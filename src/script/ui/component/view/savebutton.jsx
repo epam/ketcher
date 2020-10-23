@@ -14,63 +14,78 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h, Component } from 'preact';
-import { saveAs } from 'file-saver';
+import React, { Component } from 'react'
+import { saveAs } from 'file-saver'
 
 class SaveButton extends Component {
-	constructor({ filename = 'unnamed', type = 'text/plain', className = '', ...props }) {
-		super({ filename, type, className, ...props });
-		fileSaver(props.server).then((saver) => {
-			this.setState({ saver });
-		});
-	}
+  constructor({
+    filename = 'unnamed',
+    type = 'text/plain',
+    className = '',
+    ...props
+  }) {
+    super({ filename, type, className, ...props })
+    this.state = {}
+    fileSaver(props.server).then(saver => {
+      this.setState({ saver })
+    })
+  }
 
-	save(ev) {
-		const noop = () => null;
-		const { filename, data, type, onSave = noop, onError = noop } = this.props;
+  save(ev) {
+    const noop = () => null
+    const { filename, data, type, onSave = noop, onError = noop } = this.props
 
-		if (this.state.saver && data) {
-			try {
-				this.state.saver(data, filename, type);
-				onSave();
-			} catch (e) {
-				onError(e);
-			}
-		}
+    if (this.state.saver && data) {
+      try {
+        this.state.saver(data, filename, type)
+        onSave()
+      } catch (e) {
+        onError(e)
+      }
+    }
 
-		ev.preventDefault();
-	}
+    ev.preventDefault()
+  }
 
-	render() {
-		const { children, filename, data, className = 'save-button', ...props } = this.props;
+  render() {
+    const {
+      children,
+      filename,
+      data,
+      className = 'save-button',
+      ...props
+    } = this.props
 
-		return (
-			<button
-				onClick={ev => this.save(ev)}
-				className={(!this.state.saver || !data) ? `disabled ${className}` : className}
-				{...props}
-			>
-				{ children }
-			</button>
-		);
-	}
+    return (
+      <button
+        onClick={ev => this.save(ev)}
+        className={
+          !this.state.saver || !data ? `disabled ${className}` : className
+        }
+        {...props}>
+        {children}
+      </button>
+    )
+  }
 }
 
 function fileSaver(server) {
-	return new Promise((resolve, reject) => {
-		if (global.Blob && saveAs) {
-			resolve((data, fn, type) => {
-				const blob = new Blob([data], { type }); // eslint-disable-line no-undef
-				saveAs(blob, fn);
-			});
-		} else if (server) {
-			resolve(server.then(() => {
-				throw Error("Server doesn't still support echo method");
-			}));
-		} else {
-			reject(new Error('Your browser does not support opening files locally'));
-		}
-	});
+  return new Promise((resolve, reject) => {
+    if (global.Blob && saveAs) {
+      resolve((data, fn, type) => {
+        const blob = new Blob([data], { type }) // eslint-disable-line no-undef
+        saveAs(blob, fn)
+      })
+    } else if (server) {
+      resolve(
+        server.then(() => {
+          throw Error("Server doesn't still support echo method")
+        })
+      )
+    } else {
+      reject(new Error('Your browser does not support opening files locally'))
+    }
+  })
 }
 
-export default SaveButton;
+export default SaveButton

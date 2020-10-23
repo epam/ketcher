@@ -14,12 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h } from 'preact';
+import React from 'react'
 
 function Spin({ ...props }) {
-	return (
-		<div className="ket-spinner" {...props} />
-	);
+  return <div className="ket-spinner" {...props} />
 }
 
-export default Spin;
+export default Spin

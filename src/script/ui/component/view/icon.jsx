@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
- import { h } from 'preact';
- 
+import React from 'react'
+
 function Icon({ name, ...props }) {
-	return (
-		<svg {...props}>
-			<use xlinkHref={`#icon-${name}`} />
-		</svg>
-	);
+  return (
+    <svg {...props}>
+      <use xlinkHref={`#icon-${name}`} />
+    </svg>
+  )
 }
-export default Icon;
+export default Icon

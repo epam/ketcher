@@ -15,50 +15,49 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h } from 'preact';
-import { connect } from 'react-redux';
+import React from 'react'
+import { connect } from 'react-redux'
 
-import Form, { Field } from '../../component/form/form';
-import Dialog from '../../component/dialog';
-import { automap } from '../../state/server';
+import Form, { Field } from '../../component/form/form'
+import Dialog from '../../component/dialog'
+import { automap } from '../../state/server'
 
 export const automapSchema = {
-	title: 'Reaction Auto-Mapping',
-	type: 'object',
-	required: ['mode'],
-	properties: {
-		mode: {
-			title: 'Mode',
-			enum: ['discard', 'keep', 'alter', 'clear'],
-			enumNames: ['Discard', 'Keep', 'Alter', 'Clear'],
-			default: 'discard'
-		}
-	}
-};
+  title: 'Reaction Auto-Mapping',
+  type: 'object',
+  required: ['mode'],
+  properties: {
+    mode: {
+      title: 'Mode',
+      enum: ['discard', 'keep', 'alter', 'clear'],
+      enumNames: ['Discard', 'Keep', 'Alter', 'Clear'],
+      default: 'discard'
+    }
+  }
+}
 
 function Automap(props) {
-	const { formState, ...prop } = props;
-	return (
-		<Dialog
-			title="Reaction Auto-Mapping"
-			className="automap"
-			result={() => formState.result}
-			valid={() => formState.valid}
-			params={prop}
-		>
-			<Form schema={automapSchema} {...formState}>
-				<Field name="mode" />
-			</Form>
-		</Dialog>
-	);
+  const { formState, ...prop } = props
+  return (
+    <Dialog
+      title="Reaction Auto-Mapping"
+      className="automap"
+      result={() => formState.result}
+      valid={() => formState.valid}
+      params={prop}>
+      <Form schema={automapSchema} {...formState}>
+        <Field name="mode" />
+      </Form>
+    </Dialog>
+  )
 }
 
 export default connect(
-	store => ({ formState: store.modal.form }),
-	(dispatch, props) => ({
-		onOk: (res) => {
-			dispatch(automap(res));
-			props.onOk(res);
-		}
-	})
-)(Automap);
+  store => ({ formState: store.modal.form }),
+  (dispatch, props) => ({
+    onOk: res => {
+      dispatch(automap(res))
+      props.onOk(res)
+    }
+  })
+)(Automap)

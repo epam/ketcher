@@ -14,41 +14,57 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h, Component, toChildArray } from 'preact';
-import { xor } from 'lodash/fp';
+import React, { Component } from 'react'
+import { xor } from 'lodash/fp'
 
 class Accordion extends Component {
-	constructor(props) {
-		super(props);
-		this.state.active = props.active || [];
-	}
-	onActive(index) {
-		const { multiple = true } = this.props;
+  constructor(props) {
+    super(props)
+    this.state = {}
+    this.state.active = props.active || []
+  }
+  onActive(index) {
+    const { multiple = true } = this.props
 
-		if (!multiple)
-			this.setState({ active: [index] });
-		else
-			this.setState(prevState => ({ active: xor(prevState.active, [index]) }));
-	}
+    if (!multiple) this.setState({ active: [index] })
+    else
+      this.setState(prevState => ({ active: xor(prevState.active, [index]) }))
+  }
 
-	render() {
-		const { children, captions, ...props } = this.props;
-		const { active } = this.state;
-		return (
-			<ul {...props}>
-				{ captions.map((caption, index) => (
-					<li className={'ac_tab ' + (active.includes(index) ? 'active' : 'hidden')}>
-						<a // eslint-disable-line
-							onClick={() => this.onActive(index)}
-						>
-							{caption}
-						</a>
-						{toChildArray(children)[index]}
-					</li>
-				)) }
-			</ul>
-		);
-	}
+  groupIsActive(index) {
+    return this.state.active.includes(index)
+  }
+
+  static Group({ caption, isActive, onActive, index, children }) {
+    return (
+      <li className={'ac_tab ' + (isActive(index) ? 'active' : 'hidden')}>
+        <a // eslint-disable-line
+          onClick={() => onActive(index)}>
+          {caption}
+        </a>
+        {children}
+      </li>
+    )
+  }
+  render() {
+    const { children, ...props } = this.props
+    const childrenWithProps = React.Children.map(
+      this.props.children,
+      (child, index) => {
+        // checking isValidElement is the safe way and avoids a typescript error too
+        const props = {
+          isActive: this.groupIsActive.bind(this),
+          onActive: this.onActive.bind(this),
+          index
+        }
+        if (React.isValidElement(child)) {
+          return React.cloneElement(child, props)
+        }
+        return child
+      }
+    )
+    return <ul {...props}>{childrenWithProps}</ul>
+  }
 }
 
-export default Accordion;
+export default Accordion

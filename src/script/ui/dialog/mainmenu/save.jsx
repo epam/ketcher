@@ -68,7 +68,9 @@ class Save extends Component {
 
 		this.changeType(this.isRxn ? 'rxn' : 'mol')
 			.then(res => (res instanceof Error ? props.onCancel() : null));
+	}
 
+	componentDidMount() {
 		const { checkOptions } = this.props.checkState;
 		this.props.onCheck(checkOptions);
 	}
@@ -124,27 +126,29 @@ class Save extends Component {
 					'Close'
 				]}
 			>
-				<Form
-					schema={this.saveSchema}
-					init={{ filename, format: this.isRxn ? 'rxn' : 'mol' }}
-					{...formState}
-				>
-					<Field name="filename" />
-					<Field name="format" onChange={value => this.changeType(value)} />
-				</Form>
-				<textarea
-					value={structStr}
-					readOnly
-					ref={(el) => { this.textarea = el; }}
-				/>
-				{ isStructInvalid &&
-					<div className="warning">
-						Structure contains errors, please check the data,
-						otherwise you can lose some properties or
-						the whole structure after saving in this format.
-					</div>
-				}
-				{ warning && <div className="warning">{warning}</div> }
+				<div className="form-container">
+					<Form
+						schema={this.saveSchema}
+						init={{ filename, format: this.isRxn ? 'rxn' : 'mol' }}
+						{...formState}
+					>
+						<Field name="filename" />
+						<Field name="format" onChange={value => this.changeType(value)} />
+					</Form>
+					<textarea
+						value={structStr}
+						readOnly
+						ref={(el) => { this.textarea = el; }}
+					/>
+					{ isStructInvalid &&
+						<div className="warning">
+							Structure contains errors, please check the data,
+							otherwise you can lose some properties or
+							the whole structure after saving in this format.
+						</div>
+					}
+					{ warning && <div className="warning">{warning}</div> }
+				</div>
 			</Dialog>
 		);
 	}

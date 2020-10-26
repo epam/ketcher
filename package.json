@@ -28,6 +28,7 @@
     "font-face-observer": "^1.0.0",
     "jsonschema": "^1.4.0",
     "lodash": "^4.17.20",
+    "normalize.css": "^8.0.1",
     "query-string": "^6.13.6",
     "raphael": "^2.3.0",
     "react": "^17.0.0",
@@ -54,30 +55,33 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@welldone-software/why-did-you-render": "^4.3.1",
+    "customize-cra": "^1.0.0",
     "husky": "v1.0.0-rc.13",
+    "less": "^3.12.2",
+    "less-loader": "^7.0.2",
     "lint-staged": "^10.4.2",
     "node-sass": "^4.14.1",
     "postcss-normalize": "^9.0.0",
     "prettier": "^2.0.5",
     "prettier-config-standard": "^1.0.1",
+    "react-app-rewired": "^2.1.6",
     "serve": "^11.3.2",
-    "source-map-explorer": "^2.5.0",
     "stylelint": "^13.6.1",
     "stylelint-config-prettier": "^8.0.1",
     "stylelint-config-recommended-scss": "^4.2.0",
     "stylelint-config-standard": "^20.0.0",
     "stylelint-prettier": "^1.1.2",
-    "stylelint-scss": "^3.18.0"
+    "stylelint-scss": "^3.18.0",
+    "webpack-bundle-analyzer": "^3.9.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "analyze:gzip": "source-map-explorer 'build/static/js/*.js' --gzip",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "build:analyze": "react-app-rewired build --analyze",
     "lint": "eslint src --ext .ts,.tsx,.js,.jsx",
     "lint-staged": "lint-staged",
-    "test": "react-scripts test",
-    "test:update": "react-scripts test --updateSnapshot",
+    "test": "react-app-rewired test",
+    "test:update": "react-app-rewired test --updateSnapshot",
     "prettier": "prettier --check \"src/**/*.{js,jsx,json,ts,tsx}\"",
     "prettier:write": "prettier --write \"src/**/*.{js,jsx,json,ts,tsx}\"",
     "stylelint": "stylelint \"src/**/*.{css,less,scss}\" --formatter verbose",
@@ -117,5 +121,6 @@
     "src/**/*.{css,scss}": [
       "stylelint --formatter verbose --fix"
     ]
-  }
+  },
+  "config-overrides-path": "config/webpack.config.js"
 }

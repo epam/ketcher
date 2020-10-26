@@ -11,10 +11,10 @@ export function initLib(lib) {
 }
 
 export default function initTmplLib(dispatch, baseUrl, cacheEl) {
-  prefetchStatic(`${baseUrl}/library.sdf`)
+  prefetchStatic(`${baseUrl}/templates/library.sdf`)
     .then(text => {
       const tmpls = sdf.parse(text)
-      const prefetch = prefetchRender(tmpls, baseUrl + '/', cacheEl)
+      const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheEl)
 
       return prefetch.then(cachedFiles =>
         tmpls.map(tmpl => {

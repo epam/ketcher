@@ -83,7 +83,8 @@ class Dialog extends Component {
             </button>
           )}
         </header>
-        {children}
+        <div class="dialog-body">{children}</div>
+
         <footer>
           {buttons.map(b =>
             typeof b !== 'string' ? (

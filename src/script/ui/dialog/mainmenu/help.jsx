@@ -14,18 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-
+import React, { useEffect, useState, useCallback } from 'react'
+import Markdown from 'react-markdown'
 import Dialog from '../../component/dialog'
 
 function Help(props) {
+  const [content, setContent] = useState(null)
+
+  useEffect(() => {
+    const init = async () => {
+      fetch(`${process.env.PUBLIC_URL}/docs/help.md`)
+        .then(response => response.text())
+        .then(text => setContent(text))
+    }
+    init()
+  }, [])
+
+  const transfromImageUri = useCallback(
+    uri => `${process.env.PUBLIC_URL}/docs/${uri}`,
+    []
+  )
+
   return (
-    <Dialog title="Help" className="help" params={props} buttons={['Close']}>
-      <iframe
-        className="help"
-        src={`${process.env.PUBLIC_URL}/docs/help.html`}
-      />
-    </Dialog>
+    content && (
+      <Dialog title="Help" params={props} buttons={['Close']}>
+        {content && (
+          <Markdown transformImageUri={transfromImageUri}>{content}</Markdown>
+        )}
+      </Dialog>
+    )
   )
 }
 

@@ -14,77 +14,86 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { upperFirst } from 'lodash/fp';
-import { h, Component } from 'preact';
+import { upperFirst } from 'lodash/fp'
+import React, { Component, createRef } from 'react'
 
-import MeasureLog from './measurelog';
-import Editor from '../../editor';
+import MeasureLog from './measurelog'
+import Editor from '../../editor'
 
 function setupEditor(editor, props, oldProps = {}) {
-	const { struct, tool, toolOpts, options } = props;
+  const { struct, tool, toolOpts, options } = props
 
-	if (struct !== oldProps.struct)
-		editor.struct(struct);
+  if (struct !== oldProps.struct) editor.struct(struct)
 
-	if (tool !== oldProps.tool || toolOpts !== oldProps.toolOpts)
-		editor.tool(tool, toolOpts);
+  if (tool !== oldProps.tool || toolOpts !== oldProps.toolOpts)
+    editor.tool(tool, toolOpts)
 
-	if (oldProps.options && options !== oldProps.options)
-		editor.options(options);
+  if (oldProps.options && options !== oldProps.options) editor.options(options)
 
-	// update handlers
-	Object.keys(editor.event).forEach((name) => {
-		const eventName = `on${upperFirst(name)}`;
+  // update handlers
+  Object.keys(editor.event).forEach(name => {
+    const eventName = `on${upperFirst(name)}`
 
-		if (props[eventName] !== oldProps[eventName]) {
-			if (oldProps[eventName])
-				editor.event[name].remove(oldProps[eventName]);
+    if (props[eventName] !== oldProps[eventName]) {
+      if (oldProps[eventName]) editor.event[name].remove(oldProps[eventName])
 
-			if (props[eventName])
-				editor.event[name].add(props[eventName]);
-		}
-	});
+      if (props[eventName]) editor.event[name].add(props[eventName])
+    }
+  })
 }
 
 function removeEditorHandlers(editor, props) {
-	Object.keys(editor.event).forEach((name) => {
-		const eventName = `on${upperFirst(name)}`;
+  Object.keys(editor.event).forEach(name => {
+    const eventName = `on${upperFirst(name)}`
 
-		if (props[eventName])
-			editor.event[name].remove(props[eventName]);
-	});
+    if (props[eventName]) editor.event[name].remove(props[eventName])
+  })
 }
 
 class StructEditor extends Component {
-	shouldComponentUpdate() {
-		return false;
-	}
+  constructor(props) {
+    super(props)
+    this.editorRef = createRef()
+  }
+  shouldComponentUpdate() {
+    return false
+  }
 
-	componentWillReceiveProps(props) {
-		setupEditor(this.instance, props, this.props);
-	}
+  componentWillReceiveProps(props) {
+    setupEditor(this.instance, props, this.props)
+  }
 
-	componentDidMount() {
-		console.assert(this.base, 'No backing element');
-		this.instance = new Editor(this.base, { ...this.props.options });
-		setupEditor(this.instance, this.props);
-		if (this.props.onInit)
-			this.props.onInit(this.instance);
-	}
+  componentDidMount() {
+    this.instance = new Editor(this.editorRef.current, {
+      ...this.props.options
+    })
+    setupEditor(this.instance, this.props)
+    if (this.props.onInit) this.props.onInit(this.instance)
+  }
 
-	componentWillUnmount() {
-		removeEditorHandlers(this.instance, this.props);
-	}
+  componentWillUnmount() {
+    removeEditorHandlers(this.instance, this.props)
+  }
 
-	render() {
-		const { Tag = 'div', struct, tool, toolOpts, options, ...props } = this.props;
-		return (
-			<Tag onMouseDown={ev => ev.preventDefault()} {...props}>
-				{/* svg here */}
-				<MeasureLog />
-			</Tag>
-		);
-	}
+  render() {
+    const {
+      Tag = 'div',
+      struct,
+      tool,
+      toolOpts,
+      options,
+      ...props
+    } = this.props
+    return (
+      <Tag
+        onMouseDown={ev => ev.preventDefault()}
+        {...props}
+        ref={this.editorRef}>
+        {/* svg here */}
+        <MeasureLog />
+      </Tag>
+    )
+  }
 }
 
-export default StructEditor;
+export default StructEditor

@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import app from './app';
+import app from './app'
 
 function init(opts, apiServer) {
-	const ketcherWindow = document.querySelector('[role=application]') || document.body;
-	return app(ketcherWindow, opts, apiServer);
+  const ketcherWindow = document.getElementById('root')
+  return app(ketcherWindow, opts, apiServer)
 }
 
-export default init;
+export default init

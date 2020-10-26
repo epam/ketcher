@@ -1,27 +1,29 @@
-import { h, Component } from 'preact';
-import { connect } from 'react-redux';
+import React, { Component, createRef } from 'react'
+import { connect } from 'react-redux'
 
 class MeasureLog extends Component {
-	componentWillReceiveProps(props, oldProps) {
-		if (!oldProps.editor && props.editor) {
-			props.editor.event.message.add((msg) => {
-				if (msg.info) {
-					this.base.innerHTML = msg.info;
-					this.base.classList.add('visible');
-				} else {
-					this.base.classList.remove('visible');
-				}
-			});
-		}
-	}
-	render() {
-		return (
-			<div className="measure-log" />
-		);
-	}
+  constructor(props) {
+    super(props)
+    this.logRef = createRef()
+  }
+  componentWillReceiveProps(props, oldProps) {
+    if (!oldProps.editor && props.editor) {
+      props.editor.event.message.add(msg => {
+        const el = this.logRef.current
+        if (msg.info) {
+          const el = this.logRef.current
+          el.innerHTML = msg.info
+          el.classList.add('visible')
+        } else {
+          el.classList.remove('visible')
+        }
+      })
+    }
+  }
+  render() {
+    return <div className="measure-log" ref={this.logRef} />
+  }
 }
-export default connect(
-	state => ({
-		editor: state.editor
-	})
-)(MeasureLog);
+export default connect(state => ({
+  editor: state.editor
+}))(MeasureLog)

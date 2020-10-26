@@ -14,71 +14,73 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h } from 'preact';
-import { connect } from 'react-redux';
+import React from 'react'
+import { connect } from 'react-redux'
 
-import Dialog from '../../component/dialog';
+import Dialog from '../../component/dialog'
 
 function About(props) {
-	const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r'); // Indigo version and build info
+  const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info
 
-	return (
-		<Dialog
-			title="About"
-			className="about"
-			params={props}
-			buttons={['Close']}
-		>
-			<a href="http://lifescience.opensource.epam.com/ketcher/" target="_blank">
-				<img alt="Ketcher" src="logo/ketcher-logo.svg" />
-			</a>
-			<dl>
-				<dt>
-					<a href="http://lifescience.opensource.epam.com/ketcher/help.html" target="_blank">Ketcher</a>
-				</dt>
-				<dd>
-					version
-					<var>{props.version}</var>
-				</dd>
-				{
-					props.buildNumber ? (
-						<dd>
-							build #
-							<var>{props.buildNumber}</var>
-							{' at '}
-							<time>{props.buildDate}</time>
-						</dd>) : null
-				}
-				{
-					props.indigoVersion ? (
-						<div>
-							<dt>
-								<a href="http://lifescience.opensource.epam.com/indigo/" target="_blank">Indigo
-									Toolkit
-								</a>
-							</dt>
-							<dd>
-								version
-								<var>{indigoInfo[0]}</var>
-							</dd>
-							<dd>
-								build #
-								<var>{indigoInfo[1]}</var>
-							</dd>
-						</div>
-					) : (<dd>standalone</dd>)
-				}
-				<dt>
-					<a href="http://lifescience.opensource.epam.com/" target="_blank">EPAM Life Sciences</a>
-				</dt>
-				<dd>
-					<a href="http://lifescience.opensource.epam.com/ketcher/#feedback" target="_blank">Feedback</a>
-				</dd>
-			</dl>
-		</Dialog>
-	);
+  return (
+    <Dialog title="About" className="about" params={props} buttons={['Close']}>
+      <a href="http://lifescience.opensource.epam.com/ketcher/" target="_blank">
+        <img alt="Ketcher" src={`${process.env.PUBLIC_URL}/logo.svg`} />
+      </a>
+      <dl>
+        <dt>
+          <a
+            href="http://lifescience.opensource.epam.com/ketcher/help.html"
+            target="_blank">
+            Ketcher
+          </a>
+        </dt>
+        <dd>
+          version
+          <var>{props.version}</var>
+        </dd>
+        {props.buildNumber ? (
+          <dd>
+            build #<var>{props.buildNumber}</var>
+            {' at '}
+            <time>{props.buildDate}</time>
+          </dd>
+        ) : null}
+        {props.indigoVersion ? (
+          <div>
+            <dt>
+              <a
+                href="http://lifescience.opensource.epam.com/indigo/"
+                target="_blank">
+                Indigo Toolkit
+              </a>
+            </dt>
+            <dd>
+              version
+              <var>{indigoInfo[0]}</var>
+            </dd>
+            <dd>
+              build #<var>{indigoInfo[1]}</var>
+            </dd>
+          </div>
+        ) : (
+          <dd>standalone</dd>
+        )}
+        <dt>
+          <a href="http://lifescience.opensource.epam.com/" target="_blank">
+            EPAM Life Sciences
+          </a>
+        </dt>
+        <dd>
+          <a
+            href="http://lifescience.opensource.epam.com/ketcher/#feedback"
+            target="_blank">
+            Feedback
+          </a>
+        </dd>
+      </dl>
+    </Dialog>
+  )
 }
 
-export default connect(
-	store => ({ ...store.options.app })
-)(About);
+export default connect(store => ({ ...store.options.app }))(About)

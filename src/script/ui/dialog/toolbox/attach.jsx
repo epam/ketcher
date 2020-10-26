@@ -14,31 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h } from 'preact';
-import { connect } from 'react-redux';
+import React from 'react'
+import { connect } from 'react-redux'
 
-import { attachmentPoints as attachmentPointsSchema } from '../../data/schema/struct-schema';
-import Form, { Field } from '../../component/form/form';
-import Dialog from '../../component/dialog';
+import { attachmentPoints as attachmentPointsSchema } from '../../data/schema/struct-schema'
+import Form, { Field } from '../../component/form/form'
+import Dialog from '../../component/dialog'
 
 function AttachmentPoints(props) {
-	const { formState, ...prop } = props;
-	return (
-		<Dialog
-			title="Attachment Points"
-			className="attach-points"
-			result={() => formState.result}
-			valid={() => formState.valid}
-			params={prop}
-		>
-			<Form schema={attachmentPointsSchema} init={prop} {...formState}>
-				<Field name="primary" />
-				<Field name="secondary" />
-			</Form>
-		</Dialog>
-	);
+  const { formState, ...prop } = props
+  return (
+    <Dialog
+      title="Attachment Points"
+      className="attach-points"
+      result={() => formState.result}
+      valid={() => formState.valid}
+      params={prop}>
+      <Form schema={attachmentPointsSchema} init={prop} {...formState}>
+        <Field name="primary" />
+        <Field name="secondary" />
+      </Form>
+    </Dialog>
+  )
 }
 
-export default connect(
-	store => ({ formState: store.modal.form })
-)(AttachmentPoints);
+export default connect(store => ({ formState: store.modal.form }))(
+  AttachmentPoints
+)

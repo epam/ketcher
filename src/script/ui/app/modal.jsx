@@ -14,60 +14,58 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h } from 'preact';
-import { omit } from 'lodash/fp';
-import { connect } from 'react-redux';
-import modals from '../dialog';
+import React from 'react'
+import { omit } from 'lodash/fp'
+import { connect } from 'react-redux'
+import modals from '../dialog'
 
 const mapStateToProps = state => ({
-	modal: state.modal
-});
+  modal: state.modal
+})
 
 const mapDispatchToProps = dispatch => ({
-	onOk: (res) => {
-		console.info('Output:', res);
-		dispatch({ type: 'MODAL_CLOSE' });
-	},
-	onCancel: () => {
-		dispatch({ type: 'MODAL_CLOSE' });
-	}
-});
+  onOk: res => {
+    console.info('Output:', res)
+    dispatch({ type: 'MODAL_CLOSE' })
+  },
+  onCancel: () => {
+    dispatch({ type: 'MODAL_CLOSE' })
+  }
+})
 
 const mergeProps = (stateProps, dispatchProps) => {
-	const prop = stateProps.modal && stateProps.modal.prop;
-	const initProps = prop ? omit(['onResult', 'onCancel'], prop) : {};
-	return {
-		modal: stateProps.modal,
-		...initProps,
-		onOk: (res) => {
-			if (prop && prop.onResult) prop.onResult(res);
-			dispatchProps.onOk(res);
-		},
-		onCancel: () => {
-			if (prop && prop.onCancel) prop.onCancel();
-			dispatchProps.onCancel();
-		}
-	};
-};
+  const prop = stateProps.modal && stateProps.modal.prop
+  const initProps = prop ? omit(['onResult', 'onCancel'], prop) : {}
+  return {
+    modal: stateProps.modal,
+    ...initProps,
+    onOk: res => {
+      if (prop && prop.onResult) prop.onResult(res)
+      dispatchProps.onOk(res)
+    },
+    onCancel: () => {
+      if (prop && prop.onCancel) prop.onCancel()
+      dispatchProps.onCancel()
+    }
+  }
+}
 
 const AppModal = connect(
-	mapStateToProps,
-	mapDispatchToProps,
-	mergeProps
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
 )(({ modal, ...props }) => {
-	if (!modal)
-		return null;
+  if (!modal) return null
 
-	const Modal = modals[modal.name];
+  const Modal = modals[modal.name]
 
-	if (!Modal)
-		throw new Error(`There is no modal window named ${modal.name}`);
+  if (!Modal) throw new Error(`There is no modal window named ${modal.name}`)
 
-	return (
-		<div className="ket-overlay">
-			<Modal {...props} />
-		</div>
-	);
-});
+  return (
+    <div className="ket-overlay">
+      <Modal {...props} />
+    </div>
+  )
+})
 
-export default AppModal;
+export default AppModal

@@ -101,12 +101,12 @@ window.onload = function () {
 }
 
 const buildInfo = {
-  version: '__VERSION__',
-  apiPath: '__API_PATH__',
-  buildDate: '__BUILD_DATE__',
-  buildNumber: '__BUILD_NUMBER__' || null
+  version: process.env.REACT_APP_VERSION,
+  apiPath: process.env.REACT_APP_API_PATH,
+  buildDate: process.env.BUILD_DATE,
+  buildNumber: process.env.BUILD_NUMBER || null
 }
-
+console.log(JSON.stringify(process.env))
 import validateGraphF from './format/graphValidator' // eslint-disable-line
 
 const ketcher = Object.assign(
@@ -131,4 +131,4 @@ const ketcher = Object.assign(
   buildInfo
 )
 
-export default ketcher
+window.ketcher = ketcher

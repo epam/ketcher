@@ -56,7 +56,7 @@ export function initResize() {
 }
 
 export function initIcons(cacheEl) {
-  const iconpath = `${process.env.PUBLIC_URL}/ketcher.svg`
+  const iconpath = `${process.env.PUBLIC_URL}/static/icons.svg`
   fetch(iconpath, { credentials: 'same-origin' }).then(resp => {
     if (resp.ok)
       resp.text().then(svg => {

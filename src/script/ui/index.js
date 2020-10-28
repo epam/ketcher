@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 import app from './app'
+require.context('./../../icons', true, /\.svg$/)
+//import './../../icons'
 
 function init(opts, apiServer) {
   const ketcherWindow = document.getElementById('root')

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { h } from 'preact';
-import Input from './input';
+import React from 'react'
+import Input from './input'
 
 function SelectCheckbox({ schema, ...props }) {
-	const desc = {
-		title: schema.title,
-		enum: [true, false],
-		enumNames: ['on', 'off']
-	};
-	return <Input schema={desc} {...props} />;
+  const desc = {
+    title: schema.title,
+    enum: [true, false],
+    enumNames: ['on', 'off']
+  }
+  return <Input schema={desc} {...props} />
 }
 
-export default SelectCheckbox;
+export default SelectCheckbox

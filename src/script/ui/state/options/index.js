@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,127 +14,143 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { pick } from 'lodash/fp';
+import { pick } from 'lodash/fp'
 
-import { SERVER_OPTIONS, getDefaultOptions, validation } from '../../data/schema/options-schema';
-import { storage } from '../../storage-ext';
+import {
+  SERVER_OPTIONS,
+  getDefaultOptions,
+  validation
+} from '../../data/schema/options-schema'
+import { storage } from '../../storage-ext'
 
 export const initOptionsState = {
-	app: {
-		server: false,
-		templates: false
-	},
-	analyse: {
-		values: null,
-		roundWeight: 3,
-		roundMass: 3
-	},
-	check: {
-		checkOptions: ['valence', 'radicals', 'pseudoatoms', 'stereo', 'query', 'overlapping_atoms',
-			'overlapping_bonds', 'rgroups', 'chiral', '3d', 'chiral_flag']
-	},
-	recognize: {
-		file: null,
-		structStr: null,
-		fragment: false,
-		version: null
-	},
-	settings: Object.assign(getDefaultOptions(), validation(storage.getItem('ketcher-opts'))),
-	getServerSettings() {
-		return pick(SERVER_OPTIONS, this.settings);
-	}
-};
+  app: {
+    server: false,
+    templates: false
+  },
+  analyse: {
+    values: null,
+    roundWeight: 3,
+    roundMass: 3
+  },
+  check: {
+    checkOptions: [
+      'valence',
+      'radicals',
+      'pseudoatoms',
+      'stereo',
+      'query',
+      'overlapping_atoms',
+      'overlapping_bonds',
+      'rgroups',
+      'chiral',
+      '3d',
+      'chiral_flag'
+    ]
+  },
+  recognize: {
+    file: null,
+    structStr: null,
+    fragment: false,
+    version: null
+  },
+  settings: Object.assign(
+    getDefaultOptions(),
+    validation(storage.getItem('ketcher-opts'))
+  ),
+  getServerSettings() {
+    return pick(SERVER_OPTIONS, this.settings)
+  }
+}
 
 export function appUpdate(data) {
-	return (dispatch) => {
-		dispatch({ type: 'APP_OPTIONS', data });
-		dispatch({ type: 'UPDATE' });
-	};
+  return dispatch => {
+    dispatch({ type: 'APP_OPTIONS', data })
+    dispatch({ type: 'UPDATE' })
+  }
 }
 
 /* SETTINGS */
 export function saveSettings(newSettings) {
-	storage.setItem('ketcher-opts', newSettings);
-	return {
-		type: 'SAVE_SETTINGS',
-		data: newSettings
-	};
+  storage.setItem('ketcher-opts', newSettings)
+  return {
+    type: 'SAVE_SETTINGS',
+    data: newSettings
+  }
 }
 
 /* ANALYZE */
 export function changeRound(roundName, value) {
-	return {
-		type: 'CHANGE_ANALYSE',
-		data: { [roundName]: value }
-	};
+  return {
+    type: 'CHANGE_ANALYSE',
+    data: { [roundName]: value }
+  }
 }
 
 /* RECOGNIZE */
 const recognizeActions = [
-	'SET_RECOGNIZE_STRUCT',
-	'CHANGE_RECOGNIZE_FILE',
-	'CHANGE_IMAGO_VERSION',
-	'IS_FRAGMENT_RECOGNIZE'
-];
+  'SET_RECOGNIZE_STRUCT',
+  'CHANGE_RECOGNIZE_FILE',
+  'CHANGE_IMAGO_VERSION',
+  'IS_FRAGMENT_RECOGNIZE'
+]
 
 export function setStruct(str) {
-	return {
-		type: 'SET_RECOGNIZE_STRUCT',
-		data: { structStr: str }
-	};
+  return {
+    type: 'SET_RECOGNIZE_STRUCT',
+    data: { structStr: str }
+  }
 }
 
 export function changeVersion(version) {
-	return {
-		type: 'CHANGE_IMAGO_VERSION',
-		data: { version }
-	};
+  return {
+    type: 'CHANGE_IMAGO_VERSION',
+    data: { version }
+  }
 }
 
 export function changeImage(file) {
-	return {
-		type: 'CHANGE_RECOGNIZE_FILE',
-		data: {
-			file,
-			structStr: null
-		}
-	};
+  return {
+    type: 'CHANGE_RECOGNIZE_FILE',
+    data: {
+      file,
+      structStr: null
+    }
+  }
 }
 
 export function shouldFragment(isFrag) {
-	return {
-		type: 'IS_FRAGMENT_RECOGNIZE',
-		data: { fragment: isFrag }
-	};
+  return {
+    type: 'IS_FRAGMENT_RECOGNIZE',
+    data: { fragment: isFrag }
+  }
 }
 
 /* CHECK */
 export function checkOpts(data) {
-	return {
-		type: 'SAVE_CHECK_OPTS',
-		data
-	};
+  return {
+    type: 'SAVE_CHECK_OPTS',
+    data
+  }
 }
 
 /* REDUCER */
 function optionsReducer(state = {}, action) {
-	const { type, data } = action;
+  const { type, data } = action
 
-	if (type === 'APP_OPTIONS')
-		return { ...state, app: { ...state.app, ...data } };
+  if (type === 'APP_OPTIONS')
+    return { ...state, app: { ...state.app, ...data } }
 
-	if (type === 'SAVE_SETTINGS')
-		return { ...state, settings: data };
+  if (type === 'SAVE_SETTINGS') return { ...state, settings: data }
 
-	if (type === 'SAVE_CHECK_OPTS')
-		return { ...state, check: data };
+  if (type === 'SAVE_CHECK_OPTS') return { ...state, check: data }
 
-	if (type === 'CHANGE_ANALYSE')
-		return { ...state, analyse: { ...state.analyse, ...data } };
+  if (type === 'CHANGE_ANALYSE')
+    return { ...state, analyse: { ...state.analyse, ...data } }
 
-	if (recognizeActions.includes(type))
-		return { ...state, recognize: { ...state.recognize, ...data } };
-	return state;
+  if (recognizeActions.includes(type))
+    return { ...state, recognize: { ...state.recognize, ...data } }
+  return state
 }
 
-export default optionsReducer;
+export default optionsReducer

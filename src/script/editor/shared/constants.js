@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 export const SgContexts = {
-	Fragment: 'Fragment',
-	Multifragment: 'Multifragment',
-	Bond: 'Bond',
-	Atom: 'Atom',
-	Group: 'Group'
-};
+  Fragment: 'Fragment',
+  Multifragment: 'Multifragment',
+  Bond: 'Bond',
+  Atom: 'Atom',
+  Group: 'Group'
+}

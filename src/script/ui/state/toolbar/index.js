@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,122 +14,137 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { capitalize, throttle, isEqual } from 'lodash/fp';
-import { basic as basicAtoms } from '../../action/atoms';
-import tools from '../../action/tools';
+import { capitalize, throttle, isEqual } from 'lodash/fp'
+import { basic as basicAtoms } from '../../action/atoms'
+import tools from '../../action/tools'
 
 const initial = {
-	freqAtoms: [],
-	currentAtom: 0,
-	opened: null,
-	visibleTools: {
-		select: 'select-lasso'
-	}
-};
-const MAX_ATOMS = 7;
+  freqAtoms: [],
+  currentAtom: 0,
+  opened: null,
+  visibleTools: {
+    select: 'select-lasso'
+  }
+}
+const MAX_ATOMS = 7
 
 function updateVisibleTools(visibleTool, activeTool) {
-	const regExp = /(bond)(-)(common|stereo|query)/;
-	const menuHeight = window.innerHeight;
+  const regExp = /(bond)(-)(common|stereo|query)/
+  const menuHeight = window.innerHeight
 
-	return Object.keys(visibleTool).reduce((res, key) => {
-		if (key === 'bond' && menuHeight > 700) return res; // TODO remove me after update styles
-		if (key === 'transform' && menuHeight > 800) return res;
-		if (key === 'rgroup' && menuHeight > 850) return res;
-		if (!key.match(regExp) || menuHeight > 700)
-			res[key] = visibleTool[key];
-		return res;
-	}, { ...activeTool });
+  return Object.keys(visibleTool).reduce(
+    (res, key) => {
+      if (key === 'bond' && menuHeight > 700) return res // TODO remove me after update styles
+      if (key === 'transform' && menuHeight > 800) return res
+      if (key === 'rgroup' && menuHeight > 850) return res
+      if (!key.match(regExp) || menuHeight > 700) res[key] = visibleTool[key]
+      return res
+    },
+    { ...activeTool }
+  )
 }
 
 export function initResize() {
-	return function (dispatch, getState) {
-		const onResize = throttle(250, () => {
-			const state = getState();
-			state.editor.render.update();
-			dispatch({ type: 'CLEAR_VISIBLE', data: state.actionState.activeTool });
-		});
-		addEventListener('resize', onResize); // eslint-disable-line
-	};
+  return function (dispatch, getState) {
+    const onResize = throttle(250, () => {
+      const state = getState()
+      state.editor.render.update()
+      dispatch({ type: 'CLEAR_VISIBLE', data: state.actionState.activeTool })
+    })
+    addEventListener('resize', onResize) // eslint-disable-line
+  }
 }
 
 export function initIcons(cacheEl) {
-	const iconpath = 'ketcher.svg';
-	fetch(iconpath, { credentials: 'same-origin' }).then((resp) => {
-		if (resp.ok) resp.text().then((svg) => { cacheEl.innerHTML += svg; });
-		else throw Error(`Could not fetch ${iconpath}`);
-	});
+  const iconpath = `${process.env.PUBLIC_URL}/ketcher.svg`
+  fetch(iconpath, { credentials: 'same-origin' }).then(resp => {
+    if (resp.ok)
+      resp.text().then(svg => {
+        cacheEl.innerHTML += svg
+      })
+    else throw Error(`Could not fetch ${iconpath}`)
+  })
 }
 
 /* REDUCER */
 export default function (state = initial, action) {
-	const { type, data } = action;
+  const { type, data } = action
 
-	switch (type) {
-	case 'ACTION': {
-		const visibleTool = toolInMenu(action.action);
-		return visibleTool
-			? { ...state, opened: null, visibleTools: { ...state.visibleTools, ...visibleTool } }
-			: { ...state, opened: null };
-	}
-	case 'ADD_ATOMS': {
-		const newState = addFreqAtom(data, state.freqAtoms, state.currentAtom);
-		return { ...state, ...newState };
-	}
-	case 'CLEAR_VISIBLE': {
-		const activeTool = toolInMenu(action.data);
-		const correctTools = updateVisibleTools(state.visibleTools, activeTool);
-		return { ...state, opened: null, visibleTools: { ...correctTools } };
-	}
-	case 'OPENED': {
-		return data.isSelected && state.opened
-			? { ...state, opened: null }
-			: { ...state, opened: data.menuName };
-	}
-	case 'UPDATE':
-		return { ...state, opened: null };
-	case 'MODAL_OPEN':
-		return { ...state, opened: null };
-	default:
-		return state;
-	}
+  switch (type) {
+    case 'ACTION': {
+      const visibleTool = toolInMenu(action.action)
+      return visibleTool
+        ? {
+            ...state,
+            opened: null,
+            visibleTools: { ...state.visibleTools, ...visibleTool }
+          }
+        : { ...state, opened: null }
+    }
+    case 'ADD_ATOMS': {
+      const newState = addFreqAtom(data, state.freqAtoms, state.currentAtom)
+      return { ...state, ...newState }
+    }
+    case 'CLEAR_VISIBLE': {
+      const activeTool = toolInMenu(action.data)
+      const correctTools = updateVisibleTools(state.visibleTools, activeTool)
+      return { ...state, opened: null, visibleTools: { ...correctTools } }
+    }
+    case 'OPENED': {
+      return data.isSelected && state.opened
+        ? { ...state, opened: null }
+        : { ...state, opened: data.menuName }
+    }
+    case 'UPDATE':
+      return { ...state, opened: null }
+    case 'MODAL_OPEN':
+      return { ...state, opened: null }
+    default:
+      return state
+  }
 }
 /* ------- */
 
 function addFreqAtom(label, freqAtoms, index) {
-	label = capitalize(label);
-	if (basicAtoms.indexOf(label) > -1 || freqAtoms.indexOf(label) !== -1) return { freqAtoms };
+  label = capitalize(label)
+  if (basicAtoms.indexOf(label) > -1 || freqAtoms.indexOf(label) !== -1)
+    return { freqAtoms }
 
-	freqAtoms[index] = label;
-	index = (index + 1) % MAX_ATOMS;
+  freqAtoms[index] = label
+  index = (index + 1) % MAX_ATOMS
 
-	return { freqAtoms, currentAtom: index };
+  return { freqAtoms, currentAtom: index }
 }
 
 export function addAtoms(atomLabel) {
-	return {
-		type: 'ADD_ATOMS',
-		data: atomLabel
-	};
+  return {
+    type: 'ADD_ATOMS',
+    data: atomLabel
+  }
 }
 
 function toolInMenu(action) {
-	const tool = Object.keys(tools).find(toolName => isEqual(action, tools[toolName].action));
+  const tool = Object.keys(tools).find(toolName =>
+    isEqual(action, tools[toolName].action)
+  )
 
-	const sel = document.getElementById(tool);
-	const dropdown = sel && hiddenAncestor(sel);
+  const sel = document.getElementById(tool)
+  const dropdown = sel && hiddenAncestor(sel)
 
-	return (dropdown && dropdown.id !== '') ? { [dropdown.id]: sel.id } : null;
+  return dropdown && dropdown.id !== '' ? { [dropdown.id]: sel.id } : null
 }
 
 export function hiddenAncestor(el, base) {
-	base = base || document.body;
-	let findEl = el;
+  base = base || document.body
+  let findEl = el
 
-	while (window.getComputedStyle(findEl).overflow !== 'hidden' && !findEl.classList.contains('opened')) {
-		if (findEl === base) return null;
-		findEl = findEl.parentNode;
-	}
+  while (
+    window.getComputedStyle(findEl).overflow !== 'hidden' &&
+    !findEl.classList.contains('opened')
+  ) {
+    if (findEl === base) return null
+    findEl = findEl.parentNode
+  }
 
-	return findEl;
+  return findEl
 }

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h } from 'preact';
+import React from 'react'
 
 function SelectList({ schema, value, onSelect, splitIndexes, ...props }) {
-	return (
-		<ul {...props}>{
-			schema.enum.map((opt, index) => (
-				<li
-					onClick={() => onSelect(opt, index)}
-					className={
-						(opt === value ? 'selected ' : '') +
-						(isSplitIndex(index, splitIndexes) ? 'split' : '')
-					}
-				>
-					{schema.enumNames ? schema.enumNames[index] : opt}
-				</li>
-			))
-		}
-		</ul>
-	);
+  return (
+    <ul {...props}>
+      {schema.enum.map((opt, index) => (
+        <li
+          onClick={() => onSelect(opt, index)}
+          className={
+            (opt === value ? 'selected ' : '') +
+            (isSplitIndex(index, splitIndexes) ? 'split' : '')
+          }>
+          {schema.enumNames ? schema.enumNames[index] : opt}
+        </li>
+      ))}
+    </ul>
+  )
 }
 
 function isSplitIndex(index, splitIndexes) {
-	return index > 0 && splitIndexes && splitIndexes.includes(index);
+  return index > 0 && splitIndexes && splitIndexes.includes(index)
 }
 
-export default SelectList;
+export default SelectList

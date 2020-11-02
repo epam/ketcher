@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ module.exports.script = function (options) {
 	// Don't transform, see: http://git.io/vcJlV
 		.pipe(source(`${options.pkg.name}.js`)).pipe(buffer())
 		.pipe(plugins.sourcemaps.init({ loadMaps: true }))
-		.pipe(plugins.uglify({
+		.pipe(plugins.terser({
 			compress: {
 				global_defs: {
 					DEBUG: false

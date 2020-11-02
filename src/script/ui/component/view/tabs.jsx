@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,41 +14,45 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h, Component } from 'preact';
+import React, { Component } from 'react'
 
 class Tabs extends Component {
-	constructor(props) {
-		super(props);
-		this.state.tabIndex = props.tabIndex || 0;
-		this.props.changeTab(this.state.tabIndex);
-	}
+  constructor(props) {
+    super(props)
+    this.state = {}
+    this.state.tabIndex = props.tabIndex || 0
+    this.props.changeTab(this.state.tabIndex)
+  }
 
-	changeTab(ev, index) {
-		this.setState({ tabIndex: index });
-		if (this.props.changeTab)
-			this.props.changeTab(index);
-	}
+  changeTab(ev, index) {
+    this.setState({ tabIndex: index })
+    if (this.props.changeTab) this.props.changeTab(index)
+  }
 
-	render() {
-		const { children, captions, ...props } = this.props;
-		return (
-			<ul {...props}>
-				<li className="tabs">
-					{ captions.map((caption, index) => (
-						<a // eslint-disable-line
-							className={this.state.tabIndex === index ? 'active' : ''}
-							onClick={ev => this.changeTab(ev, index)}
-						>
-							{caption}
-						</a>
-					)) }
-				</li>
-				<li className="tabs-content">
-					{ children[this.state.tabIndex] }
-				</li>
-			</ul>
-		);
-	}
+  render() {
+    const { tabs, ...other } = this.props
+    const tabPanel = tabs[this.state.tabIndex]
+    const Component = tabPanel?.component
+    const componentProps = tabPanel?.props
+    return (
+      <ul {...other}>
+        <li className="tabs">
+          {tabs.map((tabPanel, index) => (
+            <a // eslint-disable-line
+              className={this.state.tabIndex === index ? 'active' : ''}
+              onClick={ev => this.changeTab(ev, index)}>
+              {tabPanel.caption}
+            </a>
+          ))}
+        </li>
+        {tabPanel && (
+          <li className="tabs-content">
+            <Component {...componentProps} />
+          </li>
+        )}
+      </ul>
+    )
+  }
 }
 
-export default Tabs;
+export default Tabs

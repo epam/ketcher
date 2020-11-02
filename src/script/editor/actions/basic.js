@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import op from '../shared/op';
-import Action from '../shared/action';
+import op from '../operations/op'
+import Action from '../shared/action'
 
 export function fromNewCanvas(restruct, struct) {
-	var action = new Action();
+  var action = new Action()
 
-	action.addOp(new op.CanvasLoad(struct));
-	return action.perform(restruct);
+  action.addOp(new op.CanvasLoad(struct))
+  return action.perform(restruct)
 }
 
 export function fromDescriptorsAlign(restruct) {
-	const action = new Action();
-	action.addOp(new op.AlignDescriptors(restruct));
-	return action.perform(restruct);
+  const action = new Action()
+  action.addOp(new op.AlignDescriptors(restruct))
+  return action.perform(restruct)
 }

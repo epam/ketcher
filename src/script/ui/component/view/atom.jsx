@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,31 +14,31 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h } from 'preact';
-import element from '../../../chem/element';
-import { sketchingColors as elementColor } from '../../../chem/element-color';
+import React from 'react'
+import element from '../../../chem/element'
+import { sketchingColors as elementColor } from '../../../chem/element-color'
 
-const metPrefix = ['alkali', 'alkaline-earth', 'transition',
-	'post-transition']; // 'lanthanide', 'actinide'
+const metPrefix = ['alkali', 'alkaline-earth', 'transition', 'post-transition'] // 'lanthanide', 'actinide'
 
 function atomClass(el) {
-	const type = metPrefix.indexOf(el.type) >= 0 ? `${el.type} metal` :
-		(el.type || 'unknown-props');
-	return [type, el.state || 'unknown-state', el.origin];
+  const type =
+    metPrefix.indexOf(el.type) >= 0
+      ? `${el.type} metal`
+      : el.type || 'unknown-props'
+  return [type, el.state || 'unknown-state', el.origin]
 }
 
 function Atom({ el, shortcut, className, ...props }) {
-	return (
-		<button
-			title={shortcut ? `${el.title} (${shortcut})` : el.title}
-			className={[...atomClass(el), className].join(' ')}
-			style={{ color: elementColor[el.label] }}
-			value={element.map[el.label]}
-			{...props}
-		>
-			<span>{el.label}</span>
-		</button>
-	);
+  return (
+    <button
+      title={shortcut ? `${el.title} (${shortcut})` : el.title}
+      className={[...atomClass(el), className].join(' ')}
+      style={{ color: elementColor[el.label] }}
+      value={element.map[el.label]}
+      {...props}>
+      <span>{el.label}</span>
+    </button>
+  )
 }
 
-export default Atom;
+export default Atom

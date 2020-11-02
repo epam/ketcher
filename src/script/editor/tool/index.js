@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,44 +14,44 @@
  * limitations under the License.
  ***************************************************************************/
 
-import RGroupAtomTool from './rgroupatom';
-import SelectTool from './select';
-import SGroupTool from './sgroup';
-import EraserTool from './eraser';
-import AtomTool from './atom';
-import BondTool from './bond';
-import ChainTool from './chain';
-import ChiralFlagTool from './chiral-flag';
-import TemplateTool from './template';
-import ChargeTool from './charge';
-import RGroupFragmentTool from './rgroupfragment';
-import APointTool from './apoint';
-import AttachTool from './attach';
-import ReactionArrowTool from './reactionarrow';
-import ReactionPlusTool from './reactionplus';
-import ReactionMapTool from './reactionmap';
-import ReactionUnmapTool from './reactionunmap';
-import PasteTool from './paste';
-import RotateTool from './rotate';
+import RGroupAtomTool from './rgroupatom'
+import SelectTool from './select'
+import SGroupTool from './sgroup'
+import EraserTool from './eraser'
+import AtomTool from './atom'
+import BondTool from './bond'
+import ChainTool from './chain'
+import TemplateTool from './template'
+import ChargeTool from './charge'
+import RGroupFragmentTool from './rgroupfragment'
+import APointTool from './apoint'
+import AttachTool from './attach'
+import ReactionArrowTool from './reactionarrow'
+import ReactionPlusTool from './reactionplus'
+import ReactionMapTool from './reactionmap'
+import ReactionUnmapTool from './reactionunmap'
+import PasteTool from './paste'
+import RotateTool from './rotate'
+import EnhancedStereoTool from './enhanced-stereo'
 
 export default {
-	rgroupatom: RGroupAtomTool,
-	select: SelectTool,
-	sgroup: SGroupTool,
-	eraser: EraserTool,
-	atom: AtomTool,
-	bond: BondTool,
-	chain: ChainTool,
-	chiralFlag: ChiralFlagTool,
-	template: TemplateTool,
-	charge: ChargeTool,
-	rgroupfragment: RGroupFragmentTool,
-	apoint: APointTool,
-	attach: AttachTool,
-	reactionarrow: ReactionArrowTool,
-	reactionplus: ReactionPlusTool,
-	reactionmap: ReactionMapTool,
-	reactionunmap: ReactionUnmapTool,
-	paste: PasteTool,
-	rotate: RotateTool
-};
+  rgroupatom: RGroupAtomTool,
+  select: SelectTool,
+  sgroup: SGroupTool,
+  eraser: EraserTool,
+  atom: AtomTool,
+  bond: BondTool,
+  chain: ChainTool,
+  template: TemplateTool,
+  charge: ChargeTool,
+  rgroupfragment: RGroupFragmentTool,
+  apoint: APointTool,
+  attach: AttachTool,
+  reactionarrow: ReactionArrowTool,
+  reactionplus: ReactionPlusTool,
+  reactionmap: ReactionMapTool,
+  reactionunmap: ReactionUnmapTool,
+  paste: PasteTool,
+  rotate: RotateTool,
+  enhancedStereo: EnhancedStereoTool
+}

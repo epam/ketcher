@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,56 +14,55 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Action from '../shared/action';
-import utils from '../shared/utils';
-import { fromBondsMerge } from './bond';
-import { fromAtomMerge } from './atom';
+import Action from '../shared/action'
+import utils from '../shared/utils'
+import { fromBondsMerge } from './bond'
+import { fromAtomMerge } from './atom'
 
 export function fromItemsFuse(restruct, items) {
-	let action = new Action();
+  let action = new Action()
 
-	if (!items)
-		return action;
+  if (!items) return action
 
-	const usedAtoms = new Set();
+  const usedAtoms = new Set()
 
-	// merge single atoms
-	items.atoms.forEach((dst, src) => {
-		if (usedAtoms.has(dst) || usedAtoms.has(src))
-			return;
+  // merge single atoms
+  items.atoms.forEach((dst, src) => {
+    if (usedAtoms.has(dst) || usedAtoms.has(src)) return
 
-		action = fromAtomMerge(restruct, src, dst).mergeWith(action);
-		usedAtoms.add(dst).add(src);
-	});
+    action = fromAtomMerge(restruct, src, dst).mergeWith(action)
+    usedAtoms.add(dst).add(src)
+  })
 
-	// merge bonds
-	action = fromBondsMerge(restruct, items.bonds).mergeWith(action);
+  // merge bonds
+  action = fromBondsMerge(restruct, items.bonds).mergeWith(action)
 
-	return action;
+  return action
 }
 
 export function getItemsToFuse(editor, items) {
-	const struct = editor.render.ctab.molecule;
+  const struct = editor.render.ctab.molecule
 
-	const mergeItems = items || (
-		{
-			atoms: Array.from(struct.atoms.keys()),
-			bonds: Array.from(struct.bonds.keys())
-		}
-	);
+  const mergeItems = items || {
+    atoms: Array.from(struct.atoms.keys()),
+    bonds: Array.from(struct.bonds.keys())
+  }
 
-	return closestToMerge(struct, editor.findMerge(mergeItems, ['atoms', 'bonds']));
+  return closestToMerge(
+    struct,
+    editor.findMerge(mergeItems, ['atoms', 'bonds'])
+  )
 }
 
 export function getHoverToFuse(items) {
-	if (!items) return null;
+  if (!items) return null
 
-	const hoverItems = {
-		atoms: Array.from(items.atoms.values()),
-		bonds: Array.from(items.bonds.values())
-	};
+  const hoverItems = {
+    atoms: Array.from(items.atoms.values()),
+    bonds: Array.from(items.bonds.values())
+  }
 
-	return { map: 'merge', id: +Date.now(), items: hoverItems };
+  return { map: 'merge', id: +Date.now(), items: hoverItems }
 }
 
 /**
@@ -78,25 +77,24 @@ export function getHoverToFuse(items) {
  * }}
  */
 function closestToMerge(struct, closestMap) {
-	const mergeMap = {
-		atoms: new Map(closestMap.atoms),
-		bonds: new Map(closestMap.bonds)
-	};
+  const mergeMap = {
+    atoms: new Map(closestMap.atoms),
+    bonds: new Map(closestMap.bonds)
+  }
 
-	closestMap.bonds.forEach((dstId, srcId) => {
-		const bond = struct.bonds.get(srcId);
-		const bondCI = struct.bonds.get(dstId);
+  closestMap.bonds.forEach((dstId, srcId) => {
+    const bond = struct.bonds.get(srcId)
+    const bondCI = struct.bonds.get(dstId)
 
-		if (utils.mergeBondsParams(struct, bond, struct, bondCI).merged) {
-			mergeMap.atoms.delete(bond.begin);
-			mergeMap.atoms.delete(bond.end);
-		} else {
-			mergeMap.bonds.delete(srcId);
-		}
-	});
+    if (utils.mergeBondsParams(struct, bond, struct, bondCI).merged) {
+      mergeMap.atoms.delete(bond.begin)
+      mergeMap.atoms.delete(bond.end)
+    } else {
+      mergeMap.bonds.delete(srcId)
+    }
+  })
 
-	if (mergeMap.atoms.size === 0 && mergeMap.bonds.size === 0)
-		return null;
+  if (mergeMap.atoms.size === 0 && mergeMap.bonds.size === 0) return null
 
-	return mergeMap;
+  return mergeMap
 }

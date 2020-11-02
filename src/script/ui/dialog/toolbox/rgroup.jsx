@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,36 +14,33 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h } from 'preact';
-import { connect } from 'preact-redux';
+import React from 'react'
+import { connect } from 'react-redux'
 
-import { rgroupSchema } from '../../data/schema/struct-schema';
+import { rgroupSchema } from '../../data/schema/struct-schema'
 
-import Dialog from '../../component/dialog';
-import Form, { Field } from '../../component/form/form';
-import ButtonList from '../../component/form/buttonlist';
+import Dialog from '../../component/dialog'
+import Form, { Field } from '../../component/form/form'
+import ButtonList from '../../component/form/buttonlist'
 
 function RGroup({ disabledIds, values, formState, type, ...props }) {
-	return (
-		<Dialog
-			title="R-Group"
-			className="rgroup"
-			params={props}
-			result={() => formState.result}
-		>
-			<Form schema={rgroupSchema} init={{ values }} {...formState} >
-				<Field
-					name="values"
-					multiple={type === 'atom'}
-					labelPos={false}
-					component={ButtonList}
-					disabledIds={disabledIds}
-				/>
-			</Form>
-		</Dialog>
-	);
+  return (
+    <Dialog
+      title="R-Group"
+      className="rgroup"
+      params={props}
+      result={() => formState.result}>
+      <Form schema={rgroupSchema} init={{ values }} {...formState}>
+        <Field
+          name="values"
+          multiple={type === 'atom'}
+          labelPos={false}
+          component={ButtonList}
+          disabledIds={disabledIds}
+        />
+      </Form>
+    </Dialog>
+  )
 }
 
-export default connect(
-	store => ({ formState: store.modal.form })
-)(RGroup);
+export default connect(store => ({ formState: store.modal.form }))(RGroup)

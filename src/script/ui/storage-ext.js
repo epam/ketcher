@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,32 +16,33 @@
 
 /* local storage */
 export const storage = {
-	warningMessage: 'Your changes will be lost after the tab closing. See Help (Note 2).',
-	isAvailable() {
-		try {
-			return localStorage;
-		} catch (ex) {
-			return false;
-		}
-	},
-	getItem(key) {
-		let item = null;
-		try {
-			item = JSON.parse(localStorage.getItem(key));
-		} catch (ex) {
-			console.info('LocalStorage:', ex.name);
-		}
-		return item;
-	},
-	setItem(key, data) {
-		let isSet = null;
-		try {
-			localStorage.setItem(key, JSON.stringify(data));
-			isSet = true;
-		} catch (ex) {
-			console.info('LocalStorage:', ex.name);
-			isSet = false;
-		}
-		return isSet;
-	}
-};
+  warningMessage:
+    'Your changes will be lost after the tab closing. See Help (Note 2).',
+  isAvailable() {
+    try {
+      return localStorage
+    } catch (ex) {
+      return false
+    }
+  },
+  getItem(key) {
+    let item = null
+    try {
+      item = JSON.parse(localStorage.getItem(key))
+    } catch (ex) {
+      console.info('LocalStorage:', ex.name)
+    }
+    return item
+  },
+  setItem(key, data) {
+    let isSet = null
+    try {
+      localStorage.setItem(key, JSON.stringify(data))
+      isSet = true
+    } catch (ex) {
+      console.info('LocalStorage:', ex.name)
+      isSet = false
+    }
+    return isSet
+  }
+}

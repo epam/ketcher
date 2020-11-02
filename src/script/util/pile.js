@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,53 +15,39 @@
  ***************************************************************************/
 
 class Pile extends Set {
-	// TODO: it's used only in dfs.js in one place in some strange way.
-	// Should be removed after dfs.js refactoring
-	find(predicate) {
-		for (const item of this) {
-			if (predicate(item))
-				return item;
-		}
+  // TODO: it's used only in dfs.js in one place in some strange way.
+  // Should be removed after dfs.js refactoring
+  find(predicate) {
+    for (const item of this) {
+      if (predicate(item)) return item
+    }
 
-		return null;
-	}
+    return null
+  }
 
-	intersection(setB) {
-		const intersection = new Pile();
+  equals(setB) {
+    return this.isSuperset(setB) && setB.isSuperset(this)
+  }
 
-		for (const item of setB) {
-			if (this.has(item))
-				intersection.add(item);
-		}
+  isSuperset(subset) {
+    for (const item of subset) {
+      if (!this.has(item)) return false
+    }
 
-		return intersection;
-	}
+    return true
+  }
 
-	equals(setB) {
-		return this.isSuperset(setB) && setB.isSuperset(this);
-	}
+  filter(filterFunc) {
+    return new Pile(Array.from(this).filter(filterFunc))
+  }
 
-	isSuperset(subset) {
-		for (const item of subset) {
-			if (!this.has(item))
-				return false;
-		}
+  union(setB) {
+    const union = new Pile(this)
 
-		return true;
-	}
+    for (const item of setB) union.add(item)
 
-	filter(filterFunc) {
-		return new Pile(Array.from(this).filter(filterFunc));
-	}
-
-	union(setB) {
-		const union = new Pile(this);
-
-		for (const item of setB)
-			union.add(item);
-
-		return union;
-	}
+    return union
+  }
 }
 
-export default Pile;
+export default Pile

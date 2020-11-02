@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,67 +14,63 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h, Component } from 'preact';
+import React, { Component } from 'react'
 
 class ComboBox extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			suggestsHidden: true
-		};
+  constructor(props) {
+    super(props)
+    this.state = {
+      suggestsHidden: true
+    }
 
-		this.click = this.click.bind(this);
-		this.blur = this.blur.bind(this);
-		this.updateInput = this.updateInput.bind(this);
-	}
+    this.click = this.click.bind(this)
+    this.blur = this.blur.bind(this)
+    this.updateInput = this.updateInput.bind(this)
+  }
 
-	updateInput(event) {
-		const value = (event.target.value || event.target.textContent);
-		this.setState({ suggestsHidden: true });
-		this.props.onChange(value);
-	}
+  updateInput(event) {
+    const value = event.target.value || event.target.textContent
+    this.setState({ suggestsHidden: true })
+    this.props.onChange(value)
+  }
 
-	click() {
-		this.setState({ suggestsHidden: false });
-	}
+  click() {
+    this.setState({ suggestsHidden: false })
+  }
 
-	blur() {
-		this.setState({ suggestsHidden: true });
-	}
+  blur() {
+    this.setState({ suggestsHidden: true })
+  }
 
-	render(props) {
-		const { value, type = 'text', schema } = props;
+  render(props) {
+    const { value, type = 'text', schema } = props
 
-		const suggestList = schema.enumNames
-			.filter(item => item !== value)
-			.map(item => <li onMouseDown={this.updateInput}>{item}</li>);
+    const suggestList = schema.enumNames
+      .filter(item => item !== value)
+      .map(item => <li onMouseDown={this.updateInput}>{item}</li>)
 
-		return (
-			<div>
-				<input
-					type={type}
-					value={value}
-					onClick={this.click}
-					onBlur={this.blur}
-					onInput={this.updateInput}
-					autoComplete="off"
-				/>
-				{
-					suggestList.length !== 0 ?
-						(
-							<ui
-								className="suggestList"
-								style={`display: ${this.state.suggestsHidden ? 'none' : 'block'}`}
-							>
-								{
-									suggestList
-								}
-							</ui>
-						) : ''
-				}
-			</div>
-		);
-	}
+    return (
+      <div>
+        <input
+          type={type}
+          value={value}
+          onClick={this.click}
+          onBlur={this.blur}
+          onInput={this.updateInput}
+          autoComplete="off"
+        />
+        {suggestList.length !== 0 ? (
+          <ui
+            className="suggestList"
+            style={`display: ${this.state.suggestsHidden ? 'none' : 'block'}`}>
+            {suggestList}
+          </ui>
+        ) : (
+          ''
+        )}
+      </div>
+    )
+  }
 }
 
-export default ComboBox;
+export default ComboBox

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import app from './app';
+import app from './app'
 
 function init(opts, apiServer) {
-	const ketcherWindow = document.querySelector('[role=application]') || document.body;
-	return app(ketcherWindow, opts, apiServer);
+  const ketcherWindow = document.getElementById('root')
+  return app(ketcherWindow, opts, apiServer)
 }
 
-export default init;
+export default init

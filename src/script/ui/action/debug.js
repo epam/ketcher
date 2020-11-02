@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-import molfile from '../../chem/molfile'
+import molfile from '../../chem/molfile';
 
 export default {
-  // original: for dev purposes
-  'force-update': {
-    shortcut: 'Ctrl+Shift+r',
-    action: editor => {
-      editor.update(true)
-    }
-  },
-  'qs-serialize': {
-    shortcut: 'Alt+Shift+r',
-    action: editor => {
-      const molStr = molfile.stringify(editor.struct())
-      const molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+')
-      const qs = document.location.search
-      document.location.search = !qs
-        ? '?' + molQs // eslint-disable-line
-        : qs.search('mol=') === -1
-        ? qs + '&' + molQs
-        : qs.replace(/mol=[^&$]*/, molQs)
-    }
-  }
-}
+	// original: for dev purposes
+	'force-update': {
+		shortcut: 'Ctrl+Shift+r',
+		action: (editor) => {
+			editor.update(true);
+		}
+	},
+	'qs-serialize': {
+		shortcut: 'Alt+Shift+r',
+		action: (editor) => {
+			const molStr = molfile.stringify(editor.struct());
+			const molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+');
+			const qs = document.location.search;
+			document.location.search = !qs ? '?' + molQs : // eslint-disable-line
+				qs.search('mol=') === -1 ? qs + '&' + molQs :
+					qs.replace(/mol=[^&$]*/, molQs);
+		}
+	}
+};

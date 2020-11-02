@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,63 +14,59 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component, createRef } from 'react'
+import { h, Component } from 'preact';
 
-import Struct from '../../chem/struct'
-import molfile from '../../chem/molfile'
-import Render from '../../render'
+import Struct from '../../chem/struct';
+import molfile from '../../chem/molfile';
+import Render from '../../render';
 
 function renderStruct(el, struct, options = {}) {
-  if (el) {
-    if (struct.prerender) {
-      // Should it sit here?
-      el.innerHTML = struct.prerender
-    } else {
-      console.info('render!', el.clientWidth, el.clientWidth)
-      const rnd = new Render(el, {
-        autoScale: true,
-        ...options
-      })
-      rnd.setMolecule(struct)
-      rnd.update()
-      // console.info('render!');//, el.innerHTML);
-      // struct.prerender = el.innerHTML;
-    }
-  }
+	if (el) {
+		if (struct.prerender) { // Should it sit here?
+			el.innerHTML = struct.prerender;
+		} else {
+			console.info('render!', el.clientWidth, el.clientWidth);
+			const rnd = new Render(el, {
+				autoScale: true,
+				...options
+			});
+			rnd.setMolecule(struct);
+			rnd.update();
+			// console.info('render!');//, el.innerHTML);
+			// struct.prerender = el.innerHTML;
+		}
+	}
 }
 
 class StructRender extends Component {
-  constructor(props) {
-    super(props)
-    this.tagRef = createRef()
-    if (!(props.struct instanceof Struct)) {
-      try {
-        this.props.struct = molfile.parse(props.struct)
-      } catch (e) {
-        alert('Could not parse structure\n' + e.message) // eslint-disable-line no-undef
-        this.props.struct = null
-      }
-    }
-  }
+	constructor(props) {
+		super(props);
+		if (!(props.struct instanceof Struct)) {
+			try {
+				this.props.struct = molfile.parse(props.struct);
+			} catch (e) {
+				alert('Could not parse structure\n' + e.message); // eslint-disable-line no-undef
+				this.props.struct = null;
+			}
+		}
+	}
 
-  shouldComponentUpdate() {
-    return false
-  }
+	shouldComponentUpdate() {
+		return false;
+	}
 
-  componentDidMount() {
-    const el = this
-    const { struct, options } = this.props
-    renderStruct(el, struct, options)
-  }
+	componentDidMount() {
+		const el = this.base;
+		const { struct, options } = this.props;
+		renderStruct(el, struct, options);
+	}
 
-  render() {
-    const { struct, Tag = 'div', ...props } = this.props
-    return (
-      <Tag ref={this.tagRef} /* ref="el" */ {...props}>
-        {struct ? null : 'No molecule'}
-      </Tag>
-    )
-  }
+	render() {
+		const { struct, Tag = 'div', ...props } = this.props;
+		return (
+			<Tag /* ref="el" */ {...props}>{ struct ? null : 'No molecule' }</Tag>
+		);
+	}
 }
 
-export default StructRender
+export default StructRender;

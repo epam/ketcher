@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,41 +14,40 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromAtomsAttrs } from '../actions/atom'
+import { fromAtomsAttrs } from '../actions/atom';
 
 function APointTool(editor) {
-  if (!(this instanceof APointTool)) return new APointTool(editor)
+	if (!(this instanceof APointTool))
+		return new APointTool(editor);
 
-  this.editor = editor
-  this.editor.selection(null)
+	this.editor = editor;
+	this.editor.selection(null);
 }
 
 APointTool.prototype.mousemove = function (event) {
-  this.editor.hover(this.editor.findItem(event, ['atoms']))
-}
+	this.editor.hover(this.editor.findItem(event, ['atoms']));
+};
 
 APointTool.prototype.click = function (event) {
-  var editor = this.editor
-  var struct = editor.render.ctab.molecule
-  var ci = editor.findItem(event, ['atoms'])
+	var editor = this.editor;
+	var struct = editor.render.ctab.molecule;
+	var ci = editor.findItem(event, ['atoms']);
 
-  if (ci && ci.map === 'atoms') {
-    this.editor.hover(null)
-    var atom = struct.atoms.get(ci.id)
-    var res = editor.event.elementEdit.dispatch({
-      attpnt: atom.attpnt
-    })
-    Promise.resolve(res)
-      .then(newatom => {
-        if (atom.attpnt !== newatom.attpnt) {
-          var action = fromAtomsAttrs(editor.render.ctab, ci.id, newatom)
-          editor.update(action)
-        }
-      })
-      .catch(() => null) // w/o changes
-    return true
-  }
-  return true
-}
+	if (ci && ci.map === 'atoms') {
+		this.editor.hover(null);
+		var atom = struct.atoms.get(ci.id);
+		var res = editor.event.elementEdit.dispatch({
+			attpnt: atom.attpnt
+		});
+		Promise.resolve(res).then((newatom) => {
+			if (atom.attpnt !== newatom.attpnt) {
+				var action = fromAtomsAttrs(editor.render.ctab, ci.id, newatom);
+				editor.update(action);
+			}
+		}).catch(() => null); // w/o changes
+		return true;
+	}
+	return true;
+};
 
-export default APointTool
+export default APointTool;

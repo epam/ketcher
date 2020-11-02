@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,34 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
+import { h, Component } from 'preact';
+import { connect } from 'preact-redux';
 
-import ClipArea from '../component/cliparea'
+import ClipArea from '../component/cliparea';
 
-import { initIcons } from '../state/toolbar'
-import { initClipboard } from '../state/hotkeys'
-import { initTmplLib } from '../state/templates'
+import { initIcons } from '../state/toolbar';
+import { initClipboard } from '../state/hotkeys';
+import { initTmplLib } from '../state/templates';
 
-export const AppHidden = connect(null, dispatch => ({
-  onInitTmpls: cacheEl => initTmplLib(dispatch, process.env.PUBLIC_URL, cacheEl)
-}))(
-  class extends Component {
-    componentDidMount() {
-      this.props.onInitTmpls(this.cacheEl, process.env.PUBLIC_URL)
-      initIcons(this.cacheEl)
-    }
-    render = () => (
-      <div
-        className="cellar"
-        ref={c => {
-          this.cacheEl = c
-        }}
-      />
-    )
-  }
-)
+export const AppHidden = connect(
+	null,
+	dispatch => ({
+		onInitTmpls: cacheEl => initTmplLib(dispatch, '', cacheEl)
+	})
+)(class extends Component {
+	componentDidMount() {
+		this.props.onInitTmpls(this.cacheEl);
+		initIcons(this.cacheEl);
+	}
+	render = () => (<div className="cellar" ref={(c) => { this.cacheEl = c; }} />)
+});
 
-export const AppCliparea = connect(null, dispatch => dispatch(initClipboard))(
-  ClipArea
-)
+export const AppCliparea = connect(
+	null,
+	dispatch => (dispatch(initClipboard))
+)(ClipArea);

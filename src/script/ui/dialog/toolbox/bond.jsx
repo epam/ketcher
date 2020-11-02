@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-import { connect } from 'react-redux'
+import { h } from 'preact';
+import { connect } from 'preact-redux';
 
-import { bond as bondSchema } from '../../data/schema/struct-schema'
-import Form, { Field } from '../../component/form/form'
-import Dialog from '../../component/dialog'
+import { bond as bondSchema } from '../../data/schema/struct-schema';
+import Form, { Field } from '../../component/form/form';
+import Dialog from '../../component/dialog';
 
 function Bond(props) {
-  const { formState, ...prop } = props
-  return (
-    <Dialog
-      title="Bond Properties"
-      className="bond"
-      result={() => formState.result}
-      valid={() => formState.valid}
-      params={prop}>
-      <Form schema={bondSchema} init={prop} {...formState}>
-        <Field name="type" />
-        <Field name="topology" />
-        <Field name="center" />
-      </Form>
-    </Dialog>
-  )
+	const { formState, ...prop } = props;
+	return (
+		<Dialog
+			title="Bond Properties"
+			className="bond"
+			result={() => formState.result}
+			valid={() => formState.valid}
+			params={prop}
+		>
+			<Form schema={bondSchema} init={prop} {...formState}>
+				<Field name="type" />
+				<Field name="topology" />
+				<Field name="center" />
+			</Form>
+		</Dialog>
+	);
 }
 
-export default connect(store => ({ formState: store.modal.form }))(Bond)
+export default connect(
+	store => ({ formState: store.modal.form })
+)(Bond);

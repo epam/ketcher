@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,160 +14,148 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Vec2 from '../../util/vec2'
+import Vec2 from '../../util/vec2';
 
-import utils from '../shared/utils'
-import { fromRotate, fromFlip, fromBondAlign } from '../actions/rotate'
-import {
-  fromItemsFuse,
-  getItemsToFuse,
-  getHoverToFuse
-} from '../actions/closely-fusing'
+import utils from '../shared/utils';
+import { fromRotate, fromFlip, fromBondAlign } from '../actions/rotate';
+import { fromItemsFuse, getItemsToFuse, getHoverToFuse } from '../actions/closely-fusing';
 
 function RotateTool(editor, dir) {
-  if (!(this instanceof RotateTool)) {
-    if (!dir) return new RotateTool(editor)
+	if (!(this instanceof RotateTool)) {
+		if (!dir)
+			return new RotateTool(editor);
 
-    const restruct = editor.render.ctab
-    const selection = editor.selection()
-    const singleBond =
-      selection &&
-      selection.bonds &&
-      Object.keys(selection).length === 1 &&
-      selection.bonds.length === 1
+		const restruct = editor.render.ctab;
+		const selection = editor.selection();
+		const singleBond = selection && selection.bonds &&
+			Object.keys(selection).length === 1 &&
+			selection.bonds.length === 1;
 
-    const action = !singleBond
-      ? fromFlip(restruct, selection, dir)
-      : fromBondAlign(restruct, selection.bonds[0], dir)
-    editor.update(action)
-    return null
-  }
+		const action = !singleBond ? fromFlip(restruct, selection, dir) :
+			fromBondAlign(restruct, selection.bonds[0], dir);
+		editor.update(action);
+		return null;
+	}
 
-  this.editor = editor
+	this.editor = editor;
 
-  if (!editor.selection() || !editor.selection().atoms)
-    // otherwise, clear selection
-    this.editor.selection(null)
+	if (!editor.selection() || !editor.selection().atoms)
+		// otherwise, clear selection
+		this.editor.selection(null);
 }
 
 RotateTool.prototype.mousedown = function (event) {
-  var xy0 = new Vec2()
-  var selection = this.editor.selection()
-  var rnd = this.editor.render
-  var struct = rnd.ctab.molecule
+	var xy0 = new Vec2();
+	var selection = this.editor.selection();
+	var rnd = this.editor.render;
+	var struct = rnd.ctab.molecule;
 
-  if (selection && selection.atoms) {
-    console.assert(selection.atoms.length > 0)
+	if (selection && selection.atoms) {
+		console.assert(selection.atoms.length > 0);
 
-    var rotId = null
-    var rotAll = false
+		var rotId = null;
+		var rotAll = false;
 
-    selection.atoms.forEach(aid => {
-      var atom = struct.atoms.get(aid)
+		selection.atoms.forEach((aid) => {
+			var atom = struct.atoms.get(aid);
 
-      xy0.add_(atom.pp) // eslint-disable-line no-underscore-dangle
+			xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
 
-      if (rotAll) return
+			if (rotAll)
+				return;
 
-      atom.neighbors.find(nei => {
-        var hb = struct.halfBonds.get(nei)
+			atom.neighbors.find((nei) => {
+				var hb = struct.halfBonds.get(nei);
 
-        if (selection.atoms.indexOf(hb.end) === -1) {
-          if (hb.loop >= 0) {
-            var neiAtom = struct.atoms.get(aid)
-            if (
-              !neiAtom.neighbors.find(neiNei => {
-                var neiHb = struct.halfBonds.get(neiNei)
-                return (
-                  neiHb.loop >= 0 && selection.atoms.indexOf(neiHb.end) !== -1
-                )
-              })
-            ) {
-              rotAll = true
-              return true
-            }
-          }
-          if (rotId == null) {
-            rotId = aid
-          } else if (rotId !== aid) {
-            rotAll = true
-            return true
-          }
-        }
-        return false
-      })
-    })
+				if (selection.atoms.indexOf(hb.end) === -1) {
+					if (hb.loop >= 0) {
+						var neiAtom = struct.atoms.get(aid);
+						if (!neiAtom.neighbors.find((neiNei) => {
+							var neiHb = struct.halfBonds.get(neiNei);
+							return neiHb.loop >= 0 && selection.atoms.indexOf(neiHb.end) !== -1;
+						})) {
+							rotAll = true;
+							return true;
+						}
+					}
+					if (rotId == null) {
+						rotId = aid;
+					} else if (rotId !== aid) {
+						rotAll = true;
+						return true;
+					}
+				}
+				return false;
+			});
+		});
 
-    if (!rotAll && rotId !== null) xy0 = struct.atoms.get(rotId).pp
-    else xy0 = xy0.scaled(1 / selection.atoms.length)
-  } else {
-    struct.atoms.forEach(atom => {
-      xy0.add_(atom.pp)
-    }) // eslint-disable-line no-underscore-dangle, max-len
-    // poor man struct center (without sdata, etc)
-    xy0 = xy0.scaled(1 / struct.atoms.size)
-  }
-  this.dragCtx = {
-    xy0,
-    angle1: utils.calcAngle(xy0, rnd.page2obj(event))
-  }
-  return true
-}
+		if (!rotAll && rotId !== null)
+			xy0 = struct.atoms.get(rotId).pp;
+		else
+			xy0 = xy0.scaled(1 / selection.atoms.length);
+	} else {
+		struct.atoms.forEach((atom) => { xy0.add_(atom.pp); }); // eslint-disable-line no-underscore-dangle, max-len
+		// poor man struct center (without chiral, sdata, etc)
+		xy0 = xy0.scaled(1 / struct.atoms.size);
+	}
+	this.dragCtx = {
+		xy0,
+		angle1: utils.calcAngle(xy0, rnd.page2obj(event))
+	};
+	return true;
+};
 
-RotateTool.prototype.mousemove = function (event) {
-  // eslint-disable-line max-statements
-  if (!this.dragCtx) return true
+RotateTool.prototype.mousemove = function (event) { // eslint-disable-line max-statements
+	if (!this.dragCtx)
+		return true;
 
-  const rnd = this.editor.render
-  const dragCtx = this.dragCtx
+	const rnd = this.editor.render;
+	const dragCtx = this.dragCtx;
 
-  const pos = rnd.page2obj(event)
-  let angle = utils.calcAngle(dragCtx.xy0, pos) - dragCtx.angle1
-  if (!event.ctrlKey) angle = utils.fracAngle(angle)
+	const pos = rnd.page2obj(event);
+	let angle = utils.calcAngle(dragCtx.xy0, pos) - dragCtx.angle1;
+	if (!event.ctrlKey)
+		angle = utils.fracAngle(angle);
 
-  const degrees = utils.degrees(angle)
+	const degrees = utils.degrees(angle);
 
-  if ('angle' in dragCtx && dragCtx.angle === degrees) return true
-  if ('action' in dragCtx) dragCtx.action.perform(rnd.ctab)
+	if ('angle' in dragCtx && dragCtx.angle === degrees) return true;
+	if ('action' in dragCtx)
+		dragCtx.action.perform(rnd.ctab);
 
-  dragCtx.angle = degrees
-  dragCtx.action = fromRotate(
-    rnd.ctab,
-    this.editor.selection(),
-    dragCtx.xy0,
-    angle
-  )
+	dragCtx.angle = degrees;
+	dragCtx.action = fromRotate(rnd.ctab, this.editor.selection(), dragCtx.xy0, angle);
 
-  this.editor.event.message.dispatch({ info: degrees + 'º' })
+	this.editor.event.message.dispatch({ info: degrees + 'º' });
 
-  const expSel = this.editor.explicitSelected()
-  dragCtx.mergeItems = getItemsToFuse(this.editor, expSel)
-  this.editor.hover(getHoverToFuse(dragCtx.mergeItems))
+	const expSel = this.editor.explicitSelected();
+	dragCtx.mergeItems = getItemsToFuse(this.editor, expSel);
+	this.editor.hover(getHoverToFuse(dragCtx.mergeItems));
 
-  this.editor.update(dragCtx.action, true)
-  return true
-}
+	this.editor.update(dragCtx.action, true);
+	return true;
+};
 
 RotateTool.prototype.mouseup = function () {
-  if (!this.dragCtx) return true
-  const dragCtx = this.dragCtx
-  const restruct = this.editor.render.ctab
+	if (!this.dragCtx) return true;
+	const dragCtx = this.dragCtx;
+	const restruct = this.editor.render.ctab;
 
-  const action = dragCtx.action
-    ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
-    : fromItemsFuse(restruct, dragCtx.mergeItems)
-  delete this.dragCtx
+	const action = dragCtx.action ?
+		fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action) :
+		fromItemsFuse(restruct, dragCtx.mergeItems);
+	delete this.dragCtx;
 
-  this.editor.update(action)
-  this.editor.hover(null)
-  if (dragCtx.mergeItems) this.editor.selection(null)
-  this.editor.event.message.dispatch({
-    info: false
-  })
-  return true
-}
+	this.editor.update(action);
+	this.editor.hover(null);
+	if (dragCtx.mergeItems) this.editor.selection(null);
+	this.editor.event.message.dispatch({
+		info: false
+	});
+	return true;
+};
 
-RotateTool.prototype.cancel = RotateTool.prototype.mouseup
-RotateTool.prototype.mouseleave = RotateTool.prototype.mouseup
+RotateTool.prototype.cancel = RotateTool.prototype.mouseup;
+RotateTool.prototype.mouseleave = RotateTool.prototype.mouseup;
 
-export default RotateTool
+export default RotateTool;

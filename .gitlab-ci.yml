@@ -1,0 +1,66 @@
+image: node:6
+
+stages:
+  - build
+  - test
+
+before_script:
+  - npm prune
+  - npm install
+
+cache:
+  paths:
+   - node_modules/
+
+variables:
+  API_PATH: "$SERVER:8081/v2"
+  MIEW_PATH: "/srv/static/miew-0.7.13/"
+  BRANCHE_NAME_SOURCE: "$CI_COMMIT_REF_NAME"
+  NAME_REPORT_SOURCE: "Ketcher_${BRANCHE_NAME_SOURCE}_${CI_COMMIT_SHA:0:8}"
+#  TEST_TYPE_SOURCE: "KetcherVerifyAPISuite.xml"
+  TEST_TYPE_SOURCE: "KetcherSmokeSuite.xml"
+
+unstable:
+  stage: build
+  script:
+    - npm run archive -- --api-path=$API_PATH --miew-path=$MIEW_PATH
+    - deploy www ketcher-*.zip
+  only:
+    - master
+    - dev
+    - /^task-.*$/
+
+standalone:
+  stage: build
+  script:
+    - npm run archive
+    - BUILD=standalone deploy www ketcher-*.zip
+    - deploy artifact ketcher-*.zip
+  only:
+    - master
+
+stable:
+  stage: build
+  script:
+    - npm run archive -- --api-path="$SERVER:8082/v2" --miew-path=$MIEW_PATH
+    - deploy www ketcher-*.zip
+  only:
+    - /^test-.*$/
+
+frozen:
+  stage: build
+  script:
+    - npm run archive -- --api-path="$SERVER:8083/v2" --miew-path=$MIEW_PATH
+    - deploy www ketcher-*.zip
+  only:
+    - demo
+    - /^2.0.0-.*$/
+
+test:
+  stage: test
+  script:
+    - eval $EXECUTE
+  only:
+    - master
+    - dev
+    - /^2.0.0-.*$/

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,164 +14,157 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import * as structFormat from '../../data/convert/structformat'
-import { saveUserTmpl } from '../../state/templates'
-import { updateFormState } from '../../state/modal/form'
-import { check } from '../../state/server'
+import { h, Component } from 'preact';
+import { connect } from 'preact-redux';
+import * as structFormat from '../../data/convert/structformat';
+import { saveUserTmpl } from '../../state/templates';
+import { updateFormState } from '../../state/modal/form';
+import { check } from '../../state/server';
 
-import Dialog from '../../component/dialog'
-import Form, { Field } from '../../component/form/form'
-import SaveButton from '../../component/view/savebutton'
-import { createRef } from 'react'
+import Dialog from '../../component/dialog';
+import Form, { Field } from '../../component/form/form';
+import SaveButton from '../../component/view/savebutton';
 
 const saveSchema = {
-  title: 'Save',
-  type: 'object',
-  properties: {
-    filename: {
-      title: 'Filename',
-      type: 'string',
-      maxLength: 128,
-      pattern: /^[^.<>:?"*|/\\][^<>:?"*|/\\]*$/,
-      invalidMessage: res => {
-        if (!res) return 'Filename should contain at least one character'
-        if (res.length > 128) return 'Filename is too long'
-        return "A filename cannot contain characters: \\ / : * ? \" < > | and cannot start with '.'"
-      }
-    },
-    format: {
-      title: 'Format',
-      enum: Object.keys(structFormat.map),
-      enumNames: Object.keys(structFormat.map).map(
-        fmt => structFormat.map[fmt].name
-      )
-    }
-  }
-}
+	title: 'Save',
+	type: 'object',
+	properties: {
+		filename: {
+			title: 'Filename',
+			type: 'string',
+			maxLength: 128,
+			pattern: /^[^.<>:?"*|/\\][^<>:?"*|/\\]*$/,
+			invalidMessage: (res) => {
+				if (!res) return 'Filename should contain at least one character';
+				if (res.length > 128) return 'Filename is too long';
+				return "A filename cannot contain characters: \\ / : * ? \" < > | and cannot start with '.'";
+			}
+		},
+		format: {
+			title: 'Format',
+			enum: Object.keys(structFormat.map),
+			enumNames: Object.keys(structFormat.map).map(fmt => structFormat.map[fmt].name)
+		}
+	}
+};
 
 function showStructWarningMessage(format, moleculeErrors) {
-  return format !== 'mol' && Object.keys(moleculeErrors).length > 0
+	return (format !== 'mol' && Object.keys(moleculeErrors).length > 0);
 }
 
 class Save extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {}
-    this.isRxn = this.props.struct.hasRxnArrow()
-    this.textAreaRef = createRef()
-    const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'graph']
-    if (this.props.server)
-      formats.push('smiles-ext', 'smarts', 'inchi', 'inchi-aux', 'cml')
+	constructor(props) {
+		super(props);
+		this.isRxn = this.props.struct.hasRxnArrow();
 
-    this.saveSchema = saveSchema
-    this.saveSchema.properties.format = Object.assign(
-      this.saveSchema.properties.format,
-      {
-        enum: formats,
-        enumNames: formats.map(fmt => structFormat.map[fmt].name)
-      }
-    )
+		const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles'];
+		if (this.props.server) formats.push('smiles-ext', 'smarts', 'inchi', 'inchi-aux', 'cml');
 
-    this.changeType(this.isRxn ? 'rxn' : 'mol').then(res =>
-      res instanceof Error ? props.onCancel() : null
-    )
-  }
+		this.saveSchema = saveSchema;
+		this.saveSchema.properties.format = Object.assign(this.saveSchema.properties.format, {
+			enum: formats,
+			enumNames: formats.map(fmt => structFormat.map[fmt].name)
+		});
 
-  componentDidMount() {
-    const { checkOptions } = this.props.checkState
-    this.props.onCheck(checkOptions)
-  }
+		this.changeType(this.isRxn ? 'rxn' : 'mol')
+			.then(res => (res instanceof Error ? props.onCancel() : null));
+	}
 
-  changeType(type) {
-    const { struct, server, options, formState } = this.props
-    const converted = structFormat.toString(struct, type, server, options)
-    return converted.then(
-      structStr => {
-        this.setState({ structStr })
-        setTimeout(() => this.textarea.select(), 10) // TODO: remove hack
-      },
-      e => {
-        alert(e.message) // eslint-disable-line no-undef
-        this.props.onResetForm(formState)
-        return e
-      }
-    )
-  }
+	componentDidMount() {
+		const { checkOptions } = this.props.checkState;
+		this.props.onCheck(checkOptions);
+	}
 
-  render() {
-    const { structStr } = this.state
-    const formState = this.props.formState
-    const { filename, format } = formState.result
-    const warning = structFormat.couldBeSaved(this.props.struct, format)
-    const isCleanStruct = this.props.struct.isBlank()
-    const { moleculeErrors } = formState
-    const isStructInvalid = showStructWarningMessage(format, moleculeErrors)
+	changeType(type) {
+		const { struct, server, options, formState } = this.props;
+		const converted = structFormat.toString(struct, type, server, options);
+		return converted.then(
+			(structStr) => {
+				this.setState({ structStr });
+				setTimeout(() => this.textarea.select(), 10); // TODO: remove hack
+			},
+			(e) => {
+				alert(e.message); // eslint-disable-line no-undef
+				this.props.onResetForm(formState);
+				return e;
+			}
+		);
+	}
 
-    return (
-      <Dialog
-        title="Save Structure"
-        className="save"
-        params={this.props}
-        buttons={[
-          <SaveButton
-            data={structStr}
-            filename={filename + structFormat.map[format].ext[0]}
-            type={format.mime}
-            server={this.props.server}
-            onSave={() => this.props.onOk()}
-            disabled={!formState.valid || isCleanStruct}>
-            Save To File…
-          </SaveButton>,
-          <button
-            className="save-tmpl"
-            disabled={isCleanStruct}
-            onClick={() => this.props.onTmplSave(this.props.struct)}>
-            Save to Templates
-          </button>,
-          'Close'
-        ]}>
-        <div className="form-container">
-          <Form
-            schema={this.saveSchema}
-            init={{ filename, format: this.isRxn ? 'rxn' : 'mol' }}
-            {...formState}>
-            <Field name="filename" />
-            <Field name="format" onChange={value => this.changeType(value)} />
-          </Form>
-          <textarea
-            value={structStr}
-            readOnly
-            ref={el => {
-              this.textarea = el
-            }}
-          />
-          {isStructInvalid && (
-            <div className="warning">
-              Structure contains errors, please check the data, otherwise you
-              can lose some properties or the whole structure after saving in
-              this format.
-            </div>
-          )}
-          {warning && <div className="warning">{warning}</div>}
-        </div>
-      </Dialog>
-    )
-  }
+	render() {
+		const { structStr } = this.state;
+		const formState = this.props.formState;
+		const { filename, format } = formState.result;
+		const warning = structFormat.couldBeSaved(this.props.struct, format);
+		const isCleanStruct = this.props.struct.isBlank();
+		const { moleculeErrors } = formState;
+		const isStructInvalid = showStructWarningMessage(format, moleculeErrors);
+
+		return (
+			<Dialog
+				title="Save Structure"
+				className="save"
+				params={this.props}
+				buttons={[
+					<SaveButton
+						data={structStr}
+						filename={filename + structFormat.map[format].ext[0]}
+						type={format.mime}
+						server={this.props.server}
+						onSave={() => this.props.onOk()}
+						disabled={!formState.valid || isCleanStruct}
+					>
+						Save To File…
+					</SaveButton>,
+					<button
+						className="save-tmpl"
+						disabled={isCleanStruct}
+						onClick={() => this.props.onTmplSave(this.props.struct)}
+					>
+						Save to Templates
+					</button>,
+					'Close'
+				]}
+			>
+				<div className="form-container">
+					<Form
+						schema={this.saveSchema}
+						init={{ filename, format: this.isRxn ? 'rxn' : 'mol' }}
+						{...formState}
+					>
+						<Field name="filename" />
+						<Field name="format" onChange={value => this.changeType(value)} />
+					</Form>
+					<textarea
+						value={structStr}
+						readOnly
+						ref={(el) => { this.textarea = el; }}
+					/>
+					{ isStructInvalid &&
+						<div className="warning">
+							Structure contains errors, please check the data,
+							otherwise you can lose some properties or
+							the whole structure after saving in this format.
+						</div>
+					}
+					{ warning && <div className="warning">{warning}</div> }
+				</div>
+			</Dialog>
+		);
+	}
 }
 
 export default connect(
-  store => ({
-    server: store.options.app.server ? store.server : null,
-    struct: store.editor.struct(),
-    options: store.options.getServerSettings(),
-    formState: store.modal.form,
-    checkState: store.options.check
-  }),
-  dispatch => ({
-    onCheck: checkOptions => dispatch(check(checkOptions)),
-    onTmplSave: struct => dispatch(saveUserTmpl(struct)),
-    onResetForm: prevState => dispatch(updateFormState(prevState))
-  })
-)(Save)
+	store => ({
+		server: store.options.app.server ? store.server : null,
+		struct: store.editor.struct(),
+		options: store.options.getServerSettings(),
+		formState: store.modal.form,
+		checkState: store.options.check
+	}),
+	dispatch => ({
+		onCheck: checkOptions => dispatch(check(checkOptions)),
+		onTmplSave: struct => dispatch(saveUserTmpl(struct)),
+		onResetForm: prevState => dispatch(updateFormState(prevState))
+	})
+)(Save);

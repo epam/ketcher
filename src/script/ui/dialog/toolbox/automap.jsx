@@ -1,6 +1,6 @@
 /****************************************************************************
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,49 +15,50 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-import { connect } from 'react-redux'
+import { h } from 'preact';
+import { connect } from 'preact-redux';
 
-import Form, { Field } from '../../component/form/form'
-import Dialog from '../../component/dialog'
-import { automap } from '../../state/server'
+import Form, { Field } from '../../component/form/form';
+import Dialog from '../../component/dialog';
+import { automap } from '../../state/server';
 
 export const automapSchema = {
-  title: 'Reaction Auto-Mapping',
-  type: 'object',
-  required: ['mode'],
-  properties: {
-    mode: {
-      title: 'Mode',
-      enum: ['discard', 'keep', 'alter', 'clear'],
-      enumNames: ['Discard', 'Keep', 'Alter', 'Clear'],
-      default: 'discard'
-    }
-  }
-}
+	title: 'Reaction Auto-Mapping',
+	type: 'object',
+	required: ['mode'],
+	properties: {
+		mode: {
+			title: 'Mode',
+			enum: ['discard', 'keep', 'alter', 'clear'],
+			enumNames: ['Discard', 'Keep', 'Alter', 'Clear'],
+			default: 'discard'
+		}
+	}
+};
 
 function Automap(props) {
-  const { formState, ...prop } = props
-  return (
-    <Dialog
-      title="Reaction Auto-Mapping"
-      className="automap"
-      result={() => formState.result}
-      valid={() => formState.valid}
-      params={prop}>
-      <Form schema={automapSchema} {...formState}>
-        <Field name="mode" />
-      </Form>
-    </Dialog>
-  )
+	const { formState, ...prop } = props;
+	return (
+		<Dialog
+			title="Reaction Auto-Mapping"
+			className="automap"
+			result={() => formState.result}
+			valid={() => formState.valid}
+			params={prop}
+		>
+			<Form schema={automapSchema} {...formState}>
+				<Field name="mode" />
+			</Form>
+		</Dialog>
+	);
 }
 
 export default connect(
-  store => ({ formState: store.modal.form }),
-  (dispatch, props) => ({
-    onOk: res => {
-      dispatch(automap(res))
-      props.onOk(res)
-    }
-  })
-)(Automap)
+	store => ({ formState: store.modal.form }),
+	(dispatch, props) => ({
+		onOk: (res) => {
+			dispatch(automap(res));
+			props.onOk(res);
+		}
+	})
+)(Automap);

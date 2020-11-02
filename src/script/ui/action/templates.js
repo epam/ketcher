@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-import templates from '../data/templates'
+import templates from '../data/templates';
 
 const templateLib = {
-  'template-lib': {
-    shortcut: 'Shift+t',
-    title: 'Custom Templates',
-    action: { dialog: 'templates' },
-    disabled: (editor, server, options) => !options.app.templates
-  }
-}
+	'template-lib': {
+		shortcut: 'Shift+t',
+		title: 'Custom Templates',
+		action: { dialog: 'templates' },
+		disabled: (editor, server, options) => !options.app.templates
+	}
+};
 
 export default templates.reduce((res, struct, i) => {
-  res[`template-${i}`] = {
-    title: `${struct.name}`,
-    shortcut: 't',
-    action: {
-      tool: 'template',
-      opts: { struct }
-    }
-  }
-  return res
-}, templateLib)
+	res[`template-${i}`] = {
+		title: `${struct.name}`,
+		shortcut: 't',
+		action: {
+			tool: 'template',
+			opts: { struct }
+		}
+	};
+	return res;
+}, templateLib);
+

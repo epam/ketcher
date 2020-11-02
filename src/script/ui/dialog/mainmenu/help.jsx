@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
+import { h } from 'preact';
 
-import Dialog from '../../component/dialog'
+import Dialog from '../../component/dialog';
 
 function Help(props) {
-  return (
-    <Dialog title="Help" className="help" params={props} buttons={['Close']}>
-      <iframe
-        className="help"
-        src={`${process.env.PUBLIC_URL}/docs/help.html`}
-      />
-    </Dialog>
-  )
+	return (
+		<Dialog
+			title="Help"
+			className="help"
+			params={props}
+			buttons={['Close']}
+		>
+			<iframe className="help" src="doc/help.html" />
+		</Dialog>
+	);
 }
 
-export default Help
+export default Help;

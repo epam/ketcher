@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,6 @@ const options = minimist(process.argv.slice(2), {
 		dist: 'dist'
 	}
 });
-const chromeDriverOpts = [
-
-];
 const headlessOpts = {
 	// see: https://goo.gl/ypWDst
 	args: ['--headless', '--disable-gpu']
@@ -42,33 +39,20 @@ function implicitHeadless() {
 }
 
 async function startSession(session) {
-	let browser;
-	try {
-		// a variant of https://git.io/vQ8o7
-		await chromedriver.start(chromeDriverOpts, true);
-		console.log('Browser started')
-	} catch (e) {
-		console.log('[browser-session.js] Cnould not start chrome driver');
-		console.error(e);
-		process.exit(1);
-	}
-	try {
-		browser = await webdriverio.remote({
-			port: 9515, // TODO: autoselect unused port
-			path: '/',
-			logLevel: 'warn',
-			capabilities: {
-				browserName: 'chrome',
-				'goog:chromeOptions': options.headless ? headlessOpts : {}
-			}
-		});
-	} catch (e) {
-		console.log('[browser-session.js] Could not start browser session');
-		console.error(e);
-		process.exit(1);
-	}
+	// an variant of https://git.io/vQ8o7
+	chromedriver.start(['--url-base=wd/hub']);
 
-	await session(browser, path.resolve(__dirname, '../'));
+	const browser = await webdriverio.remote({
+		port: 9515, // TODO: autoselect unused port
+    	path: '/wd/hub',
+    	logLevel: 'warn',
+		capabilities: {
+			browserName: 'chrome',
+			'goog:chromeOptions': options.headless ? headlessOpts : {}
+		}
+	});
+
+	await session(browser, path.join(__dirname, '..'));
 	await browser.deleteSession();
 	return chromedriver.stop();
 }

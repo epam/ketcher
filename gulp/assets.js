@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ function markdownify(options) {
 	}, options));
 	return function process(file) {
 		const data = md.render(file.contents.toString());
-		file.contents = Buffer.from(header + data + footer);
+		file.contents = new Buffer(header + data + footer);
 		file.path = replaceExtension(file.path, '.html');
 	};
 }

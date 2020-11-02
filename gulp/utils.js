@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,13 +64,6 @@ module.exports.createBundleConfig = (options) => ({
 				['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
 				['transform-builtin-extend', { globals: ['Set', 'Map'] }]
 			]
-		}],
-		['aliasify', {
-			global: true,
-			aliases: {
-				'react': 'preact/compat',
-				'react-dom': 'preact/compat'
-			}
 		}]
 	]
 });

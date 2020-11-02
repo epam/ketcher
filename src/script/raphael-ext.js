@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,21 @@
 
 // Single entry point to Raphaël library
 
-import Raphael from 'raphael'
-import Vec2 from './util/vec2'
+import Raphael from 'raphael';
+import Vec2 from './util/vec2';
 
 // TODO: refactor ugly prototype extensions to plain old functions
 Raphael.el.translateAbs = function (x, y) {
-  this.delta = this.delta || new Vec2()
-  this.delta.x += x - 0
-  this.delta.y += y - 0
-  this.transform('t' + this.delta.x.toString() + ',' + this.delta.y.toString())
-}
+	this.delta = this.delta || new Vec2();
+	this.delta.x += x - 0;
+	this.delta.y += y - 0;
+	this.transform('t' + this.delta.x.toString() + ',' + this.delta.y.toString());
+};
 
 Raphael.st.translateAbs = function (x, y) {
-  this.forEach(el => {
-    el.translateAbs(x, y)
-  })
-}
+	this.forEach((el) => {
+		el.translateAbs(x, y);
+	});
+};
 
-export default Raphael
+export default Raphael;

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,71 +14,68 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { pick } from 'lodash/fp'
+import { pick } from 'lodash/fp';
 
-import { createStore, combineReducers, applyMiddleware } from 'redux'
-import thunk from 'redux-thunk'
-import { logger } from 'redux-logger'
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import { logger } from 'redux-logger';
 
-import actionStateReducer from './action'
-import modalReducer from './modal'
-import optionsReducer, { initOptionsState } from './options'
-import templatesReducer, { initTmplsState } from './templates'
-import toolbarReducer from './toolbar'
+import actionStateReducer from './action';
+import modalReducer from './modal';
+import optionsReducer, { initOptionsState } from './options';
+import templatesReducer, { initTmplsState } from './templates';
+import toolbarReducer from './toolbar';
 
-import { onAction, load } from './shared'
+import { onAction, load } from './shared';
 
-export { onAction, load }
+export { onAction, load };
 
 const shared = combineReducers({
-  actionState: actionStateReducer,
-  toolbar: toolbarReducer,
-  modal: modalReducer,
-  server: (store = null) => store,
-  editor: (store = null) => store,
-  options: optionsReducer,
-  templates: templatesReducer
-})
+	actionState: actionStateReducer,
+	toolbar: toolbarReducer,
+	modal: modalReducer,
+	server: (store = null) => store,
+	editor: (store = null) => store,
+	options: optionsReducer,
+	templates: templatesReducer
+});
 
 /* ROOT REDUCER */
 function root(state, action) {
-  switch (
-    action.type // eslint-disable-line default-case
-  ) {
-    case 'INIT':
-      global._ui_editor = action.editor
-    case 'UPDATE': // eslint-disable-line no-case-declarations
-      const { type, ...data } = action
-      if (data) state = { ...state, ...data }
-  }
+	switch (action.type) { // eslint-disable-line default-case
+	case 'INIT':
+		global._ui_editor = action.editor;
+	case 'UPDATE': // eslint-disable-line no-case-declarations
+		const { type, ...data } = action;
+		if (data)
+			state = { ...state, ...data };
+	}
 
-  const sh = shared(state, {
-    ...action,
-    ...pick(['editor', 'server', 'options'], state)
-  })
+	const sh = shared(state, {
+		...action,
+		...pick(['editor', 'server', 'options'], state)
+	});
 
-  return sh === state.shared
-    ? state
-    : {
-        ...state,
-        ...sh
-      }
+	return (sh === state.shared) ? state : {
+		...state, ...sh
+	};
 }
 
 export default function (options, server) {
-  // TODO: redux localStorage here
-  const initState = {
-    actionState: null,
-    editor: null,
-    modal: null,
-    options: Object.assign(initOptionsState, { app: options }),
-    server: server || Promise.reject(new Error('Standalone mode!')),
-    templates: initTmplsState
-  }
+	// TODO: redux localStorage here
+	const initState = {
+		actionState: null,
+		editor: null,
+		modal: null,
+		options: Object.assign(initOptionsState, { app: options }),
+		server: server || Promise.reject(new Error('Standalone mode!')),
+		templates: initTmplsState
+	};
 
-  const middleware = [thunk]
+	const middleware = [thunk];
 
-  if (process.env.NODE_ENV !== 'production') middleware.push(logger)
+	if (process.env.NODE_ENV !== 'production')
+		middleware.push(logger);
 
-  return createStore(root, initState, applyMiddleware(...middleware))
+	return createStore(root, initState, applyMiddleware(...middleware));
 }

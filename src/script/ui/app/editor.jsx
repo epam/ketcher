@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2018 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { connect } from 'react-redux'
-import initEditor from '../state/editor'
-import StructEditor from '../component/structeditor'
+import { connect } from 'preact-redux';
+import initEditor from '../state/editor';
+import StructEditor from '../component/structeditor';
 
 const AppEditor = connect(
-  state => ({
-    options: state.options.settings
-  }),
-  dispatch => dispatch(initEditor)
-)(StructEditor)
+	state => ({
+		options: state.options.settings
+	}),
+	dispatch => dispatch(initEditor)
+)(StructEditor);
 
-export default AppEditor
+export default AppEditor;

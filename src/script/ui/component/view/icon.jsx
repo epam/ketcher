@@ -15,12 +15,10 @@
  ***************************************************************************/
 
 import React from 'react'
+import findIconByName from './../../../../icons'
 
 function Icon({ name, ...props }) {
-  return (
-    <svg {...props}>
-      <use xlinkHref={`#icon-${name}`} />
-    </svg>
-  )
+  const Component = findIconByName(name)
+  return <Component {...props} />
 }
 export default Icon

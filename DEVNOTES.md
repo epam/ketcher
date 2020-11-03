@@ -1,29 +1,20 @@
 ## Prerequisites
 
-   Stable [Node.js](https://nodejs.org) version
+Stable [Node.js](https://nodejs.org) version
 
 ## Build instructions
 
-    npm install
-    npm start
+    yarn install
+    yarn start
 
 For production build:
 
-    npm run build
-   
-You could also build only the style with command
-
-    npm run style
+    yarn build
 
 ## Indigo Service
 
 Ketcher uses Indigo Service for server operations.
-You can use `--api-path` parameter to start with it:
-
-    npm start -- --api-path=<server-url>
-For production build:
-
-    npm run build -- --api-path=<server-url>
+You can set up REACT_APP_API_PATH variable inside .env file to start with it or just add api_path query parameter.
 
 You can find the instruction for service installation
 [here](http://lifescience.opensource.epam.com/indigo/service/index.html).
@@ -35,6 +26,7 @@ For use of this functionality you need to add parameter `--miew-path`,
 having specified a path to directory with Miew files: [Miew.min.js and Miew.min.css](https://github.com/epam/miew/tree/master/dist):
 
     npm start -- --miew-path=<miew-dir>
+
 For production build:
 
     npm run build -- --miew-path=<miew-dir>
@@ -58,18 +50,18 @@ To start the tests separately:
 #### Parameters
 
 You can use following parameters to start the tests:
- - `--fixtures` - for the choice of a specific directory with molecules
- - `--headless` - for start of the browser in headless mode
+
+- `--fixtures` - for the choice of a specific directory with molecules
+- `--headless` - for start of the browser in headless mode
 
 ```
 npm run test-render -- --fixtures=fixtures/super --headless
 ```
 
-If you have added new structures for testing to the `test/fixtures` directory 
+If you have added new structures for testing to the `test/fixtures` directory
 you have to generate `svg` from them for correct render-test with:
 
-    npm run generate-svg    
-
+    npm run generate-svg
 
 ## Simple server
 
@@ -100,6 +92,7 @@ services:
       - 8002:8002
     command: supervisord -n
 ```
+
 Copy Ketcher files under ketcher/ folder
 Add this file under nginx/defaut.conf
 
@@ -129,7 +122,7 @@ server {
 }
 ```
 
-Run 
+Run
 
 ```
 docker-compose up -d

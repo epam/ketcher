@@ -55,17 +55,6 @@ export function initResize() {
   }
 }
 
-export function initIcons(cacheEl) {
-  const iconpath = `${process.env.PUBLIC_URL}/static/icons.svg`
-  fetch(iconpath, { credentials: 'same-origin' }).then(resp => {
-    if (resp.ok)
-      resp.text().then(svg => {
-        cacheEl.innerHTML += svg
-      })
-    else throw Error(`Could not fetch ${iconpath}`)
-  })
-}
-
 /* REDUCER */
 export default function (state = initial, action) {
   const { type, data } = action

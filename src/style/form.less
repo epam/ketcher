@@ -92,7 +92,7 @@ input[type=text], input[type=number], input[type=search] {
 
 @input-height: 2.4em + 2 * 0.35em;
 
-label[data-error] {
+.data-error {
 	select, textarea,
 	input[type=text], input[type=number], input[type=search] {
 		border: 1px solid @error-color;
@@ -102,7 +102,7 @@ label[data-error] {
 	}
 
 	&:hover:after {
-		content: "Error: " attr(data-error);
+		content: "Error: " attr(error);
 		display: block;
 		position: fixed;
 		white-space: pre;

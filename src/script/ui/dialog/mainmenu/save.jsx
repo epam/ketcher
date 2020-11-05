@@ -19,6 +19,7 @@ import { connect } from 'react-redux'
 import * as structFormat from '../../data/convert/structformat'
 import { saveUserTmpl } from '../../state/templates'
 import { updateFormState } from '../../state/modal/form'
+import { check } from '../../state/server'
 
 import Dialog from '../../component/dialog'
 import Form, { Field } from '../../component/form/form'
@@ -74,6 +75,16 @@ class Save extends Component {
     )
   }
 
+  componentDidMount() {
+    const { checkOptions } = this.props.checkState
+    this.props.onCheck(checkOptions)
+  }
+
+  showStructWarningMessage(format) {
+    const { moleculeErrors } = this.props.formState
+    return format !== 'mol' && Object.keys(moleculeErrors).length > 0
+  }
+
   changeType(type) {
     const { struct, server, options, formState } = this.props
     const converted = structFormat.toString(struct, type, server, options)
@@ -92,10 +103,12 @@ class Save extends Component {
 
   render() {
     const { structStr } = this.state
-    const formState = this.props.formState
+    const formState = Object.assign({}, this.props.formState)
+    delete formState.moleculeErrors
     const { filename, format } = formState.result
     const warning = structFormat.couldBeSaved(this.props.struct, format)
     const isCleanStruct = this.props.struct.isBlank()
+    const isStructInvalid = this.showStructWarningMessage(format)
 
     return (
       <Dialog
@@ -120,15 +133,24 @@ class Save extends Component {
           </button>,
           'Close'
         ]}>
-        <Form
-          schema={this.saveSchema}
-          init={{ filename, format: this.isRxn ? 'rxn' : 'mol' }}
-          {...formState}>
-          <Field name="filename" />
-          <Field name="format" onChange={value => this.changeType(value)} />
-        </Form>
-        <textarea value={structStr} readOnly ref={this.textAreaRef} />
-        {warning && <div className="warning">{warning}</div>}
+        <div className="form-container">
+          <Form
+            schema={this.saveSchema}
+            init={{ filename, format: this.isRxn ? 'rxn' : 'mol' }}
+            {...formState}>
+            <Field name="filename" />
+            <Field name="format" onChange={value => this.changeType(value)} />
+          </Form>
+          <textarea value={structStr} readOnly ref={this.textAreaRef} />
+          {isStructInvalid && (
+            <div className="warning">
+              Structure contains errors, please check the data, otherwise you
+              can lose some properties or the whole structure after saving in
+              this format.
+            </div>
+          )}
+          {warning && <div className="warning">{warning}</div>}
+        </div>
       </Dialog>
     )
   }
@@ -139,9 +161,11 @@ export default connect(
     server: store.options.app.server ? store.server : null,
     struct: store.editor.struct(),
     options: store.options.getServerSettings(),
-    formState: store.modal.form
+    formState: store.modal.form,
+    checkState: store.options.check
   }),
   dispatch => ({
+    onCheck: checkOptions => dispatch(check(checkOptions)),
     onTmplSave: struct => dispatch(saveUserTmpl(struct)),
     onResetForm: prevState => dispatch(updateFormState(prevState))
   })

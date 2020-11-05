@@ -17,6 +17,7 @@
 import jsonschema from 'jsonschema'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import classNames from 'classnames'
 
 import Input from './input'
 import { updateFormState } from '../../state/modal/form'
@@ -98,7 +99,7 @@ function Label({ labelPos, title, children, ...props }) {
 }
 
 function Field(props) {
-  const { name, onChange, className, component, labelPos, ...prop } = props
+  const { name, onChange, component, labelPos, ...prop } = props
   const { schema, stateStore } = useContext(FormContext)
   const desc = prop.schema || schema.properties[name]
   const { dataError, ...fieldOpts } = stateStore.field(name, onChange)
@@ -112,8 +113,8 @@ function Field(props) {
   if (labelPos === false) return formField
   return (
     <Label
-      className={className}
-      data-error={dataError}
+      className={classNames({ 'data-error': dataError })}
+      error={dataError}
       title={prop.title || desc.title}
       labelPos={labelPos}>
       {formField}

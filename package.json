@@ -134,7 +134,7 @@
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
       "prettier --write",
-      "eslint",
+      "eslint --fix",
       "react-scripts test --env=jsdom --watchAll=false --findRelatedTests"
     ],
     "src/**/*.{json}": [

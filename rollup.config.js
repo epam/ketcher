@@ -2,7 +2,7 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import babel from '@rollup/plugin-babel'
 import replace from '@rollup/plugin-replace'
 import { string } from 'rollup-plugin-string'
-//import copy from 'rollup-plugin-copy'
+import copy from 'rollup-plugin-copy'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import typescript from 'rollup-plugin-typescript2'
@@ -62,10 +62,10 @@ const config = {
     less({ output: 'dist/index.css' }),
 
     svgr(),
+    copy({
+      targets: [{ src: 'src/style/*.svg', dest: 'dist' }]
+    }),
     cleanup({ extensions })
-    // copy({
-    //   targets: [{ src: 'src/icons', dest: distFolder }]
-    // })
   ]
 }
 

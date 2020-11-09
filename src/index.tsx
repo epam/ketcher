@@ -4,12 +4,13 @@ import './index.less'
 
 interface EditorProps {
   staticResourcesUrl: string
+  apiPath?: string
 }
 
-export default function Editor({ staticResourcesUrl }: EditorProps) {
+export default function Editor({ staticResourcesUrl, apiPath }: EditorProps) {
   const rootElRef = useRef(null)
   useEffect(() => {
-    init(rootElRef.current, staticResourcesUrl)
+    init(rootElRef.current, staticResourcesUrl, apiPath)
   }, [])
 
   return <div ref={rootElRef} className="ketcher root"></div>

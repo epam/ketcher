@@ -79,7 +79,8 @@ function showMolfile(clientArea, molString, options) {
 
 // TODO: replace window.onload with something like <https://github.com/ded/domready>
 // to start early
-export default function init(el, staticResourcesUrl) {
+export default function init(el, staticResourcesUrl, apiPath) {
+  ketcher.apiPath = apiPath
   const params = queryString.parse(document.location.search)
   if (params.api_path) ketcher.apiPath = params.api_path
   ketcher.server = api(ketcher.apiPath, {

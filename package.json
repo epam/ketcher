@@ -27,8 +27,8 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "rollup -c",
-    "start": "rollup -c -w",
+    "build": "rollup -c -m inline",
+    "start": "rollup -c -w -m inline",
     "test": "run-s test:unit test:lint prettier stylelint test:build",
     "test:build": "run-s build",
     "test:lint": "eslint src --ext .ts,.tsx,.js,.jsx",

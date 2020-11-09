@@ -19,13 +19,11 @@ const config = {
   output: [
     {
       file: pkg.main,
-      sourcemap: true,
       exports: 'auto',
       format: 'cjs'
     },
     {
       file: pkg.module,
-      sourcemap: true,
       exports: 'auto',
       format: 'es'
     }

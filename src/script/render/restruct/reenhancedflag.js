@@ -14,60 +14,65 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Box2Abs from '../../util/box2abs';
-import Vec2 from '../../util/vec2';
-import scale from '../../util/scale';
-import ReObject from './reobject';
-import { Fragment } from '../../chem/struct';
+import Box2Abs from '../../util/box2abs'
+import Vec2 from '../../util/vec2'
+import scale from '../../util/scale'
+import ReObject from './reobject'
+import { Fragment } from '../../chem/struct'
 
 function ReEnhancedFlag(flag, pos) {
-	this.init('enhancedFlag');
+  this.init('enhancedFlag')
 
-	this.flag = flag;
-	this.pp = pos;
+  this.flag = flag
+  this.pp = pos
 }
-ReEnhancedFlag.prototype = new ReObject();
+ReEnhancedFlag.prototype = new ReObject()
 ReEnhancedFlag.isSelectable = function () {
-	return true;
-};
+  return true
+}
 
 ReEnhancedFlag.prototype.highlightPath = function (render) {
-	var box = Box2Abs.fromRelBox(this.path.getBBox());
-	var sz = box.p1.sub(box.p0);
-	var p0 = box.p0.sub(render.options.offset);
-	return render.paper.rect(p0.x, p0.y, sz.x, sz.y);
-};
+  var box = Box2Abs.fromRelBox(this.path.getBBox())
+  var sz = box.p1.sub(box.p0)
+  var p0 = box.p0.sub(render.options.offset)
+  return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
+}
 
 ReEnhancedFlag.prototype.drawHighlight = function (render) {
-	if (!this.path) return null;
-	var ret = this.highlightPath(render).attr(render.options.highlightStyle);
-	render.ctab.addReObjectPath('highlighting', this.visel, ret);
-	return ret;
-};
+  if (!this.path) return null
+  var ret = this.highlightPath(render).attr(render.options.highlightStyle)
+  render.ctab.addReObjectPath('highlighting', this.visel, ret)
+  return ret
+}
 
-ReEnhancedFlag.prototype.makeSelectionPlate = function (restruct, paper, options) {
-	if (!this.path) return null;
-	return this.highlightPath(restruct.render).attr(options.selectionStyle);
-};
+ReEnhancedFlag.prototype.makeSelectionPlate = function (
+  restruct,
+  paper,
+  options
+) {
+  if (!this.path) return null
+  return this.highlightPath(restruct.render).attr(options.selectionStyle)
+}
 
 ReEnhancedFlag.prototype.show = function (restruct, id, options) {
-	const render = restruct.render;
-	if (!this.flag) return;
+  const render = restruct.render
+  if (!this.flag) return
 
-	if (!this.pp) {
-		const bb = restruct.molecule.getFragment(id).getCoordBoundingBox();
-		this.pp = new Vec2(bb.max.x, bb.min.y - 1);
-	}
+  if (!this.pp) {
+    const bb = restruct.molecule.getFragment(id).getCoordBoundingBox()
+    this.pp = new Vec2(bb.max.x, bb.min.y - 1)
+  }
 
-	const paper = render.paper;
-	const ps = scale.obj2scaled(this.pp, options);
-	this.path = paper.text(ps.x, ps.y, Fragment.STEREO_FLAG[this.flag] || '')
-		.attr({
-			font: options.font,
-			'font-size': options.fontsz,
-			fill: '#000'
-		});
-	render.ctab.addReObjectPath('data', this.visel, this.path, null, true);
-};
+  const paper = render.paper
+  const ps = scale.obj2scaled(this.pp, options)
+  this.path = paper
+    .text(ps.x, ps.y, Fragment.STEREO_FLAG[this.flag] || '')
+    .attr({
+      font: options.font,
+      'font-size': options.fontsz,
+      fill: '#000'
+    })
+  render.ctab.addReObjectPath('data', this.visel, this.path, null, true)
+}
 
-export default ReEnhancedFlag;
+export default ReEnhancedFlag

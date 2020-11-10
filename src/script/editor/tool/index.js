@@ -14,44 +14,44 @@
  * limitations under the License.
  ***************************************************************************/
 
-import RGroupAtomTool from './rgroupatom';
-import SelectTool from './select';
-import SGroupTool from './sgroup';
-import EraserTool from './eraser';
-import AtomTool from './atom';
-import BondTool from './bond';
-import ChainTool from './chain';
-import TemplateTool from './template';
-import ChargeTool from './charge';
-import RGroupFragmentTool from './rgroupfragment';
-import APointTool from './apoint';
-import AttachTool from './attach';
-import ReactionArrowTool from './reactionarrow';
-import ReactionPlusTool from './reactionplus';
-import ReactionMapTool from './reactionmap';
-import ReactionUnmapTool from './reactionunmap';
-import PasteTool from './paste';
-import RotateTool from './rotate';
-import EnhancedStereoTool from './enhanced-stereo';
+import RGroupAtomTool from './rgroupatom'
+import SelectTool from './select'
+import SGroupTool from './sgroup'
+import EraserTool from './eraser'
+import AtomTool from './atom'
+import BondTool from './bond'
+import ChainTool from './chain'
+import TemplateTool from './template'
+import ChargeTool from './charge'
+import RGroupFragmentTool from './rgroupfragment'
+import APointTool from './apoint'
+import AttachTool from './attach'
+import ReactionArrowTool from './reactionarrow'
+import ReactionPlusTool from './reactionplus'
+import ReactionMapTool from './reactionmap'
+import ReactionUnmapTool from './reactionunmap'
+import PasteTool from './paste'
+import RotateTool from './rotate'
+import EnhancedStereoTool from './enhanced-stereo'
 
 export default {
-	rgroupatom: RGroupAtomTool,
-	select: SelectTool,
-	sgroup: SGroupTool,
-	eraser: EraserTool,
-	atom: AtomTool,
-	bond: BondTool,
-	chain: ChainTool,
-	template: TemplateTool,
-	charge: ChargeTool,
-	rgroupfragment: RGroupFragmentTool,
-	apoint: APointTool,
-	attach: AttachTool,
-	reactionarrow: ReactionArrowTool,
-	reactionplus: ReactionPlusTool,
-	reactionmap: ReactionMapTool,
-	reactionunmap: ReactionUnmapTool,
-	paste: PasteTool,
-	rotate: RotateTool,
-	enhancedStereo: EnhancedStereoTool
-};
+  rgroupatom: RGroupAtomTool,
+  select: SelectTool,
+  sgroup: SGroupTool,
+  eraser: EraserTool,
+  atom: AtomTool,
+  bond: BondTool,
+  chain: ChainTool,
+  template: TemplateTool,
+  charge: ChargeTool,
+  rgroupfragment: RGroupFragmentTool,
+  apoint: APointTool,
+  attach: AttachTool,
+  reactionarrow: ReactionArrowTool,
+  reactionplus: ReactionPlusTool,
+  reactionmap: ReactionMapTool,
+  reactionunmap: ReactionUnmapTool,
+  paste: PasteTool,
+  rotate: RotateTool,
+  enhancedStereo: EnhancedStereoTool
+}

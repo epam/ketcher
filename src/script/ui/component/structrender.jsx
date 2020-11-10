@@ -43,14 +43,6 @@ class StructRender extends Component {
   constructor(props) {
     super(props)
     this.tagRef = createRef()
-    if (!(props.struct instanceof Struct)) {
-      try {
-        this.props.struct = molfile.parse(props.struct)
-      } catch (e) {
-        alert('Could not parse structure\n' + e.message) // eslint-disable-line no-undef
-        this.props.struct = null
-      }
-    }
   }
 
   shouldComponentUpdate() {
@@ -60,6 +52,16 @@ class StructRender extends Component {
   componentDidMount() {
     const el = this
     const { struct, options } = this.props
+    let parsedStruct
+    if (!(struct instanceof Struct)) {
+      try {
+        parsedStruct = molfile.parse(struct)
+      } catch (e) {
+        //TODO: add error handler call
+        //legacy message: Could not parse structure
+        parsedStruct = null
+      }
+    }
     renderStruct(el, struct, options)
   }
 

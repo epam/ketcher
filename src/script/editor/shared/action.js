@@ -18,38 +18,39 @@
 // Undo/redo actions
 //
 function Action() {
-	this.operations = [];
+  this.operations = []
 }
 
 Action.prototype.addOp = function (operation, restruct) {
-	if (!restruct || !operation.isDummy(restruct))
-		this.operations.push(operation);
+  if (!restruct || !operation.isDummy(restruct)) this.operations.push(operation)
 
-	return operation;
-};
+  return operation
+}
 
 Action.prototype.mergeWith = function (action) {
-	this.operations = this.operations.concat(action.operations);
-	return this;
-};
+  this.operations = this.operations.concat(action.operations)
+  return this
+}
 
 // Perform action and return inverted one
 Action.prototype.perform = function (restruct) {
-	const action = new Action();
+  const action = new Action()
 
-	this.operations.forEach((operation) => {
-		action.addOp(operation.perform(restruct));
-	});
+  this.operations.forEach(operation => {
+    action.addOp(operation.perform(restruct))
+  })
 
-	action.operations.reverse();
-	return action;
-};
+  action.operations.reverse()
+  return action
+}
 
 Action.prototype.isDummy = function (restruct) {
-	return this.operations.find(
-		// TODO [RB] the condition is always true for op.* operations
-		operation => (restruct ? !operation.isDummy(restruct) : true)
-	) === undefined;
-};
+  return (
+    this.operations.find(
+      // TODO [RB] the condition is always true for op.* operations
+      operation => (restruct ? !operation.isDummy(restruct) : true)
+    ) === undefined
+  )
+}
 
-export default Action;
+export default Action

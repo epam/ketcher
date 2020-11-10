@@ -14,63 +14,75 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RGroup } from '../../chem/struct';
-import { fromRGroupAttrs, fromRGroupFragment, fromUpdateIfThen } from '../actions/rgroup';
+import { RGroup } from '../../chem/struct'
+import {
+  fromRGroupAttrs,
+  fromRGroupFragment,
+  fromUpdateIfThen
+} from '../actions/rgroup'
 
 function RGroupFragmentTool(editor) {
-	if (!(this instanceof RGroupFragmentTool)) {
-		// TODO: check if it's a fragments already
-		editor.selection(null);
-		return new RGroupFragmentTool(editor);
-	}
+  if (!(this instanceof RGroupFragmentTool)) {
+    // TODO: check if it's a fragments already
+    editor.selection(null)
+    return new RGroupFragmentTool(editor)
+  }
 
-	this.editor = editor;
+  this.editor = editor
 }
 
 RGroupFragmentTool.prototype.mousemove = function (event) {
-	this.editor.hover(this.editor.findItem(event, ['frags', 'rgroups']));
-};
+  this.editor.hover(this.editor.findItem(event, ['frags', 'rgroups']))
+}
 
 RGroupFragmentTool.prototype.click = function (event) {
-	const editor = this.editor;
-	const struct = editor.render.ctab.molecule;
-	const ci = editor.findItem(event, ['frags', 'rgroups']);
+  const editor = this.editor
+  const struct = editor.render.ctab.molecule
+  const ci = editor.findItem(event, ['frags', 'rgroups'])
 
-	if (!ci) return true;
+  if (!ci) return true
 
-	this.editor.hover(null);
+  this.editor.hover(null)
 
-	const label = (ci.map === 'rgroups') ? ci.id :
-		RGroup.findRGroupByFragment(struct.rgroups, ci.id);
+  const label =
+    ci.map === 'rgroups'
+      ? ci.id
+      : RGroup.findRGroupByFragment(struct.rgroups, ci.id)
 
-	const rg = Object.assign(
-		{ label },
-		ci.map === 'frags' ? { fragId: ci.id } : struct.rgroups.get(ci.id)
-	);
+  const rg = Object.assign(
+    { label },
+    ci.map === 'frags' ? { fragId: ci.id } : struct.rgroups.get(ci.id)
+  )
 
-	const res = editor.event.rgroupEdit.dispatch(rg);
+  const res = editor.event.rgroupEdit.dispatch(rg)
 
-	Promise.resolve(res).then((newRg) => {
-		const restruct = editor.render.ctab;
+  Promise.resolve(res)
+    .then(newRg => {
+      const restruct = editor.render.ctab
 
-		let action = null;
-		if (ci.map !== 'rgroups') {
-			const rgidOld = RGroup.findRGroupByFragment(restruct.molecule.rgroups, ci.id);
+      let action = null
+      if (ci.map !== 'rgroups') {
+        const rgidOld = RGroup.findRGroupByFragment(
+          restruct.molecule.rgroups,
+          ci.id
+        )
 
-			action = fromRGroupFragment(restruct, newRg.label, ci.id)
-				.mergeWith(fromUpdateIfThen(restruct, newRg.label, rgidOld));
-		} else {
-			action = fromRGroupAttrs(restruct, ci.id, newRg);
-		}
+        action = fromRGroupFragment(restruct, newRg.label, ci.id).mergeWith(
+          fromUpdateIfThen(restruct, newRg.label, rgidOld)
+        )
+      } else {
+        action = fromRGroupAttrs(restruct, ci.id, newRg)
+      }
 
-		editor.update(action);
-	}).catch(() => null); // w/o changes
+      editor.update(action)
+    })
+    .catch(() => null) // w/o changes
 
-	return true;
-};
+  return true
+}
 
 RGroupFragmentTool.prototype.cancel = function () {
-	this.editor.hover(null);
-};
+  this.editor.hover(null)
+}
 
-export default RGroupFragmentTool;
+export default RGroupFragmentTool

@@ -1,17 +1,17 @@
 export function arrowToGraph(arrowNode) {
-	const coord = arrowNode.center;
-	return {
-		type: 'arrow',
-		location: [coord.x, coord.y, coord.z],
-		prop: arrowNode.data
-	};
+  const coord = arrowNode.center
+  return {
+    type: 'arrow',
+    location: [coord.x, coord.y, coord.z],
+    prop: arrowNode.data
+  }
 }
 
 export function plusToGraph(plusNode) {
-	const coord = plusNode.center;
-	return {
-		type: 'plus',
-		location: [coord.x, coord.y, coord.z],
-		prop: plusNode.data
-	};
+  const coord = plusNode.center
+  return {
+    type: 'plus',
+    location: [coord.x, coord.y, coord.z],
+    prop: plusNode.data
+  }
 }

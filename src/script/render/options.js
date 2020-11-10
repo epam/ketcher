@@ -14,83 +14,82 @@
  * limitations under the License.
  ***************************************************************************/
 
-import utils from '../editor/shared/utils';
-import Vec2 from '../util/vec2';
+import utils from '../editor/shared/utils'
+import Vec2 from '../util/vec2'
 
 function defaultOptions(opt) {
-	const scaleFactor = opt.scale || 100;
+  const scaleFactor = opt.scale || 100
 
-	if (opt.rotationStep)
-		utils.setFracAngle(opt.rotationStep);
+  if (opt.rotationStep) utils.setFracAngle(opt.rotationStep)
 
-	const labelFontSize = Math.ceil(1.9 * (scaleFactor / 6));
-	const subFontSize = Math.ceil(0.7 * labelFontSize);
+  const labelFontSize = Math.ceil(1.9 * (scaleFactor / 6))
+  const subFontSize = Math.ceil(0.7 * labelFontSize)
 
-	const defaultOptions = {
-		// flags for debugging
-		showAtomIds: false,
-		showBondIds: false,
-		showHalfBondIds: false,
-		showLoopIds: false,
-		// rendering customization flags
-		// TODO: hide enhanced flags opts
-		showValenceWarnings: true,
-		autoScale: false, // scale structure to fit into the given view box, used in view mode
-		autoScaleMargin: 0,
-		maxBondLength: 0, // 0 stands for "not specified"
-		atomColoring: true,
-		hideImplicitHydrogen: false,
-		hideTerminalLabels: false,
-		// atoms
-		carbonExplicitly: false,
-		showCharge: true,
-		showHydrogenLabels: 'on',
-		showValence: true,
-		// bonds
-		aromaticCircle: true,
+  const defaultOptions = {
+    // flags for debugging
+    showAtomIds: false,
+    showBondIds: false,
+    showHalfBondIds: false,
+    showLoopIds: false,
+    // rendering customization flags
+    // TODO: hide enhanced flags opts
+    showValenceWarnings: true,
+    autoScale: false, // scale structure to fit into the given view box, used in view mode
+    autoScaleMargin: 0,
+    maxBondLength: 0, // 0 stands for "not specified"
+    atomColoring: true,
+    hideImplicitHydrogen: false,
+    hideTerminalLabels: false,
+    // atoms
+    carbonExplicitly: false,
+    showCharge: true,
+    showHydrogenLabels: 'on',
+    showValence: true,
+    // bonds
+    aromaticCircle: true,
 
-		scale: scaleFactor,
-		zoom: 1.0,
-		offset: new Vec2(),
+    scale: scaleFactor,
+    zoom: 1.0,
+    offset: new Vec2(),
 
-		lineWidth: scaleFactor / 20,
-		bondSpace: opt.doubleBondWidth || scaleFactor / 7,
-		stereoBond: opt.stereoBondWidth || scaleFactor / 7,
-		subFontSize,
-		font: '30px Arial',
-		fontsz: labelFontSize,
-		fontszsub: subFontSize,
-		fontRLabel: labelFontSize * 1.2,
-		fontRLogic: labelFontSize * 0.7,
+    lineWidth: scaleFactor / 20,
+    bondSpace: opt.doubleBondWidth || scaleFactor / 7,
+    stereoBond: opt.stereoBondWidth || scaleFactor / 7,
+    subFontSize,
+    font: '30px Arial',
+    fontsz: labelFontSize,
+    fontszsub: subFontSize,
+    fontRLabel: labelFontSize * 1.2,
+    fontRLogic: labelFontSize * 0.7,
 
-		/* styles */
-		lineattr: {
-			stroke: '#000',
-			'stroke-width': opt.bondThickness || scaleFactor / 20,
-			'stroke-linecap': 'round',
-			'stroke-linejoin': 'round'
-		},
-		/* eslint-enable quote-props */
-		selectionStyle: {
-			fill: '#7f7',
-			stroke: 'none'
-		},
-		highlightStyle: {
-			stroke: '#0c0',
-			'stroke-width': 0.6 * scaleFactor / 20
-		},
-		sgroupBracketStyle: {
-			stroke: 'darkgray',
-			'stroke-width': 0.5 * scaleFactor / 20
-		},
-		lassoStyle: {
-			stroke: 'gray',
-			'stroke-width': '1px'
-		},
-		atomSelectionPlateRadius: labelFontSize * 1.2
-	};
+    /* styles */
+    lineattr: {
+      stroke: '#000',
+      'stroke-width': opt.bondThickness || scaleFactor / 20,
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round'
+    },
+    /* eslint-enable quote-props */
+    selectionStyle: {
+      fill: '#7f7',
+      stroke: 'none'
+    },
+    highlightStyle: {
+      stroke: '#0c0',
+      'stroke-width': (0.6 * scaleFactor) / 20
+    },
+    sgroupBracketStyle: {
+      stroke: 'darkgray',
+      'stroke-width': (0.5 * scaleFactor) / 20
+    },
+    lassoStyle: {
+      stroke: 'gray',
+      'stroke-width': '1px'
+    },
+    atomSelectionPlateRadius: labelFontSize * 1.2
+  }
 
-	return Object.assign({}, defaultOptions, opt);
+  return Object.assign({}, defaultOptions, opt)
 }
 
-export default defaultOptions;
+export default defaultOptions

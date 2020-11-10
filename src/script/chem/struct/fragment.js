@@ -15,26 +15,26 @@
  ***************************************************************************/
 
 function Fragment(flag = null) {
-	this.stereoAtoms = [];
+  this.stereoAtoms = []
 
-	this.enhancedStereoFlag = flag;
+  this.enhancedStereoFlag = flag
 }
-Fragment.prototype = Object.create(null);
+Fragment.prototype = Object.create(null)
 
 Fragment.prototype.clone = function (aidMap) {
-	const fr = new Fragment(this.enhancedStereoFlag);
-	fr.stereoAtoms = this.stereoAtoms.map(aid => aidMap.get(aid));
-	return fr;
-};
+  const fr = new Fragment(this.enhancedStereoFlag)
+  fr.stereoAtoms = this.stereoAtoms.map(aid => aidMap.get(aid))
+  return fr
+}
 
 Fragment.STEREO_FLAG = {
-	Mixed: 'Mixed',
-	abs: 'ABS (Chiral)',
-	and: 'AND Enantiomer',
-	or: 'OR Enantiomer',
-	null: null
-	// todo: custom in the future
-};
+  Mixed: 'Mixed',
+  abs: 'ABS (Chiral)',
+  and: 'AND Enantiomer',
+  or: 'OR Enantiomer',
+  null: null
+  // todo: custom in the future
+}
 
 /**
  * @param { Struct } struct
@@ -42,27 +42,27 @@ Fragment.STEREO_FLAG = {
  * @return { string | null } stereoFlag
  */
 function calcStereoFlag(struct, stereoAids) {
-	if (!stereoAids || stereoAids.length === 0) return null;
-	const stereoLabel = struct.atoms.get(stereoAids[0]).stereoLabel; // {string | null} "<abs|and|or>-<group>"
+  if (!stereoAids || stereoAids.length === 0) return null
+  const stereoLabel = struct.atoms.get(stereoAids[0]).stereoLabel // {string | null} "<abs|and|or>-<group>"
 
-	const hasAnotherLabel = stereoAids
-		.map(aid => struct.atoms.get(aid))
-		.some(atom => atom.stereoLabel !== stereoLabel);
+  const hasAnotherLabel = stereoAids
+    .map(aid => struct.atoms.get(aid))
+    .some(atom => atom.stereoLabel !== stereoLabel)
 
-	return hasAnotherLabel ? 'Mixed' : stereoLabel.split('-')[0];
+  return hasAnotherLabel ? 'Mixed' : stereoLabel.split('-')[0]
 }
 
 Fragment.prototype.updateStereoFlag = function (struct, flag = false) {
-	this.enhancedStereoFlag =
-		flag !== false ? flag : calcStereoFlag(struct, this.stereoAtoms);
-	return this.enhancedStereoFlag;
-};
+  this.enhancedStereoFlag =
+    flag !== false ? flag : calcStereoFlag(struct, this.stereoAtoms)
+  return this.enhancedStereoFlag
+}
 
 Fragment.prototype.updateStereoAtom = function (struct, aid, isAdd) {
-	if (isAdd && !this.stereoAtoms.includes(aid)) this.stereoAtoms.push(aid);
-	if (!isAdd) this.stereoAtoms = this.stereoAtoms.filter(item => item !== aid);
+  if (isAdd && !this.stereoAtoms.includes(aid)) this.stereoAtoms.push(aid)
+  if (!isAdd) this.stereoAtoms = this.stereoAtoms.filter(item => item !== aid)
 
-	this.enhancedStereoFlag = calcStereoFlag(struct, this.stereoAtoms);
-};
+  this.enhancedStereoFlag = calcStereoFlag(struct, this.stereoAtoms)
+}
 
-export default Fragment;
+export default Fragment

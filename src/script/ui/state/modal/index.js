@@ -14,44 +14,44 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { formReducer, formsState } from './form';
+import { formReducer, formsState } from './form'
 
 export function openDialog(dispatch, dialogName, props) {
-	return new Promise((resolve, reject) => {
-		dispatch({
-			type: 'MODAL_OPEN',
-			data: {
-				name: dialogName,
-				prop: {
-					...props,
-					onResult: resolve,
-					onCancel: reject
-				}
-			}
-		});
-	});
+  return new Promise((resolve, reject) => {
+    dispatch({
+      type: 'MODAL_OPEN',
+      data: {
+        name: dialogName,
+        prop: {
+          ...props,
+          onResult: resolve,
+          onCancel: reject
+        }
+      }
+    })
+  })
 }
 
 function modalReducer(state = null, action) {
-	const { type, data } = action;
+  const { type, data } = action
 
-	if (type === 'UPDATE_FORM') {
-		const formState = formReducer(state.form, action, state.name);
-		return { ...state, form: formState };
-	}
+  if (type === 'UPDATE_FORM') {
+    const formState = formReducer(state.form, action, state.name)
+    return { ...state, form: formState }
+  }
 
-	switch (type) {
-		case 'MODAL_CLOSE':
-			return null;
-		case 'MODAL_OPEN':
-			return {
-				name: data.name,
-				form: formsState[data.name] || null,
-				prop: data.prop || null
-			};
-		default:
-			return state;
-	}
+  switch (type) {
+    case 'MODAL_CLOSE':
+      return null
+    case 'MODAL_OPEN':
+      return {
+        name: data.name,
+        form: formsState[data.name] || null,
+        prop: data.prop || null
+      }
+    default:
+      return state
+  }
 }
 
-export default modalReducer;
+export default modalReducer

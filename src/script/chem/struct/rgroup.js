@@ -14,42 +14,42 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Pile from '../../util/pile';
+import Pile from '../../util/pile'
 
 function RGroup(logic) {
-	logic = logic || {};
-	this.frags = new Pile();
-	this.resth = logic.resth || false;
-	this.range = logic.range || '';
-	this.ifthen = logic.ifthen || 0;
+  logic = logic || {}
+  this.frags = new Pile()
+  this.resth = logic.resth || false
+  this.range = logic.range || ''
+  this.ifthen = logic.ifthen || 0
 }
 
 RGroup.prototype.getAttrs = function () {
-	return {
-		resth: this.resth,
-		range: this.range,
-		ifthen: this.ifthen
-	};
-};
+  return {
+    resth: this.resth,
+    range: this.range,
+    ifthen: this.ifthen
+  }
+}
 
 /**
  * @param rgroups { Pool<number, RGroup> }
  * @param frid { number }
  */
 RGroup.findRGroupByFragment = function (rgroups, frid) {
-	return rgroups.find((rgid, rgroup) => rgroup.frags.has(frid));
-};
+  return rgroups.find((rgid, rgroup) => rgroup.frags.has(frid))
+}
 
 /**
  * @param fidMap { Map<number, number> }
  * @returns { RGroup }
  */
 RGroup.prototype.clone = function (fidMap) {
-	const ret = new RGroup(this);
-	this.frags.forEach((fid) => {
-		ret.frags.add(fidMap ? fidMap.get(fid) : fid);
-	});
-	return ret;
-};
+  const ret = new RGroup(this)
+  this.frags.forEach(fid => {
+    ret.frags.add(fidMap ? fidMap.get(fid) : fid)
+  })
+  return ret
+}
 
-export default RGroup;
+export default RGroup

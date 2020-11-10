@@ -15,15 +15,14 @@
  ***************************************************************************/
 
 function scaled2obj(v, options) {
-	return v.scaled(1 / options.scale);
+  return v.scaled(1 / options.scale)
 }
 
 function obj2scaled(v, options) {
-	return v.scaled(options.scale);
+  return v.scaled(options.scale)
 }
 
 export default {
-	scaled2obj,
-	obj2scaled
-};
-
+  scaled2obj,
+  obj2scaled
+}

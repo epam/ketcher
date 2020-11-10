@@ -1,7 +1,11 @@
 export function ifDef(target, key, value, defaultValue) {
-	if (value !== undefined && value !== null && value !== defaultValue &&
-		!(Array.isArray(value) && value.length === 0))
-		target[key] = value;
+  if (
+    value !== undefined &&
+    value !== null &&
+    value !== defaultValue &&
+    !(Array.isArray(value) && value.length === 0)
+  )
+    target[key] = value
 }
 
 // /**

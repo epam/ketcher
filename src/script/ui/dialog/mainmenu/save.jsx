@@ -94,7 +94,7 @@ class Save extends Component {
         setTimeout(() => this.textAreaRef.current.select(), 10) // TODO: remove hack
       },
       e => {
-        alert(e.message) // eslint-disable-line no-undef
+        //TODO: add error handler call
         this.props.onResetForm(formState)
         return e
       }

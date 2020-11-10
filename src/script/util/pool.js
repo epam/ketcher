@@ -15,42 +15,42 @@
  ***************************************************************************/
 
 class Pool extends Map {
-	constructor(arg) {
-		super(arg);
-		this._nextId = 0;
-	}
+  constructor(arg) {
+    super(arg)
+    this._nextId = 0
+  }
 
-	add(item) {
-		const id = this._nextId++;
-		super.set(id, item);
-		return id;
-	}
+  add(item) {
+    const id = this._nextId++
+    super.set(id, item)
+    return id
+  }
 
-	newId() {
-		return this._nextId++;
-	}
+  newId() {
+    return this._nextId++
+  }
 
-	keyOf(item) {
-		for (const [key, value] of this.entries()) {
-			if (value === item)
-				return key;
-		}
+  keyOf(item) {
+    for (const [key, value] of this.entries()) {
+      if (value === item) return key
+    }
 
-		return null;
-	}
+    return null
+  }
 
-	find(predicate) {
-		for (const [key, value] of this.entries()) {
-			if (predicate(key, value))
-				return key;
-		}
+  find(predicate) {
+    for (const [key, value] of this.entries()) {
+      if (predicate(key, value)) return key
+    }
 
-		return null;
-	}
+    return null
+  }
 
-	filter(predicate) {
-		return new Pool(Array.from(this).filter(([key, value]) => predicate(key, value)));
-	}
+  filter(predicate) {
+    return new Pool(
+      Array.from(this).filter(([key, value]) => predicate(key, value))
+    )
+  }
 }
 
-export default Pool;
+export default Pool

@@ -14,294 +14,333 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { uniq } from 'lodash';
+import { uniq } from 'lodash'
 
-import { SGroup } from '../../chem/struct';
+import { SGroup } from '../../chem/struct'
 
-import Pile from '../../util/pile';
-import op from '../operations/op';
-import Action from '../shared/action';
-import { SgContexts } from '../shared/constants';
+import Pile from '../../util/pile'
+import op from '../operations/op'
+import Action from '../shared/action'
+import { SgContexts } from '../shared/constants'
 
-import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
+import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils'
 
 export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
-	const descriptors = attrs.fieldValue;
+  const descriptors = attrs.fieldValue
 
-	if (typeof descriptors === 'string' || type !== 'DAT')
-		return fromSgroupAddition(restruct, type, atoms, attrs, restruct.molecule.sgroups.newId());
+  if (typeof descriptors === 'string' || type !== 'DAT')
+    return fromSgroupAddition(
+      restruct,
+      type,
+      atoms,
+      attrs,
+      restruct.molecule.sgroups.newId()
+    )
 
-	return descriptors.reduce((acc, fValue) => {
-		const localAttrs = Object.assign({}, attrs);
-		localAttrs.fieldValue = fValue;
+  return descriptors.reduce((acc, fValue) => {
+    const localAttrs = Object.assign({}, attrs)
+    localAttrs.fieldValue = fValue
 
-		return acc.mergeWith(
-			fromSgroupAddition(restruct, type, atoms, localAttrs, restruct.molecule.sgroups.newId())
-		);
-	}, new Action());
+    return acc.mergeWith(
+      fromSgroupAddition(
+        restruct,
+        type,
+        atoms,
+        localAttrs,
+        restruct.molecule.sgroups.newId()
+      )
+    )
+  }, new Action())
 }
 
 export function fromSgroupAttrs(restruct, id, attrs) {
-	const action = new Action();
+  const action = new Action()
 
-	Object.keys(attrs).forEach((key) => {
-		action.addOp(new op.SGroupAttr(id, key, attrs[key]));
-	});
+  Object.keys(attrs).forEach(key => {
+    action.addOp(new op.SGroupAttr(id, key, attrs[key]))
+  })
 
-	return action.perform(restruct);
+  return action.perform(restruct)
 }
 
 export function sGroupAttributeAction(id, attrs) {
-	const action = new Action();
+  const action = new Action()
 
-	Object.keys(attrs).forEach((key) => {
-		action.addOp(new op.SGroupAttr(id, key, attrs[key]));
-	});
+  Object.keys(attrs).forEach(key => {
+    action.addOp(new op.SGroupAttr(id, key, attrs[key]))
+  })
 
-	return action;
+  return action
 }
 
 export function fromSgroupDeletion(restruct, id) {
-	let action = new Action();
-	const struct = restruct.molecule;
+  let action = new Action()
+  const struct = restruct.molecule
 
-	const sG = restruct.sgroups.get(id).item;
+  const sG = restruct.sgroups.get(id).item
 
-	if (sG.type === 'SRU') {
-		struct.sGroupsRecalcCrossBonds();
+  if (sG.type === 'SRU') {
+    struct.sGroupsRecalcCrossBonds()
 
-		sG.neiAtoms.forEach((aid) => {
-			if (atomGetAttr(restruct, aid, 'label') === '*')
-				action.addOp(new op.AtomAttr(aid, 'label', 'C'));
-		});
-	}
+    sG.neiAtoms.forEach(aid => {
+      if (atomGetAttr(restruct, aid, 'label') === '*')
+        action.addOp(new op.AtomAttr(aid, 'label', 'C'))
+    })
+  }
 
-	const sg = struct.sgroups.get(id);
-	const atoms = SGroup.getAtoms(struct, sg);
-	const attrs = sg.getAttrs();
+  const sg = struct.sgroups.get(id)
+  const atoms = SGroup.getAtoms(struct, sg)
+  const attrs = sg.getAttrs()
 
-	action.addOp(new op.SGroupRemoveFromHierarchy(id));
+  action.addOp(new op.SGroupRemoveFromHierarchy(id))
 
-	atoms.forEach((atom) => {
-		action.addOp(new op.SGroupAtomRemove(id, atom));
-	});
+  atoms.forEach(atom => {
+    action.addOp(new op.SGroupAtomRemove(id, atom))
+  })
 
-	action.addOp(new op.SGroupDelete(id));
+  action.addOp(new op.SGroupDelete(id))
 
-	action = action.perform(restruct);
+  action = action.perform(restruct)
 
-	action.mergeWith(sGroupAttributeAction(id, attrs));
+  action.mergeWith(sGroupAttributeAction(id, attrs))
 
-	return action;
+  return action
 }
 
-export function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) { // eslint-disable-line
-	let action = new Action();
+export function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) {
+  // eslint-disable-line
+  let action = new Action()
 
-	// TODO: shoud the id be generated when OpSGroupCreate is executed?
-	//      if yes, how to pass it to the following operations?
-	sgid = sgid - 0 === sgid ? sgid : restruct.molecule.sgroups.newId();
+  // TODO: shoud the id be generated when OpSGroupCreate is executed?
+  //      if yes, how to pass it to the following operations?
+  sgid = sgid - 0 === sgid ? sgid : restruct.molecule.sgroups.newId()
 
-	action.addOp(new op.SGroupCreate(sgid, type, pp));
+  action.addOp(new op.SGroupCreate(sgid, type, pp))
 
-	atoms.forEach((atom) => {
-		action.addOp(new op.SGroupAtomAdd(sgid, atom));
-	});
+  atoms.forEach(atom => {
+    action.addOp(new op.SGroupAtomAdd(sgid, atom))
+  })
 
-	action.addOp(
-		type !== 'DAT' ?
-			new op.SGroupAddToHierarchy(sgid) :
-			new op.SGroupAddToHierarchy(sgid, -1, [])
-	);
+  action.addOp(
+    type !== 'DAT'
+      ? new op.SGroupAddToHierarchy(sgid)
+      : new op.SGroupAddToHierarchy(sgid, -1, [])
+  )
 
-	action = action.perform(restruct);
+  action = action.perform(restruct)
 
-	if (type === 'SRU') {
-		restruct.molecule.sGroupsRecalcCrossBonds();
-		let asteriskAction = new Action();
+  if (type === 'SRU') {
+    restruct.molecule.sGroupsRecalcCrossBonds()
+    let asteriskAction = new Action()
 
-		restruct.sgroups.get(sgid).item.neiAtoms.forEach((aid) => {
-			const plainCarbon = restruct.atoms.get(aid).a.isPlainCarbon();
+    restruct.sgroups.get(sgid).item.neiAtoms.forEach(aid => {
+      const plainCarbon = restruct.atoms.get(aid).a.isPlainCarbon()
 
-			if (atomGetDegree(restruct, aid) === 1 && plainCarbon)
-				asteriskAction.addOp(new op.AtomAttr(aid, 'label', '*'));
-		});
+      if (atomGetDegree(restruct, aid) === 1 && plainCarbon)
+        asteriskAction.addOp(new op.AtomAttr(aid, 'label', '*'))
+    })
 
-		asteriskAction = asteriskAction.perform(restruct);
-		asteriskAction.mergeWith(action);
-		action = asteriskAction;
-	}
+    asteriskAction = asteriskAction.perform(restruct)
+    asteriskAction.mergeWith(action)
+    action = asteriskAction
+  }
 
-	return fromSgroupAttrs(restruct, sgid, attrs).mergeWith(action);
+  return fromSgroupAttrs(restruct, sgid, attrs).mergeWith(action)
 }
 
-export function fromSgroupAction(context, restruct, newSg, sourceAtoms, selection) {
-	if (context === SgContexts.Bond)
-		return fromBondAction(restruct, newSg, sourceAtoms, selection);
+export function fromSgroupAction(
+  context,
+  restruct,
+  newSg,
+  sourceAtoms,
+  selection
+) {
+  if (context === SgContexts.Bond)
+    return fromBondAction(restruct, newSg, sourceAtoms, selection)
 
-	const atomsFromBonds = getAtomsFromBonds(restruct.molecule, selection.bonds);
-	const newSourceAtoms = uniq(sourceAtoms.concat(atomsFromBonds));
+  const atomsFromBonds = getAtomsFromBonds(restruct.molecule, selection.bonds)
+  const newSourceAtoms = uniq(sourceAtoms.concat(atomsFromBonds))
 
-	if (context === SgContexts.Fragment)
-		return fromGroupAction(restruct, newSg, newSourceAtoms, Array.from(restruct.atoms.keys()));
+  if (context === SgContexts.Fragment)
+    return fromGroupAction(
+      restruct,
+      newSg,
+      newSourceAtoms,
+      Array.from(restruct.atoms.keys())
+    )
 
-	if (context === SgContexts.Multifragment)
-		return fromMultiFragmentAction(restruct, newSg, newSourceAtoms);
+  if (context === SgContexts.Multifragment)
+    return fromMultiFragmentAction(restruct, newSg, newSourceAtoms)
 
-	if (context === SgContexts.Group)
-		return fromGroupAction(restruct, newSg, newSourceAtoms, newSourceAtoms);
+  if (context === SgContexts.Group)
+    return fromGroupAction(restruct, newSg, newSourceAtoms, newSourceAtoms)
 
-	if (context === SgContexts.Atom)
-		return fromAtomAction(restruct, newSg, newSourceAtoms);
+  if (context === SgContexts.Atom)
+    return fromAtomAction(restruct, newSg, newSourceAtoms)
 
-	return {
-		action: fromSeveralSgroupAddition(restruct, newSg.type, sourceAtoms, newSg.attrs)
-	};
+  return {
+    action: fromSeveralSgroupAddition(
+      restruct,
+      newSg.type,
+      sourceAtoms,
+      newSg.attrs
+    )
+  }
 }
 
 function fromAtomAction(restruct, newSg, sourceAtoms) {
-	return sourceAtoms.reduce((acc, atom) => {
-		acc.action = acc.action.mergeWith(
-			fromSeveralSgroupAddition(restruct, newSg.type, [atom], newSg.attrs)
-		);
-		return acc;
-	}, {
-		action: new Action(),
-		selection: {
-			atoms: sourceAtoms,
-			bonds: []
-		}
-	});
+  return sourceAtoms.reduce(
+    (acc, atom) => {
+      acc.action = acc.action.mergeWith(
+        fromSeveralSgroupAddition(restruct, newSg.type, [atom], newSg.attrs)
+      )
+      return acc
+    },
+    {
+      action: new Action(),
+      selection: {
+        atoms: sourceAtoms,
+        bonds: []
+      }
+    }
+  )
 }
 
 function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
-	const allFragments = new Pile(
-		sourceAtoms.map(aid => restruct.atoms.get(aid).a.fragment)
-	);
+  const allFragments = new Pile(
+    sourceAtoms.map(aid => restruct.atoms.get(aid).a.fragment)
+  )
 
-	return Array.from(allFragments).reduce((acc, fragId) => {
-		const atoms = targetAtoms
-			.reduce((res, aid) => {
-				const atom = restruct.atoms.get(aid).a;
-				if (fragId === atom.fragment)
-					res.push(aid);
+  return Array.from(allFragments).reduce(
+    (acc, fragId) => {
+      const atoms = targetAtoms.reduce((res, aid) => {
+        const atom = restruct.atoms.get(aid).a
+        if (fragId === atom.fragment) res.push(aid)
 
-				return res;
-			}, []);
+        return res
+      }, [])
 
-		const bonds = getAtomsBondIds(restruct.molecule, atoms);
+      const bonds = getAtomsBondIds(restruct.molecule, atoms)
 
-		acc.action = acc.action.mergeWith(
-			fromSeveralSgroupAddition(restruct, newSg.type, atoms, newSg.attrs)
-		);
+      acc.action = acc.action.mergeWith(
+        fromSeveralSgroupAddition(restruct, newSg.type, atoms, newSg.attrs)
+      )
 
-		acc.selection.atoms = acc.selection.atoms.concat(atoms);
-		acc.selection.bonds = acc.selection.bonds.concat(bonds);
+      acc.selection.atoms = acc.selection.atoms.concat(atoms)
+      acc.selection.bonds = acc.selection.bonds.concat(bonds)
 
-		return acc;
-	}, {
-		action: new Action(),
-		selection: {
-			atoms: [],
-			bonds: []
-		}
-	});
+      return acc
+    },
+    {
+      action: new Action(),
+      selection: {
+        atoms: [],
+        bonds: []
+      }
+    }
+  )
 }
 
 function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
-	const struct = restruct.molecule;
-	let bonds = getAtomsBondIds(struct, sourceAtoms);
+  const struct = restruct.molecule
+  let bonds = getAtomsBondIds(struct, sourceAtoms)
 
-	if (currSelection.bonds)
-		bonds = uniq(bonds.concat(currSelection.bonds));
+  if (currSelection.bonds) bonds = uniq(bonds.concat(currSelection.bonds))
 
-	return bonds.reduce((acc, bondid) => {
-		const bond = struct.bonds.get(bondid);
+  return bonds.reduce(
+    (acc, bondid) => {
+      const bond = struct.bonds.get(bondid)
 
-		acc.action = acc.action
-			.mergeWith(
-				fromSeveralSgroupAddition(restruct, newSg.type, [bond.begin, bond.end], newSg.attrs)
-			);
+      acc.action = acc.action.mergeWith(
+        fromSeveralSgroupAddition(
+          restruct,
+          newSg.type,
+          [bond.begin, bond.end],
+          newSg.attrs
+        )
+      )
 
-		acc.selection.bonds.push(bondid);
+      acc.selection.bonds.push(bondid)
 
-		return acc;
-	}, {
-		action: new Action(),
-		selection: {
-			atoms: sourceAtoms,
-			bonds: []
-		}
-	});
+      return acc
+    },
+    {
+      action: new Action(),
+      selection: {
+        atoms: sourceAtoms,
+        bonds: []
+      }
+    }
+  )
 }
 
 function fromMultiFragmentAction(restruct, newSg, atoms) {
-	const bonds = getAtomsBondIds(restruct.molecule, atoms);
-	return {
-		action: fromSeveralSgroupAddition(restruct, newSg.type, atoms, newSg.attrs),
-		selection: {
-			atoms,
-			bonds
-		}
-	};
+  const bonds = getAtomsBondIds(restruct.molecule, atoms)
+  return {
+    action: fromSeveralSgroupAddition(restruct, newSg.type, atoms, newSg.attrs),
+    selection: {
+      atoms,
+      bonds
+    }
+  }
 }
 
 // Add action operation to remove atom from s-group if needed
 export function removeAtomFromSgroupIfNeeded(action, restruct, id) {
-	const sgroups = atomGetSGroups(restruct, id);
+  const sgroups = atomGetSGroups(restruct, id)
 
-	if (sgroups.length > 0) {
-		sgroups.forEach((sid) => {
-			action.addOp(new op.SGroupAtomRemove(sid, id));
-		});
+  if (sgroups.length > 0) {
+    sgroups.forEach(sid => {
+      action.addOp(new op.SGroupAtomRemove(sid, id))
+    })
 
-		return true;
-	}
+    return true
+  }
 
-	return false;
+  return false
 }
 
 // Add action operations to remove whole s-group if needed
 export function removeSgroupIfNeeded(action, restruct, atoms) {
-	const struct = restruct.molecule;
-	const sgCounts = new Map();
+  const struct = restruct.molecule
+  const sgCounts = new Map()
 
-	atoms.forEach((id) => {
-		const sgroups = atomGetSGroups(restruct, id);
+  atoms.forEach(id => {
+    const sgroups = atomGetSGroups(restruct, id)
 
-		sgroups.forEach((sid) => {
-			sgCounts.set(sid, sgCounts.has(sid) ? (sgCounts.get(sid) + 1) : 1);
-		});
-	});
+    sgroups.forEach(sid => {
+      sgCounts.set(sid, sgCounts.has(sid) ? sgCounts.get(sid) + 1 : 1)
+    })
+  })
 
-	sgCounts.forEach((count, sid) => {
-		const sG = restruct.sgroups.get(sid).item;
-		const sgAtoms = SGroup.getAtoms(restruct.molecule, sG);
+  sgCounts.forEach((count, sid) => {
+    const sG = restruct.sgroups.get(sid).item
+    const sgAtoms = SGroup.getAtoms(restruct.molecule, sG)
 
-		if (sgAtoms.length === count) {
-			// delete whole s-group
-			const sgroup = struct.sgroups.get(sid);
-			action.mergeWith(sGroupAttributeAction(sid, sgroup.getAttrs()));
-			action.addOp(new op.SGroupRemoveFromHierarchy(sid));
-			action.addOp(new op.SGroupDelete(sid));
-		}
-	});
+    if (sgAtoms.length === count) {
+      // delete whole s-group
+      const sgroup = struct.sgroups.get(sid)
+      action.mergeWith(sGroupAttributeAction(sid, sgroup.getAttrs()))
+      action.addOp(new op.SGroupRemoveFromHierarchy(sid))
+      action.addOp(new op.SGroupDelete(sid))
+    }
+  })
 }
 
 function getAtomsBondIds(struct, atoms) {
-	const atomSet = new Pile(atoms);
+  const atomSet = new Pile(atoms)
 
-	return Array.from(struct.bonds.keys()).filter((bid) => {
-		const bond = struct.bonds.get(bid);
-		return atomSet.has(bond.begin) && atomSet.has(bond.end);
-	});
+  return Array.from(struct.bonds.keys()).filter(bid => {
+    const bond = struct.bonds.get(bid)
+    return atomSet.has(bond.begin) && atomSet.has(bond.end)
+  })
 }
 
 function getAtomsFromBonds(struct, bonds) {
-	bonds = bonds || [];
-	return bonds.reduce((acc, bondid) => {
-		const bond = struct.bonds.get(bondid);
-		acc = acc.concat([bond.begin, bond.end]);
-		return acc;
-	}, []);
+  bonds = bonds || []
+  return bonds.reduce((acc, bondid) => {
+    const bond = struct.bonds.get(bondid)
+    acc = acc.concat([bond.begin, bond.end])
+    return acc
+  }, [])
 }

@@ -15,42 +15,39 @@
  ***************************************************************************/
 
 class Pile extends Set {
-	// TODO: it's used only in dfs.js in one place in some strange way.
-	// Should be removed after dfs.js refactoring
-	find(predicate) {
-		for (const item of this) {
-			if (predicate(item))
-				return item;
-		}
+  // TODO: it's used only in dfs.js in one place in some strange way.
+  // Should be removed after dfs.js refactoring
+  find(predicate) {
+    for (const item of this) {
+      if (predicate(item)) return item
+    }
 
-		return null;
-	}
+    return null
+  }
 
-	equals(setB) {
-		return this.isSuperset(setB) && setB.isSuperset(this);
-	}
+  equals(setB) {
+    return this.isSuperset(setB) && setB.isSuperset(this)
+  }
 
-	isSuperset(subset) {
-		for (const item of subset) {
-			if (!this.has(item))
-				return false;
-		}
+  isSuperset(subset) {
+    for (const item of subset) {
+      if (!this.has(item)) return false
+    }
 
-		return true;
-	}
+    return true
+  }
 
-	filter(filterFunc) {
-		return new Pile(Array.from(this).filter(filterFunc));
-	}
+  filter(filterFunc) {
+    return new Pile(Array.from(this).filter(filterFunc))
+  }
 
-	union(setB) {
-		const union = new Pile(this);
+  union(setB) {
+    const union = new Pile(this)
 
-		for (const item of setB)
-			union.add(item);
+    for (const item of setB) union.add(item)
 
-		return union;
-	}
+    return union
+  }
 }
 
-export default Pile;
+export default Pile

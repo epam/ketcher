@@ -95,7 +95,6 @@ export default function init(el, staticResourcesUrl, apiPath) {
     Object.assign({}, params, buildInfo),
     ketcher.server
   )
-  ketcher.editor = global._ui_editor
   ketcher.server.then(
     () => {
       if (params.mol) ketcher.ui.load(params.mol)
@@ -136,4 +135,4 @@ const ketcher = Object.assign(
   buildInfo
 )
 
-window.ketcher = ketcher
+global.ketcher = ketcher

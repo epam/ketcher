@@ -21,7 +21,7 @@ import Dialog from '../../component/dialog'
 
 function About(props) {
   const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info
-
+  console.log(props)
   return (
     <Dialog title="About" className="about" params={props} buttons={['Close']}>
       <a href="http://lifescience.opensource.epam.com/ketcher/" target="_blank">

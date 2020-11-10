@@ -79,7 +79,8 @@ function showMolfile(clientArea, molString, options) {
 
 // TODO: replace window.onload with something like <https://github.com/ded/domready>
 // to start early
-window.onload = function () {
+export default function init(el, staticResourcesUrl, apiPath) {
+  ketcher.apiPath = apiPath
   const params = queryString.parse(document.location.search)
   if (params.api_path) ketcher.apiPath = params.api_path
   ketcher.server = api(ketcher.apiPath, {
@@ -88,7 +89,12 @@ window.onload = function () {
     'mass-skip-error-on-pseudoatoms': false,
     'gross-formula-add-rsites': true
   })
-  ketcher.ui = ui(Object.assign({}, params, buildInfo), ketcher.server)
+  ketcher.ui = ui(
+    el,
+    staticResourcesUrl,
+    Object.assign({}, params, buildInfo),
+    ketcher.server
+  )
   ketcher.editor = global._ui_editor
   ketcher.server.then(
     () => {
@@ -101,12 +107,11 @@ window.onload = function () {
 }
 
 const buildInfo = {
-  version: process.env.REACT_APP_VERSION,
-  apiPath: process.env.REACT_APP_API_PATH,
+  version: process.env.VERSION,
   buildDate: process.env.BUILD_DATE,
   buildNumber: process.env.BUILD_NUMBER || null
 }
-console.log(JSON.stringify(process.env))
+
 import validateGraphF from './format/graphValidator' // eslint-disable-line
 
 const ketcher = Object.assign(

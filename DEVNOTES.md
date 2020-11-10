@@ -1,75 +1,90 @@
 ## Prerequisites
 
-   Stable [Node.js](https://nodejs.org) version
+Stable [Node.js](https://nodejs.org) version
 
 ## Build instructions
 
-    npm install
-    npm start
+The latest version of Ketcher has been splitted into two packages: component library (see /src folder) and React Ready-to-run application (see /example folder).
+
+### Build component library (terminal #1)
+
+    yarn install
+    yarn start
 
 For production build:
 
-    npm run build
-   
-You could also build only the style with command
+    yarn build
 
-    npm run style
+### Build example application (terminal #2)
+
+    cd example
+    yarn install
+    yarn start
+
+For production build:
+
+    yarn build
 
 ## Indigo Service
 
 Ketcher uses Indigo Service for server operations.
-You can use `--api-path` parameter to start with it:
+You may pass it as a property while Editor component is used or just add api_path query parameter:
 
-    npm start -- --api-path=<server-url>
-For production build:
-
-    npm run build -- --api-path=<server-url>
+    <Editor staticResourcesUrl={process.env.PUBLIC_URL} apiPath={link to Indigo service} />
+      or
+    http://localhost:3000/?api_path={link to Indigo service}
 
 You can find the instruction for service installation
 [here](http://lifescience.opensource.epam.com/indigo/service/index.html).
 
 ## 3D Viewer
 
-Ketcher uses Miew for viewing and editing data in 3D.
-For use of this functionality you need to add parameter `--miew-path`,
-having specified a path to directory with Miew files: [Miew.min.js and Miew.min.css](https://github.com/epam/miew/tree/master/dist):
+Ketcher can use Miew for viewing and editing data in 3D.
+For use of this functionality you should add the link to miew by your own:
 
-    npm start -- --miew-path=<miew-dir>
-For production build:
-
-    npm run build -- --miew-path=<miew-dir>
+    <html lang="en">
+      <head>
+      ...
+        <link href="{link to Miew.min.css}" rel="stylesheet">
+        ...
+        </head>
+      </head>
+      <body>
+        ...
+        <script src="{link to Miew.min.js}"></script>
+        ...
+      </body>
+    </html>
 
 You can find the latest version of viewer [here](https://github.com/epam/miew).
 The last checked version - [0.7.13](https://github.com/epam/miew/releases/tag/v0.7.13).
 
-## Tests instructions
+## Additional commands
 
-You can start tests for input/output `.mol`-files and render.
+To start unit tests:
 
-    npm test
+    yarn test:unit
+      or
+    yarn test:watch
 
-Tests are started for all structures in `test/fixtures` directory.
+To start prettier:
 
-To start the tests separately:
+    prettier
+    prettier:write
 
-    npm run test-io
-    npm run test-render
+To start eslint:
 
-#### Parameters
+    test:lint 
 
-You can use following parameters to start the tests:
- - `--fixtures` - for the choice of a specific directory with molecules
- - `--headless` - for start of the browser in headless mode
+To start stylelint:
 
-```
-npm run test-render -- --fixtures=fixtures/super --headless
-```
+    yarn stylelint
+      or
+    yarn stylelint:fix
 
-If you have added new structures for testing to the `test/fixtures` directory 
-you have to generate `svg` from them for correct render-test with:
+To start all tests and formatting:
 
-    npm run generate-svg    
-
+    yarn test
 
 ## Simple server
 
@@ -100,6 +115,7 @@ services:
       - 8002:8002
     command: supervisord -n
 ```
+
 Copy Ketcher files under ketcher/ folder
 Add this file under nginx/defaut.conf
 
@@ -129,7 +145,7 @@ server {
 }
 ```
 
-Run 
+Run
 
 ```
 docker-compose up -d

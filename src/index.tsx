@@ -1,19 +1,17 @@
-//import React from 'react'
-//import ReactDOM from 'react-dom'
+import React, { useEffect, useRef } from 'react'
+import init from './script'
 import './index.less'
-//import App from './App'
-//import * as serviceWorker from './serviceWorker'
-import './wdyr.ts'
-import './script'
 
-// ReactDOM.render(
-//   <React.StrictMode>
-//     <App />
-//   </React.StrictMode>,
-//   document.getElementById('root')
-// )
+interface EditorProps {
+  staticResourcesUrl: string
+  apiPath?: string
+}
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-//serviceWorker.unregister()
+export default function Editor({ staticResourcesUrl, apiPath }: EditorProps) {
+  const rootElRef = useRef(null)
+  useEffect(() => {
+    init(rootElRef.current, staticResourcesUrl, apiPath)
+  }, [])
+
+  return <div ref={rootElRef} className="ketcher root"></div>
+}

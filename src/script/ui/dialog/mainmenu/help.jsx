@@ -16,23 +16,23 @@
 
 import React, { useEffect, useState, useCallback } from 'react'
 import Markdown from 'react-markdown'
+import { useSettingsContext } from './../../../../hooks'
 import Dialog from '../../component/dialog'
-
 function Help(props) {
   const [content, setContent] = useState(null)
-
+  const { staticResourcesUrl } = useSettingsContext()
   useEffect(() => {
     const init = async () => {
-      fetch(`${process.env.PUBLIC_URL}/docs/help.md`)
+      fetch(`${staticResourcesUrl}/docs/help.md`)
         .then(response => response.text())
         .then(text => setContent(text))
     }
     init()
-  }, [])
+  }, [staticResourcesUrl])
 
   const transfromImageUri = useCallback(
-    uri => `${process.env.PUBLIC_URL}/docs/${uri}`,
-    []
+    uri => `${staticResourcesUrl}/docs/${uri}`,
+    [staticResourcesUrl]
   )
 
   return (

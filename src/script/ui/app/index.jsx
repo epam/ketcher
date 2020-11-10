@@ -17,6 +17,7 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider, connect } from 'react-redux'
+import { SettingsContext } from './../../../contexts'
 
 import { AppCliparea, AppHidden } from './hidden'
 import AppEditor from './editor'
@@ -38,26 +39,29 @@ const App = connect(null, { onAction, checkServer })(
     }
     render() {
       return (
-        <>
+        <React.Fragment>
           <AppHidden />
           <AppEditor id="canvas" />
           <Toolbar {...this.props} />
           <AppCliparea />
           <AppModal />
-        </>
+        </React.Fragment>
       )
     }
   }
 )
 
-function init(el, options, server) {
+function init(el, staticResourcesUrl, options, server) {
   const store = createStore(options, server)
+  console.log(el)
   store.dispatch(initKeydownListener(el))
   store.dispatch(initResize())
 
   ReactDOM.render(
     <Provider store={store}>
-      <App />
+      <SettingsContext.Provider value={{ staticResourcesUrl }}>
+        <App />
+      </SettingsContext.Provider>
     </Provider>,
     el
   )

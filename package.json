@@ -1,5 +1,5 @@
 {
-  "name": "ketcher",
+  "name": "@ketcher/react",
   "version": "2.0.0-RC",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
@@ -20,7 +20,27 @@
   "bugs": {
     "url": "https://github.com/epam/ketcher/issues"
   },
-  "private": true,
+  "main": "dist/index.js",
+  "module": "dist/index.modern.js",
+  "source": "src/index.tsx",
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "build": "rollup -c -m inline",
+    "start": "rollup -c -w -m inline",
+    "test": "run-s test:unit test:lint prettier stylelint test:build",
+    "test:build": "run-s build",
+    "test:lint": "eslint src --ext .ts,.tsx,.js,.jsx",
+    "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
+    "test:watch": "react-scripts test --env=jsdom",
+    "prettier": "prettier --check \"src/**/*.{js,jsx,json,ts,tsx}\"",
+    "prettier:write": "prettier --write \"src/**/*.{js,jsx,json,ts,tsx}\"",
+    "stylelint": "stylelint \"src/**/*.{css,less,scss}\" --formatter verbose",
+    "stylelint:fix": "stylelint \"src/**/*.{css,less,scss}\" --formatter verbose --fix",
+    "predeploy": "cd example && yarn install && yarn build",
+    "deploy": "gh-pages -d example/build"
+  },
   "dependencies": {
     "classnames": "^2.2.6",
     "core-js": "^3.6.5",
@@ -31,11 +51,8 @@
     "normalize.css": "^8.0.1",
     "query-string": "^6.13.6",
     "raphael": "^2.3.0",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
     "react-markdown": "^5.0.2",
     "react-redux": "^7.2.1",
-    "react-scripts": "3.4.4",
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
@@ -43,69 +60,71 @@
     "replace": "^1.2.0",
     "reselect": "^4.0.0",
     "subscription": "^3.0.0",
-    "typescript": "~3.7.2",
     "w3c-keyname": "^2.2.4",
     "whatwg-fetch": "^3.4.1"
   },
+  "peerDependencies": {
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0"
+  },
   "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-react": "^7.12.5",
+    "@babel/preset-typescript": "^7.12.1",
+    "@rollup/plugin-babel": "^5.2.1",
+    "@rollup/plugin-commonjs": "^16.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^10.0.0",
+    "@rollup/plugin-replace": "^2.3.4",
+    "@svgr/rollup": "^5.4.0",
     "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
-    "@types/jest": "^24.0.0",
-    "@types/node": "^12.0.0",
-    "@types/react": "^16.9.0",
-    "@types/react-dom": "^16.9.0",
-    "@welldone-software/why-did-you-render": "^4.3.1",
-    "customize-cra": "^1.0.0",
-    "git-revision-webpack-plugin": "^3.0.6",
-    "husky": "v1.0.0-rc.13",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "@types/jest": "^25.1.4",
+    "@types/node": "^12.12.38",
+    "@types/react": "^16.9.27",
+    "@types/react-dom": "^16.9.7",
+    "@typescript-eslint/eslint-plugin": "^4.0.0",
+    "@typescript-eslint/parser": "^4.0.0",
+    "babel-eslint": "^10.0.0",
+    "cross-env": "^7.0.2",
+    "eslint": "^6.8.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^24.0.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react-hooks": "^4.0.8",
+    "eslint-plugin-testing-library": "^3.9.0",
+    "gh-pages": "^2.2.0",
+    "husky": "^4.3.0",
     "less": "^3.12.2",
-    "less-loader": "^7.0.2",
-    "lint-staged": "^10.4.2",
-    "node-sass": "^4.14.1",
-    "postcss-normalize": "^9.0.0",
-    "prettier": "^2.0.5",
+    "lint-staged": "^10.5.1",
+    "node-sass": "^5.0.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.0.4",
     "prettier-config-standard": "^1.0.1",
-    "react-app-rewired": "^2.1.6",
-    "serve": "^11.3.2",
-    "stylelint": "^13.6.1",
-    "stylelint-config-prettier": "^8.0.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "^3.4.1",
+    "rollup": "^2.33.1",
+    "rollup-plugin-cleanup": "^3.2.1",
+    "rollup-plugin-copy": "^3.3.0",
+    "rollup-plugin-less": "^1.1.2",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-string": "^3.0.0",
+    "rollup-plugin-typescript2": "^0.29.0",
+    "rollup-plugin-visualizer": "^4.2.0",
+    "stylelint": "^13.7.2",
+    "stylelint-config-prettier": "^8.0.2",
     "stylelint-config-recommended-scss": "^4.2.0",
     "stylelint-config-standard": "^20.0.0",
     "stylelint-prettier": "^1.1.2",
     "stylelint-scss": "^3.18.0",
-    "svg-sprite-loader": "^5.0.0",
-    "webpack-bundle-analyzer": "^3.9.0"
-  },
-  "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "build:analyze": "react-app-rewired build --analyze",
-    "lint": "eslint src --ext .ts,.tsx,.js,.jsx",
-    "lint-staged": "lint-staged",
-    "test": "react-app-rewired test",
-    "test:update": "react-app-rewired test --updateSnapshot",
-    "prettier": "prettier --check \"src/**/*.{js,jsx,json,ts,tsx}\"",
-    "prettier:write": "prettier --write \"src/**/*.{js,jsx,json,ts,tsx}\"",
-    "stylelint": "stylelint \"src/**/*.{css,less,scss}\" --formatter verbose",
-    "stylelint:fix": "stylelint \"src/**/*.{css,less,scss}\" --formatter verbose --fix",
-    "serve:build": "serve -s build -l 4001",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "typescript": "^4.0.5"
   },
   "husky": {
     "hooks": {
@@ -115,7 +134,7 @@
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
       "prettier --write",
-      "eslint",
+      "eslint --fix",
       "react-scripts test --env=jsdom --watchAll=false --findRelatedTests"
     ],
     "src/**/*.{json}": [
@@ -125,5 +144,8 @@
       "stylelint --formatter verbose --fix"
     ]
   },
-  "config-overrides-path": "config/webpack.config.js"
+  "files": [
+    "dist",
+    "src/icons"
+  ]
 }

@@ -15,12 +15,9 @@
  ***************************************************************************/
 
 import app from './app'
-require.context('./../../icons', true, /\.svg$/)
-//import './../../icons'
 
-function init(opts, apiServer) {
-  const ketcherWindow = document.getElementById('root')
-  return app(ketcherWindow, opts, apiServer)
+function init(el, staticResourcesUrl, opts, apiServer) {
+  return app(el, staticResourcesUrl, opts, apiServer)
 }
 
 export default init

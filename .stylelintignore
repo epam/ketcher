@@ -1,2 +1,3 @@
 src/style/**
-/build
+build
+dist

@@ -19,6 +19,7 @@ import React, { Component } from 'react'
 class OpenButton extends Component {
   constructor(props) {
     super(props)
+    this.state = {}
     if (props.server) {
       fileOpener(props.server).then(opener => {
         this.setState({ opener })

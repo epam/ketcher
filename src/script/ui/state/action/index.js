@@ -56,6 +56,8 @@ export default function (state = null, { type, action, ...params }) {
     case 'INIT':
       action = acts['select-lasso'].action
     case 'ACTION': // eslint-disable-line no-case-declarations
+      //TODO: temporary solution. Need to review work with redux store
+      global.currentState = state
       activeTool = execute(state && state.activeTool, {
         ...params,
         action

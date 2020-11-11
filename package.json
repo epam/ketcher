@@ -140,7 +140,7 @@
     "src/**/*.{json}": [
       "prettier --write"
     ],
-    "src/**/*.{css,scss}": [
+    "src/**/*.{css,less,scss}": [
       "stylelint --formatter verbose --fix"
     ]
   },

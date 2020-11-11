@@ -36,10 +36,10 @@ export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }))
   const sleep = time => new Promise(resolve => setTimeout(resolve, time))
 
-  function resetToSelect(dispatch, getState) {
+  function resetToSelect(dispatch) {
     // eslint-disable-line no-shadow
-    const state = getState()
-    const activeTool = state.actionState.activeTool.tool
+    const state = global.currentState
+    const activeTool = state.activeTool.tool
     if (activeTool === 'select') return
     const selectMode = state.toolbar.visibleTools.select
     const resetOption = state.options.settings.resetToSelect

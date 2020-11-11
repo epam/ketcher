@@ -50,7 +50,7 @@ class StructRender extends Component {
   }
 
   componentDidMount() {
-    const el = this
+    const el = this.tagRef.current
     const { struct, options } = this.props
     let parsedStruct
     if (!(struct instanceof Struct)) {
@@ -62,7 +62,7 @@ class StructRender extends Component {
         parsedStruct = null
       }
     }
-    renderStruct(el, struct, options)
+    renderStruct(el, parsedStruct, options)
   }
 
   render() {

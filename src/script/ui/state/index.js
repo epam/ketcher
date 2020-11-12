@@ -42,6 +42,8 @@ const shared = combineReducers({
 
 /* ROOT REDUCER */
 function root(state, action) {
+  //TODO: temporary solution. Need to review work with redux store
+  global.currentState = state
   switch (
     action.type // eslint-disable-line default-case
   ) {

@@ -9,6 +9,7 @@ import typescript from 'rollup-plugin-typescript2'
 import less from 'rollup-plugin-less'
 import json from '@rollup/plugin-json'
 import svgr from '@svgr/rollup'
+import del from 'rollup-plugin-delete'
 import cleanup from 'rollup-plugin-cleanup'
 import pkg from './package.json'
 
@@ -19,16 +20,20 @@ const config = {
   output: [
     {
       file: pkg.main,
-      exports: 'auto',
+      exports: 'named',
       format: 'cjs'
     },
     {
       file: pkg.module,
-      exports: 'auto',
+      exports: 'named',
       format: 'es'
     }
   ],
   plugins: [
+    del({
+      targets: 'dist/*',
+      runOnce: true
+    }),
     peerDepsExternal(),
     typescript(),
     string({

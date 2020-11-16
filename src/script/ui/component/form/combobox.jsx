@@ -42,8 +42,8 @@ class ComboBox extends Component {
     this.setState({ suggestsHidden: true })
   }
 
-  render(props) {
-    const { value, type = 'text', schema } = props
+  render() {
+    const { value, type = 'text', schema } = this.props
 
     const suggestList = schema.enumNames
       .filter(item => item !== value)

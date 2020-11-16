@@ -33,6 +33,7 @@
     "react-app-rewired": "^2.1.6",
     "react-scripts": "^3.4.1",
     "serve": "^11.3.2",
+    "source-map-loader": "^1.1.2",
     "typescript": "link:../node_modules/typescript",
     "webpack-bundle-analyzer": "^3.9.0"
   },

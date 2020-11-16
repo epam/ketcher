@@ -27,8 +27,8 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "rollup -c -m inline",
-    "start": "rollup -c -w -m inline",
+    "build": "rollup -c -m true",
+    "start": "rollup -c -w -m true",
     "test": "run-s test:unit test:lint prettier stylelint test:build",
     "test:build": "run-s build",
     "test:lint": "eslint src --ext .ts,.tsx,.js,.jsx",
@@ -113,6 +113,7 @@
     "rollup": "^2.33.1",
     "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-copy": "^3.3.0",
+    "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-less": "^1.1.2",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-string": "^3.0.0",
@@ -145,7 +146,6 @@
     ]
   },
   "files": [
-    "dist",
-    "src/icons"
+    "dist"
   ]
 }

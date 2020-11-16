@@ -49,7 +49,7 @@ function calcStereoFlag(struct, stereoAids) {
     .map(aid => struct.atoms.get(aid))
     .some(atom => atom.stereoLabel !== stereoLabel)
 
-  return hasAnotherLabel ? 'Mixed' : stereoLabel.split('-')[0]
+  return hasAnotherLabel ? 'Mixed' : stereoLabel?.split('-')[0]
 }
 
 Fragment.prototype.updateStereoFlag = function (struct, flag = false) {

@@ -1,6 +1,7 @@
 const {
   override,
   addBundleVisualizer,
+  addWebpackModuleRule,
   addWebpackPlugin
 } = require('customize-cra')
 const config = require('../../package.json')
@@ -12,6 +13,12 @@ const gitRevisionPlugin = new GitRevisionPlugin({
 
 module.exports = override(
   addBundleVisualizer({}, true),
+  addWebpackModuleRule({
+    test: /\.js$/,
+    enforce: 'pre',
+    loader: 'source-map-loader',
+    exclude: /node_modules/
+  }),
   addWebpackPlugin(gitRevisionPlugin),
   addWebpackPlugin(
     new HtmlReplaceWebpackPlugin([

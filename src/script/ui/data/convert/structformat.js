@@ -188,7 +188,12 @@ export function fromString(structStr, opts, server, serverOpts) {
 }
 
 export function couldBeSaved(struct, format) {
-  if (format === 'inchi' || format === 'smiles') {
+  if (
+    format === 'inchi' ||
+    format === 'inchi-aux' ||
+    format === 'smiles' ||
+    format === 'smiles-ext'
+  ) {
     if (struct.rgroups.size !== 0)
       return `In ${map[format].name} the structure will be saved without R-group fragments`
     struct = struct.clone() // need this: .getScaffold()

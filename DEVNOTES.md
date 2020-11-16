@@ -1,6 +1,7 @@
 ## Prerequisites
 
-Stable [Node.js](https://nodejs.org) version
+- Stable [Node.js](https://nodejs.org) version
+- [Yarn](https://yarnpkg.com/) installed globally
 
 ## Build instructions
 

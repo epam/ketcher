@@ -110,7 +110,7 @@ export default function initEditor(dispatch, getState) {
     onQuickEdit: atom => openDialog(dispatch, 'labelEdit', atom),
     onBondEdit: bond =>
       openDialog(dispatch, 'bondProps', fromBond(bond)).then(toBond),
-    onGroupEdit: rgroup => {
+    onRgroupEdit: rgroup => {
       const struct = getState().editor.struct()
 
       if (Object.keys(rgroup).length > 2) {

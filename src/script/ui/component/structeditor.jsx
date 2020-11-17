@@ -88,12 +88,12 @@ class StructEditor extends Component {
       onEnhancedStereoEdit,
       onQuickEdit,
       onBondEdit,
-      onGroupEdit,
+      onRgroupEdit,
       onSgroupEdit,
       onSdataEdit,
       onMessage,
-      onAromatizesSruct,
       onAromatizeStruct,
+      onDearomatizeStruct,
       ...props
     } = this.props
     return (

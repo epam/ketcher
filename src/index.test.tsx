@@ -1,4 +1,4 @@
-import Editor from '.'
+import { Editor } from '.'
 
 describe('Editor', () => {
   it('is truthy', () => {

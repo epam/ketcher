@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Editor from '@ketcher/react'
+import { Editor } from '@ketcher/react'
 import '@ketcher/react/dist/index.css'
 
 const App = () => {

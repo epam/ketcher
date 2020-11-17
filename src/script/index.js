@@ -17,7 +17,6 @@
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 import 'whatwg-fetch'
-import queryString from 'query-string'
 
 import api from './api'
 import molfile from './chem/molfile'
@@ -81,8 +80,8 @@ function showMolfile(clientArea, molString, options) {
 // to start early
 export default function init(el, staticResourcesUrl, apiPath) {
   ketcher.apiPath = apiPath
-  const params = queryString.parse(document.location.search)
-  if (params.api_path) ketcher.apiPath = params.api_path
+  const params = new URLSearchParams(document.location.search)
+  if (params.has('api_path')) ketcher.apiPath = params.get('api_path')
   ketcher.server = api(ketcher.apiPath, {
     'smart-layout': true,
     'ignore-stereochemistry-errors': true,

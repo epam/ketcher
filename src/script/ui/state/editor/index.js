@@ -50,7 +50,7 @@ export default function initEditor(dispatch, getState) {
   }
 
   return {
-    onInit: editor => {
+    handleinit: editor => {
       dispatch({ type: 'INIT', editor })
     },
     onChange: action => {
@@ -58,10 +58,10 @@ export default function initEditor(dispatch, getState) {
       // new tool in reducer
       else dispatch(resetToSelect)
     },
-    onSelectionChange: () => {
+    handleselectionchange: () => {
       updateAction()
     },
-    onElementEdit: selem => {
+    handleelementedit: selem => {
       const elem = fromElement(selem)
       let dlg = null
       if (element.map[elem.label]) {
@@ -98,7 +98,7 @@ export default function initEditor(dispatch, getState) {
     },
 
     // TODO: correct
-    onEnhancedStereoEdit: ({ type, ...init }) =>
+    handleenhancedstereoedit: ({ type, ...init }) =>
       sleep(0).then(() => {
         if (type === 'atoms') init = fromStereoLabel(init.stereoLabel)
         return openDialog(dispatch, 'enhancedStereo', {
@@ -107,10 +107,10 @@ export default function initEditor(dispatch, getState) {
         }).then(res => (type === 'atoms' ? toStereoLabel(res) : res))
       }),
 
-    onQuickEdit: atom => openDialog(dispatch, 'labelEdit', atom),
-    onBondEdit: bond =>
+    handlequickedit: atom => openDialog(dispatch, 'labelEdit', atom),
+    handlebondedit: bond =>
       openDialog(dispatch, 'bondProps', fromBond(bond)).then(toBond),
-    onRgroupEdit: rgroup => {
+    handlergroupedit: rgroup => {
       const struct = getState().editor.struct()
 
       if (Object.keys(rgroup).length > 2) {
@@ -142,11 +142,11 @@ export default function initEditor(dispatch, getState) {
         label: res.values[0]
       }))
     },
-    onSgroupEdit: sgroup =>
+    handlesgroupedit: sgroup =>
       sleep(0) // huck to open dialog after dispatch sgroup tool action
         .then(() => openDialog(dispatch, 'sgroup', fromSgroup(sgroup)))
         .then(toSgroup),
-    onSdataEdit: sgroup =>
+    handlesdataedit: sgroup =>
       sleep(0)
         .then(() =>
           openDialog(
@@ -156,12 +156,12 @@ export default function initEditor(dispatch, getState) {
           )
         )
         .then(toSgroup),
-    onMessage: msg => {
+    handlemessage: msg => {
       if (msg.error) {
         //TODO: add error handler call
       }
     },
-    onAromatizeStruct: struct => {
+    handlearomatizestruct: struct => {
       const state = getState()
       const serverOpts = state.options.getServerSettings()
       return serverCall(
@@ -172,7 +172,7 @@ export default function initEditor(dispatch, getState) {
         struct
       )
     },
-    onDearomatizeStruct: struct => {
+    handledearomatizestruct: struct => {
       const state = getState()
       const serverOpts = state.options.getServerSettings()
       return serverCall(

@@ -161,7 +161,7 @@ export default function initEditor(dispatch, getState) {
         //TODO: add error handler call
       }
     },
-    onAromatizesSruct: struct => {
+    onAromatizeStruct: struct => {
       const state = getState()
       const serverOpts = state.options.getServerSettings()
       return serverCall(
@@ -172,7 +172,7 @@ export default function initEditor(dispatch, getState) {
         struct
       )
     },
-    onAromatizeStruct: struct => {
+    onDearomatizeStruct: struct => {
       const state = getState()
       const serverOpts = state.options.getServerSettings()
       return serverCall(

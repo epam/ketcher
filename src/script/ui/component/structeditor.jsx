@@ -68,7 +68,7 @@ class StructEditor extends Component {
       ...this.props.options
     })
     setupEditor(this.instance, this.props)
-    if (this.props.handleinit) this.props.handleinit(this.instance)
+    if (this.props.onInit) this.props.onInit(this.instance)
   }
 
   componentWillUnmount() {
@@ -82,35 +82,23 @@ class StructEditor extends Component {
       tool,
       toolOpts,
       options,
-      handleinit,
-      handleselectionchange,
-      handleelementedit,
-      handleenhancedstereoedit,
-      handlequickedit,
-      handlebondedit,
-      handlergroupedit,
-      handlesgroupedit,
-      handlesdataedit,
-      handlemessage,
-      handlearomatizestruct,
-      handledearomatizestruct,
+      onInit,
+      onSelectionChange,
+      onElementEdit,
+      onEnhancedStereoEdit,
+      onQuickEdit,
+      onBondEdit,
+      onGroupEdit,
+      onSgroupEdit,
+      onSdataEdit,
+      onMessage,
+      onAromatizesSruct,
+      onAromatizeStruct,
       ...props
     } = this.props
     return (
       <Tag
         onMouseDown={ev => ev.preventDefault()}
-        handleinit={1}
-        handleselectionchange={1}
-        handleelementedit={1}
-        handleenhancedstereoedit={1}
-        handlequickedit={1}
-        handlebondedit={1}
-        handlergroupedit={1}
-        handlesgroupedit={1}
-        handlesdataedit={1}
-        handlemessage={1}
-        handlearomatizestruct={1}
-        handledearomatizestruct={1}
         {...props}
         ref={this.editorRef}>
         {/* svg here */}

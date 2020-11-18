@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import 'url-search-params-polyfill'
 import init from './script'
 import './index.less'
 
@@ -7,7 +8,7 @@ interface EditorProps {
   apiPath?: string
 }
 
-export default function Editor({ staticResourcesUrl, apiPath }: EditorProps) {
+export function Editor({ staticResourcesUrl, apiPath }: EditorProps) {
   const rootElRef = useRef(null)
   useEffect(() => {
     init(rootElRef.current, staticResourcesUrl, apiPath)

@@ -22,8 +22,6 @@ import action from '../action'
 import { hiddenAncestor } from '../state/toolbar'
 import Icon from './view/icon'
 
-var currentCount = 0
-
 const isMac = /Mac/.test(navigator.platform) // eslint-disable-line no-undef
 const shortcutAliasMap = {
   Escape: 'Esc',
@@ -89,22 +87,19 @@ function ActionMenu({ name, menu, className, role, ...props }) {
       className={className}
       role={role}
       style={toolMargin(name, menu, props.visibleTools)}>
-      {menu.map((item, index) => {
-        currentCount++
-        return (
-          <li
-            key={currentCount}
-            id={item.id || item}
-            className={
-              classNames(props.status[item]) +
-              ` ${item.id === props.opened ? 'opened' : ''}`
-            }
-            onClick={ev => openHandle(ev, props.onOpen)}>
-            {showMenuOrButton(action, item, props.status[item], props)}
-            {item.menu && <Icon name="dropdown" />}
-          </li>
-        )
-      })}
+      {menu.map((item, index) => (
+        <li
+          key={item.id || item}
+          id={item.id || item}
+          className={
+            classNames(props.status[item]) +
+            ` ${item.id === props.opened ? 'opened' : ''}`
+          }
+          onClick={ev => openHandle(ev, props.onOpen)}>
+          {showMenuOrButton(action, item, props.status[item], props)}
+          {item.menu && <Icon name="dropdown" />}
+        </li>
+      ))}
     </menu>
   )
 }

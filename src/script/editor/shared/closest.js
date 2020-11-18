@@ -27,7 +27,25 @@ const findMaps = {
   rxnArrows: findClosestRxnArrow,
   rxnPluses: findClosestRxnPlus,
   frags: findClosestFrag,
-  rgroups: findClosestRGroup
+  rgroups: findClosestRGroup,
+  simpleObjects: findClosestSimpleObject
+}
+
+function findClosestSimpleObject(restruct, pos) {
+  let minDist = null
+  let ret = null
+
+  restruct.simpleObjects.forEach((simpleObject, id) => {
+    const p = simpleObject.center()
+    const dist = Math.max(Math.abs(pos.x - p.x), Math.abs(pos.y - p.y))
+
+    if (dist < 0.3 && (!ret || dist < minDist)) {
+      minDist = dist
+      ret = { id, dist: minDist }
+    }
+  })
+
+  return ret
 }
 
 function findClosestAtom(restruct, pos, skip, minDist) {

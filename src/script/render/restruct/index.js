@@ -37,6 +37,7 @@ import ReDataSGroupData from './redatasgroupdata'
 import ReEnhancedFlag from './reenhancedflag'
 import ReSGroup from './resgroup'
 import ReLoop from './reloop'
+import ReSimpleObject from './resimpleobject'
 
 var LAYER_MAP = {
   background: 0,
@@ -60,6 +61,7 @@ function ReStruct(molecule, render) {
   this.sgroups = new Map()
   this.sgroupData = new Map()
   this.enhancedFlags = new Map()
+  this.simpleObjects = new Map()
   this.molecule = molecule || new Struct()
   this.initialized = false
   this.layers = []
@@ -92,6 +94,10 @@ function ReStruct(molecule, render) {
 
   molecule.rxnArrows.forEach((item, id) => {
     this.rxnArrows.set(id, new ReRxnArrow(item))
+  })
+
+  molecule.simpleObjects.forEach((item, id) => {
+    this.simpleObjects.set(id, new ReSimpleObject(item))
   })
 
   molecule.frags.forEach((item, id) => {
@@ -447,7 +453,9 @@ ReStruct.prototype.update = function (force) {
   this.showFragments()
   this.showRGroups()
   this.showEnhancedFlags()
+  this.showSimpleObjects()
   this.clearMarks()
+
   return true
 }
 
@@ -468,6 +476,15 @@ ReStruct.prototype.showLoops = function () {
   const options = this.render.options
   this.reloops.forEach((reloop, rlid) => {
     reloop.show(this, rlid, options)
+  })
+}
+
+ReStruct.prototype.showSimpleObjects = function () {
+  const options = this.render.options
+
+  this.simpleObjectsChanged.forEach((value, id) => {
+    const simpleObject = this.simpleObjects.get(id)
+    simpleObject.show(this, id, options)
   })
 }
 
@@ -622,7 +639,8 @@ ReStruct.maps = {
   sgroupData: ReDataSGroupData,
   enhancedFlags: ReEnhancedFlag,
   sgroups: ReSGroup,
-  reloops: ReLoop
+  reloops: ReLoop,
+  simpleObjects: ReSimpleObject
 }
 
 export default ReStruct
@@ -634,5 +652,6 @@ export {
   ReFrag,
   ReRGroup,
   ReEnhancedFlag,
-  ReSGroup
+  ReSGroup,
+  ReSimpleObject
 }

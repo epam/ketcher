@@ -37,7 +37,8 @@ const structObjects = [
   'rgroups',
   'rxnArrows',
   'rxnPluses',
-  'enhancedFlags'
+  'enhancedFlags',
+  'simpleObjects'
 ]
 
 function Editor(clientArea, options) {
@@ -182,7 +183,8 @@ const highlightTargets = [
   'rgroups',
   'sgroups',
   'sgroupData',
-  'enhancedFlags'
+  'enhancedFlags',
+  'simpleObjects'
 ]
 
 Editor.prototype.highlight = function (ci, visible) {

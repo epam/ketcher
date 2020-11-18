@@ -33,8 +33,9 @@ import ReactionUnmapTool from './reactionunmap'
 import PasteTool from './paste'
 import RotateTool from './rotate'
 import EnhancedStereoTool from './enhanced-stereo'
+import SimpleObjectTool from './simpleobject'
 
-export default {
+const tools = {
   rgroupatom: RGroupAtomTool,
   select: SelectTool,
   sgroup: SGroupTool,
@@ -53,5 +54,8 @@ export default {
   reactionunmap: ReactionUnmapTool,
   paste: PasteTool,
   rotate: RotateTool,
-  enhancedStereo: EnhancedStereoTool
+  enhancedStereo: EnhancedStereoTool,
+  simpleobject: SimpleObjectTool
 }
+
+export default tools

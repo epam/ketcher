@@ -81,8 +81,8 @@ class Save extends Component {
   }
 
   showStructWarningMessage(format) {
-    const { moleculeErrors } = this.props.formState
-    return format !== 'mol' && Object.keys(moleculeErrors).length > 0
+    const { errors } = this.props.formState
+    return format !== 'mol' && Object.keys(errors).length > 0
   }
 
   changeType(type) {

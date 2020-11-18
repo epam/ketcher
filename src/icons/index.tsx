@@ -82,6 +82,8 @@ import TransformRotateIcon from './files/transform-rotate.svg'
 import UndoIcon from './files/undo.svg'
 import ZoomInIcon from './files/zoom-in.svg'
 import ZoomOutIcon from './files/zoom-out.svg'
+import ShapeCircleIcon from './files/shape-circle.svg'
+import ShapeRectangleIcon from './files/shape-rectangle.svg'
 
 const icons = {
   about: AboutIcon,
@@ -152,7 +154,9 @@ const icons = {
   'transform-rotate': TransformRotateIcon,
   undo: UndoIcon,
   'zoom-in': ZoomInIcon,
-  'zoom-out': ZoomOutIcon
+  'zoom-out': ZoomOutIcon,
+  'shape-circle': ShapeCircleIcon,
+  'shape-rectangle': ShapeRectangleIcon
 }
 
 function emptyIcon() {

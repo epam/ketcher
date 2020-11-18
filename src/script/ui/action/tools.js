@@ -112,6 +112,14 @@ const toolActions = {
     shortcut: 'Mod+r',
     title: 'Attachment Point Tool',
     action: { tool: 'apoint' }
+  },
+  'shape-circle': {
+    title: 'Shape Circle',
+    action: { tool: 'simpleobject', opts: 'circle' }
+  },
+  'shape-rectangle': {
+    title: 'Shape Rectangle',
+    action: { tool: 'simpleobject', opts: 'rectangle' }
   }
 }
 

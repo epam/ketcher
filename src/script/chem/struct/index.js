@@ -42,6 +42,7 @@ function Struct() {
   this.rgroups = new Pool()
   this.name = ''
   this.sGroupForest = new SGroupForest()
+  this.simpleObjects = new Pool()
 }
 
 Struct.prototype.hasRxnProps = function () {
@@ -59,7 +60,8 @@ Struct.prototype.isBlank = function () {
   return (
     this.atoms.size === 0 &&
     this.rxnArrows.size === 0 &&
-    this.rxnPluses.size === 0
+    this.rxnPluses.size === 0 &&
+    this.simpleObjects.size === 0
   )
 }
 
@@ -438,6 +440,12 @@ Struct.prototype.rxnPlusSetPos = function (id, pp) {
 Struct.prototype.rxnArrowSetPos = function (id, pp) {
   const item = this.rxnArrows.get(id)
   item.pp = pp
+}
+
+Struct.prototype.simpleObjectSetPos = function (id, p0, p1) {
+  const item = this.simpleObjects.get(id)
+  item.p0 = p0
+  item.p1 = p1
 }
 
 /**
@@ -1020,6 +1028,17 @@ RxnPlus.prototype.clone = function () {
   return new RxnPlus(this)
 }
 
+function SimpleObject(params) {
+  params = params || {}
+  this.p0 = params.p0 ? new Vec2(params.p0) : new Vec2()
+  this.p1 = params.p1 ? new Vec2(params.p1) : new Vec2()
+  this.mode = params.mode
+}
+
+SimpleObject.prototype.clone = function () {
+  return new SimpleObject(this)
+}
+
 function RxnArrow(params) {
   params = params || {}
   this.pp = params.pp ? new Vec2(params.pp) : new Vec2()
@@ -1047,5 +1066,6 @@ export {
   SGroupForest,
   RGroup,
   RxnPlus,
-  RxnArrow
+  RxnArrow,
+  SimpleObject
 }

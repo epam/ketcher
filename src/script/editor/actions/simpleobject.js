@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import jsonschema from 'jsonschema'
+import op from '../operations/op'
+import Action from '../shared/action'
 
-import structSchema from './schemes/moleculeSchema'
-import rgroupSchema from './schemes/rgroupSchema'
-import { plusSchema, arrowSchema } from './schemes/rxnSchemas'
-import simpleObjectSchema from './schemes/simpleObjectSchema'
-import graphSchema from './schemes/rootSchema'
+export function fromSimpleObjectDeletion(restruct, id) {
+  const action = new Action()
+  action.addOp(new op.SimpleObjectDelete(id))
+  return action.perform(restruct)
+}
 
-export default function validate(graph) {
-  const v = new jsonschema.Validator()
-  v.addSchema(structSchema, '/Molecule')
-  v.addSchema(rgroupSchema, '/RGroup')
-  v.addSchema(arrowSchema, '/RxnArrow')
-  v.addSchema(plusSchema, '/RxnPlus')
-  v.addSchema(simpleObjectSchema, '/SimpleObject')
+export function fromSimpleObjectAddition(restruct, p0, p1, mode) {
+  var action = new Action()
+  action.addOp(new op.SimpleObjectAdd(p0, p1, mode))
+  return action.perform(restruct)
+}
 
-  const res = v.validate(graph, graphSchema)
-  console.log(res)
+export function fromSimpleObjectResizing(restruct, id, d) {
+  var action = new Action()
+  action.addOp(new op.SimpleObjectResize(id, d))
+  return action.perform(restruct)
 }

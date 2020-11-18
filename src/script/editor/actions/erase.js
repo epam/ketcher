@@ -97,7 +97,8 @@ export function fromFragmentDeletion(restruct, selection) {
     bonds: selection.bonds || [],
     rxnPluses: selection.rxnPluses || [],
     rxnArrows: selection.rxnArrows || [],
-    sgroupData: selection.sgroupData || []
+    sgroupData: selection.sgroupData || [],
+    simpleObjects: selection.simpleObjects || []
   }
 
   const actionRemoveDataSGroups = new Action()
@@ -144,6 +145,10 @@ export function fromFragmentDeletion(restruct, selection) {
 
   selection.rxnPluses.forEach(id => {
     action.addOp(new op.RxnPlusDelete(id))
+  })
+
+  selection.simpleObjects.forEach(id => {
+    action.addOp(new op.SimpleObjectDelete(id))
   })
 
   action = action.perform(restruct)

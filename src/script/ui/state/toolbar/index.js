@@ -37,6 +37,7 @@ function updateVisibleTools(visibleTool, activeTool) {
       if (key === 'bond' && menuHeight > 700) return res // TODO remove me after update styles
       if (key === 'transform' && menuHeight > 800) return res
       if (key === 'rgroup' && menuHeight > 850) return res
+      if (key === 'shape' && menuHeight > 900) return res
       if (!key.match(regExp) || menuHeight > 700) res[key] = visibleTool[key]
       return res
     },

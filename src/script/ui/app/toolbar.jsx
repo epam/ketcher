@@ -162,7 +162,9 @@ function ZoomList({ status, onAction }) {
         onAction(editor => editor.zoom(parseFloat(ev.target.value)))
       }>
       {zoomList.map(val => (
-        <option value={val}>{`${(val * 100).toFixed()}%`}</option>
+        <option key={val.toString()} value={val}>{`${(
+          val * 100
+        ).toFixed()}%`}</option>
       ))}
     </select>
   )

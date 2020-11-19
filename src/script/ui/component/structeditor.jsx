@@ -82,6 +82,18 @@ class StructEditor extends Component {
       tool,
       toolOpts,
       options,
+      onInit,
+      onSelectionChange,
+      onElementEdit,
+      onEnhancedStereoEdit,
+      onQuickEdit,
+      onBondEdit,
+      onRgroupEdit,
+      onSgroupEdit,
+      onSdataEdit,
+      onMessage,
+      onAromatizeStruct,
+      onDearomatizeStruct,
       ...props
     } = this.props
     return (

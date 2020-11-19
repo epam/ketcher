@@ -53,7 +53,6 @@ const App = connect(null, { onAction, checkServer })(
 
 function init(el, staticResourcesUrl, options, server) {
   const store = createStore(options, server)
-  console.log(el)
   store.dispatch(initKeydownListener(el))
   store.dispatch(initResize())
 

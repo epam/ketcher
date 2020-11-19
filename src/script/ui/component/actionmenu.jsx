@@ -89,7 +89,7 @@ function ActionMenu({ name, menu, className, role, ...props }) {
       style={toolMargin(name, menu, props.visibleTools)}>
       {menu.map((item, index) => (
         <li
-          key={index}
+          key={item.id || item}
           id={item.id || item}
           className={
             classNames(props.status[item]) +

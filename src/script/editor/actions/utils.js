@@ -56,7 +56,8 @@ export function structSelection(struct) {
     'sgroups',
     'rgroups',
     'rxnArrows',
-    'rxnPluses'
+    'rxnPluses',
+    'simpleObjects'
   ].reduce((res, key) => {
     res[key] = Array.from(struct[key].keys())
     return res

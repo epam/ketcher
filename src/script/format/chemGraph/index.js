@@ -1,12 +1,28 @@
+/****************************************************************************
+ * Copyright 2020 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 import Struct from '../../chem/struct'
 import { headerToGraph } from './toGraph/headerToGraph'
 import { moleculeToGraph } from './toGraph/moleculeToGraph'
 import { rgroupToGraph } from './toGraph/rgroupToGraph'
 import { arrowToGraph, plusToGraph } from './toGraph/rxnToGraph'
-
+import { simpleObjectToGraph } from './toGraph/simpleObjectToGraph'
 import { moleculeToStruct } from './fromGraph/moleculeToStruct'
 import { rgroupToStruct } from './fromGraph/rgroupToStruct'
 import { rxnToStruct } from './fromGraph/rxnToStruct'
+import { simpleObjectToStruct } from './fromGraph/simpleObjectToStruct'
 
 import { prepareStructForGraph } from './toGraph/prepare'
 
@@ -46,6 +62,10 @@ function toGraph(struct) {
         result.root.nodes.push(arrowToGraph(item))
         break
       }
+      case 'simpleObject': {
+        result.root.nodes.push(simpleObjectToGraph(item))
+        break
+      }
       default:
         break
     }
@@ -75,6 +95,9 @@ function parseNode(node, struct) {
       break
     case 'plus':
       rxnToStruct(node, struct)
+      break
+    case 'simpleObject':
+      simpleObjectToStruct(node, struct)
       break
     case 'molecule':
       moleculeToStruct(node).mergeInto(struct)

@@ -16,6 +16,7 @@
 
 import LassoHelper from './helper/lasso'
 import { fromArrowDeletion, fromPlusDeletion } from '../actions/reaction'
+import { fromSimpleObjectDeletion } from '../actions/simpleobject'
 import { fromSgroupDeletion } from '../actions/sgroup'
 import {
   fromFragmentDeletion,
@@ -41,7 +42,8 @@ function EraserTool(editor, mode) {
     'rxnArrows',
     'rxnPluses',
     'sgroups',
-    'sgroupData'
+    'sgroupData',
+    'simpleObjects'
   ]
   this.lassoHelper = new LassoHelper(mode || 0, editor)
 }
@@ -89,6 +91,8 @@ EraserTool.prototype.click = function (event) {
     this.editor.update(fromArrowDeletion(restruct, ci.id))
   } else if (ci.map === 'rxnPluses') {
     this.editor.update(fromPlusDeletion(restruct, ci.id))
+  } else if (ci.map === 'simpleObjects') {
+    this.editor.update(fromSimpleObjectDeletion(restruct, ci.id))
   } else {
     // TODO re-factoring needed - should be "map-independent"
     console.error(

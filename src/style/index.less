@@ -159,11 +159,11 @@ select {
 }
 
 @media (max-height: 850px) {
-	#rgroup {
+	#rgroup, #shape {
 		.collapsed-ifnot(opened);
 	}
 	@media (max-width: 1040px) { // better way not to dublicate?
-		#rgroup {                // inherit 100%, small? overflow-x?
+		#rgroup, #shape {                // inherit 100%, small? overflow-x?
 			.collapsed-size(small);
 		}
 	}
@@ -203,7 +203,7 @@ select {
 }
 
 @media (max-height: 600px) {
-	#rgroup, #transform, #bond {
+	#rgroup, #transform, #bond, #shape {
 		.collapsed-size(small);
 	}
 }

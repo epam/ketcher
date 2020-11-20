@@ -13,22 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import jsonschema from 'jsonschema'
-
-import structSchema from './schemes/moleculeSchema'
-import rgroupSchema from './schemes/rgroupSchema'
-import { plusSchema, arrowSchema } from './schemes/rxnSchemas'
-import simpleObjectSchema from './schemes/simpleObjectSchema'
-import graphSchema from './schemes/rootSchema'
-
-export default function validate(graph) {
-  const v = new jsonschema.Validator()
-  v.addSchema(structSchema, '/Molecule')
-  v.addSchema(rgroupSchema, '/RGroup')
-  v.addSchema(arrowSchema, '/RxnArrow')
-  v.addSchema(plusSchema, '/RxnPlus')
-  v.addSchema(simpleObjectSchema, '/SimpleObject')
-
-  const res = v.validate(graph, graphSchema)
-  console.log(res)
+export function simpleObjectToGraph(simpleObjectNode) {
+  return {
+    type: 'simpleObject',
+    data: simpleObjectNode.data
+  }
 }

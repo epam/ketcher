@@ -148,7 +148,7 @@
       "prettier --write"
     ],
     "src/**/*.{css,less,scss}": [
-      "stylelint --formatter verbose --fix"
+      "stylelint --formatter verbose --fix --allow-empty-input"
     ]
   },
   "files": [

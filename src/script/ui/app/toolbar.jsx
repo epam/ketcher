@@ -122,6 +122,10 @@ const toolbox = [
   {
     id: 'rgroup',
     menu: ['rgroup-label', 'rgroup-fragment', 'rgroup-attpoints']
+  },
+  {
+    id: 'shape',
+    menu: ['shape-circle', 'shape-rectangle']
   }
 ]
 

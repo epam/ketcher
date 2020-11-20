@@ -144,7 +144,7 @@ export function atomLongtapEvent(tool, render) {
   dragCtx.stopTapping = function () {
     if (dragCtx.timeout) {
       clearTimeout(dragCtx.timeout)
-      delete tool.dragCtx.timeout
+      delete dragCtx.timeout
     }
   }
 }

@@ -48,6 +48,7 @@ function getElementsInRectangle(restruct, p0, p1) {
 
   const rxnArrowsList = []
   const rxnPlusesList = []
+  const simpleObjectsList = []
 
   restruct.rxnArrows.forEach((item, id) => {
     if (
@@ -67,6 +68,16 @@ function getElementsInRectangle(restruct, p0, p1) {
       item.item.pp.y < y1
     )
       rxnPlusesList.push(id)
+  })
+
+  restruct.simpleObjects.forEach((item, id) => {
+    if (
+      item.item.p0.x > x0 &&
+      item.item.p0.x < x1 &&
+      item.item.p0.y > y0 &&
+      item.item.p0.y < y1
+    )
+      simpleObjectsList.push(id)
   })
 
   const enhancedFlagList = []
@@ -93,7 +104,8 @@ function getElementsInRectangle(restruct, p0, p1) {
     rxnArrows: rxnArrowsList,
     rxnPluses: rxnPlusesList,
     enhancedFlags: enhancedFlagList,
-    sgroupData: sgroupDataList
+    sgroupData: sgroupDataList,
+    simpleObjects: simpleObjectsList
   }
 }
 
@@ -121,6 +133,7 @@ function getElementsInPolygon(restruct, rr) {
 
   const rxnArrowsList = []
   const rxnPlusesList = []
+  const simpleObjectsList = []
 
   restruct.rxnArrows.forEach((item, id) => {
     if (isPointInPolygon(r, item.item.pp)) rxnArrowsList.push(id)
@@ -128,6 +141,10 @@ function getElementsInPolygon(restruct, rr) {
 
   restruct.rxnPluses.forEach((item, id) => {
     if (isPointInPolygon(r, item.item.pp)) rxnPlusesList.push(id)
+  })
+
+  restruct.simpleObjects.forEach((item, id) => {
+    if (isPointInPolygon(r, item.item.p0)) simpleObjectsList.push(id)
   })
 
   const enhancedFlagList = []
@@ -146,7 +163,8 @@ function getElementsInPolygon(restruct, rr) {
     rxnArrows: rxnArrowsList,
     rxnPluses: rxnPlusesList,
     enhancedFlags: enhancedFlagList,
-    sgroupData: sgroupDataList
+    sgroupData: sgroupDataList,
+    simpleObjects: simpleObjectsList
   }
 }
 

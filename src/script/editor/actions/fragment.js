@@ -91,6 +91,12 @@ export function fromMultipleMove(restruct, lists, d) {
     })
   }
 
+  if (lists.simpleObjects) {
+    lists.simpleObjects.forEach(simpleObject => {
+      action.addOp(new op.SimpleObjectMove(simpleObject, d, true))
+    })
+  }
+
   if (lists.sgroupData) {
     lists.sgroupData.forEach(sgData => {
       action.addOp(new op.SGroupDataMove(sgData, d))

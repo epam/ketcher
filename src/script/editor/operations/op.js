@@ -25,7 +25,8 @@ import {
   RGroup,
   RxnArrow,
   RxnPlus,
-  SGroup
+  SGroup,
+  SimpleObject
 } from '../../chem/struct'
 import {
   ReAtom,
@@ -33,7 +34,8 @@ import {
   ReRxnPlus,
   ReRxnArrow,
   ReRGroup,
-  ReSGroup
+  ReSGroup,
+  ReSimpleObject
 } from '../../render/restruct'
 
 import Base, {
@@ -932,7 +934,119 @@ function RestoreDescriptorsPosition(history) {
 }
 RestoreDescriptorsPosition.prototype = new Base()
 
-export default {
+function SimpleObjectAdd(p0, p1, mode) {
+  this.data = { id: null, p0, p1, mode }
+  let performed = false
+  this.execute = function (restruct) {
+    const struct = restruct.molecule
+    if (!performed) {
+      this.data.id = struct.simpleObjects.add(new SimpleObject({ mode }))
+      performed = true
+    } else {
+      struct.simpleObjects.set(this.data.id, new SimpleObject({ mode }))
+    }
+
+    restruct.simpleObjects.set(
+      this.data.id,
+      new ReSimpleObject(struct.simpleObjects.get(this.data.id))
+    )
+
+    struct.simpleObjectSetPos(
+      this.data.id,
+      new Vec2(this.data.p0),
+      new Vec2(this.data.p1)
+    )
+
+    invalidateItem(restruct, 'simpleObjects', this.data.id, 1)
+  }
+
+  this.invert = function () {
+    const ret = new SimpleObjectDelete()
+    ret.data = this.data
+    return ret
+  }
+}
+SimpleObjectAdd.prototype = new Base()
+
+function SimpleObjectDelete(id) {
+  this.data = { id, p0: null, p1: null, item: null }
+  let performed = false
+  this.execute = function (restruct) {
+    const struct = restruct.molecule
+    if (!performed) {
+      const item = struct.simpleObjects.get(this.data.id)
+      this.data.p0 = item.p0
+      this.data.p1 = item.p1
+      this.data.mode = item.mode
+    }
+
+    // notifyRxnPlusRemoved
+    restruct.markItemRemoved()
+    restruct.clearVisel(restruct.simpleObjects.get(this.data.id).visel)
+    restruct.simpleObjects.delete(this.data.id)
+
+    struct.simpleObjects.delete(this.data.id)
+  }
+
+  this.invert = function () {
+    const ret = new SimpleObjectAdd()
+    ret.data = this.data
+    return ret
+  }
+}
+SimpleObjectDelete.prototype = new Base()
+
+function SimpleObjectMove(id, d, noinvalidate) {
+  this.data = { id, d, noinvalidate }
+
+  this.execute = function (restruct) {
+    const struct = restruct.molecule
+    const id = this.data.id
+    const d = this.data.d
+    const item = struct.simpleObjects.get(id)
+    item.p0.add_(d)
+    item.p1.add_(d)
+    restruct.simpleObjects
+      .get(id)
+      .visel.translate(scale.obj2scaled(d, restruct.render.options))
+    this.data.d = d.negated()
+    if (!this.data.noinvalidate)
+      invalidateItem(restruct, 'simpleObjects', id, 1)
+  }
+
+  this.invert = function () {
+    const ret = new SimpleObjectMove()
+    ret.data = this.data
+    return ret
+  }
+}
+SimpleObjectMove.prototype = new Base()
+
+function SimpleObjectResize(id, d, noinvalidate) {
+  this.data = { id, d, noinvalidate }
+  this.execute = function (restruct) {
+    const struct = restruct.molecule
+    const id = this.data.id
+    const d = this.data.d
+    const item = struct.simpleObjects.get(id)
+    item.p1.add_(d)
+    restruct.simpleObjects
+      .get(id)
+      .visel.translate(scale.obj2scaled(d, restruct.render.options))
+    this.data.d = d.negated()
+    if (!this.data.noinvalidate)
+      invalidateItem(restruct, 'simpleObjects', id, 1)
+  }
+
+  this.invert = function () {
+    const ret = new SimpleObjectResize()
+    ret.data = this.data
+    return ret
+  }
+}
+SimpleObjectResize.prototype = new Base()
+
+const operations = {
   AtomAdd,
   AtomDelete,
   AtomAttr,
@@ -967,5 +1081,12 @@ export default {
   FragmentStereoFlag,
   FragmentAddStereoAtom,
   FragmentDeleteStereoAtom,
-  EnhancedFlagMove
+  EnhancedFlagMove,
+
+  SimpleObjectAdd,
+  SimpleObjectDelete,
+  SimpleObjectMove,
+  SimpleObjectResize
 }
+
+export default operations

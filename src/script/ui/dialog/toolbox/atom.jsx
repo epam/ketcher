@@ -25,8 +25,7 @@ import Dialog from '../../component/dialog'
 
 import element from '../../../chem/element'
 
-function ElementNumber(props, { stateStore }) {
-  const { result } = stateStore.props
+function ElementNumber(label) {
   return (
     <label>
       Number:
@@ -34,7 +33,7 @@ function ElementNumber(props, { stateStore }) {
         className="number"
         type="text"
         readOnly
-        value={element.map[capitalize(result.label)] || ''}
+        value={element.map[capitalize(label)] || ''}
       />
     </label>
   )
@@ -60,7 +59,7 @@ function Atom(props) {
         <fieldset className="main">
           <Field name="label" />
           <Field name="alias" />
-          <ElementNumber />
+          <ElementNumber label={prop.label} />
           <Field name="charge" maxlength="5" />
           <Field name="explicitValence" />
           <Field name="isotope" />

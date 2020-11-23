@@ -53,6 +53,7 @@ class SaveButton extends Component {
       filename,
       data,
       className = 'save-button',
+      onSave,
       ...props
     } = this.props
 

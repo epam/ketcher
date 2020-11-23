@@ -18,7 +18,15 @@ import React, { Component } from 'react'
 import { omit } from 'lodash'
 
 function GenericInput({ schema, value, onChange, type = 'text', ...props }) {
-  return <input type={type} value={value} onInput={onChange} {...props} />
+  return (
+    <input
+      type={type}
+      value={value}
+      onInput={onChange}
+      onChange={onChange}
+      {...props}
+    />
+  )
 }
 
 GenericInput.val = function (ev, schema) {
@@ -52,7 +60,8 @@ function Select({ schema, value, selected, onSelect, ...props }) {
     <select onChange={onSelect} {...props}>
       {enumSchema(schema, (title, val) => (
         <option
-          selected={selected(val, value)}
+          key={val}
+          defaultValue={selected(val, value)}
           value={typeof val !== 'object' && val}>
           {title}
         </option>

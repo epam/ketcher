@@ -63,7 +63,16 @@ class Form extends Component {
   }
 
   render() {
-    const { result, errors, init, children, schema, ...prop } = this.props
+    const {
+      result,
+      errors,
+      init,
+      children,
+      schema,
+      onUpdate,
+      customValid,
+      ...prop
+    } = this.props
 
     if (schema.key && schema.key !== this.schema.key) {
       this.schema = propSchema(schema, prop)
@@ -72,12 +81,12 @@ class Form extends Component {
     }
 
     return (
-      <form {...prop}>
+      <div {...prop} valid="true">
         <FormContext.Provider
           value={{ schema: this.props.schema, stateStore: this }}>
           {children}
         </FormContext.Provider>
-      </form>
+      </div>
     )
   }
 }
@@ -114,7 +123,7 @@ function Field(props) {
   return (
     <Label
       className={classNames({ 'data-error': dataError })}
-      error={dataError}
+      error={dataError ? 1 : 0}
       title={prop.title || desc.title}
       labelPos={labelPos}>
       {formField}

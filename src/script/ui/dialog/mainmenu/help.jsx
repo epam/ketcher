@@ -16,6 +16,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react'
 import Markdown from 'react-markdown'
+import gfm from 'remark-gfm'
 import { useSettingsContext } from './../../../../hooks'
 import Dialog from '../../component/dialog'
 function Help(props) {
@@ -39,7 +40,9 @@ function Help(props) {
     content && (
       <Dialog title="Help" params={props} buttons={['Close']}>
         {content && (
-          <Markdown transformImageUri={transfromImageUri}>{content}</Markdown>
+          <Markdown plugins={[gfm]} transformImageUri={transfromImageUri}>
+            {content}
+          </Markdown>
         )}
       </Dialog>
     )

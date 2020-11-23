@@ -18,13 +18,11 @@ import React, { Component } from 'react'
 import { saveAs } from 'file-saver'
 
 class SaveButton extends Component {
-  constructor({
-    filename = 'unnamed',
-    type = 'text/plain',
-    className = '',
-    ...props
-  }) {
-    super({ filename, type, className, ...props })
+  constructor(props) {
+    super(props)
+    this.filename = props.filename || 'unnamed'
+    this.type = props.type || 'text/plain'
+    this.className = props.className || ''
     this.state = {}
     fileSaver(props.server).then(saver => {
       this.setState({ saver })

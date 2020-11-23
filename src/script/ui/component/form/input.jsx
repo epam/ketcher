@@ -21,7 +21,7 @@ function GenericInput({ schema, value, onChange, type = 'text', ...props }) {
   return (
     <input
       type={type}
-      value={value}
+      value={value || ''}
       onInput={onChange}
       onChange={onChange}
       {...props}
@@ -47,7 +47,15 @@ function TextArea({ schema, value, onChange, ...props }) {
 TextArea.val = ev => ev.target.value
 
 function CheckBox({ schema, value, onChange, ...props }) {
-  return <input type="checkbox" checked={value} onClick={onChange} {...props} />
+  return (
+    <input
+      type="checkbox"
+      checked={value || ''}
+      onClick={onChange}
+      onChange={onChange}
+      {...props}
+    />
+  )
 }
 
 CheckBox.val = function (ev) {

@@ -64,15 +64,13 @@ class Open extends Component {
           'OK'
         ]}>
         <textarea
-          value={structStr}
+          defaultValue={structStr}
           onInput={ev => this.changeStructStr(ev.target.value)}
-          onChange={() => {}}
         />
         <label>
           <input
             type="checkbox"
-            checked={fragment}
-            onChange={() => {}}
+            defaultChecked={fragment}
             onClick={ev => this.changeFragment(ev.target)}
           />
           Load as a fragment and copy to the Clipboard

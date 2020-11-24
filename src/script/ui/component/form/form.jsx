@@ -52,7 +52,7 @@ class Form extends Component {
     const value = result[name]
     const self = this
     return {
-      dataError: (errors && errors[name]) || false,
+      dataError: errors && errors[name],
       value,
       onChange(val) {
         const newstate = Object.assign({}, self.props.result, { [name]: val })
@@ -81,7 +81,7 @@ class Form extends Component {
     }
 
     return (
-      <div {...prop} valid="true">
+      <div {...prop} valid={prop.valid.toString()}>
         <FormContext.Provider
           value={{ schema: this.props.schema, stateStore: this }}>
           {children}
@@ -123,7 +123,7 @@ function Field(props) {
   return (
     <Label
       className={classNames({ 'data-error': dataError })}
-      error={dataError ? 1 : 0}
+      error={dataError}
       title={prop.title || desc.title}
       labelPos={labelPos}>
       {formField}

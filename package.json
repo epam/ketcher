@@ -64,6 +64,7 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.7",
+    "remark-gfm": "^1.0.0",
     "remark-parse": "^9.0.0",
     "replace": "^1.2.0",
     "reselect": "^4.0.0",

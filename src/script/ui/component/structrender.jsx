@@ -22,10 +22,10 @@ import Render from '../../render'
 
 function renderStruct(el, struct, options = {}) {
   if (el) {
-    if (struct.prerender) {
+    if (struct?.prerender) {
       // Should it sit here?
       el.innerHTML = struct.prerender
-    } else {
+    } else if (struct) {
       console.info('render!', el.clientWidth, el.clientWidth)
       const rnd = new Render(el, {
         autoScale: true,

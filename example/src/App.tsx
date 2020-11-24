@@ -6,7 +6,7 @@ import '@ketcher/react/dist/index.css'
 const App = () => {
   return (
     <div>
-      <Editor staticResourcesUrl={process.env.PUBLIC_URL} apiPath={''} />
+      <Editor staticResourcesUrl={process.env.PUBLIC_URL} apiPath={process.env.REACT_APP_API_PATH} />
     </div>
   )
 }

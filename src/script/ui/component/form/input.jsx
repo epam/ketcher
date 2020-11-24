@@ -100,11 +100,11 @@ function FieldSet({
   return (
     <fieldset onClick={onSelect} className="radio">
       {enumSchema(schema, (title, val) => (
-        <li>
+        <li key={title}>
           <label>
             <input
               type={type}
-              checked={selected(val, value)}
+              defaultChecked={selected(val, value)}
               value={typeof val !== 'object' && val}
               {...props}
             />

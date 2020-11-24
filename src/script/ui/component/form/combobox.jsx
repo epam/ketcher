@@ -47,24 +47,30 @@ class ComboBox extends Component {
 
     const suggestList = schema.enumNames
       .filter(item => item !== value)
-      .map(item => <li onMouseDown={this.updateInput}>{item}</li>)
+      .map(item => (
+        <li key={item} onMouseDown={this.updateInput}>
+          {item}
+        </li>
+      ))
 
     return (
       <div>
         <input
           type={type}
-          value={value}
+          defaultValue={value}
           onClick={this.click}
           onBlur={this.blur}
           onInput={this.updateInput}
           autoComplete="off"
         />
         {suggestList.length !== 0 ? (
-          <ui
+          <ul
             className="suggestList"
-            style={`display: ${this.state.suggestsHidden ? 'none' : 'block'}`}>
+            style={{
+              display: '${this.state.suggestsHidden' ? 'none' : 'block'
+            }}>
             {suggestList}
-          </ui>
+          </ul>
         ) : (
           ''
         )}

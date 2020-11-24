@@ -81,7 +81,7 @@ class Form extends Component {
     }
 
     return (
-      <div {...prop} valid={prop.valid.toString()}>
+      <div {...prop} valid={prop.valid ? prop.valid.toString() : 'true'}>
         <FormContext.Provider
           value={{ schema: this.props.schema, stateStore: this }}>
           {children}

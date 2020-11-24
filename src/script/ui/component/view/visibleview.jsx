@@ -73,13 +73,13 @@ export default class VirtualList extends Component {
       Tag = 'div',
       overscanCount = 1,
       sync,
+      render,
       ...props
     } = this.props
     const { offset, height } = this.state
 
     // first visible row index
     let start = offset / rowHeight || 0
-    const { render } = this.props
 
     // actual number of visible rows (without overscan)
     let visibleRowCount = height / rowHeight || 0

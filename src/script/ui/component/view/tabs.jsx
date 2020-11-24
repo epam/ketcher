@@ -30,7 +30,7 @@ class Tabs extends Component {
   }
 
   render() {
-    const { tabs, ...other } = this.props
+    const { tabs, changeTab, ...other } = this.props
     const tabPanel = tabs[this.state.tabIndex]
     const Component = tabPanel?.component
     const componentProps = tabPanel?.props
@@ -39,8 +39,9 @@ class Tabs extends Component {
         <li className="tabs">
           {tabs.map((tabPanel, index) => (
             <a // eslint-disable-line
+              key={index}
               className={this.state.tabIndex === index ? 'active' : ''}
-              onClick={ev => this.changeTab(ev, index)}>
+              onClick={ev => changeTab(ev, index)}>
               {tabPanel.caption}
             </a>
           ))}

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import { connect } from 'react-redux'
 import { range } from 'lodash/fp'
 
@@ -27,6 +27,10 @@ import Input from '../../component/form/input'
 import StructRender from '../../component/structrender'
 import OpenButton from '../../component/view/openbutton'
 import Spin from '../../component/view/spin'
+
+function isImage(file) {
+  return file?.type?.includes('image')
+}
 
 function Recognize(prop) {
   const {
@@ -44,11 +48,15 @@ function Recognize(prop) {
     onChangeImago,
     ...props
   } = partProps
+  const [canPreviewImage, setCanPreviewImage] = useState(true)
   const result = () =>
     structStr && !(structStr instanceof Promise)
       ? { structStr, fragment }
       : null
-
+  const clearFile = useCallback(() => {
+    onImage(null)
+    return true
+  }, [onImage])
   return (
     <Dialog
       title="Import From Image"
@@ -84,17 +92,24 @@ function Recognize(prop) {
         />
       </label>
       <div className="picture">
-        {file && (
+        {file && isImage(file) && canPreviewImage && (
           <img
             alt=""
             id="pic"
             src={url(file) || ''}
             onError={() => {
-              onImage(null)
-              //TODO: add error handler call
-              //legacy message: Error, it isn't a picture
+              setCanPreviewImage(false)
             }}
           />
+        )}
+        {file && isImage(file) && !canPreviewImage && (
+          <div>
+            Preview of '{file.type}' MIME type does not supported by current
+            browser
+          </div>
+        )}
+        {(!file || (!isImage(file) && clearFile())) && (
+          <div>Please choose image</div>
         )}
       </div>
       <div className="output">

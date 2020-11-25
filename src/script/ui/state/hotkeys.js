@@ -27,17 +27,17 @@ import { openDialog } from './modal'
 import { onAction, load } from './shared'
 
 export function initKeydownListener(element) {
-  return function (dispatch, getState) {
+  return function (dispatch) {
     const hotKeys = initHotKeys()
     element.addEventListener('keydown', event =>
-      keyHandle(dispatch, getState, hotKeys, event)
+      keyHandle(dispatch, global.currentState, hotKeys, event)
     )
   }
 }
 
 /* HotKeys */
-function keyHandle(dispatch, getState, hotKeys, event) {
-  const state = getState()
+function keyHandle(dispatch, state, hotKeys, event) {
+  //const state = global.currentState
   if (state.modal) return
 
   const editor = state.editor
@@ -115,7 +115,7 @@ function checkGroupOnTool(group, actionTool) {
 const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/
 
 /* ClipArea */
-export function initClipboard(dispatch, getState) {
+export function initClipboard(dispatch) {
   const formats = Object.keys(structFormat.map).map(
     fmt => structFormat.map[fmt].mime
   )
@@ -128,17 +128,17 @@ export function initClipboard(dispatch, getState) {
   return {
     formats,
     focused() {
-      return !getState().modal
+      return !global.currentState.modal
     },
     onCut() {
-      const editor = getState().editor
+      const editor = global.currentState.editor
       const data = clipData(editor)
       if (data) debAction({ tool: 'eraser', opts: 1 })
       else editor.selection(null)
       return data
     },
     onCopy() {
-      const editor = getState().editor
+      const editor = global.currentState.editor
       const data = clipData(editor)
       editor.selection(null)
       return data
@@ -150,7 +150,7 @@ export function initClipboard(dispatch, getState) {
         data['chemical/x-mdl-rxnfile'] ||
         data['text/plain']
 
-      const struct = getState().editor.render.ctab.molecule
+      const struct = global.currentState.editor.render.ctab.molecule
 
       if (
         structStr &&

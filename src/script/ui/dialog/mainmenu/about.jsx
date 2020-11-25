@@ -31,7 +31,8 @@ function About(props) {
         <dt>
           <a
             href="http://lifescience.opensource.epam.com/ketcher/help.html"
-            target="_blank">
+            target="_blank"
+            rel="noopener noreferrer">
             Ketcher
           </a>
         </dt>

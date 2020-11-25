@@ -44,15 +44,12 @@ class ComboBox extends Component {
 
   render() {
     const { value, type = 'text', schema } = this.props
-
     const suggestList = schema.enumNames
       .filter(item => item !== value)
-      .map(item => (
-        <li key={item} onMouseDown={this.updateInput}>
-          {item}
-        </li>
-      ))
-
+      .map(item => <li key={item} onMouseDown={this.updateInput}>{item}</li>)
+    const suggestListStyles = {
+      display: this.state.suggestsHidden ? 'none' : 'block'
+    }
     return (
       <div>
         <input
@@ -64,11 +61,7 @@ class ComboBox extends Component {
           autoComplete="off"
         />
         {suggestList.length !== 0 ? (
-          <ul
-            className="suggestList"
-            style={{
-              display: '${this.state.suggestsHidden' ? 'none' : 'block'
-            }}>
+          <ui className="suggestList" style={suggestListStyles}>
             {suggestList}
           </ul>
         ) : (

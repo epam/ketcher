@@ -46,7 +46,7 @@ function api(base, defaultOptions) {
       imagoVersions: res['imago_versions']
     }))
     .catch(() => {
-      throw Error('Server is not compatible')
+      //TODO: add error handler
     })
 
   function request(method, url, data, headers) {

@@ -31,9 +31,9 @@ export function checkServer() {
       res =>
         dispatch(
           appUpdate({
-            indigoVersion: res.indigoVersion,
-            imagoVersions: res.imagoVersions,
-            server: true
+            indigoVersion: res?.indigoVersion,
+            imagoVersions: res?.imagoVersions,
+            server: res?.indigoVersion && res?.imagoVersions
           })
         ),
       err => console.info(err)
@@ -98,8 +98,7 @@ export function check(optsTypes) {
       .catch(e => {
         //TODO: add error handler call
         //legacy message: Failed check
-        throw e
-      }) // eslint-disable-line no-undef
+      })
     // TODO: notification
   }
 }

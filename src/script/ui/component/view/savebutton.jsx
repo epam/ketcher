@@ -20,24 +20,22 @@ import { saveAs } from 'file-saver'
 class SaveButton extends Component {
   constructor(props) {
     super(props)
-    const {
-      filename = 'unnamed',
-      type = 'text/plain',
-      className = '',
-      server
-    } = props
-    this.filename = filename
-    this.type = type
-    this.className = className
     this.state = {}
-    fileSaver(server).then(saver => {
+    fileSaver(props.server).then(saver => {
       this.setState({ saver })
     })
   }
 
   save(ev) {
     const noop = () => null
-    const { filename, data, type, onSave = noop, onError = noop } = this.props
+    const {
+      filename = 'unnamed',
+      data,
+      className = '',
+      type = 'text/plain',
+      onSave = noop,
+      onError = noop
+    } = this.props
 
     if (this.state.saver && data) {
       try {

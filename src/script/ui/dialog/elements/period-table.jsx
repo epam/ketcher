@@ -72,7 +72,7 @@ function TypeChoise({ value, onChange, ...props }) {
           <input
             type="radio"
             value={sc.value}
-            defaultChecked={sc.value === value}
+            checked={sc.value === value} //TODO: fix React Warning
             onClick={() => onChange(sc.value)}
             {...props}
           />

@@ -64,10 +64,10 @@ function Recognize(prop) {
       params={props}
       result={() => result(structStr, fragment)}
       buttons={[
-        <OpenButton key="image/*" onLoad={onImage} type="image/*">
+        <OpenButton key="choose" onLoad={onImage} type="image/*">
           Choose file…
         </OpenButton>,
-        <span key="open-filename" className="open-filename">
+        <span key="saved-file" className="open-filename">
           {file ? file.name : null}
         </span>,
         file && (

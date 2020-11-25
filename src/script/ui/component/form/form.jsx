@@ -80,13 +80,15 @@ class Form extends Component {
       this.updateState(result)
     }
 
+    //TODO: change the layout of the form content (fix React warning: <form> cannot appear as a descendant of <form>)
     return (
-      <div valid={prop.valid ? prop.valid.toString() : 'true'}>
+      //TODO: fix React Warning: Received `true` for a non-boolean attribute `valid`.
+      <form {...prop}>
         <FormContext.Provider
           value={{ schema: this.props.schema, stateStore: this }}>
           {children}
         </FormContext.Provider>
-      </div>
+      </form>
     )
   }
 }

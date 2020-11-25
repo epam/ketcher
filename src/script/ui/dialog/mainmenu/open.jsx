@@ -64,13 +64,13 @@ class Open extends Component {
           'OK'
         ]}>
         <textarea
-          defaultValue={structStr}
+          value={structStr} //TODO: fix React warning
           onInput={ev => this.changeStructStr(ev.target.value)}
         />
         <label>
           <input
             type="checkbox"
-            defaultChecked={fragment}
+            checked={fragment} //TODO: fix React warning
             onClick={ev => this.changeFragment(ev.target)}
           />
           Load as a fragment and copy to the Clipboard

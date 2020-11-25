@@ -58,7 +58,7 @@ class ComboBox extends Component {
       <div>
         <input
           type={type}
-          defaultValue={value}
+          value={value} //TODO: React warning defaultValue
           onClick={this.click}
           onBlur={this.blur}
           onInput={this.updateInput}

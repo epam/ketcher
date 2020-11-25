@@ -30,7 +30,7 @@ function FrozenInput({ value }) {
     <input
       type="text"
       spellCheck={false}
-      defaultValue={value}
+      value={value} //TODO: fix React warning
       onKeyDown={ev => allowMovement(ev)}
     />
   )

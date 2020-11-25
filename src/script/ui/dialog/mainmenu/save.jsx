@@ -119,7 +119,7 @@ class Save extends Component {
           <SaveButton
             data={structStr}
             filename={filename + structFormat.map[format].ext[0]}
-            key={filename + structFormat.map[format].ext[0]}
+            key="save-button"
             type={format.mime}
             server={this.props.server}
             onSave={() => this.props.onOk()}
@@ -127,7 +127,7 @@ class Save extends Component {
             Save To File…
           </SaveButton>,
           <button
-            key={filename}
+            key="save-tmpl"
             className="save-tmpl"
             disabled={isCleanStruct}
             onClick={() => this.props.onTmplSave(this.props.struct)}>

@@ -67,7 +67,7 @@ function Recognize(prop) {
         <OpenButton key="choose" onLoad={onImage} type="image/*">
           Choose file…
         </OpenButton>,
-        <span key="saved-file" className="open-filename">
+        <span key="open-file" className="open-filename">
           {file ? file.name : null}
         </span>,
         file && (

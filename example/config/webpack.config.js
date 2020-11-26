@@ -8,9 +8,9 @@ const config = require('../../package.json')
 const HtmlReplaceWebpackPlugin = require('html-replace-webpack-plugin')
 const GitRevisionPlugin = require('git-revision-webpack-plugin')
 const gitRevisionPlugin = new GitRevisionPlugin({
-  commithashCommand: 'rev-list ' + config.version + '..HEAD --count'
+  commithashCommand: `rev-list v${config.version}..HEAD --count`
 })
-
+const buildNumber = gitRevisionPlugin.commithash()
 module.exports = override(
   addBundleVisualizer({}, true),
   addWebpackModuleRule({
@@ -24,7 +24,8 @@ module.exports = override(
     new HtmlReplaceWebpackPlugin([
       {
         pattern: '@@version',
-        replacement: gitRevisionPlugin.commithash()
+        replacement:
+          'v' + config.version + (buildNumber > 0 ? `+${buildNumber}` : '')
       }
     ])
   )

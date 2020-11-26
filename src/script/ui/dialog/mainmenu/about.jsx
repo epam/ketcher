@@ -16,7 +16,7 @@
 
 import React from 'react'
 import { connect } from 'react-redux'
-
+import Logo from './logo.svg'
 import Dialog from '../../component/dialog'
 
 function About(props) {
@@ -25,7 +25,7 @@ function About(props) {
   return (
     <Dialog title="About" className="about" params={props} buttons={['Close']}>
       <a href="http://lifescience.opensource.epam.com/ketcher/" target="_blank">
-        <img alt="Ketcher" src={`${process.env.PUBLIC_URL}/logo.svg`} />
+        <Logo />
       </a>
       <dl>
         <dt>

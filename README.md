@@ -35,13 +35,13 @@ Ketcher is an open-source web-based chemical structure editor incorporating high
 Ketcher library is available as an [NPM](https://www.npmjs.com/) package. Install it either with NPM:
 
 ```sh
-npm install --save miew
+npm install --save ketcher-react
 ```
 
 or [Yarn](https://yarnpkg.com/):
 
 ```sh
-yarn add miew
+yarn add ketcher-react
 ```
 
 ## Usage

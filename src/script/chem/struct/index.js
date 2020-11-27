@@ -70,16 +70,24 @@ Struct.prototype.isBlank = function () {
  * @param bondSet { Pile<number>? }
  * @param dropRxnSymbols { boolean? }
  * @param aidMap { Map<number, number>? }
+ * @param simpleObjectsSet { Pile<number>? }
  * @returns { Struct }
  */
-Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols, aidMap) {
+Struct.prototype.clone = function (
+  atomSet,
+  bondSet,
+  dropRxnSymbols,
+  aidMap,
+  simpleObjectsSet
+) {
   return this.mergeInto(
     new Struct(),
     atomSet,
     bondSet,
     dropRxnSymbols,
     false,
-    aidMap
+    aidMap,
+    simpleObjectsSet
   )
 }
 
@@ -121,6 +129,7 @@ Struct.prototype.getFragment = function (fid) {
  * @param dropRxnSymbols { boolean? }
  * @param keepAllRGroups { boolean? }
  * @param aidMap { Map<number, number>? }
+ * @param simpleObjectsSet { Pile<number>? }
  * @returns { Struct }
  */
 Struct.prototype.mergeInto = function (
@@ -129,11 +138,13 @@ Struct.prototype.mergeInto = function (
   bondSet,
   dropRxnSymbols,
   keepAllRGroups,
-  aidMap
+  aidMap,
+  simpleObjectsSet
 ) {
   // eslint-disable-line max-params, max-statements
   atomSet = atomSet || new Pile(this.atoms.keys())
   bondSet = bondSet || new Pile(this.bonds.keys())
+  simpleObjectsSet = simpleObjectsSet || new Pile(this.simpleObjects.keys())
   aidMap = aidMap || new Map()
 
   bondSet = bondSet.filter(bid => {
@@ -211,6 +222,10 @@ Struct.prototype.mergeInto = function (
 
     if (sg.type === 'DAT') cp.sGroupForest.insert(sg, -1, [])
     else cp.sGroupForest.insert(sg)
+  })
+
+  simpleObjectsSet.forEach(soid => {
+    cp.simpleObjects.add(this.simpleObjects.get(soid).clone())
   })
 
   if (!dropRxnSymbols) {

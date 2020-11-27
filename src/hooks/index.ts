@@ -1,3 +1,4 @@
 import useSettingsContext from './useSettingsContext'
+import useFormContext from './useFormContext'
 
-export { useSettingsContext }
+export { useSettingsContext, useFormContext }

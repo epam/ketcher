@@ -94,6 +94,7 @@ class StructEditor extends Component {
       onMessage,
       onAromatizeStruct,
       onDearomatizeStruct,
+      onAttachEdit,
       ...props
     } = this.props
     return (

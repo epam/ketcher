@@ -54,6 +54,7 @@ class Open extends Component {
         params={this.props}
         buttons={[
           <OpenButton
+            key={structAcceptMimes().toString()}
             server={this.props.server}
             type={structAcceptMimes()}
             onLoad={s => this.changeStructStr(s)}>
@@ -63,13 +64,13 @@ class Open extends Component {
           'OK'
         ]}>
         <textarea
-          value={structStr}
+          value={structStr} //TODO: fix React warning
           onInput={ev => this.changeStructStr(ev.target.value)}
         />
         <label>
           <input
             type="checkbox"
-            checked={fragment}
+            checked={fragment} //TODO: fix React warning
             onClick={ev => this.changeFragment(ev.target)}
           />
           Load as a fragment and copy to the Clipboard

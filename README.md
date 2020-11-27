@@ -1,4 +1,6 @@
 # Ketcher
+[![npm version](https://img.shields.io/npm/v/ketcher-react)](https://www.npmjs.com/package/ketcher-react)
+[![Downloads](https://img.shields.io/npm/dm/ketcher-react)](https://www.npmjs.com/package/ketcher-react)
 
 Copyright (c) 2020 EPAM Systems, Inc
 

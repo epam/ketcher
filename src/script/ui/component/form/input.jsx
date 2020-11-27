@@ -17,8 +17,22 @@
 import React, { Component } from 'react'
 import { omit } from 'lodash'
 
-function GenericInput({ schema, value, onChange, type = 'text', ...props }) {
-  return <input type={type} value={value} onInput={onChange} {...props} />
+function GenericInput({
+  schema,
+  value = '',
+  onChange,
+  type = 'text',
+  ...props
+}) {
+  return (
+    <input
+      type={type}
+      value={value}
+      onInput={onChange}
+      onChange={onChange}
+      {...props}
+    />
+  )
 }
 
 GenericInput.val = function (ev, schema) {
@@ -38,8 +52,16 @@ function TextArea({ schema, value, onChange, ...props }) {
 
 TextArea.val = ev => ev.target.value
 
-function CheckBox({ schema, value, onChange, ...props }) {
-  return <input type="checkbox" checked={value} onClick={onChange} {...props} />
+function CheckBox({ schema, value = '', onChange, ...props }) {
+  return (
+    <input
+      type="checkbox"
+      checked={value}
+      onClick={onChange}
+      onChange={onChange}
+      {...props}
+    />
+  )
 }
 
 CheckBox.val = function (ev) {
@@ -52,7 +74,10 @@ function Select({ schema, value, selected, onSelect, ...props }) {
     <select onChange={onSelect} {...props}>
       {enumSchema(schema, (title, val) => (
         <option
+          key={val}
+          //TODO: Warning: Use the `defaultValue` or `value` props on <select> instead of setting `selected` on <option>
           selected={selected(val, value)}
+          //TODO: looks strange
           value={typeof val !== 'object' && val}>
           {title}
         </option>
@@ -83,11 +108,11 @@ function FieldSet({
   return (
     <fieldset onClick={onSelect} className="radio">
       {enumSchema(schema, (title, val) => (
-        <li>
+        <li key={title}>
           <label>
             <input
               type={type}
-              checked={selected(val, value)}
+              checked={selected(val, value)} //TODO: React warning defaultChecked
               value={typeof val !== 'object' && val}
               {...props}
             />

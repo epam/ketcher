@@ -83,7 +83,7 @@ class Dialog extends Component {
             </button>
           )}
         </header>
-        <div class="dialog-body">{children}</div>
+        <div className="dialog-body">{children}</div>
 
         <footer>
           {buttons.map(b =>
@@ -91,6 +91,7 @@ class Dialog extends Component {
               b
             ) : (
               <input
+                key={b}
                 type="button"
                 value={b}
                 disabled={b === 'OK' && !valid()}

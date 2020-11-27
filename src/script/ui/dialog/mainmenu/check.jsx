@@ -117,7 +117,7 @@ function ErrorsCheck(props) {
   const moleculeErrorsTypes = Object.keys(moleculeErrors)
 
   return (
-    <fieldset {...props}>
+    <fieldset>
       {moleculeErrorsTypes.length === 0 ? (
         <dt>No errors found</dt>
       ) : (

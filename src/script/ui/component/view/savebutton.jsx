@@ -18,13 +18,8 @@ import React, { Component } from 'react'
 import { saveAs } from 'file-saver'
 
 class SaveButton extends Component {
-  constructor({
-    filename = 'unnamed',
-    type = 'text/plain',
-    className = '',
-    ...props
-  }) {
-    super({ filename, type, className, ...props })
+  constructor(props) {
+    super(props)
     this.state = {}
     fileSaver(props.server).then(saver => {
       this.setState({ saver })
@@ -33,7 +28,14 @@ class SaveButton extends Component {
 
   save(ev) {
     const noop = () => null
-    const { filename, data, type, onSave = noop, onError = noop } = this.props
+    const {
+      filename = 'unnamed',
+      data,
+      className = '',
+      type = 'text/plain',
+      onSave = noop,
+      onError = noop
+    } = this.props
 
     if (this.state.saver && data) {
       try {
@@ -53,6 +55,7 @@ class SaveButton extends Component {
       filename,
       data,
       className = 'save-button',
+      onSave,
       ...props
     } = this.props
 

@@ -54,11 +54,13 @@ const actinides = element.filter(el => el && el.type === 'actinide')
 
 function Header() {
   return (
-    <tr>
-      {range(0, 19).map(i => (
-        <th>{i || ''}</th>
-      ))}
-    </tr>
+    <tbody>
+      <tr>
+        {range(0, 19).map(i => (
+          <th key={i}>{i || ''}</th>
+        ))}
+      </tr>
+    </tbody>
   )
 }
 
@@ -66,11 +68,11 @@ function TypeChoise({ value, onChange, ...props }) {
   return (
     <fieldset>
       {typeSchema.map(sc => (
-        <label>
+        <label key={sc.title}>
           <input
             type="radio"
             value={sc.value}
-            checked={sc.value === value}
+            checked={sc.value === value} //TODO: fix React Warning
             onClick={() => onChange(sc.value)}
             {...props}
           />
@@ -83,11 +85,39 @@ function TypeChoise({ value, onChange, ...props }) {
 
 function MainRow({ row, caption, refer, selected, onSelect, curEvents }) {
   return (
-    <tr>
-      <th>{caption}</th>
-      {row.map(el =>
-        typeof el !== 'number' ? ( // eslint-disable-line
-          <td>
+    <tbody>
+      <tr>
+        <th>{caption}</th>
+        {row.map(el =>
+          typeof el !== 'number' ? ( // eslint-disable-line
+            <td>
+              <Atom
+                el={el}
+                className={selected(el.label) ? 'selected' : ''}
+                onClick={() => onSelect(el.label)}
+                {...curEvents(el)}
+              />
+            </td>
+          ) : refer(el) ? (
+            <td className="ref">{refer(el)}</td>
+          ) : (
+            <td colSpan={el} />
+          )
+        )}
+      </tr>
+    </tbody>
+  )
+}
+
+function OutinerRow({ row, caption, selected, onSelect, curEvents }) {
+  return (
+    <tbody>
+      <tr>
+        <th colSpan="3" className="ref">
+          {caption}
+        </th>
+        {row.map(el => (
+          <td key={el.label}>
             <Atom
               el={el}
               className={selected(el.label) ? 'selected' : ''}
@@ -95,46 +125,22 @@ function MainRow({ row, caption, refer, selected, onSelect, curEvents }) {
               {...curEvents(el)}
             />
           </td>
-        ) : refer(el) ? (
-          <td className="ref">{refer(el)}</td>
-        ) : (
-          <td colSpan={el} />
-        )
-      )}
-    </tr>
-  )
-}
-
-function OutinerRow({ row, caption, selected, onSelect, curEvents }) {
-  return (
-    <tr>
-      <th colSpan="3" className="ref">
-        {caption}
-      </th>
-      {row.map(el => (
-        <td>
-          <Atom
-            el={el}
-            className={selected(el.label) ? 'selected' : ''}
-            onClick={() => onSelect(el.label)}
-            {...curEvents(el)}
-          />
-        </td>
-      ))}
-      <td />
-    </tr>
+        ))}
+        <td />
+      </tr>
+    </tbody>
   )
 }
 
 function AtomInfo({ el, isInfo }) {
   const numberStyle = {
     color: elementColor[el.label] || 'black',
-    'font-size': '1.2em'
+    fontSize: '1.2em'
   }
   const elemStyle = {
     color: elementColor[el.label] || 'black',
-    'font-weight': 'bold',
-    'font-size': '2em'
+    fontWeight: 'bold',
+    fontSize: '2em'
   }
   return (
     <div className={`ket-atom-info ${isInfo ? '' : 'none'}`}>
@@ -264,6 +270,7 @@ class ElementsTable extends Component {
         <Header />
         {main.map((row, i) => (
           <MainRow
+            key={i}
             row={row}
             caption={i + 1}
             refer={o => o === 1 && (i === 5 ? '*' : '**')}

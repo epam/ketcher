@@ -177,6 +177,7 @@ class TemplateLib extends Component {
         result={() => this.result()}
         buttons={[
           <SaveButton
+            key="save-to-SDF"
             data={sdf.stringify(this.props.lib)}
             filename="ketcher-tmpls.sdf">
             Save To SDF…

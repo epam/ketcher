@@ -30,7 +30,7 @@ function FrozenInput({ value }) {
     <input
       type="text"
       spellCheck={false}
-      value={value}
+      value={value} //TODO: fix React warning
       onKeyDown={ev => allowMovement(ev)}
     />
   )
@@ -45,7 +45,8 @@ function formulaInputMarkdown(value) {
       className="chem-input"
       spellCheck="false"
       contentEditable
-      onKeyDown={ev => allowMovement(ev)}>
+      onKeyDown={ev => allowMovement(ev)}
+      suppressContentEditableWarning={true}>
       {value}
     </div>
   )
@@ -61,7 +62,7 @@ function FormulaInput({ value }) {
   while ((cnd = formulaRegexp.exec(value)) !== null) {
     if (cnd[1].length > 0) content.push(<sup>{cnd[1]}</sup>)
     content.push(value.substring(pos, cnd.index) + cnd[2])
-    if (cnd[3].length > 0) content.push(<sub>{cnd[3]}</sub>)
+    if (cnd[3].length > 0) content.push(<sub key={cnd}>{cnd[3]}</sub>)
     pos = cnd.index + cnd[0].length
   }
 
@@ -100,7 +101,7 @@ class Analyse extends Component {
             },
             { name: 'Elemental Analysis', key: 'mass-composition' }
           ].map(item => (
-            <li>
+            <li key={item.key}>
               <label>{item.name}:</label>
               {item.key === 'gross' ? (
                 <FormulaInput value={values ? values[item.key] : 0} />

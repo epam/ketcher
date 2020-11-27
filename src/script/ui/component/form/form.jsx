@@ -52,7 +52,7 @@ class Form extends Component {
     const value = result[name]
     const self = this
     return {
-      dataError: (errors && errors[name]) || false,
+      dataError: errors && errors[name],
       value,
       onChange(val) {
         const newstate = Object.assign({}, self.props.result, { [name]: val })
@@ -63,7 +63,16 @@ class Form extends Component {
   }
 
   render() {
-    const { result, errors, init, children, schema, ...prop } = this.props
+    const {
+      result,
+      errors,
+      init,
+      children,
+      schema,
+      onUpdate,
+      customValid,
+      ...prop
+    } = this.props
 
     if (schema.key && schema.key !== this.schema.key) {
       this.schema = propSchema(schema, prop)
@@ -71,7 +80,9 @@ class Form extends Component {
       this.updateState(result)
     }
 
+    //TODO: change the layout of the form content (fix React warning: <form> cannot appear as a descendant of <form>)
     return (
+      //TODO: fix React Warning: Received `true` for a non-boolean attribute `valid`.
       <form {...prop}>
         <FormContext.Provider
           value={{ schema: this.props.schema, stateStore: this }}>

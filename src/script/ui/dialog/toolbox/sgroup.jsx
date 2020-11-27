@@ -49,8 +49,8 @@ const content = type =>
     .filter(prop => prop !== 'type')
     .map(prop => {
       const props = {}
-      if (prop === 'name') props.maxlength = 15
-      if (prop === 'fieldName') props.maxlength = 30
+      if (prop === 'name') props.maxLength = 15
+      if (prop === 'fieldName') props.maxLength = 30
       if (prop === 'fieldValue') props.type = 'textarea'
       if (prop === 'radiobuttons') props.type = 'radio'
 

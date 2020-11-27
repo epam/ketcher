@@ -82,7 +82,7 @@ function LabelEdit(props) {
         customValid={{ label: l => deserialize(l) }}
         init={init}
         {...formState}>
-        <Field name="label" maxlength="20" size="10" />
+        <Field name="label" maxLength="20" size="10" />
       </Form>
     </Dialog>
   )

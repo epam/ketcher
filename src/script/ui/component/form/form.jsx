@@ -21,9 +21,8 @@ import classNames from 'classnames'
 
 import Input from './input'
 import { updateFormState } from '../../state/modal/form'
-import { useContext } from 'react'
-
-const FormContext = React.createContext(null)
+import { FormContext } from './../../../../contexts'
+import { useFormContext } from './../../../../hooks'
 
 class Form extends Component {
   constructor(props) {
@@ -111,7 +110,7 @@ function Label({ labelPos, title, children, ...props }) {
 
 function Field(props) {
   const { name, onChange, component, labelPos, ...prop } = props
-  const { schema, stateStore } = useContext(FormContext)
+  const { schema, stateStore } = useFormContext()
   const desc = prop.schema || schema.properties[name]
   const { dataError, ...fieldOpts } = stateStore.field(name, onChange)
   const Component = component

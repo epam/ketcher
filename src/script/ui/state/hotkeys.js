@@ -27,17 +27,16 @@ import { openDialog } from './modal'
 import { onAction, load } from './shared'
 
 export function initKeydownListener(element) {
-  return function (dispatch) {
+  return function (dispatch, getState) {
     const hotKeys = initHotKeys()
     element.addEventListener('keydown', event =>
-      keyHandle(dispatch, global.currentState, hotKeys, event)
+      keyHandle(dispatch, getState(), hotKeys, event)
     )
   }
 }
 
 /* HotKeys */
 function keyHandle(dispatch, state, hotKeys, event) {
-  //const state = global.currentState
   if (state.modal) return
 
   const editor = state.editor

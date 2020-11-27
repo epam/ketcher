@@ -374,7 +374,9 @@ Editor.prototype.structSelected = function () {
   const dst = struct.clone(
     new Pile(selection.atoms),
     new Pile(selection.bonds),
-    true
+    true,
+    null,
+    new Pile(selection.simpleObjects)
   )
 
   // Copy by its own as Struct.clone doesn't support

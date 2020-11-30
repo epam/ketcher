@@ -313,10 +313,19 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
         (dir == 1 && vIdx == bond.begin)
       )
         this.smiles += '\\'
-      else if (bond.type == Bond.PATTERN.TYPE.ANY) this.smiles += '~'
-      else if (bond.type == Bond.PATTERN.TYPE.DOUBLE) this.smiles += '='
-      else if (bond.type == Bond.PATTERN.TYPE.TRIPLE) this.smiles += '#'
-      else if (
+      else if (bond.type == Bond.PATTERN.TYPE.ANY) {
+        this.smiles += '~'
+      } else if (bond.type == Bond.PATTERN.TYPE.DOUBLE) {
+        this.smiles += '='
+      } else if (bond.type == Bond.PATTERN.TYPE.TRIPLE) {
+        this.smiles += '#'
+      } else if (bond.type == Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
+        this.smiles += '-,:'
+      } else if (bond.type == Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
+        this.smiles += '=,:'
+      } else if (bond.type == Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE) {
+        this.smiles += '-,='
+      } else if (
         bond.type == Bond.PATTERN.TYPE.AROMATIC &&
         (!this.atoms[bond.begin].lowercase ||
           !this.atoms[bond.end].lowercase ||

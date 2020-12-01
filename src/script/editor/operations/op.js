@@ -952,10 +952,10 @@ function SimpleObjectAdd(pos, mode) {
       new ReSimpleObject(struct.simpleObjects.get(this.data.id))
     )
 
-    struct.simpleObjectSetPos(this.data.id, [
-      new Vec2(this.data.pos[0]),
-      new Vec2(this.data.pos[1])
-    ])
+    struct.simpleObjectSetPos(
+      this.data.id,
+      this.data.pos.map(p => new Vec2(p))
+    )
 
     invalidateItem(restruct, 'simpleObjects', this.data.id, 1)
   }
@@ -1003,8 +1003,7 @@ function SimpleObjectMove(id, d, noinvalidate) {
     const id = this.data.id
     const d = this.data.d
     const item = struct.simpleObjects.get(id)
-    item.pos[0].add_(d)
-    item.pos[1].add_(d)
+    item.pos.forEach(p => p.add_(d))
     restruct.simpleObjects
       .get(id)
       .visel.translate(scale.obj2scaled(d, restruct.render.options))
@@ -1028,13 +1027,8 @@ function SimpleObjectResize(id, d, noinvalidate) {
     const id = this.data.id
     const d = this.data.d
     const item = struct.simpleObjects.get(id)
-    if (!item.pos) {
-      item.pos = new Array()
-    }
 
-    item.pos[0] = item.pos[0] || new Vec2()
-    item.pos[1] = item.pos[1] || new Vec2()
-
+    //JA: TODO
     if (d) item.pos[1].add_(d)
     restruct.simpleObjects
       .get(id)

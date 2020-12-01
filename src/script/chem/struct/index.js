@@ -444,8 +444,7 @@ Struct.prototype.rxnArrowSetPos = function (id, pp) {
 
 Struct.prototype.simpleObjectSetPos = function (id, pos) {
   const item = this.simpleObjects.get(id)
-  item.pos[0] = pos[0]
-  item.pos[1] = pos[1]
+  item.pos = pos
 }
 
 /**

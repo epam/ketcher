@@ -66,12 +66,9 @@ ReSimpleObject.prototype.show = function (restruct, id, options) {
   const render = restruct.render
 
   const pos = []
-  pos[0] = this.item.pos[0]
-    ? scale.obj2scaled(this.item.pos[0], options)
-    : new Vec2()
-  pos[1] = this.item.pos[1]
-    ? scale.obj2scaled(this.item.pos[1], options)
-    : new Vec2()
+  this.item.pos.forEach((p, index) => {
+    pos[index] = scale.obj2scaled(p, options) || new Vec2()
+  })
 
   let path = null
   switch (this.item.mode) {
@@ -81,6 +78,10 @@ ReSimpleObject.prototype.show = function (restruct, id, options) {
     }
     case 'polyline': {
       path = draw.polyline(render.paper, pos, options)
+      break
+    }
+    case 'line': {
+      path = draw.line(render.paper, pos, options)
       break
     }
     default: {

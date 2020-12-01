@@ -39,6 +39,12 @@ function circle(paper, pos, options) {
 
 function polyline(paper, pos, options) {
   let path = ['M', pos[0].x, pos[0].y]
+  for (let i = 1; i < pos.length; i++) path.push('L', pos[i].x, pos[i].y)
+  return paper.path(path)
+}
+
+function line(paper, pos, options) {
+  let path = ['M', pos[0].x, pos[0].y]
   path.push('L', pos[1].x, pos[1].y)
   return paper.path(path)
 }
@@ -404,5 +410,6 @@ export default {
   selectionLine,
   circle,
   rectangle,
-  polyline
+  polyline,
+  line
 }

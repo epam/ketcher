@@ -60,7 +60,7 @@ function Atom(props) {
           <Field name="label" />
           <Field name="alias" />
           <ElementNumber label={prop.label} />
-          <Field name="charge" maxlength="5" />
+          <Field name="charge" maxLength="5" />
           <Field name="explicitValence" />
           <Field name="isotope" />
           <Field name="radical" />

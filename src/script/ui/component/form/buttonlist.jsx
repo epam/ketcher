@@ -28,7 +28,7 @@ function ButtonList({ value, onChange, schema, disabledIds, multiple }) {
       {schema.items.enum.map((item, i) => {
         className = value.includes(item) ? 'selected' : ''
         return (
-          <li>
+          <li key={item}>
             <button
               disabled={disabledIds.includes(item)}
               type="button"

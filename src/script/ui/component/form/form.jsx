@@ -21,9 +21,8 @@ import classNames from 'classnames'
 
 import Input from './input'
 import { updateFormState } from '../../state/modal/form'
-import { useContext } from 'react'
-
-const FormContext = React.createContext(null)
+import { FormContext } from './../../../../contexts'
+import { useFormContext } from './../../../../hooks'
 
 class Form extends Component {
   constructor(props) {
@@ -52,7 +51,7 @@ class Form extends Component {
     const value = result[name]
     const self = this
     return {
-      dataError: (errors && errors[name]) || false,
+      dataError: errors && errors[name],
       value,
       onChange(val) {
         const newstate = Object.assign({}, self.props.result, { [name]: val })
@@ -63,7 +62,16 @@ class Form extends Component {
   }
 
   render() {
-    const { result, errors, init, children, schema, ...prop } = this.props
+    const {
+      result,
+      errors,
+      init,
+      children,
+      schema,
+      onUpdate,
+      customValid,
+      ...prop
+    } = this.props
 
     if (schema.key && schema.key !== this.schema.key) {
       this.schema = propSchema(schema, prop)
@@ -71,7 +79,9 @@ class Form extends Component {
       this.updateState(result)
     }
 
+    //TODO: change the layout of the form content (fix React warning: <form> cannot appear as a descendant of <form>)
     return (
+      //TODO: fix React Warning: Received `true` for a non-boolean attribute `valid`.
       <form {...prop}>
         <FormContext.Provider
           value={{ schema: this.props.schema, stateStore: this }}>
@@ -100,7 +110,7 @@ function Label({ labelPos, title, children, ...props }) {
 
 function Field(props) {
   const { name, onChange, component, labelPos, ...prop } = props
-  const { schema, stateStore } = useContext(FormContext)
+  const { schema, stateStore } = useFormContext()
   const desc = prop.schema || schema.properties[name]
   const { dataError, ...fieldOpts } = stateStore.field(name, onChange)
   const Component = component

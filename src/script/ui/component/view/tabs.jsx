@@ -24,6 +24,7 @@ class Tabs extends Component {
     this.props.changeTab(this.state.tabIndex)
   }
 
+  //TODO: refactor the component
   changeTab(ev, index) {
     this.setState({ tabIndex: index })
     if (this.props.changeTab) this.props.changeTab(index)
@@ -39,6 +40,7 @@ class Tabs extends Component {
         <li className="tabs">
           {tabs.map((tabPanel, index) => (
             <a // eslint-disable-line
+              key={index}
               className={this.state.tabIndex === index ? 'active' : ''}
               onClick={ev => this.changeTab(ev, index)}>
               {tabPanel.caption}

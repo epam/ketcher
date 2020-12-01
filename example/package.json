@@ -13,7 +13,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@ketcher/react": "link:..",
+    "ketcher-react": "link:..",
     "react": "link:../node_modules/react",
     "react-dom": "link:../node_modules/react-dom"
   },

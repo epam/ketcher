@@ -20,10 +20,11 @@ import { connect } from 'react-redux'
 import { rgroupLogic as rgroupSchema } from '../../data/schema/struct-schema'
 import Form, { Field } from '../../component/form/form'
 import Dialog from '../../component/dialog'
+import { useFormContext } from './../../../../hooks'
 
-function IfThenSelect(props, { schema }) {
+function IfThenSelect(props) {
   const { name, rgids } = props
-
+  const { schema } = useFormContext()
   const desc = {
     title: schema.properties[name].title,
     enum: [0],

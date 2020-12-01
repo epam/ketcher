@@ -31,18 +31,8 @@ ReSimpleObject.isSelectable = function () {
   return true
 }
 
-ReSimpleObject.prototype.center = function () {
-  switch (this.item.mode) {
-    case 'rectangle': {
-      return Vec2.centre(this.item.pos[0], this.item.pos[1])
-    }
-    default:
-      return this.item.pos[0]
-  }
-}
-
 ReSimpleObject.prototype.highlightPath = function (render) {
-  var p = scale.obj2scaled(this.center(), render.options)
+  var p = scale.obj2scaled(this.item.center(), render.options)
   var s = render.options.scale
   return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8)
 }

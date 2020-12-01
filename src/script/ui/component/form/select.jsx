@@ -16,11 +16,20 @@
 
 import React from 'react'
 
-function SelectList({ schema, value, onSelect, splitIndexes, ...props }) {
+function SelectList({
+  schema,
+  value,
+  onSelect,
+  splitIndexes,
+  selected,
+  component,
+  ...props
+}) {
   return (
     <ul {...props}>
       {schema.enum.map((opt, index) => (
         <li
+          key={opt}
           onClick={() => onSelect(opt, index)}
           className={
             (opt === value ? 'selected ' : '') +

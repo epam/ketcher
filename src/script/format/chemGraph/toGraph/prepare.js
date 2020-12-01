@@ -70,11 +70,10 @@ export function prepareStructForGraph(struct) {
   struct.simpleObjects.forEach(item => {
     graphNodes.push({
       type: 'simpleObject',
-      center: item.p0,
+      center: item.pos[0],
       data: {
         mode: item.mode,
-        p0: item.p0,
-        p1: item.p1
+        pos: item.pos
       }
     })
   })

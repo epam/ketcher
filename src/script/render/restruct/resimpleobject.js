@@ -34,10 +34,10 @@ ReSimpleObject.isSelectable = function () {
 ReSimpleObject.prototype.center = function () {
   switch (this.item.mode) {
     case 'rectangle': {
-      return Vec2.centre(this.item.p0, this.item.p1)
+      return Vec2.centre(this.item.pos[0], this.item.pos[1])
     }
     default:
-      return this.item.p0
+      return this.item.pos[0]
   }
 }
 
@@ -64,16 +64,27 @@ ReSimpleObject.prototype.makeSelectionPlate = function (
 
 ReSimpleObject.prototype.show = function (restruct, id, options) {
   const render = restruct.render
-  const p0 = scale.obj2scaled(this.item.p0, options)
-  const p1 = scale.obj2scaled(this.item.p1, options)
+
+  const pos = []
+  pos[0] = this.item.pos[0]
+    ? scale.obj2scaled(this.item.pos[0], options)
+    : new Vec2()
+  pos[1] = this.item.pos[1]
+    ? scale.obj2scaled(this.item.pos[1], options)
+    : new Vec2()
+
   let path = null
   switch (this.item.mode) {
     case 'circle': {
-      path = draw.circle(render.paper, p0, p1, options)
+      path = draw.circle(render.paper, pos, options)
+      break
+    }
+    case 'polyline': {
+      path = draw.polyline(render.paper, pos, options)
       break
     }
     default: {
-      path = draw.rectangle(render.paper, p0, p1, options)
+      path = draw.rectangle(render.paper, pos, options)
       break
     }
   }

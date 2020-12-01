@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import Vec2 from './vec2'
+
 function scaled2obj(v, options) {
   return v.scaled(1 / options.scale)
 }

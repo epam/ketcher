@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 1000 1000">
+  <path d="M100 110 L300 800 L380 100 L520 800 L700 900 L900 50" fill = "white" stroke = "black" stroke-width = "24"/>
+</svg>

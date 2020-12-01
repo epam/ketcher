@@ -34,32 +34,25 @@ const schema = {
         mode: {
           type: 'string'
         },
-        p0: {
-          type: 'object',
-          properties: {
-            x: {
-              type: 'integer'
-            },
-            y: {
-              type: 'integer'
+        pos: {
+          type: 'array',
+          items: [
+            {
+              type: 'object',
+              properties: {
+                x: {
+                  type: 'integer'
+                },
+                y: {
+                  type: 'integer'
+                }
+              },
+              required: ['x', 'y']
             }
-          },
-          required: ['x', 'y']
-        },
-        p1: {
-          type: 'object',
-          properties: {
-            x: {
-              type: 'integer'
-            },
-            y: {
-              type: 'integer'
-            }
-          },
-          required: ['x', 'y']
+          ]
         }
       },
-      required: ['type', 'mode', 'p0', 'p1']
+      required: ['type', 'mode', 'pos']
     }
   }
 }

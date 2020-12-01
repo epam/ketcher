@@ -97,7 +97,10 @@ Box2Abs.prototype.translate = function (d) {
  */
 Box2Abs.prototype.transform = function (f, options) {
   console.assert(!!f)
-  return new Box2Abs(f(this.p0, options), f(this.p1, options))
+  return new Box2Abs(
+    f(this.p0 || this.pos[0], options),
+    f(this.p1 || this.pos[1], options)
+  )
 }
 
 Box2Abs.prototype.sz = function () {

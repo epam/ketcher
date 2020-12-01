@@ -32,6 +32,8 @@ SimpleObjectTool.prototype.mousedown = function (event) {
   var rnd = this.editor.render
   const p0 = rnd.page2obj(event)
   this.dragCtx = { p0 }
+
+  console.log('-------p0 = ' + p0)
   var ci = this.editor.findItem(event, ['simpleObjects'])
   if (ci && ci.map === 'simpleObjects') {
     this.editor.hover(null)
@@ -59,8 +61,7 @@ SimpleObjectTool.prototype.mousemove = function (event) {
       if (!this.dragCtx.action) {
         const action = fromSimpleObjectAddition(
           rnd.ctab,
-          previous,
-          previous,
+          [previous, previous],
           this.mode
         )
         //TODO: need to rework  actions/operations logic

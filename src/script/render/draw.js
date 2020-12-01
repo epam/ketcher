@@ -20,18 +20,27 @@ import Raphael from '../raphael-ext'
 
 const tfx = util.tfx
 
-function rectangle(paper, p0, p1, options) {
+function rectangle(paper, pos, options) {
   return paper.rect(
-    tfx(Math.min(p0.x, p1.x)),
-    tfx(Math.min(p0.y, p1.y)),
-    tfx(Math.abs(p1.x - p0.x)),
-    tfx(Math.abs(p1.y - p0.y))
+    tfx(Math.min(pos[0].x, pos[1].x)),
+    tfx(Math.min(pos[0].y, pos[1].y)),
+    tfx(Math.abs(pos[1].x - pos[0].x)),
+    tfx(Math.abs(pos[1].y - pos[0].y))
   )
 }
 
-function circle(paper, p0, p1, options) {
-  let rad = Math.sqrt(Math.pow(p0.x - p1.x, 2), Math.pow(p0.y - p1.y, 2))
-  return paper.circle(p0.x, p0.y, rad)
+function circle(paper, pos, options) {
+  let rad = Math.sqrt(
+    Math.pow(pos[0].x - pos[1].x, 2),
+    Math.pow(pos[0].y - pos[1].y, 2)
+  )
+  return paper.circle(pos[0].x, pos[0].y, rad)
+}
+
+function polyline(paper, pos, options) {
+  let path = ['M', pos[0].x, pos[0].y]
+  path.push('L', pos[1].x, pos[1].y)
+  return paper.path(path)
 }
 
 function arrow(paper, a, b, options) {
@@ -394,5 +403,6 @@ export default {
   selectionPolygon,
   selectionLine,
   circle,
-  rectangle
+  rectangle,
+  polyline
 }

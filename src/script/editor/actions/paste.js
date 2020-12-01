@@ -107,6 +107,16 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
     action.addOp(new op.RxnPlusAdd(plus.pp.add(offset)).perform(restruct))
   })
 
+  pstruct.simpleObjects.forEach(simpleObject => {
+    action.addOp(
+      new op.SimpleObjectAdd(
+        simpleObject.p0.add(offset),
+        simpleObject.p1.add(offset),
+        simpleObject.mode
+      ).perform(restruct)
+    )
+  })
+
   pstruct.rgroups.forEach((rg, rgid) => {
     rg.frags.forEach((frag, frid) => {
       action.addOp(
@@ -141,6 +151,7 @@ function getStructCenter(struct) {
   }
   if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0).pp
   if (struct.rxnPluses.size > 0) return struct.rxnPluses.get(0).pp
+  if (struct.simpleObjects.size > 0) return struct.simpleObjects.get(0).center()
 
   return null
 }

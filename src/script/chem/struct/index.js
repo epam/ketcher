@@ -1060,10 +1060,10 @@ SimpleObject.prototype.clone = function () {
 SimpleObject.prototype.center = function () {
   switch (this.mode) {
     case 'rectangle': {
-      return Vec2.centre(this.p0, this.p1)
+      return Vec2.centre(this.pos[0], this.pos[1])
     }
     default:
-      return this.p0
+      return this.pos[0]
   }
 }
 

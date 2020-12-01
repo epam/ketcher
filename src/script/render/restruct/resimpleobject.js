@@ -21,6 +21,8 @@ import util from '../util'
 import scale from '../../util/scale'
 import Vec2 from 'src/script/util/vec2'
 
+const tfx = util.tfx
+
 function ReSimpleObject(simpleObject) {
   this.init('simpleObject')
 
@@ -32,13 +34,65 @@ ReSimpleObject.isSelectable = function () {
 }
 
 ReSimpleObject.prototype.highlightPath = function (render) {
-  var p = scale.obj2scaled(this.item.center(), render.options)
-  var s = render.options.scale
-  return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8)
+  // var p = scale.obj2scaled(this.item.center(), render.options)
+  // var s = render.options.scale
+  // return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8)
+
+  const point = []
+  this.item.pos.forEach((p, index) => {
+    point[index] = scale.obj2scaled(p, render.options)
+  })
+  const s = render.options.scale
+
+  const lineWidth = tfx(s / 2)
+  let path = ['M', point[0].x, point[0].y]
+
+  switch (this.item.mode) {
+    case 'circle': {
+      let rad = Math.sqrt(
+        Math.pow(point[0].x - point[1].x, 2),
+        Math.pow(point[0].y - point[1].y, 2)
+      )
+      return render.paper
+        .circle(point[0].x, point[0].y, rad)
+        .attr({
+          stroke: 'blue',
+          'stroke-dasharray': '- ',
+          'stroke-width': lineWidth
+        })
+    }
+    case 'rectangle': {
+      render.paper
+        .rect(
+          tfx(Math.min(point[0].x, point[1].x)),
+          tfx(Math.min(point[0].y, point[1].y)),
+          tfx(Math.abs(point[1].x - point[0].x)),
+          tfx(Math.abs(point[1].y - point[0].y))
+        )
+        .attr({
+          stroke: 'blue',
+          'stroke-dasharray': '- ',
+          'stroke-width': lineWidth
+        })
+    }
+
+    default: {
+      for (let i = 1; i < point.length; i++)
+        path.push('L', point[i].x, point[i].y)
+      return render.paper
+        .path(path)
+        .attr({
+          stroke: 'blue',
+          'stroke-dasharray': '- ',
+          'stroke-width': lineWidth
+        })
+    }
+  }
 }
 
 ReSimpleObject.prototype.drawHighlight = function (render) {
-  var ret = this.highlightPath(render).attr(render.options.highlightStyle)
+  //var ret = this.highlightPath(render).attr(render.options.highlightStyle)
+  var ret = this.highlightPath(render)
   render.ctab.addReObjectPath('highlighting', this.visel, ret)
   return ret
 }

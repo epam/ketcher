@@ -1054,6 +1054,16 @@ SimpleObject.prototype.clone = function () {
   return new SimpleObject(this)
 }
 
+SimpleObject.prototype.center = function () {
+  switch (this.mode) {
+    case 'rectangle': {
+      return Vec2.centre(this.p0, this.p1)
+    }
+    default:
+      return this.p0
+  }
+}
+
 function RxnArrow(params) {
   params = params || {}
   this.pp = params.pp ? new Vec2(params.pp) : new Vec2()

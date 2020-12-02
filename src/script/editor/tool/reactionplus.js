@@ -50,15 +50,22 @@ ReactionPlusTool.prototype.mousemove = function (event) {
 }
 
 ReactionPlusTool.prototype.mouseup = function () {
-  if (this.dragCtx) {
+  if (!this.dragCtx) return true
+
+  if (this.dragCtx.action) {
     this.editor.update(this.dragCtx.action) // TODO investigate, subsequent undo/redo fails
-    delete this.dragCtx
   }
+
+  delete this.dragCtx
+  return true
 }
 
 ReactionPlusTool.prototype.click = function (event) {
   const rnd = this.editor.render
-  this.editor.update(fromPlusAddition(rnd.ctab, rnd.page2obj(event)))
+  const ci = this.editor.findItem(event, ['rxnPluses'])
+  if (!ci) {
+    this.editor.update(fromPlusAddition(rnd.ctab, rnd.page2obj(event)))
+  }
 }
 
 export default ReactionPlusTool

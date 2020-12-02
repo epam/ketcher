@@ -119,7 +119,11 @@ function EnhancedFlagMove(frid, p) {
         .getCoordBoundingBox()
       this.data.p = new Vec2(bb.max.x, bb.min.y - 1)
     }
-    restruct.enhancedFlags.get(this.data.frid).pp.add_(this.data.p)
+    const enhancedFlag = restruct.enhancedFlags.get(this.data.frid)
+    if (enhancedFlag?.pp) {
+      enhancedFlag.pp.add_(this.data.p)
+    }
+
     this.data.p = this.data.p.negated()
     invalidateItem(restruct, 'enhancedFlags', this.data.frid, 1)
   }

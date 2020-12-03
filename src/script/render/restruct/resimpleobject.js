@@ -103,8 +103,8 @@ ReSimpleObject.prototype.highlightPath = function (render) {
     case 'circle': {
       const rad = Vec2.dist(point[0], point[1])
       path.push(
-        render.paper.circle(point[0].x, point[0].y, rad + s / 4),
-        render.paper.circle(point[0].x, point[0].y, rad - s / 4)
+        render.paper.circle(point[0].x, point[0].y, rad + s / 8),
+        render.paper.circle(point[0].x, point[0].y, rad - s / 8)
       )
       break
     }
@@ -112,34 +112,34 @@ ReSimpleObject.prototype.highlightPath = function (render) {
     case 'rectangle': {
       path.push(
         render.paper.rect(
-          tfx(Math.min(point[0].x, point[1].x) - s / 4),
-          tfx(Math.min(point[0].y, point[1].y) - s / 4),
+          tfx(Math.min(point[0].x, point[1].x) - s / 8),
+          tfx(Math.min(point[0].y, point[1].y) - s / 8),
           tfx(
             Math.max(point[0].x, point[1].x) -
               Math.min(point[0].x, point[1].x) +
-              s / 2
+              s / 4
           ),
           tfx(
             Math.max(point[0].y, point[1].y) -
               Math.min(point[0].y, point[1].y) +
-              s / 2
+              s / 4
           )
         )
       )
 
       path.push(
         render.paper.rect(
-          tfx(Math.min(point[0].x, point[1].x) + s / 4),
-          tfx(Math.min(point[0].y, point[1].y) + s / 4),
+          tfx(Math.min(point[0].x, point[1].x) + s / 8),
+          tfx(Math.min(point[0].y, point[1].y) + s / 8),
           tfx(
             Math.max(point[0].x, point[1].x) -
               Math.min(point[0].x, point[1].x) -
-              s / 2
+              s / 4
           ),
           tfx(
             Math.max(point[0].y, point[1].y) -
               Math.min(point[0].y, point[1].y) -
-              s / 2
+              s / 4
           )
         )
       )
@@ -159,35 +159,35 @@ ReSimpleObject.prototype.highlightPath = function (render) {
 
       const k = point[0].x > point[1].x ? -1 : 1
 
-      p0.x = point[0].x - k * ((s / 4) * Math.cos(angle))
-      p0.y = point[0].y - k * ((s / 4) * Math.sin(angle))
-      p1.x = point[1].x + k * ((s / 4) * Math.cos(angle))
-      p1.y = point[1].y + k * ((s / 4) * Math.sin(angle))
+      p0.x = point[0].x - k * ((s / 8) * Math.cos(angle))
+      p0.y = point[0].y - k * ((s / 8) * Math.sin(angle))
+      p1.x = point[1].x + k * ((s / 8) * Math.cos(angle))
+      p1.y = point[1].y + k * ((s / 8) * Math.sin(angle))
 
       poly.push(
         'M',
-        p0.x + ((k * s) / 4) * Math.sin(angle),
-        p0.y - ((k * s) / 4) * Math.cos(angle)
+        p0.x + ((k * s) / 8) * Math.sin(angle),
+        p0.y - ((k * s) / 8) * Math.cos(angle)
       )
       poly.push(
         'L',
-        p1.x + ((k * s) / 4) * Math.sin(angle),
-        p1.y - ((k * s) / 4) * Math.cos(angle)
+        p1.x + ((k * s) / 8) * Math.sin(angle),
+        p1.y - ((k * s) / 8) * Math.cos(angle)
       )
       poly.push(
         'L',
-        p1.x - ((k * s) / 4) * Math.sin(angle),
-        p1.y + ((k * s) / 4) * Math.cos(angle)
+        p1.x - ((k * s) / 8) * Math.sin(angle),
+        p1.y + ((k * s) / 8) * Math.cos(angle)
       )
       poly.push(
         'L',
-        p0.x - ((k * s) / 4) * Math.sin(angle),
-        p0.y + ((k * s) / 4) * Math.cos(angle)
+        p0.x - ((k * s) / 8) * Math.sin(angle),
+        p0.y + ((k * s) / 8) * Math.cos(angle)
       )
       poly.push(
         'L',
-        p0.x + ((k * s) / 4) * Math.sin(angle),
-        p0.y - ((k * s) / 4) * Math.cos(angle)
+        p0.x + ((k * s) / 8) * Math.sin(angle),
+        p0.y - ((k * s) / 8) * Math.cos(angle)
       )
 
       path.push(render.paper.path(poly))

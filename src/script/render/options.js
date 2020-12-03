@@ -88,7 +88,7 @@ function defaultOptions(opt) {
     },
     highlightStyleSimpleObject: {
       stroke: '#0c0',
-      'stroke-width': scaleFactor / 2,
+      'stroke-width': scaleFactor / 4,
       'stroke-linecap': 'round',
       'stroke-opacity': 0.6
     },

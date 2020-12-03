@@ -16,7 +16,8 @@
 import { fromMultipleMove } from '../actions/fragment'
 import {
   fromSimpleObjectAddition,
-  fromSimpleObjectResizing
+  fromSimpleObjectResizing,
+  fromSimpleObjectDeletion
 } from '../actions/simpleobject'
 
 function SimpleObjectTool(editor, mode) {
@@ -39,17 +40,18 @@ SimpleObjectTool.prototype.mousedown = function (event) {
     this.editor.selection({ simpleObjects: [ci.id] })
     this.dragCtx.ci = ci
   } else {
+    this.dragCtx.isNew = true
   }
 }
 
 SimpleObjectTool.prototype.mousemove = function (event) {
   var rnd = this.editor.render
   if (this.dragCtx) {
-    const previous = this.dragCtx.p0
     const current = rnd.page2obj(event)
-    const diff = current.sub(previous)
-    this.dragCtx.p0 = current
+    const diff = current.sub(this.dragCtx.p0)
+    this.dragCtx.previous = current
     if (this.dragCtx.ci) {
+      if (this.dragCtx.action) this.dragCtx.action.perform(rnd.ctab)
       this.dragCtx.action = fromMultipleMove(
         rnd.ctab,
         this.editor.selection() || {},
@@ -60,7 +62,7 @@ SimpleObjectTool.prototype.mousemove = function (event) {
       if (!this.dragCtx.action) {
         const action = fromSimpleObjectAddition(
           rnd.ctab,
-          [previous, previous],
+          [this.dragCtx.p0, this.dragCtx.p0],
           this.mode
         )
         //TODO: need to rework  actions/operations logic
@@ -69,6 +71,8 @@ SimpleObjectTool.prototype.mousemove = function (event) {
         this.dragCtx.itemId = itemId
         this.dragCtx.action = action
         this.editor.update(this.dragCtx.action, true)
+      } else {
+        this.dragCtx.action.perform(rnd.ctab)
       }
 
       this.dragCtx.action = fromSimpleObjectResizing(
@@ -85,8 +89,24 @@ SimpleObjectTool.prototype.mousemove = function (event) {
 
 SimpleObjectTool.prototype.mouseup = function (event) {
   if (!this.dragCtx) return true
-  delete this.dragCtx
 
+  if (this.dragCtx.action) {
+    if (this.dragCtx.isNew) {
+      const rnd = this.editor.render
+      this.editor.update(
+        fromSimpleObjectDeletion(rnd.ctab, this.dragCtx.itemId),
+        true
+      )
+      this.dragCtx.action = fromSimpleObjectAddition(
+        rnd.ctab,
+        [this.dragCtx.p0, this.dragCtx.previous],
+        this.mode
+      )
+    }
+    this.editor.update(this.dragCtx.action)
+  }
+
+  delete this.dragCtx
   return true
 }
 

@@ -124,10 +124,6 @@ const toolActions = {
   'shape-line': {
     title: 'Shape Line',
     action: { tool: 'simpleobject', opts: 'line' }
-  },
-  'shape-polyline': {
-    title: 'Shape Polyline',
-    action: { tool: 'simpleobject', opts: 'polyline' }
   }
 }
 

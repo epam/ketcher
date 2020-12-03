@@ -125,7 +125,7 @@ const toolbox = [
   },
   {
     id: 'shape',
-    menu: ['shape-circle', 'shape-rectangle', 'shape-line', 'shape-polyline']
+    menu: ['shape-circle', 'shape-rectangle', 'shape-line']
   }
 ]
 

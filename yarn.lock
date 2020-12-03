@@ -4666,6 +4666,11 @@ electron-to-chromium@^1.3.378, electron-to-chromium@^1.3.591:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.597.tgz#0d30fd4c0f5437149c28a6044c4e119357ae56aa"
   integrity sha512-VJI21MucKaqyFw0oe3j9BIg+nDF4MHzUZAmUwZzrxho+s8zPCD13Fds07Rgu+MTtAadO4tYTKFdAUksKYUyIJw==
 
+element-closest-polyfill@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/element-closest-polyfill/-/element-closest-polyfill-1.0.2.tgz#272c217d60effe76a0509a911cde5fcdd78da5a6"
+  integrity sha512-+3cNhtv8YIyk/oDSlBv+zqUjQFcF9puLp4TFIk2w0Gqd6IL2uZnnu0jvDdOaI7dsK1bIA9gG69KIvkEyUFVGRg==
+
 elliptic@^6.5.3:
   version "6.5.3"
   resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.3.tgz#cb59eb2efdaf73a0bd78ccd7015a62ad6e0f93d6"

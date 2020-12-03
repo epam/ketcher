@@ -1,4 +1,7 @@
+import 'regenerator-runtime/runtime'
+import 'whatwg-fetch'
 import React, { useEffect, useRef } from 'react'
+import 'element-closest-polyfill'
 import 'url-search-params-polyfill'
 import init from './script'
 import './index.less'

@@ -13,11 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import 'core-js/stable'
-import 'regenerator-runtime/runtime'
-import 'whatwg-fetch'
-
 import api from './api'
 import molfile from './chem/molfile'
 import smiles from './chem/smiles'

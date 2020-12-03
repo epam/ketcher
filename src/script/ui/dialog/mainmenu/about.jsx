@@ -21,10 +21,13 @@ import Dialog from '../../component/dialog'
 
 function About(props) {
   const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info
-  console.log(props)
+
   return (
     <Dialog title="About" className="about" params={props} buttons={['Close']}>
-      <a href="http://lifescience.opensource.epam.com/ketcher/" target="_blank">
+      <a
+        href="http://lifescience.opensource.epam.com/ketcher/"
+        target="_blank"
+        rel="noopener noreferrer">
         <Logo />
       </a>
       <dl>
@@ -40,19 +43,16 @@ function About(props) {
           version
           <var>{props.version}</var>
         </dd>
-        {props.buildNumber ? (
-          <dd>
-            build #<var>{props.buildNumber}</var>
-            {' at '}
-            <time>{props.buildDate}</time>
-          </dd>
-        ) : null}
+        <dd>
+          build at <time>{props.buildDate}</time>
+        </dd>
         {props.indigoVersion ? (
           <div>
             <dt>
               <a
                 href="http://lifescience.opensource.epam.com/indigo/"
-                target="_blank">
+                target="_blank"
+                rel="noopener noreferrer">
                 Indigo Toolkit
               </a>
             </dt>
@@ -68,14 +68,18 @@ function About(props) {
           <dd>standalone</dd>
         )}
         <dt>
-          <a href="http://lifescience.opensource.epam.com/" target="_blank">
+          <a
+            href="http://lifescience.opensource.epam.com/"
+            target="_blank"
+            rel="noopener noreferrer">
             EPAM Life Sciences
           </a>
         </dt>
         <dd>
           <a
             href="http://lifescience.opensource.epam.com/ketcher/#feedback"
-            target="_blank">
+            target="_blank"
+            rel="noopener noreferrer">
             Feedback
           </a>
         </dd>

@@ -120,6 +120,10 @@ const toolActions = {
   'shape-rectangle': {
     title: 'Shape Rectangle',
     action: { tool: 'simpleobject', opts: 'rectangle' }
+  },
+  'shape-line': {
+    title: 'Shape Line',
+    action: { tool: 'simpleobject', opts: 'line' }
   }
 }
 

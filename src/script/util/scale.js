@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
 function scaled2obj(v, options) {
   return v.scaled(1 / options.scale)
 }

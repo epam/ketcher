@@ -11,6 +11,7 @@ const gitRevisionPlugin = new GitRevisionPlugin({
   commithashCommand: `rev-list v${config.version}..HEAD --count`
 })
 const buildNumber = gitRevisionPlugin.commithash()
+
 module.exports = override(
   addBundleVisualizer({}, true),
   addWebpackModuleRule({

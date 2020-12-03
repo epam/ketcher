@@ -26,7 +26,8 @@ import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
 
 const EDITOR_STYLES = {
   selectionStyle: { fill: '#47b3ec', stroke: 'none' },
-  highlightStyle: { stroke: '#1a7090', 'stroke-width': 1.2 }
+  highlightStyle: { stroke: '#1a7090', 'stroke-width': 1.2 },
+  highlightStyleSimpleObject: { 'stroke-opacity': 0.3 }
 }
 
 class Attach extends Component {

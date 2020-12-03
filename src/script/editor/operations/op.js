@@ -934,8 +934,9 @@ function RestoreDescriptorsPosition(history) {
 }
 RestoreDescriptorsPosition.prototype = new Base()
 
-function SimpleObjectAdd(p0, p1, mode) {
-  this.data = { id: null, p0, p1, mode }
+function SimpleObjectAdd(pos, mode) {
+  this.data = { id: null, pos, mode }
+
   let performed = false
   this.execute = function (restruct) {
     const struct = restruct.molecule
@@ -953,8 +954,7 @@ function SimpleObjectAdd(p0, p1, mode) {
 
     struct.simpleObjectSetPos(
       this.data.id,
-      new Vec2(this.data.p0),
-      new Vec2(this.data.p1)
+      this.data.pos.map(p => new Vec2(p))
     )
 
     invalidateItem(restruct, 'simpleObjects', this.data.id, 1)
@@ -969,14 +969,13 @@ function SimpleObjectAdd(p0, p1, mode) {
 SimpleObjectAdd.prototype = new Base()
 
 function SimpleObjectDelete(id) {
-  this.data = { id, p0: null, p1: null, item: null }
+  this.data = { id, pos: null, item: null }
   let performed = false
   this.execute = function (restruct) {
     const struct = restruct.molecule
     if (!performed) {
       const item = struct.simpleObjects.get(this.data.id)
-      this.data.p0 = item.p0
-      this.data.p1 = item.p1
+      this.data.pos = item.pos
       this.data.mode = item.mode
     }
 
@@ -1004,8 +1003,7 @@ function SimpleObjectMove(id, d, noinvalidate) {
     const id = this.data.id
     const d = this.data.d
     const item = struct.simpleObjects.get(id)
-    item.p0.add_(d)
-    item.p1.add_(d)
+    item.pos.forEach(p => p.add_(d))
     restruct.simpleObjects
       .get(id)
       .visel.translate(scale.obj2scaled(d, restruct.render.options))
@@ -1029,7 +1027,9 @@ function SimpleObjectResize(id, d, noinvalidate) {
     const id = this.data.id
     const d = this.data.d
     const item = struct.simpleObjects.get(id)
-    item.p1.add_(d)
+
+    //JA: TODO
+    if (d) item.pos[1].add_(d)
     restruct.simpleObjects
       .get(id)
       .visel.translate(scale.obj2scaled(d, restruct.render.options))

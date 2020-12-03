@@ -72,10 +72,10 @@ function getElementsInRectangle(restruct, p0, p1) {
 
   restruct.simpleObjects.forEach((item, id) => {
     if (
-      item.item.p0.x > x0 &&
-      item.item.p0.x < x1 &&
-      item.item.p0.y > y0 &&
-      item.item.p0.y < y1
+      item.item.pos[0].x > x0 &&
+      item.item.pos[0].x < x1 &&
+      item.item.pos[0].y > y0 &&
+      item.item.pos[0].y < y1
     )
       simpleObjectsList.push(id)
   })
@@ -144,7 +144,7 @@ function getElementsInPolygon(restruct, rr) {
   })
 
   restruct.simpleObjects.forEach((item, id) => {
-    if (isPointInPolygon(r, item.item.p0)) simpleObjectsList.push(id)
+    if (isPointInPolygon(r, item.item.pos[0])) simpleObjectsList.push(id)
   })
 
   const enhancedFlagList = []

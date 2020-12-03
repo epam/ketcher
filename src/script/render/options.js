@@ -86,6 +86,12 @@ function defaultOptions(opt) {
       stroke: 'gray',
       'stroke-width': '1px'
     },
+    highlightStyleSimpleObject: {
+      stroke: '#0c0',
+      'stroke-width': scaleFactor / 2,
+      'stroke-linecap': 'round',
+      'stroke-opacity': 0.6
+    },
     atomSelectionPlateRadius: labelFontSize * 1.2
   }
 

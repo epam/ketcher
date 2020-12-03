@@ -33,7 +33,6 @@ SimpleObjectTool.prototype.mousedown = function (event) {
   const p0 = rnd.page2obj(event)
   this.dragCtx = { p0 }
 
-  console.log('-------p0 = ' + p0)
   var ci = this.editor.findItem(event, ['simpleObjects'])
   if (ci && ci.map === 'simpleObjects') {
     this.editor.hover(null)

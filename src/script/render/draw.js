@@ -30,10 +30,7 @@ function rectangle(paper, pos, options) {
 }
 
 function circle(paper, pos, options) {
-  let rad = Math.sqrt(
-    Math.pow(pos[0].x - pos[1].x, 2),
-    Math.pow(pos[0].y - pos[1].y, 2)
-  )
+  const rad = Vec2.dist(pos[0], pos[1])
   return paper.circle(pos[0].x, pos[0].y, rad)
 }
 

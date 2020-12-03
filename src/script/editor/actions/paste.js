@@ -110,8 +110,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   pstruct.simpleObjects.forEach(simpleObject => {
     action.addOp(
       new op.SimpleObjectAdd(
-        simpleObject.p0.add(offset),
-        simpleObject.p1.add(offset),
+        simpleObject.pos.map(p => p.add(offset)),
         simpleObject.mode
       ).perform(restruct)
     )

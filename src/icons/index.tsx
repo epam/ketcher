@@ -84,6 +84,8 @@ import ZoomInIcon from './files/zoom-in.svg'
 import ZoomOutIcon from './files/zoom-out.svg'
 import ShapeCircleIcon from './files/shape-circle.svg'
 import ShapeRectangleIcon from './files/shape-rectangle.svg'
+import ShapePolylineIcon from './files/shape-polyline.svg'
+import ShapeLineIcon from './files/shape-line.svg'
 
 const icons = {
   about: AboutIcon,
@@ -156,7 +158,9 @@ const icons = {
   'zoom-in': ZoomInIcon,
   'zoom-out': ZoomOutIcon,
   'shape-circle': ShapeCircleIcon,
-  'shape-rectangle': ShapeRectangleIcon
+  'shape-rectangle': ShapeRectangleIcon,
+  'shape-polyline': ShapePolylineIcon,
+  'shape-line': ShapeLineIcon
 }
 
 function emptyIcon() {

@@ -457,10 +457,9 @@ Struct.prototype.rxnArrowSetPos = function (id, pp) {
   item.pp = pp
 }
 
-Struct.prototype.simpleObjectSetPos = function (id, p0, p1) {
+Struct.prototype.simpleObjectSetPos = function (id, pos) {
   const item = this.simpleObjects.get(id)
-  item.p0 = p0
-  item.p1 = p1
+  item.pos = pos
 }
 
 /**
@@ -781,14 +780,14 @@ Struct.prototype.findLoops = function () {
   const bondsToMark = new Pile()
 
   /*
-	 	Starting from each half-bond not known to be in a loop yet,
-	 	follow the 'next' links until the initial half-bond is reached or
-	 	the length of the sequence exceeds the number of half-bonds available.
-	 	In a planar graph, as long as every bond is a part of some "loop" -
-	 	either an outer or an inner one - every iteration either yields a loop
-	 	or doesn't start at all. Thus this has linear complexity in the number
-	 	of bonds for planar graphs.
-	 */
+      Starting from each half-bond not known to be in a loop yet,
+      follow the 'next' links until the initial half-bond is reached or
+      the length of the sequence exceeds the number of half-bonds available.
+      In a planar graph, as long as every bond is a part of some "loop" -
+      either an outer or an inner one - every iteration either yields a loop
+      or doesn't start at all. Thus this has linear complexity in the number
+      of bonds for planar graphs.
+   */
 
   let hbIdNext, c, loop, loopId
   this.halfBonds.forEach((hb, hbId) => {
@@ -1045,8 +1044,12 @@ RxnPlus.prototype.clone = function () {
 
 function SimpleObject(params) {
   params = params || {}
-  this.p0 = params.p0 ? new Vec2(params.p0) : new Vec2()
-  this.p1 = params.p1 ? new Vec2(params.p1) : new Vec2()
+  this.pos = []
+
+  if (params.pos)
+    for (let i = 0; i < params.pos.length; i++)
+      this.pos[i] = params.pos[i] ? new Vec2(params.pos[i]) : new Vec2()
+
   this.mode = params.mode
 }
 
@@ -1057,10 +1060,10 @@ SimpleObject.prototype.clone = function () {
 SimpleObject.prototype.center = function () {
   switch (this.mode) {
     case 'rectangle': {
-      return Vec2.centre(this.p0, this.p1)
+      return Vec2.centre(this.pos[0], this.pos[1])
     }
     default:
-      return this.p0
+      return this.pos[0]
   }
 }
 

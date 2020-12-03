@@ -36,8 +36,7 @@ function findClosestSimpleObject(restruct, pos) {
   let ret = null
 
   restruct.simpleObjects.forEach((simpleObject, id) => {
-    const p = simpleObject.item.center()
-    const dist = Math.max(Math.abs(pos.x - p.x), Math.abs(pos.y - p.y))
+    const dist = simpleObject.calcDistance(pos)
 
     if (dist < 0.3 && (!ret || dist < minDist)) {
       minDist = dist

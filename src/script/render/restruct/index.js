@@ -245,15 +245,19 @@ ReStruct.prototype.addReObjectPath = function (
   // eslint-disable-line max-params
   if (!path || !this.layers[LAYER_MAP[group]].node.parentNode) return
 
-  const offset = this.render.options.offset
-  let bb = visible ? Box2Abs.fromRelBox(util.relBox(path.getBBox())) : null
-  const ext = pos && bb ? bb.translate(pos.negated()) : null
-  if (offset !== null) {
-    path.translateAbs(offset.x, offset.y)
-    bb = bb ? bb.translate(offset) : null
-  }
-  visel.add(path, bb, ext)
-  path.insertBefore(this.layers[LAYER_MAP[group]])
+  const paths = Array.isArray(path) ? path : [path]
+
+  paths.forEach(path => {
+    const offset = this.render.options.offset
+    let bb = visible ? Box2Abs.fromRelBox(util.relBox(path.getBBox())) : null
+    const ext = pos && bb ? bb.translate(pos.negated()) : null
+    if (offset !== null) {
+      path.translateAbs(offset.x, offset.y)
+      bb = bb ? bb.translate(offset) : null
+    }
+    visel.add(path, bb, ext)
+    path.insertBefore(this.layers[LAYER_MAP[group]])
+  })
 }
 
 ReStruct.prototype.clearMarks = function () {

@@ -22,9 +22,9 @@ export function fromSimpleObjectDeletion(restruct, id) {
   return action.perform(restruct)
 }
 
-export function fromSimpleObjectAddition(restruct, p0, p1, mode) {
+export function fromSimpleObjectAddition(restruct, pos, mode) {
   var action = new Action()
-  action.addOp(new op.SimpleObjectAdd(p0, p1, mode))
+  action.addOp(new op.SimpleObjectAdd(pos, mode))
   return action.perform(restruct)
 }
 

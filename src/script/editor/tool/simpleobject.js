@@ -33,6 +33,7 @@ SimpleObjectTool.prototype.mousedown = function (event) {
   var rnd = this.editor.render
   const p0 = rnd.page2obj(event)
   this.dragCtx = { p0 }
+
   var ci = this.editor.findItem(event, ['simpleObjects'])
   if (ci && ci.map === 'simpleObjects') {
     this.editor.hover(null)
@@ -61,8 +62,7 @@ SimpleObjectTool.prototype.mousemove = function (event) {
       if (!this.dragCtx.action) {
         const action = fromSimpleObjectAddition(
           rnd.ctab,
-          this.dragCtx.p0,
-          this.dragCtx.p0,
+          [this.dragCtx.p0, this.dragCtx.p0],
           this.mode
         )
         //TODO: need to rework  actions/operations logic
@@ -74,6 +74,7 @@ SimpleObjectTool.prototype.mousemove = function (event) {
       } else {
         this.dragCtx.action.perform(rnd.ctab)
       }
+
       this.dragCtx.action = fromSimpleObjectResizing(
         rnd.ctab,
         this.dragCtx.itemId,
@@ -98,8 +99,7 @@ SimpleObjectTool.prototype.mouseup = function (event) {
       )
       this.dragCtx.action = fromSimpleObjectAddition(
         rnd.ctab,
-        this.dragCtx.p0,
-        this.dragCtx.previous,
+        [this.dragCtx.p0, this.dragCtx.previous],
         this.mode
       )
     }

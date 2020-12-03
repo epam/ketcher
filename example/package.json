@@ -15,6 +15,7 @@
   "dependencies": {
     "ketcher-react": "link:..",
     "react": "link:../node_modules/react",
+    "react-app-polyfill": "^2.0.0",
     "react-dom": "link:../node_modules/react-dom"
   },
   "devDependencies": {

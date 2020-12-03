@@ -9089,7 +9089,7 @@ promise@^6.1.0:
   dependencies:
     asap "~1.0.0"
 
-promise@^8.0.3:
+promise@^8.0.3, promise@^8.1.0:
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/promise/-/promise-8.1.0.tgz#697c25c3dfe7435dd79fcd58c38a135888eaf05e"
   integrity sha512-W04AqnILOL/sPRXziNicCjSNRruLAuIHEOVBazepu0545DDNGYHz7ar9ZgZ1fMU8/MA4mVxp5rkBWRi6OXIy3Q==
@@ -9301,6 +9301,18 @@ react-app-polyfill@^1.0.6:
     raf "^3.4.1"
     regenerator-runtime "^0.13.3"
     whatwg-fetch "^3.0.0"
+
+react-app-polyfill@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-app-polyfill/-/react-app-polyfill-2.0.0.tgz#a0bea50f078b8a082970a9d853dc34b6dcc6a3cf"
+  integrity sha512-0sF4ny9v/B7s6aoehwze9vJNWcmCemAUYBVasscVr92+UYiEqDXOxfKjXN685mDaMRNF3WdhHQs76oTODMocFA==
+  dependencies:
+    core-js "^3.6.5"
+    object-assign "^4.1.1"
+    promise "^8.1.0"
+    raf "^3.4.1"
+    regenerator-runtime "^0.13.7"
+    whatwg-fetch "^3.4.1"
 
 react-app-rewired@^2.1.6:
   version "2.1.6"

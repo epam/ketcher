@@ -100,12 +100,14 @@ RotateTool.prototype.mousedown = function (event) {
 
     if (!rotAll && rotId !== null) xy0 = struct.atoms.get(rotId).pp
     else xy0 = xy0.scaled(1 / selection.atoms.length)
-  } else {
+  } else if (struct.atoms?.size) {
     struct.atoms.forEach(atom => {
       xy0.add_(atom.pp)
     }) // eslint-disable-line no-underscore-dangle, max-len
     // poor man struct center (without sdata, etc)
     xy0 = xy0.scaled(1 / struct.atoms.size)
+  } else {
+    xy0 = rnd.page2obj(event)
   }
   this.dragCtx = {
     xy0,

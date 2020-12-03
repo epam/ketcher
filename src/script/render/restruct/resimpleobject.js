@@ -20,8 +20,6 @@ import draw from '../draw'
 import util from '../util'
 import scale from '../../util/scale'
 import Vec2 from 'src/script/util/vec2'
-import { maxHeaderSize } from 'http'
-import { ENGINE_METHOD_PKEY_ASN1_METHS } from 'constants'
 
 const tfx = util.tfx
 

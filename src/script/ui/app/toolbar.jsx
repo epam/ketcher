@@ -134,9 +134,8 @@ const template = [
     id: 'template-common',
     component: TemplatesList
   },
-  'template-lib'
-  //TODO: it should be enabled after starting work on enhanced stereo
-  //'enhanced-stereo'
+  'template-lib',
+  'enhanced-stereo'
 ]
 
 const elements = [

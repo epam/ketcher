@@ -32,9 +32,11 @@ ReSimpleObject.prototype = new ReObject()
 ReSimpleObject.isSelectable = function () {
   return true
 }
-ReSimpleObject.prototype.calcDistance = function (p) {
+ReSimpleObject.prototype.calcDistance = function (p, s) {
   const point = new Vec2(p.x, p.y)
-  let dist = 0
+  let dist = null
+  let distRef = null
+
   switch (this.item.mode) {
     case 'circle': {
       const dist1 = Vec2.dist(point, this.item.pos[0])
@@ -84,8 +86,75 @@ ReSimpleObject.prototype.calcDistance = function (p) {
     }
   }
 
-  return dist
+  distRef = this.getReferencePointDistance(p)
+  const refPoint = distRef.minDist <= 8 / s ? distRef.refPoint : null
+
+  return { minDist: dist, refPoint: refPoint }
 }
+
+ReSimpleObject.prototype.getReferencePointDistance = function (p) {
+  let dist = []
+  const refPoints = this.getReferencePoints()
+  refPoints.forEach(rp => {
+    dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp })
+  })
+
+  const minDist = dist.reduce(
+    (acc, current) =>
+      !acc ? current : acc.minDist < current.minDist ? acc : current,
+    null
+  )
+
+  return minDist
+}
+
+ReSimpleObject.prototype.getReferencePoints = function () {
+  const refPoints = []
+  switch (this.item.mode) {
+    case 'circle': {
+      const p0 = this.item.pos[0]
+      const rad = Vec2.dist(this.item.pos[0], this.item.pos[1])
+      refPoints.push(
+        new Vec2(p0.x - rad, p0.y),
+        new Vec2(p0.x, p0.y - rad),
+        new Vec2(p0.x + rad, p0.y),
+        new Vec2(p0.x, p0.y + rad)
+      )
+
+      break
+    }
+    case 'rectangle': {
+      const p0 = new Vec2(
+        tfx(Math.min(this.item.pos[0].x, this.item.pos[1].x)),
+        tfx(Math.min(this.item.pos[0].y, this.item.pos[1].y))
+      )
+      const w = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).x)
+      const h = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).y)
+
+      refPoints.push(
+        p0,
+        new Vec2(p0.x + 0.5 * w, p0.y),
+        new Vec2(p0.x + w, p0.y),
+        new Vec2(p0.x + w, p0.y + 0.5 * h),
+        new Vec2(p0.x + w, p0.y + h),
+        new Vec2(p0.x + 0.5 * w, p0.y + h),
+        new Vec2(p0.x, p0.y + h),
+        new Vec2(p0.x, p0.y + 0.5 * h)
+      )
+      break
+    }
+    case 'line': {
+      this.item.pos.forEach(i => refPoints.push(i))
+      break
+    }
+
+    default: {
+      throw new Error('Unsupported shape type')
+    }
+  }
+  return refPoints
+}
+
 ReSimpleObject.prototype.highlightPath = function (render) {
   const point = []
 
@@ -196,13 +265,33 @@ ReSimpleObject.prototype.highlightPath = function (render) {
     }
   }
 
-  return path
+  const enhPaths = path.map(p => {
+    return { path: p, stylesApplied: false }
+  })
+
+  const refPoints = this.getReferencePoints()
+
+  refPoints.forEach(rp => {
+    const scaledRP = scale.obj2scaled(rp, render.options)
+    enhPaths.push({
+      path: render.paper
+        .circle(scaledRP.x, scaledRP.y, s / 8)
+        .attr({ fill: 'black' }),
+      stylesApplied: true
+    })
+  })
+
+  return enhPaths
 }
 
 ReSimpleObject.prototype.drawHighlight = function (render) {
-  const paths = this.highlightPath(render).map(path =>
-    path.attr(render.options.highlightStyle)
-  )
+  const paths = this.highlightPath(render).map(enhPath => {
+    if (!enhPath.stylesApplied) {
+      return enhPath.path.attr(render.options.highlightStyle)
+    }
+    return enhPath.path
+  })
+
   render.ctab.addReObjectPath('highlighting', this.visel, paths)
   return paths
 }
@@ -212,63 +301,49 @@ ReSimpleObject.prototype.makeSelectionPlate = function (
   paper,
   styles
 ) {
-  const s = restruct.render.options.scale
-  const pos = []
-  this.item.pos.forEach((p, index) => {
-    pos[index] = scale.obj2scaled(p, restruct.render.options) || new Vec2()
+  const pos = this.item.pos.map(p => {
+    return scale.obj2scaled(p, restruct.render.options) || new Vec2()
   })
 
-  let path = null
-  switch (this.item.mode) {
-    case 'circle': {
-      path = draw.circle(paper, pos)
-      break
-    }
-    case 'rectangle': {
-      path = draw.rectangle(paper, pos)
-      break
-    }
-    case 'line': {
-      path = draw.line(paper, pos)
-      break
-    }
-    default: {
-      throw new Error('Unsupported shape type')
-    }
-  }
+  const path = generatePath(this.item.mode, paper, pos)
 
   return path.attr(styles.highlightStyleSimpleObject)
 }
 
 ReSimpleObject.prototype.show = function (restruct, id, options) {
   const render = restruct.render
-  const s = render.options.scale
-  const pos = []
-  this.item.pos.forEach((p, index) => {
-    pos[index] = scale.obj2scaled(p, options) || new Vec2()
+  const pos = this.item.pos.map((p, index) => {
+    return scale.obj2scaled(p, options) || new Vec2()
   })
 
+  const path = generatePath(this.item.mode, render.paper, pos, options)
+
+  var offset = options.offset
+  if (offset != null) path.translateAbs(offset.x, offset.y)
+  this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())))
+}
+
+function generatePath(mode, paper, pos, options) {
   let path = null
-  switch (this.item.mode) {
+  switch (mode) {
     case 'circle': {
-      path = draw.circle(render.paper, pos, options)
+      path = draw.circle(paper, pos, options)
       break
     }
     case 'rectangle': {
-      path = draw.rectangle(render.paper, pos, options)
+      path = draw.rectangle(paper, pos, options)
       break
     }
     case 'line': {
-      path = draw.line(render.paper, pos, options)
+      path = draw.line(paper, pos, options)
       break
     }
     default: {
       throw new Error('Unsupported shape type')
     }
   }
-  var offset = options.offset
-  if (offset != null) path.translateAbs(offset.x, offset.y)
-  this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())))
+
+  return path
 }
 
 export default ReSimpleObject

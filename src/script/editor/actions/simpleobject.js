@@ -28,8 +28,8 @@ export function fromSimpleObjectAddition(restruct, pos, mode) {
   return action.perform(restruct)
 }
 
-export function fromSimpleObjectResizing(restruct, id, d) {
+export function fromSimpleObjectResizing(restruct, id, d, current, anchor) {
   var action = new Action()
-  action.addOp(new op.SimpleObjectResize(id, d))
+  action.addOp(new op.SimpleObjectResize(id, d, current, anchor))
   return action.perform(restruct)
 }

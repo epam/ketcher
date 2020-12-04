@@ -33,14 +33,17 @@ const findMaps = {
 
 function findClosestSimpleObject(restruct, pos) {
   let minDist = null
+  let refPoint = null
   let ret = null
 
   restruct.simpleObjects.forEach((simpleObject, id) => {
-    const dist = simpleObject.calcDistance(pos)
+    const dist = simpleObject.calcDistance(pos, restruct.render.options.scale)
 
-    if (dist < 0.3 && (!ret || dist < minDist)) {
-      minDist = dist
-      ret = { id, dist: minDist }
+    if (dist.minDist < 0.3 && (!ret || dist.minDist < minDist)) {
+      minDist = dist.minDist
+      refPoint = dist.refPoint
+
+      ret = { id, dist: minDist, ref: refPoint }
     }
   })
 
@@ -327,10 +330,12 @@ function findClosestItem(restruct, pos, maps, skip, scale) {
     const item = findMaps[mp](restruct, pos, skip, minDist, scale)
 
     if (item !== null && (res === null || item.dist < res.dist)) {
+      const { id, dist, ...other } = item
       return {
         map: mp,
-        id: item.id,
-        dist: item.dist
+        id: id,
+        dist: dist,
+        ...other
       }
     }
 

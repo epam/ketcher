@@ -19,6 +19,7 @@
 import Vec2 from '../../util/vec2'
 import scale from '../../util/scale'
 import Pile from '../../util/pile'
+import util from '../../render/util'
 import {
   Atom,
   Bond,
@@ -52,6 +53,8 @@ import {
   FragmentDeleteStereoAtom,
   EnhancedFlagMove
 } from './op-frag'
+
+const tfx = util.tfx
 
 function AtomAdd(atom, pos) {
   this.data = { atom, pos, aid: null }
@@ -1020,16 +1023,48 @@ function SimpleObjectMove(id, d, noinvalidate) {
 }
 SimpleObjectMove.prototype = new Base()
 
-function SimpleObjectResize(id, d, noinvalidate) {
-  this.data = { id, d, noinvalidate }
+function SimpleObjectResize(id, d, current, anchor, noinvalidate) {
+  this.data = { id, d, current, anchor, noinvalidate }
   this.execute = function (restruct) {
     const struct = restruct.molecule
     const id = this.data.id
     const d = this.data.d
+    const current = this.data.current
     const item = struct.simpleObjects.get(id)
+    const anchor = this.data.anchor
 
-    //JA: TODO
-    if (d) item.pos[1].add_(d)
+    if (item.mode === 'circle') {
+      const previousPos1 = item.pos[1].get_xy0()
+      item.pos[1].x = current.x
+      item.pos[1].y = current.y
+      this.data.current = previousPos1
+    } else if (item.mode === 'line' && anchor) {
+      const previousPos1 = anchor.get_xy0()
+      anchor.x = current.x
+      anchor.y = current.y
+      this.data.current = previousPos1
+    } else if (item.mode === 'rectangle' && anchor) {
+      const previousPos0 = item.pos[0].get_xy0()
+      const previousPos1 = item.pos[1].get_xy0()
+
+      if (tfx(anchor.x) === tfx(item.pos[1].x)) {
+        item.pos[1].x = anchor.x = current.x
+        this.data.current.x = previousPos1.x
+      }
+      if (tfx(anchor.y) === tfx(item.pos[1].y)) {
+        item.pos[1].y = anchor.y = current.y
+        this.data.current.y = previousPos1.y
+      }
+      if (tfx(anchor.x) === tfx(item.pos[0].x)) {
+        item.pos[0].x = anchor.x = current.x
+        this.data.current.x = previousPos0.x
+      }
+      if (tfx(anchor.y) === tfx(item.pos[0].y)) {
+        item.pos[0].y = anchor.y = current.y
+        this.data.current.y = previousPos0.y
+      }
+    } else item.pos[1].add_(d)
+
     restruct.simpleObjects
       .get(id)
       .visel.translate(scale.obj2scaled(d, restruct.render.options))

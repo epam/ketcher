@@ -52,11 +52,21 @@ SimpleObjectTool.prototype.mousemove = function (event) {
     this.dragCtx.previous = current
     if (this.dragCtx.ci) {
       if (this.dragCtx.action) this.dragCtx.action.perform(rnd.ctab)
-      this.dragCtx.action = fromMultipleMove(
-        rnd.ctab,
-        this.editor.selection() || {},
-        diff
-      )
+      if (!this.dragCtx.ci.ref) {
+        this.dragCtx.action = fromMultipleMove(
+          rnd.ctab,
+          this.editor.selection() || {},
+          diff
+        )
+      } else {
+        this.dragCtx.action = fromSimpleObjectResizing(
+          rnd.ctab,
+          this.dragCtx.ci.id,
+          diff,
+          current,
+          this.dragCtx.ci.ref
+        )
+      }
       this.editor.update(this.dragCtx.action, true)
     } else {
       if (!this.dragCtx.action) {
@@ -78,7 +88,9 @@ SimpleObjectTool.prototype.mousemove = function (event) {
       this.dragCtx.action = fromSimpleObjectResizing(
         rnd.ctab,
         this.dragCtx.itemId,
-        diff
+        diff,
+        current,
+        null
       )
       this.editor.update(this.dragCtx.action, true)
     }

@@ -30,14 +30,18 @@ class ClipArea extends Component {
 
     this.listeners = {
       mouseup: event => {
-        if (this.props.focused() && !isFormElement(event.target)) autofocus(el)
+        if (!isFormElement(event.target) && this.props.focused()) autofocus(el)
       },
       mousedown: event => {
         if (event.shiftKey && !isFormElement(event.target))
           event.preventDefault()
       },
       copy: event => {
-        if (this.props.focused() && this.props.onCopy) {
+        if (
+          !isFormElement(event.target) &&
+          this.props.focused() &&
+          this.props.onCopy
+        ) {
           const data = this.props.onCopy()
 
           if (data) copy(event.clipboardData, data)
@@ -46,7 +50,11 @@ class ClipArea extends Component {
         }
       },
       cut: event => {
-        if (this.props.focused() && this.props.onCut) {
+        if (
+          !isFormElement(event.target) &&
+          this.props.focused() &&
+          this.props.onCut
+        ) {
           const data = this.props.onCut()
 
           if (data) copy(event.clipboardData, data)
@@ -55,7 +63,11 @@ class ClipArea extends Component {
         }
       },
       paste: event => {
-        if (this.props.focused() && this.props.onPaste) {
+        if (
+          !isFormElement(event.target) &&
+          this.props.focused() &&
+          this.props.onPaste
+        ) {
           const data = paste(event.clipboardData, this.props.formats)
 
           if (data) this.props.onPaste(data)

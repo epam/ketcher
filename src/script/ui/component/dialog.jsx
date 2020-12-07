@@ -36,9 +36,10 @@ class Dialog extends Component {
     if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
       this.exit(key === 'Enter' ? 'OK' : 'Cancel')
       ev.preventDefault()
+      ev.stopPropagation()
     }
-    ev.stopPropagation()
   }
+
   componentDidMount() {
     const fe =
       this.formRef.current.querySelector(
@@ -49,7 +50,6 @@ class Dialog extends Component {
           'select'
         ].join(',')
       ) || this.formRef.current.querySelector(['button.close'].join(','))
-    console.assert(fe, 'No active buttons')
     if (fe.focus) fe.focus()
   }
 

@@ -70,25 +70,32 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
 
 export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse) {
   const action = new Action()
-  const frid = restruct.molecule.atoms.get(aid).fragment
+  const atom = restruct.molecule.atoms.get(aid)
+  if (atom) {
+    const frid = atom.fragment
 
-  if ('stereoParity' in attrs)
-    action.addOp(
-      new op.AtomAttr(aid, 'stereoParity', attrs['stereoParity']).perform(
-        restruct
+    if ('stereoParity' in attrs)
+      action.addOp(
+        new op.AtomAttr(aid, 'stereoParity', attrs['stereoParity']).perform(
+          restruct
+        )
       )
-    )
-  if ('stereoLabel' in attrs) {
-    action.addOp(
-      new op.AtomAttr(aid, 'stereoLabel', attrs['stereoLabel']).perform(
-        restruct
+    if ('stereoLabel' in attrs) {
+      action.addOp(
+        new op.AtomAttr(aid, 'stereoLabel', attrs['stereoLabel']).perform(
+          restruct
+        )
       )
-    )
-    if (attrs['stereoLabel'] === null)
-      action.addOp(new op.FragmentDeleteStereoAtom(frid, aid).perform(restruct))
-    else action.addOp(new op.FragmentAddStereoAtom(frid, aid).perform(restruct))
+      if (attrs['stereoLabel'] === null)
+        action.addOp(
+          new op.FragmentDeleteStereoAtom(frid, aid).perform(restruct)
+        )
+      else
+        action.addOp(new op.FragmentAddStereoAtom(frid, aid).perform(restruct))
+    }
+    if (withReverse) action.operations.reverse()
   }
-  if (withReverse) action.operations.reverse()
+
   return action
 }
 

@@ -81,10 +81,10 @@ function ActionButton({ name, action, status = {}, onAction }) {
   )
 }
 
-function findActiveMenuItem(menu, status) {
+function findActiveMenuItem(menuItems, status) {
   let activeMenuItem = null
-  for (let index = 0; index < menu.length; index++) {
-    const current = menu[index]
+  for (let index = 0; index < menuItems.length; index++) {
+    const current = menuItems[index]
     if (status[current]?.selected) {
       activeMenuItem = current
       break
@@ -93,38 +93,64 @@ function findActiveMenuItem(menu, status) {
   return activeMenuItem
 }
 
+function isLeaf(menu) {
+  return menu.every(item => typeof item === 'string')
+}
+
+function isOpened(item, opened) {
+  return item.id === opened
+}
+
+function renderActiveMenuItem(item, props) {
+  const menu = item.menu || []
+  const { opened, status, ...attrs } = props
+  let activeMenuItem = null
+  if (isOpened(item, opened)) {
+    if (isLeaf(menu)) {
+      activeMenuItem = findActiveMenuItem(menu, status) || menu[0]
+    } else {
+      const subMenuItems = menu.reduce((acc, curr) => {
+        acc.push(...curr.menu)
+        return acc
+      }, [])
+
+      activeMenuItem =
+        findActiveMenuItem(subMenuItems, status) || subMenuItems[0]
+    }
+  }
+
+  return (
+    activeMenuItem && (
+      <ActionButton
+        {...attrs}
+        name={activeMenuItem}
+        action={action[activeMenuItem]}
+        status={status[activeMenuItem]}
+      />
+    )
+  )
+}
+
 function ActionMenu({ name, menu, className, role, ...props }) {
   return (
     <menu
       className={className}
       role={role}
       style={toolMargin(name, menu, props.visibleTools)}>
-      {menu.map((item, index) => {
-        const activeMenuItem = item.menu
-          ? findActiveMenuItem(item.menu, props.status) || item.menu[0]
-          : ''
-        return (
-          <li
-            key={item.id || item}
-            id={item.id || item}
-            className={
-              classNames(props.status[item]) +
-              ` ${item.id === props.opened ? 'opened' : ''}`
-            }
-            onClick={ev => openHandle(ev, props.onOpen)}>
-            {showMenuOrButton(action, item, props.status[item], props)}
-            {item.menu && props.opened !== '' && props.opened === item.id && (
-              <ActionButton
-                {...props}
-                name={activeMenuItem}
-                action={action[activeMenuItem]}
-                status={props.status[activeMenuItem]}
-              />
-            )}
-            {item.menu && <Icon name="dropdown" />}
-          </li>
-        )
-      })}
+      {menu.map((item, index) => (
+        <li
+          key={item.id || item}
+          id={item.id || item}
+          className={
+            classNames(props.status[item]) +
+            ` ${item.id === props.opened ? 'opened' : ''}`
+          }
+          onClick={ev => openHandle(ev, props.onOpen)}>
+          {showMenuOrButton(action, item, props.status[item], props)}
+          {item.menu && props.opened && renderActiveMenuItem(item, props)}
+          {item.menu && <Icon name="dropdown" />}
+        </li>
+      ))}
     </menu>
   )
 }

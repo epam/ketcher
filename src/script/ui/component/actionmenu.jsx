@@ -159,7 +159,7 @@ function toolMargin(menuName, menu, visibleTools) {
   if (!visibleTools[menuName]) return {}
   // now not found better way
   const iconHeight =
-    window.innerHeight < 600 || window.innerWidth < 1040 ? 32 : 40
+    window.innerHeight <= 600 || window.innerWidth <= 1040 ? 32 : 40
   let index = menu.indexOf(visibleTools[menuName]) // first level
 
   if (index === -1) {

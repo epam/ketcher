@@ -7391,6 +7391,14 @@ micromatch@^3.1.10, micromatch@^3.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.2"
 
+miew@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/miew/-/miew-0.9.0.tgz#0b050b89de2958617bdb77220d7ee051f453179e"
+  integrity sha512-FhuLxiJfhp5Mmc7GlfChXnDtgbYS/KjXsQTlQc60+jsVyTe6+OwlI6frpqKCmNhFgsLpmAZCNGUF6606FrjscA==
+  dependencies:
+    lodash "^4.17.15"
+    three "0.112.1"
+
 miller-rabin@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/miller-rabin/-/miller-rabin-4.0.1.tgz#f080351c865b0dc562a8462966daa53543c78a4d"
@@ -10872,6 +10880,11 @@ text-table@0.2.0, text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
+
+three@0.112.1:
+  version "0.112.1"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.112.1.tgz#f8d8f4d0f8e5f753dac6260491b8209457fdc131"
+  integrity sha512-8I0O74hiYtKl3LgDNcPJbBGOlpekbcJ6fJnImmW3mFdeUFJ2H9Y3/UuUSW2sBdjrIlCM0gvOkaTEFlofO900TQ==
 
 throat@^4.0.0:
   version "4.1.0"

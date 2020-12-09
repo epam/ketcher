@@ -14,33 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { capitalize } from 'lodash/fp'
-
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import { connect } from 'react-redux'
-
 import { atom as atomSchema } from '../../data/schema/struct-schema'
 import Form, { Field } from '../../component/form/form'
 import Dialog from '../../component/dialog'
-
+import { capitalize } from 'lodash/fp'
 import element from '../../../chem/element'
 
-function ElementNumber(label) {
+function ElementNumber({ label }) {
+  const value = element.map[capitalize(label)] || ''
   return (
     <label>
       Number:
-      <input
-        className="number"
-        type="text"
-        readOnly
-        value={element.map[capitalize(label)] || ''}
-      />
+      <input className="number" type="text" readOnly value={value} />
     </label>
   )
 }
 
 function Atom(props) {
   const { formState, ...prop } = props
+  const [currentLabel, setCurrentLabel] = useState(prop.label)
+  const onLabelChangeCallback = useCallback(newValue => {
+    setCurrentLabel(newValue)
+  }, [])
   return (
     <Dialog
       title="Atom Properties"
@@ -57,9 +54,9 @@ function Atom(props) {
         init={prop}
         {...formState}>
         <fieldset className="main">
-          <Field name="label" />
+          <Field name="label" onChange={onLabelChangeCallback} />
           <Field name="alias" />
-          <ElementNumber label={prop.label} />
+          <ElementNumber label={currentLabel} />
           <Field name="charge" maxLength="5" />
           <Field name="explicitValence" />
           <Field name="isotope" />

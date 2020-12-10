@@ -208,5 +208,18 @@ export function couldBeSaved(struct, format) {
     if (isSg !== null)
       return `In ${map[format].name} the structure will be saved without S-groups`
   }
+
+  if (
+    format === 'smiles' ||
+    format === 'smiles-ext' ||
+    format === 'smarts' ||
+    format === 'inchi' ||
+    format === 'inchi-aux' ||
+    format === 'cml'
+  ) {
+    const isVal = struct.atoms.find((ind, atom) => atom.explicitValence >= 0)
+    if (isVal !== null) return `In ${map[format].name} valence is not supported`
+  }
+
   return null
 }

@@ -108,26 +108,24 @@ form[role=dialog] {
 
 .template-lib {
 	label {
-		position: absolute;
-		right: 0;
-		left: 0;
 		text-align: center;
 		line-height: 2.6em;
+		display: flex;
 		input[type=search] {
-			float: right;
-			width: 660px;
+			width: 100%;
+			margin-left: 4px;
 		}
 	}
 	.groups {
 		&:extend(.-SelectList all);
-		margin-top: 3.5em;
+		margin-top: 1em;
 		height: 27em;
 		width: 11em;
 		float: left;
 		overflow: hidden;
 	}
 	.table {
-		margin-top: 3.5em;
+		margin-top: 1em;
 		padding: 0;
 		float: left;
 		width: 550px;

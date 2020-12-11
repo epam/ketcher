@@ -16,21 +16,23 @@
 
 import { upperFirst } from 'lodash/fp'
 import React, { Component, createRef } from 'react'
-
-import MeasureLog from './measurelog'
 import Editor from '../../editor'
 
+//TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
   const { struct, tool, toolOpts, options } = props
 
   if (struct !== oldProps.struct) editor.struct(struct)
 
-  if (tool !== oldProps.tool || toolOpts !== oldProps.toolOpts)
+  if (tool !== oldProps.tool || toolOpts !== oldProps.toolOpts) {
     editor.tool(tool, toolOpts)
+    if (toolOpts !== oldProps.toolOpts) {
+      editor.event.message.dispatch({ info: JSON.stringify(toolOpts) })
+    }
+  }
 
   if (oldProps.options && options !== oldProps.options) editor.options(options)
 
-  // update handlers
   Object.keys(editor.event).forEach(name => {
     const eventName = `on${upperFirst(name)}`
 
@@ -54,25 +56,37 @@ class StructEditor extends Component {
   constructor(props) {
     super(props)
     this.editorRef = createRef()
+    this.logRef = createRef()
   }
+
   shouldComponentUpdate() {
     return false
   }
 
   componentWillReceiveProps(props) {
-    setupEditor(this.instance, props, this.props)
+    setupEditor(this.editor, props, this.props)
   }
 
   componentDidMount() {
-    this.instance = new Editor(this.editorRef.current, {
+    this.editor = new Editor(this.editorRef.current, {
       ...this.props.options
     })
-    setupEditor(this.instance, this.props)
-    if (this.props.onInit) this.props.onInit(this.instance)
+    setupEditor(this.editor, this.props)
+    if (this.props.onInit) this.props.onInit(this.editor)
+
+    this.editor.event.message.add(msg => {
+      const el = this.logRef.current
+      if (msg.info) {
+        el.innerHTML = msg.info
+        el.classList.add('visible')
+      } else {
+        el.classList.remove('visible')
+      }
+    })
   }
 
   componentWillUnmount() {
-    removeEditorHandlers(this.instance, this.props)
+    removeEditorHandlers(this.editor, this.props)
   }
 
   render() {
@@ -103,7 +117,7 @@ class StructEditor extends Component {
         {...props}
         ref={this.editorRef}>
         {/* svg here */}
-        <MeasureLog />
+        <div className="measure-log" ref={this.logRef} />
       </Tag>
     )
   }

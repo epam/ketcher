@@ -68,7 +68,7 @@ class Attach extends Component {
         params={prop}>
         <label>
           Template name:
-          <Input value={name} onChange={onNameEdit} />
+          <Input value={name} onChange={onNameEdit} placeholder="tmpl" />
         </label>
         <label>Choose attachment atom and bond:</label>
         <StructEditor

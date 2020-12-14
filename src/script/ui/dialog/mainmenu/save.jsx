@@ -151,7 +151,12 @@ class Save extends Component {
               this format.
             </div>
           )}
-          {warning && <div className="warning">{warning}</div>}
+          {warning && (
+            <div className="warnings-container">
+              <div className="warning"></div>
+              <div className="warnings-arr">{warning}</div>
+            </div>
+          )}
         </div>
       </Dialog>
     )

@@ -188,6 +188,7 @@ export function fromString(structStr, opts, server, serverOpts) {
 }
 
 export function couldBeSaved(struct, format) {
+  let warnings = []
   if (
     format === 'inchi' ||
     format === 'inchi-aux' ||
@@ -195,18 +196,40 @@ export function couldBeSaved(struct, format) {
     format === 'smiles-ext'
   ) {
     if (struct.rgroups.size !== 0)
-      return `In ${map[format].name} the structure will be saved without R-group fragments`
+      warnings.push(
+        `In ${map[format].name} the structure will be saved without R-group fragments`
+      )
     struct = struct.clone() // need this: .getScaffold()
     const isRg = struct.atoms.find((ind, atom) => atom.label === 'R#')
     if (isRg !== null)
-      return `In ${map[format].name} the structure will be saved without R-group members`
+      warnings.push(
+        `In ${map[format].name} the structure will be saved without R-group members`
+      )
 
     const isSg = struct.sgroups.find(
       (ind, sg) =>
         sg.type !== 'MUL' && !/^INDIGO_.+_DESC$/i.test(sg.data.fieldName)
     )
     if (isSg !== null)
-      return `In ${map[format].name} the structure will be saved without S-groups`
+      warnings.push(
+        `In ${map[format].name} the structure will be saved without S-groups`
+      )
   }
+
+  if (
+    format === 'smiles' ||
+    format === 'smiles-ext' ||
+    format === 'smarts' ||
+    format === 'inchi' ||
+    format === 'inchi-aux' ||
+    format === 'cml'
+  ) {
+    const isVal = struct.atoms.find((ind, atom) => atom.explicitValence >= 0)
+    if (isVal !== null)
+      warnings.push(`In ${map[format].name} valence is not supported`)
+  }
+
+  if (warnings.length !== 0) return warnings.join('\n')
+
   return null
 }

@@ -1,4 +1,3 @@
-#!/usr/bin/env nodejs
 /****************************************************************************
  * Copyright 2020 EPAM Systems
  *
@@ -15,26 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-env node */
+const fs = require('fs')
+const path = require('path')
 
-var path = require('path');
-var cp = require('child_process');
+const xpath = require('xpath')
+const DOMParser = require('xmldom').DOMParser
+const XMLSerializer = require('xmldom').XMLSerializer
 
-var minimist = require('minimist');
+let libStr = fs
+  .readFileSync(path.join(__dirname, '../fixtures/fixtures.svg'))
+  .toString()
+let library = new DOMParser().parseFromString(libStr)
 
-var opts = process.argv.slice(3);
-var script = require.resolve(path.join(__dirname, process.argv[2]));
-var binPath = cp.execSync('npm bin').toString().trim();
-var tapScript = path.join(binPath, 'tap');
+function libSymbol(sampleName) {
+  let xsym = xpath.evaluate(
+    `//*[@id='${sampleName}']`,
+    library, // ids with '/' are absolutely valid, see https://epa.ms/SGNMm
+    null,
+    xpath.XPathResult.FIRST_ORDERED_NODE_TYPE,
+    null
+  )
+  let symbol = xsym.singleNodeValue
+  return new XMLSerializer().serializeToString(symbol)
+}
 
-var filterSpec = {
-	string: ['reporter'],
-	default: { reporter: 'classic' },
-	alias: { reporter: 'R' },
-	unknown: o => filterSpec.string.includes(o)
-};
-var filterOpts = minimist(process.argv.slice(3), filterSpec);
-
-cp.spawn(`node ${script} ${opts.join(' ')} |` +
-         `${tapScript} --reporter=${filterOpts.reporter} -`,
-         { shell: true, stdio: 'inherit' });
+module.exports = libSymbol

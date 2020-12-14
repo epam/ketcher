@@ -1,8 +1,7 @@
 {
   "private": true,
   "workspaces": [
-    "packages/*",
-    "example"
+    "packages/*"
   ],
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c -m true --silent",

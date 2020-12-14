@@ -1,5 +1,6 @@
 {
   "name": "ketcher-react-app",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "react-app-rewired start",
@@ -11,21 +12,21 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "ketcher-react": "2.1.0-beta",
+    "ketcher-react": "link:../packages/ketcher-react",
     "miew": "^0.9.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-app-polyfill": "^2.0.0"
+    "react": "link:../node_modules/react",
+    "react-app-polyfill": "^2.0.0",
+    "react-dom": "link:../node_modules/react-dom"
   },
   "devDependencies": {
     "@babel/plugin-syntax-object-rest-spread": "^7.8.3",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
-    "@types/jest": "^25.1.4",
-    "@types/node": "^12.12.38",
-    "@types/react": "^16.9.27",
-    "@types/react-dom": "^16.9.7",
+    "@testing-library/jest-dom": "link:../node_modules/@testing-library/jest-dom",
+    "@testing-library/react": "link:../node_modules/@testing-library/react",
+    "@testing-library/user-event": "link:../node_modules/@testing-library/user-event",
+    "@types/jest": "link:../node_modules/@types/jest",
+    "@types/node": "link:../node_modules/@types/node",
+    "@types/react": "link:../node_modules/@types/react",
+    "@types/react-dom": "link:../node_modules/@types/react-dom",
     "@welldone-software/why-did-you-render": "^4.3.1",
     "customize-cra": "^1.0.0",
     "git-revision-webpack-plugin": "^3.0.6",
@@ -34,7 +35,7 @@
     "react-scripts": "^3.4.1",
     "serve": "^11.3.2",
     "source-map-loader": "^1.1.2",
-    "typescript": "^4.0.5",
+    "typescript": "link:../node_modules/typescript",
     "webpack-bundle-analyzer": "^3.9.0"
   },
   "browserslist": {

@@ -9,8 +9,8 @@ node_modules
 /coverage
 
 # production
-example/build
-/dist
+build
+dist
 
 # old version
 /__archive

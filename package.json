@@ -1,20 +1,14 @@
 {
   "private": true,
+  "version": "2.1.0-beta",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c -m true --silent",
-    "start": "cross-env NODE_ENV=development rollup -c -m true -w",
-    "test": "run-s test:unit test:lint prettier stylelint test:build",
-    "test:build": "run-s build",
-    "test:lint": "eslint src --ext .ts,.tsx,.js,.jsx",
-    "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
-    "test:watch": "react-scripts test --env=jsdom",
-    "prettier": "prettier --check \"src/**/*.{js,jsx,json,ts,tsx}\"",
-    "prettier:write": "prettier --write \"src/**/*.{js,jsx,json,ts,tsx}\"",
-    "stylelint": "stylelint \"src/**/*.{css,less,scss}\" --formatter verbose",
-    "stylelint:fix": "stylelint \"src/**/*.{css,less,scss}\" --formatter verbose --fix"
+    "build:packages": "yarn workspaces run build",
+    "build:app": "cd example && yarn install && yarn build",
+    "build": "run-s build:packages build:app",
+    "serve": "cd example && yarn serve:build"
   },
   "peerDependencies": {
     "react": "^16.13.0",
@@ -76,7 +70,8 @@
     "stylelint-config-standard": "^20.0.0",
     "stylelint-prettier": "^1.1.2",
     "stylelint-scss": "^3.18.0",
-    "typescript": "^4.0.5"
+    "typescript": "^4.0.5",
+    "serve": "^11.3.2"
   },
   "husky": {
     "hooks": {

@@ -37,9 +37,7 @@
     "prettier": "prettier --check \"src/**/*.{js,jsx,json,ts,tsx}\"",
     "prettier:write": "prettier --write \"src/**/*.{js,jsx,json,ts,tsx}\"",
     "stylelint": "stylelint \"src/**/*.{css,less,scss}\" --formatter verbose",
-    "stylelint:fix": "stylelint \"src/**/*.{css,less,scss}\" --formatter verbose --fix",
-    "predeploy": "cd example && yarn install && yarn build",
-    "deploy": "gh-pages -d example/build"
+    "stylelint:fix": "stylelint \"src/**/*.{css,less,scss}\" --formatter verbose --fix"
   },
   "peerDependencies": {
     "react": "^16.13.0",
@@ -58,7 +56,6 @@
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",
     "raphael": "^2.3.0",
-    "react-is": "^17.0.1",
     "react-markdown": "^5.0.2",
     "react-redux": "^7.2.1",
     "redux": "^4.0.5",
@@ -108,16 +105,10 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react-hooks": "^4.0.8",
     "eslint-plugin-testing-library": "^3.9.0",
-    "gh-pages": "^2.2.0",
-    "husky": "^4.3.0",
     "less": "^3.12.2",
-    "lint-staged": "^10.5.1",
     "node-sass": "^5.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.4",
-    "prettier-config-standard": "^1.0.1",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
     "react-scripts": "^3.4.1",
     "rollup": "^2.33.1",
     "rollup-plugin-cleanup": "^3.2.1",
@@ -134,24 +125,6 @@
     "stylelint-prettier": "^1.1.2",
     "stylelint-scss": "^3.18.0",
     "typescript": "^4.0.5"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged --allow-empty"
-    }
-  },
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx}": [
-      "prettier --write",
-      "eslint --fix",
-      "react-scripts test --env=jsdom --watchAll=false --findRelatedTests"
-    ],
-    "src/**/*.{json}": [
-      "prettier --write"
-    ],
-    "src/**/*.{css,less,scss}": [
-      "stylelint --formatter verbose --fix --allow-empty-input"
-    ]
   },
   "files": [
     "dist",

@@ -64,26 +64,20 @@ You can find the instruction for service installation
 [here](http://lifescience.opensource.epam.com/indigo/service/index.html).
 ### 3D Viewer
 
-Ketcher can use Miew for viewing and editing data in 3D.
+Ketcher uses Miew for viewing and editing data in 3D.
 For use of this functionality you should add the link to miew by your own:
+
 ```sh
-<html lang="en">
-    <head>
-    ...
-    <link href="{link to Miew.min.css}" rel="stylesheet">
-    ...
-    </head>
-    </head>
-    <body>
-     ...
-    <script src="{link to Miew.min.js}"></script>
-    ...
-    </body>
-</html>
+...
+import Miew from 'miew'
+import 'miew/dist/Miew.min.css'
+...
+;(global as any).Miew = Miew
+...
 ```
 
 You can find the latest version of viewer [here](https://github.com/epam/miew).
-The last checked version - [0.7.13](https://github.com/epam/miew/releases/tag/v0.7.13).
+The last checked version - [0.9.0](https://github.com/epam/miew/releases/tag/v0.9.0).
 
 For more details please read [DEVNOTES](DEVNOTES.md).
 

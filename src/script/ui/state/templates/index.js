@@ -91,6 +91,23 @@ export function editTmpl(tmpl) {
   }
 }
 
+export function deleteUserTmpl(tmpl) {
+  return {
+    type: 'TMPL_DELETE',
+    data: {
+      tmpl: tmpl
+    }
+  }
+}
+
+export function deleteTmpl(tmpl) {
+  return (dispatch, getState) => {
+    const lib = getState().templates.lib.filter(value => value !== tmpl)
+    dispatch(deleteUserTmpl(tmpl))
+    updateLocalStore(lib)
+  }
+}
+
 /* SAVE */
 export function saveUserTmpl(struct) {
   // TODO: structStr can be not in mol format => structformat.toString ...
@@ -146,6 +163,12 @@ function templatesReducer(state = initTmplsState, action) {
   if (attachActions.includes(action.type)) {
     const attach = Object.assign({}, state.attach, action.data)
     return { ...state, attach }
+  }
+
+  if (action.type === 'TMPL_DELETE') {
+    const currentState = Object.assign({}, state)
+    const lib = currentState.lib.filter(value => value !== action.data.tmpl)
+    return { ...currentState, lib: lib }
   }
 
   return state

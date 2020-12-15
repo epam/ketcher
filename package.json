@@ -1,78 +1,13 @@
 {
-  "name": "ketcher-react",
+  "private": true,
   "version": "2.1.0-beta",
-  "description": "Web-based molecule sketcher",
-  "license": "Apache-2.0",
-  "homepage": "http://lifescience.opensource.epam.com/ketcher",
-  "author": {
-    "name": "EPAM Life Sciences",
-    "url": "http://lifescience.opensource.epam.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/epam/ketcher.git"
-  },
-  "keywords": [
-    "molecule",
-    "sketcher",
-    "chemistry"
+  "workspaces": [
+    "packages/*",
+    "example"
   ],
-  "bugs": {
-    "url": "https://github.com/epam/ketcher/issues"
-  },
-  "main": "dist/index.js",
-  "module": "dist/index.modern.js",
-  "source": "src/index.tsx",
-  "engines": {
-    "node": ">=10"
-  },
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c -m true --silent",
-    "start": "cross-env NODE_ENV=development rollup -c -m true -w",
-    "test": "run-s test:unit test:lint prettier stylelint test:build",
-    "test:build": "run-s build",
-    "test:lint": "eslint src --ext .ts,.tsx,.js,.jsx",
-    "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
-    "test:watch": "react-scripts test --env=jsdom",
-    "prettier": "prettier --check \"src/**/*.{js,jsx,json,ts,tsx}\"",
-    "prettier:write": "prettier --write \"src/**/*.{js,jsx,json,ts,tsx}\"",
-    "stylelint": "stylelint \"src/**/*.{css,less,scss}\" --formatter verbose",
-    "stylelint:fix": "stylelint \"src/**/*.{css,less,scss}\" --formatter verbose --fix",
-    "predeploy": "cd example && yarn install && yarn build",
-    "deploy": "gh-pages -d example/build"
-  },
-  "peerDependencies": {
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0"
-  },
-  "dependencies": {
-    "@babel/runtime": "^7.12.5",
-    "classnames": "^2.2.6",
-    "core-js": "^3.6.5",
-    "element-closest-polyfill": "^1.0.2",
-    "file-saver": "^2.0.2",
-    "font-face-observer": "^1.0.0",
-    "hoist-non-react-statics": "^3.3.2",
-    "jsonschema": "^1.4.0",
-    "lodash": "^4.17.20",
-    "normalize.css": "^8.0.1",
-    "prop-types": "^15.7.2",
-    "raphael": "^2.3.0",
-    "react-is": "^17.0.1",
-    "react-markdown": "^5.0.2",
-    "react-redux": "^7.2.1",
-    "redux": "^4.0.5",
-    "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.3.0",
-    "regenerator-runtime": "^0.13.7",
-    "remark-gfm": "^1.0.0",
-    "remark-parse": "^9.0.0",
-    "replace": "^1.2.0",
-    "reselect": "^4.0.0",
-    "subscription": "^3.0.0",
-    "url-search-params-polyfill": "^8.1.0",
-    "w3c-keyname": "^2.2.4",
-    "whatwg-fetch": "^3.4.1"
+    "build": "yarn workspaces run build",
+    "serve": "cd example && yarn serve:build"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
@@ -82,24 +17,9 @@
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.12.5",
     "@babel/preset-typescript": "^7.12.1",
-    "@rollup/plugin-babel": "^5.2.1",
-    "@rollup/plugin-commonjs": "^16.0.0",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^10.0.0",
-    "@rollup/plugin-replace": "^2.3.4",
-    "@rollup/plugin-strip": "^2.0.0",
-    "@svgr/rollup": "^5.4.0",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
-    "@types/jest": "^25.1.4",
-    "@types/node": "^12.12.38",
-    "@types/react": "^16.9.27",
-    "@types/react-dom": "^16.9.7",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
     "@typescript-eslint/parser": "^4.0.0",
     "babel-eslint": "^10.0.0",
-    "cross-env": "^7.0.2",
     "eslint": "^6.8.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-import": "^2.22.0",
@@ -108,25 +28,11 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react-hooks": "^4.0.8",
     "eslint-plugin-testing-library": "^3.9.0",
-    "gh-pages": "^2.2.0",
     "husky": "^4.3.0",
-    "less": "^3.12.2",
     "lint-staged": "^10.5.1",
-    "node-sass": "^5.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.4",
     "prettier-config-standard": "^1.0.1",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-scripts": "^3.4.1",
-    "rollup": "^2.33.1",
-    "rollup-plugin-cleanup": "^3.2.1",
-    "rollup-plugin-copy": "^3.3.0",
-    "rollup-plugin-delete": "^2.0.0",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-postcss": "^3.1.8",
-    "rollup-plugin-typescript2": "^0.29.0",
-    "rollup-plugin-visualizer": "^4.2.0",
     "stylelint": "^13.7.2",
     "stylelint-config-prettier": "^8.0.2",
     "stylelint-config-recommended-scss": "^4.2.0",
@@ -141,20 +47,16 @@
     }
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx}": [
+    "*.{js,jsx,ts,tsx}": [
       "prettier --write",
       "eslint --fix",
       "react-scripts test --env=jsdom --watchAll=false --findRelatedTests"
     ],
-    "src/**/*.{json}": [
+    "*.{json}": [
       "prettier --write"
     ],
-    "src/**/*.{css,less,scss}": [
+    "*.{css,less,scss}": [
       "stylelint --formatter verbose --fix --allow-empty-input"
     ]
-  },
-  "files": [
-    "dist",
-    "DEVNOTES.md"
-  ]
+  }
 }

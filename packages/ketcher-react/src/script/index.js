@@ -21,6 +21,7 @@ import * as structformat from './ui/data/convert/structformat'
 import ui from './ui'
 import Render from './render'
 import graph from './format/chemGraph'
+import { DefaultStructService } from './../infrastructure/services'
 
 function getSmiles() {
   return smiles.stringify(ketcher.editor.struct(), { ignoreErrors: true })
@@ -77,12 +78,17 @@ export default function init(el, staticResourcesUrl, apiPath) {
   ketcher.apiPath = apiPath
   const params = new URLSearchParams(document.location.search)
   if (params.has('api_path')) ketcher.apiPath = params.get('api_path')
-  ketcher.server = api(ketcher.apiPath, {
-    'smart-layout': true,
-    'ignore-stereochemistry-errors': true,
-    'mass-skip-error-on-pseudoatoms': false,
-    'gross-formula-add-rsites': true
-  })
+  ketcher.server = api(
+    ketcher.apiPath,
+    (baseUrl, defaultOptions) =>
+      new DefaultStructService(baseUrl, defaultOptions),
+    {
+      'smart-layout': true,
+      'ignore-stereochemistry-errors': true,
+      'mass-skip-error-on-pseudoatoms': false,
+      'gross-formula-add-rsites': true
+    }
+  )
   ketcher.ui = ui(
     el,
     staticResourcesUrl,
@@ -102,7 +108,7 @@ export default function init(el, staticResourcesUrl, apiPath) {
 const buildInfo = {
   version: process.env.VERSION,
   buildDate: process.env.BUILD_DATE,
-  buildNumber: process.env.BUILD_NUMBER || null
+  buildNumber: process.env.BUILD_NUMBER
 }
 
 import validateGraphF from './format/graphValidator' // eslint-disable-line

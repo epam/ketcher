@@ -39,8 +39,9 @@ function parametrizeUrl(url, params) {
 }
 
 function request(method: string, url: string, data?: any, headers?: any) {
-  if (data && method === 'GET') url = parametrizeUrl(url, data)
-  return fetch(url, {
+  let requestUrl = url
+  if (data && method === 'GET') requestUrl = parametrizeUrl(url, data)
+  return fetch(requestUrl, {
     method,
     headers: Object.assign(
       {
@@ -196,7 +197,7 @@ class IndigoService implements StructService {
         'Content-Type': blob.type || 'application/octet-stream'
       }
     )
-    const status = request.bind(null, 'GET', 'imago/uploads/:id')
+    const status = request.bind(null, 'GET', this.baseUrl + 'imago/uploads/:id')
     return req
       .then(data =>
         pollDeferred(

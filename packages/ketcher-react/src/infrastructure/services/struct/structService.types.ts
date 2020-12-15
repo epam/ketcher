@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 export interface StructService {
-  info: () => Promise<void>
+  info: () => Promise<any>
   convert: (data: any, options: any) => Promise<any>
   layout: (data: any, options: any) => Promise<any>
   clean: (data: any, options: any) => Promise<any>

@@ -33,7 +33,7 @@ export function checkServer() {
           appUpdate({
             indigoVersion: res?.indigoVersion,
             imagoVersions: res?.imagoVersions,
-            server: res?.indigoVersion && res?.imagoVersions
+            server: res?.isAvailable
           })
         ),
       err => console.info(err)

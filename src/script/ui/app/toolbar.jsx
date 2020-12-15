@@ -161,17 +161,19 @@ const toolbar = [
 function ZoomList({ status, onAction }) {
   const zoom = status.zoom && status.zoom.selected // TMP
   return (
-    <select
-      value={zoom}
-      onChange={ev =>
-        onAction(editor => editor.zoom(parseFloat(ev.target.value)))
-      }>
-      {zoomList.map(val => (
-        <option key={val.toString()} value={val}>{`${(
-          val * 100
-        ).toFixed()}%`}</option>
-      ))}
-    </select>
+    <form>
+      <select
+        value={zoom}
+        onChange={ev =>
+          onAction(editor => editor.zoom(parseFloat(ev.target.value)))
+        }>
+        {zoomList.map(val => (
+          <option key={val.toString()} value={val}>{`${(
+            val * 100
+          ).toFixed()}%`}</option>
+        ))}
+      </select>
+    </form>
   )
 }
 

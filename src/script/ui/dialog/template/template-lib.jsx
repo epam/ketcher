@@ -153,7 +153,7 @@ class TemplateLib extends Component {
               onClick={() => this.select(tmpl)}
             />
             <div class="btn-container">
-              {this.props.group === 'User Templates' && (
+              {tmpl.props.group === 'User Templates' && (
                 <button
                   className="delete-button"
                   onClick={() => this.props.onDelete(tmpl)}>

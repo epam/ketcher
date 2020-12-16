@@ -40,7 +40,8 @@ import {
   changeFilter,
   changeGroup,
   selectTmpl,
-  editTmpl
+  editTmpl,
+  deleteTmpl
 } from '../../state/templates'
 import { onAction } from '../../state'
 
@@ -151,11 +152,20 @@ class TemplateLib extends Component {
               className="struct"
               onClick={() => this.select(tmpl)}
             />
-            <button
-              className="attach-button"
-              onClick={() => this.props.onAttach(tmpl)}>
-              Edit
-            </button>
+            <div class="btn-container">
+              {tmpl.props.group === 'User Templates' && (
+                <button
+                  className="delete-button"
+                  onClick={() => this.props.onDelete(tmpl)}>
+                  Delete
+                </button>
+              )}
+              <button
+                className="attach-button"
+                onClick={() => this.props.onAttach(tmpl)}>
+                Edit
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -222,6 +232,7 @@ export default connect(
     onSelect: tmpl => dispatch(selectTmpl(tmpl)),
     onChangeGroup: group => dispatch(changeGroup(group)),
     onAttach: tmpl => dispatch(editTmpl(tmpl)),
+    onDelete: tmpl => dispatch(deleteTmpl(tmpl)),
     onOk: res => {
       dispatch(onAction({ tool: 'template', opts: res }))
       props.onOk(res)

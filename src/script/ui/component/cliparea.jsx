@@ -106,7 +106,7 @@ class ClipArea extends Component {
 }
 
 function isFormElement(el) {
-  return el.closest('form') != null || el.value
+  return el.closest('form') != null || el.tagName === 'SELECT'
 }
 
 function autofocus(cliparea) {

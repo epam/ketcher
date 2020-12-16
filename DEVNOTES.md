@@ -5,60 +5,48 @@
 
 ## Build instructions
 
-The latest version of Ketcher has been splitted into two packages: component library (see /src folder) and React Ready-to-run application (see /example folder).
+The latest version of Ketcher has been splitted into two packages: component library (see /packaes/ketcher-react folder) and React ready-to-run application (see /example folder).
 
-### Build component library (terminal #1)
+### Create production build
+
+To create production build of ready-to-run application execute the following command from root directory:
 
     yarn install
-    yarn start
-
-For production build:
-
     yarn build
 
-### Build example application (terminal #2)
+To serve results of build locally run the following command from root directory:
+
+    yarn serve
+
+### Development
+
+The latest version of Ketcher is based on yarn workspaces. So before starting development it is necessary to run the following commads from root directory:
+
+    yarn install
+
+After that component library and application should be started separately.
+
+**Build component library (terminal #1)**
+
+    cd packages/ketcher-react
+    yarn start
+
+**Build example application (terminal #2)**
 
     cd example
-    yarn install
     yarn start
 
-For production build:
-
-    yarn build
-
-## Indigo Service
+## Indigo service
 
 Ketcher uses Indigo Service for server operations.
 You may pass it as a property while Editor component is used or just add api_path query parameter:
 
-    <Editor staticResourcesUrl={process.env.PUBLIC_URL} apiPath={link to Indigo service} />
+    <Editor staticResourcesUrl={process.env.PUBLIC_URL} apiPath={insert link to Indigo service here} />
       or
-    http://localhost:3000/?api_path={link to Indigo service}
+    http://localhost:3000/?api_path={insert link to Indigo service here}
 
 You can find the instruction for service installation
 [here](http://lifescience.opensource.epam.com/indigo/service/index.html).
-
-## 3D Viewer
-
-Ketcher can use Miew for viewing and editing data in 3D.
-For use of this functionality you should add the link to miew by your own:
-
-    <html lang="en">
-      <head>
-      ...
-        <link href="{link to Miew.min.css}" rel="stylesheet">
-        ...
-        </head>
-      </head>
-      <body>
-        ...
-        <script src="{link to Miew.min.js}"></script>
-        ...
-      </body>
-    </html>
-
-You can find the latest version of viewer [here](https://github.com/epam/miew).
-The last checked version - [0.7.13](https://github.com/epam/miew/releases/tag/v0.7.13).
 
 ## Additional commands
 
@@ -75,7 +63,7 @@ To start prettier:
 
 To start eslint:
 
-    test:lint 
+    test:lint
 
 To start stylelint:
 

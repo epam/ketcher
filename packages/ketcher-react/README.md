@@ -59,4 +59,4 @@ The last checked version - [0.9.0](https://github.com/epam/miew/releases/tag/v0.
 
 ## License
 
-Please read [LICENSE](LICENSE) and [NOTICE](NOTICE) for details.
+Please read [LICENSE](./../../LICENSE) and [NOTICE](./../../NOTICE) for details.

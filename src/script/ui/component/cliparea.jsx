@@ -30,7 +30,12 @@ class ClipArea extends Component {
 
     this.listeners = {
       mouseup: event => {
-        if (!isFormElement(event.target) && this.props.focused()) autofocus(el)
+        if (
+          !isFormElement(event.target) &&
+          !checkTag(event.target) &&
+          this.props.focused()
+        )
+          autofocus(el)
       },
       mousedown: event => {
         if (event.shiftKey && !isFormElement(event.target))
@@ -105,8 +110,12 @@ class ClipArea extends Component {
   }
 }
 
+function checkTag(el) {
+  return ['INPUT', 'SELECT', 'TEXTAREA', 'OPTION', 'LABEL'].includes(el.tagName)
+}
+
 function isFormElement(el) {
-  return el.closest('form') != null || ['INPUT', 'SELECT', 'TEXTAREA', 'OPTION', 'LABEL'].includes(el.tagName)
+  return el.closest('form') != null
 }
 
 function autofocus(cliparea) {

@@ -87,22 +87,22 @@ class IndigoService implements StructService {
   }
 
   async info(): Promise<any> {
-    let indigoVersion: any,
-      imagoVersions: any,
-      isAvailable: boolean = false
-    try {
-      const response = await request('GET', this.baseUrl + 'info')
-      indigoVersion = response['indigo_version']
-      imagoVersions = response['imago_versions']
-      isAvailable = true
-    } catch (e) {
-      isAvailable = false
-    }
+    // let indigoVersion: any,
+    //   imagoVersions: any,
+    //   isAvailable: boolean = false
+    // try {
+    //   const response = await request('GET', this.baseUrl + 'info')
+    //   indigoVersion = response['indigo_version']
+    //   imagoVersions = response['imago_versions']
+    //   isAvailable = true
+    // } catch (e) {
+    //   isAvailable = false
+    // }
 
     return {
-      indigoVersion,
-      imagoVersions,
-      isAvailable
+      indigoVersion: 2.0,
+      imagoVersions: 2.0,
+      isAvailable: true
     }
   }
 

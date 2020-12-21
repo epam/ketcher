@@ -13,8 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { StructService } from './structService.types'
-import RemoteStructService from './remoteStructService'
-
-export { RemoteStructService }
-export type { StructService }
+export interface StructService {
+  info: () => Promise<any>
+  convert: (data: any, options: any) => Promise<any>
+  layout: (data: any, options: any) => Promise<any>
+  clean: (data: any, options: any) => Promise<any>
+  aromatize: (data: any, options: any) => Promise<any>
+  dearomatize: (data: any, options: any) => Promise<any>
+  calculateCip: (data: any, options: any) => Promise<any>
+  automap: (data: any, options: any) => Promise<any>
+  check: (data: any, options: any) => Promise<any>
+  calculate: (data: any, options: any) => Promise<any>
+  recognize: (data: any, options: any) => Promise<any>
+}

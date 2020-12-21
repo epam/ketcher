@@ -21,7 +21,7 @@ import * as structformat from './ui/data/convert/structformat'
 import ui from './ui'
 import Render from './render'
 import graph from './format/chemGraph'
-import { DefaultStructService } from './../infrastructure/services'
+import { RemoteStructService } from './../infrastructure/services'
 
 function getSmiles() {
   return smiles.stringify(ketcher.editor.struct(), { ignoreErrors: true })
@@ -81,7 +81,7 @@ export default function init(el, staticResourcesUrl, apiPath) {
   ketcher.server = api(
     ketcher.apiPath,
     (baseUrl, defaultOptions) =>
-      new DefaultStructService(baseUrl, defaultOptions),
+      new RemoteStructService(baseUrl, defaultOptions),
     {
       'smart-layout': true,
       'ignore-stereochemistry-errors': true,

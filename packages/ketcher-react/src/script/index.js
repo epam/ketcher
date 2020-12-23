@@ -23,6 +23,8 @@ import Render from './render'
 import graph from './format/chemGraph'
 import { RemoteStructService } from './../infrastructure/services'
 
+import validateGraphF from './format/graphValidator'
+
 function getSmiles() {
   return smiles.stringify(ketcher.editor.struct(), { ignoreErrors: true })
 }
@@ -72,23 +74,24 @@ function showMolfile(clientArea, molString, options) {
   return render
 }
 
+function createDefaultStructService(baseUrl, defaultOptions) {
+  const service = new RemoteStructService(baseUrl, defaultOptions)
+  return service
+}
+
 // TODO: replace window.onload with something like <https://github.com/ded/domready>
 // to start early
-export default function init(el, staticResourcesUrl, apiPath) {
+export default function init(el, staticResourcesUrl, apiPath, structServiceFn) {
   ketcher.apiPath = apiPath
   const params = new URLSearchParams(document.location.search)
+  const createStructServiceFn = structServiceFn || createDefaultStructService
   if (params.has('api_path')) ketcher.apiPath = params.get('api_path')
-  ketcher.server = api(
-    ketcher.apiPath,
-    (baseUrl, defaultOptions) =>
-      new RemoteStructService(baseUrl, defaultOptions),
-    {
-      'smart-layout': true,
-      'ignore-stereochemistry-errors': true,
-      'mass-skip-error-on-pseudoatoms': false,
-      'gross-formula-add-rsites': true
-    }
-  )
+  ketcher.server = api(ketcher.apiPath, createStructServiceFn, {
+    'smart-layout': true,
+    'ignore-stereochemistry-errors': true,
+    'mass-skip-error-on-pseudoatoms': false,
+    'gross-formula-add-rsites': true
+  })
   ketcher.ui = ui(
     el,
     staticResourcesUrl,
@@ -110,8 +113,6 @@ const buildInfo = {
   buildDate: process.env.BUILD_DATE,
   buildNumber: process.env.BUILD_NUMBER
 }
-
-import validateGraphF from './format/graphValidator' // eslint-disable-line
 
 const ketcher = Object.assign(
   {

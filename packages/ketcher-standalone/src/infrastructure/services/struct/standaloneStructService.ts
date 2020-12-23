@@ -13,145 +13,169 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Module as IndigoModule } from './../../../generated/libindigo'
+import indigoModuleFn from './../../../generated/libindigo'
 import { StructService } from './structService.types'
 
+function setOptions(indigoOptions: any, options: any) {
+  for (let [key, value] of Object.entries(options)) {
+    indigoOptions.set(key, (value as any).toString())
+  }
+}
+
+enum ChemicalMimeType {
+  Mol = 'chemical/x-mdl-molfile',
+  Rxn = 'chemical/x-mdl-rxnfile',
+  DaylightSmiles = 'chemical/x-daylight-smiles',
+  ExtendedSmiles = 'chemical/x-chemaxon-cxsmiles',
+  DaylightSmarts = 'chemical/x-daylight-smarts',
+  InchI = 'chemical/x-inchi',
+  InChIAuxInfo = 'chemical/x-inchi-aux',
+  CML = 'chemical/x-cml'
+}
+
+enum SupportedFormat {
+  Rxn = 'rxnfile',
+  Mol = 'molfile',
+  Smiles = 'smiles',
+  Smarts = 'smarts',
+  CML = 'cml',
+  InchI = 'inchi',
+  InChIAuxInfo = 'inchi-aux'
+}
+
+function convertMimeTypeToOutputFormat(
+  mimeType: ChemicalMimeType
+): SupportedFormat | undefined {
+  let format: SupportedFormat | undefined
+  switch (mimeType) {
+    case ChemicalMimeType.Mol: {
+      format = SupportedFormat.Mol
+      break
+    }
+    case ChemicalMimeType.Rxn: {
+      format = SupportedFormat.Rxn
+      break
+    }
+    case ChemicalMimeType.DaylightSmiles:
+    case ChemicalMimeType.ExtendedSmiles: {
+      format = SupportedFormat.Smiles
+      break
+    }
+    case ChemicalMimeType.DaylightSmarts: {
+      format = SupportedFormat.Smiles
+      break
+    }
+    case ChemicalMimeType.InchI: {
+      format = SupportedFormat.InchI
+      break
+    }
+    case ChemicalMimeType.InChIAuxInfo: {
+      format = SupportedFormat.InChIAuxInfo
+      break
+    }
+    case ChemicalMimeType.CML: {
+      format = SupportedFormat.CML
+      break
+    }
+  }
+
+  return format
+}
+
+interface ConvertOptions {
+  output_format: ChemicalMimeType
+  struct: string
+}
 class IndigoService implements StructService {
-  private baseUrl: string
   private defaultOptions: any
   private indigoModule: any
 
-  constructor(base: string, defaultOptions: any) {
-    this.baseUrl = !base || /\/$/.test(base) ? base : base + '/'
+  constructor(defaultOptions: any) {
     this.defaultOptions = defaultOptions
-    this.indigoModule = this.indigoModule()
+    this.indigoModule = indigoModuleFn()
   }
 
   async info(): Promise<any> {
-    let indigoVersion: any,
-      imagoVersions: any,
-      isAvailable: boolean = false
-    try {
-      const response = await request('GET', this.baseUrl + 'info')
-      indigoVersion = response['indigo_version']
-      imagoVersions = response['imago_versions']
-      isAvailable = true
-    } catch (e) {
-      isAvailable = false
-    }
-
-    return {
-      indigoVersion,
-      imagoVersions,
-      isAvailable
-    }
+    return this.indigoModule.then(indigo => {
+      return {
+        indigoVersion: indigo.version(),
+        imagoVersions: null,
+        isAvailable: true
+      }
+    })
   }
 
   convert(data: any, options: any): Promise<any> {
-    return indigoCall(
-      'POST',
-      'indigo/convert',
-      this.baseUrl,
-      this.defaultOptions
-    )(data, options)
+    const { output_format, struct }: ConvertOptions = data
+    const format = convertMimeTypeToOutputFormat(output_format)
+    return this.indigoModule.then(indigo => {
+      const indigoOptions = new indigo.map$string$$string$()
+      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+      const convertedStruct = indigo.convert(struct, format, indigoOptions)
+      return { struct: convertedStruct }
+    })
   }
 
   layout(data: any, options: any): Promise<any> {
-    return indigoCall(
-      'POST',
-      'indigo/layout',
-      this.baseUrl,
-      this.defaultOptions
-    )(data, options)
+    console.log(data)
+    console.log(options)
+    return Promise.reject('not implemented yet')
   }
 
   clean(data: any, options: any): Promise<any> {
-    return indigoCall(
-      'POST',
-      'indigo/clean',
-      this.baseUrl,
-      this.defaultOptions
-    )(data, options)
+    console.log(data)
+    console.log(options)
+    return Promise.reject('not implemented yet')
   }
 
   aromatize(data: any, options: any): Promise<any> {
-    return indigoCall(
-      'POST',
-      'indigo/aromatize',
-      this.baseUrl,
-      this.defaultOptions
-    )(data, options)
+    const { struct }: ConvertOptions = data
+    return this.indigoModule.then(indigo => {
+      const indigoOptions = new indigo.map$string$$string$()
+      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+      const aromatizedStruct = indigo.aromatize(struct, indigoOptions)
+      return { struct: aromatizedStruct }
+    })
   }
 
   dearomatize(data: any, options: any): Promise<any> {
-    return indigoCall(
-      'POST',
-      'indigo/dearomatize',
-      this.baseUrl,
-      this.defaultOptions
-    )(data, options)
+    const { struct }: ConvertOptions = data
+    return this.indigoModule.then(indigo => {
+      const indigoOptions = new indigo.map$string$$string$()
+      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+      const dearomatizedStruct = indigo.dearomatize(struct, indigoOptions)
+      return { struct: dearomatizedStruct }
+    })
   }
 
   calculateCip(data: any, options: any): Promise<any> {
-    return indigoCall(
-      'POST',
-      'indigo/calculate_cip',
-      this.baseUrl,
-      this.defaultOptions
-    )(data, options)
+    console.log(data)
+    console.log(options)
+    return Promise.reject('not implemented yet')
   }
 
   automap(data: any, options: any): Promise<any> {
-    return indigoCall(
-      'POST',
-      'indigo/automap',
-      this.baseUrl,
-      this.defaultOptions
-    )(data, options)
+    console.log(data)
+    console.log(options)
+    return Promise.reject('not implemented yet')
   }
 
   check(data: any, options: any): Promise<any> {
-    return indigoCall(
-      'POST',
-      'indigo/check',
-      this.baseUrl,
-      this.defaultOptions
-    )(data, options)
+    console.log(data)
+    console.log(options)
+    return Promise.reject('not implemented yet')
   }
 
   calculate(data: any, options: any): Promise<any> {
-    return indigoCall(
-      'POST',
-      'indigo/calculate',
-      this.baseUrl,
-      this.defaultOptions
-    )(data, options)
+    console.log(data)
+    console.log(options)
+    return Promise.reject('not implemented yet')
   }
 
   recognize(blob: any, version: any): Promise<any> {
-    const parVersion = version ? `?version=${version}` : ''
-    const req = request(
-      'POST',
-      this.baseUrl + `imago/uploads${parVersion}`,
-      blob,
-      {
-        'Content-Type': blob.type || 'application/octet-stream'
-      }
-    )
-    const status = request.bind(null, 'GET', this.baseUrl + 'imago/uploads/:id')
-    return req
-      .then(data =>
-        pollDeferred(
-          status.bind(null, { id: data.upload_id }),
-          (response: any) => {
-            if (response.state === 'FAILURE') throw response
-            return response.state === 'SUCCESS'
-          },
-          500,
-          300
-        )
-      )
-      .then((response: any) => ({ struct: response.metadata.mol_str }))
+    console.log(blob)
+    console.log(version)
+    return Promise.reject('not implemented yet')
   }
 }
 

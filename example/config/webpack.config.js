@@ -5,6 +5,7 @@ const {
   addWebpackPlugin
 } = require('customize-cra')
 const config = require('../../package.json')
+const webpack = require('webpack')
 const HtmlReplaceWebpackPlugin = require('html-replace-webpack-plugin')
 const GitRevisionPlugin = require('git-revision-webpack-plugin')
 
@@ -30,6 +31,11 @@ module.exports = override(
     loader: 'source-map-loader',
     exclude: /node_modules/
   }),
+  addWebpackPlugin(
+    new webpack.EnvironmentPlugin({
+      MODE: process.env.MODE
+    })
+  ),
   addWebpackPlugin(
     new HtmlReplaceWebpackPlugin([
       {

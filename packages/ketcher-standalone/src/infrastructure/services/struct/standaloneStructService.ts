@@ -1,3 +1,13 @@
+import {
+  CheckData,
+  AutomapData,
+  CalculateCipData,
+  DearomatizeData,
+  AromatizeData,
+  CleanData,
+  LayoutData,
+  CalculateData
+} from './structService.types'
 /****************************************************************************
  * Copyright 2020 EPAM Systems
  *
@@ -14,33 +24,33 @@
  * limitations under the License.
  ***************************************************************************/
 import indigoModuleFn from './../../../generated/libindigo'
-import { StructService } from './structService.types'
+import {
+  StructService,
+  ChemicalMimeType,
+  SupportedFormat,
+  Options,
+  InfoResult,
+  ConvertData,
+  ConvertResult,
+  LayoutResult,
+  CleanResult,
+  AromatizeResult,
+  DearomatizeResult,
+  CalculateCipResult,
+  AutomapResult,
+  CheckResult,
+  CalculateResult,
+  RecognizeResult
+} from './structService.types'
 
-function setOptions(indigoOptions: any, options: any) {
+interface IndigoOptions {
+  set: (key: string, value: string) => void
+}
+
+function setOptions(indigoOptions: IndigoOptions, options: Options) {
   for (let [key, value] of Object.entries(options)) {
     indigoOptions.set(key, (value as any).toString())
   }
-}
-
-enum ChemicalMimeType {
-  Mol = 'chemical/x-mdl-molfile',
-  Rxn = 'chemical/x-mdl-rxnfile',
-  DaylightSmiles = 'chemical/x-daylight-smiles',
-  ExtendedSmiles = 'chemical/x-chemaxon-cxsmiles',
-  DaylightSmarts = 'chemical/x-daylight-smarts',
-  InchI = 'chemical/x-inchi',
-  InChIAuxInfo = 'chemical/x-inchi-aux',
-  CML = 'chemical/x-cml'
-}
-
-enum SupportedFormat {
-  Rxn = 'rxnfile',
-  Mol = 'molfile',
-  Smiles = 'smiles',
-  Smarts = 'smarts',
-  CML = 'cml',
-  InchI = 'inchi',
-  InChIAuxInfo = 'inchi-aux'
 }
 
 function convertMimeTypeToOutputFormat(
@@ -82,99 +92,165 @@ function convertMimeTypeToOutputFormat(
   return format
 }
 
-interface ConvertOptions {
-  output_format: ChemicalMimeType
-  struct: string
-}
 class IndigoService implements StructService {
   private defaultOptions: any
   private indigoModule: any
 
-  constructor(defaultOptions: any) {
+  constructor(defaultOptions: Options) {
     this.defaultOptions = defaultOptions
     this.indigoModule = indigoModuleFn()
   }
 
-  async info(): Promise<any> {
+  async info(): Promise<InfoResult> {
     return this.indigoModule.then(indigo => {
-      return {
+      const result: InfoResult = {
         indigoVersion: indigo.version(),
-        imagoVersions: null,
+        imagoVersions: [],
         isAvailable: true
       }
+
+      return result
     })
   }
 
-  convert(data: any, options: any): Promise<any> {
-    const { output_format, struct }: ConvertOptions = data
+  convert(data: ConvertData, options: Options): Promise<ConvertResult> {
+    const { output_format, struct } = data
     const format = convertMimeTypeToOutputFormat(output_format)
     return this.indigoModule.then(indigo => {
       const indigoOptions = new indigo.map$string$$string$()
       setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
       const convertedStruct = indigo.convert(struct, format, indigoOptions)
-      return { struct: convertedStruct }
+      const result: ConvertResult = {
+        struct: convertedStruct,
+        format: output_format
+      }
+      return result
     })
   }
 
-  layout(data: any, options: any): Promise<any> {
-    console.log(data)
-    console.log(options)
-    return Promise.reject('not implemented yet')
+  layout(data: LayoutData, options: Options): Promise<LayoutResult> {
+    const { struct } = data
+    return this.indigoModule.then(indigo => {
+      const indigoOptions = new indigo.map$string$$string$()
+      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+      const updatedStruct = indigo.layout(struct, indigoOptions)
+      const result: LayoutResult = {
+        struct: updatedStruct,
+        format: ChemicalMimeType.Mol
+      }
+      return result
+    })
   }
 
-  clean(data: any, options: any): Promise<any> {
-    console.log(data)
-    console.log(options)
-    return Promise.reject('not implemented yet')
+  clean(data: CleanData, options: Options): Promise<CleanResult> {
+    //TODO: very slow
+    const { struct } = data
+    return this.indigoModule.then(indigo => {
+      const indigoOptions = new indigo.map$string$$string$()
+      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+      const updatedStruct = indigo.clean2d(struct, indigoOptions)
+      const result: CleanResult = {
+        struct: updatedStruct,
+        format: ChemicalMimeType.Mol
+      }
+      return result
+    })
   }
 
-  aromatize(data: any, options: any): Promise<any> {
-    const { struct }: ConvertOptions = data
+  aromatize(data: AromatizeData, options: Options): Promise<AromatizeResult> {
+    const { struct } = data
     return this.indigoModule.then(indigo => {
       const indigoOptions = new indigo.map$string$$string$()
       setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
       const aromatizedStruct = indigo.aromatize(struct, indigoOptions)
-      return { struct: aromatizedStruct }
+      const result: AromatizeResult = {
+        struct: aromatizedStruct,
+        format: ChemicalMimeType.Mol
+      }
+      return result
     })
   }
 
-  dearomatize(data: any, options: any): Promise<any> {
-    const { struct }: ConvertOptions = data
+  dearomatize(
+    data: DearomatizeData,
+    options: Options
+  ): Promise<DearomatizeResult> {
+    const { struct } = data
     return this.indigoModule.then(indigo => {
       const indigoOptions = new indigo.map$string$$string$()
       setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
       const dearomatizedStruct = indigo.dearomatize(struct, indigoOptions)
-      return { struct: dearomatizedStruct }
+      const result: AromatizeResult = {
+        struct: dearomatizedStruct,
+        format: ChemicalMimeType.Mol
+      }
+      return result
     })
   }
 
-  calculateCip(data: any, options: any): Promise<any> {
-    console.log(data)
-    console.log(options)
-    return Promise.reject('not implemented yet')
+  calculateCip(
+    data: CalculateCipData,
+    options: Options
+  ): Promise<CalculateCipResult> {
+    const { struct } = data
+    return this.indigoModule.then(indigo => {
+      const indigoOptions = new indigo.map$string$$string$()
+      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+      const updatedStruct = indigo.calculateCip(struct, indigoOptions)
+      const result: CalculateCipResult = {
+        struct: updatedStruct,
+        format: ChemicalMimeType.Mol
+      }
+      return result
+    })
   }
 
-  automap(data: any, options: any): Promise<any> {
-    console.log(data)
-    console.log(options)
-    return Promise.reject('not implemented yet')
+  automap(data: AutomapData, options: Options): Promise<AutomapResult> {
+    const { mode, struct } = data
+    return this.indigoModule.then(indigo => {
+      const indigoOptions = new indigo.map$string$$string$()
+      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+      const updatedStruct = indigo.automap(struct, mode, indigoOptions)
+      const result: AutomapResult = {
+        struct: updatedStruct,
+        format: ChemicalMimeType.Mol
+      }
+      return result
+    })
   }
 
-  check(data: any, options: any): Promise<any> {
-    console.log(data)
-    console.log(options)
-    return Promise.reject('not implemented yet')
+  check(data: CheckData, options: Options): Promise<CheckResult> {
+    //TODO: transform to valid result
+    const { types, struct } = data
+    return this.indigoModule.then(indigo => {
+      const indigoOptions = new indigo.map$string$$string$()
+      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+      const warnings = indigo.check(
+        struct,
+        types?.length ? types.join(';') : '',
+        indigoOptions
+      )
+      const result: CheckResult = warnings as CheckResult
+      return result
+    })
   }
 
-  calculate(data: any, options: any): Promise<any> {
-    console.log(data)
-    console.log(options)
-    return Promise.reject('not implemented yet')
+  calculate(data: CalculateData, options: Options): Promise<CalculateResult> {
+    const { struct } = data
+    return this.indigoModule.then(indigo => {
+      const indigoOptions = new indigo.map$string$$string$()
+      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+      const calculatedPropertiesString = indigo.calculate(struct, indigoOptions)
+      //TODO: map to required fileds
+      const result: CalculateResult = JSON.parse(
+        calculatedPropertiesString
+      ) as CalculateResult
+      return result
+    })
   }
 
-  recognize(blob: any, version: any): Promise<any> {
-    console.log(blob)
-    console.log(version)
+  //@ts-ignore
+  recognize(blob: Blob, version: string): Promise<RecognizeResult> {
     return Promise.reject('not implemented yet')
   }
 }

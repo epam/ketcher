@@ -16,7 +16,7 @@
 
 import { serverTransform } from '../state/server'
 
-export default {
+const config = {
   layout: {
     shortcut: 'Mod+l',
     title: 'Layout',
@@ -68,7 +68,9 @@ export default {
   recognize: {
     title: 'Recognize Molecule',
     action: { dialog: 'recognize' },
-    disabled: (editor, server, options) => !options.app.server
+    disabled: (editor, server, options) =>
+      //TODO: provide the list of disabled functions as array
+      !options.app.server || process.env.MODE === 'standalone'
   },
   miew: {
     title: '3D Viewer',
@@ -76,3 +78,5 @@ export default {
     disabled: () => !window.Miew
   }
 }
+
+export default config

@@ -45,7 +45,7 @@ interface IndigoOptions {
   set: (key: string, value: string) => void
 }
 interface KeyValuePair {
-  [key: string]: number | string | boolean
+  [key: string]: number | string | boolean | object
 }
 
 function setOptions(indigoOptions: IndigoOptions, options: Options) {
@@ -93,7 +93,7 @@ function convertMimeTypeToOutputFormat(
   return format
 }
 
-function mapCalculatePropertyName(property: string) {
+function mapCalculatedPropertyName(property: string) {
   let mappedProperty: string | undefined
   switch (property) {
     case 'gross-formula': {
@@ -107,6 +107,22 @@ function mapCalculatePropertyName(property: string) {
 
   return mappedProperty
 }
+
+function mapWarningGroup(property: string) {
+  let mappedProperty: string | undefined
+  switch (property) {
+    case 'OVERLAP_BOND': {
+      mappedProperty = 'overlapping_bonds'
+      break
+    }
+    default:
+      mappedProperty = property.toLowerCase()
+      break
+  }
+
+  return mappedProperty
+}
+
 class IndigoService implements StructService {
   private defaultOptions: any
   private indigoModule: any
@@ -235,17 +251,28 @@ class IndigoService implements StructService {
   }
 
   check(data: CheckData, options: Options): Promise<CheckResult> {
-    //TODO: transform to valid result
     const { types, struct } = data
     return this.indigoModule.then(indigo => {
       const indigoOptions = new indigo.map$string$$string$()
       setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
-      const warnings = indigo.check(
+      const warningsString = indigo.check(
         struct,
         types?.length ? types.join(';') : '',
         indigoOptions
       )
-      const result: CheckResult = warnings as CheckResult
+
+      const warnings = JSON.parse(warningsString) as KeyValuePair
+
+      const result: CheckResult = Object.entries(warnings).reduce(
+        (acc, curr) => {
+          const [key, value] = curr
+          const mappedPropertyName = mapWarningGroup(key)
+          acc[mappedPropertyName] = value['message']
+
+          return acc
+        },
+        {}
+      )
       return result
     })
   }
@@ -263,7 +290,7 @@ class IndigoService implements StructService {
         calculatedProperties
       ).reduce((acc, curr) => {
         const [key, value] = curr
-        const mappedPropertyName = mapCalculatePropertyName(key)
+        const mappedPropertyName = mapCalculatedPropertyName(key)
         if (properties.includes(mappedPropertyName)) {
           acc[mappedPropertyName] = value
         }

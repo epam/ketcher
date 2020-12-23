@@ -1,13 +1,3 @@
-import {
-  CheckData,
-  AutomapData,
-  CalculateCipData,
-  DearomatizeData,
-  AromatizeData,
-  CleanData,
-  LayoutData,
-  CalculateData
-} from './structService.types'
 /****************************************************************************
  * Copyright 2020 EPAM Systems
  *
@@ -26,6 +16,14 @@ import {
 import indigoModuleFn from './../../../generated/libindigo'
 import {
   StructService,
+  CheckData,
+  AutomapData,
+  CalculateCipData,
+  DearomatizeData,
+  AromatizeData,
+  CleanData,
+  LayoutData,
+  CalculateData,
   ChemicalMimeType,
   SupportedFormat,
   Options,
@@ -45,6 +43,9 @@ import {
 
 interface IndigoOptions {
   set: (key: string, value: string) => void
+}
+interface KeyValuePair {
+  [key: string]: number | string | boolean
 }
 
 function setOptions(indigoOptions: IndigoOptions, options: Options) {
@@ -92,6 +93,20 @@ function convertMimeTypeToOutputFormat(
   return format
 }
 
+function mapCalculatePropertyName(property: string) {
+  let mappedProperty: string | undefined
+  switch (property) {
+    case 'gross-formula': {
+      mappedProperty = 'gross'
+      break
+    }
+    default:
+      mappedProperty = property
+      break
+  }
+
+  return mappedProperty
+}
 class IndigoService implements StructService {
   private defaultOptions: any
   private indigoModule: any
@@ -236,15 +251,26 @@ class IndigoService implements StructService {
   }
 
   calculate(data: CalculateData, options: Options): Promise<CalculateResult> {
-    const { struct } = data
+    const { properties, struct } = data
     return this.indigoModule.then(indigo => {
       const indigoOptions = new indigo.map$string$$string$()
       setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
       const calculatedPropertiesString = indigo.calculate(struct, indigoOptions)
-      //TODO: map to required fileds
-      const result: CalculateResult = JSON.parse(
+      const calculatedProperties = JSON.parse(
         calculatedPropertiesString
-      ) as CalculateResult
+      ) as KeyValuePair
+      const result: CalculateResult = Object.entries(
+        calculatedProperties
+      ).reduce((acc, curr) => {
+        const [key, value] = curr
+        const mappedPropertyName = mapCalculatePropertyName(key)
+        if (properties.includes(mappedPropertyName)) {
+          acc[mappedPropertyName] = value
+        }
+
+        return acc
+      }, {})
+
       return result
     })
   }

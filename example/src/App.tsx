@@ -5,7 +5,18 @@ import 'miew/dist/Miew.min.css'
 //@ts-ignore
 import { Editor } from 'ketcher-react'
 import 'ketcher-react/dist/index.css'
+//import { StandaloneStructService } from 'ketcher-standalone'
 ;(global as any).Miew = Miew
+
+let structServiceFn: any = undefined
+console.log(process.env)
+if (process.env.MODE === 'standalone') {
+  const { StandaloneStructService } = require('ketcher-standalone')
+  //@ts-ignore
+  structServiceFn = (baseUrl: string, options: any) => {
+    return new StandaloneStructService(options)
+  }
+}
 
 const App = () => {
   return (
@@ -13,6 +24,8 @@ const App = () => {
       <Editor
         staticResourcesUrl={process.env.PUBLIC_URL}
         apiPath={process.env.REACT_APP_API_PATH}
+        //@ts-ignore
+        structServiceFn={structServiceFn}
       />
     </div>
   )

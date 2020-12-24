@@ -66,7 +66,7 @@ function Editor(clientArea, options) {
     sdataEdit: new s.PipelineSubscription(),
     quickEdit: new s.PipelineSubscription(),
     attachEdit: new s.PipelineSubscription(),
-    change: new s.PipelineSubscription(),
+    change: new s.Subscription(),
     selectionChange: new s.PipelineSubscription(),
     aromatizeStruct: new s.PipelineSubscription(),
     dearomatizeStruct: new s.PipelineSubscription(),
@@ -273,8 +273,33 @@ Editor.prototype.redo = function () {
   this.render.update()
 }
 
+function customOnChangeHandler(action, handler) {
+  const data = []
+  const idTemplate = /id$/i
+
+  action.operations.forEach(operation => {
+    const op = operation._inverted
+    data.push({
+      operation: op.operationName,
+      id: op.data
+        ? op.data[Object.keys(op.data).filter(key => key.match(idTemplate))]
+        : null
+    })
+  })
+
+  return handler(data)
+}
+
 Editor.prototype.on = function (eventName, handler) {
-  this.event[eventName].add(handler)
+  switch (eventName) {
+    case 'change':
+      this.event[eventName].add(action =>
+        customOnChangeHandler(action, handler)
+      )
+      break
+    default:
+      this.event[eventName].add(handler)
+  }
 }
 
 function isMouseRight(event) {

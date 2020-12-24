@@ -22,7 +22,7 @@ function FragmentAdd(frid) {
     return new FragmentDelete(this.frid)
   }
 }
-FragmentAdd.prototype = new Base()
+FragmentAdd.prototype = new Base('FragmentAdd')
 
 function FragmentDelete(frid) {
   this.frid = frid
@@ -42,7 +42,7 @@ function FragmentDelete(frid) {
     return new FragmentAdd(this.frid)
   }
 }
-FragmentDelete.prototype = new Base()
+FragmentDelete.prototype = new Base('FragmentDelete')
 
 function FragmentStereoFlag(frid, flag = false) {
   this.frid = frid
@@ -66,7 +66,7 @@ function FragmentStereoFlag(frid, flag = false) {
     return ret
   }
 }
-FragmentStereoFlag.prototype = new Base()
+FragmentStereoFlag.prototype = new Base('FragmentStereoFlag')
 
 // todo : merge add and delete stereo atom
 function FragmentAddStereoAtom(frid, aid) {
@@ -83,7 +83,7 @@ function FragmentAddStereoAtom(frid, aid) {
     return new FragmentDeleteStereoAtom(this.data.frid, this.data.aid)
   }
 }
-FragmentAddStereoAtom.prototype = new Base()
+FragmentAddStereoAtom.prototype = new Base('FragmentAddStereoAtom')
 
 function FragmentDeleteStereoAtom(frid, aid) {
   this.data = { frid, aid }
@@ -99,7 +99,7 @@ function FragmentDeleteStereoAtom(frid, aid) {
     return new FragmentAddStereoAtom(this.data.frid, this.data.aid)
   }
 }
-FragmentDeleteStereoAtom.prototype = new Base()
+FragmentDeleteStereoAtom.prototype = new Base('FragmentDeleteStereoAtom')
 
 function invalidateEnhancedFlag(restruct, frid, flag) {
   const reEnhancedFlag = restruct.enhancedFlags.get(frid)
@@ -134,7 +134,7 @@ function EnhancedFlagMove(frid, p) {
     return ret
   }
 }
-EnhancedFlagMove.prototype = new Base()
+EnhancedFlagMove.prototype = new Base('EnhancedFlagMove')
 
 export {
   FragmentAdd,

@@ -1,5 +1,6 @@
-function Base() {
+function Base(operationName) {
   this.type = 'OpBase'
+  this.operationName = operationName
 
   // assert here?
   this.execute = function () {

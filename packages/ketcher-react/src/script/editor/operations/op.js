@@ -101,7 +101,7 @@ function AtomAdd(atom, pos) {
     return ret
   }
 }
-AtomAdd.prototype = new Base()
+AtomAdd.prototype = new Base('AtomAdd')
 
 function AtomDelete(aid) {
   this.data = { aid, atom: null, pos: null }
@@ -130,7 +130,7 @@ function AtomDelete(aid) {
     return ret
   }
 }
-AtomDelete.prototype = new Base()
+AtomDelete.prototype = new Base('AtomDelete')
 
 function AtomAttr(aid, attribute, value) {
   this.data = { aid, attribute, value }
@@ -167,7 +167,7 @@ function AtomAttr(aid, attribute, value) {
     return ret
   }
 }
-AtomAttr.prototype = new Base()
+AtomAttr.prototype = new Base('AtomAttr')
 
 function AtomMove(aid, d, noinvalidate) {
   this.data = { aid, d, noinvalidate }
@@ -196,7 +196,7 @@ function AtomMove(aid, d, noinvalidate) {
     return ret
   }
 }
-AtomMove.prototype = new Base()
+AtomMove.prototype = new Base('AtomMove')
 
 function BondMove(bid, d) {
   this.data = { bid, d }
@@ -214,7 +214,7 @@ function BondMove(bid, d) {
     return ret
   }
 }
-BondMove.prototype = new Base()
+BondMove.prototype = new Base('BondMove')
 
 function LoopMove(id, d) {
   this.data = { id, d }
@@ -240,7 +240,7 @@ function LoopMove(id, d) {
     return ret
   }
 }
-LoopMove.prototype = new Base()
+LoopMove.prototype = new Base('LoopMove')
 
 function SGroupAtomAdd(sgid, aid) {
   this.type = 'OpSGroupAtomAdd'
@@ -270,7 +270,7 @@ function SGroupAtomAdd(sgid, aid) {
     return ret
   }
 }
-SGroupAtomAdd.prototype = new Base()
+SGroupAtomAdd.prototype = new Base('SGroupAtomAdd')
 
 function SGroupAtomRemove(sgid, aid) {
   this.type = 'OpSGroupAtomRemove'
@@ -294,7 +294,7 @@ function SGroupAtomRemove(sgid, aid) {
     return ret
   }
 }
-SGroupAtomRemove.prototype = new Base()
+SGroupAtomRemove.prototype = new Base('SGroupAtomRemove')
 
 function SGroupAttr(sgid, attr, value) {
   this.type = 'OpSGroupAttr'
@@ -320,7 +320,7 @@ function SGroupAttr(sgid, attr, value) {
     return ret
   }
 }
-SGroupAttr.prototype = new Base()
+SGroupAttr.prototype = new Base('SGroupAttr')
 
 function SGroupCreate(sgid, type, pp) {
   this.type = 'OpSGroupCreate'
@@ -346,7 +346,7 @@ function SGroupCreate(sgid, type, pp) {
     return ret
   }
 }
-SGroupCreate.prototype = new Base()
+SGroupCreate.prototype = new Base('SGroupCreate')
 
 function SGroupDelete(sgid) {
   this.type = 'OpSGroupDelete'
@@ -378,7 +378,7 @@ function SGroupDelete(sgid) {
     return ret
   }
 }
-SGroupDelete.prototype = new Base()
+SGroupDelete.prototype = new Base('SGroupDelete')
 
 function SGroupAddToHierarchy(sgid, parent, children) {
   this.type = 'OpSGroupAddToHierarchy'
@@ -399,7 +399,7 @@ function SGroupAddToHierarchy(sgid, parent, children) {
     return ret
   }
 }
-SGroupAddToHierarchy.prototype = new Base()
+SGroupAddToHierarchy.prototype = new Base('SGroupAddToHierarchy')
 
 function SGroupRemoveFromHierarchy(sgid) {
   this.type = 'OpSGroupRemoveFromHierarchy'
@@ -420,7 +420,7 @@ function SGroupRemoveFromHierarchy(sgid) {
     return ret
   }
 }
-SGroupRemoveFromHierarchy.prototype = new Base()
+SGroupRemoveFromHierarchy.prototype = new Base('SGroupRemoveFromHierarchy')
 
 function BondAdd(begin, end, bond) {
   this.data = { bond, begin, end, bid: null }
@@ -468,7 +468,7 @@ function BondAdd(begin, end, bond) {
     return ret
   }
 }
-BondAdd.prototype = new Base()
+BondAdd.prototype = new Base('BondAdd')
 
 function BondDelete(bid) {
   this.data = { bid, bond: null, begin: null, end: null }
@@ -516,7 +516,7 @@ function BondDelete(bid) {
     return ret
   }
 }
-BondDelete.prototype = new Base()
+BondDelete.prototype = new Base('BondDelete')
 
 function BondAttr(bid, attribute, value) {
   this.data = { bid, attribute, value }
@@ -554,7 +554,7 @@ function BondAttr(bid, attribute, value) {
     return ret
   }
 }
-BondAttr.prototype = new Base()
+BondAttr.prototype = new Base('BondAttr')
 
 function RGroupAttr(rgid, attribute, value) {
   this.data = { rgid, attribute, value }
@@ -590,7 +590,7 @@ function RGroupAttr(rgid, attribute, value) {
     return ret
   }
 }
-RGroupAttr.prototype = new Base()
+RGroupAttr.prototype = new Base('RGroupAttr')
 
 function RGroupFragment(rgid, frid, rg) {
   this.type = 'OpAddOrDeleteRGFragment'
@@ -637,7 +637,7 @@ function RGroupFragment(rgid, frid, rg) {
     return new RGroupFragment(this.rgid_old, this.frid, this.rg_old)
   }
 }
-RGroupFragment.prototype = new Base()
+RGroupFragment.prototype = new Base('RGroupFragment')
 
 function UpdateIfThen(rgNew, rgOld, skipRgids = []) {
   this.type = 'OpUpdateIfThenValues'
@@ -661,7 +661,7 @@ function UpdateIfThen(rgNew, rgOld, skipRgids = []) {
     return new RestoreIfThen(this.rgid_new, this.rgid_old, this.ifThenHistory)
   }
 }
-UpdateIfThen.prototype = new Base()
+UpdateIfThen.prototype = new Base('UpdateIfThen')
 
 function RestoreIfThen(rgNew, rgOld, history) {
   this.type = 'OpRestoreIfThenValues'
@@ -683,7 +683,7 @@ function RestoreIfThen(rgNew, rgOld, history) {
     return new UpdateIfThen(this.rgid_old, this.rgid_new)
   }
 }
-RestoreIfThen.prototype = new Base()
+RestoreIfThen.prototype = new Base('RestoreIfThen')
 
 function RxnArrowAdd(pos) {
   this.data = { pos, arid: null }
@@ -727,7 +727,7 @@ function RxnArrowAdd(pos) {
     return ret
   }
 }
-RxnArrowAdd.prototype = new Base()
+RxnArrowAdd.prototype = new Base('RxnArrowAdd')
 
 function RxnArrowDelete(arid) {
   this.data = { arid, pos: null }
@@ -755,7 +755,7 @@ function RxnArrowDelete(arid) {
     return ret
   }
 }
-RxnArrowDelete.prototype = new Base()
+RxnArrowDelete.prototype = new Base('RxnArrowDelete')
 
 function RxnArrowMove(id, d, noinvalidate) {
   this.data = { id, d, noinvalidate }
@@ -778,7 +778,7 @@ function RxnArrowMove(id, d, noinvalidate) {
     return ret
   }
 }
-RxnArrowMove.prototype = new Base()
+RxnArrowMove.prototype = new Base('RxnArrowMove')
 
 function RxnPlusAdd(pos) {
   this.data = { plid: null, pos }
@@ -806,7 +806,7 @@ function RxnPlusAdd(pos) {
     return ret
   }
 }
-RxnPlusAdd.prototype = new Base()
+RxnPlusAdd.prototype = new Base('RxnPlusAdd')
 
 function RxnPlusDelete(plid) {
   this.data = { plid, pos: null }
@@ -829,7 +829,7 @@ function RxnPlusDelete(plid) {
     return ret
   }
 }
-RxnPlusDelete.prototype = new Base()
+RxnPlusDelete.prototype = new Base('RxnPlusDelete')
 
 function RxnPlusMove(id, d, noinvalidate) {
   this.data = { id, d, noinvalidate }
@@ -852,7 +852,7 @@ function RxnPlusMove(id, d, noinvalidate) {
     return ret
   }
 }
-RxnPlusMove.prototype = new Base()
+RxnPlusMove.prototype = new Base('RxnPlusMove')
 
 function SGroupDataMove(id, d) {
   this.data = { id, d }
@@ -870,7 +870,7 @@ function SGroupDataMove(id, d) {
     return ret
   }
 }
-SGroupDataMove.prototype = new Base()
+SGroupDataMove.prototype = new Base('SGroupDataMove')
 
 function CanvasLoad(struct) {
   this.data = { struct }
@@ -888,7 +888,7 @@ function CanvasLoad(struct) {
     return ret
   }
 }
-CanvasLoad.prototype = new Base()
+CanvasLoad.prototype = new Base('CanvasLoad')
 
 function AlignDescriptors() {
   this.type = 'OpAlignDescriptors'
@@ -915,7 +915,7 @@ function AlignDescriptors() {
     return new RestoreDescriptorsPosition(this.history)
   }
 }
-AlignDescriptors.prototype = new Base()
+AlignDescriptors.prototype = new Base('AlignDescriptors')
 
 function RestoreDescriptorsPosition(history) {
   this.type = 'OpRestoreDescriptorsPosition'
@@ -935,7 +935,7 @@ function RestoreDescriptorsPosition(history) {
     return new AlignDescriptors()
   }
 }
-RestoreDescriptorsPosition.prototype = new Base()
+RestoreDescriptorsPosition.prototype = new Base('RestoreDescriptorsPosition')
 
 function SimpleObjectAdd(pos, mode) {
   this.data = { id: null, pos, mode }
@@ -969,7 +969,7 @@ function SimpleObjectAdd(pos, mode) {
     return ret
   }
 }
-SimpleObjectAdd.prototype = new Base()
+SimpleObjectAdd.prototype = new Base('SimpleObjectAdd')
 
 function SimpleObjectDelete(id) {
   this.data = { id, pos: null, item: null }
@@ -996,7 +996,7 @@ function SimpleObjectDelete(id) {
     return ret
   }
 }
-SimpleObjectDelete.prototype = new Base()
+SimpleObjectDelete.prototype = new Base('SimpleObjectDelete')
 
 function SimpleObjectMove(id, d, noinvalidate) {
   this.data = { id, d, noinvalidate }
@@ -1021,7 +1021,7 @@ function SimpleObjectMove(id, d, noinvalidate) {
     return ret
   }
 }
-SimpleObjectMove.prototype = new Base()
+SimpleObjectMove.prototype = new Base('SimpleObjectMove')
 
 function SimpleObjectResize(id, d, current, anchor, noinvalidate) {
   this.data = { id, d, current, anchor, noinvalidate }
@@ -1079,7 +1079,7 @@ function SimpleObjectResize(id, d, current, anchor, noinvalidate) {
     return ret
   }
 }
-SimpleObjectResize.prototype = new Base()
+SimpleObjectResize.prototype = new Base('SimpleObjectResize')
 
 const operations = {
   AtomAdd,

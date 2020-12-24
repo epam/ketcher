@@ -16,6 +16,10 @@ To create production build of ready-to-run application execute the following com
 
 To serve results of build locally run the following command from root directory:
 
+    yarn serve:remote
+      or
+    yarn serve:standalone
+      or
     yarn serve
 
 ### Development
@@ -26,15 +30,22 @@ The latest version of Ketcher is based on yarn workspaces. So before starting de
 
 After that component library and application should be started separately.
 
-**Build component library (terminal #1)**
+**Build kecther-react package (terminal #1)**
 
     cd packages/ketcher-react
+    yarn start
+
+**Build ketcher-standalone package**
+
+    cd packages/ketcher-standalone
     yarn start
 
 **Build example application (terminal #2)**
 
     cd example
-    yarn start
+    yarn start:remote
+      or
+    yarn start:standalone
 
 ## Indigo service
 

@@ -31,7 +31,6 @@ function FrozenInput({ value }) {
       type="text"
       spellCheck={false}
       value={value} //TODO: fix React warning
-      onKeyDown={ev => allowMovement(ev)}
     />
   )
 }
@@ -45,7 +44,6 @@ function formulaInputMarkdown(value) {
       className="chem-input"
       spellCheck="false"
       contentEditable
-      onKeyDown={ev => allowMovement(ev)}
       suppressContentEditableWarning={true}>
       {value}
     </div>
@@ -128,13 +126,6 @@ class Analyse extends Component {
       </Dialog>
     )
   }
-}
-
-function allowMovement(event) {
-  const movementKeys = ['Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End']
-  const key = KN.keyName(event)
-
-  if (movementKeys.indexOf(key) === -1) event.preventDefault()
 }
 
 function roundOff(value, round) {

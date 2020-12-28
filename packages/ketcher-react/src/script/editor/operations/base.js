@@ -1,18 +1,20 @@
-function Base() {
-  this.type = 'OpBase'
+class Base {
+  #type
 
-  // assert here?
-  this.execute = function () {
+  constructor(type) {
+    this.#type = type
+  }
+
+  get type() {
+    return this.#type
+  }
+
+  execute() {
     throw new Error('Operation.execute() is not implemented')
   }
 
-  this.invert = function () {
-    throw new Error('Operation.invert() is not implemented')
-  }
-
-  this.perform = function (restruct) {
+  perform(restruct) {
     this.execute(restruct)
-    /* eslint-disable no-underscore-dangle */
     if (!this._inverted) {
       this._inverted = this.invert()
       this._inverted._inverted = this
@@ -20,9 +22,12 @@ function Base() {
     return this._inverted
   }
 
-  this.isDummy = function (restruct) {
-    return this._isDummy ? this._isDummy(restruct) : false
-    /* eslint-enable no-underscore-dangle */
+  invert() {
+    throw new Error('Operation.invert() is not implemented')
+  }
+
+  isDummy(restruct) {
+    return false
   }
 }
 

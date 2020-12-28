@@ -7,7 +7,9 @@
   ],
   "scripts": {
     "build": "yarn workspaces run build",
-    "serve": "cd example && yarn serve:build"
+    "serve:remote": "cd example && yarn serve:remote",
+    "serve:standalone": "cd example && yarn serve:standalone",
+    "serve": "run-p serve:*"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",

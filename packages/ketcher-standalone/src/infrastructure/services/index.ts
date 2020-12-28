@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { StructService } from './structService.types'
-import RemoteStructService from './remoteStructService'
+import { StandaloneStructService } from './struct'
 
-export { RemoteStructService }
-export type { StructService }
+export { StandaloneStructService }

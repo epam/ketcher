@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
+import React, { Component, createRef } from 'react'
 import { connect } from 'react-redux'
 
 import { map as formatMap } from '../../data/convert/structformat'
@@ -31,19 +31,23 @@ class Open extends Component {
       structStr: '',
       fragment: false
     }
+    this.textAreaRef = createRef()
   }
   result() {
     const { structStr, fragment } = this.state
     return structStr ? { structStr, fragment } : null
   }
+
   changeStructStr(structStr) {
     this.setState({ structStr })
   }
+
   changeFragment(target) {
     this.setState({
       fragment: target.checked
     })
   }
+
   render() {
     const { structStr, fragment } = this.state
     return (

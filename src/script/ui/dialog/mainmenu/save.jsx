@@ -95,6 +95,7 @@ class Save extends Component {
       },
       e => {
         //TODO: add error handler call
+        alert(e.message)
         this.props.onResetForm(formState)
         return e
       }

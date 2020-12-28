@@ -114,7 +114,7 @@ function checkGroupOnTool(group, actionTool) {
 const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/
 
 /* ClipArea */
-export function initClipboard(dispatch) {
+export function initClipboard(dispatch, getState) {
   const formats = Object.keys(structFormat.map).map(
     fmt => structFormat.map[fmt].mime
   )
@@ -127,17 +127,20 @@ export function initClipboard(dispatch) {
   return {
     formats,
     focused() {
-      return !global.currentState.modal
+      const state = getState()
+      return !state.modal
     },
     onCut() {
-      const editor = global.currentState.editor
+      const state = getState()
+      const editor = state.editor
       const data = clipData(editor)
       if (data) debAction({ tool: 'eraser', opts: 1 })
       else editor.selection(null)
       return data
     },
     onCopy() {
-      const editor = global.currentState.editor
+      const state = getState()
+      const editor = state.editor
       const data = clipData(editor)
       editor.selection(null)
       return data
@@ -148,8 +151,9 @@ export function initClipboard(dispatch) {
         data['chemical/x-mdl-molfile'] ||
         data['chemical/x-mdl-rxnfile'] ||
         data['text/plain']
+      const state = getState()
 
-      const struct = global.currentState.editor.render.ctab.molecule
+      const struct = state.editor.render.ctab.molecule
 
       if (
         structStr &&

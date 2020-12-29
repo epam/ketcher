@@ -84,6 +84,34 @@ function api(base, defaultOptions) {
     }
   }
 
+  async function recognize(blob, version) {
+    // eslint-disable-line no-unused-vars
+    const parVersion = version ? `?version=${version}` : ''
+    const { upload_id } = await request(
+      'POST',
+      `imago/uploads${parVersion}`,
+      blob,
+      {
+        'Content-Type': blob.type || 'application/octet-stream'
+      }
+    )
+    const statusFn = () =>
+      request('GET', 'imago/uploads/:id', {
+        id: upload_id
+      })
+    const response = await pollDeferred(
+      statusFn,
+      res => {
+        if (res.state === 'FAILURE') throw res
+        return res.state === 'SUCCESS'
+      },
+      500,
+      300
+    )
+
+    return { struct: response.metadata.mol_str }
+  }
+
   return Object.assign(info, {
     convert: indigoCall('POST', 'indigo/convert'),
     layout: indigoCall('POST', 'indigo/layout'),
@@ -94,27 +122,7 @@ function api(base, defaultOptions) {
     automap: indigoCall('POST', 'indigo/automap'),
     check: indigoCall('POST', 'indigo/check'),
     calculate: indigoCall('POST', 'indigo/calculate'),
-    recognize(blob, version) {
-      // eslint-disable-line no-unused-vars
-      const parVersion = version ? `?version=${version}` : ''
-      const req = request('POST', `imago/uploads${parVersion}`, blob, {
-        'Content-Type': blob.type || 'application/octet-stream'
-      })
-      const status = request.bind(null, 'GET', 'imago/uploads/:id')
-      return req
-        .then(data =>
-          pollDeferred(
-            status.bind(null, { id: data.upload_id }),
-            res => {
-              if (res.state === 'FAILURE') throw res
-              return res.state === 'SUCCESS'
-            },
-            500,
-            300
-          )
-        )
-        .then(res => ({ struct: res.metadata.mol_str }))
-    }
+    recognize: recognize
   })
 }
 

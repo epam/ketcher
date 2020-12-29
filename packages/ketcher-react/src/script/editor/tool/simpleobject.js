@@ -95,7 +95,8 @@ SimpleObjectTool.prototype.mousemove = function (event) {
       this.editor.update(this.dragCtx.action, true)
     }
   } else {
-    this.editor.hover(this.editor.findItem(event, ['simpleObjects']))
+    const items = this.editor.findItem(event, ['simpleObjects'])
+    this.editor.hover(items)
   }
 }
 

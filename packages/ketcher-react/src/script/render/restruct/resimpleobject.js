@@ -36,45 +36,70 @@ ReSimpleObject.prototype.calcDistance = function (p, s) {
   const point = new Vec2(p.x, p.y)
   let dist = null
   let distRef = null
+  const item = this.item
+  const mode = item.mode
+  const pos = item.pos
 
-  switch (this.item.mode) {
+  switch (mode) {
     case 'circle': {
-      const dist1 = Vec2.dist(point, this.item.pos[0])
-      const dist2 = Vec2.dist(this.item.pos[0], this.item.pos[1])
+      const dist1 = Vec2.dist(point, pos[0])
+      const dist2 = Vec2.dist(pos[0], pos[1])
       dist = Math.max(dist1, dist2) - Math.min(dist1, dist2)
       break
     }
     case 'rectangle': {
-      const diffX = Math.min(
-        Math.max(this.item.pos[0].x, point.x) -
-          Math.min(this.item.pos[0].x, point.x),
-        Math.max(this.item.pos[1].x, point.x) -
-          Math.min(this.item.pos[1].x, point.x)
-      )
-      const diffY = Math.min(
-        Math.max(this.item.pos[0].y, point.y) -
-          Math.min(this.item.pos[0].y, point.y),
-        Math.max(this.item.pos[1].y, point.y) -
-          Math.min(this.item.pos[1].y, point.y)
-      )
-      dist = Math.min(diffX, diffY)
+      const topX = Math.min(pos[0].x, pos[1].x)
+      const topY = Math.min(pos[0].y, pos[1].y)
+      const bottomX = Math.max(pos[0].x, pos[1].x)
+      const bottomY = Math.max(pos[0].y, pos[1].y)
+
+      const distances = []
+
+      if (point.x >= topX && point.x <= bottomX) {
+        if (point.y < topY) {
+          distances.push(topY - point.y)
+        } else if (point.y > bottomY) {
+          distances.push(point.y - bottomY)
+        } else {
+          distances.push(point.y - topY, bottomY - point.y)
+        }
+      }
+      if (point.x < topX && point.y < topY) {
+        distances.push(Vec2.dist(new Vec2(topX, topY), point))
+      }
+      if (point.x > bottomX && point.y > bottomY) {
+        distances.push(Vec2.dist(new Vec2(bottomX, bottomY), point))
+      }
+      if (point.x < topX && point.y > bottomY) {
+        distances.push(Vec2.dist(new Vec2(topX, bottomY), point))
+      }
+      if (point.x > bottomX && point.y < topY) {
+        distances.push(Vec2.dist(new Vec2(bottomX, topY), point))
+      }
+      if (point.y >= topY && point.y <= bottomY) {
+        if (point.x < topX) {
+          distances.push(topX - point.x)
+        } else if (point.x > bottomX) {
+          distances.push(point.x - bottomX)
+        } else {
+          distances.push(point.x - topX, bottomX - point.x)
+        }
+      }
+      dist = Math.min(...distances)
       break
     }
     case 'line': {
       if (
-        (point.x < Math.min(this.item.pos[0].x, this.item.pos[1].x) ||
-          point.x > Math.max(this.item.pos[0].x, this.item.pos[1].x)) &&
-        (point.y < Math.min(this.item.pos[0].y, this.item.pos[1].y) ||
-          point.y > Math.max(this.item.pos[0].y, this.item.pos[1].y))
+        (point.x < Math.min(pos[0].x, pos[1].x) ||
+          point.x > Math.max(pos[0].x, pos[1].x)) &&
+        (point.y < Math.min(pos[0].y, pos[1].y) ||
+          point.y > Math.max(pos[0].y, pos[1].y))
       )
-        dist = Math.min(
-          Vec2.dist(this.item.pos[0], point),
-          Vec2.dist(this.item.pos[1], point)
-        )
+        dist = Math.min(Vec2.dist(pos[0], point), Vec2.dist(pos[1], point))
       else {
-        const a = Vec2.dist(this.item.pos[0], this.item.pos[1])
-        const b = Vec2.dist(this.item.pos[0], point)
-        const c = Vec2.dist(this.item.pos[1], point)
+        const a = Vec2.dist(pos[0], pos[1])
+        const b = Vec2.dist(pos[0], point)
+        const c = Vec2.dist(pos[1], point)
         const per = (a + b + c) / 2
         dist = (2 / a) * Math.sqrt(per * (per - a) * (per - b) * (per - c))
       }

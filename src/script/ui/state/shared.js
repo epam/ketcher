@@ -29,14 +29,10 @@ export function load(structStr, options) {
     const server = state.server
 
     options = options || {}
-    // TODO: check if structStr is parsed already
-    // utils.loading('show');
     const parsed = structFormat.fromString(structStr, options, server)
 
     return parsed.then(
       struct => {
-        // utils.loading('hide');
-        console.assert(struct, 'No molecule to update')
         if (options.rescale) struct.rescale() // TODO: move out parsing?
 
         if (struct.isBlank()) return

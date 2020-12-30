@@ -143,7 +143,10 @@ export function fromString(structStr, opts, server, serverOpts) {
     if (format === 'graph') {
       const res = graph.fromGraph(JSON.parse(structStr))
       resolve(res)
-    } else if (format === 'mol' || format === 'rxn') {
+    } else if (
+      (format === 'mol' && molfile.version(structStr) === 'V2000') ||
+      format === 'rxn'
+    ) {
       const struct = molfile.parse(structStr, opts)
       resolve(struct)
     } else {

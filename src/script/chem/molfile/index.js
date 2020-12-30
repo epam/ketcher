@@ -44,7 +44,7 @@ function parseCTFile(str, options) {
   }
 }
 
-export default {
+const molFileManager = {
   stringify(struct, options) {
     const opts = options || {}
     return new Molfile(opts.v3000).saveMolecule(
@@ -56,5 +56,15 @@ export default {
   },
   parse(str, options) {
     return parseCTFile(str, options || {})
+  },
+  version(molFileStr) {
+    let regex = /v(?:2000|3000)/im
+    const match = regex.exec(molFileStr)
+    if (match) {
+      return match[0].toUpperCase()
+    }
+    return 'V2000'
   }
 }
+
+export default molFileManager

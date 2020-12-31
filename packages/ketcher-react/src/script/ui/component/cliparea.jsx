@@ -31,22 +31,17 @@ class ClipArea extends Component {
     this.listeners = {
       mouseup: event => {
         if (
-          !isFormElement(event.target) &&
-          !checkTag(event.target) &&
-          this.props.focused()
+          el === event.target ||
+          (!isActiveElement(event.target) && this.props.focused())
         )
           autofocus(el)
       },
       mousedown: event => {
-        if (event.shiftKey && !isFormElement(event.target))
+        if (event.shiftKey && !isActiveElement(event.target))
           event.preventDefault()
       },
       copy: event => {
-        if (
-          !isFormElement(event.target) &&
-          this.props.focused() &&
-          this.props.onCopy
-        ) {
+        if (this.props.focused() && this.props.onCopy) {
           const data = this.props.onCopy()
 
           if (data) copy(event.clipboardData, data)
@@ -55,11 +50,7 @@ class ClipArea extends Component {
         }
       },
       cut: event => {
-        if (
-          !isFormElement(event.target) &&
-          this.props.focused() &&
-          this.props.onCut
-        ) {
+        if (this.props.focused() && this.props.onCut) {
           const data = this.props.onCut()
 
           if (data) copy(event.clipboardData, data)
@@ -68,11 +59,7 @@ class ClipArea extends Component {
         }
       },
       paste: event => {
-        if (
-          !isFormElement(event.target) &&
-          this.props.focused() &&
-          this.props.onPaste
-        ) {
+        if (this.props.focused() && this.props.onPaste) {
           const data = paste(event.clipboardData, this.props.formats)
 
           if (data) this.props.onPaste(data)
@@ -110,12 +97,9 @@ class ClipArea extends Component {
   }
 }
 
-function checkTag(el) {
+function isActiveElement(el) {
+  if (el.tagName === 'INPUT' && el.type === 'button') return false
   return ['INPUT', 'SELECT', 'TEXTAREA', 'OPTION', 'LABEL'].includes(el.tagName)
-}
-
-function isFormElement(el) {
-  return el.closest('form') != null
 }
 
 function autofocus(cliparea) {

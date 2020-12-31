@@ -167,10 +167,10 @@ export function sgroupDialog(editor, id, defaultType) {
 
         const result = fromContextType(id, editor, newSg, selection)
         editor.update(result.action)
-        editor.selection(result.selection)
+        editor.selection(null)
       }
     })
-    .catch(() => null) // w/o changes
+    .catch(() => null)
 }
 
 function getContextBySgroup(restruct, sgAtoms) {

@@ -25,6 +25,8 @@ import { fromNewCanvas, fromDescriptorsAlign } from './actions/basic'
 import closest from './shared/closest'
 import toolMap from './tool'
 
+import { OperationType } from './operations/op'
+
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
 
@@ -275,22 +277,162 @@ Editor.prototype.redo = function () {
 
 function customOnChangeHandler(action, handler) {
   const data = []
-  const idTemplate = /id$/i
 
   action.operations.forEach(operation => {
     const op = operation._inverted
-    data.push({
-      operation: op.operationName,
-      id: op.data
-        ? op.data[Object.keys(op.data).filter(key => key.match(idTemplate))]
-        : null
-    })
+    switch (op.type) {
+      case OperationType.ATOM_ADD || OperationType.ATOM_DELETE:
+        data.push({
+          operation: op.type,
+          id: op.data.aid,
+          position: {
+            x: +op.data.pos.x.toFixed(2),
+            y: +op.data.pos.y.toFixed(2)
+          }
+        })
+        break
+
+      case OperationType.ATOM_ATTR:
+        data.push({
+          operation: operation.type,
+          id: operation.data.aid,
+          attribute: operation.data.attribute,
+          from: operation.data.value,
+          to: operation.data2.value
+        })
+        break
+
+      case OperationType.ATOM_MOVE:
+        data.push({
+          operation: op.type,
+          id: op.data.aid,
+          position: { x: +op.data.d.x.toFixed(2), y: +op.data.d.y.toFixed(2) }
+        })
+        break
+
+      case OperationType.BOND_ADD || OperationType.BOND_DELETE:
+        data.push({
+          operation: op.type,
+          id: op.data.bid
+        })
+        break
+
+      case OperationType.FRAGMENT_ADD || OperationType.FRAGMENT_DELETE:
+        data.push({
+          operation: op.type,
+          id: op.frid
+        })
+        break
+
+      case OperationType.FRAGMENT_ADD_STEREO_ATOM ||
+        OperationType.FRAGMENT_DELETE_STEREO_ATOM:
+        data.push({
+          operation: op.type,
+          atomId: op.data.aid,
+          fragId: op.data.frid
+        })
+        break
+
+      case OperationType.S_GROUP_ATOM_ADD || OperationType.S_GROUP_ATOM_REMOVE:
+        data.push({
+          operation: op.type,
+          atomId: op.data.aid,
+          sGroupId: op.data.sgid
+        })
+        break
+
+      case OperationType.S_GROUP_CREATE || OperationType.S_GROUP_DELETE:
+        data.push({
+          operation: op.type,
+          type: op.data.type,
+          sGroupId: op.data.sgid
+        })
+        break
+
+      case OperationType.RXN_ARROW_ADD || OperationType.RXN_ARROW_DELETE:
+        data.push({
+          operation: op.type,
+          id: op.data.arid,
+          position: {
+            x: +op.data.pos.x.toFixed(2),
+            y: +op.data.pos.y.toFixed(2)
+          }
+        })
+        break
+
+      case OperationType.RXN_ARROW_MOVE:
+        data.push({
+          operation: op.type,
+          id: op.data.id,
+          position: { x: +op.data.d.x.toFixed(2), y: +op.data.d.y.toFixed(2) }
+        })
+        break
+
+      case OperationType.R_GROUP_FRAGMENT:
+        data.push({
+          operation: operation.type,
+          id: op.frid
+        })
+        break
+
+      case OperationType.SIMPLE_OBJECT_ADD ||
+        OperationType.SIMPLE_OBJECT_DELETE:
+        data.push({
+          operation: op.type,
+          id: op.data.id,
+          mode: op.data.mode,
+          position: {
+            coord1: {
+              x: +op.data.pos[0].x.toFixed(2),
+              y: +op.data.pos[0].y.toFixed(2)
+            },
+            coord2: {
+              x: +op.data.pos[1].x.toFixed(2),
+              y: +op.data.pos[1].y.toFixed(2)
+            }
+          }
+        })
+        break
+
+      case OperationType.SIMPLE_OBJECT_RESIZE:
+        data.push({
+          operation: op.type,
+          id: op.data.id,
+          position: {
+            anchor: {
+              x: +op.data.anchor.x.toFixed(2),
+              y: +op.data.anchor.y.toFixed(2)
+            },
+            current: {
+              x: +op.data.current.x.toFixed(2),
+              y: +op.data.current.y.toFixed(2)
+            }
+          }
+        })
+        break
+
+      case OperationType.SIMPLE_OBJECT_MOVE:
+        data.push({
+          operation: operation.type,
+          id: operation.data.id,
+          position: {
+            x: +operation.data.d.x.toFixed(2),
+            y: +operation.data.d.y.toFixed(2)
+          }
+        })
+        break
+
+      default:
+        data.push({
+          operation: op.type
+        })
+    }
   })
 
   return handler(data)
 }
 
-Editor.prototype.on = function (eventName, handler) {
+Editor.prototype.subscribe = function (eventName, handler) {
   switch (eventName) {
     case 'change':
       this.event[eventName].add(action =>

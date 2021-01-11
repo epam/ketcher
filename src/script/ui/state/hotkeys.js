@@ -127,11 +127,11 @@ export function initClipboard(dispatch, getState) {
   return {
     formats,
     focused() {
-      const state = getState()
+      const state = global.currentState
       return !state.modal
     },
     onCut() {
-      const state = getState()
+      const state = global.currentState
       const editor = state.editor
       const data = clipData(editor)
       if (data) debAction({ tool: 'eraser', opts: 1 })
@@ -139,7 +139,7 @@ export function initClipboard(dispatch, getState) {
       return data
     },
     onCopy() {
-      const state = getState()
+      const state = global.currentState
       const editor = state.editor
       const data = clipData(editor)
       editor.selection(null)

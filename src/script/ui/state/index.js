@@ -42,8 +42,6 @@ const shared = combineReducers({
 
 /* ROOT REDUCER */
 function root(state, action) {
-  //TODO: temporary solution. Need to review work with redux store
-  global.currentState = state
   switch (
     action.type // eslint-disable-line default-case
   ) {
@@ -60,12 +58,17 @@ function root(state, action) {
     ...pick(['editor', 'server', 'options'], state)
   })
 
-  return sh === state.shared
-    ? state
-    : {
-        ...state,
-        ...sh
-      }
+  const finalState =
+    sh === state.shared
+      ? state
+      : {
+          ...state,
+          ...sh
+        }
+
+  //TODO: temporary solution. Need to review work with redux store
+  global.currentState = finalState
+  return finalState
 }
 
 export default function (options, server) {

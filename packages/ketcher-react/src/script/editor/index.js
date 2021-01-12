@@ -278,13 +278,14 @@ Editor.prototype.redo = function () {
 function customOnChangeHandler(action, handler) {
   const data = []
 
-  action.operations.forEach(operation => {
+  action.operations.reverse().forEach(operation => {
     const op = operation._inverted
     switch (op.type) {
       case OperationType.ATOM_ADD || OperationType.ATOM_DELETE:
         data.push({
           operation: op.type,
           id: op.data.aid,
+          label: op.data.atom.label ? op.data.atom.label : '',
           position: {
             x: +op.data.pos.x.toFixed(2),
             y: +op.data.pos.y.toFixed(2)
@@ -380,34 +381,14 @@ function customOnChangeHandler(action, handler) {
         data.push({
           operation: op.type,
           id: op.data.id,
-          mode: op.data.mode,
-          position: {
-            coord1: {
-              x: +op.data.pos[0].x.toFixed(2),
-              y: +op.data.pos[0].y.toFixed(2)
-            },
-            coord2: {
-              x: +op.data.pos[1].x.toFixed(2),
-              y: +op.data.pos[1].y.toFixed(2)
-            }
-          }
+          mode: op.data.mode
         })
         break
 
       case OperationType.SIMPLE_OBJECT_RESIZE:
         data.push({
           operation: op.type,
-          id: op.data.id,
-          position: {
-            anchor: {
-              x: +op.data.anchor.x.toFixed(2),
-              y: +op.data.anchor.y.toFixed(2)
-            },
-            current: {
-              x: +op.data.current.x.toFixed(2),
-              y: +op.data.current.y.toFixed(2)
-            }
-          }
+          id: op.data.id
         })
         break
 
@@ -433,15 +414,25 @@ function customOnChangeHandler(action, handler) {
 }
 
 Editor.prototype.subscribe = function (eventName, handler) {
+  let subscriber = {
+    handler: handler
+  }
   switch (eventName) {
     case 'change':
-      this.event[eventName].add(action =>
+      const subscribeFuncWrapper = action =>
         customOnChangeHandler(action, handler)
-      )
+      subscriber.handler = subscribeFuncWrapper
+      this.event[eventName].add(subscribeFuncWrapper)
       break
     default:
       this.event[eventName].add(handler)
   }
+  return subscriber
+}
+
+Editor.prototype.unsubscribe = function (eventName, subscriber) {
+  //Only for event type - subscription
+  this.event[eventName].remove(subscriber.handler)
 }
 
 function isMouseRight(event) {

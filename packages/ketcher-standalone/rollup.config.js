@@ -10,6 +10,7 @@ import json from '@rollup/plugin-json'
 import del from 'rollup-plugin-delete'
 import cleanup from 'rollup-plugin-cleanup'
 import strip from '@rollup/plugin-strip'
+import webWorkerLoader from 'rollup-plugin-web-worker-loader'
 import pkg from './package.json'
 
 const mode = {
@@ -36,27 +37,28 @@ const config = {
   ],
   external: [
     'url',
-    /@babel\/runtime/,
+    // /@babel\/runtime/,
     'remark-parse',
     'unified',
     'asap',
     'object-assign',
     'unist-util-visit',
     'unist-util-visit-parents',
-    'xtend',
-    'fs',
-    'path'
+    'xtend'
+    // 'fs',
+    // 'path'
   ],
   plugins: [
     del({
       targets: 'dist/*',
       runOnce: true
     }),
-    peerDepsExternal({ includeDependencies: true }),
+    peerDepsExternal(),
     commonjs(),
     resolve({ extensions, preferBuiltins: true }),
 
     typescript(),
+    webWorkerLoader({ extensions }),
     replace(
       {
         'process.env.NODE_ENV': JSON.stringify(

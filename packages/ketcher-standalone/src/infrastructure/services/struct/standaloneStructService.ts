@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 import indigoModuleFn from './../../../generated/libindigo'
+// @ts-ignore
+import IndigoWorker from 'web-worker:./indigoWorker'
 import {
   StructService,
   CheckData,
@@ -126,13 +128,16 @@ function mapWarningGroup(property: string) {
 class IndigoService implements StructService {
   private defaultOptions: any
   private indigoModule: any
+  private indigoWorker: Worker
 
   constructor(defaultOptions: Options) {
     this.defaultOptions = defaultOptions
     this.indigoModule = indigoModuleFn()
+    this.indigoWorker = new IndigoWorker()
   }
 
   async info(): Promise<InfoResult> {
+    this.indigoWorker.postMessage({ type: 'init' })
     return this.indigoModule.then(indigo => {
       const result: InfoResult = {
         indigoVersion: indigo.version(),

@@ -11,6 +11,7 @@ import del from 'rollup-plugin-delete'
 import cleanup from 'rollup-plugin-cleanup'
 import strip from '@rollup/plugin-strip'
 import webWorkerLoader from 'rollup-plugin-web-worker-loader'
+import nodePolyfills from 'rollup-plugin-node-polyfills'
 import pkg from './package.json'
 
 const mode = {
@@ -37,7 +38,6 @@ const config = {
   ],
   external: [
     'url',
-    // /@babel\/runtime/,
     'remark-parse',
     'unified',
     'asap',
@@ -45,8 +45,6 @@ const config = {
     'unist-util-visit',
     'unist-util-visit-parents',
     'xtend'
-    // 'fs',
-    // 'path'
   ],
   plugins: [
     del({
@@ -54,8 +52,9 @@ const config = {
       runOnce: true
     }),
     peerDepsExternal(),
+    nodePolyfills(),
     commonjs(),
-    resolve({ extensions, preferBuiltins: true }),
+    resolve({ extensions, preferBuiltins: false }),
 
     typescript(),
     webWorkerLoader({ extensions }),

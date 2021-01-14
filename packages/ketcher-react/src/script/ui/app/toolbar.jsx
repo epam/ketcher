@@ -122,12 +122,14 @@ const toolbox = [
   {
     id: 'rgroup',
     menu: ['rgroup-label', 'rgroup-fragment', 'rgroup-attpoints']
-  },
-  {
-    id: 'shape',
-    menu: ['shape-circle', 'shape-rectangle', 'shape-line']
   }
 ]
+
+if (process.env.MODE !== 'standalone')
+  toolbox.push({
+    id: 'shape',
+      menu: ['shape-circle', 'shape-rectangle', 'shape-line']
+  })
 
 const template = [
   {

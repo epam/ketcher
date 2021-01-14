@@ -25,4 +25,5 @@ export interface StructService {
   check: (data: any, options: any) => Promise<any>
   calculate: (data: any, options: any) => Promise<any>
   recognize: (data: any, options: any) => Promise<any>
+  generatePng: (data: any, options: any) => Promise<any>
 }

@@ -131,7 +131,10 @@ const ketcher = Object.assign(
       return j
     },
     fromGraph: () =>
-      graph.fromGraph(graph.toGraph(ketcher.editor.render.ctab.molecule))
+      graph.fromGraph(graph.toGraph(ketcher.editor.render.ctab.molecule)),
+    generatePng: function () {
+      return this.server.generatePng()
+    }
   },
   buildInfo
 )

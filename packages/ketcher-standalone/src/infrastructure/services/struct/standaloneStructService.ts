@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import indigoModuleFn from './../../../generated/libindigo'
 // @ts-ignore
 import IndigoWorker from 'web-worker:./indigoWorker'
+import { Command, OutputMessage, InputMessage } from './indigoWorker.types'
 import {
   StructService,
   CheckData,
@@ -128,24 +128,29 @@ function mapWarningGroup(property: string) {
 class IndigoService implements StructService {
   private defaultOptions: any
   private indigoModule: any
-  private indigoWorker: Worker
 
   constructor(defaultOptions: Options) {
     this.defaultOptions = defaultOptions
-    this.indigoModule = indigoModuleFn()
-    this.indigoWorker = new IndigoWorker()
   }
 
-  async info(): Promise<InfoResult> {
-    this.indigoWorker.postMessage({ type: 'init' })
-    return this.indigoModule.then(indigo => {
-      const result: InfoResult = {
-        indigoVersion: indigo.version(),
-        imagoVersions: [],
-        isAvailable: true
-      }
+  info(): Promise<InfoResult> {
+    return new Promise((resolve, reject) => {
+      const worker: Worker = new IndigoWorker()
 
-      return result
+      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
+        const msg: OutputMessage<string> = e.data
+        if (!msg.hasError) {
+          const result: InfoResult = {
+            indigoVersion: msg.payload,
+            imagoVersions: [],
+            isAvailable: true
+          }
+          resolve(result)
+        } else {
+          reject(msg.error)
+        }
+      }
+      worker.postMessage({ type: Command.Info })
     })
   }
 
@@ -175,6 +180,26 @@ class IndigoService implements StructService {
   }
 
   clean(data: CleanData, options: Options): Promise<CleanResult> {
+    // return new Promise((resolve, reject) => {
+    //   const worker = new IndigoWorker()
+    //   worker.onmessage((e: MessageEvent<OutputMessage<string>>) => {
+    //     const msg: OutputMessage<string> = e.data
+    //     if (!msg.hasError) {
+    //       const result: CleanResult = {
+    //         struct: msg.payload,
+    //         format: ChemicalMimeType.Mol
+    //       }
+    //       resolve(result)
+    //     } else {
+    //       reject(msg.error)
+    //     }
+    //   })
+    //   // const inputMessage: InputMessage = {
+    //   //   type: Command.Clean,
+    //   //   args:
+    //   // }
+    //   worker.postMessage(Command.Clean)
+    // })
     //TODO: very slow
     const { struct } = data
     return this.service(options, (indigo, indigoOptions) => {

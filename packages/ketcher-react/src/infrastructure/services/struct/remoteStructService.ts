@@ -213,11 +213,11 @@ class IndigoService implements StructService {
       .then((response: any) => ({ struct: response.metadata.mol_str }))
   }
 
-  generatePng(data: any, options: any): Promise<any> {
+  generatePng(data: string, options: any): Promise<string> {
     // todo: find out real endpoint url and request type
     return indigoCall(
       'POST',
-      'indigo/depict',
+      'indigo/render',
       this.baseUrl,
       this.defaultOptions
     )(data, options)

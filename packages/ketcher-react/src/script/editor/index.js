@@ -281,7 +281,8 @@ function customOnChangeHandler(action, handler) {
   action.operations.reverse().forEach(operation => {
     const op = operation._inverted
     switch (op.type) {
-      case OperationType.ATOM_ADD || OperationType.ATOM_DELETE:
+      case OperationType.ATOM_ADD:
+      case OperationType.ATOM_DELETE:
         data.push({
           operation: op.type,
           id: op.data.aid,
@@ -311,22 +312,24 @@ function customOnChangeHandler(action, handler) {
         })
         break
 
-      case OperationType.BOND_ADD || OperationType.BOND_DELETE:
+      case OperationType.BOND_ADD:
+      case OperationType.BOND_DELETE:
         data.push({
           operation: op.type,
           id: op.data.bid
         })
         break
 
-      case OperationType.FRAGMENT_ADD || OperationType.FRAGMENT_DELETE:
+      case OperationType.FRAGMENT_ADD:
+      case OperationType.FRAGMENT_DELETE:
         data.push({
           operation: op.type,
           id: op.frid
         })
         break
 
-      case OperationType.FRAGMENT_ADD_STEREO_ATOM ||
-        OperationType.FRAGMENT_DELETE_STEREO_ATOM:
+      case OperationType.FRAGMENT_ADD_STEREO_ATOM:
+      case OperationType.FRAGMENT_DELETE_STEREO_ATOM:
         data.push({
           operation: op.type,
           atomId: op.data.aid,
@@ -334,7 +337,8 @@ function customOnChangeHandler(action, handler) {
         })
         break
 
-      case OperationType.S_GROUP_ATOM_ADD || OperationType.S_GROUP_ATOM_REMOVE:
+      case OperationType.S_GROUP_ATOM_ADD:
+      case OperationType.S_GROUP_ATOM_REMOVE:
         data.push({
           operation: op.type,
           atomId: op.data.aid,
@@ -342,7 +346,8 @@ function customOnChangeHandler(action, handler) {
         })
         break
 
-      case OperationType.S_GROUP_CREATE || OperationType.S_GROUP_DELETE:
+      case OperationType.S_GROUP_CREATE:
+      case OperationType.S_GROUP_DELETE:
         data.push({
           operation: op.type,
           type: op.data.type,
@@ -350,7 +355,8 @@ function customOnChangeHandler(action, handler) {
         })
         break
 
-      case OperationType.RXN_ARROW_ADD || OperationType.RXN_ARROW_DELETE:
+      case OperationType.RXN_ARROW_ADD:
+      case OperationType.RXN_ARROW_DELETE:
         data.push({
           operation: op.type,
           id: op.data.arid,
@@ -376,8 +382,8 @@ function customOnChangeHandler(action, handler) {
         })
         break
 
-      case OperationType.SIMPLE_OBJECT_ADD ||
-        OperationType.SIMPLE_OBJECT_DELETE:
+      case OperationType.SIMPLE_OBJECT_ADD:
+      case OperationType.SIMPLE_OBJECT_DELETE:
         data.push({
           operation: op.type,
           id: op.data.id,

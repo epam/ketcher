@@ -40,7 +40,7 @@ function api(
     check: structService.check.bind(structService),
     calculate: structService.calculate.bind(structService),
     recognize: structService.recognize.bind(structService),
-    generatePng: structService.generatePng.bind(structService)
+    generatePngAsBase64: structService.generatePngAsBase64.bind(structService)
   })
 }
 

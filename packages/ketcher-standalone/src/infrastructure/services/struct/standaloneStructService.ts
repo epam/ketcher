@@ -289,7 +289,7 @@ class IndigoService implements StructService {
     return Promise.reject('not implemented yet')
   }
 
-  generatePng(data: string, options: Options): Promise<string> {
+  generatePngAsBase64(data: string, options: Options): Promise<string> {
     return this.service(options, (service, indigoOptions) => {
       if (typeof service.render !== 'function') {
         if (process.env.MODE === 'development') {

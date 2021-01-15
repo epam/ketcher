@@ -98,14 +98,9 @@ export default function init(el, staticResourcesUrl, apiPath, structServiceFn) {
     Object.assign({}, params, buildInfo),
     ketcher.server
   )
-  ketcher.server.then(
-    () => {
-      if (params.mol) ketcher.ui.load(params.mol)
-    },
-    () => {
-      document.title += ' (standalone)'
-    }
-  )
+  ketcher.server.then(() => {
+    if (params.mol) ketcher.ui.load(params.mol)
+  })
 }
 
 const buildInfo = {

@@ -11,11 +11,8 @@ import 'ketcher-react/dist/index.css'
 let structServiceFn: any = undefined
 console.log(process.env)
 if (process.env.MODE === 'standalone') {
-  const { StandaloneStructService } = require('ketcher-standalone')
-  //@ts-ignore
-  structServiceFn = (baseUrl: string, options: any) => {
-    return new StandaloneStructService(options)
-  }
+  const { initStructService } = require('ketcher-standalone')
+  structServiceFn = initStructService
 }
 
 const App = () => {

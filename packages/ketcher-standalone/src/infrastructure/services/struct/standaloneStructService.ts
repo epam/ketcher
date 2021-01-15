@@ -291,13 +291,6 @@ class IndigoService implements StructService {
 
   generatePngAsBase64(data: string, options: Options): Promise<string> {
     return this.service(options, (service, indigoOptions) => {
-      if (typeof service.render !== 'function') {
-        if (process.env.MODE === 'development') {
-          console.warn('Indigo service')
-        }
-        return undefined
-      }
-
       indigoOptions.set('render-output-format', 'png')
       return service.render(data, indigoOptions)
     })

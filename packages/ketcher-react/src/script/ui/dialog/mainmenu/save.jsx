@@ -105,9 +105,16 @@ class Save extends Component {
   getWarnings(format) {
     const { struct, moleculeErrors } = this.props
     const warnings = []
-    const warning = structFormat.couldBeSaved(struct, format)
-    if (warning) {
-      warnings.push(warning)
+    const structWarning =
+      'Structure contains errors, please check the data, otherwise you ' +
+      'can lose some properties or the whole structure after saving in this format.'
+    const saveWarning = structFormat.couldBeSaved(struct, format)
+    const isStructInvalid = this.showStructWarningMessage(format)
+    if (isStructInvalid) {
+      warnings.push(structWarning)
+    }
+    if (saveWarning) {
+      warnings.push(saveWarning)
     }
     if (moleculeErrors) {
       warnings.push(...Object.values(moleculeErrors))
@@ -122,7 +129,6 @@ class Save extends Component {
     const { filename, format } = formState.result
     const warnings = this.getWarnings(format)
     const isCleanStruct = this.props.struct.isBlank()
-    const isStructInvalid = this.showStructWarningMessage(format)
 
     return (
       <Dialog
@@ -158,13 +164,6 @@ class Save extends Component {
             <Field name="format" onChange={value => this.changeType(value)} />
           </Form>
           <textarea value={structStr} readOnly ref={this.textAreaRef} />
-          {isStructInvalid && (
-            <div className="warning">
-              Structure contains errors, please check the data, otherwise you
-              can lose some properties or the whole structure after saving in
-              this format.
-            </div>
-          )}
           {warnings.map(warning => (
             <div className="warnings-container">
               <div className="warning"></div>

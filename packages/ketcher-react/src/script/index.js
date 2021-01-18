@@ -25,6 +25,8 @@ import { RemoteStructService } from './../infrastructure/services'
 
 import validateGraphF from './format/graphValidator'
 
+import { isEqual } from 'lodash/fp'
+
 function getSmiles() {
   return smiles.stringify(ketcher.editor.struct(), { ignoreErrors: true })
 }
@@ -79,6 +81,20 @@ function createDefaultStructService(baseUrl, defaultOptions) {
   return service
 }
 
+function isDirty() {
+  const position = ketcher.editor.historyPtr
+  const length = ketcher.editor.historyStack.length
+  if (!length || !this._origin) {
+    return false
+  }
+  return !isEqual(ketcher.editor.historyStack[position - 1], this._origin)
+}
+
+function setOrigin() {
+  const position = ketcher.editor.historyPtr
+  this._origin = position ? ketcher.editor.historyStack[position - 1] : null
+}
+
 // TODO: replace window.onload with something like <https://github.com/ded/domready>
 // to start early
 export default function init(el, staticResourcesUrl, apiPath, structServiceFn) {
@@ -108,6 +124,8 @@ export default function init(el, staticResourcesUrl, apiPath, structServiceFn) {
   )
 }
 
+let _origin = null
+
 const buildInfo = {
   version: process.env.VERSION,
   buildDate: process.env.BUILD_DATE,
@@ -131,7 +149,10 @@ const ketcher = Object.assign(
       return j
     },
     fromGraph: () =>
-      graph.fromGraph(graph.toGraph(ketcher.editor.render.ctab.molecule))
+      graph.fromGraph(graph.toGraph(ketcher.editor.render.ctab.molecule)),
+    isDirty,
+    setOrigin,
+    _origin
   },
   buildInfo
 )

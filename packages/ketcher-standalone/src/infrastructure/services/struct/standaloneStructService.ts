@@ -585,18 +585,6 @@ class IndigoService implements StructService {
       worker.postMessage(inputMessage)
     })
   }
-
-  private execute<TResponse = void>(
-    options: Options,
-    callback: (service, indigoOptions?) => any
-  ): Promise<TResponse> {
-    return this.indigoModule.then(service => {
-      const indigoOptions = new service.map$string$$string$()
-      console.log(options)
-      //setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
-      return callback(service, indigoOptions)
-    })
-  }
 }
 
 export default IndigoService

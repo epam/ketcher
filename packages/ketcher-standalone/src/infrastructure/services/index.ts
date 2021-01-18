@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import initStructService from './structServiceProvider'
+import {
+  StandaloneStructServiceProvider,
+  StandaloneStructService
+} from './struct'
 
-export { initStructService }
+export { StandaloneStructServiceProvider, StandaloneStructService }

@@ -21,7 +21,6 @@ import * as structformat from './ui/data/convert/structformat'
 import ui from './ui'
 import Render from './render'
 import graph from './format/chemGraph'
-import { RemoteStructService } from './../infrastructure/services'
 
 import validateGraphF from './format/graphValidator'
 
@@ -74,17 +73,18 @@ function showMolfile(clientArea, molString, options) {
   return render
 }
 
-function createDefaultStructService(baseUrl, defaultOptions) {
-  const service = new RemoteStructService(baseUrl, defaultOptions)
-  return service
-}
-
 // TODO: replace window.onload with something like <https://github.com/ded/domready>
 // to start early
-export default function init(el, staticResourcesUrl, apiPath, structServiceFn) {
+export default function init(
+  el,
+  staticResourcesUrl,
+  apiPath,
+  structServiceProvider
+) {
   ketcher.apiPath = apiPath
   const params = new URLSearchParams(document.location.search)
-  const createStructServiceFn = structServiceFn || createDefaultStructService
+  const createStructServiceFn =
+    structServiceProvider || createDefaultStructService
   if (params.has('api_path')) ketcher.apiPath = params.get('api_path')
   ketcher.server = api(ketcher.apiPath, createStructServiceFn, {
     'smart-layout': true,

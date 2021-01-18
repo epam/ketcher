@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { initStructService } from './infrastructure/services'
+import {
+  StandaloneStructServiceProvider,
+  StandaloneStructService
+} from './infrastructure/services'
 
-export { initStructService }
+export { StandaloneStructServiceProvider, StandaloneStructService }

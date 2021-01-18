@@ -26,3 +26,7 @@ export interface StructService {
   calculate: (data: any, options: any) => Promise<any>
   recognize: (data: any, options: any) => Promise<any>
 }
+
+export interface StructServiceProvider {
+  initStructService: (baseUrl: string, options: any) => StructService
+}

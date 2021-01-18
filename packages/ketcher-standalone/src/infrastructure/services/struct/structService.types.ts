@@ -122,3 +122,7 @@ export interface StructService {
   calculate: (data: CalculateData, options: Options) => Promise<CalculateResult>
   recognize: (blob: Blob, version: string) => Promise<RecognizeResult>
 }
+
+export interface StructServiceProvider {
+  initStructService: (baseUrl: string, options: any) => StructService
+}

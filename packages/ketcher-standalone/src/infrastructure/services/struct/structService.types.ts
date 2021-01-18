@@ -25,16 +25,6 @@ export enum ChemicalMimeType {
   CML = 'chemical/x-cml'
 }
 
-export enum SupportedFormat {
-  Rxn = 'rxnfile',
-  Mol = 'molfile',
-  Smiles = 'smiles',
-  Smarts = 'smarts',
-  CML = 'cml',
-  InchI = 'inchi',
-  InChIAuxInfo = 'inchi-aux'
-}
-
 export interface WithStruct {
   struct: string
 }
@@ -121,4 +111,5 @@ export interface StructService {
   check: (data: CheckData, options: Options) => Promise<CheckResult>
   calculate: (data: CalculateData, options: Options) => Promise<CalculateResult>
   recognize: (blob: Blob, version: string) => Promise<RecognizeResult>
+  generatePngAsBase64: (data: any, options: any) => Promise<string>
 }

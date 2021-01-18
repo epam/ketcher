@@ -1,11 +1,9 @@
-import path from 'path'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import babel from '@rollup/plugin-babel'
 import replace from '@rollup/plugin-replace'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
-import postcss from 'rollup-plugin-postcss'
 import json from '@rollup/plugin-json'
 import del from 'rollup-plugin-delete'
 import cleanup from 'rollup-plugin-cleanup'
@@ -57,7 +55,11 @@ const config = {
     resolve({ extensions, preferBuiltins: false }),
 
     typescript(),
-    webWorkerLoader({ extensions }),
+    webWorkerLoader({
+      extensions,
+      sourcemap: false,
+      targetPlatform: 'browser'
+    }),
     replace(
       {
         'process.env.NODE_ENV': JSON.stringify(
@@ -74,11 +76,6 @@ const config = {
       extensions,
       babelHelpers: 'runtime',
       include: ['src/**/*']
-    }),
-    postcss({
-      extract: path.resolve('dist/index.css'),
-      minimize: isProduction,
-      sourceMap: true
     }),
     cleanup({ extensions, comments: 'none' }),
     ...(isProduction ? [strip()] : [])

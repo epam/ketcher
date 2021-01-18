@@ -152,7 +152,16 @@ const ketcher = Object.assign(
       graph.fromGraph(graph.toGraph(ketcher.editor.render.ctab.molecule)),
     isDirty,
     setOrigin,
-    _origin
+    _origin,
+    generatePng: function (...args) {
+      return this.server.generatePngAsBase64
+        .apply(null, args)
+        .then(base64 =>
+          fetch(`data:image/png;base64,${base64}`).then(response =>
+            response.blob()
+          )
+        )
+    }
   },
   buildInfo
 )

@@ -147,9 +147,7 @@ class IndigoService implements StructService {
   convert(data: ConvertData, options: Options): Promise<ConvertResult> {
     const { output_format, struct } = data
     const format = convertMimeTypeToOutputFormat(output_format)
-    return this.indigoModule.then(indigo => {
-      const indigoOptions = new indigo.map$string$$string$()
-      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+    return this.service(options, (indigo, indigoOptions) => {
       const convertedStruct = indigo.convert(struct, format, indigoOptions)
       const result: ConvertResult = {
         struct: convertedStruct,
@@ -161,9 +159,7 @@ class IndigoService implements StructService {
 
   layout(data: LayoutData, options: Options): Promise<LayoutResult> {
     const { struct } = data
-    return this.indigoModule.then(indigo => {
-      const indigoOptions = new indigo.map$string$$string$()
-      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+    return this.service(options, (indigo, indigoOptions) => {
       const updatedStruct = indigo.layout(struct, indigoOptions)
       const result: LayoutResult = {
         struct: updatedStruct,
@@ -176,9 +172,7 @@ class IndigoService implements StructService {
   clean(data: CleanData, options: Options): Promise<CleanResult> {
     //TODO: very slow
     const { struct } = data
-    return this.indigoModule.then(indigo => {
-      const indigoOptions = new indigo.map$string$$string$()
-      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+    return this.service(options, (indigo, indigoOptions) => {
       const updatedStruct = indigo.clean2d(struct, indigoOptions)
       const result: CleanResult = {
         struct: updatedStruct,
@@ -190,9 +184,7 @@ class IndigoService implements StructService {
 
   aromatize(data: AromatizeData, options: Options): Promise<AromatizeResult> {
     const { struct } = data
-    return this.indigoModule.then(indigo => {
-      const indigoOptions = new indigo.map$string$$string$()
-      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+    return this.service(options, (indigo, indigoOptions) => {
       const aromatizedStruct = indigo.aromatize(struct, indigoOptions)
       const result: AromatizeResult = {
         struct: aromatizedStruct,
@@ -207,9 +199,7 @@ class IndigoService implements StructService {
     options: Options
   ): Promise<DearomatizeResult> {
     const { struct } = data
-    return this.indigoModule.then(indigo => {
-      const indigoOptions = new indigo.map$string$$string$()
-      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+    return this.service(options, (indigo, indigoOptions) => {
       const dearomatizedStruct = indigo.dearomatize(struct, indigoOptions)
       const result: AromatizeResult = {
         struct: dearomatizedStruct,
@@ -224,9 +214,7 @@ class IndigoService implements StructService {
     options: Options
   ): Promise<CalculateCipResult> {
     const { struct } = data
-    return this.indigoModule.then(indigo => {
-      const indigoOptions = new indigo.map$string$$string$()
-      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+    return this.service(options, (indigo, indigoOptions) => {
       const updatedStruct = indigo.calculateCip(struct, indigoOptions)
       const result: CalculateCipResult = {
         struct: updatedStruct,
@@ -238,9 +226,7 @@ class IndigoService implements StructService {
 
   automap(data: AutomapData, options: Options): Promise<AutomapResult> {
     const { mode, struct } = data
-    return this.indigoModule.then(indigo => {
-      const indigoOptions = new indigo.map$string$$string$()
-      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+    return this.service(options, (indigo, indigoOptions) => {
       const updatedStruct = indigo.automap(struct, mode, indigoOptions)
       const result: AutomapResult = {
         struct: updatedStruct,
@@ -252,9 +238,7 @@ class IndigoService implements StructService {
 
   check(data: CheckData, options: Options): Promise<CheckResult> {
     const { types, struct } = data
-    return this.indigoModule.then(indigo => {
-      const indigoOptions = new indigo.map$string$$string$()
-      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+    return this.service(options, (indigo, indigoOptions) => {
       const warningsString = indigo.check(
         struct,
         types?.length ? types.join(';') : '',
@@ -279,9 +263,7 @@ class IndigoService implements StructService {
 
   calculate(data: CalculateData, options: Options): Promise<CalculateResult> {
     const { properties, struct } = data
-    return this.indigoModule.then(indigo => {
-      const indigoOptions = new indigo.map$string$$string$()
-      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+    return this.service(options, (indigo, indigoOptions) => {
       const calculatedPropertiesString = indigo.calculate(struct, indigoOptions)
       const calculatedProperties = JSON.parse(
         calculatedPropertiesString
@@ -302,9 +284,27 @@ class IndigoService implements StructService {
     })
   }
 
-  //@ts-ignore
+  // @ts-ignore
   recognize(blob: Blob, version: string): Promise<RecognizeResult> {
     return Promise.reject('not implemented yet')
+  }
+
+  generatePngAsBase64(data: string, options: Options): Promise<string> {
+    return this.service(options, (service, indigoOptions) => {
+      indigoOptions.set('render-output-format', 'png')
+      return service.render(data, indigoOptions)
+    })
+  }
+
+  private service<TResponse = void>(
+    options: Options,
+    callback: (service, indigoOptions?) => any
+  ): Promise<TResponse> {
+    return this.indigoModule.then(service => {
+      const indigoOptions = new service.map$string$$string$()
+      setOptions(indigoOptions, Object.assign({}, this.defaultOptions, options))
+      return callback(service, indigoOptions)
+    })
   }
 }
 

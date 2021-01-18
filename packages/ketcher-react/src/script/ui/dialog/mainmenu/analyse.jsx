@@ -73,7 +73,11 @@ function FormulaInput({ value }) {
 class Analyse extends Component {
   constructor(props) {
     super(props)
-    props.onAnalyse().catch(props.onCancel)
+    props.onAnalyse().catch(e => {
+      //error could possibly be an invalid state of molecule.TODO handling such cases described in #251
+      alert(e)
+      props.onCancel()
+    })
   }
 
   render() {

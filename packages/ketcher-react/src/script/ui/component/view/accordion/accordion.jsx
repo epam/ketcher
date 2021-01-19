@@ -16,6 +16,7 @@
 
 import React, { Component } from 'react'
 import { xor } from 'lodash/fp'
+import styles from './accordion.module.less'
 
 class Accordion extends Component {
   constructor(props) {
@@ -37,7 +38,10 @@ class Accordion extends Component {
 
   static Group({ caption, isActive, onActive, index, children }) {
     return (
-      <li className={'ac_tab ' + (isActive(index) ? 'active' : 'hidden')}>
+      <li
+        className={`${styles.ac_tab} ${
+          isActive(index) ? styles.active : styles.hidden
+        }`}>
         <a // eslint-disable-line
           onClick={() => onActive(index)}>
           {caption}

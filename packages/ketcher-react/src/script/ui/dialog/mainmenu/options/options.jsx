@@ -16,21 +16,23 @@
 
 import React from 'react'
 import { connect } from 'react-redux'
-import { updateFormState, setDefaultSettings } from '../../state/modal/form'
-import { saveSettings } from '../../state/options'
+import { updateFormState, setDefaultSettings } from '../../../state/modal/form'
+import { saveSettings } from '../../../state/options'
 
-import settingsSchema from '../../data/schema/options-schema'
-import { storage } from '../../storage-ext'
+import settingsSchema from '../../../data/schema/options-schema'
+import { storage } from '../../../storage-ext'
 
-import Form, { Field } from '../../component/form/form'
-import Dialog from '../../component/dialog'
-import Accordion from '../../component/view/accordion'
-import SaveButton from '../../component/view/savebutton'
-import OpenButton from '../../component/view/openbutton'
+import Form, { Field } from '../../../component/form/form'
+import Dialog from '../../../component/dialog'
+import Accordion from '../../../component/view/accordion/accordion'
+import SaveButton from '../../../component/view/savebutton'
+import OpenButton from '../../../component/view/openbutton'
 
-import MeasureInput from '../../component/form/measure-input'
-import SystemFonts from '../../component/form/systemfonts'
-import SelectCheckbox from '../../component/form/select-checkbox'
+import MeasureInput from '../../../component/form/measure-input'
+import SystemFonts from '../../../component/form/systemfonts'
+import SelectCheckbox from '../../../component/form/select-checkbox'
+
+import styles from './options.module.less'
 
 function Settings(props) {
   const {
@@ -46,7 +48,7 @@ function Settings(props) {
   return (
     <Dialog
       title="Settings"
-      className="settings"
+      className={styles.settings}
       result={() => formState.result}
       valid={() => formState.valid}
       params={prop}
@@ -67,9 +69,9 @@ function Settings(props) {
         'OK'
       ]}>
       <Form schema={settingsSchema} init={initState} {...formState}>
-        <Accordion className="accordion" multiple={false} active={[0]}>
+        <Accordion className={styles.accordion} multiple={false} active={[0]}>
           <Accordion.Group caption="Rendering customization options">
-            <fieldset className="render">
+            <fieldset className={styles.render}>
               <Field name="resetToSelect" />
               <Field name="rotationStep" />
               <Field name="showValenceWarnings" component={SelectCheckbox} />
@@ -97,7 +99,7 @@ function Settings(props) {
             </fieldset>
           </Accordion.Group>
           <Accordion.Group caption="Server">
-            <fieldset className="server" disabled={!appOpts.server}>
+            <fieldset className={styles.server} disabled={!appOpts.server}>
               <Field name="smart-layout" component={SelectCheckbox} />
               <Field
                 name="ignore-stereochemistry-errors"
@@ -118,7 +120,7 @@ function Settings(props) {
             </fieldset>
           </Accordion.Group>
           <Accordion.Group caption="3D Viewer">
-            <fieldset className="miew" disabled={!window.Miew}>
+            <fieldset className={server.miew} disabled={!window.Miew}>
               <Field name="miewMode" />
               <Field name="miewTheme" />
               <Field name="miewAtomLabel" />

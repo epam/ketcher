@@ -1,12 +1,8 @@
 class Base {
-  #type
+  type
 
   constructor(type) {
-    this.#type = type
-  }
-
-  get type() {
-    return this.#type
+    this.type = type
   }
 
   execute() {

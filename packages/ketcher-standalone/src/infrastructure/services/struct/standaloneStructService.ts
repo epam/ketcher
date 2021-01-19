@@ -132,8 +132,7 @@ function mapWarningGroup(property: string) {
 }
 
 class IndigoService implements StructService {
-  private defaultOptions: any
-  private indigoModule: any
+  private defaultOptions: Options
 
   constructor(defaultOptions: Options) {
     this.defaultOptions = defaultOptions
@@ -548,7 +547,7 @@ class IndigoService implements StructService {
 
   // @ts-ignore
   recognize(blob: Blob, version: string): Promise<RecognizeResult> {
-    return Promise.reject('not implemented yet')
+    return Promise.reject('Not supported in standalone mode')
   }
 
   generatePngAsBase64(data: string, options: Options): Promise<string> {

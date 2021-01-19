@@ -16,6 +16,7 @@ import {
   CommandData,
   GenerateImageCommandData
 } from './indigoWorker.types'
+// @ts-ignore
 import indigoModuleFn from '../../../generated/libindigo'
 
 interface IndigoOptions {
@@ -29,7 +30,7 @@ function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {
 }
 
 const module = indigoModuleFn()
-self.onmessage = () => (e:MessageEvent<InputMessage<CommandData>>) => {
+self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
   const message = e.data
   switch (message.type) {
     case Command.GenerateImageAsBase64: {
@@ -37,7 +38,7 @@ self.onmessage = () => (e:MessageEvent<InputMessage<CommandData>>) => {
       module.then(indigo => {
         const indigoOptions = new indigo.map$string$$string$()
         setOptions(indigoOptions, data.options)
-        setOptions(indigoOptions, {'render-output-format': data.outputFormat})
+        setOptions(indigoOptions, { 'render-output-format': data.outputFormat })
         const updatedStruct = indigo.render(data.struct, indigoOptions)
 
         const msg: OutputMessage<string> = {
@@ -236,4 +237,4 @@ self.onmessage = () => (e:MessageEvent<InputMessage<CommandData>>) => {
     default:
       throw Error('Unsupported enum type')
   }
-})
+}

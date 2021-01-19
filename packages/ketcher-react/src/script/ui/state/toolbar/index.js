@@ -129,6 +129,7 @@ export function hiddenAncestor(el, base) {
   let findEl = el
 
   while (
+    findEl &&
     window.getComputedStyle(findEl).overflow !== 'hidden' &&
     !findEl.classList.contains('opened')
   ) {

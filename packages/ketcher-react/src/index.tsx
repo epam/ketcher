@@ -18,11 +18,12 @@ interface EditorProps {
 
 export function Editor({
   staticResourcesUrl,
+  apiPath,
   structServiceProvider
 }: EditorProps) {
   const rootElRef = useRef(null)
   useEffect(() => {
-    init(rootElRef.current, staticResourcesUrl, structServiceProvider)
+    init(rootElRef.current, staticResourcesUrl, apiPath, structServiceProvider)
   }, [])
 
   return <div ref={rootElRef} className="ketcher root"></div>

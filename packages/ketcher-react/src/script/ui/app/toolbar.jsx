@@ -212,8 +212,7 @@ function TemplatesList({ active, onAction }) {
 }
 
 function initToolbar() {
-  console.log(global.ketcher)
-  let toolboxItems = [...toolbox]
+  const toolboxItems = [...toolbox]
   if (!global?.ketcher?.standalone)
     toolboxItems.push({
       id: 'shape',

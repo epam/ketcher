@@ -28,5 +28,5 @@ export interface StructService {
 }
 
 export interface StructServiceProvider {
-  initStructService: (baseUrl: string, options: any) => StructService
+  initStructService: (options: any) => StructService
 }

@@ -78,15 +78,9 @@ function showMolfile(clientArea, molString, options) {
 export default function init(
   el,
   staticResourcesUrl,
-  apiPath,
   structServiceProvider
 ) {
-  ketcher.apiPath = apiPath
-  const params = new URLSearchParams(document.location.search)
-  const createStructServiceFn =
-    structServiceProvider || createDefaultStructService
-  if (params.has('api_path')) ketcher.apiPath = params.get('api_path')
-  ketcher.server = api(ketcher.apiPath, createStructServiceFn, {
+  ketcher.server = api(structServiceProvider, {
     'smart-layout': true,
     'ignore-stereochemistry-errors': true,
     'mass-skip-error-on-pseudoatoms': false,
@@ -98,6 +92,7 @@ export default function init(
     Object.assign({}, params, buildInfo),
     ketcher.server
   )
+  const params = new URLSearchParams(document.location.search)
   ketcher.server.then(() => {
     if (params.mol) ketcher.ui.load(params.mol)
   })

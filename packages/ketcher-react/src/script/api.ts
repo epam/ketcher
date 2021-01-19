@@ -16,15 +16,10 @@
 import { StructServiceProvider } from '../infrastructure/services/struct/structService.types'
 
 function api(
-  base: string,
   structServiceProvider: StructServiceProvider,
   defaultOptions: any
 ) {
-  const baseUrl = !base || /\/$/.test(base) ? base : base + '/'
-  const structService = structServiceProvider.initStructService(
-    baseUrl,
-    defaultOptions
-  )
+  const structService = structServiceProvider.initStructService(defaultOptions)
   const info = structService.info()
 
   return Object.assign(info, {

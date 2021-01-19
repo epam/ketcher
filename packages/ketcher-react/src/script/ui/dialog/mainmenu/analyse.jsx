@@ -74,7 +74,8 @@ class Analyse extends Component {
   constructor(props) {
     super(props)
     props.onAnalyse().catch(e => {
-      //error could possibly be an invalid state of molecule.TODO handling such cases described in #251
+      // error could possibly be an invalid state of molecule.
+      // TODO: handling such cases described in #251
       alert(e)
       props.onCancel()
     })

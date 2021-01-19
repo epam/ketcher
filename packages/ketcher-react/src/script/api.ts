@@ -32,7 +32,8 @@ function api(
     automap: structService.automap.bind(structService),
     check: structService.check.bind(structService),
     calculate: structService.calculate.bind(structService),
-    recognize: structService.recognize.bind(structService)
+    recognize: structService.recognize.bind(structService),
+    generatePngAsBase64: structService.generatePngAsBase64.bind(structService)
   })
 }
 

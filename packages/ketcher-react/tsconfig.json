@@ -16,7 +16,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es6",
+    "target": "es5",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,

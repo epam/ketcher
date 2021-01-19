@@ -35,7 +35,7 @@ class Ketcher {
     buildDate: process.env.BUILD_DATE,
     buildNumber: process.env.BUILD_NUMBER
   }
-  #origin = null
+  private origin = null
 
   getSmiles(): string {
     return smiles.stringify(ketcher.editor.struct(), { ignoreErrors: true })
@@ -97,15 +97,15 @@ class Ketcher {
   isDirty(): boolean {
     const position = ketcher.editor.historyPtr
     const length = ketcher.editor.historyStack.length
-    if (!length || !this.#origin) {
+    if (!length || !this.origin) {
       return false
     }
-    return !isEqual(ketcher.editor.historyStack[position - 1], this.#origin)
+    return !isEqual(ketcher.editor.historyStack[position - 1], this.origin)
   }
 
   setOrigin(): void {
     const position = ketcher.editor.historyPtr
-    this.#origin = position ? ketcher.editor.historyStack[position - 1] : null
+    this.origin = position ? ketcher.editor.historyStack[position - 1] : null
   }
 
   toGraph(): any {
@@ -161,9 +161,4 @@ export default function init(el, staticResourcesUrl, apiPath, structServiceFn) {
 
 const ketcher = new Ketcher()
 
-declare const global: Global
-global.ketcher = ketcher
-
-interface Global {
-  ketcher: Ketcher
-}
+;(global as any).ketcher = ketcher

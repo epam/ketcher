@@ -1,4 +1,3 @@
-import { StructService } from './../../../../../ketcher-react/src/infrastructure/services/struct/structService.types'
 /****************************************************************************
  * Copyright 2020 EPAM Systems
  *
@@ -14,6 +13,7 @@ import { StructService } from './../../../../../ketcher-react/src/infrastructure
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { StructService } from './structService.types'
 // @ts-ignore
 import IndigoWorker from 'web-worker:./indigoWorker'
 import {

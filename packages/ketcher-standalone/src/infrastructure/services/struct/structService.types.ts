@@ -117,4 +117,3 @@ export interface StructService {
 export interface StructServiceProvider {
   createStructService: (baseUrl: string, options: any) => StructService
 }
-

@@ -53,11 +53,54 @@ import {
 
 const tfx = util.tfx
 
+export const OperationType = {
+  ATOM_ADD: 'Add atom',
+  ATOM_DELETE: 'Delete atom',
+  ATOM_ATTR: 'Set atom attribute',
+  ATOM_MOVE: 'Move atom',
+  BOND_ADD: 'Add bond',
+  BOND_DELETE: 'Delete bond',
+  BOND_ATTR: 'Set bond attribute',
+  BOND_MOVE: 'Move bond',
+  LOOP_MOVE: 'Move loop',
+  S_GROUP_ATOM_ADD: 'Add atom to s-group',
+  S_GROUP_ATOM_REMOVE: 'Remove atom from s-group',
+  S_GROUP_ATTR: 'Set s-group attribute',
+  S_GROUP_CREATE: 'Create s-group',
+  S_GROUP_DELETE: 'Delete s-group',
+  S_GROUP_ADD_TO_HIERACHY: 'Add s-group to hierarchy',
+  S_GROUP_REMOVE_FROM_HIERACHY: 'Delete s-group from hierarchy',
+  R_GROUP_ATTR: 'Set r-group attribute',
+  R_GROUP_FRAGMENT: 'R-group fragment',
+  UPDATE_IF_THEN: 'Update',
+  RESTORE_IF_THEN: 'Restore',
+  RXN_ARROW_ADD: 'Add rxn arrow',
+  RXN_ARROW_DELETE: 'Delete rxn arrow',
+  RXN_ARROW_MOVE: 'Move rxn arrow',
+  RXN_PLUS_ADD: 'Add rxn plus',
+  RXN_PLUS_DELETE: 'Delete rxn plus',
+  RXN_PLUS_MOVE: 'Move rxn plus',
+  S_GROUP_DATA_MOVE: 'Move s-group data',
+  CANVAS_LOAD: 'Load canvas',
+  ALIGN_DESCRIPTORS: 'Align descriptors',
+  SIMPLE_OBJECT_ADD: 'Add simple object',
+  SIMPLE_OBJECT_DELETE: 'Delete simple object',
+  SIMPLE_OBJECT_MOVE: 'Move simple object',
+  SIMPLE_OBJECT_RESIZE: 'Resize simple object',
+  RESTORE_DESCRIPTORS_POSITION: 'Restore descriptors position',
+  FRAGMENT_ADD: 'Add fragment',
+  FRAGMENT_DELETE: 'Delete fragment',
+  FRAGMENT_STEREO_FLAG: 'Add fragment stereo flag',
+  FRAGMENT_ADD_STEREO_ATOM: 'Add stereo atom to fragment',
+  FRAGMENT_DELETE_STEREO_ATOM: 'Delete stereo atom from fragment',
+  ENHANCED_FLAG_MOVE: 'Move enhanced flag'
+}
+
 function AtomAdd(atom, pos) {
   this.data = { atom, pos, aid: null }
 }
 
-AtomAdd.prototype = new Base('Add atom')
+AtomAdd.prototype = new Base(OperationType.ATOM_ADD)
 
 AtomAdd.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -105,7 +148,7 @@ function AtomDelete(aid) {
   this.data = { aid, atom: null, pos: null }
 }
 
-AtomDelete.prototype = new Base('Delete atom')
+AtomDelete.prototype = new Base(OperationType.ATOM_DELETE)
 
 AtomDelete.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -136,7 +179,7 @@ function AtomAttr(aid, attribute, value) {
   this.data2 = null
 }
 
-AtomAttr.prototype = new Base('Set atom attribute')
+AtomAttr.prototype = new Base(OperationType.ATOM_ATTR)
 
 AtomAttr.prototype.execute = function (restruct) {
   const atom = restruct.molecule.atoms.get(this.data.aid)
@@ -170,7 +213,7 @@ function AtomMove(aid, d, noinvalidate) {
   this.data = { aid, d, noinvalidate }
 }
 
-AtomMove.prototype = new Base('Move atom')
+AtomMove.prototype = new Base(OperationType.ATOM_MOVE)
 AtomMove.prototype.execute = function (restruct) {
   const struct = restruct.molecule
   const aid = this.data.aid
@@ -199,7 +242,7 @@ function BondMove(bid, d) {
   this.data = { bid, d }
 }
 
-BondMove.prototype = new Base('Move bond')
+BondMove.prototype = new Base(OperationType.BOND_MOVE)
 
 BondMove.prototype.execute = function (restruct) {
   restruct.bonds
@@ -218,7 +261,7 @@ function LoopMove(id, d) {
   this.data = { id, d }
 }
 
-LoopMove.prototype = new Base('Move loop')
+LoopMove.prototype = new Base(OperationType.LOOP_MOVE)
 
 LoopMove.prototype.execute = function (restruct) {
   // not sure if there should be an action to move a loop in the first place
@@ -245,7 +288,7 @@ function SGroupAtomAdd(sgid, aid) {
   this.data = { sgid, aid }
 }
 
-SGroupAtomAdd.prototype = new Base('Add atom to s-group')
+SGroupAtomAdd.prototype = new Base(OperationType.S_GROUP_ATOM_ADD)
 
 SGroupAtomAdd.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -275,7 +318,7 @@ function SGroupAtomRemove(sgid, aid) {
   this.data = { sgid, aid }
 }
 
-SGroupAtomRemove.prototype = new Base('Remove atom from s-group')
+SGroupAtomRemove.prototype = new Base(OperationType.S_GROUP_ATOM_REMOVE)
 
 SGroupAtomRemove.prototype.execute = function (restruct) {
   const aid = this.data.aid
@@ -299,7 +342,7 @@ function SGroupAttr(sgid, attr, value) {
   this.data = { sgid, attr, value }
 }
 
-SGroupAttr.prototype = new Base('Set s-group attribute')
+SGroupAttr.prototype = new Base(OperationType.S_GROUP_ATTR)
 
 SGroupAttr.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -325,7 +368,7 @@ function SGroupCreate(sgid, type, pp) {
   this.data = { sgid, type, pp }
 }
 
-SGroupCreate.prototype = new Base('Create s-group')
+SGroupCreate.prototype = new Base(OperationType.S_GROUP_CREATE)
 
 SGroupCreate.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -351,7 +394,7 @@ function SGroupDelete(sgid) {
   this.data = { sgid }
 }
 
-SGroupDelete.prototype = new Base('Delete s-group')
+SGroupDelete.prototype = new Base(OperationType.S_GROUP_DELETE)
 
 SGroupDelete.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -383,7 +426,7 @@ function SGroupAddToHierarchy(sgid, parent, children) {
   this.data = { sgid, parent, children }
 }
 
-SGroupAddToHierarchy.prototype = new Base('Add s-group to hierarchy')
+SGroupAddToHierarchy.prototype = new Base(OperationType.S_GROUP_ADD_TO_HIERACHY)
 
 SGroupAddToHierarchy.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -408,7 +451,9 @@ function SGroupRemoveFromHierarchy(sgid) {
   this.data = { sgid }
 }
 
-SGroupRemoveFromHierarchy.prototype = new Base('Delete s-group from hierarchy')
+SGroupRemoveFromHierarchy.prototype = new Base(
+  OperationType.S_GROUP_REMOVE_FROM_HIERACHY
+)
 
 SGroupRemoveFromHierarchy.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -429,7 +474,7 @@ function BondAdd(begin, end, bond) {
   this.data = { bond, begin, end, bid: null }
 }
 
-BondAdd.prototype = new Base('Add bond')
+BondAdd.prototype = new Base(OperationType.BOND_ADD)
 
 BondAdd.prototype.execute = function (restruct) {
   // eslint-disable-line max-statements
@@ -475,7 +520,7 @@ function BondDelete(bid) {
   this.data = { bid, bond: null, begin: null, end: null }
 }
 
-BondDelete.prototype = new Base('Delete bond')
+BondDelete.prototype = new Base(OperationType.BOND_DELETE)
 
 BondDelete.prototype.execute = function (restruct) {
   // eslint-disable-line max-statements
@@ -525,7 +570,7 @@ function BondAttr(bid, attribute, value) {
   this.data2 = null
 }
 
-BondAttr.prototype = new Base('Set bond attribute')
+BondAttr.prototype = new Base(OperationType.BOND_ATTR)
 
 BondAttr.prototype.execute = function (restruct) {
   const bond = restruct.molecule.bonds.get(this.data.bid)
@@ -564,7 +609,7 @@ function RGroupAttr(rgid, attribute, value) {
   this.data2 = null
 }
 
-RGroupAttr.prototype = new Base('Set r-group attribute')
+RGroupAttr.prototype = new Base(OperationType.R_GROUP_ATTR)
 
 RGroupAttr.prototype.execute = function (restruct) {
   const rgp = restruct.molecule.rgroups.get(this.data.rgid)
@@ -604,7 +649,7 @@ function RGroupFragment(rgid, frid, rg) {
   this.frid = frid
 }
 
-RGroupFragment.prototype = new Base('R-group fragment')
+RGroupFragment.prototype = new Base(OperationType.R_GROUP_FRAGMENT)
 
 RGroupFragment.prototype.execute = function (restruct) {
   // eslint-disable-line max-statements
@@ -650,7 +695,7 @@ function UpdateIfThen(rgNew, rgOld, skipRgids = []) {
   this.skipRgids = skipRgids || []
 }
 
-UpdateIfThen.prototype = new Base('Update if then')
+UpdateIfThen.prototype = new Base(OperationType.UPDATE_IF_THEN)
 
 UpdateIfThen.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -674,7 +719,7 @@ function RestoreIfThen(rgNew, rgOld, history) {
   this.ifThenHistory = history || new Map()
 }
 
-RestoreIfThen.prototype = new Base('Restore if then')
+RestoreIfThen.prototype = new Base(OperationType.RESTORE_IF_THEN)
 
 RestoreIfThen.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -694,7 +739,7 @@ function RxnArrowAdd(pos) {
   this.data = { pos, arid: null }
 }
 
-RxnArrowAdd.prototype = new Base('Add rxn arrow')
+RxnArrowAdd.prototype = new Base(OperationType.RXN_ARROW_ADD)
 
 RxnArrowAdd.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -739,7 +784,7 @@ function RxnArrowDelete(arid) {
   this.data = { arid, pos: null }
 }
 
-RxnArrowDelete.prototype = new Base('Delete rxn arrow')
+RxnArrowDelete.prototype = new Base(OperationType.RXN_ARROW_DELETE)
 
 RxnArrowDelete.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -768,7 +813,7 @@ function RxnArrowMove(id, d, noinvalidate) {
   this.data = { id, d, noinvalidate }
 }
 
-RxnArrowMove.prototype = new Base('Move rxn arrow')
+RxnArrowMove.prototype = new Base(OperationType.RXN_ARROW_MOVE)
 
 RxnArrowMove.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -792,7 +837,7 @@ function RxnPlusAdd(pos) {
   this.data = { plid: null, pos }
 }
 
-RxnPlusAdd.prototype = new Base('Add rxn plus')
+RxnPlusAdd.prototype = new Base(OperationType.RXN_PLUS_ADD)
 
 RxnPlusAdd.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -821,7 +866,7 @@ function RxnPlusDelete(plid) {
   this.data = { plid, pos: null }
 }
 
-RxnPlusDelete.prototype = new Base('Delete rxn plus')
+RxnPlusDelete.prototype = new Base(OperationType.RXN_PLUS_DELETE)
 
 RxnPlusDelete.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -845,7 +890,7 @@ function RxnPlusMove(id, d, noinvalidate) {
   this.data = { id, d, noinvalidate }
 }
 
-RxnPlusMove.prototype = new Base('Nove rxn plus')
+RxnPlusMove.prototype = new Base(OperationType.RXN_PLUS_MOVE)
 
 RxnPlusMove.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -869,7 +914,7 @@ function SGroupDataMove(id, d) {
   this.data = { id, d }
 }
 
-SGroupDataMove.prototype = new Base('Move s-group data')
+SGroupDataMove.prototype = new Base(OperationType.S_GROUP_DATA_MOVE)
 
 SGroupDataMove.prototype.execute = function (restruct) {
   const { sgroups } = restruct.molecule
@@ -888,7 +933,7 @@ function CanvasLoad(struct) {
   this.data = { struct }
 }
 
-CanvasLoad.prototype = new Base('Load canvas')
+CanvasLoad.prototype = new Base(OperationType.CANVAS_LOAD)
 
 CanvasLoad.prototype.execute = function (restruct) {
   const oldStruct = restruct.molecule
@@ -907,7 +952,7 @@ function AlignDescriptors() {
   this.history = {}
 }
 
-AlignDescriptors.prototype = new Base('Align descriptors')
+AlignDescriptors.prototype = new Base(OperationType.ALIGN_DESCRIPTORS)
 
 AlignDescriptors.prototype.execute = function (restruct) {
   const sgroups = Array.from(restruct.molecule.sgroups.values()).reverse()
@@ -934,7 +979,9 @@ function RestoreDescriptorsPosition(history) {
   this.history = history
 }
 
-RestoreDescriptorsPosition.prototype = new Base('Restore descriptors position')
+RestoreDescriptorsPosition.prototype = new Base(
+  OperationType.RESTORE_DESCRIPTORS_POSITION
+)
 
 RestoreDescriptorsPosition.prototype.execute = function (restruct) {
   const sgroups = Array.from(restruct.molecule.sgroups.values())
@@ -955,7 +1002,7 @@ function SimpleObjectAdd(pos, mode) {
   this.performed = false
 }
 
-SimpleObjectAdd.prototype = new Base('Add simple object')
+SimpleObjectAdd.prototype = new Base(OperationType.SIMPLE_OBJECT_ADD)
 
 SimpleObjectAdd.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -995,7 +1042,7 @@ function SimpleObjectDelete(id) {
   this.performed = false
 }
 
-SimpleObjectDelete.prototype = new Base('Delete simple object')
+SimpleObjectDelete.prototype = new Base(OperationType.SIMPLE_OBJECT_DELETE)
 
 SimpleObjectDelete.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -1023,7 +1070,7 @@ function SimpleObjectMove(id, d, noinvalidate) {
   this.data = { id, d, noinvalidate }
 }
 
-SimpleObjectMove.prototype = new Base('Move simple object')
+SimpleObjectMove.prototype = new Base(OperationType.SIMPLE_OBJECT_MOVE)
 
 SimpleObjectMove.prototype.execute = function (restruct) {
   const struct = restruct.molecule
@@ -1048,7 +1095,7 @@ function SimpleObjectResize(id, d, current, anchor, noinvalidate) {
   this.data = { id, d, current, anchor, noinvalidate }
 }
 
-SimpleObjectResize.prototype = new Base('Resize simple object')
+SimpleObjectResize.prototype = new Base(OperationType.SIMPLE_OBJECT_RESIZE)
 
 SimpleObjectResize.prototype.execute = function (restruct) {
   const struct = restruct.molecule

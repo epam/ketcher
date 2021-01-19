@@ -16,7 +16,7 @@
 import api from './api'
 import molfile from './chem/molfile'
 import smiles from './chem/smiles'
-import * as structformat from './ui/data/convert/structformat'
+import * as structFormat from './ui/data/convert/structformat'
 import ui from './ui'
 import Render from './render'
 import graph from './format/chemGraph'
@@ -43,7 +43,7 @@ class Ketcher {
 
   saveSmiles(): Promise<any> {
     const struct = ketcher.editor.struct()
-    return structformat
+    return structFormat
       .toString(struct, 'smiles-ext', ketcher.server)
       .catch(() => smiles.stringify(struct))
   }
@@ -53,14 +53,14 @@ class Ketcher {
   }
 
   setMolecule(molString: string): void {
-    if (!(typeof molString === 'string')) return
+    if (typeof molString !== 'string') return
     ketcher.ui.load(molString, {
       rescale: true
     })
   }
 
   addFragment(molString: string): void {
-    if (!(typeof molString === 'string')) return
+    if (typeof molString !== 'string') return
     ketcher.ui.load(molString, {
       rescale: true,
       fragment: true

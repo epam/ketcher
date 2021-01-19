@@ -21,10 +21,7 @@ function api(
   defaultOptions: any
 ) {
   const baseUrl = !base || /\/$/.test(base) ? base : base + '/'
-  const structService = structServiceProvider.createStructService(
-    baseUrl,
-    defaultOptions
-  )
+  const structService = structServiceProvider.createStructService(baseUrl, defaultOptions)
   const info = structService.info()
 
   return Object.assign(info, {

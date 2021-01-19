@@ -86,14 +86,6 @@ class Ketcher {
     return render
   }
 
-  createDefaultStructService(
-    baseUrl: string,
-    defaultOptions: any
-  ): RemoteStructService {
-    const service = new RemoteStructService(baseUrl, defaultOptions)
-    return service
-  }
-
   isDirty(): boolean {
     const position = ketcher.editor.historyPtr
     const length = ketcher.editor.historyStack.length
@@ -131,13 +123,12 @@ class Ketcher {
 
 // TODO: replace window.onload with something like <https://github.com/ded/domready>
 // to start early
-export default function init(el, staticResourcesUrl, apiPath, structServiceFn) {
+export default function init(el, staticResourcesUrl, apiPath, structServiceProvider) {
   ketcher.apiPath = apiPath
   const params = new URLSearchParams(document.location.search)
-  const createStructServiceFn =
-    structServiceFn || ketcher.createDefaultStructService
+
   if (params.has('api_path')) ketcher.apiPath = params.get('api_path')
-  ketcher.server = api(ketcher.apiPath, createStructServiceFn, {
+  ketcher.server = api(ketcher.apiPath, structServiceProvider, {
     'smart-layout': true,
     'ignore-stereochemistry-errors': true,
     'mass-skip-error-on-pseudoatoms': false,

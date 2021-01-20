@@ -17,17 +17,22 @@ import { StructService } from '../infrastructure/services'
 import api from './api'
 import initUI from './ui'
 import { Ketcher } from './Ketcher'
-import { Dispatch } from 'redux'
 
 interface ButtonConfig {
   name: string
-  action?: {
-    dialog?: string
-    thunk: (dispatch: Dispatch, getState: () => any) => any
-  }
-  disabled?: (editor, server, options) => boolean
   hidden?: boolean
 }
+
+type ButtonName =
+  | 'layout'
+  | 'clean'
+  | 'arom'
+  | 'dearom'
+  | 'cip'
+  | 'check'
+  | 'analyse'
+  | 'recognize'
+  | 'miew'
 
 interface Config {
   element: HTMLInputElement | null
@@ -35,7 +40,7 @@ interface Config {
   apiPath: string
   structServiceFn: (baseUrl: string, defaultOptions: any) => StructService
   buttons: {
-    [buttonName in string]: ButtonConfig
+    [buttonName in ButtonName]: ButtonConfig
   }
 }
 

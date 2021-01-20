@@ -42,9 +42,8 @@ function disabled(actObj, { editor, server, options }) {
   return false
 }
 
-function hidden(actObj, { editor, server, options }) {
-  if (typeof actObj.hidden === 'function')
-    return actObj.hidden(editor, server, options)
+function hidden(actObj, { options }) {
+  if (typeof actObj.hidden === 'function') return actObj.hidden(options)
   return false
 }
 

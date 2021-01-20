@@ -1,4 +1,4 @@
-.ac_tab {
+.accordion_tab {
   margin-top: 2px;
 
   & > a:first-child {
@@ -10,8 +10,12 @@
     background-color: #eee;
     border: 1px solid #ccc;
     transition: border-radius 0.1s linear;
+    border-radius: 6px 6px 0 0;
+    border-bottom: 0;
+    transition-delay: 0s;
 
     &::before {
+      content: '−';
       margin-left: 30px;
       float: left;
     }
@@ -28,35 +32,22 @@
     transition-duration: 0.5s;
     transition-timing-function: linear;
   }
-}
 
-.ac_tab.active {
-  // active tab
-  & > a:first-child {
-    border-radius: 6px 6px 0 0;
-    border-bottom: 0;
-    transition-delay: 0s;
+  &.hidden {
+    & > a:first-child {
+      border-radius: 6px;
+      transition-delay: 0.4s;
 
-    &::before {
-      content: '−';
+      &::before {
+        content: '+';
+      }
     }
-  }
-}
 
-.ac_tab.hidden {
-  & > a:first-child {
-    border-radius: 6px;
-    transition-delay: 0.4s;
-
-    &::before {
-      content: '+';
+    & > *:nth-child(2) {
+      // hidden element
+      height: 0;
+      padding: 0;
+      border: 0;
     }
-  }
-
-  & > *:nth-child(2) {
-    // hidden element
-    height: 0;
-    padding: 0;
-    border: 0;
   }
 }

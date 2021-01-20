@@ -39,8 +39,8 @@ class Accordion extends Component {
   static Group({ caption, isActive, onActive, index, children }) {
     return (
       <li
-        className={`${styles.ac_tab} ${
-          isActive(index) ? styles.active : styles.hidden
+        className={`${styles.accordion_tab}${
+          isActive(index) ? '' : ` ${styles.hidden}`
         }`}>
         <a // eslint-disable-line
           onClick={() => onActive(index)}>

@@ -120,7 +120,7 @@ function Settings(props) {
             </fieldset>
           </Accordion.Group>
           <Accordion.Group caption="3D Viewer">
-            <fieldset className={server.miew} disabled={!window.Miew}>
+            <fieldset className={styles.miew} disabled={!window.Miew}>
               <Field name="miewMode" />
               <Field name="miewTheme" />
               <Field name="miewAtomLabel" />

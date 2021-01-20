@@ -83,7 +83,7 @@ function Settings(props) {
             </fieldset>
           </Accordion.Group>
           <Accordion.Group caption="Atoms">
-            <fieldset className="atoms">
+            <fieldset>
               <Field name="carbonExplicitly" component={SelectCheckbox} />
               <Field name="showCharge" component={SelectCheckbox} />
               <Field name="showValence" component={SelectCheckbox} />
@@ -91,7 +91,7 @@ function Settings(props) {
             </fieldset>
           </Accordion.Group>
           <Accordion.Group caption="Bonds">
-            <fieldset className="bonds">
+            <fieldset>
               <Field name="aromaticCircle" component={SelectCheckbox} />
               <Field name="doubleBondWidth" component={MeasureInput} />
               <Field name="bondThickness" component={MeasureInput} />
@@ -120,14 +120,14 @@ function Settings(props) {
             </fieldset>
           </Accordion.Group>
           <Accordion.Group caption="3D Viewer">
-            <fieldset className={styles.miew} disabled={!window.Miew}>
+            <fieldset className={styles.viewer} disabled={!window.Miew}>
               <Field name="miewMode" />
               <Field name="miewTheme" />
               <Field name="miewAtomLabel" />
             </fieldset>
           </Accordion.Group>
           <Accordion.Group caption="Options for debugging">
-            <fieldset className="debug">
+            <fieldset>
               <Field name="showAtomIds" component={SelectCheckbox} />
               <Field name="showBondIds" component={SelectCheckbox} />
               <Field name="showHalfBondIds" component={SelectCheckbox} />
@@ -136,7 +136,7 @@ function Settings(props) {
           </Accordion.Group>
         </Accordion>
         {!storage.isAvailable() ? (
-          <div className="warning">{storage.warningMessage}</div>
+          <div className={styles.warning}>{storage.warningMessage}</div>
         ) : null}
       </Form>
     </Dialog>

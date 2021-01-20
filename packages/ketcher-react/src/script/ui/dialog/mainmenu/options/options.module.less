@@ -1,36 +1,11 @@
-@import "../../../../../style/variables.less";
+@import '../../../../../style/variables.less';
 
 .settings {
   width: 35em;
 }
 
-.save-button {
-  margin-left: 10px;
-}
-
-.warning {
-  margin: 0.3em;
-}
-
 .accordion {
   margin: 0.3em;
-
-  fieldset {
-    border-radius: 0 0 6px 6px;
-    height: @input-height * 4;
-  }
-
-  .server {
-    height: @input-height * 5;
-  }
-  
-  .miew {
-    height: @input-height * 3;
-  }
-  
-  .render {
-    height: @input-height * 8;
-  }
 
   label {
     display: block;
@@ -41,18 +16,22 @@
     input {
       width: 50%;
     }
-    div {
-      margin: 2px;
-      width: 50%;
-      input {
-        margin: 0 4px 0 0;
-      }
-      select {
-        margin: 0;
-      }
-    }
-    &:hover::after {
-      left: 50%;
-    }
+  }
+
+  fieldset {
+    border-radius: 0 0 6px 6px;
+    height: @input-height * 4;
+  }
+
+  .server {
+    height: @input-height * 5;
+  }
+
+  .viewer {
+    height: @input-height * 3;
+  }
+
+  .render {
+    height: @input-height * 8;
   }
 }

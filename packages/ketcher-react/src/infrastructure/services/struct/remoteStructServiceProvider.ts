@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import {
-  StandaloneStructServiceProvider,
-  StandaloneStructService
-} from './infrastructure/services'
 
-export { StandaloneStructServiceProvider, StandaloneStructService }
+import { StructService, StructServiceProvider } from './structService.types'
+import IndigoService from './remoteStructService'
+
+class RemoteStructServiceProvider implements StructServiceProvider {
+  createStructService(baseUrl: string, options: any): StructService {
+    return new IndigoService(baseUrl, options)
+  }
+}
+export default RemoteStructServiceProvider

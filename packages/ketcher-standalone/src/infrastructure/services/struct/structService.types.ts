@@ -113,3 +113,7 @@ export interface StructService {
   recognize: (blob: Blob, version: string) => Promise<RecognizeResult>
   generatePngAsBase64: (data: any, options: any) => Promise<string>
 }
+
+export interface StructServiceProvider {
+  createStructService: (baseUrl: string, options: any) => StructService
+}

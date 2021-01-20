@@ -27,3 +27,7 @@ export interface StructService {
   recognize: (data: any, options: any) => Promise<any>
   generatePngAsBase64: (data: any, options: any) => Promise<any>
 }
+
+export interface StructServiceProvider {
+  createStructService: (baseUrl: string, options: any) => StructService
+}

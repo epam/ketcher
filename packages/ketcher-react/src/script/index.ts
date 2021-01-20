@@ -20,7 +20,6 @@ import * as structFormat from './ui/data/convert/structformat'
 import ui from './ui'
 import Render from './render'
 import graph from './format/chemGraph'
-import { RemoteStructService } from '../infrastructure/services'
 import validateGraphF from './format/graphValidator'
 import { isEqual } from 'lodash/fp'
 import Struct from './chem/struct'
@@ -123,7 +122,12 @@ class Ketcher {
 
 // TODO: replace window.onload with something like <https://github.com/ded/domready>
 // to start early
-export default function init(el, staticResourcesUrl, apiPath, structServiceProvider) {
+export default function init(
+  el,
+  staticResourcesUrl,
+  apiPath,
+  structServiceProvider
+) {
   ketcher.apiPath = apiPath
   const params = new URLSearchParams(document.location.search)
 

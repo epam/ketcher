@@ -3,24 +3,18 @@ import 'whatwg-fetch'
 import React, { useEffect, useRef } from 'react'
 import 'element-closest-polyfill'
 import 'url-search-params-polyfill'
-import init from './script'
-import { StructService } from './infrastructure/services'
+import init, { Config } from './script'
 import './index.less'
 
-interface EditorProps {
-  staticResourcesUrl: string
-  apiPath?: string
-  structServiceFn?: (baseUrl: string, defaultOptions: any) => StructService
-}
+interface EditorProps extends Config {}
 
-export function Editor({
-  staticResourcesUrl,
-  apiPath,
-  structServiceFn
-}: EditorProps) {
-  const rootElRef = useRef(null)
+export function Editor(props: EditorProps) {
+  const rootElRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
-    init(rootElRef.current, staticResourcesUrl, apiPath, structServiceFn)
+    init({
+      ...props,
+      element: rootElRef.current
+    })
   }, [])
 
   return <div ref={rootElRef} className="ketcher root"></div>

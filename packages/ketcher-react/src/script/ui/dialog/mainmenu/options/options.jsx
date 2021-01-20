@@ -24,7 +24,7 @@ import { storage } from '../../../storage-ext'
 
 import Form, { Field } from '../../../component/form/form'
 import Dialog from '../../../component/dialog'
-import Accordion from '../../../component/view/accordion/accordion'
+import Accordion from '../../../component/view/accordion'
 import SaveButton from '../../../component/view/savebutton'
 import OpenButton from '../../../component/view/openbutton'
 

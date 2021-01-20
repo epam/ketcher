@@ -35,7 +35,7 @@ import EnhancedStereo from './toolbox/enhanced-stereo'
 import LabelEdit from './toolbox/labeledit'
 import RgroupLogic from './toolbox/rgroup-logic'
 import Save from './mainmenu/save'
-import Settings from './mainmenu/options/options'
+import Settings from './mainmenu/options'
 import Sgroup from './toolbox/sgroup'
 import Sdata from './toolbox/sdata'
 
@@ -50,7 +50,6 @@ export default {
   about: About,
   help: Help,
   miew: Miew,
-
   atomProps: Atom,
   attachmentPoints: AttachPoints,
   automap: Automap,

@@ -37,9 +37,9 @@ type ButtonName =
 interface Config {
   element: HTMLInputElement | null
   staticResourcesUrl: string
-  apiPath: string
-  structServiceFn: (baseUrl: string, defaultOptions: any) => StructService
-  buttons: {
+  apiPath?: string
+  structServiceFn?: (baseUrl: string, defaultOptions: any) => StructService
+  buttons?: {
     [buttonName in ButtonName]: ButtonConfig
   }
 }
@@ -73,7 +73,7 @@ function buildKetcher({
     staticResourcesUrl,
     Object.assign(
       {
-        buttons
+        buttons: buttons || {}
       },
       params,
       ketcher.buildInfo

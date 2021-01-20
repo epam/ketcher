@@ -22,7 +22,6 @@ const App = () => {
       <Editor
         staticResourcesUrl={process.env.PUBLIC_URL}
         apiPath={process.env.REACT_APP_API_PATH}
-        //@ts-ignore
         structServiceFn={structServiceFn}
       />
     </div>

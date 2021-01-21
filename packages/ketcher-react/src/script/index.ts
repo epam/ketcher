@@ -53,7 +53,7 @@ function buildKetcher({
   structServiceProvider,
   buttons
 }: Config) {
-  const ketcher = new Ketcher()
+  const ketcher = Ketcher.make(structServiceProvider.mode)
   ketcher.apiPath = apiPath
 
   const params = new URLSearchParams(document.location.search)
@@ -77,7 +77,8 @@ function buildKetcher({
       params,
       ketcher.buildInfo
     ),
-    ketcher.server
+    ketcher.server,
+    ketcher
   )
 
   ketcher.server.then(
@@ -88,10 +89,6 @@ function buildKetcher({
       document.title += ' (standalone)'
     }
   )
-
-  // todo: remove this and refactor ketcher using of
-  ;(global as any).ketcher = ketcher
-  ;(global as any).ketcher[structServiceProvider.mode] = true
 
   return ketcher
 }

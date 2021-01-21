@@ -16,8 +16,4 @@
 
 import app from './app'
 
-function init(el, staticResourcesUrl, opts, apiServer) {
-  return app(el, staticResourcesUrl, opts, apiServer)
-}
-
-export default init
+export default app

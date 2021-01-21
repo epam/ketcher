@@ -25,7 +25,7 @@ import Dialog from '../../component/dialog'
 import Form, { Field } from '../../component/form/form'
 import SaveButton from '../../component/view/savebutton'
 import { createRef } from 'react'
-import { SupportedFormatPropertiesMap } from '../../data/convert/struct.types'
+import {getPropertiesByFormat, SupportedFormat, SupportedFormatPropertiesMap} from '../../data/convert/struct.types'
 
 const saveSchema = {
   title: 'Save',

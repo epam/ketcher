@@ -17,7 +17,9 @@
 import React, { Component, createRef } from 'react'
 import { connect } from 'react-redux'
 
-import { map as formatMap } from '../../data/convert/structformat'
+import {
+  SupportedFormatPropertiesMap as formatMap
+} from '../../data/convert/struct.types'
 import Dialog from '../../component/dialog'
 import OpenButton from '../../component/view/openbutton'
 import ClipArea, { exec } from '../../component/cliparea'

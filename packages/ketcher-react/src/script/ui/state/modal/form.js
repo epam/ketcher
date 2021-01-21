@@ -16,6 +16,7 @@
 
 import { getDefaultOptions } from '../../data/schema/options-schema'
 import { initSdata, sdataReducer } from './sdata'
+import { SupportedFormat } from '../../data/convert/struct.types'
 
 export const formsState = {
   // TODO: create from schema.{smth}.defaultValue
@@ -90,7 +91,7 @@ export const formsState = {
     valid: true,
     result: {
       filename: 'ketcher',
-      format: 'mol'
+      format: SupportedFormat.Mol
     }
   },
   settings: {

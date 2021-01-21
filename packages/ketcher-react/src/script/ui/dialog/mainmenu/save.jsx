@@ -16,7 +16,7 @@
 
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import * as structFormat from '../../data/convert/structformat'
+import * as structFormat from '../../data/convert/structConverter'
 import { saveUserTmpl } from '../../state/templates'
 import { updateFormState } from '../../state/modal/form'
 import { check } from '../../state/server'
@@ -25,6 +25,11 @@ import Dialog from '../../component/dialog'
 import Form, { Field } from '../../component/form/form'
 import SaveButton from '../../component/view/savebutton'
 import { createRef } from 'react'
+import {
+  getPropertiesByFormat,
+  SupportedFormat,
+  SupportedFormatPropertiesMap
+} from '../../data/convert/struct.types'
 
 const saveSchema = {
   title: 'Save',
@@ -43,9 +48,9 @@ const saveSchema = {
     },
     format: {
       title: 'Format',
-      enum: Object.keys(structFormat.map),
-      enumNames: Object.keys(structFormat.map).map(
-        fmt => structFormat.map[fmt].name
+      enum: Object.keys(SupportedFormatPropertiesMap),
+      enumNames: Object.keys(SupportedFormatPropertiesMap).map(
+        fmt => SupportedFormatPropertiesMap[fmt].name
       )
     }
   }
@@ -57,22 +62,33 @@ class Save extends Component {
     this.state = {}
     this.isRxn = this.props.struct.hasRxnArrow()
     this.textAreaRef = createRef()
-    const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'graph']
+    const formats = [
+      this.isRxn ? SupportedFormat.Rxn : SupportedFormat.Mol,
+      SupportedFormat.Smiles,
+      SupportedFormat.Graph
+    ]
     if (this.props.server)
-      formats.push('smiles-ext', 'smarts', 'inchi', 'inchi-aux', 'cml')
+      formats.push(
+        this.isRxn ? SupportedFormat.RxnV3000 : SupportedFormat.MolV3000,
+        SupportedFormat.SmilesExt,
+        SupportedFormat.Smarts,
+        SupportedFormat.InChI,
+        SupportedFormat.InChIAuxInfo,
+        SupportedFormat.CML
+      )
 
     this.saveSchema = saveSchema
     this.saveSchema.properties.format = Object.assign(
       this.saveSchema.properties.format,
       {
         enum: formats,
-        enumNames: formats.map(fmt => structFormat.map[fmt].name)
+        enumNames: formats.map(fmt => getPropertiesByFormat(fmt).name)
       }
     )
 
-    this.changeType(this.isRxn ? 'rxn' : 'mol').then(res =>
-      res instanceof Error ? props.onCancel() : null
-    )
+    this.changeType(
+      this.isRxn ? SupportedFormat.Rxn : SupportedFormat.Mol
+    ).then(res => (res instanceof Error ? props.onCancel() : null))
   }
 
   componentDidMount() {
@@ -82,7 +98,7 @@ class Save extends Component {
 
   showStructWarningMessage(format) {
     const { errors } = this.props.formState
-    return format !== 'mol' && Object.keys(errors).length > 0
+    return format !== SupportedFormat.Mol && Object.keys(errors).length > 0
   }
 
   changeType(type) {
@@ -138,7 +154,7 @@ class Save extends Component {
         buttons={[
           <SaveButton
             data={structStr}
-            filename={filename + structFormat.map[format].ext[0]}
+            filename={filename + getPropertiesByFormat(format).ext[0]}
             key="save-button"
             type={format.mime}
             server={this.props.server}
@@ -158,7 +174,10 @@ class Save extends Component {
         <div className="form-container">
           <Form
             schema={this.saveSchema}
-            init={{ filename, format: this.isRxn ? 'rxn' : 'mol' }}
+            init={{
+              filename,
+              format: this.isRxn ? SupportedFormat.Rxn : SupportedFormat.Mol
+            }}
             {...formState}>
             <Field name="filename" />
             <Field name="format" onChange={value => this.changeType(value)} />

@@ -16,13 +16,14 @@
 import api from './api'
 import molfile from './chem/molfile'
 import smiles from './chem/smiles'
-import * as structFormat from './ui/data/convert/structformat'
+import * as structFormat from './ui/data/convert/structConverter'
 import ui from './ui'
 import Render from './render'
 import graph from './format/chemGraph'
 import validateGraphF from './format/graphValidator'
 import { isEqual } from 'lodash/fp'
 import Struct from './chem/struct'
+import { SupportedFormat } from './ui/data/convert/struct.types'
 
 class Ketcher {
   editor: any
@@ -43,7 +44,7 @@ class Ketcher {
   saveSmiles(): Promise<any> {
     const struct = ketcher.editor.struct()
     return structFormat
-      .toString(struct, 'smiles-ext', ketcher.server)
+      .toString(struct, SupportedFormat.SmilesExt, ketcher.server)
       .catch(() => smiles.stringify(struct))
   }
 

@@ -17,102 +17,59 @@
 import molfile from '../../../chem/molfile'
 import smiles from '../../../chem/smiles'
 import graph from '../../../format/chemGraph'
+import { getPropertiesByFormat, SupportedFormat } from './struct.types'
 
-export const map = {
-  mol: {
-    name: 'MDL Molfile',
-    mime: 'chemical/x-mdl-molfile',
-    ext: ['.mol'],
-    supportsCoords: true
-  },
-  rxn: {
-    name: 'MDL Rxnfile',
-    mime: 'chemical/x-mdl-rxnfile',
-    ext: ['.rxn'],
-    supportsCoords: true
-  },
-  smiles: {
-    name: 'Daylight SMILES',
-    mime: 'chemical/x-daylight-smiles',
-    ext: ['.smi', '.smiles']
-  },
-  'smiles-ext': {
-    name: 'Extended SMILES',
-    mime: 'chemical/x-chemaxon-cxsmiles',
-    ext: ['.cxsmi', '.cxsmiles']
-  },
-  smarts: {
-    name: 'Daylight SMARTS',
-    mime: 'chemical/x-daylight-smarts',
-    ext: ['.smarts']
-  },
-  inchi: {
-    name: 'InChI',
-    mime: 'chemical/x-inchi',
-    ext: ['.inchi']
-  },
-  'inchi-aux': {
-    name: 'InChI AuxInfo',
-    mime: 'chemical/x-inchi-aux',
-    ext: ['.inchi']
-  },
-  cml: {
-    name: 'CML',
-    mime: 'chemical/x-cml',
-    ext: ['.cml', '.mrv'],
-    supportsCoords: true
-  },
-  graph: {
-    name: 'Graph Format',
-    mime: 'application/json',
-    ext: ['.ket']
-  }
-}
-
-export function guess(structStr, strict) {
+function guess(structStr: string): SupportedFormat {
   // Mimic Indigo/molecule_auto_loader.cpp as much as possible
   const molStr = structStr.trim()
 
   try {
-    if (JSON.parse(molStr)) return 'graph'
+    if (JSON.parse(molStr)) return SupportedFormat.Graph
   } catch (er) {} // eslint-disable-line
 
-  if (molStr.indexOf('$RXN') !== -1) return 'rxn'
+  if (molStr.indexOf('$RXN') !== -1) return SupportedFormat.Rxn
 
   const molMatch = molStr.match(/^(M {2}END|\$END MOL)$/m)
 
   if (molMatch) {
-    const end = molMatch.index + molMatch[0].length
+    const end = (molMatch.index || 0) + molMatch[0].length
     if (
       end === molStr.length ||
       molStr.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) !== -1
     )
-      return 'mol'
+      return SupportedFormat.Mol
   }
-  if (molStr[0] === '<' && molStr.indexOf('<molecule') !== -1) return 'cml'
+  if (molStr[0] === '<' && molStr.indexOf('<molecule') !== -1)
+    return SupportedFormat.CML
 
-  if (molStr.slice(0, 5) === 'InChI') return 'inchi'
+  if (molStr.slice(0, 5) === 'InChI') return SupportedFormat.InChI
 
   if (molStr.indexOf('\n') === -1)
     // TODO: smiles regexp
-    return 'smiles'
+    return SupportedFormat.Smiles
 
   // Molfile by default as Indigo does
-  return strict ? null : 'mol'
+  return SupportedFormat.Mol
 }
 
-export function toString(struct, format, server, serverOpts) {
-  console.assert(map[format], 'No such format')
-  if (format === 'graph') {
+export function toString(
+  struct: any,
+  format: SupportedFormat,
+  server: any,
+  serverOpts?: any
+) {
+  let formatProperties = getPropertiesByFormat(format)
+  console.assert(formatProperties, 'No such format')
+  if (format === SupportedFormat.Graph) {
     const res = graph.toGraph(struct)
     return Promise.resolve(JSON.stringify(res, null, 4))
   }
 
   return new Promise(resolve => {
     const moldata = molfile.stringify(struct)
-    if (format === 'mol' || format === 'rxn') {
+    if (format === SupportedFormat.Mol || format === SupportedFormat.Rxn) {
       resolve(moldata)
-    } else if (format === 'smiles') {
+    } else if (format === SupportedFormat.Smiles) {
       resolve(smiles.stringify(struct))
     } else {
       const converting = server
@@ -120,14 +77,16 @@ export function toString(struct, format, server, serverOpts) {
           server.convert(
             {
               struct: moldata,
-              output_format: map[format].mime
+              output_format: formatProperties.mime
             },
-            serverOpts
+            Object.assign({}, serverOpts, formatProperties.options || {})
           )
         )
         .catch(err => {
           throw err.message === 'Server is not compatible'
-            ? Error(`${map[format].name} is not supported in standalone mode.`)
+            ? Error(
+                `${formatProperties.name} is not supported in standalone mode.`
+              )
             : Error(`Convert error!\n${err.message}`)
         })
         .then(res => res.struct)
@@ -136,35 +95,42 @@ export function toString(struct, format, server, serverOpts) {
   })
 }
 
-export function fromString(structStr, opts, server, serverOpts) {
+export function fromString(
+  structStr: any,
+  opts: any,
+  server: any,
+  serverOpts: any
+): Promise<any> {
   return new Promise(resolve => {
     const format = guess(structStr)
-    console.assert(map[format], 'No such format')
-    if (format === 'graph') {
+    const formatProperties = getPropertiesByFormat(format)
+    console.assert(formatProperties, 'No such format')
+    if (format === SupportedFormat.Graph) {
       const res = graph.fromGraph(JSON.parse(structStr))
       resolve(res)
     } else if (
-      (format === 'mol' && molfile.version(structStr) === 'V2000') ||
-      format === 'rxn'
+      (format === SupportedFormat.Mol &&
+        molfile.version(structStr) === 'V2000') ||
+      format === SupportedFormat.Rxn
     ) {
       const struct = molfile.parse(structStr, opts)
       resolve(struct)
     } else {
-      const withCoords = map[format].supportsCoords
+      const withCoords = getPropertiesByFormat(format).supportsCoords
       const converting = server
         .then(() =>
           withCoords
             ? server.convert(
                 {
                   struct: structStr,
-                  output_format: map['mol'].mime
+                  output_format: getPropertiesByFormat(SupportedFormat.Mol).mime
                 },
                 serverOpts
               )
             : server.layout(
                 {
                   struct: structStr.trim(),
-                  output_format: map['mol'].mime
+                  output_format: getPropertiesByFormat(SupportedFormat.Mol).mime
                 },
                 serverOpts
               )
@@ -172,9 +138,13 @@ export function fromString(structStr, opts, server, serverOpts) {
         .catch(err => {
           if (err.message === 'Server is not compatible') {
             const formatError =
-              format === 'smiles'
-                ? `${map['smiles-ext'].name} and opening of ${map['smiles'].name}`
-                : map[format].name
+              format === SupportedFormat.Smiles
+                ? `${
+                    getPropertiesByFormat(SupportedFormat.SmilesExt).name
+                  } and opening of ${
+                    getPropertiesByFormat(SupportedFormat.Smiles).name
+                  }`
+                : getPropertiesByFormat(format).name
             throw Error(`${formatError} is not supported in standalone mode.`)
           } else {
             throw Error(`Convert error!\n${err.message}`)
@@ -190,46 +160,54 @@ export function fromString(structStr, opts, server, serverOpts) {
   })
 }
 
-export function couldBeSaved(struct, format) {
-  let warnings = []
+export function couldBeSaved(
+  struct: any,
+  format: SupportedFormat
+): string | null {
+  let warnings: Array<string> = []
+  const formatName: string = getPropertiesByFormat(format).name
   if (
-    format === 'inchi' ||
-    format === 'inchi-aux' ||
-    format === 'smiles' ||
-    format === 'smiles-ext'
+    format === SupportedFormat.InChI ||
+    format === SupportedFormat.InChIAuxInfo ||
+    format === SupportedFormat.Smiles ||
+    format === SupportedFormat.SmilesExt
   ) {
     if (struct.rgroups.size !== 0)
       warnings.push(
-        `In ${map[format].name} the structure will be saved without R-group fragments`
+        `In ${formatName} the structure will be saved without R-group fragments`
       )
+
     struct = struct.clone() // need this: .getScaffold()
+    // @ts-ignore
     const isRg = struct.atoms.find((ind, atom) => atom.label === 'R#')
     if (isRg !== null)
       warnings.push(
-        `In ${map[format].name} the structure will be saved without R-group members`
+        `In ${formatName} the structure will be saved without R-group members`
       )
 
     const isSg = struct.sgroups.find(
+      // @ts-ignore
       (ind, sg) =>
         sg.type !== 'MUL' && !/^INDIGO_.+_DESC$/i.test(sg.data.fieldName)
     )
     if (isSg !== null)
       warnings.push(
-        `In ${map[format].name} the structure will be saved without S-groups`
+        `In ${formatName} the structure will be saved without S-groups`
       )
   }
 
   if (
-    format === 'smiles' ||
-    format === 'smiles-ext' ||
-    format === 'smarts' ||
-    format === 'inchi' ||
-    format === 'inchi-aux' ||
-    format === 'cml'
+    format === SupportedFormat.Smiles ||
+    format === SupportedFormat.SmilesExt ||
+    format === SupportedFormat.Smarts ||
+    format === SupportedFormat.InChI ||
+    format === SupportedFormat.InChIAuxInfo ||
+    format === SupportedFormat.CML
   ) {
+    // @ts-ignore
     const isVal = struct.atoms.find((ind, atom) => atom.explicitValence >= 0)
     if (isVal !== null)
-      warnings.push(`In ${map[format].name} valence is not supported`)
+      warnings.push(`In ${formatName} valence is not supported`)
   }
 
   if (warnings.length !== 0) return warnings.join('\n')

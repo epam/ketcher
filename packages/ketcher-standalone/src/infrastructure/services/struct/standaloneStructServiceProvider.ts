@@ -18,7 +18,6 @@ import { StructService, StructServiceProvider } from './structService.types'
 import StandaloneStructService from './standaloneStructService'
 
 class StandaloneStructServiceProvider implements StructServiceProvider {
-
   constructor() {
     ;(global as any).ketcher.standalone = true
   }

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { isEqual, isEmpty, pickBy } from 'lodash/fp'
-import acts from '../../action'
+import actions from '../../action'
 
 function execute(activeTool, { action, editor, server, options }) {
   if (action.tool) {
@@ -42,11 +42,17 @@ function disabled(actObj, { editor, server, options }) {
   return false
 }
 
-function status(key, activeTool, params) {
-  const actObj = acts[key]
+function hidden(actObj, { options }) {
+  if (typeof actObj.hidden === 'function') return actObj.hidden(options)
+  return false
+}
+
+function status(actionName, activeTool, params) {
+  const actObj = actions[actionName]
   return pickBy(x => x, {
     selected: selected(actObj, activeTool, params),
-    disabled: disabled(actObj, params)
+    disabled: disabled(actObj, params),
+    hidden: hidden(actObj, params)
   })
 }
 
@@ -54,17 +60,17 @@ export default function (state = null, { type, action, ...params }) {
   let activeTool
   switch (type) {
     case 'INIT':
-      action = acts['select-lasso'].action
+      action = actions['select-lasso'].action
     case 'ACTION': // eslint-disable-line no-case-declarations
       activeTool = execute(state && state.activeTool, {
         ...params,
         action
       })
     case 'UPDATE':
-      return Object.keys(acts).reduce(
-        (res, key) => {
-          const value = status(key, res.activeTool, params)
-          if (!isEmpty(value)) res[key] = value
+      return Object.keys(actions).reduce(
+        (res, actionName) => {
+          const value = status(actionName, res.activeTool, params)
+          if (!isEmpty(value)) res[actionName] = value
           return res
         },
         { activeTool: activeTool || state.activeTool }

@@ -72,12 +72,14 @@ function root(state, action) {
 }
 
 export default function (options, server) {
+  const { buttons = {}, ...restOptions } = options
+
   // TODO: redux localStorage here
   const initState = {
     actionState: null,
     editor: null,
     modal: null,
-    options: Object.assign(initOptionsState, { app: options }),
+    options: Object.assign(initOptionsState, { app: restOptions, buttons }),
     server: server || Promise.reject(new Error('Standalone mode!')),
     templates: initTmplsState
   }

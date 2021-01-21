@@ -1,32 +1,39 @@
-import 'regenerator-runtime/runtime'
-import 'whatwg-fetch'
-import React, { useEffect, useRef } from 'react'
+/****************************************************************************
+ * Copyright 2018 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 import 'element-closest-polyfill'
+import React, { useEffect, useRef } from 'react'
+import 'regenerator-runtime/runtime'
 import 'url-search-params-polyfill'
-import init from './script'
+import 'whatwg-fetch'
 import './index.less'
-import {
-  RemoteStructServiceProvider,
-  StructServiceProvider
-} from './infrastructure/services'
+import { RemoteStructServiceProvider } from './infrastructure/services'
+import init, { Config } from './script'
 
-interface EditorProps {
-  staticResourcesUrl: string
-  structServiceProvider: StructServiceProvider
-  apiPath?: string
-}
+interface EditorProps extends Config {}
 
-export function Editor({
-  staticResourcesUrl,
-  apiPath,
-  structServiceProvider
-}: EditorProps) {
-  const rootElRef = useRef(null)
+function Editor(props: EditorProps) {
+  const rootElRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
-    init(rootElRef.current, staticResourcesUrl, apiPath, structServiceProvider)
+    init({
+      ...props,
+      element: rootElRef.current
+    })
   }, [])
 
   return <div ref={rootElRef} className="ketcher root"></div>
 }
 
-export { RemoteStructServiceProvider }
+export { Editor, RemoteStructServiceProvider }

@@ -16,7 +16,7 @@
 import { StructServiceProvider } from '../infrastructure/services'
 import api from './api'
 import initUI from './ui'
-import { Ketcher } from './Ketcher'
+import { Ketcher } from './ketcher'
 
 interface ButtonConfig {
   name: string

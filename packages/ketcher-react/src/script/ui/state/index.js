@@ -40,8 +40,8 @@ const shared = combineReducers({
   templates: templatesReducer
 })
 
-const getRootReducer = editorContainer =>
-  function root(state, action) {
+function getRootReducer(editorContainer) {
+  return function root(state, action) {
     switch (
       action.type // eslint-disable-line default-case
     ) {
@@ -70,6 +70,7 @@ const getRootReducer = editorContainer =>
     global.currentState = finalState
     return finalState
   }
+}
 
 export default function (options, server, editorContainer) {
   const { buttons = {}, ...restOptions } = options

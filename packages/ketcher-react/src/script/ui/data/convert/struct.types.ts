@@ -61,9 +61,9 @@ export class SupportedFormatProperties {
     this.options = options || {}
   }
 }
-export type SupportedFormatStrings = keyof typeof SupportedFormat
+
 type FormatPropertiesMap = {
-  [key in SupportedFormatStrings]: SupportedFormatProperties
+  [key in keyof typeof SupportedFormat]: SupportedFormatProperties
 }
 
 export const SupportedFormatPropertiesMap: FormatPropertiesMap = {

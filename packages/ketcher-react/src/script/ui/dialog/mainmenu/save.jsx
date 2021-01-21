@@ -50,7 +50,7 @@ const saveSchema = {
       title: 'Format',
       enum: Object.keys(SupportedFormatPropertiesMap),
       enumNames: Object.keys(SupportedFormatPropertiesMap).map(
-        fmt => SupportedFormatPropertiesMap[fmt].name
+        format => SupportedFormatPropertiesMap[format].name
       )
     }
   }
@@ -82,7 +82,7 @@ class Save extends Component {
       this.saveSchema.properties.format,
       {
         enum: formats,
-        enumNames: formats.map(fmt => getPropertiesByFormat(fmt).name)
+        enumNames: formats.map(format => getPropertiesByFormat(format).name)
       }
     )
 

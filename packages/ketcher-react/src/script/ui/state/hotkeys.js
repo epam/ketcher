@@ -116,7 +116,7 @@ const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/
 /* ClipArea */
 export function initClipboard(dispatch, getState) {
   const formats = Object.keys(SupportedFormatPropertiesMap).map(
-    fmt => SupportedFormatPropertiesMap[fmt].mime
+    format => SupportedFormatPropertiesMap[format].mime
   )
 
   const debAction = debounce(0, action => dispatch(onAction(action)))

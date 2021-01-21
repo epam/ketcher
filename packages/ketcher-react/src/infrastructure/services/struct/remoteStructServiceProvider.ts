@@ -14,10 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { StructService, StructServiceProvider } from './structService.types'
+import {
+  StructService,
+  StructServiceProvider,
+  ServiceMode
+} from './structService.types'
 import IndigoService from './remoteStructService'
 
 class RemoteStructServiceProvider implements StructServiceProvider {
+  mode: ServiceMode = 'remote'
+
   createStructService(baseUrl: string, options: any): StructService {
     return new IndigoService(baseUrl, options)
   }

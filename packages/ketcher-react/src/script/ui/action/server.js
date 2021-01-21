@@ -23,7 +23,8 @@ const config = {
     action: {
       thunk: serverTransform('layout')
     },
-    disabled: (editor, server, options) => !options.app.server
+    disabled: (editor, server, options) => !options.app.server,
+    hidden: options => isHidden(options, 'layout')
   },
   clean: {
     shortcut: 'Mod+Shift+l',
@@ -31,21 +32,24 @@ const config = {
     action: {
       thunk: serverTransform('clean')
     },
-    disabled: (editor, server, options) => !options.app.server
+    disabled: (editor, server, options) => !options.app.server,
+    hidden: options => isHidden(options, 'clean')
   },
   arom: {
     title: 'Aromatize',
     action: {
       thunk: serverTransform('aromatize')
     },
-    disabled: (editor, server, options) => !options.app.server
+    disabled: (editor, server, options) => !options.app.server,
+    hidden: options => isHidden(options, 'arom')
   },
   dearom: {
     title: 'Dearomatize',
     action: {
       thunk: serverTransform('dearomatize')
     },
-    disabled: (editor, server, options) => !options.app.server
+    disabled: (editor, server, options) => !options.app.server,
+    hidden: options => isHidden(options, 'dearom')
   },
   cip: {
     shortcut: 'Mod+p',
@@ -53,30 +57,39 @@ const config = {
     action: {
       thunk: serverTransform('calculateCip')
     },
-    disabled: (editor, server, options) => !options.app.server
+    disabled: (editor, server, options) => !options.app.server,
+    hidden: options => isHidden(options, 'cip')
   },
   check: {
     title: 'Check Structure',
     action: { dialog: 'check' },
-    disabled: (editor, server, options) => !options.app.server
+    disabled: (editor, server, options) => !options.app.server,
+    hidden: options => isHidden(options, 'check')
   },
   analyse: {
     title: 'Calculated Values',
     action: { dialog: 'analyse' },
-    disabled: (editor, server, options) => !options.app.server
+    disabled: (editor, server, options) => !options.app.server,
+    hidden: options => isHidden(options, 'analyse')
   },
   recognize: {
     title: 'Recognize Molecule',
     action: { dialog: 'recognize' },
     disabled: (editor, server, options) =>
       //TODO: provide the list of disabled functions as array
-      !options.app.server || global.ketcher.standalone
+      !options.app.server || global.ketcher.standalone,
+    hidden: options => isHidden(options, 'recognize')
   },
   miew: {
     title: '3D Viewer',
     action: { dialog: 'miew' },
-    disabled: () => !window.Miew
+    disabled: () => !window.Miew,
+    hidden: options => isHidden(options, 'miew')
   }
+}
+
+function isHidden(options, buttonName) {
+  return Boolean(options.buttons?.[buttonName]?.hidden)
 }
 
 export default config

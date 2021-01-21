@@ -128,7 +128,7 @@ const toolbox = [
 if (process.env.MODE !== 'standalone')
   toolbox.push({
     id: 'shape',
-      menu: ['shape-circle', 'shape-rectangle', 'shape-line']
+    menu: ['shape-circle', 'shape-rectangle', 'shape-line']
   })
 
 const template = [

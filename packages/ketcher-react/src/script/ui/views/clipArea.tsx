@@ -14,30 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-
 import ClipArea from '../component/cliparea'
-
 import { initClipboard } from '../state/hotkeys'
-import { initTmplLib } from '../state/templates'
-import { useSettingsContext } from './../../../hooks'
 
-function AppHiddenView({ onInitTmpls }) {
-  const rootRef = useRef(null)
-  const { staticResourcesUrl } = useSettingsContext()
+const AppCliparea = connect(null, dispatch => dispatch(initClipboard))(ClipArea)
 
-  useEffect(() => {
-    onInitTmpls(rootRef.current, staticResourcesUrl)
-  }, [])
-
-  return <div className="cellar" ref={rootRef} />
-}
-
-export const AppHidden = connect(null, dispatch => ({
-  onInitTmpls: cacheEl => initTmplLib(dispatch, process.env.PUBLIC_URL, cacheEl)
-}))(AppHiddenView)
-
-export const AppCliparea = connect(null, dispatch => dispatch(initClipboard))(
-  ClipArea
-)
+export default AppCliparea

@@ -67,55 +67,54 @@ export function toString(
 
   return new Promise(resolve => {
     const moldata = molfile.stringify(struct)
-    switch (format) {
-      case SupportedFormat.Mol:
-      case SupportedFormat.Rxn:
-        resolve(moldata)
-        break
-      case SupportedFormat.Smiles:
-        resolve(smiles.stringify(struct))
-        break
-      default:
-        const converting = server
-          .then(() =>
-            server.convert(
-              {
-                struct: moldata,
-                output_format: formatProperties.mime
-              },
-              { ...serverOpts, ...formatProperties.options }
-            )
+    if (format === SupportedFormat.Mol || format === SupportedFormat.Rxn) {
+      resolve(moldata)
+    } else if (format === SupportedFormat.Smiles) {
+      resolve(smiles.stringify(struct))
+    } else {
+      const converting = server
+        .then(() =>
+          server.convert(
+            {
+              struct: moldata,
+              output_format: formatProperties.mime
+            },
+            Object.assign({}, serverOpts, formatProperties.options || {})
           )
-          .catch(err => {
-            throw err.message === 'Server is not compatible'
-              ? Error(
-                  `${formatProperties.name} is not supported in standalone mode.`
-                )
-              : Error(`Convert error!\n${err.message}`)
-          })
-          .then(res => res.struct)
-        resolve(converting)
+        )
+        .catch(err => {
+          throw err.message === 'Server is not compatible'
+            ? Error(
+                `${formatProperties.name} is not supported in standalone mode.`
+              )
+            : Error(`Convert error!\n${err.message}`)
+        })
+        .then(res => res.struct)
+      resolve(converting)
     }
   })
 }
 
 export function fromString(
-  struct: string,
+  structStr: any,
   opts: any,
   server: any,
   serverOpts: any
 ): Promise<any> {
   return new Promise(resolve => {
-    const format = guess(struct)
+    const format = guess(structStr)
     const formatProperties = getPropertiesByFormat(format)
     console.assert(formatProperties, 'No such format')
     if (format === SupportedFormat.Graph) {
-      resolve(graph.fromGraph(JSON.parse(struct)))
+      const res = graph.fromGraph(JSON.parse(structStr))
+      resolve(res)
     } else if (
-      (format === SupportedFormat.Mol && molfile.version(struct) === 'V2000') ||
+      (format === SupportedFormat.Mol &&
+        molfile.version(structStr) === 'V2000') ||
       format === SupportedFormat.Rxn
     ) {
-      resolve(molfile.parse(struct, opts))
+      const struct = molfile.parse(structStr, opts)
+      resolve(struct)
     } else {
       const withCoords = getPropertiesByFormat(format).supportsCoords
       const converting = server
@@ -123,14 +122,14 @@ export function fromString(
           withCoords
             ? server.convert(
                 {
-                  struct: struct,
+                  struct: structStr,
                   output_format: getPropertiesByFormat(SupportedFormat.Mol).mime
                 },
                 serverOpts
               )
             : server.layout(
                 {
-                  struct: struct.trim(),
+                  struct: structStr.trim(),
                   output_format: getPropertiesByFormat(SupportedFormat.Mol).mime
                 },
                 serverOpts
@@ -152,9 +151,9 @@ export function fromString(
           }
         })
         .then(res => {
-          const parsedStruct = molfile.parse(res.struct)
-          if (!withCoords) parsedStruct.rescale()
-          return parsedStruct
+          const struct = molfile.parse(res.struct)
+          if (!withCoords) struct.rescale()
+          return struct
         })
       resolve(converting)
     }
@@ -167,47 +166,48 @@ export function couldBeSaved(
 ): string | null {
   let warnings: Array<string> = []
   const formatName: string = getPropertiesByFormat(format).name
-  switch (format) {
-    case SupportedFormat.InChI:
-    case SupportedFormat.InChIAuxInfo:
-    case SupportedFormat.Smiles:
-    case SupportedFormat.SmilesExt:
-      if (struct.rgroups.size !== 0)
-        warnings.push(
-          `In ${formatName} the structure will be saved without R-group fragments`
-        )
-
-      struct = struct.clone() // need this: .getScaffold()
-      // @ts-ignore
-      const isRg = struct.atoms.find((ind, atom) => atom.label === 'R#')
-      if (isRg !== null)
-        warnings.push(
-          `In ${formatName} the structure will be saved without R-group members`
-        )
-
-      const isSg = struct.sgroups.find(
-        // @ts-ignore
-        (ind, sg) =>
-          sg.type !== 'MUL' && !/^INDIGO_.+_DESC$/i.test(sg.data.fieldName)
+  if (
+    format === SupportedFormat.InChI ||
+    format === SupportedFormat.InChIAuxInfo ||
+    format === SupportedFormat.Smiles ||
+    format === SupportedFormat.SmilesExt
+  ) {
+    if (struct.rgroups.size !== 0)
+      warnings.push(
+        `In ${formatName} the structure will be saved without R-group fragments`
       )
-      if (isSg !== null)
-        warnings.push(
-          `In ${formatName} the structure will be saved without S-groups`
-        )
-      break
+
+    struct = struct.clone() // need this: .getScaffold()
+    // @ts-ignore
+    const isRg = struct.atoms.find((ind, atom) => atom.label === 'R#')
+    if (isRg !== null)
+      warnings.push(
+        `In ${formatName} the structure will be saved without R-group members`
+      )
+
+    const isSg = struct.sgroups.find(
+      // @ts-ignore
+      (ind, sg) =>
+        sg.type !== 'MUL' && !/^INDIGO_.+_DESC$/i.test(sg.data.fieldName)
+    )
+    if (isSg !== null)
+      warnings.push(
+        `In ${formatName} the structure will be saved without S-groups`
+      )
   }
 
-  switch (format) {
-    case SupportedFormat.Smiles:
-    case SupportedFormat.SmilesExt:
-    case SupportedFormat.Smarts:
-    case SupportedFormat.InChI:
-    case SupportedFormat.InChIAuxInfo:
-    case SupportedFormat.CML:
-      // @ts-ignore
-      const isVal = struct.atoms.find((ind, atom) => atom.explicitValence >= 0)
-      if (isVal !== null)
-        warnings.push(`In ${formatName} valence is not supported`)
+  if (
+    format === SupportedFormat.Smiles ||
+    format === SupportedFormat.SmilesExt ||
+    format === SupportedFormat.Smarts ||
+    format === SupportedFormat.InChI ||
+    format === SupportedFormat.InChIAuxInfo ||
+    format === SupportedFormat.CML
+  ) {
+    // @ts-ignore
+    const isVal = struct.atoms.find((ind, atom) => atom.explicitValence >= 0)
+    if (isVal !== null)
+      warnings.push(`In ${formatName} valence is not supported`)
   }
 
   if (warnings.length !== 0) return warnings.join('\n')

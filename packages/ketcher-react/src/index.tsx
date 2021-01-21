@@ -1,14 +1,15 @@
-import 'regenerator-runtime/runtime'
-import 'whatwg-fetch'
-import React, { useEffect, useRef } from 'react'
 import 'element-closest-polyfill'
+import React, { useEffect, useRef } from 'react'
+import 'regenerator-runtime/runtime'
 import 'url-search-params-polyfill'
-import init, { Config } from './script'
+import 'whatwg-fetch'
 import './index.less'
+import { RemoteStructServiceProvider } from './infrastructure/services'
+import init, { Config } from './script'
 
 interface EditorProps extends Config {}
 
-export function Editor(props: EditorProps) {
+function Editor(props: EditorProps) {
   const rootElRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
     init({
@@ -19,3 +20,5 @@ export function Editor(props: EditorProps) {
 
   return <div ref={rootElRef} className="ketcher root"></div>
 }
+
+export { Editor, RemoteStructServiceProvider }

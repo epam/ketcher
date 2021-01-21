@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { StructService } from '../infrastructure/services'
+import { StructServiceProvider } from '../infrastructure/services'
 import api from './api'
 import initUI from './ui'
 import { Ketcher } from './Ketcher'
@@ -38,7 +38,7 @@ interface Config {
   element: HTMLInputElement | null
   staticResourcesUrl: string
   apiPath?: string
-  structServiceFn?: (baseUrl: string, defaultOptions: any) => StructService
+  structServiceProvider: StructServiceProvider
   buttons?: {
     [buttonName in ButtonName]: ButtonConfig
   }
@@ -50,18 +50,17 @@ function buildKetcher({
   element,
   staticResourcesUrl,
   apiPath,
-  structServiceFn,
+  structServiceProvider,
   buttons
 }: Config) {
   const ketcher = new Ketcher()
   ketcher.apiPath = apiPath
 
   const params = new URLSearchParams(document.location.search)
-  const createStructServiceFn =
-    structServiceFn || ketcher.createDefaultStructService
+
   if (params.has('api_path')) ketcher.apiPath = params.get('api_path')
 
-  ketcher.server = api(ketcher.apiPath, createStructServiceFn, {
+  ketcher.server = api(ketcher.apiPath, structServiceProvider, {
     'smart-layout': true,
     'ignore-stereochemistry-errors': true,
     'mass-skip-error-on-pseudoatoms': false,
@@ -92,6 +91,7 @@ function buildKetcher({
 
   // todo: remove this and refactor ketcher using of
   ;(global as any).ketcher = ketcher
+  ;(global as any).ketcher[structServiceProvider.mode] = true
 
   return ketcher
 }

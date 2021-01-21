@@ -77,7 +77,7 @@ const config = {
     action: { dialog: 'recognize' },
     disabled: (editor, server, options) =>
       //TODO: provide the list of disabled functions as array
-      !options.app.server || process.env.MODE === 'standalone',
+      !options.app.server || global.ketcher.standalone,
     hidden: options => isHidden(options, 'recognize')
   },
   miew: {

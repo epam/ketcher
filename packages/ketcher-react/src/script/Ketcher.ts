@@ -18,7 +18,6 @@ import smiles from './chem/smiles'
 import * as structFormat from './ui/data/convert/structformat'
 import Render from './render'
 import graph from './format/chemGraph'
-import { RemoteStructService } from '../infrastructure/services'
 import validateGraphF from './format/graphValidator'
 import { isEqual } from 'lodash/fp'
 import Struct from './chem/struct'
@@ -82,14 +81,6 @@ export class Ketcher {
     render.update()
     // not sure we need to expose guts
     return render
-  }
-
-  createDefaultStructService(
-    baseUrl: string,
-    defaultOptions: any
-  ): RemoteStructService {
-    const service = new RemoteStructService(baseUrl, defaultOptions)
-    return service
   }
 
   isDirty(): boolean {

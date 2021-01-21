@@ -24,7 +24,7 @@ To serve results of build locally run the following command from root directory:
 
 ### Development
 
-The latest version of Ketcher is based on yarn workspaces. So before starting development it is necessary to run the following commads from root directory:
+The latest version of Ketcher is based on yarn workspaces. So before starting development it is necessary to run the following commands from root directory:
 
     yarn install
 

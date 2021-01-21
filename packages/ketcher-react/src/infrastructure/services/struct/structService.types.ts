@@ -27,3 +27,10 @@ export interface StructService {
   recognize: (data: any, options: any) => Promise<any>
   generatePngAsBase64: (data: any, options: any) => Promise<any>
 }
+
+export type ServiceMode = 'standalone' | 'remote'
+
+export interface StructServiceProvider {
+  mode: ServiceMode
+  createStructService: (baseUrl: string, options: any) => StructService
+}

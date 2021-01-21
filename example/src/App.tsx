@@ -3,17 +3,14 @@ import React from 'react'
 import Miew from 'miew'
 import 'miew/dist/Miew.min.css'
 //@ts-ignore
-import { Editor } from 'ketcher-react'
+import { Editor, RemoteStructServiceProvider } from 'ketcher-react'
 import 'ketcher-react/dist/index.css'
 ;(global as any).Miew = Miew
 
-let structServiceFn: any = undefined
+let structServiceProvider: any = new RemoteStructServiceProvider()
 if (process.env.MODE === 'standalone') {
-  const { StandaloneStructService } = require('ketcher-standalone')
-  //@ts-ignore
-  structServiceFn = (baseUrl: string, options: any) => {
-    return new StandaloneStructService(options)
-  }
+  const { StandaloneStructServiceProvider } = require('ketcher-standalone')
+  structServiceProvider = new StandaloneStructServiceProvider()
 }
 
 const App = () => {
@@ -22,7 +19,7 @@ const App = () => {
       <Editor
         staticResourcesUrl={process.env.PUBLIC_URL}
         apiPath={process.env.REACT_APP_API_PATH}
-        structServiceFn={structServiceFn}
+        structServiceProvider={structServiceProvider}
       />
     </div>
   )

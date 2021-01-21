@@ -22,7 +22,7 @@ import molfile from '../../../chem/molfile'
 import { setStruct, appUpdate } from '../options'
 import { checkErrors } from '../modal/form'
 import { load } from '../shared'
-
+import graph from './../../../../script/format/chemGraph'
 export function checkServer() {
   return (dispatch, getState) => {
     const server = getState().server
@@ -175,14 +175,17 @@ export function serverCall(editor, server, method, options, struct) {
 
     selectedAtoms = selectedAtoms.map(aid => reindexMap.get(aidMap.get(aid)))
   }
-
+  //TODO: remove after switching to ket format
+  const useInternalFormat = method === 'clean'
   return server.then(() =>
     server[method](
       Object.assign(
         {
-          struct: molfile.stringify(struct, { ignoreErrors: true })
+          struct: useInternalFormat
+            ? graph.toGraph(struct, selectedAtoms)
+            : molfile.stringify(struct, { ignoreErrors: true })
         },
-        selectedAtoms && selectedAtoms.length > 0
+        !useInternalFormat && selectedAtoms && selectedAtoms.length > 0
           ? {
               selected: selectedAtoms
             }

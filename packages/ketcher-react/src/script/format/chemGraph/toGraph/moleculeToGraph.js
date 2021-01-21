@@ -3,13 +3,20 @@ import structSchema from '../../schemes/moleculeSchema'
 import { fromRlabel } from '../convertStruct'
 import { ifDef } from '../../utils'
 
-export function moleculeToGraph(struct) {
+export function moleculeToGraph(struct, selectedAtoms) {
+  const moleculeSelectedAtoms = selectedAtoms?.filter(aid =>
+    struct.atoms.has(aid)
+  )
   const body = {
     atoms: Array.from(struct.atoms.values()).map(atom => {
       if (atom.label === 'R#') return rglabelToGraph(atom)
       if (atom.label === 'L#') return atomListToGraph(atom)
       return atomToGraph(atom)
-    })
+    }),
+    selection: {
+      entityType: 'atom',
+      items: moleculeSelectedAtoms
+    }
   }
 
   if (struct.bonds.size !== 0)

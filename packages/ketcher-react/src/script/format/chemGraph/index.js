@@ -26,7 +26,7 @@ import { simpleObjectToStruct } from './fromGraph/simpleObjectToStruct'
 
 import { prepareStructForGraph } from './toGraph/prepare'
 
-function toGraph(struct) {
+function toGraph(struct, selectedAtoms) {
   const result = {
     root: {
       nodes: []
@@ -43,7 +43,10 @@ function toGraph(struct) {
     switch (item.type) {
       case 'molecule': {
         result.root.nodes.push({ $ref: `mol${moleculeId}` })
-        result[`mol${moleculeId++}`] = moleculeToGraph(item.fragment)
+        result[`mol${moleculeId++}`] = moleculeToGraph(
+          item.fragment,
+          selectedAtoms
+        )
         break
       }
       case 'rgroup': {

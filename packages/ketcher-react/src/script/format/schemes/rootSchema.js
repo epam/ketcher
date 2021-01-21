@@ -28,6 +28,7 @@ const rootSchema = {
         oneOf: [
           { $ref: '/RxnPlus' },
           { $ref: '/RxnArrow' },
+          { $ref: '/SimpleObject' },
           {
             type: 'object',
             required: ['$ref'],

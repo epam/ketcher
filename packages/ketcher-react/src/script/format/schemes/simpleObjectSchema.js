@@ -41,10 +41,10 @@ const schema = {
               type: 'object',
               properties: {
                 x: {
-                  type: 'integer'
+                  type: 'number'
                 },
                 y: {
-                  type: 'integer'
+                  type: 'number'
                 }
               },
               required: ['x', 'y']
@@ -52,7 +52,7 @@ const schema = {
           ]
         }
       },
-      required: ['type', 'mode', 'pos']
+      required: ['mode', 'pos']
     }
   }
 }

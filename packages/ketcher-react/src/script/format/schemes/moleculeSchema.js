@@ -421,6 +421,31 @@ const sgroup = {
   ]
 }
 
+const selection = {
+  title: 'Selection',
+  type: 'array',
+  items: [
+    {
+      type: 'object',
+      properties: {
+        entityType: {
+          type: 'string',
+          enum: ['atom', 'bond']
+        },
+        items: {
+          type: 'array',
+          items: [
+            {
+              type: 'integer'
+            }
+          ]
+        }
+      },
+      required: ['entityType', 'items']
+    }
+  ]
+}
+
 const moleculeSchema = {
   id: '/Molecule',
   type: 'object',
@@ -447,6 +472,7 @@ const moleculeSchema = {
       type: 'array',
       items: { $ref: '#/bond' }
     },
+    selection: { $ref: '#/selection' },
     sgroups: {
       title: 'SGroups',
       type: 'array',
@@ -458,7 +484,8 @@ const moleculeSchema = {
   atomlist,
   rgatom,
   bond,
-  sgroup
+  sgroup,
+  selection
 }
 
 export default moleculeSchema

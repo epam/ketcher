@@ -67,54 +67,55 @@ export function toString(
 
   return new Promise(resolve => {
     const moldata = molfile.stringify(struct)
-    if (format === SupportedFormat.Mol || format === SupportedFormat.Rxn) {
-      resolve(moldata)
-    } else if (format === SupportedFormat.Smiles) {
-      resolve(smiles.stringify(struct))
-    } else {
-      const converting = server
-        .then(() =>
-          server.convert(
-            {
-              struct: moldata,
-              output_format: formatProperties.mime
-            },
-            Object.assign({}, serverOpts, formatProperties.options || {})
+    switch (format) {
+      case SupportedFormat.Mol:
+      case SupportedFormat.Rxn:
+        resolve(moldata)
+        break
+      case SupportedFormat.Smiles:
+        resolve(smiles.stringify(struct))
+        break
+      default:
+        const converting = server
+          .then(() =>
+            server.convert(
+              {
+                struct: moldata,
+                output_format: formatProperties.mime
+              },
+              { ...serverOpts, ...formatProperties.options }
+            )
           )
-        )
-        .catch(err => {
-          throw err.message === 'Server is not compatible'
-            ? Error(
-                `${formatProperties.name} is not supported in standalone mode.`
-              )
-            : Error(`Convert error!\n${err.message}`)
-        })
-        .then(res => res.struct)
-      resolve(converting)
+          .catch(err => {
+            throw err.message === 'Server is not compatible'
+              ? Error(
+                  `${formatProperties.name} is not supported in standalone mode.`
+                )
+              : Error(`Convert error!\n${err.message}`)
+          })
+          .then(res => res.struct)
+        resolve(converting)
     }
   })
 }
 
 export function fromString(
-  structStr: any,
+  struct: string,
   opts: any,
   server: any,
   serverOpts: any
 ): Promise<any> {
   return new Promise(resolve => {
-    const format = guess(structStr)
+    const format = guess(struct)
     const formatProperties = getPropertiesByFormat(format)
     console.assert(formatProperties, 'No such format')
     if (format === SupportedFormat.Graph) {
-      const res = graph.fromGraph(JSON.parse(structStr))
-      resolve(res)
+      resolve(graph.fromGraph(JSON.parse(struct)))
     } else if (
-      (format === SupportedFormat.Mol &&
-        molfile.version(structStr) === 'V2000') ||
+      (format === SupportedFormat.Mol && molfile.version(struct) === 'V2000') ||
       format === SupportedFormat.Rxn
     ) {
-      const struct = molfile.parse(structStr, opts)
-      resolve(struct)
+      resolve(molfile.parse(struct, opts))
     } else {
       const withCoords = getPropertiesByFormat(format).supportsCoords
       const converting = server
@@ -122,14 +123,14 @@ export function fromString(
           withCoords
             ? server.convert(
                 {
-                  struct: structStr,
+                  struct: struct,
                   output_format: getPropertiesByFormat(SupportedFormat.Mol).mime
                 },
                 serverOpts
               )
             : server.layout(
                 {
-                  struct: structStr.trim(),
+                  struct: struct.trim(),
                   output_format: getPropertiesByFormat(SupportedFormat.Mol).mime
                 },
                 serverOpts
@@ -151,9 +152,9 @@ export function fromString(
           }
         })
         .then(res => {
-          const struct = molfile.parse(res.struct)
-          if (!withCoords) struct.rescale()
-          return struct
+          const parsedStruct = molfile.parse(res.struct)
+          if (!withCoords) parsedStruct.rescale()
+          return parsedStruct
         })
       resolve(converting)
     }
@@ -167,10 +168,12 @@ export function couldBeSaved(
   let warnings: Array<string> = []
   const formatName: string = getPropertiesByFormat(format).name
   if (
-    format === SupportedFormat.InChI ||
-    format === SupportedFormat.InChIAuxInfo ||
-    format === SupportedFormat.Smiles ||
-    format === SupportedFormat.SmilesExt
+    [
+      SupportedFormat.InChI,
+      SupportedFormat.InChIAuxInfo,
+      SupportedFormat.Smiles,
+      SupportedFormat.SmilesExt
+    ].includes(format)
   ) {
     if (struct.rgroups.size !== 0)
       warnings.push(
@@ -197,12 +200,14 @@ export function couldBeSaved(
   }
 
   if (
-    format === SupportedFormat.Smiles ||
-    format === SupportedFormat.SmilesExt ||
-    format === SupportedFormat.Smarts ||
-    format === SupportedFormat.InChI ||
-    format === SupportedFormat.InChIAuxInfo ||
-    format === SupportedFormat.CML
+    [
+      SupportedFormat.Smiles,
+      SupportedFormat.SmilesExt,
+      SupportedFormat.Smarts,
+      SupportedFormat.InChI,
+      SupportedFormat.InChIAuxInfo,
+      SupportedFormat.CML
+    ].includes(format)
   ) {
     // @ts-ignore
     const isVal = struct.atoms.find((ind, atom) => atom.explicitValence >= 0)

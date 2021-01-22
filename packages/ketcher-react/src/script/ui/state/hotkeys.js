@@ -22,9 +22,9 @@ import keyNorm from '../data/convert/keynorm'
 import actions from '../action'
 
 import * as clipArea from '../component/cliparea'
-import * as structFormat from '../data/convert/structformat'
 import { openDialog } from './modal'
 import { onAction, load } from './shared'
+import { SupportedFormatPropertiesMap } from '../data/convert/struct.types'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -115,8 +115,8 @@ const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/
 
 /* ClipArea */
 export function initClipboard(dispatch, getState) {
-  const formats = Object.keys(structFormat.map).map(
-    fmt => structFormat.map[fmt].mime
+  const formats = Object.keys(SupportedFormatPropertiesMap).map(
+    format => SupportedFormatPropertiesMap[format].mime
   )
 
   const debAction = debounce(0, action => dispatch(onAction(action)))

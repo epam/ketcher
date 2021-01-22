@@ -33,6 +33,37 @@ export class Ketcher {
     buildNumber: process.env.BUILD_NUMBER
   }
   private origin = null
+  private _editor: any
+
+  static make(serviceMode: string) {
+    const ketcher = new Ketcher()
+    ketcher[serviceMode] = true
+
+    Object.defineProperty(ketcher, 'editor', {
+      set: editor => {
+        ketcher._editor = editor
+        // todo: remove
+        ;(global as any)._ui_editor = editor
+      },
+      get: () => {
+        return ketcher._editor
+      },
+      enumerable: true,
+      configurable: false
+    })
+
+    // todo: remove
+    ;(global as any).ketcher = ketcher
+
+    return ketcher
+  }
+
+  constructor() {
+    Object.defineProperty(this, '_editor', {
+      enumerable: false,
+      configurable: false
+    })
+  }
 
   getSmiles(): string {
     return smiles.stringify(this.editor.struct(), { ignoreErrors: true })

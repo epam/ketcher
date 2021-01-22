@@ -40,38 +40,39 @@ const shared = combineReducers({
   templates: templatesReducer
 })
 
-/* ROOT REDUCER */
-function root(state, action) {
-  switch (
-    action.type // eslint-disable-line default-case
-  ) {
-    case 'INIT':
-      global._ui_editor = action.editor
-      global.ketcher.editor = action.editor
-    case 'UPDATE': // eslint-disable-line no-case-declarations
-      const { type, ...data } = action
-      if (data) state = { ...state, ...data }
+function getRootReducer(editorContainer) {
+  return function root(state, action) {
+    switch (
+      action.type // eslint-disable-line default-case
+    ) {
+      case 'INIT':
+        editorContainer.editor = action.editor
+
+      case 'UPDATE': // eslint-disable-line no-case-declarations
+        const { type, ...data } = action
+        if (data) state = { ...state, ...data }
+    }
+
+    const sh = shared(state, {
+      ...action,
+      ...pick(['editor', 'server', 'options'], state)
+    })
+
+    const finalState =
+      sh === state.shared
+        ? state
+        : {
+            ...state,
+            ...sh
+          }
+
+    //TODO: temporary solution. Need to review work with redux store
+    global.currentState = finalState
+    return finalState
   }
-
-  const sh = shared(state, {
-    ...action,
-    ...pick(['editor', 'server', 'options'], state)
-  })
-
-  const finalState =
-    sh === state.shared
-      ? state
-      : {
-          ...state,
-          ...sh
-        }
-
-  //TODO: temporary solution. Need to review work with redux store
-  global.currentState = finalState
-  return finalState
 }
 
-export default function (options, server) {
+export default function (options, server, editorContainer) {
   const { buttons = {}, ...restOptions } = options
 
   // TODO: redux localStorage here
@@ -88,5 +89,6 @@ export default function (options, server) {
 
   if (process.env.NODE_ENV !== 'production') middleware.push(logger)
 
-  return createStore(root, initState, applyMiddleware(...middleware))
+  const rootReducer = getRootReducer(editorContainer)
+  return createStore(rootReducer, initState, applyMiddleware(...middleware))
 }

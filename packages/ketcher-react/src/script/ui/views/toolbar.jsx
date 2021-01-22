@@ -17,7 +17,7 @@
 import { connect } from 'react-redux'
 import React from 'react'
 
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import element from '../../chem/element'
 import Atom from '../component/view/atom'
@@ -187,7 +187,7 @@ function AtomsList(atoms, { active, onAction }) {
           basicAtoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null
         return (
           <li
-            className={classNames({
+            className={clsx({
               selected: isAtom && active.opts.label === label
             })}>
             <Atom
@@ -210,7 +210,7 @@ function TemplatesList({ active, onAction }) {
       {templates.map((struct, i) => (
         <li
           id={`template-${i}`}
-          className={classNames({
+          className={clsx({
             selected: isTmpl && active.opts.struct === struct
           })}>
           <button

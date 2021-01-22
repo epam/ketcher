@@ -16,7 +16,7 @@
 
 import React, { useRef } from 'react'
 
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import action from '../action'
 import { hiddenAncestor } from '../state/toolbar'
@@ -142,8 +142,10 @@ function ActionMenu({ name, menu, className, role, ...props }) {
           key={item.id || item}
           id={item.id || item}
           className={
-            classNames(props.status[item]) +
-            ` ${item.id === props.opened ? 'opened' : ''}`
+            (clsx(props.status[item]),
+            {
+              opened: item.id === props.opened
+            })
           }
           onClick={ev => openHandle(ev, props.onOpen)}>
           {showMenuOrButton(action, item, props.status[item], props)}

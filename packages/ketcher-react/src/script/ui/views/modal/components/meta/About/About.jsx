@@ -17,13 +17,19 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Logo from './logo.svg'
-import Dialog from '../../component/dialog'
+import Dialog from '../../../../components/Dialog'
+
+import styles from './about.module.less'
 
 function About(props) {
   const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info
 
   return (
-    <Dialog title="About" className="about" params={props} buttons={['Close']}>
+    <Dialog
+      title="About"
+      className={styles.about}
+      params={props}
+      buttons={['Close']}>
       <a
         href="http://lifescience.opensource.epam.com/ketcher/"
         target="_blank"

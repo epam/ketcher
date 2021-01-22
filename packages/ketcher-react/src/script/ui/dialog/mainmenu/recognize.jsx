@@ -22,7 +22,7 @@ import { changeImage, shouldFragment, changeVersion } from '../../state/options'
 import { load } from '../../state'
 import { recognize } from '../../state/server'
 
-import Dialog from '../../component/dialog'
+import Dialog from '../../views/components/Dialog'
 import Input from '../../component/form/input'
 import StructRender from '../../component/structrender'
 import OpenButton from '../../component/view/openbutton'

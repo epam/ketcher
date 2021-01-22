@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import React, { Component, createRef } from 'react'
-
 import * as KN from 'w3c-keyname'
+import style from './Dialog.module.less'
 
 class Dialog extends Component {
   constructor(props) {
@@ -49,7 +49,7 @@ class Dialog extends Component {
           '[contenteditable]',
           'select'
         ].join(',')
-      ) || this.formRef.current.querySelector(['button.close'].join(','))
+      ) || this.formRef.current.querySelector(`button.${style.close}`)
     if (fe.focus) fe.focus()
   }
 
@@ -78,12 +78,12 @@ class Dialog extends Component {
         <header>
           {title}
           {params.onCancel && title && (
-            <button className="close" onClick={() => this.exit('Cancel')}>
+            <button className={style.close} onClick={() => this.exit('Cancel')}>
               ×
             </button>
           )}
         </header>
-        <div className="dialog-body">{children}</div>
+        <div className={style.dialog_body}>{children}</div>
 
         <footer>
           {buttons.map(b =>

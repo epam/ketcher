@@ -19,7 +19,7 @@ import { connect } from 'react-redux'
 
 import { attachmentPoints as attachmentPointsSchema } from '../../data/schema/struct-schema'
 import Form, { Field } from '../../component/form/form'
-import Dialog from '../../component/dialog'
+import Dialog from '../../views/components/Dialog'
 
 function AttachmentPoints(props) {
   const { formState, ...prop } = props

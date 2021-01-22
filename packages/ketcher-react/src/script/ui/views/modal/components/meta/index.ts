@@ -14,29 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-import { connect } from 'react-redux'
+import About from './About/About'
+import Help from './Help/Help'
+import Settings from './Options/Options'
 
-import { bond as bondSchema } from '../../data/schema/struct-schema'
-import Form, { Field } from '../../component/form/form'
-import Dialog from '../../views/components/Dialog'
-
-function Bond(props) {
-  const { formState, ...prop } = props
-  return (
-    <Dialog
-      title="Bond Properties"
-      className="bond"
-      result={() => formState.result}
-      valid={() => formState.valid}
-      params={prop}>
-      <Form schema={bondSchema} init={prop} {...formState}>
-        <Field name="type" />
-        <Field name="topology" />
-        <Field name="center" />
-      </Form>
-    </Dialog>
-  )
-}
-
-export default connect(store => ({ formState: store.modal.form }))(Bond)
+export { About, Help, Settings }

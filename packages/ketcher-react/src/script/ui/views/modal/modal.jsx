@@ -17,7 +17,7 @@
 import React from 'react'
 import { omit } from 'lodash/fp'
 import { connect } from 'react-redux'
-import modals from '../dialog'
+import modals from '../../dialog'
 
 const mapStateToProps = state => ({
   modal: state.modal

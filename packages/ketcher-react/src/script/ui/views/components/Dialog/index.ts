@@ -14,6 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Settings from './options'
+import Dialog from './Dialog'
 
-export default Settings
+export default Dialog

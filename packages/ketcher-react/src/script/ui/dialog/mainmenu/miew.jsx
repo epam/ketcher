@@ -18,7 +18,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { pick } from 'lodash/fp'
 
-import Dialog from '../../component/dialog'
+import Dialog from '../../views/components/Dialog'
 import * as structFormat from '../../data/convert/structformat'
 import { MIEW_OPTIONS } from '../../data/schema/options-schema'
 import { load } from '../../state'

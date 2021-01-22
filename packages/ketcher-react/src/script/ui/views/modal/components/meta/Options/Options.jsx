@@ -16,21 +16,24 @@
 
 import React from 'react'
 import { connect } from 'react-redux'
-import { updateFormState, setDefaultSettings } from '../../../state/modal/form'
-import { saveSettings } from '../../../state/options'
+import {
+  updateFormState,
+  setDefaultSettings
+} from '../../../../../state/modal/form'
+import { saveSettings } from '../../../../../state/options'
 
-import settingsSchema from '../../../data/schema/options-schema'
-import { storage } from '../../../storage-ext'
+import settingsSchema from '../../../../../data/schema/options-schema'
+import { storage } from '../../../../../storage-ext'
 
-import Form, { Field } from '../../../component/form/form'
-import Dialog from '../../../component/dialog'
-import Accordion from '../../../component/view/accordion'
-import SaveButton from '../../../component/view/savebutton'
-import OpenButton from '../../../component/view/openbutton'
+import Form, { Field } from '../../../../../component/form/form'
+import Dialog from '../../../../components/Dialog'
+import Accordion from '../../../../../component/view/accordion'
+import SaveButton from '../../../../../component/view/savebutton'
+import OpenButton from '../../../../../component/view/openbutton'
 
-import MeasureInput from '../../../component/form/measure-input'
-import SystemFonts from '../../../component/form/systemfonts'
-import SelectCheckbox from '../../../component/form/select-checkbox'
+import MeasureInput from '../../../../../component/form/measure-input'
+import SystemFonts from '../../../../../component/form/systemfonts'
+import SelectCheckbox from '../../../../../component/form/select-checkbox'
 
 import styles from './options.module.less'
 

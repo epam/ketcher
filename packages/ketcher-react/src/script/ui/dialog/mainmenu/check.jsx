@@ -17,7 +17,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import Dialog from '../../component/dialog'
+import Dialog from '../../views/components/Dialog'
 import Tabs from '../../component/view/tabs'
 import Form, { Field } from '../../component/form/form'
 import { check } from '../../state/server'

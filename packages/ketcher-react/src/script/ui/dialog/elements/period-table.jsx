@@ -22,7 +22,7 @@ import { connect } from 'react-redux'
 import element from '../../../chem/element'
 import { sketchingColors as elementColor } from '../../../chem/element-color'
 
-import Dialog from '../../component/dialog'
+import Dialog from '../../views/components/Dialog'
 import Atom from '../../component/view/atom'
 import Tabs from '../../component/view/tabs'
 

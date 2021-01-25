@@ -20,6 +20,8 @@ import common from './common'
 import { MolfileFormat } from './molfileFormat'
 import utils from './utils'
 
+const END_V2000 = '2D 1   1.00000     0.00000     0'
+
 type Mapping = {
   [key in number]: number
 }
@@ -46,7 +48,7 @@ class Molfile {
     this.bondMapping = {}
   }
 
-  parseCTFile(molfileLines: string[], shouldReactionRelayout: boolean) {
+  parseCTFile(molfileLines: string[], shouldReactionRelayout?: boolean) {
     let ret
     if (molfileLines[0].search('\\$RXN') === 0) {
       ret = common.parseRxn(molfileLines, shouldReactionRelayout)
@@ -91,6 +93,7 @@ class Molfile {
           toRemove.push(sgroup.id)
         }
       }, this)
+
     if (errors) {
       throw new Error(
         'Warning: ' +
@@ -102,7 +105,6 @@ class Molfile {
     for (let i = 0; i < toRemove.length; ++i) {
       mol.sGroupDelete(toRemove[i])
     }
-    return mol
   }
 
   getCTab(molecule: Struct, rgroups?: Map<any, any>) {
@@ -217,7 +219,7 @@ class Molfile {
         ((date.getFullYear() % 100) + '').padStart(2) +
         (date.getHours() + '').padStart(2) +
         (date.getMinutes() + '').padStart(2) +
-        '2D 1   1.00000     0.00000     0'
+        END_V2000
     )
     this.writeCR()
   }
@@ -238,7 +240,6 @@ class Molfile {
 
   writeWhiteSpace(length: number = 0) {
     /* saver */
-
     if (arguments.length == 0) {
       length = 1
     }
@@ -254,7 +255,6 @@ class Molfile {
 
   writePaddedNumber(number: number, width: number) {
     /* saver */
-
     let str = (number - 0).toString()
 
     this.writeWhiteSpace(width - str.length)
@@ -263,13 +263,11 @@ class Molfile {
 
   writePaddedFloat(number: string | number, width: number, precision: number) {
     /* saver */
-
     this.write(utils.paddedNum(number, width, precision))
   }
 
   writeCTab2000Header() {
     /* saver */
-
     this.writePaddedNumber(this.molecule.atoms.size, 3)
     this.writePaddedNumber(this.molecule.bonds.size, 3)
 
@@ -293,132 +291,55 @@ class Molfile {
     this.mapping = {}
     let i = 1
 
-    /* eslint-disable camelcase*/
-    let atomList_list: number[] = []
-    let atomProps_list: {
+    const atomsIds: number[] = []
+    const atomsProps: {
       id: number
       value: string
     }[] = []
-    /* eslint-enable camelcase*/
     this.molecule.atoms.forEach((atom, id) => {
-      this.writePaddedFloat(atom.pp.x, 10, 4)
-      this.writePaddedFloat(-atom.pp.y, 10, 4)
-      this.writePaddedFloat(atom.pp.z, 10, 4)
-      this.writeWhiteSpace()
-
-      let label = atom.label
       if (atom.atomList != null) {
-        label = 'L'
-        atomList_list.push(id)
+        atomsIds.push(id)
       } else if (atom['pseudo']) {
         if (atom['pseudo'].length > 3) {
-          label = 'A'
-          atomProps_list.push({ id, value: "'" + atom['pseudo'] + "'" })
+          atomsProps.push({ id, value: `'${atom['pseudo']}'` })
         }
       } else if (atom['alias']) {
-        atomProps_list.push({ id, value: atom['alias'] })
+        atomsProps.push({ id, value: atom['alias'] })
       } else if (
-        !element.map[label] &&
-        ['A', 'Q', 'X', '*', 'R#'].indexOf(label) == -1
+        !element.map[atom.label] &&
+        ['A', 'Q', 'X', '*', 'R#'].indexOf(atom.label) == -1
       ) {
         // search in generics?
-        label = 'C'
-        atomProps_list.push({ id, value: atom.label })
+        atomsProps.push({ id, value: atom.label })
       }
-      this.writePadded(label, 3)
-      this.writePaddedNumber(0, 2)
-      this.writePaddedNumber(0, 3)
-      this.writePaddedNumber(0, 3)
 
-      if (typeof atom.hCount === 'undefined') {
-        atom.hCount = 0
-      }
-      this.writePaddedNumber(atom.hCount, 3)
+      const atomLabel = this.getAtomLabel(atom)
+      this.writeAtom(atom, atomLabel)
 
-      if (typeof atom.stereoCare === 'undefined') {
-        atom.stereoCare = 0
-      }
-      this.writePaddedNumber(atom.stereoCare, 3)
-
-      this.writePaddedNumber(
-        atom.explicitValence < 0
-          ? 0
-          : atom.explicitValence == 0
-          ? 15
-          : atom.explicitValence,
-        3
-      ) // eslint-disable-line no-nested-ternary
-
-      this.writePaddedNumber(0, 3)
-      this.writePaddedNumber(0, 3)
-      this.writePaddedNumber(0, 3)
-
-      if (typeof atom.aam === 'undefined') {
-        atom.aam = 0
-      }
-      this.writePaddedNumber(atom.aam, 3)
-
-      if (typeof atom.invRet === 'undefined') {
-        atom.invRet = 0
-      }
-      this.writePaddedNumber(atom.invRet, 3)
-
-      if (typeof atom.exactChangeFlag === 'undefined') {
-        atom.exactChangeFlag = 0
-      }
-      this.writePaddedNumber(atom.exactChangeFlag, 3)
-
-      this.writeCR()
-
-      this.mapping[id] = i
-      i++
+      this.mapping[id] = i++
     }, this)
 
     this.bondMapping = {}
     i = 1
     this.molecule.bonds.forEach((bond, id) => {
       this.bondMapping[id] = i++
-      this.writePaddedNumber(this.mapping[bond.begin], 3)
-      this.writePaddedNumber(this.mapping[bond.end], 3)
-      this.writePaddedNumber(bond.type, 3)
+      this.writeBond(bond)
+    }, this)
 
-      if (typeof bond.stereo === 'undefined') {
-        bond.stereo = 0
-      }
-      this.writePaddedNumber(bond.stereo, 3)
-
-      this.writePadded(bond.xxx, 3)
-
-      if (typeof bond.topology === 'undefined') {
-        bond.topology = 0
-      }
-      this.writePaddedNumber(bond.topology, 3)
-
-      if (typeof bond.reactingCenterStatus === 'undefined') {
-        bond.reactingCenterStatus = 0
-      }
-      this.writePaddedNumber(bond.reactingCenterStatus, 3)
-
-      this.writeCR()
-    })
-
-    while (atomProps_list.length > 0) {
-      this.write('A  ')
-      this.writePaddedNumber(atomProps_list[0].id + 1, 3)
-      this.writeCR()
-      this.writeCR(atomProps_list[0].value)
-      atomProps_list.splice(0, 1)
+    while (atomsProps.length > 0) {
+      this.writeAtomProps(atomsProps[0])
+      atomsProps.splice(0, 1)
     }
 
-    let chargeList: NumberTuple[] = []
-    let isotopeList: NumberTuple[] = []
-    let radicalList: NumberTuple[] = []
-    let rglabelList: NumberTuple[] = []
-    let rglogicList: string[] = []
-    let aplabelList: NumberTuple[] = []
-    let rbcountList: NumberTuple[] = []
-    let unsaturatedList: NumberTuple[] = []
-    let substcountList: NumberTuple[] = []
+    const chargeList: NumberTuple[] = []
+    const isotopeList: NumberTuple[] = []
+    const radicalList: NumberTuple[] = []
+    const rglabelList: NumberTuple[] = []
+    const rglogicList: string[] = []
+    const aplabelList: NumberTuple[] = []
+    const rbcountList: NumberTuple[] = []
+    const unsaturatedList: NumberTuple[] = []
+    const substcountList: NumberTuple[] = []
 
     this.molecule.atoms.forEach((atom, id) => {
       if (atom.charge != 0) {
@@ -482,12 +403,12 @@ class Molfile {
     this.writeAtomPropList('M  SUB', substcountList)
     this.writeAtomPropList('M  UNS', unsaturatedList)
 
-    if (atomList_list.length > 0) {
-      for (let j = 0; j < atomList_list.length; ++j) {
-        let aid = atomList_list[j]
-        let atomList = this.molecule.atoms.get(aid).atomList
+    if (atomsIds.length > 0) {
+      for (let j = 0; j < atomsIds.length; ++j) {
+        let atomId = atomsIds[j]
+        let atomList = this.molecule.atoms.get(atomId).atomList
         this.write('M  ALS')
-        this.writePaddedNumber(aid + 1, 4)
+        this.writePaddedNumber(atomId + 1, 4)
         this.writePaddedNumber(atomList.ids.length, 3)
         this.writeWhiteSpace()
         this.write(atomList.notList ? 'T' : 'F')
@@ -501,18 +422,18 @@ class Molfile {
       }
     }
 
-    let sgmap = {}
+    const sgmap = {}
     let cnt = 1
-    let sgmapback = {}
-    let sgorder = this.molecule.sGroupForest.getSGroupsBFS()
+    const sgmapback = {}
+    const sgorder = this.molecule.sGroupForest.getSGroupsBFS()
     sgorder.forEach(id => {
       sgmapback[cnt] = id
       sgmap[id] = cnt++
     })
     for (let q = 1; q < cnt; ++q) {
       // each group on its own
-      let id = sgmapback[q]
-      let sgroup = this.molecule.sgroups.get(id)
+      const id = sgmapback[q]
+      const sgroup = this.molecule.sgroups.get(id)
       this.write('M  STY')
       this.writePaddedNumber(1, 3)
       this.writeWhiteSpace(1)
@@ -531,24 +452,23 @@ class Molfile {
       this.writePaddedNumber(q, 3)
       this.writeCR()
 
-      let parentid = this.molecule.sGroupForest.parent.get(id)
-      if (parentid >= 0) {
+      const parentId = this.molecule.sGroupForest.parent.get(id)
+      if (parentId >= 0) {
         this.write('M  SPL')
         this.writePaddedNumber(1, 3)
         this.writeWhiteSpace(1)
         this.writePaddedNumber(q, 3)
         this.writeWhiteSpace(1)
-        this.writePaddedNumber(sgmap[parentid], 3)
+        this.writePaddedNumber(sgmap[parentId], 3)
         this.writeCR()
       }
 
       // connectivity
       if (sgroup.type == 'SRU' && sgroup.data.connectivity) {
-        let connectivity = ''
-        connectivity += ' '
-        connectivity += q.toString().padStart(3)
-        connectivity += ' '
-        connectivity += (sgroup.data.connectivity || '').padEnd(3)
+        const connectivity = ` ${q.toString().padStart(3)} ${(
+          sgroup.data.connectivity || ''
+        ).padEnd(3)}`
+
         this.write('M  SCN')
         this.writePaddedNumber(1, 3)
         this.write(connectivity.toUpperCase())
@@ -582,6 +502,116 @@ class Molfile {
     this.writeCR('M  END')
   }
 
+  private getAtomLabel(atom): string {
+    if (atom.atomList != null) {
+      return 'L'
+    }
+
+    if (atom['pseudo']) {
+      if (atom['pseudo'].length > 3) {
+        return 'A'
+      }
+    }
+
+    const { label } = atom
+    if (atom['alias']) {
+      return label
+    }
+
+    if (
+      !element.map[label] &&
+      ['A', 'Q', 'X', '*', 'R#'].indexOf(label) == -1
+    ) {
+      return 'C'
+    }
+
+    return label
+  }
+
+  private writeAtom(atom, atomLabel: string) {
+    this.writePaddedFloat(atom.pp.x, 10, 4)
+    this.writePaddedFloat(-atom.pp.y, 10, 4)
+    this.writePaddedFloat(atom.pp.z, 10, 4)
+    this.writeWhiteSpace()
+    this.writePadded(atomLabel, 3)
+    this.writePaddedNumber(0, 2)
+    this.writePaddedNumber(0, 3)
+    this.writePaddedNumber(0, 3)
+
+    if (typeof atom.hCount === 'undefined') {
+      atom.hCount = 0
+    }
+    this.writePaddedNumber(atom.hCount, 3)
+
+    if (typeof atom.stereoCare === 'undefined') {
+      atom.stereoCare = 0
+    }
+    this.writePaddedNumber(atom.stereoCare, 3)
+
+    let number: number
+    if (atom.explicitValence < 0) {
+      number = 0
+    } else if (atom.explicitValence == 0) {
+      number = 15
+    } else {
+      number = atom.explicitValence
+    }
+    this.writePaddedNumber(number, 3)
+
+    this.writePaddedNumber(0, 3)
+    this.writePaddedNumber(0, 3)
+    this.writePaddedNumber(0, 3)
+
+    if (typeof atom.aam === 'undefined') {
+      atom.aam = 0
+    }
+    this.writePaddedNumber(atom.aam, 3)
+
+    if (typeof atom.invRet === 'undefined') {
+      atom.invRet = 0
+    }
+    this.writePaddedNumber(atom.invRet, 3)
+
+    if (typeof atom.exactChangeFlag === 'undefined') {
+      atom.exactChangeFlag = 0
+    }
+    this.writePaddedNumber(atom.exactChangeFlag, 3)
+
+    this.writeCR()
+  }
+
+  private writeBond(bond) {
+    this.writePaddedNumber(this.mapping[bond.begin], 3)
+    this.writePaddedNumber(this.mapping[bond.end], 3)
+    this.writePaddedNumber(bond.type, 3)
+
+    if (typeof bond.stereo === 'undefined') {
+      bond.stereo = 0
+    }
+    this.writePaddedNumber(bond.stereo, 3)
+
+    this.writePadded(bond.xxx, 3)
+
+    if (typeof bond.topology === 'undefined') {
+      bond.topology = 0
+    }
+    this.writePaddedNumber(bond.topology, 3)
+
+    if (typeof bond.reactingCenterStatus === 'undefined') {
+      bond.reactingCenterStatus = 0
+    }
+    this.writePaddedNumber(bond.reactingCenterStatus, 3)
+
+    this.writeCR()
+  }
+
+  private writeAtomProps(props) {
+    this.write('A  ')
+    this.writePaddedNumber(props.id + 1, 3)
+    this.writeCR()
+    this.writeCR(props.value)
+  }
+
   private writeAtomPropList(propId: string, values: NumberTuple[]) {
     while (values.length > 0) {
       const part: NumberTuple[] = []
@@ -606,4 +636,5 @@ class Molfile {
   }
 }
 
+export { END_V2000 }
 export default Molfile

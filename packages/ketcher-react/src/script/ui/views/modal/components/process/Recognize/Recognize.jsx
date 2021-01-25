@@ -18,15 +18,21 @@ import React, { useState, useCallback } from 'react'
 import { connect } from 'react-redux'
 import { range } from 'lodash/fp'
 
-import { changeImage, shouldFragment, changeVersion } from '../../state/options'
-import { load } from '../../state'
-import { recognize } from '../../state/server'
+import {
+  changeImage,
+  shouldFragment,
+  changeVersion
+} from '../../../../../state/options'
+import { load } from '../../../../../state'
+import { recognize } from '../../../../../state/server'
 
-import Dialog from '../../views/components/Dialog'
-import Input from '../../component/form/input'
-import StructRender from '../../component/structrender'
-import OpenButton from '../../component/view/openbutton'
-import Spin from '../../component/view/spin'
+import Dialog from '../../../../components'
+import Input from '../../../../../component/form/input'
+import StructRender from '../../../../../component/structrender'
+import OpenButton from '../../../../../component/view/openbutton'
+import Spin from '../../../../../component/view/spin'
+
+import styles from './Recognize.module.less'
 
 function isImage(file) {
   return file?.type?.includes('image')
@@ -53,21 +59,23 @@ function Recognize(prop) {
     structStr && !(structStr instanceof Promise)
       ? { structStr, fragment }
       : null
+
   const clearFile = useCallback(() => {
     onImage(null)
     return true
   }, [onImage])
+
   return (
     <Dialog
       title="Import From Image"
-      className="recognize"
+      className={styles.recognize}
       params={props}
       result={() => result(structStr, fragment)}
       buttons={[
         <OpenButton key="choose" onLoad={onImage} type="image/*">
           Choose file…
         </OpenButton>,
-        <span key="open-file" className="open-filename">
+        <span key="open-file" className={styles.open_filename}>
           {file ? file.name : null}
         </span>,
         file && (
@@ -80,7 +88,7 @@ function Recognize(prop) {
         'Cancel',
         'OK'
       ]}>
-      <label className="change-version">
+      <label className={styles.change_version}>
         Imago version:
         <Input
           schema={{
@@ -93,7 +101,7 @@ function Recognize(prop) {
           onChange={v => onChangeImago(v)}
         />
       </label>
-      <div className="picture">
+      <div className={styles.picture}>
         {file && isImage(file) && canPreviewImage && (
           <img
             alt=""
@@ -114,13 +122,13 @@ function Recognize(prop) {
           <div>Please choose image</div>
         )}
       </div>
-      <div className="output">
+      <div className={styles.output}>
         {structStr &&
           // in Edge 38: instanceof Promise always `false`
           (structStr instanceof Promise || typeof structStr !== 'string' ? (
             <Spin />
           ) : (
-            <StructRender className="struct" struct={structStr} />
+            <StructRender className={styles.struct} struct={structStr} />
           ))}
       </div>
       <label>

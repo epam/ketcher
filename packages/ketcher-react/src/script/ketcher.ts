@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import molfile from './chem/molfile'
+import molfile, { MolfileFormat } from './chem/molfile'
 import smiles from './chem/smiles'
 import * as structFormat from './ui/data/convert/structConverter'
 import Render from './render'
@@ -22,9 +22,12 @@ import validateGraphF from './format/graphValidator'
 import { isEqual } from 'lodash/fp'
 import Struct from './chem/struct'
 import { SupportedFormat } from './ui/data/convert/struct.types'
+import Editor from './editor'
 
+import Molfile from './chem/molfile/molfile'
 export class Ketcher {
-  editor: any
+  // @ts-ignore
+  editor: Editor
   server: any
   ui: any
   apiPath: any
@@ -77,8 +80,18 @@ export class Ketcher {
       .catch(() => smiles.stringify(struct))
   }
 
-  getMolfile(): string {
-    return molfile.stringify(this.editor.struct(), { ignoreErrors: true })
+  getMolfile(molfileFormat?: MolfileFormat): string {
+    const struct = this.editor.struct()
+    const options = {
+      ignoreErrors: true,
+      format: molfileFormat
+    }
+
+    return molfile.stringify(struct, options)
+  }
+
+  parse(lines: string[]) {
+    return new Molfile().parseCTFile(lines, false)
   }
 
   setMolecule(molString: string): void {

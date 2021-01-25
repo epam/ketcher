@@ -1,4 +1,4 @@
-import * as structFormat from '../data/convert/structformat'
+import * as structFormat from '../data/convert/structConverter'
 
 export function onAction(action) {
   if (action && action.dialog) {

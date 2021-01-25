@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { StructService } from '../infrastructure/services'
-
-type StructServiceCreatorType = (
-  baseUrl: string,
-  defaultOptions: any
-) => StructService
+import { StructServiceProvider } from '../infrastructure/services'
 
 function api(
   base: string,
-  structServiceCreator: StructServiceCreatorType,
+  structServiceProvider: StructServiceProvider,
   defaultOptions: any
 ) {
   const baseUrl = !base || /\/$/.test(base) ? base : base + '/'
-  const structService = structServiceCreator(baseUrl, defaultOptions)
+  const structService = structServiceProvider.createStructService(
+    baseUrl,
+    defaultOptions
+  )
   const info = structService.info()
 
   return Object.assign(info, {

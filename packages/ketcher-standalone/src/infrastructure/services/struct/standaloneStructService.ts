@@ -84,8 +84,8 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.Smiles
       break
     }
-    case ChemicalMimeType.InchI: {
-      format = SupportedFormat.InchI
+    case ChemicalMimeType.InChI: {
+      format = SupportedFormat.InChI
       break
     }
     case ChemicalMimeType.InChIAuxInfo: {

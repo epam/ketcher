@@ -20,7 +20,7 @@ export enum ChemicalMimeType {
   DaylightSmiles = 'chemical/x-daylight-smiles',
   ExtendedSmiles = 'chemical/x-chemaxon-cxsmiles',
   DaylightSmarts = 'chemical/x-daylight-smarts',
-  InchI = 'chemical/x-inchi',
+  InChI = 'chemical/x-inchi',
   InChIAuxInfo = 'chemical/x-inchi-aux',
   CML = 'chemical/x-cml'
 }
@@ -112,4 +112,11 @@ export interface StructService {
   calculate: (data: CalculateData, options: Options) => Promise<CalculateResult>
   recognize: (blob: Blob, version: string) => Promise<RecognizeResult>
   generatePngAsBase64: (data: any, options: any) => Promise<string>
+}
+
+export type ServiceMode = 'standalone' | 'remote'
+
+export interface StructServiceProvider {
+  mode: ServiceMode
+  createStructService: (baseUrl: string, options: any) => StructService
 }

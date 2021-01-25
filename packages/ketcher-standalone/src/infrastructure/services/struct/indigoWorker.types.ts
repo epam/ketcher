@@ -33,7 +33,7 @@ export enum SupportedFormat {
   Smiles = 'smiles',
   Smarts = 'smarts',
   CML = 'cml',
-  InchI = 'inchi',
+  InChI = 'inchi',
   InChIAuxInfo = 'inchi-aux'
 }
 

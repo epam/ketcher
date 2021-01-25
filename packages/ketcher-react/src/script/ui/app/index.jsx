@@ -28,9 +28,9 @@ import { initResize } from '../state/toolbar'
 
 import { loadStruct } from '../state/shared'
 
-function init(el, staticResourcesUrl, options, server) {
-  const store = createStore(options, server)
-  store.dispatch(initKeydownListener(el))
+function init(element, staticResourcesUrl, options, server, editorContainer) {
+  const store = createStore(options, server, editorContainer)
+  store.dispatch(initKeydownListener(element))
   store.dispatch(initResize())
 
   ReactDOM.render(
@@ -39,7 +39,7 @@ function init(el, staticResourcesUrl, options, server) {
         <App />
       </SettingsContext.Provider>
     </Provider>,
-    el
+    element
   )
 
   return {

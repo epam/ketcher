@@ -132,12 +132,21 @@ function renderActiveMenuItem(item, props) {
 }
 
 function ActionMenu({ name, menu, className, role, ...props }) {
+  const visibleMenu = menu.reduce((items, item) => {
+    const status = props.status[item]
+    if (!status || !status.hidden) {
+      items.push(item)
+    }
+
+    return items
+  }, [])
+
   return (
     <menu
       className={className}
       role={role}
       style={toolMargin(name, menu, props.visibleTools)}>
-      {menu.map((item, index) => (
+      {visibleMenu.map(item => (
         <li
           key={item.id || item}
           id={item.id || item}

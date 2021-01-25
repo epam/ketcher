@@ -153,13 +153,6 @@ const elements = [
   'period-table'
 ]
 
-const toolbar = [
-  { id: 'mainmenu', menu: mainmenu },
-  { id: 'toolbox', menu: toolbox },
-  { id: 'template', menu: template },
-  { id: 'elements', menu: elements }
-]
-
 function ZoomList({ status, onAction }) {
   const zoom = status.zoom && status.zoom.selected // TMP
   return (
@@ -224,6 +217,22 @@ function TemplatesList({ active, onAction }) {
   )
 }
 
+function initToolbar() {
+  const toolboxItems = [...toolbox]
+  if (!global?.ketcher?.standalone)
+    toolboxItems.push({
+      id: 'shape',
+      menu: ['shape-circle', 'shape-rectangle', 'shape-line']
+    })
+
+  return [
+    { id: 'mainmenu', menu: mainmenu },
+    { id: 'toolbox', menu: toolboxItems },
+    { id: 'template', menu: template },
+    { id: 'elements', menu: elements }
+  ]
+}
+
 export default connect(
   state => ({
     active: state.actionState && state.actionState.activeTool,
@@ -238,4 +247,4 @@ export default connect(
       data: { menuName, isSelected }
     })
   }
-)(props => <ActionMenu menu={toolbar} role="toolbar" {...props} />)
+)(props => <ActionMenu menu={initToolbar()} role="toolbar" {...props} />)

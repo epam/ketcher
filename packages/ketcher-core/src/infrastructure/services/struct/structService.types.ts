@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-//TODO: move all these types in core module to reuse
 export enum ChemicalMimeType {
   Mol = 'chemical/x-mdl-molfile',
   Rxn = 'chemical/x-mdl-rxnfile',
@@ -89,34 +88,51 @@ export interface InfoResult {
 
 export interface RecognizeResult extends WithStruct {}
 
-export interface Options {
+export interface StructServiceOptions {
   [key: string]: string | number | boolean
 }
 
 export interface StructService {
   info: () => Promise<InfoResult>
-  convert: (data: ConvertData, options: Options) => Promise<ConvertResult>
-  layout: (data: LayoutData, options: Options) => Promise<LayoutResult>
-  clean: (data: CleanData, options: Options) => Promise<CleanResult>
-  aromatize: (data: AromatizeData, options: Options) => Promise<AromatizeResult>
+  convert: (
+    data: ConvertData,
+    options: StructServiceOptions
+  ) => Promise<ConvertResult>
+  layout: (
+    data: LayoutData,
+    options: StructServiceOptions
+  ) => Promise<LayoutResult>
+  clean: (
+    data: CleanData,
+    options: StructServiceOptions
+  ) => Promise<CleanResult>
+  aromatize: (
+    data: AromatizeData,
+    options: StructServiceOptions
+  ) => Promise<AromatizeResult>
   dearomatize: (
     data: DearomatizeData,
-    options: Options
+    options: StructServiceOptions
   ) => Promise<DearomatizeResult>
   calculateCip: (
     data: CalculateCipData,
-    options: Options
+    options: StructServiceOptions
   ) => Promise<CalculateCipResult>
-  automap: (data: AutomapData, options: Options) => Promise<AutomapResult>
-  check: (data: CheckData, options: Options) => Promise<CheckResult>
-  calculate: (data: CalculateData, options: Options) => Promise<CalculateResult>
+  automap: (
+    data: AutomapData,
+    options: StructServiceOptions
+  ) => Promise<AutomapResult>
+  check: (
+    data: CheckData,
+    options: StructServiceOptions
+  ) => Promise<CheckResult>
+  calculate: (
+    data: CalculateData,
+    options: StructServiceOptions
+  ) => Promise<CalculateResult>
   recognize: (blob: Blob, version: string) => Promise<RecognizeResult>
-  generatePngAsBase64: (data: any, options: any) => Promise<string>
-}
-
-export type ServiceMode = 'standalone' | 'remote'
-
-export interface StructServiceProvider {
-  mode: ServiceMode
-  createStructService: (baseUrl: string, options: any) => StructService
+  generatePngAsBase64: (
+    data: string,
+    options: StructServiceOptions
+  ) => Promise<string>
 }

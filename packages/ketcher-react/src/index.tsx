@@ -19,7 +19,6 @@ import 'regenerator-runtime/runtime'
 import 'url-search-params-polyfill'
 import 'whatwg-fetch'
 import './index.less'
-import { RemoteStructServiceProvider } from './infrastructure/services'
 import init, { Config } from './script'
 
 interface EditorProps extends Config {}
@@ -31,9 +30,9 @@ function Editor(props: EditorProps) {
       ...props,
       element: rootElRef.current
     })
-  }, [])
+  }, [props])
 
   return <div ref={rootElRef} className="ketcher root"></div>
 }
 
-export { Editor, RemoteStructServiceProvider }
+export { Editor }

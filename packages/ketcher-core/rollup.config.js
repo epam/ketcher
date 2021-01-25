@@ -3,13 +3,11 @@ import babel from '@rollup/plugin-babel'
 import replace from '@rollup/plugin-replace'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
-import typescript from '@rollup/plugin-typescript'
+import typescript from 'rollup-plugin-typescript2'
 import json from '@rollup/plugin-json'
 import del from 'rollup-plugin-delete'
 import cleanup from 'rollup-plugin-cleanup'
 import strip from '@rollup/plugin-strip'
-import webWorkerLoader from 'rollup-plugin-web-worker-loader'
-import nodePolyfills from 'rollup-plugin-node-polyfills'
 import pkg from './package.json'
 
 const mode = {
@@ -17,7 +15,7 @@ const mode = {
   DEVELOPMENT: 'development'
 }
 
-const extensions = ['.js', '.jsx', '.ts', '.tsx']
+const extensions = ['.js', '.ts']
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION
 
 const config = {
@@ -49,17 +47,11 @@ const config = {
       targets: 'dist/*',
       runOnce: true
     }),
-    peerDepsExternal(),
-    nodePolyfills(),
+    peerDepsExternal({ includeDependencies: true }),
     commonjs(),
     resolve({ extensions, preferBuiltins: false }),
-
     typescript(),
-    webWorkerLoader({
-      extensions,
-      sourcemap: false,
-      targetPlatform: 'browser'
-    }),
+
     replace(
       {
         'process.env.NODE_ENV': JSON.stringify(
@@ -67,7 +59,7 @@ const config = {
         )
       },
       {
-        include: 'src/**/*.{js,jsx,ts,tsx}'
+        include: 'src/**/*.{js,ts}'
       }
     ),
 

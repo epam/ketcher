@@ -1,3 +1,4 @@
+import { AromatizeCommandData } from './../../../ketcher-standalone/src/infrastructure/services/struct/indigoWorker.types'
 /****************************************************************************
  * Copyright 2018 EPAM Systems
  *
@@ -13,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { StructServiceProvider } from '../infrastructure/services'
+import { StructServiceProvider } from 'ketcher-core'
 import api from './api'
 import initUI from './ui'
 import { Ketcher } from './ketcher'

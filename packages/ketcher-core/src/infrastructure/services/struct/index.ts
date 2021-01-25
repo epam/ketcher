@@ -13,7 +13,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import StandaloneStructService from './standaloneStructService'
-import StandaloneStructServiceProvider from './standaloneStructServiceProvider'
+import RemoteStructService from './RemoteStructService'
+import RemoteStructServiceProvider from './RemoteStructServiceProvider'
 
-export { StandaloneStructService, StandaloneStructServiceProvider }
+import type {
+  StructService,
+  StructServiceOptions,
+  ChemicalMimeType,
+  AromatizeData,
+  AromatizeResult,
+  AutomapData,
+  AutomapResult,
+  CalculateCipData,
+  CalculateCipResult,
+  CalculateData,
+  CalculateResult,
+  CheckData,
+  CheckResult,
+  CleanData,
+  CleanResult,
+  ConvertData,
+  ConvertResult,
+  DearomatizeData,
+  DearomatizeResult,
+  InfoResult,
+  LayoutData,
+  LayoutResult,
+  RecognizeResult
+} from './structService.types'
+import type {
+  ServiceMode,
+  StructServiceProvider
+} from './structServiceProvider.types'
+
+export { RemoteStructService, RemoteStructServiceProvider }
+export type {
+  StructService,
+  StructServiceOptions,
+  ChemicalMimeType,
+  AromatizeData,
+  AromatizeResult,
+  AutomapData,
+  AutomapResult,
+  CalculateCipData,
+  CalculateCipResult,
+  CalculateData,
+  CalculateResult,
+  CheckData,
+  CheckResult,
+  CleanData,
+  CleanResult,
+  ConvertData,
+  ConvertResult,
+  DearomatizeData,
+  DearomatizeResult,
+  InfoResult,
+  LayoutData,
+  LayoutResult,
+  RecognizeResult,
+  ServiceMode,
+  StructServiceProvider
+}

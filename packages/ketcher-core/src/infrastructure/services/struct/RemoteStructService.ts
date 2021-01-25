@@ -77,7 +77,7 @@ function indigoCall(
   }
 }
 
-class IndigoService implements StructService {
+class RemoteStructService implements StructService {
   private baseUrl: string
   private defaultOptions: any
 
@@ -223,4 +223,4 @@ class IndigoService implements StructService {
   }
 }
 
-export default IndigoService
+export default RemoteStructService

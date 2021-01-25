@@ -17,11 +17,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import Dialog from '../../views/components/Dialog'
-import Tabs from '../../component/view/tabs'
-import Form, { Field } from '../../component/form/form'
-import { check } from '../../state/server'
-import { checkOpts } from '../../state/options'
+import Dialog from '../../../../components/Dialog'
+import Tabs from '../../../../../component/view/tabs'
+import Form, { Field } from '../../../../../component/form/form'
+import { check } from '../../../../../state/server'
+import { checkOpts } from '../../../../../state/options'
+import ErrorsCheck from './components'
+
+import style from './Check.module.less'
 
 const checkSchema = {
   title: 'Check',
@@ -61,10 +64,6 @@ const checkSchema = {
     }
   }
 }
-function getOptionName(opt) {
-  const d = checkSchema.properties.checkOptions.items
-  return d.enumNames[d.enum.indexOf(opt)]
-}
 
 function Check(props) {
   const { formState, checkState, onCheck, ...prop } = props
@@ -73,7 +72,7 @@ function Check(props) {
     {
       caption: 'Check',
       component: ErrorsCheck,
-      props: { moleculeErrors }
+      props: { moleculeErrors, checkSchema }
     },
     {
       caption: 'Settings',
@@ -90,16 +89,19 @@ function Check(props) {
   return (
     <Dialog
       title="Structure Check"
-      className="check"
+      className={style.check}
       result={() => result}
       params={prop}>
       <Form schema={checkSchema} init={checkState} {...formState}>
         <Tabs
-          className="tabs"
+          className={style.tabs}
           captions={tabs}
           changeTab={i => (i === 0 ? onCheck(result.checkOptions) : null)}
           tabs={tabs}>
-          <ErrorsCheck moleculeErrors={moleculeErrors} />
+          <ErrorsCheck
+            moleculeErrors={moleculeErrors}
+            checkSchema={checkSchema}
+          />
           <Field
             name="checkOptions"
             multiple
@@ -109,26 +111,6 @@ function Check(props) {
         </Tabs>
       </Form>
     </Dialog>
-  )
-}
-
-function ErrorsCheck(props) {
-  const { moleculeErrors } = props
-  const moleculeErrorsTypes = Object.keys(moleculeErrors)
-
-  return (
-    <fieldset>
-      {moleculeErrorsTypes.length === 0 ? (
-        <dt>No errors found</dt>
-      ) : (
-        moleculeErrorsTypes.map(type => (
-          <div>
-            <dt>{getOptionName(type)} warning:</dt>
-            <dd>{moleculeErrors[type]}</dd>
-          </div>
-        ))
-      )}
-    </fieldset>
   )
 }
 

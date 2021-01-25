@@ -19,7 +19,7 @@ import { connect } from 'react-redux'
 
 import { rgroupSchema } from '../../data/schema/struct-schema'
 
-import Dialog from '../../views/components/Dialog'
+import Dialog from '../../views/components'
 import Form, { Field } from '../../component/form/form'
 import ButtonList from '../../component/form/buttonlist'
 

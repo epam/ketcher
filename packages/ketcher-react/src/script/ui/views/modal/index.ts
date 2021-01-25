@@ -14,6 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import AppModal from './modal'
+import AppModal from './AppModal'
 
 export { AppModal }

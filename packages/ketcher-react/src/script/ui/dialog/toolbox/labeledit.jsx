@@ -21,7 +21,7 @@ import { connect } from 'react-redux'
 import element from '../../../chem/element'
 import { labelEdit as labelEditSchema } from '../../data/schema/struct-schema'
 
-import Dialog from '../../views/components/Dialog'
+import Dialog from '../../views/components'
 import Form, { Field } from '../../component/form/form'
 
 function serialize(lc) {

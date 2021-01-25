@@ -17,7 +17,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Logo from './logo.svg'
-import Dialog from '../../../../components/Dialog'
+import Dialog from '../../../../components'
 
 import styles from './about.module.less'
 

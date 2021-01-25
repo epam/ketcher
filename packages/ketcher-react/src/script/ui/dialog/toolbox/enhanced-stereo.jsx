@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import Dialog from '../../views/components/Dialog'
+import Dialog from '../../views/components'
 import Form, { Field } from '../../component/form/form'
 
 const enhancedStereoSchema = {

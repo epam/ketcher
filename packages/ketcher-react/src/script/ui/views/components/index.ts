@@ -14,6 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Dialog from './Dialog'
+import Dialog from './Dialog/Dialog'
 
 export default Dialog

@@ -23,12 +23,14 @@ class Dialog extends Component {
     super(props)
     this.formRef = createRef()
   }
+
   exit(mode) {
     const { params, result = () => null, valid = () => !!result() } = this.props
     const key = mode === 'OK' ? 'onOk' : 'onCancel'
     if (params && key in params && (key !== 'onOk' || valid()))
       params[key](result())
   }
+
   keyDown(ev) {
     const key = KN.keyName(ev)
     const active = document.activeElement

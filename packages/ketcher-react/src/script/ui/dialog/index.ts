@@ -19,14 +19,18 @@ import PeriodTable from './elements/period-table'
 import Rgroup from './toolbox/rgroup'
 import TemplateAttach from './template/template-attach'
 import TemplatesLib from './template/template-lib'
-import Miew from './mainmenu/miew'
 
 // schemify dialogs
 import Atom from './toolbox/atom'
 import AttachPoints from './toolbox/attach'
 import Automap from './toolbox/automap'
 import Bond from './toolbox/bond'
-import { Check, Analyse, Recognize } from '../views/modal/components/process'
+import {
+  Check,
+  Analyse,
+  Recognize,
+  Miew
+} from '../views/modal/components/process'
 import EnhancedStereo from './toolbox/enhanced-stereo'
 import LabelEdit from './toolbox/labeledit'
 import RgroupLogic from './toolbox/rgroup-logic'

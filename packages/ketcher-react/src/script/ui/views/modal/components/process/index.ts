@@ -17,5 +17,6 @@
 import Check from './Check/Check'
 import Analyse from './Analyse/Analyse'
 import Recognize from './Recognize/Recognize'
+import Miew from './Miew/Miew'
 
-export { Check, Analyse, Recognize }
+export { Check, Analyse, Recognize, Miew }

@@ -18,10 +18,12 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { pick } from 'lodash/fp'
 
-import Dialog from '../../views/components'
-import * as structFormat from '../../data/convert/structConverter'
-import { MIEW_OPTIONS } from '../../data/schema/options-schema'
-import { load } from '../../state'
+import Dialog from '../../../../components'
+import * as structFormat from '../../../../../data/convert/structConverter'
+import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema'
+import { load } from '../../../../../state'
+
+import styles from './Miew.module.less'
 
 /* OPTIONS for MIEW */
 const BACKGROUND_COLOR = {
@@ -84,7 +86,7 @@ function createMiewOptions(userOpts) {
 const CHANGING_WARNING =
   'Stereocenters can be changed after the strong 3D rotation'
 
-class MiewComponent extends Component {
+class Miew extends Component {
   componentDidMount() {
     const { struct, server, miewOpts } = this.props
     const Miew = window.Miew
@@ -115,10 +117,9 @@ class MiewComponent extends Component {
     return (
       <Dialog
         title="Miew"
-        className="miew"
         params={prop}
         buttons={[
-          <div className="warning">{CHANGING_WARNING}</div>,
+          <div className={styles.warning}>{CHANGING_WARNING}</div>,
           'Close',
           <button onClick={() => this.exportCML()}>Apply</button>
         ]}>
@@ -146,4 +147,4 @@ export default connect(
       props.onOk()
     }
   })
-)(MiewComponent)
+)(Miew)

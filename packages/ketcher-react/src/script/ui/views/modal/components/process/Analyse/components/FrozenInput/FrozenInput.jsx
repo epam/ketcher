@@ -14,7 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Check from './Check/Check'
-import Analyse from './Analyse/Analyse'
+import React from 'react'
 
-export { Check, Analyse }
+function FrozenInput({ value }) {
+  return (
+    <input
+      type="text"
+      spellCheck={false}
+      value={value} //TODO: fix React warning
+    />
+  )
+}
+
+export default FrozenInput

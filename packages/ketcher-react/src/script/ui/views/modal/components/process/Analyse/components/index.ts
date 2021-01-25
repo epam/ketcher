@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Check from './Check/Check'
-import Analyse from './Analyse/Analyse'
+import FormulaInput from './FormulaInput/FormulaInput'
+import FrozenInput from './FrozenInput/FrozenInput'
 
-export { Check, Analyse }
+export { FormulaInput, FrozenInput }

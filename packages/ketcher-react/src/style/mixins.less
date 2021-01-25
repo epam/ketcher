@@ -492,3 +492,32 @@
 		}
 	}
 }
+
+.input() {
+	border-radius: 4px;
+	display: inline-block;
+	vertical-align: middle;
+	background: white;
+	line-height: 20 / 14;
+	height: 2.4em;
+	padding: 0.35em 0.15em 0.35em 0.3em;
+	margin: 2px;
+	border: 1px solid @border-color;
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	box-sizing: border-box;
+	&:active, &:focus {
+		outline: 0;
+	}
+	&:hover, &:focus {
+		.highlight-shadow(black);
+	}
+
+	&[disabled],
+	&[readonly],
+	fieldset[disabled] & {
+		cursor: not-allowed;
+		//box-shadow: none;
+		background: #efefef;
+		opacity: 0.6;
+	}
+}

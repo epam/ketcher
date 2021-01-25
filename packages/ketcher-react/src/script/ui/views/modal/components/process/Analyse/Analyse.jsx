@@ -19,55 +19,18 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import * as KN from 'w3c-keyname'
-import Dialog from '../../views/components/Dialog'
-import Input from '../../component/form/input'
+import Dialog from '../../../../components/Dialog'
+import Input from '../../../../../component/form/input'
 
-import { changeRound } from '../../state/options'
-import { analyse } from '../../state/server'
+import { changeRound } from '../../../../../state/options'
+import { analyse } from '../../../../../state/server'
+import { FrozenInput, FormulaInput } from './components'
 
-function FrozenInput({ value }) {
-  return (
-    <input
-      type="text"
-      spellCheck={false}
-      value={value} //TODO: fix React warning
-    />
-  )
-}
+import styles from './Analyse.module.less'
 
-const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g
-const errorRegexp = /error:.*/g
-
-function formulaInputMarkdown(value) {
-  return (
-    <div
-      className="chem-input"
-      spellCheck="false"
-      contentEditable
-      suppressContentEditableWarning={true}>
-      {value}
-    </div>
-  )
-}
-
-function FormulaInput({ value }) {
-  if (errorRegexp.test(value)) return formulaInputMarkdown(value)
-
-  const content = []
-  let cnd
-  let pos = 0
-
-  while ((cnd = formulaRegexp.exec(value)) !== null) {
-    if (cnd[1].length > 0) content.push(<sup>{cnd[1]}</sup>)
-    content.push(value.substring(pos, cnd.index) + cnd[2])
-    if (cnd[3].length > 0) content.push(<sub key={cnd}>{cnd[3]}</sub>)
-    pos = cnd.index + cnd[0].length
-  }
-
-  if (pos === 0) content.push(value)
-  else content.push(value.substring(pos, value.length))
-
-  return formulaInputMarkdown(content)
+function roundOff(value, round) {
+  if (typeof value === 'number') return value.toFixed(round)
+  return value.replace(/[0-9]*\.[0-9]+/g, str => (+str).toFixed(round))
 }
 
 class Analyse extends Component {
@@ -86,7 +49,7 @@ class Analyse extends Component {
     return (
       <Dialog
         title="Calculated Values"
-        className="analyse"
+        className={styles.analyse}
         buttons={['Close']}
         params={props}>
         <ul>
@@ -131,12 +94,6 @@ class Analyse extends Component {
       </Dialog>
     )
   }
-}
-
-function roundOff(value, round) {
-  if (typeof value === 'number') return value.toFixed(round)
-
-  return value.replace(/[0-9]*\.[0-9]+/g, str => (+str).toFixed(round))
 }
 
 export default connect(

@@ -17,6 +17,7 @@
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,
     "target": "es5",
+    "downlevelIteration": true,
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,

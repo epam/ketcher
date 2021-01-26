@@ -51,9 +51,8 @@ const config = {
     }),
     peerDepsExternal(),
     nodePolyfills(),
-    commonjs(),
     resolve({ extensions, preferBuiltins: false }),
-
+    commonjs(),
     typescript(),
     webWorkerLoader({
       extensions,

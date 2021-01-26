@@ -53,9 +53,8 @@ const config = {
       runOnce: true
     }),
     peerDepsExternal({ includeDependencies: true }),
-    commonjs(),
     resolve({ extensions, preferBuiltins: true }),
-
+    commonjs(),
     typescript(),
     replace(
       {

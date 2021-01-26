@@ -66,7 +66,8 @@ export class Ketcher {
   constructor() {
     Object.defineProperty(this, '_editor', {
       enumerable: false,
-      configurable: false
+      configurable: false,
+      writable: true
     })
   }
 

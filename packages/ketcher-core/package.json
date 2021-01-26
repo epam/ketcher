@@ -28,7 +28,7 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c -m true",
+    "build": "cross-env NODE_ENV=production rollup -c -m true --silent",
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
     "test": "run-s test:unit test:lint prettier stylelint test:build",
     "test:build": "run-s build",

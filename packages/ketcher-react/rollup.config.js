@@ -5,7 +5,6 @@ import replace from '@rollup/plugin-replace'
 import copy from 'rollup-plugin-copy'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
-import typescript from 'rollup-plugin-typescript2'
 import postcss from 'rollup-plugin-postcss'
 import json from '@rollup/plugin-json'
 import svgr from '@svgr/rollup'
@@ -55,7 +54,6 @@ const config = {
     peerDepsExternal({ includeDependencies: true }),
     resolve({ extensions, preferBuiltins: true }),
     commonjs(),
-    typescript(),
     replace(
       {
         'process.env.NODE_ENV': JSON.stringify(
@@ -88,7 +86,10 @@ const config = {
     copy({
       targets: [{ src: 'src/style/*.svg', dest: 'dist' }]
     }),
-    cleanup({ extensions, comments: 'none' }),
+    cleanup({
+      extensions: extensions.map(ext => ext.trimStart('.')),
+      comments: 'none'
+    }),
     ...(isProduction ? [strip()] : [])
   ]
 }

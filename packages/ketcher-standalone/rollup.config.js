@@ -3,7 +3,6 @@ import babel from '@rollup/plugin-babel'
 import replace from '@rollup/plugin-replace'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
-import typescript from 'rollup-plugin-typescript2'
 import json from '@rollup/plugin-json'
 import del from 'rollup-plugin-delete'
 import cleanup from 'rollup-plugin-cleanup'
@@ -53,7 +52,6 @@ const config = {
     nodePolyfills(),
     resolve({ extensions, preferBuiltins: false }),
     commonjs(),
-    typescript(),
     webWorkerLoader({
       extensions,
       sourcemap: false,
@@ -76,7 +74,10 @@ const config = {
       babelHelpers: 'runtime',
       include: ['src/**/*']
     }),
-    cleanup({ extensions, comments: 'none' }),
+    cleanup({
+      extensions: extensions.map(ext => ext.trimStart('.')),
+      comments: 'none'
+    }),
     ...(isProduction ? [strip()] : [])
   ]
 }

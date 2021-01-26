@@ -16,6 +16,7 @@
 
 import React from 'react'
 import Atom from '../../../../../../../../../component/view/atom'
+import clsx from 'clsx'
 
 function OutinerRow({ row, caption, selected, onSelect, curEvents }) {
   return (
@@ -28,7 +29,9 @@ function OutinerRow({ row, caption, selected, onSelect, curEvents }) {
           <td key={el.label}>
             <Atom
               el={el}
-              className={selected(el.label) ? 'selected' : ''}
+              className={clsx({
+                selected: selected(el.label)
+              })}
               onClick={() => onSelect(el.label)}
               {...curEvents(el)}
             />

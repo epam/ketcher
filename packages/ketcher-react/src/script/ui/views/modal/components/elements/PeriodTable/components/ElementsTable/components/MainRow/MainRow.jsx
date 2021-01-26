@@ -16,6 +16,7 @@
 
 import React from 'react'
 import Atom from '../../../../../../../../../component/view/atom'
+import clsx from 'clsx'
 
 function MainRow({ row, caption, refer, selected, onSelect, curEvents }) {
   return (
@@ -27,7 +28,9 @@ function MainRow({ row, caption, refer, selected, onSelect, curEvents }) {
             <td>
               <Atom
                 el={el}
-                className={selected(el.label) ? 'selected' : ''}
+                className={clsx({
+                  selected: selected(el.label)
+                })}
                 onClick={() => onSelect(el.label)}
                 {...curEvents(el)}
               />

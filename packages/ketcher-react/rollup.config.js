@@ -5,7 +5,7 @@ import replace from '@rollup/plugin-replace'
 import copy from 'rollup-plugin-copy'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
-import typescript from '@rollup/plugin-typescript'
+import typescript from 'rollup-plugin-typescript2'
 import postcss from 'rollup-plugin-postcss'
 import json from '@rollup/plugin-json'
 import svgr from '@svgr/rollup'
@@ -53,9 +53,8 @@ const config = {
       runOnce: true
     }),
     peerDepsExternal({ includeDependencies: true }),
-    commonjs(),
     resolve({ extensions, preferBuiltins: true }),
-
+    commonjs(),
     typescript(),
     replace(
       {

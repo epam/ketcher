@@ -4,7 +4,6 @@
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "moduleResolution": "node",
-    "jsx": "react",
     "sourceMap": true,
     "declaration": true,
     "esModuleInterop": true,
@@ -24,7 +23,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "baseUrl": "."
+    "baseUrl": "./src"
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

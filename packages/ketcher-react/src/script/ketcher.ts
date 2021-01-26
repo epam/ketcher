@@ -23,6 +23,8 @@ import validateGraphF from './format/graphValidator'
 import Render from './render'
 import { SupportedFormat } from './ui/data/convert/struct.types'
 import * as structConverter from './ui/data/convert/structConverter'
+// @ts-ignore
+import { ServiceMode } from 'ketcher-core'
 
 export class Ketcher {
   // @ts-ignore
@@ -38,7 +40,7 @@ export class Ketcher {
   private origin = null
   private _editor: any
 
-  static make(serviceMode: string) {
+  static create(serviceMode: ServiceMode) {
     const ketcher = new Ketcher()
     ketcher[serviceMode] = true
 
@@ -64,7 +66,8 @@ export class Ketcher {
   constructor() {
     Object.defineProperty(this, '_editor', {
       enumerable: false,
-      configurable: false
+      configurable: false,
+      writable: true
     })
   }
 

@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { StructServiceProvider } from '../infrastructure/services'
+// @ts-ignore
+import { StructServiceProvider, StructServiceOptions } from 'ketcher-core'
 
 function api(
-  base: string,
   structServiceProvider: StructServiceProvider,
-  defaultOptions: any
+  defaultOptions: StructServiceOptions
 ) {
-  const baseUrl = !base || /\/$/.test(base) ? base : base + '/'
   const structService = structServiceProvider.createStructService(
-    baseUrl,
     defaultOptions
   )
   const info = structService.info()

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { StructService } from './structService.types'
+import { StructService, StructServiceOptions } from './structService.types'
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -77,12 +77,12 @@ function indigoCall(
   }
 }
 
-class IndigoService implements StructService {
-  private baseUrl: string
-  private defaultOptions: any
+class RemoteStructService implements StructService {
+  private readonly apiPath: string
+  private readonly defaultOptions: StructServiceOptions
 
-  constructor(base: string, defaultOptions: any) {
-    this.baseUrl = !base || /\/$/.test(base) ? base : base + '/'
+  constructor(apiPath: string, defaultOptions: StructServiceOptions) {
+    this.apiPath = apiPath
     this.defaultOptions = defaultOptions
   }
 
@@ -91,7 +91,7 @@ class IndigoService implements StructService {
       imagoVersions: any,
       isAvailable: boolean = false
     try {
-      const response = await request('GET', this.baseUrl + 'info')
+      const response = await request('GET', this.apiPath + 'info')
       indigoVersion = response['indigo_version']
       imagoVersions = response['imago_versions']
       isAvailable = true
@@ -110,7 +110,7 @@ class IndigoService implements StructService {
     return indigoCall(
       'POST',
       'indigo/convert',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -119,7 +119,7 @@ class IndigoService implements StructService {
     return indigoCall(
       'POST',
       'indigo/layout',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -128,7 +128,7 @@ class IndigoService implements StructService {
     return indigoCall(
       'POST',
       'indigo/clean',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -137,7 +137,7 @@ class IndigoService implements StructService {
     return indigoCall(
       'POST',
       'indigo/aromatize',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -146,7 +146,7 @@ class IndigoService implements StructService {
     return indigoCall(
       'POST',
       'indigo/dearomatize',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -155,7 +155,7 @@ class IndigoService implements StructService {
     return indigoCall(
       'POST',
       'indigo/calculate_cip',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -164,7 +164,7 @@ class IndigoService implements StructService {
     return indigoCall(
       'POST',
       'indigo/automap',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -173,7 +173,7 @@ class IndigoService implements StructService {
     return indigoCall(
       'POST',
       'indigo/check',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -182,7 +182,7 @@ class IndigoService implements StructService {
     return indigoCall(
       'POST',
       'indigo/calculate',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -191,13 +191,13 @@ class IndigoService implements StructService {
     const parVersion = version ? `?version=${version}` : ''
     const req = request(
       'POST',
-      this.baseUrl + `imago/uploads${parVersion}`,
+      this.apiPath + `imago/uploads${parVersion}`,
       blob,
       {
         'Content-Type': blob.type || 'application/octet-stream'
       }
     )
-    const status = request.bind(null, 'GET', this.baseUrl + 'imago/uploads/:id')
+    const status = request.bind(null, 'GET', this.apiPath + 'imago/uploads/:id')
     return req
       .then(data =>
         pollDeferred(
@@ -217,10 +217,10 @@ class IndigoService implements StructService {
     return indigoCall(
       'POST',
       'indigo/render',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
 }
 
-export default IndigoService
+export default RemoteStructService

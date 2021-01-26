@@ -27,7 +27,7 @@ class RemoteStructServiceProvider implements StructServiceProvider {
   mode: ServiceMode = 'remote'
 
   constructor(baseUrl: string) {
-    this.baseUrl = baseUrl
+    this.baseUrl = !baseUrl || /\/$/.test(baseUrl) ? baseUrl : baseUrl + '/'
   }
 
   createStructService(options: StructServiceOptions): StructService {

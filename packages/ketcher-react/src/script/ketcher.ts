@@ -85,11 +85,9 @@ export class Ketcher {
       molfileFormat === 'v3000' ? SupportedFormat.MolV3000 : SupportedFormat.Mol
 
     return structConverter.toString(struct, format, this.server).catch(() => {
-      const options = {
-        ignoreErrors: true,
-        format: molfileFormat
-      }
-      return molfile.stringify(struct, options)
+      throw new Error(
+        `We can't create molfile with your format, because server is not available`
+      )
     })
   }
 

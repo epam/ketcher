@@ -16,4 +16,4 @@
 
 import AppModal from './AppModal'
 
-export { AppModal }
+export default AppModal

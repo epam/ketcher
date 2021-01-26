@@ -56,9 +56,6 @@
     ],
     "*.{json}": [
       "prettier --write"
-    ],
-    "*.{css,less,scss}": [
-      "stylelint --formatter verbose --fix --allow-empty-input"
     ]
   }
 }

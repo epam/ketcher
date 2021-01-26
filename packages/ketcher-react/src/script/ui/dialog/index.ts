@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Open from './mainmenu/open'
 import PeriodTable from './elements/period-table'
 import Rgroup from './toolbox/rgroup'
 import TemplateAttach from './template/template-attach'
@@ -34,7 +33,7 @@ import {
 import EnhancedStereo from './toolbox/enhanced-stereo'
 import LabelEdit from './toolbox/labeledit'
 import RgroupLogic from './toolbox/rgroup-logic'
-import Save from './mainmenu/save'
+import { Open, Save } from '../views/modal/components/document'
 import { Settings, Help, About } from '../views/modal/components/meta'
 import Sgroup from './toolbox/sgroup'
 import Sdata from './toolbox/sdata'

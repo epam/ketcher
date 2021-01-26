@@ -17,12 +17,14 @@
 import React, { Component, createRef } from 'react'
 import { connect } from 'react-redux'
 
-import { SupportedFormatPropertiesMap as formatMap } from '../../data/convert/struct.types'
-import Dialog from '../../views/components'
-import OpenButton from '../../component/view/openbutton'
-import ClipArea, { exec } from '../../component/cliparea'
+import { SupportedFormatPropertiesMap as formatMap } from '../../../../../data/convert/struct.types'
+import Dialog from '../../../../components'
+import OpenButton from '../../../../../component/view/openbutton'
+import ClipArea, { exec } from '../../../../../component/cliparea'
 
-import { load } from '../../state'
+import { load } from '../../../../../state'
+
+import styles from './Open.module.less'
 
 class Open extends Component {
   constructor(props) {
@@ -33,6 +35,7 @@ class Open extends Component {
     }
     this.textAreaRef = createRef()
   }
+
   result() {
     const { structStr, fragment } = this.state
     return structStr ? { structStr, fragment } : null
@@ -48,19 +51,28 @@ class Open extends Component {
     })
   }
 
+  structAcceptMimes() {
+    return Object.keys(formatMap)
+      .reduce(
+        (res, key) => res.concat(formatMap[key].mime, ...formatMap[key].ext),
+        []
+      )
+      .join(',')
+  }
+
   render() {
     const { structStr, fragment } = this.state
     return (
       <Dialog
         title="Open Structure"
-        className="open"
+        className={styles.open}
         result={() => this.result()}
         params={this.props}
         buttons={[
           <OpenButton
-            key={structAcceptMimes().toString()}
+            key={this.structAcceptMimes().toString()}
             server={this.props.server}
-            type={structAcceptMimes()}
+            type={this.structAcceptMimes()}
             onLoad={s => this.changeStructStr(s)}>
             Open From File…
           </OpenButton>,
@@ -86,15 +98,6 @@ class Open extends Component {
       </Dialog>
     )
   }
-}
-
-function structAcceptMimes() {
-  return Object.keys(formatMap)
-    .reduce(
-      (res, key) => res.concat(formatMap[key].mime, ...formatMap[key].ext),
-      []
-    )
-    .join(',')
 }
 
 export default connect(

@@ -16,20 +16,22 @@
 
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import * as structFormat from '../../data/convert/structConverter'
-import { saveUserTmpl } from '../../state/templates'
-import { updateFormState } from '../../state/modal/form'
-import { check } from '../../state/server'
+import * as structFormat from '../../../../../data/convert/structConverter'
+import { saveUserTmpl } from '../../../../../state/templates'
+import { updateFormState } from '../../../../../state/modal/form'
+import { check } from '../../../../../state/server'
 
-import Dialog from '../../views/components'
-import Form, { Field } from '../../component/form/form'
-import SaveButton from '../../component/view/savebutton'
+import Dialog from '../../../../components'
+import Form, { Field } from '../../../../../component/form/form'
+import SaveButton from '../../../../../component/view/savebutton'
 import { createRef } from 'react'
 import {
   getPropertiesByFormat,
   SupportedFormat,
   SupportedFormatPropertiesMap
-} from '../../data/convert/struct.types'
+} from '../../../../../data/convert/struct.types'
+
+import styles from './Save.module.less'
 
 const saveSchema = {
   title: 'Save',
@@ -149,7 +151,7 @@ class Save extends Component {
     return (
       <Dialog
         title="Save Structure"
-        className="save"
+        className={styles.save}
         params={this.props}
         buttons={[
           <SaveButton
@@ -164,14 +166,13 @@ class Save extends Component {
           </SaveButton>,
           <button
             key="save-tmpl"
-            className="save-tmpl"
             disabled={isCleanStruct}
             onClick={() => this.props.onTmplSave(this.props.struct)}>
             Save to Templates
           </button>,
           'Close'
         ]}>
-        <div className="form-container">
+        <div className={styles.form_container}>
           <Form
             schema={this.saveSchema}
             init={{
@@ -184,9 +185,9 @@ class Save extends Component {
           </Form>
           <textarea value={structStr} readOnly ref={this.textAreaRef} />
           {warnings.map(warning => (
-            <div className="warnings-container">
-              <div className="warning"></div>
-              <div className="warnings-arr">{warning}</div>
+            <div className={styles.warnings_container}>
+              <div className={styles.warning}></div>
+              <div className={styles.warnings_arr}>{warning}</div>
             </div>
           ))}
         </div>

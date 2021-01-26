@@ -1,0 +1,42 @@
+@import "../../../../../../../style/variables.less";
+@import "../../../../../../../style/mixins.less";
+
+.save {
+	.form_container {
+		display: flex;
+		flex-direction: column;
+		width: min-content;
+    }
+
+	.warnings_container {
+		display: flex;
+		.warnings_arr {
+			color: @error-color;
+			margin: 2px;
+			white-space: pre-line;
+		}
+    }
+
+    .warning {
+        .warning;
+    }
+
+	form > label {
+		display: inline-block;
+		text-align: right;
+		margin: 0 .3em;
+		select, input {
+			width: 12.25em;
+		}
+    }
+
+	textarea {
+		display: block;
+		min-width: 34em;
+		min-height: 23em;
+		overflow: auto;
+		white-space: pre;
+		cursor: text;
+		resize: both;
+	}
+}

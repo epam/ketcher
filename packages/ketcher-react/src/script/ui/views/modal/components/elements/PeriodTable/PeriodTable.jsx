@@ -30,32 +30,7 @@ import { fromElement, toElement } from '../../../../../data/convert/structconv'
 import { onAction } from '../../../../../state'
 import { addAtoms } from '../../../../../state/toolbar'
 
-import { ElementsTable, AtomInfo } from './components'
-
-const typeSchema = [
-  { title: 'Single', value: 'atom' },
-  { title: 'List', value: 'list' },
-  { title: 'Not List', value: 'not-list' }
-]
-
-function TypeChoice({ value, onChange, ...props }) {
-  return (
-    <fieldset>
-      {typeSchema.map(sc => (
-        <label key={sc.title}>
-          <input
-            type="radio"
-            value={sc.value}
-            checked={sc.value === value} //TODO: fix React Warning
-            onClick={() => onChange(sc.value)}
-            {...props}
-          />
-          {sc.title}
-        </label>
-      ))}
-    </fieldset>
-  )
-}
+import { ElementsTable, AtomInfo, TypeChoice } from './components'
 
 class PeriodTable extends Component {
   constructor(props) {

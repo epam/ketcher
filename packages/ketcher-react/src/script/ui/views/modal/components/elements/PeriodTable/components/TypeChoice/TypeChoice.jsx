@@ -14,8 +14,31 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ElementsTable from './ElementsTable/ElementsTable'
-import AtomInfo from './AtomInfo/AtomInfo'
-import TypeChoice from './TypeChoice/TypeChoice'
+import React from 'react'
 
-export { ElementsTable, AtomInfo, TypeChoice }
+const typeSchema = [
+  { title: 'Single', value: 'atom' },
+  { title: 'List', value: 'list' },
+  { title: 'Not List', value: 'not-list' }
+]
+
+function TypeChoice({ value, onChange, ...props }) {
+  return (
+    <fieldset>
+      {typeSchema.map(sc => (
+        <label key={sc.title}>
+          <input
+            type="radio"
+            value={sc.value}
+            checked={sc.value === value} //TODO: fix React Warning
+            onClick={() => onChange(sc.value)}
+            {...props}
+          />
+          {sc.title}
+        </label>
+      ))}
+    </fieldset>
+  )
+}
+
+export default TypeChoice

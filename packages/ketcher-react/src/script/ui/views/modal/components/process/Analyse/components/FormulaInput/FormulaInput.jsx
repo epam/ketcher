@@ -44,11 +44,11 @@ function FormulaInput(props) {
   let position = 0
 
   while ((matches = formulaRegexp.exec(value)) !== null) {
-    if (matches[1].length > 0) {
+    if (matches[1].length) {
       content.push(<sup>{matches[1]}</sup>)
     }
     content.push(value.substring(position, matches.index) + matches[2])
-    if (matches[3].length > 0) {
+    if (matches[3].length) {
       content.push(<sub key={matches}>{matches[3]}</sub>)
     }
     position = matches.index + matches[0].length

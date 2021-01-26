@@ -95,6 +95,9 @@ Editor.prototype.clear = function () {
   this.struct(null)
 }
 
+/**
+ * @param {Struct} [value]
+ * @returns {Struct} */
 Editor.prototype.struct = function (value) {
   if (arguments.length > 0) {
     this.selection(null)

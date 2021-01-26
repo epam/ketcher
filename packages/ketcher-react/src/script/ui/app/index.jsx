@@ -28,7 +28,6 @@ import createStore, { onAction, load } from '../state'
 import { checkServer } from '../state/server'
 import { initKeydownListener } from '../state/hotkeys'
 import { initResize } from '../state/toolbar'
-
 import { loadStruct } from '../state/shared'
 
 const App = connect(null, { onAction, checkServer })(
@@ -51,8 +50,15 @@ const App = connect(null, { onAction, checkServer })(
   }
 )
 
-function init(element, staticResourcesUrl, options, server, editorContainer) {
-  const store = createStore(options, server, editorContainer)
+/**
+ * @param {HTMLInputElement | null} element
+ * @param {string} staticResourcesUrl
+ * @param {any} options
+ * @param {import('../../api').Api} server
+ * @param {function} setEditor
+ * */
+function init(element, staticResourcesUrl, options, server, setEditor) {
+  const store = createStore(options, server, setEditor)
   store.dispatch(initKeydownListener(element))
   store.dispatch(initResize())
 

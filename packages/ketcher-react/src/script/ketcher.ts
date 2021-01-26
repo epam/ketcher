@@ -13,85 +13,76 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { ServiceMode } from 'ketcher-core'
 import { isEqual } from 'lodash/fp'
+import { Api } from './api'
 import molfile, { MolfileFormat } from './chem/molfile'
-import smiles from './chem/smiles'
 import Struct from './chem/struct'
 import Editor from './editor'
-import graph from './format/chemGraph'
-import validateGraphF from './format/graphValidator'
+import { Graph } from './format/chemGraph/Graph'
 import Render from './render'
+import { StructureService } from './services'
 import { SupportedFormat } from './ui/data/convert/struct.types'
-import * as structConverter from './ui/data/convert/structConverter'
-// @ts-ignore
-import { ServiceMode } from 'ketcher-core'
 
-export class Ketcher {
-  // @ts-ignore
-  editor: Editor
-  server: any
-  ui: any
-  apiPath: any
-  readonly buildInfo = {
-    version: process.env.VERSION,
-    buildDate: process.env.BUILD_DATE,
-    buildNumber: process.env.BUILD_NUMBER
-  }
+interface UI {
+  load: (structStr: string | null, options?: any) => undefined
+  loadStruct: (struct: Struct) => any
+}
+
+interface BuildInfo {
+  version: string
+  buildDate: string
+  buildNumber: string
+}
+
+class Ketcher {
   private origin = null
-  private _editor: any
 
-  static create(serviceMode: ServiceMode) {
-    const ketcher = new Ketcher()
+  static create(
+    serviceMode: ServiceMode,
+    editor: Editor,
+    api: Api,
+    ui: UI,
+    buildInfo: BuildInfo,
+    structureService: StructureService
+  ) {
+    const ketcher = new Ketcher(editor, api, ui, buildInfo, structureService)
     ketcher[serviceMode] = true
-
-    Object.defineProperty(ketcher, 'editor', {
-      set: editor => {
-        ketcher._editor = editor
-        // todo: remove
-        ;(global as any)._ui_editor = editor
-      },
-      get: () => {
-        return ketcher._editor
-      },
-      enumerable: true,
-      configurable: false
-    })
 
     // todo: remove
     ;(global as any).ketcher = ketcher
+    ;(global as any)._ui_editor = editor
 
     return ketcher
   }
 
-  constructor() {
-    Object.defineProperty(this, '_editor', {
-      enumerable: false,
-      configurable: false,
-      writable: true
-    })
+  constructor(
+    readonly editor: Editor,
+    readonly server: Api,
+    readonly ui: UI,
+    readonly buildInfo: BuildInfo,
+    private readonly structureService: StructureService
+  ) {}
+
+  getStructureAsync(
+    structureFormat: SupportedFormat = SupportedFormat.Rxn
+  ): Promise<string> {
+    return this.structureService.getStructureAsync(structureFormat)
   }
 
-  getSmiles(): string {
-    return smiles.stringify(this.editor.struct(), { ignoreErrors: true })
+  getSmilesAsync(isExtended: boolean = false): Promise<string> {
+    return this.structureService.getSmilesAsync(isExtended)
   }
 
-  saveSmiles(): Promise<any> {
-    const struct = this.editor.struct()
-    return structConverter
-      .toString(struct, SupportedFormat.SmilesExt, this.server)
-      .catch(() => smiles.stringify(struct))
+  getMolfileAsync(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+    return this.structureService.getMolfileAsync(molfileFormat)
   }
 
-  getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
-    const struct = this.editor.struct()
-    const format =
-      molfileFormat === 'v3000' ? SupportedFormat.MolV3000 : SupportedFormat.Mol
-
-    return structConverter.toString(struct, format, this.server).catch(() => {
-      throw new Error(
-        `We can't create molfile with your format, because server is not available`
-      )
-    })
+  async getGraphAsync(): Promise<Graph> {
+    const stringifiedGraph = await this.structureService.getStructureAsync(
+      SupportedFormat.Graph
+    )
+    return JSON.parse(stringifiedGraph)
   }
 
   setMolecule(molString: string): void {
@@ -142,16 +133,6 @@ export class Ketcher {
     this.origin = position ? this.editor.historyStack[position - 1] : null
   }
 
-  toGraph(): any {
-    const j = graph.toGraph(this.editor.render.ctab.molecule)
-    validateGraphF(j)
-    return j
-  }
-
-  fromGraph(): Struct {
-    return graph.fromGraph(graph.toGraph(this.editor.render.ctab.molecule))
-  }
-
   generatePng(...args: any): Promise<any> {
     return this.server.generatePngAsBase64
       .apply(null, args)
@@ -162,3 +143,6 @@ export class Ketcher {
       )
   }
 }
+
+export type { UI, BuildInfo }
+export { Ketcher }

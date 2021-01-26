@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-// @ts-ignore
-import { StructServiceProvider, StructServiceOptions } from 'ketcher-core'
+import {
+  StructServiceProvider,
+  StructServiceOptions,
+  InfoResult,
+  StructService
+} from 'ketcher-core'
 
-function api(
+interface Api extends Promise<InfoResult>, Omit<StructService, 'info'> {}
+
+function createApi(
   structServiceProvider: StructServiceProvider,
   defaultOptions: StructServiceOptions
-) {
+): Api {
   const structService = structServiceProvider.createStructService(
     defaultOptions
   )
@@ -40,4 +46,5 @@ function api(
   })
 }
 
-export default api
+export type { Api }
+export default createApi

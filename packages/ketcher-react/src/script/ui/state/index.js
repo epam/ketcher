@@ -40,13 +40,13 @@ const shared = combineReducers({
   templates: templatesReducer
 })
 
-function getRootReducer(editorContainer) {
+function getRootReducer(setEditor) {
   return function root(state, action) {
     switch (
       action.type // eslint-disable-line default-case
     ) {
       case 'INIT':
-        editorContainer.editor = action.editor
+        setEditor(action.editor)
 
       case 'UPDATE': // eslint-disable-line no-case-declarations
         const { type, ...data } = action
@@ -72,7 +72,7 @@ function getRootReducer(editorContainer) {
   }
 }
 
-export default function (options, server, editorContainer) {
+export default function (options, server, setEditor) {
   const { buttons = {}, ...restOptions } = options
 
   // TODO: redux localStorage here
@@ -89,6 +89,6 @@ export default function (options, server, editorContainer) {
 
   if (process.env.NODE_ENV !== 'production') middleware.push(logger)
 
-  const rootReducer = getRootReducer(editorContainer)
+  const rootReducer = getRootReducer(setEditor)
   return createStore(rootReducer, initState, applyMiddleware(...middleware))
 }

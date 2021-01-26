@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-// @ts-ignore
 import { StructServiceProvider } from 'ketcher-core'
-import api from './api'
+import createApi from './api'
+import Editor from './editor'
+import { BuildInfo, Ketcher, UI as KetcherUI } from './ketcher'
+import { ServerStructureService } from './services'
 import initUI from './ui'
-import { Ketcher } from './ketcher'
 
 interface ButtonConfig {
   name: string
@@ -44,35 +45,55 @@ interface Config {
   }
 }
 
-function buildKetcher({
+async function buildKetcherAsync({
   element,
   staticResourcesUrl,
   structServiceProvider,
   buttons
 }: Config) {
-  const params = new URLSearchParams(document.location.search)
-  const ketcher = Ketcher.create(structServiceProvider.mode)
-
-  ketcher.server = api(structServiceProvider, {
+  const ketcherApi = createApi(structServiceProvider, {
     'smart-layout': true,
     'ignore-stereochemistry-errors': true,
     'mass-skip-error-on-pseudoatoms': false,
     'gross-formula-add-rsites': true
   })
 
-  ketcher.ui = initUI(
-    element,
-    staticResourcesUrl,
-    Object.assign(
-      {
-        buttons: buttons || {}
-      },
-      ketcher.buildInfo
-    ),
-    ketcher.server,
-    ketcher
+  const buildInfo: BuildInfo = {
+    version: process.env.VERSION as string,
+    buildDate: process.env.BUILD_DATE as string,
+    buildNumber: process.env.BUILD_NUMBER as string
+  }
+
+  const [ui, editor] = await new Promise<[KetcherUI, Editor]>(resolve => {
+    const setEditor = editor => {
+      resolve([ui, editor])
+    }
+
+    const ui = initUI(
+      element,
+      staticResourcesUrl,
+      Object.assign(
+        {
+          buttons: buttons || {}
+        },
+        buildInfo
+      ),
+      ketcherApi,
+      setEditor
+    )
+  })
+
+  const structureService = new ServerStructureService(editor, ketcherApi)
+  const ketcher = Ketcher.create(
+    structServiceProvider.mode,
+    editor,
+    ketcherApi,
+    ui,
+    buildInfo,
+    structureService
   )
 
+  const params = new URLSearchParams(document.location.search)
   ketcher.server.then(
     () => {
       if (params.get('moll')) ketcher.ui.load(params.get('moll'))
@@ -86,4 +107,4 @@ function buildKetcher({
 }
 
 export type { Config }
-export default buildKetcher
+export default buildKetcherAsync

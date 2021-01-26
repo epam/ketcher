@@ -15,11 +15,10 @@
  ***************************************************************************/
 import RemoteStructService from './RemoteStructService'
 import RemoteStructServiceProvider from './RemoteStructServiceProvider'
-
+import { ChemicalMimeType } from './structService.types'
 import type {
   StructService,
   StructServiceOptions,
-  ChemicalMimeType,
   AromatizeData,
   AromatizeResult,
   AutomapData,
@@ -46,11 +45,10 @@ import type {
   StructServiceProvider
 } from './structServiceProvider.types'
 
-export { RemoteStructService, RemoteStructServiceProvider }
+export { RemoteStructService, RemoteStructServiceProvider, ChemicalMimeType }
 export type {
   StructService,
   StructServiceOptions,
-  ChemicalMimeType,
   AromatizeData,
   AromatizeResult,
   AutomapData,

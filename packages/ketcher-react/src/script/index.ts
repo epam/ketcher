@@ -1,4 +1,3 @@
-import { AromatizeCommandData } from './../../../ketcher-standalone/src/infrastructure/services/struct/indigoWorker.types'
 /****************************************************************************
  * Copyright 2018 EPAM Systems
  *
@@ -38,30 +37,22 @@ type ButtonName =
 interface Config {
   element: HTMLInputElement | null
   staticResourcesUrl: string
-  apiPath?: string
   structServiceProvider: StructServiceProvider
   buttons?: {
     [buttonName in ButtonName]: ButtonConfig
   }
 }
 
-// TODO: replace window.onload with something like <https://github.com/ded/domready>
-// to start early
 function buildKetcher({
   element,
   staticResourcesUrl,
-  apiPath,
   structServiceProvider,
   buttons
 }: Config) {
-  const ketcher = Ketcher.make(structServiceProvider.mode)
-  ketcher.apiPath = apiPath
-
   const params = new URLSearchParams(document.location.search)
+  const ketcher = Ketcher.create(structServiceProvider.mode)
 
-  if (params.has('api_path')) ketcher.apiPath = params.get('api_path')
-
-  ketcher.server = api(ketcher.apiPath, structServiceProvider, {
+  ketcher.server = api(structServiceProvider, {
     'smart-layout': true,
     'ignore-stereochemistry-errors': true,
     'mass-skip-error-on-pseudoatoms': false,
@@ -75,7 +66,6 @@ function buildKetcher({
       {
         buttons: buttons || {}
       },
-      params,
       ketcher.buildInfo
     ),
     ketcher.server,

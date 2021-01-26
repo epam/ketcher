@@ -78,11 +78,11 @@ function indigoCall(
 }
 
 class RemoteStructService implements StructService {
-  private baseUrl: string
+  private apiPath: string
   private defaultOptions: any
 
-  constructor(base: string, defaultOptions: any) {
-    this.baseUrl = !base || /\/$/.test(base) ? base : base + '/'
+  constructor(apiPath: string, defaultOptions: any) {
+    this.apiPath = apiPath
     this.defaultOptions = defaultOptions
   }
 
@@ -91,7 +91,7 @@ class RemoteStructService implements StructService {
       imagoVersions: any,
       isAvailable: boolean = false
     try {
-      const response = await request('GET', this.baseUrl + 'info')
+      const response = await request('GET', this.apiPath + 'info')
       indigoVersion = response['indigo_version']
       imagoVersions = response['imago_versions']
       isAvailable = true
@@ -110,7 +110,7 @@ class RemoteStructService implements StructService {
     return indigoCall(
       'POST',
       'indigo/convert',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -119,7 +119,7 @@ class RemoteStructService implements StructService {
     return indigoCall(
       'POST',
       'indigo/layout',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -128,7 +128,7 @@ class RemoteStructService implements StructService {
     return indigoCall(
       'POST',
       'indigo/clean',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -137,7 +137,7 @@ class RemoteStructService implements StructService {
     return indigoCall(
       'POST',
       'indigo/aromatize',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -146,7 +146,7 @@ class RemoteStructService implements StructService {
     return indigoCall(
       'POST',
       'indigo/dearomatize',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -155,7 +155,7 @@ class RemoteStructService implements StructService {
     return indigoCall(
       'POST',
       'indigo/calculate_cip',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -164,7 +164,7 @@ class RemoteStructService implements StructService {
     return indigoCall(
       'POST',
       'indigo/automap',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -173,7 +173,7 @@ class RemoteStructService implements StructService {
     return indigoCall(
       'POST',
       'indigo/check',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -182,7 +182,7 @@ class RemoteStructService implements StructService {
     return indigoCall(
       'POST',
       'indigo/calculate',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }
@@ -191,13 +191,13 @@ class RemoteStructService implements StructService {
     const parVersion = version ? `?version=${version}` : ''
     const req = request(
       'POST',
-      this.baseUrl + `imago/uploads${parVersion}`,
+      this.apiPath + `imago/uploads${parVersion}`,
       blob,
       {
         'Content-Type': blob.type || 'application/octet-stream'
       }
     )
-    const status = request.bind(null, 'GET', this.baseUrl + 'imago/uploads/:id')
+    const status = request.bind(null, 'GET', this.apiPath + 'imago/uploads/:id')
     return req
       .then(data =>
         pollDeferred(
@@ -217,7 +217,7 @@ class RemoteStructService implements StructService {
     return indigoCall(
       'POST',
       'indigo/render',
-      this.baseUrl,
+      this.apiPath,
       this.defaultOptions
     )(data, options)
   }

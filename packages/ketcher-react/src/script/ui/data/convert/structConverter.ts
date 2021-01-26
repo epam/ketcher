@@ -58,7 +58,7 @@ export function toString(
   format: SupportedFormat,
   server: any,
   serverOpts?: any
-) {
+): Promise<string> {
   let formatProperties = getPropertiesByFormat(format)
   console.assert(formatProperties, 'No such format')
   if (format === SupportedFormat.Graph) {

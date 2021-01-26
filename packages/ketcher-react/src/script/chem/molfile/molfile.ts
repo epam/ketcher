@@ -17,7 +17,6 @@
 import element from './../element'
 import Struct from '../struct'
 import common from './common'
-import { MolfileFormat } from './molfileFormat'
 import utils from './utils'
 
 const END_V2000 = '2D 1   1.00000     0.00000     0'
@@ -30,18 +29,14 @@ type NumberTuple = [number, number]
 class Molfile {
   molecule: Struct
   molfile: string | null
-  format: MolfileFormat
   reaction: boolean
   mapping: Mapping
   bondMapping: Mapping
 
-  constructor(format: MolfileFormat = 'v2000') {
-    /* reader */
-    /* saver */
+  constructor() {
     // @ts-ignore
     this.molecule = null
     this.molfile = null
-    this.format = format
 
     this.reaction = false
     this.mapping = {}
@@ -119,7 +114,7 @@ class Molfile {
   saveMolecule(
     molecule: Struct,
     skipSGroupErrors: boolean,
-    norgroups: boolean,
+    norgroups?: boolean,
     preserveIndigoDesc?: boolean
   ) {
     // eslint-disable-line max-statements
@@ -149,9 +144,9 @@ class Molfile {
         utils.paddedNum(0, 3) +
         '\n'
       for (let i = 0; i < all.length; ++i) {
-        let saver = new Molfile(this.format)
-        let submol = molecule.clone(all[i], null, true)
-        let molfile = saver.saveMolecule(submol, false, true)
+        const saver = new Molfile()
+        const submol = molecule.clone(all[i], null, true)
+        const molfile = saver.saveMolecule(submol, false, true)
         this.molfile += '$MOL\n' + molfile
       }
       return this.molfile
@@ -161,7 +156,7 @@ class Molfile {
       if (norgroups) {
         molecule = molecule.getScaffold()
       } else {
-        let scaffold = new Molfile(this.format).getCTab(
+        let scaffold = new Molfile().getCTab(
           molecule.getScaffold(),
           molecule.rgroups
         )
@@ -174,9 +169,7 @@ class Molfile {
           this.writePaddedNumber(rgid, 3)
           this.molfile += '\n'
           rg.frags.forEach(fid => {
-            const group = new Molfile(this.format).getCTab(
-              molecule.getFragment(fid)
-            )
+            const group = new Molfile().getCTab(molecule.getFragment(fid))
             this.molfile += '$CTAB\n' + group + '$END CTAB\n'
           })
           this.molfile += '$END RGP\n'
@@ -192,14 +185,7 @@ class Molfile {
     this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc)
 
     this.writeHeader()
-
-    switch (this.format) {
-      case 'v3000': // TODO: saving to V3000
-      case 'v2000':
-      default:
-        this.writeCTab2000()
-        break
-    }
+    this.writeCTab2000()
 
     return this.molfile
   }

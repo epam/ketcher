@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { isEqual } from 'lodash/fp'
 import molfile, { MolfileFormat } from './chem/molfile'
 import smiles from './chem/smiles'
-import * as structFormat from './ui/data/convert/structConverter'
-import Render from './render'
+import Struct from './chem/struct'
+import Editor from './editor'
 import graph from './format/chemGraph'
 import validateGraphF from './format/graphValidator'
-import { isEqual } from 'lodash/fp'
-import Struct from './chem/struct'
+import Render from './render'
 import { SupportedFormat } from './ui/data/convert/struct.types'
-import Editor from './editor'
+import * as structConverter from './ui/data/convert/structConverter'
 
-import Molfile from './chem/molfile/molfile'
 export class Ketcher {
   // @ts-ignore
   editor: Editor
@@ -75,23 +74,23 @@ export class Ketcher {
 
   saveSmiles(): Promise<any> {
     const struct = this.editor.struct()
-    return structFormat
+    return structConverter
       .toString(struct, SupportedFormat.SmilesExt, this.server)
       .catch(() => smiles.stringify(struct))
   }
 
-  getMolfile(molfileFormat?: MolfileFormat): string {
+  getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
     const struct = this.editor.struct()
-    const options = {
-      ignoreErrors: true,
-      format: molfileFormat
-    }
+    const format =
+      molfileFormat === 'v3000' ? SupportedFormat.MolV3000 : SupportedFormat.Mol
 
-    return molfile.stringify(struct, options)
-  }
-
-  parse(lines: string[]) {
-    return new Molfile().parseCTFile(lines, false)
+    return structConverter.toString(struct, format, this.server).catch(() => {
+      const options = {
+        ignoreErrors: true,
+        format: molfileFormat
+      }
+      return molfile.stringify(struct, options)
+    })
   }
 
   setMolecule(molString: string): void {

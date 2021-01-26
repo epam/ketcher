@@ -53,6 +53,7 @@
     "font-face-observer": "^1.0.0",
     "hoist-non-react-statics": "^3.3.2",
     "jsonschema": "^1.4.0",
+    "ketcher-core": "^1.0.0",
     "lodash": "^4.17.20",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",
@@ -70,8 +71,7 @@
     "subscription": "^3.0.0",
     "url-search-params-polyfill": "^8.1.0",
     "w3c-keyname": "^2.2.4",
-    "whatwg-fetch": "^3.4.1",
-    "ketcher-core": "^1.0.0"
+    "whatwg-fetch": "^3.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",

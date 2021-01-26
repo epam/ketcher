@@ -24,7 +24,7 @@ import element from '../../../../../../chem/element'
 import Dialog from '../../../../components'
 import Tabs from '../../../../../component/view/tabs'
 
-import GenericGroups from '../../../../../dialog/elements/generic-groups'
+import GenericGroups from '../../../../GenericGroups'
 
 import { fromElement, toElement } from '../../../../../data/convert/structconv'
 import { onAction } from '../../../../../state'
@@ -39,7 +39,7 @@ class PeriodTable extends Component {
     this.state = {
       type: props.type || genType || 'atom',
       value: props.values || props.label || null,
-      cur: element[2],
+      current: element[2],
       isInfo: false
     }
     this.firstType = true
@@ -86,8 +86,8 @@ class PeriodTable extends Component {
     return value.length ? { type, values: value } : null
   }
 
-  curEvents = el => ({
-    onMouseEnter: () => this.setState({ cur: el, isInfo: true }),
+  curEvents = element => ({
+    onMouseEnter: () => this.setState({ current: element, isInfo: true }),
     onMouseLeave: () => this.setState({ isInfo: false })
   })
 
@@ -95,7 +95,7 @@ class PeriodTable extends Component {
     const renderPeriodicTable = value => {
       return (
         <div className="period-table">
-          <AtomInfo el={this.state.cur} isInfo={this.state.isInfo} />
+          <AtomInfo el={this.state.current} isInfo={this.state.isInfo} />
           <ElementsTable
             value={value}
             curEvents={this.curEvents.bind(this)}

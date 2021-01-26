@@ -19,7 +19,7 @@ export enum ChemicalMimeType {
   DaylightSmiles = 'chemical/x-daylight-smiles',
   ExtendedSmiles = 'chemical/x-chemaxon-cxsmiles',
   DaylightSmarts = 'chemical/x-daylight-smarts',
-  InchI = 'chemical/x-inchi',
+  InChI = 'chemical/x-inchi',
   InChIAuxInfo = 'chemical/x-inchi-aux',
   CML = 'chemical/x-cml'
 }

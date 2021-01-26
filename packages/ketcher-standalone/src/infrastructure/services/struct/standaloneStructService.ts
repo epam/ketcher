@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+// @ts-ignore
 import IndigoWorker from 'web-worker:./indigoWorker'
 import {
   Command,
@@ -31,8 +32,9 @@ import {
   CalculateCommandData,
   GenerateImageCommandData
 } from './indigoWorker.types'
-import {
-  StructService,
+// @ts-ignore
+import { StructService, ChemicalMimeType } from 'ketcher-core'
+import type {
   CheckData,
   AutomapData,
   CalculateCipData,
@@ -41,7 +43,6 @@ import {
   CleanData,
   LayoutData,
   CalculateData,
-  ChemicalMimeType,
   StructServiceOptions,
   InfoResult,
   ConvertData,
@@ -55,6 +56,7 @@ import {
   CheckResult,
   CalculateResult,
   RecognizeResult
+  // @ts-ignore
 } from 'ketcher-core'
 
 interface KeyValuePair {
@@ -94,6 +96,9 @@ function convertMimeTypeToOutputFormat(
     case ChemicalMimeType.CML: {
       format = SupportedFormat.CML
       break
+    }
+    default: {
+      throw new Error('Unsupported chemical mime type')
     }
   }
 

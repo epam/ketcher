@@ -21,7 +21,7 @@ import 'whatwg-fetch'
 import './index.less'
 import init, { Config } from './script'
 
-interface EditorProps extends Config {}
+interface EditorProps extends Omit<Config, 'element'> {}
 
 function Editor(props: EditorProps) {
   const rootElRef = useRef<HTMLInputElement>(null)

@@ -23,6 +23,7 @@ import validateGraphF from './format/graphValidator'
 import Render from './render'
 import { SupportedFormat } from './ui/data/convert/struct.types'
 import * as structConverter from './ui/data/convert/structConverter'
+// @ts-ignore
 import { ServiceMode } from 'ketcher-core'
 
 export class Ketcher {

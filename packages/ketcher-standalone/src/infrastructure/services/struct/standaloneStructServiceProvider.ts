@@ -19,6 +19,7 @@ import {
   StructService,
   StructServiceProvider,
   StructServiceOptions
+  // @ts-ignore
 } from 'ketcher-core'
 import StandaloneStructService from './standaloneStructService'
 

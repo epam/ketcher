@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import React, { Component } from 'react'
+import clsx from 'clsx'
 
 class Tabs extends Component {
   constructor(props) {
@@ -41,7 +42,9 @@ class Tabs extends Component {
           {tabs.map((tabPanel, index) => (
             <a // eslint-disable-line
               key={index}
-              className={this.state.tabIndex === index ? 'active' : ''}
+              className={clsx({
+                active: this.state.tabIndex === index
+              })}
               onClick={ev => this.changeTab(ev, index)}>
               {tabPanel.caption}
             </a>

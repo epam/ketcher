@@ -14,7 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ElementsTable from './ElementsTable/ElementsTable'
-import AtomInfo from './AtomInfo/AtomInfo'
+import React from 'react'
+import { sketchingColors as elementColor } from '../../../../../../../../chem/element-color'
+import element from '../../../../../../../../chem/element'
 
-export { ElementsTable, AtomInfo }
+function AtomInfo({ el, isInfo }) {
+  const numberStyle = {
+    color: elementColor[el.label] || 'black',
+    fontSize: '1.2em'
+  }
+  const elemStyle = {
+    color: elementColor[el.label] || 'black',
+    fontWeight: 'bold',
+    fontSize: '2em'
+  }
+  return (
+    <div className={`ket-atom-info ${isInfo ? '' : 'none'}`}>
+      <div style={numberStyle}>{element.map[el.label]}</div>
+      <span style={elemStyle}>{el.label}</span>
+      <br />
+      {el.title}
+      <br />
+      {el.atomic_mass}
+    </div>
+  )
+}
+
+export default AtomInfo

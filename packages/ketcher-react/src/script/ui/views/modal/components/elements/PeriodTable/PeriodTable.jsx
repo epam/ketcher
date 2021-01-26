@@ -20,7 +20,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import element from '../../../../../../chem/element'
-import { sketchingColors as elementColor } from '../../../../../../chem/element-color'
 
 import Dialog from '../../../../components'
 import Tabs from '../../../../../component/view/tabs'
@@ -31,7 +30,7 @@ import { fromElement, toElement } from '../../../../../data/convert/structconv'
 import { onAction } from '../../../../../state'
 import { addAtoms } from '../../../../../state/toolbar'
 
-import { ElementsTable } from './components'
+import { ElementsTable, AtomInfo } from './components'
 
 const typeSchema = [
   { title: 'Single', value: 'atom' },
@@ -55,28 +54,6 @@ function TypeChoice({ value, onChange, ...props }) {
         </label>
       ))}
     </fieldset>
-  )
-}
-
-function AtomInfo({ el, isInfo }) {
-  const numberStyle = {
-    color: elementColor[el.label] || 'black',
-    fontSize: '1.2em'
-  }
-  const elemStyle = {
-    color: elementColor[el.label] || 'black',
-    fontWeight: 'bold',
-    fontSize: '2em'
-  }
-  return (
-    <div className={`ket-atom-info ${isInfo ? '' : 'none'}`}>
-      <div style={numberStyle}>{element.map[el.label]}</div>
-      <span style={elemStyle}>{el.label}</span>
-      <br />
-      {el.title}
-      <br />
-      {el.atomic_mass}
-    </div>
   )
 }
 

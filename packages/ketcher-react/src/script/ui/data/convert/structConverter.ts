@@ -16,6 +16,7 @@
 
 import molfile from '../../../chem/molfile'
 import smiles from '../../../chem/smiles'
+import Struct from '../../../chem/struct'
 import graph from '../../../format/chemGraph'
 import { getPropertiesByFormat, SupportedFormat } from './struct.types'
 
@@ -53,11 +54,11 @@ function guess(structStr: string): SupportedFormat {
 }
 
 export function toString(
-  struct: any,
+  struct: Struct,
   format: SupportedFormat,
   server: any,
   serverOpts?: any
-) {
+): Promise<string> {
   let formatProperties = getPropertiesByFormat(format)
   console.assert(formatProperties, 'No such format')
   if (format === SupportedFormat.Graph) {

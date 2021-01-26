@@ -46,12 +46,14 @@ function parseCTFile(str, options) {
 
 const molFileManager = {
   stringify(struct, options) {
-    const opts = options || {}
-    return new Molfile(opts.v3000).saveMolecule(
+    if (!options) {
+      options = {}
+    }
+    return new Molfile().saveMolecule(
       struct,
-      opts.ignoreErrors,
-      opts.noRgroups,
-      opts.preserveIndigoDesc
+      options.ignoreErrors,
+      options.noRgroups,
+      options.preserveIndigoDesc
     )
   },
   parse(str, options) {
@@ -67,4 +69,5 @@ const molFileManager = {
   }
 }
 
+export * from './molfileFormat'
 export default molFileManager

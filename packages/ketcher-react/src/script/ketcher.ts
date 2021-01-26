@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import molfile from './chem/molfile'
+import { isEqual } from 'lodash/fp'
+import molfile, { MolfileFormat } from './chem/molfile'
 import smiles from './chem/smiles'
-import * as structFormat from './ui/data/convert/structConverter'
-import Render from './render'
+import Struct from './chem/struct'
+import Editor from './editor'
 import graph from './format/chemGraph'
 import validateGraphF from './format/graphValidator'
-import { isEqual } from 'lodash/fp'
-import Struct from './chem/struct'
+import Render from './render'
 import { SupportedFormat } from './ui/data/convert/struct.types'
+import * as structConverter from './ui/data/convert/structConverter'
 
 export class Ketcher {
-  editor: any
+  // @ts-ignore
+  editor: Editor
   server: any
   ui: any
   apiPath: any
@@ -72,13 +74,21 @@ export class Ketcher {
 
   saveSmiles(): Promise<any> {
     const struct = this.editor.struct()
-    return structFormat
+    return structConverter
       .toString(struct, SupportedFormat.SmilesExt, this.server)
       .catch(() => smiles.stringify(struct))
   }
 
-  getMolfile(): string {
-    return molfile.stringify(this.editor.struct(), { ignoreErrors: true })
+  getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
+    const struct = this.editor.struct()
+    const format =
+      molfileFormat === 'v3000' ? SupportedFormat.MolV3000 : SupportedFormat.Mol
+
+    return structConverter.toString(struct, format, this.server).catch(() => {
+      throw new Error(
+        `We can't create molfile with your format, because server is not available`
+      )
+    })
   }
 
   setMolecule(molString: string): void {

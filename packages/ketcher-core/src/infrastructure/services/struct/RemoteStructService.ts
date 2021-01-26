@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { StructService } from './structService.types'
+import { StructService, StructServiceOptions } from './structService.types'
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -78,10 +78,10 @@ function indigoCall(
 }
 
 class RemoteStructService implements StructService {
-  private apiPath: string
-  private defaultOptions: any
+  private readonly apiPath: string
+  private readonly defaultOptions: StructServiceOptions
 
-  constructor(apiPath: string, defaultOptions: any) {
+  constructor(apiPath: string, defaultOptions: StructServiceOptions) {
     this.apiPath = apiPath
     this.defaultOptions = defaultOptions
   }

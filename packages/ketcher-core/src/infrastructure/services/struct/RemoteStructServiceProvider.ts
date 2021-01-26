@@ -23,16 +23,19 @@ import {
 import RemoteStructService from './RemoteStructService'
 
 class RemoteStructServiceProvider implements StructServiceProvider {
-  private apiPath: string
+  private readonly apiPath: string
   mode: ServiceMode = 'remote'
 
-  constructor(baseUrl: string) {
-    let apiPath = baseUrl
+  constructor(apiPath: string) {
+    let currentApiPath = apiPath
     const params = new URLSearchParams(document.location.search)
     if (params.has('api_path')) {
-      apiPath = params.get('api_path')!
+      currentApiPath = params.get('api_path')!
     }
-    this.apiPath = !apiPath || /\/$/.test(apiPath) ? apiPath : apiPath + '/'
+    this.apiPath =
+      !currentApiPath || /\/$/.test(currentApiPath)
+        ? currentApiPath
+        : currentApiPath + '/'
   }
 
   createStructService(options: StructServiceOptions): StructService {

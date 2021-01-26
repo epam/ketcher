@@ -136,7 +136,7 @@ function mapWarningGroup(property: string) {
 }
 
 class IndigoService implements StructService {
-  private defaultOptions: StructServiceOptions
+  private readonly defaultOptions: StructServiceOptions
 
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions

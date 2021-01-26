@@ -30,7 +30,8 @@ function Editor(props: EditorProps) {
       ...props,
       element: rootElRef.current
     })
-  }, [props])
+    // TODO: provide the list of dependencies after implementing unsubscribe function
+  }, [])
 
   return <div ref={rootElRef} className="ketcher root"></div>
 }

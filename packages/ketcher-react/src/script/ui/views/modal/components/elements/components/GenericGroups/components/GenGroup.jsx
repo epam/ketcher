@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import React from 'react'
-import generics from '../../chem/generics'
+import GenSet from './components'
 
 const viewSchema = {
   atom: {
@@ -62,21 +62,6 @@ const viewSchema = {
   'group/cyclic/hetero/aryl': 'hetero aryl'
 }
 
-function GenSet({ labels, caption = '', selected, onSelect, ...props }) {
-  return (
-    <fieldset {...props}>
-      {labels.map(label => (
-        <button
-          onClick={() => onSelect(label)}
-          className={selected(label) ? 'selected' : ''}>
-          {label}
-        </button>
-      ))}
-      {caption ? <legend>{caption}</legend> : null}
-    </fieldset>
-  )
-}
-
 function GenGroup({ gen, name, path, selected, onSelect }) {
   const group = gen[name]
   const pk = path ? `${path}/${name}` : name
@@ -111,33 +96,4 @@ function GenGroup({ gen, name, path, selected, onSelect }) {
   )
 }
 
-function GenericGroups({ selected, onSelect, ...props }) {
-  return (
-    <div summary="Generic Groups" {...props}>
-      <div className="col">
-        <GenGroup
-          gen={generics}
-          name="atom"
-          selected={l => selected(l)}
-          onSelect={l => onSelect(l)}
-        />
-        <GenGroup
-          gen={generics}
-          name="special"
-          selected={l => selected(l)}
-          onSelect={l => onSelect(l)}
-        />
-      </div>
-      <div className="col">
-        <GenGroup
-          gen={generics}
-          name="group"
-          selected={l => selected(l)}
-          onSelect={l => onSelect(l)}
-        />
-      </div>
-    </div>
-  )
-}
-
-export default GenericGroups
+export default GenGroup

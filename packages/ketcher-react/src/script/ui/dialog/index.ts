@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { PeriodTable } from '../views/modal/components/elements'
+import PeriodTable from '../views/modal/components/elements'
 import Rgroup from './toolbox/rgroup'
 import TemplateAttach from './template/template-attach'
 import TemplatesLib from './template/template-lib'

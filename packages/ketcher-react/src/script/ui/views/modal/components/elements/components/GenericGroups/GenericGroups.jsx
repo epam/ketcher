@@ -15,35 +15,36 @@
  ***************************************************************************/
 
 import React from 'react'
-import Atom from '../../../../../../../../../component/view/atom'
-import clsx from 'clsx'
+import generics from '../../../../../../../chem/generics'
+import GenGroup from './components'
 
-function MainRow({ row, caption, refer, selected, onSelect, currentEvents }) {
+function GenericGroups({ selected, onSelect, ...props }) {
   return (
-    <tbody>
-      <tr>
-        <th>{caption}</th>
-        {row.map(el =>
-          typeof el !== 'number' ? ( // eslint-disable-line
-            <td>
-              <Atom
-                el={el}
-                className={clsx({
-                  selected: selected(el.label)
-                })}
-                onClick={() => onSelect(el.label)}
-                {...currentEvents(el)}
-              />
-            </td>
-          ) : refer(el) ? (
-            <td className="ref">{refer(el)}</td>
-          ) : (
-            <td colSpan={el} />
-          )
-        )}
-      </tr>
-    </tbody>
+    <div summary="Generic Groups" {...props}>
+      <div className="col">
+        <GenGroup
+          gen={generics}
+          name="atom"
+          selected={l => selected(l)}
+          onSelect={l => onSelect(l)}
+        />
+        <GenGroup
+          gen={generics}
+          name="special"
+          selected={l => selected(l)}
+          onSelect={l => onSelect(l)}
+        />
+      </div>
+      <div className="col">
+        <GenGroup
+          gen={generics}
+          name="group"
+          selected={l => selected(l)}
+          onSelect={l => onSelect(l)}
+        />
+      </div>
+    </div>
   )
 }
 
-export default MainRow
+export default GenericGroups

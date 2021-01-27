@@ -14,6 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import PeriodTable from './PeriodTable'
+import GenSet from './GenSet'
 
-export default PeriodTable
+export default GenSet

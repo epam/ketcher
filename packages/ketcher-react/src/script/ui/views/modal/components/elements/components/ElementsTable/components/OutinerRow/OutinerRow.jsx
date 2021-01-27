@@ -14,8 +14,33 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ElementsTable from './ElementsTable/ElementsTable'
-import AtomInfo from './AtomInfo/AtomInfo'
-import TypeChoice from './TypeChoice/TypeChoice'
+import React from 'react'
+import Atom from '../../../../../../../../component/view/atom'
+import clsx from 'clsx'
 
-export { ElementsTable, AtomInfo, TypeChoice }
+function OutinerRow({ row, caption, selected, onSelect, currentEvents }) {
+  return (
+    <tbody>
+      <tr>
+        <th colSpan="3" className="ref">
+          {caption}
+        </th>
+        {row.map(el => (
+          <td key={el.label}>
+            <Atom
+              el={el}
+              className={clsx({
+                selected: selected(el.label)
+              })}
+              onClick={() => onSelect(el.label)}
+              {...currentEvents(el)}
+            />
+          </td>
+        ))}
+        <td />
+      </tr>
+    </tbody>
+  )
+}
+
+export default OutinerRow

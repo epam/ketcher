@@ -14,6 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import PeriodTable from './PeriodTable'
+import React from 'react'
+import clsx from 'clsx'
 
-export default PeriodTable
+function GenSet({ labels, caption = '', selected, onSelect, ...props }) {
+  return (
+    <fieldset {...props}>
+      {labels.map(label => (
+        <button
+          onClick={() => onSelect(label)}
+          className={clsx({
+            selected: selected(label)
+          })}>
+          {label}
+        </button>
+      ))}
+      {caption ? <legend>{caption}</legend> : null}
+    </fieldset>
+  )
+}
+
+export default GenSet

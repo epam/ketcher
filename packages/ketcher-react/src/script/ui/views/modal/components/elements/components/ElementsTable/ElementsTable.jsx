@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import React, { Component } from 'react'
-import element from '../../../../../../../../chem/element'
+import element from '../../../../../../../chem/element'
 import { Header, MainRow, OutinerRow } from './components'
 
 const beforeSpan = {

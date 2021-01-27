@@ -14,6 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import PeriodTable from './PeriodTable'
+import ElementsTable from './ElementsTable/ElementsTable'
+import AtomInfo from './AtomInfo/AtomInfo'
+import TypeChoice from './TypeChoice/TypeChoice'
+import GenericGroups from './GenericGroups/GenericGroups'
 
-export default PeriodTable
+export { ElementsTable, AtomInfo, TypeChoice, GenericGroups }

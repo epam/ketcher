@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import React from 'react'
-import { sketchingColors as elementColor } from '../../../../../../../../chem/element-color'
-import element from '../../../../../../../../chem/element'
+import { sketchingColors as elementColor } from '../../../../../../../chem/element-color'
+import element from '../../../../../../../chem/element'
 
 function AtomInfo({ el, isInfo }) {
   const numberStyle = {

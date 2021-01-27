@@ -19,18 +19,21 @@ import { xor } from 'lodash/fp'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import element from '../../../../../../chem/element'
+import element from '../../../../../chem/element'
 
-import Dialog from '../../../../components'
-import Tabs from '../../../../../component/view/tabs'
+import Dialog from '../../../components'
+import Tabs from '../../../../component/view/tabs'
 
-import GenericGroups from '../../../../GenericGroups'
+import { fromElement, toElement } from '../../../../data/convert/structconv'
+import { onAction } from '../../../../state'
+import { addAtoms } from '../../../../state/toolbar'
 
-import { fromElement, toElement } from '../../../../../data/convert/structconv'
-import { onAction } from '../../../../../state'
-import { addAtoms } from '../../../../../state/toolbar'
-
-import { ElementsTable, AtomInfo, TypeChoice } from './components'
+import {
+  ElementsTable,
+  AtomInfo,
+  TypeChoice,
+  GenericGroups
+} from './components'
 
 class PeriodTable extends Component {
   constructor(props) {

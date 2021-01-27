@@ -18,7 +18,7 @@ import React from 'react'
 import Atom from '../../../../../../../../../component/view/atom'
 import clsx from 'clsx'
 
-function MainRow({ row, caption, refer, selected, onSelect, curEvents }) {
+function MainRow({ row, caption, refer, selected, onSelect, currentEvents }) {
   return (
     <tbody>
       <tr>
@@ -32,7 +32,7 @@ function MainRow({ row, caption, refer, selected, onSelect, curEvents }) {
                   selected: selected(el.label)
                 })}
                 onClick={() => onSelect(el.label)}
-                {...curEvents(el)}
+                {...currentEvents(el)}
               />
             </td>
           ) : refer(el) ? (

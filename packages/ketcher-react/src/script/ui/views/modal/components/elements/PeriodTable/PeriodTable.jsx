@@ -86,30 +86,37 @@ class PeriodTable extends Component {
     return value.length ? { type, values: value } : null
   }
 
-  curEvents = element => ({
-    onMouseEnter: () => this.setState({ current: element, isInfo: true }),
-    onMouseLeave: () => this.setState({ isInfo: false })
-  })
+  currentEvents(element) {
+    return {
+      onMouseEnter: () => this.setState({ current: element, isInfo: true }),
+      onMouseLeave: () => this.setState({ isInfo: false })
+    }
+  }
+
+  periodicTable(value) {
+    const { type, current, isInfo } = this.state
+    return (
+      <div className="period-table">
+        <AtomInfo el={current} isInfo={isInfo} />
+        <ElementsTable
+          value={value}
+          currentEvents={this.currentEvents.bind(this)}
+          selected={this.selected.bind(this)}
+          onSelect={this.onSelect.bind(this)}
+        />
+        <TypeChoice value={type} onChange={event => this.changeType(event)} />
+      </div>
+    )
+  }
 
   render() {
-    const renderPeriodicTable = value => {
-      return (
-        <div className="period-table">
-          <AtomInfo el={this.state.current} isInfo={this.state.isInfo} />
-          <ElementsTable
-            value={value}
-            curEvents={this.curEvents.bind(this)}
-            selected={this.selected.bind(this)}
-            onSelect={this.onSelect.bind(this)}
-          />
-          <TypeChoice value={type} onChange={t => this.changeType(t)} />
-        </div>
-      )
-    }
-
     const { type, value } = this.state
     const tabs = [
-      { caption: 'Table', component: renderPeriodicTable, props: { value } },
+      {
+        caption: 'Table',
+        component: this.periodicTable.bind(this),
+        props: { value }
+      },
       {
         caption: 'Extended',
         component: GenericGroups,
@@ -131,7 +138,7 @@ class PeriodTable extends Component {
           className="tabs"
           captions={tabs}
           tabIndex={type !== 'gen' ? 0 : 1}
-          changeTab={i => this.changeType(i === 0 ? 'atom' : 'gen')}
+          changeTab={event => this.changeType(event === 0 ? 'atom' : 'gen')}
           tabs={tabs}
         />
       </Dialog>

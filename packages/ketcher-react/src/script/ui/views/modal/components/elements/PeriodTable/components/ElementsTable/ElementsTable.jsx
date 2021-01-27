@@ -51,8 +51,8 @@ class ElementsTable extends Component {
   }
 
   render() {
-    const { curEvents, selected, onSelect } = this.props
-    const callbacks = { curEvents, selected, onSelect }
+    const { currentEvents, selected, onSelect } = this.props
+    const callbacks = { currentEvents, selected, onSelect }
     return (
       <table summary="Periodic table of the chemical elements">
         <Header />

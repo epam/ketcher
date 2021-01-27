@@ -18,7 +18,7 @@ import React from 'react'
 import Atom from '../../../../../../../../../component/view/atom'
 import clsx from 'clsx'
 
-function OutinerRow({ row, caption, selected, onSelect, curEvents }) {
+function OutinerRow({ row, caption, selected, onSelect, currentEvents }) {
   return (
     <tbody>
       <tr>
@@ -33,7 +33,7 @@ function OutinerRow({ row, caption, selected, onSelect, curEvents }) {
                 selected: selected(el.label)
               })}
               onClick={() => onSelect(el.label)}
-              {...curEvents(el)}
+              {...currentEvents(el)}
             />
           </td>
         ))}

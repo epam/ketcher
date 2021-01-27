@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ServiceMode } from 'ketcher-core'
 import { isEqual } from 'lodash/fp'
 import { Api } from './api'
 import molfile, { MolfileFormat } from './chem/molfile'
@@ -21,7 +20,7 @@ import Struct from './chem/struct'
 import Editor from './editor'
 import { Graph } from './format/chemGraph/Graph'
 import Render from './render'
-import { StructureService } from './services'
+import { StructureServiceFactory } from './services/structure'
 import { SupportedFormat } from './ui/data/convert/struct.types'
 
 interface UI {
@@ -38,51 +37,40 @@ interface BuildInfo {
 class Ketcher {
   private origin = null
 
-  static create(
-    serviceMode: ServiceMode,
-    editor: Editor,
-    api: Api,
-    ui: UI,
-    buildInfo: BuildInfo,
-    structureService: StructureService
-  ) {
-    const ketcher = new Ketcher(editor, api, ui, buildInfo, structureService)
-    ketcher[serviceMode] = true
-
-    // todo: remove
-    ;(global as any).ketcher = ketcher
-    ;(global as any)._ui_editor = editor
-
-    return ketcher
-  }
-
   constructor(
     readonly editor: Editor,
     readonly server: Api,
     readonly ui: UI,
     readonly buildInfo: BuildInfo,
-    private readonly structureService: StructureService
+    private readonly structureServiceFactory: StructureServiceFactory
   ) {}
 
   getStructureAsync(
     structureFormat: SupportedFormat = SupportedFormat.Rxn
   ): Promise<string> {
-    return this.structureService.getStructureAsync(structureFormat)
+    const service = this.structureServiceFactory.create(structureFormat)
+    return service.getStructureAsync()
   }
 
   getSmilesAsync(isExtended: boolean = false): Promise<string> {
-    return this.structureService.getSmilesAsync(isExtended)
+    const format = isExtended
+      ? SupportedFormat.SmilesExt
+      : SupportedFormat.Smiles
+
+    const service = this.structureServiceFactory.create(format)
+    return service.getStructureAsync()
   }
 
   getMolfileAsync(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
-    return this.structureService.getMolfileAsync(molfileFormat)
+    const format =
+      molfileFormat === 'v3000' ? SupportedFormat.MolV3000 : SupportedFormat.Mol
+    const service = this.structureServiceFactory.create(format)
+    return service.getStructureAsync()
   }
 
   async getGraphAsync(): Promise<Graph> {
-    const stringifiedGraph = await this.structureService.getStructureAsync(
-      SupportedFormat.Graph
-    )
-    return JSON.parse(stringifiedGraph)
+    const service = this.structureServiceFactory.create(SupportedFormat.Graph)
+    return service.getStructureAsync()
   }
 
   setMolecule(molString: string): void {

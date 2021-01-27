@@ -57,7 +57,7 @@ const App = connect(null, { onAction, checkServer })(
  * @param {import('../../api').Api} server
  * @param {function} setEditor
  * */
-function init(element, staticResourcesUrl, options, server, setEditor) {
+function initApp(element, staticResourcesUrl, options, server, setEditor) {
   const store = createStore(options, server, setEditor)
   store.dispatch(initKeydownListener(element))
   store.dispatch(initResize())
@@ -77,4 +77,4 @@ function init(element, staticResourcesUrl, options, server, setEditor) {
   }
 }
 
-export default init
+export default initApp

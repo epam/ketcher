@@ -18,6 +18,6 @@ import { connect } from 'react-redux'
 import ClipArea from '../component/cliparea'
 import { initClipboard } from '../state/hotkeys'
 
-const AppCliparea = connect(null, dispatch => dispatch(initClipboard))(ClipArea)
+const AppClipArea = connect(null, dispatch => dispatch(initClipboard))(ClipArea)
 
-export default AppCliparea
+export default AppClipArea

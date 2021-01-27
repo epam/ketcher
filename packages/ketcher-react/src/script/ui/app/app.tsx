@@ -18,12 +18,12 @@ import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { onAction } from '../state'
 import { checkServer } from '../state/server'
-import AppEditor from '../views/editor'
-import AppModal from '../views/modal'
-import Toolbar from '../views/toolbar'
-import AppCliparea from '../views/clipArea'
+import AppEditor from '../views/AppEditor'
+import AppModal from '../views/Modal'
+import Toolbar from '../views/Toolbar'
+import AppClipArea from '../views/AppClipArea'
 import { initTmplLib } from '../state/templates'
-import { useSettingsContext } from './../../../hooks'
+import { useSettingsContext } from '../../../hooks'
 
 function AppHiddenView({ onInitTmpls }) {
   const rootRef = useRef(null)
@@ -50,7 +50,7 @@ function AppView(props) {
       <AppHidden />
       <AppEditor id="canvas" />
       <Toolbar {...props} />
-      <AppCliparea />
+      <AppClipArea />
       <AppModal />
     </React.Fragment>
   )

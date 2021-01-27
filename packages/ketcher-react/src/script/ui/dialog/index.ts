@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import PeriodTable from '../views/modal/components/elements'
+import PeriodTable from '../views/Modal/components/elements'
 import Rgroup from './toolbox/rgroup'
 import TemplateAttach from './template/template-attach'
 import TemplatesLib from './template/template-lib'
@@ -29,12 +29,12 @@ import {
   Analyse,
   Recognize,
   Miew
-} from '../views/modal/components/process'
+} from '../views/Modal/components/process'
 import EnhancedStereo from './toolbox/enhanced-stereo'
 import LabelEdit from './toolbox/labeledit'
 import RgroupLogic from './toolbox/rgroup-logic'
-import { Open, Save } from '../views/modal/components/document'
-import { Settings, Help, About } from '../views/modal/components/meta'
+import { Open, Save } from '../views/Modal/components/document'
+import { Settings, Help, About } from '../views/Modal/components/meta'
 import Sgroup from './toolbox/sgroup'
 import Sdata from './toolbox/sdata'
 

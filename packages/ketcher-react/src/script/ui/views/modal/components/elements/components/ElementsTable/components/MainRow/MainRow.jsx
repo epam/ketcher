@@ -23,22 +23,22 @@ function MainRow({ row, caption, refer, selected, onSelect, currentEvents }) {
     <tbody>
       <tr>
         <th>{caption}</th>
-        {row.map(el =>
-          typeof el !== 'number' ? ( // eslint-disable-line
+        {row.map(element =>
+          typeof element !== 'number' ? ( // eslint-disable-line
             <td>
               <Atom
-                el={el}
+                el={element}
                 className={clsx({
-                  selected: selected(el.label)
+                  selected: selected(element.label)
                 })}
-                onClick={() => onSelect(el.label)}
-                {...currentEvents(el)}
+                onClick={() => onSelect(element.label)}
+                {...currentEvents(element)}
               />
             </td>
-          ) : refer(el) ? (
-            <td className="ref">{refer(el)}</td>
+          ) : refer(element) ? (
+            <td className="ref">{refer(element)}</td>
           ) : (
-            <td colSpan={el} />
+            <td colSpan={element} />
           )
         )}
       </tr>

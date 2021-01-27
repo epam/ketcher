@@ -9,6 +9,7 @@ import postcss from 'rollup-plugin-postcss'
 import json from '@rollup/plugin-json'
 import svgr from '@svgr/rollup'
 import del from 'rollup-plugin-delete'
+import typescript from 'rollup-plugin-typescript2'
 import cleanup from 'rollup-plugin-cleanup'
 import strip from '@rollup/plugin-strip'
 import pkg from './package.json'
@@ -70,8 +71,8 @@ const config = {
         include: 'src/**/*.{js,jsx,ts,tsx}'
       }
     ),
-
     json(),
+    typescript(),
     babel({
       extensions,
       babelHelpers: 'runtime',

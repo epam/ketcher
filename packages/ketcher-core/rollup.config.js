@@ -5,6 +5,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
 import del from 'rollup-plugin-delete'
+import typescript from 'rollup-plugin-typescript2'
 import cleanup from 'rollup-plugin-cleanup'
 import strip from '@rollup/plugin-strip'
 import pkg from './package.json'
@@ -49,7 +50,6 @@ const config = {
     peerDepsExternal({ includeDependencies: true }),
     resolve({ extensions, preferBuiltins: false }),
     commonjs(),
-    //typescript(),
     replace(
       {
         'process.env.NODE_ENV': JSON.stringify(
@@ -60,8 +60,8 @@ const config = {
         include: 'src/**/*.{js,ts}'
       }
     ),
-
     json(),
+    typescript(),
     babel({
       extensions,
       babelHelpers: 'runtime',

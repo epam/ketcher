@@ -5,6 +5,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
 import del from 'rollup-plugin-delete'
+import typescript from 'rollup-plugin-typescript2'
 import cleanup from 'rollup-plugin-cleanup'
 import strip from '@rollup/plugin-strip'
 import webWorkerLoader from 'rollup-plugin-web-worker-loader'
@@ -69,6 +70,7 @@ const config = {
     ),
 
     json(),
+    typescript(),
     babel({
       extensions,
       babelHelpers: 'runtime',

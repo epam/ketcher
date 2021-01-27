@@ -1,11 +1,13 @@
-import { SupportedFormat } from '../../../ui/data/convert/struct.types'
+import { molfileManager } from '../../../chem/molfile'
+import { StructProvider } from '../../../editor'
 import { StructureService } from '../StructureService'
-import { BaseServiceStrategy } from './BaseServiceStrategy'
 
-export class MolfileV2000ServiceStrategy
-  extends BaseServiceStrategy
-  implements StructureService {
+export class MolfileV2000ServiceStrategy implements StructureService {
+  constructor(protected readonly structProvider: StructProvider) {}
+
   getStructureAsync(): Promise<string> {
-    return this.getStructureByFormatAsync(SupportedFormat.Mol)
+    const struct = this.structProvider.struct()
+    const stringifiedMolfile = molfileManager.stringify(struct)
+    return Promise.resolve(stringifiedMolfile)
   }
 }

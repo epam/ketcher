@@ -44,7 +44,7 @@ function parseCTFile(str, options) {
   }
 }
 
-const molFileManager = {
+const molfileManager = {
   stringify(struct, options) {
     if (!options) {
       options = {}
@@ -70,4 +70,5 @@ const molFileManager = {
 }
 
 export * from './molfileFormat'
-export default molFileManager
+export { molfileManager }
+export default molfileManager

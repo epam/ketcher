@@ -1,13 +1,13 @@
-import smiles from '../../../chem/smiles'
+import { molfileManager } from '../../../chem/molfile'
 import { StructProvider } from '../../../editor'
 import { StructureService } from '../StructureService'
 
-export class SmilesServiceStrategy implements StructureService {
+export class RxnServiceStrategy implements StructureService {
   constructor(protected readonly structProvider: StructProvider) {}
 
   getStructureAsync(): Promise<string> {
     const struct = this.structProvider.struct()
-    const stringifiedMolfile = smiles.stringify(struct)
+    const stringifiedMolfile = molfileManager.stringify(struct)
     return Promise.resolve(stringifiedMolfile)
   }
 }

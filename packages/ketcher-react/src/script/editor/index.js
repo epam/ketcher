@@ -594,4 +594,6 @@ function elementOffset(element) {
   return new Vec2(left, top)
 }
 
+export { Editor }
+export * from './StructProvider'
 export default Editor

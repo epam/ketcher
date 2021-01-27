@@ -30,6 +30,7 @@ import {
   SupportedFormat,
   SupportedFormatPropertiesMap
 } from '../../data/convert/struct.types'
+import { StructureServiceFactory } from '../../../services/structure'
 
 const saveSchema = {
   title: 'Save',
@@ -103,8 +104,16 @@ class Save extends Component {
 
   changeType(type) {
     const { struct, server, options, formState } = this.props
-    const converted = structFormat.toString(struct, type, server, options)
-    return converted.then(
+
+    const factory = new StructureServiceFactory(
+      {
+        struct: () => struct
+      },
+      server
+    )
+    const service = factory.create(type, options)
+
+    service.getStructureAsync().then(
       structStr => {
         this.setState({ structStr })
         setTimeout(() => this.textAreaRef.current.select(), 10) // TODO: remove hack

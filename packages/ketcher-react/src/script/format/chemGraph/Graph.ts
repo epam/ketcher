@@ -7,4 +7,5 @@ export type Graph = {
       data?: any
     }[]
   }
+  toString: () => string
 }

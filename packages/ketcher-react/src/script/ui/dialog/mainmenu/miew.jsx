@@ -19,9 +19,10 @@ import { connect } from 'react-redux'
 import { pick } from 'lodash/fp'
 
 import Dialog from '../../component/dialog'
-import * as structFormat from '../../data/convert/structConverter'
 import { MIEW_OPTIONS } from '../../data/schema/options-schema'
 import { load } from '../../state'
+import { StructureServiceFactory } from '../../../services/structure'
+import { SupportedFormat } from '../../data/convert/struct.types'
 
 /* OPTIONS for MIEW */
 const BACKGROUND_COLOR = {
@@ -95,8 +96,16 @@ class MiewComponent extends Component {
 
     if (this.viewer.init()) this.viewer.run()
 
-    structFormat
-      .toString(struct, 'cml', server)
+    const factory = new StructureServiceFactory(
+      {
+        struct: () => struct
+      },
+      server
+    )
+    const service = factory.create(SupportedFormat.CML)
+
+    service
+      .getStructureAsync()
       .then(res =>
         this.viewer.load(res, { sourceType: 'immediate', fileType: 'cml' })
       )

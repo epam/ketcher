@@ -21,7 +21,7 @@ import { connect } from 'react-redux'
 
 import element from '../../../../../chem/element'
 
-import Dialog from '../../../components'
+import { Dialog } from '../../../components'
 import Tabs from '../../../../component/view/Tabs'
 
 import { fromElement, toElement } from '../../../../data/convert/structconv'

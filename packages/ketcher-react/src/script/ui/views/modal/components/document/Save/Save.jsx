@@ -21,7 +21,7 @@ import { saveUserTmpl } from '../../../../../state/templates'
 import { updateFormState } from '../../../../../state/modal/form'
 import { check } from '../../../../../state/server'
 
-import Dialog from '../../../../components'
+import { Dialog } from '../../../../components'
 import Form, { Field } from '../../../../../component/form/form'
 import SaveButton from '../../../../../component/view/savebutton'
 import { createRef } from 'react'

@@ -18,7 +18,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import Markdown from 'react-markdown'
 import gfm from 'remark-gfm'
 import { useSettingsContext } from '../../../../../../../hooks'
-import Dialog from '../../../../components'
+import { Dialog } from '../../../../components'
 
 function Help(props) {
   const [content, setContent] = useState(null)

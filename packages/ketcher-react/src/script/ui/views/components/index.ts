@@ -16,4 +16,4 @@
 
 import Dialog from './Dialog/Dialog'
 
-export default Dialog
+export { Dialog }

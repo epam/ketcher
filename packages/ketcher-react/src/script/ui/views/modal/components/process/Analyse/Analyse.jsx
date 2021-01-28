@@ -19,7 +19,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import * as KN from 'w3c-keyname'
-import Dialog from '../../../../components'
+import { Dialog } from '../../../../components'
 import Input from '../../../../../component/form/input'
 
 import { changeRound } from '../../../../../state/options'

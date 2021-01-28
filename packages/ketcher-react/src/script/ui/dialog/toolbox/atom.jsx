@@ -18,7 +18,7 @@ import React, { useState, useCallback } from 'react'
 import { connect } from 'react-redux'
 import { atom as atomSchema } from '../../data/schema/struct-schema'
 import Form, { Field } from '../../component/form/form'
-import Dialog from '../../views/components'
+import { Dialog } from '../../views/components'
 import { capitalize } from 'lodash/fp'
 import element from '../../../chem/element'
 

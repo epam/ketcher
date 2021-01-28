@@ -1,8 +1,18 @@
+@import '../../../../../../../../../../style/mixins.less';
+
 .body {
   .row {
     .ref {
       vertical-align: top;
       text-align: right;
+    }
+    .cell {
+      .selected {
+        &:after {
+          visibility: hidden;
+        }
+        .highlight-invert;
+      }
     }
   }
 }

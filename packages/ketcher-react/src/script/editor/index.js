@@ -96,8 +96,8 @@ Editor.prototype.clear = function () {
 }
 
 /**
- * @param {Struct} [value]
- * @returns {Struct} */
+ * @param {import('ketcher-core').Struct} [value]
+ * @returns {import('ketcher-core').Struct} */
 Editor.prototype.struct = function (value) {
   if (arguments.length > 0) {
     this.selection(null)
@@ -595,5 +595,4 @@ function elementOffset(element) {
 }
 
 export { Editor }
-export * from './StructProvider'
 export default Editor

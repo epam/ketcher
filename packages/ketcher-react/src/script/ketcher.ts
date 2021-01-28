@@ -13,25 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { FormatterFactory, StructService, SupportedFormat } from 'ketcher-core'
 import { isEqual } from 'lodash/fp'
-import { Api } from './api'
 import molfile, { MolfileFormat } from './chem/molfile'
 import Struct from './chem/struct'
 import Editor from './editor'
 import { Graph } from './format/chemGraph'
 import Render from './render'
-import { StructureServiceFactory } from './services/structure'
-import { SupportedFormat } from './ui/data/convert/struct.types'
 
 interface UI {
   load: (structStr: string | null, options?: any) => undefined
   loadStruct: (struct: Struct) => any
-}
-
-interface BuildInfo {
-  version: string
-  buildDate: string
-  buildNumber: string
 }
 
 class Ketcher {
@@ -39,37 +31,32 @@ class Ketcher {
 
   constructor(
     readonly editor: Editor,
-    readonly server: Api,
+    readonly server: StructService, // todo: remove
     readonly ui: UI,
-    readonly buildInfo: BuildInfo,
-    private readonly structureServiceFactory: StructureServiceFactory
+    private readonly structureServiceFactory: FormatterFactory
   ) {}
 
-  getStructureAsync(
-    structureFormat: SupportedFormat = SupportedFormat.Rxn
-  ): Promise<string> {
+  getStructureAsync(structureFormat: SupportedFormat = 'rxn'): Promise<string> {
     const service = this.structureServiceFactory.create(structureFormat)
     return service.getStructureAsync()
   }
 
   getSmilesAsync(isExtended: boolean = false): Promise<string> {
-    const format = isExtended
-      ? SupportedFormat.SmilesExt
-      : SupportedFormat.Smiles
+    const format: SupportedFormat = isExtended ? 'smilesExt' : 'smiles'
 
     const service = this.structureServiceFactory.create(format)
     return service.getStructureAsync()
   }
 
   getMolfileAsync(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
-    const format =
-      molfileFormat === 'v3000' ? SupportedFormat.MolV3000 : SupportedFormat.Mol
+    const format: SupportedFormat =
+      molfileFormat === 'v3000' ? 'molV3000' : 'mol'
     const service = this.structureServiceFactory.create(format)
     return service.getStructureAsync()
   }
 
   async getGraphAsync(): Promise<Graph> {
-    const service = this.structureServiceFactory.create(SupportedFormat.Graph)
+    const service = this.structureServiceFactory.create('graph')
     return service.getStructureAsync()
   }
 
@@ -132,5 +119,5 @@ class Ketcher {
   }
 }
 
-export type { UI, BuildInfo }
+export type { UI }
 export { Ketcher }

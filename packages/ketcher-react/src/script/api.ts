@@ -14,14 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 import {
+  InfoResult,
   StructServiceProvider,
   StructServiceOptions,
-  InfoResult,
   StructService
 } from 'ketcher-core'
 
-interface Api extends Promise<InfoResult>, Omit<StructService, 'info'> {}
+type Api = StructService & Promise<InfoResult>
 
+// todo: remove
 function createApi(
   structServiceProvider: StructServiceProvider,
   defaultOptions: StructServiceOptions
@@ -32,6 +33,7 @@ function createApi(
   const info = structService.info()
 
   return Object.assign(info, {
+    info: structService.info.bind(structService),
     convert: structService.convert.bind(structService),
     layout: structService.layout.bind(structService),
     clean: structService.clean.bind(structService),
@@ -46,5 +48,4 @@ function createApi(
   })
 }
 
-export type { Api }
 export default createApi

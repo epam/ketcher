@@ -13,22 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
+import { SupportedFormat, getPropertiesByFormat } from 'ketcher-core'
 import molfile from '../../../chem/molfile'
-import smiles from '../../../chem/smiles'
-import Struct from '../../../chem/struct'
 import graph from '../../../format/chemGraph'
-import { getPropertiesByFormat, SupportedFormat } from './struct.types'
 
 function guess(structStr: string): SupportedFormat {
   // Mimic Indigo/molecule_auto_loader.cpp as much as possible
   const molStr = structStr.trim()
 
   try {
-    if (JSON.parse(molStr)) return SupportedFormat.Graph
+    if (JSON.parse(molStr)) return 'graph'
   } catch (er) {} // eslint-disable-line
 
-  if (molStr.indexOf('$RXN') !== -1) return SupportedFormat.Rxn
+  if (molStr.indexOf('$RXN') !== -1) return 'rxn'
 
   const molMatch = molStr.match(/^(M {2}END|\$END MOL)$/m)
 
@@ -38,66 +35,18 @@ function guess(structStr: string): SupportedFormat {
       end === molStr.length ||
       molStr.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) !== -1
     )
-      return SupportedFormat.Mol
+      return 'mol'
   }
-  if (molStr[0] === '<' && molStr.indexOf('<molecule') !== -1)
-    return SupportedFormat.CML
+  if (molStr[0] === '<' && molStr.indexOf('<molecule') !== -1) return 'cml'
 
-  if (molStr.slice(0, 5) === 'InChI') return SupportedFormat.InChI
+  if (molStr.slice(0, 5) === 'InChI') return 'inChI'
 
   if (molStr.indexOf('\n') === -1)
     // TODO: smiles regexp
-    return SupportedFormat.Smiles
+    return 'smiles'
 
   // Molfile by default as Indigo does
-  return SupportedFormat.Mol
-}
-
-export function toString(
-  struct: Struct,
-  format: SupportedFormat,
-  server: any,
-  serverOpts?: any
-): Promise<string> {
-  let formatProperties = getPropertiesByFormat(format)
-  console.assert(formatProperties, 'No such format')
-  if (format === SupportedFormat.Graph) {
-    const res = graph.toGraph(struct)
-    return Promise.resolve(JSON.stringify(res, null, 4))
-  }
-
-  return new Promise(resolve => {
-    const moldata = molfile.stringify(struct)
-    switch (format) {
-      case SupportedFormat.Mol:
-      case SupportedFormat.Rxn:
-        resolve(moldata)
-        break
-      case SupportedFormat.Smiles:
-        resolve(smiles.stringify(struct))
-        break
-      default:
-        const converting = server
-          .then(() =>
-            server.convert(
-              {
-                struct: moldata,
-                output_format: formatProperties.mime
-              },
-              { ...serverOpts, ...formatProperties.options }
-            )
-          )
-          .catch(err => {
-            throw err.message === 'Server is not compatible'
-              ? Error(
-                  `${formatProperties.name} is not supported in standalone mode.`
-                )
-              : Error(`Convert error!\n${err.message}`)
-          })
-          .then(res => res.struct)
-        resolve(converting)
-    }
-  })
+  return 'mol'
 }
 
 export function fromString(
@@ -110,11 +59,11 @@ export function fromString(
     const format = guess(struct)
     const formatProperties = getPropertiesByFormat(format)
     console.assert(formatProperties, 'No such format')
-    if (format === SupportedFormat.Graph) {
+    if (format === 'graph') {
       resolve(graph.fromGraph(JSON.parse(struct)))
     } else if (
-      (format === SupportedFormat.Mol && molfile.version(struct) === 'V2000') ||
-      format === SupportedFormat.Rxn
+      (format === 'mol' && molfile.version(struct) === 'V2000') ||
+      format === 'rxn'
     ) {
       resolve(molfile.parse(struct, opts))
     } else {
@@ -125,14 +74,14 @@ export function fromString(
             ? server.convert(
                 {
                   struct: struct,
-                  output_format: getPropertiesByFormat(SupportedFormat.Mol).mime
+                  output_format: getPropertiesByFormat('mol').mime
                 },
                 serverOpts
               )
             : server.layout(
                 {
                   struct: struct.trim(),
-                  output_format: getPropertiesByFormat(SupportedFormat.Mol).mime
+                  output_format: getPropertiesByFormat('mol').mime
                 },
                 serverOpts
               )
@@ -140,11 +89,9 @@ export function fromString(
         .catch(err => {
           if (err.message === 'Server is not compatible') {
             const formatError =
-              format === SupportedFormat.Smiles
-                ? `${
-                    getPropertiesByFormat(SupportedFormat.SmilesExt).name
-                  } and opening of ${
-                    getPropertiesByFormat(SupportedFormat.Smiles).name
+              format === 'smiles'
+                ? `${getPropertiesByFormat('smilesExt').name} and opening of ${
+                    getPropertiesByFormat('smiles').name
                   }`
                 : getPropertiesByFormat(format).name
             throw Error(`${formatError} is not supported in standalone mode.`)
@@ -169,12 +116,12 @@ export function couldBeSaved(
   let warnings: Array<string> = []
   const formatName: string = getPropertiesByFormat(format).name
   if (
-    [
-      SupportedFormat.InChI,
-      SupportedFormat.InChIAuxInfo,
-      SupportedFormat.Smiles,
-      SupportedFormat.SmilesExt
-    ].includes(format)
+    ([
+      'inChI',
+      'inChIAuxInfo',
+      'smiles',
+      'smilesExt'
+    ] as SupportedFormat[]).includes(format)
   ) {
     if (struct.rgroups.size !== 0)
       warnings.push(
@@ -201,14 +148,14 @@ export function couldBeSaved(
   }
 
   if (
-    [
-      SupportedFormat.Smiles,
-      SupportedFormat.SmilesExt,
-      SupportedFormat.Smarts,
-      SupportedFormat.InChI,
-      SupportedFormat.InChIAuxInfo,
-      SupportedFormat.CML
-    ].includes(format)
+    ([
+      'smiles',
+      'smilesExt',
+      'smarts',
+      'inChI',
+      'inChIAuxInfo',
+      'cml'
+    ] as SupportedFormat[]).includes(format)
   ) {
     // @ts-ignore
     const isVal = struct.atoms.find((ind, atom) => atom.explicitValence >= 0)

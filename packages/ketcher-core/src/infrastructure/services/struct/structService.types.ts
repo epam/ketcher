@@ -21,7 +21,8 @@ export enum ChemicalMimeType {
   DaylightSmarts = 'chemical/x-daylight-smarts',
   InChI = 'chemical/x-inchi',
   InChIAuxInfo = 'chemical/x-inchi-aux',
-  CML = 'chemical/x-cml'
+  CML = 'chemical/x-cml',
+  JSON = 'application/json' // todo: do we need this?
 }
 
 export interface WithStruct {

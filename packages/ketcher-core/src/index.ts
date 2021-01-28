@@ -1,4 +1,24 @@
 import {
+  Graph,
+  GraphManager,
+  MolfileManager,
+  Pile,
+  Pool,
+  Struct,
+  SGroupForest,
+  SmilesManager
+} from './chem'
+
+import {
+  FormatterFactory,
+  formatProperties,
+  getPropertiesByFormat,
+  StructFormatter,
+  StructProvider,
+  SupportedFormat
+} from './format'
+
+import {
   RemoteStructService,
   RemoteStructServiceProvider,
   ChemicalMimeType
@@ -30,6 +50,19 @@ import type {
   ServiceMode,
   StructServiceProvider
 } from './infrastructure/services'
+
+export type {
+  Graph,
+  GraphManager,
+  MolfileManager,
+  Pile,
+  Pool,
+  Struct,
+  SGroupForest,
+  SmilesManager
+}
+export type { StructFormatter, StructProvider, SupportedFormat }
+export { FormatterFactory, formatProperties, getPropertiesByFormat }
 
 export { RemoteStructService, RemoteStructServiceProvider, ChemicalMimeType }
 export type {

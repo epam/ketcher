@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { FormatterFactory } from 'ketcher-core'
 import { pick } from 'lodash/fp'
-
+import { molfileManager } from '../../../chem/molfile'
+import smilesManager from '../../../chem/smiles'
+import graphManager from '../../../format/chemGraph'
 import Dialog from '../../component/dialog'
 import { MIEW_OPTIONS } from '../../data/schema/options-schema'
 import { load } from '../../state'
-import { StructureServiceFactory } from '../../../services/structure'
-import { SupportedFormat } from '../../data/convert/struct.types'
 
 /* OPTIONS for MIEW */
 const BACKGROUND_COLOR = {
@@ -96,13 +96,16 @@ class MiewComponent extends Component {
 
     if (this.viewer.init()) this.viewer.run()
 
-    const factory = new StructureServiceFactory(
+    const factory = new FormatterFactory(
       {
         struct: () => struct
       },
-      server
+      server,
+      graphManager,
+      molfileManager,
+      smilesManager
     )
-    const service = factory.create(SupportedFormat.CML)
+    const service = factory.create('cml')
 
     service
       .getStructureAsync()

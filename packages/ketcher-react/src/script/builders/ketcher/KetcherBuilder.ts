@@ -1,18 +1,23 @@
-import { StructServiceProvider } from 'ketcher-core'
-import { ServiceMode } from 'ketcher-core/src/infrastructure/services/struct/structServiceProvider.types'
-import createApi, { Api } from '../../api'
+import {
+  StructService,
+  StructServiceProvider,
+  FormatterFactory,
+  ServiceMode
+} from 'ketcher-core'
+import createApi from '../../api'
 import Editor from '../../editor'
-import { BuildInfo, Ketcher, UI as KetcherUI } from '../../ketcher'
-import { StructureServiceFactory } from '../../services/structure'
+import { Ketcher, UI as KetcherUI } from '../../ketcher'
 import initUI from '../../ui'
 import { ButtonsConfig } from './ButtonsConfig'
+import { molfileManager } from '../../chem/molfile'
+import smilesManager from '../../chem/smiles'
+import graphManager from '../../format/chemGraph'
 
 class KetcherBuilder {
-  private api: Api | null
-  private readonly buildInfo: BuildInfo
+  private structService: StructService | null
   private editor: Editor | null
   private serviceMode: ServiceMode | null
-  private structureServiceFactory: StructureServiceFactory | null
+  private formatterFactory: FormatterFactory | null
   private ui: KetcherUI | null
 
   private tempUIDataContainer: null | {
@@ -22,22 +27,17 @@ class KetcherBuilder {
   }
 
   constructor() {
-    this.api = null
-    this.buildInfo = {
-      version: process.env.VERSION || '',
-      buildDate: process.env.BUILD_DATE || '',
-      buildNumber: process.env.BUILD_NUMBER || ''
-    }
+    this.structService = null
     this.editor = null
     this.serviceMode = null
-    this.structureServiceFactory = null
+    this.formatterFactory = null
     this.ui = null
 
     this.tempUIDataContainer = null
   }
 
   appendApiAsync(structServiceProvider: StructServiceProvider) {
-    this.api = createApi(structServiceProvider, {
+    this.structService = createApi(structServiceProvider, {
       'smart-layout': true,
       'ignore-stereochemistry-errors': true,
       'mass-skip-error-on-pseudoatoms': false,
@@ -64,9 +64,9 @@ class KetcherBuilder {
     staticResourcesUrl: string,
     buttons?: ButtonsConfig
   ): Promise<void> {
-    const { api, buildInfo } = this
+    const { structService } = this
 
-    if (!api) {
+    if (!structService) {
       this.tempUIDataContainer = {
         element,
         staticResourcesUrl,
@@ -85,20 +85,26 @@ class KetcherBuilder {
       tempLink.ui = initUI(
         element,
         staticResourcesUrl,
-        Object.assign(
-          {
-            buttons: buttons || {}
-          },
-          buildInfo
-        ),
-        api,
+        {
+          buttons: buttons || {},
+          version: process.env.VERSION || '',
+          buildDate: process.env.BUILD_DATE || '',
+          buildNumber: process.env.BUILD_NUMBER || ''
+        },
+        structService,
         resolve
       )
     })
 
     this.editor = editor
     this.ui = tempLink.ui
-    this.structureServiceFactory = new StructureServiceFactory(editor, api)
+    this.formatterFactory = new FormatterFactory(
+      editor,
+      structService,
+      graphManager,
+      molfileManager,
+      smilesManager
+    )
   }
 
   build() {
@@ -106,7 +112,7 @@ class KetcherBuilder {
       throw new Error('You should append ServiceMode before building')
     }
 
-    if (!this.api) {
+    if (!this.structService) {
       throw new Error('You should append Api before building')
     }
 
@@ -114,7 +120,7 @@ class KetcherBuilder {
       throw new Error('You should append UI before building')
     }
 
-    if (!this.structureServiceFactory) {
+    if (!this.formatterFactory) {
       throw new Error(
         'You should append StructureServiceFactory before building'
       )
@@ -122,10 +128,9 @@ class KetcherBuilder {
 
     const ketcher = new Ketcher(
       this.editor,
-      this.api,
+      this.structService,
       this.ui,
-      this.buildInfo,
-      this.structureServiceFactory
+      this.formatterFactory
     )
     ketcher[this.serviceMode] = true
 
@@ -134,7 +139,7 @@ class KetcherBuilder {
     ;(global as any)._ui_editor = this.editor
 
     const params = new URLSearchParams(document.location.search)
-    ketcher.server.then(
+    ketcher.server.info().then(
       () => {
         if (params.get('moll')) {
           ketcher.ui.load(params.get('moll'))

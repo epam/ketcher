@@ -26,6 +26,9 @@ import { simpleObjectToStruct } from './fromGraph/simpleObjectToStruct'
 
 import { prepareStructForGraph } from './toGraph/prepare'
 
+/**
+ * @param {import('ketcher-core').Struct} struct
+ * @returns {import('ketcher-core').Graph} */
 function toGraph(struct) {
   const result = {
     root: {

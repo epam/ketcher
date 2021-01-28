@@ -17,6 +17,8 @@
 import React, { Component } from 'react'
 import clsx from 'clsx'
 
+import styles from './Tabs.module.less'
+
 class Tabs extends Component {
   constructor(props) {
     super(props)
@@ -32,18 +34,18 @@ class Tabs extends Component {
   }
 
   render() {
-    const { tabs, ...other } = this.props
+    const { tabs, contentClassName, ...other } = this.props
     const tabPanel = tabs[this.state.tabIndex]
     const Component = tabPanel?.component
     const componentProps = tabPanel?.props
     return (
       <ul {...other}>
-        <li className="tabs">
+        <li className={styles.tabs}>
           {tabs.map((tabPanel, index) => (
             <a // eslint-disable-line
               key={index}
               className={clsx({
-                active: this.state.tabIndex === index
+                [styles.active]: this.state.tabIndex === index
               })}
               onClick={ev => this.changeTab(ev, index)}>
               {tabPanel.caption}
@@ -51,7 +53,7 @@ class Tabs extends Component {
           ))}
         </li>
         {tabPanel && (
-          <li className="tabs-content">
+          <li className={contentClassName}>
             <Component {...componentProps} />
           </li>
         )}

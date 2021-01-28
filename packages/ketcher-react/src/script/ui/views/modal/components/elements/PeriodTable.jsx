@@ -22,7 +22,7 @@ import { connect } from 'react-redux'
 import element from '../../../../../chem/element'
 
 import Dialog from '../../../components'
-import Tabs from '../../../../component/view/tabs'
+import Tabs from '../../../../component/view/Tabs'
 
 import { fromElement, toElement } from '../../../../data/convert/structconv'
 import { onAction } from '../../../../state'
@@ -34,6 +34,8 @@ import {
   TypeChoice,
   GenericGroups
 } from './components'
+
+import styles from './PeriodTable.module.less'
 
 class PeriodTable extends Component {
   constructor(props) {
@@ -99,7 +101,7 @@ class PeriodTable extends Component {
   periodicTable(value) {
     const { type, current, isInfo } = this.state
     return (
-      <div className="period-table">
+      <div className={styles.period_table}>
         <AtomInfo el={current} isInfo={isInfo} />
         <ElementsTable
           value={value}
@@ -134,11 +136,12 @@ class PeriodTable extends Component {
     return (
       <Dialog
         title="Periodic table"
-        className="elements-table"
+        className={styles.elements_table}
         params={this.props}
         result={() => this.result()}>
         <Tabs
-          className="tabs"
+          className={styles.tabs}
+          contentClassName={styles.tabs_content}
           captions={tabs}
           tabIndex={type !== 'gen' ? 0 : 1}
           changeTab={event => this.changeType(event === 0 ? 'atom' : 'gen')}

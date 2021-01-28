@@ -18,7 +18,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import Dialog from '../../../../components'
-import Tabs from '../../../../../component/view/tabs'
+import Tabs from '../../../../../component/view/Tabs'
 import Form, { Field } from '../../../../../component/form/form'
 import { check } from '../../../../../state/server'
 import { checkOpts } from '../../../../../state/options'

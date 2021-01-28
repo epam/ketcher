@@ -18,11 +18,13 @@ import React from 'react'
 import Atom from '../../../../../../../../component/view/atom'
 import clsx from 'clsx'
 
+import styles from './OutinerRow.module.less'
+
 function OutinerRow({ row, caption, selected, onSelect, currentEvents }) {
   return (
-    <tbody>
-      <tr>
-        <th colSpan="3" className="ref">
+    <tbody className={styles.body}>
+      <tr className={styles.row}>
+        <th colSpan="3" className={styles.ref}>
           {caption}
         </th>
         {row.map(el => (

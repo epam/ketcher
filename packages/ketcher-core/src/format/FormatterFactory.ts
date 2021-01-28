@@ -64,14 +64,14 @@ export class FormatterFactory {
       options
     )
 
-    let strategy: StructFormatter
+    let formatter: StructFormatter
     switch (format) {
       case 'graph':
-        strategy = new GraphFormatter(this.structProvider, this.graphManager)
+        formatter = new GraphFormatter(this.structProvider, this.graphManager)
         break
 
       case 'mol':
-        strategy = new MolfileV2000Formatter(
+        formatter = new MolfileV2000Formatter(
           this.structProvider,
           this.molfileManager,
           molfileParseOptions
@@ -79,7 +79,7 @@ export class FormatterFactory {
         break
 
       case 'rxn':
-        strategy = new RxnFormatter(
+        formatter = new RxnFormatter(
           this.structProvider,
           this.molfileManager,
           molfileParseOptions
@@ -87,7 +87,7 @@ export class FormatterFactory {
         break
 
       case 'smiles':
-        strategy = new SmilesFormatter(
+        formatter = new SmilesFormatter(
           this.structProvider,
           this.smilesManager,
 
@@ -108,7 +108,7 @@ export class FormatterFactory {
       case 'smilesExt':
       case 'smarts':
       default:
-        strategy = new ServerFormatter(
+        formatter = new ServerFormatter(
           this.structProvider,
           this.structService,
           this.molfileManager,
@@ -117,6 +117,6 @@ export class FormatterFactory {
         )
     }
 
-    return strategy
+    return formatter
   }
 }

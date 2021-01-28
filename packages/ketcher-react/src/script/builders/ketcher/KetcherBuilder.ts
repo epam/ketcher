@@ -77,12 +77,12 @@ class KetcherBuilder {
     }
     this.tempUIDataContainer = null
 
-    const tempLink: { ui: KetcherUI } = {
+    const tempRef: { ui: KetcherUI } = {
       ui: null as any
     }
 
     const editor = await new Promise<Editor>(resolve => {
-      tempLink.ui = initUI(
+      tempRef.ui = initUI(
         element,
         staticResourcesUrl,
         {
@@ -97,7 +97,7 @@ class KetcherBuilder {
     })
 
     this.editor = editor
-    this.ui = tempLink.ui
+    this.ui = tempRef.ui
     this.formatterFactory = new FormatterFactory(
       editor,
       structService,

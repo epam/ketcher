@@ -92,7 +92,10 @@ function structAcceptMimes() {
   return Object.keys(formatProperties)
     .reduce(
       (res, key) =>
-        res.concat(formatProperties[key].mime, ...formatProperties[key].ext),
+        res.concat(
+          formatProperties[key].mime,
+          ...formatProperties[key].extensions
+        ),
       []
     )
     .join(',')

@@ -3,20 +3,20 @@ import { ChemicalMimeType } from '../infrastructure/services'
 export class SupportedFormatProperties {
   name: string
   mime: ChemicalMimeType
-  ext: Array<string>
+  extensions: string[]
   supportsCoords?: boolean
   options?: any
 
   constructor(
     name: string,
     mime: ChemicalMimeType,
-    ext: Array<string>,
+    extensions: string[],
     supportsCoords?: boolean,
     options?: any
   ) {
     this.name = name
     this.mime = mime
-    this.ext = ext
+    this.extensions = extensions
     this.supportsCoords = supportsCoords || false
     this.options = options || {}
   }

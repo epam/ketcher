@@ -37,30 +37,30 @@ class Ketcher {
     readonly editor: Editor,
     readonly server: StructService, // todo: remove
     readonly ui: UI,
-    private readonly structureServiceFactory: FormatterFactory
+    private readonly formatterFactory: FormatterFactory
   ) {}
 
   getStructureAsync(structureFormat: SupportedFormat = 'rxn'): Promise<string> {
-    const service = this.structureServiceFactory.create(structureFormat)
+    const service = this.formatterFactory.create(structureFormat)
     return service.getStructureAsync()
   }
 
   getSmilesAsync(isExtended: boolean = false): Promise<string> {
     const format: SupportedFormat = isExtended ? 'smilesExt' : 'smiles'
 
-    const service = this.structureServiceFactory.create(format)
+    const service = this.formatterFactory.create(format)
     return service.getStructureAsync()
   }
 
   getMolfileAsync(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
     const format: SupportedFormat =
       molfileFormat === 'v3000' ? 'molV3000' : 'mol'
-    const service = this.structureServiceFactory.create(format)
+    const service = this.formatterFactory.create(format)
     return service.getStructureAsync()
   }
 
   async getGraphAsync(): Promise<Graph> {
-    const service = this.structureServiceFactory.create('graph')
+    const service = this.formatterFactory.create('graph')
     return service.getStructureAsync()
   }
 

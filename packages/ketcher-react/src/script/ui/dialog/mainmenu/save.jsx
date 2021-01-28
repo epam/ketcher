@@ -164,7 +164,7 @@ class Save extends Component {
         buttons={[
           <SaveButton
             data={structStr}
-            filename={filename + getPropertiesByFormat(format).ext[0]}
+            filename={filename + getPropertiesByFormat(format).extensions[0]}
             key="save-button"
             type={format.mime}
             server={this.props.server}

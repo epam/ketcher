@@ -15,8 +15,9 @@
  ***************************************************************************/
 
 import React from 'react'
-import element from '../../../chem/element'
-import { sketchingColors as elementColor } from '../../../chem/element-color'
+import element from '../../../../chem/element'
+import { sketchingColors as elementColor } from '../../../../chem/element-color'
+import styles from './Atom.module.less'
 
 const metPrefix = ['alkali', 'alkaline-earth', 'transition', 'post-transition'] // 'lanthanide', 'actinide'
 
@@ -32,7 +33,7 @@ function Atom({ el, shortcut, className, ...props }) {
   return (
     <button
       title={shortcut ? `${el.title} (${shortcut})` : el.title}
-      className={[...atomClass(el), className].join(' ')}
+      className={[...atomClass(el), styles[className]].join(' ')}
       style={{ color: elementColor[el.label] }}
       value={element.map[el.label]}
       {...props}>

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import React from 'react'
-import Atom from '../../../../../../../../component/view/atom'
+import Atom from '../../../../../../../../component/view/Atom/Atom'
 import clsx from 'clsx'
 
 import styles from './MainRow.module.less'
@@ -27,11 +27,11 @@ function MainRow({ row, caption, refer, selected, onSelect, currentEvents }) {
         <th>{caption}</th>
         {row.map(element =>
           typeof element !== 'number' ? ( // eslint-disable-line
-            <td className={styles.cell}>
+            <td>
               <Atom
                 el={element}
                 className={clsx({
-                  [styles.selected]: selected(element.label)
+                  selected: selected(element.label)
                 })}
                 onClick={() => onSelect(element.label)}
                 {...currentEvents(element)}

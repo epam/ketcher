@@ -54,8 +54,7 @@
         vertical-align: top;
         content: attr(value);
       }
-      &:hover,
-      &.selected {
+      &:hover {
         &:after {
           visibility: hidden;
         }
@@ -72,9 +71,6 @@
       &:active {
         .highlight-scale(none);
         .highlight-shadow(none);
-      }
-      &.selected {
-        .highlight-invert;
       }
     }
 

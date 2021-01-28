@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import React from 'react'
-import Atom from '../../../../../../../../component/view/atom'
+import Atom from '../../../../../../../../component/view/Atom/Atom'
 import clsx from 'clsx'
 
 import styles from './OutinerRow.module.less'
@@ -28,11 +28,11 @@ function OutinerRow({ row, caption, selected, onSelect, currentEvents }) {
           {caption}
         </th>
         {row.map(el => (
-          <td className={styles.cell} key={el.label}>
+          <td key={el.label}>
             <Atom
               el={el}
               className={clsx({
-                [styles.selected]: selected(el.label)
+                selected: selected(el.label)
               })}
               onClick={() => onSelect(el.label)}
               {...currentEvents(el)}

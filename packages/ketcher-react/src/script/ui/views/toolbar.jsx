@@ -20,7 +20,7 @@ import React from 'react'
 import clsx from 'clsx'
 
 import element from '../../chem/element'
-import Atom from '../component/view/atom'
+import Atom from '../component/view/Atom/Atom'
 import Icon from '../component/view/icon'
 import ActionMenu, { shortcutStr } from '../component/actionmenu'
 

@@ -189,11 +189,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: ConvertCommandData = {
         struct,
@@ -233,11 +232,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: LayoutCommandData = {
         struct,
@@ -272,11 +270,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: CleanCommandData = {
         struct,
@@ -315,11 +312,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: AromatizeCommandData = {
         struct,
@@ -358,11 +354,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: DearomatizeCommandData = {
         struct,
@@ -400,11 +395,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: CalculateCipCommandData = {
         struct,
@@ -443,11 +437,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: AutomapCommandData = {
         struct,
@@ -492,11 +485,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: CheckCommandData = {
         struct,
@@ -543,11 +535,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: CalculateCommandData = {
         struct,
@@ -586,11 +577,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: GenerateImageCommandData = {
         struct: data,

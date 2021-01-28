@@ -151,7 +151,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: InfoResult = {
-            indigoVersion: msg.payload,
+            indigoVersion: msg.payload!,
             imagoVersions: [],
             isAvailable: true
           }
@@ -180,7 +180,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: ConvertResult = {
-            struct: msg.payload,
+            struct: msg.payload!,
             format: output_format
           }
           resolve(result)
@@ -224,7 +224,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: LayoutResult = {
-            struct: msg.payload,
+            struct: msg.payload!,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -263,7 +263,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: CleanResult = {
-            struct: msg.payload,
+            struct: msg.payload!,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -306,7 +306,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: AromatizeResult = {
-            struct: msg.payload,
+            struct: msg.payload!,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -349,7 +349,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: AromatizeResult = {
-            struct: msg.payload,
+            struct: msg.payload!,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -391,7 +391,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: CalculateCipResult = {
-            struct: msg.payload,
+            struct: msg.payload!,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -434,7 +434,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: AutomapResult = {
-            struct: msg.payload,
+            struct: msg.payload!,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -474,7 +474,7 @@ class IndigoService implements StructService {
         worker.terminate()
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
-          const warnings = JSON.parse(msg.payload) as KeyValuePair
+          const warnings = JSON.parse(msg.payload!) as KeyValuePair
 
           const result: CheckResult = Object.entries(warnings).reduce(
             (acc, curr) => {
@@ -525,7 +525,7 @@ class IndigoService implements StructService {
         worker.terminate()
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
-          const calculatedProperties = JSON.parse(msg.payload) as KeyValuePair
+          const calculatedProperties = JSON.parse(msg.payload!) as KeyValuePair
           const result: CalculateResult = Object.entries(
             calculatedProperties
           ).reduce((acc, curr) => {
@@ -580,7 +580,7 @@ class IndigoService implements StructService {
         worker.terminate()
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
-          resolve(msg.payload)
+          resolve(msg.payload!)
         } else {
           reject(msg.error)
         }

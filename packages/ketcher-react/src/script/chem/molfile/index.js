@@ -18,6 +18,10 @@ import Molfile from './molfile'
 
 // TODO: reconstruct molfile string instead parsing multiple times
 //       merge to bottom
+/**
+ * @param {string} str
+ * @param {import('ketcher-core').MolfileParseOptions} options
+ * */
 function parseCTFile(str, options) {
   const molfile = new Molfile()
   const lines = str.split(/\r\n|[\n\r]/g)

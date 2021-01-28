@@ -80,6 +80,9 @@ function toGraph(struct) {
   return result
 }
 
+/**
+ * @param {import('ketcher-core').Graph} graph
+ * @returns {import('ketcher-core').Struct} */
 function fromGraph(graph) {
   const resultingStruct = new Struct()
   resultingStruct.name = graph.header ? graph.header.moleculeName : null
@@ -120,4 +123,3 @@ export default {
   toGraph,
   fromGraph
 }
-export * from './Graph'

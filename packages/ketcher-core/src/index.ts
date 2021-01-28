@@ -2,6 +2,7 @@ import {
   Graph,
   GraphManager,
   MolfileManager,
+  MolfileParseOptions,
   Pile,
   Pool,
   Struct,
@@ -15,7 +16,8 @@ import {
   getPropertiesByFormat,
   StructFormatter,
   StructProvider,
-  SupportedFormat
+  SupportedFormat,
+  identifyStructFormat
 } from './format'
 
 import {
@@ -55,6 +57,7 @@ export type {
   Graph,
   GraphManager,
   MolfileManager,
+  MolfileParseOptions,
   Pile,
   Pool,
   Struct,
@@ -62,7 +65,12 @@ export type {
   SmilesManager
 }
 export type { StructFormatter, StructProvider, SupportedFormat }
-export { FormatterFactory, formatProperties, getPropertiesByFormat }
+export {
+  FormatterFactory,
+  formatProperties,
+  getPropertiesByFormat,
+  identifyStructFormat
+}
 
 export { RemoteStructService, RemoteStructServiceProvider, ChemicalMimeType }
 export type {

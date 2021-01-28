@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { FormatterFactory, StructService, SupportedFormat } from 'ketcher-core'
+import {
+  FormatterFactory,
+  Graph,
+  StructService,
+  SupportedFormat
+} from 'ketcher-core'
 import { isEqual } from 'lodash/fp'
 import molfile, { MolfileFormat } from './chem/molfile'
 import Struct from './chem/struct'
 import Editor from './editor'
-import { Graph } from './format/chemGraph'
 import Render from './render'
 
 interface UI {

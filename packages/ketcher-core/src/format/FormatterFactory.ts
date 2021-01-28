@@ -1,5 +1,10 @@
-import { GraphManager, MolfileManager, SmilesManager } from '../chem'
-import { StructService } from '../infrastructure/services'
+import {
+  GraphManager,
+  MolfileManager,
+  MolfileParseOptions,
+  SmilesManager
+} from '../chem'
+import { StructService, StructServiceOptions } from '../infrastructure/services'
 import {
   StructProvider,
   StructFormatter,
@@ -20,9 +25,46 @@ export class FormatterFactory {
     private readonly smilesManager: SmilesManager
   ) {}
 
-  create(format: SupportedFormat, options?: any): StructFormatter {
-    let strategy: StructFormatter
+  private separateOptions(
+    options?:
+      | MolfileParseOptions
+      | StructServiceOptions
+      | (MolfileParseOptions & StructServiceOptions)
+  ): [MolfileParseOptions, StructServiceOptions | {}] {
+    if (!options) {
+      return [{}, {}]
+    }
 
+    const {
+      reactionRelayout,
+      badHeaderRecover,
+      ...structServiceOptions
+    } = options
+
+    let molfileParseOptions: MolfileParseOptions = {}
+
+    if (typeof reactionRelayout === 'boolean') {
+      molfileParseOptions.reactionRelayout = reactionRelayout
+    }
+    if (typeof badHeaderRecover === 'boolean') {
+      molfileParseOptions.badHeaderRecover = badHeaderRecover
+    }
+
+    return [molfileParseOptions, structServiceOptions]
+  }
+
+  create(
+    format: SupportedFormat,
+    options?:
+      | MolfileParseOptions
+      | StructServiceOptions
+      | (MolfileParseOptions & StructServiceOptions)
+  ): StructFormatter {
+    const [molfileParseOptions, structServiceOptions] = this.separateOptions(
+      options
+    )
+
+    let strategy: StructFormatter
     switch (format) {
       case 'graph':
         strategy = new GraphFormatter(this.structProvider, this.graphManager)
@@ -31,16 +73,31 @@ export class FormatterFactory {
       case 'mol':
         strategy = new MolfileV2000Formatter(
           this.structProvider,
-          this.molfileManager
+          this.molfileManager,
+          molfileParseOptions
         )
         break
 
       case 'rxn':
-        strategy = new RxnFormatter(this.structProvider, this.molfileManager)
+        strategy = new RxnFormatter(
+          this.structProvider,
+          this.molfileManager,
+          molfileParseOptions
+        )
         break
 
       case 'smiles':
-        strategy = new SmilesFormatter(this.structProvider, this.smilesManager)
+        strategy = new SmilesFormatter(
+          this.structProvider,
+          this.smilesManager,
+
+          // only for ServerFormatter, because 'getStructureFromStringAsync' is delegated to it
+
+          this.structService,
+          this.molfileManager,
+          format,
+          structServiceOptions
+        )
         break
 
       case 'cml':
@@ -56,7 +113,7 @@ export class FormatterFactory {
           this.structService,
           this.molfileManager,
           format,
-          options
+          structServiceOptions
         )
     }
 

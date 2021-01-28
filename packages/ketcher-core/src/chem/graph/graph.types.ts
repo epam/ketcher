@@ -14,4 +14,5 @@ export type Graph = {
 
 export interface GraphManager {
   toGraph: (struct: Struct) => Graph
+  fromGraph: (graph: Graph) => Struct
 }

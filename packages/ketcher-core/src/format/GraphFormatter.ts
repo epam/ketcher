@@ -1,7 +1,7 @@
+import { Graph, GraphManager, Struct } from '../chem'
 import { StructFormatter, StructProvider } from './structFormatter.types'
-import { Graph, GraphManager } from '../chem/graph'
 
-export class GraphFormatter implements StructFormatter {
+export class GraphFormatter implements StructFormatter<Graph> {
   constructor(
     private readonly structProvider: StructProvider,
     private readonly graphManager: GraphManager
@@ -9,7 +9,17 @@ export class GraphFormatter implements StructFormatter {
 
   async getStructureAsync(): Promise<Graph> {
     const struct = this.structProvider.struct()
+    return this.getStructureFromStructAsync(struct)
+  }
+
+  getStructureFromStructAsync(struct: Struct): Promise<Graph> {
     const graph = this.graphManager.toGraph(struct)
+    return Promise.resolve(graph)
+  }
+
+  getStructureFromStringAsync(stringifiedStruct: string): Promise<Struct> {
+    const parsedStruct = JSON.parse(stringifiedStruct)
+    const graph = this.graphManager.fromGraph(parsedStruct)
     return Promise.resolve(graph)
   }
 }

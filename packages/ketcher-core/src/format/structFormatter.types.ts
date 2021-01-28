@@ -1,7 +1,9 @@
 import { Struct } from '../chem'
 
-export interface StructFormatter {
-  getStructureAsync: () => Promise<any>
+export interface StructFormatter<TFormat = any> {
+  getStructureAsync: () => Promise<TFormat>
+  getStructureFromStructAsync: (struct: Struct) => Promise<TFormat>
+  getStructureFromStringAsync: (stringifiedStruct: string) => Promise<Struct>
 }
 
 export interface StructProvider {

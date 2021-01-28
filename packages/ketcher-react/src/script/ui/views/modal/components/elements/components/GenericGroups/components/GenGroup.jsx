@@ -16,6 +16,9 @@
 
 import React from 'react'
 import GenSet from './components'
+import clsx from 'clsx'
+
+import styles from './GenGroup.module.less'
 
 const viewSchema = {
   atom: {
@@ -68,10 +71,15 @@ function GenGroup({ gen, name, path, selected, onSelect }) {
   const schema = viewSchema[pk]
 
   return schema && schema.caption ? (
-    <fieldset className={name}>
+    <fieldset className={clsx(styles[name], styles.fieldset)}>
       <legend>{schema.caption}</legend>
       {group.labels ? (
-        <GenSet labels={group.labels} selected={selected} onSelect={onSelect} />
+        <GenSet
+          labels={group.labels}
+          selected={selected}
+          onSelect={onSelect}
+          className={styles.subgroup}
+        />
       ) : null}
       {schema.order.map((
         child // TODO:order = Object.keys ifndef
@@ -89,7 +97,7 @@ function GenGroup({ gen, name, path, selected, onSelect }) {
     <GenSet
       labels={group.labels}
       caption={schema || name}
-      className={name}
+      className={styles[name]}
       selected={selected}
       onSelect={onSelect}
     />

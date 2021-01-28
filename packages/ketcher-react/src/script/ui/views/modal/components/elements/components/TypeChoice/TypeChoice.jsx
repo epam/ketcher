@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import React from 'react'
+import styles from './TypeChoice.module.less'
 
 const typeSchema = [
   { title: 'Single', value: 'atom' },
@@ -24,7 +25,7 @@ const typeSchema = [
 
 function TypeChoice({ value, onChange, ...props }) {
   return (
-    <fieldset>
+    <fieldset className={styles.fieldset}>
       {typeSchema.map(sc => (
         <label key={sc.title}>
           <input

@@ -17,7 +17,15 @@
 import React, { Component } from 'react'
 import element from '../../../../../../../chem/element'
 import { Header, MainRow, OutinerRow } from './components'
+import styles from './ElementsTable.module.less'
+import clsx from 'clsx'
 
+const metalPrefix = [
+  'alkali',
+  'alkaline-earth',
+  'transition',
+  'post-transition'
+] // 'lanthanide', 'actinide'
 const beforeSpan = {
   He: 16,
   B: 10,
@@ -50,14 +58,32 @@ class ElementsTable extends Component {
     return nextProps.value !== this.props.value
   }
 
+  atomClasses = item => {
+    const { selected } = this.props
+    const type = metalPrefix.includes(item.type)
+      ? `${item.type} metal`
+      : item.type || 'unknown-props'
+    const classes = [
+      ...type.split(' '),
+      item.state || 'unknown-state',
+      item.origin
+    ]
+    return classes.map(className => {
+      return styles[className]
+    })
+  }
+
   render() {
     const { currentEvents, selected, onSelect } = this.props
     const callbacks = { currentEvents, selected, onSelect }
     return (
-      <table summary="Periodic table of the chemical elements">
+      <table
+        className={styles.table}
+        summary="Periodic table of the chemical elements">
         <Header />
         {main.map((row, i) => (
           <MainRow
+            atomClasses={this.atomClasses}
             key={i}
             row={row}
             caption={i + 1}
@@ -65,8 +91,18 @@ class ElementsTable extends Component {
             {...callbacks}
           />
         ))}
-        <OutinerRow row={lanthanides} caption="*" {...callbacks} />
-        <OutinerRow row={actinides} caption="**" {...callbacks} />
+        <OutinerRow
+          row={lanthanides}
+          caption="*"
+          atomClasses={this.atomClasses}
+          {...callbacks}
+        />
+        <OutinerRow
+          row={actinides}
+          caption="**"
+          atomClasses={this.atomClasses}
+          {...callbacks}
+        />
       </table>
     )
   }

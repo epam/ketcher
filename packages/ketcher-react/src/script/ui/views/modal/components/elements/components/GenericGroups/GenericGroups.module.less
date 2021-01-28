@@ -1,0 +1,36 @@
+@import '../../../../../../../../style/mixins.less';
+
+.generic-groups {
+  display: flex;
+  justify-content: space-around;
+  padding: 1.5em 0;
+  .col {
+    &:first-child {
+      width: 40%;
+    }
+    & > fieldset {
+      margin: 1em;
+      padding: 1em 0.5em;
+    }
+  }
+  button {
+    font-size: 1.1em;
+    height: 2em;
+    width: 2.5em;
+    line-height: 1;
+    vertical-align: middle;
+    padding: 0.15em;
+    background: inherit;
+    &:hover {
+      .highlight-scale(@scale:1.25);
+      .highlight-shadow(black);
+    }
+    &:active {
+      .highlight-scale(none);
+      .highlight-shadow(none);
+    }
+    &.selected {
+      .highlight-invert;
+    }
+  }
+}

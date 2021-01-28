@@ -17,23 +17,12 @@
 import React from 'react'
 import element from '../../../../chem/element'
 import { sketchingColors as elementColor } from '../../../../chem/element-color'
-import styles from './Atom.module.less'
-
-const metPrefix = ['alkali', 'alkaline-earth', 'transition', 'post-transition'] // 'lanthanide', 'actinide'
-
-function atomClass(el) {
-  const type =
-    metPrefix.indexOf(el.type) >= 0
-      ? `${el.type} metal`
-      : el.type || 'unknown-props'
-  return [type, el.state || 'unknown-state', el.origin]
-}
 
 function Atom({ el, shortcut, className, ...props }) {
   return (
     <button
       title={shortcut ? `${el.title} (${shortcut})` : el.title}
-      className={[...atomClass(el), styles[className]].join(' ')}
+      className={className}
       style={{ color: elementColor[el.label] }}
       value={element.map[el.label]}
       {...props}>

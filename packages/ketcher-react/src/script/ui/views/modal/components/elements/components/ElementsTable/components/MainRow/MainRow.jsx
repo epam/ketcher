@@ -20,19 +20,30 @@ import clsx from 'clsx'
 
 import styles from './MainRow.module.less'
 
-function MainRow({ row, caption, refer, selected, onSelect, currentEvents }) {
+function MainRow({
+  row,
+  caption,
+  refer,
+  selected,
+  onSelect,
+  currentEvents,
+  atomClasses
+}) {
   return (
     <tbody className={styles.body}>
       <tr className={styles.row}>
         <th>{caption}</th>
         {row.map(element =>
           typeof element !== 'number' ? ( // eslint-disable-line
-            <td>
+            <td className={styles.cell}>
               <Atom
                 el={element}
-                className={clsx({
-                  selected: selected(element.label)
-                })}
+                className={clsx(
+                  {
+                    [styles.selected]: selected(element.label)
+                  },
+                  ...atomClasses(element)
+                )}
                 onClick={() => onSelect(element.label)}
                 {...currentEvents(element)}
               />

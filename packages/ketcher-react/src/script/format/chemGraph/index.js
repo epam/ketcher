@@ -35,9 +35,6 @@ function toGraph(struct) {
       nodes: []
     }
   }
-  result.__proto__.toString = () => {
-    return JSON.stringify(result, null, 4)
-  }
 
   const header = headerToGraph(struct)
   if (header) result.header = header

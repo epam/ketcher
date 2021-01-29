@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
+import { formatProperties } from 'ketcher-core'
 import { isEqual, debounce } from 'lodash/fp'
 
 import molfile from '../../chem/molfile'
@@ -24,7 +24,6 @@ import actions from '../action'
 import * as clipArea from '../component/cliparea'
 import { openDialog } from './modal'
 import { onAction, load } from './shared'
-import { SupportedFormatPropertiesMap } from '../data/convert/struct.types'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -115,8 +114,8 @@ const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/
 
 /* ClipArea */
 export function initClipboard(dispatch, getState) {
-  const formats = Object.keys(SupportedFormatPropertiesMap).map(
-    format => SupportedFormatPropertiesMap[format].mime
+  const formats = Object.keys(formatProperties).map(
+    format => formatProperties[format].mime
   )
 
   const debAction = debounce(0, action => dispatch(onAction(action)))

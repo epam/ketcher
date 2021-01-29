@@ -13,19 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-// @ts-ignore
-import { StructServiceProvider, StructServiceOptions } from 'ketcher-core'
+import {
+  InfoResult,
+  StructServiceProvider,
+  StructServiceOptions,
+  StructService
+} from 'ketcher-core'
 
-function api(
+type Api = StructService & Promise<InfoResult>
+
+// todo: remove
+function createApi(
   structServiceProvider: StructServiceProvider,
   defaultOptions: StructServiceOptions
-) {
+): Api {
   const structService = structServiceProvider.createStructService(
     defaultOptions
   )
   const info = structService.info()
 
   return Object.assign(info, {
+    info: structService.info.bind(structService),
     convert: structService.convert.bind(structService),
     layout: structService.layout.bind(structService),
     clean: structService.clean.bind(structService),
@@ -40,4 +48,4 @@ function api(
   })
 }
 
-export default api
+export default createApi

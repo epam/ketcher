@@ -1,3 +1,27 @@
+// todo: remove Managers from export outside, when this managers will be moved under Core package
+import {
+  Graph,
+  GraphManager,
+  MolfileManager,
+  MolfileParseOptions,
+  Pile,
+  Pool,
+  Struct,
+  SGroupForest,
+  SmilesManager
+} from './chem'
+
+import {
+  FormatterFactory,
+  FormatterFactoryOptions,
+  formatProperties,
+  getPropertiesByFormat,
+  StructFormatter,
+  StructProvider,
+  SupportedFormat,
+  identifyStructFormat
+} from './format'
+
 import {
   RemoteStructService,
   RemoteStructServiceProvider,
@@ -30,6 +54,30 @@ import type {
   ServiceMode,
   StructServiceProvider
 } from './infrastructure/services'
+
+export type {
+  Graph,
+  GraphManager,
+  MolfileManager,
+  MolfileParseOptions,
+  Pile,
+  Pool,
+  Struct,
+  SGroupForest,
+  SmilesManager
+}
+export type {
+  FormatterFactoryOptions,
+  StructFormatter,
+  StructProvider,
+  SupportedFormat
+}
+export {
+  FormatterFactory,
+  formatProperties,
+  getPropertiesByFormat,
+  identifyStructFormat
+}
 
 export { RemoteStructService, RemoteStructServiceProvider, ChemicalMimeType }
 export type {

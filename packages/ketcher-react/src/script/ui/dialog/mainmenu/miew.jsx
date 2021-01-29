@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { FormatterFactory } from 'ketcher-core'
 import { pick } from 'lodash/fp'
-
+import { molfileManager } from '../../../chem/molfile'
+import smilesManager from '../../../chem/smiles'
+import graphManager from '../../../format/chemGraph'
 import Dialog from '../../component/dialog'
-import * as structFormat from '../../data/convert/structConverter'
 import { MIEW_OPTIONS } from '../../data/schema/options-schema'
 import { load } from '../../state'
 
@@ -95,8 +96,19 @@ class MiewComponent extends Component {
 
     if (this.viewer.init()) this.viewer.run()
 
-    structFormat
-      .toString(struct, 'cml', server)
+    const factory = new FormatterFactory(
+      {
+        struct: () => struct
+      },
+      server,
+      graphManager,
+      molfileManager,
+      smilesManager
+    )
+    const service = factory.create('cml')
+
+    service
+      .getStructureAsync()
       .then(res =>
         this.viewer.load(res, { sourceType: 'immediate', fileType: 'cml' })
       )

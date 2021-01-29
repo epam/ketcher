@@ -16,8 +16,8 @@
 
 import React, { Component, createRef } from 'react'
 import { connect } from 'react-redux'
+import { formatProperties } from 'ketcher-core'
 
-import { SupportedFormatPropertiesMap as formatMap } from '../../data/convert/struct.types'
 import Dialog from '../../component/dialog'
 import OpenButton from '../../component/view/openbutton'
 import ClipArea, { exec } from '../../component/cliparea'
@@ -89,9 +89,13 @@ class Open extends Component {
 }
 
 function structAcceptMimes() {
-  return Object.keys(formatMap)
+  return Object.keys(formatProperties)
     .reduce(
-      (res, key) => res.concat(formatMap[key].mime, ...formatMap[key].ext),
+      (res, key) =>
+        res.concat(
+          formatProperties[key].mime,
+          ...formatProperties[key].extensions
+        ),
       []
     )
     .join(',')

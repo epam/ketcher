@@ -1,0 +1,10 @@
+export type ButtonName =
+  | 'layout'
+  | 'clean'
+  | 'arom'
+  | 'dearom'
+  | 'cip'
+  | 'check'
+  | 'analyse'
+  | 'recognize'
+  | 'miew'

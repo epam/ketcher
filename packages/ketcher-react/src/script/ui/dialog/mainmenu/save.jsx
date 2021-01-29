@@ -16,20 +16,22 @@
 
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import {
+  FormatterFactory,
+  getPropertiesByFormat,
+  formatProperties
+} from 'ketcher-core'
+import { molfileManager } from '../../../chem/molfile'
+import smilesManager from '../../../chem/smiles'
+import graphManager from '../../../format/chemGraph'
 import * as structFormat from '../../data/convert/structConverter'
 import { saveUserTmpl } from '../../state/templates'
 import { updateFormState } from '../../state/modal/form'
 import { check } from '../../state/server'
-
 import Dialog from '../../component/dialog'
 import Form, { Field } from '../../component/form/form'
 import SaveButton from '../../component/view/savebutton'
 import { createRef } from 'react'
-import {
-  getPropertiesByFormat,
-  SupportedFormat,
-  SupportedFormatPropertiesMap
-} from '../../data/convert/struct.types'
 
 const saveSchema = {
   title: 'Save',
@@ -48,9 +50,9 @@ const saveSchema = {
     },
     format: {
       title: 'Format',
-      enum: Object.keys(SupportedFormatPropertiesMap),
-      enumNames: Object.keys(SupportedFormatPropertiesMap).map(
-        format => SupportedFormatPropertiesMap[format].name
+      enum: Object.keys(formatProperties),
+      enumNames: Object.keys(formatProperties).map(
+        format => formatProperties[format].name
       )
     }
   }
@@ -62,19 +64,15 @@ class Save extends Component {
     this.state = {}
     this.isRxn = this.props.struct.hasRxnArrow()
     this.textAreaRef = createRef()
-    const formats = [
-      this.isRxn ? SupportedFormat.Rxn : SupportedFormat.Mol,
-      SupportedFormat.Smiles,
-      SupportedFormat.Graph
-    ]
+    const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'graph']
     if (this.props.server)
       formats.push(
-        this.isRxn ? SupportedFormat.RxnV3000 : SupportedFormat.MolV3000,
-        SupportedFormat.SmilesExt,
-        SupportedFormat.Smarts,
-        SupportedFormat.InChI,
-        SupportedFormat.InChIAuxInfo,
-        SupportedFormat.CML
+        this.isRxn ? 'rxnV3000' : 'molV3000',
+        'smilesExt',
+        'smarts',
+        'inChI',
+        'inChIAuxInfo',
+        'cml'
       )
 
     this.saveSchema = saveSchema
@@ -86,9 +84,9 @@ class Save extends Component {
       }
     )
 
-    this.changeType(
-      this.isRxn ? SupportedFormat.Rxn : SupportedFormat.Mol
-    ).then(res => (res instanceof Error ? props.onCancel() : null))
+    this.changeType(this.isRxn ? 'rxn' : 'mol').then(res =>
+      res instanceof Error ? props.onCancel() : null
+    )
   }
 
   componentDidMount() {
@@ -98,13 +96,25 @@ class Save extends Component {
 
   showStructWarningMessage(format) {
     const { errors } = this.props.formState
-    return format !== SupportedFormat.Mol && Object.keys(errors).length > 0
+    return format !== 'mol' && Object.keys(errors).length > 0
   }
 
   changeType(type) {
     const { struct, server, options, formState } = this.props
-    const converted = structFormat.toString(struct, type, server, options)
-    return converted.then(
+
+    const factory = new FormatterFactory(
+      {
+        struct: () => struct
+      },
+      server,
+      graphManager,
+      molfileManager,
+      smilesManager
+    )
+
+    const service = factory.create(type, options)
+
+    return service.getStructureAsync().then(
       structStr => {
         this.setState({ structStr })
         setTimeout(() => this.textAreaRef.current.select(), 10) // TODO: remove hack
@@ -154,7 +164,7 @@ class Save extends Component {
         buttons={[
           <SaveButton
             data={structStr}
-            filename={filename + getPropertiesByFormat(format).ext[0]}
+            filename={filename + getPropertiesByFormat(format).extensions[0]}
             key="save-button"
             type={format.mime}
             server={this.props.server}
@@ -176,7 +186,7 @@ class Save extends Component {
             schema={this.saveSchema}
             init={{
               filename,
-              format: this.isRxn ? SupportedFormat.Rxn : SupportedFormat.Mol
+              format: this.isRxn ? 'rxn' : 'mol'
             }}
             {...formState}>
             <Field name="filename" />
@@ -185,7 +195,7 @@ class Save extends Component {
           <textarea value={structStr} readOnly ref={this.textAreaRef} />
           {warnings.map(warning => (
             <div className="warnings-container">
-              <div className="warning"></div>
+              <div className="warning" />
               <div className="warnings-arr">{warning}</div>
             </div>
           ))}

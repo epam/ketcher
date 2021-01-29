@@ -1,4 +1,8 @@
-import * as structFormat from '../data/convert/structConverter'
+import { identifyStructFormat, FormatterFactory } from 'ketcher-core'
+
+import { molfileManager } from '../../chem/molfile'
+import smilesManager from '../../chem/smiles'
+import graphManager from '../../format/chemGraph'
 
 export function onAction(action) {
   if (action && action.dialog) {
@@ -29,16 +33,34 @@ export function load(structStr, options) {
     const server = state.server
 
     options = options || {}
-    const parsed = structFormat.fromString(structStr, options, server)
+    const { rescale, fragment, ...formatterOptions } = options
 
-    return parsed.then(
+    const format = identifyStructFormat(structStr)
+    const factory = new FormatterFactory(
+      {
+        struct: () => null
+      },
+      server,
+      graphManager,
+      molfileManager,
+      smilesManager
+    )
+
+    const service = factory.create(format, formatterOptions)
+    return service.getStructureFromStringAsync(structStr).then(
       struct => {
-        if (options.rescale) struct.rescale() // TODO: move out parsing?
+        if (rescale) {
+          struct.rescale() // TODO: move out parsing?
+        }
 
-        if (struct.isBlank()) return
-        if (options.fragment)
+        if (struct.isBlank()) {
+          return
+        }
+        if (fragment) {
           dispatch(onAction({ tool: 'paste', opts: struct }))
-        else editor.struct(struct)
+        } else {
+          editor.struct(struct)
+        }
       },
       err => {
         //TODO: add error handler call

@@ -13,77 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-// @ts-ignore
 import { StructServiceProvider } from 'ketcher-core'
-import api from './api'
-import initUI from './ui'
-import { Ketcher } from './ketcher'
-
-interface ButtonConfig {
-  name: string
-  hidden?: boolean
-}
-
-type ButtonName =
-  | 'layout'
-  | 'clean'
-  | 'arom'
-  | 'dearom'
-  | 'cip'
-  | 'check'
-  | 'analyse'
-  | 'recognize'
-  | 'miew'
+import { KetcherBuilder, ButtonsConfig } from './builders'
 
 interface Config {
   element: HTMLInputElement | null
   staticResourcesUrl: string
   structServiceProvider: StructServiceProvider
-  buttons?: {
-    [buttonName in ButtonName]: ButtonConfig
-  }
+  buttons?: ButtonsConfig
 }
 
-function buildKetcher({
+async function buildKetcherAsync({
   element,
   staticResourcesUrl,
   structServiceProvider,
   buttons
 }: Config) {
-  const params = new URLSearchParams(document.location.search)
-  const ketcher = Ketcher.create(structServiceProvider.mode)
+  const builder = new KetcherBuilder()
 
-  ketcher.server = api(structServiceProvider, {
-    'smart-layout': true,
-    'ignore-stereochemistry-errors': true,
-    'mass-skip-error-on-pseudoatoms': false,
-    'gross-formula-add-rsites': true
-  })
+  await builder.appendApiAsync(structServiceProvider)
+  builder.appendServiceMode(structServiceProvider.mode)
+  await builder.appendUiAsync(element, staticResourcesUrl, buttons)
 
-  ketcher.ui = initUI(
-    element,
-    staticResourcesUrl,
-    Object.assign(
-      {
-        buttons: buttons || {}
-      },
-      ketcher.buildInfo
-    ),
-    ketcher.server,
-    ketcher
-  )
-
-  ketcher.server.then(
-    () => {
-      if (params.get('moll')) ketcher.ui.load(params.get('moll'))
-    },
-    () => {
-      document.title += ' (standalone)'
-    }
-  )
-
-  return ketcher
+  return builder.build()
 }
 
 export type { Config }
-export default buildKetcher
+export default buildKetcherAsync

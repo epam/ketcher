@@ -21,8 +21,8 @@ function Header() {
   return (
     <tbody>
       <tr>
-        {range(0, 19).map(i => (
-          <th key={i}>{i || ''}</th>
+        {range(0, 19).map(index => (
+          <th key={index}>{index || ''}</th>
         ))}
       </tr>
     </tbody>

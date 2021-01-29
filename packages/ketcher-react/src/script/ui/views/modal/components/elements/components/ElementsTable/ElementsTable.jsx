@@ -26,6 +26,13 @@ const metalPrefix = [
   'transition',
   'post-transition'
 ] // 'lanthanide', 'actinide'
+const atomClassNames = {
+  metal: 'metal',
+  unknownProps: 'unknown-props',
+  unknownState: 'unknown-state',
+  button: 'button',
+  selected: 'selected'
+}
 const beforeSpan = {
   He: 16,
   B: 10,
@@ -33,13 +40,15 @@ const beforeSpan = {
   Hf: 1,
   Rf: 1
 }
+const ACTINIDE = 'actinide'
+const LANTHANIDE = 'lanthanide'
 const main = rowPartition(
   element.filter(
-    item => item && item.type !== 'actinide' && item.type !== 'lanthanide'
+    item => item && item.type !== ACTINIDE && item.type !== LANTHANIDE
   )
 )
-const lanthanides = element.filter(item => item && item.type === 'lanthanide')
-const actinides = element.filter(item => item && item.type === 'actinide')
+const lanthanides = element.filter(item => item && item.type === LANTHANIDE)
+const actinides = element.filter(item => item && item.type === ACTINIDE)
 
 function rowPartition(elements) {
   return elements.reduce((result, item) => {
@@ -60,21 +69,18 @@ class ElementsTable extends Component {
     return nextProps.value !== this.props.value
   }
 
-  atomStyling = item => {
+  getAtomClassNames = item => {
     const { selected } = this.props
-
     const type = metalPrefix.includes(item.type)
-      ? `${item.type} metal`
-      : item.type || 'unknown-props'
-
+      ? `${item.type} ${atomClassNames.metal}`
+      : item.type || atomClassNames.unknownProps
     const classes = [
       ...type.split(' '),
-      item.state || 'unknown-state',
+      item.state || atomClassNames.unknownState,
       item.origin,
-      'button',
-      selected(item.label) && 'selected'
+      atomClassNames.button,
+      selected(item.label) && atomClassNames.selected
     ]
-
     return classes.map(className => {
       return styles[className]
     })
@@ -90,7 +96,7 @@ class ElementsTable extends Component {
         <Header />
         {main.map((row, index) => (
           <MainRow
-            atomStyling={this.atomStyling}
+            atomClassNames={this.getAtomClassNames}
             className={styles.main_row}
             key={index}
             row={row}
@@ -100,17 +106,17 @@ class ElementsTable extends Component {
           />
         ))}
         <OutinerRow
+          atomClassNames={this.getAtomClassNames}
           className={styles.outiner_row}
           row={lanthanides}
           caption="*"
-          atomStyling={this.atomStyling}
           {...callbacks}
         />
         <OutinerRow
+          atomClassNames={this.getAtomClassNames}
           className={styles.outiner_row}
           row={actinides}
           caption="**"
-          atomStyling={this.atomStyling}
           {...callbacks}
         />
       </table>

@@ -23,7 +23,7 @@ function OutinerRow({
   caption,
   onSelect,
   currentEvents,
-  atomStyling,
+  atomClassNames,
   className
 }) {
   return (
@@ -36,7 +36,7 @@ function OutinerRow({
           <td key={element.label}>
             <Atom
               el={element}
-              className={clsx(...atomStyling(element))}
+              className={clsx(...atomClassNames(element))}
               onClick={() => onSelect(element.label)}
               {...currentEvents(element)}
             />

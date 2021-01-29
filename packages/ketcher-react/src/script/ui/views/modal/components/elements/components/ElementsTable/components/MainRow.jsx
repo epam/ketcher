@@ -24,7 +24,7 @@ function MainRow({
   refer,
   onSelect,
   currentEvents,
-  atomStyling,
+  atomClassNames,
   className
 }) {
   return (
@@ -36,7 +36,7 @@ function MainRow({
             <td key={index}>
               <Atom
                 el={element}
-                className={clsx(...atomStyling(element))}
+                className={clsx(...atomClassNames(element))}
                 onClick={() => onSelect(element.label)}
                 {...currentEvents(element)}
               />

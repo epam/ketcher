@@ -82,9 +82,11 @@ function GenGroup({ gen, name, path, selected, onSelect }) {
         />
       ) : null}
       {schema.order.map((
-        child // TODO:order = Object.keys ifndef
+        child, // TODO:order = Object.keys ifndef
+        index
       ) => (
         <GenGroup
+          key={index}
           gen={group}
           name={child}
           path={pk}

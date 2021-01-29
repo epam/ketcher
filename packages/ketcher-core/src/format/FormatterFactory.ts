@@ -8,7 +8,8 @@ import { StructService, StructServiceOptions } from '../infrastructure/services'
 import {
   StructProvider,
   StructFormatter,
-  SupportedFormat
+  SupportedFormat,
+  FormatterFactoryOptions
 } from './structFormatter.types'
 import { GraphFormatter } from './GraphFormatter'
 import { MolfileV2000Formatter } from './MolfileV2000Formatter'
@@ -25,12 +26,8 @@ export class FormatterFactory {
     private readonly smilesManager: SmilesManager
   ) {}
 
-  // todo: remove? if we don't sanitize option for server in Standalone mode, server respond error about this flags
   private separateOptions(
-    options?:
-      | MolfileParseOptions
-      | StructServiceOptions
-      | (MolfileParseOptions & StructServiceOptions)
+    options?: FormatterFactoryOptions
   ): [MolfileParseOptions, StructServiceOptions | {}] {
     if (!options) {
       return [{}, {}]
@@ -56,10 +53,7 @@ export class FormatterFactory {
 
   create(
     format: SupportedFormat,
-    options?:
-      | MolfileParseOptions
-      | StructServiceOptions
-      | (MolfileParseOptions & StructServiceOptions)
+    options?: FormatterFactoryOptions
   ): StructFormatter {
     const [molfileParseOptions, structServiceOptions] = this.separateOptions(
       options

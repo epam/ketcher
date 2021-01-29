@@ -13,6 +13,7 @@ import {
 
 import {
   FormatterFactory,
+  FormatterFactoryOptions,
   formatProperties,
   getPropertiesByFormat,
   StructFormatter,
@@ -65,7 +66,12 @@ export type {
   SGroupForest,
   SmilesManager
 }
-export type { StructFormatter, StructProvider, SupportedFormat }
+export type {
+  FormatterFactoryOptions,
+  StructFormatter,
+  StructProvider,
+  SupportedFormat
+}
 export {
   FormatterFactory,
   formatProperties,

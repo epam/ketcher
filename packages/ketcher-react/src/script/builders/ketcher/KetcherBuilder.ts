@@ -139,16 +139,11 @@ class KetcherBuilder {
     ;(global as any)._ui_editor = this.editor
 
     const params = new URLSearchParams(document.location.search)
-    ketcher.server.info().then(
-      () => {
-        if (params.get('moll')) {
-          ketcher.ui.load(params.get('moll'))
-        }
-      },
-      () => {
-        document.title += ' (standalone)'
+    ketcher.server.info().then(() => {
+      if (params.get('moll')) {
+        ketcher.ui.load(params.get('moll'))
       }
-    )
+    })
 
     return ketcher
   }

@@ -1,4 +1,5 @@
-import { Struct } from '../chem'
+import { MolfileParseOptions, Struct } from '../chem'
+import { StructServiceOptions } from '../infrastructure/services'
 
 export interface StructFormatter<TFormat = any> {
   getStructureAsync: () => Promise<TFormat>
@@ -22,3 +23,7 @@ export type SupportedFormat =
   | 'inChIAuxInfo'
   | 'cml'
   | 'graph'
+
+export type FormatterFactoryOptions = Partial<
+  MolfileParseOptions & StructServiceOptions
+>

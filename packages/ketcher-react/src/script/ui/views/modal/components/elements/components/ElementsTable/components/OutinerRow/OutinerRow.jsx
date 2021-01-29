@@ -34,18 +34,18 @@ function OutinerRow({
         <th colSpan="3" className={styles.ref}>
           {caption}
         </th>
-        {row.map(el => (
-          <td className={styles.cell} key={el.label}>
+        {row.map(element => (
+          <td className={styles.cell} key={element.label}>
             <Atom
-              el={el}
+              el={element}
               className={clsx(
                 {
-                  [styles.selected]: selected(el.label)
+                  [styles.selected]: selected(element.label)
                 },
-                ...atomClasses(el)
+                ...atomClasses(element)
               )}
-              onClick={() => onSelect(el.label)}
-              {...currentEvents(el)}
+              onClick={() => onSelect(element.label)}
+              {...currentEvents(element)}
             />
           </td>
         ))}

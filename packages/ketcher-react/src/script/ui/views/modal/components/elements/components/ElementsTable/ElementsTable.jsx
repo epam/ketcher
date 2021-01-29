@@ -71,9 +71,11 @@ class ElementsTable extends Component {
 
   getAtomClassNames = item => {
     const { selected } = this.props
+
     const type = metalPrefix.includes(item.type)
       ? `${item.type} ${atomClassNames.metal}`
       : item.type || atomClassNames.unknownProps
+
     const classes = [
       ...type.split(' '),
       item.state || atomClassNames.unknownState,
@@ -81,6 +83,7 @@ class ElementsTable extends Component {
       atomClassNames.button,
       selected(item.label) && atomClassNames.selected
     ]
+
     return classes.map(className => {
       return styles[className]
     })
@@ -101,7 +104,7 @@ class ElementsTable extends Component {
             key={index}
             row={row}
             caption={index + 1}
-            refer={o => o === 1 && (index === 5 ? '*' : '**')}
+            refer={element => element === 1 && (index === 5 ? '*' : '**')}
             {...callbacks}
           />
         ))}

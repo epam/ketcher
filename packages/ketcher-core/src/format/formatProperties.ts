@@ -62,7 +62,7 @@ const formatProperties: FormatPropertiesMap = {
     ['.cml', '.mrv'],
     true
   ),
-  graph: new SupportedFormatProperties('Graph Format', ChemicalMimeType.JSON, [
+  graph: new SupportedFormatProperties('Graph Format', ChemicalMimeType.KET, [
     '.ket'
   ])
 }

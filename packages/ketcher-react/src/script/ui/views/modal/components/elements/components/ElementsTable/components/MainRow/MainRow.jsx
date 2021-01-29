@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import React from 'react'
-import Atom from '../../../../../../../../component/view/Atom/Atom'
+import Atom from '../../../../../../../../component/view/Atom'
 import clsx from 'clsx'
 
 import styles from './MainRow.module.less'

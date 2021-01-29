@@ -18,6 +18,10 @@ import Molfile from './molfile'
 
 // TODO: reconstruct molfile string instead parsing multiple times
 //       merge to bottom
+/**
+ * @param {string} str
+ * @param {import('ketcher-core').MolfileParseOptions} options
+ * */
 function parseCTFile(str, options) {
   const molfile = new Molfile()
   const lines = str.split(/\r\n|[\n\r]/g)
@@ -44,14 +48,16 @@ function parseCTFile(str, options) {
   }
 }
 
-const molFileManager = {
+const molfileManager = {
   stringify(struct, options) {
-    const opts = options || {}
-    return new Molfile(opts.v3000).saveMolecule(
+    if (!options) {
+      options = {}
+    }
+    return new Molfile().saveMolecule(
       struct,
-      opts.ignoreErrors,
-      opts.noRgroups,
-      opts.preserveIndigoDesc
+      options.ignoreErrors,
+      options.noRgroups,
+      options.preserveIndigoDesc
     )
   },
   parse(str, options) {
@@ -67,4 +73,6 @@ const molFileManager = {
   }
 }
 
-export default molFileManager
+export * from './molfileFormat'
+export { molfileManager }
+export default molfileManager

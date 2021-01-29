@@ -66,11 +66,11 @@ Struct.prototype.isBlank = function () {
 }
 
 /**
- * @param atomSet { Pile<number>? }
- * @param bondSet { Pile<number>? }
- * @param dropRxnSymbols { boolean? }
- * @param aidMap { Map<number, number>? }
- * @param simpleObjectsSet { Pile<number>? }
+ * @param [atomSet] { Pile<number> }
+ * @param [bondSet] { Pile<number> }
+ * @param [dropRxnSymbols] { boolean }
+ * @param [aidMap] { Map<number, number> }
+ * @param [simpleObjectsSet] { Pile<number> }
  * @returns { Struct }
  */
 Struct.prototype.clone = function (
@@ -124,12 +124,12 @@ Struct.prototype.getFragment = function (fid) {
 
 /**
  * @param cp { Struct } - container for merging
- * @param atomSet { Pile<number>? }
- * @param bondSet { Pile<number>? }
- * @param dropRxnSymbols { boolean? }
- * @param keepAllRGroups { boolean? }
- * @param aidMap { Map<number, number>? }
- * @param simpleObjectsSet { Pile<number>? }
+ * @param [atomSet] { Pile<number> }
+ * @param [bondSet] { Pile<number> }
+ * @param [dropRxnSymbols] { boolean }
+ * @param [keepAllRGroups] { boolean }
+ * @param [aidMap] { Map<number, number> }
+ * @param [simpleObjectsSet] { Pile<number> }
  * @returns { Struct }
  */
 Struct.prototype.mergeInto = function (

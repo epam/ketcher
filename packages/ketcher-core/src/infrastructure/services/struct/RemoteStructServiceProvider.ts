@@ -14,18 +14,33 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { StructService, StructServiceOptions } from './structService.types'
+
 import {
-  StructService,
   StructServiceProvider,
   ServiceMode
-} from './structService.types'
-import IndigoService from './remoteStructService'
+} from './structServiceProvider.types'
+import RemoteStructService from './RemoteStructService'
 
 class RemoteStructServiceProvider implements StructServiceProvider {
+  private readonly apiPath: string
   mode: ServiceMode = 'remote'
 
-  createStructService(baseUrl: string, options: any): StructService {
-    return new IndigoService(baseUrl, options)
+  constructor(apiPath: string) {
+    let currentApiPath = apiPath
+    const params = new URLSearchParams(document.location.search)
+    if (params.has('api_path')) {
+      currentApiPath = params.get('api_path')!
+    }
+    this.apiPath =
+      !currentApiPath || /\/$/.test(currentApiPath)
+        ? currentApiPath
+        : currentApiPath + '/'
+  }
+
+  createStructService(options: StructServiceOptions): StructService {
+    return new RemoteStructService(this.apiPath, options)
   }
 }
+
 export default RemoteStructServiceProvider

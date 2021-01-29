@@ -13,85 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { StructServiceProvider } from '../infrastructure/services'
-import api from './api'
-import initUI from './ui'
-import { Ketcher } from './ketcher'
-
-interface ButtonConfig {
-  name: string
-  hidden?: boolean
-}
-
-type ButtonName =
-  | 'layout'
-  | 'clean'
-  | 'arom'
-  | 'dearom'
-  | 'cip'
-  | 'check'
-  | 'analyse'
-  | 'recognize'
-  | 'miew'
+import { StructServiceProvider } from 'ketcher-core'
+import { KetcherBuilder, ButtonsConfig } from './builders'
 
 interface Config {
   element: HTMLInputElement | null
   staticResourcesUrl: string
-  apiPath?: string
   structServiceProvider: StructServiceProvider
-  buttons?: {
-    [buttonName in ButtonName]: ButtonConfig
-  }
+  buttons?: ButtonsConfig
 }
 
-// TODO: replace window.onload with something like <https://github.com/ded/domready>
-// to start early
-function buildKetcher({
+async function buildKetcherAsync({
   element,
   staticResourcesUrl,
-  apiPath,
   structServiceProvider,
   buttons
 }: Config) {
-  const ketcher = Ketcher.make(structServiceProvider.mode)
-  ketcher.apiPath = apiPath
+  const builder = new KetcherBuilder()
 
-  const params = new URLSearchParams(document.location.search)
+  await builder.appendApiAsync(structServiceProvider)
+  builder.appendServiceMode(structServiceProvider.mode)
+  await builder.appendUiAsync(element, staticResourcesUrl, buttons)
 
-  if (params.has('api_path')) ketcher.apiPath = params.get('api_path')
-
-  ketcher.server = api(ketcher.apiPath, structServiceProvider, {
-    'smart-layout': true,
-    'ignore-stereochemistry-errors': true,
-    'mass-skip-error-on-pseudoatoms': false,
-    'gross-formula-add-rsites': true
-  })
-
-  ketcher.ui = initUI(
-    element,
-    staticResourcesUrl,
-    Object.assign(
-      {
-        buttons: buttons || {}
-      },
-      params,
-      ketcher.buildInfo
-    ),
-    ketcher.server,
-    ketcher
-  )
-
-  ketcher.server.then(
-    () => {
-      if (params.get('moll')) ketcher.ui.load(params.get('moll'))
-    },
-    () => {
-      document.title += ' (standalone)'
-    }
-  )
-
-  return ketcher
+  return builder.build()
 }
 
 export type { Config }
-export default buildKetcher
+export default buildKetcherAsync

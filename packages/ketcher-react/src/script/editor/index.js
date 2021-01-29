@@ -95,6 +95,9 @@ Editor.prototype.clear = function () {
   this.struct(null)
 }
 
+/**
+ * @param {import('ketcher-core').Struct} [value]
+ * @returns {import('ketcher-core').Struct} */
 Editor.prototype.struct = function (value) {
   if (arguments.length > 0) {
     this.selection(null)
@@ -591,4 +594,5 @@ function elementOffset(element) {
   return new Vec2(left, top)
 }
 
+export { Editor }
 export default Editor

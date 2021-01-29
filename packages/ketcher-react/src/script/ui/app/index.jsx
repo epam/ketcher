@@ -25,11 +25,17 @@ import createStore, { load } from '../state'
 import { checkServer } from '../state/server'
 import { initKeydownListener } from '../state/hotkeys'
 import { initResize } from '../state/toolbar'
-
 import { loadStruct } from '../state/shared'
 
-function init(element, staticResourcesUrl, options, server, editorContainer) {
-  const store = createStore(options, server, editorContainer)
+/**
+ * @param {HTMLInputElement | null} element
+ * @param {string} staticResourcesUrl
+ * @param {any} options
+ * @param {import('../../api').Api} server
+ * @param {function} setEditor
+ * */
+function initApp(element, staticResourcesUrl, options, server, setEditor) {
+  const store = createStore(options, server, setEditor)
   store.dispatch(initKeydownListener(element))
   store.dispatch(initResize())
 
@@ -48,4 +54,4 @@ function init(element, staticResourcesUrl, options, server, editorContainer) {
   }
 }
 
-export default init
+export default initApp

@@ -5,11 +5,11 @@ import replace from '@rollup/plugin-replace'
 import copy from 'rollup-plugin-copy'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
-import typescript from '@rollup/plugin-typescript'
 import postcss from 'rollup-plugin-postcss'
 import json from '@rollup/plugin-json'
 import svgr from '@svgr/rollup'
 import del from 'rollup-plugin-delete'
+import typescript from 'rollup-plugin-typescript2'
 import cleanup from 'rollup-plugin-cleanup'
 import strip from '@rollup/plugin-strip'
 import pkg from './package.json'
@@ -53,10 +53,8 @@ const config = {
       runOnce: true
     }),
     peerDepsExternal({ includeDependencies: true }),
-    commonjs(),
     resolve({ extensions, preferBuiltins: true }),
-
-    typescript(),
+    commonjs(),
     replace(
       {
         'process.env.NODE_ENV': JSON.stringify(
@@ -73,8 +71,8 @@ const config = {
         include: 'src/**/*.{js,jsx,ts,tsx}'
       }
     ),
-
     json(),
+    typescript(),
     babel({
       extensions,
       babelHelpers: 'runtime',
@@ -89,7 +87,10 @@ const config = {
     copy({
       targets: [{ src: 'src/style/*.svg', dest: 'dist' }]
     }),
-    cleanup({ extensions, comments: 'none' }),
+    cleanup({
+      extensions: extensions.map(ext => ext.trimStart('.')),
+      comments: 'none'
+    }),
     ...(isProduction ? [strip()] : [])
   ]
 }

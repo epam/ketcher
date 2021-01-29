@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { StructService } from './structService.types'
 // @ts-ignore
 import IndigoWorker from 'web-worker:./indigoWorker'
 import {
@@ -33,7 +32,9 @@ import {
   CalculateCommandData,
   GenerateImageCommandData
 } from './indigoWorker.types'
-import {
+// @ts-ignore
+import { StructService, ChemicalMimeType } from 'ketcher-core'
+import type {
   CheckData,
   AutomapData,
   CalculateCipData,
@@ -42,8 +43,7 @@ import {
   CleanData,
   LayoutData,
   CalculateData,
-  ChemicalMimeType,
-  Options,
+  StructServiceOptions,
   InfoResult,
   ConvertData,
   ConvertResult,
@@ -56,7 +56,8 @@ import {
   CheckResult,
   CalculateResult,
   RecognizeResult
-} from './structService.types'
+  // @ts-ignore
+} from 'ketcher-core'
 
 interface KeyValuePair {
   [key: string]: number | string | boolean | object
@@ -96,6 +97,9 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.CML
       break
     }
+    default: {
+      throw new Error('Unsupported chemical mime type')
+    }
   }
 
   return format
@@ -132,9 +136,9 @@ function mapWarningGroup(property: string) {
 }
 
 class IndigoService implements StructService {
-  private defaultOptions: Options
+  private readonly defaultOptions: StructServiceOptions
 
-  constructor(defaultOptions: Options) {
+  constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions
   }
 
@@ -147,7 +151,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: InfoResult = {
-            indigoVersion: msg.payload,
+            indigoVersion: msg.payload!,
             imagoVersions: [],
             isAvailable: true
           }
@@ -161,7 +165,10 @@ class IndigoService implements StructService {
     })
   }
 
-  convert(data: ConvertData, options: Options): Promise<ConvertResult> {
+  convert(
+    data: ConvertData,
+    options: StructServiceOptions
+  ): Promise<ConvertResult> {
     const { output_format, struct } = data
     const format = convertMimeTypeToOutputFormat(output_format)
 
@@ -173,7 +180,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: ConvertResult = {
-            struct: msg.payload,
+            struct: msg.payload!,
             format: output_format
           }
           resolve(result)
@@ -182,11 +189,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: ConvertCommandData = {
         struct,
@@ -203,7 +209,10 @@ class IndigoService implements StructService {
     })
   }
 
-  layout(data: LayoutData, options: Options): Promise<LayoutResult> {
+  layout(
+    data: LayoutData,
+    options: StructServiceOptions
+  ): Promise<LayoutResult> {
     const { struct } = data
 
     return new Promise((resolve, reject) => {
@@ -214,7 +223,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: LayoutResult = {
-            struct: msg.payload,
+            struct: msg.payload!,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -223,11 +232,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: LayoutCommandData = {
         struct,
@@ -243,7 +251,7 @@ class IndigoService implements StructService {
     })
   }
 
-  clean(data: CleanData, options: Options): Promise<CleanResult> {
+  clean(data: CleanData, options: StructServiceOptions): Promise<CleanResult> {
     const { struct } = data
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()
@@ -253,7 +261,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: CleanResult = {
-            struct: msg.payload,
+            struct: msg.payload!,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -262,11 +270,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: CleanCommandData = {
         struct,
@@ -282,7 +289,10 @@ class IndigoService implements StructService {
     })
   }
 
-  aromatize(data: AromatizeData, options: Options): Promise<AromatizeResult> {
+  aromatize(
+    data: AromatizeData,
+    options: StructServiceOptions
+  ): Promise<AromatizeResult> {
     const { struct } = data
 
     return new Promise((resolve, reject) => {
@@ -293,7 +303,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: AromatizeResult = {
-            struct: msg.payload,
+            struct: msg.payload!,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -302,11 +312,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: AromatizeCommandData = {
         struct,
@@ -324,7 +333,7 @@ class IndigoService implements StructService {
 
   dearomatize(
     data: DearomatizeData,
-    options: Options
+    options: StructServiceOptions
   ): Promise<DearomatizeResult> {
     const { struct } = data
 
@@ -336,7 +345,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: AromatizeResult = {
-            struct: msg.payload,
+            struct: msg.payload!,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -345,11 +354,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: DearomatizeCommandData = {
         struct,
@@ -367,7 +375,7 @@ class IndigoService implements StructService {
 
   calculateCip(
     data: CalculateCipData,
-    options: Options
+    options: StructServiceOptions
   ): Promise<CalculateCipResult> {
     const { struct } = data
     return new Promise((resolve, reject) => {
@@ -378,7 +386,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: CalculateCipResult = {
-            struct: msg.payload,
+            struct: msg.payload!,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -387,11 +395,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: CalculateCipCommandData = {
         struct,
@@ -407,7 +414,10 @@ class IndigoService implements StructService {
     })
   }
 
-  automap(data: AutomapData, options: Options): Promise<AutomapResult> {
+  automap(
+    data: AutomapData,
+    options: StructServiceOptions
+  ): Promise<AutomapResult> {
     const { mode, struct } = data
 
     return new Promise((resolve, reject) => {
@@ -418,7 +428,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: AutomapResult = {
-            struct: msg.payload,
+            struct: msg.payload!,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -427,11 +437,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: AutomapCommandData = {
         struct,
@@ -448,7 +457,7 @@ class IndigoService implements StructService {
     })
   }
 
-  check(data: CheckData, options: Options): Promise<CheckResult> {
+  check(data: CheckData, options: StructServiceOptions): Promise<CheckResult> {
     const { types, struct } = data
 
     return new Promise((resolve, reject) => {
@@ -458,7 +467,7 @@ class IndigoService implements StructService {
         worker.terminate()
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
-          const warnings = JSON.parse(msg.payload) as KeyValuePair
+          const warnings = JSON.parse(msg.payload!) as KeyValuePair
 
           const result: CheckResult = Object.entries(warnings).reduce(
             (acc, curr) => {
@@ -476,11 +485,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: CheckCommandData = {
         struct,
@@ -497,7 +505,10 @@ class IndigoService implements StructService {
     })
   }
 
-  calculate(data: CalculateData, options: Options): Promise<CalculateResult> {
+  calculate(
+    data: CalculateData,
+    options: StructServiceOptions
+  ): Promise<CalculateResult> {
     const { properties, struct } = data
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()
@@ -506,7 +517,7 @@ class IndigoService implements StructService {
         worker.terminate()
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
-          const calculatedProperties = JSON.parse(msg.payload) as KeyValuePair
+          const calculatedProperties = JSON.parse(msg.payload!) as KeyValuePair
           const result: CalculateResult = Object.entries(
             calculatedProperties
           ).reduce((acc, curr) => {
@@ -524,11 +535,10 @@ class IndigoService implements StructService {
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: CalculateCommandData = {
         struct,
@@ -550,7 +560,10 @@ class IndigoService implements StructService {
     return Promise.reject('Not supported in standalone mode')
   }
 
-  generatePngAsBase64(data: string, options: Options): Promise<string> {
+  generatePngAsBase64(
+    data: string,
+    options: StructServiceOptions
+  ): Promise<string> {
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()
 
@@ -558,17 +571,16 @@ class IndigoService implements StructService {
         worker.terminate()
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
-          resolve(msg.payload)
+          resolve(msg.payload!)
         } else {
           reject(msg.error)
         }
       }
 
-      const commandOptions: CommandOptions = Object.assign(
-        {},
-        this.defaultOptions,
-        options
-      )
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options
+      }
 
       const commandData: GenerateImageCommandData = {
         struct: data,

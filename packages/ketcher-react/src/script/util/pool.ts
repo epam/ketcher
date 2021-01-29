@@ -14,13 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-class Pool extends Map {
-  constructor(arg) {
-    super(arg)
+class Pool<TValue = any> extends Map<number, TValue> {
+  private _nextId: number
+
+  constructor(args) {
+    super(args)
     this._nextId = 0
   }
 
-  add(item) {
+  add(item: TValue) {
     const id = this._nextId++
     super.set(id, item)
     return id
@@ -30,7 +32,7 @@ class Pool extends Map {
     return this._nextId++
   }
 
-  keyOf(item) {
+  keyOf(item: TValue) {
     for (const [key, value] of this.entries()) {
       if (value === item) return key
     }
@@ -38,7 +40,7 @@ class Pool extends Map {
     return null
   }
 
-  find(predicate) {
+  find(predicate: (key: number, value: TValue) => boolean) {
     for (const [key, value] of this.entries()) {
       if (predicate(key, value)) return key
     }
@@ -46,8 +48,8 @@ class Pool extends Map {
     return null
   }
 
-  filter(predicate) {
-    return new Pool(
+  filter(predicate: (key: number, value: TValue) => boolean) {
+    return new Pool<TValue>(
       Array.from(this).filter(([key, value]) => predicate(key, value))
     )
   }

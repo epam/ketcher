@@ -19,7 +19,7 @@ import Box2Abs from '../../util/box2abs'
 import draw from '../draw'
 import util from '../util'
 import scale from '../../util/scale'
-import Vec2 from 'src/script/util/vec2'
+import Vec2 from '../../util/vec2'
 
 const tfx = util.tfx
 

@@ -3,9 +3,9 @@ import babel from '@rollup/plugin-babel'
 import replace from '@rollup/plugin-replace'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
-import typescript from '@rollup/plugin-typescript'
 import json from '@rollup/plugin-json'
 import del from 'rollup-plugin-delete'
+import typescript from 'rollup-plugin-typescript2'
 import cleanup from 'rollup-plugin-cleanup'
 import strip from '@rollup/plugin-strip'
 import webWorkerLoader from 'rollup-plugin-web-worker-loader'
@@ -51,10 +51,8 @@ const config = {
     }),
     peerDepsExternal(),
     nodePolyfills(),
-    commonjs(),
     resolve({ extensions, preferBuiltins: false }),
-
-    typescript(),
+    commonjs(),
     webWorkerLoader({
       extensions,
       sourcemap: false,
@@ -72,12 +70,16 @@ const config = {
     ),
 
     json(),
+    typescript(),
     babel({
       extensions,
       babelHelpers: 'runtime',
       include: ['src/**/*']
     }),
-    cleanup({ extensions, comments: 'none' }),
+    cleanup({
+      extensions: extensions.map(ext => ext.trimStart('.')),
+      comments: 'none'
+    }),
     ...(isProduction ? [strip()] : [])
   ]
 }

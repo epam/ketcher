@@ -13,13 +13,15 @@ export class MolfileV2000Formatter implements StructFormatter<string> {
     return this.getStructureFromStructAsync(struct)
   }
 
-  getStructureFromStructAsync(struct: Struct): Promise<string> {
+  async getStructureFromStructAsync(struct: Struct): Promise<string> {
     const stringifiedMolfile = this.molfileManager.stringify(struct)
-    return Promise.resolve(stringifiedMolfile)
+    return stringifiedMolfile
   }
 
-  getStructureFromStringAsync(stringifiedStruct: string): Promise<Struct> {
+  async getStructureFromStringAsync(
+    stringifiedStruct: string
+  ): Promise<Struct> {
     const struct = this.molfileManager.parse(stringifiedStruct, this.options)
-    return Promise.resolve(struct)
+    return struct
   }
 }

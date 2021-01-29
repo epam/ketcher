@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 // @ts-ignore
-import IndigoWorker from 'web-worker:./indigoWorker'
+import IndigoWorker from 'web-worker:./IndigoWorker'
 import {
   Command,
   OutputMessage,
@@ -32,9 +32,10 @@ import {
   CalculateCommandData,
   GenerateImageCommandData
 } from './indigoWorker.types'
-// @ts-ignore
-import { StructService, ChemicalMimeType } from 'ketcher-core'
-import type {
+
+import {
+  StructService,
+  ChemicalMimeType,
   CheckData,
   AutomapData,
   CalculateCipData,
@@ -167,7 +168,7 @@ class IndigoService implements StructService {
 
   convert(
     data: ConvertData,
-    options: StructServiceOptions
+    options?: StructServiceOptions
   ): Promise<ConvertResult> {
     const { output_format, struct } = data
     const format = convertMimeTypeToOutputFormat(output_format)
@@ -211,7 +212,7 @@ class IndigoService implements StructService {
 
   layout(
     data: LayoutData,
-    options: StructServiceOptions
+    options?: StructServiceOptions
   ): Promise<LayoutResult> {
     const { struct } = data
 
@@ -251,7 +252,7 @@ class IndigoService implements StructService {
     })
   }
 
-  clean(data: CleanData, options: StructServiceOptions): Promise<CleanResult> {
+  clean(data: CleanData, options?: StructServiceOptions): Promise<CleanResult> {
     const { struct } = data
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()
@@ -291,7 +292,7 @@ class IndigoService implements StructService {
 
   aromatize(
     data: AromatizeData,
-    options: StructServiceOptions
+    options?: StructServiceOptions
   ): Promise<AromatizeResult> {
     const { struct } = data
 
@@ -333,7 +334,7 @@ class IndigoService implements StructService {
 
   dearomatize(
     data: DearomatizeData,
-    options: StructServiceOptions
+    options?: StructServiceOptions
   ): Promise<DearomatizeResult> {
     const { struct } = data
 
@@ -375,7 +376,7 @@ class IndigoService implements StructService {
 
   calculateCip(
     data: CalculateCipData,
-    options: StructServiceOptions
+    options?: StructServiceOptions
   ): Promise<CalculateCipResult> {
     const { struct } = data
     return new Promise((resolve, reject) => {
@@ -416,7 +417,7 @@ class IndigoService implements StructService {
 
   automap(
     data: AutomapData,
-    options: StructServiceOptions
+    options?: StructServiceOptions
   ): Promise<AutomapResult> {
     const { mode, struct } = data
 
@@ -457,7 +458,7 @@ class IndigoService implements StructService {
     })
   }
 
-  check(data: CheckData, options: StructServiceOptions): Promise<CheckResult> {
+  check(data: CheckData, options?: StructServiceOptions): Promise<CheckResult> {
     const { types, struct } = data
 
     return new Promise((resolve, reject) => {
@@ -507,7 +508,7 @@ class IndigoService implements StructService {
 
   calculate(
     data: CalculateData,
-    options: StructServiceOptions
+    options?: StructServiceOptions
   ): Promise<CalculateResult> {
     const { properties, struct } = data
     return new Promise((resolve, reject) => {
@@ -562,7 +563,7 @@ class IndigoService implements StructService {
 
   generatePngAsBase64(
     data: string,
-    options: StructServiceOptions
+    options?: StructServiceOptions
   ): Promise<string> {
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()

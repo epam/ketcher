@@ -1,3 +1,4 @@
+// todo: remove Managers from export outside, when this managers will be moved under Core package
 import {
   Graph,
   GraphManager,

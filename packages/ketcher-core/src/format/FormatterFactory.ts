@@ -25,6 +25,7 @@ export class FormatterFactory {
     private readonly smilesManager: SmilesManager
   ) {}
 
+  // todo: remove? if we don't sanitize option for server in Standalone mode, server respond error about this flags
   private separateOptions(
     options?:
       | MolfileParseOptions

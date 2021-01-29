@@ -66,7 +66,8 @@ class ElementsTable extends Component {
     const classes = [
       ...type.split(' '),
       item.state || 'unknown-state',
-      item.origin
+      item.origin,
+      'button'
     ]
     return classes.map(className => {
       return styles[className]

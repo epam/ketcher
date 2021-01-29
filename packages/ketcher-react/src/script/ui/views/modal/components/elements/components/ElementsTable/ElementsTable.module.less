@@ -116,5 +116,11 @@
       .highlight-scale(none);
       .highlight-shadow(none);
     }
+    &.selected {
+      &::after {
+        visibility: hidden;
+      }
+      .highlight-invert;
+    }
   }
 }

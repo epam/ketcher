@@ -58,25 +58,29 @@ class ElementsTable extends Component {
     return nextProps.value !== this.props.value
   }
 
-  atomClasses = item => {
+  atomStyling = item => {
     const { selected } = this.props
+
     const type = metalPrefix.includes(item.type)
       ? `${item.type} metal`
       : item.type || 'unknown-props'
+
     const classes = [
       ...type.split(' '),
       item.state || 'unknown-state',
       item.origin,
-      'button'
+      'button',
+      selected(item.label) && 'selected'
     ]
+
     return classes.map(className => {
       return styles[className]
     })
   }
 
   render() {
-    const { currentEvents, selected, onSelect } = this.props
-    const callbacks = { currentEvents, selected, onSelect }
+    const { currentEvents, onSelect } = this.props
+    const callbacks = { currentEvents, onSelect }
     return (
       <table
         className={styles.table}
@@ -84,7 +88,7 @@ class ElementsTable extends Component {
         <Header />
         {main.map((row, i) => (
           <MainRow
-            atomClasses={this.atomClasses}
+            atomStyling={this.atomStyling}
             key={i}
             row={row}
             caption={i + 1}
@@ -95,13 +99,13 @@ class ElementsTable extends Component {
         <OutinerRow
           row={lanthanides}
           caption="*"
-          atomClasses={this.atomClasses}
+          atomStyling={this.atomStyling}
           {...callbacks}
         />
         <OutinerRow
           row={actinides}
           caption="**"
-          atomClasses={this.atomClasses}
+          atomStyling={this.atomStyling}
           {...callbacks}
         />
       </table>

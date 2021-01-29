@@ -24,10 +24,9 @@ function MainRow({
   row,
   caption,
   refer,
-  selected,
   onSelect,
   currentEvents,
-  atomClasses
+  atomStyling
 }) {
   return (
     <tbody className={styles.body}>
@@ -35,15 +34,10 @@ function MainRow({
         <th>{caption}</th>
         {row.map(element =>
           typeof element !== 'number' ? ( // eslint-disable-line
-            <td className={styles.cell}>
+            <td>
               <Atom
                 el={element}
-                className={clsx(
-                  {
-                    [styles.selected]: selected(element.label)
-                  },
-                  ...atomClasses(element)
-                )}
+                className={clsx(...atomStyling(element))}
                 onClick={() => onSelect(element.label)}
                 {...currentEvents(element)}
               />

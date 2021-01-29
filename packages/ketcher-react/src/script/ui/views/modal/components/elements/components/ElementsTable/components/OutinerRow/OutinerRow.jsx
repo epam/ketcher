@@ -20,14 +20,7 @@ import clsx from 'clsx'
 
 import styles from './OutinerRow.module.less'
 
-function OutinerRow({
-  row,
-  caption,
-  selected,
-  onSelect,
-  currentEvents,
-  atomClasses
-}) {
+function OutinerRow({ row, caption, onSelect, currentEvents, atomStyling }) {
   return (
     <tbody className={styles.body}>
       <tr className={styles.row}>
@@ -35,15 +28,10 @@ function OutinerRow({
           {caption}
         </th>
         {row.map(element => (
-          <td className={styles.cell} key={element.label}>
+          <td key={element.label}>
             <Atom
               el={element}
-              className={clsx(
-                {
-                  [styles.selected]: selected(element.label)
-                },
-                ...atomClasses(element)
-              )}
+              className={clsx(...atomStyling(element))}
               onClick={() => onSelect(element.label)}
               {...currentEvents(element)}
             />

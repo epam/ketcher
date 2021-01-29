@@ -34,21 +34,23 @@ const beforeSpan = {
   Rf: 1
 }
 const main = rowPartition(
-  element.filter(el => el && el.type !== 'actinide' && el.type !== 'lanthanide')
+  element.filter(
+    item => item && item.type !== 'actinide' && item.type !== 'lanthanide'
+  )
 )
-const lanthanides = element.filter(el => el && el.type === 'lanthanide')
-const actinides = element.filter(el => el && el.type === 'actinide')
+const lanthanides = element.filter(item => item && item.type === 'lanthanide')
+const actinides = element.filter(item => item && item.type === 'actinide')
 
 function rowPartition(elements) {
-  return elements.reduce((res, el) => {
-    const row = res[el.period - 1]
+  return elements.reduce((result, item) => {
+    const row = result[item.period - 1]
     if (!row) {
-      res.push([el])
+      result.push([item])
     } else {
-      if (beforeSpan[el.label]) row.push(beforeSpan[el.label])
-      row.push(el)
+      if (beforeSpan[item.label]) row.push(beforeSpan[item.label])
+      row.push(item)
     }
-    return res
+    return result
   }, [])
 }
 
@@ -86,23 +88,26 @@ class ElementsTable extends Component {
         className={styles.table}
         summary="Periodic table of the chemical elements">
         <Header />
-        {main.map((row, i) => (
+        {main.map((row, index) => (
           <MainRow
             atomStyling={this.atomStyling}
-            key={i}
+            className={styles.main_row}
+            key={index}
             row={row}
-            caption={i + 1}
-            refer={o => o === 1 && (i === 5 ? '*' : '**')}
+            caption={index + 1}
+            refer={o => o === 1 && (index === 5 ? '*' : '**')}
             {...callbacks}
           />
         ))}
         <OutinerRow
+          className={styles.outiner_row}
           row={lanthanides}
           caption="*"
           atomStyling={this.atomStyling}
           {...callbacks}
         />
         <OutinerRow
+          className={styles.outiner_row}
           row={actinides}
           caption="**"
           atomStyling={this.atomStyling}

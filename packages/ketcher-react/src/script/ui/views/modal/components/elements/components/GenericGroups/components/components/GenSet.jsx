@@ -22,8 +22,9 @@ import styles from './GenSet.module.less'
 function GenSet({ labels, caption = '', selected, onSelect, ...props }) {
   return (
     <fieldset {...props}>
-      {labels.map(label => (
+      {labels.map((label, index) => (
         <button
+          key={index}
           onClick={() => onSelect(label)}
           className={clsx(
             {

@@ -9,11 +9,16 @@
     text-align: center;
     vertical-align: middle;
   }
-  th {
+  th,
+  .main_row {
     opacity: 0.6;
     font-weight: normal;
     font-size: 0.8em;
     padding: 0.3em 0.8em;
+  }
+  .outiner_row {
+    vertical-align: top;
+    text-align: right;
   }
   tr:nth-of-type(8) {
     border-bottom: 1em solid transparent;
@@ -52,27 +57,27 @@
     background: @atom-periodic-unknown-properties;
   }
   .unknown-state {
-    &:after {
+    &::after {
       color: #222;
     }
   }
   .solid {
-    &:after {
+    &::after {
       color: #222;
     }
   }
   .metal {
-    &:after {
+    &::after {
       color: #006;
     }
   }
   .gas {
-    &:after {
+    &::after {
       color: #c00;
     }
   }
   .liquid {
-    &:after {
+    &::after {
       color: #0a0;
     }
   }
@@ -88,7 +93,7 @@
     display: block;
     position: relative;
 
-    &:after {
+    &::after {
       position: absolute;
       opacity: 0.6;
       top: 0.3em;
@@ -99,18 +104,17 @@
       content: attr(value);
     }
     &:hover {
-      &:after {
+      .highlight-scale(@scale:1.25);
+      .highlight-shadow(black);
+
+      z-index: 60;
+      background: #fff;
+      &::after {
         visibility: hidden;
       }
     }
     &:not(:hover) > span {
       color: black;
-    }
-    &:hover {
-      .highlight-scale(@scale:1.25);
-      .highlight-shadow(black);
-      z-index: 60;
-      background: #fff;
     }
     &:active {
       .highlight-scale(none);

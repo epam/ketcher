@@ -15,16 +15,21 @@
  ***************************************************************************/
 
 import React from 'react'
-import Atom from '../../../../../../../../component/view/Atom'
+import Atom from '../../../../../../../component/view/Atom'
 import clsx from 'clsx'
 
-import styles from './OutinerRow.module.less'
-
-function OutinerRow({ row, caption, onSelect, currentEvents, atomStyling }) {
+function OutinerRow({
+  row,
+  caption,
+  onSelect,
+  currentEvents,
+  atomStyling,
+  className
+}) {
   return (
-    <tbody className={styles.body}>
-      <tr className={styles.row}>
-        <th colSpan="3" className={styles.ref}>
+    <tbody>
+      <tr>
+        <th colSpan="3" className={className}>
           {caption}
         </th>
         {row.map(element => (

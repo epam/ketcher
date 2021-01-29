@@ -15,10 +15,8 @@
  ***************************************************************************/
 
 import React from 'react'
-import Atom from '../../../../../../../../component/view/Atom'
+import Atom from '../../../../../../../component/view/Atom'
 import clsx from 'clsx'
-
-import styles from './MainRow.module.less'
 
 function MainRow({
   row,
@@ -26,15 +24,16 @@ function MainRow({
   refer,
   onSelect,
   currentEvents,
-  atomStyling
+  atomStyling,
+  className
 }) {
   return (
-    <tbody className={styles.body}>
-      <tr className={styles.row}>
+    <tbody>
+      <tr>
         <th>{caption}</th>
-        {row.map(element =>
+        {row.map((element, index) =>
           typeof element !== 'number' ? ( // eslint-disable-line
-            <td>
+            <td key={index}>
               <Atom
                 el={element}
                 className={clsx(...atomStyling(element))}
@@ -43,9 +42,11 @@ function MainRow({
               />
             </td>
           ) : refer(element) ? (
-            <td className={styles.ref}>{refer(element)}</td>
+            <td key={index} className={className}>
+              {refer(element)}
+            </td>
           ) : (
-            <td colSpan={element} />
+            <td key={index} colSpan={element} />
           )
         )}
       </tr>

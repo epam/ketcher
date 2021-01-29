@@ -17,7 +17,7 @@
 import React, { Component } from 'react'
 import clsx from 'clsx'
 import { xor } from 'lodash/fp'
-import styles from './accordion.module.less'
+import styles from './Accordion.module.less'
 
 class Accordion extends Component {
   constructor(props) {

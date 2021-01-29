@@ -14,6 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Accordion from './accordion'
+import Accordion from './Accordion'
 
 export default Accordion

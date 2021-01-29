@@ -4,10 +4,13 @@
 @import 'mixins';
 @import 'dialogs';
 
-li, ul, menu { // move to reset
-	list-style: none;
-	margin: 0;
-	padding: 0;
+li,
+ul,
+menu {
+  // move to reset
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 /////////////////////
@@ -15,273 +18,306 @@ li, ul, menu { // move to reset
 
 .set-size(large);
 
-html, body {
-	height: 100%;
-	width: 100%;
+html,
+body {
+  height: 100%;
+  width: 100%;
 }
 
-body, main[role=application] {
-	height: 100%;
-	position: relative;
-	font: @base-size FreeSans, Arimo, "Droid Sans", Helvetica,
-	                 "Helvetica Neue", Arial, sans-serif;
-	background-color: white;
-	color: @main-color;
+body,
+main[role='application'] {
+  height: 100%;
+  position: relative;
+  font: @base-size FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
+    Arial, sans-serif;
+  background-color: white;
+  color: @main-color;
 
-	min-width: 640px;
-	min-height: 400px;
+  min-width: 640px;
+  min-height: 400px;
 }
 
 #canvas {
-	.canvas;
-	user-select: none;
+  .canvas;
+  user-select: none;
 
-	.measure-log {
-		&:extend(.-Measure);
-		&.visible {
-			opacity: 1;
-		}
-	}
+  .measure-log {
+    &:extend(.-Measure);
+    &.visible {
+      opacity: 1;
+    }
+  }
 }
 
 #mainmenu {
-	.toolbar(top);
+  .toolbar(top);
 }
 #elements {
-	.toolbar(right);
+  .toolbar(right);
 }
 #template {
-	.toolbar(bottom);
-	& > menu {
-		overflow: hidden; // #300 quick fix,
-	}                     // no menu expansion
+  .toolbar(bottom);
+  & > menu {
+    overflow: hidden; // #300 quick fix,
+  } // no menu expansion
 }
 #toolbox {
-	.toolbar(left);
+  .toolbar(left);
 }
 
 #meta {
-	position: absolute;
-	right: 0;
+  position: absolute;
+  right: 0;
 }
 
 #enhanced-stereo {
-	position: absolute;
-	right: 0;
-	overflow-y: hidden;
+  position: absolute;
+  right: 0;
+  overflow-y: hidden;
 }
 
 [role='toolbar'] {
-	user-select: none;
-	menu {
-		.remove-inline-spacing;
-	}
-	li {
-		display: inline-block;
-		vertical-align: top;
-		& > svg {
-			fill: @main-color;
-			display: none; // dropdown
-		}
-	}
-	button {
-		.toolbutton;
-	}
-	.selected button {
-		.highlight-invert;
-	}
-	kbd {
-		display: none;
-		font: 0.8em monospace;
-		color: @border-color;
-	}
+  user-select: none;
+  menu {
+    .remove-inline-spacing;
+  }
+  li {
+    display: inline-block;
+    vertical-align: top;
+    & > svg {
+      fill: @main-color;
+      display: none; // dropdown
+    }
+  }
+  button {
+    .toolbutton;
+  }
+  .selected button {
+    .highlight-invert;
+  }
+  kbd {
+    display: none;
+    font: 0.8em monospace;
+    color: @border-color;
+  }
 }
 
 .cliparea {
-	// Copied from http://bit.ly/12nphsK
-	// Search for less verbose way to make FF happy
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	width: 0;
-	height: 0;
-	display: block;
-	font-size: 1px;
-	z-index: -1;
-	color: transparent;
-	background: transparent;
-	overflow: hidden;
-	border: none;
-	padding: 0;
-	resize: none;
-	outline: none;
-	user-select: text;
-	// Because for user-select:none,
-	// Safari won't allow input
+  // Copied from http://bit.ly/12nphsK
+  // Search for less verbose way to make FF happy
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  display: block;
+  font-size: 1px;
+  z-index: -1;
+  color: transparent;
+  background: transparent;
+  overflow: hidden;
+  border: none;
+  padding: 0;
+  resize: none;
+  outline: none;
+  user-select: text;
+  // Because for user-select:none,
+  // Safari won't allow input
 }
 
 li.opened {
-	.expanded;
+  .expanded;
 }
 
-#atom, #freq-atoms {
-	button {
-		font-size: @atom-size;
-	}
-	kbd {
-		display: none;
-	}
+#atom,
+#freq-atoms {
+  button {
+    font-size: @atom-size;
+  }
+  kbd {
+    display: none;
+  }
 }
 
 select {
-	// reset select size after inline-block
-	// space removing inside toolbar
-	font-size: @base-size;
+  // reset select size after inline-block
+  // space removing inside toolbar
+  font-size: @base-size;
 }
 
 //////////////////////////
 // Adjust to custom sizes
 
-#select, #bond-common, #bond-stereo, #bond-query, #reaction {
-	.collapsed-ifnot(opened);
+#select,
+#bond-common,
+#bond-stereo,
+#bond-query,
+#reaction {
+  .collapsed-ifnot(opened);
 }
 
 @media (max-width: 840px) {
-	#zoom-in, #zoom-out {
-		display: none;
-	}
+  #zoom-in,
+  #zoom-out {
+    display: none;
+  }
 }
 
 @media (max-width: 1040px) {
-	#bond-common, #bond-stereo, #bond-query {
-		.collapsed-size(small);
-	}
+  #bond-common,
+  #bond-stereo,
+  #bond-query {
+    .collapsed-size(small);
+  }
 }
 
 @media (max-height: 850px) {
-	#rgroup, #shape {
-		.collapsed-ifnot(opened);
-	}
-	@media (max-width: 1040px) { // better way not to dublicate?
-		#rgroup, #shape {                // inherit 100%, small? overflow-x?
-			.collapsed-size(small);
-		}
-	}
+  #rgroup,
+  #shape {
+    .collapsed-ifnot(opened);
+  }
+  @media (max-width: 1040px) {
+    // better way not to dublicate?
+    #rgroup,
+    #shape {
+      // inherit 100%, small? overflow-x?
+      .collapsed-size(small);
+    }
+  }
 }
 
 @media (max-height: 800px) {
-	#transform {
-		.collapsed-ifnot(opened);
-	}
-	@media (max-width: 1040px) {
-		#transform {
-			.collapsed-size(small);
-		}
-	}
+  #transform {
+    .collapsed-ifnot(opened);
+  }
+  @media (max-width: 1040px) {
+    #transform {
+      .collapsed-size(small);
+    }
+  }
 }
 
 @media (max-height: 700px) {
-	li.opened {
-		.expanded-menu;
-	}
-	#bond-common, #bond-stereo, #bond-query {
-		.collapsed(none);
-	}
-	#bond {
-		.collapsed-ifnot(opened);
-	}
-	@media (max-width: 850px) {
-		li.opened {
-			.expanded-menu(small);
-		}
-	}
-	@media (max-width: 1040px) {
-		#bond {
-			.collapsed-size(small);
-		}
-	}
+  li.opened {
+    .expanded-menu;
+  }
+  #bond-common,
+  #bond-stereo,
+  #bond-query {
+    .collapsed(none);
+  }
+  #bond {
+    .collapsed-ifnot(opened);
+  }
+  @media (max-width: 850px) {
+    li.opened {
+      .expanded-menu(small);
+    }
+  }
+  @media (max-width: 1040px) {
+    #bond {
+      .collapsed-size(small);
+    }
+  }
 }
 
 @media (max-height: 600px) {
-	#rgroup, #transform, #bond, #shape {
-		.collapsed-size(small);
-	}
+  #rgroup,
+  #transform,
+  #bond,
+  #shape {
+    .collapsed-size(small);
+  }
 }
 
 @media (min-height: 800px) {
-	#reaction {
-		.separate-item(vertical, 5px);
-	}
+  #reaction {
+    .separate-item(vertical, 5px);
+  }
 }
 
 @media (min-height: 650px) {
-	#erase, #chain, #charge, #transform, #atom, #freq-atoms {
-		.separate-item(vertical, 5px);
-	}
+  #erase,
+  #chain,
+  #charge,
+  #transform,
+  #atom,
+  #freq-atoms {
+    .separate-item(vertical, 5px);
+  }
 }
 
 @media (min-width: 1160px) {
-	#analyse, #document, #edit, #zoom {
-		.separate-item(horizontal, 10px);
-	}
+  #analyse,
+  #document,
+  #edit,
+  #zoom {
+    .separate-item(horizontal, 10px);
+  }
 }
 
 @media (max-height: 600px), (max-width: 1040px) {
-	.set-size(small);
+  .set-size(small);
 
-	body, select, form {
-		font-size: @base-size;
-	}
-	#canvas {
-		.canvas-size(small);
-	}
-	#mainmenu, #template {
-		.toolbar-size(horizontal, small);
-	}
-	#elements, #toolbox {
-		.toolbar-size(vertical, small);
-	}
+  body,
+  select,
+  form {
+    font-size: @base-size;
+  }
+  #canvas {
+    .canvas-size(small);
+  }
+  #mainmenu,
+  #template {
+    .toolbar-size(horizontal, small);
+  }
+  #elements,
+  #toolbox {
+    .toolbar-size(vertical, small);
+  }
 
-	[role='toolbar'] button {
-		.toolbutton-size(small);
-	}
+  [role='toolbar'] button {
+    .toolbutton-size(small);
+  }
 
-	#select, #reaction {
-		.collapsed-size(small);
-	}
+  #select,
+  #reaction {
+    .collapsed-size(small);
+  }
 
-	li.opened {
-		.expanded-size(small);
-	}
+  li.opened {
+    .expanded-size(small);
+  }
 
-	#atom button,
-	#freq-atoms button {
-		font-size: @atom-size;
-	}
+  #atom button,
+  #freq-atoms button {
+    font-size: @atom-size;
+  }
 }
 
 @media (max-width: 770px) {
-	#help, #about {
-		display: none;
-	}
-	#mainmenu {
-		.set-size(small);
-		left: @toolbar-gap;
-		right: @toolbar-gap;
-	}
+  #help,
+  #about {
+    display: none;
+  }
+  #mainmenu {
+    .set-size(small);
+    left: @toolbar-gap;
+    right: @toolbar-gap;
+  }
 }
 
 #template-common {
-	.separate-item(horizontal, 15px);
+  .separate-item(horizontal, 15px);
 }
 
 .cellar {
-	display: none;
+  display: none;
 }
 
 .warning {
-	color: @error-color;
-	&:before {
-		content: '⚠ ';
-	}
+  color: @error-color;
+  &:before {
+    content: '⚠ ';
+  }
 }

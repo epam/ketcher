@@ -45,9 +45,14 @@ export class ServerFormatter implements StructFormatter<string> {
 
       return convertResult.struct
     } catch (error) {
-      throw error.message === 'Server is not compatible'
-        ? Error(`${formatProperties.name} is not supported in standalone mode.`)
-        : Error(`Convert error!\n${error.message}`)
+      let message
+      if (error.message === 'Server is not compatible') {
+        message = `${formatProperties.name} is not supported in standalone mode.`
+      } else {
+        message = `Convert error!\n${error.message}`
+      }
+
+      throw new Error(message)
     }
   }
 

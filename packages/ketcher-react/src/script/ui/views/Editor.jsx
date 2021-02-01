@@ -18,11 +18,11 @@ import { connect } from 'react-redux'
 import initEditor from '../state/editor'
 import StructEditor from '../component/structeditor'
 
-const AppEditor = connect(
+const Editor = connect(
   state => ({
     options: state.options.settings
   }),
   dispatch => dispatch(initEditor)
 )(StructEditor)
 
-export default AppEditor
+export default Editor

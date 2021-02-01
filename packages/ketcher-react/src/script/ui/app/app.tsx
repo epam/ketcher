@@ -18,7 +18,7 @@ import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { onAction } from '../state'
 import { checkServer } from '../state/server'
-import AppEditor from '../views/AppEditor'
+import Editor from '../views/Editor'
 import AppModal from '../views/modal'
 import Toolbar from '../views/toolbar'
 import AppClipArea from '../views/AppClipArea'
@@ -48,7 +48,7 @@ function AppView(props) {
   return (
     <React.Fragment>
       <AppHidden />
-      <AppEditor id="canvas" />
+      <Editor id="canvas" />
       <Toolbar {...props} />
       <AppClipArea />
       <AppModal />

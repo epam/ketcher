@@ -21,7 +21,7 @@ import { Dialog } from '../../../../components'
 
 import styles from './about.module.less'
 
-function About(props) {
+function AboutDialog(props) {
   const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info
 
   return (
@@ -94,4 +94,6 @@ function About(props) {
   )
 }
 
-export default connect(store => ({ ...store.options.app }))(About)
+const About = connect(store => ({ ...store.options.app }))(AboutDialog)
+
+export default About

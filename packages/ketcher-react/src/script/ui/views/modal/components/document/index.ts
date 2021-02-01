@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Open from './Open/Open'
-import Save from './Save/Save'
+import Open from './Open'
+import Save from './Save'
 
 export { Open, Save }

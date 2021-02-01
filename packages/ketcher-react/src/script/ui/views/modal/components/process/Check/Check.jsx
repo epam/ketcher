@@ -65,7 +65,7 @@ const checkSchema = {
   }
 }
 
-function Check(props) {
+function CheckDialog(props) {
   const { formState, checkState, onCheck, ...prop } = props
   const { result = checkState, moleculeErrors } = formState
   const tabs = [
@@ -114,7 +114,7 @@ function Check(props) {
   )
 }
 
-export default connect(
+const Check = connect(
   store => ({
     formState: store.modal.form,
     checkState: store.options.check
@@ -126,4 +126,6 @@ export default connect(
       props.onOk(res)
     }
   })
-)(Check)
+)(CheckDialog)
+
+export default Check

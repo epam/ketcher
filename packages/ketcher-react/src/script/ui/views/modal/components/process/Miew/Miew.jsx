@@ -87,7 +87,7 @@ function createMiewOptions(userOpts) {
 const CHANGING_WARNING =
   'Stereocenters can be changed after the strong 3D rotation'
 
-class Miew extends Component {
+class MiewDialog extends Component {
   componentDidMount() {
     const { struct, server, miewOpts } = this.props
     const Miew = window.Miew
@@ -147,7 +147,7 @@ class Miew extends Component {
   }
 }
 
-export default connect(
+const Miew = connect(
   store => ({
     miewOpts: createMiewOptions(pick(MIEW_OPTIONS, store.options.settings)),
     server: store.options.app.server ? store.server : null,
@@ -159,4 +159,6 @@ export default connect(
       props.onOk()
     }
   })
-)(Miew)
+)(MiewDialog)
+
+export default Miew

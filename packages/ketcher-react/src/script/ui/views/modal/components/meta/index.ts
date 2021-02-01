@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import About from './About/About'
-import Help from './Help/Help'
+import About from './About'
+import Help from './Help'
 import Settings from './Options/Options'
 
 export { About, Help, Settings }

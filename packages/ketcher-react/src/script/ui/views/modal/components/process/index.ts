@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Check from './Check/Check'
-import Analyse from './Analyse/Analyse'
-import Recognize from './Recognize/Recognize'
-import Miew from './Miew/Miew'
+import Check from './Check'
+import Analyse from './Analyse'
+import Recognize from './Recognize'
+import Miew from './Miew'
 
 export { Check, Analyse, Recognize, Miew }

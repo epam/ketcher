@@ -38,7 +38,7 @@ function isImage(file) {
   return file?.type?.includes('image')
 }
 
-function Recognize(prop) {
+function RecognizeDialog(prop) {
   const {
     file,
     structStr,
@@ -145,7 +145,7 @@ function url(file) {
   return URL ? URL.createObjectURL(file) : 'No preview'
 }
 
-export default connect(
+const Recognize = connect(
   store => ({
     imagoVersions: store.options.app.imagoVersions,
     file: store.options.recognize.file,
@@ -169,4 +169,6 @@ export default connect(
       props.onOk(res)
     }
   })
-)(Recognize)
+)(RecognizeDialog)
+
+export default Recognize

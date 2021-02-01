@@ -14,6 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Dialog from './Dialog/Dialog'
+import Dialog from './Dialog'
 
 export { Dialog }

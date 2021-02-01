@@ -60,7 +60,7 @@ const saveSchema = {
   }
 }
 
-class Save extends Component {
+class SaveDialog extends Component {
   constructor(props) {
     super(props)
     this.state = {}
@@ -206,7 +206,7 @@ class Save extends Component {
   }
 }
 
-export default connect(
+const Save = connect(
   store => ({
     server: store.options.app.server ? store.server : null,
     struct: store.editor.struct(),
@@ -220,4 +220,6 @@ export default connect(
     onTmplSave: struct => dispatch(saveUserTmpl(struct)),
     onResetForm: prevState => dispatch(updateFormState(prevState))
   })
-)(Save)
+)(SaveDialog)
+
+export default Save

@@ -14,6 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ErrorsCheck from './ErrorsCheck'
-
-export default ErrorsCheck
+export { default } from './ErrorsCheck'

@@ -50,7 +50,7 @@ const mergeProps = (stateProps, dispatchProps) => {
   }
 }
 
-const AppModal = connect(
+const ModalContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps
@@ -68,4 +68,4 @@ const AppModal = connect(
   )
 })
 
-export default AppModal
+export default ModalContainer

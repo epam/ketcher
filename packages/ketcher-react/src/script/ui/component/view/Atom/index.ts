@@ -14,6 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Atom from './Atom'
-
-export default Atom
+export { default } from './Atom'

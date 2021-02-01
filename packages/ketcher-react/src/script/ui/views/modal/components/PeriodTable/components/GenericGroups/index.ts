@@ -14,6 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import GenSet from './GenSet'
-
-export default GenSet
+export { default } from './GenericGroups'

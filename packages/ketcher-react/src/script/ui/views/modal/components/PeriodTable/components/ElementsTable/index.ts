@@ -14,6 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import GenGroup from './GenGroup'
-
-export default GenGroup
+export { default } from './ElementsTable'

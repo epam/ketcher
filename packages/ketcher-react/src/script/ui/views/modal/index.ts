@@ -14,6 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import AppModal from './AppModal'
+import ModalContainer from './ModalContainer'
 
-export default AppModal
+export default ModalContainer

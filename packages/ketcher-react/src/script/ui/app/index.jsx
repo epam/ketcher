@@ -19,7 +19,7 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { SettingsContext } from './../../../contexts'
 
-import App from './App'
+import App from './app'
 
 import createStore, { load } from '../state'
 import { checkServer } from '../state/server'

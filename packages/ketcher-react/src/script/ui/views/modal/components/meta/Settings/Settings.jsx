@@ -35,9 +35,9 @@ import MeasureInput from '../../../../../component/form/measure-input'
 import SystemFonts from '../../../../../component/form/systemfonts'
 import SelectCheckbox from '../../../../../component/form/select-checkbox'
 
-import styles from './options.module.less'
+import styles from './Settings.module.less'
 
-function Settings(props) {
+function SettingsDialog(props) {
   const {
     initState,
     formState,
@@ -146,7 +146,7 @@ function Settings(props) {
   )
 }
 
-export default connect(
+const Settings = connect(
   store => ({
     server: store.options.app.server ? store.server : null,
     appOpts: store.options.app,
@@ -167,4 +167,6 @@ export default connect(
       props.onOk(res)
     }
   })
-)(Settings)
+)(SettingsDialog)
+
+export default Settings

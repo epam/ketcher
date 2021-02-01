@@ -14,6 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import PeriodTable from './PeriodTable'
-
-export default PeriodTable
+export { default } from './PeriodTable'

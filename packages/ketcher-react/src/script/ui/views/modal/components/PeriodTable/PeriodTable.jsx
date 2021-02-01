@@ -37,7 +37,7 @@ import {
 
 import styles from './PeriodTable.module.less'
 
-class PeriodTable extends Component {
+class Table extends Component {
   constructor(props) {
     super(props)
     const genType = !this.props.pseudo ? null : 'gen'
@@ -169,7 +169,7 @@ function mapSelectionToProps(editor) {
   return {}
 }
 
-export default connect(
+const PeriodTable = connect(
   (store, props) => {
     if (props.values || props.label) return {}
     return mapSelectionToProps(store.editor)
@@ -181,4 +181,6 @@ export default connect(
       props.onOk(res)
     }
   })
-)(PeriodTable)
+)(Table)
+
+export default PeriodTable

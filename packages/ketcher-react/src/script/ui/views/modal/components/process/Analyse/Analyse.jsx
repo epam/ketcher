@@ -33,7 +33,7 @@ function roundOff(value, round) {
   return value.replace(/[0-9]*\.[0-9]+/g, str => (+str).toFixed(round))
 }
 
-class Analyse extends Component {
+class AnalyseDialog extends Component {
   constructor(props) {
     super(props)
     props.onAnalyse().catch(e => {
@@ -96,7 +96,7 @@ class Analyse extends Component {
   }
 }
 
-export default connect(
+const Analyse = connect(
   store => ({
     values: store.options.analyse.values,
     round: {
@@ -108,4 +108,6 @@ export default connect(
     onAnalyse: () => dispatch(analyse()),
     onChangeRound: (roundName, val) => dispatch(changeRound(roundName, val))
   })
-)(Analyse)
+)(AnalyseDialog)
+
+export default Analyse

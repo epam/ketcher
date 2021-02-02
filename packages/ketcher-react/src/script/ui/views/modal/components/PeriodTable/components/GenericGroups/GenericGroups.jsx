@@ -27,22 +27,22 @@ function GenericGroups({ selected, onSelect, className, ...props }) {
         <GenGroup
           gen={generics}
           name="atom"
-          selected={l => selected(l)}
-          onSelect={l => onSelect(l)}
+          selected={selected}
+          onSelect={onSelect}
         />
         <GenGroup
           gen={generics}
           name="special"
-          selected={l => selected(l)}
-          onSelect={l => onSelect(l)}
+          selected={selected}
+          onSelect={onSelect}
         />
       </div>
       <div className={styles.col}>
         <GenGroup
           gen={generics}
           name="group"
-          selected={l => selected(l)}
-          onSelect={l => onSelect(l)}
+          selected={selected}
+          onSelect={onSelect}
         />
       </div>
     </div>

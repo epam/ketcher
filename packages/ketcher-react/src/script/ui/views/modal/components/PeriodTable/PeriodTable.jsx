@@ -48,11 +48,9 @@ class Table extends Component {
       isInfo: false
     }
     this.firstType = true
-    this.selected = this.selected.bind(this)
-    this.onSelect = this.onSelect.bind(this)
   }
 
-  changeType(type) {
+  changeType = type => {
     if (this.firstType) {
       this.firstType = false
       return
@@ -69,21 +67,21 @@ class Table extends Component {
     }
   }
 
-  selected(label) {
+  selected = label => {
     const { type, value } = this.state
     return type === 'atom' || type === 'gen'
       ? value === label
       : value.includes(label)
   }
 
-  onSelect(label) {
+  onSelect = label => {
     const { type, value } = this.state
     this.setState({
       value: type === 'atom' || type === 'gen' ? label : xor([label], value)
     })
   }
 
-  result() {
+  result = () => {
     const { type, value } = this.state
     if (!value || !value.length) {
       return null
@@ -96,23 +94,23 @@ class Table extends Component {
     return { type, values: value }
   }
 
-  currentEvents(element) {
+  currentEvents = element => {
     return {
       onMouseEnter: () => this.setState({ current: element, isInfo: true }),
       onMouseLeave: () => this.setState({ isInfo: false })
     }
   }
 
-  periodicTable(value) {
+  periodicTable = value => {
     const { type, current, isInfo } = this.state
     return (
       <div className={styles.period_table}>
         <AtomInfo el={current} isInfo={isInfo} />
         <ElementsTable
           value={value}
-          currentEvents={this.currentEvents.bind(this)}
-          selected={this.selected.bind(this)}
-          onSelect={this.onSelect.bind(this)}
+          currentEvents={this.currentEvents}
+          selected={this.selected}
+          onSelect={this.onSelect}
         />
         <TypeChoice value={type} onChange={event => this.changeType(event)} />
       </div>
@@ -124,7 +122,7 @@ class Table extends Component {
     const tabs = [
       {
         caption: 'Table',
-        component: this.periodicTable.bind(this),
+        component: this.periodicTable,
         props: { value }
       },
       {
@@ -132,8 +130,8 @@ class Table extends Component {
         component: GenericGroups,
         props: {
           className: 'generic-groups',
-          selected: this.selected.bind(this),
-          onSelect: this.onSelect.bind(this)
+          selected: this.selected,
+          onSelect: this.onSelect
         }
       }
     ]

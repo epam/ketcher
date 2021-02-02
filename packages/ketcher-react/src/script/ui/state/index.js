@@ -25,6 +25,7 @@ import modalReducer from './modal'
 import optionsReducer, { initOptionsState } from './options'
 import templatesReducer, { initTmplsState } from './templates'
 import toolbarReducer from './toolbar'
+import requestReducer from './request'
 
 import { onAction, load } from './shared'
 
@@ -37,7 +38,8 @@ const shared = combineReducers({
   server: (store = null) => store,
   editor: (store = null) => store,
   options: optionsReducer,
-  templates: templatesReducer
+  templates: templatesReducer,
+  blockUi: requestReducer
 })
 
 function getRootReducer(setEditor) {

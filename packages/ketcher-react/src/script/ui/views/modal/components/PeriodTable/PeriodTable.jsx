@@ -85,10 +85,15 @@ class Table extends Component {
 
   result() {
     const { type, value } = this.state
-    if (type === 'atom') return value ? { label: value, pseudo: null } : null
-    else if (type === 'gen')
-      return value ? { type, label: value, pseudo: value } : null
-    return value.length ? { type, values: value } : null
+    if (!value || !value.length) {
+      return null
+    }
+    if (type === 'atom') {
+      return { label: value, pseudo: null }
+    } else if (type === 'gen') {
+      return { type, label: value, pseudo: value }
+    }
+    return { type, values: value }
   }
 
   currentEvents(element) {

@@ -26,16 +26,16 @@ const typeSchema = [
 function TypeChoice({ value, onChange, ...props }) {
   return (
     <fieldset className={styles.fieldset}>
-      {typeSchema.map(sc => (
-        <label key={sc.title}>
+      {typeSchema.map(type => (
+        <label key={type.title}>
           <input
             type="radio"
-            value={sc.value}
-            checked={sc.value === value} //TODO: fix React Warning
-            onClick={() => onChange(sc.value)}
+            value={type.value}
+            checked={type.value === value} //TODO: fix React Warning
+            onClick={() => onChange(type.value)}
             {...props}
           />
-          {sc.title}
+          {type.title}
         </label>
       ))}
     </fieldset>

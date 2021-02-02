@@ -35,7 +35,7 @@ function AppHiddenView({ onInitTmpls }) {
 }
 
 export const AppHidden = connect(null, dispatch => ({
-  onInitTmpls: cacheEl => initTmplLib(dispatch, process.env.PUBLIC_URL, cacheEl)
+  onInitTmpls: (cacheEl, url) => initTmplLib(dispatch, url, cacheEl)
 }))(AppHiddenView)
 
 export const AppCliparea = connect(null, dispatch => dispatch(initClipboard))(

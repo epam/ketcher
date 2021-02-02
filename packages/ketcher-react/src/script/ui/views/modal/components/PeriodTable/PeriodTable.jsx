@@ -55,9 +55,10 @@ class Table extends Component {
       this.firstType = false
       return
     }
-    const pl = this.state.type === 'list' || this.state.type === 'not-list'
-    const l = type === 'list' || type === 'not-list'
-    if (l && pl) {
+    const prevChoice =
+      this.state.type === 'list' || this.state.type === 'not-list'
+    const currentChoice = type === 'list' || type === 'not-list'
+    if (prevChoice && currentChoice) {
       this.setState({ type })
     } else {
       this.setState({
@@ -65,6 +66,11 @@ class Table extends Component {
         value: type === 'atom' || type === 'gen' ? null : []
       })
     }
+  }
+
+  changeTabType = event => {
+    const type = event === 0 ? 'atom' : 'gen'
+    this.changeType(type)
   }
 
   selected = label => {
@@ -112,7 +118,7 @@ class Table extends Component {
           selected={this.selected}
           onSelect={this.onSelect}
         />
-        <TypeChoice value={type} onChange={event => this.changeType(event)} />
+        <TypeChoice value={type} onChange={this.changeType} />
       </div>
     )
   }
@@ -141,13 +147,13 @@ class Table extends Component {
         title="Periodic table"
         className={styles.elements_table}
         params={this.props}
-        result={() => this.result()}>
+        result={this.result}>
         <Tabs
           className={styles.tabs}
           contentClassName={styles.tabs_content}
           captions={tabs}
           tabIndex={type !== 'gen' ? 0 : 1}
-          changeTab={event => this.changeType(event === 0 ? 'atom' : 'gen')}
+          changeTab={this.changeTabType}
           tabs={tabs}
         />
       </Dialog>
@@ -172,18 +178,25 @@ function mapSelectionToProps(editor) {
   return {}
 }
 
-const PeriodTable = connect(
-  (store, props) => {
-    if (props.values || props.label) return {}
-    return mapSelectionToProps(store.editor)
-  },
-  (dispatch, props) => ({
-    onOk: res => {
-      if (!res.type || res.type === 'atom') dispatch(addAtoms(res.label))
-      dispatch(onAction({ tool: 'atom', opts: toElement(res) }))
-      props.onOk(res)
+const mapStateToProps = (state, ownProps) => {
+  if (ownProps.values || ownProps.label) {
+    return {}
+  }
+  return mapSelectionToProps(state.editor)
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    onOk: result => {
+      if (!result.type || result.type === 'atom') {
+        dispatch(addAtoms(result.label))
+      }
+      dispatch(onAction({ tool: 'atom', opts: toElement(result) }))
+      ownProps.onOk(result)
     }
-  })
-)(Table)
+  }
+}
+
+const PeriodTable = connect(mapStateToProps, mapDispatchToProps)(Table)
 
 export default PeriodTable

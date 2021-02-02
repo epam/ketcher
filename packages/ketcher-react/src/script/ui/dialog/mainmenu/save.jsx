@@ -117,7 +117,11 @@ class Save extends Component {
     return service.getStructureAsync().then(
       structStr => {
         this.setState({ structStr })
-        setTimeout(() => this.textAreaRef.current.select(), 10) // TODO: remove hack
+        setTimeout(() => {
+          if (this.textAreaRef.current) {
+            this.textAreaRef.current.select()
+          }
+        }, 10) // TODO: remove hack
       },
       e => {
         //TODO: add error handler call

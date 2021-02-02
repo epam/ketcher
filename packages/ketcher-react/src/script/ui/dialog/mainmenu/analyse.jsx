@@ -18,7 +18,6 @@ import { range } from 'lodash/fp'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import * as KN from 'w3c-keyname'
 import Dialog from '../../component/dialog'
 import Input from '../../component/form/input'
 
@@ -38,15 +37,29 @@ function FrozenInput({ value }) {
 const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g
 const errorRegexp = /error:.*/g
 
-function formulaInputMarkdown(value) {
+function formulaInputMarkdown(formulaDescriptor) {
   return (
-    <div
-      className="chem-input"
-      spellCheck="false"
-      contentEditable
-      suppressContentEditableWarning={true}>
-      {value}
-    </div>
+    formulaDescriptor?.length && (
+      <div
+        className="chem-input"
+        spellCheck="false"
+        contentEditable
+        suppressContentEditableWarning={true}>
+        {formulaDescriptor.map(elementDescriptor => {
+          return (
+            <React.Fragment key={elementDescriptor.symbol}>
+              {elementDescriptor.isotope > 0 && (
+                <sup>{elementDescriptor.isotope}</sup>
+              )}
+              {elementDescriptor.symbol}
+              {elementDescriptor.index > 0 && (
+                <sub>{elementDescriptor.index}</sub>
+              )}
+            </React.Fragment>
+          )
+        })}
+      </div>
+    )
   )
 }
 
@@ -54,20 +67,27 @@ function FormulaInput({ value }) {
   if (errorRegexp.test(value)) return formulaInputMarkdown(value)
 
   const content = []
+  let formulaDescriptor = []
   let cnd
   let pos = 0
-
   while ((cnd = formulaRegexp.exec(value)) !== null) {
-    if (cnd[1].length > 0) content.push(<sup>{cnd[1]}</sup>)
-    content.push(value.substring(pos, cnd.index) + cnd[2])
-    if (cnd[3].length > 0) content.push(<sub key={cnd}>{cnd[3]}</sub>)
+    let symbol
+    let index = 0
+    let isotope = 0
+    if (cnd[1].length > 0) isotope = cnd[1]
+
+    symbol = value.substring(pos, cnd.index) + cnd[2]
+
+    if (cnd[3].length > 0) index = cnd[3]
+
+    formulaDescriptor.push({ symbol, index, isotope })
     pos = cnd.index + cnd[0].length
   }
 
   if (pos === 0) content.push(value)
   else content.push(value.substring(pos, value.length))
 
-  return formulaInputMarkdown(content)
+  return formulaInputMarkdown(formulaDescriptor)
 }
 
 class Analyse extends Component {

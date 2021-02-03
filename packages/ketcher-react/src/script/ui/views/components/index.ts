@@ -15,5 +15,6 @@
  ***************************************************************************/
 
 import Dialog from './Dialog'
+import StructEditor from './StructEditor'
 
-export { Dialog }
+export { Dialog, StructEditor }

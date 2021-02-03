@@ -14,16 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { connect } from 'react-redux'
-import initEditor from '../state/editor'
-import { StructEditor } from './components'
-
-const Editor = connect(
-  state => ({
-    options: state.options.settings,
-    indigoVerification: state.requestsStatuses.indigoVerification
-  }),
-  dispatch => dispatch(initEditor)
-)(StructEditor)
-
-export default Editor
+export { default } from './StructEditor'

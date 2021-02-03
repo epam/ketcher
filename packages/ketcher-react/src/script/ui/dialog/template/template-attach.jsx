@@ -17,9 +17,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { Dialog } from '../../views/components'
 import Input from '../../component/form/input'
-import StructEditor from '../../component/structeditor'
+import { StructEditor, Dialog } from '../../views/components'
 import { storage } from '../../storage-ext'
 
 import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'

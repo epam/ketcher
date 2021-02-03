@@ -24,24 +24,6 @@ class Dialog extends Component {
     this.formRef = createRef()
   }
 
-  exit(mode) {
-    const { params, result = () => null, valid = () => !!result() } = this.props
-    const key = mode === 'OK' ? 'onOk' : 'onCancel'
-    if (params && key in params && (key !== 'onOk' || valid()))
-      params[key](result())
-  }
-
-  keyDown(ev) {
-    const key = KN.keyName(ev)
-    const active = document.activeElement
-    const activeTextarea = active && active.tagName === 'TEXTAREA'
-    if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
-      this.exit(key === 'Enter' ? 'OK' : 'Cancel')
-      ev.preventDefault()
-      ev.stopPropagation()
-    }
-  }
-
   componentDidMount() {
     const fe =
       this.formRef.current.querySelector(
@@ -57,6 +39,24 @@ class Dialog extends Component {
 
   componentWillUnmount() {
     ;(document.querySelector('.cliparea') || document.body).focus()
+  }
+
+  exit = mode => {
+    const { params, result = () => null, valid = () => !!result() } = this.props
+    const key = mode === 'OK' ? 'onOk' : 'onCancel'
+    if (params && key in params && (key !== 'onOk' || valid()))
+      params[key](result())
+  }
+
+  keyDown = ev => {
+    const key = KN.keyName(ev)
+    const active = document.activeElement
+    const activeTextarea = active && active.tagName === 'TEXTAREA'
+    if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
+      this.exit(key === 'Enter' ? 'OK' : 'Cancel')
+      ev.preventDefault()
+      ev.stopPropagation()
+    }
   }
 
   render() {

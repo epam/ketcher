@@ -96,12 +96,12 @@ class SaveDialog extends Component {
     this.props.onCheck(checkOptions)
   }
 
-  showStructWarningMessage(format) {
+  showStructWarningMessage = format => {
     const { errors } = this.props.formState
     return format !== 'mol' && Object.keys(errors).length > 0
   }
 
-  changeType(type) {
+  changeType = type => {
     const { struct, server, options, formState } = this.props
 
     const factory = new FormatterFactory(
@@ -134,7 +134,7 @@ class SaveDialog extends Component {
     )
   }
 
-  getWarnings(format) {
+  getWarnings = format => {
     const { struct, moleculeErrors } = this.props
     const warnings = []
     const structWarning =

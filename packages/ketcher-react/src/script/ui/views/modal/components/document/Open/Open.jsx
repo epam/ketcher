@@ -36,22 +36,22 @@ class Open extends Component {
     this.textAreaRef = createRef()
   }
 
-  result() {
+  result = () => {
     const { structStr, fragment } = this.state
     return structStr ? { structStr, fragment } : null
   }
 
-  changeStructStr(structStr) {
+  changeStructStr = structStr => {
     this.setState({ structStr })
   }
 
-  changeFragment(target) {
+  changeFragment = target => {
     this.setState({
       fragment: target.checked
     })
   }
 
-  structAcceptMimes() {
+  structAcceptMimes = () => {
     return Object.keys(formatProperties)
       .reduce(
         (res, key) =>

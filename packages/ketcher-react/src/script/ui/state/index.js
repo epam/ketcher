@@ -39,7 +39,7 @@ const shared = combineReducers({
   editor: (store = null) => store,
   options: optionsReducer,
   templates: templatesReducer,
-  blockUi: requestReducer
+  requestsStatuses: requestReducer
 })
 
 function getRootReducer(setEditor) {

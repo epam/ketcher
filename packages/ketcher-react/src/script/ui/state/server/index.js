@@ -22,7 +22,7 @@ import molfile from '../../../chem/molfile'
 import { setStruct, appUpdate } from '../options'
 import { checkErrors } from '../modal/form'
 import { load } from '../shared'
-import { blockUi } from '../request'
+import { indigoVerification } from '../request'
 
 export function checkServer() {
   return (dispatch, getState) => {
@@ -142,7 +142,7 @@ export function serverTransform(method, data, struct) {
     const state = getState()
     const opts = state.options.getServerSettings()
     opts.data = data
-    dispatch(blockUi(true))
+    dispatch(indigoVerification(true))
 
     serverCall(state.editor, state.server, method, opts, struct)
       .then(res =>
@@ -157,7 +157,7 @@ export function serverTransform(method, data, struct) {
         //TODO: add error handler call
       })
       .finally(() => {
-        dispatch(blockUi(false))
+        dispatch(indigoVerification(false))
       })
     // TODO: notification
   }

@@ -14,21 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BLOCK_UI, RequestActionTypes } from './request.types'
+import {
+  INDIGO_VERIFICATION,
+  RequestActionTypes,
+  RequestState
+} from './request.types'
 
-export function blockUi(data: boolean): RequestActionTypes {
+export function indigoVerification(data: boolean): RequestActionTypes {
   return {
-    type: BLOCK_UI,
+    type: INDIGO_VERIFICATION,
     data
   }
 }
 
-export default function (state = false, action: RequestActionTypes): boolean {
+const initialState = {
+  indigoVerification: false
+}
+
+export default function (
+  state = initialState,
+  action: RequestActionTypes
+): RequestState {
   const { type, data } = action
 
   switch (type) {
-    case BLOCK_UI: {
-      return data
+    case INDIGO_VERIFICATION: {
+      return {
+        ...state,
+        indigoVerification: data
+      }
     }
     default:
       return state

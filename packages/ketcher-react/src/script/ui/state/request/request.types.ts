@@ -14,11 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const BLOCK_UI = 'BLOCK_UI'
+export const INDIGO_VERIFICATION = 'INDIGO_VERIFICATION'
 
-interface BlockUiAction {
-  type: typeof BLOCK_UI
+export interface RequestState {
+  indigoVerification: boolean
+}
+
+interface IndigoVerificationAction {
+  type: typeof INDIGO_VERIFICATION
   data: boolean
 }
 
-export type RequestActionTypes = BlockUiAction
+export type RequestActionTypes = IndigoVerificationAction

@@ -14,8 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Dialog from './Dialog'
-import StructEditor from './StructEditor'
-import Spinner from './StructEditor/components/Spinner'
+import React, { ReactElement } from 'react'
 
-export { Dialog, StructEditor, Spinner }
+import styles from './Spinner.module.less'
+
+function Spinner(): ReactElement {
+  return <div className={styles.spinner} />
+}
+
+export default Spinner

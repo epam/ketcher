@@ -17,6 +17,7 @@
 import { upperFirst } from 'lodash/fp'
 import React, { Component, createRef } from 'react'
 import Editor from '../../../../editor'
+import { Spinner } from './components'
 
 import styles from './StructEditor.module.less'
 
@@ -124,7 +125,7 @@ class StructEditor extends Component {
         <div className="measure-log" ref={this.logRef} />
         {indigoVerification && (
           <div className={styles.spinner_overlay}>
-            <p>spinner</p>
+            <Spinner />
           </div>
         )}
       </Tag>

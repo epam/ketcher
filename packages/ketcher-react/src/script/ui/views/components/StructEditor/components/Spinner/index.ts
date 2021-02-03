@@ -14,8 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Dialog from './Dialog'
-import StructEditor from './StructEditor'
-import Spinner from './StructEditor/components/Spinner'
-
-export { Dialog, StructEditor, Spinner }
+export { default } from './Spinner'

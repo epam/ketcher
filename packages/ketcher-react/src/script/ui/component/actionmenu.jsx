@@ -60,14 +60,22 @@ export function showMenuOrButton(action, item, status, props) {
   return item.component(props)
 }
 
-function ActionButton({ name, action, status = {}, onAction }) {
+function ActionButton({
+  name,
+  action,
+  status = {},
+  onAction,
+  disableableButtons,
+  indigoVerification
+}) {
   // eslint-disable-line no-shadow
   const shortcut = action.shortcut && shortcutStr(action.shortcut)
   const menuRef = useRef(null)
+  const disabled = indigoVerification && disableableButtons.includes(name)
   return (
     <button
       ref={menuRef}
-      disabled={status.disabled}
+      disabled={status.disabled || disabled}
       onClick={ev => {
         if (!status.selected || isMenuOpened(menuRef.current)) {
           onAction(action.action)
@@ -122,6 +130,7 @@ function renderActiveMenuItem(item, props) {
   return (
     activeMenuItem && (
       <ActionButton
+        {...props}
         {...attrs}
         name={activeMenuItem}
         action={action[activeMenuItem]}

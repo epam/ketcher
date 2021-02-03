@@ -1,810 +1,835 @@
-@import "variables";
-@import "form";
-@import (reference) "component";
+@import 'variables';
+@import 'form';
+@import (reference) 'component';
 
 .ket-overlay {
-	position: fixed;
-	left: 0;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	z-index: 40;
-	text-align: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 40;
+  text-align: center;
 
-	background-image: data-uri('overlay.svg');
-	.background-opacity(#777, 0.2);
-	//opacity: 1;
+  background-image: data-uri('overlay.svg');
+  .background-opacity(#777, 0.2);
+  //opacity: 1;
 
-	&.animate {
-		transition: background-color 0.3s;
-		//transition: opacity 0.3s;
-	}
+  &.animate {
+    transition: background-color 0.3s;
+    //transition: opacity 0.3s;
+  }
 
-	&.hide {
-		background-color: fade(#777, 1%);
-		//opacity: 0.1;
-	}
+  &.hide {
+    background-color: fade(#777, 1%);
+    //opacity: 0.1;
+  }
 
-	&:after {
-		content: '';
-		display: inline-block;
-		height: 100%;
-		vertical-align: middle;
-	}
+  &:after {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+  }
 
-	form[role=dialog] {
-		outline: 0;
-		display: inline-block;
-		position: relative;
-		vertical-align: middle;
-	}
+  form[role='dialog'] {
+    outline: 0;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+  }
 }
 
 .ket-spinner {
-	margin: auto;
-	display: block;
-	border: 16px solid #f3f3f3;
-	border-top: 16px solid #0000ff;
-	border-radius: 50%;
-	width: 5em;
-	height: 5em;
-	animation: spin 3s linear infinite;
+  margin: auto;
+  display: block;
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #0000ff;
+  border-radius: 50%;
+  width: 5em;
+  height: 5em;
+  animation: spin 3s linear infinite;
 
-	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
-	}
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 }
 
-form[role=dialog] {
-	text-align: left;
-	background-color: #fff;
-	border: 1px solid #999;
-	border: 1px solid rgba(0,0,0,.3);
-	border-radius: 6px;
-	box-shadow: 0 3px 9px rgba(0,0,0,.5);
-	background-clip: padding-box;
-	overflow: visible;
-	.transition-zoom;
-	//outline: 0;
-	> * {
-		margin: 0.3em;
-	}
-	header, footer {
-		margin: 0;
-		padding: 0.2em 0.6em;
-		background-color: #f5f5f5;
-	}
-	header {
-		font-size: 1.6em;
-		font-weight: 600;
-		line-height: 1.3;
-		border-bottom: 1px solid #ddd;
-		border-radius: 6px 6px 0 0;
-	}
-	footer {
-		clear: both;
-		border-top: 1px solid #ddd;
-		border-radius: 0 0 6px 6px;
-		text-align: right;
-	}
-	.close {
-		.reset-button;
-		position: absolute;
-		top: 0;
-		right: 0.3em;
-		color: lighten(#000, 60%);
-		font-size: 0.8em;
-		font-weight: bold;
-		text-shadow: 0 1px 0 rgba(255,255,255, 1);
-		opacity: 0.5;
-		&:hover {
-			opacity: 1;
-		}
-	}
+form[role='dialog'] {
+  text-align: left;
+  background-color: #fff;
+  border: 1px solid #999;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  background-clip: padding-box;
+  overflow: visible;
+  .transition-zoom;
+  //outline: 0;
+  > * {
+    margin: 0.3em;
+  }
+  header,
+  footer {
+    margin: 0;
+    padding: 0.2em 0.6em;
+    background-color: #f5f5f5;
+  }
+  header {
+    font-size: 1.6em;
+    font-weight: 600;
+    line-height: 1.3;
+    border-bottom: 1px solid #ddd;
+    border-radius: 6px 6px 0 0;
+  }
+  footer {
+    clear: both;
+    border-top: 1px solid #ddd;
+    border-radius: 0 0 6px 6px;
+    text-align: right;
+  }
+  .close {
+    .reset-button;
+    position: absolute;
+    top: 0;
+    right: 0.3em;
+    color: lighten(#000, 60%);
+    font-size: 0.8em;
+    font-weight: bold;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 1);
+    opacity: 0.5;
+    &:hover {
+      opacity: 1;
+    }
+  }
 }
 
 /////////////////////
 
 .template-lib {
-	label {
-		text-align: center;
-		line-height: 2.6em;
-		display: flex;
-		input[type=search] {
-			width: 100%;
-			margin-left: 4px;
-		}
-	}
-	.groups {
-		&:extend(.-SelectList all);
-		margin-top: 1em;
-		height: 27em;
-		width: 11em;
-		float: left;
-		overflow: hidden;
-	}
-	.table {
-		margin-top: 1em;
-		padding: 0;
-		float: left;
-		width: 550px;
-		height: 27em;
-		overflow: auto;
-	}
-	.tr {
-		height: 120px;
-	}
-	.td {
-		width: 33%;
-		float: left;
-		height: 100%;
-		position: relative;
-		&:before {
-			position: absolute;
-			z-index: 10;
-			left: 0.3em;
-			top: 0;
-			padding: 0 4px;
-			border-radius: 3px;
-			font-size: 10px;
-			color: darken(@border-color, 30%);
-			background-color: white;
-			content: attr(title);
-		}
-		&.selected .struct {
-			background-color: lighten(@form-selected-background, 15%);
-		}
-	}
-	.btn-container {
-		display: flex;
-		flex-direction: row;
-		position: absolute;
-		right: 0;
-		bottom: 0;
-		margin: 0 4px 2px 0;
-		.attach-button {
-		margin: 0 0 0 0;
-		border-radius: 0;
-		border: 1px solid #ccc;
-		}
-		.delete-button {
-		margin: 0 0 0 0;
-		border-radius: 0;
-		border: 1px solid #ccc;
-		}
-	}
-	.struct {
-		position: absolute;
-		display: block;
-		box-sizing: border-box;
-		padding: 1em;
-		width: 98%;
-		height: 98%;
+  label {
+    text-align: center;
+    line-height: 2.6em;
+    display: flex;
+    input[type='search'] {
+      width: 100%;
+      margin-left: 4px;
+    }
+  }
+  .groups {
+    &:extend(.-SelectList all);
+    margin-top: 1em;
+    height: 27em;
+    width: 11em;
+    float: left;
+    overflow: hidden;
+  }
+  .table {
+    margin-top: 1em;
+    padding: 0;
+    float: left;
+    width: 550px;
+    height: 27em;
+    overflow: auto;
+  }
+  .tr {
+    height: 120px;
+  }
+  .td {
+    width: 33%;
+    float: left;
+    height: 100%;
+    position: relative;
+    &:before {
+      position: absolute;
+      z-index: 10;
+      left: 0.3em;
+      top: 0;
+      padding: 0 4px;
+      border-radius: 3px;
+      font-size: 10px;
+      color: darken(@border-color, 30%);
+      background-color: white;
+      content: attr(title);
+    }
+    &.selected .struct {
+      background-color: lighten(@form-selected-background, 15%);
+    }
+  }
+  .btn-container {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin: 0 4px 2px 0;
+    .attach-button {
+      margin: 0 0 0 0;
+      border-radius: 0;
+      border: 1px solid #ccc;
+    }
+    .delete-button {
+      margin: 0 0 0 0;
+      border-radius: 0;
+      border: 1px solid #ccc;
+    }
+  }
+  .struct {
+    position: absolute;
+    display: block;
+    box-sizing: border-box;
+    padding: 1em;
+    width: 98%;
+    height: 98%;
 
-		border: 1px solid @border-color;
-		border-radius: 5px;
-		&:hover {
-			background: @form-hover-background;
-		}
-	}
-	div.struct {
-		padding: 0;  // TODO: tmp hack to fit viewbox
-	}
+    border: 1px solid @border-color;
+    border-radius: 5px;
+    &:hover {
+      background: @form-hover-background;
+    }
+  }
+  div.struct {
+    padding: 0; // TODO: tmp hack to fit viewbox
+  }
 }
 
 form.bond {
-	label {
-		text-align: right;
-		display: block;
-	}
-	select {
-		width: 12em;
-	}
+  label {
+    text-align: right;
+    display: block;
+  }
+  select {
+    width: 12em;
+  }
 }
 
 form.atom-props {
-	fieldset {
-		margin-top: 0.7em;
-		text-align: right;
-		label {
-			margin: 0.3em 0;
-			display: inline-block;
-		}
-	}
-	.main {
-		width: 14.5em;
-		float: left;
-		&:extend(fieldset.-hidden);
-		input {
-			width: 8em;
-		}
-	}
-	.query, .reaction {
-		float: right;
-		clear: right;
-		width: 16em;
-		input[type=checkbox] {
-			margin: 0.6em 0.3em;
-		}
-	}
+  fieldset {
+    margin-top: 0.7em;
+    text-align: right;
+    label {
+      margin: 0.3em 0;
+      display: inline-block;
+    }
+  }
+  .main {
+    width: 14.5em;
+    float: left;
+    &:extend(fieldset.-hidden);
+    input {
+      width: 8em;
+    }
+  }
+  .query,
+  .reaction {
+    float: right;
+    clear: right;
+    width: 16em;
+    input[type='checkbox'] {
+      margin: 0.6em 0.3em;
+    }
+  }
 }
 
 form.attach-points {
-	form {
-		width: 17em;
-		text-align: right;
-		label {
-			margin: @input-height / 3;
-			display: inline-block;
-		}
-	}
+  form {
+    width: 17em;
+    text-align: right;
+    label {
+      margin: @input-height / 3;
+      display: inline-block;
+    }
+  }
 }
 
 form.automap {
-	width: 22em;
-	label {
-		display: block;
-		text-align: right;
-		line-height: @input-height;
-	}
+  width: 22em;
+  label {
+    display: block;
+    text-align: right;
+    line-height: @input-height;
+  }
 }
 
 form.rgroup-logic {
-	label {
-		display: inline-block;
-		text-align: right;
-		line-height: @input-height;
-	}
-	.cond {
-		display: block;
-	}
-	input[type=text] {
-		width: 7em;
-	}
+  label {
+    display: inline-block;
+    text-align: right;
+    line-height: @input-height;
+  }
+  .cond {
+    display: block;
+  }
+  input[type='text'] {
+    width: 7em;
+  }
 }
 
-.sgroup, .sgroup-special {
-	width: 20em;
-	label {
-		display: block;
-		text-align: right;
-		input, select {
-			width: 10em;
-		}
-		&:hover:after {
-			margin: 1px 0 0 3px;
-		}
-	}
-	fieldset {
-		border: 0;
-		padding: 0;
-	}
-	.data {
-		label {
-			text-align: left;
-			fieldset.radio {
-				label {
-					margin: .4em;
-					display: inline-block;
-				}
-				input[type=radio] {
-					width: auto;
-				}
-			}
-		}
-		textarea, select[name=fieldValue] {
-			display: block;
-			width: 19em;
-			height: 12em;
-			overflow: auto;
-		}
-		input[type=text], select[name=fieldName] {
-			width: 19em;
-			display: block;
-			margin-bottom: 0;
-		}
-	}
+.sgroup,
+.sgroup-special {
+  width: 20em;
+  label {
+    display: block;
+    text-align: right;
+    input,
+    select {
+      width: 10em;
+    }
+    &:hover:after {
+      margin: 1px 0 0 3px;
+    }
+  }
+  fieldset {
+    border: 0;
+    padding: 0;
+  }
+  .data {
+    label {
+      text-align: left;
+      fieldset.radio {
+        label {
+          margin: 0.4em;
+          display: inline-block;
+        }
+        input[type='radio'] {
+          width: auto;
+        }
+      }
+    }
+    textarea,
+    select[name='fieldValue'] {
+      display: block;
+      width: 19em;
+      height: 12em;
+      overflow: auto;
+    }
+    input[type='text'],
+    select[name='fieldName'] {
+      width: 19em;
+      display: block;
+      margin-bottom: 0;
+    }
+  }
 }
 
 form.settings {
-	width: 35em;
-	.save-button {
-		margin-left: 10px;
-	}
-	.warning {
-		margin: 0.3em;
-	}
+  width: 35em;
+  .save-button {
+    margin-left: 10px;
+  }
+  .warning {
+    margin: 0.3em;
+  }
 
-	.accordion {
-		fieldset {
-			border-radius: 0 0 6px 6px;
-			height: @input-height * 4;
-		}
-		fieldset.server {
-			height: @input-height * 5;
-		}
-		fieldset.miew {
-			height: @input-height * 3;
-		}
-		fieldset.render {
-			height: @input-height * 8;
-		}
-		&:extend(.-Accordion all);
+  .accordion {
+    fieldset {
+      border-radius: 0 0 6px 6px;
+      height: @input-height * 4;
+    }
+    fieldset.server {
+      height: @input-height * 5;
+    }
+    fieldset.miew {
+      height: @input-height * 3;
+    }
+    fieldset.render {
+      height: @input-height * 8;
+    }
+    &:extend(.-Accordion all);
 
-		label {
-			display: block;
-			text-align: right;
-			line-height: @input-height;
-			height: @input-height;
-			select, input {
-				width: 50%;
-			}
-			div {
-				margin: 2px;
-				width: 50%;
-				input {
-					margin: 0 4px 0 0;
-				}
-				select {
-					margin: 0;
-				}
-			}
-			&:hover:after {
-				left: 50%;
-			}
-		}
-	}
+    label {
+      display: block;
+      text-align: right;
+      line-height: @input-height;
+      height: @input-height;
+      select,
+      input {
+        width: 50%;
+      }
+      div {
+        margin: 2px;
+        width: 50%;
+        input {
+          margin: 0 4px 0 0;
+        }
+        select {
+          margin: 0;
+        }
+      }
+      &:hover:after {
+        left: 50%;
+      }
+    }
+  }
 }
 
 .about {
-	width: 25em;
-	& > a {
-		display: block;
-		margin: 2em 1em;
-	}
-	var {
-		margin-left: .5em;
-		font-style: normal;
-		font-weight: bold;
-		display: inline-block;
-	}
-	time {
-		font-style: italic;
-	}
-	a {
-		color: @active-color;
-		&:hover {
-			color: @hover-color;
-		}
-	}
+  width: 25em;
+  & > a {
+    display: block;
+    margin: 2em 1em;
+  }
+  var {
+    margin-left: 0.5em;
+    font-style: normal;
+    font-weight: bold;
+    display: inline-block;
+  }
+  time {
+    font-style: italic;
+  }
+  a {
+    color: @active-color;
+    &:hover {
+      color: @hover-color;
+    }
+  }
 
-	@line-height: 1.4em;
-	dl {
-		position: relative;
-		margin: 0 1em 1em;
-		vertical-align: bottom;
-		line-height: @line-height;
-	}
-	dd {
-		text-align: right;
-		margin-bottom: 0.5em;
-	}
-	dt + dd {
-		margin: -@line-height 0 0;
-	}
+  @line-height: 1.4em;
+  dl {
+    position: relative;
+    margin: 0 1em 1em;
+    vertical-align: bottom;
+    line-height: @line-height;
+  }
+  dd {
+    text-align: right;
+    margin-bottom: 0.5em;
+  }
+  dt + dd {
+    margin: -@line-height 0 0;
+  }
 }
 
 .rgroup {
-	ul {
-		width: 25.6em;
-		padding: 0.5em;
-	}
-	li {
-		display: inline-block;
-		margin: 0.2em 0.1em;
-	}
-	form button {
-		font-size: 1.3em;
-		width: 2.3em;
-		height: 2em;
-		line-height: 1;
-		vertical-align: middle;
-		padding: 0.15em;
-		background: inherit;
-		&:first-letter {
-			font-weight: 600;
-			color: lighten(@main-color, 20%);
-		}
-		&:hover {
-			.highlight-scale(@scale:1.005);
-			.highlight-shadow(black);
-		}
-		&:active {
-			.highlight-scale(none);
-			.highlight-shadow(none);
-		}
-		&.selected {
-			.highlight-invert;
-			&:first-letter {
-				color: darken(white, 30%);
-			}
-		}
-	}
+  ul {
+    width: 25.6em;
+    padding: 0.5em;
+  }
+  li {
+    display: inline-block;
+    margin: 0.2em 0.1em;
+  }
+  form button {
+    font-size: 1.3em;
+    width: 2.3em;
+    height: 2em;
+    line-height: 1;
+    vertical-align: middle;
+    padding: 0.15em;
+    background: inherit;
+    &:first-letter {
+      font-weight: 600;
+      color: lighten(@main-color, 20%);
+    }
+    &:hover {
+      .highlight-scale(@scale:1.005);
+      .highlight-shadow(black);
+    }
+    &:active {
+      .highlight-scale(none);
+      .highlight-shadow(none);
+    }
+    &.selected {
+      .highlight-invert;
+      &:first-letter {
+        color: darken(white, 30%);
+      }
+    }
+  }
 }
 
 .elements-table {
-	width: 57em;
-	.tabs {
-		&:extend(.-Tabs all);
-		.tabs-content {
-			height: 31em;
-		}
-	}
+  width: 57em;
+  .tabs {
+    &:extend(.-Tabs all);
+    .tabs-content {
+      height: 31em;
+    }
+  }
 
-	.period-table {
+  .period-table {
     position: relative;
-		table {
-			position: relative;
-		}
-		td, th {
-			padding: 0;
-			margin: 0;
-			text-align: center;
-			vertical-align: middle;
-		}
-		th, td.ref {
-			opacity: 0.6;
-			font-weight: normal;
-			font-size: 0.8em;
-			padding: 0.3em 0.8em;
-		}
-		th.ref {
-			vertical-align: top;
-			text-align: right;
-		}
-		tr:nth-of-type(8) {
-			border-bottom: 1em solid transparent;
-		}
+    table {
+      position: relative;
+    }
+    td,
+    th {
+      padding: 0;
+      margin: 0;
+      text-align: center;
+      vertical-align: middle;
+    }
+    th,
+    td.ref {
+      opacity: 0.6;
+      font-weight: normal;
+      font-size: 0.8em;
+      padding: 0.3em 0.8em;
+    }
+    th.ref {
+      vertical-align: top;
+      text-align: right;
+    }
+    tr:nth-of-type(8) {
+      border-bottom: 1em solid transparent;
+    }
 
-		.ket-atom-info {
-			position: absolute;
-			padding: 0.75em 0.75em;
-			left: 18em;
-			top: 2em;
-			width: 7em;
-			.highlight-shadow(black);
-			opacity: 1;
-			transition: opacity 1s, visibility 0s;
-			&.none {
-				opacity: 0;
-				transition: opacity 2s, visibility 2s;
-			}
-		}
+    .ket-atom-info {
+      position: absolute;
+      padding: 0.75em 0.75em;
+      left: 18em;
+      top: 2em;
+      width: 7em;
+      .highlight-shadow(black);
+      opacity: 1;
+      transition: opacity 1s, visibility 0s;
+      &.none {
+        opacity: 0;
+        transition: opacity 2s, visibility 2s;
+      }
+    }
 
-		button {
-			font-size: 1.3em;
-			width: 2em;
-			height: 2em;
-			line-height: 2;
-			vertical-align: middle;
-			padding: 0.15em;
-			margin: 1px;
-			border: 0;
-			display: block;
-			position: relative;
+    button {
+      font-size: 1.3em;
+      width: 2em;
+      height: 2em;
+      line-height: 2;
+      vertical-align: middle;
+      padding: 0.15em;
+      margin: 1px;
+      border: 0;
+      display: block;
+      position: relative;
 
-			&:after {
-				position: absolute;
-				opacity: 0.6;
-				top: 0.3em;
-				right: 0.3em;
-				font-size: 0.5em;
-				line-height: 1;
-				vertical-align: top;
-				content: attr(value);
-			}
-			&:hover, &.selected {
-				&:after {
-					visibility: hidden;
-				}
-			}
-			&:not(:hover) > span {
-				color: black;
-			}
-			&:hover {
-				.highlight-scale(@scale:1.25);
-				.highlight-shadow(black);
-				z-index: 60;
-				background: #fff;
-			}
-			&:active {
-				.highlight-scale(none);
-				.highlight-shadow(none);
-			}
-			&.selected {
-				.highlight-invert;
-			}
-		}
+      &:after {
+        position: absolute;
+        opacity: 0.6;
+        top: 0.3em;
+        right: 0.3em;
+        font-size: 0.5em;
+        line-height: 1;
+        vertical-align: top;
+        content: attr(value);
+      }
+      &:hover,
+      &.selected {
+        &:after {
+          visibility: hidden;
+        }
+      }
+      &:not(:hover) > span {
+        color: black;
+      }
+      &:hover {
+        .highlight-scale(@scale:1.25);
+        .highlight-shadow(black);
+        z-index: 60;
+        background: #fff;
+      }
+      &:active {
+        .highlight-scale(none);
+        .highlight-shadow(none);
+      }
+      &.selected {
+        .highlight-invert;
+      }
+    }
 
-		fieldset {
-			border: 0;
-			padding: 0.5em;
-			margin: 0.5em 0 0 1.5em;
-		}
+    fieldset {
+      border: 0;
+      padding: 0.5em;
+      margin: 0.5em 0 0 1.5em;
+    }
 
-		.diatomic {
-			background: @atom-periodic-diatomic;
-		}
-		.noble {
-			background: @atom-periodic-noble-gas;
-		}
-		.alkali {
-			background: @atom-periodic-alkali-metal;
-		}
-		.alkaline-earth {
-			background: @atom-periodic-alkaline-earth-metal;
-		}
-		.metalloid {
-			background: @atom-periodic-metalloid;
-		}
-		.polyatomic {
-			background: @atom-periodic-polyatomic;
-		}
-		.post-transition {
-			background: @atom-periodic-post-transition-metal;
-		}
-		.transition {
-			background: @atom-periodic-transition-metal;
-		}
-		.lanthanide {
-			background: @atom-periodic-lanthanide;
-		}
-		.actinide {
-			background: @atom-periodic-actinide;
-		}
-		.unknown-props {
-			background: @atom-periodic-unknown-properties;
-		}
-		.unknown-state:after {
-			color: #222;
-		}
-		.solid:after {
-			color: #222;
-		}
-		.metal:after {
-			color: #006;
-		}
-		.gas:after {
-			color: #c00;
-		}
-		.liquid:after {
-			color: #0a0;
-		}
-	}
+    .diatomic {
+      background: @atom-periodic-diatomic;
+    }
+    .noble {
+      background: @atom-periodic-noble-gas;
+    }
+    .alkali {
+      background: @atom-periodic-alkali-metal;
+    }
+    .alkaline-earth {
+      background: @atom-periodic-alkaline-earth-metal;
+    }
+    .metalloid {
+      background: @atom-periodic-metalloid;
+    }
+    .polyatomic {
+      background: @atom-periodic-polyatomic;
+    }
+    .post-transition {
+      background: @atom-periodic-post-transition-metal;
+    }
+    .transition {
+      background: @atom-periodic-transition-metal;
+    }
+    .lanthanide {
+      background: @atom-periodic-lanthanide;
+    }
+    .actinide {
+      background: @atom-periodic-actinide;
+    }
+    .unknown-props {
+      background: @atom-periodic-unknown-properties;
+    }
+    .unknown-state:after {
+      color: #222;
+    }
+    .solid:after {
+      color: #222;
+    }
+    .metal:after {
+      color: #006;
+    }
+    .gas:after {
+      color: #c00;
+    }
+    .liquid:after {
+      color: #0a0;
+    }
+  }
 
-	.generic-groups {
-		display: flex;
-		justify-content: space-around;
-		padding: 1.5em 0;
-		.col {
-			&:first-child {
-				width: 40%;
-			}
-			& > fieldset {
-				margin: 1em;
-				padding: 1em 0.5em;
-			}
-		}
-		.atom > fieldset, .acyclic, .cyclic {
-			display: inline-block;
-			vertical-align: top;
-			& + fieldset {
-				margin-left: 0.4em;
-			}
-		}
-		.cyclic > fieldset, .carbo, .hetero {
-			float: left;
-		}
-		.carbo {
-			clear: both;
-			margin-right: 0.4em;
-		}
-		.cyclic > legend + fieldset { // a hack
-			margin: 0 0.4em 0 0.8em;
-		}
-		fieldset {
-			text-align: center;
-		}
-		legend + fieldset,
-		.atom fieldset, .carbo fieldset, .hetero fieldset,
-		.no-carbon {
-			position: relative;
-			border: 0;
-			padding: 0 0 1em;
-			legend {
-				font-size: 0.7em;
-				bottom: 0.1em;
-				left: 0;
-				right: 0;
-				margin: 0 auto;
-				position: absolute;
-			}
-		}
-		button {
-			font-size: 1.1em;
-			height: 2em;
-			width: 2.5em;
-			line-height: 1;
-			vertical-align: middle;
-			padding: 0.15em;
-			background: inherit;
-			&:hover {
-				.highlight-scale(@scale:1.25);
-				.highlight-shadow(black);
-			}
-			&:active {
-				.highlight-scale(none);
-				.highlight-shadow(none);
-			}
-			&.selected {
-				.highlight-invert;
-			}
-		}
-	}
+  .generic-groups {
+    display: flex;
+    justify-content: space-around;
+    padding: 1.5em 0;
+    .col {
+      &:first-child {
+        width: 40%;
+      }
+      & > fieldset {
+        margin: 1em;
+        padding: 1em 0.5em;
+      }
+    }
+    .atom > fieldset,
+    .acyclic,
+    .cyclic {
+      display: inline-block;
+      vertical-align: top;
+      & + fieldset {
+        margin-left: 0.4em;
+      }
+    }
+    .cyclic > fieldset,
+    .carbo,
+    .hetero {
+      float: left;
+    }
+    .carbo {
+      clear: both;
+      margin-right: 0.4em;
+    }
+    .cyclic > legend + fieldset {
+      // a hack
+      margin: 0 0.4em 0 0.8em;
+    }
+    fieldset {
+      text-align: center;
+    }
+    legend + fieldset,
+    .atom fieldset,
+    .carbo fieldset,
+    .hetero fieldset,
+    .no-carbon {
+      position: relative;
+      border: 0;
+      padding: 0 0 1em;
+      legend {
+        font-size: 0.7em;
+        bottom: 0.1em;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        position: absolute;
+      }
+    }
+    button {
+      font-size: 1.1em;
+      height: 2em;
+      width: 2.5em;
+      line-height: 1;
+      vertical-align: middle;
+      padding: 0.15em;
+      background: inherit;
+      &:hover {
+        .highlight-scale(@scale:1.25);
+        .highlight-shadow(black);
+      }
+      &:active {
+        .highlight-scale(none);
+        .highlight-shadow(none);
+      }
+      &.selected {
+        .highlight-invert;
+      }
+    }
+  }
 }
 
 .recognize {
-	.change-version {
-		display: block;
-		text-align: right;
-	}
-	.output, .picture {
-		height: 25em;
-		width: 21em;
-		display: table-cell;
-		vertical-align: middle;
-		text-align: center;
-	}
-	img, .struct {
-		overflow: hidden;
-		position: relative;
-		max-height: 100%;
-		max-width: 21em;
-	}
+  .change-version {
+    display: block;
+    text-align: right;
+  }
+  .output,
+  .picture {
+    height: 25em;
+    width: 21em;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+  }
+  img,
+  .struct {
+    overflow: hidden;
+    position: relative;
+    max-height: 100%;
+    max-width: 21em;
+  }
 
-	label {
-		display: block;
-	}
-	.open-filename {
-		display: inline-block;
-		float: left;
-		padding: 6px;
-		max-width: 200px;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
+  label {
+    display: block;
+  }
+  .open-filename {
+    display: inline-block;
+    float: left;
+    padding: 6px;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .check {
-	.tabs {
-		&:extend(.-Tabs all);
-	}
-	fieldset {
-		margin: 0;
-		padding: 0 0 .3em .3em;
-		overflow-y: auto;
-		height: 25em;
-		width: 25em;
-		border-color: #ddd;
-		border-radius: 0 4px 4px 4px;
-		li {
-			display: block;
-			margin: 1.1em 0 0.3em 0.3em;
-		}
-		dt {
-			font-weight: bold;
-			margin: 1.1em 0 0.3em 0.3em;
-		}
-		dd {
-			margin-left: 1.5em;
-		}
-	}
+  .tabs {
+    &:extend(.-Tabs all);
+  }
+  fieldset {
+    margin: 0;
+    padding: 0 0 0.3em 0.3em;
+    overflow-y: auto;
+    height: 25em;
+    width: 25em;
+    border-color: #ddd;
+    border-radius: 0 4px 4px 4px;
+    li {
+      display: block;
+      margin: 1.1em 0 0.3em 0.3em;
+    }
+    dt {
+      font-weight: bold;
+      margin: 1.1em 0 0.3em 0.3em;
+    }
+    dd {
+      margin-left: 1.5em;
+    }
+  }
 }
 
 .analyse {
-	label {
-		width: 10em;
-		display: inline-block;
-		vertical-align: middle;
-		margin-right: 1em;
-	}
-	input[type=text] {
-		width: 14em;
-		margin-right: 1em;
-	}
-	select {
-		width: 10em;
-		margin: 0;
-	}
-	.chem-input {
-		&:extend(input[type=text]);
-		&:active, &:focus {
-			outline: 0;
-			.highlight-shadow(black);
-		}
-		width: 14em;
-		overflow: hidden;
-		white-space: nowrap;
-	}
+  label {
+    width: 10em;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 1em;
+  }
+  input[type='text'] {
+    width: 14em;
+    margin-right: 1em;
+  }
+  select {
+    width: 10em;
+    margin: 0;
+  }
+  .chem-input {
+    &:extend(input[type='text']);
+    &:active,
+    &:focus {
+      outline: 0;
+      .highlight-shadow(black);
+    }
+    width: 14em;
+    overflow: hidden;
+    white-space: nowrap;
+  }
 }
 
 .open {
-	// constrain dialog resizebility
-	// max-width: 50%;
-	// max-height: 70%;
-	label {
-		display: block;
-		width: 22.5em;
-		input {
-			margin-bottom: 0.1em;
-		}
-	}
-	textarea {
-		min-width: 32em;
-		min-height: 23em;
-		overflow: auto;
-		white-space: pre;
-		//make it resizable
-		resize: both;
-	}
+  // constrain dialog resizebility
+  // max-width: 50%;
+  // max-height: 70%;
+  label {
+    display: block;
+    width: 22.5em;
+    input {
+      margin-bottom: 0.1em;
+    }
+  }
+  textarea {
+    min-width: 32em;
+    min-height: 23em;
+    overflow: auto;
+    white-space: pre;
+    //make it resizable
+    resize: both;
+  }
 }
 
 .save {
-	.form-container {
-		display: flex;
-		flex-direction: column;
-		width: min-content;
-	}
-	.warnings-container {
-		display: flex;
-		.warnings-arr {
-			color: @error-color;
-			margin: 2px;
-			white-space: pre-line;
-		}
-	}
-	form > label {
-		display: inline-block;
-		text-align: right;
-		margin: 0 .3em;
-		select, input {
-			width: 12.25em;
-		}
-	}
-	textarea {
-		display: block;
-		min-width: 34em;
-		min-height: 23em;
-		overflow: auto;
-		white-space: pre;
-		cursor: text;
-		resize: both;
-	}
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    width: min-content;
+  }
+  .warnings-container {
+    display: flex;
+    .warnings-arr {
+      color: @error-color;
+      margin: 2px;
+      white-space: pre-line;
+    }
+  }
+  form > label {
+    display: inline-block;
+    text-align: right;
+    margin: 0 0.3em;
+    select,
+    input {
+      width: 12.25em;
+    }
+  }
+  textarea {
+    display: block;
+    min-width: 34em;
+    min-height: 23em;
+    overflow: auto;
+    white-space: pre;
+    cursor: text;
+    resize: both;
+  }
 }
 
 .help {
-	overflow: auto;
-	min-height: 500px;
-	min-width: 800px;
-	border: 0;
+  overflow: auto;
+  min-height: 500px;
+  min-width: 800px;
+  border: 0;
 }
 
 .dialog-body {
-	max-width: 80vw;
-	max-height: 80vh;
-	overflow: auto;
+  max-width: 80vw;
+  max-height: 80vh;
+  overflow: auto;
 }
 
 .miew {
@@ -833,21 +858,41 @@ form.settings {
 }
 
 .attach {
-	label {
-		display: block;
-		padding: 0 5px;
-		font-size: 16px;
-	}
-	.warning {
-		padding: 0 5px;
-	}
+  label {
+    display: block;
+    padding: 0 5px;
+    font-size: 16px;
+  }
+  .warning {
+    padding: 0 5px;
+  }
 
-	.editor {
-		border: 1px solid @border-color;
-		border-radius: 5px;
-		position: relative;
-		height: 25em;
-		max-width: 30em;
-		overflow: auto;
-	}
+  .editor {
+    border: 1px solid @border-color;
+    border-radius: 5px;
+    position: relative;
+    height: 25em;
+    max-width: 30em;
+    overflow: auto;
+  }
+}
+
+.miew-container {
+  .atom-info {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border-radius: 4px;
+    color: silver;
+    background-color: rgba(64, 64, 64, 0.75);
+    display: flex;
+    align-items: left;
+    justify-content: left;
+    opacity: 0;
+
+    p {
+      margin: 10px;
+      text-align: left;
+    }
+  }
 }

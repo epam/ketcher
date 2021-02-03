@@ -14,41 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
-import { Provider, connect } from 'react-redux'
+import { Provider } from 'react-redux'
 import { SettingsContext } from './../../../contexts'
 
-import { AppCliparea, AppHidden } from './hidden'
-import AppEditor from './editor'
-import AppModal from './modal'
-import Toolbar from './toolbar'
+import App from './app'
 
-import createStore, { onAction, load } from '../state'
+import createStore, { load } from '../state'
 import { checkServer } from '../state/server'
 import { initKeydownListener } from '../state/hotkeys'
 import { initResize } from '../state/toolbar'
 import { loadStruct } from '../state/shared'
-
-const App = connect(null, { onAction, checkServer })(
-  class extends Component {
-    // eslint-disable-line
-    componentDidMount() {
-      this.props.checkServer()
-    }
-    render() {
-      return (
-        <React.Fragment>
-          <AppHidden />
-          <AppEditor id="canvas" />
-          <Toolbar {...this.props} />
-          <AppCliparea />
-          <AppModal />
-        </React.Fragment>
-      )
-    }
-  }
-)
 
 /**
  * @param {HTMLInputElement | null} element

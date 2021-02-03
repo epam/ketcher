@@ -1,148 +1,163 @@
-@import "variables";
-@import (reference) "component";
+@import 'variables';
+@import (reference) 'component';
 
-button, input[type=submit],
-input[type=reset], input[type=button] {
-	display: inline-block;
-	margin: 0;
-	text-align: center;
-	vertical-align: middle;
-	//touch-action: manipulation;
-	//cursor: pointer;
-	background-image: none;
-	border: 1px solid transparent;
-	padding: 0.42em 0.85em;
+button,
+input[type='submit'],
+input[type='reset'],
+input[type='button'] {
+  display: inline-block;
+  margin: 0;
+  text-align: center;
+  vertical-align: middle;
+  //touch-action: manipulation;
+  //cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  padding: 0.42em 0.85em;
 
-	color: #333;
-	background-color: #fff;
-	border-color: #ccc;
-	border-radius: 4px;
-	user-select: none;
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
+  border-radius: 4px;
+  user-select: none;
 
-	&:hover, &:focus {
-		background-image: linear-gradient(to bottom, #fff, darken(#fff, 7%));
-		//.gradient-vertical-three(25%, #fff, darken(#fff, 10%), #fff);
-		//color: @btn-default-color;
-		outline: 0;
-	}
+  &:hover,
+  &:focus {
+    background-image: linear-gradient(to bottom, #fff, darken(#fff, 7%));
+    //.gradient-vertical-three(25%, #fff, darken(#fff, 10%), #fff);
+    //color: @btn-default-color;
+    outline: 0;
+  }
 
-	&:active {
-		outline: 0;
-		background-image: none;
-		box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
-	}
+  &:active {
+    outline: 0;
+    background-image: none;
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  }
 
-	&.disabled, &[disabled], fieldset[disabled] & {
-		background-image: none;
-		cursor: not-allowed;
-		opacity: .5;
-		box-shadow: none;
-	}
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    background-image: none;
+    cursor: not-allowed;
+    opacity: 0.5;
+    box-shadow: none;
+  }
 
-	&.save-button {
-		float: left;
-	}
-	&.open-button {
-		float: left;
-	}
+  &.save-button {
+    float: left;
+  }
+  &.open-button {
+    float: left;
+  }
 
-	& > input[type=file] { // hide file input
-		left: -9999px;
-		position: absolute;
-	}
-	& + & {
-		margin-left: 0.3em;
-	}
+  & > input[type='file'] {
+    // hide file input
+    left: -9999px;
+    position: absolute;
+  }
+  & + & {
+    margin-left: 0.3em;
+  }
 }
 
-select, textarea,
-input[type=text], input[type=number], input[type=search] {
-	&:extend(.-Control);
-	&:active, &:focus {
-		outline: 0;
-	}
-	&:hover, &:focus {
-		.highlight-shadow(black);
-	}
+select,
+textarea,
+input[type='text'],
+input[type='number'],
+input[type='search'] {
+  &:extend(.-Control);
+  &:active,
+  &:focus {
+    outline: 0;
+  }
+  &:hover,
+  &:focus {
+    .highlight-shadow(black);
+  }
 
-	&[disabled],
-	&[readonly],
-	fieldset[disabled] & {
-		cursor: not-allowed;
-		//box-shadow: none;
-		background: #efefef;
-		opacity: 0.6;
-	}
+  &[disabled],
+  &[readonly],
+  fieldset[disabled] & {
+    cursor: not-allowed;
+    //box-shadow: none;
+    background: #efefef;
+    opacity: 0.6;
+  }
 }
 
 .suggestList {
-	border: 1px solid #3297FD;
-	position: absolute;
-	background-color: white;
-	margin-left: 3px;
-	padding-left: 3px;
-	width: 93%;
-	z-index: 3;
+  border: 1px solid #3297fd;
+  position: absolute;
+  background-color: white;
+  margin-left: 3px;
+  padding-left: 3px;
+  width: 93%;
+  z-index: 3;
 }
 
 .suggestList li:hover {
-	background-color: #3297FD;
-	color: white;
+  background-color: #3297fd;
+  color: white;
 }
 
 @input-height: 2.4em + 2 * 0.35em;
 
 .data-error {
-	select, textarea,
-	input[type=text], input[type=number], input[type=search] {
-		border: 1px solid @error-color;
-		&:hover, &:focus {
-			.highlight-shadow(@error-color);
-		}
-	}
+  select,
+  textarea,
+  input[type='text'],
+  input[type='number'],
+  input[type='search'] {
+    border: 1px solid @error-color;
+    &:hover,
+    &:focus {
+      .highlight-shadow(@error-color);
+    }
+  }
 
-	&:hover:after {
-		content: "Error: " attr(error);
-		display: block;
-		position: fixed;
-		white-space: pre;
-		padding: 0.35em;
-		background: lighten(@error-color, 30%);
-		border: 1px solid @error-color;
-		border-radius: 4px;
-		line-height: 1em;
-		font-size: 0.9em;
-		z-index: 2;
-	}
+  &:hover:after {
+    content: 'Error: ' attr(error);
+    display: block;
+    position: fixed;
+    white-space: pre;
+    padding: 0.35em;
+    background: lighten(@error-color, 30%);
+    border: 1px solid @error-color;
+    border-radius: 4px;
+    line-height: 1em;
+    font-size: 0.9em;
+    z-index: 2;
+  }
 }
 
-input[type=radio],
-input[type=checkbox] {
-	vertical-align: middle;
-	//display: inline-block;
-	margin: 0 0.3em;
-	margin-top: 1px \9; // IE8-9
-	line-height: normal;
-	// TODO: style focus, active, etc
+input[type='radio'],
+input[type='checkbox'] {
+  vertical-align: middle;
+  //display: inline-block;
+  margin: 0 0.3em;
+  margin-top: 1px \9; // IE8-9
+  line-height: normal;
+  // TODO: style focus, active, etc
 }
 
 fieldset {
-	border: 1px solid @border-color;
-	padding: 0.3em;
-	margin: 0;
-	border-radius: 4px;
-	& > li {
-		display: inline-block;
-	}
-	&.-hidden {
-		border-color: transparent;
-		margin-top: 0.9em + 2 * 0.3em;
-	}
+  border: 1px solid @border-color;
+  padding: 0.3em;
+  margin: 0;
+  border-radius: 4px;
+  & > li {
+    display: inline-block;
+  }
+  &.-hidden {
+    border-color: transparent;
+    margin-top: 0.9em + 2 * 0.3em;
+  }
 }
 
 legend {
-	color: darken(@border-color, 25%);
-	padding: 0 0.4em;
-	font-size: 0.9em;
-	text-align: left;
+  color: darken(@border-color, 25%);
+  padding: 0 0.4em;
+  font-size: 0.9em;
+  text-align: left;
 }

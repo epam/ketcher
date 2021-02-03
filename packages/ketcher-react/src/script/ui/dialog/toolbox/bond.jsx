@@ -19,7 +19,7 @@ import { connect } from 'react-redux'
 
 import { bond as bondSchema } from '../../data/schema/struct-schema'
 import Form, { Field } from '../../component/form/form'
-import Dialog from '../../component/dialog'
+import { Dialog } from '../../views/components'
 
 function Bond(props) {
   const { formState, ...prop } = props

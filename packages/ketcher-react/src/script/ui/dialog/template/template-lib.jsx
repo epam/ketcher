@@ -31,7 +31,7 @@ import sdf from '../../../chem/sdf'
 
 import VisibleView from '../../component/view/visibleview'
 import StructRender from '../../component/structrender'
-import Dialog from '../../component/dialog'
+import { Dialog } from '../../views/components'
 import SaveButton from '../../component/view/savebutton'
 import Input from '../../component/form/input'
 import SelectList from '../../component/form/select'

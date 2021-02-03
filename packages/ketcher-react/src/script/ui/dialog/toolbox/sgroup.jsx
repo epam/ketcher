@@ -20,7 +20,7 @@ import { connect } from 'react-redux'
 import { sgroupMap as schemes } from '../../data/schema/struct-schema'
 
 import Form, { Field, SelectOneOf } from '../../component/form/form'
-import Dialog from '../../component/dialog'
+import { Dialog } from '../../views/components'
 
 function Sgroup({ formState, ...prop }) {
   const { result, valid } = formState

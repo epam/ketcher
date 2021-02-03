@@ -17,7 +17,7 @@
 import jsonschema from 'jsonschema'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import Input from './input'
 import { updateFormState } from '../../state/modal/form'
@@ -123,7 +123,7 @@ function Field(props) {
   if (labelPos === false) return formField
   return (
     <Label
-      className={classNames({ 'data-error': dataError })}
+      className={clsx({ 'data-error': dataError })}
       error={dataError}
       title={prop.title || desc.title}
       labelPos={labelPos}>

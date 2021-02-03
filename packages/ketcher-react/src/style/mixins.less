@@ -5,467 +5,524 @@
 .set-size(inherit) {
 }
 .set-size(small) {
-	#small-dim;
+  #small-dim;
 }
 .set-size(large) {
-	#large-dim;
+  #large-dim;
 }
 
 /////////////////////
 
 .canvas(@dim: inherit) {
-	position: absolute;
-	border: @border-color 1px solid;
-	border-radius: 5px;
-	overflow: auto;
-	.canvas-size(@dim);
-	// svg {
-	//		display: block;
-	// }
-	.measure-log {
-		position: fixed;
-	}
+  position: absolute;
+  border: @border-color 1px solid;
+  border-radius: 5px;
+  overflow: auto;
+  .canvas-size(@dim);
+  // svg {
+  //		display: block;
+  // }
+  .measure-log {
+    position: fixed;
+  }
 }
 
 .canvas-size(@dim) {
-	.set-size(@dim);
-	top: @canvas-padding;
-	left: @canvas-padding;
-	right: @canvas-padding;
-	bottom: @canvas-padding;
+  .set-size(@dim);
+  top: @canvas-padding;
+  left: @canvas-padding;
+  right: @canvas-padding;
+  bottom: @canvas-padding;
 
-	.measure-log {
-		top: @canvas-padding;
-		right: @canvas-padding;
-	}
+  .measure-log {
+    top: @canvas-padding;
+    right: @canvas-padding;
+  }
 }
 
 /////////////////////
 
 .toolbar(@dir, @dim: inherit) {
-	.orientation(@dir);
-	position: absolute;
-	@{dir}: @app-gap;
-	.toolbar-size(@dir, @dim);
-	& > menu {
-			@{main-dim}: 100%;
-	}
+  .orientation(@dir);
+  position: absolute;
+  @{dir}: @app-gap;
+  .toolbar-size(@dir, @dim);
+  & > menu {
+    @{main-dim}: 100%;
+  }
 }
 
 .toolbar-size(@dir, @dim) {
-	.orientation(@dir);
-	.set-size(@dim);
-	@{main-lose}: @canvas-padding;
-	@{main-rise}: @canvas-padding;
-	@{cross-dim}: @toolbar-size;
+  .orientation(@dir);
+  .set-size(@dim);
+  @{main-lose}: @canvas-padding;
+  @{main-rise}: @canvas-padding;
+  @{cross-dim}: @toolbar-size;
 }
 
 .toolbar-pos(@icon-count, @separator-count: 0, @loose-pad: 0,
              @rise-pad: @loose-pad, @dim: inherit) {
-	.set-size(@dim);
-	@offset: @icon-count * @toolbar-size +
-            (@loose-pad + @rise-pad) * @separator-count;
+  .set-size(@dim);
+  @offset: @icon-count * @toolbar-size + (@loose-pad + @rise-pad) *
+    @separator-count;
 }
 
 /////////////////////
 
 .toolbutton(@dim: inherit) {
-	display: block;
-	border: 0;
-	padding: 0;
-	position: relative;
-	background: inherit;
-	background-color: white;
-	//background-image: none;
+  display: block;
+  border: 0;
+  padding: 0;
+  position: relative;
+  background: inherit;
+  background-color: white;
+  //background-image: none;
 
-	//text-align: center;
-	//overflow: hidden;
-	//font: ~"0/0" a;
-	//.text-hide(transparent);
+  //text-align: center;
+  //overflow: hidden;
+  //font: ~"0/0" a;
+  //.text-hide(transparent);
 
-	&:before, &:after {
-		display: inline-block;
-		vertical-align: middle;
-	}
-	&:after {
-		position: absolute;
-		left: 0;
-	}
-	&:hover { // &:hover:not(:active)
-		.highlight-scale(@scale:1.25);
-		.highlight-shadow(black);
-	}
-	&:active, &[disabled] {
-		.highlight-scale(none);
-		.highlight-shadow(none);
-		//.shadow-highlight(black, inset);
-	}
-	.toolbutton-size(@dim);
+  &:before,
+  &:after {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  &:after {
+    position: absolute;
+    left: 0;
+  }
+  &:hover {
+    // &:hover:not(:active)
+    .highlight-scale(@scale:1.25);
+    .highlight-shadow(black);
+  }
+  &:active,
+  &[disabled] {
+    .highlight-scale(none);
+    .highlight-shadow(none);
+    //.shadow-highlight(black, inset);
+  }
+  .toolbutton-size(@dim);
 }
 
 .toolbutton-size(@dim) {
-	.set-size(@dim);
-	width: @button-size;
-	height: @button-size;
-	margin: @button-grow;
+  .set-size(@dim);
+  width: @button-size;
+  height: @button-size;
+  margin: @button-grow;
 
-	& > svg {
-		position: absolute; // TODO fix it
-		top: 0.1em;
-		left: 0.1em;
-		font-size: @icon-size;
-		width: @icon-size;
-		height: @icon-size;
-		fill: @main-color;
-	}
+  & > svg {
+    position: absolute; // TODO fix it
+    top: 0.1em;
+    left: 0.1em;
+    font-size: @icon-size;
+    width: @icon-size;
+    height: @icon-size;
+    fill: @main-color;
+  }
 }
 
 .toolbutton-horizontal(@dim, @width-cells: 1) {
-	.set-size(@dim);
-	width: @button-size * @width-cells;
-	margin-left: @button-grow * @width-cells;
-	margin-right: @button-grow * @width-cells;
+  .set-size(@dim);
+  width: @button-size * @width-cells;
+  margin-left: @button-grow * @width-cells;
+  margin-right: @button-grow * @width-cells;
 
-	& > svg {
-		position: static;
-		left: 0;
-		top: 0;
-		width: @icon-size * @width-cells;
-	}
+  & > svg {
+    position: static;
+    left: 0;
+    top: 0;
+    width: @icon-size * @width-cells;
+  }
 }
 ////////////////////
 
 .collapsed(@dim: inherit) when not (@dim = none) {
-	position: relative;
-	overflow: hidden;
-	.collapsed-size(@dim);
-	.collapsed-icon;
+  position: relative;
+  overflow: hidden;
+  .collapsed-size(@dim);
+  .collapsed-icon;
 }
 
 .collapsed(none) {
-	position: static;
-	overflow: visible;
-	height: auto;
-	width: auto;
+  position: static;
+  overflow: visible;
+  height: auto;
+  width: auto;
 
-	& > svg { // dropdown
-		display: none;
-	}
-	// &> menu {
-	// 	margin: 0 !important;  // TODO: fix me in js
-	// }
+  & > svg {
+    // dropdown
+    display: none;
+  }
+  // &> menu {
+  // 	margin: 0 !important;  // TODO: fix me in js
+  // }
 }
 
 .collapsed-size(@dim) {
-	.set-size(@dim);
-	height: @toolbar-size;
-	width: 100%; //@toolbar-size;
+  .set-size(@dim);
+  height: @toolbar-size;
+  width: 100%; //@toolbar-size;
 }
 
 .collapsed-ifnot(@classname, @dim: inherit) {
-	.collapsed(@dim);
-	&.@{classname} {
-		overflow: visible;
-	}
+  .collapsed(@dim);
+  &.@{classname} {
+    overflow: visible;
+  }
 }
 
 .collapsed-icon() {
-	& > svg {
-		display: block;
-		width: 7px;
-		height: 7px;
-		position: absolute;
-		right: 0;
-		bottom: 0;
-	}
-	&:hover > svg {
-		//.scale-highlight;
-		fill: @active-color;
-	}
+  & > svg {
+    display: block;
+    width: 7px;
+    height: 7px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+  &:hover > svg {
+    //.scale-highlight;
+    fill: @active-color;
+  }
 }
 
 /////////////////////
 
 .expanded(@dim: inherit) {
-	.set-size(@dim);
-	& > menu {
-		margin: 0 !important;
-		position: absolute;
-		left: @toolbar-size + @menu-pad;
-		z-index: 20;
+  .set-size(@dim);
+  & > menu {
+    margin: 0 !important;
+    position: absolute;
+    left: @toolbar-size + @menu-pad;
+    z-index: 20;
 
-		//display: table-cell;
-		white-space: nowrap;
-		word-break: keep-all;
-		//width: auto;
-		//height: @toolbar-size;
+    //display: table-cell;
+    white-space: nowrap;
+    word-break: keep-all;
+    //width: auto;
+    //height: @toolbar-size;
 
-		padding: 2px;
-		.separate-menu(vertical, 3px);
+    padding: 2px;
+    .separate-menu(vertical, 3px);
 
-		background: white;
-		border: 1px solid @border-color;
-		border-radius: 5px;
-		box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
-	}
+    background: white;
+    border: 1px solid @border-color;
+    border-radius: 5px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  }
 }
 
 .expanded-size(@dim) {
-	& > menu {
-		.set-size(@dim);
-		left: @toolbar-size + @menu-pad;
-	}
+  & > menu {
+    .set-size(@dim);
+    left: @toolbar-size + @menu-pad;
+  }
 }
 
 .expanded-menu(@dim: inherit) {
-	.set-size(@dim);
-	li {
-		display: flex;
-		menu {
-			width: 100%;
-		}
-	}
-	button {
-		display: flex;
-		justify-content: space-between;
-		width: 100%;
-		margin: 1px 0;
-		padding: 0.3em 0.3em 0.3em 2em;
-		height: 1.7em;
+  .set-size(@dim);
+  li {
+    display: flex;
+    menu {
+      width: 100%;
+    }
+  }
+  button {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 1px 0;
+    padding: 0.3em 0.3em 0.3em 2em;
+    height: 1.7em;
 
-		font-size: @menu-font-size;
-		//line-height: 18px;
-		text-align: left;
-		&:before, &:after {
-			padding-right: 0.4em;
-			font-size: @menu-icon-size;
-		}
-		&[disabled] { // TODO: general button highlight
-			.highlight-invert(disabled); // refactor
-		}
-		kbd {
-			margin: 2.5px 0 0 10px;
-			display: inline-block;
-		}
-		& > svg {
-			width: @expanded-icon-size;
-			height: @expanded-icon-size;
-		}
-	}
-	button:hover {
-		.highlight-scale(none);
-		background-color: #eee;
-	}
-	.selected button {
-		//&:extend(button:active); not extended while in media
-		.highlight-scale(none);
-		.highlight-invert;
-	}
+    font-size: @menu-font-size;
+    //line-height: 18px;
+    text-align: left;
+    &:before,
+    &:after {
+      padding-right: 0.4em;
+      font-size: @menu-icon-size;
+    }
+    &[disabled] {
+      // TODO: general button highlight
+      .highlight-invert(disabled); // refactor
+    }
+    kbd {
+      margin: 2.5px 0 0 10px;
+      display: inline-block;
+    }
+    & > svg {
+      width: @expanded-icon-size;
+      height: @expanded-icon-size;
+    }
+  }
+  button:hover {
+    .highlight-scale(none);
+    background-color: #eee;
+  }
+  .selected button {
+    //&:extend(button:active); not extended while in media
+    .highlight-scale(none);
+    .highlight-invert;
+  }
 }
 
 /////////////////////
 
 .separator(@orientation, @lose-pad, @rise-pad) {
-	.orientation(@orientation);
-	margin-@{main-lose}: @lose-pad;
-	border-@{main-lose}: 1px solid @border-color;
-	padding-@{main-lose}: @rise-pad - 1px; // substract 1px to assert
-	// width = lose-pad + rise-pad
+  .orientation(@orientation);
+  margin-@{main-lose}: @lose-pad;
+  border-@{main-lose}: 1px solid @border-color;
+  padding-@{main-lose}: @rise-pad - 1px; // substract 1px to assert
+  // width = lose-pad + rise-pad
 }
 
 .separate-item(@orientation, @lose-pad, @rise-pad: @lose-pad) {
-	& + li {
-		.separator(@orientation, @lose-pad, @rise-pad);
-	}
+  & + li {
+    .separator(@orientation, @lose-pad, @rise-pad);
+  }
 }
 
 .separate-menu(@orientation, @lose-pad, @rise-pad: @lose-pad) {
-	li + li > menu {
-		.separator(@orientation, @lose-pad, @rise-pad);
-	}
+  li + li > menu {
+    .separator(@orientation, @lose-pad, @rise-pad);
+  }
 }
 
 /////////////////////
 // Highlight effects
 
 .highlight-scale(@scale) {
-	transition: transform, 0.2s, ease-out;
-	transform: scale(@scale);
+  transition: transform, 0.2s, ease-out;
+  transform: scale(@scale);
 }
 
 .highlight-scale(none) {
-	transform: scale(1);
+  transform: scale(1);
 }
 
 .highlight-shadow(inset, @color: @active-color) {
-	box-shadow: 0px -1px 6px fade(@color, 5%) inset,
-	0px 1px 3px @color inset;
+  box-shadow: 0px -1px 6px fade(@color, 5%) inset, 0px 1px 3px @color inset;
 }
 
 .highlight-shadow(@color: @active-color) when (iscolor(@color)) {
-	box-shadow: inset 0 0 1px 1px fade(@color, 12%);
+  box-shadow: inset 0 0 1px 1px fade(@color, 12%);
 }
 
 .highlight-shadow(none) {
-	box-shadow: none;
+  box-shadow: none;
 }
 
 .highlight-circle(@color: @active-color, @inset: '') {
-	border-radius: (@icon-size + @icon-padding) / 2;
-	box-shadow: ~'0 0 4px @{color} @{inset}';
+  border-radius: (@icon-size + @icon-padding) / 2;
+  box-shadow: ~'0 0 4px @{color} @{inset}';
 }
 
 .highlight-symbol(@color: @active-color) {
-	color: @active-color;
-	text-shadow: 1px 1px 3px @color;
+  color: @active-color;
+  text-shadow: 1px 1px 3px @color;
 }
 
 .highlight-symbol-invert() {
-	background: #333;
-	text-shadow: 0px 1px 10px white, 0px -1px 10px white;
+  background: #333;
+  text-shadow: 0px 1px 10px white, 0px -1px 10px white;
 }
 
 .highlight-invert() {
-	background: #444;
-	color: white;
-	&>span {
+  background: #444;
+  color: white;
+  & > span {
     color: white;
   }
-	&>svg {
-		fill: white;
-		stroke: white;
-		stroke-width: 5;
-	}
+  & > svg {
+    fill: white;
+    stroke: white;
+    stroke-width: 5;
+  }
 }
 
 .highlight-invert(disabled) {
-	background: inherit;
-	color: @disabled-color; // hint for menus
+  background: inherit;
+  color: @disabled-color; // hint for menus
 }
 
 /////////////////////
 // Transition effects
 
 .transition-twirl(@time: 0.3s) {
-	transform: rotateX(0);
-	transition: transform @time;
-	&.hide {
-		transform-style: preserve-3d;
-		transform: perspective(350px) rotateX(-70deg);
-	}
+  transform: rotateX(0);
+  transition: transform @time;
+  &.hide {
+    transform-style: preserve-3d;
+    transform: perspective(350px) rotateX(-70deg);
+  }
 }
 
 .transition-zoom(@time: 0.3s) {
-	opacity: 1;
-	transform: scale(1);
-	transition: transform @time, opacity @time;
+  opacity: 1;
+  transform: scale(1);
+  transition: transform @time, opacity @time;
 
-	&.hide {
-		opacity: .2;
-		transform: scale(.5);
-	}
+  &.hide {
+    opacity: 0.2;
+    transform: scale(0.5);
+  }
 }
 
 //////////////////////////
 // Icon content & coloring
 
 .colorize(@color) when not (@color = inherit) {
-	color: @color;
+  color: @color;
 }
 
 ////////////////////////////////////////////
 // Little bit jankie directions unification
 
 .orientation(horizontal) {
-	@main-rise: right;
-	@main-lose: left;
-	@main-dim: width;
-	@cross-rise: bottom;
-	@cross-lose: top;
-	@cross-dim: height;
+  @main-rise: right;
+  @main-lose: left;
+  @main-dim: width;
+  @cross-rise: bottom;
+  @cross-lose: top;
+  @cross-dim: height;
 }
 
 .orientation(vertical) {
-	@main-rise: bottom;
-	@main-lose: top;
-	@main-dim: height;
-	@cross-rise: right;
-	@cross-lose: left;
-	@cross-dim: width;
+  @main-rise: bottom;
+  @main-lose: top;
+  @main-dim: height;
+  @cross-rise: right;
+  @cross-lose: left;
+  @cross-dim: width;
 }
 
 .orientation(@dir) when (@dir = top), (@dir = bottom) {
-	.orientation(horizontal);
+  .orientation(horizontal);
 }
 
 .orientation(@dir) when (@dir = left), (@dir = right) {
-	.orientation(vertical);
+  .orientation(vertical);
 }
 
 .direction(@dir) {
-	.to-index(top) { @index: 0; }
-	.to-index(right) { @index: 1; }
-	.to-index(bottom) { @index: 2; }
-	.to-index(left) { @index: 3; }
-	@directions: top right bottom left;
-	@orientations: horizontal vertical;
-	.to-index(@dir);
+  .to-index(top) {
+    @index: 0;
+  }
+  .to-index(right) {
+    @index: 1;
+  }
+  .to-index(bottom) {
+    @index: 2;
+  }
+  .to-index(left) {
+    @index: 3;
+  }
+  @directions: top right bottom left;
+  @orientations: horizontal vertical;
+  .to-index(@dir);
 
-	@main-start: extract(@directions, mod(@index, 4) + 1);
-	@main-end: extract(@directions, mod((@index + 2), 4) + 1);
+  @main-start: extract(@directions, mod(@index, 4) + 1);
+  @main-end: extract(@directions, mod((@index + 2), 4) + 1);
 
-	@cross-start: extract(@directions, mod((@index + 3), 4) + 1);
-	@cross-end: extract(@directions, mod((@index + 1), 4) + 1);
+  @cross-start: extract(@directions, mod((@index + 3), 4) + 1);
+  @cross-end: extract(@directions, mod((@index + 1), 4) + 1);
 
-	@main-orient: extract(@orientations, mod(@index + 1, 2));
-	@cross-orient: extract(@orientations, mod(@index + 1, 2) + 1);
+  @main-orient: extract(@orientations, mod(@index + 1, 2));
+  @cross-orient: extract(@orientations, mod(@index + 1, 2) + 1);
 }
 
 /////////////////////
 // Basic mixins
 
 .background-opacity(@color, @opacity) {
-	@rgba-color: rgba(red(@color), green(@color), blue(@color), @opacity);
-	background-color: @rgba-color;
+  @rgba-color: rgba(red(@color), green(@color), blue(@color), @opacity);
+  background-color: @rgba-color;
 
-	background: none \9; // Hack for IE8
-	filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d')", argb(@rgba-color), argb(@rgba-color)));
-	//zoom: 1;
-	&:not([ie9]) {
-		// Do not apply to IE9 as it supports rgba
-		filter: progid:DXImageTransform.Microsoft.gradient(enabled='false');
-	}
+  background: none \9; // Hack for IE8
+  filter: e(
+    %(
+      "progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d')",
+      argb(@rgba-color),
+      argb(@rgba-color)
+    )
+  );
+  //zoom: 1;
+  &:not([ie9]) {
+    // Do not apply to IE9 as it supports rgba
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled='false');
+  }
 }
 
 .text-hide(transparent) {
-	font: ~"0/0" a;
-	color: transparent;
-	text-shadow: none;
-	background-color: transparent;
-	border: 0;
+  font: ~'0/0' a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
 }
 
 .text-hide(indent) {
-	@approximate-em-value: 12px / 1em;
-	@wider-than-any-screen: -9999em;
-	text-indent: @wider-than-any-screen * @approximate-em-value;
-	overflow: hidden;
-	text-align: left;
+  @approximate-em-value: 12px / 1em;
+  @wider-than-any-screen: -9999em;
+  text-indent: @wider-than-any-screen * @approximate-em-value;
+  overflow: hidden;
+  text-align: left;
 }
 
 .text-hide() {
-	.text-hide(indent);
+  .text-hide(indent);
 }
 
 .reset-button() {
-	padding: 0;
-	border: 0;
-	background: transparent;
-	box-shadow: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .remove-inline-spacing() {
-	// vanish horizontal spacing between inline blocks
-	font-size: 0.00001px;
-	-webkit-text-size-adjust: none;
+  // vanish horizontal spacing between inline blocks
+  font-size: 0.00001px;
+  -webkit-text-size-adjust: none;
+}
+
+.input() {
+  border-radius: 4px;
+  display: inline-block;
+  vertical-align: middle;
+  background: white;
+  line-height: 20 / 14;
+  height: 2.4em;
+  padding: 0.35em 0.15em 0.35em 0.3em;
+  margin: 2px;
+  border: 1px solid @border-color;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-sizing: border-box;
+  &:active,
+  &:focus {
+    outline: 0;
+  }
+  &:hover,
+  &:focus {
+    .highlight-shadow(black);
+  }
+
+  &[disabled],
+  &[readonly],
+  fieldset[disabled] & {
+    cursor: not-allowed;
+    //box-shadow: none;
+    background: #efefef;
+    opacity: 0.6;
+  }
+}
+
+.warning() {
+  color: @error-color;
+  &:before {
+    content: '⚠ ';
+  }
 }

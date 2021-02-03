@@ -17,7 +17,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Form, { Field, SelectOneOf } from '../../component/form/form'
-import Dialog from '../../component/dialog'
+import { Dialog } from '../../views/components'
 import ComboBox from '../../component/form/combobox'
 import {
   sdataSchema,

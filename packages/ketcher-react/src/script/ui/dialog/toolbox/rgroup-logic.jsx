@@ -19,7 +19,7 @@ import { connect } from 'react-redux'
 
 import { rgroupLogic as rgroupSchema } from '../../data/schema/struct-schema'
 import Form, { Field } from '../../component/form/form'
-import Dialog from '../../component/dialog'
+import { Dialog } from '../../views/components'
 import { useFormContext } from './../../../../hooks'
 
 function IfThenSelect(props) {

@@ -1,0 +1,41 @@
+@import '../../../../../../../style/variables.less';
+
+.settings {
+  width: 35em;
+
+  .warning {
+    margin: 0.3em;
+  }
+}
+
+.accordion {
+  margin: 0.3em;
+
+  label {
+    display: block;
+    text-align: right;
+    line-height: @input-height;
+    height: @input-height;
+    select,
+    input {
+      width: 50%;
+    }
+  }
+
+  fieldset {
+    border-radius: 0 0 6px 6px;
+    height: @input-height * 4;
+  }
+
+  .server {
+    height: @input-height * 5;
+  }
+
+  .viewer {
+    height: @input-height * 3;
+  }
+
+  .render {
+    height: @input-height * 8;
+  }
+}

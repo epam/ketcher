@@ -10,6 +10,8 @@
 @form-hover-background: lighten(@border-color, 15%);
 @form-selected-background: #9dc2d0;
 
+@input-height: 2.4em + 2 * 0.35em;
+
 // breakpoints for popular resolutions
 // are copied from bootstrap and unused yet;)
 // See: http://getbootstrap.com/css/#grid-media-queries
@@ -19,45 +21,45 @@
 @common-screen-large: 1200px;
 
 #large-dim() {
-	@base-size: 14px;
+  @base-size: 14px;
 
-	@icon-size: 26px;
-	@expanded-icon-size: 20px;
-	@button-size: 32px;
-	@button-grow: 4px; // additional padding button may grow
+  @icon-size: 26px;
+  @expanded-icon-size: 20px;
+  @button-size: 32px;
+  @button-grow: 4px; // additional padding button may grow
 
-	@atom-size: 19px;
+  @atom-size: 19px;
 
-	@menu-pad: 7px;
-	@menu-font-size: 14px;
-	@menu-icon-size: 18px;
+  @menu-pad: 7px;
+  @menu-font-size: 14px;
+  @menu-icon-size: 18px;
 
-	@app-gap: 7px - @button-grow;
-	@toolbar-gap: 6px - @button-grow;
+  @app-gap: 7px - @button-grow;
+  @toolbar-gap: 6px - @button-grow;
 
-	@toolbar-size: @button-size + 2 * @button-grow; // + border?
-	@canvas-padding: @toolbar-size + @toolbar-gap + @app-gap;
+  @toolbar-size: @button-size + 2 * @button-grow; // + border?
+  @canvas-padding: @toolbar-size + @toolbar-gap + @app-gap;
 }
 
 #small-dim() {
-	@base-size: 11px;
+  @base-size: 11px;
 
-	@icon-size: 20px;
-	@expanded-icon-size: 17px;
-	@button-size: 24px;
-	@button-grow: 4px;
+  @icon-size: 20px;
+  @expanded-icon-size: 17px;
+  @button-size: 24px;
+  @button-grow: 4px;
 
-	@atom-size: 16px;
+  @atom-size: 16px;
 
-	@menu-pad: 5px;
-	@menu-font-size: 12px;
-	@menu-icon-size: 16px;
+  @menu-pad: 5px;
+  @menu-font-size: 12px;
+  @menu-icon-size: 16px;
 
-	@app-gap: 7px - @button-grow;
-	@toolbar-gap: 6px - @button-grow;
+  @app-gap: 7px - @button-grow;
+  @toolbar-gap: 6px - @button-grow;
 
-	@toolbar-size: @button-size + 2 * @button-grow;
-	@canvas-padding: @toolbar-size + @toolbar-gap + @app-gap;
+  @toolbar-size: @button-size + 2 * @button-grow;
+  @canvas-padding: @toolbar-size + @toolbar-gap + @app-gap;
 }
 
 // Periodic table coloring

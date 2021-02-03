@@ -19,7 +19,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import Form, { Field } from '../../component/form/form'
-import Dialog from '../../component/dialog'
+import { Dialog } from '../../views/components'
 import { automap } from '../../state/server'
 
 export const automapSchema = {

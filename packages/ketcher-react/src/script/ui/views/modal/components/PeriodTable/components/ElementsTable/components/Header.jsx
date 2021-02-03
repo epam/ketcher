@@ -17,11 +17,13 @@
 import React from 'react'
 import { range } from 'lodash/fp'
 
+const PERIODIC_TABLE_COLUMNS = 19
+
 function Header() {
   return (
     <tbody>
       <tr>
-        {range(0, 19).map(index => (
+        {range(0, PERIODIC_TABLE_COLUMNS).map(index => (
           <th key={index}>{index || ''}</th>
         ))}
       </tr>

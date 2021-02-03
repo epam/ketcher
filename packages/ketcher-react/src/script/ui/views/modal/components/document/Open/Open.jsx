@@ -77,7 +77,7 @@ class Open extends Component {
             key={this.structAcceptMimes().toString()}
             server={this.props.server}
             type={this.structAcceptMimes()}
-            onLoad={s => this.changeStructStr(s)}>
+            onLoad={this.changeStructStr}>
             Open From File…
           </OpenButton>,
           'Cancel',

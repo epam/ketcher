@@ -195,7 +195,7 @@ class SaveDialog extends Component {
             }}
             {...formState}>
             <Field name="filename" />
-            <Field name="format" onChange={value => this.changeType(value)} />
+            <Field name="format" onChange={this.changeType} />
           </Form>
           <textarea value={structStr} readOnly ref={this.textAreaRef} />
           {warnings.map(warning => (

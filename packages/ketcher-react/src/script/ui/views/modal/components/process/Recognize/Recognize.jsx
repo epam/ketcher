@@ -98,7 +98,7 @@ function RecognizeDialog(prop) {
             )
           }}
           value={version}
-          onChange={v => onChangeImago(v)}
+          onChange={onChangeImago}
         />
       </label>
       <div className={styles.picture}>
@@ -132,7 +132,7 @@ function RecognizeDialog(prop) {
           ))}
       </div>
       <label>
-        <Input type="checkbox" value={fragment} onChange={v => isFragment(v)} />
+        <Input type="checkbox" value={fragment} onChange={isFragment} />
         Load as a fragment
       </label>
     </Dialog>

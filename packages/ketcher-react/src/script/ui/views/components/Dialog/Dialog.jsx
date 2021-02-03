@@ -74,7 +74,7 @@ class Dialog extends Component {
         ref={this.formRef}
         role="dialog"
         onSubmit={ev => ev.preventDefault()}
-        onKeyDown={ev => this.keyDown(ev)}
+        onKeyDown={this.keyDown}
         tabIndex="-1"
         {...props}>
         <header>
@@ -88,16 +88,16 @@ class Dialog extends Component {
         <div className={style.dialog_body}>{children}</div>
 
         <footer>
-          {buttons.map(b =>
-            typeof b !== 'string' ? (
-              b
+          {buttons.map(button =>
+            typeof button !== 'string' ? (
+              button
             ) : (
               <input
-                key={b}
+                key={button}
                 type="button"
-                value={b}
-                disabled={b === 'OK' && !valid()}
-                onClick={() => this.exit(b)}
+                value={button}
+                disabled={button === 'OK' && !valid()}
+                onClick={() => this.exit(button)}
               />
             )
           )}

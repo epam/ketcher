@@ -95,18 +95,19 @@ class AnalyseDialog extends Component {
   }
 }
 
-const Analyse = connect(
-  state => ({
-    values: state.options.analyse.values,
-    round: {
-      roundWeight: state.options.analyse.roundWeight,
-      roundMass: state.options.analyse.roundMass
-    }
-  }),
-  dispatch => ({
-    onAnalyse: () => dispatch(analyse()),
-    onChangeRound: (roundName, val) => dispatch(changeRound(roundName, val))
-  })
-)(AnalyseDialog)
+const mapStateToProps = state => ({
+  values: state.options.analyse.values,
+  round: {
+    roundWeight: state.options.analyse.roundWeight,
+    roundMass: state.options.analyse.roundMass
+  }
+})
+
+const mapDispatchToProps = dispatch => ({
+  onAnalyse: () => dispatch(analyse()),
+  onChangeRound: (roundName, val) => dispatch(changeRound(roundName, val))
+})
+
+const Analyse = connect(mapStateToProps, mapDispatchToProps)(AnalyseDialog)
 
 export default Analyse

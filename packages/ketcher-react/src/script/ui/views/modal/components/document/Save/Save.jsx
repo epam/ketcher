@@ -210,20 +210,21 @@ class SaveDialog extends Component {
   }
 }
 
-const Save = connect(
-  store => ({
-    server: store.options.app.server ? store.server : null,
-    struct: store.editor.struct(),
-    options: store.options.getServerSettings(),
-    formState: store.modal.form,
-    moleculeErrors: store.modal.form.moleculeErrors,
-    checkState: store.options.check
-  }),
-  dispatch => ({
-    onCheck: checkOptions => dispatch(check(checkOptions)),
-    onTmplSave: struct => dispatch(saveUserTmpl(struct)),
-    onResetForm: prevState => dispatch(updateFormState(prevState))
-  })
-)(SaveDialog)
+const mapStateToProps = state => ({
+  server: state.options.app.server ? state.server : null,
+  struct: state.editor.struct(),
+  options: state.options.getServerSettings(),
+  formState: state.modal.form,
+  moleculeErrors: state.modal.form.moleculeErrors,
+  checkState: state.options.check
+})
+
+const mapDispatchToProps = dispatch => ({
+  onCheck: checkOptions => dispatch(check(checkOptions)),
+  onTmplSave: struct => dispatch(saveUserTmpl(struct)),
+  onResetForm: prevState => dispatch(updateFormState(prevState))
+})
+
+const Save = connect(mapStateToProps, mapDispatchToProps)(SaveDialog)
 
 export default Save

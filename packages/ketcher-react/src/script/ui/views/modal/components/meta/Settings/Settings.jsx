@@ -146,27 +146,28 @@ function SettingsDialog(props) {
   )
 }
 
-const Settings = connect(
-  store => ({
-    server: store.options.app.server ? store.server : null,
-    appOpts: store.options.app,
-    initState: store.options.settings,
-    formState: store.modal.form
-  }),
-  (dispatch, props) => ({
-    onOpenFile: newOpts => {
-      try {
-        dispatch(updateFormState({ result: JSON.parse(newOpts) }))
-      } catch (ex) {
-        console.info('Bad file')
-      }
-    },
-    onReset: () => dispatch(setDefaultSettings()),
-    onOk: res => {
-      dispatch(saveSettings(res))
-      props.onOk(res)
+const mapStateToProps = state => ({
+  server: state.options.app.server ? state.server : null,
+  appOpts: state.options.app,
+  initState: state.options.settings,
+  formState: state.modal.form
+})
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  onOpenFile: newOpts => {
+    try {
+      dispatch(updateFormState({ result: JSON.parse(newOpts) }))
+    } catch (ex) {
+      console.info('Bad file')
     }
-  })
-)(SettingsDialog)
+  },
+  onReset: () => dispatch(setDefaultSettings()),
+  onOk: res => {
+    dispatch(saveSettings(res))
+    ownProps.onOk(res)
+  }
+})
+
+const Settings = connect(mapStateToProps, mapDispatchToProps)(SettingsDialog)
 
 export default Settings

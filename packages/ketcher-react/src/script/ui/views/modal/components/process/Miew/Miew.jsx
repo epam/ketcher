@@ -147,18 +147,19 @@ class MiewDialog extends Component {
   }
 }
 
-const Miew = connect(
-  store => ({
-    miewOpts: createMiewOptions(pick(MIEW_OPTIONS, store.options.settings)),
-    server: store.options.app.server ? store.server : null,
-    struct: store.editor.struct()
-  }),
-  (dispatch, props) => ({
-    onExportCML: cmlStruct => {
-      dispatch(load(cmlStruct))
-      props.onOk()
-    }
-  })
-)(MiewDialog)
+const mapStateToProps = state => ({
+  miewOpts: createMiewOptions(pick(MIEW_OPTIONS, state.options.settings)),
+  server: state.options.app.server ? state.server : null,
+  struct: state.editor.struct()
+})
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  onExportCML: cmlStruct => {
+    dispatch(load(cmlStruct))
+    ownProps.onOk()
+  }
+})
+
+const Miew = connect(mapStateToProps, mapDispatchToProps)(MiewDialog)
 
 export default Miew

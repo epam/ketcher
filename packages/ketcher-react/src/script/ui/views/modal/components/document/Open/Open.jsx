@@ -104,18 +104,19 @@ class Open extends Component {
   }
 }
 
-export default connect(
-  store => ({ server: store.server }),
-  (dispatch, props) => ({
-    onOk: res => {
-      if (res.fragment) exec('copy')
-      dispatch(
-        load(res.structStr, {
-          badHeaderRecover: true,
-          fragment: res.fragment
-        })
-      )
-      props.onOk(res)
-    }
-  })
-)(Open)
+const mapStateToProps = state => ({ server: state.server })
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  onOk: res => {
+    if (res.fragment) exec('copy')
+    dispatch(
+      load(res.structStr, {
+        badHeaderRecover: true,
+        fragment: res.fragment
+      })
+    )
+    ownProps.onOk(res)
+  }
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Open)

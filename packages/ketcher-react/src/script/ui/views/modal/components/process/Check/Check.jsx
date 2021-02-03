@@ -114,18 +114,19 @@ function CheckDialog(props) {
   )
 }
 
-const Check = connect(
-  store => ({
-    formState: store.modal.form,
-    checkState: store.options.check
-  }),
-  (dispatch, props) => ({
-    onCheck: opts => dispatch(check(opts)).catch(props.onCancel),
-    onOk: res => {
-      dispatch(checkOpts(res))
-      props.onOk(res)
-    }
-  })
-)(CheckDialog)
+const mapStateToProps = state => ({
+  formState: state.modal.form,
+  checkState: state.options.check
+})
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  onCheck: opts => dispatch(check(opts)).catch(ownProps.onCancel),
+  onOk: res => {
+    dispatch(checkOpts(res))
+    ownProps.onOk(res)
+  }
+})
+
+const Check = connect(mapStateToProps, mapDispatchToProps)(CheckDialog)
 
 export default Check

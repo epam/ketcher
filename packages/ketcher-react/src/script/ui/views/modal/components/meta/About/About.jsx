@@ -94,6 +94,8 @@ function AboutDialog(props) {
   )
 }
 
-const About = connect(store => ({ ...store.options.app }))(AboutDialog)
+const mapStateToProps = state => ({ ...state.options.app })
+
+const About = connect(mapStateToProps)(AboutDialog)
 
 export default About

@@ -227,18 +227,22 @@ function initToolbar() {
   ]
 }
 
+const mapStateToProps = state => ({
+  active: state.actionState && state.actionState.activeTool,
+  status: state.actionState || {},
+  freqAtoms: state.toolbar.freqAtoms,
+  opened: state.toolbar.opened,
+  visibleTools: state.toolbar.visibleTools
+})
+
+const mapDispatchToProps = () => ({
+  onOpen: (menuName, isSelected) => ({
+    type: 'OPENED',
+    data: { menuName, isSelected }
+  })
+})
+
 export default connect(
-  state => ({
-    active: state.actionState && state.actionState.activeTool,
-    status: state.actionState || {},
-    freqAtoms: state.toolbar.freqAtoms,
-    opened: state.toolbar.opened,
-    visibleTools: state.toolbar.visibleTools
-  }),
-  {
-    onOpen: (menuName, isSelected) => ({
-      type: 'OPENED',
-      data: { menuName, isSelected }
-    })
-  }
-)(props => <ActionMenu menu={initToolbar()} role="toolbar" {...props} />)
+  mapStateToProps,
+  mapDispatchToProps
+)(ownProps => <ActionMenu menu={initToolbar()} role="toolbar" {...ownProps} />)

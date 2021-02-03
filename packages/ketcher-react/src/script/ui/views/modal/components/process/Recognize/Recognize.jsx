@@ -145,30 +145,30 @@ function url(file) {
   return URL ? URL.createObjectURL(file) : 'No preview'
 }
 
-const Recognize = connect(
-  store => ({
-    imagoVersions: store.options.app.imagoVersions,
-    file: store.options.recognize.file,
-    structStr: store.options.recognize.structStr,
-    fragment: store.options.recognize.fragment,
-    version:
-      store.options.recognize.version || store.options.app.imagoVersions[0]
-  }),
-  (dispatch, props) => ({
-    isFragment: v => dispatch(shouldFragment(v)),
-    onImage: file => dispatch(changeImage(file)),
-    onRecognize: (file, ver) => dispatch(recognize(file, ver)),
-    onChangeImago: ver => dispatch(changeVersion(ver)),
-    onOk: res => {
-      dispatch(
-        load(res.structStr, {
-          rescale: true,
-          fragment: res.fragment
-        })
-      )
-      props.onOk(res)
-    }
-  })
-)(RecognizeDialog)
+const mapStateToProps = state => ({
+  imagoVersions: state.options.app.imagoVersions,
+  file: state.options.recognize.file,
+  structStr: state.options.recognize.structStr,
+  fragment: state.options.recognize.fragment,
+  version: state.options.recognize.version || state.options.app.imagoVersions[0]
+})
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  isFragment: v => dispatch(shouldFragment(v)),
+  onImage: file => dispatch(changeImage(file)),
+  onRecognize: (file, ver) => dispatch(recognize(file, ver)),
+  onChangeImago: ver => dispatch(changeVersion(ver)),
+  onOk: res => {
+    dispatch(
+      load(res.structStr, {
+        rescale: true,
+        fragment: res.fragment
+      })
+    )
+    ownProps.onOk(res)
+  }
+})
+
+const Recognize = connect(mapStateToProps, mapDispatchToProps)(RecognizeDialog)
 
 export default Recognize

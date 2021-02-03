@@ -37,7 +37,7 @@ function AppHiddenView({ onInitTmpls }) {
 }
 
 const AppHidden = connect(null, dispatch => ({
-  onInitTmpls: cacheEl => initTmplLib(dispatch, process.env.PUBLIC_URL, cacheEl)
+  onInitTmpls: (cacheEl, url) => initTmplLib(dispatch, url, cacheEl)
 }))(AppHiddenView)
 
 function AppView(props) {

@@ -18,7 +18,6 @@ import { range } from 'lodash/fp'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import * as KN from 'w3c-keyname'
 import { Dialog } from '../../../../components'
 import Input from '../../../../../component/form/input'
 
@@ -97,11 +96,11 @@ class AnalyseDialog extends Component {
 }
 
 const Analyse = connect(
-  store => ({
-    values: store.options.analyse.values,
+  state => ({
+    values: state.options.analyse.values,
     round: {
-      roundWeight: store.options.analyse.roundWeight,
-      roundMass: store.options.analyse.roundMass
+      roundWeight: state.options.analyse.roundWeight,
+      roundMass: state.options.analyse.roundMass
     }
   }),
   dispatch => ({

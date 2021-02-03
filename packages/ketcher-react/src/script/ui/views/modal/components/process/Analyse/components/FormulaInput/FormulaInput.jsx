@@ -20,37 +20,56 @@ import styles from './FormulaInput.module.less'
 const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g
 const errorRegexp = /error:.*/g
 
-function formulaInputMarkdown(value) {
+function formulaInputMarkdown(formulaDescriptor) {
   return (
-    <div
-      className={styles.chem_input}
-      spellCheck="false"
-      contentEditable
-      suppressContentEditableWarning={true}>
-      {value}
-    </div>
+    formulaDescriptor?.length && (
+      <div
+        className={styles.chem_input}
+        spellCheck="false"
+        contentEditable
+        suppressContentEditableWarning={true}>
+        {formulaDescriptor.map(elementDescriptor => {
+          return (
+            <React.Fragment key={elementDescriptor.symbol}>
+              {elementDescriptor.isotope > 0 && (
+                <sup>{elementDescriptor.isotope}</sup>
+              )}
+              {elementDescriptor.symbol}
+              {elementDescriptor.index > 0 && (
+                <sub>{elementDescriptor.index}</sub>
+              )}
+            </React.Fragment>
+          )
+        })}
+      </div>
+    )
   )
 }
 
-function FormulaInput(props) {
-  const { value } = props
-
+function FormulaInput({ value }) {
   if (errorRegexp.test(value)) {
     return formulaInputMarkdown(value)
   }
 
   const content = []
+  let formulaDescriptor = []
   let matches
   let position = 0
-
   while ((matches = formulaRegexp.exec(value)) !== null) {
-    if (matches[1].length) {
-      content.push(<sup>{matches[1]}</sup>)
+    let symbol
+    let index = 0
+    let isotope = 0
+    if (matches[1].length > 0) {
+      isotope = matches[1]
     }
-    content.push(value.substring(position, matches.index) + matches[2])
-    if (matches[3].length) {
-      content.push(<sub key={matches}>{matches[3]}</sub>)
+
+    symbol = value.substring(position, matches.index) + matches[2]
+
+    if (matches[3].length > 0) {
+      index = matches[3]
     }
+
+    formulaDescriptor.push({ symbol, index, isotope })
     position = matches.index + matches[0].length
   }
 
@@ -60,7 +79,7 @@ function FormulaInput(props) {
     content.push(value.substring(position, value.length))
   }
 
-  return formulaInputMarkdown(content)
+  return formulaInputMarkdown(formulaDescriptor)
 }
 
 export default FormulaInput

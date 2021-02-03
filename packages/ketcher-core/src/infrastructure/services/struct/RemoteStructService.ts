@@ -13,7 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { StructService, StructServiceOptions } from './structService.types'
+import {
+  StructService,
+  CheckData,
+  AutomapData,
+  CalculateCipData,
+  DearomatizeData,
+  AromatizeData,
+  CleanData,
+  LayoutData,
+  CalculateData,
+  StructServiceOptions,
+  InfoResult,
+  ConvertData,
+  ConvertResult,
+  LayoutResult,
+  CleanResult,
+  AromatizeResult,
+  DearomatizeResult,
+  CalculateCipResult,
+  AutomapResult,
+  CheckResult,
+  CalculateResult,
+  RecognizeResult
+} from './structService.types'
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -86,16 +109,19 @@ class RemoteStructService implements StructService {
     this.defaultOptions = defaultOptions
   }
 
-  async info(): Promise<any> {
-    let indigoVersion: any,
-      imagoVersions: any,
-      isAvailable: boolean = false
+  async info(): Promise<InfoResult> {
+    let indigoVersion: string
+    let imagoVersions: Array<string>
+    let isAvailable: boolean = false
+
     try {
       const response = await request('GET', this.apiPath + 'info')
       indigoVersion = response['indigo_version']
       imagoVersions = response['imago_versions']
       isAvailable = true
     } catch (e) {
+      indigoVersion = ''
+      imagoVersions = []
       isAvailable = false
     }
 
@@ -106,7 +132,10 @@ class RemoteStructService implements StructService {
     }
   }
 
-  convert(data: any, options: any): Promise<any> {
+  convert(
+    data: ConvertData,
+    options?: StructServiceOptions
+  ): Promise<ConvertResult> {
     return indigoCall(
       'POST',
       'indigo/convert',
@@ -115,7 +144,10 @@ class RemoteStructService implements StructService {
     )(data, options)
   }
 
-  layout(data: any, options: any): Promise<any> {
+  layout(
+    data: LayoutData,
+    options?: StructServiceOptions
+  ): Promise<LayoutResult> {
     return indigoCall(
       'POST',
       'indigo/layout',
@@ -124,7 +156,7 @@ class RemoteStructService implements StructService {
     )(data, options)
   }
 
-  clean(data: any, options: any): Promise<any> {
+  clean(data: CleanData, options?: StructServiceOptions): Promise<CleanResult> {
     return indigoCall(
       'POST',
       'indigo/clean',
@@ -133,7 +165,10 @@ class RemoteStructService implements StructService {
     )(data, options)
   }
 
-  aromatize(data: any, options: any): Promise<any> {
+  aromatize(
+    data: AromatizeData,
+    options?: StructServiceOptions
+  ): Promise<AromatizeResult> {
     return indigoCall(
       'POST',
       'indigo/aromatize',
@@ -142,7 +177,10 @@ class RemoteStructService implements StructService {
     )(data, options)
   }
 
-  dearomatize(data: any, options: any): Promise<any> {
+  dearomatize(
+    data: DearomatizeData,
+    options?: StructServiceOptions
+  ): Promise<DearomatizeResult> {
     return indigoCall(
       'POST',
       'indigo/dearomatize',
@@ -151,7 +189,10 @@ class RemoteStructService implements StructService {
     )(data, options)
   }
 
-  calculateCip(data: any, options: any): Promise<any> {
+  calculateCip(
+    data: CalculateCipData,
+    options?: StructServiceOptions
+  ): Promise<CalculateCipResult> {
     return indigoCall(
       'POST',
       'indigo/calculate_cip',
@@ -160,7 +201,10 @@ class RemoteStructService implements StructService {
     )(data, options)
   }
 
-  automap(data: any, options: any): Promise<any> {
+  automap(
+    data: AutomapData,
+    options?: StructServiceOptions
+  ): Promise<AutomapResult> {
     return indigoCall(
       'POST',
       'indigo/automap',
@@ -169,7 +213,7 @@ class RemoteStructService implements StructService {
     )(data, options)
   }
 
-  check(data: any, options: any): Promise<any> {
+  check(data: CheckData, options?: StructServiceOptions): Promise<CheckResult> {
     return indigoCall(
       'POST',
       'indigo/check',
@@ -178,7 +222,10 @@ class RemoteStructService implements StructService {
     )(data, options)
   }
 
-  calculate(data: any, options: any): Promise<any> {
+  calculate(
+    data: CalculateData,
+    options?: StructServiceOptions
+  ): Promise<CalculateResult> {
     return indigoCall(
       'POST',
       'indigo/calculate',
@@ -187,7 +234,7 @@ class RemoteStructService implements StructService {
     )(data, options)
   }
 
-  recognize(blob: any, version: any): Promise<any> {
+  recognize(blob: Blob, version: string): Promise<RecognizeResult> {
     const parVersion = version ? `?version=${version}` : ''
     const req = request(
       'POST',
@@ -213,7 +260,10 @@ class RemoteStructService implements StructService {
       .then((response: any) => ({ struct: response.metadata.mol_str }))
   }
 
-  generatePngAsBase64(data: string, options: any): Promise<string> {
+  generatePngAsBase64(
+    data: string,
+    options?: StructServiceOptions
+  ): Promise<string> {
     return indigoCall(
       'POST',
       'indigo/render',

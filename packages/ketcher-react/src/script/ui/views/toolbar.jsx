@@ -238,11 +238,12 @@ const mapStateToProps = state => ({
   indigoVerification: state.requestsStatuses.indigoVerification
 })
 
-const mapDispatchToProps = () => ({
-  onOpen: (menuName, isSelected) => ({
-    type: 'OPENED',
-    data: { menuName, isSelected }
-  })
+const mapDispatchToProps = dispatch => ({
+  onOpen: (menuName, isSelected) =>
+    dispatch({
+      type: 'OPENED',
+      data: { menuName, isSelected }
+    })
 })
 
 export default connect(

@@ -82,7 +82,7 @@ import TransformRotateIcon from './files/transform-rotate.svg'
 import UndoIcon from './files/undo.svg'
 import ZoomInIcon from './files/zoom-in.svg'
 import ZoomOutIcon from './files/zoom-out.svg'
-import ShapeCircleIcon from './files/shape-circle.svg'
+import ShapeEllipseIcon from './files/shape-ellipse.svg'
 import ShapeRectangleIcon from './files/shape-rectangle.svg'
 import ShapePolylineIcon from './files/shape-polyline.svg'
 import ShapeLineIcon from './files/shape-line.svg'
@@ -157,7 +157,7 @@ const icons = {
   undo: UndoIcon,
   'zoom-in': ZoomInIcon,
   'zoom-out': ZoomOutIcon,
-  'shape-circle': ShapeCircleIcon,
+  'shape-ellipse': ShapeEllipseIcon,
   'shape-rectangle': ShapeRectangleIcon,
   'shape-polyline': ShapePolylineIcon,
   'shape-line': ShapeLineIcon

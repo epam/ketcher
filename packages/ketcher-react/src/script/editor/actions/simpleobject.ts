@@ -22,14 +22,23 @@ export function fromSimpleObjectDeletion(restruct, id) {
   return action.perform(restruct)
 }
 
-export function fromSimpleObjectAddition(restruct, pos, mode) {
+export function fromSimpleObjectAddition(restruct, pos, mode, toCircle) {
   var action = new Action()
-  action.addOp(new op.SimpleObjectAdd(pos, mode))
+  action.addOp(new op.SimpleObjectAdd(pos, mode, toCircle))
   return action.perform(restruct)
 }
 
-export function fromSimpleObjectResizing(restruct, id, d, current, anchor) {
+export function fromSimpleObjectResizing(
+  restruct,
+  id,
+  d,
+  current,
+  anchor,
+  toCircle
+) {
   var action = new Action()
-  action.addOp(new op.SimpleObjectResize(id, d, current, anchor))
+  action.addOp(
+    new op.SimpleObjectResize(id, d, current, anchor, false, toCircle)
+  )
   return action.perform(restruct)
 }

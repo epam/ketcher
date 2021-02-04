@@ -22,7 +22,6 @@ import { SettingsContext } from './../../../contexts'
 import App from './app'
 
 import createStore, { load } from '../state'
-import { checkServer } from '../state/server'
 import { initKeydownListener } from '../state/hotkeys'
 import { initResize } from '../state/toolbar'
 import { loadStruct } from '../state/shared'

@@ -1,9 +1,9 @@
 import reducer from '.'
-import { INDIGO_VERIFICATION } from './request.types'
+import { INDIGO_VERIFICATION, RequestActionTypes } from './request.types'
 
 describe('requests reducer', () => {
   it('should return the initial state', () => {
-    expect(reducer(undefined, {})).toEqual({
+    expect(reducer(undefined, {} as RequestActionTypes)).toEqual({
       indigoVerification: false
     })
   })

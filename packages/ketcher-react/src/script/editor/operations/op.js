@@ -23,8 +23,7 @@ import {
   RGroup,
   RxnArrow,
   RxnPlus,
-  SGroup,
-  SimpleObject
+  SGroup
 } from '../../chem/struct'
 import {
   ReAtom,
@@ -32,15 +31,15 @@ import {
   ReRxnPlus,
   ReRxnArrow,
   ReRGroup,
-  ReSGroup,
-  ReSimpleObject
+  ReSGroup
 } from '../../render/restruct'
 
 import Base, {
   invalidateAtom,
   invalidateBond,
   invalidateItem,
-  invalidateLoop
+  invalidateLoop,
+  OperationType
 } from './base'
 import {
   FragmentAdd,
@@ -51,50 +50,14 @@ import {
   EnhancedFlagMove
 } from './op-frag'
 
-const tfx = util.tfx
+import {
+  SimpleObjectAdd,
+  SimpleObjectDelete,
+  SimpleObjectMove,
+  SimpleObjectResize
+} from './simpleObject'
 
-export const OperationType = {
-  ATOM_ADD: 'Add atom',
-  ATOM_DELETE: 'Delete atom',
-  ATOM_ATTR: 'Set atom attribute',
-  ATOM_MOVE: 'Move atom',
-  BOND_ADD: 'Add bond',
-  BOND_DELETE: 'Delete bond',
-  BOND_ATTR: 'Set bond attribute',
-  BOND_MOVE: 'Move bond',
-  LOOP_MOVE: 'Move loop',
-  S_GROUP_ATOM_ADD: 'Add atom to s-group',
-  S_GROUP_ATOM_REMOVE: 'Remove atom from s-group',
-  S_GROUP_ATTR: 'Set s-group attribute',
-  S_GROUP_CREATE: 'Create s-group',
-  S_GROUP_DELETE: 'Delete s-group',
-  S_GROUP_ADD_TO_HIERACHY: 'Add s-group to hierarchy',
-  S_GROUP_REMOVE_FROM_HIERACHY: 'Delete s-group from hierarchy',
-  R_GROUP_ATTR: 'Set r-group attribute',
-  R_GROUP_FRAGMENT: 'R-group fragment',
-  UPDATE_IF_THEN: 'Update',
-  RESTORE_IF_THEN: 'Restore',
-  RXN_ARROW_ADD: 'Add rxn arrow',
-  RXN_ARROW_DELETE: 'Delete rxn arrow',
-  RXN_ARROW_MOVE: 'Move rxn arrow',
-  RXN_PLUS_ADD: 'Add rxn plus',
-  RXN_PLUS_DELETE: 'Delete rxn plus',
-  RXN_PLUS_MOVE: 'Move rxn plus',
-  S_GROUP_DATA_MOVE: 'Move s-group data',
-  CANVAS_LOAD: 'Load canvas',
-  ALIGN_DESCRIPTORS: 'Align descriptors',
-  SIMPLE_OBJECT_ADD: 'Add simple object',
-  SIMPLE_OBJECT_DELETE: 'Delete simple object',
-  SIMPLE_OBJECT_MOVE: 'Move simple object',
-  SIMPLE_OBJECT_RESIZE: 'Resize simple object',
-  RESTORE_DESCRIPTORS_POSITION: 'Restore descriptors position',
-  FRAGMENT_ADD: 'Add fragment',
-  FRAGMENT_DELETE: 'Delete fragment',
-  FRAGMENT_STEREO_FLAG: 'Add fragment stereo flag',
-  FRAGMENT_ADD_STEREO_ATOM: 'Add stereo atom to fragment',
-  FRAGMENT_DELETE_STEREO_ATOM: 'Delete stereo atom from fragment',
-  ENHANCED_FLAG_MOVE: 'Move enhanced flag'
-}
+const tfx = util.tfx
 
 function AtomAdd(atom, pos) {
   this.data = { atom, pos, aid: null }
@@ -997,159 +960,6 @@ RestoreDescriptorsPosition.prototype.invert = function () {
   return new AlignDescriptors()
 }
 
-function SimpleObjectAdd(pos, mode) {
-  this.data = { id: null, pos, mode }
-  this.performed = false
-}
-
-SimpleObjectAdd.prototype = new Base(OperationType.SIMPLE_OBJECT_ADD)
-
-SimpleObjectAdd.prototype.execute = function (restruct) {
-  const struct = restruct.molecule
-  if (!this.performed) {
-    this.data.id = struct.simpleObjects.add(
-      new SimpleObject({ mode: this.data.mode })
-    )
-    this.performed = true
-  } else {
-    struct.simpleObjects.set(
-      this.data.id,
-      new SimpleObject({ mode: this.data.mode })
-    )
-  }
-
-  restruct.simpleObjects.set(
-    this.data.id,
-    new ReSimpleObject(struct.simpleObjects.get(this.data.id))
-  )
-
-  struct.simpleObjectSetPos(
-    this.data.id,
-    this.data.pos.map(p => new Vec2(p))
-  )
-
-  invalidateItem(restruct, 'simpleObjects', this.data.id, 1)
-}
-
-SimpleObjectAdd.prototype.invert = function () {
-  const ret = new SimpleObjectDelete()
-  ret.data = this.data
-  return ret
-}
-
-function SimpleObjectDelete(id) {
-  this.data = { id, pos: null, item: null }
-  this.performed = false
-}
-
-SimpleObjectDelete.prototype = new Base(OperationType.SIMPLE_OBJECT_DELETE)
-
-SimpleObjectDelete.prototype.execute = function (restruct) {
-  const struct = restruct.molecule
-  if (!this.performed) {
-    const item = struct.simpleObjects.get(this.data.id)
-    this.data.pos = item.pos
-    this.data.mode = item.mode
-    this.performed = true
-  }
-
-  restruct.markItemRemoved()
-  restruct.clearVisel(restruct.simpleObjects.get(this.data.id).visel)
-  restruct.simpleObjects.delete(this.data.id)
-
-  struct.simpleObjects.delete(this.data.id)
-}
-
-SimpleObjectDelete.prototype.invert = function () {
-  const ret = new SimpleObjectAdd()
-  ret.data = this.data
-  return ret
-}
-
-function SimpleObjectMove(id, d, noinvalidate) {
-  this.data = { id, d, noinvalidate }
-}
-
-SimpleObjectMove.prototype = new Base(OperationType.SIMPLE_OBJECT_MOVE)
-
-SimpleObjectMove.prototype.execute = function (restruct) {
-  const struct = restruct.molecule
-  const id = this.data.id
-  const d = this.data.d
-  const item = struct.simpleObjects.get(id)
-  item.pos.forEach(p => p.add_(d))
-  restruct.simpleObjects
-    .get(id)
-    .visel.translate(scale.obj2scaled(d, restruct.render.options))
-  this.data.d = d.negated()
-  if (!this.data.noinvalidate) invalidateItem(restruct, 'simpleObjects', id, 1)
-}
-
-SimpleObjectMove.prototype.invert = function () {
-  const ret = new SimpleObjectMove()
-  ret.data = this.data
-  return ret
-}
-
-function SimpleObjectResize(id, d, current, anchor, noinvalidate) {
-  this.data = { id, d, current, anchor, noinvalidate }
-}
-
-SimpleObjectResize.prototype = new Base(OperationType.SIMPLE_OBJECT_RESIZE)
-
-SimpleObjectResize.prototype.execute = function (restruct) {
-  const struct = restruct.molecule
-  const id = this.data.id
-  const d = this.data.d
-  const current = this.data.current
-  const item = struct.simpleObjects.get(id)
-  const anchor = this.data.anchor
-
-  if (item.mode === 'circle') {
-    const previousPos1 = item.pos[1].get_xy0()
-    item.pos[1].x = current.x
-    item.pos[1].y = current.y
-    this.data.current = previousPos1
-  } else if (item.mode === 'line' && anchor) {
-    const previousPos1 = anchor.get_xy0()
-    anchor.x = current.x
-    anchor.y = current.y
-    this.data.current = previousPos1
-  } else if (item.mode === 'rectangle' && anchor) {
-    const previousPos0 = item.pos[0].get_xy0()
-    const previousPos1 = item.pos[1].get_xy0()
-
-    if (tfx(anchor.x) === tfx(item.pos[1].x)) {
-      item.pos[1].x = anchor.x = current.x
-      this.data.current.x = previousPos1.x
-    }
-    if (tfx(anchor.y) === tfx(item.pos[1].y)) {
-      item.pos[1].y = anchor.y = current.y
-      this.data.current.y = previousPos1.y
-    }
-    if (tfx(anchor.x) === tfx(item.pos[0].x)) {
-      item.pos[0].x = anchor.x = current.x
-      this.data.current.x = previousPos0.x
-    }
-    if (tfx(anchor.y) === tfx(item.pos[0].y)) {
-      item.pos[0].y = anchor.y = current.y
-      this.data.current.y = previousPos0.y
-    }
-  } else item.pos[1].add_(d)
-
-  restruct.simpleObjects
-    .get(id)
-    .visel.translate(scale.obj2scaled(d, restruct.render.options))
-  this.data.d = d.negated()
-  if (!this.data.noinvalidate) invalidateItem(restruct, 'simpleObjects', id, 1)
-}
-
-SimpleObjectResize.prototype.invert = function () {
-  const ret = new SimpleObjectResize()
-  ret.data = this.data
-  return ret
-}
-
 const operations = {
   AtomAdd,
   AtomDelete,
@@ -1194,3 +1004,5 @@ const operations = {
 }
 
 export default operations
+
+export { OperationType }

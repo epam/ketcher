@@ -64,7 +64,8 @@ SimpleObjectTool.prototype.mousemove = function (event) {
           this.dragCtx.ci.id,
           diff,
           current,
-          this.dragCtx.ci.ref
+          this.dragCtx.ci.ref,
+          event.shiftKey
         )
       }
       this.editor.update(this.dragCtx.action, true)
@@ -90,7 +91,8 @@ SimpleObjectTool.prototype.mousemove = function (event) {
         this.dragCtx.itemId,
         diff,
         current,
-        null
+        null,
+        event.shiftKey
       )
       this.editor.update(this.dragCtx.action, true)
     }
@@ -113,7 +115,8 @@ SimpleObjectTool.prototype.mouseup = function (event) {
       this.dragCtx.action = fromSimpleObjectAddition(
         rnd.ctab,
         [this.dragCtx.p0, this.dragCtx.previous],
-        this.mode
+        this.mode,
+        event.shiftKey
       )
     }
     this.editor.update(this.dragCtx.action)

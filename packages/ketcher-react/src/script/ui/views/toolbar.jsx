@@ -216,7 +216,7 @@ function initToolbar() {
   if (!global?.ketcher?.standalone)
     toolboxItems.push({
       id: 'shape',
-      menu: ['shape-circle', 'shape-rectangle', 'shape-line']
+      menu: ['shape-ellipse', 'shape-rectangle', 'shape-line']
     })
 
   return [

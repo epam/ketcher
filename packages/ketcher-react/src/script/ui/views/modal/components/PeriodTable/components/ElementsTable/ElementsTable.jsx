@@ -18,7 +18,6 @@ import React, { Component } from 'react'
 import element from '../../../../../../../chem/element'
 import { Header, MainRow, OutinerRow } from './components'
 import styles from './ElementsTable.module.less'
-import clsx from 'clsx'
 
 const metalPrefix = [
   'alkali',

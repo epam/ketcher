@@ -2,6 +2,7 @@ import structSchema from '../../schemes/moleculeSchema'
 
 import { fromRlabel } from '../convertStruct'
 import { ifDef } from '../../utils'
+import { SGroup } from '../../../chem/struct'
 
 export function moleculeToGraph(struct) {
   const body = {
@@ -16,7 +17,9 @@ export function moleculeToGraph(struct) {
     body.bonds = Array.from(struct.bonds.values()).map(bondToGraph)
 
   if (struct.sgroups.size !== 0)
-    body.sgroups = Array.from(struct.sgroups.values()).map(sgroupToGraph)
+    body.sgroups = Array.from(struct.sgroups.values()).map(sGroup =>
+      sgroupToGraph(struct, sGroup)
+    )
 
   const fragment = struct.frags.get(0)
   if (fragment)
@@ -141,7 +144,7 @@ function bondToGraph(source) {
   return result
 }
 
-function sgroupToGraph(source) {
+function sgroupToGraph(struct, source) {
   let schema
   const result = {}
 
@@ -183,6 +186,7 @@ function sgroupToGraph(source) {
       ifDef(result, 'context', data.context)
       ifDef(result, 'fieldName', data.fieldName)
       ifDef(result, 'fieldData', data.fieldValue)
+      ifDef(result, 'bonds', SGroup.getBonds(struct, source))
       break
     }
     default:

@@ -12,9 +12,6 @@ node_modules
 build
 dist
 
-# old version
-/__archive
-
 # misc
 .DS_Store
 .env.local

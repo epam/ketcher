@@ -71,15 +71,16 @@ function ActionButton({
   // eslint-disable-line no-shadow
   const shortcut = action.shortcut && shortcutStr(action.shortcut)
   const menuRef = useRef(null)
-  const disabled = indigoVerification && disableableButtons.includes(name)
+  const disabled =
+    status.disabled || (indigoVerification && disableableButtons.includes(name))
   return (
     <button
       ref={menuRef}
-      disabled={status.disabled || disabled}
-      onClick={ev => {
+      disabled={disabled}
+      onClick={event => {
         if (!status.selected || isMenuOpened(menuRef.current)) {
           onAction(action.action)
-          ev.stopPropagation()
+          event.stopPropagation()
         }
       }}
       title={shortcut ? `${action.title} (${shortcut})` : action.title}>

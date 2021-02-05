@@ -205,9 +205,6 @@ class SimpleObjectResize extends Base {
           const rad = Vec2.diff(item.pos[1], item.pos[0])
           const rx = Math.abs(rad.x / 2)
           const ry = Math.abs(rad.y / 2)
-          const changeInAnchor = Vec2.diff(current, anchor)
-          changeInAnchor.x = changeInAnchor.x * (1 + (rx /ry < 1 ?  1/rx : 1/ry))
-          changeInAnchor.y = changeInAnchor.y * (1 + (rx /ry < 1 ?  1/rx : 1/ry))
           const topLeftX =
             item.pos[0].x <= item.pos[1].x ? item.pos[0] : item.pos[1]
           const topLeftY =
@@ -217,25 +214,15 @@ class SimpleObjectResize extends Base {
           const bottomRightY =
             item.pos[0].y <= item.pos[1].y ? item.pos[1] : item.pos[0]
           if (anchor.x <= topLeftX.x + rx) {
-            if (topLeftX.x + changeInAnchor.x < bottomRightX.x) {
-              topLeftX.x = topLeftX.x + changeInAnchor.x
-            }
+              topLeftX.x = current.x
           } else {
-            if (bottomRightX.x + changeInAnchor.x > topLeftX.x) {
-              bottomRightX.x = bottomRightX.x + changeInAnchor.x
-            }
+              bottomRightX.x = current.x
           }
           if (anchor.y <= topLeftY.y + ry) {
-            if (topLeftY.y + changeInAnchor.y < bottomRightY.y) {
-              topLeftY.y = topLeftY.y + changeInAnchor.y
-            }
+              topLeftY.y = current.y
           } else {
-            if (bottomRightY.y + changeInAnchor.y > topLeftY.y) {
-              bottomRightY.y = bottomRightY.y + changeInAnchor.y
-            }
+              bottomRightY.y = current.y
           }
-          anchor.x = current.x
-          anchor.y = current.y
         }
       } else if (this.data.toCircle) {
         const previousPos1 = item.pos[1].get_xy0()

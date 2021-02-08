@@ -13,14 +13,152 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Base, { invalidateItem, OperationType } from '../base'
-import { SimpleObjectMode } from '../../../chem/struct'
-import Vec2 from 'src/script/util/vec2'
-import util from '../../../render/util'
-import { makeCircleFromEllipse } from './simpleObjectUtil'
-import scale from '../../../util/scale'
+import Vec2 from '../../util/vec2'
+import Base, { invalidateItem, OperationType } from './base'
+import { ReSimpleObject } from '../../render/restruct'
+import { SimpleObject, SimpleObjectMode } from 'src/script/chem/struct'
+import scale from "../../util/scale";
+import util from "../../render/util";
 
 const tfx = util.tfx
+
+interface SimpleObjectAddData {
+  id?: string
+  pos: Array<Vec2>
+  mode: SimpleObjectMode
+  toCircle: boolean
+}
+export class SimpleObjectAdd extends Base {
+  data: SimpleObjectAddData
+  performed: boolean
+
+  constructor(
+    pos: Array<Vec2> = [],
+    mode: SimpleObjectMode = SimpleObjectMode.line,
+    toCircle: boolean = false
+  ) {
+    super(OperationType.SIMPLE_OBJECT_ADD)
+    // here is "tempValue is used
+    this.data = { pos, mode, toCircle }
+    this.performed = false
+  }
+
+  execute(restruct: any): void {
+    const struct = restruct.molecule
+    if (!this.performed) {
+      this.data.id = struct.simpleObjects.add(
+        new SimpleObject({ mode: this.data.mode })
+      )
+      this.performed = true
+    } else {
+      struct.simpleObjects.set(
+        this.data.id,
+        new SimpleObject({ mode: this.data.mode })
+      )
+    }
+
+    restruct.simpleObjects.set(
+      this.data.id,
+      new ReSimpleObject(struct.simpleObjects.get(this.data.id))
+    )
+
+    const positions = [...this.data.pos]
+    if (this.data.toCircle) {
+      positions[1] = makeCircleFromEllipse(positions[0], positions[1])
+    }
+    struct.simpleObjectSetPos(
+      this.data.id,
+      positions.map(p => new Vec2(p))
+    )
+
+    invalidateItem(restruct, 'simpleObjects', this.data.id, 1)
+  }
+  invert(): Base {
+    //@ts-ignore
+    return new SimpleObjectDelete(this.data.id)
+  }
+}
+
+interface SimpleObjectDeleteData {
+  id: string
+  pos?: Array<Vec2>
+  mode?: SimpleObjectMode
+  toCircle?: boolean
+}
+
+export class SimpleObjectDelete extends Base {
+  data: SimpleObjectDeleteData
+  performed: boolean
+
+  constructor(id: string) {
+    super(OperationType.SIMPLE_OBJECT_DELETE)
+    this.data = { id, pos: [], mode: SimpleObjectMode.line, toCircle: false }
+    this.performed = false
+  }
+
+  execute(restruct: any): void {
+    const struct = restruct.molecule
+    if (!this.performed) {
+      const item = struct.simpleObjects.get(this.data.id) as any
+      //save to data current values. In future they could be used in invert for restoring simple object
+      this.data.pos = item.pos
+      this.data.mode = item.mode
+      this.data.toCircle = item.toCircle
+      this.performed = true
+    }
+
+    restruct.markItemRemoved()
+    restruct.clearVisel(restruct.simpleObjects.get(this.data.id).visel)
+    restruct.simpleObjects.delete(this.data.id)
+
+    struct.simpleObjects.delete(this.data.id)
+  }
+
+  invert(): Base {
+    return new SimpleObjectAdd(this.data.pos, this.data.mode, this.data.toCircle)
+  }
+}
+
+
+interface SimpleObjectMoveData {
+  id: string
+  d: any
+  noinvalidate: boolean
+}
+
+export class SimpleObjectMove extends Base {
+  data: SimpleObjectMoveData
+
+  constructor(id: string, d: any, noinvalidate: boolean) {
+    super(OperationType.SIMPLE_OBJECT_MOVE)
+    this.data = { id, d, noinvalidate }
+  }
+  execute(restruct: any): void {
+    const struct = restruct.molecule
+    const id = this.data.id
+    const d = this.data.d
+    const item = struct.simpleObjects.get(id)
+    item.pos.forEach(p => p.add_(d))
+    restruct.simpleObjects
+      .get(id)
+      .visel.translate(scale.obj2scaled(d, restruct.render.options))
+    this.data.d = d.negated()
+    if (!this.data.noinvalidate)
+      invalidateItem(restruct, 'simpleObjects', id, 1)
+  }
+
+  invert(): Base {
+    const move = new SimpleObjectMove(
+      this.data.id,
+      this.data.d,
+      this.data.noinvalidate
+    )
+    //todo Need further investigation on why this is needed?
+    move.data = this.data
+    return move
+  }
+}
+
 
 interface SimpleObjectResizeData {
   id: string
@@ -80,16 +218,16 @@ function handleEllipseChangeIfAnchorIsOnDiagonal(item, current) {
 
   if (current.y < bottomRightY.y && (firstQuarter || secondQuarter)){
     topLeftY.y = current.y
-  console.log(2)
-}
+    console.log(2)
+  }
   if (current.x < bottomRightX.x && (secondQuarter || thirdQuarter)){
     topLeftX.x = current.x
-console.log(3)
-}
+    console.log(3)
+  }
   if (current.y > topLeftY.y && (thirdQuarter || forthQuarter)){
     bottomRightY.y = current.y
-console.log(4)
-}
+    console.log(4)
+  }
 }
 
 function handleRectangleChangeWithAnchor(item, anchor, current) {
@@ -186,4 +324,14 @@ export class SimpleObjectResize extends Base {
       this.data.toCircle
     )
   }
+}
+
+export function makeCircleFromEllipse(position0: Vec2, position1: Vec2): Vec2 {
+  const diff = Vec2.diff(position1, position0)
+  const min = Math.abs(diff.x) < Math.abs(diff.y) ? diff.x : diff.y
+  return new Vec2(
+    position0.x + (diff.x > 0 ? 1 : -1) * Math.abs(min),
+    position0.y + (diff.y > 0 ? 1 : -1) * Math.abs(min),
+    0
+  )
 }

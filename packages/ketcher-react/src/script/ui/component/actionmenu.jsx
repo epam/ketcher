@@ -183,6 +183,7 @@ function toolMargin(menuName, menu, visibleTools) {
 }
 
 function openHandle(event, onOpen) {
+
   const hiddenEl = hiddenAncestor(event.currentTarget)
   const isSelected = event.currentTarget?.classList.contains('selected')
 

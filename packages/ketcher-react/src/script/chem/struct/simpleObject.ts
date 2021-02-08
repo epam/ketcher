@@ -4,7 +4,7 @@ class SimpleObject {
   pos: Array<Vec2>
   mode: SimpleObjectMode
 
-  constructor(params) {
+  constructor(params: { mode: SimpleObjectMode, pos?: Array<Vec2> }) {
     params = params || {}
     this.pos = []
 

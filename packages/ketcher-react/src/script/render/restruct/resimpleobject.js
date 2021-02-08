@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,11 +48,17 @@ ReSimpleObject.prototype.calcDistance = function (p, s) {
       const ry = rad.y / 2
       const center = Vec2.sum(pos[0], { x: rx, y: ry })
       const pointToCenter = Vec2.diff(point, center)
-      dist = Math.abs(
-        1 -
-          (pointToCenter.x * pointToCenter.x) / (rx * rx) -
-          (pointToCenter.y * pointToCenter.y) / (ry * ry)
-      )
+      if (rx !== 0 && ry !== 0 ) {
+        dist = Math.abs(
+          1 -
+            (pointToCenter.x * pointToCenter.x) / (rx * rx) -
+            (pointToCenter.y * pointToCenter.y) / (ry * ry)
+        )
+      } else {
+        // in case rx or ry is equal to 0 we have a line as a trivial case of ellipse
+        // in such case distance need to be calculated as a distance between line and current point
+        dist = calculateDistanceToLine(pos, point)
+      }
       break
     }
     case SimpleObjectMode.rectangle: {
@@ -97,20 +103,7 @@ ReSimpleObject.prototype.calcDistance = function (p, s) {
       break
     }
     case SimpleObjectMode.line: {
-      if (
-        (point.x < Math.min(pos[0].x, pos[1].x) ||
-          point.x > Math.max(pos[0].x, pos[1].x)) &&
-        (point.y < Math.min(pos[0].y, pos[1].y) ||
-          point.y > Math.max(pos[0].y, pos[1].y))
-      )
-        dist = Math.min(Vec2.dist(pos[0], point), Vec2.dist(pos[1], point))
-      else {
-        const a = Vec2.dist(pos[0], pos[1])
-        const b = Vec2.dist(pos[0], point)
-        const c = Vec2.dist(pos[1], point)
-        const per = (a + b + c) / 2
-        dist = (2 / a) * Math.sqrt(per * (per - a) * (per - b) * (per - c))
-      }
+      dist = calculateDistanceToLine(pos, point)
       break
     }
 
@@ -123,6 +116,25 @@ ReSimpleObject.prototype.calcDistance = function (p, s) {
   const refPoint = distRef.minDist <= 8 / s ? distRef.refPoint : null
 
   return { minDist: dist, refPoint: refPoint }
+}
+
+function calculateDistanceToLine(pos, point) {
+  let dist;
+  if (
+    (point.x < Math.min(pos[0].x, pos[1].x) ||
+      point.x > Math.max(pos[0].x, pos[1].x)) &&
+    (point.y < Math.min(pos[0].y, pos[1].y) ||
+      point.y > Math.max(pos[0].y, pos[1].y))
+  )
+    dist = Math.min(Vec2.dist(pos[0], point), Vec2.dist(pos[1], point))
+  else {
+    const a = Vec2.dist(pos[0], pos[1])
+    const b = Vec2.dist(pos[0], point)
+    const c = Vec2.dist(pos[1], point)
+    const per = (a + b + c) / 2
+    dist = (2 / a) * Math.sqrt(per * (per - a) * (per - b) * (per - c))
+  }
+  return dist;
 }
 
 ReSimpleObject.prototype.getReferencePointDistance = function (p) {
@@ -233,16 +245,18 @@ ReSimpleObject.prototype.highlightPath = function (render) {
       const ry = rad.y / 2
       path.push(
         render.paper.ellipse(
-          point[0].x + rx,
-          point[0].y + ry,
-          Math.abs(rx) + s / 8,
-          Math.abs(ry) + s / 8
-        ),
+          tfx(point[0].x + rx),
+          tfx(point[0].y + ry),
+          tfx(Math.abs(rx) + s / 8),
+          tfx(Math.abs(ry) + s / 8)
+        )
+      )
+      path.push(
         render.paper.ellipse(
-          point[0].x + rx,
-          point[0].y + ry,
-          Math.abs(rx) - s / 8,
-          Math.abs(ry) - s / 8
+          tfx(point[0].x + rx),
+          tfx(point[0].y + ry),
+          tfx(Math.abs(rx) - s / 8),
+          tfx(Math.abs(ry) - s / 8)
         )
       )
       break

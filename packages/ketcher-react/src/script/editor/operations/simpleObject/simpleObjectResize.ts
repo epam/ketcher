@@ -53,39 +53,29 @@ function handleEllipseChangeIfAnchorIsOnAxis(anchor, item, current) {
 }
 
 function handleEllipseChangeIfAnchorIsOnDiagonal(anchor, item, current) {
-  if (
-    tfx(anchor.y) !== tfx(item.pos[0].y) &&
-    tfx(anchor.x) !== tfx(item.pos[0].x) &&
-    tfx(anchor.y) !== tfx(item.pos[1].y) &&
-    tfx(anchor.x) !== tfx(item.pos[1].x)
-  ) {
-    const rad = Vec2.diff(item.pos[1], item.pos[0])
-    const rx = Math.abs(rad.x / 2)
-    const ry = Math.abs(rad.y / 2)
-    const topLeftX = item.pos[0].x <= item.pos[1].x ? item.pos[0] : item.pos[1]
-    const topLeftY = item.pos[0].y <= item.pos[1].y ? item.pos[0] : item.pos[1]
-    const bottomRightX =
-      item.pos[0].x <= item.pos[1].x ? item.pos[1] : item.pos[0]
-    const bottomRightY =
-      item.pos[0].y <= item.pos[1].y ? item.pos[1] : item.pos[0]
-    //check in which quarter the anchor is placed
-    const firstQuarter =
-      anchor.x > topLeftX.x + rx && anchor.y <= topLeftY.y + ry
-    const secondQuarter =
-      anchor.x <= topLeftX.x + rx && anchor.y <= topLeftY.y + ry
-    const thirdQuarter =
-      anchor.x <= topLeftX.x + rx && anchor.y > topLeftY.y + ry
-    const forthQuarter =
-      anchor.x > topLeftX.x + rx && anchor.y > topLeftY.y + ry
-    if (current.x >= topLeftX.x && (firstQuarter || forthQuarter))
-      bottomRightX.x = current.x
-    if (current.y <= bottomRightY.y && (firstQuarter || secondQuarter))
-      topLeftY.y = current.y
-    if (current.x <= bottomRightX.x && (secondQuarter || thirdQuarter))
-      topLeftX.x = current.x
-    if (current.y >= topLeftY.y && (thirdQuarter || forthQuarter))
-      bottomRightY.y = current.y
-  }
+  const rad = Vec2.diff(item.pos[1], item.pos[0])
+  const rx = Math.abs(rad.x / 2)
+  const ry = Math.abs(rad.y / 2)
+  const topLeftX = item.pos[0].x <= item.pos[1].x ? item.pos[0] : item.pos[1]
+  const topLeftY = item.pos[0].y <= item.pos[1].y ? item.pos[0] : item.pos[1]
+  const bottomRightX =
+    item.pos[0].x <= item.pos[1].x ? item.pos[1] : item.pos[0]
+  const bottomRightY =
+    item.pos[0].y <= item.pos[1].y ? item.pos[1] : item.pos[0]
+  //check in which quarter the anchor is placed
+  const firstQuarter = anchor.x > topLeftX.x + rx && anchor.y <= topLeftY.y + ry
+  const secondQuarter =
+    anchor.x <= topLeftX.x + rx && anchor.y <= topLeftY.y + ry
+  const thirdQuarter = anchor.x <= topLeftX.x + rx && anchor.y > topLeftY.y + ry
+  const forthQuarter = anchor.x > topLeftX.x + rx && anchor.y > topLeftY.y + ry
+  if (current.x >= topLeftX.x && (firstQuarter || forthQuarter))
+    bottomRightX.x = current.x
+  if (current.y <= bottomRightY.y && (firstQuarter || secondQuarter))
+    topLeftY.y = current.y
+  if (current.x <= bottomRightX.x && (secondQuarter || thirdQuarter))
+    topLeftX.x = current.x
+  if (current.y >= topLeftY.y && (thirdQuarter || forthQuarter))
+    bottomRightY.y = current.y
 }
 
 function handleRectangleChangeWithAnchor(item, anchor, current) {
@@ -134,8 +124,16 @@ export class SimpleObjectResize extends Base {
     const anchor = this.data.anchor
     if (item.mode === SimpleObjectMode.ellipse) {
       if (anchor) {
-        handleEllipseChangeIfAnchorIsOnAxis(anchor, item, current)
-        handleEllipseChangeIfAnchorIsOnDiagonal(anchor, item, current)
+        if (
+          tfx(anchor.y) !== tfx(item.pos[0].y) &&
+          tfx(anchor.x) !== tfx(item.pos[0].x) &&
+          tfx(anchor.y) !== tfx(item.pos[1].y) &&
+          tfx(anchor.x) !== tfx(item.pos[1].x)
+        ) {
+          handleEllipseChangeIfAnchorIsOnDiagonal(anchor, item, current)
+        } else {
+          handleEllipseChangeIfAnchorIsOnAxis(anchor, item, current)
+        }
       } else if (this.data.toCircle) {
         const previousPos1 = item.pos[1].get_xy0()
         const circlePoint = makeCircleFromEllipse(item.pos[0], current)

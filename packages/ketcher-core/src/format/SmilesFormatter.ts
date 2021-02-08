@@ -1,15 +1,10 @@
 import { MolfileManager, SmilesManager, Struct } from '../chem'
 import { StructService, StructServiceOptions } from '../infrastructure/services'
 import { ServerFormatter } from './ServerFormatter'
-import {
-  StructFormatter,
-  StructProvider,
-  SupportedFormat
-} from './structFormatter.types'
+import { StructFormatter, SupportedFormat } from './structFormatter.types'
 
-export class SmilesFormatter implements StructFormatter<string> {
+export class SmilesFormatter implements StructFormatter {
   constructor(
-    private readonly structProvider: StructProvider,
     private readonly smilesManager: SmilesManager,
 
     // only for ServerFormatter
@@ -20,11 +15,6 @@ export class SmilesFormatter implements StructFormatter<string> {
     private readonly options?: StructServiceOptions
   ) {}
 
-  getStructureAsync(): Promise<string> {
-    const struct = this.structProvider.struct()
-    return this.getStructureFromStructAsync(struct)
-  }
-
   getStructureFromStructAsync(struct: Struct): Promise<string> {
     const stringifiedMolfile = this.smilesManager.stringify(struct)
     return Promise.resolve(stringifiedMolfile)
@@ -32,7 +22,6 @@ export class SmilesFormatter implements StructFormatter<string> {
 
   getStructureFromStringAsync(stringifiedStruct: string): Promise<Struct> {
     const serverFormatter = new ServerFormatter(
-      this.structProvider,
       this.structService,
       this.molfileManager,
       this.format,

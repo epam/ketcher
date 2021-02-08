@@ -15,19 +15,27 @@
  ***************************************************************************/
 import {
   FormatterFactory,
-  Graph,
   StructService,
-  SupportedFormat
+  SupportedFormat,
+  Struct
 } from 'ketcher-core'
 import { isEqual } from 'lodash/fp'
 import molfile, { MolfileFormat } from './chem/molfile'
-import Struct from './chem/struct'
 import Editor from './editor'
 import Render from './render'
 
 interface UI {
   load: (structStr: string | null, options?: any) => undefined
   loadStruct: (struct: Struct) => any
+}
+
+function getStructureAsync(
+  structureFormat: SupportedFormat = 'rxn',
+  formatterFactory: FormatterFactory,
+  struct: Struct
+): Promise<string> {
+  const formatter = formatterFactory.create(structureFormat)
+  return formatter.getStructureFromStructAsync(struct)
 }
 
 class Ketcher {
@@ -40,28 +48,55 @@ class Ketcher {
     private readonly formatterFactory: FormatterFactory
   ) {}
 
-  getStructureAsync(structureFormat: SupportedFormat = 'rxn'): Promise<string> {
-    const service = this.formatterFactory.create(structureFormat)
-    return service.getStructureAsync()
-  }
-
   getSmilesAsync(isExtended: boolean = false): Promise<string> {
     const format: SupportedFormat = isExtended ? 'smilesExt' : 'smiles'
-
-    const service = this.formatterFactory.create(format)
-    return service.getStructureAsync()
+    return getStructureAsync(
+      format,
+      this.formatterFactory,
+      this.editor.struct()
+    )
   }
 
   getMolfileAsync(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+    if (this.containsReaction()) {
+      throw Error(
+        'The structure cannot be saved as *.MOL due to reaction arrrows.'
+      )
+    }
     const format: SupportedFormat =
       molfileFormat === 'v3000' ? 'molV3000' : 'mol'
-    const service = this.formatterFactory.create(format)
-    return service.getStructureAsync()
+    return getStructureAsync(
+      format,
+      this.formatterFactory,
+      this.editor.struct()
+    )
   }
 
-  async getGraphAsync(): Promise<Graph> {
-    const service = this.formatterFactory.create('graph')
-    return service.getStructureAsync()
+  getGraphAsync(): Promise<string> {
+    return getStructureAsync(
+      'graph',
+      this.formatterFactory,
+      this.editor.struct()
+    )
+  }
+
+  containsReaction(): boolean {
+    return this.editor.struct().hasRxnArrow()
+  }
+
+  getRxnAsync(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+    if (!this.containsReaction()) {
+      throw Error(
+        'The structure cannot be saved as *.RXN: there is no reaction arrows.'
+      )
+    }
+    const format: SupportedFormat =
+      molfileFormat === 'v3000' ? 'rxnV3000' : 'rxn'
+    return getStructureAsync(
+      format,
+      this.formatterFactory,
+      this.editor.struct()
+    )
   }
 
   setMolecule(molString: string): void {

@@ -114,7 +114,6 @@ class KetcherBuilder {
     this.editor = editor
     this.ui = tempRef.ui
     this.formatterFactory = new FormatterFactory(
-      editor,
       structService,
       graphManager,
       molfileManager,

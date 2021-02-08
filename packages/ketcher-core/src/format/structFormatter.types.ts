@@ -1,14 +1,9 @@
 import { MolfileParseOptions, Struct } from '../chem'
 import { StructServiceOptions } from '../infrastructure/services'
 
-export interface StructFormatter<TFormat = any> {
-  getStructureAsync: () => Promise<TFormat>
-  getStructureFromStructAsync: (struct: Struct) => Promise<TFormat>
+export interface StructFormatter {
+  getStructureFromStructAsync: (struct: Struct) => Promise<string>
   getStructureFromStringAsync: (stringifiedStruct: string) => Promise<Struct>
-}
-
-export interface StructProvider {
-  struct: () => Struct
 }
 
 export type SupportedFormat =

@@ -1,6 +1,5 @@
 import { MolfileManager, Struct } from '../chem'
 import { getPropertiesByFormat } from './formatProperties'
-import { StructProvider } from './structFormatter.types'
 import {
   ConvertData,
   ConvertResult,
@@ -11,19 +10,13 @@ import {
 } from '../infrastructure/services'
 import { StructFormatter, SupportedFormat } from './structFormatter.types'
 
-export class ServerFormatter implements StructFormatter<string> {
+export class ServerFormatter implements StructFormatter {
   constructor(
-    private readonly structProvider: StructProvider,
     private readonly structService: StructService,
     private readonly molfileManager: MolfileManager,
     private readonly format: SupportedFormat,
     private readonly options?: StructServiceOptions
   ) {}
-
-  async getStructureAsync(): Promise<string> {
-    const struct = this.structProvider.struct()
-    return this.getStructureFromStructAsync(struct)
-  }
 
   async getStructureFromStructAsync(struct: Struct): Promise<string> {
     const infoResult = await this.structService.info()

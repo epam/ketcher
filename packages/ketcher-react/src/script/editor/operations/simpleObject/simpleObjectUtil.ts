@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { SimpleObject } from '../../../chem/struct'
-export function simpleObjectToStruct(graphItem, struct) {
-  struct.simpleObjects.add(new SimpleObject(graphItem.data))
-  return struct
+import Vec2 from '../../../util/vec2'
+
+export function makeCircleFromEllipse(position0: Vec2, position1: Vec2): Vec2 {
+  const diff = Vec2.diff(position1, position0)
+  const min = Math.abs(diff.x) < Math.abs(diff.y) ? diff.x : diff.y
+  return new Vec2(
+    position0.x + (diff.x > 0 ? 1 : -1) * Math.abs(min),
+    position0.y + (diff.y > 0 ? 1 : -1) * Math.abs(min),
+    0
+  )
 }

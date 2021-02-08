@@ -16,6 +16,7 @@
 
 import { bond as bondSchema } from '../data/schema/struct-schema'
 import { toBondType } from '../data/convert/structconv'
+import { SimpleObjectMode } from '../../chem/struct'
 
 const toolActions = {
   'select-lasso': {
@@ -113,17 +114,17 @@ const toolActions = {
     title: 'Attachment Point Tool',
     action: { tool: 'apoint' }
   },
-  'shape-circle': {
-    title: 'Shape Circle',
-    action: { tool: 'simpleobject', opts: 'circle' }
+  'shape-ellipse': {
+    title: 'Shape Ellipse',
+    action: { tool: 'simpleobject', opts: SimpleObjectMode.ellipse }
   },
   'shape-rectangle': {
     title: 'Shape Rectangle',
-    action: { tool: 'simpleobject', opts: 'rectangle' }
+    action: { tool: 'simpleobject', opts: SimpleObjectMode.rectangle }
   },
   'shape-line': {
     title: 'Shape Line',
-    action: { tool: 'simpleobject', opts: 'line' }
+    action: { tool: 'simpleobject', opts: SimpleObjectMode.line }
   }
 }
 

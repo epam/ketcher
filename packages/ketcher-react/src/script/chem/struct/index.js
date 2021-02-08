@@ -28,6 +28,7 @@ import Fragment from './fragment'
 import SGroup from './sgroup'
 import RGroup from './rgroup'
 import SGroupForest from './sgforest'
+import { SimpleObject, SimpleObjectMode } from './simpleObject'
 
 function Struct() {
   this.atoms = new Pool()
@@ -1042,31 +1043,6 @@ RxnPlus.prototype.clone = function () {
   return new RxnPlus(this)
 }
 
-function SimpleObject(params) {
-  params = params || {}
-  this.pos = []
-
-  if (params.pos)
-    for (let i = 0; i < params.pos.length; i++)
-      this.pos[i] = params.pos[i] ? new Vec2(params.pos[i]) : new Vec2()
-
-  this.mode = params.mode
-}
-
-SimpleObject.prototype.clone = function () {
-  return new SimpleObject(this)
-}
-
-SimpleObject.prototype.center = function () {
-  switch (this.mode) {
-    case 'rectangle': {
-      return Vec2.centre(this.pos[0], this.pos[1])
-    }
-    default:
-      return this.pos[0]
-  }
-}
-
 function RxnArrow(params) {
   params = params || {}
   this.pp = params.pp ? new Vec2(params.pp) : new Vec2()
@@ -1095,5 +1071,6 @@ export {
   RGroup,
   RxnPlus,
   RxnArrow,
-  SimpleObject
+  SimpleObject,
+  SimpleObjectMode
 }

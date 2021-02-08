@@ -70,4 +70,48 @@ export class SimpleObjectAdd extends Base {
 
     invalidateItem(restruct, 'simpleObjects', this.data.id, 1)
   }
+  invert(): Base {
+    //@ts-ignore
+    return new SimpleObjectDelete(this.data.id)
+  }
+}
+
+interface SimpleObjectDeleteData {
+  id: string
+  pos?: Array<Vec2>
+  mode?: SimpleObjectMode
+  toCircle?: boolean
+}
+
+export class SimpleObjectDelete extends Base {
+  data: SimpleObjectDeleteData
+  performed: boolean
+
+  constructor(id: string) {
+    super(OperationType.SIMPLE_OBJECT_DELETE)
+    this.data = { id, pos: [], mode: SimpleObjectMode.line, toCircle: false }
+    this.performed = false
+  }
+
+  execute(restruct: any): void {
+    const struct = restruct.molecule
+    if (!this.performed) {
+      const item = struct.simpleObjects.get(this.data.id) as any
+      //save to data current values. In future they could be used in invert for restoring simple object
+      this.data.pos = item.pos
+      this.data.mode = item.mode
+      this.data.toCircle = item.toCircle
+      this.performed = true
+    }
+
+    restruct.markItemRemoved()
+    restruct.clearVisel(restruct.simpleObjects.get(this.data.id).visel)
+    restruct.simpleObjects.delete(this.data.id)
+
+    struct.simpleObjects.delete(this.data.id)
+  }
+
+  invert(): Base {
+    return new SimpleObjectAdd(this.data.pos, this.data.mode, this.data.toCircle)
+  }
 }

@@ -13,19 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { SimpleObjectDelete } from './simpleObjectDelete'
-import { SimpleObjectAdd } from './simpleObjectAdd'
+import { SimpleObjectAdd, SimpleObjectDelete } from './simpleObjectAddAndDelete'
 import { SimpleObjectMove } from './simpleObjectMove'
 import { SimpleObjectResize } from './simpleObjectResize'
-
-SimpleObjectAdd.prototype.invert = function () {
-  //@ts-ignore
-  return new SimpleObjectDelete(this.data.id)
-}
-
-SimpleObjectDelete.prototype.invert = function () {
-  return new SimpleObjectAdd(this.data.pos, this.data.mode, this.data.toCircle)
-}
 
 export {
   SimpleObjectAdd,

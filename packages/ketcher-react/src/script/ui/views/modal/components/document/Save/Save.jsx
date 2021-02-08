@@ -105,9 +105,6 @@ class SaveDialog extends Component {
     const { struct, server, options, formState } = this.props
 
     const factory = new FormatterFactory(
-      {
-        struct: () => struct
-      },
       server,
       graphManager,
       molfileManager,
@@ -116,7 +113,7 @@ class SaveDialog extends Component {
 
     const service = factory.create(type, options)
 
-    return service.getStructureAsync().then(
+    return service.getStructureFromStructAsync(struct).then(
       structStr => {
         this.setState({ structStr })
         setTimeout(() => {

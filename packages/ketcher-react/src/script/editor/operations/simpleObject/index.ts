@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import {SimpleObjectDelete} from "./simpleObjectDelete";
-import {SimpleObjectAdd} from "./simpleObjectAdd";
-import Base from "../base";
-import {SimpleObjectMove} from "./simpleObjectMove";
-import {SimpleObjectResize} from "./simpleObjectResize";
-
+import { SimpleObjectDelete } from './simpleObjectDelete'
+import { SimpleObjectAdd } from './simpleObjectAdd'
+import Base from '../base'
+import { SimpleObjectMove } from './simpleObjectMove'
+import { SimpleObjectResize } from './simpleObjectResize'
 
 class SimpleObjectAddImpl extends SimpleObjectAdd {
   invert(): Base {
@@ -29,19 +28,34 @@ class SimpleObjectAddImpl extends SimpleObjectAdd {
 
 class SimpleObjectDeleteImpl extends SimpleObjectDelete {
   invert(): Base {
-    return new SimpleObjectAdd(this.data.pos, this.data.mode, this.data.toCircle)
+    return new SimpleObjectAdd(
+      this.data.pos,
+      this.data.mode,
+      this.data.toCircle
+    )
   }
 }
 
 class SimpleObjectMoveImpl extends SimpleObjectMove {
   invert(): Base {
-    return new SimpleObjectMove(this.data.id, this.data.d, this.data.noinvalidate)
+    return new SimpleObjectMove(
+      this.data.id,
+      this.data.d,
+      this.data.noinvalidate
+    )
   }
 }
 
 class SimpleObjectResizeImpl extends SimpleObjectResize {
   invert(): Base {
-    return new SimpleObjectResize(this.data.id, this.data.d, this.data.current, this.data.anchor, this.data.noinvalidate, this.data.toCircle)
+    return new SimpleObjectResize(
+      this.data.id,
+      this.data.d,
+      this.data.current,
+      this.data.anchor,
+      this.data.noinvalidate,
+      this.data.toCircle
+    )
   }
 }
 

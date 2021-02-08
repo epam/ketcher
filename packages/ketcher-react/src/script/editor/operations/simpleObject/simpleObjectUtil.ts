@@ -24,5 +24,3 @@ export function makeCircleFromEllipse(position0: Vec2, position1: Vec2): Vec2 {
     0
   )
 }
-
-

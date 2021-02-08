@@ -48,7 +48,7 @@ ReSimpleObject.prototype.calcDistance = function (p, s) {
       const ry = rad.y / 2
       const center = Vec2.sum(pos[0], { x: rx, y: ry })
       const pointToCenter = Vec2.diff(point, center)
-      if (rx !== 0 && ry !== 0 ) {
+      if (rx !== 0 && ry !== 0) {
         dist = Math.abs(
           1 -
             (pointToCenter.x * pointToCenter.x) / (rx * rx) -
@@ -119,7 +119,7 @@ ReSimpleObject.prototype.calcDistance = function (p, s) {
 }
 
 function calculateDistanceToLine(pos, point) {
-  let dist;
+  let dist
   if (
     (point.x < Math.min(pos[0].x, pos[1].x) ||
       point.x > Math.max(pos[0].x, pos[1].x)) &&
@@ -134,7 +134,7 @@ function calculateDistanceToLine(pos, point) {
     const per = (a + b + c) / 2
     dist = (2 / a) * Math.sqrt(per * (per - a) * (per - b) * (per - c))
   }
-  return dist;
+  return dist
 }
 
 ReSimpleObject.prototype.getReferencePointDistance = function (p) {
@@ -167,7 +167,10 @@ ReSimpleObject.prototype.getReferencePoints = function () {
         curPoint
       //calculate approximate perimeter value for first 1/4
       while (angle <= 90) {
-        curPoint = new Vec2(rx * Math.cos((angle * Math.PI) / 180), ry * Math.sin((angle * Math.PI) / 180))
+        curPoint = new Vec2(
+          rx * Math.cos((angle * Math.PI) / 180),
+          ry * Math.sin((angle * Math.PI) / 180)
+        )
         perimeter += Vec2.dist(point, curPoint)
         point = curPoint
         angle += 0.25
@@ -178,7 +181,10 @@ ReSimpleObject.prototype.getReferencePoints = function () {
       //get point value for first 1/8 of ellipse perimeter with approximation scheme
       while (dist <= perimeter / 2) {
         angle += 0.25
-        curPoint = new Vec2(rx * Math.cos((angle * Math.PI) / 180), ry * Math.sin((angle * Math.PI) / 180))
+        curPoint = new Vec2(
+          rx * Math.cos((angle * Math.PI) / 180),
+          ry * Math.sin((angle * Math.PI) / 180)
+        )
         dist += Vec2.dist(point, curPoint)
         point = curPoint
       }

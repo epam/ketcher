@@ -36,7 +36,6 @@ export class SimpleObjectMove extends Base {
     this.data = new SimpleObjectMoveData(id, d, noinvalidate)
   }
   execute(restruct: any): void {
-    console.log('move')
     const struct = restruct.molecule
     const id = this.data.id
     const d = this.data.d

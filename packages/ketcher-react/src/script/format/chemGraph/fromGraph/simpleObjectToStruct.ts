@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ import { SimpleObject, SimpleObjectMode } from '../../../chem/struct'
 import Vec2 from '../../../util/vec2'
 
 export function simpleObjectToStruct(graphItem, struct) {
-  let object =
+  const object =
     graphItem.data.mode === 'circle'
       ? circleToEllipse(graphItem)
       : graphItem.data

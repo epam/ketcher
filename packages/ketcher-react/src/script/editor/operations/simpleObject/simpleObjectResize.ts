@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Base, {invalidateItem, OperationType} from "../base";
-import {SimpleObjectMode} from "../../../chem/struct";
-import Vec2 from "src/script/util/vec2";
-import util from "../../../render/util";
-import {makeCircleFromEllipse} from "./simpleObjectUtil";
-import scale from "../../../util/scale";
+import Base, { invalidateItem, OperationType } from '../base'
+import { SimpleObjectMode } from '../../../chem/struct'
+import Vec2 from 'src/script/util/vec2'
+import util from '../../../render/util'
+import { makeCircleFromEllipse } from './simpleObjectUtil'
+import scale from '../../../util/scale'
 
 const tfx = util.tfx
 
@@ -30,14 +30,20 @@ class SimpleObjectResizeData {
   noinvalidate: boolean
   toCircle: boolean
 
-
-  constructor(id: string, d: any, current:Vec2, anchor:Vec2, noinvalidate: boolean, toCircle: boolean) {
-    this.id = id;
-    this.d = d;
-    this.current = current;
-    this.anchor = anchor;
-    this.noinvalidate = noinvalidate;
-    this.toCircle = toCircle;
+  constructor(
+    id: string,
+    d: any,
+    current: Vec2,
+    anchor: Vec2,
+    noinvalidate: boolean,
+    toCircle: boolean
+  ) {
+    this.id = id
+    this.d = d
+    this.current = current
+    this.anchor = anchor
+    this.noinvalidate = noinvalidate
+    this.toCircle = toCircle
   }
 }
 export class SimpleObjectResize extends Base {
@@ -52,7 +58,14 @@ export class SimpleObjectResize extends Base {
     toCircle: boolean
   ) {
     super(OperationType.SIMPLE_OBJECT_RESIZE)
-    this.data = new SimpleObjectResizeData(id, d, current, anchor, noinvalidate, toCircle)
+    this.data = new SimpleObjectResizeData(
+      id,
+      d,
+      current,
+      anchor,
+      noinvalidate,
+      toCircle
+    )
   }
 
   execute(restruct: any): void {
@@ -70,7 +83,7 @@ export class SimpleObjectResize extends Base {
         const previousPos0 = item.pos[0].get_xy0()
         const previousPos1 = item.pos[1].get_xy0()
 
-        if (tfx(anchor.x) === tfx(item.pos[1].x) ) {
+        if (tfx(anchor.x) === tfx(item.pos[1].x)) {
           console.log(4)
           item.pos[1].x = anchor.x = current.x
           this.data.current.x = previousPos1.x
@@ -109,18 +122,18 @@ export class SimpleObjectResize extends Base {
           const bottomRightY =
             item.pos[0].y <= item.pos[1].y ? item.pos[1] : item.pos[0]
           if (anchor.x <= topLeftX.x + rx) {
-              console.log(81)
-              topLeftX.x = current.x
+            console.log(81)
+            topLeftX.x = current.x
           } else {
             console.log(82)
-              bottomRightX.x = current.x
+            bottomRightX.x = current.x
           }
           if (anchor.y <= topLeftY.y + ry) {
             console.log(83)
-              topLeftY.y = current.y
+            topLeftY.y = current.y
           } else {
             console.log(84)
-              bottomRightY.y = current.y
+            bottomRightY.y = current.y
           }
         }
       } else if (this.data.toCircle) {

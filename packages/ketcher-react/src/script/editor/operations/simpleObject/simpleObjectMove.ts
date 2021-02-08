@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Base, {invalidateItem, OperationType} from "../base";
-import scale from "../../../util/scale";
+import Base, { invalidateItem, OperationType } from '../base'
+import scale from '../../../util/scale'
 
 class SimpleObjectMoveData {
   id: string
@@ -22,9 +22,9 @@ class SimpleObjectMoveData {
   noinvalidate: boolean
 
   constructor(id: string, d: any, noinvalidate: boolean) {
-    this.id = id;
-    this.d = d;
-    this.noinvalidate = noinvalidate;
+    this.id = id
+    this.d = d
+    this.noinvalidate = noinvalidate
   }
 }
 
@@ -36,7 +36,7 @@ export class SimpleObjectMove extends Base {
     this.data = new SimpleObjectMoveData(id, d, noinvalidate)
   }
   execute(restruct: any): void {
-    console.log("move")
+    console.log('move')
     const struct = restruct.molecule
     const id = this.data.id
     const d = this.data.d

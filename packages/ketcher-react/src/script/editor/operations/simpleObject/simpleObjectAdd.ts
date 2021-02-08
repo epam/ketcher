@@ -17,38 +17,39 @@ import Vec2 from '../../../util/vec2'
 import Base, { invalidateItem, OperationType } from '../base'
 import { ReSimpleObject } from '../../../render/restruct'
 import { SimpleObject, SimpleObjectMode } from 'src/script/chem/struct'
-import {makeCircleFromEllipse} from "./simpleObjectUtil";
+import { makeCircleFromEllipse } from './simpleObjectUtil'
 
 class SimpleObjectAddData {
-  id: string|null
+  id: string | null
   pos: Array<Vec2>
   mode: SimpleObjectMode
   toCircle: boolean
 
-  constructor(id: string, pos: Array<Vec2>, mode:SimpleObjectMode, toCircle: boolean) {
-    this.id = id;
-    this.pos = pos;
-    this.mode = mode;
-    this.toCircle = toCircle;
+  constructor(
+    id: string,
+    pos: Array<Vec2>,
+    mode: SimpleObjectMode,
+    toCircle: boolean
+  ) {
+    this.id = id
+    this.pos = pos
+    this.mode = mode
+    this.toCircle = toCircle
   }
 }
 export class SimpleObjectAdd extends Base {
   data: SimpleObjectAddData
   performed: boolean
 
-  constructor(
-    pos: Array<Vec2>,
-    mode: SimpleObjectMode,
-    toCircle: boolean
-  ) {
+  constructor(pos: Array<Vec2>, mode: SimpleObjectMode, toCircle: boolean) {
     super(OperationType.SIMPLE_OBJECT_ADD)
     // here is "tempValue is used
-    this.data = new SimpleObjectAddData("tempValue", pos, mode, toCircle)
+    this.data = new SimpleObjectAddData('tempValue', pos, mode, toCircle)
     this.performed = false
   }
 
   execute(restruct: any): void {
-    console.log("add")
+    console.log('add')
     const struct = restruct.molecule
     if (!this.performed) {
       this.data.id = struct.simpleObjects.add(

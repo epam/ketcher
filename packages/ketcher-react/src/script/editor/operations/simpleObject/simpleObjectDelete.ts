@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Base, {OperationType} from "../base";
-import {SimpleObjectMode} from "../../../chem/struct";
-import Vec2 from "src/script/util/vec2";
+import Base, { OperationType } from '../base'
+import { SimpleObjectMode } from '../../../chem/struct'
+import Vec2 from 'src/script/util/vec2'
 
 class SimpleObjectDeleteData {
   id: string
@@ -24,7 +24,7 @@ class SimpleObjectDeleteData {
   toCircle: boolean = false
 
   constructor(id: string) {
-    this.id = id;
+    this.id = id
   }
 }
 

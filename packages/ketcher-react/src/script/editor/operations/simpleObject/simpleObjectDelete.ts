@@ -17,15 +17,11 @@ import Base, { OperationType } from '../base'
 import { SimpleObjectMode } from '../../../chem/struct'
 import Vec2 from 'src/script/util/vec2'
 
-class SimpleObjectDeleteData {
+interface SimpleObjectDeleteData {
   id: string
-  pos: Array<Vec2> = []
-  mode: SimpleObjectMode = SimpleObjectMode.line
-  toCircle: boolean = false
-
-  constructor(id: string) {
-    this.id = id
-  }
+  pos?: Array<Vec2>
+  mode?: SimpleObjectMode
+  toCircle?: boolean
 }
 
 export class SimpleObjectDelete extends Base {
@@ -34,7 +30,7 @@ export class SimpleObjectDelete extends Base {
 
   constructor(id: string) {
     super(OperationType.SIMPLE_OBJECT_DELETE)
-    this.data = new SimpleObjectDeleteData(id)
+    this.data = { id, pos: [], mode: SimpleObjectMode.line, toCircle: false }
     this.performed = false
   }
 

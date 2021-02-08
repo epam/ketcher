@@ -19,32 +19,24 @@ import { ReSimpleObject } from '../../../render/restruct'
 import { SimpleObject, SimpleObjectMode } from 'src/script/chem/struct'
 import { makeCircleFromEllipse } from './simpleObjectUtil'
 
-class SimpleObjectAddData {
-  id: string | null
+interface SimpleObjectAddData {
+  id?: string
   pos: Array<Vec2>
   mode: SimpleObjectMode
   toCircle: boolean
-
-  constructor(
-    id: string,
-    pos: Array<Vec2>,
-    mode: SimpleObjectMode,
-    toCircle: boolean
-  ) {
-    this.id = id
-    this.pos = pos
-    this.mode = mode
-    this.toCircle = toCircle
-  }
 }
 export class SimpleObjectAdd extends Base {
   data: SimpleObjectAddData
   performed: boolean
 
-  constructor(pos: Array<Vec2>, mode: SimpleObjectMode, toCircle: boolean) {
+  constructor(
+    pos: Array<Vec2> = [],
+    mode: SimpleObjectMode = SimpleObjectMode.line,
+    toCircle: boolean = false
+  ) {
     super(OperationType.SIMPLE_OBJECT_ADD)
     // here is "tempValue is used
-    this.data = new SimpleObjectAddData('tempValue', pos, mode, toCircle)
+    this.data = { pos, mode, toCircle }
     this.performed = false
   }
 

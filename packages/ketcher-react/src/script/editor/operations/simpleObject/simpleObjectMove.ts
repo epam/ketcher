@@ -16,16 +16,10 @@
 import Base, { invalidateItem, OperationType } from '../base'
 import scale from '../../../util/scale'
 
-class SimpleObjectMoveData {
+interface SimpleObjectMoveData {
   id: string
   d: any
   noinvalidate: boolean
-
-  constructor(id: string, d: any, noinvalidate: boolean) {
-    this.id = id
-    this.d = d
-    this.noinvalidate = noinvalidate
-  }
 }
 
 export class SimpleObjectMove extends Base {
@@ -33,7 +27,7 @@ export class SimpleObjectMove extends Base {
 
   constructor(id: string, d: any, noinvalidate: boolean) {
     super(OperationType.SIMPLE_OBJECT_MOVE)
-    this.data = new SimpleObjectMoveData(id, d, noinvalidate)
+    this.data = { id, d, noinvalidate }
   }
   execute(restruct: any): void {
     const struct = restruct.molecule
@@ -47,5 +41,16 @@ export class SimpleObjectMove extends Base {
     this.data.d = d.negated()
     if (!this.data.noinvalidate)
       invalidateItem(restruct, 'simpleObjects', id, 1)
+  }
+
+  invert(): Base {
+    const move = new SimpleObjectMove(
+      this.data.id,
+      this.data.d,
+      this.data.noinvalidate
+    )
+    //todo Need further investigation on why this is needed?
+    move.data = this.data
+    return move
   }
 }

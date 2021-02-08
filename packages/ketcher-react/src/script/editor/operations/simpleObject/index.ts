@@ -15,56 +15,21 @@
  ***************************************************************************/
 import { SimpleObjectDelete } from './simpleObjectDelete'
 import { SimpleObjectAdd } from './simpleObjectAdd'
-import Base from '../base'
 import { SimpleObjectMove } from './simpleObjectMove'
 import { SimpleObjectResize } from './simpleObjectResize'
 
-class SimpleObjectAddImpl extends SimpleObjectAdd {
-  invert(): Base {
-    //@ts-ignore
-    return new SimpleObjectDelete(this.data.id)
-  }
+SimpleObjectAdd.prototype.invert = function () {
+  //@ts-ignore
+  return new SimpleObjectDelete(this.data.id)
 }
 
-class SimpleObjectDeleteImpl extends SimpleObjectDelete {
-  invert(): Base {
-    return new SimpleObjectAdd(
-      this.data.pos,
-      this.data.mode,
-      this.data.toCircle
-    )
-  }
-}
-
-class SimpleObjectMoveImpl extends SimpleObjectMove {
-  invert(): Base {
-    const move = new SimpleObjectMove(
-      this.data.id,
-      this.data.d,
-      this.data.noinvalidate
-    )
-    //todo why this is needed?
-    move.data = this.data
-    return move
-  }
-}
-
-class SimpleObjectResizeImpl extends SimpleObjectResize {
-  invert(): Base {
-    return new SimpleObjectResize(
-      this.data.id,
-      this.data.d,
-      this.data.current,
-      this.data.anchor,
-      this.data.noinvalidate,
-      this.data.toCircle
-    )
-  }
+SimpleObjectDelete.prototype.invert = function () {
+  return new SimpleObjectAdd(this.data.pos, this.data.mode, this.data.toCircle)
 }
 
 export {
-  SimpleObjectAddImpl as SimpleObjectAdd,
-  SimpleObjectDeleteImpl as SimpleObjectDelete,
-  SimpleObjectMoveImpl as SimpleObjectMove,
-  SimpleObjectResizeImpl as SimpleObjectResize
+  SimpleObjectAdd,
+  SimpleObjectDelete,
+  SimpleObjectMove,
+  SimpleObjectResize
 }

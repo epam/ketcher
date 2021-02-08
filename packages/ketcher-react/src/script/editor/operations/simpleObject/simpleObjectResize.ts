@@ -22,30 +22,94 @@ import scale from '../../../util/scale'
 
 const tfx = util.tfx
 
-class SimpleObjectResizeData {
+interface SimpleObjectResizeData {
   id: string
   d: any
   current: Vec2
   anchor: Vec2
   noinvalidate: boolean
   toCircle: boolean
+}
 
-  constructor(
-    id: string,
-    d: any,
-    current: Vec2,
-    anchor: Vec2,
-    noinvalidate: boolean,
-    toCircle: boolean
-  ) {
-    this.id = id
-    this.d = d
-    this.current = current
-    this.anchor = anchor
-    this.noinvalidate = noinvalidate
-    this.toCircle = toCircle
+function handleEllipseChangeIfAnchorIsOnAxis(anchor, item, current) {
+  const previousPos0 = item.pos[0].get_xy0()
+  const previousPos1 = item.pos[1].get_xy0()
+  if (tfx(anchor.x) === tfx(item.pos[1].x)) {
+    item.pos[1].x = anchor.x = current.x
+    current.x = previousPos1.x
+  }
+  if (tfx(anchor.y) === tfx(item.pos[1].y)) {
+    item.pos[1].y = anchor.y = current.y
+    current.y = previousPos1.y
+  }
+  if (tfx(anchor.x) === tfx(item.pos[0].x)) {
+    item.pos[0].x = anchor.x = current.x
+    current.x = previousPos0.x
+  }
+  if (tfx(anchor.y) === tfx(item.pos[0].y)) {
+    item.pos[0].y = anchor.y = current.y
+    current.y = previousPos0.y
   }
 }
+
+function handleEllipseChangeIfAnchorIsOnDiagonal(anchor, item, current) {
+  if (
+    tfx(anchor.y) !== tfx(item.pos[0].y) &&
+    tfx(anchor.x) !== tfx(item.pos[0].x) &&
+    tfx(anchor.y) !== tfx(item.pos[1].y) &&
+    tfx(anchor.x) !== tfx(item.pos[1].x)
+  ) {
+    const rad = Vec2.diff(item.pos[1], item.pos[0])
+    const rx = Math.abs(rad.x / 2)
+    const ry = Math.abs(rad.y / 2)
+    const topLeftX = item.pos[0].x <= item.pos[1].x ? item.pos[0] : item.pos[1]
+    const topLeftY = item.pos[0].y <= item.pos[1].y ? item.pos[0] : item.pos[1]
+    const bottomRightX =
+      item.pos[0].x <= item.pos[1].x ? item.pos[1] : item.pos[0]
+    const bottomRightY =
+      item.pos[0].y <= item.pos[1].y ? item.pos[1] : item.pos[0]
+    //check in which quarter the anchor is placed
+    const firstQuarter =
+      anchor.x > topLeftX.x + rx && anchor.y <= topLeftY.y + ry
+    const secondQuarter =
+      anchor.x <= topLeftX.x + rx && anchor.y <= topLeftY.y + ry
+    const thirdQuarter =
+      anchor.x <= topLeftX.x + rx && anchor.y > topLeftY.y + ry
+    const forthQuarter =
+      anchor.x > topLeftX.x + rx && anchor.y > topLeftY.y + ry
+    if (current.x >= topLeftX.x && (firstQuarter || forthQuarter))
+      bottomRightX.x = current.x
+    if (current.y <= bottomRightY.y && (firstQuarter || secondQuarter))
+      topLeftY.y = current.y
+    if (current.x <= bottomRightX.x && (secondQuarter || thirdQuarter))
+      topLeftX.x = current.x
+    if (current.y >= topLeftY.y && (thirdQuarter || forthQuarter))
+      bottomRightY.y = current.y
+  }
+}
+
+function handleRectangleChangeWithAnchor(item, anchor, current) {
+  const previousPos0 = item.pos[0].get_xy0()
+  const previousPos1 = item.pos[1].get_xy0()
+
+  if (tfx(anchor.x) === tfx(item.pos[1].x)) {
+    item.pos[1].x = anchor.x = current.x
+    current.x = previousPos1.x
+  }
+  if (tfx(anchor.y) === tfx(item.pos[1].y)) {
+    item.pos[1].y = anchor.y = current.y
+    current.y = previousPos1.y
+  }
+  if (tfx(anchor.x) === tfx(item.pos[0].x)) {
+    item.pos[0].x = anchor.x = current.x
+    current.x = previousPos0.x
+  }
+  if (tfx(anchor.y) === tfx(item.pos[0].y)) {
+    item.pos[0].y = anchor.y = current.y
+    current.y = previousPos0.y
+  }
+}
+
 export class SimpleObjectResize extends Base {
   data: SimpleObjectResizeData
 
@@ -58,14 +122,7 @@ export class SimpleObjectResize extends Base {
     toCircle: boolean
   ) {
     super(OperationType.SIMPLE_OBJECT_RESIZE)
-    this.data = new SimpleObjectResizeData(
-      id,
-      d,
-      current,
-      anchor,
-      noinvalidate,
-      toCircle
-    )
+    this.data = { id, d, current, anchor, noinvalidate, toCircle }
   }
 
   execute(restruct: any): void {
@@ -77,59 +134,8 @@ export class SimpleObjectResize extends Base {
     const anchor = this.data.anchor
     if (item.mode === SimpleObjectMode.ellipse) {
       if (anchor) {
-        const previousPos0 = item.pos[0].get_xy0()
-        const previousPos1 = item.pos[1].get_xy0()
-
-        if (tfx(anchor.x) === tfx(item.pos[1].x)) {
-          item.pos[1].x = anchor.x = current.x
-          this.data.current.x = previousPos1.x
-        }
-        if (tfx(anchor.y) === tfx(item.pos[1].y)) {
-          item.pos[1].y = anchor.y = current.y
-          this.data.current.y = previousPos1.y
-        }
-        if (tfx(anchor.x) === tfx(item.pos[0].x)) {
-          item.pos[0].x = anchor.x = current.x
-          this.data.current.x = previousPos0.x
-        }
-        if (tfx(anchor.y) === tfx(item.pos[0].y)) {
-          item.pos[0].y = anchor.y = current.y
-          this.data.current.y = previousPos0.y
-        }
-        if (
-          tfx(anchor.y) !== tfx(item.pos[0].y) &&
-          tfx(anchor.x) !== tfx(item.pos[0].x) &&
-          tfx(anchor.y) !== tfx(item.pos[1].y) &&
-          tfx(anchor.x) !== tfx(item.pos[1].x)
-        ) {
-          const rad = Vec2.diff(item.pos[1], item.pos[0])
-          const rx = Math.abs(rad.x / 2)
-          const ry = Math.abs(rad.y / 2)
-          const topLeftX =
-            item.pos[0].x <= item.pos[1].x ? item.pos[0] : item.pos[1]
-          const topLeftY =
-            item.pos[0].y <= item.pos[1].y ? item.pos[0] : item.pos[1]
-          const bottomRightX =
-            item.pos[0].x <= item.pos[1].x ? item.pos[1] : item.pos[0]
-          const bottomRightY =
-            item.pos[0].y <= item.pos[1].y ? item.pos[1] : item.pos[0]
-          const firstQuarter =
-            anchor.x > topLeftX.x + rx && anchor.y <= topLeftY.y + ry
-          const secondQuarter =
-            anchor.x <= topLeftX.x + rx && anchor.y <= topLeftY.y + ry
-          const thirdQuarter =
-            anchor.x <= topLeftX.x + rx && anchor.y > topLeftY.y + ry
-          const forthQuarter =
-            anchor.x > topLeftX.x + rx && anchor.y > topLeftY.y + ry
-          if (current.x >= topLeftX.x && (firstQuarter || forthQuarter))
-            bottomRightX.x = current.x
-          if (current.y <= bottomRightY.y && (firstQuarter || secondQuarter))
-            topLeftY.y = current.y
-          if (current.x <= bottomRightX.x && (secondQuarter || thirdQuarter))
-            topLeftX.x = current.x
-          if (current.y >= topLeftY.y && (thirdQuarter || forthQuarter))
-            bottomRightY.y = current.y
-        }
+        handleEllipseChangeIfAnchorIsOnAxis(anchor, item, current)
+        handleEllipseChangeIfAnchorIsOnDiagonal(anchor, item, current)
       } else if (this.data.toCircle) {
         const previousPos1 = item.pos[1].get_xy0()
         const circlePoint = makeCircleFromEllipse(item.pos[0], current)
@@ -148,25 +154,7 @@ export class SimpleObjectResize extends Base {
       anchor.y = current.y
       this.data.current = previousPos1
     } else if (item.mode === SimpleObjectMode.rectangle && anchor) {
-      const previousPos0 = item.pos[0].get_xy0()
-      const previousPos1 = item.pos[1].get_xy0()
-
-      if (tfx(anchor.x) === tfx(item.pos[1].x)) {
-        item.pos[1].x = anchor.x = current.x
-        this.data.current.x = previousPos1.x
-      }
-      if (tfx(anchor.y) === tfx(item.pos[1].y)) {
-        item.pos[1].y = anchor.y = current.y
-        this.data.current.y = previousPos1.y
-      }
-      if (tfx(anchor.x) === tfx(item.pos[0].x)) {
-        item.pos[0].x = anchor.x = current.x
-        this.data.current.x = previousPos0.x
-      }
-      if (tfx(anchor.y) === tfx(item.pos[0].y)) {
-        item.pos[0].y = anchor.y = current.y
-        this.data.current.y = previousPos0.y
-      }
+      handleRectangleChangeWithAnchor.call(this, item, anchor, current)
     } else item.pos[1].add_(d)
 
     restruct.simpleObjects
@@ -175,5 +163,15 @@ export class SimpleObjectResize extends Base {
     this.data.d = d.negated()
     if (!this.data.noinvalidate)
       invalidateItem(restruct, 'simpleObjects', id, 1)
+  }
+  invert(): Base {
+    return new SimpleObjectResize(
+      this.data.id,
+      this.data.d,
+      this.data.current,
+      this.data.anchor,
+      this.data.noinvalidate,
+      this.data.toCircle
+    )
   }
 }

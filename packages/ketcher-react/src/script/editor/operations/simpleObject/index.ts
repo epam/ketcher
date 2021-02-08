@@ -38,11 +38,14 @@ class SimpleObjectDeleteImpl extends SimpleObjectDelete {
 
 class SimpleObjectMoveImpl extends SimpleObjectMove {
   invert(): Base {
-    return new SimpleObjectMove(
+    const move = new SimpleObjectMove(
       this.data.id,
       this.data.d,
       this.data.noinvalidate
     )
+    //todo why this is needed?
+    move.data = this.data
+    return move
   }
 }
 

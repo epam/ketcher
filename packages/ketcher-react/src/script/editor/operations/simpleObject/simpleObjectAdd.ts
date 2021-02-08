@@ -49,7 +49,6 @@ export class SimpleObjectAdd extends Base {
   }
 
   execute(restruct: any): void {
-    console.log('add')
     const struct = restruct.molecule
     if (!this.performed) {
       this.data.id = struct.simpleObjects.add(

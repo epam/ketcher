@@ -75,31 +75,24 @@ export class SimpleObjectResize extends Base {
     const current = this.data.current
     const item = struct.simpleObjects.get(id)
     const anchor = this.data.anchor
-    console.log(1)
     if (item.mode === SimpleObjectMode.ellipse) {
-      console.log(2)
       if (anchor) {
-        console.log(3)
         const previousPos0 = item.pos[0].get_xy0()
         const previousPos1 = item.pos[1].get_xy0()
 
         if (tfx(anchor.x) === tfx(item.pos[1].x)) {
-          console.log(4)
           item.pos[1].x = anchor.x = current.x
           this.data.current.x = previousPos1.x
         }
         if (tfx(anchor.y) === tfx(item.pos[1].y)) {
-          console.log(5)
           item.pos[1].y = anchor.y = current.y
           this.data.current.y = previousPos1.y
         }
         if (tfx(anchor.x) === tfx(item.pos[0].x)) {
-          console.log(6)
           item.pos[0].x = anchor.x = current.x
           this.data.current.x = previousPos0.x
         }
         if (tfx(anchor.y) === tfx(item.pos[0].y)) {
-          console.log(7)
           item.pos[0].y = anchor.y = current.y
           this.data.current.y = previousPos0.y
         }
@@ -109,7 +102,6 @@ export class SimpleObjectResize extends Base {
           tfx(anchor.y) !== tfx(item.pos[1].y) &&
           tfx(anchor.x) !== tfx(item.pos[1].x)
         ) {
-          console.log(8)
           const rad = Vec2.diff(item.pos[1], item.pos[0])
           const rx = Math.abs(rad.x / 2)
           const ry = Math.abs(rad.y / 2)
@@ -121,30 +113,30 @@ export class SimpleObjectResize extends Base {
             item.pos[0].x <= item.pos[1].x ? item.pos[1] : item.pos[0]
           const bottomRightY =
             item.pos[0].y <= item.pos[1].y ? item.pos[1] : item.pos[0]
-          if (anchor.x <= topLeftX.x + rx) {
-            console.log(81)
-            topLeftX.x = current.x
-          } else {
-            console.log(82)
+          const firstQuarter =
+            anchor.x > topLeftX.x + rx && anchor.y <= topLeftY.y + ry
+          const secondQuarter =
+            anchor.x <= topLeftX.x + rx && anchor.y <= topLeftY.y + ry
+          const thirdQuarter =
+            anchor.x <= topLeftX.x + rx && anchor.y > topLeftY.y + ry
+          const forthQuarter =
+            anchor.x > topLeftX.x + rx && anchor.y > topLeftY.y + ry
+          if (current.x >= topLeftX.x && (firstQuarter || forthQuarter))
             bottomRightX.x = current.x
-          }
-          if (anchor.y <= topLeftY.y + ry) {
-            console.log(83)
+          if (current.y <= bottomRightY.y && (firstQuarter || secondQuarter))
             topLeftY.y = current.y
-          } else {
-            console.log(84)
+          if (current.x <= bottomRightX.x && (secondQuarter || thirdQuarter))
+            topLeftX.x = current.x
+          if (current.y >= topLeftY.y && (thirdQuarter || forthQuarter))
             bottomRightY.y = current.y
-          }
         }
       } else if (this.data.toCircle) {
-        console.log(9)
         const previousPos1 = item.pos[1].get_xy0()
         const circlePoint = makeCircleFromEllipse(item.pos[0], current)
         item.pos[1].x = circlePoint.x
         item.pos[1].y = circlePoint.y
         this.data.current = previousPos1
       } else {
-        console.log(10)
         const previousPos1 = item.pos[1].get_xy0()
         item.pos[1].x = current.x
         item.pos[1].y = current.y

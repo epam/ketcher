@@ -257,14 +257,15 @@ ReSimpleObject.prototype.highlightPath = function (render) {
           tfx(Math.abs(ry) + s / 8)
         )
       )
-      path.push(
-        render.paper.ellipse(
-          tfx(point[0].x + rx),
-          tfx(point[0].y + ry),
-          tfx(Math.abs(rx) - s / 8),
-          tfx(Math.abs(ry) - s / 8)
+      if (Math.abs(rx) - s / 8 > 0 && Math.abs(ry) - s / 8 > 0)
+        path.push(
+          render.paper.ellipse(
+            tfx(point[0].x + rx),
+            tfx(point[0].y + ry),
+            tfx(Math.abs(rx) - s / 8),
+            tfx(Math.abs(ry) - s / 8)
+          )
         )
-      )
       break
     }
 

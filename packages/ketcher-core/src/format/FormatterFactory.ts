@@ -6,7 +6,6 @@ import {
 } from '../chem'
 import { StructService, StructServiceOptions } from '../infrastructure/services'
 import {
-  StructProvider,
   StructFormatter,
   SupportedFormat,
   FormatterFactoryOptions
@@ -19,7 +18,6 @@ import { SmilesFormatter } from './SmilesFormatter'
 
 export class FormatterFactory {
   constructor(
-    private readonly structProvider: StructProvider,
     private readonly structService: StructService,
     private readonly graphManager: GraphManager,
     private readonly molfileManager: MolfileManager,
@@ -62,28 +60,22 @@ export class FormatterFactory {
     let formatter: StructFormatter
     switch (format) {
       case 'graph':
-        formatter = new GraphFormatter(this.structProvider, this.graphManager)
+        formatter = new GraphFormatter(this.graphManager)
         break
 
       case 'mol':
         formatter = new MolfileV2000Formatter(
-          this.structProvider,
           this.molfileManager,
           molfileParseOptions
         )
         break
 
       case 'rxn':
-        formatter = new RxnFormatter(
-          this.structProvider,
-          this.molfileManager,
-          molfileParseOptions
-        )
+        formatter = new RxnFormatter(this.molfileManager, molfileParseOptions)
         break
 
       case 'smiles':
         formatter = new SmilesFormatter(
-          this.structProvider,
           this.smilesManager,
 
           // only for ServerFormatter, because 'getStructureFromStringAsync' is delegated to it
@@ -104,7 +96,6 @@ export class FormatterFactory {
       case 'smarts':
       default:
         formatter = new ServerFormatter(
-          this.structProvider,
           this.structService,
           this.molfileManager,
           format,

@@ -1,16 +1,8 @@
 import { GraphManager, Struct } from '../chem'
-import { StructFormatter, StructProvider } from './structFormatter.types'
+import { StructFormatter } from './structFormatter.types'
 
-export class GraphFormatter implements StructFormatter<string> {
-  constructor(
-    private readonly structProvider: StructProvider,
-    private readonly graphManager: GraphManager
-  ) {}
-
-  async getStructureAsync(): Promise<string> {
-    const struct = this.structProvider.struct()
-    return this.getStructureFromStructAsync(struct)
-  }
+export class GraphFormatter implements StructFormatter {
+  constructor(private readonly graphManager: GraphManager) {}
 
   getStructureFromStructAsync(struct: Struct): Promise<string> {
     const graph = this.graphManager.toGraph(struct)

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { Dialog } from '../../views/components'
 import Input from '../../component/form/input'
-import StructEditor from '../../component/structeditor'
+import { StructEditor, Dialog } from '../../views/components'
 import { storage } from '../../storage-ext'
 
 import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'

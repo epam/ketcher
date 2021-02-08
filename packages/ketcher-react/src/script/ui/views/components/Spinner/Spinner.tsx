@@ -14,4 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './GenericGroups'
+import React, { ReactElement } from 'react'
+
+import styles from './Spinner.module.less'
+
+function Spinner(): ReactElement {
+  return <div className={styles.spinner} />
+}
+
+export default Spinner

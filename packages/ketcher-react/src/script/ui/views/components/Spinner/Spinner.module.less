@@ -14,4 +14,31 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './GenericGroups'
+.spinner {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::after {
+    display: block;
+    content: '';
+    border-radius: 50%;
+    height: 2px;
+    width: 2px;
+    box-shadow: 10px 0 0 2px #333, 7px 7px 0 2px #999, 0 10px 0 2px #999,
+      -7px 7px 0 2px #999, -10px 0 0 2px #999, -7px -7px 0 2px #999,
+      0 -10px 0 2px #333, 7px -7px 0 2px #111;
+    animation: rotate 0.7s steps(8) infinite;
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}

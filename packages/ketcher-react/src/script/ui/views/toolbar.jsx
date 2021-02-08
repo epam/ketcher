@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -147,6 +147,8 @@ const elements = [
   'period-table'
 ]
 
+const disableableButtons = ['layout', 'clean', 'arom', 'dearom', 'cip']
+
 function ZoomList({ status, onAction }) {
   const zoom = status.zoom && status.zoom.selected // TMP
   return (
@@ -232,7 +234,8 @@ const mapStateToProps = state => ({
   status: state.actionState || {},
   freqAtoms: state.toolbar.freqAtoms,
   opened: state.toolbar.opened,
-  visibleTools: state.toolbar.visibleTools
+  visibleTools: state.toolbar.visibleTools,
+  indigoVerification: state.requestsStatuses.indigoVerification
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -246,4 +249,11 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(props => <ActionMenu menu={initToolbar()} role="toolbar" {...props} />)
+)(props => (
+  <ActionMenu
+    disableableButtons={disableableButtons}
+    menu={initToolbar()}
+    role="toolbar"
+    {...props}
+  />
+))

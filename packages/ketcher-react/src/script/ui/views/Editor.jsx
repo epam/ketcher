@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@
 
 import { connect } from 'react-redux'
 import initEditor from '../state/editor'
-import StructEditor from '../component/structeditor'
+import { StructEditor } from './components'
 
 const Editor = connect(
   state => ({
-    options: state.options.settings
+    options: state.options.settings,
+    indigoVerification: state.requestsStatuses.indigoVerification
   }),
   dispatch => dispatch(initEditor)
 )(StructEditor)

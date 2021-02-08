@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import modalReducer from './modal'
 import optionsReducer, { initOptionsState } from './options'
 import templatesReducer, { initTmplsState } from './templates'
 import toolbarReducer from './toolbar'
+import requestReducer from './request'
 
 import { onAction, load } from './shared'
 
@@ -37,7 +38,8 @@ const shared = combineReducers({
   server: (store = null) => store,
   editor: (store = null) => store,
   options: optionsReducer,
-  templates: templatesReducer
+  templates: templatesReducer,
+  requestsStatuses: requestReducer
 })
 
 function getRootReducer(setEditor) {

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 import { upperFirst } from 'lodash/fp'
 import React, { Component, createRef } from 'react'
-import Editor from '../../editor'
+import Editor from '../../../../editor'
+import Spinner from '../Spinner'
+
+import styles from './StructEditor.module.less'
 
 //TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -59,8 +62,8 @@ class StructEditor extends Component {
     this.logRef = createRef()
   }
 
-  shouldComponentUpdate() {
-    return false
+  shouldComponentUpdate(nextProps) {
+    return this.props.indigoVerification !== nextProps.indigoVerification
   }
 
   componentWillReceiveProps(props) {
@@ -109,15 +112,22 @@ class StructEditor extends Component {
       onAromatizeStruct,
       onDearomatizeStruct,
       onAttachEdit,
+      indigoVerification,
       ...props
     } = this.props
+
     return (
       <Tag
-        onMouseDown={ev => ev.preventDefault()}
+        onMouseDown={event => event.preventDefault()}
         {...props}
         ref={this.editorRef}>
         {/* svg here */}
         <div className="measure-log" ref={this.logRef} />
+        {indigoVerification && (
+          <div className={styles.spinner_overlay}>
+            <Spinner />
+          </div>
+        )}
       </Tag>
     )
   }

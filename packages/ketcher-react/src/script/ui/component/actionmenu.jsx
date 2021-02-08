@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,18 +60,27 @@ export function showMenuOrButton(action, item, status, props) {
   return item.component(props)
 }
 
-function ActionButton({ name, action, status = {}, onAction }) {
+function ActionButton({
+  name,
+  action,
+  status = {},
+  onAction,
+  disableableButtons,
+  indigoVerification
+}) {
   // eslint-disable-line no-shadow
   const shortcut = action.shortcut && shortcutStr(action.shortcut)
   const menuRef = useRef(null)
+  const disabled =
+    status.disabled || (indigoVerification && disableableButtons.includes(name))
   return (
     <button
       ref={menuRef}
-      disabled={status.disabled}
-      onClick={ev => {
+      disabled={disabled}
+      onClick={event => {
         if (!status.selected || isMenuOpened(menuRef.current)) {
           onAction(action.action)
-          ev.stopPropagation()
+          event.stopPropagation()
         }
       }}
       title={shortcut ? `${action.title} (${shortcut})` : action.title}>
@@ -122,6 +131,7 @@ function renderActiveMenuItem(item, props) {
   return (
     activeMenuItem && (
       <ActionButton
+        {...props}
         {...attrs}
         name={activeMenuItem}
         action={action[activeMenuItem]}

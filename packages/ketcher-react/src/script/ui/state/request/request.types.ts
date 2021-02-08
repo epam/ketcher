@@ -14,4 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './GenericGroups'
+export const INDIGO_VERIFICATION = 'INDIGO_VERIFICATION'
+
+export interface RequestState {
+  indigoVerification: boolean
+}
+
+interface IndigoVerificationAction {
+  type: typeof INDIGO_VERIFICATION
+  data: boolean
+}
+
+export type RequestActionTypes = IndigoVerificationAction

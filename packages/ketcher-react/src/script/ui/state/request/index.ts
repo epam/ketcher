@@ -14,4 +14,37 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './GenericGroups'
+import {
+  INDIGO_VERIFICATION,
+  RequestActionTypes,
+  RequestState
+} from './request.types'
+
+export function indigoVerification(data: boolean): RequestActionTypes {
+  return {
+    type: INDIGO_VERIFICATION,
+    data
+  }
+}
+
+const initialState = {
+  indigoVerification: false
+}
+
+export default function (
+  state = initialState,
+  action: RequestActionTypes
+): RequestState {
+  const { type, data } = action
+
+  switch (type) {
+    case INDIGO_VERIFICATION: {
+      return {
+        ...state,
+        indigoVerification: data
+      }
+    }
+    default:
+      return state
+  }
+}

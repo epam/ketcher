@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import molfile from '../../../chem/molfile'
 import { setStruct, appUpdate } from '../options'
 import { checkErrors } from '../modal/form'
 import { load } from '../shared'
+import { indigoVerification } from '../request'
 
 export function checkServer() {
   return (dispatch, getState) => {
@@ -141,6 +142,7 @@ export function serverTransform(method, data, struct) {
     const state = getState()
     const opts = state.options.getServerSettings()
     opts.data = data
+    dispatch(indigoVerification(true))
 
     serverCall(state.editor, state.server, method, opts, struct)
       .then(res =>
@@ -153,6 +155,9 @@ export function serverTransform(method, data, struct) {
       )
       .catch(e => {
         //TODO: add error handler call
+      })
+      .finally(() => {
+        dispatch(indigoVerification(false))
       })
     // TODO: notification
   }

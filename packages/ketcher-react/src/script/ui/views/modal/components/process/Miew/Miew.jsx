@@ -100,9 +100,6 @@ class MiewDialog extends Component {
     if (this.viewer.init()) this.viewer.run()
 
     const factory = new FormatterFactory(
-      {
-        struct: () => struct
-      },
       server,
       graphManager,
       molfileManager,
@@ -111,7 +108,7 @@ class MiewDialog extends Component {
     const service = factory.create('cml')
 
     service
-      .getStructureAsync()
+      .getStructureFromStructAsync(struct)
       .then(res =>
         this.viewer.load(res, { sourceType: 'immediate', fileType: 'cml' })
       )

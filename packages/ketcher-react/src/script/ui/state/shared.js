@@ -37,9 +37,6 @@ export function load(structStr, options) {
 
     const format = identifyStructFormat(structStr)
     const factory = new FormatterFactory(
-      {
-        struct: () => null
-      },
       server,
       graphManager,
       molfileManager,

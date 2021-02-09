@@ -22,13 +22,13 @@ const errorRegexp = /error:.*/g
 
 function formulaInputMarkdown(formulaDescriptor) {
   return (
-    formulaDescriptor?.length > 0 && (
-      <div
-        className={styles.chem_input}
-        spellCheck="false"
-        contentEditable
-        suppressContentEditableWarning={true}>
-        {formulaDescriptor.map(elementDescriptor => {
+    <div
+      className={styles.chem_input}
+      spellCheck="false"
+      contentEditable
+      suppressContentEditableWarning={true}>
+      {formulaDescriptor?.length > 0 &&
+        formulaDescriptor.map(elementDescriptor => {
           return (
             <React.Fragment key={elementDescriptor.symbol}>
               {elementDescriptor.isotope > 0 && (
@@ -41,8 +41,7 @@ function formulaInputMarkdown(formulaDescriptor) {
             </React.Fragment>
           )
         })}
-      </div>
-    )
+    </div>
   )
 }
 

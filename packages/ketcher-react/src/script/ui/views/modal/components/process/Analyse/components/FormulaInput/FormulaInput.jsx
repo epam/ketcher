@@ -22,7 +22,7 @@ const errorRegexp = /error:.*/g
 
 function formulaInputMarkdown(formulaDescriptor) {
   return (
-    formulaDescriptor?.length && (
+    formulaDescriptor?.length > 0 && (
       <div
         className={styles.chem_input}
         spellCheck="false"
@@ -48,7 +48,15 @@ function formulaInputMarkdown(formulaDescriptor) {
 
 function FormulaInput({ value }) {
   if (errorRegexp.test(value)) {
-    return formulaInputMarkdown(value)
+    return (
+      <div
+        className={styles.chem_input}
+        spellCheck="false"
+        contentEditable
+        suppressContentEditableWarning={true}>
+        {value}
+      </div>
+    )
   }
 
   const content = []

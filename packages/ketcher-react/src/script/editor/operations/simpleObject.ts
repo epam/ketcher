@@ -17,8 +17,8 @@ import Vec2 from '../../util/vec2'
 import Base, { invalidateItem, OperationType } from './base'
 import { ReSimpleObject } from '../../render/restruct'
 import { SimpleObject, SimpleObjectMode } from 'src/script/chem/struct'
-import scale from "../../util/scale";
-import util from "../../render/util";
+import scale from '../../util/scale'
+import util from '../../render/util'
 
 const tfx = util.tfx
 
@@ -115,10 +115,13 @@ export class SimpleObjectDelete extends Base {
   }
 
   invert(): Base {
-    return new SimpleObjectAdd(this.data.pos, this.data.mode, this.data.toCircle)
+    return new SimpleObjectAdd(
+      this.data.pos,
+      this.data.mode,
+      this.data.toCircle
+    )
   }
 }
-
 
 interface SimpleObjectMoveData {
   id: string
@@ -158,7 +161,6 @@ export class SimpleObjectMove extends Base {
     return move
   }
 }
-
 
 interface SimpleObjectResizeData {
   id: string
@@ -201,32 +203,27 @@ function handleEllipseChangeIfAnchorIsOnDiagonal(item, current) {
   const bottomRightY =
     item.pos[0].y <= item.pos[1].y ? item.pos[1] : item.pos[0]
   //check in which quarter the anchor is placed
-  const firstQuarter = current.x > topLeftX.x + rx && current.y <= topLeftY.y + ry
+  const firstQuarter =
+    current.x > topLeftX.x + rx && current.y <= topLeftY.y + ry
   const secondQuarter =
     current.x <= topLeftX.x + rx && current.y <= topLeftY.y + ry
-  const thirdQuarter = current.x <= topLeftX.x + rx && current.y > topLeftY.y + ry
-  const forthQuarter = current.x > topLeftX.x + rx && current.y > topLeftY.y + ry
-  console.log(rad, firstQuarter, secondQuarter, thirdQuarter, forthQuarter)
-  console.log(current, topLeftX,topLeftY, bottomRightX, bottomRightY)
-  if (firstQuarter) {
+  const thirdQuarter =
+    current.x <= topLeftX.x + rx && current.y > topLeftY.y + ry
+  const forthQuarter =
+    current.x > topLeftX.x + rx && current.y > topLeftY.y + ry
 
-  }
   if (current.x > topLeftX.x && (firstQuarter || forthQuarter)) {
     bottomRightX.x = current.x
-    console.log(1)
   }
 
-  if (current.y < bottomRightY.y && (firstQuarter || secondQuarter)){
+  if (current.y < bottomRightY.y && (firstQuarter || secondQuarter)) {
     topLeftY.y = current.y
-    console.log(2)
   }
-  if (current.x < bottomRightX.x && (secondQuarter || thirdQuarter)){
+  if (current.x < bottomRightX.x && (secondQuarter || thirdQuarter)) {
     topLeftX.x = current.x
-    console.log(3)
   }
-  if (current.y > topLeftY.y && (thirdQuarter || forthQuarter)){
+  if (current.y > topLeftY.y && (thirdQuarter || forthQuarter)) {
     bottomRightY.y = current.y
-    console.log(4)
   }
 }
 
@@ -304,7 +301,7 @@ export class SimpleObjectResize extends Base {
       anchor.y = current.y
       this.data.current = previousPos1
     } else if (item.mode === SimpleObjectMode.rectangle && anchor) {
-      handleRectangleChangeWithAnchor.call(this, item, anchor, current)
+      handleRectangleChangeWithAnchor(item, anchor, current)
     } else item.pos[1].add_(d)
 
     restruct.simpleObjects

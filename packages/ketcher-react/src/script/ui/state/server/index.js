@@ -163,16 +163,16 @@ export function serverTransform(method, data, struct) {
   }
 }
 
-export function serverCall(editor, server, method, options, struct) {
+export function serverCall(editor, server, method, options) {
   const selection = editor.selection()
   let selectedAtoms = []
-
+  let struct = editor.struct()
   if (selection)
     selectedAtoms = selection.atoms
       ? selection.atoms
       : editor.explicitSelected().atoms
 
-  if (!struct) {
+  if (struct.hasRxnArrow()) {
     const aidMap = new Map()
     struct = editor.struct().clone(null, null, false, aidMap)
 

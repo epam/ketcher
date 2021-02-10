@@ -39,25 +39,28 @@ class Tabs extends Component {
     const Component = tabPanel?.component
     const componentProps = tabPanel?.props
     return (
-      <ul {...other}>
-        <li className={styles.tabs}>
-          {tabs.map((tabPanel, index) => (
-            <a // eslint-disable-line
-              key={index}
-              className={clsx({
-                [styles.active]: this.state.tabIndex === index
-              })}
-              onClick={ev => this.changeTab(ev, index)}>
-              {tabPanel.caption}
-            </a>
-          ))}
-        </li>
-        {tabPanel && (
-          <li className={contentClassName}>
-            <Component {...componentProps} />
+      <div>
+        <ul {...other}>
+          <li className={styles.tabs}>
+            {tabs.map((tabPanel, index) => (
+              <a // eslint-disable-line
+                key={index}
+                className={clsx({
+                  [styles.active]: this.state.tabIndex === index
+                })}
+                onClick={ev => this.changeTab(ev, index)}>
+                {tabPanel.caption}
+              </a>
+            ))}
           </li>
+        </ul>
+        {tabPanel && (
+          <div className={contentClassName}>
+            <Component {...componentProps} />
+          </div>
         )}
-      </ul>
+
+      </div>
     )
   }
 }

@@ -133,13 +133,15 @@ class MiewDialog extends Component {
           'Close',
           <button onClick={() => this.exportCML()}>Apply</button>
         ]}>
-        <div
-          ref={el => {
-            this.miewContainer = el
-          }}
-          className="miew-container"
-          style={{ width: '1024px', height: '600px', position: 'relative' }}
-        />
+        <div className={styles.dialog_body}>
+          <div
+            ref={el => {
+              this.miewContainer = el
+            }}
+            className="miew-container"
+            style={{ width: '1024px', height: '600px', position: 'relative' }}
+          />
+        </div>
       </Dialog>
     )
   }

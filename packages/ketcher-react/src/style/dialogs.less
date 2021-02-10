@@ -3,13 +3,15 @@
 @import (reference) 'component';
 
 .ket-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: fixed;
   left: 0;
   top: 0;
   bottom: 0;
   right: 0;
   z-index: 40;
-  text-align: center;
 
   background-image: data-uri('overlay.svg');
   .background-opacity(#777, 0.2);
@@ -825,12 +827,12 @@ form.settings {
   min-width: 800px;
   border: 0;
 }
-
-.dialog-body {
-  max-width: 80vw;
-  max-height: 80vh;
-  overflow: auto;
-}
+//
+//.displayialog-body {
+//  max-width: 80vw;
+//  max-height: 80vh;
+//  overflow: auto;
+//}
 
 .miew {
   .warning {

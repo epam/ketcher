@@ -44,6 +44,7 @@ import {
   deleteTmpl
 } from '../../state/templates'
 import { onAction } from '../../state'
+import styles from './template-lib.module.less'
 
 const GREEK_SIMBOLS = {
   Alpha: 'A',
@@ -195,31 +196,33 @@ class TemplateLib extends Component {
           'Cancel',
           'OK'
         ]}>
-        <label>
-          Filter:
+        <div className={styles.dialog_body}>
+          <label>
+            Filter:
+            <Input
+              type="search"
+              value={filter}
+              onChange={value => onFilter(value)}
+            />
+          </label>
           <Input
-            type="search"
-            value={filter}
-            onChange={value => onFilter(value)}
+            className="groups"
+            component={SelectList}
+            splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
+            value={group}
+            onChange={g => onChangeGroup(g)}
+            schema={{
+              enum: Object.keys(lib),
+              enumNames: Object.keys(lib).map(g => greekify(g))
+            }}
           />
-        </label>
-        <Input
-          className="groups"
-          component={SelectList}
-          splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
-          value={group}
-          onChange={g => onChangeGroup(g)}
-          schema={{
-            enum: Object.keys(lib),
-            enumNames: Object.keys(lib).map(g => greekify(g))
-          }}
-        />
-        <VisibleView
-          data={libRowsSelector({ lib, group, COLS })}
-          rowHeight={120}
-          className="table"
-          render={(row, i) => this.renderRow(row, i, COLS)}
-        />
+          <VisibleView
+            data={libRowsSelector({ lib, group, COLS })}
+            rowHeight={120}
+            className="table"
+            render={(row, i) => this.renderRow(row, i, COLS)}
+          />
+        </div>
       </Dialog>
     )
   }

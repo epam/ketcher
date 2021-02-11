@@ -26,7 +26,7 @@ import {
 import { usePortalOpening } from './usePortalOpening'
 import { usePortalStyle } from './usePortalStyle'
 
-import styles from './ToolbarMultiToolItem.module.less'
+import classes from './ToolbarMultiToolItem.module.less'
 
 interface ToolbarMultiToolItemProps {
   id: ToolbarItemVariant
@@ -37,6 +37,7 @@ interface ToolbarMultiToolItemProps {
   opened: any | null
   disableableButtons: string[]
   indigoVerification: boolean
+  className?: string
 }
 
 interface ToolbarMultiToolItemCallProps {
@@ -54,6 +55,7 @@ const ToolbarMultiToolItem = (props: Props) => {
     opened,
     indigoVerification,
     disableableButtons,
+    className,
     onAction,
     onOpen
   } = props
@@ -97,19 +99,20 @@ const ToolbarMultiToolItem = (props: Props) => {
   }
 
   return (
-    <div ref={ref} className={styles.root}>
+    <div ref={ref} className={classes.root}>
       <ActionButton
         {...actionButtonProps}
+        className={className}
         name={currentId}
         action={action[currentId]}
         // @ts-ignore
         status={currentStatus}
         selected={selected}
       />
-      <Icon className={styles.icon} name="dropdown" onClick={onOpenOptions} />
+      <Icon className={classes.icon} name="dropdown" onClick={onOpenOptions} />
 
       {!isOpen ? null : (
-        <Portal isOpen={isOpen} className={styles.portal} style={portalStyle}>
+        <Portal isOpen={isOpen} className={classes.portal} style={portalStyle}>
           {options.map(toolbarItem => {
             const _status = status[toolbarItem.id]
             return (

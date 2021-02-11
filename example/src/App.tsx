@@ -22,9 +22,21 @@ const App = () => {
     <div
       style={{
         display: 'grid',
-        gridTemplateAreas: '"editor1 . editor2" ". . ." "editor3 . ."',
-        gridTemplateRows: 'auto 80px auto',
-        gridTemplateColumns: '1fr 40px 1fr',
+        // gridTemplateAreas: `
+        //   "editor1 . editor2"
+        //   ". . editor2"
+        //   "editor3 . editor2"
+        // `,
+        // gridTemplateRows: '600px 28px 340px',
+        // gridTemplateColumns: '1fr 40px 1fr',
+        // gridTemplateAreas: `
+        //   "editor1"
+        //   "."
+        //   "editor3"
+        // `,
+        gridTemplateAreas: `"editor1"`,
+        gridTemplateRows: '100%',
+        gridTemplateColumns: '100%',
         height: '100%',
         width: '100%'
       }}>
@@ -38,7 +50,7 @@ const App = () => {
         />
       </div>
 
-      <div
+      {/*<div
         style={{
           gridArea: 'editor2'
         }}>
@@ -46,9 +58,9 @@ const App = () => {
           staticResourcesUrl={process.env.PUBLIC_URL}
           structServiceProvider={structServiceProvider}
         />
-      </div>
+      </div>*/}
 
-      <div
+      {/*<div
         style={{
           gridArea: 'editor3'
         }}>
@@ -56,7 +68,7 @@ const App = () => {
           staticResourcesUrl={process.env.PUBLIC_URL}
           structServiceProvider={structServiceProvider}
         />
-      </div>
+      </div>*/}
     </div>
   )
 }

@@ -41,6 +41,7 @@ interface ToolbarGroupItemProps extends ToolbarItem {
   visibleTools: {
     [key in ToolbarGroupVariant]?: ToolbarItemVariant
   }
+  className?: string
 }
 
 interface ToolbarGroupItemCallProps {
@@ -51,39 +52,48 @@ interface ToolbarGroupItemCallProps {
 type Props = ToolbarGroupItemProps & ToolbarGroupItemCallProps
 
 const ToolbarGroupItem = (props: Props) => {
-  const { id, options, Component, status, ...rest } = props
+  const { id, options, Component, status, ...componentProps } = props
+  const {
+    className,
+    opened,
+    indigoVerification,
+    disableableButtons,
+    onAction,
+    onOpen
+  } = componentProps
 
   if (Component) {
-    return <Component id={id} status={status} {...rest} />
+    return <Component id={id} status={status} {...componentProps} />
   }
 
   if (!options || !options.length) {
     const selected = !!status[id]?.selected
     return (
       <ActionButton
-        {...rest}
+        className={className}
         name={id}
         action={action[id]}
         // @ts-ignore
         status={status[id]}
         selected={selected}
-        indigoVerification={rest.indigoVerification}
-        disableableButtons={rest.disableableButtons}
-        onAction={rest.onAction}
+        indigoVerification={indigoVerification}
+        disableableButtons={disableableButtons}
+        onAction={onAction}
       />
     )
   }
 
   return (
     <ToolbarMultiToolItem
+      className={className}
       id={id}
       options={options}
       status={status}
-      opened={rest.opened}
-      disableableButtons={rest.disableableButtons}
-      indigoVerification={rest.indigoVerification}
-      onAction={rest.onAction}
-      onOpen={rest.onOpen}
+      opened={opened}
+      disableableButtons={disableableButtons}
+      indigoVerification={indigoVerification}
+      onAction={onAction}
+      onOpen={onOpen}
     />
   )
 }

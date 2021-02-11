@@ -22,7 +22,7 @@ import {
 } from '../ToolbarGroupItem'
 import { TemplatesList } from './TemplatesList'
 
-import styles from './BottomToolbar.module.less'
+import classes from './BottomToolbar.module.less'
 
 interface BottomToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options' | 'Component' | 'tool'> {
@@ -36,8 +36,8 @@ type Props = BottomToolbarProps & BottomToolbarCallProps
 const BottomToolbar = (props: Props) => {
   const { className, ...rest } = props
   return (
-    <div className={clsx(styles.root, className)}>
-      <div className={styles.group}>
+    <div className={clsx(classes.root, className)}>
+      <div className={classes.group}>
         <ToolbarGroupItem
           id="template-common"
           Component={TemplatesList}
@@ -45,7 +45,7 @@ const BottomToolbar = (props: Props) => {
         />
       </div>
 
-      <div className={styles.group}>
+      <div className={classes.group}>
         <ToolbarGroupItem id="template-lib" {...rest} />
         {/*
           //TODO: it should be enabled after starting work on enhanced stereo

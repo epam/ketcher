@@ -26,7 +26,9 @@ function usePortalStyle([ref, isOpen]: HookParams) {
     }
 
     const rect = ref.current.getBoundingClientRect()
-    const top = rect.top
+    // if content is bigger than page height and user scrolled document, we should correct portal position
+    const scrollOffset = document.scrollingElement?.scrollTop || 0
+    const top = rect.top + scrollOffset
 
     const spaceBetween = 4
     const left = rect.left + rect.width + spaceBetween

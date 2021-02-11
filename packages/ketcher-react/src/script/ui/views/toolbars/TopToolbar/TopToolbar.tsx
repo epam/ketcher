@@ -22,7 +22,7 @@ import {
 } from '../ToolbarGroupItem'
 import { ZoomList } from './ZoomList'
 
-import styles from './TopToolbar.module.less'
+import classes from './TopToolbar.module.less'
 
 interface TopToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options' | 'Component' | 'tool'> {
@@ -36,14 +36,14 @@ type Props = TopToolbarProps & TopToolbarCallProps
 const TopToolbar = (props: Props) => {
   const { className, ...rest } = props
   return (
-    <div className={clsx(styles.root, className)}>
-      <div className={styles.group}>
+    <div className={clsx(classes.root, className)}>
+      <div className={classes.group}>
         <ToolbarGroupItem id="new" {...rest} />
         <ToolbarGroupItem id="open" {...rest} />
         <ToolbarGroupItem id="save" {...rest} />
       </div>
 
-      <div className={styles.group}>
+      <div className={classes.group}>
         <ToolbarGroupItem id="undo" {...rest} />
         <ToolbarGroupItem id="redo" {...rest} />
         <ToolbarGroupItem id="cut" {...rest} />
@@ -51,13 +51,21 @@ const TopToolbar = (props: Props) => {
         <ToolbarGroupItem id="paste" {...rest} />
       </div>
 
-      <div className={clsx(styles.group, 'zoom')}>
-        <ToolbarGroupItem id="zoom-in" {...rest} />
-        <ToolbarGroupItem id="zoom-out" {...rest} />
+      <div className={classes.group}>
+        <ToolbarGroupItem
+          id="zoom-in"
+          className={classes.zoomAdjust}
+          {...rest}
+        />
+        <ToolbarGroupItem
+          id="zoom-out"
+          className={classes.zoomAdjust}
+          {...rest}
+        />
         <ToolbarGroupItem id="zoom-list" Component={ZoomList} {...rest} />
       </div>
 
-      <div className={styles.group}>
+      <div className={classes.group}>
         <ToolbarGroupItem id="layout" {...rest} />
         <ToolbarGroupItem id="clean" {...rest} />
         <ToolbarGroupItem id="arom" {...rest} />
@@ -66,15 +74,15 @@ const TopToolbar = (props: Props) => {
         <ToolbarGroupItem id="check" {...rest} />
       </div>
 
-      <div className={styles.group}>
+      <div className={clsx(classes.group, classes.recognize)}>
         <ToolbarGroupItem id="recognize" {...rest} />
         <ToolbarGroupItem id="miew" {...rest} />
       </div>
 
-      <div className={clsx(styles.group, 'meta')}>
+      <div className={clsx(classes.group, classes.meta)}>
         <ToolbarGroupItem id="settings" {...rest} />
-        <ToolbarGroupItem id="help" {...rest} />
-        <ToolbarGroupItem id="about" {...rest} />
+        <ToolbarGroupItem id="help" className={classes.metaInfo} {...rest} />
+        <ToolbarGroupItem id="about" className={classes.metaInfo} {...rest} />
       </div>
     </div>
   )

@@ -23,7 +23,7 @@ import {
 } from '../ToolbarGroupItem'
 import { AtomsList } from './AtomsList'
 
-import styles from './RightToolbar.module.less'
+import classes from './RightToolbar.module.less'
 
 interface RightToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options' | 'Component' | 'tool'> {
@@ -37,8 +37,8 @@ type Props = RightToolbarProps & RightToolbarCallProps
 const RightToolbar = (props: Props) => {
   const { className, ...rest } = props
   return (
-    <div className={clsx(styles.root, className)}>
-      <div className={styles.group}>
+    <div className={clsx(classes.root, className)}>
+      <div className={classes.group}>
         <ToolbarGroupItem
           id="atom"
           Component={_props => AtomsList({ ..._props, atoms: basicAtoms })}
@@ -54,7 +54,7 @@ const RightToolbar = (props: Props) => {
         />
       </div>
 
-      <div className={styles.group}>
+      <div className={classes.group}>
         <ToolbarGroupItem id="period-table" {...rest} />
       </div>
     </div>

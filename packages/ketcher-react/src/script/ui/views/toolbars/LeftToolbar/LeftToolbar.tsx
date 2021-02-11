@@ -15,13 +15,15 @@
  ***************************************************************************/
 import clsx from 'clsx'
 import React from 'react'
+import { useMediaQuery } from 'react-responsive'
+
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
 
-import styles from './LeftToolbar.module.less'
+import classes from './LeftToolbar.module.less'
 
 interface LeftToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options' | 'Component' | 'tool'> {
@@ -35,9 +37,12 @@ type Props = LeftToolbarProps & LeftToolbarCallProps
 
 const LeftToolbar = (props: Props) => {
   const { isStandalone, className, ...rest } = props
+  const collapseTransform = useMediaQuery({ query: '(max-height: 800px)' })
+  const collapseRGroup = useMediaQuery({ query: '(max-height: 850px)' })
+
   return (
-    <div className={clsx(styles.root, className)}>
-      <div className={styles.group}>
+    <div className={clsx(classes.root, className)}>
+      <div className={classes.group}>
         <ToolbarGroupItem
           id="select"
           options={[
@@ -56,7 +61,7 @@ const LeftToolbar = (props: Props) => {
         <ToolbarGroupItem id="erase" {...rest} />
       </div>
 
-      <div className={styles.group}>
+      <div className={classes.group}>
         <ToolbarGroupItem
           id="bond-common"
           options={[
@@ -117,18 +122,38 @@ const LeftToolbar = (props: Props) => {
         <ToolbarGroupItem id="chain" {...rest} />
       </div>
 
-      <div className={styles.group}>
+      <div className={classes.group}>
         <ToolbarGroupItem id="charge-plus" {...rest} />
         <ToolbarGroupItem id="charge-minus" {...rest} />
       </div>
 
-      <div className={styles.group}>
-        <ToolbarGroupItem id="transform-rotate" {...rest} />
-        <ToolbarGroupItem id="transform-flip-h" {...rest} />
-        <ToolbarGroupItem id="transform-flip-v" {...rest} />
+      <div className={classes.group}>
+        {collapseTransform ? (
+          <ToolbarGroupItem
+            id="transform-rotate"
+            options={[
+              {
+                id: 'transform-rotate'
+              },
+              {
+                id: 'transform-flip-h'
+              },
+              {
+                id: 'transform-flip-v'
+              }
+            ]}
+            {...rest}
+          />
+        ) : (
+          <>
+            <ToolbarGroupItem id="transform-rotate" {...rest} />
+            <ToolbarGroupItem id="transform-flip-h" {...rest} />
+            <ToolbarGroupItem id="transform-flip-v" {...rest} />
+          </>
+        )}
       </div>
 
-      <div className={styles.group}>
+      <div className={classes.group}>
         <ToolbarGroupItem id="sgroup" {...rest} />
         <ToolbarGroupItem id="sgroup-data" {...rest} />
         <ToolbarGroupItem
@@ -154,14 +179,34 @@ const LeftToolbar = (props: Props) => {
         />
       </div>
 
-      <div className={styles.group}>
-        <ToolbarGroupItem id="rgroup-label" {...rest} />
-        <ToolbarGroupItem id="rgroup-fragment" {...rest} />
-        <ToolbarGroupItem id="rgroup-attpoints" {...rest} />
+      <div className={clsx(classes.group, classes.rGroup)}>
+        {collapseRGroup ? (
+          <ToolbarGroupItem
+            id="rgroup-label"
+            options={[
+              {
+                id: 'rgroup-label'
+              },
+              {
+                id: 'rgroup-fragment'
+              },
+              {
+                id: 'rgroup-attpoints'
+              }
+            ]}
+            {...rest}
+          />
+        ) : (
+          <>
+            <ToolbarGroupItem id="rgroup-label" {...rest} />
+            <ToolbarGroupItem id="rgroup-fragment" {...rest} />
+            <ToolbarGroupItem id="rgroup-attpoints" {...rest} />
+          </>
+        )}
       </div>
 
       {isStandalone ? null : (
-        <div className={styles.group}>
+        <div className={classes.group}>
           <ToolbarGroupItem id="shape-circle" {...rest} />
           <ToolbarGroupItem id="shape-rectangle" {...rest} />
           <ToolbarGroupItem id="shape-line" {...rest} />

@@ -20,7 +20,7 @@ import { UiAction, UiActionAction } from '../../../../action'
 import Icon from '../../../../component/view/icon'
 import { shortcutStr } from '../../shortcutStr'
 
-import styles from './ActionButton.module.less'
+import classes from './ActionButton.module.less'
 
 interface ActionButtonProps {
   name: string
@@ -31,6 +31,7 @@ interface ActionButtonProps {
   selected?: boolean
   disableableButtons: string[]
   indigoVerification: boolean
+  className?: string
 }
 
 interface ActionButtonCallProps {
@@ -47,6 +48,7 @@ const ActionButton = (props: Props) => {
     selected = false,
     disableableButtons,
     indigoVerification,
+    className,
     onAction
   } = props
   const shortcut = shortcutStr(action?.shortcut)
@@ -65,10 +67,13 @@ const ActionButton = (props: Props) => {
       disabled={disabled}
       onClick={handleClick}
       title={shortcut ? `${action?.title} (${shortcut})` : action?.title}
-      className={clsx(styles.button, {
-        // selected: selected
-        [styles.selected]: selected
-      })}>
+      className={clsx(
+        classes.button,
+        {
+          [classes.selected]: selected
+        },
+        className
+      )}>
       <Icon name={name} />
       <kbd>{shortcut}</kbd>
     </button>

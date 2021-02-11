@@ -22,7 +22,7 @@ import { atomCuts, basicAtoms } from '../../../../action/atoms'
 import { shortcutStr } from '../../shortcutStr'
 import Atom from '../../../../component/view/Atom'
 
-import styles from '../../ToolbarGroupItem/ActionButton/ActionButton.module.less'
+import classes from '../../ToolbarGroupItem/ActionButton/ActionButton.module.less'
 
 interface AtomsListProps {
   atoms: string[]
@@ -54,8 +54,9 @@ const AtomsList = (props: Props) => {
             key={label}
             el={element[index]}
             shortcut={shortcut}
-            className={clsx(styles.button, {
-              [styles.selected]: isAtom && active && active.opts.label === label
+            className={clsx(classes.button, {
+              [classes.selected]:
+                isAtom && active && active.opts.label === label
             })}
             onClick={() => onAction({ tool: 'atom', opts: { label } })}
           />

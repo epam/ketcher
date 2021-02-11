@@ -68,12 +68,13 @@
     font-size: @icon-size;
     width: @icon-size;
     height: @icon-size;
-    fill: @main-color;
+    //fill: @main-color;
+    fill: currentColor;
   }
 }
 
 @media (max-height: 600px), (max-width: 1040px) {
-  .toolbar button {
+  .button {
     .toolbutton-size(small);
   }
 }

@@ -18,12 +18,21 @@
 .root {
   .toolbar();
   .horizontal-toolbar();
+}
 
-  // meta group
-  .toolbar-group:last-of-type {
-    flex-grow: 1;
-    justify-content: flex-end;
+@media (max-width: 840px) {
+  .zoomAdjust {
+    display: none;
   }
+}
+
+.recognize {
+  border-right: none !important;
+}
+
+.meta {
+  flex-grow: 1;
+  justify-content: flex-end;
 }
 
 @media (max-height: 600px), (max-width: 1040px) {
@@ -35,5 +44,8 @@
 @media (max-width: 770px) {
   .root {
     .set-size(small);
+  }
+  .metaInfo {
+    display: none;
   }
 }

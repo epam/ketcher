@@ -45,6 +45,10 @@ export interface WithFormat {
   format: SupportedFormat
 }
 
+export interface WithSelection {
+  selectedAtoms: Array<number>
+}
+
 export interface CheckCommandData extends CommandData, WithStruct {
   types: Array<string>
 }
@@ -64,7 +68,10 @@ export interface GenerateImageCommandData extends CommandData, WithStruct {
 
 export interface LayoutCommandData extends CommandData, WithStruct {}
 
-export interface CleanCommandData extends CommandData, WithStruct {}
+export interface CleanCommandData
+  extends CommandData,
+    WithStruct,
+    WithSelection {}
 
 export interface AromatizeCommandData extends CommandData, WithStruct {}
 
@@ -72,7 +79,10 @@ export interface DearomatizeCommandData extends CommandData, WithStruct {}
 
 export interface CalculateCipCommandData extends CommandData, WithStruct {}
 
-export interface CalculateCommandData extends CommandData, WithStruct {
+export interface CalculateCommandData
+  extends CommandData,
+    WithStruct,
+    WithSelection {
   properties: Array<string>
 }
 

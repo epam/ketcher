@@ -42,7 +42,7 @@ type handlerType = (indigo: any, indigoOptions: IndigoOptions) => string
 
 function handle(handler: handlerType, options?: CommandOptions) {
   module.then(indigo => {
-    const indigoOptions = new indigo.map$string$$string$()
+    const indigoOptions = new indigo.MapStringString()
     setOptions(indigoOptions, options || {})
     let msg: OutputMessage<string>
     try {
@@ -129,10 +129,16 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
 
     case Command.Calculate: {
       const data: CalculateCommandData = message.data as CalculateCommandData
-      handle(
-        (indigo, indigoOptions) => indigo.calculate(data.struct, indigoOptions),
-        data.options
-      )
+      handle((indigo, indigoOptions) => {
+        const selectedAtoms = new indigo.VectorInt()
+        data.selectedAtoms.forEach(atomId => selectedAtoms.push_back(atomId))
+        const result = indigo.calculate(
+          data.struct,
+          indigoOptions,
+          selectedAtoms
+        )
+        return result
+      }, data.options)
       break
     }
 
@@ -157,10 +163,16 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
 
     case Command.Clean: {
       const data: CleanCommandData = message.data as CleanCommandData
-      handle(
-        (indigo, indigoOptions) => indigo.clean2d(data.struct, indigoOptions),
-        data.options
-      )
+      handle((indigo, indigoOptions) => {
+        const selectedAtoms = new indigo.VectorInt()
+        data.selectedAtoms.forEach(atomId => selectedAtoms.push_back(atomId))
+        const updatedStruct = indigo.clean2d(
+          data.struct,
+          indigoOptions,
+          selectedAtoms
+        )
+        return updatedStruct
+      }, data.options)
       break
     }
 

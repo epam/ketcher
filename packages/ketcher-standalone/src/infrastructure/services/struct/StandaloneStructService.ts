@@ -253,7 +253,7 @@ class IndigoService implements StructService {
   }
 
   clean(data: CleanData, options?: StructServiceOptions): Promise<CleanResult> {
-    const { struct } = data
+    const { struct, selected } = data
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()
 
@@ -278,7 +278,8 @@ class IndigoService implements StructService {
 
       const commandData: CleanCommandData = {
         struct,
-        options: commandOptions
+        options: commandOptions,
+        selectedAtoms: selected || []
       }
 
       const inputMessage: InputMessage<CleanCommandData> = {
@@ -510,7 +511,7 @@ class IndigoService implements StructService {
     data: CalculateData,
     options?: StructServiceOptions
   ): Promise<CalculateResult> {
-    const { properties, struct } = data
+    const { properties, struct, selected } = data
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()
 
@@ -544,7 +545,8 @@ class IndigoService implements StructService {
       const commandData: CalculateCommandData = {
         struct,
         properties,
-        options: commandOptions
+        options: commandOptions,
+        selectedAtoms: selected || []
       }
 
       const inputMessage: InputMessage<CalculateCommandData> = {

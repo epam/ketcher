@@ -33,6 +33,10 @@ export interface WithFormat {
   format: ChemicalMimeType
 }
 
+export interface WithSelection {
+  selected?: Array<number>
+}
+
 export interface CheckData extends WithStruct {
   types: Array<string>
 }
@@ -51,7 +55,7 @@ export interface LayoutData extends WithStruct {}
 
 export interface LayoutResult extends WithStruct, WithFormat {}
 
-export interface CleanData extends WithStruct {}
+export interface CleanData extends WithStruct, WithSelection {}
 
 export interface CleanResult extends WithStruct, WithFormat {}
 
@@ -67,7 +71,7 @@ export interface CalculateCipData extends WithStruct {}
 
 export interface CalculateCipResult extends WithStruct, WithFormat {}
 
-export interface CalculateData extends WithStruct {
+export interface CalculateData extends WithStruct, WithSelection {
   properties: Array<string>
 }
 

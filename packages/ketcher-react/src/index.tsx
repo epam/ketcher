@@ -20,6 +20,7 @@ import 'url-search-params-polyfill'
 import 'whatwg-fetch'
 import './index.less'
 import init, { Config } from './script'
+import styles from './index.module.less'
 
 interface EditorProps extends Omit<Config, 'element'> {}
 
@@ -33,7 +34,7 @@ function Editor(props: EditorProps) {
     // TODO: provide the list of dependencies after implementing unsubscribe function
   }, [])
 
-  return <div ref={rootElRef} className="ketcher root"></div>
+  return <div ref={rootElRef} className={styles.root}></div>
 }
 
 export { Editor }

@@ -147,7 +147,7 @@ class Ketcher {
     this.origin = position ? this.editor.historyStack[position - 1] : null
   }
 
-  generatePng(...args: any): Promise<any> {
+  generatePngAsync(...args: any): Promise<any> {
     return this.server.generatePngAsBase64
       .apply(null, args)
       .then(base64 =>

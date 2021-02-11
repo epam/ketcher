@@ -20,6 +20,7 @@ import Editor from '../../../../editor'
 import Spinner from '../Spinner'
 
 import styles from './StructEditor.module.less'
+import clsx from 'clsx'
 
 //TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -113,16 +114,18 @@ class StructEditor extends Component {
       onDearomatizeStruct,
       onAttachEdit,
       indigoVerification,
+      className,
       ...props
     } = this.props
 
     return (
       <Tag
         onMouseDown={event => event.preventDefault()}
+        className={clsx(styles.canvas, className)}
         {...props}
         ref={this.editorRef}>
         {/* svg here */}
-        <div className="measure-log" ref={this.logRef} />
+        <div className={styles.measureLog} ref={this.logRef} />
         {indigoVerification && (
           <div className={styles.spinner_overlay}>
             <Spinner />

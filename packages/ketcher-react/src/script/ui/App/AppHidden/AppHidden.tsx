@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,31 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import React, { useEffect, useRef } from 'react'
+import { useSettingsContext } from '../../../../hooks'
 
-export const basicAtoms = ['H', 'C', 'N', 'O', 'S', 'P', 'F', 'Cl', 'Br', 'I']
-
-export const atomCuts = {
-  H: 'h',
-  C: 'c',
-  N: 'n',
-  O: 'o',
-  S: 's',
-  P: 'p',
-  F: 'f',
-  Cl: 'Shift+c',
-  Br: 'Shift+b',
-  I: 'i',
-  A: 'a'
+interface AppHiddenCallProps {
+  onInitTmpls: (cacheEl, url) => void
 }
 
-export default Object.keys(atomCuts).reduce((res, label) => {
-  res[`atom-${label.toLowerCase()}`] = {
-    title: `Atom ${label}`,
-    shortcut: atomCuts[label],
-    action: {
-      tool: 'atom',
-      opts: { label }
-    }
-  }
-  return res
-}, {})
+type Props = AppHiddenCallProps
+
+const AppHidden = (props: Props) => {
+  const { onInitTmpls } = props
+
+  const ref = useRef(null)
+  const { staticResourcesUrl } = useSettingsContext()
+
+  useEffect(() => {
+    onInitTmpls(ref.current, staticResourcesUrl)
+  }, [])
+
+  return <div style={{ display: 'none' }} ref={ref} />
+}
+
+export type { AppHiddenCallProps }
+export { AppHidden }

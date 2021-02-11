@@ -25,7 +25,7 @@ import Icon from '../component/view/icon'
 import ActionMenu, { shortcutStr } from '../component/actionmenu'
 
 import action from '../action'
-import { atomCuts, basic as basicAtoms } from '../action/atoms'
+import { atomCuts, basicAtoms } from '../action/atoms'
 import { zoomList } from '../action/zoom'
 import templates from '../data/templates'
 

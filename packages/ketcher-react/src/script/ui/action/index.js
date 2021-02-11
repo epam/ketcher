@@ -24,6 +24,8 @@ import debug from './debug'
 import templates from './templates'
 import { exec } from '../component/cliparea'
 
+export * from './action.types'
+
 export default {
   new: {
     shortcut: 'Mod+Delete',

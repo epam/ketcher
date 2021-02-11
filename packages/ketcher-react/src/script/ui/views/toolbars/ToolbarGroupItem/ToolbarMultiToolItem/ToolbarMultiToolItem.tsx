@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import clsx from 'clsx'
 import React, { useRef } from 'react'
 import action, { UiAction, UiActionAction } from '../../../../action'
 import Icon from '../../../../component/view/icon'
@@ -27,10 +28,14 @@ import { usePortalOpening } from './usePortalOpening'
 import { usePortalStyle } from './usePortalStyle'
 
 import classes from './ToolbarMultiToolItem.module.less'
+import { chooseMultiTool } from './variants/chooseMultiTool'
+import { MultiToolVariant } from './variants/variants.types'
 
 interface ToolbarMultiToolItemProps {
   id: ToolbarItemVariant
   options: ToolbarItem[]
+  groups?: number[]
+  variant?: MultiToolVariant
   status: {
     [key in string]?: UiAction
   }
@@ -51,6 +56,8 @@ const ToolbarMultiToolItem = (props: Props) => {
   const {
     id,
     options,
+    groups,
+    variant,
     status,
     opened,
     indigoVerification,
@@ -98,6 +105,8 @@ const ToolbarMultiToolItem = (props: Props) => {
     onOpen(id, Boolean(currentStatus?.selected))
   }
 
+  const [Component, portalClassName] = chooseMultiTool(variant)
+
   return (
     <div ref={ref} className={classes.root}>
       <ActionButton
@@ -112,8 +121,19 @@ const ToolbarMultiToolItem = (props: Props) => {
       <Icon className={classes.icon} name="dropdown" onClick={onOpenOptions} />
 
       {!isOpen ? null : (
-        <Portal isOpen={isOpen} className={classes.portal} style={portalStyle}>
-          {options.map(toolbarItem => {
+        <Portal
+          isOpen={isOpen}
+          className={clsx(classes.portal, portalClassName)}
+          style={portalStyle}>
+          <Component
+            options={options}
+            groups={groups}
+            status={status}
+            disableableButtons={disableableButtons}
+            indigoVerification={indigoVerification}
+            onAction={onAction}
+          />
+          {/*{options.map(toolbarItem => {
             const _status = status[toolbarItem.id]
             return (
               <ActionButton
@@ -126,7 +146,7 @@ const ToolbarMultiToolItem = (props: Props) => {
                 selected={!!_status?.selected}
               />
             )
-          })}
+          })}*/}
         </Portal>
       )}
     </div>

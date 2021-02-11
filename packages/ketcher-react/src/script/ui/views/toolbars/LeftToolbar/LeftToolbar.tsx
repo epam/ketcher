@@ -15,18 +15,20 @@
  ***************************************************************************/
 import clsx from 'clsx'
 import React from 'react'
-import { useMediaQuery } from 'react-responsive'
 
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
+import { Bond } from './Bond'
 
 import classes from './LeftToolbar.module.less'
+import { RGroup } from './RGroup'
+import { Transform } from './Transform'
 
 interface LeftToolbarProps
-  extends Omit<ToolbarGroupItemProps, 'id' | 'options' | 'Component' | 'tool'> {
+  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   className?: string
   isStandalone: boolean
 }
@@ -37,8 +39,6 @@ type Props = LeftToolbarProps & LeftToolbarCallProps
 
 const LeftToolbar = (props: Props) => {
   const { isStandalone, className, ...rest } = props
-  const collapseTransform = useMediaQuery({ query: '(max-height: 800px)' })
-  const collapseRGroup = useMediaQuery({ query: '(max-height: 850px)' })
 
   return (
     <div className={clsx(classes.root, className)}>
@@ -62,63 +62,7 @@ const LeftToolbar = (props: Props) => {
       </div>
 
       <div className={classes.group}>
-        <ToolbarGroupItem
-          id="bond-common"
-          options={[
-            {
-              id: 'bond-single'
-            },
-            {
-              id: 'bond-double'
-            },
-            {
-              id: 'bond-triple'
-            }
-          ]}
-          {...rest}
-        />
-
-        <ToolbarGroupItem
-          id="bond-stereo"
-          options={[
-            {
-              id: 'bond-up'
-            },
-            {
-              id: 'bond-down'
-            },
-            {
-              id: 'bond-updown'
-            },
-            {
-              id: 'bond-crossed'
-            }
-          ]}
-          {...rest}
-        />
-
-        <ToolbarGroupItem
-          id="bond-query"
-          options={[
-            {
-              id: 'bond-any'
-            },
-            {
-              id: 'bond-aromatic'
-            },
-            {
-              id: 'bond-singledouble'
-            },
-            {
-              id: 'bond-singlearomatic'
-            },
-            {
-              id: 'bond-doublearomatic'
-            }
-          ]}
-          {...rest}
-        />
-
+        <Bond {...rest} />
         <ToolbarGroupItem id="chain" {...rest} />
       </div>
 
@@ -128,29 +72,7 @@ const LeftToolbar = (props: Props) => {
       </div>
 
       <div className={classes.group}>
-        {collapseTransform ? (
-          <ToolbarGroupItem
-            id="transform-rotate"
-            options={[
-              {
-                id: 'transform-rotate'
-              },
-              {
-                id: 'transform-flip-h'
-              },
-              {
-                id: 'transform-flip-v'
-              }
-            ]}
-            {...rest}
-          />
-        ) : (
-          <>
-            <ToolbarGroupItem id="transform-rotate" {...rest} />
-            <ToolbarGroupItem id="transform-flip-h" {...rest} />
-            <ToolbarGroupItem id="transform-flip-v" {...rest} />
-          </>
-        )}
+        <Transform {...rest} />
       </div>
 
       <div className={classes.group}>
@@ -180,29 +102,7 @@ const LeftToolbar = (props: Props) => {
       </div>
 
       <div className={clsx(classes.group, classes.rGroup)}>
-        {collapseRGroup ? (
-          <ToolbarGroupItem
-            id="rgroup-label"
-            options={[
-              {
-                id: 'rgroup-label'
-              },
-              {
-                id: 'rgroup-fragment'
-              },
-              {
-                id: 'rgroup-attpoints'
-              }
-            ]}
-            {...rest}
-          />
-        ) : (
-          <>
-            <ToolbarGroupItem id="rgroup-label" {...rest} />
-            <ToolbarGroupItem id="rgroup-fragment" {...rest} />
-            <ToolbarGroupItem id="rgroup-attpoints" {...rest} />
-          </>
-        )}
+        <RGroup {...rest} />
       </div>
 
       {isStandalone ? null : (

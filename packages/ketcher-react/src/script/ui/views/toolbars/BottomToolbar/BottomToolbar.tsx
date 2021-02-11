@@ -25,8 +25,12 @@ import { TemplatesList } from './TemplatesList'
 import classes from './BottomToolbar.module.less'
 
 interface BottomToolbarProps
-  extends Omit<ToolbarGroupItemProps, 'id' | 'options' | 'Component' | 'tool'> {
+  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   className?: string
+  active?: {
+    opts: any
+    tool: string
+  }
 }
 
 interface BottomToolbarCallProps extends ToolbarGroupItemCallProps {}
@@ -35,13 +39,16 @@ type Props = BottomToolbarProps & BottomToolbarCallProps
 
 const BottomToolbar = (props: Props) => {
   const { className, ...rest } = props
+  const { active, disableableButtons, indigoVerification, onAction } = rest
+
   return (
     <div className={clsx(classes.root, className)}>
       <div className={classes.group}>
-        <ToolbarGroupItem
-          id="template-common"
-          Component={TemplatesList}
-          {...rest}
+        <TemplatesList
+          active={active}
+          indigoVerification={indigoVerification}
+          disableableButtons={disableableButtons}
+          onAction={onAction}
         />
       </div>
 

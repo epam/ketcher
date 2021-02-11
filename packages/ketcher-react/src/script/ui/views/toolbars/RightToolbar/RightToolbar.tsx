@@ -26,8 +26,13 @@ import { AtomsList } from './AtomsList'
 import classes from './RightToolbar.module.less'
 
 interface RightToolbarProps
-  extends Omit<ToolbarGroupItemProps, 'id' | 'options' | 'Component' | 'tool'> {
+  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   className?: string
+  active?: {
+    opts: any
+    tool: string
+  }
+  freqAtoms: any[]
 }
 
 interface RightToolbarCallProps extends ToolbarGroupItemCallProps {}
@@ -36,22 +41,14 @@ type Props = RightToolbarProps & RightToolbarCallProps
 
 const RightToolbar = (props: Props) => {
   const { className, ...rest } = props
+  const { active, onAction, freqAtoms } = rest
+
   return (
     <div className={clsx(classes.root, className)}>
       <div className={classes.group}>
-        <ToolbarGroupItem
-          id="atom"
-          Component={_props => AtomsList({ ..._props, atoms: basicAtoms })}
-          {...rest}
-        />
+        <AtomsList atoms={basicAtoms} active={active} onAction={onAction} />
 
-        <ToolbarGroupItem
-          id="freq-atoms"
-          Component={_props =>
-            AtomsList({ ..._props, atoms: _props['freqAtoms'] })
-          }
-          {...rest}
-        />
+        <AtomsList atoms={freqAtoms} active={active} onAction={onAction} />
       </div>
 
       <div className={classes.group}>

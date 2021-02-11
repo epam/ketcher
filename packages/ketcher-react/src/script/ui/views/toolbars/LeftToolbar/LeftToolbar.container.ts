@@ -29,11 +29,8 @@ type StateProps = Omit<LeftToolbarProps, 'className'>
 type OwnProps = Pick<LeftToolbarProps, 'className'>
 
 const mapStateToProps = (state): StateProps => ({
-  active: state.actionState && state.actionState.activeTool,
   status: state.actionState || {},
-  freqAtoms: state.toolbar.freqAtoms,
   opened: state.toolbar.opened,
-  visibleTools: state.toolbar.visibleTools,
   indigoVerification: state.requestsStatuses.indigoVerification,
   disableableButtons: [],
   isStandalone: (global as any)?.ketcher?.standalone

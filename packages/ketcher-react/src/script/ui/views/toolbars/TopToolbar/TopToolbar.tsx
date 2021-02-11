@@ -25,7 +25,7 @@ import { ZoomList } from './ZoomList'
 import classes from './TopToolbar.module.less'
 
 interface TopToolbarProps
-  extends Omit<ToolbarGroupItemProps, 'id' | 'options' | 'Component' | 'tool'> {
+  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   className?: string
 }
 
@@ -62,7 +62,7 @@ const TopToolbar = (props: Props) => {
           className={classes.zoomAdjust}
           {...rest}
         />
-        <ToolbarGroupItem id="zoom-list" Component={ZoomList} {...rest} />
+        <ZoomList status={rest.status} onAction={rest.onAction} />
       </div>
 
       <div className={classes.group}>

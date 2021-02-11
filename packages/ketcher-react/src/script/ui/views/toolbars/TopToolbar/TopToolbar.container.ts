@@ -25,11 +25,8 @@ type StateProps = Omit<TopToolbarProps, 'className'>
 type OwnProps = Pick<TopToolbarProps, 'className'>
 
 const mapStateToProps = (state): StateProps => ({
-  active: state.actionState && state.actionState.activeTool,
   status: state.actionState || {},
-  freqAtoms: state.toolbar.freqAtoms,
   opened: state.toolbar.opened,
-  visibleTools: state.toolbar.visibleTools,
   indigoVerification: state.requestsStatuses.indigoVerification,
   disableableButtons: ['layout', 'clean', 'arom', 'dearom', 'cip']
 })

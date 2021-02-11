@@ -15,11 +15,7 @@
  ***************************************************************************/
 import React from 'react'
 import action, { UiAction, UiActionAction } from '../../../action'
-import {
-  ToolbarGroupVariant,
-  ToolbarItem,
-  ToolbarItemVariant
-} from '../toolbox.types'
+import { ToolbarItem } from '../toolbox.types'
 import { ActionButton } from './ActionButton'
 import { ToolbarMultiToolItem } from './ToolbarMultiToolItem'
 
@@ -30,17 +26,6 @@ interface ToolbarGroupItemProps extends ToolbarItem {
   opened: any | null
   disableableButtons: string[]
   indigoVerification: boolean
-
-  // possible redundant properties ?
-
-  active?: {
-    opts: any
-    tool: string
-  }
-  freqAtoms: any[]
-  visibleTools: {
-    [key in ToolbarGroupVariant]?: ToolbarItemVariant
-  }
   className?: string
 }
 
@@ -52,22 +37,19 @@ interface ToolbarGroupItemCallProps {
 type Props = ToolbarGroupItemProps & ToolbarGroupItemCallProps
 
 const ToolbarGroupItem = (props: Props) => {
-  const { id, options, Component, status, ...componentProps } = props
   const {
+    id,
+    options,
+    status,
     className,
     opened,
     indigoVerification,
     disableableButtons,
     onAction,
     onOpen
-  } = componentProps
-
-  if (Component) {
-    return <Component id={id} status={status} {...componentProps} />
-  }
+  } = props
 
   if (!options || !options.length) {
-    const selected = !!status[id]?.selected
     return (
       <ActionButton
         className={className}
@@ -75,7 +57,7 @@ const ToolbarGroupItem = (props: Props) => {
         action={action[id]}
         // @ts-ignore
         status={status[id]}
-        selected={selected}
+        selected={!!status[id]?.selected}
         indigoVerification={indigoVerification}
         disableableButtons={disableableButtons}
         onAction={onAction}

@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ComponentType } from 'react'
-import { UiAction } from '../../action'
-
 type TopGroup = 'document' | 'edit' | 'zoom' | 'process' | 'analyse' | 'meta'
 
 type LeftGroup =
@@ -119,7 +116,6 @@ type ToolbarItemVariant =
 interface ToolbarItem {
   id: ToolbarItemVariant
   options?: ToolbarItem[]
-  Component?: ComponentType<UiAction | any> // possible incorrect props type
 }
 
 export type { ToolbarGroupVariant }

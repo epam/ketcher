@@ -33,7 +33,6 @@ const mapStateToProps = (state): StateProps => ({
   status: state.actionState || {},
   freqAtoms: state.toolbar.freqAtoms,
   opened: state.toolbar.opened,
-  visibleTools: state.toolbar.visibleTools,
   indigoVerification: state.requestsStatuses.indigoVerification,
   disableableButtons: []
 })

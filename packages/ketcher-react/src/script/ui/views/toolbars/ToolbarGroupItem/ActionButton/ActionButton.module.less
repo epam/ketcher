@@ -38,6 +38,8 @@
   &:hover {
     .highlight-scale(@scale:1.25);
     .highlight-shadow(black);
+
+    background-image: none;
   }
   &:active,
   &[disabled] {
@@ -69,21 +71,6 @@
     fill: @main-color;
   }
 }
-
-//.toolbutton-horizontal(@dim, @width-cells: 1) {
-//  .set-size(@dim);
-//
-//  width: @button-size * @width-cells;
-//  margin-left: @button-grow * @width-cells;
-//  margin-right: @button-grow * @width-cells;
-//
-//  & > svg {
-//    position: static;
-//    left: 0;
-//    top: 0;
-//    width: @icon-size * @width-cells;
-//  }
-//}
 
 @media (max-height: 600px), (max-width: 1040px) {
   .toolbar button {

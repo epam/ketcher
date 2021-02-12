@@ -38,7 +38,7 @@ const bondQuery: ToolbarItem[] = makeItems([
 
 const groups = [bondCommon, bondStereo, bondQuery]
 const groupOptions = groups.flat()
-const groupSettings = groups.reduce((accum, group, index) => {
+const groupDescriptors = groups.reduce((accum, group, index) => {
   const start = accum[index - 1]?.end || 0
 
   accum.push({
@@ -49,4 +49,4 @@ const groupSettings = groups.reduce((accum, group, index) => {
   return accum
 }, [] as GroupDescriptor[])
 
-export { bondCommon, bondStereo, bondQuery, groupOptions, groupSettings }
+export { bondCommon, bondStereo, bondQuery, groupOptions, groupDescriptors }

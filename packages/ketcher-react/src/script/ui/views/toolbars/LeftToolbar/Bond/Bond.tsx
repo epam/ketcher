@@ -25,7 +25,7 @@ import {
   bondStereo,
   bondQuery,
   groupOptions,
-  groupSettings
+  groupDescriptors
 } from './options'
 
 interface BondProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {}
@@ -42,7 +42,7 @@ const Bond = (props: Props) => {
         id="bond-common"
         options={groupOptions}
         variant="grouped"
-        groups={groupSettings}
+        groups={groupDescriptors}
         {...props}
       />
     )

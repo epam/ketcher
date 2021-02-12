@@ -45,7 +45,7 @@ const formatProperties: FormatPropertiesMap = {
   ),
   smarts: new SupportedFormatProperties(
     'Daylight SMARTS',
-    ChemicalMimeType.DaylightSmiles,
+    ChemicalMimeType.DaylightSmarts,
     ['.smarts']
   ),
   inChI: new SupportedFormatProperties('InChI', ChemicalMimeType.InChI, [

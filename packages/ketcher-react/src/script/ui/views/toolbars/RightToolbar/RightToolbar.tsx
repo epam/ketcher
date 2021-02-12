@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 import clsx from 'clsx'
-import React from 'react'
+import React, { FC } from 'react'
+
 import { basicAtoms } from '../../../action/atoms'
 import {
   ToolbarGroupItem,
@@ -22,8 +23,11 @@ import {
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
 import { AtomsList } from './AtomsList'
-
 import classes from './RightToolbar.module.less'
+
+const Group: FC<{ className?: string }> = ({ children, className }) => (
+  <div className={clsx(classes.group, className)}>{children}</div>
+)
 
 interface RightToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
@@ -45,14 +49,14 @@ const RightToolbar = (props: Props) => {
 
   return (
     <div className={clsx(classes.root, className)}>
-      <div className={classes.group}>
+      <Group>
         <AtomsList atoms={basicAtoms} active={active} onAction={onAction} />
         <AtomsList atoms={freqAtoms} active={active} onAction={onAction} />
-      </div>
+      </Group>
 
-      <div className={classes.group}>
+      <Group>
         <ToolbarGroupItem id="period-table" {...rest} />
-      </div>
+      </Group>
     </div>
   )
 }

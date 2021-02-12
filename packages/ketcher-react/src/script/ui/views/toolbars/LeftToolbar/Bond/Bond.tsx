@@ -20,30 +20,13 @@ import {
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
 import { ToolbarMultiToolItem } from '../../ToolbarGroupItem/ToolbarMultiToolItem'
-import { ToolbarItem, ToolbarItemVariant } from '../../toolbox.types'
-
-function makeItems(ids: ToolbarItemVariant[]): ToolbarItem[] {
-  return ids.map(id => ({ id }))
-}
-
-const bondCommon: ToolbarItem[] = makeItems([
-  'bond-single',
-  'bond-double',
-  'bond-triple'
-])
-const bondStereo: ToolbarItem[] = makeItems([
-  'bond-up',
-  'bond-down',
-  'bond-updown',
-  'bond-crossed'
-])
-const bondQuery: ToolbarItem[] = makeItems([
-  'bond-any',
-  'bond-aromatic',
-  'bond-singledouble',
-  'bond-singlearomatic',
-  'bond-doublearomatic'
-])
+import {
+  bondCommon,
+  bondStereo,
+  bondQuery,
+  groupOptions,
+  groupSettings
+} from './options'
 
 interface BondProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {}
 interface BondCallProps extends ToolbarGroupItemCallProps {}
@@ -57,9 +40,9 @@ const Bond = (props: Props) => {
     return (
       <ToolbarMultiToolItem
         id="bond-common"
-        options={[...bondCommon, ...bondStereo, ...bondQuery]}
+        options={groupOptions}
         variant="grouped"
-        groups={[bondCommon.length, bondStereo.length, bondQuery.length]}
+        groups={groupSettings}
         {...props}
       />
     )

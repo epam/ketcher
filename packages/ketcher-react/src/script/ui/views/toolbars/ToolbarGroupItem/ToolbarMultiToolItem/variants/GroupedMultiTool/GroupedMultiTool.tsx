@@ -39,22 +39,20 @@ const GroupedMultiTool = (props: Props) => {
     return null
   }
 
-  let i = 0
   return (
     <>
-      {groups.map((amount, index) => (
-        <div className={classes.group} key={index}>
-          {options.slice(i, i + amount).map(toolbarItem => {
-            i++
-            const _status = status[toolbarItem.id]
+      {groups.map(descriptor => (
+        <div className={classes.group} key={descriptor.start}>
+          {options.slice(descriptor.start, descriptor.end).map(toolbarItem => {
+            const currentStatus = status[toolbarItem.id]
             return (
               <ActionButton
                 key={toolbarItem.id}
                 name={toolbarItem.id}
                 action={action[toolbarItem.id]}
                 // @ts-ignore
-                status={_status}
-                selected={!!_status?.selected}
+                status={currentStatus}
+                selected={!!currentStatus?.selected}
                 disableableButtons={disableableButtons}
                 indigoVerification={indigoVerification}
                 onAction={onAction}

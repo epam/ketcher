@@ -14,15 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 import clsx from 'clsx'
-import React from 'react'
+import React, { FC } from 'react'
+
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
+import { ToolbarItem, ToolbarItemVariant } from '../toolbox.types'
+import classes from './TopToolbar.module.less'
 import { ZoomList } from './ZoomList'
 
-import classes from './TopToolbar.module.less'
+const Group: FC<{ className?: string }> = ({ children, className }) => (
+  <div className={clsx(classes.group, className)}>{children}</div>
+)
 
 interface TopToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
@@ -35,55 +40,56 @@ type Props = TopToolbarProps & TopToolbarCallProps
 
 const TopToolbar = (props: Props) => {
   const { className, ...rest } = props
+
+  type ItemProps = {
+    id: ToolbarItemVariant
+    options?: ToolbarItem[]
+    className?: string
+  }
+  const Item = ({ id, options }: ItemProps) =>
+    ToolbarGroupItem({ id, options, ...rest })
+
   return (
     <div className={clsx(classes.root, className)}>
-      <div className={classes.group}>
-        <ToolbarGroupItem id="new" {...rest} />
-        <ToolbarGroupItem id="open" {...rest} />
-        <ToolbarGroupItem id="save" {...rest} />
-      </div>
+      <Group>
+        <Item id="new" />
+        <Item id="open" />
+        <Item id="save" />
+      </Group>
 
-      <div className={classes.group}>
-        <ToolbarGroupItem id="undo" {...rest} />
-        <ToolbarGroupItem id="redo" {...rest} />
-        <ToolbarGroupItem id="cut" {...rest} />
-        <ToolbarGroupItem id="copy" {...rest} />
-        <ToolbarGroupItem id="paste" {...rest} />
-      </div>
+      <Group>
+        <Item id="undo" />
+        <Item id="redo" />
+        <Item id="cut" />
+        <Item id="copy" />
+        <Item id="paste" />
+      </Group>
 
-      <div className={classes.group}>
-        <ToolbarGroupItem
-          id="zoom-in"
-          className={classes.zoomAdjust}
-          {...rest}
-        />
-        <ToolbarGroupItem
-          id="zoom-out"
-          className={classes.zoomAdjust}
-          {...rest}
-        />
+      <Group>
+        <Item id="zoom-in" className={classes.zoomAdjust} />
+        <Item id="zoom-out" className={classes.zoomAdjust} />
         <ZoomList status={rest.status} onAction={rest.onAction} />
-      </div>
+      </Group>
 
-      <div className={classes.group}>
-        <ToolbarGroupItem id="layout" {...rest} />
-        <ToolbarGroupItem id="clean" {...rest} />
-        <ToolbarGroupItem id="arom" {...rest} />
-        <ToolbarGroupItem id="dearom" {...rest} />
-        <ToolbarGroupItem id="cip" {...rest} />
-        <ToolbarGroupItem id="check" {...rest} />
-      </div>
+      <Group>
+        <Item id="layout" />
+        <Item id="clean" />
+        <Item id="arom" />
+        <Item id="dearom" />
+        <Item id="cip" />
+        <Item id="check" />
+      </Group>
 
-      <div className={clsx(classes.group, classes.recognize)}>
-        <ToolbarGroupItem id="recognize" {...rest} />
-        <ToolbarGroupItem id="miew" {...rest} />
-      </div>
+      <Group className={classes.recognize}>
+        <Item id="recognize" />
+        <Item id="miew" />
+      </Group>
 
-      <div className={clsx(classes.group, classes.meta)}>
-        <ToolbarGroupItem id="settings" {...rest} />
-        <ToolbarGroupItem id="help" className={classes.metaInfo} {...rest} />
-        <ToolbarGroupItem id="about" className={classes.metaInfo} {...rest} />
-      </div>
+      <Group className={classes.meta}>
+        <Item id="settings" />
+        <Item id="help" className={classes.metaInfo} />
+        <Item id="about" className={classes.metaInfo} />
+      </Group>
     </div>
   )
 }

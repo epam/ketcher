@@ -22,9 +22,9 @@ function usePortalOpening([id, opened, options]: HookParams): [boolean] {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   useEffect(() => {
-    const _currentId = (options.length && options![0].id) || ''
-    const _isOpen = opened === id || opened === _currentId
-    setIsOpen(_isOpen)
+    const currentId = (options.length && options![0].id) || ''
+    const newState = opened === id || opened === currentId
+    setIsOpen(newState)
   }, [opened, options])
 
   return [isOpen]

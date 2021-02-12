@@ -20,6 +20,13 @@ import {
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
+import { makeItems } from '../../ToolbarGroupItem/utils'
+
+const rGroupOptions = makeItems([
+  'rgroup-label',
+  'rgroup-fragment',
+  'rgroup-attpoints'
+])
 
 interface RGroupProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {}
 interface RGroupCallProps extends ToolbarGroupItemCallProps {}
@@ -31,21 +38,7 @@ const RGroup = (props: Props) => {
 
   if (collapseRGroup) {
     return (
-      <ToolbarGroupItem
-        id="rgroup-label"
-        options={[
-          {
-            id: 'rgroup-label'
-          },
-          {
-            id: 'rgroup-fragment'
-          },
-          {
-            id: 'rgroup-attpoints'
-          }
-        ]}
-        {...props}
-      />
+      <ToolbarGroupItem id="rgroup-label" options={rGroupOptions} {...props} />
     )
   }
 

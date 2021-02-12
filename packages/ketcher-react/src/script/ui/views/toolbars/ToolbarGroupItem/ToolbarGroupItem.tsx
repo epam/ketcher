@@ -49,7 +49,7 @@ const ToolbarGroupItem = (props: Props) => {
     onOpen
   } = props
 
-  if (!options || !options.length) {
+  if (!options?.length) {
     return (
       <ActionButton
         className={className}

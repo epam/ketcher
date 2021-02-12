@@ -14,15 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 import clsx from 'clsx'
-import React from 'react'
+import React, { FC } from 'react'
+
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
+import classes from './BottomToolbar.module.less'
 import { TemplatesList } from './TemplatesList'
 
-import classes from './BottomToolbar.module.less'
+const Group: FC<{ className?: string }> = ({ children, className }) => (
+  <div className={clsx(classes.group, className)}>{children}</div>
+)
 
 interface BottomToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
@@ -43,22 +47,22 @@ const BottomToolbar = (props: Props) => {
 
   return (
     <div className={clsx(classes.root, className)}>
-      <div className={classes.group}>
+      <Group>
         <TemplatesList
           active={active}
           indigoVerification={indigoVerification}
           disableableButtons={disableableButtons}
           onAction={onAction}
         />
-      </div>
+      </Group>
 
-      <div className={classes.group}>
+      <Group>
         <ToolbarGroupItem id="template-lib" {...rest} />
         {/*
           //TODO: it should be enabled after starting work on enhanced stereo
           <ToolbarGroupItem id="enhanced-stereo" {...rest} />
         */}
-      </div>
+      </Group>
     </div>
   )
 }

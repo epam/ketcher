@@ -20,6 +20,13 @@ import {
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
+import { makeItems } from '../../ToolbarGroupItem/utils'
+
+const shapeOptions = makeItems([
+  'shape-ellipse',
+  'shape-rectangle',
+  'shape-line'
+])
 
 interface ShapeProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {}
 interface ShapeCallProps extends ToolbarGroupItemCallProps {}
@@ -31,21 +38,7 @@ const Shape = (props: Props) => {
 
   if (collapseRGroup) {
     return (
-      <ToolbarGroupItem
-        id="shape-ellipse"
-        options={[
-          {
-            id: 'shape-ellipse'
-          },
-          {
-            id: 'shape-rectangle'
-          },
-          {
-            id: 'shape-line'
-          }
-        ]}
-        {...props}
-      />
+      <ToolbarGroupItem id="shape-ellipse" options={shapeOptions} {...props} />
     )
   }
 

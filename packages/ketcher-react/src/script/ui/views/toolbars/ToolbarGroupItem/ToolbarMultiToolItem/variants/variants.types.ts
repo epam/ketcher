@@ -16,9 +16,14 @@
 import { UiAction, UiActionAction } from '../../../../../action'
 import { ToolbarItem } from '../../../toolbox.types'
 
+type GroupDescriptor = {
+  start: number
+  end: number
+}
+
 interface MultiToolProps {
   options: ToolbarItem[]
-  groups?: number[]
+  groups?: GroupDescriptor[]
   status: {
     [key in string]?: UiAction
   }
@@ -32,4 +37,9 @@ interface MultiToolCallProps {
 
 type MultiToolVariant = 'default' | 'grouped'
 
-export type { MultiToolProps, MultiToolCallProps, MultiToolVariant }
+export type {
+  GroupDescriptor,
+  MultiToolProps,
+  MultiToolCallProps,
+  MultiToolVariant
+}

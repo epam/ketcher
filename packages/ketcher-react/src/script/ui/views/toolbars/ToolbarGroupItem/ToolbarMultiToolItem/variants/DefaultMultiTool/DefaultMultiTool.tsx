@@ -35,15 +35,15 @@ const DefaultMultiTool = (props: Props) => {
   return (
     <>
       {options.map(toolbarItem => {
-        const _status = status[toolbarItem.id]
+        const currentStatus = status[toolbarItem.id]
         return (
           <ActionButton
             key={toolbarItem.id}
             name={toolbarItem.id}
             action={action[toolbarItem.id]}
             // @ts-ignore
-            status={_status}
-            selected={!!_status?.selected}
+            status={currentStatus}
+            selected={!!currentStatus?.selected}
             disableableButtons={disableableButtons}
             indigoVerification={indigoVerification}
             onAction={onAction}

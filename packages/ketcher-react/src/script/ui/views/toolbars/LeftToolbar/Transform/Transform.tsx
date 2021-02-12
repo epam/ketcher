@@ -20,6 +20,13 @@ import {
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
+import { makeItems } from '../../ToolbarGroupItem/utils'
+
+const transformOptions = makeItems([
+  'transform-rotate',
+  'transform-flip-h',
+  'transform-flip-v'
+])
 
 interface TransformProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {}
@@ -34,17 +41,7 @@ const Transform = (props: Props) => {
     return (
       <ToolbarGroupItem
         id="transform-rotate"
-        options={[
-          {
-            id: 'transform-rotate'
-          },
-          {
-            id: 'transform-flip-h'
-          },
-          {
-            id: 'transform-flip-v'
-          }
-        ]}
+        options={transformOptions}
         {...props}
       />
     )

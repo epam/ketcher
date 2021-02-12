@@ -28,14 +28,14 @@ import {
 import { usePortalOpening } from './usePortalOpening'
 import { usePortalStyle } from './usePortalStyle'
 import { chooseMultiTool } from './variants/chooseMultiTool'
-import { MultiToolVariant } from './variants/variants.types'
+import { GroupDescriptor, MultiToolVariant } from './variants/variants.types'
 
 import classes from './ToolbarMultiToolItem.module.less'
 
 interface ToolbarMultiToolItemProps {
   id: ToolbarItemVariant
   options: ToolbarItem[]
-  groups?: number[]
+  groups?: GroupDescriptor[]
   variant?: MultiToolVariant
   status: {
     [key in string]?: UiAction

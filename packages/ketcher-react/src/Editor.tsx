@@ -13,50 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-@import '../../../../../style/component';
-@import '../../../../../style/variables';
-@import '../../../../../style/mixins';
+import 'element-closest-polyfill'
+import React, { useEffect, useRef } from 'react'
+import 'regenerator-runtime/runtime'
+import 'url-search-params-polyfill'
+import 'whatwg-fetch'
+import './index.less'
+import init, { Config } from './script'
+import classes from './index.module.less'
 
-.spinnerOverlay {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+interface EditorProps extends Omit<Config, 'element'> {}
+
+function Editor(props: EditorProps) {
+  const rootElRef = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    init({
+      ...props,
+      element: rootElRef.current
+    })
+    // TODO: provide the list of dependencies after implementing unsubscribe function
+  }, [])
+
+  return <div ref={rootElRef} className={classes.root}></div>
 }
 
-.canvas-size(@dim) {
-  .set-size(@dim);
-
-  .measureLog {
-    top: 0;
-    right: 0;
-  }
-}
-
-.canvas {
-  border: @border-color 1px solid;
-  border-radius: 5px;
-  overflow: auto;
-  position: relative;
-
-  .canvas-size(inherit);
-
-  user-select: none;
-
-  .measureLog {
-    position: absolute;
-    &:extend(.-measure);
-    &.visible {
-      opacity: 1;
-    }
-  }
-}
-
-@media (max-height: 600px), (max-width: 1040px) {
-  .canvas {
-    .canvas-size(small);
-  }
-}
+export { Editor }

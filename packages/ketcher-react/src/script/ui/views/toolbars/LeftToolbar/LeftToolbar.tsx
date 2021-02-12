@@ -14,19 +14,37 @@
  * limitations under the License.
  ***************************************************************************/
 import clsx from 'clsx'
-import React from 'react'
+import React, { FC } from 'react'
 
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
+import { makeItems } from '../ToolbarGroupItem/utils'
+import { ToolbarItem, ToolbarItemVariant } from '../toolbox.types'
 import { Bond } from './Bond'
-
 import classes from './LeftToolbar.module.less'
 import { RGroup } from './RGroup'
 import { Shape } from './Shape'
 import { Transform } from './Transform'
+
+const Group: FC<{ className?: string }> = ({ children, className }) => (
+  <div className={clsx(classes.group, className)}>{children}</div>
+)
+
+const selectOptions: ToolbarItem[] = makeItems([
+  'select-lasso',
+  'select-rectangle',
+  'select-fragment'
+])
+const reactionOptions: ToolbarItem[] = makeItems([
+  'reaction-arrow',
+  'reaction-plus',
+  'reaction-automap',
+  'reaction-map',
+  'reaction-unmap'
+])
 
 interface LeftToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
@@ -41,72 +59,45 @@ type Props = LeftToolbarProps & LeftToolbarCallProps
 const LeftToolbar = (props: Props) => {
   const { isStandalone, className, ...rest } = props
 
+  type ItemProps = {
+    id: ToolbarItemVariant
+    options?: ToolbarItem[]
+  }
+  const Item = ({ id, options }: ItemProps) =>
+    ToolbarGroupItem({ id, options, ...rest })
+
   return (
     <div className={clsx(classes.root, className)}>
-      <div className={classes.group}>
-        <ToolbarGroupItem
-          id="select"
-          options={[
-            {
-              id: 'select-lasso'
-            },
-            {
-              id: 'select-rectangle'
-            },
-            {
-              id: 'select-fragment'
-            }
-          ]}
-          {...rest}
-        />
-        <ToolbarGroupItem id="erase" {...rest} />
-      </div>
+      <Group>
+        <Item id="select" options={selectOptions} />
+        <Item id="erase" />
+      </Group>
 
-      <div className={classes.group}>
+      <Group>
         <Bond {...rest} />
-        <ToolbarGroupItem id="chain" {...rest} />
-      </div>
+        <Item id="chain" />
+      </Group>
 
-      <div className={classes.group}>
-        <ToolbarGroupItem id="charge-plus" {...rest} />
-        <ToolbarGroupItem id="charge-minus" {...rest} />
-      </div>
+      <Group>
+        <Item id="charge-plus" />
+        <Item id="charge-minus" />
+      </Group>
 
-      <div className={classes.group}>
+      <Group>
         <Transform {...rest} />
-      </div>
+      </Group>
 
-      <div className={clsx(classes.group, classes.sGroup)}>
-        <ToolbarGroupItem id="sgroup" {...rest} />
-        <ToolbarGroupItem id="sgroup-data" {...rest} />
-        <ToolbarGroupItem
-          id="reaction"
-          options={[
-            {
-              id: 'reaction-arrow'
-            },
-            {
-              id: 'reaction-plus'
-            },
-            {
-              id: 'reaction-automap'
-            },
-            {
-              id: 'reaction-map'
-            },
-            {
-              id: 'reaction-unmap'
-            }
-          ]}
-          {...rest}
-        />
-      </div>
+      <Group className={classes.sGroup}>
+        <Item id="sgroup" />
+        <Item id="sgroup-data" />
+        <Item id="reaction" options={reactionOptions} />
+      </Group>
 
-      <div className={classes.group}>
+      <Group>
         <RGroup {...rest} />
 
         {isStandalone ? null : <Shape {...rest} />}
-      </div>
+      </Group>
     </div>
   )
 }

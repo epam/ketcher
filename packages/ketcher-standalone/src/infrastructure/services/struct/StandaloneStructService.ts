@@ -83,7 +83,7 @@ function convertMimeTypeToOutputFormat(
       break
     }
     case ChemicalMimeType.DaylightSmarts: {
-      format = SupportedFormat.Smiles
+      format = SupportedFormat.Smarts
       break
     }
     case ChemicalMimeType.InChI: {

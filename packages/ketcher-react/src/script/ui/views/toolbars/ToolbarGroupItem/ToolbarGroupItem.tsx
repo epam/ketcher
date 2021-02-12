@@ -23,7 +23,7 @@ interface ToolbarGroupItemProps extends ToolbarItem {
   status: {
     [key in string]?: UiAction
   }
-  opened: any | null
+  opened: string | null
   disableableButtons: string[]
   indigoVerification: boolean
   className?: string

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
 import { ComponentType } from 'react'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'

@@ -39,7 +39,7 @@ type Props = TemplatesListProps & TemplatesListCallProps
 const TemplatesList = (props: Props) => {
   const { active, disableableButtons, indigoVerification, onAction } = props
 
-  const isTmpl = active && active.tool === 'template'
+  const isTemplate = active && active.tool === 'template'
 
   const makeAction = (struct, index): UiAction => ({
     shortcut: action[`template-${index}`].shortcut,
@@ -54,7 +54,7 @@ const TemplatesList = (props: Props) => {
           name={`template-${index}`}
           action={makeAction(struct, index)}
           onAction={onAction}
-          selected={isTmpl && active && active.opts.struct === struct}
+          selected={isTemplate && active && active.opts.struct === struct}
           status={action[`template-${index}`]}
           disableableButtons={disableableButtons}
           indigoVerification={indigoVerification}

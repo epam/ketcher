@@ -18,6 +18,11 @@ import React from 'react'
 import { UiActionAction } from '../../../../action'
 import { zoomList } from '../../../../action/zoom'
 
+function toPercent(value: number): string {
+  const percentLimit = 100
+  return (value * percentLimit).toFixed()
+}
+
 interface ZoomListProps {
   status: {
     zoom?: {
@@ -45,7 +50,7 @@ const ZoomList = (props: Props) => {
     <select value={zoom} onChange={handleChange}>
       {zoomList.map(value => (
         <option key={value.toString()} value={value}>
-          {`${(value * 100).toFixed()}%`}
+          {toPercent(value)}%
         </option>
       ))}
     </select>

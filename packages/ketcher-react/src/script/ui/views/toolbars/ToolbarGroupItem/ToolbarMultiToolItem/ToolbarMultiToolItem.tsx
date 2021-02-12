@@ -121,7 +121,7 @@ const ToolbarMultiToolItem = (props: Props) => {
       />
       <Icon className={classes.icon} name="dropdown" onClick={onOpenOptions} />
 
-      {!isOpen ? null : (
+      {isOpen ? (
         <Portal
           isOpen={isOpen}
           className={clsx(classes.portal, portalClassName)}
@@ -135,7 +135,7 @@ const ToolbarMultiToolItem = (props: Props) => {
             onAction={onAction}
           />
         </Portal>
-      )}
+      ) : null}
     </div>
   )
 }

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import 'element-closest-polyfill'
-import React, { useEffect, useRef } from 'react'
-import 'regenerator-runtime/runtime'
-import 'url-search-params-polyfill'
-import 'whatwg-fetch'
-import './index.less'
-import init, { Config } from './script'
-
-interface EditorProps extends Omit<Config, 'element'> {}
-
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLInputElement>(null)
-  useEffect(() => {
-    init({
-      ...props,
-      element: rootElRef.current
-    })
-    // TODO: provide the list of dependencies after implementing unsubscribe function
-  }, [])
-
-  return <div ref={rootElRef} className="ketcher root"></div>
-}
-
-export { Editor }
+export * from './Editor'

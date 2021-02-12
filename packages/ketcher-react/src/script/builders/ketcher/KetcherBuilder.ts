@@ -22,7 +22,7 @@ import {
 import createApi from '../../api'
 import Editor from '../../editor'
 import { Ketcher, UI as KetcherUI } from '../../ketcher'
-import initUI from '../../ui'
+import { initApp } from '../../ui'
 import { ButtonsConfig } from './ButtonsConfig'
 import { molfileManager } from '../../chem/molfile'
 import smilesManager from '../../chem/smiles'
@@ -97,7 +97,7 @@ class KetcherBuilder {
     }
 
     const editor = await new Promise<Editor>(resolve => {
-      tempRef.ui = initUI(
+      tempRef.ui = initApp(
         element,
         staticResourcesUrl,
         {

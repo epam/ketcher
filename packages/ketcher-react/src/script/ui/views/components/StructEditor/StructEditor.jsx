@@ -19,7 +19,8 @@ import React, { Component, createRef } from 'react'
 import Editor from '../../../../editor'
 import Spinner from '../Spinner'
 
-import styles from './StructEditor.module.less'
+import classes from './StructEditor.module.less'
+import clsx from 'clsx'
 
 //TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -81,9 +82,9 @@ class StructEditor extends Component {
       const el = this.logRef.current
       if (msg.info) {
         el.innerHTML = msg.info
-        el.classList.add('visible')
+        el.classList.add(classes.visible)
       } else {
-        el.classList.remove('visible')
+        el.classList.remove(classes.visible)
       }
     })
   }
@@ -113,18 +114,20 @@ class StructEditor extends Component {
       onDearomatizeStruct,
       onAttachEdit,
       indigoVerification,
+      className,
       ...props
     } = this.props
 
     return (
       <Tag
         onMouseDown={event => event.preventDefault()}
+        className={clsx(classes.canvas, className)}
         {...props}
         ref={this.editorRef}>
         {/* svg here */}
-        <div className="measure-log" ref={this.logRef} />
+        <div className={classes.measureLog} ref={this.logRef} />
         {indigoVerification && (
-          <div className={styles.spinner_overlay}>
+          <div className={classes.spinnerOverlay}>
             <Spinner />
           </div>
         )}

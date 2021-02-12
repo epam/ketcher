@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
+import { StructService } from 'ketcher-core'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
+
 import { SettingsContext } from './../../../contexts'
-
-import App from './app'
-
 import createStore, { load } from '../state'
 import { initKeydownListener } from '../state/hotkeys'
 import { initResize } from '../state/toolbar'
 import { loadStruct } from '../state/shared'
 
-/**
- * @param {HTMLInputElement | null} element
- * @param {string} staticResourcesUrl
- * @param {any} options
- * @param {import('../../api').Api} server
- * @param {function} setEditor
- * */
-function initApp(element, staticResourcesUrl, options, server, setEditor) {
+import App from './App.container'
+
+function initApp(
+  element: HTMLInputElement | null,
+  staticResourcesUrl: string,
+  options: any,
+  server: StructService,
+  setEditor: (editor: any) => void
+) {
   const store = createStore(options, server, setEditor)
   store.dispatch(initKeydownListener(element))
   store.dispatch(initResize())
@@ -53,4 +52,4 @@ function initApp(element, staticResourcesUrl, options, server, setEditor) {
   }
 }
 
-export default initApp
+export { initApp }

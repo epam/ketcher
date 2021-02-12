@@ -1,0 +1,71 @@
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+import clsx from 'clsx'
+import React, { FC } from 'react'
+
+import {
+  ToolbarGroupItem,
+  ToolbarGroupItemCallProps,
+  ToolbarGroupItemProps
+} from '../ToolbarGroupItem'
+import classes from './BottomToolbar.module.less'
+import { TemplatesList } from './TemplatesList'
+
+const Group: FC<{ className?: string }> = ({ children, className }) => (
+  <div className={clsx(classes.group, className)}>{children}</div>
+)
+
+interface BottomToolbarProps
+  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
+  className?: string
+  active?: {
+    opts: any
+    tool: string
+  }
+}
+
+interface BottomToolbarCallProps extends ToolbarGroupItemCallProps {}
+
+type Props = BottomToolbarProps & BottomToolbarCallProps
+
+const BottomToolbar = (props: Props) => {
+  const { className, ...rest } = props
+  const { active, disableableButtons, indigoVerification, onAction } = rest
+
+  return (
+    <div className={clsx(classes.root, className)}>
+      <Group>
+        <TemplatesList
+          active={active}
+          indigoVerification={indigoVerification}
+          disableableButtons={disableableButtons}
+          onAction={onAction}
+        />
+      </Group>
+
+      <Group>
+        <ToolbarGroupItem id="template-lib" {...rest} />
+        {/*
+          //TODO: it should be enabled after starting work on enhanced stereo
+          <ToolbarGroupItem id="enhanced-stereo" {...rest} />
+        */}
+      </Group>
+    </div>
+  )
+}
+
+export type { BottomToolbarProps, BottomToolbarCallProps }
+export { BottomToolbar }

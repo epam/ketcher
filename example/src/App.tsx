@@ -19,12 +19,10 @@ if (process.env.MODE === 'standalone') {
 
 const App = () => {
   return (
-    <div>
-      <Editor
-        staticResourcesUrl={process.env.PUBLIC_URL}
-        structServiceProvider={structServiceProvider}
-      />
-    </div>
+    <Editor
+      staticResourcesUrl={process.env.PUBLIC_URL}
+      structServiceProvider={structServiceProvider}
+    />
   )
 }
 

@@ -13,131 +13,6 @@
 
 /////////////////////
 
-.canvas(@dim: inherit) {
-  position: absolute;
-  border: @border-color 1px solid;
-  border-radius: 5px;
-  overflow: auto;
-  .canvas-size(@dim);
-  // svg {
-  //		display: block;
-  // }
-  .measure-log {
-    position: fixed;
-  }
-}
-
-.canvas-size(@dim) {
-  .set-size(@dim);
-  top: @canvas-padding;
-  left: @canvas-padding;
-  right: @canvas-padding;
-  bottom: @canvas-padding;
-
-  .measure-log {
-    top: @canvas-padding;
-    right: @canvas-padding;
-  }
-}
-
-/////////////////////
-
-.toolbar(@dir, @dim: inherit) {
-  .orientation(@dir);
-  position: absolute;
-  @{dir}: @app-gap;
-  .toolbar-size(@dir, @dim);
-  & > menu {
-    @{main-dim}: 100%;
-  }
-}
-
-.toolbar-size(@dir, @dim) {
-  .orientation(@dir);
-  .set-size(@dim);
-  @{main-lose}: @canvas-padding;
-  @{main-rise}: @canvas-padding;
-  @{cross-dim}: @toolbar-size;
-}
-
-.toolbar-pos(@icon-count, @separator-count: 0, @loose-pad: 0,
-             @rise-pad: @loose-pad, @dim: inherit) {
-  .set-size(@dim);
-  @offset: @icon-count * @toolbar-size + (@loose-pad + @rise-pad) *
-    @separator-count;
-}
-
-/////////////////////
-
-.toolbutton(@dim: inherit) {
-  display: block;
-  border: 0;
-  padding: 0;
-  position: relative;
-  background: inherit;
-  background-color: white;
-  //background-image: none;
-
-  //text-align: center;
-  //overflow: hidden;
-  //font: ~"0/0" a;
-  //.text-hide(transparent);
-
-  &:before,
-  &:after {
-    display: inline-block;
-    vertical-align: middle;
-  }
-  &:after {
-    position: absolute;
-    left: 0;
-  }
-  &:hover {
-    // &:hover:not(:active)
-    .highlight-scale(@scale:1.25);
-    .highlight-shadow(black);
-  }
-  &:active,
-  &[disabled] {
-    .highlight-scale(none);
-    .highlight-shadow(none);
-    //.shadow-highlight(black, inset);
-  }
-  .toolbutton-size(@dim);
-}
-
-.toolbutton-size(@dim) {
-  .set-size(@dim);
-  width: @button-size;
-  height: @button-size;
-  margin: @button-grow;
-
-  & > svg {
-    position: absolute; // TODO fix it
-    top: 0.1em;
-    left: 0.1em;
-    font-size: @icon-size;
-    width: @icon-size;
-    height: @icon-size;
-    fill: @main-color;
-  }
-}
-
-.toolbutton-horizontal(@dim, @width-cells: 1) {
-  .set-size(@dim);
-  width: @button-size * @width-cells;
-  margin-left: @button-grow * @width-cells;
-  margin-right: @button-grow * @width-cells;
-
-  & > svg {
-    position: static;
-    left: 0;
-    top: 0;
-    width: @icon-size * @width-cells;
-  }
-}
-////////////////////
-
 .collapsed(@dim: inherit) when not (@dim = none) {
   position: relative;
   overflow: hidden;
@@ -155,13 +30,11 @@
     // dropdown
     display: none;
   }
-  // &> menu {
-  // 	margin: 0 !important;  // TODO: fix me in js
-  // }
 }
 
 .collapsed-size(@dim) {
   .set-size(@dim);
+
   height: @toolbar-size;
   width: 100%; //@toolbar-size;
 }
@@ -189,109 +62,6 @@
 }
 
 /////////////////////
-
-.expanded(@dim: inherit) {
-  .set-size(@dim);
-  & > menu {
-    margin: 0 !important;
-    position: absolute;
-    left: @toolbar-size + @menu-pad;
-    z-index: 20;
-
-    //display: table-cell;
-    white-space: nowrap;
-    word-break: keep-all;
-    //width: auto;
-    //height: @toolbar-size;
-
-    padding: 2px;
-    .separate-menu(vertical, 3px);
-
-    background: white;
-    border: 1px solid @border-color;
-    border-radius: 5px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-  }
-}
-
-.expanded-size(@dim) {
-  & > menu {
-    .set-size(@dim);
-    left: @toolbar-size + @menu-pad;
-  }
-}
-
-.expanded-menu(@dim: inherit) {
-  .set-size(@dim);
-  li {
-    display: flex;
-    menu {
-      width: 100%;
-    }
-  }
-  button {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin: 1px 0;
-    padding: 0.3em 0.3em 0.3em 2em;
-    height: 1.7em;
-
-    font-size: @menu-font-size;
-    //line-height: 18px;
-    text-align: left;
-    &:before,
-    &:after {
-      padding-right: 0.4em;
-      font-size: @menu-icon-size;
-    }
-    &[disabled] {
-      // TODO: general button highlight
-      .highlight-invert(disabled); // refactor
-    }
-    kbd {
-      margin: 2.5px 0 0 10px;
-      display: inline-block;
-    }
-    & > svg {
-      width: @expanded-icon-size;
-      height: @expanded-icon-size;
-    }
-  }
-  button:hover {
-    .highlight-scale(none);
-    background-color: #eee;
-  }
-  .selected button {
-    //&:extend(button:active); not extended while in media
-    .highlight-scale(none);
-    .highlight-invert;
-  }
-}
-
-/////////////////////
-
-.separator(@orientation, @lose-pad, @rise-pad) {
-  .orientation(@orientation);
-  margin-@{main-lose}: @lose-pad;
-  border-@{main-lose}: 1px solid @border-color;
-  padding-@{main-lose}: @rise-pad - 1px; // substract 1px to assert
-  // width = lose-pad + rise-pad
-}
-
-.separate-item(@orientation, @lose-pad, @rise-pad: @lose-pad) {
-  & + li {
-    .separator(@orientation, @lose-pad, @rise-pad);
-  }
-}
-
-.separate-menu(@orientation, @lose-pad, @rise-pad: @lose-pad) {
-  li + li > menu {
-    .separator(@orientation, @lose-pad, @rise-pad);
-  }
-}
-
-/////////////////////
 // Highlight effects
 
 .highlight-scale(@scale) {
@@ -304,7 +74,7 @@
 }
 
 .highlight-shadow(inset, @color: @active-color) {
-  box-shadow: 0px -1px 6px fade(@color, 5%) inset, 0px 1px 3px @color inset;
+  box-shadow: 0 -1px 6px fade(@color, 5%) inset, 0 1px 3px @color inset;
 }
 
 .highlight-shadow(@color: @active-color) when (iscolor(@color)) {
@@ -327,7 +97,7 @@
 
 .highlight-symbol-invert() {
   background: #333;
-  text-shadow: 0px 1px 10px white, 0px -1px 10px white;
+  text-shadow: 0 1px 10px white, 0 -1px 10px white;
 }
 
 .highlight-invert() {
@@ -439,6 +209,7 @@
 
 .background-opacity(@color, @opacity) {
   @rgba-color: rgba(red(@color), green(@color), blue(@color), @opacity);
+
   background-color: @rgba-color;
 
   background: none \9; // Hack for IE8
@@ -452,7 +223,7 @@
   //zoom: 1;
   &:not([ie9]) {
     // Do not apply to IE9 as it supports rgba
-    filter: progid:DXImageTransform.Microsoft.gradient(enabled='false');
+    filter: progid:dximagetransform.microsoft.gradient(enabled='false');
   }
 }
 
@@ -467,6 +238,7 @@
 .text-hide(indent) {
   @approximate-em-value: 12px / 1em;
   @wider-than-any-screen: -9999em;
+
   text-indent: @wider-than-any-screen * @approximate-em-value;
   overflow: hidden;
   text-align: left;
@@ -522,7 +294,7 @@
 
 .warning() {
   color: @error-color;
-  &:before {
+  &::before {
     content: '⚠ ';
   }
 }
@@ -531,4 +303,10 @@
   max-width: 80vw;
   max-height: 80vh;
   overflow: auto;
+}
+
+.kbd() {
+  display: none;
+  font: 0.8em monospace;
+  color: @border-color;
 }

@@ -17,9 +17,9 @@ import { connect } from 'react-redux'
 import { checkServer } from '../state/server'
 import { App, AppCallProps } from './App'
 
-const mapDispatchToProps = (): AppCallProps => ({
+const mapDispatchToProps: AppCallProps = {
   checkServer
-})
+}
 
 const AppContainer = connect(null, mapDispatchToProps)(App)
 

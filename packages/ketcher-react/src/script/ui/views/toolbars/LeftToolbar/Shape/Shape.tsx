@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 import React from 'react'
-import { useMediaQuery } from 'react-responsive'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -28,25 +27,27 @@ const shapeOptions = makeItems([
   'shape-line'
 ])
 
-interface ShapeProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {}
+interface ShapeProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
+  height?: number
+}
 interface ShapeCallProps extends ToolbarGroupItemCallProps {}
 
 type Props = ShapeProps & ShapeCallProps
 
 const Shape = (props: Props) => {
-  const collapseRGroup = useMediaQuery({ query: '(max-height: 850px)' })
+  const { height, ...rest } = props
 
-  if (collapseRGroup) {
+  if (height && height <= 850) {
     return (
-      <ToolbarGroupItem id="shape-ellipse" options={shapeOptions} {...props} />
+      <ToolbarGroupItem id="shape-ellipse" options={shapeOptions} {...rest} />
     )
   }
 
   return (
     <>
-      <ToolbarGroupItem id="shape-ellipse" {...props} />
-      <ToolbarGroupItem id="shape-rectangle" {...props} />
-      <ToolbarGroupItem id="shape-line" {...props} />
+      <ToolbarGroupItem id="shape-ellipse" {...rest} />
+      <ToolbarGroupItem id="shape-rectangle" {...rest} />
+      <ToolbarGroupItem id="shape-line" {...rest} />
     </>
   )
 }

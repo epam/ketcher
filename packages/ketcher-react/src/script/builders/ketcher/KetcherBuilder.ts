@@ -36,7 +36,7 @@ class KetcherBuilder {
   private ui: KetcherUI | null
 
   private tempUIDataContainer: null | {
-    element: HTMLInputElement | null
+    element: HTMLDivElement | null
     staticResourcesUrl: string
     buttons?: ButtonsConfig
   }
@@ -75,7 +75,7 @@ class KetcherBuilder {
   }
 
   async appendUiAsync(
-    element: HTMLInputElement | null,
+    element: HTMLDivElement | null,
     staticResourcesUrl: string,
     buttons?: ButtonsConfig
   ): Promise<void> {

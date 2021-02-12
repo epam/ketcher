@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 import React from 'react'
-import { useMediaQuery } from 'react-responsive'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -28,30 +27,31 @@ const transformOptions = makeItems([
   'transform-flip-v'
 ])
 
-interface TransformProps
-  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {}
+interface TransformProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
+  height?: number
+}
 interface TransformCallProps extends ToolbarGroupItemCallProps {}
 
 type Props = TransformProps & TransformCallProps
 
 const Transform = (props: Props) => {
-  const collapseTransform = useMediaQuery({ query: '(max-height: 800px)' })
+  const { height, ...rest } = props
 
-  if (collapseTransform) {
+  if (height && height <= 720) {
     return (
       <ToolbarGroupItem
         id="transform-rotate"
         options={transformOptions}
-        {...props}
+        {...rest}
       />
     )
   }
 
   return (
     <>
-      <ToolbarGroupItem id="transform-rotate" {...props} />
-      <ToolbarGroupItem id="transform-flip-h" {...props} />
-      <ToolbarGroupItem id="transform-flip-v" {...props} />
+      <ToolbarGroupItem id="transform-rotate" {...rest} />
+      <ToolbarGroupItem id="transform-flip-h" {...rest} />
+      <ToolbarGroupItem id="transform-flip-v" {...rest} />
     </>
   )
 }

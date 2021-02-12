@@ -16,6 +16,7 @@
 import clsx from 'clsx'
 import React, { FC } from 'react'
 
+import { useResizeObserver } from '../../../../../hooks'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -58,6 +59,7 @@ type Props = LeftToolbarProps & LeftToolbarCallProps
 
 const LeftToolbar = (props: Props) => {
   const { isStandalone, className, ...rest } = props
+  const { ref, height } = useResizeObserver<HTMLDivElement>()
 
   type ItemProps = {
     id: ToolbarItemVariant
@@ -67,14 +69,14 @@ const LeftToolbar = (props: Props) => {
     ToolbarGroupItem({ id, options, ...rest })
 
   return (
-    <div className={clsx(classes.root, className)}>
+    <div className={clsx(classes.root, className)} ref={ref}>
       <Group>
         <Item id="select" options={selectOptions} />
         <Item id="erase" />
       </Group>
 
       <Group>
-        <Bond {...rest} />
+        <Bond {...rest} height={height} />
         <Item id="chain" />
       </Group>
 
@@ -84,19 +86,19 @@ const LeftToolbar = (props: Props) => {
       </Group>
 
       <Group>
-        <Transform {...rest} />
+        <Transform {...rest} height={height} />
       </Group>
 
-      <Group className={classes.sGroup}>
+      <Group className={clsx({ [classes.borderOff]: height && height <= 850 })}>
         <Item id="sgroup" />
         <Item id="sgroup-data" />
         <Item id="reaction" options={reactionOptions} />
       </Group>
 
       <Group>
-        <RGroup {...rest} />
+        <RGroup {...rest} height={height} />
 
-        {isStandalone ? null : <Shape {...rest} />}
+        {isStandalone ? null : <Shape {...rest} height={height} />}
       </Group>
     </div>
   )

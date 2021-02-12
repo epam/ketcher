@@ -14,18 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 import 'element-closest-polyfill'
+import clsx from 'clsx'
 import React, { useEffect, useRef } from 'react'
 import 'regenerator-runtime/runtime'
 import 'url-search-params-polyfill'
 import 'whatwg-fetch'
 import './index.less'
+import { useResizeObserver } from './hooks'
 import init, { Config } from './script'
-import classes from './index.module.less'
+import classes from './Editor.module.less'
 
 interface EditorProps extends Omit<Config, 'element'> {}
 
 function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLInputElement>(null)
+  const rootElRef = useRef<HTMLDivElement>(null)
+  const { height, width } = useResizeObserver<HTMLDivElement>({
+    ref: rootElRef
+  })
   useEffect(() => {
     init({
       ...props,
@@ -34,7 +39,14 @@ function Editor(props: EditorProps) {
     // TODO: provide the list of dependencies after implementing unsubscribe function
   }, [])
 
-  return <div ref={rootElRef} className={classes.root}></div>
+  return (
+    <div
+      ref={rootElRef}
+      className={clsx(classes.root, {
+        smallEditor: (height && height <= 600) || (width && width <= 1040)
+      })}
+    />
+  )
 }
 
 export { Editor }

@@ -17,9 +17,9 @@ import {
   FormatterFactory,
   StructService,
   SupportedFormat,
-  Struct
+  Struct,
+  StructServiceOptions
 } from 'ketcher-core'
-import { StructServiceOptions } from 'ketcher-core/src/infrastructure/services/struct/structService.types'
 import { isEqual } from 'lodash/fp'
 import molfile, { MolfileFormat } from './chem/molfile'
 import Editor from './editor'

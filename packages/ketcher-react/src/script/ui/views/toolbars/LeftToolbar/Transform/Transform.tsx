@@ -23,7 +23,6 @@ import {
 
 interface TransformProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {}
-
 interface TransformCallProps extends ToolbarGroupItemCallProps {}
 
 type Props = TransformProps & TransformCallProps

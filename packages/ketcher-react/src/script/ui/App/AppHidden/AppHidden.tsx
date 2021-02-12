@@ -21,7 +21,7 @@ interface AppHiddenCallProps {
 }
 
 type Props = AppHiddenCallProps
-
+// todo: come up with better name
 const AppHidden = (props: Props) => {
   const { onInitTmpls } = props
 

@@ -41,7 +41,7 @@ class Portal extends Component<Props> {
 
     const { className, style } = this.props
     if (className) {
-      this.element.classList.add(className)
+      this.addClassName(className)
     }
     if (style) {
       this.updateStyle(style)
@@ -57,8 +57,8 @@ class Portal extends Component<Props> {
   componentDidUpdate(prevProps: Readonly<Props>) {
     const { isOpen, className, style } = this.props
     if (className !== prevProps.className) {
-      this.element.classList.remove(prevProps.className || '')
-      this.element.classList.add(className || '')
+      this.removeClassNames(prevProps.className)
+      this.addClassName(className)
     }
 
     if (style !== prevProps.style) {
@@ -84,6 +84,26 @@ class Portal extends Component<Props> {
   private removeElementFromDOM() {
     document.querySelector('body')?.removeChild(this.element)
     this.isElementInDom = false
+  }
+
+  private removeClassNames(classNames?: string) {
+    if (!classNames) {
+      return
+    }
+
+    classNames.split(' ').forEach(className => {
+      this.element.classList.remove(className)
+    })
+  }
+
+  private addClassName(classNames?: string) {
+    if (!classNames) {
+      return
+    }
+
+    classNames.split(' ').forEach(className => {
+      this.element.classList.add(className)
+    })
   }
 
   private updateStyle(style?: CSSProperties, prevStyle?: CSSProperties) {

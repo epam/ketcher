@@ -25,6 +25,7 @@ import { Bond } from './Bond'
 
 import classes from './LeftToolbar.module.less'
 import { RGroup } from './RGroup'
+import { Shape } from './Shape'
 import { Transform } from './Transform'
 
 interface LeftToolbarProps
@@ -75,7 +76,7 @@ const LeftToolbar = (props: Props) => {
         <Transform {...rest} />
       </div>
 
-      <div className={classes.group}>
+      <div className={clsx(classes.group, classes.sGroup)}>
         <ToolbarGroupItem id="sgroup" {...rest} />
         <ToolbarGroupItem id="sgroup-data" {...rest} />
         <ToolbarGroupItem
@@ -101,17 +102,11 @@ const LeftToolbar = (props: Props) => {
         />
       </div>
 
-      <div className={clsx(classes.group, classes.rGroup)}>
+      <div className={classes.group}>
         <RGroup {...rest} />
-      </div>
 
-      {isStandalone ? null : (
-        <div className={classes.group}>
-          <ToolbarGroupItem id="shape-circle" {...rest} />
-          <ToolbarGroupItem id="shape-rectangle" {...rest} />
-          <ToolbarGroupItem id="shape-line" {...rest} />
-        </div>
-      )}
+        {isStandalone ? null : <Shape {...rest} />}
+      </div>
     </div>
   )
 }

@@ -1,11 +1,3 @@
-import React from 'react'
-import { useMediaQuery } from 'react-responsive'
-import {
-  ToolbarGroupItem,
-  ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps
-} from '../../ToolbarGroupItem'
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -21,28 +13,35 @@ import {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import React from 'react'
+import { useMediaQuery } from 'react-responsive'
+import {
+  ToolbarGroupItem,
+  ToolbarGroupItemCallProps,
+  ToolbarGroupItemProps
+} from '../../ToolbarGroupItem'
 
-interface RGroupProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {}
-interface RGroupCallProps extends ToolbarGroupItemCallProps {}
+interface ShapeProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {}
+interface ShapeCallProps extends ToolbarGroupItemCallProps {}
 
-type Props = RGroupProps & RGroupCallProps
+type Props = ShapeProps & ShapeCallProps
 
-const RGroup = (props: Props) => {
+const Shape = (props: Props) => {
   const collapseRGroup = useMediaQuery({ query: '(max-height: 850px)' })
 
   if (collapseRGroup) {
     return (
       <ToolbarGroupItem
-        id="rgroup-label"
+        id="shape-ellipse"
         options={[
           {
-            id: 'rgroup-label'
+            id: 'shape-ellipse'
           },
           {
-            id: 'rgroup-fragment'
+            id: 'shape-rectangle'
           },
           {
-            id: 'rgroup-attpoints'
+            id: 'shape-line'
           }
         ]}
         {...props}
@@ -52,12 +51,12 @@ const RGroup = (props: Props) => {
 
   return (
     <>
-      <ToolbarGroupItem id="rgroup-label" {...props} />
-      <ToolbarGroupItem id="rgroup-fragment" {...props} />
-      <ToolbarGroupItem id="rgroup-attpoints" {...props} />
+      <ToolbarGroupItem id="shape-ellipse" {...props} />
+      <ToolbarGroupItem id="shape-rectangle" {...props} />
+      <ToolbarGroupItem id="shape-line" {...props} />
     </>
   )
 }
 
-export type { RGroupProps, RGroupCallProps }
-export { RGroup }
+export type { ShapeProps, ShapeCallProps }
+export { Shape }

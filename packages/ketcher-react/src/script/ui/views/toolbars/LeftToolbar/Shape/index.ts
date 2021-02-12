@@ -13,41 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-.app {
-  height: 100%;
-  width: 100%;
-  position: relative;
-  display: grid;
-  grid-template-areas:
-    '. toolbar-top .'
-    'toolbar-left canvas toolbar-right'
-    '. toolbar-bottom .';
-  grid-template-columns: minmax(40px, auto) 1fr minmax(40px, auto);
-  grid-template-rows: auto 1fr auto;
-}
 
-.canvas {
-  grid-area: canvas;
-}
-
-.top {
-  grid-area: toolbar-top;
-}
-
-.left {
-  grid-area: toolbar-left;
-}
-
-.right {
-  grid-area: toolbar-right;
-}
-
-.bottom {
-  grid-area: toolbar-bottom;
-}
-
-@media (max-height: 600px), (max-width: 1040px) {
-  .app {
-    grid-template-columns: minmax(32px, auto) 1fr minmax(32px, auto);
-  }
-}
+export * from './Shape'

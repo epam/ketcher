@@ -20,9 +20,32 @@ import {
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
 import { ToolbarMultiToolItem } from '../../ToolbarGroupItem/ToolbarMultiToolItem'
+import { ToolbarItem, ToolbarItemVariant } from '../../toolbox.types'
+
+function makeItems(ids: ToolbarItemVariant[]): ToolbarItem[] {
+  return ids.map(id => ({ id }))
+}
+
+const bondCommon: ToolbarItem[] = makeItems([
+  'bond-single',
+  'bond-double',
+  'bond-triple'
+])
+const bondStereo: ToolbarItem[] = makeItems([
+  'bond-up',
+  'bond-down',
+  'bond-updown',
+  'bond-crossed'
+])
+const bondQuery: ToolbarItem[] = makeItems([
+  'bond-any',
+  'bond-aromatic',
+  'bond-singledouble',
+  'bond-singlearomatic',
+  'bond-doublearomatic'
+])
 
 interface BondProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {}
-
 interface BondCallProps extends ToolbarGroupItemCallProps {}
 
 type Props = BondProps & BondCallProps
@@ -34,46 +57,9 @@ const Bond = (props: Props) => {
     return (
       <ToolbarMultiToolItem
         id="bond-common"
-        options={[
-          {
-            id: 'bond-single'
-          },
-          {
-            id: 'bond-double'
-          },
-          {
-            id: 'bond-triple'
-          },
-          {
-            id: 'bond-up'
-          },
-          {
-            id: 'bond-down'
-          },
-          {
-            id: 'bond-updown'
-          },
-          {
-            id: 'bond-crossed'
-          },
-          {
-            id: 'bond-any'
-          },
-          {
-            id: 'bond-aromatic'
-          },
-          {
-            id: 'bond-singledouble'
-          },
-          {
-            id: 'bond-singlearomatic'
-          },
-          {
-            id: 'bond-doublearomatic'
-          }
-        ]}
+        options={[...bondCommon, ...bondStereo, ...bondQuery]}
         variant="grouped"
-        groups={[3, 4, 5]}
+        groups={[bondCommon.length, bondStereo.length, bondQuery.length]}
         {...props}
       />
     )
@@ -81,62 +67,9 @@ const Bond = (props: Props) => {
 
   return (
     <>
-      <ToolbarMultiToolItem
-        id="bond-common"
-        options={[
-          {
-            id: 'bond-single'
-          },
-          {
-            id: 'bond-double'
-          },
-          {
-            id: 'bond-triple'
-          }
-        ]}
-        {...props}
-      />
-
-      <ToolbarMultiToolItem
-        id="bond-stereo"
-        options={[
-          {
-            id: 'bond-up'
-          },
-          {
-            id: 'bond-down'
-          },
-          {
-            id: 'bond-updown'
-          },
-          {
-            id: 'bond-crossed'
-          }
-        ]}
-        {...props}
-      />
-
-      <ToolbarMultiToolItem
-        id="bond-query"
-        options={[
-          {
-            id: 'bond-any'
-          },
-          {
-            id: 'bond-aromatic'
-          },
-          {
-            id: 'bond-singledouble'
-          },
-          {
-            id: 'bond-singlearomatic'
-          },
-          {
-            id: 'bond-doublearomatic'
-          }
-        ]}
-        {...props}
-      />
+      <ToolbarMultiToolItem id="bond-common" options={bondCommon} {...props} />
+      <ToolbarMultiToolItem id="bond-stereo" options={bondStereo} {...props} />
+      <ToolbarMultiToolItem id="bond-query" options={bondQuery} {...props} />
     </>
   )
 }

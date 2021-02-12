@@ -103,10 +103,10 @@ type ActionObj = {
   thunk?: (dispatch: Dispatch, getState: () => ReduxState) => void
 }
 type ActionFn = (editor: Editor) => void
-// todo: imagine better name
+// todo: come up with better name
 type UiActionAction = ActionObj | ActionFn
 
-// todo: imagine better name
+// todo: come up with better name
 type GetActionState = (
   editor: Editor,
   server?: Server,

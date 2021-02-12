@@ -27,7 +27,7 @@ import {
 } from '../views/toolbars'
 
 import { AppHiddenContainer } from './AppHidden'
-import styles from './App.module.less'
+import classes from './App.module.less'
 
 interface AppCallProps {
   checkServer: () => void
@@ -42,14 +42,14 @@ const App = (props: Props) => {
   }, [])
 
   return (
-    <div className={styles.app}>
+    <div className={classes.app}>
       <AppHiddenContainer />
-      <Editor className={styles.canvas} />
+      <Editor className={classes.canvas} />
 
-      <TopToolbarContainer className={styles.top} />
-      <LeftToolbarContainer className={styles.left} />
-      <BottomToolbarContainer className={styles.bottom} />
-      <RightToolbarContainer className={styles.right} />
+      <TopToolbarContainer className={classes.top} />
+      <LeftToolbarContainer className={classes.left} />
+      <BottomToolbarContainer className={classes.bottom} />
+      <RightToolbarContainer className={classes.right} />
 
       <AppClipArea />
       <AppModal />

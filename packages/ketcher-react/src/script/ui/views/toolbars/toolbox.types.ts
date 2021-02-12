@@ -99,7 +99,7 @@ type LeftToolbarItemVariant =
   | 'rgroup-fragment'
   | 'rgroup-attpoints'
   // shape group
-  | 'shape-circle'
+  | 'shape-ellipse'
   | 'shape-rectangle'
   | 'shape-line'
 

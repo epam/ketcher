@@ -47,7 +47,6 @@ const RightToolbar = (props: Props) => {
     <div className={clsx(classes.root, className)}>
       <div className={classes.group}>
         <AtomsList atoms={basicAtoms} active={active} onAction={onAction} />
-
         <AtomsList atoms={freqAtoms} active={active} onAction={onAction} />
       </div>
 

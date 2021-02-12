@@ -15,6 +15,7 @@
  ***************************************************************************/
 import clsx from 'clsx'
 import React, { useRef } from 'react'
+
 import action, { UiAction, UiActionAction } from '../../../../action'
 import Icon from '../../../../component/view/icon'
 import { Portal } from '../../../../Portal'
@@ -26,10 +27,10 @@ import {
 } from '../ActionButton'
 import { usePortalOpening } from './usePortalOpening'
 import { usePortalStyle } from './usePortalStyle'
-
-import classes from './ToolbarMultiToolItem.module.less'
 import { chooseMultiTool } from './variants/chooseMultiTool'
 import { MultiToolVariant } from './variants/variants.types'
+
+import classes from './ToolbarMultiToolItem.module.less'
 
 interface ToolbarMultiToolItemProps {
   id: ToolbarItemVariant
@@ -39,7 +40,7 @@ interface ToolbarMultiToolItemProps {
   status: {
     [key in string]?: UiAction
   }
-  opened: any | null
+  opened: string | null
   disableableButtons: string[]
   indigoVerification: boolean
   className?: string
@@ -133,20 +134,6 @@ const ToolbarMultiToolItem = (props: Props) => {
             indigoVerification={indigoVerification}
             onAction={onAction}
           />
-          {/*{options.map(toolbarItem => {
-            const _status = status[toolbarItem.id]
-            return (
-              <ActionButton
-                {...actionButtonProps}
-                key={toolbarItem.id}
-                name={toolbarItem.id}
-                action={action[toolbarItem.id]}
-                // @ts-ignore
-                status={_status}
-                selected={!!_status?.selected}
-              />
-            )
-          })}*/}
         </Portal>
       )}
     </div>

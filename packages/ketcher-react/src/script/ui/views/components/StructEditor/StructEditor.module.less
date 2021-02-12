@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import '../../../../../style/component';
 @import '../../../../../style/variables';
 @import '../../../../../style/mixins';
 
@@ -29,7 +30,7 @@
 .canvas-size(@dim) {
   .set-size(@dim);
 
-  .measure-log {
+  .measureLog {
     top: 0;
     right: 0;
   }
@@ -39,12 +40,13 @@
   border: @border-color 1px solid;
   border-radius: 5px;
   overflow: auto;
+  position: relative;
 
   .canvas-size(inherit);
 
   user-select: none;
 
-  .measure-log {
+  .measureLog {
     position: absolute;
     &:extend(.-measure);
     &.visible {

@@ -129,11 +129,4 @@ type Tools = {
   [ket in keyof ToolVariant]?: UiAction
 }
 
-export type {
-  Tools,
-  UiAction,
-  UiActionAction,
-  ActionObj,
-  ActionFn,
-  IsActionState
-}
+export type { Tools, UiAction, UiActionAction }

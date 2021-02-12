@@ -2,10 +2,8 @@
 // https://github.com/less/less.js/issues/2004
 @import 'variables';
 
-// stylelint-disable block-no-empty
 .set-size(inherit) {
 }
-// stylelint-enable block-no-empty
 .set-size(small) {
   #small-dim;
 }
@@ -214,7 +212,6 @@
 
   background-color: @rgba-color;
 
-  // stylelint-disable-next-line declaration-block-no-shorthand-property-overrides
   background: none \9; // Hack for IE8
   filter: e(
     %(
@@ -231,7 +228,6 @@
 }
 
 .text-hide(transparent) {
-  /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
   font: ~'0/0' a;
   color: transparent;
   text-shadow: none;

@@ -13,25 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-@import '../toolbar';
 
-.root {
-  .toolbar();
-  .vertical-toolbar();
-
-  button {
-    font-size: 19px;
-  }
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: rgba(0, 0, 0, 0);
+  -webkit-border-radius: 100px;
 }
 
-@media (max-height: 600px), (max-width: 1040px) {
-  .root {
-    .set-size(small);
-  }
+::-webkit-scrollbar:hover {
+  background-color: rgba(0, 0, 0, 0.09);
 }
 
-@media (max-width: 1159px) {
-  .root {
-    .hide-group-separator(bottom);
-  }
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.30);
+  -webkit-border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgba(0, 0, 0, 0.61);
+  -webkit-border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+  min-height: 10px;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  min-width: 10px;
 }

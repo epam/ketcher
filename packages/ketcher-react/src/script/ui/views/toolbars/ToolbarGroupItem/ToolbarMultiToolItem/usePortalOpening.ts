@@ -14,8 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 import { useEffect, useState } from 'react'
+import { ToolbarItem } from '../../toolbox.types'
 
-function usePortalOpening([id, opened, options]) {
+type HookParams = [string, string | null, ToolbarItem[]]
+
+function usePortalOpening([id, opened, options]: HookParams): [boolean] {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   useEffect(() => {

@@ -16,6 +16,8 @@
 import { Component, CSSProperties } from 'react'
 import ReactDOM from 'react-dom'
 
+const CLASSNAME_SEPARATOR = ' '
+
 interface PortalProps {
   isOpen: boolean
   className?: string
@@ -91,7 +93,7 @@ class Portal extends Component<Props> {
       return
     }
 
-    classNames.split(' ').forEach(className => {
+    classNames.split(CLASSNAME_SEPARATOR).forEach(className => {
       this.element.classList.remove(className)
     })
   }
@@ -101,7 +103,7 @@ class Portal extends Component<Props> {
       return
     }
 
-    classNames.split(' ').forEach(className => {
+    classNames.split(CLASSNAME_SEPARATOR).forEach(className => {
       this.element.classList.add(className)
     })
   }

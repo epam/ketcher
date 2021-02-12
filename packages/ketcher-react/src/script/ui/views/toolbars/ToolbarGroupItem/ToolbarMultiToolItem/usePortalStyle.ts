@@ -17,7 +17,7 @@ import { CSSProperties, RefObject, useEffect, useState } from 'react'
 
 type HookParams = [RefObject<HTMLDivElement>, boolean]
 
-function usePortalStyle([ref, isOpen]: HookParams) {
+function usePortalStyle([ref, isOpen]: HookParams): [CSSProperties] {
   const [portalStyle, setPortalStyle] = useState<CSSProperties>({})
 
   useEffect(() => {

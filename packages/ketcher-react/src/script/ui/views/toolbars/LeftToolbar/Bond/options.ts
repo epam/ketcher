@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { GroupDescriptor } from '../../ToolbarGroupItem/ToolbarMultiToolItem/variants/variants.types'
 import { makeItems } from '../../ToolbarGroupItem/utils'
-import { ToolbarItem } from '../../toolbox.types'
+import { ToolbarItem } from '../../toolbar.types'
 
 const bondCommon: ToolbarItem[] = makeItems([
   'bond-single',

@@ -19,7 +19,7 @@ import React, { useRef } from 'react'
 import action, { UiAction, UiActionAction } from '../../../../action'
 import Icon from '../../../../component/view/icon'
 import { Portal } from '../../../../Portal'
-import { ToolbarItem, ToolbarItemVariant } from '../../toolbox.types'
+import { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types'
 import {
   ActionButton,
   ActionButtonCallProps,

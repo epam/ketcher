@@ -23,7 +23,7 @@ import {
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
 import { makeItems } from '../ToolbarGroupItem/utils'
-import { ToolbarItem, ToolbarItemVariant } from '../toolbox.types'
+import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
 import { Bond } from './Bond'
 import classes from './LeftToolbar.module.less'
 import { RGroup } from './RGroup'

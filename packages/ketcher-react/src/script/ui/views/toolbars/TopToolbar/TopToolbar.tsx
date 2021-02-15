@@ -22,7 +22,7 @@ import {
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
-import { ToolbarItem, ToolbarItemVariant } from '../toolbox.types'
+import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
 import classes from './TopToolbar.module.less'
 import { ZoomList } from './ZoomList'
 

@@ -283,10 +283,13 @@ class Molfile {
       value: string
     }[] = []
     this.molecule.atoms.forEach((atom, id) => {
+      let label = atom.label
       if (atom.atomList != null) {
+        label = 'L'
         atomsIds.push(id)
       } else if (atom['pseudo']) {
         if (atom['pseudo'].length > 3) {
+          label = 'A'
           atomsProps.push({ id, value: `'${atom['pseudo']}'` })
         }
       } else if (atom['alias']) {
@@ -296,11 +299,11 @@ class Molfile {
         ['A', 'Q', 'X', '*', 'R#'].indexOf(atom.label) == -1
       ) {
         // search in generics?
+        label = 'C'
         atomsProps.push({ id, value: atom.label })
       }
 
-      const atomLabel = this.getAtomLabel(atom)
-      this.writeAtom(atom, atomLabel)
+      this.writeAtom(atom, label)
 
       this.mapping[id] = i++
     }, this)
@@ -486,32 +489,6 @@ class Molfile {
     // TODO: write M  LOG
 
     this.writeCR('M  END')
-  }
-
-  private getAtomLabel(atom): string {
-    if (atom.atomList != null) {
-      return 'L'
-    }
-
-    if (atom['pseudo']) {
-      if (atom['pseudo'].length > 3) {
-        return 'A'
-      }
-    }
-
-    const { label } = atom
-    if (atom['alias']) {
-      return label
-    }
-
-    if (
-      !element.map[label] &&
-      ['A', 'Q', 'X', '*', 'R#'].indexOf(label) == -1
-    ) {
-      return 'C'
-    }
-
-    return label
   }
 
   private writeAtom(atom, atomLabel: string) {

@@ -16,12 +16,14 @@
 import clsx from 'clsx'
 import React, { FC } from 'react'
 
+import { useResizeObserver } from '../../../../../hooks'
+import { mediaSizes } from '../mediaSizes'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
-import { ToolbarItem, ToolbarItemVariant } from '../toolbox.types'
+import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
 import classes from './TopToolbar.module.less'
 import { ZoomList } from './ZoomList'
 
@@ -40,17 +42,23 @@ type Props = TopToolbarProps & TopToolbarCallProps
 
 const TopToolbar = (props: Props) => {
   const { className, ...rest } = props
+  const { ref, width } = useResizeObserver<HTMLDivElement>()
 
   type ItemProps = {
     id: ToolbarItemVariant
     options?: ToolbarItem[]
     className?: string
   }
-  const Item = ({ id, options }: ItemProps) =>
-    ToolbarGroupItem({ id, options, ...rest })
+  const Item = ({ id, options, className }: ItemProps) =>
+    ToolbarGroupItem({ id, options, className, ...rest })
 
   return (
-    <div className={clsx(classes.root, className)}>
+    <div
+      ref={ref}
+      className={clsx(classes.root, className, {
+        [classes.hideSeparators]:
+          width && width < mediaSizes.topSeparatorsShowingWidth
+      })}>
       <Group>
         <Item id="new" />
         <Item id="open" />
@@ -66,8 +74,12 @@ const TopToolbar = (props: Props) => {
       </Group>
 
       <Group>
-        <Item id="zoom-in" className={classes.zoomAdjust} />
-        <Item id="zoom-out" className={classes.zoomAdjust} />
+        {width && width >= mediaSizes.zoomShowingWidth ? (
+          <>
+            <Item id="zoom-in" />
+            <Item id="zoom-out" />
+          </>
+        ) : null}
         <ZoomList status={rest.status} onAction={rest.onAction} />
       </Group>
 
@@ -87,8 +99,12 @@ const TopToolbar = (props: Props) => {
 
       <Group className={classes.meta}>
         <Item id="settings" />
-        <Item id="help" className={classes.metaInfo} />
-        <Item id="about" className={classes.metaInfo} />
+        {width && width >= mediaSizes.infoShowingWidth ? (
+          <>
+            <Item id="help" />
+            <Item id="about" />
+          </>
+        ) : null}
       </Group>
     </div>
   )

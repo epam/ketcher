@@ -55,8 +55,7 @@
   }
 }
 
-@media (max-height: 600px), (max-width: 1040px) {
-  .canvas {
-    .canvas-size(small);
-  }
+// stylelint-disable-next-line selector-pseudo-class-no-unknown
+:global(.smallEditor) .canvas {
+  .canvas-size(small);
 }

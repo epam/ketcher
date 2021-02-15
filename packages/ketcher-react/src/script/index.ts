@@ -17,7 +17,7 @@ import { StructServiceProvider } from 'ketcher-core'
 import { KetcherBuilder, ButtonsConfig } from './builders'
 
 interface Config {
-  element: HTMLInputElement | null
+  element: HTMLDivElement | null
   staticResourcesUrl: string
   structServiceProvider: StructServiceProvider
   buttons?: ButtonsConfig

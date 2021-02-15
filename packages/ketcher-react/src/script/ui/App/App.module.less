@@ -46,8 +46,7 @@
   grid-area: toolbar-bottom;
 }
 
-@media (max-height: 600px), (max-width: 1040px) {
-  .app {
-    grid-template-columns: minmax(32px, auto) 1fr minmax(32px, auto);
-  }
+// stylelint-disable-next-line selector-pseudo-class-no-unknown
+:global(.smallEditor) .app {
+  grid-template-columns: minmax(32px, auto) 1fr minmax(32px, auto);
 }

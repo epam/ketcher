@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import React from 'react'
-import { useMediaQuery } from 'react-responsive'
+import { mediaSizes } from '../../mediaSizes'
 import {
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
@@ -28,31 +28,33 @@ import {
   groupDescriptors
 } from './options'
 
-interface BondProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {}
+interface BondProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
+  height?: number
+}
 interface BondCallProps extends ToolbarGroupItemCallProps {}
 
 type Props = BondProps & BondCallProps
 
 const Bond = (props: Props) => {
-  const collapseBond = useMediaQuery({ query: '(max-height: 700px)' })
+  const { height, ...rest } = props
 
-  if (collapseBond) {
+  if (height && height <= mediaSizes.bondCollapsableHeight) {
     return (
       <ToolbarMultiToolItem
         id="bond-common"
         options={groupOptions}
         variant="grouped"
         groups={groupDescriptors}
-        {...props}
+        {...rest}
       />
     )
   }
 
   return (
     <>
-      <ToolbarMultiToolItem id="bond-common" options={bondCommon} {...props} />
-      <ToolbarMultiToolItem id="bond-stereo" options={bondStereo} {...props} />
-      <ToolbarMultiToolItem id="bond-query" options={bondQuery} {...props} />
+      <ToolbarMultiToolItem id="bond-common" options={bondCommon} {...rest} />
+      <ToolbarMultiToolItem id="bond-stereo" options={bondStereo} {...rest} />
+      <ToolbarMultiToolItem id="bond-query" options={bondQuery} {...rest} />
     </>
   )
 }

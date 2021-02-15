@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-@import '../toolbar';
 
-.root {
-  .toolbar();
-  .vertical-toolbar();
-
-  button {
-    font-size: 19px;
-  }
+const mediaSizes = {
+  topSeparatorsShowingWidth: 1080,
+  zoomShowingWidth: 780,
+  infoShowingWidth: 790,
+  reactionSeparatorShowingHeight: 851,
+  bondCollapsableHeight: 620,
+  rGroupCollapsableHeight: 850,
+  shapeCollapsableHeight: 850,
+  transformCollapsableHeight: 720
 }
+
+export { mediaSizes }

@@ -27,7 +27,7 @@ import { loadStruct } from '../state/shared'
 import App from './App.container'
 
 function initApp(
-  element: HTMLInputElement | null,
+  element: HTMLDivElement | null,
   staticResourcesUrl: string,
   options: any,
   server: StructService,

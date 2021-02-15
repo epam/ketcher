@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { useEffect, useState } from 'react'
-import { ToolbarItem } from '../../toolbox.types'
+import { ToolbarItem } from '../../toolbar.types'
 
 type HookParams = [string, string | null, ToolbarItem[]]
 

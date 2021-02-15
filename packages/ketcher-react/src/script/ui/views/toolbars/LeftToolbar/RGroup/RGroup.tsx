@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import React from 'react'
-import { useMediaQuery } from 'react-responsive'
+import { mediaSizes } from '../../mediaSizes'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -28,25 +28,27 @@ const rGroupOptions = makeItems([
   'rgroup-attpoints'
 ])
 
-interface RGroupProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {}
+interface RGroupProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
+  height?: number
+}
 interface RGroupCallProps extends ToolbarGroupItemCallProps {}
 
 type Props = RGroupProps & RGroupCallProps
 
 const RGroup = (props: Props) => {
-  const collapseRGroup = useMediaQuery({ query: '(max-height: 850px)' })
+  const { height, ...rest } = props
 
-  if (collapseRGroup) {
+  if (height && height <= mediaSizes.rGroupCollapsableHeight) {
     return (
-      <ToolbarGroupItem id="rgroup-label" options={rGroupOptions} {...props} />
+      <ToolbarGroupItem id="rgroup-label" options={rGroupOptions} {...rest} />
     )
   }
 
   return (
     <>
-      <ToolbarGroupItem id="rgroup-label" {...props} />
-      <ToolbarGroupItem id="rgroup-fragment" {...props} />
-      <ToolbarGroupItem id="rgroup-attpoints" {...props} />
+      <ToolbarGroupItem id="rgroup-label" {...rest} />
+      <ToolbarGroupItem id="rgroup-fragment" {...rest} />
+      <ToolbarGroupItem id="rgroup-attpoints" {...rest} />
     </>
   )
 }

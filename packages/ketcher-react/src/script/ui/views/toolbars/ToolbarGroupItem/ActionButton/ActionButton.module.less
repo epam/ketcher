@@ -15,8 +15,7 @@
  ***************************************************************************/
 @import '../../../../../../style/variables';
 @import '../../../../../../style/mixins';
-
-.set-size(large);
+@import '../../../../../../style/index';
 
 .button {
   display: block;
@@ -47,14 +46,14 @@
     .highlight-shadow(none);
   }
 
-  .toolbutton-size(inherit);
+  .button-size(large);
 }
 
 .selected {
   .highlight-invert();
 }
 
-.toolbutton-size(@dim) {
+.button-size(@dim) {
   .set-size(@dim);
 
   width: @button-size;
@@ -68,13 +67,11 @@
     font-size: @icon-size;
     width: @icon-size;
     height: @icon-size;
-    //fill: @main-color;
     fill: currentColor;
   }
 }
 
-@media (max-height: 600px), (max-width: 1040px) {
-  .button {
-    .toolbutton-size(small);
-  }
+// stylelint-disable-next-line selector-pseudo-class-no-unknown
+:global(.smallEditor) .button {
+  .button-size(small);
 }

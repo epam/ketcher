@@ -68,7 +68,8 @@ select {
 
 //////////////////////////
 
-@media (max-height: 600px), (max-width: 1040px) {
+// stylelint-disable-next-line selector-pseudo-class-no-unknown
+:global(.smallEditor) {
   .set-size(small);
 
   body,

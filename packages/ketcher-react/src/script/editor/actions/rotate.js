@@ -19,7 +19,14 @@ import Pile from '../../util/pile'
 
 import { Bond } from '../../chem/struct'
 
-import op from '../operations/op'
+import {
+  AtomMove,
+  SGroupDataMove,
+  BondAttr,
+  RxnArrowMove,
+  RxnPlusMove,
+  EnhancedFlagMove
+} from '../operations'
 import utils from '../shared/utils'
 import Action from '../shared/action'
 
@@ -62,7 +69,7 @@ export function fromFlip(restruct, selection, dir, center) {
     fragment.forEach(aid => {
       const atom = struct.atoms.get(aid)
       const d = flipItemByCenter(atom, calcCenter, dir)
-      action.addOp(new op.AtomMove(aid, d))
+      action.addOp(new AtomMove(aid, d))
     })
 
     if (!selection.sgroupData) {
@@ -70,7 +77,7 @@ export function fromFlip(restruct, selection, dir, center) {
 
       sgroups.forEach(sg => {
         const d = flipItemByCenter(sg, calcCenter, dir)
-        action.addOp(new op.SGroupDataMove(sg.id, d))
+        action.addOp(new SGroupDataMove(sg.id, d))
       })
     }
   })
@@ -82,12 +89,12 @@ export function fromFlip(restruct, selection, dir, center) {
       if (bond.type !== Bond.PATTERN.TYPE.SINGLE) return
 
       if (bond.stereo === Bond.PATTERN.STEREO.UP) {
-        action.addOp(new op.BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.DOWN))
+        action.addOp(new BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.DOWN))
         return
       }
 
       if (bond.stereo === Bond.PATTERN.STEREO.DOWN)
-        action.addOp(new op.BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.UP))
+        action.addOp(new BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.UP))
     })
   }
 
@@ -124,7 +131,7 @@ export function fromRotate(restruct, selection, center, angle) {
   if (selection.atoms) {
     selection.atoms.forEach(aid => {
       const atom = struct.atoms.get(aid)
-      action.addOp(new op.AtomMove(aid, rotateDelta(atom.pp, center, angle)))
+      action.addOp(new AtomMove(aid, rotateDelta(atom.pp, center, angle)))
     })
 
     if (!selection.sgroupData) {
@@ -132,7 +139,7 @@ export function fromRotate(restruct, selection, center, angle) {
 
       sgroups.forEach(sg => {
         action.addOp(
-          new op.SGroupDataMove(sg.id, rotateDelta(sg.pp, center, angle))
+          new SGroupDataMove(sg.id, rotateDelta(sg.pp, center, angle))
         )
       })
     }
@@ -141,25 +148,21 @@ export function fromRotate(restruct, selection, center, angle) {
   if (selection.rxnArrows) {
     selection.rxnArrows.forEach(aid => {
       var arrow = struct.rxnArrows.get(aid)
-      action.addOp(
-        new op.RxnArrowMove(aid, rotateDelta(arrow.pp, center, angle))
-      )
+      action.addOp(new RxnArrowMove(aid, rotateDelta(arrow.pp, center, angle)))
     })
   }
 
   if (selection.rxnPluses) {
     selection.rxnPluses.forEach(pid => {
       var plus = struct.rxnPluses.get(pid)
-      action.addOp(new op.RxnPlusMove(pid, rotateDelta(plus.pp, center, angle)))
+      action.addOp(new RxnPlusMove(pid, rotateDelta(plus.pp, center, angle)))
     })
   }
 
   if (selection.sgroupData) {
     selection.sgroupData.forEach(did => {
       var data = struct.sgroups.get(did)
-      action.addOp(
-        new op.SGroupDataMove(did, rotateDelta(data.pp, center, angle))
-      )
+      action.addOp(new SGroupDataMove(did, rotateDelta(data.pp, center, angle)))
     })
   }
 
@@ -167,7 +170,7 @@ export function fromRotate(restruct, selection, center, angle) {
     selection.enhancedFlags.forEach(fid => {
       const flag = restruct.enhancedFlags.get(fid)
       action.addOp(
-        new op.EnhancedFlagMove(fid, rotateDelta(flag.pp, center, angle))
+        new EnhancedFlagMove(fid, rotateDelta(flag.pp, center, angle))
       )
     })
   }

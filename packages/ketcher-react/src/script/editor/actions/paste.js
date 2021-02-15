@@ -16,7 +16,16 @@
 
 import Vec2 from '../../util/vec2'
 
-import op from '../operations/op'
+import {
+  FragmentAdd,
+  FragmentAddStereoAtom,
+  AtomAdd,
+  BondAdd,
+  RxnArrowAdd,
+  RxnPlusAdd,
+  SimpleObjectAdd,
+  RGroupFragment
+} from '../operations'
 import Action from '../shared/action'
 
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup'
@@ -41,13 +50,13 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
     if (!fridMap.has(atom.fragment))
       fridMap.set(
         atom.fragment,
-        action.addOp(new op.FragmentAdd().perform(restruct)).frid
+        action.addOp(new FragmentAdd().perform(restruct)).frid
       )
 
     const tmpAtom = Object.assign(atom.clone(), {
       fragment: fridMap.get(atom.fragment)
     })
-    const operation = new op.AtomAdd(
+    const operation = new AtomAdd(
       tmpAtom,
       Vec2.diff(atom.pp, xy0).rotate(angle).add(point)
     ).perform(restruct)
@@ -60,16 +69,15 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   pstruct.frags.forEach((frag, frid) => {
     frag.stereoAtoms.forEach(aid =>
       action.addOp(
-        new op.FragmentAddStereoAtom(
-          fridMap.get(frid),
-          aidMap.get(aid)
-        ).perform(restruct)
+        new FragmentAddStereoAtom(fridMap.get(frid), aidMap.get(aid)).perform(
+          restruct
+        )
       )
     )
   })
 
   pstruct.bonds.forEach(bond => {
-    const operation = new op.BondAdd(
+    const operation = new BondAdd(
       aidMap.get(bond.begin),
       aidMap.get(bond.end),
       bond
@@ -97,19 +105,17 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 
   if (restruct.rxnArrows.size < 1) {
     pstruct.rxnArrows.forEach(rxnArrow => {
-      action.addOp(
-        new op.RxnArrowAdd(rxnArrow.pp.add(offset)).perform(restruct)
-      )
+      action.addOp(new RxnArrowAdd(rxnArrow.pp.add(offset)).perform(restruct))
     })
   }
 
   pstruct.rxnPluses.forEach(plus => {
-    action.addOp(new op.RxnPlusAdd(plus.pp.add(offset)).perform(restruct))
+    action.addOp(new RxnPlusAdd(plus.pp.add(offset)).perform(restruct))
   })
 
   pstruct.simpleObjects.forEach(simpleObject => {
     action.addOp(
-      new op.SimpleObjectAdd(
+      new SimpleObjectAdd(
         simpleObject.pos.map(p => p.add(offset)),
         simpleObject.mode
       ).perform(restruct)
@@ -119,7 +125,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   pstruct.rgroups.forEach((rg, rgid) => {
     rg.frags.forEach((frag, frid) => {
       action.addOp(
-        new op.RGroupFragment(rgid, fridMap.get(frid)).perform(restruct)
+        new RGroupFragment(rgid, fridMap.get(frid)).perform(restruct)
       )
     })
     const ifThen = pstruct.rgroups.get(rgid).ifthen

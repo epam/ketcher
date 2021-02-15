@@ -14,30 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-import op from '../operations/op'
+import {
+  RxnArrowAdd,
+  RxnArrowDelete,
+  RxnPlusAdd,
+  RxnPlusDelete
+} from '../operations'
 import Action from '../shared/action'
 
 export function fromArrowAddition(restruct, pos) {
   var action = new Action()
   if (restruct.molecule.rxnArrows.size < 1)
-    action.addOp(new op.RxnArrowAdd(pos).perform(restruct))
+    action.addOp(new RxnArrowAdd(pos).perform(restruct))
   return action
 }
 
 export function fromArrowDeletion(restruct, id) {
   var action = new Action()
-  action.addOp(new op.RxnArrowDelete(id))
+  action.addOp(new RxnArrowDelete(id))
   return action.perform(restruct)
 }
 
 export function fromPlusAddition(restruct, pos) {
   var action = new Action()
-  action.addOp(new op.RxnPlusAdd(pos).perform(restruct))
+  action.addOp(new RxnPlusAdd(pos).perform(restruct))
   return action
 }
 
 export function fromPlusDeletion(restruct, id) {
   var action = new Action()
-  action.addOp(new op.RxnPlusDelete(id))
+  action.addOp(new RxnPlusDelete(id))
   return action.perform(restruct)
 }

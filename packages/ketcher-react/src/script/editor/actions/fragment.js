@@ -18,7 +18,20 @@ import Vec2 from '../../util/vec2'
 import Pile from '../../util/pile'
 import { RGroup } from '../../chem/struct'
 
-import op from '../operations/op'
+import {
+  BondMove,
+  LoopMove,
+  AtomMove,
+  SGroupDataMove,
+  RxnArrowMove,
+  RxnPlusMove,
+  SimpleObjectMove,
+  EnhancedFlagMove,
+  FragmentDeleteStereoAtom,
+  FragmentStereoFlag,
+  FragmentAdd,
+  FragmentDelete
+} from '../operations'
 import Action from '../shared/action'
 
 import { fromAtomsFragmentAttr } from './atom'
@@ -58,54 +71,54 @@ export function fromMultipleMove(restruct, lists, d) {
     })
 
     bondlist.forEach(bond => {
-      action.addOp(new op.BondMove(bond, d))
+      action.addOp(new BondMove(bond, d))
     })
 
     loops.forEach(loopId => {
       if (restruct.reloops.get(loopId) && restruct.reloops.get(loopId).visel)
         // hack
-        action.addOp(new op.LoopMove(loopId, d))
+        action.addOp(new LoopMove(loopId, d))
     })
 
     lists.atoms.forEach(aid => {
-      action.addOp(new op.AtomMove(aid, d, !atomsToInvalidate.has(aid)))
+      action.addOp(new AtomMove(aid, d, !atomsToInvalidate.has(aid)))
     })
 
     if (lists.sgroupData && lists.sgroupData.length === 0) {
       const sgroups = getRelSgroupsBySelection(restruct, lists.atoms)
       sgroups.forEach(sg => {
-        action.addOp(new op.SGroupDataMove(sg.id, d))
+        action.addOp(new SGroupDataMove(sg.id, d))
       })
     }
   }
 
   if (lists.rxnArrows) {
     lists.rxnArrows.forEach(rxnArrow => {
-      action.addOp(new op.RxnArrowMove(rxnArrow, d, true))
+      action.addOp(new RxnArrowMove(rxnArrow, d, true))
     })
   }
 
   if (lists.rxnPluses) {
     lists.rxnPluses.forEach(rxnPulse => {
-      action.addOp(new op.RxnPlusMove(rxnPulse, d, true))
+      action.addOp(new RxnPlusMove(rxnPulse, d, true))
     })
   }
 
   if (lists.simpleObjects) {
     lists.simpleObjects.forEach(simpleObject => {
-      action.addOp(new op.SimpleObjectMove(simpleObject, d, true))
+      action.addOp(new SimpleObjectMove(simpleObject, d, true))
     })
   }
 
   if (lists.sgroupData) {
     lists.sgroupData.forEach(sgData => {
-      action.addOp(new op.SGroupDataMove(sgData, d))
+      action.addOp(new SGroupDataMove(sgData, d))
     })
   }
 
   if (lists.enhancedFlags) {
     lists.enhancedFlags.forEach(fid => {
-      action.addOp(new op.EnhancedFlagMove(fid, d))
+      action.addOp(new EnhancedFlagMove(fid, d))
     })
   }
 
@@ -120,11 +133,11 @@ export function fromStereoFlagUpdate(restruct, frid, flag) {
     const frag = restruct.molecule.frags.get(frid)
     frag.stereoAtoms.forEach(aid => {
       if (struct.atoms.get(aid).stereoLabel === null)
-        action.addOp(new op.FragmentDeleteStereoAtom(frid, aid))
+        action.addOp(new FragmentDeleteStereoAtom(frid, aid))
     })
   }
 
-  action.addOp(new op.FragmentStereoFlag(frid, flag))
+  action.addOp(new FragmentStereoFlag(frid, flag))
   return action.perform(restruct)
 }
 
@@ -169,7 +182,7 @@ export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
 
   restruct.molecule.atoms.forEach((atom, aid) => {
     if (atom.fragment === frid) {
-      const newfrid = action.addOp(new op.FragmentAdd().perform(restruct)).frid
+      const newfrid = action.addOp(new FragmentAdd().perform(restruct)).frid
 
       action.mergeWith(processAtom(restruct, aid, frid, newfrid))
 
@@ -179,7 +192,7 @@ export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
 
   if (frid !== -1) {
     action.mergeWith(fromRGroupFragment(restruct, 0, frid))
-    action.addOp(new op.FragmentDelete(frid).perform(restruct))
+    action.addOp(new FragmentDelete(frid).perform(restruct))
     action.mergeWith(fromUpdateIfThen(restruct, 0, rgid, rgForRemove))
   }
 

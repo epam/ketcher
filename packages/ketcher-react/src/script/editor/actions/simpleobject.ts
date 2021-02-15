@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import op from '../operations/op'
+import {
+  SimpleObjectDelete,
+  SimpleObjectAdd,
+  SimpleObjectResize
+} from '../operations'
 import Action from '../shared/action'
 
 export function fromSimpleObjectDeletion(restruct, id) {
   const action = new Action()
-  action.addOp(new op.SimpleObjectDelete(id))
+  action.addOp(new SimpleObjectDelete(id))
   return action.perform(restruct)
 }
 
 export function fromSimpleObjectAddition(restruct, pos, mode, toCircle) {
   var action = new Action()
-  action.addOp(new op.SimpleObjectAdd(pos, mode, toCircle))
+  action.addOp(new SimpleObjectAdd(pos, mode, toCircle))
   return action.perform(restruct)
 }
 
@@ -37,8 +41,6 @@ export function fromSimpleObjectResizing(
   toCircle
 ) {
   var action = new Action()
-  action.addOp(
-    new op.SimpleObjectResize(id, d, current, anchor, false, toCircle)
-  )
+  action.addOp(new SimpleObjectResize(id, d, current, anchor, false, toCircle))
   return action.perform(restruct)
 }

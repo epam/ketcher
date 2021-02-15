@@ -16,7 +16,7 @@
 
 import Vec2 from '../../util/vec2'
 import { Atom } from '../../chem/struct'
-import op from '../operations/op'
+import { AtomAdd, BondAdd } from '../operations'
 import Action from '../shared/action'
 import utils from '../shared/utils'
 import closest from '../shared/closest'
@@ -49,7 +49,7 @@ function extraBondAction(restruct, aid, angle) {
     action.operations.reverse()
     additionalAtom = actionRes[2]
   } else {
-    const operation = new op.AtomAdd(
+    const operation = new AtomAdd(
       { label: 'C', fragment: frid },
       new Vec2(1, 0)
         .rotate(angle)
@@ -59,7 +59,7 @@ function extraBondAction(restruct, aid, angle) {
 
     action.addOp(operation)
     action.addOp(
-      new op.BondAdd(aid, operation.data.aid, { type: 1 }).perform(restruct)
+      new BondAdd(aid, operation.data.aid, { type: 1 }).perform(restruct)
     )
 
     additionalAtom = operation.data.aid
@@ -116,7 +116,7 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
     } else {
       const v = Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp)
 
-      const operation = new op.AtomAdd(attrs, v.get_xy0()).perform(restruct)
+      const operation = new AtomAdd(attrs, v.get_xy0()).perform(restruct)
       action.addOp(operation)
       map.set(id, operation.data.aid)
       pasteItems.atoms.push(operation.data.aid)
@@ -125,7 +125,7 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
   mergeSgroups(action, restruct, pasteItems.atoms, aid)
 
   tmpl.bonds.forEach(bond => {
-    const operation = new op.BondAdd(
+    const operation = new BondAdd(
       map.get(bond.begin),
       map.get(bond.end),
       bond
@@ -210,7 +210,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
     const mergeA = closest.atom(restruct, v, null, 0.1)
 
     if (mergeA === null) {
-      const operation = new op.AtomAdd(attrs, v).perform(restruct)
+      const operation = new AtomAdd(attrs, v).perform(restruct)
       action.addOp(operation)
       atomsMap.set(id, operation.data.aid)
       pasteItems.atoms.push(operation.data.aid)
@@ -229,7 +229,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
       atomsMap.get(tBond.end)
     )
     if (existId === null) {
-      const operation = new op.BondAdd(
+      const operation = new BondAdd(
         atomsMap.get(tBond.begin),
         atomsMap.get(tBond.end),
         tBond

@@ -17,6 +17,7 @@ import clsx from 'clsx'
 import React, { FC } from 'react'
 
 import { useResizeObserver } from '../../../../../hooks'
+import { mediaSizes } from '../mediaSizes'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -55,7 +56,8 @@ const TopToolbar = (props: Props) => {
     <div
       ref={ref}
       className={clsx(classes.root, className, {
-        [classes.hideSeparators]: width && width < 1080
+        [classes.hideSeparators]:
+          width && width < mediaSizes.topSeparatorsShowingWidth
       })}>
       <Group>
         <Item id="new" />
@@ -72,7 +74,7 @@ const TopToolbar = (props: Props) => {
       </Group>
 
       <Group>
-        {width && width >= 780 ? (
+        {width && width >= mediaSizes.zoomShowingWidth ? (
           <>
             <Item id="zoom-in" />
             <Item id="zoom-out" />
@@ -97,7 +99,7 @@ const TopToolbar = (props: Props) => {
 
       <Group className={classes.meta}>
         <Item id="settings" />
-        {width && width >= 790 ? (
+        {width && width >= mediaSizes.infoShowingWidth ? (
           <>
             <Item id="help" />
             <Item id="about" />

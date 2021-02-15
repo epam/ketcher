@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import React from 'react'
+import { mediaSizes } from '../../mediaSizes'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -37,7 +38,7 @@ type Props = RGroupProps & RGroupCallProps
 const RGroup = (props: Props) => {
   const { height, ...rest } = props
 
-  if (height && height <= 850) {
+  if (height && height <= mediaSizes.rGroupCollapsableHeight) {
     return (
       <ToolbarGroupItem id="rgroup-label" options={rGroupOptions} {...rest} />
     )

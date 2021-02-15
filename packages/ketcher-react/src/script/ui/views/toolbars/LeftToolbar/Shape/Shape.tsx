@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import React from 'react'
+import { mediaSizes } from '../../mediaSizes'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -37,7 +38,7 @@ type Props = ShapeProps & ShapeCallProps
 const Shape = (props: Props) => {
   const { height, ...rest } = props
 
-  if (height && height <= 850) {
+  if (height && height <= mediaSizes.shapeCollapsableHeight) {
     return (
       <ToolbarGroupItem id="shape-ellipse" options={shapeOptions} {...rest} />
     )

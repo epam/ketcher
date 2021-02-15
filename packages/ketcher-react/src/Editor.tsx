@@ -24,6 +24,11 @@ import { useResizeObserver } from './hooks'
 import init, { Config } from './script'
 import classes from './Editor.module.less'
 
+const mediaSizes = {
+  smallWidth: 1040,
+  smallHeight: 600
+}
+
 interface EditorProps extends Omit<Config, 'element'> {}
 
 function Editor(props: EditorProps) {
@@ -43,7 +48,9 @@ function Editor(props: EditorProps) {
     <div
       ref={rootElRef}
       className={clsx(classes.root, {
-        smallEditor: (height && height <= 600) || (width && width <= 1040)
+        smallEditor:
+          (height && height <= mediaSizes.smallHeight) ||
+          (width && width <= mediaSizes.smallWidth)
       })}
     />
   )

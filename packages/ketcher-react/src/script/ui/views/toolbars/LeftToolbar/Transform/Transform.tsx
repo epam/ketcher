@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import React from 'react'
+import { mediaSizes } from '../../mediaSizes'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -37,7 +38,7 @@ type Props = TransformProps & TransformCallProps
 const Transform = (props: Props) => {
   const { height, ...rest } = props
 
-  if (height && height <= 720) {
+  if (height && height <= mediaSizes.transformCollapsableHeight) {
     return (
       <ToolbarGroupItem
         id="transform-rotate"

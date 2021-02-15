@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import React from 'react'
+import { mediaSizes } from '../../mediaSizes'
 import {
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
@@ -37,7 +38,7 @@ type Props = BondProps & BondCallProps
 const Bond = (props: Props) => {
   const { height, ...rest } = props
 
-  if (height && height <= 620) {
+  if (height && height <= mediaSizes.bondCollapsableHeight) {
     return (
       <ToolbarMultiToolItem
         id="bond-common"

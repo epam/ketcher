@@ -17,6 +17,7 @@ import clsx from 'clsx'
 import React, { FC } from 'react'
 
 import { useResizeObserver } from '../../../../../hooks'
+import { mediaSizes } from '../mediaSizes'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -89,7 +90,11 @@ const LeftToolbar = (props: Props) => {
         <Transform {...rest} height={height} />
       </Group>
 
-      <Group className={clsx({ [classes.borderOff]: height && height <= 850 })}>
+      <Group
+        className={clsx({
+          [classes.borderOff]:
+            height && height < mediaSizes.reactionSeparatorShowingHeight
+        })}>
         <Item id="sgroup" />
         <Item id="sgroup-data" />
         <Item id="reaction" options={reactionOptions} />

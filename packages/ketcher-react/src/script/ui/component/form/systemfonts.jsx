@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import FontFaceObserver from 'font-face-observer'
-import Input from './input'
 
 const commonFonts = [
   'Arial',
@@ -58,51 +57,44 @@ function checkInSystem() {
   return Promise.all(availableFontsPromises)
 }
 
-let cache = null
+function SystemFonts(props) {
+  const [availableFonts, setAvailableFonts] = useState(null)
+  const { value, onChange } = props
+  const onChangeCallback = useCallback(
+    e => {
+      onChange(e.target.value)
+    },
+    [onChange]
+  )
 
-class SystemFonts extends Component {
-  constructor(props) {
-    super(props)
-    this.state = { availableFonts: [subfontname(props.value)] }
-    this.setAvailableFonts()
-  }
-
-  setAvailableFonts() {
-    if (cache) {
-      this.setState({ availableFonts: cache })
-    } else {
-      checkInSystem().then(results => {
-        cache = results.filter(i => i !== null)
-        this.setState({ availableFonts: cache })
-      })
-    }
-  }
-
-  render() {
-    const { ...props } = this.props
-
-    const desc = {
-      enum: [],
-      enumNames: []
-    }
-
-    this.state.availableFonts.forEach(font => {
-      desc.enum.push(`30px ${font}`)
-      desc.enumNames.push(font)
+  useEffect(() => {
+    let mounted = true
+    checkInSystem().then(results => {
+      const fonts = results
+        .filter(i => i !== null)
+        .map(font => {
+          return { value: `30px ${font}`, label: font }
+        })
+      if (mounted) {
+        setAvailableFonts(fonts)
+      }
     })
 
-    return desc.enum.length !== 1 ? (
-      <Input {...props} schema={desc} />
-    ) : (
-      <select>
-        <option>{desc.enumNames[0]}</option>
-      </select>
-    )
-  }
-}
+    return () => (mounted = false)
+  }, [])
 
-function subfontname(name) {
-  return name.substring(name.indexOf('px ') + 3)
+  return (
+    <select
+      disabled={availableFonts == null}
+      value={value}
+      onChange={onChangeCallback}>
+      {availableFonts?.map(({ value, label }) => (
+        <option key={value} value={value}>
+          {label}
+        </option>
+      ))}
+    </select>
+  )
 }
 
 export default SystemFonts

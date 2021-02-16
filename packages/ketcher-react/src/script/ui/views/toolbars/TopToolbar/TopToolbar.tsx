@@ -90,6 +90,7 @@ const TopToolbar = (props: Props) => {
         <Item id="dearom" />
         <Item id="cip" />
         <Item id="check" />
+        <Item id="analyse" />
       </Group>
 
       <Group className={classes.recognize}>

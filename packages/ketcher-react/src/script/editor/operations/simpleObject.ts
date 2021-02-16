@@ -38,7 +38,6 @@ export class SimpleObjectAdd extends Base {
     toCircle: boolean = false
   ) {
     super(OperationType.SIMPLE_OBJECT_ADD)
-    // here is "tempValue is used
     this.data = { pos, mode, toCircle }
     this.performed = false
   }
@@ -192,41 +191,6 @@ function handleEllipseChangeIfAnchorIsOnAxis(anchor, item, current) {
   }
 }
 
-function handleEllipseChangeIfAnchorIsOnDiagonal(item, current) {
-  const rad = Vec2.diff(item.pos[1], item.pos[0])
-  const rx = Math.abs(rad.x / 2)
-  const ry = Math.abs(rad.y / 2)
-  const topLeftX = item.pos[0].x <= item.pos[1].x ? item.pos[0] : item.pos[1]
-  const topLeftY = item.pos[0].y <= item.pos[1].y ? item.pos[0] : item.pos[1]
-  const bottomRightX =
-    item.pos[0].x <= item.pos[1].x ? item.pos[1] : item.pos[0]
-  const bottomRightY =
-    item.pos[0].y <= item.pos[1].y ? item.pos[1] : item.pos[0]
-  //check in which quarter the anchor is placed
-  const firstQuarter =
-    current.x > topLeftX.x + rx && current.y <= topLeftY.y + ry
-  const secondQuarter =
-    current.x <= topLeftX.x + rx && current.y <= topLeftY.y + ry
-  const thirdQuarter =
-    current.x <= topLeftX.x + rx && current.y > topLeftY.y + ry
-  const forthQuarter =
-    current.x > topLeftX.x + rx && current.y > topLeftY.y + ry
-
-  if (current.x > topLeftX.x && (firstQuarter || forthQuarter)) {
-    bottomRightX.x = current.x
-  }
-
-  if (current.y < bottomRightY.y && (firstQuarter || secondQuarter)) {
-    topLeftY.y = current.y
-  }
-  if (current.x < bottomRightX.x && (secondQuarter || thirdQuarter)) {
-    topLeftX.x = current.x
-  }
-  if (current.y > topLeftY.y && (thirdQuarter || forthQuarter)) {
-    bottomRightY.y = current.y
-  }
-}
-
 function handleRectangleChangeWithAnchor(item, anchor, current) {
   const previousPos0 = item.pos[0].get_xy0()
   const previousPos1 = item.pos[1].get_xy0()
@@ -273,16 +237,7 @@ export class SimpleObjectResize extends Base {
     const anchor = this.data.anchor
     if (item.mode === SimpleObjectMode.ellipse) {
       if (anchor) {
-        if (
-          tfx(anchor.y) !== tfx(item.pos[0].y) &&
-          tfx(anchor.x) !== tfx(item.pos[0].x) &&
-          tfx(anchor.y) !== tfx(item.pos[1].y) &&
-          tfx(anchor.x) !== tfx(item.pos[1].x)
-        ) {
-          handleEllipseChangeIfAnchorIsOnDiagonal(item, current)
-        } else {
-          handleEllipseChangeIfAnchorIsOnAxis(anchor, item, current)
-        }
+        handleEllipseChangeIfAnchorIsOnAxis(anchor, item, current)
       } else if (this.data.toCircle) {
         const previousPos1 = item.pos[1].get_xy0()
         const circlePoint = makeCircleFromEllipse(item.pos[0], current)

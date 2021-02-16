@@ -19,6 +19,8 @@ import { omit } from 'lodash/fp'
 import { connect } from 'react-redux'
 import modals from '../../dialog'
 
+import styles from './ModalContainer.module.less'
+
 const mapStateToProps = state => ({
   modal: state.modal
 })
@@ -62,7 +64,7 @@ const ModalContainer = connect(
   if (!Modal) throw new Error(`There is no modal window named ${modal.name}`)
 
   return (
-    <div className="ket-overlay">
+    <div className={styles.ketOverlay}>
       <Modal {...props} />
     </div>
   )

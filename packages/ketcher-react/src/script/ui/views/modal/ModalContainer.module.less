@@ -1,0 +1,37 @@
+@import '../../../../style/mixins.less';
+
+.ketOverlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 40;
+  background-image: data-uri('overlay.svg');
+  .background-opacity(#777, 0.2);
+
+  &.animate {
+    transition: background-color 0.3s;
+  }
+
+  &.hide {
+    background-color: fade(#777, 1%);
+  }
+
+  &::after {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+  }
+
+  form[role='dialog'] {
+    outline: 0;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+  }
+}

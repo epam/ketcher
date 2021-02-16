@@ -2,46 +2,6 @@
 @import 'form';
 @import (reference) 'component';
 
-.ket-overlay {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  z-index: 40;
-
-  background-image: data-uri('overlay.svg');
-  .background-opacity(#777, 0.2);
-  //opacity: 1;
-
-  &.animate {
-    transition: background-color 0.3s;
-    //transition: opacity 0.3s;
-  }
-
-  &.hide {
-    background-color: fade(#777, 1%);
-    //opacity: 0.1;
-  }
-
-  &:after {
-    content: '';
-    display: inline-block;
-    height: 100%;
-    vertical-align: middle;
-  }
-
-  form[role='dialog'] {
-    outline: 0;
-    display: inline-block;
-    position: relative;
-    vertical-align: middle;
-  }
-}
-
 .ket-spinner {
   margin: auto;
   display: block;

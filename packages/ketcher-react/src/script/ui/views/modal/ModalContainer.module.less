@@ -30,8 +30,20 @@
 
   form[role='dialog'] {
     outline: 0;
-    display: inline-block;
     position: relative;
     vertical-align: middle;
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+    max-height: 80%;
+  }
+}
+
+@media (max-height: 600px), (max-width: 600px) {
+  .ketOverlay {
+    form[role='dialog'] {
+      max-width: 90%;
+      max-height: 90%;
+    }
   }
 }

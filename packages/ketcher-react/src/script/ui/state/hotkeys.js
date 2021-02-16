@@ -184,6 +184,7 @@ function clipData(editor) {
     return res
   } catch (ex) {
     //TODO: add error handler call
+    alert(ex)
   }
 
   return null

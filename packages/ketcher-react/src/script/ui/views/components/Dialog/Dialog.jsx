@@ -16,6 +16,9 @@
 
 import React, { Component, createRef } from 'react'
 import * as KN from 'w3c-keyname'
+import clsx from 'clsx'
+
+import mediaSizes from './mediaSizes'
 import style from './Dialog.module.less'
 
 class Dialog extends Component {
@@ -48,14 +51,14 @@ class Dialog extends Component {
       params[key](result())
   }
 
-  keyDown = ev => {
-    const key = KN.keyName(ev)
+  keyDown = event => {
+    const key = KN.keyName(event)
     const active = document.activeElement
     const activeTextarea = active && active.tagName === 'TEXTAREA'
     if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
       this.exit(key === 'Enter' ? 'OK' : 'Cancel')
-      ev.preventDefault()
-      ev.stopPropagation()
+      event.preventDefault()
+      event.stopPropagation()
     }
   }
 
@@ -67,16 +70,27 @@ class Dialog extends Component {
       result = () => null,
       valid = () => !!result(), // Hmm, dublicate.. No simple default props
       buttons = ['Cancel', 'OK'],
-      ...props
+      className,
+      containerSize,
+      ...rest
     } = this.props // see: https://git.io/v1KR6
+
+    const { height, width } = containerSize
+    const isSmallScreen =
+      height <= mediaSizes.smallScreenHeight ||
+      width <= mediaSizes.smallScreenWidth
+
     return (
       <form
         ref={this.formRef}
         role="dialog"
-        onSubmit={ev => ev.preventDefault()}
+        onSubmit={event => event.preventDefault()}
         onKeyDown={this.keyDown}
         tabIndex="-1"
-        {...props}>
+        className={clsx(style.form, className, {
+          [style.smallScreen]: isSmallScreen
+        })}
+        {...rest}>
         <header>
           {title}
           {params.onCancel && title && (

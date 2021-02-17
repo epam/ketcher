@@ -14,35 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../../../../../style/mixins.less';
-
-.form {
-  outline: 0;
-  position: relative;
-  vertical-align: middle;
-  display: flex;
-  flex-direction: column;
-  max-width: 80%;
-  max-height: 80%;
+const mediaSizes = {
+  smallScreenWidth: 600,
+  smallScreenHeight: 600
 }
 
-.close {
-  .reset-button;
-
-  position: absolute;
-  top: 0;
-  right: 0.3em;
-  color: lighten(#000, 60%);
-  font-size: 0.8em;
-  font-weight: bold;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 1);
-  opacity: 0.5;
-  &:hover {
-    opacity: 1;
-  }
-}
-
-.smallScreen {
-  max-width: 90%;
-  max-height: 90%;
-}
+export default mediaSizes

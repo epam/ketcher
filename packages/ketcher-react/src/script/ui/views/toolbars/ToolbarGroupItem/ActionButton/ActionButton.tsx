@@ -27,6 +27,7 @@ interface ActionButtonProps {
   action?: UiAction
   status?: {
     disabled?: boolean
+    hidden?: boolean
   }
   selected?: boolean
   disableableButtons: string[]
@@ -51,6 +52,11 @@ const ActionButton = (props: Props) => {
     className,
     onAction
   } = props
+
+  if (status.hidden) {
+    return null
+  }
+
   const shortcut = shortcutStr(action?.shortcut)
   const disabled =
     status.disabled || (indigoVerification && disableableButtons.includes(name))

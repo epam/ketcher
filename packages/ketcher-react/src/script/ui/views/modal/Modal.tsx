@@ -46,7 +46,7 @@ function Modal(props: ModalProps) {
     throw new Error(`There is no modal window named ${modal.name}`)
 
   return (
-    <div className={styles.ketOverlay} ref={containerRef}>
+    <div className={styles.modalOverlay} ref={containerRef}>
       <Component containerSize={{ height, width }} {...rest} />
     </div>
   )

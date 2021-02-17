@@ -128,11 +128,6 @@ class SGroupForest {
     const childIndex = childs.indexOf(childId)
     childs.splice(childIndex, 1)
     this.parent.set(childId, id)
-
-    if (!this.children.has(id)) {
-      this.children.set(id, [])
-    }
-    this.children.get(id).push(childId)
   }
 
   remove(id) {
@@ -142,7 +137,8 @@ class SGroupForest {
     const parentId = this.parent.get(id)
     const childs = this.children.get(parentId)
     this.children.get(id).forEach(childId => {
-      this.resetParentLink(childId, parentId)
+      this.parent.set(childId, parentId)
+      this.children.get(parentId).push(childId)
     })
 
     const i = childs.indexOf(id)

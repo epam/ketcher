@@ -75,7 +75,7 @@ class Dialog extends Component {
       ...rest
     } = this.props // see: https://git.io/v1KR6
 
-    const { height, width } = containerSize
+    const { height, width } = params.containerSize
     const isSmallScreen =
       height <= mediaSizes.smallScreenHeight ||
       width <= mediaSizes.smallScreenWidth

@@ -17,7 +17,7 @@
 import molfile from '../../chem/molfile'
 import { Bond } from '../../chem/struct'
 
-import op from '../operations/op'
+import { BondAttr } from '../operations'
 import Action from '../shared/action'
 
 /**
@@ -109,7 +109,7 @@ function fromAromatize(restruct, astruct, bondMap) {
   astruct.bonds.forEach((bond, bid) => {
     if (bond.type !== Bond.PATTERN.TYPE.AROMATIC) return
     action.addOp(
-      new op.BondAttr(
+      new BondAttr(
         bondMap.get(bid),
         'type',
         Bond.PATTERN.TYPE.AROMATIC
@@ -131,7 +131,7 @@ function fromDearomatize(restruct, dastruct, bondMap) {
 
   dastruct.bonds.forEach((bond, bid) => {
     action.addOp(
-      new op.BondAttr(bondMap.get(bid), 'type', bond.type).perform(restruct)
+      new BondAttr(bondMap.get(bid), 'type', bond.type).perform(restruct)
     )
   })
 

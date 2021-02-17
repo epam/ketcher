@@ -25,7 +25,7 @@ import { fromNewCanvas, fromDescriptorsAlign } from './actions/basic'
 import closest from './shared/closest'
 import toolMap from './tool'
 
-import { OperationType } from './operations/op'
+import { OperationType } from './operations'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -248,15 +248,24 @@ Editor.prototype.historySize = function () {
 }
 
 Editor.prototype.undo = function () {
-  if (this.historyPtr === 0) throw new Error('Undo stack is empty')
-  if (this.tool() && this.tool().cancel) this.tool().cancel()
+  if (this.historyPtr === 0) {
+    throw new Error('Undo stack is empty')
+  }
+  if (this.tool() && this.tool().cancel) {
+    this.tool().cancel()
+  }
+
   this.selection(null)
+
   if (this._tool instanceof toolMap['paste']) {
     this.event.change.dispatch()
     return
   }
+
   this.historyPtr--
-  const action = this.historyStack[this.historyPtr].perform(this.render.ctab)
+  const stack = this.historyStack[this.historyPtr]
+  const action = stack.perform(this.render.ctab)
+
   this.historyStack[this.historyPtr] = action
   this.event.change.dispatch(action)
   this.render.update()

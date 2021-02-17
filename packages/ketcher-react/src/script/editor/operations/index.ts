@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import { CanvasLoad, AlignDescriptors } from '../operations'
-import Action from '../shared/action'
-
-export function fromNewCanvas(restruct, struct) {
-  var action = new Action()
-
-  action.addOp(new CanvasLoad(struct))
-  return action.perform(restruct)
-}
-
-export function fromDescriptorsAlign(restruct) {
-  const action = new Action()
-  action.addOp(new AlignDescriptors(restruct))
-  return action.perform(restruct)
-}
+export * from './atom'
+export * from './bond'
+export * from './CanvasLoad'
+export * from './descriptors'
+export * from './EnhancedFlagMove'
+export * from './ifThen'
+export * from './fragment'
+export * from './fragmentStereoAtom'
+export * from './FragmentStereoFlag'
+export * from './LoopMove'
+export * from './OperationType'
+export * from './rgroup'
+export * from './rxn'
+export * from './simpleObject'
+export * from './sgroup'

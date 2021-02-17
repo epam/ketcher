@@ -16,7 +16,7 @@
 
 import Vec2 from '../../util/vec2'
 
-import op from '../operations/op'
+import { FragmentAdd, AtomAdd } from '../operations'
 import Action from '../shared/action'
 
 import { atomGetAttr } from './utils'
@@ -32,7 +32,7 @@ export function fromChain(restruct, p0, v, nSect, atomId) {
   const frid =
     atomId !== null
       ? atomGetAttr(restruct, atomId, 'fragment')
-      : action.addOp(new op.FragmentAdd().perform(restruct)).frid
+      : action.addOp(new FragmentAdd().perform(restruct)).frid
 
   const chainItems = {
     atoms: [],
@@ -43,7 +43,7 @@ export function fromChain(restruct, p0, v, nSect, atomId) {
     atomId !== null
       ? atomId
       : action.addOp(
-          new op.AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct)
+          new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct)
         ).data.aid
 
   chainItems.atoms.push(id0)

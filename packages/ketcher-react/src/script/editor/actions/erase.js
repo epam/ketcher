@@ -17,7 +17,13 @@
 import Pile from '../../util/pile'
 
 import Action from '../shared/action'
-import op from '../operations/op'
+import {
+  BondDelete,
+  AtomDelete,
+  RxnArrowDelete,
+  RxnPlusDelete,
+  SimpleObjectDelete
+} from '../operations'
 import { Atom, RGroup } from '../../chem/struct'
 
 import { fromStereoAtomAttrs } from './atom'
@@ -38,7 +44,7 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
   const bond = restruct.molecule.bonds.get(bid)
   const atomsToRemove = []
 
-  action.addOp(new op.BondDelete(bid))
+  action.addOp(new BondDelete(bid))
 
   if (
     !skipAtoms.includes(bond.begin) &&
@@ -47,7 +53,7 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
     if (removeAtomFromSgroupIfNeeded(action, restruct, bond.begin))
       atomsToRemove.push(bond.begin)
 
-    action.addOp(new op.AtomDelete(bond.begin))
+    action.addOp(new AtomDelete(bond.begin))
   }
 
   if (
@@ -57,7 +63,7 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
     if (removeAtomFromSgroupIfNeeded(action, restruct, bond.end))
       atomsToRemove.push(bond.end)
 
-    action.addOp(new op.AtomDelete(bond.end))
+    action.addOp(new AtomDelete(bond.end))
   }
 
   removeSgroupIfNeeded(action, restruct, atomsToRemove)
@@ -134,21 +140,21 @@ export function fromFragmentDeletion(restruct, selection) {
     if (removeAtomFromSgroupIfNeeded(action, restruct, aid))
       atomsToRemove.push(aid)
 
-    action.addOp(new op.AtomDelete(aid))
+    action.addOp(new AtomDelete(aid))
   })
 
   removeSgroupIfNeeded(action, restruct, atomsToRemove)
 
   selection.rxnArrows.forEach(id => {
-    action.addOp(new op.RxnArrowDelete(id))
+    action.addOp(new RxnArrowDelete(id))
   })
 
   selection.rxnPluses.forEach(id => {
-    action.addOp(new op.RxnPlusDelete(id))
+    action.addOp(new RxnPlusDelete(id))
   })
 
   selection.simpleObjects.forEach(id => {
-    action.addOp(new op.SimpleObjectDelete(id))
+    action.addOp(new SimpleObjectDelete(id))
   })
 
   action = action.perform(restruct)

@@ -24,9 +24,12 @@ import util from '../util'
 import Vec2 from '../../util/vec2'
 import { Bond } from '../../chem/struct'
 
+/** @param {import('../../chem/struct/atom').default} atom */
 function ReAtom(/* chem.Atom*/ atom) {
+  this.visel = undefined // for typing
   this.init('atom')
 
+  /** @type {import('../../chem/struct/atom').default} */
   this.a = atom // TODO rename a to item
   this.showLabel = false
 

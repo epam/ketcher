@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import op from '../operations/op'
+import { RGroupAttr, RGroupFragment, UpdateIfThen } from '../operations'
 import Action from '../shared/action'
 
 export function fromRGroupAttrs(restruct, id, attrs) {
   const action = new Action()
 
   Object.keys(attrs).forEach(key => {
-    action.addOp(new op.RGroupAttr(id, key, attrs[key]))
+    action.addOp(new RGroupAttr(id, key, attrs[key]))
   })
 
   return action.perform(restruct)
@@ -29,7 +29,7 @@ export function fromRGroupAttrs(restruct, id, attrs) {
 
 export function fromRGroupFragment(restruct, rgidNew, frid) {
   const action = new Action()
-  action.addOp(new op.RGroupFragment(rgidNew, frid))
+  action.addOp(new RGroupFragment(rgidNew, frid))
 
   return action.perform(restruct)
 }
@@ -37,7 +37,7 @@ export function fromRGroupFragment(restruct, rgidNew, frid) {
 export function fromUpdateIfThen(restruct, rgidNew, rgidOld, skipRgids) {
   const action = new Action()
   if (!restruct.molecule.rgroups.get(rgidOld))
-    action.addOp(new op.UpdateIfThen(rgidNew, rgidOld, skipRgids))
+    action.addOp(new UpdateIfThen(rgidNew, rgidOld, skipRgids))
 
   return action.perform(restruct)
 }

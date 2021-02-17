@@ -19,7 +19,16 @@ import { uniq } from 'lodash'
 import { SGroup } from '../../chem/struct'
 
 import Pile from '../../util/pile'
-import op from '../operations/op'
+import {
+  SGroupAttr,
+  AtomAttr,
+  SGroupRemoveFromHierarchy,
+  SGroupAtomRemove,
+  SGroupDelete,
+  SGroupCreate,
+  SGroupAtomAdd,
+  SGroupAddToHierarchy
+} from '../operations'
 import Action from '../shared/action'
 import { SgContexts } from '../shared/constants'
 
@@ -57,7 +66,7 @@ export function fromSgroupAttrs(restruct, id, attrs) {
   const action = new Action()
 
   Object.keys(attrs).forEach(key => {
-    action.addOp(new op.SGroupAttr(id, key, attrs[key]))
+    action.addOp(new SGroupAttr(id, key, attrs[key]))
   })
 
   return action.perform(restruct)
@@ -67,7 +76,7 @@ export function sGroupAttributeAction(id, attrs) {
   const action = new Action()
 
   Object.keys(attrs).forEach(key => {
-    action.addOp(new op.SGroupAttr(id, key, attrs[key]))
+    action.addOp(new SGroupAttr(id, key, attrs[key]))
   })
 
   return action
@@ -84,7 +93,7 @@ export function fromSgroupDeletion(restruct, id) {
 
     sG.neiAtoms.forEach(aid => {
       if (atomGetAttr(restruct, aid, 'label') === '*')
-        action.addOp(new op.AtomAttr(aid, 'label', 'C'))
+        action.addOp(new AtomAttr(aid, 'label', 'C'))
     })
   }
 
@@ -92,13 +101,13 @@ export function fromSgroupDeletion(restruct, id) {
   const atoms = SGroup.getAtoms(struct, sg)
   const attrs = sg.getAttrs()
 
-  action.addOp(new op.SGroupRemoveFromHierarchy(id))
+  action.addOp(new SGroupRemoveFromHierarchy(id))
 
   atoms.forEach(atom => {
-    action.addOp(new op.SGroupAtomRemove(id, atom))
+    action.addOp(new SGroupAtomRemove(id, atom))
   })
 
-  action.addOp(new op.SGroupDelete(id))
+  action.addOp(new SGroupDelete(id))
 
   action = action.perform(restruct)
 
@@ -115,16 +124,16 @@ export function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) {
   //      if yes, how to pass it to the following operations?
   sgid = sgid - 0 === sgid ? sgid : restruct.molecule.sgroups.newId()
 
-  action.addOp(new op.SGroupCreate(sgid, type, pp))
+  action.addOp(new SGroupCreate(sgid, type, pp))
 
   atoms.forEach(atom => {
-    action.addOp(new op.SGroupAtomAdd(sgid, atom))
+    action.addOp(new SGroupAtomAdd(sgid, atom))
   })
 
   action.addOp(
     type !== 'DAT'
-      ? new op.SGroupAddToHierarchy(sgid)
-      : new op.SGroupAddToHierarchy(sgid, -1, [])
+      ? new SGroupAddToHierarchy(sgid)
+      : new SGroupAddToHierarchy(sgid, -1, [])
   )
 
   action = action.perform(restruct)
@@ -137,7 +146,7 @@ export function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) {
       const plainCarbon = restruct.atoms.get(aid).a.isPlainCarbon()
 
       if (atomGetDegree(restruct, aid) === 1 && plainCarbon)
-        asteriskAction.addOp(new op.AtomAttr(aid, 'label', '*'))
+        asteriskAction.addOp(new AtomAttr(aid, 'label', '*'))
     })
 
     asteriskAction = asteriskAction.perform(restruct)
@@ -291,7 +300,7 @@ export function removeAtomFromSgroupIfNeeded(action, restruct, id) {
 
   if (sgroups.length > 0) {
     sgroups.forEach(sid => {
-      action.addOp(new op.SGroupAtomRemove(sid, id))
+      action.addOp(new SGroupAtomRemove(sid, id))
     })
 
     return true
@@ -321,8 +330,8 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
       // delete whole s-group
       const sgroup = struct.sgroups.get(sid)
       action.mergeWith(sGroupAttributeAction(sid, sgroup.getAttrs()))
-      action.addOp(new op.SGroupRemoveFromHierarchy(sid))
-      action.addOp(new op.SGroupDelete(sid))
+      action.addOp(new SGroupRemoveFromHierarchy(sid))
+      action.addOp(new SGroupDelete(sid))
     }
   })
 }

@@ -16,7 +16,14 @@
 
 import { Atom, Bond } from '../../chem/struct'
 
-import op from '../operations/op'
+import {
+  FragmentAdd,
+  AtomAdd,
+  AtomAttr,
+  BondAdd,
+  BondAttr,
+  BondDelete
+} from '../operations'
 import utils from '../shared/utils'
 import Action from '../shared/action'
 
@@ -48,28 +55,28 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) {
   }
 
   if (frid == null)
-    frid = action.addOp(new op.FragmentAdd().perform(restruct)).frid
+    frid = action.addOp(new FragmentAdd().perform(restruct)).frid
 
   if (!(typeof begin === 'number')) {
     begin.fragment = frid
-    begin = action.addOp(new op.AtomAdd(begin, pos).perform(restruct)).data.aid
+    begin = action.addOp(new AtomAdd(begin, pos).perform(restruct)).data.aid
     if (typeof end === 'number') mergeSgroups(action, restruct, [begin], end)
     pos = pos2
   } else if (atomGetAttr(restruct, begin, 'label') === '*') {
-    action.addOp(new op.AtomAttr(begin, 'label', 'C').perform(restruct))
+    action.addOp(new AtomAttr(begin, 'label', 'C').perform(restruct))
   }
 
   if (!(typeof end === 'number')) {
     end.fragment = frid
     // TODO: <op>.data.aid here is a hack, need a better way to access the id of a created atom
-    end = action.addOp(new op.AtomAdd(end, pos).perform(restruct)).data.aid
+    end = action.addOp(new AtomAdd(end, pos).perform(restruct)).data.aid
     if (typeof begin === 'number') mergeSgroups(action, restruct, [end], begin)
   } else if (atomGetAttr(restruct, end, 'label') === '*') {
-    action.addOp(new op.AtomAttr(end, 'label', 'C').perform(restruct))
+    action.addOp(new AtomAttr(end, 'label', 'C').perform(restruct))
   }
 
-  const bid = action.addOp(new op.BondAdd(begin, end, bond).perform(restruct))
-    .data.bid
+  const bid = action.addOp(new BondAdd(begin, end, bond).perform(restruct)).data
+    .bid
   if (bond.stereo > 0) action.mergeWith(fromBondStereoUpdate(restruct, bid))
   action.operations.reverse()
 
@@ -93,7 +100,7 @@ export function fromBondsAttrs(restruct, ids, attrs, reset) {
       if (!(key in attrs) && !reset) return
 
       const value = key in attrs ? attrs[key] : Bond.attrGetDefault(key)
-      action.addOp(new op.BondAttr(bid, key, value).perform(restruct))
+      action.addOp(new BondAttr(bid, key, value).perform(restruct))
       if (key === 'stereo' && key in attrs)
         action.mergeWith(fromBondStereoUpdate(restruct, bid, true))
     })
@@ -134,8 +141,8 @@ function fromBondFlipping(restruct, id) {
   const bond = restruct.molecule.bonds.get(id)
 
   const action = new Action()
-  action.addOp(new op.BondDelete(id))
-  action.addOp(new op.BondAdd(bond.end, bond.begin, bond)).data.bid = id
+  action.addOp(new BondDelete(id))
+  action.addOp(new BondAdd(bond.end, bond.begin, bond)).data.bid = id
   // todo: swap atoms stereoLabels and stereoAtoms in fragment
   return action.perform(restruct)
 }

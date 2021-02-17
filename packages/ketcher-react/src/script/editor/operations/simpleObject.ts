@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 import Vec2 from '../../util/vec2'
-import Base, { invalidateItem, OperationType } from './base'
+import Base from './base'
+import { OperationType } from './OperationType'
 import { ReSimpleObject } from '../../render/restruct'
 import { SimpleObject, SimpleObjectMode } from 'src/script/chem/struct'
 import scale from '../../util/scale'
@@ -70,7 +71,13 @@ export class SimpleObjectAdd extends Base {
       positions.map(p => new Vec2(p))
     )
 
-    invalidateItem(restruct, 'simpleObjects', this.data.id, 1)
+    Base.invalidateItem(
+      restruct,
+      'simpleObjects',
+      // @ts-ignore
+      this.data.id,
+      1
+    )
   }
   invert(): Base {
     //@ts-ignore
@@ -145,8 +152,15 @@ export class SimpleObjectMove extends Base {
       .get(id)
       .visel.translate(scale.obj2scaled(d, restruct.render.options))
     this.data.d = d.negated()
-    if (!this.data.noinvalidate)
-      invalidateItem(restruct, 'simpleObjects', id, 1)
+    if (!this.data.noinvalidate) {
+      Base.invalidateItem(
+        restruct,
+        'simpleObjects',
+        // @ts-ignore
+        id,
+        1
+      )
+    }
   }
 
   invert(): Base {
@@ -263,8 +277,15 @@ export class SimpleObjectResize extends Base {
       .get(id)
       .visel.translate(scale.obj2scaled(d, restruct.render.options))
     this.data.d = d.negated()
-    if (!this.data.noinvalidate)
-      invalidateItem(restruct, 'simpleObjects', id, 1)
+    if (!this.data.noinvalidate) {
+      Base.invalidateItem(
+        restruct,
+        'simpleObjects',
+        // @ts-ignore
+        id,
+        1
+      )
+    }
   }
   invert(): Base {
     return new SimpleObjectResize(

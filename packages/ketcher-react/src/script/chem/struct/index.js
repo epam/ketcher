@@ -34,6 +34,7 @@ function Struct() {
   this.atoms = new Pool()
   this.bonds = new Pool()
   this.sgroups = new Pool()
+  /** @type {Pool<HalfBond>} */
   this.halfBonds = new Pool()
   this.loops = new Pool()
   this.isReaction = false
@@ -464,7 +465,7 @@ Struct.prototype.simpleObjectSetPos = function (id, pos) {
 }
 
 /**
- * @param atomSet { Pile<number> }
+ * @param [atomSet] { Pile<number> }
  * @returns {*}
  */
 Struct.prototype.getCoordBoundingBox = function (atomSet) {

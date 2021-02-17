@@ -18,17 +18,13 @@ import React, { useRef, useEffect } from 'react'
 import * as KN from 'w3c-keyname'
 import clsx from 'clsx'
 
-import mediaSizes from './mediaSizes'
 import style from './Dialog.module.less'
 
 interface DialogProps {
   children: React.ReactElement
   title: string
   params: {
-    containerSize: {
-      width: number
-      height: number
-    }
+    className: string
     onCancel: () => void
     onOk: (result: any) => void
   }
@@ -49,10 +45,6 @@ const Dialog = (props: DialogProps) => {
     className,
     ...rest
   } = props
-  const { height, width } = params.containerSize
-  const isSmallScreen =
-    height <= mediaSizes.smallScreenHeight ||
-    width <= mediaSizes.smallScreenWidth
   const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
@@ -80,7 +72,6 @@ const Dialog = (props: DialogProps) => {
     const key = mode === 'OK' ? 'onOk' : 'onCancel'
     if (params && key in params && (key !== 'onOk' || valid()))
       params[key](result())
-    debugger
   }
 
   const keyDown = event => {
@@ -101,9 +92,7 @@ const Dialog = (props: DialogProps) => {
       onSubmit={event => event.preventDefault()}
       onKeyDown={keyDown}
       tabIndex={-1}
-      className={clsx(style.form, className, {
-        [style.smallScreen]: isSmallScreen
-      })}
+      className={clsx(style.form, className, params.className)}
       {...rest}>
       <header>
         {title}

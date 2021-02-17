@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 const mediaSizes = {
-  smallScreenWidth: 600,
-  smallScreenHeight: 600
+  smallWidth: 600,
+  smallHeight: 600
 }
 
 export default mediaSizes

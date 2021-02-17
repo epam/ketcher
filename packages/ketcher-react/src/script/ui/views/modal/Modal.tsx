@@ -16,9 +16,10 @@
 
 import React, { useRef } from 'react'
 import useResizeObserver from 'use-resize-observer'
+import clsx from 'clsx'
 
 import modals from '../../dialog'
-
+import mediaSizes from './mediaSizes'
 import styles from './Modal.module.less'
 
 interface ModalProps {
@@ -47,7 +48,14 @@ function Modal(props: ModalProps) {
 
   return (
     <div className={styles.modalOverlay} ref={containerRef}>
-      <Component containerSize={{ height, width }} {...rest} />
+      <Component
+        className={clsx({
+          [styles.smallScreen]:
+            (height && height <= mediaSizes.smallHeight) ||
+            (width && width <= mediaSizes.smallWidth)
+        })}
+        {...rest}
+      />
     </div>
   )
 }

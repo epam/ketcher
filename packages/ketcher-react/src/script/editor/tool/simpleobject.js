@@ -41,6 +41,7 @@ SimpleObjectTool.prototype.mousedown = function (event) {
     this.dragCtx.ci = ci
   } else {
     this.dragCtx.isNew = true
+    this.editor.selection(null)
   }
 }
 

@@ -14,19 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
 import { omit } from 'lodash/fp'
 import { connect } from 'react-redux'
-import modals from '../../dialog'
-import Modal from './Modal'
+import { Dispatch } from 'redux'
 
-const mapStateToProps = state => ({
+import { Modal, ModalProps } from './Modal'
+
+type StateProps = Pick<ModalProps, 'modal'>
+type DispatchProps = Omit<ModalProps, 'modal'>
+
+const mapStateToProps = (state): StateProps => ({
   modal: state.modal
 })
 
-const mapDispatchToProps = dispatch => ({
-  onOk: res => {
-    console.info('Output:', res)
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
+  onOk: result => {
+    console.info('Output:', result)
     dispatch({ type: 'MODAL_CLOSE' })
   },
   onCancel: () => {
@@ -34,15 +37,18 @@ const mapDispatchToProps = dispatch => ({
   }
 })
 
-const mergeProps = (stateProps, dispatchProps) => {
+const mergeProps = (
+  stateProps: StateProps,
+  dispatchProps: DispatchProps
+): ModalProps => {
   const prop = stateProps.modal && stateProps.modal.prop
   const initProps = prop ? omit(['onResult', 'onCancel'], prop) : {}
   return {
     modal: stateProps.modal,
     ...initProps,
-    onOk: res => {
-      if (prop && prop.onResult) prop.onResult(res)
-      dispatchProps.onOk(res)
+    onOk: result => {
+      if (prop && prop.onResult) prop.onResult(result)
+      dispatchProps.onOk(result)
     },
     onCancel: () => {
       if (prop && prop.onCancel) prop.onCancel()

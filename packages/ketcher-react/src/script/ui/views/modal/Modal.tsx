@@ -16,18 +16,19 @@
 
 import React, { useRef } from 'react'
 import useResizeObserver from 'use-resize-observer'
+
 import modals from '../../dialog'
 
 import styles from './Modal.module.less'
 
 interface ModalProps {
   modal: {
-    form: object
     name: string
-    prop: object | null
+    form: any
+    prop: any
   }
   onCancel: () => void
-  onOk: (result: object) => void
+  onOk: (result: any) => void
 }
 
 function Modal(props: ModalProps) {
@@ -51,4 +52,5 @@ function Modal(props: ModalProps) {
   )
 }
 
-export default Modal
+export type { ModalProps }
+export { Modal }

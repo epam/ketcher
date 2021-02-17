@@ -161,44 +161,12 @@ ReSimpleObject.prototype.getReferencePoints = function () {
       const rad = Vec2.diff(this.item.pos[1], p0)
       const rx = rad.x / 2
       const ry = rad.y / 2
-      let point = { x: rx, y: 0 }
-      let angle = 0,
-        perimeter = 0,
-        curPoint
-      //calculate approximate perimeter value for first 1/4
-      while (angle <= 90) {
-        curPoint = new Vec2(
-          rx * Math.cos((angle * Math.PI) / 180),
-          ry * Math.sin((angle * Math.PI) / 180)
-        )
-        perimeter += Vec2.dist(point, curPoint)
-        point = curPoint
-        angle += 0.25
-      }
-      angle = 0
-      point = { x: rx, y: 0 }
-      let dist = 0
-      //get point value for first 1/8 of ellipse perimeter with approximation scheme
-      while (dist <= perimeter / 2) {
-        angle += 0.25
-        curPoint = new Vec2(
-          rx * Math.cos((angle * Math.PI) / 180),
-          ry * Math.sin((angle * Math.PI) / 180)
-        )
-        dist += Vec2.dist(point, curPoint)
-        point = curPoint
-      }
       refPoints.push(
         new Vec2(p0.x + rx, p0.y),
         new Vec2(p0.x, p0.y + ry),
         new Vec2(p0.x + 2 * rx, p0.y + ry),
-        new Vec2(p0.x + rx, p0.y + 2 * ry),
-        new Vec2(p0.x + rx + point.x, p0.y + ry + point.y),
-        new Vec2(p0.x + rx + point.x, p0.y + ry - point.y),
-        new Vec2(p0.x + rx - point.x, p0.y + ry + point.y),
-        new Vec2(p0.x + rx - point.x, p0.y + ry - point.y)
-      )
-
+        new Vec2(p0.x + rx, p0.y + 2 * ry)
+      );
       break
     }
     case SimpleObjectMode.rectangle: {

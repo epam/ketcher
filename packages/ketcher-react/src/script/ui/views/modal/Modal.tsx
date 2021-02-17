@@ -33,9 +33,9 @@ interface ModalProps {
 
 function Modal(props: ModalProps) {
   const { modal, ...rest } = props
-  const ref = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const { height, width } = useResizeObserver<HTMLDivElement>({
-    ref
+    ref: containerRef
   })
 
   if (!modal) return null
@@ -46,7 +46,7 @@ function Modal(props: ModalProps) {
     throw new Error(`There is no modal window named ${modal.name}`)
 
   return (
-    <div className={styles.ketOverlay} ref={ref}>
+    <div className={styles.ketOverlay} ref={containerRef}>
       <Component containerSize={{ height, width }} {...rest} />
     </div>
   )

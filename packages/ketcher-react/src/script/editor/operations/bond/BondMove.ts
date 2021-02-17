@@ -13,18 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-export * from './atom'
-export * from './bond'
-export * from './CanvasLoad'
-export * from './descriptors'
-export * from './EnhancedFlagMove'
-export * from './ifThen'
-export * from './fragment'
-export * from './fragmentStereoAtom'
-export * from './FragmentStereoFlag'
-export * from './LoopMove'
-export * from './OperationType'
-export * from './rgroup'
-export * from './rxn'
-export * from './simpleObject'
-export * from './sgroup'
+import Restruct from '../../../render/restruct'
+import scale from '../../../util/scale'
+import { BaseOperation } from '../base'
+import { OperationType } from '../OperationType'
+
+export class BondMove extends BaseOperation {
+  data: {
+    bid: any
+    d: any
+  }
+
+  constructor(bondId?: any, d?: any) {
+    super(OperationType.BOND_MOVE)
+    this.data = { bid: bondId, d }
+  }
+
+  execute(restruct: Restruct) {
+    const { bid, d } = this.data
+    const bond = restruct.bonds.get(bid)
+
+    const scaled = scale.obj2scaled(d, restruct.render.options)
+    bond.visel.translate(scaled)
+    this.data.d = d.negated()
+  }
+
+  invert() {
+    const inverted = new BondMove()
+    inverted.data = this.data
+    return inverted
+  }
+}

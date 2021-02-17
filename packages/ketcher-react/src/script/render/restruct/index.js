@@ -51,7 +51,9 @@ var LAYER_MAP = {
 function ReStruct(molecule, render) {
   // eslint-disable-line max-statements
   this.render = render
+  /** @type {Map<number, ReAtom>} */
   this.atoms = new Map()
+  /** @type {Map<number, any>} */
   this.bonds = new Map()
   this.reloops = new Map()
   this.rxnPluses = new Map()
@@ -62,6 +64,7 @@ function ReStruct(molecule, render) {
   this.sgroupData = new Map()
   this.enhancedFlags = new Map()
   this.simpleObjects = new Map()
+  /** @type {Struct} */
   this.molecule = molecule || new Struct()
   this.initialized = false
   this.layers = []

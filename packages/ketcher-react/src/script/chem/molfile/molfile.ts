@@ -438,7 +438,7 @@ class Molfile {
       this.writePaddedNumber(q, 3)
       this.writeCR()
 
-      const parentId = this.molecule.sGroupForest.parent.get(id)
+      const parentId = this.molecule.sGroupForest.parent.get(id) as number
       if (parentId >= 0) {
         this.write('M  SPL')
         this.writePaddedNumber(1, 3)

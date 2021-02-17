@@ -62,6 +62,7 @@ function Atom(params) {
   ifDef(this, params, 'stereoParity', def('stereoParity')) // {string | null} "<abs|and|or>-<group>"
 
   this.atomList = params.atomList ? new AtomList(params.atomList) : null
+  /** @type {number[]} */
   this.neighbors = [] // set of half-bonds having this atom as their origin
   this.badConn = false
 }

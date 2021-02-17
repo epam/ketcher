@@ -13,18 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-export * from './atom'
-export * from './bond'
-export * from './CanvasLoad'
-export * from './descriptors'
-export * from './EnhancedFlagMove'
-export * from './ifThen'
-export * from './fragment'
-export * from './fragmentStereoAtom'
-export * from './FragmentStereoFlag'
-export * from './LoopMove'
-export * from './OperationType'
-export * from './rgroup'
-export * from './rxn'
-export * from './simpleObject'
-export * from './sgroup'
+import Restruct from '../../render/restruct'
+import Struct from '../../chem/struct'
+import { BaseOperation } from './base'
+import { OperationType } from './OperationType'
+
+export class CanvasLoad extends BaseOperation {
+  data: {
+    struct?: Struct
+  }
+
+  constructor(struct?: Struct) {
+    super(OperationType.CANVAS_LOAD)
+    this.data = { struct }
+  }
+
+  execute(restruct: Restruct) {
+    const oldStruct = restruct.molecule
+    restruct.clearVisels() // TODO: What is it?
+    restruct.render.setMolecule(this.data.struct)
+    this.data.struct = oldStruct
+  }
+
+  invert() {
+    const inverted = new CanvasLoad()
+    inverted.data = this.data
+    return inverted
+  }
+}

@@ -319,18 +319,6 @@ ReSimpleObject.prototype.highlightPath = function (render) {
     return { path: p, stylesApplied: false }
   })
 
-  // const refPoints = this.getReferencePoints()
-  //
-  // refPoints.forEach(rp => {
-  //   const scaledRP = scale.obj2scaled(rp, render.options)
-  //   enhPaths.push({
-  //     path: render.paper
-  //       .circle(scaledRP.x, scaledRP.y, s / 8)
-  //       .attr({ fill: 'black' }),
-  //     stylesApplied: true
-  //   })
-  // })
-
   return enhPaths
 }
 

@@ -85,7 +85,11 @@ const toolActions = {
   },
   'reaction-arrow': {
     title: 'Reaction Arrow Tool',
-    action: { tool: 'reactionarrow' }
+    action: { tool: 'reactionarrow', opts: 'SIMPLE' }
+  },
+  'reaction-arrow-equilibrium': {
+    title: 'Reaction Arrow Equilibrium Tool',
+    action: { tool: 'reactionarrow', opts: 'EQUILIBRIUM' }
   },
   'reaction-plus': {
     title: 'Reaction Plus Tool',

@@ -51,6 +51,7 @@ import OpenIcon from './files/open.svg'
 import PasteIcon from './files/paste.svg'
 import PeriodTableIcon from './files/period-table.svg'
 import ReactionArrowIcon from './files/reaction-arrow.svg'
+import ReactionArrowEquilibriumIcon from './files/reaction-arrow-equilibrium.svg'
 import ReactionAutomapIcon from './files/reaction-automap.svg'
 import ReactionMapIcon from './files/reaction-map.svg'
 import ReactionPlusIcon from './files/reaction-plus.svg'
@@ -126,6 +127,7 @@ const icons = {
   paste: PasteIcon,
   'period-table': PeriodTableIcon,
   'reaction-arrow': ReactionArrowIcon,
+  'reaction-arrow-equilibrium': ReactionArrowEquilibriumIcon,
   'reaction-automap': ReactionAutomapIcon,
   'reaction-map': ReactionMapIcon,
   'reaction-plus': ReactionPlusIcon,

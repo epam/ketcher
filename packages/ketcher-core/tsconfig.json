@@ -23,7 +23,16 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "paths": {
+      "*": ["*"]
+    },
+    "plugins": [
+      {
+        "transform": "@zerollup/ts-transform-paths",
+        "exclude": ["*"]
+      }
+    ]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

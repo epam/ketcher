@@ -3,8 +3,8 @@ import {
   MolfileManager,
   MolfileParseOptions,
   SmilesManager
-} from '../chem'
-import { StructService, StructServiceOptions } from '../infrastructure/services'
+} from 'chem'
+import { StructService, StructServiceOptions } from 'infrastructure/services'
 import {
   StructFormatter,
   SupportedFormat,

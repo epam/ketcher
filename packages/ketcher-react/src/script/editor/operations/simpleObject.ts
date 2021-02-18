@@ -184,27 +184,6 @@ interface SimpleObjectResizeData {
   toCircle: boolean
 }
 
-function handleEllipseChangeIfAnchorIsOnAxis(anchor, item, current) {
-  const previousPos0 = item.pos[0].get_xy0()
-  const previousPos1 = item.pos[1].get_xy0()
-  if (tfx(anchor.x) === tfx(item.pos[1].x)) {
-    item.pos[1].x = anchor.x = current.x
-    current.x = previousPos1.x
-  }
-  if (tfx(anchor.y) === tfx(item.pos[1].y)) {
-    item.pos[1].y = anchor.y = current.y
-    current.y = previousPos1.y
-  }
-  if (tfx(anchor.x) === tfx(item.pos[0].x)) {
-    item.pos[0].x = anchor.x = current.x
-    current.x = previousPos0.x
-  }
-  if (tfx(anchor.y) === tfx(item.pos[0].y)) {
-    item.pos[0].y = anchor.y = current.y
-    current.y = previousPos0.y
-  }
-}
-
 function handleRectangleChangeWithAnchor(item, anchor, current) {
   const previousPos0 = item.pos[0].get_xy0()
   const previousPos1 = item.pos[1].get_xy0()
@@ -251,7 +230,7 @@ export class SimpleObjectResize extends Base {
     const anchor = this.data.anchor
     if (item.mode === SimpleObjectMode.ellipse) {
       if (anchor) {
-        handleEllipseChangeIfAnchorIsOnAxis(anchor, item, current)
+        handleRectangleChangeWithAnchor(item, anchor, current)
       } else if (this.data.toCircle) {
         const previousPos1 = item.pos[1].get_xy0()
         const circlePoint = makeCircleFromEllipse(item.pos[0], current)

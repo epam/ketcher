@@ -114,7 +114,8 @@ ReSimpleObject.prototype.calcDistance = function (p, s) {
 
   distRef = this.getReferencePointDistance(p)
   const refPoint = distRef.minDist <= 8 / s ? distRef.refPoint : null
-
+  // distance is a smallest betwen dist to figure and it's reference points
+  dist = Math.min(distRef.minDist, dist)
   return { minDist: dist, refPoint: refPoint }
 }
 
@@ -156,19 +157,7 @@ ReSimpleObject.prototype.getReferencePointDistance = function (p) {
 ReSimpleObject.prototype.getReferencePoints = function () {
   const refPoints = []
   switch (this.item.mode) {
-    case SimpleObjectMode.ellipse: {
-      const p0 = this.item.pos[0]
-      const rad = Vec2.diff(this.item.pos[1], p0)
-      const rx = rad.x / 2
-      const ry = rad.y / 2
-      refPoints.push(
-        new Vec2(p0.x + rx, p0.y),
-        new Vec2(p0.x, p0.y + ry),
-        new Vec2(p0.x + 2 * rx, p0.y + ry),
-        new Vec2(p0.x + rx, p0.y + 2 * ry)
-      );
-      break
-    }
+    case SimpleObjectMode.ellipse:
     case SimpleObjectMode.rectangle: {
       const p0 = new Vec2(
         tfx(Math.min(this.item.pos[0].x, this.item.pos[1].x)),
@@ -330,17 +319,17 @@ ReSimpleObject.prototype.highlightPath = function (render) {
     return { path: p, stylesApplied: false }
   })
 
-  const refPoints = this.getReferencePoints()
-
-  refPoints.forEach(rp => {
-    const scaledRP = scale.obj2scaled(rp, render.options)
-    enhPaths.push({
-      path: render.paper
-        .circle(scaledRP.x, scaledRP.y, s / 8)
-        .attr({ fill: 'black' }),
-      stylesApplied: true
-    })
-  })
+  // const refPoints = this.getReferencePoints()
+  //
+  // refPoints.forEach(rp => {
+  //   const scaledRP = scale.obj2scaled(rp, render.options)
+  //   enhPaths.push({
+  //     path: render.paper
+  //       .circle(scaledRP.x, scaledRP.y, s / 8)
+  //       .attr({ fill: 'black' }),
+  //     stylesApplied: true
+  //   })
+  // })
 
   return enhPaths
 }
@@ -366,9 +355,23 @@ ReSimpleObject.prototype.makeSelectionPlate = function (
     return scale.obj2scaled(p, restruct.render.options) || new Vec2()
   })
 
-  const path = generatePath(this.item.mode, paper, pos)
-
-  return path.attr(styles.highlightStyleSimpleObject)
+  const refPoints = this.getReferencePoints()
+  const s = restruct.render.options.scale
+  var st = restruct.render.paper.set()
+  st.push(
+    generatePath(this.item.mode, paper, pos).attr(
+      styles.highlightStyleSimpleObject
+    )
+  )
+  refPoints.forEach(rp => {
+    const scaledRP = scale.obj2scaled(rp, restruct.render.options)
+    st.push(
+      restruct.render.paper
+        .circle(scaledRP.x, scaledRP.y, s / 8)
+        .attr({ fill: 'black' })
+    )
+  })
+  return st
 }
 
 ReSimpleObject.prototype.show = function (restruct, id, options) {

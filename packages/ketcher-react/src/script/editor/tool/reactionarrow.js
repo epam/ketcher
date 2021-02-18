@@ -63,8 +63,7 @@ ReactionArrowTool.prototype.mouseup = function () {
 
 ReactionArrowTool.prototype.click = function (event) {
   const rnd = this.editor.render
-  if (rnd.ctab.molecule.rxnArrows.size < 1)
-    this.editor.update(fromArrowAddition(rnd.ctab, rnd.page2obj(event)))
+  this.editor.update(fromArrowAddition(rnd.ctab, rnd.page2obj(event)))
 }
 
 export default ReactionArrowTool

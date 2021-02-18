@@ -1,4 +1,4 @@
-import { GraphManager, Struct } from '../chem'
+import { GraphManager, Struct } from 'chem'
 import { StructFormatter } from './structFormatter.types'
 
 export class GraphFormatter implements StructFormatter {

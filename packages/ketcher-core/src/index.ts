@@ -9,7 +9,7 @@ import {
   Struct,
   SGroupForest,
   SmilesManager
-} from './chem'
+} from 'chem'
 
 import {
   FormatterFactory,
@@ -19,13 +19,13 @@ import {
   StructFormatter,
   SupportedFormat,
   identifyStructFormat
-} from './format'
+} from 'format'
 
 import {
   RemoteStructService,
   RemoteStructServiceProvider,
   ChemicalMimeType
-} from './infrastructure/services'
+} from 'infrastructure'
 
 import type {
   StructService,
@@ -52,7 +52,7 @@ import type {
   RecognizeResult,
   ServiceMode,
   StructServiceProvider
-} from './infrastructure/services'
+} from 'infrastructure'
 
 export type {
   Graph,

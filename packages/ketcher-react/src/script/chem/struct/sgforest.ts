@@ -13,33 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
+import { SGroupForest as ISGroupForest } from 'ketcher-core'
 import Pile from '../../util/pile'
 import SGroup from './sgroup'
 
-class SGroupForest {
+class SGroupForest implements ISGroupForest {
+  /** node id -> parent id */
+  parent: Map<number, number>
+  /** node id -> list of child ids */
+  children: Map<number, number[]>
+  atomSets: Map<number, any>
+
   constructor() {
-    /** node id -> parent id
-     * @type {Map<number, number>}
-     * */
     this.parent = new Map()
-    /** node id -> list of child ids
-     * @type {Map<number, number[]>}
-     * */
     this.children = new Map()
 
     this.children.set(-1, []) // extra root node
     this.atomSets = new Map()
   }
 
-  // returns an array or s-group ids in the order of breadth-first search
-  getSGroupsBFS() {
-    const order = []
+  /** returns an array or s-group ids in the order of breadth-first search */
+  getSGroupsBFS(): number[] {
+    const order: number[] = []
     let id = -1
-    let queue = Array.from(this.children.get(-1))
+    let queue = Array.from(this.children.get(-1) as any)
     while (queue.length > 0) {
-      id = queue.shift()
-      queue = queue.concat(this.children.get(id))
+      id = queue.shift() as any
+      queue = queue.concat(this.children.get(id) as any)
       order.push(id)
     }
     return order
@@ -61,10 +61,11 @@ class SGroupForest {
     })
 
     const parents = Array.from(this.atomSets.keys()).filter(sgid => {
-      if (!isSubset.get(sgid)) return false
-      return (
-        this.children.get(sgid).findIndex(childId => isSubset.get(childId)) < 0
-      )
+      if (!isSubset.get(sgid)) {
+        return false
+      }
+      const childs = this.children.get(sgid)
+      return childs && childs.findIndex(childId => isSubset.get(childId)) < 0
     })
 
     const children = Array.from(this.atomSets.keys()).filter(
@@ -78,8 +79,8 @@ class SGroupForest {
     }
   }
 
-  getPathToRoot(sgid) {
-    const path = []
+  getPathToRoot(sgid): number[] {
+    const path: number[] = []
     for (let id = sgid; id >= 0; id = this.parent.get(id)) {
       console.assert(path.indexOf(id) < 0, 'SGroupForest: loop detected')
       path.push(id)
@@ -87,11 +88,7 @@ class SGroupForest {
     return path
   }
 
-  /**
-   * @param {number} [parent]
-   * @param {number[]} [children]
-   * */
-  insert({ id, atoms }, parent, children) {
+  insert({ id, atoms }, parent?: number, children?: number[]) {
     console.assert(!this.parent.has(id), 'sgid already present in the forest')
     console.assert(!this.children.has(id), 'sgid already present in the forest')
 
@@ -108,13 +105,13 @@ class SGroupForest {
     })
     this.children.set(id, children)
     this.parent.set(id, parent)
-    this.children.get(parent).push(id)
+    this.children.get(parent)?.push(id)
     this.atomSets.set(id, new Pile(atoms))
 
     return { parent, children }
   }
 
-  resetParentLink(childId, id) {
+  private resetParentLink(childId, id) {
     const parentId = this.parent.get(childId)
     if (typeof parentId === 'undefined') {
       return
@@ -134,11 +131,11 @@ class SGroupForest {
     console.assert(this.parent.has(id), 'sgid is not in the forest')
     console.assert(this.children.has(id), 'sgid is not in the forest')
 
-    const parentId = this.parent.get(id)
-    const childs = this.children.get(parentId)
-    this.children.get(id).forEach(childId => {
+    const parentId = this.parent.get(id) as any
+    const childs = this.children.get(parentId) as any
+    this.children.get(id)?.forEach(childId => {
       this.parent.set(childId, parentId)
-      this.children.get(parentId).push(childId)
+      this.children.get(parentId)?.push(childId)
     })
 
     const i = childs.indexOf(id)

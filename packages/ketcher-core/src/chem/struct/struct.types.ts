@@ -6,36 +6,36 @@ export interface Pool<TValue = any> extends Map<number, TValue> {
   filter: (predicate: (key: number, value: TValue) => boolean) => Pool<TValue>
 }
 
-export interface SGroupForest<TValue = number> {
-  parent: Map<TValue, TValue>
-  children: Map<TValue, TValue[]>
-  atomSets: Map<number | string, any>
+export interface SGroupForest {
+  parent: Map<number, number>
+  children: Map<number, number[]>
+  atomSets: Map<number, any>
 
-  getSGroupsBFS: () => TValue[]
+  getSGroupsBFS: () => number[]
 
   getAtomSetRelations: (
     newId,
     atoms
   ) => {
-    children: Map<TValue, TValue>
-    parent: any // -1 | TValue ?
+    children: number[]
+    parent: number
   }
 
-  getPathToRoot: (sgid) => TValue[]
+  getPathToRoot: (sgid) => number[]
 
   insert: (
     item: {
-      id: TValue
+      id: number
       atoms: number
     },
-    parent?: TValue,
-    children?: TValue[]
+    parent?: number,
+    children?: number[]
   ) => {
-    children: any // Map/Set ?
-    parent: any // Map/Set ?
+    children: number[]
+    parent: number
   }
 
-  remove: (id: TValue) => void
+  remove: (id: number) => void
 }
 
 export interface Pile<TValue = any> extends Set<TValue> {
@@ -66,7 +66,7 @@ export interface Struct {
 
   // methods
 
-  hasRxnProps: () => boolean
+  hasRxnProps: () => number | null
   hasRxnArrow: () => boolean
   isBlank: () => boolean
 
@@ -120,7 +120,7 @@ export interface Struct {
   getCoordBoundingBoxObj: () => {
     min: number
     max: number
-  }
+  } | null
 
   getBondLengthData: () => {
     cnt: number

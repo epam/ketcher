@@ -19,7 +19,9 @@ import actions from '../../action'
 
 function execute(activeTool, { action, editor, server, options }) {
   if (action.tool) {
-    if (editor.tool(action.tool, action.opts)) return action
+    if (editor.tool(action.tool, action.opts)) {
+      return action
+    }
   } else if (typeof action === 'function') {
     action(editor, server, options)
   } else {

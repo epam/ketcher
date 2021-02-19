@@ -11,7 +11,9 @@ export function onAction(action) {
       data: { name: action.dialog }
     }
   }
-  if (action && action.thunk) return action.thunk
+  if (action && action.thunk) {
+    return action.thunk
+  }
 
   return {
     type: 'ACTION',

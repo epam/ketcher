@@ -20,7 +20,7 @@ import {
   ServiceMode
 } from 'ketcher-core'
 import createApi from '../../api'
-import Editor from '../../editor'
+import { Editor } from '../../editor'
 import { Ketcher, UI as KetcherUI } from '../../ketcher'
 import { initApp } from '../../ui'
 import { ButtonsConfig } from './ButtonsConfig'

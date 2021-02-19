@@ -30,6 +30,7 @@ import RGroup from './rgroup'
 import SGroupForest from './sgforest'
 import { SimpleObject, SimpleObjectMode } from './simpleObject'
 
+/** @returns {import('ketcher-core').Struct} */
 function Struct() {
   this.atoms = new Pool()
   this.bonds = new Pool()
@@ -71,7 +72,7 @@ Struct.prototype.isBlank = function () {
  * @param [atomSet] { Pile<number> }
  * @param [bondSet] { Pile<number> }
  * @param [dropRxnSymbols] { boolean }
- * @param [aidMap] { Map<number, number> }
+ * @param [aidMap] { Map<number, number> | null }
  * @param [simpleObjectsSet] { Pile<number> }
  * @returns { Struct }
  */
@@ -125,14 +126,14 @@ Struct.prototype.getFragment = function (fid) {
 }
 
 /**
- * @param cp { Struct } - container for merging
+ * @param cp { import('ketcher-core').Struct } - container for merging
  * @param [atomSet] { Pile<number> }
  * @param [bondSet] { Pile<number> }
  * @param [dropRxnSymbols] { boolean }
  * @param [keepAllRGroups] { boolean }
  * @param [aidMap] { Map<number, number> }
  * @param [simpleObjectsSet] { Pile<number> }
- * @returns { Struct }
+ * @returns { import('ketcher-core').Struct }
  */
 Struct.prototype.mergeInto = function (
   cp,
@@ -858,6 +859,7 @@ Struct.prototype.atomAddToSGroup = function (sgid, aid) {
   this.atoms.get(aid).sgs.add(sgid)
 }
 
+/** @returns {[number, boolean]} */
 Struct.prototype.calcConn = function (atom) {
   let conn = 0
   for (let i = 0; i < atom.neighbors.length; ++i) {
@@ -1013,7 +1015,7 @@ Struct.prototype.getComponents = function () {
 /**
  * @param atomset { Pile<number> }
  * @param arrowpos { number }
- * @returns { number }
+ * @returns { 1 | 2 }
  */
 Struct.prototype.defineRxnFragmentTypeForAtomset = function (
   atomset,
@@ -1073,5 +1075,6 @@ export {
   RxnPlus,
   RxnArrow,
   SimpleObject,
-  SimpleObjectMode
+  SimpleObjectMode,
+  Struct
 }

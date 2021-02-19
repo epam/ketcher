@@ -93,12 +93,12 @@ class AtomDelete extends BaseOperation {
   }
 
   execute(restruct: Restruct) {
-    const { aid, atom } = this.data
+    const { aid } = this.data
 
     const struct = restruct.molecule
-    if (!atom) {
+    if (!this.data.atom) {
       this.data.atom = struct.atoms.get(aid)
-      this.data.pos = atom.pp
+      this.data.pos = this.data.atom.pp
     }
 
     // notifyAtomRemoved(aid);

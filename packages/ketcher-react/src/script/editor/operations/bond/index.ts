@@ -98,14 +98,14 @@ class BondDelete extends BaseOperation {
   }
 
   execute(restruct: Restruct) {
-    const { bid, bond } = this.data
+    const { bid } = this.data
 
     // eslint-disable-line max-statements
     const struct = restruct.molecule
-    if (!bond) {
+    if (!this.data.bond) {
       this.data.bond = struct.bonds.get(bid)
-      this.data.begin = bond.begin
-      this.data.end = bond.end
+      this.data.begin = this.data.bond.begin
+      this.data.end = this.data.bond.end
     }
 
     BaseOperation.invalidateBond(restruct, bid)

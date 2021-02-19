@@ -625,7 +625,7 @@ ReStruct.prototype.setSelection = function (selection) {
 function isSelectionSvgObjectExists(item) {
   return (
     (item.selectionPlate !== null && !item.selectionPlate.removed) ||
-    (item.selectionPlate instanceof Array && !item.selectionPlate[0].removed)
+    (Array.isArray(item.selectionPlate) && !item.selectionPlate[0].removed)
   )
 }
 

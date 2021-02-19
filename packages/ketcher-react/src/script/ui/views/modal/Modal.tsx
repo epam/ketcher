@@ -28,11 +28,16 @@ interface ModalProps {
     form: any
     prop: any
   }
+}
+
+interface ModalCallProps {
   onCancel: () => void
   onOk: (result: any) => void
 }
 
-function Modal(props: ModalProps) {
+type Props = ModalProps & ModalCallProps
+
+function Modal(props: Props) {
   const { modal, ...rest } = props
   const containerRef = useRef<HTMLDivElement>(null)
   const { height, width } = useResizeObserver<HTMLDivElement>({
@@ -60,5 +65,5 @@ function Modal(props: ModalProps) {
   )
 }
 
-export type { ModalProps }
+export type { ModalProps, ModalCallProps }
 export { Modal }

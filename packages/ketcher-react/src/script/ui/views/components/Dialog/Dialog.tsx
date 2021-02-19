@@ -23,18 +23,24 @@ import style from './Dialog.module.less'
 interface DialogProps {
   children: React.ReactElement
   title: string
-  params: {
-    className: string
-    onCancel: () => void
-    onOk: (result: any) => void
-  }
+  params: DialogParams
   result: () => any
   valid: () => boolean
   buttons: Array<string | React.ReactElement>
   className: string
 }
+interface DialogParams extends DialogCallProps {
+  className: string
+}
 
-const Dialog = (props: DialogProps) => {
+interface DialogCallProps {
+  onCancel: () => void
+  onOk: (result: any) => void
+}
+
+type Props = DialogProps & DialogCallProps
+
+const Dialog = (props: Props) => {
   const {
     children,
     title,
@@ -123,4 +129,5 @@ const Dialog = (props: DialogProps) => {
   )
 }
 
-export default Dialog
+export type { DialogCallProps }
+export { Dialog }

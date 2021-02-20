@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,3 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { Vec2 } from './Vec2'
+
+export interface ScaleOptions {
+  scale: number
+}
+
+function scaled2obj(v: Vec2, options: ScaleOptions): Vec2 {
+  return Vec2.scale(v, 1 / options.scale)
+}
+
+function obj2scaled(v: Vec2, options: ScaleOptions): Vec2 {
+  return Vec2.scale(v, options.scale)
+}
+
+export const scale = {
+  scaled2obj,
+  obj2scaled
+}

@@ -475,7 +475,7 @@ class IndigoService implements StructService {
             (acc, curr) => {
               const [key, value] = curr
               const mappedPropertyName = mapWarningGroup(key)
-              acc[mappedPropertyName] = value['message']
+              acc[mappedPropertyName] = value
 
               return acc
             },

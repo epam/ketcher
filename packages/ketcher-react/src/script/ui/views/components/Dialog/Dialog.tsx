@@ -24,18 +24,21 @@ interface DialogProps {
   children: React.ReactElement
   title: string
   params: DialogParams
-  result: () => any
-  valid: () => boolean
   buttons: Array<string | React.ReactElement>
   className: string
 }
-interface DialogParams extends DialogCallProps {
+interface DialogParams extends DialogParamsCallProps {
   className: string
 }
 
-interface DialogCallProps {
+interface DialogParamsCallProps {
   onCancel: () => void
   onOk: (result: any) => void
+}
+
+interface DialogCallProps {
+  result: () => any
+  valid: () => boolean
 }
 
 type Props = DialogProps & DialogCallProps
@@ -129,5 +132,5 @@ const Dialog = (props: Props) => {
   )
 }
 
-export type { DialogCallProps }
+export type { DialogParamsCallProps }
 export { Dialog }

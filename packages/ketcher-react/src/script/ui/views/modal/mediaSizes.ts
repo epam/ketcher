@@ -14,4 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Dialog'
+const mediaSizes = {
+  smallWidth: 600,
+  smallHeight: 600
+}
+
+export default mediaSizes

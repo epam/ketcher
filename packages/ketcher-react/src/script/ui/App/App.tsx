@@ -18,7 +18,7 @@ import React, { useEffect } from 'react'
 
 import AppClipArea from '../views/AppClipArea'
 import Editor from '../views/Editor'
-import AppModal from '../views/modal'
+import AppModalContainer from '../views/modal'
 import {
   BottomToolbarContainer,
   LeftToolbarContainer,
@@ -52,7 +52,7 @@ const App = (props: Props) => {
       <RightToolbarContainer className={classes.right} />
 
       <AppClipArea />
-      <AppModal />
+      <AppModalContainer />
     </div>
   )
 }

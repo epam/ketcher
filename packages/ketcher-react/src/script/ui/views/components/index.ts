@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dialog, DialogCallProps } from './Dialog'
+import { Dialog, DialogParamsCallProps } from './Dialog'
 import StructEditor from './StructEditor'
 import Spinner from './Spinner'
 
-export type { DialogCallProps }
+export type { DialogParamsCallProps }
 export { Dialog, StructEditor, Spinner }

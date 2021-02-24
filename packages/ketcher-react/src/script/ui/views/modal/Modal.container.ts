@@ -19,7 +19,7 @@ import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 import { DialogCallProps } from '../components'
 
-import { Modal, ModalProps, ModalCallProps } from './Modal'
+import { Modal, ModalProps } from './Modal'
 
 type StateProps = Pick<ModalProps, 'modal'>
 
@@ -39,7 +39,7 @@ const mapDispatchToProps = (dispatch: Dispatch): DialogCallProps => ({
 
 const mergeProps = (
   stateProps: StateProps,
-  dispatchProps: ModalCallProps
+  dispatchProps: DialogCallProps
 ): ModalProps => {
   const prop = stateProps.modal && stateProps.modal.prop
   const initProps = prop ? omit(['onResult', 'onCancel'], prop) : {}

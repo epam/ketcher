@@ -20,7 +20,6 @@ import clsx from 'clsx'
 
 import modals from '../../dialog'
 import mediaSizes from './mediaSizes'
-import { DialogParamsCallProps } from '../components'
 import styles from './Modal.module.less'
 
 interface ModalProps {
@@ -31,7 +30,12 @@ interface ModalProps {
   }
 }
 
-type Props = ModalProps & DialogParamsCallProps
+interface ModalCallProps {
+  onCancel: () => void
+  onOk: (result: any) => void
+}
+
+type Props = ModalProps & ModalCallProps
 
 function Modal(props: Props) {
   const { modal, ...rest } = props
@@ -61,5 +65,5 @@ function Modal(props: Props) {
   )
 }
 
-export type { ModalProps }
+export type { ModalProps, ModalCallProps }
 export { Modal }

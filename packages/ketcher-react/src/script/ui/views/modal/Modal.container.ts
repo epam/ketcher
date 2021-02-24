@@ -17,9 +17,8 @@
 import { omit } from 'lodash/fp'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
-import { DialogParamsCallProps } from '../components'
 
-import { Modal, ModalProps } from './Modal'
+import { Modal, ModalProps, ModalCallProps } from './Modal'
 
 type StateProps = Pick<ModalProps, 'modal'>
 
@@ -27,7 +26,7 @@ const mapStateToProps = (state): StateProps => ({
   modal: state.modal
 })
 
-const mapDispatchToProps = (dispatch: Dispatch): DialogParamsCallProps => ({
+const mapDispatchToProps = (dispatch: Dispatch): ModalCallProps => ({
   onOk: result => {
     console.info('Output:', result)
     dispatch({ type: 'MODAL_CLOSE' })
@@ -39,7 +38,7 @@ const mapDispatchToProps = (dispatch: Dispatch): DialogParamsCallProps => ({
 
 const mergeProps = (
   stateProps: StateProps,
-  dispatchProps: DialogParamsCallProps
+  dispatchProps: ModalCallProps
 ): ModalProps => {
   const prop = stateProps.modal && stateProps.modal.prop
   const initProps = prop ? omit(['onResult', 'onCancel'], prop) : {}

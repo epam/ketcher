@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,43 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { Pile, Pool } from 'utils'
 
-import Pile from '../../util/pile'
-
-function RGroup(logic) {
-  logic = logic || {}
-  this.frags = new Pile()
-  this.resth = logic.resth || false
-  this.range = logic.range || ''
-  this.ifthen = logic.ifthen || 0
+export interface RGroupParams {
+  ifthen: number
+  resth: boolean
+  range: string
 }
+export class RGroup {
+  frags: Pile<number>
+  resth: boolean
+  range: string
+  ifthen: number
 
-RGroup.prototype.getAttrs = function () {
-  return {
-    resth: this.resth,
-    range: this.range,
-    ifthen: this.ifthen
+  constructor(params: RGroupParams) {
+    this.frags = new Pile<number>()
+    this.resth = params.resth || false
+    this.range = params.range || ''
+    this.ifthen = params.ifthen || 0
+  }
+
+  static findRGroupByFragment(rgroups: Pool<RGroup>, frid: number) {
+    return rgroups.find((_rgid, rgroup) => rgroup.frags.has(frid))
+  }
+
+  getAttrs(): RGroupParams {
+    return {
+      resth: this.resth,
+      range: this.range,
+      ifthen: this.ifthen
+    }
+  }
+
+  clone(fidMap?: Map<number, number>): RGroup {
+    const ret = new RGroup(this)
+    this.frags.forEach(fid => {
+      ret.frags.add(fidMap ? fidMap.get(fid)! : fid)
+    })
+    return ret
   }
 }
-
-/**
- * @param rgroups { Pool<number, RGroup> }
- * @param frid { number }
- */
-RGroup.findRGroupByFragment = function (rgroups, frid) {
-  return rgroups.find((rgid, rgroup) => rgroup.frags.has(frid))
-}
-
-/**
- * @param fidMap { Map<number, number> }
- * @returns { RGroup }
- */
-RGroup.prototype.clone = function (fidMap) {
-  const ret = new RGroup(this)
-  this.frags.forEach(fid => {
-    ret.frags.add(fidMap ? fidMap.get(fid) : fid)
-  })
-  return ret
-}
-
-export default RGroup

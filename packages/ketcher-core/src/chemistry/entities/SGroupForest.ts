@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { SGroupForest as ISGroupForest } from 'ketcher-core'
-import Pile from '../../util/pile'
-import SGroup from './SGroup'
+import { Pile } from 'utils'
+import { SGroup } from './SGroup'
 
-class SGroupForest implements ISGroupForest {
+export class SGroupForest {
   /** node id -> parent id */
   parent: Map<number, number>
   /** node id -> list of child ids */
@@ -45,7 +44,7 @@ class SGroupForest implements ISGroupForest {
     return order
   }
 
-  getAtomSetRelations(newId, atoms) {
+  getAtomSetRelations(newId: any, atoms: any) {
     // find the lowest superset in the hierarchy
     const isStrictSuperset = new Map()
     const isSubset = new Map()
@@ -163,5 +162,3 @@ export function checkOverlapping(struct, atoms) {
       : atoms.findIndex(aid => sgAtoms.indexOf(aid) === -1) >= 0
   })
 }
-
-export default SGroupForest

@@ -17,8 +17,8 @@
 import { Vec2 } from './Vec2'
 
 export class Box2Abs {
-  private p0: Vec2
-  private p1: Vec2
+  readonly p0: Vec2
+  readonly p1: Vec2
 
   constructor(p: Vec2)
   constructor(p0: Vec2, p1: Vec2)

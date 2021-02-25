@@ -27,6 +27,10 @@ export class Vec2 {
     this.z = z || 0
   }
 
+  clone(): Vec2 {
+    return new Vec2(this.x, this.y, this.z)
+  }
+
   length(): number {
     return Math.sqrt(this.x * this.x + this.y * this.y)
   }

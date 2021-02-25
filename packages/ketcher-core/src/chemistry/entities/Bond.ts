@@ -136,23 +136,23 @@ export class Bond {
     }
   }
 
-  hasRxnProps() {
+  hasRxnProps(): boolean {
     return !!this.reactingCenterStatus
   }
 
-  getCenter(struct: any) {
+  getCenter(struct: any): Vec2 {
     const p1 = struct.atoms.get(this.begin).pp
     const p2 = struct.atoms.get(this.end).pp
     return Vec2.lc2(p1, 0.5, p2, 0.5)
   }
 
-  getDir(struct: any) {
-    const p1 = struct.atoms.get(this.begin).pp
-    const p2 = struct.atoms.get(this.end).pp
-    return p2.sub(p1).normalized()
+  getDir(struct: any): Vec2 {
+    const p1: Vec2 = struct.atoms.get(this.begin).pp
+    const p2: Vec2 = struct.atoms.get(this.end).pp
+    return Vec2.normalize(Vec2.sub(p2, p1))
   }
 
-  clone(aidMap: any) {
+  clone(aidMap: any): Bond {
     const cp = new Bond(this)
     if (aidMap) {
       cp.begin = aidMap.get(cp.begin)
@@ -161,5 +161,3 @@ export class Bond {
     return cp
   }
 }
-
-export default Bond

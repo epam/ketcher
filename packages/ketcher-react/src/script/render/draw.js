@@ -65,6 +65,27 @@ function arrow(paper, a, b, options) {
     .attr(options.lineattr)
 }
 
+function equilibriumArrow(paper, a, b, options) {
+  var arrowLength = 9,
+    lineOffset = 3.5,
+    arrowOffset = 7
+  var path = []
+  path.push(
+    `M${tfx(a.x)},${tfx(a.y - lineOffset)}` +
+      `L${tfx(b.x)},${tfx(b.y - lineOffset)}` +
+      `L${tfx(b.x - arrowLength)},${tfx(b.y - arrowOffset)}` +
+      `L${tfx(b.x - arrowLength)},${tfx(a.y - lineOffset)}Z`
+  )
+  path.push(
+    `M${tfx(a.x)},${tfx(a.y + lineOffset)}` +
+      `L${tfx(b.x)},${tfx(b.y + lineOffset)}` +
+      `M${tfx(a.x)},${tfx(a.y + lineOffset)}` +
+      `L${tfx(a.x + arrowLength)},${tfx(a.y + arrowOffset)}` +
+      `L${tfx(a.x + arrowLength)},${a.y + lineOffset}Z`
+  )
+  return paper.path(path).attr({ ...options.lineattr, fill: '#000' })
+}
+
 function plus(paper, c, options) {
   var s = options.scale / 5
   return paper
@@ -386,6 +407,7 @@ function recenterText(path, rbb) {
 export default {
   recenterText,
   arrow,
+  equilibriumArrow,
   plus,
   aromaticBondPaths,
   bondSingle,

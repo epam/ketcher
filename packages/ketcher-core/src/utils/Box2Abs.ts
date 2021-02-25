@@ -45,6 +45,48 @@ export class Box2Abs {
     }
   }
 
+  static extend(b: Box2Abs, lp: Vec2, rb: Vec2) {
+    return new Box2Abs(Vec2.sub(b.p1, lp), Vec2.sum(b.p1, rb || lp))
+  }
+
+  static include(b: Box2Abs, p: Vec2) {
+    return new Box2Abs(Vec2.min(b.p0, p), Vec2.max(b.p1, p))
+  }
+
+  static union(b1: Box2Abs, b2: Box2Abs) {
+    return new Box2Abs(Vec2.min(b1.p0, b2.p0), Vec2.max(b1.p1, b2.p1))
+  }
+
+  static segmentIntersection(a: Vec2, b: Vec2, c: Vec2, d: Vec2): boolean {
+    const dc = (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x)
+    const dd = (a.x - d.x) * (b.y - d.y) - (a.y - d.y) * (b.x - d.x)
+    const da = (c.x - a.x) * (d.y - a.y) - (c.y - a.y) * (d.x - a.x)
+    const db = (c.x - b.x) * (d.y - b.y) - (c.y - b.y) * (d.x - b.x)
+
+    return dc * dd <= 0 && da * db <= 0
+  }
+
+  static translate(b: Box2Abs, d: Vec2): Box2Abs {
+    return new Box2Abs(Vec2.sum(b.p0, d), Vec2.sum(b.p1, d))
+  }
+
+  static transform(
+    b: Box2Abs,
+    f: (p: Vec2, options: any) => Vec2,
+    options: any
+  ): Box2Abs {
+    return new Box2Abs(f(b.p0, options), f(b.p1, options))
+  }
+
+  static fromRelBox(relBox: any) {
+    return new Box2Abs(
+      relBox.x,
+      relBox.y,
+      relBox.x + relBox.width,
+      relBox.y + relBox.height
+    )
+  }
+
   clone(): Box2Abs {
     return new Box2Abs(this.p0, this.p1)
   }
@@ -72,51 +114,5 @@ export class Box2Abs {
 
   toString(): string {
     return this.p0.toString() + ' ' + this.p1.toString()
-  }
-
-  static extend(b: Box2Abs, lp: Vec2, rb: Vec2) {
-    return new Box2Abs(Vec2.sub(b.p1, lp), Vec2.sum(b.p1, rb || lp))
-  }
-
-  static include(b: Box2Abs, p: Vec2) {
-    return new Box2Abs(Vec2.min(b.p0, p), Vec2.max(b.p1, p))
-  }
-
-  static union(b1: Box2Abs, b2: Box2Abs) {
-    return new Box2Abs(Vec2.min(b1.p0, b2.p0), Vec2.max(b1.p1, b2.p1))
-  }
-
-  static segmentIntersection(a: Vec2, b: Vec2, c: Vec2, d: Vec2): boolean {
-    const dc = (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x)
-    const dd = (a.x - d.x) * (b.y - d.y) - (a.y - d.y) * (b.x - d.x)
-    const da = (c.x - a.x) * (d.y - a.y) - (c.y - a.y) * (d.x - a.x)
-    const db = (c.x - b.x) * (d.y - b.y) - (c.y - b.y) * (d.x - b.x)
-
-    return dc * dd <= 0 && da * db <= 0
-  }
-
-  /**
-   * @param d { Vec2 }
-   * @returns { Box2Abs }
-   */
-  static translate(b: Box2Abs, d: Vec2): Box2Abs {
-    return new Box2Abs(Vec2.sum(b.p0, d), Vec2.sum(b.p1, d))
-  }
-
-  static transform(
-    b: Box2Abs,
-    f: (p: Vec2, options: any) => Vec2,
-    options: any
-  ): Box2Abs {
-    return new Box2Abs(f(b.p0, options), f(b.p1, options))
-  }
-
-  static fromRelBox(relBox: any) {
-    return new Box2Abs(
-      relBox.x,
-      relBox.y,
-      relBox.x + relBox.width,
-      relBox.y + relBox.height
-    )
   }
 }

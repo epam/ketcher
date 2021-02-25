@@ -56,7 +56,8 @@ export function prepareStructForGraph(struct) {
     graphNodes.push({
       type: 'arrow',
       center: item.pp,
-      data: {}
+      data: {},
+      mode: item.mode
     })
   })
 

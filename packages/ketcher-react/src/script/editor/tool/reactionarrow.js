@@ -18,9 +18,11 @@ import Action from '../shared/action'
 import { fromArrowAddition } from '../actions/reaction'
 import { fromMultipleMove } from '../actions/fragment'
 
-function ReactionArrowTool(editor) {
-  if (!(this instanceof ReactionArrowTool)) return new ReactionArrowTool(editor)
+function ReactionArrowTool(editor, mode) {
+  if (!(this instanceof ReactionArrowTool))
+    return new ReactionArrowTool(editor, mode)
 
+  this.mode = mode
   this.editor = editor
   this.editor.selection(null)
 }
@@ -60,7 +62,9 @@ ReactionArrowTool.prototype.mouseup = function (event) {
     delete this.dragCtx
   } else {
     const rnd = this.editor.render
-    this.editor.update(fromArrowAddition(rnd.ctab, rnd.page2obj(event)))
+    this.editor.update(
+      fromArrowAddition(rnd.ctab, rnd.page2obj(event), this.mode)
+    )
   }
 }
 

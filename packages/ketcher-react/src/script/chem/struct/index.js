@@ -56,7 +56,7 @@ Struct.prototype.hasRxnProps = function () {
 }
 
 Struct.prototype.hasRxnArrow = function () {
-  return this.rxnArrows.size > 0
+  return this.rxnArrows.size === 1
 }
 
 Struct.prototype.isBlank = function () {

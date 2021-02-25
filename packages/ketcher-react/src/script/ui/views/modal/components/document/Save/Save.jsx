@@ -145,6 +145,13 @@ class SaveDialog extends Component {
     if (saveWarning) {
       warnings.push(saveWarning)
     }
+    if (struct.rxnArrows.size > 1 && format !== 'graph') {
+      warnings.push(
+        `The ${
+          getPropertiesByFormat(format).name
+        } format does not support drawn elements: reaction arrows will be lost.`
+      )
+    }
     if (moleculeErrors) {
       warnings.push(...Object.values(moleculeErrors))
     }

@@ -31,8 +31,8 @@ function TypeChoice({ value, onChange, ...props }) {
           <input
             type="radio"
             value={type.value}
-            checked={type.value === value} //TODO: fix React Warning
-            onClick={() => onChange(type.value)}
+            checked={type.value === value}
+            onChange={() => onChange(type.value)}
             {...props}
           />
           {type.title}

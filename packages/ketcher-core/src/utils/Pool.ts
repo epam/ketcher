@@ -17,7 +17,7 @@
 export class Pool<TValue = any> extends Map<number, TValue> {
   private nextId: number
 
-  constructor(args) {
+  constructor(...args) {
     super(args)
     this.nextId = 0
   }

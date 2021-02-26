@@ -1,4 +1,4 @@
-import { MolfileManager, Struct } from 'chem'
+import { MolfileManager, Struct } from 'chemistry'
 import { getPropertiesByFormat } from './formatProperties'
 import {
   ConvertData,

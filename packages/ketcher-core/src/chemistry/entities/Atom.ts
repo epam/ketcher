@@ -135,6 +135,7 @@ export class Atom {
   rxnFragmentType: number
   stereoLabel: string
   stereoParity: number
+  hasImplicitH?: boolean
 
   constructor(params: AtomParams) {
     console.assert(params || 'label' in params, 'label must be specified!')
@@ -493,7 +494,7 @@ export class Atom {
     return true
   }
 
-  calcValenceMinusHyd(conn: number) {
+  calcValenceMinusHyd(conn: number): number {
     const charge = this.charge
     const label = this.label
     const element = elements.find(element => element.label === this.label)
@@ -501,7 +502,7 @@ export class Atom {
       console.assert('Element ' + label + ' unknown')
       // query atom, skip
       this.implicitH = 0
-      return null
+      return 0
     }
 
     var groupno = element.group

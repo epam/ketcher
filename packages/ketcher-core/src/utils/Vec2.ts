@@ -13,7 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-export class Vec2 {
+export interface Point {
+  x?: number
+  y?: number
+  z?: number
+}
+export class Vec2 implements Point {
   static ZERO = new Vec2(0, 0)
   static UNIT = new Vec2(1, 1)
 
@@ -21,10 +26,26 @@ export class Vec2 {
   y: number
   z: number
 
-  constructor(x?: number, y?: number, z?: number) {
-    this.x = x || 0
-    this.y = y || 0
-    this.z = z || 0
+  constructor(point: Point)
+  constructor(x?: number, y?: number, z?: number)
+  constructor(...args: any) {
+    let point: Point | null = null
+    if (args.length > 0) {
+      if ('x' in args[0] || 'y' in args[0] || 'z' in args[0]) {
+        point = args as Point
+      } else {
+        const [x, y, z] = args
+        point = {
+          x,
+          y,
+          z
+        }
+      }
+    }
+
+    this.x = point?.x || 0
+    this.y = point?.y || 0
+    this.z = point?.z || 0
   }
 
   clone(): Vec2 {

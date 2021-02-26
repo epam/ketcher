@@ -1,4 +1,5 @@
-import { MolfileParseOptions, Struct } from 'chem'
+import { MolfileParseOptions } from 'chemistry'
+import { Struct } from 'chemistry'
 import { StructServiceOptions } from 'infrastructure/services'
 
 export interface StructFormatter {

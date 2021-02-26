@@ -1,4 +1,4 @@
-import { Struct } from '../struct'
+import { Struct } from 'chemistry'
 
 export type Graph = {
   root: {

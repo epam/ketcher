@@ -3,7 +3,7 @@ import {
   MolfileManager,
   MolfileParseOptions,
   SmilesManager
-} from 'chem'
+} from 'chemistry'
 import { StructService, StructServiceOptions } from 'infrastructure/services'
 import {
   StructFormatter,

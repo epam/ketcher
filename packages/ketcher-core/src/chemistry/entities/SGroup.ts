@@ -43,7 +43,7 @@ export class SGroup {
     GEN: 5
   }
 
-  type: number
+  type: string
   id: number
   label: number
   bracketBox: any
@@ -61,10 +61,10 @@ export class SGroup {
   bonds: any
   xBonds: any
   neiAtoms: any
-  pp: any
+  pp: Vec2 | null
   data: any
 
-  constructor(type: number) {
+  constructor(type: string) {
     // eslint-disable-line max-statements
     console.assert(
       type && type in SGroup.TYPES,

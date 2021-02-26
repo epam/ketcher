@@ -14,14 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, FunctionComponent } from 'react'
 import * as KN from 'w3c-keyname'
 import clsx from 'clsx'
 
 import style from './Dialog.module.less'
 
 interface DialogProps {
-  children: React.ReactElement
   title: string
   params: DialogParams
   buttons: Array<string | React.ReactElement>
@@ -38,12 +37,12 @@ interface DialogParamsCallProps {
 
 interface DialogCallProps {
   result: () => any
-  valid: () => boolean
+  valid?: () => boolean
 }
 
 type Props = DialogProps & DialogCallProps
 
-const Dialog = (props: Props) => {
+const Dialog: FunctionComponent<Props> = props => {
   const {
     children,
     title,

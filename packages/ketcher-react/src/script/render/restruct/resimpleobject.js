@@ -114,7 +114,7 @@ ReSimpleObject.prototype.calcDistance = function (p, s) {
 
   distRef = this.getReferencePointDistance(p)
   const refPoint = distRef.minDist <= 8 / s ? distRef.refPoint : null
-  // distance is a smallest betwen dist to figure and it's reference points
+  // distance is a smallest between dist to figure and it's reference points
   dist = Math.min(distRef.minDist, dist)
   return { minDist: dist, refPoint: refPoint }
 }

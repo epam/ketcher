@@ -123,29 +123,40 @@ form[role='dialog'] {
       margin-left: 4px;
     }
   }
+  .table-group-wrap {
+    display: flex;
+    @media (max-width: @common-screen-tiny) {
+      flex-wrap: wrap;
+    }
+  }
   .groups {
     &:extend(.-SelectList all);
     margin-top: 1em;
     height: 27em;
     width: 11em;
-    float: left;
     overflow: hidden;
   }
   .table {
-    margin-top: 1em;
-    padding: 0;
-    float: left;
+    display: flex;
+    flex-wrap: wrap;
     width: 550px;
     height: 27em;
-    overflow: auto;
+    margin-top: 1em;
+    padding: 0;
+    overflow: hidden;
+    @media (max-width: @common-screen-tiny) {
+      width: auto;
+    }
+  }
+  .table-content {
+    &:focus {
+      outline: none;
+    }
   }
   .tr {
-    height: 120px;
+    display: flex;
   }
   .td {
-    width: 33%;
-    float: left;
-    height: 100%;
     position: relative;
     &:before {
       position: absolute;

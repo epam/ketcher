@@ -14,22 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  escapeRegExp,
-  chunk,
-  flow,
-  filter as _filter,
-  reduce,
-  omit
-} from 'lodash/fp'
+import { escapeRegExp, flow, filter as _filter, reduce, omit } from 'lodash/fp'
 import { createSelector } from 'reselect'
+import { List, AutoSizer } from 'react-virtualized'
 
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import sdf from '../../../chem/sdf'
-
-import VisibleView from '../../component/view/visibleview'
 import StructRender from '../../component/structrender'
 import { Dialog } from '../../views/components'
 import SaveButton from '../../component/view/savebutton'
@@ -58,11 +50,6 @@ const GREEK_SIMBOLS = {
 function tmplName(tmpl, i) {
   console.assert(tmpl.props && tmpl.props.group, 'No group')
   return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`
-}
-
-function partition(n, array) {
-  console.warn('partition', n)
-  return chunk(n)(array)
 }
 
 const greekRe = new RegExp(
@@ -97,18 +84,6 @@ function filterLib(lib, filter) {
   )(lib)
 }
 
-const libRowsSelector = createSelector(
-  props => props.lib,
-  props => props.group,
-  props => props.COLS,
-  libRows
-)
-
-function libRows(lib, group, COLS) {
-  console.warn('Group', group)
-  return partition(COLS, lib[group])
-}
-
 function RenderTmpl({ tmpl, ...props }) {
   return tmpl.props && tmpl.props.prerender ? (
     <svg {...props}>
@@ -141,40 +116,76 @@ class TemplateLib extends Component {
       : null
   }
 
-  renderRow(row, index, COLS) {
+  renderTemplatesTable(templates) {
+    const ITEMS_COUNT = templates ? templates.length : 0
+    const ITEM_SIZE = { width: 178, height: 120 }
+    const tmplStyles = {
+      width: `${ITEM_SIZE.width}px`,
+      height: `${ITEM_SIZE.height}px`
+    }
+
     return (
-      <div className="tr" key={index}>
-        {row.map((tmpl, i) => (
-          <div
-            className={tmpl === this.props.selected ? 'td selected' : 'td'}
-            title={greekify(tmplName(tmpl, index * COLS + i))}>
-            <RenderTmpl
-              tmpl={tmpl}
-              className="struct"
-              onClick={() => this.select(tmpl)}
-            />
-            <div class="btn-container">
-              {tmpl.props.group === 'User Templates' && (
-                <button
-                  className="delete-button"
-                  onClick={() => this.props.onDelete(tmpl)}>
-                  Delete
-                </button>
-              )}
-              <button
-                className="attach-button"
-                onClick={() => this.props.onAttach(tmpl)}>
-                Edit
-              </button>
-            </div>
-          </div>
-        ))}
+      <div className="table" style={{ minWidth: ITEM_SIZE.width }}>
+        <AutoSizer>
+          {({ height, width }) => {
+            const itemsPerRow = Math.floor(width / ITEM_SIZE.width)
+            const rowCount = Math.ceil(ITEMS_COUNT / itemsPerRow)
+
+            return (
+              <List
+                className="table-content"
+                width={width}
+                height={height}
+                rowCount={rowCount}
+                rowHeight={ITEM_SIZE.height}
+                rowRenderer={({ index, key, style }) => {
+                  const fromIndex = index * itemsPerRow
+                  const toIndex = Math.min(fromIndex + itemsPerRow, ITEMS_COUNT)
+                  const items = templates.slice(fromIndex, toIndex)
+
+                  return (
+                    <div className="tr" key={key} style={style}>
+                      {items.map((tmpl, i) => (
+                        <div
+                          className={
+                            tmpl === this.props.selected ? 'td selected' : 'td'
+                          }
+                          title={greekify(tmplName(tmpl, i))}
+                          key={i}
+                          style={tmplStyles}>
+                          <RenderTmpl
+                            tmpl={tmpl}
+                            className="struct"
+                            onClick={() => this.select(tmpl)}
+                          />
+                          <div className="btn-container">
+                            {tmpl.props.group === 'User Templates' && (
+                              <button
+                                className="delete-button"
+                                onClick={() => this.props.onDelete(tmpl)}>
+                                Delete
+                              </button>
+                            )}
+                            <button
+                              className="attach-button"
+                              onClick={() => this.props.onAttach(tmpl)}>
+                              Edit
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                }}
+              />
+            )
+          }}
+        </AutoSizer>
       </div>
     )
   }
 
   render() {
-    const COLS = 3
     const { filter, onFilter, onChangeGroup, ...props } = this.props
     let group = props.group
     const lib = filterLibSelector(this.props)
@@ -205,23 +216,20 @@ class TemplateLib extends Component {
               onChange={value => onFilter(value)}
             />
           </label>
-          <Input
-            className="groups"
-            component={SelectList}
-            splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
-            value={group}
-            onChange={g => onChangeGroup(g)}
-            schema={{
-              enum: Object.keys(lib),
-              enumNames: Object.keys(lib).map(g => greekify(g))
-            }}
-          />
-          <VisibleView
-            data={libRowsSelector({ lib, group, COLS })}
-            rowHeight={120}
-            className="table"
-            render={(row, i) => this.renderRow(row, i, COLS)}
-          />
+          <div className="table-group-wrap">
+            <Input
+              className="groups"
+              component={SelectList}
+              splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
+              value={group}
+              onChange={g => onChangeGroup(g)}
+              schema={{
+                enum: Object.keys(lib),
+                enumNames: Object.keys(lib).map(g => greekify(g))
+              }}
+            />
+            {this.renderTemplatesTable(lib[group])}
+          </div>
         </div>
       </Dialog>
     )

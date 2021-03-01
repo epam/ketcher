@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@ import Action from '../shared/action'
 import { fromArrowAddition } from '../actions/reaction'
 import { fromMultipleMove } from '../actions/fragment'
 
-function ReactionArrowTool(editor) {
-  if (!(this instanceof ReactionArrowTool)) return new ReactionArrowTool(editor)
+function ReactionArrowTool(editor, mode) {
+  if (!(this instanceof ReactionArrowTool))
+    return new ReactionArrowTool(editor, mode)
 
+  this.mode = mode
   this.editor = editor
   this.editor.selection(null)
 }
@@ -54,17 +56,16 @@ ReactionArrowTool.prototype.mousemove = function (event) {
   }
 }
 
-ReactionArrowTool.prototype.mouseup = function () {
+ReactionArrowTool.prototype.mouseup = function (event) {
   if (this.dragCtx) {
     this.editor.update(this.dragCtx.action) // TODO investigate, subsequent undo/redo fails
     delete this.dragCtx
+  } else {
+    const rnd = this.editor.render
+    this.editor.update(
+      fromArrowAddition(rnd.ctab, rnd.page2obj(event), this.mode)
+    )
   }
-}
-
-ReactionArrowTool.prototype.click = function (event) {
-  const rnd = this.editor.render
-  if (rnd.ctab.molecule.rxnArrows.size < 1)
-    this.editor.update(fromArrowAddition(rnd.ctab, rnd.page2obj(event)))
 }
 
 export default ReactionArrowTool

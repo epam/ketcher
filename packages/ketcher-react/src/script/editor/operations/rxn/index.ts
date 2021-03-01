@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { RxnArrow } from '../../../chem/struct'
+import { RxnArrow, RxnArrowMode } from '../../../chem/struct'
 import Restruct, { ReRxnArrow } from '../../../render/restruct'
 import Vec2 from '../../../util/vec2'
 import { BaseOperation } from '../base'
@@ -24,23 +24,29 @@ import { OperationType } from '../OperationType'
 type Data = {
   pos: any
   arid: any
+  mode: RxnArrowMode
 }
 
 class RxnArrowAdd extends BaseOperation {
   data: Data
 
-  constructor(pos?: any) {
+  constructor(mode: RxnArrowMode, pos: any, arid = null) {
     super(OperationType.RXN_ARROW_ADD)
-    this.data = { pos, arid: null }
+    this.data = { pos, arid, mode }
   }
 
   execute(restruct: Restruct) {
     const struct = restruct.molecule
 
     if (typeof this.data.arid === 'number') {
-      struct.rxnArrows.set(this.data.arid, new RxnArrow())
+      struct.rxnArrows.set(
+        this.data.arid,
+        new RxnArrow(new Vec2(), this.data.mode)
+      )
     } else {
-      this.data.arid = struct.rxnArrows.add(new RxnArrow())
+      this.data.arid = struct.rxnArrows.add(
+        new RxnArrow(new Vec2(), this.data.mode)
+      )
     }
 
     const { pos, arid } = this.data
@@ -87,15 +93,17 @@ class RxnArrowDelete extends BaseOperation {
 
   constructor(arid?: any) {
     super(OperationType.RXN_ARROW_DELETE)
-    this.data = { arid, pos: null }
+    this.data = { arid, pos: null, mode: RxnArrowMode.simple }
   }
 
   execute(restruct: any) {
     const { arid } = this.data
     const struct = restruct.molecule
 
-    if (!this.data.pos) {
-      this.data.pos = struct.rxnArrows.get(arid).pp
+    if (!this.data.pos || !this.data.mode) {
+      const arrow = struct.rxnArrows.get(arid)
+      this.data.pos = arrow.pp
+      this.data.mode = arrow.mode
     }
 
     // notifyRxnArrowRemoved
@@ -112,9 +120,7 @@ class RxnArrowDelete extends BaseOperation {
   }
 
   invert() {
-    const inverted = new RxnArrowAdd()
-    inverted.data = this.data
-    return inverted
+    return new RxnArrowAdd(this.data.mode, this.data.pos, this.data.arid)
   }
 }
 

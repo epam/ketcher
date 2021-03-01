@@ -91,6 +91,7 @@ type LeftToolbarItemVariant =
   | 'sgroup-data'
   | 'reaction'
   | 'reaction-arrow'
+  | 'reaction-arrow-equilibrium'
   | 'reaction-plus'
   | 'reaction-automap'
   | 'reaction-map'

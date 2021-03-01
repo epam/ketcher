@@ -22,10 +22,9 @@ import {
 } from '../operations'
 import Action from '../shared/action'
 
-export function fromArrowAddition(restruct, pos) {
+export function fromArrowAddition(restruct, pos, mode) {
   var action = new Action()
-  if (restruct.molecule.rxnArrows.size < 1)
-    action.addOp(new RxnArrowAdd(pos).perform(restruct))
+  action.addOp(new RxnArrowAdd(mode, pos).perform(restruct))
   return action
 }
 

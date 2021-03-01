@@ -120,9 +120,6 @@ class Molfile {
     // eslint-disable-line max-statements
     /* saver */
     this.reaction = molecule.rxnArrows.size > 0
-    if (molecule.rxnArrows.size > 1) {
-      throw new Error('Reaction may not contain more than one arrow')
-    }
     this.molfile = '' + molecule.name
     if (this.reaction) {
       if (molecule.rgroups.size > 0) {

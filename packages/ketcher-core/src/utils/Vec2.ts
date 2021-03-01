@@ -29,26 +29,25 @@ export class Vec2 {
   constructor(point: Point)
   constructor(x?: number, y?: number, z?: number)
   constructor(...args: Array<any>) {
-    let point: Point | null = null
-    if (args.length > 0) {
-      if (
-        args.length === 1 &&
-        ('x' in args[0] || 'y' in args[0] || 'z' in args[0])
-      ) {
-        point = args[0] as Point
-      } else {
-        const [x, y, z] = args
-        point = {
-          x,
-          y,
-          z
-        }
-      }
+    if (args.length === 0) {
+      this.x = 0
+      this.y = 0
+      this.z = 0
+    } else if (arguments.length === 1) {
+      this.x = parseFloat(args[0].x || 0)
+      this.y = parseFloat(args[0].y || 0)
+      this.z = parseFloat(args[0].z || 0)
+    } else if (arguments.length === 2) {
+      this.x = parseFloat(args[0] || 0)
+      this.y = parseFloat(args[1] || 0)
+      this.z = 0
+    } else if (arguments.length === 3) {
+      this.x = parseFloat(args[0])
+      this.y = parseFloat(args[1])
+      this.z = parseFloat(args[2])
+    } else {
+      throw new Error('Vec2(): invalid arguments')
     }
-
-    this.x = point?.x || 0
-    this.y = point?.y || 0
-    this.z = point?.z || 0
   }
 
   static dist(a: Vec2, b: Vec2): number {

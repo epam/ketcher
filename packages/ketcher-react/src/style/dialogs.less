@@ -125,8 +125,12 @@ form[role='dialog'] {
   }
   .table-group-wrap {
     display: flex;
-    @media (max-width: @common-screen-tiny) {
-      flex-wrap: wrap;
+  }
+  .single-col-layout {
+    flex-wrap: wrap;
+    .td {
+      flex-grow: 1;
+      max-width: 230px;
     }
   }
   .groups {
@@ -135,6 +139,7 @@ form[role='dialog'] {
     height: 27em;
     width: 11em;
     overflow: hidden;
+    flex-shrink: 0;
   }
   .table {
     display: flex;
@@ -144,9 +149,6 @@ form[role='dialog'] {
     margin-top: 1em;
     padding: 0;
     overflow: hidden;
-    @media (max-width: @common-screen-tiny) {
-      width: auto;
-    }
   }
   .table-content {
     &:focus {

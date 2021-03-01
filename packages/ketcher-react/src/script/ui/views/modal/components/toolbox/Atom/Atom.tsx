@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useState, useCallback } from 'react'
-import { connect } from 'react-redux'
+import React, { useState, useCallback, FunctionComponent } from 'react'
 import { capitalize } from 'lodash/fp'
 
 import { atom as atomSchema } from '../../../../../data/schema/struct-schema'
@@ -26,7 +25,32 @@ import ElementNumber from './ElementNumber'
 
 import styles from './Atom.module.less'
 
-function Atom(props) {
+interface AtomProps {
+  alias: string
+  charge: string
+  className: string
+  exactChangeFlag: boolean
+  explicitValence: number
+  formState: any
+  hCount: number
+  invRet: number
+  isotope: number
+  label: string
+  radical: number
+  ringBondCount: number
+  stereoParity: number
+  substitutionCount: number
+  unsaturatedAtom: boolean
+}
+
+interface AtomCallProps {
+  onCancel: () => void
+  onOk: (result: any) => void
+}
+
+type Props = AtomProps & AtomCallProps
+
+const Atom: FunctionComponent<Props> = props => {
   const { formState, stereoParity, ...rest } = props
   const [currentLabel, setCurrentLabel] = useState(rest.label)
 
@@ -44,8 +68,8 @@ function Atom(props) {
       <Form
         schema={atomSchema}
         customValid={{
-          label: l => atomValid(l),
-          charge: ch => chargeValid(ch)
+          label: label => atomValid(label),
+          charge: charge => chargeValid(charge)
         }}
         init={rest}
         {...formState}>
@@ -81,8 +105,9 @@ function atomValid(label) {
 }
 
 function chargeValid(charge) {
-  const pch = atomSchema.properties.charge.pattern.exec(charge)
-  return !(pch === null || (pch[1] !== '' && pch[3] !== ''))
+  const result = atomSchema.properties.charge.pattern.exec(charge)
+  return !(result === null || (result[1] !== '' && result[3] !== ''))
 }
 
-export default connect(store => ({ formState: store.modal.form }))(Atom)
+export type { AtomProps }
+export default Atom

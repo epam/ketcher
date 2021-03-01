@@ -23,7 +23,7 @@ import style from './Dialog.module.less'
 interface DialogProps {
   title: string
   params: DialogParams
-  buttons: Array<string | React.ReactElement>
+  buttons?: Array<string | React.ReactElement>
   className: string
 }
 interface DialogParams extends DialogParamsCallProps {

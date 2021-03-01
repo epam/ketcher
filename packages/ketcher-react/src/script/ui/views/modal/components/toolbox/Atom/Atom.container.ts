@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,4 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './Atom.container'
+import { connect } from 'react-redux'
+
+import Atom, { AtomProps } from './Atom'
+
+type StateProps = Pick<AtomProps, 'formState'>
+
+const mapStateToProps = (state): StateProps => ({ formState: state.modal.form })
+
+export default connect(mapStateToProps)(Atom)

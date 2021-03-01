@@ -15,10 +15,7 @@
  ***************************************************************************/
 
 import { uniq } from 'lodash'
-
-import { SGroup } from '../../chem/struct'
-
-import Pile from '../../util/pile'
+import { SGroup, Pile } from 'ketcher-core'
 import {
   SGroupAttr,
   AtomAttr,

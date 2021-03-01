@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond } from '../../chem/struct'
+import { Atom, Bond } from 'ketcher-core'
 
 import utils from '../shared/utils'
 

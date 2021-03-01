@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import scale from '../../util/scale'
+import { scale } from 'ketcher-core'
 import Action from '../shared/action'
 import draw from '../../render/draw'
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Struct from '../../chem/struct'
+import { Struct } from 'ketcher-core'
 import { headerToGraph } from './toGraph/headerToGraph'
 import { moleculeToGraph } from './toGraph/moleculeToGraph'
 import { rgroupToGraph } from './toGraph/rgroupToGraph'

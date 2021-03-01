@@ -1,4 +1,4 @@
-import Struct from '../struct'
+import { Struct } from 'ketcher-core'
 import common from './common'
 import Molfile, { END_V2000 } from './molfile'
 import utils from './utils'

@@ -1,5 +1,5 @@
 import { ifDef } from '../../utils'
-import Struct, { Atom, Bond, SGroup } from '../../../chem/struct'
+import { Struct, Atom, Bond, SGroup } from 'ketcher-core'
 import { toRlabel } from '../convertStruct'
 import element from '../../../chem/element'
 

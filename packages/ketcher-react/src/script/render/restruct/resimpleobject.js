@@ -15,12 +15,9 @@
  ***************************************************************************/
 
 import ReObject from './reobject'
-import Box2Abs from '../../util/box2abs'
 import draw from '../draw'
 import util from '../util'
-import scale from '../../util/scale'
-import Vec2 from '../../util/vec2'
-import { SimpleObjectMode } from '../../chem/struct'
+import { SimpleObjectMode, Box2Abs, Vec2, scale } from 'ketcher-core'
 
 const tfx = util.tfx
 
@@ -214,7 +211,10 @@ ReSimpleObject.prototype.highlightPath = function (render) {
           tfx(Math.abs(ry) + scaleFactor / 8)
         )
       )
-      if (Math.abs(rx) - scaleFactor / 8 > 0 && Math.abs(ry) - scaleFactor / 8 > 0)
+      if (
+        Math.abs(rx) - scaleFactor / 8 > 0 &&
+        Math.abs(ry) - scaleFactor / 8 > 0
+      )
         path.push(
           render.paper.ellipse(
             tfx(point[0].x + rx),

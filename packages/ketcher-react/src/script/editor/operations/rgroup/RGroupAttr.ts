@@ -36,7 +36,7 @@ export class RGroupAttr extends BaseOperation {
   execute(restruct: Restruct) {
     const { rgid, attribute, value } = this.data
 
-    const rgp = restruct.molecule.rgroups.get(rgid)
+    const rgp = restruct.molecule.rgroups.get(rgid)!
     if (!this.data2) {
       this.data2 = {
         rgid,
@@ -60,7 +60,7 @@ export class RGroupAttr extends BaseOperation {
 
   isDummy(restruct: Restruct) {
     const { rgid, attribute, value } = this.data
-    const rgroup = restruct.molecule.rgroups.get(rgid)
+    const rgroup = restruct.molecule.rgroups.get(rgid)!
     return rgroup[attribute] === value
   }
 }

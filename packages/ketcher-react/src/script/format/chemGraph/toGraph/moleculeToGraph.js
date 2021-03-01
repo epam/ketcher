@@ -2,7 +2,7 @@ import structSchema from '../../schemes/moleculeSchema'
 
 import { fromRlabel } from '../convertStruct'
 import { ifDef } from '../../utils'
-import { SGroup } from '../../../chem/struct'
+import { SGroup } from 'ketcher-core'
 
 export function moleculeToGraph(struct) {
   const body = {

@@ -15,8 +15,7 @@
  ***************************************************************************/
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import { SGroup } from '../../../chem/struct'
-import Vec2 from '../../../util/vec2'
+import { SGroup, Vec2 } from 'ketcher-core'
 import Restruct, { ReSGroup } from '../../../render/restruct'
 
 // todo: separate classes: now here is circular dependency in `invert` method
@@ -44,7 +43,7 @@ class SGroupCreate extends BaseOperation {
     struct.sgroups.set(sgid, sgroup)
 
     if (pp) {
-      struct.sgroups.get(sgid).pp = new Vec2(pp)
+      struct.sgroups.get(sgid)!.pp = new Vec2(pp)
     }
 
     restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)))

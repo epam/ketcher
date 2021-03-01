@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Visel from './visel'
-import scale from '../../util/scale'
+import { scale } from 'ketcher-core'
 
 function ReObject() {}
 

@@ -13,19 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-/* eslint-disable guard-for-in,no-prototype-builtins */ // todo
-
 // ReStruct is to store all the auxiliary information for
 //  Struct while rendering
-import Box2Abs from '../../util/box2abs'
-import Pool from '../../util/pool'
-import Pile from '../../util/pile'
-import Vec2 from '../../util/vec2'
 
 import util from '../util'
-
-import Struct from '../../chem/struct'
+import { Struct, Box2Abs, Pool, Pile, Vec2 } from 'ketcher-core'
 
 import ReAtom from './reatom'
 import ReBond from './rebond'

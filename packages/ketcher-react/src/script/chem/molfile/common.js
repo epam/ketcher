@@ -16,10 +16,7 @@
 
 import v2000 from './v2000'
 import v3000 from './v3000'
-
-import Pile from '../../util/pile'
-
-import { SGroup } from './../struct/index'
+import { SGroup, Pile } from 'ketcher-core'
 import utils from './utils'
 
 const loadRGroupFragments = true // TODO: set to load the fragments

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Vec2 from '../../util/vec2'
+import { Vec2 } from 'ketcher-core'
 
 import utils from '../shared/utils'
 import { fromRotate, fromFlip, fromBondAlign } from '../actions/rotate'

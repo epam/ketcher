@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import Box2Abs from '../../util/box2abs'
 import ReObject from './reobject'
-import scale from '../../util/scale'
 import element from '../../chem/element'
 import { sketchingColors as elementColor } from '../../chem/element-color'
 import draw from '../draw'
 import util from '../util'
-import Vec2 from '../../util/vec2'
-import { Bond } from '../../chem/struct'
+import { Bond, Box2Abs, Vec2, scale } from 'ketcher-core'
 
-/** @param {import('../../chem/struct/atom').default} atom */
+/** @param {import('ketcher-core').Atom} atom */
 function ReAtom(/* chem.Atom*/ atom) {
   this.visel = undefined // for typing
   this.init('atom')
 
-  /** @type {import('../../chem/struct/atom').default} */
+  /** @type {import('ketcher-core').Atom} */
   this.a = atom // TODO rename a to item
   this.showLabel = false
 

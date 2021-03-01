@@ -88,11 +88,11 @@ export class Struct {
   }
 
   clone(
-    atomSet: Pile<number>,
-    bondSet?: Pile<number>,
+    atomSet?: Pile<number> | null,
+    bondSet?: Pile<number> | null,
     dropRxnSymbols?: boolean,
-    aidMap?: Map<number, number>,
-    simpleObjectsSet?: Pile<number>
+    aidMap?: Map<number, number> | null,
+    simpleObjectsSet?: Pile<number> | null
   ): Struct {
     return this.mergeInto(
       new Struct(),
@@ -308,8 +308,8 @@ export class Struct {
     })
   }
 
-  bondInitHalfBonds(bid, bond) {
-    bond = bond || this.bonds.get(bid)
+  bondInitHalfBonds(bid, bond?: Bond) {
+    bond = bond || this.bonds.get(bid)!
     bond.hb1 = 2 * bid
     bond.hb2 = 2 * bid + 1 // eslint-disable-line no-mixed-operators
     this.halfBonds.set(bond.hb1, new HalfBond(bond.begin, bond.end, bid))
@@ -474,7 +474,7 @@ export class Struct {
     item.pos = pos
   }
 
-  getCoordBoundingBox(atomSet: Pile<number>) {
+  getCoordBoundingBox(atomSet?: Pile<number>) {
     let bb: any = null
     function extend(pp) {
       if (!bb) {
@@ -491,7 +491,7 @@ export class Struct {
     let global = !atomSet || atomSet.size === 0
 
     this.atoms.forEach((atom, aid) => {
-      if (global || atomSet.has(aid)) extend(atom.pp)
+      if (global || atomSet!.has(aid)) extend(atom.pp)
     })
     if (global) {
       this.rxnPluses.forEach(item => {

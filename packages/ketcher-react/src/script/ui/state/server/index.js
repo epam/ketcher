@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { omit, without } from 'lodash/fp'
-import Pool from '../../../util/pool'
+import { Pool } from 'ketcher-core'
 
 import molfile from '../../../chem/molfile'
 

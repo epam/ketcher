@@ -34,9 +34,9 @@ export class Fragment {
   }
 
   stereoAtoms: Array<number>
-  enhancedStereoFlag?: string
+  enhancedStereoFlag?: any
 
-  constructor(flag?: string) {
+  constructor(flag?: any) {
     this.stereoAtoms = []
     this.enhancedStereoFlag = flag
   }

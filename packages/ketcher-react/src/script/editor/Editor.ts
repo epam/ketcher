@@ -19,10 +19,8 @@ import {
   Subscription
 } from 'subscription'
 
-import { Struct } from '../chem/struct'
+import { Struct, Pile, Vec2 } from 'ketcher-core'
 import Render from '../render'
-import Pile from '../util/pile'
-import Vec2 from '../util/vec2'
 import { fromDescriptorsAlign, fromNewCanvas } from './actions/basic'
 import Action from './shared/action'
 import closest from './shared/closest'
@@ -256,7 +254,7 @@ class Editor {
     if (ci.map === 'merge') {
       Object.keys(ci.items).forEach(mp => {
         ci.items[mp].forEach(dstId => {
-          item = render.ctab[mp].get(dstId)
+          item = render.ctab[mp].get(dstId)!
 
           if (item) {
             item.setHighlight(visible, render)
@@ -413,7 +411,7 @@ class Editor {
     // "auto-select" the atoms for the bonds in selection
     if (res.bonds) {
       res.bonds.forEach(bid => {
-        const bond = struct.bonds.get(bid)
+        const bond = struct.bonds.get(bid)!
         res.atoms = res.atoms || []
         if (res.atoms.indexOf(bond.begin) < 0) {
           res.atoms.push(bond.begin)

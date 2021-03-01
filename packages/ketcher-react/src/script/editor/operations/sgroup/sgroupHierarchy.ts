@@ -41,7 +41,7 @@ class SGroupAddToHierarchy extends BaseOperation {
     const { sgid } = this.data
 
     const struct = restruct.molecule
-    const sgroup = struct.sgroups.get(sgid)
+    const sgroup = struct.sgroups.get(sgid)!
     const relations = struct.sGroupForest.insert(
       sgroup,
       this.parent,

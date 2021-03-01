@@ -46,7 +46,7 @@ export function radicalElectrons(radical: any) {
 
 export interface AtomParams {
   stereoParity?: number
-  stereoLabel?: string
+  stereoLabel?: string | null
   exactChangeFlag?: number
   rxnFragmentType?: number
   invRet?: number
@@ -57,13 +57,13 @@ export interface AtomParams {
   ringBondCount?: number
   explicitValence?: number
   attpnt?: any
-  rglabel?: string
+  rglabel?: string | null
   charge?: number
   radical?: number
   isotope?: number
-  alias?: string
+  alias?: string | null
   pseudo?: string
-  atomList?: AtomListParams
+  atomList?: AtomListParams | null
   label: string
   fragment?: number
   pp?: Vec2
@@ -87,7 +87,7 @@ export class Atom {
 
   //TODO: rename
   static attrlist = {
-    alias: '',
+    alias: null,
     label: 'C',
     pseudo: null,
     isotope: 0,
@@ -101,18 +101,18 @@ export class Atom {
     atomList: null,
     invRet: 0,
     exactChangeFlag: 0,
-    rglabel: '',
+    rglabel: null,
     attpnt: null,
     aam: 0,
     // enhanced stereo
-    stereoLabel: '',
+    stereoLabel: null,
     stereoParity: 0
   }
 
   label: string
   fragment: number
   pseudo: string
-  atomList?: AtomList
+  atomList: AtomList | null
   attpnt: any
   isotope: number
   hCount: number
@@ -128,13 +128,13 @@ export class Atom {
   neighbors: Array<number>
   sgs: Pile<any>
   badConn: boolean
-  alias: string
-  rglabel: string
+  alias: string | null
+  rglabel: string | null
   aam: number
   invRet: number
   exactChangeFlag: number
   rxnFragmentType: number
-  stereoLabel: string
+  stereoLabel: string | null
   stereoParity: number
   hasImplicitH?: boolean
 
@@ -197,7 +197,7 @@ export class Atom {
       Atom.attrlist.stereoParity
     )
 
-    this.atomList = params.atomList && new AtomList(params.atomList)
+    this.atomList = params.atomList ? new AtomList(params.atomList) : null
     this.neighbors = [] // set of half-bonds having this atom as their origin
     this.badConn = false
   }

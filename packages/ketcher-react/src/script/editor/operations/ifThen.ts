@@ -66,7 +66,7 @@ class RestoreIfThen extends BaseOperation {
     const struct = restruct.molecule
 
     this.ifThenHistory.forEach((rg, rgid) => {
-      const rgValue = struct.rgroups.get(rgid)
+      const rgValue = struct.rgroups.get(rgid)!
       rgValue.ifthen = rg
       struct.rgroups.set(rgid, rgValue)
     })

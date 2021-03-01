@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 // TODO: find DOM shorthand
-import Vec2 from '../../util/vec2'
+import { Vec2 } from 'ketcher-core'
 
 export function elementOffset(element) {
   let top = 0

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import util from './util'
-import Vec2 from '../util/vec2'
+import { Vec2 } from 'ketcher-core'
 import Raphael from '../raphael-ext'
 
 const tfx = util.tfx

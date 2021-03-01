@@ -17,7 +17,7 @@
 // Single entry point to Raphaël library
 
 import Raphael from 'raphael'
-import Vec2 from './util/vec2'
+import { Vec2 } from 'ketcher-core'
 
 // TODO: refactor ugly prototype extensions to plain old functions
 Raphael.el.translateAbs = function (x, y) {

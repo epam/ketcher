@@ -16,10 +16,10 @@
 import { Vec2 } from 'utils'
 
 export interface BondParams {
-  reactingCenterStatus: number
-  topology: number
-  stereo: number
-  xxx: string
+  reactingCenterStatus?: number
+  topology?: number
+  stereo?: number
+  xxx?: string
   type: number
   end: number
   begin: number

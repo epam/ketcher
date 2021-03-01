@@ -16,11 +16,9 @@
 
 import ReObject from './reobject'
 
-import { Bond } from '../../chem/struct'
+import { Bond, Vec2, scale } from 'ketcher-core'
 import draw from '../draw'
-import Vec2 from '../../util/vec2'
 import util from '../util'
-import scale from '../../util/scale'
 
 /**
  * @param bond { Bond }

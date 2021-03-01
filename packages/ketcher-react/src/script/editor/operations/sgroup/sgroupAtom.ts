@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import { SGroup } from '../../../chem/struct'
+import { SGroup } from 'ketcher-core'
 import Restruct from '../../../render/restruct'
 
 // todo: separate classes: now here is circular dependency in `invert` method
@@ -37,8 +37,8 @@ class SGroupAtomAdd extends BaseOperation {
     const { aid, sgid } = this.data
 
     const struct = restruct.molecule
-    const atom = struct.atoms.get(aid)
-    const sgroup = struct.sgroups.get(sgid)
+    const atom = struct.atoms.get(aid)!
+    const sgroup = struct.sgroups.get(sgid)!
 
     if (sgroup.atoms.indexOf(aid) >= 0) {
       throw new Error(
@@ -73,8 +73,8 @@ class SGroupAtomRemove extends BaseOperation {
     const { aid, sgid } = this.data
 
     const struct = restruct.molecule
-    const atom = struct.atoms.get(aid)
-    const sgroup = struct.sgroups.get(sgid)
+    const atom = struct.atoms.get(aid)!
+    const sgroup = struct.sgroups.get(sgid)!
 
     SGroup.removeAtom(sgroup, aid)
     atom.sgs.delete(sgid)

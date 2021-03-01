@@ -53,19 +53,19 @@ const Dialog: FunctionComponent<Props> = props => {
     className,
     ...rest
   } = props
-  const formRef = useRef<HTMLFormElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (formRef?.current) {
+    if (dialogRef?.current) {
       const element: HTMLElement | null =
-        formRef.current.querySelector(
+        dialogRef.current.querySelector(
           [
             'input:not([type=checkbox]):not([type=button])',
             'textarea',
             '[contenteditable]',
             'select'
           ].join(',')
-        ) || formRef.current.querySelector(`button.${style.close}`)
+        ) || dialogRef.current.querySelector(`button.${style.close}`)
       element?.focus()
     }
 
@@ -94,8 +94,8 @@ const Dialog: FunctionComponent<Props> = props => {
   }
 
   return (
-    <form
-      ref={formRef}
+    <div
+      ref={dialogRef}
       role="dialog"
       onSubmit={event => event.preventDefault()}
       onKeyDown={keyDown}
@@ -127,7 +127,7 @@ const Dialog: FunctionComponent<Props> = props => {
           )
         )}
       </footer>
-    </form>
+    </div>
   )
 }
 

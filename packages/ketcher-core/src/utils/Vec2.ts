@@ -18,7 +18,7 @@ export interface Point {
   y?: number
   z?: number
 }
-export class Vec2 implements Point {
+export class Vec2 {
   static ZERO = new Vec2(0, 0)
   static UNIT = new Vec2(1, 1)
 
@@ -28,11 +28,14 @@ export class Vec2 implements Point {
 
   constructor(point: Point)
   constructor(x?: number, y?: number, z?: number)
-  constructor(...args: any) {
+  constructor(...args: Array<any>) {
     let point: Point | null = null
     if (args.length > 0) {
-      if ('x' in args[0] || 'y' in args[0] || 'z' in args[0]) {
-        point = args as Point
+      if (
+        args.length === 1 &&
+        ('x' in args[0] || 'y' in args[0] || 'z' in args[0])
+      ) {
+        point = args[0] as Point
       } else {
         const [x, y, z] = args
         point = {
@@ -48,71 +51,8 @@ export class Vec2 implements Point {
     this.z = point?.z || 0
   }
 
-  clone(): Vec2 {
-    return new Vec2(this.x, this.y, this.z)
-  }
-
-  length(): number {
-    return Math.sqrt(this.x * this.x + this.y * this.y)
-  }
-
-  equals(v: Vec2): boolean {
-    return this.x === v.x && this.y === v.y
-  }
-
-  add(v: Vec2): Vec2 {
-    this.x += v.x
-    this.y += v.y
-    this.z += v.z
-
-    return this
-  }
-
-  normalize(): boolean {
-    const l = this.length()
-
-    if (l < 0.000001) return false
-
-    this.x /= l
-    this.y /= l
-
-    return true
-  }
-
-  oxAngle(): number {
-    return Math.atan2(this.y, this.x)
-  }
-
-  coordStr(): string {
-    return this.x.toString() + ' , ' + this.y.toString()
-  }
-
-  toString(): string {
-    return '(' + this.x.toFixed(2) + ',' + this.y.toFixed(2) + ')'
-  }
-
-  static getXY0(v: Vec2): Vec2 {
-    return new Vec2(v.x, v.y)
-  }
-
-  static sub(v1: Vec2, v2: Vec2): Vec2 {
-    return new Vec2(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z)
-  }
-
-  static scale(v: Vec2, s: number): Vec2 {
-    return new Vec2(v.x * s, v.y * s, v.z * s)
-  }
-
-  static negate(v: Vec2): Vec2 {
-    return new Vec2(-v.x, -v.y, -v.z)
-  }
-
-  static turnLeft(v: Vec2): Vec2 {
-    return new Vec2(-v.y, v.x, v.z)
-  }
-
-  static floor(v: Vec2): Vec2 {
-    return new Vec2(Math.floor(v.x), Math.floor(v.y), Math.floor(v.z))
+  static dist(a: Vec2, b: Vec2): number {
+    return Vec2.diff(a, b).length()
   }
 
   static max(v1: Vec2, v2: Vec2): Vec2 {
@@ -139,21 +79,6 @@ export class Vec2 implements Point {
     return v1.x * v2.x + v1.y * v2.y
   }
 
-  static ceil(v: Vec2): Vec2 {
-    return new Vec2(Math.ceil(v.x), Math.ceil(v.y), Math.ceil(v.z))
-  }
-
-  static rotate(v: Vec2, angle: number): Vec2 {
-    const sin = Math.sin(angle)
-    const cos = Math.cos(angle)
-
-    return Vec2.rotateSC(v, sin, cos)
-  }
-
-  static rotateSC(v: Vec2, sin: number, cos: number): Vec2 {
-    return new Vec2(v.x * cos - v.y * sin, v.x * sin + v.y * cos, v.z)
-  }
-
   static cross(v1: Vec2, v2: Vec2): number {
     return v1.x * v2.y - v1.y * v2.x
   }
@@ -166,37 +91,133 @@ export class Vec2 implements Point {
     return new Vec2(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z)
   }
 
-  static dist(v1: Vec2, v2: Vec2): number {
-    return Vec2.diff(v1, v2).length()
+  // assume arguments v1, f1, v2, f2, v3, f3, etc.
+  // where v[i] are vectors and f[i] are corresponding coefficients
+  static lc(...args: Array<Vec2 | number>): Vec2 {
+    let v = new Vec2()
+    for (let i = 0; i < arguments.length / 2; ++i)
+      v = v.addScaled(args[2 * i] as Vec2, args[2 * i + 1] as number)
+    return v
   }
 
-  static yComplement(v: Vec2, y1: number) {
-    y1 = y1 || 0
-    return new Vec2(v.x, y1 - v.y, v.z)
-  }
-
-  static normalize = function (v: Vec2): Vec2 {
-    return Vec2.scale(v, 1 / v.length())
-  }
-
-  static lc2(v1: Vec2, s1: number, v2: Vec2, s2: number): Vec2 {
+  static lc2(v1: Vec2, f1: number, v2: Vec2, f2: number): Vec2 {
     return new Vec2(
-      v1.x * s1 + v2.x * s2,
-      v1.y * s1 + v2.y * s2,
-      v1.z * s1 + v2.z * s2
+      v1.x * f1 + v2.x * f2,
+      v1.y * f1 + v2.y * f2,
+      v1.z * f1 + v2.z * f2
     )
   }
 
-  static lc(...args: Array<Vec2 | number>): Vec2 {
-    let v1 = new Vec2()
-    for (let i = 0; i < args.length / 2; ++i) {
-      const v2 = Vec2.scale(args[2 * i] as Vec2, ((2 * i) as number) + 1)
-      v1 = Vec2.sum(v1, v2)
-    }
-    return v1
+  static centre(v1: Vec2, v2: Vec2) {
+    return Vec2.lc2(v1, 0.5, v2, 0.5)
   }
 
-  static center(v1: Vec2, v2: Vec2): Vec2 {
-    return Vec2.lc2(v1, 0.5, v2, 0.5)
+  length(): number {
+    return Math.sqrt(this.x * this.x + this.y * this.y)
+  }
+
+  equals(v: Vec2): boolean {
+    return this.x === v.x && this.y === v.y
+  }
+
+  add(v: Vec2): Vec2 {
+    return new Vec2(this.x + v.x, this.y + v.y, this.z + v.z)
+  }
+
+  add_(v: Vec2): void {
+    this.x += v.x
+    this.y += v.y
+    this.z += v.z
+  }
+
+  get_xy0(): Vec2 {
+    return new Vec2(this.x, this.y)
+  }
+
+  sub(v: Vec2): Vec2 {
+    return new Vec2(this.x - v.x, this.y - v.y, this.z - v.z)
+  }
+
+  scaled(s: number): Vec2 {
+    return new Vec2(this.x * s, this.y * s, this.z * s)
+  }
+
+  negated(): Vec2 {
+    return new Vec2(-this.x, -this.y, -this.z)
+  }
+
+  yComplement(y1: number): Vec2 {
+    y1 = y1 || 0
+    return new Vec2(this.x, y1 - this.y, this.z)
+  }
+
+  addScaled(v: Vec2, f: number): Vec2 {
+    return new Vec2(this.x + v.x * f, this.y + v.y * f, this.z + v.z * f)
+  }
+
+  normalized(): Vec2 {
+    return this.scaled(1 / this.length())
+  }
+
+  normalize(): boolean {
+    const l = this.length()
+
+    if (l < 0.000001) return false
+
+    this.x /= l
+    this.y /= l
+
+    return true
+  }
+
+  turnLeft(): Vec2 {
+    return new Vec2(-this.y, this.x, this.z)
+  }
+
+  coordStr(): string {
+    return this.x.toString() + ' , ' + this.y.toString()
+  }
+
+  toString(): string {
+    return '(' + this.x.toFixed(2) + ',' + this.y.toFixed(2) + ')'
+  }
+
+  max(v: Vec2): Vec2 {
+    console.assert(!!v)
+    return Vec2.max(this, v)
+  }
+
+  min(v: Vec2): Vec2 {
+    return Vec2.min(this, v)
+  }
+
+  ceil() {
+    return new Vec2(Math.ceil(this.x), Math.ceil(this.y), Math.ceil(this.z))
+  }
+
+  floor() {
+    return new Vec2(Math.floor(this.x), Math.floor(this.y), Math.floor(this.z))
+  }
+
+  rotate(angle: number) {
+    const sin = Math.sin(angle)
+    const cos = Math.cos(angle)
+
+    return this.rotateSC(sin, cos)
+  }
+
+  rotateSC(sin: number, cos: number): Vec2 {
+    console.assert(sin === 0 || !!sin)
+    console.assert(cos === 0 || !!cos)
+
+    return new Vec2(
+      this.x * cos - this.y * sin,
+      this.x * sin + this.y * cos,
+      this.z
+    )
+  }
+
+  oxAngle(): number {
+    return Math.atan2(this.y, this.x)
   }
 }

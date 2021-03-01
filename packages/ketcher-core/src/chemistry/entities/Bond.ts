@@ -94,12 +94,6 @@ export class Bond {
   center: Vec2
 
   constructor(params: BondParams) {
-    // eslint-disable-line max-statements
-    console.assert(
-      params && 'begin' in params && 'end' in params && 'type' in params,
-      "'begin', 'end' and 'type' properties must be specified!"
-    )
-
     this.begin = params.begin
     this.end = params.end
     this.type = params.type
@@ -147,16 +141,16 @@ export class Bond {
   }
 
   getDir(struct: any): Vec2 {
-    const p1: Vec2 = struct.atoms.get(this.begin).pp
-    const p2: Vec2 = struct.atoms.get(this.end).pp
-    return Vec2.normalize(Vec2.sub(p2, p1))
+    const p1 = struct.atoms.get(this.begin)!.pp
+    const p2 = struct.atoms.get(this.end)!.pp
+    return p2.sub(p1).normalized()
   }
 
-  clone(aidMap: any): Bond {
+  clone(aidMap?: Map<number, number> | null): Bond {
     const cp = new Bond(this)
     if (aidMap) {
-      cp.begin = aidMap.get(cp.begin)
-      cp.end = aidMap.get(cp.end)
+      cp.begin = aidMap.get(cp.begin)!
+      cp.end = aidMap.get(cp.end)!
     }
     return cp
   }

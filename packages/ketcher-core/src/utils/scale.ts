@@ -20,11 +20,11 @@ export interface ScaleOptions {
 }
 
 function scaled2obj(v: Vec2, options: ScaleOptions): Vec2 {
-  return Vec2.scale(v, 1 / options.scale)
+  return v.scaled(1 / options.scale)
 }
 
 function obj2scaled(v: Vec2, options: ScaleOptions): Vec2 {
-  return Vec2.scale(v, options.scale)
+  return v.scaled(options.scale)
 }
 
 export const scale = {

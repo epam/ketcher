@@ -31,7 +31,7 @@ function getPseudo(label: string) {
     : ''
 }
 
-export function radicalElectrons(radical) {
+export function radicalElectrons(radical: any) {
   radical -= 0
   if (radical === Atom.PATTERN.RADICAL.DOUPLET) return 1
   else if (
@@ -85,7 +85,8 @@ export class Atom {
     }
   }
 
-  static DEFAULT = {
+  //TODO: rename
+  static attrlist = {
     alias: '',
     label: 'C',
     pseudo: null,
@@ -138,26 +139,24 @@ export class Atom {
   hasImplicitH?: boolean
 
   constructor(params: AtomParams) {
-    console.assert(params || 'label' in params, 'label must be specified!')
-
     this.label = params.label
     this.fragment = getValueOrDefault(params.fragment, -1)
     this.pseudo = params.pseudo || getPseudo(params.label)
 
-    this.alias = getValueOrDefault(params.alias, Atom.DEFAULT.alias)
-    this.isotope = getValueOrDefault(params.isotope, Atom.DEFAULT.isotope)
-    this.radical = getValueOrDefault(params.radical, Atom.DEFAULT.radical)
-    this.charge = getValueOrDefault(params.charge, Atom.DEFAULT.charge)
-    this.rglabel = getValueOrDefault(params.rglabel, Atom.DEFAULT.rglabel)
-    this.attpnt = getValueOrDefault(params.attpnt, Atom.DEFAULT.attpnt)
+    this.alias = getValueOrDefault(params.alias, Atom.attrlist.alias)
+    this.isotope = getValueOrDefault(params.isotope, Atom.attrlist.isotope)
+    this.radical = getValueOrDefault(params.radical, Atom.attrlist.radical)
+    this.charge = getValueOrDefault(params.charge, Atom.attrlist.charge)
+    this.rglabel = getValueOrDefault(params.rglabel, Atom.attrlist.rglabel)
+    this.attpnt = getValueOrDefault(params.attpnt, Atom.attrlist.attpnt)
     this.explicitValence = getValueOrDefault(
       params.explicitValence,
-      Atom.DEFAULT.explicitValence
+      Atom.attrlist.explicitValence
     )
 
     this.valence = 0
     this.implicitH = 0 // implicitH is not an attribute
-    this.pp = params.pp ? params.pp.clone() : new Vec2()
+    this.pp = params.pp ? new Vec2(params.pp) : new Vec2()
 
     // sgs should only be set when an atom is added to an s-group by an appropriate method,
     //   or else a copied atom might think it belongs to a group, but the group be unaware of the atom
@@ -167,35 +166,35 @@ export class Atom {
     // query
     this.ringBondCount = getValueOrDefault(
       params.ringBondCount,
-      Atom.DEFAULT.ringBondCount
+      Atom.attrlist.ringBondCount
     )
     this.substitutionCount = getValueOrDefault(
       params.substitutionCount,
-      Atom.DEFAULT.substitutionCount
+      Atom.attrlist.substitutionCount
     )
     this.unsaturatedAtom = getValueOrDefault(
       params.unsaturatedAtom,
-      Atom.DEFAULT.unsaturatedAtom
+      Atom.attrlist.unsaturatedAtom
     )
-    this.hCount = getValueOrDefault(params.hCount, Atom.DEFAULT.hCount)
+    this.hCount = getValueOrDefault(params.hCount, Atom.attrlist.hCount)
 
     // reaction
-    this.aam = getValueOrDefault(params.aam, Atom.DEFAULT.aam)
-    this.invRet = getValueOrDefault(params.invRet, Atom.DEFAULT.invRet)
+    this.aam = getValueOrDefault(params.aam, Atom.attrlist.aam)
+    this.invRet = getValueOrDefault(params.invRet, Atom.attrlist.invRet)
     this.exactChangeFlag = getValueOrDefault(
       params.exactChangeFlag,
-      Atom.DEFAULT.exactChangeFlag
+      Atom.attrlist.exactChangeFlag
     )
     this.rxnFragmentType = getValueOrDefault(params.rxnFragmentType, -1)
 
     // stereo
     this.stereoLabel = getValueOrDefault(
       params.stereoLabel,
-      Atom.DEFAULT.stereoLabel
+      Atom.attrlist.stereoLabel
     )
     this.stereoParity = getValueOrDefault(
       params.stereoParity,
-      Atom.DEFAULT.stereoParity
+      Atom.attrlist.stereoParity
     )
 
     this.atomList = params.atomList && new AtomList(params.atomList)
@@ -205,14 +204,14 @@ export class Atom {
 
   static getAttrHash(atom: Atom) {
     const attrs = {}
-    for (let attr in Atom.DEFAULT) {
+    for (let attr in Atom.attrlist) {
       if (typeof atom[attr] !== 'undefined') attrs[attr] = atom[attr]
     }
     return attrs
   }
 
   static attrGetDefault(attr: string) {
-    if (attr in Atom.DEFAULT) return Atom.DEFAULT[attr]
+    if (attr in Atom.attrlist) return Atom.attrlist[attr]
     return console.assert(false, 'Attribute unknown')
   }
 

@@ -26,11 +26,6 @@ export class AtomList {
   ids: Array<number>
 
   constructor(params: AtomListParams) {
-    console.assert(
-      params && 'notList' in params && 'ids' in params,
-      "'notList' and 'ids' must be specified!"
-    )
-
     this.notList = params.notList
     this.ids = params.ids
   }

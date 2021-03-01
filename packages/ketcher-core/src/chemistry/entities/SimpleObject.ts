@@ -23,7 +23,7 @@ export enum SimpleObjectMode {
 
 export interface SimpleObjectParams {
   mode: SimpleObjectMode
-  pos: Array<Vec2>
+  pos?: Array<Vec2>
 }
 
 export class SimpleObject {
@@ -37,7 +37,7 @@ export class SimpleObject {
     if (params.pos) {
       for (let i = 0; i < params.pos.length; i++) {
         const currentP = params.pos[i]
-        this.pos[i] = currentP ? currentP.clone() : new Vec2()
+        this.pos[i] = currentP ? new Vec2(params.pos[i]) : new Vec2()
       }
     }
 
@@ -51,7 +51,7 @@ export class SimpleObject {
   center(): Vec2 {
     switch (this.mode) {
       case SimpleObjectMode.rectangle: {
-        return Vec2.center(this.pos[0], this.pos[1])
+        return Vec2.centre(this.pos[0], this.pos[1])
       }
       default:
         return this.pos[0]

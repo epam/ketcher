@@ -13,20 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Vec2, Point } from 'utils'
+import { Vec2 } from 'utils'
 
-export interface RxnArrowParams {
-  pp: Point
+export enum RxnArrowMode {
+  simple = 'simple',
+  equilibrium = 'equilibrium'
 }
 
 export class RxnArrow {
   pp: Vec2
+  mode: RxnArrowMode
 
-  constructor(params?: RxnArrowParams) {
-    this.pp = params?.pp ? new Vec2(params.pp) : new Vec2()
+  constructor(pp: Vec2, mode: RxnArrowMode = RxnArrowMode.simple) {
+    this.pp = pp
+    this.mode = mode
   }
 
   clone() {
-    return new RxnArrow(this)
+    return new RxnArrow(this.pp, this.mode)
   }
 }

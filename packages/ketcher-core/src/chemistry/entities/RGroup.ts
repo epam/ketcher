@@ -16,9 +16,9 @@
 import { Pile, Pool } from 'utils'
 
 export interface RGroupParams {
-  ifthen: number
-  resth: boolean
-  range: string
+  ifthen?: number
+  resth?: boolean
+  range?: string
 }
 export class RGroup {
   frags: Pile<number>
@@ -26,11 +26,11 @@ export class RGroup {
   range: string
   ifthen: number
 
-  constructor(params: RGroupParams) {
+  constructor(params?: RGroupParams) {
     this.frags = new Pile<number>()
-    this.resth = params.resth || false
-    this.range = params.range || ''
-    this.ifthen = params.ifthen || 0
+    this.resth = params?.resth || false
+    this.range = params?.range || ''
+    this.ifthen = params?.ifthen || 0
   }
 
   static findRGroupByFragment(rgroups: Pool<RGroup>, frid: number) {
@@ -45,7 +45,7 @@ export class RGroup {
     }
   }
 
-  clone(fidMap?: Map<number, number>): RGroup {
+  clone(fidMap?: Map<number, number> | null): RGroup {
     const ret = new RGroup(this)
     this.frags.forEach(fid => {
       ret.frags.add(fidMap ? fidMap.get(fid)! : fid)

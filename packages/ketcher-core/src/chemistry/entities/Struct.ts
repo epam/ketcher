@@ -138,12 +138,12 @@ export class Struct {
 
   mergeInto(
     cp: Struct,
-    atomSet?: Pile<number>,
-    bondSet?: Pile<number>,
+    atomSet?: Pile<number> | null,
+    bondSet?: Pile<number> | null,
     dropRxnSymbols?: boolean,
     keepAllRGroups?: boolean,
-    aidMap?: Map<number, number>,
-    simpleObjectsSet?: Pile<number>
+    aidMap?: Map<number, number> | null,
+    simpleObjectsSet?: Pile<number> | null
   ): Struct {
     // eslint-disable-line max-params, max-statements
     atomSet = atomSet || new Pile<number>(this.atoms.keys())
@@ -262,7 +262,6 @@ export class Struct {
     this.atoms.get(aid)!.sgs.add(sgid)
   }
 
-  /** @returns {[number, boolean]} */
   calcConn(atom) {
     let conn = 0
     for (let i = 0; i < atom.neighbors.length; ++i) {
@@ -325,9 +324,9 @@ export class Struct {
     const hb = this.halfBonds.get(hbid)!
     const p1 = this.atoms.get(hb.begin)!.pp
     const p2 = this.atoms.get(hb.end)!.pp
-    const d = Vec2.normalize(Vec2.diff(p2, p1))
+    const d = Vec2.diff(p2, p1).normalized()
     hb.dir = Vec2.dist(p2, p1) > 1e-4 ? d : new Vec2(1, 0)
-    hb.norm = Vec2.turnLeft(hb.dir)
+    hb.norm = hb.dir.turnLeft()
     hb.ang = hb.dir.oxAngle()
     if (hb.loop < 0) hb.loop = -1
   }
@@ -647,19 +646,19 @@ export class Struct {
     if (scale === 1) return
 
     this.atoms.forEach(atom => {
-      atom.pp = Vec2.scale(atom.pp, scale)
+      atom.pp = atom.pp.scaled(scale)
     })
 
     this.rxnPluses.forEach(item => {
-      item.pp = Vec2.scale(item.pp, scale)
+      item.pp = item.pp.scaled(scale)
     })
 
     this.rxnArrows.forEach(item => {
-      item.pp = Vec2.scale(item.pp, scale)
+      item.pp = item.pp.scaled(scale)
     })
 
     this.sgroups.forEach(item => {
-      item.pp = item.pp ? Vec2.scale(item.pp, scale) : null
+      item.pp = item.pp ? item.pp.scaled(scale) : null
     })
   }
 

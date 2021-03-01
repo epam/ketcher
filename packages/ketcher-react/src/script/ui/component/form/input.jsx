@@ -69,16 +69,11 @@ CheckBox.val = function (ev) {
   return !!ev.target.checked
 }
 
-function Select({ schema, value, selected, onSelect, ...props }) {
+function Select({ schema, value, name, onSelect, ...props }) {
   return (
-    <select onChange={onSelect} {...props}>
+    <select onChange={onSelect} value={value} name={name}>
       {enumSchema(schema, (title, val) => (
-        <option
-          key={val}
-          //TODO: Warning: Use the `defaultValue` or `value` props on <select> instead of setting `selected` on <option>
-          selected={selected(val, value)}
-          //TODO: looks strange
-          value={typeof val !== 'object' && val}>
+        <option key={val} value={val}>
           {title}
         </option>
       ))}

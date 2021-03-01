@@ -1,5 +1,4 @@
-import { RxnPlus, RxnArrow } from '../../../chem/struct'
-import Vec2 from '../../../util/vec2'
+import { RxnPlus, RxnArrow, Vec2 } from 'ketcher-core'
 
 export function rxnToStruct(graphItem, struct) {
   if (graphItem.type === 'arrow') {

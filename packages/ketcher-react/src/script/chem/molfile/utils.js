@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import Vec2 from '../../util/vec2'
-import Struct, { Bond, RxnArrow, RxnPlus } from './../struct/index'
+import { Struct, Bond, RxnArrow, RxnPlus, Vec2 } from 'ketcher-core'
 
 function paddedNum(number, width, precision) {
   number = parseFloat(number)

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { xor } from 'lodash/fp'
-import { SGroup } from '../../chem/struct'
+import { SGroup } from 'ketcher-core'
 import LassoHelper from './helper/lasso'
 import { sgroupDialog } from './sgroup'
 import { atomLongtapEvent } from './atom'

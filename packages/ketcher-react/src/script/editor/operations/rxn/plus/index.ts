@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { RxnPlus } from '../../../../chem/struct'
+import { RxnPlus, Vec2 } from 'ketcher-core'
 import Restruct, { ReRxnPlus } from '../../../../render/restruct'
-import Vec2 from '../../../../util/vec2'
 import { BaseOperation } from '../../base'
 import { OperationType } from '../../OperationType'
 
@@ -75,7 +74,7 @@ class RxnPlusDelete extends BaseOperation {
 
     const struct = restruct.molecule
     if (!this.data.pos) {
-      this.data.pos = struct.rxnPluses.get(plid).pp
+      this.data.pos = struct.rxnPluses.get(plid)!.pp
     }
 
     // notifyRxnPlusRemoved

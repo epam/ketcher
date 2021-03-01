@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import Pool from '../../util/pool'
-import Vec2 from '../../util/vec2'
-
-import { Bond } from '../struct'
+import { Bond, Vec2, Pool } from 'ketcher-core'
 
 function CisTrans(mol, neighborsFunc, context) {
   this.molecule = mol

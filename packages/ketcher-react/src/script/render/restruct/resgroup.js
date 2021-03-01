@@ -13,14 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import Box2Abs from '../../util/box2abs'
-import Vec2 from '../../util/vec2'
-import Pile from '../../util/pile'
 import util from '../util'
-import scale from '../../util/scale'
 
-import { SGroup } from '../../chem/struct'
+import { SGroup, Box2Abs, Vec2, Pile, scale } from 'ketcher-core'
 import draw from '../draw'
 
 import ReDataSGroupData from './redatasgroupdata'

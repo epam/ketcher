@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Atom } from '../../../chem/struct'
+import { Atom, Pile, Vec2 } from 'ketcher-core'
 import Restruct, { ReAtom } from '../../../render/restruct'
-import Pile from '../../../util/pile'
-import Vec2 from '../../../util/vec2'
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
 
@@ -49,17 +47,18 @@ class AtomAdd extends BaseOperation {
     }
 
     pp.label = pp.label || 'C'
-
     if (typeof this.data.aid !== 'number') {
+      // @ts-ignore
       this.data.aid = struct.atoms.add(new Atom(pp))
     } else {
+      // @ts-ignore
       struct.atoms.set(this.data.aid, new Atom(pp))
     }
 
     const { aid } = this.data
 
     // notifyAtomAdded
-    const atomData = new ReAtom(struct.atoms.get(aid))
+    const atomData = new ReAtom(struct.atoms.get(aid)!)
 
     atomData.component = restruct.connectedComponents.add(new Pile([aid]))
     restruct.atoms.set(aid, atomData)
@@ -69,7 +68,7 @@ class AtomAdd extends BaseOperation {
 
     const arrow = struct.rxnArrows.get(0)
     if (arrow) {
-      const atom = struct.atoms.get(aid)
+      const atom = struct.atoms.get(aid)!
       atom.rxnFragmentType = struct.defineRxnFragmentTypeForAtomset(
         new Pile([aid]),
         arrow.pp.x

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import Restruct from '../../../render/restruct'
-import scale from '../../../util/scale'
+import { scale } from 'ketcher-core'
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
 
@@ -34,7 +34,7 @@ export class AtomMove extends BaseOperation {
     const struct = restruct.molecule
     const { aid, d } = this.data
 
-    struct.atoms.get(aid).pp.add_(d) // eslint-disable-line no-underscore-dangle
+    struct.atoms.get(aid)!.pp.add_(d) // eslint-disable-line no-underscore-dangle
     const atom = restruct.atoms.get(aid)
     if (atom) {
       const scaled = scale.obj2scaled(d, restruct.render.options)

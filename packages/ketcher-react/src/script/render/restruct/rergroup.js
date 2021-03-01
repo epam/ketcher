@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import Box2Abs from '../../util/box2abs'
-import Vec2 from '../../util/vec2'
 import util from '../util'
 import draw from '../draw'
-import scale from '../../util/scale'
+import { Box2Abs, Vec2, scale } from 'ketcher-core'
 
 import ReObject from './reobject'
 

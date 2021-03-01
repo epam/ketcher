@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Restruct from '../../../../render/restruct'
-import scale from '../../../../util/scale'
+import { scale } from 'ketcher-core'
 import { BaseOperation } from '../../base'
 import { OperationType } from '../../OperationType'
 
@@ -35,9 +35,9 @@ export class RxnPlusMove extends BaseOperation {
     const { id, d, noinvalidate } = this.data
 
     const struct = restruct.molecule
-    struct.rxnPluses.get(id).pp.add_(d) // eslint-disable-line no-underscore-dangle
+    struct.rxnPluses.get(id)!.pp.add_(d) // eslint-disable-line no-underscore-dangle
 
-    const rxn = restruct.rxnPluses.get(id)
+    const rxn = restruct.rxnPluses.get(id)!
     const scaled = scale.obj2scaled(d, restruct.render.options)
     rxn.visel.translate(scaled)
 

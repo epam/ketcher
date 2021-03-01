@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import Vec2 from '../../util/vec2'
 import Visel from './visel'
 import ReObject from './reobject'
-import scale from '../../util/scale'
 import util from '../util'
-import { Bond } from '../../chem/struct'
+import { Bond, Vec2, scale } from 'ketcher-core'
 
 const tfx = util.tfx
 

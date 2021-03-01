@@ -16,7 +16,7 @@
 
 import { capitalize } from 'lodash/fp'
 
-import { Bond, AtomList } from '../../../chem/struct/index'
+import { Bond, AtomList } from 'ketcher-core'
 import element from '../../../chem/element'
 import { sdataSchema } from '../schema/sdata-schema'
 import { atom as atomSchema } from '../schema/struct-schema'

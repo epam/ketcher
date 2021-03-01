@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import Restruct from '../../render/restruct'
-import Struct from '../../chem/struct'
+import { Struct } from 'ketcher-core'
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
 

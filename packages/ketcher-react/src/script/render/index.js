@@ -15,11 +15,7 @@
  ***************************************************************************/
 
 import Raphael from '../raphael-ext'
-import Box2Abs from '../util/box2abs'
-import Vec2 from '../util/vec2'
-import scale from '../util/scale'
-
-import Struct from '../chem/struct'
+import { Struct, Vec2, Box2Abs, scale } from 'ketcher-core'
 import ReStruct from './restruct'
 
 import defaultOptions from './options'

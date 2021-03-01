@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Vec2 from '../../util/vec2'
 import Base from './base'
 import { OperationType } from './OperationType'
 import { ReSimpleObject } from '../../render/restruct'
-import { SimpleObject, SimpleObjectMode } from 'src/script/chem/struct'
-import scale from '../../util/scale'
+import { SimpleObject, SimpleObjectMode, Vec2, scale } from 'ketcher-core'
 import util from '../../render/util'
 
 const tfx = util.tfx

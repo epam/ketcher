@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Vec2 from '../util/vec2'
+import { Vec2 } from 'ketcher-core'
 
 function tfx(v) {
   return parseFloat(v).toFixed(8)

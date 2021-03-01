@@ -1,4 +1,4 @@
-import { MolfileManager, MolfileParseOptions, Struct } from 'chem'
+import { MolfileManager, MolfileParseOptions, Struct } from 'chemistry'
 import { StructFormatter } from './structFormatter.types'
 
 export class MolfileV2000Formatter implements StructFormatter {

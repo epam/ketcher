@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Pile from '../../util/pile'
-import { Atom, Bond, SGroup } from '../struct'
+import { Atom, Bond, SGroup, Pile } from 'ketcher-core'
 import CisTrans from './cis_trans'
 import Dfs from './dfs'
 import Stereocenters from './stereocenters'

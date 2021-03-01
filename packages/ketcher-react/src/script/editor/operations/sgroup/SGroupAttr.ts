@@ -37,7 +37,7 @@ export class SGroupAttr extends BaseOperation {
   execute(restruct: Restruct) {
     const struct = restruct.molecule
     const sgroupId = this.data.sgid
-    const sgroup = struct.sgroups.get(sgroupId)
+    const sgroup = struct.sgroups.get(sgroupId)!
 
     if (sgroup.type === 'DAT' && restruct.sgroupData.has(sgroupId)) {
       // clean the stuff here, else it might be left behind if the sgroups is set to "attached"

@@ -15,12 +15,9 @@
  ***************************************************************************/
 
 import ReObject from './reobject'
-import Box2Abs from '../../util/box2abs'
-import Vec2 from '../../util/vec2'
 import draw from '../draw'
 import util from '../util'
-import scale from '../../util/scale'
-import { RxnArrowMode } from '../../chem/struct'
+import { RxnArrowMode, Box2Abs, Vec2, scale } from 'ketcher-core'
 
 function ReRxnArrow(/* chem.RxnArrow*/ arrow) {
   this.init('rxnArrow')

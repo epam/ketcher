@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { SimpleObject, SimpleObjectMode } from '../../../chem/struct'
-import Vec2 from '../../../util/vec2'
+import { SimpleObject, SimpleObjectMode, Vec2 } from 'ketcher-core'
 
 export function simpleObjectToStruct(graphItem, struct) {
   const object =

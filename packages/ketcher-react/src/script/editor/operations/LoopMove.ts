@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import Restruct from '../../render/restruct'
-import scale from '../../util/scale'
+import { scale } from 'ketcher-core'
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
 

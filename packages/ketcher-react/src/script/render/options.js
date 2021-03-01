@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import utils from '../editor/shared/utils'
-import Vec2 from '../util/vec2'
+import { Vec2 } from 'ketcher-core'
 
 function defaultOptions(opt) {
   const scaleFactor = opt.scale || 100

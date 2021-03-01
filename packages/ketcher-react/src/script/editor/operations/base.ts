@@ -131,7 +131,7 @@ class BaseOperation {
   protected static invalidateEnhancedFlag(
     restruct: Restruct,
     fragmentId: any,
-    flag: boolean
+    flag: any
   ) {
     const reEnhancedFlag = restruct.enhancedFlags.get(fragmentId)
     if (reEnhancedFlag.flag === flag) {

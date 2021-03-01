@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import scale from '../../../util/scale'
+import { scale } from 'ketcher-core'
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
 import Restruct from '../../../render/restruct'
@@ -35,7 +35,7 @@ export class RxnArrowMove extends BaseOperation {
     const { d, id, noinvalidate } = this.data
 
     const struct = restruct.molecule
-    struct.rxnArrows.get(id).pp.add_(d) // eslint-disable-line no-underscore-dangle
+    struct.rxnArrows.get(id)!.pp.add_(d) // eslint-disable-line no-underscore-dangle
 
     const rxn = restruct.rxnArrows.get(id)
     const scaled = scale.obj2scaled(d, restruct.render.options)

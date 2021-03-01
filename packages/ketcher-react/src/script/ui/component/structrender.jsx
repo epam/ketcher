@@ -16,7 +16,7 @@
 
 import React, { Component, createRef } from 'react'
 
-import Struct from '../../chem/struct'
+import { Struct } from 'ketcher-core'
 import molfile from '../../chem/molfile'
 import Render from '../../render'
 

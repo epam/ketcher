@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Vec2 from '../../util/vec2'
+import { Vec2 } from 'ketcher-core'
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4
 

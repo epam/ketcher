@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import Vec2 from '../../util/vec2'
-import { Atom } from '../../chem/struct'
+import { Atom, Vec2 } from 'ketcher-core'
 import { AtomAdd, BondAdd } from '../operations'
 import Action from '../shared/action'
 import utils from '../shared/utils'

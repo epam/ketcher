@@ -1,4 +1,4 @@
-import { MolfileManager, SmilesManager, Struct } from 'chem'
+import { MolfileManager, SmilesManager, Struct } from 'chemistry'
 import { StructService, StructServiceOptions } from 'infrastructure/services'
 import { ServerFormatter } from './ServerFormatter'
 import { StructFormatter, SupportedFormat } from './structFormatter.types'

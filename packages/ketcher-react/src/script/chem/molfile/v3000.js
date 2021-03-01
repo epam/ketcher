@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import Vec2 from '../../util/vec2'
-
 import element from './../element'
-import Struct, { Atom, AtomList, Bond, RGroup, SGroup } from './../struct/index'
+import {
+  Struct,
+  Atom,
+  AtomList,
+  Bond,
+  RGroup,
+  SGroup,
+  Vec2
+} from 'ketcher-core'
 
 import sGroup from './parseSGroup'
 import utils from './utils'

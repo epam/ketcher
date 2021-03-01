@@ -15,10 +15,9 @@
  ***************************************************************************/
 
 import ReObject from './reobject'
-import Box2Abs from '../../util/box2abs'
 import draw from '../draw'
 import util from '../util'
-import scale from '../../util/scale'
+import { Box2Abs, scale } from 'ketcher-core'
 
 function ReRxnPlus(/* chem.RxnPlus*/ plus) {
   this.init('rxnPlus')

@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 import {
+  Struct,
+  SupportedFormat,
   FormatterFactory,
   StructService,
-  SupportedFormat,
-  Struct,
   StructServiceOptions
 } from 'ketcher-core'
 import { isEqual } from 'lodash/fp'

@@ -16,7 +16,7 @@
 
 import { bond as bondSchema } from '../data/schema/struct-schema'
 import { toBondType } from '../data/convert/structconv'
-import { SimpleObjectMode, RxnArrowMode } from '../../chem/struct'
+import { SimpleObjectMode, RxnArrowMode } from 'ketcher-core'
 
 const toolActions = {
   'select-lasso': {

@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { RxnArrow, RxnArrowMode } from '../../../chem/struct'
+import { RxnArrow, RxnArrowMode, Vec2 } from 'ketcher-core'
 import Restruct, { ReRxnArrow } from '../../../render/restruct'
-import Vec2 from '../../../util/vec2'
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
 
@@ -51,7 +50,7 @@ class RxnArrowAdd extends BaseOperation {
 
     const { pos, arid } = this.data
 
-    const rxn = struct.rxnArrows.get(arid)
+    const rxn = struct.rxnArrows.get(arid)!
     // notifyRxnArrowAdded
     restruct.rxnArrows.set(arid, new ReRxnArrow(rxn))
 
@@ -69,12 +68,12 @@ class RxnArrowAdd extends BaseOperation {
     )
 
     reactants.forEach(aid => {
-      const atom = struct.atoms.get(aid)
+      const atom = struct.atoms.get(aid)!
       atom.rxnFragmentType = 1
     })
 
     products.forEach(aid => {
-      const atom = struct.atoms.get(aid)
+      const atom = struct.atoms.get(aid)!
       atom.rxnFragmentType = 2
     })
 

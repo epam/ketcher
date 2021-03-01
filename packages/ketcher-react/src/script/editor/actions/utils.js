@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { difference } from 'lodash'
-import Vec2 from '../../util/vec2'
+import { Vec2 } from 'ketcher-core'
 import closest from '../shared/closest'
 
 export function atomGetAttr(restruct, aid, name) {

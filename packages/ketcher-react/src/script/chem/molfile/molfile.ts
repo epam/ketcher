@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import element from './../element'
-import Struct from '../struct'
+import { Struct } from 'ketcher-core'
 import common from './common'
 import utils from './utils'
 
@@ -65,7 +65,7 @@ class Molfile {
       .getSGroupsBFS()
       .reverse()
       .forEach(id => {
-        let sgroup = mol.sgroups.get(id)
+        let sgroup = mol.sgroups.get(id)!
         let errorIgnore = false
 
         try {
@@ -340,7 +340,7 @@ class Molfile {
       if (atom.rglabel != null && atom.label == 'R#') {
         // TODO need to force rglabel=null when label is not 'R#'
         for (let rgi = 0; rgi < 32; rgi++) {
-          if (atom.rglabel & (1 << rgi)) {
+          if ((atom.rglabel as any) & (1 << rgi)) {
             rglabelList.push([id, rgi + 1])
           }
         }
@@ -392,7 +392,7 @@ class Molfile {
     if (atomsIds.length > 0) {
       for (let j = 0; j < atomsIds.length; ++j) {
         let atomId = atomsIds[j]
-        let atomList = this.molecule.atoms.get(atomId).atomList
+        let atomList = this.molecule.atoms.get(atomId)!.atomList!
         this.write('M  ALS')
         this.writePaddedNumber(atomId + 1, 4)
         this.writePaddedNumber(atomList.ids.length, 3)
@@ -419,7 +419,7 @@ class Molfile {
     for (let q = 1; q < cnt; ++q) {
       // each group on its own
       const id = sgmapback[q]
-      const sgroup = this.molecule.sgroups.get(id)
+      const sgroup = this.molecule.sgroups.get(id)!
       this.write('M  STY')
       this.writePaddedNumber(1, 3)
       this.writeWhiteSpace(1)
@@ -438,7 +438,7 @@ class Molfile {
       this.writePaddedNumber(q, 3)
       this.writeCR()
 
-      const parentId = this.molecule.sGroupForest.parent.get(id) as number
+      const parentId = this.molecule.sGroupForest.parent.get(id)!
       if (parentId >= 0) {
         this.write('M  SPL')
         this.writePaddedNumber(1, 3)

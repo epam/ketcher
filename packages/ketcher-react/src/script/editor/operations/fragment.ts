@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Fragment } from '../../chem/struct'
+import { Fragment } from 'ketcher-core'
 import Restruct, { ReEnhancedFlag, ReFrag } from '../../render/restruct'
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'

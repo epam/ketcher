@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { inRange } from 'lodash'
-import Vec2 from '../../util/vec2'
+import { Vec2 } from 'ketcher-core'
 
 let FRAC = Math.PI / 12 // '15º'
 

@@ -1,4 +1,4 @@
-import Pile from '../../util/pile'
+import { Pile } from 'ketcher-core'
 
 import { fromAtomsAttrs } from '../actions/atom'
 import { fromStereoFlagUpdate } from '../actions/fragment'

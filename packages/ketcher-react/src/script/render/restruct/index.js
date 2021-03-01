@@ -616,8 +616,21 @@ ReStruct.prototype.setSelection = function (selection) {
   })
 }
 
+/**
+ * SelectionPlate could be an item then value would be in it
+ * or it could be a set of items then removed value need to be check on at least one of items in set
+ * @param item
+ * @returns {boolean}
+ */
+function isSelectionSvgObjectExists(item) {
+  return (
+    (item.selectionPlate !== null && !item.selectionPlate.removed) ||
+    (Array.isArray(item.selectionPlate) && !item.selectionPlate[0].removed)
+  )
+}
+
 ReStruct.prototype.showItemSelection = function (item, selected) {
-  var exists = item.selectionPlate !== null && !item.selectionPlate.removed
+  var exists = isSelectionSvgObjectExists(item)
   // TODO: simplify me, who sets `removed`?
   item.selected = selected
   if (item instanceof ReDataSGroupData) item.sgroup.selected = selected

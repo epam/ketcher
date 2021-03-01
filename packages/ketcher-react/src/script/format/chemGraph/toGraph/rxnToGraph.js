@@ -3,7 +3,8 @@ export function arrowToGraph(arrowNode) {
   return {
     type: 'arrow',
     location: [coord.x, coord.y, coord.z],
-    prop: arrowNode.data
+    prop: arrowNode.data,
+    mode: arrowNode.mode
   }
 }
 

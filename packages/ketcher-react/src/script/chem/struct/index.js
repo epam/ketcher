@@ -29,6 +29,7 @@ import SGroup from './sgroup'
 import RGroup from './rgroup'
 import SGroupForest from './sgforest'
 import { SimpleObject, SimpleObjectMode } from './simpleObject'
+import { RxnArrow, RxnArrowMode } from './rxnArrow'
 
 /** @returns {import('ketcher-core').Struct} */
 function Struct() {
@@ -56,7 +57,7 @@ Struct.prototype.hasRxnProps = function () {
 }
 
 Struct.prototype.hasRxnArrow = function () {
-  return this.rxnArrows.size > 0
+  return this.rxnArrows.size === 1
 }
 
 Struct.prototype.isBlank = function () {
@@ -1046,15 +1047,6 @@ RxnPlus.prototype.clone = function () {
   return new RxnPlus(this)
 }
 
-function RxnArrow(params) {
-  params = params || {}
-  this.pp = params.pp ? new Vec2(params.pp) : new Vec2()
-}
-
-RxnArrow.prototype.clone = function () {
-  return new RxnArrow(this)
-}
-
 function arrayAddIfMissing(array, item) {
   for (var i = 0; i < array.length; ++i) {
     if (array[i] === item) return false
@@ -1074,6 +1066,7 @@ export {
   RGroup,
   RxnPlus,
   RxnArrow,
+  RxnArrowMode,
   SimpleObject,
   SimpleObjectMode,
   Struct

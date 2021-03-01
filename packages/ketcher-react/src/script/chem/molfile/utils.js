@@ -270,14 +270,14 @@ function rxnMerge(
   bb1 = bbReactAll
   bb2 = bbProdAll
   if (!bb1 && !bb2) {
-    ret.rxnArrows.add(new RxnArrow({ pp: new Vec2(0, 0) }))
+    ret.rxnArrows.add(new RxnArrow(new Vec2(0, 0)))
   } else {
     var v1 = bb1 ? new Vec2(bb1.max.x, (bb1.max.y + bb1.min.y) / 2) : null
     var v2 = bb2 ? new Vec2(bb2.min.x, (bb2.max.y + bb2.min.y) / 2) : null
     var defaultOffset = 3
     if (!v1) v1 = new Vec2(v2.x - defaultOffset, v2.y)
     if (!v2) v2 = new Vec2(v1.x + defaultOffset, v1.y)
-    ret.rxnArrows.add(new RxnArrow({ pp: Vec2.lc2(v1, 0.5, v2, 0.5) }))
+    ret.rxnArrows.add(new RxnArrow(Vec2.lc2(v1, 0.5, v2, 0.5)))
   }
   ret.isReaction = true
   return ret

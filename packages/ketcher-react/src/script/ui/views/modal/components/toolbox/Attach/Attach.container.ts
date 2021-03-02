@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { connect } from 'react-redux'
 
-import Atom from './Atom'
-import Bond from './Bond'
-import AttachPoints from './Attach'
+import AttachPoints, { AttachPointsProps } from './Attach'
 
-export { Atom, Bond, AttachPoints }
+type StateProps = Pick<AttachPointsProps, 'formState'>
+
+const mapStateToProps = (state): StateProps => ({ formState: state.modal.form })
+
+export default connect(mapStateToProps)(AttachPoints)

@@ -45,7 +45,7 @@ const IfThenSelect = (props: Props) => {
     }
   })
 
-  return <Field schema={desc} className={styles.cond} {...props} />
+  return <Field schema={desc} className={styles.field} {...props} />
 }
 
 export default IfThenSelect

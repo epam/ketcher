@@ -34,13 +34,13 @@ class Tabs extends Component {
   }
 
   render() {
-    const { tabs, contentClassName, ...other } = this.props
+    const { tabs, contentClassName, className, tabIndex } = this.props
     const tabPanel = tabs[this.state.tabIndex]
     const Component = tabPanel?.component
     const componentProps = tabPanel?.props
     return (
       <div>
-        <ul {...other}>
+        <ul className={className} tabIndex={tabIndex}>
           <li className={styles.tabs}>
             {tabs.map((tabPanel, index) => (
               <a // eslint-disable-line
@@ -59,7 +59,6 @@ class Tabs extends Component {
             <Component {...componentProps} />
           </div>
         )}
-
       </div>
     )
   }

@@ -70,21 +70,18 @@ class Form extends Component {
       schema,
       onUpdate,
       customValid,
-      ...prop
+      ...rest
     } = this.props
 
     if (schema.key && schema.key !== this.schema.key) {
-      this.schema = propSchema(schema, prop)
+      this.schema = propSchema(schema, rest)
       this.schema.serialize(result) // hack: valid first state
       this.updateState(result)
     }
 
-    //TODO: change the layout of the form content (fix React warning: <form> cannot appear as a descendant of <form>)
     return (
-      //TODO: fix React Warning: Received `true` for a non-boolean attribute `valid`.
-      <form {...prop}>
-        <FormContext.Provider
-          value={{ schema: this.props.schema, stateStore: this }}>
+      <form>
+        <FormContext.Provider value={{ schema, stateStore: this }}>
           {children}
         </FormContext.Provider>
       </form>
@@ -152,12 +149,12 @@ const SelectOneOf = props => {
 //
 
 function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
-  const v = new jsonschema.Validator()
+  const validator = new jsonschema.Validator()
 
   if (customValid) {
     schema = Object.assign({}, schema) // copy
     schema.properties = Object.keys(customValid).reduce((res, prop) => {
-      v.customFormats[prop] = customValid[prop]
+      validator.customFormats[prop] = customValid[prop]
       res[prop] = { format: prop, ...res[prop] }
       return res
     }, schema.properties)
@@ -166,11 +163,11 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
   return {
     key: schema.key || '',
     serialize: inst =>
-      v.validate(inst, schema, {
+      validator.validate(inst, schema, {
         rewrite: serializeRewrite.bind(null, serialize)
       }),
     deserialize: inst =>
-      v.validate(inst, schema, {
+      validator.validate(inst, schema, {
         rewrite: deserializeRewrite.bind(null, deserialize)
       })
   }

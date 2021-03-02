@@ -70,8 +70,9 @@ CheckBox.val = function (ev) {
 }
 
 function Select({ schema, value, name, onSelect, ...props }) {
+  const selectedValue = Array.isArray(value) ? value[0] : value
   return (
-    <select onChange={onSelect} value={value} name={name}>
+    <select onChange={onSelect} value={selectedValue} name={name}>
       {enumSchema(schema, (title, val) => (
         <option key={val} value={val}>
           {title}
@@ -107,7 +108,7 @@ function FieldSet({
           <label>
             <input
               type={type}
-              checked={selected(val, value)} //TODO: React warning defaultChecked
+              defaultChecked={selected(val, value)}
               value={typeof val !== 'object' && val}
               {...props}
             />

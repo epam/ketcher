@@ -36,14 +36,12 @@ ReSGroup.isSelectable = function () {
 ReSGroup.prototype.draw = function (remol, sgroup) {
   var render = remol.render
   var set = render.paper.set()
-  var inBonds = [],
-    xBonds = []
   var atomSet = new Pile(sgroup.atoms)
-  SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet)
-  bracketPos(sgroup, render, remol.molecule, xBonds)
-  var bb = sgroup.bracketBox
+  const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet)
+  bracketPos(sgroup, render, remol.molecule, crossBonds)
+  var bracketBox = sgroup.bracketBox
   var d = sgroup.bracketDir
-  sgroup.areas = [bb]
+  sgroup.areas = [bracketBox]
 
   switch (sgroup.type) {
     case 'MUL':
@@ -51,9 +49,9 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
         set,
         render,
         sgroup,
-        xBonds,
+        crossBonds,
         atomSet,
-        bb,
+        bracketBox,
         d,
         sgroup.data.mul
       )
@@ -66,9 +64,9 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
         set,
         render,
         sgroup,
-        xBonds,
+        crossBonds,
         atomSet,
-        bb,
+        bracketBox,
         d,
         subscript,
         connectivity
@@ -79,9 +77,9 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
         set,
         render,
         sgroup,
-        xBonds,
+        crossBonds,
         atomSet,
-        bb,
+        bracketBox,
         d,
         sgroup.data.name,
         null,
@@ -89,7 +87,7 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
       )
       break
     case 'GEN':
-      SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d)
+      SGroupdrawBrackets(set, render, sgroup, crossBonds, atomSet, bracketBox, d)
       break
     case 'DAT':
       set = drawGroupDat(remol, sgroup)
@@ -104,9 +102,9 @@ function SGroupdrawBrackets(
   set,
   render,
   sg,
-  xbonds,
+  crossBonds,
   atomSet,
-  bb,
+  bracketBox,
   d,
   lowerIndexText,
   upperIndexText,
@@ -115,9 +113,9 @@ function SGroupdrawBrackets(
   // eslint-disable-line max-params
   var brackets = getBracketParameters(
     render.ctab.molecule,
-    xbonds,
+    crossBonds,
     atomSet,
-    bb,
+    bracketBox,
     d,
     render,
     sg.id
@@ -281,15 +279,16 @@ function drawAttachedDat(restruct, sgroup) {
   return set
 }
 
-function bracketPos(sg, render, mol, xbonds) {
+function bracketPos(sg, render, mol, crossBonds) {
   // eslint-disable-line max-statements
   var atoms = sg.atoms
 
-  if (!xbonds || xbonds.length !== 2) {
+  if (!crossBonds || crossBonds.length !== 2) {
     sg.bracketDir = new Vec2(1, 0)
   } else {
-    var p1 = mol.bonds.get(xbonds[0]).getCenter(mol)
-    var p2 = mol.bonds.get(xbonds[1]).getCenter(mol)
+    const crossBondsValues = Array.prototype.concat.apply([], Object.values(crossBonds))
+    var p1 = mol.bonds.get(crossBondsValues[0]).getCenter(mol)
+    var p2 = mol.bonds.get(crossBondsValues[1]).getCenter(mol)
     sg.bracketDir = Vec2.diff(p2, p1).normalized()
   }
   var d = sg.bracketDir
@@ -334,7 +333,7 @@ function bracketPos(sg, render, mol, xbonds) {
   sg.bracketBox = bb
 }
 
-function getBracketParameters(mol, xbonds, atomSet, bb, d, render, id) {
+function getBracketParameters(mol, crossBonds, atomSet, bracketBox, d, render, id) {
   // eslint-disable-line max-params
   function BracketParams(c, d, w, h) {
     this.c = c
@@ -345,25 +344,28 @@ function getBracketParameters(mol, xbonds, atomSet, bb, d, render, id) {
   }
   var brackets = []
   var n = d.rotateSC(1, 0)
-  if (xbonds.length < 2) {
+
+  const crossBondsPerAtom = Object.values(crossBonds)
+  const crossBondsValues = Array.prototype.concat.apply([], crossBondsPerAtom)
+  if (crossBondsValues.length < 2) {
     ;(function () {
       d = d || new Vec2(1, 0)
       n = n || d.rotateSC(1, 0)
-      var bracketWidth = Math.min(0.25, bb.sz().x * 0.3)
-      var cl = Vec2.lc2(d, bb.p0.x, n, 0.5 * (bb.p0.y + bb.p1.y))
-      var cr = Vec2.lc2(d, bb.p1.x, n, 0.5 * (bb.p0.y + bb.p1.y))
-      var bracketHeight = bb.sz().y
+      var bracketWidth = Math.min(0.25, bracketBox.sz().x * 0.3)
+      var cl = Vec2.lc2(d, bracketBox.p0.x, n, 0.5 * (bracketBox.p0.y + bracketBox.p1.y))
+      var cr = Vec2.lc2(d, bracketBox.p1.x, n, 0.5 * (bracketBox.p0.y + bracketBox.p1.y))
+      var bracketHeight = bracketBox.sz().y
 
       brackets.push(
         new BracketParams(cl, d.negated(), bracketWidth, bracketHeight),
         new BracketParams(cr, d, bracketWidth, bracketHeight)
       )
     })()
-  } else if (xbonds.length === 2) {
+  } else if (crossBondsValues.length === 2 && crossBondsPerAtom.length === 2) {
     ;(function () {
       // eslint-disable-line max-statements
-      var b1 = mol.bonds.get(xbonds[0])
-      var b2 = mol.bonds.get(xbonds[1])
+      var b1 = mol.bonds.get(crossBondsValues[0])
+      var b2 = mol.bonds.get(crossBondsValues[1])
       var cl0 = b1.getCenter(mol)
       var cr0 = b2.getCenter(mol)
       var tl = -1
@@ -408,8 +410,8 @@ function getBracketParameters(mol, xbonds, atomSet, bb, d, render, id) {
     })()
   } else {
     ;(function () {
-      for (var i = 0; i < xbonds.length; ++i) {
-        var b = mol.bonds.get(xbonds[i])
+      for (var i = 0; i < crossBondsValues.length; ++i) {
+        var b = mol.bonds.get(crossBondsValues[i])
         var c = b.getCenter(mol)
         var d = atomSet.has(b.begin) ? b.getDir(mol) : b.getDir(mol).negated()
         brackets.push(new BracketParams(c, d, 0.2, 1.0))
@@ -423,20 +425,20 @@ ReSGroup.prototype.drawHighlight = function (render) {
   // eslint-disable-line max-statements
   var options = render.options
   var paper = render.paper
-  var sg = this.item
-  var bb = sg.bracketBox.transform(scale.obj2scaled, options)
-  var lw = options.lineWidth
-  var vext = new Vec2(lw * 4, lw * 6)
-  bb = bb.extend(vext, vext)
-  var d = sg.bracketDir,
+  var sGroupItem = this.item
+  var bracketBox = sGroupItem.bracketBox.transform(scale.obj2scaled, options)
+  var lineWidth = options.lineWidth
+  var vext = new Vec2(lineWidth * 4, lineWidth * 6)
+  bracketBox = bracketBox.extend(vext, vext)
+  var d = sGroupItem.bracketDir,
     n = d.rotateSC(1, 0)
-  var a0 = Vec2.lc2(d, bb.p0.x, n, bb.p0.y)
-  var a1 = Vec2.lc2(d, bb.p0.x, n, bb.p1.y)
-  var b0 = Vec2.lc2(d, bb.p1.x, n, bb.p0.y)
-  var b1 = Vec2.lc2(d, bb.p1.x, n, bb.p1.y)
+  var a0 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p0.y)
+  var a1 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p1.y)
+  var b0 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p0.y)
+  var b1 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p1.y)
 
   var set = paper.set()
-  sg.highlighting = paper
+  sGroupItem.highlighting = paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
       tfx(a0.x),
@@ -449,12 +451,12 @@ ReSGroup.prototype.drawHighlight = function (render) {
       tfx(b0.y)
     )
     .attr(options.highlightStyle)
-  set.push(sg.highlighting)
+  set.push(sGroupItem.highlighting)
 
-  SGroup.getAtoms(render.ctab.molecule, sg).forEach(aid => {
+  SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach(aid => {
     set.push(render.ctab.atoms.get(aid).makeHighlightPlate(render))
   }, this)
-  SGroup.getBonds(render.ctab.molecule, sg).forEach(bid => {
+  SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach(bid => {
     set.push(render.ctab.bonds.get(bid).makeHighlightPlate(render))
   }, this)
   render.ctab.addReObjectPath('highlighting', this.visel, set)

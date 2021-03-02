@@ -51,7 +51,7 @@ const RgroupLogic = (props: Props) => {
         {...formState}>
         <Field name="range" />
         <Field name="resth" />
-        <IfThenSelect label={label} rgids={rgroupLabels} />
+        <IfThenSelect label={label} rgroupLabels={rgroupLabels} />
       </Form>
     </Dialog>
   )

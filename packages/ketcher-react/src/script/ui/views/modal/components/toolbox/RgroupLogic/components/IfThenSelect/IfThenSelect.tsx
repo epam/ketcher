@@ -18,19 +18,16 @@ import React from 'react'
 
 import { useFormContext } from '../../../../../../../../../hooks'
 import { Field } from '../../../../../../../component/form/form'
+import { RgroupLogicProps } from '../../RgroupLogic'
 
 import styles from './IfThenSelect.module.less'
 
-interface IfThenSelectProps {
-  label: number
-  rgids: Array<number>
-}
-
-type Props = IfThenSelectProps
+type Props = Pick<RgroupLogicProps, 'label'> &
+  Pick<RgroupLogicProps, 'rgroupLabels'>
 
 const IfThenSelect = (props: Props) => {
   const PROP_NAME = 'ifthen'
-  const { rgids } = props
+  const { rgroupLabels, label } = props
   const { schema } = useFormContext() as any
   const desc = {
     title: schema.properties[PROP_NAME].title,
@@ -38,10 +35,10 @@ const IfThenSelect = (props: Props) => {
     enumNames: ['Always']
   }
 
-  rgids.forEach(label => {
-    if (props.label !== label) {
-      desc.enum.push(label)
-      desc.enumNames.push(`IF R${props.label} THEN R${label}`)
+  rgroupLabels.forEach(rgroupLabel => {
+    if (label !== rgroupLabel) {
+      desc.enum.push(rgroupLabel)
+      desc.enumNames.push(`IF R${label} THEN R${rgroupLabel}`)
     }
   })
 

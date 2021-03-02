@@ -18,7 +18,7 @@ import {
   StructService,
   SupportedFormat,
   Struct,
-  StructServiceOptions
+  GenerateImageOptions
 } from 'ketcher-core'
 import { isEqual } from 'lodash/fp'
 import molfile, { MolfileFormat } from './chem/molfile'
@@ -148,17 +148,16 @@ class Ketcher {
     this.origin = position ? this.editor.historyStack[position - 1] : null
   }
 
-  generatePngAsync(
+  async generateImageAsBase64Async(
     data: string,
-    options?: StructServiceOptions
-  ): Promise<Blob> {
-    return this.server
-      .generatePngAsBase64(data, options)
-      .then(base64 =>
-        fetch(`data:image/png;base64,${base64}`).then(response =>
-          response.blob()
-        )
-      )
+    options?: GenerateImageOptions
+  ): Promise<string> {
+    const base64 = await this.server.generateImageAsBase64(data, options)
+    if (options?.outputFormat === 'svg') {
+      return `data:image/svg+xml;base64,${base64}`
+    }
+
+    return `data:image/png;base64,${base64}`
   }
 }
 

@@ -97,6 +97,10 @@ export interface StructServiceOptions {
   [key: string]: string | number | boolean
 }
 
+export interface GenerateImageOptions extends StructServiceOptions {
+  outputFormat: 'png' | 'svg'
+}
+
 export interface StructService {
   info: () => Promise<InfoResult>
   convert: (
@@ -136,8 +140,8 @@ export interface StructService {
     options?: StructServiceOptions
   ) => Promise<CalculateResult>
   recognize: (blob: Blob, version: string) => Promise<RecognizeResult>
-  generatePngAsBase64: (
+  generateImageAsBase64: (
     data: string,
-    options?: StructServiceOptions
+    options?: GenerateImageOptions
   ) => Promise<string>
 }

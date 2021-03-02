@@ -35,7 +35,8 @@ import {
   AutomapResult,
   CheckResult,
   CalculateResult,
-  RecognizeResult
+  RecognizeResult,
+  GenerateImageOptions
 } from './structService.types'
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
@@ -260,9 +261,9 @@ class RemoteStructService implements StructService {
       .then((response: any) => ({ struct: response.metadata.mol_str }))
   }
 
-  generatePngAsBase64(
+  generateImageAsBase64(
     data: string,
-    options?: StructServiceOptions
+    options?: GenerateImageOptions
   ): Promise<string> {
     return indigoCall(
       'POST',

@@ -16,9 +16,10 @@
 
 import { connect } from 'react-redux'
 
-import RgroupLogic, { RgroupLogicProps } from './RgroupLogic'
+import RgroupLogic from './RgroupLogic'
+import { BaseProps } from '../../../modal.types'
 
-type StateProps = Pick<RgroupLogicProps, 'formState'>
+type StateProps = Pick<BaseProps, 'formState'>
 
 const mapStateToProps = (state): StateProps => ({ formState: state.modal.form })
 

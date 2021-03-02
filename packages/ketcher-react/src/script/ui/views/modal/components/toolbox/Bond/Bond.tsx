@@ -18,23 +18,17 @@ import React from 'react'
 import { bond as bondSchema } from '../../../../../data/schema/struct-schema'
 import Form, { Field } from '../../../../../component/form/form'
 import { Dialog } from '../../../../components'
+import { BaseProps, BaseCallProps } from '../../../modal.types'
 
 import styles from './Bond.module.less'
 
-interface BondProps {
+interface BondProps extends BaseProps {
   center: number
-  className: string
-  formState: any
   topology: number
   type: string
 }
 
-interface BondCallProps {
-  onCancel: () => void
-  onOk: (result: any) => void
-}
-
-type Props = BondProps & BondCallProps
+type Props = BondProps & BaseCallProps
 
 const Bond = (props: Props) => {
   const { formState, ...rest } = props
@@ -54,5 +48,4 @@ const Bond = (props: Props) => {
   )
 }
 
-export type { BondProps }
 export default Bond

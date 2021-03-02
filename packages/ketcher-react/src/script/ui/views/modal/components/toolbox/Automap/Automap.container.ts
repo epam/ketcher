@@ -15,12 +15,13 @@
  ***************************************************************************/
 import { connect } from 'react-redux'
 
-import Automap, { AutomapProps, AutomapCallProps } from './Automap'
+import Automap from './Automap'
 import { automap } from '../../../../../state/server'
+import { BaseProps, BaseCallProps } from '../../../modal.types'
 
-type StateProps = Pick<AutomapProps, 'formState'>
+type StateProps = Pick<BaseProps, 'formState'>
 
-type DispatchProps = Pick<AutomapCallProps, 'onOk'>
+type DispatchProps = Pick<BaseCallProps, 'onOk'>
 
 const mapStateToProps = (state): StateProps => ({ formState: state.modal.form })
 

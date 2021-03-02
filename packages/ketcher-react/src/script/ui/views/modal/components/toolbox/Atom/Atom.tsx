@@ -22,16 +22,15 @@ import Form, { Field } from '../../../../../component/form/form'
 import { Dialog } from '../../../../components'
 import element from '../../../../../../chem/element'
 import ElementNumber from './ElementNumber'
+import { BaseProps, BaseCallProps } from '../../../modal.types'
 
 import styles from './Atom.module.less'
 
-interface AtomProps {
+interface AtomProps extends BaseProps {
   alias: string
   charge: string
-  className: string
   exactChangeFlag: boolean
   explicitValence: number
-  formState: any
   hCount: number
   invRet: number
   isotope: number
@@ -43,12 +42,7 @@ interface AtomProps {
   unsaturatedAtom: boolean
 }
 
-interface AtomCallProps {
-  onCancel: () => void
-  onOk: (result: any) => void
-}
-
-type Props = AtomProps & AtomCallProps
+type Props = AtomProps & BaseCallProps
 
 const Atom: FunctionComponent<Props> = props => {
   const { formState, stereoParity, ...rest } = props
@@ -109,5 +103,4 @@ function chargeValid(charge) {
   return !(result === null || (result[1] !== '' && result[3] !== ''))
 }
 
-export type { AtomProps }
 export default Atom

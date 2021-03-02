@@ -14,37 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-
-import { useFormContext } from '../../../../../../../../hooks'
-import { Field } from '../../../../../../component/form/form'
-
-interface IfThenSelectProps {
+interface BaseProps {
   className: string
-  label: number
-  name: string
-  rgids: Array<number>
-}
-
-type Props = IfThenSelectProps
-
-const IfThenSelect = (props: Props) => {
-  const { name, rgids } = props
-  const { schema } = useFormContext() as any
-  const desc = {
-    title: schema.properties[name].title,
-    enum: [0],
-    enumNames: ['Always']
+  formState: {
+    errors: Record<string, string>
+    result: Record<string, any>
+    valid: boolean
   }
-
-  rgids.forEach(label => {
-    if (props.label !== label) {
-      desc.enum.push(label)
-      desc.enumNames.push(`IF R${props.label} THEN R${label}`)
-    }
-  })
-
-  return <Field schema={desc} {...props} />
 }
 
-export default IfThenSelect
+interface BaseCallProps {
+  onCancel: () => void
+  onOk: (result: any) => void
+}
+
+export type { BaseProps, BaseCallProps }

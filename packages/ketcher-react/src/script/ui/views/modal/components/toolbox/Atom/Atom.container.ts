@@ -16,9 +16,10 @@
 
 import { connect } from 'react-redux'
 
-import Atom, { AtomProps } from './Atom'
+import Atom from './Atom'
+import { BaseProps } from '../../../modal.types'
 
-type StateProps = Pick<AtomProps, 'formState'>
+type StateProps = Pick<BaseProps, 'formState'>
 
 const mapStateToProps = (state): StateProps => ({ formState: state.modal.form })
 

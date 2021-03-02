@@ -18,20 +18,11 @@ import React from 'react'
 
 import Form, { Field } from '../../../../../component/form/form'
 import { Dialog } from '../../../../components'
+import { BaseProps, BaseCallProps } from '../../../modal.types'
 
 import styles from './Automap.module.less'
 
-interface AutomapProps {
-  className: string
-  formState: any
-}
-
-interface AutomapCallProps {
-  onCancel: () => void
-  onOk: (result: any) => void
-}
-
-type Props = AutomapProps & AutomapCallProps
+type Props = BaseProps & BaseCallProps
 
 export const automapSchema = {
   title: 'Reaction Auto-Mapping',
@@ -63,5 +54,4 @@ const Automap = (props: Props) => {
   )
 }
 
-export type { AutomapProps, AutomapCallProps }
 export default Automap

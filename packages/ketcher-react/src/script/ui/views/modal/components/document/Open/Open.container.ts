@@ -17,10 +17,11 @@ import { connect } from 'react-redux'
 
 import { exec } from '../../../../../component/cliparea'
 import { load } from '../../../../../state'
-import { Open, OpenProps, OpenCallProps } from './Open'
+import { Open, OpenProps } from './Open'
+import { BaseCallProps } from '../../../modal.types'
 
-type StateProps = Pick<OpenProps, 'server'>
-type DispatchProps = Pick<OpenCallProps, 'onOk'>
+type StateProps = OpenProps
+type DispatchProps = Pick<BaseCallProps, 'onOk'>
 
 const mapStateToProps = (state): StateProps => ({ server: state.server })
 

@@ -20,12 +20,11 @@ import { rgroupLogic as rgroupSchema } from '../../../../../data/schema/struct-s
 import Form, { Field } from '../../../../../component/form/form'
 import { Dialog } from '../../../../components'
 import IfThenSelect from './components'
+import { BaseProps, BaseCallProps } from '../../../modal.types'
 
 import styles from './RgroupLogic.module.less'
 
-interface RgroupLogicProps {
-  className: string
-  formState: any
+interface RgroupLogicProps extends BaseProps {
   frags: Set<number>
   ifthen: number
   label: number
@@ -34,12 +33,7 @@ interface RgroupLogicProps {
   rgroupLabels: Array<number>
 }
 
-interface RgroupLogicCallProps {
-  onCancel: () => void
-  onOk: (result: any) => void
-}
-
-type Props = RgroupLogicProps & RgroupLogicCallProps
+type Props = RgroupLogicProps & BaseCallProps
 
 const RgroupLogic = (props: Props) => {
   const { formState, label, rgroupLabels, ...rest } = props
@@ -57,12 +51,7 @@ const RgroupLogic = (props: Props) => {
         {...formState}>
         <Field name="range" />
         <Field name="resth" />
-        <IfThenSelect
-          name="ifthen"
-          className={styles.cond}
-          label={label}
-          rgids={rgroupLabels}
-        />
+        <IfThenSelect label={label} rgids={rgroupLabels} />
       </Form>
     </Dialog>
   )

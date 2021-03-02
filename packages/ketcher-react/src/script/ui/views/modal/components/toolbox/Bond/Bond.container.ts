@@ -15,9 +15,10 @@
  ***************************************************************************/
 import { connect } from 'react-redux'
 
-import Bond, { BondProps } from './Bond'
+import Bond from './Bond'
+import { BaseProps } from '../../../modal.types'
 
-type StateProps = Pick<BondProps, 'formState'>
+type StateProps = Pick<BaseProps, 'formState'>
 
 const mapStateToProps = (state): StateProps => ({ formState: state.modal.form })
 

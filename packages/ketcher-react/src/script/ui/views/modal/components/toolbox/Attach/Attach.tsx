@@ -19,22 +19,16 @@ import React from 'react'
 import { attachmentPoints as attachmentPointsSchema } from '../../../../../data/schema/struct-schema'
 import Form, { Field } from '../../../../../component/form/form'
 import { Dialog } from '../../../../components'
+import { BaseProps, BaseCallProps } from '../../../modal.types'
 
 import styles from './Attach.module.less'
 
-interface AttachPointsProps {
-  className: string
-  formState: any
+interface AttachPointsProps extends BaseProps {
   primary: boolean
   secondary: boolean
 }
 
-interface AttachPointsCallProps {
-  onCancel: () => void
-  onOk: (result: any) => void
-}
-
-type Props = AttachPointsProps & AttachPointsCallProps
+type Props = AttachPointsProps & BaseCallProps
 
 const AttachPoints = (props: Props) => {
   const { formState, ...rest } = props
@@ -53,5 +47,4 @@ const AttachPoints = (props: Props) => {
   )
 }
 
-export type { AttachPointsProps }
 export default AttachPoints

@@ -34,16 +34,25 @@ class Form extends Component {
     if (init) {
       const { valid, errors } = this.schema.serialize(init)
       const errs = getErrorsObj(errors)
-
-      const initObj = Object.assign({}, init, { init: true })
-      onUpdate(initObj, valid, errs)
+      const initialState = Object.assign({}, init, { init: true })
+      onUpdate(initialState, valid, errs)
     }
   }
 
-  updateState(newstate) {
-    const { instance, valid, errors } = this.schema.serialize(newstate)
+  componentDidUpdate() {
+    const { schema, result, customValid, ...rest } = this.props
+    if (schema.key && schema.key !== this.schema.key) {
+      this.schema = propSchema(schema, rest)
+      this.schema.serialize(result) // hack: valid first state
+      this.updateState(result)
+    }
+  }
+
+  updateState(newState) {
+    const { onUpdate } = this.props
+    const { instance, valid, errors } = this.schema.serialize(newState)
     const errs = getErrorsObj(errors)
-    this.props.onUpdate(instance, valid, errs)
+    onUpdate(instance, valid, errs)
   }
 
   field(name, onChange) {
@@ -54,30 +63,15 @@ class Form extends Component {
       dataError: errors && errors[name],
       value,
       onChange(val) {
-        const newstate = Object.assign({}, self.props.result, { [name]: val })
-        self.updateState(newstate)
+        const newState = Object.assign({}, self.props.result, { [name]: val })
+        self.updateState(newState)
         if (onChange) onChange(val)
       }
     }
   }
 
   render() {
-    const {
-      result,
-      errors,
-      init,
-      children,
-      schema,
-      onUpdate,
-      customValid,
-      ...rest
-    } = this.props
-
-    if (schema.key && schema.key !== this.schema.key) {
-      this.schema = propSchema(schema, rest)
-      this.schema.serialize(result) // hack: valid first state
-      this.updateState(result)
-    }
+    const { schema, children } = this.props
 
     return (
       <form>
@@ -106,15 +100,15 @@ function Label({ labelPos, title, children, ...props }) {
 }
 
 function Field(props) {
-  const { name, onChange, component, labelPos, ...prop } = props
+  const { name, onChange, component, labelPos, ...rest } = props
   const { schema, stateStore } = useFormContext()
-  const desc = prop.schema || schema.properties[name]
+  const desc = rest.schema || schema.properties[name]
   const { dataError, ...fieldOpts } = stateStore.field(name, onChange)
   const Component = component
   const formField = component ? (
-    <Component name={name} schema={desc} {...fieldOpts} {...prop} />
+    <Component name={name} schema={desc} {...fieldOpts} {...rest} />
   ) : (
-    <Input name={name} schema={desc} {...fieldOpts} {...prop} />
+    <Input name={name} schema={desc} {...fieldOpts} {...rest} />
   )
 
   if (labelPos === false) return formField
@@ -122,7 +116,7 @@ function Field(props) {
     <Label
       className={clsx({ 'data-error': dataError })}
       error={dataError}
-      title={prop.title || desc.title}
+      title={rest.title || desc.title}
       labelPos={labelPos}>
       {formField}
     </Label>

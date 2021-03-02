@@ -121,7 +121,7 @@ const content = (schema, context, fieldName) =>
         <Field
           name={prop}
           type="textarea"
-          multiple
+          multiple={true}
           size="10"
           key={`${context}-${fieldName}-${prop}-select`}
         />

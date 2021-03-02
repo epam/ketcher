@@ -46,20 +46,20 @@ GenericInput.val = function (ev, schema) {
   return isNumber && !isNaN(value - 0) ? value - 0 : value // eslint-disable-line
 }
 
-function TextArea({ schema, value, onChange, ...props }) {
-  return <textarea value={value} onInput={onChange} {...props} />
+function TextArea({ schema, value, onChange, ...rest }) {
+  return <textarea value={value} onInput={onChange} {...rest} />
 }
 
 TextArea.val = ev => ev.target.value
 
-function CheckBox({ schema, value = '', onChange, ...props }) {
+function CheckBox({ schema, value = '', onChange, ...rest }) {
   return (
     <input
       type="checkbox"
       checked={value}
       onClick={onChange}
       onChange={onChange}
-      {...props}
+      {...rest}
     />
   )
 }
@@ -69,10 +69,21 @@ CheckBox.val = function (ev) {
   return !!ev.target.checked
 }
 
-function Select({ schema, value, name, onSelect, ...props }) {
-  const selectedValue = Array.isArray(value) ? value[0] : value
+function Select({
+  schema,
+  value,
+  name,
+  onSelect,
+  className,
+  multiple = false
+}) {
   return (
-    <select onChange={onSelect} value={selectedValue} name={name}>
+    <select
+      onChange={onSelect}
+      value={value}
+      name={name}
+      multiple={multiple}
+      className={className}>
       {enumSchema(schema, (title, val) => (
         <option key={val} value={val}>
           {title}
@@ -99,7 +110,7 @@ function FieldSet({
   selected,
   onSelect,
   type = 'radio',
-  ...props
+  ...rest
 }) {
   return (
     <fieldset onClick={onSelect} className="radio">
@@ -110,7 +121,7 @@ function FieldSet({
               type={type}
               defaultChecked={selected(val, value)}
               value={typeof val !== 'object' && val}
-              {...props}
+              {...rest}
             />
             {title}
           </label>

@@ -80,6 +80,7 @@ function RecognizeDialog(prop) {
         </span>,
         file && (
           <button
+            key="recognize"
             onClick={() => onRecognize(file, version)}
             disabled={structStr && typeof structStr !== 'string'}>
             Recognize

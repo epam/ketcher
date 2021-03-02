@@ -129,9 +129,13 @@ class MiewDialog extends Component {
         title="Miew"
         params={prop}
         buttons={[
-          <div className={styles.warning}>{CHANGING_WARNING}</div>,
+          <div key="warning" className={styles.warning}>
+            {CHANGING_WARNING}
+          </div>,
           'Close',
-          <button onClick={() => this.exportCML()}>Apply</button>
+          <button key="apply" onClick={() => this.exportCML()}>
+            Apply
+          </button>
         ]}>
         <div className={styles.dialog_body}>
           <div

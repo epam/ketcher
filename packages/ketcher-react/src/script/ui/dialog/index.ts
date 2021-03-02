@@ -24,7 +24,8 @@ import {
   Atom,
   Bond,
   AttachPoints,
-  Automap
+  Automap,
+  RgroupLogic
 } from '../views/modal/components/toolbox'
 import {
   Check,
@@ -34,7 +35,6 @@ import {
 } from '../views/modal/components/process'
 import EnhancedStereo from './toolbox/enhanced-stereo'
 import LabelEdit from './toolbox/labeledit'
-import RgroupLogic from './toolbox/rgroup-logic'
 import { Open, Save } from '../views/modal/components/document'
 import { Settings, Help, About } from '../views/modal/components/meta'
 import Sgroup from './toolbox/sgroup'

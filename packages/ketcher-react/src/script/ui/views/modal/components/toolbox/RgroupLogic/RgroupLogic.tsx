@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,51 +15,51 @@
  ***************************************************************************/
 
 import React from 'react'
-import { connect } from 'react-redux'
 
-import { rgroupLogic as rgroupSchema } from '../../data/schema/struct-schema'
-import Form, { Field } from '../../component/form/form'
-import { Dialog } from '../../views/components'
-import { useFormContext } from './../../../../hooks'
+import { rgroupLogic as rgroupSchema } from '../../../../../data/schema/struct-schema'
+import Form, { Field } from '../../../../../component/form/form'
+import { Dialog } from '../../../../components'
+import IfThenSelect from './components'
 
-function IfThenSelect(props) {
-  const { name, rgids } = props
-  const { schema } = useFormContext()
-  const desc = {
-    title: schema.properties[name].title,
-    enum: [0],
-    enumNames: ['Always']
-  }
+import styles from './RgroupLogic.module.less'
 
-  rgids.forEach(label => {
-    if (props.label !== label) {
-      desc.enum.push(label)
-      desc.enumNames.push(`IF R${props.label} THEN R${label}`)
-    }
-  })
-
-  return <Field name={name} schema={desc} {...props} />
+interface RgroupLogicProps {
+  className: string
+  formState: any
+  frags: Set<number>
+  ifthen: number
+  label: number
+  range: string
+  resth: boolean
+  rgroupLabels: Array<number>
 }
 
-function RgroupLogic(props) {
-  const { formState, label, rgroupLabels, ...prop } = props
+interface RgroupLogicCallProps {
+  onCancel: () => void
+  onOk: (result: any) => void
+}
+
+type Props = RgroupLogicProps & RgroupLogicCallProps
+
+const RgroupLogic = (props: Props) => {
+  const { formState, label, rgroupLabels, ...rest } = props
   return (
     <Dialog
       title="R-Group Logic"
-      className="rgroup-logic"
+      className={styles.rgroupLogic}
       result={() => formState.result}
       valid={() => formState.valid}
-      params={prop}>
+      params={rest}>
       <Form
         schema={rgroupSchema}
         customValid={{ range: r => rangeConv(r) }}
-        init={prop}
+        init={rest}
         {...formState}>
         <Field name="range" />
         <Field name="resth" />
         <IfThenSelect
           name="ifthen"
-          className="cond"
+          className={styles.cond}
           label={label}
           rgids={rgroupLabels}
         />
@@ -81,4 +81,5 @@ function rangeConv(range) {
     .every(s => s.match(/^[>,<=]?[0-9]+$/g) || s.match(/^[0-9]+-[0-9]+$/g))
 }
 
-export default connect(store => ({ formState: store.modal.form }))(RgroupLogic)
+export type { RgroupLogicProps }
+export default RgroupLogic

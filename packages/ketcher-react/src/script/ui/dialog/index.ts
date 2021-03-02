@@ -20,8 +20,12 @@ import TemplateAttach from './template/template-attach'
 import TemplatesLib from './template/template-lib'
 
 // schemify dialogs
-import { Atom, Bond, AttachPoints } from '../views/modal/components/toolbox'
-import Automap from './toolbox/automap'
+import {
+  Atom,
+  Bond,
+  AttachPoints,
+  Automap
+} from '../views/modal/components/toolbox'
 import {
   Check,
   Analyse,

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { connect } from 'react-redux'
 
-import Atom from './Atom'
-import Bond from './Bond'
-import AttachPoints from './Attach'
-import Automap from './Automap'
+import Automap, { AutomapProps, AutomapCallProps } from './Automap'
+import { automap } from '../../../../../state/server'
 
-export { Atom, Bond, AttachPoints, Automap }
+type StateProps = Pick<AutomapProps, 'formState'>
+
+type DispatchProps = Pick<AutomapCallProps, 'onOk'>
+
+const mapStateToProps = (state): StateProps => ({ formState: state.modal.form })
+
+const mapDispatchToProps = (dispatch, ownProps): DispatchProps => ({
+  onOk: result => {
+    dispatch(automap(result))
+    ownProps.onOk(result)
+  }
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Automap)

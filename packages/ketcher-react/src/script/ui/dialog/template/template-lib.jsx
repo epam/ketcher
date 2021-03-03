@@ -143,10 +143,12 @@ class TemplateLib extends Component {
   }
 
   renderRow(row, index, COLS) {
+    debugger
     return (
       <div className="tr" key={index}>
         {row.map((tmpl, i) => (
           <div
+            key={tmpl.props.prerender}
             className={tmpl === this.props.selected ? 'td selected' : 'td'}
             title={greekify(tmplName(tmpl, index * COLS + i))}>
             <RenderTmpl
@@ -154,7 +156,7 @@ class TemplateLib extends Component {
               className="struct"
               onClick={() => this.select(tmpl)}
             />
-            <div class="btn-container">
+            <div className="btn-container">
               {tmpl.props.group === 'User Templates' && (
                 <button
                   className="delete-button"

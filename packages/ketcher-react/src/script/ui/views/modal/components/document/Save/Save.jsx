@@ -14,13 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
+import React, { Component, createRef } from 'react'
 import { connect } from 'react-redux'
 import {
   FormatterFactory,
   getPropertiesByFormat,
   formatProperties
 } from 'ketcher-core'
+
 import { molfileManager } from '../../../../../../chem/molfile'
 import smilesManager from '../../../../../../chem/smiles'
 import graphManager from '../../../../../../format/chemGraph'
@@ -31,7 +32,6 @@ import { check } from '../../../../../state/server'
 import { Dialog } from '../../../../components'
 import Form, { Field } from '../../../../../component/form/form'
 import SaveButton from '../../../../../component/view/savebutton'
-import { createRef } from 'react'
 
 import styles from './Save.module.less'
 

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -262,11 +262,9 @@ function makeAtomBondLines(prefix, idstr, ids, map) {
 
 function bracketsToMolfile(mol, sg, idstr) {
   // eslint-disable-line max-statements
-  const inBonds = []
-  const xBonds = []
   const atomSet = new Pile(sg.atoms)
-  SGroup.getCrossBonds(inBonds, xBonds, mol, atomSet)
-  SGroup.bracketPos(sg, mol, xBonds)
+  const crossBonds = SGroup.getCrossBonds(mol, atomSet)
+  SGroup.bracketPos(sg, mol, crossBonds)
   const bb = sg.bracketBox
   const d = sg.bracketDir
   const n = d.rotateSC(1, 0)

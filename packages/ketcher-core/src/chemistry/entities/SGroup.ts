@@ -187,32 +187,46 @@ export class SGroup {
   }
 
   static getCrossBonds(
-    inBonds: any,
-    xBonds: any,
     mol: any,
     parentAtomSet: Pile<number>
-  ): void {
+  ): { [key: number]: Array<Bond> } {
+    const crossBonds: { [key: number]: Array<Bond> } = {}
     mol.bonds.forEach((bond, bid) => {
-      if (parentAtomSet.has(bond.begin) && parentAtomSet.has(bond.end)) {
-        if (inBonds !== null) inBonds.push(bid)
-      } else if (parentAtomSet.has(bond.begin) || parentAtomSet.has(bond.end)) {
-        if (xBonds !== null) xBonds.push(bid)
+      if (parentAtomSet.has(bond.begin) && !parentAtomSet.has(bond.end)) {
+        if (!crossBonds[bond.begin]) {
+          crossBonds[bond.begin] = []
+        }
+        crossBonds[bond.begin].push(bid)
+      } else if (
+        parentAtomSet.has(bond.end) &&
+        !parentAtomSet.has(bond.begin)
+      ) {
+        if (!crossBonds[bond.end]) {
+          crossBonds[bond.end] = []
+        }
+        crossBonds[bond.end].push(bid)
       }
     })
+    return crossBonds
   }
 
-  static bracketPos(sg, mol, xbonds): void {
-    var atoms = sg.atoms
-    if (!xbonds || xbonds.length !== 2) {
-      sg.bracketDir = new Vec2(1, 0)
+  static bracketPos(
+    sGroup,
+    mol,
+    crossBondsPerAtom: { [key: number]: Array<Bond> }
+  ): void {
+    var atoms = sGroup.atoms
+    const crossBonds = Object.values(crossBondsPerAtom).flat()
+    if (!crossBonds || crossBonds.length !== 2) {
+      sGroup.bracketDir = new Vec2(1, 0)
     } else {
-      var p1 = mol.bonds.get(xbonds[0]).getCenter(mol)
-      var p2 = mol.bonds.get(xbonds[1]).getCenter(mol)
-      sg.bracketDir = Vec2.diff(p2, p1).normalized()
+      var p1 = mol.bonds.get(crossBonds[0]).getCenter(mol)
+      var p2 = mol.bonds.get(crossBonds[1]).getCenter(mol)
+      sGroup.bracketDir = Vec2.diff(p2, p1).normalized()
     }
-    var d = sg.bracketDir
+    var d = sGroup.bracketDir
 
-    var bb: Box2Abs | null = null
+    var braketBox: Box2Abs | null = null
     var contentBoxes: Array<any> = []
     atoms.forEach(aid => {
       var atom = mol.atoms.get(aid)
@@ -227,26 +241,28 @@ export class SGroup {
         ;[bba.p0.y, bba.p1.y].forEach(y => {
           var v = new Vec2(x, y)
           var p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, d.rotateSC(1, 0)))
-          bbb = bbb === null ? new Box2Abs(p, p) : bbb!.include(p)
+          bbb = !bbb ? new Box2Abs(p, p) : bbb!.include(p)
         })
       })
-      bb = bb === null ? bbb : Box2Abs.union(bb, bbb!)
+      braketBox = !braketBox ? bbb : Box2Abs.union(braketBox, bbb!)
     })
     var vext = new Vec2(0.2, 0.4)
-    if (bb !== null) bb = bb!.extend(vext, vext)
-    sg.bracketBox = bb
+    if (braketBox) braketBox = braketBox!.extend(vext, vext)
+    sGroup.bracketBox = braketBox
   }
 
   static getBracketParameters(
     mol,
-    xbonds,
+    crossBondsPerAtom: { [key: number]: Array<Bond> },
     atomSet: Pile<number>,
     bb,
     d,
     n
   ): Array<any> {
     var brackets: Array<any> = []
-    if (xbonds.length < 2) {
+    const crossBondsPerAtomValues = Object.values(crossBondsPerAtom)
+    const crossBonds = crossBondsPerAtomValues.flat()
+    if (crossBonds.length < 2) {
       ;(function () {
         d = d || new Vec2(1, 0)
         n = n || d.rotateSC(1, 0)
@@ -260,11 +276,14 @@ export class SGroup {
           new SGroupBracketParams(cr, d, bracketWidth, bracketHeight)
         )
       })()
-    } else if (xbonds.length === 2) {
+    } else if (
+      crossBonds.length === 2 &&
+      crossBondsPerAtomValues.length === 2
+    ) {
       ;(function () {
         // eslint-disable-line max-statements
-        var b1 = mol.bonds.get(xbonds[0])
-        var b2 = mol.bonds.get(xbonds[1])
+        var b1 = mol.bonds.get(crossBonds[0])
+        var b2 = mol.bonds.get(crossBonds[1])
         var cl0 = b1.getCenter(mol)
         var cr0 = b2.getCenter(mol)
         var dr = Vec2.diff(cr0, cl0).normalized()
@@ -289,8 +308,8 @@ export class SGroup {
       })()
     } else {
       ;(function () {
-        for (var i = 0; i < xbonds.length; ++i) {
-          var b = mol.bonds.get(xbonds[i])
+        for (var i = 0; i < crossBonds.length; ++i) {
+          var b = mol.bonds.get(crossBonds[i])
           var c = b.getCenter(mol)
           var d = atomSet.has(b.begin) ? b.getDir(mol) : b.getDir(mol).negated()
           brackets.push(new SGroupBracketParams(c, d, 0.2, 1.0))

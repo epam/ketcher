@@ -21,7 +21,7 @@ import Form, { Field } from '../../../../../component/form/form'
 import { Dialog } from '../../../../components'
 import { BaseProps, BaseCallProps } from '../../../modal.types'
 
-import styles from './Attach.module.less'
+import classes from './Attach.module.less'
 
 interface AttachPointsProps extends BaseProps {
   primary: boolean
@@ -35,7 +35,7 @@ const AttachPoints = (props: Props) => {
   return (
     <Dialog
       title="Attachment Points"
-      className={styles.attachPoints}
+      className={classes.attachPoints}
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}>
@@ -47,4 +47,5 @@ const AttachPoints = (props: Props) => {
   )
 }
 
+export type { AttachPointsProps }
 export default AttachPoints

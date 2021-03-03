@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { ComponentType } from 'react'
 import { connect } from 'react-redux'
 
 import Automap from './Automap'
@@ -20,8 +21,8 @@ import { automap } from '../../../../../state/server'
 import { BaseProps, BaseCallProps } from '../../../modal.types'
 
 type StateProps = Pick<BaseProps, 'formState'>
-
 type DispatchProps = Pick<BaseCallProps, 'onOk'>
+type OwnProps = Omit<BaseProps, 'formState'>
 
 const mapStateToProps = (state): StateProps => ({ formState: state.modal.form })
 
@@ -32,4 +33,8 @@ const mapDispatchToProps = (dispatch, ownProps): DispatchProps => ({
   }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Automap)
+const AutomapContainer: ComponentType<OwnProps> = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Automap)
+export default AutomapContainer

@@ -19,7 +19,7 @@ import Markdown from 'react-markdown'
 import gfm from 'remark-gfm'
 import { useSettingsContext } from '../../../../../../../hooks'
 import { Dialog } from '../../../../components'
-import styles from './Help.module.less'
+import classes from './Help.module.less'
 
 function Help(props) {
   const [content, setContent] = useState(null)
@@ -40,10 +40,9 @@ function Help(props) {
 
   return (
     content && (
-
       <Dialog title="Help" params={props} buttons={['Close']}>
         {content && (
-          <div className={styles.dialog_body}>
+          <div className={classes.dialog_body}>
             <Markdown plugins={[gfm]} transformImageUri={transfromImageUri}>
               {content}
             </Markdown>

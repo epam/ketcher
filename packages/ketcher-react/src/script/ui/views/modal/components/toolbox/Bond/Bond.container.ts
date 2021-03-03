@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { ComponentType } from 'react'
 import { connect } from 'react-redux'
 
-import Bond from './Bond'
+import Bond, { BondProps } from './Bond'
 import { BaseProps } from '../../../modal.types'
 
 type StateProps = Pick<BaseProps, 'formState'>
+type OwnProps = Omit<BondProps, 'formState'>
 
 const mapStateToProps = (state): StateProps => ({ formState: state.modal.form })
 
-export default connect(mapStateToProps)(Bond)
+const BondContainer: ComponentType<OwnProps> = connect(mapStateToProps)(Bond)
+export default BondContainer

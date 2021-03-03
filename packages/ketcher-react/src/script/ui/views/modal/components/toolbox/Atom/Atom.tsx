@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useState, useCallback, FunctionComponent } from 'react'
+import React, { useState, useCallback, FC } from 'react'
 import { capitalize } from 'lodash/fp'
 
 import { atom as atomSchema } from '../../../../../data/schema/struct-schema'
@@ -24,7 +24,7 @@ import element from '../../../../../../chem/element'
 import ElementNumber from './ElementNumber'
 import { BaseProps, BaseCallProps } from '../../../modal.types'
 
-import styles from './Atom.module.less'
+import classes from './Atom.module.less'
 
 interface AtomProps extends BaseProps {
   alias: string
@@ -44,9 +44,9 @@ interface AtomProps extends BaseProps {
 
 type Props = AtomProps & BaseCallProps
 
-const Atom: FunctionComponent<Props> = props => {
+const Atom: FC<Props> = props => {
   const { formState, stereoParity, ...rest } = props
-  const [currentLabel, setCurrentLabel] = useState(rest.label)
+  const [currentLabel, setCurrentLabel] = useState<string>(rest.label)
 
   const onLabelChangeCallback = useCallback(newValue => {
     setCurrentLabel(newValue)
@@ -55,7 +55,7 @@ const Atom: FunctionComponent<Props> = props => {
   return (
     <Dialog
       title="Atom Properties"
-      className={styles.atomProps}
+      className={classes.atomProps}
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}>
@@ -67,7 +67,7 @@ const Atom: FunctionComponent<Props> = props => {
         }}
         init={rest}
         {...formState}>
-        <fieldset className={styles.main}>
+        <fieldset className={classes.main}>
           <Field name="label" onChange={onLabelChangeCallback} />
           <Field name="alias" />
           <ElementNumber label={currentLabel} />
@@ -76,14 +76,14 @@ const Atom: FunctionComponent<Props> = props => {
           <Field name="isotope" />
           <Field name="radical" />
         </fieldset>
-        <fieldset className={styles.query}>
+        <fieldset className={classes.query}>
           <legend>Query specific</legend>
           <Field name="ringBondCount" />
           <Field name="hCount" />
           <Field name="substitutionCount" />
           <Field name="unsaturatedAtom" />
         </fieldset>
-        <fieldset className={styles.reaction}>
+        <fieldset className={classes.reaction}>
           <legend>Reaction flags</legend>
           <Field name="invRet" />
           <Field name="exactChangeFlag" />
@@ -100,7 +100,8 @@ function atomValid(label) {
 
 function chargeValid(charge) {
   const result = atomSchema.properties.charge.pattern.exec(charge)
-  return !(result === null || (result[1] !== '' && result[3] !== ''))
+  return result && (result[1] === '' || result[3] === '')
 }
 
+export type { AtomProps }
 export default Atom

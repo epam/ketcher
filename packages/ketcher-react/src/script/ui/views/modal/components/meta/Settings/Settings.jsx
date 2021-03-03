@@ -35,7 +35,7 @@ import MeasureInput from '../../../../../component/form/measure-input'
 import SystemFonts from '../../../../../component/form/systemfonts'
 import SelectCheckbox from '../../../../../component/form/select-checkbox'
 
-import styles from './Settings.module.less'
+import classes from './Settings.module.less'
 
 function SettingsDialog(props) {
   const {
@@ -51,7 +51,7 @@ function SettingsDialog(props) {
   return (
     <Dialog
       title="Settings"
-      className={styles.settings}
+      className={classes.settings}
       result={() => formState.result}
       valid={() => formState.valid}
       params={prop}
@@ -72,9 +72,9 @@ function SettingsDialog(props) {
         'OK'
       ]}>
       <Form schema={settingsSchema} init={initState} {...formState}>
-        <Accordion className={styles.accordion} multiple={false} active={[0]}>
+        <Accordion className={classes.accordion} multiple={false} active={[0]}>
           <Accordion.Group caption="Rendering customization options">
-            <fieldset className={styles.render}>
+            <fieldset className={classes.render}>
               <Field name="resetToSelect" />
               <Field name="rotationStep" />
               <Field name="showValenceWarnings" component={SelectCheckbox} />
@@ -102,7 +102,7 @@ function SettingsDialog(props) {
             </fieldset>
           </Accordion.Group>
           <Accordion.Group caption="Server">
-            <fieldset className={styles.server} disabled={!appOpts.server}>
+            <fieldset className={classes.server} disabled={!appOpts.server}>
               <Field name="smart-layout" component={SelectCheckbox} />
               <Field
                 name="ignore-stereochemistry-errors"
@@ -123,7 +123,7 @@ function SettingsDialog(props) {
             </fieldset>
           </Accordion.Group>
           <Accordion.Group caption="3D Viewer">
-            <fieldset className={styles.viewer} disabled={!window.Miew}>
+            <fieldset className={classes.viewer} disabled={!window.Miew}>
               <Field name="miewMode" />
               <Field name="miewTheme" />
               <Field name="miewAtomLabel" />
@@ -139,7 +139,7 @@ function SettingsDialog(props) {
           </Accordion.Group>
         </Accordion>
         {!storage.isAvailable() ? (
-          <div className={styles.warning}>{storage.warningMessage}</div>
+          <div className={classes.warning}>{storage.warningMessage}</div>
         ) : null}
       </Form>
     </Dialog>

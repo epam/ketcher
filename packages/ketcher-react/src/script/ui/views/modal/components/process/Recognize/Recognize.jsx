@@ -32,7 +32,7 @@ import StructRender from '../../../../../component/structrender'
 import OpenButton from '../../../../../component/view/openbutton'
 import Spin from '../../../../../component/view/spin'
 
-import styles from './Recognize.module.less'
+import classes from './Recognize.module.less'
 
 function isImage(file) {
   return file?.type?.includes('image')
@@ -68,14 +68,14 @@ function RecognizeDialog(prop) {
   return (
     <Dialog
       title="Import From Image"
-      className={styles.recognize}
+      className={classes.recognize}
       params={props}
       result={() => result(structStr, fragment)}
       buttons={[
         <OpenButton key="choose" onLoad={onImage} type="image/*">
           Choose file…
         </OpenButton>,
-        <span key="open-file" className={styles.open_filename}>
+        <span key="open-file" className={classes.open_filename}>
           {file ? file.name : null}
         </span>,
         file && (
@@ -89,7 +89,7 @@ function RecognizeDialog(prop) {
         'Cancel',
         'OK'
       ]}>
-      <label className={styles.change_version}>
+      <label className={classes.change_version}>
         Imago version:
         <Input
           schema={{
@@ -102,7 +102,7 @@ function RecognizeDialog(prop) {
           onChange={onChangeImago}
         />
       </label>
-      <div className={styles.picture}>
+      <div className={classes.picture}>
         {file && isImage(file) && canPreviewImage && (
           <img
             alt=""
@@ -123,13 +123,13 @@ function RecognizeDialog(prop) {
           <div>Please choose image</div>
         )}
       </div>
-      <div className={styles.output}>
+      <div className={classes.output}>
         {structStr &&
           // in Edge 38: instanceof Promise always `false`
           (structStr instanceof Promise || typeof structStr !== 'string' ? (
             <Spin />
           ) : (
-            <StructRender className={styles.struct} struct={structStr} />
+            <StructRender className={classes.struct} struct={structStr} />
           ))}
       </div>
       <label>

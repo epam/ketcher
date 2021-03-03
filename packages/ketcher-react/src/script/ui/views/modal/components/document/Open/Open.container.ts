@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { ComponentType } from 'react'
 import { connect } from 'react-redux'
 
 import { exec } from '../../../../../component/cliparea'
 import { load } from '../../../../../state'
-import { Open, OpenProps } from './Open'
+import Open, { OpenProps } from './Open'
 import { BaseCallProps } from '../../../modal.types'
 
 type StateProps = OpenProps
 type DispatchProps = Pick<BaseCallProps, 'onOk'>
+type OwnProps = OpenProps
 
 const mapStateToProps = (state): StateProps => ({ server: state.server })
 
@@ -38,4 +40,8 @@ const mapDispatchToProps = (dispatch, ownProps): DispatchProps => ({
   }
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Open)
+const OpenContainer: ComponentType<OwnProps> = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Open)
+export default OpenContainer

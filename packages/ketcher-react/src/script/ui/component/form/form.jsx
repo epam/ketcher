@@ -34,7 +34,7 @@ class Form extends Component {
     if (init) {
       const { valid, errors } = this.schema.serialize(init)
       const errs = getErrorsObj(errors)
-      const initialState = Object.assign({}, init, { init: true })
+      const initialState = { ...init, init: true }
       onUpdate(initialState, valid, errs)
     }
   }

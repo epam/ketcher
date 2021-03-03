@@ -25,7 +25,7 @@ import { Dialog } from '../../../../components'
 import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema'
 import { load } from '../../../../../state'
 
-import styles from './Miew.module.less'
+import classes from './Miew.module.less'
 
 /* OPTIONS for MIEW */
 const BACKGROUND_COLOR = {
@@ -129,7 +129,7 @@ class MiewDialog extends Component {
         title="Miew"
         params={prop}
         buttons={[
-          <div key="warning" className={styles.warning}>
+          <div key="warning" className={classes.warning}>
             {CHANGING_WARNING}
           </div>,
           'Close',
@@ -137,7 +137,7 @@ class MiewDialog extends Component {
             Apply
           </button>
         ]}>
-        <div className={styles.dialog_body}>
+        <div className={classes.dialog_body}>
           <div
             ref={el => {
               this.miewContainer = el

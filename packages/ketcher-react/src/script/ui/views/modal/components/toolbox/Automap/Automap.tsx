@@ -20,7 +20,7 @@ import Form, { Field } from '../../../../../component/form/form'
 import { Dialog } from '../../../../components'
 import { BaseProps, BaseCallProps } from '../../../modal.types'
 
-import styles from './Automap.module.less'
+import classes from './Automap.module.less'
 
 type Props = BaseProps & BaseCallProps
 
@@ -43,7 +43,7 @@ const Automap = (props: Props) => {
   return (
     <Dialog
       title="Reaction Auto-Mapping"
-      className={styles.automap}
+      className={classes.automap}
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}>

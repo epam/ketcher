@@ -20,10 +20,9 @@ import { useFormContext } from '../../../../../../../../../hooks'
 import { Field } from '../../../../../../../component/form/form'
 import { RgroupLogicProps } from '../../RgroupLogic'
 
-import styles from './IfThenSelect.module.less'
+import classes from './IfThenSelect.module.less'
 
-type Props = Pick<RgroupLogicProps, 'label'> &
-  Pick<RgroupLogicProps, 'rgroupLabels'>
+type Props = Pick<RgroupLogicProps, 'label' | 'rgroupLabels'>
 
 const IfThenSelect = (props: Props) => {
   const PROP_NAME = 'ifthen'
@@ -42,7 +41,7 @@ const IfThenSelect = (props: Props) => {
     }
   })
 
-  return <Field schema={desc} className={styles.field} {...props} />
+  return <Field schema={desc} className={classes.field} {...props} />
 }
 
 export default IfThenSelect

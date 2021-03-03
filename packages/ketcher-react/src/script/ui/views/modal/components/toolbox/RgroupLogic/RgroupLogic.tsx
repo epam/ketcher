@@ -22,7 +22,7 @@ import { Dialog } from '../../../../components'
 import IfThenSelect from './components'
 import { BaseProps, BaseCallProps } from '../../../modal.types'
 
-import styles from './RgroupLogic.module.less'
+import classes from './RgroupLogic.module.less'
 
 interface RgroupLogicProps extends BaseProps {
   frags: Set<number>
@@ -40,7 +40,7 @@ const RgroupLogic = (props: Props) => {
   return (
     <Dialog
       title="R-Group Logic"
-      className={styles.rgroupLogic}
+      className={classes.rgroupLogic}
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}>

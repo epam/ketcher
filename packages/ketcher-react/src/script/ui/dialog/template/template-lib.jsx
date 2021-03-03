@@ -44,7 +44,8 @@ import {
   deleteTmpl
 } from '../../state/templates'
 import { onAction } from '../../state'
-import styles from './template-lib.module.less'
+
+import classes from './template-lib.module.less'
 
 const GREEK_SIMBOLS = {
   Alpha: 'A',
@@ -196,7 +197,7 @@ class TemplateLib extends Component {
           'Cancel',
           'OK'
         ]}>
-        <div className={styles.dialog_body}>
+        <div className={classes.dialog_body}>
           <label>
             Filter:
             <Input

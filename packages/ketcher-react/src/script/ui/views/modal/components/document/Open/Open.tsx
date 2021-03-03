@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { FunctionComponent, useState } from 'react'
+import React, { FC, useState } from 'react'
 
 import { formatProperties } from 'ketcher-core'
 import { Dialog } from '../../../../components'
@@ -21,17 +21,17 @@ import OpenButton from '../../../../../component/view/openbutton'
 import ClipArea from '../../../../../component/cliparea'
 import { BaseProps, BaseCallProps } from '../../../modal.types'
 
-import styles from './Open.module.less'
+import classes from './Open.module.less'
 
 interface OpenProps {
-  server: any
+  server?: any
 }
 
 type Props = OpenProps & Pick<BaseProps, 'className'> & BaseCallProps
 
-const Open: FunctionComponent<Props> = props => {
-  const [structStr, setStructStr] = useState('')
-  const [fragment, setFragment] = useState(false)
+const Open: FC<Props> = props => {
+  const [structStr, setStructStr] = useState<string>('')
+  const [fragment, setFragment] = useState<boolean>(false)
   const { server, ...rest } = props
 
   const result = () => {
@@ -54,7 +54,7 @@ const Open: FunctionComponent<Props> = props => {
   return (
     <Dialog
       title="Open Structure"
-      className={styles.open}
+      className={classes.open}
       result={result}
       params={rest}
       buttons={[
@@ -89,4 +89,4 @@ const Open: FunctionComponent<Props> = props => {
 }
 
 export type { OpenProps }
-export { Open }
+export default Open

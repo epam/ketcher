@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useRef, useEffect, FunctionComponent } from 'react'
+import React, { useRef, useEffect, FC } from 'react'
 import * as KN from 'w3c-keyname'
 import clsx from 'clsx'
 
@@ -42,7 +42,7 @@ interface DialogCallProps {
 
 type Props = DialogProps & DialogCallProps
 
-const Dialog: FunctionComponent<Props> = props => {
+const Dialog: FC<Props> = props => {
   const {
     children,
     title,
@@ -74,7 +74,7 @@ const Dialog: FunctionComponent<Props> = props => {
         document.querySelector('.cliparea') || document.body
       element?.focus()
     }
-  }, [])
+  }, [dialogRef, dialogRef.current])
 
   const exit = mode => {
     const key = mode === 'OK' ? 'onOk' : 'onCancel'
@@ -131,5 +131,4 @@ const Dialog: FunctionComponent<Props> = props => {
   )
 }
 
-export type { DialogParamsCallProps }
-export { Dialog }
+export default Dialog

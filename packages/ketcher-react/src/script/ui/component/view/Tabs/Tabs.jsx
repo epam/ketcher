@@ -17,7 +17,7 @@
 import React, { Component } from 'react'
 import clsx from 'clsx'
 
-import styles from './Tabs.module.less'
+import classes from './Tabs.module.less'
 
 class Tabs extends Component {
   constructor(props) {
@@ -41,12 +41,12 @@ class Tabs extends Component {
     return (
       <div>
         <ul className={className} tabIndex={tabIndex}>
-          <li className={styles.tabs}>
+          <li className={classes.tabs}>
             {tabs.map((tabPanel, index) => (
               <a // eslint-disable-line
                 key={index}
                 className={clsx({
-                  [styles.active]: this.state.tabIndex === index
+                  [classes.active]: this.state.tabIndex === index
                 })}
                 onClick={ev => this.changeTab(ev, index)}>
                 {tabPanel.caption}

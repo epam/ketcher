@@ -16,10 +16,10 @@
 
 import React, { ReactElement } from 'react'
 
-import styles from './Spinner.module.less'
+import classes from './Spinner.module.less'
 
 function Spinner(): ReactElement {
-  return <div className={styles.spinner} />
+  return <div className={classes.spinner} />
 }
 
 export default Spinner

@@ -20,7 +20,7 @@ import Form, { Field } from '../../../../../component/form/form'
 import { Dialog } from '../../../../components'
 import { BaseProps, BaseCallProps } from '../../../modal.types'
 
-import styles from './Bond.module.less'
+import classes from './Bond.module.less'
 
 interface BondProps extends BaseProps {
   center: number
@@ -35,7 +35,7 @@ const Bond = (props: Props) => {
   return (
     <Dialog
       title="Bond Properties"
-      className={styles.bond}
+      className={classes.bond}
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}>
@@ -48,4 +48,5 @@ const Bond = (props: Props) => {
   )
 }
 
+export type { BondProps }
 export default Bond

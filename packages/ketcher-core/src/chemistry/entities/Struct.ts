@@ -78,12 +78,12 @@ export class Struct {
     return this.rxnArrows.size === 1
   }
 
-  hasRxnPlus(): boolean {
-    return this.rxnPluses.size === 1
+  hasRxnPluses(): boolean {
+    return this.rxnPluses.size > 0
   }
 
   isRxn(): boolean {
-    return this.hasRxnArrow() || this.hasRxnPlus()
+    return this.hasRxnArrow() || this.hasRxnPluses()
   }
 
   isBlank(): boolean {

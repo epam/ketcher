@@ -39,9 +39,9 @@ class Form extends Component {
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     const { schema, result, customValid, ...rest } = this.props
-    if (schema.key && schema.key !== this.schema.key) {
+    if (schema.key && schema.key !== prevProps.schema.key) {
       this.schema = propSchema(schema, rest)
       this.schema.serialize(result) // hack: valid first state
       this.updateState(result)

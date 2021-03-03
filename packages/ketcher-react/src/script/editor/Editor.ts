@@ -462,8 +462,7 @@ class Editor {
         dst.rxnPluses.add(item.clone())
     })
 
-    dst.isReaction =
-      struct.isReaction && Boolean(dst.rxnArrows.size || dst.rxnPluses.size)
+    dst.isReaction = struct.isReaction && struct.isRxn()
 
     return dst
   }

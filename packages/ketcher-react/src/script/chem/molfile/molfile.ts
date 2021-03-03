@@ -119,7 +119,7 @@ class Molfile {
   ) {
     // eslint-disable-line max-statements
     /* saver */
-    this.reaction = molecule.rxnArrows.size > 0
+    this.reaction = molecule.hasRxnArrow()
     this.molfile = '' + molecule.name
     if (this.reaction) {
       if (molecule.rgroups.size > 0) {

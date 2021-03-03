@@ -87,7 +87,15 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
       )
       break
     case 'GEN':
-      SGroupdrawBrackets(set, render, sgroup, crossBonds, atomSet, bracketBox, d)
+      SGroupdrawBrackets(
+        set,
+        render,
+        sgroup,
+        crossBonds,
+        atomSet,
+        bracketBox,
+        d
+      )
       break
     case 'DAT':
       set = drawGroupDat(remol, sgroup)
@@ -286,7 +294,7 @@ function bracketPos(sg, render, mol, crossBonds) {
   if (!crossBonds || crossBonds.length !== 2) {
     sg.bracketDir = new Vec2(1, 0)
   } else {
-    const crossBondsValues = Array.prototype.concat.apply([], Object.values(crossBonds))
+    const crossBondsValues = Object.values(crossBonds).flat()
     var p1 = mol.bonds.get(crossBondsValues[0]).getCenter(mol)
     var p2 = mol.bonds.get(crossBondsValues[1]).getCenter(mol)
     sg.bracketDir = Vec2.diff(p2, p1).normalized()
@@ -333,7 +341,15 @@ function bracketPos(sg, render, mol, crossBonds) {
   sg.bracketBox = bb
 }
 
-function getBracketParameters(mol, crossBonds, atomSet, bracketBox, d, render, id) {
+function getBracketParameters(
+  mol,
+  crossBonds,
+  atomSet,
+  bracketBox,
+  d,
+  render,
+  id
+) {
   // eslint-disable-line max-params
   function BracketParams(c, d, w, h) {
     this.c = c
@@ -346,14 +362,24 @@ function getBracketParameters(mol, crossBonds, atomSet, bracketBox, d, render, i
   var n = d.rotateSC(1, 0)
 
   const crossBondsPerAtom = Object.values(crossBonds)
-  const crossBondsValues = Array.prototype.concat.apply([], crossBondsPerAtom)
+  const crossBondsValues = crossBondsPerAtom.flat()
   if (crossBondsValues.length < 2) {
     ;(function () {
       d = d || new Vec2(1, 0)
       n = n || d.rotateSC(1, 0)
       var bracketWidth = Math.min(0.25, bracketBox.sz().x * 0.3)
-      var cl = Vec2.lc2(d, bracketBox.p0.x, n, 0.5 * (bracketBox.p0.y + bracketBox.p1.y))
-      var cr = Vec2.lc2(d, bracketBox.p1.x, n, 0.5 * (bracketBox.p0.y + bracketBox.p1.y))
+      var cl = Vec2.lc2(
+        d,
+        bracketBox.p0.x,
+        n,
+        0.5 * (bracketBox.p0.y + bracketBox.p1.y)
+      )
+      var cr = Vec2.lc2(
+        d,
+        bracketBox.p1.x,
+        n,
+        0.5 * (bracketBox.p0.y + bracketBox.p1.y)
+      )
       var bracketHeight = bracketBox.sz().y
 
       brackets.push(

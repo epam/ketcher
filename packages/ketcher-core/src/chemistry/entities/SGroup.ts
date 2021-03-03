@@ -190,14 +190,17 @@ export class SGroup {
     mol: any,
     parentAtomSet: Pile<number>
   ): { [key: number]: Array<Bond> } {
-    const crossBonds: { [key: number]: Array<Bond> }= {}
+    const crossBonds: { [key: number]: Array<Bond> } = {}
     mol.bonds.forEach((bond, bid) => {
       if (parentAtomSet.has(bond.begin) && !parentAtomSet.has(bond.end)) {
         if (!crossBonds[bond.begin]) {
           crossBonds[bond.begin] = []
         }
         crossBonds[bond.begin].push(bid)
-      } else if (parentAtomSet.has(bond.end) && !parentAtomSet.has(bond.begin) ) {
+      } else if (
+        parentAtomSet.has(bond.end) &&
+        !parentAtomSet.has(bond.begin)
+      ) {
         if (!crossBonds[bond.end]) {
           crossBonds[bond.end] = []
         }
@@ -207,9 +210,13 @@ export class SGroup {
     return crossBonds
   }
 
-  static bracketPos(sGroup, mol, crossBondsPerAtom: { [key: number]: Array<Bond> }): void {
+  static bracketPos(
+    sGroup,
+    mol,
+    crossBondsPerAtom: { [key: number]: Array<Bond> }
+  ): void {
     var atoms = sGroup.atoms
-    const crossBonds = Array.prototype.concat.apply([], Object.values(crossBondsPerAtom))
+    const crossBonds = Object.values(crossBondsPerAtom).flat()
     if (!crossBonds || crossBonds.length !== 2) {
       sGroup.bracketDir = new Vec2(1, 0)
     } else {
@@ -234,19 +241,19 @@ export class SGroup {
         ;[bba.p0.y, bba.p1.y].forEach(y => {
           var v = new Vec2(x, y)
           var p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, d.rotateSC(1, 0)))
-          bbb = bbb === null ? new Box2Abs(p, p) : bbb!.include(p)
+          bbb = !bbb ? new Box2Abs(p, p) : bbb!.include(p)
         })
       })
-      braketBox = braketBox === null ? bbb : Box2Abs.union(braketBox, bbb!)
+      braketBox = !braketBox ? bbb : Box2Abs.union(braketBox, bbb!)
     })
     var vext = new Vec2(0.2, 0.4)
-    if (braketBox !== null) braketBox = braketBox!.extend(vext, vext)
+    if (braketBox) braketBox = braketBox!.extend(vext, vext)
     sGroup.bracketBox = braketBox
   }
 
   static getBracketParameters(
     mol,
-    crossBondsPerAtom:{ [key: number]: Array<Bond> },
+    crossBondsPerAtom: { [key: number]: Array<Bond> },
     atomSet: Pile<number>,
     bb,
     d,
@@ -254,7 +261,7 @@ export class SGroup {
   ): Array<any> {
     var brackets: Array<any> = []
     const crossBondsPerAtomValues = Object.values(crossBondsPerAtom)
-    const crossBonds = Array.prototype.concat.apply([], crossBondsPerAtomValues)
+    const crossBonds = crossBondsPerAtomValues.flat()
     if (crossBonds.length < 2) {
       ;(function () {
         d = d || new Vec2(1, 0)
@@ -269,7 +276,10 @@ export class SGroup {
           new SGroupBracketParams(cr, d, bracketWidth, bracketHeight)
         )
       })()
-    } else if (crossBonds.length === 2 && crossBondsPerAtomValues.length === 2) {
+    } else if (
+      crossBonds.length === 2 &&
+      crossBondsPerAtomValues.length === 2
+    ) {
       ;(function () {
         // eslint-disable-line max-statements
         var b1 = mol.bonds.get(crossBonds[0])

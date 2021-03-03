@@ -413,7 +413,7 @@ class Editor {
     // "auto-select" the atoms for the bonds in selection
     if (res.bonds) {
       res.bonds.forEach(bid => {
-        const bond = struct.bonds.get(bid)
+        const bond = struct.bonds.get(bid)!
         res.atoms = res.atoms || []
         if (res.atoms.indexOf(bond.begin) < 0) {
           res.atoms.push(bond.begin)

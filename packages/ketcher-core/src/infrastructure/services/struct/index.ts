@@ -19,6 +19,7 @@ import { ChemicalMimeType } from './structService.types'
 import type {
   StructService,
   StructServiceOptions,
+  GenerateImageOptions,
   AromatizeData,
   AromatizeResult,
   AutomapData,
@@ -49,6 +50,7 @@ export { RemoteStructService, RemoteStructServiceProvider, ChemicalMimeType }
 export type {
   StructService,
   StructServiceOptions,
+  GenerateImageOptions,
   AromatizeData,
   AromatizeResult,
   AutomapData,

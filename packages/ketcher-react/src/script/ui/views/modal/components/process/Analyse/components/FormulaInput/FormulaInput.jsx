@@ -30,7 +30,7 @@ function formulaInputMarkdown(formulaDescriptor) {
       {formulaDescriptor?.length > 0 &&
         formulaDescriptor.map(elementDescriptor => {
           return (
-            <React.Fragment key={elementDescriptor.symbol}>
+            <React.Fragment>
               {elementDescriptor.isotope > 0 && (
                 <sup>{elementDescriptor.isotope}</sup>
               )}

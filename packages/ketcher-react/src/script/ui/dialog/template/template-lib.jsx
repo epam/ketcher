@@ -44,7 +44,8 @@ import {
   deleteTmpl
 } from '../../state/templates'
 import { onAction } from '../../state'
-import styles from './template-lib.module.less'
+
+import classes from './template-lib.module.less'
 
 const GREEK_SIMBOLS = {
   Alpha: 'A',
@@ -142,10 +143,12 @@ class TemplateLib extends Component {
   }
 
   renderRow(row, index, COLS) {
+    debugger
     return (
       <div className="tr" key={index}>
         {row.map((tmpl, i) => (
           <div
+            key={tmpl.props.prerender}
             className={tmpl === this.props.selected ? 'td selected' : 'td'}
             title={greekify(tmplName(tmpl, index * COLS + i))}>
             <RenderTmpl
@@ -153,7 +156,7 @@ class TemplateLib extends Component {
               className="struct"
               onClick={() => this.select(tmpl)}
             />
-            <div class="btn-container">
+            <div className="btn-container">
               {tmpl.props.group === 'User Templates' && (
                 <button
                   className="delete-button"
@@ -196,7 +199,7 @@ class TemplateLib extends Component {
           'Cancel',
           'OK'
         ]}>
-        <div className={styles.dialog_body}>
+        <div className={classes.dialog_body}>
           <label>
             Filter:
             <Input

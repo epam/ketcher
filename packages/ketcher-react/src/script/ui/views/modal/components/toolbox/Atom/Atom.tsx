@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,46 +14,60 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useState, useCallback } from 'react'
-import { connect } from 'react-redux'
-import { atom as atomSchema } from '../../data/schema/struct-schema'
-import Form, { Field } from '../../component/form/form'
-import { Dialog } from '../../views/components'
+import React, { useState, useCallback, FC } from 'react'
 import { capitalize } from 'lodash/fp'
-import element from '../../../chem/element'
 
-function ElementNumber({ label }) {
-  const value = element.map[capitalize(label)] || ''
-  return (
-    <label>
-      Number:
-      <input className="number" type="text" readOnly value={value} />
-    </label>
-  )
+import { atom as atomSchema } from '../../../../../data/schema/struct-schema'
+import Form, { Field } from '../../../../../component/form/form'
+import { Dialog } from '../../../../components'
+import element from '../../../../../../chem/element'
+import ElementNumber from './ElementNumber'
+import { BaseProps, BaseCallProps } from '../../../modal.types'
+
+import classes from './Atom.module.less'
+
+interface AtomProps extends BaseProps {
+  alias: string
+  charge: string
+  exactChangeFlag: boolean
+  explicitValence: number
+  hCount: number
+  invRet: number
+  isotope: number
+  label: string
+  radical: number
+  ringBondCount: number
+  stereoParity: number
+  substitutionCount: number
+  unsaturatedAtom: boolean
 }
 
-function Atom(props) {
-  const { formState, ...prop } = props
-  const [currentLabel, setCurrentLabel] = useState(prop.label)
+type Props = AtomProps & BaseCallProps
+
+const Atom: FC<Props> = props => {
+  const { formState, stereoParity, ...rest } = props
+  const [currentLabel, setCurrentLabel] = useState<string>(rest.label)
+
   const onLabelChangeCallback = useCallback(newValue => {
     setCurrentLabel(newValue)
   }, [])
+
   return (
     <Dialog
       title="Atom Properties"
-      className="atom-props"
+      className={classes.atomProps}
       result={() => formState.result}
       valid={() => formState.valid}
-      params={prop}>
+      params={rest}>
       <Form
         schema={atomSchema}
         customValid={{
-          label: l => atomValid(l),
-          charge: ch => chargeValid(ch)
+          label: label => atomValid(label),
+          charge: charge => chargeValid(charge)
         }}
-        init={prop}
+        init={rest}
         {...formState}>
-        <fieldset className="main">
+        <fieldset className={classes.main}>
           <Field name="label" onChange={onLabelChangeCallback} />
           <Field name="alias" />
           <ElementNumber label={currentLabel} />
@@ -62,19 +76,19 @@ function Atom(props) {
           <Field name="isotope" />
           <Field name="radical" />
         </fieldset>
-        <fieldset className="query">
+        <fieldset className={classes.query}>
           <legend>Query specific</legend>
           <Field name="ringBondCount" />
           <Field name="hCount" />
           <Field name="substitutionCount" />
           <Field name="unsaturatedAtom" />
         </fieldset>
-        <fieldset className="reaction">
+        <fieldset className={classes.reaction}>
           <legend>Reaction flags</legend>
           <Field name="invRet" />
           <Field name="exactChangeFlag" />
         </fieldset>
-        PARITY: {props.stereoParity}
+        PARITY: {stereoParity}
       </Form>
     </Dialog>
   )
@@ -85,8 +99,9 @@ function atomValid(label) {
 }
 
 function chargeValid(charge) {
-  const pch = atomSchema.properties.charge.pattern.exec(charge)
-  return !(pch === null || (pch[1] !== '' && pch[3] !== ''))
+  const result = atomSchema.properties.charge.pattern.exec(charge)
+  return result && (result[1] === '' || result[3] === '')
 }
 
-export default connect(store => ({ formState: store.modal.form }))(Atom)
+export type { AtomProps }
+export default Atom

@@ -14,17 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, FC } from 'react'
 import * as KN from 'w3c-keyname'
 import clsx from 'clsx'
 
 import style from './Dialog.module.less'
 
 interface DialogProps {
-  children: React.ReactElement
   title: string
   params: DialogParams
-  buttons: Array<string | React.ReactElement>
+  buttons?: Array<string | React.ReactElement>
   className: string
 }
 interface DialogParams extends DialogParamsCallProps {
@@ -38,12 +37,12 @@ interface DialogParamsCallProps {
 
 interface DialogCallProps {
   result: () => any
-  valid: () => boolean
+  valid?: () => boolean
 }
 
 type Props = DialogProps & DialogCallProps
 
-const Dialog = (props: Props) => {
+const Dialog: FC<Props> = props => {
   const {
     children,
     title,
@@ -54,19 +53,19 @@ const Dialog = (props: Props) => {
     className,
     ...rest
   } = props
-  const formRef = useRef<HTMLFormElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (formRef?.current) {
+    if (dialogRef?.current) {
       const element: HTMLElement | null =
-        formRef.current.querySelector(
+        dialogRef.current.querySelector(
           [
             'input:not([type=checkbox]):not([type=button])',
             'textarea',
             '[contenteditable]',
             'select'
           ].join(',')
-        ) || formRef.current.querySelector(`button.${style.close}`)
+        ) || dialogRef.current.querySelector(`button.${style.close}`)
       element?.focus()
     }
 
@@ -75,7 +74,7 @@ const Dialog = (props: Props) => {
         document.querySelector('.cliparea') || document.body
       element?.focus()
     }
-  }, [])
+  }, [dialogRef, dialogRef.current])
 
   const exit = mode => {
     const key = mode === 'OK' ? 'onOk' : 'onCancel'
@@ -95,8 +94,8 @@ const Dialog = (props: Props) => {
   }
 
   return (
-    <form
-      ref={formRef}
+    <div
+      ref={dialogRef}
       role="dialog"
       onSubmit={event => event.preventDefault()}
       onKeyDown={keyDown}
@@ -128,9 +127,8 @@ const Dialog = (props: Props) => {
           )
         )}
       </footer>
-    </form>
+    </div>
   )
 }
 
-export type { DialogParamsCallProps }
-export { Dialog }
+export default Dialog

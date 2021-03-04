@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,31 @@
  ***************************************************************************/
 
 import React from 'react'
-import { connect } from 'react-redux'
 
-import { attachmentPoints as attachmentPointsSchema } from '../../data/schema/struct-schema'
-import Form, { Field } from '../../component/form/form'
-import { Dialog } from '../../views/components'
+import { attachmentPoints as attachmentPointsSchema } from '../../../../../data/schema/struct-schema'
+import Form, { Field } from '../../../../../component/form/form'
+import { Dialog } from '../../../../components'
+import { BaseProps, BaseCallProps } from '../../../modal.types'
 
-function AttachmentPoints(props) {
-  const { formState, ...prop } = props
+import classes from './Attach.module.less'
+
+interface AttachPointsProps extends BaseProps {
+  primary: boolean
+  secondary: boolean
+}
+
+type Props = AttachPointsProps & BaseCallProps
+
+const AttachPoints = (props: Props) => {
+  const { formState, ...rest } = props
   return (
     <Dialog
       title="Attachment Points"
-      className="attach-points"
+      className={classes.attachPoints}
       result={() => formState.result}
       valid={() => formState.valid}
-      params={prop}>
-      <Form schema={attachmentPointsSchema} init={prop} {...formState}>
+      params={rest}>
+      <Form schema={attachmentPointsSchema} init={rest} {...formState}>
         <Field name="primary" />
         <Field name="secondary" />
       </Form>
@@ -38,6 +47,5 @@ function AttachmentPoints(props) {
   )
 }
 
-export default connect(store => ({ formState: store.modal.form }))(
-  AttachmentPoints
-)
+export type { AttachPointsProps }
+export default AttachPoints

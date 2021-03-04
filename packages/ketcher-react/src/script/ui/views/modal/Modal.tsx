@@ -20,7 +20,9 @@ import clsx from 'clsx'
 
 import modals from '../../dialog'
 import mediaSizes from './mediaSizes'
-import styles from './Modal.module.less'
+import { BaseCallProps } from './modal.types'
+
+import classes from './Modal.module.less'
 
 interface ModalProps {
   modal: {
@@ -30,12 +32,7 @@ interface ModalProps {
   }
 }
 
-interface ModalCallProps {
-  onCancel: () => void
-  onOk: (result: any) => void
-}
-
-type Props = ModalProps & ModalCallProps
+type Props = ModalProps & BaseCallProps
 
 function Modal(props: Props) {
   const { modal, ...rest } = props
@@ -52,10 +49,10 @@ function Modal(props: Props) {
     throw new Error(`There is no modal window named ${modal.name}`)
 
   return (
-    <div className={styles.modalOverlay} ref={containerRef}>
+    <div className={classes.modalOverlay} ref={containerRef}>
       <Component
         className={clsx({
-          [styles.smallScreen]:
+          [classes.smallScreen]:
             (height && height <= mediaSizes.smallHeight) ||
             (width && width <= mediaSizes.smallWidth)
         })}
@@ -65,5 +62,5 @@ function Modal(props: Props) {
   )
 }
 
-export type { ModalProps, ModalCallProps }
+export type { ModalProps }
 export { Modal }

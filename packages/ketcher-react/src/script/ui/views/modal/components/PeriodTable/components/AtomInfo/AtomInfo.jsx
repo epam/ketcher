@@ -19,7 +19,7 @@ import { sketchingColors as elementColor } from '../../../../../../../chem/eleme
 import element from '../../../../../../../chem/element'
 import clsx from 'clsx'
 
-import styles from './AtomInfo.module.less'
+import classes from './AtomInfo.module.less'
 
 function AtomInfo({ el, isInfo }) {
   const numberStyle = {
@@ -32,7 +32,7 @@ function AtomInfo({ el, isInfo }) {
     fontSize: '2em'
   }
   return (
-    <div className={clsx(styles.ket_atom_info, !isInfo && styles.none)}>
+    <div className={clsx(classes.ket_atom_info, !isInfo && classes.none)}>
       <div style={numberStyle}>{element.map[el.label]}</div>
       <span style={elemStyle}>{el.label}</span>
       <br />

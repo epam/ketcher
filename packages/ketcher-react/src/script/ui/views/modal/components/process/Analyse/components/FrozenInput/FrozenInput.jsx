@@ -21,7 +21,8 @@ function FrozenInput({ value }) {
     <input
       type="text"
       spellCheck={false}
-      value={value} //TODO: fix React warning
+      value={value}
+      onChange={event => event.preventDefault()}
     />
   )
 }

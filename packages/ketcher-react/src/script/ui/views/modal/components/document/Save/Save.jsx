@@ -33,7 +33,7 @@ import { Dialog } from '../../../../components'
 import Form, { Field } from '../../../../../component/form/form'
 import SaveButton from '../../../../../component/view/savebutton'
 
-import styles from './Save.module.less'
+import classes from './Save.module.less'
 
 const saveSchema = {
   title: 'Save',
@@ -169,7 +169,7 @@ class SaveDialog extends Component {
     return (
       <Dialog
         title="Save Structure"
-        className={styles.save}
+        className={classes.save}
         params={this.props}
         buttons={[
           <SaveButton
@@ -190,7 +190,7 @@ class SaveDialog extends Component {
           </button>,
           'Close'
         ]}>
-        <div className={styles.form_container}>
+        <div className={classes.form_container}>
           <Form
             schema={this.saveSchema}
             init={{
@@ -203,9 +203,9 @@ class SaveDialog extends Component {
           </Form>
           <textarea value={structStr} readOnly ref={this.textAreaRef} />
           {warnings.map(warning => (
-            <div className={styles.warnings_container}>
-              <div className={styles.warning} />
-              <div className={styles.warnings_arr}>{warning}</div>
+            <div className={classes.warnings_container}>
+              <div className={classes.warning} />
+              <div className={classes.warnings_arr}>{warning}</div>
             </div>
           ))}
         </div>

@@ -15,7 +15,8 @@
  ***************************************************************************/
 
 import React from 'react'
-import styles from './TypeChoice.module.less'
+
+import classes from './TypeChoice.module.less'
 
 const typeSchema = [
   { title: 'Single', value: 'atom' },
@@ -25,14 +26,14 @@ const typeSchema = [
 
 function TypeChoice({ value, onChange, ...props }) {
   return (
-    <fieldset className={styles.fieldset}>
+    <fieldset className={classes.fieldset}>
       {typeSchema.map(type => (
         <label key={type.title}>
           <input
             type="radio"
             value={type.value}
-            checked={type.value === value} //TODO: fix React Warning
-            onClick={() => onChange(type.value)}
+            checked={type.value === value}
+            onChange={() => onChange(type.value)}
             {...props}
           />
           {type.title}

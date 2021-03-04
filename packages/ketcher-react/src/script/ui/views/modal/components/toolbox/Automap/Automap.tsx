@@ -1,6 +1,5 @@
 /****************************************************************************
-/****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +15,14 @@
  ***************************************************************************/
 
 import React from 'react'
-import { connect } from 'react-redux'
 
-import Form, { Field } from '../../component/form/form'
-import { Dialog } from '../../views/components'
-import { automap } from '../../state/server'
+import Form, { Field } from '../../../../../component/form/form'
+import { Dialog } from '../../../../components'
+import { BaseProps, BaseCallProps } from '../../../modal.types'
+
+import classes from './Automap.module.less'
+
+type Props = BaseProps & BaseCallProps
 
 export const automapSchema = {
   title: 'Reaction Auto-Mapping',
@@ -36,15 +38,15 @@ export const automapSchema = {
   }
 }
 
-function Automap(props) {
-  const { formState, ...prop } = props
+const Automap = (props: Props) => {
+  const { formState, ...rest } = props
   return (
     <Dialog
       title="Reaction Auto-Mapping"
-      className="automap"
+      className={classes.automap}
       result={() => formState.result}
       valid={() => formState.valid}
-      params={prop}>
+      params={rest}>
       <Form schema={automapSchema} {...formState}>
         <Field name="mode" />
       </Form>
@@ -52,12 +54,4 @@ function Automap(props) {
   )
 }
 
-export default connect(
-  store => ({ formState: store.modal.form }),
-  (dispatch, props) => ({
-    onOk: res => {
-      dispatch(automap(res))
-      props.onOk(res)
-    }
-  })
-)(Automap)
+export default Automap

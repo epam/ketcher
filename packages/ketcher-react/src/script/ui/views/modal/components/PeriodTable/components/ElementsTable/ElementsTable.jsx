@@ -17,7 +17,8 @@
 import React, { Component } from 'react'
 import element from '../../../../../../../chem/element'
 import { Header, MainRow, OutinerRow } from './components'
-import styles from './ElementsTable.module.less'
+
+import classes from './ElementsTable.module.less'
 
 const metalPrefix = [
   'alkali',
@@ -84,7 +85,7 @@ class ElementsTable extends Component {
     ]
 
     return classes.map(className => {
-      return styles[className]
+      return classes[className]
     })
   }
 
@@ -93,13 +94,13 @@ class ElementsTable extends Component {
     const callbacks = { currentEvents, onSelect }
     return (
       <table
-        className={styles.table}
+        className={classes.table}
         summary="Periodic table of the chemical elements">
         <Header />
         {main.map((row, index) => (
           <MainRow
             atomClassNames={this.getAtomClassNames}
-            className={styles.main_row}
+            className={classes.main_row}
             key={index}
             row={row}
             caption={index + 1}
@@ -109,14 +110,14 @@ class ElementsTable extends Component {
         ))}
         <OutinerRow
           atomClassNames={this.getAtomClassNames}
-          className={styles.outiner_row}
+          className={classes.outiner_row}
           row={lanthanides}
           caption="*"
           {...callbacks}
         />
         <OutinerRow
           atomClassNames={this.getAtomClassNames}
-          className={styles.outiner_row}
+          className={classes.outiner_row}
           row={actinides}
           caption="**"
           {...callbacks}

@@ -23,7 +23,6 @@ import { BaseCallProps } from '../../../modal.types'
 
 type StateProps = OpenProps
 type DispatchProps = Pick<BaseCallProps, 'onOk'>
-type OwnProps = OpenProps
 
 const mapStateToProps = (state): StateProps => ({ server: state.server })
 
@@ -40,7 +39,7 @@ const mapDispatchToProps = (dispatch, ownProps): DispatchProps => ({
   }
 })
 
-const OpenContainer: ComponentType<OwnProps> = connect(
+const OpenContainer: ComponentType = connect(
   mapStateToProps,
   mapDispatchToProps
 )(Open)

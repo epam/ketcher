@@ -24,7 +24,7 @@ import { BaseProps, BaseCallProps } from '../../../modal.types'
 import classes from './Open.module.less'
 
 interface OpenProps {
-  server?: any
+  server: any
 }
 
 type Props = OpenProps & Pick<BaseProps, 'className'> & BaseCallProps

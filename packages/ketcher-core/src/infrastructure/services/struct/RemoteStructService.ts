@@ -270,7 +270,7 @@ class RemoteStructService implements StructService {
       'indigo/render',
       this.apiPath,
       this.defaultOptions
-    )(data, options)
+    )({ struct: data }, options)
   }
 }
 

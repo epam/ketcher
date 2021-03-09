@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import React, { useRef } from 'react'
-import useResizeObserver from 'use-resize-observer'
+import useResizeObserver from 'use-resize-observer/polyfilled'
 import clsx from 'clsx'
 
 import modals from '../../dialog'

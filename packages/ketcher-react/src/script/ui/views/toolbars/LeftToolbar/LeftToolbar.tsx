@@ -42,6 +42,7 @@ const selectOptions: ToolbarItem[] = makeItems([
 ])
 const reactionOptions: ToolbarItem[] = makeItems([
   'reaction-arrow',
+  'reaction-arrow-equilibrium',
   'reaction-plus',
   'reaction-automap',
   'reaction-map',

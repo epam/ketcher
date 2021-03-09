@@ -1,6 +1,6 @@
 import { ifDef } from '../../utils'
 import { moleculeToStruct } from './moleculeToStruct'
-import RGroup from '../../../chem/struct/rgroup'
+import { RGroup } from 'ketcher-core'
 
 export function rgroupToStruct(graphItem) {
   const struct = moleculeToStruct(graphItem)

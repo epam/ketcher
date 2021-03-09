@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom } from '../../chem/struct'
+import { Atom } from 'ketcher-core'
 import { fromAtomAddition, fromAtomsAttrs } from '../actions/atom'
 
 function RGroupAtomTool(editor) {

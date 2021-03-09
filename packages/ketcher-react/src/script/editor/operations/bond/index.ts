@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Bond } from '../../../chem/struct'
+import { Bond } from 'ketcher-core'
 import Restruct, { ReBond } from '../../../render/restruct'
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
@@ -63,6 +63,7 @@ class BondAdd extends BaseOperation {
     pp.begin = begin
     pp.end = end
 
+    // @ts-ignore
     const newBond = new Bond(pp)
     if (typeof this.data.bid === 'number') {
       struct.bonds.set(this.data.bid, newBond)
@@ -71,7 +72,7 @@ class BondAdd extends BaseOperation {
     }
 
     const { bid } = this.data
-    const structBond = struct.bonds.get(bid)
+    const structBond = struct.bonds.get(bid)!
 
     struct.bondInitHalfBonds(bid)
     struct.atomAddNeighbor(structBond.hb1)
@@ -98,14 +99,14 @@ class BondDelete extends BaseOperation {
   }
 
   execute(restruct: Restruct) {
-    const { bid, bond } = this.data
+    const { bid } = this.data
 
     // eslint-disable-line max-statements
     const struct = restruct.molecule
-    if (!bond) {
+    if (!this.data.bond) {
       this.data.bond = struct.bonds.get(bid)
-      this.data.begin = bond.begin
-      this.data.end = bond.end
+      this.data.begin = this.data.bond.begin
+      this.data.end = this.data.bond.end
     }
 
     BaseOperation.invalidateBond(restruct, bid)
@@ -122,22 +123,22 @@ class BondDelete extends BaseOperation {
     restruct.bonds.delete(bid)
     restruct.markItemRemoved()
 
-    const structBond = struct.bonds.get(bid)
+    const structBond = struct.bonds.get(bid)!
     ;[structBond.hb1, structBond.hb2].forEach(hbid => {
-      const halfBond = struct.halfBonds.get(hbid)
+      const halfBond = hbid && struct.halfBonds.get(hbid)
       if (!halfBond) {
         return
       }
 
-      const atom = struct.atoms.get(halfBond.begin)
-      const pos = atom.neighbors.indexOf(hbid)
+      const atom = struct.atoms.get(halfBond.begin)!
+      const pos = atom.neighbors.indexOf(hbid!)
       const prev = (pos + atom.neighbors.length - 1) % atom.neighbors.length
       const next = (pos + 1) % atom.neighbors.length
       struct.setHbNext(atom.neighbors[prev], atom.neighbors[next])
       atom.neighbors.splice(pos, 1)
     })
-    struct.halfBonds.delete(structBond.hb1)
-    struct.halfBonds.delete(structBond.hb2)
+    struct.halfBonds.delete(structBond.hb1!)
+    struct.halfBonds.delete(structBond.hb2!)
 
     struct.bonds.delete(bid)
   }

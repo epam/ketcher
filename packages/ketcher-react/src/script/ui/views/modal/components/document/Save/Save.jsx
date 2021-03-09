@@ -14,13 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
+import React, { Component, createRef } from 'react'
 import { connect } from 'react-redux'
 import {
   FormatterFactory,
   getPropertiesByFormat,
   formatProperties
 } from 'ketcher-core'
+
 import { molfileManager } from '../../../../../../chem/molfile'
 import smilesManager from '../../../../../../chem/smiles'
 import graphManager from '../../../../../../format/chemGraph'
@@ -31,9 +32,8 @@ import { check } from '../../../../../state/server'
 import { Dialog } from '../../../../components'
 import Form, { Field } from '../../../../../component/form/form'
 import SaveButton from '../../../../../component/view/savebutton'
-import { createRef } from 'react'
 
-import styles from './Save.module.less'
+import classes from './Save.module.less'
 
 const saveSchema = {
   title: 'Save',
@@ -145,6 +145,13 @@ class SaveDialog extends Component {
     if (saveWarning) {
       warnings.push(saveWarning)
     }
+    if (struct.rxnArrows.size > 1 && format !== 'graph') {
+      warnings.push(
+        `The ${
+          getPropertiesByFormat(format).name
+        } format does not support drawn elements: reaction arrows will be lost.`
+      )
+    }
     if (moleculeErrors) {
       warnings.push(...Object.values(moleculeErrors))
     }
@@ -162,7 +169,7 @@ class SaveDialog extends Component {
     return (
       <Dialog
         title="Save Structure"
-        className={styles.save}
+        className={classes.save}
         params={this.props}
         buttons={[
           <SaveButton
@@ -183,7 +190,7 @@ class SaveDialog extends Component {
           </button>,
           'Close'
         ]}>
-        <div className={styles.form_container}>
+        <div className={classes.form_container}>
           <Form
             schema={this.saveSchema}
             init={{
@@ -196,9 +203,9 @@ class SaveDialog extends Component {
           </Form>
           <textarea value={structStr} readOnly ref={this.textAreaRef} />
           {warnings.map(warning => (
-            <div className={styles.warnings_container}>
-              <div className={styles.warning} />
-              <div className={styles.warnings_arr}>{warning}</div>
+            <div className={classes.warnings_container}>
+              <div className={classes.warning} />
+              <div className={classes.warnings_arr}>{warning}</div>
             </div>
           ))}
         </div>

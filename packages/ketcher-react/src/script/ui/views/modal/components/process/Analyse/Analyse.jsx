@@ -25,7 +25,7 @@ import { changeRound } from '../../../../../state/options'
 import { analyse } from '../../../../../state/server'
 import { FrozenInput, FormulaInput } from './components'
 
-import styles from './Analyse.module.less'
+import classes from './Analyse.module.less'
 
 function roundOff(value, round) {
   if (typeof value === 'number') return value.toFixed(round)
@@ -48,7 +48,7 @@ class AnalyseDialog extends Component {
     return (
       <Dialog
         title="Calculated Values"
-        className={styles.analyse}
+        className={classes.analyse}
         buttons={['Close']}
         params={props}>
         <ul>

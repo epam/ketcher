@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import { RGroup } from '../../../chem/struct'
+import { RGroup } from 'ketcher-core'
 import Restruct, { ReRGroup } from '../../../render/restruct'
 
 export class RGroupFragment extends BaseOperation {

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Vec2 from '../../util/vec2'
+import { Vec2 } from 'ketcher-core'
 
 import {
   FragmentAdd,
@@ -103,11 +103,11 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
     })
   })
 
-  if (restruct.rxnArrows.size < 1) {
-    pstruct.rxnArrows.forEach(rxnArrow => {
-      action.addOp(new RxnArrowAdd(rxnArrow.pp.add(offset)).perform(restruct))
-    })
-  }
+  pstruct.rxnArrows.forEach(rxnArrow => {
+    action.addOp(
+      new RxnArrowAdd(rxnArrow.mode, rxnArrow.pp.add(offset)).perform(restruct)
+    )
+  })
 
   pstruct.rxnPluses.forEach(plus => {
     action.addOp(new RxnPlusAdd(plus.pp.add(offset)).perform(restruct))

@@ -1,4 +1,4 @@
-import { MolfileManager, Struct } from '../chem'
+import { MolfileManager, Struct } from 'chemistry'
 import { getPropertiesByFormat } from './formatProperties'
 import {
   ConvertData,
@@ -7,7 +7,7 @@ import {
   LayoutResult,
   StructService,
   StructServiceOptions
-} from '../infrastructure/services'
+} from 'infrastructure/services'
 import { StructFormatter, SupportedFormat } from './structFormatter.types'
 
 export class ServerFormatter implements StructFormatter {

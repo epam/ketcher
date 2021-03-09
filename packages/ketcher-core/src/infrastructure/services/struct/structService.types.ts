@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,6 +97,10 @@ export interface StructServiceOptions {
   [key: string]: string | number | boolean
 }
 
+export interface GenerateImageOptions extends StructServiceOptions {
+  outputFormat: 'png' | 'svg'
+}
+
 export interface StructService {
   info: () => Promise<InfoResult>
   convert: (
@@ -136,8 +140,8 @@ export interface StructService {
     options?: StructServiceOptions
   ) => Promise<CalculateResult>
   recognize: (blob: Blob, version: string) => Promise<RecognizeResult>
-  generatePngAsBase64: (
+  generateImageAsBase64: (
     data: string,
-    options?: StructServiceOptions
+    options?: GenerateImageOptions
   ) => Promise<string>
 }

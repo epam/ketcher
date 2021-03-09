@@ -36,6 +36,9 @@ export const arrowSchema = {
     },
     prop: {
       type: 'object'
+    },
+    mode: {
+      enum: ['simple', 'equilibrium']
     }
   }
 }

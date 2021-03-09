@@ -13,12 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-/* eslint-disable guard-for-in */ // todo
-
-import Vec2 from '../../util/vec2'
-import Pool from '../../util/pool'
-import { SGroup } from './../struct/index'
+import { SGroup, Pool, Vec2 } from 'ketcher-core'
 import utils from './utils'
 
 /**

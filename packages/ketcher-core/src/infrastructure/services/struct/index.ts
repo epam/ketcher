@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import { ChemicalMimeType } from './structService.types'
 import type {
   StructService,
   StructServiceOptions,
+  GenerateImageOptions,
   AromatizeData,
   AromatizeResult,
   AutomapData,
@@ -49,6 +50,7 @@ export { RemoteStructService, RemoteStructServiceProvider, ChemicalMimeType }
 export type {
   StructService,
   StructServiceOptions,
+  GenerateImageOptions,
   AromatizeData,
   AromatizeResult,
   AutomapData,

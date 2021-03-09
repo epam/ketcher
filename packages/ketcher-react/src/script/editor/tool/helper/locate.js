@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Vec2 from '../../../util/vec2'
+import { Vec2 } from 'ketcher-core'
 
 function getElementsInRectangle(restruct, p0, p1) {
   const bondList = []

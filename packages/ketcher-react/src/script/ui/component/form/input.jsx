@@ -46,20 +46,20 @@ GenericInput.val = function (ev, schema) {
   return isNumber && !isNaN(value - 0) ? value - 0 : value // eslint-disable-line
 }
 
-function TextArea({ schema, value, onChange, ...props }) {
-  return <textarea value={value} onInput={onChange} {...props} />
+function TextArea({ schema, value, onChange, ...rest }) {
+  return <textarea value={value} onInput={onChange} {...rest} />
 }
 
 TextArea.val = ev => ev.target.value
 
-function CheckBox({ schema, value = '', onChange, ...props }) {
+function CheckBox({ schema, value = '', onChange, ...rest }) {
   return (
     <input
       type="checkbox"
       checked={value}
       onClick={onChange}
       onChange={onChange}
-      {...props}
+      {...rest}
     />
   )
 }
@@ -69,16 +69,23 @@ CheckBox.val = function (ev) {
   return !!ev.target.checked
 }
 
-function Select({ schema, value, selected, onSelect, ...props }) {
+function Select({
+  schema,
+  value,
+  name,
+  onSelect,
+  className,
+  multiple = false
+}) {
   return (
-    <select onChange={onSelect} {...props}>
+    <select
+      onChange={onSelect}
+      value={value}
+      name={name}
+      multiple={multiple}
+      className={className}>
       {enumSchema(schema, (title, val) => (
-        <option
-          key={val}
-          //TODO: Warning: Use the `defaultValue` or `value` props on <select> instead of setting `selected` on <option>
-          selected={selected(val, value)}
-          //TODO: looks strange
-          value={typeof val !== 'object' && val}>
+        <option key={val} value={val}>
           {title}
         </option>
       ))}
@@ -103,7 +110,7 @@ function FieldSet({
   selected,
   onSelect,
   type = 'radio',
-  ...props
+  ...rest
 }) {
   return (
     <fieldset onClick={onSelect} className="radio">
@@ -112,9 +119,9 @@ function FieldSet({
           <label>
             <input
               type={type}
-              checked={selected(val, value)} //TODO: React warning defaultChecked
+              defaultChecked={selected(val, value)}
               value={typeof val !== 'object' && val}
-              {...props}
+              {...rest}
             />
             {title}
           </label>

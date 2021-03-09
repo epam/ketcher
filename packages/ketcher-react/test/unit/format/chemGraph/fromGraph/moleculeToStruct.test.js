@@ -3,13 +3,12 @@ import {
   atomToStruct,
   rglabelToStruct,
   atomListToStruct,
-  bondToStruct,
-  sgroupToStruct
+  bondToStruct
 } from '../../../../../src/script/format/chemGraph/fromGraph/moleculeToStruct'
 import testGraph from '../../data/testGraph.json'
 import testRglabel from '../../data/testRglabel.json'
 import testAtomList from '../../data/testAtomList.json'
-import { Atom, Bond } from '../../../../../src/script/chem/struct'
+import { Atom, Bond } from 'ketcher-core'
 
 const struct = moleculeToStruct(testGraph.mol0)
 

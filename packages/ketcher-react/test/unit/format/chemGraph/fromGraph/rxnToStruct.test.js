@@ -1,5 +1,5 @@
 import { rxnToStruct } from '../../../../../src/script/format/chemGraph/fromGraph/rxnToStruct'
-import Struct from '../../../../../src/script/chem/struct/index'
+import { Struct } from 'ketcher-core'
 import testGraph from '../../data/testGraph.json'
 
 test('rxn to struct test if-path', () => {

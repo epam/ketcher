@@ -44,7 +44,9 @@ function createApi(
     check: structService.check.bind(structService),
     calculate: structService.calculate.bind(structService),
     recognize: structService.recognize.bind(structService),
-    generatePngAsBase64: structService.generatePngAsBase64.bind(structService)
+    generateImageAsBase64: structService.generateImageAsBase64.bind(
+      structService
+    )
   })
 }
 

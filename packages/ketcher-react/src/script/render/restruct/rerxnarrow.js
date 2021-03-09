@@ -15,11 +15,9 @@
  ***************************************************************************/
 
 import ReObject from './reobject'
-import Box2Abs from '../../util/box2abs'
-import Vec2 from '../../util/vec2'
 import draw from '../draw'
 import util from '../util'
-import scale from '../../util/scale'
+import { RxnArrowMode, Box2Abs, Vec2, scale } from 'ketcher-core'
 
 function ReRxnArrow(/* chem.RxnArrow*/ arrow) {
   this.init('rxnArrow')
@@ -50,12 +48,17 @@ ReRxnArrow.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 ReRxnArrow.prototype.show = function (restruct, id, options) {
   var render = restruct.render
   var centre = scale.obj2scaled(this.item.pp, options)
-  var path = draw.arrow(
-    render.paper,
-    new Vec2(centre.x - options.scale, centre.y),
-    new Vec2(centre.x + options.scale, centre.y),
-    options
-  )
+  var startPoint = new Vec2(centre.x - options.scale, centre.y)
+  var endPoint = new Vec2(centre.x + options.scale, centre.y)
+  var path
+  switch (this.item.mode) {
+    case RxnArrowMode.simple:
+      path = draw.arrow(render.paper, startPoint, endPoint, options)
+      break
+    case RxnArrowMode.equilibrium:
+      path = draw.equilibriumArrow(render.paper, startPoint, endPoint, options)
+      break
+  }
   var offset = options.offset
   if (offset != null) path.translateAbs(offset.x, offset.y)
   this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())))

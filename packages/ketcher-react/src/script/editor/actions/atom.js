@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { without } from 'lodash/fp'
 
-import { Atom, Bond, RGroup } from '../../chem/struct'
+import { Atom, Bond, RGroup } from 'ketcher-core'
 import {
   FragmentAdd,
   AtomAdd,

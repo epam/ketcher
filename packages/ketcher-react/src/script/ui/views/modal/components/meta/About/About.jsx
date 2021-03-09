@@ -19,7 +19,7 @@ import { connect } from 'react-redux'
 import Logo from './logo.svg'
 import { Dialog } from '../../../../components'
 
-import styles from './about.module.less'
+import classes from './about.module.less'
 
 function AboutDialog(props) {
   const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info
@@ -27,7 +27,7 @@ function AboutDialog(props) {
   return (
     <Dialog
       title="About"
-      className={styles.about}
+      className={classes.about}
       params={props}
       buttons={['Close']}>
       <a

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import molfile from '../../chem/molfile'
-import { Bond } from '../../chem/struct'
+import { Bond } from 'ketcher-core'
 
 import { BondAttr } from '../operations'
 import Action from '../shared/action'

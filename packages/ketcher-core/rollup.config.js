@@ -1,3 +1,4 @@
+import ttypescript from 'ttypescript'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import babel from '@rollup/plugin-babel'
 import replace from '@rollup/plugin-replace'
@@ -61,7 +62,7 @@ const config = {
       }
     ),
     json(),
-    typescript(),
+    typescript({ typescript: ttypescript }),
     babel({
       extensions,
       babelHelpers: 'runtime',

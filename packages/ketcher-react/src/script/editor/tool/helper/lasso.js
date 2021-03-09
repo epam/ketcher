@@ -16,7 +16,7 @@
 
 import locate from './locate'
 import draw from '../../../render/draw'
-import scale from '../../../util/scale'
+import { scale } from 'ketcher-core'
 
 function LassoHelper(mode, editor, fragment) {
   this.mode = mode

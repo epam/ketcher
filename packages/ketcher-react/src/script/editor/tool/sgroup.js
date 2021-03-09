@@ -18,8 +18,8 @@ import isEqual from 'lodash/fp/isEqual'
 
 import { SgContexts } from '../shared/constants'
 
-import Pile from '../../util/pile'
-import { checkOverlapping } from '../../chem/struct/sgforest'
+import { Pile } from 'ketcher-core'
+import { checkOverlapping } from 'ketcher-core'
 import LassoHelper from './helper/lasso'
 import {
   fromSgroupDeletion,

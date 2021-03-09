@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Pile from '../../util/pile'
+import { Pile } from 'ketcher-core'
 
 import Action from '../shared/action'
 import {
@@ -24,7 +24,7 @@ import {
   RxnPlusDelete,
   SimpleObjectDelete
 } from '../operations'
-import { Atom, RGroup } from '../../chem/struct'
+import { Atom, RGroup } from 'ketcher-core'
 
 import { fromStereoAtomAttrs } from './atom'
 import {

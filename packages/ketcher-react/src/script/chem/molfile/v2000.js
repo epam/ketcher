@@ -16,10 +16,17 @@
 
 /* eslint-disable guard-for-in */ // todo
 
-import Vec2 from '../../util/vec2'
-import Pool from '../../util/pool'
 import element from './../element'
-import Struct, { Atom, AtomList, Bond, RGroup, SGroup } from './../struct/index'
+import {
+  Struct,
+  Atom,
+  AtomList,
+  Bond,
+  RGroup,
+  SGroup,
+  Vec2,
+  Pool
+} from 'ketcher-core'
 
 import sGroup from './parseSGroup'
 import utils from './utils'

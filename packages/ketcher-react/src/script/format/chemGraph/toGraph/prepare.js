@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Pile from '../../../util/pile'
-import Vec2 from '../../../util/vec2'
+import { Pile, Vec2 } from 'ketcher-core'
 
 export function prepareStructForGraph(struct) {
   const graphNodes = []
@@ -56,7 +55,8 @@ export function prepareStructForGraph(struct) {
     graphNodes.push({
       type: 'arrow',
       center: item.pp,
-      data: {}
+      data: {},
+      mode: item.mode
     })
   })
 

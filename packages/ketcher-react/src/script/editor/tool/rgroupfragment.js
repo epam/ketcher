@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RGroup } from '../../chem/struct'
+import { RGroup } from 'ketcher-core'
 import {
   fromRGroupAttrs,
   fromRGroupFragment,

@@ -15,12 +15,9 @@
  ***************************************************************************/
 
 import ReObject from './reobject'
-import Box2Abs from '../../util/box2abs'
 import draw from '../draw'
 import util from '../util'
-import scale from '../../util/scale'
-import Vec2 from '../../util/vec2'
-import { SimpleObjectMode } from '../../chem/struct'
+import { SimpleObjectMode, Box2Abs, Vec2, scale } from 'ketcher-core'
 
 const tfx = util.tfx
 
@@ -114,7 +111,8 @@ ReSimpleObject.prototype.calcDistance = function (p, s) {
 
   distRef = this.getReferencePointDistance(p)
   const refPoint = distRef.minDist <= 8 / s ? distRef.refPoint : null
-
+  // distance is a smallest between dist to figure and it's reference points
+  dist = Math.min(distRef.minDist, dist)
   return { minDist: dist, refPoint: refPoint }
 }
 
@@ -156,19 +154,7 @@ ReSimpleObject.prototype.getReferencePointDistance = function (p) {
 ReSimpleObject.prototype.getReferencePoints = function () {
   const refPoints = []
   switch (this.item.mode) {
-    case SimpleObjectMode.ellipse: {
-      const p0 = this.item.pos[0]
-      const rad = Vec2.diff(this.item.pos[1], p0)
-      const rx = rad.x / 2
-      const ry = rad.y / 2
-      refPoints.push(
-        new Vec2(p0.x + rx, p0.y),
-        new Vec2(p0.x, p0.y + ry),
-        new Vec2(p0.x + 2 * rx, p0.y + ry),
-        new Vec2(p0.x + rx, p0.y + 2 * ry)
-      );
-      break
-    }
+    case SimpleObjectMode.ellipse:
     case SimpleObjectMode.rectangle: {
       const p0 = new Vec2(
         tfx(Math.min(this.item.pos[0].x, this.item.pos[1].x)),
@@ -207,7 +193,7 @@ ReSimpleObject.prototype.highlightPath = function (render) {
   this.item.pos.forEach((p, index) => {
     point[index] = scale.obj2scaled(p, render.options)
   })
-  const s = render.options.scale
+  const scaleFactor = render.options.scale
 
   const path = []
 
@@ -221,17 +207,20 @@ ReSimpleObject.prototype.highlightPath = function (render) {
         render.paper.ellipse(
           tfx(point[0].x + rx),
           tfx(point[0].y + ry),
-          tfx(Math.abs(rx) + s / 8),
-          tfx(Math.abs(ry) + s / 8)
+          tfx(Math.abs(rx) + scaleFactor / 8),
+          tfx(Math.abs(ry) + scaleFactor / 8)
         )
       )
-      if (Math.abs(rx) - s / 8 > 0 && Math.abs(ry) - s / 8 > 0)
+      if (
+        Math.abs(rx) - scaleFactor / 8 > 0 &&
+        Math.abs(ry) - scaleFactor / 8 > 0
+      )
         path.push(
           render.paper.ellipse(
             tfx(point[0].x + rx),
             tfx(point[0].y + ry),
-            tfx(Math.abs(rx) - s / 8),
-            tfx(Math.abs(ry) - s / 8)
+            tfx(Math.abs(rx) - scaleFactor / 8),
+            tfx(Math.abs(ry) - scaleFactor / 8)
           )
         )
       break
@@ -240,34 +229,34 @@ ReSimpleObject.prototype.highlightPath = function (render) {
     case SimpleObjectMode.rectangle: {
       path.push(
         render.paper.rect(
-          tfx(Math.min(point[0].x, point[1].x) - s / 8),
-          tfx(Math.min(point[0].y, point[1].y) - s / 8),
+          tfx(Math.min(point[0].x, point[1].x) - scaleFactor / 8),
+          tfx(Math.min(point[0].y, point[1].y) - scaleFactor / 8),
           tfx(
             Math.max(point[0].x, point[1].x) -
               Math.min(point[0].x, point[1].x) +
-              s / 4
+              scaleFactor / 4
           ),
           tfx(
             Math.max(point[0].y, point[1].y) -
               Math.min(point[0].y, point[1].y) +
-              s / 4
+              scaleFactor / 4
           )
         )
       )
 
       path.push(
         render.paper.rect(
-          tfx(Math.min(point[0].x, point[1].x) + s / 8),
-          tfx(Math.min(point[0].y, point[1].y) + s / 8),
+          tfx(Math.min(point[0].x, point[1].x) + scaleFactor / 8),
+          tfx(Math.min(point[0].y, point[1].y) + scaleFactor / 8),
           tfx(
             Math.max(point[0].x, point[1].x) -
               Math.min(point[0].x, point[1].x) -
-              s / 4
+              scaleFactor / 4
           ),
           tfx(
             Math.max(point[0].y, point[1].y) -
               Math.min(point[0].y, point[1].y) -
-              s / 4
+              scaleFactor / 4
           )
         )
       )
@@ -287,35 +276,35 @@ ReSimpleObject.prototype.highlightPath = function (render) {
 
       const k = point[0].x > point[1].x ? -1 : 1
 
-      p0.x = point[0].x - k * ((s / 8) * Math.cos(angle))
-      p0.y = point[0].y - k * ((s / 8) * Math.sin(angle))
-      p1.x = point[1].x + k * ((s / 8) * Math.cos(angle))
-      p1.y = point[1].y + k * ((s / 8) * Math.sin(angle))
+      p0.x = point[0].x - k * ((scaleFactor / 8) * Math.cos(angle))
+      p0.y = point[0].y - k * ((scaleFactor / 8) * Math.sin(angle))
+      p1.x = point[1].x + k * ((scaleFactor / 8) * Math.cos(angle))
+      p1.y = point[1].y + k * ((scaleFactor / 8) * Math.sin(angle))
 
       poly.push(
         'M',
-        p0.x + ((k * s) / 8) * Math.sin(angle),
-        p0.y - ((k * s) / 8) * Math.cos(angle)
+        p0.x + ((k * scaleFactor) / 8) * Math.sin(angle),
+        p0.y - ((k * scaleFactor) / 8) * Math.cos(angle)
       )
       poly.push(
         'L',
-        p1.x + ((k * s) / 8) * Math.sin(angle),
-        p1.y - ((k * s) / 8) * Math.cos(angle)
+        p1.x + ((k * scaleFactor) / 8) * Math.sin(angle),
+        p1.y - ((k * scaleFactor) / 8) * Math.cos(angle)
       )
       poly.push(
         'L',
-        p1.x - ((k * s) / 8) * Math.sin(angle),
-        p1.y + ((k * s) / 8) * Math.cos(angle)
+        p1.x - ((k * scaleFactor) / 8) * Math.sin(angle),
+        p1.y + ((k * scaleFactor) / 8) * Math.cos(angle)
       )
       poly.push(
         'L',
-        p0.x - ((k * s) / 8) * Math.sin(angle),
-        p0.y + ((k * s) / 8) * Math.cos(angle)
+        p0.x - ((k * scaleFactor) / 8) * Math.sin(angle),
+        p0.y + ((k * scaleFactor) / 8) * Math.cos(angle)
       )
       poly.push(
         'L',
-        p0.x + ((k * s) / 8) * Math.sin(angle),
-        p0.y - ((k * s) / 8) * Math.cos(angle)
+        p0.x + ((k * scaleFactor) / 8) * Math.sin(angle),
+        p0.y - ((k * scaleFactor) / 8) * Math.cos(angle)
       )
 
       path.push(render.paper.path(poly))
@@ -328,18 +317,6 @@ ReSimpleObject.prototype.highlightPath = function (render) {
 
   const enhPaths = path.map(p => {
     return { path: p, stylesApplied: false }
-  })
-
-  const refPoints = this.getReferencePoints()
-
-  refPoints.forEach(rp => {
-    const scaledRP = scale.obj2scaled(rp, render.options)
-    enhPaths.push({
-      path: render.paper
-        .circle(scaledRP.x, scaledRP.y, s / 8)
-        .attr({ fill: 'black' }),
-      stylesApplied: true
-    })
   })
 
   return enhPaths
@@ -366,9 +343,23 @@ ReSimpleObject.prototype.makeSelectionPlate = function (
     return scale.obj2scaled(p, restruct.render.options) || new Vec2()
   })
 
-  const path = generatePath(this.item.mode, paper, pos)
-
-  return path.attr(styles.highlightStyleSimpleObject)
+  const refPoints = this.getReferencePoints()
+  const scaleFactor = restruct.render.options.scale
+  var selectionSet = restruct.render.paper.set()
+  selectionSet.push(
+    generatePath(this.item.mode, paper, pos).attr(
+      styles.highlightStyleSimpleObject
+    )
+  )
+  refPoints.forEach(rp => {
+    const scaledRP = scale.obj2scaled(rp, restruct.render.options)
+    selectionSet.push(
+      restruct.render.paper
+        .circle(scaledRP.x, scaledRP.y, scaleFactor / 8)
+        .attr({ fill: 'black' })
+    )
+  })
+  return selectionSet
 }
 
 ReSimpleObject.prototype.show = function (restruct, id, options) {

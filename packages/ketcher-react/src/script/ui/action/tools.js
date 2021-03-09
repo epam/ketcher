@@ -16,7 +16,7 @@
 
 import { bond as bondSchema } from '../data/schema/struct-schema'
 import { toBondType } from '../data/convert/structconv'
-import { SimpleObjectMode } from '../../chem/struct'
+import { SimpleObjectMode, RxnArrowMode } from 'ketcher-core'
 
 const toolActions = {
   'select-lasso': {
@@ -85,7 +85,11 @@ const toolActions = {
   },
   'reaction-arrow': {
     title: 'Reaction Arrow Tool',
-    action: { tool: 'reactionarrow' }
+    action: { tool: 'reactionarrow', opts: RxnArrowMode.simple }
+  },
+  'reaction-arrow-equilibrium': {
+    title: 'Reaction Arrow Equilibrium Tool',
+    action: { tool: 'reactionarrow', opts: RxnArrowMode.equilibrium }
   },
   'reaction-plus': {
     title: 'Reaction Plus Tool',

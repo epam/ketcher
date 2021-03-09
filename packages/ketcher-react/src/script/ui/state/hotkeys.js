@@ -154,10 +154,7 @@ export function initClipboard(dispatch, getState) {
 
       const struct = state.editor.render.ctab.molecule
 
-      if (
-        structStr &&
-        (!struct.hasRxnArrow() || !rxnTextPlain.test(data['text/plain']))
-      )
+      if (structStr || !rxnTextPlain.test(data['text/plain']))
         loadStruct(structStr, { fragment: true })
     }
   }

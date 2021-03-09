@@ -20,10 +20,13 @@ import TemplateAttach from './template/template-attach'
 import TemplatesLib from './template/TemplateLib'
 
 // schemify dialogs
-import Atom from './toolbox/atom'
-import AttachPoints from './toolbox/attach'
-import Automap from './toolbox/automap'
-import Bond from './toolbox/bond'
+import {
+  Atom,
+  Bond,
+  AttachPoints,
+  Automap,
+  RgroupLogic
+} from '../views/modal/components/toolbox'
 import {
   Check,
   Analyse,
@@ -32,7 +35,6 @@ import {
 } from '../views/modal/components/process'
 import EnhancedStereo from './toolbox/enhanced-stereo'
 import LabelEdit from './toolbox/labeledit'
-import RgroupLogic from './toolbox/rgroup-logic'
 import { Open, Save } from '../views/modal/components/document'
 import { Settings, Help, About } from '../views/modal/components/meta'
 import Sgroup from './toolbox/sgroup'

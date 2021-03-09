@@ -35,7 +35,7 @@ import {
   GenericGroups
 } from './components'
 
-import styles from './PeriodTable.module.less'
+import classes from './PeriodTable.module.less'
 
 class Table extends Component {
   constructor(props) {
@@ -110,7 +110,7 @@ class Table extends Component {
   periodicTable = value => {
     const { type, current, isInfo } = this.state
     return (
-      <div className={styles.period_table}>
+      <div className={classes.period_table}>
         <AtomInfo el={current} isInfo={isInfo} />
         <ElementsTable
           value={value}
@@ -145,12 +145,12 @@ class Table extends Component {
     return (
       <Dialog
         title="Periodic table"
-        className={styles.elements_table}
+        className={classes.elements_table}
         params={this.props}
         result={this.result}>
         <Tabs
-          className={styles.tabs}
-          contentClassName={styles.tabs_content}
+          className={classes.tabs}
+          contentClassName={classes.tabs_content}
           captions={tabs}
           tabIndex={type !== 'gen' ? 0 : 1}
           changeTab={this.changeTabType}

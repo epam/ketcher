@@ -45,6 +45,7 @@ import {
   LayoutData,
   CalculateData,
   StructServiceOptions,
+  GenerateImageOptions,
   InfoResult,
   ConvertData,
   ConvertResult,
@@ -475,7 +476,7 @@ class IndigoService implements StructService {
             (acc, curr) => {
               const [key, value] = curr
               const mappedPropertyName = mapWarningGroup(key)
-              acc[mappedPropertyName] = value['message']
+              acc[mappedPropertyName] = value
 
               return acc
             },
@@ -563,10 +564,12 @@ class IndigoService implements StructService {
     return Promise.reject('Not supported in standalone mode')
   }
 
-  generatePngAsBase64(
+  generateImageAsBase64(
     data: string,
-    options?: StructServiceOptions
+    options: GenerateImageOptions = { outputFormat: 'png' }
   ): Promise<string> {
+    const { outputFormat, ...restOptions } = options
+
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()
 
@@ -582,12 +585,12 @@ class IndigoService implements StructService {
 
       const commandOptions: CommandOptions = {
         ...this.defaultOptions,
-        ...options
+        ...restOptions
       }
 
       const commandData: GenerateImageCommandData = {
         struct: data,
-        outputFormat: 'png',
+        outputFormat: outputFormat || 'png',
         options: commandOptions
       }
 

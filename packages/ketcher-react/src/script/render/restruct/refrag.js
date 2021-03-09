@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import Box2Abs from '../../util/box2abs'
-import Vec2 from '../../util/vec2'
 import ReObject from './reobject'
-import scale from '../../util/scale'
+import { Box2Abs, Vec2, scale } from 'ketcher-core'
 
 function ReFrag(/* Struct.Fragment */ frag) {
   this.init('frag')

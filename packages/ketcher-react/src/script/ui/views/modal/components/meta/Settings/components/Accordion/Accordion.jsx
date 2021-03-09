@@ -17,7 +17,8 @@
 import React, { Component } from 'react'
 import clsx from 'clsx'
 import { xor } from 'lodash/fp'
-import styles from './Accordion.module.less'
+
+import classes from './Accordion.module.less'
 
 class Accordion extends Component {
   constructor(props) {
@@ -40,8 +41,8 @@ class Accordion extends Component {
   static Group({ caption, isActive, onActive, index, children }) {
     return (
       <li
-        className={clsx(styles.accordion_tab, {
-          [styles.hidden]: !isActive(index)
+        className={clsx(classes.accordion_tab, {
+          [classes.hidden]: !isActive(index)
         })}>
         <a // eslint-disable-line
           onClick={() => onActive(index)}>

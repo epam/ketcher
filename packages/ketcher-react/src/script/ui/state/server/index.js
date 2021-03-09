@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { omit, without } from 'lodash/fp'
-import Pool from '../../../util/pool'
+import { Pool } from 'ketcher-core'
 
 import molfile from '../../../chem/molfile'
 
@@ -166,19 +166,18 @@ export function serverTransform(method, data, struct) {
 export function serverCall(editor, server, method, options) {
   const selection = editor.selection()
   let selectedAtoms = []
-  let struct = editor.struct()
-  if (selection)
-    selectedAtoms = selection.atoms
+  const aidMap = new Map()
+  const struct = editor.struct().clone(null, null, false, aidMap)
+  if (selection) {
+    selectedAtoms = (selection.atoms
       ? selection.atoms
       : editor.explicitSelected().atoms
+    ).map(aid => aidMap.get(aid))
 
-  if (struct.hasRxnArrow()) {
-    const aidMap = new Map()
-    struct = editor.struct().clone(null, null, false, aidMap)
-
-    const reindexMap = getReindexMap(struct.getComponents())
-
-    selectedAtoms = selectedAtoms.map(aid => reindexMap.get(aidMap.get(aid)))
+    if (struct.hasRxnArrow()) {
+      const reindexMap = getReindexMap(struct.getComponents())
+      selectedAtoms = selectedAtoms.map(aid => reindexMap.get(aid))
+    }
   }
 
   return server.then(() =>

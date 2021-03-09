@@ -18,12 +18,12 @@ import React from 'react'
 import generics from '../../../../../../../chem/generics'
 import GenGroup from './components'
 
-import styles from './GenericGroups.module.less'
+import classes from './GenericGroups.module.less'
 
 function GenericGroups({ selected, onSelect, className, ...props }) {
   return (
-    <div summary="Generic Groups" className={styles[className]} {...props}>
-      <div className={styles.col}>
+    <div summary="Generic Groups" className={classes[className]} {...props}>
+      <div className={classes.col}>
         <GenGroup
           gen={generics}
           name="atom"
@@ -37,7 +37,7 @@ function GenericGroups({ selected, onSelect, className, ...props }) {
           onSelect={onSelect}
         />
       </div>
-      <div className={styles.col}>
+      <div className={classes.col}>
         <GenGroup
           gen={generics}
           name="group"

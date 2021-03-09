@@ -51,7 +51,7 @@ class Action {
     return action
   }
 
-  isDummy(restruct: Restruct) {
+  isDummy(restruct?: Restruct) {
     return (
       this.operations.find(
         // TODO [RB] the condition is always true for op.* operations

@@ -1,5 +1,6 @@
-import { MolfileParseOptions, Struct } from '../chem'
-import { StructServiceOptions } from '../infrastructure/services'
+import { MolfileParseOptions } from 'chemistry'
+import { Struct } from 'chemistry'
+import { StructServiceOptions } from 'infrastructure/services'
 
 export interface StructFormatter {
   getStructureFromStructAsync: (struct: Struct) => Promise<string>

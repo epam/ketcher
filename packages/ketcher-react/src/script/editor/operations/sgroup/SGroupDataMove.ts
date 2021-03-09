@@ -32,7 +32,7 @@ export class SGroupDataMove extends BaseOperation {
     const { d, id } = this.data
     const { sgroups } = restruct.molecule
 
-    sgroups.get(id).pp.add_(d) // eslint-disable-line no-underscore-dangle
+    sgroups.get(id)!.pp?.add_(d) // eslint-disable-line no-underscore-dangle
     this.data.d = d.negated()
 
     // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway

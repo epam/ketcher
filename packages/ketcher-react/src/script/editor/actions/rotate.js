@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import Vec2 from '../../util/vec2'
-import Pile from '../../util/pile'
-
-import { Bond } from '../../chem/struct'
+import { Bond, Pile, Vec2 } from 'ketcher-core'
 
 import {
   AtomMove,

@@ -73,16 +73,19 @@ function ActionButton({
   const menuRef = useRef(null)
   const disabled =
     status.disabled || (indigoVerification && disableableButtons.includes(name))
+
+  const onClick = event => {
+    if (!status.selected || isMenuOpened(menuRef.current)) {
+      onAction(action.action)
+      event.stopPropagation()
+    }
+  }
+
   return (
     <button
       ref={menuRef}
       disabled={disabled}
-      onClick={event => {
-        if (!status.selected || isMenuOpened(menuRef.current)) {
-          onAction(action.action)
-          event.stopPropagation()
-        }
-      }}
+      onClick={onClick}
       title={shortcut ? `${action.title} (${shortcut})` : action.title}>
       <Icon name={name} />
       <kbd>{shortcut}</kbd>

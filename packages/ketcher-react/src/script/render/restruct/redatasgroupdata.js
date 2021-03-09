@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import ReObject from './reobject'
-import scale from '../../util/scale'
+import { scale } from 'ketcher-core'
 
 function ReDataSGroupData(sgroup) {
   this.init('sgroupData')

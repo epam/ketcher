@@ -17,7 +17,7 @@
 import React from 'react'
 import clsx from 'clsx'
 
-import styles from './GenSet.module.less'
+import classes from './GenSet.module.less'
 
 function GenSet({ labels, caption = '', selected, onSelect, ...props }) {
   return (
@@ -28,9 +28,9 @@ function GenSet({ labels, caption = '', selected, onSelect, ...props }) {
           onClick={() => onSelect(label)}
           className={clsx(
             {
-              [styles.selected]: selected(label)
+              [classes.selected]: selected(label)
             },
-            styles.button
+            classes.button
           )}>
           {label}
         </button>

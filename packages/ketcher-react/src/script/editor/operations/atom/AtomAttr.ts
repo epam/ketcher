@@ -36,7 +36,7 @@ export class AtomAttr extends BaseOperation {
   execute(restruct: Restruct) {
     const { aid, attribute, value } = this.data
 
-    const atom = restruct.molecule.atoms.get(aid)
+    const atom = restruct.molecule.atoms.get(aid)!
     if (!this.data2) {
       this.data2 = {
         aid,
@@ -59,7 +59,7 @@ export class AtomAttr extends BaseOperation {
 
   isDummy(restruct: Restruct) {
     return (
-      restruct.molecule.atoms.get(this.data.aid)[this.data.attribute] ===
+      restruct.molecule.atoms.get(this.data.aid)![this.data.attribute] ===
       this.data.value
     )
   }

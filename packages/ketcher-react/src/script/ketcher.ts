@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 import {
+  Struct,
+  SupportedFormat,
   FormatterFactory,
   StructService,
-  SupportedFormat,
-  Struct,
   StructServiceOptions
 } from 'ketcher-core'
 import { isEqual } from 'lodash/fp'
@@ -148,14 +148,14 @@ class Ketcher {
     this.origin = position ? this.editor.historyStack[position - 1] : null
   }
 
-  generatePngAsync(
+  generateImageAsync(
     data: string,
     options?: StructServiceOptions
   ): Promise<Blob> {
     return this.server
-      .generatePngAsBase64(data, options)
+      .generateImageAsBase64(data, { ...options, outputFormat: 'svg' })
       .then(base64 =>
-        fetch(`data:image/png;base64,${base64}`).then(response =>
+        fetch(`data:image/svg+xml;base64,${base64}`).then(response =>
           response.blob()
         )
       )

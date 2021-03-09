@@ -1,4 +1,4 @@
-import { ChemicalMimeType } from '../infrastructure/services'
+import { ChemicalMimeType } from 'infrastructure/services'
 import { SupportedFormat } from './structFormatter.types'
 import { SupportedFormatProperties } from './SupportedFormatProperties'
 

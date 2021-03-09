@@ -125,7 +125,7 @@ class BondDelete extends BaseOperation {
 
     const structBond = struct.bonds.get(bid)!
     ;[structBond.hb1, structBond.hb2].forEach(hbid => {
-      const halfBond = hbid && struct.halfBonds.get(hbid)
+      const halfBond = struct.halfBonds.get(hbid!)
       if (!halfBond) {
         return
       }

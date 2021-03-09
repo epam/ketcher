@@ -18,7 +18,7 @@ import {
   StructService,
   SupportedFormat,
   Struct,
-  StructServiceOptions
+  GenerateImageOptions
 } from 'ketcher-core'
 import { isEqual } from 'lodash/fp'
 import molfile, { MolfileFormat } from './chem/molfile'
@@ -150,14 +150,25 @@ class Ketcher {
 
   generateImageAsync(
     data: string,
-    options?: StructServiceOptions
+    options: GenerateImageOptions = { outputFormat: 'png' }
   ): Promise<Blob> {
+    let meta = ''
+
+    switch (options.outputFormat) {
+      case 'svg':
+        meta = 'image/svg+xml'
+        break
+
+      case 'png':
+      default:
+        meta = 'image/png'
+        options.outputFormat = 'png' // if option wasn't pass
+    }
+
     return this.server
-      .generateImageAsBase64(data, { ...options, outputFormat: 'svg' })
+      .generateImageAsBase64(data, options)
       .then(base64 =>
-        fetch(`data:image/svg+xml;base64,${base64}`).then(response =>
-          response.blob()
-        )
+        fetch(`data:${meta};base64,${base64}`).then(response => response.blob())
       )
   }
 }

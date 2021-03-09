@@ -69,7 +69,7 @@ class AnalyseDialog extends Component {
             <li key={item.key}>
               <label>{item.name}:</label>
               {item.key === 'gross' ? (
-                <FormulaInput value={values ? values[item.key] : 0} />
+                <FormulaInput value={values ? values[item.key] : ''} />
               ) : (
                 <FrozenInput
                   value={

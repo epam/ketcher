@@ -24,6 +24,7 @@ import {
   RxnPlusMove,
   SimpleObjectMove,
   EnhancedFlagMove,
+  TextMove,
   FragmentDeleteStereoAtom,
   FragmentStereoFlag,
   FragmentAdd,
@@ -116,6 +117,12 @@ export function fromMultipleMove(restruct, lists, d) {
   if (lists.enhancedFlags) {
     lists.enhancedFlags.forEach(fid => {
       action.addOp(new EnhancedFlagMove(fid, d))
+    })
+  }
+
+  if (lists.texts) {
+    lists.texts.forEach(text => {
+      action.addOp(new TextMove(text, d, true))
     })
   }
 

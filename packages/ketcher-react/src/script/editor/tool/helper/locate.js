@@ -98,6 +98,17 @@ function getElementsInRectangle(restruct, p0, p1) {
       sgroupDataList.push(id)
   })
 
+  const textsList = []
+  restruct.texts.forEach((item, id) => {
+    if (
+      item.item.position.x > x0 &&
+      item.item.position.x < x1 &&
+      item.item.position.y > y0 &&
+      item.item.position.y < y1
+    )
+      textsList.push(id)
+  })
+
   return {
     atoms: atomList,
     bonds: bondList,
@@ -105,7 +116,8 @@ function getElementsInRectangle(restruct, p0, p1) {
     rxnPluses: rxnPlusesList,
     enhancedFlags: enhancedFlagList,
     sgroupData: sgroupDataList,
-    simpleObjects: simpleObjectsList
+    simpleObjects: simpleObjectsList,
+    texts: textsList
   }
 }
 
@@ -134,6 +146,7 @@ function getElementsInPolygon(restruct, rr) {
   const rxnArrowsList = []
   const rxnPlusesList = []
   const simpleObjectsList = []
+  const textsList = []
 
   restruct.rxnArrows.forEach((item, id) => {
     if (isPointInPolygon(r, item.item.pp)) rxnArrowsList.push(id)
@@ -145,6 +158,10 @@ function getElementsInPolygon(restruct, rr) {
 
   restruct.simpleObjects.forEach((item, id) => {
     if (isPointInPolygon(r, item.item.pos[0])) simpleObjectsList.push(id)
+  })
+
+  restruct.texts.forEach((item, id) => {
+    if (isPointInPolygon(r, item.item.position)) textsList.push(id)
   })
 
   const enhancedFlagList = []
@@ -164,7 +181,8 @@ function getElementsInPolygon(restruct, rr) {
     rxnPluses: rxnPlusesList,
     enhancedFlags: enhancedFlagList,
     sgroupData: sgroupDataList,
-    simpleObjects: simpleObjectsList
+    simpleObjects: simpleObjectsList,
+    texts: textsList
   }
 }
 

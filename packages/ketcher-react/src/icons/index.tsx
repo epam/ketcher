@@ -77,6 +77,7 @@ import Template5Icon from './files/template-5.svg'
 import Template6Icon from './files/template-6.svg'
 import Template7Icon from './files/template-7.svg'
 import TemplateLibIcon from './files/template-lib.svg'
+import TextIcon from './files/text.svg'
 import TransfromFlipHIcon from './files/transform-flip-h.svg'
 import TransfromFlipVIcon from './files/transform-flip-v.svg'
 import TransformRotateIcon from './files/transform-rotate.svg'
@@ -153,6 +154,7 @@ const icons = {
   'template-6': Template6Icon,
   'template-7': Template7Icon,
   'template-lib': TemplateLibIcon,
+  'text-editor': TextIcon,
   'transform-flip-h': TransfromFlipHIcon,
   'transform-flip-v': TransfromFlipVIcon,
   'transform-rotate': TransformRotateIcon,

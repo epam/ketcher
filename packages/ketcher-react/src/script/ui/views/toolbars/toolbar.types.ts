@@ -23,6 +23,7 @@ type LeftGroup =
   | 'sgroup'
   | 'rgroup'
   | 'shape'
+  | 'text'
 
 type BottomGroup = 'template-common' | 'template-lib'
 
@@ -104,6 +105,8 @@ type LeftToolbarItemVariant =
   | 'shape-ellipse'
   | 'shape-rectangle'
   | 'shape-line'
+  // text group
+  | 'text-editor'
 
 type BottomToolbarItemVariant = 'template-common' | 'template-lib'
 

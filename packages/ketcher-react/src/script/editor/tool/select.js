@@ -60,7 +60,8 @@ SelectTool.prototype.mousedown = function (event) {
           'rxnArrows',
           'rxnPluses',
           'enhancedFlags',
-          'simpleObjects'
+          'simpleObjects',
+          'texts'
         ]
       : [
           'atoms',
@@ -71,7 +72,8 @@ SelectTool.prototype.mousedown = function (event) {
           'rxnArrows',
           'rxnPluses',
           'enhancedFlags',
-          'simpleObjects'
+          'simpleObjects',
+          'texts'
         ]
   )
 
@@ -178,7 +180,8 @@ SelectTool.prototype.mousemove = function (event) {
           'rxnArrows',
           'rxnPluses',
           'enhancedFlags',
-          'simpleObjects'
+          'simpleObjects',
+          'texts'
         ]
       : [
           'atoms',
@@ -189,7 +192,8 @@ SelectTool.prototype.mousemove = function (event) {
           'rxnArrows',
           'rxnPluses',
           'enhancedFlags',
-          'simpleObjects'
+          'simpleObjects',
+          'texts'
         ]
 
   editor.hover(editor.findItem(event, maps))

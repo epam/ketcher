@@ -19,6 +19,7 @@ import { initSdata, sdataReducer } from './sdata'
 
 export const formsState = {
   // TODO: create from schema.{smth}.defaultValue
+  // TODO: change validation method
   atomProps: {
     errors: {},
     valid: true,
@@ -104,6 +105,11 @@ export const formsState = {
     result: {
       type: 'GEN'
     }
+  },
+  text: {
+    errors: {},
+    valid: true,
+    result: {}
   },
   sdata: initSdata()
 }

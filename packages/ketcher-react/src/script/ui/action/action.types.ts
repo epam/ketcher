@@ -79,6 +79,7 @@ type ToolVariant =
   | 'template-6'
   | 'template-7'
   | 'template-lib'
+  | 'text-editor'
   | 'transform-flip-h'
   | 'transform-flip-v'
   | 'transform-rotate'

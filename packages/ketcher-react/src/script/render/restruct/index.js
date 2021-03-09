@@ -30,6 +30,7 @@ import ReEnhancedFlag from './reenhancedflag'
 import ReSGroup from './resgroup'
 import ReLoop from './reloop'
 import ReSimpleObject from './resimpleobject'
+import ReText from './retext'
 
 var LAYER_MAP = {
   background: 0,
@@ -56,8 +57,9 @@ function ReStruct(molecule, render) {
   this.sgroupData = new Map()
   this.enhancedFlags = new Map()
   this.simpleObjects = new Map()
+  this.texts = new Map()
   /** @type {Struct} */
-  this.molecule = molecule || new Struct()
+  this.molecule = molecule || new Struct() //TODO: rename 'molecule', as Struct is an object representing all entities we render in editor
   this.initialized = false
   this.layers = []
   this.initLayers()
@@ -93,6 +95,10 @@ function ReStruct(molecule, render) {
 
   molecule.simpleObjects.forEach((item, id) => {
     this.simpleObjects.set(id, new ReSimpleObject(item))
+  })
+
+  molecule.texts.forEach((item, id) => {
+    this.texts.set(id, new ReText(item))
   })
 
   molecule.frags.forEach((item, id) => {
@@ -453,6 +459,7 @@ ReStruct.prototype.update = function (force) {
   this.showRGroups()
   this.showEnhancedFlags()
   this.showSimpleObjects()
+  this.showTexts()
   this.clearMarks()
 
   return true
@@ -484,6 +491,15 @@ ReStruct.prototype.showSimpleObjects = function () {
   this.simpleObjectsChanged.forEach((value, id) => {
     const simpleObject = this.simpleObjects.get(id)
     simpleObject.show(this, id, options)
+  })
+}
+
+ReStruct.prototype.showTexts = function () {
+  const options = this.render.options
+
+  this.textsChanged.forEach((value, id) => {
+    const text = this.texts.get(id)
+    text.show(this, id, options)
   })
 }
 
@@ -592,6 +608,14 @@ ReStruct.prototype.showBonds = function () {
   })
 }
 
+ReStruct.prototype.showText = function () {
+  this.texts.forEach((text, id) => {
+    const path = text.draw(this.render, id)
+    if (path) this.addReObjectPath('data', text.visel, path, null, true)
+    // TODO fragment selection & highlighting
+  })
+}
+
 ReStruct.prototype.setSelection = function (selection) {
   const redraw = arguments.length === 0 // render.update only
 
@@ -652,7 +676,8 @@ ReStruct.maps = {
   enhancedFlags: ReEnhancedFlag,
   sgroups: ReSGroup,
   reloops: ReLoop,
-  simpleObjects: ReSimpleObject
+  simpleObjects: ReSimpleObject,
+  texts: ReText
 }
 
 export default ReStruct
@@ -665,5 +690,6 @@ export {
   ReRGroup,
   ReEnhancedFlag,
   ReSGroup,
-  ReSimpleObject
+  ReSimpleObject,
+  ReText
 }

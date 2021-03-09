@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-export * from './atom'
-export * from './bond'
-export * from './CanvasLoad'
-export * from './descriptors'
-export * from './EnhancedFlagMove'
-export * from './ifThen'
-export * from './fragment'
-export * from './fragmentStereoAtom'
-export * from './FragmentStereoFlag'
-export * from './LoopMove'
-export * from './OperationType'
-export * from './rgroup'
-export * from './rxn'
-export * from './simpleObject'
-export * from './sgroup'
-export * from './text'
+
+import React, { useState } from 'react'
+import { connect } from 'react-redux'
+
+import { Dialog } from '../../../components/Dialog'
+
+const Text = props => {
+  const { formState, position, id, type } = props
+  const [text, setText] = useState(props.label)
+
+  const result = () => ({ label: text, position, id, type })
+
+  return (
+    <Dialog
+      title="Text editor"
+      params={props}
+      result={result}
+      valid={() => formState.form.valid}>
+      <textarea
+        value={text}
+        onChange={event => setText(event.target.value)}
+        rows="20"
+        cols="20"></textarea>
+    </Dialog>
+  )
+}
+
+export default connect(store => ({ formState: store.modal }))(Text)

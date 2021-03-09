@@ -28,7 +28,37 @@ const findMaps = {
   rxnPluses: findClosestRxnPlus,
   frags: findClosestFrag,
   rgroups: findClosestRGroup,
-  simpleObjects: findClosestSimpleObject
+  simpleObjects: findClosestSimpleObject,
+  texts: findClosestText
+}
+
+function findClosestText(restruct, pos, skip, minDist) {
+  let closestTextId = null
+  const maxMinDist = SELECTION_DISTANCE_COEFFICIENT
+  const skipId = skip && skip.map === 'texts' ? skip.id : null
+
+  minDist = minDist || maxMinDist
+  minDist = Math.min(minDist, maxMinDist)
+
+  restruct.texts.forEach((text, id) => {
+    if (id === skipId) return
+
+    const dist = Vec2.dist(pos, text.item.position)
+
+    if (dist < minDist) {
+      closestTextId = id
+      minDist = dist
+    }
+  })
+
+  if (closestTextId !== null) {
+    return {
+      id: closestTextId,
+      dist: minDist
+    }
+  } else {
+    return null
+  }
 }
 
 function findClosestSimpleObject(restruct, pos) {

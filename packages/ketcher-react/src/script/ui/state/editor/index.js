@@ -64,7 +64,10 @@ export default function initEditor(dispatch, getState) {
     onElementEdit: selem => {
       const elem = fromElement(selem)
       let dlg = null
-      if (element.map[elem.label]) {
+
+      if (elem.type === 'text') {
+        dlg = openDialog(dispatch, 'text', elem).then(res => res)
+      } else if (element.map[elem.label]) {
         dlg = openDialog(dispatch, 'atomProps', elem)
       } else if (Object.keys(elem).length === 1 && 'ap' in elem) {
         dlg = openDialog(dispatch, 'attachmentPoints', elem.ap).then(res => ({
@@ -116,7 +119,6 @@ export default function initEditor(dispatch, getState) {
       if (Object.keys(rgroup).length > 2) {
         const rgroupLabels = Array.from(struct.rgroups.keys())
         if (!rgroup.range) rgroup.range = '>0'
-
         return openDialog(
           dispatch,
           'rgroupLogic',

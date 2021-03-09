@@ -26,6 +26,7 @@ import { HalfBond } from './HalfBond'
 import { Loop } from './Loop'
 import { RxnArrow } from './RxnArrow'
 import { RxnPlus } from './RxnPlus'
+import { Text } from './Text'
 import { elements } from 'chemistry/constants'
 
 function arrayAddIfMissing(array, item) {
@@ -50,6 +51,7 @@ export class Struct {
   name: string
   sGroupForest: SGroupForest
   simpleObjects: Pool<SimpleObject>
+  texts: Pool<Text>
 
   constructor() {
     this.atoms = new Pool<Atom>()
@@ -65,6 +67,7 @@ export class Struct {
     this.name = ''
     this.sGroupForest = new SGroupForest()
     this.simpleObjects = new Pool<SimpleObject>()
+    this.texts = new Pool<Text>()
   }
 
   hasRxnProps(): boolean {
@@ -472,6 +475,11 @@ export class Struct {
   simpleObjectSetPos(id: number, pos: Array<Vec2>) {
     const item = this.simpleObjects.get(id)!
     item.pos = pos
+  }
+
+  textSetPosition(id: number, position: Vec2): void {
+    const item = this.texts.get(id)!
+    item.position = position
   }
 
   getCoordBoundingBox(atomSet?: Pile<number>) {

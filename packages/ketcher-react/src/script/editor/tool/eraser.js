@@ -18,6 +18,7 @@ import LassoHelper from './helper/lasso'
 import { fromArrowDeletion, fromPlusDeletion } from '../actions/reaction'
 import { fromSimpleObjectDeletion } from '../actions/simpleobject'
 import { fromSgroupDeletion } from '../actions/sgroup'
+import { fromTextDeletion } from '../actions/text'
 import {
   fromFragmentDeletion,
   fromOneAtomDeletion,
@@ -43,7 +44,8 @@ function EraserTool(editor, mode) {
     'rxnPluses',
     'sgroups',
     'sgroupData',
-    'simpleObjects'
+    'simpleObjects',
+    'texts'
   ]
   this.lassoHelper = new LassoHelper(mode || 0, editor)
 }
@@ -77,6 +79,7 @@ EraserTool.prototype.mouseup = function (event) {
 EraserTool.prototype.click = function (event) {
   const restruct = this.editor.render.ctab
   const ci = this.editor.findItem(event, this.maps)
+  console.log('🚀 ~ file: eraser.js ~ line 82 ~ ci', ci)
 
   if (!ci) return // ci.type == 'Canvas'
 
@@ -93,6 +96,8 @@ EraserTool.prototype.click = function (event) {
     this.editor.update(fromPlusDeletion(restruct, ci.id))
   } else if (ci.map === 'simpleObjects') {
     this.editor.update(fromSimpleObjectDeletion(restruct, ci.id))
+  } else if (ci.map === 'texts') {
+    this.editor.update(fromTextDeletion(restruct, ci.id))
   } else {
     // TODO re-factoring needed - should be "map-independent"
     console.error(

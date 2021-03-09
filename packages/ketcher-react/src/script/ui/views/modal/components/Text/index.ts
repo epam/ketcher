@@ -13,19 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-export * from './atom'
-export * from './bond'
-export * from './CanvasLoad'
-export * from './descriptors'
-export * from './EnhancedFlagMove'
-export * from './ifThen'
-export * from './fragment'
-export * from './fragmentStereoAtom'
-export * from './FragmentStereoFlag'
-export * from './LoopMove'
-export * from './OperationType'
-export * from './rgroup'
-export * from './rxn'
-export * from './simpleObject'
-export * from './sgroup'
-export * from './text'
+
+export { default } from './Text'

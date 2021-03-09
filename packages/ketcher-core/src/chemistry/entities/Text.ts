@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-export * from './atom'
-export * from './bond'
-export * from './CanvasLoad'
-export * from './descriptors'
-export * from './EnhancedFlagMove'
-export * from './ifThen'
-export * from './fragment'
-export * from './fragmentStereoAtom'
-export * from './FragmentStereoFlag'
-export * from './LoopMove'
-export * from './OperationType'
-export * from './rgroup'
-export * from './rxn'
-export * from './simpleObject'
-export * from './sgroup'
-export * from './text'
+
+import { Vec2 } from 'utils'
+
+export interface TextParams {
+  id?: any
+  label: string
+  position?: Vec2
+}
+
+export class Text {
+  id?: any
+  label: string
+  position?: Vec2
+
+  constructor(params: TextParams) {
+    params = params || {}
+    this.id = params.id
+    this.label = params.label
+    this.position = params.position
+  }
+}

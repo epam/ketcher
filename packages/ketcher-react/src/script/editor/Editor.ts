@@ -40,7 +40,8 @@ const structObjects = [
   'rxnArrows',
   'rxnPluses',
   'enhancedFlags',
-  'simpleObjects'
+  'simpleObjects',
+  'texts'
 ]
 
 const highlightTargets = [
@@ -54,7 +55,8 @@ const highlightTargets = [
   'sgroups',
   'sgroupData',
   'enhancedFlags',
-  'simpleObjects'
+  'simpleObjects',
+  'texts'
 ]
 
 class Editor {

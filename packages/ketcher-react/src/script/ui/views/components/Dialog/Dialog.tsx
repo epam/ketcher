@@ -38,7 +38,7 @@ interface DialogParamsCallProps {
 
 interface DialogCallProps {
   result: () => any
-  valid: () => boolean
+  valid?: () => boolean
 }
 
 type Props = DialogProps & DialogCallProps

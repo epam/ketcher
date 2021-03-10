@@ -22,10 +22,10 @@ import { SimpleObjectMode, Box2Abs, Vec2, scale } from 'ketcher-core'
 const tfx = util.tfx
 interface MinDistanceWithReferencePoint {
   minDist: number
-  refPoint: Vec2|null
+  refPoint: Vec2 | null
 }
 interface StyledPath {
-  path: any,
+  path: any
   stylesApplied: boolean
 }
 class ReSimpleObject extends ReObject {
@@ -119,10 +119,11 @@ class ReSimpleObject extends ReObject {
     }
 
     distRef = this.getReferencePointDistance(p)
-    const refPoint: Vec2|null = distRef.minDist <= 8 / s ? distRef.refPoint : null
+    const refPoint: Vec2 | null =
+      distRef.minDist <= 8 / s ? distRef.refPoint : null
     // distance is a smallest between dist to figure and it's reference points
     dist = Math.min(distRef.minDist, dist)
-    return {minDist: dist, refPoint}
+    return { minDist: dist, refPoint }
   }
 
   getReferencePointDistance(p: Vec2): MinDistanceWithReferencePoint {
@@ -153,17 +154,17 @@ class ReSimpleObject extends ReObject {
         const h = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).y)
 
         refPoints.push(
-            new Vec2(p0.x + 0.5 * w, p0.y),
-            new Vec2(p0.x + w, p0.y + 0.5 * h),
-            new Vec2(p0.x + 0.5 * w, p0.y + h),
-            new Vec2(p0.x, p0.y + 0.5 * h)
-        );
-        if (!onlyOnObject || this.item.mode === SimpleObjectMode.rectangle ) {
+          new Vec2(p0.x + 0.5 * w, p0.y),
+          new Vec2(p0.x + w, p0.y + 0.5 * h),
+          new Vec2(p0.x + 0.5 * w, p0.y + h),
+          new Vec2(p0.x, p0.y + 0.5 * h)
+        )
+        if (!onlyOnObject || this.item.mode === SimpleObjectMode.rectangle) {
           refPoints.push(
-              p0,
-              new Vec2(p0.x, p0.y + h),
-              new Vec2(p0.x + w, p0.y + h),
-              new Vec2(p0.x + w, p0.y)
+            p0,
+            new Vec2(p0.x, p0.y + h),
+            new Vec2(p0.x + w, p0.y + h),
+            new Vec2(p0.x + w, p0.y)
           )
         }
         break
@@ -257,7 +258,7 @@ class ReSimpleObject extends ReObject {
       }
       case SimpleObjectMode.line: {
         //TODO: reuse this code for polyline
-        const poly:Array<string|number> = []
+        const poly: Array<string | number> = []
 
         let angle = Math.atan(
           (point[1].y - point[0].y) / (point[1].x - point[0].x)
@@ -307,7 +308,7 @@ class ReSimpleObject extends ReObject {
       }
     }
 
-    const enhPaths:Array<StyledPath> = path.map(p => {
+    const enhPaths: Array<StyledPath> = path.map(p => {
       return { path: p, stylesApplied: false }
     })
 

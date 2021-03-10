@@ -72,12 +72,10 @@ function getElementsInRectangle(restruct, p0, p1) {
 
   restruct.simpleObjects.forEach((item, id) => {
     const referencePoints = item.getReferencePoints(true)
-    const referencePointInRectangle = referencePoints.find((point) => point.x > x0 &&
-        point.x < x1 &&
-        point.y > y0 &&
-        point.y < y1)
-    if (referencePointInRectangle)
-      simpleObjectsList.push(id)
+    const referencePointInRectangle = referencePoints.find(
+      point => point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1
+    )
+    if (referencePointInRectangle) simpleObjectsList.push(id)
   })
 
   const enhancedFlagList = []
@@ -145,7 +143,9 @@ function getElementsInPolygon(restruct, rr) {
 
   restruct.simpleObjects.forEach((item, id) => {
     const referencePoints = item.getReferencePoints(true)
-    const referencePointInPolygon = referencePoints.find((point) => isPointInPolygon(r, point))
+    const referencePointInPolygon = referencePoints.find(point =>
+      isPointInPolygon(r, point)
+    )
     if (referencePointInPolygon) simpleObjectsList.push(id)
   })
 

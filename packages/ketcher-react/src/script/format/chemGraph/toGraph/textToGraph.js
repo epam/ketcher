@@ -13,28 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-const schema = {
-  id: '/Text',
-  type: 'object',
-  required: ['label', 'position'],
-  properties: {
-    label: {
-      title: 'Label',
-      type: 'string'
-    },
-    position: {
-      type: 'object',
-      required: ['x', 'y'],
-      properties: {
-        x: {
-          type: 'integer'
-        },
-        y: {
-          type: 'integer'
-        }
-      }
-    }
+export function textToGraph(textNode) {
+  return {
+    type: 'text',
+    data: textNode.data
   }
 }
-
-export default schema

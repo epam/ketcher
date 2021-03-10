@@ -86,7 +86,8 @@ export class Struct {
       this.atoms.size === 0 &&
       this.rxnArrows.size === 0 &&
       this.rxnPluses.size === 0 &&
-      this.simpleObjects.size === 0
+      this.simpleObjects.size === 0 &&
+      this.texts.size === 0
     )
   }
 

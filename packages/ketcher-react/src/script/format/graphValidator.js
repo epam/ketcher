@@ -19,7 +19,8 @@ import structSchema from './schemes/moleculeSchema'
 import rgroupSchema from './schemes/rgroupSchema'
 import { plusSchema, arrowSchema } from './schemes/rxnSchemas'
 import simpleObjectSchema from './schemes/simpleObjectSchema'
-import graphSchema from './schemes/rootSchema'
+import graphSchema from './schemes/root Schema'
+import textSchema from './schemes/textSchema'
 
 export default function validate(graph) {
   const v = new jsonschema.Validator()
@@ -28,6 +29,7 @@ export default function validate(graph) {
   v.addSchema(arrowSchema, '/RxnArrow')
   v.addSchema(plusSchema, '/RxnPlus')
   v.addSchema(simpleObjectSchema, '/SimpleObject')
+  v.addSchema(textSchema, '/Text')
 
   const res = v.validate(graph, graphSchema)
   console.log(res)

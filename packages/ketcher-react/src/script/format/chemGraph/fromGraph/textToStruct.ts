@@ -13,28 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-const schema = {
-  id: '/Text',
-  type: 'object',
-  required: ['label', 'position'],
-  properties: {
-    label: {
-      title: 'Label',
-      type: 'string'
-    },
-    position: {
-      type: 'object',
-      required: ['x', 'y'],
-      properties: {
-        x: {
-          type: 'integer'
-        },
-        y: {
-          type: 'integer'
-        }
-      }
-    }
-  }
-}
+import { Text } from 'ketcher-core'
 
-export default schema
+export function textToStruct(graphItem, struct) {
+  const object = graphItem.data
+  struct.texts.add(new Text(object))
+
+  return struct
+}

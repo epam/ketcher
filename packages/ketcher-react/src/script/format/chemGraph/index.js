@@ -23,8 +23,10 @@ import { moleculeToStruct } from './fromGraph/moleculeToStruct'
 import { rgroupToStruct } from './fromGraph/rgroupToStruct'
 import { rxnToStruct } from './fromGraph/rxnToStruct'
 import { simpleObjectToStruct } from './fromGraph/simpleObjectToStruct'
+import { textToStruct } from './fromGraph/textToStruct.ts'
 
 import { prepareStructForGraph } from './toGraph/prepare'
+import { textToGraph } from './toGraph/textToGraph'
 
 /**
  * @param {import('ketcher-core').Struct} struct
@@ -69,6 +71,10 @@ function toGraph(struct) {
         result.root.nodes.push(simpleObjectToGraph(item))
         break
       }
+      case 'text': {
+        result.root.nodes.push(textToGraph(item))
+        break
+      }
       default:
         break
     }
@@ -110,6 +116,9 @@ function parseNode(node, struct) {
       break
     case 'rgroup':
       rgroupToStruct(node).mergeInto(struct)
+      break
+    case 'text':
+      textToStruct(node, struct)
       break
     default:
       break

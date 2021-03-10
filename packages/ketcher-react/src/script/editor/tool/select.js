@@ -28,6 +28,7 @@ import {
   getHoverToFuse
 } from '../actions/closely-fusing'
 import utils from '../shared/utils'
+import propsDialog from '../tool/text'
 
 function SelectTool(editor, mode) {
   if (!(this instanceof SelectTool)) return new SelectTool(editor, mode)
@@ -240,7 +241,8 @@ SelectTool.prototype.dblclick = function (event) {
     'atoms',
     'bonds',
     'sgroups',
-    'sgroupData'
+    'sgroupData',
+    'texts'
   ])
   if (!ci) return true
 
@@ -268,6 +270,9 @@ SelectTool.prototype.dblclick = function (event) {
   } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
     this.editor.selection(closestToSel(ci))
     sgroupDialog(this.editor, ci.id)
+  } else if (ci.map === 'texts') {
+    this.editor.selection(closestToSel(ci))
+    propsDialog(this.editor, ci.id)
   }
   return true
 }

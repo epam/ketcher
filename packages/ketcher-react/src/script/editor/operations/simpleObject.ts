@@ -97,7 +97,6 @@ export class SimpleObjectDelete extends Base {
   constructor(id: string) {
     super(OperationType.SIMPLE_OBJECT_DELETE)
     this.data = { id, pos: [], mode: SimpleObjectMode.line, toCircle: false }
-    debugger
     this.performed = false
   }
 

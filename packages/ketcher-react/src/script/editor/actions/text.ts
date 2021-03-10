@@ -27,9 +27,9 @@ export function fromTextAddition(restruct, elem) {
 
 export function fromTextDeletion(restruct, elem) {
   const action = new Action()
-  const { id, label, position } = elem
+  const { id } = elem
 
-  action.addOp(new TextDelete(id, label, position))
+  action.addOp(new TextDelete(id))
 
   return action.perform(restruct)
 }

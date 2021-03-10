@@ -36,10 +36,9 @@ export class TextAdd extends BaseOperation {
 
   execute(restruct: Restruct): void {
     const struct = restruct.molecule
-    const text = new Text(this.data)
 
     if (!this.performed) {
-      this.data.id = struct.texts.add(text)
+      this.data.id = struct.texts.add(new Text(this.data))
       this.performed = true
     } else {
       struct.texts.set(this.data.id, new Text(this.data))
@@ -79,7 +78,6 @@ export class TextDelete extends BaseOperation {
   constructor(id: any) {
     super(OperationType.TEXT_DELETE)
     this.data = { id }
-    debugger
     this.performed = false
   }
 
@@ -87,10 +85,8 @@ export class TextDelete extends BaseOperation {
     const struct = restruct.molecule
 
     if (!this.performed) {
-      debugger
-      const item = struct.texts.get(this.data.id) as any
+      const item = struct.texts.get(this.data.id)!
 
-      this.data.id = item.id
       this.data.label = item.label || ''
       this.data.position = item.position
       this.performed = true

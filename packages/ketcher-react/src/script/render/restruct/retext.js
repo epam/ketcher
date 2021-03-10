@@ -19,8 +19,6 @@ import draw from '../draw'
 import ReObject from './reobject'
 import { Box2Abs, scale, Vec2 } from 'ketcher-core'
 
-function getLabelText(text) {}
-
 function buildLabel(text, paper, position, options) {
   // eslint-disable-line max-statements
   let label = {}
@@ -31,7 +29,6 @@ function buildLabel(text, paper, position, options) {
     font: options.font,
     'font-size': options.fontsz,
     fill: text.color
-    // 'font-style': 'italic'
   })
 
   label.rbb = util.relBox(label.path.getBBox())
@@ -51,19 +48,45 @@ class ReText extends ReObject {
     this.component = -1
   }
   static isSelectable() {
-    return false
+    return true
   }
 
   show(restruct, id, options) {
     const render = restruct.render
-    const position =
-      scale.obj2scaled(this.item.position, render.options) || new Vec2()
+    const position = scale.obj2scaled(this.item.position, render.options)
     const label = buildLabel(this, render.paper, position, options)
 
     this.color = 'black'
     restruct.addReObjectPath('data', this.visel, label.path, position, true)
+  }
 
-    this.setHighlight(this.highlight, render)
+  highlightPath(render) {
+    const position = scale.obj2scaled(this.item.position, render.options)
+    const length = this.item.label.length
+    const scaleFactor = render.options.scale
+
+    const x0 = position.x - (length / 2) * 6
+    const y0 = position.y - scaleFactor / 4
+    const width = (length * scaleFactor) / 6
+    const height = scaleFactor / 2
+    const rounding = scaleFactor / 8
+
+    console.log(`position:${position}, scale:${scale}, length:${length}`)
+    console.log(
+      `x:${x0}, y:${y0}, width:${width}, height:${height}, rounding:${rounding}`
+    )
+
+    return render.paper.rect(x0, y0, width, height, rounding)
+  }
+
+  drawHighlight(render) {
+    const ret = this.highlightPath(render).attr(render.options.highlightStyle)
+    render.ctab.addReObjectPath('highlighting', this.visel, ret)
+    return ret
+  }
+
+  makeSelectionPlate(restruct, paper, styles) {
+    return this.highlightPath(restruct.render).attr(styles.selectionStyle)
   }
 }
 

@@ -15,8 +15,9 @@
  ***************************************************************************/
 
 import { Text } from 'ketcher-core'
-import { fromTextAddition, fromTextDeletion } from '../actions/text'
+import { fromTextAddition } from '../actions/text'
 import { fromMultipleMove } from '../actions/fragment'
+import Action from '../shared/action'
 
 function TextTool(editor) {
   if (!(this instanceof TextTool)) {
@@ -28,73 +29,66 @@ function TextTool(editor) {
 
   TextTool.prototype.mousedown = function (event) {
     const render = this.editor.render
-    const initialPosition = render.page2obj(event)
-    const currentItem = this.editor.findItem(event, ['texts'])
+    const ci = this.editor.findItem(event, ['texts'])
 
-    this.dragCtx = { initialPosition }
-
-    if (currentItem && currentItem.map === 'texts') {
+    if (ci && ci.map === 'texts') {
       this.editor.hover(null)
-      this.editor.selection({ texts: [currentItem.id] })
-      this.dragCtx.currentItem = currentItem
-    } else {
-      this.dragCtx.isNew = true
-      this.editor.selection(null)
+      this.editor.selection({ texts: [ci.id] })
+      this.dragCtx = {
+        xy0: render.page2obj(event),
+        action: new Action()
+      }
     }
   }
 
   TextTool.prototype.mousemove = function (event) {
     const render = this.editor.render
 
-    if (this.dragCtx) {
-      const currentPosition = render.page2obj(event)
-      const positionDifference = currentPosition.sub(
-        this.dragCtx.initialPosition
-      )
-
-      this.dragCtx.previousPosition = currentPosition
-
-      if (this.dragCtx.currentItem) {
-        if (this.dragCtx.action) {
-          this.dragCtx.action.perform(render.ctab)
-        }
-
-        if (!this.dragCtx.currentItem.ref) {
-          this.dragCtx.action = fromMultipleMove(
-            render.ctab,
-            this.editor.selection() || {},
-            positionDifference
-          )
-        }
-      } else {
-        if (!this.dragCtx.action) {
-          const action = fromTextAddition()
-        }
+    if ('dragCtx' in this) {
+      if (this.dragCtx.action) {
+        this.dragCtx.action.perform(render.ctab)
       }
+
+      this.dragCtx.action = fromMultipleMove(
+        render.ctab,
+        this.editor.selection() || {},
+        render.page2obj(event).sub(this.dragCtx.xy0)
+      )
+      this.editor.update(this.dragCtx.action, true)
+    } else {
+      this.editor.hover(this.editor.findItem(event, ['texts']))
     }
+  }
+
+  TextTool.prototype.mouseup = function (event) {
+    if (this.dragCtx) {
+      this.editor.update(this.dragCtx.action)
+      delete this.dragCtx
+    }
+    return true
   }
 
   TextTool.prototype.click = function (event) {
     const render = this.editor.render
-    // const currentItem = null
-    const currentItem = this.editor.findItem(event, ['texts'])
+    const ci = this.editor.findItem(event, ['texts'])
     this.editor.hover(null)
 
-    if (!currentItem) {
+    if (!ci) {
       propsDialog(this.editor, null, render.page2obj(event))
-    } else if (currentItem.map === 'texts') {
-      propsDialog(this.editor, currentItem.id)
     }
 
     return true
   }
 
-  TextTool.prototype.mouseup = function (event) {
+  TextTool.prototype.dblclick = function (event) {
     const render = this.editor.render
-    const currentItem = this.editor.findItem(event, ['texts'])
+    const ci = this.editor.findItem(event, ['texts'])
     this.editor.hover(null)
 
-    this.editor.update(fromTextDeletion(render.ctab, currentItem.id))
+    if (ci.map === 'texts') {
+      propsDialog(this.editor, ci.id, render.page2obj(event))
+    }
+
     return true
   }
 }

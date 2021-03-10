@@ -63,11 +63,11 @@ ReObject.prototype.setHighlight = function (highLight, render) {
   this.highlight = highLight
 }
 
-ReObject.prototype.drawHighlight = function () {
+ReObject.prototype.drawHighlight = function (render) {
   console.assert('ReObject.drawHighlight is not overridden') // eslint-disable-line no-console
 }
 
-ReObject.prototype.makeSelectionPlate = function () {
+ReObject.prototype.makeSelectionPlate = function (restruct, paper, styles) {
   console.assert(null, 'ReObject.makeSelectionPlate is not overridden') // eslint-disable-line no-console
 }
 

@@ -17,7 +17,7 @@
 import PeriodTable from '../views/modal/components/PeriodTable'
 import Rgroup from './toolbox/rgroup'
 import TemplateAttach from './template/template-attach'
-import TemplatesLib from './template/template-lib'
+import TemplatesLib from './template/TemplateLib'
 
 // schemify dialogs
 import {

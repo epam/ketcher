@@ -56,6 +56,7 @@ export const OperationType = Object.freeze({
   FRAGMENT_DELETE_STEREO_ATOM: 'Delete stereo atom from fragment',
   ENHANCED_FLAG_MOVE: 'Move enhanced flag',
   TEXT_ADD: 'Add text',
+  TEXT_EDIT: 'Edit text',
   TEXT_DELETE: 'Delete text',
   TEXT_MOVE: 'Move text'
 })

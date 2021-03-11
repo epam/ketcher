@@ -65,6 +65,57 @@ export class TextAdd extends BaseOperation {
   }
 }
 
+interface TextEditData {
+  id?: any
+  label?: string
+  position?: Vec2
+}
+
+export class TextEdit extends BaseOperation {
+  oldData: TextEditData
+  newData: TextEditData | null
+
+  constructor(id?: any, label?: string, position?: Vec2) {
+    super(OperationType.TEXT_EDIT)
+    this.oldData = { id, label, position }
+    this.newData = null
+  }
+
+  execute(restruct: Restruct) {
+    const struct = restruct.molecule
+    const { id, label, position } = this.oldData
+    const item = struct.texts.get(this.oldData.id)
+
+    if (!this.newData) {
+      this.newData = {
+        id,
+        label,
+        position
+      }
+    }
+
+    if (item) {
+      item.label = label!
+    }
+
+    BaseOperation.invalidateItem(
+      restruct,
+      'texts',
+      // @ts-ignore
+      this.oldData.id,
+      1
+    )
+  }
+
+  invert() {
+    const inverted = new TextEdit()
+    // @ts-ignore
+    inverted.oldData = this.newData
+    inverted.newData = this.oldData
+    return inverted
+  }
+}
+
 interface TextDeleteData {
   id: any
   label?: string

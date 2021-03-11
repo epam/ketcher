@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Text } from 'ketcher-core'
-import { fromTextAddition } from '../actions/text'
+import { fromTextAddition, fromTextRedaction } from '../actions/text'
 import { fromMultipleMove } from '../actions/fragment'
 import Action from '../shared/action'
 
@@ -81,12 +81,11 @@ function TextTool(editor) {
   }
 
   TextTool.prototype.dblclick = function (event) {
-    const render = this.editor.render
     const ci = this.editor.findItem(event, ['texts'])
     this.editor.hover(null)
 
     if (ci.map === 'texts') {
-      propsDialog(this.editor, ci.id, render.page2obj(event))
+      propsDialog(this.editor, ci.id)
     }
 
     return true
@@ -108,7 +107,12 @@ function propsDialog(editor, id, position) {
   Promise.resolve(res)
     .then(elem => {
       elem = Object.assign({}, Text.attrlist, elem)
-      editor.update(fromTextAddition(editor.render.ctab, elem))
+
+      if (!id && id !== 0 && elem.label) {
+        editor.update(fromTextAddition(editor.render.ctab, elem))
+      } else if (label !== elem.label) {
+        editor.update(fromTextRedaction(editor.render.ctab, id, elem))
+      }
     })
     .catch(() => null)
 }

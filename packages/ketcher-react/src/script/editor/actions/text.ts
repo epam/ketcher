@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { TextAdd, TextDelete } from '../operations'
+import { TextAdd, TextEdit, TextDelete } from '../operations'
 import Action from '../shared/action'
 
 export function fromTextAddition(restruct, elem) {
@@ -22,6 +22,14 @@ export function fromTextAddition(restruct, elem) {
   const { id, label, position } = elem
 
   action.addOp(new TextAdd(id, label, position))
+  return action.perform(restruct)
+}
+
+export function fromTextRedaction(restruct, id, elem) {
+  const action = new Action()
+  const { label, position } = elem
+
+  action.addOp(new TextEdit(id, label, position))
   return action.perform(restruct)
 }
 

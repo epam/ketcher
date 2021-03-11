@@ -19,6 +19,8 @@ import { connect } from 'react-redux'
 
 import { Dialog } from '../../../components/Dialog'
 
+import styles from './Text.module.less'
+
 const Text = props => {
   const { formState, position, id, type } = props
   const [text, setText] = useState(props.label)
@@ -34,8 +36,9 @@ const Text = props => {
       <textarea
         value={text}
         onChange={event => setText(event.target.value)}
-        rows="20"
-        cols="20"></textarea>
+        className={styles.text_area}
+        rows="5"
+        cols="40"></textarea>
     </Dialog>
   )
 }

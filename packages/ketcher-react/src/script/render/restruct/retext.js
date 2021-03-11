@@ -17,7 +17,7 @@
 import util from '../util'
 import draw from '../draw'
 import ReObject from './reobject'
-import { Box2Abs, scale, Vec2 } from 'ketcher-core'
+import { scale } from 'ketcher-core'
 
 function buildLabel(text, paper, position, options) {
   // eslint-disable-line max-statements
@@ -28,6 +28,7 @@ function buildLabel(text, paper, position, options) {
   label.path = paper.text(position.x, position.y, label.text).attr({
     font: options.font,
     'font-size': options.fontsz,
+    'text-anchor': 'start',
     fill: text.color
   })
 
@@ -62,19 +63,20 @@ class ReText extends ReObject {
 
   highlightPath(render) {
     const position = scale.obj2scaled(this.item.position, render.options)
-    const length = this.item.label.length
     const scaleFactor = render.options.scale
+    const labelCharacterBoxSide = render.options.labelCharacterBoxSide
 
-    const x0 = position.x - (length / 2) * 6
-    const y0 = position.y - scaleFactor / 4
-    const width = (length * scaleFactor) / 6
-    const height = scaleFactor / 2
+    const sortedLines = this.item.label
+      .split(/\r?\n/)
+      .sort((a, b) => b.length - a.length)
+    const linesNumber = sortedLines.length
+    const longestString = sortedLines[0].length
+
+    const x0 = position.x
+    const y0 = position.y - labelCharacterBoxSide * linesNumber
+    const width = longestString * labelCharacterBoxSide
+    const height = linesNumber * labelCharacterBoxSide * 2.22
     const rounding = scaleFactor / 8
-
-    console.log(`position:${position}, scale:${scale}, length:${length}`)
-    console.log(
-      `x:${x0}, y:${y0}, width:${width}, height:${height}, rounding:${rounding}`
-    )
 
     return render.paper.rect(x0, y0, width, height, rounding)
   }

@@ -100,10 +100,10 @@ class Ketcher {
     )
   }
 
-  setMolecule(molString: string): void {
+  setMolecule(molString: string, rescale = true): void {
     if (typeof molString !== 'string') return
     this.ui.load(molString, {
-      rescale: true
+      rescale
     })
   }
 

@@ -19,9 +19,9 @@ import Action from '../shared/action'
 
 export function fromTextCreation(restruct, elem) {
   const action = new Action()
-  const { id, label, position } = elem
+  const { id, label, position, type } = elem
 
-  action.addOp(new TextCreate(id, label, position))
+  action.addOp(new TextCreate(id, label, position, type))
   return action.perform(restruct)
 }
 

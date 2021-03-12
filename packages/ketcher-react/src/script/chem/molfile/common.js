@@ -268,7 +268,14 @@ function bracketsToMolfile(mol, sg, idstr) {
   const bb = sg.bracketBox
   const d = sg.bracketDir
   const n = d.rotateSC(1, 0)
-  const brackets = SGroup.getBracketParameters(mol, xBonds, atomSet, bb, d, n)
+  const brackets = SGroup.getBracketParameters(
+    mol,
+    crossBonds,
+    atomSet,
+    bb,
+    d,
+    n
+  )
   const lines = []
   for (let i = 0; i < brackets.length; ++i) {
     const bracket = brackets[i]

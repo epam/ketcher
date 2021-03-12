@@ -26,17 +26,8 @@ class ReObject {
 
   constructor(viselType: string) {
     this.visel = new Visel(viselType)
-    // this.init(viselType)
   }
 
-  // init(viselType: string): void {
-  //   this.visel = new Visel(viselType)
-  //
-  //   this.highlight = false
-  //   this.highlighting = null
-  //   this.selected = false
-  //   this.selectionPlate = null
-  // }
   getVBoxObj(render: any): any {
     var vbox = this.visel.boundingBox
     if (vbox === null) return null
@@ -44,6 +35,7 @@ class ReObject {
       vbox = vbox.translate(render.options.offset.negated())
     return vbox.transform(scale.scaled2obj, render.options)
   }
+
   setHighlight(highLight: boolean, render: any): void {
     // TODO render should be field
     if (highLight) {
@@ -69,6 +61,7 @@ class ReObject {
 
     this.highlight = highLight
   }
+
   // @ts-ignore
   drawHighlight(render: any): any {
     console.assert(null, 'ReObject.drawHighlight is not overridden') // eslint-disable-line no-console

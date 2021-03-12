@@ -28,7 +28,7 @@ import {
   getHoverToFuse
 } from '../actions/closely-fusing'
 import utils from '../shared/utils'
-import propsDialog from '../tool/text'
+import { fromTextUpdating } from '../actions/text'
 
 function SelectTool(editor, mode) {
   if (!(this instanceof SelectTool)) return new SelectTool(editor, mode)
@@ -272,7 +272,13 @@ SelectTool.prototype.dblclick = function (event) {
     sgroupDialog(this.editor, ci.id)
   } else if (ci.map === 'texts') {
     this.editor.selection(closestToSel(ci))
-    propsDialog(this.editor, ci.id)
+    const text = struct.texts.get(ci.id)
+    const dialog = editor.event.elementEdit.dispatch(text)
+    Promise.resolve(dialog)
+      .then(newText => {
+        editor.update(fromTextUpdating(rnd.ctab, ci.id, newText))
+      })
+      .catch(() => null)
   }
   return true
 }

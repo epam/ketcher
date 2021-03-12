@@ -19,15 +19,18 @@ import { Vec2 } from 'utils'
 export interface TextParams {
   label: string
   position?: Vec2
+  type: string
 }
 
 export class Text {
   label: string
   position?: Vec2
+  type: string
 
   constructor(params: TextParams) {
     params = params || {}
     this.label = params.label
     this.position = params.position ? new Vec2(params.position) : new Vec2()
+    this.type = 'text'
   }
 }

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ const Text = props => {
       <textarea
         value={text}
         onChange={event => setText(event.target.value)}
-        className={styles.text_area}
+        className={styles.textArea}
         rows="5"
         cols="40"></textarea>
     </Dialog>

@@ -22,15 +22,16 @@ interface TextCreateData {
   id?: any
   label: string
   position: Vec2
+  type: string
 }
 
 export class TextCreate extends BaseOperation {
   data: TextCreateData
   performed: boolean
 
-  constructor(id: any, label: string = '', position: Vec2) {
+  constructor(id: any, label: string = '', position: Vec2, type: string) {
     super(OperationType.TEXT_CREATE)
-    this.data = { id, label, position }
+    this.data = { id, label, position, type }
     this.performed = false
   }
 
@@ -67,30 +68,32 @@ export class TextCreate extends BaseOperation {
 
 interface TextUpdateData {
   id?: any
-  label?: string
+  label?: string | null
   position?: Vec2
+  type?: string
 }
 
 export class TextUpdate extends BaseOperation {
   oldData: TextUpdateData
   newData: TextUpdateData | null
 
-  constructor(id?: any, label?: string, position?: Vec2) {
+  constructor(id?: any, label?: string, position?: Vec2, type?: string) {
     super(OperationType.TEXT_UPDATE)
-    this.oldData = { id, label, position }
+    this.oldData = { id, label, position, type }
     this.newData = null
   }
 
   execute(restruct: Restruct) {
     const struct = restruct.molecule
-    const { id, label, position } = this.oldData
+    const { id, label, position, type } = this.oldData
     const item = struct.texts.get(this.oldData.id)
 
     if (!this.newData) {
       this.newData = {
         id,
         label,
-        position
+        position,
+        type
       }
     }
 
@@ -120,6 +123,7 @@ interface TextDeleteData {
   id: any
   label?: string
   position?: Vec2
+  type?: string
 }
 
 export class TextDelete extends BaseOperation {
@@ -140,6 +144,7 @@ export class TextDelete extends BaseOperation {
 
       this.data.label = item.label || ''
       this.data.position = item.position
+      this.data.type = item.type
       this.performed = true
     }
 
@@ -155,7 +160,8 @@ export class TextDelete extends BaseOperation {
       this.data.id,
       this.data.label,
       // @ts-ignore
-      this.data.position
+      this.data.position,
+      this.data.type
     )
   }
 }

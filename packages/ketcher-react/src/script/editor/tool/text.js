@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Text } from 'ketcher-core'
-import { fromTextAddition, fromTextRedaction } from '../actions/text'
+import { fromTextCreation, fromTextUpdating } from '../actions/text'
 import { fromMultipleMove } from '../actions/fragment'
 import Action from '../shared/action'
 
@@ -109,9 +109,9 @@ function propsDialog(editor, id, position) {
       elem = Object.assign({}, Text.attrlist, elem)
 
       if (!id && id !== 0 && elem.label) {
-        editor.update(fromTextAddition(editor.render.ctab, elem))
+        editor.update(fromTextCreation(editor.render.ctab, elem))
       } else if (label !== elem.label) {
-        editor.update(fromTextRedaction(editor.render.ctab, id, elem))
+        editor.update(fromTextUpdating(editor.render.ctab, id, elem))
       }
     })
     .catch(() => null)

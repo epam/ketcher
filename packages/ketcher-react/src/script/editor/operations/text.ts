@@ -18,18 +18,18 @@ import { OperationType } from './OperationType'
 import { Text, Vec2, scale } from 'ketcher-core'
 import Restruct, { ReText } from '../../render/restruct'
 
-interface TextAddData {
+interface TextCreateData {
   id?: any
   label: string
   position: Vec2
 }
 
-export class TextAdd extends BaseOperation {
-  data: TextAddData
+export class TextCreate extends BaseOperation {
+  data: TextCreateData
   performed: boolean
 
   constructor(id: any, label: string = '', position: Vec2) {
-    super(OperationType.TEXT_ADD)
+    super(OperationType.TEXT_CREATE)
     this.data = { id, label, position }
     this.performed = false
   }
@@ -65,18 +65,18 @@ export class TextAdd extends BaseOperation {
   }
 }
 
-interface TextEditData {
+interface TextUpdateData {
   id?: any
   label?: string
   position?: Vec2
 }
 
-export class TextEdit extends BaseOperation {
-  oldData: TextEditData
-  newData: TextEditData | null
+export class TextUpdate extends BaseOperation {
+  oldData: TextUpdateData
+  newData: TextUpdateData | null
 
   constructor(id?: any, label?: string, position?: Vec2) {
-    super(OperationType.TEXT_EDIT)
+    super(OperationType.TEXT_UPDATE)
     this.oldData = { id, label, position }
     this.newData = null
   }
@@ -108,7 +108,7 @@ export class TextEdit extends BaseOperation {
   }
 
   invert() {
-    const inverted = new TextEdit()
+    const inverted = new TextUpdate()
     // @ts-ignore
     inverted.oldData = this.newData
     inverted.newData = this.oldData
@@ -151,7 +151,7 @@ export class TextDelete extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    return new TextAdd(
+    return new TextCreate(
       this.data.id,
       this.data.label,
       // @ts-ignore

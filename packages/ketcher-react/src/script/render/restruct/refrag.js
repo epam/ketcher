@@ -17,7 +17,6 @@ import ReObject from './ReObject'
 import { Box2Abs, Vec2, scale } from 'ketcher-core'
 
 function ReFrag(/* Struct.Fragment */ frag) {
-  // this.init('frag')
   this.item = frag
 }
 

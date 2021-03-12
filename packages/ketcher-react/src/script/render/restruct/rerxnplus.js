@@ -20,8 +20,6 @@ import util from '../util'
 import { Box2Abs, scale } from 'ketcher-core'
 
 function ReRxnPlus(/* chem.RxnPlus*/ plus) {
-  // this.init('rxnPlus')
-
   this.item = plus
 }
 ReRxnPlus.prototype = new ReObject('rxnPlus')

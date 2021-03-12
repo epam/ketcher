@@ -22,7 +22,6 @@ const tfx = util.tfx
 
 function ReLoop(loop) {
   this.loop = loop
-  // this.visel = new Visel('loop')
   this.centre = new Vec2()
   this.radius = new Vec2()
 }

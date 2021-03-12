@@ -17,8 +17,6 @@ import ReObject from './ReObject'
 import { Fragment, Box2Abs, Vec2, scale } from 'ketcher-core'
 
 function ReEnhancedFlag(flag, pos) {
-  // this.init('enhancedFlag')
-
   this.flag = flag
   this.pp = pos
 }

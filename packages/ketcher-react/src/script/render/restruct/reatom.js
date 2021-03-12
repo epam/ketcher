@@ -23,7 +23,6 @@ import { Bond, Box2Abs, Vec2, scale } from 'ketcher-core'
 /** @param {import('ketcher-core').Atom} atom */
 function ReAtom(/* chem.Atom*/ atom) {
   this.visel = undefined // for typing
-  // this.init('atom')
 
   /** @type {import('ketcher-core').Atom} */
   this.a = atom // TODO rename a to item

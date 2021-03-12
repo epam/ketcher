@@ -18,8 +18,6 @@ import ReObject from './ReObject'
 import { scale } from 'ketcher-core'
 
 function ReDataSGroupData(sgroup) {
-  // this.init('sgroupData')
-
   this.sgroup = sgroup
 }
 

@@ -24,8 +24,6 @@ import ReObject from './ReObject'
 const tfx = util.tfx
 
 function ReSGroup(sgroup) {
-  // this.init('sgroup')
-
   this.item = sgroup
 }
 ReSGroup.prototype = new ReObject('sgroup')

@@ -22,8 +22,6 @@ import ReObject from './ReObject'
 var BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3)
 
 function ReRGroup(/* RGroup*/ rgroup) {
-  // this.init('rgroup')
-
   this.labelBox = null
   this.item = rgroup
 }

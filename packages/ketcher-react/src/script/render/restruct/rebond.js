@@ -25,8 +25,6 @@ import util from '../util'
  * @constructor
  */
 function ReBond(bond) {
-  // this.init('bond')
-
   this.b = bond // TODO rename b to item
   this.doubleBondShift = 0
 }

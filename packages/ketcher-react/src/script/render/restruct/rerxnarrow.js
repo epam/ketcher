@@ -20,8 +20,6 @@ import util from '../util'
 import { RxnArrowMode, Box2Abs, Vec2, scale } from 'ketcher-core'
 
 function ReRxnArrow(/* chem.RxnArrow*/ arrow) {
-  // this.init('rxnArrow')
-
   this.item = arrow
 }
 ReRxnArrow.prototype = new ReObject('rxnArrow')

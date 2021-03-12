@@ -68,7 +68,7 @@ export class TextCreate extends BaseOperation {
 
 interface TextUpdateData {
   id?: any
-  label?: string | null
+  label?: string
   position?: Vec2
   type?: string
 }
@@ -98,7 +98,7 @@ export class TextUpdate extends BaseOperation {
     }
 
     if (item) {
-      item.label = label!
+      item.label = label
     }
 
     BaseOperation.invalidateItem(

@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import ReObject from './reobject'
+import ReObject from './ReObject'
 import { Fragment, Box2Abs, Vec2, scale } from 'ketcher-core'
 
 function ReEnhancedFlag(flag, pos) {
-  this.init('enhancedFlag')
+  // this.init('enhancedFlag')
 
   this.flag = flag
   this.pp = pos
 }
-ReEnhancedFlag.prototype = new ReObject()
+ReEnhancedFlag.prototype = new ReObject('enhancedFlag')
 ReEnhancedFlag.isSelectable = function () {
   return true
 }

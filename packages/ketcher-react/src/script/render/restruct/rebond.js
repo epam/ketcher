@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ReObject from './reobject'
+import ReObject from './ReObject'
 
 import { Bond, Vec2, scale } from 'ketcher-core'
 import draw from '../draw'
@@ -25,13 +25,13 @@ import util from '../util'
  * @constructor
  */
 function ReBond(bond) {
-  this.init('bond')
+  // this.init('bond')
 
   this.b = bond // TODO rename b to item
   this.doubleBondShift = 0
 }
 
-ReBond.prototype = new ReObject()
+ReBond.prototype = new ReObject('bond')
 ReBond.isSelectable = function () {
   return true
 }

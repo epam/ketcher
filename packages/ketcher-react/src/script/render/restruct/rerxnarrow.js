@@ -14,17 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ReObject from './reobject'
+import ReObject from './ReObject'
 import draw from '../draw'
 import util from '../util'
 import { RxnArrowMode, Box2Abs, Vec2, scale } from 'ketcher-core'
 
 function ReRxnArrow(/* chem.RxnArrow*/ arrow) {
-  this.init('rxnArrow')
+  // this.init('rxnArrow')
 
   this.item = arrow
 }
-ReRxnArrow.prototype = new ReObject()
+ReRxnArrow.prototype = new ReObject('rxnArrow')
 ReRxnArrow.isSelectable = function () {
   return true
 }

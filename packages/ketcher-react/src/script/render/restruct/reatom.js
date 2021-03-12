@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import ReObject from './reobject'
+import ReObject from './ReObject'
 import element from '../../chem/element'
 import { sketchingColors as elementColor } from '../../chem/element-color'
 import draw from '../draw'
@@ -23,7 +23,7 @@ import { Bond, Box2Abs, Vec2, scale } from 'ketcher-core'
 /** @param {import('ketcher-core').Atom} atom */
 function ReAtom(/* chem.Atom*/ atom) {
   this.visel = undefined // for typing
-  this.init('atom')
+  // this.init('atom')
 
   /** @type {import('ketcher-core').Atom} */
   this.a = atom // TODO rename a to item
@@ -35,7 +35,7 @@ function ReAtom(/* chem.Atom*/ atom) {
   this.component = -1
 }
 
-ReAtom.prototype = new ReObject()
+ReAtom.prototype = new ReObject('atom')
 ReAtom.isSelectable = function () {
   return true
 }

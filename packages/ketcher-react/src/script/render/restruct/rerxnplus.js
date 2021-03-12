@@ -14,17 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ReObject from './reobject'
+import ReObject from './ReObject'
 import draw from '../draw'
 import util from '../util'
 import { Box2Abs, scale } from 'ketcher-core'
 
 function ReRxnPlus(/* chem.RxnPlus*/ plus) {
-  this.init('rxnPlus')
+  // this.init('rxnPlus')
 
   this.item = plus
 }
-ReRxnPlus.prototype = new ReObject()
+ReRxnPlus.prototype = new ReObject('rxnPlus')
 ReRxnPlus.isSelectable = function () {
   return true
 }

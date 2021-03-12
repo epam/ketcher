@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ReObject from './reobject'
+import ReObject from './ReObject'
 import draw from '../draw'
 import util from '../util'
 import { SimpleObjectMode, Box2Abs, Vec2, scale } from 'ketcher-core'
@@ -32,8 +32,7 @@ class ReSimpleObject extends ReObject {
   private item: any
 
   constructor(simpleObject: any) {
-    super()
-    this.init('simpleObject')
+    super('simpleObject')
     this.item = simpleObject
   }
   static isSelectable(): boolean {

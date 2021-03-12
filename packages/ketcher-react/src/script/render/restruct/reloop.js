@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import Visel from './visel'
-import ReObject from './reobject'
+import ReObject from './ReObject'
 import util from '../util'
 import { Bond, Vec2, scale } from 'ketcher-core'
 
@@ -22,11 +22,11 @@ const tfx = util.tfx
 
 function ReLoop(loop) {
   this.loop = loop
-  this.visel = new Visel('loop')
+  // this.visel = new Visel('loop')
   this.centre = new Vec2()
   this.radius = new Vec2()
 }
-ReLoop.prototype = new ReObject()
+ReLoop.prototype = new ReObject('loop')
 ReLoop.isSelectable = function () {
   return false
 }

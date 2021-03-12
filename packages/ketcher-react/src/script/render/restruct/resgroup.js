@@ -19,16 +19,16 @@ import { SGroup, Box2Abs, Vec2, Pile, scale } from 'ketcher-core'
 import draw from '../draw'
 
 import ReDataSGroupData from './redatasgroupdata'
-import ReObject from './reobject'
+import ReObject from './ReObject'
 
 const tfx = util.tfx
 
 function ReSGroup(sgroup) {
-  this.init('sgroup')
+  // this.init('sgroup')
 
   this.item = sgroup
 }
-ReSGroup.prototype = new ReObject()
+ReSGroup.prototype = new ReObject('sgroup')
 ReSGroup.isSelectable = function () {
   return false
 }

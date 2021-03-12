@@ -14,16 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ReObject from './reobject'
+import ReObject from './ReObject'
 import { scale } from 'ketcher-core'
 
 function ReDataSGroupData(sgroup) {
-  this.init('sgroupData')
+  // this.init('sgroupData')
 
   this.sgroup = sgroup
 }
 
-ReDataSGroupData.prototype = new ReObject()
+ReDataSGroupData.prototype = new ReObject('sgroupData')
 ReDataSGroupData.isSelectable = function () {
   return true
 }

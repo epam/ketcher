@@ -79,7 +79,6 @@ EraserTool.prototype.mouseup = function (event) {
 EraserTool.prototype.click = function (event) {
   const restruct = this.editor.render.ctab
   const ci = this.editor.findItem(event, this.maps)
-  console.log('🚀 ~ file: eraser.js ~ line 82 ~ ci', ci)
 
   if (!ci) return // ci.type == 'Canvas'
 

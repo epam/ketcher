@@ -63,7 +63,7 @@ class ReText extends ReObject {
     }
 
     const paperScale = scale.obj2scaled(this.item.position, options)
-    this.item.label = this.item.label.replace(/\s/g, '\u00a0')
+    this.item.label = this.item.label.replace(/[^\S\r\n]/g, '\u00a0')
 
     this.path = paper.text(paperScale.x, paperScale.y, this.item.label).attr({
       font: options.font,

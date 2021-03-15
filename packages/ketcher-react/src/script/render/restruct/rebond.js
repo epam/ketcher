@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ReObject from './ReObject'
+import ReObject from './reobject'
 
 import { Bond, Vec2, scale } from 'ketcher-core'
 import draw from '../draw'
@@ -25,11 +25,13 @@ import util from '../util'
  * @constructor
  */
 function ReBond(bond) {
+  this.init('bond')
+
   this.b = bond // TODO rename b to item
   this.doubleBondShift = 0
 }
 
-ReBond.prototype = new ReObject('bond')
+ReBond.prototype = new ReObject()
 ReBond.isSelectable = function () {
   return true
 }

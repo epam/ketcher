@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ReObject from './ReObject'
+import ReObject from './reobject'
 import draw from '../draw'
 import util from '../util'
 import { RxnArrowMode, Box2Abs, Vec2, scale } from 'ketcher-core'
 
 function ReRxnArrow(/* chem.RxnArrow*/ arrow) {
+  this.init('rxnArrow')
+
   this.item = arrow
 }
-ReRxnArrow.prototype = new ReObject('rxnArrow')
+ReRxnArrow.prototype = new ReObject()
 ReRxnArrow.isSelectable = function () {
   return true
 }

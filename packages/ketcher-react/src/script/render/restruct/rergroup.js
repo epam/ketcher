@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,17 @@ import util from '../util'
 import draw from '../draw'
 import { Box2Abs, Vec2, scale } from 'ketcher-core'
 
-import ReObject from './ReObject'
+import ReObject from './reobject'
 
 var BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3)
 
 function ReRGroup(/* RGroup*/ rgroup) {
+  this.init('rgroup')
+
   this.labelBox = null
   this.item = rgroup
 }
-ReRGroup.prototype = new ReObject('rgroup')
+ReRGroup.prototype = new ReObject()
 ReRGroup.isSelectable = function () {
   return false
 }

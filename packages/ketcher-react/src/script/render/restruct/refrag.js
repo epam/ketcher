@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import ReObject from './ReObject'
+import ReObject from './reobject'
 import { Box2Abs, Vec2, scale } from 'ketcher-core'
 
 function ReFrag(/* Struct.Fragment */ frag) {
+  this.init('frag')
   this.item = frag
 }
 
-ReFrag.prototype = new ReObject('frag')
+ReFrag.prototype = new ReObject()
 
 ReFrag.isSelectable = function () {
   return false

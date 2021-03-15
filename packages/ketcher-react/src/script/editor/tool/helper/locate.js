@@ -100,13 +100,14 @@ function getElementsInRectangle(restruct, p0, p1) {
 
   const textsList = []
   restruct.texts.forEach((item, id) => {
-    if (
-      item.item.position.x > x0 &&
-      item.item.position.x < x1 &&
-      item.item.position.y > y0 &&
-      item.item.position.y < y1
-    )
+    const referencePoints = item.getReferencePoints()
+    const referencePointInRectangle = referencePoints.find(point => {
+      return point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1
+    })
+
+    if (referencePointInRectangle) {
       textsList.push(id)
+    }
   })
 
   return {
@@ -161,7 +162,14 @@ function getElementsInPolygon(restruct, rr) {
   })
 
   restruct.texts.forEach((item, id) => {
-    if (isPointInPolygon(r, item.item.position)) textsList.push(id)
+    const referencePoints = item.getReferencePoints()
+    const referencePointInPolygon = referencePoints.find(point =>
+      isPointInPolygon(r, point)
+    )
+
+    if (referencePointInPolygon) {
+      textsList.push(id)
+    }
   })
 
   const enhancedFlagList = []

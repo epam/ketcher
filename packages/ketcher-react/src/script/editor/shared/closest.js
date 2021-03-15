@@ -32,33 +32,63 @@ const findMaps = {
   texts: findClosestText
 }
 
-function findClosestText(restruct, pos, skip, minDist) {
-  let closestTextId = null
-  const maxMinDist = SELECTION_DISTANCE_COEFFICIENT
-  const skipId = skip && skip.map === 'texts' ? skip.id : null
-
-  minDist = minDist || maxMinDist
-  minDist = Math.min(minDist, maxMinDist)
+function findClosestText(restruct, cursorPosition) {
+  let minDist = null
+  let ret = null
 
   restruct.texts.forEach((text, id) => {
-    if (id === skipId) return
+    const referencePoints = text.getReferencePoints(restruct)
+    const topX = referencePoints[0].x
+    const topY = referencePoints[0].y
+    const bottomX = referencePoints[2].x
+    const bottomY = referencePoints[2].y
 
-    const dist = Vec2.dist(pos, text.item.position)
+    const distances = []
 
-    if (dist < minDist) {
-      closestTextId = id
+    if (cursorPosition.x >= topX && cursorPosition.x <= bottomX) {
+      if (cursorPosition.y < topY) {
+        distances.push(topY - cursorPosition.y)
+      } else if (cursorPosition.y > bottomY) {
+        distances.push(cursorPosition.y - bottomY)
+      } else {
+        distances.push(cursorPosition.y - topY, bottomY - cursorPosition.y)
+      }
+    }
+
+    if (cursorPosition.x < topX && cursorPosition.y < topY) {
+      distances.push(Vec2.dist(new Vec2(topX, topY), cursorPosition))
+    }
+
+    if (cursorPosition.x > bottomX && cursorPosition.y > bottomY) {
+      distances.push(Vec2.dist(new Vec2(bottomX, bottomY), cursorPosition))
+    }
+
+    if (cursorPosition.x < topX && cursorPosition.y > bottomY) {
+      distances.push(Vec2.dist(new Vec2(topX, bottomY), cursorPosition))
+    }
+
+    if (cursorPosition.x > bottomX && cursorPosition.y < topY) {
+      distances.push(Vec2.dist(new Vec2(bottomX, topY), cursorPosition))
+    }
+
+    if (cursorPosition.y >= topY && cursorPosition.y <= bottomY) {
+      if (cursorPosition.x < topX) {
+        distances.push(topX - cursorPosition.x)
+      } else if (cursorPosition.x > bottomX) {
+        distances.push(cursorPosition.x - bottomX)
+      } else {
+        distances.push(cursorPosition.x - topX, bottomX - cursorPosition.x)
+      }
+    }
+
+    let dist = Math.min(...distances)
+
+    if (dist < 0.4 && (!ret || dist < minDist)) {
       minDist = dist
+      ret = { id, dist: minDist }
     }
   })
-
-  if (closestTextId !== null) {
-    return {
-      id: closestTextId,
-      dist: minDist
-    }
-  } else {
-    return null
-  }
+  return ret
 }
 
 function findClosestSimpleObject(restruct, pos) {
@@ -76,7 +106,6 @@ function findClosestSimpleObject(restruct, pos) {
       ret = { id, dist: minDist, ref: refPoint }
     }
   })
-
   return ret
 }
 

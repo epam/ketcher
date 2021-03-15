@@ -30,7 +30,7 @@ import ReEnhancedFlag from './reenhancedflag'
 import ReSGroup from './resgroup'
 import ReLoop from './reloop'
 import ReSimpleObject from './resimpleobject'
-import ReText from './retext'
+import ReText from './ReText'
 
 var LAYER_MAP = {
   background: 0,

@@ -18,48 +18,72 @@ import ReObject from './reobject'
 import { Box2Abs, Vec2, scale } from 'ketcher-core'
 
 class ReText extends ReObject {
-  constructor(text) {
+  private item: any
+  path: any
+
+  constructor(text: any) {
     super()
     this.visel = undefined
     this.init('text')
     this.item = text
-    this.color = '#000000'
-    this.component = -1
   }
   static isSelectable() {
     return true
   }
 
-  highlightPath(render) {
-    const box = Box2Abs.fromRelBox(this.path.getBBox())
-    const sz = box.p1.sub(box.p0)
-    const p0 = box.p0.sub(render.options.offset)
-    return render.paper.rect(p0.x, p0.y, sz.x, sz.y, 5)
+  getReferencePoints(): Array<Vec2> {
+    const { p0, p1 } = Box2Abs.fromRelBox(this.path.getBBox())
+
+    const p = this.item.position
+    const w = Math.abs(Vec2.diff(p0, p1).x) / 40
+    const h = Math.abs(Vec2.diff(p0, p1).y) / 40
+
+    const refPoints: Array<Vec2> = []
+
+    refPoints.push(
+      this.item.position,
+      new Vec2(p.x, p.y + h),
+      new Vec2(p.x + w, p.y + h),
+      new Vec2(p.x + w, p.y)
+    )
+
+    return refPoints
   }
 
-  drawHighlight(render) {
+  highlightPath(render: any): any {
+    const { p0, p1 } = Box2Abs.fromRelBox(this.path.getBBox())
+    const topLeft = p0.sub(render.options.offset)
+    const bottomRight = p1.sub(p0)
+
+    return render.paper.rect(
+      topLeft.x,
+      topLeft.y,
+      bottomRight.x,
+      bottomRight.y,
+      5
+    )
+  }
+
+  // @ts-ignore
+  drawHighlight(render: any): any {
     if (!this.path) return null
     const ret = this.highlightPath(render).attr(render.options.highlightStyle)
     render.ctab.addReObjectPath('highlighting', this.visel, ret)
     return ret
   }
 
-  makeSelectionPlate(restruct, paper, options) {
+  // @ts-ignore
+  makeSelectionPlate(restruct: any, paper: any, options: any): any {
     if (!this.path) return null
     return this.highlightPath(restruct.render).attr(options.selectionStyle)
   }
 
-  show(restruct, id, options) {
+  show(restruct: any, _id: any, options: any): void {
     const render = restruct.render
     const paper = render.paper
 
     if (!this.item.label) {
       return
-    }
-
-    if (!this.item.position) {
-      const boundingBox = restruct.molecule.getText(id).getCoordBoundingBox()
-      this.item.position = new Vec2(boundingBox.max.x, boundingBox.min.y - 1)
     }
 
     const paperScale = scale.obj2scaled(this.item.position, options)
@@ -69,7 +93,7 @@ class ReText extends ReObject {
       font: options.font,
       'font-size': options.fontsz,
       'text-anchor': 'start',
-      fill: this.color
+      fill: '#000000'
     })
     render.ctab.addReObjectPath('data', this.visel, this.path, null, true)
   }

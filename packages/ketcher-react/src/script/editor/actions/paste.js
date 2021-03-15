@@ -24,6 +24,7 @@ import {
   RxnArrowAdd,
   RxnPlusAdd,
   SimpleObjectAdd,
+  TextCreate,
   RGroupFragment
 } from '../operations'
 import Action from '../shared/action'
@@ -122,6 +123,14 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
     )
   })
 
+  pstruct.texts.forEach(text => {
+    action.addOp(
+      new TextCreate(text.id, text.label, text.position, text.type).perform(
+        restruct
+      )
+    )
+  })
+
   pstruct.rgroups.forEach((rg, rgid) => {
     rg.frags.forEach((frag, frid) => {
       action.addOp(
@@ -157,6 +166,7 @@ function getStructCenter(struct) {
   if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0).pp
   if (struct.rxnPluses.size > 0) return struct.rxnPluses.get(0).pp
   if (struct.simpleObjects.size > 0) return struct.simpleObjects.get(0).center()
+  if (struct.texts.size > 0) return struct.texts.get(0).position
 
   return null
 }

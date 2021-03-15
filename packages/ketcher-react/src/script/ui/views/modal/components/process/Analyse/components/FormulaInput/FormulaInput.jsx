@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import React from 'react'
-import classes from './FormulaInput.module.less'
+import styles from './FormulaInput.module.less'
 
 const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g
 const errorRegexp = /error:.*/g
@@ -65,15 +65,7 @@ function formulaInputMarkdown(descriptor) {
 
 function FormulaInput({ value }) {
   if (errorRegexp.test(value)) {
-    return (
-      <div
-        className={classes.chem_input}
-        spellCheck="false"
-        contentEditable
-        suppressContentEditableWarning={true}>
-        {value}
-      </div>
-    )
+    return <div className={styles.chem_input}>{value}</div>
   }
 
   const descriptor = value

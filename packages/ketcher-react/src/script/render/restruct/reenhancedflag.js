@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import ReObject from './ReObject'
+import ReObject from './reobject'
 import { Fragment, Box2Abs, Vec2, scale } from 'ketcher-core'
 
 function ReEnhancedFlag(flag, pos) {
+  this.init('enhancedFlag')
+
   this.flag = flag
   this.pp = pos
 }
-ReEnhancedFlag.prototype = new ReObject('enhancedFlag')
+ReEnhancedFlag.prototype = new ReObject()
 ReEnhancedFlag.isSelectable = function () {
   return true
 }

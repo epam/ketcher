@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import ReDataSGroupData from './redatasgroupdata'
 import ReEnhancedFlag from './reenhancedflag'
 import ReSGroup from './resgroup'
 import ReLoop from './reloop'
-import ReSimpleObject from './ReSimpleObject'
+import ReSimpleObject from './resimpleobject'
 
 var LAYER_MAP = {
   background: 0,
@@ -483,7 +483,7 @@ ReStruct.prototype.showSimpleObjects = function () {
 
   this.simpleObjectsChanged.forEach((value, id) => {
     const simpleObject = this.simpleObjects.get(id)
-    simpleObject.show(this, options)
+    simpleObject.show(this, id, options)
   })
 }
 
@@ -615,11 +615,9 @@ ReStruct.prototype.setSelection = function (selection) {
  * @returns {boolean}
  */
 function isSelectionSvgObjectExists(item) {
-  return (
-    item.selectionPlate !== null &&
+  return (item.selectionPlate !== null &&
     ((!item.selectionPlate.items && !item.selectionPlate.removed) ||
-      (Array.isArray(item.selectionPlate.items) &&
-        !item.selectionPlate[0].removed))
+    (Array.isArray(item.selectionPlate.items) && !item.selectionPlate[0].removed))
   )
 }
 

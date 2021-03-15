@@ -45,11 +45,7 @@ function renderGroup(group, key, renderBrakets) {
 
 function formulaInputMarkdown(descriptor) {
   return (
-    <div
-      className={styles.chem_input}
-      spellCheck="false"
-      contentEditable
-      suppressContentEditableWarning={true}>
+    <div className={styles.chem_input}>
       {descriptor?.groups.length > 0 &&
         descriptor.groups.map((group, index) => {
           return (

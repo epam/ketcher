@@ -296,3 +296,15 @@ export const rgroupLogic = {
     }
   }
 }
+
+export const textSchema = {
+  title: 'Text Edit',
+  type: 'object',
+  required: ['label'],
+  properties: {
+    label: {
+      default: '',
+      type: 'string'
+    }
+  }
+}

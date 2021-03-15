@@ -22,7 +22,8 @@ import {
   AtomDelete,
   RxnArrowDelete,
   RxnPlusDelete,
-  SimpleObjectDelete
+  SimpleObjectDelete,
+  TextDelete
 } from '../operations'
 import { Atom, RGroup } from 'ketcher-core'
 
@@ -104,7 +105,8 @@ export function fromFragmentDeletion(restruct, selection) {
     rxnPluses: selection.rxnPluses || [],
     rxnArrows: selection.rxnArrows || [],
     sgroupData: selection.sgroupData || [],
-    simpleObjects: selection.simpleObjects || []
+    simpleObjects: selection.simpleObjects || [],
+    texts: selection.texts || []
   }
 
   const actionRemoveDataSGroups = new Action()
@@ -155,6 +157,10 @@ export function fromFragmentDeletion(restruct, selection) {
 
   selection.simpleObjects.forEach(id => {
     action.addOp(new SimpleObjectDelete(id))
+  })
+
+  selection.texts.forEach(id => {
+    action.addOp(new TextDelete(id))
   })
 
   action = action.perform(restruct)

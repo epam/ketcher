@@ -18,6 +18,7 @@ import PeriodTable from '../views/modal/components/PeriodTable'
 import Rgroup from './toolbox/rgroup'
 import TemplateAttach from './template/template-attach'
 import TemplatesLib from './template/TemplateLib'
+import Text from '../views/modal/components/Text'
 
 // schemify dialogs
 import {
@@ -62,5 +63,6 @@ export default {
   save: Save,
   settings: Settings,
   sgroup: Sgroup,
-  sdata: Sdata
+  sdata: Sdata,
+  text: Text
 }

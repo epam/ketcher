@@ -13,19 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-export * from './atom'
-export * from './bond'
-export * from './CanvasLoad'
-export * from './descriptors'
-export * from './EnhancedFlagMove'
-export * from './ifThen'
-export * from './fragment'
-export * from './fragmentStereoAtom'
-export * from './FragmentStereoFlag'
-export * from './LoopMove'
-export * from './OperationType'
-export * from './rgroup'
-export * from './rxn'
-export * from './simpleObject'
-export * from './sgroup'
-export * from './text'
+
+const schema = {
+  id: '/Text',
+  type: 'object',
+  required: ['label', 'position'],
+  properties: {
+    label: {
+      title: 'Label',
+      type: 'string'
+    },
+    position: {
+      type: 'object',
+      required: ['x', 'y'],
+      properties: {
+        x: {
+          type: 'integer'
+        },
+        y: {
+          type: 'integer'
+        }
+      }
+    }
+  }
+}
+
+export default schema

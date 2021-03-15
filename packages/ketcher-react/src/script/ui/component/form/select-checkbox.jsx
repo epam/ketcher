@@ -17,12 +17,17 @@ import React from 'react'
 import Input from './input'
 
 function SelectCheckbox({ schema, ...props }) {
-  const desc = {
-    title: schema.title,
-    enum: [true, false],
-    enumNames: ['on', 'off']
+  let currentSchema = schema
+  if (schema.type === 'boolean') {
+    currentSchema = {
+      title: schema.title,
+      enum: [true, false],
+      enumNames: ['on', 'off'],
+      default: schema.default
+    }
   }
-  return <Input schema={desc} {...props} />
+
+  return <Input schema={currentSchema} {...props} />
 }
 
 export default SelectCheckbox

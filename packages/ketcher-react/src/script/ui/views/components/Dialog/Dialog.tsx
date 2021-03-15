@@ -104,7 +104,7 @@ const Dialog: FC<Props> = props => {
       {...rest}>
       <header>
         {title}
-        {params.onCancel && title && (
+        {title && (
           <button className={style.close} onClick={() => exit('Cancel')}>
             ×
           </button>

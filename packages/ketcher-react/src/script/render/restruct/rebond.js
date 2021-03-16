@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,145 +14,136 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ReObject from './reobject'
+import ReObject from './ReObject'
 
 import { Bond, Vec2, scale } from 'ketcher-core'
 import draw from '../draw'
 import util from '../util'
 
-/**
- * @param bond { Bond }
- * @constructor
- */
-function ReBond(bond) {
-  this.init('bond')
-
-  this.b = bond // TODO rename b to item
-  this.doubleBondShift = 0
-}
-
-ReBond.prototype = new ReObject()
-ReBond.isSelectable = function () {
-  return true
-}
-
-ReBond.prototype.drawHighlight = function (render) {
-  var ret = this.makeHighlightPlate(render)
-  render.ctab.addReObjectPath('highlighting', this.visel, ret)
-  return ret
-}
-
-ReBond.prototype.makeHighlightPlate = function (render) {
-  var options = render.options
-  bondRecalc(this, render.ctab, options)
-  var c = scale.obj2scaled(this.b.center, options)
-  return render.paper
-    .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
-    .attr(options.highlightStyle)
-}
-
-ReBond.prototype.makeSelectionPlate = function (restruct, paper, options) {
-  bondRecalc(this, restruct, options)
-  var c = scale.obj2scaled(this.b.center, options)
-  return paper
-    .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
-    .attr(options.selectionStyle)
-}
-
-/**
- * @param restruct { ReStruct }
- * @param bid { number }
- * @param options { object }
- */
-ReBond.prototype.show = function (restruct, bid, options) {
-  // eslint-disable-line max-statements
-  var render = restruct.render
-  var struct = restruct.molecule
-  var paper = render.paper
-  var hb1 = struct.halfBonds.get(this.b.hb1),
-    hb2 = struct.halfBonds.get(this.b.hb2)
-
-  checkStereoBold(bid, this, restruct)
-  bondRecalc(this, restruct, options)
-  setDoubleBondShift(this, struct)
-
-  this.path = getBondPath(restruct, this, hb1, hb2)
-
-  this.rbb = util.relBox(this.path.getBBox())
-  restruct.addReObjectPath('data', this.visel, this.path, null, true)
-  var reactingCenter = {}
-  reactingCenter.path = getReactingCenterPath(render, this, hb1, hb2)
-  if (reactingCenter.path) {
-    reactingCenter.rbb = util.relBox(reactingCenter.path.getBBox())
-    restruct.addReObjectPath(
-      'data',
-      this.visel,
-      reactingCenter.path,
-      null,
-      true
-    )
+class ReBond extends ReObject {
+  constructor(bond) {
+    super('bond')
+    this.b = bond // TODO rename b to item
+    this.doubleBondShift = 0
   }
-  var topology = {}
-  topology.path = getTopologyMark(render, this, hb1, hb2)
-  if (topology.path) {
-    topology.rbb = util.relBox(topology.path.getBBox())
-    restruct.addReObjectPath('data', this.visel, topology.path, null, true)
+  static isSelectable() {
+    return true
   }
-  this.setHighlight(this.highlight, render)
+  drawHighlight(render) {
+    var ret = this.makeHighlightPlate(render)
+    render.ctab.addReObjectPath('highlighting', this.visel, ret)
+    return ret
+  }
+  makeHighlightPlate(render) {
+    var options = render.options
+    bondRecalc(this, render.ctab, options)
+    var c = scale.obj2scaled(this.b.center, options)
+    return render.paper
+      .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
+      .attr(options.highlightStyle)
+  }
+  makeSelectionPlate(restruct, paper, options) {
+    bondRecalc(this, restruct, options)
+    var c = scale.obj2scaled(this.b.center, options)
+    return paper
+      .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
+      .attr(options.selectionStyle)
+  }
+  /**
+   * @param restruct { ReStruct }
+   * @param bid { number }
+   * @param options { object }
+   */
+  show(restruct, bid, options) {
+    // eslint-disable-line max-statements
+    var render = restruct.render
+    var struct = restruct.molecule
+    var paper = render.paper
+    var hb1 = struct.halfBonds.get(this.b.hb1),
+      hb2 = struct.halfBonds.get(this.b.hb2)
 
-  var ipath = null
-  var bondIdxOff = options.subFontSize * 0.6
-  if (options.showBondIds) {
-    ipath = getIdsPath(bid, paper, hb1, hb2, bondIdxOff, 0.5, 0.5, hb1.norm)
-    restruct.addReObjectPath('indices', this.visel, ipath)
-  }
-  if (options.showHalfBondIds) {
-    ipath = getIdsPath(
-      this.b.hb1,
-      paper,
-      hb1,
-      hb2,
-      bondIdxOff,
-      0.8,
-      0.2,
-      hb1.norm
-    )
-    restruct.addReObjectPath('indices', this.visel, ipath)
-    ipath = getIdsPath(
-      this.b.hb2,
-      paper,
-      hb1,
-      hb2,
-      bondIdxOff,
-      0.2,
-      0.8,
-      hb2.norm
-    )
-    restruct.addReObjectPath('indices', this.visel, ipath)
-  }
-  if (options.showLoopIds && !options.showBondIds) {
-    ipath = getIdsPath(
-      hb1.loop,
-      paper,
-      hb1,
-      hb2,
-      bondIdxOff,
-      0.5,
-      0.5,
-      hb2.norm
-    )
-    restruct.addReObjectPath('indices', this.visel, ipath)
-    ipath = getIdsPath(
-      hb2.loop,
-      paper,
-      hb1,
-      hb2,
-      bondIdxOff,
-      0.5,
-      0.5,
-      hb1.norm
-    )
-    restruct.addReObjectPath('indices', this.visel, ipath)
+    checkStereoBold(bid, this, restruct)
+    bondRecalc(this, restruct, options)
+    setDoubleBondShift(this, struct)
+
+    this.path = getBondPath(restruct, this, hb1, hb2)
+
+    this.rbb = util.relBox(this.path.getBBox())
+    restruct.addReObjectPath('data', this.visel, this.path, null, true)
+    var reactingCenter = {}
+    reactingCenter.path = getReactingCenterPath(render, this, hb1, hb2)
+    if (reactingCenter.path) {
+      reactingCenter.rbb = util.relBox(reactingCenter.path.getBBox())
+      restruct.addReObjectPath(
+        'data',
+        this.visel,
+        reactingCenter.path,
+        null,
+        true
+      )
+    }
+    var topology = {}
+    topology.path = getTopologyMark(render, this, hb1, hb2)
+    if (topology.path) {
+      topology.rbb = util.relBox(topology.path.getBBox())
+      restruct.addReObjectPath('data', this.visel, topology.path, null, true)
+    }
+    this.setHighlight(this.highlight, render)
+
+    var ipath = null
+    var bondIdxOff = options.subFontSize * 0.6
+    if (options.showBondIds) {
+      ipath = getIdsPath(bid, paper, hb1, hb2, bondIdxOff, 0.5, 0.5, hb1.norm)
+      restruct.addReObjectPath('indices', this.visel, ipath)
+    }
+    if (options.showHalfBondIds) {
+      ipath = getIdsPath(
+        this.b.hb1,
+        paper,
+        hb1,
+        hb2,
+        bondIdxOff,
+        0.8,
+        0.2,
+        hb1.norm
+      )
+      restruct.addReObjectPath('indices', this.visel, ipath)
+      ipath = getIdsPath(
+        this.b.hb2,
+        paper,
+        hb1,
+        hb2,
+        bondIdxOff,
+        0.2,
+        0.8,
+        hb2.norm
+      )
+      restruct.addReObjectPath('indices', this.visel, ipath)
+    }
+    if (options.showLoopIds && !options.showBondIds) {
+      ipath = getIdsPath(
+        hb1.loop,
+        paper,
+        hb1,
+        hb2,
+        bondIdxOff,
+        0.5,
+        0.5,
+        hb2.norm
+      )
+      restruct.addReObjectPath('indices', this.visel, ipath)
+      ipath = getIdsPath(
+        hb2.loop,
+        paper,
+        hb1,
+        hb2,
+        bondIdxOff,
+        0.5,
+        0.5,
+        hb1.norm
+      )
+      restruct.addReObjectPath('indices', this.visel, ipath)
+    }
   }
 }
 

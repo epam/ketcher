@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,91 +19,140 @@ import { SGroup, Box2Abs, Vec2, Pile, scale } from 'ketcher-core'
 import draw from '../draw'
 
 import ReDataSGroupData from './redatasgroupdata'
-import ReObject from './reobject'
+import ReObject from './ReObject'
 
 const tfx = util.tfx
 
-function ReSGroup(sgroup) {
-  this.init('sgroup')
-
-  this.item = sgroup
-}
-ReSGroup.prototype = new ReObject()
-ReSGroup.isSelectable = function () {
-  return false
-}
-
-ReSGroup.prototype.draw = function (remol, sgroup) {
-  var render = remol.render
-  var set = render.paper.set()
-  var atomSet = new Pile(sgroup.atoms)
-  const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet)
-  bracketPos(sgroup, render, remol.molecule, crossBonds)
-  var bracketBox = sgroup.bracketBox
-  var d = sgroup.bracketDir
-  sgroup.areas = [bracketBox]
-
-  switch (sgroup.type) {
-    case 'MUL':
-      SGroupdrawBrackets(
-        set,
-        render,
-        sgroup,
-        crossBonds,
-        atomSet,
-        bracketBox,
-        d,
-        sgroup.data.mul
-      )
-      break
-    case 'SRU':
-      var connectivity = sgroup.data.connectivity || 'eu'
-      if (connectivity === 'ht') connectivity = ''
-      var subscript = sgroup.data.subscript || 'n'
-      SGroupdrawBrackets(
-        set,
-        render,
-        sgroup,
-        crossBonds,
-        atomSet,
-        bracketBox,
-        d,
-        subscript,
-        connectivity
-      )
-      break
-    case 'SUP':
-      SGroupdrawBrackets(
-        set,
-        render,
-        sgroup,
-        crossBonds,
-        atomSet,
-        bracketBox,
-        d,
-        sgroup.data.name,
-        null,
-        { 'font-style': 'italic' }
-      )
-      break
-    case 'GEN':
-      SGroupdrawBrackets(
-        set,
-        render,
-        sgroup,
-        crossBonds,
-        atomSet,
-        bracketBox,
-        d
-      )
-      break
-    case 'DAT':
-      set = drawGroupDat(remol, sgroup)
-      break
-    default:
-      break
+class ReSGroup extends ReObject {
+  constructor(sgroup) {
+    super('sgroup')
+    this.item = sgroup
   }
-  return set
+  static isSelectable() {
+    return false
+  }
+  draw(remol, sgroup) {
+    var render = remol.render
+    var set = render.paper.set()
+    var atomSet = new Pile(sgroup.atoms)
+    const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet)
+    bracketPos(sgroup, render, remol.molecule, crossBonds)
+    var bracketBox = sgroup.bracketBox
+    var d = sgroup.bracketDir
+    sgroup.areas = [bracketBox]
+
+    switch (sgroup.type) {
+      case 'MUL':
+        SGroupdrawBrackets(
+          set,
+          render,
+          sgroup,
+          crossBonds,
+          atomSet,
+          bracketBox,
+          d,
+          sgroup.data.mul
+        )
+        break
+      case 'SRU':
+        var connectivity = sgroup.data.connectivity || 'eu'
+        if (connectivity === 'ht') connectivity = ''
+        var subscript = sgroup.data.subscript || 'n'
+        SGroupdrawBrackets(
+          set,
+          render,
+          sgroup,
+          crossBonds,
+          atomSet,
+          bracketBox,
+          d,
+          subscript,
+          connectivity
+        )
+        break
+      case 'SUP':
+        SGroupdrawBrackets(
+          set,
+          render,
+          sgroup,
+          crossBonds,
+          atomSet,
+          bracketBox,
+          d,
+          sgroup.data.name,
+          null,
+          { 'font-style': 'italic' }
+        )
+        break
+      case 'GEN':
+        SGroupdrawBrackets(
+          set,
+          render,
+          sgroup,
+          crossBonds,
+          atomSet,
+          bracketBox,
+          d
+        )
+        break
+      case 'DAT':
+        set = drawGroupDat(remol, sgroup)
+        break
+      default:
+        break
+    }
+    return set
+  }
+  drawHighlight(render) {
+    // eslint-disable-line max-statements
+    var options = render.options
+    var paper = render.paper
+    var sGroupItem = this.item
+    var bracketBox = sGroupItem.bracketBox.transform(scale.obj2scaled, options)
+    var lineWidth = options.lineWidth
+    var vext = new Vec2(lineWidth * 4, lineWidth * 6)
+    bracketBox = bracketBox.extend(vext, vext)
+    var d = sGroupItem.bracketDir,
+      n = d.rotateSC(1, 0)
+    var a0 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p0.y)
+    var a1 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p1.y)
+    var b0 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p0.y)
+    var b1 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p1.y)
+
+    var set = paper.set()
+    sGroupItem.highlighting = paper
+      .path(
+        'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
+        tfx(a0.x),
+        tfx(a0.y),
+        tfx(a1.x),
+        tfx(a1.y),
+        tfx(b1.x),
+        tfx(b1.y),
+        tfx(b0.x),
+        tfx(b0.y)
+      )
+      .attr(options.highlightStyle)
+    set.push(sGroupItem.highlighting)
+
+    SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach(aid => {
+      set.push(render.ctab.atoms.get(aid).makeHighlightPlate(render))
+    }, this)
+    SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach(bid => {
+      set.push(render.ctab.bonds.get(bid).makeHighlightPlate(render))
+    }, this)
+    render.ctab.addReObjectPath('highlighting', this.visel, set)
+  }
+  show(restruct) {
+    var render = restruct.render
+    var sgroup = this.item
+    if (sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
+      var remol = render.ctab
+      var path = this.draw(remol, sgroup)
+      restruct.addReObjectPath('data', this.visel, path, null, true)
+      this.setHighlight(this.highlight, render) // TODO: fix this
+    }
+  }
 }
 
 function SGroupdrawBrackets(
@@ -445,58 +494,6 @@ function getBracketParameters(
     })()
   }
   return brackets
-}
-
-ReSGroup.prototype.drawHighlight = function (render) {
-  // eslint-disable-line max-statements
-  var options = render.options
-  var paper = render.paper
-  var sGroupItem = this.item
-  var bracketBox = sGroupItem.bracketBox.transform(scale.obj2scaled, options)
-  var lineWidth = options.lineWidth
-  var vext = new Vec2(lineWidth * 4, lineWidth * 6)
-  bracketBox = bracketBox.extend(vext, vext)
-  var d = sGroupItem.bracketDir,
-    n = d.rotateSC(1, 0)
-  var a0 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p0.y)
-  var a1 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p1.y)
-  var b0 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p0.y)
-  var b1 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p1.y)
-
-  var set = paper.set()
-  sGroupItem.highlighting = paper
-    .path(
-      'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
-      tfx(a0.x),
-      tfx(a0.y),
-      tfx(a1.x),
-      tfx(a1.y),
-      tfx(b1.x),
-      tfx(b1.y),
-      tfx(b0.x),
-      tfx(b0.y)
-    )
-    .attr(options.highlightStyle)
-  set.push(sGroupItem.highlighting)
-
-  SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach(aid => {
-    set.push(render.ctab.atoms.get(aid).makeHighlightPlate(render))
-  }, this)
-  SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach(bid => {
-    set.push(render.ctab.bonds.get(bid).makeHighlightPlate(render))
-  }, this)
-  render.ctab.addReObjectPath('highlighting', this.visel, set)
-}
-
-ReSGroup.prototype.show = function (restruct) {
-  var render = restruct.render
-  var sgroup = this.item
-  if (sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
-    var remol = render.ctab
-    var path = this.draw(remol, sgroup)
-    restruct.addReObjectPath('data', this.visel, path, null, true)
-    this.setHighlight(this.highlight, render) // TODO: fix this
-  }
 }
 
 export default ReSGroup

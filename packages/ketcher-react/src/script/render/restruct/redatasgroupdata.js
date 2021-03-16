@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ReObject from './reobject'
+import ReObject from './ReObject'
 import { scale } from 'ketcher-core'
 
 function ReDataSGroupData(sgroup) {
-  this.init('sgroupData')
-
   this.sgroup = sgroup
 }
 
-ReDataSGroupData.prototype = new ReObject()
+ReDataSGroupData.prototype = new ReObject('sgroupData')
 ReDataSGroupData.isSelectable = function () {
   return true
 }

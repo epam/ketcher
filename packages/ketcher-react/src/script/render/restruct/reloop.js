@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Visel from './visel'
-import ReObject from './reobject'
+import ReObject from './ReObject'
 import util from '../util'
 import { Bond, Vec2, scale } from 'ketcher-core'
 
@@ -22,11 +21,10 @@ const tfx = util.tfx
 
 function ReLoop(loop) {
   this.loop = loop
-  this.visel = new Visel('loop')
   this.centre = new Vec2()
   this.radius = new Vec2()
 }
-ReLoop.prototype = new ReObject()
+ReLoop.prototype = new ReObject('loop')
 ReLoop.isSelectable = function () {
   return false
 }

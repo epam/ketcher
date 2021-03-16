@@ -207,10 +207,10 @@ function getReindexMap(components) {
   return components.reactants
     .concat(components.products)
     .reduce((acc, item) => {
-      Array.from(item).forEach(aid => {
-        acc.add(aid)
+      Array.from(item).forEach((aid, index) => {
+        acc.set(aid, index)
       })
 
       return acc
-    }, new Pool())
+    }, new Map())
 }

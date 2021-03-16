@@ -18,43 +18,44 @@
 // It corresponds to a visualization (i.e. set of paths) of an atom or a bond.
 import { Vec2, Box2Abs } from 'ketcher-core'
 
-function Visel(type) {
-  this.type = type
-  this.paths = []
-  this.boxes = []
-  this.boundingBox = null
-}
-
-Visel.prototype.add = function (path, bb, ext) {
-  this.paths.push(path)
-  if (bb) {
-    this.boxes.push(bb)
-    this.boundingBox =
-      this.boundingBox == null ? bb : Box2Abs.union(this.boundingBox, bb)
+class Visel {
+  constructor(type) {
+    this.type = type
+    this.paths = []
+    this.boxes = []
+    this.boundingBox = null
+    this.exts = []
   }
-  if (ext) this.exts.push(ext)
-}
-
-Visel.prototype.clear = function () {
-  this.paths = []
-  this.boxes = []
-  this.exts = []
-  this.boundingBox = null
-}
-
-Visel.prototype.translate = function (x, y) {
-  if (arguments.length > 2)
-    // TODO: replace to debug time assert
-    throw new Error('One vector or two scalar arguments expected')
-  if (y === undefined) {
-    this.translate(x.x, x.y)
-  } else {
-    var delta = new Vec2(x, y)
-    for (var i = 0; i < this.paths.length; ++i) this.paths[i].translateAbs(x, y)
-    for (var j = 0; j < this.boxes.length; ++j)
-      this.boxes[j] = this.boxes[j].translate(delta)
-    if (this.boundingBox !== null)
-      this.boundingBox = this.boundingBox.translate(delta)
+  add(path, bb, ext) {
+    this.paths.push(path)
+    if (bb) {
+      this.boxes.push(bb)
+      this.boundingBox =
+        this.boundingBox == null ? bb : Box2Abs.union(this.boundingBox, bb)
+    }
+    if (ext) this.exts.push(ext)
+  }
+  clear() {
+    this.paths = []
+    this.boxes = []
+    this.exts = []
+    this.boundingBox = null
+  }
+  translate(x, y) {
+    if (arguments.length > 2)
+      // TODO: replace to debug time assert
+      throw new Error('One vector or two scalar arguments expected')
+    if (y === undefined) {
+      this.translate(x.x, x.y)
+    } else {
+      var delta = new Vec2(x, y)
+      for (var i = 0; i < this.paths.length; ++i)
+        this.paths[i].translateAbs(x, y)
+      for (var j = 0; j < this.boxes.length; ++j)
+        this.boxes[j] = this.boxes[j].translate(delta)
+      if (this.boundingBox !== null)
+        this.boundingBox = this.boundingBox.translate(delta)
+    }
   }
 }
 

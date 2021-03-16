@@ -16,57 +16,51 @@
 import ReObject from './ReObject'
 import { Fragment, Box2Abs, Vec2, scale } from 'ketcher-core'
 
-function ReEnhancedFlag(flag, pos) {
-  this.flag = flag
-  this.pp = pos
-}
-ReEnhancedFlag.prototype = new ReObject('enhancedFlag')
-ReEnhancedFlag.isSelectable = function () {
-  return true
-}
-
-ReEnhancedFlag.prototype.highlightPath = function (render) {
-  var box = Box2Abs.fromRelBox(this.path.getBBox())
-  var sz = box.p1.sub(box.p0)
-  var p0 = box.p0.sub(render.options.offset)
-  return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
-}
-
-ReEnhancedFlag.prototype.drawHighlight = function (render) {
-  if (!this.path) return null
-  var ret = this.highlightPath(render).attr(render.options.highlightStyle)
-  render.ctab.addReObjectPath('highlighting', this.visel, ret)
-  return ret
-}
-
-ReEnhancedFlag.prototype.makeSelectionPlate = function (
-  restruct,
-  paper,
-  options
-) {
-  if (!this.path) return null
-  return this.highlightPath(restruct.render).attr(options.selectionStyle)
-}
-
-ReEnhancedFlag.prototype.show = function (restruct, id, options) {
-  const render = restruct.render
-  if (!this.flag) return
-
-  if (!this.pp) {
-    const bb = restruct.molecule.getFragment(id).getCoordBoundingBox()
-    this.pp = new Vec2(bb.max.x, bb.min.y - 1)
+class ReEnhancedFlag extends ReObject {
+  constructor(flag, pos) {
+    super('enhancedFlag')
+    this.flag = flag
+    this.pp = pos
   }
+  static isSelectable() {
+    return true
+  }
+  highlightPath(render) {
+    var box = Box2Abs.fromRelBox(this.path.getBBox())
+    var sz = box.p1.sub(box.p0)
+    var p0 = box.p0.sub(render.options.offset)
+    return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
+  }
+  drawHighlight(render) {
+    if (!this.path) return null
+    var ret = this.highlightPath(render).attr(render.options.highlightStyle)
+    render.ctab.addReObjectPath('highlighting', this.visel, ret)
+    return ret
+  }
+  makeSelectionPlate(restruct, paper, options) {
+    if (!this.path) return null
+    return this.highlightPath(restruct.render).attr(options.selectionStyle)
+  }
+  show(restruct, id, options) {
+    const render = restruct.render
+    if (!this.flag) return
 
-  const paper = render.paper
-  const ps = scale.obj2scaled(this.pp, options)
-  this.path = paper
-    .text(ps.x, ps.y, Fragment.STEREO_FLAG[this.flag] || '')
-    .attr({
-      font: options.font,
-      'font-size': options.fontsz,
-      fill: '#000'
-    })
-  render.ctab.addReObjectPath('data', this.visel, this.path, null, true)
+    if (!this.pp) {
+      const bb = restruct.molecule.getFragment(id).getCoordBoundingBox()
+      this.pp = new Vec2(bb.max.x, bb.min.y - 1)
+    }
+
+    const paper = render.paper
+    const ps = scale.obj2scaled(this.pp, options)
+    this.path = paper
+      .text(ps.x, ps.y, Fragment.STEREO_FLAG[this.flag] || '')
+      .attr({
+        font: options.font,
+        'font-size': options.fontsz,
+        fill: '#000'
+      })
+    render.ctab.addReObjectPath('data', this.visel, this.path, null, true)
+  }
 }
 
 export default ReEnhancedFlag

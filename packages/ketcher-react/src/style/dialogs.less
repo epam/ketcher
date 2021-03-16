@@ -25,10 +25,14 @@
 /////////////////////
 
 .template-lib {
+  & > div {
+    display: flex;
+  }
   label {
     text-align: center;
     line-height: 2.6em;
     display: flex;
+    margin-bottom: 1em;
     input[type='search'] {
       width: 100%;
       margin-left: 4px;
@@ -36,6 +40,7 @@
   }
   .table-group-wrap {
     display: flex;
+    height: calc(100% - 3.6em - 4px);
   }
   .single-col-layout {
     flex-wrap: wrap;
@@ -46,18 +51,16 @@
   }
   .groups {
     &:extend(.-SelectList all);
-    margin-top: 1em;
-    height: 27em;
+    height: 100%;
+    min-height: 200px;
     width: 11em;
-    overflow: hidden;
+    overflow: auto;
     flex-shrink: 0;
   }
   .table {
     display: flex;
     flex-wrap: wrap;
     width: 550px;
-    height: 27em;
-    margin-top: 1em;
     padding: 0;
     overflow: hidden;
   }

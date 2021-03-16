@@ -149,7 +149,7 @@ TemplateTool.prototype.mousemove = function (event) {
       if (dragCtx.action) dragCtx.action.perform(restruct) // undo previous action
 
       dragCtx.sign2 = sign
-      ;[action, pasteItems] = fromTemplateOnBondAction(
+      let [action, pasteItems] = fromTemplateOnBondAction(
         restruct,
         this.template,
         ci.id,

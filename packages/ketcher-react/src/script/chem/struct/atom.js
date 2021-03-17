@@ -26,7 +26,6 @@ function Atom(params) {
 
   this.label = params.label
   this.fragment = 'fragment' in params ? params.fragment : -1
-  this.pseudo = params.pseudo || checkPseudo(params.label)
 
   ifDef(this, params, 'alias', def('alias'))
   ifDef(this, params, 'isotope', def('isotope'))
@@ -65,6 +64,18 @@ function Atom(params) {
   /** @type {number[]} */
   this.neighbors = [] // set of half-bonds having this atom as their origin
   this.badConn = false
+
+  Object.defineProperty(this, 'pseudo', {
+    enumerable: true,
+    get: function () {
+      return !element.map[this.label] &&
+        this.label !== 'L' &&
+        this.label !== 'L#' &&
+        this.label !== 'R#'
+        ? this.label
+        : null
+    }
+  })
 }
 
 Atom.getAttrHash = function (atom) {
@@ -98,7 +109,6 @@ Atom.PATTERN = {
 Atom.attrlist = {
   alias: null,
   label: 'C',
-  pseudo: null,
   isotope: 0,
   radical: 0,
   charge: 0,
@@ -457,15 +467,6 @@ Atom.prototype.calcValenceMinusHyd = function (conn) {
 
 function ifDef(dst, src, prop, def) {
   dst[prop] = !(typeof src[prop] === 'undefined') ? src[prop] : def
-}
-
-function checkPseudo(label) {
-  return !element.map[label] &&
-    label !== 'L' &&
-    label !== 'L#' &&
-    label !== 'R#'
-    ? label
-    : null
 }
 
 export default Atom

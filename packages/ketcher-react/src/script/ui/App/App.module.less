@@ -22,7 +22,7 @@
     '. toolbar-top .'
     'toolbar-left canvas toolbar-right'
     '. toolbar-bottom .';
-  grid-template-columns: minmax(40px, auto) 1fr minmax(40px, auto);
+  grid-template-columns: minmax(40px, max-content) 1fr minmax(40px, max-content);
   grid-template-rows: auto 1fr auto;
 }
 
@@ -48,5 +48,5 @@
 
 // stylelint-disable-next-line selector-pseudo-class-no-unknown
 :global(.smallEditor) .app {
-  grid-template-columns: minmax(32px, auto) 1fr minmax(32px, auto);
+  grid-template-columns: minmax(32px, max-content) 1fr minmax(32px, max-content);
 }

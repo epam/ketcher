@@ -89,7 +89,6 @@ export class Atom {
   static attrlist = {
     alias: null,
     label: 'C',
-    pseudo: null,
     isotope: 0,
     radical: 0,
     charge: 0,
@@ -111,7 +110,6 @@ export class Atom {
 
   label: string
   fragment: number
-  pseudo: string
   atomList: AtomList | null
   attpnt: any
   isotope: number
@@ -141,8 +139,6 @@ export class Atom {
   constructor(params: AtomParams) {
     this.label = params.label
     this.fragment = getValueOrDefault(params.fragment, -1)
-    this.pseudo = params.pseudo || getPseudo(params.label)
-
     this.alias = getValueOrDefault(params.alias, Atom.attrlist.alias)
     this.isotope = getValueOrDefault(params.isotope, Atom.attrlist.isotope)
     this.radical = getValueOrDefault(params.radical, Atom.attrlist.radical)
@@ -200,6 +196,13 @@ export class Atom {
     this.atomList = params.atomList ? new AtomList(params.atomList) : null
     this.neighbors = [] // set of half-bonds having this atom as their origin
     this.badConn = false
+
+    Object.defineProperty(this, 'pseudo', {
+      enumerable: true,
+      get: function () {
+        return getPseudo(this.label)
+      }
+    })
   }
 
   static getAttrHash(atom: Atom) {

@@ -180,7 +180,8 @@ export function serverCall(editor, server, method, options, struct) {
     ).map(aid => aidMap.get(aid))
 
     if (currentStruct.hasRxnArrow()) {
-      const reindexMap = getReindexMap(currentStruct.getComponents())
+      const components = currentStruct.getComponents()
+      const reindexMap = getReindexMap(components)
       selectedAtoms = selectedAtoms.map(aid => reindexMap.get(aid))
     }
   }
@@ -204,13 +205,15 @@ export function serverCall(editor, server, method, options, struct) {
 }
 
 function getReindexMap(components) {
-  return components.reactants
-    .concat(components.products)
-    .reduce((acc, item) => {
-      Array.from(item).forEach((aid, index) => {
-        acc.set(aid, index)
-      })
-
+  const map = [...components.reactants, ...components.products]
+    .reduce((acc, set) => {
+      acc = [...acc, ...set]
+      return acc
+    }, [])
+    .reduce((acc, aid, index) => {
+      acc.set(aid, index)
       return acc
     }, new Map())
+
+  return map
 }

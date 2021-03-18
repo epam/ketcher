@@ -122,8 +122,9 @@ class StructEditor extends Component {
       <Tag
         onMouseDown={event => event.preventDefault()}
         className={clsx(classes.canvas, className)}
-        {...props}>
-        <div ref={this.editorRef}>{/* svg here */}</div>
+        {...props}
+        ref={this.editorRef}>
+        {/* svg here */}
         <div className={classes.measureLog} ref={this.logRef} />
         {indigoVerification && (
           <div className={classes.spinnerOverlay}>

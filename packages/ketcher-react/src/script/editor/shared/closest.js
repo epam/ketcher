@@ -83,7 +83,7 @@ function findClosestText(restruct, cursorPosition) {
 
     let dist = Math.min(...distances)
 
-    if (dist < 0.4 && (!ret || dist < minDist)) {
+    if (dist < SELECTION_DISTANCE_COEFFICIENT && (!ret || dist < minDist)) {
       minDist = dist
       ret = { id, dist: minDist }
     }

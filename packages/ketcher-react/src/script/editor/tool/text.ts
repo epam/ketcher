@@ -14,20 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Text } from 'ketcher-core'
 import { fromTextCreation, fromTextUpdating } from '../actions/text'
 import { fromMultipleMove } from '../actions/fragment'
 import Action from '../shared/action'
 
-function TextTool(editor) {
-  if (!(this instanceof TextTool)) {
-    return new TextTool(editor)
+class TextTool {
+  editor: any
+  dragCtx: any
+
+  constructor(editor) {
+    this.editor = editor
+    this.editor.selection(null)
   }
 
-  this.editor = editor
-  this.editor.selection(null)
-
-  TextTool.prototype.mousedown = function (event) {
+  mousedown(event) {
     const render = this.editor.render
     const ci = this.editor.findItem(event, ['texts'])
 
@@ -41,10 +41,10 @@ function TextTool(editor) {
     }
   }
 
-  TextTool.prototype.mousemove = function (event) {
+  mousemove(event) {
     const render = this.editor.render
 
-    if ('dragCtx' in this) {
+    if (this.dragCtx) {
       if (this.dragCtx.action) {
         this.dragCtx.action.perform(render.ctab)
       }
@@ -60,7 +60,7 @@ function TextTool(editor) {
     }
   }
 
-  TextTool.prototype.mouseup = function (event) {
+  mouseup() {
     if (this.dragCtx) {
       this.editor.update(this.dragCtx.action)
       delete this.dragCtx
@@ -68,7 +68,7 @@ function TextTool(editor) {
     return true
   }
 
-  TextTool.prototype.click = function (event) {
+  click(event) {
     const render = this.editor.render
     const ci = this.editor.findItem(event, ['texts'])
     this.editor.hover(null)
@@ -80,12 +80,12 @@ function TextTool(editor) {
     return true
   }
 
-  TextTool.prototype.dblclick = function (event) {
+  dblclick(event) {
     const ci = this.editor.findItem(event, ['texts'])
     this.editor.hover(null)
 
     if (ci.map === 'texts') {
-      propsDialog(this.editor, ci.id)
+      propsDialog(this.editor, ci.id, ci.position)
     }
 
     return true
@@ -106,7 +106,8 @@ function propsDialog(editor, id, position) {
 
   Promise.resolve(res)
     .then(elem => {
-      elem = Object.assign({}, Text.attrlist, elem)
+      elem = Object.assign({}, elem)
+      debugger
 
       if (!id && id !== 0 && elem.label) {
         editor.update(fromTextCreation(editor.render.ctab, elem))
@@ -117,4 +118,6 @@ function propsDialog(editor, id, position) {
     .catch(() => null)
 }
 
-export default TextTool
+export default function TextToolWrapper(editor) {
+  return new TextTool(editor)
+}

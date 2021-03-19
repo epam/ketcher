@@ -34,7 +34,7 @@ import PasteTool from './paste'
 import RotateTool from './rotate'
 import EnhancedStereoTool from './enhanced-stereo'
 import SimpleObjectTool from './simpleobject'
-import TextTool from './text'
+import TextToolWrapper from './text'
 
 const tools = {
   rgroupatom: RGroupAtomTool,
@@ -57,7 +57,7 @@ const tools = {
   rotate: RotateTool,
   enhancedStereo: EnhancedStereoTool,
   simpleobject: SimpleObjectTool,
-  text: TextTool
+  text: TextToolWrapper
 }
 
 export default tools

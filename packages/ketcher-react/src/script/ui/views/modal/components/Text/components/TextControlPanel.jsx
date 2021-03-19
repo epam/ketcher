@@ -4,20 +4,24 @@ import TextButton from './TextButton'
 export default function TextControlPanel() {
   const buttons = [
     {
-      label: 'subtext',
-      id: 1
+      label: 'subscript',
+      id: 1,
+      dataCommand: 'subscript'
     },
     {
-      label: 'supertext',
-      id: 2
+      label: 'superscript',
+      id: 2,
+      dataCommand: 'superscript'
     },
     {
       label: 'bold',
-      id: 3
+      id: 3,
+      dataCommand: 'bold'
     },
     {
       label: 'italic',
-      id: 4
+      id: 4,
+      dataCommand: 'italic'
     }
   ]
 

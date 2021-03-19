@@ -38,7 +38,8 @@ const Text = props => {
         onChange={event => setText(event.target.value)}
         className={styles.textArea}
         rows="5"
-        cols="40"></textarea>
+        cols="40"
+        contentEditable="true"></textarea>
     </Dialog>
   )
 }

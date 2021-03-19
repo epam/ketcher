@@ -17,15 +17,12 @@
 const schema = {
   id: '/Text',
   type: 'object',
-  required: ['label', 'position'],
   properties: {
     label: {
-      title: 'Label',
       type: 'string'
     },
     position: {
       type: 'object',
-      required: ['x', 'y'],
       properties: {
         x: {
           type: 'integer'
@@ -33,7 +30,11 @@ const schema = {
         y: {
           type: 'integer'
         }
-      }
+      },
+      required: ['x', 'y']
+    },
+    type: {
+      type: 'string'
     }
   }
 }

@@ -16,6 +16,7 @@
 
 import Visel from './visel'
 import { scale } from 'ketcher-core'
+import ReStruct from './index'
 
 class ReObject {
   public visel: Visel
@@ -68,7 +69,7 @@ class ReObject {
   }
 
   // @ts-ignore
-  makeSelectionPlate(restruct: any, paper: any, styles: any): any {
+  makeSelectionPlate(restruct: ReStruct, paper: any, styles: any): any {
     console.assert(null, 'ReObject.makeSelectionPlate is not overridden') // eslint-disable-line no-console
   }
 }

@@ -14,10 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 import ReObject from './ReObject'
-import { Fragment, Box2Abs, Vec2, scale } from 'ketcher-core'
+import { Box2Abs, Vec2, scale, StereoFlag } from 'ketcher-core'
+import ReStruct from './index'
 
 class ReEnhancedFlag extends ReObject {
-  constructor(flag, pos) {
+  private flag: StereoFlag | null
+  private pp: Vec2 | null
+  private path: any
+
+  constructor(flag: StereoFlag | null, pos: Vec2 | null) {
     super('enhancedFlag')
     this.flag = flag
     this.pp = pos
@@ -25,23 +30,25 @@ class ReEnhancedFlag extends ReObject {
   static isSelectable() {
     return true
   }
-  highlightPath(render) {
+  highlightPath(render: any): any {
     var box = Box2Abs.fromRelBox(this.path.getBBox())
     var sz = box.p1.sub(box.p0)
     var p0 = box.p0.sub(render.options.offset)
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
   }
-  drawHighlight(render) {
+  drawHighlight(render: any): any {
     if (!this.path) return null
     var ret = this.highlightPath(render).attr(render.options.highlightStyle)
     render.ctab.addReObjectPath('highlighting', this.visel, ret)
     return ret
   }
-  makeSelectionPlate(restruct, paper, options) {
+  // @ts-ignore
+  makeSelectionPlate(restruct: ReStruct, paper: any, options: any): any {
     if (!this.path) return null
     return this.highlightPath(restruct.render).attr(options.selectionStyle)
   }
-  show(restruct, id, options) {
+
+  show(restruct: ReStruct, id: any, options: any): void {
     const render = restruct.render
     if (!this.flag) return
 
@@ -52,13 +59,14 @@ class ReEnhancedFlag extends ReObject {
 
     const paper = render.paper
     const ps = scale.obj2scaled(this.pp, options)
-    this.path = paper
-      .text(ps.x, ps.y, Fragment.STEREO_FLAG[this.flag] || '')
-      .attr({
+
+    if (!options.hideStereoFlags) {
+      this.path = paper.text(ps.x, ps.y, StereoFlag[this.flag] || '').attr({
         font: options.font,
         'font-size': options.fontsz,
         fill: '#000'
       })
+    }
     render.ctab.addReObjectPath('data', this.visel, this.path, null, true)
   }
 }

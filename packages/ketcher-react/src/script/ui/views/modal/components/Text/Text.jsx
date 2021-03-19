@@ -19,6 +19,8 @@ import { connect } from 'react-redux'
 import { Dialog } from '../../../components'
 import styles from './Text.module.less'
 
+import TextControlPanel from './components/TextControlPanel'
+
 const Text = props => {
   const { formState, position, id, type } = props
   const [text, setText] = useState(props.label)
@@ -30,6 +32,7 @@ const Text = props => {
       params={props}
       result={result}
       valid={() => formState.form.valid}>
+      <TextControlPanel />
       <textarea
         value={text}
         onChange={event => setText(event.target.value)}

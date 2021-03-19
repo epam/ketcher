@@ -23,7 +23,7 @@ export interface TextParams {
 }
 
 export class Text {
-  label: string | null | undefined
+  label?: string | null
   position?: Vec2
   type: string
 

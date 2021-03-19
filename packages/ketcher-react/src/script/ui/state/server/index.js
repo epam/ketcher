@@ -163,19 +163,25 @@ export function serverTransform(method, data, struct) {
   }
 }
 
-export function serverCall(editor, server, method, options) {
+export function serverCall(editor, server, method, options, struct) {
   const selection = editor.selection()
   let selectedAtoms = []
   const aidMap = new Map()
-  const struct = editor.struct().clone(null, null, false, aidMap)
+  const currentStruct = (struct || editor.struct()).clone(
+    null,
+    null,
+    false,
+    aidMap
+  )
   if (selection) {
     selectedAtoms = (selection.atoms
       ? selection.atoms
       : editor.explicitSelected().atoms
     ).map(aid => aidMap.get(aid))
 
-    if (struct.hasRxnArrow()) {
-      const reindexMap = getReindexMap(struct.getComponents())
+    if (currentStruct.hasRxnArrow()) {
+      const components = currentStruct.getComponents()
+      const reindexMap = getReindexMap(components)
       selectedAtoms = selectedAtoms.map(aid => reindexMap.get(aid))
     }
   }
@@ -184,7 +190,7 @@ export function serverCall(editor, server, method, options) {
     server[method](
       Object.assign(
         {
-          struct: molfile.stringify(struct, { ignoreErrors: true })
+          struct: molfile.stringify(currentStruct, { ignoreErrors: true })
         },
         selectedAtoms && selectedAtoms.length > 0
           ? {
@@ -199,13 +205,15 @@ export function serverCall(editor, server, method, options) {
 }
 
 function getReindexMap(components) {
-  return components.reactants
-    .concat(components.products)
-    .reduce((acc, item) => {
-      Array.from(item).forEach(aid => {
-        acc.add(aid)
-      })
-
+  const map = [...components.reactants, ...components.products]
+    .reduce((acc, set) => {
+      acc = [...acc, ...set]
       return acc
-    }, new Pool())
+    }, [])
+    .reduce((acc, aid, index) => {
+      acc.set(aid, index)
+      return acc
+    }, new Map())
+
+  return map
 }

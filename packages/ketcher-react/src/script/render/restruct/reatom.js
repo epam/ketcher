@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,193 +13,192 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import ReObject from './reobject'
+import ReObject from './ReObject'
 import element from '../../chem/element'
 import { sketchingColors as elementColor } from '../../chem/element-color'
 import draw from '../draw'
 import util from '../util'
 import { Bond, Box2Abs, Vec2, scale } from 'ketcher-core'
 
-/** @param {import('ketcher-core').Atom} atom */
-function ReAtom(/* chem.Atom*/ atom) {
-  this.visel = undefined // for typing
-  this.init('atom')
+class ReAtom extends ReObject {
+  /** @param {import('ketcher-core').Atom} atom */
+  constructor(/* chem.Atom*/ atom) {
+    super('atom')
+    /** @type {import('ketcher-core').Atom} */
+    this.a = atom // TODO rename a to item
+    this.showLabel = false
 
-  /** @type {import('ketcher-core').Atom} */
-  this.a = atom // TODO rename a to item
-  this.showLabel = false
+    this.hydrogenOnTheLeft = false
 
-  this.hydrogenOnTheLeft = false
+    this.color = '#000000'
+    this.component = -1
+  }
+  static isSelectable() {
+    return true
+  }
+  getVBoxObj(render) {
+    if (this.visel.boundingBox)
+      return ReObject.prototype.getVBoxObj.call(this, render)
+    return new Box2Abs(this.a.pp, this.a.pp)
+  }
+  drawHighlight(render) {
+    var ret = this.makeHighlightPlate(render)
+    render.ctab.addReObjectPath('highlighting', this.visel, ret)
+    return ret
+  }
+  makeHighlightPlate(render) {
+    var paper = render.paper
+    var options = render.options
+    var ps = scale.obj2scaled(this.a.pp, options)
+    return paper
+      .circle(ps.x, ps.y, options.atomSelectionPlateRadius)
+      .attr(options.highlightStyle)
+  }
+  makeSelectionPlate(restruct, paper, styles) {
+    var ps = scale.obj2scaled(this.a.pp, restruct.render.options)
+    return paper
+      .circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
+      .attr(styles.selectionStyle)
+  }
+  show(restruct, aid, options) {
+    // eslint-disable-line max-statements
+    const render = restruct.render
+    const ps = scale.obj2scaled(this.a.pp, render.options)
 
-  this.color = '#000000'
-  this.component = -1
-}
+    this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this)
+    this.showLabel = isLabelVisible(restruct, render.options, this)
+    this.color = 'black' // reset colour
+    if (this.showLabel) {
+      var label = buildLabel(this, render.paper, ps, options)
+      var delta = 0.5 * options.lineWidth
+      var rightMargin = label.rbb.width / 2
+      var leftMargin = -label.rbb.width / 2
+      var implh = Math.floor(this.a.implicitH)
+      var isHydrogen = label.text === 'H'
+      restruct.addReObjectPath('data', this.visel, label.path, ps, true)
 
-ReAtom.prototype = new ReObject()
-ReAtom.isSelectable = function () {
-  return true
-}
+      var index = null
+      if (options.showAtomIds) {
+        index = {}
+        index.text = aid.toString()
+        index.path = render.paper.text(ps.x, ps.y, index.text).attr({
+          font: options.font,
+          'font-size': options.fontszsub,
+          fill: '#070'
+        })
+        index.rbb = util.relBox(index.path.getBBox())
+        draw.recenterText(index.path, index.rbb)
+        restruct.addReObjectPath('indices', this.visel, index.path, ps)
+      }
+      this.setHighlight(this.highlight, render)
+    }
 
-ReAtom.prototype.getVBoxObj = function (render) {
-  if (this.visel.boundingBox)
-    return ReObject.prototype.getVBoxObj.call(this, render)
-  return new Box2Abs(this.a.pp, this.a.pp)
-}
+    if (this.showLabel && !this.a.alias && !this.a.pseudo) {
+      var hydroIndex = null
+      if (isHydrogen && implh > 0) {
+        hydroIndex = showHydroIndex(this, render, implh, rightMargin)
+        rightMargin += hydroIndex.rbb.width + delta
+        restruct.addReObjectPath('data', this.visel, hydroIndex.path, ps, true)
+      }
 
-ReAtom.prototype.drawHighlight = function (render) {
-  var ret = this.makeHighlightPlate(render)
-  render.ctab.addReObjectPath('highlighting', this.visel, ret)
-  return ret
-}
+      if (this.a.radical != 0) {
+        var radical = showRadical(this, render)
+        restruct.addReObjectPath('data', this.visel, radical.path, ps, true)
+      }
+      if (this.a.isotope != 0) {
+        var isotope = showIsotope(this, render, leftMargin)
+        leftMargin -= isotope.rbb.width + delta
+        restruct.addReObjectPath('data', this.visel, isotope.path, ps, true)
+      }
+      if (
+        !isHydrogen &&
+        implh > 0 &&
+        displayHydrogen(options.showHydrogenLabels, this)
+      ) {
+        var data = showHydrogen(this, render, implh, {
+          hydrogen: {},
+          hydroIndex,
+          rightMargin,
+          leftMargin
+        })
+        var hydrogen = data.hydrogen
+        hydroIndex = data.hydroIndex
+        rightMargin = data.rightMargin
+        leftMargin = data.leftMargin
+        restruct.addReObjectPath('data', this.visel, hydrogen.path, ps, true)
+        if (hydroIndex != null)
+          restruct.addReObjectPath(
+            'data',
+            this.visel,
+            hydroIndex.path,
+            ps,
+            true
+          )
+      }
 
-ReAtom.prototype.makeHighlightPlate = function (render) {
-  var paper = render.paper
-  var options = render.options
-  var ps = scale.obj2scaled(this.a.pp, options)
-  return paper
-    .circle(ps.x, ps.y, options.atomSelectionPlateRadius)
-    .attr(options.highlightStyle)
-}
+      if (this.a.charge != 0 && options.showCharge) {
+        var charge = showCharge(this, render, rightMargin)
+        rightMargin += charge.rbb.width + delta
+        restruct.addReObjectPath('data', this.visel, charge.path, ps, true)
+      }
+      if (this.a.explicitValence >= 0 && options.showValence) {
+        var valence = showExplicitValence(this, render, rightMargin)
+        rightMargin += valence.rbb.width + delta
+        restruct.addReObjectPath('data', this.visel, valence.path, ps, true)
+      }
 
-ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
-  var ps = scale.obj2scaled(this.a.pp, restruct.render.options)
-  return paper
-    .circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
-    .attr(styles.selectionStyle)
-}
+      if (this.a.badConn && options.showValenceWarnings) {
+        var warning = showWarning(this, render, leftMargin, rightMargin)
+        restruct.addReObjectPath('warnings', this.visel, warning.path, ps, true)
+      }
+      if (index) {
+        /* eslint-disable no-mixed-operators */
+        pathAndRBoxTranslate(
+          index.path,
+          index.rbb,
+          -0.5 * label.rbb.width - 0.5 * index.rbb.width - delta,
+          0.3 * label.rbb.height
+        )
+        /* eslint-enable no-mixed-operators */
+      }
+    }
 
-ReAtom.prototype.show = function (restruct, aid, options) {
-  // eslint-disable-line max-statements
-  const render = restruct.render
-  const ps = scale.obj2scaled(this.a.pp, render.options)
+    if (this.a.attpnt) {
+      const lsb = bisectLargestSector(this, restruct.molecule)
+      showAttpnt(this, render, lsb, restruct.addReObjectPath.bind(restruct))
+    }
 
-  this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this)
-  this.showLabel = isLabelVisible(restruct, render.options, this)
-  this.color = 'black' // reset colour
-  if (this.showLabel) {
-    var label = buildLabel(this, render.paper, ps, options)
-    var delta = 0.5 * options.lineWidth
-    var rightMargin = label.rbb.width / 2
-    var leftMargin = -label.rbb.width / 2
-    var implh = Math.floor(this.a.implicitH)
-    var isHydrogen = label.text === 'H'
-    restruct.addReObjectPath('data', this.visel, label.path, ps, true)
+    const stereoLabel = this.a.stereoLabel // Enhanced Stereo
+    const aamText = getAamText(this)
+    const queryAttrsText =
+      !this.a.alias && !this.a.pseudo ? getQueryAttrsText(this) : ''
 
-    var index = null
-    if (options.showAtomIds) {
-      index = {}
-      index.text = aid.toString()
-      index.path = render.paper.text(ps.x, ps.y, index.text).attr({
+    // we render them together to avoid possible collisions
+    const text =
+      (stereoLabel ? `${stereoLabel}\n` : '') +
+      (queryAttrsText.length > 0 ? `${queryAttrsText}\n` : '') +
+      (aamText.length > 0 ? `.${aamText}.` : '')
+    if (text.length > 0) {
+      var elem = element.map[this.a.label]
+      var aamPath = render.paper.text(ps.x, ps.y, text).attr({
         font: options.font,
         'font-size': options.fontszsub,
-        fill: '#070'
+        fill: options.atomColoring && elem ? elementColor[this.a.label] : '#000'
       })
-      index.rbb = util.relBox(index.path.getBBox())
-      draw.recenterText(index.path, index.rbb)
-      restruct.addReObjectPath('indices', this.visel, index.path, ps)
+      var aamBox = util.relBox(aamPath.getBBox())
+      draw.recenterText(aamPath, aamBox)
+      var dir = bisectLargestSector(this, restruct.molecule)
+      var visel = this.visel
+      var t = 3
+      // estimate the shift to clear the atom label
+      for (var i = 0; i < visel.exts.length; ++i)
+        t = Math.max(t, util.shiftRayBox(ps, dir, visel.exts[i].translate(ps)))
+      // estimate the shift backwards to account for the size of the aam/query text box itself
+      t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox))
+      dir = dir.scaled(8 + t)
+      pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y)
+      restruct.addReObjectPath('data', this.visel, aamPath, ps, true)
     }
-    this.setHighlight(this.highlight, render)
-  }
-
-  if (this.showLabel && !this.a.alias && !this.a.pseudo) {
-    var hydroIndex = null
-    if (isHydrogen && implh > 0) {
-      hydroIndex = showHydroIndex(this, render, implh, rightMargin)
-      rightMargin += hydroIndex.rbb.width + delta
-      restruct.addReObjectPath('data', this.visel, hydroIndex.path, ps, true)
-    }
-
-    if (this.a.radical != 0) {
-      var radical = showRadical(this, render)
-      restruct.addReObjectPath('data', this.visel, radical.path, ps, true)
-    }
-    if (this.a.isotope != 0) {
-      var isotope = showIsotope(this, render, leftMargin)
-      leftMargin -= isotope.rbb.width + delta
-      restruct.addReObjectPath('data', this.visel, isotope.path, ps, true)
-    }
-    if (
-      !isHydrogen &&
-      implh > 0 &&
-      displayHydrogen(options.showHydrogenLabels, this)
-    ) {
-      var data = showHydrogen(this, render, implh, {
-        hydrogen: {},
-        hydroIndex,
-        rightMargin,
-        leftMargin
-      })
-      var hydrogen = data.hydrogen
-      hydroIndex = data.hydroIndex
-      rightMargin = data.rightMargin
-      leftMargin = data.leftMargin
-      restruct.addReObjectPath('data', this.visel, hydrogen.path, ps, true)
-      if (hydroIndex != null)
-        restruct.addReObjectPath('data', this.visel, hydroIndex.path, ps, true)
-    }
-
-    if (this.a.charge != 0 && options.showCharge) {
-      var charge = showCharge(this, render, rightMargin)
-      rightMargin += charge.rbb.width + delta
-      restruct.addReObjectPath('data', this.visel, charge.path, ps, true)
-    }
-    if (this.a.explicitValence >= 0 && options.showValence) {
-      var valence = showExplicitValence(this, render, rightMargin)
-      rightMargin += valence.rbb.width + delta
-      restruct.addReObjectPath('data', this.visel, valence.path, ps, true)
-    }
-
-    if (this.a.badConn && options.showValenceWarnings) {
-      var warning = showWarning(this, render, leftMargin, rightMargin)
-      restruct.addReObjectPath('warnings', this.visel, warning.path, ps, true)
-    }
-    if (index) {
-      /* eslint-disable no-mixed-operators */
-      pathAndRBoxTranslate(
-        index.path,
-        index.rbb,
-        -0.5 * label.rbb.width - 0.5 * index.rbb.width - delta,
-        0.3 * label.rbb.height
-      )
-      /* eslint-enable no-mixed-operators */
-    }
-  }
-
-  if (this.a.attpnt) {
-    const lsb = bisectLargestSector(this, restruct.molecule)
-    showAttpnt(this, render, lsb, restruct.addReObjectPath.bind(restruct))
-  }
-
-  const stereoLabel = this.a.stereoLabel // Enhanced Stereo
-  const aamText = getAamText(this)
-  const queryAttrsText =
-    !this.a.alias && !this.a.pseudo ? getQueryAttrsText(this) : ''
-
-  // we render them together to avoid possible collisions
-  const text =
-    (stereoLabel ? `${stereoLabel}\n` : '') +
-    (queryAttrsText.length > 0 ? `${queryAttrsText}\n` : '') +
-    (aamText.length > 0 ? `.${aamText}.` : '')
-  if (text.length > 0) {
-    var elem = element.map[this.a.label]
-    var aamPath = render.paper.text(ps.x, ps.y, text).attr({
-      font: options.font,
-      'font-size': options.fontszsub,
-      fill: options.atomColoring && elem ? elementColor[this.a.label] : '#000'
-    })
-    var aamBox = util.relBox(aamPath.getBBox())
-    draw.recenterText(aamPath, aamBox)
-    var dir = bisectLargestSector(this, restruct.molecule)
-    var visel = this.visel
-    var t = 3
-    // estimate the shift to clear the atom label
-    for (var i = 0; i < visel.exts.length; ++i)
-      t = Math.max(t, util.shiftRayBox(ps, dir, visel.exts[i].translate(ps)))
-    // estimate the shift backwards to account for the size of the aam/query text box itself
-    t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox))
-    dir = dir.scaled(8 + t)
-    pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y)
-    restruct.addReObjectPath('data', this.visel, aamPath, ps, true)
   }
 }
 

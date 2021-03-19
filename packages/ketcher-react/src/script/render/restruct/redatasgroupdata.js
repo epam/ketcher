@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,40 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ReObject from './reobject'
+import ReObject from './ReObject'
 import { scale } from 'ketcher-core'
 
-function ReDataSGroupData(sgroup) {
-  this.init('sgroupData')
-
-  this.sgroup = sgroup
-}
-
-ReDataSGroupData.prototype = new ReObject()
-ReDataSGroupData.isSelectable = function () {
-  return true
-}
-
-ReDataSGroupData.prototype.highlightPath = function (render) {
-  var box = this.sgroup.dataArea
-  var p0 = scale.obj2scaled(box.p0, render.options)
-  var sz = scale.obj2scaled(box.p1, render.options).sub(p0)
-  return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
-}
-
-ReDataSGroupData.prototype.drawHighlight = function (render) {
-  var ret = this.highlightPath(render).attr(render.options.highlightStyle)
-  render.ctab.addReObjectPath('highlighting', this.visel, ret)
-  return ret
-}
-
-ReDataSGroupData.prototype.makeSelectionPlate = function (
-  restruct,
-  paper,
-  styles
-) {
-  // TODO [MK] review parameters
-  return this.highlightPath(restruct.render).attr(styles.selectionStyle)
+class ReDataSGroupData extends ReObject {
+  constructor(sgroup) {
+    super('sgroupData')
+    this.sgroup = sgroup
+  }
+  static isSelectable() {
+    return true
+  }
+  highlightPath(render) {
+    var box = this.sgroup.dataArea
+    var p0 = scale.obj2scaled(box.p0, render.options)
+    var sz = scale.obj2scaled(box.p1, render.options).sub(p0)
+    return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
+  }
+  drawHighlight(render) {
+    var ret = this.highlightPath(render).attr(render.options.highlightStyle)
+    render.ctab.addReObjectPath('highlighting', this.visel, ret)
+    return ret
+  }
+  makeSelectionPlate(restruct, paper, styles) {
+    // TODO [MK] review parameters
+    return this.highlightPath(restruct.render).attr(styles.selectionStyle)
+  }
 }
 
 export default ReDataSGroupData

@@ -6,6 +6,7 @@ import copy from 'rollup-plugin-copy'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import postcss from 'rollup-plugin-postcss'
+import autoprefixer from 'autoprefixer'
 import json from '@rollup/plugin-json'
 import svgr from '@svgr/rollup'
 import del from 'rollup-plugin-delete'
@@ -79,6 +80,7 @@ const config = {
       include: ['src/**/*']
     }),
     postcss({
+      plugins: isProduction ? [autoprefixer({ grid: 'autoplace' })] : [],
       extract: path.resolve('dist/index.css'),
       minimize: isProduction,
       sourceMap: true

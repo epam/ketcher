@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ReObject from './reobject'
+import ReObject from './ReObject'
 import { Box2Abs, Vec2, scale } from 'ketcher-core'
 
 class ReText extends ReObject {
@@ -22,9 +22,7 @@ class ReText extends ReObject {
   path: any
 
   constructor(text: any) {
-    super()
-    this.visel = undefined
-    this.init('text')
+    super('text')
     this.item = text
   }
   static isSelectable() {
@@ -64,7 +62,6 @@ class ReText extends ReObject {
     )
   }
 
-  // @ts-ignore
   drawHighlight(render: any): any {
     if (!this.path) return null
     const ret = this.highlightPath(render).attr(render.options.highlightStyle)
@@ -72,9 +69,8 @@ class ReText extends ReObject {
     return ret
   }
 
-  // @ts-ignore
   makeSelectionPlate(restruct: any, paper: any, options: any): any {
-    if (!this.path) return null
+    if (!this.path || !paper) return null
     return this.highlightPath(restruct.render).attr(options.selectionStyle)
   }
 

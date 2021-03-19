@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
 import { Text, Vec2, scale } from 'ketcher-core'
@@ -51,17 +52,10 @@ export class TextCreate extends BaseOperation {
 
     struct.textSetPosition(id, new Vec2(position))
 
-    BaseOperation.invalidateItem(
-      restruct,
-      'texts',
-      // @ts-ignore
-      this.data.id,
-      1
-    )
+    BaseOperation.invalidateItem(restruct, 'texts', this.data.id, 1)
   }
 
   invert(): BaseOperation {
-    //@ts-ignore
     return new TextDelete(this.data.id)
   }
 }
@@ -84,9 +78,8 @@ export class TextUpdate extends BaseOperation {
   }
 
   execute(restruct: Restruct) {
-    const struct = restruct.molecule
     const { id, label, position, type } = this.oldData
-    const item = struct.texts.get(this.oldData.id)
+    const text = restruct.molecule.texts.get(id)
 
     if (!this.newData) {
       this.newData = {
@@ -97,17 +90,11 @@ export class TextUpdate extends BaseOperation {
       }
     }
 
-    if (item) {
-      item.label = label
+    if (text) {
+      text.label = label
     }
 
-    BaseOperation.invalidateItem(
-      restruct,
-      'texts',
-      // @ts-ignore
-      this.oldData.id,
-      1
-    )
+    BaseOperation.invalidateItem(restruct, 'texts', id, 1)
   }
 
   invert() {
@@ -193,13 +180,7 @@ export class TextMove extends BaseOperation {
     this.data.d = difference.negated()
 
     if (!this.data.noinvalidate) {
-      BaseOperation.invalidateItem(
-        restruct,
-        'texts',
-        // @ts-ignore
-        id,
-        1
-      )
+      BaseOperation.invalidateItem(restruct, 'texts', id, 1)
     }
   }
 

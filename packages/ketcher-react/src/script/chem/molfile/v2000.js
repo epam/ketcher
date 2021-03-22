@@ -256,6 +256,7 @@ function parseCTabV2000(ctabLines, countsSplit) {
   const bondCount = utils.parseDecimalInt(countsSplit[1])
   const atomListCount = utils.parseDecimalInt(countsSplit[2])
   const isAbs = utils.parseDecimalInt(countsSplit[4]) === 1
+  const isAnd = utils.parseDecimalInt(countsSplit[4]) === 0
   const stextLinesCount = utils.parseDecimalInt(countsSplit[5])
   const propertyLinesCount = utils.parseDecimalInt(countsSplit[10])
 
@@ -273,6 +274,7 @@ function parseCTabV2000(ctabLines, countsSplit) {
   const bonds = bondLines.map(parseBondLine)
   bonds.forEach(bond => {
     if (bond.stereo && isAbs) ctab.atoms.get(bond.begin).stereoLabel = 'abs'
+    if (bond.stereo && isAnd) ctab.atoms.get(bond.begin).stereoLabel = 'and-1'
     ctab.bonds.add(bond)
   })
 

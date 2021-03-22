@@ -105,7 +105,10 @@ type LeftToolbarItemVariant =
   | 'shape-rectangle'
   | 'shape-line'
 
-type BottomToolbarItemVariant = 'template-common' | 'template-lib'
+type BottomToolbarItemVariant =
+  | 'template-common'
+  | 'template-lib'
+  | 'enhanced-stereo'
 
 type RightToolbarItemVariant = 'atom' | 'freq-atoms' | 'period-table'
 

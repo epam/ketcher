@@ -44,7 +44,14 @@ class AnalyseDialog extends Component {
   }
 
   render() {
-    const { values, round, onAnalyse, onChangeRound, ...props } = this.props
+    const {
+      values,
+      round,
+      loading,
+      onAnalyse,
+      onChangeRound,
+      ...props
+    } = this.props
     return (
       <Dialog
         title="Calculated Values"
@@ -69,11 +76,15 @@ class AnalyseDialog extends Component {
             <li key={item.key}>
               <label>{item.name}:</label>
               {item.key === 'gross' ? (
-                <FormulaInput value={values ? values[item.key] : ''} />
+                <FormulaInput
+                  value={values && !loading ? values[item.key] : ''}
+                />
               ) : (
                 <FrozenInput
                   value={
-                    values ? roundOff(values[item.key], round[item.round]) : 0
+                    values && !loading
+                      ? roundOff(values[item.key], round[item.round])
+                      : 0
                   }
                 />
               )}
@@ -97,6 +108,7 @@ class AnalyseDialog extends Component {
 
 const mapStateToProps = state => ({
   values: state.options.analyse.values,
+  loading: state.options.analyse.loading,
   round: {
     roundWeight: state.options.analyse.roundWeight,
     roundMass: state.options.analyse.roundMass

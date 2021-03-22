@@ -63,32 +63,28 @@ export class TextCreate extends BaseOperation {
 interface TextUpdateData {
   id?: any
   label?: string
+  invertedLabel?: string
   position?: Vec2
   type?: string
 }
 
 export class TextUpdate extends BaseOperation {
-  oldData: TextUpdateData
-  newData: TextUpdateData | null
+  data: TextUpdateData
 
-  constructor(id?: any, label?: string, position?: Vec2, type?: string) {
+  constructor(
+    id?: any,
+    label?: string,
+    invertedLabel?: string,
+    position?: Vec2,
+    type?: string
+  ) {
     super(OperationType.TEXT_UPDATE)
-    this.oldData = { id, label, position, type }
-    this.newData = null
+    this.data = { id, label, invertedLabel, position, type }
   }
 
   execute(restruct: Restruct) {
-    const { id, label, position, type } = this.oldData
+    const { id, label } = this.data
     const text = restruct.molecule.texts.get(id)
-
-    if (!this.newData) {
-      this.newData = {
-        id,
-        label,
-        position,
-        type
-      }
-    }
 
     if (text) {
       text.label = label
@@ -98,10 +94,9 @@ export class TextUpdate extends BaseOperation {
   }
 
   invert() {
-    const inverted = new TextUpdate()
-    // @ts-ignore
-    inverted.oldData = this.newData
-    inverted.newData = this.oldData
+    const inverted = new TextUpdate(this.data.id)
+    inverted.data.label = this.data.invertedLabel
+    inverted.data.invertedLabel = this.data.label
     return inverted
   }
 }

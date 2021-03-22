@@ -106,7 +106,7 @@ function propsDialog(editor, id, position) {
 
   Promise.resolve(res)
     .then(elem => {
-      elem = Object.assign({ invertedLabel: label }, elem)
+      elem = Object.assign({ previousLabel: label }, elem)
 
       if (!id && id !== 0 && elem.label) {
         editor.update(fromTextCreation(editor.render.ctab, elem))

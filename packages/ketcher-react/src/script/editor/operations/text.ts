@@ -63,7 +63,7 @@ export class TextCreate extends BaseOperation {
 interface TextUpdateData {
   id?: any
   label?: string
-  invertedLabel?: string
+  previousLabel?: string
   position?: Vec2
   type?: string
 }
@@ -74,12 +74,12 @@ export class TextUpdate extends BaseOperation {
   constructor(
     id?: any,
     label?: string,
-    invertedLabel?: string,
+    previousLabel?: string,
     position?: Vec2,
     type?: string
   ) {
     super(OperationType.TEXT_UPDATE)
-    this.data = { id, label, invertedLabel, position, type }
+    this.data = { id, label, previousLabel, position, type }
   }
 
   execute(restruct: Restruct) {
@@ -95,8 +95,8 @@ export class TextUpdate extends BaseOperation {
 
   invert() {
     const inverted = new TextUpdate(this.data.id)
-    inverted.data.label = this.data.invertedLabel
-    inverted.data.invertedLabel = this.data.label
+    inverted.data.label = this.data.previousLabel
+    inverted.data.previousLabel = this.data.label
     return inverted
   }
 }

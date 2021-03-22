@@ -10,8 +10,8 @@ export function fromTextCreation(restruct, elem) {
 
 export function fromTextUpdating(restruct, id, elem) {
   const action = new Action()
-  const { label, invertedLabel } = elem
-  action.addOp(new TextUpdate(id, label, invertedLabel))
+  const { label, previousLabel } = elem
+  action.addOp(new TextUpdate(id, label, previousLabel))
   return action.perform(restruct)
 }
 

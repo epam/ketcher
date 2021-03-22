@@ -18,6 +18,8 @@ import ReObject from './ReObject'
 import draw from '../draw'
 import util from '../util'
 import { SimpleObjectMode, Box2Abs, Vec2, scale } from 'ketcher-core'
+import Render from '..'
+import ReStruct from './index'
 
 const tfx = util.tfx
 interface MinDistanceWithReferencePoint {
@@ -179,7 +181,7 @@ class ReSimpleObject extends ReObject {
     }
     return refPoints
   }
-  highlightPath(render): Array<StyledPath> {
+  highlightPath(render: Render): Array<StyledPath> {
     const point: Array<Vec2> = []
 
     this.item.pos.forEach((p, index) => {
@@ -314,7 +316,7 @@ class ReSimpleObject extends ReObject {
     return enhPaths
   }
 
-  drawHighlight(render: any): Array<any> {
+  drawHighlight(render: Render): Array<any> {
     const paths: Array<any> = this.highlightPath(render).map(enhPath => {
       if (!enhPath.stylesApplied) {
         return enhPath.path.attr(render.options.highlightStyle)
@@ -326,7 +328,7 @@ class ReSimpleObject extends ReObject {
     return paths
   }
 
-  makeSelectionPlate(restruct: any, paper: any, styles: any): any {
+  makeSelectionPlate(restruct: ReStruct, paper: any, styles: any): any {
     const pos = this.item.pos.map(p => {
       return scale.obj2scaled(p, restruct.render.options) || new Vec2()
     })
@@ -349,7 +351,7 @@ class ReSimpleObject extends ReObject {
     })
     return selectionSet
   }
-  show(restruct: any, options: any): void {
+  show(restruct: ReStruct, options: any): void {
     const render = restruct.render
     const pos = this.item.pos.map(p => {
       return scale.obj2scaled(p, options) || new Vec2()

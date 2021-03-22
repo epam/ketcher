@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { Struct } from './Struct'
+
 export enum StereoFlag {
   Mixed = 'Mixed',
   abs = 'ABS (Chiral)',
@@ -21,22 +23,25 @@ export enum StereoFlag {
   // todo: custom in the future
 }
 
-function calcStereoFlag(struct: any, stereoAids: Array<number>): string | null {
-  if (!stereoAids || stereoAids.length === 0) return null
-  const stereoLabel = struct.atoms.get(stereoAids[0]).stereoLabel // {string | null} "<abs|and|or>-<group>"
+function calcStereoFlag(
+  struct: Struct,
+  stereoAids: Array<number>
+): string | undefined {
+  if (!stereoAids || stereoAids.length === 0) return undefined
+  const stereoLabel = struct.atoms.get(stereoAids[0])?.stereoLabel // {string | null} "<abs|and|or>-<group>"
 
   const hasAnotherLabel = stereoAids
     .map(aid => struct.atoms.get(aid))
-    .some(atom => atom.stereoLabel !== stereoLabel)
+    .some(atom => atom?.stereoLabel !== stereoLabel)
 
   return hasAnotherLabel ? StereoFlag.Mixed : stereoLabel?.split('-')[0]
 }
 
 export class Fragment {
   stereoAtoms: Array<number>
-  enhancedStereoFlag?: boolean | string | null
+  enhancedStereoFlag?: boolean | string | undefined
 
-  constructor(flag: boolean | string | null = null) {
+  constructor(flag?: boolean | string) {
     this.stereoAtoms = []
     this.enhancedStereoFlag = flag
   }

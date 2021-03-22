@@ -16,6 +16,7 @@
 import ReObject from './ReObject'
 import { Box2Abs, Vec2, scale, StereoFlag } from 'ketcher-core'
 import ReStruct from './index'
+import Render from '..'
 
 class ReEnhancedFlag extends ReObject {
   private flag: StereoFlag | null
@@ -30,13 +31,13 @@ class ReEnhancedFlag extends ReObject {
   static isSelectable() {
     return true
   }
-  highlightPath(render: any): any {
+  highlightPath(render: Render): any {
     var box = Box2Abs.fromRelBox(this.path.getBBox())
     var sz = box.p1.sub(box.p0)
     var p0 = box.p0.sub(render.options.offset)
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
   }
-  drawHighlight(render: any): any {
+  drawHighlight(render: Render): any {
     if (!this.path) return null
     var ret = this.highlightPath(render).attr(render.options.highlightStyle)
     render.ctab.addReObjectPath('highlighting', this.visel, ret)

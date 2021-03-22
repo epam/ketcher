@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { useState, useMemo, RefObject, RefCallback } from 'react'
-import useResizeObserver from 'use-resize-observer'
+import useResizeObserver from 'use-resize-observer/polyfilled'
 import lodash from 'lodash'
 
 const throttleMilliseconds = 100

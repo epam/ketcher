@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { omit, without } from 'lodash/fp'
-import { Pool } from 'ketcher-core'
 
 import molfile from '../../../chem/molfile'
 
@@ -110,9 +109,13 @@ export function automap(res) {
 
 export function analyse() {
   return (dispatch, getState) => {
-    const { editor, server } = getState()
-    const options = getState().options.getServerSettings()
-    options.data = {
+    //reset values to initial state
+    dispatch({
+      type: 'ANALYSE_LOADING'
+    })
+    const { editor, server, options } = getState()
+    const serverSettings = options.getServerSettings()
+    serverSettings.data = {
       properties: [
         'molecular-weight',
         'most-abundant-mass',
@@ -122,7 +125,7 @@ export function analyse() {
       ]
     }
 
-    return serverCall(editor, server, 'calculate', options)
+    return serverCall(editor, server, 'calculate', serverSettings)
       .then(values =>
         dispatch({
           type: 'CHANGE_ANALYSE',

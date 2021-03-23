@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from './base'
-import { OperationType } from './OperationType'
-import { Text, Vec2, scale } from 'ketcher-core'
-import Restruct, { ReText } from '../../render/restruct'
+import { BaseOperation } from '../base'
+import { OperationType } from '../OperationType'
+import { Text, Vec2 } from 'ketcher-core'
+import Restruct, { ReText } from '../../../render/restruct'
 
 interface TextCreateData {
   id?: any
@@ -64,47 +64,6 @@ export class TextCreate extends BaseOperation {
   }
 }
 
-interface TextUpdateData {
-  id?: any
-  label?: string
-  position?: Vec2
-  type?: string
-  previousLabel?: string
-}
-
-export class TextUpdate extends BaseOperation {
-  data: TextUpdateData
-
-  constructor(
-    id?: any,
-    label?: string,
-    position?: Vec2,
-    type?: string,
-    previousLabel?: string
-  ) {
-    super(OperationType.TEXT_UPDATE)
-    this.data = { id, label, position, type, previousLabel }
-  }
-
-  execute(restruct: Restruct) {
-    const { id, label } = this.data
-    const text = restruct.molecule.texts.get(id)
-
-    if (text) {
-      text.label = label
-    }
-
-    BaseOperation.invalidateItem(restruct, 'texts', id, 1)
-  }
-
-  invert() {
-    const inverted = new TextUpdate(this.data.id)
-    inverted.data.label = this.data.previousLabel
-    inverted.data.previousLabel = this.data.label
-    return inverted
-  }
-}
-
 interface TextDeleteData {
   id: any
   label: string
@@ -141,7 +100,7 @@ export class TextDelete extends BaseOperation {
     restruct.markItemRemoved()
 
     if (this.data.id !== null) {
-      restruct.clearVisel(restruct.texts.get(this.data.id).visel)
+      restruct.clearVisel(restruct.texts.get(this.data.id)?.visel)
       restruct.texts.delete(this.data.id)
 
       struct.texts.delete(this.data.id)
@@ -156,48 +115,5 @@ export class TextDelete extends BaseOperation {
       // @ts-ignore
       this.data.type
     )
-  }
-}
-
-interface TextMoveData {
-  id: any
-  d: any
-  noinvalidate: boolean
-}
-
-export class TextMove extends BaseOperation {
-  data: TextMoveData
-
-  constructor(id: any, d: any, noinvalidate: boolean) {
-    super(OperationType.TEXT_MOVE)
-    this.data = { id, d, noinvalidate }
-  }
-
-  execute(restruct: Restruct): void {
-    const struct = restruct.molecule
-    const id = this.data.id
-    const difference = this.data.d
-
-    if (id !== null) {
-      const item = struct.texts.get(id)
-
-      item?.position?.add_(difference)
-      restruct.texts
-        .get(id)
-        .visel.translate(scale.obj2scaled(difference, restruct.render.options))
-      this.data.d = difference.negated()
-
-      if (!this.data.noinvalidate) {
-        BaseOperation.invalidateItem(restruct, 'texts', id, 1)
-      }
-    }
-  }
-
-  invert(): BaseOperation {
-    const move = new TextMove(this.data.id, this.data.d, this.data.noinvalidate)
-
-    move.data = this.data
-
-    return move
   }
 }

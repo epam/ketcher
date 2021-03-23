@@ -489,8 +489,11 @@ export class Struct {
   }
 
   textSetPosition(id: number, position: Vec2): void {
-    const item = this.texts.get(id)!
-    item.position = position
+    const item = this.texts.get(id)
+
+    if (item) {
+      item.position = position
+    }
   }
 
   getCoordBoundingBox(atomSet?: Pile<number>) {

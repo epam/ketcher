@@ -274,9 +274,12 @@ SelectTool.prototype.dblclick = function (event) {
     this.editor.selection(closestToSel(ci))
     const text = struct.texts.get(ci.id)
     const dialog = editor.event.elementEdit.dispatch(text)
-    Promise.resolve(dialog)
+
+    dialog
       .then(newText => {
-        editor.update(fromTextUpdating(rnd.ctab, ci.id, newText))
+        newText.id = ci.id
+        newText.previousLabel = text.label
+        editor.update(fromTextUpdating(rnd.ctab, newText))
       })
       .catch(() => null)
   }

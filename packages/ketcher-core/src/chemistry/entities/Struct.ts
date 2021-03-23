@@ -477,8 +477,10 @@ export class Struct {
   }
 
   rxnArrowSetPos(id: number, pp: Vec2): void {
-    const item = this.rxnArrows.get(id)!
-    item.pp = pp
+    const item = this.rxnArrows.get(id)
+    if (item) {
+      item.pp = pp
+    }
   }
 
   simpleObjectSetPos(id: number, pos: Array<Vec2>) {

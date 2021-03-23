@@ -26,6 +26,7 @@ const Text = props => {
 
   return (
     <Dialog
+      className="textEditor"
       title="Text editor"
       params={props}
       result={result}
@@ -33,9 +34,7 @@ const Text = props => {
       <textarea
         value={text}
         onChange={event => setText(event.target.value)}
-        className={styles.textArea}
-        rows="5"
-        cols="40"></textarea>
+        className={styles.textArea}></textarea>
     </Dialog>
   )
 }

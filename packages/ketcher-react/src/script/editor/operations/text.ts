@@ -30,7 +30,7 @@ export class TextCreate extends BaseOperation {
   data: TextCreateData
   performed: boolean
 
-  constructor(id: any, label: string = '', position: Vec2, type: string) {
+  constructor(id: any, label: string, position: Vec2, type: string) {
     super(OperationType.TEXT_CREATE)
     this.data = { id, label, position, type }
     this.performed = false
@@ -46,26 +46,30 @@ export class TextCreate extends BaseOperation {
       struct.texts.set(this.data.id, new Text(this.data))
     }
 
-    restruct.texts.set(this.data.id, new ReText(struct.texts.get(this.data.id)))
-
-    const { id, position } = this.data
-
-    struct.textSetPosition(id, new Vec2(position))
-
-    BaseOperation.invalidateItem(restruct, 'texts', this.data.id, 1)
+    if (this.data.id !== null) {
+      restruct.texts.set(
+        this.data.id,
+        new ReText(struct.texts.get(this.data.id))
+      )
+      const { id, position } = this.data
+      struct.textSetPosition(id, new Vec2(position))
+      BaseOperation.invalidateItem(restruct, 'texts', this.data.id, 1)
+    }
   }
 
   invert(): BaseOperation {
-    return new TextDelete(this.data.id)
+    const { id, label, position, type } = this.data
+
+    return new TextDelete(id, label, position, type)
   }
 }
 
 interface TextUpdateData {
   id?: any
   label?: string
-  previousLabel?: string
   position?: Vec2
   type?: string
+  previousLabel?: string
 }
 
 export class TextUpdate extends BaseOperation {
@@ -74,12 +78,12 @@ export class TextUpdate extends BaseOperation {
   constructor(
     id?: any,
     label?: string,
-    previousLabel?: string,
     position?: Vec2,
-    type?: string
+    type?: string,
+    previousLabel?: string
   ) {
     super(OperationType.TEXT_UPDATE)
-    this.data = { id, label, previousLabel, position, type }
+    this.data = { id, label, position, type, previousLabel }
   }
 
   execute(restruct: Restruct) {
@@ -103,8 +107,8 @@ export class TextUpdate extends BaseOperation {
 
 interface TextDeleteData {
   id: any
-  label?: string
-  position?: Vec2
+  label: string
+  position: Vec2
   type?: string
 }
 
@@ -112,9 +116,9 @@ export class TextDelete extends BaseOperation {
   data: TextDeleteData
   performed: boolean
 
-  constructor(id: any) {
+  constructor(id: any, label: string, position: Vec2, type: string) {
     super(OperationType.TEXT_DELETE)
-    this.data = { id }
+    this.data = { id, label, position, type }
     this.performed = false
   }
 
@@ -122,27 +126,34 @@ export class TextDelete extends BaseOperation {
     const struct = restruct.molecule
 
     if (!this.performed) {
-      const item = struct.texts.get(this.data.id)!
+      const item = struct.texts.get(this.data.id)
 
-      this.data.label = item.label || ''
-      this.data.position = item.position
-      this.data.type = item.type
-      this.performed = true
+      if (item) {
+        // @ts-ignore
+        this.data.label = item.label
+        // @ts-ignore
+        this.data.position = item.position
+        this.data.type = item.type
+        this.performed = true
+      }
     }
 
     restruct.markItemRemoved()
-    restruct.clearVisel(restruct.texts.get(this.data.id).visel)
-    restruct.texts.delete(this.data.id)
 
-    struct.texts.delete(this.data.id)
+    if (this.data.id !== null) {
+      restruct.clearVisel(restruct.texts.get(this.data.id).visel)
+      restruct.texts.delete(this.data.id)
+
+      struct.texts.delete(this.data.id)
+    }
   }
 
   invert(): BaseOperation {
     return new TextCreate(
       this.data.id,
       this.data.label,
-      // @ts-ignore
       this.data.position,
+      // @ts-ignore
       this.data.type
     )
   }
@@ -166,16 +177,19 @@ export class TextMove extends BaseOperation {
     const struct = restruct.molecule
     const id = this.data.id
     const difference = this.data.d
-    const item = struct.texts.get(id)
 
-    item?.position?.add_(difference)
-    restruct.texts
-      .get(id)
-      .visel.translate(scale.obj2scaled(difference, restruct.render.options))
-    this.data.d = difference.negated()
+    if (id !== null) {
+      const item = struct.texts.get(id)
 
-    if (!this.data.noinvalidate) {
-      BaseOperation.invalidateItem(restruct, 'texts', id, 1)
+      item?.position?.add_(difference)
+      restruct.texts
+        .get(id)
+        .visel.translate(scale.obj2scaled(difference, restruct.render.options))
+      this.data.d = difference.negated()
+
+      if (!this.data.noinvalidate) {
+        BaseOperation.invalidateItem(restruct, 'texts', id, 1)
+      }
     }
   }
 

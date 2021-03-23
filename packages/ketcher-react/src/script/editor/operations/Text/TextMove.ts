@@ -39,16 +39,15 @@ export class TextMove extends BaseOperation {
     const difference = this.data.d
     const item = struct.texts.get(id)
 
-    if (item) {
-      item?.position?.add_(difference)
-      restruct.texts
-        .get(id)
-        .visel.translate(scale.obj2scaled(difference, restruct.render.options))
-      this.data.d = difference.negated()
+    item?.position?.add_(difference)
+    restruct.texts
+      .get(id)
+      ?.visel.translate(scale.obj2scaled(difference, restruct.render.options))
 
-      if (!this.data.noinvalidate) {
-        BaseOperation.invalidateItem(restruct, 'texts', id, 1)
-      }
+    this.data.d = difference.negated()
+
+    if (!this.data.noinvalidate) {
+      BaseOperation.invalidateItem(restruct, 'texts', id, 1)
     }
   }
 

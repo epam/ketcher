@@ -46,11 +46,10 @@ export class TextCreate extends BaseOperation {
       struct.texts.set(this.data.id, new Text(this.data))
     }
 
-    if (this.data.id != null) {
-      restruct.texts.set(
-        this.data.id,
-        new ReText(struct.texts.get(this.data.id))
-      )
+    const text = struct.texts.get(this.data.id)
+
+    if (text) {
+      restruct.texts.set(this.data.id, new ReText(text))
       const { id, position } = this.data
       struct.textSetPosition(id, new Vec2(position))
       BaseOperation.invalidateItem(restruct, 'texts', this.data.id, 1)
@@ -99,12 +98,10 @@ export class TextDelete extends BaseOperation {
 
     restruct.markItemRemoved()
 
-    if (this.data.id != null) {
-      restruct.clearVisel(restruct.texts.get(this.data.id)?.visel)
-      restruct.texts.delete(this.data.id)
+    restruct.clearVisel(restruct.texts.get(this.data.id)?.visel)
+    restruct.texts.delete(this.data.id)
 
-      struct.texts.delete(this.data.id)
-    }
+    struct.texts.delete(this.data.id)
   }
 
   invert(): BaseOperation {

@@ -26,7 +26,7 @@ interface DialogProps {
   buttons?: Array<string | React.ReactElement>
   className: string
 }
-interface DialogParams extends DialogParamsCallProps {
+export interface DialogParams extends DialogParamsCallProps {
   className: string
 }
 

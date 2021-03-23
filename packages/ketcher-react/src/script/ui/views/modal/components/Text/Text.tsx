@@ -18,8 +18,19 @@ import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { Dialog } from '../../../components'
 import styles from './Text.module.less'
+import { DialogParams } from '../../../components/Dialog/Dialog'
 
-const Text = props => {
+interface TextProps extends DialogParams {
+  formState: any
+  type: string
+  id?: any
+  label?: string
+  position?: string
+}
+
+type Props = TextProps
+
+const Text = (props: Props) => {
   const { formState, position, id, type } = props
   const [text, setText] = useState(props.label)
   const result = () => ({ label: text, position, id, type })

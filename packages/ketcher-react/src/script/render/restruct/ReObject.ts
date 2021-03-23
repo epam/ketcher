@@ -15,7 +15,9 @@
  ***************************************************************************/
 
 import Visel from './visel'
-import { scale } from 'ketcher-core'
+import { Box2Abs, scale } from 'ketcher-core'
+import ReStruct from './index'
+import Render from '..'
 
 class ReObject {
   public visel: Visel
@@ -28,7 +30,7 @@ class ReObject {
     this.visel = new Visel(viselType)
   }
 
-  getVBoxObj(render: any): any {
+  getVBoxObj(render: Render): Box2Abs | null {
     var vbox = this.visel.boundingBox
     if (vbox === null) return null
     if (render.options.offset)
@@ -36,7 +38,7 @@ class ReObject {
     return vbox.transform(scale.scaled2obj, render.options)
   }
 
-  setHighlight(highLight: boolean, render: any): void {
+  setHighlight(highLight: boolean, render: Render): void {
     // TODO render should be field
     if (highLight) {
       let noredraw = 'highlighting' in this && this.highlighting !== null // && !this.highlighting.removed;
@@ -63,12 +65,12 @@ class ReObject {
   }
 
   // @ts-ignore
-  drawHighlight(render: any): any {
+  drawHighlight(render: Render): any {
     console.assert(null, 'ReObject.drawHighlight is not overridden') // eslint-disable-line no-console
   }
 
   // @ts-ignore
-  makeSelectionPlate(restruct: any, paper: any, styles: any): any {
+  makeSelectionPlate(restruct: ReStruct, paper: any, styles: any): any {
     console.assert(null, 'ReObject.makeSelectionPlate is not overridden') // eslint-disable-line no-console
   }
 }

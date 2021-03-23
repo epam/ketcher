@@ -37,10 +37,9 @@ export class TextMove extends BaseOperation {
     const struct = restruct.molecule
     const id = this.data.id
     const difference = this.data.d
+    const item = struct.texts.get(id)
 
-    if (id !== null) {
-      const item = struct.texts.get(id)
-
+    if (item) {
       item?.position?.add_(difference)
       restruct.texts
         .get(id)

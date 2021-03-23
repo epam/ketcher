@@ -46,7 +46,7 @@ export class TextCreate extends BaseOperation {
       struct.texts.set(this.data.id, new Text(this.data))
     }
 
-    if (this.data.id !== null) {
+    if (this.data.id != null) {
       restruct.texts.set(
         this.data.id,
         new ReText(struct.texts.get(this.data.id))
@@ -99,7 +99,7 @@ export class TextDelete extends BaseOperation {
 
     restruct.markItemRemoved()
 
-    if (this.data.id !== null) {
+    if (this.data.id != null) {
       restruct.clearVisel(restruct.texts.get(this.data.id)?.visel)
       restruct.texts.delete(this.data.id)
 

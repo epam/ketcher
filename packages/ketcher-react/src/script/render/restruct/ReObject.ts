@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Visel from './visel'
-import { scale } from 'ketcher-core'
+import { Box2Abs, scale } from 'ketcher-core'
 import ReStruct from './index'
 import Render from '..'
 
@@ -30,7 +30,7 @@ class ReObject {
     this.visel = new Visel(viselType)
   }
 
-  getVBoxObj(render: Render): any {
+  getVBoxObj(render: Render): Box2Abs | null {
     var vbox = this.visel.boundingBox
     if (vbox === null) return null
     if (render.options.offset)

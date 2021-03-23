@@ -39,7 +39,7 @@ function calcStereoFlag(
 
 export class Fragment {
   stereoAtoms: Array<number>
-  enhancedStereoFlag?: boolean | string | undefined
+  enhancedStereoFlag?: boolean | string
 
   constructor(flag?: boolean | string) {
     this.stereoAtoms = []

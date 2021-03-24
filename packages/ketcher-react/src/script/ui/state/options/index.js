@@ -146,7 +146,10 @@ function optionsReducer(state = {}, action) {
   if (type === 'SAVE_CHECK_OPTS') return { ...state, check: data }
 
   if (type === 'CHANGE_ANALYSE')
-    return { ...state, analyse: { ...state.analyse, ...data } }
+    return { ...state, analyse: { ...state.analyse, ...data, loading: false } }
+
+  if (type === 'ANALYSE_LOADING')
+    return { ...state, analyse: { ...state.analyse, loading: true } }
 
   if (recognizeActions.includes(type))
     return { ...state, recognize: { ...state.recognize, ...data } }

@@ -79,6 +79,17 @@ export function prepareStructForGraph(struct) {
     })
   })
 
+  struct.texts.forEach(item => {
+    graphNodes.push({
+      type: 'text',
+      center: item.position,
+      data: {
+        label: item.label,
+        position: item.position
+      }
+    })
+  })
+
   return graphNodes.sort((a, b) => a.center.x - b.center.x)
 }
 

@@ -64,7 +64,9 @@ export default function initEditor(dispatch, getState) {
     onElementEdit: selem => {
       const elem = fromElement(selem)
       let dlg = null
-      if (element.map[elem.label]) {
+      if (elem.type === 'text') {
+        dlg = openDialog(dispatch, 'text', elem).then(res => res)
+      } else if (element.map[elem.label]) {
         dlg = openDialog(dispatch, 'atomProps', elem)
       } else if (Object.keys(elem).length === 1 && 'ap' in elem) {
         dlg = openDialog(dispatch, 'attachmentPoints', elem.ap).then(res => ({

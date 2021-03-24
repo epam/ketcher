@@ -30,6 +30,7 @@ import ReEnhancedFlag from './ReEnhancedFlag'
 import ReSGroup from './resgroup'
 import ReLoop from './reloop'
 import ReSimpleObject from './ReSimpleObject'
+import ReText from './ReText'
 
 var LAYER_MAP = {
   background: 0,
@@ -56,6 +57,7 @@ class ReStruct {
     this.sgroupData = new Map()
     this.enhancedFlags = new Map()
     this.simpleObjects = new Map()
+    this.texts = new Map()
     /** @type {Struct} */
     this.molecule = molecule || new Struct()
     this.initialized = false
@@ -93,6 +95,10 @@ class ReStruct {
 
     molecule.simpleObjects.forEach((item, id) => {
       this.simpleObjects.set(id, new ReSimpleObject(item))
+    })
+
+    molecule.texts.forEach((item, id) => {
+      this.texts.set(id, new ReText(item))
     })
 
     molecule.frags.forEach((item, id) => {
@@ -418,6 +424,7 @@ class ReStruct {
     this.showRGroups()
     this.showEnhancedFlags()
     this.showSimpleObjects()
+    this.showTexts()
     this.clearMarks()
 
     return true
@@ -449,6 +456,15 @@ class ReStruct {
     this.simpleObjectsChanged.forEach((value, id) => {
       const simpleObject = this.simpleObjects.get(id)
       simpleObject.show(this, options)
+    })
+  }
+
+  showTexts() {
+    const options = this.render.options
+
+    this.textsChanged.forEach((value, id) => {
+      const text = this.texts.get(id)
+      text.show(this, id, options)
     })
   }
 
@@ -648,7 +664,8 @@ ReStruct.maps = {
   enhancedFlags: ReEnhancedFlag,
   sgroups: ReSGroup,
   reloops: ReLoop,
-  simpleObjects: ReSimpleObject
+  simpleObjects: ReSimpleObject,
+  texts: ReText
 }
 
 export default ReStruct
@@ -661,5 +678,6 @@ export {
   ReRGroup,
   ReEnhancedFlag,
   ReSGroup,
-  ReSimpleObject
+  ReSimpleObject,
+  ReText
 }

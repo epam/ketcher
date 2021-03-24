@@ -28,6 +28,7 @@ import {
   getHoverToFuse
 } from '../actions/closely-fusing'
 import utils from '../shared/utils'
+import { fromTextUpdating } from '../actions/text'
 
 function SelectTool(editor, mode) {
   if (!(this instanceof SelectTool)) return new SelectTool(editor, mode)
@@ -60,7 +61,8 @@ SelectTool.prototype.mousedown = function (event) {
           'rxnArrows',
           'rxnPluses',
           'enhancedFlags',
-          'simpleObjects'
+          'simpleObjects',
+          'texts'
         ]
       : [
           'atoms',
@@ -71,7 +73,8 @@ SelectTool.prototype.mousedown = function (event) {
           'rxnArrows',
           'rxnPluses',
           'enhancedFlags',
-          'simpleObjects'
+          'simpleObjects',
+          'texts'
         ]
   )
 
@@ -178,7 +181,8 @@ SelectTool.prototype.mousemove = function (event) {
           'rxnArrows',
           'rxnPluses',
           'enhancedFlags',
-          'simpleObjects'
+          'simpleObjects',
+          'texts'
         ]
       : [
           'atoms',
@@ -189,7 +193,8 @@ SelectTool.prototype.mousemove = function (event) {
           'rxnArrows',
           'rxnPluses',
           'enhancedFlags',
-          'simpleObjects'
+          'simpleObjects',
+          'texts'
         ]
 
   editor.hover(editor.findItem(event, maps))
@@ -236,7 +241,8 @@ SelectTool.prototype.dblclick = function (event) {
     'atoms',
     'bonds',
     'sgroups',
-    'sgroupData'
+    'sgroupData',
+    'texts'
   ])
   if (!ci) return true
 
@@ -264,6 +270,18 @@ SelectTool.prototype.dblclick = function (event) {
   } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
     this.editor.selection(closestToSel(ci))
     sgroupDialog(this.editor, ci.id)
+  } else if (ci.map === 'texts') {
+    this.editor.selection(closestToSel(ci))
+    const text = struct.texts.get(ci.id)
+    const dialog = editor.event.elementEdit.dispatch(text)
+
+    dialog
+      .then(newText => {
+        newText.id = ci.id
+        newText.previousLabel = text.label
+        editor.update(fromTextUpdating(rnd.ctab, newText))
+      })
+      .catch(() => null)
   }
   return true
 }

@@ -24,9 +24,11 @@ type OperationType = ValueOf<typeof OperationType>
 class BaseOperation {
   private _inverted: BaseOperation | undefined
   type: OperationType
+  priority: number
 
-  constructor(type: OperationType) {
+  constructor(type: OperationType, priority = 0) {
     this.type = type
+    this.priority = priority
   }
 
   // @ts-ignore

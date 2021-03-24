@@ -58,7 +58,7 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
 
   if (
     !skipAtoms.includes(bond.end) &&
-    atomGetDegree(restruct, bond.end) === 1
+    atomGetDegree(restruct, bond.end, skipAtoms) === 1
   ) {
     if (removeAtomFromSgroupIfNeeded(action, restruct, bond.end))
       atomsToRemove.push(bond.end)
@@ -118,8 +118,9 @@ export function fromFragmentDeletion(restruct, selection) {
 
   selection.atoms.forEach(aid => {
     atomGetNeighbors(restruct, aid).forEach(nei => {
-      if (selection.bonds.indexOf(nei.bid) === -1)
+      if (selection.bonds.indexOf(nei.bid) === -1) {
         selection.bonds = selection.bonds.concat([nei.bid])
+      }
     })
   })
 
@@ -170,5 +171,8 @@ export function fromFragmentDeletion(restruct, selection) {
 
   action.mergeWith(actionRemoveDataSGroups)
 
-  return action
+  const sortedOperations = action.operations.sort(
+    (a, b) => a.priority - b.priority
+  )
+  return new Action(sortedOperations)
 }

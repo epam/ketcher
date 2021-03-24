@@ -21,8 +21,8 @@ import { BaseOperation } from '../operations/base'
 class Action {
   operations: BaseOperation[]
 
-  constructor() {
-    this.operations = []
+  constructor(operations = []) {
+    this.operations = operations
   }
 
   addOp(operation: BaseOperation, restruct?: Restruct) {

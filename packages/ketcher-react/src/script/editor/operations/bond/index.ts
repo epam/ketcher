@@ -31,7 +31,7 @@ class BondAdd extends BaseOperation {
   data: Data
 
   constructor(begin?: any, end?: any, bond?: any) {
-    super(OperationType.BOND_ADD)
+    super(OperationType.BOND_ADD, 2)
     this.data = { bond, begin, end, bid: null }
   }
 

@@ -73,7 +73,7 @@ function FormulaInput({ value }) {
     .map(group => {
       return group
         .trim()
-        .split(';')
+        .split(/(?:;|\+)+/)
         .reduce(
           (acc, formula) => {
             let match

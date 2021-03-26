@@ -13,30 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-function calcStereoFlag(struct: any, stereoAids: Array<number>) {
-  if (!stereoAids || stereoAids.length === 0) return null
-  const stereoLabel = struct.atoms.get(stereoAids[0]).stereoLabel // {string | null} "<abs|and|or>-<group>"
+import { Struct } from './Struct'
+
+export enum StereoFlag {
+  Mixed = 'Mixed',
+  abs = 'ABS (Chiral)',
+  and = 'AND Enantiomer',
+  or = 'OR Enantiomer'
+  // todo: custom in the future
+}
+
+function calcStereoFlag(
+  struct: Struct,
+  stereoAids: Array<number>
+): string | undefined {
+  if (!stereoAids || stereoAids.length === 0) return undefined
+  const stereoLabel = struct.atoms.get(stereoAids[0])?.stereoLabel // {string | null} "<abs|and|or>-<group>"
 
   const hasAnotherLabel = stereoAids
     .map(aid => struct.atoms.get(aid))
-    .some(atom => atom.stereoLabel !== stereoLabel)
+    .some(atom => atom?.stereoLabel !== stereoLabel)
 
-  return hasAnotherLabel ? 'Mixed' : stereoLabel?.split('-')[0]
+  return hasAnotherLabel ? StereoFlag.Mixed : stereoLabel?.split('-')[0]
 }
+
 export class Fragment {
-  static STEREO_FLAG = {
-    Mixed: 'Mixed',
-    abs: 'ABS (Chiral)',
-    and: 'AND Enantiomer',
-    or: 'OR Enantiomer',
-    null: null
-    // todo: custom in the future
-  }
-
   stereoAtoms: Array<number>
-  enhancedStereoFlag?: any
+  enhancedStereoFlag?: boolean | string
 
-  constructor(flag?: any) {
+  constructor(flag?: boolean | string) {
     this.stereoAtoms = []
     this.enhancedStereoFlag = flag
   }

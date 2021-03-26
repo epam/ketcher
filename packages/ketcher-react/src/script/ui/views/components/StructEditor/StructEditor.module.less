@@ -39,7 +39,7 @@
 .canvas {
   border: @border-color 1px solid;
   border-radius: 5px;
-  overflow: auto;
+  overflow: hidden;
   position: relative;
 
   .canvas-size(inherit);
@@ -54,7 +54,12 @@
     }
   }
 }
-
+.intermediateCanvas {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  position: relative;
+}
 // stylelint-disable-next-line selector-pseudo-class-no-unknown
 :global(.smallEditor) .canvas {
   .canvas-size(small);

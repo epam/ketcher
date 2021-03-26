@@ -477,8 +477,10 @@ export class Struct {
   }
 
   rxnArrowSetPos(id: number, pp: Vec2): void {
-    const item = this.rxnArrows.get(id)!
-    item.pp = pp
+    const item = this.rxnArrows.get(id)
+    if (item) {
+      item.pp = pp
+    }
   }
 
   simpleObjectSetPos(id: number, pos: Array<Vec2>) {
@@ -487,8 +489,11 @@ export class Struct {
   }
 
   textSetPosition(id: number, position: Vec2): void {
-    const item = this.texts.get(id)!
-    item.position = position
+    const item = this.texts.get(id)
+
+    if (item) {
+      item.position = position
+    }
   }
 
   getCoordBoundingBox(atomSet?: Pile<number>) {

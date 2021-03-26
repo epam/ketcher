@@ -81,7 +81,7 @@ const config = {
       include: ['src/**/*']
     }),
     postcss({
-      plugins: isProduction ? [autoprefixer({ grid: 'autoplace' })] : [],
+      plugins: [autoprefixer({ grid: 'autoplace' })],
       extract: path.resolve('dist/index.css'),
       minimize: isProduction,
       sourceMap: true

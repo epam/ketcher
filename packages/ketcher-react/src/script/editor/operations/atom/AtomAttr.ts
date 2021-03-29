@@ -28,7 +28,7 @@ export class AtomAttr extends BaseOperation {
   data2: Data | null
 
   constructor(atomId?: any, attribute?: any, value?: any) {
-    super(OperationType.ATOM_ATTR)
+    super(OperationType.ATOM_ATTR, 2)
     this.data = { aid: atomId, attribute, value }
     this.data2 = null
   }

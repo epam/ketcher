@@ -26,7 +26,7 @@ export class SGroupAttr extends BaseOperation {
   }
 
   constructor(sgroupId?: any, attribute?: any, value?: any) {
-    super(OperationType.S_GROUP_ATTR)
+    super(OperationType.S_GROUP_ATTR, 4)
     this.data = {
       sgid: sgroupId,
       attr: attribute,

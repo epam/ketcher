@@ -177,7 +177,7 @@ export function fromFragmentDeletion(restruct, selection) {
 
   action.mergeWith(actionRemoveDataSGroups)
 
-  const sortedOperations = action.operations.sort(
+  const sortedOperations = [...action.operations].sort(
     (a, b) => a.priority - b.priority
   )
   return new Action(sortedOperations)

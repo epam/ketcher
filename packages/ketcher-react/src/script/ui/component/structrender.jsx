@@ -61,6 +61,8 @@ class StructRender extends Component {
         //legacy message: Could not parse structure
         parsedStruct = null
       }
+    } else {
+      parsedStruct = struct
     }
     renderStruct(el, parsedStruct, options)
   }

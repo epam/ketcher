@@ -20,93 +20,46 @@ import styles from './FormulaInput.module.less'
 const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g
 const errorRegexp = /error:.*/g
 
-function renderFormula(formula, key) {
-  return formula.elements.map((element, index) => {
-    return (
-      <React.Fragment key={index}>
-        {element.isotope > 0 && <sup>{element.isotope}</sup>}
-        {element.symbol}
-        {element.index > 0 && <sub>{element.index}</sub>}
-      </React.Fragment>
-    )
-  })
-}
-
-function renderGroup(group, key, renderBrakets) {
-  return group.formulas.map((formula, index) => {
-    return (
-      <React.Fragment key={index}>
-        {renderFormula(formula)}
-        {index < group.formulas.length - 1 && group.formulas.length > 1 && '; '}
-      </React.Fragment>
-    )
-  })
-}
-
-function formulaInputMarkdown(descriptor) {
+function formulaInputMarkdown(content) {
+  const onKeyDown = e => {
+    if (e.keyCode === 8) {
+      e.preventDefault()
+      return false
+    }
+  }
   return (
-    <div className={styles.chem_input}>
-      {descriptor?.groups.length > 0 &&
-        descriptor.groups.map((group, index) => {
-          return (
-            <React.Fragment key={index}>
-              {<>{descriptor.groups.length > 1 && '['}</>}
-              {renderGroup(group, index, descriptor.groups.length > 1)}
-              {<>{descriptor.groups.length > 1 && ']'}</>}
-              {descriptor.groups.length > 1 &&
-                index < descriptor.groups.length - 1 &&
-                ' > '}
-            </React.Fragment>
-          )
-        })}
+    <div
+      className={styles.chem_input}
+      onKeyPress={e => e.preventDefault()}
+      onPaste={e => e.preventDefault()}
+      onKeyDown={onKeyDown}
+      contentEditable={true}
+      suppressContentEditableWarning={true}>
+      {content}
     </div>
   )
 }
 
 function FormulaInput({ value }) {
-  if (errorRegexp.test(value)) {
-    return <div className={styles.chem_input}>{value}</div>
+  if (errorRegexp.test(value)) return formulaInputMarkdown(value)
+
+  const content = []
+  let cnd
+  let pos = 0
+
+  while ((cnd = formulaRegexp.exec(value)) !== null) {
+    if (cnd[1].length > 0)
+      content.push(<sup key={content.length}>{cnd[1]}</sup>)
+    content.push(value.substring(pos, cnd.index) + cnd[2])
+    if (cnd[3].length > 0)
+      content.push(<sub key={content.length}>{cnd[3]}</sub>)
+    pos = cnd.index + cnd[0].length
   }
 
-  const descriptor = value
-    .split('>')
-    .map(group => {
-      return group
-        .trim()
-        .split(/(?:;|\+)+/)
-        .reduce(
-          (acc, formula) => {
-            let match
-            const elements = []
-            do {
-              match = formulaRegexp.exec(formula)
-              if (match) {
-                const isotope = match[1]
-                const symbol = match[2]
-                const index = match[3]
+  if (pos === 0) content.push(value)
+  else content.push(value.substring(pos, value.length))
 
-                elements.push({ symbol, index, isotope })
-              }
-            } while (match)
-
-            if (elements.length) {
-              acc.formulas.push({ elements })
-            }
-
-            return acc
-          },
-          { formulas: [] }
-        )
-    })
-    .reduce(
-      (acc, group) => {
-        acc.groups.push(group)
-        return acc
-      },
-      { groups: [] }
-    )
-
-  return formulaInputMarkdown(descriptor)
+  return formulaInputMarkdown(content)
 }
 
 export default FormulaInput

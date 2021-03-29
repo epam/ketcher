@@ -29,7 +29,7 @@ class SGroupAtomAdd extends BaseOperation {
   data: Data
 
   constructor(sgroupId?: any, aid?: any) {
-    super(OperationType.S_GROUP_ATOM_ADD)
+    super(OperationType.S_GROUP_ATOM_ADD, 3)
     this.data = { sgid: sgroupId, aid }
   }
 

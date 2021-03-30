@@ -42,7 +42,7 @@ export class ServerFormatter implements StructFormatter {
       if (error.message === 'Server is not compatible') {
         message = `${formatProperties.name} is not supported in standalone mode.`
       } else {
-        message = `Convert error!\n${error.message}`
+        message = `Convert error!\n${error.message || error}`
       }
 
       throw new Error(message)
@@ -92,7 +92,7 @@ export class ServerFormatter implements StructFormatter {
       return parsedStruct
     } catch (error) {
       if (error.message !== 'Server is not compatible') {
-        throw Error(`Convert error!\n${error.message}`)
+        throw Error(`Convert error!\n${error.message || error}`)
       }
 
       const formatError =

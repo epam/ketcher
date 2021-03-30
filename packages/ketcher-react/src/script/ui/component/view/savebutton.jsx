@@ -26,7 +26,7 @@ class SaveButton extends Component {
     })
   }
 
-  save(ev) {
+  saveFile(ev) {
     const noop = () => null
     const {
       filename = 'unnamed',
@@ -49,6 +49,29 @@ class SaveButton extends Component {
     ev.preventDefault()
   }
 
+  saveImage(ev) {
+    ev.preventDefault()
+    const noop = () => null
+    const {
+      filename = 'unnamed',
+      data,
+      type,
+      className = '',
+      onSave = noop,
+      onError = noop
+    } = this.props
+
+    window.ketcher
+      .generateImageAsync(data, { outputFormat: 'svg' })
+      .then(blob => {
+        saveAs(blob, filename)
+      })
+      .catch(error => {
+        onError(error)
+      })
+    onSave()
+  }
+
   render() {
     const {
       children,
@@ -61,7 +84,9 @@ class SaveButton extends Component {
 
     return (
       <button
-        onClick={ev => this.save(ev)}
+        onClick={event => {
+          this[event.target.name](event)
+        }}
         className={
           !this.state.saver || !data ? `disabled ${className}` : className
         }

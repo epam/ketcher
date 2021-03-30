@@ -18,7 +18,7 @@ import { Struct } from './Struct'
 export enum StereoFlag {
   Mixed = 'Mixed',
   abs = 'ABS (Chiral)',
-  and = 'AND Enantiomer',
+  '&' = 'AND Enantiomer',
   or = 'OR Enantiomer'
   // todo: custom in the future
 }
@@ -34,7 +34,7 @@ function calcStereoFlag(
     .map(aid => struct.atoms.get(aid))
     .some(atom => atom?.stereoLabel !== stereoLabel)
 
-  return hasAnotherLabel ? StereoFlag.Mixed : stereoLabel?.split('-')[0]
+  return hasAnotherLabel ? StereoFlag.Mixed : stereoLabel?.match(/\D+/g)?.[0]
 }
 
 export class Fragment {

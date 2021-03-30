@@ -274,7 +274,7 @@ function parseCTabV2000(ctabLines, countsSplit) {
   const bonds = bondLines.map(parseBondLine)
   bonds.forEach(bond => {
     if (bond.stereo && isAbs) ctab.atoms.get(bond.begin).stereoLabel = 'abs'
-    if (bond.stereo && isAnd) ctab.atoms.get(bond.begin).stereoLabel = 'and-1'
+    if (bond.stereo && isAnd) ctab.atoms.get(bond.begin).stereoLabel = '&1'
     ctab.bonds.add(bond)
   })
 

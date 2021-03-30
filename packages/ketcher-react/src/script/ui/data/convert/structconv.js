@@ -20,6 +20,7 @@ import { Bond, AtomList } from 'ketcher-core'
 import element from '../../../chem/element'
 import { sdataSchema } from '../schema/sdata-schema'
 import { atom as atomSchema } from '../schema/struct-schema'
+import { StereoLabel } from '../../dialog/toolbox/enhanced-stereo'
 
 export function fromElement(selem) {
   if (selem.label === 'R#') {
@@ -121,17 +122,37 @@ function toAtomList(atom) {
 
 export function fromStereoLabel(stereoLabel) {
   if (stereoLabel === null) return { type: null }
-  const stereo = stereoLabel.split('-')
+  const type = stereoLabel.match(/\D+/g)[0]
+  const number = +stereoLabel.replace(type, '')
+
   return {
-    type: stereo[0],
-    number: +stereo[1] || 0
+    type: number < 3 ? stereoLabel : type,
+    orNumber: 3,
+    andNumber: 3,
+    ...(number < 3
+      ? {}
+      : { [type.replace(StereoLabel.and, 'and') + 'Number']: number })
   }
 }
 
-export function toStereoLabel(sstereoLabel) {
-  if (sstereoLabel.type === null) return null
-  if (sstereoLabel.type === 'abs') return 'abs'
-  return `${sstereoLabel.type}-${sstereoLabel.number}`
+export function toStereoLabel(stereoLabel) {
+  switch (stereoLabel.type) {
+    case StereoLabel.abs:
+    case `${StereoLabel.and}1`:
+    case `${StereoLabel.and}2`:
+    case `${StereoLabel.or}1`:
+    case `${StereoLabel.or}2`:
+      return stereoLabel.type
+
+    case StereoLabel.and:
+      return `${StereoLabel.and}${stereoLabel.andNumber || 1}`
+
+    case StereoLabel.or:
+      return `${StereoLabel.or}${stereoLabel.orNumber || 1}`
+
+    default:
+      return null
+  }
 }
 
 function fromApoint(sap) {

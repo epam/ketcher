@@ -11,86 +11,118 @@ The latest version of Ketcher has been splitted into two packages: component lib
 
 To create production build of ready-to-run application execute the following command from root directory:
 
-    yarn install
-    yarn build
+```sh
+yarn install
+yarn build
+```
 
 To serve results of build locally run the following command from root directory:
 
-    yarn serve:remote
-      or
-    yarn serve:standalone
-      or
-    yarn serve
+```sh
+yarn serve:remote
+  or
+yarn serve:standalone
+  or
+yarn serve
+```
 
 ### Development
 
-The latest version of Ketcher is based on yarn workspaces. So before starting development it is necessary to run the following commands from root directory:
+The latest version of Ketcher is based on yarn workspaces. So before starting development it is necessary to run the following command from root directory:
 
-    yarn install
+```sh
+yarn install
+```
 
 After that component library and application should be started separately.
 
-**Build kecther-react package (terminal #1)**
+#### Build kecther-react package
 
-    cd packages/ketcher-react
-    yarn start
+```sh
+cd packages/ketcher-react
+yarn start
+```
 
-**Build ketcher-standalone package**
+#### Build ketcher-standalone package
 
-    cd packages/ketcher-standalone
-    yarn start
+```sh
+cd packages/ketcher-standalone
+yarn start
+```
 
-**Build example application (terminal #2)**
+#### Build ketcher-core package
 
-    cd example
-    yarn start:remote
-      or
-    yarn start:standalone
+```sh
+cd packages/ketcher-core
+yarn start
+```
+
+#### Build example application
+
+```sh
+cd example
+yarn start:remote
+  or
+yarn start:standalone
+```
 
 ## Indigo service
 
 Ketcher uses Indigo Service for server operations.
 You may pass it as a property while Editor component is used or just add api_path query parameter:
 
-    <Editor staticResourcesUrl={process.env.PUBLIC_URL} apiPath={insert link to Indigo service here} />
-      or
-    http://localhost:3000/?api_path={insert link to Indigo service here}
+```sh
+<Editor staticResourcesUrl={process.env.PUBLIC_URL} apiPath={insert link to Indigo service here} />
+  or
+http://localhost:3000/?api_path={insert link to Indigo service here}
+```
 
 You can find the instruction for service installation
 [here](http://lifescience.opensource.epam.com/indigo/service/index.html).
 
 ## Additional commands
 
-To start unit tests:
+### Start unit tests
 
-    yarn test:unit
-      or
-    yarn test:watch
+```sh
+yarn test:unit
+  or
+yarn test:watch
+```
 
-To start prettier:
+### Start prettier
 
-    prettier
-    prettier:write
+```sh
+prettier
+  or
+prettier:write
+```
 
-To start eslint:
+### Start eslint
 
-    test:lint
+```sh
+test:lint
+```
 
-To start stylelint:
+### Start stylelint
 
-    yarn stylelint
-      or
-    yarn stylelint:fix
+```sh
+yarn stylelint
+  or
+yarn stylelint:fix
+```
 
-To start all tests and formatting:
+### Start all tests and formatting
 
-    yarn test
+```sh
+yarn test
+```
 
 ## Simple server
 
 Place this docker-compose.yml file at the root of your repository
 
-```
+```sh
 version: '3'
 services:
   nginx:
@@ -119,7 +151,7 @@ services:
 Copy Ketcher files under ketcher/ folder
 Add this file under nginx/defaut.conf
 
-```
+```sh
 server {
   listen 80;
   keepalive_timeout 5;
@@ -147,7 +179,7 @@ server {
 
 Run
 
-```
+```sh
 docker-compose up -d
 ```
 

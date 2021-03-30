@@ -28,7 +28,7 @@ yarn add ketcher-react
 
 ## Usage
 
-```sh
+```js
 import { RemoteStructServiceProvider } from 'ketcher-core'
 
 const structServiceProvider = new RemoteStructServiceProvider(
@@ -64,7 +64,7 @@ You can find the instruction for service installation
 Ketcher uses Miew for viewing and editing data in 3D.
 For use of this functionality you should add the link to miew by your own:
 
-```sh
+```js
 ...
 import Miew from 'miew'
 import 'miew/dist/Miew.min.css'

@@ -26,7 +26,7 @@ yarn add ketcher-core
 
 ## Usage
 
-```sh
+```js
 import { RemoteStructServiceProvider } from 'ketcher-core'
 
 const structServiceProvider = new RemoteStructServiceProvider(

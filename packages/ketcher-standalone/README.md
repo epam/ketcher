@@ -26,7 +26,7 @@ yarn add ketcher-standalone
 
 ## Usage
 
-```sh
+```js
 import { StandaloneStructServiceProvider } from 'ketcher-standalone'
 
 const structServiceProvider = new StandaloneStructServiceProvider()

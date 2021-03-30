@@ -4,7 +4,7 @@
 [![Downloads](https://img.shields.io/npm/dm/ketcher-react)](https://www.npmjs.com/package/ketcher-react)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Copyright (c) 2020 [EPAM Systems, Inc.](https://www.epam.com/)
+Copyright (c) 2021 [EPAM Systems, Inc.](https://www.epam.com/)
 
 Ketcher is an open-source web-based chemical structure editor incorporating high performance, good portability, light weight, and ability to easily integrate into a custom web-application. Ketcher is designed for chemists, laboratory scientists and technicians who draw structures and reactions.
 
@@ -36,7 +36,7 @@ Ketcher is an open-source web-based chemical structure editor incorporating high
 
 ## Installation and usage
 
-At this moment Ketcher library is available as an [react component library](https://www.npmjs.com/package/ketcher-react) and [zip archive](https://lifescience.opensource.epam.com/download/ketcher.html):
+At this moment Ketcher library is delivered as an [react component library](https://www.npmjs.com/package/ketcher-react) and [zip archive](https://lifescience.opensource.epam.com/download/ketcher.html):
 
 ### How to use react component library
 

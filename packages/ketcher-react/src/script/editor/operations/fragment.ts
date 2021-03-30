@@ -65,7 +65,9 @@ class FragmentDelete extends BaseOperation {
     restruct.frags.delete(this.frid)
     struct.frags.delete(this.frid) // TODO add ReStruct.notifyFragmentRemoved
 
-    restruct.clearVisel(restruct.enhancedFlags.get(this.frid).visel)
+    const enhancedFalg = restruct.enhancedFlags.get(this.frid)
+    if (!enhancedFalg) return
+    restruct.clearVisel(enhancedFalg.visel)
     restruct.enhancedFlags.delete(this.frid)
   }
 

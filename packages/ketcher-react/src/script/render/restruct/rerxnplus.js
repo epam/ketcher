@@ -18,6 +18,7 @@ import ReObject from './ReObject'
 import draw from '../draw'
 import util from '../util'
 import { Box2Abs, scale } from 'ketcher-core'
+import { LayerMap } from './GeneralEnumTypes'
 
 class ReRxnPlus extends ReObject {
   constructor(/* chem.RxnPlus*/ plus) {
@@ -36,7 +37,7 @@ class ReRxnPlus extends ReObject {
   }
   drawHighlight(render) {
     var ret = this.highlightPath(render).attr(render.options.highlightStyle)
-    render.ctab.addReObjectPath('highlighting', this.visel, ret)
+    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
     return ret
   }
   makeSelectionPlate(restruct, paper, styles) {

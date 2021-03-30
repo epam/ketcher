@@ -16,6 +16,7 @@
 import ReObject from './ReObject'
 import util from '../util'
 import { Bond, Vec2, scale } from 'ketcher-core'
+import { LayerMap } from './GeneralEnumTypes'
 
 const tfx = util.tfx
 
@@ -99,7 +100,7 @@ class ReLoop extends ReObject {
         'stroke-dasharray': '- '
       })
     }
-    restruct.addReObjectPath('data', this.visel, path, null, true)
+    restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true)
   }
   isValid(struct, rlid) {
     const halfBonds = struct.halfBonds

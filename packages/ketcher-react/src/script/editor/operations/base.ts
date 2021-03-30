@@ -136,7 +136,7 @@ class BaseOperation {
     flag: any
   ) {
     const reEnhancedFlag = restruct.enhancedFlags.get(fragmentId)
-    if (reEnhancedFlag.flag === flag) {
+    if (!reEnhancedFlag || reEnhancedFlag.flag === flag) {
       return
     }
 

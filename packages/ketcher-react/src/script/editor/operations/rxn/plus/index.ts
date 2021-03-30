@@ -80,6 +80,7 @@ class RxnPlusDelete extends BaseOperation {
     // notifyRxnPlusRemoved
     restruct.markItemRemoved()
     const rxn = restruct.rxnPluses.get(plid)
+    if (!rxn) return
     restruct.clearVisel(rxn.visel)
     restruct.rxnPluses.delete(plid)
 

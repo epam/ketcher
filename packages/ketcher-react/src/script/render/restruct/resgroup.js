@@ -20,6 +20,7 @@ import draw from '../draw'
 
 import ReDataSGroupData from './redatasgroupdata'
 import ReObject from './ReObject'
+import { LayerMap } from './GeneralEnumTypes'
 
 const tfx = util.tfx
 
@@ -141,7 +142,7 @@ class ReSGroup extends ReObject {
     SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach(bid => {
       set.push(render.ctab.bonds.get(bid).makeHighlightPlate(render))
     }, this)
-    render.ctab.addReObjectPath('highlighting', this.visel, set)
+    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, set)
   }
   show(restruct) {
     var render = restruct.render
@@ -149,7 +150,7 @@ class ReSGroup extends ReObject {
     if (sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
       var remol = render.ctab
       var path = this.draw(remol, sgroup)
-      restruct.addReObjectPath('data', this.visel, path, null, true)
+      restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true)
       this.setHighlight(this.highlight, render) // TODO: fix this
     }
   }

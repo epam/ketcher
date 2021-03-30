@@ -18,6 +18,7 @@ import draw from '../draw'
 import { Box2Abs, Vec2, scale } from 'ketcher-core'
 
 import ReObject from './ReObject'
+import { LayerMap } from './GeneralEnumTypes'
 
 var BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3)
 class ReRGroup extends ReObject {
@@ -148,7 +149,7 @@ class ReRGroup extends ReObject {
       rgid,
       render.options.highlightStyle /* { 'fill' : 'red' }*/
     ) // eslint-disable-line no-underscore-dangle
-    render.ctab.addReObjectPath('highlighting', this.visel, ret)
+    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
 
     this.item.frags.forEach((fnum, fid) => {
       render.ctab.frags.get(fid).drawHighlight(render)
@@ -162,7 +163,7 @@ class ReRGroup extends ReObject {
     Object.keys(drawing).forEach(group => {
       while (drawing[group].length > 0)
         restruct.addReObjectPath(
-          group,
+          LayerMap.data,
           this.visel,
           drawing[group].shift(),
           null,

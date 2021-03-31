@@ -19,7 +19,7 @@ import ReObject from './ReObject'
 import { Bond, Vec2, scale } from 'ketcher-core'
 import draw from '../draw'
 import util from '../util'
-import { LayerMap } from './GeneralEnumTypes'
+import { LayerMap, StereoColoringType } from './GeneralEnumTypes'
 
 class ReBond extends ReObject {
   constructor(bond) {
@@ -226,13 +226,19 @@ function getBondPath(restruct, bond, hb1, hb2) {
           else path = getBondSingleUpPath(render, hb1, hb2, bond, struct)
           break
         case Bond.PATTERN.STEREO.DOWN:
-          path = getBondSingleDownPath(render, hb1, hb2)
+          path = getBondSingleDownPath(render, hb1, hb2, bond, struct)
           break
         case Bond.PATTERN.STEREO.EITHER:
-          path = getBondSingleEitherPath(render, hb1, hb2)
+          path = getBondSingleEitherPath(render, hb1, hb2, bond, struct)
           break
         default:
-          path = draw.bondSingle(render.paper, hb1, hb2, render.options)
+          path = draw.bondSingle(
+            render.paper,
+            hb1,
+            hb2,
+            render.options,
+            getStereoBondColor(render.options, bond, struct)
+          )
           break
       }
       break
@@ -305,7 +311,61 @@ function getBondSingleUpPath(render, hb1, hb2, bond, struct) {
     b2 = coords[0]
     b3 = coords[1]
   }
-  return draw.bondSingleUp(render.paper, a, b2, b3, options)
+  return draw.bondSingleUp(
+    render.paper,
+    a,
+    b2,
+    b3,
+    options,
+    getStereoBondColor(options, bond, struct)
+  )
+}
+
+/**
+ * Calculate stereo bond color
+ * Color is calculated base on stereo center type.
+ * In case of one stereo center it would be type of it.
+ * In case of none or two stereo centers on both ends returned color would be black
+ * @param options
+ * @param bond
+ * @param restruct
+ * @return {string}
+ */
+function getStereoBondColor(options, bond, struct) {
+  let color = '#000'
+  if (
+    bond.b.stereo &&
+    (StereoColoringType.BondsOnly === options.colorStereogenicCenters ||
+      StereoColoringType.LabelsAndBonds === options.colorStereogenicCenters)
+  ) {
+    const beginAtomStereoLabel = struct.atoms.get(bond.b.begin).stereoLabel
+    const endAtomStereoLabel = struct.atoms.get(bond.b.end).stereoLabel
+    let stereoLabel = null
+    if (beginAtomStereoLabel && !endAtomStereoLabel) {
+      stereoLabel = beginAtomStereoLabel
+    } else if (!beginAtomStereoLabel && endAtomStereoLabel) {
+      stereoLabel = endAtomStereoLabel
+    } // else if no stereolabel present or present in both than use default color
+    if (!stereoLabel) {
+      return color
+    }
+    let bondStereoFlag = stereoLabel.split('-')[0]
+
+    switch (bondStereoFlag) {
+      case 'and':
+        color = options.colorOfAndCenters
+        break
+      case 'or':
+        color = options.colorOfOrCenters
+        break
+      case 'abs':
+        color = options.colorOfAbsoluteCenters
+        break
+      default:
+        color = '#000'
+    }
+  }
+  return color
 }
 
 function getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct) {
@@ -327,7 +387,15 @@ function getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct) {
   var a2 = coords1[1]
   var a3 = coords2[0]
   var a4 = coords2[1]
-  return draw.bondSingleStereoBold(render.paper, a1, a2, a3, a4, options)
+  return draw.bondSingleStereoBold(
+    render.paper,
+    a1,
+    a2,
+    a3,
+    a4,
+    options,
+    getStereoBondColor(options, bond, struct)
+  )
 }
 
 function getBondDoubleStereoBoldPath(
@@ -376,7 +444,8 @@ function getBondDoubleStereoBoldPath(
     sgBondPath,
     b1,
     b2,
-    render.options
+    render.options,
+    getStereoBondColor(render.options, bond, struct)
   )
 }
 
@@ -405,7 +474,7 @@ function stereoUpBondGetCoordinates(hb, neihbid, bondSpace, struct) {
   return sin > 0 ? [a1, a2] : [a2, a1]
 }
 
-function getBondSingleDownPath(render, hb1, hb2) {
+function getBondSingleDownPath(render, hb1, hb2, bond, struct) {
   var a = hb1.p,
     b = hb2.p
   var options = render.options
@@ -419,10 +488,18 @@ function getBondSingleDownPath(render, hb1, hb2) {
       0
     ) + 2
   var step = len / (nlines - 1)
-  return draw.bondSingleDown(render.paper, hb1, d, nlines, step, options)
+  return draw.bondSingleDown(
+    render.paper,
+    hb1,
+    d,
+    nlines,
+    step,
+    options,
+    getStereoBondColor(options, bond, struct)
+  )
 }
 
-function getBondSingleEitherPath(render, hb1, hb2) {
+function getBondSingleEitherPath(render, hb1, hb2, bond, struct) {
   var a = hb1.p,
     b = hb2.p
   var options = render.options
@@ -436,7 +513,15 @@ function getBondSingleEitherPath(render, hb1, hb2) {
       0
     ) + 2
   var step = len / (nlines - 0.5)
-  return draw.bondSingleEither(render.paper, hb1, d, nlines, step, options)
+  return draw.bondSingleEither(
+    render.paper,
+    hb1,
+    d,
+    nlines,
+    step,
+    options,
+    getStereoBondColor(options, bond, struct)
+  )
 }
 
 function getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB) {

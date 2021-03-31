@@ -101,13 +101,16 @@ function plus(paper, c, options) {
     .attr(options.lineattr)
 }
 
-function bondSingle(paper, hb1, hb2, options) {
+function bondSingle(paper, hb1, hb2, options, color = '#000') {
   var a = hb1.p,
     b = hb2.p
-  return paper.path(makeStroke(a, b)).attr(options.lineattr)
+  return paper.path(makeStroke(a, b)).attr(options.lineattr).attr({
+    fill: color,
+    stroke: color
+  })
 }
 
-function bondSingleUp(paper, a, b2, b3, options) {
+function bondSingleUp(paper, a, b2, b3, options, color = '#000') {
   // eslint-disable-line max-params
   return paper
     .path(
@@ -120,12 +123,15 @@ function bondSingleUp(paper, a, b2, b3, options) {
       tfx(b3.y)
     )
     .attr(options.lineattr)
-    .attr({ fill: '#000' })
+    .attr({
+      fill: color,
+      stroke: color
+    })
 }
 
-function bondSingleStereoBold(paper, a1, a2, a3, a4, options) {
+function bondSingleStereoBold(paper, a1, a2, a3, a4, options, color = '#000') {
   // eslint-disable-line max-params
-  return paper
+  const bond = paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}L{6},{7}Z',
       tfx(a1.x),
@@ -138,23 +144,35 @@ function bondSingleStereoBold(paper, a1, a2, a3, a4, options) {
       tfx(a4.y)
     )
     .attr(options.lineattr)
-    .attr({
-      stroke: '#000',
-      fill: '#000'
-    })
+  bond.attr({
+    stroke: color,
+    fill: color
+  })
+  return bond
 }
 
-function bondDoubleStereoBold(paper, sgBondPath, b1, b2, options) {
+function bondDoubleStereoBold(
+  paper,
+  sgBondPath,
+  b1,
+  b2,
+  options,
+  color = '#000'
+) {
   // eslint-disable-line max-params
   return paper.set([
     sgBondPath,
     paper
       .path('M{0},{1}L{2},{3}', tfx(b1.x), tfx(b1.y), tfx(b2.x), tfx(b2.y))
       .attr(options.lineattr)
+      .attr({
+        stroke: color,
+        fill: color
+      })
   ])
 }
 
-function bondSingleDown(paper, hb1, d, nlines, step, options) {
+function bondSingleDown(paper, hb1, d, nlines, step, options, color = '#000') {
   // eslint-disable-line max-params
   var a = hb1.p,
     n = hb1.norm
@@ -170,10 +188,21 @@ function bondSingleDown(paper, hb1, d, nlines, step, options) {
     q = r.addScaled(n, (-bsp * (i + 0.5)) / (nlines - 0.5))
     path += makeStroke(p, q)
   }
-  return paper.path(path).attr(options.lineattr)
+  return paper.path(path).attr(options.lineattr).attr({
+    fill: color,
+    stroke: color
+  })
 }
 
-function bondSingleEither(paper, hb1, d, nlines, step, options) {
+function bondSingleEither(
+  paper,
+  hb1,
+  d,
+  nlines,
+  step,
+  options,
+  color = '#000'
+) {
   // eslint-disable-line max-params
   var a = hb1.p,
     n = hb1.norm
@@ -187,7 +216,10 @@ function bondSingleEither(paper, hb1, d, nlines, step, options) {
       .addScaled(n, ((i & 1 ? -1 : +1) * bsp * (i + 0.5)) / (nlines - 0.5))
     path += 'L' + tfx(r.x) + ',' + tfx(r.y)
   }
-  return paper.path(path).attr(options.lineattr)
+  return paper.path(path).attr(options.lineattr).attr({
+    fill: color,
+    stroke: color
+  })
 }
 
 function bondDouble(paper, a1, a2, b1, b2, cisTrans, options) {
@@ -232,7 +264,7 @@ function bondSingleOrDouble(paper, hb1, hb2, nSect, options) {
   return paper.path(path).attr(options.lineattr)
 }
 
-function bondTriple(paper, hb1, hb2, options) {
+function bondTriple(paper, hb1, hb2, options, color = '#000') {
   var a = hb1.p,
     b = hb2.p,
     n = hb1.norm
@@ -243,6 +275,10 @@ function bondTriple(paper, hb1, hb2, options) {
   return paper
     .path(makeStroke(a, b) + makeStroke(a2, b2) + makeStroke(a3, b3))
     .attr(options.lineattr)
+    .attr({
+      fill: color,
+      stroke: color
+    })
 }
 
 function bondAromatic(paper, paths, bondShift, options) {

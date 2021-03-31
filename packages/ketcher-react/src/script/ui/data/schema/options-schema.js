@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import jsonschema from 'jsonschema'
+import { StereoColoringType } from '../../../render/restruct/GeneralEnumTypes'
 
 const editor = {
   resetToSelect: {
@@ -47,6 +48,32 @@ const render = {
     title: 'Do not show the Stereo flags',
     type: 'boolean',
     default: false
+  },
+  colorOfAbsoluteCenters: {
+    title: ' Color of Absolute Center',
+    type: 'string',
+    default: 'Red'
+  },
+  colorOfAndCenters: {
+    title: 'Color of AND Centers',
+    type: 'string',
+    default: 'MediumBlue'
+  },
+  colorOfOrCenters: {
+    title: 'Color of OR Centers',
+    type: 'string',
+    default: 'ForestGreen'
+  },
+  colorStereogenicCenters: {
+    title: 'Color stereogenic centers',
+    enum: [
+      StereoColoringType.LabelsOnly,
+      StereoColoringType.BondsOnly,
+      StereoColoringType.LabelsAndBonds,
+      StereoColoringType.Off
+    ],
+    enumNames: ['Labels Only', 'Bonds Only', 'Labels And Bonds', 'Off'],
+    default: StereoColoringType.LabelsOnly
   },
   font: {
     title: 'Font',

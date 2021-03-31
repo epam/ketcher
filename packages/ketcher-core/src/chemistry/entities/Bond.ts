@@ -46,14 +46,6 @@ export class Bond {
       CIS_TRANS: 3
     },
 
-    // STEREO:
-    // {
-    // 	NONE: 0,
-    // 	UP: 1,
-    // 	EITHER: 2,
-    // 	DOWN: 3
-    // },
-
     TOPOLOGY: {
       EITHER: 0,
       RING: 1,

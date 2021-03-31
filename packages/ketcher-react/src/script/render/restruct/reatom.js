@@ -19,7 +19,7 @@ import { sketchingColors as elementColor } from '../../chem/element-color'
 import draw from '../draw'
 import util from '../util'
 import { Bond, Box2Abs, Vec2, scale } from 'ketcher-core'
-import { LayerMap } from './GeneralEnumTypes'
+import { LayerMap, StereoColoringType } from './GeneralEnumTypes'
 
 class ReAtom extends ReObject {
   /** @param {import('ketcher-core').Atom} atom */
@@ -228,6 +228,13 @@ class ReAtom extends ReObject {
         'font-size': options.fontszsub,
         fill: options.atomColoring && elem ? elementColor[this.a.label] : '#000'
       })
+      if (stereoLabel) {
+        //use dom element to change color of stereo label which is the first element
+        //of just created text
+        //text -> tspan
+        const color = getStereoAtomColor(render.options, stereoLabel)
+        aamPath.node.children[0].setAttribute('fill', color)
+      }
       var aamBox = util.relBox(aamPath.getBBox())
       draw.recenterText(aamPath, aamBox)
       var dir = bisectLargestSector(this, restruct.molecule)
@@ -243,6 +250,33 @@ class ReAtom extends ReObject {
       restruct.addReObjectPath(LayerMap.data, this.visel, aamPath, ps, true)
     }
   }
+}
+
+function getStereoAtomColor(options, stereoLabel) {
+  let color = '#000'
+  if (
+    stereoLabel &&
+    (StereoColoringType.LabelsOnly === options.colorStereogenicCenters ||
+      StereoColoringType.LabelsAndBonds === options.colorStereogenicCenters)
+  ) {
+    let bondStereoFlag = stereoLabel.split('-')[0]
+
+    switch (bondStereoFlag) {
+      //todo try to use StereoFlag enum
+      case 'and':
+        color = options.colorOfAndCenters
+        break
+      case 'or':
+        color = options.colorOfOrCenters
+        break
+      case 'abs':
+        color = options.colorOfAbsoluteCenters
+        break
+      default:
+        color = '#000'
+    }
+  }
+  return color
 }
 
 function isLabelVisible(restruct, options, atom) {

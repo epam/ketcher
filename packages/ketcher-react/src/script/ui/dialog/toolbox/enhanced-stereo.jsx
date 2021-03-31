@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 
 import { Dialog } from '../../views/components'
 import Form, { Field } from '../../component/form/form'
+import { StereoFlag } from 'ketcher-core'
 
 const enhancedStereoSchema = {
   title: 'Enhanced Stereo',
@@ -14,7 +15,7 @@ const enhancedStereoSchema = {
         stereoFlag: {
           title: 'Stereo Flag',
           enum: ['and', 'or', 'abs'],
-          enumNames: ['AND Enantiomer', 'OR Enantiomer', 'ABS (Chiral)']
+          enumNames: [StereoFlag.and, StereoFlag.or, StereoFlag.abs]
         }
       }
     },
@@ -25,9 +26,9 @@ const enhancedStereoSchema = {
           title: 'Stereo Label',
           enum: ['and', 'or', 'abs', null],
           enumNames: [
-            'AND Enantiomer',
-            'OR Enantiomer',
-            'ABS (Chiral)',
+            StereoFlag.and,
+            StereoFlag.or,
+            StereoFlag.abs,
             '< Clear label >'
           ]
         },

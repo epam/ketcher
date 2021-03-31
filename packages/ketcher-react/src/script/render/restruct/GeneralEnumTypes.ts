@@ -21,3 +21,10 @@ export enum LayerMap {
   data = 'data',
   indices = 'indices'
 }
+
+export enum StereoColoringType {
+  LabelsOnly = 'LabelsOnly',
+  BondsOnly = 'BondsOnly',
+  LabelsAndBonds = 'LabelsAndBonds',
+  Off = 'Off'
+}

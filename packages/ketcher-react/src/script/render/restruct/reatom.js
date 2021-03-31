@@ -19,6 +19,7 @@ import { sketchingColors as elementColor } from '../../chem/element-color'
 import draw from '../draw'
 import util from '../util'
 import { Bond, Box2Abs, Vec2, scale } from 'ketcher-core'
+import { LayerMap } from './GeneralEnumTypes'
 
 class ReAtom extends ReObject {
   /** @param {import('ketcher-core').Atom} atom */
@@ -43,7 +44,7 @@ class ReAtom extends ReObject {
   }
   drawHighlight(render) {
     var ret = this.makeHighlightPlate(render)
-    render.ctab.addReObjectPath('highlighting', this.visel, ret)
+    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
     return ret
   }
   makeHighlightPlate(render) {
@@ -75,7 +76,7 @@ class ReAtom extends ReObject {
       var leftMargin = -label.rbb.width / 2
       var implh = Math.floor(this.a.implicitH)
       var isHydrogen = label.text === 'H'
-      restruct.addReObjectPath('data', this.visel, label.path, ps, true)
+      restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true)
 
       var index = null
       if (options.showAtomIds) {
@@ -88,7 +89,7 @@ class ReAtom extends ReObject {
         })
         index.rbb = util.relBox(index.path.getBBox())
         draw.recenterText(index.path, index.rbb)
-        restruct.addReObjectPath('indices', this.visel, index.path, ps)
+        restruct.addReObjectPath(LayerMap.indices, this.visel, index.path, ps)
       }
       this.setHighlight(this.highlight, render)
     }
@@ -98,17 +99,35 @@ class ReAtom extends ReObject {
       if (isHydrogen && implh > 0) {
         hydroIndex = showHydroIndex(this, render, implh, rightMargin)
         rightMargin += hydroIndex.rbb.width + delta
-        restruct.addReObjectPath('data', this.visel, hydroIndex.path, ps, true)
+        restruct.addReObjectPath(
+          LayerMap.data,
+          this.visel,
+          hydroIndex.path,
+          ps,
+          true
+        )
       }
 
       if (this.a.radical != 0) {
         var radical = showRadical(this, render)
-        restruct.addReObjectPath('data', this.visel, radical.path, ps, true)
+        restruct.addReObjectPath(
+          LayerMap.data,
+          this.visel,
+          radical.path,
+          ps,
+          true
+        )
       }
       if (this.a.isotope != 0) {
         var isotope = showIsotope(this, render, leftMargin)
         leftMargin -= isotope.rbb.width + delta
-        restruct.addReObjectPath('data', this.visel, isotope.path, ps, true)
+        restruct.addReObjectPath(
+          LayerMap.data,
+          this.visel,
+          isotope.path,
+          ps,
+          true
+        )
       }
       if (
         !isHydrogen &&
@@ -125,10 +144,16 @@ class ReAtom extends ReObject {
         hydroIndex = data.hydroIndex
         rightMargin = data.rightMargin
         leftMargin = data.leftMargin
-        restruct.addReObjectPath('data', this.visel, hydrogen.path, ps, true)
+        restruct.addReObjectPath(
+          LayerMap.data,
+          this.visel,
+          hydrogen.path,
+          ps,
+          true
+        )
         if (hydroIndex != null)
           restruct.addReObjectPath(
-            'data',
+            LayerMap.data,
             this.visel,
             hydroIndex.path,
             ps,
@@ -139,17 +164,35 @@ class ReAtom extends ReObject {
       if (this.a.charge != 0 && options.showCharge) {
         var charge = showCharge(this, render, rightMargin)
         rightMargin += charge.rbb.width + delta
-        restruct.addReObjectPath('data', this.visel, charge.path, ps, true)
+        restruct.addReObjectPath(
+          LayerMap.data,
+          this.visel,
+          charge.path,
+          ps,
+          true
+        )
       }
       if (this.a.explicitValence >= 0 && options.showValence) {
         var valence = showExplicitValence(this, render, rightMargin)
         rightMargin += valence.rbb.width + delta
-        restruct.addReObjectPath('data', this.visel, valence.path, ps, true)
+        restruct.addReObjectPath(
+          LayerMap.data,
+          this.visel,
+          valence.path,
+          ps,
+          true
+        )
       }
 
       if (this.a.badConn && options.showValenceWarnings) {
         var warning = showWarning(this, render, leftMargin, rightMargin)
-        restruct.addReObjectPath('warnings', this.visel, warning.path, ps, true)
+        restruct.addReObjectPath(
+          LayerMap.warnings,
+          this.visel,
+          warning.path,
+          ps,
+          true
+        )
       }
       if (index) {
         /* eslint-disable no-mixed-operators */
@@ -197,7 +240,7 @@ class ReAtom extends ReObject {
       t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox))
       dir = dir.scaled(8 + t)
       pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y)
-      restruct.addReObjectPath('data', this.visel, aamPath, ps, true)
+      restruct.addReObjectPath(LayerMap.data, this.visel, aamPath, ps, true)
     }
   }
 }
@@ -647,7 +690,7 @@ function showAttpnt(atom, render, lsb, addReObjectPath) {
           .attr(render.options.lineattr)
           .attr({ 'stroke-width': options.lineWidth / 2 })
       )
-      addReObjectPath('indices', atom.visel, attpntPath, ps)
+      addReObjectPath(LayerMap.indices, atom.visel, attpntPath, ps)
       lsb = lsb.rotate(Math.PI / 6)
     }
   }

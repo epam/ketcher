@@ -13,35 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Restruct from '../../../render/restruct'
-import { scale } from 'ketcher-core'
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
-
-export class BondMove extends BaseOperation {
-  data: {
-    bid: any
-    d: any
-  }
-
-  constructor(bondId?: any, d?: any) {
-    super(OperationType.BOND_MOVE)
-    this.data = { bid: bondId, d }
-  }
-
-  execute(restruct: Restruct) {
-    const { bid, d } = this.data
-    const bond = restruct.bonds.get(bid)
-    if (!bond) return
-
-    const scaled = scale.obj2scaled(d, restruct.render.options)
-    bond.visel.translate(scaled)
-    this.data.d = d.negated()
-  }
-
-  invert() {
-    const inverted = new BondMove()
-    inverted.data = this.data
-    return inverted
-  }
+export enum LayerMap {
+  background = 'background',
+  selectionPlate = 'selectionPlate',
+  highlighting = 'highlighting',
+  warnings = 'warnings',
+  data = 'data',
+  indices = 'indices'
 }

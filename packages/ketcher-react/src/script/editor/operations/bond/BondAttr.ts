@@ -35,8 +35,8 @@ export class BondAttr extends BaseOperation {
 
   execute(restruct: Restruct) {
     const { attribute, bid, value } = this.data
-    const bond = restruct.molecule.bonds.get(bid)!
-
+    const bond = restruct.molecule.bonds.get(bid)
+    if (!bond) return
     if (!this.data2) {
       this.data2 = {
         bid: bid,

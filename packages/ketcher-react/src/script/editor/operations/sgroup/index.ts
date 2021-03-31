@@ -69,12 +69,13 @@ class SGroupDelete extends BaseOperation {
     const struct = restruct.molecule
     const { sgid } = this.data
     const sgroup = restruct.sgroups.get(sgid)
-
+    const sgroupData = restruct.sgroupData.get(sgid)
+    if (!sgroup) return
     this.data.type = sgroup.item.type
     this.data.pp = sgroup.item.pp
 
-    if (sgroup.item.type === 'DAT' && restruct.sgroupData.has(sgid)) {
-      restruct.clearVisel(restruct.sgroupData.get(sgid).visel)
+    if (sgroup.item.type === 'DAT' && sgroupData) {
+      restruct.clearVisel(sgroupData.visel)
       restruct.sgroupData.delete(sgid)
     }
 

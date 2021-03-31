@@ -15,7 +15,8 @@
  ***************************************************************************/
 
 import ReObject from './ReObject'
-import { Box2Abs, Vec2, scale } from 'ketcher-core'
+import { Box2Abs, scale, Vec2 } from 'ketcher-core'
+import { LayerMap } from './GeneralEnumTypes'
 
 class ReText extends ReObject {
   private item: any
@@ -65,7 +66,7 @@ class ReText extends ReObject {
   drawHighlight(render: any): any {
     if (!this.path) return null
     const ret = this.highlightPath(render).attr(render.options.highlightStyle)
-    render.ctab.addReObjectPath('highlighting', this.visel, ret)
+    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
     return ret
   }
 
@@ -91,7 +92,13 @@ class ReText extends ReObject {
       'text-anchor': 'start',
       fill: '#000000'
     })
-    render.ctab.addReObjectPath('data', this.visel, this.path, null, true)
+    render.ctab.addReObjectPath(
+      LayerMap.data,
+      this.visel,
+      this.path,
+      null,
+      true
+    )
   }
 }
 

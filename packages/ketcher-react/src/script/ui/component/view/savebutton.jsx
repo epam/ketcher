@@ -31,54 +31,34 @@ const SaveButton = props => {
     onError = noop
   } = props
   const { getKetcherInstance } = useAppContext()
-  const ketcherInstance = getKetcherInstance()
-  const fileSaver = server => {
-    return new Promise((resolve, reject) => {
-      if (global.Blob && saveAs) {
-        resolve((data, fn, type) => {
-          const blob = new Blob([data], { type }) // eslint-disable-line no-undef
-          saveAs(blob, fn)
-        })
-      } else if (server) {
-        resolve(
-          server.then(() => {
-            throw Error("Server doesn't still support echo method")
-          })
-        )
-      } else {
-        reject(new Error('Your browser does not support opening files locally'))
-      }
-    })
-  }
 
   const save = event => {
+    event.preventDefault()
     switch (mode) {
       case 'saveImage':
-        saveImage(event)
+        saveImage()
         break
       case 'saveFile':
       default:
-        saveFile(event)
+        saveFile()
     }
   }
 
-  const saveFile = event => {
-    event.preventDefault()
+  const saveFile = () => {
     if (data) {
       try {
         fileSaver(server).then(saver => {
           saver(data, filename, type)
           onSave()
         })
-        onSave()
       } catch (error) {
         onError(error)
       }
     }
   }
 
-  const saveImage = event => {
-    event.preventDefault()
+  const saveImage = () => {
+    const ketcherInstance = getKetcherInstance()
     ketcherInstance
       .generateImageAsync(data, { outputFormat: 'svg' })
       .then(blob => {
@@ -100,6 +80,25 @@ const SaveButton = props => {
       {props.children}
     </button>
   )
+}
+
+const fileSaver = server => {
+  return new Promise((resolve, reject) => {
+    if (global.Blob && saveAs) {
+      resolve((data, fn, type) => {
+        const blob = new Blob([data], { type }) // eslint-disable-line no-undef
+        saveAs(blob, fn)
+      })
+    } else if (server) {
+      resolve(
+        server.then(() => {
+          throw Error("Server doesn't still support echo method")
+        })
+      )
+    } else {
+      reject(new Error('Your browser does not support opening files locally'))
+    }
+  })
 }
 
 export default SaveButton

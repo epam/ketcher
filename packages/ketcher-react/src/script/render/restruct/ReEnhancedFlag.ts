@@ -17,13 +17,14 @@ import ReObject from './ReObject'
 import { Box2Abs, Vec2, scale, StereoFlag } from 'ketcher-core'
 import ReStruct from './index'
 import Render from '..'
+import { StereoLabel } from '../../ui/dialog/toolbox/stereo-label.enum'
 
 class ReEnhancedFlag extends ReObject {
-  private flag: StereoFlag | null
+  private flag: StereoLabel | null
   private pp: Vec2 | null
   private path: any
 
-  constructor(flag: StereoFlag | null, pos: Vec2 | null) {
+  constructor(flag: StereoLabel | null, pos: Vec2 | null) {
     super('enhancedFlag')
     this.flag = flag
     this.pp = pos
@@ -62,11 +63,19 @@ class ReEnhancedFlag extends ReObject {
     const ps = scale.obj2scaled(this.pp, options)
 
     if (!options.hideStereoFlags) {
-      this.path = paper.text(ps.x, ps.y, StereoFlag[this.flag] || '').attr({
-        font: options.font,
-        'font-size': options.fontsz,
-        fill: '#000'
-      })
+      this.path = paper
+        .text(
+          ps.x,
+          ps.y,
+          (this.flag === StereoLabel.and
+            ? StereoFlag.and
+            : StereoFlag[this.flag]) || ''
+        )
+        .attr({
+          font: options.font,
+          'font-size': options.fontsz,
+          fill: '#000'
+        })
     }
     render.ctab.addReObjectPath('data', this.visel, this.path, null, true)
   }

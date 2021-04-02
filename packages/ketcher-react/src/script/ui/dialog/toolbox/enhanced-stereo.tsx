@@ -3,12 +3,7 @@ import { connect } from 'react-redux'
 
 import { Dialog } from '../../views/components'
 import Form, { Field } from '../../component/form/form'
-
-export enum StereoLabel {
-  abs = 'abs',
-  and = '&',
-  or = 'or'
-}
+import { DefaultStereoGroup, StereoLabel } from './stereo-label.enum'
 
 const enhancedStereoSchema = {
   title: 'Enhanced Stereo',
@@ -18,11 +13,11 @@ const enhancedStereoSchema = {
       title: 'Stereo Label',
       enum: [
         StereoLabel.abs,
-        `${StereoLabel.and}1`,
-        `${StereoLabel.and}2`,
+        `${StereoLabel.and}${DefaultStereoGroup.One}`,
+        `${StereoLabel.and}${DefaultStereoGroup.Two}`,
         StereoLabel.and,
-        `${StereoLabel.or}1`,
-        `${StereoLabel.or}2`,
+        `${StereoLabel.or}${DefaultStereoGroup.One}`,
+        `${StereoLabel.or}${DefaultStereoGroup.Two}`,
         StereoLabel.or
       ],
       enumNames: ['ABS', 'AND1', 'AND2', 'AND...', 'OR1', 'OR2', 'OR...']
@@ -78,7 +73,17 @@ const EnhancedStereo: React.FC<Props> = props => {
   )
 }
 
-function FieldSet({ schema, value, onChange, type = 'radio', ...rest }) {
+interface FieldSetProps {
+  name: string
+  schema: any
+  value: string
+  onChange: (value: string) => void
+  type?: string
+}
+
+const FieldSet: React.FC<FieldSetProps> = props => {
+  const { schema, value, onChange, type = 'radio', ...rest } = props
+
   return (
     <fieldset>
       {schema.enum.map((val, index) => (

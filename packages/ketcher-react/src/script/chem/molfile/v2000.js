@@ -30,6 +30,10 @@ import {
 
 import sGroup from './parseSGroup'
 import utils from './utils'
+import {
+  DefaultStereoGroup,
+  StereoLabel
+} from '../../ui/dialog/toolbox/stereo-label.enum'
 
 const loadRGroupFragments = true // TODO: set to load the fragments
 
@@ -273,8 +277,12 @@ function parseCTabV2000(ctabLines, countsSplit) {
 
   const bonds = bondLines.map(parseBondLine)
   bonds.forEach(bond => {
-    if (bond.stereo && isAbs) ctab.atoms.get(bond.begin).stereoLabel = 'abs'
-    if (bond.stereo && isAnd) ctab.atoms.get(bond.begin).stereoLabel = '&1'
+    if (bond.stereo && isAbs)
+      ctab.atoms.get(bond.begin).stereoLabel = StereoLabel.abs
+    if (bond.stereo && isAnd)
+      ctab.atoms.get(
+        bond.begin
+      ).stereoLabel = `${StereoLabel.and}${DefaultStereoGroup.One}`
     ctab.bonds.add(bond)
   })
 

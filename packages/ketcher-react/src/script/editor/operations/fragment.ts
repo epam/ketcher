@@ -23,7 +23,7 @@ import { OperationType } from './OperationType'
 class FragmentAdd extends BaseOperation {
   frid: any
 
-  constructor(fragmentId: any) {
+  constructor(fragmentId?: any) {
     super(OperationType.FRAGMENT_ADD)
     this.frid = typeof fragmentId === 'undefined' ? null : fragmentId
   }

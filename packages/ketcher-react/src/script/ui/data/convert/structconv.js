@@ -20,7 +20,10 @@ import { Bond, AtomList } from 'ketcher-core'
 import element from '../../../chem/element'
 import { sdataSchema } from '../schema/sdata-schema'
 import { atom as atomSchema } from '../schema/struct-schema'
-import { StereoLabel } from '../../dialog/toolbox/enhanced-stereo'
+import {
+  DefaultStereoGroup,
+  StereoLabel
+} from '../../dialog/toolbox/stereo-label.enum'
 
 export function fromElement(selem) {
   if (selem.label === 'R#') {
@@ -126,10 +129,10 @@ export function fromStereoLabel(stereoLabel) {
   const number = +stereoLabel.replace(type, '')
 
   return {
-    type: number < 3 ? stereoLabel : type,
-    orNumber: 3,
-    andNumber: 3,
-    ...(number < 3
+    type: number <= DefaultStereoGroup.Two ? stereoLabel : type,
+    orNumber: DefaultStereoGroup.Two + 1,
+    andNumber: DefaultStereoGroup.Two + 1,
+    ...(number <= DefaultStereoGroup.Two
       ? {}
       : { [type.replace(StereoLabel.and, 'and') + 'Number']: number })
   }
@@ -138,10 +141,10 @@ export function fromStereoLabel(stereoLabel) {
 export function toStereoLabel(stereoLabel) {
   switch (stereoLabel.type) {
     case StereoLabel.abs:
-    case `${StereoLabel.and}1`:
-    case `${StereoLabel.and}2`:
-    case `${StereoLabel.or}1`:
-    case `${StereoLabel.or}2`:
+    case `${StereoLabel.and}${DefaultStereoGroup.One}`:
+    case `${StereoLabel.and}${DefaultStereoGroup.Two}`:
+    case `${StereoLabel.or}${DefaultStereoGroup.One}`:
+    case `${StereoLabel.or}${DefaultStereoGroup.Two}`:
       return stereoLabel.type
 
     case StereoLabel.and:

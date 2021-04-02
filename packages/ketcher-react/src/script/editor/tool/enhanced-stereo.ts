@@ -1,8 +1,13 @@
 import { fromAtomsAttrs } from '../actions/atom'
 import { fromStereoFlagUpdate } from '../actions/fragment'
 import { findStereoAtoms } from '../actions/utils'
+import Editor from '../Editor'
+import Action from '../shared/action'
 
-function EnhancedStereoTool(editor) {
+function EnhancedStereoTool(
+  this: typeof EnhancedStereoTool,
+  editor: Editor
+): null | void {
   if (!(this instanceof EnhancedStereoTool)) {
     const selection = editor.selection()
 
@@ -21,11 +26,18 @@ function EnhancedStereoTool(editor) {
   }
 }
 
-function changeAtomsStereoAction(editor, stereoAtoms) {
+function changeAtomsStereoAction(
+  editor: Editor,
+  stereoAtoms: number[]
+): Promise<Action> {
   const struct = editor.struct()
   const restruct = editor.render.ctab
-  const stereoLabels = stereoAtoms.map(x => struct.atoms.get(x).stereoLabel)
-  const hasAnotherLabel = stereoLabels.some(x => x !== stereoLabels[0])
+  const stereoLabels = stereoAtoms.map(
+    stereoAtom => struct.atoms.get(stereoAtom)?.stereoLabel
+  )
+  const hasAnotherLabel = stereoLabels.some(
+    stereoLabel => stereoLabel !== stereoLabels[0]
+  )
   const res = editor.event.enhancedStereoEdit.dispatch({
     stereoLabel: hasAnotherLabel ? null : stereoLabels[0]
   })
@@ -33,12 +45,17 @@ function changeAtomsStereoAction(editor, stereoAtoms) {
     const action = stereoAtoms.reduce(
       (acc, stereoAtom) => {
         return acc.mergeWith(
-          fromStereoFlagUpdate(restruct, struct.atoms.get(stereoAtom).fragment)
+          fromStereoFlagUpdate(restruct, struct.atoms.get(stereoAtom)?.fragment)
         )
       },
-      fromAtomsAttrs(restruct, stereoAtoms, {
-        stereoLabel
-      })
+      fromAtomsAttrs(
+        restruct,
+        stereoAtoms,
+        {
+          stereoLabel
+        },
+        false
+      )
     )
     action.operations.reverse()
     return action

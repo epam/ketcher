@@ -14,54 +14,72 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
+import React from 'react'
 import { saveAs } from 'file-saver'
+import { useAppContext } from '../../../../hooks'
 
-class SaveButton extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {}
-    fileSaver(props.server).then(saver => {
-      this.setState({ saver })
+const SaveButton = props => {
+  const noop = () => null
+  const {
+    server,
+    filename = 'unnamed',
+    data,
+    type,
+    className = '',
+    mode = 'saveFile',
+    onSave = noop,
+    onError = noop
+  } = props
+  const { getKetcherInstance } = useAppContext()
+  const ketcherInstance = getKetcherInstance()
+  const fileSaver = server => {
+    return new Promise((resolve, reject) => {
+      if (global.Blob && saveAs) {
+        resolve((data, fn, type) => {
+          const blob = new Blob([data], { type }) // eslint-disable-line no-undef
+          saveAs(blob, fn)
+        })
+      } else if (server) {
+        resolve(
+          server.then(() => {
+            throw Error("Server doesn't still support echo method")
+          })
+        )
+      } else {
+        reject(new Error('Your browser does not support opening files locally'))
+      }
     })
   }
 
-  saveFile(ev) {
-    const noop = () => null
-    const {
-      filename = 'unnamed',
-      data,
-      className = '',
-      type = 'text/plain',
-      onSave = noop,
-      onError = noop
-    } = this.props
-
-    if (this.state.saver && data) {
-      try {
-        this.state.saver(data, filename, type)
-        onSave()
-      } catch (e) {
-        onError(e)
-      }
+  const save = event => {
+    switch (mode) {
+      case 'saveImage':
+        saveImage(event)
+        break
+      case 'saveFile':
+      default:
+        saveFile(event)
     }
-
-    ev.preventDefault()
   }
 
-  saveImage(ev) {
-    ev.preventDefault()
-    const noop = () => null
-    const {
-      filename = 'unnamed',
-      data,
-      type,
-      className = '',
-      onSave = noop,
-      onError = noop
-    } = this.props
+  const saveFile = event => {
+    event.preventDefault()
+    if (data) {
+      try {
+        fileSaver(server).then(saver => {
+          saver(data, filename, type)
+          onSave()
+        })
+        onSave()
+      } catch (error) {
+        onError(error)
+      }
+    }
+  }
 
-    window.ketcher
+  const saveImage = event => {
+    event.preventDefault()
+    ketcherInstance
       .generateImageAsync(data, { outputFormat: 'svg' })
       .then(blob => {
         saveAs(blob, filename)
@@ -72,48 +90,16 @@ class SaveButton extends Component {
     onSave()
   }
 
-  render() {
-    const {
-      children,
-      filename,
-      data,
-      className = 'save-button',
-      onSave,
-      ...props
-    } = this.props
-
-    return (
-      <button
-        onClick={event => {
-          this[event.target.name](event)
-        }}
-        className={
-          !this.state.saver || !data ? `disabled ${className}` : className
-        }
-        {...props}>
-        {children}
-      </button>
-    )
-  }
-}
-
-function fileSaver(server) {
-  return new Promise((resolve, reject) => {
-    if (global.Blob && saveAs) {
-      resolve((data, fn, type) => {
-        const blob = new Blob([data], { type }) // eslint-disable-line no-undef
-        saveAs(blob, fn)
-      })
-    } else if (server) {
-      resolve(
-        server.then(() => {
-          throw Error("Server doesn't still support echo method")
-        })
-      )
-    } else {
-      reject(new Error('Your browser does not support opening files locally'))
-    }
-  })
+  return (
+    <button
+      onClick={event => {
+        save(event)
+      }}
+      className={!data ? `disabled ${className}` : className}
+      {...props}>
+      {props.children}
+    </button>
+  )
 }
 
 export default SaveButton

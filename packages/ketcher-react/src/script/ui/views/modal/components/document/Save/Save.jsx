@@ -173,7 +173,7 @@ class SaveDialog extends Component {
         params={this.props}
         buttons={[
           <SaveButton
-            name="saveFile"
+            mode="saveFile"
             data={structStr}
             filename={filename + getPropertiesByFormat(format).extensions[0]}
             key="save-file-button"
@@ -184,7 +184,7 @@ class SaveDialog extends Component {
             Save To File…
           </SaveButton>,
           <SaveButton
-            name="saveImage"
+            mode="saveImage"
             data={structStr}
             filename={filename}
             key="save-image-button"

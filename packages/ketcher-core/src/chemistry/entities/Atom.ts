@@ -44,6 +44,12 @@ export function radicalElectrons(radical: any) {
   }
 }
 
+export enum StereoLabel {
+  Abs = 'abs',
+  And = '&',
+  Or = 'or'
+}
+
 export interface AtomParams {
   stereoParity?: number
   stereoLabel?: string | null

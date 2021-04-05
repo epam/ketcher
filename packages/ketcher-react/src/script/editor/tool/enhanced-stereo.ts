@@ -32,9 +32,10 @@ function changeAtomsStereoAction(
 ): Promise<Action> {
   const struct = editor.struct()
   const restruct = editor.render.ctab
-  const stereoLabels = stereoAtoms.map(
-    stereoAtom => struct.atoms.get(stereoAtom)?.stereoLabel
-  )
+  const stereoLabels = stereoAtoms.map(stereoAtom => {
+    const atom = struct.atoms.get(stereoAtom)
+    return atom && atom.stereoLabel
+  })
   const hasAnotherLabel = stereoLabels.some(
     stereoLabel => stereoLabel !== stereoLabels[0]
   )

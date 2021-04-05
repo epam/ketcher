@@ -25,15 +25,12 @@ import {
   RGroup,
   SGroup,
   Vec2,
-  Pool
+  Pool,
+  StereoLabel
 } from 'ketcher-core'
 
 import sGroup from './parseSGroup'
 import utils from './utils'
-import {
-  DefaultStereoGroup,
-  StereoLabel
-} from '../../ui/dialog/toolbox/stereo-label.enum'
 
 const loadRGroupFragments = true // TODO: set to load the fragments
 
@@ -278,11 +275,9 @@ function parseCTabV2000(ctabLines, countsSplit) {
   const bonds = bondLines.map(parseBondLine)
   bonds.forEach(bond => {
     if (bond.stereo && isAbs)
-      ctab.atoms.get(bond.begin).stereoLabel = StereoLabel.abs
+      ctab.atoms.get(bond.begin).stereoLabel = StereoLabel.Abs
     if (bond.stereo && isAnd)
-      ctab.atoms.get(
-        bond.begin
-      ).stereoLabel = `${StereoLabel.and}${DefaultStereoGroup.One}`
+      ctab.atoms.get(bond.begin).stereoLabel = `${StereoLabel.And}1`
     ctab.bonds.add(bond)
   })
 

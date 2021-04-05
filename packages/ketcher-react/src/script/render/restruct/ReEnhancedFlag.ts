@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 import ReObject from './ReObject'
-import { Box2Abs, Vec2, scale, StereoFlag } from 'ketcher-core'
+import { Box2Abs, Vec2, scale, StereoFlag, StereoLabel } from 'ketcher-core'
 import ReStruct from './index'
 import Render from '..'
-import { StereoLabel } from '../../ui/dialog/toolbox/stereo-label.enum'
+import { upperFirst } from 'lodash/fp'
 
 class ReEnhancedFlag extends ReObject {
   private flag: StereoLabel | null
@@ -67,9 +67,9 @@ class ReEnhancedFlag extends ReObject {
         .text(
           ps.x,
           ps.y,
-          (this.flag === StereoLabel.and
-            ? StereoFlag.and
-            : StereoFlag[this.flag]) || ''
+          (this.flag === StereoLabel.And
+            ? StereoFlag.And
+            : StereoFlag[upperFirst(this.flag)]) || ''
         )
         .attr({
           font: options.font,

@@ -16,14 +16,14 @@
 
 import { capitalize } from 'lodash/fp'
 
-import { Bond, AtomList } from 'ketcher-core'
+import { Bond, AtomList, StereoLabel } from 'ketcher-core'
 import element from '../../../chem/element'
 import { sdataSchema } from '../schema/sdata-schema'
 import { atom as atomSchema } from '../schema/struct-schema'
 import {
-  DefaultStereoGroup,
-  StereoLabel
-} from '../../dialog/toolbox/stereo-label.enum'
+  getPredefinedStereoLabels,
+  predefinedStereoGroups
+} from '../../dialog/toolbox/enhanced-stereo'
 
 export function fromElement(selem) {
   if (selem.label === 'R#') {
@@ -127,34 +127,47 @@ export function fromStereoLabel(stereoLabel) {
   if (stereoLabel === null) return { type: null }
   const type = stereoLabel.match(/\D+/g)[0]
   const number = +stereoLabel.replace(type, '')
+  const defaultOrNumber = predefinedStereoGroups[StereoLabel.Or].max + 1
+  const defaultAndNumber = predefinedStereoGroups[StereoLabel.And].max + 1
 
-  return {
-    type: number <= DefaultStereoGroup.Two ? stereoLabel : type,
-    orNumber: DefaultStereoGroup.Two + 1,
-    andNumber: DefaultStereoGroup.Two + 1,
-    ...(number <= DefaultStereoGroup.Two
-      ? {}
-      : { [type.replace(StereoLabel.and, 'and') + 'Number']: number })
+  if (
+    type === StereoLabel.Abs ||
+    getPredefinedStereoLabels(type).includes(stereoLabel)
+  ) {
+    return {
+      type: stereoLabel,
+      orNumber: defaultOrNumber,
+      andNumber: defaultAndNumber
+    }
+  }
+
+  if (type === StereoLabel.And) {
+    return {
+      type: type,
+      orNumber: defaultOrNumber,
+      andNumber: number
+    }
+  }
+
+  if (type === StereoLabel.Or) {
+    return {
+      type: type,
+      orNumber: number,
+      andNumber: defaultOrNumber
+    }
   }
 }
 
 export function toStereoLabel(stereoLabel) {
   switch (stereoLabel.type) {
-    case StereoLabel.abs:
-    case `${StereoLabel.and}${DefaultStereoGroup.One}`:
-    case `${StereoLabel.and}${DefaultStereoGroup.Two}`:
-    case `${StereoLabel.or}${DefaultStereoGroup.One}`:
-    case `${StereoLabel.or}${DefaultStereoGroup.Two}`:
-      return stereoLabel.type
+    case StereoLabel.And:
+      return `${StereoLabel.And}${stereoLabel.andNumber || 1}`
 
-    case StereoLabel.and:
-      return `${StereoLabel.and}${stereoLabel.andNumber || 1}`
-
-    case StereoLabel.or:
-      return `${StereoLabel.or}${stereoLabel.orNumber || 1}`
+    case StereoLabel.Or:
+      return `${StereoLabel.Or}${stereoLabel.orNumber || 1}`
 
     default:
-      return null
+      return stereoLabel.type
   }
 }
 

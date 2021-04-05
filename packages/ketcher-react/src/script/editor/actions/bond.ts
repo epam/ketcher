@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, Struct, Vec2 } from 'ketcher-core'
+import { Atom, Bond, StereoLabel, Struct, Vec2 } from 'ketcher-core'
 
 import {
   FragmentAdd,
@@ -34,10 +34,6 @@ import {
   mergeFragmentsIfNeeded,
   mergeSgroups
 } from './atom'
-import {
-  DefaultStereoGroup,
-  StereoLabel
-} from '../../ui/dialog/toolbox/stereo-label.enum'
 import ReStruct from '../../render/restruct'
 
 export function fromBondAddition(
@@ -174,9 +170,11 @@ export function fromBondStereoUpdate(
 
   if (bond?.stereo === Bond.PATTERN.STEREO.NONE) {
     const neigs = atomGetNeighbors(restruct, bond.begin)
-    const stereoNeig = neigs.find(
-      item => item.bid !== bid && Number(struct.bonds.get(item.bid)?.stereo) > 0
-    )
+    const stereoNeig = neigs.find(item => {
+      const bond = struct.bonds.get(item.bid)
+      if (!bond) return false
+      return item.bid !== bid && bond.stereo > 0
+    })
     if (neigs.length < 3 || !stereoNeig) {
       action.mergeWith(
         fromStereoAtomAttrs(
@@ -215,7 +213,7 @@ export function fromBondStereoUpdate(
       bond.begin,
       {
         stereoParity: newAtomParity,
-        stereoLabel: `${StereoLabel.and}${DefaultStereoGroup.One}`
+        stereoLabel: `${StereoLabel.And}1`
       },
       withReverse
     )
@@ -223,13 +221,6 @@ export function fromBondStereoUpdate(
   return action
 }
 
-/**
- * @param restruct { ReStruct }
- * @param itemID - bond id in structure
- * @param bond - bond for change
- * @param bondProps - bondTool properties
- * @returns Action
- */
 export function bondChangingAction(
   restruct: ReStruct,
   itemID: number,
@@ -262,12 +253,15 @@ export function bondChangingAction(
 }
 
 function bondFlipRequired(struct: Struct, bond: Bond, attrs: any): boolean {
+  const bondBegin = struct.atoms.get(bond.begin)
+  const bondEnd = struct.atoms.get(bond.end)
+  if (!bondBegin || !bondBegin.neighbors || !bondEnd || !bondEnd.neighbors)
+    return false
   return (
     attrs.type === Bond.PATTERN.TYPE.SINGLE &&
     bond.stereo === Bond.PATTERN.STEREO.NONE &&
     attrs.stereo !== Bond.PATTERN.STEREO.NONE &&
-    Number(struct.atoms.get(bond.begin)?.neighbors.length) <
-      Number(struct.atoms.get(bond.end)?.neighbors.length)
+    bondBegin.neighbors.length < bondEnd.neighbors.length
   )
 }
 

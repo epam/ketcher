@@ -3,7 +3,27 @@ import { connect } from 'react-redux'
 
 import { Dialog } from '../../views/components'
 import Form, { Field } from '../../component/form/form'
-import { DefaultStereoGroup, StereoLabel } from './stereo-label.enum'
+import { StereoLabel } from 'ketcher-core'
+
+export const predefinedStereoGroups = {
+  [StereoLabel.And]: {
+    min: 1,
+    max: 2
+  },
+  [StereoLabel.Or]: {
+    min: 1,
+    max: 2
+  }
+} as const
+
+export function getPredefinedStereoLabels(stereoLabel: StereoLabel): string[] {
+  const min = predefinedStereoGroups[stereoLabel].min
+  const max = predefinedStereoGroups[stereoLabel].max
+
+  return new Array(max - min + 1)
+    .fill(null)
+    .map((_, index) => stereoLabel + (min + index))
+}
 
 const enhancedStereoSchema = {
   title: 'Enhanced Stereo',
@@ -12,15 +32,23 @@ const enhancedStereoSchema = {
     type: {
       title: 'Stereo Label',
       enum: [
-        StereoLabel.abs,
-        `${StereoLabel.and}${DefaultStereoGroup.One}`,
-        `${StereoLabel.and}${DefaultStereoGroup.Two}`,
-        StereoLabel.and,
-        `${StereoLabel.or}${DefaultStereoGroup.One}`,
-        `${StereoLabel.or}${DefaultStereoGroup.Two}`,
-        StereoLabel.or
+        StereoLabel.Abs,
+        ...getPredefinedStereoLabels(StereoLabel.And),
+        StereoLabel.And,
+        ...getPredefinedStereoLabels(StereoLabel.Or),
+        StereoLabel.Or
       ],
-      enumNames: ['ABS', 'AND1', 'AND2', 'AND...', 'OR1', 'OR2', 'OR...']
+      enumNames: [
+        'ABS',
+        ...getPredefinedStereoLabels(StereoLabel.And).map(stereoLabel =>
+          stereoLabel.replace(StereoLabel.And, 'AND')
+        ),
+        'AND...',
+        ...getPredefinedStereoLabels(StereoLabel.Or).map(stereoLabel =>
+          stereoLabel.toUpperCase()
+        ),
+        'OR...'
+      ]
     },
     andNumber: {
       type: 'integer',
@@ -98,20 +126,20 @@ const FieldSet: React.FC<FieldSetProps> = props => {
             />
             {schema.enumNames[index]}
           </label>
-          {val === StereoLabel.and && (
+          {val === StereoLabel.And && (
             <Field
               name="andNumber"
               type="text"
               className="label-group-value"
-              disabled={!value || value !== StereoLabel.and || value === null}
+              disabled={!value || value !== StereoLabel.And || value === null}
             />
           )}
-          {val === StereoLabel.or && (
+          {val === StereoLabel.Or && (
             <Field
               name="orNumber"
               type="text"
               className="label-group-value"
-              disabled={!value || value !== StereoLabel.or || value === null}
+              disabled={!value || value !== StereoLabel.Or || value === null}
             />
           )}
         </li>

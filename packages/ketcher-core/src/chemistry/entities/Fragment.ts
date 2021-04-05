@@ -17,9 +17,9 @@ import { Struct } from './Struct'
 
 export enum StereoFlag {
   Mixed = 'Mixed',
-  abs = 'ABS (Chiral)',
-  and = 'AND Enantiomer',
-  or = 'OR Enantiomer'
+  Abs = 'ABS (Chiral)',
+  And = 'AND Enantiomer',
+  Or = 'OR Enantiomer'
   // todo: custom in the future
 }
 

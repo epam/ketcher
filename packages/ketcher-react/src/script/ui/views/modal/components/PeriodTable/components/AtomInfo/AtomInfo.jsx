@@ -37,7 +37,7 @@ function AtomInfo({ el, isInfo }) {
       <br />
       {el.title}
       <br />
-      {el.atomic_mass}
+      {el.mass}
     </div>
   )
 }

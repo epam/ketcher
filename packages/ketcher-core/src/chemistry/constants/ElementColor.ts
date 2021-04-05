@@ -15,11 +15,11 @@
  ***************************************************************************/
 import type { ElementLabel } from './element.types'
 
-export type ColorSchema = {
+type ElementColorType = {
   [key in ElementLabel]: string
 }
 
-export const colorSchema: ColorSchema = {
+export const ElementColor: ElementColorType = {
   H: '#000000',
   He: '#89a1a1',
   Li: '#bd77ed',
@@ -139,4 +139,4 @@ export const colorSchema: ColorSchema = {
   Lv: '#000000',
   Ts: '#000000',
   Og: '#000000'
-}
+} as const

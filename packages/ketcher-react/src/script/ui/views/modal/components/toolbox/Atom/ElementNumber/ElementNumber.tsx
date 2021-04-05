@@ -16,7 +16,7 @@
 import React from 'react'
 import { capitalize } from 'lodash/fp'
 
-import element from '../../../../../../../chem/element'
+import { Elements } from 'ketcher-core'
 
 interface ElementNumberProps {
   label: string
@@ -26,7 +26,7 @@ type Props = ElementNumberProps
 
 const ElementNumber = (props: Props) => {
   const { label } = props
-  const value = element.map[capitalize(label)] || ''
+  const value = Elements.get(capitalize(label))?.number || ''
 
   return (
     <label>

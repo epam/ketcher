@@ -15,8 +15,6 @@
  ***************************************************************************/
 
 /* eslint-disable guard-for-in */ // todo
-
-import element from './../element'
 import {
   Struct,
   Atom,
@@ -26,7 +24,8 @@ import {
   SGroup,
   Vec2,
   Pool,
-  StereoLabel
+  StereoLabel,
+  Elements
 } from 'ketcher-core'
 
 import sGroup from './parseSGroup'
@@ -469,8 +468,13 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
 function labelsListToIds(labels) {
   /* reader */
   var ids = []
-  for (var i = 0; i < labels.length; ++i)
-    ids.push(element.map[labels[i].trim()])
+  for (var i = 0; i < labels.length; ++i) {
+    const element = Elements.get(labels[i].trim())
+    if (element) {
+      ids.push(element.number)
+    }
+  }
+
   return ids
 }
 

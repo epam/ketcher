@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { elements, ElementLabel } from 'chemistry/constants'
+import { Elements, ElementLabel } from 'chemistry/constants'
 
 export interface AtomListParams {
   readonly notList: boolean
@@ -33,7 +33,7 @@ export class AtomList {
   labelList() {
     const labels: Array<ElementLabel> = []
     for (let id of this.ids) {
-      const currenElement = elements.find(element => element.number === id)
+      const currenElement = Elements.get(id)
       currenElement && labels.push(currenElement!.label)
     }
 

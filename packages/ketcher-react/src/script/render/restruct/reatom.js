@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 import ReObject from './ReObject'
-import element from '../../chem/element'
 import draw from '../draw'
 import util from '../util'
 import {
@@ -22,7 +21,8 @@ import {
   Box2Abs,
   Vec2,
   scale,
-  colorSchema as elementColor
+  Elements,
+  ElementColor
 } from 'ketcher-core'
 import { LayerMap } from './GeneralEnumTypes'
 
@@ -227,11 +227,11 @@ class ReAtom extends ReObject {
       (queryAttrsText.length > 0 ? `${queryAttrsText}\n` : '') +
       (aamText.length > 0 ? `.${aamText}.` : '')
     if (text.length > 0) {
-      var elem = element.map[this.a.label]
+      var elem = Elements.get(this.a.label)
       var aamPath = render.paper.text(ps.x, ps.y, text).attr({
         font: options.font,
         'font-size': options.fontszsub,
-        fill: options.atomColoring && elem ? elementColor[this.a.label] : '#000'
+        fill: options.atomColoring && elem ? ElementColor[this.a.label] : '#000'
       })
       var aamBox = util.relBox(aamPath.getBBox())
       draw.recenterText(aamPath, aamBox)
@@ -307,8 +307,8 @@ function displayHydrogen(hydrogenLabels, atom) {
 function setHydrogenPos(struct, atom) {
   // check where should the hydrogen be put on the left of the label
   if (atom.a.neighbors.length === 0) {
-    const elem = element.map[atom.a.label]
-    return !elem || element[elem].leftH
+    const element = Elements.get(atom.a.label)
+    return !element || element.leftH
   }
 
   let yl = 1
@@ -339,9 +339,9 @@ function buildLabel(atom, paper, ps, options) {
   if (label.text === '') label = 'R#' // for structures that missed 'M  RGP' tag in molfile
 
   if (label.text === atom.a.label) {
-    const elem = element.map[label.text]
-    if (options.atomColoring && elem)
-      atom.color = elementColor[label.text] || '#000'
+    const element = Elements.get(label.text)
+    if (options.atomColoring && element)
+      atom.color = ElementColor[label.text] || '#000'
   }
 
   label.path = paper.text(ps.x, ps.y, label.text).attr({

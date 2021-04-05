@@ -27,7 +27,7 @@ import { Loop } from './Loop'
 import { RxnArrow } from './RxnArrow'
 import { RxnPlus } from './RxnPlus'
 import { Text } from './Text'
-import { elements } from 'chemistry/constants'
+import { Elements } from 'chemistry/constants'
 
 function arrayAddIfMissing(array, item) {
   for (var i = 0; i < array.length; ++i) {
@@ -876,7 +876,7 @@ export class Struct {
     }
 
     if (atom.explicitValence >= 0) {
-      const elem = elements.find(element => element.label === atom.label)
+      const elem = Elements.get(atom.label)
       atom.implicitH = !!elem
         ? atom.explicitValence - atom.calcValenceMinusHyd(correctConn)
         : 0

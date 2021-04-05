@@ -18,10 +18,11 @@ import { Box2Abs, Vec2, scale, StereoFlag, StereoLabel } from 'ketcher-core'
 import ReStruct from './index'
 import Render from '..'
 import { upperFirst } from 'lodash/fp'
+import { LayerMap } from './GeneralEnumTypes'
 
 class ReEnhancedFlag extends ReObject {
-  private flag: StereoLabel | null
-  private pp: Vec2 | null
+  public flag: StereoLabel | null
+  public pp: Vec2 | null
   private path: any
 
   constructor(flag: StereoLabel | null, pos: Vec2 | null) {
@@ -41,7 +42,7 @@ class ReEnhancedFlag extends ReObject {
   drawHighlight(render: Render): any {
     if (!this.path) return null
     var ret = this.highlightPath(render).attr(render.options.highlightStyle)
-    render.ctab.addReObjectPath('highlighting', this.visel, ret)
+    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
     return ret
   }
   // @ts-ignore
@@ -77,7 +78,13 @@ class ReEnhancedFlag extends ReObject {
           fill: '#000'
         })
     }
-    render.ctab.addReObjectPath('data', this.visel, this.path, null, true)
+    render.ctab.addReObjectPath(
+      LayerMap.data,
+      this.visel,
+      this.path,
+      null,
+      true
+    )
   }
 }
 

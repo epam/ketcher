@@ -20,6 +20,7 @@ import util from '../util'
 import { SimpleObjectMode, Box2Abs, Vec2, scale } from 'ketcher-core'
 import Render from '..'
 import ReStruct from './index'
+import { LayerMap } from './GeneralEnumTypes'
 
 const tfx = util.tfx
 interface MinDistanceWithReferencePoint {
@@ -324,7 +325,7 @@ class ReSimpleObject extends ReObject {
       return enhPath.path
     })
 
-    render.ctab.addReObjectPath('highlighting', this.visel, paths)
+    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, paths)
     return paths
   }
 

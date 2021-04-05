@@ -19,6 +19,7 @@ import ReObject from './ReObject'
 import { Bond, Vec2, scale } from 'ketcher-core'
 import draw from '../draw'
 import util from '../util'
+import { LayerMap } from './GeneralEnumTypes'
 
 class ReBond extends ReObject {
   constructor(bond) {
@@ -31,7 +32,7 @@ class ReBond extends ReObject {
   }
   drawHighlight(render) {
     var ret = this.makeHighlightPlate(render)
-    render.ctab.addReObjectPath('highlighting', this.visel, ret)
+    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
     return ret
   }
   makeHighlightPlate(render) {
@@ -69,13 +70,13 @@ class ReBond extends ReObject {
     this.path = getBondPath(restruct, this, hb1, hb2)
 
     this.rbb = util.relBox(this.path.getBBox())
-    restruct.addReObjectPath('data', this.visel, this.path, null, true)
+    restruct.addReObjectPath(LayerMap.data, this.visel, this.path, null, true)
     var reactingCenter = {}
     reactingCenter.path = getReactingCenterPath(render, this, hb1, hb2)
     if (reactingCenter.path) {
       reactingCenter.rbb = util.relBox(reactingCenter.path.getBBox())
       restruct.addReObjectPath(
-        'data',
+        LayerMap.data,
         this.visel,
         reactingCenter.path,
         null,
@@ -86,7 +87,13 @@ class ReBond extends ReObject {
     topology.path = getTopologyMark(render, this, hb1, hb2)
     if (topology.path) {
       topology.rbb = util.relBox(topology.path.getBBox())
-      restruct.addReObjectPath('data', this.visel, topology.path, null, true)
+      restruct.addReObjectPath(
+        LayerMap.data,
+        this.visel,
+        topology.path,
+        null,
+        true
+      )
     }
     this.setHighlight(this.highlight, render)
 
@@ -94,7 +101,7 @@ class ReBond extends ReObject {
     var bondIdxOff = options.subFontSize * 0.6
     if (options.showBondIds) {
       ipath = getIdsPath(bid, paper, hb1, hb2, bondIdxOff, 0.5, 0.5, hb1.norm)
-      restruct.addReObjectPath('indices', this.visel, ipath)
+      restruct.addReObjectPath(LayerMap.indices, this.visel, ipath)
     }
     if (options.showHalfBondIds) {
       ipath = getIdsPath(
@@ -107,7 +114,7 @@ class ReBond extends ReObject {
         0.2,
         hb1.norm
       )
-      restruct.addReObjectPath('indices', this.visel, ipath)
+      restruct.addReObjectPath(LayerMap.indices, this.visel, ipath)
       ipath = getIdsPath(
         this.b.hb2,
         paper,
@@ -118,7 +125,7 @@ class ReBond extends ReObject {
         0.8,
         hb2.norm
       )
-      restruct.addReObjectPath('indices', this.visel, ipath)
+      restruct.addReObjectPath(LayerMap.indices, this.visel, ipath)
     }
     if (options.showLoopIds && !options.showBondIds) {
       ipath = getIdsPath(
@@ -131,7 +138,7 @@ class ReBond extends ReObject {
         0.5,
         hb2.norm
       )
-      restruct.addReObjectPath('indices', this.visel, ipath)
+      restruct.addReObjectPath(LayerMap.indices, this.visel, ipath)
       ipath = getIdsPath(
         hb2.loop,
         paper,
@@ -142,7 +149,7 @@ class ReBond extends ReObject {
         0.5,
         hb1.norm
       )
-      restruct.addReObjectPath('indices', this.visel, ipath)
+      restruct.addReObjectPath(LayerMap.indices, this.visel, ipath)
     }
   }
 }

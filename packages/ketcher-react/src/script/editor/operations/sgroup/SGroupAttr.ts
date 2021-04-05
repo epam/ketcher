@@ -26,7 +26,7 @@ export class SGroupAttr extends BaseOperation {
   }
 
   constructor(sgroupId?: any, attribute?: any, value?: any) {
-    super(OperationType.S_GROUP_ATTR)
+    super(OperationType.S_GROUP_ATTR, 4)
     this.data = {
       sgid: sgroupId,
       attr: attribute,
@@ -39,9 +39,10 @@ export class SGroupAttr extends BaseOperation {
     const sgroupId = this.data.sgid
     const sgroup = struct.sgroups.get(sgroupId)!
 
-    if (sgroup.type === 'DAT' && restruct.sgroupData.has(sgroupId)) {
+    const sgroupData = restruct.sgroupData.get(sgroupId)
+    if (sgroup.type === 'DAT' && sgroupData) {
       // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
-      restruct.clearVisel(restruct.sgroupData.get(sgroupId).visel)
+      restruct.clearVisel(sgroupData.visel)
       restruct.sgroupData.delete(sgroupId)
     }
 

@@ -38,6 +38,7 @@ export class RxnArrowMove extends BaseOperation {
     struct.rxnArrows.get(id)!.pp.add_(d) // eslint-disable-line no-underscore-dangle
 
     const rxn = restruct.rxnArrows.get(id)
+    if (!rxn) return
     const scaled = scale.obj2scaled(d, restruct.render.options)
     rxn.visel.translate(scaled)
 

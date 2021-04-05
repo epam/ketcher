@@ -98,7 +98,7 @@ export class TextDelete extends BaseOperation {
 
     restruct.markItemRemoved()
 
-    restruct.clearVisel(restruct.texts.get(this.data.id)?.visel)
+    restruct.clearVisel(restruct.texts.get(this.data.id)!.visel)
     restruct.texts.delete(this.data.id)
 
     struct.texts.delete(this.data.id)

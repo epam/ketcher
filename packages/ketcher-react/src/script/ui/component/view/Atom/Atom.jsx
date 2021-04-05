@@ -16,7 +16,7 @@
 
 import React from 'react'
 import element from '../../../../chem/element'
-import { sketchingColors as elementColor } from '../../../../chem/element-color'
+import { colorSchema as elementColor } from 'ketcher-core'
 
 function Atom({ el, shortcut, className, ...props }) {
   return (

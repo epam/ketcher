@@ -15,10 +15,15 @@
  ***************************************************************************/
 import ReObject from './ReObject'
 import element from '../../chem/element'
-import { sketchingColors as elementColor } from '../../chem/element-color'
 import draw from '../draw'
 import util from '../util'
-import { Bond, Box2Abs, Vec2, scale } from 'ketcher-core'
+import {
+  Bond,
+  Box2Abs,
+  Vec2,
+  scale,
+  colorSchema as elementColor
+} from 'ketcher-core'
 import { LayerMap } from './GeneralEnumTypes'
 
 class ReAtom extends ReObject {

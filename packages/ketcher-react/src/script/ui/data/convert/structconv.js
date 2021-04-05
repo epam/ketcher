@@ -23,7 +23,7 @@ import { atom as atomSchema } from '../schema/struct-schema'
 import {
   getPredefinedStereoLabels,
   predefinedStereoGroups
-} from '../../dialog/toolbox/enhanced-stereo'
+} from '../../dialog/toolbox/enhancedStereo'
 
 export function fromElement(selem) {
   if (selem.label === 'R#') {

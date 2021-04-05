@@ -104,7 +104,7 @@ export default function initEditor(dispatch, getState) {
     },
 
     // TODO: correct
-    onEnhancedStereoEdit: ({ type, ...init }) =>
+    onEnhancedStereoEdit: ({ ...init }) =>
       sleep(0).then(() => {
         init = fromStereoLabel(init.stereoLabel)
         return openDialog(dispatch, 'enhancedStereo', {

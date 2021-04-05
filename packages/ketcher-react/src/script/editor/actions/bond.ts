@@ -132,12 +132,11 @@ export function fromBondsMerge(
   mergeMap.forEach((dstId, srcId) => {
     const bond = struct.bonds.get(srcId)
     const bondCI = struct.bonds.get(dstId)
-
+    if (!bond || !bondCI) return
     const params = utils.mergeBondsParams(struct, bond, struct, bondCI)
     if (!params.merged) return
-
-    atomPairs.set(bond?.begin, !params.cross ? bondCI?.begin : bondCI?.end)
-    atomPairs.set(bond?.end, !params.cross ? bondCI?.end : bondCI?.begin)
+    atomPairs.set(bond.begin, !params.cross ? bondCI.begin : bondCI.end)
+    atomPairs.set(bond.end, !params.cross ? bondCI.end : bondCI.begin)
   })
 
   atomPairs.forEach((dst, src) => {
@@ -152,9 +151,12 @@ function fromBondFlipping(restruct: ReStruct, id: number): Action {
 
   const action = new Action()
   action.addOp(new BondDelete(id))
-  ;(action.addOp(
-    new BondAdd(bond?.end, bond?.begin, bond)
-  ) as BondAdd).data.bid = id
+  if (bond?.end && bond?.begin) {
+    ;(action.addOp(
+      new BondAdd(bond.end, bond.begin, bond)
+    ) as BondAdd).data.bid = id
+  }
+
   // todo: swap atoms stereoLabels and stereoAtoms in fragment
   return action.perform(restruct)
 }

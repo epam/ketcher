@@ -34,7 +34,7 @@ import {
   Recognize,
   Miew
 } from '../views/modal/components/process'
-import EnhancedStereo from './toolbox/enhanced-stereo'
+import EnhancedStereo from './toolbox/enhancedStereo'
 import LabelEdit from './toolbox/labeledit'
 import { Open, Save } from '../views/modal/components/document'
 import { Settings, Help, About } from '../views/modal/components/meta'

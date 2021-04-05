@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import React, { Component } from 'react'
-import element from '../../../../../../../chem/element'
+import { Elements } from 'ketcher-core'
 import { Header, MainRow, OutinerRow } from './components'
 
 import classes from './ElementsTable.module.less'
@@ -43,12 +43,12 @@ const beforeSpan = {
 const ACTINIDE = 'actinide'
 const LANTHANIDE = 'lanthanide'
 const main = rowPartition(
-  element.filter(
+  Elements.filter(
     item => item && item.type !== ACTINIDE && item.type !== LANTHANIDE
   )
 )
-const lanthanides = element.filter(item => item && item.type === LANTHANIDE)
-const actinides = element.filter(item => item && item.type === ACTINIDE)
+const lanthanides = Elements.filter(item => item && item.type === LANTHANIDE)
+const actinides = Elements.filter(item => item && item.type === ACTINIDE)
 
 function rowPartition(elements) {
   return elements.reduce((result, item) => {

@@ -16,7 +16,7 @@
 
 import { debounce } from 'lodash/fp'
 
-import element from '../../../chem/element'
+import { Elements } from 'ketcher-core'
 import {
   fromBond,
   toBond,
@@ -70,7 +70,7 @@ export default function initEditor(dispatch, getState) {
       let dlg = null
       if (elem.type === 'text') {
         dlg = openDialog(dispatch, 'text', elem).then(res => res)
-      } else if (element.map[elem.label]) {
+      } else if (Elements.get(elem.label)) {
         dlg = openDialog(dispatch, 'atomProps', elem)
       } else if (Object.keys(elem).length === 1 && 'ap' in elem) {
         dlg = openDialog(dispatch, 'attachmentPoints', elem.ap).then(res => ({

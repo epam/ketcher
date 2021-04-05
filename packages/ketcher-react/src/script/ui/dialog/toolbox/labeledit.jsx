@@ -18,7 +18,7 @@ import { capitalize } from 'lodash/fp'
 import React from 'react'
 import { connect } from 'react-redux'
 
-import element from '../../../chem/element'
+import { Elements } from 'ketcher-core'
 import { labelEdit as labelEditSchema } from '../../data/schema/struct-schema'
 
 import { Dialog } from '../../views/components'
@@ -59,7 +59,7 @@ function deserialize(value) {
       label === 'Q' ||
       label === 'X' ||
       label === 'M' ||
-      element.map[label]
+      Elements.get(label)
     )
       return { label, charge, isotope, radical }
   }

@@ -16,7 +16,7 @@
 import clsx from 'clsx'
 import React from 'react'
 
-import element from '../../../../../chem/element'
+import { Elements } from 'ketcher-core'
 import { UiActionAction } from '../../../../action'
 import { atomCuts, basicAtoms } from '../../../../action/atoms'
 import { shortcutStr } from '../../shortcutStr'
@@ -46,13 +46,13 @@ const AtomsList = (props: Props) => {
   return (
     <>
       {atoms.map(label => {
-        const index = element.map[label]
+        const element = Elements.get(label)
         const shortcut =
           basicAtoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null
         return (
           <Atom
             key={label}
-            el={element[index]}
+            el={element}
             shortcut={shortcut}
             className={clsx(classes.button, {
               [classes.selected]:

@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import element from './../element'
-import { Struct } from 'ketcher-core'
+import { Struct, Elements } from 'ketcher-core'
 import common from './common'
 import utils from './utils'
 
@@ -292,7 +291,7 @@ class Molfile {
       } else if (atom['alias']) {
         atomsProps.push({ id, value: atom['alias'] })
       } else if (
-        !element.map[atom.label] &&
+        !Elements.get(atom.label) &&
         ['A', 'Q', 'X', '*', 'R#'].indexOf(atom.label) == -1
       ) {
         // search in generics?

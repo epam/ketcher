@@ -16,8 +16,7 @@
 
 import { capitalize } from 'lodash/fp'
 
-import { Bond, AtomList, StereoLabel } from 'ketcher-core'
-import element from '../../../chem/element'
+import { Bond, AtomList, StereoLabel, Elements } from 'ketcher-core'
 import { sdataSchema } from '../schema/sdata-schema'
 import { atom as atomSchema } from '../schema/struct-schema'
 import {
@@ -35,7 +34,7 @@ export function fromElement(selem) {
   }
   if (selem.label === 'L#') return fromAtomList(selem)
 
-  if (element.map[selem.label]) return fromAtom(selem)
+  if (Elements.get(selem.label)) return fromAtom(selem)
 
   if (!selem.label && 'attpnt' in selem) return { ap: fromApoint(selem.attpnt) }
 
@@ -53,7 +52,7 @@ export function toElement(elem) {
 
   if (!elem.label && 'ap' in elem) return { attpnt: toApoint(elem.ap) }
 
-  if (element.map[capitalize(elem.label)]) return toAtom(elem)
+  if (Elements.get(capitalize(elem.label))) return toAtom(elem)
 
   if (
     elem.label === 'A' ||
@@ -108,7 +107,7 @@ function toAtom(atom) {
 function fromAtomList(satom) {
   return {
     type: satom.atomList.notList ? 'not-list' : 'list',
-    values: satom.atomList.ids.map(i => element[i].label)
+    values: satom.atomList.ids.map(i => Elements.get(i).label)
   }
 }
 
@@ -118,7 +117,7 @@ function toAtomList(atom) {
     label: 'L#',
     atomList: new AtomList({
       notList: atom.type === 'not-list',
-      ids: atom.values.map(el => element.map[el])
+      ids: atom.values.map(el => Elements.get(el).number)
     })
   }
 }

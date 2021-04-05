@@ -15,7 +15,7 @@
  ***************************************************************************/
 import type { Element } from './element.types'
 
-export const elements: Array<Element> = [
+const elementsArray: Array<Element> = [
   {
     number: 1,
     label: 'H',
@@ -1295,3 +1295,16 @@ export const elements: Array<Element> = [
     mass: 294
   }
 ]
+
+const elementsMap = elementsArray.reduce((acc, element) => {
+  acc.set(element.label, element)
+  acc.set(element.number, element)
+  return acc
+}, new Map<string | number, Element>())
+
+export const Elements = {
+  get: (key: number | string): Element | undefined => elementsMap.get(key),
+  filter: (predicate: (element: Element) => boolean): Array<Element> => {
+    return elementsArray.filter(predicate)
+  }
+}

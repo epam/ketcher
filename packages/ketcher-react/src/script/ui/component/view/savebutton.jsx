@@ -25,7 +25,6 @@ const SaveButton = props => {
     filename = 'unnamed',
     data,
     type,
-    className = '',
     mode = 'saveFile',
     onSave = noop,
     onError = noop
@@ -45,7 +44,7 @@ const SaveButton = props => {
   }
 
   const saveFile = () => {
-    if (server && data) {
+    if (data) {
       try {
         fileSaver(server).then(saver => {
           saver(data, filename, type)
@@ -75,7 +74,6 @@ const SaveButton = props => {
       onClick={event => {
         save(event)
       }}
-      className={!server || !data ? `disabled ${className}` : className}
       {...props}>
       {props.children}
     </button>

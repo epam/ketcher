@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import React from 'react'
-import { sketchingColors as elementColor } from '../../../../../../../chem/element-color'
+import { colorSchema as elementColor } from 'ketcher-core'
 import element from '../../../../../../../chem/element'
 import clsx from 'clsx'
 

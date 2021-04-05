@@ -14,17 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 import ReObject from './ReObject'
-import { Box2Abs, Vec2, scale, StereoFlag } from 'ketcher-core'
+import { Box2Abs, Vec2, scale, StereoFlag, StereoLabel } from 'ketcher-core'
 import ReStruct from './index'
 import Render from '..'
+import { upperFirst } from 'lodash/fp'
 import { LayerMap } from './GeneralEnumTypes'
 
 class ReEnhancedFlag extends ReObject {
-  public flag: StereoFlag | null
+  public flag: StereoLabel | null
   public pp: Vec2 | null
   private path: any
 
-  constructor(flag: StereoFlag | null, pos: Vec2 | null) {
+  constructor(flag: StereoLabel | null, pos: Vec2 | null) {
     super('enhancedFlag')
     this.flag = flag
     this.pp = pos
@@ -63,11 +64,19 @@ class ReEnhancedFlag extends ReObject {
     const ps = scale.obj2scaled(this.pp, options)
 
     if (!options.hideStereoFlags) {
-      this.path = paper.text(ps.x, ps.y, StereoFlag[this.flag] || '').attr({
-        font: options.font,
-        'font-size': options.fontsz,
-        fill: '#000'
-      })
+      this.path = paper
+        .text(
+          ps.x,
+          ps.y,
+          (this.flag === StereoLabel.And
+            ? StereoFlag.And
+            : StereoFlag[upperFirst(this.flag)]) || ''
+        )
+        .attr({
+          font: options.font,
+          'font-size': options.fontsz,
+          fill: '#000'
+        })
     }
     render.ctab.addReObjectPath(
       LayerMap.data,

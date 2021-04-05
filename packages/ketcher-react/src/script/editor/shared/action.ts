@@ -25,7 +25,7 @@ class Action {
     this.operations = operations
   }
 
-  addOp(operation: BaseOperation, restruct?: Restruct) {
+  addOp(operation: BaseOperation, restruct?: Restruct): BaseOperation {
     if (!restruct || !operation.isDummy(restruct)) {
       this.operations.push(operation)
     }

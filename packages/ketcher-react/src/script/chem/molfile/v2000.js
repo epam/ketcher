@@ -25,7 +25,8 @@ import {
   RGroup,
   SGroup,
   Vec2,
-  Pool
+  Pool,
+  StereoLabel
 } from 'ketcher-core'
 
 import sGroup from './parseSGroup'
@@ -273,8 +274,10 @@ function parseCTabV2000(ctabLines, countsSplit) {
 
   const bonds = bondLines.map(parseBondLine)
   bonds.forEach(bond => {
-    if (bond.stereo && isAbs) ctab.atoms.get(bond.begin).stereoLabel = 'abs'
-    if (bond.stereo && isAnd) ctab.atoms.get(bond.begin).stereoLabel = 'and-1'
+    if (bond.stereo && isAbs)
+      ctab.atoms.get(bond.begin).stereoLabel = StereoLabel.Abs
+    if (bond.stereo && isAnd)
+      ctab.atoms.get(bond.begin).stereoLabel = `${StereoLabel.And}1`
     ctab.bonds.add(bond)
   })
 

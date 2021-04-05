@@ -58,9 +58,6 @@ const BottomToolbar = (props: Props) => {
 
       <Group>
         <ToolbarGroupItem id="template-lib" {...rest} />
-        {process.env.ENABLE_STEREOCHEMISTRY && (
-          <ToolbarGroupItem id="enhanced-stereo" {...rest} />
-        )}
       </Group>
     </div>
   )

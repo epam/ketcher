@@ -57,6 +57,11 @@ const RightToolbar = (props: Props) => {
       <Group>
         <ToolbarGroupItem id="period-table" {...rest} />
       </Group>
+      <Group>
+        {process.env.ENABLE_STEREOCHEMISTRY && (
+          <ToolbarGroupItem id="enhanced-stereo" {...rest} />
+        )}
+      </Group>
     </div>
   )
 }

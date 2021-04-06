@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Vec2, Pile } from 'utils'
-import { elements } from 'chemistry/constants'
+import { Elements } from 'chemistry/constants'
 import { AtomList, AtomListParams } from './AtomList'
 
 function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
@@ -23,7 +23,7 @@ function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
 }
 
 function getPseudo(label: string) {
-  return !elements.find(element => element.label === label) &&
+  return !Elements.get(label) &&
     label !== 'L' &&
     label !== 'L#' &&
     label !== 'R#'
@@ -42,6 +42,12 @@ export function radicalElectrons(radical: any) {
   else {
     return 0
   }
+}
+
+export enum StereoLabel {
+  Abs = 'abs',
+  And = '&',
+  Or = 'or'
 }
 
 export interface AtomParams {
@@ -252,11 +258,7 @@ export class Atom {
 
   isPseudo(): boolean {
     // TODO: handle reaxys generics separately
-    return (
-      !this.atomList &&
-      !this.rglabel &&
-      !elements.find(element => element.label === this.label)
-    )
+    return !this.atomList && !this.rglabel && !Elements.get(this.label)
   }
 
   hasRxnProps(): boolean {
@@ -275,7 +277,7 @@ export class Atom {
       this.implicitH = 0
       return true
     }
-    var element = elements.find(element => element.label === label)
+    const element = Elements.get(label)
     if (!element) {
       this.implicitH = 0
       return true
@@ -499,7 +501,7 @@ export class Atom {
   calcValenceMinusHyd(conn: number): number {
     const charge = this.charge
     const label = this.label
-    const element = elements.find(element => element.label === this.label)
+    const element = Elements.get(this.label)
     if (!element) {
       console.assert('Element ' + label + ' unknown')
       // query atom, skip

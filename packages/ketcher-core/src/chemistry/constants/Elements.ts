@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,81 +13,89 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import type { Element } from './element.types'
 
-const element = [
-  null,
+const elementsArray: Array<Element> = [
   {
-    label: 'H', // 1
+    number: 1,
+    label: 'H',
     period: 1,
     group: 1,
     title: 'Hydrogen',
     state: 'gas',
     origin: 'primordial',
     type: 'diatomic',
-    atomic_mass: 1.00794
+    mass: 1.00794
   },
   {
-    label: 'He', // 2
+    number: 2,
+    label: 'He',
     period: 1,
     group: 8,
     title: 'Helium',
     state: 'gas',
     origin: 'primordial',
     type: 'noble',
-    atomic_mass: 4.0026022
+    mass: 4.0026022
   },
   {
-    label: 'Li', // 3
+    number: 3,
+    label: 'Li',
     period: 2,
     group: 1,
     title: 'Lithium',
     state: 'solid',
     origin: 'primordial',
     type: 'alkali',
-    atomic_mass: 6.94
+    mass: 6.94
   },
   {
-    label: 'Be', // 4
+    number: 4,
+    label: 'Be',
     period: 2,
     group: 2,
     title: 'Beryllium',
     state: 'solid',
     origin: 'primordial',
     type: 'alkaline-earth',
-    atomic_mass: 9.01218315
+    mass: 9.01218315
   },
   {
-    label: 'B', // 5
+    number: 5,
+    label: 'B',
     period: 2,
     group: 3,
     title: 'Boron',
     state: 'solid',
     origin: 'primordial',
     type: 'metalloid',
-    atomic_mass: 10.81
+    mass: 10.81
   },
   {
-    label: 'C', // 6
+    number: 6,
+    label: 'C',
     period: 2,
     group: 4,
     title: 'Carbon',
     state: 'solid',
     origin: 'primordial',
     type: 'polyatomic',
-    atomic_mass: 12.011
+    mass: 12.011
   },
   {
-    label: 'N', // 7
+    number: 7,
+    label: 'N',
     period: 2,
     group: 5,
     title: 'Nitrogen',
     state: 'gas',
     origin: 'primordial',
     type: 'diatomic',
-    atomic_mass: 14.007
+    mass: 14.007
   },
   {
-    label: 'O', // 8
+    number: 8,
+    label: 'O',
     period: 2,
     group: 6,
     leftH: true,
@@ -95,10 +103,11 @@ const element = [
     state: 'gas',
     origin: 'primordial',
     type: 'diatomic',
-    atomic_mass: 15.999
+    mass: 15.999
   },
   {
-    label: 'F', // 9
+    number: 9,
+    label: 'F',
     period: 2,
     group: 7,
     leftH: true,
@@ -106,70 +115,77 @@ const element = [
     state: 'gas',
     origin: 'primordial',
     type: 'diatomic',
-    atomic_mass: 18.9984031636
+    mass: 18.9984031636
   },
   {
-    label: 'Ne', // 10
+    number: 10,
+    label: 'Ne',
     period: 2,
     group: 8,
     title: 'Neon',
     state: 'gas',
     origin: 'primordial',
     type: 'noble',
-    atomic_mass: 20.17976
+    mass: 20.17976
   },
   {
-    label: 'Na', // 11
+    number: 11,
+    label: 'Na',
     period: 3,
     group: 1,
     title: 'Sodium',
     state: 'solid',
     origin: 'primordial',
     type: 'alkali',
-    atomic_mass: 22.989769282
+    mass: 22.989769282
   },
   {
-    label: 'Mg', // 12
+    number: 12,
+    label: 'Mg',
     period: 3,
     group: 2,
     title: 'Magnesium',
     state: 'solid',
     origin: 'primordial',
     type: 'alkaline-earth',
-    atomic_mass: 24.305
+    mass: 24.305
   },
   {
-    label: 'Al', // 13
+    number: 13,
+    label: 'Al',
     period: 3,
     group: 3,
     title: 'Aluminium',
     state: 'solid',
     origin: 'primordial',
     type: 'post-transition',
-    atomic_mass: 26.98153857
+    mass: 26.98153857
   },
   {
-    label: 'Si', // 14
+    number: 14,
+    label: 'Si',
     period: 3,
     group: 4,
     title: 'Silicon',
     state: 'solid',
     origin: 'primordial',
     type: 'metalloid',
-    atomic_mass: 28.085
+    mass: 28.085
   },
   {
-    label: 'P', // 15
+    number: 15,
+    label: 'P',
     period: 3,
     group: 5,
     title: 'Phosphorus',
     state: 'solid',
     origin: 'primordial',
     type: 'polyatomic',
-    atomic_mass: 30.9737619985
+    mass: 30.9737619985
   },
   {
-    label: 'S', // 16
+    number: 16,
+    label: 'S',
     period: 3,
     group: 6,
     leftH: true,
@@ -177,10 +193,11 @@ const element = [
     state: 'solid',
     origin: 'primordial',
     type: 'polyatomic',
-    atomic_mass: 32.06
+    mass: 32.06
   },
   {
-    label: 'Cl', // 17
+    number: 17,
+    label: 'Cl',
     period: 3,
     group: 7,
     leftH: true,
@@ -188,170 +205,187 @@ const element = [
     state: 'gas',
     origin: 'primordial',
     type: 'diatomic',
-    atomic_mass: 35.45
+    mass: 35.45
   },
   {
-    label: 'Ar', // 18
+    number: 18,
+    label: 'Ar',
     period: 3,
     group: 8,
     title: 'Argon',
     state: 'gas',
     origin: 'primordial',
     type: 'noble',
-    atomic_mass: 39.9481
+    mass: 39.9481
   },
   {
-    label: 'K', // 19
+    number: 19,
+    label: 'K',
     period: 4,
     group: 1,
     title: 'Potassium',
     state: 'solid',
     origin: 'primordial',
     type: 'alkali',
-    atomic_mass: 39.09831
+    mass: 39.09831
   },
   {
-    label: 'Ca', // 20
+    number: 20,
+    label: 'Ca',
     period: 4,
     group: 2,
     title: 'Calcium',
     state: 'solid',
     origin: 'primordial',
     type: 'alkaline-earth',
-    atomic_mass: 40.0784
+    mass: 40.0784
   },
   {
-    label: 'Sc', // 21
+    number: 21,
+    label: 'Sc',
     period: 4,
     group: 3,
     title: 'Scandium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 44.9559085
+    mass: 44.9559085
   },
   {
-    label: 'Ti', // 22
+    number: 22,
+    label: 'Ti',
     period: 4,
     group: 4,
     title: 'Titanium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 47.8671
+    mass: 47.8671
   },
   {
-    label: 'V', // 23
+    number: 23,
+    label: 'V',
     period: 4,
     group: 5,
     title: 'Vanadium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 50.94151
+    mass: 50.94151
   },
   {
-    label: 'Cr', // 24
+    number: 24,
+    label: 'Cr',
     period: 4,
     group: 6,
     title: 'Chromium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 51.99616
+    mass: 51.99616
   },
   {
-    label: 'Mn', // 25
+    number: 25,
+    label: 'Mn',
     period: 4,
     group: 7,
     title: 'Manganese',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 54.9380443
+    mass: 54.9380443
   },
   {
-    label: 'Fe', // 26
+    number: 26,
+    label: 'Fe',
     period: 4,
     group: 8,
     title: 'Iron',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 55.8452
+    mass: 55.8452
   },
   {
-    label: 'Co', // 27
+    number: 27,
+    label: 'Co',
     period: 4,
     group: 8,
     title: 'Cobalt',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 58.9331944
+    mass: 58.9331944
   },
   {
-    label: 'Ni', // 28
+    number: 28,
+    label: 'Ni',
     period: 4,
     group: 8,
     title: 'Nickel',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 58.69344
+    mass: 58.69344
   },
   {
-    label: 'Cu', // 29
+    number: 29,
+    label: 'Cu',
     period: 4,
     group: 1,
     title: 'Copper',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 63.5463
+    mass: 63.5463
   },
   {
-    label: 'Zn', // 30
+    number: 30,
+    label: 'Zn',
     period: 4,
     group: 2,
     title: 'Zinc',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 65.382
+    mass: 65.382
   },
   {
-    label: 'Ga', // 31
+    number: 31,
+    label: 'Ga',
     period: 4,
     group: 3,
     title: 'Gallium',
     state: 'solid',
     origin: 'primordial',
     type: 'post-transition',
-    atomic_mass: 69.7231
+    mass: 69.7231
   },
   {
-    label: 'Ge', // 32
+    number: 32,
+    label: 'Ge',
     period: 4,
     group: 4,
     title: 'Germanium',
     state: 'solid',
     origin: 'primordial',
     type: 'metalloid',
-    atomic_mass: 72.6308
+    mass: 72.6308
   },
   {
-    label: 'As', // 33
+    number: 33,
+    label: 'As',
     period: 4,
     group: 5,
     title: 'Arsenic',
     state: 'solid',
     origin: 'primordial',
     type: 'metalloid',
-    atomic_mass: 74.9215956
+    mass: 74.9215956
   },
   {
-    label: 'Se', // 34
+    number: 34,
+    label: 'Se',
     period: 4,
     group: 6,
     leftH: true,
@@ -359,10 +393,11 @@ const element = [
     state: 'solid',
     origin: 'primordial',
     type: 'polyatomic',
-    atomic_mass: 78.9718
+    mass: 78.9718
   },
   {
-    label: 'Br', // 35
+    number: 35,
+    label: 'Br',
     period: 4,
     group: 7,
     leftH: true,
@@ -370,139 +405,153 @@ const element = [
     state: 'liquid',
     origin: 'primordial',
     type: 'diatomic',
-    atomic_mass: 79.904
+    mass: 79.904
   },
   {
-    label: 'Kr', // 36
+    number: 36,
+    label: 'Kr',
     period: 4,
     group: 8,
     title: 'Krypton',
     state: 'gas',
     origin: 'primordial',
     type: 'noble',
-    atomic_mass: 83.7982
+    mass: 83.7982
   },
   {
-    label: 'Rb', // 37
+    number: 37,
+    label: 'Rb',
     period: 5,
     group: 1,
     title: 'Rubidium',
     state: 'solid',
     origin: 'primordial',
     type: 'alkali',
-    atomic_mass: 85.46783
+    mass: 85.46783
   },
   {
-    label: 'Sr', // 38
+    number: 38,
+    label: 'Sr',
     period: 5,
     group: 2,
     title: 'Strontium',
     state: 'solid',
     origin: 'primordial',
     type: 'alkaline-earth',
-    atomic_mass: 87.621
+    mass: 87.621
   },
   {
-    label: 'Y', // 39
+    number: 39,
+    label: 'Y',
     period: 5,
     group: 3,
     title: 'Yttrium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 88.905842
+    mass: 88.905842
   },
   {
-    label: 'Zr', // 40
+    number: 40,
+    label: 'Zr',
     period: 5,
     group: 4,
     title: 'Zirconium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 91.2242
+    mass: 91.2242
   },
   {
-    label: 'Nb', // 41
+    number: 41,
+    label: 'Nb',
     period: 5,
     group: 5,
     title: 'Niobium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 92.906372
+    mass: 92.906372
   },
   {
-    label: 'Mo', // 42
+    number: 42,
+    label: 'Mo',
     period: 5,
     group: 6,
     title: 'Molybdenum',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 95.951
+    mass: 95.951
   },
   {
-    label: 'Tc', // 43
+    number: 43,
+    label: 'Tc',
     period: 5,
     group: 7,
     title: 'Technetium',
     state: 'solid',
     origin: 'decay',
     type: 'transition',
-    atomic_mass: 98
+    mass: 98
   },
   {
-    label: 'Ru', // 44
+    number: 44,
+    label: 'Ru',
     period: 5,
     group: 8,
     title: 'Ruthenium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 101.072
+    mass: 101.072
   },
   {
-    label: 'Rh', // 45
+    number: 45,
+    label: 'Rh',
     period: 5,
     group: 8,
     title: 'Rhodium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 102.905502
+    mass: 102.905502
   },
   {
-    label: 'Pd', // 46
+    number: 46,
+    label: 'Pd',
     period: 5,
     group: 8,
     title: 'Palladium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 106.421
+    mass: 106.421
   },
   {
-    label: 'Ag', // 47
+    number: 47,
+    label: 'Ag',
     period: 5,
     group: 1,
     title: 'Silver',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 107.86822
+    mass: 107.86822
   },
   {
-    label: 'Cd', // 48
+    number: 48,
+    label: 'Cd',
     period: 5,
     group: 2,
     title: 'Cadmium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 112.4144
+    mass: 112.4144
   },
   {
+    number: 49,
     label: 'In', // 49
     period: 5,
     group: 3,
@@ -510,40 +559,44 @@ const element = [
     state: 'solid',
     origin: 'primordial',
     type: 'post-transition',
-    atomic_mass: 114.8181
+    mass: 114.8181
   },
   {
-    label: 'Sn', // 50
+    number: 50,
+    label: 'Sn',
     period: 5,
     group: 4,
     title: 'Tin',
     state: 'solid',
     origin: 'primordial',
     type: 'post-transition',
-    atomic_mass: 118.7107
+    mass: 118.7107
   },
   {
-    label: 'Sb', // 51
+    number: 51,
+    label: 'Sb',
     period: 5,
     group: 5,
     title: 'Antimony',
     state: 'solid',
     origin: 'primordial',
     type: 'metalloid',
-    atomic_mass: 121.7601
+    mass: 121.7601
   },
   {
-    label: 'Te', // 52
+    number: 52,
+    label: 'Te',
     period: 5,
     group: 6,
     title: 'Tellurium',
     state: 'solid',
     origin: 'primordial',
     type: 'metalloid',
-    atomic_mass: 127.603
+    mass: 127.603
   },
   {
-    label: 'I', // 53
+    number: 53,
+    label: 'I',
     period: 5,
     group: 7,
     leftH: true,
@@ -551,636 +604,707 @@ const element = [
     state: 'solid',
     origin: 'primordial',
     type: 'diatomic',
-    atomic_mass: 126.904473
+    mass: 126.904473
   },
   {
-    label: 'Xe', // 54
+    number: 54,
+    label: 'Xe',
     period: 5,
     group: 8,
     title: 'Xenon',
     state: 'gas',
     origin: 'primordial',
     type: 'noble',
-    atomic_mass: 131.2936
+    mass: 131.2936
   },
   {
-    label: 'Cs', // 55
+    number: 55,
+    label: 'Cs',
     period: 6,
     group: 1,
     title: 'Caesium',
     state: 'solid',
     origin: 'primordial',
     type: 'alkali',
-    atomic_mass: 132.905451966
+    mass: 132.905451966
   },
   {
-    label: 'Ba', // 56
+    number: 56,
+    label: 'Ba',
     period: 6,
     group: 2,
     title: 'Barium',
     state: 'solid',
     origin: 'primordial',
     type: 'alkaline-earth',
-    atomic_mass: 137.3277
+    mass: 137.3277
   },
   {
-    label: 'La', // 57
+    number: 57,
+    label: 'La',
     period: 6,
     group: 3,
     title: 'Lanthanum',
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    atomic_mass: 138.905477
+    mass: 138.905477
   },
   {
-    label: 'Ce', // 58
+    number: 58,
+    label: 'Ce',
     period: 6,
     group: 3,
     title: 'Cerium',
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    atomic_mass: 140.1161
+    mass: 140.1161
   },
   {
-    label: 'Pr', // 59
+    number: 59,
+    label: 'Pr',
     period: 6,
     group: 3,
     title: 'Praseodymium',
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    atomic_mass: 140.907662
+    mass: 140.907662
   },
   {
-    label: 'Nd', // 60
+    number: 60,
+    label: 'Nd',
     period: 6,
     group: 3,
     title: 'Neodymium',
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    atomic_mass: 144.2423
+    mass: 144.2423
   },
   {
-    label: 'Pm', // 61
+    number: 61,
+    label: 'Pm',
     period: 6,
     group: 3,
     title: 'Promethium',
     state: 'solid',
     origin: 'decay',
     type: 'lanthanide',
-    atomic_mass: 145
+    mass: 145
   },
   {
-    label: 'Sm', // 62
+    number: 62,
+    label: 'Sm',
     period: 6,
     group: 3,
     title: 'Samarium',
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    atomic_mass: 150.362
+    mass: 150.362
   },
   {
-    label: 'Eu', // 63
+    number: 63,
+    label: 'Eu',
     period: 6,
     group: 3,
     title: 'Europium',
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    atomic_mass: 151.9641
+    mass: 151.9641
   },
   {
-    label: 'Gd', // 64
+    number: 64,
+    label: 'Gd',
     period: 6,
     group: 3,
     title: 'Gadolinium',
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    atomic_mass: 157.253
+    mass: 157.253
   },
   {
-    label: 'Tb', // 65
+    number: 65,
+    label: 'Tb',
     period: 6,
     group: 3,
     title: 'Terbium',
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    atomic_mass: 158.925352
+    mass: 158.925352
   },
   {
-    label: 'Dy', // 66
+    number: 66,
+    label: 'Dy',
     period: 6,
     group: 3,
     title: 'Dysprosium',
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    atomic_mass: 162.5001
+    mass: 162.5001
   },
   {
-    label: 'Ho', // 67
+    number: 67,
+    label: 'Ho',
     period: 6,
     group: 3,
     title: 'Holmium',
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    atomic_mass: 164.930332
+    mass: 164.930332
   },
   {
-    label: 'Er', // 68
+    number: 68,
+    label: 'Er',
     period: 6,
     group: 3,
     title: 'Erbium',
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    atomic_mass: 167.2593
+    mass: 167.2593
   },
   {
-    label: 'Tm', // 69
+    number: 69,
+    label: 'Tm',
     period: 6,
     group: 3,
     title: 'Thulium',
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    atomic_mass: 168.934222
+    mass: 168.934222
   },
   {
-    label: 'Yb', // 70
+    number: 70,
+    label: 'Yb',
     period: 6,
     group: 3,
     title: 'Ytterbium',
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    atomic_mass: 173.0451
+    mass: 173.0451
   },
   {
-    label: 'Lu', // 71
+    number: 71,
+    label: 'Lu',
     period: 6,
     group: 3,
     title: 'Lutetium',
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    atomic_mass: 174.96681
+    mass: 174.96681
   },
   {
-    label: 'Hf', // 72
+    number: 72,
+    label: 'Hf',
     period: 6,
     group: 4,
     title: 'Hafnium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 178.492
+    mass: 178.492
   },
   {
-    label: 'Ta', // 73
+    number: 73,
+    label: 'Ta',
     period: 6,
     group: 5,
     title: 'Tantalum',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 180.947882
+    mass: 180.947882
   },
   {
-    label: 'W', // 74
+    number: 74,
+    label: 'W',
     period: 6,
     group: 6,
     title: 'Tungsten',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 183.841
+    mass: 183.841
   },
   {
-    label: 'Re', // 75
+    number: 75,
+    label: 'Re',
     period: 6,
     group: 7,
     title: 'Rhenium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 186.2071
+    mass: 186.2071
   },
   {
-    label: 'Os', // 76
+    number: 76,
+    label: 'Os',
     period: 6,
     group: 8,
     title: 'Osmium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 190.233
+    mass: 190.233
   },
   {
-    label: 'Ir', // 77
+    number: 77,
+    label: 'Ir',
     period: 6,
     group: 8,
     title: 'Iridium',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 192.2173
+    mass: 192.2173
   },
   {
-    label: 'Pt', // 78
+    number: 78,
+    label: 'Pt',
     period: 6,
     group: 8,
     title: 'Platinum',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 195.0849
+    mass: 195.0849
   },
   {
-    label: 'Au', // 79
+    number: 79,
+    label: 'Au',
     period: 6,
     group: 1,
     title: 'Gold',
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 196.9665695
+    mass: 196.9665695
   },
   {
-    label: 'Hg', // 80
+    number: 80,
+    label: 'Hg',
     period: 6,
     group: 2,
     title: 'Mercury',
     state: 'liquid',
     origin: 'primordial',
     type: 'transition',
-    atomic_mass: 200.5923
+    mass: 200.5923
   },
   {
-    label: 'Tl', // 81
+    number: 81,
+    label: 'Tl',
     period: 6,
     group: 3,
     title: 'Thallium',
     state: 'solid',
     origin: 'primordial',
     type: 'post-transition',
-    atomic_mass: 204.38
+    mass: 204.38
   },
   {
-    label: 'Pb', // 82
+    number: 82,
+    label: 'Pb',
     period: 6,
     group: 4,
     title: 'Lead',
     state: 'solid',
     origin: 'primordial',
     type: 'post-transition',
-    atomic_mass: 207.21
+    mass: 207.21
   },
   {
-    label: 'Bi', // 83
+    number: 83,
+    label: 'Bi',
     period: 6,
     group: 5,
     title: 'Bismuth',
     state: 'solid',
     origin: 'primordial',
     type: 'post-transition',
-    atomic_mass: 208.980401
+    mass: 208.980401
   },
   {
-    label: 'Po', // 84
+    number: 84,
+    label: 'Po',
     period: 6,
     group: 6,
     title: 'Polonium',
     state: 'solid',
     origin: 'decay',
     type: 'post-transition',
-    atomic_mass: 209
+    mass: 209
   },
   {
-    label: 'At', // 85
+    number: 85,
+    label: 'At',
     period: 6,
     group: 7,
     title: 'Astatine',
     state: 'solid',
     origin: 'decay',
     type: 'metalloid',
-    atomic_mass: 210
+    mass: 210
   },
   {
-    label: 'Rn', // 86
+    number: 86,
+    label: 'Rn',
     period: 6,
     group: 8,
     title: 'Radon',
     state: 'gas',
     origin: 'decay',
     type: 'noble',
-    atomic_mass: 222
+    mass: 222
   },
   {
-    label: 'Fr', // 87
+    number: 87,
+    label: 'Fr',
     period: 7,
     group: 1,
     title: 'Francium',
     state: 'solid',
     origin: 'decay',
     type: 'alkali',
-    atomic_mass: 223
+    mass: 223
   },
   {
-    label: 'Ra', // 88
+    number: 88,
+    label: 'Ra',
     period: 7,
     group: 2,
     title: 'Radium',
     state: 'solid',
     origin: 'decay',
     type: 'alkaline-earth',
-    atomic_mass: 226
+    mass: 226
   },
   {
-    label: 'Ac', // 89
+    number: 89,
+    label: 'Ac',
     period: 7,
     group: 3,
     title: 'Actinium',
     state: 'solid',
     origin: 'decay',
     type: 'actinide',
-    atomic_mass: 227
+    mass: 227
   },
   {
-    label: 'Th', // 90
+    number: 90,
+    label: 'Th',
     period: 7,
     group: 3,
     title: 'Thorium',
     state: 'solid',
     origin: 'primordial',
     type: 'actinide',
-    atomic_mass: 232.03774
+    mass: 232.03774
   },
   {
-    label: 'Pa', // 91
+    number: 91,
+    label: 'Pa',
     period: 7,
     group: 3,
     title: 'Protactinium',
     state: 'solid',
     origin: 'decay',
     type: 'actinide',
-    atomic_mass: 231.035882
+    mass: 231.035882
   },
   {
-    label: 'U', // 92
+    number: 92,
+    label: 'U',
     period: 7,
     group: 3,
     title: 'Uranium',
     state: 'solid',
     origin: 'primordial',
     type: 'actinide',
-    atomic_mass: 238.028913
+    mass: 238.028913
   },
   {
-    label: 'Np', // 93
+    number: 93,
+    label: 'Np',
     period: 7,
     group: 3,
     title: 'Neptunium',
     state: 'solid',
     origin: 'decay',
     type: 'actinide',
-    atomic_mass: 237
+    mass: 237
   },
   {
-    label: 'Pu', // 94
+    number: 94,
+    label: 'Pu',
     period: 7,
     group: 3,
     title: 'Plutonium',
     state: 'solid',
     origin: 'decay',
     type: 'actinide',
-    atomic_mass: 244
+    mass: 244
   },
   {
-    label: 'Am', // 95
+    number: 95,
+    label: 'Am',
     period: 7,
     group: 3,
     title: 'Americium',
     state: 'solid',
     origin: 'synthetic',
     type: 'actinide',
-    atomic_mass: 243
+    mass: 243
   },
   {
-    label: 'Cm', // 96
+    number: 96,
+    label: 'Cm',
     period: 7,
     group: 3,
     title: 'Curium',
     state: 'solid',
     origin: 'synthetic',
     type: 'actinide',
-    atomic_mass: 247
+    mass: 247
   },
   {
-    label: 'Bk', // 97
+    number: 97,
+    label: 'Bk',
     period: 7,
     group: 3,
     title: 'Berkelium',
     state: 'solid',
     origin: 'synthetic',
     type: 'actinide',
-    atomic_mass: 247
+    mass: 247
   },
   {
-    label: 'Cf', // 98
+    number: 98,
+    label: 'Cf',
     period: 7,
     group: 3,
     title: 'Californium',
     state: 'solid',
     origin: 'synthetic',
     type: 'actinide',
-    atomic_mass: 251
+    mass: 251
   },
   {
-    label: 'Es', // 99
+    number: 99,
+    label: 'Es',
     period: 7,
     group: 3,
     title: 'Einsteinium',
     state: 'solid',
     origin: 'synthetic',
     type: 'actinide',
-    atomic_mass: 252
+    mass: 252
   },
   {
-    label: 'Fm', // 100
+    number: 100,
+    label: 'Fm',
     period: 7,
     group: 3,
     title: 'Fermium',
     origin: 'synthetic',
     type: 'actinide',
-    atomic_mass: 257
+    mass: 257
   },
   {
-    label: 'Md', // 101
+    number: 101,
+    label: 'Md',
     period: 7,
     group: 3,
     title: 'Mendelevium',
     origin: 'synthetic',
     type: 'actinide',
-    atomic_mass: 258
+    mass: 258
   },
   {
-    label: 'No', // 102
+    number: 102,
+    label: 'No',
     period: 7,
     group: 3,
     title: 'Nobelium',
     origin: 'synthetic',
     type: 'actinide',
-    atomic_mass: 259
+    mass: 259
   },
   {
-    label: 'Lr', // 103
+    number: 103,
+    label: 'Lr',
     period: 7,
     group: 3,
     title: 'Lawrencium',
     origin: 'synthetic',
     type: 'actinide',
-    atomic_mass: 266
+    mass: 266
   },
   {
-    label: 'Rf', // 104
+    number: 104,
+    label: 'Rf',
     period: 7,
     group: 4,
     title: 'Rutherfordium',
     origin: 'synthetic',
     type: 'transition',
-    atomic_mass: 267
+    mass: 267
   },
   {
-    label: 'Db', // 105
+    number: 105,
+    label: 'Db',
     period: 7,
     group: 5,
     title: 'Dubnium',
     origin: 'synthetic',
     type: 'transition',
-    atomic_mass: 268
+    mass: 268
   },
   {
-    label: 'Sg', // 106
+    number: 106,
+    label: 'Sg',
     period: 7,
     group: 6,
     title: 'Seaborgium',
     origin: 'synthetic',
     type: 'transition',
-    atomic_mass: 269
+    mass: 269
   },
   {
-    label: 'Bh', // 107
+    number: 107,
+    label: 'Bh',
     period: 7,
     group: 7,
     title: 'Bohrium',
     origin: 'synthetic',
     type: 'transition',
-    atomic_mass: 270
+    mass: 270
   },
   {
-    label: 'Hs', // 108
+    number: 108,
+    label: 'Hs',
     period: 7,
     group: 8,
     title: 'Hassium',
     origin: 'synthetic',
     type: 'transition',
-    atomic_mass: 269
+    mass: 269
   },
   {
-    label: 'Mt', // 109
+    number: 109,
+    label: 'Mt',
     period: 7,
     group: 8,
     title: 'Meitnerium',
     origin: 'synthetic',
-    atomic_mass: 278
+    mass: 278
   },
   {
-    label: 'Ds', // 110
+    number: 110,
+    label: 'Ds',
     period: 7,
     group: 8,
     title: 'Darmstadtium',
     origin: 'synthetic',
-    atomic_mass: 281
+    mass: 281
   },
   {
-    label: 'Rg', // 111
+    number: 111,
+    label: 'Rg',
     period: 7,
     group: 1,
     title: 'Roentgenium',
     origin: 'synthetic',
-    atomic_mass: 282
+    mass: 282
   },
   {
-    label: 'Cn', // 112
+    number: 112,
+    label: 'Cn',
     period: 7,
     group: 2,
     title: 'Copernicium',
     origin: 'synthetic',
     type: 'transition',
-    atomic_mass: 285
+    mass: 285
   },
   {
-    label: 'Nh', // 113
+    number: 113,
+    label: 'Nh',
     period: 7,
     group: 3,
     title: 'Nihonium',
     origin: 'synthetic',
-    atomic_mass: 286
+    mass: 286
   },
   {
-    label: 'Fl', // 114
+    number: 114,
+    label: 'Fl',
     period: 7,
     group: 4,
     title: 'Flerovium',
     origin: 'synthetic',
     type: 'post-transition',
-    atomic_mass: 289
+    mass: 289
   },
   {
-    label: 'Mc', // 115
+    number: 115,
+    label: 'Mc',
     period: 7,
     group: 5,
     title: 'Moscovium',
     origin: 'synthetic',
-    atomic_mass: 289
+    mass: 289
   },
   {
-    label: 'Lv', // 116
+    number: 116,
+    label: 'Lv',
     period: 7,
     group: 6,
     title: 'Livermorium',
     origin: 'synthetic',
-    atomic_mass: 293
+    mass: 293
   },
   {
-    label: 'Ts', // 117
+    number: 117,
+    label: 'Ts',
     period: 7,
     group: 7,
     title: 'Tennessine',
     origin: 'synthetic',
-    atomic_mass: 294
+    mass: 294
   },
   {
-    label: 'Og', // 118
+    number: 118,
+    label: 'Og',
     period: 7,
     group: 8,
     title: 'Oganesson',
     origin: 'synthetic',
-    atomic_mass: 294
+    mass: 294
   }
 ]
 
-element.map = element.reduce((res, el, index) => {
-  if (el) res[el.label] = index
-  return res
-}, {})
+const elementsMap = elementsArray.reduce((acc, element) => {
+  acc.set(element.label, element)
+  acc.set(element.number, element)
+  return acc
+}, new Map<string | number, Element>())
 
-export default element
+export const Elements = {
+  get: (key: number | string): Element | undefined => elementsMap.get(key),
+  filter: (predicate: (element: Element) => boolean): Array<Element> => {
+    return elementsArray.filter(predicate)
+  }
+}

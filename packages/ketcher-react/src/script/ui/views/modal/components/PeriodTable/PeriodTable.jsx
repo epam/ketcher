@@ -19,7 +19,7 @@ import { xor } from 'lodash/fp'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import element from '../../../../../chem/element'
+import { Elements } from 'ketcher-core'
 
 import { Dialog } from '../../../components'
 import Tabs from '../../../../component/view/Tabs'
@@ -44,7 +44,7 @@ class Table extends Component {
     this.state = {
       type: props.type || genType || 'atom',
       value: props.values || props.label || null,
-      current: element[2],
+      current: Elements.get(2),
       isInfo: false
     }
     this.firstType = true

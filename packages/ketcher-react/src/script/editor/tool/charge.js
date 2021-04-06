@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import element from '../../chem/element'
+import { Elements } from 'ketcher-core'
 import { fromAtomsAttrs } from '../actions/atom'
 
 function ChargeTool(editor, charge) {
@@ -29,7 +29,7 @@ ChargeTool.prototype.mousemove = function (event) {
   var rnd = this.editor.render
   var ci = this.editor.findItem(event, ['atoms'])
   var struct = rnd.ctab.molecule
-  if (ci && ci.map === 'atoms' && element.map[struct.atoms.get(ci.id).label])
+  if (ci && ci.map === 'atoms' && Elements.get(struct.atoms.get(ci.id)?.label))
     this.editor.hover(ci)
   else this.editor.hover(null)
   return true
@@ -40,7 +40,11 @@ ChargeTool.prototype.click = function (event) {
   var rnd = editor.render
   var struct = rnd.ctab.molecule
   var ci = editor.findItem(event, ['atoms'])
-  if (ci && ci.map === 'atoms' && element.map[struct.atoms.get(ci.id).label]) {
+  if (
+    ci &&
+    ci.map === 'atoms' &&
+    Elements.get(struct.atoms.get(ci.id)?.label)
+  ) {
     this.editor.hover(null)
     this.editor.update(
       fromAtomsAttrs(rnd.ctab, ci.id, {

@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 import React, { Component } from 'react'
-import element from '../../../../../../../chem/element'
+import { Elements } from 'ketcher-core'
 import { Header, MainRow, OutinerRow } from './components'
 
-import classes from './ElementsTable.module.less'
+import styles from './ElementsTable.module.less'
 
 const metalPrefix = [
   'alkali',
@@ -43,12 +43,12 @@ const beforeSpan = {
 const ACTINIDE = 'actinide'
 const LANTHANIDE = 'lanthanide'
 const main = rowPartition(
-  element.filter(
+  Elements.filter(
     item => item && item.type !== ACTINIDE && item.type !== LANTHANIDE
   )
 )
-const lanthanides = element.filter(item => item && item.type === LANTHANIDE)
-const actinides = element.filter(item => item && item.type === ACTINIDE)
+const lanthanides = Elements.filter(item => item && item.type === LANTHANIDE)
+const actinides = Elements.filter(item => item && item.type === ACTINIDE)
 
 function rowPartition(elements) {
   return elements.reduce((result, item) => {
@@ -85,7 +85,7 @@ class ElementsTable extends Component {
     ]
 
     return classes.map(className => {
-      return classes[className]
+      return styles[className]
     })
   }
 
@@ -94,13 +94,13 @@ class ElementsTable extends Component {
     const callbacks = { currentEvents, onSelect }
     return (
       <table
-        className={classes.table}
+        className={styles.table}
         summary="Periodic table of the chemical elements">
         <Header />
         {main.map((row, index) => (
           <MainRow
             atomClassNames={this.getAtomClassNames}
-            className={classes.main_row}
+            className={styles.main_row}
             key={index}
             row={row}
             caption={index + 1}
@@ -110,14 +110,14 @@ class ElementsTable extends Component {
         ))}
         <OutinerRow
           atomClassNames={this.getAtomClassNames}
-          className={classes.outiner_row}
+          className={styles.outiner_row}
           row={lanthanides}
           caption="*"
           {...callbacks}
         />
         <OutinerRow
           atomClassNames={this.getAtomClassNames}
-          className={classes.outiner_row}
+          className={styles.outiner_row}
           row={actinides}
           caption="**"
           {...callbacks}

@@ -1,4 +1,4 @@
-export * from './colorSchema'
-export * from './elements'
+export * from './ElementColor'
+export * from './Elements'
 export * from './element.types'
 export * from './genericsTree'

@@ -96,7 +96,9 @@ EraserTool.prototype.click = function (event) {
   } else if (ci.map === 'simpleObjects') {
     this.editor.update(fromSimpleObjectDeletion(restruct, ci.id))
   } else if (ci.map === 'texts') {
-    this.editor.update(fromTextDeletion(restruct, ci.id))
+    const text = restruct.molecule.texts.get(ci.id)
+    const elem = { id: ci.id, ...text }
+    this.editor.update(fromTextDeletion(restruct, elem))
   } else {
     // TODO re-factoring needed - should be "map-independent"
     console.error(

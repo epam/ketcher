@@ -25,7 +25,6 @@ const SaveButton = props => {
     filename = 'unnamed',
     data,
     type,
-    className = '',
     mode = 'saveFile',
     onSave = noop,
     onError = noop
@@ -63,11 +62,11 @@ const SaveButton = props => {
       .generateImageAsync(data, { outputFormat: 'svg' })
       .then(blob => {
         saveAs(blob, filename)
+        onSave()
       })
       .catch(error => {
         onError(error)
       })
-    onSave()
   }
 
   return (
@@ -75,7 +74,6 @@ const SaveButton = props => {
       onClick={event => {
         save(event)
       }}
-      className={!data ? `disabled ${className}` : className}
       {...props}>
       {props.children}
     </button>

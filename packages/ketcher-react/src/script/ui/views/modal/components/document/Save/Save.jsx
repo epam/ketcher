@@ -189,8 +189,9 @@ class SaveDialog extends Component {
             filename={filename}
             key="save-image-button"
             type="image/svg+xml"
+            server={this.props.server}
             onSave={this.props.onOk}
-            disabled={!formState.valid || isCleanStruct}>
+            disabled={!formState.valid || isCleanStruct || !this.props.server}>
             Save As Image...
           </SaveButton>,
           <button

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-export const genericsTree = {
+export const Generics = {
   atom: {
     any: {
       labels: ['A', 'AH']
@@ -79,4 +79,4 @@ export const genericsTree = {
   special: {
     labels: ['H+', 'D', 'T', 'R', 'Pol']
   }
-}
+} as const

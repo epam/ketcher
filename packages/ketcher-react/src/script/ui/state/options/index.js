@@ -31,7 +31,8 @@ export const initOptionsState = {
   analyse: {
     values: null,
     roundWeight: 3,
-    roundMass: 3
+    roundMass: 3,
+    roundElAnalysis: 1
   },
   check: {
     checkOptions: [

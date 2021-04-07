@@ -34,7 +34,7 @@ import OpenButton from '../../../../../component/view/openbutton'
 import MeasureInput from '../../../../../component/form/measure-input'
 import SystemFonts from '../../../../../component/form/systemfonts'
 import SelectCheckbox from '../../../../../component/form/select-checkbox'
-import InputCtrl from '../../../../../component/form/input'
+import ColorPicker from '../../../../../component/form/ColorPicker'
 
 import classes from './Settings.module.less'
 function SettingsDialog(props) {
@@ -80,9 +80,9 @@ function SettingsDialog(props) {
               <Field name="showValenceWarnings" component={SelectCheckbox} />
               <Field name="atomColoring" component={SelectCheckbox} />
               <Field name="hideStereoFlags" component={SelectCheckbox} />
-              <Field name="colorOfAbsoluteCenters" component={InputCtrl} />
-              <Field name="colorOfAndCenters" component={InputCtrl} />
-              <Field name="colorOfOrCenters" component={InputCtrl} />
+              <Field name="colorOfAbsoluteCenters" component={ColorPicker} />
+              <Field name="colorOfAndCenters" component={ColorPicker} />
+              <Field name="colorOfOrCenters" component={ColorPicker} />
               <Field name="colorStereogenicCenters" />
               <Field name="font" component={SystemFonts} />
               <Field name="fontsz" component={MeasureInput} />

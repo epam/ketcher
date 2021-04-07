@@ -52,17 +52,17 @@ const render = {
   colorOfAbsoluteCenters: {
     title: ' Color of Absolute Center',
     type: 'string',
-    default: 'Red'
+    default: '#ff0000'
   },
   colorOfAndCenters: {
     title: 'Color of AND Centers',
     type: 'string',
-    default: 'MediumBlue'
+    default: '#0000cd'
   },
   colorOfOrCenters: {
     title: 'Color of OR Centers',
     type: 'string',
-    default: 'ForestGreen'
+    default: '#228b22'
   },
   colorStereogenicCenters: {
     title: 'Color stereogenic centers',

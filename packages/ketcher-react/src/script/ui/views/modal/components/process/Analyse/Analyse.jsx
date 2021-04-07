@@ -60,18 +60,29 @@ class AnalyseDialog extends Component {
         params={props}>
         <ul>
           {[
-            { name: 'Chemical Formula', key: 'gross' },
+            {
+              name: 'Chemical Formula',
+              key: 'gross',
+              withSelector: false
+            },
             {
               name: 'Molecular Weight',
               key: 'molecular-weight',
-              round: 'roundWeight'
+              round: 'roundWeight',
+              withSelector: true
             },
             {
               name: 'Exact Mass',
               key: 'monoisotopic-mass',
-              round: 'roundMass'
+              round: 'roundMass',
+              withSelector: true
             },
-            { name: 'Elemental Analysis', key: 'mass-composition' }
+            {
+              name: 'Elemental Analysis',
+              key: 'mass-composition',
+              round: 'roundElAnalysis',
+              withSelector: false
+            }
           ].map(item => (
             <li key={item.key}>
               <label>{item.name}:</label>
@@ -83,14 +94,12 @@ class AnalyseDialog extends Component {
                 <FrozenInput
                   value={
                     values && !loading
-                      ? item.key === 'mass-composition'
-                        ? roundOff(values[item.key], 1)
-                        : roundOff(values[item.key], round[item.round])
+                      ? roundOff(values[item.key], round[item.round])
                       : 0
                   }
                 />
               )}
-              {item.round ? (
+              {item.withSelector ? (
                 <Input
                   schema={{
                     enum: range(0, 8),
@@ -113,7 +122,8 @@ const mapStateToProps = state => ({
   loading: state.options.analyse.loading,
   round: {
     roundWeight: state.options.analyse.roundWeight,
-    roundMass: state.options.analyse.roundMass
+    roundMass: state.options.analyse.roundMass,
+    roundElAnalysis: state.options.analyse.roundElAnalysis
   }
 })
 

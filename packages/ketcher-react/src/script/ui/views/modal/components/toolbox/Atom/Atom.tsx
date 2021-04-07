@@ -20,7 +20,7 @@ import { capitalize } from 'lodash/fp'
 import { atom as atomSchema } from '../../../../../data/schema/struct-schema'
 import Form, { Field } from '../../../../../component/form/form'
 import { Dialog } from '../../../../components'
-import element from '../../../../../../chem/element'
+import { Elements } from 'ketcher-core'
 import ElementNumber from './ElementNumber'
 import { BaseProps, BaseCallProps } from '../../../modal.types'
 
@@ -95,7 +95,7 @@ const Atom: FC<Props> = props => {
 }
 
 function atomValid(label) {
-  return label && !!element.map[capitalize(label)]
+  return label && !!Elements.get(capitalize(label))
 }
 
 function chargeValid(charge) {

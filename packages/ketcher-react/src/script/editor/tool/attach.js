@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import element from '../../chem/element'
+import { Elements } from 'ketcher-core'
 
 function AttachTool(editor, attachPoints) {
   if (!(this instanceof AttachTool)) return new AttachTool(editor, attachPoints)
@@ -35,7 +35,7 @@ AttachTool.prototype.mousemove = function (event) {
   const struct = rnd.ctab.molecule
   if (
     ci &&
-    ((ci.map === 'atoms' && element.map[struct.atoms.get(ci.id).label]) ||
+    ((ci.map === 'atoms' && Elements.get(struct.atoms.get(ci.id)?.label)) ||
       ci.map === 'bonds')
   )
     this.editor.hover(ci)
@@ -51,7 +51,7 @@ AttachTool.prototype.click = function (event) {
 
   if (
     ci &&
-    ((ci.map === 'atoms' && element.map[struct.atoms.get(ci.id).label]) ||
+    ((ci.map === 'atoms' && Elements.get(struct.atoms.get(ci.id)?.label)) ||
       ci.map === 'bonds')
   ) {
     if (ci.map === 'atoms') this.attach.atomid = ci.id

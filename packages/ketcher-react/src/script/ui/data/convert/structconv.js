@@ -16,10 +16,13 @@
 
 import { capitalize } from 'lodash/fp'
 
-import { Bond, AtomList } from 'ketcher-core'
-import element from '../../../chem/element'
+import { Bond, AtomList, StereoLabel, Elements } from 'ketcher-core'
 import { sdataSchema } from '../schema/sdata-schema'
 import { atom as atomSchema } from '../schema/struct-schema'
+import {
+  getPredefinedStereoLabels,
+  predefinedStereoGroups
+} from '../../dialog/toolbox/enhancedStereo'
 
 export function fromElement(selem) {
   if (selem.label === 'R#') {
@@ -31,7 +34,7 @@ export function fromElement(selem) {
   }
   if (selem.label === 'L#') return fromAtomList(selem)
 
-  if (element.map[selem.label]) return fromAtom(selem)
+  if (Elements.get(selem.label)) return fromAtom(selem)
 
   if (!selem.label && 'attpnt' in selem) return { ap: fromApoint(selem.attpnt) }
 
@@ -49,7 +52,7 @@ export function toElement(elem) {
 
   if (!elem.label && 'ap' in elem) return { attpnt: toApoint(elem.ap) }
 
-  if (element.map[capitalize(elem.label)]) return toAtom(elem)
+  if (Elements.get(capitalize(elem.label))) return toAtom(elem)
 
   if (
     elem.label === 'A' ||
@@ -104,7 +107,7 @@ function toAtom(atom) {
 function fromAtomList(satom) {
   return {
     type: satom.atomList.notList ? 'not-list' : 'list',
-    values: satom.atomList.ids.map(i => element[i].label)
+    values: satom.atomList.ids.map(i => Elements.get(i).label)
   }
 }
 
@@ -114,24 +117,57 @@ function toAtomList(atom) {
     label: 'L#',
     atomList: new AtomList({
       notList: atom.type === 'not-list',
-      ids: atom.values.map(el => element.map[el])
+      ids: atom.values.map(el => Elements.get(el).number)
     })
   }
 }
 
 export function fromStereoLabel(stereoLabel) {
   if (stereoLabel === null) return { type: null }
-  const stereo = stereoLabel.split('-')
-  return {
-    type: stereo[0],
-    number: +stereo[1] || 0
+  const type = stereoLabel.match(/\D+/g)[0]
+  const number = +stereoLabel.replace(type, '')
+  const defaultOrNumber = predefinedStereoGroups[StereoLabel.Or].max + 1
+  const defaultAndNumber = predefinedStereoGroups[StereoLabel.And].max + 1
+
+  if (
+    type === StereoLabel.Abs ||
+    getPredefinedStereoLabels(type).includes(stereoLabel)
+  ) {
+    return {
+      type: stereoLabel,
+      orNumber: defaultOrNumber,
+      andNumber: defaultAndNumber
+    }
+  }
+
+  if (type === StereoLabel.And) {
+    return {
+      type: type,
+      orNumber: defaultOrNumber,
+      andNumber: number
+    }
+  }
+
+  if (type === StereoLabel.Or) {
+    return {
+      type: type,
+      orNumber: number,
+      andNumber: defaultOrNumber
+    }
   }
 }
 
-export function toStereoLabel(sstereoLabel) {
-  if (sstereoLabel.type === null) return null
-  if (sstereoLabel.type === 'abs') return 'abs'
-  return `${sstereoLabel.type}-${sstereoLabel.number}`
+export function toStereoLabel(stereoLabel) {
+  switch (stereoLabel.type) {
+    case StereoLabel.And:
+      return `${StereoLabel.And}${stereoLabel.andNumber || 1}`
+
+    case StereoLabel.Or:
+      return `${StereoLabel.Or}${stereoLabel.orNumber || 1}`
+
+    default:
+      return stereoLabel.type
+  }
 }
 
 function fromApoint(sap) {

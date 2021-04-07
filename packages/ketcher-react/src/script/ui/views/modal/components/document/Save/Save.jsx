@@ -173,14 +173,26 @@ class SaveDialog extends Component {
         params={this.props}
         buttons={[
           <SaveButton
+            mode="saveFile"
             data={structStr}
             filename={filename + getPropertiesByFormat(format).extensions[0]}
-            key="save-button"
+            key="save-file-button"
             type={format.mime}
             server={this.props.server}
             onSave={() => this.props.onOk()}
             disabled={!formState.valid || isCleanStruct}>
             Save To File…
+          </SaveButton>,
+          <SaveButton
+            mode="saveImage"
+            data={structStr}
+            filename={filename}
+            key="save-image-button"
+            type="image/svg+xml"
+            server={this.props.server}
+            onSave={this.props.onOk}
+            disabled={!formState.valid || isCleanStruct || !this.props.server}>
+            Save As Image...
           </SaveButton>,
           <button
             key="save-tmpl"

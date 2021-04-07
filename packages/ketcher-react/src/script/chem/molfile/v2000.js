@@ -15,8 +15,6 @@
  ***************************************************************************/
 
 /* eslint-disable guard-for-in */ // todo
-
-import element from './../element'
 import {
   Struct,
   Atom,
@@ -25,7 +23,9 @@ import {
   RGroup,
   SGroup,
   Vec2,
-  Pool
+  Pool,
+  StereoLabel,
+  Elements
 } from 'ketcher-core'
 
 import sGroup from './parseSGroup'
@@ -273,8 +273,10 @@ function parseCTabV2000(ctabLines, countsSplit) {
 
   const bonds = bondLines.map(parseBondLine)
   bonds.forEach(bond => {
-    if (bond.stereo && isAbs) ctab.atoms.get(bond.begin).stereoLabel = 'abs'
-    if (bond.stereo && isAnd) ctab.atoms.get(bond.begin).stereoLabel = 'and-1'
+    if (bond.stereo && isAbs)
+      ctab.atoms.get(bond.begin).stereoLabel = StereoLabel.Abs
+    if (bond.stereo && isAnd)
+      ctab.atoms.get(bond.begin).stereoLabel = `${StereoLabel.And}1`
     ctab.bonds.add(bond)
   })
 
@@ -466,8 +468,13 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
 function labelsListToIds(labels) {
   /* reader */
   var ids = []
-  for (var i = 0; i < labels.length; ++i)
-    ids.push(element.map[labels[i].trim()])
+  for (var i = 0; i < labels.length; ++i) {
+    const element = Elements.get(labels[i].trim())
+    if (element) {
+      ids.push(element.number)
+    }
+  }
+
   return ids
 }
 

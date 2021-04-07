@@ -15,30 +15,29 @@
  ***************************************************************************/
 
 import React from 'react'
-import { sketchingColors as elementColor } from '../../../../../../../chem/element-color'
-import element from '../../../../../../../chem/element'
+import { ElementColor } from 'ketcher-core'
 import clsx from 'clsx'
 
 import classes from './AtomInfo.module.less'
 
 function AtomInfo({ el, isInfo }) {
   const numberStyle = {
-    color: elementColor[el.label] || 'black',
+    color: ElementColor[el.label] || 'black',
     fontSize: '1.2em'
   }
   const elemStyle = {
-    color: elementColor[el.label] || 'black',
+    color: ElementColor[el.label] || 'black',
     fontWeight: 'bold',
     fontSize: '2em'
   }
   return (
     <div className={clsx(classes.ket_atom_info, !isInfo && classes.none)}>
-      <div style={numberStyle}>{element.map[el.label]}</div>
+      <div style={numberStyle}>{el.number}</div>
       <span style={elemStyle}>{el.label}</span>
       <br />
       {el.title}
       <br />
-      {el.atomic_mass}
+      {el.mass}
     </div>
   )
 }

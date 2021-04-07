@@ -18,7 +18,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 
-import { SettingsContext } from './../../../contexts'
+import { SettingsContext, AppContext } from './../../../contexts'
 import createStore, { load } from '../state'
 import { initKeydownListener } from '../state/hotkeys'
 import { initResize } from '../state/toolbar'
@@ -40,7 +40,10 @@ function initApp(
   ReactDOM.render(
     <Provider store={store}>
       <SettingsContext.Provider value={{ staticResourcesUrl }}>
-        <App />
+        <AppContext.Provider
+          value={{ getKetcherInstance: () => (window as any).ketcher }}>
+          <App />
+        </AppContext.Provider>
       </SettingsContext.Provider>
     </Provider>,
     element

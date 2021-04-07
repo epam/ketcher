@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import element from './../element'
 import {
   Struct,
   Atom,
@@ -21,7 +20,8 @@ import {
   Bond,
   RGroup,
   SGroup,
-  Vec2
+  Vec2,
+  Elements
 } from 'ketcher-core'
 
 import sGroup from './parseSGroup'
@@ -497,8 +497,13 @@ function stripV30(line) {
 function labelsListToIds(labels) {
   /* reader */
   var ids = []
-  for (var i = 0; i < labels.length; ++i)
-    ids.push(element.map[labels[i].trim()])
+  for (var i = 0; i < labels.length; ++i) {
+    const element = Elements.get(labels[i].trim())
+    if (element) {
+      ids.push(element.number)
+    }
+  }
+
   return ids
 }
 

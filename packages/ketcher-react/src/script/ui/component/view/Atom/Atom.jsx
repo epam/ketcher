@@ -15,16 +15,15 @@
  ***************************************************************************/
 
 import React from 'react'
-import element from '../../../../chem/element'
-import { sketchingColors as elementColor } from '../../../../chem/element-color'
+import { ElementColor } from 'ketcher-core'
 
 function Atom({ el, shortcut, className, ...props }) {
   return (
     <button
       title={shortcut ? `${el.title} (${shortcut})` : el.title}
       className={className}
-      style={{ color: elementColor[el.label] }}
-      value={element.map[el.label]}
+      style={{ color: ElementColor[el.label] }}
+      value={el.number}
       {...props}>
       <span>{el.label}</span>
     </button>

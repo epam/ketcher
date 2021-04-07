@@ -14,65 +14,73 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
+import React from 'react'
 import { saveAs } from 'file-saver'
+import { useAppContext } from '../../../../hooks'
 
-class SaveButton extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {}
-    fileSaver(props.server).then(saver => {
-      this.setState({ saver })
-    })
+const SaveButton = props => {
+  const noop = () => null
+  const {
+    server,
+    filename = 'unnamed',
+    data,
+    type,
+    mode = 'saveFile',
+    onSave = noop,
+    onError = noop
+  } = props
+  const { getKetcherInstance } = useAppContext()
+
+  const save = event => {
+    event.preventDefault()
+    switch (mode) {
+      case 'saveImage':
+        saveImage()
+        break
+      case 'saveFile':
+      default:
+        saveFile()
+    }
   }
 
-  save(ev) {
-    const noop = () => null
-    const {
-      filename = 'unnamed',
-      data,
-      className = '',
-      type = 'text/plain',
-      onSave = noop,
-      onError = noop
-    } = this.props
-
-    if (this.state.saver && data) {
+  const saveFile = () => {
+    if (data) {
       try {
-        this.state.saver(data, filename, type)
-        onSave()
-      } catch (e) {
-        onError(e)
+        fileSaver(server).then(saver => {
+          saver(data, filename, type)
+          onSave()
+        })
+      } catch (error) {
+        onError(error)
       }
     }
-
-    ev.preventDefault()
   }
 
-  render() {
-    const {
-      children,
-      filename,
-      data,
-      className = 'save-button',
-      onSave,
-      ...props
-    } = this.props
-
-    return (
-      <button
-        onClick={ev => this.save(ev)}
-        className={
-          !this.state.saver || !data ? `disabled ${className}` : className
-        }
-        {...props}>
-        {children}
-      </button>
-    )
+  const saveImage = () => {
+    const ketcherInstance = getKetcherInstance()
+    ketcherInstance
+      .generateImageAsync(data, { outputFormat: 'svg' })
+      .then(blob => {
+        saveAs(blob, filename)
+        onSave()
+      })
+      .catch(error => {
+        onError(error)
+      })
   }
+
+  return (
+    <button
+      onClick={event => {
+        save(event)
+      }}
+      {...props}>
+      {props.children}
+    </button>
+  )
 }
 
-function fileSaver(server) {
+const fileSaver = server => {
   return new Promise((resolve, reject) => {
     if (global.Blob && saveAs) {
       resolve((data, fn, type) => {

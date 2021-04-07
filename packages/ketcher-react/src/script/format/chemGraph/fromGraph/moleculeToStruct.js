@@ -1,7 +1,6 @@
 import { ifDef } from '../../utils'
-import { Struct, Atom, Bond, SGroup } from 'ketcher-core'
+import { Struct, Atom, Bond, SGroup, Elements } from 'ketcher-core'
 import { toRlabel } from '../convertStruct'
-import element from '../../../chem/element'
 
 export function moleculeToStruct(graphItem) {
   const struct = new Struct()
@@ -82,7 +81,9 @@ export function atomListToStruct(source) {
     z: source.location[2] || 0.0
   })
   ifDef(params, 'attpnt', source.attachmentPoints)
-  const ids = source.elements.map(el => element.map[el])
+  const ids = source.elements
+    .map(el => Elements.get(el)?.number)
+    .filter(id => id)
   ifDef(params, 'atomList', {
     ids,
     notList: source.notList

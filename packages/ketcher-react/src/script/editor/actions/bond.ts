@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond } from 'ketcher-core'
+import { Atom, Bond, StereoLabel, Struct, Vec2 } from 'ketcher-core'
 
 import {
   FragmentAdd,
@@ -34,8 +34,16 @@ import {
   mergeFragmentsIfNeeded,
   mergeSgroups
 } from './atom'
+import ReStruct from '../../render/restruct'
 
-export function fromBondAddition(restruct, bond, begin, end, pos, pos2) {
+export function fromBondAddition(
+  restruct: ReStruct,
+  bond: Bond,
+  begin: any,
+  end: any,
+  pos?: Vec2,
+  pos2?: Vec2
+): [Action, number, number, number] {
   // eslint-disable-line
   if (end === undefined) {
     const atom = atomForNewBond(restruct, begin)
@@ -55,11 +63,13 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) {
   }
 
   if (frid == null)
-    frid = action.addOp(new FragmentAdd().perform(restruct)).frid
+    frid = (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd)
+      .frid
 
   if (!(typeof begin === 'number')) {
     begin.fragment = frid
-    begin = action.addOp(new AtomAdd(begin, pos).perform(restruct)).data.aid
+    begin = (action.addOp(new AtomAdd(begin, pos).perform(restruct)) as AtomAdd)
+      .data.aid
     if (typeof end === 'number') mergeSgroups(action, restruct, [begin], end)
     pos = pos2
   } else if (atomGetAttr(restruct, begin, 'label') === '*') {
@@ -69,14 +79,16 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) {
   if (!(typeof end === 'number')) {
     end.fragment = frid
     // TODO: <op>.data.aid here is a hack, need a better way to access the id of a created atom
-    end = action.addOp(new AtomAdd(end, pos).perform(restruct)).data.aid
+    end = (action.addOp(new AtomAdd(end, pos).perform(restruct)) as AtomAdd)
+      .data.aid
     if (typeof begin === 'number') mergeSgroups(action, restruct, [end], begin)
   } else if (atomGetAttr(restruct, end, 'label') === '*') {
     action.addOp(new AtomAttr(end, 'label', 'C').perform(restruct))
   }
 
-  const bid = action.addOp(new BondAdd(begin, end, bond).perform(restruct)).data
-    .bid
+  const bid = (action.addOp(
+    new BondAdd(begin, end, bond).perform(restruct)
+  ) as BondAdd).data.bid
   if (bond.stereo > 0) action.mergeWith(fromBondStereoUpdate(restruct, bid))
   action.operations.reverse()
 
@@ -85,13 +97,12 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) {
   return [action, begin, end, bid]
 }
 
-/**
- * @param restruct { ReStruct }
- * @param ids { Array<number>|number }
- * @param attrs { Bond }
- * @param reset? { boolean }
- */
-export function fromBondsAttrs(restruct, ids, attrs, reset) {
+export function fromBondsAttrs(
+  restruct: ReStruct,
+  ids: Array<number> | number,
+  attrs: Bond,
+  reset?: boolean
+): Action {
   const action = new Action()
   const bids = Array.isArray(ids) ? ids : [ids]
 
@@ -109,11 +120,10 @@ export function fromBondsAttrs(restruct, ids, attrs, reset) {
   return action
 }
 
-/**
- * @param restruct { ReStruct }
- * @param mergeMap { Map<number, number> }
- */
-export function fromBondsMerge(restruct, mergeMap) {
+export function fromBondsMerge(
+  restruct: ReStruct,
+  mergeMap: Map<number, number>
+): Action {
   const struct = restruct.molecule
 
   const atomPairs = new Map()
@@ -122,10 +132,9 @@ export function fromBondsMerge(restruct, mergeMap) {
   mergeMap.forEach((dstId, srcId) => {
     const bond = struct.bonds.get(srcId)
     const bondCI = struct.bonds.get(dstId)
-
+    if (!bond || !bondCI) return
     const params = utils.mergeBondsParams(struct, bond, struct, bondCI)
     if (!params.merged) return
-
     atomPairs.set(bond.begin, !params.cross ? bondCI.begin : bondCI.end)
     atomPairs.set(bond.end, !params.cross ? bondCI.end : bondCI.begin)
   })
@@ -137,26 +146,37 @@ export function fromBondsMerge(restruct, mergeMap) {
   return action
 }
 
-function fromBondFlipping(restruct, id) {
+function fromBondFlipping(restruct: ReStruct, id: number): Action {
   const bond = restruct.molecule.bonds.get(id)
 
   const action = new Action()
   action.addOp(new BondDelete(id))
-  action.addOp(new BondAdd(bond.end, bond.begin, bond)).data.bid = id
+  if (bond?.end && bond?.begin) {
+    ;(action.addOp(
+      new BondAdd(bond.end, bond.begin, bond)
+    ) as BondAdd).data.bid = id
+  }
+
   // todo: swap atoms stereoLabels and stereoAtoms in fragment
   return action.perform(restruct)
 }
 
-export function fromBondStereoUpdate(restruct, bid, withReverse) {
+export function fromBondStereoUpdate(
+  restruct: ReStruct,
+  bid: number,
+  withReverse?: boolean
+): Action {
   const struct = restruct.molecule
   let bond = struct.bonds.get(bid)
   const action = new Action()
 
-  if (bond.stereo === Bond.PATTERN.STEREO.NONE) {
+  if (bond?.stereo === Bond.PATTERN.STEREO.NONE) {
     const neigs = atomGetNeighbors(restruct, bond.begin)
-    const stereoNeig = neigs.find(
-      item => item.bid !== bid && struct.bonds.get(item.bid).stereo > 0
-    )
+    const stereoNeig = neigs.find(item => {
+      const bond = struct.bonds.get(item.bid)
+      if (!bond) return false
+      return item.bid !== bid && bond.stereo > 0
+    })
     if (neigs.length < 3 || !stereoNeig) {
       action.mergeWith(
         fromStereoAtomAttrs(
@@ -174,8 +194,8 @@ export function fromBondStereoUpdate(restruct, bid, withReverse) {
     bond = struct.bonds.get(stereoNeig.bid)
   }
 
-  let newAtomParity = null
-  switch (bond.stereo) {
+  let newAtomParity: number | null = null
+  switch (bond?.stereo) {
     case Bond.PATTERN.STEREO.UP:
       newAtomParity = Atom.PATTERN.STEREO_PARITY.ODD
       break
@@ -195,7 +215,7 @@ export function fromBondStereoUpdate(restruct, bid, withReverse) {
       bond.begin,
       {
         stereoParity: newAtomParity,
-        stereoLabel: 'and-1'
+        stereoLabel: `${StereoLabel.And}1`
       },
       withReverse
     )
@@ -203,14 +223,12 @@ export function fromBondStereoUpdate(restruct, bid, withReverse) {
   return action
 }
 
-/**
- * @param restruct { ReStruct }
- * @param itemID - bond id in structure
- * @param bond - bond for change
- * @param bondProps - bondTool properties
- * @returns Action
- */
-export function bondChangingAction(restruct, itemID, bond, bondProps) {
+export function bondChangingAction(
+  restruct: ReStruct,
+  itemID: number,
+  bond: Bond,
+  bondProps: any
+): Action {
   if (
     bondProps.stereo !== Bond.PATTERN.STEREO.NONE && //
     bondProps.type === Bond.PATTERN.TYPE.SINGLE &&
@@ -236,13 +254,16 @@ export function bondChangingAction(restruct, itemID, bond, bondProps) {
   return fromBondsAttrs(restruct, itemID, bondProps).mergeWith(action)
 }
 
-function bondFlipRequired(struct, bond, attrs) {
+function bondFlipRequired(struct: Struct, bond: Bond, attrs: any): boolean {
+  const bondBegin = struct.atoms.get(bond.begin)
+  const bondEnd = struct.atoms.get(bond.end)
+  if (!bondBegin || !bondBegin.neighbors || !bondEnd || !bondEnd.neighbors)
+    return false
   return (
     attrs.type === Bond.PATTERN.TYPE.SINGLE &&
     bond.stereo === Bond.PATTERN.STEREO.NONE &&
     attrs.stereo !== Bond.PATTERN.STEREO.NONE &&
-    struct.atoms.get(bond.begin).neighbors.length <
-      struct.atoms.get(bond.end).neighbors.length
+    bondBegin.neighbors.length < bondEnd.neighbors.length
   )
 }
 

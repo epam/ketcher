@@ -159,8 +159,7 @@ class ReStruct {
     const ids = new Pile()
 
     while (list.length > 0) {
-      const aid = list.pop()
-      if (!aid) continue
+      const aid = list.pop()!
       ids.add(aid)
       const atom = this.atoms.get(aid)
       if (!atom) continue

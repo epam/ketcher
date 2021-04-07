@@ -160,7 +160,7 @@ class ReStruct {
 
     while (list.length > 0) {
       const aid = list.pop()
-      if (!aid) continue
+      if (aid === undefined) continue
       ids.add(aid)
       const atom = this.atoms.get(aid)
       if (!atom) continue

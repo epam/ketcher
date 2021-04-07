@@ -83,7 +83,9 @@ class AnalyseDialog extends Component {
                 <FrozenInput
                   value={
                     values && !loading
-                      ? roundOff(values[item.key], round[item.round])
+                      ? item.key === 'mass-composition'
+                        ? roundOff(values[item.key], 1)
+                        : roundOff(values[item.key], round[item.round])
                       : 0
                   }
                 />

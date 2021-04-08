@@ -1,4 +1,4 @@
-import { MolfileParseOptions } from 'chemistry'
+import { MolSerializerOptions } from 'chemistry'
 import { Struct } from 'chemistry'
 import { StructServiceOptions } from 'infrastructure/services'
 
@@ -21,5 +21,5 @@ export type SupportedFormat =
   | 'graph'
 
 export type FormatterFactoryOptions = Partial<
-  MolfileParseOptions & StructServiceOptions
+  MolSerializerOptions & StructServiceOptions
 >

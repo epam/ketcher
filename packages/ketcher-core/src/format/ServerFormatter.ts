@@ -1,4 +1,4 @@
-import { MolfileManager, Struct } from 'chemistry'
+import { MolSerializer, Struct } from 'chemistry'
 import { getPropertiesByFormat } from './formatProperties'
 import {
   ConvertData,
@@ -13,7 +13,7 @@ import { StructFormatter, SupportedFormat } from './structFormatter.types'
 export class ServerFormatter implements StructFormatter {
   constructor(
     private readonly structService: StructService,
-    private readonly molfileManager: MolfileManager,
+    private readonly molfileManager: MolSerializer,
     private readonly format: SupportedFormat,
     private readonly options?: StructServiceOptions
   ) {}
@@ -27,7 +27,7 @@ export class ServerFormatter implements StructFormatter {
     const formatProperties = getPropertiesByFormat(this.format)
 
     try {
-      const stringifiedStruct = this.molfileManager.stringify(struct)
+      const stringifiedStruct = this.molfileManager.serialize(struct)
       const convertResult = await this.structService.convert(
         {
           struct: stringifiedStruct,
@@ -85,7 +85,7 @@ export class ServerFormatter implements StructFormatter {
 
     try {
       const result = await promise(data, this.options)
-      const parsedStruct = this.molfileManager.parse(result.struct)
+      const parsedStruct = this.molfileManager.deserialize(result.struct)
       if (!withCoords) {
         parsedStruct.rescale()
       }

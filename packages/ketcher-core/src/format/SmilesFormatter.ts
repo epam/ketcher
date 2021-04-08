@@ -1,4 +1,4 @@
-import { MolfileManager, SmilesManager, Struct } from 'chemistry'
+import { MolSerializer, SmilesManager, Struct } from 'chemistry'
 import { StructService, StructServiceOptions } from 'infrastructure/services'
 import { ServerFormatter } from './ServerFormatter'
 import { StructFormatter, SupportedFormat } from './structFormatter.types'
@@ -10,7 +10,7 @@ export class SmilesFormatter implements StructFormatter {
     // only for ServerFormatter
 
     private readonly structService: StructService,
-    private readonly molfileManager: MolfileManager,
+    private readonly molfileManager: MolSerializer,
     private readonly format: SupportedFormat,
     private readonly options?: StructServiceOptions
   ) {}

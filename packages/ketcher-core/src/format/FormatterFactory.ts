@@ -1,9 +1,9 @@
 import {
   GraphManager,
-  MolfileManager,
-  MolfileParseOptions,
+  MolSerializer,
+  MolSerializerOptions,
   SmilesManager
-} from 'chemistry'
+} from 'chemistry/serializers'
 import { StructService, StructServiceOptions } from 'infrastructure/services'
 import {
   StructFormatter,
@@ -20,13 +20,12 @@ export class FormatterFactory {
   constructor(
     private readonly structService: StructService,
     private readonly graphManager: GraphManager,
-    private readonly molfileManager: MolfileManager,
     private readonly smilesManager: SmilesManager
   ) {}
 
   private separateOptions(
     options?: FormatterFactoryOptions
-  ): [MolfileParseOptions, StructServiceOptions | {}] {
+  ): [Partial<MolSerializerOptions>, StructServiceOptions | {}] {
     if (!options) {
       return [{}, {}]
     }
@@ -37,7 +36,7 @@ export class FormatterFactory {
       ...structServiceOptions
     } = options
 
-    let molfileParseOptions: MolfileParseOptions = {}
+    let molfileParseOptions: Partial<MolSerializerOptions> = {}
 
     if (typeof reactionRelayout === 'boolean') {
       molfileParseOptions.reactionRelayout = reactionRelayout
@@ -53,7 +52,7 @@ export class FormatterFactory {
     format: SupportedFormat,
     options?: FormatterFactoryOptions
   ): StructFormatter {
-    const [molfileParseOptions, structServiceOptions] = this.separateOptions(
+    const [molSerializerOptions, structServiceOptions] = this.separateOptions(
       options
     )
 
@@ -65,13 +64,12 @@ export class FormatterFactory {
 
       case 'mol':
         formatter = new MolfileV2000Formatter(
-          this.molfileManager,
-          molfileParseOptions
+          new MolSerializer(molSerializerOptions)
         )
         break
 
       case 'rxn':
-        formatter = new RxnFormatter(this.molfileManager, molfileParseOptions)
+        formatter = new RxnFormatter(new MolSerializer(molSerializerOptions))
         break
 
       case 'smiles':
@@ -81,7 +79,7 @@ export class FormatterFactory {
           // only for ServerFormatter, because 'getStructureFromStringAsync' is delegated to it
 
           this.structService,
-          this.molfileManager,
+          new MolSerializer(molSerializerOptions),
           format,
           structServiceOptions
         )
@@ -97,7 +95,7 @@ export class FormatterFactory {
       default:
         formatter = new ServerFormatter(
           this.structService,
-          this.molfileManager,
+          new MolSerializer(molSerializerOptions),
           format,
           structServiceOptions
         )

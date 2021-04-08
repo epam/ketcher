@@ -99,12 +99,7 @@ class MiewDialog extends Component {
 
     if (this.viewer.init()) this.viewer.run()
 
-    const factory = new FormatterFactory(
-      server,
-      graphManager,
-      molfileManager,
-      smilesManager
-    )
+    const factory = new FormatterFactory(server, graphManager, smilesManager)
     const service = factory.create('cml')
 
     service

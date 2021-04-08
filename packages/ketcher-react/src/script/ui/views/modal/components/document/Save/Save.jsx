@@ -104,12 +104,7 @@ class SaveDialog extends Component {
   changeType = type => {
     const { struct, server, options, formState } = this.props
 
-    const factory = new FormatterFactory(
-      server,
-      graphManager,
-      molfileManager,
-      smilesManager
-    )
+    const factory = new FormatterFactory(server, graphManager, smilesManager)
 
     const service = factory.create(type, options)
 

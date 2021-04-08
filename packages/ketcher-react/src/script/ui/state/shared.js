@@ -38,12 +38,7 @@ export function load(structStr, options) {
     const { rescale, fragment, ...formatterOptions } = options
 
     const format = identifyStructFormat(structStr)
-    const factory = new FormatterFactory(
-      server,
-      graphManager,
-      molfileManager,
-      smilesManager
-    )
+    const factory = new FormatterFactory(server, graphManager, smilesManager)
 
     const service = factory.create(format, formatterOptions)
     return service.getStructureFromStringAsync(structStr).then(

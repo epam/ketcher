@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { CompactPicker } from 'react-color'
 
 interface ColorPickerProps {
@@ -16,12 +16,14 @@ type Props = ColorPickerProps & ColorPickerCallProps
 
 const ColorPicker: React.FC<Props> = props => {
   const [isOpen, setIsOpen] = useState(false)
-  const [color, setColor] = useState<string>(props.value)
+  const { onChange, value } = props
 
-  useEffect(() => {
-    setColor(props.value)
-  }, [props.value])
-
+  const handleChange = useCallback(
+    color => {
+      onChange(color.hex)
+    },
+    [onChange]
+  )
   const handleClick = () => {
     setIsOpen(isOpen => !isOpen)
   }
@@ -31,21 +33,29 @@ const ColorPicker: React.FC<Props> = props => {
 
   return (
     <div className="color-picker-input">
-      <div className="color-picker-btn" onClick={handleClick}>
+      <div
+        className="color-picker-btn"
+        onClick={handleClick}
+        data-testid="color-picker-btn">
         {props.value}
         <span
           className="color-picker-preview"
-          style={{ backgroundColor: color }}
+          data-testid="color-picker-preview"
+          style={{ backgroundColor: value }}
         />
       </div>
       <div className="color-picker-wrap">
         {isOpen ? (
           <>
-            <div className="color-picker-overlay" onClick={handleClose} />
+            <div
+              className="color-picker-overlay"
+              onClick={handleClose}
+              data-testid="color-picker-overlay"
+            />
             <CompactPicker
               className="color-picker"
-              color={color}
-              onChange={value => props.onChange(value.hex)}
+              color={value}
+              onChange={handleChange}
             />
           </>
         ) : null}

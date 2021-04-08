@@ -38,7 +38,9 @@ class Accordion extends Component {
     return this.state.active.includes(index)
   }
 
-  static Group({ caption, isActive, onActive, index, children }) {
+  static Group(props) {
+    const { caption, isActive, onActive, index, children } = props
+
     return (
       <li
         className={clsx(classes.accordion_tab, {

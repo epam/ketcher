@@ -22,7 +22,8 @@ import {
   Vec2,
   scale,
   Elements,
-  ElementColor
+  ElementColor,
+  StereoLabel
 } from 'ketcher-core'
 import { LayerMap, StereoColoringType } from './GeneralEnumTypes'
 
@@ -239,6 +240,8 @@ class ReAtom extends ReObject {
         //text -> tspan
         const color = getStereoAtomColor(render.options, stereoLabel)
         aamPath.node.children[0].setAttribute('fill', color)
+        const opacity = getStereoAtomOpacity(stereoLabel)
+        aamPath.node.children[0].setAttribute('opacity', opacity)
       }
       var aamBox = util.relBox(aamPath.getBBox())
       draw.recenterText(aamPath, aamBox)
@@ -258,30 +261,39 @@ class ReAtom extends ReObject {
 }
 
 function getStereoAtomColor(options, stereoLabel) {
-  let color = '#000'
   if (
-    stereoLabel &&
-    (StereoColoringType.LabelsOnly === options.colorStereogenicCenters ||
-      StereoColoringType.LabelsAndBonds === options.colorStereogenicCenters)
+    !stereoLabel ||
+    options.colorStereogenicCenters === StereoColoringType.Off ||
+    options.colorStereogenicCenters === StereoColoringType.BondsOnly
   ) {
-    let bondStereoFlag = stereoLabel.split('-')[0]
-
-    switch (bondStereoFlag) {
-      //todo try to use StereoFlag enum
-      case 'and':
-        color = options.colorOfAndCenters
-        break
-      case 'or':
-        color = options.colorOfOrCenters
-        break
-      case 'abs':
-        color = options.colorOfAbsoluteCenters
-        break
-      default:
-        color = '#000'
-    }
+    return '#000'
   }
-  return color
+
+  return getColorFromStereoLabel(options, stereoLabel)
+}
+
+export function getColorFromStereoLabel(options, stereoLabel) {
+  const stereoLabelType = stereoLabel.match(/\D+/g)[0]
+
+  switch (stereoLabelType) {
+    case StereoLabel.And:
+      return options.colorOfAndCenters
+    case StereoLabel.Or:
+      return options.colorOfOrCenters
+    case StereoLabel.Abs:
+      return options.colorOfAbsoluteCenters
+    default:
+      return '#000'
+  }
+}
+
+function getStereoAtomOpacity(stereoLabel) {
+  const stereoLabelType = stereoLabel.match(/\D+/g)[0]
+  const stereoLabelNumber = +stereoLabel.replace(stereoLabelType, '')
+  if (stereoLabelType === StereoLabel.Abs) {
+    return 1
+  }
+  return Math.max(1 - (stereoLabelNumber - 1) / 10, 0.3)
 }
 
 function isLabelVisible(restruct, options, atom) {

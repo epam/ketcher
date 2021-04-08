@@ -16,10 +16,11 @@
 
 import ReObject from './ReObject'
 
-import { Bond, Vec2, scale } from 'ketcher-core'
+import { Bond, Vec2, scale, StereoLabel } from 'ketcher-core'
 import draw from '../draw'
 import util from '../util'
 import { LayerMap, StereoColoringType } from './GeneralEnumTypes'
+import { getColorFromStereoLabel } from './reatom'
 
 class ReBond extends ReObject {
   constructor(bond) {
@@ -328,44 +329,33 @@ function getBondSingleUpPath(render, hb1, hb2, bond, struct) {
  * In case of none or two stereo centers on both ends returned color would be black
  * @param options
  * @param bond
- * @param restruct
+ * @param struct
  * @return {string}
  */
 function getStereoBondColor(options, bond, struct) {
-  let color = '#000'
   if (
-    bond.b.stereo &&
-    (StereoColoringType.BondsOnly === options.colorStereogenicCenters ||
-      StereoColoringType.LabelsAndBonds === options.colorStereogenicCenters)
+    !bond.b.stereo ||
+    options.colorStereogenicCenters === StereoColoringType.Off ||
+    options.colorStereogenicCenters === StereoColoringType.LabelsOnly
   ) {
-    const beginAtomStereoLabel = struct.atoms.get(bond.b.begin).stereoLabel
-    const endAtomStereoLabel = struct.atoms.get(bond.b.end).stereoLabel
-    let stereoLabel = null
-    if (beginAtomStereoLabel && !endAtomStereoLabel) {
-      stereoLabel = beginAtomStereoLabel
-    } else if (!beginAtomStereoLabel && endAtomStereoLabel) {
-      stereoLabel = endAtomStereoLabel
-    } // else if no stereolabel present or present in both than use default color
-    if (!stereoLabel) {
-      return color
-    }
-    let bondStereoFlag = stereoLabel.split('-')[0]
-
-    switch (bondStereoFlag) {
-      case 'and':
-        color = options.colorOfAndCenters
-        break
-      case 'or':
-        color = options.colorOfOrCenters
-        break
-      case 'abs':
-        color = options.colorOfAbsoluteCenters
-        break
-      default:
-        color = '#000'
-    }
+    return '#000'
   }
-  return color
+
+  const beginAtomStereoLabel = struct.atoms.get(bond.b.begin).stereoLabel
+  const endAtomStereoLabel = struct.atoms.get(bond.b.end).stereoLabel
+
+  let stereoLabel = null
+  if (beginAtomStereoLabel && !endAtomStereoLabel) {
+    stereoLabel = beginAtomStereoLabel
+  } else if (!beginAtomStereoLabel && endAtomStereoLabel) {
+    stereoLabel = endAtomStereoLabel
+  }
+
+  if (!stereoLabel) {
+    return '#000'
+  }
+
+  return getColorFromStereoLabel(options, stereoLabel)
 }
 
 function getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct) {

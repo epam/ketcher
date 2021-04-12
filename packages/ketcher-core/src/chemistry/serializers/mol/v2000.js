@@ -22,12 +22,10 @@ import {
   Bond,
   RGroup,
   SGroup,
-  Vec2,
-  Pool,
   StereoLabel,
   Elements
-} from 'ketcher-core'
-
+} from 'chemistry'
+import { Vec2, Pool } from 'utils'
 import sGroup from './parseSGroup'
 import utils from './utils'
 

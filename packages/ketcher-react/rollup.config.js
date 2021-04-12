@@ -55,7 +55,7 @@ const config = {
     }),
     peerDepsExternal({ includeDependencies: true }),
     resolve({ extensions, preferBuiltins: true }),
-    commonjs(),
+    commonjs({ sourceMap: false }),
     replace(
       {
         'process.env.NODE_ENV': JSON.stringify(

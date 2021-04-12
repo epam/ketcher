@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import molfile from '../../chem/molfile'
-import { Bond } from 'ketcher-core'
+import { Bond, MolSerializer } from 'ketcher-core'
 
 import { BondAttr } from '../operations'
 import Action from '../shared/action'
@@ -53,11 +51,15 @@ export function fromAromaticTemplateOnBond(
     return Promise.resolve(action)
   }
 
+  const molSerialzer = new MolSerializer()
+
   return Promise.all([
     events.aromatizeStruct
       .dispatch(beforeMerge.frag)
-      .then(res => molfile.parse(res.struct)),
-    events.aromatizeStruct.dispatch(tmpl).then(res => molfile.parse(res.struct))
+      .then(res => molSerialzer.deserialize(res.struct)),
+    events.aromatizeStruct
+      .dispatch(tmpl)
+      .then(res => molSerialzer.deserialize(res.struct))
   ])
     .then(([astruct, atmpl]) => {
       // aromatize restruct fragment
@@ -77,7 +79,7 @@ export function fromAromaticTemplateOnBond(
 
       return events.dearomatizeStruct
         .dispatch(afterMerge.frag)
-        .then(res => molfile.parse(res.struct))
+        .then(res => molSerialzer.deserialize(res.struct))
     })
     .then(destruct => {
       destruct.bonds.forEach(bond => {

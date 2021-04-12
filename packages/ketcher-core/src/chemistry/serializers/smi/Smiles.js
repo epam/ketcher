@@ -14,17 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, SGroup, Pile } from 'ketcher-core'
+import { Atom, Bond, SGroup } from 'chemistry/entities'
+import { Pile } from 'utils'
 import CisTrans from './cis_trans'
 import Dfs from './dfs'
 import Stereocenters from './stereocenters'
 
-function Smiles() {
+export function Smiles() {
   this.smiles = ''
   this.writtenAtoms = []
   this.writtenComponents = 0
 
-  this.ignore_errors = false
+  this.ignoreErrors = false
 }
 
 Smiles._Atom = function (hСount) {
@@ -49,7 +50,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
   // eslint-disable-line max-statements
   var i, j, k
 
-  if (!ignoreErrors) this.ignore_errors = ignoreErrors
+  if (!ignoreErrors) this.ignoreErrors = ignoreErrors
 
   // [RB]: KETCHER-498 (Incorrect smile-string for multiple Sgroup)
   // TODO the fix is temporary, still need to implement error handling/reporting
@@ -173,7 +174,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
       },
       this
     )
-    stereocenters.buildFromBonds(this.ignore_errors)
+    stereocenters.buildFromBonds(this.ignoreErrors)
 
     stereocenters.each((sc, atomIdx) => {
       // eslint-disable-line max-statements
@@ -786,12 +787,5 @@ Smiles.prototype.writeRadicals = function (mol) {
         this.smiles += ',' + j
       }
     }
-  }
-}
-
-export default {
-  stringify(struct, options) {
-    const opts = options || {}
-    return new Smiles().saveMolecule(struct, opts.ignoreErrors)
   }
 }

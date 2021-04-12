@@ -1,22 +1,22 @@
-import { MolfileManager, SmilesManager, Struct } from 'chemistry'
+import { MolSerializer, SmiSerializer, Struct } from 'chemistry'
 import { StructService, StructServiceOptions } from 'infrastructure/services'
 import { ServerFormatter } from './ServerFormatter'
 import { StructFormatter, SupportedFormat } from './structFormatter.types'
 
 export class SmilesFormatter implements StructFormatter {
   constructor(
-    private readonly smilesManager: SmilesManager,
+    private readonly smiSerializer: SmiSerializer,
 
     // only for ServerFormatter
 
     private readonly structService: StructService,
-    private readonly molfileManager: MolfileManager,
+    private readonly molfileManager: MolSerializer,
     private readonly format: SupportedFormat,
     private readonly options?: StructServiceOptions
   ) {}
 
   getStructureFromStructAsync(struct: Struct): Promise<string> {
-    const stringifiedMolfile = this.smilesManager.stringify(struct)
+    const stringifiedMolfile = this.smiSerializer.serialize(struct)
     return Promise.resolve(stringifiedMolfile)
   }
 

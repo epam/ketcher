@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import { Struct, Elements } from 'ketcher-core'
+import { Struct } from 'chemistry/entities'
+import { Elements } from 'chemistry/constants'
 import common from './common'
 import utils from './utils'
 
@@ -25,7 +25,7 @@ type Mapping = {
 }
 type NumberTuple = [number, number]
 
-class Molfile {
+export class Molfile {
   molecule: Struct
   molfile: string | null
   reaction: boolean
@@ -594,6 +594,3 @@ class Molfile {
     }
   }
 }
-
-export { END_V2000 }
-export default Molfile

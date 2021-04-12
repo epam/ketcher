@@ -20,10 +20,9 @@ import {
   Bond,
   RGroup,
   SGroup,
-  Vec2,
   Elements
-} from 'ketcher-core'
-
+} from 'chemistry'
+import { Vec2 } from 'utils'
 import sGroup from './parseSGroup'
 import utils from './utils'
 

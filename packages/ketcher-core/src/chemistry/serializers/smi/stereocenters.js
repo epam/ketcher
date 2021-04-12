@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Bond, Pile, Vec2, Pool } from 'ketcher-core'
+import { Bond } from 'chemistry/entities'
+import { Pile, Vec2, Pool } from 'utils'
 
 function Stereocenters(mol, neighborsFunc, context) {
   this.molecule = mol

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import React from 'react'
-import generics from '../../../../../../../chem/generics'
+import { Generics } from 'ketcher-core'
 import GenGroup from './components'
 
 import classes from './GenericGroups.module.less'
@@ -25,13 +25,13 @@ function GenericGroups({ selected, onSelect, className, ...props }) {
     <div summary="Generic Groups" className={classes[className]} {...props}>
       <div className={classes.col}>
         <GenGroup
-          gen={generics}
+          gen={Generics}
           name="atom"
           selected={selected}
           onSelect={onSelect}
         />
         <GenGroup
-          gen={generics}
+          gen={Generics}
           name="special"
           selected={selected}
           onSelect={onSelect}
@@ -39,7 +39,7 @@ function GenericGroups({ selected, onSelect, className, ...props }) {
       </div>
       <div className={classes.col}>
         <GenGroup
-          gen={generics}
+          gen={Generics}
           name="group"
           selected={selected}
           onSelect={onSelect}

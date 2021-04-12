@@ -24,8 +24,6 @@ import { Editor } from '../../editor'
 import { Ketcher, UI as KetcherUI } from '../../ketcher'
 import { initApp } from '../../ui'
 import { ButtonsConfig } from './ButtonsConfig'
-import { molfileManager } from '../../chem/molfile'
-import smilesManager from '../../chem/smiles'
 import graphManager from '../../format/chemGraph'
 
 class KetcherBuilder {
@@ -113,12 +111,7 @@ class KetcherBuilder {
 
     this.editor = editor
     this.ui = tempRef.ui
-    this.formatterFactory = new FormatterFactory(
-      structService,
-      graphManager,
-      molfileManager,
-      smilesManager
-    )
+    this.formatterFactory = new FormatterFactory(structService, graphManager)
   }
 
   build() {

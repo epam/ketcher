@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import molfile from '../../chem/molfile'
+import { MolSerializer } from 'ketcher-core'
 
-export default {
+const debugObj = {
   // original: for dev purposes
   'force-update': {
     shortcut: 'Ctrl+Shift+r',
@@ -27,7 +27,8 @@ export default {
   'qs-serialize': {
     shortcut: 'Alt+Shift+r',
     action: editor => {
-      const molStr = molfile.stringify(editor.struct())
+      const molSerializer = new MolSerializer()
+      const molStr = molSerializer.serialize(editor.struct())
       const molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+')
       const qs = document.location.search
       document.location.search = !qs
@@ -38,3 +39,5 @@ export default {
     }
   }
 }
+
+export default debugObj

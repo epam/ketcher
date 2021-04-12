@@ -21,9 +21,6 @@ import {
   getPropertiesByFormat,
   formatProperties
 } from 'ketcher-core'
-
-import { molfileManager } from '../../../../../../chem/molfile'
-import smilesManager from '../../../../../../chem/smiles'
 import graphManager from '../../../../../../format/chemGraph'
 import * as structFormat from '../../../../../data/convert/structConverter'
 import { saveUserTmpl } from '../../../../../state/templates'
@@ -104,12 +101,7 @@ class SaveDialog extends Component {
   changeType = type => {
     const { struct, server, options, formState } = this.props
 
-    const factory = new FormatterFactory(
-      server,
-      graphManager,
-      molfileManager,
-      smilesManager
-    )
+    const factory = new FormatterFactory(server, graphManager)
 
     const service = factory.create(type, options)
 

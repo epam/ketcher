@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { omit } from 'lodash/fp'
-import molfile from '../../../chem/molfile'
+import { MolSerializer } from 'ketcher-core'
 import { storage } from '../../storage-ext'
 
 import { openDialog } from '../modal'
@@ -128,10 +128,11 @@ export function saveUserTmpl(struct) {
 }
 
 function updateLocalStore(lib) {
+  const molSerializer = new MolSerializer()
   const userLib = lib
     .filter(item => item.props.group === 'User Templates')
     .map(item => ({
-      struct: molfile.stringify(item.struct),
+      struct: molSerializer.serialize(item.struct),
       props: Object.assign({}, omit(['group'], item.props))
     }))
 

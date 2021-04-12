@@ -16,8 +16,7 @@
 
 import React, { Component, createRef } from 'react'
 
-import { Struct } from 'ketcher-core'
-import molfile from '../../chem/molfile'
+import { Struct, MolSerializer } from 'ketcher-core'
 import Render from '../../render'
 
 function renderStruct(el, struct, options = {}) {
@@ -55,7 +54,8 @@ class StructRender extends Component {
     let parsedStruct
     if (!(struct instanceof Struct)) {
       try {
-        parsedStruct = molfile.parse(struct)
+        const molSerialzer = new MolSerializer()
+        parsedStruct = molSerialzer.deserialize(struct)
       } catch (e) {
         //TODO: add error handler call
         //legacy message: Could not parse structure

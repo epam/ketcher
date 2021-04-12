@@ -1,6 +1,4 @@
 import { identifyStructFormat, FormatterFactory } from 'ketcher-core'
-
-import { molfileManager } from '../../chem/molfile'
 import smilesManager from '../../chem/smiles'
 import graphManager from '../../format/chemGraph'
 

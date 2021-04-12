@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
+import { MolSerializer } from 'ketcher-core'
 import { omit, without } from 'lodash/fp'
-
-import molfile from '../../../chem/molfile'
-
 import { setStruct, appUpdate } from '../options'
 import { checkErrors } from '../modal/form'
 import { load } from '../shared'
@@ -188,12 +185,12 @@ export function serverCall(editor, server, method, options, struct) {
       selectedAtoms = selectedAtoms.map(aid => reindexMap.get(aid))
     }
   }
-
+  const molSerializer = new MolSerializer({ ignoreErrors: true })
   return server.then(() =>
     server[method](
       Object.assign(
         {
-          struct: molfile.stringify(currentStruct, { ignoreErrors: true })
+          struct: molSerializer.serialize(currentStruct)
         },
         selectedAtoms && selectedAtoms.length > 0
           ? {

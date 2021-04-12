@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { formatProperties } from 'ketcher-core'
+import { formatProperties, MolSerializer } from 'ketcher-core'
 import { isEqual, debounce } from 'lodash/fp'
-
-import molfile from '../../chem/molfile'
 import graph from '../../format/chemGraph'
 import keyNorm from '../data/convert/keynorm'
 import actions from '../action'
@@ -165,7 +163,7 @@ function clipData(editor) {
   const struct = editor.structSelected()
 
   if (struct.isBlank()) return null
-
+  const molSerializer = new MolSerializer()
   try {
     const graphData = graph.toGraph(struct)
     res['application/json'] = JSON.stringify(graphData)
@@ -173,7 +171,7 @@ function clipData(editor) {
     const type = struct.isReaction
       ? 'chemical/x-mdl-molfile'
       : 'chemical/x-mdl-rxnfile'
-    const data = molfile.stringify(struct)
+    const data = molSerializer.serialize(struct)
     res['text/plain'] = data
     res[type] = data
 

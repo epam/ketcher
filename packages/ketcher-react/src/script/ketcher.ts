@@ -18,10 +18,11 @@ import {
   SupportedFormat,
   FormatterFactory,
   StructService,
-  GenerateImageOptions
+  GenerateImageOptions,
+  MolfileFormat,
+  MolSerializer
 } from 'ketcher-core'
 import { isEqual } from 'lodash/fp'
-import molfile, { MolfileFormat } from './chem/molfile'
 import Editor from './editor'
 import Render from './render'
 
@@ -126,7 +127,8 @@ class Ketcher {
       )
     )
     if (molString) {
-      const mol = molfile.parse(molString)
+      const molSerializer = new MolSerializer()
+      const mol = molSerializer.deserialize(molString)
       render.setMolecule(mol)
     }
     render.update()

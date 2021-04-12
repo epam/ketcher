@@ -1,6 +1,5 @@
 import { storage } from '../../storage-ext'
-import { SdfSerializer } from 'ketcher-core'
-import molfile from '../../../chem/molfile'
+import { SdfSerializer, MolSerializer } from 'ketcher-core'
 import { appUpdate } from '../options'
 
 export function initLib(lib) {
@@ -38,7 +37,7 @@ export default function initTmplLib(dispatch, baseUrl, cacheEl) {
 function userTmpls() {
   const userLib = storage.getItem('ketcher-tmpls')
   if (!Array.isArray(userLib) || userLib.length === 0) return []
-
+  const molSerializer = new MolSerializer()
   return userLib
     .map(tmpl => {
       try {
@@ -46,7 +45,7 @@ function userTmpls() {
         tmpl.props.group = 'User Templates'
 
         return {
-          struct: molfile.parse(tmpl.struct),
+          struct: molSerializer.deserialize(tmpl.struct),
           props: tmpl.props
         }
       } catch (ex) {

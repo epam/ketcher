@@ -21,8 +21,6 @@ import {
   getPropertiesByFormat,
   formatProperties
 } from 'ketcher-core'
-
-import { molfileManager } from '../../../../../../chem/molfile'
 import smilesManager from '../../../../../../chem/smiles'
 import graphManager from '../../../../../../format/chemGraph'
 import * as structFormat from '../../../../../data/convert/structConverter'

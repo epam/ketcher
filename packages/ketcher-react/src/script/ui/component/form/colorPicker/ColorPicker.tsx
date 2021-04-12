@@ -14,7 +14,7 @@ interface ColorPickerCallProps {
 
 type Props = ColorPickerProps & ColorPickerCallProps
 
-const ColorPicker: React.FC<Props> = props => {
+const ColorPicker = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const { onChange, value } = props
 

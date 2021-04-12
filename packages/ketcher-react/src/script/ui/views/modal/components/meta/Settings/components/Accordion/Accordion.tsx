@@ -14,19 +14,41 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
+import React, { Component, ReactNode } from 'react'
 import clsx from 'clsx'
 import { xor } from 'lodash/fp'
 
 import classes from './Accordion.module.less'
 
-class Accordion extends Component {
-  constructor(props) {
+interface AccordionProps {
+  className: string
+  multiple: boolean
+  active: Array<number>
+}
+
+interface AccordionState {
+  active: Array<number>
+}
+
+interface GroupProps {
+  caption: string
+  children: ReactNode
+}
+
+interface ExtendedGroupProps extends GroupProps {
+  isActive: (index: Array<number>) => boolean
+  onActive: (index: Array<number>) => void
+  index: Array<number>
+}
+
+class Accordion extends Component<AccordionProps, AccordionState> {
+  constructor(props: AccordionProps) {
     super(props)
-    this.state = {}
-    this.state.active = props.active || []
+    this.state = {
+      active: props.active || []
+    }
   }
-  onActive(index) {
+  onActive(index: number): void {
     const { multiple = true } = this.props
 
     if (!multiple) this.setState({ active: [index] })
@@ -34,12 +56,18 @@ class Accordion extends Component {
       this.setState(prevState => ({ active: xor(prevState.active, [index]) }))
   }
 
-  groupIsActive(index) {
+  groupIsActive(index: number): boolean {
     return this.state.active.includes(index)
   }
 
-  static Group(props) {
-    const { caption, isActive, onActive, index, children } = props
+  static Group(props: GroupProps) {
+    const {
+      caption,
+      isActive,
+      onActive,
+      index,
+      children
+    } = props as ExtendedGroupProps
 
     return (
       <li

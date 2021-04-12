@@ -115,6 +115,7 @@ class BondDelete extends BaseOperation {
     const rebond = restruct.bonds.get(bid)
     if (!rebond) return
     ;[rebond.b.hb1, rebond.b.hb2].forEach(hbid => {
+      if (hbid === undefined) return
       const halfBond = restruct.molecule.halfBonds.get(hbid)
       if (halfBond && halfBond.loop >= 0) {
         restruct.loopRemove(halfBond.loop)

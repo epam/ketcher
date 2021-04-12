@@ -77,9 +77,9 @@ export class Bond {
   readonly stereo: number
   readonly topology: number
   readonly reactingCenterStatus: number
-  readonly len: number
-  readonly sb: number
-  readonly sa: number
+  len: number
+  sb: number
+  sa: number
   hb1?: number
   hb2?: number
   angle: number

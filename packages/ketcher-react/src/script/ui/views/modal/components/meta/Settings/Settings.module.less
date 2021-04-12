@@ -16,6 +16,11 @@
 
 @import '../../../../../../../style/variables.less';
 
+@fieldset-inputs-number: 4;
+@server-inputs-number: 5;
+@viewer-inputs-number: 3;
+@render-inputs-number: 12;
+
 .settings {
   width: 35em;
 
@@ -40,18 +45,18 @@
 
   fieldset {
     border-radius: 0 0 6px 6px;
-    height: @input-height * 4;
+    height: @input-height * @fieldset-inputs-number;
   }
 
   .server {
-    height: @input-height * 5;
+    height: @input-height * @server-inputs-number;
   }
 
   .viewer {
-    height: @input-height * 3;
+    height: @input-height * @viewer-inputs-number;
   }
 
   .render {
-    height: @input-height * 12;
+    height: @input-height * @render-inputs-number;
   }
 }

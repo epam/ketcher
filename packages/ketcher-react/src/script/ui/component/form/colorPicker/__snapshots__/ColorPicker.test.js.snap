@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ColorPicker should be rendered correctly should be rendered without crashing 1`] = `
+exports[`should be rendered correctly should be rendered without crashing 1`] = `
 <DocumentFragment>
   <div
     class="color-picker-input"

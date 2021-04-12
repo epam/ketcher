@@ -61,7 +61,7 @@ interface SettingsCallProps extends BaseCallProps {
 
 type Props = SettingsProps & SettingsCallProps
 
-const SettingsDialog: React.FC<Props> = props => {
+const SettingsDialog = (props: Props) => {
   const {
     initState,
     formState,

@@ -14,10 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import jsonschema from 'jsonschema'
+import jsonschema, { Schema } from 'jsonschema'
 import { StereoColoringType } from '../../../render/restruct/GeneralEnumTypes'
 
-const editor = {
+type ExtendedSchema = Schema & { enumNames?: Array<string>; default?: any }
+
+const editor: {
+  resetToSelect: ExtendedSchema
+  rotationStep: ExtendedSchema
+} = {
   resetToSelect: {
     title: 'Reset to Select Tool',
     enum: [true, 'paste', false],
@@ -33,7 +38,26 @@ const editor = {
   }
 }
 
-const render = {
+const render: {
+  showValenceWarnings: ExtendedSchema
+  atomColoring: ExtendedSchema
+  hideStereoFlags: ExtendedSchema
+  colorOfAbsoluteCenters: ExtendedSchema
+  colorOfAndCenters: ExtendedSchema
+  colorOfOrCenters: ExtendedSchema
+  colorStereogenicCenters: ExtendedSchema
+  font: ExtendedSchema
+  fontsz: ExtendedSchema
+  fontszsub: ExtendedSchema
+  carbonExplicitly: ExtendedSchema
+  showCharge: ExtendedSchema
+  showValence: ExtendedSchema
+  showHydrogenLabels: ExtendedSchema
+  aromaticCircle: ExtendedSchema
+  doubleBondWidth: ExtendedSchema
+  bondThickness: ExtendedSchema
+  stereoBondWidth: ExtendedSchema
+} = {
   showValenceWarnings: {
     title: 'Show valence warnings',
     type: 'boolean',
@@ -144,7 +168,13 @@ const render = {
   }
 }
 
-const server = {
+const server: {
+  'smart-layout': ExtendedSchema
+  'ignore-stereochemistry-errors': ExtendedSchema
+  'mass-skip-error-on-pseudoatoms': ExtendedSchema
+  'gross-formula-add-rsites': ExtendedSchema
+  'gross-formula-add-isotopes': ExtendedSchema
+} = {
   'smart-layout': {
     title: 'Smart-layout',
     type: 'boolean',
@@ -174,7 +204,12 @@ const server = {
 
 export const SERVER_OPTIONS = Object.keys(server)
 
-const debug = {
+const debug: {
+  showAtomIds: ExtendedSchema
+  showBondIds: ExtendedSchema
+  showHalfBondIds: ExtendedSchema
+  showLoopIds: ExtendedSchema
+} = {
   showAtomIds: {
     title: 'Show atom Ids',
     type: 'boolean',
@@ -197,7 +232,11 @@ const debug = {
   }
 }
 
-const miew = {
+const miew: {
+  miewMode: ExtendedSchema
+  miewTheme: ExtendedSchema
+  miewAtomLabel: ExtendedSchema
+} = {
   miewMode: {
     title: 'Display mode',
     enum: ['LN', 'BS', 'LC'],
@@ -220,7 +259,7 @@ const miew = {
 
 export const MIEW_OPTIONS = Object.keys(miew)
 
-const optionsSchema = {
+const optionsSchema: ExtendedSchema = {
   title: 'Settings',
   type: 'object',
   required: [],
@@ -235,14 +274,16 @@ const optionsSchema = {
 
 export default optionsSchema
 
-export function getDefaultOptions() {
+export function getDefaultOptions(): Record<string, any> {
+  if (!optionsSchema.properties) return {}
+
   return Object.keys(optionsSchema.properties).reduce((res, prop) => {
-    res[prop] = optionsSchema.properties[prop].default
+    res[prop] = (optionsSchema.properties![prop] as ExtendedSchema).default
     return res
   }, {})
 }
 
-export function validation(settings) {
+export function validation(settings): Record<string, string> | null {
   if (typeof settings !== 'object' || settings === null) return null
 
   const v = new jsonschema.Validator()
@@ -250,8 +291,11 @@ export function validation(settings) {
   const errProps = errors.map(err => err.property.split('.')[1])
 
   return Object.keys(settings).reduce((res, prop) => {
+    if (!optionsSchema.properties) return res
+
     if (optionsSchema.properties[prop] && errProps.indexOf(prop) === -1)
       res[prop] = settings[prop]
+
     return res
   }, {})
 }

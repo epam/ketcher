@@ -18,33 +18,7 @@ import Molfile from './molfile'
 import { Serializer } from './../serializers.types'
 import { MolSerializerOptions } from './mol.types'
 
-function parseCTFile(str: string, options: MolSerializerOptions) {
-  const molfile = new Molfile()
-  const lines = str.split(/\r\n|[\n\r]/g)
-  try {
-    return molfile.parseCTFile(lines, options.reactionRelayout)
-  } catch (ex) {
-    if (options.badHeaderRecover) {
-      try {
-        // check whether there's an extra empty line on top
-        // this often happens when molfile text is pasted into the dialog window
-        return molfile.parseCTFile(lines.slice(1), options.reactionRelayout)
-      } catch (ex1) {
-        //
-      }
-      try {
-        // check for a missing first line
-        // this sometimes happens when pasting
-        return molfile.parseCTFile([''].concat(lines), options.reactionRelayout)
-      } catch (ex2) {
-        //
-      }
-    }
-    throw ex
-  }
-}
-
-export class MolSerializer implements Serializer {
+export class MolSerializer implements Serializer<Struct> {
   static DefaultOptions: MolSerializerOptions = {
     badHeaderRecover: false,
     ignoreErrors: false,
@@ -60,7 +34,35 @@ export class MolSerializer implements Serializer {
   }
 
   deserialize(content: string): Struct {
-    return parseCTFile(content, this.options)
+    const molfile = new Molfile()
+    const lines = content?.split(/\r\n|[\n\r]/g)
+    try {
+      return molfile.parseCTFile(lines, this.options.reactionRelayout)
+    } catch (ex) {
+      if (this.options.badHeaderRecover) {
+        try {
+          // check whether there's an extra empty line on top
+          // this often happens when molfile text is pasted into the dialog window
+          return molfile.parseCTFile(
+            lines.slice(1),
+            this.options.reactionRelayout
+          )
+        } catch (ex1) {
+          //
+        }
+        try {
+          // check for a missing first line
+          // this sometimes happens when pasting
+          return molfile.parseCTFile(
+            [''].concat(lines),
+            this.options.reactionRelayout
+          )
+        } catch (ex2) {
+          //
+        }
+      }
+      throw ex
+    }
   }
 
   serialize(struct: Struct): string {

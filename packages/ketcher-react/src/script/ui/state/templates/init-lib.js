@@ -1,5 +1,5 @@
 import { storage } from '../../storage-ext'
-import sdf from '../../../chem/sdf'
+import { SdfSerializer } from 'ketcher-core'
 import molfile from '../../../chem/molfile'
 import { appUpdate } from '../options'
 
@@ -11,9 +11,10 @@ export function initLib(lib) {
 }
 
 export default function initTmplLib(dispatch, baseUrl, cacheEl) {
+  const sdfSerializer = new SdfSerializer()
   prefetchStatic(`${baseUrl}/templates/library.sdf`)
     .then(text => {
-      const tmpls = sdf.parse(text)
+      const tmpls = sdfSerializer.deserialize(text)
       const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheEl)
 
       return prefetch.then(cachedFiles =>

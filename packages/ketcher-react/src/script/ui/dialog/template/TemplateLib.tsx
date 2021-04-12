@@ -20,7 +20,7 @@ import { createSelector } from 'reselect'
 import React, { RefCallback } from 'react'
 import { connect } from 'react-redux'
 
-import sdf from '../../../chem/sdf'
+import { SdfSerializer } from 'ketcher-core'
 import { Dialog } from '../../views/components'
 import SaveButton from '../../component/view/savebutton'
 import Input from '../../component/form/input'
@@ -114,6 +114,9 @@ const TemplateLib: React.FC<Props> = props => {
       : null
   }
 
+  const sdfSerializer = new SdfSerializer()
+  const data = sdfSerializer.serialize(props.lib)
+
   const select = (tmpl: Template): void => {
     if (tmpl === props.selected) props.onOk(result())
     else props.onSelect(tmpl)
@@ -126,10 +129,7 @@ const TemplateLib: React.FC<Props> = props => {
       params={omit(['group'], rest)}
       result={() => result()}
       buttons={[
-        <SaveButton
-          key="save-to-SDF"
-          data={sdf.stringify(props.lib)}
-          filename="ketcher-tmpls.sdf">
+        <SaveButton key="save-to-SDF" data={data} filename="ketcher-tmpls.sdf">
           Save To SDF…
         </SaveButton>,
         'Cancel',

@@ -68,7 +68,6 @@ class SaveDialog extends Component {
     this.state = { imageFormat: 'svg', tabIndex: 0 }
     this.isRxn = this.props.struct.hasRxnArrow()
     this.textAreaRef = createRef()
-    this.formContainerRef = createRef()
     const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'graph']
     if (this.props.server)
       formats.push(
@@ -97,13 +96,6 @@ class SaveDialog extends Component {
   componentDidMount() {
     const { checkOptions } = this.props.checkState
     this.props.onCheck(checkOptions)
-    if (this.formContainerRef.current) {
-      const {
-        width,
-        height
-      } = this.formContainerRef.current.getBoundingClientRect()
-      this.setState({ dimensions: { width, height } })
-    }
   }
 
   showStructWarningMessage = format => {
@@ -183,7 +175,7 @@ class SaveDialog extends Component {
     const warnings = this.getWarnings(format)
     const { structStr } = this.state
     return (
-      <div className={classes.form_container} ref={this.formContainerRef}>
+      <div className={classes.formContainer}>
         <Form
           schema={this.saveSchema}
           init={{
@@ -195,12 +187,14 @@ class SaveDialog extends Component {
           <Field name="format" onChange={this.changeType} />
         </Form>
         <textarea value={structStr} readOnly ref={this.textAreaRef} />
-        {warnings.map(warning => (
-          <div className={classes.warnings_container}>
-            <div className={classes.warning} />
-            <div className={classes.warnings_arr}>{warning}</div>
-          </div>
-        ))}
+        <div className={classes.warnings}>
+          {warnings.map(warning => (
+            <div className={classes.warningsContainer}>
+              <div className={classes.warning} />
+              <div className={classes.warningsArr}>{warning}</div>
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
@@ -262,8 +256,7 @@ class SaveDialog extends Component {
         caption: 'Image',
         component: SaveImageTab,
         props: {
-          changeImageFormat: this.changeImageFormat,
-          dimensions: this.state.dimensions
+          changeImageFormat: this.changeImageFormat
         }
       }
     ]
@@ -278,7 +271,6 @@ class SaveDialog extends Component {
           changeTab={tab => {
             this.changeTab(tab)
           }}
-          captions={this.tabs}
         />
       </Dialog>
     )

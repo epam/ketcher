@@ -2,7 +2,7 @@ import {
   GraphManager,
   MolSerializer,
   MolSerializerOptions,
-  SmilesManager
+  SmiSerializer
 } from 'chemistry/serializers'
 import { StructService, StructServiceOptions } from 'infrastructure/services'
 import {
@@ -19,8 +19,7 @@ import { SmilesFormatter } from './SmilesFormatter'
 export class FormatterFactory {
   constructor(
     private readonly structService: StructService,
-    private readonly graphManager: GraphManager,
-    private readonly smilesManager: SmilesManager
+    private readonly graphManager: GraphManager
   ) {}
 
   private separateOptions(
@@ -74,7 +73,7 @@ export class FormatterFactory {
 
       case 'smiles':
         formatter = new SmilesFormatter(
-          this.smilesManager,
+          new SmiSerializer(),
 
           // only for ServerFormatter, because 'getStructureFromStringAsync' is delegated to it
 

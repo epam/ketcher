@@ -15,13 +15,25 @@
  ***************************************************************************/
 import { Struct } from 'chemistry/entities'
 import { Serializer } from './../serializers.types'
+import { Smiles } from './Smiles'
+import { SmiSerializerOptions } from './smi.types'
 
 export class SmiSerializer implements Serializer<Struct> {
-  deserialize(content: string): Struct {
-    return (content as any) as Struct
+  static DefaultOptions: SmiSerializerOptions = {
+    ignoreErrors: false
+  }
+
+  private readonly options: SmiSerializerOptions
+
+  constructor(options?: Partial<SmiSerializerOptions>) {
+    this.options = { ...SmiSerializer.DefaultOptions, ...options }
+  }
+
+  deserialize(_content: string): Struct {
+    throw new Error('Not implemented yet.')
   }
 
   serialize(struct: Struct): string {
-    return struct.toString()
+    return new Smiles().saveMolecule(struct, this.options.ignoreErrors)
   }
 }

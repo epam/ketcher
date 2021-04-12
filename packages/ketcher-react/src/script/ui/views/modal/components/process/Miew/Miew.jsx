@@ -18,7 +18,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { FormatterFactory } from 'ketcher-core'
 import { pick } from 'lodash/fp'
-import smilesManager from '../../../../../../chem/smiles'
 import graphManager from '../../../../../../format/chemGraph'
 import { Dialog } from '../../../../components'
 import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema'
@@ -98,7 +97,7 @@ class MiewDialog extends Component {
 
     if (this.viewer.init()) this.viewer.run()
 
-    const factory = new FormatterFactory(server, graphManager, smilesManager)
+    const factory = new FormatterFactory(server, graphManager)
     const service = factory.create('cml')
 
     service

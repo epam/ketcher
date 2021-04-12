@@ -1,5 +1,4 @@
 import { identifyStructFormat, FormatterFactory } from 'ketcher-core'
-import smilesManager from '../../chem/smiles'
 import graphManager from '../../format/chemGraph'
 
 export function onAction(action) {
@@ -36,7 +35,7 @@ export function load(structStr, options) {
     const { rescale, fragment, ...formatterOptions } = options
 
     const format = identifyStructFormat(structStr)
-    const factory = new FormatterFactory(server, graphManager, smilesManager)
+    const factory = new FormatterFactory(server, graphManager)
 
     const service = factory.create(format, formatterOptions)
     return service.getStructureFromStringAsync(structStr).then(

@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Struct } from 'chemistry'
-
-export interface SmilesManager {
-  stringify: (struct: Struct) => string
+export interface SmiSerializerOptions {
+  ignoreErrors: boolean
 }

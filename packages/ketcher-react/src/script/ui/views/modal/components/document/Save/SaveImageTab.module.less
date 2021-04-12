@@ -1,0 +1,14 @@
+@import '../../../../../../../style/variables.less';
+@import '../../../../../../../style/mixins.less';
+@import '../../../../../../../style/dialogs.less';
+
+.saveImageContainer {
+  width: @save-container-width-large;
+  height: @save-container-height-large;
+}
+
+// stylelint-disable-next-line selector-pseudo-class-no-unknown
+:global(.smallEditor) .saveImageContainer {
+  width: @save-container-width-small;
+  height: @save-container-height-small;
+}

@@ -1,6 +1,8 @@
 import React from 'react'
 
-const SaveImageTab = ({ dimensions, changeImageFormat }) => {
+import classes from './SaveImageTab.module.less'
+
+const SaveImageTab = ({ changeImageFormat }) => {
   const formats = [
     { extension: 'svg', text: 'SVG Document' },
     { extension: 'png', text: 'PNG Image' }
@@ -22,7 +24,7 @@ const SaveImageTab = ({ dimensions, changeImageFormat }) => {
   }
 
   return (
-    <div style={dimensions}>
+    <div className={classes.saveImageContainer}>
       <label>
         Image Format: &nbsp;
         <select onChange={handleChange}>{renderOptions(formats)}</select>

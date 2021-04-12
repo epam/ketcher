@@ -113,22 +113,29 @@ class SaveDialog extends Component {
 
     const service = factory.create(type, options)
 
-    return service.getStructureFromStructAsync(struct).then(
-      structStr => {
-        this.setState({ structStr })
-        setTimeout(() => {
-          if (this.textAreaRef.current) {
-            this.textAreaRef.current.select()
-          }
-        }, 10) // TODO: remove hack
-      },
-      e => {
-        //TODO: add error handler call
-        alert(e.message)
-        this.props.onResetForm(formState)
-        return e
-      }
-    )
+    this.props.onResetForm({ valid: false })
+
+    return service
+      .getStructureFromStructAsync(struct)
+      .then(
+        structStr => {
+          this.setState({ structStr })
+          setTimeout(() => {
+            if (this.textAreaRef.current) {
+              this.textAreaRef.current.select()
+            }
+          }, 10) // TODO: remove hack
+        },
+        e => {
+          //TODO: add error handler call
+          alert(e.message)
+          this.props.onResetForm(formState)
+          return e
+        }
+      )
+      .then(() => {
+        this.props.onResetForm({ valid: true })
+      })
   }
 
   getWarnings = format => {

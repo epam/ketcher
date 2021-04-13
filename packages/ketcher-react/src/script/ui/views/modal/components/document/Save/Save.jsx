@@ -63,7 +63,7 @@ const saveSchema = {
 class SaveDialog extends Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = { disableControls: false }
     this.isRxn = this.props.struct.hasRxnArrow()
     this.textAreaRef = createRef()
     const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'graph']
@@ -102,6 +102,8 @@ class SaveDialog extends Component {
   }
 
   changeType = type => {
+    this.setState({ disableControls: true })
+
     const { struct, server, options, formState } = this.props
 
     const factory = new FormatterFactory(
@@ -112,8 +114,6 @@ class SaveDialog extends Component {
     )
 
     const service = factory.create(type, options)
-
-    this.props.onResetForm({ valid: false })
 
     return service
       .getStructureFromStructAsync(struct)
@@ -133,8 +133,8 @@ class SaveDialog extends Component {
           return e
         }
       )
-      .then(() => {
-        this.props.onResetForm({ valid: true })
+      .finally(() => {
+        this.setState({ disableControls: false })
       })
   }
 
@@ -166,7 +166,7 @@ class SaveDialog extends Component {
   }
 
   render() {
-    const { structStr } = this.state
+    const { structStr, disableControls } = this.state
     const formState = Object.assign({}, this.props.formState)
     delete formState.moleculeErrors
     const { filename, format } = formState.result
@@ -187,7 +187,7 @@ class SaveDialog extends Component {
             type={format.mime}
             server={this.props.server}
             onSave={() => this.props.onOk()}
-            disabled={!formState.valid || isCleanStruct}>
+            disabled={disableControls || !formState.valid || isCleanStruct}>
             Save To File…
           </SaveButton>,
           <SaveButton
@@ -198,12 +198,17 @@ class SaveDialog extends Component {
             type="image/svg+xml"
             server={this.props.server}
             onSave={this.props.onOk}
-            disabled={!formState.valid || isCleanStruct || !this.props.server}>
+            disabled={
+              disableControls ||
+              !formState.valid ||
+              isCleanStruct ||
+              !this.props.server
+            }>
             Save As Image...
           </SaveButton>,
           <button
             key="save-tmpl"
-            disabled={isCleanStruct}
+            disabled={disableControls || isCleanStruct}
             onClick={() => this.props.onTmplSave(this.props.struct)}>
             Save to Templates
           </button>,

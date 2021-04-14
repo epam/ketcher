@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { Struct } from 'chemistry/entities'
-import { Molfile } from './Molfile'
+import { Molfile } from '../Molfile'
 import { Serializer } from './../serializers.types'
 import { MolSerializerOptions } from './mol.types'
 

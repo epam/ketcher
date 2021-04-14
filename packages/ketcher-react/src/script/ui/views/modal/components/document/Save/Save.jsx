@@ -29,6 +29,8 @@ import { check } from '../../../../../state/server'
 import { Dialog } from '../../../../components'
 import Form, { Field } from '../../../../../component/form/form'
 import SaveButton from '../../../../../component/view/savebutton'
+import Tabs from '../../../../../component/view/Tabs'
+import SaveImageTab from './SaveImageTab'
 
 import classes from './Save.module.less'
 
@@ -60,7 +62,11 @@ const saveSchema = {
 class SaveDialog extends Component {
   constructor(props) {
     super(props)
-    this.state = { disableControls: false }
+    this.state = {
+      disableControls: false,
+      imageFormat: 'svg',
+      tabIndex: 0
+    }
     this.isRxn = this.props.struct.hasRxnArrow()
     this.textAreaRef = createRef()
     const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'graph']
@@ -157,74 +163,126 @@ class SaveDialog extends Component {
     return warnings
   }
 
-  render() {
-    const { structStr, disableControls } = this.state
+  changeTab = tabIndex => {
+    this.setState({ tabIndex })
+  }
+
+  changeImageFormat = imageFormat => {
+    this.setState({ imageFormat })
+  }
+
+  renderSaveFile = () => {
     const formState = Object.assign({}, this.props.formState)
     delete formState.moleculeErrors
     const { filename, format } = formState.result
     const warnings = this.getWarnings(format)
+    const { structStr } = this.state
+    return (
+      <div className={classes.formContainer}>
+        <Form
+          schema={this.saveSchema}
+          init={{
+            filename,
+            format: this.isRxn ? 'rxn' : 'mol'
+          }}
+          {...formState}>
+          <Field name="filename" />
+          <Field name="format" onChange={this.changeType} />
+        </Form>
+        <textarea value={structStr} readOnly ref={this.textAreaRef} />
+        {warnings.length ? (
+          <div className={classes.warnings}>
+            {warnings.map(warning => (
+              <div className={classes.warningsContainer}>
+                <div className={classes.warning} />
+                <div className={classes.warningsArr}>{warning}</div>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    )
+  }
+
+  getButtons = () => {
+    const { disableControls, imageFormat, structStr, tabIndex } = this.state
+    const formState = this.props.formState
+    const { filename, format } = formState.result
     const isCleanStruct = this.props.struct.isBlank()
+    const buttons = [
+      [
+        <SaveButton
+          className="save-button"
+          mode="saveFile"
+          data={structStr}
+          filename={filename + getPropertiesByFormat(format).extensions[0]}
+          key="save-file-button"
+          type={format.mime}
+          server={this.props.server}
+          onSave={this.props.onOk}
+          disabled={disableControls || !formState.valid || isCleanStruct}>
+          Save To File
+        </SaveButton>,
+        <button
+          className="save-button"
+          key="save-tmpl"
+          disabled={disableControls || isCleanStruct}
+          onClick={() => this.props.onTmplSave(this.props.struct)}>
+          Save to Templates...
+        </button>,
+        'Close'
+      ],
+      [
+        <SaveButton
+          className="save-button"
+          mode="saveImage"
+          data={structStr}
+          filename={filename}
+          outputFormat={imageFormat}
+          key="save-image-button"
+          type="image/svg+xml"
+          onSave={this.props.onOk}
+          disabled={
+            disableControls ||
+            !formState.valid ||
+            isCleanStruct ||
+            !this.props.server
+          }>
+          Save As Image
+        </SaveButton>,
+        'Close'
+      ]
+    ]
+    return buttons[tabIndex]
+  }
+
+  render() {
+    const tabs = [
+      {
+        caption: 'Structure',
+        component: this.renderSaveFile
+      },
+      {
+        caption: 'Image',
+        component: SaveImageTab,
+        props: {
+          changeImageFormat: this.changeImageFormat
+        }
+      }
+    ]
 
     return (
       <Dialog
         title="Save Structure"
         className={classes.save}
         params={this.props}
-        buttons={[
-          <SaveButton
-            mode="saveFile"
-            data={structStr}
-            filename={filename + getPropertiesByFormat(format).extensions[0]}
-            key="save-file-button"
-            type={format.mime}
-            server={this.props.server}
-            onSave={() => this.props.onOk()}
-            disabled={disableControls || !formState.valid || isCleanStruct}>
-            Save To File…
-          </SaveButton>,
-          <SaveButton
-            mode="saveImage"
-            data={structStr}
-            filename={filename}
-            key="save-image-button"
-            type="image/svg+xml"
-            server={this.props.server}
-            onSave={this.props.onOk}
-            disabled={
-              disableControls ||
-              !formState.valid ||
-              isCleanStruct ||
-              !this.props.server
-            }>
-            Save As Image...
-          </SaveButton>,
-          <button
-            key="save-tmpl"
-            disabled={disableControls || isCleanStruct}
-            onClick={() => this.props.onTmplSave(this.props.struct)}>
-            Save to Templates
-          </button>,
-          'Close'
-        ]}>
-        <div className={classes.form_container}>
-          <Form
-            schema={this.saveSchema}
-            init={{
-              filename,
-              format: this.isRxn ? 'rxn' : 'mol'
-            }}
-            {...formState}>
-            <Field name="filename" />
-            <Field name="format" onChange={this.changeType} />
-          </Form>
-          <textarea value={structStr} readOnly ref={this.textAreaRef} />
-          {warnings.map(warning => (
-            <div className={classes.warnings_container}>
-              <div className={classes.warning} />
-              <div className={classes.warnings_arr}>{warning}</div>
-            </div>
-          ))}
-        </div>
+        buttons={this.getButtons()}>
+        <Tabs
+          tabs={tabs}
+          changeTab={tab => {
+            this.changeTab(tab)
+          }}
+        />
       </Dialog>
     )
   }

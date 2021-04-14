@@ -17,24 +17,38 @@
 @import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
+@save-container-width-large: 480px;
+@save-container-height-large: 415px;
+@save-container-width-small: 380px;
+@save-container-height-small: 325px;
+
 .save {
-  .form_container {
+  .formContainer {
     display: flex;
     flex-direction: column;
-    width: min-content;
+    width: @save-container-width-large;
+    height: @save-container-height-large;
   }
 
-  .warnings_container {
-    display: flex;
-    .warnings_arr {
-      color: @error-color;
-      margin: 2px;
-      white-space: pre-line;
+  .warnings {
+    height: 40px;
+    border: 1px solid @border-color;
+    border-radius: 4px;
+    margin: 2px;
+    padding: 2px 5px;
+    overflow: auto;
+    .warningsContainer {
+      display: flex;
+      .warningsArr {
+        color: @error-color;
+        margin: 2px;
+        white-space: pre-line;
+        word-break: break-word;
+      }
     }
-  }
-
-  .warning {
-    .warning;
+    .warning {
+      .warning;
+    }
   }
 
   form > label {
@@ -50,15 +64,33 @@
   textarea {
     display: block;
     min-width: 34em;
-    min-height: 23em;
+    height: 100%;
     overflow: auto;
     white-space: pre;
     cursor: text;
-    resize: both;
+    resize: none;
   }
 
-  footer {
-    display: flex;
-    justify-content: space-around;
+  .saveImageContainer {
+    width: @save-container-width-large;
+    height: @save-container-height-large;
+    label {
+      margin: 0 0.3em;
+    }
+  }
+}
+
+// stylelint-disable-next-line selector-pseudo-class-no-unknown
+:global(.smallEditor) {
+  .formContainer {
+    width: @save-container-width-small;
+    height: @save-container-height-small;
+  }
+  .warnings {
+    height: 30px;
+  }
+  .saveImageContainer {
+    width: @save-container-width-small;
+    height: @save-container-height-small;
   }
 }

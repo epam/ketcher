@@ -31,6 +31,8 @@ class TextTool {
     const render = this.editor.render
     const ci = this.editor.findItem(event, ['texts'])
 
+    this.editor.selection(null)
+
     if (ci && ci.map === 'texts') {
       this.editor.hover(null)
       this.editor.selection({ texts: [ci.id] })

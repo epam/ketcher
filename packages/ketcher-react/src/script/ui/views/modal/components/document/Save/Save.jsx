@@ -187,14 +187,16 @@ class SaveDialog extends Component {
           <Field name="format" onChange={this.changeType} />
         </Form>
         <textarea value={structStr} readOnly ref={this.textAreaRef} />
-        <div className={classes.warnings}>
-          {warnings.map(warning => (
-            <div className={classes.warningsContainer}>
-              <div className={classes.warning} />
-              <div className={classes.warningsArr}>{warning}</div>
-            </div>
-          ))}
-        </div>
+        {warnings.length ? (
+          <div className={classes.warnings}>
+            {warnings.map(warning => (
+              <div className={classes.warningsContainer}>
+                <div className={classes.warning} />
+                <div className={classes.warningsArr}>{warning}</div>
+              </div>
+            ))}
+          </div>
+        ) : null}
       </div>
     )
   }
@@ -216,7 +218,7 @@ class SaveDialog extends Component {
           server={this.props.server}
           onSave={this.props.onOk}
           disabled={!formState.valid || isCleanStruct}>
-          Save To File…
+          Save To File
         </SaveButton>,
         <button
           className="save-button"
@@ -238,7 +240,7 @@ class SaveDialog extends Component {
           type="image/svg+xml"
           onSave={this.props.onOk}
           disabled={!formState.valid || isCleanStruct || !this.props.server}>
-          Save
+          Save As Image
         </SaveButton>,
         'Close'
       ]

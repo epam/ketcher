@@ -1,6 +1,6 @@
 import React from 'react'
 
-import classes from './SaveImageTab.module.less'
+import classes from './Save.module.less'
 
 const SaveImageTab = ({ changeImageFormat }) => {
   const formats = [

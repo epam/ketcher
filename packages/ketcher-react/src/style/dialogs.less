@@ -2,11 +2,6 @@
 @import 'form';
 @import (reference) 'component';
 
-@save-container-width-large: 480px;
-@save-container-height-large: 415px;
-@save-container-width-small: 380px;
-@save-container-height-small: 325px;
-
 .ket-spinner {
   margin: auto;
   display: block;
@@ -615,53 +610,6 @@
   }
 }
 
-.save {
-  .formContainer {
-    display: flex;
-    flex-direction: column;
-    width: @save-container-width-large;
-    height: @save-container-height-large;
-  }
-  .warnings {
-    height: 40px;
-    border: 1px solid @border-color;
-    border-radius: 4px;
-    margin: 2px;
-    padding: 2px 5px;
-    overflow: auto;
-    .warningsContainer {
-      display: flex;
-      .warningsArr {
-        color: @error-color;
-        margin: 2px;
-        white-space: pre-line;
-        word-break: break-word;
-      }
-    }
-    .warning {
-      .warning;
-    }
-  }
-  form > label {
-    display: inline-block;
-    text-align: right;
-    margin: 0 0.3em;
-    select,
-    input {
-      width: 12.25em;
-    }
-  }
-  textarea {
-    display: block;
-    min-width: 34em;
-    min-height: 23em;
-    overflow: auto;
-    white-space: pre;
-    cursor: text;
-    resize: both;
-  }
-}
-
 .help {
   overflow: auto;
   min-height: 500px;
@@ -731,15 +679,5 @@
       margin: 10px;
       text-align: left;
     }
-  }
-}
-
-:global(.smallEditor) {
-  .formContainer {
-    width: @save-container-width-small;
-    height: @save-container-height-small;
-  }
-  .warnings {
-    height: 30px;
   }
 }

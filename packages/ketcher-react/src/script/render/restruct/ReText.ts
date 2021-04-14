@@ -79,10 +79,6 @@ class ReText extends ReObject {
     const render = restruct.render
     const paper = render.paper
 
-    if (!this.item.label) {
-      return
-    }
-
     const paperScale = scale.obj2scaled(this.item.position, options)
     this.item.label = this.item.label.replace(/[^\S\r\n]/g, '\u00a0')
 

@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromTextCreation, fromTextUpdating } from '../actions/text'
+import {
+  fromTextCreation,
+  fromTextUpdating,
+  fromTextDeletion
+} from '../actions/text'
 import { fromMultipleMove } from '../actions/fragment'
 import Action from '../shared/action'
 
@@ -110,6 +114,8 @@ function propsDialog(editor, id, position) {
 
       if (!id && id !== 0 && elem.label) {
         editor.update(fromTextCreation(editor.render.ctab, elem))
+      } else if (!elem.label) {
+        editor.update(fromTextDeletion(editor.render.ctab, elem))
       } else if (label !== elem.label) {
         elem.id = id
         editor.update(fromTextUpdating(editor.render.ctab, elem))

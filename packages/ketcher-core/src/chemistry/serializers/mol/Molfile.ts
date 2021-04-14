@@ -1,4 +1,3 @@
-import { Element } from '../constants/element.types'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,8 +15,8 @@ import { Element } from '../constants/element.types'
  ***************************************************************************/
 import { Struct } from 'chemistry/entities'
 import { Elements } from 'chemistry/constants'
-import common from './mol/common'
-import utils from './mol/utils'
+import common from './common'
+import utils from './utils'
 
 const END_V2000 = '2D 1   1.00000     0.00000     0'
 

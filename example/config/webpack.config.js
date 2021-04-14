@@ -4,24 +4,11 @@ const {
   addWebpackModuleRule,
   addWebpackPlugin
 } = require('customize-cra')
-const config = require('../../package.json')
 const webpack = require('webpack')
 const HtmlReplaceWebpackPlugin = require('html-replace-webpack-plugin')
 const GitRevisionPlugin = require('git-revision-webpack-plugin')
 
-function getBuildNumber() {
-  let buildNumber = 0
-  try {
-    const gitRevisionPlugin = new GitRevisionPlugin({
-      commithashCommand: `rev-list v${config.version}..HEAD --count`
-    })
-    buildNumber = gitRevisionPlugin.commithash()
-  } catch {}
-
-  return buildNumber
-}
-
-const buildNumber = getBuildNumber()
+const gitRevisionPlugin = new GitRevisionPlugin({ lightweightTags: true })
 
 module.exports = override(
   addBundleVisualizer({}, true),
@@ -40,8 +27,7 @@ module.exports = override(
     new HtmlReplaceWebpackPlugin([
       {
         pattern: '@@version',
-        replacement:
-          'v' + config.version + (buildNumber > 0 ? `+${buildNumber}` : '')
+        replacement: gitRevisionPlugin.version()
       }
     ])
   )

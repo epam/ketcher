@@ -65,7 +65,11 @@ const saveSchema = {
 class SaveDialog extends Component {
   constructor(props) {
     super(props)
-    this.state = { imageFormat: 'svg', tabIndex: 0 }
+    this.state = {
+      disableControls: false,
+      imageFormat: 'svg',
+      tabIndex: 0
+    }
     this.isRxn = this.props.struct.hasRxnArrow()
     this.textAreaRef = createRef()
     const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'graph']
@@ -104,6 +108,8 @@ class SaveDialog extends Component {
   }
 
   changeType = type => {
+    this.setState({ disableControls: true })
+
     const { struct, server, options, formState } = this.props
 
     const factory = new FormatterFactory(
@@ -115,22 +121,27 @@ class SaveDialog extends Component {
 
     const service = factory.create(type, options)
 
-    return service.getStructureFromStructAsync(struct).then(
-      structStr => {
-        this.setState({ structStr })
-        setTimeout(() => {
-          if (this.textAreaRef.current) {
-            this.textAreaRef.current.select()
-          }
-        }, 10) // TODO: remove hack
-      },
-      e => {
-        //TODO: add error handler call
-        alert(e.message)
-        this.props.onResetForm(formState)
-        return e
-      }
-    )
+    return service
+      .getStructureFromStructAsync(struct)
+      .then(
+        structStr => {
+          this.setState({ structStr })
+          setTimeout(() => {
+            if (this.textAreaRef.current) {
+              this.textAreaRef.current.select()
+            }
+          }, 10) // TODO: remove hack
+        },
+        e => {
+          //TODO: add error handler call
+          alert(e.message)
+          this.props.onResetForm(formState)
+          return e
+        }
+      )
+      .finally(() => {
+        this.setState({ disableControls: false })
+      })
   }
 
   getWarnings = format => {
@@ -202,7 +213,7 @@ class SaveDialog extends Component {
   }
 
   getButtons = () => {
-    const { imageFormat, structStr, tabIndex } = this.state
+    const { disableControls, imageFormat, structStr, tabIndex } = this.state
     const formState = this.props.formState
     const { filename, format } = formState.result
     const isCleanStruct = this.props.struct.isBlank()
@@ -217,13 +228,13 @@ class SaveDialog extends Component {
           type={format.mime}
           server={this.props.server}
           onSave={this.props.onOk}
-          disabled={!formState.valid || isCleanStruct}>
+          disabled={disableControls || !formState.valid || isCleanStruct}>
           Save To File
         </SaveButton>,
         <button
           className="save-button"
           key="save-tmpl"
-          disabled={isCleanStruct}
+          disabled={disableControls || isCleanStruct}
           onClick={() => this.props.onTmplSave(this.props.struct)}>
           Save to Templates...
         </button>,
@@ -239,7 +250,12 @@ class SaveDialog extends Component {
           key="save-image-button"
           type="image/svg+xml"
           onSave={this.props.onOk}
-          disabled={!formState.valid || isCleanStruct || !this.props.server}>
+          disabled={
+            disableControls ||
+            !formState.valid ||
+            isCleanStruct ||
+            !this.props.server
+          }>
           Save As Image
         </SaveButton>,
         'Close'

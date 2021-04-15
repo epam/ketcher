@@ -114,7 +114,6 @@ class StructEditor extends Component {
       onDearomatizeStruct,
       onAttachEdit,
       indigoVerification,
-      onCipChange,
       className,
       ...props
     } = this.props

@@ -19,7 +19,7 @@ import {
   Subscription
 } from 'subscription'
 
-import { Struct, Pile, Vec2 } from 'ketcher-core'
+import { Struct, Pile, Vec2, SGroupForest } from 'ketcher-core'
 import Render from '../render'
 import { fromDescriptorsAlign, fromNewCanvas } from './actions/basic'
 import Action from './shared/action'
@@ -80,7 +80,6 @@ class Editor {
     aromatizeStruct: PipelineSubscription
     dearomatizeStruct: PipelineSubscription
     enhancedStereoEdit: PipelineSubscription
-    cipChange: PipelineSubscription
   }
   lastEvent: any
 
@@ -114,8 +113,7 @@ class Editor {
       aromatizeStruct: new PipelineSubscription(),
       dearomatizeStruct: new PipelineSubscription(),
       // TODO: correct
-      enhancedStereoEdit: new PipelineSubscription(),
-      cipChange: new PipelineSubscription()
+      enhancedStereoEdit: new PipelineSubscription()
     }
 
     domEventSetup(this, clientArea)
@@ -295,28 +293,36 @@ class Editor {
     return true
   }
 
-  shouldRecalculateCip(action: Action): boolean {
+  update(action: Action | true, ignoreHistory?) {
+    if (action === true) {
+      this.render.update(true) // force
+    } else {
+      if (!ignoreHistory && !action.isDummy()) {
+        if (this.shouldClearCipMarks(action)) {
+          this.revertCipCalculation()
+        } else {
+          this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action)
+          if (this.historyStack.length > HISTORY_SIZE) {
+            this.historyStack.shift()
+          }
+          this.historyPtr = this.historyStack.length
+          this.event.change.dispatch(action) // TODO: stoppable here
+        }
+      }
+      this.render.update()
+    }
+  }
+
+  shouldClearCipMarks(action: Action): boolean {
     return (
       this.struct().sgroups.size > 0 &&
       !(action.operations[0] instanceof CanvasLoad)
     )
   }
 
-  update(action: Action | true, ignoreHistory?) {
-    if (action === true) {
-      this.render.update(true) // force
-    } else {
-      if (!ignoreHistory && !action.isDummy()) {
-        this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action)
-        if (this.historyStack.length > HISTORY_SIZE) {
-          this.historyStack.shift()
-        }
-        this.historyPtr = this.historyStack.length
-        this.event.change.dispatch(action) // TODO: stoppable here
-        if (this.shouldRecalculateCip(action)) this.event.cipChange.dispatch()
-      }
-      this.render.update()
-    }
+  revertCipCalculation(): void {
+    this.render.ctab.molecule.sGroupForest = new SGroupForest()
+    this.render.ctab.molecule.sgroups.clear()
   }
 
   historySize() {

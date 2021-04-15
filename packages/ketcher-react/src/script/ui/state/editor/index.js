@@ -31,7 +31,6 @@ import acts from '../../action'
 
 import { openDialog } from '../modal'
 import { serverCall } from '../server'
-import { onAction } from '../shared'
 
 export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }))
@@ -58,9 +57,6 @@ export default function initEditor(dispatch, getState) {
       if (action === undefined) sleep(0).then(() => dispatch(resetToSelect))
       // new tool in reducer
       else dispatch(resetToSelect)
-    },
-    onCipChange: () => {
-      sleep(0).then(() => dispatch(onAction(acts.cip.action)))
     },
     onSelectionChange: () => {
       updateAction()

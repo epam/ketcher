@@ -66,10 +66,11 @@ export default function initEditor(dispatch, getState) {
       updateAction()
     },
     onElementEdit: selem => {
-      const elem = fromElement(selem)
+      const elem = selem
       let dlg = null
       if (elem.type === 'text') {
-        dlg = openDialog(dispatch, 'text', elem).then(res => res)
+        // TODO: move textdialog opening logic to another place
+        return openDialog(dispatch, 'text', elem)
       } else if (Elements.get(elem.label)) {
         dlg = openDialog(dispatch, 'atomProps', elem)
       } else if (Object.keys(elem).length === 1 && 'ap' in elem) {
@@ -99,7 +100,6 @@ export default function initEditor(dispatch, getState) {
       } else {
         dlg = openDialog(dispatch, 'period-table', elem)
       }
-
       return dlg.then(toElement)
     },
 

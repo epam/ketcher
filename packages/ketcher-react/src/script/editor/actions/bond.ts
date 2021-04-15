@@ -113,7 +113,7 @@ export function fromBondsAttrs(
       const value = key in attrs ? attrs[key] : Bond.attrGetDefault(key)
       action.addOp(new BondAttr(bid, key, value).perform(restruct))
       if (key === 'stereo' && key in attrs)
-        action.mergeWith(fromBondStereoUpdate(restruct, bid, true))
+        action.mergeWith(fromBondStereoUpdate(restruct, bid))
     })
   })
 

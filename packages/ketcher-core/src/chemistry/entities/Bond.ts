@@ -46,14 +46,6 @@ export class Bond {
       CIS_TRANS: 3
     },
 
-    // STEREO:
-    // {
-    // 	NONE: 0,
-    // 	UP: 1,
-    // 	EITHER: 2,
-    // 	DOWN: 3
-    // },
-
     TOPOLOGY: {
       EITHER: 0,
       RING: 1,
@@ -85,9 +77,9 @@ export class Bond {
   readonly stereo: number
   readonly topology: number
   readonly reactingCenterStatus: number
-  readonly len: number
-  readonly sb: number
-  readonly sa: number
+  len: number
+  sb: number
+  sa: number
   hb1?: number
   hb2?: number
   angle: number

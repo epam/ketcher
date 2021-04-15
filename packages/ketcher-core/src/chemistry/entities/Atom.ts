@@ -141,6 +141,7 @@ export class Atom {
   stereoLabel: string | null
   stereoParity: number
   hasImplicitH?: boolean
+  pseudo!: string
 
   constructor(params: AtomParams) {
     this.label = params.label

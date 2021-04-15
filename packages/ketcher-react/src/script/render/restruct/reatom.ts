@@ -22,15 +22,41 @@ import {
   Vec2,
   scale,
   Elements,
-  ElementColor
+  ElementColor,
+  StereoLabel,
+  Atom,
+  Struct
 } from 'ketcher-core'
-import { LayerMap } from './GeneralEnumTypes'
+import { LayerMap, StereoColoringType } from './GeneralEnumTypes'
+import ReStruct from './ReStruct'
+import Render from '..'
+
+interface ElemAttr {
+  text: string
+  path: any
+  rbb: { x: number; y: number; width: number; height: number }
+}
+
+const StereoLabelMinOpacity = 0.3
+
+enum ShowHydrogenLabels {
+  Off = 'off',
+  Hetero = 'Hetero',
+  Terminal = 'Terminal',
+  TerminalAndHetero = 'Terminal and Hetero',
+  On = 'on'
+}
 
 class ReAtom extends ReObject {
-  /** @param {import('ketcher-core').Atom} atom */
-  constructor(/* chem.Atom*/ atom) {
+  a: Atom
+  showLabel: boolean
+  hydrogenOnTheLeft: boolean
+  color: string
+  component: number
+  label?: ElemAttr
+
+  constructor(atom: Atom) {
     super('atom')
-    /** @type {import('ketcher-core').Atom} */
     this.a = atom // TODO rename a to item
     this.showLabel = false
 
@@ -39,34 +65,34 @@ class ReAtom extends ReObject {
     this.color = '#000000'
     this.component = -1
   }
-  static isSelectable() {
+  static isSelectable(): true {
     return true
   }
-  getVBoxObj(render) {
+  getVBoxObj(render: Render): Box2Abs | null {
     if (this.visel.boundingBox)
       return ReObject.prototype.getVBoxObj.call(this, render)
     return new Box2Abs(this.a.pp, this.a.pp)
   }
-  drawHighlight(render) {
-    var ret = this.makeHighlightPlate(render)
+  drawHighlight(render: Render) {
+    const ret = this.makeHighlightPlate(render)
     render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
     return ret
   }
-  makeHighlightPlate(render) {
-    var paper = render.paper
-    var options = render.options
-    var ps = scale.obj2scaled(this.a.pp, options)
+  makeHighlightPlate(render: Render) {
+    const paper = render.paper
+    const options = render.options
+    const ps = scale.obj2scaled(this.a.pp, options)
     return paper
       .circle(ps.x, ps.y, options.atomSelectionPlateRadius)
       .attr(options.highlightStyle)
   }
-  makeSelectionPlate(restruct, paper, styles) {
-    var ps = scale.obj2scaled(this.a.pp, restruct.render.options)
+  makeSelectionPlate(restruct: ReStruct, paper: any, styles: any) {
+    const ps = scale.obj2scaled(this.a.pp, restruct.render.options)
     return paper
       .circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
       .attr(styles.selectionStyle)
   }
-  show(restruct, aid, options) {
+  show(restruct: ReStruct, aid: number, options: any): void {
     // eslint-disable-line max-statements
     const render = restruct.render
     const ps = scale.obj2scaled(this.a.pp, render.options)
@@ -74,16 +100,23 @@ class ReAtom extends ReObject {
     this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this)
     this.showLabel = isLabelVisible(restruct, render.options, this)
     this.color = 'black' // reset colour
-    if (this.showLabel) {
-      var label = buildLabel(this, render.paper, ps, options)
-      var delta = 0.5 * options.lineWidth
-      var rightMargin = label.rbb.width / 2
-      var leftMargin = -label.rbb.width / 2
-      var implh = Math.floor(this.a.implicitH)
-      var isHydrogen = label.text === 'H'
-      restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true)
 
-      var index = null
+    let delta
+    let rightMargin
+    let leftMargin
+    let implh
+    let isHydrogen
+    let label
+    let index: any = null
+
+    if (this.showLabel) {
+      label = buildLabel(this, render.paper, ps, options)
+      delta = 0.5 * options.lineWidth
+      rightMargin = label.rbb.width / 2
+      leftMargin = -label.rbb.width / 2
+      implh = Math.floor(this.a.implicitH)
+      isHydrogen = label.text === 'H'
+      restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true)
       if (options.showAtomIds) {
         index = {}
         index.text = aid.toString()
@@ -100,7 +133,7 @@ class ReAtom extends ReObject {
     }
 
     if (this.showLabel && !this.a.alias && !this.a.pseudo) {
-      var hydroIndex = null
+      let hydroIndex: any = null
       if (isHydrogen && implh > 0) {
         hydroIndex = showHydroIndex(this, render, implh, rightMargin)
         rightMargin += hydroIndex.rbb.width + delta
@@ -114,7 +147,7 @@ class ReAtom extends ReObject {
       }
 
       if (this.a.radical != 0) {
-        var radical = showRadical(this, render)
+        const radical = showRadical(this, render)
         restruct.addReObjectPath(
           LayerMap.data,
           this.visel,
@@ -124,7 +157,7 @@ class ReAtom extends ReObject {
         )
       }
       if (this.a.isotope != 0) {
-        var isotope = showIsotope(this, render, leftMargin)
+        const isotope = showIsotope(this, render, leftMargin)
         leftMargin -= isotope.rbb.width + delta
         restruct.addReObjectPath(
           LayerMap.data,
@@ -139,13 +172,13 @@ class ReAtom extends ReObject {
         implh > 0 &&
         displayHydrogen(options.showHydrogenLabels, this)
       ) {
-        var data = showHydrogen(this, render, implh, {
+        const data = showHydrogen(this, render, implh, {
           hydrogen: {},
           hydroIndex,
           rightMargin,
           leftMargin
         })
-        var hydrogen = data.hydrogen
+        const hydrogen = data.hydrogen
         hydroIndex = data.hydroIndex
         rightMargin = data.rightMargin
         leftMargin = data.leftMargin
@@ -167,7 +200,7 @@ class ReAtom extends ReObject {
       }
 
       if (this.a.charge != 0 && options.showCharge) {
-        var charge = showCharge(this, render, rightMargin)
+        const charge = showCharge(this, render, rightMargin)
         rightMargin += charge.rbb.width + delta
         restruct.addReObjectPath(
           LayerMap.data,
@@ -178,7 +211,7 @@ class ReAtom extends ReObject {
         )
       }
       if (this.a.explicitValence >= 0 && options.showValence) {
-        var valence = showExplicitValence(this, render, rightMargin)
+        const valence = showExplicitValence(this, render, rightMargin)
         rightMargin += valence.rbb.width + delta
         restruct.addReObjectPath(
           LayerMap.data,
@@ -190,7 +223,7 @@ class ReAtom extends ReObject {
       }
 
       if (this.a.badConn && options.showValenceWarnings) {
-        var warning = showWarning(this, render, leftMargin, rightMargin)
+        const warning = showWarning(this, render, leftMargin, rightMargin)
         restruct.addReObjectPath(
           LayerMap.warnings,
           this.visel,
@@ -227,19 +260,28 @@ class ReAtom extends ReObject {
       (queryAttrsText.length > 0 ? `${queryAttrsText}\n` : '') +
       (aamText.length > 0 ? `.${aamText}.` : '')
     if (text.length > 0) {
-      var elem = Elements.get(this.a.label)
-      var aamPath = render.paper.text(ps.x, ps.y, text).attr({
+      const elem = Elements.get(this.a.label)
+      const aamPath = render.paper.text(ps.x, ps.y, text).attr({
         font: options.font,
         'font-size': options.fontszsub,
         fill: options.atomColoring && elem ? ElementColor[this.a.label] : '#000'
       })
-      var aamBox = util.relBox(aamPath.getBBox())
+      if (stereoLabel) {
+        //use dom element to change color of stereo label which is the first element
+        //of just created text
+        //text -> tspan
+        const color = getStereoAtomColor(render.options, stereoLabel)
+        aamPath.node.children[0].setAttribute('fill', color)
+        const opacity = getStereoAtomOpacity(stereoLabel)
+        aamPath.node.children[0].setAttribute('opacity', opacity)
+      }
+      const aamBox = util.relBox(aamPath.getBBox())
       draw.recenterText(aamPath, aamBox)
-      var dir = bisectLargestSector(this, restruct.molecule)
-      var visel = this.visel
-      var t = 3
+      const visel = this.visel
+      let t = 3
+      let dir = bisectLargestSector(this, restruct.molecule)
       // estimate the shift to clear the atom label
-      for (var i = 0; i < visel.exts.length; ++i)
+      for (let i = 0; i < visel.exts.length; ++i)
         t = Math.max(t, util.shiftRayBox(ps, dir, visel.exts[i].translate(ps)))
       // estimate the shift backwards to account for the size of the aam/query text box itself
       t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox))
@@ -250,10 +292,46 @@ class ReAtom extends ReObject {
   }
 }
 
+function getStereoAtomColor(options, stereoLabel) {
+  if (
+    !stereoLabel ||
+    options.colorStereogenicCenters === StereoColoringType.Off ||
+    options.colorStereogenicCenters === StereoColoringType.BondsOnly
+  ) {
+    return '#000'
+  }
+
+  return getColorFromStereoLabel(options, stereoLabel)
+}
+
+export function getColorFromStereoLabel(options, stereoLabel) {
+  const stereoLabelType = stereoLabel.match(/\D+/g)[0]
+
+  switch (stereoLabelType) {
+    case StereoLabel.And:
+      return options.colorOfAndCenters
+    case StereoLabel.Or:
+      return options.colorOfOrCenters
+    case StereoLabel.Abs:
+      return options.colorOfAbsoluteCenters
+    default:
+      return '#000'
+  }
+}
+
+function getStereoAtomOpacity(stereoLabel) {
+  const stereoLabelType = stereoLabel.match(/\D+/g)[0]
+  const stereoLabelNumber = +stereoLabel.replace(stereoLabelType, '')
+  if (stereoLabelType === StereoLabel.Abs) {
+    return 1
+  }
+  return Math.max(1 - (stereoLabelNumber - 1) / 10, StereoLabelMinOpacity)
+}
+
 function isLabelVisible(restruct, options, atom) {
   const visibleTerminal =
-    options.showHydrogenLabels !== 'off' &&
-    options.showHydrogenLabels !== 'Hetero'
+    options.showHydrogenLabels !== ShowHydrogenLabels.Off &&
+    options.showHydrogenLabels !== ShowHydrogenLabels.Hetero
 
   const neighborsLength =
     atom.a.neighbors.length === 0 ||
@@ -296,10 +374,12 @@ function isLabelVisible(restruct, options, atom) {
 
 function displayHydrogen(hydrogenLabels, atom) {
   return (
-    hydrogenLabels === 'on' ||
-    (hydrogenLabels === 'Terminal' && atom.a.neighbors.length < 2) ||
-    (hydrogenLabels === 'Hetero' && atom.label.text.toLowerCase() !== 'c') ||
-    (hydrogenLabels === 'Terminal and Hetero' &&
+    hydrogenLabels === ShowHydrogenLabels.On ||
+    (hydrogenLabels === ShowHydrogenLabels.Terminal &&
+      atom.a.neighbors.length < 2) ||
+    (hydrogenLabels === ShowHydrogenLabels.Hetero &&
+      atom.label.text.toLowerCase() !== 'c') ||
+    (hydrogenLabels === ShowHydrogenLabels.TerminalAndHetero &&
       (atom.a.neighbors.length < 2 || atom.label.text.toLowerCase() !== 'c'))
   )
 }
@@ -308,7 +388,7 @@ function setHydrogenPos(struct, atom) {
   // check where should the hydrogen be put on the left of the label
   if (atom.a.neighbors.length === 0) {
     const element = Elements.get(atom.a.label)
-    return !element || element.leftH
+    return !element || Boolean(element.leftH)
   }
 
   let yl = 1
@@ -331,9 +411,14 @@ function setHydrogenPos(struct, atom) {
   return yl < 0.51 || yr < 0.51 ? yr < yl : nr > nl
 }
 
-function buildLabel(atom, paper, ps, options) {
+function buildLabel(
+  atom: ReAtom,
+  paper: any,
+  ps: Vec2,
+  options: any
+): ElemAttr {
   // eslint-disable-line max-statements
-  let label = {}
+  let label: any = {}
   label.text = getLabelText(atom.a)
 
   if (label.text === '') label = 'R#' // for structures that missed 'M  RGP' tag in molfile
@@ -390,11 +475,11 @@ function getLabelText(atom) {
   return atom.label
 }
 
-function showHydroIndex(atom, render, implh, rightMargin) {
-  var ps = scale.obj2scaled(atom.a.pp, render.options)
-  var options = render.options
-  var delta = 0.5 * options.lineWidth
-  var hydroIndex = {}
+function showHydroIndex(atom, render, implh, rightMargin): ElemAttr {
+  const ps = scale.obj2scaled(atom.a.pp, render.options)
+  const options = render.options
+  const delta = 0.5 * options.lineWidth
+  const hydroIndex: any = {}
   hydroIndex.text = (implh + 1).toString()
   hydroIndex.path = render.paper.text(ps.x, ps.y, hydroIndex.text).attr({
     font: options.font,
@@ -414,12 +499,12 @@ function showHydroIndex(atom, render, implh, rightMargin) {
   return hydroIndex
 }
 
-function showRadical(atom, render) {
-  var ps = scale.obj2scaled(atom.a.pp, render.options)
-  var options = render.options
-  var paper = render.paper
-  var radical = {}
-  var hshift
+function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
+  const ps: Vec2 = scale.obj2scaled(atom.a.pp, render.options)
+  const options = render.options
+  const paper: any = render.paper
+  const radical: any = {}
+  let hshift
   switch (atom.a.radical) {
     case 1:
       radical.path = paper.set()
@@ -448,17 +533,21 @@ function showRadical(atom, render) {
       break
   }
   radical.rbb = util.relBox(radical.path.getBBox())
-  var vshift = -0.5 * (atom.label.rbb.height + radical.rbb.height)
+  let vshift = -0.5 * (atom.label!.rbb.height + radical.rbb.height)
   if (atom.a.radical === 3) vshift -= options.lineWidth / 2
   pathAndRBoxTranslate(radical.path, radical.rbb, 0, vshift)
   return radical
 }
 
-function showIsotope(atom, render, leftMargin) {
-  var ps = scale.obj2scaled(atom.a.pp, render.options)
-  var options = render.options
-  var delta = 0.5 * options.lineWidth
-  var isotope = {}
+function showIsotope(
+  atom: ReAtom,
+  render: Render,
+  leftMargin: number
+): ElemAttr {
+  const ps = scale.obj2scaled(atom.a.pp, render.options)
+  const options = render.options
+  const delta = 0.5 * options.lineWidth
+  const isotope: any = {}
   isotope.text = atom.a.isotope.toString()
   isotope.path = render.paper.text(ps.x, ps.y, isotope.text).attr({
     font: options.font,
@@ -472,19 +561,23 @@ function showIsotope(atom, render, leftMargin) {
     isotope.path,
     isotope.rbb,
     leftMargin - 0.5 * isotope.rbb.width - delta,
-    -0.3 * atom.label.rbb.height
+    -0.3 * atom.label!.rbb.height
   )
   /* eslint-enable no-mixed-operators*/
   return isotope
 }
 
-function showCharge(atom, render, rightMargin) {
-  var ps = scale.obj2scaled(atom.a.pp, render.options)
-  var options = render.options
-  var delta = 0.5 * options.lineWidth
-  var charge = {}
+function showCharge(
+  atom: ReAtom,
+  render: Render,
+  rightMargin: number
+): ElemAttr {
+  const ps = scale.obj2scaled(atom.a.pp, render.options)
+  const options = render.options
+  const delta = 0.5 * options.lineWidth
+  const charge: any = {}
   charge.text = ''
-  var absCharge = Math.abs(atom.a.charge)
+  const absCharge = Math.abs(atom.a.charge)
   if (absCharge !== 1) charge.text = absCharge.toString()
   if (atom.a.charge < 0) charge.text += '\u2013'
   else charge.text += '+'
@@ -501,14 +594,18 @@ function showCharge(atom, render, rightMargin) {
     charge.path,
     charge.rbb,
     rightMargin + 0.5 * charge.rbb.width + delta,
-    -0.3 * atom.label.rbb.height
+    -0.3 * atom.label!.rbb.height
   )
   /* eslint-enable no-mixed-operators*/
   return charge
 }
 
-function showExplicitValence(atom, render, rightMargin) {
-  var mapValence = {
+function showExplicitValence(
+  atom: ReAtom,
+  render: Render,
+  rightMargin: number
+): ElemAttr {
+  const mapValence = {
     0: '0',
     1: 'I',
     2: 'II',
@@ -525,10 +622,10 @@ function showExplicitValence(atom, render, rightMargin) {
     13: 'XIII',
     14: 'XIV'
   }
-  var ps = scale.obj2scaled(atom.a.pp, render.options)
-  var options = render.options
-  var delta = 0.5 * options.lineWidth
-  var valence = {}
+  const ps = scale.obj2scaled(atom.a.pp, render.options)
+  const options = render.options
+  const delta = 0.5 * options.lineWidth
+  const valence: any = {}
   valence.text = mapValence[atom.a.explicitValence]
   if (!valence.text)
     throw new Error('invalid valence ' + atom.a.explicitValence.toString())
@@ -545,20 +642,35 @@ function showExplicitValence(atom, render, rightMargin) {
     valence.path,
     valence.rbb,
     rightMargin + 0.5 * valence.rbb.width + delta,
-    -0.3 * atom.label.rbb.height
+    -0.3 * atom.label!.rbb.height
   )
   /* eslint-enable no-mixed-operators*/
   return valence
 }
 
-function showHydrogen(atom, render, implh, data) {
+function showHydrogen(
+  atom: ReAtom,
+  render: Render,
+  implh: number,
+  data: {
+    hydrogen: any
+    hydroIndex: number
+    rightMargin: number
+    leftMargin: number
+  }
+): {
+  hydrogen: ElemAttr
+  hydroIndex: ElemAttr
+  rightMargin: number
+  leftMargin: number
+} {
   // eslint-disable-line max-statements
-  var hydroIndex = data.hydroIndex
-  var hydrogenLeft = atom.hydrogenOnTheLeft
-  var ps = scale.obj2scaled(atom.a.pp, render.options)
-  var options = render.options
-  var delta = 0.5 * options.lineWidth
-  var hydrogen = data.hydrogen
+  let hydroIndex: any = data.hydroIndex
+  const hydrogenLeft = atom.hydrogenOnTheLeft
+  const ps = scale.obj2scaled(atom.a.pp, render.options)
+  const options = render.options
+  const delta = 0.5 * options.lineWidth
+  const hydrogen = data.hydrogen
   hydrogen.text = 'H'
   hydrogen.path = render.paper.text(ps.x, ps.y, hydrogen.text).attr({
     font: options.font,
@@ -591,7 +703,7 @@ function showHydrogen(atom, render, implh, data) {
         hydroIndex.path,
         hydroIndex.rbb,
         data.rightMargin + 0.5 * hydroIndex.rbb.width + delta,
-        0.2 * atom.label.rbb.height
+        0.2 * atom.label!.rbb.height
       )
       data.rightMargin += hydroIndex.rbb.width + delta
     }
@@ -602,7 +714,7 @@ function showHydrogen(atom, render, implh, data) {
         hydroIndex.path,
         hydroIndex.rbb,
         data.leftMargin - 0.5 * hydroIndex.rbb.width - delta,
-        0.2 * atom.label.rbb.height
+        0.2 * atom.label!.rbb.height
       )
       data.leftMargin -= hydroIndex.rbb.width + delta
     }
@@ -617,12 +729,17 @@ function showHydrogen(atom, render, implh, data) {
   return Object.assign(data, { hydrogen, hydroIndex })
 }
 
-function showWarning(atom, render, leftMargin, rightMargin) {
-  var ps = scale.obj2scaled(atom.a.pp, render.options)
-  var delta = 0.5 * render.options.lineWidth
-  var tfx = util.tfx
-  var warning = {}
-  var y = ps.y + atom.label.rbb.height / 2 + delta
+function showWarning(
+  atom,
+  render,
+  leftMargin,
+  rightMargin
+): { rbb: DOMRect; path: any } {
+  const ps = scale.obj2scaled(atom.a.pp, render.options)
+  const delta = 0.5 * render.options.lineWidth
+  const tfx = util.tfx
+  const warning: any = {}
+  const y = ps.y + atom.label.rbb.height / 2 + delta
   warning.path = render.paper
     .path(
       'M{0},{1}L{2},{3}',
@@ -639,29 +756,29 @@ function showWarning(atom, render, leftMargin, rightMargin) {
 
 function showAttpnt(atom, render, lsb, addReObjectPath) {
   // eslint-disable-line max-statements
-  var asterisk = '∗'
-  var ps = scale.obj2scaled(atom.a.pp, render.options)
-  var options = render.options
-  var tfx = util.tfx
-  var i, j
+  const asterisk = '∗'
+  const ps = scale.obj2scaled(atom.a.pp, render.options)
+  const options = render.options
+  const tfx = util.tfx
+  let i, j
   for (i = 0; i < 4; ++i) {
-    var attpntText = ''
+    let attpntText = ''
     if (atom.a.attpnt & (1 << i)) {
       if (attpntText.length > 0) attpntText += ' '
       attpntText += asterisk
       for (j = 0; j < (i == 0 ? 0 : i + 1); ++j) attpntText += "'"
-      var pos0 = new Vec2(ps)
-      var pos1 = ps.addScaled(lsb, 0.7 * options.scale)
+      let pos0 = new Vec2(ps)
+      let pos1 = ps.addScaled(lsb, 0.7 * options.scale)
 
-      var attpntPath1 = render.paper.text(pos1.x, pos1.y, attpntText).attr({
+      const attpntPath1 = render.paper.text(pos1.x, pos1.y, attpntText).attr({
         font: options.font,
         'font-size': options.fontsz,
         fill: atom.color
       })
-      var attpntRbb = util.relBox(attpntPath1.getBBox())
+      const attpntRbb = util.relBox(attpntPath1.getBBox())
       draw.recenterText(attpntPath1, attpntRbb)
 
-      var lsbn = lsb.negated()
+      const lsbn = lsb.negated()
       /* eslint-disable no-mixed-operators*/
       pos1 = pos1.addScaled(
         lsbn,
@@ -670,14 +787,14 @@ function showAttpnt(atom, render, lsb, addReObjectPath) {
       )
       /* eslint-enable no-mixed-operators*/
       pos0 = shiftBondEnd(atom, pos0, lsb, options.lineWidth)
-      var n = lsb.rotateSC(1, 0)
-      var arrowLeft = pos1
+      const n = lsb.rotateSC(1, 0)
+      const arrowLeft = pos1
         .addScaled(n, 0.05 * options.scale)
         .addScaled(lsbn, 0.09 * options.scale)
-      var arrowRight = pos1
+      const arrowRight = pos1
         .addScaled(n, -0.05 * options.scale)
         .addScaled(lsbn, 0.09 * options.scale)
-      var attpntPath = render.paper.set()
+      const attpntPath = render.paper.set()
       attpntPath.push(
         attpntPath1,
         render.paper
@@ -711,7 +828,7 @@ function showAttpnt(atom, render, lsb, addReObjectPath) {
 // }
 
 function getAamText(atom) {
-  var aamText = ''
+  let aamText = ''
   if (atom.a.aam > 0) aamText += atom.a.aam
   if (atom.a.invRet > 0) {
     if (aamText.length > 0) aamText += ','
@@ -728,7 +845,7 @@ function getAamText(atom) {
 }
 
 function getQueryAttrsText(atom) {
-  var queryAttrsText = ''
+  let queryAttrsText = ''
   if (atom.a.ringBondCount != 0) {
     if (atom.a.ringBondCount > 0)
       queryAttrsText += 'rb' + atom.a.ringBondCount.toString()
@@ -762,20 +879,21 @@ function pathAndRBoxTranslate(path, rbb, x, y) {
   rbb.y += y
 }
 
-function bisectLargestSector(atom, struct) {
-  var angles = []
+function bisectLargestSector(atom: ReAtom, struct: Struct) {
+  let angles: Array<number> = []
   atom.a.neighbors.forEach(hbid => {
-    var hb = struct.halfBonds.get(hbid)
-    angles.push(hb.ang)
+    const hb = struct.halfBonds.get(hbid)
+    hb && angles.push(hb.ang)
   })
   angles = angles.sort((a, b) => a - b)
-  var da = []
-  for (var i = 0; i < angles.length - 1; ++i)
+  const da: Array<number> = []
+  for (let i = 0; i < angles.length - 1; ++i) {
     da.push(angles[(i + 1) % angles.length] - angles[i])
+  }
   da.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI)
-  var daMax = 0
-  var ang = -Math.PI / 2
-  for (i = 0; i < angles.length; ++i) {
+  let daMax = 0
+  let ang = -Math.PI / 2
+  for (let i = 0; i < angles.length; ++i) {
     if (da[i] > daMax) {
       daMax = da[i]
       ang = angles[i] + da[i] / 2
@@ -785,10 +903,10 @@ function bisectLargestSector(atom, struct) {
 }
 
 function shiftBondEnd(atom, pos0, dir, margin) {
-  var t = 0
-  var visel = atom.visel
-  for (var k = 0; k < visel.exts.length; ++k) {
-    var box = visel.exts[k].translate(pos0)
+  let t = 0
+  const visel = atom.visel
+  for (let k = 0; k < visel.exts.length; ++k) {
+    const box = visel.exts[k].translate(pos0)
     t = Math.max(t, util.shiftRayBox(pos0, dir, box))
   }
   if (t > 0) pos0 = pos0.addScaled(dir, t + margin)

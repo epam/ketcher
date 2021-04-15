@@ -34,10 +34,34 @@ import OpenButton from '../../../../../component/view/openbutton'
 import MeasureInput from '../../../../../component/form/measure-input'
 import SystemFonts from '../../../../../component/form/systemfonts'
 import SelectCheckbox from '../../../../../component/form/select-checkbox'
+import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker'
 
 import classes from './Settings.module.less'
+import { BaseCallProps, BaseProps } from '../../../modal.types'
+import { StructService } from 'ketcher-core'
 
-function SettingsDialog(props) {
+interface SettingsProps extends BaseProps {
+  initState: any
+  appOpts: {
+    version: string
+    buildDate: string
+    buildNumber: string
+    indigoVersion: string
+    imagoVersions: Array<string>
+    server: boolean
+    templates: boolean
+  }
+  server: StructService
+}
+
+interface SettingsCallProps extends BaseCallProps {
+  onOpenFile: (any) => void
+  onReset: () => void
+}
+
+type Props = SettingsProps & SettingsCallProps
+
+const SettingsDialog = (props: Props) => {
   const {
     initState,
     formState,
@@ -80,6 +104,10 @@ function SettingsDialog(props) {
               <Field name="showValenceWarnings" component={SelectCheckbox} />
               <Field name="atomColoring" component={SelectCheckbox} />
               <Field name="hideStereoFlags" component={SelectCheckbox} />
+              <Field name="colorOfAbsoluteCenters" component={ColorPicker} />
+              <Field name="colorOfAndCenters" component={ColorPicker} />
+              <Field name="colorOfOrCenters" component={ColorPicker} />
+              <Field name="colorStereogenicCenters" />
               <Field name="font" component={SystemFonts} />
               <Field name="fontsz" component={MeasureInput} />
               <Field name="fontszsub" component={MeasureInput} />
@@ -123,7 +151,7 @@ function SettingsDialog(props) {
             </fieldset>
           </Accordion.Group>
           <Accordion.Group caption="3D Viewer">
-            <fieldset className={classes.viewer} disabled={!window.Miew}>
+            <fieldset className={classes.viewer} disabled={!window['Miew']}>
               <Field name="miewMode" />
               <Field name="miewTheme" />
               <Field name="miewAtomLabel" />

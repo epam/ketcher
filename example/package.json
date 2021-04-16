@@ -12,6 +12,7 @@
     "build:standalone": "cross-env MODE=standalone react-app-rewired build && yarn clean:standalone && shx mkdir -p dist && shx cp -r build dist/standalone && yarn clean:build",
     "build:remote": "cross-env MODE=remote react-app-rewired build && yarn clean:remote && shx mkdir -p dist && shx cp -r build dist/remote && yarn clean:build",
     "build": "run-s clean build:standalone build:remote",
+    "build:release": "run-s build",
     "build:standalone:analyze": "cross-env MODE=standalone react-app-rewired build --analyze",
     "build:remote:analyze": "cross-env MODE=remote react-app-rewired build --analyze",
     "test": "react-app-rewired test",

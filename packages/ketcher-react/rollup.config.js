@@ -22,7 +22,8 @@ const mode = {
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION
-
+const enableFeaturesInDevelopment =
+  process.env.FEATURES_IN_DEVELOPMENT !== 'disabled'
 const config = {
   input: pkg.source,
   output: [
@@ -61,7 +62,9 @@ const config = {
         'process.env.NODE_ENV': JSON.stringify(
           isProduction ? mode.PRODUCTION : mode.DEVELOPMENT
         ),
-        'process.env.ENABLE_STEREOCHEMISTRY': JSON.stringify(!isProduction),
+        'process.env.ENABLE_STEREOCHEMISTRY': JSON.stringify(
+          enableFeaturesInDevelopment
+        ),
         'process.env.VERSION': JSON.stringify(pkg.version),
         'process.env.BUILD_DATE': JSON.stringify(
           new Date().toISOString().slice(0, 19)

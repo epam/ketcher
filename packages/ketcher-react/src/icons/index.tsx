@@ -88,6 +88,10 @@ import ShapeEllipseIcon from './files/shape-ellipse.svg'
 import ShapeRectangleIcon from './files/shape-rectangle.svg'
 import ShapePolylineIcon from './files/shape-polyline.svg'
 import ShapeLineIcon from './files/shape-line.svg'
+import TextBold from './files/text-bold.svg'
+import TextItalic from './files/text-italic.svg'
+import TextSubscript from './files/text-subscript.svg'
+import TextSuperscript from './files/text-superscript.svg'
 
 const icons = {
   about: AboutIcon,
@@ -155,6 +159,10 @@ const icons = {
   'template-7': Template7Icon,
   'template-lib': TemplateLibIcon,
   text: TextIcon,
+  'text-bold': TextBold,
+  'text-italic': TextItalic,
+  'text-subscript': TextSubscript,
+  'text-superscript': TextSuperscript,
   'transform-flip-h': TransfromFlipHIcon,
   'transform-flip-v': TransfromFlipVIcon,
   'transform-rotate': TransformRotateIcon,

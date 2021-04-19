@@ -25,7 +25,7 @@ export function loadStruct(struct) {
   }
 }
 
-export function load(structStr, options) {
+export function load(structStr, options, method) {
   return (dispatch, getState) => {
     const state = getState()
     const editor = state.editor
@@ -50,7 +50,7 @@ export function load(structStr, options) {
         if (fragment) {
           dispatch(onAction({ tool: 'paste', opts: struct }))
         } else {
-          editor.struct(struct)
+          editor.struct(struct, method)
         }
       },
       err => {

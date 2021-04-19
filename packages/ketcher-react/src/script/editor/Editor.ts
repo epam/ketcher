@@ -19,7 +19,7 @@ import {
   Subscription
 } from 'subscription'
 
-import { Struct, Pile, Vec2, SGroupForest } from 'ketcher-core'
+import { Struct, Pile, Vec2 } from 'ketcher-core'
 import Render from '../render'
 import { fromDescriptorsAlign, fromNewCanvas } from './actions/basic'
 import Action from './shared/action'
@@ -27,6 +27,7 @@ import closest from './shared/closest'
 import toolMap from './tool'
 import { customOnChangeHandler, elementOffset } from './utils'
 import { CanvasLoad } from './operations'
+import { removeSgroupIfNeeded } from './actions/sgroup'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -143,14 +144,14 @@ class Editor {
     this.struct(undefined)
   }
 
-  struct(value?: Struct): Struct {
+  struct(value?: Struct, method: string = ''): Struct {
     if (arguments.length === 0) {
       return this.render.ctab.molecule
     }
 
     this.selection(null)
     const struct = value || new Struct()
-    const action = fromNewCanvas(this.render.ctab, struct)
+    const action = fromNewCanvas(this.render.ctab, struct, method)
     this.update(action)
 
     const structCenter = getStructCenter(this.render.ctab)
@@ -298,31 +299,45 @@ class Editor {
       this.render.update(true) // force
     } else {
       if (!ignoreHistory && !action.isDummy()) {
-        if (this.shouldClearCipMarks(action)) {
-          this.revertCipCalculation()
-        } else {
-          this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action)
-          if (this.historyStack.length > HISTORY_SIZE) {
-            this.historyStack.shift()
-          }
-          this.historyPtr = this.historyStack.length
-          this.event.change.dispatch(action) // TODO: stoppable here
+        if (this.shouldClearCipMarks(action)) this.clearCipMarks(action)
+        this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action)
+        if (this.historyStack.length > HISTORY_SIZE) {
+          this.historyStack.shift()
         }
+        this.historyPtr = this.historyStack.length
+        this.event.change.dispatch(action) // TODO: stoppable here
       }
       this.render.update()
     }
   }
 
   shouldClearCipMarks(action: Action): boolean {
+    const prevAction = this.historyStack[this.historyPtr - 1]
+
     return (
       this.struct().sgroups.size > 0 &&
-      !(action.operations[0] instanceof CanvasLoad)
+      this.isCalculateCipAction(prevAction) &&
+      !this.isCalculateCipAction(action)
     )
   }
 
-  revertCipCalculation(): void {
-    this.render.ctab.molecule.sGroupForest = new SGroupForest()
-    this.render.ctab.molecule.sgroups.clear()
+  isCalculateCipAction(action: Action): boolean {
+    return (
+      action &&
+      action.operations[0] instanceof CanvasLoad &&
+      (action.operations[0] as CanvasLoad).method === 'calculateCip'
+    )
+  }
+
+  clearCipMarks(action: Action): void {
+    const clearCipMarksAction = new Action()
+    removeSgroupIfNeeded(
+      clearCipMarksAction,
+      this.render.ctab,
+      Array.from(this.struct().atoms.keys()),
+      false
+    )
+    action.mergeWith(clearCipMarksAction.perform(this.render.ctab))
   }
 
   historySize() {

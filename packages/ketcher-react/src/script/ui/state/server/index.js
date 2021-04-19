@@ -147,10 +147,14 @@ export function serverTransform(method, data, struct) {
     serverCall(state.editor, state.server, method, opts, struct)
       .then(res =>
         dispatch(
-          load(res.struct, {
-            rescale: method === 'layout',
-            reactionRelayout: method === 'clean'
-          })
+          load(
+            res.struct,
+            {
+              rescale: method === 'layout',
+              reactionRelayout: method === 'clean'
+            },
+            method
+          )
         )
       )
       .catch(e => {

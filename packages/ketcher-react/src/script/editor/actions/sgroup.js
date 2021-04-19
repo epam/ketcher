@@ -307,7 +307,12 @@ export function removeAtomFromSgroupIfNeeded(action, restruct, id) {
 }
 
 // Add action operations to remove whole s-group if needed
-export function removeSgroupIfNeeded(action, restruct, atoms) {
+export function removeSgroupIfNeeded(
+  action,
+  restruct,
+  atoms,
+  checkEmptiness = true
+) {
   const struct = restruct.molecule
   const sgCounts = new Map()
 
@@ -328,7 +333,7 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
       const sgroup = struct.sgroups.get(sid)
       action.mergeWith(sGroupAttributeAction(sid, sgroup.getAttrs()))
       action.addOp(new SGroupRemoveFromHierarchy(sid))
-      action.addOp(new SGroupDelete(sid))
+      action.addOp(new SGroupDelete(sid, checkEmptiness))
     }
   })
 }

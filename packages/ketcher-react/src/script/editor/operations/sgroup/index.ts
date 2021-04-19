@@ -59,10 +59,12 @@ class SGroupCreate extends BaseOperation {
 
 class SGroupDelete extends BaseOperation {
   data: Data
+  checkEmptiness: boolean
 
-  constructor(sgroupId?: any) {
+  constructor(sgroupId?: any, checkEmptiness = true) {
     super(OperationType.S_GROUP_DELETE)
     this.data = { sgid: sgroupId }
+    this.checkEmptiness = checkEmptiness
   }
 
   execute(restruct: Restruct) {
@@ -80,7 +82,7 @@ class SGroupDelete extends BaseOperation {
     }
 
     restruct.clearVisel(sgroup.visel)
-    if (sgroup.item.atoms.length !== 0) {
+    if (sgroup.item.atoms.length !== 0 && this.checkEmptiness) {
       throw new Error('S-Group not empty!')
     }
 

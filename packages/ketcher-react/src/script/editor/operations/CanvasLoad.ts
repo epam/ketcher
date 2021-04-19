@@ -22,10 +22,12 @@ export class CanvasLoad extends BaseOperation {
   data: {
     struct?: Struct
   }
+  method: string
 
-  constructor(struct?: Struct) {
+  constructor(struct?: Struct, method = '') {
     super(OperationType.CANVAS_LOAD)
     this.data = { struct }
+    this.method = method
   }
 
   execute(restruct: Restruct) {
@@ -38,6 +40,7 @@ export class CanvasLoad extends BaseOperation {
   invert() {
     const inverted = new CanvasLoad()
     inverted.data = this.data
+    inverted.method = this.method
     return inverted
   }
 }

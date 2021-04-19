@@ -26,27 +26,19 @@ type Data = {
 }
 
 class SGroupAddToHierarchy extends BaseOperation {
-  private readonly parent?: any
-  private readonly children?: any
   data: Data
 
   constructor(sgroupId?: any, parent?: any, children?: any) {
     super(OperationType.S_GROUP_ADD_TO_HIERACHY)
     this.data = { sgid: sgroupId, parent, children }
-    this.parent = parent
-    this.children = children
   }
 
   execute(restruct: Restruct) {
-    const { sgid } = this.data
+    const { sgid, parent, children } = this.data
 
     const struct = restruct.molecule
     const sgroup = struct.sgroups.get(sgid)!
-    const relations = struct.sGroupForest.insert(
-      sgroup,
-      this.parent,
-      this.children
-    )
+    const relations = struct.sGroupForest.insert(sgroup, parent, children)
 
     this.data.parent = relations.parent
     this.data.children = relations.children

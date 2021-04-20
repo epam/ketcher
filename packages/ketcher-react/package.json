@@ -49,6 +49,7 @@
     "@babel/runtime": "^7.12.5",
     "clsx": "^1.1.1",
     "core-js": "^3.6.5",
+    "draft-js": "^0.11.7",
     "element-closest-polyfill": "^1.0.2",
     "file-saver": "^2.0.2",
     "font-face-observer": "^1.0.0",

@@ -1,0 +1,52 @@
+@import '../../../../../../../style/variables';
+@import '../../../../../../../style/mixins';
+@import '../../../../../../../style/index';
+
+.textButton {
+  border: 0;
+  padding: 0;
+  position: relative;
+  //background: inherit;
+  //background-color: white;
+  &:hover {
+    .highlight-scale(@scale:1.25);
+    .highlight-shadow(black);
+
+    background-image: none;
+  }
+  &:active,
+  &[disabled] {
+    .highlight-scale(none);
+    .highlight-shadow(none);
+  }
+
+  .button-size(large);
+}
+
+.isActive {
+  color: white;
+  background-color: #444;
+}
+
+.button-size(@dim) {
+  .set-size(@dim);
+
+  width: @button-size;
+  height: @button-size;
+  margin: @button-grow;
+
+  & > svg {
+    position: absolute;
+    top: 0.1em;
+    left: 0.1em;
+    font-size: @icon-size;
+    width: @icon-size;
+    height: @icon-size;
+    fill: currentColor;
+  }
+}
+
+// stylelint-disable-next-line selector-pseudo-class-no-unknown
+:global(.smallEditor) .textButton {
+  .button-size(small);
+}

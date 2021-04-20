@@ -43,7 +43,10 @@ Fragment.STEREO_FLAG = {
  */
 function calcStereoFlag(struct, stereoAids) {
   if (!stereoAids || stereoAids.length === 0) return null
-  const stereoLabel = struct.atoms.get(stereoAids[0]).stereoLabel // {string | null} "<abs|and|or>-<group>"
+  const atomId = stereoAids[0]
+  const atom = struct.atoms.get(atomId)
+  if (!atom) return null
+  const stereoLabel = atom.stereoLabel // {string | null} "<abs|and|or>-<group>"
 
   const hasAnotherLabel = stereoAids
     .map(aid => struct.atoms.get(aid))

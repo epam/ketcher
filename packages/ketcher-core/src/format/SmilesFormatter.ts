@@ -15,9 +15,9 @@ export class SmilesFormatter implements StructFormatter {
     private readonly options?: StructServiceOptions
   ) {}
 
-  getStructureFromStructAsync(struct: Struct): Promise<string> {
+  async getStructureFromStructAsync(struct: Struct): Promise<string> {
     const stringifiedMolfile = this.smilesManager.stringify(struct)
-    return Promise.resolve(stringifiedMolfile)
+    return stringifiedMolfile
   }
 
   getStructureFromStringAsync(stringifiedStruct: string): Promise<Struct> {

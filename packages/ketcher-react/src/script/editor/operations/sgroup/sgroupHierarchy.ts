@@ -29,7 +29,7 @@ class SGroupAddToHierarchy extends BaseOperation {
   data: Data
 
   constructor(sgroupId?: any, parent?: any, children?: any) {
-    super(OperationType.S_GROUP_ADD_TO_HIERACHY)
+    super(OperationType.S_GROUP_ADD_TO_HIERACHY, 4)
     this.data = { sgid: sgroupId, parent, children }
   }
 

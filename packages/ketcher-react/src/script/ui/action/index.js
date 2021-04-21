@@ -157,7 +157,8 @@ function hasSelection(editor) {
   const selection = editor.selection()
   return (
     selection && // if not only sgroupData selected
-    (Object.keys(selection).length > 1 || !selection.sgroupData)
+    Object.keys(selection).filter(key => !['sgroupData', 'texts'].includes(key))
+      .length > 0
   )
 }
 

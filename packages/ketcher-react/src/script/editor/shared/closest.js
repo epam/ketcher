@@ -17,6 +17,7 @@
 import { Vec2 } from 'ketcher-core'
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4
+const SELECTION_WITHIN_TEXT = 0
 
 const findMaps = {
   atoms: findClosestAtom,
@@ -77,7 +78,7 @@ function findClosestText(restruct, cursorPosition) {
       } else if (cursorPosition.x > bottomX) {
         distances.push(cursorPosition.x - bottomX)
       } else {
-        distances.push(cursorPosition.x - topX, bottomX - cursorPosition.x)
+        distances.push(SELECTION_WITHIN_TEXT)
       }
     }
 

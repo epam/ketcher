@@ -88,6 +88,9 @@ class ReText extends ReObject {
       'text-anchor': 'start',
       fill: '#000000'
     })
+    const { p0, p1 } = Box2Abs.fromRelBox(this.path.getBBox())
+    const textVerticalOffset = Math.abs(Vec2.diff(p0, p1).y) / 2
+    this.path.translateAbs(0, textVerticalOffset)
     render.ctab.addReObjectPath(
       LayerMap.data,
       this.visel,

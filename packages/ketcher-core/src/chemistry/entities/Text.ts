@@ -15,21 +15,21 @@
  ***************************************************************************/
 
 import { Vec2 } from 'utils'
+import { RawDraftContentState } from 'draft-js'
 
 export interface TextParams {
-  label: string
+  rawContent: RawDraftContentState
   position?: Vec2
   type: string
 }
 
 export class Text {
-  label?: string | null
-  position?: Vec2
+  rawContent: RawDraftContentState
+  position: Vec2
   type: string
 
   constructor(params: TextParams) {
-    params = params || {}
-    this.label = params.label
+    this.rawContent = params.rawContent
     this.position = params.position ? new Vec2(params.position) : new Vec2()
     this.type = 'text'
   }

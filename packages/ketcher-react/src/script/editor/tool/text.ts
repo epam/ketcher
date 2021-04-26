@@ -17,10 +17,15 @@
 import {
   fromTextCreation,
   fromTextUpdating,
-  fromTextDeletion
+  fromTextDeletion,
+  TextElemData
 } from '../actions/text'
 import { fromMultipleMove } from '../actions/fragment'
 import Action from '../shared/action'
+import Editor from '../Editor'
+import { RawDraftContentState } from 'draft-js'
+import { Vec2 } from 'ketcher-core'
+import _ from 'lodash'
 
 class TextTool {
   editor: any
@@ -98,27 +103,27 @@ class TextTool {
   }
 }
 
-function propsDialog(editor, id, position) {
+function propsDialog(editor: Editor, id, position: Vec2) {
   const struct = editor.render.ctab.molecule
   const text = id || id === 0 ? struct.texts.get(id) : null
-  const label = text ? text.label : ''
+  const rawContent: RawDraftContentState | undefined = text?.rawContent
 
   const res = editor.event.elementEdit.dispatch({
     type: 'text',
-    label,
+    rawContent,
     id,
     position
   })
 
   res
-    .then(elem => {
-      elem = Object.assign({ previousLabel: label }, elem)
+    .then((elem: TextElemData) => {
+      elem = Object.assign({ previousRawContent: rawContent }, elem)
 
-      if (!id && id !== 0 && elem.label) {
+      if (!id && id !== 0 && elem.rawContent) {
         editor.update(fromTextCreation(editor.render.ctab, elem))
-      } else if (!elem.label) {
+      } else if (!elem.rawContent) {
         editor.update(fromTextDeletion(editor.render.ctab, elem))
-      } else if (label !== elem.label) {
+      } else if (!_.isEqual(rawContent, elem.rawContent)) {
         elem.id = id
         editor.update(fromTextUpdating(editor.render.ctab, elem))
       }

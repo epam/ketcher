@@ -16,58 +16,90 @@
 
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import { Editor, ContentState, EditorState, RichUtils } from 'draft-js'
+import {
+  Editor,
+  EditorState,
+  RichUtils,
+  RawDraftContentState,
+  convertFromRaw,
+  convertToRaw,
+  getDefaultKeyBinding,
+  DraftStyleMap
+} from 'draft-js'
 import { Dialog } from '../../../components'
 import { DialogParams } from '../../../components/Dialog/Dialog'
-import TextControlPanel from './components/TextControlPanel'
-
-import 'draft-js/dist/Draft.css';
+import TextControlPanel, { TextStyle } from './components/TextControlPanel'
 import classes from './Text.module.less'
+import 'draft-js/dist/Draft.css'
 
 interface TextProps extends DialogParams {
   formState: any
   type: string
   id?: any
-  label?: string
+  rawContent: RawDraftContentState
   position?: string
 }
 
-type Props = TextProps
-
-const Text = (props: Props) => {
+const Text = (props: TextProps) => {
   const { formState, position, id, type } = props
-  const [text, setText] = useState(props.label)
-  const [editorState, setEditorState] = useState(EditorState.createWithContent(ContentState.createFromText(text)));
-  const result = () => ({ label: text, position, id, type })
 
-  const onContentChange = state => { console.log('STATE: ', state.getCurrentContent())
-    setEditorState(state)
-    setText(editorState.getCurrentContent().getPlainText('\u0001')) // only temporary !
+  const [editorState, setEditorState] = useState<EditorState>(
+    EditorState.moveFocusToEnd(
+      EditorState.createWithContent(
+        convertFromRaw(props.rawContent || { blocks: [], entityMap: {} })
+      )
+    )
+  )
+
+  const result = () => ({
+    rawContent: convertToRaw(editorState.getCurrentContent()),
+    position,
+    id,
+    type
+  })
+
+  const myKeyBindingFn = (e: any): string | null => {
+    if (e.keyCode === 13) {
+      e.stopPropagation()
+    }
+
+    return getDefaultKeyBinding(e)
   }
 
-  const toggleStyle = command => {
+  const onContentChange = (state: EditorState): void => {
+    setEditorState(state)
+  }
+
+  const toggleStyle = (command: TextStyle): void => {
     setEditorState(RichUtils.toggleInlineStyle(editorState, command))
   }
 
-  const customStyleMap = {
-    SUBSCRIPT: { fontSize: '0.6em', verticalAlign: 'sub' },
-    SUPERSCRIPT: { fontSize: '0.6em', verticalAlign: 'super' }
+  const customStyleMap: DraftStyleMap = {
+    SUBSCRIPT: { fontSize: '0.8em', verticalAlign: 'sub' },
+    SUPERSCRIPT: { fontSize: '0.8em', verticalAlign: 'super' }
   }
 
   return (
     <Dialog
       className="textEditor"
       title="Text editor"
+      manageFocus={false}
       params={props}
       result={result}
       valid={() => formState.form.valid}>
-      <TextControlPanel toggleStyle={toggleStyle} />
+      <TextControlPanel
+        className={classes.controlPanel}
+        toggleStyle={toggleStyle}
+        editorState={editorState}
+      />
+      <div className={classes.textEditorInput}>
         <Editor
-          className={classes.textArea}
-          editorState={ editorState }
+          keyBindingFn={myKeyBindingFn}
+          editorState={editorState}
           onChange={onContentChange}
           customStyleMap={customStyleMap}
         />
+      </div>
     </Dialog>
   )
 }

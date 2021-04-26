@@ -28,8 +28,7 @@ const mapStateToProps = (state): StateProps => ({
 })
 
 const mapDispatchToProps = (dispatch: Dispatch): BaseCallProps => ({
-  onOk: result => {
-    console.info('Output:', result)
+  onOk: () => {
     dispatch({ type: 'MODAL_CLOSE' })
   },
   onCancel: () => {

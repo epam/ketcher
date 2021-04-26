@@ -18,10 +18,11 @@ import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
 import { Text, Vec2 } from 'ketcher-core'
 import Restruct, { ReText } from '../../../render/restruct'
+import { RawDraftContentState } from 'draft-js'
 
 interface TextCreateData {
   id?: any
-  label: string
+  rawContent: RawDraftContentState
   position: Vec2
   type: string
 }
@@ -30,9 +31,14 @@ export class TextCreate extends BaseOperation {
   data: TextCreateData
   performed: boolean
 
-  constructor(id: any, label: string, position: Vec2, type: string) {
+  constructor(
+    id: any,
+    rawContent: RawDraftContentState,
+    position: Vec2,
+    type: string
+  ) {
     super(OperationType.TEXT_CREATE)
-    this.data = { id, label, position, type }
+    this.data = { id, rawContent, position, type }
     this.performed = false
   }
 
@@ -57,15 +63,15 @@ export class TextCreate extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    const { id, label, position, type } = this.data
+    const { id, rawContent, position, type } = this.data
 
-    return new TextDelete(id, label, position, type)
+    return new TextDelete(id, rawContent, position, type)
   }
 }
 
 interface TextDeleteData {
   id: any
-  label: string
+  rawContent: RawDraftContentState
   position: Vec2
   type?: string
 }
@@ -74,9 +80,14 @@ export class TextDelete extends BaseOperation {
   data: TextDeleteData
   performed: boolean
 
-  constructor(id: any, label: string, position: Vec2, type: string) {
+  constructor(
+    id: any,
+    rawContent: RawDraftContentState,
+    position: Vec2,
+    type: string
+  ) {
     super(OperationType.TEXT_DELETE)
-    this.data = { id, label, position, type }
+    this.data = { id, rawContent, position, type }
     this.performed = false
   }
 
@@ -107,7 +118,7 @@ export class TextDelete extends BaseOperation {
   invert(): BaseOperation {
     return new TextCreate(
       this.data.id,
-      this.data.label,
+      this.data.rawContent,
       this.data.position,
       // @ts-ignore
       this.data.type

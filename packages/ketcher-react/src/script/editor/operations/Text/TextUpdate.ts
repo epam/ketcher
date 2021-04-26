@@ -18,44 +18,45 @@ import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
 import { Vec2 } from 'ketcher-core'
 import Restruct from '../../../render/restruct'
+import { RawDraftContentState } from 'draft-js'
 
 interface TextUpdateData {
-  id?: any
-  label?: string
+  id: any
+  rawContent?: RawDraftContentState
   position?: Vec2
   type?: string
-  previousLabel?: string
+  previousRawContent?: RawDraftContentState
 }
 
 export class TextUpdate extends BaseOperation {
   data: TextUpdateData
 
   constructor(
-    id?: any,
-    label?: string,
+    id: any,
+    rawContent?: RawDraftContentState,
     position?: Vec2,
     type?: string,
-    previousLabel?: string
+    previousRawContent?: RawDraftContentState
   ) {
     super(OperationType.TEXT_UPDATE)
-    this.data = { id, label, position, type, previousLabel }
+    this.data = { id, rawContent, position, type, previousRawContent }
   }
 
   execute(restruct: Restruct) {
-    const { id, label } = this.data
+    const { id, rawContent } = this.data
     const text = restruct.molecule.texts.get(id)
 
     if (text) {
-      text.label = label
+      text.rawContent = rawContent!
     }
 
     BaseOperation.invalidateItem(restruct, 'texts', id, 1)
   }
 
   invert() {
-    const inverted = new TextUpdate(this.data.id)
-    inverted.data.label = this.data.previousLabel
-    inverted.data.previousLabel = this.data.label
+    const inverted = new TextUpdate(this.data)
+    inverted.data.rawContent = this.data.previousRawContent
+    inverted.data.previousRawContent = this.data.rawContent
     return inverted
   }
 }

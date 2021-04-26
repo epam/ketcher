@@ -15,14 +15,22 @@
  ***************************************************************************/
 
 import ReObject from './ReObject'
-import { Box2Abs, scale, Vec2 } from 'ketcher-core'
+import { scale, Vec2, Text } from 'ketcher-core'
 import { LayerMap } from './GeneralEnumTypes'
+import {
+  DraftInlineStyleType,
+  RawDraftContentBlock,
+  RawDraftInlineStyleRange
+} from 'draft-js'
+import _ from 'lodash'
+import ReStruct from './ReStruct'
+import { TextStyle } from '../../ui/views/modal/components/Text/components/TextControlPanel'
 
 class ReText extends ReObject {
-  private item: any
-  path: any
+  private item: Text
+  paths: Array<Array<any>> = []
 
-  constructor(text: any) {
+  constructor(text: Text) {
     super('text')
     this.item = text
   }
@@ -31,7 +39,7 @@ class ReText extends ReObject {
   }
 
   getReferencePoints(): Array<Vec2> {
-    const { p0, p1 } = Box2Abs.fromRelBox(this.path.getBBox())
+    const { p0, p1 } = this.getRelBox()
 
     const p = this.item.position
     const w = Math.abs(Vec2.diff(p0, p1).x) / 40
@@ -50,52 +58,180 @@ class ReText extends ReObject {
   }
 
   highlightPath(render: any): any {
-    const { p0, p1 } = Box2Abs.fromRelBox(this.path.getBBox())
+    const { p0, p1 } = this.getRelBox()
     const topLeft = p0.sub(render.options.offset)
-    const bottomRight = p1.sub(p0)
+    const { x: width, y: height } = p1.sub(p0)
 
-    return render.paper.rect(
-      topLeft.x,
-      topLeft.y,
-      bottomRight.x,
-      bottomRight.y,
-      5
+    return render.paper.rect(topLeft.x, topLeft.y, width, height, 5)
+  }
+
+  getRelBox(): { p0: Vec2; p1: Vec2 } {
+    const lastRow: Array<any> = this.paths[this.paths.length - 1]
+    const widestRow: Array<any> = this.paths.reduce(
+      (widestRow, nextRow) =>
+        this.getRowWidth(nextRow) > this.getRowWidth(widestRow)
+          ? nextRow
+          : widestRow,
+      this.paths[0]
     )
+
+    const firstElOfFirstRow: any = this.paths[0][0]
+    const lastElOfWidestRow: any = widestRow[widestRow.length - 1]
+
+    const rightEdgeOfWidestRow: number =
+      lastElOfWidestRow.getBBox().x + lastElOfWidestRow.getBBox().width
+    const bottomEdgeOfLastRow: number = lastRow.reduce((acc, nextEl) => {
+      const bottomEdgeOfEl = nextEl.getBBox().y + nextEl.getBBox().height
+
+      if (bottomEdgeOfEl > acc) {
+        acc = bottomEdgeOfEl
+      }
+
+      return acc
+    }, 0)
+
+    return {
+      p0: new Vec2(
+        firstElOfFirstRow.getBBox().x,
+        firstElOfFirstRow.getBBox().y
+      ),
+      p1: new Vec2(rightEdgeOfWidestRow, bottomEdgeOfLastRow)
+    }
+  }
+
+  getRowWidth(row: Array<any>): number {
+    return row.reduce((rowWidth, nextRow) => {
+      rowWidth += nextRow.getBBox().width
+      return rowWidth
+    }, 0)
   }
 
   drawHighlight(render: any): any {
-    if (!this.path) return null
+    if (!this.paths.length) return null
     const ret = this.highlightPath(render).attr(render.options.highlightStyle)
     render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
     return ret
   }
 
-  makeSelectionPlate(restruct: any, paper: any, options: any): any {
-    if (!this.path || !paper) return null
+  makeSelectionPlate(restruct: ReStruct, paper: any, options: any): any {
+    if (!this.paths.length || !paper) return null
     return this.highlightPath(restruct.render).attr(options.selectionStyle)
   }
 
-  show(restruct: any, _id: any, options: any): void {
+  show(restruct: ReStruct, _id: number, options: any): void {
     const render = restruct.render
     const paper = render.paper
-
     const paperScale = scale.obj2scaled(this.item.position, options)
-    this.item.label = this.item.label.replace(/[^\S\r\n]/g, '\u00a0')
 
-    this.path = paper.text(paperScale.x, paperScale.y, this.item.label).attr({
-      font: options.font,
-      'font-size': options.fontsz,
-      'text-anchor': 'start',
-      fill: '#000000'
+    let shiftY: number = 0
+    this.paths = []
+    this.item.rawContent.blocks.forEach((block: RawDraftContentBlock) => {
+      const ranges: Array<
+        [number, number, Record<string, any>]
+      > = this.getRanges(block, options)
+
+      let shiftX: number = 0
+      const row: Array<any> = []
+      ranges.forEach(([start, end, styles]) => {
+        block.text = block.text.replace(/[^\S\r\n]/g, '\u00a0')
+
+        const path = paper
+          .text(
+            paperScale.x,
+            paperScale.y,
+            block.text.substring(start, end + 1) || '\u00a0'
+          )
+          .attr({
+            font: options.font,
+            'font-size': options.fontsz,
+            'text-anchor': 'start',
+            fill: '#000000',
+            ...styles
+          })
+
+        path.translateAbs(shiftX, shiftY + (styles.shiftY || 0))
+
+        row.push(path)
+        shiftX += path.getBBox().width
+      })
+
+      this.paths.push(row)
+      shiftY += row[0].getBBox().height
     })
+
     render.ctab.addReObjectPath(
       LayerMap.data,
       this.visel,
-      this.path,
+      _.flatten(this.paths),
       null,
       true
     )
   }
+
+  getRanges(
+    block: RawDraftContentBlock,
+    options: any
+  ): Array<[number, number, Record<string, any>]> {
+    const ranges: Array<[number, number, Record<string, any>]> = []
+
+    let start: number = 0
+    let styles: Record<string, any> = this.getStyles(block, start, options)
+    for (let i = 1; i < block.text.length; i++) {
+      const nextStyles = this.getStyles(block, i, options)
+
+      if (!_.isEqual(styles, nextStyles)) {
+        ranges.push([start, i - 1, styles])
+        styles = nextStyles
+        start = i
+      }
+    }
+    ranges.push([start, block.text.length - 1, styles])
+
+    return ranges
+  }
+
+  getStyles(
+    block: RawDraftContentBlock,
+    index: number,
+    options: any
+  ): Record<string, string> {
+    return block.inlineStyleRanges
+      .filter(
+        (inlineRange: CustomRawDraftInlineStyleRange) =>
+          inlineRange.offset <= index &&
+          index < inlineRange.offset + inlineRange.length
+      )
+      .reduce((styles: any, textRange: CustomRawDraftInlineStyleRange) => {
+        switch (textRange.style) {
+          case TextStyle.Bold:
+            styles['font-weight'] = 'bold'
+            break
+
+          case TextStyle.Italic:
+            styles['font-style'] = 'italic'
+            break
+
+          case TextStyle.Subscript:
+            styles['font-size'] = options.fontszsub + 'px'
+            styles.shiftY = options.fontsz / 3
+            break
+
+          case TextStyle.Superscript:
+            styles['font-size'] = options.fontszsub + 'px'
+            styles.shiftY = -options.fontsz / 3
+            break
+
+          default:
+        }
+
+        return styles
+      }, {})
+  }
+}
+
+interface CustomRawDraftInlineStyleRange
+  extends Omit<RawDraftInlineStyleRange, 'style'> {
+  style: DraftInlineStyleType | TextStyle.Subscript | TextStyle.Superscript
 }
 
 export default ReText

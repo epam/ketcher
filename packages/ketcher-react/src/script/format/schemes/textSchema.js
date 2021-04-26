@@ -18,8 +18,8 @@ const schema = {
   id: '/Text',
   type: 'object',
   properties: {
-    label: {
-      type: 'string'
+    rawContent: {
+      type: 'object'
     },
     position: {
       type: 'object',

@@ -25,6 +25,7 @@ interface DialogProps {
   params: DialogParams
   buttons?: Array<string | React.ReactElement>
   className: string
+  manageFocus?: boolean
 }
 export interface DialogParams extends DialogParamsCallProps {
   className: string
@@ -51,11 +52,14 @@ const Dialog: FC<Props> = props => {
     valid = () => !!result(),
     buttons = ['Cancel', 'OK'],
     className,
+    manageFocus,
     ...rest
   } = props
   const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    if (manageFocus === false) return
+
     if (dialogRef?.current) {
       const element: HTMLElement | null =
         dialogRef.current.querySelector(

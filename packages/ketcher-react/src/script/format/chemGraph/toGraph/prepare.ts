@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Pile, Vec2 } from 'ketcher-core'
+import { Pile, Struct, Vec2 } from 'ketcher-core'
 
-export function prepareStructForGraph(struct) {
-  const graphNodes = []
+export function prepareStructForGraph(struct: Struct) {
+  const graphNodes: Array<any> = []
 
   const rgFrags = new Set() // skip this when writing molecules
   for (const [rgnumber, rgroup] of struct.rgroups.entries()) {
@@ -84,7 +84,7 @@ export function prepareStructForGraph(struct) {
       type: 'text',
       center: item.position,
       data: {
-        label: item.label,
+        rawContent: item.rawContent,
         position: item.position
       }
     })

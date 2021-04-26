@@ -39,7 +39,7 @@ export class TextCreate extends BaseOperation {
   execute(restruct: Restruct): void {
     const struct = restruct.molecule
 
-    if (!this.performed) {
+    if (!this.performed && this.data.id === null) {
       this.data.id = struct.texts.add(new Text(this.data))
       this.performed = true
     } else {

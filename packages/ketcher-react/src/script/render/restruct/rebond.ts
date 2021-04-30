@@ -305,6 +305,9 @@ function getBondPath(
     case Bond.PATTERN.TYPE.HYDROGEN:
       path = draw.bondHydrogen(render.paper, hb1, hb2, render.options)
       break
+    case Bond.PATTERN.TYPE.DATIVE:
+      path = draw.bondDative(render.paper, hb1, hb2, render.options)
+      break
     default:
       throw new Error('Bond type ' + bond.b.type + ' not supported')
   }

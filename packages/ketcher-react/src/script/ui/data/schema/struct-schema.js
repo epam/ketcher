@@ -166,7 +166,8 @@ export const bond = {
         'hydrogen',
         'singledouble',
         'singlearomatic',
-        'doublearomatic'
+        'doublearomatic',
+        'dative'
       ],
       enumNames: [
         'Single',
@@ -181,7 +182,8 @@ export const bond = {
         'Hydrogen',
         'Single/Double',
         'Single/Aromatic',
-        'Double/Aromatic'
+        'Double/Aromatic',
+        'Dative'
       ],
       default: 'single'
     },

@@ -23,6 +23,7 @@ type ToolVariant =
   | 'bond-hydrogen'
   | 'bond-aromatic'
   | 'bond-crossed'
+  | 'bond-dative'
   | 'bond-double'
   | 'bond-doublearomatic'
   | 'bond-down'

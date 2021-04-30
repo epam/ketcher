@@ -288,6 +288,10 @@ const bondCaptionMap = {
   hydrogen: {
     type: Bond.PATTERN.TYPE.HYDROGEN,
     stereo: Bond.PATTERN.STEREO.NONE
+  },
+  dative: {
+    type: Bond.PATTERN.TYPE.DATIVE,
+    stereo: Bond.PATTERN.STEREO.NONE
   }
 }
 

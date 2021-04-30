@@ -36,6 +36,7 @@ export class Bond {
       SINGLE_OR_AROMATIC: 6,
       DOUBLE_OR_AROMATIC: 7,
       ANY: 8,
+      DATIVE: 9,
       HYDROGEN: 10
     },
 

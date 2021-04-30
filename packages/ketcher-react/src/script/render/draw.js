@@ -308,6 +308,16 @@ function bondHydrogen(paper, hb1, hb2, options) {
   })
 }
 
+function bondDative(paper, hb1, hb2, options) {
+/*
+*  TODO: implement function to draw arrow on the canvas.
+*  Arrow should flip its direction
+*  from one half-bond to another on mouse click. Currently the dative bond is represented
+*  with straight line.
+* */
+  return paper.path(makeStroke(hb1.p, hb2.p))
+}
+
 function reactingCenter(paper, p, options) {
   var pathdesc = ''
   for (var i = 0; i < p.length / 2; ++i)
@@ -467,6 +477,7 @@ export default {
   bondAromatic,
   bondAny,
   bondHydrogen,
+  bondDative,
   reactingCenter,
   topologyMark,
   radicalCap,

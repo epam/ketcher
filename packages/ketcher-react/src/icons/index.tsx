@@ -20,6 +20,7 @@ import BondAnyIcon from './files/bond-any.svg'
 import BondAromaticIcon from './files/bond-aromatic.svg'
 import BondHydrogenIcon from './files/bond-hydrogen.svg'
 import BondCrossedIcon from './files/bond-crossed.svg'
+import BondDative from './files/bond-dative.svg'
 import BondDoubleIcon from './files/bond-double.svg'
 import BondDoubleAromaticIcon from './files/bond-doublearomatic.svg'
 import BondDownIcon from './files/bond-down.svg'
@@ -98,6 +99,7 @@ const icons = {
   'bond-aromatic': BondAromaticIcon,
   'bond-crossed': BondCrossedIcon,
   'bond-hydrogen': BondHydrogenIcon,
+  'bond-dative': BondDative,
   'bond-double': BondDoubleIcon,
   'bond-doublearomatic': BondDoubleAromaticIcon,
   'bond-down': BondDownIcon,

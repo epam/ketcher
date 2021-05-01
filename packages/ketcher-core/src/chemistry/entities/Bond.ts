@@ -35,7 +35,8 @@ export class Bond {
       SINGLE_OR_DOUBLE: 5,
       SINGLE_OR_AROMATIC: 6,
       DOUBLE_OR_AROMATIC: 7,
-      ANY: 8
+      ANY: 8,
+      HYDROGEN: 9
     },
 
     STEREO: {

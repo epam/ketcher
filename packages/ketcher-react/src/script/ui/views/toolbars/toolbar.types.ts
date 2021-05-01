@@ -75,6 +75,7 @@ type LeftToolbarItemVariant =
   | 'bond-crossed'
   | 'bond-query'
   | 'bond-any'
+  | 'bond-hydrogen'
   | 'bond-aromatic'
   | 'bond-singledouble'
   | 'bond-singlearomatic'

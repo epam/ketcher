@@ -163,6 +163,7 @@ export const bond = {
         'triple',
         'aromatic',
         'any',
+        'hydrogen',
         'singledouble',
         'singlearomatic',
         'doublearomatic'
@@ -177,6 +178,7 @@ export const bond = {
         'Triple',
         'Aromatic',
         'Any',
+        'Hydrogen',
         'Single/Double',
         'Single/Aromatic',
         'Double/Aromatic'

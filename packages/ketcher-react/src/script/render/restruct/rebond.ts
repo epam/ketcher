@@ -350,18 +350,12 @@ function getStereoBondColor(
   bond: ReBond,
   struct: Struct
 ): string {
+  const defaultColor = '#000'
+
+  if (bond.b.stereo === 0) return defaultColor
+
   const beginAtomStereoLabel = struct.atoms.get(bond.b.begin)?.stereoLabel
   const endAtomStereoLabel = struct.atoms.get(bond.b.end)?.stereoLabel
-
-  if (
-    !bond.b.stereo ||
-    !beginAtomStereoLabel ||
-    !endAtomStereoLabel ||
-    options.colorStereogenicCenters === StereoColoringType.Off ||
-    options.colorStereogenicCenters === StereoColoringType.LabelsOnly
-  ) {
-    return '#000'
-  }
 
   let stereoLabel = ''
   if (beginAtomStereoLabel && !endAtomStereoLabel) {
@@ -370,8 +364,13 @@ function getStereoBondColor(
     stereoLabel = endAtomStereoLabel
   }
 
-  if (!stereoLabel) {
-    return '#000'
+  if (
+    // if no stereolabel presents or presents in both then use default color
+    !stereoLabel ||
+    options.colorStereogenicCenters === StereoColoringType.Off ||
+    options.colorStereogenicCenters === StereoColoringType.LabelsOnly
+  ) {
+    return defaultColor
   }
 
   return getColorFromStereoLabel(options, stereoLabel)

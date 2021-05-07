@@ -28,7 +28,9 @@ function calcStereoFlag(
   stereoAids: Array<number>
 ): string | undefined {
   if (!stereoAids || stereoAids.length === 0) return undefined
-  const stereoLabel = struct.atoms.get(stereoAids[0])?.stereoLabel // {string | null} "<abs|and|or>-<group>"
+  const atom = struct.atoms.get(stereoAids[0])
+  if (!atom) return undefined
+  const stereoLabel = atom.stereoLabel // {string | null} "<abs|and|or>-<group>"
 
   const hasAnotherLabel = stereoAids
     .map(aid => struct.atoms.get(aid))

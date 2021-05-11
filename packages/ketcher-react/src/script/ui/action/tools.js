@@ -45,7 +45,7 @@ const toolActions = {
   },
   'enhanced-stereo': {
     shortcut: 'Alt+e',
-    title: 'Enhanced Stereo',
+    title: 'Stereochemistry',
     action: { tool: 'enhancedStereo' }
   },
   'charge-plus': {

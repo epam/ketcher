@@ -39,7 +39,7 @@ class ReText extends ReObject {
   }
 
   getReferencePoints(): Array<Vec2> {
-    const { p0, p1 } = this.getRelBox()
+    const { p0, p1 } = this.getRelBox(this.paths)
 
     const p = this.item.position
     const w = Math.abs(Vec2.diff(p0, p1).x) / 40
@@ -58,44 +58,39 @@ class ReText extends ReObject {
   }
 
   highlightPath(render: any): any {
-    const { p0, p1 } = this.getRelBox()
+    const { p0, p1 } = this.getRelBox(this.paths)
     const topLeft = p0.sub(render.options.offset)
     const { x: width, y: height } = p1.sub(p0)
 
     return render.paper.rect(topLeft.x, topLeft.y, width, height, 5)
   }
 
-  getRelBox(): { p0: Vec2; p1: Vec2 } {
-    const lastRow: Array<any> = this.paths[this.paths.length - 1]
-    const widestRow: Array<any> = this.paths.reduce(
+  getRelBox(paths: Array<Array<any>>): { p0: Vec2; p1: Vec2 } {
+    const firstElOfFirstRow: any = paths[0][0]
+    const leftEdge = firstElOfFirstRow.getBBox().x
+
+    const firstRow: Array<any> = paths[0]
+    const topEdge: number = Math.min(...firstRow.map(path => path.getBBox().y))
+
+    const widestRow: Array<any> = paths.reduce(
       (widestRow, nextRow) =>
         this.getRowWidth(nextRow) > this.getRowWidth(widestRow)
           ? nextRow
           : widestRow,
-      this.paths[0]
+      paths[0]
+    )
+    const lastElOfWidestRow: any = widestRow[widestRow.length - 1]
+    const rightEdge: number =
+      lastElOfWidestRow.getBBox().x + lastElOfWidestRow.getBBox().width
+
+    const lastRow: Array<any> = paths[paths.length - 1]
+    const bottomEdge: number = Math.max(
+      ...lastRow.map(path => path.getBBox().y + path.getBBox().height)
     )
 
-    const firstElOfFirstRow: any = this.paths[0][0]
-    const lastElOfWidestRow: any = widestRow[widestRow.length - 1]
-
-    const rightEdgeOfWidestRow: number =
-      lastElOfWidestRow.getBBox().x + lastElOfWidestRow.getBBox().width
-    const bottomEdgeOfLastRow: number = lastRow.reduce((acc, nextEl) => {
-      const bottomEdgeOfEl = nextEl.getBBox().y + nextEl.getBBox().height
-
-      if (bottomEdgeOfEl > acc) {
-        acc = bottomEdgeOfEl
-      }
-
-      return acc
-    }, 0)
-
     return {
-      p0: new Vec2(
-        firstElOfFirstRow.getBBox().x,
-        firstElOfFirstRow.getBBox().y
-      ),
-      p1: new Vec2(rightEdgeOfWidestRow, bottomEdgeOfLastRow)
+      p0: new Vec2(leftEdge, topEdge),
+      p1: new Vec2(rightEdge, bottomEdge)
     }
   }
 
@@ -156,7 +151,9 @@ class ReText extends ReObject {
       })
 
       this.paths.push(row)
-      shiftY += row[0].getBBox().height
+
+      const { p0, p1 } = this.getRelBox([row])
+      shiftY += Math.abs(Vec2.diff(p0, p1).y)
     })
 
     render.ctab.addReObjectPath(

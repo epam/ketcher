@@ -19,7 +19,7 @@ import { connect } from 'react-redux'
 import Logo from './logo.svg'
 import { Dialog } from '../../../../components'
 
-import classes from './about.module.less'
+import classes from './About.module.less'
 
 function AboutDialog(props) {
   const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info

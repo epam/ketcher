@@ -52,27 +52,33 @@ const enhancedStereoSchema = {
     },
     andNumber: {
       type: 'integer',
-      minimum: 0,
+      minimum: 1,
       invalidMessage: 'Only positive integer'
     },
     orNumber: {
       type: 'integer',
-      minimum: 0,
+      minimum: 1,
       invalidMessage: 'Only positive integer'
     }
   }
-}
-
-interface EnhancedStereoProps {
-  className: string
-  init: EnhancedStereoResult & { init?: true }
-  formState: any
 }
 
 interface EnhancedStereoResult {
   andNumber: number
   orNumber: number
   type: StereoLabel
+}
+
+interface EnhancedStereoFormState {
+  result: EnhancedStereoResult
+  valid: boolean
+  errors: string[]
+}
+
+interface EnhancedStereoProps {
+  className: string
+  init: EnhancedStereoResult & { init?: true }
+  formState: EnhancedStereoFormState
 }
 
 interface EnhancedStereoCallProps {
@@ -86,6 +92,23 @@ const EnhancedStereo: React.FC<Props> = props => {
   const { formState, init, ...rest } = props
   const { result, valid } = formState
 
+  const handleChange = (
+    stereoLabel: StereoLabel,
+    newState: EnhancedStereoResult
+  ): EnhancedStereoResult => {
+    const defaultOrNumber = predefinedStereoGroups[StereoLabel.Or].max + 1
+    const defaultAndNumber = predefinedStereoGroups[StereoLabel.And].max + 1
+
+    if (andNumberDisabled(stereoLabel)) {
+      newState.andNumber = defaultAndNumber
+    }
+    if (orNumberDisabled(stereoLabel)) {
+      newState.orNumber = defaultOrNumber
+    }
+
+    return newState
+  }
+
   return (
     <Dialog
       title="Enhanced Stereochemistry"
@@ -95,7 +118,12 @@ const EnhancedStereo: React.FC<Props> = props => {
       valid={() => valid}
       buttons={['OK', 'Close']}>
       <Form schema={enhancedStereoSchema} init={init} {...formState}>
-        <Field name="type" component={FieldSet} labelPos={false} />
+        <Field
+          name="type"
+          component={FieldSet}
+          labelPos={false}
+          onChange={handleChange}
+        />
       </Form>
     </Dialog>
   )
@@ -104,7 +132,7 @@ const EnhancedStereo: React.FC<Props> = props => {
 interface FieldSetProps {
   name: string
   schema: any
-  value: string
+  value: StereoLabel
   onChange: (value: string) => void
   type?: string
 }
@@ -131,7 +159,7 @@ const FieldSet: React.FC<FieldSetProps> = props => {
               name="andNumber"
               type="text"
               className="label-group-value"
-              disabled={!value || value !== StereoLabel.And || value === null}
+              disabled={andNumberDisabled(value)}
             />
           )}
           {val === StereoLabel.Or && (
@@ -139,13 +167,21 @@ const FieldSet: React.FC<FieldSetProps> = props => {
               name="orNumber"
               type="text"
               className="label-group-value"
-              disabled={!value || value !== StereoLabel.Or || value === null}
+              disabled={orNumberDisabled(value)}
             />
           )}
         </li>
       ))}
     </fieldset>
   )
+}
+
+function andNumberDisabled(stereoLabel: StereoLabel): boolean {
+  return !stereoLabel || stereoLabel !== StereoLabel.And || stereoLabel === null
+}
+
+function orNumberDisabled(stereoLabel: StereoLabel): boolean {
+  return !stereoLabel || stereoLabel !== StereoLabel.Or || stereoLabel === null
 }
 
 export default connect(store => ({

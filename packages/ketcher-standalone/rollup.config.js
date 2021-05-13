@@ -19,7 +19,6 @@ const mode = {
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION
-console.log(process.env.FEATURES_IN_DEVELOPMENT)
 const config = {
   input: pkg.source,
   output: [

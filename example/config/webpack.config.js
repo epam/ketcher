@@ -20,7 +20,8 @@ module.exports = override(
   }),
   addWebpackPlugin(
     new webpack.EnvironmentPlugin({
-      MODE: process.env.MODE
+      MODE: process.env.MODE,
+      API_PATH: process.env.API_PATH
     })
   ),
   addWebpackPlugin(

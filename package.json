@@ -6,7 +6,6 @@
   ],
   "scripts": {
     "build": "yarn workspaces run build",
-    "build:release": "yarn workspaces run build:release",
     "serve:remote": "cd example && yarn serve:remote",
     "serve:standalone": "cd example && yarn serve:standalone",
     "serve": "run-p serve:*"

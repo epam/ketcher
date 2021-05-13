@@ -16,6 +16,19 @@ yarn install
 yarn build
 ```
 
+The following parameters are used by default:
+
+```sh
+API_PATH='/v2'
+PUBLIC_URL='./'
+```
+
+If you want to change these parameters you can build application by using the following command:
+
+```sh
+npx cross-env API_PATH='{your_api_path_here}' PUBLIC_URL='{your_public_url_here}' yarn build
+```
+
 To serve results of build locally run the following command from root directory:
 
 ```sh

@@ -1,3 +1,5 @@
+# NOTES
+
 ## Prerequisites
 
 - Stable [Node.js](https://nodejs.org) version

@@ -36,9 +36,7 @@
     "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
     "test:watch": "react-scripts test --env=jsdom",
     "prettier": "prettier --check \"src/**/*.{js,jsx,json,ts,tsx}\"",
-    "prettier:write": "prettier --write \"src/**/*.{js,jsx,json,ts,tsx}\"",
-    "stylelint": "stylelint \"src/**/*.{css,less,scss}\" --formatter verbose",
-    "stylelint:fix": "stylelint \"src/**/*.{css,less,scss}\" --formatter verbose --fix"
+    "prettier:write": "prettier --write \"src/**/*.{js,jsx,json,ts,tsx}\""
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5"

@@ -284,6 +284,10 @@ const bondCaptionMap = {
   any: {
     type: Bond.PATTERN.TYPE.ANY,
     stereo: Bond.PATTERN.STEREO.NONE
+  },
+  hydrogen: {
+    type: Bond.PATTERN.TYPE.HYDROGEN,
+    stereo: Bond.PATTERN.STEREO.NONE
   }
 }
 

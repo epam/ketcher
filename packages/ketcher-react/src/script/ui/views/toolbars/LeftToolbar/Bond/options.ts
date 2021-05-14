@@ -30,6 +30,7 @@ const bondStereo: ToolbarItem[] = makeItems([
 ])
 const bondQuery: ToolbarItem[] = makeItems([
   'bond-any',
+  'bond-hydrogen',
   'bond-aromatic',
   'bond-singledouble',
   'bond-singlearomatic',

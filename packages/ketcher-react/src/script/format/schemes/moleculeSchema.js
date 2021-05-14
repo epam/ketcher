@@ -259,6 +259,7 @@ const bond = {
         'Triple',
         'Aromatic',
         'Any',
+        'Hydrogen',
         'Single/Double',
         'Single/Aromatic',
         'Double/Aromatic'

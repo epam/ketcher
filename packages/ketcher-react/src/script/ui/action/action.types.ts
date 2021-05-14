@@ -20,6 +20,7 @@ type ToolVariant =
   | 'analyse'
   | 'arom'
   | 'bond-any'
+  | 'bond-hydrogen'
   | 'bond-aromatic'
   | 'bond-crossed'
   | 'bond-double'

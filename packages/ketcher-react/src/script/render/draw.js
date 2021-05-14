@@ -299,6 +299,15 @@ function bondAny(paper, hb1, hb2, options) {
     .attr({ 'stroke-dasharray': '- ' })
 }
 
+function bondHydrogen(paper, hb1, hb2, options) {
+  var a = hb1.p,
+    b = hb2.p
+  return paper.path(makeStroke(a, b)).attr(options.lineattr).attr({
+    'stroke-dasharray': '.',
+    'stroke-linecap': 'square'
+  })
+}
+
 function reactingCenter(paper, p, options) {
   var pathdesc = ''
   for (var i = 0; i < p.length / 2; ++i)
@@ -457,6 +466,7 @@ export default {
   bondTriple,
   bondAromatic,
   bondAny,
+  bondHydrogen,
   reactingCenter,
   topologyMark,
   radicalCap,

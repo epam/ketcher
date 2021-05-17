@@ -20,7 +20,8 @@ import { ToolbarItem } from '../../toolbar.types'
 const bondCommon: ToolbarItem[] = makeItems([
   'bond-single',
   'bond-double',
-  'bond-triple'
+  'bond-triple',
+  'bond-dative'
 ])
 const bondStereo: ToolbarItem[] = makeItems([
   'bond-up',

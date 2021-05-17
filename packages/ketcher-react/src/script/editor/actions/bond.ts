@@ -259,6 +259,9 @@ function bondFlipRequired(struct: Struct, bond: Bond, attrs: any): boolean {
   const bondEnd = struct.atoms.get(bond.end)
   if (!bondBegin || !bondBegin.neighbors || !bondEnd || !bondEnd.neighbors)
     return false
+
+  if (attrs.type === Bond.PATTERN.TYPE.DATIVE) return true
+
   return (
     attrs.type === Bond.PATTERN.TYPE.SINGLE &&
     bond.stereo === Bond.PATTERN.STEREO.NONE &&

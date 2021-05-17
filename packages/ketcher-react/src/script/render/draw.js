@@ -308,6 +308,15 @@ function bondHydrogen(paper, hb1, hb2, options) {
   })
 }
 
+function bondDative(paper, hb1, hb2, options) {
+  var a = hb1.p,
+    b = hb2.p
+  return paper
+    .path(makeStroke(a, b))
+    .attr(options.lineattr)
+    .attr({ 'arrow-end': 'block-midium-long' })
+}
+
 function reactingCenter(paper, p, options) {
   var pathdesc = ''
   for (var i = 0; i < p.length / 2; ++i)
@@ -467,6 +476,7 @@ export default {
   bondAromatic,
   bondAny,
   bondHydrogen,
+  bondDative,
   reactingCenter,
   topologyMark,
   radicalCap,

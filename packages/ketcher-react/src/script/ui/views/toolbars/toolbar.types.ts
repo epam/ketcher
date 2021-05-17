@@ -68,6 +68,7 @@ type LeftToolbarItemVariant =
   | 'bond-single'
   | 'bond-double'
   | 'bond-triple'
+  | 'bond-dative'
   | 'bond-stereo'
   | 'bond-up'
   | 'bond-down'

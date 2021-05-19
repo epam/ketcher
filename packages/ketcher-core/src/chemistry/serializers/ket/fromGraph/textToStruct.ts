@@ -14,29 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-const schema = {
-  id: '/Text',
-  type: 'object',
-  properties: {
-    label: {
-      type: 'string'
-    },
-    position: {
-      type: 'object',
-      properties: {
-        x: {
-          type: 'integer'
-        },
-        y: {
-          type: 'integer'
-        }
-      },
-      required: ['x', 'y']
-    },
-    type: {
-      type: 'string'
-    }
-  }
-}
+import { Text, Struct } from 'chemistry/entities'
 
-export default schema
+export function textToStruct(graphItem: any, struct: Struct) {
+  const object = graphItem.data
+  struct.texts.add(new Text(object))
+
+  return struct
+}

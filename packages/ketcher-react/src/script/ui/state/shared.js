@@ -1,5 +1,4 @@
-import { identifyStructFormat, FormatterFactory } from 'ketcher-core'
-import graphManager from '../../format/chemGraph'
+import { FormatterFactory, identifyStructFormat } from 'ketcher-core'
 
 export function onAction(action) {
   if (action && action.dialog) {
@@ -35,7 +34,7 @@ export function load(structStr, options) {
     const { rescale, fragment, ...formatterOptions } = options
 
     const format = identifyStructFormat(structStr)
-    const factory = new FormatterFactory(server, graphManager)
+    const factory = new FormatterFactory(server)
 
     const service = factory.create(format, formatterOptions)
     return service.getStructureFromStringAsync(structStr).then(
@@ -55,7 +54,7 @@ export function load(structStr, options) {
       },
       err => {
         //TODO: add error handler call
-        //legacy message: Can't parse molecule!
+        alert(err)
       }
     )
   }

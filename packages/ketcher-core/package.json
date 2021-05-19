@@ -39,7 +39,8 @@
     "prettier:write": "prettier --write \"src/**/*.{js,jsx,json,ts,tsx}\""
   },
   "dependencies": {
-    "@babel/runtime": "^7.12.5"
+    "@babel/runtime": "^7.12.5",
+    "jsonschema": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",

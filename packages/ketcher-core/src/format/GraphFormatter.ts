@@ -1,19 +1,16 @@
-import { GraphManager, Struct } from 'chemistry'
+import { KetSerializer } from 'chemistry/serializers'
+import { Struct } from 'chemistry/entities'
 import { StructFormatter } from './structFormatter.types'
 
 export class GraphFormatter implements StructFormatter {
-  constructor(private readonly graphManager: GraphManager) {}
+  constructor(private readonly serializer: KetSerializer) {}
 
   async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    const graph = this.graphManager.toGraph(struct)
-    const stringifiedGraph = JSON.stringify(graph, null, 4)
-    return stringifiedGraph
+    const graph = this.serializer.serialize(struct)
+    return graph
   }
 
-  async getStructureFromStringAsync(
-    stringifiedStruct: string
-  ): Promise<Struct> {
-    const parsedStruct = JSON.parse(stringifiedStruct)
-    return this.graphManager.fromGraph(parsedStruct)
+  async getStructureFromStringAsync(content: string): Promise<Struct> {
+    return this.serializer.deserialize(content)
   }
 }

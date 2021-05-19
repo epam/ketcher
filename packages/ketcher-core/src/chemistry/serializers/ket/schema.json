@@ -1,0 +1,607 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ket",
+  "description": "Ketcher format schema",
+  "type": "object",
+  "required": ["root"],
+  "properties": {
+    "root": {
+      "type": "object",
+      "required": ["nodes"],
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/simpleObject"
+              },
+              {
+                "$ref": "#/definitions/text"
+              },
+              {
+                "$ref": "#/definitions/arrow"
+              },
+              {
+                "$ref": "#/definitions/plus"
+              },
+              {
+                "type": "object",
+                "required": ["$ref"],
+                "properties": {
+                  "$ref": {
+                    "type": "string",
+                    "pattern": "^(mol\\d+|rg[1-9]\\d*)"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "patternProperties": {
+    "^rg[1-9]\\d*": {
+      "$ref": "#/definitions/rgroup"
+    },
+    "^mol\\d+": {
+      "$ref": "#/definitions/molecule"
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "rsite": {
+      "type": "object",
+      "required": ["type", "location"],
+      "properties": {
+        "type": {
+          "const": "rg-label"
+        },
+        "location": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": {
+            "type": "number"
+          }
+        },
+        "$refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^rg-[1-9]\\d*"
+          }
+        },
+        "attachmentPoints": {
+          "type": "integer",
+          "enum": [0, 1, 2, 3]
+        }
+      }
+    },
+    "atom": {
+      "type": "object",
+      "required": ["label"],
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "location": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": {
+            "type": "number"
+          }
+        },
+        "charge": {
+          "type": "integer",
+          "minimum": -1000,
+          "maximum": 1000
+        },
+        "explicitValence": {
+          "type": "integer",
+          "enum": [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        },
+        "isotope": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "radical": {
+          "type": "integer",
+          "enum": [0, 2, 1, 3]
+        },
+        "attachmentPoints": {
+          "type": "integer",
+          "enum": [0, 1, 2, 3]
+        },
+        "stereoParity": {
+          "type": "integer",
+          "enum": [0, 1, 2, 3]
+        },
+        "ringBondCount": {
+          "type": "integer",
+          "enum": [0, -2, -1, 2, 3, 4]
+        },
+        "substitutionCount": {
+          "type": "integer",
+          "enum": [0, -2, -1, 1, 2, 3, 4, 5, 6]
+        },
+        "unsaturatedAtom": {
+          "type": "boolean"
+        },
+        "hCount": {
+          "type": "integer",
+          "enum": [-1, 0, 1, 2, 3, 4, 5]
+        },
+        "mapping": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "invRet": {
+          "type": "integer",
+          "enum": [0, 1, 2]
+        },
+        "exactChangeFlag": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "atomlist": {
+      "type": "object",
+      "required": ["type", "location"],
+      "properties": {
+        "type": {
+          "enum": ["atom-list"]
+        },
+        "notList": {
+          "type": "boolean"
+        },
+        "location": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": {
+            "type": "number"
+          }
+        },
+        "elements": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "attachmentPoints": {
+          "type": "integer",
+          "enum": [0, 1, 2, 3]
+        }
+      }
+    },
+    "bond": {
+      "type": "object",
+      "required": ["atoms", "type"],
+      "properties": {
+        "type": {
+          "type": "integer",
+          "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        },
+        "atoms": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "uniqueItems": true
+          }
+        },
+        "stereo": {
+          "type": "integer",
+          "enum": [0, 1, 2, 3]
+        },
+        "topology": {
+          "type": "integer",
+          "enum": [0, 1, 2]
+        },
+        "center": {
+          "type": "integer",
+          "enum": [0, -1, 1, 2, 4, 8, 12]
+        },
+        "stereobox": {
+          "type": "integer",
+          "enum": [0, 1]
+        }
+      }
+    },
+    "rgroup": {
+      "type": "object",
+      "required": ["rlogic", "type"],
+      "properties": {
+        "type": {
+          "const": "rgroup"
+        },
+        "rlogic": {
+          "type": "object",
+          "required": ["number"],
+          "properties": {
+            "number": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "range": {
+              "type": "string",
+              "maxLength": 50,
+              "default": ""
+            },
+            "resth": {
+              "type": "boolean",
+              "default": false
+            },
+            "ifthen": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/structure"
+        }
+      ]
+    },
+    "molecule": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "const": "molecule"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/structure"
+        }
+      ]
+    },
+    "structure": {
+      "type": "object",
+      "required": ["atoms"],
+      "properties": {
+        "stereoFlag": {
+          "type": "string",
+          "enum": ["ABS", "AND", "OR", "Mixed"]
+        },
+        "atoms": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/atom"
+              },
+              {
+                "$ref": "#/definitions/rsite"
+              },
+              {
+                "$ref": "#/definitions/atomlist"
+              }
+            ]
+          }
+        },
+        "bonds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/bond"
+          }
+        },
+        "highlight": {
+          "$ref": "#/definitions/subset"
+        },
+        "selection": {
+          "$ref": "#/definitions/subset"
+        },
+        "sgroups": {
+          "$ref": "#/definitions/sgroups"
+        }
+      }
+    },
+    "subset": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": ["entityType", "items"],
+            "properties": {
+              "entityType": {
+                "type": "string",
+                "const": "atoms"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "uniqueItems": true
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": ["entityType", "items"],
+            "properties": {
+              "entityType": {
+                "type": "string",
+                "const": "bonds"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "uniqueItems": true
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "sgroups": {
+      "type": "array",
+      "items": {
+        "required": ["atoms", "type"],
+        "properties": {
+          "atoms": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "type": {
+            "type": "string",
+            "enum": ["GEN", "MUL", "SRU", "SUP", "DAT"]
+          }
+        },
+        "if": {
+          "properties": {
+            "type": {
+              "const": "MUL"
+            }
+          }
+        },
+        "then": {
+          "required": ["mul"],
+          "properties": {
+            "mul": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            }
+          }
+        },
+        "if": {
+          "properties": {
+            "type": {
+              "const": "SRU"
+            }
+          }
+        },
+        "then": {
+          "required": ["subscript", "connectivity"],
+          "properties": {
+            "subscript": {
+              "type": "string",
+              "pattern": "^[a-zA-Z]$"
+            },
+            "connectivity": {
+              "type": "string",
+              "enum": ["HT", "HH", "EU"]
+            }
+          }
+        },
+        "if": {
+          "properties": {
+            "type": {
+              "const": "SUP"
+            }
+          }
+        },
+        "then": {
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "if": {
+          "properties": {
+            "type": {
+              "const": "DAT"
+            }
+          }
+        },
+        "then": {
+          "required": ["context", "fieldName", "fieldValue"],
+          "properties": {
+            "context": {
+              "enum": ["Fragment", "Multifragment", "Bond", "Atom", "Group"]
+            },
+            "fieldName": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fieldValue": {
+              "type": "string",
+              "minLength": 1
+            },
+            "display": {
+              "type": "boolean"
+            },
+            "placement": {
+              "type": "boolean"
+            },
+            "bonds": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "plus": {
+      "type": "object",
+      "required": ["type", "location"],
+      "properties": {
+        "type": {
+          "const": "plus"
+        },
+        "location": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "arrow": {
+      "type": "object",
+      "required": ["type", "location"],
+      "properties": {
+        "type": {
+          "const": "arrow"
+        },
+        "location": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "simpleObject": {
+      "type": "object",
+      "required": ["type", "data"],
+      "properties": {
+        "type": {
+          "const": "simpleObject"
+        },
+        "data": {
+          "type": "object",
+          "required": ["mode"],
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": ["line", "rectangle", "circle", "ellipse", "polyline"]
+            }
+          },
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "polyline"
+              }
+            }
+          },
+          "then": {
+            "required": ["pos"],
+            "properties": {
+              "pos": {
+                "type": "array",
+                "minItems": 2,
+                "items": {
+                  "type": "object",
+                  "required": ["x", "y"],
+                  "properties": {
+                    "x": {
+                      "type": "number"
+                    },
+                    "y": {
+                      "type": "number"
+                    },
+                    "z": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "required": ["pos"],
+            "properties": {
+              "pos": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "type": "object",
+                  "required": ["x", "y"],
+                  "properties": {
+                    "x": {
+                      "type": "number"
+                    },
+                    "y": {
+                      "type": "number"
+                    },
+                    "z": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "text": {
+      "type": "object",
+      "required": ["type", "data"],
+      "properties": {
+        "type": {
+          "const": "text"
+        },
+        "data": {
+          "type": "object",
+          "required": ["label", "position"],
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "position": {
+              "type": "object",
+              "required": ["x", "y"],
+              "properties": {
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

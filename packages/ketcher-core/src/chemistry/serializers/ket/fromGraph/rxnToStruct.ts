@@ -1,6 +1,7 @@
-import { RxnPlus, RxnArrow, Vec2 } from 'ketcher-core'
+import { RxnPlus, RxnArrow, Struct } from 'chemistry/entities'
+import { Vec2 } from 'utils'
 
-export function rxnToStruct(graphItem, struct) {
+export function rxnToStruct(graphItem: any, struct: Struct): Struct {
   if (graphItem.type === 'arrow') {
     struct.rxnArrows.add(
       new RxnArrow(

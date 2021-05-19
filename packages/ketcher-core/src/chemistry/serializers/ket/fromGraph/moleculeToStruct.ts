@@ -1,8 +1,17 @@
-import { ifDef } from '../../utils'
-import { Struct, Atom, Bond, SGroup, Elements } from 'ketcher-core'
-import { toRlabel } from '../convertStruct'
+import { ifDef } from 'utils'
+import { Struct, Atom, Bond, SGroup } from 'chemistry/entities'
+import { Elements } from 'chemistry/constants'
 
-export function moleculeToStruct(graphItem) {
+export function toRlabel(values) {
+  let res = 0
+  values.forEach(val => {
+    const rgi = val - 1
+    res |= 1 << rgi
+  })
+  return res
+}
+
+export function moleculeToStruct(graphItem: any): Struct {
   const struct = new Struct()
   graphItem.atoms.forEach(atom => {
     if (atom.type === 'rg-label') struct.atoms.add(rglabelToStruct(atom))
@@ -22,13 +31,13 @@ export function moleculeToStruct(graphItem) {
   struct.initNeighbors()
   struct.markFragments()
   if (graphItem.stereoFlag)
-    struct.frags.get(0).enhancedStereoFlag = graphItem.stereoFlag
+    struct.frags.get(0)!.enhancedStereoFlag = graphItem.stereoFlag
 
   return struct
 }
 
 export function atomToStruct(source) {
-  const params = {}
+  const params: any = {}
 
   ifDef(params, 'label', source.label)
   ifDef(params, 'alias', source.alias)
@@ -59,7 +68,7 @@ export function atomToStruct(source) {
 }
 
 export function rglabelToStruct(source) {
-  const params = {}
+  const params: any = {}
   params.label = 'R#'
   ifDef(params, 'pp', {
     x: source.location[0],
@@ -73,7 +82,7 @@ export function rglabelToStruct(source) {
 }
 
 export function atomListToStruct(source) {
-  const params = {}
+  const params: any = {}
   params.label = 'L#'
   ifDef(params, 'pp', {
     x: source.location[0],
@@ -92,7 +101,7 @@ export function atomListToStruct(source) {
 }
 
 export function bondToStruct(source) {
-  const params = {}
+  const params: any = {}
 
   ifDef(params, 'type', source.type)
   ifDef(params, 'topology', source.topology)

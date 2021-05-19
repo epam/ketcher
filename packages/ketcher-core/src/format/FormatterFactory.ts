@@ -1,15 +1,16 @@
 import {
-  GraphManager,
+  FormatterFactoryOptions,
+  StructFormatter,
+  SupportedFormat
+} from './structFormatter.types'
+import {
+  KetSerializer,
   MolSerializer,
   MolSerializerOptions,
   SmiSerializer
 } from 'chemistry/serializers'
 import { StructService, StructServiceOptions } from 'infrastructure/services'
-import {
-  StructFormatter,
-  SupportedFormat,
-  FormatterFactoryOptions
-} from './structFormatter.types'
+
 import { GraphFormatter } from './GraphFormatter'
 import { MolfileV2000Formatter } from './MolfileV2000Formatter'
 import { RxnFormatter } from './RxnFormatter'
@@ -17,10 +18,7 @@ import { ServerFormatter } from './ServerFormatter'
 import { SmilesFormatter } from './SmilesFormatter'
 
 export class FormatterFactory {
-  constructor(
-    private readonly structService: StructService,
-    private readonly graphManager: GraphManager
-  ) {}
+  constructor(private readonly structService: StructService) {}
 
   private separateOptions(
     options?: FormatterFactoryOptions
@@ -58,7 +56,7 @@ export class FormatterFactory {
     let formatter: StructFormatter
     switch (format) {
       case 'graph':
-        formatter = new GraphFormatter(this.graphManager)
+        formatter = new GraphFormatter(new KetSerializer())
         break
 
       case 'mol':

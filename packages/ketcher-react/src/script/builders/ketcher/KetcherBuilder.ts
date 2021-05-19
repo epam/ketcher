@@ -14,17 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 import {
-  StructService,
-  StructServiceProvider,
   FormatterFactory,
-  ServiceMode
+  ServiceMode,
+  StructService,
+  StructServiceProvider
 } from 'ketcher-core'
-import createApi from '../../api'
-import { Editor } from '../../editor'
 import { Ketcher, UI as KetcherUI } from '../../ketcher'
-import { initApp } from '../../ui'
+
 import { ButtonsConfig } from './ButtonsConfig'
-import graphManager from '../../format/chemGraph'
+import { Editor } from '../../editor'
+import createApi from '../../api'
+import { initApp } from '../../ui'
 
 class KetcherBuilder {
   private structService: StructService | null
@@ -111,7 +111,7 @@ class KetcherBuilder {
 
     this.editor = editor
     this.ui = tempRef.ui
-    this.formatterFactory = new FormatterFactory(structService, graphManager)
+    this.formatterFactory = new FormatterFactory(structService)
   }
 
   build() {

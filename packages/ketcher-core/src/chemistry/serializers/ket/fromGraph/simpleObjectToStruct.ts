@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { SimpleObject, SimpleObjectMode, Vec2 } from 'ketcher-core'
+import { SimpleObject, SimpleObjectMode, Struct } from 'chemistry/entities'
+import { Vec2 } from 'utils'
 
-export function simpleObjectToStruct(graphItem, struct) {
+export function simpleObjectToStruct(graphItem: any, struct: Struct): Struct {
   const object =
     graphItem.data.mode === 'circle'
       ? circleToEllipse(graphItem)

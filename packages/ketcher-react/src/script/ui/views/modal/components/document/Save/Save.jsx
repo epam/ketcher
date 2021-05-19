@@ -14,25 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component, createRef } from 'react'
-import { connect } from 'react-redux'
+import * as structFormat from '../../../../../data/convert/structConverter'
+
+import Form, { Field } from '../../../../../component/form/form'
 import {
   FormatterFactory,
-  getPropertiesByFormat,
-  formatProperties
+  formatProperties,
+  getPropertiesByFormat
 } from 'ketcher-core'
-import graphManager from '../../../../../../format/chemGraph'
-import * as structFormat from '../../../../../data/convert/structConverter'
+import React, { Component, createRef } from 'react'
+
+import { Dialog } from '../../../../components'
+import SaveButton from '../../../../../component/view/savebutton'
+import SaveImageTab from './SaveImageTab'
+import Tabs from '../../../../../component/view/Tabs'
+import { check } from '../../../../../state/server'
+import classes from './Save.module.less'
+import { connect } from 'react-redux'
 import { saveUserTmpl } from '../../../../../state/templates'
 import { updateFormState } from '../../../../../state/modal/form'
-import { check } from '../../../../../state/server'
-import { Dialog } from '../../../../components'
-import Form, { Field } from '../../../../../component/form/form'
-import SaveButton from '../../../../../component/view/savebutton'
-import Tabs from '../../../../../component/view/Tabs'
-import SaveImageTab from './SaveImageTab'
-
-import classes from './Save.module.less'
 
 const saveSchema = {
   title: 'Save',
@@ -109,7 +109,7 @@ class SaveDialog extends Component {
 
     const { struct, server, options, formState } = this.props
 
-    const factory = new FormatterFactory(server, graphManager)
+    const factory = new FormatterFactory(server)
 
     const service = factory.create(type, options)
 

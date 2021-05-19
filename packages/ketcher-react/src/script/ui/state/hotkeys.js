@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { formatProperties, MolSerializer } from 'ketcher-core'
-import { isEqual, debounce } from 'lodash/fp'
-import graph from '../../format/chemGraph'
-import keyNorm from '../data/convert/keynorm'
-import actions from '../action'
-
 import * as clipArea from '../component/cliparea'
+
+import { KetSerializer, MolSerializer, formatProperties } from 'ketcher-core'
+import { debounce, isEqual } from 'lodash/fp'
+import { load, onAction } from './shared'
+
+import actions from '../action'
+import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
-import { onAction, load } from './shared'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -165,8 +165,9 @@ function clipData(editor) {
   if (struct.isBlank()) return null
   const molSerializer = new MolSerializer()
   try {
-    const graphData = graph.toGraph(struct)
-    res['application/json'] = JSON.stringify(graphData)
+    const serializer = new KetSerializer()
+    const graph = serializer.serialize(struct)
+    res['application/json'] = graph
 
     const type = struct.isReaction
       ? 'chemical/x-mdl-molfile'

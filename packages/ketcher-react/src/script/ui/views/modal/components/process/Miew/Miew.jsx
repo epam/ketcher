@@ -15,15 +15,14 @@
  ***************************************************************************/
 
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { FormatterFactory } from 'ketcher-core'
-import { pick } from 'lodash/fp'
-import graphManager from '../../../../../../format/chemGraph'
-import { Dialog } from '../../../../components'
-import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema'
-import { load } from '../../../../../state'
 
+import { Dialog } from '../../../../components'
+import { FormatterFactory } from 'ketcher-core'
+import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema'
 import classes from './Miew.module.less'
+import { connect } from 'react-redux'
+import { load } from '../../../../../state'
+import { pick } from 'lodash/fp'
 
 /* OPTIONS for MIEW */
 const BACKGROUND_COLOR = {
@@ -97,7 +96,7 @@ class MiewDialog extends Component {
 
     if (this.viewer.init()) this.viewer.run()
 
-    const factory = new FormatterFactory(server, graphManager)
+    const factory = new FormatterFactory(server)
     const service = factory.create('cml')
 
     service

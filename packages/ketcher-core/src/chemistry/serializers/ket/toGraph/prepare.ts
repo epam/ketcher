@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Pile, Vec2 } from 'ketcher-core'
+import { Pile, Vec2 } from 'utils'
 
-export function prepareStructForGraph(struct) {
-  const graphNodes = []
+import { Struct } from 'chemistry/entities'
+
+export function prepareStructForGraph(struct: Struct) {
+  const graphNodes: any = []
 
   const rgFrags = new Set() // skip this when writing molecules
   for (const [rgnumber, rgroup] of struct.rgroups.entries()) {

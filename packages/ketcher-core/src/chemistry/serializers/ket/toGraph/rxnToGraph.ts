@@ -13,12 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+export function arrowToGraph(arrowNode) {
+  const coord = arrowNode.center
+  return {
+    type: 'arrow',
+    location: [coord.x, coord.y, coord.z],
+    prop: arrowNode.data,
+    mode: arrowNode.mode
+  }
+}
 
-import { Text } from 'ketcher-core'
-
-export function textToStruct(graphItem, struct) {
-  const object = graphItem.data
-  struct.texts.add(new Text(object))
-
-  return struct
+export function plusToGraph(plusNode) {
+  const coord = plusNode.center
+  return {
+    type: 'plus',
+    location: [coord.x, coord.y, coord.z],
+    prop: plusNode.data
+  }
 }

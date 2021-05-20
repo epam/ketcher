@@ -15,7 +15,10 @@
  ***************************************************************************/
 
 import jsonschema, { Schema } from 'jsonschema'
-import { StereoColoringType } from '../../../render/restruct/GeneralEnumTypes'
+import {
+  StereoColoringType,
+  StereLabelStyleType
+} from '../../../render/restruct/GeneralEnumTypes'
 
 type ExtendedSchema = Schema & { enumNames?: Array<string>; default?: any }
 
@@ -42,6 +45,7 @@ const render: {
   showValenceWarnings: ExtendedSchema
   atomColoring: ExtendedSchema
   hideStereoFlags: ExtendedSchema
+  stereoLabelStyle: ExtendedSchema
   colorOfAbsoluteCenters: ExtendedSchema
   colorOfAndCenters: ExtendedSchema
   colorOfOrCenters: ExtendedSchema
@@ -72,6 +76,17 @@ const render: {
     title: 'Do not show the Stereo flags',
     type: 'boolean',
     default: false
+  },
+  stereoLabelStyle: {
+    title: 'Label display at stereogenic centers',
+    enum: [
+      StereLabelStyleType.IUPAC,
+      StereLabelStyleType.Classic,
+      StereLabelStyleType.On,
+      StereLabelStyleType.Off
+    ],
+    enumNames: ['IUPAC style', 'Classic', 'On', 'Off'],
+    default: StereLabelStyleType.IUPAC
   },
   colorOfAbsoluteCenters: {
     title: ' Color of Absolute Center',

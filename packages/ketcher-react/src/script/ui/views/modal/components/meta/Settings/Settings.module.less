@@ -19,10 +19,11 @@
 @fieldset-inputs-number: 4;
 @server-inputs-number: 5;
 @viewer-inputs-number: 3;
-@render-inputs-number: 12;
+@general-inputs-number: 7;
+@stereochemistry-inputs-number: 6;
 
 .settings {
-  width: 35em;
+  width: 38em;
 
   .warning {
     margin: 0.3em;
@@ -56,7 +57,11 @@
     height: @input-height * @viewer-inputs-number;
   }
 
-  .render {
-    height: @input-height * @render-inputs-number;
+  .general {
+    height: @input-height * @general-inputs-number;
+  }
+
+  .stereochemistry {
+    height: @input-height * @stereochemistry-inputs-number;
   }
 }

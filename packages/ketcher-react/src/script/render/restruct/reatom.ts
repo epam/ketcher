@@ -27,7 +27,11 @@ import {
   Atom,
   Struct
 } from 'ketcher-core'
-import { LayerMap, StereoColoringType } from './GeneralEnumTypes'
+import {
+  LayerMap,
+  StereoColoringType,
+  StereLabelStyleType
+} from './GeneralEnumTypes'
 import ReStruct from './ReStruct'
 import Render from '..'
 
@@ -256,7 +260,9 @@ class ReAtom extends ReObject {
 
     // we render them together to avoid possible collisions
     const text =
-      (stereoLabel ? `${stereoLabel}\n` : '') +
+      (shouldDisplayStereoLabel(stereoLabel, options.stereoLabelStyle)
+        ? `${stereoLabel}\n`
+        : '') +
       (queryAttrsText.length > 0 ? `${queryAttrsText}\n` : '') +
       (aamText.length > 0 ? `.${aamText}.` : '')
     if (text.length > 0) {
@@ -326,6 +332,49 @@ function getStereoAtomOpacity(stereoLabel) {
     return 1
   }
   return Math.max(1 - (stereoLabelNumber - 1) / 10, StereoLabelMinOpacity)
+}
+
+function shouldDisplayStereoLabel(stereoLabel, labelStyle): Boolean {
+  if (!stereoLabel) {
+    return false
+  }
+
+  const stereoLabelType = stereoLabel.match(/\D+/g)[0]
+
+  switch (labelStyle) {
+    // Off
+    case StereLabelStyleType.Off:
+      return false
+    // On
+    case StereLabelStyleType.On:
+      return true
+    // Classic
+    case StereLabelStyleType.Classic:
+      if (stereoLabelType === StereoLabel.Abs) {
+        return false
+      }
+      if (stereoLabelType === StereoLabel.Or) {
+        return true
+      }
+      if (stereoLabelType === StereoLabel.And) {
+        return false
+      }
+      return true
+    // IUPAC
+    case StereLabelStyleType.IUPAC:
+      if (stereoLabelType === StereoLabel.Abs) {
+        return false
+      }
+      if (stereoLabelType === StereoLabel.Or) {
+        return false
+      }
+      if (stereoLabelType === StereoLabel.And) {
+        return false
+      }
+      return true
+    default:
+      return true
+  }
 }
 
 function isLabelVisible(restruct, options, atom) {

@@ -24,6 +24,7 @@ import {
   Elements,
   ElementColor,
   StereoLabel,
+  StereoFlag,
   Atom,
   Struct
 } from 'ketcher-core'
@@ -259,8 +260,16 @@ class ReAtom extends ReObject {
       !this.a.alias && !this.a.pseudo ? getQueryAttrsText(this) : ''
 
     // we render them together to avoid possible collisions
+
+    const fragmentId = Number(restruct.atoms.get(aid)?.a.fragment)
+    const EnhancedFlag = restruct.enhancedFlags.get(fragmentId)?.flag
+
     const text =
-      (shouldDisplayStereoLabel(stereoLabel, options.stereoLabelStyle)
+      (shouldDisplayStereoLabel(
+        stereoLabel,
+        options.stereoLabelStyle,
+        EnhancedFlag
+      )
         ? `${stereoLabel}\n`
         : '') +
       (queryAttrsText.length > 0 ? `${queryAttrsText}\n` : '') +
@@ -334,13 +343,11 @@ function getStereoAtomOpacity(stereoLabel) {
   return Math.max(1 - (stereoLabelNumber - 1) / 10, StereoLabelMinOpacity)
 }
 
-function shouldDisplayStereoLabel(stereoLabel, labelStyle): Boolean {
+function shouldDisplayStereoLabel(stereoLabel, labelStyle, flag): Boolean {
   if (!stereoLabel) {
     return false
   }
-
   const stereoLabelType = stereoLabel.match(/\D+/g)[0]
-
   switch (labelStyle) {
     // Off
     case StereLabelStyleType.Off:
@@ -350,28 +357,12 @@ function shouldDisplayStereoLabel(stereoLabel, labelStyle): Boolean {
       return true
     // Classic
     case StereLabelStyleType.Classic:
-      if (stereoLabelType === StereoLabel.Abs) {
-        return false
-      }
-      if (stereoLabelType === StereoLabel.Or) {
-        return true
-      }
-      if (stereoLabelType === StereoLabel.And) {
-        return false
-      }
-      return true
+      return flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or
+        ? true
+        : false
     // IUPAC
     case StereLabelStyleType.IUPAC:
-      if (stereoLabelType === StereoLabel.Abs) {
-        return false
-      }
-      if (stereoLabelType === StereoLabel.Or) {
-        return false
-      }
-      if (stereoLabelType === StereoLabel.And) {
-        return false
-      }
-      return true
+      return flag === StereoFlag.Mixed ? true : false
     default:
       return true
   }

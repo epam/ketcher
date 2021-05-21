@@ -71,6 +71,7 @@ var fmtInfo = {
     6: Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC,
     7: Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC,
     8: Bond.PATTERN.TYPE.ANY,
+    9: Bond.PATTERN.TYPE.DATIVE, 
     10: Bond.PATTERN.TYPE.HYDROGEN
   },
   bondStereoMap: {

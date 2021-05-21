@@ -14,19 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable no-shadow */
-
-import tools from './tools'
 import atoms from './atoms'
-import zoom from './zoom'
-import server from './server'
 import debug from './debug'
-import templates from './templates'
 import { exec } from '../component/cliparea'
+import server from './server'
+import templates from './templates'
+import tools from './tools'
+import zoom from './zoom'
 
 export * from './action.types'
 
-export default {
+const config = {
   new: {
     shortcut: 'Mod+Delete',
     title: 'Clear Canvas',
@@ -157,8 +155,8 @@ function hasSelection(editor) {
   const selection = editor.selection()
   return (
     selection && // if not only sgroupData selected
-    Object.keys(selection).filter(key => !['sgroupData', 'texts'].includes(key))
-      .length > 0
+    Object.keys(selection).filter(key => !['sgroupData'].includes(key)).length >
+      0
   )
 }
 
@@ -171,3 +169,5 @@ function dontClipMessage(title) {
       '.'
   )
 }
+
+export default config

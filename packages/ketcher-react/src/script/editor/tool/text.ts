@@ -24,6 +24,10 @@ import Action from '../shared/action'
 import { Vec2 } from 'ketcher-core'
 import { fromMultipleMove } from '../actions/fragment'
 
+interface Text {
+  label: string
+}
+
 class TextTool {
   editor: any
   dragCtx: any
@@ -100,7 +104,7 @@ class TextTool {
   }
 }
 
-function propsDialog(editor, id, position) {
+function propsDialog(editor: any, id: number | null, position: Vec2) {
   const struct = editor.render.ctab.molecule
   const text = id || id === 0 ? struct.texts.get(id) : null
   const label = text ? text.label : ''
@@ -108,17 +112,18 @@ function propsDialog(editor, id, position) {
   const res = editor.event.elementEdit.dispatch({
     label,
     id,
-    position
+    position,
+    type: 'text'
   })
 
   res
-    .then((id: number, label: string, position: Vec2) => {
+    .then(({ label }: Text) => {
       if (!id && id !== 0 && label) {
         editor.update(fromTextCreation(editor.render.ctab, label, position))
       } else if (!label) {
-        editor.update(fromTextDeletion(editor.render.ctab, id))
+        editor.update(fromTextDeletion(editor.render.ctab, id!))
       } else {
-        editor.update(fromTextUpdating(editor.render.ctab, id, label))
+        editor.update(fromTextUpdating(editor.render.ctab, id!, label))
       }
     })
     .catch(() => null)

@@ -28,28 +28,29 @@ interface TextCreateData {
 
 export class TextCreate extends BaseOperation {
   data: TextCreateData
-  performed: boolean
 
-  constructor(label: string, position: Vec2) {
+  constructor(label: string, position: Vec2, id?: number) {
     super(OperationType.TEXT_CREATE)
-    this.data = { label, position }
-    this.performed = false
+    this.data = { label, position, id }
   }
 
   execute(restruct: Restruct): void {
     const struct = restruct.molecule
+    const item = new Text(this.data)
 
-    if (!this.performed) {
-      this.data.id = struct.texts.add(new Text(this.data))
-      this.performed = true
+    if (this.data.id == null) {
+      const index = struct.texts.add(item)
+      this.data.id = index
     } else {
-      struct.texts.set(this.data.id!, new Text(this.data))
+      struct.texts.set(this.data.id!, item)
     }
-    const textId = this.data.id!
-    restruct.texts.set(textId, new ReText(struct.texts.get(textId)))
 
-    struct.textSetPosition(textId, new Vec2(this.data.position))
-    BaseOperation.invalidateItem(restruct, 'texts', textId, 1)
+    const itemId = this.data.id!
+
+    restruct.texts.set(itemId, new ReText(item))
+
+    struct.textSetPosition(itemId, new Vec2(this.data.position))
+    BaseOperation.invalidateItem(restruct, 'texts', itemId, 1)
   }
 
   invert(): BaseOperation {
@@ -75,16 +76,11 @@ export class TextDelete extends BaseOperation {
 
   execute(restruct: Restruct): void {
     const struct = restruct.molecule
+    const item = struct.texts.get(this.data.id)!
+    if (!item) return
 
-    if (!this.performed) {
-      const item = struct.texts.get(this.data.id)!
-
-      if (item) {
-        this.data.label = item.label!
-        this.data.position = item.position
-        this.performed = true
-      }
-    }
+    this.data.label = item.label!
+    this.data.position = item.position
 
     restruct.markItemRemoved()
 
@@ -95,6 +91,6 @@ export class TextDelete extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    return new TextCreate(this.data.label!, this.data.position!)
+    return new TextCreate(this.data.label!, this.data.position!, this.data.id)
   }
 }

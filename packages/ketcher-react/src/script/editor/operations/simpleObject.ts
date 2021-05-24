@@ -30,47 +30,42 @@ interface SimpleObjectAddData {
 }
 export class SimpleObjectAdd extends Base {
   data: SimpleObjectAddData
-  performed: boolean
 
   constructor(
     pos: Array<Vec2> = [],
     mode: SimpleObjectMode = SimpleObjectMode.line,
-    toCircle: boolean = false
+    toCircle: boolean = false,
+    id?: number
   ) {
     super(OperationType.SIMPLE_OBJECT_ADD)
-    this.data = { pos, mode, toCircle }
-    this.performed = false
+    this.data = { pos, mode, toCircle, id }
   }
 
   execute(restruct: any): void {
     const struct = restruct.molecule
-    if (!this.performed) {
-      this.data.id = struct.simpleObjects.add(
-        new SimpleObject({ mode: this.data.mode })
-      )
-      this.performed = true
+    const item = new SimpleObject({ mode: this.data.mode })
+
+    if (this.data.id == null) {
+      const index = struct.simpleObjects.add(item)
+      this.data.id = index
     } else {
-      struct.simpleObjects.set(
-        this.data.id,
-        new SimpleObject({ mode: this.data.mode })
-      )
+      struct.simpleObjects.set(this.data.id!, item)
     }
 
-    restruct.simpleObjects.set(
-      this.data.id,
-      new ReSimpleObject(struct.simpleObjects.get(this.data.id))
-    )
+    const itemId = this.data.id!
+
+    restruct.simpleObjects.set(itemId, new ReSimpleObject(item))
 
     const positions = [...this.data.pos]
     if (this.data.toCircle) {
       positions[1] = makeCircleFromEllipse(positions[0], positions[1])
     }
     struct.simpleObjectSetPos(
-      this.data.id,
+      itemId,
       positions.map(p => new Vec2(p))
     )
 
-    Base.invalidateItem(restruct, 'simpleObjects', this.data.id!, 1)
+    Base.invalidateItem(restruct, 'simpleObjects', itemId, 1)
   }
   invert(): Base {
     return new SimpleObjectDelete(this.data.id!)
@@ -96,14 +91,12 @@ export class SimpleObjectDelete extends Base {
 
   execute(restruct: any): void {
     const struct = restruct.molecule
-    if (!this.performed) {
-      const item = struct.simpleObjects.get(this.data.id) as any
-      //save to data current values. In future they could be used in invert for restoring simple object
-      this.data.pos = item.pos
-      this.data.mode = item.mode
-      this.data.toCircle = item.toCircle
-      this.performed = true
-    }
+    const item = struct.simpleObjects.get(this.data.id) as any
+    //save to data current values. In future they could be used in invert for restoring simple object
+    this.data.pos = item.pos
+    this.data.mode = item.mode
+    this.data.toCircle = item.toCircle
+    this.performed = true
 
     restruct.markItemRemoved()
     restruct.clearVisel(restruct.simpleObjects.get(this.data.id).visel)
@@ -116,13 +109,14 @@ export class SimpleObjectDelete extends Base {
     return new SimpleObjectAdd(
       this.data.pos,
       this.data.mode,
-      this.data.toCircle
+      this.data.toCircle,
+      this.data.id
     )
   }
 }
 
 interface SimpleObjectMoveData {
-  id: string
+  id: number
   d: any
   noinvalidate: boolean
 }
@@ -130,7 +124,7 @@ interface SimpleObjectMoveData {
 export class SimpleObjectMove extends Base {
   data: SimpleObjectMoveData
 
-  constructor(id: string, d: any, noinvalidate: boolean) {
+  constructor(id: number, d: any, noinvalidate: boolean) {
     super(OperationType.SIMPLE_OBJECT_MOVE)
     this.data = { id, d, noinvalidate }
   }
@@ -145,13 +139,7 @@ export class SimpleObjectMove extends Base {
       .visel.translate(scale.obj2scaled(d, restruct.render.options))
     this.data.d = d.negated()
     if (!this.data.noinvalidate) {
-      Base.invalidateItem(
-        restruct,
-        'simpleObjects',
-        // @ts-ignore
-        id,
-        1
-      )
+      Base.invalidateItem(restruct, 'simpleObjects', id, 1)
     }
   }
 
@@ -168,7 +156,7 @@ export class SimpleObjectMove extends Base {
 }
 
 interface SimpleObjectResizeData {
-  id: string
+  id: number
   d: any
   current: Vec2
   anchor: Vec2
@@ -202,7 +190,7 @@ export class SimpleObjectResize extends Base {
   data: SimpleObjectResizeData
 
   constructor(
-    id: string,
+    id: number,
     d: any,
     current: Vec2,
     anchor: any,

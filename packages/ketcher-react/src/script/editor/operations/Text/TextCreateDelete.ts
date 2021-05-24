@@ -66,12 +66,10 @@ interface TextDeleteData {
 
 export class TextDelete extends BaseOperation {
   data: TextDeleteData
-  performed: boolean
 
   constructor(id: number) {
     super(OperationType.TEXT_DELETE)
     this.data = { id }
-    this.performed = false
   }
 
   execute(restruct: Restruct): void {

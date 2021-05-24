@@ -16,11 +16,13 @@
 
 import {
   fromTextCreation,
-  fromTextUpdating,
-  fromTextDeletion
+  fromTextDeletion,
+  fromTextUpdating
 } from '../actions/text'
-import { fromMultipleMove } from '../actions/fragment'
+
 import Action from '../shared/action'
+import { Vec2 } from 'ketcher-core'
+import { fromMultipleMove } from '../actions/fragment'
 
 class TextTool {
   editor: any
@@ -104,23 +106,19 @@ function propsDialog(editor, id, position) {
   const label = text ? text.label : ''
 
   const res = editor.event.elementEdit.dispatch({
-    type: 'text',
     label,
     id,
     position
   })
 
   res
-    .then(elem => {
-      elem = Object.assign({ previousLabel: label }, elem)
-
-      if (!id && id !== 0 && elem.label) {
-        editor.update(fromTextCreation(editor.render.ctab, elem))
-      } else if (!elem.label) {
-        editor.update(fromTextDeletion(editor.render.ctab, elem))
-      } else if (label !== elem.label) {
-        elem.id = id
-        editor.update(fromTextUpdating(editor.render.ctab, elem))
+    .then((id: number, label: string, position: Vec2) => {
+      if (!id && id !== 0 && label) {
+        editor.update(fromTextCreation(editor.render.ctab, label, position))
+      } else if (!label) {
+        editor.update(fromTextDeletion(editor.render.ctab, id))
+      } else {
+        editor.update(fromTextUpdating(editor.render.ctab, id, label))
       }
     })
     .catch(() => null)

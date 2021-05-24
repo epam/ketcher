@@ -18,15 +18,15 @@ import {
   PipelineSubscription,
   Subscription
 } from 'subscription'
-
-import { Struct, Pile, Vec2 } from 'ketcher-core'
-import Render from '../render'
+import { Pile, Struct, Vec2 } from 'ketcher-core'
+import { customOnChangeHandler, elementOffset } from './utils'
 import { fromDescriptorsAlign, fromNewCanvas } from './actions/basic'
+
 import Action from './shared/action'
+import { CanvasLoad } from './operations'
+import Render from '../render'
 import closest from './shared/closest'
 import toolMap from './tool'
-import { customOnChangeHandler, elementOffset } from './utils'
-import { CanvasLoad } from './operations'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -461,7 +461,8 @@ class Editor {
       new Pile(selection.bonds),
       true,
       null,
-      new Pile(selection.simpleObjects)
+      new Pile(selection.simpleObjects),
+      new Pile(selection.texts)
     )
 
     // Copy by its own as Struct.clone doesn't support

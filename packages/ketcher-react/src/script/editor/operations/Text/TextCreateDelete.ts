@@ -14,69 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
+import Restruct, { ReText } from '../../../render/restruct'
+import { Text, Vec2 } from 'ketcher-core'
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import { Text, Vec2 } from 'ketcher-core'
-import Restruct, { ReText } from '../../../render/restruct'
 
 interface TextCreateData {
-  id?: any
+  id?: number
   label: string
   position: Vec2
-  type: string
 }
 
 export class TextCreate extends BaseOperation {
   data: TextCreateData
   performed: boolean
 
-  constructor(id: any, label: string, position: Vec2, type: string) {
+  constructor(label: string, position: Vec2) {
     super(OperationType.TEXT_CREATE)
-    this.data = { id, label, position, type }
-    this.performed = false
-  }
-
-  execute(restruct: Restruct): void {
-    const struct = restruct.molecule
-
-    if (!this.performed && this.data.id === null) {
-      this.data.id = struct.texts.add(new Text(this.data))
-      this.performed = true
-    } else {
-      struct.texts.set(this.data.id, new Text(this.data))
-    }
-
-    const text = struct.texts.get(this.data.id)
-
-    if (text) {
-      restruct.texts.set(this.data.id, new ReText(text))
-      const { id, position } = this.data
-      struct.textSetPosition(id, new Vec2(position))
-      BaseOperation.invalidateItem(restruct, 'texts', this.data.id, 1)
-    }
-  }
-
-  invert(): BaseOperation {
-    const { id, label, position, type } = this.data
-
-    return new TextDelete(id, label, position, type)
-  }
-}
-
-interface TextDeleteData {
-  id: any
-  label: string
-  position: Vec2
-  type?: string
-}
-
-export class TextDelete extends BaseOperation {
-  data: TextDeleteData
-  performed: boolean
-
-  constructor(id: any, label: string, position: Vec2, type: string) {
-    super(OperationType.TEXT_DELETE)
-    this.data = { id, label, position, type }
+    this.data = { label, position }
     this.performed = false
   }
 
@@ -84,14 +40,48 @@ export class TextDelete extends BaseOperation {
     const struct = restruct.molecule
 
     if (!this.performed) {
-      const item = struct.texts.get(this.data.id)
+      this.data.id = struct.texts.add(new Text(this.data))
+      this.performed = true
+    } else {
+      struct.texts.set(this.data.id!, new Text(this.data))
+    }
+    const textId = this.data.id!
+    restruct.texts.set(textId, new ReText(struct.texts.get(textId)))
+
+    struct.textSetPosition(textId, new Vec2(this.data.position))
+    BaseOperation.invalidateItem(restruct, 'texts', textId, 1)
+  }
+
+  invert(): BaseOperation {
+    return new TextDelete(this.data.id!)
+  }
+}
+
+interface TextDeleteData {
+  id: any
+  label?: string
+  position?: Vec2
+}
+
+export class TextDelete extends BaseOperation {
+  data: TextDeleteData
+  performed: boolean
+
+  constructor(id: number) {
+    super(OperationType.TEXT_DELETE)
+    this.data = { id }
+    this.performed = false
+  }
+
+  execute(restruct: Restruct): void {
+    const struct = restruct.molecule
+
+    if (!this.performed) {
+      const item = struct.texts.get(this.data.id)!
 
       if (item) {
-        // @ts-ignore
-        this.data.label = item.label
-        // @ts-ignore
+        this.data.label = item.label!
         this.data.position = item.position
-        this.data.type = item.type
         this.performed = true
       }
     }
@@ -105,12 +95,6 @@ export class TextDelete extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    return new TextCreate(
-      this.data.id,
-      this.data.label,
-      this.data.position,
-      // @ts-ignore
-      this.data.type
-    )
+    return new TextCreate(this.data.label!, this.data.position!)
   }
 }

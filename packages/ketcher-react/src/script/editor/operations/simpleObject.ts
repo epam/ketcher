@@ -1,3 +1,5 @@
+import { SimpleObject, SimpleObjectMode, Vec2, scale } from 'ketcher-core'
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,13 +18,12 @@
 import Base from './base'
 import { OperationType } from './OperationType'
 import { ReSimpleObject } from '../../render/restruct'
-import { SimpleObject, SimpleObjectMode, Vec2, scale } from 'ketcher-core'
 import util from '../../render/util'
 
 const tfx = util.tfx
 
 interface SimpleObjectAddData {
-  id?: string
+  id?: number
   pos: Array<Vec2>
   mode: SimpleObjectMode
   toCircle: boolean
@@ -69,22 +70,15 @@ export class SimpleObjectAdd extends Base {
       positions.map(p => new Vec2(p))
     )
 
-    Base.invalidateItem(
-      restruct,
-      'simpleObjects',
-      // @ts-ignore
-      this.data.id,
-      1
-    )
+    Base.invalidateItem(restruct, 'simpleObjects', this.data.id!, 1)
   }
   invert(): Base {
-    //@ts-ignore
-    return new SimpleObjectDelete(this.data.id)
+    return new SimpleObjectDelete(this.data.id!)
   }
 }
 
 interface SimpleObjectDeleteData {
-  id: string
+  id: number
   pos?: Array<Vec2>
   mode?: SimpleObjectMode
   toCircle?: boolean
@@ -94,7 +88,7 @@ export class SimpleObjectDelete extends Base {
   data: SimpleObjectDeleteData
   performed: boolean
 
-  constructor(id: string) {
+  constructor(id: number) {
     super(OperationType.SIMPLE_OBJECT_DELETE)
     this.data = { id, pos: [], mode: SimpleObjectMode.line, toCircle: false }
     this.performed = false

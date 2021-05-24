@@ -14,16 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import LassoHelper from './helper/lasso'
 import { fromArrowDeletion, fromPlusDeletion } from '../actions/reaction'
-import { fromSimpleObjectDeletion } from '../actions/simpleobject'
-import { fromSgroupDeletion } from '../actions/sgroup'
-import { fromTextDeletion } from '../actions/text'
 import {
   fromFragmentDeletion,
   fromOneAtomDeletion,
   fromOneBondDeletion
 } from '../actions/erase'
+
+import LassoHelper from './helper/lasso'
+import { fromSgroupDeletion } from '../actions/sgroup'
+import { fromSimpleObjectDeletion } from '../actions/simpleobject'
+import { fromTextDeletion } from '../actions/text'
 
 function EraserTool(editor, mode) {
   if (!(this instanceof EraserTool)) {
@@ -96,9 +97,7 @@ EraserTool.prototype.click = function (event) {
   } else if (ci.map === 'simpleObjects') {
     this.editor.update(fromSimpleObjectDeletion(restruct, ci.id))
   } else if (ci.map === 'texts') {
-    const text = restruct.molecule.texts.get(ci.id)
-    const elem = { id: ci.id, ...text }
-    this.editor.update(fromTextDeletion(restruct, elem))
+    this.editor.update(fromTextDeletion(restruct, ci.id))
   } else {
     // TODO re-factoring needed - should be "map-independent"
     console.error(

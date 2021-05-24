@@ -97,20 +97,25 @@ const SettingsDialog = (props: Props) => {
       ]}>
       <Form schema={settingsSchema} init={initState} {...formState}>
         <Accordion className={classes.accordion} multiple={false} active={[0]}>
-          <Accordion.Group caption="Rendering customization options">
-            <fieldset className={classes.render}>
+          <Accordion.Group caption="General">
+            <fieldset className={classes.general}>
               <Field name="resetToSelect" />
               <Field name="rotationStep" />
               <Field name="showValenceWarnings" component={SelectCheckbox} />
               <Field name="atomColoring" component={SelectCheckbox} />
+              <Field name="font" component={SystemFonts} />
+              <Field name="fontsz" component={MeasureInput} />
+              <Field name="fontszsub" component={MeasureInput} />
+            </fieldset>
+          </Accordion.Group>
+          <Accordion.Group caption="Stereochemistry">
+            <fieldset className={classes.stereochemistry}>
               <Field name="hideStereoFlags" component={SelectCheckbox} />
+              <Field name="stereoLabelStyle" />
               <Field name="colorOfAbsoluteCenters" component={ColorPicker} />
               <Field name="colorOfAndCenters" component={ColorPicker} />
               <Field name="colorOfOrCenters" component={ColorPicker} />
               <Field name="colorStereogenicCenters" />
-              <Field name="font" component={SystemFonts} />
-              <Field name="fontsz" component={MeasureInput} />
-              <Field name="fontszsub" component={MeasureInput} />
             </fieldset>
           </Accordion.Group>
           <Accordion.Group caption="Atoms">

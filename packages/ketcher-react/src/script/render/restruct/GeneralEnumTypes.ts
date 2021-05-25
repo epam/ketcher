@@ -28,3 +28,10 @@ export enum StereoColoringType {
   LabelsAndBonds = 'LabelsAndBonds',
   Off = 'Off'
 }
+
+export enum StereLabelStyleType {
+  IUPAC = 'Iupac',
+  Classic = 'Classic',
+  On = 'On',
+  Off = 'Off'
+}

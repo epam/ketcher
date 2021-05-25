@@ -1,35 +1,33 @@
-import { Vec2 } from 'ketcher-core'
-import { TextCreate, TextUpdate, TextDelete } from '../operations'
+import { TextCreate, TextDelete, TextUpdate } from '../operations'
+
 import Action from '../shared/action'
 import Restruct from '../../render/restruct'
+import { Vec2 } from 'ketcher-core'
 
-interface TextElemData {
-  id: any
-  type: string
+export function fromTextCreation(
+  restruct: Restruct,
+  label: string,
   position: Vec2
+) {
+  const action = new Action()
+  action.addOp(new TextCreate(label, position))
+  return action.perform(restruct)
+}
+
+export function fromTextUpdating(
+  restruct: Restruct,
+  id: number,
   label: string
-  previousLabel?: string
-}
-
-export function fromTextCreation(restruct: Restruct, elem: TextElemData) {
+) {
   const action = new Action()
-  const { id, label, position, type } = elem
-  action.addOp(new TextCreate(id, label, position, type))
+  action.addOp(new TextUpdate(id, label))
   return action.perform(restruct)
 }
 
-export function fromTextUpdating(restruct: Restruct, elem: TextElemData) {
+export function fromTextDeletion(restruct: Restruct, id: number) {
   const action = new Action()
-  const { id, label, position, type, previousLabel } = elem
-  action.addOp(new TextUpdate(id, label, position, type, previousLabel))
-  return action.perform(restruct)
-}
 
-export function fromTextDeletion(restruct: Restruct, elem: TextElemData) {
-  const action = new Action()
-  const { id, label, position, type } = elem
-
-  action.addOp(new TextDelete(id, label, position, type))
+  action.addOp(new TextDelete(id))
 
   return action.perform(restruct)
 }

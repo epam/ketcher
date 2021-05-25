@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Vec2, Pile } from 'utils'
+import { Box2Abs, Pile, Vec2 } from 'utils'
+
 import { Atom } from './Atom'
 import { Bond } from './Bond'
 
@@ -131,7 +132,7 @@ export class SGroup {
 
   // stub
   checkAttr(attr: string, value: any): boolean {
-    return this.data[attr] == value
+    return this.data[attr] === value
   }
 
   static filterAtoms(atoms: any, map: any) {
@@ -281,7 +282,6 @@ export class SGroup {
       crossBondsPerAtomValues.length === 2
     ) {
       ;(function () {
-        // eslint-disable-line max-statements
         var b1 = mol.bonds.get(crossBonds[0])
         var b2 = mol.bonds.get(crossBonds[1])
         var cl0 = b1.getCenter(mol)

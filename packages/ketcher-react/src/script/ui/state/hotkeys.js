@@ -148,9 +148,6 @@ export function initClipboard(dispatch, getState) {
         data['chemical/x-mdl-molfile'] ||
         data['chemical/x-mdl-rxnfile'] ||
         data['text/plain']
-      const state = getState()
-
-      const struct = state.editor.render.ctab.molecule
 
       if (structStr || !rxnTextPlain.test(data['text/plain']))
         loadStruct(structStr, { fragment: true })

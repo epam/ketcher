@@ -14,22 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'ketcher-core'
-
 import {
-  FragmentAdd,
-  FragmentAddStereoAtom,
   AtomAdd,
   BondAdd,
+  FragmentAdd,
+  FragmentAddStereoAtom,
+  RGroupFragment,
   RxnArrowAdd,
   RxnPlusAdd,
   SimpleObjectAdd,
-  TextCreate,
-  RGroupFragment
+  TextCreate
 } from '../operations'
-import Action from '../shared/action'
-
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup'
+
+import Action from '../shared/action'
+import { Vec2 } from 'ketcher-core'
 import { fromSgroupAddition } from './sgroup'
 
 export function fromPaste(restruct, pstruct, point, angle = 0) {
@@ -125,9 +124,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 
   pstruct.texts.forEach(text => {
     action.addOp(
-      new TextCreate(text.id, text.label, text.position, text.type).perform(
-        restruct
-      )
+      new TextCreate(text.label, text.position.add(offset)).perform(restruct)
     )
   })
 

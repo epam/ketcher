@@ -14,20 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Pool, Pile, Vec2, Box2Abs } from 'utils'
 import { Atom, radicalElectrons } from './Atom'
+import { Box2Abs, Pile, Pool, Vec2 } from 'utils'
+
 import { Bond } from './Bond'
+import { Elements } from 'chemistry/constants'
 import { Fragment } from './Fragment'
-import { SGroup } from './SGroup'
-import { RGroup } from './RGroup'
-import { SGroupForest } from './SGroupForest'
-import { SimpleObject } from './SimpleObject'
 import { HalfBond } from './HalfBond'
 import { Loop } from './Loop'
+import { RGroup } from './RGroup'
 import { RxnArrow } from './RxnArrow'
 import { RxnPlus } from './RxnPlus'
+import { SGroup } from './SGroup'
+import { SGroupForest } from './SGroupForest'
+import { SimpleObject } from './SimpleObject'
 import { Text } from './Text'
-import { Elements } from 'chemistry/constants'
 
 function arrayAddIfMissing(array, item) {
   for (var i = 0; i < array.length; ++i) {
@@ -104,7 +105,8 @@ export class Struct {
     bondSet?: Pile<number> | null,
     dropRxnSymbols?: boolean,
     aidMap?: Map<number, number> | null,
-    simpleObjectsSet?: Pile<number> | null
+    simpleObjectsSet?: Pile<number> | null,
+    textsSet?: Pile<number> | null
   ): Struct {
     return this.mergeInto(
       new Struct(),
@@ -113,7 +115,8 @@ export class Struct {
       dropRxnSymbols,
       false,
       aidMap,
-      simpleObjectsSet
+      simpleObjectsSet,
+      textsSet
     )
   }
 
@@ -155,13 +158,14 @@ export class Struct {
     dropRxnSymbols?: boolean,
     keepAllRGroups?: boolean,
     aidMap?: Map<number, number> | null,
-    simpleObjectsSet?: Pile<number> | null
+    simpleObjectsSet?: Pile<number> | null,
+    textsSet?: Pile<number> | null
   ): Struct {
-    // eslint-disable-line max-params, max-statements
     atomSet = atomSet || new Pile<number>(this.atoms.keys())
     bondSet = bondSet || new Pile<number>(this.bonds.keys())
     simpleObjectsSet =
       simpleObjectsSet || new Pile<number>(this.simpleObjects.keys())
+    textsSet = textsSet || new Pile<number>(this.texts.keys())
     aidMap = aidMap || new Map()
 
     bondSet = bondSet.filter(bid => {
@@ -245,6 +249,10 @@ export class Struct {
       cp.simpleObjects.add(this.simpleObjects.get(soid)!.clone())
     })
 
+    textsSet.forEach(id => {
+      cp.texts.add(this.texts.get(id)!.clone())
+    })
+
     if (!dropRxnSymbols) {
       cp.isReaction = this.isReaction
       this.rxnArrows.forEach(item => {
@@ -290,6 +298,8 @@ export class Struct {
           conn += 3
           break
         case Bond.PATTERN.TYPE.DATIVE:
+          break
+        case Bond.PATTERN.TYPE.HYDROGEN:
           break
         case Bond.PATTERN.TYPE.AROMATIC:
           if (atom.neighbors.length === 1) return [-1, true]

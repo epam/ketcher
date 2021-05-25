@@ -16,11 +16,17 @@
 
 import {
   fromTextCreation,
-  fromTextUpdating,
-  fromTextDeletion
+  fromTextDeletion,
+  fromTextUpdating
 } from '../actions/text'
-import { fromMultipleMove } from '../actions/fragment'
+
 import Action from '../shared/action'
+import { Vec2 } from 'ketcher-core'
+import { fromMultipleMove } from '../actions/fragment'
+
+interface Text {
+  label: string
+}
 
 class TextTool {
   editor: any
@@ -98,29 +104,26 @@ class TextTool {
   }
 }
 
-function propsDialog(editor, id, position) {
+function propsDialog(editor: any, id: number | null, position: Vec2) {
   const struct = editor.render.ctab.molecule
   const text = id || id === 0 ? struct.texts.get(id) : null
   const label = text ? text.label : ''
 
   const res = editor.event.elementEdit.dispatch({
-    type: 'text',
     label,
     id,
-    position
+    position,
+    type: 'text'
   })
 
   res
-    .then(elem => {
-      elem = Object.assign({ previousLabel: label }, elem)
-
-      if (!id && id !== 0 && elem.label) {
-        editor.update(fromTextCreation(editor.render.ctab, elem))
-      } else if (!elem.label) {
-        editor.update(fromTextDeletion(editor.render.ctab, elem))
-      } else if (label !== elem.label) {
-        elem.id = id
-        editor.update(fromTextUpdating(editor.render.ctab, elem))
+    .then(({ label }: Text) => {
+      if (!id && id !== 0 && label) {
+        editor.update(fromTextCreation(editor.render.ctab, label, position))
+      } else if (!label) {
+        editor.update(fromTextDeletion(editor.render.ctab, id!))
+      } else {
+        editor.update(fromTextUpdating(editor.render.ctab, id!, label))
       }
     })
     .catch(() => null)

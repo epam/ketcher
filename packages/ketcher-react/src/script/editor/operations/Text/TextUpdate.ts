@@ -16,29 +16,20 @@
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import { Vec2 } from 'ketcher-core'
 import Restruct from '../../../render/restruct'
 
 interface TextUpdateData {
-  id?: any
-  label?: string
-  position?: Vec2
-  type?: string
+  id: number
+  label: string
   previousLabel?: string
 }
 
 export class TextUpdate extends BaseOperation {
   data: TextUpdateData
 
-  constructor(
-    id?: any,
-    label?: string,
-    position?: Vec2,
-    type?: string,
-    previousLabel?: string
-  ) {
+  constructor(id: number, label: string) {
     super(OperationType.TEXT_UPDATE)
-    this.data = { id, label, position, type, previousLabel }
+    this.data = { id, label }
   }
 
   execute(restruct: Restruct) {
@@ -46,6 +37,7 @@ export class TextUpdate extends BaseOperation {
     const text = restruct.molecule.texts.get(id)
 
     if (text) {
+      this.data.previousLabel = text.label!
       text.label = label
     }
 
@@ -53,8 +45,8 @@ export class TextUpdate extends BaseOperation {
   }
 
   invert() {
-    const inverted = new TextUpdate(this.data.id)
-    inverted.data.label = this.data.previousLabel
+    const inverted = new TextUpdate(this.data.id, this.data.previousLabel!)
+
     inverted.data.previousLabel = this.data.label
     return inverted
   }

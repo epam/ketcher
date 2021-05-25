@@ -297,6 +297,8 @@ export class Struct {
         case Bond.PATTERN.TYPE.TRIPLE:
           conn += 3
           break
+        case Bond.PATTERN.TYPE.HYDROGEN:
+          break
         case Bond.PATTERN.TYPE.AROMATIC:
           if (atom.neighbors.length === 1) return [-1, true]
           return [atom.neighbors.length, true]

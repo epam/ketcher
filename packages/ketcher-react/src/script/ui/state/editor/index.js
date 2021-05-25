@@ -14,24 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { debounce } from 'lodash/fp'
-
-import { Elements } from 'ketcher-core'
 import {
   fromBond,
-  toBond,
-  fromStereoLabel,
-  toStereoLabel,
-  fromSgroup,
-  toSgroup,
   fromElement,
-  toElement
+  fromSgroup,
+  fromStereoLabel,
+  toBond,
+  toElement,
+  toSgroup,
+  toStereoLabel
 } from '../../data/convert/structconv'
-import acts from '../../action'
 
+import { Elements } from 'ketcher-core'
+import acts from '../../action'
+import { debounce } from 'lodash/fp'
+import { onAction } from '../shared'
 import { openDialog } from '../modal'
 import { serverCall } from '../server'
-import { onAction } from '../shared'
 
 export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }))
@@ -58,9 +57,6 @@ export default function initEditor(dispatch, getState) {
       if (action === undefined) sleep(0).then(() => dispatch(resetToSelect))
       // new tool in reducer
       else dispatch(resetToSelect)
-    },
-    onCipChange: () => {
-      sleep(0).then(() => dispatch(onAction(acts.cip.action)))
     },
     onSelectionChange: () => {
       updateAction()

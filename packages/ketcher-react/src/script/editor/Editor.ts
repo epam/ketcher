@@ -23,7 +23,6 @@ import { customOnChangeHandler, elementOffset } from './utils'
 import { fromDescriptorsAlign, fromNewCanvas } from './actions/basic'
 
 import Action from './shared/action'
-import { CanvasLoad } from './operations'
 import Render from '../render'
 import closest from './shared/closest'
 import toolMap from './tool'
@@ -80,7 +79,6 @@ class Editor {
     aromatizeStruct: PipelineSubscription
     dearomatizeStruct: PipelineSubscription
     enhancedStereoEdit: PipelineSubscription
-    cipChange: PipelineSubscription
   }
   lastEvent: any
 
@@ -114,8 +112,7 @@ class Editor {
       aromatizeStruct: new PipelineSubscription(),
       dearomatizeStruct: new PipelineSubscription(),
       // TODO: correct
-      enhancedStereoEdit: new PipelineSubscription(),
-      cipChange: new PipelineSubscription()
+      enhancedStereoEdit: new PipelineSubscription()
     }
 
     domEventSetup(this, clientArea)
@@ -295,13 +292,6 @@ class Editor {
     return true
   }
 
-  shouldRecalculateCip(action: Action): boolean {
-    return (
-      this.struct().sgroups.size > 0 &&
-      !(action.operations[0] instanceof CanvasLoad)
-    )
-  }
-
   update(action: Action | true, ignoreHistory?) {
     if (action === true) {
       this.render.update(true) // force
@@ -313,7 +303,6 @@ class Editor {
         }
         this.historyPtr = this.historyStack.length
         this.event.change.dispatch(action) // TODO: stoppable here
-        if (this.shouldRecalculateCip(action)) this.event.cipChange.dispatch()
       }
       this.render.update()
     }

@@ -297,6 +297,8 @@ export class Struct {
         case Bond.PATTERN.TYPE.TRIPLE:
           conn += 3
           break
+        case Bond.PATTERN.TYPE.DATIVE:
+          break
         case Bond.PATTERN.TYPE.HYDROGEN:
           break
         case Bond.PATTERN.TYPE.AROMATIC:

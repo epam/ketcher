@@ -1,3 +1,9 @@
+import {
+  LeftToolbar,
+  LeftToolbarCallProps,
+  LeftToolbarProps
+} from './LeftToolbar'
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,15 +20,9 @@
  * limitations under the License.
  ***************************************************************************/
 import { ComponentType } from 'react'
-import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
-
+import { connect } from 'react-redux'
 import { onAction } from '../../../state'
-import {
-  LeftToolbar,
-  LeftToolbarProps,
-  LeftToolbarCallProps
-} from './LeftToolbar'
 
 type StateProps = Omit<LeftToolbarProps, 'className'>
 type OwnProps = Pick<LeftToolbarProps, 'className'>
@@ -31,8 +31,7 @@ const mapStateToProps = (state): StateProps => ({
   status: state.actionState || {},
   opened: state.toolbar.opened,
   indigoVerification: state.requestsStatuses.indigoVerification,
-  disableableButtons: [],
-  isStandalone: (global as any)?.ketcher?.standalone
+  disableableButtons: []
 })
 
 const mapDispatchToProps = (dispatch: Dispatch): LeftToolbarCallProps => ({

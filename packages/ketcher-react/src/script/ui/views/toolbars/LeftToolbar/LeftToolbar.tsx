@@ -1,3 +1,16 @@
+import React, { FC } from 'react'
+import {
+  ToolbarGroupItem,
+  ToolbarGroupItemCallProps,
+  ToolbarGroupItemProps
+} from '../ToolbarGroupItem'
+import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
+
+import { Bond } from './Bond'
+import { RGroup } from './RGroup'
+import { Shape } from './Shape'
+import { Transform } from './Transform'
+import classes from './LeftToolbar.module.less'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,22 +27,9 @@
  * limitations under the License.
  ***************************************************************************/
 import clsx from 'clsx'
-import React, { FC } from 'react'
-
-import { useResizeObserver } from '../../../../../hooks'
-import { mediaSizes } from '../mediaSizes'
-import {
-  ToolbarGroupItem,
-  ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps
-} from '../ToolbarGroupItem'
 import { makeItems } from '../ToolbarGroupItem/utils'
-import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
-import { Bond } from './Bond'
-import classes from './LeftToolbar.module.less'
-import { RGroup } from './RGroup'
-import { Shape } from './Shape'
-import { Transform } from './Transform'
+import { mediaSizes } from '../mediaSizes'
+import { useResizeObserver } from '../../../../../hooks'
 
 const Group: FC<{ className?: string }> = ({ children, className }) => (
   <div className={clsx(classes.group, className)}>{children}</div>
@@ -52,7 +52,6 @@ const reactionOptions: ToolbarItem[] = makeItems([
 interface LeftToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   className?: string
-  isStandalone: boolean
 }
 
 interface LeftToolbarCallProps extends ToolbarGroupItemCallProps {}
@@ -60,7 +59,7 @@ interface LeftToolbarCallProps extends ToolbarGroupItemCallProps {}
 type Props = LeftToolbarProps & LeftToolbarCallProps
 
 const LeftToolbar = (props: Props) => {
-  const { isStandalone, className, ...rest } = props
+  const { className, ...rest } = props
   const { ref, height } = useResizeObserver<HTMLDivElement>()
 
   type ItemProps = {
@@ -103,8 +102,7 @@ const LeftToolbar = (props: Props) => {
 
       <Group>
         <RGroup {...rest} height={height} />
-
-        {isStandalone ? null : <Shape {...rest} height={height} />}
+        <Shape {...rest} height={height} />
       </Group>
       <Group>
         <Item id="text" />

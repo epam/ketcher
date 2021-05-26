@@ -64,7 +64,7 @@ const TXoptions = userOpts => {
 function createMiewOptions(userOpts) {
   const options = {
     settings: {
-      theme: userOpts.miewTheme,
+      bg: { color: Number(BACKGROUND_COLOR[userOpts.miewTheme]) },
       autoPreset: false,
       editing: true,
       inversePanning: true

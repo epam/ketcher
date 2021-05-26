@@ -362,7 +362,9 @@ function shouldDisplayStereoLabel(stereoLabel, labelStyle, flag): Boolean {
         : false
     // IUPAC
     case StereLabelStyleType.IUPAC:
-      return flag === StereoFlag.Mixed ? true : false
+      return flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs
+        ? true
+        : false
     default:
       return true
   }

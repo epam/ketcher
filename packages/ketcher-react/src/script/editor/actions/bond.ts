@@ -215,7 +215,7 @@ export function fromBondStereoUpdate(
       bond.begin,
       {
         stereoParity: newAtomParity,
-        stereoLabel: `${StereoLabel.And}1`
+        stereoLabel: `${StereoLabel.Abs}`
       },
       withReverse
     )

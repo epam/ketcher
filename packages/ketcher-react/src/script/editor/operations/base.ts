@@ -18,6 +18,8 @@
 import Restruct from '../../render/restruct'
 import { OperationType } from './OperationType'
 
+import { StereLabelStyleType } from '../../render/restruct/GeneralEnumTypes'
+
 type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>
 type OperationType = ValueOf<typeof OperationType>
 
@@ -79,6 +81,18 @@ class BaseOperation {
 
       if (level) {
         BaseOperation.invalidateLoop(restruct, halfBond.bid)
+      }
+    })
+
+    const fragment = atom.a.fragment
+    const stereoLabelStyle = restruct.render.options.stereoLabelStyle
+
+    restruct.atoms.forEach((atom, atomId) => {
+      if (
+        stereoLabelStyle === StereLabelStyleType.IUPAC ||
+        stereoLabelStyle === StereLabelStyleType.Classic
+      ) {
+        if (atom.a.fragment === fragment) restruct.markAtom(atomId, 0)
       }
     })
   }

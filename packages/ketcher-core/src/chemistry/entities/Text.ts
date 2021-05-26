@@ -17,17 +17,18 @@
 import { Vec2 } from 'utils'
 
 export interface TextParams {
-  label?: string
+  //TODO: add Interface for content type
+  content?: any
   position?: Vec2
 }
 
 export class Text {
-  label: string
+  content: any
   position: Vec2
 
   constructor(params: TextParams) {
     params = params || {}
-    this.label = params.label || ''
+    this.content = params.content || ''
     this.position = params.position ? new Vec2(params.position) : new Vec2()
   }
 

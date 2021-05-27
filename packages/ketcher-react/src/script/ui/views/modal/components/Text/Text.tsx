@@ -80,7 +80,7 @@ const Text = (props: TextProps) => {
     id
   })
 
-  const myKeyBindingFn = (e: any): string | null => {
+  const keyBindingFn = (e: any): string | null => {
     if (e.keyCode === 13) {
       e.stopPropagation()
     }
@@ -92,19 +92,42 @@ const Text = (props: TextProps) => {
     setEditorState(state)
   }
 
+  const currentStyle = editorState.getCurrentInlineStyle()
+
   const toggleStyle = useCallback(
     (command: TextCommand): void => {
-      setEditorState(RichUtils.toggleInlineStyle(editorState, command))
+      let newEditorState: EditorState = editorState
+      switch (command) {
+        case TextCommand.Subscript: {
+          if (currentStyle.has(TextCommand.Superscript)) {
+            newEditorState = RichUtils.toggleInlineStyle(
+              newEditorState,
+              TextCommand.Superscript
+            )
+          }
+          break
+        }
+        case TextCommand.Superscript: {
+          if (currentStyle.has(TextCommand.Subscript)) {
+            newEditorState = RichUtils.toggleInlineStyle(
+              newEditorState,
+              TextCommand.Subscript
+            )
+          }
+          break
+        }
+      }
+      newEditorState = RichUtils.toggleInlineStyle(newEditorState, command)
+
+      setEditorState(newEditorState)
     },
-    [editorState]
+    [currentStyle, editorState]
   )
 
   const customStyleMap: DraftStyleMap = {
     SUBSCRIPT: { fontSize: '0.8em', verticalAlign: 'sub' },
     SUPERSCRIPT: { fontSize: '0.8em', verticalAlign: 'super' }
   }
-
-  const currentStyle = editorState.getCurrentInlineStyle()
 
   return (
     <Dialog
@@ -127,7 +150,7 @@ const Text = (props: TextProps) => {
       </ul>
       <div className={styles.textEditorInput}>
         <Editor
-          keyBindingFn={myKeyBindingFn}
+          keyBindingFn={keyBindingFn}
           editorState={editorState}
           onChange={onContentChange}
           customStyleMap={customStyleMap}

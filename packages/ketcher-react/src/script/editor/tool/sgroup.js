@@ -14,18 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import isEqual from 'lodash/fp/isEqual'
-
-import { SgContexts } from '../shared/constants'
-
-import { Pile } from 'ketcher-core'
-import { checkOverlapping } from 'ketcher-core'
-import LassoHelper from './helper/lasso'
 import {
-  fromSgroupDeletion,
   fromSeveralSgroupAddition,
-  fromSgroupAction
+  fromSgroupAction,
+  fromSgroupDeletion
 } from '../actions/sgroup'
+
+import LassoHelper from './helper/lasso'
+import { Pile } from 'ketcher-core'
+import { SgContexts } from '../shared/constants'
+import { checkOverlapping } from 'ketcher-core'
+import { isEqual } from 'lodash/fp'
 
 const searchMaps = ['atoms', 'bonds', 'sgroups', 'sgroupData']
 

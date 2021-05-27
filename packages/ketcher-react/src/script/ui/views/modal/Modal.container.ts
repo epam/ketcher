@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { omit } from 'lodash/fp'
-import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
-
 import { Modal, ModalProps } from './Modal'
+
 import { BaseCallProps } from './modal.types'
+import { Dispatch } from 'redux'
+import { connect } from 'react-redux'
+import { omit } from 'lodash/fp'
 
 type StateProps = Pick<ModalProps, 'modal'>
 
@@ -28,8 +28,7 @@ const mapStateToProps = (state): StateProps => ({
 })
 
 const mapDispatchToProps = (dispatch: Dispatch): BaseCallProps => ({
-  onOk: result => {
-    console.info('Output:', result)
+  onOk: _result => {
     dispatch({ type: 'MODAL_CLOSE' })
   },
   onCancel: () => {

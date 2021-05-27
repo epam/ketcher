@@ -16,18 +16,27 @@
 
 import { Vec2 } from 'utils'
 
+//TODO: move to infrastructure
+export enum TextCommand {
+  Bold = 'BOLD',
+  Italic = 'ITALIC',
+  Subscript = 'SUBSCRIPT',
+  Superscript = 'SUPERSCRIPT'
+}
+
 export interface TextParams {
-  label?: string
+  //TODO: add Interface for content type
+  content?: string
   position?: Vec2
 }
 
 export class Text {
-  label: string
+  content: string
   position: Vec2
 
   constructor(params: TextParams) {
     params = params || {}
-    this.label = params.label || ''
+    this.content = params.content || ''
     this.position = params.position ? new Vec2(params.position) : new Vec2()
   }
 

@@ -7,7 +7,7 @@
 
 ## Build instructions
 
-The latest version of Ketcher has been splitted into two packages: component library (see /packaes/ketcher-react folder) and React ready-to-run application (see /example folder).
+The latest version of Ketcher has been splitted into two packages: component library (see /packages/ketcher-react folder) and React ready-to-run application (see /example folder).
 
 ### Create production build
 

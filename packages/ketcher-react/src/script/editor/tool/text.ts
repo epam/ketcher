@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Text, Vec2 } from 'ketcher-core'
 import {
   fromTextCreation,
   fromTextDeletion,
@@ -21,11 +22,10 @@ import {
 } from '../actions/text'
 
 import Action from '../shared/action'
-import { Vec2 } from 'ketcher-core'
 import { fromMultipleMove } from '../actions/fragment'
 
-interface Text {
-  label: string
+interface Result {
+  content: string
 }
 
 class TextTool {
@@ -106,24 +106,24 @@ class TextTool {
 
 function propsDialog(editor: any, id: number | null, position: Vec2) {
   const struct = editor.render.ctab.molecule
-  const text = id || id === 0 ? struct.texts.get(id) : null
-  const label = text ? text.label : ''
+  const text: Text | null = id || id === 0 ? struct.texts.get(id) : null
+  const origilContent = text ? text.content : ''
 
   const res = editor.event.elementEdit.dispatch({
-    label,
+    content: origilContent,
     id,
     position,
     type: 'text'
   })
 
   res
-    .then(({ label }: Text) => {
-      if (!id && id !== 0 && label) {
-        editor.update(fromTextCreation(editor.render.ctab, label, position))
-      } else if (!label) {
+    .then(({ content }: Result) => {
+      if (!id && id !== 0 && content) {
+        editor.update(fromTextCreation(editor.render.ctab, content, position))
+      } else if (!content) {
         editor.update(fromTextDeletion(editor.render.ctab, id!))
-      } else {
-        editor.update(fromTextUpdating(editor.render.ctab, id!, label))
+      } else if (content !== origilContent) {
+        editor.update(fromTextUpdating(editor.render.ctab, id!, content))
       }
     })
     .catch(() => null)

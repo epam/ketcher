@@ -14,22 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { uniq } from 'lodash'
-import { SGroup, Pile } from 'ketcher-core'
 import {
-  SGroupAttr,
   AtomAttr,
-  SGroupRemoveFromHierarchy,
-  SGroupAtomRemove,
-  SGroupDelete,
-  SGroupCreate,
+  SGroupAddToHierarchy,
   SGroupAtomAdd,
-  SGroupAddToHierarchy
+  SGroupAtomRemove,
+  SGroupAttr,
+  SGroupCreate,
+  SGroupDelete,
+  SGroupRemoveFromHierarchy
 } from '../operations'
+import { Pile, SGroup } from 'ketcher-core'
+import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils'
+
 import Action from '../shared/action'
 import { SgContexts } from '../shared/constants'
-
-import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils'
+import { uniq } from 'lodash/fp'
 
 export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
   const descriptors = attrs.fieldValue

@@ -86,7 +86,7 @@ export function prepareStructForGraph(struct: Struct) {
       type: 'text',
       center: item.position,
       data: {
-        label: item.label,
+        content: item.content,
         position: item.position
       }
     })

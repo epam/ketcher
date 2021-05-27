@@ -14,16 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useState, useCallback, FC } from 'react'
-import { capitalize } from 'lodash/fp'
-
-import { atom as atomSchema } from '../../../../../data/schema/struct-schema'
+import { BaseCallProps, BaseProps } from '../../../modal.types'
 import Form, { Field } from '../../../../../component/form/form'
-import { Dialog } from '../../../../components'
-import { Elements } from 'ketcher-core'
-import ElementNumber from './ElementNumber'
-import { BaseProps, BaseCallProps } from '../../../modal.types'
+import React, { FC, useCallback, useState } from 'react'
 
+import { Dialog } from '../../../../components'
+import ElementNumber from './ElementNumber'
+import { Elements } from 'ketcher-core'
+import { atom as atomSchema } from '../../../../../data/schema/struct-schema'
+import { capitalize } from 'lodash/fp'
 import classes from './Atom.module.less'
 
 interface AtomProps extends BaseProps {
@@ -68,7 +67,7 @@ const Atom: FC<Props> = props => {
         init={rest}
         {...formState}>
         <fieldset className={classes.main}>
-          <Field name="label" onChange={onLabelChangeCallback} />
+          <Field name="label" onChange={onLabelChangeCallback} autoFocus />
           <Field name="alias" />
           <ElementNumber label={currentLabel} />
           <Field name="charge" maxLength="5" />

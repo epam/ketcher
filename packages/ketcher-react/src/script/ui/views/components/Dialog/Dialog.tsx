@@ -14,11 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useRef, useEffect, FC } from 'react'
 import * as KN from 'w3c-keyname'
-import clsx from 'clsx'
 
-import style from './Dialog.module.less'
+import React, { FC, useRef } from 'react'
+
+import clsx from 'clsx'
+import styles from './Dialog.module.less'
 
 interface DialogProps {
   title: string
@@ -55,27 +56,6 @@ const Dialog: FC<Props> = props => {
   } = props
   const dialogRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (dialogRef?.current) {
-      const element: HTMLElement | null =
-        dialogRef.current.querySelector(
-          [
-            'input:not([type=checkbox]):not([type=button])',
-            'textarea',
-            '[contenteditable]',
-            'select'
-          ].join(',')
-        ) || dialogRef.current.querySelector(`button.${style.close}`)
-      element?.focus()
-    }
-
-    return () => {
-      const element: HTMLElement | null =
-        document.querySelector('.cliparea') || document.body
-      element?.focus()
-    }
-  }, [dialogRef, dialogRef.current])
-
   const exit = mode => {
     const key = mode === 'OK' ? 'onOk' : 'onCancel'
     if (params && key in params && (key !== 'onOk' || valid()))
@@ -100,17 +80,17 @@ const Dialog: FC<Props> = props => {
       onSubmit={event => event.preventDefault()}
       onKeyDown={keyDown}
       tabIndex={-1}
-      className={clsx(style.form, className, params.className)}
+      className={clsx(styles.form, className, params.className)}
       {...rest}>
       <header>
         {title}
         {title && (
-          <button className={style.close} onClick={() => exit('Cancel')}>
+          <button className={styles.close} onClick={() => exit('Cancel')}>
             ×
           </button>
         )}
       </header>
-      <div className={style.dialog_body}>{children}</div>
+      <div className={styles.dialog_body}>{children}</div>
 
       <footer>
         {buttons.map(button =>

@@ -14,15 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { capitalize } from 'lodash/fp'
-import React from 'react'
-import { connect } from 'react-redux'
-
-import { Elements } from 'ketcher-core'
-import { labelEdit as labelEditSchema } from '../../data/schema/struct-schema'
+import Form, { Field } from '../../component/form/form'
 
 import { Dialog } from '../../views/components'
-import Form, { Field } from '../../component/form/form'
+import { Elements } from 'ketcher-core'
+import React from 'react'
+import { capitalize } from 'lodash/fp'
+import { connect } from 'react-redux'
+import { labelEdit as labelEditSchema } from '../../data/schema/struct-schema'
 
 function serialize(lc) {
   const charge = Math.abs(lc.charge)
@@ -82,7 +81,7 @@ function LabelEdit(props) {
         customValid={{ label: l => deserialize(l) }}
         init={init}
         {...formState}>
-        <Field name="label" maxLength="20" size="10" />
+        <Field name="label" maxLength="20" size="10" autoFocus />
       </Form>
     </Dialog>
   )

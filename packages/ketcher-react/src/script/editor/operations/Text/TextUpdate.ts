@@ -20,34 +20,34 @@ import Restruct from '../../../render/restruct'
 
 interface TextUpdateData {
   id: number
-  label: string
-  previousLabel?: string
+  content: string
+  previousContent?: string
 }
 
 export class TextUpdate extends BaseOperation {
   data: TextUpdateData
 
-  constructor(id: number, label: string) {
+  constructor(id: number, content: string) {
     super(OperationType.TEXT_UPDATE)
-    this.data = { id, label }
+    this.data = { id, content: content }
   }
 
   execute(restruct: Restruct) {
-    const { id, label } = this.data
+    const { id, content } = this.data
     const text = restruct.molecule.texts.get(id)
 
     if (text) {
-      this.data.previousLabel = text.label!
-      text.label = label
+      this.data.previousContent = text.content!
+      text.content = content
     }
 
     BaseOperation.invalidateItem(restruct, 'texts', id, 1)
   }
 
   invert() {
-    const inverted = new TextUpdate(this.data.id, this.data.previousLabel!)
+    const inverted = new TextUpdate(this.data.id, this.data.previousContent!)
 
-    inverted.data.previousLabel = this.data.label
+    inverted.data.previousContent = this.data.content
     return inverted
   }
 }

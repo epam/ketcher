@@ -6,21 +6,21 @@ import { Vec2 } from 'ketcher-core'
 
 export function fromTextCreation(
   restruct: Restruct,
-  label: string,
+  content: string,
   position: Vec2
 ) {
   const action = new Action()
-  action.addOp(new TextCreate(label, position))
+  action.addOp(new TextCreate(content, position))
   return action.perform(restruct)
 }
 
 export function fromTextUpdating(
   restruct: Restruct,
   id: number,
-  label: string
+  content: string
 ) {
   const action = new Action()
-  action.addOp(new TextUpdate(id, label))
+  action.addOp(new TextUpdate(id, content))
   return action.perform(restruct)
 }
 

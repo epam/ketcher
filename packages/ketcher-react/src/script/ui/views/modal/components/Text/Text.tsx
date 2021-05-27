@@ -14,26 +14,95 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useState } from 'react'
-import { connect } from 'react-redux'
+import 'draft-js/dist/Draft.css'
+
+import {
+  DraftStyleMap,
+  Editor,
+  EditorState,
+  RawDraftContentState,
+  RichUtils,
+  convertFromRaw,
+  convertToRaw,
+  getDefaultKeyBinding
+} from 'draft-js'
+import React, { useCallback, useState } from 'react'
+
 import { Dialog } from '../../../components'
-import styles from './Text.module.less'
 import { DialogParams } from '../../../components/Dialog/Dialog'
+import { TextButton } from './TextButton'
+import { TextStyle } from './text.types'
+import classes from './Text.module.less'
+import { connect } from 'react-redux'
 
 interface TextProps extends DialogParams {
   formState: any
-  type: string
   id?: any
-  label?: string
+  content: RawDraftContentState
   position?: string
 }
 
-type Props = TextProps
+const buttons: Array<{ command: TextStyle; name: string }> = [
+  {
+    command: TextStyle.Bold,
+    name: 'text-bold'
+  },
+  {
+    command: TextStyle.Italic,
+    name: 'text-italic'
+  },
+  {
+    command: TextStyle.Subscript,
+    name: 'text-subscript'
+  },
+  {
+    command: TextStyle.Superscript,
+    name: 'text-superscript'
+  }
+]
 
-const Text = (props: Props) => {
-  const { formState, position, id, type } = props
-  const [text, setText] = useState(props.label)
-  const result = () => ({ label: text, position, id, type })
+const Text = (props: TextProps) => {
+  const { formState, position, id } = props
+
+  const [editorState, setEditorState] = useState<EditorState>(
+    EditorState.moveFocusToEnd(
+      EditorState.createWithContent(
+        convertFromRaw(props.content || { blocks: [], entityMap: {} })
+      )
+    )
+  )
+
+  const result = () => ({
+    content: convertToRaw(editorState.getCurrentContent()),
+    position,
+    id
+  })
+
+  const myKeyBindingFn = (e: any): string | null => {
+    if (e.keyCode === 13) {
+      e.stopPropagation()
+    }
+
+    return getDefaultKeyBinding(e)
+  }
+
+  const onContentChange = (state: EditorState): void => {
+    setEditorState(state)
+  }
+
+  const toggleStyle = useCallback(
+    (command: TextStyle): void => {
+      setEditorState(RichUtils.toggleInlineStyle(editorState, command))
+    },
+    [editorState]
+  )
+
+  const customStyleMap: DraftStyleMap = {
+    SUBSCRIPT: { fontSize: '0.8em', verticalAlign: 'sub' },
+    SUPERSCRIPT: { fontSize: '0.8em', verticalAlign: 'super' }
+  }
+
+  const currentStyle = editorState.getCurrentInlineStyle()
 
   return (
     <Dialog
@@ -42,10 +111,26 @@ const Text = (props: Props) => {
       params={props}
       result={result}
       valid={() => formState.form.valid}>
-      <textarea
-        value={text}
-        onChange={event => setText(event.target.value)}
-        className={styles.textArea}></textarea>
+      <ul className={classes.controlPanel}>
+        {buttons.map(button => {
+          return (
+            <TextButton
+              button={button}
+              key={button.name}
+              active={currentStyle.has(button.command)}
+              toggleStyle={toggleStyle}
+            />
+          )
+        })}
+      </ul>
+      <div className={classes.textEditorInput}>
+        <Editor
+          keyBindingFn={myKeyBindingFn}
+          editorState={editorState}
+          onChange={onContentChange}
+          customStyleMap={customStyleMap}
+        />
+      </div>
     </Dialog>
   )
 }

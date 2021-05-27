@@ -22,16 +22,16 @@ import { OperationType } from '../OperationType'
 
 interface TextCreateData {
   id?: number
-  label: string
+  content: string
   position: Vec2
 }
 
 export class TextCreate extends BaseOperation {
   data: TextCreateData
 
-  constructor(label: string, position: Vec2, id?: number) {
+  constructor(content: string, position: Vec2, id?: number) {
     super(OperationType.TEXT_CREATE)
-    this.data = { label, position, id }
+    this.data = { content: content, position, id }
   }
 
   execute(restruct: Restruct): void {
@@ -59,8 +59,8 @@ export class TextCreate extends BaseOperation {
 }
 
 interface TextDeleteData {
-  id: any
-  label?: string
+  id: number
+  content?: string
   position?: Vec2
 }
 
@@ -77,7 +77,7 @@ export class TextDelete extends BaseOperation {
     const item = struct.texts.get(this.data.id)!
     if (!item) return
 
-    this.data.label = item.label!
+    this.data.content = item.content!
     this.data.position = item.position
 
     restruct.markItemRemoved()
@@ -89,6 +89,6 @@ export class TextDelete extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    return new TextCreate(this.data.label!, this.data.position!, this.data.id)
+    return new TextCreate(this.data.content!, this.data.position!, this.data.id)
   }
 }

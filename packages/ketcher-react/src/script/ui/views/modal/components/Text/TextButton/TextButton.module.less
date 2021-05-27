@@ -1,0 +1,53 @@
+@import '../../../../../../../style/variables';
+@import '../../../../../../../style/mixins';
+@import '../../../../../../../style/index';
+
+.textButton {
+  border: 0;
+  padding: 0;
+  position: relative;
+  cursor: pointer;
+  .button-size(large);
+
+  & > svg {
+    fill: #666;
+    transition: 0.2s;
+  }
+
+  &.isActive {
+    background-color: #eee;
+    border-radius: 2px;
+    & > svg {
+      fill: #000;
+    }
+  }
+
+  &:hover {
+    background-image: none;
+    & > svg {
+      fill: #000;
+    }
+  }
+}
+
+.button-size(@dim) {
+  .set-size(@dim);
+
+  width: @button-size;
+  height: @button-size;
+  margin: @button-grow;
+
+  & > svg {
+    position: absolute;
+    top: 0.1em;
+    left: 0.1em;
+    font-size: @icon-size;
+    width: @icon-size;
+    height: @icon-size;
+  }
+}
+
+// stylelint-disable-next-line selector-pseudo-class-no-unknown
+:global(.smallEditor) .textButton {
+  .button-size(small);
+}

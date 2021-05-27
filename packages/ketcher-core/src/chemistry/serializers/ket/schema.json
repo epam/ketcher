@@ -586,9 +586,9 @@
         },
         "data": {
           "type": "object",
-          "required": ["label", "position"],
+          "required": ["content", "position"],
           "properties": {
-            "label": {
+            "content": {
               "type": "string"
             },
             "position": {

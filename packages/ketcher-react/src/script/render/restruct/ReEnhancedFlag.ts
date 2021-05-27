@@ -40,14 +40,16 @@ class ReEnhancedFlag extends ReObject {
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
   }
   drawHighlight(render: Render): any {
-    if (!this.path) return null
+    // TODO: after the enhanced flag stops being displayed, need to remove the reEnhancedflag object from ctab
+    if (!this.path.atrrs) return null
     var ret = this.highlightPath(render).attr(render.options.highlightStyle)
     render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
     return ret
   }
   // @ts-ignore
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any): any {
-    if (!this.path) return null
+    // TODO: after the enhanced flag stops being displayed, need to remove the reEnhancedflag object from ctab
+    if (!this.path.attrs) return null
     return this.highlightPath(restruct.render).attr(options.selectionStyle)
   }
 

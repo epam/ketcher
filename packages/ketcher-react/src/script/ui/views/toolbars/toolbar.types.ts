@@ -75,6 +75,7 @@ type LeftToolbarItemVariant =
   | 'bond-updown'
   | 'bond-crossed'
   | 'bond-query'
+  | 'bond-special'
   | 'bond-any'
   | 'bond-hydrogen'
   | 'bond-aromatic'

@@ -15,7 +15,8 @@
  ***************************************************************************/
 
 import React, { Component } from 'react'
-import { omit } from 'lodash'
+
+import { omit } from 'lodash/fp'
 
 function GenericInput({
   schema,

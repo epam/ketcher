@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useState, useMemo, RefObject, RefCallback } from 'react'
+import { RefCallback, RefObject, useMemo, useState } from 'react'
+
+import { throttle } from 'lodash'
 import useResizeObserver from 'use-resize-observer/polyfilled'
-import lodash from 'lodash'
 
 const throttleMilliseconds = 100
 
@@ -42,10 +43,7 @@ function useThrottleResizeObserver<THTMLElement extends HTMLElement>(
     width: undefined
   })
 
-  const onResize = useMemo(
-    () => lodash.throttle(setSize, throttleMilliseconds),
-    []
-  )
+  const onResize = useMemo(() => throttle(setSize, throttleMilliseconds), [])
 
   const { ref } = useResizeObserver<THTMLElement>({ onResize, ...options })
   return { ref, ...size }

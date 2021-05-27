@@ -31,49 +31,51 @@ import React, { useCallback, useState } from 'react'
 import { Dialog } from '../../../components'
 import { DialogParams } from '../../../components/Dialog/Dialog'
 import { TextButton } from './TextButton'
-import { TextStyle } from './text.types'
-import classes from './Text.module.less'
+import { TextCommand } from 'ketcher-core'
 import { connect } from 'react-redux'
+import styles from './Text.module.less'
 
 interface TextProps extends DialogParams {
   formState: any
   id?: any
-  content: RawDraftContentState
+  content: string
   position?: string
 }
 
-const buttons: Array<{ command: TextStyle; name: string }> = [
+const buttons: Array<{ command: TextCommand; name: string }> = [
   {
-    command: TextStyle.Bold,
+    command: TextCommand.Bold,
     name: 'text-bold'
   },
   {
-    command: TextStyle.Italic,
+    command: TextCommand.Italic,
     name: 'text-italic'
   },
   {
-    command: TextStyle.Subscript,
+    command: TextCommand.Subscript,
     name: 'text-subscript'
   },
   {
-    command: TextStyle.Superscript,
+    command: TextCommand.Superscript,
     name: 'text-superscript'
   }
 ]
 
 const Text = (props: TextProps) => {
   const { formState, position, id } = props
-
+  const rawContentState: RawDraftContentState | null = props.content
+    ? (JSON.parse(props.content) as RawDraftContentState)
+    : null
   const [editorState, setEditorState] = useState<EditorState>(
     EditorState.moveFocusToEnd(
       EditorState.createWithContent(
-        convertFromRaw(props.content || { blocks: [], entityMap: {} })
+        convertFromRaw(rawContentState || { blocks: [], entityMap: {} })
       )
     )
   )
 
   const result = () => ({
-    content: convertToRaw(editorState.getCurrentContent()),
+    content: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
     position,
     id
   })
@@ -91,7 +93,7 @@ const Text = (props: TextProps) => {
   }
 
   const toggleStyle = useCallback(
-    (command: TextStyle): void => {
+    (command: TextCommand): void => {
       setEditorState(RichUtils.toggleInlineStyle(editorState, command))
     },
     [editorState]
@@ -111,7 +113,7 @@ const Text = (props: TextProps) => {
       params={props}
       result={result}
       valid={() => formState.form.valid}>
-      <ul className={classes.controlPanel}>
+      <ul className={styles.controlPanel}>
         {buttons.map(button => {
           return (
             <TextButton
@@ -123,7 +125,7 @@ const Text = (props: TextProps) => {
           )
         })}
       </ul>
-      <div className={classes.textEditorInput}>
+      <div className={styles.textEditorInput}>
         <Editor
           keyBindingFn={myKeyBindingFn}
           editorState={editorState}

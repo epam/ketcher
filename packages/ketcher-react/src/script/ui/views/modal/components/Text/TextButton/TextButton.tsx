@@ -1,16 +1,16 @@
 import Icon from '../../../../../component/view/icon'
 import React from 'react'
-import { TextStyle } from '../text.types'
+import { TextCommand } from 'ketcher-core'
 import clsx from 'clsx'
 import styles from './TextButton.module.less'
 
 interface TextButtonProps {
-  button: { command: TextStyle; name: string }
+  button: { command: TextCommand; name: string }
   active: boolean
 }
 
 interface TextButtonPropsCallProps {
-  toggleStyle: (command: TextStyle) => void
+  toggleStyle: (command: TextCommand) => void
 }
 
 type Props = TextButtonProps & TextButtonPropsCallProps
@@ -18,7 +18,7 @@ type Props = TextButtonProps & TextButtonPropsCallProps
 export const TextButton = (props: Props) => {
   const toggleStyle = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    command: TextStyle
+    command: TextCommand
   ) => {
     event.preventDefault()
     props.toggleStyle(command)

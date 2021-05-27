@@ -151,9 +151,11 @@ function fromBondFlipping(restruct: ReStruct, id: number): Action {
 
   const action = new Action()
   action.addOp(new BondDelete(id))
-  if (bond?.end && bond?.begin) {
+
+  // TODO: find better way to avoid problem with bond.begin = 0
+  if (Number.isInteger(bond?.end) && Number.isInteger(bond?.begin)) {
     ;(action.addOp(
-      new BondAdd(bond.end, bond.begin, bond)
+      new BondAdd(bond?.end, bond?.begin, bond)
     ) as BondAdd).data.bid = id
   }
 

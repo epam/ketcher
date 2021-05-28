@@ -20,8 +20,7 @@ import { ToolbarItem } from '../../toolbar.types'
 const bondCommon: ToolbarItem[] = makeItems([
   'bond-single',
   'bond-double',
-  'bond-triple',
-  'bond-dative'
+  'bond-triple'
 ])
 const bondStereo: ToolbarItem[] = makeItems([
   'bond-up',
@@ -31,14 +30,14 @@ const bondStereo: ToolbarItem[] = makeItems([
 ])
 const bondQuery: ToolbarItem[] = makeItems([
   'bond-any',
-  'bond-hydrogen',
   'bond-aromatic',
   'bond-singledouble',
   'bond-singlearomatic',
   'bond-doublearomatic'
 ])
+const bondSpecial: ToolbarItem[] = makeItems(['bond-dative', 'bond-hydrogen'])
 
-const groups = [bondCommon, bondStereo, bondQuery]
+const groups = [bondCommon, bondStereo, bondQuery, bondSpecial]
 const groupOptions = groups.flat()
 const groupDescriptors = groups.reduce((accum, group, index) => {
   const start = accum[index - 1]?.end || 0
@@ -51,4 +50,11 @@ const groupDescriptors = groups.reduce((accum, group, index) => {
   return accum
 }, [] as GroupDescriptor[])
 
-export { bondCommon, bondStereo, bondQuery, groupOptions, groupDescriptors }
+export {
+  bondCommon,
+  bondStereo,
+  bondQuery,
+  bondSpecial,
+  groupOptions,
+  groupDescriptors
+}

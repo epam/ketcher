@@ -24,7 +24,7 @@ import { BaseCallProps } from './modal.types'
 
 import classes from './Modal.module.less'
 
-interface ModalProps {
+interface ModalProps extends BaseCallProps {
   modal: {
     name: string
     form: any

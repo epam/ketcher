@@ -28,7 +28,7 @@ interface DialogProps {
   className: string
 }
 export interface DialogParams extends DialogParamsCallProps {
-  className: string
+  className?: string
 }
 
 interface DialogParamsCallProps {

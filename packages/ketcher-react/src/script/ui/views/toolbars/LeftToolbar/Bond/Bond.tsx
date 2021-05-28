@@ -24,6 +24,7 @@ import {
   bondCommon,
   bondStereo,
   bondQuery,
+  bondSpecial,
   groupOptions,
   groupDescriptors
 } from './options'
@@ -55,6 +56,7 @@ const Bond = (props: Props) => {
       <ToolbarMultiToolItem id="bond-common" options={bondCommon} {...rest} />
       <ToolbarMultiToolItem id="bond-stereo" options={bondStereo} {...rest} />
       <ToolbarMultiToolItem id="bond-query" options={bondQuery} {...rest} />
+      <ToolbarMultiToolItem id="bond-special" options={bondSpecial} {...rest} />
     </>
   )
 }

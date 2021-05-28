@@ -145,7 +145,6 @@ const bondCuts = {
   updown: '1',
   crossed: '2',
   any: '0',
-  hydrogen: '0',
   aromatic: '4'
 }
 

@@ -24,9 +24,7 @@ import { BaseCallProps } from './modal.types'
 
 import classes from './Modal.module.less'
 
-interface ModalProps {
-  onOk: (res: any) => void
-  onCancel: () => void
+interface ModalProps extends BaseCallProps {
   modal: {
     name: string
     form: any

@@ -74,11 +74,14 @@ const Text = (props: TextProps) => {
     )
   )
 
-  const result = () => ({
-    content: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
-    position,
-    id
-  })
+  const result = () => {
+    const content = editorState.getCurrentContent()
+    return {
+      content: content.hasText() ? JSON.stringify(convertToRaw(content)) : '',
+      position,
+      id
+    }
+  }
 
   const keyBindingFn = (e: any): string | null => {
     if (e.keyCode === 13) {

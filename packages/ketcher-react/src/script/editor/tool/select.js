@@ -14,21 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { xor } from 'lodash/fp'
-import { SGroup } from 'ketcher-core'
-import LassoHelper from './helper/lasso'
-import { sgroupDialog } from './sgroup'
-import { atomLongtapEvent } from './atom'
-import { fromMultipleMove } from '../actions/fragment'
-import { fromAtomsAttrs } from '../actions/atom'
-import { fromBondsAttrs } from '../actions/bond'
 import {
   fromItemsFuse,
-  getItemsToFuse,
-  getHoverToFuse
+  getHoverToFuse,
+  getItemsToFuse
 } from '../actions/closely-fusing'
+import { fromTextDeletion, fromTextUpdating } from '../actions/text'
+
+import LassoHelper from './helper/lasso'
+import { SGroup } from 'ketcher-core'
+import { atomLongtapEvent } from './atom'
+import { fromAtomsAttrs } from '../actions/atom'
+import { fromBondsAttrs } from '../actions/bond'
+import { fromMultipleMove } from '../actions/fragment'
+import { sgroupDialog } from './sgroup'
 import utils from '../shared/utils'
-import { fromTextUpdating } from '../actions/text'
+import { xor } from 'lodash/fp'
 
 function SelectTool(editor, mode) {
   if (!(this instanceof SelectTool)) return new SelectTool(editor, mode)
@@ -273,13 +274,15 @@ SelectTool.prototype.dblclick = function (event) {
   } else if (ci.map === 'texts') {
     this.editor.selection(closestToSel(ci))
     const text = struct.texts.get(ci.id)
-    const dialog = editor.event.elementEdit.dispatch(text)
+    const dialog = editor.event.elementEdit.dispatch({ ...text, type: 'text' })
 
     dialog
-      .then(newText => {
-        newText.id = ci.id
-        newText.previousLabel = text.label
-        editor.update(fromTextUpdating(rnd.ctab, newText))
+      .then(({ content }) => {
+        if (!content) {
+          editor.update(fromTextDeletion(editor.render.ctab, ci.id))
+        } else if (content !== text.content) {
+          editor.update(fromTextUpdating(editor.render.ctab, ci.id, content))
+        }
       })
       .catch(() => null)
   }

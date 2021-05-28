@@ -124,7 +124,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 
   pstruct.texts.forEach(text => {
     action.addOp(
-      new TextCreate(text.label, text.position.add(offset)).perform(restruct)
+      new TextCreate(text.content, text.position.add(offset)).perform(restruct)
     )
   })
 

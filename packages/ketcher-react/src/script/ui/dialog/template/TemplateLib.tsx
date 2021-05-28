@@ -75,7 +75,7 @@ function filterLib(lib, filter) {
   const re = new RegExp(escapeRegExp(greekify(filter)), 'i')
   return flow(
     _filter(
-      item =>
+      (item: any) =>
         !filter ||
         re.test(greekify(item.struct.name)) ||
         re.test(greekify(item.props.group))

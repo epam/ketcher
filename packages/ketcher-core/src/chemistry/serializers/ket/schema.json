@@ -278,10 +278,6 @@
       "type": "object",
       "required": ["atoms"],
       "properties": {
-        "stereoFlag": {
-          "type": "string",
-          "enum": ["ABS", "AND", "OR", "Mixed"]
-        },
         "atoms": {
           "type": "array",
           "items": {

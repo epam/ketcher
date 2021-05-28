@@ -1,6 +1,7 @@
-import { ifDef } from 'utils'
-import { Struct, Atom, Bond, SGroup } from 'chemistry/entities'
+import { Atom, Bond, SGroup, Struct } from 'chemistry/entities'
+
 import { Elements } from 'chemistry/constants'
+import { ifDef } from 'utils'
 
 export function toRlabel(values) {
   let res = 0
@@ -30,8 +31,6 @@ export function moleculeToStruct(graphItem: any): Struct {
   struct.initHalfBonds()
   struct.initNeighbors()
   struct.markFragments()
-  if (graphItem.stereoFlag)
-    struct.frags.get(0)!.enhancedStereoFlag = graphItem.stereoFlag
 
   return struct
 }

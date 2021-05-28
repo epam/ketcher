@@ -13,19 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { Box2Abs, StereoFlag, Vec2, scale } from 'ketcher-core'
+
+import { LayerMap } from './GeneralEnumTypes'
 import ReObject from './ReObject'
-import { Box2Abs, Vec2, scale, StereoFlag, StereoLabel } from 'ketcher-core'
 import ReStruct from './index'
 import Render from '..'
-import { upperFirst } from 'lodash/fp'
-import { LayerMap } from './GeneralEnumTypes'
+
+//TODO: it should be a part of default settings
+const stereoFlapMap = {
+  [StereoFlag.Abs]: 'ABS (Chiral)',
+  [StereoFlag.And]: 'AND Enantiomer',
+  [StereoFlag.Mixed]: 'Mixed',
+  [StereoFlag.Or]: 'OR Enantiomer'
+}
 
 class ReEnhancedFlag extends ReObject {
-  public flag: StereoLabel | null
+  public flag: StereoFlag | null
   public pp: Vec2 | null
   private path: any
 
-  constructor(flag: StereoLabel | null, pos: Vec2 | null) {
+  constructor(flag: StereoFlag | null, pos: Vec2 | null) {
     super('enhancedFlag')
     this.flag = flag
     this.pp = pos
@@ -67,13 +75,7 @@ class ReEnhancedFlag extends ReObject {
 
     if (!options.hideStereoFlags) {
       this.path = paper
-        .text(
-          ps.x,
-          ps.y,
-          (this.flag === StereoLabel.And
-            ? StereoFlag.And
-            : StereoFlag[upperFirst(this.flag)]) || ''
-        )
+        .text(ps.x, ps.y, this.flag ? stereoFlapMap[this.flag] : '')
         .attr({
           font: options.font,
           'font-size': options.fontsz,

@@ -1,3 +1,5 @@
+import { BaseOperation } from './base'
+import { OperationType } from './OperationType'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,29 +16,20 @@
  * limitations under the License.
  ***************************************************************************/
 import Restruct from '../../render/restruct'
-import { BaseOperation } from './base'
-import { OperationType } from './OperationType'
 
 export class FragmentStereoFlag extends BaseOperation {
-  frid: any
-  flag: boolean
-  invert_flag: any
+  frid: number
 
-  constructor(fragmentId: any, flag = false) {
+  constructor(fragmentId: number) {
     super(OperationType.FRAGMENT_STEREO_FLAG)
     this.frid = fragmentId
-    this.flag = flag
-    this.invert_flag = null
   }
 
   execute(restruct: Restruct) {
     const struct = restruct.molecule
 
     const fragment = struct.frags.get(this.frid)!
-    if (!this.invert_flag) {
-      this.invert_flag = fragment.enhancedStereoFlag
-    }
-    fragment.updateStereoFlag(struct, this.flag)
+    fragment.updateStereoFlag(struct)
 
     BaseOperation.invalidateEnhancedFlag(
       restruct,
@@ -47,8 +40,6 @@ export class FragmentStereoFlag extends BaseOperation {
 
   invert() {
     const inverted = new FragmentStereoFlag(this.frid)
-    inverted.flag = this.invert_flag
-    inverted.invert_flag = this.flag
     return inverted
   }
 }

@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2, Pile } from 'utils'
-import { Elements } from 'chemistry/constants'
 import { AtomList, AtomListParams } from './AtomList'
+import { Pile, Vec2 } from 'utils'
+
+import { Elements } from 'chemistry/constants'
 
 function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
   return typeof value !== 'undefined' ? value : defaultValue
@@ -138,7 +139,7 @@ export class Atom {
   invRet: number
   exactChangeFlag: number
   rxnFragmentType: number
-  stereoLabel: string | null
+  stereoLabel?: string | null
   stereoParity: number
   hasImplicitH?: boolean
   pseudo!: string

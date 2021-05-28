@@ -1,3 +1,4 @@
+import { StereoLabel } from './Atom'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,34 +17,56 @@
 import { Struct } from './Struct'
 
 export enum StereoFlag {
-  Mixed = 'Mixed',
-  Abs = 'ABS (Chiral)',
-  And = 'AND Enantiomer',
-  Or = 'OR Enantiomer'
-  // todo: custom in the future
+  Mixed = 'MIXED',
+  Abs = 'ABS',
+  And = 'AND',
+  Or = 'OR'
 }
 
 function calcStereoFlag(
   struct: Struct,
   stereoAids: Array<number>
-): string | undefined {
+): StereoFlag | undefined {
   if (!stereoAids || stereoAids.length === 0) return undefined
   const atom = struct.atoms.get(stereoAids[0])
-  if (!atom) return undefined
-  const stereoLabel = atom.stereoLabel // {string | null} "<abs|and|or>-<group>"
+  if (!(atom && atom.stereoLabel)) return undefined
+  const stereoLabel = atom.stereoLabel! // {string | null} "<abs|and|or>-<group>"
 
   const hasAnotherLabel = stereoAids
     .map(aid => struct.atoms.get(aid))
     .some(atom => atom?.stereoLabel !== stereoLabel)
 
-  return hasAnotherLabel ? StereoFlag.Mixed : stereoLabel?.match(/\D+/g)?.[0]
+  let stereoFlag: StereoFlag
+  if (hasAnotherLabel) {
+    stereoFlag = StereoFlag.Mixed
+  } else {
+    const label = stereoLabel.match(/\D+/g)?.[0]
+    switch (label) {
+      case StereoLabel.Abs: {
+        stereoFlag = StereoFlag.Abs
+        break
+      }
+      case StereoLabel.And: {
+        stereoFlag = StereoFlag.And
+        break
+      }
+      case StereoLabel.Or: {
+        stereoFlag = StereoFlag.Or
+        break
+      }
+      default: {
+        throw new Error(`Unsupported stereo label: ${label}.`)
+      }
+    }
+  }
+  return stereoFlag
 }
 
 export class Fragment {
   stereoAtoms: Array<number>
-  enhancedStereoFlag?: boolean | string
+  enhancedStereoFlag?: StereoFlag
 
-  constructor(flag?: boolean | string) {
+  constructor(flag?: StereoFlag) {
     this.stereoAtoms = []
     this.enhancedStereoFlag = flag
   }
@@ -54,9 +77,8 @@ export class Fragment {
     return fr
   }
 
-  updateStereoFlag(struct: any, flag = false) {
-    this.enhancedStereoFlag =
-      flag !== false ? flag : calcStereoFlag(struct, this.stereoAtoms)
+  updateStereoFlag(struct: Struct) {
+    this.enhancedStereoFlag = calcStereoFlag(struct, this.stereoAtoms)
     return this.enhancedStereoFlag
   }
 

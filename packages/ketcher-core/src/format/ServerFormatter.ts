@@ -1,5 +1,3 @@
-import { MolSerializer, Struct } from 'chemistry'
-import { getPropertiesByFormat } from './formatProperties'
 import {
   ConvertData,
   ConvertResult,
@@ -8,7 +6,10 @@ import {
   StructService,
   StructServiceOptions
 } from 'infrastructure/services'
+import { MolSerializer, Struct } from 'chemistry'
 import { StructFormatter, SupportedFormat } from './structFormatter.types'
+
+import { getPropertiesByFormat } from './formatProperties'
 
 export class ServerFormatter implements StructFormatter {
   constructor(
@@ -40,7 +41,7 @@ export class ServerFormatter implements StructFormatter {
     } catch (error) {
       let message
       if (error.message === 'Server is not compatible') {
-        message = `${formatProperties.name} is not supported in standalone mode.`
+        message = `${formatProperties.name} is not supported.`
       } else {
         message = `Convert error!\n${error.message || error}`
       }

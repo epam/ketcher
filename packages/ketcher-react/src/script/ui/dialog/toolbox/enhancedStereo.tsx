@@ -5,24 +5,25 @@ import { Dialog } from '../../views/components'
 import Form, { Field } from '../../component/form/form'
 import { StereoLabel } from 'ketcher-core'
 
-export const predefinedStereoGroups = {
-  [StereoLabel.And]: {
-    min: 1,
-    max: 2
-  },
-  [StereoLabel.Or]: {
-    min: 1,
-    max: 2
-  }
-} as const
+import { findStereoAtoms } from '../../../editor/actions/utils'
 
-export function getPredefinedStereoLabels(stereoLabel: StereoLabel): string[] {
-  const min = predefinedStereoGroups[stereoLabel].min
-  const max = predefinedStereoGroups[stereoLabel].max
+function findStereLabels(struct, aids): Array<string> {
+  const stereoaids = findStereoAtoms(struct, aids)
+  return stereoaids.map(aid => struct.atoms.get(aid).stereoLabel)
+}
 
-  return new Array(max - min + 1)
-    .fill(null)
-    .map((_, index) => stereoLabel + (min + index))
+function maxOfAnds(stereLabels): number {
+  const numbers = stereLabels.map(label => {
+    return label.match(/&/) ? +label.match(/\d+/)?.join() : 0
+  })
+  return Math.max(...numbers)
+}
+
+function maxOfOrs(stereLabels): number {
+  const numbers = stereLabels.map(label => {
+    return label.match(/or/) ? +label.match(/\d+/)?.join() : 0
+  })
+  return Math.max(...numbers)
 }
 
 const enhancedStereoSchema = {
@@ -31,34 +32,14 @@ const enhancedStereoSchema = {
   properties: {
     type: {
       title: 'Stereo Label',
-      enum: [
-        StereoLabel.Abs,
-        ...getPredefinedStereoLabels(StereoLabel.And),
-        StereoLabel.And,
-        ...getPredefinedStereoLabels(StereoLabel.Or),
-        StereoLabel.Or
-      ],
-      enumNames: [
-        'ABS',
-        ...getPredefinedStereoLabels(StereoLabel.And).map(stereoLabel =>
-          stereoLabel.replace(StereoLabel.And, 'AND')
-        ),
-        'AND...',
-        ...getPredefinedStereoLabels(StereoLabel.Or).map(stereoLabel =>
-          stereoLabel.toUpperCase()
-        ),
-        'OR...'
-      ]
+      enum: [StereoLabel.Abs, StereoLabel.And, StereoLabel.Or],
+      enumNames: ['ABS', 'AND', 'OR']
     },
     andNumber: {
-      type: 'integer',
-      minimum: 1,
-      invalidMessage: 'Only positive integer'
+      type: 'integer'
     },
     orNumber: {
-      type: 'integer',
-      minimum: 1,
-      invalidMessage: 'Only positive integer'
+      type: 'integer'
     }
   }
 }
@@ -79,6 +60,7 @@ interface EnhancedStereoProps {
   className: string
   init: EnhancedStereoResult & { init?: true }
   formState: EnhancedStereoFormState
+  struct: any
 }
 
 interface EnhancedStereoCallProps {
@@ -89,25 +71,8 @@ interface EnhancedStereoCallProps {
 type Props = EnhancedStereoProps & EnhancedStereoCallProps
 
 const EnhancedStereo: React.FC<Props> = props => {
-  const { formState, init, ...rest } = props
+  const { struct, formState, init, ...rest } = props
   const { result, valid } = formState
-
-  const handleChange = (
-    stereoLabel: StereoLabel,
-    newState: EnhancedStereoResult
-  ): EnhancedStereoResult => {
-    const defaultOrNumber = predefinedStereoGroups[StereoLabel.Or].max + 1
-    const defaultAndNumber = predefinedStereoGroups[StereoLabel.And].max + 1
-
-    if (andNumberDisabled(stereoLabel)) {
-      newState.andNumber = defaultAndNumber
-    }
-    if (orNumberDisabled(stereoLabel)) {
-      newState.orNumber = defaultOrNumber
-    }
-
-    return newState
-  }
 
   return (
     <Dialog
@@ -121,8 +86,8 @@ const EnhancedStereo: React.FC<Props> = props => {
         <Field
           name="type"
           component={FieldSet}
+          struct={struct}
           labelPos={false}
-          onChange={handleChange}
         />
       </Form>
     </Dialog>
@@ -135,10 +100,19 @@ interface FieldSetProps {
   value: StereoLabel
   onChange: (value: string) => void
   type?: string
+  struct: any
 }
 
 const FieldSet: React.FC<FieldSetProps> = props => {
-  const { schema, value, onChange, type = 'radio', ...rest } = props
+  const { struct, schema, value, onChange, type = 'radio', ...rest } = props
+
+  const stereoLabels: Array<string> = findStereLabels(
+    struct,
+    Array.from(struct.atoms.keys())
+  )
+
+  const maxAnd: number = maxOfAnds(stereoLabels)
+  const maxOr: number = maxOfOrs(stereoLabels)
 
   return (
     <fieldset>
@@ -157,17 +131,17 @@ const FieldSet: React.FC<FieldSetProps> = props => {
           {val === StereoLabel.And && (
             <Field
               name="andNumber"
+              schema={[...Array(maxAnd + 1)].map((_e, i) => i + 1)}
               type="text"
-              className="label-group-value"
-              disabled={andNumberDisabled(value)}
+              className="label-group-select"
             />
           )}
           {val === StereoLabel.Or && (
             <Field
               name="orNumber"
+              schema={[...Array(maxOr + 1)].map((_e, i) => i + 1)}
               type="text"
-              className="label-group-value"
-              disabled={orNumberDisabled(value)}
+              className="label-group-select"
             />
           )}
         </li>
@@ -176,14 +150,7 @@ const FieldSet: React.FC<FieldSetProps> = props => {
   )
 }
 
-function andNumberDisabled(stereoLabel: StereoLabel): boolean {
-  return !stereoLabel || stereoLabel !== StereoLabel.And || stereoLabel === null
-}
-
-function orNumberDisabled(stereoLabel: StereoLabel): boolean {
-  return !stereoLabel || stereoLabel !== StereoLabel.Or || stereoLabel === null
-}
-
-export default connect(store => ({
-  formState: store.modal.form || { result: {}, valid: false }
+export default connect(state => ({
+  formState: state.modal.form || { result: {}, valid: false },
+  struct: state.editor.struct()
 }))(EnhancedStereo)

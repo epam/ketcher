@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Struct } from 'chemistry/entities'
+import { StereoFlag, Struct } from 'chemistry/entities'
+
 import { Elements } from 'chemistry/constants'
 import common from './common'
 import utils from './utils'
@@ -256,7 +257,7 @@ export class Molfile {
     this.writePaddedNumber(0, 3)
     this.writeWhiteSpace(3)
     const isAbsFlag = Array.from(this.molecule.frags.values()).some(fr =>
-      fr ? fr.enhancedStereoFlag === 'abs' : false
+      fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false
     )
     this.writePaddedNumber(isAbsFlag ? 1 : 0, 3)
     this.writePaddedNumber(0, 3)

@@ -14,30 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 import {
-  StructService,
-  CheckData,
-  AutomapData,
-  CalculateCipData,
-  DearomatizeData,
   AromatizeData,
-  CleanData,
-  LayoutData,
+  AromatizeResult,
+  AutomapData,
+  AutomapResult,
+  CalculateCipData,
+  CalculateCipResult,
   CalculateData,
-  StructServiceOptions,
-  InfoResult,
+  CalculateResult,
+  CheckData,
+  CheckResult,
+  CleanData,
+  CleanResult,
   ConvertData,
   ConvertResult,
-  LayoutResult,
-  CleanResult,
-  AromatizeResult,
+  DearomatizeData,
   DearomatizeResult,
-  CalculateCipResult,
-  AutomapResult,
-  CheckResult,
-  CalculateResult,
+  GenerateImageOptions,
+  InfoResult,
+  LayoutData,
+  LayoutResult,
   RecognizeResult,
-  GenerateImageOptions
+  StructService,
+  StructServiceOptions
 } from './structService.types'
+
+import { OutputFormatType } from './structService.types'
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -265,12 +267,13 @@ class RemoteStructService implements StructService {
     data: string,
     options?: GenerateImageOptions
   ): Promise<string> {
+    const outputFormat: OutputFormatType = options?.outputFormat || 'png'
     return indigoCall(
       'POST',
       'indigo/render',
       this.apiPath,
       this.defaultOptions
-    )({ struct: data }, options)
+    )({ struct: data }, { 'render-output-format': outputFormat })
   }
 }
 

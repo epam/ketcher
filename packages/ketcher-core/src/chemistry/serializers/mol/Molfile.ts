@@ -255,7 +255,7 @@ export class Molfile {
     this.writePaddedNumber(this.molecule.bonds.size, 3)
 
     this.writePaddedNumber(0, 3)
-    this.writeWhiteSpace(3)
+    this.writePaddedNumber(0, 3)
     const isAbsFlag = Array.from(this.molecule.frags.values()).some(fr =>
       fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false
     )
@@ -293,7 +293,7 @@ export class Molfile {
         atomsProps.push({ id, value: atom['alias'] })
       } else if (
         !Elements.get(atom.label) &&
-        ['A', 'Q', 'X', '*', 'R#'].indexOf(atom.label) == -1
+        ['A', 'Q', 'X', '*', 'R#'].indexOf(atom.label) === -1
       ) {
         // search in generics?
         label = 'C'
@@ -328,16 +328,16 @@ export class Molfile {
     const substcountList: NumberTuple[] = []
 
     this.molecule.atoms.forEach((atom, id) => {
-      if (atom.charge != 0) {
+      if (atom.charge !== 0) {
         chargeList.push([id, atom.charge])
       }
-      if (atom.isotope != 0) {
+      if (atom.isotope !== 0) {
         isotopeList.push([id, atom.isotope])
       }
-      if (atom.radical != 0) {
+      if (atom.radical !== 0) {
         radicalList.push([id, atom.radical])
       }
-      if (atom.rglabel != null && atom.label == 'R#') {
+      if (atom.rglabel != null && atom.label === 'R#') {
         // TODO need to force rglabel=null when label is not 'R#'
         for (let rgi = 0; rgi < 32; rgi++) {
           if ((atom.rglabel as any) & (1 << rgi)) {
@@ -348,13 +348,13 @@ export class Molfile {
       if (atom.attpnt != null) {
         aplabelList.push([id, atom.attpnt])
       }
-      if (atom.ringBondCount != 0) {
+      if (atom.ringBondCount !== 0) {
         rbcountList.push([id, atom.ringBondCount])
       }
-      if (atom.substitutionCount != 0) {
+      if (atom.substitutionCount !== 0) {
         substcountList.push([id, atom.substitutionCount])
       }
-      if (atom.unsaturatedAtom != 0) {
+      if (atom.unsaturatedAtom !== 0) {
         unsaturatedList.push([id, atom.unsaturatedAtom])
       }
     })

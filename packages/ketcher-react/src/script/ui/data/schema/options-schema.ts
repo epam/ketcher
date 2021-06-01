@@ -73,9 +73,9 @@ const render: {
     default: true
   },
   hideStereoFlags: {
-    title: 'Do not show the Stereo flags',
+    title: 'Show the Stereo flags',
     type: 'boolean',
-    default: false
+    default: true
   },
   stereoLabelStyle: {
     title: 'Label display at stereogenic centers',

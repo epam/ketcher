@@ -13,10 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { SupportedFormat, getPropertiesByFormat } from 'ketcher-core'
+import {
+  StereoFlag,
+  Struct,
+  SupportedFormat,
+  getPropertiesByFormat
+} from 'ketcher-core'
 
 export function couldBeSaved(
-  struct: any,
+  struct: Struct,
   format: SupportedFormat
 ): string | null {
   let warnings: Array<string> = []
@@ -67,6 +72,17 @@ export function couldBeSaved(
     const isVal = struct.atoms.find((ind, atom) => atom.explicitValence >= 0)
     if (isVal !== null)
       warnings.push(`In ${formatName} valence is not supported`)
+  }
+
+  if (
+    (['mol', 'rxn'] as SupportedFormat[]).includes(format) &&
+    Array.from(struct.frags.values()).some(fr =>
+      fr ? fr.enhancedStereoFlag !== StereoFlag.Abs : false
+    )
+  ) {
+    warnings.push(
+      `Structure contains enhanced stereochemistry features. Information will be partly lost.`
+    )
   }
 
   if (warnings.length !== 0) return warnings.join('\n')

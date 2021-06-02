@@ -1,3 +1,6 @@
+import { appUpdate, setStruct } from '../options'
+import { omit, without } from 'lodash/fp'
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,11 +17,9 @@
  * limitations under the License.
  ***************************************************************************/
 import { MolSerializer } from 'ketcher-core'
-import { omit, without } from 'lodash/fp'
-import { setStruct, appUpdate } from '../options'
 import { checkErrors } from '../modal/form'
-import { load } from '../shared'
 import { indigoVerification } from '../request'
+import { load } from '../shared'
 
 export function checkServer() {
   return (dispatch, getState) => {

@@ -44,7 +44,7 @@ const editor: {
 const render: {
   showValenceWarnings: ExtendedSchema
   atomColoring: ExtendedSchema
-  hideStereoFlags: ExtendedSchema
+  showStereoFlags: ExtendedSchema
   stereoLabelStyle: ExtendedSchema
   colorOfAbsoluteCenters: ExtendedSchema
   colorOfAndCenters: ExtendedSchema
@@ -72,10 +72,10 @@ const render: {
     type: 'boolean',
     default: true
   },
-  hideStereoFlags: {
-    title: 'Do not show the Stereo flags',
+  showStereoFlags: {
+    title: 'Show the Stereo flags',
     type: 'boolean',
-    default: false
+    default: true
   },
   stereoLabelStyle: {
     title: 'Label display at stereogenic centers',

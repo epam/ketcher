@@ -82,7 +82,7 @@ const EnhancedStereo: React.FC<Props> = props => {
       params={rest}
       result={() => result}
       valid={() => valid}
-      buttons={['OK', 'Close']}>
+      buttons={['Cancel', 'OK']}>
       <Form schema={enhancedStereoSchema} init={init} {...formState}>
         <Field
           name="type"

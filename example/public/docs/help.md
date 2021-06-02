@@ -4,9 +4,11 @@ reactions.
 # Ketcher Overview
 
 **Ketcher** is a tool to draw molecular structures and chemical
-reactions. Ketcher operates in two modes, the Server mode with most
-functions available and the client mode with limited functions
-available.
+reactions. The application operates in two modes - Standalone and Remote:
+
+- Standalone mode is based on WASM and can be run as client-only application without a backend.
+
+- Remote version requires Indigo Service as a backend server to perform complex calculations (When the server is not responding you can continue to work in the application although some of the functions will be unavailable).
 
 **Ketcher** consists of the following elements:
 
@@ -24,28 +26,22 @@ Using the _Tool palette_, you can
 - delete any element of the drawing (atom or bond) by clicking on it
   with the Erase tool;
 
-- delete the entire molecule or its fragment by a lasso,
-  rectangular, or fragment selection with the Erase tool;
+- delete the entire molecule or its fragment using a lasso,
+  rectangular, or fragment selection and the Erase tool;
 
 - draw special structures (see the following sections);
 
 - select the entire molecule or its fragment in one of the following
-  ways (click on the button to see the list of available options):
+  ways (click on the button![](images/select.png)  to see the list of available options):
 
-  - in the expanded form
+   <img src="images/expanded.png" style="zoom: 67%;" />  
 
-    ![](images/expanded.png 'Expanded tool')
-
-  - in the collapsed form
-
-    ![](images/collapsed.png 'Collapsed tool')
-
-To select one atom or bond, click Lasso or Rectangle Selection tool,
+To select one atom or bond, click Lasso (1) or Rectangle Selection tool (2),
 and then click the atom or bond.
 
 To select the entire structure:
 
-- Select the Fragment Selection tool and then click the object.
+- Select the Fragment Selection tool (3) and then click the object.
 
 - Select the Lasso or Rectangle Selection tool, and then drag the
   mouse to select the object.
@@ -62,12 +58,12 @@ of the following:
   mouse around the atoms, bonds, or structures that you want to
   select.
 
-**Note** : `Ctrl+Shift-click` with the Lasso or Rectangle Selection tool
+**Note** : `Ctrl+Shift-click each structure` with the Lasso or Rectangle Selection tool
 selects several structures.
 
 You can use the buttons of the _Main_ toolbar:
 
-![](images/toolbar.png 'Tolbar')
+![](images/toolbar.png 'Tolbar') 
 
 - **Clear Canvas** (1) button to start drawing a new molecule; this
   command clears the drawing area;
@@ -96,15 +92,15 @@ You can use the buttons of the _Main_ toolbar:
 - **Check Structure** button (14) to check the following properties
   of the structure:
 
-  ![](images/check.png 'Structure Ckeck')
+  ![](images/check.png 'Structure Ckeck') 
 
 - **Calculated Values** button (15) to display some properties of
   the structure:
 
-  ![](images/analyse.png 'Calculated Values')
+  ![](images/analyse.png 'Calculated Values') 
 
 - **Recognize Molecule** button (16) to recognize a structure in the
-  image file and load it to the canvas;
+  image file and load it to the canvas (not available in Standalone Mode);
 
 - **3D Viewer** button (17) to open the structure in the
   three-dimensional Viewer;
@@ -112,16 +108,14 @@ You can use the buttons of the _Main_ toolbar:
 - **Settings** button (18) to make some settings for molecular
   files:
 
-  ![](images/settings.png 'Settings')
+  <img src="images/settings.png" title="Settings"  /> 
 
 - **Help** button (19) to view Help;
+
 - **About** button (20) to display version and copyright information
   of the program.
-
-**Note** : **Layout,** **Clean Up,** **Aromatize** / **Dearomatize,**
-**Calculate CIP,** **Check Structure,** **Calculated Values,**
-**Recognize Molecule** and **3D View** buttons are active only in the
-Server mode.
+  
+  
 
 # 3D Viewer
 
@@ -141,6 +135,8 @@ Ketcher Settings allow to change the appearance of the structure and background 
 "Lines" drawing method, "Bright" atom name coloring
 method and "Light" background coloring are default.
 
+
+
 # Drawing Atoms
 
 To draw/edit atoms you can:
@@ -156,7 +152,7 @@ To draw/edit atoms you can:
   that position), _Not List_ - exclude any atom on your list at that
   position).
 
-  ![](images/periodic-dialog.png 'Periodic Table')
+  ![](images/periodic-dialog.png 'Periodic Table') 
 
 - add an atom to the existing molecule by selecting an atom in the
   _Atoms_ toolbar, clicking on an atom in the molecule, and dragging
@@ -169,27 +165,28 @@ To draw/edit atoms you can:
   appears the atom will be underlined in red;
 
 - change an atom by clicking on an existing atom with the
-  _Selection_ tool and waiting for a couple of seconds for the text
-  box to appear; type another atom symbol in the text box:
-
-  ![](images/inline-edit.png 'Change Atom')
-
+  _Selection_ tool and starting to enter text after that; type another atom symbol in the text box:
+  
+  ![](images/inline-edit.png 'Change Atom') 
+  
 - change the charge of an atom by selecting the Charge Plus or
   Charge Minus tool and clicking consecutively on an atom to
-  increase/decrease its charge
+  increase/decrease its charge:
 
-  ![](images/charge.png 'Ions')
+  ![](images/charge.png 'Ions') 
 
 - change an atom or its properties by double-clicking on the atom to
   invoke the Atom Properties dialog (the dialog also provides atom
   query features):
 
-  ![](images/atom-dialog.png 'Atom Properties')
+  ![](images/atom-dialog.png 'Atom Properties') 
 
 - click on the Periodic Table button, open the Extended table and
   select a corresponding Generic group or Special Node:
 
-  ![](images/periodic-dialog-ext.png 'Generic Groups')
+  ![](images/periodic-dialog-ext.png 'Generic Groups') 
+
+
 
 # Drawing Bonds
 
@@ -198,14 +195,16 @@ To draw/edit bonds you can:
 - Click an arrow on the Bond tool ![](images/bond.png) in the Tools palette
   to open the drop-down list with the following bond types:
 
-  ![](images/bonds.png)
+  ![](images/bonds.png) 
 
+  
+  
   For the full screen format, the Bond tool from the Tools palette
-  splits into three: _Single Bond,\_\_Single Up Bond,_ and _Any
-  Bond_,which include the corresponding bond types:
+  splits into four: Single Bond, Single Up Bond, Any
+  Bond and Dative Bond, which include the corresponding bond types:
 
-  ![](images/bond-types.png)
-
+  ![](images/bond-types.png) 
+  
 - select a bond type from the drop down list and click inside the
   drawing area; a bond of the selected type will be drawn;
 
@@ -224,34 +223,36 @@ To draw/edit bonds you can:
 - change a bond or its properties by double-clicking on the bond to
   invoke the Bond Properties dialog:
 
-  ![](images/bond-dialog.png 'Bond Properties')
+  ![](images/bond-dialog.png 'Bond Properties') 
 
-- clicking on a drawn stereo bond changes its direction.
+- clicking on the drawn stereo and dative bonds change their direction.
 
 - clicking with the Single Bond tool or Chain tool switches the bond type
   cyclically: Single-Double-Triple-Single.
+
+
 
 # Drawing R-Groups
 
 Use the _R-Group_ toolbox ![](images/rgroup.png) to draw R-groups in Markush
 structures:
 
-![](images/rgroup-types.png)
+![](images/rgroup-types.png) 
 
-Selecting the _R-Group_ _Label_ Tool and clicking on an atom in the
+Selecting the _R-Group_ _Label_ Tool (1) and clicking on an atom in the
 structure invokes the dialog to select the R-Group label for a current
 atom position in the structure:
 
-![](images/rgroup-dialog.png)
+![](images/rgroup-dialog.png) 
 
 Selecting the R-Group label and clicking **OK** converts the structure
 into a Markush structure with the selected R-Group label:
 
-![](images/rgroup-example1.png)
+![](images/rgroup-example1.png) 
 
 **Note** : You can choose several R-Group labels simultaneously:
 
-![](images/rgroup-example2.png)
+![](images/rgroup-example2.png) 
 
 Particular chemical fragments that may be substituted for a given
 R-Group form a set of R-Group members. R-Group members can be any
@@ -262,7 +263,7 @@ To create a set of R-Group members:
 
 1. Draw a structure to become an R-Group member.
 
-2. Select the structure using the _R-Group Fragment Tool_ to invoke
+2. Select the structure using the *R-Group Fragment Tool* (2) to invoke
    the R-Group dialog; in this dialog select the label of the
    R-Group to assign the fragment to.
 
@@ -271,14 +272,14 @@ To create a set of R-Group members:
 An R-Group attachment point is the atom in an R-Group member fragment
 that attaches the fragment to the initial Markush structure.
 
-Selecting the _Attachment Point Tool_ and clicking on an atom in the
+Selecting the _Attachment Point Tool_ (3) and clicking on an atom in the
 R-Group fragment converts this atom into an attachment point. If the
 R-Group contains more than one attachment point, you can specify one
 of them as primary and the other as secondary. You can select between
 either the primary or secondary attachment point using the dialog that
 appears after clicking on the atom:
 
-![](images/attpoints-dialog.png)
+![](images/attpoints-dialog.png) 
 
 If there are two attachment points on an R-Group member, there must be
 two corresponding attachments (bonds) to the R-Group atom that has the
@@ -288,9 +289,11 @@ attachment point.
 Schematically, the entire process of the R-Group member creation can
 be presented as:
 
-![](images/rgroup-example3.png)
+![](images/rgroup-example3.png) 
 
-![](images/rgroup-example4.png)
+![](images/rgroup-example4.png) 
+
+
 
 # R-Group Logic
 
@@ -303,7 +306,7 @@ the R-Group logic:
    appear, then click inside the fragment. The following dialog
    appears:
 
-   ![](images/rlogic-dialog.png)
+   ![](images/rlogic-dialog.png) 
 
 3. Specify **Occurrence** to define how many of an R-Group
    occurs. If an R-Group atom appears several times in the initial
@@ -318,13 +321,15 @@ the R-Group logic:
    R(i) Then** to specify whether the presence of an R-Group is
    dependent on the presence of another R-Group.
 
+
+
 # Marking S-Groups
 
 To mark S-Groups, use the _S-Group tool_ ![](images/sgroup.png) and the
 following dialog that appears after selecting a fragment with this
 tool:
 
-![](images/sgroup-dialog.png 'S-Group Dialog')
+![](images/sgroup-dialog.png 'S-Group Dialog') 
 
 Available S-Group types:
 
@@ -352,37 +357,41 @@ significance, but their underlying structure is hidden. The current
 version can&#39;t display contracted structures but correctly
 saves/reads them into/from files.
 
+
+
 # Data S-Groups
 
 The _Data S-Groups Tool_ ![](images/sdata.png) is a separate tool for
 comfortable use with the accustomed set of descriptors (like Attached
 Data in **Marvin** Editor).
 
-You can attach data to an atom, a fragment, a single bond, or a
+You can attach data to an atom, a fragment, a multifragment, a single bond, or a
 group. The defined set of _Names_ and _Values_ is introduced for each
 type of selected elements:
 
-![](images/sdata-dialog.png)
+![](images/sdata-dialog.png) 
 
 - Select the appropriate S-Group Field Name.
 
-- Select or type the appropriate Field Value.
+- Select the appropriate Field Value.
 
 - Labels can be specified as Absolute, Relative or Attached.
 
+
+
 # Changing Structure Display
 
-Use the _Flip/Rotate_ tool ![](images/transform.png) to change the structure
+Use the _Rotate_ tool ![](images/transform.png) to change the structure
 display:
 
-![](images/transform-types.png)
+![](images/transform-types.png) 
 
-For the full screen format, the _Flip/Rotate_ tool is split into
+For the full screen format, the _Rotate_ tool is split into
 separate buttons:
 
-![](images/rotate.png)
+![](images/rotate.png) 
 
-_Rotate Tool_
+_Rotate Tool_ (1)
 
 This tool allows rotating objects.
 
@@ -394,7 +403,7 @@ This tool allows rotating objects.
 Select any bond on the structure and click Alt+H to rotate the structure so that the selected bond is placed horizontally.
 Select any bond on the structure and click Alt+V to rotate the structure so that the selected bond is placed vertically.
 
-_Flip Tool_
+_Flip Tool_ (2, 3)
 
 This tool flips the objects horizontally or vertically.
 
@@ -403,19 +412,55 @@ This tool flips the objects horizontally or vertically.
 - If some objects are selected, the Vertical Flip tool (or Alt+V) flips the selected objects vertically
 - If no objects are selected, or all objects are selected, the Vertical Flip tool (or Alt+V) flips each structure vertically
 
+
+
 # Drawing Reactions
 
-To draw/edit reactions you can
+To draw/edit reactions you can:
 
 - draw reagents and products as described above;
 - use options of the _Reaction Arrow Tool_ ![](images/reaction.png) to draw an
   arrow and pluses in the reaction equation and map same atoms in
   reagents and products.
 
-  ![](images/reaction-types.png)
+  ![](images/reaction-types.png) 
 
-**Note** : Reaction Auto-Mapping Tool is available only in the Server
-mode.
+1 – Reaction Arrow Tool
+
+2 – Reaction Arrow Equilibrium Tool
+
+3 – Reaction Plus Tool
+
+4 – Reaction Auto-Mapping Tool
+
+5 – Reaction Mapping Tool
+
+6 – Reaction Unmapping Tool
+
+
+
+# Drawing graphical objects
+
+To draw graphical objects click the arrow on the *Shape Ellipse* tool ![](images/shape-ellipse.png)in the Tools palette
+to open the drop-down list with the following tools:
+
+![](images/simple-objects.png) 
+
+ *Shape Ellipse* (1), *Shape Rectangle* (2), and *Shape Line* (3). 
+
+
+
+# Creating text objects on the canvas
+
+To add text to the canvas click the *Add text* tool ![](images\add-text.png) in the Tools palette and click the canvas to open the Text editor window:
+
+ <img src="images/text-editor.png" style="zoom:80%;" />
+
+- To enter text, type in the Text editor field.
+- To edit text, double click the text on the canvas to open the Text editor window.
+- Change a style of a text to bold and italic, make it subscript and superscript while typing or by selecting a text and applying styles.
+
+
 
 # Templates toolbar
 
@@ -423,7 +468,7 @@ You can add templates (rings or other predefined structures) to the
 structure using the _Templates_ toolbar together with the _Custom
 Templates_ button located at the bottom:
 
-![](images/template.png)
+![](images/template.png) 
 
 To add a ring to the molecule, select a ring from the toolbar and
 click inside the drawing area, or click on an atom or a bond in the
@@ -435,13 +480,13 @@ Rules of using templates:
   structure adds the template to the structure connected with a single
   bond:
 
-  ![](images/template-example1.png)
+  ![](images/template-example1.png) 
 
 - Selecting a template and dragging the cursor from an atom in the
   existing structure adds the template directly to this atom resulting
   in the fused structure:
 
-  ![](images/template-example2.png)
+  ![](images/template-example2.png) 
 
 - Dragging the cursor from an atom in the existing structure results
   in the single bond attachment if the cursor is dragged to more than
@@ -449,7 +494,7 @@ Rules of using templates:
 - Selecting a template and clicking on a bond in the existing
   structure created a bond-to-bond fused structure:
 
-  ![](images/template-example3.png)
+  ![](images/template-example3.png)  
 
 - The bond in the initial structure is replaced with the bond in the
   template.
@@ -464,49 +509,67 @@ Rules of using templates:
 atom or bond preset in the program.
 
 **Note** : User is able to define the attachment atom and bond by clicking
-the Edit button for template structure.
+the Edit button for template structure in the Template Library.
 
 The _Custom Templates_ button ![](images/template-lib.png)invokes the scrolling
 list of templates available in the program; both built-in and created
 by user:
 
-![](images/template-dialog.png)
+![](images/template-dialog.png) 
 
 To create a user template:
 
 - draw a structure.
+
 - click the Save as button.
+
 - click the Save to Templates button.
+
 - enter a name and define the attachment atom and bond.
+
+
+
 
 # Working with Files
 
 Ketcher supports the following molecular formats that can be entered
 either manually or from files:
 
-|                              | Graph | MDL | Daylight SMILES | Daylight SMARTS | InChi | CML |
-| ---------------------------- | :---: | :-: | :-------------: | :-------------: | :---: | :-: |
-| Offline mode                 |   +   |  +  |        -        |        -        |   -   |  -  |
-| Reactions                    |   +   |  +  |        +        |        -        |   -   |  +  |
-| R-Groups                     |   +   |  +  |        -        |        -        |   -   |  -  |
-| S-Groups                     |   +   |  +  |        -        |        -        |   -   |  +  |
-| Standalone (Open/Save as...) |   +   |  +  |        -        |        -        |   -   |  -  |
-| Valency                      |   +   |  +  |        +        |        +        |   +   |  -  |
+![](images/formats-table.png)
 
-You can use the **Open…** and **Save As…** buttons of the _Main_
+You can use the *Open…* and *Save As…* buttons of the _Main_
 toolbar to import a molecule from a molecular file or save it to a
 supported molecular file format. The _Open Structure_ dialog enables
-one to either browse for a file (Server mode) or manually input, e.g.,
+one to either browse for a file or manually input, e.g.
 the Molfile ctable for the molecule to be imported:
 
-![](images/open.png)
+<img src="images/open.png" style="zoom: 80%;" /> 
 
 The _Save Structure_ dialog enables one to save the molecular file:
 
-![](images/save.png)
+<img src="images/save.png" style="zoom:75%;" /> 
 
-**Note** : In the standalone version only mol/rxn are supported for
-Open and mol/rxn/SMILES for Save.
+You can save a structure as image. Although when you save a file to one of the image formats you lose the chemical information in the file. You can not open files in these formats in Ketcher. Supported graphics file formats are: *Portable Network Graphics (.png)* and *Scalable Vector Graphics (.svg)*.
+
+<img src="images/save-image.png" style="zoom:80%;" /> 
+
+
+
+# Stereochemistry
+
+When the structure with the correct tetrahedral stereochemistry is created on the canvas you can open the ‘Enhanced Stereochemistry’ window by clicking the *Stereochemistry* button ![](images/stereo-button.png) and assign the stereo marks:
+
+<img src="images/enhanced-stereo.png" style="zoom:80%;" /> 
+
+In the *Stereochemistry tab* in *Settings* you can change the style of the Label display at stereogenic centers:
+
+<img src="images/label-display.png" style="zoom:70%;" /> 
+
+You can also select the color of Absolute/AND/OR stereogenic centers and choose one of the four color display modes:
+
+<img src="images/color-stereo.png" style="zoom:70%;" /> 
+
+
 
 # Hotkeys
 
@@ -561,6 +624,3 @@ it will appear in brackets after the description of the button.
 **Note** : Please, use `Ctrl+V` to paste the selected object in
 Google Chrome and Mozilla Firefox browsers.
 
-**Note 2** : Probably, you have forbidden access to the local storage.
-If you are using IE10 or IE11 and didn't forbid access to local storage
-intentionally, you can pay attention here: https://stackoverflow.com/a/20848924

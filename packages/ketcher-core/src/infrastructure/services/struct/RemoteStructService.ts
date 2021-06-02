@@ -34,12 +34,11 @@ import {
   InfoResult,
   LayoutData,
   LayoutResult,
+  OutputFormatType,
   RecognizeResult,
   StructService,
   StructServiceOptions
 } from './structService.types'
-
-import { OutputFormatType } from './structService.types'
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -64,10 +63,16 @@ function parametrizeUrl(url, params) {
   return url.replace(/:(\w+)/g, (_, val) => params[val])
 }
 
-function request(method: string, url: string, data?: any, headers?: any) {
+function request(
+  method: string,
+  url: string,
+  data?: any,
+  headers?: any,
+  responseHandler?: (promise: Promise<any>) => Promise<any>
+) {
   let requestUrl = url
   if (data && method === 'GET') requestUrl = parametrizeUrl(url, data)
-  return fetch(requestUrl, {
+  let response: any = fetch(requestUrl, {
     method,
     headers: Object.assign(
       {
@@ -78,14 +83,20 @@ function request(method: string, url: string, data?: any, headers?: any) {
     body: method !== 'GET' ? data : undefined,
     credentials: 'same-origin'
   })
-    .then(response =>
+
+  if (responseHandler) {
+    response = responseHandler(response)
+  } else {
+    response = response.then(response =>
       response
         .json()
         .then(res => (response.ok ? res : Promise.reject(res.error)))
     )
-    .catch(err => {
-      throw Error(err)
-    })
+  }
+
+  return response.catch(err => {
+    throw Error(err)
+  })
 }
 
 function indigoCall(
@@ -94,12 +105,22 @@ function indigoCall(
   baseUrl: string,
   defaultOptions: any
 ) {
-  return function (data, options) {
+  return function (
+    data,
+    options,
+    responseHandler?: (promise: Promise<any>) => Promise<any>
+  ) {
     const body = Object.assign({}, data)
     body.options = Object.assign(body.options || {}, defaultOptions, options)
-    return request(method, baseUrl + url, JSON.stringify(body), {
-      'Content-Type': 'application/json'
-    })
+    return request(
+      method,
+      baseUrl + url,
+      JSON.stringify(body),
+      {
+        'Content-Type': 'application/json'
+      },
+      responseHandler
+    )
   }
 }
 
@@ -273,7 +294,18 @@ class RemoteStructService implements StructService {
       'indigo/render',
       this.apiPath,
       this.defaultOptions
-    )({ struct: data }, { 'render-output-format': outputFormat })
+    )({ struct: data }, { 'render-output-format': outputFormat }, response =>
+      response
+        .then(resp => resp.text())
+        //TODO: Indigo does not encode svg to base64. This code should be deleted after fix
+        .then(text => {
+          if (outputFormat === 'svg') {
+            return btoa(text)
+          } else {
+            return text
+          }
+        })
+    )
   }
 }
 

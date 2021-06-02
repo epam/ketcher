@@ -97,8 +97,9 @@ export interface StructServiceOptions {
   [key: string]: string | number | boolean
 }
 
+export type OutputFormatType = 'png' | 'svg'
 export interface GenerateImageOptions extends StructServiceOptions {
-  outputFormat: 'png' | 'svg'
+  outputFormat: OutputFormatType
 }
 
 export interface StructService {

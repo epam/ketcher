@@ -20,14 +20,6 @@ import ReObject from './ReObject'
 import ReStruct from './index'
 import Render from '..'
 
-//TODO: it should be a part of default settings
-const stereoFlapMap = {
-  [StereoFlag.Abs]: 'ABS (Chiral)',
-  [StereoFlag.And]: 'AND Enantiomer',
-  [StereoFlag.Mixed]: 'Mixed',
-  [StereoFlag.Or]: 'OR Enantiomer'
-}
-
 class ReEnhancedFlag extends ReObject {
   public flag: StereoFlag | null
   public pp: Vec2 | null
@@ -73,9 +65,16 @@ class ReEnhancedFlag extends ReObject {
     const paper = render.paper
     const ps = scale.obj2scaled(this.pp, options)
 
+    const stereoFlagMap = {
+      [StereoFlag.Abs]: options.textOfAbsoluteChiralityLabel,
+      [StereoFlag.And]: options.textOfAndChiralityLabel,
+      [StereoFlag.Mixed]: options.textOfMixedChiralityLabel,
+      [StereoFlag.Or]: options.textOfOrChiralityLabel
+    }
+
     if (options.showStereoFlags) {
       this.path = paper
-        .text(ps.x, ps.y, this.flag ? stereoFlapMap[this.flag] : '')
+        .text(ps.x, ps.y, this.flag ? stereoFlagMap[this.flag] : '')
         .attr({
           font: options.font,
           'font-size': options.fontsz,

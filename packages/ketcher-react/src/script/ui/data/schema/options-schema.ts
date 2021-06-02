@@ -50,6 +50,10 @@ const render: {
   colorOfAndCenters: ExtendedSchema
   colorOfOrCenters: ExtendedSchema
   colorStereogenicCenters: ExtendedSchema
+  textOfAbsoluteChiralityLabel: ExtendedSchema
+  textOfAndChiralityLabel: ExtendedSchema
+  textOfMixedChiralityLabel: ExtendedSchema
+  textOfOrChiralityLabel: ExtendedSchema
   font: ExtendedSchema
   fontsz: ExtendedSchema
   fontszsub: ExtendedSchema
@@ -113,6 +117,26 @@ const render: {
     ],
     enumNames: ['Labels Only', 'Bonds Only', 'Labels And Bonds', 'Off'],
     default: StereoColoringType.LabelsOnly
+  },
+  textOfAbsoluteChiralityLabel: {
+    title: 'Text of Absolute chirality label',
+    type: 'String',
+    default: ''
+  },
+  textOfAndChiralityLabel: {
+    title: 'Text of And chirality label',
+    type: 'String',
+    default: 'AND Enantiomer'
+  },
+  textOfMixedChiralityLabel: {
+    title: 'Text of Mixed chirality label',
+    type: 'String',
+    default: 'Mixed'
+  },
+  textOfOrChiralityLabel: {
+    title: 'Text of Or chirality label',
+    type: 'String',
+    default: 'OR Enantiomer'
   },
   font: {
     title: 'Font',

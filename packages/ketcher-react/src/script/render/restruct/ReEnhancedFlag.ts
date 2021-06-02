@@ -73,7 +73,7 @@ class ReEnhancedFlag extends ReObject {
     const paper = render.paper
     const ps = scale.obj2scaled(this.pp, options)
 
-    if (!options.hideStereoFlags) {
+    if (options.showStereoFlags) {
       this.path = paper
         .text(ps.x, ps.y, this.flag ? stereoFlapMap[this.flag] : '')
         .attr({

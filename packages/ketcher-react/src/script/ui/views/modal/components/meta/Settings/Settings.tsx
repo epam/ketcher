@@ -110,7 +110,7 @@ const SettingsDialog = (props: Props) => {
           </Accordion.Group>
           <Accordion.Group caption="Stereochemistry">
             <fieldset className={classes.stereochemistry}>
-              <Field name="hideStereoFlags" component={SelectCheckbox} />
+              <Field name="showStereoFlags" component={SelectCheckbox} />
               <Field name="stereoLabelStyle" />
               <Field name="colorOfAbsoluteCenters" component={ColorPicker} />
               <Field name="colorOfAndCenters" component={ColorPicker} />

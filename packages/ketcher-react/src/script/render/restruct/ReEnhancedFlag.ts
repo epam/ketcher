@@ -66,10 +66,10 @@ class ReEnhancedFlag extends ReObject {
     const ps = scale.obj2scaled(this.pp, options)
 
     const stereoFlagMap = {
-      [StereoFlag.Abs]: options.textOfAbsoluteChiralityLabel,
-      [StereoFlag.And]: options.textOfAndChiralityLabel,
-      [StereoFlag.Mixed]: options.textOfMixedChiralityLabel,
-      [StereoFlag.Or]: options.textOfOrChiralityLabel
+      [StereoFlag.Abs]: options.absFlagLabel,
+      [StereoFlag.And]: options.andFlagLabel,
+      [StereoFlag.Mixed]: options.mixedFlagLabel,
+      [StereoFlag.Or]: options.orFlagLabel
     }
 
     if (options.showStereoFlags) {

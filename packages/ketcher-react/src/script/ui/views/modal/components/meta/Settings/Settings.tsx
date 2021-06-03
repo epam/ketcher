@@ -116,10 +116,10 @@ const SettingsDialog = (props: Props) => {
               <Field name="colorOfAndCenters" component={ColorPicker} />
               <Field name="colorOfOrCenters" component={ColorPicker} />
               <Field name="colorStereogenicCenters" />
-              <Field name="textOfAbsFlag" />
-              <Field name="textOfAndFlag" />
-              <Field name="textOfOrFlag" />
-              <Field name="textOfMixedFlag" />
+              <Field name="absFlagLabel" />
+              <Field name="andFlagLabel" />
+              <Field name="orFlagLabel" />
+              <Field name="mixedFlagLabel" />
             </fieldset>
           </Accordion.Group>
           <Accordion.Group caption="Atoms">

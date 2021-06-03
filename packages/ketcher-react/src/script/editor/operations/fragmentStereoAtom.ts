@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct from '../../render/restruct'
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
+import Restruct from '../../render/restruct'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -30,7 +30,7 @@ class FragmentAddStereoAtom extends BaseOperation {
   data: Data
 
   constructor(fragmentId: any, atomId: any) {
-    super(OperationType.FRAGMENT_ADD_STEREO_ATOM)
+    super(OperationType.FRAGMENT_ADD_STEREO_ATOM, 5)
     this.data = { frid: fragmentId, aid: atomId }
   }
 

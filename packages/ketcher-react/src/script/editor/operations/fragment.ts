@@ -51,7 +51,7 @@ class FragmentDelete extends BaseOperation {
   frid: any
 
   constructor(fragmentId: any) {
-    super(OperationType.FRAGMENT_DELETE)
+    super(OperationType.FRAGMENT_DELETE, 4)
     this.frid = fragmentId
   }
 

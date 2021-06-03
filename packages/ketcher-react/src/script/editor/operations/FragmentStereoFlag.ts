@@ -21,7 +21,7 @@ export class FragmentStereoFlag extends BaseOperation {
   frid: number
 
   constructor(fragmentId: number) {
-    super(OperationType.FRAGMENT_STEREO_FLAG)
+    super(OperationType.FRAGMENT_STEREO_FLAG, 6)
     this.frid = fragmentId
   }
 

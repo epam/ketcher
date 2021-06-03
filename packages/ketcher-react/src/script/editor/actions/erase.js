@@ -14,27 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Pile } from 'ketcher-core'
-
-import Action from '../shared/action'
+import { Atom, RGroup } from 'ketcher-core'
 import {
-  BondDelete,
   AtomDelete,
+  BondDelete,
   RxnArrowDelete,
   RxnPlusDelete,
   SimpleObjectDelete,
   TextDelete
 } from '../operations'
-import { Atom, RGroup } from 'ketcher-core'
-
-import { fromStereoAtomAttrs } from './atom'
+import { atomGetDegree, atomGetNeighbors } from './utils'
 import {
   fromSgroupDeletion,
   removeAtomFromSgroupIfNeeded,
   removeSgroupIfNeeded
 } from './sgroup'
+
+import Action from '../shared/action'
+import { Pile } from 'ketcher-core'
 import { fromFragmentSplit } from './fragment'
-import { atomGetDegree, atomGetNeighbors } from './utils'
+import { fromStereoAtomAttrs } from './atom'
 
 export function fromOneAtomDeletion(restruct, id) {
   return fromFragmentDeletion(restruct, { atoms: [id] })
@@ -177,8 +176,5 @@ export function fromFragmentDeletion(restruct, selection) {
 
   action.mergeWith(actionRemoveDataSGroups)
 
-  const sortedOperations = [...action.operations].sort(
-    (a, b) => a.priority - b.priority
-  )
-  return new Action(sortedOperations)
+  return action
 }

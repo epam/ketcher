@@ -1,3 +1,4 @@
+import { BaseOperation } from '../operations/base'
 /****************************************************************************
  * Copyright 2020 EPAM Systems
  *
@@ -14,7 +15,6 @@
  * limitations under the License.
  ***************************************************************************/
 import Restruct from '../../render/restruct'
-import { BaseOperation } from '../operations/base'
 //
 // Undo/redo actions
 //
@@ -41,13 +41,14 @@ class Action {
   // Perform action and return inverted one
   perform(restruct: Restruct) {
     const action = new Action()
-
-    this.operations.forEach(operation => {
+    const sortedOperations = [...this.operations].sort(
+      (a, b) => a.priority - b.priority
+    )
+    sortedOperations.forEach(operation => {
       const invertedOperation = operation.perform(restruct)
       action.addOp(invertedOperation)
     })
 
-    action.operations.reverse()
     return action
   }
 

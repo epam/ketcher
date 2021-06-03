@@ -1,3 +1,6 @@
+import Restruct, { ReBond } from '../../../render/restruct'
+
+import { BaseOperation } from '../base'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,8 +17,6 @@
  * limitations under the License.
  ***************************************************************************/
 import { Bond } from 'ketcher-core'
-import Restruct, { ReBond } from '../../../render/restruct'
-import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
 
 // todo: separate classes: now here is circular dependency in `invert` method
@@ -94,7 +95,7 @@ class BondDelete extends BaseOperation {
   data: Data
 
   constructor(bondId?: any) {
-    super(OperationType.BOND_DELETE)
+    super(OperationType.BOND_DELETE, 1)
     this.data = { bid: bondId, bond: null, begin: null, end: null }
   }
 

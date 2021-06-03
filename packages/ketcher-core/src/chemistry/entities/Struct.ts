@@ -148,7 +148,7 @@ export class Struct {
   }
 
   getFragment(fid: number): Struct {
-    return this.clone(this.getFragmentIds(fid))
+    return this.clone(this.getFragmentIds(fid), null, true)
   }
 
   mergeInto(

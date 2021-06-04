@@ -20,6 +20,8 @@ import { atom as atomSchema } from '../schema/struct-schema'
 import { capitalize } from 'lodash/fp'
 import { sdataSchema } from '../schema/sdata-schema'
 
+const DefaultStereoGroupNumber = 1
+
 export function fromElement(selem) {
   if (selem.label === 'R#') {
     return {
@@ -122,20 +124,19 @@ export function fromStereoLabel(stereoLabel) {
   if (stereoLabel === null) return { type: null }
   const type = stereoLabel.match(/\D+/g)[0]
   const number = +stereoLabel.replace(type, '')
-  const initNumber = 1
 
   if (type === StereoLabel.Abs) {
     return {
       type: stereoLabel,
-      orNumber: initNumber,
-      andNumber: initNumber
+      orNumber: DefaultStereoGroupNumber,
+      andNumber: DefaultStereoGroupNumber
     }
   }
 
   if (type === StereoLabel.And) {
     return {
       type: type,
-      orNumber: initNumber,
+      orNumber: DefaultStereoGroupNumber,
       andNumber: number
     }
   }
@@ -144,7 +145,7 @@ export function fromStereoLabel(stereoLabel) {
     return {
       type: type,
       orNumber: number,
-      andNumber: initNumber
+      andNumber: DefaultStereoGroupNumber
     }
   }
 }

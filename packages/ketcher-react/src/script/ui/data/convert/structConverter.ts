@@ -76,9 +76,12 @@ export function couldBeSaved(
 
   if (
     (['mol', 'rxn'] as SupportedFormat[]).includes(format) &&
-    Array.from(struct.frags.values()).some(fr =>
-      fr ? fr.enhancedStereoFlag !== StereoFlag.Abs : false
-    )
+    Array.from(struct.frags.values()).some(fr => {
+      if (fr?.enhancedStereoFlag) {
+        return fr.enhancedStereoFlag !== StereoFlag.Abs
+      }
+      return false
+    })
   ) {
     warnings.push(
       `Structure contains enhanced stereochemistry features. Information will be partly lost.`

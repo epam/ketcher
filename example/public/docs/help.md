@@ -12,7 +12,7 @@ reactions. The application operates in two modes - Standalone and Remote:
 
 **Ketcher** consists of the following elements:
 
-![](images/main.png 'Main window')
+![](images/main.png)
 
 **Note** : Depending on the screen size, some tools on the _Tool
 palette_ can be displayed in expanded or collapsed forms.
@@ -26,15 +26,15 @@ Using the _Tool palette_, you can
 - delete any element of the drawing (atom or bond) by clicking on it
   with the Erase tool;
 
-- delete the entire molecule or its fragment using a lasso,
-  rectangular, or fragment selection and the Erase tool;
+- delete the entire molecule or its fragment using the lasso,
+  rectangle, or fragment selection and the Erase tool;
 
 - draw special structures (see the following sections);
 
 - select the entire molecule or its fragment in one of the following
   ways (click on the button![](images/select.png)  to see the list of available options):
 
-   <img src="images/expanded.png" style="zoom: 67%;" />  
+  ![](images/expanded.png) 
 
 To select one atom or bond, click Lasso (1) or Rectangle Selection tool (2),
 and then click the atom or bond.
@@ -108,7 +108,7 @@ You can use the buttons of the _Main_ toolbar:
 - **Settings** button (18) to make some settings for molecular
   files:
 
-  <img src="images/settings.png" title="Settings"  /> 
+  ![](images/settings.png) 
 
 - **Help** button (19) to view Help;
 
@@ -122,7 +122,7 @@ You can use the buttons of the _Main_ toolbar:
 The structure appears in a modal window after clicking on the **3D
 Viewer** button:
 
-![](images/miew.png '3D Viewer')
+![](images/miew.png '3D Viewer') 
 
 You can perform the following actions:
 
@@ -161,7 +161,7 @@ To draw/edit atoms you can:
   atoms;
 
 - change an atom by selecting an atom in the _Atoms_ toolbar and
-  clicking on the atom to be changed; in the case a wrong valence thus
+  clicking on the atom to be changed; in the case a wrong valence
   appears the atom will be underlined in red;
 
 - change an atom by clicking on an existing atom with the
@@ -181,7 +181,7 @@ To draw/edit atoms you can:
 
   ![](images/atom-dialog.png 'Atom Properties') 
 
-- click on the Periodic Table button, open the Extended table and
+- click on the Periodic Table button, open the Extended tab and
   select a corresponding Generic group or Special Node:
 
   ![](images/periodic-dialog-ext.png 'Generic Groups') 
@@ -192,14 +192,14 @@ To draw/edit atoms you can:
 
 To draw/edit bonds you can:
 
-- Click an arrow on the Bond tool ![](images/bond.png) in the Tools palette
+- Click an arrow on the Bond tool ![](images/bond.png) in the Tool palette
   to open the drop-down list with the following bond types:
 
   ![](images/bonds.png) 
 
   
   
-  For the full screen format, the Bond tool from the Tools palette
+  For the full screen format, the Bond tool from the Tool palette
   splits into four: Single Bond, Single Up Bond, Any
   Bond and Dative Bond, which include the corresponding bond types:
 
@@ -252,7 +252,7 @@ into a Markush structure with the selected R-Group label:
 
 **Note** : You can choose several R-Group labels simultaneously:
 
-![](images/rgroup-example2.png) 
+![](images/rgroup-example2.png)  
 
 Particular chemical fragments that may be substituted for a given
 R-Group form a set of R-Group members. R-Group members can be any
@@ -441,7 +441,7 @@ To draw/edit reactions you can:
 
 # Drawing graphical objects
 
-To draw graphical objects click the arrow on the *Shape Ellipse* tool ![](images/shape-ellipse.png)in the Tools palette
+To draw graphical objects click the arrow on the *Shape Ellipse* tool ![](images/shape-ellipse.png)  in the Tools palette
 to open the drop-down list with the following tools:
 
 ![](images/simple-objects.png) 
@@ -454,11 +454,11 @@ to open the drop-down list with the following tools:
 
 To add text to the canvas click the *Add text* tool ![](images\add-text.png) in the Tools palette and click the canvas to open the Text editor window:
 
- <img src="images/text-editor.png" style="zoom:80%;" />
+![](images/text-editor.png) 
 
 - To enter text, type in the Text editor field.
-- To edit text, double click the text on the canvas to open the Text editor window.
-- Change a style of a text to bold and italic, make it subscript and superscript while typing or by selecting a text and applying styles.
+- To edit text, double click the text object on the canvas.
+- Change the text style to bold and italic, make it subscript and superscript while typing or by selecting text and applying styles.
 
 
 
@@ -535,7 +535,7 @@ To create a user template:
 Ketcher supports the following molecular formats that can be entered
 either manually or from files:
 
-![](images/formats-table.png)
+![](images/formats-table.png) 
 
 You can use the *Open…* and *Save As…* buttons of the _Main_
 toolbar to import a molecule from a molecular file or save it to a
@@ -543,33 +543,39 @@ supported molecular file format. The _Open Structure_ dialog enables
 one to either browse for a file or manually input, e.g.
 the Molfile ctable for the molecule to be imported:
 
-<img src="images/open.png" style="zoom: 80%;" /> 
+![](images/open.png) 
 
 The _Save Structure_ dialog enables one to save the molecular file:
 
-<img src="images/save.png" style="zoom:75%;" /> 
+![](images/save.png) 
 
-You can save a structure as image. Although when you save a file to one of the image formats you lose the chemical information in the file. You can not open files in these formats in Ketcher. Supported graphics file formats are: *Portable Network Graphics (.png)* and *Scalable Vector Graphics (.svg)*.
+You can save a structure as image (in Standalone mode and in Remote mode when the server is available) . Although when you save a file to one of the image formats you lose the chemical information in the file. You can not open files in these formats in Ketcher. Supported graphics file formats are: *Portable Network Graphics (.png)* and *Scalable Vector Graphics (.svg)*.
 
-<img src="images/save-image.png" style="zoom:80%;" /> 
+![](images/save-image.png) 
 
 
 
 # Stereochemistry
 
-When the structure with the correct tetrahedral stereochemistry is created on the canvas you can open the ‘Enhanced Stereochemistry’ window by clicking the *Stereochemistry* button ![](images/stereo-button.png) and assign the stereo marks:
+When the structure with the correct tetrahedral stereochemistry is created on the canvas you can open the ‘Enhanced Stereochemistry’ window by clicking the *Stereochemistry* button ![](images/stereo-button.png) and assign stereo marks:
 
-<img src="images/enhanced-stereo.png" style="zoom:80%;" /> 
-
-In the *Stereochemistry tab* in *Settings* you can change the style of the Label display at stereogenic centers:
-
-<img src="images/label-display.png" style="zoom:70%;" /> 
-
-You can also select the color of Absolute/AND/OR stereogenic centers and choose one of the four color display modes:
-
-<img src="images/color-stereo.png" style="zoom:70%;" /> 
+ ![](images/enhanced-stereo.png)
 
 
+
+In the *Stereochemistry tab* in *Settings* you can:
+
+- enable/disable display of the Stereo flags 
+- set the text of the Absolute/AND/OR/Mixed flags
+- change the style of the Label display at stereogenic centers
+- select the color of Absolute/AND/OR stereogenic centers
+- choose one of the four color display modes
+
+![](images/label-display.png) 
+
+![](images/color-stereo.png) 
+
+ 
 
 # Hotkeys
 

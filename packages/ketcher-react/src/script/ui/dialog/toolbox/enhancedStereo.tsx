@@ -1,11 +1,10 @@
-import React from 'react'
-import { connect } from 'react-redux'
+import Form, { Field } from '../../component/form/form'
+import { StereoLabel, Struct } from 'ketcher-core'
 
 import { Dialog } from '../../views/components'
-import Form, { Field } from '../../component/form/form'
-import { StereoLabel } from 'ketcher-core'
-
-import { findStereoAtoms } from '../../../editor/actions/utils'
+import React from 'react'
+import { connect } from 'react-redux'
+import { range } from 'lodash'
 
 interface EnhancedStereoResult {
   andNumber: number
@@ -23,7 +22,7 @@ interface EnhancedStereoProps {
   className: string
   init: EnhancedStereoResult & { init?: true }
   formState: EnhancedStereoFormState
-  struct: any
+  struct: Struct
 }
 
 interface EnhancedStereoCallProps {
@@ -50,21 +49,7 @@ const EnhancedStereo: React.FC<Props> = props => {
     type: 'object',
     properties: {
       type: {
-        title: 'Stereo Label',
-        enum: [
-          StereoLabel.Abs,
-          StereoLabel.And,
-          StereoLabel.Or,
-          StereoLabel.And + (maxAnd + 1),
-          StereoLabel.Or + (maxOr + 1)
-        ],
-        enumNames: [
-          'ABS',
-          'Add to AND',
-          'Add to OR',
-          'Create new AND Group',
-          'Create new OR Group'
-        ]
+        type: 'string'
       },
       andNumber: {
         type: 'integer'
@@ -84,89 +69,84 @@ const EnhancedStereo: React.FC<Props> = props => {
       valid={() => valid}
       buttons={['Cancel', 'OK']}>
       <Form schema={enhancedStereoSchema} init={init} {...formState}>
-        <Field
-          name="type"
-          component={FieldSet}
-          maxAnd={maxAnd}
-          maxOr={maxOr}
-          labelPos={false}
-        />
+        <fieldset>
+          <label className="stereo-label-item">
+            <Field
+              name="type"
+              labelPos={false}
+              type="radio"
+              value={StereoLabel.Abs}
+              checked={result.type === StereoLabel.Abs}
+            />
+            ABS
+          </label>
+          {maxAnd !== 0 && (
+            <label className="stereo-label-item">
+              <Field
+                name="type"
+                labelPos={false}
+                type="radio"
+                value={StereoLabel.And}
+                checked={result.type === StereoLabel.And}
+              />
+              Add to AND
+              <Field
+                name="andNumber"
+                schema={range(1, maxAnd + 1)}
+                type="text"
+                className="label-group-select"
+              />
+              Group
+            </label>
+          )}
+          {maxOr !== 0 && (
+            <label className="stereo-label-item">
+              <Field
+                name="type"
+                labelPos={false}
+                type="radio"
+                value={StereoLabel.Or}
+                checked={result.type === StereoLabel.Or}
+              />
+              Add to OR
+              <Field
+                name="orNumber"
+                schema={range(1, maxOr + 1)}
+                type="text"
+                className="label-group-select"
+              />
+              Group
+            </label>
+          )}
+          <label className="stereo-label-item">
+            <Field
+              name="type"
+              labelPos={false}
+              type="radio"
+              value={`&${maxOr + 1}`}
+            />
+            Create new AND Group
+          </label>
+          <label className="stereo-label-item">
+            <Field
+              name="type"
+              labelPos={false}
+              type="radio"
+              value={`or${maxOr + 1}`}
+            />
+            Create new OR Group
+          </label>
+        </fieldset>
       </Form>
     </Dialog>
   )
 }
 
-interface FieldSetProps {
-  name: string
-  schema: any
-  value: StereoLabel
-  onChange: (value: string) => void
-  type?: string
-  maxAnd: number
-  maxOr: number
-}
-
-const FieldSet: React.FC<FieldSetProps> = props => {
-  const {
-    maxAnd,
-    maxOr,
-    schema,
-    value,
-    onChange,
-    type = 'radio',
-    ...rest
-  } = props
-
-  return (
-    <fieldset>
-      {schema.enum.map(
-        (val, index) =>
-          shouldDisplay(val, maxAnd, maxOr) && (
-            <li key={schema.enumNames[index]} className="stereo-label-item">
-              <label className="stereo-label-name">
-                <input
-                  type={type}
-                  checked={val === value}
-                  value={val}
-                  onChange={() => onChange(val)}
-                  {...rest}
-                />
-                {schema.enumNames[index]}
-              </label>
-              {val === StereoLabel.And && (
-                <>
-                  <Field
-                    name="andNumber"
-                    // The line below creates an array [1...maxAnd]
-                    schema={[...Array(maxAnd)].map((_e, i) => i + 1)}
-                    type="text"
-                    className="label-group-select"
-                  />
-                  Group
-                </>
-              )}
-              {val === StereoLabel.Or && (
-                <>
-                  <Field
-                    name="orNumber"
-                    // The line below creates an array [1...maxOr]
-                    schema={[...Array(maxOr)].map((_e, i) => i + 1)}
-                    type="text"
-                    className="label-group-select"
-                  />
-                  Group
-                </>
-              )}
-            </li>
-          )
-      )}
-    </fieldset>
-  )
-}
-
 function findStereLabels(struct, aids): Array<string> {
-  const stereoaids = findStereoAtoms(struct, aids)
-  return stereoaids.map(aid => struct.atoms.get(aid).stereoLabel)
+  const stereoIds = aids.filter(
+    aid => struct.atoms.get(aid).stereoLabel !== null
+  )
+  return stereoIds.map(aid => struct.atoms.get(aid).stereoLabel)
 }
 
 function maxOfAnds(stereLabels): number {
@@ -181,18 +161,6 @@ function maxOfOrs(stereLabels): number {
     return label.match(/or/) ? +label.match(/\d+/)?.join() : 0
   })
   return Math.max(...numbers)
-}
-
-function shouldDisplay(type, maxAnd, maxOr) {
-  if (type === StereoLabel.Or && maxOr === 0) {
-    return false
-  }
-
-  if (type === StereoLabel.And && maxAnd === 0) {
-    return false
-  }
-
-  return true
 }
 
 export default connect(state => ({

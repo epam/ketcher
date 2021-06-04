@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { capitalize } from 'lodash/fp'
+import { AtomList, Bond, Elements, StereoLabel } from 'ketcher-core'
 
-import { Bond, AtomList, StereoLabel, Elements } from 'ketcher-core'
-import { sdataSchema } from '../schema/sdata-schema'
 import { atom as atomSchema } from '../schema/struct-schema'
+import { capitalize } from 'lodash/fp'
+import { sdataSchema } from '../schema/sdata-schema'
 
 export function fromElement(selem) {
   if (selem.label === 'R#') {
@@ -122,21 +122,20 @@ export function fromStereoLabel(stereoLabel) {
   if (stereoLabel === null) return { type: null }
   const type = stereoLabel.match(/\D+/g)[0]
   const number = +stereoLabel.replace(type, '')
-  const initOrNumber = 1
-  const initAndNumber = 1
+  const initNumber = 1
 
   if (type === StereoLabel.Abs) {
     return {
       type: stereoLabel,
-      orNumber: initOrNumber,
-      andNumber: initAndNumber
+      orNumber: initNumber,
+      andNumber: initNumber
     }
   }
 
   if (type === StereoLabel.And) {
     return {
       type: type,
-      orNumber: initOrNumber,
+      orNumber: initNumber,
       andNumber: number
     }
   }
@@ -145,7 +144,7 @@ export function fromStereoLabel(stereoLabel) {
     return {
       type: type,
       orNumber: number,
-      andNumber: initOrNumber
+      andNumber: initNumber
     }
   }
 }

@@ -142,6 +142,7 @@ const EnhancedStereo: React.FC<Props> = props => {
   )
 }
 
+// TODO: Move the function below to Struct class
 function findStereLabels(struct, aids): Array<string> {
   const stereoIds = aids.filter(
     aid => struct.atoms.get(aid).stereoLabel !== null

@@ -123,7 +123,7 @@ const EnhancedStereo: React.FC<Props> = props => {
               name="type"
               labelPos={false}
               type="radio"
-              value={`&${maxOr + 1}`}
+              value={`&${maxAnd + 1}`}
             />
             Create new AND Group
           </label>

@@ -171,7 +171,11 @@ export function fromBondStereoUpdate(
   let bond = struct.bonds.get(bid)
   const action = new Action()
 
-  if (bond?.stereo === Bond.PATTERN.STEREO.NONE) {
+  if (
+    bond &&
+    (bond.stereo === Bond.PATTERN.STEREO.NONE ||
+      bond.type === Bond.PATTERN.TYPE.DOUBLE)
+  ) {
     const neigs = atomGetNeighbors(restruct, bond.begin)
     const stereoNeig = neigs.find(item => {
       const bond = struct.bonds.get(item.bid)

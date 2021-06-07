@@ -95,7 +95,7 @@ class BondDelete extends BaseOperation {
   data: Data
 
   constructor(bondId?: any) {
-    super(OperationType.BOND_DELETE, 2)
+    super(OperationType.BOND_DELETE, 1)
     this.data = { bid: bondId, bond: null, begin: null, end: null }
   }
 

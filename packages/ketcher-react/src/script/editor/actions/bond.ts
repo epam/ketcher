@@ -15,26 +15,25 @@
  ***************************************************************************/
 
 import { Atom, Bond, StereoLabel, Struct, Vec2 } from 'ketcher-core'
-
 import {
-  FragmentAdd,
   AtomAdd,
   AtomAttr,
   BondAdd,
   BondAttr,
-  BondDelete
+  BondDelete,
+  FragmentAdd
 } from '../operations'
-import utils from '../shared/utils'
-import Action from '../shared/action'
-
-import { atomGetAttr, atomForNewBond, atomGetNeighbors } from './utils'
+import { atomForNewBond, atomGetAttr, atomGetNeighbors } from './utils'
 import {
   fromAtomMerge,
   fromStereoAtomAttrs,
   mergeFragmentsIfNeeded,
   mergeSgroups
 } from './atom'
+
+import Action from '../shared/action'
 import ReStruct from '../../render/restruct'
+import utils from '../shared/utils'
 
 export function fromBondAddition(
   restruct: ReStruct,
@@ -232,8 +231,9 @@ export function bondChangingAction(
   bondProps: any
 ): Action {
   if (
-    bondProps.stereo !== Bond.PATTERN.STEREO.NONE && //
-    bondProps.type === Bond.PATTERN.TYPE.SINGLE &&
+    ((bondProps.stereo !== Bond.PATTERN.STEREO.NONE && //
+      bondProps.type === Bond.PATTERN.TYPE.SINGLE) ||
+      bond.type === Bond.PATTERN.TYPE.DATIVE) &&
     bond.type === bondProps.type &&
     bond.stereo === bondProps.stereo
   )
@@ -261,8 +261,6 @@ function bondFlipRequired(struct: Struct, bond: Bond, attrs: any): boolean {
   const bondEnd = struct.atoms.get(bond.end)
   if (!bondBegin || !bondBegin.neighbors || !bondEnd || !bondEnd.neighbors)
     return false
-
-  if (attrs.type === Bond.PATTERN.TYPE.DATIVE) return true
 
   return (
     attrs.type === Bond.PATTERN.TYPE.SINGLE &&

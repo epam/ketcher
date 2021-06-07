@@ -19,6 +19,7 @@ import {
   Subscription
 } from 'subscription'
 import { Pile, Struct, Vec2 } from 'ketcher-core'
+import { groupBy } from 'lodash'
 import { customOnChangeHandler, elementOffset } from './utils'
 import { fromDescriptorsAlign, fromNewCanvas } from './actions/basic'
 
@@ -59,9 +60,44 @@ const highlightTargets = [
   'texts'
 ]
 
+function selectStereoFlagsIfNecessary(
+  struct: Struct,
+  atoms: number[]
+): number[] {
+  const atomsOfFragments = groupBy(
+    Array.from(struct.atoms.values()),
+    atom => atom.fragment
+  )
+  const selectedAtomsOfFragments = groupBy(
+    Array.from(struct.atoms.entries())
+      .filter(([atomId]) => atoms.includes(atomId))
+      .map(([, atom]) => atom),
+    atom => atom.fragment
+  )
+
+  let stereoFlags: number[] = []
+  Object.keys(selectedAtomsOfFragments).forEach(fragId => {
+    if (
+      selectedAtomsOfFragments[fragId].length ===
+      atomsOfFragments[fragId].length
+    ) {
+      fragId && stereoFlags.push(Number(fragId))
+    }
+  })
+
+  return stereoFlags
+}
+
+interface Selection {
+  atoms?: Array<number>
+  bonds?: Array<number>
+  enhancedFlags?: Array<number>
+  rxnPluses?: Array<number>
+  rxnArrows?: Array<number>
+}
 class Editor {
   render: Render
-  _selection: any
+  _selection: Selection | null
   _tool: any
   historyStack: any
   historyPtr: any
@@ -213,12 +249,28 @@ class Editor {
     }
 
     if (ci) {
-      const res = {}
+      let res: Selection = {}
+
       Object.keys(ci).forEach(key => {
         if (ci[key].length > 0)
           // TODO: deep merge
           res[key] = ci[key].slice()
       })
+
+      if (ci.atoms) {
+        const stereoFlags = selectStereoFlagsIfNecessary(
+          this.struct(),
+          ci.atoms
+        )
+        if (stereoFlags.length !== 0) {
+          res.enhancedFlags
+            ? (res.enhancedFlags = Array.from(
+                new Set([...res.enhancedFlags, ...stereoFlags])
+              ))
+            : (res.enhancedFlags = stereoFlags)
+        }
+      }
+
       if (Object.keys(res).length !== 0) {
         this._selection = res // eslint-disable-line
       }

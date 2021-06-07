@@ -88,7 +88,7 @@ class AtomDelete extends BaseOperation {
   data: Data
 
   constructor(atomId?: any) {
-    super(OperationType.ATOM_DELETE, 2)
+    super(OperationType.ATOM_DELETE, 3)
     this.data = { aid: atomId, atom: null, pos: null }
   }
 

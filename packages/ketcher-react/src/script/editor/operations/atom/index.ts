@@ -31,7 +31,7 @@ class AtomAdd extends BaseOperation {
   data: Data
 
   constructor(atom?: any, pos?: any) {
-    super(OperationType.ATOM_ADD, 1)
+    super(OperationType.ATOM_ADD)
     this.data = { atom, pos, aid: null }
   }
 

@@ -1,3 +1,5 @@
+import { BaseOperation } from '../base'
+import { OperationType } from '../OperationType'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,8 +16,6 @@
  * limitations under the License.
  ***************************************************************************/
 import Restruct from '../../../render/restruct'
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
 
 type Data = {
   aid?: any
@@ -28,7 +28,7 @@ export class AtomAttr extends BaseOperation {
   data2: Data | null
 
   constructor(atomId?: any, attribute?: any, value?: any) {
-    super(OperationType.ATOM_ATTR, 2)
+    super(OperationType.ATOM_ATTR, 1)
     this.data = { aid: atomId, attribute, value }
     this.data2 = null
   }

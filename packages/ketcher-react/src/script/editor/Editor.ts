@@ -78,8 +78,9 @@ function selectStereoFlagsIfNecessary(
   let stereoFlags: number[] = []
   Object.keys(selectedAtomsOfFragments).forEach(fragId => {
     if (
-      selectedAtomsOfFragments[fragId].length ===
-      atomsOfFragments[fragId].length
+      atomsOfFragments[fragId].length -
+        selectedAtomsOfFragments[fragId].length <=
+      1
     ) {
       fragId && stereoFlags.push(Number(fragId))
     }

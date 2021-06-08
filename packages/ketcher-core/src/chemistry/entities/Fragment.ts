@@ -1,3 +1,4 @@
+import { Bond } from './Bond'
 import { StereoLabel } from './Atom'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -28,14 +29,17 @@ function calcStereoFlag(
   stereoAids: Array<number>
 ): StereoFlag | undefined {
   if (!stereoAids || stereoAids.length === 0) return undefined
-  const atom = struct.atoms.get(stereoAids[0])
-  if (!(atom && atom.stereoLabel)) return undefined
-  const stereoLabel = atom.stereoLabel! // {string | null} "<abs|and|or>-<group>"
-
-  const hasAnotherLabel = stereoAids
+  const filteredStereoAtoms = stereoAids
     .map(aid => struct.atoms.get(aid))
     .filter(atom => atom?.stereoLabel)
-    .some(atom => atom?.stereoLabel !== stereoLabel)
+  if (!filteredStereoAtoms.length) return undefined
+
+  const atom = filteredStereoAtoms[0]!
+  const stereoLabel = atom.stereoLabel! // {string | null} "<abs|and|or>-<group>"
+
+  const hasAnotherLabel = filteredStereoAtoms.some(
+    atom => atom?.stereoLabel !== stereoLabel
+  )
 
   let stereoFlag: StereoFlag
   if (hasAnotherLabel) {
@@ -83,9 +87,17 @@ export class Fragment {
     return this.enhancedStereoFlag
   }
 
-  updateStereoAtom(struct: any, aid: number, isAdd: boolean) {
+  //TODO: split to 'add' and 'remove methods
+  updateStereoAtom(struct: Struct, aid: number, isAdd: boolean) {
     if (isAdd && !this.stereoAtoms.includes(aid)) this.stereoAtoms.push(aid)
-    if (!isAdd) this.stereoAtoms = this.stereoAtoms.filter(item => item !== aid)
+    if (
+      !isAdd &&
+      !Array.from(struct.bonds.values())
+        .filter(bond => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE)
+        .some(bond => bond.begin === aid)
+    ) {
+      this.stereoAtoms = this.stereoAtoms.filter(item => item !== aid)
+    }
 
     this.enhancedStereoFlag = calcStereoFlag(struct, this.stereoAtoms)
   }

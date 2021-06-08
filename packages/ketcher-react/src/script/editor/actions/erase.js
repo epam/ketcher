@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, RGroup } from 'ketcher-core'
+import { Atom, Bond, RGroup } from 'ketcher-core'
 import {
   AtomDelete,
   BondDelete,
@@ -69,7 +69,12 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
   removeSgroupIfNeeded(action, restruct, atomsToRemove)
   action = action.perform(restruct)
 
-  if (bond.stereo) {
+  if (
+    bond.stereo &&
+    !Array.from(restruct.molecule.bonds.values())
+      .filter(bond => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE)
+      .some(curr => curr.begin === bond.begin)
+  ) {
     action.mergeWith(
       fromStereoAtomAttrs(restruct, bond.begin, {
         stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,

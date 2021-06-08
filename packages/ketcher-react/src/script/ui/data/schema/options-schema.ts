@@ -50,6 +50,10 @@ const render: {
   colorOfAndCenters: ExtendedSchema
   colorOfOrCenters: ExtendedSchema
   colorStereogenicCenters: ExtendedSchema
+  absFlagLabel: ExtendedSchema
+  andFlagLabel: ExtendedSchema
+  mixedFlagLabel: ExtendedSchema
+  orFlagLabel: ExtendedSchema
   font: ExtendedSchema
   fontsz: ExtendedSchema
   fontszsub: ExtendedSchema
@@ -113,6 +117,26 @@ const render: {
     ],
     enumNames: ['Labels Only', 'Bonds Only', 'Labels And Bonds', 'Off'],
     default: StereoColoringType.LabelsOnly
+  },
+  absFlagLabel: {
+    title: 'Text of Absolute flag',
+    type: 'String',
+    default: 'ABS (Chiral)'
+  },
+  andFlagLabel: {
+    title: 'Text of AND flag',
+    type: 'String',
+    default: 'AND Enantiomer'
+  },
+  mixedFlagLabel: {
+    title: 'Text of Mixed flag',
+    type: 'String',
+    default: 'Mixed'
+  },
+  orFlagLabel: {
+    title: 'Text of OR flag',
+    type: 'String',
+    default: 'OR Enantiomer'
   },
   font: {
     title: 'Font',

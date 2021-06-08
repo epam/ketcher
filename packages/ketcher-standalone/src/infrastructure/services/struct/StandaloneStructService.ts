@@ -1,3 +1,47 @@
+import {
+  AromatizeCommandData,
+  AutomapCommandData,
+  CalculateCipCommandData,
+  CalculateCommandData,
+  CheckCommandData,
+  CleanCommandData,
+  Command,
+  CommandOptions,
+  ConvertCommandData,
+  DearomatizeCommandData,
+  GenerateImageCommandData,
+  InputMessage,
+  LayoutCommandData,
+  OutputMessage,
+  SupportedFormat
+} from './indigoWorker.types'
+import {
+  AromatizeData,
+  AromatizeResult,
+  AutomapData,
+  AutomapResult,
+  CalculateCipData,
+  CalculateCipResult,
+  CalculateData,
+  CalculateResult,
+  CheckData,
+  CheckResult,
+  ChemicalMimeType,
+  CleanData,
+  CleanResult,
+  ConvertData,
+  ConvertResult,
+  DearomatizeData,
+  DearomatizeResult,
+  GenerateImageOptions,
+  InfoResult,
+  LayoutData,
+  LayoutResult,
+  RecognizeResult,
+  StructService,
+  StructServiceOptions
+} from 'ketcher-core'
+
 /****************************************************************************
  * Copyright 2020 EPAM Systems
  *
@@ -15,51 +59,6 @@
  ***************************************************************************/
 // @ts-ignore
 import IndigoWorker from 'web-worker:./IndigoWorker'
-import {
-  Command,
-  OutputMessage,
-  InputMessage,
-  SupportedFormat,
-  CleanCommandData,
-  ConvertCommandData,
-  LayoutCommandData,
-  AromatizeCommandData,
-  DearomatizeCommandData,
-  CommandOptions,
-  CalculateCipCommandData,
-  AutomapCommandData,
-  CheckCommandData,
-  CalculateCommandData,
-  GenerateImageCommandData
-} from './indigoWorker.types'
-
-import {
-  StructService,
-  ChemicalMimeType,
-  CheckData,
-  AutomapData,
-  CalculateCipData,
-  DearomatizeData,
-  AromatizeData,
-  CleanData,
-  LayoutData,
-  CalculateData,
-  StructServiceOptions,
-  GenerateImageOptions,
-  InfoResult,
-  ConvertData,
-  ConvertResult,
-  LayoutResult,
-  CleanResult,
-  AromatizeResult,
-  DearomatizeResult,
-  CalculateCipResult,
-  AutomapResult,
-  CheckResult,
-  CalculateResult,
-  RecognizeResult
-  // @ts-ignore
-} from 'ketcher-core'
 
 interface KeyValuePair {
   [key: string]: number | string | boolean | object

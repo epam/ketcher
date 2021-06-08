@@ -15,6 +15,7 @@
  ***************************************************************************/
 import { Atom, Pile, Vec2 } from 'ketcher-core'
 import Restruct, { ReAtom } from '../../../render/restruct'
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
 
@@ -30,7 +31,7 @@ class AtomAdd extends BaseOperation {
   data: Data
 
   constructor(atom?: any, pos?: any) {
-    super(OperationType.ATOM_ADD, 1)
+    super(OperationType.ATOM_ADD)
     this.data = { atom, pos, aid: null }
   }
 
@@ -87,7 +88,7 @@ class AtomDelete extends BaseOperation {
   data: Data
 
   constructor(atomId?: any) {
-    super(OperationType.ATOM_DELETE)
+    super(OperationType.ATOM_DELETE, 2)
     this.data = { aid: atomId, atom: null, pos: null }
   }
 

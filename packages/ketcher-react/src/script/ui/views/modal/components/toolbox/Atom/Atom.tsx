@@ -87,7 +87,6 @@ const Atom: FC<Props> = props => {
           <Field name="invRet" />
           <Field name="exactChangeFlag" />
         </fieldset>
-        PARITY: {stereoParity}
       </Form>
     </Dialog>
   )

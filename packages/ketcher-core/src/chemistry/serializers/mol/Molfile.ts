@@ -214,7 +214,7 @@ export class Molfile {
 
   writeCR(str?: string) {
     /* saver */
-    if (arguments.length == 0) {
+    if (arguments.length === 0) {
       str = ''
     }
 
@@ -223,7 +223,7 @@ export class Molfile {
 
   writeWhiteSpace(length: number = 0) {
     /* saver */
-    if (arguments.length == 0) {
+    if (arguments.length === 0) {
       length = 1
     }
 
@@ -450,7 +450,7 @@ export class Molfile {
       }
 
       // connectivity
-      if (sgroup.type == 'SRU' && sgroup.data.connectivity) {
+      if (sgroup.type === 'SRU' && sgroup.data.connectivity) {
         const connectivity = ` ${q.toString().padStart(3)} ${(
           sgroup.data.connectivity || ''
         ).padEnd(3)}`
@@ -461,7 +461,7 @@ export class Molfile {
         this.writeCR()
       }
 
-      if (sgroup.type == 'SRU') {
+      if (sgroup.type === 'SRU') {
         this.write('M  SMT ')
         this.writePaddedNumber(q, 3)
         this.writeWhiteSpace()
@@ -511,7 +511,7 @@ export class Molfile {
     let number: number
     if (atom.explicitValence < 0) {
       number = 0
-    } else if (atom.explicitValence == 0) {
+    } else if (atom.explicitValence === 0) {
       number = 15
     } else {
       number = atom.explicitValence

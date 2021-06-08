@@ -1,67 +1,10 @@
-import React from 'react'
-import { connect } from 'react-redux'
+import Form, { Field } from '../../component/form/form'
+import { StereoLabel, Struct } from 'ketcher-core'
 
 import { Dialog } from '../../views/components'
-import Form, { Field } from '../../component/form/form'
-import { StereoLabel } from 'ketcher-core'
-
-export const predefinedStereoGroups = {
-  [StereoLabel.And]: {
-    min: 1,
-    max: 2
-  },
-  [StereoLabel.Or]: {
-    min: 1,
-    max: 2
-  }
-} as const
-
-export function getPredefinedStereoLabels(stereoLabel: StereoLabel): string[] {
-  const min = predefinedStereoGroups[stereoLabel].min
-  const max = predefinedStereoGroups[stereoLabel].max
-
-  return new Array(max - min + 1)
-    .fill(null)
-    .map((_, index) => stereoLabel + (min + index))
-}
-
-const enhancedStereoSchema = {
-  title: 'Enhanced Stereo',
-  type: 'object',
-  properties: {
-    type: {
-      title: 'Stereo Label',
-      enum: [
-        StereoLabel.Abs,
-        ...getPredefinedStereoLabels(StereoLabel.And),
-        StereoLabel.And,
-        ...getPredefinedStereoLabels(StereoLabel.Or),
-        StereoLabel.Or
-      ],
-      enumNames: [
-        'ABS',
-        ...getPredefinedStereoLabels(StereoLabel.And).map(stereoLabel =>
-          stereoLabel.replace(StereoLabel.And, 'AND')
-        ),
-        'AND...',
-        ...getPredefinedStereoLabels(StereoLabel.Or).map(stereoLabel =>
-          stereoLabel.toUpperCase()
-        ),
-        'OR...'
-      ]
-    },
-    andNumber: {
-      type: 'integer',
-      minimum: 1,
-      invalidMessage: 'Only positive integer'
-    },
-    orNumber: {
-      type: 'integer',
-      minimum: 1,
-      invalidMessage: 'Only positive integer'
-    }
-  }
-}
+import React from 'react'
+import { connect } from 'react-redux'
+import { range } from 'lodash'
 
 interface EnhancedStereoResult {
   andNumber: number
@@ -79,6 +22,7 @@ interface EnhancedStereoProps {
   className: string
   init: EnhancedStereoResult & { init?: true }
   formState: EnhancedStereoFormState
+  struct: Struct
 }
 
 interface EnhancedStereoCallProps {
@@ -89,24 +33,31 @@ interface EnhancedStereoCallProps {
 type Props = EnhancedStereoProps & EnhancedStereoCallProps
 
 const EnhancedStereo: React.FC<Props> = props => {
-  const { formState, init, ...rest } = props
+  const { struct, formState, init, ...rest } = props
   const { result, valid } = formState
 
-  const handleChange = (
-    stereoLabel: StereoLabel,
-    newState: EnhancedStereoResult
-  ): EnhancedStereoResult => {
-    const defaultOrNumber = predefinedStereoGroups[StereoLabel.Or].max + 1
-    const defaultAndNumber = predefinedStereoGroups[StereoLabel.And].max + 1
+  const stereoLabels: Array<string> = findStereLabels(
+    struct,
+    Array.from(struct.atoms.keys())
+  )
 
-    if (andNumberDisabled(stereoLabel)) {
-      newState.andNumber = defaultAndNumber
-    }
-    if (orNumberDisabled(stereoLabel)) {
-      newState.orNumber = defaultOrNumber
-    }
+  const maxAnd: number = maxOfAnds(stereoLabels)
+  const maxOr: number = maxOfOrs(stereoLabels)
 
-    return newState
+  const enhancedStereoSchema = {
+    title: 'Enhanced Stereo',
+    type: 'object',
+    properties: {
+      type: {
+        type: 'string'
+      },
+      andNumber: {
+        type: 'integer'
+      },
+      orNumber: {
+        type: 'integer'
+      }
+    }
   }
 
   return (
@@ -116,74 +67,104 @@ const EnhancedStereo: React.FC<Props> = props => {
       params={rest}
       result={() => result}
       valid={() => valid}
-      buttons={['OK', 'Close']}>
+      buttons={['Cancel', 'OK']}>
       <Form schema={enhancedStereoSchema} init={init} {...formState}>
-        <Field
-          name="type"
-          component={FieldSet}
-          labelPos={false}
-          onChange={handleChange}
-        />
+        <fieldset>
+          <label className="stereo-label-item">
+            <Field
+              name="type"
+              labelPos={false}
+              type="radio"
+              value={StereoLabel.Abs}
+              checked={result.type === StereoLabel.Abs}
+            />
+            ABS
+          </label>
+          {maxAnd !== 0 && (
+            <label className="stereo-label-item">
+              <Field
+                name="type"
+                labelPos={false}
+                type="radio"
+                value={StereoLabel.And}
+                checked={result.type === StereoLabel.And}
+              />
+              Add to AND
+              <Field
+                name="andNumber"
+                schema={range(1, maxAnd + 1)}
+                type="text"
+                className="label-group-select"
+              />
+              Group
+            </label>
+          )}
+          {maxOr !== 0 && (
+            <label className="stereo-label-item">
+              <Field
+                name="type"
+                labelPos={false}
+                type="radio"
+                value={StereoLabel.Or}
+                checked={result.type === StereoLabel.Or}
+              />
+              Add to OR
+              <Field
+                name="orNumber"
+                schema={range(1, maxOr + 1)}
+                type="text"
+                className="label-group-select"
+              />
+              Group
+            </label>
+          )}
+          <label className="stereo-label-item">
+            <Field
+              name="type"
+              labelPos={false}
+              type="radio"
+              value={`&${maxAnd + 1}`}
+            />
+            Create new AND Group
+          </label>
+          <label className="stereo-label-item">
+            <Field
+              name="type"
+              labelPos={false}
+              type="radio"
+              value={`or${maxOr + 1}`}
+            />
+            Create new OR Group
+          </label>
+        </fieldset>
       </Form>
     </Dialog>
   )
 }
 
-interface FieldSetProps {
-  name: string
-  schema: any
-  value: StereoLabel
-  onChange: (value: string) => void
-  type?: string
-}
-
-const FieldSet: React.FC<FieldSetProps> = props => {
-  const { schema, value, onChange, type = 'radio', ...rest } = props
-
-  return (
-    <fieldset>
-      {schema.enum.map((val, index) => (
-        <li key={schema.enumNames[index]} className="stereo-label-item">
-          <label className="stereo-label-name">
-            <input
-              type={type}
-              checked={val === value}
-              value={val}
-              onChange={() => onChange(val)}
-              {...rest}
-            />
-            {schema.enumNames[index]}
-          </label>
-          {val === StereoLabel.And && (
-            <Field
-              name="andNumber"
-              type="text"
-              className="label-group-value"
-              disabled={andNumberDisabled(value)}
-            />
-          )}
-          {val === StereoLabel.Or && (
-            <Field
-              name="orNumber"
-              type="text"
-              className="label-group-value"
-              disabled={orNumberDisabled(value)}
-            />
-          )}
-        </li>
-      ))}
-    </fieldset>
+// TODO: Move the function below to Struct class
+function findStereLabels(struct, aids): Array<string> {
+  const stereoIds = aids.filter(
+    aid => struct.atoms.get(aid).stereoLabel !== null
   )
+  return stereoIds.map(aid => struct.atoms.get(aid).stereoLabel)
 }
 
-function andNumberDisabled(stereoLabel: StereoLabel): boolean {
-  return !stereoLabel || stereoLabel !== StereoLabel.And || stereoLabel === null
+function maxOfAnds(stereLabels): number {
+  const numbers = stereLabels.map(label => {
+    return label.match(/&/) ? +label.match(/\d+/)?.join() : 0
+  })
+  return Math.max(...numbers)
 }
 
-function orNumberDisabled(stereoLabel: StereoLabel): boolean {
-  return !stereoLabel || stereoLabel !== StereoLabel.Or || stereoLabel === null
+function maxOfOrs(stereLabels): number {
+  const numbers = stereLabels.map(label => {
+    return label.match(/or/) ? +label.match(/\d+/)?.join() : 0
+  })
+  return Math.max(...numbers)
 }
 
-export default connect(store => ({
-  formState: store.modal.form || { result: {}, valid: false }
+export default connect(state => ({
+  formState: state.modal.form || { result: {}, valid: false },
+  struct: state.editor.struct()
 }))(EnhancedStereo)

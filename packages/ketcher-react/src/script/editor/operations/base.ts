@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { OperationType } from './OperationType'
 // todo: rename file in another PR
 import Restruct from '../../render/restruct'
-import { OperationType } from './OperationType'
-
 import { StereLabelStyleType } from '../../render/restruct/GeneralEnumTypes'
 
 type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>
@@ -126,7 +125,12 @@ class BaseOperation {
     BaseOperation.invalidateAtom(restruct, bond.b.end, 0)
   }
 
-  protected static invalidateItem(restruct: Restruct, map, id: number, level?) {
+  protected static invalidateItem(
+    restruct: Restruct,
+    map,
+    id: number,
+    level?: any
+  ) {
     if (map === 'atoms') {
       BaseOperation.invalidateAtom(restruct, id, level)
       return

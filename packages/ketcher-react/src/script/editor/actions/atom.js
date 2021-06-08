@@ -1,3 +1,27 @@
+import { Atom, Bond, RGroup } from 'ketcher-core'
+import {
+  AtomAdd,
+  AtomAttr,
+  AtomDelete,
+  BondAdd,
+  BondAttr,
+  BondDelete,
+  FragmentAdd,
+  FragmentAddStereoAtom,
+  FragmentDelete,
+  FragmentDeleteStereoAtom,
+  SGroupAtomAdd
+} from '../operations'
+import {
+  atomGetAttr,
+  atomGetDegree,
+  atomGetNeighbors,
+  atomGetSGroups
+} from './utils'
+import { fromRGroupFragment, fromUpdateIfThen } from './rgroup'
+import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup'
+
+import Action from '../shared/action'
 /****************************************************************************
  * Copyright 2020 EPAM Systems
  *
@@ -14,31 +38,6 @@
  * limitations under the License.
  ***************************************************************************/
 import { without } from 'lodash/fp'
-
-import { Atom, Bond, RGroup } from 'ketcher-core'
-import {
-  FragmentAdd,
-  AtomAdd,
-  AtomAttr,
-  FragmentDeleteStereoAtom,
-  FragmentAddStereoAtom,
-  BondDelete,
-  BondAdd,
-  BondAttr,
-  AtomDelete,
-  FragmentDelete,
-  SGroupAtomAdd
-} from '../operations'
-import Action from '../shared/action'
-
-import {
-  atomGetAttr,
-  atomGetDegree,
-  atomGetNeighbors,
-  atomGetSGroups
-} from './utils'
-import { removeSgroupIfNeeded, removeAtomFromSgroupIfNeeded } from './sgroup'
-import { fromRGroupFragment, fromUpdateIfThen } from './rgroup'
 
 export function fromAtomAddition(restruct, pos, atom) {
   atom = Object.assign({}, atom)
@@ -96,9 +95,11 @@ export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse) {
       action.addOp(
         new AtomAttr(aid, 'stereoLabel', attrs['stereoLabel']).perform(restruct)
       )
-      if (attrs['stereoLabel'] === null)
+      if (attrs['stereoLabel'] === null) {
         action.addOp(new FragmentDeleteStereoAtom(frid, aid).perform(restruct))
-      else action.addOp(new FragmentAddStereoAtom(frid, aid).perform(restruct))
+      } else {
+        action.addOp(new FragmentAddStereoAtom(frid, aid).perform(restruct))
+      }
     }
     if (withReverse) action.operations.reverse()
   }

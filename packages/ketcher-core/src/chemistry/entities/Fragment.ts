@@ -34,6 +34,7 @@ function calcStereoFlag(
 
   const hasAnotherLabel = stereoAids
     .map(aid => struct.atoms.get(aid))
+    .filter(atom => atom?.stereoLabel)
     .some(atom => atom?.stereoLabel !== stereoLabel)
 
   let stereoFlag: StereoFlag

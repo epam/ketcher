@@ -19,7 +19,6 @@ import {
   Subscription
 } from 'subscription'
 import { Pile, Struct, Vec2 } from 'ketcher-core'
-import { groupBy } from 'lodash'
 import { customOnChangeHandler, elementOffset } from './utils'
 import { fromDescriptorsAlign, fromNewCanvas } from './actions/basic'
 
@@ -61,28 +60,25 @@ const highlightTargets = [
 ]
 
 function selectStereoFlagsIfNecessary(
-  struct: Struct,
-  atoms: number[]
+  atoms: any,
+  expAtoms: number[]
 ): number[] {
-  const atomsOfFragments = groupBy(
-    Array.from(struct.atoms.values()),
-    atom => atom.fragment
-  )
-  const selectedAtomsOfFragments = groupBy(
-    Array.from(struct.atoms.entries())
-      .filter(([atomId]) => atoms.includes(atomId))
-      .map(([, atom]) => atom),
-    atom => atom.fragment
-  )
-
-  let stereoFlags: number[] = []
-  Object.keys(selectedAtomsOfFragments).forEach(fragId => {
-    if (atomsOfFragments[fragId].length - selectedAtomsOfFragments[fragId].length <= 1
-    ) {
-      fragId && stereoFlags.push(Number(fragId))
-    }
+  const atomsOfFragments = {}
+  atoms.forEach((atom, atomId) => {
+    atomsOfFragments[atom.fragment]
+      ? atomsOfFragments[atom.fragment].push(atomId)
+      : (atomsOfFragments[atom.fragment] = [atomId])
   })
 
+  let stereoFlags: number[] = []
+
+  Object.keys(atomsOfFragments).forEach(fragId => {
+    let shouldSelSFlag: boolean = true
+    atomsOfFragments[fragId].forEach(atomId => {
+      if (!expAtoms.includes(atomId)) shouldSelSFlag = false
+    })
+    shouldSelSFlag && stereoFlags.push(Number(fragId))
+  })
   return stereoFlags
 }
 
@@ -255,22 +251,19 @@ class Editor {
           res[key] = ci[key].slice()
       })
 
-      if (ci.atoms) {
-        const stereoFlags = selectStereoFlagsIfNecessary(
-          this.struct(),
-          ci.atoms
-        )
-        if (stereoFlags.length !== 0) {
-          res.enhancedFlags
-            ? (res.enhancedFlags = Array.from(
-                new Set([...res.enhancedFlags, ...stereoFlags])
-              ))
-            : (res.enhancedFlags = stereoFlags)
-        }
-      }
-
       if (Object.keys(res).length !== 0) {
         this._selection = res // eslint-disable-line
+      }
+      const stereoFlags = selectStereoFlagsIfNecessary(
+        this.struct().atoms,
+        this.explicitSelected().atoms
+      )
+      if (stereoFlags.length !== 0) {
+        this._selection && this._selection.enhancedFlags
+          ? (this._selection.enhancedFlags = Array.from(
+              new Set([...this._selection.enhancedFlags, ...stereoFlags])
+            ))
+          : (res.enhancedFlags = stereoFlags)
       }
     }
 

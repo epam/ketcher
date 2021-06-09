@@ -23,7 +23,7 @@ interface Config {
   buttons?: ButtonsConfig
 }
 
-async function buildKetcherAsync({
+export async function buildKetcherAsync({
   element,
   staticResourcesUrl,
   structServiceProvider,

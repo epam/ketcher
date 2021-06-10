@@ -1,3 +1,6 @@
+import Restruct, { ReEnhancedFlag, ReFrag } from '../../render/restruct'
+
+import { BaseOperation } from './base'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,8 +17,6 @@
  * limitations under the License.
  ***************************************************************************/
 import { Fragment } from 'ketcher-core'
-import Restruct, { ReEnhancedFlag, ReFrag } from '../../render/restruct'
-import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
 
 // todo: separate classes: now here is circular dependency in `invert` method
@@ -51,7 +52,7 @@ class FragmentDelete extends BaseOperation {
   frid: any
 
   constructor(fragmentId: any) {
-    super(OperationType.FRAGMENT_DELETE, 4)
+    super(OperationType.FRAGMENT_DELETE, 100)
     this.frid = fragmentId
   }
 

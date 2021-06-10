@@ -1,3 +1,6 @@
+import Restruct, { ReSGroup } from '../../../render/restruct'
+import { SGroup, Vec2 } from 'ketcher-core'
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,8 +18,6 @@
  ***************************************************************************/
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import { SGroup, Vec2 } from 'ketcher-core'
-import Restruct, { ReSGroup } from '../../../render/restruct'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -61,7 +62,7 @@ class SGroupDelete extends BaseOperation {
   data: Data
 
   constructor(sgroupId?: any) {
-    super(OperationType.S_GROUP_DELETE)
+    super(OperationType.S_GROUP_DELETE, 95)
     this.data = { sgid: sgroupId }
   }
 

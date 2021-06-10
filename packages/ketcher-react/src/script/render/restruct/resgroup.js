@@ -15,12 +15,12 @@
  ***************************************************************************/
 import util from '../util'
 
-import { Box2Abs, Pile, SGroup, Vec2, scale } from 'ketcher-core'
+import { SGroup, Box2Abs, Vec2, Pile, scale } from 'ketcher-core'
+import draw from '../draw'
 
-import { LayerMap } from './GeneralEnumTypes'
 import ReDataSGroupData from './redatasgroupdata'
 import ReObject from './ReObject'
-import draw from '../draw'
+import { LayerMap } from './GeneralEnumTypes'
 
 const tfx = util.tfx
 
@@ -265,20 +265,6 @@ function definePP(restruct, sgroup) {
     if (!descriptorIntersects(sgroups, topLeftPoint)) break
 
     topLeftPoint = topLeftPoint.add(new Vec2(0, 0.5))
-  }
-
-  // TODO: the code below is a temporary solution that will be removed after the implementation of the internal format
-  // TODO: in schema.json required fields ["context", "FieldValue"] in sgroups type DAT must be returned
-  if (
-    sgroup.data.fieldName === 'INDIGO_CIP_DESC' &&
-    sgroup.atoms.length === 1
-  ) {
-    const sAtom = sgroup.atoms[0]
-    const sAtomPP = restruct.atoms.get(sAtom)?.a.pp
-
-    if (sAtomPP) {
-      return sAtomPP
-    }
   }
 
   return topLeftPoint

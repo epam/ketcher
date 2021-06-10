@@ -68,14 +68,11 @@ export function fromFlip(restruct, selection, dir, center) {
       action.addOp(new AtomMove(aid, d))
     })
 
-    if (!selection.sgroupData) {
-      const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment))
-
-      sgroups.forEach(sg => {
-        const d = flipItemByCenter(sg, calcCenter, dir)
-        action.addOp(new SGroupDataMove(sg.id, d))
-      })
-    }
+    const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment))
+    sgroups.forEach(sg => {
+      const d = flipItemByCenter(sg, calcCenter, dir)
+      action.addOp(new SGroupDataMove(sg.id, d))
+    })
   })
 
   if (selection.bonds) {

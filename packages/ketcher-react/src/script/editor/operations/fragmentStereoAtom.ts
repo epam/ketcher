@@ -59,7 +59,7 @@ class FragmentDeleteStereoAtom extends BaseOperation {
   data: Data
 
   constructor(fragmentId: any, atomId: any) {
-    super(OperationType.FRAGMENT_DELETE_STEREO_ATOM, 100)
+    super(OperationType.FRAGMENT_DELETE_STEREO_ATOM, 90)
     this.data = { frid: fragmentId, aid: atomId }
   }
 

@@ -434,7 +434,7 @@
           }
         },
         "then": {
-          "required": ["fieldName"],
+          "required": ["context", "fieldName", "fieldValue"],
           "properties": {
             "context": {
               "enum": ["Fragment", "Multifragment", "Bond", "Atom", "Group"]

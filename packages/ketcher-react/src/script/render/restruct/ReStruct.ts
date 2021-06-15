@@ -1,3 +1,6 @@
+import { Box2Abs, Pile, Pool, Struct, Vec2 } from 'ketcher-core'
+
+import { LayerMap } from './GeneralEnumTypes'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,21 +18,19 @@
  ***************************************************************************/
 import ReAtom from './reatom'
 import ReBond from './rebond'
-import ReLoop from './reloop'
-import ReRxnPlus from './rerxnplus'
-import ReRxnArrow from './rerxnarrow'
-import ReSimpleObject from './ReSimpleObject'
-import ReFrag from './refrag'
-import ReEnhancedFlag from './ReEnhancedFlag'
-import ReRGroup from './rergroup'
-import ReSGroup from './resgroup'
 import ReDataSGroupData from './redatasgroupdata'
-import util from '../util'
-import Render from '..'
-import { Box2Abs, Pile, Pool, Struct, Vec2 } from 'ketcher-core'
-import Visel from './visel'
-import { LayerMap } from './GeneralEnumTypes'
+import ReEnhancedFlag from './ReEnhancedFlag'
+import ReFrag from './refrag'
+import ReLoop from './reloop'
+import ReRGroup from './rergroup'
+import ReRxnArrow from './rerxnarrow'
+import ReRxnPlus from './rerxnplus'
+import ReSGroup from './resgroup'
+import ReSimpleObject from './ReSimpleObject'
 import ReText from './ReText'
+import Render from '..'
+import Visel from './visel'
+import util from '../util'
 
 class ReStruct {
   public static maps = {
@@ -286,8 +287,6 @@ class ReStruct {
 
     mapChanged.set(id, value)
 
-    // console.log("??????????", map + 'Changed', mapChanged);
-
     if (this[map].has(id)) this.clearVisel(this[map].get(id).visel)
   }
 
@@ -347,7 +346,6 @@ class ReStruct {
     // check items to update
     Object.keys(ReStruct.maps).forEach(map => {
       const mapChanged = this[map + 'Changed']
-      // console.log(map + 'Changed', mapChanged);
       if (force) {
         this[map].forEach((_item, id) => mapChanged.set(id, 1))
       } else {
@@ -558,8 +556,6 @@ class ReStruct {
 
   showEnhancedFlags(): void {
     const options = this.render.options
-
-    // console.log("!!", this.enhancedFlagsChanged);
 
     this.enhancedFlagsChanged.forEach((_value, chid) => {
       const flag = this.enhancedFlags.get(chid)

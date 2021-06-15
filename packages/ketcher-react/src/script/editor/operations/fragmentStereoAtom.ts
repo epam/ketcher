@@ -39,7 +39,6 @@ class FragmentAddStereoAtom extends BaseOperation {
 
     const frag = restruct.molecule.frags.get(frid)
     if (frag) {
-      console.log('stereo:', aid)
       frag.updateStereoAtom(restruct.molecule, aid, true)
 
       BaseOperation.invalidateEnhancedFlag(

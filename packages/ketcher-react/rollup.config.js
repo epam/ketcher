@@ -1,19 +1,19 @@
+import autoprefixer from 'autoprefixer'
+import babel from '@rollup/plugin-babel'
+import cleanup from 'rollup-plugin-cleanup'
+import commonjs from '@rollup/plugin-commonjs'
+import copy from 'rollup-plugin-copy'
+import del from 'rollup-plugin-delete'
+import json from '@rollup/plugin-json'
 import path from 'path'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
-import babel from '@rollup/plugin-babel'
-import replace from '@rollup/plugin-replace'
-import copy from 'rollup-plugin-copy'
-import resolve from '@rollup/plugin-node-resolve'
-import commonjs from '@rollup/plugin-commonjs'
-import postcss from 'rollup-plugin-postcss'
-import autoprefixer from 'autoprefixer'
-import json from '@rollup/plugin-json'
-import svgr from '@svgr/rollup'
-import del from 'rollup-plugin-delete'
-import typescript from 'rollup-plugin-typescript2'
-import cleanup from 'rollup-plugin-cleanup'
-import strip from '@rollup/plugin-strip'
 import pkg from './package.json'
+import postcss from 'rollup-plugin-postcss'
+import replace from '@rollup/plugin-replace'
+import resolve from '@rollup/plugin-node-resolve'
+import strip from '@rollup/plugin-strip'
+import svgr from '@svgr/rollup'
+import typescript from 'rollup-plugin-typescript2'
 
 const mode = {
   PRODUCTION: 'production',
@@ -97,7 +97,7 @@ const config = {
       extensions: extensions.map(ext => ext.trimStart('.')),
       comments: 'none'
     }),
-    ...(isProduction ? [strip()] : [])
+    ...(isProduction ? [strip({ include: 'src/**/*.{js,jsx,ts,tsx}' })] : [])
   ]
 }
 

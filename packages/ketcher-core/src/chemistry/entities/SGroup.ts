@@ -146,7 +146,6 @@ export class SGroup {
   }
 
   definePP(struct: Struct): null | Vec2 {
-    if (!this.bracketBox.p1) return null
     let topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5))
     const sgroups = Array.from(struct.sgroups.values())
     for (let i = 0; i < struct.sgroups.size; ++i) {
@@ -155,7 +154,16 @@ export class SGroup {
       topLeftPoint = topLeftPoint.add(new Vec2(0, 0.5))
     }
 
-    this.pp = topLeftPoint
+    // TODO: the code below is a temporary solution that will be removed after the implementation of the internal format
+    // TODO: in schema.json required fields ["context", "FieldValue"] in sgroups type DAT must be returned
+    if (this.data.fieldName === 'INDIGO_CIP_DESC' && this.atoms.length === 1) {
+      const sAtom = this.atoms[0]
+      const sAtomPP = struct.atoms.get(sAtom)?.pp
+
+      if (sAtomPP) {
+        return sAtomPP
+      }
+    }
 
     return topLeftPoint
   }

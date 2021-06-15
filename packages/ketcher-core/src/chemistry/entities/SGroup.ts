@@ -18,6 +18,7 @@ import { Box2Abs, Pile, Vec2 } from 'utils'
 
 import { Atom } from './Atom'
 import { Bond } from './Bond'
+import { Struct } from './Struct'
 
 export class SGroupBracketParams {
   readonly c: Vec2
@@ -133,6 +134,30 @@ export class SGroup {
   // stub
   checkAttr(attr: string, value: any): boolean {
     return this.data[attr] === value
+  }
+
+  setPPFromOffset(offset: Vec2): void {
+    this.pp = Vec2.sum(this.bracketBox.p1, offset)
+  }
+
+  getOffsetPP(): null | Vec2 {
+    if (!this.pp) return null
+    return Vec2.diff(this.pp, this.bracketBox.p1)
+  }
+
+  definePP(struct: Struct): null | Vec2 {
+    if (!this.bracketBox.p1) return null
+    let topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5))
+    const sgroups = Array.from(struct.sgroups.values())
+    for (let i = 0; i < struct.sgroups.size; ++i) {
+      if (!descriptorIntersects(sgroups, topLeftPoint)) break
+
+      topLeftPoint = topLeftPoint.add(new Vec2(0, 0.5))
+    }
+
+    this.pp = topLeftPoint
+
+    return topLeftPoint
   }
 
   static filterAtoms(atoms: any, map: any) {
@@ -435,4 +460,20 @@ export class SGroup {
       c = c.addScaled(mol.atoms.get(atoms[i]).pp, 1.0 / atoms.length)
     return c
   }
+}
+
+function descriptorIntersects(sgroups, topLeftPoint) {
+  return sgroups.some(sg => {
+    if (!sg.pp) return false
+
+    const sgBottomRightPoint = sg.pp.add(new Vec2(0.5, 0.5))
+    const bottomRightPoint = topLeftPoint.add(new Vec2(0.5, 0.5))
+
+    return Box2Abs.segmentIntersection(
+      sg.pp,
+      sgBottomRightPoint,
+      topLeftPoint,
+      bottomRightPoint
+    )
+  })
 }

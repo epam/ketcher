@@ -1,4 +1,9 @@
-import { FormatterFactory, identifyStructFormat } from 'ketcher-core'
+import {
+  FormatterFactory,
+  identifyStructFormat,
+  Pile,
+  SGroup
+} from 'ketcher-core'
 
 export function onAction(action) {
   if (action && action.dialog) {
@@ -41,6 +46,17 @@ export function load(structStr, options) {
       struct => {
         if (rescale) {
           struct.rescale() // TODO: move out parsing?
+
+          //NB: reset id
+          const oldStruct = editor.struct().clone()
+
+          struct.sgroups.forEach((sg, sgId) => {
+            const offset = oldStruct.sgroups.get(sgId).getOffsetPP()
+            const atomSet = new Pile(sg.atoms)
+            const crossBonds = SGroup.getCrossBonds(struct, atomSet)
+            SGroup.bracketPos(sg, struct, crossBonds)
+            sg.setPPFromOffset(offset)
+          })
         }
 
         if (struct.isBlank()) {

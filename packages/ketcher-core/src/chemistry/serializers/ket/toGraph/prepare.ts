@@ -38,20 +38,16 @@ export function prepareStructForGraph(struct: Struct) {
     })
   }
 
-  const molFrags = Array.from(struct.frags.keys()).filter(
-    fid => !rgFrags.has(fid)
-  )
-  const moleculeFragsAtoms = molFrags.reduce((acc, fid) => {
-    const fragAtoms = struct.getFragmentIds(fid)
-    acc = acc.union(fragAtoms)
-    return acc
-  }, new Pile())
-
-  graphNodes.push({
-    type: 'molecule',
-    fragment: struct.clone(moleculeFragsAtoms),
-    center: getFragmentCenter(struct, moleculeFragsAtoms)
-  })
+  Array.from(struct.frags.keys())
+    .filter(fid => !rgFrags.has(fid))
+    .forEach(fid => {
+      const fragAtoms = struct.getFragmentIds(fid)
+      graphNodes.push({
+        type: 'molecule',
+        fragment: struct.clone(fragAtoms),
+        center: getFragmentCenter(struct, fragAtoms)
+      })
+    })
 
   struct.rxnArrows.forEach(item => {
     graphNodes.push({

@@ -1,5 +1,3 @@
-import { Bond } from './Bond'
-import { StereoLabel } from './Atom'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +13,11 @@ import { StereoLabel } from './Atom'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { Bond } from './Bond'
+import { StereoLabel } from './Atom'
 import { Struct } from './Struct'
+import { Vec2 } from 'utils'
 
 export enum StereoFlag {
   Mixed = 'MIXED',
@@ -68,16 +70,12 @@ function calcStereoFlag(
 }
 
 export class Fragment {
-  stereoAtoms: Array<number>
+  stereoAtoms: Array<number> = []
   enhancedStereoFlag?: StereoFlag
-
-  constructor(flag?: StereoFlag) {
-    this.stereoAtoms = []
-    this.enhancedStereoFlag = flag
-  }
+  stereoFlagPosition?: Vec2
 
   clone(aidMap: Map<number, number>) {
-    const fr = new Fragment(this.enhancedStereoFlag)
+    const fr = new Fragment()
     fr.stereoAtoms = this.stereoAtoms.map(aid => aidMap.get(aid)!)
     return fr
   }

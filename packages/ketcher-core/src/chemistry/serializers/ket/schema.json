@@ -278,6 +278,9 @@
       "type": "object",
       "required": ["atoms"],
       "properties": {
+        "stereoFlagPosition": {
+          "type": "number"
+        },
         "atoms": {
           "type": "array",
           "items": {

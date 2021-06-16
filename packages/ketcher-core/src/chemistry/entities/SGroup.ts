@@ -136,20 +136,15 @@ export class SGroup {
     return this.data[attr] === value
   }
 
-  setPPFromOffset(offset: Vec2): void {
+  updateOffset(offset: Vec2): void {
     this.pp = Vec2.sum(this.bracketBox.p1, offset)
   }
 
-  getOffsetPP(): null | Vec2 {
-    if (!this.pp) return null
-    return Vec2.diff(this.pp, this.bracketBox.p1)
-  }
-
-  definePP(struct: Struct): null | Vec2 {
+  calculatePP(struct: Struct): void {
     let topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5))
     const sgroups = Array.from(struct.sgroups.values())
     for (let i = 0; i < struct.sgroups.size; ++i) {
-      if (!descriptorIntersects(sgroups, topLeftPoint)) break
+      if (!descriptorIntersects(sgroups as [], topLeftPoint)) break
 
       topLeftPoint = topLeftPoint.add(new Vec2(0, 0.5))
     }
@@ -161,11 +156,16 @@ export class SGroup {
       const sAtomPP = struct.atoms.get(sAtom)?.pp
 
       if (sAtomPP) {
-        return sAtomPP
+        topLeftPoint = sAtomPP
       }
     }
 
-    return topLeftPoint
+    this.pp = topLeftPoint
+  }
+
+  static getOffset(sgroup: SGroup): null | Vec2 {
+    if (!sgroup.pp) return null
+    return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1)
   }
 
   static filterAtoms(atoms: any, map: any) {
@@ -470,8 +470,8 @@ export class SGroup {
   }
 }
 
-function descriptorIntersects(sgroups, topLeftPoint) {
-  return sgroups.some(sg => {
+function descriptorIntersects(sgroups: [], topLeftPoint: Vec2): boolean {
+  return sgroups.some((sg: SGroup) => {
     if (!sg.pp) return false
 
     const sgBottomRightPoint = sg.pp.add(new Vec2(0.5, 0.5))

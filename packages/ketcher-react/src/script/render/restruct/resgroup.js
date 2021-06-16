@@ -194,7 +194,7 @@ function SGroupdrawBrackets(
     if (
       ir < 0 ||
       brackets[ir].d.x < bracket.d.x ||
-      (brackets[ir].d.x == bracket.d.x && brackets[ir].d.y > bracket.d.y)
+      (brackets[ir].d.x === bracket.d.x && brackets[ir].d.y > bracket.d.y)
     )
       ir = i
   }
@@ -245,7 +245,7 @@ function showValue(paper, pos, sg, options) {
 function drawGroupDat(restruct, sgroup) {
   sgroup.areas = sgroup.bracketBox ? [sgroup.bracketBox] : []
 
-  if (sgroup.pp === null) sgroup.definePP(restruct.molecule)
+  if (sgroup.pp === null) sgroup.calculatePP(restruct.molecule)
 
   return sgroup.data.attached
     ? drawAttachedDat(restruct, sgroup)

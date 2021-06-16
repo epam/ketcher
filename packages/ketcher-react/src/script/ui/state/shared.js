@@ -51,11 +51,11 @@ export function load(structStr, options) {
           const oldStruct = editor.struct().clone()
 
           struct.sgroups.forEach((sg, sgId) => {
-            const offset = oldStruct.sgroups.get(sgId).getOffsetPP()
+            const offset = SGroup.getOffset(oldStruct.sgroups.get(sgId))
             const atomSet = new Pile(sg.atoms)
             const crossBonds = SGroup.getCrossBonds(struct, atomSet)
             SGroup.bracketPos(sg, struct, crossBonds)
-            sg.setPPFromOffset(offset)
+            sg.updateOffset(offset)
           })
         }
 

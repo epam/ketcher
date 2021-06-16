@@ -18,6 +18,7 @@ import { Box2Abs, Pile, Vec2 } from 'utils'
 
 import { Atom } from './Atom'
 import { Bond } from './Bond'
+import { Struct } from './Struct'
 
 export class SGroupBracketParams {
   readonly c: Vec2
@@ -133,6 +134,38 @@ export class SGroup {
   // stub
   checkAttr(attr: string, value: any): boolean {
     return this.data[attr] === value
+  }
+
+  updateOffset(offset: Vec2): void {
+    this.pp = Vec2.sum(this.bracketBox.p1, offset)
+  }
+
+  calculatePP(struct: Struct): void {
+    let topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5))
+    const sgroups = Array.from(struct.sgroups.values())
+    for (let i = 0; i < struct.sgroups.size; ++i) {
+      if (!descriptorIntersects(sgroups as [], topLeftPoint)) break
+
+      topLeftPoint = topLeftPoint.add(new Vec2(0, 0.5))
+    }
+
+    // TODO: the code below is a temporary solution that will be removed after the implementation of the internal format
+    // TODO: in schema.json required fields ["context", "FieldValue"] in sgroups type DAT must be returned
+    if (this.data.fieldName === 'INDIGO_CIP_DESC' && this.atoms.length === 1) {
+      const sAtom = this.atoms[0]
+      const sAtomPP = struct.atoms.get(sAtom)?.pp
+
+      if (sAtomPP) {
+        topLeftPoint = sAtomPP
+      }
+    }
+
+    this.pp = topLeftPoint
+  }
+
+  static getOffset(sgroup: SGroup): null | Vec2 {
+    if (!sgroup.pp) return null
+    return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1)
   }
 
   static filterAtoms(atoms: any, map: any) {
@@ -435,4 +468,20 @@ export class SGroup {
       c = c.addScaled(mol.atoms.get(atoms[i]).pp, 1.0 / atoms.length)
     return c
   }
+}
+
+function descriptorIntersects(sgroups: [], topLeftPoint: Vec2): boolean {
+  return sgroups.some((sg: SGroup) => {
+    if (!sg.pp) return false
+
+    const sgBottomRightPoint = sg.pp.add(new Vec2(0.5, 0.5))
+    const bottomRightPoint = topLeftPoint.add(new Vec2(0.5, 0.5))
+
+    return Box2Abs.segmentIntersection(
+      sg.pp,
+      sgBottomRightPoint,
+      topLeftPoint,
+      bottomRightPoint
+    )
+  })
 }

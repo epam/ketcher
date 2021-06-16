@@ -37,7 +37,7 @@ class ReSGroup extends ReObject {
     var set = render.paper.set()
     var atomSet = new Pile(sgroup.atoms)
     const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet)
-    bracketPos(sgroup, render, remol.molecule, crossBonds)
+    SGroup.bracketPos(sgroup, remol.molecule, crossBonds)
     var bracketBox = sgroup.bracketBox
     var d = sgroup.bracketDir
     sgroup.areas = [bracketBox]
@@ -194,7 +194,7 @@ function SGroupdrawBrackets(
     if (
       ir < 0 ||
       brackets[ir].d.x < bracket.d.x ||
-      (brackets[ir].d.x == bracket.d.x && brackets[ir].d.y > bracket.d.y)
+      (brackets[ir].d.x === bracket.d.x && brackets[ir].d.y > bracket.d.y)
     )
       ir = i
   }
@@ -243,61 +243,13 @@ function showValue(paper, pos, sg, options) {
 }
 
 function drawGroupDat(restruct, sgroup) {
-  const render = restruct.render
-
-  // NB: we did not pass xbonds parameter to the backetPos method above,
-  //  so the result will be in the regular coordinate system
-
-  bracketPos(sgroup, render, restruct.molecule)
   sgroup.areas = sgroup.bracketBox ? [sgroup.bracketBox] : []
 
-  if (sgroup.pp === null) sgroup.pp = definePP(restruct, sgroup)
+  if (sgroup.pp === null) sgroup.calculatePP(restruct.molecule)
 
   return sgroup.data.attached
     ? drawAttachedDat(restruct, sgroup)
     : drawAbsoluteDat(restruct, sgroup)
-}
-
-function definePP(restruct, sgroup) {
-  let topLeftPoint = sgroup.bracketBox.p1.add(new Vec2(0.5, 0.5))
-  const sgroups = Array.from(restruct.molecule.sgroups.values())
-  for (let i = 0; i < restruct.molecule.sgroups.size; ++i) {
-    if (!descriptorIntersects(sgroups, topLeftPoint)) break
-
-    topLeftPoint = topLeftPoint.add(new Vec2(0, 0.5))
-  }
-
-  // TODO: the code below is a temporary solution that will be removed after the implementation of the internal format
-  // TODO: in schema.json required fields ["context", "FieldValue"] in sgroups type DAT must be returned
-  if (
-    sgroup.data.fieldName === 'INDIGO_CIP_DESC' &&
-    sgroup.atoms.length === 1
-  ) {
-    const sAtom = sgroup.atoms[0]
-    const sAtomPP = restruct.atoms.get(sAtom)?.a.pp
-
-    if (sAtomPP) {
-      return sAtomPP
-    }
-  }
-
-  return topLeftPoint
-}
-
-function descriptorIntersects(sgroups, topLeftPoint) {
-  return sgroups.some(sg => {
-    if (!sg.pp) return false
-
-    const sgBottomRightPoint = sg.pp.add(new Vec2(0.5, 0.5))
-    const bottomRightPoint = topLeftPoint.add(new Vec2(0.5, 0.5))
-
-    return Box2Abs.segmentIntersection(
-      sg.pp,
-      sgBottomRightPoint,
-      topLeftPoint,
-      bottomRightPoint
-    )
-  })
 }
 
 function drawAbsoluteDat(restruct, sgroup) {
@@ -349,60 +301,6 @@ function drawAttachedDat(restruct, sgroup) {
   })
 
   return set
-}
-
-function bracketPos(sg, render, mol, crossBonds) {
-  // eslint-disable-line max-statements
-  var atoms = sg.atoms
-
-  if (!crossBonds || crossBonds.length !== 2) {
-    sg.bracketDir = new Vec2(1, 0)
-  } else {
-    const crossBondsValues = Object.values(crossBonds).flat()
-    var p1 = mol.bonds.get(crossBondsValues[0]).getCenter(mol)
-    var p2 = mol.bonds.get(crossBondsValues[1]).getCenter(mol)
-    sg.bracketDir = Vec2.diff(p2, p1).normalized()
-  }
-  var d = sg.bracketDir
-
-  var bb = null
-  var contentBoxes = []
-
-  atoms.forEach(aid => {
-    var atom = mol.atoms.get(aid)
-    var bba = render ? render.ctab.atoms.get(aid).visel.boundingBox : null
-    if (!bba) {
-      var pos = new Vec2(atom.pp)
-      var ext = new Vec2(0.05 * 3, 0.05 * 3)
-      bba = new Box2Abs(pos, pos).extend(ext, ext)
-    } else {
-      bba = bba
-        .translate((render.options.offset || new Vec2()).negated())
-        .transform(scale.scaled2obj, render.options)
-    }
-    contentBoxes.push(bba)
-  })
-  mol.sGroupForest.children.get(sg.id).forEach(sgid => {
-    var bba = render.ctab.sgroups.get(sgid).visel.boundingBox
-    bba = bba
-      .translate((render.options.offset || new Vec2()).negated())
-      .transform(scale.scaled2obj, render.options)
-    contentBoxes.push(bba)
-  })
-  contentBoxes.forEach(bba => {
-    var bbb = null
-    ;[bba.p0.x, bba.p1.x].forEach(x => {
-      ;[bba.p0.y, bba.p1.y].forEach(y => {
-        var v = new Vec2(x, y)
-        var p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, d.rotateSC(1, 0)))
-        bbb = bbb === null ? new Box2Abs(p, p) : bbb.include(p)
-      })
-    })
-    bb = bb === null ? bbb : Box2Abs.union(bb, bbb)
-  })
-  var vext = new Vec2(0.2, 0.4)
-  if (bb !== null) bb = bb.extend(vext, vext)
-  sg.bracketBox = bb
 }
 
 function getBracketParameters(

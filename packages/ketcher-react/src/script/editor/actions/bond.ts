@@ -52,8 +52,6 @@ export function fromBondAddition(
   const action = new Action()
   let mergeFragments = false
 
-  const struct = restruct.molecule
-
   let frid = null
 
   if (!(typeof begin === 'number')) {
@@ -90,8 +88,7 @@ export function fromBondAddition(
   const bid = (action.addOp(
     new BondAdd(begin, end, bond).perform(restruct)
   ) as BondAdd).data.bid
-  const Bond = struct.bonds.get(bid)
-  action.mergeWith(fromBondStereoUpdate(restruct, Bond?.begin, Bond?.end))
+  action.mergeWith(fromBondStereoUpdate(restruct))
   action.operations.reverse()
 
   if (mergeFragments) mergeFragmentsIfNeeded(action, restruct, begin, end)
@@ -108,8 +105,6 @@ export function fromBondsAttrs(
   const action = new Action()
   const bids = Array.isArray(ids) ? ids : [ids]
 
-  const struct = restruct.molecule
-
   bids.forEach(bid => {
     Object.keys(Bond.attrlist).forEach(key => {
       if (!(key in attrs) && !reset) return
@@ -117,8 +112,7 @@ export function fromBondsAttrs(
       const value = key in attrs ? attrs[key] : Bond.attrGetDefault(key)
       action.addOp(new BondAttr(bid, key, value).perform(restruct))
       if (key === 'stereo' && key in attrs) {
-        const bond = struct.bonds.get(bid)
-        action.mergeWith(fromBondStereoUpdate(restruct, bond?.begin, bond?.end))
+        action.mergeWith(fromBondStereoUpdate(restruct))
       }
     })
   })
@@ -166,25 +160,20 @@ function fromBondFlipping(restruct: ReStruct, id: number): Action {
   }
 
   // todo: swap atoms stereoLabels and stereoAtoms in fragment
-  return action.perform(restruct)
+  action.perform(restruct)
+  action.mergeWith(fromBondStereoUpdate(restruct))
+  return action
 }
 
 export function fromBondStereoUpdate(
   restruct: ReStruct,
-  bondBegin: number | undefined,
-  bondEnd: number | undefined,
   withReverse?: boolean
 ): Action {
   const struct = restruct.molecule
 
   const action = new Action()
 
-  const [stereoAtomsMap, atomParityMap] = getStereoCentersMap(
-    struct,
-    bondBegin,
-    bondEnd,
-    restruct
-  )
+  const [stereoAtomsMap, atomParityMap] = getStereoCentersMap(struct, restruct)
 
   stereoAtomsMap.forEach((value, key) => {
     action.mergeWith(
@@ -203,22 +192,13 @@ export function fromBondStereoUpdate(
   return action
 }
 
-function getStereoCentersMap(
-  struct: Struct,
-  bondBegin: number | undefined,
-  bondEnd: number | undefined,
-  restruct: ReStruct
-) {
+function getStereoCentersMap(struct: Struct, restruct: ReStruct) {
   let neigStereoBonds: Array<Bond> = []
   let stereoAtomsMap = new Map()
   let atomParityMap = new Map()
 
   struct.bonds.forEach(bond => {
-    if (bond.begin === bondBegin || bond.begin === bondEnd) {
-      if (bond.stereo > 0) {
-        neigStereoBonds.push(bond)
-      }
-    }
+    neigStereoBonds.push(bond)
   })
 
   function getStereoParity(stereo) {
@@ -238,13 +218,26 @@ function getStereoCentersMap(
   }
 
   neigStereoBonds.forEach(bond => {
-    const neigs = atomGetNeighbors(restruct, bond.begin)
-    if (neigs.length > 2) {
-      stereoAtomsMap.set(bond.begin, `${StereoLabel.Abs}`)
-      atomParityMap.set(bond.begin, getStereoParity(bond?.stereo))
-    } else {
-      stereoAtomsMap.set(bond.begin, null)
-      atomParityMap.set(bond.begin, 0)
+    const Neigs = atomGetNeighbors(restruct, bond.begin)
+    if (bond.stereo > 0) {
+      if (Neigs.length > 2) {
+        stereoAtomsMap.set(bond.begin, `${StereoLabel.Abs}`)
+        atomParityMap.set(bond.begin, getStereoParity(bond?.stereo))
+      } else {
+        stereoAtomsMap.set(bond.begin, null)
+        atomParityMap.set(bond.begin, 0)
+      }
+    }
+
+    if (bond.stereo === 0) {
+      if (!stereoAtomsMap.get(bond.begin)) {
+        stereoAtomsMap.set(bond.begin, null)
+        atomParityMap.set(bond.begin, 0)
+      }
+      if (!stereoAtomsMap.get(bond.end)) {
+        stereoAtomsMap.set(bond.end, null)
+        atomParityMap.set(bond.end, 0)
+      }
     }
   })
 

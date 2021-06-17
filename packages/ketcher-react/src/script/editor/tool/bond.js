@@ -21,6 +21,7 @@ import {
   bondChangingAction,
   fromBondsAttrs
 } from '../actions/bond'
+import { atomGetAttr } from '../actions/utils'
 
 function BondTool(editor, bondProps) {
   if (!(this instanceof BondTool)) {
@@ -79,7 +80,7 @@ BondTool.prototype.mousemove = function (event) {
       if ('item' in dragCtx && dragCtx.item.map === 'atoms') {
         // first mousedown event intersect with any atom
         i1 = dragCtx.item.id
-        i2 = editor.findItem(event, ['atoms'], dragCtx.item)
+        i2 = editor.findItem(event, ['atoms', 'bonds'], dragCtx.item)
       } else {
         // first mousedown event intersect with any canvas
         i1 = this.atomProps
@@ -90,6 +91,30 @@ BondTool.prototype.mousemove = function (event) {
       if (i2 && i2.map === 'atoms') {
         // after mousedown events is appered, cursor is moved and then cursor intersects any atoms
         i2 = i2.id
+
+        // if first item is atom
+        if (typeof i1 === 'number') {
+          const frid1 = atomGetAttr(rnd.ctab, i1, 'fragment')
+          const frid2 = atomGetAttr(rnd.ctab, i2, 'fragment')
+          const bid = rnd.ctab.molecule.bonds.find((_, bond) => {
+            return (
+              (bond.end === i1 && bond.begin === i2) ||
+              (bond.end === i2 && bond.begin === i1)
+            )
+          })
+          // if we have connected two already connected atoms
+          if (frid2 === frid1 && bid !== null) {
+            dragCtx.changeBond = bid
+            delete dragCtx.action
+            this.editor.update(dragCtx.action, true)
+            return true
+          }
+        }
+      } else if (i2 && i2.map === 'bonds') {
+        delete dragCtx.action
+        delete dragCtx.changeBond
+        this.editor.update(dragCtx.action, true)
+        return true
       } else {
         i2 = this.atomProps
         const xy1 = rnd.page2obj(event)
@@ -115,6 +140,7 @@ BondTool.prototype.mousemove = function (event) {
           p2
         )[0]
       else delete dragCtx.action
+      delete dragCtx.changeBond
       this.editor.update(dragCtx.action, true)
       return true
     }
@@ -129,8 +155,14 @@ BondTool.prototype.mouseup = function (event) {
     var dragCtx = this.dragCtx
     var rnd = this.editor.render
     var struct = rnd.ctab.molecule
-    if ('action' in dragCtx) {
-      this.editor.update(dragCtx.action)
+    if ('action' in dragCtx || 'changeBond' in dragCtx) {
+      if ('changeBond' in dragCtx) {
+        const bond = struct.bonds.get(dragCtx.changeBond)
+        const bondProps = Object.assign({}, this.bondProps)
+        this.editor.update(
+          bondChangingAction(rnd.ctab, dragCtx.changeBond, bond, bondProps)
+        )
+      } else this.editor.update(dragCtx.action)
     } else if (!('item' in dragCtx)) {
       var xy = rnd.page2obj(event)
       var v = new Vec2(1.0 / 2, 0).rotate(
@@ -146,11 +178,6 @@ BondTool.prototype.mouseup = function (event) {
       )
 
       this.editor.update(bondAddition[0])
-    } else if (dragCtx.item.map === 'atoms') {
-      // when does it hapend?
-      this.editor.update(
-        fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id)[0]
-      )
     } else if (dragCtx.item.map === 'bonds') {
       var bondProps = Object.assign({}, this.bondProps)
       var bond = struct.bonds.get(dragCtx.item.id)

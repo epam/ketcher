@@ -32,6 +32,10 @@ export function moleculeToGraph(struct: Struct): any {
       sgroupToGraph(struct, sGroup)
     )
 
+  const fragment = struct.frags.get(0)
+  if (fragment) {
+    ifDef(body, 'stereoFlagPosition', fragment.stereoFlagPosition, null)
+  }
   return {
     type: 'molecule',
     ...body

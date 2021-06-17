@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'ketcher-core'
+import { Fragment, Vec2 } from 'ketcher-core'
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4
 const SELECTION_WITHIN_TEXT = 0
@@ -212,7 +212,12 @@ function findClosestEnhancedFlag(restruct, pos) {
   let minDist
   let ret = null
   restruct.enhancedFlags.forEach((item, id) => {
-    const p = item.pp
+    const fragment = restruct.molecule.frags.get(id)
+    if (!fragment) return
+
+    const p = fragment.stereoFlagPosition
+      ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)
+      : Fragment.getDefaultStereoFlagPosition(restruct.molecule, id)
     if (!p || Math.abs(pos.x - p.x) >= 1.0) return
 
     const dist = Math.abs(pos.y - p.y)

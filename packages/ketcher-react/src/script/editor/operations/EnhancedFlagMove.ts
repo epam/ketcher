@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Vec2 } from 'ketcher-core'
-import Restruct from '../../render/restruct'
+import { Fragment, Vec2 } from 'ketcher-core'
+
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
+import Restruct from '../../render/restruct'
 
 export class EnhancedFlagMove extends BaseOperation {
   data: {
@@ -31,18 +32,16 @@ export class EnhancedFlagMove extends BaseOperation {
 
   execute(restruct: Restruct) {
     const { frid } = this.data
-
-    if (!this.data.p) {
-      const bb = restruct.molecule.getFragment(frid).getCoordBoundingBox()
-      this.data.p = new Vec2(bb.max.x, bb.min.y - 1)
-    }
-
     const { p } = this.data
+    const fragment = restruct.molecule.frags.get(frid)
+    if (!fragment) return
 
-    const enhancedFlag = restruct.enhancedFlags.get(frid)
-    if (enhancedFlag?.pp) {
-      enhancedFlag.pp.add_(p)
-    }
+    const currentPosition = fragment.stereoFlagPosition
+      ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)
+      : Fragment.getDefaultStereoFlagPosition(restruct.molecule, frid)!
+
+    const newPosition = Vec2.sum(currentPosition, p)
+    fragment.stereoFlagPosition = newPosition
 
     this.data.p = p.negated()
     BaseOperation.invalidateItem(restruct, 'enhancedFlags', frid, 1)

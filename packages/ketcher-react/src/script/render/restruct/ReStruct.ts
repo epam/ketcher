@@ -112,15 +112,7 @@ class ReStruct {
 
     molecule.frags.forEach((item, id) => {
       this.frags.set(id, new ReFrag(item))
-      const bb = molecule.getCoordBoundingBox(molecule.getFragmentIds(id))
-      if (item)
-        this.enhancedFlags.set(
-          id,
-          new ReEnhancedFlag(
-            item.enhancedStereoFlag || null,
-            new Vec2(bb.max.x, bb.min.y - 1)
-          )
-        )
+      if (item) this.enhancedFlags.set(id, new ReEnhancedFlag())
     })
 
     molecule.rgroups.forEach((item, id) => {

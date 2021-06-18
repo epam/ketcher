@@ -31,11 +31,7 @@ export class FragmentStereoFlag extends BaseOperation {
     const fragment = struct.frags.get(this.frid)!
     fragment.updateStereoFlag(struct)
 
-    BaseOperation.invalidateEnhancedFlag(
-      restruct,
-      this.frid,
-      fragment.enhancedStereoFlag
-    )
+    BaseOperation.invalidateEnhancedFlag(restruct, this.frid)
   }
 
   invert() {

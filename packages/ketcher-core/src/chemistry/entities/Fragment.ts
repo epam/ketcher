@@ -95,6 +95,7 @@ export class Fragment {
   clone(aidMap: Map<number, number>) {
     const fr = new Fragment(this.stereoFlagPosition)
     fr.stereoAtoms = this.stereoAtoms.map(aid => aidMap.get(aid)!)
+    fr.#enhancedStereoFlag = this.#enhancedStereoFlag
     return fr
   }
 

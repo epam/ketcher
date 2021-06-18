@@ -41,11 +41,7 @@ class FragmentAddStereoAtom extends BaseOperation {
     if (frag) {
       frag.updateStereoAtom(restruct.molecule, aid, true)
 
-      BaseOperation.invalidateEnhancedFlag(
-        restruct,
-        frid,
-        frag.enhancedStereoFlag
-      )
+      BaseOperation.invalidateEnhancedFlag(restruct, frid)
     }
   }
 
@@ -69,11 +65,7 @@ class FragmentDeleteStereoAtom extends BaseOperation {
     if (frag) {
       frag.updateStereoAtom(restruct.molecule, aid, false)
 
-      BaseOperation.invalidateEnhancedFlag(
-        restruct,
-        frid,
-        frag.enhancedStereoFlag
-      )
+      BaseOperation.invalidateEnhancedFlag(restruct, frid)
     }
   }
 

@@ -40,7 +40,7 @@ class FragmentAdd extends BaseOperation {
     }
 
     restruct.frags.set(this.frid, new ReFrag(frag)) // TODO add ReStruct.notifyFragmentAdded
-    restruct.enhancedFlags.set(this.frid, new ReEnhancedFlag(null, null))
+    restruct.enhancedFlags.set(this.frid, new ReEnhancedFlag())
   }
 
   invert() {

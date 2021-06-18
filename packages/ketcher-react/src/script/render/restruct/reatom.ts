@@ -13,28 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import ReObject from './ReObject'
-import draw from '../draw'
-import util from '../util'
+
 import {
+  Atom,
   Bond,
   Box2Abs,
-  Vec2,
-  scale,
-  Elements,
   ElementColor,
-  StereoLabel,
+  Elements,
   StereoFlag,
-  Atom,
-  Struct
+  StereoLabel,
+  Struct,
+  Vec2,
+  scale
 } from 'ketcher-core'
 import {
   LayerMap,
-  StereoColoringType,
-  StereLabelStyleType
+  StereLabelStyleType,
+  StereoColoringType
 } from './GeneralEnumTypes'
+
+import ReObject from './ReObject'
 import ReStruct from './ReStruct'
 import Render from '..'
+import draw from '../draw'
+import util from '../util'
 
 interface ElemAttr {
   text: string
@@ -262,13 +264,13 @@ class ReAtom extends ReObject {
     // we render them together to avoid possible collisions
 
     const fragmentId = Number(restruct.atoms.get(aid)?.a.fragment)
-    const EnhancedFlag = restruct.enhancedFlags.get(fragmentId)?.flag
+    const fragment = restruct.molecule.frags.get(fragmentId)!
 
     const text =
       (shouldDisplayStereoLabel(
         stereoLabel,
         options.stereoLabelStyle,
-        EnhancedFlag
+        fragment.enhancedStereoFlag
       )
         ? `${stereoLabel}\n`
         : '') +
@@ -343,7 +345,11 @@ function getStereoAtomOpacity(stereoLabel) {
   return Math.max(1 - (stereoLabelNumber - 1) / 10, StereoLabelMinOpacity)
 }
 
-function shouldDisplayStereoLabel(stereoLabel, labelStyle, flag): Boolean {
+function shouldDisplayStereoLabel(
+  stereoLabel,
+  labelStyle,
+  flag: StereoFlag | undefined
+): Boolean {
   if (!stereoLabel) {
     return false
   }

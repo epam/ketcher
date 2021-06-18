@@ -1,6 +1,3 @@
-import { appUpdate, setStruct } from '../options'
-import { omit, without } from 'lodash/fp'
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,6 +13,10 @@ import { omit, without } from 'lodash/fp'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { appUpdate, setStruct } from '../options'
+import { omit, without } from 'lodash/fp'
+
 import { MolSerializer } from 'ketcher-core'
 import { checkErrors } from '../modal/form'
 import { indigoVerification } from '../request'
@@ -146,14 +147,20 @@ export function serverTransform(method, data, struct) {
     dispatch(indigoVerification(true))
 
     serverCall(state.editor, state.server, method, opts, struct)
-      .then(res =>
-        dispatch(
-          load(res.struct, {
+      .then(res => {
+        // TODO: it should be removed after implementing of 'Internal Format'  epic
+        const previousStruct = struct || state.editor.struct()
+        const loadedStruct = new MolSerializer().deserialize(res.struct)
+        loadedStruct.simpleObjects = previousStruct.simpleObjects
+        loadedStruct.texts = previousStruct.texts
+
+        return dispatch(
+          load(loadedStruct, {
             rescale: method === 'layout',
             reactionRelayout: method === 'clean'
           })
         )
-      )
+      })
       .catch(e => {
         //TODO: add error handler call
       })

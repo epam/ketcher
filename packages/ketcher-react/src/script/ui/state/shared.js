@@ -29,21 +29,32 @@ export function loadStruct(struct) {
   }
 }
 
-export function load(structStr, options) {
+function parseStruct(struct, server, options) {
+  if (typeof struct === 'string') {
+    options = options || {}
+    const { rescale, fragment, ...formatterOptions } = options
+
+    const format = identifyStructFormat(struct)
+    const factory = new FormatterFactory(server)
+
+    const service = factory.create(format, formatterOptions)
+    return service.getStructureFromStringAsync(struct)
+  } else {
+    return Promise.resolve(struct)
+  }
+}
+
+export function load(struct, options) {
   return (dispatch, getState) => {
     const state = getState()
     const editor = state.editor
     const server = state.server
 
     options = options || {}
-    const { rescale, fragment, ...formatterOptions } = options
 
-    const format = identifyStructFormat(structStr)
-    const factory = new FormatterFactory(server)
-
-    const service = factory.create(format, formatterOptions)
-    return service.getStructureFromStringAsync(structStr).then(
+    return parseStruct(struct, server, options).then(
       struct => {
+        const { rescale, fragment } = options
         if (rescale) {
           struct.rescale() // TODO: move out parsing?
 

@@ -150,15 +150,8 @@ class BaseOperation {
 
   protected static invalidateEnhancedFlag(
     restruct: Restruct,
-    fragmentId: any,
-    flag: any
+    fragmentId: number
   ) {
-    const reEnhancedFlag = restruct.enhancedFlags.get(fragmentId)
-    if (!reEnhancedFlag || reEnhancedFlag.flag === flag) {
-      return
-    }
-
-    reEnhancedFlag.flag = flag
     BaseOperation.invalidateItem(restruct, 'enhancedFlags', fragmentId, 1)
   }
 }

@@ -1,5 +1,3 @@
-import { Bond } from './Bond'
-import { StereoLabel } from './Atom'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +13,11 @@ import { StereoLabel } from './Atom'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { Bond } from './Bond'
+import { StereoLabel } from './Atom'
 import { Struct } from './Struct'
+import { Vec2 } from 'utils'
 
 export enum StereoFlag {
   Mixed = 'MIXED',
@@ -68,23 +70,38 @@ function calcStereoFlag(
 }
 
 export class Fragment {
-  stereoAtoms: Array<number>
-  enhancedStereoFlag?: StereoFlag
+  #enhancedStereoFlag?: StereoFlag
+  stereoFlagPosition?: Vec2
+  stereoAtoms: Array<number> = []
 
-  constructor(flag?: StereoFlag) {
-    this.stereoAtoms = []
-    this.enhancedStereoFlag = flag
+  get enhancedStereoFlag() {
+    return this.#enhancedStereoFlag
+  }
+
+  constructor(stereoFlagPosition?: Vec2) {
+    this.stereoFlagPosition = stereoFlagPosition
+  }
+
+  static getDefaultStereoFlagPosition(
+    struct: Struct,
+    fragmentId: number
+  ): Vec2 | undefined {
+    const fragment = struct.getFragment(fragmentId)
+    if (!fragment) return undefined
+    const bb = fragment.getCoordBoundingBox()
+    return new Vec2(bb.max.x, bb.min.y - 1)
   }
 
   clone(aidMap: Map<number, number>) {
-    const fr = new Fragment(this.enhancedStereoFlag)
+    const fr = new Fragment(this.stereoFlagPosition)
     fr.stereoAtoms = this.stereoAtoms.map(aid => aidMap.get(aid)!)
+    fr.#enhancedStereoFlag = this.#enhancedStereoFlag
     return fr
   }
 
   updateStereoFlag(struct: Struct) {
-    this.enhancedStereoFlag = calcStereoFlag(struct, this.stereoAtoms)
-    return this.enhancedStereoFlag
+    this.#enhancedStereoFlag = calcStereoFlag(struct, this.stereoAtoms)
+    return this.#enhancedStereoFlag
   }
 
   //TODO: split to 'add' and 'remove methods
@@ -99,6 +116,6 @@ export class Fragment {
       this.stereoAtoms = this.stereoAtoms.filter(item => item !== aid)
     }
 
-    this.enhancedStereoFlag = calcStereoFlag(struct, this.stereoAtoms)
+    this.#enhancedStereoFlag = calcStereoFlag(struct, this.stereoAtoms)
   }
 }

@@ -2,6 +2,7 @@ import { arrowToGraph, plusToGraph } from './toGraph/rxnToGraph'
 
 import { Serializer } from './../serializers.types'
 import { Struct } from 'chemistry/entities'
+import { Vec2 } from 'utils'
 import { headerToGraph } from './toGraph/headerToGraph'
 import { moleculeToGraph } from './toGraph/moleculeToGraph'
 import { moleculeToStruct } from './fromGraph/moleculeToStruct'
@@ -28,7 +29,13 @@ function parseNode(node: any, struct: any) {
       simpleObjectToStruct(node, struct)
       break
     case 'molecule':
-      moleculeToStruct(node).mergeInto(struct)
+      const currentStruct = moleculeToStruct(node)
+      if (node.stereoFlagPosition) {
+        const fragment = currentStruct.frags.get(0)!
+        fragment.stereoFlagPosition = new Vec2(node.stereoFlagPosition)
+      }
+
+      currentStruct.mergeInto(struct)
       break
     case 'rgroup':
       rgroupToStruct(node).mergeInto(struct)

@@ -178,6 +178,10 @@ BondTool.prototype.mouseup = function (event) {
       )
 
       this.editor.update(bondAddition[0])
+    } else if (dragCtx.item.map === 'atoms') {
+      this.editor.update(
+        fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id)[0]
+      )
     } else if (dragCtx.item.map === 'bonds') {
       var bondProps = Object.assign({}, this.bondProps)
       var bond = struct.bonds.get(dragCtx.item.id)

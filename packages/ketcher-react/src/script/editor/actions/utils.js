@@ -27,7 +27,7 @@ export function atomGetDegree(restruct, aid) {
 }
 
 export function atomGetNeighbors(restruct, aid) {
-  return restruct.atoms.get(aid).a.neighbors.map(nei => {
+  return restruct.atoms.get(aid)?.a.neighbors.map(nei => {
     const hb = restruct.molecule.halfBonds.get(nei)
     return {
       aid: hb.end,

@@ -69,7 +69,7 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
 
   removeSgroupIfNeeded(action, restruct, atomsToRemove)
   action = action.perform(restruct)
-  action.mergeWith(fromBondStereoUpdate(restruct))
+  action.mergeWith(fromBondStereoUpdate(restruct, bond?.begin, bond?.end, false))
 
   if (
     bond.stereo &&
@@ -84,6 +84,7 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
       })
     )
   }
+  action.operations.reverse()
 
   return action
 }

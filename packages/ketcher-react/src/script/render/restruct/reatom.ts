@@ -407,7 +407,14 @@ function isLabelVisible(restruct, options, atom) {
       bond1.b.stereo === Bond.PATTERN.STEREO.NONE &&
       bond2.b.stereo === Bond.PATTERN.STEREO.NONE
 
-    if (sameNotStereo && Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2)
+    const duplicateBbonds =
+      (bond1.end === bond2.end && bond1.begin === bond2.begin) ||
+      (bond1.end === bond2.begin && bond1.begin === bond2.end)
+
+    if (
+      (sameNotStereo || duplicateBbonds) &&
+      Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2
+    )
       return true
   }
 

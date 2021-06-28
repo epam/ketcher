@@ -29,9 +29,14 @@ const mapStateToProps = (state): StateProps => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): BaseCallProps => ({
   onOk: _result => {
+    //to use hotkeys
+    // TODO: find a better way
+    ;(document.getElementsByClassName('cliparea')[0] as any).focus()
     dispatch({ type: 'MODAL_CLOSE' })
   },
   onCancel: () => {
+    //to use hotkeys
+    ;(document.getElementsByClassName('cliparea')[0] as any).focus()
     dispatch({ type: 'MODAL_CLOSE' })
   }
 })

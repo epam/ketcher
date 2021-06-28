@@ -26,6 +26,7 @@ interface BaseProps {
 interface BaseCallProps {
   onCancel: () => void
   onOk: (result: any) => void
+  setModalRef: (ref: any) => void
 }
 
 export type { BaseProps, BaseCallProps }

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import useResizeObserver from 'use-resize-observer/polyfilled'
 import clsx from 'clsx'
 
@@ -35,11 +35,15 @@ interface ModalProps extends BaseCallProps {
 type Props = ModalProps & BaseCallProps
 
 function Modal(props: Props) {
-  const { modal, ...rest } = props
+  const { modal, setModalRef, ...rest } = props
   const containerRef = useRef<HTMLDivElement>(null)
   const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: containerRef
   })
+
+  useEffect(() => {
+    setModalRef(containerRef)
+  }, [containerRef])
 
   if (!modal) return null
 

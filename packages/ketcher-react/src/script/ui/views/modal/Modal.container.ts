@@ -23,21 +23,28 @@ import { omit } from 'lodash/fp'
 
 type StateProps = Pick<ModalProps, 'modal'>
 
+let modalRef
+const focusCliparea = () => {
+  //to use hotkeys
+  // TODO: find a better way
+  modalRef.current.parentNode.getElementsByClassName('cliparea')[0].focus()
+}
+
 const mapStateToProps = (state): StateProps => ({
   modal: state.modal
 })
 
 const mapDispatchToProps = (dispatch: Dispatch): BaseCallProps => ({
   onOk: _result => {
-    //to use hotkeys
-    // TODO: find a better way
-    ;(document.getElementsByClassName('cliparea')[0] as any).focus()
+    focusCliparea()
     dispatch({ type: 'MODAL_CLOSE' })
   },
   onCancel: () => {
-    //to use hotkeys
-    ;(document.getElementsByClassName('cliparea')[0] as any).focus()
+    focusCliparea()
     dispatch({ type: 'MODAL_CLOSE' })
+  },
+  setModalRef: ref => {
+    modalRef = ref
   }
 })
 
@@ -57,6 +64,9 @@ const mergeProps = (
     onCancel: () => {
       if (prop && prop.onCancel) prop.onCancel()
       dispatchProps.onCancel()
+    },
+    setModalRef: ref => {
+      modalRef = ref
     }
   }
 }

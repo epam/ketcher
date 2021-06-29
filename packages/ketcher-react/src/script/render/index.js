@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Raphael from '../raphael-ext'
-import { Struct, Vec2, Box2Abs, scale } from 'ketcher-core'
-import ReStruct from './restruct'
+import { Box2Abs, Struct, Vec2, scale } from 'ketcher-core'
 
+import Raphael from '../raphael-ext'
+import ReStruct from './restruct'
 import defaultOptions from './options'
 
 var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false }

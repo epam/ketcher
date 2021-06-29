@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { AutoSizer, List } from 'react-virtualized'
+
 import React from 'react'
-import { List, AutoSizer } from 'react-virtualized'
-import StructRender from '../../component/structrender'
 import { Struct } from 'ketcher-core'
+import StructRender from '../../component/structrender'
 
 interface TemplateTableProps {
   templates: Array<Template>

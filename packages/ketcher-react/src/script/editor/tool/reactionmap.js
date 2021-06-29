@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { scale } from 'ketcher-core'
 import Action from '../shared/action'
 import draw from '../../render/draw'
-
 import { fromAtomsAttrs } from '../actions/atom'
+import { scale } from 'ketcher-core'
 
 function ReactionMapTool(editor) {
   if (!(this instanceof ReactionMapTool)) return new ReactionMapTool(editor)

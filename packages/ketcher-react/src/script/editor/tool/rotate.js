@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'ketcher-core'
-
-import utils from '../shared/utils'
-import { fromRotate, fromFlip, fromBondAlign } from '../actions/rotate'
+import { fromBondAlign, fromFlip, fromRotate } from '../actions/rotate'
 import {
   fromItemsFuse,
-  getItemsToFuse,
-  getHoverToFuse
+  getHoverToFuse,
+  getItemsToFuse
 } from '../actions/closely-fusing'
+
+import { Vec2 } from 'ketcher-core'
+import utils from '../shared/utils'
 
 function RotateTool(editor, dir) {
   if (!(this instanceof RotateTool)) {

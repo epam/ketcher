@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { escapeRegExp, flow, filter as _filter, reduce, omit } from 'lodash/fp'
-import { createSelector } from 'reselect'
-
 import React, { RefCallback } from 'react'
-import { connect } from 'react-redux'
-
-import { SdfSerializer } from 'ketcher-core'
-import { Dialog } from '../../views/components'
-import SaveButton from '../../component/view/savebutton'
-import Input from '../../component/form/input'
-import SelectList from '../../component/form/select'
+import TemplateTable, { Template, greekify } from './TemplateTable'
+import { filter as _filter, escapeRegExp, flow, omit, reduce } from 'lodash/fp'
 import {
   changeFilter,
   changeGroup,
-  selectTmpl,
+  deleteTmpl,
   editTmpl,
-  deleteTmpl
+  selectTmpl
 } from '../../state/templates'
+
+import { Dialog } from '../../views/components'
+import Input from '../../component/form/input'
+import SaveButton from '../../component/view/savebutton'
+import { SdfSerializer } from 'ketcher-core'
+import SelectList from '../../component/form/select'
+import { Struct } from 'ketcher-core'
+import clsx from 'clsx'
+import { connect } from 'react-redux'
+import { createSelector } from 'reselect'
 import { onAction } from '../../state'
 import styles from './template-lib.module.less'
 import { useResizeObserver } from '../../../../hooks'
-import clsx from 'clsx'
-import { Struct } from 'ketcher-core'
-import TemplateTable, { greekify, Template } from './TemplateTable'
 
 interface TemplateLibProps {
   filter: string

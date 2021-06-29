@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 import { Bond, Vec2 } from 'ketcher-core'
-import utils from '../shared/utils'
+import {
+  fromItemsFuse,
+  getHoverToFuse,
+  getItemsToFuse
+} from '../actions/closely-fusing'
 
 import { atomLongtapEvent } from './atom'
 import { bondChangingAction } from '../actions/bond'
 import { fromChain } from '../actions/chain'
-import {
-  fromItemsFuse,
-  getItemsToFuse,
-  getHoverToFuse
-} from '../actions/closely-fusing'
+import utils from '../shared/utils'
 
 function ChainTool(editor) {
   if (!(this instanceof ChainTool)) return new ChainTool(editor)

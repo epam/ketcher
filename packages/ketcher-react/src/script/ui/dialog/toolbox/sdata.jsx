@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
+import Form, { Field, SelectOneOf } from '../../component/form/form'
+import {
+  getSdataDefault,
+  sdataCustomSchema,
+  sdataSchema
+} from '../../data/schema/sdata-schema'
+
+import ComboBox from '../../component/form/combobox'
+import { Dialog } from '../../views/components'
 import React from 'react'
 import { connect } from 'react-redux'
-import Form, { Field, SelectOneOf } from '../../component/form/form'
-import { Dialog } from '../../views/components'
-import ComboBox from '../../component/form/combobox'
-import {
-  sdataSchema,
-  sdataCustomSchema,
-  getSdataDefault
-} from '../../data/schema/sdata-schema'
 
 function SelectInput({ title, name, schema, ...prop }) {
   const inputSelect = Object.keys(schema).reduce(

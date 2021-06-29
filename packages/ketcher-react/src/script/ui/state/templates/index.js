@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { omit } from 'lodash/fp'
-import { MolSerializer } from 'ketcher-core'
-import { storage } from '../../storage-ext'
-
-import { openDialog } from '../modal'
 import initTmplLib, { initLib } from './init-lib'
+
+import { MolSerializer } from 'ketcher-core'
+import { omit } from 'lodash/fp'
+import { openDialog } from '../modal'
+import { storage } from '../../storage-ext'
 
 export { initTmplLib }
 

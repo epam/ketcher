@@ -1,5 +1,13 @@
+import {
+  AtomMove,
+  BondAttr,
+  EnhancedFlagMove,
+  RxnArrowMove,
+  RxnPlusMove,
+  SGroupDataMove
+} from '../operations'
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +22,10 @@
  * limitations under the License.
  ***************************************************************************/
 import { Bond, Pile, Vec2 } from 'ketcher-core'
+import { getRelSgroupsBySelection, structSelection } from './utils'
 
-import {
-  AtomMove,
-  SGroupDataMove,
-  BondAttr,
-  RxnArrowMove,
-  RxnPlusMove,
-  EnhancedFlagMove
-} from '../operations'
-import utils from '../shared/utils'
 import Action from '../shared/action'
-
-import { structSelection, getRelSgroupsBySelection } from './utils'
+import utils from '../shared/utils'
 
 export function fromFlip(restruct, selection, dir, center) {
   // eslint-disable-line max-statements

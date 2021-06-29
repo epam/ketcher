@@ -1,8 +1,7 @@
+import { Struct, Vec2 } from 'domain/entities'
 import { arrowToGraph, plusToGraph } from './toGraph/rxnToGraph'
 
 import { Serializer } from '../serializers.types'
-import { Struct } from 'domain/entities'
-import { Vec2 } from 'utils'
 import { headerToGraph } from './toGraph/headerToGraph'
 import { moleculeToGraph } from './toGraph/moleculeToGraph'
 import { moleculeToStruct } from './fromGraph/moleculeToStruct'

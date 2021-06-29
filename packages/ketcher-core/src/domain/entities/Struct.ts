@@ -15,13 +15,15 @@
  ***************************************************************************/
 
 import { Atom, radicalElectrons } from './Atom'
-import { Box2Abs, Pile, Pool, Vec2 } from 'utils'
 
 import { Bond } from './Bond'
+import { Box2Abs } from './Box2Abs'
 import { Elements } from 'domain/constants'
 import { Fragment } from './Fragment'
 import { HalfBond } from './HalfBond'
 import { Loop } from './Loop'
+import { Pile } from './Pile'
+import { Pool } from './Pool'
 import { RGroup } from './RGroup'
 import { RxnArrow } from './RxnArrow'
 import { RxnPlus } from './RxnPlus'
@@ -29,6 +31,7 @@ import { SGroup } from './SGroup'
 import { SGroupForest } from './SGroupForest'
 import { SimpleObject } from './SimpleObject'
 import { Text } from './Text'
+import { Vec2 } from './Vec2'
 
 function arrayAddIfMissing(array, item) {
   for (var i = 0; i < array.length; ++i) {

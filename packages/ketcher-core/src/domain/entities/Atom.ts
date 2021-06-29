@@ -15,9 +15,10 @@
  ***************************************************************************/
 
 import { AtomList, AtomListParams } from './AtomList'
-import { Pile, Vec2 } from 'utils'
 
 import { Elements } from 'domain/constants'
+import { Pile } from './Pile'
+import { Vec2 } from './Vec2'
 
 function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
   return typeof value !== 'undefined' ? value : defaultValue

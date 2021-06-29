@@ -1,5 +1,3 @@
-import { Pile, Pool, Vec2 } from 'utils'
-
 /****************************************************************************
  * Copyright 2020 EPAM Systems
  *
@@ -15,7 +13,7 @@ import { Pile, Pool, Vec2 } from 'utils'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Bond } from 'domain/entities'
+import { Bond, Pile, Pool, Vec2 } from 'domain/entities'
 
 function Stereocenters(mol, neighborsFunc, context) {
   this.molecule = mol

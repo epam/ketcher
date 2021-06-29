@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Vec2 } from './Vec2'
+import { Vec2 } from 'domain/entities'
 
 export interface ScaleOptions {
   scale: number
@@ -27,7 +27,7 @@ function obj2scaled(v: Vec2, options: ScaleOptions): Vec2 {
   return v.scaled(options.scale)
 }
 
-export const scale = {
+export const Scale = {
   scaled2obj,
   obj2scaled
 }

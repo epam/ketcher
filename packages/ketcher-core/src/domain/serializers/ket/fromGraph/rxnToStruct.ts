@@ -1,6 +1,4 @@
-import { RxnArrow, RxnPlus, Struct } from 'domain/entities'
-
-import { Vec2 } from 'utils'
+import { RxnArrow, RxnPlus, Struct, Vec2 } from 'domain/entities'
 
 export function rxnToStruct(graphItem: any, struct: Struct): Struct {
   if (graphItem.type === 'arrow') {

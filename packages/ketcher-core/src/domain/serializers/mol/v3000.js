@@ -13,10 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Atom, AtomList, Bond, RGroup, SGroup, Struct } from 'domain/entities'
+import {
+  Atom,
+  AtomList,
+  Bond,
+  RGroup,
+  SGroup,
+  Struct,
+  Vec2
+} from 'domain/entities'
 
 import { Elements } from 'domain/constants'
-import { Vec2 } from 'utils'
 import sGroup from './parseSGroup'
 import utils from './utils'
 

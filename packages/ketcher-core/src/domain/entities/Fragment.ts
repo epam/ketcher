@@ -17,7 +17,7 @@
 import { Bond } from './Bond'
 import { StereoLabel } from './Atom'
 import { Struct } from './Struct'
-import { Vec2 } from 'utils'
+import { Vec2 } from './Vec2'
 
 export enum StereoFlag {
   Mixed = 'MIXED',

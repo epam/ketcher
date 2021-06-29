@@ -20,12 +20,13 @@ import {
   Atom,
   AtomList,
   Bond,
+  Pool,
   RGroup,
   SGroup,
   StereoLabel,
-  Struct
+  Struct,
+  Vec2
 } from 'domain/entities'
-import { Pool, Vec2 } from 'utils'
 
 import { Elements } from 'domain/constants'
 import sGroup from './parseSGroup'

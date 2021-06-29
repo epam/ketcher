@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Pile } from 'utils'
-import { SGroup } from 'domain/entities'
+import { Pile, SGroup } from 'domain/entities'
+
 import utils from './utils'
 import v2000 from './v2000'
 import v3000 from './v3000'

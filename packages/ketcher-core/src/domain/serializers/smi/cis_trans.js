@@ -1,5 +1,3 @@
-import { Pool, Vec2 } from 'utils'
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +13,7 @@ import { Pool, Vec2 } from 'utils'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Bond } from 'domain/entities'
+import { Bond, Pool, Vec2 } from 'domain/entities'
 
 function CisTrans(mol, neighborsFunc, context) {
   this.molecule = mol

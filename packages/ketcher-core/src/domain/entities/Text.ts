@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'utils'
+import { Vec2 } from './Vec2'
 
 //TODO: move to infrastructure
 export enum TextCommand {

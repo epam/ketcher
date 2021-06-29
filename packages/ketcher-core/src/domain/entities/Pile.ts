@@ -36,7 +36,7 @@ export class Pile<TValue = any> extends Set<TValue> {
     return true
   }
 
-  filter(expression: (TValue) => boolean): Pile<TValue> {
+  filter(expression: (arg: TValue) => boolean): Pile<TValue> {
     return new Pile(Array.from(this).filter(expression))
   }
 

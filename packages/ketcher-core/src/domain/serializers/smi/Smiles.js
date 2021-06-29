@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, SGroup } from 'domain/entities'
+import { Atom, Bond, Pile, SGroup } from 'domain/entities'
 
 import CisTrans from './cis_trans'
 import Dfs from './dfs'
-import { Pile } from 'utils'
 import Stereocenters from './stereocenters'
 
 export function Smiles() {

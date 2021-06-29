@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Pile, Vec2 } from 'utils'
-
-import { Struct } from 'domain/entities'
+import { Pile, Struct, Vec2 } from 'domain/entities'
 
 export function prepareStructForGraph(struct: Struct) {
   const graphNodes: any = []

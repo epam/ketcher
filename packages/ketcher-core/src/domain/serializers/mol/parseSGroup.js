@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { Pool, SGroup, Vec2 } from 'domain/entities'
 
-import { Pool, Vec2 } from 'utils'
-
-import { SGroup } from 'domain/entities'
 import utils from './utils'
 
 /**

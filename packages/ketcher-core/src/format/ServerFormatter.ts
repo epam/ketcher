@@ -5,10 +5,11 @@ import {
   LayoutResult,
   StructService,
   StructServiceOptions
-} from 'infrastructure/services'
-import { MolSerializer, Struct } from 'chemistry'
+} from 'domain/services'
 import { StructFormatter, SupportedFormat } from './structFormatter.types'
 
+import { MolSerializer } from 'domain/serializers'
+import { Struct } from 'domain/entities'
 import { getPropertiesByFormat } from './formatProperties'
 
 export class ServerFormatter implements StructFormatter {

@@ -1,4 +1,5 @@
-import { MolSerializer, Struct } from 'chemistry'
+import { MolSerializer } from 'domain/serializers'
+import { Struct } from 'domain/entities'
 import { StructFormatter } from './structFormatter.types'
 
 export class RxnFormatter implements StructFormatter {

@@ -8,8 +8,8 @@ import {
   MolSerializer,
   MolSerializerOptions,
   SmiSerializer
-} from 'chemistry/serializers'
-import { StructService, StructServiceOptions } from 'infrastructure/services'
+} from 'domain/serializers'
+import { StructService, StructServiceOptions } from 'domain/services'
 
 import { GraphFormatter } from './GraphFormatter'
 import { MolfileV2000Formatter } from './MolfileV2000Formatter'

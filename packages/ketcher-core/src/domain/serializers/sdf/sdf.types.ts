@@ -13,5 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-export * from './RemoteStructService'
-export * from './RemoteStructServiceProvider'
+import { Struct } from 'domain/entities'
+
+export interface StructAssociatedData {
+  [key: string]: string | number
+}
+
+export interface SdfItem {
+  struct: Struct
+  props: StructAssociatedData
+}

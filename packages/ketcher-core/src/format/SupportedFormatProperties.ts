@@ -1,4 +1,4 @@
-import { ChemicalMimeType } from 'infrastructure'
+import { ChemicalMimeType } from 'domain/services'
 
 export class SupportedFormatProperties {
   name: string

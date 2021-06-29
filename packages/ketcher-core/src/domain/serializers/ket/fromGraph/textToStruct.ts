@@ -13,5 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-export * from './RemoteStructService'
-export * from './RemoteStructServiceProvider'
+
+import { Struct, Text } from 'domain/entities'
+
+export function textToStruct(graphItem: any, struct: Struct) {
+  const object = graphItem.data
+  struct.texts.add(new Text(object))
+
+  return struct
+}

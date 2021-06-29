@@ -1,3 +1,6 @@
+import { Serializer } from '../serializers.types'
+import { SmiSerializerOptions } from './smi.types'
+import { Smiles } from './Smiles'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -13,5 +16,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-export * from './RemoteStructService'
-export * from './RemoteStructServiceProvider'
+import { Struct } from 'domain/entities'
+
+export class SmiSerializer implements Serializer<Struct> {
+  static DefaultOptions: SmiSerializerOptions = {
+    ignoreErrors: false
+  }
+
+  private readonly options: SmiSerializerOptions
+
+  constructor(options?: Partial<SmiSerializerOptions>) {
+    this.options = { ...SmiSerializer.DefaultOptions, ...options }
+  }
+
+  deserialize(_content: string): Struct {
+    throw new Error('Not implemented yet.')
+  }
+
+  serialize(struct: Struct): string {
+    return new Smiles().saveMolecule(struct, this.options.ignoreErrors)
+  }
+}

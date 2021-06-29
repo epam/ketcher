@@ -1,7 +1,9 @@
-import { MolSerializer, SmiSerializer, Struct } from 'chemistry'
-import { StructService, StructServiceOptions } from 'infrastructure/services'
-import { ServerFormatter } from './ServerFormatter'
+import { MolSerializer, SmiSerializer } from 'domain/serializers'
 import { StructFormatter, SupportedFormat } from './structFormatter.types'
+import { StructService, StructServiceOptions } from 'domain/services'
+
+import { ServerFormatter } from './ServerFormatter'
+import { Struct } from 'domain/entities'
 
 export class SmilesFormatter implements StructFormatter {
   constructor(

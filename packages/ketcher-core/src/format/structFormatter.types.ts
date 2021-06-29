@@ -1,6 +1,6 @@
-import { MolSerializerOptions } from 'chemistry'
-import { Struct } from 'chemistry'
-import { StructServiceOptions } from 'infrastructure/services'
+import { MolSerializerOptions } from 'domain/serializers'
+import { Struct } from 'domain/entities'
+import { StructServiceOptions } from 'domain/services'
 
 export interface StructFormatter {
   getStructureFromStructAsync: (struct: Struct) => Promise<string>

@@ -39,7 +39,7 @@ class ReEnhancedFlag extends ReObject {
   }
   drawHighlight(render: Render): any {
     // TODO: after the enhanced flag stops being displayed, need to remove the reEnhancedflag object from ctab
-    if (!this.#path?.atrrs) return null
+    if (!this.#path?.attrs) return null
     var ret = this.highlightPath(render).attr(render.options.highlightStyle)
     render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
     return ret

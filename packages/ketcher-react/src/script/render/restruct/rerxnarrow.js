@@ -14,11 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Box2Abs, RxnArrowMode, Scale, Vec2 } from 'ketcher-core'
+
+import { LayerMap } from './GeneralEnumTypes'
 import ReObject from './ReObject'
 import draw from '../draw'
 import util from '../util'
-import { RxnArrowMode, Box2Abs, Vec2, scale } from 'ketcher-core'
-import { LayerMap } from './GeneralEnumTypes'
 
 class ReRxnArrow extends ReObject {
   constructor(/* chem.RxnArrow*/ arrow) {
@@ -29,7 +30,7 @@ class ReRxnArrow extends ReObject {
     return true
   }
   highlightPath(render) {
-    var p = scale.obj2scaled(this.item.pp, render.options)
+    var p = Scale.obj2scaled(this.item.pp, render.options)
     var s = render.options.scale
     return render.paper.rect(p.x - s, p.y - s / 4, 2 * s, s / 2, s / 8) // eslint-disable-line no-mixed-operators
   }
@@ -43,7 +44,7 @@ class ReRxnArrow extends ReObject {
   }
   show(restruct, id, options) {
     var render = restruct.render
-    var centre = scale.obj2scaled(this.item.pp, options)
+    var centre = Scale.obj2scaled(this.item.pp, options)
     var startPoint = new Vec2(centre.x - options.scale, centre.y)
     var endPoint = new Vec2(centre.x + options.scale, centre.y)
     var path

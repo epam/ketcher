@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { scale } from 'ketcher-core'
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
 import Restruct from '../../../render/restruct'
+import { Scale } from 'ketcher-core'
 
 export class RxnArrowMove extends BaseOperation {
   data: {
@@ -39,7 +39,7 @@ export class RxnArrowMove extends BaseOperation {
 
     const rxn = restruct.rxnArrows.get(id)
     if (!rxn) return
-    const scaled = scale.obj2scaled(d, restruct.render.options)
+    const scaled = Scale.obj2scaled(d, restruct.render.options)
     rxn.visel.translate(scaled)
 
     this.data.d = d.negated()

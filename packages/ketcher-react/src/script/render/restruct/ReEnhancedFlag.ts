@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Box2Abs, StereoFlag, scale } from 'ketcher-core'
+
+import { Box2Abs, Scale, StereoFlag } from 'ketcher-core'
 
 import { Fragment } from 'ketcher-core'
 import { LayerMap } from './GeneralEnumTypes'
@@ -61,7 +62,7 @@ class ReEnhancedFlag extends ReObject {
       : Fragment.getDefaultStereoFlagPosition(restruct.molecule, fragmentId)!
 
     const paper = render.paper
-    const ps = scale.obj2scaled(position, options)
+    const ps = Scale.obj2scaled(position, options)
 
     const stereoFlagMap = {
       [StereoFlag.Abs]: options.absFlagLabel,

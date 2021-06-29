@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Scale } from 'ketcher-core'
 import draw from '../../../render/draw'
 import locate from './locate'
-import { scale } from 'ketcher-core'
 
 function LassoHelper(mode, editor, fragment) {
   this.mode = mode
@@ -66,7 +66,7 @@ LassoHelper.prototype.update = function () {
   if (this.points && this.points.length > 1) {
     const rnd = this.editor.render
     const dp = this.points.map(p =>
-      scale.obj2scaled(p, rnd.options).add(rnd.options.offset)
+      Scale.obj2scaled(p, rnd.options).add(rnd.options.offset)
     )
     this.selection =
       this.mode === 0

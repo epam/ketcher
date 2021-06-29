@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { Bond, Scale, Vec2 } from 'ketcher-core'
+
+import { LayerMap } from './GeneralEnumTypes'
 import ReObject from './ReObject'
 import util from '../util'
-import { Bond, Vec2, scale } from 'ketcher-core'
-import { LayerMap } from './GeneralEnumTypes'
 
 const tfx = util.tfx
 
@@ -40,7 +42,7 @@ class ReLoop extends ReObject {
     loop.hbs.forEach(hbid => {
       var hb = molecule.halfBonds.get(hbid)
       var bond = restruct.bonds.get(hb.bid)
-      var apos = scale.obj2scaled(restruct.atoms.get(hb.begin).a.pp, options)
+      var apos = Scale.obj2scaled(restruct.atoms.get(hb.begin).a.pp, options)
       if (bond.b.type !== Bond.PATTERN.TYPE.AROMATIC) loop.aromatic = false
       this.centre.add_(apos) // eslint-disable-line no-underscore-dangle
     })
@@ -59,8 +61,8 @@ class ReLoop extends ReObject {
     this.radius = -1
     loop.hbs.forEach(hbid => {
       var hb = molecule.halfBonds.get(hbid)
-      var apos = scale.obj2scaled(restruct.atoms.get(hb.begin).a.pp, options)
-      var bpos = scale.obj2scaled(restruct.atoms.get(hb.end).a.pp, options)
+      var apos = Scale.obj2scaled(restruct.atoms.get(hb.begin).a.pp, options)
+      var bpos = Scale.obj2scaled(restruct.atoms.get(hb.end).a.pp, options)
       var n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized()
       var dist = Vec2.dot(Vec2.diff(apos, this.centre), n)
       this.radius = this.radius < 0 ? dist : Math.min(this.radius, dist)
@@ -84,7 +86,7 @@ class ReLoop extends ReObject {
         )
         var halfAngle = (Math.PI - angle) / 2
         var dir = hbb.dir.rotate(halfAngle)
-        var pi = scale.obj2scaled(restruct.atoms.get(hbb.begin).a.pp, options)
+        var pi = Scale.obj2scaled(restruct.atoms.get(hbb.begin).a.pp, options)
         var sin = Math.sin(halfAngle)
         var minSin = 0.1
         if (Math.abs(sin) < minSin) sin = (sin * minSin) / Math.abs(sin)

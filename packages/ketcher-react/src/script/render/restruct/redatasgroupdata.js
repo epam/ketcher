@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ReObject from './ReObject'
-import { scale } from 'ketcher-core'
 import { LayerMap } from './GeneralEnumTypes'
+import ReObject from './ReObject'
+import { Scale } from 'ketcher-core'
 
 class ReDataSGroupData extends ReObject {
   constructor(sgroup) {
@@ -28,8 +28,8 @@ class ReDataSGroupData extends ReObject {
   }
   highlightPath(render) {
     var box = this.sgroup.dataArea
-    var p0 = scale.obj2scaled(box.p0, render.options)
-    var sz = scale.obj2scaled(box.p1, render.options).sub(p0)
+    var p0 = Scale.obj2scaled(box.p0, render.options)
+    var sz = Scale.obj2scaled(box.p1, render.options).sub(p0)
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
   }
   drawHighlight(render) {

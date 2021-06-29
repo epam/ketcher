@@ -16,8 +16,8 @@
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import { scale } from 'ketcher-core'
 import Restruct from '../../../render/restruct'
+import { Scale } from 'ketcher-core'
 
 interface TextMoveData {
   id: any
@@ -42,7 +42,7 @@ export class TextMove extends BaseOperation {
     item?.position?.add_(difference)
     restruct.texts
       .get(id)
-      ?.visel.translate(scale.obj2scaled(difference, restruct.render.options))
+      ?.visel.translate(Scale.obj2scaled(difference, restruct.render.options))
 
     this.data.d = difference.negated()
 

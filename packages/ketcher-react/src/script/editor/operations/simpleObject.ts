@@ -1,5 +1,3 @@
-import { SimpleObject, SimpleObjectMode, Vec2, scale } from 'ketcher-core'
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,6 +13,9 @@ import { SimpleObject, SimpleObjectMode, Vec2, scale } from 'ketcher-core'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { Scale, SimpleObject, SimpleObjectMode, Vec2 } from 'ketcher-core'
+
 import Base from './base'
 import { OperationType } from './OperationType'
 import { ReSimpleObject } from '../../render/restruct'
@@ -136,7 +137,7 @@ export class SimpleObjectMove extends Base {
     item.pos.forEach(p => p.add_(d))
     restruct.simpleObjects
       .get(id)
-      .visel.translate(scale.obj2scaled(d, restruct.render.options))
+      .visel.translate(Scale.obj2scaled(d, restruct.render.options))
     this.data.d = d.negated()
     if (!this.data.noinvalidate) {
       Base.invalidateItem(restruct, 'simpleObjects', id, 1)
@@ -234,7 +235,7 @@ export class SimpleObjectResize extends Base {
 
     restruct.simpleObjects
       .get(id)
-      .visel.translate(scale.obj2scaled(d, restruct.render.options))
+      .visel.translate(Scale.obj2scaled(d, restruct.render.options))
     this.data.d = d.negated()
     if (!this.data.noinvalidate) {
       Base.invalidateItem(

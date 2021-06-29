@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Restruct from '../../render/restruct'
-import { scale } from 'ketcher-core'
+
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
-
+import Restruct from '../../render/restruct'
+import { Scale } from 'ketcher-core'
 export class LoopMove extends BaseOperation {
   data: {
     id: any
@@ -37,7 +37,7 @@ export class LoopMove extends BaseOperation {
     const reloop = restruct.reloops.get(id)
 
     if (reloop && reloop.visel) {
-      const scaled = scale.obj2scaled(d, restruct.render.options)
+      const scaled = Scale.obj2scaled(d, restruct.render.options)
       reloop.visel.translate(scaled)
     }
     this.data.d = d.negated()

@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ReObject from './ReObject'
-
-import { Bond, Vec2, scale, HalfBond, Atom, Struct } from 'ketcher-core'
-import draw from '../draw'
-import util from '../util'
+import { Atom, Bond, HalfBond, Scale, Struct, Vec2 } from 'ketcher-core'
 import { LayerMap, StereoColoringType } from './GeneralEnumTypes'
 import ReAtom, { getColorFromStereoLabel } from './reatom'
-import Render from '..'
+
+import ReObject from './ReObject'
 import ReStruct from './ReStruct'
+import Render from '..'
+import draw from '../draw'
+import util from '../util'
 
 class ReBond extends ReObject {
   b: Bond
@@ -49,14 +49,14 @@ class ReBond extends ReObject {
   makeHighlightPlate(render: Render) {
     const options = render.options
     bondRecalc(this, render.ctab, options)
-    const c = scale.obj2scaled(this.b.center, options)
+    const c = Scale.obj2scaled(this.b.center, options)
     return render.paper
       .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
       .attr(options.highlightStyle)
   }
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any) {
     bondRecalc(this, restruct, options)
-    const c = scale.obj2scaled(this.b.center, options)
+    const c = Scale.obj2scaled(this.b.center, options)
     return paper
       .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
       .attr(options.selectionStyle)
@@ -886,8 +886,8 @@ function bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
   if (!atom1 || !atom2 || bond.b.hb1 === undefined || bond.b.hb2 === undefined)
     return
 
-  const p1 = scale.obj2scaled(atom1.a.pp, render.options)
-  const p2 = scale.obj2scaled(atom2.a.pp, render.options)
+  const p1 = Scale.obj2scaled(atom1.a.pp, render.options)
+  const p2 = Scale.obj2scaled(atom2.a.pp, render.options)
   const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1)
   const hb2 = restruct.molecule.halfBonds.get(bond.b.hb2)
 

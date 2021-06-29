@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Restruct from '../../../render/restruct'
-import { scale } from 'ketcher-core'
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
+import Restruct from '../../../render/restruct'
+import { Scale } from 'ketcher-core'
 
 export class AtomMove extends BaseOperation {
   data: {
@@ -37,7 +38,7 @@ export class AtomMove extends BaseOperation {
     struct.atoms.get(aid)!.pp.add_(d) // eslint-disable-line no-underscore-dangle
     const atom = restruct.atoms.get(aid)
     if (atom) {
-      const scaled = scale.obj2scaled(d, restruct.render.options)
+      const scaled = Scale.obj2scaled(d, restruct.render.options)
       atom.visel.translate(scaled)
     }
 

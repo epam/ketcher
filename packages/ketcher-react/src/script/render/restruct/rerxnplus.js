@@ -14,11 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Box2Abs, Scale } from 'ketcher-core'
+
+import { LayerMap } from './GeneralEnumTypes'
 import ReObject from './ReObject'
 import draw from '../draw'
 import util from '../util'
-import { Box2Abs, scale } from 'ketcher-core'
-import { LayerMap } from './GeneralEnumTypes'
 
 class ReRxnPlus extends ReObject {
   constructor(/* chem.RxnPlus*/ plus) {
@@ -29,7 +30,7 @@ class ReRxnPlus extends ReObject {
     return true
   }
   highlightPath(render) {
-    var p = scale.obj2scaled(this.item.pp, render.options)
+    var p = Scale.obj2scaled(this.item.pp, render.options)
     var s = render.options.scale
     /* eslint-disable no-mixed-operators*/
     return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8)
@@ -46,7 +47,7 @@ class ReRxnPlus extends ReObject {
   }
   show(restruct, id, options) {
     var render = restruct.render
-    var centre = scale.obj2scaled(this.item.pp, options)
+    var centre = Scale.obj2scaled(this.item.pp, options)
     var path = draw.plus(render.paper, centre, options)
     var offset = options.offset
     if (offset != null) path.translateAbs(offset.x, offset.y)

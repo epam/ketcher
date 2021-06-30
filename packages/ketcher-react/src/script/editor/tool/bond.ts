@@ -157,13 +157,13 @@ BondTool.prototype.mouseup = function (event: Event): void {
       )
 
       if (repeatingBonds.length > 1) {
+        this.editor.update(dragCtx.action, true)
         new BondDelete(repeatingBonds[1]).perform(rnd.ctab)
         const bondProps = Object.assign({}, this.bondProps)
         const bond = struct.bonds.get(repeatingBonds[0])
         this.editor.update(
           bondChangingAction(rnd.ctab, repeatingBonds[0], bond, bondProps)
         )
-        this.editor.update(dragCtx.action)
       } else this.editor.update(dragCtx.action)
     } else if (!('beginItem' in dragCtx)) {
       const xy = rnd.page2obj(event)

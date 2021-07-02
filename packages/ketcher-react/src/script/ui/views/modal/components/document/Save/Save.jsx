@@ -145,29 +145,11 @@ class SaveDialog extends Component {
     const saveWarning = structFormat.couldBeSaved(struct, format)
     const isStructInvalid = this.showStructWarningMessage(format)
 
-    const FormatName = getPropertiesByFormat(format).name
-    const rxnArrowsSize = struct.rxnArrows.size
-
     if (isStructInvalid) {
       warnings.push(structWarning)
     }
     if (saveWarning) {
       warnings.push(saveWarning)
-    }
-    if (
-      (rxnArrowsSize > 1 && format !== 'graph') ||
-      (rxnArrowsSize === 1 && (format === 'rxn' || format === 'smiles'))
-    ) {
-      warnings.push(
-        `The ${FormatName} format does not support drawn elements: reaction arrow(s) will be lost.`
-      )
-    } else if (rxnArrowsSize === 1) {
-      const rxnArrowMode = struct.rxnArrows.values().next().value.mode
-      if (rxnArrowMode !== 'simple' && format !== 'graph') {
-        warnings.push(
-          `The ${FormatName} format does not support drawn elements: the reaction ${rxnArrowMode} arrow will be replaced with the reaction arrow`
-        )
-      }
     }
 
     if (moleculeErrors) {

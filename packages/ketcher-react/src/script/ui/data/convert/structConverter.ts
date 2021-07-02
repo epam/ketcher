@@ -26,6 +26,31 @@ export function couldBeSaved(
 ): string | null {
   let warnings: Array<string> = []
   const formatName: string = getPropertiesByFormat(format).name
+
+  const rxnArrowsSize = struct.rxnArrows.size
+  const hasRxnArrow = struct.hasRxnArrow()
+
+  if (format !== 'graph') {
+    if (hasRxnArrow) {
+      const rxnArrowMode = struct.rxnArrows.values().next().value.mode
+      if ((['rxn', 'smiles'] as SupportedFormat[]).includes(format)) {
+        warnings.push(
+          `The ${formatName} format does not support drawn elements: reaction arrow will be lost.`
+        )
+      } else if (rxnArrowMode !== 'simple') {
+        warnings.push(
+          `The ${formatName} format does not support drawn elements: the reaction ${rxnArrowMode} arrow will be replaced with the reaction arrow`
+        )
+      }
+    }
+
+    if (rxnArrowsSize > 1) {
+      warnings.push(
+        `The ${formatName} format does not support drawn elements: reaction arrows will be lost.`
+      )
+    }
+  }
+
   if (
     ([
       'inChI',

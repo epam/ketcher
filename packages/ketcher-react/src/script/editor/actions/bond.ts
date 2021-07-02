@@ -183,10 +183,13 @@ export function fromBondStereoUpdate(
       return item.bid !== bid && bond.stereo > 0
     })
     if (neigs.length < 3 || !stereoNeig) {
+      const atomBegin = struct.atoms.get(bond.begin)
+      const stereoAtomId =
+        atomBegin && atomBegin.stereoLabel ? bond.begin : bond.end
       action.mergeWith(
         fromStereoAtomAttrs(
           restruct,
-          bond.begin,
+          stereoAtomId,
           {
             stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
             stereoLabel: null

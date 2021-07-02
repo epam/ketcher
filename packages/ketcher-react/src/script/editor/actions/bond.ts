@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, StereoLabel, Vec2 } from 'ketcher-core'
+import { Atom, Bond, StereoLabel, Struct, Vec2 } from 'ketcher-core'
 import {
   AtomAdd,
   AtomAttr,
@@ -216,30 +216,72 @@ export function fromBondStereoUpdate(
     endNeighBonds.push(struct.bonds.get(neigh.bid))
   })
 
-  const NeighBonds = [...beginNeighBonds, ...endNeighBonds]
+  const neighBonds = [...beginNeighBonds, ...endNeighBonds]
 
-  NeighBonds.forEach(bond => {
+  neighBonds.forEach(bond => {
     if (bond) {
-      const Neigs = atomGetNeighbors(restruct, bond.begin)
-      if (bond.stereo > 0) {
-        if (Neigs.length > 2) {
-          action.mergeWith(
-            fromStereoAtomAttrs(
-              restruct,
-              bond.begin,
-              {
-                stereoParity: getStereoParity(bond.stereo),
-                stereoLabel: `${StereoLabel.Abs}`
-              },
-              withReverse
-            )
+      const beginNeighs = atomGetNeighbors(restruct, bond.begin)
+      const endNeighs = atomGetNeighbors(restruct, bond.end)
+      if (isCorrectStereoCenter(bond, beginNeighs, endNeighs, struct)) {
+        action.mergeWith(
+          fromStereoAtomAttrs(
+            restruct,
+            bond.begin,
+            {
+              stereoParity: getStereoParity(bond.stereo),
+              stereoLabel: `${StereoLabel.Abs}`
+            },
+            withReverse
           )
-        }
+        )
       }
     }
   })
 
   return action
+}
+
+function isCorrectStereoCenter(
+  bond: Bond,
+  beginNeighs,
+  endNeighs,
+  struct: Struct
+) {
+  const beginAtom = struct.atoms.get(bond.begin)
+
+  let EndAtomNeigh: Number = NaN
+
+  if (endNeighs == 2) {
+    if (beginNeighs.include(endNeighs[0])) {
+      EndAtomNeigh = endNeighs[1].aid
+    } else {
+      EndAtomNeigh = endNeighs[0].aid
+    }
+  }
+
+  if (bond.stereo > 0) {
+    if (
+      endNeighs.length === 1 &&
+      beginNeighs.length <= 2 &&
+      Number(beginAtom?.implicitH) % 2 === 0
+    ) {
+      return false
+    }
+
+    if (bond.stereo > 0) {
+      if (
+        endNeighs.length == 2 &&
+        beginNeighs.length <= 2 &&
+        Number(beginAtom?.implicitH) % 2 === 0 &&
+        atomGetNeighbors(EndAtomNeigh).length === 1
+      ) {
+        return false
+      }
+    }
+    return true
+  } else {
+    return false
+  }
 }
 
 function getStereoParity(stereo) {
@@ -285,10 +327,8 @@ export function bondChangingAction(
     // if `Single bond` tool is chosen and bond for change in `plainBondTypes`
     bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length]
 
-
   return fromBondsAttrs(restruct, itemID, bondProps).mergeWith(action)
 }
-
 
 const plainBondTypes = [
   Bond.PATTERN.TYPE.SINGLE,

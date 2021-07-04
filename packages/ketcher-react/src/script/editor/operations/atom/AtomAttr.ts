@@ -37,7 +37,6 @@ export class AtomAttr extends BaseOperation {
     const { aid, attribute, value } = this.data
 
     const atom = restruct.molecule.atoms.get(aid)!
-
     if (!this.data2) {
       this.data2 = {
         aid,
@@ -47,7 +46,6 @@ export class AtomAttr extends BaseOperation {
     }
 
     atom[attribute] = value
-
     BaseOperation.invalidateAtom(restruct, aid)
   }
 

@@ -277,15 +277,13 @@ export class Atom {
     const label = this.label
     const charge = this.charge
 
-    let implicitH: Number
+    let implicitH: Number = 0
 
     if (this.isQuery()) {
-      implicitH = 0
       return implicitH
     }
     const element = Elements.get(label)
     if (!element) {
-      implicitH = 0
       return implicitH
     }
 

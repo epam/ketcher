@@ -273,17 +273,20 @@ export class Atom {
     )
   }
 
-  calcValence(conn: number): boolean {
+  calcValence(conn: number): Number {
     const label = this.label
     const charge = this.charge
+
+    let implicitH: Number
+
     if (this.isQuery()) {
-      this.implicitH = 0
-      return true
+      implicitH = 0
+      return implicitH
     }
     const element = Elements.get(label)
     if (!element) {
-      this.implicitH = 0
-      return true
+      implicitH = 0
+      return implicitH
     }
 
     var groupno = element.group
@@ -491,14 +494,14 @@ export class Atom {
     }
 
     this.valence = valence
-    this.implicitH = hyd
-    if (this.implicitH < 0) {
+    implicitH = hyd
+    if (implicitH < 0) {
       this.valence = conn
-      this.implicitH = 0
+      implicitH = 0
       this.badConn = true
-      return false
+      return implicitH
     }
-    return true
+    return implicitH
   }
 
   calcValenceMinusHyd(conn: number): number {

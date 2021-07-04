@@ -92,8 +92,11 @@ export function fromBondAddition(
 
   const bnd = struct.bonds.get(bid)
 
-  action.mergeWith(setImplicitHydrogen(restruct, bnd?.begin, bnd?.end))
-  action.mergeWith(fromBondStereoUpdate(restruct, bnd?.begin, bnd?.end))
+  if (bnd) {
+    action.mergeWith(setImplicitHydrogen(restruct, bnd.begin, bnd.end))
+    action.mergeWith(fromBondStereoUpdate(restruct, bnd.begin, bnd.end))
+  }
+
   action.operations.reverse()
 
   if (mergeFragments) mergeFragmentsIfNeeded(action, restruct, begin, end)
@@ -119,8 +122,10 @@ export function fromBondsAttrs(
       action.addOp(new BondAttr(bid, key, value).perform(restruct))
       if (key === 'stereo' && key in attrs) {
         const bond = struct.bonds.get(bid)
-        action.mergeWith(setImplicitHydrogen(restruct, bond?.begin, bond?.end))
-        action.mergeWith(fromBondStereoUpdate(restruct, bond?.begin, bond?.end))
+        if (bond) {
+          action.mergeWith(setImplicitHydrogen(restruct, bond.begin, bond.end))
+          action.mergeWith(fromBondStereoUpdate(restruct, bond.begin, bond.end))
+        }
       }
     })
   })
@@ -175,19 +180,25 @@ function fromBondFlipping(restruct: ReStruct, id: number): Action {
 
 export function setImplicitHydrogen(
   restruct: ReStruct,
-  bondBegin: number | undefined,
-  bondEnd: number | undefined
+  bondBegin: number,
+  bondEnd: number
 ) {
   const action = new Action()
 
   const struct = restruct.molecule
 
-  if (struct.atoms.get(bondBegin!)) {
-    action.addOp(new AtomAttr(bondBegin, 'implicitH').perform(restruct))
+  if (struct.atoms.get(bondBegin)) {
+    const implicitH = struct.calcImplicitHydrogen(bondBegin)
+    action.addOp(
+      new AtomAttr(bondBegin, 'implicitH', implicitH).perform(restruct)
+    )
   }
 
-  if (struct.atoms.get(bondEnd!)) {
-    action.addOp(new AtomAttr(bondEnd, 'implicitH').perform(restruct))
+  if (struct.atoms.get(bondEnd)) {
+    const implicitH = struct.calcImplicitHydrogen(bondEnd)
+    action.addOp(
+      new AtomAttr(bondEnd, 'implicitH', implicitH).perform(restruct)
+    )
   }
 
   return action
@@ -195,8 +206,8 @@ export function setImplicitHydrogen(
 
 export function fromBondStereoUpdate(
   restruct: ReStruct,
-  bondBegin: number | undefined,
-  bondEnd: number | undefined,
+  bondBegin: number,
+  bondEnd: number,
   withReverse?: boolean
 ): Action {
   const action = new Action()

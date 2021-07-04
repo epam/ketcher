@@ -853,21 +853,22 @@ export class Struct {
     }
   }
 
-  calcImplicitHydrogen(aid: number) {
+  calcImplicitHydrogen(aid: number): Number {
     const atom = this.atoms.get(aid)!
     const [conn, isAromatic] = this.calcConn(atom)
     let correctConn = conn
     atom.badConn = false
+    let implicitH: Number
 
     if (isAromatic) {
       if (atom.label === 'C' && atom.charge === 0) {
         if (conn === 3) {
-          atom.implicitH = -radicalElectrons(atom.radical)
-          return
+          implicitH = -radicalElectrons(atom.radical)
+          return implicitH
         }
         if (conn === 2) {
-          atom.implicitH = 1 - radicalElectrons(atom.radical)
-          return
+          implicitH = 1 - radicalElectrons(atom.radical)
+          return implicitH
         }
       } else if (
         (atom.label === 'O' && atom.charge === 0) ||
@@ -875,30 +876,32 @@ export class Struct {
         (atom.label === 'N' && atom.charge === 1 && conn === 3) ||
         (atom.label === 'S' && atom.charge === 0 && conn === 3)
       ) {
-        atom.implicitH = 0
-        return
+        implicitH = 0
+        return implicitH
       } else if (!atom.hasImplicitH) {
         correctConn++
       }
     }
 
     if (correctConn < 0 || atom.isQuery()) {
-      atom.implicitH = 0
-      return
+      implicitH = 0
+      return implicitH
     }
 
     if (atom.explicitValence >= 0) {
       const elem = Elements.get(atom.label)
-      atom.implicitH = !!elem
+      implicitH = !!elem
         ? atom.explicitValence - atom.calcValenceMinusHyd(correctConn)
         : 0
-      if (atom.implicitH < 0) {
-        atom.implicitH = 0
+      if (implicitH < 0) {
+        implicitH = 0
         atom.badConn = true
       }
     } else {
-      atom.calcValence(correctConn)
+      implicitH = atom.calcValence(correctConn)
+      return implicitH
     }
+    return implicitH
   }
 
   setImplicitHydrogen(list) {

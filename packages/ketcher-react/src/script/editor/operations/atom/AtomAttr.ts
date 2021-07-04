@@ -35,7 +35,6 @@ export class AtomAttr extends BaseOperation {
 
   execute(restruct: Restruct) {
     const { aid, attribute, value } = this.data
-    const struct = restruct.molecule
 
     const atom = restruct.molecule.atoms.get(aid)!
 
@@ -47,11 +46,7 @@ export class AtomAttr extends BaseOperation {
       }
     }
 
-    if (attribute === 'implicitH') {
-      struct.calcImplicitHydrogen(aid)
-    } else {
-      atom[attribute] = value
-    }
+    atom[attribute] = value
 
     BaseOperation.invalidateAtom(restruct, aid)
   }

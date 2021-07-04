@@ -23,7 +23,7 @@ import {
   SimpleObjectDelete,
   TextDelete
 } from '../operations'
-import { fromBondStereoUpdate } from '../actions/bond'
+import { fromBondStereoUpdate, setImplicitHydrogen } from '../actions/bond'
 import { atomGetDegree, atomGetNeighbors } from './utils'
 import {
   fromSgroupDeletion,
@@ -69,6 +69,7 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
 
   removeSgroupIfNeeded(action, restruct, atomsToRemove)
   action = action.perform(restruct)
+  action.mergeWith(setImplicitHydrogen(restruct, bond?.begin, bond?.end))
   action.mergeWith(fromBondStereoUpdate(restruct, bond?.begin, bond?.end, false))
 
   if (

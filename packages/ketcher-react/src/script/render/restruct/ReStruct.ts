@@ -407,7 +407,6 @@ class ReStruct {
     this.verifyLoops()
     const updLoops = force || this.structChanged
     if (updLoops) this.updateLoops()
-    this.setImplicitHydrogen()
     this.showLabels()
     this.showBonds()
     if (updLoops) this.showLoops()
@@ -503,10 +502,6 @@ class ReStruct {
     })
   }
 
-  setImplicitHydrogen(): void {
-    // calculate implicit hydrogens for atoms that have been modified
-    this.molecule.setImplicitHydrogen(Array.from(this.atomsChanged.keys()))
-  }
 
   loopRemove(loopId: number): void {
     const reloop = this.reloops.get(loopId)

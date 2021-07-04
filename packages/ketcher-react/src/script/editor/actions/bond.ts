@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, StereoLabel, Struct, Vec2 } from 'ketcher-core'
+import { Atom, Bond, StereoLabel, Vec2 } from 'ketcher-core'
 import {
   AtomAdd,
   AtomAttr,
@@ -92,6 +92,7 @@ export function fromBondAddition(
 
   const bnd = struct.bonds.get(bid)
 
+  action.mergeWith(setImplicitHydrogen(restruct, bnd?.begin, bnd?.end))
   action.mergeWith(fromBondStereoUpdate(restruct, bnd?.begin, bnd?.end))
   action.operations.reverse()
 
@@ -118,6 +119,7 @@ export function fromBondsAttrs(
       action.addOp(new BondAttr(bid, key, value).perform(restruct))
       if (key === 'stereo' && key in attrs) {
         const bond = struct.bonds.get(bid)
+        action.mergeWith(setImplicitHydrogen(restruct, bond?.begin, bond?.end))
         action.mergeWith(fromBondStereoUpdate(restruct, bond?.begin, bond?.end))
       }
     })
@@ -167,6 +169,26 @@ function fromBondFlipping(restruct: ReStruct, id: number): Action {
 
   // todo: swap atoms stereoLabels and stereoAtoms in fragment
   action.perform(restruct)
+
+  return action
+}
+
+export function setImplicitHydrogen(
+  restruct: ReStruct,
+  bondBegin: number | undefined,
+  bondEnd: number | undefined
+) {
+  const action = new Action()
+
+  const struct = restruct.molecule
+
+  if (struct.atoms.get(bondBegin!)) {
+    action.addOp(new AtomAttr(bondBegin, 'implicitH').perform(restruct))
+  }
+
+  if (struct.atoms.get(bondEnd!)) {
+    action.addOp(new AtomAttr(bondEnd, 'implicitH').perform(restruct))
+  }
 
   return action
 }
@@ -222,7 +244,7 @@ export function fromBondStereoUpdate(
     if (bond) {
       const beginNeighs = atomGetNeighbors(restruct, bond.begin)
       const endNeighs = atomGetNeighbors(restruct, bond.end)
-      if (isCorrectStereoCenter(bond, beginNeighs, endNeighs, struct)) {
+      if (isCorrectStereoCenter(bond, beginNeighs, endNeighs, restruct)) {
         action.mergeWith(
           fromStereoAtomAttrs(
             restruct,
@@ -245,14 +267,15 @@ function isCorrectStereoCenter(
   bond: Bond,
   beginNeighs,
   endNeighs,
-  struct: Struct
+  restruct: ReStruct
 ) {
+  const struct = restruct.molecule
   const beginAtom = struct.atoms.get(bond.begin)
 
   let EndAtomNeigh: Number = NaN
 
-  if (endNeighs == 2) {
-    if (beginNeighs.include(endNeighs[0])) {
+  if (endNeighs.length === 2) {
+    if (beginNeighs.find(atom => endNeighs[0].aid === atom.aid)) {
       EndAtomNeigh = endNeighs[1].aid
     } else {
       EndAtomNeigh = endNeighs[0].aid
@@ -262,7 +285,7 @@ function isCorrectStereoCenter(
   if (bond.stereo > 0) {
     if (
       endNeighs.length === 1 &&
-      beginNeighs.length <= 2 &&
+      beginNeighs.length === 2 &&
       Number(beginAtom?.implicitH) % 2 === 0
     ) {
       return false
@@ -270,10 +293,10 @@ function isCorrectStereoCenter(
 
     if (bond.stereo > 0) {
       if (
-        endNeighs.length == 2 &&
-        beginNeighs.length <= 2 &&
+        endNeighs.length === 2 &&
+        beginNeighs.length === 2 &&
         Number(beginAtom?.implicitH) % 2 === 0 &&
-        atomGetNeighbors(EndAtomNeigh).length === 1
+        atomGetNeighbors(restruct, EndAtomNeigh).length === 1
       ) {
         return false
       }

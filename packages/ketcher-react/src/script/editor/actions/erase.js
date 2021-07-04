@@ -70,7 +70,7 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
   removeSgroupIfNeeded(action, restruct, atomsToRemove)
   action = action.perform(restruct)
   action.mergeWith(setImplicitHydrogen(restruct, bond.begin, bond.end))
-  action.mergeWith(fromBondStereoUpdate(restruct, bond.begin, bond.end, false))
+  action.mergeWith(fromBondStereoUpdate(restruct, bond, false))
 
   if (
     bond.stereo &&

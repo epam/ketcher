@@ -94,7 +94,7 @@ export function fromBondAddition(
 
   if (bnd) {
     action.mergeWith(setImplicitHydrogen(restruct, bnd.begin, bnd.end))
-    action.mergeWith(fromBondStereoUpdate(restruct, bnd.begin, bnd.end))
+    action.mergeWith(fromBondStereoUpdate(restruct, bnd))
   }
 
   action.operations.reverse()
@@ -124,7 +124,7 @@ export function fromBondsAttrs(
         const bond = struct.bonds.get(bid)
         if (bond) {
           action.mergeWith(setImplicitHydrogen(restruct, bond.begin, bond.end))
-          action.mergeWith(fromBondStereoUpdate(restruct, bond.begin, bond.end))
+          action.mergeWith(fromBondStereoUpdate(restruct, bond))
         }
       }
     })
@@ -204,57 +204,61 @@ export function setImplicitHydrogen(
   return action
 }
 
+type Neighbor = {
+  aid: Number
+  bid: Number
+}
+
 export function fromBondStereoUpdate(
   restruct: ReStruct,
-  bondBegin: number,
-  bondEnd: number,
+  bond: Bond,
   withReverse?: boolean
 ): Action {
   const action = new Action()
-
   const struct = restruct.molecule
+  const frId = struct.atoms.get(bond.begin)?.fragment
+  const fragmentBonds: Array<Bond> = []
 
-  action.mergeWith(
-    fromStereoAtomAttrs(
-      restruct,
-      bondBegin,
-      {
-        stereoParity: 0,
-        stereoLabel: null
-      },
-      withReverse
-    )
-  )
-
-  action.mergeWith(
-    fromStereoAtomAttrs(
-      restruct,
-      bondEnd,
-      {
-        stereoParity: 0,
-        stereoLabel: null
-      },
-      withReverse
-    )
-  )
-
-  const beginNeighBonds: Array<Bond | undefined> = []
-  const endNeighBonds: Array<Bond | undefined> = []
-
-  atomGetNeighbors(restruct, bondBegin)?.forEach(neigh => {
-    beginNeighBonds.push(struct.bonds.get(neigh.bid))
+  struct.bonds.forEach(bond => {
+    if (
+      struct.atoms.get(bond.begin)?.fragment === frId ||
+      struct.atoms.get(bond.end)?.fragment === frId
+    ) {
+      fragmentBonds.push(bond)
+    }
   })
 
-  atomGetNeighbors(restruct, bondEnd)?.map(neigh => {
-    endNeighBonds.push(struct.bonds.get(neigh.bid))
-  })
-
-  const neighBonds = [...beginNeighBonds, ...endNeighBonds]
-
-  neighBonds.forEach(bond => {
+  fragmentBonds.forEach((bond: Bond | undefined) => {
     if (bond) {
-      const beginNeighs = atomGetNeighbors(restruct, bond.begin)
-      const endNeighs = atomGetNeighbors(restruct, bond.end)
+      const beginNeighs: Array<Neighbor> = atomGetNeighbors(
+        restruct,
+        bond.begin
+      )
+      const endNeighs: Array<Neighbor> = atomGetNeighbors(restruct, bond.end)
+
+      action.mergeWith(
+        fromStereoAtomAttrs(
+          restruct,
+          bond.end,
+          {
+            stereoParity: 0,
+            stereoLabel: null
+          },
+          withReverse
+        )
+      )
+      action.mergeWith(
+        fromStereoAtomAttrs(
+          restruct,
+          bond.end,
+          {
+            stereoParity: 0,
+            stereoLabel: null
+          },
+          withReverse
+        )
+      )
+
       if (isCorrectStereoCenter(bond, beginNeighs, endNeighs, restruct)) {
         action.mergeWith(
           fromStereoAtomAttrs(
@@ -276,8 +280,8 @@ export function fromBondStereoUpdate(
 
 function isCorrectStereoCenter(
   bond: Bond,
-  beginNeighs,
-  endNeighs,
+  beginNeighs: Array<Neighbor>,
+  endNeighs: Array<Neighbor>,
   restruct: ReStruct
 ) {
   const struct = restruct.molecule
@@ -286,11 +290,8 @@ function isCorrectStereoCenter(
   let EndAtomNeigh: Number = NaN
 
   if (endNeighs.length === 2) {
-    if (beginNeighs.find(atom => endNeighs[0].aid === atom.aid)) {
-      EndAtomNeigh = endNeighs[1].aid
-    } else {
-      EndAtomNeigh = endNeighs[0].aid
-    }
+    EndAtomNeigh =
+      endNeighs[0].aid === bond.begin ? endNeighs[1].aid : endNeighs[0].aid
   }
 
   if (bond.stereo > 0) {
@@ -312,6 +313,11 @@ function isCorrectStereoCenter(
         return false
       }
     }
+
+    if (beginNeighs.length === 1) {
+      return false
+    }
+
     return true
   } else {
     return false

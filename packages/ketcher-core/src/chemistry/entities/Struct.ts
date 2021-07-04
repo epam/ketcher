@@ -858,7 +858,7 @@ export class Struct {
     const [conn, isAromatic] = this.calcConn(atom)
     let correctConn = conn
     atom.badConn = false
-    let implicitH: Number
+    let implicitH: Number = 0
 
     if (isAromatic) {
       if (atom.label === 'C' && atom.charge === 0) {
@@ -876,7 +876,6 @@ export class Struct {
         (atom.label === 'N' && atom.charge === 1 && conn === 3) ||
         (atom.label === 'S' && atom.charge === 0 && conn === 3)
       ) {
-        implicitH = 0
         return implicitH
       } else if (!atom.hasImplicitH) {
         correctConn++
@@ -884,7 +883,6 @@ export class Struct {
     }
 
     if (correctConn < 0 || atom.isQuery()) {
-      implicitH = 0
       return implicitH
     }
 

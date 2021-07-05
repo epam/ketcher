@@ -17,6 +17,7 @@
 import { Atom, Bond, RGroup } from 'ketcher-core'
 import {
   AtomDelete,
+  AtomAttr,
   BondDelete,
   RxnArrowDelete,
   RxnPlusDelete,
@@ -54,6 +55,14 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
     if (removeAtomFromSgroupIfNeeded(action, restruct, bond.begin))
       atomsToRemove.push(bond.begin)
 
+    action.addOp(
+      new AtomAttr(
+        bond.begin,
+        'implicitH',
+        restruct.molecule.atoms.get(bond.begin).implicitH
+      )
+    )
+
     action.addOp(new AtomDelete(bond.begin))
   }
 
@@ -63,6 +72,14 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
   ) {
     if (removeAtomFromSgroupIfNeeded(action, restruct, bond.end))
       atomsToRemove.push(bond.end)
+
+    action.addOp(
+      new AtomAttr(
+        bond.end,
+        'implicitH',
+        restruct.molecule.atoms.get(bond.end).implicitH
+      )
+    )
 
     action.addOp(new AtomDelete(bond.end))
   }

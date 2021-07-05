@@ -216,7 +216,10 @@ export function fromBondStereoUpdate(
 ): Action {
   const action = new Action()
   const struct = restruct.molecule
-  const frId = struct.atoms.get(bond.begin)?.fragment
+  const frId =
+    struct.atoms.get(bond.begin)?.fragment ||
+    struct.atoms.get(bond.end)?.fragment
+
   const fragmentBonds: Array<Bond> = []
 
   struct.bonds.forEach(bond => {
@@ -224,7 +227,38 @@ export function fromBondStereoUpdate(
       struct.atoms.get(bond.begin)?.fragment === frId ||
       struct.atoms.get(bond.end)?.fragment === frId
     ) {
-      fragmentBonds.push(bond)
+      bond.stereo > 0 ? fragmentBonds.push(bond) : fragmentBonds.unshift(bond)
+    }
+  })
+
+  fragmentBonds.forEach((bond: Bond | undefined) => {
+    if (bond) {
+      if (struct.atoms.get(bond.begin)?.stereoLabel !== null) {
+        action.mergeWith(
+          fromStereoAtomAttrs(
+            restruct,
+            bond.begin,
+            {
+              stereoParity: 0,
+              stereoLabel: null
+            },
+            withReverse
+          )
+        )
+      }
+      if (struct.atoms.get(bond.end)?.stereoLabel !== null) {
+        action.mergeWith(
+          fromStereoAtomAttrs(
+            restruct,
+            bond.end,
+            {
+              stereoParity: 0,
+              stereoLabel: null
+            },
+            withReverse
+          )
+        )
+      }
     }
   })
 
@@ -236,41 +270,20 @@ export function fromBondStereoUpdate(
       )
       const endNeighs: Array<Neighbor> = atomGetNeighbors(restruct, bond.end)
 
-      action.mergeWith(
-        fromStereoAtomAttrs(
-          restruct,
-          bond.end,
-          {
-            stereoParity: 0,
-            stereoLabel: null
-          },
-          withReverse
-        )
-      )
-      action.mergeWith(
-        fromStereoAtomAttrs(
-          restruct,
-          bond.end,
-          {
-            stereoParity: 0,
-            stereoLabel: null
-          },
-          withReverse
-        )
-      )
-
       if (isCorrectStereoCenter(bond, beginNeighs, endNeighs, restruct)) {
-        action.mergeWith(
-          fromStereoAtomAttrs(
-            restruct,
-            bond.begin,
-            {
-              stereoParity: getStereoParity(bond.stereo),
-              stereoLabel: `${StereoLabel.Abs}`
-            },
-            withReverse
+        if (struct.atoms.get(bond.begin)?.stereoLabel === null) {
+          action.mergeWith(
+            fromStereoAtomAttrs(
+              restruct,
+              bond.begin,
+              {
+                stereoParity: getStereoParity(bond.stereo),
+                stereoLabel: `${StereoLabel.Abs}`
+              },
+              withReverse
+            )
           )
-        )
+        }
       }
     }
   })

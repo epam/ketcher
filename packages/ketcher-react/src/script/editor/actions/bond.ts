@@ -337,7 +337,7 @@ function isCorrectStereoCenter(
   }
 }
 
-function getStereoParity(stereo) {
+function getStereoParity(stereo: Number): number | null {
   let newAtomParity: number | null = null
   switch (stereo) {
     case Bond.PATTERN.STEREO.UP:

@@ -17,7 +17,8 @@ import {
   StereoFlag,
   Struct,
   SupportedFormat,
-  getPropertiesByFormat
+  getPropertiesByFormat,
+  RxnArrowMode
 } from 'ketcher-core'
 
 export function couldBeSaved(
@@ -32,12 +33,8 @@ export function couldBeSaved(
 
   if (format !== 'graph') {
     if (hasRxnArrow) {
-      const rxnArrowMode = struct.rxnArrows.values().next().value.mode
-      if ((['rxn', 'smiles'] as SupportedFormat[]).includes(format)) {
-        warnings.push(
-          `The ${formatName} format does not support drawn elements: reaction arrow will be lost.`
-        )
-      } else if (rxnArrowMode !== 'simple') {
+      const rxnArrowMode: RxnArrowMode | undefined = struct.rxnArrows.get(0)?.mode 
+       if (rxnArrowMode !== RxnArrowMode.simple) {
         warnings.push(
           `The ${formatName} format does not support drawn elements: the reaction ${rxnArrowMode} arrow will be replaced with the reaction arrow`
         )

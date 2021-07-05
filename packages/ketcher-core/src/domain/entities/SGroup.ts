@@ -282,7 +282,7 @@ export class SGroup {
       braketBox = !braketBox ? bbb : Box2Abs.union(braketBox, bbb!)
     })
     var vext = new Vec2(0.2, 0.4)
-    if (braketBox) braketBox = (braketBox as Box2Abs).extend(vext, vext)
+    if (braketBox) braketBox = braketBox!.extend(vext, vext)
     sGroup.bracketBox = braketBox
   }
 

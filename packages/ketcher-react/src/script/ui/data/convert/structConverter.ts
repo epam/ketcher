@@ -44,6 +44,7 @@ export function couldBeSaved(
       }
     }
 
+    // TODO: find better solution for case when Arrows > 1 
     if (rxnArrowsSize > 1) {
       warnings.push(
         `The ${formatName} format does not support drawn elements: reaction arrows will be lost.`

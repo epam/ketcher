@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import locate from './locate'
+import { Scale } from 'ketcher-core'
 import draw from '../../../render/draw'
-import { scale } from 'ketcher-core'
+import locate from './locate'
 
 function LassoHelper(mode, editor, fragment) {
   this.mode = mode
@@ -66,7 +66,7 @@ LassoHelper.prototype.update = function () {
   if (this.points && this.points.length > 1) {
     const rnd = this.editor.render
     const dp = this.points.map(p =>
-      scale.obj2scaled(p, rnd.options).add(rnd.options.offset)
+      Scale.obj2scaled(p, rnd.options).add(rnd.options.offset)
     )
     this.selection =
       this.mode === 0

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 // Visel is a shorthand for VISual ELement
 // It corresponds to a visualization (i.e. set of paths) of an atom or a bond.
-import { Vec2, Box2Abs } from 'ketcher-core'
+import { Box2Abs, Vec2 } from 'ketcher-core'
 
 class Visel {
   constructor(type) {

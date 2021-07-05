@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Raphael from '../raphael-ext'
-import { Struct, Vec2, Box2Abs, scale } from 'ketcher-core'
-import ReStruct from './restruct'
+import { Box2Abs, Scale, Struct, Vec2 } from 'ketcher-core'
 
+import Raphael from '../raphael-ext'
+import ReStruct from './restruct'
 import defaultOptions from './options'
 
 var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false }
@@ -45,11 +45,11 @@ Render.prototype.view2obj = function (p, isRelative) {
     scroll = scroll.scaled(1 / this.options.zoom)
   }
   p = isRelative ? p : p.add(scroll).sub(this.options.offset)
-  return scale.scaled2obj(p, this.options)
+  return Scale.scaled2obj(p, this.options)
 }
 
 Render.prototype.obj2view = function (v, isRelative) {
-  var p = scale.obj2scaled(v, this.options)
+  var p = Scale.obj2scaled(v, this.options)
   p = isRelative
     ? p
     : p
@@ -188,7 +188,7 @@ Render.prototype.update = function (force, viewSz) {
     var sf = this.options.scale
     var bb = this.ctab
       .getVBoxObj()
-      .transform(scale.obj2scaled, this.options)
+      .transform(Scale.obj2scaled, this.options)
       .translate(this.options.offset || new Vec2())
 
     if (!this.options.autoScale) {

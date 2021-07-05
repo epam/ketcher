@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Visel from './visel'
-import { Box2Abs, scale } from 'ketcher-core'
+import { Box2Abs, Scale } from 'ketcher-core'
+
 import ReStruct from './index'
 import Render from '..'
+import Visel from './visel'
 
 class ReObject {
   public visel: Visel
@@ -35,7 +36,7 @@ class ReObject {
     if (vbox === null) return null
     if (render.options.offset)
       vbox = vbox.translate(render.options.offset.negated())
-    return vbox.transform(scale.scaled2obj, render.options)
+    return vbox.transform(Scale.scaled2obj, render.options)
   }
 
   setHighlight(highLight: boolean, render: Render): void {

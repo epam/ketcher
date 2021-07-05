@@ -38,7 +38,7 @@ import {
   RecognizeResult,
   StructService,
   StructServiceOptions
-} from './structService.types'
+} from 'domain/services'
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -124,7 +124,7 @@ function indigoCall(
   }
 }
 
-class RemoteStructService implements StructService {
+export class RemoteStructService implements StructService {
   private readonly apiPath: string
   private readonly defaultOptions: StructServiceOptions
 
@@ -308,5 +308,3 @@ class RemoteStructService implements StructService {
     )
   }
 }
-
-export default RemoteStructService

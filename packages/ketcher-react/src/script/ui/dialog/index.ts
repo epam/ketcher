@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 
-import PeriodTable from '../views/modal/components/PeriodTable'
-import Rgroup from './toolbox/rgroup'
-import TemplateAttach from './template/template-attach'
-import TemplatesLib from './template/TemplateLib'
-import Text from '../views/modal/components/Text'
-
+import { About, Help, Settings } from '../views/modal/components/meta'
+import {
+  Analyse,
+  Check,
+  Miew,
+  Recognize
+} from '../views/modal/components/process'
 // schemify dialogs
 import {
   Atom,
-  Bond,
   AttachPoints,
   Automap,
+  Bond,
   RgroupLogic
 } from '../views/modal/components/toolbox'
-import {
-  Check,
-  Analyse,
-  Recognize,
-  Miew
-} from '../views/modal/components/process'
+import { Open, Save } from '../views/modal/components/document'
+
 import EnhancedStereo from './toolbox/enhancedStereo'
 import LabelEdit from './toolbox/labeledit'
-import { Open, Save } from '../views/modal/components/document'
-import { Settings, Help, About } from '../views/modal/components/meta'
-import Sgroup from './toolbox/sgroup'
+import PeriodTable from '../views/modal/components/PeriodTable'
+import Rgroup from './toolbox/rgroup'
 import Sdata from './toolbox/sdata'
+import Sgroup from './toolbox/sgroup'
+import TemplateAttach from './template/template-attach'
+import TemplatesLib from './template/TemplateLib'
+import Text from '../views/modal/components/Text'
 
 export default {
   open: Open,

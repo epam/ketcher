@@ -1,5 +1,20 @@
+import {
+  AtomMove,
+  BondMove,
+  EnhancedFlagMove,
+  FragmentAdd,
+  FragmentDelete,
+  FragmentDeleteStereoAtom,
+  FragmentStereoFlag,
+  LoopMove,
+  RxnArrowMove,
+  RxnPlusMove,
+  SGroupDataMove,
+  SimpleObjectMove,
+  TextMove
+} from '../operations'
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +28,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { RGroup, Pile, Vec2 } from 'ketcher-core'
-
-import {
-  BondMove,
-  LoopMove,
-  AtomMove,
-  SGroupDataMove,
-  RxnArrowMove,
-  RxnPlusMove,
-  SimpleObjectMove,
-  EnhancedFlagMove,
-  TextMove,
-  FragmentDeleteStereoAtom,
-  FragmentStereoFlag,
-  FragmentAdd,
-  FragmentDelete
-} from '../operations'
-import Action from '../shared/action'
-
-import { fromAtomsFragmentAttr } from './atom'
+import { Pile, RGroup, Vec2 } from 'ketcher-core'
 import { atomGetNeighbors, getRelSgroupsBySelection } from './utils'
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup'
+
+import Action from '../shared/action'
+import { fromAtomsFragmentAttr } from './atom'
 
 export function fromMultipleMove(restruct, lists, d) {
   d = new Vec2(d)

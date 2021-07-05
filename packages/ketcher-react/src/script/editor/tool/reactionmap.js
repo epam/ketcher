@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { scale } from 'ketcher-core'
 import Action from '../shared/action'
+import { Scale } from 'ketcher-core'
 import draw from '../../render/draw'
-
 import { fromAtomsAttrs } from '../actions/atom'
 
 function ReactionMapTool(editor) {
@@ -70,8 +69,8 @@ ReactionMapTool.prototype.updateLine = function (p1, p2) {
     var rnd = this.editor.render
     this.line = draw.selectionLine(
       rnd.paper,
-      scale.obj2scaled(p1, rnd.options).add(rnd.options.offset),
-      scale.obj2scaled(p2, rnd.options).add(rnd.options.offset),
+      Scale.obj2scaled(p1, rnd.options).add(rnd.options.offset),
+      Scale.obj2scaled(p2, rnd.options).add(rnd.options.offset),
       rnd.options
     )
   }

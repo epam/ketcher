@@ -20,11 +20,11 @@ import {
   Box2Abs,
   ElementColor,
   Elements,
+  Scale,
   StereoFlag,
   StereoLabel,
   Struct,
-  Vec2,
-  scale
+  Vec2
 } from 'ketcher-core'
 import {
   LayerMap,
@@ -88,13 +88,13 @@ class ReAtom extends ReObject {
   makeHighlightPlate(render: Render) {
     const paper = render.paper
     const options = render.options
-    const ps = scale.obj2scaled(this.a.pp, options)
+    const ps = Scale.obj2scaled(this.a.pp, options)
     return paper
       .circle(ps.x, ps.y, options.atomSelectionPlateRadius)
       .attr(options.highlightStyle)
   }
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any) {
-    const ps = scale.obj2scaled(this.a.pp, restruct.render.options)
+    const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
     return paper
       .circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
       .attr(styles.selectionStyle)
@@ -102,7 +102,7 @@ class ReAtom extends ReObject {
   show(restruct: ReStruct, aid: number, options: any): void {
     // eslint-disable-line max-statements
     const render = restruct.render
-    const ps = scale.obj2scaled(this.a.pp, render.options)
+    const ps = Scale.obj2scaled(this.a.pp, render.options)
 
     this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this)
     this.showLabel = isLabelVisible(restruct, render.options, this)
@@ -524,7 +524,7 @@ function getLabelText(atom) {
 }
 
 function showHydroIndex(atom, render, implh, rightMargin): ElemAttr {
-  const ps = scale.obj2scaled(atom.a.pp, render.options)
+  const ps = Scale.obj2scaled(atom.a.pp, render.options)
   const options = render.options
   const delta = 0.5 * options.lineWidth
   const hydroIndex: any = {}
@@ -548,7 +548,7 @@ function showHydroIndex(atom, render, implh, rightMargin): ElemAttr {
 }
 
 function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
-  const ps: Vec2 = scale.obj2scaled(atom.a.pp, render.options)
+  const ps: Vec2 = Scale.obj2scaled(atom.a.pp, render.options)
   const options = render.options
   const paper: any = render.paper
   const radical: any = {}
@@ -592,7 +592,7 @@ function showIsotope(
   render: Render,
   leftMargin: number
 ): ElemAttr {
-  const ps = scale.obj2scaled(atom.a.pp, render.options)
+  const ps = Scale.obj2scaled(atom.a.pp, render.options)
   const options = render.options
   const delta = 0.5 * options.lineWidth
   const isotope: any = {}
@@ -620,7 +620,7 @@ function showCharge(
   render: Render,
   rightMargin: number
 ): ElemAttr {
-  const ps = scale.obj2scaled(atom.a.pp, render.options)
+  const ps = Scale.obj2scaled(atom.a.pp, render.options)
   const options = render.options
   const delta = 0.5 * options.lineWidth
   const charge: any = {}
@@ -670,7 +670,7 @@ function showExplicitValence(
     13: 'XIII',
     14: 'XIV'
   }
-  const ps = scale.obj2scaled(atom.a.pp, render.options)
+  const ps = Scale.obj2scaled(atom.a.pp, render.options)
   const options = render.options
   const delta = 0.5 * options.lineWidth
   const valence: any = {}
@@ -715,7 +715,7 @@ function showHydrogen(
   // eslint-disable-line max-statements
   let hydroIndex: any = data.hydroIndex
   const hydrogenLeft = atom.hydrogenOnTheLeft
-  const ps = scale.obj2scaled(atom.a.pp, render.options)
+  const ps = Scale.obj2scaled(atom.a.pp, render.options)
   const options = render.options
   const delta = 0.5 * options.lineWidth
   const hydrogen = data.hydrogen
@@ -783,7 +783,7 @@ function showWarning(
   leftMargin,
   rightMargin
 ): { rbb: DOMRect; path: any } {
-  const ps = scale.obj2scaled(atom.a.pp, render.options)
+  const ps = Scale.obj2scaled(atom.a.pp, render.options)
   const delta = 0.5 * render.options.lineWidth
   const tfx = util.tfx
   const warning: any = {}
@@ -805,7 +805,7 @@ function showWarning(
 function showAttpnt(atom, render, lsb, addReObjectPath) {
   // eslint-disable-line max-statements
   const asterisk = '∗'
-  const ps = scale.obj2scaled(atom.a.pp, render.options)
+  const ps = Scale.obj2scaled(atom.a.pp, render.options)
   const options = render.options
   const tfx = util.tfx
   let i, j

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromPaste } from '../actions/paste'
 import {
   fromItemsFuse,
-  getItemsToFuse,
-  getHoverToFuse
+  getHoverToFuse,
+  getItemsToFuse
 } from '../actions/closely-fusing'
+
+import { fromPaste } from '../actions/paste'
 
 function PasteTool(editor, struct) {
   if (!(this instanceof PasteTool)) return new PasteTool(editor, struct)

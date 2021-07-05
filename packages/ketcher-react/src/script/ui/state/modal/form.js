@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { getDefaultOptions } from '../../data/schema/options-schema'
 import { initSdata, sdataReducer } from './sdata'
+
+import { getDefaultOptions } from '../../data/schema/options-schema'
 
 export const formsState = {
   // TODO: create from schema.{smth}.defaultValue

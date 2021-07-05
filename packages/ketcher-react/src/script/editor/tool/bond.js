@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 import { Bond, Vec2 } from 'ketcher-core'
-import utils from '../shared/utils'
-
 import {
-  fromBondAddition,
   bondChangingAction,
+  fromBondAddition,
   fromBondsAttrs
 } from '../actions/bond'
+
+import utils from '../shared/utils'
 
 function BondTool(editor, bondProps) {
   if (!(this instanceof BondTool)) {

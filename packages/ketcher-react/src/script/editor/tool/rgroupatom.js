@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom } from 'ketcher-core'
 import { fromAtomAddition, fromAtomsAttrs } from '../actions/atom'
+
+import { Atom } from 'ketcher-core'
 
 function RGroupAtomTool(editor) {
   if (!(this instanceof RGroupAtomTool)) {

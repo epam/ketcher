@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { pick } from 'lodash/fp'
-
 import {
   SERVER_OPTIONS,
   getDefaultOptions,
   validation
 } from '../../data/schema/options-schema'
+
+import { pick } from 'lodash/fp'
 import { storage } from '../../storage-ext'
 
 export const initOptionsState = {

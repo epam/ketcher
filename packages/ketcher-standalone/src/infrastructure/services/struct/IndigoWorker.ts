@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,23 @@
  ***************************************************************************/
 /* eslint-disable no-restricted-globals */
 import {
-  CleanCommandData,
-  ConvertCommandData,
-  LayoutCommandData,
-  Command,
-  OutputMessage,
-  CommandOptions,
   AromatizeCommandData,
-  DearomatizeCommandData,
-  CalculateCipCommandData,
   AutomapCommandData,
-  CheckCommandData,
+  CalculateCipCommandData,
   CalculateCommandData,
-  InputMessage,
+  CheckCommandData,
+  CleanCommandData,
+  Command,
   CommandData,
-  GenerateImageCommandData
+  CommandOptions,
+  ConvertCommandData,
+  DearomatizeCommandData,
+  GenerateImageCommandData,
+  InputMessage,
+  LayoutCommandData,
+  OutputMessage
 } from './indigoWorker.types'
+
 // @ts-ignore
 import indigoModuleFn from '../../../generated/libindigo'
 

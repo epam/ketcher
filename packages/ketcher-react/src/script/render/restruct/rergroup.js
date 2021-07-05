@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import util from '../util'
-import draw from '../draw'
-import { Box2Abs, Vec2, scale } from 'ketcher-core'
 
-import ReObject from './ReObject'
+import { Box2Abs, Scale, Vec2 } from 'ketcher-core'
+
 import { LayerMap } from './GeneralEnumTypes'
+import ReObject from './ReObject'
+import draw from '../draw'
+import util from '../util'
 
 var BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3)
 class ReRGroup extends ReObject {
@@ -72,8 +73,8 @@ class ReRGroup extends ReObject {
     }
 
     const ret = { data: [] }
-    const p0 = scale.obj2scaled(bb.p0, options)
-    const p1 = scale.obj2scaled(bb.p1, options)
+    const p0 = Scale.obj2scaled(bb.p0, options)
+    const p1 = Scale.obj2scaled(bb.p1, options)
     const brackets = render.paper.set()
 
     rGroupdrawBrackets(brackets, render, bb) // eslint-disable-line new-cap
@@ -116,7 +117,7 @@ class ReRGroup extends ReObject {
 
     ret.data.push(label)
     this.labelBox = Box2Abs.fromRelBox(labelSet.getBBox()).transform(
-      scale.scaled2obj,
+      Scale.scaled2obj,
       render.options
     )
     return ret
@@ -128,8 +129,8 @@ class ReRGroup extends ReObject {
 
     if (!bb) return null
 
-    const p0 = scale.obj2scaled(bb.p0, render.options)
-    const p1 = scale.obj2scaled(bb.p1, render.options)
+    const p0 = Scale.obj2scaled(bb.p0, render.options)
+    const p1 = Scale.obj2scaled(bb.p1, render.options)
     return render.paper
       .rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0)
       .attr(attrs)
@@ -175,7 +176,7 @@ class ReRGroup extends ReObject {
 }
 
 function rGroupdrawBrackets(set, render, bb, d) {
-  d = scale.obj2scaled(d || new Vec2(1, 0), render.options)
+  d = Scale.obj2scaled(d || new Vec2(1, 0), render.options)
   var bracketWidth = Math.min(0.25, bb.sz().x * 0.3)
   var bracketHeight = bb.p1.y - bb.p0.y
   var cy = 0.5 * (bb.p1.y + bb.p0.y)
@@ -184,7 +185,7 @@ function rGroupdrawBrackets(set, render, bb, d) {
     render.paper,
     d.negated(),
     d.negated().rotateSC(1, 0),
-    scale.obj2scaled(new Vec2(bb.p0.x, cy), render.options),
+    Scale.obj2scaled(new Vec2(bb.p0.x, cy), render.options),
     bracketWidth,
     bracketHeight,
     render.options
@@ -194,7 +195,7 @@ function rGroupdrawBrackets(set, render, bb, d) {
     render.paper,
     d,
     d.rotateSC(1, 0),
-    scale.obj2scaled(new Vec2(bb.p1.x, cy), render.options),
+    Scale.obj2scaled(new Vec2(bb.p1.x, cy), render.options),
     bracketWidth,
     bracketHeight,
     render.options

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,15 @@
  ***************************************************************************/
 import { Atom, Vec2 } from 'ketcher-core'
 import { AtomAdd, BondAdd } from '../operations'
-import Action from '../shared/action'
-import utils from '../shared/utils'
-import closest from '../shared/closest'
-
-import { atomGetAttr, atomForNewBond } from './utils'
+import { atomForNewBond, atomGetAttr } from './utils'
 import { fromAtomsAttrs, mergeSgroups } from './atom'
 import { fromBondAddition, fromBondsAttrs } from './bond'
+
+import Action from '../shared/action'
+import closest from '../shared/closest'
 import { fromAromaticTemplateOnBond } from './aromatic-fusing'
 import { fromPaste } from './paste'
+import utils from '../shared/utils'
 
 export function fromTemplateOnCanvas(restruct, template, pos, angle) {
   return fromPaste(restruct, template.molecule, pos, angle)

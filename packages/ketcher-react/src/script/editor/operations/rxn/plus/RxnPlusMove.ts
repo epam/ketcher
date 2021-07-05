@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct from '../../../../render/restruct'
-import { scale } from 'ketcher-core'
 import { BaseOperation } from '../../base'
 import { OperationType } from '../../OperationType'
+import Restruct from '../../../../render/restruct'
+import { Scale } from 'ketcher-core'
 
 export class RxnPlusMove extends BaseOperation {
   data: {
@@ -38,7 +38,7 @@ export class RxnPlusMove extends BaseOperation {
     struct.rxnPluses.get(id)!.pp.add_(d) // eslint-disable-line no-underscore-dangle
 
     const rxn = restruct.rxnPluses.get(id)!
-    const scaled = scale.obj2scaled(d, restruct.render.options)
+    const scaled = Scale.obj2scaled(d, restruct.render.options)
     rxn.visel.translate(scaled)
 
     this.data.d = d.negated()

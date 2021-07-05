@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2020 EPAM Systems
+ * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 import {
-  SimpleObjectDelete,
   SimpleObjectAdd,
+  SimpleObjectDelete,
   SimpleObjectResize
 } from '../operations'
+
 import Action from '../shared/action'
 
 export function fromSimpleObjectDeletion(restruct, id) {

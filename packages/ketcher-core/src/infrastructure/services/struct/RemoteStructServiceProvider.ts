@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import { StructService, StructServiceOptions } from './structService.types'
-
 import {
-  StructServiceProvider,
-  ServiceMode
-} from './structServiceProvider.types'
-import RemoteStructService from './RemoteStructService'
+  ServiceMode,
+  StructService,
+  StructServiceOptions,
+  StructServiceProvider
+} from 'domain/services'
 
-class RemoteStructServiceProvider implements StructServiceProvider {
+import { RemoteStructService } from './RemoteStructService'
+
+export class RemoteStructServiceProvider implements StructServiceProvider {
   private readonly apiPath: string
   mode: ServiceMode = 'remote'
 
@@ -42,5 +42,3 @@ class RemoteStructServiceProvider implements StructServiceProvider {
     return new RemoteStructService(this.apiPath, options)
   }
 }
-
-export default RemoteStructServiceProvider

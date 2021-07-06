@@ -22,7 +22,7 @@ import {
   BondAttr,
   BondDelete,
   FragmentAdd,
-  calcImplicitH
+  CalcImplicitH
 } from '../operations'
 import { atomForNewBond, atomGetAttr, atomGetNeighbors } from './utils'
 import {
@@ -94,7 +94,7 @@ export function fromBondAddition(
   const bnd = struct.bonds.get(bid)
 
   if (bnd) {
-    action.addOp(new calcImplicitH([bnd.begin, bnd.end]).perform(restruct))
+    action.addOp(new CalcImplicitH([bnd.begin, bnd.end]).perform(restruct))
     action.mergeWith(fromBondStereoUpdate(restruct, bnd))
   }
 
@@ -125,7 +125,7 @@ export function fromBondsAttrs(
         const bond = struct.bonds.get(bid)
         if (bond) {
           action.addOp(
-            new calcImplicitH([bond.begin, bond.end]).perform(restruct)
+            new CalcImplicitH([bond.begin, bond.end]).perform(restruct)
           )
           action.mergeWith(fromBondStereoUpdate(restruct, bond))
         }

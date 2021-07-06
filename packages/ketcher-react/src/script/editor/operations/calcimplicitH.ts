@@ -18,7 +18,7 @@ import Restruct from '../../render/restruct'
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
 
-export class calcImplicitH extends BaseOperation {
+export class CalcImplicitH extends BaseOperation {
   atomIds: Array<number>
 
   constructor(aids: Array<number>) {
@@ -33,6 +33,6 @@ export class calcImplicitH extends BaseOperation {
   }
 
   invert() {
-    return new calcImplicitH(this.atomIds)
+    return new CalcImplicitH(this.atomIds)
   }
 }

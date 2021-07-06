@@ -19,7 +19,7 @@ import {
   AtomDelete,
   AtomAttr,
   BondDelete,
-  calcImplicitH,
+  CalcImplicitH,
   RxnArrowDelete,
   RxnPlusDelete,
   SimpleObjectDelete,
@@ -71,7 +71,7 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
 
   removeSgroupIfNeeded(action, restruct, atomsToRemove)
   action = action.perform(restruct)
-  action.addOp(new calcImplicitH([bond.begin, bond.end]).perform(restruct))
+  action.addOp(new CalcImplicitH([bond.begin, bond.end]).perform(restruct))
   action.mergeWith(fromBondStereoUpdate(restruct, bond, false))
 
   if (

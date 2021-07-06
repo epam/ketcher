@@ -1,3 +1,5 @@
+import { ButtonsConfig, KetcherBuilder } from './builders'
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +16,6 @@
  * limitations under the License.
  ***************************************************************************/
 import { StructServiceProvider } from 'ketcher-core'
-import { KetcherBuilder, ButtonsConfig } from './builders'
 
 interface Config {
   element: HTMLDivElement | null
@@ -23,7 +24,7 @@ interface Config {
   buttons?: ButtonsConfig
 }
 
-export async function buildKetcherAsync({
+async function buildKetcherAsync({
   element,
   staticResourcesUrl,
   structServiceProvider,

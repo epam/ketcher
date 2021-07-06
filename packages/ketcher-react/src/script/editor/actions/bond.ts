@@ -193,18 +193,25 @@ export function fromBondStereoUpdate(
 ): Action {
   const action = new Action()
   const struct = restruct.molecule
-  const frId =
-    struct.atoms.get(bond.begin)?.fragment ||
-    struct.atoms.get(bond.end)?.fragment
+
+  const beginFrId = struct.atoms.get(bond.begin)?.fragment
+  const endFrId = struct.atoms.get(bond.begin)?.fragment
 
   const fragmentBonds: Array<Bond> = []
 
   struct.bonds.forEach(bond => {
     if (
-      struct.atoms.get(bond.begin)?.fragment === frId ||
-      struct.atoms.get(bond.end)?.fragment === frId
+      struct.atoms.get(bond.begin)?.fragment === beginFrId
     ) {
       bond.stereo > 0 ? fragmentBonds.push(bond) : fragmentBonds.unshift(bond)
+    }
+
+    if (beginFrId !== endFrId) {
+      if (
+        struct.atoms.get(bond.begin)?.fragment === endFrId
+      ) {
+        bond.stereo > 0 ? fragmentBonds.push(bond) : fragmentBonds.unshift(bond)
+      }
     }
   })
 

@@ -33,7 +33,7 @@ export function couldBeSaved(
 
   if (format !== 'graph') {
     if (hasRxnArrow) {
-      const rxnArrowMode: RxnArrowMode | undefined = struct.rxnArrows.get(0)?.mode 
+      const rxnArrowMode: RxnArrowMode | undefined = struct.rxnArrows.get(0)!.mode 
        if (rxnArrowMode !== RxnArrowMode.simple) {
         warnings.push(
           `The ${formatName} format does not support drawn elements: the reaction ${rxnArrowMode} arrow will be replaced with the reaction arrow`

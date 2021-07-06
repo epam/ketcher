@@ -13,20 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-export * from './atom'
-export * from './bond'
-export * from './CanvasLoad'
-export * from './descriptors'
-export * from './EnhancedFlagMove'
-export * from './ifThen'
-export * from './fragment'
-export * from './fragmentStereoAtom'
-export * from './FragmentStereoFlag'
-export * from './calcimplicitH'
-export * from './LoopMove'
-export * from './OperationType'
-export * from './rgroup'
-export * from './rxn'
-export * from './simpleObject'
-export * from './sgroup'
-export * from './Text'
+
+import Restruct from '../../render/restruct'
+import { BaseOperation } from './base'
+import { OperationType } from './OperationType'
+
+export class calcImplicitH extends BaseOperation {
+  atomIds: Array<number>
+
+  constructor(aids: Array<number>) {
+    super(OperationType.CALC_IMPLICIT_H, 3)
+    this.atomIds = aids
+  }
+
+  execute(restruct: Restruct) {
+    const aIds = this.atomIds
+
+    restruct.molecule.setImplicitHydrogen(aIds)
+  }
+
+  invert() {
+    return new calcImplicitH(this.atomIds)
+  }
+}

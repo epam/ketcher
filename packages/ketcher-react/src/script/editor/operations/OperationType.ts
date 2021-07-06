@@ -19,6 +19,7 @@ export const OperationType = Object.freeze({
   ATOM_DELETE: 'Delete atom',
   ATOM_ATTR: 'Set atom attribute',
   ATOM_MOVE: 'Move atom',
+  CALC_IMPLICIT_H: 'Calculate implicit hydrogen',
   BOND_ADD: 'Add bond',
   BOND_DELETE: 'Delete bond',
   BOND_ATTR: 'Set bond attribute',

@@ -856,22 +856,21 @@ export class Struct {
     }
   }
 
-  calcImplicitHydrogen(aid: number): Number {
+  calcImplicitHydrogen(aid: number) {
     const atom = this.atoms.get(aid)!
     const [conn, isAromatic] = this.calcConn(atom)
     let correctConn = conn
     atom.badConn = false
-    let implicitH: Number = 0
 
     if (isAromatic) {
       if (atom.label === 'C' && atom.charge === 0) {
         if (conn === 3) {
-          implicitH = -radicalElectrons(atom.radical)
-          return implicitH
+          atom.implicitH = -radicalElectrons(atom.radical)
+          return
         }
         if (conn === 2) {
-          implicitH = 1 - radicalElectrons(atom.radical)
-          return implicitH
+          atom.implicitH = 1 - radicalElectrons(atom.radical)
+          return
         }
       } else if (
         (atom.label === 'O' && atom.charge === 0) ||
@@ -879,33 +878,33 @@ export class Struct {
         (atom.label === 'N' && atom.charge === 1 && conn === 3) ||
         (atom.label === 'S' && atom.charge === 0 && conn === 3)
       ) {
-        return implicitH
+        atom.implicitH = 0
+        return
       } else if (!atom.hasImplicitH) {
         correctConn++
       }
     }
 
     if (correctConn < 0 || atom.isQuery()) {
-      return implicitH
+      atom.implicitH = 0
+      return
     }
 
     if (atom.explicitValence >= 0) {
       const elem = Elements.get(atom.label)
-      implicitH = !!elem
+      atom.implicitH = !!elem
         ? atom.explicitValence - atom.calcValenceMinusHyd(correctConn)
         : 0
-      if (implicitH < 0) {
-        implicitH = 0
+      if (atom.implicitH < 0) {
+        atom.implicitH = 0
         atom.badConn = true
       }
     } else {
-      implicitH = atom.calcValence(correctConn)
-      return implicitH
+      atom.calcValence(correctConn)
     }
-    return implicitH
   }
 
-  setImplicitHydrogen(list) {
+  setImplicitHydrogen(list: Array<number>) {
     this.sgroups.forEach(item => {
       if (item.data.fieldName === 'MRV_IMPLICIT_H')
         this.atoms.get(item.atoms[0])!.hasImplicitH = true
@@ -917,7 +916,9 @@ export class Struct {
       })
     } else {
       list.forEach(aid => {
-        this.calcImplicitHydrogen(aid)
+        if (this.atoms.get(aid)) {
+          this.calcImplicitHydrogen(aid)
+        }
       })
     }
   }

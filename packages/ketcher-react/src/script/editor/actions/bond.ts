@@ -21,7 +21,8 @@ import {
   BondAdd,
   BondAttr,
   BondDelete,
-  FragmentAdd
+  FragmentAdd,
+  calcImplicitH
 } from '../operations'
 import { atomForNewBond, atomGetAttr, atomGetNeighbors } from './utils'
 import {
@@ -93,7 +94,7 @@ export function fromBondAddition(
   const bnd = struct.bonds.get(bid)
 
   if (bnd) {
-    action.mergeWith(setImplicitHydrogen(restruct, bnd.begin, bnd.end))
+    action.addOp(new calcImplicitH([bnd.begin, bnd.end]).perform(restruct))
     action.mergeWith(fromBondStereoUpdate(restruct, bnd))
   }
 
@@ -123,7 +124,9 @@ export function fromBondsAttrs(
       if (key === 'stereo' && key in attrs) {
         const bond = struct.bonds.get(bid)
         if (bond) {
-          action.mergeWith(setImplicitHydrogen(restruct, bond.begin, bond.end))
+          action.addOp(
+            new calcImplicitH([bond.begin, bond.end]).perform(restruct)
+          )
           action.mergeWith(fromBondStereoUpdate(restruct, bond))
         }
       }
@@ -174,32 +177,6 @@ function fromBondFlipping(restruct: ReStruct, id: number): Action {
 
   // todo: swap atoms stereoLabels and stereoAtoms in fragment
   action.perform(restruct)
-
-  return action
-}
-
-export function setImplicitHydrogen(
-  restruct: ReStruct,
-  bondBegin: number,
-  bondEnd: number
-) {
-  const action = new Action()
-
-  const struct = restruct.molecule
-
-  if (struct.atoms.get(bondBegin)) {
-    const implicitH = struct.calcImplicitHydrogen(bondBegin)
-    action.addOp(
-      new AtomAttr(bondBegin, 'implicitH', implicitH).perform(restruct)
-    )
-  }
-
-  if (struct.atoms.get(bondEnd)) {
-    const implicitH = struct.calcImplicitHydrogen(bondEnd)
-    action.addOp(
-      new AtomAttr(bondEnd, 'implicitH', implicitH).perform(restruct)
-    )
-  }
 
   return action
 }

@@ -144,19 +144,14 @@ class SaveDialog extends Component {
       'can lose some properties or the whole structure after saving in this format.'
     const saveWarning = structFormat.couldBeSaved(struct, format)
     const isStructInvalid = this.showStructWarningMessage(format)
+
     if (isStructInvalid) {
       warnings.push(structWarning)
     }
     if (saveWarning) {
       warnings.push(saveWarning)
     }
-    if (struct.rxnArrows.size > 1 && format !== 'graph') {
-      warnings.push(
-        `The ${
-          getPropertiesByFormat(format).name
-        } format does not support drawn elements: reaction arrows will be lost.`
-      )
-    }
+
     if (moleculeErrors) {
       warnings.push(...Object.values(moleculeErrors))
     }

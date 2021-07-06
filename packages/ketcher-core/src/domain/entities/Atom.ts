@@ -288,11 +288,9 @@ export class Atom {
 
     var groupno = element.group
     var rad = radicalElectrons(this.radical)
-
     var valence = conn
     var hyd = 0
     var absCharge = Math.abs(charge)
-
     if (groupno === 1) {
       if (
         label === 'H' ||

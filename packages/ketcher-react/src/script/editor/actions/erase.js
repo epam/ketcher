@@ -17,12 +17,15 @@
 import { Atom, Bond, RGroup } from 'ketcher-core'
 import {
   AtomDelete,
+  AtomAttr,
   BondDelete,
+  CalcImplicitH,
   RxnArrowDelete,
   RxnPlusDelete,
   SimpleObjectDelete,
   TextDelete
 } from '../operations'
+import { fromBondStereoUpdate } from '../actions/bond'
 import { atomGetDegree, atomGetNeighbors } from './utils'
 import {
   fromSgroupDeletion,
@@ -68,6 +71,8 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
 
   removeSgroupIfNeeded(action, restruct, atomsToRemove)
   action = action.perform(restruct)
+  action.addOp(new CalcImplicitH([bond.begin, bond.end]).perform(restruct))
+  action.mergeWith(fromBondStereoUpdate(restruct, bond, false))
 
   if (
     bond.stereo &&
@@ -82,6 +87,7 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
       })
     )
   }
+  action.operations.reverse()
 
   return action
 }

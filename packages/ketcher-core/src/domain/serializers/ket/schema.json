@@ -452,8 +452,7 @@
               "enum": ["Fragment", "Multifragment", "Bond", "Atom", "Group"]
             },
             "fieldName": {
-              "type": "string",
-              "minLength": 1
+              "type": "string"
             },
             "fieldValue": {
               "type": "string",

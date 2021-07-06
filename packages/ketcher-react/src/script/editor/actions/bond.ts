@@ -176,9 +176,8 @@ function fromBondFlipping(restruct: ReStruct, id: number): Action {
   }
 
   // todo: swap atoms stereoLabels and stereoAtoms in fragment
-  action.perform(restruct)
 
-  return action
+  return action.perform(restruct)
 }
 
 type Neighbor = {
@@ -200,16 +199,12 @@ export function fromBondStereoUpdate(
   const fragmentBonds: Array<Bond> = []
 
   struct.bonds.forEach(bond => {
-    if (
-      struct.atoms.get(bond.begin)?.fragment === beginFrId
-    ) {
+    if (struct.atoms.get(bond.begin)?.fragment === beginFrId) {
       bond.stereo > 0 ? fragmentBonds.push(bond) : fragmentBonds.unshift(bond)
     }
 
     if (beginFrId !== endFrId) {
-      if (
-        struct.atoms.get(bond.begin)?.fragment === endFrId
-      ) {
+      if (struct.atoms.get(bond.begin)?.fragment === endFrId) {
         bond.stereo > 0 ? fragmentBonds.push(bond) : fragmentBonds.unshift(bond)
       }
     }

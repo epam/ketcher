@@ -272,27 +272,24 @@ export class Atom {
     )
   }
 
-  calcValence(conn: number): Number {
+  calcValence(conn: number): boolean {
     const label = this.label
     const charge = this.charge
-
-    let implicitH: Number = 0
-
     if (this.isQuery()) {
-      return implicitH
+      this.implicitH = 0
+      return true
     }
     const element = Elements.get(label)
     if (!element) {
-      return implicitH
+      this.implicitH = 0
+      return true
     }
 
     var groupno = element.group
     var rad = radicalElectrons(this.radical)
-
     var valence = conn
     var hyd = 0
     var absCharge = Math.abs(charge)
-
     if (groupno === 1) {
       if (
         label === 'H' ||
@@ -491,14 +488,14 @@ export class Atom {
     }
 
     this.valence = valence
-    implicitH = hyd
-    if (implicitH < 0) {
+    this.implicitH = hyd
+    if (this.implicitH < 0) {
       this.valence = conn
-      implicitH = 0
+      this.implicitH = 0
       this.badConn = true
-      return implicitH
+      return false
     }
-    return implicitH
+    return true
   }
 
   calcValenceMinusHyd(conn: number): number {

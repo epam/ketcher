@@ -19,12 +19,13 @@ import {
   AtomDelete,
   AtomAttr,
   BondDelete,
+  calcImplicitH,
   RxnArrowDelete,
   RxnPlusDelete,
   SimpleObjectDelete,
   TextDelete
 } from '../operations'
-import { fromBondStereoUpdate, setImplicitHydrogen } from '../actions/bond'
+import { fromBondStereoUpdate } from '../actions/bond'
 import { atomGetDegree, atomGetNeighbors } from './utils'
 import {
   fromSgroupDeletion,
@@ -55,14 +56,6 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
     if (removeAtomFromSgroupIfNeeded(action, restruct, bond.begin))
       atomsToRemove.push(bond.begin)
 
-    action.addOp(
-      new AtomAttr(
-        bond.begin,
-        'implicitH',
-        restruct.molecule.atoms.get(bond.begin).implicitH
-      )
-    )
-
     action.addOp(new AtomDelete(bond.begin))
   }
 
@@ -73,20 +66,12 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
     if (removeAtomFromSgroupIfNeeded(action, restruct, bond.end))
       atomsToRemove.push(bond.end)
 
-    action.addOp(
-      new AtomAttr(
-        bond.end,
-        'implicitH',
-        restruct.molecule.atoms.get(bond.end).implicitH
-      )
-    )
-
     action.addOp(new AtomDelete(bond.end))
   }
 
   removeSgroupIfNeeded(action, restruct, atomsToRemove)
   action = action.perform(restruct)
-  action.mergeWith(setImplicitHydrogen(restruct, bond.begin, bond.end))
+  action.addOp(new calcImplicitH([bond.begin, bond.end]).perform(restruct))
   action.mergeWith(fromBondStereoUpdate(restruct, bond, false))
 
   if (

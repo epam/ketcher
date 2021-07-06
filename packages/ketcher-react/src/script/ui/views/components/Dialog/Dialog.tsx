@@ -58,7 +58,7 @@ const Dialog: FC<Props> = props => {
 
   const exit = mode => {
     ;(dialogRef.current
-      ?.closest('.smallEditor')
+      ?.closest('.editor')
       ?.getElementsByClassName('cliparea')[0] as any).focus()
     const key = mode === 'OK' ? 'onOk' : 'onCancel'
     if (params && key in params && (key !== 'onOk' || valid()))

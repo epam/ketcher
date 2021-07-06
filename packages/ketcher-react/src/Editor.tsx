@@ -22,7 +22,7 @@ import 'whatwg-fetch'
 import './index.less'
 import { useResizeObserver } from './hooks'
 import init, { Config } from './script'
-import classes from './Editor.module.less'
+import './Editor.module.less'
 
 const mediaSizes = {
   smallWidth: 1040,
@@ -47,8 +47,8 @@ function Editor(props: EditorProps) {
   return (
     <div
       ref={rootElRef}
-      className={clsx(classes.root, {
-        smallEditor:
+      className={clsx('editor', {
+        small:
           (height && height <= mediaSizes.smallHeight) ||
           (width && width <= mediaSizes.smallWidth)
       })}

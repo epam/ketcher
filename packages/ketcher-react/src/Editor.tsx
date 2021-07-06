@@ -14,25 +14,31 @@
  * limitations under the License.
  ***************************************************************************/
 import 'element-closest-polyfill'
-import clsx from 'clsx'
-import React, { useEffect, useRef } from 'react'
 import 'regenerator-runtime/runtime'
 import 'url-search-params-polyfill'
 import 'whatwg-fetch'
 import './index.less'
-import { useResizeObserver } from './hooks'
-import init, { Config } from './script'
 import './Editor.module.less'
+
+import React, { useEffect, useRef } from 'react'
+import init, { Config } from './script'
+
+import { Ketcher } from './script/ketcher'
+import clsx from 'clsx'
+import { useResizeObserver } from './hooks'
 
 const mediaSizes = {
   smallWidth: 1040,
   smallHeight: 600
 }
 
-interface EditorProps extends Omit<Config, 'element'> {}
+interface EditorProps extends Omit<Config, 'element'> {
+  onInit?: (ketcher: Ketcher) => void
+}
 
 function Editor(props: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
+  const { onInit } = props
   const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: rootElRef
   })
@@ -40,6 +46,10 @@ function Editor(props: EditorProps) {
     init({
       ...props,
       element: rootElRef.current
+    }).then((ketcher: Ketcher) => {
+      if (typeof onInit === 'function') {
+        onInit(ketcher)
+      }
     })
     // TODO: provide the list of dependencies after implementing unsubscribe function
   }, [])

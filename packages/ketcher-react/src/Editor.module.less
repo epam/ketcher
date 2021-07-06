@@ -14,7 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-.root {
+@import 'style/variables';
+@import 'style/mixins';
+// stylelint-disable-next-line selector-pseudo-class-no-unknown
+:global(.editor) {
   height: 100%;
   width: 100%;
+}
+// stylelint-disable-next-line selector-pseudo-class-no-unknown
+:global(.small) {
+  .set-size(small);
+
+  body,
+  select,
+  div[role='dialog'],
+  form {
+    font-size: @base-size;
+  }
 }

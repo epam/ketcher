@@ -46,7 +46,7 @@ Smiles.prototype.isBondInRing = function (bid) {
   return this.inLoop[bid]
 }
 
-Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
+Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
   // eslint-disable-line max-statements
   var i, j, k
 
@@ -55,15 +55,22 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
   // [RB]: KETCHER-498 (Incorrect smile-string for multiple Sgroup)
   // TODO the fix is temporary, still need to implement error handling/reporting
   // BEGIN
-  molecule = molecule.clone()
-  molecule.initHalfBonds()
-  molecule.initNeighbors()
-  molecule.sortNeighbors()
-  molecule.setImplicitHydrogen()
-  molecule.sgroups.forEach(sg => {
+  struct = struct.clone(
+    undefined,
+    undefined,
+    !struct.hasRxnArrow(), // make it drop multiple reactions
+    undefined,
+    undefined,
+    undefined
+  )
+  struct.initHalfBonds()
+  struct.initNeighbors()
+  struct.sortNeighbors()
+  struct.setImplicitHydrogen()
+  struct.sgroups.forEach(sg => {
     if (sg.type === 'MUL') {
       try {
-        SGroup.prepareMulForSaving(sg, molecule)
+        SGroup.prepareMulForSaving(sg, struct)
       } catch (ex) {
         throw Error('Bad s-group (' + ex.message + ')')
       }
@@ -72,9 +79,9 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
   })
   // END
 
-  this.atoms = new Array(molecule.atoms.size)
+  this.atoms = new Array(struct.atoms.size)
 
-  molecule.atoms.forEach((atom, aid) => {
+  struct.atoms.forEach((atom, aid) => {
     this.atoms[aid] = new Smiles._Atom(atom.implicitH) // eslint-disable-line no-underscore-dangle
   })
 
@@ -84,13 +91,13 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
   var allowedLowercase = ['B', 'C', 'N', 'O', 'P', 'S', 'Se', 'As']
 
   // Detect atoms that have aromatic bonds and count neighbours
-  molecule.bonds.forEach((bond, bid) => {
+  struct.bonds.forEach((bond, bid) => {
     if (bond.type === Bond.PATTERN.TYPE.AROMATIC) {
       this.atoms[bond.begin].aromatic = true
-      if (allowedLowercase.indexOf(molecule.atoms.get(bond.begin).label) !== -1)
+      if (allowedLowercase.indexOf(struct.atoms.get(bond.begin).label) !== -1)
         this.atoms[bond.begin].lowercase = true
       this.atoms[bond.end].aromatic = true
-      if (allowedLowercase.indexOf(molecule.atoms.get(bond.end).label) !== -1)
+      if (allowedLowercase.indexOf(struct.atoms.get(bond.end).label) !== -1)
         this.atoms[bond.end].lowercase = true
     }
     this.atoms[bond.begin].neighbours.push({ aid: bond.end, bid })
@@ -98,11 +105,11 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
   })
 
   this.inLoop = (function () {
-    molecule.prepareLoopStructure()
+    struct.prepareLoopStructure()
     let bondsInLoops = new Pile()
-    molecule.loops.forEach(loop => {
+    struct.loops.forEach(loop => {
       if (loop.hbs.length <= 6) {
-        const hbids = loop.hbs.map(hbid => molecule.halfBonds.get(hbid).bid)
+        const hbids = loop.hbs.map(hbid => struct.halfBonds.get(hbid).bid)
         bondsInLoops = bondsInLoops.union(new Pile(hbids))
       }
     })
@@ -114,13 +121,13 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
   })()
 
   this.touchedCistransbonds = 0
-  this.markCisTrans(molecule)
+  this.markCisTrans(struct)
 
-  var components = molecule.getComponents()
+  var components = struct.getComponents()
   var componentsAll = components.reactants.concat(components.products)
 
   var walk = new Dfs(
-    molecule,
+    struct,
     this.atoms,
     componentsAll,
     components.reactants.length
@@ -168,7 +175,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
   try {
     // detect chiral configurations
     var stereocenters = new Stereocenters(
-      molecule,
+      struct,
       function (idx) {
         return this.atoms[idx].neighbours
       },
@@ -299,12 +306,12 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
           throw new Error('unexpected branch')
       }
 
-      var bond = molecule.bonds.get(eIdx)
+      var bond = struct.bonds.get(eIdx)
 
       var dir = 0
 
       if (bond.type == Bond.PATTERN.TYPE.SINGLE)
-        dir = this.calcBondDirection(molecule, eIdx, vPrevIdx)
+        dir = this.calcBondDirection(struct, eIdx, vPrevIdx)
 
       if ((dir == 1 && vIdx == bond.end) || (dir == 2 && vIdx == bond.begin))
         this.smiles += '/'
@@ -365,7 +372,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
     }
     if (writeAtom) {
       this.writeAtom(
-        molecule,
+        struct,
         vIdx,
         this.atoms[vIdx].aromatic,
         this.atoms[vIdx].lowercase,
@@ -378,7 +385,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
   this.comma = false
 
   // this._writeStereogroups(mol, atoms);
-  this.writeRadicals(molecule)
+  this.writeRadicals(struct)
   // this._writePseudoAtoms(mol);
   // this._writeHighlighting();
 

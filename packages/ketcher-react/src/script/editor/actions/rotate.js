@@ -6,6 +6,8 @@ import {
   RxnPlusMove,
   SGroupDataMove
 } from '../operations'
+
+import { Fragment } from 'ketcher-core'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -158,11 +160,22 @@ export function fromRotate(restruct, selection, center, angle) {
     })
   }
 
-  if (selection.enhancedFlags) {
-    selection.enhancedFlags.forEach(fid => {
-      const flag = restruct.enhancedFlags.get(fid)
+  const stereoFlags =
+    selection.enhancedFlags || Array.from(restruct.enhancedFlags.keys())
+  if (stereoFlags) {
+    stereoFlags.forEach(flagId => {
+      const frId = flagId
+      const frag = restruct.molecule.frags.get(frId)
       action.addOp(
-        new EnhancedFlagMove(fid, rotateDelta(flag.pp, center, angle))
+        new EnhancedFlagMove(
+          flagId,
+          rotateDelta(
+            frag.stereoFlagPosition ||
+              Fragment.getDefaultStereoFlagPosition(restruct.molecule, frId),
+            center,
+            angle
+          )
+        )
       )
     })
   }

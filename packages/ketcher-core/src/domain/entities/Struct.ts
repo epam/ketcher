@@ -904,7 +904,7 @@ export class Struct {
     }
   }
 
-  setImplicitHydrogen(list: Array<number>) {
+  setImplicitHydrogen(list?: Array<number>) {
     this.sgroups.forEach(item => {
       if (item.data.fieldName === 'MRV_IMPLICIT_H')
         this.atoms.get(item.atoms[0])!.hasImplicitH = true

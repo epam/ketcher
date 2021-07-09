@@ -70,6 +70,9 @@ export function load(struct, options) {
           })
         }
 
+        struct.findConnectedComponents()
+        struct.setImplicitHydrogen([...struct.atoms.keys()])
+
         if (struct.isBlank()) {
           return
         }

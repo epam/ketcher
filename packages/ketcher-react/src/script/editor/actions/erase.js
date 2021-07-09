@@ -74,19 +74,6 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
   action.addOp(new CalcImplicitH([bond.begin, bond.end]).perform(restruct))
   action.mergeWith(fromBondStereoUpdate(restruct, bond, false))
 
-  if (
-    bond.stereo &&
-    !Array.from(restruct.molecule.bonds.values())
-      .filter(bond => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE)
-      .some(curr => curr.begin === bond.begin)
-  ) {
-    action.mergeWith(
-      fromStereoAtomAttrs(restruct, bond.begin, {
-        stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
-        stereoLabel: null
-      })
-    )
-  }
   action.operations.reverse()
 
   return action

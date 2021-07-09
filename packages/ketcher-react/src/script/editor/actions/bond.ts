@@ -95,7 +95,7 @@ export function fromBondAddition(
 
   if (bnd) {
     action.addOp(new CalcImplicitH([bnd.begin, bnd.end]).perform(restruct))
-    action.mergeWith(fromBondStereoUpdate(restruct, bnd))
+    action.mergeWith(fromBondStereoUpdate(restruct, bnd, bid))
   }
 
   action.operations.reverse()
@@ -128,7 +128,7 @@ export function fromBondsAttrs(
           action.addOp(
             new CalcImplicitH([bond.begin, bond.end]).perform(restruct)
           )
-          action.mergeWith(fromBondStereoUpdate(restruct, bond))
+          action.mergeWith(fromBondStereoUpdate(restruct, bond, bid))
         }
       }
     })
@@ -189,6 +189,7 @@ type Neighbor = {
 export function fromBondStereoUpdate(
   restruct: ReStruct,
   bond: Bond,
+  bid: number,
   withReverse?: boolean
 ): Action {
   const action = new Action()
@@ -197,39 +198,27 @@ export function fromBondStereoUpdate(
   const beginFrId = struct.atoms.get(bond.begin)?.fragment
   const endFrId = struct.atoms.get(bond.end)?.fragment
 
-  const fragmentBonds: Array<Bond> = []
+  const fragmentStereoBonds: Array<Bond> = []
 
   const stereoAtomsMap = new Map()
 
   struct.bonds.forEach(bond => {
-    if (struct.atoms.get(bond.begin)?.fragment === beginFrId) {
-      fragmentBonds.push(bond)
-    }
+    if (bond.stereo > 0) {
+      if (struct.atoms.get(bond.begin)?.fragment === beginFrId) {
+        fragmentStereoBonds.push(bond)
+      }
 
-    if (beginFrId !== endFrId) {
-      if (struct.atoms.get(bond.begin)?.fragment === endFrId) {
-        fragmentBonds.push(bond)
+      if (beginFrId !== endFrId) {
+        if (struct.atoms.get(bond.begin)?.fragment === endFrId) {
+          fragmentStereoBonds.push(bond)
+        }
       }
     }
   })
 
-  // make stereoLabel null for all atoms in fragment
-  fragmentBonds.forEach((bond: Bond | undefined) => {
-    if (bond) {
-      stereoAtomsMap.set(bond.begin, {
-        stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
-        stereoLabel: null
-      })
+  const correctAtomIds: Array<number> = []
 
-      stereoAtomsMap.set(bond.end, {
-        stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
-        stereoLabel: null
-      })
-    }
-  })
-
-  // change stereoLabel to abs for all atoms with correct stereoCenter
-  fragmentBonds.forEach((bond: Bond | undefined) => {
+  fragmentStereoBonds.forEach((bond: Bond | undefined) => {
     if (bond) {
       const beginNeighs: Array<Neighbor> = atomGetNeighbors(
         restruct,
@@ -238,16 +227,48 @@ export function fromBondStereoUpdate(
       const endNeighs: Array<Neighbor> = atomGetNeighbors(restruct, bond.end)
 
       if (isCorrectStereoCenter(bond, beginNeighs, endNeighs, restruct)) {
-        stereoAtomsMap.set(bond.begin, {
-          stereoParity: getStereoParity(bond.stereo),
-          stereoLabel: `${StereoLabel.Abs}`
-        })
+        const stereoLabel = struct.atoms.get(bond.begin)?.stereoLabel
+        if (
+          stereoLabel == null ||
+          stereoAtomsMap.get(bond.begin)?.stereoLabel == null
+        ) {
+          stereoAtomsMap.set(bond.begin, {
+            stereoParity: getStereoParity(bond.stereo),
+            stereoLabel: stereoLabel || `${StereoLabel.Abs}`
+          })
+        }
+        correctAtomIds.push(bond.begin)
+      } else {
+        if (!correctAtomIds.includes(bond.begin)) {
+          stereoAtomsMap.set(bond.begin, {
+            stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
+            stereoLabel: null
+          })
+        }
       }
     }
   })
 
+  if (bond.stereo > 0) {
+    if (!correctAtomIds.includes(bond.end)) {
+      // in case the stereo band is flipped 
+      stereoAtomsMap.set(bond.end, {
+        stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
+        stereoLabel: null
+      })
+
+      // in case the stereo band is removed 
+      if (!struct.bonds.get(bid)) {
+        stereoAtomsMap.set(bond.begin, {
+          stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
+          stereoLabel: null
+        })
+      }
+    }
+  }
+
   stereoAtomsMap.forEach((stereoProp, aId) => {
-    if (struct.atoms.get(aId)!.stereoLabel !== stereoProp.stereoLabel) {
+    if (struct.atoms.get(aId)?.stereoLabel !== stereoProp.stereoLabel) {
       action.mergeWith(
         fromStereoAtomAttrs(restruct, aId, stereoProp, withReverse)
       )

@@ -95,7 +95,7 @@ export function fromBondAddition(
 
   if (bnd) {
     action.addOp(new CalcImplicitH([bnd.begin, bnd.end]).perform(restruct))
-    action.mergeWith(fromBondStereoUpdate(restruct, bnd, bid))
+    action.mergeWith(fromBondStereoUpdate(restruct, bnd))
   }
 
   action.operations.reverse()
@@ -128,7 +128,7 @@ export function fromBondsAttrs(
           action.addOp(
             new CalcImplicitH([bond.begin, bond.end]).perform(restruct)
           )
-          action.mergeWith(fromBondStereoUpdate(restruct, bond, bid))
+          action.mergeWith(fromBondStereoUpdate(restruct, bond))
         }
       }
     })
@@ -189,7 +189,6 @@ type Neighbor = {
 export function fromBondStereoUpdate(
   restruct: ReStruct,
   bond: Bond,
-  bid: number,
   withReverse?: boolean
 ): Action {
   const action = new Action()
@@ -249,22 +248,18 @@ export function fromBondStereoUpdate(
     }
   })
 
-  if (bond.stereo > 0) {
-    if (!correctAtomIds.includes(bond.end)) {
-      // in case the stereo band is flipped 
-      stereoAtomsMap.set(bond.end, {
-        stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
-        stereoLabel: null
-      })
-
-      // in case the stereo band is removed 
-      if (!struct.bonds.get(bid)) {
-        stereoAtomsMap.set(bond.begin, {
-          stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
-          stereoLabel: null
-        })
-      }
-    }
+  // in case the stereo band is flipped, changed or removed
+  if (!correctAtomIds.includes(bond.begin)) {
+    stereoAtomsMap.set(bond.begin, {
+      stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
+      stereoLabel: null
+    })
+  }
+  if (!correctAtomIds.includes(bond.end)) {
+    stereoAtomsMap.set(bond.end, {
+      stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
+      stereoLabel: null
+    })
   }
 
   stereoAtomsMap.forEach((stereoProp, aId) => {

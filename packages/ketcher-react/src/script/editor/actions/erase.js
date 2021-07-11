@@ -72,7 +72,7 @@ function fromBondDeletion(restruct, bid, skipAtoms = []) {
   removeSgroupIfNeeded(action, restruct, atomsToRemove)
   action = action.perform(restruct)
   action.addOp(new CalcImplicitH([bond.begin, bond.end]).perform(restruct))
-  action.mergeWith(fromBondStereoUpdate(restruct, bond, bid, false))
+  action.mergeWith(fromBondStereoUpdate(restruct, bond, false))
 
   action.operations.reverse()
 

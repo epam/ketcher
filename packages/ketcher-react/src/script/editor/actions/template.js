@@ -33,7 +33,7 @@ export function fromTemplateOnCanvas(restruct, template, pos, angle) {
     angle
   )
 
-  action.addOp(new CalcImplicitH(pasteItems.atoms)).perform(restruct)
+  action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct))
 
   return [action, pasteItems]
 }
@@ -145,7 +145,7 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
   action.operations.reverse()
 
   const templateBonds = Array.from(tmpl.bonds.values())
-  action.addOp(new CalcImplicitH(pasteItems.atoms)).perform(restruct)
+  action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct))
   action.mergeWith(fromBondStereoUpdate(restruct, templateBonds[0]))
 
   return [action, pasteItems]
@@ -257,7 +257,11 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
   action.operations.reverse()
 
   const templateBonds = Array.from(tmpl.bonds.values())
-  action.addOp(new CalcImplicitH(pasteItems.atoms)).perform(restruct)
+  action.addOp(
+    new CalcImplicitH([bond.begin, bond.end, ...pasteItems.atoms]).perform(
+      restruct
+    )
+  )
   action.mergeWith(fromBondStereoUpdate(restruct, templateBonds[0]))
 
   return [action, pasteItems]

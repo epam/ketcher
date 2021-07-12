@@ -48,7 +48,7 @@ export function fromAtomAddition(restruct, pos, atom) {
   atom.fragment = action.addOp(new FragmentAdd().perform(restruct)).frid
 
   const aid = action.addOp(new AtomAdd(atom, pos).perform(restruct)).data.aid
-  action.addOp(new CalcImplicitH([aid])).perform(restruct)
+  action.addOp(new CalcImplicitH([aid]).perform(restruct))
 
   return action
 }

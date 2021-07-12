@@ -207,10 +207,11 @@ export function fromBondStereoUpdate(
         fragmentStereoBonds.push(bond)
       }
 
-      if (beginFrId !== endFrId) {
-        if (struct.atoms.get(bond.begin)?.fragment === endFrId) {
-          fragmentStereoBonds.push(bond)
-        }
+      if (
+        beginFrId !== endFrId &&
+        struct.atoms.get(bond.begin)?.fragment === endFrId
+      ) {
+        fragmentStereoBonds.push(bond)
       }
     }
   })
@@ -249,6 +250,7 @@ export function fromBondStereoUpdate(
   })
 
   // in case the stereo band is flipped, changed or removed
+  // TODO the duplication of the code below should be fixed, mayby by function
   if (!correctAtomIds.includes(bond.begin)) {
     stereoAtomsMap.set(bond.begin, {
       stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
@@ -273,6 +275,7 @@ export function fromBondStereoUpdate(
   return action
 }
 
+// TODO the function for calculating the stereocenter should be for the atom, not for bond
 function isCorrectStereoCenter(
   bond: Bond,
   beginNeighs: Array<Neighbor>,

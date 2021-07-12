@@ -70,6 +70,9 @@ export function load(struct, options) {
           })
         }
 
+        struct.findConnectedComponents()
+        struct.setImplicitHydrogen()
+
         if (struct.isBlank()) {
           return
         }

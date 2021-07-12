@@ -75,6 +75,7 @@ export interface AtomParams {
   label: string
   fragment?: number
   pp?: Vec2
+  implicitH: number
 }
 
 export class Atom {
@@ -160,7 +161,7 @@ export class Atom {
     )
 
     this.valence = 0
-    this.implicitH = 0 // implicitH is not an attribute
+    this.implicitH = params.implicitH || 0 // implicitH is not an attribute
     this.pp = params.pp ? new Vec2(params.pp) : new Vec2()
 
     // sgs should only be set when an atom is added to an s-group by an appropriate method,

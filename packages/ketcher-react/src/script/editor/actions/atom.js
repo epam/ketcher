@@ -69,7 +69,9 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
       if (!(key in attrs) && !reset) return
 
       const value = key in attrs ? attrs[key] : Atom.attrGetDefault(key)
-      action.addOp(new AtomAttr(aid, key, value))
+      if (key !== 'stereoLabel' && key !== 'stereoParity') {
+        action.addOp(new AtomAttr(aid, key, value).perform(restruct))
+      }
     })
 
     if (
@@ -79,10 +81,18 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
       attrs.label !== 'L#' &&
       !attrs['atomList']
     )
-      action.addOp(new AtomAttr(aid, 'atomList', null))
+      action.addOp(new AtomAttr(aid, 'atomList', null).perform(restruct))
+
+    action.addOp(new CalcImplicitH([aid]).perform(restruct))
+
+    const atomNeighbors = atomGetNeighbors(restruct, aid)
+    const bond = restruct.molecule.bonds.get(atomNeighbors[0]?.bid)
+    if (bond) {
+      action.mergeWith(fromBondStereoUpdate(restruct, bond))
+    }
   })
 
-  return action.perform(restruct)
+  return action
 }
 
 export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse) {

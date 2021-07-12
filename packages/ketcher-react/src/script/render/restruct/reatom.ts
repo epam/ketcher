@@ -264,13 +264,14 @@ class ReAtom extends ReObject {
     // we render them together to avoid possible collisions
 
     const fragmentId = Number(restruct.atoms.get(aid)?.a.fragment)
-    const fragment = restruct.molecule.frags.get(fragmentId)!
+    //TODO: fragment should not be null
+    const fragment = restruct.molecule.frags.get(fragmentId)
 
     const text =
       (shouldDisplayStereoLabel(
         stereoLabel,
         options.stereoLabelStyle,
-        fragment.enhancedStereoFlag
+        fragment?.enhancedStereoFlag
       )
         ? `${stereoLabel}\n`
         : '') +

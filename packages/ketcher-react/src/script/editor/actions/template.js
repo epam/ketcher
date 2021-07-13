@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 import { Atom, Vec2 } from 'ketcher-core'
-import { AtomAdd, BondAdd } from '../operations'
+import { AtomAdd, BondAdd, CalcImplicitH } from '../operations'
 import { atomForNewBond, atomGetAttr } from './utils'
 import { fromAtomsAttrs, mergeSgroups } from './atom'
-import { fromBondAddition, fromBondsAttrs } from './bond'
+import { fromBondAddition, fromBondsAttrs, fromBondStereoUpdate } from './bond'
 
 import Action from '../shared/action'
 import closest from '../shared/closest'
@@ -26,7 +26,16 @@ import { fromPaste } from './paste'
 import utils from '../shared/utils'
 
 export function fromTemplateOnCanvas(restruct, template, pos, angle) {
-  return fromPaste(restruct, template.molecule, pos, angle)
+  const [action, pasteItems] = fromPaste(
+    restruct,
+    template.molecule,
+    pos,
+    angle
+  )
+
+  action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct))
+
+  return [action, pasteItems]
 }
 
 function extraBondAction(restruct, aid, angle) {
@@ -134,6 +143,15 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
   })
 
   action.operations.reverse()
+
+  action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct))
+  action.mergeWith(
+    fromBondStereoUpdate(
+      restruct,
+      restruct.molecule.bonds.get(pasteItems.bonds[0])
+    )
+  )
+
   return [action, pasteItems]
 }
 
@@ -239,6 +257,20 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
       action.mergeWith(fromBondsAttrs(restruct, existId, tmplBond, true))
     }
   })
+
   action.operations.reverse()
+
+  action.addOp(
+    new CalcImplicitH([bond.begin, bond.end, ...pasteItems.atoms]).perform(
+      restruct
+    )
+  )
+  action.mergeWith(
+    fromBondStereoUpdate(
+      restruct,
+      restruct.molecule.bonds.get(pasteItems.bonds[0])
+    )
+  )
+
   return [action, pasteItems]
 }

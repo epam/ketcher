@@ -26,7 +26,8 @@ import {
   FragmentAddStereoAtom,
   FragmentDelete,
   FragmentDeleteStereoAtom,
-  SGroupAtomAdd
+  SGroupAtomAdd,
+  CalcImplicitH
 } from '../operations'
 import {
   atomGetAttr,
@@ -36,6 +37,7 @@ import {
 } from './utils'
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup'
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup'
+import { fromBondStereoUpdate } from './bond'
 
 import Action from '../shared/action'
 import { without } from 'lodash/fp'
@@ -44,7 +46,10 @@ export function fromAtomAddition(restruct, pos, atom) {
   atom = Object.assign({}, atom)
   const action = new Action()
   atom.fragment = action.addOp(new FragmentAdd().perform(restruct)).frid
-  action.addOp(new AtomAdd(atom, pos).perform(restruct))
+
+  const aid = action.addOp(new AtomAdd(atom, pos).perform(restruct)).data.aid
+  action.addOp(new CalcImplicitH([aid]).perform(restruct))
+
   return action
 }
 
@@ -64,7 +69,20 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
       if (!(key in attrs) && !reset) return
 
       const value = key in attrs ? attrs[key] : Atom.attrGetDefault(key)
-      action.addOp(new AtomAttr(aid, key, value))
+
+      switch (key) {
+        case 'stereoLabel':
+          if ('stereoLabel' in attrs)
+            action.addOp(new AtomAttr(aid, key, value).perform(restruct))
+          break
+        case 'stereoParity':
+          if ('stereoParity' in attrs)
+            action.addOp(new AtomAttr(aid, key, value).perform(restruct))
+          break
+        default:
+          action.addOp(new AtomAttr(aid, key, value).perform(restruct))
+          break
+      }
     })
 
     if (
@@ -74,10 +92,18 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
       attrs.label !== 'L#' &&
       !attrs['atomList']
     )
-      action.addOp(new AtomAttr(aid, 'atomList', null))
+      action.addOp(new AtomAttr(aid, 'atomList', null).perform(restruct))
+
+    action.addOp(new CalcImplicitH([aid]).perform(restruct))
+
+    const atomNeighbors = atomGetNeighbors(restruct, aid)
+    const bond = restruct.molecule.bonds.get(atomNeighbors[0]?.bid)
+    if (bond) {
+      action.mergeWith(fromBondStereoUpdate(restruct, bond))
+    }
   })
 
-  return action.perform(restruct)
+  return action
 }
 
 export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse) {
@@ -139,7 +165,8 @@ export function fromAtomMerge(restruct, srcId, dstId) {
 
   const action = new Action()
 
-  atomGetNeighbors(restruct, srcId).forEach(nei => {
+  const atomNeighbors = atomGetNeighbors(restruct, srcId)
+  atomNeighbors.forEach(nei => {
     const bond = restruct.molecule.bonds.get(nei.bid)
 
     if (dstId === bond.begin || dstId === bond.end) {
@@ -180,8 +207,13 @@ export function fromAtomMerge(restruct, srcId, dstId) {
   if (sgChanged) removeSgroupIfNeeded(action, restruct, [srcId])
 
   action.addOp(new AtomDelete(srcId))
+  action.addOp(new CalcImplicitH([dstId]))
+  const bond = restruct.molecule.bonds.get(atomNeighbors[0].bid)
 
-  return action.perform(restruct).mergeWith(fragAction)
+  return action
+    .perform(restruct)
+    .mergeWith(fragAction)
+    .mergeWith(fromBondStereoUpdate(restruct, bond))
 }
 
 export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {

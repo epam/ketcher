@@ -69,8 +69,19 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
       if (!(key in attrs) && !reset) return
 
       const value = key in attrs ? attrs[key] : Atom.attrGetDefault(key)
-      if (key !== 'stereoLabel' && key !== 'stereoParity') {
-        action.addOp(new AtomAttr(aid, key, value).perform(restruct))
+
+      switch (key) {
+        case 'stereoLabel':
+          if ('stereoLabel' in attrs)
+            action.addOp(new AtomAttr(aid, key, value).perform(restruct))
+          break
+        case 'stereoParity':
+          if ('stereoParity' in attrs)
+            action.addOp(new AtomAttr(aid, key, value).perform(restruct))
+          break
+        default:
+          action.addOp(new AtomAttr(aid, key, value).perform(restruct))
+          break
       }
     })
 

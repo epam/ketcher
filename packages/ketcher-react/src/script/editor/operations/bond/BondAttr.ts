@@ -28,7 +28,7 @@ export class BondAttr extends BaseOperation {
   data2: Data | null
 
   constructor(bondId?: any, attribute?: any, value?: any) {
-    super(OperationType.BOND_ATTR)
+    super(OperationType.BOND_ATTR, 4)
     this.data = { bid: bondId, attribute, value }
     this.data2 = null
   }

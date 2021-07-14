@@ -63,7 +63,7 @@ const Dialog: FC<Props> = props => {
           ?.closest('.editor')
           ?.getElementsByClassName('cliparea')[0] as any).focus()
     }
-  }, [] )
+  }, [])
 
   const exit = mode => {
     const key = mode === 'OK' ? 'onOk' : 'onCancel'

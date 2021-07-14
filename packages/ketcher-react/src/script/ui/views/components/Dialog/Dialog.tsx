@@ -43,8 +43,6 @@ interface DialogCallProps {
 
 type Props = DialogProps & DialogCallProps
 
-
-
 const Dialog: FC<Props> = props => {
   const {
     children,

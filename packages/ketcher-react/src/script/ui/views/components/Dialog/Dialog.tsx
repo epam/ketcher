@@ -16,7 +16,7 @@
 
 import * as KN from 'w3c-keyname'
 
-import React, { FC, useRef } from 'react'
+import React, {FC, useEffect, useRef} from 'react'
 
 import clsx from 'clsx'
 import styles from './Dialog.module.less'
@@ -43,6 +43,8 @@ interface DialogCallProps {
 
 type Props = DialogProps & DialogCallProps
 
+
+
 const Dialog: FC<Props> = props => {
   const {
     children,
@@ -56,10 +58,16 @@ const Dialog: FC<Props> = props => {
   } = props
   const dialogRef = useRef<HTMLDivElement>(null)
 
+  useEffect(() => {
+    (dialogRef.current as any).focus()
+    return () => {
+      (dialogRef.current
+          ?.closest('.editor')
+          ?.getElementsByClassName('cliparea')[0] as any).focus()
+    }
+  }, [] )
+
   const exit = mode => {
-    ;(dialogRef.current
-      ?.closest('.editor')
-      ?.getElementsByClassName('cliparea')[0] as any).focus()
     const key = mode === 'OK' ? 'onOk' : 'onCancel'
     if (params && key in params && (key !== 'onOk' || valid()))
       params[key](result())

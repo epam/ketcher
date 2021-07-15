@@ -26,7 +26,7 @@ export class BondMove extends BaseOperation {
   }
 
   constructor(bondId?: any, d?: any) {
-    super(OperationType.BOND_MOVE)
+    super(OperationType.BOND_MOVE, 2)
     this.data = { bid: bondId, d }
   }
 

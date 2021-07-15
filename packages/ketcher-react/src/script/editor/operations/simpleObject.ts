@@ -228,7 +228,8 @@ export class SimpleObjectResize extends Base {
       const previousPos1 = anchor.get_xy0()
       anchor.x = current.x
       anchor.y = current.y
-      this.data.current = previousPos1
+      this.data.current.x = previousPos1.x
+      this.data.current.y = previousPos1.y
     } else if (item.mode === SimpleObjectMode.rectangle && anchor) {
       handleRectangleChangeWithAnchor(item, anchor, current)
     } else item.pos[1].add_(d)

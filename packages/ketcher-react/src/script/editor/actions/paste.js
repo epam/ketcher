@@ -67,6 +67,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   })
 
   pstruct.frags.forEach((frag, frid) => {
+    if (!frag) return
     frag.stereoAtoms.forEach(aid =>
       action.addOp(
         new FragmentAddStereoAtom(fridMap.get(frid), aidMap.get(aid)).perform(

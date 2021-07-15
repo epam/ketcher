@@ -27,19 +27,20 @@ export class AtomMove extends BaseOperation {
   }
 
   constructor(atomId?: any, d?: any, noinvalidate?: any) {
-    super(OperationType.ATOM_MOVE)
+    super(OperationType.ATOM_MOVE, 2)
     this.data = { aid: atomId, d, noinvalidate }
   }
 
   execute(restruct: Restruct) {
     const struct = restruct.molecule
     const { aid, d } = this.data
-
-    struct.atoms.get(aid)!.pp.add_(d) // eslint-disable-line no-underscore-dangle
-    const atom = restruct.atoms.get(aid)
-    if (atom) {
+    const atom = struct.atoms.get(aid)
+    if (!atom) return
+    atom!.pp.add_(d) // eslint-disable-line no-underscore-dangle
+    const reatom = restruct.atoms.get(aid)
+    if (reatom) {
       const scaled = Scale.obj2scaled(d, restruct.render.options)
-      atom.visel.translate(scaled)
+      reatom.visel.translate(scaled)
     }
 
     this.data.d = d.negated()

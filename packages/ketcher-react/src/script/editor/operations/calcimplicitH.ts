@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct from '../../render/restruct'
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
+import Restruct from '../../render/restruct'
 
 export class CalcImplicitH extends BaseOperation {
   atomIds: Array<number>
 
   constructor(aids: Array<number>) {
-    super(OperationType.CALC_IMPLICIT_H, 3)
+    super(OperationType.CALC_IMPLICIT_H, 5)
     this.atomIds = aids
   }
 

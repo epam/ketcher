@@ -1,8 +1,8 @@
 import {
   FormatterFactory,
-  identifyStructFormat,
   Pile,
-  SGroup
+  SGroup,
+  identifyStructFormat
 } from 'ketcher-core'
 
 export function onAction(action) {
@@ -38,7 +38,9 @@ function parseStruct(struct, server, options) {
     const factory = new FormatterFactory(server)
 
     const service = factory.create(format, formatterOptions)
-    return service.getStructureFromStringAsync(struct)
+    return service
+      .getStructureFromStringAsync(struct)
+      .catch(error => console.log(error))
   } else {
     return Promise.resolve(struct)
   }

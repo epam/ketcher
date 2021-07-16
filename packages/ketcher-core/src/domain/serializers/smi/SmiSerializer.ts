@@ -1,6 +1,3 @@
-import { Serializer } from '../serializers.types'
-import { SmiSerializerOptions } from './smi.types'
-import { Smiles } from './Smiles'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,6 +13,10 @@ import { Smiles } from './Smiles'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { Serializer } from '../serializers.types'
+import { SmiSerializerOptions } from './smi.types'
+import { Smiles } from './Smiles'
 import { Struct } from 'domain/entities'
 
 export class SmiSerializer implements Serializer<Struct> {

@@ -1,5 +1,3 @@
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,8 +13,10 @@ import { OperationType } from '../OperationType'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Restruct from '../../../render/restruct'
 
+import { BaseOperation } from '../base'
+import { OperationType } from '../OperationType'
+import Restruct from '../../../render/restruct'
 type Data = {
   bid: any
   attribute: any

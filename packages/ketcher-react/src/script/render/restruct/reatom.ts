@@ -289,9 +289,9 @@ class ReAtom extends ReObject {
         //of just created text
         //text -> tspan
         const color = getStereoAtomColor(render.options, stereoLabel)
-        aamPath.node.children[0].setAttribute('fill', color)
+        aamPath.node.childNodes[0].setAttribute('fill', color)
         const opacity = getStereoAtomOpacity(stereoLabel)
-        aamPath.node.children[0].setAttribute('opacity', opacity)
+        aamPath.node.childNodes[0].setAttribute('opacity', opacity)
       }
       const aamBox = util.relBox(aamPath.getBBox())
       draw.recenterText(aamPath, aamBox)

@@ -1,3 +1,5 @@
+import { BaseOperation } from '../base'
+import { OperationType } from '../OperationType'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,8 +16,6 @@
  * limitations under the License.
  ***************************************************************************/
 import Restruct from '../../../render/restruct'
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
 
 type Data = {
   bid: any
@@ -34,6 +34,7 @@ export class BondAttr extends BaseOperation {
   }
 
   execute(restruct: Restruct) {
+    if (!this.data) return
     const { attribute, bid, value } = this.data
     const bond = restruct.molecule.bonds.get(bid)
     if (!bond) return

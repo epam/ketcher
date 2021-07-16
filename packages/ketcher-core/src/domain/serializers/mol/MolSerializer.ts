@@ -1,6 +1,3 @@
-import { MolSerializerOptions } from './mol.types'
-import { Molfile } from './Molfile'
-import { Serializer } from '../serializers.types'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,6 +13,10 @@ import { Serializer } from '../serializers.types'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { MolSerializerOptions } from './mol.types'
+import { Molfile } from './Molfile'
+import { Serializer } from '../serializers.types'
 import { Struct } from 'domain/entities'
 
 export class MolSerializer implements Serializer<Struct> {

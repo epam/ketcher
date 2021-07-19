@@ -928,48 +928,6 @@ export class Struct {
     }
   }
 
-  isCorrectStereoCenter(
-    bond: Bond,
-    beginNeighs: Array<Neighbor> | undefined,
-    endNeighs: Array<Neighbor> | undefined
-  ): boolean {
-    const beginAtom = this.atoms.get(bond.begin)
-
-    let EndAtomNeigh: number | undefined = NaN
-
-    if (endNeighs?.length === 2) {
-      EndAtomNeigh =
-        endNeighs[0].aid === bond.begin ? endNeighs[1].aid : endNeighs[0].aid
-    }
-
-    if (bond.stereo > 0) {
-      if (
-        endNeighs?.length === 1 &&
-        beginNeighs?.length === 2 &&
-        Number(beginAtom?.implicitH) % 2 === 0
-      ) {
-        return false
-      }
-
-      if (
-        endNeighs?.length === 2 &&
-        beginNeighs?.length === 2 &&
-        Number(beginAtom?.implicitH) % 2 === 0 &&
-        this.atomGetNeighbors(EndAtomNeigh)?.length === 1
-      ) {
-        return false
-      }
-
-      if (beginNeighs?.length === 1) {
-        return false
-      }
-
-      return true
-    } else {
-      return false
-    }
-  }
-
   atomGetNeighbors(aid: number): Array<Neighbor> | undefined {
     return this.atoms.get(aid)?.neighbors.map(nei => {
       const hb = this.halfBonds.get(nei)!

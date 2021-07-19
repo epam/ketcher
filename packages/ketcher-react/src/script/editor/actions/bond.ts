@@ -14,7 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, StereoLabel, Vec2, Neighbor } from 'ketcher-core'
+import {
+  Atom,
+  Bond,
+  StereoLabel,
+  Vec2,
+  Neighbor,
+  ValidateStereo
+} from 'ketcher-core'
 import {
   AtomAdd,
   AtomAttr,
@@ -222,7 +229,14 @@ export function fromBondStereoUpdate(
         bond.end
       )
 
-      if (struct.isCorrectStereoCenter(bond, beginNeighs, endNeighs)) {
+      if (
+        ValidateStereo.isCorrectStereoCenter(
+          bond,
+          beginNeighs,
+          endNeighs,
+          struct
+        )
+      ) {
         const stereoLabel = struct.atoms.get(bond.begin)?.stereoLabel
         if (
           stereoLabel == null ||

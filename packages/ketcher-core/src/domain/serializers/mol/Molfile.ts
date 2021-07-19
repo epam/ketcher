@@ -19,6 +19,8 @@ import { Elements } from 'domain/constants'
 import common from './common'
 import utils from './utils'
 
+import { ValidateStereo } from 'domain/helpers/utils/ValidateStereo'
+
 const END_V2000 = '2D 1   1.00000     0.00000     0'
 
 type Mapping = {
@@ -58,7 +60,14 @@ export class Molfile {
       const beginNeighs = ret.atomGetNeighbors(bond.begin)
       const endNeighs = ret.atomGetNeighbors(bond.end)
       if (bond.stereo) {
-        if (!ret.isCorrectStereoCenter(bond, beginNeighs, endNeighs)) {
+        if (
+          !ValidateStereo.isCorrectStereoCenter(
+            bond,
+            beginNeighs,
+            endNeighs,
+            ret
+          )
+        ) {
           ret.atoms.get(bond.begin).stereoLabel = null
         }
       }

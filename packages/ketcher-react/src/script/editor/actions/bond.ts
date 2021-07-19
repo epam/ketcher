@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, StereoLabel, Vec2 } from 'ketcher-core'
+import { Atom, Bond, StereoLabel, Vec2, Neighbor } from 'ketcher-core'
 import {
   AtomAdd,
   AtomAttr,
@@ -24,7 +24,7 @@ import {
   FragmentAdd,
   CalcImplicitH
 } from '../operations'
-import { atomForNewBond, atomGetAttr, atomGetNeighbors } from './utils'
+import { atomForNewBond, atomGetAttr } from './utils'
 import {
   fromAtomMerge,
   fromStereoAtomAttrs,
@@ -181,11 +181,6 @@ function fromBondFlipping(restruct: ReStruct, id: number): Action {
   return action.perform(restruct)
 }
 
-type Neighbor = {
-  aid: Number
-  bid: Number
-}
-
 export function fromBondStereoUpdate(
   restruct: ReStruct,
   bond: Bond,
@@ -220,13 +215,14 @@ export function fromBondStereoUpdate(
 
   fragmentStereoBonds.forEach((bond: Bond | undefined) => {
     if (bond) {
-      const beginNeighs: Array<Neighbor> = atomGetNeighbors(
-        restruct,
+      const beginNeighs: Array<Neighbor> | undefined = struct.atomGetNeighbors(
         bond.begin
       )
-      const endNeighs: Array<Neighbor> = atomGetNeighbors(restruct, bond.end)
+      const endNeighs: Array<Neighbor> | undefined = struct.atomGetNeighbors(
+        bond.end
+      )
 
-      if (isCorrectStereoCenter(bond, beginNeighs, endNeighs, restruct)) {
+      if (struct.isCorrectStereoCenter(bond, beginNeighs, endNeighs)) {
         const stereoLabel = struct.atoms.get(bond.begin)?.stereoLabel
         if (
           stereoLabel == null ||
@@ -273,53 +269,6 @@ export function fromBondStereoUpdate(
   })
 
   return action
-}
-
-// TODO the function for calculating the stereocenter should be for the atom, not for bond
-function isCorrectStereoCenter(
-  bond: Bond,
-  beginNeighs: Array<Neighbor>,
-  endNeighs: Array<Neighbor>,
-  restruct: ReStruct
-) {
-  const struct = restruct.molecule
-  const beginAtom = struct.atoms.get(bond.begin)
-
-  let EndAtomNeigh: Number = NaN
-
-  if (endNeighs.length === 2) {
-    EndAtomNeigh =
-      endNeighs[0].aid === bond.begin ? endNeighs[1].aid : endNeighs[0].aid
-  }
-
-  if (bond.stereo > 0) {
-    if (
-      endNeighs.length === 1 &&
-      beginNeighs.length === 2 &&
-      Number(beginAtom?.implicitH) % 2 === 0
-    ) {
-      return false
-    }
-
-    if (bond.stereo > 0) {
-      if (
-        endNeighs.length === 2 &&
-        beginNeighs.length === 2 &&
-        Number(beginAtom?.implicitH) % 2 === 0 &&
-        atomGetNeighbors(restruct, EndAtomNeigh).length === 1
-      ) {
-        return false
-      }
-    }
-
-    if (beginNeighs.length === 1) {
-      return false
-    }
-
-    return true
-  } else {
-    return false
-  }
 }
 
 function getStereoParity(stereo: Number): number | null {

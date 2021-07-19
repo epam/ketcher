@@ -52,7 +52,20 @@ export class Molfile {
     }
     ret.initHalfBonds()
     ret.initNeighbors()
+    ret.setImplicitHydrogen()
+
+    ret.bonds.forEach(bond => {
+      const beginNeighs = ret.atomGetNeighbors(bond.begin)
+      const endNeighs = ret.atomGetNeighbors(bond.end)
+      if (bond.stereo) {
+        if (!ret.isCorrectStereoCenter(bond, beginNeighs, endNeighs)) {
+          ret.atoms.get(bond.begin).stereoLabel = null
+        }
+      }
+    })
+
     ret.markFragments()
+
     return ret
   }
 

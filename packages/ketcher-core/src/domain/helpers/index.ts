@@ -1,2 +1,2 @@
 export * from './Scale'
-export * from './utils/ValidateStereo'
+export * from './utils/StereoValidator'

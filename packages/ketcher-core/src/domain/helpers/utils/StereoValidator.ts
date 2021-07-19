@@ -44,6 +44,6 @@ function isCorrectStereoCenter(
   }
 }
 
-export const ValidateStereo = {
+export const StereoValidator = {
   isCorrectStereoCenter
 }

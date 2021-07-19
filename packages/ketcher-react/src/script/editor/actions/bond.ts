@@ -20,7 +20,7 @@ import {
   StereoLabel,
   Vec2,
   Neighbor,
-  ValidateStereo
+  StereoValidator
 } from 'ketcher-core'
 import {
   AtomAdd,
@@ -230,7 +230,7 @@ export function fromBondStereoUpdate(
       )
 
       if (
-        ValidateStereo.isCorrectStereoCenter(
+        StereoValidator.isCorrectStereoCenter(
           bond,
           beginNeighs,
           endNeighs,

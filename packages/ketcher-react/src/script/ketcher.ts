@@ -14,17 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 import {
-  Struct,
-  SupportedFormat,
   FormatterFactory,
-  StructService,
   GenerateImageOptions,
+  MolSerializer,
   MolfileFormat,
-  MolSerializer
+  Struct,
+  StructService,
+  SupportedFormat
 } from 'ketcher-core'
-import { isEqual } from 'lodash/fp'
+
 import Editor from './editor'
 import Render from './render'
+import { isEqual } from 'lodash/fp'
 
 interface UI {
   load: (structStr: string | null, options?: any) => undefined
@@ -167,11 +168,16 @@ class Ketcher {
         options.outputFormat = 'png' // if option wasn't pass
     }
 
-    return this.server
-      .generateImageAsBase64(data, options)
-      .then(base64 =>
-        fetch(`data:${meta};base64,${base64}`).then(response => response.blob())
-      )
+    return this.server.generateImageAsBase64(data, options).then(base64 => {
+      const byteCharacters = atob(base64)
+      const byteNumbers = new Array(byteCharacters.length)
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i)
+      }
+      const byteArray = new Uint8Array(byteNumbers)
+      const blob = new Blob([byteArray], { type: meta })
+      return Promise.resolve(blob)
+    })
   }
 }
 

@@ -26,16 +26,6 @@ export function atomGetDegree(restruct, aid) {
   return restruct.atoms.get(aid).a.neighbors.length
 }
 
-export function atomGetNeighbors(restruct, aid) {
-  return restruct.atoms.get(aid)?.a.neighbors.map(nei => {
-    const hb = restruct.molecule.halfBonds.get(nei)
-    return {
-      aid: hb.end,
-      bid: hb.bid
-    }
-  })
-}
-
 export function atomGetSGroups(restruct, aid) {
   return Array.from(restruct.atoms.get(aid).a.sgs)
 }
@@ -71,7 +61,7 @@ export function atomForNewBond(restruct, id) {
   const neighbours = []
   const pos = atomGetPos(restruct, id)
 
-  atomGetNeighbors(restruct, id).forEach(nei => {
+  restruct.molecule.atomGetNeighbors(id).forEach(nei => {
     const neiPos = atomGetPos(restruct, nei.aid)
 
     if (Vec2.dist(pos, neiPos) < 0.1) return
@@ -112,14 +102,14 @@ export function atomForNewBond(restruct, id) {
       maxAngle = -((4 * Math.PI) / 3)
 
       // zig-zag
-      const nei = atomGetNeighbors(restruct, id)[0]
+      const nei = restruct.molecule.atomGetNeighbors(id)[0]
       if (atomGetDegree(restruct, nei.aid) > 1) {
         const neiNeighbours = []
         const neiPos = atomGetPos(restruct, nei.aid)
         const neiV = Vec2.diff(pos, neiPos)
         const neiAngle = Math.atan2(neiV.y, neiV.x)
 
-        atomGetNeighbors(restruct, nei.aid).forEach(neiNei => {
+        restruct.molecule.atomGetNeighbors(nei.aid).forEach(neiNei => {
           const neiNeiPos = atomGetPos(restruct, neiNei.aid)
 
           if (neiNei.bid === nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1)

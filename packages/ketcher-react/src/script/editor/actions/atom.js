@@ -29,12 +29,7 @@ import {
   SGroupAtomAdd,
   CalcImplicitH
 } from '../operations'
-import {
-  atomGetAttr,
-  atomGetDegree,
-  atomGetNeighbors,
-  atomGetSGroups
-} from './utils'
+import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils'
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup'
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup'
 import { fromBondStereoUpdate } from './bond'
@@ -72,11 +67,11 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
 
       switch (key) {
         case 'stereoLabel':
-          if ('stereoLabel' in attrs)
+          if (key in attrs && value)
             action.addOp(new AtomAttr(aid, key, value).perform(restruct))
           break
         case 'stereoParity':
-          if ('stereoParity' in attrs)
+          if (key in attrs && value)
             action.addOp(new AtomAttr(aid, key, value).perform(restruct))
           break
         default:
@@ -96,7 +91,7 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
 
     action.addOp(new CalcImplicitH([aid]).perform(restruct))
 
-    const atomNeighbors = atomGetNeighbors(restruct, aid)
+    const atomNeighbors = restruct.molecule.atomGetNeighbors(aid)
     const bond = restruct.molecule.bonds.get(atomNeighbors[0]?.bid)
     if (bond) {
       action.mergeWith(fromBondStereoUpdate(restruct, bond))
@@ -165,7 +160,7 @@ export function fromAtomMerge(restruct, srcId, dstId) {
 
   const action = new Action()
 
-  const atomNeighbors = atomGetNeighbors(restruct, srcId)
+  const atomNeighbors = restruct.molecule.atomGetNeighbors(srcId)
   atomNeighbors.forEach(nei => {
     const bond = restruct.molecule.bonds.get(nei.bid)
 

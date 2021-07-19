@@ -26,7 +26,7 @@ import {
   TextDelete
 } from '../operations'
 import { fromBondStereoUpdate } from '../actions/bond'
-import { atomGetDegree, atomGetNeighbors } from './utils'
+import { atomGetDegree } from './utils'
 import {
   fromSgroupDeletion,
   removeAtomFromSgroupIfNeeded,
@@ -116,7 +116,7 @@ export function fromFragmentDeletion(restruct, selection) {
   })
 
   selection.atoms.forEach(aid => {
-    atomGetNeighbors(restruct, aid).forEach(nei => {
+    restruct.molecule.atomGetNeighbors(aid).forEach(nei => {
       if (selection.bonds.indexOf(nei.bid) === -1) {
         selection.bonds = selection.bonds.concat([nei.bid])
       }

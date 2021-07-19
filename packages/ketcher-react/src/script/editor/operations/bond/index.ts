@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
- import Restruct, { ReBond } from '../../../render/restruct'
+import Restruct, { ReBond } from '../../../render/restruct'
 
- import { BaseOperation } from '../base'
+import { BaseOperation } from '../base'
 import { Bond } from 'ketcher-core'
 import { OperationType } from '../OperationType'
 

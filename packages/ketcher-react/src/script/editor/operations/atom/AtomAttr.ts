@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
- import { BaseOperation } from '../base'
- import { OperationType } from '../OperationType'
+import { BaseOperation } from '../base'
+import { OperationType } from '../OperationType'
 import Restruct from '../../../render/restruct'
 
 type Data = {

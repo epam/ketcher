@@ -22,7 +22,7 @@ export class CalcImplicitH extends BaseOperation {
   atomIds: Array<number>
 
   constructor(aids: Array<number>) {
-    super(OperationType.CALC_IMPLICIT_H, 5)
+    super(OperationType.CALC_IMPLICIT_H, 10)
     this.atomIds = aids
   }
 

@@ -29,7 +29,7 @@ import {
  * limitations under the License.
  ***************************************************************************/
 import { Pile, RGroup, Vec2 } from 'ketcher-core'
-import { atomGetNeighbors, getRelSgroupsBySelection } from './utils'
+import { getRelSgroupsBySelection } from './utils'
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup'
 
 import Action from '../shared/action'
@@ -158,7 +158,7 @@ function processAtom(restruct, aid, frid, newfrid) {
   while (queue.length > 0) {
     const id = queue.shift()
 
-    atomGetNeighbors(restruct, id).forEach(nei => {
+    restruct.molecule.atomGetNeighbors(id).forEach(nei => {
       if (
         restruct.molecule.atoms.get(nei.aid).fragment === frid &&
         !usedIds.has(nei.aid)

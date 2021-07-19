@@ -33,6 +33,11 @@ import { SimpleObject } from './SimpleObject'
 import { Text } from './Text'
 import { Vec2 } from './Vec2'
 
+export type Neighbor = {
+  aid: number
+  bid: number
+}
+
 function arrayAddIfMissing(array, item) {
   for (var i = 0; i < array.length; ++i) {
     if (array[i] === item) return false
@@ -921,6 +926,16 @@ export class Struct {
         }
       })
     }
+  }
+
+  atomGetNeighbors(aid: number): Array<Neighbor> | undefined {
+    return this.atoms.get(aid)?.neighbors.map(nei => {
+      const hb = this.halfBonds.get(nei)!
+      return {
+        aid: hb.end,
+        bid: hb.bid
+      }
+    })
   }
 
   getComponents() {

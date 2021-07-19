@@ -173,7 +173,7 @@ class ReSimpleObject extends ReObject {
         break
       }
       case SimpleObjectMode.line: {
-        this.item.pos.forEach(i => refPoints.push(i))
+        this.item.pos.forEach(i => refPoints.push(new Vec2(i.x, i.y, 0)))
         break
       }
 

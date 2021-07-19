@@ -28,8 +28,8 @@ import {
   BondAdd,
   BondAttr,
   BondDelete,
-  FragmentAdd,
-  CalcImplicitH
+  CalcImplicitH,
+  FragmentAdd
 } from '../operations'
 import { atomForNewBond, atomGetAttr } from './utils'
 import {
@@ -178,9 +178,7 @@ function fromBondFlipping(restruct: ReStruct, id: number): Action {
 
   // TODO: find better way to avoid problem with bond.begin = 0
   if (Number.isInteger(bond?.end) && Number.isInteger(bond?.begin)) {
-    ;(action.addOp(
-      new BondAdd(bond?.end, bond?.begin, bond)
-    ) as BondAdd).data.bid = id
+    action.addOp(new BondAdd(bond?.end, bond?.begin, bond))
   }
 
   // todo: swap atoms stereoLabels and stereoAtoms in fragment

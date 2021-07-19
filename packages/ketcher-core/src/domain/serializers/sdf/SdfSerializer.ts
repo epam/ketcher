@@ -1,6 +1,3 @@
-import { SdfItem, StructAssociatedData } from './sdf.types'
-
-import { MolSerializer } from '../mol/MolSerializer'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,6 +13,10 @@ import { MolSerializer } from '../mol/MolSerializer'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { SdfItem, StructAssociatedData } from './sdf.types'
+
+import { MolSerializer } from '../mol/MolSerializer'
 import { Serializer } from '../serializers.types'
 
 const DelimeterRegex = /^[^]+?\$\$\$\$$/gm

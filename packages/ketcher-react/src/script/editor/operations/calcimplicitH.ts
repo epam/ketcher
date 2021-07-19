@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct from '../../render/restruct'
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
+import Restruct from '../../render/restruct'
 
 export class CalcImplicitH extends BaseOperation {
   atomIds: Array<number>

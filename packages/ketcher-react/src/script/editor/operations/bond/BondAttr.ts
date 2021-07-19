@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Restruct from '../../../render/restruct'
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-
+import Restruct from '../../../render/restruct'
 type Data = {
   bid: any
   attribute: any
@@ -34,6 +34,7 @@ export class BondAttr extends BaseOperation {
   }
 
   execute(restruct: Restruct) {
+    if (!this.data) return
     const { attribute, bid, value } = this.data
     const bond = restruct.molecule.bonds.get(bid)
     if (!bond) return

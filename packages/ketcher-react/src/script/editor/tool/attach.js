@@ -19,7 +19,10 @@ import { Elements } from 'ketcher-core'
 function AttachTool(editor, attachPoints) {
   if (!(this instanceof AttachTool)) return new AttachTool(editor, attachPoints)
 
-  this.attach = attachPoints || { atomid: 0, bondid: 0 }
+  this.attach = {
+    atomid: attachPoints.atomid || 0,
+    bondid: attachPoints.bondid || 0
+  }
   this.editor = editor
 
   this.editor.selection({

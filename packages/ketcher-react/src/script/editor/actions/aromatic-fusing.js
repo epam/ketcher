@@ -46,7 +46,7 @@ export function fromAromaticTemplateOnBond(
 
   let action = new Action()
 
-  if (!canBeAromatized(beforeMerge.frag) || !canBeAromatized(tmpl)) {
+  if (true) {
     action = simpleFusing(restruct, template, bid)
     return Promise.resolve(action)
   }

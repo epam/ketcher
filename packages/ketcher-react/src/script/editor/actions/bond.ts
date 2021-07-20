@@ -17,10 +17,10 @@
 import {
   Atom,
   Bond,
-  StereoLabel,
-  Vec2,
   Neighbor,
-  StereoValidator
+  StereoLabel,
+  StereoValidator,
+  Vec2
 } from 'ketcher-core'
 import {
   AtomAdd,
@@ -306,7 +306,7 @@ export function bondChangingAction(
   bondProps: any
 ): Action {
   const action = new Action()
-  let newItemId
+  let newItemId = itemID
   if (
     ((bondProps.stereo !== Bond.PATTERN.STEREO.NONE && //
       bondProps.type === Bond.PATTERN.TYPE.SINGLE) ||

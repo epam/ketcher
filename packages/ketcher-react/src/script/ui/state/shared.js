@@ -40,7 +40,7 @@ function parseStruct(struct, server, options) {
     const service = factory.create(format, formatterOptions)
     return service
       .getStructureFromStringAsync(struct)
-      .catch(error => console.log(error))
+      .catch(error => {throw error})
   } else {
     return Promise.resolve(struct)
   }
@@ -88,6 +88,6 @@ export function load(struct, options) {
         //TODO: add error handler call
         alert(err)
       }
-    )
+    ).catch(alert)
   }
 }

@@ -2,8 +2,7 @@ import {
   FormatterFactory,
   Pile,
   SGroup,
-  identifyStructFormat,
-  StereoValidator
+  identifyStructFormat
 } from 'ketcher-core'
 
 import { getStereoAtomsMap } from '../../editor/actions/bond'
@@ -85,6 +84,8 @@ export function load(struct, options) {
           const atom = struct.atoms.get(aId)
           atom.stereoLabel = stereoProp.stereoLabel
         })
+
+        struct.markFragments()
 
         if (struct.isBlank()) {
           return

@@ -53,8 +53,6 @@ export class Molfile {
     ret.initHalfBonds()
     ret.initNeighbors()
 
-    ret.markFragments()
-
     return ret
   }
 

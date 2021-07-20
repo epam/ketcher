@@ -20,7 +20,8 @@ import {
   Neighbor,
   StereoLabel,
   StereoValidator,
-  Vec2
+  Vec2,
+  Struct
 } from 'ketcher-core'
 import {
   AtomAdd,
@@ -199,26 +200,41 @@ export function fromBondStereoUpdate(
 
   const fragmentStereoBonds: Array<Bond> = []
 
-  const stereoAtomsMap = new Map()
-
   struct.bonds.forEach(bond => {
-    if (bond.stereo > 0) {
-      if (struct.atoms.get(bond.begin)?.fragment === beginFrId) {
-        fragmentStereoBonds.push(bond)
-      }
+    if (struct.atoms.get(bond.begin)?.fragment === beginFrId) {
+      fragmentStereoBonds.push(bond)
+    }
 
-      if (
-        beginFrId !== endFrId &&
-        struct.atoms.get(bond.begin)?.fragment === endFrId
-      ) {
-        fragmentStereoBonds.push(bond)
-      }
+    if (
+      beginFrId !== endFrId &&
+      struct.atoms.get(bond.begin)?.fragment === endFrId
+    ) {
+      fragmentStereoBonds.push(bond)
     }
   })
 
+  const stereoAtomsMap = getStereoAtomsMap(struct, fragmentStereoBonds, bond)
+
+  stereoAtomsMap.forEach((stereoProp, aId) => {
+    if (struct.atoms.get(aId)?.stereoLabel !== stereoProp.stereoLabel) {
+      action.mergeWith(
+        fromStereoAtomAttrs(restruct, aId, stereoProp, withReverse)
+      )
+    }
+  })
+
+  return action
+}
+
+export function getStereoAtomsMap(
+  struct: Struct,
+  bonds: Array<Bond>,
+  bond?: Bond
+) {
+  const stereoAtomsMap = new Map()
   const correctAtomIds: Array<number> = []
 
-  fragmentStereoBonds.forEach((bond: Bond | undefined) => {
+  bonds.forEach((bond: Bond | undefined) => {
     if (bond) {
       const beginNeighs: Array<Neighbor> | undefined = struct.atomGetNeighbors(
         bond.begin
@@ -253,34 +269,34 @@ export function fromBondStereoUpdate(
             stereoLabel: null
           })
         }
+        if (!correctAtomIds.includes(bond.end)) {
+          stereoAtomsMap.set(bond.end, {
+            stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
+            stereoLabel: null
+          })
+        }
       }
     }
   })
 
   // in case the stereo band is flipped, changed or removed
   // TODO the duplication of the code below should be fixed, mayby by function
-  if (!correctAtomIds.includes(bond.begin)) {
-    stereoAtomsMap.set(bond.begin, {
-      stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
-      stereoLabel: null
-    })
-  }
-  if (!correctAtomIds.includes(bond.end)) {
-    stereoAtomsMap.set(bond.end, {
-      stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
-      stereoLabel: null
-    })
-  }
-
-  stereoAtomsMap.forEach((stereoProp, aId) => {
-    if (struct.atoms.get(aId)?.stereoLabel !== stereoProp.stereoLabel) {
-      action.mergeWith(
-        fromStereoAtomAttrs(restruct, aId, stereoProp, withReverse)
-      )
+  if (bond) {
+    if (!correctAtomIds.includes(bond.begin)) {
+      stereoAtomsMap.set(bond.begin, {
+        stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
+        stereoLabel: null
+      })
     }
-  })
+    if (!correctAtomIds.includes(bond.end)) {
+      stereoAtomsMap.set(bond.end, {
+        stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
+        stereoLabel: null
+      })
+    }
+  }
 
-  return action
+  return stereoAtomsMap
 }
 
 function getStereoParity(stereo: Number): number | null {

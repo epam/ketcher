@@ -6,6 +6,8 @@ import {
   StereoValidator
 } from 'ketcher-core'
 
+import { getStereoAtomsMap } from '../../editor/actions/bond'
+
 export function onAction(action) {
   if (action && action.dialog) {
     return {
@@ -39,9 +41,7 @@ function parseStruct(struct, server, options) {
     const factory = new FormatterFactory(server)
 
     const service = factory.create(format, formatterOptions)
-    return service
-      .getStructureFromStringAsync(struct)
-      .catch(error => console.log(error))
+    return service.getStructureFromStringAsync(struct)
   } else {
     return Promise.resolve(struct)
   }
@@ -76,22 +76,14 @@ export function load(struct, options) {
         struct.findConnectedComponents()
         struct.setImplicitHydrogen()
 
-        struct.bonds.forEach(bond => {
-          const beginNeighs = struct.atomGetNeighbors(bond.begin)
-          const endNeighs = struct.atomGetNeighbors(bond.end)
-          if (bond.stereo) {
-            if (
-              !StereoValidator.isCorrectStereoCenter(
-                bond,
-                beginNeighs,
-                endNeighs,
-                struct
-              )
-            ) {
-              struct.atoms.get(bond.begin).stereoLabel = null
-              struct.atoms.get(bond.begin).stereoParity = 0
-            }
-          }
+        const stereAtomsMap = getStereoAtomsMap(
+          struct,
+          Array.from(struct.bonds.values())
+        )
+
+        stereAtomsMap.forEach((stereoProp, aId) => {
+          const atom = struct.atoms.get(aId)
+          atom.stereoLabel = stereoProp.stereoLabel
         })
 
         if (struct.isBlank()) {

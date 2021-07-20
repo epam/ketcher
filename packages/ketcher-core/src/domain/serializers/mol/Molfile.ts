@@ -69,6 +69,7 @@ export class Molfile {
           )
         ) {
           ret.atoms.get(bond.begin).stereoLabel = null
+          ret.atoms.get(bond.begin).stereoParity = 0
         }
       }
     })

@@ -2,7 +2,8 @@ import {
   FormatterFactory,
   Pile,
   SGroup,
-  identifyStructFormat
+  identifyStructFormat,
+  StereoValidator
 } from 'ketcher-core'
 
 export function onAction(action) {
@@ -74,6 +75,24 @@ export function load(struct, options) {
 
         struct.findConnectedComponents()
         struct.setImplicitHydrogen()
+
+        struct.bonds.forEach(bond => {
+          const beginNeighs = struct.atomGetNeighbors(bond.begin)
+          const endNeighs = struct.atomGetNeighbors(bond.end)
+          if (bond.stereo) {
+            if (
+              !StereoValidator.isCorrectStereoCenter(
+                bond,
+                beginNeighs,
+                endNeighs,
+                struct
+              )
+            ) {
+              struct.atoms.get(bond.begin).stereoLabel = null
+              struct.atoms.get(bond.begin).stereoParity = 0
+            }
+          }
+        })
 
         if (struct.isBlank()) {
           return

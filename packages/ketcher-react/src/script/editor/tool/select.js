@@ -118,7 +118,7 @@ SelectTool.prototype.mousedown = function (event) {
   }
 
   if (!event.shiftKey)
-    this.editor.selection(isSelected(selection, ci) ? selection : sel)
+    this.editor.selection(isSelected(selection, sel) ? selection : sel)
   else this.editor.selection(selMerge(sel, selection, true))
   return true
 }
@@ -321,10 +321,18 @@ function selMerge(selection, add, reversible) {
   return selection
 }
 
-function isSelected(selection, item) {
-  return (
-    selection && selection[item.map] && selection[item.map].includes(item.id)
-  )
+function isSelected(selection, sel) {
+  let isSelected = true
+  if(selection){
+    Object.keys(sel).forEach(item => {
+      if(!selection[item] || !sel[item].every((el => selection[item].includes(el)))) {
+        isSelected = false
+      }
+    })
+  }
+  else isSelected = false
+
+  return isSelected
 }
 
 function uniqArray(dest, add, reversible) {

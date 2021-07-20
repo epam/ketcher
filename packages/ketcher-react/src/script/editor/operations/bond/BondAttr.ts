@@ -28,16 +28,14 @@ export class BondAttr extends BaseOperation {
   data2: Data | null
 
   constructor(bondId?: any, attribute?: any, value?: any) {
-    super(OperationType.BOND_ATTR, 4)
+    super(OperationType.BOND_ATTR, 2)
     this.data = { bid: bondId, attribute, value }
     this.data2 = null
   }
 
   execute(restruct: Restruct) {
-    if (!this.data) return
     const { attribute, bid, value } = this.data
-    const bond = restruct.molecule.bonds.get(bid)
-    if (!bond) return
+    const bond = restruct.molecule.bonds.get(bid)!
     if (!this.data2) {
       this.data2 = {
         bid: bid,

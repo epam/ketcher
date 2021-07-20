@@ -174,16 +174,16 @@ function fromBondFlipping(restruct: ReStruct, id: number): Action {
   const bond = restruct.molecule.bonds.get(id)
 
   const action = new Action()
-  action.addOp(new BondDelete(id))
+  action.addOp(new BondDelete(id).perform(restruct))
 
   // TODO: find better way to avoid problem with bond.begin = 0
   if (Number.isInteger(bond?.end) && Number.isInteger(bond?.begin)) {
-    action.addOp(new BondAdd(bond?.end, bond?.begin, bond))
+    action.addOp(new BondAdd(bond?.end, bond?.begin, bond).perform(restruct))
   }
 
   // todo: swap atoms stereoLabels and stereoAtoms in fragment
 
-  return action.perform(restruct)
+  return action
 }
 
 export function fromBondStereoUpdate(
@@ -306,15 +306,18 @@ export function bondChangingAction(
   bondProps: any
 ): Action {
   const action = new Action()
+  let newItemId
   if (
     ((bondProps.stereo !== Bond.PATTERN.STEREO.NONE && //
       bondProps.type === Bond.PATTERN.TYPE.SINGLE) ||
       bond.type === Bond.PATTERN.TYPE.DATIVE) &&
     bond.type === bondProps.type &&
     bond.stereo === bondProps.stereo
-  )
-    // if bondTool is stereo and equal to bond for change
+  ) {
     action.mergeWith(fromBondFlipping(restruct, itemID))
+    newItemId = (action.operations[1] as BondAdd).data.bid
+  }
+  // if bondTool is stereo and equal to bond for change
 
   const loop = plainBondTypes.includes(bondProps.type) ? plainBondTypes : null
   if (
@@ -326,7 +329,7 @@ export function bondChangingAction(
     // if `Single bond` tool is chosen and bond for change in `plainBondTypes`
     bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length]
 
-  return fromBondsAttrs(restruct, itemID, bondProps).mergeWith(action)
+  return fromBondsAttrs(restruct, newItemId, bondProps).mergeWith(action)
 }
 
 const plainBondTypes = [

@@ -60,7 +60,7 @@ function changeAtomsStereoAction(
     )
     action.operations.reverse()
     return action
-  })
+  }).catch(() => null) // no changes
 }
 
 export default EnhancedStereoTool

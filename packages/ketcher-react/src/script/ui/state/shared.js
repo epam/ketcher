@@ -38,9 +38,7 @@ function parseStruct(struct, server, options) {
     const factory = new FormatterFactory(server)
 
     const service = factory.create(format, formatterOptions)
-    return service
-      .getStructureFromStringAsync(struct)
-      .catch(error => {throw error})
+    return service.getStructureFromStringAsync(struct)
   } else {
     return Promise.resolve(struct)
   }
@@ -68,7 +66,7 @@ export function load(struct, options) {
             const atomSet = new Pile(sg.atoms)
             const crossBonds = SGroup.getCrossBonds(struct, atomSet)
             SGroup.bracketPos(sg, struct, crossBonds)
-            sg.updateOffset(offset)
+            if(offset) sg.updateOffset(offset)
           })
         }
 

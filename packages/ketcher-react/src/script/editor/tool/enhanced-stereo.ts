@@ -43,6 +43,7 @@ function changeAtomsStereoAction(
     stereoLabel: hasAnotherLabel ? null : stereoLabels[0]
   })
   return res.then(stereoLabel => {
+    if (!stereoLabel) return null
     const action = stereoAtoms.reduce(
       (acc, stereoAtom) => {
         return acc.mergeWith(

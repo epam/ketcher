@@ -105,13 +105,14 @@ export class Fragment {
   }
 
   //TODO: split to 'add' and 'remove methods
-  updateStereoAtom(struct: Struct, aid: number, isAdd: boolean) {
+  updateStereoAtom(struct: Struct, aid: number, frId: number, isAdd: boolean) {
     if (isAdd && !this.stereoAtoms.includes(aid)) this.stereoAtoms.push(aid)
     if (
       !isAdd &&
-      !Array.from(struct.bonds.values())
-        .filter(bond => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE)
-        .some(bond => bond.begin === aid)
+      (struct.atoms.get(aid)?.fragment !== frId ||
+        !Array.from(struct.bonds.values())
+          .filter(bond => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE)
+          .some(bond => bond.begin === aid))
     ) {
       this.stereoAtoms = this.stereoAtoms.filter(item => item !== aid)
     }

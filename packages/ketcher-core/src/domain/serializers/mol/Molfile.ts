@@ -19,8 +19,6 @@ import { Elements } from 'domain/constants'
 import common from './common'
 import utils from './utils'
 
-import { StereoValidator } from 'domain/helpers/utils/StereoValidator'
-
 const END_V2000 = '2D 1   1.00000     0.00000     0'
 
 type Mapping = {
@@ -54,26 +52,6 @@ export class Molfile {
     }
     ret.initHalfBonds()
     ret.initNeighbors()
-    ret.setImplicitHydrogen()
-
-    ret.bonds.forEach(bond => {
-      const beginNeighs = ret.atomGetNeighbors(bond.begin)
-      const endNeighs = ret.atomGetNeighbors(bond.end)
-      if (bond.stereo) {
-        if (
-          !StereoValidator.isCorrectStereoCenter(
-            bond,
-            beginNeighs,
-            endNeighs,
-            ret
-          )
-        ) {
-          ret.atoms.get(bond.begin).stereoLabel = null
-        }
-      }
-    })
-
-    ret.markFragments()
 
     return ret
   }

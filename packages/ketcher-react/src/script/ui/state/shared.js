@@ -5,6 +5,8 @@ import {
   identifyStructFormat
 } from 'ketcher-core'
 
+import { getStereoAtomsMap } from '../../editor/actions/bond'
+
 export function onAction(action) {
   if (action && action.dialog) {
     return {
@@ -72,6 +74,26 @@ export function load(struct, options) {
 
         struct.findConnectedComponents()
         struct.setImplicitHydrogen()
+
+        const stereAtomsMap = getStereoAtomsMap(
+          struct,
+          Array.from(struct.bonds.values())
+        )
+
+        struct.atoms.forEach((atom, id) => {
+          if (struct.atomGetNeighbors(id).length === 0) {
+            atom.stereoLabel = null
+            atom.stereoParity = 0
+          } else {
+            const stereoProp = stereAtomsMap.get(id)
+            if (stereoProp) {
+              atom.stereoLabel = stereoProp.stereoLabel
+              atom.stereoParity = stereoProp.stereoParity
+            }
+          }
+        })
+
+        struct.markFragments()
 
         if (struct.isBlank()) {
           return

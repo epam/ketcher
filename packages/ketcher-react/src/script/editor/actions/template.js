@@ -17,7 +17,7 @@ import { Atom, Vec2 } from 'ketcher-core'
 import { AtomAdd, BondAdd, CalcImplicitH } from '../operations'
 import { atomForNewBond, atomGetAttr } from './utils'
 import { fromAtomsAttrs, mergeSgroups } from './atom'
-import { fromBondAddition, fromBondsAttrs, fromBondStereoUpdate } from './bond'
+import { fromBondAddition, fromBondStereoUpdate, fromBondsAttrs } from './bond'
 
 import Action from '../shared/action'
 import closest from '../shared/closest'
@@ -258,19 +258,24 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
     }
   })
 
-  action.operations.reverse()
+  if (pasteItems.atoms.length) {
+    action.addOp(
+      new CalcImplicitH([bond.begin, bond.end, ...pasteItems.atoms]).perform(
+        restruct
+      )
+    )
+  }
 
-  action.addOp(
-    new CalcImplicitH([bond.begin, bond.end, ...pasteItems.atoms]).perform(
-      restruct
+  if (pasteItems.bonds.length) {
+    action.mergeWith(
+      fromBondStereoUpdate(
+        restruct,
+        restruct.molecule.bonds.get(pasteItems.bonds[0])
+      )
     )
-  )
-  action.mergeWith(
-    fromBondStereoUpdate(
-      restruct,
-      restruct.molecule.bonds.get(pasteItems.bonds[0])
-    )
-  )
+  }
+
+  action.operations.reverse()
 
   return [action, pasteItems]
 }

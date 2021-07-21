@@ -66,7 +66,7 @@ export function load(struct, options) {
             const atomSet = new Pile(sg.atoms)
             const crossBonds = SGroup.getCrossBonds(struct, atomSet)
             SGroup.bracketPos(sg, struct, crossBonds)
-            sg.updateOffset(offset)
+            if(offset) sg.updateOffset(offset)
           })
         }
 

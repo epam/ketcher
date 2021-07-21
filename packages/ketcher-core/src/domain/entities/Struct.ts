@@ -672,7 +672,7 @@ export class Struct {
 
     idSet.forEach(aid => {
       const atom = this.atoms.get(aid)!
-      if (atom.stereoLabel) frag.updateStereoAtom(this, aid, true)
+      if (atom.stereoLabel) frag.updateStereoAtom(this, aid, fid, true)
       atom.fragment = fid
     })
   }

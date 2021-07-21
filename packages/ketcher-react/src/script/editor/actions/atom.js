@@ -194,7 +194,9 @@ export function fromAtomMerge(restruct, srcId, dstId) {
     attrs['label'] = 'C'
 
   Object.keys(attrs).forEach(key => {
-    action.addOp(new AtomAttr(dstId, key, attrs[key]))
+    if (key !== 'stereoLabel' && key !== 'stereoParity') {
+      action.addOp(new AtomAttr(dstId, key, attrs[key]))
+    }
   })
 
   const sgChanged = removeAtomFromSgroupIfNeeded(action, restruct, srcId)
@@ -203,7 +205,10 @@ export function fromAtomMerge(restruct, srcId, dstId) {
 
   action.addOp(new AtomDelete(srcId))
   action.addOp(new CalcImplicitH([dstId]))
-  const bond = restruct.molecule.bonds.get(atomNeighbors[0]?.bid)
+  const dstAtomNeighbors = restruct.molecule.atomGetNeighbors(dstId)
+  const bond = restruct.molecule.bonds.get(
+    dstAtomNeighbors[0]?.bid || atomNeighbors[0]?.bid
+  )
 
   return action
     .perform(restruct)

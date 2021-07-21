@@ -38,9 +38,7 @@ function parseStruct(struct, server, options) {
     const factory = new FormatterFactory(server)
 
     const service = factory.create(format, formatterOptions)
-    return service
-      .getStructureFromStringAsync(struct)
-      .catch(error => console.log(error))
+    return service.getStructureFromStringAsync(struct)
   } else {
     return Promise.resolve(struct)
   }

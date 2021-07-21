@@ -195,8 +195,8 @@ export function fromBondStereoUpdate(
   const action = new Action()
   const struct = restruct.molecule
 
-  const beginFrId = struct.atoms.get(bond.begin)?.fragment
-  const endFrId = struct.atoms.get(bond.end)?.fragment
+  const beginFrId = struct.atoms.get(bond?.begin)?.fragment
+  const endFrId = struct.atoms.get(bond?.end)?.fragment
 
   const fragmentStereoBonds: Array<Bond> = []
 

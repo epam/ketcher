@@ -80,9 +80,17 @@ export function load(struct, options) {
           Array.from(struct.bonds.values())
         )
 
-        stereAtomsMap.forEach((stereoProp, aId) => {
-          const atom = struct.atoms.get(aId)
-          atom.stereoLabel = stereoProp.stereoLabel
+        struct.atoms.forEach((atom, id) => {
+          if (struct.atomGetNeighbors(id).length === 0) {
+            atom.stereoLabel = null
+            atom.stereoParity = 0
+          } else {
+            const stereoProp = stereAtomsMap.get(id)
+            if (stereoProp) {
+              atom.stereoLabel = stereoProp.stereoLabel
+              atom.stereoParity = stereoProp.stereoParity
+            }
+          }
         })
 
         struct.markFragments()

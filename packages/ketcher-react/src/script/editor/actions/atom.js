@@ -203,7 +203,7 @@ export function fromAtomMerge(restruct, srcId, dstId) {
 
   action.addOp(new AtomDelete(srcId))
   action.addOp(new CalcImplicitH([dstId]))
-  const bond = restruct.molecule.bonds.get(atomNeighbors[0].bid)
+  const bond = restruct.molecule.bonds.get(atomNeighbors[0]?.bid)
 
   return action
     .perform(restruct)

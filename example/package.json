@@ -25,9 +25,9 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "ketcher-core": "^1.0.0",
+    "ketcher-core": "^1.1.0",
     "ketcher-react": "^2.1.0",
-    "ketcher-standalone": "^1.0.0",
+    "ketcher-standalone": "^1.1.0",
     "miew": "^0.9.0",
     "react": "^16.13.1",
     "react-app-polyfill": "^2.0.0",

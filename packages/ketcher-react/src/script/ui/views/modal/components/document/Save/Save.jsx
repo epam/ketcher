@@ -88,15 +88,17 @@ class SaveDialog extends Component {
         enumNames: formats.map(format => getPropertiesByFormat(format).name)
       }
     )
-
-    this.changeType(this.isRxn ? 'rxn' : 'mol').then(res =>
-      res instanceof Error ? props.onCancel() : null
-    )
   }
 
   componentDidMount() {
     const { checkOptions } = this.props.checkState
     this.props.onCheck(checkOptions)
+    this.setState({ disableControls: true })
+    setTimeout(() => {
+      this.changeType(this.isRxn ? 'rxn' : 'mol').then(res =>
+        res instanceof Error ? this.setState({ disableControls: true }) : null
+      )
+    }, 0)
   }
 
   showStructWarningMessage = format => {

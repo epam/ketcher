@@ -290,7 +290,7 @@ class ReAtom extends ReObject {
         //text -> tspan
         const color = getStereoAtomColor(render.options, stereoLabel)
         aamPath.node.childNodes[0].setAttribute('fill', color)
-        const opacity = getStereoAtomOpacity(stereoLabel)
+        const opacity = getStereoAtomOpacity(render.options, stereoLabel)
         aamPath.node.childNodes[0].setAttribute('opacity', opacity)
       }
       const aamBox = util.relBox(aamPath.getBBox())
@@ -337,10 +337,14 @@ export function getColorFromStereoLabel(options, stereoLabel) {
   }
 }
 
-function getStereoAtomOpacity(stereoLabel) {
+function getStereoAtomOpacity(options, stereoLabel) {
   const stereoLabelType = stereoLabel.match(/\D+/g)[0]
   const stereoLabelNumber = +stereoLabel.replace(stereoLabelType, '')
-  if (stereoLabelType === StereoLabel.Abs) {
+  if (
+    stereoLabelType === StereoLabel.Abs ||
+    options.colorStereogenicCenters === StereoColoringType.Off ||
+    options.colorStereogenicCenters === StereoColoringType.BondsOnly
+  ) {
     return 1
   }
   return Math.max(1 - (stereoLabelNumber - 1) / 10, StereoLabelMinOpacity)

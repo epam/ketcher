@@ -111,7 +111,7 @@ export class Bond {
   static getAttrHash(bond: Bond) {
     let attrs = {}
     for (let attr in Bond.attrlist) {
-      if (bond[attr]) {
+      if (bond[attr] || attr === 'stereo') {
         attrs[attr] = bond[attr]
       }
     }

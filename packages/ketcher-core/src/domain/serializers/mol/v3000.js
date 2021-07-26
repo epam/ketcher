@@ -31,7 +31,6 @@ function parseAtomLineV3000(line) {
   // eslint-disable-line max-statements
   /* reader */
   var split, subsplit, key, value, i
-  line = line.replace('NOT [', 'NOT[')
   split = spaceparsplit(line)
   var params = {
     pp: new Vec2(
@@ -49,9 +48,9 @@ function parseAtomLineV3000(line) {
     label = label.substr(0, label.length - 1) // remove ']'
     var atomListParams = {}
     atomListParams.notList = false
-    if (label.substr(0, 4) == 'NOT[') {
+    if (label.substr(0, 5) == 'NOT [') {
       atomListParams.notList = true
-      label = label.substr(4) // remove 'NOT['
+      label = label.substr(5) // remove 'NOT ['
     } else if (label.charAt(0) != '[') {
       throw new Error("Error: atom list expected, found '" + label + "'")
     } else {

@@ -44,7 +44,7 @@ function parseCTab(/* string */ ctabLines) /* Struct */ {
   const version = countsSplit[11].trim()
   ctabLines = ctabLines.slice(1)
   if (version === 'V2000') return v2000.parseCTabV2000(ctabLines, countsSplit)
-  else if (version === 'V3000')
+  else if (version === 'V3000') //TODO: discuss v3000 parser
     return v3000.parseCTabV3000(ctabLines, !loadRGroupFragments)
   else throw new Error('Molfile version unknown: ' + version) // eslint-disable-line no-else-return
 }

@@ -24,6 +24,7 @@ export function identifyStructFormat(
       end === sanitizedString.length ||
       sanitizedString.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) !== -1
     ) {
+      if(sanitizedString.search(/V3000$/m) !== -1) return 'molV3000'
       return 'mol'
     }
   }

@@ -50,6 +50,7 @@ const render: {
   colorOfAndCenters: ExtendedSchema
   colorOfOrCenters: ExtendedSchema
   colorStereogenicCenters: ExtendedSchema
+  autoFadeOfStereoLabels: ExtendedSchema
   absFlagLabel: ExtendedSchema
   andFlagLabel: ExtendedSchema
   mixedFlagLabel: ExtendedSchema
@@ -117,6 +118,11 @@ const render: {
     ],
     enumNames: ['Labels Only', 'Bonds Only', 'Labels And Bonds', 'Off'],
     default: StereoColoringType.LabelsOnly
+  },
+  autoFadeOfStereoLabels: {
+    title: 'Auto fade And/Or center labels',
+    type: 'boolean',
+    default: true
   },
   absFlagLabel: {
     title: 'Text of Absolute flag',

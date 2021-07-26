@@ -116,6 +116,7 @@ const SettingsDialog = (props: Props) => {
               <Field name="colorOfAndCenters" component={ColorPicker} />
               <Field name="colorOfOrCenters" component={ColorPicker} />
               <Field name="colorStereogenicCenters" />
+              <Field name="autoFadeOfStereoLabels" component={SelectCheckbox} />
               <Field name="absFlagLabel" />
               <Field name="andFlagLabel" />
               <Field name="orFlagLabel" />

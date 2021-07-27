@@ -341,6 +341,7 @@ function getStereoAtomOpacity(options, stereoLabel) {
   const stereoLabelType = stereoLabel.match(/\D+/g)[0]
   const stereoLabelNumber = +stereoLabel.replace(stereoLabelType, '')
   if (
+    !options.autoFadeOfStereoLabels ||
     stereoLabelType === StereoLabel.Abs ||
     options.colorStereogenicCenters === StereoColoringType.Off ||
     options.colorStereogenicCenters === StereoColoringType.BondsOnly

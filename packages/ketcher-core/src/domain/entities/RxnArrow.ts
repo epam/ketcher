@@ -16,15 +16,15 @@
 import { Vec2 } from './Vec2'
 
 export enum RxnArrowMode {
-  filledBow = 'filledBow',
-  equilibriumFilledHalfBow = 'equilibriumFilledHalfBow'
+  simple = 'simple',
+  equilibrium = 'equilibrium'
 }
 
 export class RxnArrow {
   pp: Vec2
   mode: RxnArrowMode
 
-  constructor(pp: Vec2, mode: RxnArrowMode = RxnArrowMode.filledBow) {
+  constructor(pp: Vec2, mode: RxnArrowMode = RxnArrowMode.simple) {
     this.pp = pp
     this.mode = mode
   }

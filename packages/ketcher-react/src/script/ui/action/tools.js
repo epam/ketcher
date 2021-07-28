@@ -84,19 +84,16 @@ const toolActions = {
     title: 'Data S-Group',
     action: { tool: 'sgroup', opts: 'DAT' }
   },
-  'reaction-arrow-filled-bow-tool': {
-    title: 'Arrow Filled Bow Tool',
-    action: { tool: 'reactionarrow', opts: RxnArrowMode.filledBow }
+  'reaction-arrow': {
+    title: 'Reaction Arrow Tool',
+    action: { tool: 'reactionarrow', opts: RxnArrowMode.simple }
   },
-  'reaction-arrow-equilibrium-filled-half-bow-tool': {
-    title: 'Arrow Equilibrium Filled Half Bow Tool',
-    action: {
-      tool: 'reactionarrow',
-      opts: RxnArrowMode.equilibriumFilledHalfBow
-    }
+  'reaction-arrow-equilibrium': {
+    title: 'Reaction Arrow Equilibrium Tool',
+    action: { tool: 'reactionarrow', opts: RxnArrowMode.equilibrium }
   },
   'reaction-plus': {
-    title: 'Plus',
+    title: 'Reaction Plus Tool',
     action: { tool: 'reactionplus' }
   },
   'reaction-map': {

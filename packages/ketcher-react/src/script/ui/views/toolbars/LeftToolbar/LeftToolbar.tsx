@@ -42,8 +42,8 @@ const selectOptions: ToolbarItem[] = makeItems([
 ])
 
 const arrowsOptions: ToolbarItem[] = makeItems([
-  'reaction-arrow-filled-bow-tool',
-  'reaction-arrow-equilibrium-filled-half-bow-tool'
+  'reaction-arrow',
+  'reaction-arrow-equilibrium'
 ])
 
 const mappingOptions: ToolbarItem[] = makeItems([

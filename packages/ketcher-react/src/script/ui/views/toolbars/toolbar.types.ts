@@ -93,10 +93,13 @@ type LeftToolbarItemVariant =
   // sgroup group
   | 'sgroup'
   | 'sgroup-data'
-  | 'reaction'
-  | 'reaction-arrow'
+  // reaction
+  | 'reaction-arrows'
+  | 'reaction-arrow-filled-bow-tool'
+  | 'reaction-arrow-equilibrium-filled-half-bow-tool'
   | 'reaction-arrow-equilibrium'
   | 'reaction-plus'
+  | 'reaction-mapping-tools'
   | 'reaction-automap'
   | 'reaction-map'
   | 'reaction-unmap'

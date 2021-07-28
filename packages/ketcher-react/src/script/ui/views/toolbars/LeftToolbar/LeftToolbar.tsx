@@ -40,13 +40,16 @@ const selectOptions: ToolbarItem[] = makeItems([
   'select-rectangle',
   'select-fragment'
 ])
-const reactionOptions: ToolbarItem[] = makeItems([
-  'reaction-arrow',
-  'reaction-arrow-equilibrium',
-  'reaction-plus',
-  'reaction-automap',
+
+const arrowsOptions: ToolbarItem[] = makeItems([
+  'reaction-arrow-filled-bow-tool',
+  'reaction-arrow-equilibrium-filled-half-bow-tool'
+])
+
+const mappingOptions: ToolbarItem[] = makeItems([
   'reaction-map',
-  'reaction-unmap'
+  'reaction-unmap',
+  'reaction-automap'
 ])
 
 interface LeftToolbarProps
@@ -97,7 +100,9 @@ const LeftToolbar = (props: Props) => {
         })}>
         <Item id="sgroup" />
         <Item id="sgroup-data" />
-        <Item id="reaction" options={reactionOptions} />
+        <Item id="reaction-arrows" options={arrowsOptions} />
+        <Item id="reaction-plus" />
+        <Item id="reaction-mapping-tools" options={mappingOptions} />
       </Group>
 
       <Group>

@@ -92,7 +92,7 @@ class RxnArrowDelete extends BaseOperation {
 
   constructor(arid?: any) {
     super(OperationType.RXN_ARROW_DELETE)
-    this.data = { arid, pos: null, mode: RxnArrowMode.simple }
+    this.data = { arid, pos: null, mode: RxnArrowMode.filledBow }
   }
 
   execute(restruct: any) {

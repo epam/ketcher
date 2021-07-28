@@ -49,10 +49,10 @@ class ReRxnArrow extends ReObject {
     var endPoint = new Vec2(centre.x + options.scale, centre.y)
     var path
     switch (this.item.mode) {
-      case RxnArrowMode.simple:
+      case RxnArrowMode.filledBow:
         path = draw.arrow(render.paper, startPoint, endPoint, options)
         break
-      case RxnArrowMode.equilibrium:
+      case RxnArrowMode.equilibriumFilledHalfBow:
         path = draw.equilibriumArrow(
           render.paper,
           startPoint,

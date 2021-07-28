@@ -52,8 +52,8 @@ import NewIcon from './files/new.svg'
 import OpenIcon from './files/open.svg'
 import PasteIcon from './files/paste.svg'
 import PeriodTableIcon from './files/period-table.svg'
-import ReactionArrowEquilibriumIcon from './files/reaction-arrow-equilibrium.svg'
-import ReactionArrowIcon from './files/reaction-arrow.svg'
+import ReactionArrowEquilibriumFilledHalfBowIcon from './files/reaction-arrow-equilibrium-filled-half-bow.svg'
+import ReactionArrowFilledBowIcon from './files/reaction-arrow-filled-bow.svg'
 import ReactionAutomapIcon from './files/reaction-automap.svg'
 import ReactionMapIcon from './files/reaction-map.svg'
 import ReactionPlusIcon from './files/reaction-plus.svg'
@@ -135,8 +135,8 @@ const icons = {
   open: OpenIcon,
   paste: PasteIcon,
   'period-table': PeriodTableIcon,
-  'reaction-arrow': ReactionArrowIcon,
-  'reaction-arrow-equilibrium': ReactionArrowEquilibriumIcon,
+  'reaction-arrow-filled-bow-tool': ReactionArrowFilledBowIcon,
+  'reaction-arrow-equilibrium-filled-half-bow-tool': ReactionArrowEquilibriumFilledHalfBowIcon,
   'reaction-automap': ReactionAutomapIcon,
   'reaction-map': ReactionMapIcon,
   'reaction-plus': ReactionPlusIcon,

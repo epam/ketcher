@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 import {
+  RxnArrowMode,
   StereoFlag,
   Struct,
   SupportedFormat,
-  getPropertiesByFormat,
-  RxnArrowMode
+  getPropertiesByFormat
 } from 'ketcher-core'
 
 export function couldBeSaved(
@@ -35,14 +35,14 @@ export function couldBeSaved(
     if (hasRxnArrow) {
       const arrayOfArrows = Array.from(struct.rxnArrows.values())
       const rxnArrowMode: RxnArrowMode = arrayOfArrows[0].mode
-       if (rxnArrowMode !== RxnArrowMode.simple) {
+      if (rxnArrowMode !== RxnArrowMode.simple) {
         warnings.push(
           `The ${formatName} format does not support drawn elements: the reaction ${rxnArrowMode} arrow will be replaced with the reaction arrow`
         )
       }
     }
 
-    // TODO: find better solution for case when Arrows > 1 
+    // TODO: find better solution for case when Arrows > 1
     if (rxnArrowsSize > 1) {
       warnings.push(
         `The ${formatName} format does not support drawn elements: reaction arrows will be lost.`

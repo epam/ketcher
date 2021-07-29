@@ -47,25 +47,22 @@ class ReRxnArrow extends ReObject {
     var centre = Scale.obj2scaled(this.item.pp, options)
     var startPoint = new Vec2(centre.x - options.scale, centre.y)
     var endPoint = new Vec2(centre.x + options.scale, centre.y)
-    var path
-    switch (this.item.mode) {
-      case RxnArrowMode.simple:
-        path = draw.arrow(render.paper, startPoint, endPoint, options)
-        break
-      case RxnArrowMode.equilibrium:
-        path = draw.equilibriumArrow(
-          render.paper,
-          startPoint,
-          endPoint,
-          options
-        )
-        break
-      default:
-        break
-    }
+
+    const path = draw.arrow(
+      render.paper,
+      startPoint,
+      endPoint,
+      options,
+      this.item.mode
+    )
+
     var offset = options.offset
     if (offset != null) path.translateAbs(offset.x, offset.y)
-    this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())))
+    this.visel.add(
+      path,
+
+      Box2Abs.fromRelBox(util.relBox(path.getBBox()))
+    )
   }
 }
 export default ReRxnArrow

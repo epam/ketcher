@@ -94,10 +94,24 @@ type LeftToolbarItemVariant =
   | 'sgroup'
   | 'sgroup-data'
   // reaction
-  | 'reaction-arrows'
-  | 'reaction-arrow'
-  | 'reaction-arrow-equilibrium'
+  //plus
   | 'reaction-plus'
+  // arrows
+  | 'reaction-arrows'
+  | 'reaction-arrow-open-angle'
+  | 'reaction-arrow-filled-triangle'
+  | 'reaction-arrow-filled-bow'
+  | 'reaction-arrow-dashed-open-angle'
+  | 'reaction-arrow-failed'
+  | 'reaction-arrow-both-ends-filled-triangle'
+  | 'reaction-arrow-equilibrium-filled-half-bow'
+  | 'reaction-arrow-equilibrium-filled-triangle'
+  | 'reaction-arrow-equilibrium-open-angle'
+  | 'reaction-arrow-unbalanced-equilibrium-filled-half-bow'
+  | 'reaction-arrow-unbalanced-equilibrium-open-half-angle'
+  | 'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow'
+  | 'reaction-arrow-unbalanced-equilibrium-fille-half-triangle'
+  //mapping
   | 'reaction-mapping-tools'
   | 'reaction-automap'
   | 'reaction-map'

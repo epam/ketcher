@@ -16,15 +16,26 @@
 import { Vec2 } from './Vec2'
 
 export enum RxnArrowMode {
-  simple = 'simple',
-  equilibrium = 'equilibrium'
+  OpenAngle = 'open-angle',
+  FilledTriangle = 'filled-triangle',
+  FilledBow = 'filled-bow',
+  DashedOpenAngle = 'dashed-open-angle',
+  Failed = 'failed',
+  BothEndsFilledTriangle = 'both-ends-filled-triangle',
+  EquilibriumFilledTriangle = 'equilibrium-filled-triangle',
+  EquilibriumFilledHalfBow = 'equilibrium-filled-half-bow',
+  EquilibriumOpenAngle = 'equilibrium-open-angle',
+  UnbalancedEquilibriumFilledHalfBow = 'unbalanced-equilibrium-filled-half-bow',
+  UnbalancedEquilibriumOpenHalfAngle = 'unbalanced-equilibrium-open-half-angle',
+  UnbalancedEquilibriumLargeFilledHalfBow = 'unbalanced-equilibrium-large-filled-half-bow',
+  UnbalancedEquilibriumFilleHalfTriangle = 'unbalanced-equilibrium-fille-half-triangle'
 }
 
 export class RxnArrow {
   pp: Vec2
   mode: RxnArrowMode
 
-  constructor(pp: Vec2, mode: RxnArrowMode = RxnArrowMode.simple) {
+  constructor(pp: Vec2, mode: RxnArrowMode = RxnArrowMode.OpenAngle) {
     this.pp = pp
     this.mode = mode
   }

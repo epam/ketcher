@@ -1,3 +1,4 @@
+import Restruct, { ReRxnArrow } from '../../../render/restruct'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { RxnArrow, RxnArrowMode, Vec2 } from 'ketcher-core'
-import Restruct, { ReRxnArrow } from '../../../render/restruct'
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
 
@@ -92,7 +93,7 @@ class RxnArrowDelete extends BaseOperation {
 
   constructor(arid?: any) {
     super(OperationType.RXN_ARROW_DELETE)
-    this.data = { arid, pos: null, mode: RxnArrowMode.simple }
+    this.data = { arid, pos: null, mode: RxnArrowMode.OpenAngle }
   }
 
   execute(restruct: any) {

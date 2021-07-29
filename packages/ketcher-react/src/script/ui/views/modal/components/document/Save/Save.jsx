@@ -93,11 +93,9 @@ class SaveDialog extends Component {
   componentDidMount() {
     const { checkOptions } = this.props.checkState
     this.props.onCheck(checkOptions)
-    setTimeout(() => {
-      this.changeType(this.isRxn ? 'rxn' : 'mol').then(
-        res => res instanceof Error && this.setState({ disableControls: true })
-      )
-    }, 0)
+    this.changeType(this.isRxn ? 'rxn' : 'mol').then(
+      res => res instanceof Error && this.setState({ disableControls: true })
+    )
   }
 
   showStructWarningMessage = format => {

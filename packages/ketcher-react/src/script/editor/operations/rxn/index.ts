@@ -1,4 +1,3 @@
-import Restruct, { ReRxnArrow } from '../../../render/restruct'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,6 +13,8 @@ import Restruct, { ReRxnArrow } from '../../../render/restruct'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import Restruct, { ReRxnArrow } from '../../../render/restruct'
 import { RxnArrow, RxnArrowMode, Vec2 } from 'ketcher-core'
 
 import { BaseOperation } from '../base'

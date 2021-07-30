@@ -63,7 +63,7 @@ class SaveDialog extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      disableControls: false,
+      disableControls: true,
       imageFormat: 'svg',
       tabIndex: 0
     }
@@ -88,15 +88,14 @@ class SaveDialog extends Component {
         enumNames: formats.map(format => getPropertiesByFormat(format).name)
       }
     )
-
-    this.changeType(this.isRxn ? 'rxn' : 'mol').then(res =>
-      res instanceof Error ? props.onCancel() : null
-    )
   }
 
   componentDidMount() {
     const { checkOptions } = this.props.checkState
     this.props.onCheck(checkOptions)
+    this.changeType(this.isRxn ? 'rxn' : 'mol').then(
+      res => res instanceof Error && this.setState({ disableControls: true })
+    )
   }
 
   showStructWarningMessage = format => {

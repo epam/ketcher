@@ -14,39 +14,48 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, RxnArrowMode, Scale, Vec2 } from 'ketcher-core'
+import { Box2Abs, Scale, Vec2 } from 'ketcher-core'
 
 import { LayerMap } from './GeneralEnumTypes'
 import ReObject from './ReObject'
+import ReStruct from './ReStruct'
+import Render from '..'
 import draw from '../draw'
 import util from '../util'
 
+type Arrow = {
+  pp: Vec2
+  mode: string
+}
+
 class ReRxnArrow extends ReObject {
-  constructor(/* chem.RxnArrow*/ arrow) {
+  item: Arrow
+
+  constructor(/* chem.RxnArrow*/ arrow: Arrow) {
     super('rxnArrow')
     this.item = arrow
   }
-  static isSelectable() {
+  static isSelectable(): boolean {
     return true
   }
-  highlightPath(render) {
-    var p = Scale.obj2scaled(this.item.pp, render.options)
-    var s = render.options.scale
+  highlightPath(render: Render) {
+    const p = Scale.obj2scaled(this.item.pp, render.options)
+    const s = render.options.scale
     return render.paper.rect(p.x - s, p.y - s / 4, 2 * s, s / 2, s / 8) // eslint-disable-line no-mixed-operators
   }
-  drawHighlight(render) {
-    var ret = this.highlightPath(render).attr(render.options.highlightStyle)
+  drawHighlight(render: Render) {
+    const ret = this.highlightPath(render).attr(render.options.highlightStyle)
     render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
     return ret
   }
-  makeSelectionPlate(restruct, paper, styles) {
+  makeSelectionPlate(restruct: ReStruct, _paper, styles) {
     return this.highlightPath(restruct.render).attr(styles.selectionStyle)
   }
-  show(restruct, id, options) {
-    var render = restruct.render
-    var centre = Scale.obj2scaled(this.item.pp, options)
-    var startPoint = new Vec2(centre.x - options.scale, centre.y)
-    var endPoint = new Vec2(centre.x + options.scale, centre.y)
+  show(restruct: ReStruct, _id, options) {
+    const render: Render = restruct.render
+    const centre = Scale.obj2scaled(this.item.pp, options)
+    const startPoint = new Vec2(centre.x - options.scale, centre.y)
+    const endPoint = new Vec2(centre.x + options.scale, centre.y)
 
     const path = draw.arrow(
       render.paper,
@@ -56,7 +65,7 @@ class ReRxnArrow extends ReObject {
       this.item.mode
     )
 
-    var offset = options.offset
+    const offset = options.offset
     if (offset != null) path.translateAbs(offset.x, offset.y)
     this.visel.add(
       path,

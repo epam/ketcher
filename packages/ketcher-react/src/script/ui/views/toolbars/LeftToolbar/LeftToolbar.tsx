@@ -42,8 +42,19 @@ const selectOptions: ToolbarItem[] = makeItems([
 ])
 
 const arrowsOptions: ToolbarItem[] = makeItems([
-  'reaction-arrow',
-  'reaction-arrow-equilibrium'
+  'reaction-arrow-open-angle',
+  'reaction-arrow-filled-triangle',
+  'reaction-arrow-filled-bow',
+  'reaction-arrow-dashed-open-angle',
+  'reaction-arrow-failed',
+  'reaction-arrow-both-ends-filled-triangle',
+  'reaction-arrow-equilibrium-filled-half-bow',
+  'reaction-arrow-equilibrium-filled-triangle',
+  'reaction-arrow-equilibrium-open-angle',
+  'reaction-arrow-unbalanced-equilibrium-filled-half-bow',
+  'reaction-arrow-unbalanced-equilibrium-open-half-angle',
+  'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow',
+  'reaction-arrow-unbalanced-equilibrium-fille-half-triangle'
 ])
 
 const mappingOptions: ToolbarItem[] = makeItems([
@@ -100,8 +111,8 @@ const LeftToolbar = (props: Props) => {
         })}>
         <Item id="sgroup" />
         <Item id="sgroup-data" />
-        <Item id="reaction-arrows" options={arrowsOptions} />
         <Item id="reaction-plus" />
+        <Item id="reaction-arrows" options={arrowsOptions} />
         <Item id="reaction-mapping-tools" options={mappingOptions} />
       </Group>
 

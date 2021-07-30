@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { RxnArrow, RxnArrowMode, Vec2 } from 'ketcher-core'
+
 import Restruct, { ReRxnArrow } from '../../../render/restruct'
+import { RxnArrow, RxnArrowMode, Vec2 } from 'ketcher-core'
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
 
@@ -92,7 +94,7 @@ class RxnArrowDelete extends BaseOperation {
 
   constructor(arid?: any) {
     super(OperationType.RXN_ARROW_DELETE)
-    this.data = { arid, pos: null, mode: RxnArrowMode.simple }
+    this.data = { arid, pos: null, mode: RxnArrowMode.OpenAngle }
   }
 
   execute(restruct: any) {

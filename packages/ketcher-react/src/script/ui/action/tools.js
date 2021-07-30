@@ -84,13 +84,77 @@ const toolActions = {
     title: 'Data S-Group',
     action: { tool: 'sgroup', opts: 'DAT' }
   },
-  'reaction-arrow': {
-    title: 'Reaction Arrow Tool',
-    action: { tool: 'reactionarrow', opts: RxnArrowMode.simple }
+  'reaction-arrow-open-angle': {
+    // icon +, draw +
+    title: 'Arrow Open Angle Tool',
+    action: { tool: 'reactionarrow', opts: RxnArrowMode.OpenAngle }
   },
-  'reaction-arrow-equilibrium': {
-    title: 'Reaction Arrow Equilibrium Tool',
-    action: { tool: 'reactionarrow', opts: RxnArrowMode.equilibrium }
+  'reaction-arrow-filled-triangle': {
+    title: 'Arrow Filled Triangle',
+    action: { tool: 'reactionarrow', opts: RxnArrowMode.FilledTriangle }
+  },
+  'reaction-arrow-filled-bow': {
+    title: 'Arrow Filled Bow Tool',
+    action: { tool: 'reactionarrow', opts: RxnArrowMode.FilledBow }
+  },
+  'reaction-arrow-dashed-open-angle': {
+    title: 'Arrow Dashed Open Angle Tool',
+    action: { tool: 'reactionarrow', opts: RxnArrowMode.DashedOpenAngle }
+  },
+  'reaction-arrow-failed': {
+    title: 'Failed Arrow Tool',
+    action: { tool: 'reactionarrow', opts: RxnArrowMode.Failed }
+  },
+  'reaction-arrow-both-ends-filled-triangle': {
+    title: 'Arrow Both Ends Filled Triangle Tool',
+    action: { tool: 'reactionarrow', opts: RxnArrowMode.BothEndsFilledTriangle }
+  },
+  'reaction-arrow-equilibrium-filled-half-bow': {
+    // icon +, draw +
+    title: 'Arrow Equilibrium Filled Half Bow Tool',
+    action: {
+      tool: 'reactionarrow',
+      opts: RxnArrowMode.EquilibriumFilledHalfBow
+    }
+  },
+  'reaction-arrow-equilibrium-filled-triangle': {
+    title: 'Arrow Equilibrium Filled Triangle Tool',
+    action: {
+      tool: 'reactionarrow',
+      opts: RxnArrowMode.EquilibriumFilledTriangle
+    }
+  },
+  'reaction-arrow-equilibrium-open-angle': {
+    title: 'Arrow Equilibrium Open Angle Tool',
+    action: { tool: 'reactionarrow', opts: RxnArrowMode.EquilibriumOpenAngle }
+  },
+  'reaction-arrow-unbalanced-equilibrium-filled-half-bow': {
+    title: 'Arrow Unbalanced Equilibrium Filled Half Bow Tool',
+    action: {
+      tool: 'reactionarrow',
+      opts: RxnArrowMode.UnbalancedEquilibriumFilledHalfBow
+    }
+  },
+  'reaction-arrow-unbalanced-equilibrium-open-half-angle': {
+    title: 'Arrow Unbalanced Equilibrium Open Half Angle Tool',
+    action: {
+      tool: 'reactionarrow',
+      opts: RxnArrowMode.UnbalancedEquilibriumOpenHalfAngle
+    }
+  },
+  'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow': {
+    title: 'Arrow Unbalanced Equilibrium Large Filled Half Bow Tool',
+    action: {
+      tool: 'reactionarrow',
+      opts: RxnArrowMode.UnbalancedEquilibriumLargeFilledHalfBow
+    }
+  },
+  'reaction-arrow-unbalanced-equilibrium-fille-half-triangle': {
+    title: 'Arrow Unbalanced Equilibrium Filled Half Triangle Tool',
+    action: {
+      tool: 'reactionarrow',
+      opts: RxnArrowMode.UnbalancedEquilibriumFilleHalfTriangle
+    }
   },
   'reaction-plus': {
     title: 'Reaction Plus Tool',

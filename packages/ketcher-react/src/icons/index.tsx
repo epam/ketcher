@@ -52,8 +52,19 @@ import NewIcon from './files/new.svg'
 import OpenIcon from './files/open.svg'
 import PasteIcon from './files/paste.svg'
 import PeriodTableIcon from './files/period-table.svg'
-import ReactionArrowEquilibriumIcon from './files/reaction-arrow-equilibrium.svg'
-import ReactionArrowIcon from './files/reaction-arrow.svg'
+import ReactionArrowBothEndsFilledTriangle from './files/reaction-arrow-both-ends-filled-triangle.svg'
+import ReactionArrowDashedOpenAngle from './files/reaction-arrow-dashed-open-angle.svg'
+import ReactionArrowEquilibriumFilledHalfBow from './files/reaction-arrow-equilibrium-filled-half-bow.svg'
+import ReactionArrowEquilibriumFilledTriangle from './files/reaction-arrow-equilibrium-filled-triangle.svg'
+import ReactionArrowEquilibriumOpenAngle from './files/reaction-arrow-equilibrium-open-angle.svg'
+import ReactionArrowFailed from './files/reaction-arrow-failed.svg'
+import ReactionArrowFilledBow from './files/reaction-arrow-filled-bow.svg'
+import ReactionArrowFilledTriangle from './files/reaction-arrow-filled-triangle.svg'
+import ReactionArrowOpenAngleIcon from './files/reaction-arrow-open-angle.svg'
+import ReactionArrowUnbalancedEquilibriumFilledHalfBow from './files/reaction-arrow-unbalanced-equilibrium-filled-half-bow.svg'
+import ReactionArrowUnbalancedEquilibriumFilledHalfTriangle from './files/reaction-arrow-unbalanced-equilibrium-fille-half-triangle.svg'
+import ReactionArrowUnbalancedEquilibriumLargeFilledHalfBow from './files/reaction-arrow-unbalanced-equilibrium-large-filled-half-bow.svg'
+import ReactionArrowUnbalancedEquilibriumOpenHalfAngle from './files/reaction-arrow-unbalanced-equilibrium-open-half-angle.svg'
 import ReactionAutomapIcon from './files/reaction-automap.svg'
 import ReactionMapIcon from './files/reaction-map.svg'
 import ReactionPlusIcon from './files/reaction-plus.svg'
@@ -135,8 +146,19 @@ const icons = {
   open: OpenIcon,
   paste: PasteIcon,
   'period-table': PeriodTableIcon,
-  'reaction-arrow': ReactionArrowIcon,
-  'reaction-arrow-equilibrium': ReactionArrowEquilibriumIcon,
+  'reaction-arrow-open-angle': ReactionArrowOpenAngleIcon,
+  'reaction-arrow-filled-triangle': ReactionArrowFilledTriangle,
+  'reaction-arrow-filled-bow': ReactionArrowFilledBow,
+  'reaction-arrow-dashed-open-angle': ReactionArrowDashedOpenAngle,
+  'reaction-arrow-failed': ReactionArrowFailed,
+  'reaction-arrow-both-ends-filled-triangle': ReactionArrowBothEndsFilledTriangle,
+  'reaction-arrow-equilibrium-filled-half-bow': ReactionArrowEquilibriumFilledHalfBow,
+  'reaction-arrow-equilibrium-filled-triangle': ReactionArrowEquilibriumFilledTriangle,
+  'reaction-arrow-equilibrium-open-angle': ReactionArrowEquilibriumOpenAngle,
+  'reaction-arrow-unbalanced-equilibrium-filled-half-bow': ReactionArrowUnbalancedEquilibriumFilledHalfBow,
+  'reaction-arrow-unbalanced-equilibrium-open-half-angle': ReactionArrowUnbalancedEquilibriumOpenHalfAngle,
+  'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow': ReactionArrowUnbalancedEquilibriumLargeFilledHalfBow,
+  'reaction-arrow-unbalanced-equilibrium-fille-half-triangle': ReactionArrowUnbalancedEquilibriumFilledHalfTriangle,
   'reaction-automap': ReactionAutomapIcon,
   'reaction-map': ReactionMapIcon,
   'reaction-plus': ReactionPlusIcon,

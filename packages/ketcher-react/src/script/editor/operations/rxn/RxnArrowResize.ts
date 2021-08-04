@@ -77,7 +77,7 @@ export class RxnArrowResize extends Base {
         item.pos[0].y = anchor.y = current.y
         current.y = previousPos0.y
       }
-    }
+    } else item.pos[1].add_(d)
 
     restruct.rxnArrows
       .get(id)

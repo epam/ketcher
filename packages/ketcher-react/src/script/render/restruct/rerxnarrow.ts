@@ -29,7 +29,7 @@ type Arrow = {
   mode: string
 }
 
-type ArrowGeometry = {
+type ArrowParams = {
   length: number
   angle: number
 }
@@ -134,7 +134,7 @@ class ReRxnArrow extends ReObject {
       return Scale.obj2scaled(p, options) || new Vec2()
     })
 
-    const arrowGeom: ArrowGeometry = this.getArrowGeometry(
+    const arrowParams: ArrowParams = this.getArrowParams(
       pos[0].x,
       pos[0].y,
       pos[1].x,
@@ -150,8 +150,8 @@ class ReRxnArrow extends ReObject {
           render.paper,
           startPoint,
           endPoint,
-          arrowGeom.length,
-          arrowGeom.angle,
+          arrowParams.length,
+          arrowParams.angle,
           options
         )
         break
@@ -160,8 +160,8 @@ class ReRxnArrow extends ReObject {
           render.paper,
           startPoint,
           endPoint,
-          arrowGeom.length,
-          arrowGeom.angle,
+          arrowParams.length,
+          arrowParams.angle,
           options,
           this.item.mode
         )
@@ -171,7 +171,7 @@ class ReRxnArrow extends ReObject {
     return path
   }
 
-  getArrowGeometry(x1, y1, x2, y2): ArrowGeometry {
+  getArrowParams(x1, y1, x2, y2): ArrowParams {
     const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
     const angle = Raphael.angle(x1, y1, x2, y2) - 180
 

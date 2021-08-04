@@ -109,10 +109,12 @@ ReactionArrowTool.prototype.mousemove = function (event) {
 
 ReactionArrowTool.prototype.mouseup = function (event) {
   if (!this.dragCtx) return true
+  const rnd = this.editor.render
+
+  setMinLength(this.dragCtx.p0, this.dragCtx.previous)
 
   if (this.dragCtx.action) {
     if (this.dragCtx.isNew) {
-      const rnd = this.editor.render
       this.editor.update(fromArrowDeletion(rnd.ctab, this.dragCtx.itemId), true)
       this.dragCtx.action = fromArrowAddition(
         rnd.ctab,
@@ -128,25 +130,31 @@ ReactionArrowTool.prototype.mouseup = function (event) {
   return true
 }
 
-function getArrowGeometry(x1, y1, x2, y2) {
+function getArrowParams(x1, y1, x2, y2) {
   const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
   const angle = Raphael.angle(x1, y1, x2, y2)
 
   return { length, angle }
 }
 
-function setMinLength(pos) {
-  const minLength = 1
+function setMinLength(pos1, pos2) {
+  const minLength = 1.5
   const defaultLength = 2
 
-  const arrowGeom = getArrowGeometry(pos[0].x, pos[0].y, pos[1].x, pos[1].y)
+  if (!pos2) {
+    pos2 = pos1
+  }
 
-  if (arrowGeom.length <= minLength) {
-    const p0x = pos[0].x
-    pos[1].x = p0x + defaultLength * Math.cos((Math.PI * arrowGeom.angle) / 180)
+  const arrowParams = getArrowParams(pos1.x, pos1.y, pos2.x, pos2.y)
 
-    pos[1].y =
-      pos[0].y + defaultLength * Math.sin((Math.PI * arrowGeom.angle) / 180)
+  if (arrowParams.length <= minLength) {
+    pos2.x =
+      pos1.x +
+      defaultLength * Math.cos((Math.PI * (arrowParams.angle - 180)) / 180)
+
+    pos2.y =
+      pos1.y +
+      defaultLength * Math.sin((Math.PI * (arrowParams.angle - 180)) / 180)
   }
 }
 

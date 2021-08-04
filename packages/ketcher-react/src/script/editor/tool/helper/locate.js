@@ -148,7 +148,11 @@ function getElementsInPolygon(restruct, rr) {
   const textsList = []
 
   restruct.rxnArrows.forEach((item, id) => {
-    if (isPointInPolygon(r, item.item.pp)) rxnArrowsList.push(id)
+    const referencePoints = item.getReferencePoints(true)
+    const referencePointInPolygon = referencePoints.find(point =>
+      isPointInPolygon(r, point)
+    )
+    if (referencePointInPolygon) rxnArrowsList.push(id)
   })
 
   restruct.rxnPluses.forEach((item, id) => {

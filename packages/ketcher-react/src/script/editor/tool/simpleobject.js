@@ -1,9 +1,3 @@
-import {
-  fromSimpleObjectAddition,
-  fromSimpleObjectDeletion,
-  fromSimpleObjectResizing
-} from '../actions/simpleobject'
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -19,6 +13,13 @@ import {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import {
+  fromSimpleObjectAddition,
+  fromSimpleObjectDeletion,
+  fromSimpleObjectResizing
+} from '../actions/simpleobject'
+
 import { fromMultipleMove } from '../actions/fragment'
 
 function SimpleObjectTool(editor, mode) {

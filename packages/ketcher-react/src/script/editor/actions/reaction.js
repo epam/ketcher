@@ -17,16 +17,23 @@
 import {
   RxnArrowAdd,
   RxnArrowDelete,
+  RxnArrowResize,
   RxnPlusAdd,
   RxnPlusDelete
 } from '../operations'
 
 import Action from '../shared/action'
 
-export function fromArrowAddition(restruct, pos, mode) {
+export function fromArrowAddition(restruct, pos, mode, toCircle) {
+  const action = new Action()
+  action.addOp(new RxnArrowAdd(pos, mode, toCircle))
+  return action.perform(restruct)
+}
+
+export function fromArrowResizing(restruct, id, d, current, anchor, toCircle) {
   var action = new Action()
-  action.addOp(new RxnArrowAdd(mode, pos).perform(restruct))
-  return action
+  action.addOp(new RxnArrowResize(id, d, current, anchor, false, toCircle))
+  return action.perform(restruct)
 }
 
 export function fromArrowDeletion(restruct, id) {

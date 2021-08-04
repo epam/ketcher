@@ -17,6 +17,7 @@
 import { RxnArrowMode, Vec2 } from 'ketcher-core'
 
 import Raphael from '../raphael-ext'
+import svgPath from 'svgpath'
 import { useWith } from 'lodash/fp'
 import util from './util'
 
@@ -29,6 +30,24 @@ function rectangle(paper, pos, options) {
     tfx(Math.abs(pos[1].x - pos[0].x)),
     tfx(Math.abs(pos[1].y - pos[0].y))
   )
+}
+
+function rectangleWithAngle(paper, a, b, length, angle, options) {
+  const wOffset = 5
+  const hOffset = 8
+
+  const b0x = a.x + length
+
+  const path =
+    `M${tfx(a.x - wOffset)},${tfx(a.y)}` +
+    `L${tfx(a.x - wOffset)},${tfx(a.y + hOffset)}` +
+    `L${tfx(b0x + wOffset)},${tfx(a.y + hOffset)}` +
+    `L${tfx(b0x + wOffset)},${tfx(a.y - hOffset)}` +
+    `L${tfx(a.x - wOffset)},${tfx(a.y - hOffset)}Z`
+
+  const transformedPath = svgPath(path).rotate(angle, a.x, a.y).toString()
+
+  return transformedPath
 }
 
 function ellipse(paper, pos, options) {
@@ -50,10 +69,10 @@ function line(paper, pos, options) {
   return paper.path(path)
 }
 
-function arrow(paper, startPoint, endPoint, options, type) {
+function arrow(paper, startPoint, endPoint, length, angle, options, type) {
   switch (type) {
     case RxnArrowMode.OpenAngle: {
-      return arrowOpenAngle(paper, startPoint, endPoint, options)
+      return arrowOpenAngle(paper, startPoint, endPoint, length, angle, options)
     }
     case RxnArrowMode.FilledTriangle: {
       return arrowFilledTriangle(paper, startPoint, endPoint, options)
@@ -119,21 +138,22 @@ function arrow(paper, startPoint, endPoint, options, type) {
   }
 }
 
-function arrowOpenAngle(paper, a, b, options) {
-  var width = 5,
-    length = 7
-  return paper
-    .path(
-      'M{0},{1}L{2},{3}L{4},{5}M{2},{3}L{4},{6}',
-      tfx(a.x),
-      tfx(a.y),
-      tfx(b.x),
-      tfx(b.y),
-      tfx(b.x - length),
-      tfx(b.y - width),
-      tfx(b.y + width)
-    )
-    .attr(options.lineattr)
+function arrowOpenAngle(paper, a, b, arrowLength, arrowAngle, options) {
+  const width = 5
+  const length = 7
+
+  const b0x = a.x + arrowLength
+
+  const path =
+    `M${tfx(a.x)},${tfx(a.y)}` +
+    `L${tfx(b0x)},${tfx(a.y)}` +
+    `L${tfx(b0x - length)},${tfx(a.y - width)}` +
+    `M${tfx(b0x)},${tfx(a.y)}` +
+    `L${tfx(b0x - length)}, ${tfx(a.y + width)}`
+
+  const transformedPath = svgPath(path).rotate(arrowAngle, a.x, a.y).toString()
+
+  return paper.path(transformedPath).attr(options.lineattr)
 }
 
 function arrowFilledTriangle(paper, a, b, options) {
@@ -173,6 +193,7 @@ function arrowDashedOpenAngle(paper, a, b, options) {
 
   const path = []
 
+  //? refactor needed
   path.push(
     `M${tfx(a.x)},${tfx(a.y)}` +
       `L${tfx(a.x + 1 * dashSpace)},${tfx(a.y)}` +
@@ -196,7 +217,10 @@ function arrowDashedOpenAngle(paper, a, b, options) {
       `M${tfx(b.x)},${tfx(b.y)}` +
       `L${tfx(b.x - triangleLength)},${tfx(a.y - triangleWidth)}`
   )
-  return paper.path(path).attr(options.lineattr)
+
+  const transformedPath = svgPath(path.join('')).rotate(45, a.x, a.y).toString()
+
+  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
 }
 
 function arrowFailed(paper, a, b, options) {
@@ -818,6 +842,7 @@ export default {
   selectionLine,
   ellipse,
   rectangle,
+  rectangleWithAngle,
   polyline,
   line
 }

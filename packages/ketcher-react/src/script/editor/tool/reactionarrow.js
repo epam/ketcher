@@ -14,8 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
+import {
+  fromArrowAddition,
+  fromArrowDeletion,
+  fromArrowResizing
+} from '../actions/reaction'
+
 import Action from '../shared/action'
-import { fromArrowAddition } from '../actions/reaction'
+import Raphael from '../../raphael-ext'
 import { fromMultipleMove } from '../actions/fragment'
 
 function ReactionArrowTool(editor, mode) {
@@ -29,42 +35,118 @@ function ReactionArrowTool(editor, mode) {
 
 ReactionArrowTool.prototype.mousedown = function (event) {
   var rnd = this.editor.render
+  const p0 = rnd.page2obj(event)
+  this.dragCtx = { p0 }
+
   var ci = this.editor.findItem(event, ['rxnArrows'])
   if (ci && ci.map === 'rxnArrows') {
     this.editor.hover(null)
     this.editor.selection({ rxnArrows: [ci.id] })
-    this.dragCtx = {
-      xy0: rnd.page2obj(event),
-      action: new Action()
-    }
+    this.dragCtx.ci = ci
+  } else {
+    this.dragCtx.isNew = true
+    this.editor.selection(null)
   }
 }
 
 ReactionArrowTool.prototype.mousemove = function (event) {
   var rnd = this.editor.render
-  if ('dragCtx' in this) {
-    if (this.dragCtx.action) this.dragCtx.action.perform(rnd.ctab)
+  if (this.dragCtx) {
+    const current = rnd.page2obj(event)
+    const diff = current.sub(this.dragCtx.p0)
+    this.dragCtx.previous = current
+    if (this.dragCtx.ci) {
+      if (this.dragCtx.action) this.dragCtx.action.perform(rnd.ctab)
+      if (!this.dragCtx.ci.ref) {
+        this.dragCtx.action = fromMultipleMove(
+          rnd.ctab,
+          this.editor.selection() || {},
+          diff
+        )
+      } else {
+        this.dragCtx.action = fromArrowResizing(
+          rnd.ctab,
+          this.dragCtx.ci.id,
+          diff,
+          current,
+          this.dragCtx.ci.ref,
+          event.shiftKey
+        )
+      }
+      this.editor.update(this.dragCtx.action, true)
+    } else {
+      if (!this.dragCtx.action) {
+        const action = fromArrowAddition(
+          rnd.ctab,
+          [this.dragCtx.p0, this.dragCtx.p0],
+          this.mode
+        )
+        //TODO: need to rework  actions/operations logic
+        const addOperation = action.operations[0]
+        const itemId = addOperation.data.id
+        this.dragCtx.itemId = itemId
+        this.dragCtx.action = action
+        this.editor.update(this.dragCtx.action, true)
+      } else {
+        this.dragCtx.action.perform(rnd.ctab)
+      }
 
-    this.dragCtx.action = fromMultipleMove(
-      rnd.ctab,
-      this.editor.selection() || {},
-      rnd.page2obj(event).sub(this.dragCtx.xy0)
-    )
-    this.editor.update(this.dragCtx.action, true)
+      this.dragCtx.action = fromArrowResizing(
+        rnd.ctab,
+        this.dragCtx.itemId,
+        diff,
+        current,
+        null,
+        event.shiftKey
+      )
+      this.editor.update(this.dragCtx.action, true)
+    }
   } else {
-    this.editor.hover(this.editor.findItem(event, ['rxnArrows']))
+    const items = this.editor.findItem(event, ['rxnArrows'])
+    this.editor.hover(items)
   }
 }
 
 ReactionArrowTool.prototype.mouseup = function (event) {
-  if (this.dragCtx) {
-    this.editor.update(this.dragCtx.action) // TODO investigate, subsequent undo/redo fails
-    delete this.dragCtx
-  } else {
-    const rnd = this.editor.render
-    this.editor.update(
-      fromArrowAddition(rnd.ctab, rnd.page2obj(event), this.mode)
-    )
+  if (!this.dragCtx) return true
+
+  if (this.dragCtx.action) {
+    if (this.dragCtx.isNew) {
+      const rnd = this.editor.render
+      this.editor.update(fromArrowDeletion(rnd.ctab, this.dragCtx.itemId), true)
+      this.dragCtx.action = fromArrowAddition(
+        rnd.ctab,
+        [this.dragCtx.p0, this.dragCtx.previous],
+        this.mode,
+        event.shiftKey
+      )
+    }
+    this.editor.update(this.dragCtx.action)
+  }
+
+  delete this.dragCtx
+  return true
+}
+
+function getArrowGeometry(x1, y1, x2, y2) {
+  const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+  const angle = Raphael.angle(x1, y1, x2, y2)
+
+  return { length, angle }
+}
+
+function setMinLength(pos) {
+  const minLength = 1
+  const defaultLength = 2
+
+  const arrowGeom = getArrowGeometry(pos[0].x, pos[0].y, pos[1].x, pos[1].y)
+
+  if (arrowGeom.length <= minLength) {
+    const p0x = pos[0].x
+    pos[1].x = p0x + defaultLength * Math.cos((Math.PI * arrowGeom.angle) / 180)
+
+    pos[1].y =
+      pos[0].y + defaultLength * Math.sin((Math.PI * arrowGeom.angle) / 180)
   }
 }
 

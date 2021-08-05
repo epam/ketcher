@@ -561,7 +561,7 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
 ) {
   const arrowLen = 9
   const lineOffset = 3.5
-  const arrowOffset = 7
+  const arrowOffset = 10
   const arrowHeadAttr = 2
   const unbalanceVal = 15
 

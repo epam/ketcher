@@ -75,39 +75,78 @@ function arrow(paper, startPoint, endPoint, length, angle, options, type) {
       return arrowOpenAngle(paper, startPoint, endPoint, length, angle, options)
     }
     case RxnArrowMode.FilledTriangle: {
-      return arrowFilledTriangle(paper, startPoint, endPoint, options)
+      return arrowFilledTriangle(
+        paper,
+        startPoint,
+        endPoint,
+        length,
+        angle,
+        options
+      )
     }
     case RxnArrowMode.FilledBow: {
-      return arrowFilledBow(paper, startPoint, endPoint, options)
+      return arrowFilledBow(paper, startPoint, endPoint, length, angle, options)
     }
     case RxnArrowMode.DashedOpenAngle: {
-      return arrowDashedOpenAngle(paper, startPoint, endPoint, options)
+      return arrowDashedOpenAngle(
+        paper,
+        startPoint,
+        endPoint,
+        length,
+        angle,
+        options
+      )
     }
     case RxnArrowMode.Failed: {
-      return arrowFailed(paper, startPoint, endPoint, options)
+      return arrowFailed(paper, startPoint, endPoint, length, angle, options)
     }
     case RxnArrowMode.BothEndsFilledTriangle: {
-      return arrowBothEndsFilledTriangle(paper, startPoint, endPoint, options)
+      return arrowBothEndsFilledTriangle(
+        paper,
+        startPoint,
+        endPoint,
+        length,
+        angle,
+        options
+      )
     }
     case RxnArrowMode.EquilibriumFilledHalfBow: {
-      return arrowEquilibriumFilledHalfBow(paper, startPoint, endPoint, options)
+      return arrowEquilibriumFilledHalfBow(
+        paper,
+        startPoint,
+        endPoint,
+        length,
+        angle,
+        options
+      )
     }
     case RxnArrowMode.EquilibriumFilledTriangle: {
       return arrowEquilibriumFilledTriangle(
         paper,
         startPoint,
         endPoint,
+        length,
+        angle,
         options
       )
     }
     case RxnArrowMode.EquilibriumOpenAngle: {
-      return arrowEquilibriumOpenAngle(paper, startPoint, endPoint, options)
+      return arrowEquilibriumOpenAngle(
+        paper,
+        startPoint,
+        endPoint,
+        length,
+        angle,
+        options
+      )
     }
     case RxnArrowMode.UnbalancedEquilibriumFilledHalfBow: {
       return arrowUnbalancedEquilibriumFilledHalfBow(
         paper,
         startPoint,
         endPoint,
+        length,
+        angle,
         options
       )
     }
@@ -116,6 +155,8 @@ function arrow(paper, startPoint, endPoint, length, angle, options, type) {
         paper,
         startPoint,
         endPoint,
+        length,
+        angle,
         options
       )
     }
@@ -124,6 +165,8 @@ function arrow(paper, startPoint, endPoint, length, angle, options, type) {
         paper,
         startPoint,
         endPoint,
+        length,
+        angle,
         options
       )
     }
@@ -132,6 +175,8 @@ function arrow(paper, startPoint, endPoint, length, angle, options, type) {
         paper,
         startPoint,
         endPoint,
+        length,
+        angle,
         options
       )
     }
@@ -156,290 +201,439 @@ function arrowOpenAngle(paper, a, b, arrowLength, arrowAngle, options) {
   return paper.path(transformedPath).attr(options.lineattr)
 }
 
-function arrowFilledTriangle(paper, a, b, options) {
+function arrowFilledTriangle(paper, a, b, arrowLength, arrowAngle, options) {
   const triangleLength = 10
   const triangleWidth = 5
-  return paper
-    .path(
-      `M${tfx(a.x)},${tfx(a.y)}` +
-        `L${tfx(b.x)},${tfx(b.y)}` +
-        `L${tfx(b.x - triangleLength)},${tfx(b.y + triangleWidth)}` +
-        `L${tfx(b.x - triangleLength)},${tfx(a.y - triangleWidth)}` +
-        `L${tfx(b.x)},${tfx(a.y)}Z`
-    )
-    .attr({ ...options.lineattr, fill: '#000' })
-}
 
-function arrowFilledBow(paper, a, b, options) {
-  const bowLength = 10
-  const bowWidth = 5
-  const bowAttr = 4
-  return paper
-    .path(
-      `M${tfx(a.x)},${tfx(a.y)}` +
-        `L${tfx(b.x)},${tfx(b.y)}` +
-        `L${tfx(b.x - bowLength)},${tfx(b.y + bowWidth)}` +
-        `L${tfx(b.x - bowLength + bowAttr)},${tfx(b.y)}` +
-        `L${tfx(b.x - bowLength)},${tfx(a.y - bowWidth)}` +
-        `L${tfx(b.x)},${tfx(a.y)}Z`
-    )
-    .attr({ ...options.lineattr, fill: '#000' })
-}
+  const b0x = a.x + arrowLength
 
-function arrowDashedOpenAngle(paper, a, b, options) {
-  const triangleLength = 10
-  const triangleWidth = 5
-  const dashSpace = 5
-
-  const path = []
-
-  //? refactor needed
-  path.push(
+  const path =
     `M${tfx(a.x)},${tfx(a.y)}` +
-      `L${tfx(a.x + 1 * dashSpace)},${tfx(a.y)}` +
-      `M${tfx(a.x + 2 * dashSpace)},${tfx(a.y)}` +
-      `L${tfx(a.x + 3 * dashSpace)},${tfx(a.y)}` +
-      `M${tfx(a.x + 4 * dashSpace)},${tfx(a.y)}` +
-      `L${tfx(a.x + 5 * dashSpace)},${tfx(a.y)}` +
-      `M${tfx(a.x + 6 * dashSpace)},${tfx(a.y)}` +
-      `L${tfx(a.x + 7 * dashSpace)},${tfx(a.y)}` +
-      `M${tfx(a.x + 8 * dashSpace)},${tfx(a.y)}` +
-      `L${tfx(a.x + 9 * dashSpace)},${tfx(a.y)}` +
-      `M${tfx(a.x + 10 * dashSpace)},${tfx(a.y)}` +
-      `L${tfx(a.x + 11 * dashSpace)},${tfx(a.y)}` +
-      `M${tfx(a.x + 12 * dashSpace)},${tfx(a.y)}` +
-      `L${tfx(a.x + 13 * dashSpace)},${tfx(a.y)}` +
-      `M${tfx(a.x + 14 * dashSpace)},${tfx(a.y)}`
-  )
-  path.push(
-    `M${tfx(b.x)},${tfx(b.y)}` +
-      `L${tfx(b.x - triangleLength)},${tfx(b.y + triangleWidth)}` +
-      `M${tfx(b.x)},${tfx(b.y)}` +
-      `L${tfx(b.x - triangleLength)},${tfx(a.y - triangleWidth)}`
-  )
+    `L${tfx(b0x)},${tfx(a.y)}` +
+    `L${tfx(b0x - triangleLength)},${tfx(a.y + triangleWidth)}` +
+    `L${tfx(b0x - triangleLength)},${tfx(a.y - triangleWidth)}` +
+    `L${tfx(b0x)},${tfx(a.y)}Z`
 
-  const transformedPath = svgPath(path.join('')).rotate(45, a.x, a.y).toString()
+  const transformedPath = svgPath(path).rotate(arrowAngle, a.x, a.y).toString()
 
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
 }
 
-function arrowFailed(paper, a, b, options) {
-  const bowLength = 10
-  const bowWidth = 5
-  const bowAttr = 4
-  const failSignWidth = 10
-  const arrowCenter = b.x - (b.x - a.x) / 2
+function arrowFilledBow(paper, a, b, arrowLength, arrowAngle, options) {
+  const arrowHeadLength = 10
+  const arrowHeadWidth = 5
+  const arrowHeadAttr = 4
+
+  const b0x = a.x + arrowLength
+
+  const path =
+    `M${tfx(a.x)},${tfx(a.y)}` +
+    `L${tfx(b0x)},${tfx(a.y)}` +
+    `L${tfx(b0x - arrowHeadLength)},${tfx(a.y + arrowHeadWidth)}` +
+    `L${tfx(b0x - arrowHeadLength + arrowHeadAttr)},${tfx(a.y)}` +
+    `L${tfx(b0x - arrowHeadLength)},${tfx(a.y - arrowHeadWidth)}` +
+    `L${tfx(b0x)},${tfx(a.y)}Z`
+
+  const transformedPath = svgPath(path).rotate(arrowAngle, a.x, a.y).toString()
+
+  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
+}
+
+function arrowDashedOpenAngle(paper, a, b, arrowLength, arrowAngle, options) {
+  const triangleLength = 10
+  const triangleWidth = 5
+  const dashInterval = 3.5
 
   const path = []
 
+  const b0x = a.x + arrowLength
+
+  // Dashed arrow
+  for (let i = 0; i < arrowLength / dashInterval; i++) {
+    if (i % 2) {
+      path.push(`L${tfx(a.x + i * dashInterval)},${tfx(a.y)}`)
+    } else {
+      path.push(`M${tfx(a.x + i * dashInterval)},${tfx(a.y)}`)
+    }
+  }
+
+  // Arrowhead
+  path.push(
+    `M${tfx(b0x)},${tfx(a.y)}` +
+      `L${tfx(b0x - triangleLength)},${tfx(a.y + triangleWidth)}` +
+      `M${tfx(b0x)},${tfx(a.y)}` +
+      `L${tfx(b0x - triangleLength)},${tfx(a.y - triangleWidth)}`
+  )
+
+  const transformedPath = svgPath(path.join(''))
+    .rotate(arrowAngle, a.x, a.y)
+    .toString()
+
+  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
+}
+
+function arrowFailed(paper, a, b, arrowLength, arrowAngle, options) {
+  const arrowHeadLength = 10
+  const arrowHeadWidth = 5
+  const arrowHeadAttr = 4
+  const failSignWidth = 8
+
+  const b0x = a.x + arrowLength
+
+  const arrowCenter = b0x - (b0x - a.x) / 2
+
+  const path = []
+
+  // Arrow with arrowhead
   path.push(
     `M${tfx(a.x)},${tfx(a.y)}` +
-      `L${tfx(b.x)},${tfx(b.y)}` +
-      `L${tfx(b.x - bowLength)},${tfx(b.y + bowWidth)}` +
-      `L${tfx(b.x - bowLength + bowAttr)},${tfx(b.y)}` +
-      `L${tfx(b.x - bowLength)},${tfx(a.y - bowWidth)}` +
-      `L${tfx(b.x)},${tfx(a.y)}Z`
+      `L${tfx(b0x)},${tfx(a.y)}` +
+      `L${tfx(b0x - arrowHeadLength)},${tfx(a.y + arrowHeadWidth)}` +
+      `L${tfx(b0x - arrowHeadLength + arrowHeadAttr)},${tfx(a.y)}` +
+      `L${tfx(b0x - arrowHeadLength)},${tfx(a.y - arrowHeadWidth)}` +
+      `L${tfx(b0x)},${tfx(a.y)}Z`
   )
+
+  // Failed sign line 1
   path.push(
     `M${tfx(arrowCenter + failSignWidth)},${tfx(a.y + failSignWidth)}` +
       `L${tfx(arrowCenter - failSignWidth)},${tfx(a.y - failSignWidth)}`
   )
+
+  // Failed sign line 2
   path.push(
     `M${tfx(arrowCenter + failSignWidth)},${tfx(a.y - failSignWidth)}` +
       `L${tfx(arrowCenter - failSignWidth)},${tfx(a.y + failSignWidth)}`
   )
-  return paper.path(path).attr(options.lineattr)
+
+  const transformedPath = svgPath(path.join(''))
+    .rotate(arrowAngle, a.x, a.y)
+    .toString()
+
+  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
 }
 
-function arrowBothEndsFilledTriangle(paper, a, b, options) {
+function arrowBothEndsFilledTriangle(
+  paper,
+  a,
+  b,
+  arrowLength,
+  arrowAngle,
+  options
+) {
   const triangleLength = 10
   const triangleWidth = 5
-  return paper
-    .path(
-      `M${tfx(a.x)},${tfx(a.y)}` +
-        `L${tfx(b.x)},${tfx(b.y)}` +
-        `L${tfx(b.x - triangleLength)},${tfx(b.y + triangleWidth)}` +
-        `L${tfx(b.x - triangleLength)},${tfx(a.y - triangleWidth)}` +
-        `L${tfx(b.x)},${tfx(a.y)}` +
-        `M${tfx(a.x)},${tfx(a.y)}` +
-        `L${tfx(a.x + triangleLength)},${tfx(a.y - triangleWidth)}` +
-        `L${tfx(a.x + triangleLength)},${tfx(a.y + triangleWidth)}` +
-        `L${tfx(a.x)},${tfx(a.y)}`
-    )
-    .attr({ ...options.lineattr, fill: '#000' })
+
+  const b0x = a.x + arrowLength
+
+  const path =
+    `M${tfx(a.x)},${tfx(a.y)}` +
+    `L${tfx(b0x)},${tfx(a.y)}` +
+    `L${tfx(b0x - triangleLength)},${tfx(a.y + triangleWidth)}` +
+    `L${tfx(b0x - triangleLength)},${tfx(a.y - triangleWidth)}` +
+    `L${tfx(b0x)},${tfx(a.y)}` +
+    `M${tfx(a.x)},${tfx(a.y)}` +
+    `L${tfx(a.x + triangleLength)},${tfx(a.y - triangleWidth)}` +
+    `L${tfx(a.x + triangleLength)},${tfx(a.y + triangleWidth)}` +
+    `L${tfx(a.x)},${tfx(a.y)}`
+
+  const transformedPath = svgPath(path).rotate(arrowAngle, a.x, a.y).toString()
+
+  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
 }
 
-function arrowEquilibriumFilledHalfBow(paper, a, b, options) {
-  const arrowLength = 9
+function arrowEquilibriumFilledHalfBow(
+  paper,
+  a,
+  b,
+  arrowLength,
+  arrowAngle,
+  options
+) {
+  const arrowLen = 9
   const lineOffset = 3.5
   const arrowOffset = 7
-  const bowAttr = 2
+  const arrowHeadAttr = 2
+
+  const b0x = a.x + arrowLength
 
   const path = []
+
+  // Arrow
   path.push(
     `M${tfx(a.x)},${tfx(a.y - lineOffset)}` +
-      `L${tfx(b.x)},${tfx(b.y - lineOffset)}` +
-      `L${tfx(b.x - arrowLength)},${tfx(b.y - arrowOffset)}` +
-      `L${tfx(b.x - arrowLength + bowAttr)},${tfx(a.y - lineOffset)}Z`
+      `L${tfx(b0x)},${tfx(a.y - lineOffset)}` +
+      `L${tfx(b0x - arrowLen)},${tfx(a.y - arrowOffset)}` +
+      `L${tfx(b0x - arrowLen + arrowHeadAttr)},${tfx(a.y - lineOffset)}Z`
   )
+
+  // Arrowhead
   path.push(
-    `M${tfx(a.x)},${tfx(a.y + lineOffset)}` +
-      `L${tfx(b.x)},${tfx(b.y + lineOffset)}` +
-      `M${tfx(a.x)},${tfx(a.y + lineOffset)}` +
-      `L${tfx(a.x + arrowLength)},${tfx(a.y + arrowOffset)}` +
-      `L${tfx(a.x + arrowLength - bowAttr)},${a.y + lineOffset}Z`
+    `M${tfx(b0x)},${tfx(a.y + lineOffset)}` +
+      `L${tfx(a.x)},${tfx(a.y + lineOffset)}` +
+      `L${tfx(a.x + arrowLen)},${tfx(a.y + arrowOffset)}` +
+      `L${tfx(a.x + arrowLen - arrowHeadAttr)},${a.y + lineOffset}Z`
   )
-  return paper.path(path).attr({ ...options.lineattr, fill: '#000' })
+
+  const transformedPath = svgPath(path.join(''))
+    .rotate(arrowAngle, a.x, a.y)
+    .toString()
+
+  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
 }
 
-function arrowEquilibriumFilledTriangle(paper, a, b, options) {
-  const arrowLength = 9
+function arrowEquilibriumFilledTriangle(
+  paper,
+  a,
+  b,
+  arrowLength,
+  arrowAngle,
+  options
+) {
+  const arrowLen = 9
   const lineOffset = 3.5
   const arrowOffset = 7
 
+  const b0x = a.x + arrowLength
+
   const path = []
+
+  // First arrow
   path.push(
     `M${tfx(a.x)},${tfx(a.y - lineOffset)}` +
-      `L${tfx(b.x)},${tfx(b.y - lineOffset)}` +
-      `L${tfx(b.x - arrowLength)},${tfx(b.y - arrowOffset)}` +
-      `L${tfx(b.x - arrowLength)},${tfx(a.y - lineOffset)}` +
-      `L${tfx(b.x - arrowLength)},${tfx(b.y)}` +
-      `L${tfx(b.x)},${tfx(a.y - lineOffset)}Z`
+      `L${tfx(b0x)},${tfx(a.y - lineOffset)}` +
+      `L${tfx(b0x - arrowLen)},${tfx(a.y - arrowOffset)}` +
+      `L${tfx(b0x - arrowLen)},${tfx(a.y - lineOffset)}` +
+      `L${tfx(b0x - arrowLen)},${tfx(a.y)}` +
+      `L${tfx(b0x)},${tfx(a.y - lineOffset)}Z`
   )
+
+  // Second arrow
   path.push(
     `M${tfx(a.x)},${tfx(a.y + lineOffset)}` +
-      `L${tfx(b.x)},${tfx(b.y + lineOffset)}` +
+      `L${tfx(b0x)},${tfx(a.y + lineOffset)}` +
       `M${tfx(a.x)},${tfx(a.y + lineOffset)}` +
-      `L${tfx(a.x + arrowLength)},${tfx(a.y + arrowOffset)}` +
-      `L${tfx(a.x + arrowLength)},${a.y + lineOffset}Z` +
-      `L${tfx(a.x + arrowLength)},${tfx(a.y)}` +
-      `L${tfx(a.x + arrowLength)},${a.y + lineOffset}Z`
+      `L${tfx(a.x + arrowLen)},${tfx(a.y + arrowOffset)}` +
+      `L${tfx(a.x + arrowLen)},${a.y + lineOffset}Z` +
+      `L${tfx(a.x + arrowLen)},${tfx(a.y)}` +
+      `L${tfx(a.x + arrowLen)},${a.y + lineOffset}Z`
   )
-  return paper.path(path).attr({ ...options.lineattr, fill: '#000' })
+
+  const transformedPath = svgPath(path.join(''))
+    .rotate(arrowAngle, a.x, a.y)
+    .toString()
+
+  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
 }
 
-function arrowEquilibriumOpenAngle(paper, a, b, options) {
+function arrowEquilibriumOpenAngle(
+  paper,
+  a,
+  b,
+  arrowLength,
+  arrowAngle,
+  options
+) {
   const width = 5
   const length = 7
-  const arrowLength = 9
+  const arrowLen = 9
   const lineOffset = 3.5
   const arrowOffset = 7
 
+  const b0x = a.x + arrowLength
+
   const path = []
 
+  // First arrow
   path.push(
     `M${tfx(a.x)},${tfx(a.y - lineOffset)}` +
-      `L${tfx(b.x)},${tfx(b.y - lineOffset)}` +
-      `L${tfx(b.x - length)},${tfx(b.y - width - lineOffset)}`
+      `L${tfx(b0x)},${tfx(a.y - lineOffset)}` +
+      `L${tfx(b0x - length)},${tfx(a.y - width - lineOffset)}`
   )
 
+  // Second arrow
   path.push(
     `M${tfx(a.x)},${tfx(a.y + lineOffset)}` +
-      `L${tfx(b.x)},${tfx(b.y + lineOffset)}` +
+      `L${tfx(b0x)},${tfx(a.y + lineOffset)}` +
       `M${tfx(a.x)},${tfx(a.y + lineOffset)}` +
-      `L${tfx(a.x + arrowLength)},${tfx(b.y + lineOffset + width)}`
+      `L${tfx(a.x + arrowLen)},${tfx(a.y + lineOffset + width)}`
   )
 
-  return paper.path(path).attr(options.lineattr)
+  const transformedPath = svgPath(path.join(''))
+    .rotate(arrowAngle, a.x, a.y)
+    .toString()
+
+  return paper.path(transformedPath).attr(options.lineattr)
 }
 
-function arrowUnbalancedEquilibriumFilledHalfBow(paper, a, b, options) {
-  const arrowLength = 9
+function arrowUnbalancedEquilibriumFilledHalfBow(
+  paper,
+  a,
+  b,
+  arrowLength,
+  arrowAngle,
+  options
+) {
+  const arrowLen = 9
   const lineOffset = 3.5
   const arrowOffset = 7
-  const bowAttr = 2
+  const arrowHeadAttr = 2
   const unbalanceVal = 15
 
+  const b0x = a.x + arrowLength
+
   const path = []
+
+  // First arrow
   path.push(
     `M${tfx(a.x)},${tfx(a.y - lineOffset)}` +
-      `L${tfx(b.x)},${tfx(b.y - lineOffset)}` +
-      `L${tfx(b.x - arrowLength)},${tfx(b.y - arrowOffset)}` +
-      `L${tfx(b.x - arrowLength + bowAttr)},${tfx(a.y - lineOffset)}Z`
+      `L${tfx(b0x)},${tfx(a.y - lineOffset)}` +
+      `L${tfx(b0x - arrowLen)},${tfx(a.y - arrowOffset)}` +
+      `L${tfx(b0x - arrowLen + arrowHeadAttr)},${tfx(a.y - lineOffset)}Z`
   )
+
+  // Second (Unbalanced) arrow
   path.push(
     `M${tfx(a.x + unbalanceVal)},${tfx(a.y + lineOffset)}` +
-      `L${tfx(b.x - unbalanceVal)},${tfx(b.y + lineOffset)}` +
+      `L${tfx(b0x - unbalanceVal)},${tfx(a.y + lineOffset)}` +
       `M${tfx(a.x + unbalanceVal)},${tfx(a.y + lineOffset)}` +
-      `L${tfx(a.x + arrowLength + unbalanceVal)},${tfx(a.y + arrowOffset)}` +
-      `L${tfx(a.x + arrowLength - bowAttr + unbalanceVal)},${a.y + lineOffset}Z`
+      `L${tfx(a.x + arrowLen + unbalanceVal)},${tfx(a.y + arrowOffset)}` +
+      `L${tfx(a.x + arrowLen - arrowHeadAttr + unbalanceVal)},${
+        a.y + lineOffset
+      }Z`
   )
-  return paper.path(path).attr({ ...options.lineattr, fill: '#000' })
+
+  const transformedPath = svgPath(path.join(''))
+    .rotate(arrowAngle, a.x, a.y)
+    .toString()
+
+  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
 }
 
-function arrowUnbalancedEquilibriumOpenHalfAngle(paper, a, b, options) {
+function arrowUnbalancedEquilibriumOpenHalfAngle(
+  paper,
+  a,
+  b,
+  arrowLength,
+  arrowAngle,
+  options
+) {
   const width = 5
   const length = 7
-  const arrowLength = 9
+  const arrowLen = 9
   const lineOffset = 3.5
   const arrowOffset = 7
   const unbalanceVal = 15
 
+  const b0x = a.x + arrowLength
+
   const path = []
 
+  // First arrow
   path.push(
     `M${tfx(a.x)},${tfx(a.y - lineOffset)}` +
-      `L${tfx(b.x)},${tfx(b.y - lineOffset)}` +
-      `L${tfx(b.x - length)},${tfx(b.y - width - lineOffset)}`
+      `L${tfx(b0x)},${tfx(a.y - lineOffset)}` +
+      `L${tfx(b0x - length)},${tfx(a.y - width - lineOffset)}`
   )
 
+  // Second (Unbalanced) arrow
   path.push(
     `M${tfx(a.x + unbalanceVal)},${tfx(a.y + lineOffset)}` +
-      `L${tfx(b.x - unbalanceVal)},${tfx(b.y + lineOffset)}` +
+      `L${tfx(b0x - unbalanceVal)},${tfx(a.y + lineOffset)}` +
       `M${tfx(a.x + unbalanceVal)},${tfx(a.y + lineOffset)}` +
-      `L${tfx(a.x + arrowLength + unbalanceVal)},${tfx(
-        b.y + lineOffset + width
-      )}`
+      `L${tfx(a.x + arrowLen + unbalanceVal)},${tfx(a.y + lineOffset + width)}`
   )
 
-  return paper.path(path).attr(options.lineattr)
+  const transformedPath = svgPath(path.join(''))
+    .rotate(arrowAngle, a.x, a.y)
+    .toString()
+
+  return paper.path(transformedPath).attr(options.lineattr)
 }
 
-function arrowUnbalancedEquilibriumLargeFilledHalfBow(paper, a, b, options) {
-  const arrowLength = 9
+function arrowUnbalancedEquilibriumLargeFilledHalfBow(
+  paper,
+  a,
+  b,
+  arrowLength,
+  arrowAngle,
+  options
+) {
+  const arrowLen = 9
   const lineOffset = 3.5
   const arrowOffset = 7
-  const bowAttr = 2
+  const arrowHeadAttr = 2
   const unbalanceVal = 15
 
+  const b0x = a.x + arrowLength
+
   const path = []
+
+  // First arrow
   path.push(
     `M${tfx(a.x)},${tfx(a.y - lineOffset)}` +
-      `L${tfx(b.x)},${tfx(b.y - lineOffset)}` +
-      `L${tfx(b.x - arrowLength)},${tfx(b.y - arrowOffset)}` +
-      `L${tfx(b.x - arrowLength + bowAttr)},${tfx(a.y - lineOffset)}Z`
+      `L${tfx(b0x)},${tfx(a.y - lineOffset)}` +
+      `L${tfx(b0x - arrowLen)},${tfx(a.y - arrowOffset)}` +
+      `L${tfx(b0x - arrowLen + arrowHeadAttr)},${tfx(a.y - lineOffset)}Z`
   )
+
+  // Second (Unbalanced) arrow
   path.push(
     `M${tfx(a.x + unbalanceVal)},${tfx(a.y + lineOffset)}` +
-      `L${tfx(b.x - unbalanceVal)},${tfx(b.y + lineOffset)}` +
+      `L${tfx(b0x - unbalanceVal)},${tfx(a.y + lineOffset)}` +
       `M${tfx(a.x + unbalanceVal)},${tfx(a.y + lineOffset)}` +
-      `L${tfx(a.x + arrowLength + unbalanceVal)},${tfx(a.y + arrowOffset)}` +
-      `L${tfx(a.x + arrowLength - bowAttr + unbalanceVal)},${a.y + lineOffset}Z`
+      `L${tfx(a.x + arrowLen + unbalanceVal)},${tfx(a.y + arrowOffset)}` +
+      `L${tfx(a.x + arrowLen - arrowHeadAttr + unbalanceVal)},${
+        a.y + lineOffset
+      }Z`
   )
-  return paper.path(path).attr({ ...options.lineattr, fill: '#000' })
+
+  const transformedPath = svgPath(path.join(''))
+    .rotate(arrowAngle, a.x, a.y)
+    .toString()
+
+  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
 }
 
-function arrowUnbalancedEquilibriumFilleHalfTriangle(paper, a, b, options) {
-  const arrowLength = 9
+function arrowUnbalancedEquilibriumFilleHalfTriangle(
+  paper,
+  a,
+  b,
+  arrowLength,
+  arrowAngle,
+  options
+) {
+  const arrowLen = 9
   const lineOffset = 3.5
   const arrowOffset = 7
   const unbalanceVal = 15
 
+  const b0x = a.x + arrowLength
+
   const path = []
+
+  // First arrow
   path.push(
     `M${tfx(a.x)},${tfx(a.y - lineOffset)}` +
-      `L${tfx(b.x)},${tfx(b.y - lineOffset)}` +
-      `L${tfx(b.x - arrowLength)},${tfx(b.y - arrowOffset)}` +
-      `L${tfx(b.x - arrowLength)},${tfx(a.y - lineOffset)}Z`
+      `L${tfx(b0x)},${tfx(a.y - lineOffset)}` +
+      `L${tfx(b0x - arrowLen)},${tfx(a.y - arrowOffset)}` +
+      `L${tfx(b0x - arrowLen)},${tfx(a.y - lineOffset)}Z`
   )
+
+  // Second (Unbalanced) arrow
   path.push(
     `M${tfx(a.x + unbalanceVal)},${tfx(a.y + lineOffset)}` +
-      `L${tfx(b.x - unbalanceVal)},${tfx(b.y + lineOffset)}` +
+      `L${tfx(b0x - unbalanceVal)},${tfx(a.y + lineOffset)}` +
       `M${tfx(a.x + unbalanceVal)},${tfx(a.y + lineOffset)}` +
-      `L${tfx(a.x + arrowLength + unbalanceVal)},${tfx(a.y + arrowOffset)}` +
-      `L${tfx(a.x + arrowLength + unbalanceVal)},${a.y + lineOffset}Z`
+      `L${tfx(a.x + arrowLen + unbalanceVal)},${tfx(a.y + arrowOffset)}` +
+      `L${tfx(a.x + arrowLen + unbalanceVal)},${a.y + lineOffset}Z`
   )
-  return paper.path(path).attr({ ...options.lineattr, fill: '#000' })
+
+  const transformedPath = svgPath(path.join(''))
+    .rotate(arrowAngle, a.x, a.y)
+    .toString()
+
+  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
 }
 
 function plus(paper, c, options) {

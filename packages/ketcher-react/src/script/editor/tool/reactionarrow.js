@@ -22,6 +22,7 @@ import {
 
 import Action from '../shared/action'
 import Raphael from '../../raphael-ext'
+import { Vec2 } from '../../../../../ketcher-core/dist'
 import { fromMultipleMove } from '../actions/fragment'
 
 function ReactionArrowTool(editor, mode) {
@@ -111,10 +112,12 @@ ReactionArrowTool.prototype.mouseup = function (event) {
   if (!this.dragCtx) return true
   const rnd = this.editor.render
 
-  setMinLength(this.dragCtx.p0, this.dragCtx.previous)
+  const defaultPrevious = new Vec2(this.dragCtx.p0)
 
-  if (this.dragCtx.action) {
-    if (this.dragCtx.isNew) {
+  setMinLength(this.dragCtx.p0, this.dragCtx.previous || defaultPrevious)
+
+  if (this.dragCtx.isNew) {
+    if (this.dragCtx.action) {
       this.editor.update(fromArrowDeletion(rnd.ctab, this.dragCtx.itemId), true)
       this.dragCtx.action = fromArrowAddition(
         rnd.ctab,
@@ -122,17 +125,23 @@ ReactionArrowTool.prototype.mouseup = function (event) {
         this.mode,
         event.shiftKey
       )
+    } else {
+      this.dragCtx.action = fromArrowAddition(
+        rnd.ctab,
+        [this.dragCtx.p0, defaultPrevious],
+        this.mode,
+        event.shiftKey
+      )
     }
     this.editor.update(this.dragCtx.action)
   }
-
   delete this.dragCtx
   return true
 }
 
 function getArrowParams(x1, y1, x2, y2) {
   const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-  const angle = Raphael.angle(x1, y1, x2, y2)
+  const angle = Raphael.angle(x2, y2, x1, y1)
 
   return { length, angle }
 }
@@ -141,20 +150,14 @@ function setMinLength(pos1, pos2) {
   const minLength = 1.5
   const defaultLength = 2
 
-  if (!pos2) {
-    pos2 = pos1
-  }
-
   const arrowParams = getArrowParams(pos1.x, pos1.y, pos2.x, pos2.y)
 
   if (arrowParams.length <= minLength) {
     pos2.x =
-      pos1.x +
-      defaultLength * Math.cos((Math.PI * (arrowParams.angle - 180)) / 180)
+      pos1.x + defaultLength * Math.cos((Math.PI * arrowParams.angle) / 180)
 
     pos2.y =
-      pos1.y +
-      defaultLength * Math.sin((Math.PI * (arrowParams.angle - 180)) / 180)
+      pos1.y + defaultLength * Math.sin((Math.PI * arrowParams.angle) / 180)
   }
 }
 

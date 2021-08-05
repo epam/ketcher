@@ -54,10 +54,10 @@ export class RxnArrowResize extends Base {
     const item = struct.rxnArrows.get(id)
     const anchor = this.data.anchor
 
-    const previousPos0 = item.pos[0].get_xy0()
-    const previousPos1 = item.pos[1].get_xy0()
-
     if (anchor) {
+      const previousPos0 = item.pos[0].get_xy0()
+      const previousPos1 = item.pos[1].get_xy0()
+
       if (
         tfx(anchor.x) === tfx(item.pos[1].x) &&
         tfx(anchor.y) === tfx(item.pos[1].y)

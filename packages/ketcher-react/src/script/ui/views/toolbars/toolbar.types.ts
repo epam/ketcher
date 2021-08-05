@@ -39,6 +39,7 @@ type TopToolbarItemVariant =
   | 'redo'
   | 'cut'
   | 'copy'
+  | 'copy-image'
   | 'paste'
   | 'zoom-in'
   | 'zoom-out'

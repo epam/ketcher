@@ -38,6 +38,7 @@ import ChiralFlagIcon from './files/chiral-flag.svg'
 import CipIcon from './files/cip.svg'
 import CleanIcon from './files/clean.svg'
 import CopyIcon from './files/copy.svg'
+import CopyImageIcon from './files/copy-image.svg'
 import CutIcon from './files/cut.svg'
 import DearomIcon from './files/dearom.svg'
 import DropdownIcon from './files/dropdown.svg'
@@ -132,6 +133,7 @@ const icons = {
   cip: CipIcon,
   clean: CleanIcon,
   copy: CopyIcon,
+  'copy-image': CopyImageIcon,
   cut: CutIcon,
   dearom: DearomIcon,
   dropdown: DropdownIcon,

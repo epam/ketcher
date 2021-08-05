@@ -21,6 +21,7 @@ import server from './server'
 import templates from './templates'
 import tools from './tools'
 import zoom from './zoom'
+import copyImageToClipboard from './copyImageToClipboard'
 
 export * from './action.types'
 
@@ -75,6 +76,14 @@ const config = {
     title: 'Copy',
     action: () => {
       exec('copy') || dontClipMessage('Copy') // eslint-disable-line no-unused-expressions
+    },
+    disabled: editor => !hasSelection(editor)
+  },
+  'copy-image': {
+    shortcut: 'Mod+Shift+f',
+    title: 'Copy Image',
+    action: () => {
+      copyImageToClipboard()
     },
     disabled: editor => !hasSelection(editor)
   },

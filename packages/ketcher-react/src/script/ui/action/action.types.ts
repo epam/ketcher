@@ -41,6 +41,7 @@ type ToolVariant =
   | 'cip'
   | 'clean'
   | 'copy'
+  | 'copy-image'
   | 'cut'
   | 'dearom'
   | 'dropdown'

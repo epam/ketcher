@@ -71,6 +71,7 @@ const TopToolbar = (props: Props) => {
         <Item id="cut" />
         <Item id="copy" />
         <Item id="paste" />
+        <Item id="copy-image" />
       </Group>
 
       <Group>

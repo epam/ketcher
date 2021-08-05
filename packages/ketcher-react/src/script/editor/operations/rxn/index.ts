@@ -26,7 +26,6 @@ type RxnArrowAddData = {
   id?: number
   pos: Array<Vec2>
   mode: RxnArrowMode
-  toCircle: boolean
 }
 
 class RxnArrowAdd extends Base {
@@ -35,11 +34,10 @@ class RxnArrowAdd extends Base {
   constructor(
     pos: Array<Vec2> = [],
     mode: RxnArrowMode = RxnArrowMode.OpenAngle,
-    toCircle: boolean = false,
     id?: number
   ) {
     super(OperationType.RXN_ARROW_ADD)
-    this.data = { pos, mode, toCircle, id }
+    this.data = { pos, mode, id }
   }
 
   execute(restruct: any): void {
@@ -75,7 +73,6 @@ interface RxnArrowDeleteData {
   id: number
   pos?: Array<Vec2>
   mode?: RxnArrowMode
-  toCircle?: boolean
 }
 
 class RxnArrowDelete extends Base {
@@ -84,7 +81,7 @@ class RxnArrowDelete extends Base {
 
   constructor(id: number) {
     super(OperationType.RXN_ARROW_DELETE)
-    this.data = { id, pos: [], mode: RxnArrowMode.OpenAngle, toCircle: false }
+    this.data = { id, pos: [], mode: RxnArrowMode.OpenAngle }
     this.performed = false
   }
 
@@ -93,7 +90,6 @@ class RxnArrowDelete extends Base {
     const item = struct.rxnArrows.get(this.data.id) as any
     this.data.pos = item.pos
     this.data.mode = item.mode
-    this.data.toCircle = item.toCircle
     this.performed = true
 
     restruct.markItemRemoved()
@@ -104,12 +100,7 @@ class RxnArrowDelete extends Base {
   }
 
   invert(): Base {
-    return new RxnArrowAdd(
-      this.data.pos,
-      this.data.mode,
-      this.data.toCircle,
-      this.data.id
-    )
+    return new RxnArrowAdd(this.data.pos, this.data.mode, this.data.id)
   }
 }
 

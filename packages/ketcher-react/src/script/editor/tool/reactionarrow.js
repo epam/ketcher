@@ -70,8 +70,7 @@ ReactionArrowTool.prototype.mousemove = function (event) {
           this.dragCtx.ci.id,
           diff,
           current,
-          this.dragCtx.ci.ref,
-          event.shiftKey
+          this.dragCtx.ci.ref
         )
       }
       this.editor.update(this.dragCtx.action, true)
@@ -97,8 +96,7 @@ ReactionArrowTool.prototype.mousemove = function (event) {
         this.dragCtx.itemId,
         diff,
         current,
-        null,
-        event.shiftKey
+        null
       )
       this.editor.update(this.dragCtx.action, true)
     }
@@ -122,8 +120,7 @@ ReactionArrowTool.prototype.mouseup = function (event) {
       this.dragCtx.action = fromArrowAddition(
         rnd.ctab,
         [this.dragCtx.p0, this.dragCtx.previous],
-        this.mode,
-        event.shiftKey
+        this.mode
       )
     } else {
       this.dragCtx.action = fromArrowAddition(

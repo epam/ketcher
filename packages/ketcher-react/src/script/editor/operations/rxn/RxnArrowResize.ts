@@ -28,7 +28,6 @@ interface RxnArrowResizeData {
   current: Vec2
   anchor: Vec2
   noinvalidate: boolean
-  toCircle: boolean
 }
 
 export class RxnArrowResize extends Base {
@@ -39,11 +38,10 @@ export class RxnArrowResize extends Base {
     d: any,
     current: Vec2,
     anchor: any,
-    noinvalidate: boolean,
-    toCircle: boolean
+    noinvalidate: boolean
   ) {
     super(OperationType.RXN_ARROW_RESIZE)
-    this.data = { id, d, current, anchor, noinvalidate, toCircle }
+    this.data = { id, d, current, anchor, noinvalidate }
   }
 
   execute(restruct: any): void {
@@ -101,8 +99,7 @@ export class RxnArrowResize extends Base {
       this.data.d,
       this.data.current,
       this.data.anchor,
-      this.data.noinvalidate,
-      this.data.toCircle
+      this.data.noinvalidate
     )
   }
 }

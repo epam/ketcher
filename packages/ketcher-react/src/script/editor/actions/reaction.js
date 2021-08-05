@@ -24,15 +24,15 @@ import {
 
 import Action from '../shared/action'
 
-export function fromArrowAddition(restruct, pos, mode, toCircle) {
+export function fromArrowAddition(restruct, pos, mode) {
   const action = new Action()
-  action.addOp(new RxnArrowAdd(pos, mode, toCircle))
+  action.addOp(new RxnArrowAdd(pos, mode))
   return action.perform(restruct)
 }
 
-export function fromArrowResizing(restruct, id, d, current, anchor, toCircle) {
+export function fromArrowResizing(restruct, id, d, current, anchor) {
   var action = new Action()
-  action.addOp(new RxnArrowResize(id, d, current, anchor, false, toCircle))
+  action.addOp(new RxnArrowResize(id, d, current, anchor, false))
   return action.perform(restruct)
 }
 

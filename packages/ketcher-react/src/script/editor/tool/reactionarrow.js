@@ -110,25 +110,13 @@ ReactionArrowTool.prototype.mouseup = function (event) {
   if (!this.dragCtx) return true
   const rnd = this.editor.render
 
-  const defaultPrevious = new Vec2(this.dragCtx.p0)
+  const p0 = this.dragCtx.p0
+  const p1 = getDefaultLengthPos(p0, this.dragCtx.previous)
 
-  setMinLength(this.dragCtx.p0, this.dragCtx.previous || defaultPrevious)
-
-  if (this.dragCtx.isNew) {
-    if (this.dragCtx.action) {
+  if (this.dragCtx.action) {
+    if (this.dragCtx.isNew) {
       this.editor.update(fromArrowDeletion(rnd.ctab, this.dragCtx.itemId), true)
-      this.dragCtx.action = fromArrowAddition(
-        rnd.ctab,
-        [this.dragCtx.p0, this.dragCtx.previous],
-        this.mode
-      )
-    } else {
-      this.dragCtx.action = fromArrowAddition(
-        rnd.ctab,
-        [this.dragCtx.p0, defaultPrevious],
-        this.mode,
-        event.shiftKey
-      )
+      this.dragCtx.action = fromArrowAddition(rnd.ctab, [p0, p1], this.mode)
     }
     this.editor.update(this.dragCtx.action)
   }
@@ -136,26 +124,40 @@ ReactionArrowTool.prototype.mouseup = function (event) {
   return true
 }
 
+ReactionArrowTool.prototype.click = function (event) {
+  const rnd = this.editor.render
+  const ci = this.editor.findItem(event, ['rxnArrows'])
+  const p0 = rnd.page2obj(event)
+  const defaultLength = 2
+  if (!ci) {
+    this.editor.update(
+      fromArrowAddition(rnd.ctab, [p0, getDefaultLengthPos(p0)], this.mode)
+    )
+  }
+}
+
 function getArrowParams(x1, y1, x2, y2) {
   const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
   const angle = Raphael.angle(x2, y2, x1, y1)
-
   return { length, angle }
 }
 
-function setMinLength(pos1, pos2) {
+function getDefaultLengthPos(pos1, pos2) {
   const minLength = 1.5
   const defaultLength = 2
-
-  const arrowParams = getArrowParams(pos1.x, pos1.y, pos2.x, pos2.y)
-
-  if (arrowParams.length <= minLength) {
-    pos2.x =
-      pos1.x + defaultLength * Math.cos((Math.PI * arrowParams.angle) / 180)
-
-    pos2.y =
-      pos1.y + defaultLength * Math.sin((Math.PI * arrowParams.angle) / 180)
+  if (!pos2) {
+    return new Vec2(pos1.x + defaultLength, pos1.y)
   }
+  const arrowParams = getArrowParams(pos1.x, pos1.y, pos2.x, pos2.y)
+  if (arrowParams.length <= minLength) {
+    const newPos = new Vec2()
+    newPos.x =
+      pos1.x + defaultLength * Math.cos((Math.PI * arrowParams.angle) / 180)
+    newPos.y =
+      pos1.y + defaultLength * Math.sin((Math.PI * arrowParams.angle) / 180)
+    return newPos
+  }
+  return pos2
 }
 
 export default ReactionArrowTool

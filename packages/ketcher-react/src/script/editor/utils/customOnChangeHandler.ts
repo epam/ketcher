@@ -128,6 +128,13 @@ export function customOnChangeHandler(action, handler) {
         })
         break
 
+      case OperationType.RXN_ARROW_RESIZE:
+        data.push({
+          operation: op.type,
+          id: op.data.id
+        })
+        break
+
       case OperationType.RXN_ARROW_MOVE:
         data.push({
           operation: op.type,

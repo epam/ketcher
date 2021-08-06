@@ -14,12 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 export function arrowToGraph(arrowNode) {
-  const coord = arrowNode.center
   return {
     type: 'arrow',
-    location: [coord.x, coord.y, coord.z],
-    prop: arrowNode.data,
-    mode: arrowNode.mode
+    data: arrowNode.data
   }
 }
 

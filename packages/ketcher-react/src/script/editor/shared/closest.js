@@ -317,21 +317,19 @@ function findClosestRGroup(restruct, pos, skip, minDist) {
 
 function findClosestRxnArrow(restruct, pos) {
   let minDist = null
+  let refPoint = null
   let ret = null
 
-  restruct.rxnArrows.forEach((arrow, id) => {
-    const p = arrow.item.pp
+  restruct.rxnArrows.forEach((rxnArrow, id) => {
+    const dist = rxnArrow.calcDistance(pos, restruct.render.options.scale)
 
-    if (Math.abs(pos.x - p.x) >= 1.0) return
+    if (dist.minDist < 0.3 && (!ret || dist.minDist < minDist)) {
+      minDist = dist.minDist
+      refPoint = dist.refPoint
 
-    const dist = Math.abs(pos.y - p.y)
-
-    if (dist < 0.3 && (!ret || dist < minDist)) {
-      minDist = dist
-      ret = { id, dist: minDist }
+      ret = { id, dist: minDist, ref: refPoint }
     }
   })
-
   return ret
 }
 

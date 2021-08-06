@@ -494,17 +494,18 @@
     },
     "arrow": {
       "type": "object",
-      "required": ["type", "location"],
+      "required": ["type", "data"],
       "properties": {
         "type": {
           "const": "arrow"
         },
-        "location": {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 3,
-          "items": {
-            "type": "number"
+        "data": {
+          "type": "object",
+          "required": ["mode"],
+          "properties": {
+            "mode": {
+              "type": "string"
+            }
           }
         }
       }

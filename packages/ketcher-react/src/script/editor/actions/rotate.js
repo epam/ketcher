@@ -6,8 +6,6 @@ import {
   RxnPlusMove,
   SGroupDataMove
 } from '../operations'
-
-import { Fragment } from 'ketcher-core'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -27,6 +25,7 @@ import { Bond, Pile, Vec2 } from 'ketcher-core'
 import { getRelSgroupsBySelection, structSelection } from './utils'
 
 import Action from '../shared/action'
+import { Fragment } from 'ketcher-core'
 import utils from '../shared/utils'
 
 export function fromFlip(restruct, selection, dir, center) {
@@ -142,7 +141,9 @@ export function fromRotate(restruct, selection, center, angle) {
   if (selection.rxnArrows) {
     selection.rxnArrows.forEach(aid => {
       var arrow = struct.rxnArrows.get(aid)
-      action.addOp(new RxnArrowMove(aid, rotateDelta(arrow.pp, center, angle)))
+      action.addOp(
+        new RxnArrowMove(aid, rotateDelta(arrow.pos[0], center, angle))
+      )
     })
   }
 

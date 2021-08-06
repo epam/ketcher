@@ -368,7 +368,7 @@ class ReSimpleObject extends ReObject {
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())))
   }
 }
-function calculateDistanceToLine(pos: Vec2, point: Vec2): number {
+function calculateDistanceToLine(pos: Array<Vec2>, point: Vec2): number {
   let dist: number
   if (
     (point.x < Math.min(pos[0].x, pos[1].x) ||

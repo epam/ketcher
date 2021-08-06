@@ -1,17 +1,8 @@
-import { RxnArrow, RxnPlus, Struct, Vec2 } from 'domain/entities'
+import { RxnArrow, RxnPlus, Struct } from 'domain/entities'
 
 export function rxnToStruct(graphItem: any, struct: Struct): Struct {
   if (graphItem.type === 'arrow') {
-    struct.rxnArrows.add(
-      new RxnArrow(
-        new Vec2(
-          graphItem.location[0],
-          graphItem.location[1],
-          graphItem.location[2]
-        ),
-        graphItem.mode
-      )
-    )
+    struct.rxnArrows.add(new RxnArrow(graphItem.data))
   } else {
     struct.rxnPluses.add(
       new RxnPlus({

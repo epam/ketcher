@@ -128,7 +128,6 @@ ReactionArrowTool.prototype.click = function (event) {
   const rnd = this.editor.render
   const ci = this.editor.findItem(event, ['rxnArrows'])
   const p0 = rnd.page2obj(event)
-  const defaultLength = 2
   if (!ci) {
     this.editor.update(
       fromArrowAddition(rnd.ctab, [p0, getDefaultLengthPos(p0)], this.mode)

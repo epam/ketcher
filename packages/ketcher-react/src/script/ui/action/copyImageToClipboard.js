@@ -29,7 +29,8 @@ async function copyImageToClipboard() {
   const structStr = await service.getStructureFromStructAsync(struct)
   const ketcher = new Ketcher(editor, server, {}, factory)
   const image = await ketcher.generateImageAsync(structStr, {
-    outputFormat: 'png'
+    outputFormat: 'png',
+    backgroundColor: '255, 255, 255'
   })
 
   try {

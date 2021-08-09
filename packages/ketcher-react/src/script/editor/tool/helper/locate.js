@@ -52,10 +52,10 @@ function getElementsInRectangle(restruct, p0, p1) {
 
   restruct.rxnArrows.forEach((item, id) => {
     if (
-      item.item.pp.x > x0 &&
-      item.item.pp.x < x1 &&
-      item.item.pp.y > y0 &&
-      item.item.pp.y < y1
+      item.item.center().x > x0 &&
+      item.item.center().x < x1 &&
+      item.item.center().y > y0 &&
+      item.item.center().y < y1
     )
       rxnArrowsList.push(id)
   })

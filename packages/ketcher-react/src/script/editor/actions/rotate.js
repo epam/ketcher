@@ -142,7 +142,7 @@ export function fromRotate(restruct, selection, center, angle) {
     selection.rxnArrows.forEach(aid => {
       var arrow = struct.rxnArrows.get(aid)
       action.addOp(
-        new RxnArrowMove(aid, rotateDelta(arrow.pos[0], center, angle))
+        new RxnArrowMove(aid, rotateDelta(arrow.center(), center, angle))
       )
     })
   }

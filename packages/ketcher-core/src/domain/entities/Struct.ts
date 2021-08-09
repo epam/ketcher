@@ -947,7 +947,7 @@ export class Struct {
 
     this.rxnArrows.forEach(item => {
       // there's just one arrow
-      arrowPos = item.pos[1].x
+      arrowPos = item.center().x
     })
 
     this.rxnPluses.forEach(item => {

@@ -164,7 +164,7 @@ function getStructCenter(struct) {
     })
     return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2) // TODO: check
   }
-  if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0).pp
+  if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0).center()
   if (struct.rxnPluses.size > 0) return struct.rxnPluses.get(0).pp
   if (struct.simpleObjects.size > 0) return struct.simpleObjects.get(0).center()
   if (struct.texts.size > 0) return struct.texts.get(0).position

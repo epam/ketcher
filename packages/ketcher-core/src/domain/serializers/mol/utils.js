@@ -284,13 +284,21 @@ function rxnMerge(
     var defaultOffset = 3
     if (!v1) v1 = new Vec2(v2.x - defaultOffset, v2.y)
     if (!v2) v2 = new Vec2(v1.x + defaultOffset, v1.y)
+    const arrowCenter = Vec2.lc2(v1, 0.5, v2, 0.5)
+    const arrowStart = new Vec2(
+      arrowCenter.x - 0.5 * defaultArrowLength,
+      arrowCenter.y,
+      arrowCenter.z
+    )
+    const arrowEnd = new Vec2(
+      arrowCenter.x + 0.5 * defaultArrowLength,
+      arrowCenter.y,
+      arrowCenter.z
+    )
     ret.rxnArrows.add(
       new RxnArrow({
         mode: 'open-angle',
-        pos: [
-          Vec2.lc2(v1, 0.5, v2, 0.5),
-          Vec2.lc2(v1 + defaultArrowLength, 0.5, v2, 0.5)
-        ]
+        pos: [arrowStart, arrowEnd]
       })
     )
   }

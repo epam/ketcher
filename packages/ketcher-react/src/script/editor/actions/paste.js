@@ -106,7 +106,10 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 
   pstruct.rxnArrows.forEach(rxnArrow => {
     action.addOp(
-      new RxnArrowAdd(rxnArrow.mode, rxnArrow.pp.add(offset)).perform(restruct)
+      new RxnArrowAdd(
+        rxnArrow.pos.map(p => p.add(offset)),
+        rxnArrow.mode
+      ).perform(restruct)
     )
   })
 

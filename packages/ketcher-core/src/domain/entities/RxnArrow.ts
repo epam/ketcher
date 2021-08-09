@@ -59,6 +59,6 @@ export class RxnArrow {
   }
 
   center(): Vec2 {
-    return this.pos[0]
+    return Vec2.centre(this.pos[0], this.pos[1])
   }
 }

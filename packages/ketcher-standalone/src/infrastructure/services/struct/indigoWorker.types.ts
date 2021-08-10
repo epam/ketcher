@@ -64,6 +64,7 @@ export interface ConvertCommandData
 
 export interface GenerateImageCommandData extends CommandData, WithStruct {
   outputFormat: 'png' | 'svg'
+  backgroundColor: string
 }
 
 export interface LayoutCommandData extends CommandData, WithStruct {}

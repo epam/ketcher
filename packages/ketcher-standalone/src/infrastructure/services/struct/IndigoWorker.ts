@@ -80,7 +80,11 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       const data: GenerateImageCommandData = message.data as GenerateImageCommandData
       handle(
         (indigo, indigoOptions) => indigo.render(data.struct, indigoOptions),
-        { ...data.options, 'render-output-format': data.outputFormat }
+        {
+          ...data.options,
+          'render-output-format': data.outputFormat,
+          'render-background-color': data.backgroundColor
+        }
       )
       break
     }

@@ -565,9 +565,9 @@ class IndigoService implements StructService {
 
   generateImageAsBase64(
     data: string,
-    options: GenerateImageOptions = { outputFormat: 'png' }
+    options: GenerateImageOptions = { outputFormat: 'png', backgroundColor: '' }
   ): Promise<string> {
-    const { outputFormat, ...restOptions } = options
+    const { outputFormat, backgroundColor, ...restOptions } = options
 
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()
@@ -590,6 +590,7 @@ class IndigoService implements StructService {
       const commandData: GenerateImageCommandData = {
         struct: data,
         outputFormat: outputFormat || 'png',
+        backgroundColor: backgroundColor,
         options: commandOptions
       }
 

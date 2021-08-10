@@ -120,7 +120,7 @@ input[type='search'] {
     content: 'Error: ' attr(error);
     display: block;
     position: fixed;
-    white-space: pre;
+    white-space: pre-wrap;
     padding: 0.35em;
     background: lighten(@error-color, 30%);
     border: 1px solid @error-color;
@@ -128,6 +128,7 @@ input[type='search'] {
     line-height: 1em;
     font-size: 0.9em;
     z-index: 2;
+    max-width: 25em;
   }
 }
 

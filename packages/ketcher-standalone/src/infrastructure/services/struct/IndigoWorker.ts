@@ -66,6 +66,7 @@ function handle(handler: handlerType, options?: CommandOptions) {
 
 function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {
   for (let [key, value] of Object.entries(options)) {
+    if (value == null) continue
     indigoOptions.set(key, (value as any).toString())
   }
 }

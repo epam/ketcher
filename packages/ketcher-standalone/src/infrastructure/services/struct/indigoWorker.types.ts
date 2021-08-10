@@ -64,7 +64,7 @@ export interface ConvertCommandData
 
 export interface GenerateImageCommandData extends CommandData, WithStruct {
   outputFormat: 'png' | 'svg'
-  backgroundColor: string
+  backgroundColor?: string
 }
 
 export interface LayoutCommandData extends CommandData, WithStruct {}
@@ -92,7 +92,7 @@ export interface AutomapCommandData extends CommandData, WithStruct {
 }
 
 export interface CommandOptions {
-  [key: string]: string | number | boolean
+  [key: string]: string | number | boolean | undefined
 }
 
 export interface OutputMessage<T> {

@@ -94,12 +94,13 @@ export interface InfoResult {
 export interface RecognizeResult extends WithStruct {}
 
 export interface StructServiceOptions {
-  [key: string]: string | number | boolean
+  [key: string]: string | number | boolean | undefined
 }
 
 export type OutputFormatType = 'png' | 'svg'
 export interface GenerateImageOptions extends StructServiceOptions {
   outputFormat: OutputFormatType
+  backgroundColor?: string
 }
 
 export interface StructService {

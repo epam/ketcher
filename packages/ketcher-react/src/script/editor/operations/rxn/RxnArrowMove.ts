@@ -14,43 +14,46 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base'
+import Base from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
 import { Scale } from 'ketcher-core'
 
-export class RxnArrowMove extends BaseOperation {
-  data: {
-    id: any
-    d: any
-    noinvalidate: any
-  }
+interface RxnArrowMoveData {
+  id: number
+  d: any
+  noinvalidate: boolean
+}
+
+export class RxnArrowMove extends Base {
+  data: RxnArrowMoveData
 
   constructor(id?: any, d?: any, noinvalidate?: any) {
     super(OperationType.RXN_ARROW_MOVE)
     this.data = { id, d, noinvalidate }
   }
 
-  execute(restruct: Restruct) {
-    const { d, id, noinvalidate } = this.data
-
+  execute(restruct: any): void {
     const struct = restruct.molecule
-    struct.rxnArrows.get(id)!.pp.add_(d) // eslint-disable-line no-underscore-dangle
-
-    const rxn = restruct.rxnArrows.get(id)
-    if (!rxn) return
-    const scaled = Scale.obj2scaled(d, restruct.render.options)
-    rxn.visel.translate(scaled)
-
+    const id = this.data.id
+    const d = this.data.d
+    const item = struct.rxnArrows.get(id)
+    item.pos.forEach(p => p.add_(d))
+    restruct.rxnArrows
+      .get(id)
+      .visel.translate(Scale.obj2scaled(d, restruct.render.options))
     this.data.d = d.negated()
-    if (!noinvalidate) {
-      BaseOperation.invalidateItem(restruct, 'rxnArrows', id, 1)
+    if (!this.data.noinvalidate) {
+      Base.invalidateItem(restruct, 'rxnArrows', id, 1)
     }
   }
 
   invert() {
-    const inverted = new RxnArrowMove()
-    inverted.data = this.data
-    return inverted
+    const move = new RxnArrowMove(
+      this.data.id,
+      this.data.d,
+      this.data.noinvalidate
+    )
+    move.data = this.data
+    return move
   }
 }

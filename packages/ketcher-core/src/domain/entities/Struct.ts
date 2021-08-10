@@ -496,10 +496,10 @@ export class Struct {
     item.pp = pp
   }
 
-  rxnArrowSetPos(id: number, pp: Vec2): void {
+  rxnArrowSetPos(id: number, pos: Array<Vec2>): void {
     const item = this.rxnArrows.get(id)
     if (item) {
-      item.pp = pp
+      item.pos = pos
     }
   }
 
@@ -540,7 +540,7 @@ export class Struct {
         extend(item.pp)
       })
       this.rxnArrows.forEach(item => {
-        extend(item.pp)
+        extend(item.pos)
       })
     }
     if (!bb && global) {
@@ -696,7 +696,7 @@ export class Struct {
     })
 
     this.rxnArrows.forEach(item => {
-      item.pp = item.pp.scaled(scale)
+      item.pos = item.pos.map(p => p.scaled(scale))
     })
 
     this.sgroups.forEach(item => {
@@ -947,7 +947,7 @@ export class Struct {
 
     this.rxnArrows.forEach(item => {
       // there's just one arrow
-      arrowPos = item.pp.x
+      arrowPos = item.center().x
     })
 
     this.rxnPluses.forEach(item => {

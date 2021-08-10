@@ -14,8 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
+import {
+  fromArrowAddition,
+  fromArrowDeletion,
+  fromArrowResizing
+} from '../actions/reaction'
+
 import Action from '../shared/action'
-import { fromArrowAddition } from '../actions/reaction'
+import Raphael from '../../raphael-ext'
+import { Vec2 } from '../../../../../ketcher-core/dist'
 import { fromMultipleMove } from '../actions/fragment'
 
 function ReactionArrowTool(editor, mode) {
@@ -29,43 +36,127 @@ function ReactionArrowTool(editor, mode) {
 
 ReactionArrowTool.prototype.mousedown = function (event) {
   var rnd = this.editor.render
+  const p0 = rnd.page2obj(event)
+  this.dragCtx = { p0 }
+
   var ci = this.editor.findItem(event, ['rxnArrows'])
   if (ci && ci.map === 'rxnArrows') {
     this.editor.hover(null)
     this.editor.selection({ rxnArrows: [ci.id] })
-    this.dragCtx = {
-      xy0: rnd.page2obj(event),
-      action: new Action()
-    }
+    this.dragCtx.ci = ci
+  } else {
+    this.dragCtx.isNew = true
+    this.editor.selection(null)
   }
 }
 
 ReactionArrowTool.prototype.mousemove = function (event) {
   var rnd = this.editor.render
-  if ('dragCtx' in this) {
-    if (this.dragCtx.action) this.dragCtx.action.perform(rnd.ctab)
+  if (this.dragCtx) {
+    const current = rnd.page2obj(event)
+    const diff = current.sub(this.dragCtx.p0)
+    this.dragCtx.previous = current
+    if (this.dragCtx.ci) {
+      if (this.dragCtx.action) this.dragCtx.action.perform(rnd.ctab)
+      if (!this.dragCtx.ci.ref) {
+        this.dragCtx.action = fromMultipleMove(
+          rnd.ctab,
+          this.editor.selection() || {},
+          diff
+        )
+      } else {
+        this.dragCtx.action = fromArrowResizing(
+          rnd.ctab,
+          this.dragCtx.ci.id,
+          diff,
+          current,
+          this.dragCtx.ci.ref
+        )
+      }
+      this.editor.update(this.dragCtx.action, true)
+    } else {
+      if (!this.dragCtx.action) {
+        const action = fromArrowAddition(
+          rnd.ctab,
+          [this.dragCtx.p0, this.dragCtx.p0],
+          this.mode
+        )
+        //TODO: need to rework  actions/operations logic
+        const addOperation = action.operations[0]
+        const itemId = addOperation.data.id
+        this.dragCtx.itemId = itemId
+        this.dragCtx.action = action
+        this.editor.update(this.dragCtx.action, true)
+      } else {
+        this.dragCtx.action.perform(rnd.ctab)
+      }
 
-    this.dragCtx.action = fromMultipleMove(
-      rnd.ctab,
-      this.editor.selection() || {},
-      rnd.page2obj(event).sub(this.dragCtx.xy0)
-    )
-    this.editor.update(this.dragCtx.action, true)
+      this.dragCtx.action = fromArrowResizing(
+        rnd.ctab,
+        this.dragCtx.itemId,
+        diff,
+        current,
+        null
+      )
+      this.editor.update(this.dragCtx.action, true)
+    }
   } else {
-    this.editor.hover(this.editor.findItem(event, ['rxnArrows']))
+    const items = this.editor.findItem(event, ['rxnArrows'])
+    this.editor.hover(items)
   }
 }
 
 ReactionArrowTool.prototype.mouseup = function (event) {
-  if (this.dragCtx) {
-    this.editor.update(this.dragCtx.action) // TODO investigate, subsequent undo/redo fails
-    delete this.dragCtx
-  } else {
-    const rnd = this.editor.render
+  if (!this.dragCtx) return true
+  const rnd = this.editor.render
+
+  const p0 = this.dragCtx.p0
+  const p1 = getDefaultLengthPos(p0, this.dragCtx.previous)
+
+  if (this.dragCtx.action) {
+    if (this.dragCtx.isNew) {
+      this.editor.update(fromArrowDeletion(rnd.ctab, this.dragCtx.itemId), true)
+      this.dragCtx.action = fromArrowAddition(rnd.ctab, [p0, p1], this.mode)
+    }
+    this.editor.update(this.dragCtx.action)
+  }
+  delete this.dragCtx
+  return true
+}
+
+ReactionArrowTool.prototype.click = function (event) {
+  const rnd = this.editor.render
+  const ci = this.editor.findItem(event, ['rxnArrows'])
+  const p0 = rnd.page2obj(event)
+  if (!ci) {
     this.editor.update(
-      fromArrowAddition(rnd.ctab, rnd.page2obj(event), this.mode)
+      fromArrowAddition(rnd.ctab, [p0, getDefaultLengthPos(p0)], this.mode)
     )
   }
+}
+
+function getArrowParams(x1, y1, x2, y2) {
+  const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+  const angle = Raphael.angle(x2, y2, x1, y1)
+  return { length, angle }
+}
+
+function getDefaultLengthPos(pos1, pos2) {
+  const minLength = 1.5
+  const defaultLength = 2
+  if (!pos2) {
+    return new Vec2(pos1.x + defaultLength, pos1.y)
+  }
+  const arrowParams = getArrowParams(pos1.x, pos1.y, pos2.x, pos2.y)
+  if (arrowParams.length <= minLength) {
+    const newPos = new Vec2()
+    newPos.x =
+      pos1.x + defaultLength * Math.cos((Math.PI * arrowParams.angle) / 180)
+    newPos.y =
+      pos1.y + defaultLength * Math.sin((Math.PI * arrowParams.angle) / 180)
+    return newPos
+  }
+  return pos2
 }
 
 export default ReactionArrowTool

@@ -85,7 +85,6 @@ const toolActions = {
     action: { tool: 'sgroup', opts: 'DAT' }
   },
   'reaction-arrow-open-angle': {
-    // icon +, draw +
     title: 'Arrow Open Angle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.OpenAngle }
   },
@@ -110,7 +109,6 @@ const toolActions = {
     action: { tool: 'reactionarrow', opts: RxnArrowMode.BothEndsFilledTriangle }
   },
   'reaction-arrow-equilibrium-filled-half-bow': {
-    // icon +, draw +
     title: 'Arrow Equilibrium Filled Half Bow Tool',
     action: {
       tool: 'reactionarrow',

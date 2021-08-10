@@ -31,16 +31,34 @@ export enum RxnArrowMode {
   UnbalancedEquilibriumFilleHalfTriangle = 'unbalanced-equilibrium-fille-half-triangle'
 }
 
-export class RxnArrow {
-  pp: Vec2
+export interface RxnArrowParams {
   mode: RxnArrowMode
+  pos?: Array<Vec2>
+}
 
-  constructor(pp: Vec2, mode: RxnArrowMode = RxnArrowMode.OpenAngle) {
-    this.pp = pp
-    this.mode = mode
+export class RxnArrow {
+  mode: RxnArrowMode
+  pos: Array<Vec2>
+
+  constructor(params: RxnArrowParams) {
+    params = params || {}
+    this.pos = []
+
+    if (params.pos) {
+      for (let i = 0; i < params.pos.length; i++) {
+        const currentP = params.pos[i]
+        this.pos[i] = currentP ? new Vec2(params.pos[i]) : new Vec2()
+      }
+    }
+
+    this.mode = params.mode
   }
 
   clone() {
-    return new RxnArrow(this.pp, this.mode)
+    return new RxnArrow(this)
+  }
+
+  center(): Vec2 {
+    return Vec2.centre(this.pos[0], this.pos[1])
   }
 }

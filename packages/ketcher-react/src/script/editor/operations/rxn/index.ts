@@ -14,117 +14,97 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct, { ReRxnArrow } from '../../../render/restruct'
 import { RxnArrow, RxnArrowMode, Vec2 } from 'ketcher-core'
 
-import { BaseOperation } from '../base'
+import Base from '../base'
 import { OperationType } from '../OperationType'
+import { ReRxnArrow } from '../../../render/restruct'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
-type Data = {
-  pos: any
-  arid: any
+type RxnArrowAddData = {
+  id?: number
+  pos: Array<Vec2>
   mode: RxnArrowMode
 }
 
-class RxnArrowAdd extends BaseOperation {
-  data: Data
+class RxnArrowAdd extends Base {
+  data: RxnArrowAddData
 
-  constructor(mode: RxnArrowMode, pos: any, arid = null) {
+  constructor(
+    pos: Array<Vec2> = [],
+    mode: RxnArrowMode = RxnArrowMode.OpenAngle,
+    id?: number
+  ) {
     super(OperationType.RXN_ARROW_ADD)
-    this.data = { pos, arid, mode }
+    this.data = { pos, mode, id }
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: any): void {
     const struct = restruct.molecule
+    const item = new RxnArrow({ mode: this.data.mode })
 
-    if (typeof this.data.arid === 'number') {
-      struct.rxnArrows.set(
-        this.data.arid,
-        new RxnArrow(new Vec2(), this.data.mode)
-      )
+    if (this.data.id == null) {
+      const index = struct.rxnArrows.add(item)
+      this.data.id = index
     } else {
-      this.data.arid = struct.rxnArrows.add(
-        new RxnArrow(new Vec2(), this.data.mode)
-      )
+      struct.rxnArrows.set(this.data.id!, item)
     }
 
-    const { pos, arid } = this.data
+    const itemId = this.data.id!
 
-    const rxn = struct.rxnArrows.get(arid)!
-    // notifyRxnArrowAdded
-    restruct.rxnArrows.set(arid, new ReRxnArrow(rxn))
+    restruct.rxnArrows.set(itemId, new ReRxnArrow(item))
 
-    struct.rxnArrowSetPos(arid, new Vec2(pos))
+    const positions = [...this.data.pos]
 
-    const components = struct.getComponents()
-
-    const reactants = components.reactants.reduce(
-      (acc, item) => acc.concat(...item),
-      [] as number[]
-    )
-    const products = components.products.reduce(
-      (acc, item) => acc.concat(...item),
-      [] as number[]
+    struct.rxnArrowSetPos(
+      itemId,
+      positions.map(p => new Vec2(p))
     )
 
-    reactants.forEach(aid => {
-      const atom = struct.atoms.get(aid)!
-      atom.rxnFragmentType = 1
-    })
-
-    products.forEach(aid => {
-      const atom = struct.atoms.get(aid)!
-      atom.rxnFragmentType = 2
-    })
-
-    BaseOperation.invalidateItem(restruct, 'rxnArrows', this.data.arid, 1)
+    Base.invalidateItem(restruct, 'rxnArrows', itemId, 1)
   }
-
-  invert() {
-    const inverted = new RxnArrowDelete()
-    inverted.data = this.data
-    return inverted
+  invert(): Base {
+    return new RxnArrowDelete(this.data.id!)
   }
 }
 
-class RxnArrowDelete extends BaseOperation {
-  data: Data
+interface RxnArrowDeleteData {
+  id: number
+  pos?: Array<Vec2>
+  mode?: RxnArrowMode
+}
 
-  constructor(arid?: any) {
+class RxnArrowDelete extends Base {
+  data: RxnArrowDeleteData
+  performed: boolean
+
+  constructor(id: number) {
     super(OperationType.RXN_ARROW_DELETE)
-    this.data = { arid, pos: null, mode: RxnArrowMode.OpenAngle }
+    this.data = { id, pos: [], mode: RxnArrowMode.OpenAngle }
+    this.performed = false
   }
 
-  execute(restruct: any) {
-    const { arid } = this.data
+  execute(restruct: any): void {
     const struct = restruct.molecule
+    const item = struct.rxnArrows.get(this.data.id) as any
+    this.data.pos = item.pos
+    this.data.mode = item.mode
+    this.performed = true
 
-    if (!this.data.pos || !this.data.mode) {
-      const arrow = struct.rxnArrows.get(arid)
-      this.data.pos = arrow.pp
-      this.data.mode = arrow.mode
-    }
-
-    // notifyRxnArrowRemoved
     restruct.markItemRemoved()
-    const rxn = restruct.rxnArrows.get(arid)
-    restruct.clearVisel(rxn.visel)
-    restruct.rxnArrows.delete(arid)
+    restruct.clearVisel(restruct.rxnArrows.get(this.data.id).visel)
+    restruct.rxnArrows.delete(this.data.id)
 
-    struct.rxnArrows.delete(arid)
-
-    struct.atoms.forEach(atom => {
-      atom.rxnFragmentType = -1
-    })
+    struct.rxnArrows.delete(this.data.id)
   }
 
-  invert() {
-    return new RxnArrowAdd(this.data.mode, this.data.pos, this.data.arid)
+  invert(): Base {
+    return new RxnArrowAdd(this.data.pos, this.data.mode, this.data.id)
   }
 }
 
 export { RxnArrowAdd, RxnArrowDelete }
 export * from './RxnArrowMove'
+export * from './RxnArrowResize'
 export * from './plus'

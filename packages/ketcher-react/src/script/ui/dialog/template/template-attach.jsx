@@ -14,14 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Dialog, StructEditor } from '../../views/components'
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
+import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
 
 import Input from '../../component/form/input'
-import { StructEditor, Dialog } from '../../views/components'
+import { connect } from 'react-redux'
 import { storage } from '../../storage-ext'
-
-import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
 
 const EDITOR_STYLES = {
   selectionStyle: { fill: '#47b3ec', stroke: 'none' },
@@ -120,7 +119,7 @@ function structNormalization(struct) {
   })
 
   normStruct.rxnArrows.forEach(rxnArrow => {
-    rxnArrow.pp = rxnArrow.pp.sub(cbb.min)
+    rxnArrow.pos = rxnArrow.pos.map(p => p.sub(cbb.min))
   })
 
   normStruct.rxnPluses.forEach(rxnPlus => {

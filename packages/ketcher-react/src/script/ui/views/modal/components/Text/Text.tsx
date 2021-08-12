@@ -26,14 +26,18 @@ import {
   convertToRaw,
   getDefaultKeyBinding
 } from 'draft-js'
+import createStyles from 'draft-js-custom-styles'
 import React, { useCallback, useState } from 'react'
 
 import { Dialog } from '../../../components'
 import { DialogParams } from '../../../components/Dialog/Dialog'
 import { TextButton } from './TextButton'
+import { FontControl } from './FontControl'
 import { TextCommand } from 'ketcher-core'
 import { connect } from 'react-redux'
-import styles from './Text.module.less'
+import s from './Text.module.less'
+
+const { styles, customStyleFn } = createStyles(['font-size'])
 
 interface TextProps extends DialogParams {
   formState: any
@@ -139,7 +143,12 @@ const Text = (props: TextProps) => {
       params={props}
       result={result}
       valid={() => formState.form.valid}>
-      <ul className={styles.controlPanel}>
+      <ul className={s.controlPanel}>
+        <FontControl
+          editorState={editorState}
+          setEditorState={setEditorState}
+          styles={styles}
+        />
         {buttons.map(button => {
           return (
             <TextButton
@@ -151,12 +160,13 @@ const Text = (props: TextProps) => {
           )
         })}
       </ul>
-      <div className={styles.textEditorInput}>
+      <div className={s.textEditorInput}>
         <Editor
           keyBindingFn={keyBindingFn}
           editorState={editorState}
           onChange={onContentChange}
           customStyleMap={customStyleMap}
+          customStyleFn={customStyleFn}
         />
       </div>
     </Dialog>

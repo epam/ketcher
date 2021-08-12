@@ -14,34 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from './Vec2'
-
-//TODO: move to infrastructure
-export enum TextCommand {
-  Bold = 'BOLD',
-  Italic = 'ITALIC',
-  Subscript = 'SUBSCRIPT',
-  Superscript = 'SUPERSCRIPT',
-  CustomFontSize = 'CUSTOM_FONT_SIZE_'
+.fontSizeMenu {
+  display: inline-block;
+  position: absolute;
+  top: 3px;
+  background: #fff;
+  box-shadow: 0 0 2px;
+  max-height: 150px;
+  overflow-y: scroll;
+  z-index: 10;
+  padding: 4px;
+  font-size: 16px;
+  border-radius: 4px;
+  scrollbar-width: none;
 }
 
-export interface TextParams {
-  //TODO: add Interface for content type
-  content?: string
-  position?: Vec2
+.fontSizeMenu::-webkit-scrollbar {
+  display: none;
 }
 
-export class Text {
-  content: string
-  position: Vec2
+.fontSizeOption {
+  padding: 4px;
+}
 
-  constructor(params: TextParams) {
-    params = params || {}
-    this.content = params.content || ''
-    this.position = params.position ? new Vec2(params.position) : new Vec2()
-  }
-
-  clone(): Text {
-    return new Text(this)
-  }
+.fontSizeOption:hover {
+  background: #f0f0f0;
+  cursor: pointer;
 }

@@ -75,6 +75,8 @@ const ToolbarMultiToolItem = (props: Props) => {
   let selected = false
   let currentId = id
 
+  const verticalMultiToolItems = ['copy'];
+
   const selectedTool = options.find(
     toolbarItem => status[toolbarItem.id]?.selected
   )
@@ -124,7 +126,7 @@ const ToolbarMultiToolItem = (props: Props) => {
       {isOpen ? (
         <Portal
           isOpen={isOpen}
-          className={clsx(classes.portal, portalClassName)}
+          className={clsx(classes.portal, verticalMultiToolItems.includes(id) && classes['portal-vertical'], portalClassName)}
           style={portalStyle}>
           <Component
             options={options}

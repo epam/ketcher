@@ -26,10 +26,18 @@ import {
 import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
 import classes from './TopToolbar.module.less'
 import { ZoomList } from './ZoomList'
+import { makeItems } from '../ToolbarGroupItem/utils'
 
 const Group: FC<{ className?: string }> = ({ children, className }) => (
   <div className={clsx(classes.group, className)}>{children}</div>
 )
+
+const copyOptions: ToolbarItem[] = makeItems([
+  'copy',
+  'copy-mol',
+  'copy-ket',
+  'copy-image'
+])
 
 interface TopToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
@@ -69,9 +77,8 @@ const TopToolbar = (props: Props) => {
         <Item id="undo" />
         <Item id="redo" />
         <Item id="cut" />
-        <Item id="copy" />
+        <Item id="copy" options={copyOptions} />
         <Item id="paste" />
-        <Item id="copy-image" />
       </Group>
 
       <Group>

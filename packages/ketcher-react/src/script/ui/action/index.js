@@ -87,15 +87,15 @@ const config = {
       copyImageToClipboard()
     },
     disabled: editor => !hasSelection(editor)
-  },  
+  },
   'copy-mol': {
-    shortcut: 'Mod+Shift+m',
+    shortcut: 'Mod+m',
     title: 'Copy as MOL',
     action: () => {
       copyAs('mol')
     },
     disabled: editor => !hasSelection(editor)
-  },    
+  },
   'copy-ket': {
     shortcut: 'Mod+Shift+k',
     title: 'Copy as KET',

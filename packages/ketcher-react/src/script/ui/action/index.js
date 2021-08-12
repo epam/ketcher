@@ -23,7 +23,6 @@ import tools from './tools'
 import zoom from './zoom'
 import copyImageToClipboard from './copyImageToClipboard'
 import copyAs from './copyAs'
-// import copyAsKet from './copyAsKet'
 
 export * from './action.types'
 

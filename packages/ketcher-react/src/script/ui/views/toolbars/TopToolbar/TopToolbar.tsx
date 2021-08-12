@@ -56,9 +56,10 @@ const TopToolbar = (props: Props) => {
     id: ToolbarItemVariant
     options?: ToolbarItem[]
     className?: string
+    vertical?: boolean
   }
-  const Item = ({ id, options, className }: ItemProps) =>
-    ToolbarGroupItem({ id, options, className, ...rest })
+  const Item = ({ id, options, className, vertical }: ItemProps) =>
+    ToolbarGroupItem({ id, options, className, vertical, ...rest })
 
   return (
     <div
@@ -77,7 +78,7 @@ const TopToolbar = (props: Props) => {
         <Item id="undo" />
         <Item id="redo" />
         <Item id="cut" />
-        <Item id="copy" options={copyOptions} />
+        <Item id="copy" options={copyOptions} vertical={true} />
         <Item id="paste" />
       </Group>
 

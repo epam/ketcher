@@ -16,31 +16,33 @@
 import { MolSerializer, KetSerializer } from 'ketcher-core'
 
 export default function copyAs(type) {
-    if (window.ClipboardItem) { //eslint-disable-line no-undef
-        const state = global.currentState
-        const editor = state.editor
-        const struct = editor.structSelected()
-        let serializer
-        switch (type) {
-            case 'mol': {
-                serializer = new MolSerializer()
-                break
-            }
-            case 'ket': {
-                serializer = new KetSerializer()
-                break
-            }
-            default: {
-                serializer = new KetSerializer()
-                break
-            }
-        }
-        const structData = serializer.serialize(struct)
-
-        const data = [new ClipboardItem({ 'text/plain': new Blob([structData], { type: "text/plain" }) })] //eslint-disable-line no-undef
-        navigator.clipboard.write(data);
-    } else {
-        alert('This feature is not available in your browser')
+  try {
+    const state = global.currentState
+    const editor = state.editor
+    const struct = editor.structSelected()
+    let serializer
+    switch (type) {
+      case 'mol': {
+        serializer = new MolSerializer()
+        break
+      }
+      case 'ket': {
+        serializer = new KetSerializer()
+        break
+      }
+      default: {
+        serializer = new KetSerializer()
+        break
+      }
     }
-    
+    const structData = serializer.serialize(struct)
+
+    if (window.clipboardData) {
+      window.clipboardData.setData('text', structData)
+    } else {
+      navigator.clipboard.writeText(structData)
+    }
+  } catch {
+    alert('This feature is not available in your browser')
+  }
 }

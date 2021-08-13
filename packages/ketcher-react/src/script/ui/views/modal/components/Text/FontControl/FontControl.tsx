@@ -14,46 +14,58 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useState } from 'react'
-import s from './FontControl.module.css'
+import React, { useState, useMemo, useEffect } from 'react'
+import classes from './FontControl.module.css'
+import { range } from 'lodash/fp'
 
 export const FontControl = ({ editorState, setEditorState, styles }) => {
+  const defultFontSize = 13
   const [isShowingFontSizeMenu, setIsShowingFontSizeMenu] = useState(false)
+  const [currentFontSize, setCurrentFontSize] = useState(`${defultFontSize}px`)
 
   const setFontSize = (e, value) => {
     e.preventDefault()
+    setCurrentFontSize(value)
     const newEditorState = styles.fontSize.remove(editorState)
     setEditorState(styles.fontSize.add(newEditorState, value))
     setIsShowingFontSizeMenu(false)
   }
 
-  const fontSizes = new Array(141).fill('')
-  const fontSizeOptions = fontSizes.map((_, index) => {
-    const fontSize = index + 4
-    return (
-      <div
-        key={`font-size-${fontSize + 4}`}
-        className={s.fontSizeOption}
-        onMouseDown={e => setFontSize(e, `${fontSize + 4}px`)}>
-        {fontSize + 4}
-      </div>
-    )
+  const currentStyle = styles.fontSize.current(editorState) || currentFontSize
+
+  useEffect(() => {
+    setCurrentFontSize(currentStyle)
   })
+
+  const MIN_FONT_SIZE = 4
+  const MAX_FONT_SIZE = 144
+  const fontSizes = range(MIN_FONT_SIZE, MAX_FONT_SIZE + 1)
+
+  const fontSizeOptions = useMemo(
+    () =>
+      fontSizes.map(fontSize => (
+        <div
+          key={fontSize}
+          className={classes.fontSizeOption}
+          onMouseDown={e => setFontSize(e, `${fontSize}px`)}>
+          {fontSize}
+        </div>
+      )),
+    [isShowingFontSizeMenu]
+  )
 
   return (
     <div>
-      <div className="font-size-dropdown">
-        <button
-          onMouseDown={e => {
-            e.preventDefault()
-            setIsShowingFontSizeMenu(!isShowingFontSizeMenu)
-          }}>
-          Size
-        </button>
-        {isShowingFontSizeMenu ? (
-          <div className={s.fontSizeMenu}>{fontSizeOptions}</div>
-        ) : null}
-      </div>
+      <button
+        onMouseDown={e => {
+          e.preventDefault()
+          setIsShowingFontSizeMenu(!isShowingFontSizeMenu)
+        }}>
+        {currentFontSize}
+      </button>
+      {isShowingFontSizeMenu ? (
+        <div className={classes.fontSizeMenu}>{fontSizeOptions}</div>
+      ) : null}
     </div>
   )
 }

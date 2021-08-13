@@ -122,17 +122,14 @@ class ReText extends ReObject {
     let shiftY: number = 0
     this.paths = []
     //TODO: create parser in ketcher-core package
-    console.log('before parse', this.item.content)
     const rawContentState: RawDraftContentState | null = this.item.content
       ? (JSON.parse(this.item.content) as RawDraftContentState)
       : null
-    // console.log('after parse', rawContentState)
     if (!rawContentState) return
     rawContentState.blocks.forEach((block: RawDraftContentBlock) => {
       const ranges: Array<
         [number, number, Record<string, any>]
       > = this.getRanges(block, options)
-      // console.log('ranges', ranges)
       let shiftX: number = 0
       const row: Array<any> = []
       ranges.forEach(([start, end, styles]) => {
@@ -207,11 +204,7 @@ class ReText extends ReObject {
           index < inlineRange.offset + inlineRange.length
       )
       .reduce((styles: any, textRange: CustomRawDraftInlineStyleRange) => {
-        console.log(textRange.style)
-        if (textRange.style.substring(0, 16) === 'CUSTOM_FONT_SIZE') {
-          const fontSize = textRange.style.match(/\d+/)?.[0]
-          styles['font-size'] = fontSize + 'px'
-        }
+        const styleNumberValue = textRange.style.match(/\d+/)?.[0]
         switch (textRange.style) {
           case TextCommand.Bold:
             styles['font-weight'] = 'bold'
@@ -231,6 +224,10 @@ class ReText extends ReObject {
             styles.shiftY = -options.fontsz / 3
             break
 
+          case `${TextCommand.FontSize}_${styleNumberValue}px`:
+            styles['font-size'] = styleNumberValue + 'px'
+            break
+
           default:
         }
 
@@ -245,7 +242,7 @@ interface CustomRawDraftInlineStyleRange
     | DraftInlineStyleType
     | TextCommand.Subscript
     | TextCommand.Superscript
-    | TextCommand.CustomFontSize
+    | TextCommand.FontSize
 }
 
 export default ReText

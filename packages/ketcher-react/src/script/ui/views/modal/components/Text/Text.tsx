@@ -35,7 +35,7 @@ import { TextButton } from './TextButton'
 import { FontControl } from './FontControl'
 import { TextCommand } from 'ketcher-core'
 import { connect } from 'react-redux'
-import s from './Text.module.less'
+import classes from './Text.module.less'
 
 const { styles, customStyleFn } = createStyles(['font-size'])
 
@@ -143,7 +143,7 @@ const Text = (props: TextProps) => {
       params={props}
       result={result}
       valid={() => formState.form.valid}>
-      <ul className={s.controlPanel}>
+      <ul className={classes.controlPanel}>
         <FontControl
           editorState={editorState}
           setEditorState={setEditorState}
@@ -160,7 +160,7 @@ const Text = (props: TextProps) => {
           )
         })}
       </ul>
-      <div className={s.textEditorInput}>
+      <div className={classes.textEditorInput}>
         <Editor
           keyBindingFn={keyBindingFn}
           editorState={editorState}

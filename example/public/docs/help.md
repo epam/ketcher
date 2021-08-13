@@ -619,6 +619,9 @@ it will appear in brackets after the description of the button.
 | `Ctrl+Shift+z` | Redo                                                                                                       |
 | `Ctrl+x`       | Cut selected objects                                                                                       |
 | `Ctrl+c`       | Copy selected objects                                                                                      |
+| `Ctrl+m`       | Copy selected objects as Mol                                                                               |
+| `Ctrl+Shift+k` | Copy selected objects as Ket                                                                               |
+| `Ctrl+Shift+f` | Copy selected objects as Image                                                                             |
 | `Ctrl+v`       | Paste selected objects                                                                                     |
 | `+`            | Zoom In                                                                                                    |
 | `-`            | Zoom Out                                                                                                   |

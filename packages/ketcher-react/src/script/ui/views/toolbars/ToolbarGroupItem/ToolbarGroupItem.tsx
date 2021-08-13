@@ -27,6 +27,7 @@ interface ToolbarGroupItemProps extends ToolbarItem {
   disableableButtons: string[]
   indigoVerification: boolean
   className?: string
+  vertical?: boolean
 }
 
 interface ToolbarGroupItemCallProps {
@@ -45,6 +46,7 @@ const ToolbarGroupItem = (props: Props) => {
     opened,
     indigoVerification,
     disableableButtons,
+    vertical,
     onAction,
     onOpen
   } = props
@@ -76,6 +78,7 @@ const ToolbarGroupItem = (props: Props) => {
       indigoVerification={indigoVerification}
       onAction={onAction}
       onOpen={onOpen}
+      vertical={vertical}
     />
   )
 }

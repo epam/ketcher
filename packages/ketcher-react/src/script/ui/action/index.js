@@ -22,6 +22,7 @@ import templates from './templates'
 import tools from './tools'
 import zoom from './zoom'
 import copyImageToClipboard from './copyImageToClipboard'
+import copyAs from './copyAs'
 
 export * from './action.types'
 
@@ -84,6 +85,22 @@ const config = {
     title: 'Copy Image',
     action: () => {
       copyImageToClipboard()
+    },
+    disabled: editor => !hasSelection(editor)
+  },
+  'copy-mol': {
+    shortcut: 'Mod+m',
+    title: 'Copy as MOL',
+    action: () => {
+      copyAs('mol')
+    },
+    disabled: editor => !hasSelection(editor)
+  },
+  'copy-ket': {
+    shortcut: 'Mod+Shift+k',
+    title: 'Copy as KET',
+    action: () => {
+      copyAs('ket')
     },
     disabled: editor => !hasSelection(editor)
   },

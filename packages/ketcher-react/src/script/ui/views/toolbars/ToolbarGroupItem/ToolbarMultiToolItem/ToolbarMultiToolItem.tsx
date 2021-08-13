@@ -44,6 +44,7 @@ interface ToolbarMultiToolItemProps {
   disableableButtons: string[]
   indigoVerification: boolean
   className?: string
+  vertical?: boolean
 }
 
 interface ToolbarMultiToolItemCallProps {
@@ -64,6 +65,7 @@ const ToolbarMultiToolItem = (props: Props) => {
     indigoVerification,
     disableableButtons,
     className,
+    vertical,
     onAction,
     onOpen
   } = props
@@ -124,7 +126,11 @@ const ToolbarMultiToolItem = (props: Props) => {
       {isOpen ? (
         <Portal
           isOpen={isOpen}
-          className={clsx(classes.portal, portalClassName)}
+          className={clsx(
+            classes.portal,
+            vertical && classes['portal-vertical'],
+            portalClassName
+          )}
           style={portalStyle}>
           <Component
             options={options}

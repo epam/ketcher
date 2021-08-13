@@ -39,6 +39,8 @@ import CipIcon from './files/cip.svg'
 import CleanIcon from './files/clean.svg'
 import CopyIcon from './files/copy.svg'
 import CopyImageIcon from './files/copy-image.svg'
+import CopyKetIcon from './files/copy-ket.svg'
+import CopyMolIcon from './files/copy-mol.svg'
 import CutIcon from './files/cut.svg'
 import DearomIcon from './files/dearom.svg'
 import DropdownIcon from './files/dropdown.svg'
@@ -134,6 +136,8 @@ const icons = {
   clean: CleanIcon,
   copy: CopyIcon,
   'copy-image': CopyImageIcon,
+  'copy-mol': CopyMolIcon,
+  'copy-ket': CopyKetIcon,
   cut: CutIcon,
   dearom: DearomIcon,
   dropdown: DropdownIcon,

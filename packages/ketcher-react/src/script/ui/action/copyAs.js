@@ -39,6 +39,7 @@ export default function copyAs(type) {
     const simpleObjectOrText = Boolean(
       struct.simpleObjects.size || struct.texts.size
     )
+
     if (simpleObjectOrText && serializer instanceof MolSerializer) {
       alert('This feature is not available for Simple objects and Text objects')
       return null

@@ -66,6 +66,7 @@ function handle(handler: handlerType, options?: CommandOptions) {
 
 function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {
   for (let [key, value] of Object.entries(options)) {
+    if (value == null) continue
     indigoOptions.set(key, (value as any).toString())
   }
 }
@@ -80,7 +81,11 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       const data: GenerateImageCommandData = message.data as GenerateImageCommandData
       handle(
         (indigo, indigoOptions) => indigo.render(data.struct, indigoOptions),
-        { ...data.options, 'render-output-format': data.outputFormat }
+        {
+          ...data.options,
+          'render-output-format': data.outputFormat,
+          'render-background-color': data.backgroundColor
+        }
       )
       break
     }

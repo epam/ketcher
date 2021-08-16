@@ -139,7 +139,7 @@ class ReAtom extends ReObject {
       this.setHighlight(this.highlight, render)
     }
 
-    if (this.showLabel && !this.a.alias && !this.a.pseudo) {
+    if (this.showLabel && !this.a.pseudo) {
       let hydroIndex: any = null
       if (isHydrogen && implh > 0) {
         hydroIndex = showHydroIndex(this, render, implh, rightMargin)
@@ -176,6 +176,7 @@ class ReAtom extends ReObject {
       }
       if (
         !isHydrogen &&
+        !this.a.alias &&
         implh > 0 &&
         displayHydrogen(options.showHydrogenLabels, this)
       ) {
@@ -258,8 +259,7 @@ class ReAtom extends ReObject {
 
     const stereoLabel = this.a.stereoLabel // Enhanced Stereo
     const aamText = getAamText(this)
-    const queryAttrsText =
-      !this.a.alias && !this.a.pseudo ? getQueryAttrsText(this) : ''
+    const queryAttrsText = !this.a.pseudo ? getQueryAttrsText(this) : ''
 
     // we render them together to avoid possible collisions
 

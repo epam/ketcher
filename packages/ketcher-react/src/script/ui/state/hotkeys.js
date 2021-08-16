@@ -160,6 +160,16 @@ function clipData(editor) {
   const struct = editor.structSelected()
 
   if (struct.isBlank()) return null
+  const simpleObjectOrText = Boolean(
+    struct.simpleObjects.size || struct.texts.size
+  )
+  if (simpleObjectOrText && window.clipboardData) {
+    alert(
+      'The structure you are trying to copy contains Simple object or/and Text object.' +
+        'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button'
+    )
+    return null
+  }
   const molSerializer = new MolSerializer()
   try {
     const serializer = new KetSerializer()

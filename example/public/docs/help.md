@@ -618,7 +618,7 @@ it will appear in brackets after the description of the button.
 | `Ctrl+z`       | Undo                                                                                                       |
 | `Ctrl+Shift+z` | Redo                                                                                                       |
 | `Ctrl+x`       | Cut selected objects                                                                                       |
-| `Ctrl+c`       | Copy selected objects                                                                                      |
+| `Ctrl+c`       | Copy selected objects (not available for Simple objects and Text objects in IE)                            |
 | `Ctrl+m`       | Copy selected objects as Mol (not available for Simple objects and Text objects)                           |
 | `Ctrl+Shift+k` | Copy selected objects as Ket                                                                               |
 | `Ctrl+Shift+f` | Copy selected objects as Image                                                                             |

@@ -577,7 +577,6 @@ class IndigoService implements StructService {
         if (!msg.hasError) {
           resolve(msg.payload!)
         } else {
-          alert(`Can't save the structure\n${msg.error}`) //TODO: add error handler call
           reject(msg.error)
         }
       }

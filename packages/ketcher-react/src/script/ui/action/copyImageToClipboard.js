@@ -24,19 +24,18 @@ async function copyImageToClipboard() {
   const options = state.options
   const struct = editor.structSelected()
 
-  const factory = new FormatterFactory(server)
-  const service = factory.create('mol', options)
-  const structStr = await service.getStructureFromStructAsync(struct)
-  const ketcher = new Ketcher(editor, server, {}, factory)
-  const image = await ketcher.generateImageAsync(structStr, {
-    outputFormat: 'png',
-    backgroundColor: '255, 255, 255'
-  })
-
   try {
+    const factory = new FormatterFactory(server)
+    const service = factory.create('mol', options)
+    const structStr = await service.getStructureFromStructAsync(struct)
+    const ketcher = new Ketcher(editor, server, {}, factory)
+    const image = await ketcher.generateImageAsync(structStr, {
+      outputFormat: 'png',
+      backgroundColor: '255, 255, 255'
+    })
     const item = new ClipboardItem({ [image.type]: image }) // eslint-disable-line no-undef
     await navigator.clipboard.write([item])
-  } catch (err) {
+  } catch {
     alert('This feature is not available in your browser')
   }
 }

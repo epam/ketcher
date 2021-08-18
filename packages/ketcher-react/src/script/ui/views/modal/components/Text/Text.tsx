@@ -17,7 +17,7 @@
 import 'draft-js/dist/Draft.css'
 
 import {
-  // DraftStyleMap,
+  DraftStyleMap,
   Editor,
   EditorState,
   RawDraftContentState,
@@ -133,18 +133,18 @@ const Text = (props: TextProps) => {
     [currentStyle, editorState]
   )
 
-  const customStyleMap = {
+  const customStyleMap: DraftStyleMap = {
     SUBSCRIPT: {
       verticalAlign: 'sub',
       transform: 'scale(0.7)',
       display: 'inline-block',
-      'transform-origin': 'left'
+      transformOrigin: 'left'
     },
     SUPERSCRIPT: {
       verticalAlign: 'super',
       transform: 'scale(0.7)',
       display: 'inline-block',
-      'transform-origin': 'left'
+      transformOrigin: 'left'
     }
   }
 

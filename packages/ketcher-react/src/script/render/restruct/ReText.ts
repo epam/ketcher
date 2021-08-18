@@ -126,12 +126,10 @@ class ReText extends ReObject {
       ? (JSON.parse(this.item.content) as RawDraftContentState)
       : null
     if (!rawContentState) return
-
     rawContentState.blocks.forEach((block: RawDraftContentBlock) => {
       const ranges: Array<
         [number, number, Record<string, any>]
       > = this.getRanges(block, options)
-
       let shiftX: number = 0
       const row: Array<any> = []
       ranges.forEach(([start, end, styles]) => {
@@ -199,13 +197,26 @@ class ReText extends ReObject {
     index: number,
     options: any
   ): Record<string, string> {
-    return block.inlineStyleRanges
-      .filter(
-        (inlineRange: CustomRawDraftInlineStyleRange) =>
-          inlineRange.offset <= index &&
-          index < inlineRange.offset + inlineRange.length
-      )
-      .reduce((styles: any, textRange: CustomRawDraftInlineStyleRange) => {
+    const ranges = block.inlineStyleRanges.filter(
+      (inlineRange: CustomRawDraftInlineStyleRange) =>
+        inlineRange.offset <= index &&
+        index < inlineRange.offset + inlineRange.length
+    )
+
+    const customFontSize: number | null = ranges.reduce(
+      (acc: number | null, range: any) => {
+        if (range.style.includes(TextCommand.FontSize)) {
+          return range.style.match(/\d+/)?.[0]
+        }
+        return acc
+      },
+      null
+    )
+
+    return ranges.reduce(
+      (styles: any, textRange: CustomRawDraftInlineStyleRange) => {
+        const fontsz = customFontSize || options.fontsz
+        const fontszsub = (customFontSize || options.fontszsub) * 0.8
         switch (textRange.style) {
           case TextCommand.Bold:
             styles['font-weight'] = 'bold'
@@ -216,26 +227,37 @@ class ReText extends ReObject {
             break
 
           case TextCommand.Subscript:
-            styles['font-size'] = options.fontszsub + 'px'
-            styles.shiftY = options.fontsz / 3
+            styles['font-size'] = fontszsub + 'px'
+            styles.shiftY = fontsz / 3
+
             break
 
           case TextCommand.Superscript:
-            styles['font-size'] = options.fontszsub + 'px'
-            styles.shiftY = -options.fontsz / 3
+            styles['font-size'] = fontszsub + 'px'
+            styles.shiftY = -fontsz / 3
+            break
+
+          case `${TextCommand.FontSize}_${customFontSize}px`:
+            styles['font-size'] = customFontSize + 'px'
             break
 
           default:
         }
 
         return styles
-      }, {})
+      },
+      {}
+    )
   }
 }
 
 interface CustomRawDraftInlineStyleRange
   extends Omit<RawDraftInlineStyleRange, 'style'> {
-  style: DraftInlineStyleType | TextCommand.Subscript | TextCommand.Superscript
+  style:
+    | DraftInlineStyleType
+    | TextCommand.Subscript
+    | TextCommand.Superscript
+    | TextCommand.FontSize
 }
 
 export default ReText

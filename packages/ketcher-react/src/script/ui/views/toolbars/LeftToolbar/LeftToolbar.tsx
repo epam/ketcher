@@ -1,16 +1,3 @@
-import React, { FC } from 'react'
-import {
-  ToolbarGroupItem,
-  ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps
-} from '../ToolbarGroupItem'
-import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
-
-import { Bond } from './Bond'
-import { RGroup } from './RGroup'
-import { Shape } from './Shape'
-import { Transform } from './Transform'
-import classes from './LeftToolbar.module.less'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -26,9 +13,22 @@ import classes from './LeftToolbar.module.less'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import React, { FC } from 'react'
+import {
+  ToolbarGroupItem,
+  ToolbarGroupItemCallProps,
+  ToolbarGroupItemProps
+} from '../ToolbarGroupItem'
+import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
+
+import { Bond } from './Bond'
+import { RGroup } from './RGroup'
+import { Shape } from './Shape'
+import { Transform } from './Transform'
+import classes from './LeftToolbar.module.less'
 import clsx from 'clsx'
 import { makeItems } from '../ToolbarGroupItem/utils'
-import { mediaSizes } from '../mediaSizes'
 import { useResizeObserver } from '../../../../../hooks'
 
 const Group: FC<{ className?: string }> = ({ children, className }) => (
@@ -103,22 +103,21 @@ const LeftToolbar = (props: Props) => {
       <Group>
         <Transform {...rest} height={height} />
       </Group>
-
-      <Group
-        className={clsx({
-          [classes.borderOff]:
-            height && height < mediaSizes.reactionSeparatorShowingHeight
-        })}>
+      <Group>
         <Item id="sgroup" />
         <Item id="sgroup-data" />
+      </Group>
+      <Group>
         <Item id="reaction-plus" />
         <Item id="reaction-arrows" options={arrowsOptions} />
         <Item id="reaction-mapping-tools" options={mappingOptions} />
       </Group>
 
       <Group>
-        <RGroup {...rest} height={height} />
-        <Shape {...rest} height={height} />
+        <RGroup {...rest} />
+      </Group>
+      <Group>
+        <Shape {...rest} />
       </Group>
       <Group>
         <Item id="text" />

@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React from 'react'
-import { mediaSizes } from '../../mediaSizes'
+
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
+
+import React from 'react'
 import { makeItems } from '../../ToolbarGroupItem/utils'
 
 const rGroupOptions = makeItems([
@@ -36,20 +37,8 @@ interface RGroupCallProps extends ToolbarGroupItemCallProps {}
 type Props = RGroupProps & RGroupCallProps
 
 const RGroup = (props: Props) => {
-  const { height, ...rest } = props
-
-  if (height && height <= mediaSizes.rGroupCollapsableHeight) {
-    return (
-      <ToolbarGroupItem id="rgroup-label" options={rGroupOptions} {...rest} />
-    )
-  }
-
   return (
-    <>
-      <ToolbarGroupItem id="rgroup-label" {...rest} />
-      <ToolbarGroupItem id="rgroup-fragment" {...rest} />
-      <ToolbarGroupItem id="rgroup-attpoints" {...rest} />
-    </>
+    <ToolbarGroupItem id="rgroup-label" options={rGroupOptions} {...props} />
   )
 }
 

@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React from 'react'
-import { mediaSizes } from '../../mediaSizes'
+
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
+
+import React from 'react'
 import { makeItems } from '../../ToolbarGroupItem/utils'
 
 const shapeOptions = makeItems([
@@ -36,20 +37,8 @@ interface ShapeCallProps extends ToolbarGroupItemCallProps {}
 type Props = ShapeProps & ShapeCallProps
 
 const Shape = (props: Props) => {
-  const { height, ...rest } = props
-
-  if (height && height <= mediaSizes.shapeCollapsableHeight) {
-    return (
-      <ToolbarGroupItem id="shape-ellipse" options={shapeOptions} {...rest} />
-    )
-  }
-
   return (
-    <>
-      <ToolbarGroupItem id="shape-ellipse" {...rest} />
-      <ToolbarGroupItem id="shape-rectangle" {...rest} />
-      <ToolbarGroupItem id="shape-line" {...rest} />
-    </>
+    <ToolbarGroupItem id="shape-ellipse" options={shapeOptions} {...props} />
   )
 }
 

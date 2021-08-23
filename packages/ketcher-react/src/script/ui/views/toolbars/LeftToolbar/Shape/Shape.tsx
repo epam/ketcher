@@ -39,9 +39,7 @@ const Shape = (props: Props) => {
   const { height, ...rest } = props
 
   if (height && height <= mediaSizes.shapeCollapsableHeight) {
-    return (
-      <ToolbarGroupItem id="shape-ellipse" options={shapeOptions} {...rest} />
-    )
+    return <ToolbarGroupItem id="shape" options={shapeOptions} {...rest} />
   }
 
   return (

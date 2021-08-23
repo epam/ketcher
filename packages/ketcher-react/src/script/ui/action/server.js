@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { serverTransform } from '../state/server'
+import isHidden from './isHidden'
 
 const config = {
   layout: {
@@ -86,10 +87,6 @@ const config = {
     disabled: () => !window.Miew,
     hidden: options => isHidden(options, 'miew')
   }
-}
-
-function isHidden(options, buttonName) {
-  return Boolean(options.buttons?.[buttonName]?.hidden)
 }
 
 export default config

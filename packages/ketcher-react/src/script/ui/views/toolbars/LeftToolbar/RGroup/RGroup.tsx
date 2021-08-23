@@ -39,9 +39,7 @@ const RGroup = (props: Props) => {
   const { height, ...rest } = props
 
   if (height && height <= mediaSizes.rGroupCollapsableHeight) {
-    return (
-      <ToolbarGroupItem id="rgroup-label" options={rGroupOptions} {...rest} />
-    )
+    return <ToolbarGroupItem id="rgroup" options={rGroupOptions} {...rest} />
   }
 
   return (

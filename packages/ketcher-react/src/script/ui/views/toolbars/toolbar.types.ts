@@ -120,10 +120,12 @@ type LeftToolbarItemVariant =
   | 'reaction-map'
   | 'reaction-unmap'
   // rgroup group
+  | 'rgroup'
   | 'rgroup-label'
   | 'rgroup-fragment'
   | 'rgroup-attpoints'
   // shape group
+  | 'shape'
   | 'shape-ellipse'
   | 'shape-rectangle'
   | 'shape-line'

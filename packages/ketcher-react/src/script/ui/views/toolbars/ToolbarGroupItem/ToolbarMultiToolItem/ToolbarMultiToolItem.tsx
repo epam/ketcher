@@ -90,31 +90,13 @@ const ToolbarMultiToolItem = (props: Props) => {
   // and check this type convert is redundant
   selected = selected || Boolean(currentStatus?.selected)
 
-  function checkAllInnerItemsAreHidden(
-    options: ToolbarItem[],
-    status
-  ): boolean {
-    let hiddenItemsNumber = options.reduce(
-      (hiddenItems: number, currentItem: ToolbarItem) => {
-        if (status[currentItem.id]?.hidden) {
-          hiddenItems += 1
-        }
-        return hiddenItems
-      },
-      0
-    )
-    return options.length === hiddenItemsNumber
-  }
-  const allInnerItemsHidden: boolean = checkAllInnerItemsAreHidden(
-    options,
-    status
+  const allInnerItemsHidden: boolean = options.every(
+    option => status[option.id]?.hidden
   )
 
-  const shouldShowMultiToolItem: boolean = !(
+  const displayMultiToolItem: boolean = !(
     allInnerItemsHidden || currentStatus?.hidden
   )
-    ? true
-    : false
 
   if (!currentStatus && options.length) {
     currentId =
@@ -138,7 +120,7 @@ const ToolbarMultiToolItem = (props: Props) => {
 
   const [Component, portalClassName] = chooseMultiTool(variant)
 
-  return shouldShowMultiToolItem ? (
+  return displayMultiToolItem ? (
     <div ref={ref} className={classes.root}>
       <ActionButton
         {...actionButtonProps}

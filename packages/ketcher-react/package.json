@@ -139,6 +139,11 @@
     "stylelint-scss": "^3.20.1",
     "typescript": "^4.3.5"
   },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(css|less)$": "identity-obj-proxy"
+    }
+  },
   "files": [
     "dist"
   ]

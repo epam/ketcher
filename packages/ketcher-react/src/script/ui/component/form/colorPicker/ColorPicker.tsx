@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { CompactPicker } from 'react-color'
+import classes from './ColorPicker.module.less'
 
 interface ColorPickerProps {
   value: string
@@ -32,28 +33,28 @@ const ColorPicker = (props: Props) => {
   }
 
   return (
-    <div className="color-picker-input">
+    <div className={classes.colorPickerInput}>
       <div
-        className="color-picker-btn"
+        className={classes.colorPickerBtn}
         onClick={handleClick}
         data-testid="color-picker-btn">
         {props.value}
         <span
-          className="color-picker-preview"
+          className={classes.colorPickerPreview}
           data-testid="color-picker-preview"
           style={{ backgroundColor: value }}
         />
       </div>
-      <div className="color-picker-wrap">
+      <div className={classes.colorPickerWrap}>
         {isOpen ? (
           <>
             <div
-              className="color-picker-overlay"
+              className={classes.colorPickerOverlay}
               onClick={handleClose}
               data-testid="color-picker-overlay"
             />
             <CompactPicker
-              className="color-picker"
+              className={classes.colorPicker}
               color={value}
               onChange={handleChange}
             />

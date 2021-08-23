@@ -20,6 +20,7 @@ import { Dialog } from '../../views/components'
 import React from 'react'
 import { connect } from 'react-redux'
 import { sgroupMap as schemes } from '../../data/schema/struct-schema'
+import classes from './sgroup.module.less'
 
 function Sgroup({ formState, ...prop }) {
   const { result, valid } = formState
@@ -29,7 +30,7 @@ function Sgroup({ formState, ...prop }) {
   return (
     <Dialog
       title="S-Group Properties"
-      className="sgroup"
+      className={classes.sgroup}
       result={() => result}
       valid={() => valid}
       params={prop}>

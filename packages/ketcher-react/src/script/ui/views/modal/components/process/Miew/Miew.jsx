@@ -134,7 +134,7 @@ class MiewDialog extends Component {
             ref={el => {
               this.miewContainer = el
             }}
-            className="miew-container"
+            className={classes.miewContainer}
             style={{ width: '1024px', height: '600px', position: 'relative' }}
           />
         </div>

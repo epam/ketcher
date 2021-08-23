@@ -13,34 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import '../../../../../style/variables.less';
+@import '../../../../../style/mixins.less';
 
-@import '../../../../../../../style/mixins.less';
-
-.check {
-  .tabs {
-    outline: none;
+.rgroup {
+  ul {
+    width: 25.6em;
+    padding: 0.5em;
   }
-
-  fieldset {
-    margin: 0;
-    padding: 0 0 0.3em 0.3em;
-    overflow-y: auto;
-    height: 25em;
-    width: 25em;
-    border-color: #ddd;
-    border-radius: 0 4px 4px 4px;
-    .scrollbar();
-    li {
-      display: block;
-      margin: 1.1em 0 0.3em 0.3em;
+  li {
+    display: inline-block;
+    margin: 0.2em 0.1em;
+  }
+  form button {
+    font-size: 1.3em;
+    width: 2.3em;
+    height: 2em;
+    line-height: 1;
+    vertical-align: middle;
+    padding: 0.15em;
+    background: inherit;
+    &::first-letter {
+      font-weight: 600;
+      color: lighten(@main-color, 20%);
     }
-    dt {
-      font-weight: bold;
-      margin: 1.1em 0 0.3em 0.3em;
+    &:hover {
+      .highlight-scale(@scale:1.005);
+      .highlight-shadow(black);
     }
-    dd {
-      margin-left: 1.5em;
-      word-break: break-word;
+    &:active {
+      .highlight-scale(none);
+      .highlight-shadow(none);
+    }
+    &.selected {
+      .highlight-invert;
+      &::first-letter {
+        color: darken(white, 30%);
+      }
     }
   }
 }

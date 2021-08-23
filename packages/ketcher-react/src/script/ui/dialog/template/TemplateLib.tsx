@@ -35,7 +35,7 @@ import clsx from 'clsx'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { onAction } from '../../state'
-import styles from './template-lib.module.less'
+import classes from './template-lib.module.less'
 import { useResizeObserver } from '../../../../hooks'
 
 interface TemplateLibProps {
@@ -124,7 +124,7 @@ const TemplateLib: React.FC<Props> = props => {
   return (
     <Dialog
       title="Template Library"
-      className="template-lib"
+      className={classes.templateLib}
       params={omit(['group'], rest)}
       result={() => result()}
       buttons={[
@@ -134,7 +134,7 @@ const TemplateLib: React.FC<Props> = props => {
         'Cancel',
         'OK'
       ]}>
-      <div className={styles.dialog_body}>
+      <div className={classes.dialog_body}>
         <label>
           Filter:
           <Input
@@ -144,12 +144,13 @@ const TemplateLib: React.FC<Props> = props => {
           />
         </label>
         <div
-          className={clsx('table-group-wrap', {
-            'single-col-layout': width && width < CONTAINER_MIN_WIDTH
+          className={clsx(classes.tableGroupWrap, {
+            [classes.singleColLayout]: width && width < CONTAINER_MIN_WIDTH
           })}
           ref={ref}>
           <Input
-            className="groups"
+            className={classes.groups}
+            classes={classes}
             component={SelectList}
             splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
             value={group}

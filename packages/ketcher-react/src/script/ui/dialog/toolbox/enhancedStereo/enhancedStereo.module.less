@@ -14,11 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-import classes from './spin.module.less'
+.enhancedStereo {
+  width: 330px;
 
-function Spin({ ...props }) {
-  return <div className={classes.ketSpinner} {...props} />
+  .stereoLabelItem {
+    display: flex;
+    align-items: center;
+    min-height: 2.4em;
+    margin: 2px;
+  }
+
+  .labelGroupSelect {
+    margin-right: 5px;
+    margin-left: 5px;
+  }
 }
-
-export default Spin

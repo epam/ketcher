@@ -301,10 +301,43 @@
 
 .dialog_body {
   overflow: auto;
+
+  .scrollbar()
 }
 
 .kbd() {
   display: none;
   font: 0.8em monospace;
   color: @border-color;
+}
+
+.scrollbar {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: rgba(0, 0, 0, 0);
+    -webkit-border-radius: 100px;
+  }
+
+  &::-webkit-scrollbar:hover {
+    background-color: rgba(0, 0, 0, 0.09);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.30);
+    -webkit-border-radius: 100px;
+  }
+
+  &::-webkit-scrollbar-thumb:active {
+    background: rgba(0, 0, 0, 0.61);
+    -webkit-border-radius: 100px;
+  }
+
+  &::-webkit-scrollbar-thumb:vertical {
+    min-height: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:horizontal {
+    min-width: 10px;
+  }
 }

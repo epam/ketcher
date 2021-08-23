@@ -25,6 +25,7 @@ import ComboBox from '../../component/form/combobox'
 import { Dialog } from '../../views/components'
 import React from 'react'
 import { connect } from 'react-redux'
+import classes from './sgroup.module.less'
 
 function SelectInput({ title, name, schema, ...prop }) {
   const inputSelect = Object.keys(schema).reduce(
@@ -83,7 +84,7 @@ function SData({
   return (
     <Dialog
       title="S-Group Properties"
-      className="sgroup"
+      className={classes.sgroup}
       result={() => result}
       valid={() => valid}
       params={prop}>
@@ -93,7 +94,7 @@ function SData({
         init={init}
         {...formState}>
         <SelectOneOf title="Context" name="context" schema={sdataSchema} />
-        <fieldset className="data">
+        <fieldset className={classes.data}>
           <SelectInput
             title="Field name"
             name="fieldName"

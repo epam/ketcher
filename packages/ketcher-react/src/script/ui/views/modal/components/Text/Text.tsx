@@ -26,14 +26,18 @@ import {
   convertToRaw,
   getDefaultKeyBinding
 } from 'draft-js'
+import createStyles from 'draft-js-custom-styles'
 import React, { useCallback, useState } from 'react'
 
 import { Dialog } from '../../../components'
 import { DialogParams } from '../../../components/Dialog/Dialog'
 import { TextButton } from './TextButton'
+import { FontControl } from './FontControl'
 import { TextCommand } from 'ketcher-core'
 import { connect } from 'react-redux'
-import styles from './Text.module.less'
+import classes from './Text.module.less'
+
+const { styles, customStyleFn } = createStyles(['font-size'])
 
 interface TextProps extends DialogParams {
   formState: any
@@ -73,6 +77,8 @@ const Text = (props: TextProps) => {
       )
     )
   )
+
+  console.log(customStyleFn)
 
   const result = () => {
     const content = editorState.getCurrentContent()
@@ -128,8 +134,18 @@ const Text = (props: TextProps) => {
   )
 
   const customStyleMap: DraftStyleMap = {
-    SUBSCRIPT: { fontSize: '0.8em', verticalAlign: 'sub' },
-    SUPERSCRIPT: { fontSize: '0.8em', verticalAlign: 'super' }
+    SUBSCRIPT: {
+      verticalAlign: 'sub',
+      transform: 'scale(0.7)',
+      display: 'inline-block',
+      transformOrigin: 'left'
+    },
+    SUPERSCRIPT: {
+      verticalAlign: 'super',
+      transform: 'scale(0.7)',
+      display: 'inline-block',
+      transformOrigin: 'left'
+    }
   }
 
   return (
@@ -139,7 +155,12 @@ const Text = (props: TextProps) => {
       params={props}
       result={result}
       valid={() => formState.form.valid}>
-      <ul className={styles.controlPanel}>
+      <ul className={classes.controlPanel}>
+        <FontControl
+          editorState={editorState}
+          setEditorState={setEditorState}
+          styles={styles}
+        />
         {buttons.map(button => {
           return (
             <TextButton
@@ -151,12 +172,13 @@ const Text = (props: TextProps) => {
           )
         })}
       </ul>
-      <div className={styles.textEditorInput}>
+      <div className={classes.textEditorInput}>
         <Editor
           keyBindingFn={keyBindingFn}
           editorState={editorState}
           onChange={onContentChange}
           customStyleMap={customStyleMap}
+          customStyleFn={customStyleFn}
         />
       </div>
     </Dialog>

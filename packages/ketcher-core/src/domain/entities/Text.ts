@@ -21,7 +21,8 @@ export enum TextCommand {
   Bold = 'BOLD',
   Italic = 'ITALIC',
   Subscript = 'SUBSCRIPT',
-  Superscript = 'SUPERSCRIPT'
+  Superscript = 'SUPERSCRIPT',
+  FontSize = 'CUSTOM_FONT_SIZE'
 }
 
 export interface TextParams {

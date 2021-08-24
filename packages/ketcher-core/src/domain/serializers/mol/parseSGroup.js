@@ -161,8 +161,17 @@ function initSGroup(sGroups, propData) {
   /* reader */
   const kv = readKeyValuePairs(propData, true)
   for (const [key, type] of kv) {
-    if (!(type in SGroup.TYPES)) throw new Error('Unsupported S-group type')
-
+    if (!(type in SGroup.TYPES)) {
+      const isConfirmed = window.confirm(
+        `Unsupported S-group type (${type}) found. Would you like to import structure without it?`
+      )
+      if (isConfirmed) {
+        return
+      }
+      const sGroupErr = new Error()
+      sGroupErr.isSGroupError = true
+      throw sGroupErr
+    }
     const sg = new SGroup(type)
     sg.number = key
     sGroups[key] = sg
@@ -174,7 +183,9 @@ function applySGroupProp(sGroups, propName, propData, numeric, core) {
   const kv = readKeyValuePairs(propData, !numeric)
   // "core" properties are stored directly in an sgroup, not in sgroup.data
   for (const key of kv.keys())
-    (core ? sGroups[key] : sGroups[key].data)[propName] = kv.get(key)
+    if (sGroups[key]) {
+      ;(core ? sGroups[key] : sGroups[key].data)[propName] = kv.get(key)
+    }
 }
 
 function applySGroupArrayProp(sGroups, propName, propData, shift) {
@@ -186,7 +197,9 @@ function applySGroupArrayProp(sGroups, propName, propData, shift) {
   if (part.length !== num) throw new Error('File format invalid')
   if (shift) part = part.map(v => v + shift)
 
-  sGroups[sid][propName] = sGroups[sid][propName].concat(part)
+  if (sGroups[sid]) {
+    sGroups[sid][propName] = sGroups[sid][propName].concat(part)
+  }
 }
 
 function applyDataSGroupName(sg, name) {

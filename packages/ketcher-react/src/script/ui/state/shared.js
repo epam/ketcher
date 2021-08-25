@@ -6,6 +6,7 @@ import {
 } from 'ketcher-core'
 
 import { getStereoAtomsMap } from '../../editor/actions/bond'
+import { supportedSGroupTypes } from './constants'
 
 export function onAction(action) {
   if (action && action.dialog) {
@@ -58,6 +59,23 @@ export function load(struct, options) {
       .then(
         struct => {
           const { rescale, fragment } = options
+
+          if (
+            struct.sgroups.some(sGroup => !supportedSGroupTypes[sGroup.type])
+          ) {
+            const isConfirmed = window.confirm(
+              `Unsupported S-group type found. Would you like to import structure without it?`
+            )
+
+            if (!isConfirmed) {
+              return
+            }
+
+            struct.sgroups = struct.sgroups.filter(
+              (key, sGroup) => supportedSGroupTypes[sGroup.type]
+            )
+          }
+
           if (rescale) {
             struct.rescale() // TODO: move out parsing?
 
@@ -107,9 +125,7 @@ export function load(struct, options) {
         },
         err => {
           //TODO: add error handler call
-          if (!err.isSGroupError) {
-            alert(err)
-          }
+          alert(err)
         }
       )
       .catch(alert)

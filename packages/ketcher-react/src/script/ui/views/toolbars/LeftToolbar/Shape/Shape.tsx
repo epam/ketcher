@@ -38,7 +38,7 @@ type Props = ShapeProps & ShapeCallProps
 
 const Shape = (props: Props) => {
   return (
-    <ToolbarGroupItem id="shape-ellipse" options={shapeOptions} {...props} />
+    <ToolbarGroupItem id="shape" options={shapeOptions} {...props} />
   )
 }
 

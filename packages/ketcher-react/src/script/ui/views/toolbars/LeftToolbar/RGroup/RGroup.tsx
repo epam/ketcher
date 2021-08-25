@@ -38,7 +38,7 @@ type Props = RGroupProps & RGroupCallProps
 
 const RGroup = (props: Props) => {
   return (
-    <ToolbarGroupItem id="rgroup-label" options={rGroupOptions} {...props} />
+    <ToolbarGroupItem id="rgroup" options={rGroupOptions} {...props} />
   )
 }
 

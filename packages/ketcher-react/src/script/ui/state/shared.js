@@ -122,6 +122,7 @@ export function load(struct, options) {
           } else {
             editor.struct(struct)
           }
+
         },
         err => {
           //TODO: add error handler call

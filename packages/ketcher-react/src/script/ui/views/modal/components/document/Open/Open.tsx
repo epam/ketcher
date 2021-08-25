@@ -18,7 +18,7 @@ import React, { FC, useState } from 'react'
 import { formatProperties } from 'ketcher-core'
 import { Dialog } from '../../../../components'
 import OpenButton from '../../../../../component/view/openbutton'
-import ClipArea from '../../../../../component/cliparea'
+import ClipArea from '../../../../../component/cliparea/cliparea'
 import { BaseProps, BaseCallProps } from '../../../modal.types'
 
 import classes from './Open.module.less'

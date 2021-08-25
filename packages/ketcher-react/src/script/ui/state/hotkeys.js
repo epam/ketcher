@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import * as clipArea from '../component/cliparea'
+import * as clipArea from '../component/cliparea/cliparea'
 
 import { KetSerializer, MolSerializer, formatProperties } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'

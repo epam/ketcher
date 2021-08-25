@@ -17,7 +17,7 @@
 import React from 'react'
 
 import { attachmentPoints as attachmentPointsSchema } from '../../../../../data/schema/struct-schema'
-import Form, { Field } from '../../../../../component/form/form'
+import Form, { Field } from '../../../../../component/form/form/form'
 import { Dialog } from '../../../../components'
 import { BaseProps, BaseCallProps } from '../../../modal.types'
 

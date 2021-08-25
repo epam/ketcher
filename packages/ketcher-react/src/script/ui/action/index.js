@@ -16,7 +16,7 @@
 
 import atoms from './atoms'
 import debug from './debug'
-import { exec } from '../component/cliparea'
+import { exec } from '../component/cliparea/cliparea'
 import server from './server'
 import templates from './templates'
 import tools from './tools'

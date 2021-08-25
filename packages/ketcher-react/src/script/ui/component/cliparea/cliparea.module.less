@@ -14,10 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { connect } from 'react-redux'
-import ClipArea from '../component/cliparea/cliparea'
-import { initClipboard } from '../state/hotkeys'
-
-const AppClipArea = connect(null, dispatch => dispatch(initClipboard))(ClipArea)
-
-export default AppClipArea
+.cliparea {
+  // Copied from http://bit.ly/12nphsK
+  // Search for less verbose way to make FF happy
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  display: block;
+  font-size: 1px;
+  z-index: -1;
+  color: transparent;
+  background: transparent;
+  overflow: hidden;
+  border: none;
+  padding: 0;
+  resize: none;
+  outline: none;
+  user-select: text;
+  // Because for user-select:none,
+  // Safari won't allow input
+}

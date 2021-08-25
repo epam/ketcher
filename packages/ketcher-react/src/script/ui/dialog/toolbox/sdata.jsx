@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field, SelectOneOf } from '../../component/form/form'
+import Form, { Field, SelectOneOf } from '../../component/form/form/form'
 import {
   getSdataDefault,
   sdataCustomSchema,
   sdataSchema
 } from '../../data/schema/sdata-schema'
 
-import ComboBox from '../../component/form/combobox'
+import ComboBox from '../../component/form/combobox/combobox'
 import { Dialog } from '../../views/components'
 import React from 'react'
 import { connect } from 'react-redux'

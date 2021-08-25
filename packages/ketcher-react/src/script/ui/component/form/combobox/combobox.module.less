@@ -14,10 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { connect } from 'react-redux'
-import ClipArea from '../component/cliparea/cliparea'
-import { initClipboard } from '../state/hotkeys'
+.suggestList {
+  border: 1px solid #3297fd;
+  position: absolute;
+  background-color: white;
+  margin-left: 3px;
+  padding-left: 3px;
+  width: 93%;
+  z-index: 3;
+}
 
-const AppClipArea = connect(null, dispatch => dispatch(initClipboard))(ClipArea)
-
-export default AppClipArea
+.suggestList li:hover {
+  background-color: #3297fd;
+  color: white;
+}

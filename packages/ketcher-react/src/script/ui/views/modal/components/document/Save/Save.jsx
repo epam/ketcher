@@ -16,7 +16,7 @@
 
 import * as structFormat from '../../../../../data/convert/structConverter'
 
-import Form, { Field } from '../../../../../component/form/form'
+import Form, { Field } from '../../../../../component/form/form/form'
 import {
   FormatterFactory,
   formatProperties,

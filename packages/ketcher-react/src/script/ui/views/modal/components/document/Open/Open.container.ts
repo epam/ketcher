@@ -16,7 +16,7 @@
 import { ComponentType } from 'react'
 import { connect } from 'react-redux'
 
-import { exec } from '../../../../../component/cliparea'
+import { exec } from '../../../../../component/cliparea/cliparea'
 import { load } from '../../../../../state'
 import Open, { OpenProps } from './Open'
 import { BaseCallProps } from '../../../modal.types'

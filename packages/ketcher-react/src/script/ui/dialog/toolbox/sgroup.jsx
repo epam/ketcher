@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field, SelectOneOf } from '../../component/form/form'
+import Form, { Field, SelectOneOf } from '../../component/form/form/form'
 
 import { Dialog } from '../../views/components'
 import React from 'react'
@@ -36,7 +36,7 @@ function Sgroup({ formState, ...prop }) {
       params={prop}>
       <Form schema={schemes[type]} init={prop} {...formState}>
         <SelectOneOf title="Type" name="type" schema={schemes} />
-        <fieldset className={type === 'DAT' ? 'data' : 'base'}>
+        <fieldset className={type === 'DAT' ? classes.data : 'base'}>
           {content(type)}
         </fieldset>
       </Form>

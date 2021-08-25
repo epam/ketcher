@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Form, { Field } from '../../../component/form/form'
+import Form, { Field } from '../../../component/form/form/form'
 import { StereoLabel, Struct } from 'ketcher-core'
 
 import { Dialog } from '../../../views/components'

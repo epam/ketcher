@@ -13,11 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import '../../../../../style/variables.less';
+@import '../../../../../style/mixins.less';
 
-import { connect } from 'react-redux'
-import ClipArea from '../component/cliparea/cliparea'
-import { initClipboard } from '../state/hotkeys'
+.dataError {
+  select,
+  textarea,
+  input[type='text'],
+  input[type='number'],
+  input[type='search'] {
+    border: 1px solid @error-color;
+    &:hover,
+    &:focus {
+      .highlight-shadow(@error-color);
+    }
+  }
 
-const AppClipArea = connect(null, dispatch => dispatch(initClipboard))(ClipArea)
-
-export default AppClipArea
+  &:hover::after {
+    content: 'Error: ' attr(error);
+    display: block;
+    position: fixed;
+    white-space: pre-wrap;
+    padding: 0.35em;
+    background: lighten(@error-color, 30%);
+    border: 1px solid @error-color;
+    border-radius: 4px;
+    line-height: 1em;
+    font-size: 0.9em;
+    z-index: 2;
+    max-width: 25em;
+  }
+}

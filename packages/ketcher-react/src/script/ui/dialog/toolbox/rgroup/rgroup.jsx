@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field } from '../../../component/form/form'
+import Form, { Field } from '../../../component/form/form/form'
 
 import ButtonList from '../../../component/form/buttonlist'
 import { Dialog } from '../../../views/components'

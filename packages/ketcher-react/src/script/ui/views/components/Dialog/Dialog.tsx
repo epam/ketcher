@@ -16,10 +16,12 @@
 
 import * as KN from 'w3c-keyname'
 
-import React, {FC, useEffect, useRef} from 'react'
+import React, { FC, useEffect, useRef } from 'react'
 
 import clsx from 'clsx'
 import styles from './Dialog.module.less'
+import clipareaStyles from '../../../component/cliparea/cliparea.module.less'
+import editorStyles from '../../../../../Editor.module.less'
 
 interface DialogProps {
   title: string
@@ -57,11 +59,11 @@ const Dialog: FC<Props> = props => {
   const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    (dialogRef.current as any).focus()
+    ;(dialogRef.current as any).focus()
     return () => {
-      (dialogRef.current
-          ?.closest('.editor')
-          ?.getElementsByClassName('cliparea')[0] as any).focus()
+      ;(dialogRef.current
+        ?.closest(`.${editorStyles.editor}`)
+        ?.getElementsByClassName(clipareaStyles.cliparea)[0] as any).focus()
     }
   }, [])
 

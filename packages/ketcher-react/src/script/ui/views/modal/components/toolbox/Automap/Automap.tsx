@@ -16,7 +16,7 @@
 
 import React from 'react'
 
-import Form, { Field } from '../../../../../component/form/form'
+import Form, { Field } from '../../../../../component/form/form/form'
 import { Dialog } from '../../../../components'
 import { BaseProps, BaseCallProps } from '../../../modal.types'
 

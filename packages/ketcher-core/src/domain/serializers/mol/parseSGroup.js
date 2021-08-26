@@ -132,12 +132,62 @@ function postLoadDat(sgroup, mol) {
     sgroup.pp = sgroup.pp.add(SGroup.getMassCentre(mol, sgroup.atoms))
 }
 
+function postLoadMon(sgroup) {
+  // TODO: Implement after adding MON type support
+}
+
+function postLoadMer(sgroup) {
+  // TODO: Implement after adding MER type support
+}
+
+function postLoadCop(sgroup) {
+  // TODO: Implement after adding COP type support
+}
+
+function postLoadCro(sgroup) {
+  // TODO: Implement after adding CRO type support
+}
+
+function postLoadMod(sgroup) {
+  // TODO: Implement after adding MOD type support
+}
+
+function postLoadGra(sgroup) {
+  // TODO: Implement after adding GRA type support
+}
+
+function postLoadCom(sgroup) {
+  // TODO: Implement after adding COM type support
+}
+
+function postLoadMix(sgroup) {
+  // TODO: Implement after adding MIX type support
+}
+
+function postLoadFor(sgroup) {
+  // TODO: Implement after adding FOR type support
+}
+
+function postLoadAny(sgroup) {
+  // TODO: Implement after adding ANY type support
+}
+
 function loadSGroup(mol, sg, atomMap) {
-  var postLoadMap = {
+  const postLoadMap = {
+    SUP: postLoadSup,
     MUL: postLoadMul,
     SRU: postLoadSru,
-    SUP: postLoadSup,
+    MON: postLoadMon,
+    MER: postLoadMer,
+    COP: postLoadCop,
+    CRO: postLoadCro,
+    MOD: postLoadMod,
+    GRA: postLoadGra,
+    COM: postLoadCom,
+    MIX: postLoadMix,
+    FOR: postLoadFor,
     DAT: postLoadDat,
+    ANY: postLoadAny,
     GEN: postLoadGen
   }
 
@@ -161,8 +211,6 @@ function initSGroup(sGroups, propData) {
   /* reader */
   const kv = readKeyValuePairs(propData, true)
   for (const [key, type] of kv) {
-    if (!(type in SGroup.TYPES)) throw new Error('Unsupported S-group type')
-
     const sg = new SGroup(type)
     sg.number = key
     sGroups[key] = sg

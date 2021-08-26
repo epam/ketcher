@@ -107,7 +107,7 @@ export function load(struct, options) {
         },
         err => {
           //TODO: add error handler call
-          state.options.app.errorHandler('shared')
+          state.options.app.errorHandler(err.message)
         }
       )
       .catch(err => {

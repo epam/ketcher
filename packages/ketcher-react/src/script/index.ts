@@ -16,25 +16,33 @@ import { ButtonsConfig, KetcherBuilder } from './builders'
  * limitations under the License.
  ***************************************************************************/
 import { StructServiceProvider } from 'ketcher-core'
+import { IErrorsContext } from 'src/contexts'
 
 interface Config {
   element: HTMLDivElement | null
   staticResourcesUrl: string
   structServiceProvider: StructServiceProvider
   buttons?: ButtonsConfig
+  errorHandler: IErrorsContext
 }
 
 async function buildKetcherAsync({
   element,
   staticResourcesUrl,
   structServiceProvider,
-  buttons
+  buttons,
+  errorHandler
 }: Config) {
   const builder = new KetcherBuilder()
 
   await builder.appendApiAsync(structServiceProvider)
   builder.appendServiceMode(structServiceProvider.mode)
-  await builder.appendUiAsync(element, staticResourcesUrl, buttons)
+  await builder.appendUiAsync(
+    element,
+    staticResourcesUrl,
+    errorHandler,
+    buttons
+  )
 
   return builder.build()
 }

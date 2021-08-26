@@ -15,10 +15,12 @@
  ***************************************************************************/
 
 import React, { Component, createRef } from 'react'
+import { ErrorsContext } from 'src/contexts'
 
 const ieCb = window.clipboardData
 
 class ClipArea extends Component {
+  static contextType = ErrorsContext
   constructor(props) {
     super(props)
     this.textAreaRef = createRef()
@@ -27,6 +29,7 @@ class ClipArea extends Component {
   componentDidMount() {
     const el = this.textAreaRef.current
     this.target = this.props.target || el.parentNode
+    const errorHandler = this.context
 
     this.listeners = {
       mouseup: event => {
@@ -42,7 +45,7 @@ class ClipArea extends Component {
       },
       copy: event => {
         if (this.props.focused() && this.props.onCopy) {
-          const data = this.props.onCopy()
+          const data = this.props.onCopy(errorHandler)
 
           if (data) copy(event.clipboardData, data)
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useRef } from 'react'
+import React, { useRef, useContext } from 'react'
 import useResizeObserver from 'use-resize-observer/polyfilled'
 import clsx from 'clsx'
 
@@ -23,6 +23,7 @@ import mediaSizes from './mediaSizes'
 import { BaseCallProps } from './modal.types'
 
 import classes from './Modal.module.less'
+import { ErrorsContext } from 'src/contexts'
 
 interface ModalProps extends BaseCallProps {
   modal: {
@@ -40,6 +41,7 @@ function Modal(props: Props) {
   const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: containerRef
   })
+  const errorHandler = useContext(ErrorsContext)
 
   if (!modal) return null
 
@@ -56,6 +58,7 @@ function Modal(props: Props) {
             (height && height <= mediaSizes.smallHeight) ||
             (width && width <= mediaSizes.smallWidth)
         })}
+        errorHandler={errorHandler}
         {...rest}
       />
     </div>

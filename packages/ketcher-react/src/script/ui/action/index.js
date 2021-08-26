@@ -67,48 +67,48 @@ const config = {
   cut: {
     shortcut: 'Mod+x',
     title: 'Cut',
-    action: () => {
-      exec('cut') || dontClipMessage('Cut') // eslint-disable-line no-unused-expressions
+    action: (editor, server, options) => {
+      exec('cut') || dontClipMessage('Cut', options.app.errorHandler) // eslint-disable-line no-unused-expressions
     },
     disabled: editor => !hasSelection(editor)
   },
   copy: {
     shortcut: 'Mod+c',
     title: 'Copy',
-    action: () => {
-      exec('copy') || dontClipMessage('Copy') // eslint-disable-line no-unused-expressions
+    action: (editor, server, options) => {
+      exec('copy') || dontClipMessage('Copy', options.app.errorHandler) // eslint-disable-line no-unused-expressions
     },
     disabled: editor => !hasSelection(editor)
   },
   'copy-image': {
     shortcut: 'Mod+Shift+f',
     title: 'Copy Image',
-    action: () => {
-      copyImageToClipboard()
+    action: (editor, server, options) => {
+      copyImageToClipboard(options.app.errorHandler)
     },
     disabled: editor => !hasSelection(editor)
   },
   'copy-mol': {
     shortcut: 'Mod+m',
     title: 'Copy as MOL',
-    action: () => {
-      copyAs('mol')
+    action: (editor, server, options) => {
+      copyAs('mol', options.app.errorHandler)
     },
     disabled: editor => !hasSelection(editor)
   },
   'copy-ket': {
     shortcut: 'Mod+Shift+k',
     title: 'Copy as KET',
-    action: () => {
-      copyAs('ket')
+    action: (editor, server, options) => {
+      copyAs('ket', options.app.errorHandler)
     },
     disabled: editor => !hasSelection(editor)
   },
   paste: {
     shortcut: 'Mod+v',
     title: 'Paste',
-    action: () => {
-      exec('paste') || dontClipMessage('Paste') // eslint-disable-line no-unused-expressions
+    action: (editor, server, options) => {
+      exec('paste') || dontClipMessage('Paste', options.app.errorHandler) // eslint-disable-line no-unused-expressions
     },
     selected: ({ actions }) =>
       actions && // TMP
@@ -186,9 +186,8 @@ function hasSelection(editor) {
   )
 }
 
-function dontClipMessage(title) {
-  //TODO: add error handler call
-  alert(
+function dontClipMessage(title, errorHandler) {
+  errorHandler(
     'This action is unavailable via menu.\n' + // eslint-disable-line no-undef
       'Instead, use shortcut to ' +
       title +

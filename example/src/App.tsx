@@ -21,6 +21,7 @@ if (process.env.MODE === 'standalone') {
 const App = () => {
   return (
     <Editor
+      errorHandler={(message: string) => alert(message)}
       staticResourcesUrl={process.env.PUBLIC_URL}
       structServiceProvider={structServiceProvider}
     />

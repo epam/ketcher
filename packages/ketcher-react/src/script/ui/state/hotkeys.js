@@ -135,10 +135,10 @@ export function initClipboard(dispatch, getState) {
       else editor.selection(null)
       return data
     },
-    onCopy() {
+    onCopy(errorHandler) {
       const state = global.currentState
       const editor = state.editor
-      const data = clipData(editor)
+      const data = clipData(editor, errorHandler)
       editor.selection(null)
       return data
     },
@@ -155,7 +155,7 @@ export function initClipboard(dispatch, getState) {
   }
 }
 
-function clipData(editor) {
+function clipData(editor, errorHandler) {
   const res = {}
   const struct = editor.structSelected()
 
@@ -164,7 +164,7 @@ function clipData(editor) {
     struct.simpleObjects.size || struct.texts.size
   )
   if (simpleObjectOrText && window.clipboardData) {
-    alert(
+    errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
         'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button'
     )
@@ -186,8 +186,7 @@ function clipData(editor) {
     // res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
     return res
   } catch (ex) {
-    //TODO: add error handler call
-    alert(ex)
+    errorHandler(ex.message)
   }
 
   return null

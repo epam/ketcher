@@ -35,12 +35,14 @@ function roundOff(value, round) {
 class AnalyseDialog extends Component {
   constructor(props) {
     super(props)
-    props.onAnalyse().catch(e => {
+    try {
+      props.onAnalyse()
+    } catch (e) {
       // error could possibly be an invalid state of molecule.
       // TODO: handling such cases described in #251
-      alert(e)
+      props.errorHandler(e.message)
       props.onCancel()
-    })
+    }
   }
 
   render() {

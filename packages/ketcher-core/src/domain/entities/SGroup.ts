@@ -39,11 +39,21 @@ export class SGroupBracketParams {
 
 export class SGroup {
   static TYPES = {
-    MUL: 1,
-    SRU: 2,
-    SUP: 3,
-    DAT: 4,
-    GEN: 5
+    SUP: 'SUP',
+    MUL: 'MUL',
+    SRU: 'SRU',
+    MON: 'MON',
+    MER: 'MER',
+    COP: 'COP',
+    CRO: 'CRO',
+    MOD: 'MOD',
+    GRA: 'GRA',
+    COM: 'COM',
+    MIX: 'MIX',
+    FOR: 'FOR',
+    DAT: 'DAT',
+    ANY: 'ANY',
+    GEN: 'GEN'
   }
 
   type: string

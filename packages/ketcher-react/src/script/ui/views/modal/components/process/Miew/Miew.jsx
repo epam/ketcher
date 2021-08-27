@@ -152,6 +152,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   onExportCML: cmlStruct => {
     dispatch(load(cmlStruct))
+    // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
+    // See PR #731 (https://github.com/epam/ketcher/pull/731)
   }
 })
 

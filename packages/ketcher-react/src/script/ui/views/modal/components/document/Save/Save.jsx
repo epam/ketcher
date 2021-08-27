@@ -206,7 +206,6 @@ class SaveDialog extends Component {
     const buttons = [
       [
         <SaveButton
-          className="save-button"
           mode="saveFile"
           data={structStr}
           filename={filename + getPropertiesByFormat(format).extensions[0]}
@@ -218,8 +217,8 @@ class SaveDialog extends Component {
           Save To File
         </SaveButton>,
         <button
-          className="save-button"
           key="save-tmpl"
+          className={classes.saveTmpl}
           disabled={disableControls || isCleanStruct}
           onClick={() => this.props.onTmplSave(this.props.struct)}>
           Save to Templates...
@@ -228,7 +227,6 @@ class SaveDialog extends Component {
       ],
       [
         <SaveButton
-          className="save-button"
           mode="saveImage"
           data={structStr}
           filename={filename}

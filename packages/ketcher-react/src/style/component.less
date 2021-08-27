@@ -1,23 +1,23 @@
 @import 'variables';
 
-.-Control {
-  border-radius: 4px;
-
-  display: inline-block;
-  //display: block;
-  vertical-align: middle;
-
-  background: white;
-  line-height: 20 / 14;
-  height: 2.4em;
-  padding: 0.35em 0.15em 0.35em 0.3em;
-  margin: 2px;
-
-  border: 1px solid @border-color;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  box-sizing: border-box;
-  // transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-}
+//.-Control {
+//  border-radius: 4px;
+//
+//  display: inline-block;
+//  //display: block;
+//  vertical-align: middle;
+//
+//  background: white;
+//  line-height: 20 / 14;
+//  height: 2.4em;
+//  padding: 0.35em 0.15em 0.35em 0.3em;
+//  margin: 2px;
+//
+//  border: 1px solid @border-color;
+//  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+//  box-sizing: border-box;
+//  // transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+//}
 
 // .-SelectList {
 //   &:extend(select all);
@@ -70,67 +70,67 @@
   }
 }
 
-.-Accordion {
-  margin: 0.3em;
-
-  .ac_tab {
-    margin-top: 2px;
-    & > a:first-child {
-      z-index: 3;
-
-      padding: 6px 0;
-      display: block;
-      cursor: pointer;
-      text-align: center;
-      background-color: #eee;
-      border: 1px solid #ccc;
-      transition: border-radius 0.1s linear;
-      &:before {
-        margin-left: 30px;
-        float: left;
-      }
-      &:hover {
-        background-color: #9dc2d0;
-      }
-    }
-
-    & > *:nth-child(2) {
-      // child content
-      overflow: hidden;
-      transition-property: height, padding; // need "height" in child comp. for working transition
-      transition-duration: 0.5s;
-      transition-timing-function: linear;
-    }
-  }
-
-  .ac_tab.active {
-    // active tab
-    & > a:first-child {
-      border-radius: 6px 6px 0 0;
-      border-bottom: 0;
-      transition-delay: 0s;
-      &:before {
-        content: '−';
-      }
-    }
-  }
-
-  .ac_tab.hidden {
-    & > a:first-child {
-      border-radius: 6px;
-      transition-delay: 0.4s;
-      &:before {
-        content: '+';
-      }
-    }
-    & > *:nth-child(2) {
-      // hidden element
-      height: 0;
-      padding: 0;
-      border: 0;
-    }
-  }
-}
+//.-Accordion {
+//  margin: 0.3em;
+//
+//  .ac_tab {
+//    margin-top: 2px;
+//    & > a:first-child {
+//      z-index: 3;
+//
+//      padding: 6px 0;
+//      display: block;
+//      cursor: pointer;
+//      text-align: center;
+//      background-color: #eee;
+//      border: 1px solid #ccc;
+//      transition: border-radius 0.1s linear;
+//      &:before {
+//        margin-left: 30px;
+//        float: left;
+//      }
+//      &:hover {
+//        background-color: #9dc2d0;
+//      }
+//    }
+//
+//    & > *:nth-child(2) {
+//      // child content
+//      overflow: hidden;
+//      transition-property: height, padding; // need "height" in child comp. for working transition
+//      transition-duration: 0.5s;
+//      transition-timing-function: linear;
+//    }
+//  }
+//
+//  .ac_tab.active {
+//    // active tab
+//    & > a:first-child {
+//      border-radius: 6px 6px 0 0;
+//      border-bottom: 0;
+//      transition-delay: 0s;
+//      &:before {
+//        content: '−';
+//      }
+//    }
+//  }
+//
+//  .ac_tab.hidden {
+//    & > a:first-child {
+//      border-radius: 6px;
+//      transition-delay: 0.4s;
+//      &:before {
+//        content: '+';
+//      }
+//    }
+//    & > *:nth-child(2) {
+//      // hidden element
+//      height: 0;
+//      padding: 0;
+//      border: 0;
+//    }
+//  }
+//}
 
 .-measure {
   background-color: white;

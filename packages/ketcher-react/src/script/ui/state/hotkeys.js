@@ -135,10 +135,10 @@ export function initClipboard(dispatch, getState) {
       else editor.selection(null)
       return data
     },
-    onCopy(errorHandler) {
+    onCopy() {
       const state = global.currentState
       const editor = state.editor
-      const data = clipData(editor, errorHandler)
+      const data = clipData(editor)
       editor.selection(null)
       return data
     },
@@ -155,9 +155,10 @@ export function initClipboard(dispatch, getState) {
   }
 }
 
-function clipData(editor, errorHandler) {
+function clipData(editor) {
   const res = {}
   const struct = editor.structSelected()
+  const errorHandler = editor.errorHandler
 
   if (struct.isBlank()) return null
   const simpleObjectOrText = Boolean(

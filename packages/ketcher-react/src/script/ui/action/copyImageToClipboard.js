@@ -17,12 +17,13 @@
 import { FormatterFactory } from 'ketcher-core'
 import { Ketcher } from '../../ketcher'
 
-async function copyImageToClipboard(errorHandler) {
+async function copyImageToClipboard() {
   const state = global.currentState
   const editor = state.editor
   const server = state.server
   const options = state.options
   const struct = editor.structSelected()
+  const errorHandler = editor.errorHandler
 
   try {
     const factory = new FormatterFactory(server)

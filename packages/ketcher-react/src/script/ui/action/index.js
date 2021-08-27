@@ -67,48 +67,48 @@ const config = {
   cut: {
     shortcut: 'Mod+x',
     title: 'Cut',
-    action: (editor, server, options) => {
-      exec('cut') || dontClipMessage('Cut', options.app.errorHandler) // eslint-disable-line no-unused-expressions
+    action: editor => {
+      exec('cut') || dontClipMessage('Cut', editor.errorHandler) // eslint-disable-line no-unused-expressions
     },
     disabled: editor => !hasSelection(editor)
   },
   copy: {
     shortcut: 'Mod+c',
     title: 'Copy',
-    action: (editor, server, options) => {
-      exec('copy') || dontClipMessage('Copy', options.app.errorHandler) // eslint-disable-line no-unused-expressions
+    action: editor => {
+      exec('copy') || dontClipMessage('Copy', editor.errorHandler) // eslint-disable-line no-unused-expressions
     },
     disabled: editor => !hasSelection(editor)
   },
   'copy-image': {
     shortcut: 'Mod+Shift+f',
     title: 'Copy Image',
-    action: (editor, server, options) => {
-      copyImageToClipboard(options.app.errorHandler)
+    action: () => {
+      copyImageToClipboard()
     },
     disabled: editor => !hasSelection(editor)
   },
   'copy-mol': {
     shortcut: 'Mod+m',
     title: 'Copy as MOL',
-    action: (editor, server, options) => {
-      copyAs('mol', options.app.errorHandler)
+    action: () => {
+      copyAs('mol')
     },
     disabled: editor => !hasSelection(editor)
   },
   'copy-ket': {
     shortcut: 'Mod+Shift+k',
     title: 'Copy as KET',
-    action: (editor, server, options) => {
-      copyAs('ket', options.app.errorHandler)
+    action: () => {
+      copyAs('ket')
     },
     disabled: editor => !hasSelection(editor)
   },
   paste: {
     shortcut: 'Mod+v',
     title: 'Paste',
-    action: (editor, server, options) => {
-      exec('paste') || dontClipMessage('Paste', options.app.errorHandler) // eslint-disable-line no-unused-expressions
+    action: editor => {
+      exec('paste') || dontClipMessage('Paste', editor.errorHandler) // eslint-disable-line no-unused-expressions
     },
     selected: ({ actions }) =>
       actions && // TMP

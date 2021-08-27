@@ -15,12 +15,13 @@
  ***************************************************************************/
 import { MolSerializer, KetSerializer } from 'ketcher-core'
 
-export default function copyAs(type, errorHandler) {
+export default function copyAs(type) {
+  const state = global.currentState
+  const editor = state.editor
+  const struct = editor.structSelected()
+  const errorHandler = editor.errorHandler
+  let serializer
   try {
-    const state = global.currentState
-    const editor = state.editor
-    const struct = editor.structSelected()
-    let serializer
     switch (type) {
       case 'mol': {
         serializer = new MolSerializer()

@@ -95,6 +95,7 @@ class Editor {
   _tool: any
   historyStack: any
   historyPtr: any
+  errorHandler: any
   event: {
     message: Subscription
     elementEdit: PipelineSubscription
@@ -127,6 +128,7 @@ class Editor {
     this._tool = null // eslint-disable-line
     this.historyStack = []
     this.historyPtr = 0
+    this.errorHandler = null
 
     this.event = {
       message: new Subscription(),

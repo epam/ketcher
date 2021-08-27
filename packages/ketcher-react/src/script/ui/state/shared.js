@@ -51,6 +51,7 @@ export function load(struct, options) {
     const state = getState()
     const editor = state.editor
     const server = state.server
+    const errorHandler = editor.errorHandler
 
     options = options || {}
 
@@ -106,12 +107,11 @@ export function load(struct, options) {
           }
         },
         err => {
-          //TODO: add error handler call
-          state.options.app.errorHandler(err.message)
+          errorHandler(err.message)
         }
       )
       .catch(err => {
-        state.options.app.errorHandler(err.message)
+        errorHandler(err.message)
       })
   }
 }

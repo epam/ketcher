@@ -16,14 +16,13 @@ import { ButtonsConfig, KetcherBuilder } from './builders'
  * limitations under the License.
  ***************************************************************************/
 import { StructServiceProvider } from 'ketcher-core'
-import { IErrorsContext } from 'src/contexts'
 
 interface Config {
   element: HTMLDivElement | null
   staticResourcesUrl: string
   structServiceProvider: StructServiceProvider
   buttons?: ButtonsConfig
-  errorHandler: IErrorsContext
+  errorHandler: (message: string) => void
 }
 
 async function buildKetcherAsync({

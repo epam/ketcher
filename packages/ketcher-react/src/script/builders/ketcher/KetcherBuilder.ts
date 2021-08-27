@@ -25,7 +25,6 @@ import { ButtonsConfig } from './ButtonsConfig'
 import { Editor } from '../../editor'
 import createApi from '../../api'
 import { initApp } from '../../ui'
-import { IErrorsContext } from 'src/contexts'
 
 class KetcherBuilder {
   private structService: StructService | null
@@ -38,7 +37,7 @@ class KetcherBuilder {
     element: HTMLDivElement | null
     staticResourcesUrl: string
     buttons?: ButtonsConfig
-    errorHandler: IErrorsContext
+    errorHandler: (message: string) => void
   }
 
   constructor() {
@@ -78,7 +77,7 @@ class KetcherBuilder {
   async appendUiAsync(
     element: HTMLDivElement | null,
     staticResourcesUrl: string,
-    errorHandler: IErrorsContext,
+    errorHandler: (message: string) => void,
     buttons?: ButtonsConfig
   ): Promise<void> {
     const { structService } = this
@@ -105,7 +104,7 @@ class KetcherBuilder {
         staticResourcesUrl,
         {
           buttons: buttons || {},
-          errorHandler: errorHandler || {},
+          errorHandler: errorHandler || null,
           version: process.env.VERSION || '',
           buildDate: process.env.BUILD_DATE || '',
           buildNumber: process.env.BUILD_NUMBER || ''
@@ -116,6 +115,7 @@ class KetcherBuilder {
     })
 
     this.editor = editor
+    this.editor.errorHandler = errorHandler
     this.ui = tempRef.ui
     this.formatterFactory = new FormatterFactory(structService)
   }

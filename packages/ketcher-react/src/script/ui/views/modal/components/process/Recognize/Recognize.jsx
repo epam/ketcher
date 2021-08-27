@@ -154,7 +154,7 @@ const mapStateToProps = state => ({
   version: state.options.recognize.version || state.options.app.imagoVersions[0]
 })
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   isFragment: v => dispatch(shouldFragment(v)),
   onImage: file => dispatch(changeImage(file)),
   onRecognize: (file, ver) => dispatch(recognize(file, ver)),
@@ -166,7 +166,6 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         fragment: res.fragment
       })
     )
-    ownProps.onOk(res)
   }
 })
 

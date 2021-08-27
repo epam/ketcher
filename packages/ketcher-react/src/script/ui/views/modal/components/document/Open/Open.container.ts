@@ -26,7 +26,7 @@ type DispatchProps = Pick<BaseCallProps, 'onOk'>
 
 const mapStateToProps = (state): StateProps => ({ server: state.server })
 
-const mapDispatchToProps = (dispatch, ownProps): DispatchProps => ({
+const mapDispatchToProps = (dispatch): DispatchProps => ({
   onOk: result => {
     if (result.fragment) exec('copy')
     dispatch(
@@ -35,7 +35,6 @@ const mapDispatchToProps = (dispatch, ownProps): DispatchProps => ({
         fragment: result.fragment
       })
     )
-    ownProps.onOk(result)
   }
 })
 

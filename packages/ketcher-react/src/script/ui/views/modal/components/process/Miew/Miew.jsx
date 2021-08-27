@@ -149,10 +149,9 @@ const mapStateToProps = state => ({
   struct: state.editor.struct()
 })
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   onExportCML: cmlStruct => {
     dispatch(load(cmlStruct))
-    ownProps.onOk()
   }
 })
 

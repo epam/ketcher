@@ -1,5 +1,9 @@
 import React from 'react'
 
-const errorsContext = React.createContext((message: string) => alert(message))
+export interface IErrorsContext {
+  errorHandler: (message: string) => void
+}
+
+const errorsContext = React.createContext({} as IErrorsContext)
 
 export default errorsContext

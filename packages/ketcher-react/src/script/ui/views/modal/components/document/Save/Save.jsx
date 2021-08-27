@@ -106,7 +106,7 @@ class SaveDialog extends Component {
   }
 
   changeType = type => {
-    const errorHandler = this.context
+    const errorHandler = this.context.errorHandler
     this.setState({ disableControls: true })
 
     const { struct, server, options, formState } = this.props

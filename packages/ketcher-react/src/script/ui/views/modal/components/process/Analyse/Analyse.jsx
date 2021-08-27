@@ -40,7 +40,7 @@ class AnalyseDialog extends Component {
   }
 
   componentDidMount() {
-    const errorHandler = this.context
+    const errorHandler = this.context.errorHandler
     try {
       this.props.onAnalyse()
     } catch (e) {

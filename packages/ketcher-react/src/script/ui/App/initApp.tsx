@@ -40,7 +40,7 @@ function initApp(
   ReactDOM.render(
     <Provider store={store}>
       <SettingsContext.Provider value={{ staticResourcesUrl }}>
-        <ErrorsContext.Provider value={options.errorHandler}>
+        <ErrorsContext.Provider value={{ errorHandler: options.errorHandler }}>
           <AppContext.Provider
             value={{ getKetcherInstance: () => (window as any).ketcher }}>
             <App />

@@ -95,7 +95,7 @@ class Editor {
   _tool: any
   historyStack: any
   historyPtr: any
-  errorHandler: any
+  errorHandler: ((message: string) => void) | null
   event: {
     message: Subscription
     elementEdit: PipelineSubscription

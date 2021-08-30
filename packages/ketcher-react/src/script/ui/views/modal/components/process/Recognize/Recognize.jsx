@@ -154,7 +154,7 @@ const mapStateToProps = state => ({
   version: state.options.recognize.version || state.options.app.imagoVersions[0]
 })
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   isFragment: v => dispatch(shouldFragment(v)),
   onImage: file => dispatch(changeImage(file)),
   onRecognize: (file, ver) => dispatch(recognize(file, ver)),
@@ -165,8 +165,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         rescale: true,
         fragment: res.fragment
       })
+      // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
+      // See PR #731 (https://github.com/epam/ketcher/pull/731)
     )
-    ownProps.onOk(res)
   }
 })
 

@@ -323,14 +323,16 @@ function selMerge(selection, add, reversible) {
 
 function isSelected(selection, sel) {
   let isSelected = true
-  if(selection){
+  if (selection) {
     Object.keys(sel).forEach(item => {
-      if(!selection[item] || !sel[item].every((el => selection[item].includes(el)))) {
+      if (
+        !selection[item] ||
+        !sel[item].every(el => selection[item].includes(el))
+      ) {
         isSelected = false
       }
     })
-  }
-  else isSelected = false
+  } else isSelected = false
 
   return isSelected
 }

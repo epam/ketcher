@@ -46,9 +46,11 @@ jobs:
 
     - name: Run tests
       run: yarn test
+      env:
+          CI: true
 
     - name: Run build
-      run: yarn build
+      run: npx cross-env CI=false yarn build
 
     - name: Run audit
       run: npx audit-ci --critical

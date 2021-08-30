@@ -14,33 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  ToolbarGroupItem,
-  ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps
-} from '../../ToolbarGroupItem'
-
-import React from 'react'
-import { makeItems } from '../../ToolbarGroupItem/utils'
-
-const rGroupOptions = makeItems([
-  'rgroup-label',
-  'rgroup-fragment',
-  'rgroup-attpoints'
-])
-
-interface RGroupProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
-  height?: number
+export const supportedSGroupTypes = {
+  MUL: 'MUL',
+  SRU: 'SRU',
+  SUP: 'SUP',
+  DAT: 'DAT',
+  GEN: 'GEN'
 }
-interface RGroupCallProps extends ToolbarGroupItemCallProps {}
-
-type Props = RGroupProps & RGroupCallProps
-
-const RGroup = (props: Props) => {
-  return (
-    <ToolbarGroupItem id="rgroup" options={rGroupOptions} {...props} />
-  )
-}
-
-export type { RGroupProps, RGroupCallProps }
-export { RGroup }

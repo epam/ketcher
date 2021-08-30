@@ -502,7 +502,6 @@ class ReStruct {
     })
   }
 
-
   loopRemove(loopId: number): void {
     const reloop = this.reloops.get(loopId)
     if (!reloop) {

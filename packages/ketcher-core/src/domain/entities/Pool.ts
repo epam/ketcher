@@ -48,4 +48,14 @@ export class Pool<TValue = any> extends Map<number, TValue> {
       Array.from(this).filter(([key, value]) => predicate(key, value))
     )
   }
+
+  some(predicate: (value: TValue) => boolean): boolean {
+    for (const value of this.values()) {
+      if (predicate(value)) {
+        return true
+      }
+    }
+
+    return false
+  }
 }

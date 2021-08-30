@@ -23,6 +23,7 @@ import tools from './tools'
 import zoom from './zoom'
 import copyImageToClipboard from './copyImageToClipboard'
 import copyAs from './copyAs'
+import isHidden from './isHidden'
 
 export * from './action.types'
 
@@ -117,20 +118,24 @@ const config = {
   },
   settings: {
     title: 'Settings',
-    action: { dialog: 'settings' }
+    action: { dialog: 'settings' },
+    hidden: options => isHidden(options, 'settings')
   },
   help: {
     shortcut: ['?', '&', 'Shift+/'],
     title: 'Help',
-    action: { dialog: 'help' }
+    action: { dialog: 'help' },
+    hidden: options => isHidden(options, 'help')
   },
   about: {
     title: 'About',
-    action: { dialog: 'about' }
+    action: { dialog: 'about' },
+    hidden: options => isHidden(options, 'about')
   },
   'reaction-automap': {
     title: 'Reaction Auto-Mapping Tool',
     action: { dialog: 'automap' },
+    hidden: options => isHidden(options, 'reaction-automap'),
     disabled: (editor, server, options) =>
       !options.app.server || !editor.struct().hasRxnArrow()
   },

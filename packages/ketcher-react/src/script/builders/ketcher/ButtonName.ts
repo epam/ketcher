@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 export type ButtonName =
+  //top
   | 'layout'
   | 'clean'
   | 'arom'
@@ -23,3 +24,47 @@ export type ButtonName =
   | 'analyse'
   | 'recognize'
   | 'miew'
+  | 'settings'
+  | 'help'
+  | 'about'
+  //left
+  // sgroup group
+  | 'sgroup'
+  | 'sgroup-data'
+  // reaction
+  //plus
+  | 'reaction-plus'
+  // arrows
+  | 'reaction-arrows'
+  | 'reaction-arrow-open-angle'
+  | 'reaction-arrow-filled-triangle'
+  | 'reaction-arrow-filled-bow'
+  | 'reaction-arrow-dashed-open-angle'
+  | 'reaction-arrow-failed'
+  | 'reaction-arrow-both-ends-filled-triangle'
+  | 'reaction-arrow-equilibrium-filled-half-bow'
+  | 'reaction-arrow-equilibrium-filled-triangle'
+  | 'reaction-arrow-equilibrium-open-angle'
+  | 'reaction-arrow-unbalanced-equilibrium-filled-half-bow'
+  | 'reaction-arrow-unbalanced-equilibrium-open-half-angle'
+  | 'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow'
+  | 'reaction-arrow-unbalanced-equilibrium-filled-half-triangle'
+  //mapping
+  | 'reaction-mapping-tools'
+  | 'reaction-automap'
+  | 'reaction-map'
+  | 'reaction-unmap'
+  // rgroup group
+  | 'rgroup'
+  | 'rgroup-label'
+  | 'rgroup-fragment'
+  | 'rgroup-attpoints'
+  // shape group
+  | 'shape'
+  | 'shape-ellipse'
+  | 'shape-rectangle'
+  | 'shape-line'
+  // text group
+  | 'text'
+  //right
+  | 'enhanced-stereo'

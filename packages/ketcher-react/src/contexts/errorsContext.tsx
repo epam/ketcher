@@ -4,6 +4,6 @@ export interface IErrorsContext {
   errorHandler: (message: string) => void
 }
 
-const errorsContext = React.createContext({} as IErrorsContext)
+const errorsContext = React.createContext<IErrorsContext>({} as IErrorsContext)
 
 export default errorsContext

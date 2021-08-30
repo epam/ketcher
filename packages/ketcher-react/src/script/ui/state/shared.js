@@ -122,6 +122,8 @@ export function load(struct, options) {
           } else {
             editor.struct(struct)
           }
+
+          dispatch({ type: 'MODAL_CLOSE' })
         },
         err => {
           //TODO: add error handler call

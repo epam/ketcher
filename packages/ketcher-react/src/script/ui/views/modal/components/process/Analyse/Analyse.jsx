@@ -26,6 +26,7 @@ import { analyse } from '../../../../../state/server'
 import { FrozenInput, FormulaInput } from './components'
 
 import classes from './Analyse.module.less'
+import { ErrorsContext } from '../../../../../../../contexts'
 
 function roundOff(value, round) {
   if (typeof value === 'number') return value.toFixed(round)
@@ -33,14 +34,21 @@ function roundOff(value, round) {
 }
 
 class AnalyseDialog extends Component {
+  static contextType = ErrorsContext
   constructor(props) {
     super(props)
-    props.onAnalyse().catch(e => {
+  }
+
+  componentDidMount() {
+    const errorHandler = this.context.errorHandler
+    try {
+      this.props.onAnalyse()
+    } catch (e) {
       // error could possibly be an invalid state of molecule.
       // TODO: handling such cases described in #251
-      alert(e)
-      props.onCancel()
-    })
+      errorHandler(e.message)
+      this.props.onCancel()
+    }
   }
 
   render() {

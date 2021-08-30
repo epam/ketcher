@@ -22,19 +22,26 @@ interface Config {
   staticResourcesUrl: string
   structServiceProvider: StructServiceProvider
   buttons?: ButtonsConfig
+  errorHandler: (message: string) => void
 }
 
 async function buildKetcherAsync({
   element,
   staticResourcesUrl,
   structServiceProvider,
-  buttons
+  buttons,
+  errorHandler
 }: Config) {
   const builder = new KetcherBuilder()
 
   await builder.appendApiAsync(structServiceProvider)
   builder.appendServiceMode(structServiceProvider.mode)
-  await builder.appendUiAsync(element, staticResourcesUrl, buttons)
+  await builder.appendUiAsync(
+    element,
+    staticResourcesUrl,
+    errorHandler,
+    buttons
+  )
 
   return builder.build()
 }

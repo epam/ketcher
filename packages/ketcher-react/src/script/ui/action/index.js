@@ -68,16 +68,16 @@ const config = {
   cut: {
     shortcut: 'Mod+x',
     title: 'Cut',
-    action: () => {
-      exec('cut') || dontClipMessage('Cut') // eslint-disable-line no-unused-expressions
+    action: editor => {
+      exec('cut') || dontClipMessage('Cut', editor.errorHandler) // eslint-disable-line no-unused-expressions
     },
     disabled: editor => !hasSelection(editor)
   },
   copy: {
     shortcut: 'Mod+c',
     title: 'Copy',
-    action: () => {
-      exec('copy') || dontClipMessage('Copy') // eslint-disable-line no-unused-expressions
+    action: editor => {
+      exec('copy') || dontClipMessage('Copy', editor.errorHandler) // eslint-disable-line no-unused-expressions
     },
     disabled: editor => !hasSelection(editor)
   },
@@ -108,8 +108,8 @@ const config = {
   paste: {
     shortcut: 'Mod+v',
     title: 'Paste',
-    action: () => {
-      exec('paste') || dontClipMessage('Paste') // eslint-disable-line no-unused-expressions
+    action: editor => {
+      exec('paste') || dontClipMessage('Paste', editor.errorHandler) // eslint-disable-line no-unused-expressions
     },
     selected: ({ actions }) =>
       actions && // TMP
@@ -191,9 +191,8 @@ function hasSelection(editor) {
   )
 }
 
-function dontClipMessage(title) {
-  //TODO: add error handler call
-  alert(
+function dontClipMessage(title, errorHandler) {
+  errorHandler(
     'This action is unavailable via menu.\n' + // eslint-disable-line no-undef
       'Instead, use shortcut to ' +
       title +

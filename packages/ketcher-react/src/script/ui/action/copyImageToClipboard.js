@@ -23,6 +23,7 @@ async function copyImageToClipboard() {
   const server = state.server
   const options = state.options
   const struct = editor.structSelected()
+  const errorHandler = editor.errorHandler
 
   try {
     const factory = new FormatterFactory(server)
@@ -36,7 +37,7 @@ async function copyImageToClipboard() {
     const item = new ClipboardItem({ [image.type]: image }) // eslint-disable-line no-undef
     await navigator.clipboard.write([item])
   } catch {
-    alert('This feature is not available in your browser')
+    errorHandler('This feature is not available in your browser')
   }
 }
 

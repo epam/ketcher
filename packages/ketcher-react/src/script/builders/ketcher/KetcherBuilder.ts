@@ -37,6 +37,7 @@ class KetcherBuilder {
     element: HTMLDivElement | null
     staticResourcesUrl: string
     buttons?: ButtonsConfig
+    errorHandler: (message: string) => void
   }
 
   constructor() {
@@ -61,6 +62,7 @@ class KetcherBuilder {
       return this.appendUiAsync(
         this.tempUIDataContainer.element,
         this.tempUIDataContainer.staticResourcesUrl,
+        this.tempUIDataContainer.errorHandler,
         this.tempUIDataContainer.buttons
       )
     }
@@ -75,6 +77,7 @@ class KetcherBuilder {
   async appendUiAsync(
     element: HTMLDivElement | null,
     staticResourcesUrl: string,
+    errorHandler: (message: string) => void,
     buttons?: ButtonsConfig
   ): Promise<void> {
     const { structService } = this
@@ -83,6 +86,7 @@ class KetcherBuilder {
       this.tempUIDataContainer = {
         element,
         staticResourcesUrl,
+        errorHandler,
         buttons
       }
 
@@ -100,6 +104,7 @@ class KetcherBuilder {
         staticResourcesUrl,
         {
           buttons: buttons || {},
+          errorHandler: errorHandler || null,
           version: process.env.VERSION || '',
           buildDate: process.env.BUILD_DATE || '',
           buildNumber: process.env.BUILD_NUMBER || ''
@@ -110,6 +115,7 @@ class KetcherBuilder {
     })
 
     this.editor = editor
+    this.editor.errorHandler = errorHandler
     this.ui = tempRef.ui
     this.formatterFactory = new FormatterFactory(structService)
   }

@@ -55,7 +55,7 @@
     "hoist-non-react-statics": "^3.3.2",
     "html-to-react": "^1.4.5",
     "jsonschema": "^1.4.0",
-    "ketcher-core": "^1.0.0",
+    "ketcher-core": "^1.1.0",
     "lodash": "^4.17.20",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",

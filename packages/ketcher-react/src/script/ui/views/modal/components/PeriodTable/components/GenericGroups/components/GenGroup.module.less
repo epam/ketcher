@@ -19,6 +19,16 @@
   float: left;
 }
 
+.acyclic,
+.cyclic,
+.atom > fieldset {
+  display: inline-block;
+  vertical-align: top;
+  & + fieldset {
+    margin-left: 0.4em;
+  }
+}
+
 .cyclic > legend + fieldset {
   // a hack
   margin: 0 0.4em 0 0.8em;

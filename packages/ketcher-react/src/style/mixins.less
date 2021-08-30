@@ -294,7 +294,7 @@
 
 .btn() {
   display: inline-block;
-  //margin: 0;
+  margin: 0;
   text-align: center;
   vertical-align: middle;
   background-image: none;
@@ -333,9 +333,11 @@
     position: absolute;
   }
 
-
-  & + & {
-    margin-left: 0.3em !important;
+  & + button,
+  & + input[type='submit'],
+  & + input[type='reset'],
+  & + input[type='button'] {
+    margin-left: 0.3em;
   }
 }
 

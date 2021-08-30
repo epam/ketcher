@@ -16,11 +16,7 @@
 
 @import 'style/variables';
 @import 'style/mixins';
-// stylelint-disable-next-line selector-pseudo-class-no-unknown
-// :global(.editor) {
-//   height: 100%;
-//   width: 100%;
-// }
+
 .set-size(large);
 
 .small {
@@ -54,66 +50,6 @@
     padding: 0;
   }
 
-  //button,
-  //input[type='submit'],
-  //input[type='reset'],
-  //input[type='button'] {
-  //  display: inline-block;
-  //  margin: 0;
-  //  text-align: center;
-  //  vertical-align: middle;
-  //  //touch-action: manipulation;
-  //  //cursor: pointer;
-  //  background-image: none;
-  //  border: 1px solid transparent;
-  //  padding: 0.42em 0.85em;
-  //
-  //  color: #333;
-  //  background-color: #fff;
-  //  border-color: #ccc;
-  //  border-radius: 4px;
-  //  user-select: none;
-  //
-  //  &:hover,
-  //  &:focus {
-  //    background-image: linear-gradient(to bottom, #fff, darken(#fff, 7%));
-  //    //.gradient-vertical-three(25%, #fff, darken(#fff, 10%), #fff);
-  //    //color: @btn-default-color;
-  //    outline: 0;
-  //  }
-  //
-  //  &:active {
-  //    outline: 0;
-  //    background-image: none;
-  //    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  //  }
-  //
-  //  &.disabled,
-  //  &[disabled],
-  //  fieldset[disabled] & {
-  //    background-image: none;
-  //    cursor: not-allowed;
-  //    opacity: 0.5;
-  //    box-shadow: none;
-  //  }
-  //
-  //  &.save-button {
-  //    float: left;
-  //  }
-  //  &.open-button {
-  //    float: left;
-  //  }
-  //
-  //  & > input[type='file'] {
-  //    // hide file input
-  //    left: -9999px;
-  //    position: absolute;
-  //  }
-  //  & + & {
-  //    margin-left: 0.3em;
-  //  }
-  //}
-
   select,
   textarea,
   input[type='text'],
@@ -130,10 +66,12 @@
     border: 1px solid @border-color;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     box-sizing: border-box;
+
     &:active,
     &:focus {
       outline: 0;
     }
+
     &:hover,
     &:focus {
       .highlight-shadow(black);
@@ -153,11 +91,12 @@
     padding: 0.3em;
     margin: 0;
     border-radius: 4px;
+
     & > li {
-      display: inline-block; // TODO: Check this
+      display: inline-block;
     }
+
     &.-hidden {
-      // TODO: Check this
       border-color: transparent;
       margin-top: 0.9em + 2 * 0.3em;
     }
@@ -178,21 +117,4 @@
     line-height: normal;
     // TODO: style focus, active, etc
   }
-
-  // select {
-  //   // reset select size after inline-block
-  //   // space removing inside toolbar
-  //   font-size: @base-size;
-  // }
 }
-// stylelint-disable-next-line selector-pseudo-class-no-unknown
-// :global(.small) {
-//   .set-size(small);
-
-//   body,
-//   select,
-//   div[role='dialog'],
-//   form {
-//     font-size: @base-size;
-//   }
-// }

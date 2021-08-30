@@ -42,7 +42,6 @@ class OpenButton extends Component {
 
   render() {
     const { children, type, server, ...props } = this.props
-    console.log(classes)
 
     return (
       <button

@@ -57,7 +57,7 @@ function Editor(props: EditorProps) {
   return (
     <div
       ref={rootElRef}
-      className={clsx(classes.editor, {
+      className={clsx('Ketcher-root', classes.editor, {
         [classes.small]:
           (height && height <= mediaSizes.smallHeight) ||
           (width && width <= mediaSizes.smallWidth)

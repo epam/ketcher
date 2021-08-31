@@ -20,8 +20,6 @@ import React, { FC, useEffect, useRef } from 'react'
 
 import clsx from 'clsx'
 import styles from './Dialog.module.less'
-import clipareaStyles from '../../../component/cliparea/cliparea.module.less'
-import editorStyles from '../../../../../Editor.module.less'
 
 interface DialogProps {
   title: string
@@ -62,8 +60,8 @@ const Dialog: FC<Props> = props => {
     ;(dialogRef.current as any).focus()
     return () => {
       ;(dialogRef.current
-        ?.closest(`.${editorStyles.editor}`)
-        ?.getElementsByClassName(clipareaStyles.cliparea)[0] as any).focus()
+        ?.closest('.Ketcher-root')
+        ?.getElementsByClassName('cliparea')[0] as any).focus()
     }
   }, [])
 

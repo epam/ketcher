@@ -37,9 +37,7 @@ interface ShapeCallProps extends ToolbarGroupItemCallProps {}
 type Props = ShapeProps & ShapeCallProps
 
 const Shape = (props: Props) => {
-  return (
-    <ToolbarGroupItem id="shape" options={shapeOptions} {...props} />
-  )
+  return <ToolbarGroupItem id="shape" options={shapeOptions} {...props} />
 }
 
 export type { ShapeProps, ShapeCallProps }

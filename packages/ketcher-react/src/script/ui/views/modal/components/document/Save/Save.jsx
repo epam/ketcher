@@ -33,6 +33,7 @@ import classes from './Save.module.less'
 import { connect } from 'react-redux'
 import { saveUserTmpl } from '../../../../../state/templates'
 import { updateFormState } from '../../../../../state/modal/form'
+import { ErrorsContext } from '../../../../../../../contexts'
 
 const saveSchema = {
   title: 'Save',
@@ -60,6 +61,7 @@ const saveSchema = {
 }
 
 class SaveDialog extends Component {
+  static contextType = ErrorsContext
   constructor(props) {
     super(props)
     this.state = {
@@ -104,6 +106,7 @@ class SaveDialog extends Component {
   }
 
   changeType = type => {
+    const errorHandler = this.context.errorHandler
     this.setState({ disableControls: true })
 
     const { struct, server, options, formState } = this.props
@@ -124,8 +127,7 @@ class SaveDialog extends Component {
           }, 10) // TODO: remove hack
         },
         e => {
-          //TODO: add error handler call
-          alert(e.message)
+          errorHandler(e.message)
           this.props.onResetForm(formState)
           return e
         }

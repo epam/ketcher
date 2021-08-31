@@ -30,17 +30,15 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c -m true --silent",
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
-    "test": "run-s test:unit test:lint prettier stylelint test:build",
-    "test:build": "run-s build",
+    "test": "run-s prettier test:lint test:unit",
     "test:lint": "eslint src --ext .ts,.tsx,.js,.jsx",
-    "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
-    "test:watch": "react-scripts test --env=jsdom",
+    "test:unit": "react-scripts test --env=jsdom  --passWithNoTests",
     "prettier": "prettier --check \"src/**/*.{js,jsx,json,ts,tsx}\"",
     "prettier:write": "prettier --write \"src/**/*.{js,jsx,json,ts,tsx}\""
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",
-    "ketcher-core": "^1.0.0"
+    "ketcher-core": "^1.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",

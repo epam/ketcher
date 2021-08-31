@@ -16,11 +16,12 @@
 import { MolSerializer, KetSerializer } from 'ketcher-core'
 
 export default function copyAs(type) {
+  const state = global.currentState
+  const editor = state.editor
+  const struct = editor.structSelected()
+  const errorHandler = editor.errorHandler
+  let serializer
   try {
-    const state = global.currentState
-    const editor = state.editor
-    const struct = editor.structSelected()
-    let serializer
     switch (type) {
       case 'mol': {
         serializer = new MolSerializer()
@@ -41,7 +42,9 @@ export default function copyAs(type) {
     )
 
     if (simpleObjectOrText && serializer instanceof MolSerializer) {
-      alert('This feature is not available for Simple objects and Text objects')
+      errorHandler(
+        'This feature is not available for Simple objects and Text objects'
+      )
       return null
     }
 
@@ -53,6 +56,6 @@ export default function copyAs(type) {
       navigator.clipboard.writeText(structData)
     }
   } catch {
-    alert('This feature is not available in your browser')
+    errorHandler('This feature is not available in your browser')
   }
 }

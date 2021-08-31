@@ -37,9 +37,7 @@ interface RGroupCallProps extends ToolbarGroupItemCallProps {}
 type Props = RGroupProps & RGroupCallProps
 
 const RGroup = (props: Props) => {
-  return (
-    <ToolbarGroupItem id="rgroup" options={rGroupOptions} {...props} />
-  )
+  return <ToolbarGroupItem id="rgroup" options={rGroupOptions} {...props} />
 }
 
 export type { RGroupProps, RGroupCallProps }

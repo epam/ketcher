@@ -52,6 +52,7 @@ export function load(struct, options) {
     const state = getState()
     const editor = state.editor
     const server = state.server
+    const errorHandler = editor.errorHandler
 
     options = options || {}
 
@@ -126,10 +127,11 @@ export function load(struct, options) {
           dispatch({ type: 'MODAL_CLOSE' })
         },
         err => {
-          //TODO: add error handler call
-          alert(err)
+          errorHandler(err.message)
         }
       )
-      .catch(alert)
+      .catch(err => {
+        errorHandler(err.message)
+      })
   }
 }

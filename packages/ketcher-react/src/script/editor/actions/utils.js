@@ -145,7 +145,7 @@ export function atomForNewBond(restruct, id, bond) {
         bond.type === Bond.PATTERN.TYPE.TRIPLE)
     ) {
       const prevBondAngle = restruct.molecule.bonds.get(prevBondId).angle
-      angle = ((prevBondAngle * Math.PI) / 180)
+      angle = (prevBondAngle * Math.PI) / 180
     } else {
       angle =
         maxAngle / 2 + Math.atan2(neighbours[maxI].v.y, neighbours[maxI].v.x)

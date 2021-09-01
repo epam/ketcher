@@ -1,6 +1,5 @@
 import { radicalElectrons, Atom } from '../Atom'
 import { Vec2 } from '../Vec2'
-
 describe('radicalElectrons', () => {
   it('should return 1 if passed radical is Douplet (value = 2)', () => {
     expect(radicalElectrons(2)).toBe(1)
@@ -461,4 +460,5 @@ describe('Atom', () => {
 
     // TODO: Add other test cases for calcValence function
   })
+
 })

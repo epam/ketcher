@@ -16,7 +16,6 @@
 
 import { AppContext, ErrorsContext, SettingsContext } from './../../../contexts'
 import createStore, { load } from '../state'
-
 import App from './App.container'
 import { Provider } from 'react-redux'
 import ReactDOM from 'react-dom'

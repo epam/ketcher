@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React from 'react'
 
 import { bond as bondSchema } from '../../../../../data/schema/struct-schema'
 import Form, { Field } from '../../../../../component/form/form'

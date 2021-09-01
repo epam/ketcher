@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-
 import { rgroupLogic as rgroupSchema } from '../../../../../data/schema/struct-schema'
 import Form, { Field } from '../../../../../component/form/form'
 import { Dialog } from '../../../../components'

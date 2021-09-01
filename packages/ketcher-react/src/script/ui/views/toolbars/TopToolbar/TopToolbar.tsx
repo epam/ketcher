@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import clsx from 'clsx'
-import React, { FC } from 'react'
+import { FC } from 'react'
 
 import { useResizeObserver } from '../../../../../hooks'
 import { mediaSizes } from '../mediaSizes'

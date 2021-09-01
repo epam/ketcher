@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-
 import { useFormContext } from '../../../../../../../../../hooks'
 import { Field } from '../../../../../../../component/form/form'
 import { RgroupLogicProps } from '../../RgroupLogic'

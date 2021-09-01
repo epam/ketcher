@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 import { StructService } from 'ketcher-core'
-import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 

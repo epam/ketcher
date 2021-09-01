@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-
 import Form, { Field } from '../../../../../component/form/form'
 import { Dialog } from '../../../../components'
 import { BaseProps, BaseCallProps } from '../../../modal.types'

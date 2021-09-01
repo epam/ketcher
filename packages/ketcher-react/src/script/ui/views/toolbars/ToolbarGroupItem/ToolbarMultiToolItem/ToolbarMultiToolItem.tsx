@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import clsx from 'clsx'
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 
 import action, { UiAction, UiActionAction } from '../../../../action'
 import Icon from '../../../../component/view/icon'

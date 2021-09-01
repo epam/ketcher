@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import clsx from 'clsx'
-import React, { FC } from 'react'
+import { FC } from 'react'
 
 import { basicAtoms } from '../../../action/atoms'
 import {

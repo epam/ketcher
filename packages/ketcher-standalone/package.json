@@ -32,7 +32,7 @@
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
     "test": "run-s prettier test:lint test:unit",
     "test:lint": "eslint src --ext .ts,.tsx,.js,.jsx",
-    "test:unit": "react-scripts test --env=jsdom  --passWithNoTests",
+    "test:unit": "react-scripts test --env=jsdom  --passWithNoTests --watchAll=false",
     "prettier": "prettier --check \"src/**/*.{js,jsx,json,ts,tsx}\"",
     "prettier:write": "prettier --write \"src/**/*.{js,jsx,json,ts,tsx}\""
   },

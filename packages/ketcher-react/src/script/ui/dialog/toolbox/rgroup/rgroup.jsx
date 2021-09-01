@@ -14,19 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field } from '../../component/form/form'
+import Form, { Field } from '../../../component/form/form/form'
 
-import ButtonList from '../../component/form/buttonlist'
-import { Dialog } from '../../views/components'
+import ButtonList from '../../../component/form/buttonlist'
+import { Dialog } from '../../../views/components'
 import React from 'react'
 import { connect } from 'react-redux'
-import { rgroupSchema } from '../../data/schema/struct-schema'
+import { rgroupSchema } from '../../../data/schema/struct-schema'
+import classes from './rgroup.module.less'
 
 function RGroup({ disabledIds, values, formState, type, ...props }) {
   return (
     <Dialog
       title="R-Group"
-      className="rgroup"
+      className={classes.rgroup}
       params={props}
       result={() => formState.result}>
       <Form schema={rgroupSchema} init={{ values }} {...formState}>
@@ -36,6 +37,7 @@ function RGroup({ disabledIds, values, formState, type, ...props }) {
           labelPos={false}
           component={ButtonList}
           disabledIds={disabledIds}
+          classes={classes}
         />
       </Form>
     </Dialog>

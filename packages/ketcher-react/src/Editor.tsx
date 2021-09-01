@@ -18,7 +18,7 @@ import 'regenerator-runtime/runtime'
 import 'url-search-params-polyfill'
 import 'whatwg-fetch'
 import './index.less'
-import './Editor.module.less'
+import classes from './Editor.module.less'
 
 import React, { useEffect, useRef } from 'react'
 import init, { Config } from './script'
@@ -57,8 +57,8 @@ function Editor(props: EditorProps) {
   return (
     <div
       ref={rootElRef}
-      className={clsx('editor', {
-        small:
+      className={clsx('Ketcher-root', classes.editor, {
+        [classes.small]:
           (height && height <= mediaSizes.smallHeight) ||
           (width && width <= mediaSizes.smallWidth)
       })}

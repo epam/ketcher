@@ -1,10 +1,26 @@
-import Form, { Field } from '../../component/form/form'
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+import Form, { Field } from '../../../component/form/form/form'
 import { StereoLabel, Struct } from 'ketcher-core'
 
-import { Dialog } from '../../views/components'
+import { Dialog } from '../../../views/components'
 import React from 'react'
 import { connect } from 'react-redux'
 import { range } from 'lodash'
+import classes from './enhancedStereo.module.less'
 
 interface EnhancedStereoResult {
   andNumber: number
@@ -63,14 +79,14 @@ const EnhancedStereo: React.FC<Props> = props => {
   return (
     <Dialog
       title="Enhanced Stereochemistry"
-      className="enhanced-stereo"
+      className={classes.enhancedStereo}
       params={rest}
       result={() => result}
       valid={() => valid}
       buttons={['Cancel', 'OK']}>
       <Form schema={enhancedStereoSchema} init={init} {...formState}>
         <fieldset>
-          <label className="stereo-label-item">
+          <label className={classes.stereoLabelItem}>
             <Field
               name="type"
               labelPos={false}
@@ -81,7 +97,7 @@ const EnhancedStereo: React.FC<Props> = props => {
             ABS
           </label>
           {maxAnd !== 0 && (
-            <label className="stereo-label-item">
+            <label className={classes.stereoLabelItem}>
               <Field
                 name="type"
                 labelPos={false}
@@ -94,13 +110,13 @@ const EnhancedStereo: React.FC<Props> = props => {
                 name="andNumber"
                 schema={range(1, maxAnd + 1)}
                 type="text"
-                className="label-group-select"
+                className={classes.labelGroupSelect}
               />
               Group
             </label>
           )}
           {maxOr !== 0 && (
-            <label className="stereo-label-item">
+            <label className={classes.stereoLabelItem}>
               <Field
                 name="type"
                 labelPos={false}
@@ -113,12 +129,12 @@ const EnhancedStereo: React.FC<Props> = props => {
                 name="orNumber"
                 schema={range(1, maxOr + 1)}
                 type="text"
-                className="label-group-select"
+                className={classes.labelGroupSelect}
               />
               Group
             </label>
           )}
-          <label className="stereo-label-item">
+          <label className={classes.stereoLabelItem}>
             <Field
               name="type"
               labelPos={false}
@@ -127,7 +143,7 @@ const EnhancedStereo: React.FC<Props> = props => {
             />
             Create new AND Group
           </label>
-          <label className="stereo-label-item">
+          <label className={classes.stereoLabelItem}>
             <Field
               name="type"
               labelPos={false}

@@ -1,80 +1,79 @@
-@import (less) 'normalize.css';
+// @import (less) 'normalize.css';
 
-@import 'variables';
-@import 'mixins';
-@import 'dialogs';
-@import 'scrollbar';
+// @import 'variables';
+// @import 'mixins';
+// @import 'dialogs';
 
-li,
-ul,
-menu {
-  // move to reset
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
+// li,
+// ul,
+// menu {
+//   // move to reset
+//   list-style: none;
+//   margin: 0;
+//   padding: 0;
+// }
 
 /////////////////////
 // Basic layout
 
-.set-size(large);
+// .set-size(large);
 
-html,
-body {
-  height: 100%;
-  width: 100%;
-}
+// html,
+// body {
+//   height: 100%;
+//   width: 100%;
+// }
 
-body,
-main[role='application'] {
-  height: 100%;
-  position: relative;
-  font: @base-size FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
-    Arial, sans-serif;
-  background-color: white;
-  color: @main-color;
-  min-width: 640px;
-  min-height: 400px;
-}
+// body,
+// main[role='application'] {
+//   height: 100%;
+//   position: relative;
+//   font: @base-size FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
+//     Arial, sans-serif;
+//   background-color: white;
+//   color: @main-color;
+//   min-width: 640px;
+//   min-height: 400px;
+// }
 
-.cliparea {
-  // Copied from http://bit.ly/12nphsK
-  // Search for less verbose way to make FF happy
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 0;
-  display: block;
-  font-size: 1px;
-  z-index: -1;
-  color: transparent;
-  background: transparent;
-  overflow: hidden;
-  border: none;
-  padding: 0;
-  resize: none;
-  outline: none;
-  user-select: text;
-  // Because for user-select:none,
-  // Safari won't allow input
-}
+// .cliparea {
+//   // Copied from http://bit.ly/12nphsK
+//   // Search for less verbose way to make FF happy
+//   position: absolute;
+//   bottom: 0;
+//   left: 0;
+//   width: 0;
+//   height: 0;
+//   display: block;
+//   font-size: 1px;
+//   z-index: -1;
+//   color: transparent;
+//   background: transparent;
+//   overflow: hidden;
+//   border: none;
+//   padding: 0;
+//   resize: none;
+//   outline: none;
+//   user-select: text;
+//   // Because for user-select:none,
+//   // Safari won't allow input
+// }
 
-select {
-  // reset select size after inline-block
-  // space removing inside toolbar
-  font-size: @base-size;
-}
+// select {
+//   // reset select size after inline-block
+//   // space removing inside toolbar
+//   font-size: @base-size;
+// }
 
 //////////////////////////
 
-.cellar {
-  display: none;
-}
+// .cellar {
+//   display: none;
+// }
 
-.warning {
-  color: @error-color;
-  &::before {
-    content: '⚠ ';
-  }
-}
+// .warning {
+//   color: @error-color;
+//   &::before {
+//     content: '⚠ ';
+//   }
+// }

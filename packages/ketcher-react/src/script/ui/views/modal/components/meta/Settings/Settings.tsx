@@ -25,7 +25,7 @@ import { saveSettings } from '../../../../../state/options'
 import settingsSchema from '../../../../../data/schema/options-schema'
 import { storage } from '../../../../../storage-ext'
 
-import Form, { Field } from '../../../../../component/form/form'
+import Form, { Field } from '../../../../../component/form/form/form'
 import { Dialog } from '../../../../components'
 import Accordion from './components/Accordion'
 import SaveButton from '../../../../../component/view/savebutton'

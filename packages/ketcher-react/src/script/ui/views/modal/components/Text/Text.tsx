@@ -78,8 +78,6 @@ const Text = (props: TextProps) => {
     )
   )
 
-  console.log(customStyleFn)
-
   const result = () => {
     const content = editorState.getCurrentContent()
     return {

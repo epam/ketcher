@@ -16,13 +16,14 @@
 
 import React, { Component } from 'react'
 
-import { FormContext } from './../../../../contexts'
-import Input from './input'
+import { FormContext } from '../../../../../contexts'
+import Input from '../input'
 import clsx from 'clsx'
+import classes from './form.module.less'
 import { connect } from 'react-redux'
 import jsonschema from 'jsonschema'
-import { updateFormState } from '../../state/modal/form'
-import { useFormContext } from './../../../../hooks'
+import { updateFormState } from '../../../state/modal/form'
+import { useFormContext } from '../../../../../hooks'
 
 class Form extends Component {
   constructor(props) {
@@ -114,7 +115,7 @@ function Field(props) {
   if (labelPos === false) return formField
   return (
     <Label
-      className={clsx({ 'data-error': dataError })}
+      className={clsx({ [classes.dataError]: dataError })}
       error={dataError}
       title={rest.title || desc.title}
       labelPos={labelPos}>

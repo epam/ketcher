@@ -14,10 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-.fieldset {
-  table + & {
-    border: 0;
-    padding: 0.5em;
-    margin: 0.5em 0 0 1.5em;
+.ketSpinner {
+  margin: auto;
+  display: block;
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #00f;
+  border-radius: 50%;
+  width: 5em;
+  height: 5em;
+  animation: spin 3s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 }

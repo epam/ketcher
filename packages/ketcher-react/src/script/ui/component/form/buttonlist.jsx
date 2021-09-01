@@ -21,12 +21,20 @@ function oneOrMore(multipl, values, item) {
   return xor(values, values.concat([item]))
 }
 
-function ButtonList({ value, onChange, schema, disabledIds, multiple }) {
+function ButtonList({
+  value,
+  onChange,
+  schema,
+  disabledIds,
+  multiple,
+  classes
+}) {
   let className
+  const selected = classes.selected || 'selected'
   return (
     <ul>
       {schema.items.enum.map((item, i) => {
-        className = value.includes(item) ? 'selected' : ''
+        className = value.includes(item) ? selected : ''
         return (
           <li key={item}>
             <button

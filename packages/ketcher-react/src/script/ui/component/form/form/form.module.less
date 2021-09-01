@@ -13,11 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import '../../../../../style/variables.less';
+@import '../../../../../style/mixins.less';
 
-.fieldset {
-  table + & {
-    border: 0;
-    padding: 0.5em;
-    margin: 0.5em 0 0 1.5em;
+.dataError {
+  select,
+  textarea,
+  input[type='text'],
+  input[type='number'],
+  input[type='search'] {
+    border: 1px solid @error-color;
+    &:hover,
+    &:focus {
+      .highlight-shadow(@error-color);
+    }
+  }
+
+  &:hover::after {
+    content: 'Error: ' attr(error);
+    display: block;
+    position: fixed;
+    white-space: pre-wrap;
+    padding: 0.35em;
+    background: lighten(@error-color, 30%);
+    border: 1px solid @error-color;
+    border-radius: 4px;
+    line-height: 1em;
+    font-size: 0.9em;
+    z-index: 2;
+    max-width: 25em;
   }
 }

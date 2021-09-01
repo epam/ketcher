@@ -14,10 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-.fieldset {
-  table + & {
-    border: 0;
-    padding: 0.5em;
-    margin: 0.5em 0 0 1.5em;
-  }
+.suggestList {
+  border: 1px solid #3297fd;
+  position: absolute;
+  background-color: white;
+  margin-left: 3px;
+  padding-left: 3px;
+  width: 93%;
+  z-index: 3;
+}
+
+.suggestList li:hover {
+  background-color: #3297fd;
+  color: white;
 }

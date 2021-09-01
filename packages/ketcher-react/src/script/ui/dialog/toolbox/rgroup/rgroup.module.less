@@ -13,11 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import '../../../../../style/variables.less';
+@import '../../../../../style/mixins.less';
 
-.fieldset {
-  table + & {
-    border: 0;
+.rgroup {
+  ul {
+    width: 25.6em;
     padding: 0.5em;
-    margin: 0.5em 0 0 1.5em;
+  }
+  li {
+    display: inline-block;
+    margin: 0.2em 0.1em;
+  }
+  form button {
+    .btn();
+
+    font-size: 1.3em;
+    width: 2.3em;
+    height: 2em;
+    line-height: 1;
+    vertical-align: middle;
+    padding: 0.15em;
+    background: inherit;
+    &::first-letter {
+      font-weight: 600;
+      color: lighten(@main-color, 20%);
+    }
+    &:hover {
+      .highlight-scale(@scale:1.005);
+      .highlight-shadow(black);
+    }
+    &:active {
+      .highlight-scale(none);
+      .highlight-shadow(none);
+    }
+    &.selected {
+      .highlight-invert;
+      &::first-letter {
+        color: darken(white, 30%);
+      }
+    }
   }
 }

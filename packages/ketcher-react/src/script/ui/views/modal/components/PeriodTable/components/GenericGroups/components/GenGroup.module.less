@@ -13,25 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-.subgroup,
-.no-carbon,
-.atom fieldset,
-.carbo fieldset,
-.hetero fieldset {
-  position: relative;
-  border: 0;
-  padding: 0 0 1em;
-  legend {
-    font-size: 0.7em;
-    bottom: 0.1em;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    position: absolute;
-  }
-}
-
 .carbo,
 .hetero,
 .cyclic > fieldset {
@@ -48,11 +29,6 @@
   }
 }
 
-.carbo {
-  clear: both;
-  margin-right: 0.4em;
-}
-
 .cyclic > legend + fieldset {
   // a hack
   margin: 0 0.4em 0 0.8em;
@@ -60,4 +36,30 @@
 
 .fieldset {
   text-align: center;
+
+  .subgroup,
+  .any,
+  .metal,
+  .halogen,
+  .no-carbon,
+  .atom fieldset,
+  .carbo fieldset,
+  .hetero fieldset {
+    position: relative;
+    border: 0;
+    padding: 0 0 1em;
+    legend {
+      font-size: 0.7em;
+      bottom: 0.1em;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      position: absolute;
+    }
+  }
+
+  &.carbo {
+    clear: both;
+    margin-right: 0.4em;
+  }
 }

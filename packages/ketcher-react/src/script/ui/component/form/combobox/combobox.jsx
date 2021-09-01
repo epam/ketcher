@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import React, { Component } from 'react'
+import classes from './combobox.module.less'
 
 class ComboBox extends Component {
   constructor(props) {
@@ -65,7 +66,7 @@ class ComboBox extends Component {
           autoComplete="off"
         />
         {suggestList.length !== 0 ? (
-          <ul className="suggestList" style={suggestListStyles}>
+          <ul className={classes.suggestList} style={suggestListStyles}>
             {suggestList}
           </ul>
         ) : (

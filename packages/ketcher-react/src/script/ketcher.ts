@@ -51,7 +51,7 @@ class Ketcher {
     private readonly formatterFactory: FormatterFactory
   ) {}
 
-  getSmilesAsync(isExtended: boolean = false): Promise<string> {
+  getSmiles(isExtended: boolean = false): Promise<string> {
     const format: SupportedFormat = isExtended ? 'smilesExt' : 'smiles'
     return getStructureAsync(
       format,
@@ -60,7 +60,9 @@ class Ketcher {
     )
   }
 
-  getMolfileAsync(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+  async getMolfileAsync(
+    molfileFormat: MolfileFormat = 'v2000'
+  ): Promise<string> {
     if (this.containsReaction()) {
       throw Error(
         'The structure cannot be saved as *.MOL due to reaction arrrows.'
@@ -68,26 +70,16 @@ class Ketcher {
     }
     const format: SupportedFormat =
       molfileFormat === 'v3000' ? 'molV3000' : 'mol'
-    return getStructureAsync(
+    const molfile = await getStructureAsync(
       format,
       this.formatterFactory,
       this.editor.struct()
     )
+
+    return molfile
   }
 
-  getGraphAsync(): Promise<string> {
-    return getStructureAsync(
-      'graph',
-      this.formatterFactory,
-      this.editor.struct()
-    )
-  }
-
-  containsReaction(): boolean {
-    return this.editor.struct().hasRxnArrow()
-  }
-
-  getRxnAsync(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+  async getRxnAsync(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
     if (!this.containsReaction()) {
       throw Error(
         'The structure cannot be saved as *.RXN: there is no reaction arrows.'
@@ -95,11 +87,45 @@ class Ketcher {
     }
     const format: SupportedFormat =
       molfileFormat === 'v3000' ? 'rxnV3000' : 'rxn'
-    return getStructureAsync(
+    const rxnfile = await getStructureAsync(
       format,
       this.formatterFactory,
       this.editor.struct()
     )
+
+    return rxnfile
+  }
+
+  getKetAsync(): Promise<string> {
+    return getStructureAsync(
+      'graph',
+      this.formatterFactory,
+      this.editor.struct()
+    )
+  }
+
+  getSmartsAsync(): Promise<string> {
+    return getStructureAsync(
+      'smarts',
+      this.formatterFactory,
+      this.editor.struct()
+    )
+  }
+
+  getCmlAsync(): Promise<string> {
+    return getStructureAsync('cml', this.formatterFactory, this.editor.struct())
+  }
+
+  getInchiAsync(withAuxInfo = false): Promise<string> {
+    return getStructureAsync(
+      withAuxInfo ? 'inChIAuxInfo' : 'inChI',
+      this.formatterFactory,
+      this.editor.struct()
+    )
+  }
+
+  containsReaction(): boolean {
+    return this.editor.struct().hasRxnArrow()
   }
 
   setMolecule(molString: string, rescale = true): void {
@@ -151,7 +177,7 @@ class Ketcher {
     this.origin = position ? this.editor.historyStack[position - 1] : null
   }
 
-  generateImageAsync(
+  async generateImageAsync(
     data: string,
     options: GenerateImageOptions = { outputFormat: 'png' }
   ): Promise<Blob> {
@@ -168,16 +194,15 @@ class Ketcher {
         options.outputFormat = 'png' // if option wasn't pass
     }
 
-    return this.server.generateImageAsBase64(data, options).then(base64 => {
-      const byteCharacters = atob(base64)
-      const byteNumbers = new Array(byteCharacters.length)
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i)
-      }
-      const byteArray = new Uint8Array(byteNumbers)
-      const blob = new Blob([byteArray], { type: meta })
-      return Promise.resolve(blob)
-    })
+    const base64 = await this.server.generateImageAsBase64(data, options)
+    const byteCharacters = atob(base64)
+    const byteNumbers = new Array(byteCharacters.length)
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i)
+    }
+    const byteArray = new Uint8Array(byteNumbers)
+    const blob = new Blob([byteArray], { type: meta })
+    return blob
   }
 }
 

@@ -460,5 +460,4 @@ describe('Atom', () => {
 
     // TODO: Add other test cases for calcValence function
   })
-
 })

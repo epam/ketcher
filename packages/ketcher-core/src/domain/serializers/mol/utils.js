@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { Bond, RxnArrow, RxnPlus, Struct, Vec2 } from 'domain/entities'
 
 function paddedNum(number, width, precision) {

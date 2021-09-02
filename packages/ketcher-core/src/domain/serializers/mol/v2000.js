@@ -34,7 +34,7 @@ import utils from './utils'
 
 const loadRGroupFragments = true // TODO: set to load the fragments
 
-function parseAtomLine(atomLine) {
+export function parseAtomLine(atomLine) {
   /* reader */
   var atomSplit = utils.partitionLine(atomLine, utils.fmtInfo.atomLinePartition)
   var params = {
@@ -66,9 +66,10 @@ function parseAtomLine(atomLine) {
   return new Atom(params)
 }
 
-function parseBondLine(bondLine) {
+export function parseBondLine(bondLine) {
   /* reader */
   var bondSplit = utils.partitionLine(bondLine, utils.fmtInfo.bondLinePartition)
+
   var params = {
     begin: utils.parseDecimalInt(bondSplit[0]) - 1,
     end: utils.parseDecimalInt(bondSplit[1]) - 1,
@@ -83,7 +84,7 @@ function parseBondLine(bondLine) {
   return new Bond(params)
 }
 
-function parseAtomListLine(/* string */ atomListLine) {
+export function parseAtomListLine(/* string */ atomListLine) {
   /* reader */
   var split = utils.partitionLine(
     atomListLine,

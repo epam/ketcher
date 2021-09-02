@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React from 'react'
-import clsx from 'clsx'
 
 import { UiAction, UiActionAction } from '../../../../action'
-import Icon from '../../../../component/view/icon'
-import { shortcutStr } from '../../shortcutStr'
 
+import Icon from '../../../../component/view/icon'
+import React from 'react'
 import classes from './ActionButton.module.less'
+import clsx from 'clsx'
+import { shortcutStr } from '../../shortcutStr'
 
 interface ActionButtonProps {
   name: string

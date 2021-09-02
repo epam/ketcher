@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ElementsTable from './ElementsTable'
 import AtomInfo from './AtomInfo'
-import TypeChoice from './TypeChoice'
+import ElementsTable from './ElementsTable'
 import GenericGroups from './GenericGroups'
+import TypeChoice from './TypeChoice'
 
 export { ElementsTable, AtomInfo, TypeChoice, GenericGroups }

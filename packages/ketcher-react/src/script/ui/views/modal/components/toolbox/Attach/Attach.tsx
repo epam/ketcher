@@ -14,13 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-
-import { attachmentPoints as attachmentPointsSchema } from '../../../../../data/schema/struct-schema'
+import { BaseCallProps, BaseProps } from '../../../modal.types'
 import Form, { Field } from '../../../../../component/form/form/form'
-import { Dialog } from '../../../../components'
-import { BaseProps, BaseCallProps } from '../../../modal.types'
 
+import { Dialog } from '../../../../components'
+import React from 'react'
+import { attachmentPoints as attachmentPointsSchema } from '../../../../../data/schema/struct-schema'
 import classes from './Attach.module.less'
 
 interface AttachPointsProps extends BaseProps {

@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React from 'react'
+
 import action, { UiAction, UiActionAction } from '../../../action'
-import { ToolbarItem } from '../toolbar.types'
+
 import { ActionButton } from './ActionButton'
+import React from 'react'
+import { ToolbarItem } from '../toolbar.types'
 import { ToolbarMultiToolItem } from './ToolbarMultiToolItem'
 
 interface ToolbarGroupItemProps extends ToolbarItem {

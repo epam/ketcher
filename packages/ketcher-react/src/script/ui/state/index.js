@@ -14,20 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { pick } from 'lodash/fp'
-
-import { createStore, combineReducers, applyMiddleware } from 'redux'
-import thunk from 'redux-thunk'
-import { logger } from 'redux-logger'
-
-import actionStateReducer from './action'
-import modalReducer from './modal'
+import { applyMiddleware, combineReducers, createStore } from 'redux'
+import { load, onAction } from './shared'
 import optionsReducer, { initOptionsState } from './options'
 import templatesReducer, { initTmplsState } from './templates'
-import toolbarReducer from './toolbar'
-import requestReducer from './request'
 
-import { onAction, load } from './shared'
+import actionStateReducer from './action'
+import { logger } from 'redux-logger'
+import modalReducer from './modal'
+import { pick } from 'lodash/fp'
+import requestReducer from './request'
+import thunk from 'redux-thunk'
+import toolbarReducer from './toolbar'
 
 export { onAction, load }
 

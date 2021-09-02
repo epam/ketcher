@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ComponentType } from 'react'
-import { connect } from 'react-redux'
+
+import { BaseCallProps, BaseProps } from '../../../modal.types'
 
 import Automap from './Automap'
+import { ComponentType } from 'react'
 import { automap } from '../../../../../state/server'
-import { BaseProps, BaseCallProps } from '../../../modal.types'
+import { connect } from 'react-redux'
 
 type StateProps = Pick<BaseProps, 'formState'>
 type DispatchProps = Pick<BaseCallProps, 'onOk'>

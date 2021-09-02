@@ -14,19 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { range } from 'lodash/fp'
+import { FormulaInput, FrozenInput } from './components'
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 
 import { Dialog } from '../../../../components'
-import Input from '../../../../../component/form/input'
-
-import { changeRound } from '../../../../../state/options'
-import { analyse } from '../../../../../state/server'
-import { FrozenInput, FormulaInput } from './components'
-
-import classes from './Analyse.module.less'
 import { ErrorsContext } from '../../../../../../../contexts'
+import Input from '../../../../../component/form/input'
+import { analyse } from '../../../../../state/server'
+import { changeRound } from '../../../../../state/options'
+import classes from './Analyse.module.less'
+import { connect } from 'react-redux'
+import { range } from 'lodash/fp'
 
 function roundOff(value, round) {
   if (typeof value === 'number') return value.toFixed(round)

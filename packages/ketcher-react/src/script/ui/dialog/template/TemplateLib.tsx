@@ -31,11 +31,11 @@ import SaveButton from '../../component/view/savebutton'
 import { SdfSerializer } from 'ketcher-core'
 import SelectList from '../../component/form/select'
 import { Struct } from 'ketcher-core'
+import classes from './template-lib.module.less'
 import clsx from 'clsx'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { onAction } from '../../state'
-import classes from './template-lib.module.less'
 import { useResizeObserver } from '../../../../hooks'
 
 interface TemplateLibProps {

@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import Form, { Field } from '../../../component/form/form/form'
 import { StereoLabel, Struct } from 'ketcher-core'
 
 import { Dialog } from '../../../views/components'
 import React from 'react'
+import classes from './enhancedStereo.module.less'
 import { connect } from 'react-redux'
 import { range } from 'lodash'
-import classes from './enhancedStereo.module.less'
 
 interface EnhancedStereoResult {
   andNumber: number

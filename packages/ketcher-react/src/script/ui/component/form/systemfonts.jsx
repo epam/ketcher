@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+
 import FontFaceObserver from 'font-face-observer'
 
 const commonFonts = [

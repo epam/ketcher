@@ -1,4 +1,3 @@
-import Input from './input'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,6 +13,8 @@ import Input from './input'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import Input from './input'
 import React from 'react'
 
 function SelectCheckbox({ schema, ...props }) {

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React from 'react'
-import { capitalize } from 'lodash/fp'
 
 import { Elements } from 'ketcher-core'
+import React from 'react'
+import { capitalize } from 'lodash/fp'
 
 interface ElementNumberProps {
   label: string

@@ -16,11 +16,10 @@
 
 import React, { useRef } from 'react'
 
-import clsx from 'clsx'
-
-import action from '../action'
-import { hiddenAncestor } from '../state/toolbar'
 import Icon from './view/icon'
+import action from '../action'
+import clsx from 'clsx'
+import { hiddenAncestor } from '../state/toolbar'
 
 const isMac = /Mac/.test(navigator.platform) // eslint-disable-line no-undef
 const shortcutAliasMap = {

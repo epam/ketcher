@@ -26,16 +26,16 @@ import {
   convertToRaw,
   getDefaultKeyBinding
 } from 'draft-js'
-import createStyles from 'draft-js-custom-styles'
 import React, { useCallback, useState } from 'react'
 
 import { Dialog } from '../../../components'
 import { DialogParams } from '../../../components/Dialog/Dialog'
-import { TextButton } from './TextButton'
 import { FontControl } from './FontControl'
+import { TextButton } from './TextButton'
 import { TextCommand } from 'ketcher-core'
-import { connect } from 'react-redux'
 import classes from './Text.module.less'
+import { connect } from 'react-redux'
+import createStyles from 'draft-js-custom-styles'
 
 const { styles, customStyleFn } = createStyles(['font-size'])
 

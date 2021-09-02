@@ -24,8 +24,8 @@ import {
 import ComboBox from '../../component/form/combobox/combobox'
 import { Dialog } from '../../views/components'
 import React from 'react'
-import { connect } from 'react-redux'
 import classes from './sgroup.module.less'
+import { connect } from 'react-redux'
 
 function SelectInput({ title, name, schema, ...prop }) {
   const inputSelect = Object.keys(schema).reduce(

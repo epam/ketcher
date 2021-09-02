@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ComponentType } from 'react'
-import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
 
+import { TopToolbar, TopToolbarCallProps, TopToolbarProps } from './TopToolbar'
+
+import { ComponentType } from 'react'
+import { Dispatch } from 'redux'
+import { connect } from 'react-redux'
 import { onAction } from '../../../state'
-import { TopToolbar, TopToolbarProps, TopToolbarCallProps } from './TopToolbar'
 
 type StateProps = Omit<TopToolbarProps, 'className'>
 type OwnProps = Pick<TopToolbarProps, 'className'>

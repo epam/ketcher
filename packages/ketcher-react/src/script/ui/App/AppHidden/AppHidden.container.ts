@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
-import { initTmplLib } from '../../state/templates'
+
 import { AppHidden, AppHiddenCallProps } from './AppHidden'
+
+import { Dispatch } from 'redux'
+import { connect } from 'react-redux'
+import { initTmplLib } from '../../state/templates'
 
 const mapDispatchToProps = (dispatch: Dispatch): AppHiddenCallProps => ({
   onInitTmpls: (cacheEl, url) => initTmplLib(dispatch, url, cacheEl)

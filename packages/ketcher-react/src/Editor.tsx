@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import 'element-closest-polyfill'
 import 'regenerator-runtime/runtime'
 import 'url-search-params-polyfill'
 import 'whatwg-fetch'
 import './index.less'
-import classes from './Editor.module.less'
 
 import React, { useEffect, useRef } from 'react'
 import init, { Config } from './script'
 
 import { Ketcher } from './script/ketcher'
+import classes from './Editor.module.less'
 import clsx from 'clsx'
 import { useResizeObserver } from './hooks'
 

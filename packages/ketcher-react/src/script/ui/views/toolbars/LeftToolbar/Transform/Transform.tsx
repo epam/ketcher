@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React from 'react'
-import { mediaSizes } from '../../mediaSizes'
+
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
+
+import React from 'react'
 import { makeItems } from '../../ToolbarGroupItem/utils'
+import { mediaSizes } from '../../mediaSizes'
 
 const transformOptions = makeItems([
   'transform-rotate',

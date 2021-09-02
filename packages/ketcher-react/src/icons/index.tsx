@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import AboutIcon from './files/about.svg'
 import AnalyseIcon from './files/analyse.svg'
 import AromIcon from './files/arom.svg'

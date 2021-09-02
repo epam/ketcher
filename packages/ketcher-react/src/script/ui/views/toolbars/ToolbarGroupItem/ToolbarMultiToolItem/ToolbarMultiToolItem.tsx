@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import clsx from 'clsx'
-import React, { useRef } from 'react'
 
-import action, { UiAction, UiActionAction } from '../../../../action'
-import Icon from '../../../../component/view/icon'
-import { Portal } from '../../../../Portal'
-import { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types'
 import {
   ActionButton,
   ActionButtonCallProps,
   ActionButtonProps
 } from '../ActionButton'
+import { GroupDescriptor, MultiToolVariant } from './variants/variants.types'
+import React, { useRef } from 'react'
+import { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types'
+import action, { UiAction, UiActionAction } from '../../../../action'
+
+import Icon from '../../../../component/view/icon'
+import { Portal } from '../../../../Portal'
+import { chooseMultiTool } from './variants/chooseMultiTool'
+import classes from './ToolbarMultiToolItem.module.less'
+import clsx from 'clsx'
 import { usePortalOpening } from './usePortalOpening'
 import { usePortalStyle } from './usePortalStyle'
-import { chooseMultiTool } from './variants/chooseMultiTool'
-import { GroupDescriptor, MultiToolVariant } from './variants/variants.types'
-
-import classes from './ToolbarMultiToolItem.module.less'
 
 interface ToolbarMultiToolItemProps {
   id: ToolbarItemVariant

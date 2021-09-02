@@ -14,11 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+
+import { Dialog } from '../../../../components'
 import Markdown from 'react-markdown'
 import gfm from 'remark-gfm'
 import { useSettingsContext } from '../../../../../../../hooks'
-import { Dialog } from '../../../../components'
 
 function Help(props) {
   const [content, setContent] = useState(null)

@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { StructService } from 'ketcher-core'
+
+import { AppContext, ErrorsContext, SettingsContext } from './../../../contexts'
+import createStore, { load } from '../state'
+
+import App from './App.container'
+import { Provider } from 'react-redux'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Provider } from 'react-redux'
-
-import { SettingsContext, AppContext, ErrorsContext } from './../../../contexts'
-import createStore, { load } from '../state'
+import { StructService } from 'ketcher-core'
 import { initKeydownListener } from '../state/hotkeys'
 import { initResize } from '../state/toolbar'
 import { loadStruct } from '../state/shared'
-
-import App from './App.container'
 
 function initApp(
   element: HTMLDivElement | null,

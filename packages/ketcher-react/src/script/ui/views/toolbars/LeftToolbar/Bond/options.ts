@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { GroupDescriptor } from '../../ToolbarGroupItem/ToolbarMultiToolItem/variants/variants.types'
-import { makeItems } from '../../ToolbarGroupItem/utils'
 import { ToolbarItem } from '../../toolbar.types'
+import { makeItems } from '../../ToolbarGroupItem/utils'
 
 const bondCommon: ToolbarItem[] = makeItems([
   'bond-single',

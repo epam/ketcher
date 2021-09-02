@@ -15,9 +15,8 @@
  ***************************************************************************/
 
 import React from 'react'
-import clsx from 'clsx'
-
 import classes from './GenSet.module.less'
+import clsx from 'clsx'
 
 function GenSet({ labels, caption = '', selected, onSelect, ...props }) {
   return (

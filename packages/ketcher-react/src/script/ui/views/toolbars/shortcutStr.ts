@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 const isMac = /Mac/.test(navigator.platform) // eslint-disable-line no-undef
 const shortcutAliasMap = {
   Escape: 'Esc',

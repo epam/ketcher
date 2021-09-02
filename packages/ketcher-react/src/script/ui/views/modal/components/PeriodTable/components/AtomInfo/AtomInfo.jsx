@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
 import { ElementColor } from 'ketcher-core'
-import clsx from 'clsx'
-
+import React from 'react'
 import classes from './AtomInfo.module.less'
+import clsx from 'clsx'
 
 function AtomInfo({ el, isInfo }) {
   const numberStyle = {

@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { UiAction, UiActionAction } from '../../../../../action'
+
 import { ToolbarItem } from '../../../toolbar.types'
 
 type GroupDescriptor = {

@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import React, { useEffect, useRef } from 'react'
+
 import { useSettingsContext } from '../../../../hooks'
 
 interface AppHiddenCallProps {

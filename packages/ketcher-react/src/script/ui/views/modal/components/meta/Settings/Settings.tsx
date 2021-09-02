@@ -14,31 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-import { connect } from 'react-redux'
+import { BaseCallProps, BaseProps } from '../../../modal.types'
+import Form, { Field } from '../../../../../component/form/form/form'
 import {
-  updateFormState,
-  setDefaultSettings
+  setDefaultSettings,
+  updateFormState
 } from '../../../../../state/modal/form'
-import { saveSettings } from '../../../../../state/options'
 
+import Accordion from './components/Accordion'
+import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker'
+import { Dialog } from '../../../../components'
+import MeasureInput from '../../../../../component/form/measure-input'
+import OpenButton from '../../../../../component/view/openbutton'
+import React from 'react'
+import SaveButton from '../../../../../component/view/savebutton'
+import SelectCheckbox from '../../../../../component/form/select-checkbox'
+import { StructService } from 'ketcher-core'
+import SystemFonts from '../../../../../component/form/systemfonts'
+import classes from './Settings.module.less'
+import { connect } from 'react-redux'
+import { saveSettings } from '../../../../../state/options'
 import settingsSchema from '../../../../../data/schema/options-schema'
 import { storage } from '../../../../../storage-ext'
-
-import Form, { Field } from '../../../../../component/form/form/form'
-import { Dialog } from '../../../../components'
-import Accordion from './components/Accordion'
-import SaveButton from '../../../../../component/view/savebutton'
-import OpenButton from '../../../../../component/view/openbutton'
-
-import MeasureInput from '../../../../../component/form/measure-input'
-import SystemFonts from '../../../../../component/form/systemfonts'
-import SelectCheckbox from '../../../../../component/form/select-checkbox'
-import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker'
-
-import classes from './Settings.module.less'
-import { BaseCallProps, BaseProps } from '../../../modal.types'
-import { StructService } from 'ketcher-core'
 
 interface SettingsProps extends BaseProps {
   initState: any

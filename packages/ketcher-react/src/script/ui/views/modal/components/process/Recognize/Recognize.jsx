@@ -14,25 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useState, useCallback } from 'react'
-import { connect } from 'react-redux'
-import { range } from 'lodash/fp'
-
+import React, { useCallback, useState } from 'react'
 import {
   changeImage,
-  shouldFragment,
-  changeVersion
+  changeVersion,
+  shouldFragment
 } from '../../../../../state/options'
-import { load } from '../../../../../state'
-import { recognize } from '../../../../../state/server'
 
 import { Dialog } from '../../../../components'
 import Input from '../../../../../component/form/input'
-import StructRender from '../../../../../component/structrender'
 import OpenButton from '../../../../../component/view/openbutton'
 import Spin from '../../../../../component/view/spin'
-
+import StructRender from '../../../../../component/structrender'
 import classes from './Recognize.module.less'
+import { connect } from 'react-redux'
+import { load } from '../../../../../state'
+import { range } from 'lodash/fp'
+import { recognize } from '../../../../../state/server'
 
 function isImage(file) {
   return file?.type?.includes('image')

@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 import React, { Component, ReactNode } from 'react'
-import clsx from 'clsx'
-import { xor } from 'lodash/fp'
 
 import classes from './Accordion.module.less'
+import clsx from 'clsx'
+import { xor } from 'lodash/fp'
 
 interface AccordionProps {
   className: string

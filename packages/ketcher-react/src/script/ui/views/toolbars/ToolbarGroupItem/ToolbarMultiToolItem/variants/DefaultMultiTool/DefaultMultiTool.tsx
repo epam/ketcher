@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { MultiToolCallProps, MultiToolProps } from '../variants.types'
+
+import { ActionButton } from '../../../ActionButton'
 import React from 'react'
 import action from '../../../../../../action'
-import { ActionButton } from '../../../ActionButton'
-import { MultiToolCallProps, MultiToolProps } from '../variants.types'
 
 interface DefaultMultiToolProps extends MultiToolProps {}
 interface DefaultMultiToolCallProps extends MultiToolCallProps {}

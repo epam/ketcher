@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-import { Generics } from 'ketcher-core'
 import GenGroup from './components'
-
+import { Generics } from 'ketcher-core'
+import React from 'react'
 import classes from './GenericGroups.module.less'
 
 function GenericGroups({ selected, onSelect, className, ...props }) {

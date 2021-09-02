@@ -14,8 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import reducer from '.'
 import { INDIGO_VERIFICATION, RequestActionTypes } from './request.types'
+
+import reducer from '.'
 
 describe('requests reducer', () => {
   it('should return the initial state', () => {

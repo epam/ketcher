@@ -19,10 +19,9 @@ import React, { Component } from 'react'
 import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
 
 import Input from '../../component/form/input'
+import classes from './template-lib.module.less'
 import { connect } from 'react-redux'
 import { storage } from '../../storage-ext'
-
-import classes from './template-lib.module.less'
 
 const EDITOR_STYLES = {
   selectionStyle: { fill: '#47b3ec', stroke: 'none' },

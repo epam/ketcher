@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import Open, { OpenProps } from './Open'
+
+import { BaseCallProps } from '../../../modal.types'
 import { ComponentType } from 'react'
 import { connect } from 'react-redux'
-
 import { exec } from '../../../../../component/cliparea/cliparea'
 import { load } from '../../../../../state'
-import Open, { OpenProps } from './Open'
-import { BaseCallProps } from '../../../modal.types'
 
 type StateProps = OpenProps
 type DispatchProps = Pick<BaseCallProps, 'onOk'>

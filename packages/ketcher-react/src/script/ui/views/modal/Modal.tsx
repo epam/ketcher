@@ -15,14 +15,13 @@
  ***************************************************************************/
 
 import React, { useRef } from 'react'
-import useResizeObserver from 'use-resize-observer/polyfilled'
-import clsx from 'clsx'
 
-import modals from '../../dialog'
-import mediaSizes from './mediaSizes'
 import { BaseCallProps } from './modal.types'
-
 import classes from './Modal.module.less'
+import clsx from 'clsx'
+import mediaSizes from './mediaSizes'
+import modals from '../../dialog'
+import useResizeObserver from 'use-resize-observer/polyfilled'
 
 interface ModalProps extends BaseCallProps {
   modal: {

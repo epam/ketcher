@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { RxnPlus, Vec2 } from 'ketcher-core'
+
 import Restruct, { ReRxnPlus } from '../../../../render/restruct'
+import { RxnPlus, Vec2 } from 'ketcher-core'
+
 import { BaseOperation } from '../../base'
 import { OperationType } from '../../OperationType'
 

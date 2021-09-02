@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React from 'react'
 
 import action, { UiAction, UiActionAction } from '../../../../action'
-import templates from '../../../../data/templates'
+
 import { ActionButton } from '../../ToolbarGroupItem/ActionButton'
+import React from 'react'
+import templates from '../../../../data/templates'
 
 interface TemplatesListProps {
   active?: {

@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 import React from 'react'
+import classes from './buttons.module.less'
 import { saveAs } from 'file-saver'
 import { useAppContext } from '../../../../hooks'
-import classes from './buttons.module.less'
 
 const SaveButton = props => {
   const noop = () => null

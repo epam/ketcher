@@ -14,28 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { xor } from 'lodash/fp'
-
+import {
+  AtomInfo,
+  ElementsTable,
+  GenericGroups,
+  TypeChoice
+} from './components'
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-
-import { Elements } from 'ketcher-core'
+import { fromElement, toElement } from '../../../../data/convert/structconv'
 
 import { Dialog } from '../../../components'
+import { Elements } from 'ketcher-core'
 import Tabs from '../../../../component/view/Tabs'
-
-import { fromElement, toElement } from '../../../../data/convert/structconv'
-import { onAction } from '../../../../state'
 import { addAtoms } from '../../../../state/toolbar'
-
-import {
-  ElementsTable,
-  AtomInfo,
-  TypeChoice,
-  GenericGroups
-} from './components'
-
 import classes from './PeriodTable.module.less'
+import { connect } from 'react-redux'
+import { onAction } from '../../../../state'
+import { xor } from 'lodash/fp'
 
 class Table extends Component {
   constructor(props) {

@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { serverTransform } from '../state/server'
 import isHidden from './isHidden'
+import { serverTransform } from '../state/server'
 
 const config = {
   layout: {

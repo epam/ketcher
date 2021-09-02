@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import React, { Component } from 'react'
+
 import classes from './buttons.module.less'
 
 class OpenButton extends Component {

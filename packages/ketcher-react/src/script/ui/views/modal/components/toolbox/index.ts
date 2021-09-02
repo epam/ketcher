@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 import Atom from './Atom'
-import Bond from './Bond'
 import AttachPoints from './Attach'
 import Automap from './Automap'
+import Bond from './Bond'
 import RgroupLogic from './RgroupLogic'
 
 export { Atom, Bond, AttachPoints, Automap, RgroupLogic }

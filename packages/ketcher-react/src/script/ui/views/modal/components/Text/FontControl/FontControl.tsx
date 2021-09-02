@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+
 import classes from './FontControl.module.less'
 import { range } from 'lodash/fp'
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
+import Atom, { AtomProps } from './Atom'
+
+import { BaseProps } from '../../../modal.types'
 import { ComponentType } from 'react'
 import { connect } from 'react-redux'
-
-import Atom, { AtomProps } from './Atom'
-import { BaseProps } from '../../../modal.types'
 
 type StateProps = Pick<BaseProps, 'formState'>
 type OwnProps = Omit<AtomProps, 'formState'>

@@ -17,8 +17,8 @@
 import { RxnArrowMode, SimpleObjectMode } from 'ketcher-core'
 
 import { bond as bondSchema } from '../data/schema/struct-schema'
-import { toBondType } from '../data/convert/structconv'
 import isHidden from './isHidden'
+import { toBondType } from '../data/convert/structconv'
 
 const toolActions = {
   'select-lasso': {

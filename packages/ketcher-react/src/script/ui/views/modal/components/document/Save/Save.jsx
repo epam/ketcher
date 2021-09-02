@@ -25,6 +25,7 @@ import {
 import React, { Component, createRef } from 'react'
 
 import { Dialog } from '../../../../components'
+import { ErrorsContext } from '../../../../../../../contexts'
 import SaveButton from '../../../../../component/view/savebutton'
 import SaveImageTab from './SaveImageTab'
 import Tabs from '../../../../../component/view/Tabs'
@@ -33,7 +34,6 @@ import classes from './Save.module.less'
 import { connect } from 'react-redux'
 import { saveUserTmpl } from '../../../../../state/templates'
 import { updateFormState } from '../../../../../state/modal/form'
-import { ErrorsContext } from '../../../../../../../contexts'
 
 const saveSchema = {
   title: 'Save',

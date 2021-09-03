@@ -32,6 +32,7 @@ import { SGroupForest } from './SGroupForest'
 import { SimpleObject } from './SimpleObject'
 import { Text } from './Text'
 import { Vec2 } from './Vec2'
+import { FunctionalGroup } from './FunctionalGroup'
 
 export type Neighbor = {
   aid: number
@@ -61,6 +62,7 @@ export class Struct {
   sGroupForest: SGroupForest
   simpleObjects: Pool<SimpleObject>
   texts: Pool<Text>
+  functionalGroups: Pool<FunctionalGroup>
 
   constructor() {
     this.atoms = new Pool<Atom>()
@@ -77,6 +79,7 @@ export class Struct {
     this.sGroupForest = new SGroupForest()
     this.simpleObjects = new Pool<SimpleObject>()
     this.texts = new Pool<Text>()
+    this.functionalGroups = new Pool<FunctionalGroup>()
   }
 
   hasRxnProps(): boolean {
@@ -1005,5 +1008,19 @@ export class Struct {
   getBondFragment(bid: number) {
     const aid = this.bonds.get(bid)?.begin
     return aid && this.atoms.get(aid)?.fragment
+  }
+
+  bindSGroupsToFunctionalGroups(functionalGroupsList) {
+    this.sgroups.forEach(sgroup => {
+      if (
+        functionalGroupsList.includes(sgroup.data.name) &&
+        sgroup.type === 'SUP'
+      ) {
+        sgroup.isFunctionalGroup = true
+        this.functionalGroups.add(
+          new FunctionalGroup(sgroup.data.name, sgroup.id, sgroup.expanded)
+        )
+      }
+    })
   }
 }

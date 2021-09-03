@@ -76,6 +76,8 @@ export class SGroup {
   neiAtoms: any
   pp: Vec2 | null
   data: any
+  isFunctionalGroup: boolean
+  expanded: boolean
 
   constructor(type: string) {
     this.type = type
@@ -116,6 +118,8 @@ export class SGroup {
       query: '',
       queryOp: ''
     }
+    this.isFunctionalGroup = false
+    this.expanded = false
   }
 
   // TODO: these methods should be overridden

@@ -1,4 +1,5 @@
 export * from './ElementColor'
 export * from './Elements'
 export * from './element.types'
+export * from './FunctionalGroups'
 export * from './Generics'

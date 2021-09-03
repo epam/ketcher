@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { StereoFlag, Struct } from 'domain/entities'
 
-import { Elements } from 'domain/constants'
+import { Elements, FunctionalGroupsList } from 'domain/constants'
 import common from './common'
 import utils from './utils'
 
@@ -52,6 +52,7 @@ export class Molfile {
     }
     ret.initHalfBonds()
     ret.initNeighbors()
+    ret.bindSGroupsToFunctionalGroups(FunctionalGroupsList)
 
     return ret
   }

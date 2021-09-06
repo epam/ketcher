@@ -245,6 +245,7 @@ export function getStereoAtomsMap(
 
       if (
         StereoValidator.isCorrectStereoCenter(
+          bonds,
           bond,
           beginNeighs,
           endNeighs,

@@ -17,6 +17,7 @@
 import { Bond, Neighbor, Struct } from 'domain/entities'
 
 function isCorrectStereoCenter(
+  bonds: Array<Bond>,
   bond: Bond,
   beginNeighs: Array<Neighbor> | undefined,
   endNeighs: Array<Neighbor> | undefined,
@@ -31,7 +32,9 @@ function isCorrectStereoCenter(
       endNeighs[0].aid === bond.begin ? endNeighs[1].aid : endNeighs[0].aid
   }
 
-  if (bond.stereo > 0) {
+  const isBondExternal = !bonds.find(({ begin }) => begin === bond.end)
+
+  if (isBondExternal) {
     if (
       endNeighs?.length === 1 &&
       beginNeighs?.length === 2 &&

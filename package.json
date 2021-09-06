@@ -44,7 +44,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged --allow-empty && yarn test"
+      "pre-commit": "lint-staged --allow-empty"
     }
   },
   "lint-staged": {

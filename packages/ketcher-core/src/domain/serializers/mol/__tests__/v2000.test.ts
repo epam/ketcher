@@ -1,13 +1,17 @@
 import {
-  applyAtomProp,
-  parseAtomLine,
   parseAtomListLine,
+  parsePropertyLines,
+  parsePropertyLineAtomList,
+  parseAtomLine,
   parseBondLine,
-  parsePropertyLines
+  parseCTab,
+  applyAtomProp,
+  labelsListToIds
 } from '../v2000'
 import { Vec2, Bond, Atom, AtomParams } from '../../../entities'
-import { basic } from './fixtures/basic'
+import { basic, reaction, rgroups } from './fixtures'
 import molParsers from '../v2000'
+import utils from '../utils'
 
 describe('v2000 serializer', () => {
   describe('parseAtomLine', () => {
@@ -656,6 +660,190 @@ describe('v2000 serializer', () => {
     it('should add stereoLabel to atom', () => {
       const struct = molParsers.parseCTabV2000(basicCtabLines, basicCountsSplit)
       expect(struct.atoms.get(3)!.stereoLabel).toBe('abs')
+    })
+
+    it('should add atoms to DAT sgroup without atoms in generic sgroup', () => {
+      const sgroupInitLine = [
+        'M  STY  2   1 GEN   2 DAT',
+        'M  SAL   1  3  11  12  10',
+        'M  SPL  1   2   1'
+      ]
+      const countsSplit = [
+        '  0',
+        '  0',
+        '  0',
+        '   ',
+        '  0',
+        '  0',
+        '   ',
+        '   ',
+        '   ',
+        '   ',
+        '999',
+        ' V2000'
+      ]
+      const struct = molParsers.parseCTabV2000(sgroupInitLine, countsSplit)
+      expect(struct.sgroups.get(1)!.atoms).toEqual(struct.sgroups.get(0)!.atoms)
+      expect(struct.sgroups.get(1)!.atoms).not.toBe(
+        struct.sgroups.get(0)!.atoms
+      )
+    })
+
+    it('should remove sgroup without atoms and parents', () => {
+      const sgroupInitLine = [
+        'M  STY  2   1 GEN   2 DAT',
+        'M  SAL   1  3  11  12  10'
+      ]
+      const countsSplit = [
+        '  0',
+        '  0',
+        '  0',
+        '   ',
+        '  0',
+        '  0',
+        '   ',
+        '   ',
+        '   ',
+        '   ',
+        '999',
+        ' V2000'
+      ]
+      const struct = molParsers.parseCTabV2000(sgroupInitLine, countsSplit)
+      expect(struct.sgroups.size).toBe(1)
+    })
+
+    it('should add rlogic to struct', () => {
+      const rgpPropLine = [
+        '   14.2771   -3.2353    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0',
+        '   15.2771   -3.2353    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0',
+        'M  RGP  2   1   1   2   2',
+        'M  LOG  1   1   0   0   1',
+        'M  LOG  1   2   3   0   >0'
+      ]
+      const countsSplit = [
+        '  2',
+        '  0',
+        '  0',
+        '   ',
+        '  0',
+        '  0',
+        '   ',
+        '   ',
+        '   ',
+        '   ',
+        '999',
+        ' V2000'
+      ]
+
+      const struct = molParsers.parseCTabV2000(rgpPropLine, countsSplit)
+      expect(struct.rgroups.size).toBe(2)
+    })
+  })
+
+  describe('parseRxn2000', () => {
+    it('should correctly parse 3 mol structures', () => {
+      const lines = reaction.split('\n')
+      const shouldReactionRelayout = false
+      const spy = jest.spyOn(utils, 'rxnMerge')
+      molParsers.parseRxn2000(lines, shouldReactionRelayout)
+      expect(spy.mock.calls[0][0]).toHaveLength(3)
+      expect(spy.mock.calls[0][1]).toBe(2)
+      expect(spy.mock.calls[0][2]).toBe(1)
+      expect(spy.mock.calls[0][3]).toBe(0)
+      expect(spy.mock.calls[0][0][0].atoms.size).toBe(6)
+      expect(spy.mock.calls[0][0][0].bonds.size).toBe(6)
+      expect(spy.mock.calls[0][0][1].atoms.size).toBe(43)
+      expect(spy.mock.calls[0][0][1].bonds.size).toBe(42)
+      expect(spy.mock.calls[0][0][2].atoms.size).toBe(19)
+      expect(spy.mock.calls[0][0][2].bonds.size).toBe(18)
+    })
+  })
+
+  describe('parseCTab', () => {
+    it('should parse ctab header correctly', () => {
+      const lines = basic.split('\n').slice(3)
+      const struct = parseCTab(lines)
+      expect(struct.atoms.size).toBe(76)
+      expect(struct.bonds.size).toBe(71)
+    })
+  })
+
+  describe('labelsListToIds', () => {
+    it('should correctly compare atom label and number in PT', () => {
+      const lst = ['Sg  ', 'Bh  ', 'Pr  ']
+      const result = labelsListToIds(lst)
+      expect(result).toEqual([106, 107, 59])
+    })
+  })
+
+  describe('parsePropertyLineAtomList', () => {
+    it('should correctly set atom list', function () {
+      const hdr = [' ', ' 28', '  3', ' ', 'T', ' ']
+      const lst = ['Sg  ', 'Bh  ', 'Pr  ']
+      const atomList = parsePropertyLineAtomList(hdr, lst)
+      expect((atomList as any).get(27)).toBeTruthy()
+      expect((atomList as any).get(27).ids).toHaveLength(3)
+      expect((atomList as any).get(27).notList).toBe(true)
+    })
+  })
+
+  describe('parseRg2000', () => {
+    it('should throw if 8th line is not $CTAB', () => {
+      const throwLines = [
+        '$MDL  REV  1',
+        '$MOL',
+        '$HDR',
+        '',
+        '',
+        '',
+        '$END HDR',
+        '$CTA'
+      ]
+      expect(() => molParsers.parseRg2000(throwLines)).toThrow()
+    })
+
+    it('should throw if there is no end ctab mark', () => {
+      const throwLines = [
+        '$MDL  REV  1',
+        '$MOL',
+        '$HDR',
+        '',
+        '',
+        '',
+        '$END HDR',
+        '$CTAB',
+        '  2  0  0     0  0            999 V2000',
+        '   -3.4608   -4.5124    0.0000 R#  0  0  0  0  0  0  0  0  0  0  0  0',
+        '   -2.5948   -4.0124    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0'
+      ]
+      expect(() => molParsers.parseRg2000(throwLines)).toThrow()
+    })
+
+    it('should throw if there is no $RGP mark after first mol', () => {
+      const throwLines = [
+        '$MDL  REV  1',
+        '$MOL',
+        '$HDR',
+        '',
+        '',
+        '',
+        '$END HDR',
+        '$CTAB',
+        '  2  0  0     0  0            999 V2000',
+        '   -3.4608   -4.5124    0.0000 R#  0  0  0  0  0  0  0  0  0  0  0  0',
+        '   -2.5948   -4.0124    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+        '$END CTAB'
+      ]
+      expect(() => molParsers.parseRg2000(throwLines)).toThrow()
+    })
+
+    it('should parse correctly rg ext', () => {
+      const lines = rgroups.split('\n')
+      const spy = jest.spyOn(utils, 'rgMerge')
+      molParsers.parseRg2000(lines)
+      expect(spy.mock.calls[0][0].atoms.size).toBe(14)
+      expect(spy.mock.calls[0][0].bonds.size).toBe(14)
+      expect(Object.keys(spy.mock.calls[0][1])).toHaveLength(3)
     })
   })
 })

@@ -192,7 +192,6 @@ export function parsePropertyLines(
         logic.resth = hhh == 1
         logic.range = ooo
         rLogic[rgid] = logic
-        debugger
       } else if (type == 'APO') {
         if (!props.get('attpnt'))
           props.set('attpnt', sGroup.readKeyValuePairs(propertyData))
@@ -313,7 +312,6 @@ function parseCTabV2000(ctabLines, countsSplit) {
   const atomMap = {}
   let sid
   for (sid in sGroups) {
-    console.log(sid, sGroups)
     const sg = sGroups[sid]
     if (sg.type === 'DAT' && sg.atoms.length === 0) {
       const parent = sGroups[sid].parent
@@ -339,7 +337,6 @@ function parseCTabV2000(ctabLines, countsSplit) {
     const rgid = parseInt(id, 10)
     ctab.rgroups.set(rgid, new RGroup(rLogic[rgid]))
   }
-  debugger
   return ctab
 }
 
@@ -395,7 +392,7 @@ function parseRg2000(/* string[] */ ctabLines) /* Struct */ {
         frag[id].push(parseCTab(fragmentLines[id][j]))
     }
   }
-  return rgMerge(core, frag)
+  return utils.rgMerge(core, frag)
 }
 
 function parseRxn2000(
@@ -413,7 +410,6 @@ function parseRxn2000(
     nProducts = countsSplit[1] - 0,
     nAgents = countsSplit[2] - 0
   ctabLines = ctabLines.slice(1) // consume counts line
-
   var mols = []
   while (ctabLines.length > 0 && ctabLines[0].substr(0, 4) == '$MOL') {
     ctabLines = ctabLines.slice(1)
@@ -431,7 +427,6 @@ function parseRxn2000(
     mols.push(struct)
     ctabLines = ctabLines.slice(n)
   }
-
   return utils.rxnMerge(
     mols,
     nReactants,
@@ -441,7 +436,7 @@ function parseRxn2000(
   )
 }
 
-function parseCTab(/* string */ ctabLines) /* Struct */ {
+export function parseCTab(/* string */ ctabLines) /* Struct */ {
   /* reader */
   var countsSplit = utils.partitionLine(
     ctabLines[0],
@@ -451,32 +446,7 @@ function parseCTab(/* string */ ctabLines) /* Struct */ {
   return parseCTabV2000(ctabLines, countsSplit)
 }
 
-function rgMerge(scaffold, rgroups) /* Struct */ {
-  /* reader */
-  const ret = new Struct()
-
-  scaffold.mergeInto(ret, null, null, false, true)
-
-  Object.keys(rgroups).forEach(id => {
-    const rgid = parseInt(id, 10)
-
-    for (let j = 0; j < rgroups[rgid].length; ++j) {
-      const ctab = rgroups[rgid][j]
-      ctab.rgroups.set(rgid, new RGroup())
-      const frag = {}
-      const frid = ctab.frags.add(frag)
-      ctab.rgroups.get(rgid).frags.add(frid)
-      ctab.atoms.forEach(atom => {
-        atom.fragment = frid
-      })
-      ctab.mergeInto(ret)
-    }
-  })
-
-  return ret
-}
-
-function labelsListToIds(labels) {
+export function labelsListToIds(labels) {
   /* reader */
   var ids = []
   for (var i = 0; i < labels.length; ++i) {
@@ -494,7 +464,7 @@ function labelsListToIds(labels) {
  * @param lst
  * @returns { Pool }
  */
-function parsePropertyLineAtomList(hdr, lst) {
+export function parsePropertyLineAtomList(hdr, lst) {
   /* reader */
   var aid = utils.parseDecimalInt(hdr[1]) - 1
   var count = utils.parseDecimalInt(hdr[2])

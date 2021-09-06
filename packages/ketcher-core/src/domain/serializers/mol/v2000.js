@@ -121,7 +121,14 @@ export function parseAtomListLine(/* string */ atomListLine) {
  * @param rLogic
  * @returns { Pool }
  */
-function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
+export function parsePropertyLines(
+  ctab,
+  ctabLines,
+  shift,
+  end,
+  sGroups,
+  rLogic
+) {
   // eslint-disable-line max-statements, max-params
   /* reader */
   const props = new Pool()
@@ -188,6 +195,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
         logic.resth = hhh == 1
         logic.range = ooo
         rLogic[rgid] = logic
+        debugger
       } else if (type == 'APO') {
         if (!props.get('attpnt'))
           props.set('attpnt', sGroup.readKeyValuePairs(propertyData))
@@ -245,7 +253,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
  * @param values { Pool }
  * @param propId { string }
  */
-function applyAtomProp(atoms, values, propId) {
+export function applyAtomProp(atoms, values, propId) {
   /* reader */
   values.forEach((propVal, aid) => {
     atoms.get(aid)[propId] = propVal
@@ -307,6 +315,7 @@ function parseCTabV2000(ctabLines, countsSplit) {
   const atomMap = {}
   let sid
   for (sid in sGroups) {
+    console.log(sid, sGroups)
     const sg = sGroups[sid]
     if (sg.type === 'DAT' && sg.atoms.length === 0) {
       const parent = sGroups[sid].parent

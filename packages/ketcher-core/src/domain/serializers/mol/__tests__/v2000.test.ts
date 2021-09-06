@@ -1,5 +1,13 @@
-import { parseAtomLine, parseAtomListLine, parseBondLine } from '../v2000'
-import { Vec2, Bond } from '../../../entities'
+import {
+  applyAtomProp,
+  parseAtomLine,
+  parseAtomListLine,
+  parseBondLine,
+  parsePropertyLines
+} from '../v2000'
+import { Vec2, Bond, Atom, AtomParams } from '../../../entities'
+import { basic } from './fixtures/basic'
+import molParsers from '../v2000'
 
 describe('v2000 serializer', () => {
   describe('parseAtomLine', () => {
@@ -307,7 +315,347 @@ describe('v2000 serializer', () => {
     })
   })
 
-  describe.skip('parsePropertyLines', () => {
-    it('', () => {})
+  describe('parsePropertyLines', () => {
+    it('should parse atom alias', () => {
+      const atomAliasLine = 'A   58\nACH'
+      const ctabLines = atomAliasLine.split('\n')
+      const shift = 0
+      const end = 2
+      const sGroups = {}
+      const rLogic = {}
+      const props = parsePropertyLines(
+        {},
+        ctabLines,
+        shift,
+        end,
+        sGroups,
+        rLogic
+      )
+      expect(props.get('alias' as any).get(57)).toBe('ACH')
+    })
+
+    it('should parse pseudo', () => {
+      const atomAliasLine = "A   58\n'pseudoText'"
+      const ctabLines = atomAliasLine.split('\n')
+      const shift = 0
+      const end = 2
+      const sGroups = {}
+      const rLogic = {}
+      const props = parsePropertyLines(
+        {},
+        ctabLines,
+        shift,
+        end,
+        sGroups,
+        rLogic
+      )
+      expect(props.get('pseudo' as any).get(57)).toBe('pseudoText')
+    })
+
+    it('should parse charge', () => {
+      const chargePropLine = ['M  CHG  2   7  -3  25   2']
+      const shift = 0
+      const end = 1
+      const sGroups = {}
+      const rLogic = {}
+      const props = parsePropertyLines(
+        {},
+        chargePropLine,
+        shift,
+        end,
+        sGroups,
+        rLogic
+      )
+      expect(props.get('charge' as any).get(6)).toBe(-3)
+      expect(props.get('charge' as any).get(24)).toBe(2)
+    })
+
+    it('should parse radical', () => {
+      const radPropLine = ['M  RAD  2  22   3  23   1']
+      const shift = 0
+      const end = 1
+      const sGroups = {}
+      const rLogic = {}
+      const props = parsePropertyLines(
+        {},
+        radPropLine,
+        shift,
+        end,
+        sGroups,
+        rLogic
+      )
+      expect(props.get('radical' as any).get(21)).toBe(3)
+      expect(props.get('radical' as any).get(22)).toBe(1)
+    })
+
+    it('should parse isotope', () => {
+      const isotopePropLine = ['M  ISO  2  19  13  15  11']
+      const shift = 0
+      const end = 1
+      const sGroups = {}
+      const rLogic = {}
+      const props = parsePropertyLines(
+        {},
+        isotopePropLine,
+        shift,
+        end,
+        sGroups,
+        rLogic
+      )
+      expect(props.get('isotope' as any).get(18)).toBe(13)
+      expect(props.get('isotope' as any).get(14)).toBe(11)
+    })
+
+    it('should parse ringBondCount', () => {
+      const rbcPropLine = ['M  RBC  2  31  -2  13   4']
+      const shift = 0
+      const end = 1
+      const sGroups = {}
+      const rLogic = {}
+      const props = parsePropertyLines(
+        {},
+        rbcPropLine,
+        shift,
+        end,
+        sGroups,
+        rLogic
+      )
+      expect(props.get('ringBondCount' as any).get(30)).toBe(-2)
+      expect(props.get('ringBondCount' as any).get(12)).toBe(4)
+    })
+
+    it('should parse substitutionCount', () => {
+      const subPropLine = ['M  SUB  2  17  -2  11   6']
+      const shift = 0
+      const end = 1
+      const sGroups = {}
+      const rLogic = {}
+      const props = parsePropertyLines(
+        {},
+        subPropLine,
+        shift,
+        end,
+        sGroups,
+        rLogic
+      )
+      expect(props.get('substitutionCount' as any).get(16)).toBe(-2)
+      expect(props.get('substitutionCount' as any).get(10)).toBe(6)
+    })
+
+    it('should parse unsaturatedAtom', () => {
+      const subPropLine = ['M  UNS  2   4   1  12   0']
+      const shift = 0
+      const end = 1
+      const sGroups = {}
+      const rLogic = {}
+      const props = parsePropertyLines(
+        {},
+        subPropLine,
+        shift,
+        end,
+        sGroups,
+        rLogic
+      )
+      expect(props.get('unsaturatedAtom' as any).get(3)).toBe(1)
+      expect(props.get('unsaturatedAtom' as any).get(11)).toBe(0)
+    })
+
+    it('should parse rgroup props', () => {
+      const rgpPropLine = [
+        'M  RGP  4   1   2   8   1  11   3  14   1',
+        'M  LOG  1   1   0   0   1',
+        'M  LOG  1   2   3   0   >0',
+        'M  LOG  1   3   0   1   >0'
+      ]
+
+      const firstLogic = { resth: false, range: '1' }
+      const secondLogic = { resth: false, range: '>0', ifthen: 3 }
+      const thirdLogic = { resth: true, range: '>0' }
+      const shift = 0
+      const end = 4
+      const sGroups = {}
+      const rLogic = {}
+      const props = parsePropertyLines(
+        {},
+        rgpPropLine,
+        shift,
+        end,
+        sGroups,
+        rLogic
+      )
+
+      expect(props.get('rglabel' as any).get(0)).toBe(2)
+      expect(props.get('rglabel' as any).get(7)).toBe(1)
+      expect(props.get('rglabel' as any).get(10)).toBe(4)
+      expect(props.get('rglabel' as any).get(13)).toBe(1)
+
+      expect(rLogic[1]).toStrictEqual(firstLogic)
+      expect(rLogic[2]).toStrictEqual(secondLogic)
+      expect(rLogic[3]).toStrictEqual(thirdLogic)
+    })
+
+    it('should parse attachment point', () => {
+      const line = ['M  APO  2   1   1   4   2']
+      const shift = 0
+      const end = 1
+      const sGroups = {}
+      const rLogic = {}
+      const props = parsePropertyLines({}, line, shift, end, sGroups, rLogic)
+      expect(props.get('attpnt' as any).get(0)).toBe(1)
+      expect(props.get('attpnt' as any).get(3)).toBe(2)
+    })
+
+    it('should parse atom list', () => {
+      const listLine = ['M  ALS  28  3 F Sg  Bh  Pr ']
+      const notListLine = ['M  ALS  28  3 T Sg  Bh  Pr ']
+      const shift = 0
+      const end = 1
+      const sGroups = {}
+      const rLogic = {}
+      const listLineProps = parsePropertyLines(
+        {},
+        listLine,
+        shift,
+        end,
+        sGroups,
+        rLogic
+      )
+      const notListLineProps = parsePropertyLines(
+        {},
+        notListLine,
+        shift,
+        end,
+        sGroups,
+        rLogic
+      )
+      expect(listLineProps.get('label' as any).get(27)).toBe('L#')
+      expect(listLineProps.get('atomList' as any).get(27).notList).toBe(false)
+      expect(listLineProps.get('atomList' as any).get(27).ids).toStrictEqual([
+        106,
+        107,
+        59
+      ])
+      expect(notListLineProps.get('atomList' as any).get(27).notList).toBe(true)
+    })
+
+    describe('SGroups', () => {
+      const sGroups = {}
+      it('should init sGroup', () => {
+        const sgroupInitLine = ['M  STY  2   1 MUL   2 SRU']
+        const shift = 0
+        const end = 1
+        const rLogic = {}
+        parsePropertyLines({}, sgroupInitLine, shift, end, sGroups, rLogic)
+        expect(sGroups[0].type).toBe('MUL')
+        expect(sGroups[1].type).toBe('SRU')
+      })
+
+      it('should parse sgroup props', () => {
+        const sgroupInitLine = [
+          'M  SST  2   1 ALT   2 RAN',
+          'M  SLB  2   1   1   2   2',
+          'M  SPL  1   1   2',
+          'M  SCN  2   1  EU   2  HT',
+          'M  SMT   1  3'
+        ]
+        const shift = 0
+        const end = 5
+        const rLogic = {}
+        parsePropertyLines({}, sgroupInitLine, shift, end, sGroups, rLogic)
+        expect(sGroups[0].data.subtype).toBe('ALT')
+        expect(sGroups[1].data.subtype).toBe('RAN')
+        expect(sGroups[0].data.label).toBe(1)
+        expect(sGroups[1].data.label).toBe(2)
+        expect(sGroups[0].parent).toBe(2)
+        expect(sGroups[0].data.connectivity).toBe('EU')
+        expect(sGroups[1].data.connectivity).toBe('HT')
+        expect(sGroups[0].data.subscript).toBe('3')
+      })
+
+      it('should parse sgroup array props', () => {
+        const lines = [
+          'M  SAL   2  3  11  12  10',
+          'M  SBL   1  2   4  30',
+          'M  SPA   1  3   3   4   5'
+        ]
+        const shift = 0
+        const end = 3
+        const rLogic = {}
+        parsePropertyLines({}, lines, shift, end, sGroups, rLogic)
+        expect(sGroups[1].atoms).toStrictEqual([10, 11, 9])
+        expect(sGroups[0].bonds).toStrictEqual([3, 29])
+        expect(sGroups[0].patoms).toStrictEqual([2, 3, 4])
+      })
+
+      it('should parse sgroup data props', () => {
+        const lines = [
+          'M  SDT   1 test30characterdescaaaaaaaaaaa F',
+          'M  SDD   2     1.0000    5.0000    AAU',
+          'M  SCD   1 testData',
+          'M  SED   2 absolute'
+        ]
+        const shift = 0
+        const end = 4
+        const rLogic = {}
+        parsePropertyLines({}, lines, shift, end, sGroups, rLogic)
+        expect(sGroups[0].data.fieldName).toBe('test30characterdescaaaaaaaaaaa')
+        expect(sGroups[0].data.fieldType).toBe('F')
+        expect(sGroups[1].pp).toEqual({ x: 1, y: -5, z: 0 })
+        expect(sGroups[1].data.attached).toBe(true)
+        expect(sGroups[1].data.absolute).toBe(true)
+        expect(sGroups[1].data.showUnits).toBe(true)
+        expect(sGroups[0].data.fieldValue).toBe('testData')
+        expect(sGroups[1].data.fieldValue).toBe('absolute')
+      })
+    })
+  })
+
+  describe('applyAtomProp', () => {
+    it('should add property to atom', () => {
+      const atom = new Atom({} as AtomParams)
+      const atoms = new Map()
+      atoms.set(0, atom)
+      const propId = 'charge'
+      const values = new Map()
+      values.set(0, 2)
+      applyAtomProp(atoms as any, values as any, propId)
+      expect(atoms.get(0).charge).toBe(2)
+    })
+  })
+
+  describe('parseCTabV2000', () => {
+    const basicCtabLines = basic.split('\n').slice(3)
+    const basicCountsSplit = [
+      ' 76',
+      ' 71',
+      '  0',
+      '   ',
+      '  1',
+      '  0',
+      '   ',
+      '   ',
+      '   ',
+      '   ',
+      '999',
+      ' V2000'
+    ]
+
+    it('should add exact number of elements to Struct', () => {
+      const struct = molParsers.parseCTabV2000(basicCtabLines, basicCountsSplit)
+      expect(struct.atoms.size).toBe(76)
+      expect(struct.bonds.size).toBe(71)
+    })
+
+    it('should apply props to atoms and bonds', () => {
+      const struct = molParsers.parseCTabV2000(basicCtabLines, basicCountsSplit)
+      expect(struct.bonds.get(4)!.stereo).toBe(4)
+      expect(struct.atoms.get(5)!.exactChangeFlag).toBe(true)
+      expect(struct.atoms.get(6)!.charge).toBe(-3)
+    })
+
+    it('should add stereoLabel to atom', () => {
+      const struct = molParsers.parseCTabV2000(basicCtabLines, basicCountsSplit)
+      expect(struct.atoms.get(3)!.stereoLabel).toBe('abs')
+    })
   })
 })

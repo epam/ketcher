@@ -230,7 +230,11 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
       } else if (type === 'SED') {
         sGroup.applyDataSGroupDataLine(sGroups, propertyData, true)
       } else if (type === 'SDS') {
-        sGroups[sid].expanded = true
+        const expandedSGroups = propertyData.slice(7).trim().split('   ')
+        expandedSGroups.forEach(eg => {
+          const sGroupId = Number(eg) - 1
+          sGroups[sGroupId].expanded = true
+        })
       }
     }
     ++shift

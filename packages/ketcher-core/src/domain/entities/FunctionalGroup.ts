@@ -1,7 +1,7 @@
 export class FunctionalGroup {
   name: string
   relatedSGroupId: number
-  isExpanded?: boolean
+  isExpanded: boolean
 
   constructor(name: string, relatedSGroupId: number, isExpanded: boolean) {
     this.name = name
@@ -14,5 +14,14 @@ export class FunctionalGroup {
     functionalGroupsList: string[]
   ): boolean {
     return functionalGroupsList.includes(sGroupName)
+  }
+
+  static clone(functionalGroup: FunctionalGroup): FunctionalGroup {
+    const cp = new FunctionalGroup(
+      functionalGroup.name,
+      functionalGroup.relatedSGroupId,
+      functionalGroup.isExpanded
+    )
+    return cp
   }
 }

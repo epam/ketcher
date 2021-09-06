@@ -219,6 +219,8 @@ export class SGroup {
     cp.patoms = null
     cp.bonds = null
     cp.allAtoms = sgroup.allAtoms
+    cp.expanded = sgroup.expanded
+    cp.isFunctionalGroup = sgroup.isFunctionalGroup
     return cp
   }
 

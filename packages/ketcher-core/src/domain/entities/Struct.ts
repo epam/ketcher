@@ -256,6 +256,11 @@ export class Struct {
       else cp.sGroupForest.insert(sg)
     })
 
+    this.functionalGroups.forEach(fg => {
+      fg = FunctionalGroup.clone(fg)
+      cp.functionalGroups.add(fg)
+    })
+
     simpleObjectsSet.forEach(soid => {
       cp.simpleObjects.add(this.simpleObjects.get(soid)!.clone())
     })

@@ -1,5 +1,6 @@
-export const FunctionalGroupsList = [
+export const FunctionalGroupsList: string[] = [
   //temp list
   'Bn',
-  'Bz'
+  'Bz',
+  'Et'
 ]

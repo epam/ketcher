@@ -486,6 +486,18 @@ export class Molfile {
     // TODO: write M  RGP
     // TODO: write M  LOG
 
+    const expandedGroups: number[] = []
+    this.molecule.sgroups.forEach(sg => {
+      if (sg.expanded) expandedGroups.push(sg.id + 1)
+    })
+
+    if (expandedGroups.length) {
+      const expandedGroupsLine = `M  SDS EXP  ${
+        expandedGroups.length
+      }   ${expandedGroups.join('   ')}`
+      this.writeCR(expandedGroupsLine)
+    }
+
     this.writeCR('M  END')
   }
 

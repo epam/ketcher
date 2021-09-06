@@ -435,6 +435,12 @@
             "type": {
               "type": "string",
               "minLength": 1
+            },
+            "expanded": {
+              "type": "boolead"
+            },
+            "isFunctionalGroup": {
+              "type": "boolean"
             }
           }
         },

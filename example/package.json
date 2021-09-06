@@ -18,7 +18,7 @@
     "build": "run-s build:standalone build:remote",
     "build:standalone:analyze": "cross-env MODE=standalone react-app-rewired build --analyze",
     "build:remote:analyze": "cross-env MODE=remote react-app-rewired build --analyze",
-    "test": "react-app-rewired test --passWithNoTests --watchAll=false",
+    "test": "react-app-rewired test --passWithNoTests",
     "serve:remote": "serve -s dist/remote -l 4001",
     "serve:standalone": "serve -s dist/standalone -l 4002",
     "eject": "react-scripts eject"

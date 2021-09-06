@@ -195,7 +195,6 @@ export function parsePropertyLines(
         logic.resth = hhh == 1
         logic.range = ooo
         rLogic[rgid] = logic
-        debugger
       } else if (type == 'APO') {
         if (!props.get('attpnt'))
           props.set('attpnt', sGroup.readKeyValuePairs(propertyData))
@@ -315,7 +314,6 @@ function parseCTabV2000(ctabLines, countsSplit) {
   const atomMap = {}
   let sid
   for (sid in sGroups) {
-    console.log(sid, sGroups)
     const sg = sGroups[sid]
     if (sg.type === 'DAT' && sg.atoms.length === 0) {
       const parent = sGroups[sid].parent
@@ -440,7 +438,7 @@ function parseRxn2000(
   )
 }
 
-function parseCTab(/* string */ ctabLines) /* Struct */ {
+export function parseCTab(/* string */ ctabLines) /* Struct */ {
   /* reader */
   var countsSplit = utils.partitionLine(
     ctabLines[0],
@@ -468,7 +466,7 @@ function labelsListToIds(labels) {
  * @param lst
  * @returns { Pool }
  */
-function parsePropertyLineAtomList(hdr, lst) {
+export function parsePropertyLineAtomList(hdr, lst) {
   /* reader */
   var aid = utils.parseDecimalInt(hdr[1]) - 1
   var count = utils.parseDecimalInt(hdr[2])

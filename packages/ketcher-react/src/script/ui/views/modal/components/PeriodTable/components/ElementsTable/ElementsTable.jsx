@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
-import { Elements } from 'ketcher-core'
 import { Header, MainRow, OutinerRow } from './components'
+import React, { Component } from 'react'
 
+import { Elements } from 'ketcher-core'
 import styles from './ElementsTable.module.less'
 
 const metalPrefix = [

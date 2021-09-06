@@ -19,6 +19,7 @@ import React, { Component } from 'react'
 import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
 
 import Input from '../../component/form/input'
+import classes from './template-lib.module.less'
 import { connect } from 'react-redux'
 import { storage } from '../../storage-ext'
 
@@ -61,7 +62,7 @@ class Attach extends Component {
     return (
       <Dialog
         title="Template Edit"
-        className="attach"
+        className={classes.attach}
         result={this.onResult}
         params={prop}>
         <label>
@@ -70,7 +71,7 @@ class Attach extends Component {
         </label>
         <label>Choose attachment atom and bond:</label>
         <StructEditor
-          className="editor"
+          className={classes.editor}
           struct={struct}
           onAttachEdit={onAttachEdit}
           tool="attach"
@@ -78,7 +79,7 @@ class Attach extends Component {
           options={options}
         />
         {!storage.isAvailable() ? (
-          <div className="warning">{storage.warningMessage}</div>
+          <div className={classes.warning}>{storage.warningMessage}</div>
         ) : null}
       </Dialog>
     )

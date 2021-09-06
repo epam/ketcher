@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
 import GenSet from './components'
-import clsx from 'clsx'
-
+import React from 'react'
 import classes from './GenGroup.module.less'
+import clsx from 'clsx'
 
 const viewSchema = {
   atom: {

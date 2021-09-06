@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import clsx from 'clsx'
-import { FC } from 'react'
 
-import { basicAtoms } from '../../../action/atoms'
+import { FC } from 'react'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
+
 import { AtomsList } from './AtomsList'
+import { basicAtoms } from '../../../action/atoms'
 import classes from './RightToolbar.module.less'
+import clsx from 'clsx'
 
 const Group: FC<{ className?: string }> = ({ children, className }) => (
   <div className={clsx(classes.group, className)}>{children}</div>

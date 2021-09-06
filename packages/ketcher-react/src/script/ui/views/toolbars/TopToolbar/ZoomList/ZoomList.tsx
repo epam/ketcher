@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import React from 'react'
 import { UiActionAction } from '../../../../action'
 import { zoomList } from '../../../../action/zoom'
 

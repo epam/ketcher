@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { upperFirst } from 'lodash/fp'
 import React, { Component, createRef } from 'react'
+
 import Editor from '../../../../editor'
 import Spinner from '../Spinner'
-
 import classes from './StructEditor.module.less'
 import clsx from 'clsx'
+import { upperFirst } from 'lodash/fp'
 
 //TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {

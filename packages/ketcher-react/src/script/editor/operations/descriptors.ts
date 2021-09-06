@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Vec2 } from 'ketcher-core'
-import Restruct from '../../render/restruct'
+
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
+import Restruct from '../../render/restruct'
+import { Vec2 } from 'ketcher-core'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 

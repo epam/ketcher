@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { Bond, Pile, Pool, Vec2 } from 'domain/entities'
 
 function Stereocenters(mol, neighborsFunc, context) {

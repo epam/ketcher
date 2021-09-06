@@ -14,8 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useMemo, useEffect } from 'react'
-import classes from './FontControl.module.css'
+import { useEffect, useMemo, useState } from 'react'
+
+import classes from './FontControl.module.less'
+
 import { range } from 'lodash/fp'
 
 export const FontControl = ({ editorState, setEditorState, styles }) => {
@@ -57,6 +59,7 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
   return (
     <div>
       <button
+        className={classes.fontBtn}
         onMouseDown={e => {
           e.preventDefault()
           setIsShowingFontSizeMenu(!isShowingFontSizeMenu)

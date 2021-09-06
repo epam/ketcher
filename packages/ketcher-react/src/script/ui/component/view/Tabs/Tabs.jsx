@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 import React, { Component } from 'react'
-import clsx from 'clsx'
 
 import classes from './Tabs.module.less'
+import clsx from 'clsx'
 
 class Tabs extends Component {
   constructor(props) {

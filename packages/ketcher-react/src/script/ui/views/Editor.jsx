@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { StructEditor } from './components'
 import { connect } from 'react-redux'
 import initEditor from '../state/editor'
-import { StructEditor } from './components'
 
 const Editor = connect(
   state => ({

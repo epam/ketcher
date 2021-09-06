@@ -60,7 +60,7 @@ const Dialog: FC<Props> = props => {
     ;(dialogRef.current as any).focus()
     return () => {
       ;(dialogRef.current
-        ?.closest('.editor')
+        ?.closest('.Ketcher-root')
         ?.getElementsByClassName('cliparea')[0] as any).focus()
     }
   }, [])

@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { MolSerializer, KetSerializer } from 'ketcher-core'
+
+import { KetSerializer, MolSerializer } from 'ketcher-core'
 
 export default function copyAs(type) {
   const state = global.currentState

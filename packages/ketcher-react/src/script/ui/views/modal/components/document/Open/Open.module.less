@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+@import '../../../../../../../style/mixins.less';
+
 .open {
   label {
     display: block;
@@ -29,5 +31,7 @@
     white-space: pre;
     //make it resizable
     resize: both;
+
+    .scrollbar();
   }
 }

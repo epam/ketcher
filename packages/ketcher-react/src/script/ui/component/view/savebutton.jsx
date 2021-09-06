@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import React from 'react'
+import classes from './buttons.module.less'
 import { saveAs } from 'file-saver'
 import { useAppContext } from '../../../../hooks'
 
@@ -75,6 +76,7 @@ const SaveButton = props => {
       onClick={event => {
         save(event)
       }}
+      className={classes.saveButton}
       {...props}>
       {props.children}
     </button>

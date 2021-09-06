@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { Bond, Pool, Vec2 } from 'domain/entities'
 
 function CisTrans(mol, neighborsFunc, context) {

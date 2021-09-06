@@ -14,11 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { bond as bondSchema } from '../../../../../data/schema/struct-schema'
-import Form, { Field } from '../../../../../component/form/form'
-import { Dialog } from '../../../../components'
-import { BaseProps, BaseCallProps } from '../../../modal.types'
+import { BaseCallProps, BaseProps } from '../../../modal.types'
+import Form, { Field } from '../../../../../component/form/form/form'
 
+import { Dialog } from '../../../../components'
+import React from 'react'
+import { bond as bondSchema } from '../../../../../data/schema/struct-schema'
 import classes from './Bond.module.less'
 
 interface BondProps extends BaseProps {

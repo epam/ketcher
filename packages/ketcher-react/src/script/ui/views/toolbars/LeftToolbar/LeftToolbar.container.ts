@@ -1,9 +1,3 @@
-import {
-  LeftToolbar,
-  LeftToolbarCallProps,
-  LeftToolbarProps
-} from './LeftToolbar'
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -19,6 +13,13 @@ import {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import {
+  LeftToolbar,
+  LeftToolbarCallProps,
+  LeftToolbarProps
+} from './LeftToolbar'
+
 import { ComponentType } from 'react'
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'

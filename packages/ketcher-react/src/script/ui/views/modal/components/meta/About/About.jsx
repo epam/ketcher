@@ -14,12 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-import { connect } from 'react-redux'
-import Logo from './logo.svg'
 import { Dialog } from '../../../../components'
-
+import Logo from './logo.svg'
+import React from 'react'
 import classes from './About.module.less'
+import { connect } from 'react-redux'
 
 function AboutDialog(props) {
   const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info

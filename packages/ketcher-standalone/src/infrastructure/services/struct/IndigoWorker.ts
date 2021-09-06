@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 /* eslint-disable no-restricted-globals */
+
 import {
   AromatizeCommandData,
   AutomapCommandData,

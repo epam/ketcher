@@ -23,6 +23,10 @@
 @save-container-height-small: 325px;
 
 .save {
+  .saveTmpl {
+    float: left;
+  }
+
   .formContainer {
     display: flex;
     flex-direction: column;
@@ -69,6 +73,8 @@
     white-space: pre;
     cursor: text;
     resize: none;
+
+    .scrollbar();
   }
 
   .saveImageContainer {

@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { useEffect, useState } from 'react'
+
 import { ToolbarItem } from '../../toolbar.types'
 
 type HookParams = [string, string | null, ToolbarItem[]]

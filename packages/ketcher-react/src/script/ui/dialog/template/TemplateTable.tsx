@@ -19,6 +19,7 @@ import { AutoSizer, List } from 'react-virtualized'
 import React from 'react'
 import { Struct } from 'ketcher-core'
 import StructRender from '../../component/structrender'
+import classes from './template-lib.module.less'
 
 interface TemplateTableProps {
   templates: Array<Template>
@@ -89,7 +90,7 @@ const TemplateTable: React.FC<TemplateTableProps> = props => {
   }
 
   return (
-    <div className="table" style={{ minWidth: ITEM_SIZE.width }}>
+    <div className={classes.table} style={{ minWidth: ITEM_SIZE.width }}>
       <AutoSizer>
         {({ height, width }) => {
           const itemsPerRow = Math.floor(width / ITEM_SIZE.width)
@@ -97,7 +98,7 @@ const TemplateTable: React.FC<TemplateTableProps> = props => {
 
           return (
             <List
-              className="table-content"
+              className={classes.tableContent}
               width={width}
               height={height}
               rowCount={rowCount}
@@ -108,28 +109,32 @@ const TemplateTable: React.FC<TemplateTableProps> = props => {
                 const items = templates.slice(fromIndex, toIndex)
 
                 return (
-                  <div className="tr" key={key} style={style}>
+                  <div className={classes.tr} key={key} style={style}>
                     {items.map((tmpl, i) => (
                       <div
-                        className={tmpl === selected ? 'td selected' : 'td'}
+                        className={
+                          tmpl === selected
+                            ? `${classes.td} ${classes.selected}`
+                            : classes.td
+                        }
                         title={greekify(tmplName(tmpl, i))}
                         key={i}
                         style={tmplStyles}>
                         <RenderTmpl
                           tmpl={tmpl}
-                          className="struct"
+                          className={classes.struct}
                           onClick={() => onSelect(tmpl)}
                         />
-                        <div className="btn-container">
+                        <div className={classes.btnContainer}>
                           {tmpl.props.group === 'User Templates' && (
                             <button
-                              className="delete-button"
+                              className={classes.deleteButton}
                               onClick={() => onDelete(tmpl)}>
                               Delete
                             </button>
                           )}
                           <button
-                            className="attach-button"
+                            className={classes.attachButton}
                             onClick={() => onAttach(tmpl)}>
                             Edit
                           </button>

@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import React from 'react'
-
 import classes from './TypeChoice.module.less'
 
 const typeSchema = [

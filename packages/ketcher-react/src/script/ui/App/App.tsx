@@ -14,19 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect } from 'react'
-
-import AppClipArea from '../views/AppClipArea'
-import Editor from '../views/Editor'
-import AppModalContainer from '../views/modal'
 import {
   BottomToolbarContainer,
   LeftToolbarContainer,
   RightToolbarContainer,
   TopToolbarContainer
 } from '../views/toolbars'
+import { useEffect } from 'react'
 
+import AppClipArea from '../views/AppClipArea'
 import { AppHiddenContainer } from './AppHidden'
+import AppModalContainer from '../views/modal'
+import Editor from '../views/Editor'
 import classes from './App.module.less'
 
 interface AppCallProps {

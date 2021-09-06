@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { CSSProperties, RefObject, useEffect, useState } from 'react'
 
 type HookParams = [RefObject<HTMLDivElement>, boolean]

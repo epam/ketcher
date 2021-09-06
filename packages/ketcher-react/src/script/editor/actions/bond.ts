@@ -54,7 +54,7 @@ export function fromBondAddition(
 ): [Action, number, number, number] {
   // eslint-disable-line
   if (end === undefined) {
-    const atom = atomForNewBond(restruct, begin)
+    const atom = atomForNewBond(restruct, begin, bond)
     end = atom.atom
     pos = atom.pos
   }

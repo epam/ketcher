@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { BaseCallProps, BaseProps } from '../../../modal.types'
 import { FC, useState } from 'react'
 
-import { formatProperties } from 'ketcher-core'
+import ClipArea from '../../../../../component/cliparea/cliparea'
 import { Dialog } from '../../../../components'
 import OpenButton from '../../../../../component/view/openbutton'
-import ClipArea from '../../../../../component/cliparea'
-import { BaseProps, BaseCallProps } from '../../../modal.types'
-
 import classes from './Open.module.less'
+import { formatProperties } from 'ketcher-core'
 
 interface OpenProps {
   server: any

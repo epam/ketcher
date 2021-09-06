@@ -31,10 +31,10 @@ import {
 } from '../views/modal/components/toolbox'
 import { Open, Save } from '../views/modal/components/document'
 
-import EnhancedStereo from './toolbox/enhancedStereo'
+import EnhancedStereo from './toolbox/enhancedStereo/enhancedStereo'
 import LabelEdit from './toolbox/labeledit'
 import PeriodTable from '../views/modal/components/PeriodTable'
-import Rgroup from './toolbox/rgroup'
+import Rgroup from './toolbox/rgroup/rgroup'
 import Sdata from './toolbox/sdata'
 import Sgroup from './toolbox/sgroup'
 import TemplateAttach from './template/template-attach'

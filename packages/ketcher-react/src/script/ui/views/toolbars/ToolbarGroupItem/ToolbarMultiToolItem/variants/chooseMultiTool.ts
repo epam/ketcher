@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ComponentType } from 'react'
+
+import { DefaultMultiTool, classes as defaultClasses } from './DefaultMultiTool'
 import {
   MultiToolCallProps,
   MultiToolProps,
   MultiToolVariant
 } from './variants.types'
 
-import { DefaultMultiTool, classes as defaultClasses } from './DefaultMultiTool'
+import { ComponentType } from 'react'
 import { GroupedMultiTool } from './GroupedMultiTool'
 
 export function chooseMultiTool(

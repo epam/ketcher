@@ -1,6 +1,3 @@
-import { Box2Abs, Pile, Pool, Struct, Vec2 } from 'ketcher-core'
-
-import { LayerMap } from './GeneralEnumTypes'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,6 +13,10 @@ import { LayerMap } from './GeneralEnumTypes'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { Box2Abs, Pile, Pool, Struct, Vec2 } from 'ketcher-core'
+
+import { LayerMap } from './GeneralEnumTypes'
 import ReAtom from './reatom'
 import ReBond from './rebond'
 import ReDataSGroupData from './redatasgroupdata'

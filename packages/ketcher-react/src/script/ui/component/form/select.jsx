@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import React from 'react'
+// import classes from './select.module.less'
 
 function SelectList({
   schema,
@@ -23,6 +24,7 @@ function SelectList({
   splitIndexes,
   selected,
   component,
+  classes,
   ...props
 }) {
   return (
@@ -32,8 +34,8 @@ function SelectList({
           key={opt}
           onClick={() => onSelect(opt, index)}
           className={
-            (opt === value ? 'selected ' : '') +
-            (isSplitIndex(index, splitIndexes) ? 'split' : '')
+            (opt === value ? `${classes.selected} ` : '') +
+            (isSplitIndex(index, splitIndexes) ? ` ${classes.split}` : '')
           }>
           {schema.enumNames ? schema.enumNames[index] : opt}
         </li>

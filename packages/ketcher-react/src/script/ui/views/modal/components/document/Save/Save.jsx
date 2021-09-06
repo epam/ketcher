@@ -16,7 +16,7 @@
 
 import * as structFormat from '../../../../../data/convert/structConverter'
 
-import Form, { Field } from '../../../../../component/form/form'
+import Form, { Field } from '../../../../../component/form/form/form'
 import {
   FormatterFactory,
   formatProperties,
@@ -25,6 +25,7 @@ import {
 import React, { Component, createRef } from 'react'
 
 import { Dialog } from '../../../../components'
+import { ErrorsContext } from '../../../../../../../contexts'
 import SaveButton from '../../../../../component/view/savebutton'
 import SaveImageTab from './SaveImageTab'
 import Tabs from '../../../../../component/view/Tabs'
@@ -33,7 +34,6 @@ import classes from './Save.module.less'
 import { connect } from 'react-redux'
 import { saveUserTmpl } from '../../../../../state/templates'
 import { updateFormState } from '../../../../../state/modal/form'
-import { ErrorsContext } from '../../../../../../../contexts'
 
 const saveSchema = {
   title: 'Save',
@@ -208,7 +208,6 @@ class SaveDialog extends Component {
     const buttons = [
       [
         <SaveButton
-          className="save-button"
           mode="saveFile"
           data={structStr}
           filename={filename + getPropertiesByFormat(format).extensions[0]}
@@ -220,8 +219,8 @@ class SaveDialog extends Component {
           Save To File
         </SaveButton>,
         <button
-          className="save-button"
           key="save-tmpl"
+          className={classes.saveTmpl}
           disabled={disableControls || isCleanStruct}
           onClick={() => this.props.onTmplSave(this.props.struct)}>
           Save to Templates...
@@ -230,7 +229,6 @@ class SaveDialog extends Component {
       ],
       [
         <SaveButton
-          className="save-button"
           mode="saveImage"
           data={structStr}
           filename={filename}

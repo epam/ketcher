@@ -437,7 +437,7 @@
               "minLength": 1
             },
             "expanded": {
-              "type": "boolead"
+              "type": "boolean"
             },
             "isFunctionalGroup": {
               "type": "boolean"

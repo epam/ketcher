@@ -49,6 +49,19 @@ class ReBond extends ReObject {
   makeHighlightPlate(render: Render) {
     const options = render.options
     bondRecalc(this, render.ctab, options)
+    const collapsedFunctionalGroupsAtoms: number[] = []
+    render.ctab.sgroups.forEach(sg => {
+      if (!sg.item.expanded && sg.item.isFunctionalGroup) {
+        collapsedFunctionalGroupsAtoms.push(...sg.item.atoms)
+      }
+    })
+    if (
+      collapsedFunctionalGroupsAtoms.indexOf(this.b.begin) >= 0 &&
+      collapsedFunctionalGroupsAtoms.indexOf(this.b.end) >= 0
+    ) {
+      return
+    }
+
     const c = Scale.obj2scaled(this.b.center, options)
     return render.paper
       .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
@@ -66,6 +79,22 @@ class ReBond extends ReObject {
     // eslint-disable-line max-statements
     const render = restruct.render
     const struct = restruct.molecule
+    let collapsedFunctionalGroupsAtoms: number[] = []
+    restruct.molecule.sgroups.forEach(sg => {
+      if (!sg.expanded && sg.isFunctionalGroup) {
+        collapsedFunctionalGroupsAtoms = [
+          ...collapsedFunctionalGroupsAtoms,
+          ...(sg.atoms || [])
+        ]
+      }
+    })
+    const bond = restruct.molecule.bonds.get(bid)
+    if (
+      collapsedFunctionalGroupsAtoms.indexOf(bond!.begin) >= 0 &&
+      collapsedFunctionalGroupsAtoms.indexOf(bond!.end) >= 0
+    ) {
+      return
+    }
     const paper = render.paper
     const hb1 =
         this.b.hb1 !== undefined ? struct.halfBonds.get(this.b.hb1) : null,

@@ -89,6 +89,15 @@ class ReAtom extends ReObject {
     const paper = render.paper
     const options = render.options
     const ps = Scale.obj2scaled(this.a.pp, options)
+    const collapsedFunctionalGroups: number[] = []
+    render.ctab.sgroups.forEach(sg => {
+      if (!sg.item.expanded && sg.item.isFunctionalGroup) {
+        collapsedFunctionalGroups.push(sg.item.id)
+      }
+    })
+    if (collapsedFunctionalGroups.some(sg => this.a?.sgs.has(sg))) {
+      return
+    }
     return paper
       .circle(ps.x, ps.y, options.atomSelectionPlateRadius)
       .attr(options.highlightStyle)
@@ -101,6 +110,16 @@ class ReAtom extends ReObject {
   }
   show(restruct: ReStruct, aid: number, options: any): void {
     // eslint-disable-line max-statements
+    const collapsedFunctionalGroups: number[] = []
+    restruct.molecule.sgroups.forEach(sg => {
+      if (!sg.expanded && sg.isFunctionalGroup) {
+        collapsedFunctionalGroups.push(sg.id)
+      }
+    })
+    const atom = restruct.molecule.atoms.get(aid)
+    if (collapsedFunctionalGroups.some(sg => atom!.sgs.has(sg))) {
+      return
+    }
     const render = restruct.render
     const ps = Scale.obj2scaled(this.a.pp, render.options)
 

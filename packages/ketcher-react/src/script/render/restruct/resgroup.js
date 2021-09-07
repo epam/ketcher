@@ -34,7 +34,11 @@ class ReSGroup extends ReObject {
   }
   draw(remol, sgroup) {
     var render = remol.render
-    var set = render.paper.set()
+    var set
+    // if (sgroup.isFunctionalGroup && !sgroup.expanded) {
+    //   set = render.paper.text(0, 0, sgroup.data.name) coorditates to be figured out
+    // } else
+    set = render.paper.set()
     var atomSet = new Pile(sgroup.atoms)
     const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet)
     SGroup.bracketPos(sgroup, remol.molecule, crossBonds)

@@ -216,7 +216,10 @@ export function fromBondStereoUpdate(
   const stereoAtomsMap = getStereoAtomsMap(struct, fragmentStereoBonds, bond)
 
   stereoAtomsMap.forEach((stereoProp, aId) => {
-    if (struct.atoms.get(aId)?.stereoLabel !== stereoProp.stereoLabel) {
+    if (
+      struct.atoms.get(aId)?.stereoLabel !== stereoProp.stereoLabel ||
+      struct.atoms.get(aId)?.stereoLabel
+    ) {
       action.mergeWith(
         fromStereoAtomAttrs(restruct, aId, stereoProp, withReverse)
       )
@@ -245,7 +248,6 @@ export function getStereoAtomsMap(
 
       if (
         StereoValidator.isCorrectStereoCenter(
-          bonds,
           bond,
           beginNeighs,
           endNeighs,

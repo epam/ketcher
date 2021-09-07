@@ -35,9 +35,6 @@ class ReSGroup extends ReObject {
   draw(remol, sgroup) {
     var render = remol.render
     var set
-    // if (sgroup.isFunctionalGroup && !sgroup.expanded) {
-    //   set = render.paper.text(0, 0, sgroup.data.name) /*coorditates to be figured out*/
-    // } else {
     set = render.paper.set()
     var atomSet = new Pile(sgroup.atoms)
     const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet)
@@ -45,69 +42,109 @@ class ReSGroup extends ReObject {
     var bracketBox = sgroup.bracketBox
     var d = sgroup.bracketDir
     sgroup.areas = [bracketBox]
-
-    switch (sgroup.type) {
-      case 'MUL':
-        SGroupdrawBrackets(
-          set,
-          render,
-          sgroup,
-          crossBonds,
-          atomSet,
-          bracketBox,
-          d,
-          sgroup.data.mul
-        )
-        break
-      case 'SRU':
-        var connectivity = sgroup.data.connectivity || 'eu'
-        if (connectivity === 'ht') connectivity = ''
-        var subscript = sgroup.data.subscript || 'n'
-        SGroupdrawBrackets(
-          set,
-          render,
-          sgroup,
-          crossBonds,
-          atomSet,
-          bracketBox,
-          d,
-          subscript,
-          connectivity
-        )
-        break
-      case 'SUP':
-        SGroupdrawBrackets(
-          set,
-          render,
-          sgroup,
-          crossBonds,
-          atomSet,
-          bracketBox,
-          d,
-          sgroup.data.name,
-          null,
-          { 'font-style': 'italic' }
-        )
-        break
-      case 'GEN':
-        SGroupdrawBrackets(
-          set,
-          render,
-          sgroup,
-          crossBonds,
-          atomSet,
-          bracketBox,
-          d
-        )
-        break
-      case 'DAT':
-        set = drawGroupDat(remol, sgroup)
-        break
-      default:
-        break
+    const middleX = (bracketBox.p1.x + bracketBox.p0.x) / 2
+    const middleY = (bracketBox.p1.y + bracketBox.p0.y) / 2
+    const p0 = new Vec2(middleX - 0.75, middleY - 0.75) //TO DO discuss size of 'brackets'
+    const p1 = new Vec2(middleX + 0.75, middleY + 0.75) //TO DO discuss size of 'brackets'
+    const collapsedBracketBox = new Box2Abs(p0, p1)
+    if (!sgroup.expanded && sgroup.isFunctionalGroup) {
+      bracketBox = collapsedBracketBox
+      const leftBracketStart = Scale.obj2scaled(
+        bracketBox.p0,
+        remol.render.options
+      )
+      const rigthBracketEnd = Scale.obj2scaled(
+        bracketBox.p1,
+        remol.render.options
+      )
+      set.push(
+        render.paper
+          .text(
+            rigthBracketEnd.x - (rigthBracketEnd.x - leftBracketStart.x) / 2,
+            rigthBracketEnd.y - (rigthBracketEnd.y - leftBracketStart.y) / 2,
+            sgroup.data.name
+          )
+          .attr({ 'font-weight': 900, 'font-size': 24 })
+      ) // TO DO discuss font-size (depends on 'brackets')
+    } else {
+      switch (sgroup.type) {
+        case 'MUL':
+          SGroupdrawBrackets(
+            set,
+            render,
+            sgroup,
+            crossBonds,
+            atomSet,
+            bracketBox,
+            d,
+            sgroup.data.mul
+          )
+          break
+        case 'SRU':
+          var connectivity = sgroup.data.connectivity || 'eu'
+          if (connectivity === 'ht') connectivity = ''
+          var subscript = sgroup.data.subscript || 'n'
+          SGroupdrawBrackets(
+            set,
+            render,
+            sgroup,
+            crossBonds,
+            atomSet,
+            bracketBox,
+            d,
+            subscript,
+            connectivity
+          )
+          break
+        case 'SUP':
+          SGroupdrawBrackets(
+            set,
+            render,
+            sgroup,
+            crossBonds,
+            atomSet,
+            bracketBox,
+            d,
+            sgroup.data.name,
+            null,
+            { 'font-style': 'italic' }
+          )
+          break
+        case 'GEN':
+          SGroupdrawBrackets(
+            set,
+            render,
+            sgroup,
+            crossBonds,
+            atomSet,
+            bracketBox,
+            d
+          )
+          break
+        case 'DAT':
+          set = drawGroupDat(remol, sgroup)
+          break
+        default:
+          break
+      }
     }
-    // }
     return set
+  }
+  makeSelectionPlate(restruct, paper, options) {
+    const sgroup = this.item
+    var bracketBox = sgroup.bracketBox
+    const middleX = (bracketBox.p1.x + bracketBox.p0.x) / 2
+    const middleY = (bracketBox.p1.y + bracketBox.p0.y) / 2
+    const p0 = new Vec2(middleX - 0.75, middleY - 0.75)
+    const p1 = new Vec2(middleX + 0.75, middleY + 0.75)
+    const collapsedBracketBox = new Box2Abs(p0, p1)
+    if (!sgroup.expanded && sgroup.isFunctionalGroup) {
+      bracketBox = collapsedBracketBox
+    }
+    const leftBracketStart = Scale.obj2scaled(bracketBox.p0, options)
+    return paper
+      .rect(leftBracketStart.x + 5, leftBracketStart.y + 5, 50, 50)
+      .attr(options.selectionStyle) // TO DO figure out 5px
   }
   drawHighlight(render) {
     // eslint-disable-line max-statements
@@ -124,21 +161,30 @@ class ReSGroup extends ReObject {
     var a1 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p1.y)
     var b0 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p0.y)
     var b1 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p1.y)
+    const startX = (b0.x + a0.x) / 2 - 25
+    const startY = (a1.y + a0.y) / 2 - 25
 
     var set = paper.set()
-    sGroupItem.highlighting = paper
-      .path(
-        'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
-        tfx(a0.x),
-        tfx(a0.y),
-        tfx(a1.x),
-        tfx(a1.y),
-        tfx(b1.x),
-        tfx(b1.y),
-        tfx(b0.x),
-        tfx(b0.y)
-      )
-      .attr(options.highlightStyle)
+    if (!sGroupItem.expanded && sGroupItem.isFunctionalGroup) {
+      //TO DO create const for size of highlight
+      sGroupItem.highlighting = paper
+        .rect(startX, startY, 50, 50)
+        .attr(options.highlightStyle)
+    } else {
+      sGroupItem.highlighting = paper
+        .path(
+          'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
+          tfx(a0.x),
+          tfx(a0.y),
+          tfx(a1.x),
+          tfx(a1.y),
+          tfx(b1.x),
+          tfx(b1.y),
+          tfx(b0.x),
+          tfx(b0.y)
+        )
+        .attr(options.highlightStyle)
+    }
     set.push(sGroupItem.highlighting)
 
     SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach(aid => {
@@ -173,9 +219,6 @@ function SGroupdrawBrackets(
   upperIndexText,
   indexAttribute
 ) {
-  if (!sg.expanded && sg.isFunctionalGroup) {
-    render.options.sgroupBracketStyle.stroke = 'transparent'
-  }
   // eslint-disable-line max-params
   var brackets = getBracketParameters(
     render.ctab.molecule,

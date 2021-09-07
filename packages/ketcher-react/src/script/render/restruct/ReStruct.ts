@@ -563,7 +563,8 @@ class ReStruct {
     const redraw = arguments.length === 0 // render.update only
 
     Object.keys(ReStruct.maps).forEach(map => {
-      if (ReStruct.maps[map].isSelectable()) {
+      let [obj] = this[map].values() // hack to include ReSGroup, figure out better solution
+      if (ReStruct.maps[map].isSelectable() || obj instanceof ReSGroup) {
         this[map].forEach((item, id) => {
           const selected = redraw
             ? item.selected

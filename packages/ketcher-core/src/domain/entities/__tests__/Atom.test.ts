@@ -1,43 +1,5 @@
-import { getValueOrDefault, getPseudo, radicalElectrons, Atom } from '../Atom'
+import { radicalElectrons, Atom } from '../Atom'
 import { Vec2 } from '../Vec2'
-
-describe('getValueOrDefault', () => {
-  const defaultValue = 'defaultValue'
-
-  it('should return default value if first arg is undefined', () => {
-    const testValue = {}
-    expect(getValueOrDefault((testValue as any).prop, defaultValue)).toBe(
-      defaultValue
-    )
-  })
-
-  it('should return value if it is defined', () => {
-    const testValue = 'testValue'
-    expect(getValueOrDefault(testValue, defaultValue)).toBe(testValue)
-  })
-})
-
-describe('getPseudo', () => {
-  it('should return empty string if value is real label of element', () => {
-    expect(getPseudo('Lv')).toBe('')
-  })
-
-  it('should return empty string if passed value is R#', () => {
-    expect(getPseudo('R#')).toBe('')
-  })
-
-  it('should return empty string if passed value is L', () => {
-    expect(getPseudo('L')).toBe('')
-  })
-
-  it('should return empty string if passed value is L#', () => {
-    expect(getPseudo('L#')).toBe('')
-  })
-
-  it('should return passed label if its not real label and not L, L#, R#', () => {
-    expect(getPseudo('pseudo')).toBe('pseudo')
-  })
-})
 
 describe('radicalElectrons', () => {
   it('should return 1 if passed radical is Douplet (value = 2)', () => {
@@ -75,11 +37,6 @@ describe('Atom', () => {
     isotope: 0,
     label: 'H',
     neighbors: [],
-    // pp: new Vec2({
-    //     x: 16,
-    //     y: 3,
-    //     z: 0,
-    // }),
     pseudo: '',
     radical: 0,
     rglabel: null,
@@ -102,6 +59,58 @@ describe('Atom', () => {
     it('should create getter function "pseudo" and able to call it', () => {
       const atom = new Atom(hydrogenParams)
       expect(atom.pseudo).toBe('')
+    })
+
+    it('should return default value if passe arg is undef', () => {
+      const params = {
+        ...hydrogenParams,
+        radical: undefined
+      }
+      const atom = new Atom(params)
+      expect(atom.radical).toBe(0)
+    })
+  })
+
+  describe('pseudo getter', () => {
+    it('should return empty string if value is real label of element', () => {
+      const atom = new Atom(hydrogenParams)
+      expect(atom.pseudo).toBe('')
+    })
+
+    it('should return empty string if passed value is R#', () => {
+      const params = {
+        ...hydrogenParams,
+        label: 'R#'
+      }
+      const atom = new Atom(params)
+      expect(atom.pseudo).toBe('')
+    })
+
+    it('should return empty string if passed value is L', () => {
+      const params = {
+        ...hydrogenParams,
+        label: 'L'
+      }
+      const atom = new Atom(params)
+      expect(atom.pseudo).toBe('')
+    })
+
+    it('should return empty string if passed value is L#', () => {
+      const params = {
+        ...hydrogenParams,
+        label: 'L#'
+      }
+      const atom = new Atom(params)
+      expect(atom.pseudo).toBe('')
+    })
+
+    it('should return passed label if its not real label and not L, L#, R#', () => {
+      const params = {
+        ...hydrogenParams,
+        label: 'pseudo'
+      }
+      const atom = new Atom(params)
+      expect(atom.pseudo).toBe('pseudo')
     })
   })
 

@@ -20,11 +20,11 @@ import { Elements } from 'domain/constants'
 import { Pile } from './Pile'
 import { Vec2 } from './Vec2'
 
-export function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
+function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
   return typeof value !== 'undefined' ? value : defaultValue
 }
 
-export function getPseudo(label: string) {
+function getPseudo(label: string) {
   return !Elements.get(label) &&
     label !== 'L' &&
     label !== 'L#' &&

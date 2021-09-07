@@ -34,7 +34,7 @@ import utils from './utils'
 
 const loadRGroupFragments = true // TODO: set to load the fragments
 
-export function parseAtomLine(atomLine) {
+function parseAtomLine(atomLine) {
   /* reader */
   var atomSplit = utils.partitionLine(atomLine, utils.fmtInfo.atomLinePartition)
   var params = {
@@ -66,7 +66,7 @@ export function parseAtomLine(atomLine) {
   return new Atom(params)
 }
 
-export function parseBondLine(bondLine) {
+function parseBondLine(bondLine) {
   /* reader */
   var bondSplit = utils.partitionLine(bondLine, utils.fmtInfo.bondLinePartition)
 
@@ -84,7 +84,7 @@ export function parseBondLine(bondLine) {
   return new Bond(params)
 }
 
-export function parseAtomListLine(/* string */ atomListLine) {
+function parseAtomListLine(/* string */ atomListLine) {
   /* reader */
   var split = utils.partitionLine(
     atomListLine,
@@ -121,14 +121,7 @@ export function parseAtomListLine(/* string */ atomListLine) {
  * @param rLogic
  * @returns { Pool }
  */
-export function parsePropertyLines(
-  ctab,
-  ctabLines,
-  shift,
-  end,
-  sGroups,
-  rLogic
-) {
+function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
   // eslint-disable-line max-statements, max-params
   /* reader */
   const props = new Pool()
@@ -137,6 +130,9 @@ export function parsePropertyLines(
     var line = ctabLines[shift]
     if (line.charAt(0) == 'A') {
       var propValue = ctabLines[++shift]
+      //TODO: Atom entity only have pseudo getter. Check during refactoring
+      //this type of pseudo labeling is not used in current BIOVIA products. See ctab documentation 2020
+      // https://discover.3ds.com/sites/default/files/2020-08/biovia_ctfileformats_2020.pdf (page 47)
       var isPseudo = /'.+'/.test(propValue)
       if (isPseudo && !props.get('pseudo')) props.set('pseudo', new Pool())
       if (!isPseudo && !props.get('alias')) props.set('alias', new Pool())
@@ -249,7 +245,7 @@ export function parsePropertyLines(
  * @param values { Pool }
  * @param propId { string }
  */
-export function applyAtomProp(atoms, values, propId) {
+function applyAtomProp(atoms, values, propId) {
   /* reader */
   values.forEach((propVal, aid) => {
     atoms.get(aid)[propId] = propVal
@@ -268,7 +264,6 @@ function parseCTabV2000(ctabLines, countsSplit) {
   const isAnd = utils.parseDecimalInt(countsSplit[4]) === 0
   const stextLinesCount = utils.parseDecimalInt(countsSplit[5])
   const propertyLinesCount = utils.parseDecimalInt(countsSplit[10])
-
   let shift = 0
   const atomLines = ctabLines.slice(shift, shift + atomCount)
   shift += atomCount
@@ -436,7 +431,7 @@ function parseRxn2000(
   )
 }
 
-export function parseCTab(/* string */ ctabLines) /* Struct */ {
+function parseCTab(/* string */ ctabLines) /* Struct */ {
   /* reader */
   var countsSplit = utils.partitionLine(
     ctabLines[0],
@@ -446,7 +441,7 @@ export function parseCTab(/* string */ ctabLines) /* Struct */ {
   return parseCTabV2000(ctabLines, countsSplit)
 }
 
-export function labelsListToIds(labels) {
+function labelsListToIds(labels) {
   /* reader */
   var ids = []
   for (var i = 0; i < labels.length; ++i) {
@@ -464,7 +459,7 @@ export function labelsListToIds(labels) {
  * @param lst
  * @returns { Pool }
  */
-export function parsePropertyLineAtomList(hdr, lst) {
+function parsePropertyLineAtomList(hdr, lst) {
   /* reader */
   var aid = utils.parseDecimalInt(hdr[1]) - 1
   var count = utils.parseDecimalInt(hdr[2])

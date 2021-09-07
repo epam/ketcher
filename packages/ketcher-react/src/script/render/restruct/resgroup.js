@@ -36,8 +36,8 @@ class ReSGroup extends ReObject {
     var render = remol.render
     var set
     // if (sgroup.isFunctionalGroup && !sgroup.expanded) {
-    //   set = render.paper.text(0, 0, sgroup.data.name) coorditates to be figured out
-    // } else
+    //   set = render.paper.text(0, 0, sgroup.data.name) /*coorditates to be figured out*/
+    // } else {
     set = render.paper.set()
     var atomSet = new Pile(sgroup.atoms)
     const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet)
@@ -106,6 +106,7 @@ class ReSGroup extends ReObject {
       default:
         break
     }
+    // }
     return set
   }
   drawHighlight(render) {
@@ -172,6 +173,9 @@ function SGroupdrawBrackets(
   upperIndexText,
   indexAttribute
 ) {
+  if (!sg.expanded && sg.isFunctionalGroup) {
+    render.options.sgroupBracketStyle.stroke = 'transparent'
+  }
   // eslint-disable-line max-params
   var brackets = getBracketParameters(
     render.ctab.molecule,

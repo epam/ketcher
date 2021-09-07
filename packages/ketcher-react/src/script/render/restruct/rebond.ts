@@ -69,6 +69,18 @@ class ReBond extends ReObject {
   }
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any) {
     bondRecalc(this, restruct, options)
+    const collapsedFunctionalGroupsAtoms: number[] = []
+    restruct.render.ctab.sgroups.forEach(sg => {
+      if (!sg.item.expanded && sg.item.isFunctionalGroup) {
+        collapsedFunctionalGroupsAtoms.push(...sg.item.atoms)
+      }
+    })
+    if (
+      collapsedFunctionalGroupsAtoms.indexOf(this.b.begin) >= 0 &&
+      collapsedFunctionalGroupsAtoms.indexOf(this.b.end) >= 0
+    ) {
+      return null
+    }
     const c = Scale.obj2scaled(this.b.center, options)
     return paper
       .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)

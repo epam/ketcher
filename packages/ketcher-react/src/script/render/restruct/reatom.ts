@@ -103,6 +103,15 @@ class ReAtom extends ReObject {
       .attr(options.highlightStyle)
   }
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any) {
+    const collapsedFunctionalGroups: number[] = []
+    restruct.render.ctab.sgroups.forEach(sg => {
+      if (!sg.item.expanded && sg.item.isFunctionalGroup) {
+        collapsedFunctionalGroups.push(sg.item.id)
+      }
+    })
+    if (collapsedFunctionalGroups.some(sg => this.a?.sgs.has(sg))) {
+      return null
+    }
     const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
     return paper
       .circle(ps.x, ps.y, styles.atomSelectionPlateRadius)

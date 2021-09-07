@@ -636,6 +636,7 @@ function scaleVisel(visel, s) {
  */
 function isSelectionSvgObjectExists(item) {
   return (
+    item &&
     item.selectionPlate !== null &&
     ((!item.selectionPlate.items && !item.selectionPlate.removed) ||
       (Array.isArray(item.selectionPlate.items) &&

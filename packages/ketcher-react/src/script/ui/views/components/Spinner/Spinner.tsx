@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { ReactElement } from 'react'
+import { ReactElement } from 'react'
 
 import classes from './Spinner.module.less'
 

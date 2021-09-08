@@ -17,7 +17,6 @@
 import { MultiToolCallProps, MultiToolProps } from '../variants.types'
 
 import { ActionButton } from '../../../ActionButton'
-import React from 'react'
 import action from '../../../../../../action'
 
 interface DefaultMultiToolProps extends MultiToolProps {}

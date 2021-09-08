@@ -22,7 +22,7 @@
     "@typescript-eslint/eslint-plugin": "^4.0.0",
     "@typescript-eslint/parser": "^4.0.0",
     "babel-eslint": "^10.0.0",
-    "eslint": "^6.8.0",
+    "eslint": "^7.32.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jest": "^24.0.0",
@@ -50,8 +50,7 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "prettier --write",
-      "eslint --fix",
-      "react-scripts test --env=jsdom --watchAll=false --findRelatedTests"
+      "eslint --fix"
     ],
     "*.{json}": [
       "prettier --write"

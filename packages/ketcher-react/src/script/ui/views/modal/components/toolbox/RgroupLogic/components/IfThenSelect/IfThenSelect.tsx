@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { Field } from '../../../../../../../component/form/form/form'
-import React from 'react'
 import { RgroupLogicProps } from '../../RgroupLogic'
 import classes from './IfThenSelect.module.less'
 import { useFormContext } from '../../../../../../../../../hooks'

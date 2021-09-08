@@ -20,7 +20,7 @@ import {
   ActionButtonProps
 } from '../ActionButton'
 import { GroupDescriptor, MultiToolVariant } from './variants/variants.types'
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types'
 import action, { UiAction, UiActionAction } from '../../../../action'
 

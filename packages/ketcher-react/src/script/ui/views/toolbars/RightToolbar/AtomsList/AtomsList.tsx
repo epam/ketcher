@@ -18,7 +18,6 @@ import { atomCuts, basicAtoms } from '../../../../action/atoms'
 
 import Atom from '../../../../component/view/Atom'
 import { Elements } from 'ketcher-core'
-import React from 'react'
 import { UiActionAction } from '../../../../action'
 import classes from '../../ToolbarGroupItem/ActionButton/ActionButton.module.less'
 import clsx from 'clsx'

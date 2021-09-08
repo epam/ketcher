@@ -20,7 +20,7 @@ import 'url-search-params-polyfill'
 import 'whatwg-fetch'
 import './index.less'
 
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import init, { Config } from './script'
 
 import { Ketcher } from './script/ketcher'

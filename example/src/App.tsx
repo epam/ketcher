@@ -5,7 +5,6 @@ import 'ketcher-react/dist/index.css'
 import { Editor } from 'ketcher-react'
 // @ts-ignore
 import Miew from 'miew'
-import React from 'react'
 // @ts-ignore
 import { RemoteStructServiceProvider } from 'ketcher-core'
 ;(global as any).Miew = Miew

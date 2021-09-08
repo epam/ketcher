@@ -16,9 +16,7 @@
 
 import { BaseCallProps, BaseProps } from '../../../modal.types'
 import Form, { Field } from '../../../../../component/form/form/form'
-
 import { Dialog } from '../../../../components'
-import React from 'react'
 import { attachmentPoints as attachmentPointsSchema } from '../../../../../data/schema/struct-schema'
 import classes from './Attach.module.less'
 

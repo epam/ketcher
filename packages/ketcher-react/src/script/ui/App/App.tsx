@@ -20,7 +20,7 @@ import {
   RightToolbarContainer,
   TopToolbarContainer
 } from '../views/toolbars'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
 import AppClipArea from '../views/AppClipArea'
 import { AppHiddenContainer } from './AppHidden'

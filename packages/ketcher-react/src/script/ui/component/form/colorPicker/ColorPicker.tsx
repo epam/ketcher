@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { CompactPicker } from 'react-color'
 import classes from './ColorPicker.module.less'

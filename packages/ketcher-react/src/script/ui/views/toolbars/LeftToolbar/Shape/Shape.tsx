@@ -20,7 +20,6 @@ import {
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
 
-import React from 'react'
 import { makeItems } from '../../ToolbarGroupItem/utils'
 
 const shapeOptions = makeItems([

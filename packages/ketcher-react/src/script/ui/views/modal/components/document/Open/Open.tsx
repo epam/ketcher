@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { BaseCallProps, BaseProps } from '../../../modal.types'
-import React, { FC, useState } from 'react'
+import { FC, useState } from 'react'
 
 import ClipArea from '../../../../../component/cliparea/cliparea'
 import { Dialog } from '../../../../components'

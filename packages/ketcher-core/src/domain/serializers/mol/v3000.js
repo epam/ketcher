@@ -52,7 +52,7 @@ function parseAtomLineV3000(line) {
     const matchNotListInfo = label.match(/NOT ?\[/)
     if (matchNotListInfo) {
       atomListParams.notList = true
-      const [ matchedSubstr ] = matchNotListInfo
+      const [matchedSubstr] = matchNotListInfo
       label = label.substr(matchedSubstr.length) // remove 'NOT [' or 'NOT['
     } else if (label.charAt(0) != '[') {
       throw new Error("Error: atom list expected, found '" + label + "'")
@@ -423,17 +423,17 @@ function spacebarsplit(line) {
       split.push(line.slice(currentIndex, closingBracketIndex + 1))
       currentIndex = closingBracketIndex + 1
       firstSliceIndex = currentIndex
-    }
-    else if (currentSymbol === '(') bracketEquality += 1
+    } else if (currentSymbol === '(') bracketEquality += 1
     else if (currentSymbol === ')') bracketEquality -= 1
     else if (currentSymbol === '"') quoted = !quoted
-
     else if (!quoted && line[currentIndex] === ' ' && bracketEquality === 0) {
-      if (currentIndex > firstSliceIndex + 1) split.push(line.slice(firstSliceIndex + 1, currentIndex))
+      if (currentIndex > firstSliceIndex + 1)
+        split.push(line.slice(firstSliceIndex + 1, currentIndex))
       firstSliceIndex = currentIndex
     }
   }
-  if (currentIndex > firstSliceIndex + 1) split.push(line.slice(firstSliceIndex + 1, currentIndex))
+  if (currentIndex > firstSliceIndex + 1)
+    split.push(line.slice(firstSliceIndex + 1, currentIndex))
   return split
 }
 

@@ -32,7 +32,7 @@ function parseAtomLineV3000(line) {
   // eslint-disable-line max-statements
   /* reader */
   var split, subsplit, key, value, i
-  split = spaceparsplit(line)
+  split = spacebarsplit(line)
   var params = {
     pp: new Vec2(
       parseFloat(split[2]),
@@ -49,9 +49,11 @@ function parseAtomLineV3000(line) {
     label = label.substr(0, label.length - 1) // remove ']'
     var atomListParams = {}
     atomListParams.notList = false
-    if (label.substr(0, 5) == 'NOT [') {
+    const matchNotListInfo = label.match(/NOT ?\[/)
+    if (matchNotListInfo) {
       atomListParams.notList = true
-      label = label.substr(5) // remove 'NOT ['
+      const [ matchedSubstr ] = matchNotListInfo
+      label = label.substr(matchedSubstr.length) // remove 'NOT [' or 'NOT['
     } else if (label.charAt(0) != '[') {
       throw new Error("Error: atom list expected, found '" + label + "'")
     } else {
@@ -92,7 +94,7 @@ function parseAtomLineV3000(line) {
 function parseBondLineV3000(line) {
   /* reader */
   var split, subsplit, key, value, i
-  split = spaceparsplit(line)
+  split = spacebarsplit(line)
   var params = {
     begin: utils.parseDecimalInt(split[2]) - 1,
     end: utils.parseDecimalInt(split[3]) - 1,
@@ -405,27 +407,33 @@ function parseRxn3000(
 }
 
 // split a line by spaces outside parentheses
-function spaceparsplit(line) {
+function spacebarsplit(line) {
   // eslint-disable-line max-statements
   /* reader */
-  var split = []
-  var pc = 0
-  var c
-  var i
-  var i0 = -1
-  var quoted = false
+  const split = []
+  let bracketEquality = 0
+  let currentIndex = 0
+  let firstSliceIndex = -1
+  let quoted = false
 
-  for (i = 0; i < line.length; ++i) {
-    c = line[i]
-    if (c == '(') pc++
-    else if (c == ')') pc--
-    if (c == '"') quoted = !quoted
-    if (!quoted && line[i] == ' ' && pc == 0) {
-      if (i > i0 + 1) split.push(line.slice(i0 + 1, i))
-      i0 = i
+  for (currentIndex; currentIndex < line.length; currentIndex += 1) {
+    const currentSymbol = line[currentIndex]
+    if (line.substr(currentIndex, 3) === 'NOT') {
+      const closingBracketIndex = line.indexOf(']')
+      split.push(line.slice(currentIndex, closingBracketIndex + 1))
+      currentIndex = closingBracketIndex + 1
+      firstSliceIndex = currentIndex
+    }
+    else if (currentSymbol === '(') bracketEquality += 1
+    else if (currentSymbol === ')') bracketEquality -= 1
+    else if (currentSymbol === '"') quoted = !quoted
+
+    else if (!quoted && line[currentIndex] === ' ' && bracketEquality === 0) {
+      if (currentIndex > firstSliceIndex + 1) split.push(line.slice(firstSliceIndex + 1, currentIndex))
+      firstSliceIndex = currentIndex
     }
   }
-  if (i > i0 + 1) split.push(line.slice(i0 + 1, i))
+  if (currentIndex > firstSliceIndex + 1) split.push(line.slice(firstSliceIndex + 1, currentIndex))
   return split
 }
 

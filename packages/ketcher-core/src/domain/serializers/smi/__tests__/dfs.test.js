@@ -1,5 +1,5 @@
 import Dfs from '../dfs'
-import { Struct } from 'ketcher-core'
+import { Struct } from 'domain/entities/Struct'
 
 const struct = new Struct()
 const atomData = new Array(struct.atoms.size)

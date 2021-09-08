@@ -25,26 +25,48 @@ type Data = {
   sgid: any
   type?: any
   pp?: any
+  isFunctionalGroup?: boolean
+  expanded?: boolean
 }
 
 class SGroupCreate extends BaseOperation {
   data: Data
 
-  constructor(sgroupId?: any, type?: any, pp?: any) {
+  constructor(
+    sgroupId?: any,
+    type?: any,
+    pp?: any,
+    isFunctionalGroup?: boolean,
+    expanded?: boolean
+  ) {
     super(OperationType.S_GROUP_CREATE)
-    this.data = { sgid: sgroupId, type, pp }
+    this.data = {
+      sgid: sgroupId,
+      type,
+      pp,
+      isFunctionalGroup: isFunctionalGroup,
+      expanded: expanded
+    }
   }
 
   execute(restruct: Restruct) {
     const struct = restruct.molecule
     const sgroup = new SGroup(this.data.type)
-    const { sgid, pp } = this.data
+    const { sgid, pp, isFunctionalGroup, expanded } = this.data
 
     sgroup.id = sgid
     struct.sgroups.set(sgid, sgroup)
 
     if (pp) {
       struct.sgroups.get(sgid)!.pp = new Vec2(pp)
+    }
+
+    if (isFunctionalGroup) {
+      sgroup.isFunctionalGroup = isFunctionalGroup
+    }
+
+    if (expanded) {
+      sgroup.expanded = expanded
     }
 
     restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)))

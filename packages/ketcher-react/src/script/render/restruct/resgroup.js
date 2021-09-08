@@ -140,11 +140,11 @@ class ReSGroup extends ReObject {
     const collapsedBracketBox = new Box2Abs(p0, p1)
     if (!sgroup.expanded && sgroup.isFunctionalGroup) {
       bracketBox = collapsedBracketBox
+      const leftBracketStart = Scale.obj2scaled(bracketBox.p0, options)
+      return paper
+        .rect(leftBracketStart.x + 5, leftBracketStart.y + 5, 50, 50)
+        .attr(options.selectionStyle) // TO DO figure out 5px
     }
-    const leftBracketStart = Scale.obj2scaled(bracketBox.p0, options)
-    return paper
-      .rect(leftBracketStart.x + 5, leftBracketStart.y + 5, 50, 50)
-      .attr(options.selectionStyle) // TO DO figure out 5px
   }
   drawHighlight(render) {
     // eslint-disable-line max-statements

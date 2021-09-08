@@ -113,7 +113,16 @@ export function fromSgroupDeletion(restruct, id) {
   return action
 }
 
-export function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) {
+export function fromSgroupAddition(
+  restruct,
+  type,
+  atoms,
+  attrs,
+  sgid,
+  pp,
+  isFunctionalGroup,
+  expanded
+) {
   // eslint-disable-line
   let action = new Action()
 
@@ -121,7 +130,11 @@ export function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) {
   //      if yes, how to pass it to the following operations?
   sgid = sgid - 0 === sgid ? sgid : restruct.molecule.sgroups.newId()
 
-  action.addOp(new SGroupCreate(sgid, type, pp))
+  if (type === 'SUP') {
+    action.addOp(new SGroupCreate(sgid, type, pp, isFunctionalGroup, expanded))
+  } else {
+    action.addOp(new SGroupCreate(sgid, type, pp))
+  }
 
   atoms.forEach(atom => {
     action.addOp(new SGroupAtomAdd(sgid, atom))

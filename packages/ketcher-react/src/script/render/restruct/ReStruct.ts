@@ -561,11 +561,28 @@ class ReStruct {
 
   setSelection(selection) {
     const redraw = arguments.length === 0 // render.update only
+    const atoms: { selected: boolean; sgroup: number }[] = []
 
     Object.keys(ReStruct.maps).forEach(map => {
       let [obj] = this[map].values() // hack to include ReSGroup, figure out better solution
       if (ReStruct.maps[map].isSelectable() || obj instanceof ReSGroup) {
         this[map].forEach((item, id) => {
+          if (item instanceof ReAtom) {
+            atoms.push({
+              selected: item.selected,
+              sgroup: item.a.sgs.values().next().value
+            })
+          }
+          if (
+            item instanceof ReSGroup &&
+            !item.item.expanded &&
+            item.item.isFunctionalGroup
+          ) {
+            const sGroupAtoms = atoms.filter(
+              atom => atom.sgroup === item.item.id
+            )
+            item.selected = sGroupAtoms.every(atom => atom.selected)
+          }
           const selected = redraw
             ? item.selected
             : selection && selection[map] && selection[map].indexOf(id) > -1
@@ -639,9 +656,9 @@ function isSelectionSvgObjectExists(item) {
   return (
     item &&
     item.selectionPlate !== null &&
-    ((!item.selectionPlate.items && !item.selectionPlate.removed) ||
-      (Array.isArray(item.selectionPlate.items) &&
-        !item.selectionPlate[0].removed))
+    ((!item.selectionPlate?.items && !item.selectionPlate?.removed) ||
+      (Array.isArray(item.selectionPlate?.items) &&
+        !item.selectionPlate[0]?.removed))
   )
 }
 

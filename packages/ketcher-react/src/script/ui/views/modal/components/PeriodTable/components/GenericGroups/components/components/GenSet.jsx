@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
 import classes from './GenSet.module.less'
 import clsx from 'clsx'
 

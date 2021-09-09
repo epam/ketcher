@@ -18,7 +18,6 @@ import Form, { Field } from '../../../component/form/form/form'
 
 import ButtonList from '../../../component/form/buttonlist'
 import { Dialog } from '../../../views/components'
-import React from 'react'
 import classes from './rgroup.module.less'
 import { connect } from 'react-redux'
 import { rgroupSchema } from '../../../data/schema/struct-schema'

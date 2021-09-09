@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { ElementColor } from 'ketcher-core'
-import React from 'react'
 import classes from './AtomInfo.module.less'
 import clsx from 'clsx'
 

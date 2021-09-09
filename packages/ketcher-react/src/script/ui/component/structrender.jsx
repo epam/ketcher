@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { MolSerializer, Struct } from 'ketcher-core'
-import React, { Component, createRef } from 'react'
+import { Component, createRef } from 'react'
 
 import Render from '../../render'
 

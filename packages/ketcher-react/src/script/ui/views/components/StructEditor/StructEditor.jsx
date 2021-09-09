@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component, createRef } from 'react'
+import { Component, createRef } from 'react'
 
 import Editor from '../../../../editor'
 import Spinner from '../Spinner'
@@ -67,7 +67,7 @@ class StructEditor extends Component {
     return this.props.indigoVerification !== nextProps.indigoVerification
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     setupEditor(this.editor, props, this.props)
   }
 

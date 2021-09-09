@@ -18,7 +18,7 @@ import Form, { Field } from '../../../component/form/form/form'
 import { StereoLabel, Struct } from 'ketcher-core'
 
 import { Dialog } from '../../../views/components'
-import React from 'react'
+import { FC } from 'react'
 import classes from './enhancedStereo.module.less'
 import { connect } from 'react-redux'
 import { range } from 'lodash'
@@ -49,7 +49,7 @@ interface EnhancedStereoCallProps {
 
 type Props = EnhancedStereoProps & EnhancedStereoCallProps
 
-const EnhancedStereo: React.FC<Props> = props => {
+const EnhancedStereo: FC<Props> = props => {
   const { struct, formState, init, ...rest } = props
   const { result, valid } = formState
 

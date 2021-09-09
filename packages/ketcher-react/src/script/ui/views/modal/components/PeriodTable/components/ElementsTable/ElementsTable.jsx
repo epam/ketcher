@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Header, MainRow, OutinerRow } from './components'
-import React, { Component } from 'react'
+import { Component } from 'react'
 
 import { Elements } from 'ketcher-core'
 import styles from './ElementsTable.module.less'

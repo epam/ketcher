@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 
 import Icon from './view/icon'
 import action from '../action'

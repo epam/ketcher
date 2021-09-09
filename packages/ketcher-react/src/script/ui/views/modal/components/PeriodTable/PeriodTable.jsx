@@ -20,7 +20,7 @@ import {
   GenericGroups,
   TypeChoice
 } from './components'
-import React, { Component } from 'react'
+import { Component } from 'react'
 import { fromElement, toElement } from '../../../../data/convert/structconv'
 
 import { Dialog } from '../../../components'

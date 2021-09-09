@@ -27,7 +27,6 @@ import {
   groupOptions
 } from './options'
 
-import React from 'react'
 import { ToolbarMultiToolItem } from '../../ToolbarGroupItem/ToolbarMultiToolItem'
 import { mediaSizes } from '../../mediaSizes'
 

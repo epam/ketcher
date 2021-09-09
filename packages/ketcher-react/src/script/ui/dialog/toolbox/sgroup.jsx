@@ -17,7 +17,6 @@
 import Form, { Field, SelectOneOf } from '../../component/form/form/form'
 
 import { Dialog } from '../../views/components'
-import React from 'react'
 import classes from './sgroup.module.less'
 import { connect } from 'react-redux'
 import { sgroupMap as schemes } from '../../data/schema/struct-schema'

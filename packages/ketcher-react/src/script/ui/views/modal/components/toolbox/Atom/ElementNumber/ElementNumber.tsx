@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { Elements } from 'ketcher-core'
-import React from 'react'
 import { capitalize } from 'lodash/fp'
 
 interface ElementNumberProps {

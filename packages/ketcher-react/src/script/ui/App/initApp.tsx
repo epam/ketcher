@@ -19,7 +19,6 @@ import createStore, { load } from '../state'
 
 import App from './App.container'
 import { Provider } from 'react-redux'
-import React from 'react'
 import ReactDOM from 'react-dom'
 import { StructService } from 'ketcher-core'
 import { initKeydownListener } from '../state/hotkeys'

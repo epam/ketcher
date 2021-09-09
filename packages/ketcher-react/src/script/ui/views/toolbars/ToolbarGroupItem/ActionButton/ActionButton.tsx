@@ -17,7 +17,6 @@
 import { UiAction, UiActionAction } from '../../../../action'
 
 import Icon from '../../../../component/view/icon'
-import React from 'react'
 import classes from './ActionButton.module.less'
 import clsx from 'clsx'
 import { shortcutStr } from '../../shortcutStr'

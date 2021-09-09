@@ -15,8 +15,9 @@
  ***************************************************************************/
 
 import { BaseCallProps, BaseProps } from '../../../modal.types'
+
 import Form, { Field } from '../../../../../component/form/form/form'
-import React, { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 
 import { Dialog } from '../../../../components'
 import ElementNumber from './ElementNumber'

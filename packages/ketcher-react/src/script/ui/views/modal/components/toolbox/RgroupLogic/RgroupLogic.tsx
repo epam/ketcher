@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
 import { BaseCallProps, BaseProps } from '../../../modal.types'
 import Form, { Field } from '../../../../../component/form/form/form'
-
 import { Dialog } from '../../../../components'
 import IfThenSelect from './components'
-import React from 'react'
 import classes from './RgroupLogic.module.less'
 import { rgroupLogic as rgroupSchema } from '../../../../../data/schema/struct-schema'
 

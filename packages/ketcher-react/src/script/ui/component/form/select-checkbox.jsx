@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import Input from './input'
-import React from 'react'
 
 function SelectCheckbox({ schema, ...props }) {
   let currentSchema = schema

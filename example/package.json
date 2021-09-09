@@ -28,9 +28,9 @@
     "ketcher-react": "^2.3.1",
     "ketcher-standalone": "^1.1.0",
     "miew": "^0.9.0",
-    "react": "^16.13.1",
+    "react": "^17.0.2",
     "react-app-polyfill": "^2.0.0",
-    "react-dom": "^16.13.1"
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
     "@babel/plugin-syntax-object-rest-spread": "^7.8.3",
@@ -48,7 +48,7 @@
     "html-replace-webpack-plugin": "^2.5.6",
     "npm-run-all": "^4.1.5",
     "react-app-rewired": "^2.1.6",
-    "react-scripts": "^3.4.1",
+    "react-scripts": "^4.0.3",
     "serve": "^12.0.0",
     "shx": "^0.3.3",
     "source-map-loader": "^1.1.2",

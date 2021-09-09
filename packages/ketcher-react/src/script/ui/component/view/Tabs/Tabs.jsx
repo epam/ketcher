@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
+import { Component } from 'react'
 
 import classes from './Tabs.module.less'
 import clsx from 'clsx'

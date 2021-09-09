@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
 import { xor } from 'lodash/fp'
 
 function oneOrMore(multipl, values, item) {

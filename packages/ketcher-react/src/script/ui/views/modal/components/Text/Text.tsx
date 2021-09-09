@@ -26,7 +26,8 @@ import {
   convertToRaw,
   getDefaultKeyBinding
 } from 'draft-js'
-import React, { useCallback, useState } from 'react'
+
+import { useCallback, useState } from 'react'
 
 import { Dialog } from '../../../components'
 import { DialogParams } from '../../../components/Dialog/Dialog'

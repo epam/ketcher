@@ -17,7 +17,6 @@
 import action, { UiAction, UiActionAction } from '../../../action'
 
 import { ActionButton } from './ActionButton'
-import React from 'react'
 import { ToolbarItem } from '../toolbar.types'
 import { ToolbarMultiToolItem } from './ToolbarMultiToolItem'
 

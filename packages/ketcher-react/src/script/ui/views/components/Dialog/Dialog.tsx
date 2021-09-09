@@ -16,7 +16,7 @@
 
 import * as KN from 'w3c-keyname'
 
-import React, { FC, useEffect, useRef } from 'react'
+import { FC, useEffect, useRef, ReactElement } from 'react'
 
 import clsx from 'clsx'
 import styles from './Dialog.module.less'
@@ -24,7 +24,7 @@ import styles from './Dialog.module.less'
 interface DialogProps {
   title: string
   params: DialogParams
-  buttons?: Array<string | React.ReactElement>
+  buttons?: Array<string | ReactElement>
   className: string
 }
 export interface DialogParams extends DialogParamsCallProps {

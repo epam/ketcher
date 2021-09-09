@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
 import classes from './spin.module.less'
 
 function Spin({ ...props }) {

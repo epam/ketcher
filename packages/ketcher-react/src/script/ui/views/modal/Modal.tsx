@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 
 import { BaseCallProps } from './modal.types'
 import classes from './Modal.module.less'

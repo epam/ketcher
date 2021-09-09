@@ -17,7 +17,6 @@
 import action, { UiAction, UiActionAction } from '../../../../action'
 
 import { ActionButton } from '../../ToolbarGroupItem/ActionButton'
-import React from 'react'
 import templates from '../../../../data/templates'
 
 interface TemplatesListProps {

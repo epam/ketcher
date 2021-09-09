@@ -16,7 +16,7 @@
 
 import { useCallback, useState } from 'react'
 
-import { CompactPicker } from 'react-color'
+import { HexColorPicker, HexColorInput } from 'react-colorful'
 import classes from './ColorPicker.module.less'
 
 interface ColorPickerProps {
@@ -38,7 +38,7 @@ const ColorPicker = (props: Props) => {
 
   const handleChange = useCallback(
     color => {
-      onChange(color.hex)
+      onChange(color)
     },
     [onChange]
   )
@@ -70,11 +70,14 @@ const ColorPicker = (props: Props) => {
               onClick={handleClose}
               data-testid="color-picker-overlay"
             />
-            <CompactPicker
-              className={classes.colorPicker}
-              color={value}
-              onChange={handleChange}
-            />
+            <div className={classes.colorPicker}>
+              <HexColorPicker color={value} onChange={handleChange} />
+              <HexColorInput
+                data-testid="color-picker-input"
+                color={value}
+                onChange={handleChange}
+              />
+            </div>
           </>
         ) : null}
       </div>

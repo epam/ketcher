@@ -111,17 +111,29 @@ function findClosestSimpleObject(restruct, pos) {
 }
 
 function findClosestAtom(restruct, pos, skip, minDist) {
+  // console.log(skip)
   let closestAtom = null
   const maxMinDist = SELECTION_DISTANCE_COEFFICIENT
   const skipId = skip && skip.map === 'atoms' ? skip.id : null
 
   minDist = minDist || maxMinDist
   minDist = Math.min(minDist, maxMinDist)
+  const collapsedFunctionalGroups = []
+  restruct.sgroups.forEach(sg => {
+    if (!sg.item.expanded && sg.item.isFunctionalGroup) {
+      collapsedFunctionalGroups.push(sg.item.id)
+    }
+  })
 
   restruct.atoms.forEach((atom, aid) => {
-    if (aid === skipId) return
+    if (
+      aid === skipId ||
+      collapsedFunctionalGroups.includes(atom.a.sgs.values().next().value)
+    )
+      return
 
     const dist = Vec2.dist(pos, atom.a.pp)
+    console.log('dist', dist)
 
     if (dist < minDist) {
       closestAtom = aid
@@ -145,6 +157,12 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
   let closestBondCenter = null
   const maxMinDist = 0.8 * SELECTION_DISTANCE_COEFFICIENT
   const skipId = skip && skip.map === 'bonds' ? skip.id : null
+  // const collapsedFunctionalGroups = []  doesn't work properly withiout resgroup lines 61-65
+  // restruct.sgroups.forEach(sg => {
+  //   if(!sg.item.expanded && sg.item.isFunctionalGroup) {
+  //     collapsedFunctionalGroups.push(sg.item.id)
+  //   }
+  // })
 
   minDist = minDist || maxMinDist
   minDist = Math.min(minDist, maxMinDist)

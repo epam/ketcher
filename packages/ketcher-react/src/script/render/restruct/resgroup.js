@@ -37,6 +37,7 @@ class ReSGroup extends ReObject {
     var set
     set = render.paper.set()
     var atomSet = new Pile(sgroup.atoms)
+    // console.log(atomSet)
     const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet)
     SGroup.bracketPos(sgroup, remol.molecule, crossBonds)
     var bracketBox = sgroup.bracketBox
@@ -57,6 +58,11 @@ class ReSGroup extends ReObject {
         bracketBox.p1,
         remol.render.options
       )
+      // remol.atoms.forEach(atom => {  BREAKS EXPORT BUT HELPS WITH RENDER AND MERGING WITH ATOMS
+      //   if(atom.a.sgs.values().next().value === sgroup.id) {
+      //     atom.a.pp = new Vec2(middleX, middleY, 0)
+      //   }
+      // })
       set.push(
         render.paper
           .text(
@@ -64,7 +70,7 @@ class ReSGroup extends ReObject {
             rigthBracketEnd.y - (rigthBracketEnd.y - leftBracketStart.y) / 2,
             sgroup.data.name
           )
-          .attr({ 'font-weight': 900, 'font-size': 24 })
+          .attr({ 'font-weight': 900, 'font-size': 14 })
       ) // TO DO discuss font-size (depends on 'brackets')
     } else {
       switch (sgroup.type) {

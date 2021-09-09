@@ -72,7 +72,11 @@ const ColorPicker = (props: Props) => {
             />
             <div className={classes.colorPicker}>
               <HexColorPicker color={value} onChange={handleChange} />
-              <HexColorInput color={value} onChange={handleChange} />
+              <HexColorInput
+                data-testid="color-picker-input"
+                color={value}
+                onChange={handleChange}
+              />
             </div>
           </>
         ) : null}

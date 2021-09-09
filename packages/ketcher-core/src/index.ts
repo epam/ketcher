@@ -23,5 +23,7 @@ export * from 'domain/helpers'
 export * from 'infrastructure/services'
 
 export * from 'application/formatters'
+export * from 'application/editor'
+export * from 'application/Ketcher'
 
 export * from 'utils'

@@ -14,13 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FormatterFactory, SupportedFormat } from './formatters'
+import {
+  FormatterFactory,
+  SupportedFormat,
+  identifyStructFormat
+} from './formatters'
 import { GenerateImageOptions, StructService } from 'domain/services'
 
 import { Editor } from './editor'
 import { MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
-import { isEqual } from 'lodash/fp'
+import { assert } from 'console'
+
+function parseStruct(structStr: string, structService: StructService) {
+  const format = identifyStructFormat(structStr)
+  const factory = new FormatterFactory(structService)
+
+  const service = factory.create(format)
+  return service.getStructureFromStringAsync(structStr)
+}
 
 function getStructure(
   structureFormat: SupportedFormat = 'rxn',
@@ -35,7 +47,6 @@ export class Ketcher {
   #structService: StructService
   #formatterFactory: FormatterFactory
   #editor: Editor
-  #origin?: number
 
   get editor(): Editor {
     return this.#editor
@@ -62,6 +73,7 @@ export class Ketcher {
         'The structure cannot be saved as *.MOL due to reaction arrrows.'
       )
     }
+
     const format: SupportedFormat =
       molfileFormat === 'v3000' ? 'molV3000' : 'mol'
     const molfile = await getStructure(
@@ -114,31 +126,17 @@ export class Ketcher {
     return this.editor.struct().hasRxnArrow()
   }
 
-  setMolecule(structure: string): void {
-    if (typeof structure !== 'string') return
-    this.#editor.load(structure, { rescale: true, fragment: false })
+  async setMolecule(structStr: string): Promise<void> {
+    assert(typeof structStr === 'string')
+
+    const struct: Struct = await parseStruct(structStr, this.#structService)
+    this.#editor.struct(struct)
   }
 
-  addFragment(fragment: string): void {
-    if (typeof fragment !== 'string') return
-    this.#editor.load(fragment, {
-      rescale: true,
-      fragment: true
-    })
-  }
+  async addFragment(fragment: string): Promise<void> {
+    assert(typeof fragment === 'string')
 
-  isDirty(): boolean {
-    const position = this.editor.history.current
-    const length = this.editor.history.length
-    if (!length || !this.#origin) {
-      return false
-    }
-    return !isEqual(this.editor.historyStack[position - 1], this.#origin)
-  }
-
-  setOrigin(): void {
-    const position = this.editor.history.current
-    this.#origin = position ? this.editor.historyStack[position - 1] : null
+    throw Error('not implemented yet')
   }
 
   async generateImage(

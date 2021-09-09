@@ -16,11 +16,11 @@
 
 import {
   FormatterFactory,
+  Ketcher,
   ServiceMode,
   StructService,
   StructServiceProvider
 } from 'ketcher-core'
-import { Ketcher, UI as KetcherUI } from '../../ketcher'
 
 import { ButtonsConfig } from './ButtonsConfig'
 import { Editor } from '../../editor'
@@ -32,7 +32,6 @@ class KetcherBuilder {
   private editor: Editor | null
   private serviceMode: ServiceMode | null
   private formatterFactory: FormatterFactory | null
-  private ui: KetcherUI | null
 
   private tempUIDataContainer: null | {
     element: HTMLDivElement | null
@@ -46,8 +45,6 @@ class KetcherBuilder {
     this.editor = null
     this.serviceMode = null
     this.formatterFactory = null
-    this.ui = null
-
     this.tempUIDataContainer = null
   }
 
@@ -95,12 +92,8 @@ class KetcherBuilder {
     }
     this.tempUIDataContainer = null
 
-    const tempRef: { ui: KetcherUI } = {
-      ui: null as any
-    }
-
     const editor = await new Promise<Editor>(resolve => {
-      tempRef.ui = initApp(
+      initApp(
         element,
         staticResourcesUrl,
         {
@@ -117,7 +110,6 @@ class KetcherBuilder {
 
     this.editor = editor
     this.editor.errorHandler = errorHandler
-    this.ui = tempRef.ui
     this.formatterFactory = new FormatterFactory(structService)
   }
 
@@ -130,10 +122,6 @@ class KetcherBuilder {
       throw new Error('You should append Api before building')
     }
 
-    if (!this.editor || !this.ui) {
-      throw new Error('You should append UI before building')
-    }
-
     if (!this.formatterFactory) {
       throw new Error(
         'You should append StructureServiceFactory before building'
@@ -141,9 +129,8 @@ class KetcherBuilder {
     }
 
     const ketcher = new Ketcher(
-      this.editor,
+      this.editor!,
       this.structService,
-      this.ui,
       this.formatterFactory
     )
     ketcher[this.serviceMode] = true
@@ -153,11 +140,10 @@ class KetcherBuilder {
     ;(global as any)._ui_editor = this.editor
 
     const params = new URLSearchParams(document.location.search)
-    ketcher.server.info().then(() => {
-      if (params.get('moll')) {
-        ketcher.ui.load(params.get('moll'))
-      }
-    })
+    const initialMol = params.get('moll')
+    if (initialMol) {
+      ketcher.setMolecule(initialMol)
+    }
 
     return ketcher
   }

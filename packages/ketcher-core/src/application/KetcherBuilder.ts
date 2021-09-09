@@ -1,4 +1,3 @@
-import { RendererProvider } from './../domain/services/renderer/rendererProvider.types'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,12 +14,13 @@ import { RendererProvider } from './../domain/services/renderer/rendererProvider
  * limitations under the License.
  ***************************************************************************/
 
+import { Renderer, StructServiceProvider } from 'domain/services'
+
 import { Ketcher } from './Ketcher'
-import { StructServiceProvider, RendererProvider } from 'domain/services'
+import { strict as assert } from 'assert'
 
 export class KetcherBuilder {
   #structServiceProvider?: StructServiceProvider
-  #rendererProvider?: RendererProvider
 
   withStructServiceProvider(
     structServiceProvider: StructServiceProvider
@@ -29,14 +29,9 @@ export class KetcherBuilder {
     return this
   }
 
-  withRendererProvider(rendererProvider: RendererProvider): KetcherBuilder {
-    this.#rendererProvider = rendererProvider
-    return this
-  }
-
-  build(): Ketcher {
+  async build(renderer: Renderer): Promise<Ketcher> {
+    assert(renderer != null)
     console.log(this.#structServiceProvider)
-    console.log(this.#rendererProvider)
-    return new Ketcher()
+    return (null as any) as Ketcher
   }
 }

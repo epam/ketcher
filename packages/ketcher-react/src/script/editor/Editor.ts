@@ -19,13 +19,20 @@ import {
   PipelineSubscription,
   Subscription
 } from 'subscription'
-import { Pile, Struct, Vec2 } from 'ketcher-core'
+import {
+  Editor as KetcherEditor,
+  LoadOptions,
+  Pile,
+  Struct,
+  Vec2
+} from 'ketcher-core'
 import { customOnChangeHandler, elementOffset } from './utils'
 import { fromDescriptorsAlign, fromNewCanvas } from './actions/basic'
 
 import Action from './shared/action'
 import Render from '../render'
 import closest from './shared/closest'
+import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 
 const SCALE = 40
@@ -90,7 +97,8 @@ interface Selection {
   rxnPluses?: Array<number>
   rxnArrows?: Array<number>
 }
-class Editor {
+class Editor implements KetcherEditor {
+  #origin?: any
   render: Render
   _selection: Selection | null
   _tool: any
@@ -149,6 +157,22 @@ class Editor {
     }
 
     domEventSetup(this, clientArea)
+  }
+
+  load(struct: Struct, options: LoadOptions) {}
+
+  isDitrty(): boolean {
+    const position = this.historyPtr
+    const length = this.historyStack.length
+    if (!length || !this.#origin) {
+      return false
+    }
+    return !isEqual(this.historyStack[position - 1], this.#origin)
+  }
+
+  setOrigin(): void {
+    const position = this.historyPtr
+    this.#origin = position ? this.historyStack[position - 1] : null
   }
 
   tool(name?: any, opts?: any) {

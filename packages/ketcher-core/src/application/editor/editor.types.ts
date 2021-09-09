@@ -14,8 +14,7 @@ export interface LoadOptions {
 }
 
 export interface Editor {
-  readonly history: EditorHistory
-
-  struct: () => Struct
-  load: (structure: string, options: LoadOptions) => Promise<void>
+  isDitrty: () => boolean
+  setOrigin: () => void
+  struct: (struct?: Struct) => Struct
 }

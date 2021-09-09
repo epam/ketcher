@@ -22,7 +22,7 @@ import {
   StereoValidator,
   Vec2,
   Struct
-} from 'ketcher-core'
+} from '../../../../../ketcher-core'
 import {
   AtomAdd,
   AtomAttr,

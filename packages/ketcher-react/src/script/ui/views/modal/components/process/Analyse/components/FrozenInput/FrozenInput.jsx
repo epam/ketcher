@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-
 function FrozenInput({ value }) {
   return (
     <input

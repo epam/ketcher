@@ -16,7 +16,7 @@ describe('should toggle color picker dialog', () => {
     const { container } = render(<ColorPicker />)
     const pickerToggleBtn = screen.getByTestId('color-picker-btn')
     userEvent.click(pickerToggleBtn)
-    expect(container.getElementsByClassName('compact-picker')[0]).toBeDefined()
+    expect(container.getElementsByClassName('react-colorful')[0]).toBeDefined()
   })
 
   it('should hide color picker dialog on overlay click', () => {
@@ -26,7 +26,7 @@ describe('should toggle color picker dialog', () => {
     const overlay = screen.getByTestId('color-picker-overlay')
     userEvent.click(overlay)
     expect(
-      container.getElementsByClassName('compact-picker')[0]
+      container.getElementsByClassName('react-colorful')[0]
     ).toBeUndefined()
   })
 })
@@ -37,8 +37,8 @@ describe('should pick color correctly', () => {
     render(<ColorPicker onChange={onChange} />)
     const pickerToggleBtn = screen.getByTestId('color-picker-btn')
     userEvent.click(pickerToggleBtn)
-    const colorCell = screen.getByTitle('#4D4D4D')
-    userEvent.click(colorCell)
+    const colorInput = screen.getByTestId('color-picker-input')
+    userEvent.type(colorInput, '#4d4d4d')
     expect(onChange).toBeCalledWith('#4d4d4d')
   })
 

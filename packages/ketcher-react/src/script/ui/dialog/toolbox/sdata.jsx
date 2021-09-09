@@ -23,7 +23,6 @@ import {
 
 import ComboBox from '../../component/form/combobox/combobox'
 import { Dialog } from '../../views/components'
-import React from 'react'
 import classes from './sgroup.module.less'
 import { connect } from 'react-redux'
 

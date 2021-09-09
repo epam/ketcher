@@ -22,7 +22,7 @@ import {
   formatProperties,
   getPropertiesByFormat
 } from 'ketcher-core'
-import React, { Component, createRef } from 'react'
+import { Component, createRef } from 'react'
 
 import { Dialog } from '../../../../components'
 import { ErrorsContext } from '../../../../../../../contexts'
@@ -185,7 +185,12 @@ class SaveDialog extends Component {
           <Field name="filename" />
           <Field name="format" onChange={this.changeType} />
         </Form>
-        <textarea value={structStr} readOnly ref={this.textAreaRef} />
+        <textarea
+          value={structStr}
+          className={classes.previewArea}
+          readOnly
+          ref={this.textAreaRef}
+        />
         {warnings.length ? (
           <div className={classes.warnings}>
             {warnings.map(warning => (

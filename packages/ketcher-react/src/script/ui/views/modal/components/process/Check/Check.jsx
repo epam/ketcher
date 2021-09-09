@@ -18,7 +18,6 @@ import Form, { Field } from '../../../../../component/form/form/form'
 
 import { Dialog } from '../../../../components'
 import ErrorsCheck from './components'
-import React from 'react'
 import Tabs from '../../../../../component/view/Tabs'
 import { check } from '../../../../../state/server'
 import { checkOpts } from '../../../../../state/options'

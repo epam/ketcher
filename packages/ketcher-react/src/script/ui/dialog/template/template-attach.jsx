@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Dialog, StructEditor } from '../../views/components'
-import React, { Component } from 'react'
+import { Component } from 'react'
 import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
 
 import Input from '../../component/form/input'

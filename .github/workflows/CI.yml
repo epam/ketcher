@@ -43,13 +43,13 @@ jobs:
       - name: Install Dependencies
         run: yarn install
 
-      - name: Run tests
-        run: yarn test
-        env:
-          CI: true
+      - name: Run audit
+        run: npx audit-ci --critical
 
       - name: Run build
         run: npx cross-env CI=false yarn build
 
-      - name: Run audit
-        run: npx audit-ci --critical
+      - name: Run tests
+        run: yarn test
+        env:
+          CI: true

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
+import { Component } from 'react'
 
 import { Dialog } from '../../../../components'
 import { FormatterFactory } from 'ketcher-core'

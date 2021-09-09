@@ -15,12 +15,12 @@
  ***************************************************************************/
 
 import { AppContext, ErrorsContext, SettingsContext } from './../../../contexts'
+import { Ketcher, StructService } from 'ketcher-core'
 import createStore, { load } from '../state'
 
 import App from './App.container'
 import { Provider } from 'react-redux'
 import ReactDOM from 'react-dom'
-import { StructService } from 'ketcher-core'
 import { initKeydownListener } from '../state/hotkeys'
 import { initResize } from '../state/toolbar'
 import { loadStruct } from '../state/shared'
@@ -41,7 +41,9 @@ function initApp(
       <SettingsContext.Provider value={{ staticResourcesUrl }}>
         <ErrorsContext.Provider value={{ errorHandler: options.errorHandler }}>
           <AppContext.Provider
-            value={{ getKetcherInstance: () => (window as any).ketcher }}>
+            value={{
+              getKetcherInstance: () => (window as any).ketcher as Ketcher
+            }}>
             <App />
           </AppContext.Provider>
         </ErrorsContext.Provider>

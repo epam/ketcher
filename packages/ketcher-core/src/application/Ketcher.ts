@@ -24,7 +24,7 @@ import { GenerateImageOptions, StructService } from 'domain/services'
 import { Editor } from './editor'
 import { MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
-import { assert } from 'console'
+import { strict as assert } from 'assert'
 
 function parseStruct(structStr: string, structService: StructService) {
   const format = identifyStructFormat(structStr)

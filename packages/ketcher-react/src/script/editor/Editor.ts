@@ -19,13 +19,7 @@ import {
   PipelineSubscription,
   Subscription
 } from 'subscription'
-import {
-  Editor as KetcherEditor,
-  LoadOptions,
-  Pile,
-  Struct,
-  Vec2
-} from 'ketcher-core'
+import { Editor as KetcherEditor, Pile, Struct, Vec2 } from 'ketcher-core'
 import { customOnChangeHandler, elementOffset } from './utils'
 import { fromDescriptorsAlign, fromNewCanvas } from './actions/basic'
 
@@ -158,8 +152,6 @@ class Editor implements KetcherEditor {
 
     domEventSetup(this, clientArea)
   }
-
-  load(struct: Struct, options: LoadOptions) {}
 
   isDitrty(): boolean {
     const position = this.historyPtr

@@ -60,7 +60,7 @@ const SaveButton = props => {
   const saveImage = () => {
     const ketcherInstance = getKetcherInstance()
     ketcherInstance
-      .generateImageAsync(data, { outputFormat })
+      .generateImage(data, { outputFormat })
       .then(blob => {
         saveAs(blob, `${filename}.${outputFormat}`)
         onSave()

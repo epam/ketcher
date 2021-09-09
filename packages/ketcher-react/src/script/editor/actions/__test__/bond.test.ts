@@ -15,9 +15,9 @@ describe('Bond Addition', () => {
     fromBondAddition(restruct as any, singleBond as any, 3, undefined)
     expect(spy).toHaveBeenCalled()
   })
-  it('function atomGetAttr was called when end undefined', () => {
+  it('function atomGetAttr was called', () => {
     const spy = jest.spyOn(utils, 'atomGetAttr')
-    fromBondAddition(restruct as any, singleBond as any, 3, undefined)
+    fromBondAddition(restruct as any, singleBond as any, 5, 1)
     expect(spy).toHaveBeenCalled()
   })
   it('should contain operation CalcImplicitH', () => {

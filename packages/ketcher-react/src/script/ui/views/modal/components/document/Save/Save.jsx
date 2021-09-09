@@ -187,7 +187,7 @@ class SaveDialog extends Component {
         </Form>
         <textarea
           value={structStr}
-          className={classes.saveTextarea}
+          className={classes.previewArea}
           readOnly
           ref={this.textAreaRef}
         />

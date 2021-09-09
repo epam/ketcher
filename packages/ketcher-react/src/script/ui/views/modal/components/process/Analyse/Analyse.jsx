@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { FormulaInput, FrozenInput } from './components'
-import React, { Component } from 'react'
+import { Component } from 'react'
 
 import { Dialog } from '../../../../components'
 import { ErrorsContext } from '../../../../../../../contexts'

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { RefCallback } from 'react'
+import { FC, RefCallback } from 'react'
 import TemplateTable, { Template, greekify } from './TemplateTable'
 import { filter as _filter, escapeRegExp, flow, omit, reduce } from 'lodash/fp'
 import {
@@ -87,7 +87,7 @@ function filterLib(lib, filter) {
   )(lib)
 }
 
-const TemplateLib: React.FC<Props> = props => {
+const TemplateLib: FC<Props> = props => {
   const { filter, onFilter, onChangeGroup, ...rest } = props
   const CONTAINER_MIN_WIDTH = 310
   let group = props.group

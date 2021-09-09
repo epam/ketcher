@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import GenSet from './components'
-import React from 'react'
 import classes from './GenGroup.module.less'
 import clsx from 'clsx'
 

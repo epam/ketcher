@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
 import { range } from 'lodash/fp'
 
 const PERIODIC_TABLE_COLUMNS = 19

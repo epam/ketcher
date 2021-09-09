@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
+import { Component } from 'react'
 
 import { FormContext } from '../../../../../contexts'
 import Input from '../input'

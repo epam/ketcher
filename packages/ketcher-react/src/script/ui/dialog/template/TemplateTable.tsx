@@ -16,7 +16,7 @@
 
 import { AutoSizer, List } from 'react-virtualized'
 
-import React from 'react'
+import { FC } from 'react'
 import { Struct } from 'ketcher-core'
 import StructRender from '../../component/structrender'
 import classes from './template-lib.module.less'
@@ -62,7 +62,7 @@ function tmplName(tmpl: Template, i: number): string {
   return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`
 }
 
-const RenderTmpl: React.FC<{
+const RenderTmpl: FC<{
   tmpl: Template
   className: string
   onClick: () => void
@@ -80,7 +80,7 @@ const RenderTmpl: React.FC<{
   )
 }
 
-const TemplateTable: React.FC<TemplateTableProps> = props => {
+const TemplateTable: FC<TemplateTableProps> = props => {
   const { templates, selected, onSelect, onDelete, onAttach } = props
   const ITEMS_COUNT = templates ? templates.length : 0
   const ITEM_SIZE = { width: 178, height: 120 }

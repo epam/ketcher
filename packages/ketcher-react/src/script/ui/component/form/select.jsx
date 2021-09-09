@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
 // import classes from './select.module.less'
 
 function SelectList({

@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
 import classes from './buttons.module.less'
 import { saveAs } from 'file-saver'
 import { useAppContext } from '../../../../hooks'

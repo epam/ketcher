@@ -16,7 +16,7 @@
 
 import { SGroup, Struct } from 'domain/entities'
 
-import { ifDef } from 'utils'
+import { ifDef } from '../../../../utils'
 
 function fromRlabel(rg) {
   const res: Array<any> = []
@@ -58,7 +58,7 @@ export function moleculeToGraph(struct: Struct): any {
   }
 }
 
-function atomToGraph(source) {
+export function atomToGraph(source) {
   const result = {}
   ifDef(result, 'label', source.label)
   ifDef(result, 'alias', source.alias)
@@ -110,7 +110,7 @@ function atomListToGraph(source) {
   return result
 }
 
-function bondToGraph(source) {
+export function bondToGraph(source) {
   const result = {}
 
   ifDef(result, 'type', source.type)
@@ -122,7 +122,7 @@ function bondToGraph(source) {
   return result
 }
 
-function sgroupToGraph(struct, source) {
+export function sgroupToGraph(struct, source) {
   const result = {}
 
   ifDef(result, 'type', source.type)

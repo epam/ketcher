@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useRef } from 'react'
+
 import { BaseCallProps } from './modal.types'
 import classes from './Modal.module.less'
 import clsx from 'clsx'

@@ -14,8 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Renderer, StructServiceProvider } from 'domain/services'
+import {
+  Renderer,
+  StructService,
+  StructServiceOptions,
+  StructServiceProvider
+} from 'domain/services'
 
+import { Editor } from 'application/editor'
+import { FormatterFactory } from 'application/formatters'
 import { Ketcher } from './Ketcher'
 import { strict as assert } from 'assert'
 
@@ -29,9 +36,18 @@ export class KetcherBuilder {
     return this
   }
 
-  async build(renderer: Renderer): Promise<Ketcher> {
-    assert(renderer != null)
-    console.log(this.#structServiceProvider)
-    return (null as any) as Ketcher
+  build(editor: Editor, serviceOptions?: StructServiceOptions): Ketcher {
+    assert(editor != null)
+    assert(this.#structServiceProvider != null)
+
+    const mergedServiceOptions: StructServiceOptions = { ...serviceOptions }
+    const structService: StructService = this.#structServiceProvider!.createStructService(
+      mergedServiceOptions
+    )
+    return new Ketcher(
+      editor,
+      structService,
+      new FormatterFactory(structService)
+    )
   }
 }

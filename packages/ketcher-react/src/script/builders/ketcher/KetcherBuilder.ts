@@ -48,7 +48,7 @@ class KetcherBuilder {
     this.tempUIDataContainer = null
   }
 
-  appendApiAsync(structServiceProvider: StructServiceProvider) {
+  async appendApiAsync(structServiceProvider: StructServiceProvider) {
     this.structService = createApi(structServiceProvider, {
       'smart-layout': true,
       'ignore-stereochemistry-errors': true,
@@ -64,8 +64,6 @@ class KetcherBuilder {
         this.tempUIDataContainer.buttons
       )
     }
-
-    return Promise.resolve()
   }
 
   appendServiceMode(mode: ServiceMode) {
@@ -88,7 +86,7 @@ class KetcherBuilder {
         buttons
       }
 
-      return Promise.resolve()
+      return
     }
     this.tempUIDataContainer = null
 
@@ -134,10 +132,6 @@ class KetcherBuilder {
       this.formatterFactory
     )
     ketcher[this.serviceMode] = true
-
-    // todo: remove
-    ;(global as any).ketcher = ketcher
-    ;(global as any)._ui_editor = this.editor
 
     const params = new URLSearchParams(document.location.search)
     const initialMol = params.get('moll')

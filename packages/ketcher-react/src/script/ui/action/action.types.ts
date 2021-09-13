@@ -48,6 +48,7 @@ type ToolVariant =
   | 'dropdown'
   | 'enhanced-stereo'
   | 'erase'
+  | 'functional-groups'
   | 'generic-groups'
   | 'help'
   | 'layout'

@@ -41,6 +41,7 @@ import { useResizeObserver } from '../../../../hooks'
 interface TemplateLibProps {
   filter: string
   group: string
+  isFuncGroupWindow: boolean
   lib: Array<Template>
   selected: Template
 }
@@ -87,8 +88,9 @@ function filterLib(lib, filter) {
   )(lib)
 }
 
-const TemplateLib: FC<Props> = props => {
-  const { filter, onFilter, onChangeGroup, ...rest } = props
+const TemplateDialog: FC<Props> = props => {
+  const { filter, onFilter, onChangeGroup, isFuncGroupWindow, ...rest } = props
+  const title = isFuncGroupWindow ? 'Functional Groups' : 'Template Library'
   const CONTAINER_MIN_WIDTH = 310
   let group = props.group
   const lib = filterLibSelector(props)
@@ -123,7 +125,7 @@ const TemplateLib: FC<Props> = props => {
 
   return (
     <Dialog
-      title="Template Library"
+      title={title}
       className={classes.templateLib}
       params={omit(['group'], rest)}
       result={() => result()}
@@ -174,7 +176,15 @@ const TemplateLib: FC<Props> = props => {
 }
 
 export default connect(
-  store => ({ ...omit(['attach'], store.templates) }),
+  ({ templates, modal }) => {
+    const isFuncGroupWindow = modal.name === 'fGroups'
+    const lib = isFuncGroupWindow ? templates.fGroups : templates.lib
+    return {
+      ...omit(['attach', 'lib', 'funcGroups'], templates),
+      lib,
+      isFuncGroupWindow
+    }
+  },
   (dispatch, props) => ({
     onFilter: filter => dispatch(changeFilter(filter)),
     onSelect: tmpl => dispatch(selectTmpl(tmpl)),
@@ -186,4 +196,4 @@ export default connect(
       props.onOk(res)
     }
   })
-)(TemplateLib)
+)(TemplateDialog)

@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import initTmplLib, { initLib } from './init-lib'
+import initTmplLib, { initLib, initFGroupsTemplates } from './init-lib'
 
 import { MolSerializer } from 'ketcher-core'
 import { omit } from 'lodash/fp'
 import { openDialog } from '../modal'
 import { storage } from '../../storage-ext'
 
-export { initTmplLib }
+export { initTmplLib, initFGroupsTemplates }
 
 /* TEMPLATES */
 export function selectTmpl(tmpl) {
@@ -142,6 +142,7 @@ function updateLocalStore(lib) {
 /* REDUCER */
 export const initTmplsState = {
   lib: [],
+  fGroups: [],
   selected: null,
   filter: '',
   group: null,
@@ -152,7 +153,8 @@ const tmplActions = [
   'TMPL_INIT',
   'TMPL_SELECT',
   'TMPL_CHANGE_GROUP',
-  'TMPL_CHANGE_FILTER'
+  'TMPL_CHANGE_FILTER',
+  'FGROUPS_INIT'
 ]
 
 const attachActions = ['INIT_ATTACH', 'SET_ATTACH_POINTS', 'SET_TMPL_NAME']

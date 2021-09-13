@@ -22,6 +22,13 @@ const templateLib = {
     title: 'Custom Templates',
     action: { dialog: 'templates' },
     disabled: (editor, server, options) => !options.app.templates
+  },
+  'functional-groups': {
+    // shortcut: '', TODO: Determine shortcut for Functional Groups window
+    // TODO Update HELP info about current tools
+    title: 'Functional groups',
+    action: { dialog: 'fGroups' },
+    disabled: (editor, server, options) => !options.app.fGroups
   }
 }
 

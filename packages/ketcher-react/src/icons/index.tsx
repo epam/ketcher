@@ -144,6 +144,7 @@ const icons = {
   dropdown: DropdownIcon,
   'enhanced-stereo': EnhancedStereoIcon,
   erase: EraseIcon,
+  'functional-groups': TemplateLibIcon, // temporary icon
   'generic-groups': GenericGroupsIcon,
   help: HelpIcon,
   layout: LayoutIcon,

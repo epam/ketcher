@@ -249,23 +249,27 @@ SelectTool.prototype.dblclick = function (event) {
 
   var struct = rnd.ctab.molecule
   if (ci.map === 'atoms') {
-    this.editor.selection(closestToSel(ci))
     var atom = struct.atoms.get(ci.id)
     var ra = editor.event.elementEdit.dispatch(atom)
+    const selection = this.editor.selection().atoms
     Promise.resolve(ra)
       .then(newatom => {
         // TODO: deep compare to not produce dummy, e.g.
         // atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
-        editor.update(fromAtomsAttrs(rnd.ctab, ci.id, newatom))
+        selection.forEach(id => {
+          editor.update(fromAtomsAttrs(rnd.ctab, id, newatom))
+        })
       })
       .catch(() => null) // w/o changes
   } else if (ci.map === 'bonds') {
-    this.editor.selection(closestToSel(ci))
+    const selection = this.editor.selection().bonds
     var bond = rnd.ctab.bonds.get(ci.id).b
     var rb = editor.event.bondEdit.dispatch(bond)
     Promise.resolve(rb)
       .then(newbond => {
-        editor.update(fromBondsAttrs(rnd.ctab, ci.id, newbond))
+        selection.forEach(id => {
+          editor.update(fromBondsAttrs(rnd.ctab, id, newbond))
+        })
       })
       .catch(() => null) // w/o changes
   } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {

@@ -20,7 +20,8 @@ import Form, { Field } from '../../../../../component/form/form'
 import {
   FormatterFactory,
   formatProperties,
-  getPropertiesByFormat
+  getPropertiesByFormat,
+  Vec2
 } from 'ketcher-core'
 import React, { Component, createRef } from 'react'
 
@@ -110,6 +111,27 @@ class SaveDialog extends Component {
     this.setState({ disableControls: true })
 
     const { struct, server, options, formState } = this.props
+    const structAtoms = struct.atoms // TO DO add check if atom is in collapsed func group
+
+    if (structAtoms)
+      structAtoms.forEach(atom => {
+        // RECALCS ATOM POSITIONS FOR COLLAPSED FUNC GROUPS
+        const initialCoords = struct.sgroups.values().next().value
+          .initialBracketBox
+        const x1 = initialCoords?.p0?.x || 0
+        const y1 = initialCoords?.p0?.y || 0
+        const x2 = initialCoords?.p1?.x || 0
+        const y2 = initialCoords?.p1?.y || 0
+        const diffX = x2 - x1
+        const diffY = y2 - y1
+        const widthCoeff = 1.5 / diffX //TO DO discuss size of coeff
+        const heightCoeff = 1.5 / diffY //TO DO discuss size of coeff
+        const newX =
+          (atom.pp.x - x1 - (x2 - x1) / 2) / widthCoeff + x1 + (x2 - x1) / 2
+        const newY =
+          (atom.pp.y - y1 - (y2 - y1) / 2) / heightCoeff + y1 + (y2 - y1) / 2
+        atom.pp = new Vec2(newX, newY, 0)
+      })
 
     const factory = new FormatterFactory(server)
 

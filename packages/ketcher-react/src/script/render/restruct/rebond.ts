@@ -59,6 +59,18 @@ class ReBond extends ReObject {
       collapsedFunctionalGroupsAtoms.indexOf(this.b.begin) >= 0 &&
       collapsedFunctionalGroupsAtoms.indexOf(this.b.end) >= 0
     ) {
+      // POSSIBLE HACK, HELPS WITH PERMANENT HIGHLIGHT OF FUNCTIONAL GROUP
+      // const atom = render.ctab.atoms.get(this.b.begin)
+      // const sgroup = render.ctab.sgroups.get(atom!.a.sgs.values().next().value)
+      // const bracketBox = sgroup!.item.bracketBox.transform(Scale.obj2scaled, options)
+      // const d = sgroup!.item.bracketDir
+      // const n = d?.rotateSC(1, 0)
+      // var a0 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p0.y)
+      // var a1 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p1.y)
+      // var b0 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p0.y)
+      // const startX = (b0.x + a0.x) / 2 - 25
+      // const startY = (a1.y + a0.y) / 2 - 25
+      // return render.paper.rect(startX, startY, 50, 50).attr(options.highlightStyle)
       return
     }
 

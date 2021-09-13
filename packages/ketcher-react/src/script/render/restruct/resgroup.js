@@ -37,32 +37,48 @@ class ReSGroup extends ReObject {
     var set
     set = render.paper.set()
     var atomSet = new Pile(sgroup.atoms)
-    // console.log(atomSet)
     const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet)
     SGroup.bracketPos(sgroup, remol.molecule, crossBonds)
     var bracketBox = sgroup.bracketBox
     var d = sgroup.bracketDir
     sgroup.areas = [bracketBox]
-    const middleX = (bracketBox.p1.x + bracketBox.p0.x) / 2
-    const middleY = (bracketBox.p1.y + bracketBox.p0.y) / 2
-    const p0 = new Vec2(middleX - 0.75, middleY - 0.75) //TO DO discuss size of 'brackets'
-    const p1 = new Vec2(middleX + 0.75, middleY + 0.75) //TO DO discuss size of 'brackets'
-    const collapsedBracketBox = new Box2Abs(p0, p1)
+    const initialCoords = remol.sgroups.values().next().value.item.bracketBox
+    if (!sgroup.alreadyCollapsed) sgroup.initialBracketBox = initialCoords
+    const x1 = initialCoords?.p0?.x || 0
+    const y1 = initialCoords?.p0?.y || 0
+    const x2 = initialCoords?.p1?.x || 0
+    const y2 = initialCoords?.p1?.y || 0
+    const diffX = x2 - x1
+    const diffY = y2 - y1
+    const widthCoeff = 1.5 / diffX //TO DO discuss coeff
+    const heightCoeff = 1.5 / diffY //TO DO discuss coeff
     if (!sgroup.expanded && sgroup.isFunctionalGroup) {
-      bracketBox = collapsedBracketBox
       const leftBracketStart = Scale.obj2scaled(
-        bracketBox.p0,
+        initialCoords.p0,
         remol.render.options
       )
       const rigthBracketEnd = Scale.obj2scaled(
-        bracketBox.p1,
+        initialCoords.p1,
         remol.render.options
       )
-      // remol.atoms.forEach(atom => {  BREAKS EXPORT BUT HELPS WITH RENDER AND MERGING WITH ATOMS
-      //   if(atom.a.sgs.values().next().value === sgroup.id) {
-      //     atom.a.pp = new Vec2(middleX, middleY, 0)
-      //   }
-      // })
+      if (!sgroup.alreadyCollapsed) {
+        remol.atoms.forEach(atom => {
+          // HELPS WITH SELECTION AND MERGING WITH ATOMS BUT BREAKS EXPORT OF GROUPS MERGED WITH OTHER ITEMS
+          if (atom.a.sgs.values().next().value === sgroup.id) {
+            const newX =
+              (atom.a.pp.x - x1 - (x2 - x1) / 2) * widthCoeff +
+              x1 +
+              (x2 - x1) / 2
+            const newY =
+              (atom.a.pp.y - y1 - (y2 - y1) / 2) * heightCoeff +
+              y1 +
+              (y2 - y1) / 2
+            if (diffX !== 0 && diffY !== 0) {
+              atom.a.pp = new Vec2(newX, newY, 0)
+            }
+          }
+        })
+      }
       set.push(
         render.paper
           .text(
@@ -72,6 +88,7 @@ class ReSGroup extends ReObject {
           )
           .attr({ 'font-weight': 900, 'font-size': 14 })
       ) // TO DO discuss font-size (depends on 'brackets')
+      sgroup.alreadyCollapsed = true
     } else {
       switch (sgroup.type) {
         case 'MUL':
@@ -173,7 +190,7 @@ class ReSGroup extends ReObject {
     var set = paper.set()
     if (!sGroupItem.expanded && sGroupItem.isFunctionalGroup) {
       //TO DO create const for size of highlight
-      sGroupItem.highlighting = paper
+      sGroupItem.highlighting = paper // could be changed with rebond hack
         .rect(startX, startY, 50, 50)
         .attr(options.highlightStyle)
     } else {

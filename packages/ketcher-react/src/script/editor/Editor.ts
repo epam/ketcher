@@ -251,6 +251,36 @@ class Editor {
         if (ci[key].length > 0)
           // TODO: deep merge
           res[key] = ci[key].slice()
+
+        //  TO DO update next lines for all cases and create helper
+        //   if (key === 'atoms') {
+        //     ci[key].forEach(aid => {
+        //       const atom = this.struct().atoms.get(aid)
+        //       const sgroupId = atom?.sgs?.values().next().value
+        //       const sgroup = this.struct().sgroups.get(sgroupId)
+        //       if (sgroup) res[key] = sgroup.atoms
+        //     })
+        //   } else if(key === 'bonds') {
+        //     ci[key].forEach(bid => {
+        //       const bond = this.struct().bonds.get(bid)
+        //       const atom1 = this.struct().atoms.get(bond!.begin)
+        //       const atom2 = this.struct().atoms.get(bond!.end)
+        //       const firstAtomSgroupId = atom1?.sgs?.values().next().value
+        //       const secondAtomSgroupId = atom2?.sgs?.values().next().value
+        //       if (firstAtomSgroupId === secondAtomSgroupId) {
+        //         const sgroup = this.struct().sgroups.get(firstAtomSgroupId)
+        //         const resBonds: number[] = []
+        //         Array.from(this.struct().bonds).forEach(bond => {
+        //           if (sgroup!.atoms.includes(bond[1].begin) && sgroup!.atoms.includes(bond[1].end)) {
+        //             resBonds.push(bond[0])
+        //           }
+        //         })
+        //         res['atoms'] = sgroup!.atoms
+        //         res['bonds'] = resBonds
+        //       }
+        //     })
+        //   }
+        // }
       })
 
       if (Object.keys(res).length !== 0) {

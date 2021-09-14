@@ -30,6 +30,7 @@ import { fromMultipleMove } from '../actions/fragment'
 import { sgroupDialog } from './sgroup'
 import utils from '../shared/utils'
 import { xor } from 'lodash/fp'
+import Action from '../shared/action'
 
 function SelectTool(editor, mode) {
   if (!(this instanceof SelectTool)) return new SelectTool(editor, mode)
@@ -249,6 +250,7 @@ SelectTool.prototype.dblclick = function (event) {
 
   var struct = rnd.ctab.molecule
   if (ci.map === 'atoms') {
+    const action = new Action()
     var atom = struct.atoms.get(ci.id)
     var ra = editor.event.elementEdit.dispatch(atom)
     const selection = this.editor.selection().atoms
@@ -256,20 +258,23 @@ SelectTool.prototype.dblclick = function (event) {
       .then(newatom => {
         // TODO: deep compare to not produce dummy, e.g.
         // atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
-        selection.forEach(id => {
-          editor.update(fromAtomsAttrs(rnd.ctab, id, newatom))
+        selection.forEach(aid => {
+          action.mergeWith(fromAtomsAttrs(rnd.ctab, aid, newatom))
         })
+        editor.update(action)
       })
       .catch(() => null) // w/o changes
   } else if (ci.map === 'bonds') {
+    const action = new Action()
     const selection = this.editor.selection().bonds
     var bond = rnd.ctab.bonds.get(ci.id).b
     var rb = editor.event.bondEdit.dispatch(bond)
     Promise.resolve(rb)
       .then(newbond => {
-        selection.forEach(id => {
-          editor.update(fromBondsAttrs(rnd.ctab, id, newbond))
+        selection.forEach(bid => {
+          action.mergeWith(fromBondsAttrs(rnd.ctab, bid, newbond))
         })
+        editor.update(action)
       })
       .catch(() => null) // w/o changes
   } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {

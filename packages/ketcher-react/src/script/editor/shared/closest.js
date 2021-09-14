@@ -117,20 +117,9 @@ function findClosestAtom(restruct, pos, skip, minDist) {
 
   minDist = minDist || maxMinDist
   minDist = Math.min(minDist, maxMinDist)
-  const collapsedFunctionalGroups = []
-  restruct.sgroups.forEach(sg => {
-    if (!sg.item.expanded && sg.item.isFunctionalGroup) {
-      collapsedFunctionalGroups.push(sg.item.id)
-    }
-  })
 
   restruct.atoms.forEach((atom, aid) => {
-    if (
-      // doesn't work properly withiout resgroup line 67
-      aid === skipId ||
-      collapsedFunctionalGroups.includes(atom.a.sgs.values().next().value)
-    )
-      return
+    if (aid === skipId) return
 
     const dist = Vec2.dist(pos, atom.a.pp)
 
@@ -156,12 +145,6 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
   let closestBondCenter = null
   const maxMinDist = 0.8 * SELECTION_DISTANCE_COEFFICIENT
   const skipId = skip && skip.map === 'bonds' ? skip.id : null
-  // const collapsedFunctionalGroups = []
-  // restruct.sgroups.forEach(sg => {
-  //   if(!sg.item.expanded && sg.item.isFunctionalGroup) {
-  //     collapsedFunctionalGroups.push(sg.item.id)
-  //   }
-  // })
 
   minDist = minDist || maxMinDist
   minDist = Math.min(minDist, maxMinDist)
@@ -170,13 +153,6 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
 
   restruct.bonds.forEach((bond, bid) => {
     if (bid === skipId) return
-    // should let megre collapsed func group with other items but doesn't work
-    // if (
-    //   bid === skipId ||
-    //   collapsedFunctionalGroups.includes(bond.b.begin) ||
-    //   collapsedFunctionalGroups.includes(bond.b.end)
-    // )
-    //   return
 
     const p1 = restruct.atoms.get(bond.b.begin).a.pp
     const p2 = restruct.atoms.get(bond.b.end).a.pp
@@ -192,13 +168,6 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
 
   restruct.bonds.forEach((bond, bid) => {
     if (bid === skipId) return
-    // should let megre collapsed func group with other items but doesn't work
-    // if (
-    //   bid === skipId ||
-    //   collapsedFunctionalGroups.includes(bond.b.begin) ||
-    //   collapsedFunctionalGroups.includes(bond.b.end)
-    // )
-    //   return
 
     const hb = restruct.molecule.halfBonds.get(bond.b.hb1)
     const dir = hb.dir

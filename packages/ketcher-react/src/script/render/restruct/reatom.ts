@@ -97,6 +97,9 @@ class ReAtom extends ReObject {
     })
     if (collapsedFunctionalGroups.some(sg => this.a?.sgs.has(sg))) {
       return
+      // 2 Temp lines under, should be removed later
+      // return paper.circle(ps.x, ps.y, options.atomSelectionPlateRadius)
+      // .attr(options.highlightStyle)
     }
     return paper
       .circle(ps.x, ps.y, options.atomSelectionPlateRadius)

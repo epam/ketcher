@@ -33,6 +33,7 @@ import { SimpleObject } from './SimpleObject'
 import { Text } from './Text'
 import { Vec2 } from './Vec2'
 import { FunctionalGroup } from './FunctionalGroup'
+import { FunctionalGroupsProvider } from 'domain/helpers/FunctionalGroupsProvider'
 
 export type Neighbor = {
   aid: number
@@ -63,6 +64,7 @@ export class Struct {
   simpleObjects: Pool<SimpleObject>
   texts: Pool<Text>
   functionalGroups: Pool<FunctionalGroup>
+  functionalGroupsProvider // TO DO improve type
 
   constructor() {
     this.atoms = new Pool<Atom>()
@@ -80,6 +82,7 @@ export class Struct {
     this.simpleObjects = new Pool<SimpleObject>()
     this.texts = new Pool<Text>()
     this.functionalGroups = new Pool<FunctionalGroup>()
+    this.functionalGroupsProvider = new FunctionalGroupsProvider()
   }
 
   hasRxnProps(): boolean {
@@ -1015,11 +1018,13 @@ export class Struct {
     return aid && this.atoms.get(aid)?.fragment
   }
 
-  bindSGroupsToFunctionalGroups(functionalGroupsList) {
+  bindSGroupsToFunctionalGroups() {
     this.sgroups.forEach(sgroup => {
       if (
-        functionalGroupsList.includes(sgroup.data.name) &&
-        sgroup.type === 'SUP'
+        FunctionalGroup.isFunctionalGroup(
+          this.functionalGroupsProvider.getFunctionalGroupsList(),
+          sgroup
+        )
       ) {
         sgroup.isFunctionalGroup = true
         this.functionalGroups.add(

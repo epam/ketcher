@@ -9,19 +9,16 @@ export class FunctionalGroup {
     this.isExpanded = isExpanded
   }
 
-  static isFunctionalGroup(
-    sGroupName: string,
-    functionalGroupsList: string[]
-  ): boolean {
-    return functionalGroupsList.includes(sGroupName)
+  static isFunctionalGroup(list, sgroup): boolean {
+    return list.includes(sgroup.data.name) && sgroup.type === 'SUP'
   }
 
   static clone(functionalGroup: FunctionalGroup): FunctionalGroup {
-    const cp = new FunctionalGroup(
+    const cloned = new FunctionalGroup(
       functionalGroup.name,
       functionalGroup.relatedSGroupId,
       functionalGroup.isExpanded
     )
-    return cp
+    return cloned
   }
 }

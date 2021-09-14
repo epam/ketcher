@@ -42,43 +42,15 @@ class ReSGroup extends ReObject {
     var bracketBox = sgroup.bracketBox
     var d = sgroup.bracketDir
     sgroup.areas = [bracketBox]
-    const initialCoords = remol.sgroups.values().next().value.item.bracketBox
-    if (!sgroup.alreadyCollapsed) sgroup.initialBracketBox = initialCoords
-    const x1 = initialCoords?.p0?.x || 0
-    const y1 = initialCoords?.p0?.y || 0
-    const x2 = initialCoords?.p1?.x || 0
-    const y2 = initialCoords?.p1?.y || 0
-    const diffX = x2 - x1
-    const diffY = y2 - y1
-    const widthCoeff = 1.5 / diffX //TO DO discuss coeff
-    const heightCoeff = 1.5 / diffY //TO DO discuss coeff
     if (!sgroup.expanded && sgroup.isFunctionalGroup) {
       const leftBracketStart = Scale.obj2scaled(
-        initialCoords.p0,
+        bracketBox.p0,
         remol.render.options
       )
       const rigthBracketEnd = Scale.obj2scaled(
-        initialCoords.p1,
+        bracketBox.p1,
         remol.render.options
       )
-      if (!sgroup.alreadyCollapsed) {
-        remol.atoms.forEach(atom => {
-          // HELPS WITH SELECTION AND MERGING WITH ATOMS BUT BREAKS EXPORT OF GROUPS MERGED WITH OTHER ITEMS
-          if (atom.a.sgs.values().next().value === sgroup.id) {
-            const newX =
-              (atom.a.pp.x - x1 - (x2 - x1) / 2) * widthCoeff +
-              x1 +
-              (x2 - x1) / 2
-            const newY =
-              (atom.a.pp.y - y1 - (y2 - y1) / 2) * heightCoeff +
-              y1 +
-              (y2 - y1) / 2
-            if (diffX !== 0 && diffY !== 0) {
-              atom.a.pp = new Vec2(newX, newY, 0)
-            }
-          }
-        })
-      }
       set.push(
         render.paper
           .text(
@@ -86,9 +58,8 @@ class ReSGroup extends ReObject {
             rigthBracketEnd.y - (rigthBracketEnd.y - leftBracketStart.y) / 2,
             sgroup.data.name
           )
-          .attr({ 'font-weight': 900, 'font-size': 14 })
+          .attr({ 'font-weight': 700, 'font-size': 14 }) // TO DO try different weight and size
       ) // TO DO discuss font-size (depends on 'brackets')
-      sgroup.alreadyCollapsed = true
     } else {
       switch (sgroup.type) {
         case 'MUL':

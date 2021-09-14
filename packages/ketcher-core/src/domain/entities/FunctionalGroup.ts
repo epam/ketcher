@@ -21,4 +21,52 @@ export class FunctionalGroup {
     )
     return cloned
   }
+
+  static isAtomInCollapsedFinctionalGroup(
+    atom,
+    sgroups,
+    sgroupsFromReStruct: boolean
+  ): boolean {
+    // TO DO improve method, it should use Func Groups instead of SGroups
+    const collapsedFunctionalGroups: number[] = []
+    if (sgroupsFromReStruct) {
+      sgroups.forEach(sg => {
+        if (!sg.item.expanded && sg.item.isFunctionalGroup) {
+          collapsedFunctionalGroups.push(sg.item.id)
+        }
+      })
+    } else {
+      sgroups.forEach(sg => {
+        if (!sg.expanded && sg.isFunctionalGroup) {
+          collapsedFunctionalGroups.push(sg.id)
+        }
+      })
+    }
+    return collapsedFunctionalGroups.some(sg => atom.sgs.has(sg))
+  }
+
+  static isBondInCollapsedFunctionalGroup(
+    bond,
+    sgroups,
+    sgroupsFromReStruct: boolean
+  ): boolean {
+    const collapsedFunctionalGroupsAtoms: number[] = []
+    if (sgroupsFromReStruct) {
+      sgroups.forEach(sg => {
+        if (!sg.item.expanded && sg.item.isFunctionalGroup) {
+          collapsedFunctionalGroupsAtoms.push(...sg.item.atoms)
+        }
+      })
+    } else {
+      sgroups.forEach(sg => {
+        if (!sg.expanded && sg.isFunctionalGroup) {
+          collapsedFunctionalGroupsAtoms.push(...sg.atoms)
+        }
+      })
+    }
+    return (
+      collapsedFunctionalGroupsAtoms.includes(bond.begin) &&
+      collapsedFunctionalGroupsAtoms.includes(bond.end)
+    )
+  }
 }

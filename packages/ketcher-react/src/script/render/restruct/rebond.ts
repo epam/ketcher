@@ -14,7 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, HalfBond, Scale, Struct, Vec2 } from 'ketcher-core'
+import {
+  Atom,
+  Bond,
+  HalfBond,
+  Scale,
+  Struct,
+  Vec2,
+  FunctionalGroup
+} from 'ketcher-core'
 import { LayerMap, StereoColoringType } from './GeneralEnumTypes'
 import ReAtom, { getColorFromStereoLabel } from './reatom'
 
@@ -49,30 +57,10 @@ class ReBond extends ReObject {
   makeHighlightPlate(render: Render) {
     const options = render.options
     bondRecalc(this, render.ctab, options)
-    const collapsedFunctionalGroupsAtoms: number[] = []
-    render.ctab.sgroups.forEach(sg => {
-      if (!sg.item.expanded && sg.item.isFunctionalGroup) {
-        collapsedFunctionalGroupsAtoms.push(...sg.item.atoms)
-      }
-    })
-    if (
-      collapsedFunctionalGroupsAtoms.indexOf(this.b.begin) >= 0 &&
-      collapsedFunctionalGroupsAtoms.indexOf(this.b.end) >= 0
-    ) {
-      // POSSIBLE HACK, HELPS WITH PERMANENT HIGHLIGHT OF FUNCTIONAL GROUP
-      // const atom = render.ctab.atoms.get(this.b.begin)
-      // const sgroup = render.ctab.sgroups.get(atom!.a.sgs.values().next().value)
-      // const bracketBox = sgroup!.item.bracketBox.transform(Scale.obj2scaled, options)
-      // const d = sgroup!.item.bracketDir
-      // const n = d?.rotateSC(1, 0)
-      // var a0 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p0.y)
-      // var a1 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p1.y)
-      // var b0 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p0.y)
-      // const startX = (b0.x + a0.x) / 2 - 25
-      // const startY = (a1.y + a0.y) / 2 - 25
-      // return render.paper.rect(startX, startY, 50, 50).attr(options.highlightStyle)
-      return
-    }
+    const bond = this.b
+    const sgroups = render.ctab.sgroups
+    if (FunctionalGroup.isBondInCollapsedFunctionalGroup(bond, sgroups, true))
+      return null
 
     const c = Scale.obj2scaled(this.b.center, options)
     return render.paper
@@ -81,18 +69,11 @@ class ReBond extends ReObject {
   }
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any) {
     bondRecalc(this, restruct, options)
-    const collapsedFunctionalGroupsAtoms: number[] = []
-    restruct.render.ctab.sgroups.forEach(sg => {
-      if (!sg.item.expanded && sg.item.isFunctionalGroup) {
-        collapsedFunctionalGroupsAtoms.push(...sg.item.atoms)
-      }
-    })
-    if (
-      collapsedFunctionalGroupsAtoms.indexOf(this.b.begin) >= 0 &&
-      collapsedFunctionalGroupsAtoms.indexOf(this.b.end) >= 0
-    ) {
+    const bond = this.b
+    const sgroups = restruct.render.ctab.sgroups
+    if (FunctionalGroup.isBondInCollapsedFunctionalGroup(bond, sgroups, true))
       return null
-    }
+
     const c = Scale.obj2scaled(this.b.center, options)
     return paper
       .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
@@ -103,22 +84,11 @@ class ReBond extends ReObject {
     // eslint-disable-line max-statements
     const render = restruct.render
     const struct = restruct.molecule
-    let collapsedFunctionalGroupsAtoms: number[] = []
-    restruct.molecule.sgroups.forEach(sg => {
-      if (!sg.expanded && sg.isFunctionalGroup) {
-        collapsedFunctionalGroupsAtoms = [
-          ...collapsedFunctionalGroupsAtoms,
-          ...(sg.atoms || [])
-        ]
-      }
-    })
     const bond = restruct.molecule.bonds.get(bid)
-    if (
-      collapsedFunctionalGroupsAtoms.indexOf(bond!.begin) >= 0 &&
-      collapsedFunctionalGroupsAtoms.indexOf(bond!.end) >= 0
-    ) {
+    const sgroups = restruct.molecule.sgroups
+    if (FunctionalGroup.isBondInCollapsedFunctionalGroup(bond, sgroups, false))
       return
-    }
+
     const paper = render.paper
     const hb1 =
         this.b.hb1 !== undefined ? struct.halfBonds.get(this.b.hb1) : null,

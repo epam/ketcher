@@ -1018,14 +1018,9 @@ export class Struct {
     return aid && this.atoms.get(aid)?.fragment
   }
 
-  bindSGroupsToFunctionalGroups() {
+  bindSGroupsToFunctionalGroups(functionalGroupsList) {
     this.sgroups.forEach(sgroup => {
-      if (
-        FunctionalGroup.isFunctionalGroup(
-          this.functionalGroupsProvider.getFunctionalGroupsList(),
-          sgroup
-        )
-      ) {
+      if (FunctionalGroup.isFunctionalGroup(functionalGroupsList, sgroup)) {
         sgroup.isFunctionalGroup = true
         this.functionalGroups.add(
           new FunctionalGroup(sgroup.data.name, sgroup.id, sgroup.expanded)

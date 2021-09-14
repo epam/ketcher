@@ -945,7 +945,7 @@ function bisectSmallestSector(atom: ReAtom, struct: Struct) {
     da.push(angles[(i + 1) % angles.length] - angles[i])
   }
   da.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI)
-  let daMin = 999
+  let daMin = Number.MAX_VALUE
   let ang = -Math.PI / 2
   for (let i = 0; i < angles.length; ++i) {
     if (da[i] < daMin) {

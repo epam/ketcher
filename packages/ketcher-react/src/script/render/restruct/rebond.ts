@@ -59,7 +59,7 @@ class ReBond extends ReObject {
     bondRecalc(this, render.ctab, options)
     const bond = this.b
     const sgroups = render.ctab.sgroups
-    if (FunctionalGroup.isBondInCollapsedFunctionalGroup(bond, sgroups, true))
+    if (FunctionalGroup.isBondInContractedFunctionalGroup(bond, sgroups, true))
       return null
 
     const c = Scale.obj2scaled(this.b.center, options)
@@ -71,7 +71,7 @@ class ReBond extends ReObject {
     bondRecalc(this, restruct, options)
     const bond = this.b
     const sgroups = restruct.render.ctab.sgroups
-    if (FunctionalGroup.isBondInCollapsedFunctionalGroup(bond, sgroups, true))
+    if (FunctionalGroup.isBondInContractedFunctionalGroup(bond, sgroups, true))
       return null
 
     const c = Scale.obj2scaled(this.b.center, options)
@@ -86,7 +86,7 @@ class ReBond extends ReObject {
     const struct = restruct.molecule
     const bond = restruct.molecule.bonds.get(bid)
     const sgroups = restruct.molecule.sgroups
-    if (FunctionalGroup.isBondInCollapsedFunctionalGroup(bond, sgroups, false))
+    if (FunctionalGroup.isBondInContractedFunctionalGroup(bond, sgroups, false))
       return
 
     const paper = render.paper

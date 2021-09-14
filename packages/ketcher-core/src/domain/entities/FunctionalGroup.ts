@@ -22,51 +22,51 @@ export class FunctionalGroup {
     return cloned
   }
 
-  static isAtomInCollapsedFinctionalGroup(
+  static isAtomInContractedFinctionalGroup(
     atom,
     sgroups,
     sgroupsFromReStruct: boolean
   ): boolean {
     // TO DO improve method, it should use Func Groups instead of SGroups
-    const collapsedFunctionalGroups: number[] = []
+    const contractedFunctionalGroups: number[] = []
     if (sgroupsFromReStruct) {
       sgroups.forEach(sg => {
         if (!sg.item.expanded && sg.item.isFunctionalGroup) {
-          collapsedFunctionalGroups.push(sg.item.id)
+          contractedFunctionalGroups.push(sg.item.id)
         }
       })
     } else {
       sgroups.forEach(sg => {
         if (!sg.expanded && sg.isFunctionalGroup) {
-          collapsedFunctionalGroups.push(sg.id)
+          contractedFunctionalGroups.push(sg.id)
         }
       })
     }
-    return collapsedFunctionalGroups.some(sg => atom.sgs.has(sg))
+    return contractedFunctionalGroups.some(sg => atom.sgs.has(sg))
   }
 
-  static isBondInCollapsedFunctionalGroup(
+  static isBondInContractedFunctionalGroup(
     bond,
     sgroups,
     sgroupsFromReStruct: boolean
   ): boolean {
-    const collapsedFunctionalGroupsAtoms: number[] = []
+    const contractedFunctionalGroupsAtoms: number[] = []
     if (sgroupsFromReStruct) {
       sgroups.forEach(sg => {
         if (!sg.item.expanded && sg.item.isFunctionalGroup) {
-          collapsedFunctionalGroupsAtoms.push(...sg.item.atoms)
+          contractedFunctionalGroupsAtoms.push(...sg.item.atoms)
         }
       })
     } else {
       sgroups.forEach(sg => {
         if (!sg.expanded && sg.isFunctionalGroup) {
-          collapsedFunctionalGroupsAtoms.push(...sg.atoms)
+          contractedFunctionalGroupsAtoms.push(...sg.atoms)
         }
       })
     }
     return (
-      collapsedFunctionalGroupsAtoms.includes(bond.begin) &&
-      collapsedFunctionalGroupsAtoms.includes(bond.end)
+      contractedFunctionalGroupsAtoms.includes(bond.begin) &&
+      contractedFunctionalGroupsAtoms.includes(bond.end)
     )
   }
 }

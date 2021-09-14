@@ -131,9 +131,9 @@ class ReSGroup extends ReObject {
     const middleY = (bracketBox.p1.y + bracketBox.p0.y) / 2
     const p0 = new Vec2(middleX - 0.75, middleY - 0.75)
     const p1 = new Vec2(middleX + 0.75, middleY + 0.75)
-    const collapsedBracketBox = new Box2Abs(p0, p1)
+    const contractedBracketBox = new Box2Abs(p0, p1)
     if (!sgroup.expanded && sgroup.isFunctionalGroup) {
-      bracketBox = collapsedBracketBox
+      bracketBox = contractedBracketBox
       const leftBracketStart = Scale.obj2scaled(bracketBox.p0, options)
       return paper
         .rect(leftBracketStart.x + 5, leftBracketStart.y + 5, 50, 50)

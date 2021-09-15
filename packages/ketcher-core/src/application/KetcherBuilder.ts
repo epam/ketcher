@@ -23,7 +23,7 @@ import {
 import { Editor } from 'application/editor'
 import { FormatterFactory } from 'application/formatters'
 import { Ketcher } from './Ketcher'
-import { strict as assert } from 'assert'
+import assert from 'assert'
 
 const DefaultStructServiceOptions = {
   'smart-layout': true,

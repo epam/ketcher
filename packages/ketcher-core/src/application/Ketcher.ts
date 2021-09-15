@@ -24,7 +24,7 @@ import { GenerateImageOptions, StructService } from 'domain/services'
 import { Editor } from './editor'
 import { MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
-import { strict as assert } from 'assert'
+import assert from 'assert'
 
 function parseStruct(structStr: string, structService: StructService) {
   const format = identifyStructFormat(structStr)
@@ -57,6 +57,10 @@ export class Ketcher {
     structService: StructService,
     formatterFactory: FormatterFactory
   ) {
+    assert(editor != null)
+    assert(structService != null)
+    assert(formatterFactory != null)
+
     this.#editor = editor
     this.#structService = structService
     this.#formatterFactory = formatterFactory

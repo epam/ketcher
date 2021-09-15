@@ -137,7 +137,7 @@ export function sgroupToStruct(source) {
     case 'SUP': {
       ifDef(sgroup.data, 'name', source.name)
       ifDef(sgroup, 'expanded', source.expanded)
-      ifDef(sgroup, 'isFunctionalGroup', source.isFunctionalGroup)
+      ifDef(sgroup, 'id', source.id)
       break
     }
     case 'DAT': {

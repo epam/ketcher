@@ -439,8 +439,8 @@
             "expanded": {
               "type": "boolean"
             },
-            "isFunctionalGroup": {
-              "type": "boolean"
+            "id": {
+              "type": "number"
             }
           }
         },

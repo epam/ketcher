@@ -31,6 +31,7 @@ import ReText from './ReText'
 import Render from '..'
 import Visel from './visel'
 import util from '../util'
+import { FunctionalGroup } from 'ketcher-core'
 
 class ReStruct {
   public static maps = {
@@ -575,8 +576,10 @@ class ReStruct {
           }
           if (
             item instanceof ReSGroup &&
-            !item.item.expanded &&
-            item.item.isFunctionalGroup
+            FunctionalGroup.isContractedFunctionalGroup(
+              item.item.id,
+              this.molecule.functionalGroups
+            )
           ) {
             const sGroupAtoms = atoms.filter(
               atom => atom.sgroup === item.item.id

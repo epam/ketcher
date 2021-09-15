@@ -14,7 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Pile, SGroup, Scale, Vec2 } from 'ketcher-core'
+import {
+  Box2Abs,
+  Pile,
+  SGroup,
+  Scale,
+  Vec2,
+  FunctionalGroup
+} from 'ketcher-core'
 
 import { LayerMap } from './GeneralEnumTypes'
 import ReDataSGroupData from './redatasgroupdata'
@@ -42,7 +49,10 @@ class ReSGroup extends ReObject {
     var bracketBox = sgroup.bracketBox
     var d = sgroup.bracketDir
     sgroup.areas = [bracketBox]
-    if (!sgroup.expanded && sgroup.isFunctionalGroup) {
+    const functionalGroups = remol.molecule.functionalGroups
+    if (
+      FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
+    ) {
       const leftBracketStart = Scale.obj2scaled(
         bracketBox.p0,
         remol.render.options
@@ -132,7 +142,10 @@ class ReSGroup extends ReObject {
     const p0 = new Vec2(middleX - 0.75, middleY - 0.75)
     const p1 = new Vec2(middleX + 0.75, middleY + 0.75)
     const contractedBracketBox = new Box2Abs(p0, p1)
-    if (!sgroup.expanded && sgroup.isFunctionalGroup) {
+    const functionalGroups = restruct.molecule.functionalGroups
+    if (
+      FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
+    ) {
       bracketBox = contractedBracketBox
       const leftBracketStart = Scale.obj2scaled(bracketBox.p0, options)
       return paper
@@ -158,8 +171,14 @@ class ReSGroup extends ReObject {
     const startX = (b0.x + a0.x) / 2 - 25
     const startY = (a1.y + a0.y) / 2 - 25
 
+    const functionalGroups = render.ctab.molecule.functionalGroups
     var set = paper.set()
-    if (!sGroupItem.expanded && sGroupItem.isFunctionalGroup) {
+    if (
+      FunctionalGroup.isContractedFunctionalGroup(
+        sGroupItem.id,
+        functionalGroups
+      )
+    ) {
       //TO DO create const for size of highlight
       sGroupItem.highlighting = paper // could be changed with rebond hack
         .rect(startX, startY, 50, 50)

@@ -120,8 +120,9 @@ export function fromSgroupAddition(
   attrs,
   sgid,
   pp,
-  isFunctionalGroup,
-  expanded
+  expanded,
+  name,
+  initialId
 ) {
   // eslint-disable-line
   let action = new Action()
@@ -131,7 +132,7 @@ export function fromSgroupAddition(
   sgid = sgid - 0 === sgid ? sgid : restruct.molecule.sgroups.newId()
 
   if (type === 'SUP') {
-    action.addOp(new SGroupCreate(sgid, type, pp, isFunctionalGroup, expanded))
+    action.addOp(new SGroupCreate(sgid, type, pp, expanded, name, initialId))
   } else {
     action.addOp(new SGroupCreate(sgid, type, pp))
   }

@@ -92,7 +92,15 @@ class ReAtom extends ReObject {
     const ps = Scale.obj2scaled(this.a.pp, options)
     const atom = this.a
     const sgroups = render.ctab.sgroups
-    if (FunctionalGroup.isAtomInContractedFinctionalGroup(atom, sgroups, true))
+    const functionalGroups = render.ctab.molecule.functionalGroups
+    if (
+      FunctionalGroup.isAtomInContractedFinctionalGroup(
+        atom,
+        sgroups,
+        functionalGroups,
+        true
+      )
+    )
       return null
     return paper
       .circle(ps.x, ps.y, options.atomSelectionPlateRadius)
@@ -101,7 +109,15 @@ class ReAtom extends ReObject {
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any) {
     const atom = this.a
     const sgroups = restruct.render.ctab.sgroups
-    if (FunctionalGroup.isAtomInContractedFinctionalGroup(atom, sgroups, true))
+    const functionalGroups = restruct.render.ctab.molecule.functionalGroups
+    if (
+      FunctionalGroup.isAtomInContractedFinctionalGroup(
+        atom,
+        sgroups,
+        functionalGroups,
+        true
+      )
+    )
       return null
 
     const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
@@ -113,7 +129,15 @@ class ReAtom extends ReObject {
     // eslint-disable-line max-statements
     const atom = restruct.molecule.atoms.get(aid)
     const sgroups = restruct.molecule.sgroups
-    if (FunctionalGroup.isAtomInContractedFinctionalGroup(atom, sgroups, false))
+    const functionalGroups = restruct.molecule.functionalGroups
+    if (
+      FunctionalGroup.isAtomInContractedFinctionalGroup(
+        atom,
+        sgroups,
+        functionalGroups,
+        false
+      )
+    )
       return
 
     const render = restruct.render

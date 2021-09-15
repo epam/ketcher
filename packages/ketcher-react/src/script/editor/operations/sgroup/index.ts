@@ -18,6 +18,8 @@ import { SGroup, Vec2 } from 'ketcher-core'
  ***************************************************************************/
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
+import { FunctionalGroup } from 'ketcher-core'
+import { FunctionalGroupsProvider } from 'ketcher-core'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -25,8 +27,9 @@ type Data = {
   sgid: any
   type?: any
   pp?: any
-  isFunctionalGroup?: boolean
   expanded?: boolean
+  name?: string
+  initialId?: any
 }
 
 class SGroupCreate extends BaseOperation {
@@ -36,23 +39,25 @@ class SGroupCreate extends BaseOperation {
     sgroupId?: any,
     type?: any,
     pp?: any,
-    isFunctionalGroup?: boolean,
-    expanded?: boolean
+    expanded?: boolean,
+    name?: string,
+    initialId?: any
   ) {
     super(OperationType.S_GROUP_CREATE)
     this.data = {
       sgid: sgroupId,
       type,
       pp,
-      isFunctionalGroup: isFunctionalGroup,
-      expanded: expanded
+      expanded,
+      name,
+      initialId
     }
   }
 
   execute(restruct: Restruct) {
     const struct = restruct.molecule
     const sgroup = new SGroup(this.data.type)
-    const { sgid, pp, isFunctionalGroup, expanded } = this.data
+    const { sgid, pp, expanded, name, initialId } = this.data
 
     sgroup.id = sgid
     struct.sgroups.set(sgid, sgroup)
@@ -61,15 +66,26 @@ class SGroupCreate extends BaseOperation {
       struct.sgroups.get(sgid)!.pp = new Vec2(pp)
     }
 
-    if (isFunctionalGroup) {
-      sgroup.isFunctionalGroup = isFunctionalGroup
-    }
-
     if (expanded) {
       sgroup.expanded = expanded
     }
 
+    if (name) {
+      sgroup.data.name = name
+    }
+
     restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)))
+    if (
+      FunctionalGroup.isFunctionalGroup(
+        FunctionalGroupsProvider.getInstance().getFunctionalGroupsList(),
+        sgroup
+      )
+    ) {
+      restruct.molecule.functionalGroups.set(
+        initialId,
+        new FunctionalGroup(sgroup.data.name, sgroup.id, sgroup.expanded)
+      )
+    }
     this.data.sgid = sgid
   }
 

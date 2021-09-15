@@ -25,19 +25,26 @@ export class FunctionalGroup {
   static isAtomInContractedFinctionalGroup(
     atom,
     sgroups,
+    functionalGroups,
     sgroupsFromReStruct: boolean
   ): boolean {
-    // TO DO improve method, it should use Func Groups instead of SGroups
     const contractedFunctionalGroups: number[] = []
     if (sgroupsFromReStruct) {
       sgroups.forEach(sg => {
-        if (!sg.item.expanded && sg.item.isFunctionalGroup) {
+        if (
+          FunctionalGroup.isContractedFunctionalGroup(
+            sg.item.id,
+            functionalGroups
+          )
+        ) {
           contractedFunctionalGroups.push(sg.item.id)
         }
       })
     } else {
       sgroups.forEach(sg => {
-        if (!sg.expanded && sg.isFunctionalGroup) {
+        if (
+          FunctionalGroup.isContractedFunctionalGroup(sg.id, functionalGroups)
+        ) {
           contractedFunctionalGroups.push(sg.id)
         }
       })
@@ -48,18 +55,26 @@ export class FunctionalGroup {
   static isBondInContractedFunctionalGroup(
     bond,
     sgroups,
+    functionalGroups,
     sgroupsFromReStruct: boolean
   ): boolean {
     const contractedFunctionalGroupsAtoms: number[] = []
     if (sgroupsFromReStruct) {
       sgroups.forEach(sg => {
-        if (!sg.item.expanded && sg.item.isFunctionalGroup) {
+        if (
+          FunctionalGroup.isContractedFunctionalGroup(
+            sg.item.id,
+            functionalGroups
+          )
+        ) {
           contractedFunctionalGroupsAtoms.push(...sg.item.atoms)
         }
       })
     } else {
       sgroups.forEach(sg => {
-        if (!sg.expanded && sg.isFunctionalGroup) {
+        if (
+          FunctionalGroup.isContractedFunctionalGroup(sg.id, functionalGroups)
+        ) {
           contractedFunctionalGroupsAtoms.push(...sg.atoms)
         }
       })
@@ -68,5 +83,17 @@ export class FunctionalGroup {
       contractedFunctionalGroupsAtoms.includes(bond.begin) &&
       contractedFunctionalGroupsAtoms.includes(bond.end)
     )
+  }
+
+  static isContractedFunctionalGroup(sgroupId, functionalGroups): boolean {
+    let isFunctionalGroup = false
+    let expanded = false
+    functionalGroups.forEach(fg => {
+      if (fg.relatedSGroupId === sgroupId) {
+        isFunctionalGroup = true
+        expanded = fg.isExpanded
+      }
+    })
+    return !expanded && isFunctionalGroup
   }
 }

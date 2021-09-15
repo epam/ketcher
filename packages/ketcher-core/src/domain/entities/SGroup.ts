@@ -76,7 +76,6 @@ export class SGroup {
   neiAtoms: any
   pp: Vec2 | null
   data: any
-  isFunctionalGroup: boolean
   expanded: boolean
 
   constructor(type: string) {
@@ -118,7 +117,6 @@ export class SGroup {
       query: '',
       queryOp: ''
     }
-    this.isFunctionalGroup = false
     this.expanded = false
   }
 
@@ -220,7 +218,6 @@ export class SGroup {
     cp.bonds = null
     cp.allAtoms = sgroup.allAtoms
     cp.expanded = sgroup.expanded
-    cp.isFunctionalGroup = sgroup.isFunctionalGroup
     return cp
   }
 

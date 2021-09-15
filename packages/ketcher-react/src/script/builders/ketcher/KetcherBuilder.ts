@@ -33,19 +33,11 @@ class KetcherBuilder {
   private serviceMode: ServiceMode | null
   private formatterFactory: FormatterFactory | null
 
-  private tempUIDataContainer: null | {
-    element: HTMLDivElement | null
-    staticResourcesUrl: string
-    buttons?: ButtonsConfig
-    errorHandler: (message: string) => void
-  }
-
   constructor() {
     this.structService = null
     this.editor = null
     this.serviceMode = null
     this.formatterFactory = null
-    this.tempUIDataContainer = null
   }
 
   async appendApiAsync(structServiceProvider: StructServiceProvider) {
@@ -55,15 +47,6 @@ class KetcherBuilder {
       'mass-skip-error-on-pseudoatoms': false,
       'gross-formula-add-rsites': true
     })
-
-    if (this.tempUIDataContainer) {
-      return this.appendUiAsync(
-        this.tempUIDataContainer.element,
-        this.tempUIDataContainer.staticResourcesUrl,
-        this.tempUIDataContainer.errorHandler,
-        this.tempUIDataContainer.buttons
-      )
-    }
   }
 
   appendServiceMode(mode: ServiceMode) {
@@ -78,18 +61,6 @@ class KetcherBuilder {
   ): Promise<void> {
     const { structService } = this
 
-    if (!structService) {
-      this.tempUIDataContainer = {
-        element,
-        staticResourcesUrl,
-        errorHandler,
-        buttons
-      }
-
-      return
-    }
-    this.tempUIDataContainer = null
-
     const editor = await new Promise<Editor>(resolve => {
       initApp(
         element,
@@ -101,14 +72,14 @@ class KetcherBuilder {
           buildDate: process.env.BUILD_DATE || '',
           buildNumber: process.env.BUILD_NUMBER || ''
         },
-        structService,
+        structService!,
         resolve
       )
     })
 
     this.editor = editor
     this.editor.errorHandler = errorHandler
-    this.formatterFactory = new FormatterFactory(structService)
+    this.formatterFactory = new FormatterFactory(structService!)
   }
 
   build() {

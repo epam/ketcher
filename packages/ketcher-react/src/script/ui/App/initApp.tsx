@@ -16,14 +16,13 @@
 
 import { AppContext, ErrorsContext, SettingsContext } from './../../../contexts'
 import { Ketcher, StructService } from 'ketcher-core'
-import createStore, { load } from '../state'
 
 import App from './App.container'
 import { Provider } from 'react-redux'
 import ReactDOM from 'react-dom'
+import createStore from '../state'
 import { initKeydownListener } from '../state/hotkeys'
 import { initResize } from '../state/toolbar'
-import { loadStruct } from '../state/shared'
 
 function initApp(
   element: HTMLDivElement | null,
@@ -51,11 +50,6 @@ function initApp(
     </Provider>,
     element
   )
-
-  return {
-    load: (structStr, opts) => store.dispatch(load(structStr, opts)),
-    loadStruct
-  }
 }
 
 export { initApp }

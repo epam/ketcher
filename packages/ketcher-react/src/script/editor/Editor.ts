@@ -20,7 +20,7 @@ import {
   Subscription
 } from 'subscription'
 import { Editor as KetcherEditor, Pile, Struct, Vec2 } from 'ketcher-core'
-import { customOnChangeHandler, elementOffset } from './utils'
+import { customOnChangeHandler } from './utils'
 import { fromDescriptorsAlign, fromNewCanvas } from './actions/basic'
 
 import Action from './shared/action'
@@ -449,12 +449,7 @@ class Editor implements KetcherEditor {
   }
 
   findItem(event: any, maps: any, skip: any) {
-    // todo: remove global
-    const pos = (global as any)._ui_editor
-      ? new Vec2(this.render.page2obj(event)) // eslint-disable-line
-      : new Vec2(event.pageX, event.pageY).sub(
-          elementOffset(this.render.clientArea)
-        )
+    const pos = new Vec2(this.render.page2obj(event))
 
     return closest.item(this.render.ctab, pos, maps, skip, this.render.options)
   }

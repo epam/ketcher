@@ -1,12 +1,13 @@
 import 'miew/dist/Miew.min.css'
 import 'ketcher-react/dist/index.css'
 
+import { Ketcher, RemoteStructServiceProvider } from 'ketcher-core'
+
+;
+
 import { Editor } from 'ketcher-react'
 // @ts-ignore
 import Miew from 'miew'
-import { RemoteStructServiceProvider } from 'ketcher-core'
-
-;
 
 (global as any).Miew = Miew
 
@@ -24,6 +25,9 @@ const App = () => {
       errorHandler={(message: string) => alert(message)}
       staticResourcesUrl={process.env.PUBLIC_URL}
       structServiceProvider={structServiceProvider}
+      onInit={(ketcher: Ketcher) => {
+        ;(global as any).ketcher = ketcher
+      }}
     />
   )
 }

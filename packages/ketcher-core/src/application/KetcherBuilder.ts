@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import {
-  Renderer,
   StructService,
   StructServiceOptions,
   StructServiceProvider
@@ -25,6 +24,13 @@ import { Editor } from 'application/editor'
 import { FormatterFactory } from 'application/formatters'
 import { Ketcher } from './Ketcher'
 import { strict as assert } from 'assert'
+
+const DefaultStructServiceOptions = {
+  'smart-layout': true,
+  'ignore-stereochemistry-errors': true,
+  'mass-skip-error-on-pseudoatoms': false,
+  'gross-formula-add-rsites': true
+}
 
 export class KetcherBuilder {
   #structServiceProvider?: StructServiceProvider
@@ -40,14 +46,20 @@ export class KetcherBuilder {
     assert(editor != null)
     assert(this.#structServiceProvider != null)
 
-    const mergedServiceOptions: StructServiceOptions = { ...serviceOptions }
+    const mergedServiceOptions: StructServiceOptions = {
+      ...DefaultStructServiceOptions,
+      ...serviceOptions
+    }
     const structService: StructService = this.#structServiceProvider!.createStructService(
       mergedServiceOptions
     )
-    return new Ketcher(
+    const ketcher = new Ketcher(
       editor,
       structService,
       new FormatterFactory(structService)
     )
+    ketcher[this.#structServiceProvider.mode] = true
+
+    return ketcher
   }
 }

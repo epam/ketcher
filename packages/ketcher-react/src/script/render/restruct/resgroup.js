@@ -68,8 +68,8 @@ class ReSGroup extends ReObject {
             rigthBracketEnd.y - (rigthBracketEnd.y - leftBracketStart.y) / 2,
             sgroup.data.name
           )
-          .attr({ 'font-weight': 700, 'font-size': 14 }) // TO DO try different weight and size
-      ) // TO DO discuss font-size (depends on 'brackets')
+          .attr({ 'font-weight': 700, 'font-size': 14 })
+      )
     } else {
       switch (sgroup.type) {
         case 'MUL':
@@ -136,21 +136,12 @@ class ReSGroup extends ReObject {
   }
   makeSelectionPlate(restruct, paper, options) {
     const sgroup = this.item
-    var bracketBox = sgroup.bracketBox
-    const middleX = (bracketBox.p1.x + bracketBox.p0.x) / 2
-    const middleY = (bracketBox.p1.y + bracketBox.p0.y) / 2
-    const p0 = new Vec2(middleX - 0.75, middleY - 0.75)
-    const p1 = new Vec2(middleX + 0.75, middleY + 0.75)
-    const contractedBracketBox = new Box2Abs(p0, p1)
+    const { startX, startY, size } = getHighlighPathInfo(sgroup, options)
     const functionalGroups = restruct.molecule.functionalGroups
     if (
       FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
     ) {
-      bracketBox = contractedBracketBox
-      const leftBracketStart = Scale.obj2scaled(bracketBox.p0, options)
-      return paper
-        .rect(leftBracketStart.x + 5, leftBracketStart.y + 5, 50, 50)
-        .attr(options.selectionStyle) // TO DO figure out 5px
+      return paper.rect(startX, startY, size, size).attr(options.selectionStyle)
     }
   }
   drawHighlight(render) {
@@ -158,18 +149,10 @@ class ReSGroup extends ReObject {
     var options = render.options
     var paper = render.paper
     var sGroupItem = this.item
-    var bracketBox = sGroupItem.bracketBox.transform(Scale.obj2scaled, options)
-    var lineWidth = options.lineWidth
-    var vext = new Vec2(lineWidth * 4, lineWidth * 6)
-    bracketBox = bracketBox.extend(vext, vext)
-    var d = sGroupItem.bracketDir,
-      n = d.rotateSC(1, 0)
-    var a0 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p0.y)
-    var a1 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p1.y)
-    var b0 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p0.y)
-    var b1 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p1.y)
-    const startX = (b0.x + a0.x) / 2 - 25
-    const startY = (a1.y + a0.y) / 2 - 25
+    const { a0, a1, b0, b1, startX, startY, size } = getHighlighPathInfo(
+      sGroupItem,
+      options
+    )
 
     const functionalGroups = render.ctab.molecule.functionalGroups
     var set = paper.set()
@@ -179,9 +162,8 @@ class ReSGroup extends ReObject {
         functionalGroups
       )
     ) {
-      //TO DO create const for size of highlight
-      sGroupItem.highlighting = paper // could be changed with rebond hack
-        .rect(startX, startY, 50, 50)
+      sGroupItem.highlighting = paper
+        .rect(startX, startY, size, size)
         .attr(options.highlightStyle)
     } else {
       sGroupItem.highlighting = paper
@@ -471,6 +453,31 @@ function getBracketParameters(
     })()
   }
   return brackets
+}
+
+function getHighlighPathInfo(sgroup, options) {
+  let bracketBox = sgroup.bracketBox.transform(Scale.obj2scaled, options)
+  const lineWidth = options.lineWidth
+  const vext = new Vec2(lineWidth * 4, lineWidth * 6)
+  bracketBox = bracketBox.extend(vext, vext)
+  const d = sgroup.bracketDir,
+    n = d.rotateSC(1, 0)
+  const a0 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p0.y)
+  const a1 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p1.y)
+  const b0 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p0.y)
+  const b1 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p1.y)
+  const size = options.contractedFunctionalGroupSize
+  const startX = (b0.x + a0.x) / 2 - size / 2
+  const startY = (a1.y + a0.y) / 2 - size / 2
+  return {
+    a0,
+    a1,
+    b0,
+    b1,
+    startX,
+    startY,
+    size
+  }
 }
 
 export default ReSGroup

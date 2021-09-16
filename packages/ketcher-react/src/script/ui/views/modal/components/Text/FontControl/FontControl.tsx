@@ -21,9 +21,9 @@ import classes from './FontControl.module.less'
 import { range } from 'lodash/fp'
 
 export const FontControl = ({ editorState, setEditorState, styles }) => {
-  const defultFontSize = 13
+  const defaultFontSize = '13px'
   const [isShowingFontSizeMenu, setIsShowingFontSizeMenu] = useState(false)
-  const [currentFontSize, setCurrentFontSize] = useState(`${defultFontSize}px`)
+  const [currentFontSize, setCurrentFontSize] = useState(defaultFontSize)
 
   const setFontSize = (e, value) => {
     e.preventDefault()
@@ -33,11 +33,11 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
     setIsShowingFontSizeMenu(false)
   }
 
-  const currentStyle = styles.fontSize.current(editorState) || currentFontSize
+  const currentStyle = styles.fontSize.current(editorState)
 
   useEffect(() => {
-    setCurrentFontSize(currentStyle)
-  })
+    setCurrentFontSize(currentStyle || defaultFontSize)
+  }, [currentStyle])
 
   const MIN_FONT_SIZE = 4
   const MAX_FONT_SIZE = 144

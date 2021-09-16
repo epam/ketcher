@@ -30,7 +30,8 @@ import {
   BondAttr,
   BondDelete,
   CalcImplicitH,
-  FragmentAdd
+  FragmentAdd,
+  FragmentStereoFlag
 } from '../operations'
 import { atomForNewBond, atomGetAttr } from './utils'
 import {
@@ -109,6 +110,10 @@ export function fromBondAddition(
   action.operations.reverse()
 
   if (mergeFragments) mergeFragmentsIfNeeded(action, restruct, begin, end)
+
+  if (struct.frags.get(frid || 0)?.stereoAtoms && !bond.stereo) {
+    action.addOp(new FragmentStereoFlag(frid || 0).perform(restruct))
+  }
 
   return [action, begin, end, bid]
 }

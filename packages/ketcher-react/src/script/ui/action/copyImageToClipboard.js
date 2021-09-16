@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FormatterFactory } from 'ketcher-core'
-import { Ketcher } from '../../ketcher'
+import { FormatterFactory, Ketcher } from 'ketcher-core'
 
 async function copyImageToClipboard() {
   const state = global.currentState
@@ -30,7 +29,7 @@ async function copyImageToClipboard() {
     const service = factory.create('mol', options)
     const structStr = await service.getStructureFromStructAsync(struct)
     const ketcher = new Ketcher(editor, server, {}, factory)
-    const image = await ketcher.generateImageAsync(structStr, {
+    const image = await ketcher.generateImage(structStr, {
       outputFormat: 'png',
       backgroundColor: '255, 255, 255'
     })

@@ -1,13 +1,15 @@
 import 'miew/dist/Miew.min.css'
 import 'ketcher-react/dist/index.css'
 
-// @ts-ignore
+import { Ketcher, RemoteStructServiceProvider } from 'ketcher-core'
+
+;
+
 import { Editor } from 'ketcher-react'
 // @ts-ignore
 import Miew from 'miew'
-// @ts-ignore
-import { RemoteStructServiceProvider } from 'ketcher-core'
-;(global as any).Miew = Miew
+
+(global as any).Miew = Miew
 
 let structServiceProvider: any = new RemoteStructServiceProvider(
   process.env.API_PATH || process.env.REACT_APP_API_PATH!
@@ -23,6 +25,9 @@ const App = () => {
       errorHandler={(message: string) => alert(message)}
       staticResourcesUrl={process.env.PUBLIC_URL}
       structServiceProvider={structServiceProvider}
+      onInit={(ketcher: Ketcher) => {
+        ;(global as any).ketcher = ketcher
+      }}
     />
   )
 }

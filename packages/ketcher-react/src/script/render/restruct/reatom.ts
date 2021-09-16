@@ -119,8 +119,10 @@ class ReAtom extends ReObject {
     if (this.showLabel) {
       label = buildLabel(this, render.paper, ps, options)
       delta = 0.5 * options.lineWidth
-      rightMargin = label.rbb.width / 2
-      leftMargin = -label.rbb.width / 2
+      rightMargin =
+        (label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom)
+      leftMargin =
+        (-label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom)
       implh = Math.floor(this.a.implicitH)
       isHydrogen = label.text === 'H'
       restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true)
@@ -775,7 +777,11 @@ function showHydrogen(
     pathAndRBoxTranslate(
       hydrogen.path,
       hydrogen.rbb,
-      data.leftMargin - 0.5 * hydrogen.rbb.width - delta,
+      data.leftMargin -
+        0.5 *
+          hydrogen.rbb.width *
+          (implh > 1 && options.zoom < 1 ? options.zoom : 1) -
+        delta,
       0
     )
     data.leftMargin -= hydrogen.rbb.width + delta

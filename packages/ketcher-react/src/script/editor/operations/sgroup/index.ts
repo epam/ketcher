@@ -1,5 +1,10 @@
 import Restruct, { ReSGroup } from '../../../render/restruct'
-import { SGroup, Vec2 } from 'ketcher-core'
+import {
+  SGroup,
+  Vec2,
+  FunctionalGroup,
+  FunctionalGroupsProvider
+} from 'ketcher-core'
 
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -18,8 +23,6 @@ import { SGroup, Vec2 } from 'ketcher-core'
  ***************************************************************************/
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import { FunctionalGroup } from 'ketcher-core'
-import { FunctionalGroupsProvider } from 'ketcher-core'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -29,7 +32,6 @@ type Data = {
   pp?: any
   expanded?: boolean
   name?: string
-  initialId?: any
 }
 
 class SGroupCreate extends BaseOperation {
@@ -40,8 +42,7 @@ class SGroupCreate extends BaseOperation {
     type?: any,
     pp?: any,
     expanded?: boolean,
-    name?: string,
-    initialId?: any
+    name?: string
   ) {
     super(OperationType.S_GROUP_CREATE)
     this.data = {
@@ -49,8 +50,7 @@ class SGroupCreate extends BaseOperation {
       type,
       pp,
       expanded,
-      name,
-      initialId
+      name
     }
   }
 

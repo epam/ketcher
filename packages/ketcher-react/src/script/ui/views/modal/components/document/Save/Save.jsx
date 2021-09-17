@@ -110,6 +110,7 @@ class SaveDialog extends Component {
     this.setState({ disableControls: true })
 
     const { struct, server, options, formState } = this.props
+
     const factory = new FormatterFactory(server)
 
     const service = factory.create(type, options)

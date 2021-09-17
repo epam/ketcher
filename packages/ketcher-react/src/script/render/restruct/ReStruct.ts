@@ -1,4 +1,11 @@
-import { Box2Abs, Pile, Pool, Struct, Vec2 } from 'ketcher-core'
+import {
+  Box2Abs,
+  Pile,
+  Pool,
+  Struct,
+  Vec2,
+  FunctionalGroup
+} from 'ketcher-core'
 
 import { LayerMap } from './GeneralEnumTypes'
 /****************************************************************************
@@ -31,7 +38,6 @@ import ReText from './ReText'
 import Render from '..'
 import Visel from './visel'
 import util from '../util'
-import { FunctionalGroup } from 'ketcher-core'
 
 class ReStruct {
   public static maps = {
@@ -565,8 +571,8 @@ class ReStruct {
     const atoms: { selected: boolean; sgroup: number }[] = []
 
     Object.keys(ReStruct.maps).forEach(map => {
-      let [obj] = this[map].values() // hack to include ReSGroup, figure out better solution
-      if (ReStruct.maps[map].isSelectable() || obj instanceof ReSGroup) {
+      const [mapValues] = this[map].values() // hack to include ReSGroup, figure out better solution
+      if (ReStruct.maps[map].isSelectable() || mapValues instanceof ReSGroup) {
         this[map].forEach((item, id) => {
           if (item instanceof ReAtom) {
             atoms.push({

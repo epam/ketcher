@@ -22,6 +22,7 @@
     "url": "https://github.com/epam/ketcher/issues"
   },
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "module": "dist/index.modern.js",
   "source": "src/index.ts",
   "engines": {
@@ -38,7 +39,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",
-    "jsonschema": "^1.4.0"
+    "assert": "^2.0.0",
+    "jsonschema": "^1.4.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",

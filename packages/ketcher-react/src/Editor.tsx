@@ -20,10 +20,10 @@ import 'url-search-params-polyfill'
 import 'whatwg-fetch'
 import './index.less'
 
-import { useEffect, useRef } from 'react'
 import init, { Config } from './script'
+import { useEffect, useRef } from 'react'
 
-import { Ketcher } from './script/ketcher'
+import { Ketcher } from 'ketcher-core'
 import classes from './Editor.module.less'
 import clsx from 'clsx'
 import { useResizeObserver } from './hooks'

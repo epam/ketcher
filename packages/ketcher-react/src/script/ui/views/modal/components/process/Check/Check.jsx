@@ -14,16 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-import { connect } from 'react-redux'
+import Form, { Field } from '../../../../../component/form/form/form'
 
 import { Dialog } from '../../../../components'
+import ErrorsCheck from './components'
 import Tabs from '../../../../../component/view/Tabs'
-import Form, { Field } from '../../../../../component/form/form'
 import { check } from '../../../../../state/server'
 import { checkOpts } from '../../../../../state/options'
-import ErrorsCheck from './components'
-
+import { connect } from 'react-redux'
 import style from './Check.module.less'
 
 const checkSchema = {

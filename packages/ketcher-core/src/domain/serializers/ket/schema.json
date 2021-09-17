@@ -511,6 +511,24 @@
           "properties": {
             "mode": {
               "type": "string"
+            },
+            "pos": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["x", "y"],
+                "properties": {
+                  "x": {
+                    "type": "number"
+                  },
+                  "y": {
+                    "type": "number"
+                  },
+                  "z": {
+                    "type": "number"
+                  }
+                }
+              }
             }
           }
         }

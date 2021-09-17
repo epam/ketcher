@@ -14,12 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-
-import Form, { Field } from '../../../../../component/form/form'
+import { BaseCallProps, BaseProps } from '../../../modal.types'
+import Form, { Field } from '../../../../../component/form/form/form'
 import { Dialog } from '../../../../components'
-import { BaseProps, BaseCallProps } from '../../../modal.types'
-
 import classes from './Automap.module.less'
 
 type Props = BaseProps & BaseCallProps

@@ -1,4 +1,3 @@
-import { BaseOperation } from '../operations/base'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,6 +13,8 @@ import { BaseOperation } from '../operations/base'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { BaseOperation } from '../operations/base'
 import Restruct from '../../render/restruct'
 //
 // Undo/redo actions

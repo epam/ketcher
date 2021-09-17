@@ -1,11 +1,3 @@
-import {
-  AtomMove,
-  BondAttr,
-  EnhancedFlagMove,
-  RxnArrowMove,
-  RxnPlusMove,
-  SGroupDataMove
-} from '../operations'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -21,6 +13,15 @@ import {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import {
+  AtomMove,
+  BondAttr,
+  EnhancedFlagMove,
+  RxnArrowMove,
+  RxnPlusMove,
+  SGroupDataMove
+} from '../operations'
 import { Bond, Pile, Vec2 } from 'ketcher-core'
 import { getRelSgroupsBySelection, structSelection } from './utils'
 

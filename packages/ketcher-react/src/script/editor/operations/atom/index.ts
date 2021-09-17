@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { Atom, Pile, Vec2 } from 'ketcher-core'
 import Restruct, { ReAtom } from '../../../render/restruct'
 

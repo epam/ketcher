@@ -1,11 +1,3 @@
-import Restruct, { ReSGroup } from '../../../render/restruct'
-import {
-  SGroup,
-  Vec2,
-  FunctionalGroup,
-  FunctionalGroupsProvider
-} from 'ketcher-core'
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -21,6 +13,15 @@ import {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import Restruct, { ReSGroup } from '../../../render/restruct'
+import {
+  SGroup,
+  Vec2,
+  FunctionalGroup,
+  FunctionalGroupsProvider
+} from 'ketcher-core'
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
 

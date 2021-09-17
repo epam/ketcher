@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import clsx from 'clsx'
-import React, { FC } from 'react'
 
-import { useResizeObserver } from '../../../../../hooks'
-import { mediaSizes } from '../mediaSizes'
+import { FC } from 'react'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
 import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
-import classes from './TopToolbar.module.less'
+
 import { ZoomList } from './ZoomList'
+import classes from './TopToolbar.module.less'
+import clsx from 'clsx'
 import { makeItems } from '../ToolbarGroupItem/utils'
+import { mediaSizes } from '../mediaSizes'
+import { useResizeObserver } from '../../../../../hooks'
 
 const Group: FC<{ className?: string }> = ({ children, className }) => (
   <div className={clsx(classes.group, className)}>{children}</div>

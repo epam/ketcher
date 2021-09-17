@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import clsx from 'clsx'
-import React, { FC } from 'react'
 
+import { FC } from 'react'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
-import classes from './BottomToolbar.module.less'
+
 import { TemplatesList } from './TemplatesList'
+import classes from './BottomToolbar.module.less'
+import clsx from 'clsx'
 
 const Group: FC<{ className?: string }> = ({ children, className }) => (
   <div className={clsx(classes.group, className)}>{children}</div>

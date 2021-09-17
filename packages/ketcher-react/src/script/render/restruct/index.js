@@ -18,15 +18,15 @@
 
 import ReAtom from './reatom'
 import ReBond from './rebond'
-import ReRxnPlus from './rerxnplus'
-import ReRxnArrow from './rerxnarrow'
+import ReEnhancedFlag from './ReEnhancedFlag'
 import ReFrag from './refrag'
 import ReRGroup from './rergroup'
-import ReEnhancedFlag from './ReEnhancedFlag'
+import ReRxnArrow from './rerxnarrow'
+import ReRxnPlus from './rerxnplus'
 import ReSGroup from './resgroup'
 import ReSimpleObject from './ReSimpleObject'
-import ReText from './ReText'
 import ReStruct from './ReStruct'
+import ReText from './ReText'
 
 export default ReStruct
 export {

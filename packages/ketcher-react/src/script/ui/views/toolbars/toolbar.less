@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 @import '../../../../style/variables';
 @import '../../../../style/mixins';
 
@@ -45,6 +46,7 @@
 
 .vertical-toolbar() {
   overflow-y: auto;
+  overflow-x: hidden;
   flex-direction: column;
   -ms-overflow-style: none;
   scrollbar-width: thin;
@@ -54,6 +56,8 @@
   }
 
   .group-separator(bottom);
+
+  .scrollbar();
 }
 
 .group-separator(@placement) {

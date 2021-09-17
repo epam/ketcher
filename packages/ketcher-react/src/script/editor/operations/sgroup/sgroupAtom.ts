@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import { SGroup } from 'ketcher-core'
 import Restruct from '../../../render/restruct'
+import { SGroup } from 'ketcher-core'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 

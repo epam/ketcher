@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { SimpleObject, SimpleObjectMode, Struct, Vec2 } from 'domain/entities'
 
 export function simpleObjectToStruct(graphItem: any, struct: Struct): Struct {

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
+import { Component } from 'react'
 
 import { Dialog } from '../../../../components'
 import { FormatterFactory } from 'ketcher-core'
@@ -134,7 +134,7 @@ class MiewDialog extends Component {
             ref={el => {
               this.miewContainer = el
             }}
-            className="miew-container"
+            className={classes.miewContainer}
             style={{ width: '1024px', height: '600px', position: 'relative' }}
           />
         </div>

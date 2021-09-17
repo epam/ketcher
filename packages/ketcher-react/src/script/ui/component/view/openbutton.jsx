@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
+import { Component } from 'react'
+
+import classes from './buttons.module.less'
 
 class OpenButton extends Component {
   constructor(props) {
@@ -40,16 +42,13 @@ class OpenButton extends Component {
   }
 
   render() {
-    const {
-      children,
-      type,
-      server,
-      className = 'open-button',
-      ...props
-    } = this.props
+    const { children, type, server, ...props } = this.props
 
     return (
-      <button onClick={() => this.btn.click()} className={className} {...props}>
+      <button
+        onClick={() => this.btn.click()}
+        className={classes.openButton}
+        {...props}>
         <input
           onChange={ev => this.open(ev)}
           accept={type}

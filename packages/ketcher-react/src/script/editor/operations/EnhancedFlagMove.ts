@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { Fragment, Vec2 } from 'ketcher-core'
 
 import { BaseOperation } from './base'

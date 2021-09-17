@@ -20,7 +20,6 @@ import {
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
 
-import React from 'react'
 import { makeItems } from '../../ToolbarGroupItem/utils'
 
 const shapeOptions = makeItems([
@@ -37,9 +36,7 @@ interface ShapeCallProps extends ToolbarGroupItemCallProps {}
 type Props = ShapeProps & ShapeCallProps
 
 const Shape = (props: Props) => {
-  return (
-    <ToolbarGroupItem id="shape" options={shapeOptions} {...props} />
-  )
+  return <ToolbarGroupItem id="shape" options={shapeOptions} {...props} />
 }
 
 export type { ShapeProps, ShapeCallProps }

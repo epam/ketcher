@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { connect } from 'react-redux'
-import { checkServer } from '../state/server'
+
 import { App, AppCallProps } from './App'
+
+import { checkServer } from '../state/server'
+import { connect } from 'react-redux'
 
 const mapDispatchToProps: AppCallProps = {
   checkServer

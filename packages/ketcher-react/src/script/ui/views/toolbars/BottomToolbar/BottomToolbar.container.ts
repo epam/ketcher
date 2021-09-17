@@ -14,16 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ComponentType } from 'react'
-import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
-
-import { onAction } from '../../../state'
 import {
   BottomToolbar,
-  BottomToolbarProps,
-  BottomToolbarCallProps
+  BottomToolbarCallProps,
+  BottomToolbarProps
 } from './BottomToolbar'
+
+import { ComponentType } from 'react'
+import { Dispatch } from 'redux'
+import { connect } from 'react-redux'
+import { onAction } from '../../../state'
 
 type StateProps = Omit<BottomToolbarProps, 'className'>
 type OwnProps = Pick<BottomToolbarProps, 'className'>

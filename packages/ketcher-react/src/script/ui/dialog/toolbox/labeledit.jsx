@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field } from '../../component/form/form'
+import Form, { Field } from '../../component/form/form/form'
 
 import { Dialog } from '../../views/components'
 import { Elements } from 'ketcher-core'
-import React from 'react'
 import { capitalize } from 'lodash/fp'
 import { connect } from 'react-redux'
 import { labelEdit as labelEditSchema } from '../../data/schema/struct-schema'

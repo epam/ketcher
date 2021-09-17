@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component } from 'react'
+import { Component } from 'react'
 
 import { omit } from 'lodash/fp'
+import classes from './input.module.less'
 
 function GenericInput({
   schema,
@@ -116,14 +117,17 @@ function FieldSet({
   return (
     <fieldset onClick={onSelect} className="radio">
       {enumSchema(schema, (title, val) => (
-        <li key={title}>
-          <label>
+        <li key={title} className={classes.fieldSetItem}>
+          <label className={classes.fieldSetLabel}>
             <input
               type={type}
               defaultChecked={selected(val, value)}
               value={typeof val !== 'object' && val}
               {...rest}
             />
+            {type === 'checkbox' && (
+              <span className={classes.customCheckbox}></span>
+            )}
             {title}
           </label>
         </li>

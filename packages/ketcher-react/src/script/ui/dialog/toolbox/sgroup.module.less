@@ -1,0 +1,61 @@
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
+.sgroup {
+  min-width: 20em;
+  label {
+    display: block;
+    text-align: right;
+    input,
+    select {
+      width: 10em;
+    }
+    &:hover::after {
+      margin: 1px 0 0 3px;
+    }
+  }
+  fieldset {
+    border: 0;
+    padding: 0;
+  }
+  .data {
+    label {
+      text-align: left;
+      fieldset {
+        label {
+          margin: 0.4em;
+          display: inline-block;
+        }
+        input[type='radio'] {
+          width: auto;
+        }
+      }
+    }
+    textarea,
+    select[name='fieldValue'] {
+      display: block;
+      width: 19em;
+      height: 12em;
+      overflow: auto;
+    }
+    input[type='text'],
+    select[name='fieldName'] {
+      width: 19em;
+      display: block;
+      margin-bottom: 0;
+    }
+  }
+}

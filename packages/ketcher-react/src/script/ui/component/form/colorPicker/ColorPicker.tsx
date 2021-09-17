@@ -1,5 +1,23 @@
-import React, { useCallback, useState } from 'react'
-import { CompactPicker } from 'react-color'
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
+import { useCallback, useState } from 'react'
+
+import { HexColorPicker, HexColorInput } from 'react-colorful'
+import classes from './ColorPicker.module.less'
 
 interface ColorPickerProps {
   value: string
@@ -20,7 +38,7 @@ const ColorPicker = (props: Props) => {
 
   const handleChange = useCallback(
     color => {
-      onChange(color.hex)
+      onChange(color)
     },
     [onChange]
   )
@@ -32,31 +50,34 @@ const ColorPicker = (props: Props) => {
   }
 
   return (
-    <div className="color-picker-input">
+    <div className={classes.colorPickerInput}>
       <div
-        className="color-picker-btn"
+        className={classes.colorPickerBtn}
         onClick={handleClick}
         data-testid="color-picker-btn">
         {props.value}
         <span
-          className="color-picker-preview"
+          className={classes.colorPickerPreview}
           data-testid="color-picker-preview"
           style={{ backgroundColor: value }}
         />
       </div>
-      <div className="color-picker-wrap">
+      <div className={classes.colorPickerWrap}>
         {isOpen ? (
           <>
             <div
-              className="color-picker-overlay"
+              className={classes.colorPickerOverlay}
               onClick={handleClose}
               data-testid="color-picker-overlay"
             />
-            <CompactPicker
-              className="color-picker"
-              color={value}
-              onChange={handleChange}
-            />
+            <div className={classes.colorPicker}>
+              <HexColorPicker color={value} onChange={handleChange} />
+              <HexColorInput
+                data-testid="color-picker-input"
+                color={value}
+                onChange={handleChange}
+              />
+            </div>
           </>
         ) : null}
       </div>

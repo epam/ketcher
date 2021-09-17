@@ -1,5 +1,3 @@
-import { ButtonsConfig, KetcherBuilder } from './builders'
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,6 +13,9 @@ import { ButtonsConfig, KetcherBuilder } from './builders'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { ButtonsConfig, KetcherBuilder } from './builders'
+
 import { StructServiceProvider } from 'ketcher-core'
 
 interface Config {

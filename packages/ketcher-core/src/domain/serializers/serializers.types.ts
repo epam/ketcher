@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 export interface Serializer<T> {
   deserialize: (content: string) => T
   serialize: (struct: T) => string

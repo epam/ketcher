@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import clsx from 'clsx'
-import React from 'react'
 
+import { atomCuts, basicAtoms } from '../../../../action/atoms'
+
+import Atom from '../../../../component/view/Atom'
 import { Elements } from 'ketcher-core'
 import { UiActionAction } from '../../../../action'
-import { atomCuts, basicAtoms } from '../../../../action/atoms'
-import { shortcutStr } from '../../shortcutStr'
-import Atom from '../../../../component/view/Atom'
-
 import classes from '../../ToolbarGroupItem/ActionButton/ActionButton.module.less'
+import clsx from 'clsx'
+import { shortcutStr } from '../../shortcutStr'
 
 interface AtomsListProps {
   atoms: string[]

@@ -17,6 +17,7 @@
 import { Vec2 } from 'ketcher-core'
 import closest from '../shared/closest'
 import { difference } from 'lodash'
+import { Bond } from 'ketcher-core'
 
 export function atomGetAttr(restruct, aid, name) {
   return restruct.molecule.atoms.get(aid)[name]
@@ -56,10 +57,15 @@ export function structSelection(struct) {
 }
 
 // Get new atom id/label and pos for bond being added to existing atom
-export function atomForNewBond(restruct, id) {
+export function atomForNewBond(restruct, id, bond) {
   // eslint-disable-line max-statements
   const neighbours = []
   const pos = atomGetPos(restruct, id)
+  const prevBondId = restruct.molecule.findBondId(
+    id,
+    restruct.molecule.atomGetNeighbors(id)[0].aid
+  )
+  const prevBondType = restruct.molecule.bonds.get(prevBondId).type
 
   restruct.molecule.atomGetNeighbors(id).forEach(nei => {
     const neiPos = atomGetPos(restruct, nei.aid)
@@ -132,8 +138,18 @@ export function atomForNewBond(restruct, id) {
       }
     }
 
-    angle =
-      maxAngle / 2 + Math.atan2(neighbours[maxI].v.y, neighbours[maxI].v.x)
+    if (
+      neighbours.length === 1 &&
+      prevBondType === bond.type &&
+      (bond.type === Bond.PATTERN.TYPE.DOUBLE ||
+        bond.type === Bond.PATTERN.TYPE.TRIPLE)
+    ) {
+      const prevBondAngle = restruct.molecule.bonds.get(prevBondId).angle
+      angle = (prevBondAngle * Math.PI) / 180
+    } else {
+      angle =
+        maxAngle / 2 + Math.atan2(neighbours[maxI].v.y, neighbours[maxI].v.x)
+    }
 
     v = v.rotate(angle)
   }

@@ -69,6 +69,7 @@ function parseAtomLine(atomLine) {
 function parseBondLine(bondLine) {
   /* reader */
   var bondSplit = utils.partitionLine(bondLine, utils.fmtInfo.bondLinePartition)
+
   var params = {
     begin: utils.parseDecimalInt(bondSplit[0]) - 1,
     end: utils.parseDecimalInt(bondSplit[1]) - 1,
@@ -129,6 +130,9 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
     var line = ctabLines[shift]
     if (line.charAt(0) === 'A') {
       var propValue = ctabLines[++shift]
+      //TODO: Atom entity only have pseudo getter. Check during refactoring
+      //this type of pseudo labeling is not used in current BIOVIA products. See ctab documentation 2020
+      // https://discover.3ds.com/sites/default/files/2020-08/biovia_ctfileformats_2020.pdf (page 47)
       var isPseudo = /'.+'/.test(propValue)
       if (isPseudo && !props.get('pseudo')) props.set('pseudo', new Pool())
       if (!isPseudo && !props.get('alias')) props.set('alias', new Pool())
@@ -266,7 +270,6 @@ function parseCTabV2000(ctabLines, countsSplit) {
   const isAnd = utils.parseDecimalInt(countsSplit[4]) === 0
   const stextLinesCount = utils.parseDecimalInt(countsSplit[5])
   const propertyLinesCount = utils.parseDecimalInt(countsSplit[10])
-
   let shift = 0
   const atomLines = ctabLines.slice(shift, shift + atomCount)
   shift += atomCount
@@ -335,7 +338,6 @@ function parseCTabV2000(ctabLines, countsSplit) {
     const rgid = parseInt(id, 10)
     ctab.rgroups.set(rgid, new RGroup(rLogic[rgid]))
   }
-
   return ctab
 }
 
@@ -391,7 +393,7 @@ function parseRg2000(/* string[] */ ctabLines) /* Struct */ {
         frag[id].push(parseCTab(fragmentLines[id][j]))
     }
   }
-  return rgMerge(core, frag)
+  return utils.rgMerge(core, frag)
 }
 
 function parseRxn2000(
@@ -409,7 +411,6 @@ function parseRxn2000(
     nProducts = countsSplit[1] - 0,
     nAgents = countsSplit[2] - 0
   ctabLines = ctabLines.slice(1) // consume counts line
-
   var mols = []
   while (ctabLines.length > 0 && ctabLines[0].substr(0, 4) === '$MOL') {
     ctabLines = ctabLines.slice(1)
@@ -427,7 +428,6 @@ function parseRxn2000(
     mols.push(struct)
     ctabLines = ctabLines.slice(n)
   }
-
   return utils.rxnMerge(
     mols,
     nReactants,
@@ -445,31 +445,6 @@ function parseCTab(/* string */ ctabLines) /* Struct */ {
   )
   ctabLines = ctabLines.slice(1)
   return parseCTabV2000(ctabLines, countsSplit)
-}
-
-function rgMerge(scaffold, rgroups) /* Struct */ {
-  /* reader */
-  const ret = new Struct()
-
-  scaffold.mergeInto(ret, null, null, false, true)
-
-  Object.keys(rgroups).forEach(id => {
-    const rgid = parseInt(id, 10)
-
-    for (let j = 0; j < rgroups[rgid].length; ++j) {
-      const ctab = rgroups[rgid][j]
-      ctab.rgroups.set(rgid, new RGroup())
-      const frag = {}
-      const frid = ctab.frags.add(frag)
-      ctab.rgroups.get(rgid).frags.add(frid)
-      ctab.atoms.forEach(atom => {
-        atom.fragment = frid
-      })
-      ctab.mergeInto(ret)
-    }
-  })
-
-  return ret
 }
 
 function labelsListToIds(labels) {

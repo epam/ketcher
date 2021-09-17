@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React from 'react'
-import { mediaSizes } from '../../mediaSizes'
+
 import {
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
-import { ToolbarMultiToolItem } from '../../ToolbarGroupItem/ToolbarMultiToolItem'
 import {
   bondCommon,
-  bondStereo,
   bondQuery,
   bondSpecial,
-  groupOptions,
-  groupDescriptors
+  bondStereo,
+  groupDescriptors,
+  groupOptions
 } from './options'
+
+import { ToolbarMultiToolItem } from '../../ToolbarGroupItem/ToolbarMultiToolItem'
+import { mediaSizes } from '../../mediaSizes'
 
 interface BondProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   height?: number

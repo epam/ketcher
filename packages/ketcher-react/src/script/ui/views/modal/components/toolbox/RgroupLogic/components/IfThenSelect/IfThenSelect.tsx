@@ -14,13 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-
-import { useFormContext } from '../../../../../../../../../hooks'
-import { Field } from '../../../../../../../component/form/form'
+import { Field } from '../../../../../../../component/form/form/form'
 import { RgroupLogicProps } from '../../RgroupLogic'
-
 import classes from './IfThenSelect.module.less'
+import { useFormContext } from '../../../../../../../../../hooks'
 
 type Props = Pick<RgroupLogicProps, 'label' | 'rgroupLabels'>
 

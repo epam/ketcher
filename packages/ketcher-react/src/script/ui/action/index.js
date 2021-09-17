@@ -15,15 +15,15 @@
  ***************************************************************************/
 
 import atoms from './atoms'
+import copyAs from './copyAs'
+import copyImageToClipboard from './copyImageToClipboard'
 import debug from './debug'
-import { exec } from '../component/cliparea'
+import { exec } from '../component/cliparea/cliparea'
+import isHidden from './isHidden'
 import server from './server'
 import templates from './templates'
 import tools from './tools'
 import zoom from './zoom'
-import copyImageToClipboard from './copyImageToClipboard'
-import copyAs from './copyAs'
-import isHidden from './isHidden'
 
 export * from './action.types'
 

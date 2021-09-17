@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import 'element-closest-polyfill'
 import 'regenerator-runtime/runtime'
 import 'url-search-params-polyfill'
 import 'whatwg-fetch'
 import './index.less'
-import './Editor.module.less'
 
-import React, { useEffect, useRef } from 'react'
 import init, { Config } from './script'
+import { useEffect, useRef } from 'react'
 
-import { Ketcher } from './script/ketcher'
+import { Ketcher } from 'ketcher-core'
+import classes from './Editor.module.less'
 import clsx from 'clsx'
 import { useResizeObserver } from './hooks'
 
@@ -57,8 +58,8 @@ function Editor(props: EditorProps) {
   return (
     <div
       ref={rootElRef}
-      className={clsx('editor', {
-        small:
+      className={clsx('Ketcher-root', classes.editor, {
+        [classes.small]:
           (height && height <= mediaSizes.smallHeight) ||
           (width && width <= mediaSizes.smallWidth)
       })}

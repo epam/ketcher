@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Dialog from './Dialog'
-import StructEditor from './StructEditor'
 import Spinner from './Spinner'
+import StructEditor from './StructEditor'
 
 export { Dialog, StructEditor, Spinner }

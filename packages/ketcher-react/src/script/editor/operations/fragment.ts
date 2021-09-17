@@ -1,6 +1,3 @@
-import Restruct, { ReEnhancedFlag, ReFrag } from '../../render/restruct'
-
-import { BaseOperation } from './base'
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,6 +13,10 @@ import { BaseOperation } from './base'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import Restruct, { ReEnhancedFlag, ReFrag } from '../../render/restruct'
+
+import { BaseOperation } from './base'
 import { Fragment } from 'ketcher-core'
 import { OperationType } from './OperationType'
 

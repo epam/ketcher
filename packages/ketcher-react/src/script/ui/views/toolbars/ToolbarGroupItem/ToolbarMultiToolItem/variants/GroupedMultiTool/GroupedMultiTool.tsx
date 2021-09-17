@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React from 'react'
-import action from '../../../../../../action'
-import { ActionButton } from '../../../ActionButton'
+
 import { MultiToolCallProps, MultiToolProps } from '../variants.types'
 
+import { ActionButton } from '../../../ActionButton'
+import action from '../../../../../../action'
 import classes from './GroupedMultiTool.module.less'
 
 interface GroupedMultiToolProps extends MultiToolProps {}

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
+import classes from './buttons.module.less'
 import { saveAs } from 'file-saver'
 import { useAppContext } from '../../../../hooks'
 
@@ -60,7 +60,7 @@ const SaveButton = props => {
   const saveImage = () => {
     const ketcherInstance = getKetcherInstance()
     ketcherInstance
-      .generateImageAsync(data, { outputFormat })
+      .generateImage(data, { outputFormat })
       .then(blob => {
         saveAs(blob, `${filename}.${outputFormat}`)
         onSave()
@@ -75,6 +75,7 @@ const SaveButton = props => {
       onClick={event => {
         save(event)
       }}
+      className={classes.saveButton}
       {...props}>
       {props.children}
     </button>

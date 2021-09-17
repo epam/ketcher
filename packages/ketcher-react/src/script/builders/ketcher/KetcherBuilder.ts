@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import {
   FormatterFactory,
+  Ketcher,
   ServiceMode,
   StructService,
   StructServiceProvider
 } from 'ketcher-core'
-import { Ketcher, UI as KetcherUI } from '../../ketcher'
 
 import { ButtonsConfig } from './ButtonsConfig'
 import { Editor } from '../../editor'
@@ -31,43 +32,21 @@ class KetcherBuilder {
   private editor: Editor | null
   private serviceMode: ServiceMode | null
   private formatterFactory: FormatterFactory | null
-  private ui: KetcherUI | null
-
-  private tempUIDataContainer: null | {
-    element: HTMLDivElement | null
-    staticResourcesUrl: string
-    buttons?: ButtonsConfig
-    errorHandler: (message: string) => void
-  }
 
   constructor() {
     this.structService = null
     this.editor = null
     this.serviceMode = null
     this.formatterFactory = null
-    this.ui = null
-
-    this.tempUIDataContainer = null
   }
 
-  appendApiAsync(structServiceProvider: StructServiceProvider) {
+  async appendApiAsync(structServiceProvider: StructServiceProvider) {
     this.structService = createApi(structServiceProvider, {
       'smart-layout': true,
       'ignore-stereochemistry-errors': true,
       'mass-skip-error-on-pseudoatoms': false,
       'gross-formula-add-rsites': true
     })
-
-    if (this.tempUIDataContainer) {
-      return this.appendUiAsync(
-        this.tempUIDataContainer.element,
-        this.tempUIDataContainer.staticResourcesUrl,
-        this.tempUIDataContainer.errorHandler,
-        this.tempUIDataContainer.buttons
-      )
-    }
-
-    return Promise.resolve()
   }
 
   appendServiceMode(mode: ServiceMode) {
@@ -82,24 +61,8 @@ class KetcherBuilder {
   ): Promise<void> {
     const { structService } = this
 
-    if (!structService) {
-      this.tempUIDataContainer = {
-        element,
-        staticResourcesUrl,
-        errorHandler,
-        buttons
-      }
-
-      return Promise.resolve()
-    }
-    this.tempUIDataContainer = null
-
-    const tempRef: { ui: KetcherUI } = {
-      ui: null as any
-    }
-
     const editor = await new Promise<Editor>(resolve => {
-      tempRef.ui = initApp(
+      initApp(
         element,
         staticResourcesUrl,
         {
@@ -109,15 +72,14 @@ class KetcherBuilder {
           buildDate: process.env.BUILD_DATE || '',
           buildNumber: process.env.BUILD_NUMBER || ''
         },
-        structService,
+        structService!,
         resolve
       )
     })
 
     this.editor = editor
     this.editor.errorHandler = errorHandler
-    this.ui = tempRef.ui
-    this.formatterFactory = new FormatterFactory(structService)
+    this.formatterFactory = new FormatterFactory(structService!)
   }
 
   build() {
@@ -129,10 +91,6 @@ class KetcherBuilder {
       throw new Error('You should append Api before building')
     }
 
-    if (!this.editor || !this.ui) {
-      throw new Error('You should append UI before building')
-    }
-
     if (!this.formatterFactory) {
       throw new Error(
         'You should append StructureServiceFactory before building'
@@ -140,23 +98,17 @@ class KetcherBuilder {
     }
 
     const ketcher = new Ketcher(
-      this.editor,
+      this.editor!,
       this.structService,
-      this.ui,
       this.formatterFactory
     )
     ketcher[this.serviceMode] = true
 
-    // todo: remove
-    ;(global as any).ketcher = ketcher
-    ;(global as any)._ui_editor = this.editor
-
     const params = new URLSearchParams(document.location.search)
-    ketcher.server.info().then(() => {
-      if (params.get('moll')) {
-        ketcher.ui.load(params.get('moll'))
-      }
-    })
+    const initialMol = params.get('moll')
+    if (initialMol) {
+      ketcher.setMolecule(initialMol)
+    }
 
     return ketcher
   }

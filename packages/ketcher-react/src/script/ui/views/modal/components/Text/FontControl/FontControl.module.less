@@ -1,0 +1,49 @@
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
+@import '../../../../../../../style/mixins.less';
+
+.fontSizeMenu {
+  display: inline-block;
+  position: absolute;
+  top: 3px;
+  background: #fff;
+  box-shadow: 0 0 2px;
+  max-height: 150px;
+  overflow-y: scroll;
+  z-index: 10;
+  padding: 4px;
+  font-size: 16px;
+  border-radius: 4px;
+  scrollbar-width: none;
+}
+
+.fontSizeMenu::-webkit-scrollbar {
+  display: none;
+}
+
+.fontSizeOption {
+  padding: 4px;
+}
+
+.fontSizeOption:hover {
+  background: #f0f0f0;
+  cursor: pointer;
+}
+
+.fontBtn {
+  .btn();
+}

@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-
 function ErrorsCheck(props) {
   const { moleculeErrors, checkSchema } = props
   const moleculeErrorsTypes = Object.keys(moleculeErrors)

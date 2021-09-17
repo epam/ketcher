@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import {
   DOMSubscription,
   PipelineSubscription,
   Subscription
 } from 'subscription'
-import { Pile, Struct, Vec2 } from 'ketcher-core'
-import { customOnChangeHandler, elementOffset } from './utils'
+import { Editor as KetcherEditor, Pile, Struct, Vec2 } from 'ketcher-core'
+import { customOnChangeHandler } from './utils'
 import { fromDescriptorsAlign, fromNewCanvas } from './actions/basic'
 
 import Action from './shared/action'
 import Render from '../render'
 import closest from './shared/closest'
+import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 
 const SCALE = 40
@@ -89,7 +91,8 @@ interface Selection {
   rxnPluses?: Array<number>
   rxnArrows?: Array<number>
 }
-class Editor {
+class Editor implements KetcherEditor {
+  #origin?: any
   render: Render
   _selection: Selection | null
   _tool: any
@@ -148,6 +151,20 @@ class Editor {
     }
 
     domEventSetup(this, clientArea)
+  }
+
+  isDitrty(): boolean {
+    const position = this.historyPtr
+    const length = this.historyStack.length
+    if (!length || !this.#origin) {
+      return false
+    }
+    return !isEqual(this.historyStack[position - 1], this.#origin)
+  }
+
+  setOrigin(): void {
+    const position = this.historyPtr
+    this.#origin = position ? this.historyStack[position - 1] : null
   }
 
   tool(name?: any, opts?: any) {
@@ -432,12 +449,7 @@ class Editor {
   }
 
   findItem(event: any, maps: any, skip: any) {
-    // todo: remove global
-    const pos = (global as any)._ui_editor
-      ? new Vec2(this.render.page2obj(event)) // eslint-disable-line
-      : new Vec2(event.pageX, event.pageY).sub(
-          elementOffset(this.render.clientArea)
-        )
+    const pos = new Vec2(this.render.page2obj(event))
 
     return closest.item(this.render.ctab, pos, maps, skip, this.render.options)
   }

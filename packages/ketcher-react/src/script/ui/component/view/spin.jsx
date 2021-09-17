@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
+import classes from './spin.module.less'
 
 function Spin({ ...props }) {
-  return <div className="ket-spinner" {...props} />
+  return <div className={classes.ketSpinner} {...props} />
 }
 
 export default Spin

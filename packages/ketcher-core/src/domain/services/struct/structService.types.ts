@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 export enum ChemicalMimeType {
   Mol = 'chemical/x-mdl-molfile',
   Rxn = 'chemical/x-mdl-rxnfile',

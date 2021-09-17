@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
 import { ElementColor } from 'ketcher-core'
 
 function Atom({ el, shortcut, className, ...props }) {

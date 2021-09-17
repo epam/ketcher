@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import Restruct, { ReRGroup } from '../../../render/restruct'
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
 import { RGroup } from 'ketcher-core'
-import Restruct, { ReRGroup } from '../../../render/restruct'
 
 export class RGroupFragment extends BaseOperation {
   rgid_new: any

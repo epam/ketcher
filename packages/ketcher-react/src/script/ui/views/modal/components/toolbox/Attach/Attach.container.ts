@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ComponentType } from 'react'
-import { connect } from 'react-redux'
 
 import AttachPoints, { AttachPointsProps } from './Attach'
+
 import { BaseProps } from '../../../modal.types'
+import { ComponentType } from 'react'
+import { connect } from 'react-redux'
 
 type StateProps = Pick<BaseProps, 'formState'>
 type OwnProps = Omit<AttachPointsProps, 'formState'>

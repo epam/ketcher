@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Bond, RxnArrow, RxnPlus, Struct, Vec2 } from 'domain/entities'
+import { Bond, RxnArrow, RxnPlus, Struct, Vec2, RGroup } from 'domain/entities'
 
 function paddedNum(number, width, precision) {
   number = parseFloat(number)
@@ -306,11 +306,37 @@ function rxnMerge(
   return ret
 }
 
+function rgMerge(scaffold, rgroups) /* Struct */ {
+  /* reader */
+  const ret = new Struct()
+
+  scaffold.mergeInto(ret, null, null, false, true)
+
+  Object.keys(rgroups).forEach(id => {
+    const rgid = parseInt(id, 10)
+
+    for (let j = 0; j < rgroups[rgid].length; ++j) {
+      const ctab = rgroups[rgid][j]
+      ctab.rgroups.set(rgid, new RGroup())
+      const frag = {}
+      const frid = ctab.frags.add(frag)
+      ctab.rgroups.get(rgid).frags.add(frid)
+      ctab.atoms.forEach(atom => {
+        atom.fragment = frid
+      })
+      ctab.mergeInto(ret)
+    }
+  })
+
+  return ret
+}
+
 export default {
   fmtInfo,
   paddedNum,
   parseDecimalInt,
   partitionLine,
   partitionLineFixed,
-  rxnMerge
+  rxnMerge,
+  rgMerge
 }

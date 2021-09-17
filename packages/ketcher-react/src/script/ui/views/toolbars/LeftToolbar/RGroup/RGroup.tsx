@@ -20,7 +20,6 @@ import {
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
 
-import React from 'react'
 import { makeItems } from '../../ToolbarGroupItem/utils'
 
 const rGroupOptions = makeItems([
@@ -37,9 +36,7 @@ interface RGroupCallProps extends ToolbarGroupItemCallProps {}
 type Props = RGroupProps & RGroupCallProps
 
 const RGroup = (props: Props) => {
-  return (
-    <ToolbarGroupItem id="rgroup" options={rGroupOptions} {...props} />
-  )
+  return <ToolbarGroupItem id="rgroup" options={rGroupOptions} {...props} />
 }
 
 export type { RGroupProps, RGroupCallProps }

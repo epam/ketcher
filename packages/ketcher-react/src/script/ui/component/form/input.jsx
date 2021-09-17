@@ -125,7 +125,9 @@ function FieldSet({
               value={typeof val !== 'object' && val}
               {...rest}
             />
-            {type === 'checkbox' && <span className={classes.customCheckbox}></span>}
+            {type === 'checkbox' && (
+              <span className={classes.customCheckbox}></span>
+            )}
             {title}
           </label>
         </li>

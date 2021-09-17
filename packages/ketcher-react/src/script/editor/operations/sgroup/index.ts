@@ -57,7 +57,7 @@ class SGroupCreate extends BaseOperation {
   execute(restruct: Restruct) {
     const struct = restruct.molecule
     const sgroup = new SGroup(this.data.type)
-    const { sgid, pp, expanded, name, initialId } = this.data
+    const { sgid, pp, expanded, name } = this.data
 
     sgroup.id = sgid
     struct.sgroups.set(sgid, sgroup)
@@ -81,8 +81,7 @@ class SGroupCreate extends BaseOperation {
         sgroup
       )
     ) {
-      restruct.molecule.functionalGroups.set(
-        initialId,
+      restruct.molecule.functionalGroups.add(
         new FunctionalGroup(sgroup.data.name, sgroup.id, sgroup.expanded)
       )
     }

@@ -242,14 +242,15 @@ export class Struct {
     })
 
     this.sgroups.forEach(sg => {
-      if (sg.atoms.some(aid => !atomSet!.has(aid))) return
-
       sg = SGroup.clone(sg, aidMap!)
       const id = cp.sgroups.add(sg)
       sg.id = id
 
       sg.atoms.forEach(aid => {
-        cp.atoms.get(aid)!.sgs.add(id)
+        const atom = cp.atoms.get(aid)
+        if (atom) {
+          atom.sgs.add(id)
+        }
       })
 
       if (sg.type === 'DAT') cp.sGroupForest.insert(sg, -1, [])

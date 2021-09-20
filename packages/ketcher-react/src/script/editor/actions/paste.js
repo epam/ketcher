@@ -97,7 +97,9 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
       sgAtoms,
       sg.data,
       newsgid,
-      sg.pp ? sg.pp.add(offset) : null
+      sg.pp ? sg.pp.add(offset) : null,
+      sg.type === 'SUP' ? sg.expanded : null,
+      sg.data.name
     )
     sgAction.operations.reverse().forEach(oper => {
       action.addOp(oper)

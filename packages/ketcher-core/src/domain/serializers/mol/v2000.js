@@ -54,14 +54,14 @@ function parseAtomLine(atomLine) {
 
     // query
     hCount: utils.parseDecimalInt(utils.parseDecimalInt(atomSplit[8])),
-    stereoCare: utils.parseDecimalInt(atomSplit[9]) != 0,
+    stereoCare: utils.parseDecimalInt(atomSplit[9]) !== 0,
 
     // reaction
     aam: utils.parseDecimalInt(atomSplit[14]),
     invRet: utils.parseDecimalInt(atomSplit[15]),
 
     // reaction query
-    exactChangeFlag: utils.parseDecimalInt(atomSplit[16]) != 0
+    exactChangeFlag: utils.parseDecimalInt(atomSplit[16]) !== 0
   }
   return new Atom(params)
 }
@@ -92,7 +92,7 @@ function parseAtomListLine(/* string */ atomListLine) {
   )
 
   var number = utils.parseDecimalInt(split[0]) - 1
-  var notList = split[2].trim() == 'T'
+  var notList = split[2].trim() === 'T'
   var count = utils.parseDecimalInt(split[4].trim())
 
   var ids = atomListLine.slice(utils.fmtInfo.atomListHeaderLength)
@@ -128,7 +128,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
 
   while (shift < end) {
     var line = ctabLines[shift]
-    if (line.charAt(0) == 'A') {
+    if (line.charAt(0) === 'A') {
       var propValue = ctabLines[++shift]
       //TODO: Atom entity only have pseudo getter. Check during refactoring
       //this type of pseudo labeling is not used in current BIOVIA products. See ctab documentation 2020
@@ -140,31 +140,31 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
       props
         .get(isPseudo ? 'pseudo' : 'alias')
         .set(utils.parseDecimalInt(line.slice(3, 6)) - 1, propValue)
-    } else if (line.charAt(0) == 'M') {
+    } else if (line.charAt(0) === 'M') {
       var type = line.slice(3, 6)
       var propertyData = line.slice(6)
-      if (type == 'END') {
+      if (type === 'END') {
         break
-      } else if (type == 'CHG') {
+      } else if (type === 'CHG') {
         if (!props.get('charge'))
           props.set('charge', sGroup.readKeyValuePairs(propertyData))
-      } else if (type == 'RAD') {
+      } else if (type === 'RAD') {
         if (!props.get('radical'))
           props.set('radical', sGroup.readKeyValuePairs(propertyData))
-      } else if (type == 'ISO') {
+      } else if (type === 'ISO') {
         if (!props.get('isotope'))
           props.set('isotope', sGroup.readKeyValuePairs(propertyData))
-      } else if (type == 'RBC') {
+      } else if (type === 'RBC') {
         if (!props.get('ringBondCount'))
           props.set('ringBondCount', sGroup.readKeyValuePairs(propertyData))
-      } else if (type == 'SUB') {
+      } else if (type === 'SUB') {
         if (!props.get('substitutionCount'))
           props.set('substitutionCount', sGroup.readKeyValuePairs(propertyData))
-      } else if (type == 'UNS') {
+      } else if (type === 'UNS') {
         if (!props.get('unsaturatedAtom'))
           props.set('unsaturatedAtom', sGroup.readKeyValuePairs(propertyData))
         // else if (type == "LIN") // link atom
-      } else if (type == 'RGP') {
+      } else if (type === 'RGP') {
         // rgroup atom
         if (!props.get('rglabel')) props.set('rglabel', new Pool())
         var rglabels = props.get('rglabel')
@@ -176,7 +176,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
             (rglabels.get(a2r[0]) || 0) | (1 << (a2r[1] - 1))
           )
         }
-      } else if (type == 'LOG') {
+      } else if (type === 'LOG') {
         // rgroup atom
         propertyData = propertyData.slice(4)
         var rgid = utils.parseDecimalInt(propertyData.slice(0, 3).trim())
@@ -185,13 +185,13 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
         var ooo = propertyData.slice(12).trim()
         var logic = {}
         if (iii > 0) logic.ifthen = iii
-        logic.resth = hhh == 1
+        logic.resth = hhh === 1
         logic.range = ooo
         rLogic[rgid] = logic
-      } else if (type == 'APO') {
+      } else if (type === 'APO') {
         if (!props.get('attpnt'))
           props.set('attpnt', sGroup.readKeyValuePairs(propertyData))
-      } else if (type == 'ALS') {
+      } else if (type === 'ALS') {
         // atom list
         const pool = parsePropertyLineAtomList(
           utils.partitionLine(propertyData, [1, 3, 3, 1, 1, 1]),
@@ -205,34 +205,40 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
           props.get('label').set(aid, 'L#')
           props.get('atomList').set(aid, atomList)
         })
-      } else if (type == 'STY') {
+      } else if (type === 'STY') {
         // introduce s-group
         sGroup.initSGroup(sGroups, propertyData)
-      } else if (type == 'SST') {
+      } else if (type === 'SST') {
         sGroup.applySGroupProp(sGroups, 'subtype', propertyData)
-      } else if (type == 'SLB') {
+      } else if (type === 'SLB') {
         sGroup.applySGroupProp(sGroups, 'label', propertyData, true)
-      } else if (type == 'SPL') {
+      } else if (type === 'SPL') {
         sGroup.applySGroupProp(sGroups, 'parent', propertyData, true, true)
-      } else if (type == 'SCN') {
+      } else if (type === 'SCN') {
         sGroup.applySGroupProp(sGroups, 'connectivity', propertyData)
-      } else if (type == 'SAL') {
+      } else if (type === 'SAL') {
         sGroup.applySGroupArrayProp(sGroups, 'atoms', propertyData, -1)
-      } else if (type == 'SBL') {
+      } else if (type === 'SBL') {
         sGroup.applySGroupArrayProp(sGroups, 'bonds', propertyData, -1)
-      } else if (type == 'SPA') {
+      } else if (type === 'SPA') {
         sGroup.applySGroupArrayProp(sGroups, 'patoms', propertyData, -1)
-      } else if (type == 'SMT') {
+      } else if (type === 'SMT') {
         var sid = utils.parseDecimalInt(propertyData.slice(0, 4)) - 1
         sGroups[sid].data.subscript = propertyData.slice(4).trim()
-      } else if (type == 'SDT') {
+      } else if (type === 'SDT') {
         sGroup.applyDataSGroupDesc(sGroups, propertyData)
-      } else if (type == 'SDD') {
+      } else if (type === 'SDD') {
         sGroup.applyDataSGroupInfoLine(sGroups, propertyData)
-      } else if (type == 'SCD') {
+      } else if (type === 'SCD') {
         sGroup.applyDataSGroupDataLine(sGroups, propertyData, false)
-      } else if (type == 'SED') {
+      } else if (type === 'SED') {
         sGroup.applyDataSGroupDataLine(sGroups, propertyData, true)
+      } else if (type === 'SDS') {
+        const expandedSGroups = propertyData.slice(7).trim().split('   ')
+        expandedSGroups.forEach(eg => {
+          const sGroupId = Number(eg) - 1
+          sGroups[sGroupId].expanded = true
+        })
       }
     }
     ++shift
@@ -406,14 +412,14 @@ function parseRxn2000(
     nAgents = countsSplit[2] - 0
   ctabLines = ctabLines.slice(1) // consume counts line
   var mols = []
-  while (ctabLines.length > 0 && ctabLines[0].substr(0, 4) == '$MOL') {
+  while (ctabLines.length > 0 && ctabLines[0].substr(0, 4) === '$MOL') {
     ctabLines = ctabLines.slice(1)
     var n = 0
-    while (n < ctabLines.length && ctabLines[n].substr(0, 4) != '$MOL') n++
+    while (n < ctabLines.length && ctabLines[n].substr(0, 4) !== '$MOL') n++
 
     var lines = ctabLines.slice(0, n)
     var struct
-    if (lines[0].search('\\$MDL') == 0) {
+    if (lines[0].search('\\$MDL') === 0) {
       struct = parseRg2000(lines)
     } else {
       struct = parseCTab(lines.slice(3))
@@ -463,7 +469,7 @@ function parsePropertyLineAtomList(hdr, lst) {
   /* reader */
   var aid = utils.parseDecimalInt(hdr[1]) - 1
   var count = utils.parseDecimalInt(hdr[2])
-  var notList = hdr[4].trim() == 'T'
+  var notList = hdr[4].trim() === 'T'
   var ids = labelsListToIds(lst.slice(0, count))
   var ret = new Pool()
   ret.set(

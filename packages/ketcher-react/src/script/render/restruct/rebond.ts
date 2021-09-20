@@ -14,7 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, HalfBond, Scale, Struct, Vec2 } from 'ketcher-core'
+import {
+  Atom,
+  Bond,
+  HalfBond,
+  Scale,
+  Struct,
+  Vec2,
+  FunctionalGroup
+} from 'ketcher-core'
 import { LayerMap, StereoColoringType } from './GeneralEnumTypes'
 import ReAtom, { getColorFromStereoLabel } from './reatom'
 
@@ -49,6 +57,19 @@ class ReBond extends ReObject {
   makeHighlightPlate(render: Render) {
     const options = render.options
     bondRecalc(this, render.ctab, options)
+    const bond = this.b
+    const sgroups = render.ctab.sgroups
+    const functionalGroups = render.ctab.molecule.functionalGroups
+    if (
+      FunctionalGroup.isBondInContractedFunctionalGroup(
+        bond,
+        sgroups,
+        functionalGroups,
+        true
+      )
+    )
+      return null
+
     const c = Scale.obj2scaled(this.b.center, options)
     return render.paper
       .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
@@ -56,6 +77,19 @@ class ReBond extends ReObject {
   }
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any) {
     bondRecalc(this, restruct, options)
+    const bond = this.b
+    const sgroups = restruct.render.ctab.sgroups
+    const functionalGroups = restruct.render.ctab.molecule.functionalGroups
+    if (
+      FunctionalGroup.isBondInContractedFunctionalGroup(
+        bond,
+        sgroups,
+        functionalGroups,
+        true
+      )
+    )
+      return null
+
     const c = Scale.obj2scaled(this.b.center, options)
     return paper
       .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
@@ -66,6 +100,19 @@ class ReBond extends ReObject {
     // eslint-disable-line max-statements
     const render = restruct.render
     const struct = restruct.molecule
+    const bond = restruct.molecule.bonds.get(bid)
+    const sgroups = restruct.molecule.sgroups
+    const functionalGroups = restruct.molecule.functionalGroups
+    if (
+      FunctionalGroup.isBondInContractedFunctionalGroup(
+        bond,
+        sgroups,
+        functionalGroups,
+        false
+      )
+    )
+      return
+
     const paper = render.paper
     const hb1 =
         this.b.hb1 !== undefined ? struct.halfBonds.get(this.b.hb1) : null,

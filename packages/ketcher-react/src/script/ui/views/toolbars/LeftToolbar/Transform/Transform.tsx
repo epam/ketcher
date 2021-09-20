@@ -53,4 +53,4 @@ const Transform = (props: Props) => {
 }
 
 export type { TransformProps, TransformCallProps }
-export { Transform, transformOptions }
+export { Transform }

@@ -34,4 +34,4 @@ const RGroup = (props: Props) => {
 }
 
 export type { RGroupProps, RGroupCallProps }
-export { RGroup, rGroupOptions }
+export { RGroup }

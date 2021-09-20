@@ -27,6 +27,7 @@ import { AppHiddenContainer } from './AppHidden'
 import AppModalContainer from '../views/modal'
 import Editor from '../views/Editor'
 import classes from './App.module.less'
+import { FunctionalGroupsProvider } from 'ketcher-core'
 
 interface AppCallProps {
   checkServer: () => void
@@ -36,8 +37,10 @@ type Props = AppCallProps
 
 const App = (props: Props) => {
   const { checkServer } = props
+  const provider = FunctionalGroupsProvider.getInstance()
   useEffect(() => {
     checkServer()
+    provider.fetchFunctionalGroupsList()
   }, [])
 
   return (

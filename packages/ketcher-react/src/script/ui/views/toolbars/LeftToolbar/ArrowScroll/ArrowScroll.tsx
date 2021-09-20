@@ -11,51 +11,26 @@ interface ArrowScrollProps {
 const ArrowScroll = (props: ArrowScrollProps) => {
   const { startInView, endInView, scrollUp, scrollDown } = props
 
-  if (startInView && endInView) {
-    return <div className={classes.scroll} />
-  }
-  if (startInView) {
-    return (
-      <div className={classes.scroll}>
+  return (
+    <div className={classes.scroll}>
+      {endInView ? (
+        <></>
+      ) : (
         <button
-          onClick={() => {
-            scrollDown()
-          }}
+          onClick={() => scrollDown()}
           className={clsx(classes.button, classes.down)}>
           ▼
         </button>
-      </div>
-    )
-  }
-  if (endInView) {
-    return (
-      <div className={classes.scroll}>
+      )}
+      {startInView ? (
+        <></>
+      ) : (
         <button
-          onClick={() => {
-            scrollUp()
-          }}
+          onClick={() => scrollUp()}
           className={clsx(classes.button, classes.up)}>
           ▲
         </button>
-      </div>
-    )
-  }
-  return (
-    <div className={classes.scroll}>
-      <button
-        onClick={() => {
-          scrollUp()
-        }}
-        className={classes.button}>
-        ▲
-      </button>
-      <button
-        onClick={() => {
-          scrollDown()
-        }}
-        className={classes.button}>
-        ▼
-      </button>
+      )}
     </div>
   )
 }

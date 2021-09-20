@@ -89,11 +89,11 @@ const LeftToolbar = (props: Props) => {
     ToolbarGroupItem({ id, options, ...rest })
 
   const scrollUp = () => {
-    scrollRef.current.scrollTop -= 50
+    scrollRef.current.scrollTop -= 40
   }
 
   const scrollDown = () => {
-    scrollRef.current.scrollTop += 50
+    scrollRef.current.scrollTop += 40
   }
 
   return (

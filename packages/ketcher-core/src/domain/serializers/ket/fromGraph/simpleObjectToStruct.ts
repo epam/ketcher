@@ -34,7 +34,7 @@ function circleToEllipse(graphItem) {
   const radius = Vec2.dist(graphItem.data.pos[1], graphItem.data.pos[0])
   const pos0 = graphItem.data.pos[0]
   return {
-    mode: SimpleObjectMode.ellipse,
+    mode: SimpleObjectMode.Ellipse,
     pos: [
       {
         x: pos0.x - Math.abs(radius),

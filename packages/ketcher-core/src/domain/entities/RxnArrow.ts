@@ -14,45 +14,48 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from './Vec2'
+import { Point, Vec2 } from './Vec2'
 
-export enum RxnArrowMode {
-  OpenAngle = 'open-angle',
-  FilledTriangle = 'filled-triangle',
-  FilledBow = 'filled-bow',
-  DashedOpenAngle = 'dashed-open-angle',
-  Failed = 'failed',
-  BothEndsFilledTriangle = 'both-ends-filled-triangle',
-  EquilibriumFilledTriangle = 'equilibrium-filled-triangle',
-  EquilibriumFilledHalfBow = 'equilibrium-filled-half-bow',
-  EquilibriumOpenAngle = 'equilibrium-open-angle',
-  UnbalancedEquilibriumFilledHalfBow = 'unbalanced-equilibrium-filled-half-bow',
-  UnbalancedEquilibriumOpenHalfAngle = 'unbalanced-equilibrium-open-half-angle',
-  UnbalancedEquilibriumLargeFilledHalfBow = 'unbalanced-equilibrium-large-filled-half-bow',
-  UnbalancedEquilibriumFilleHalfTriangle = 'unbalanced-equilibrium-fille-half-triangle'
-}
+import assert from 'assert'
 
-export interface RxnArrowParams {
+export type RxnArrowMode =
+  | 'OPEN_ANGLE'
+  | 'FILLED_TRIANGLE'
+  | 'FILLED_BOW'
+  | 'DASHED_OPEN_ANGLE'
+  | 'FAILED'
+  | 'BOTH_ENDS_FILLED_TRIANGLE'
+  | 'EQUILIBRIUM_FILLED_TRIANGLE'
+  | 'EQUILIBRIUM_FILLED_HALF_BOW'
+  | 'EQUILIBRIUM_OPEN_ANGLE'
+  | 'UNBALANCED_EQUILIBRIUM_FILLED_HALF_BOW'
+  | 'UNBALANCED_EQUILIBRIUM_OPEN_HALF_ANGLE'
+  | 'UNBALANCED_EQUILIBRIUM_LARGE_FILLED_HALF_BOW'
+  | 'UNBALANCED_EQUILIBRIUM_FILLED_HALF_TRIANGLE'
+
+export interface RxnArrowAttributes {
   mode: RxnArrowMode
-  pos?: Array<Vec2>
+  points: Array<Point>
 }
 
 export class RxnArrow {
-  mode: RxnArrowMode
-  pos: Array<Vec2>
+  #mode: RxnArrowMode
+  #points: Array<Vec2>
 
-  constructor(params: RxnArrowParams) {
-    params = params || {}
-    this.pos = []
+  get mode(): RxnArrowMode {
+    return this.#mode
+  }
 
-    if (params.pos) {
-      for (let i = 0; i < params.pos.length; i++) {
-        const currentP = params.pos[i]
-        this.pos[i] = currentP ? new Vec2(params.pos[i]) : new Vec2()
-      }
-    }
+  get points(): Array<Vec2> {
+    return this.#points
+  }
 
-    this.mode = params.mode
+  constructor(attributes: RxnArrowAttributes) {
+    assert(attributes != null)
+    assert(attributes.points?.length > 0)
+
+    this.#mode = attributes.mode
+    this.#points = attributes.points.map(point => new Vec2(point))
   }
 
   clone() {
@@ -60,6 +63,6 @@ export class RxnArrow {
   }
 
   center(): Vec2 {
-    return Vec2.centre(this.pos[0], this.pos[1])
+    return Vec2.centre(this.points[0], this.points[1])
   }
 }

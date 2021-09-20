@@ -24,7 +24,7 @@ export * from 'infrastructure/services'
 
 export * from 'application/formatters'
 export * from 'application/editor'
-export * from 'application/Ketcher'
-export * from 'application/KetcherBuilder'
+export * from 'application/ketcher'
+export * from 'application/ketcherBuilder'
 
 export * from 'utils'

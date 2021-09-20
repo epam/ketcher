@@ -14,24 +14,40 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Point, Vec2 } from './Vec2'
+import {
+  Operation,
+  OperationType,
+  PerformOperationResult
+} from './operations.types'
 
-export interface RxnPlusAttributes {
-  position: Point
-}
+import { Struct } from 'domain/entities'
+import assert from 'assert'
 
-export class RxnPlus {
-  #position: Vec2
+export abstract class BaseOperation implements Operation {
+  #type: OperationType
+  #priority: number
 
-  get pp(): Vec2 {
-    return this.#position
+  get priority(): number {
+    return this.#priority
   }
 
-  constructor(attributes: RxnPlusAttributes) {
-    this.#position = new Vec2(attributes.position)
+  get type(): OperationType {
+    return this.#type
   }
 
-  clone() {
-    return new RxnPlus({ position: this.#position })
+  constructor(type: OperationType, priority: number = 0) {
+    assert(typeof type === 'string' && type)
+    assert(typeof priority === 'number')
+
+    this.#type = type
+    this.#priority = priority
+  }
+
+  protected abstract execute(target: Struct): PerformOperationResult
+
+  perform(target: Struct): PerformOperationResult {
+    assert(target != null)
+
+    return this.execute(target)
   }
 }

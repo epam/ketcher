@@ -486,36 +486,6 @@ export class Struct {
     this.sgroups.delete(sgid)
   }
 
-  atomSetPos(id: number, pp: Vec2): void {
-    const item = this.atoms.get(id)!
-    item.pp = pp
-  }
-
-  rxnPlusSetPos(id: number, pp: Vec2): void {
-    const item = this.rxnPluses.get(id)!
-    item.pp = pp
-  }
-
-  rxnArrowSetPos(id: number, pos: Array<Vec2>): void {
-    const item = this.rxnArrows.get(id)
-    if (item) {
-      item.pos = pos
-    }
-  }
-
-  simpleObjectSetPos(id: number, pos: Array<Vec2>) {
-    const item = this.simpleObjects.get(id)!
-    item.pos = pos
-  }
-
-  textSetPosition(id: number, position: Vec2): void {
-    const item = this.texts.get(id)
-
-    if (item) {
-      item.position = position
-    }
-  }
-
   getCoordBoundingBox(atomSet?: Pile<number>) {
     let bb: any = null
     function extend(pp) {
@@ -540,7 +510,7 @@ export class Struct {
         extend(item.pp)
       })
       this.rxnArrows.forEach(item => {
-        extend(item.pos)
+        extend(item.points)
       })
     }
     if (!bb && global) {
@@ -696,7 +666,7 @@ export class Struct {
     })
 
     this.rxnArrows.forEach(item => {
-      item.pos = item.pos.map(p => p.scaled(scale))
+      item.points = item.points.map(p => p.scaled(scale))
     })
 
     this.sgroups.forEach(item => {

@@ -14,35 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from './Vec2'
+import { Point, Vec2 } from './Vec2'
 
-export enum SimpleObjectMode {
-  ellipse = 'ellipse',
-  rectangle = 'rectangle',
-  line = 'line'
-}
+import { assert } from 'console'
 
-export interface SimpleObjectParams {
+export type SimpleObjectMode = 'ELLIPSE' | 'RECTANGLE' | 'LINE'
+
+export interface SimpleObjectAttributes {
   mode: SimpleObjectMode
-  pos?: Array<Vec2>
+  points: Array<Point>
 }
 
 export class SimpleObject {
-  pos: Array<Vec2>
-  mode: SimpleObjectMode
+  #mode: SimpleObjectMode
+  #points: Array<Vec2>
 
-  constructor(params: SimpleObjectParams) {
-    params = params || {}
-    this.pos = []
+  get mode(): SimpleObjectMode {
+    return this.#mode
+  }
 
-    if (params.pos) {
-      for (let i = 0; i < params.pos.length; i++) {
-        const currentP = params.pos[i]
-        this.pos[i] = currentP ? new Vec2(params.pos[i]) : new Vec2()
-      }
-    }
+  get points(): Array<Vec2> {
+    return this.#points
+  }
 
-    this.mode = params.mode
+  constructor(attributes: SimpleObjectAttributes) {
+    assert(attributes != null)
+
+    this.#points = attributes.points.map(point => new Vec2(point))
+    this.#mode = attributes.mode
   }
 
   clone(): SimpleObject {
@@ -51,11 +50,11 @@ export class SimpleObject {
 
   center(): Vec2 {
     switch (this.mode) {
-      case SimpleObjectMode.rectangle: {
-        return Vec2.centre(this.pos[0], this.pos[1])
+      case 'RECTANGLE': {
+        return Vec2.centre(this.points[0], this.points[1])
       }
       default:
-        return this.pos[0]
+        return this.points[0]
     }
   }
 }

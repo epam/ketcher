@@ -16,7 +16,7 @@
 
 import { Vec2 } from 'domain/entities'
 
-export interface BondParams {
+export interface BondAttributes {
   reactingCenterStatus?: number
   topology?: number
   stereo?: number
@@ -88,11 +88,11 @@ export class Bond {
   angle: number
   center: Vec2
 
-  constructor(params: BondParams) {
-    this.begin = params.begin
-    this.end = params.end
-    this.type = params.type
-    this.xxx = params.xxx || ''
+  constructor(attributes: BondAttributes) {
+    this.begin = attributes.begin
+    this.end = attributes.end
+    this.type = attributes.type
+    this.xxx = attributes.xxx || ''
     this.stereo = Bond.PATTERN.STEREO.NONE
     this.topology = Bond.PATTERN.TOPOLOGY.EITHER
     this.reactingCenterStatus = 0
@@ -101,10 +101,10 @@ export class Bond {
     this.sa = 0
     this.angle = 0
 
-    if (params.stereo) this.stereo = params.stereo
-    if (params.topology) this.topology = params.topology
-    if (params.reactingCenterStatus)
-      this.reactingCenterStatus = params.reactingCenterStatus
+    if (attributes.stereo) this.stereo = attributes.stereo
+    if (attributes.topology) this.topology = attributes.topology
+    if (attributes.reactingCenterStatus)
+      this.reactingCenterStatus = attributes.reactingCenterStatus
 
     this.center = new Vec2()
   }

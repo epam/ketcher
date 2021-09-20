@@ -14,24 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Point, Vec2 } from './Vec2'
-
-export interface RxnPlusAttributes {
-  position: Point
-}
-
-export class RxnPlus {
-  #position: Vec2
-
-  get pp(): Vec2 {
-    return this.#position
-  }
-
-  constructor(attributes: RxnPlusAttributes) {
-    this.#position = new Vec2(attributes.position)
-  }
-
-  clone() {
-    return new RxnPlus({ position: this.#position })
-  }
-}
+export * from './operations.types'
+export * from './atom'

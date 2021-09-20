@@ -51,10 +51,10 @@ export function prepareStructForGraph(struct: Struct) {
   struct.rxnArrows.forEach(item => {
     graphNodes.push({
       type: 'arrow',
-      center: item.pos[0],
+      center: item.points[0],
       data: {
         mode: item.mode,
-        pos: item.pos
+        pos: item.points
       }
     })
   })
@@ -70,10 +70,10 @@ export function prepareStructForGraph(struct: Struct) {
   struct.simpleObjects.forEach(item => {
     graphNodes.push({
       type: 'simpleObject',
-      center: item.pos[0],
+      center: item.points[0],
       data: {
         mode: item.mode,
-        pos: item.pos
+        pos: item.points
       }
     })
   })

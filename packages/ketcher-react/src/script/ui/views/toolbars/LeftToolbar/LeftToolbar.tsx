@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC } from 'react'
+import { FC, useRef } from 'react'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -23,6 +23,7 @@ import {
 import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
 
 import { Bond } from './Bond'
+import { ArrowScroll } from './ArrowScroll'
 import { RGroup } from './RGroup'
 import { Shape } from './Shape'
 import { Transform } from './Transform'
@@ -30,6 +31,7 @@ import classes from './LeftToolbar.module.less'
 import clsx from 'clsx'
 import { makeItems } from '../ToolbarGroupItem/utils'
 import { useResizeObserver } from '../../../../../hooks'
+import { useInView } from 'react-intersection-observer'
 
 const Group: FC<{ className?: string }> = ({ children, className }) => (
   <div className={clsx(classes.group, className)}>{children}</div>
@@ -74,7 +76,10 @@ type Props = LeftToolbarProps & LeftToolbarCallProps
 
 const LeftToolbar = (props: Props) => {
   const { className, ...rest } = props
+  const scrollRef = useRef<HTMLDivElement>(null)
   const { ref, height } = useResizeObserver<HTMLDivElement>()
+  const [startRef, startInView] = useInView({ threshold: 1 })
+  const [endRef, endInView] = useInView({ threshold: 0.8 })
 
   type ItemProps = {
     id: ToolbarItemVariant
@@ -85,43 +90,54 @@ const LeftToolbar = (props: Props) => {
 
   return (
     <div className={clsx(classes.root, className)} ref={ref}>
-      <Group>
-        <Item id="select" options={selectOptions} />
-        <Item id="erase" />
-      </Group>
+      <div className={classes.buttons} ref={scrollRef}>
+        <Group>
+          <div className={classes.listener} ref={startRef}>
+            <Item id="select" options={selectOptions} />
+          </div>
+          <Item id="erase" />
+        </Group>
 
-      <Group>
-        <Bond {...rest} height={height} />
-        <Item id="chain" />
-      </Group>
+        <Group>
+          <Bond {...rest} height={height} />
+          <Item id="chain" />
+        </Group>
 
-      <Group>
-        <Item id="charge-plus" />
-        <Item id="charge-minus" />
-      </Group>
+        <Group>
+          <Item id="charge-plus" />
+          <Item id="charge-minus" />
+        </Group>
 
-      <Group>
-        <Transform {...rest} height={height} />
-      </Group>
-      <Group>
-        <Item id="sgroup" />
-        <Item id="sgroup-data" />
-      </Group>
-      <Group>
-        <Item id="reaction-plus" />
-        <Item id="reaction-arrows" options={arrowsOptions} />
-        <Item id="reaction-mapping-tools" options={mappingOptions} />
-      </Group>
+        <Group>
+          <Transform {...rest} height={height} />
+        </Group>
+        <Group>
+          <Item id="sgroup" />
+          <Item id="sgroup-data" />
+        </Group>
+        <Group>
+          <Item id="reaction-plus" />
+          <Item id="reaction-arrows" options={arrowsOptions} />
+          <Item id="reaction-mapping-tools" options={mappingOptions} />
+        </Group>
 
-      <Group>
-        <RGroup {...rest} />
-      </Group>
-      <Group>
-        <Shape {...rest} />
-      </Group>
-      <Group>
-        <Item id="text" />
-      </Group>
+        <Group>
+          <RGroup {...rest} />
+        </Group>
+        <Group>
+          <Shape {...rest} />
+        </Group>
+        <Group>
+          <div className={classes.listener} ref={endRef}>
+            <Item id="text" />
+          </div>
+        </Group>
+      </div>
+      <ArrowScroll
+        scrollRef={scrollRef}
+        inView1={startInView}
+        inView2={endInView}
+      />
     </div>
   )
 }

@@ -14,14 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
-const mediaSizes = {
-  topSeparatorsShowingWidth: 1080,
-  zoomShowingWidth: 780,
-  infoShowingWidth: 790,
-  bondCollapsableHeight: 700,
-  rGroupCollapsableHeight: 850,
-  shapeCollapsableHeight: 850,
-  transformCollapsableHeight: 720
+.scroll {
+  min-height: 40px;
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
 }
 
-export { mediaSizes }
+.button {
+  height: 50%;
+  width: 100%;
+  border: none;
+  background: transparent;
+}
+
+.down {
+  position: absolute;
+  bottom: 0;
+}
+
+.up {
+  position: absolute;
+  top: 0;
+}

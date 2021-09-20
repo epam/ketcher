@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, useRef } from 'react'
+import { FC, MutableRefObject, useRef } from 'react'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -76,7 +76,7 @@ type Props = LeftToolbarProps & LeftToolbarCallProps
 
 const LeftToolbar = (props: Props) => {
   const { className, ...rest } = props
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const scrollRef = useRef() as MutableRefObject<HTMLDivElement>
   const { ref, height } = useResizeObserver<HTMLDivElement>()
   const [startRef, startInView] = useInView({ threshold: 1 })
   const [endRef, endInView] = useInView({ threshold: 0.8 })
@@ -87,6 +87,14 @@ const LeftToolbar = (props: Props) => {
   }
   const Item = ({ id, options }: ItemProps) =>
     ToolbarGroupItem({ id, options, ...rest })
+
+  const scrollUp = () => {
+    scrollRef.current.scrollTop -= 50
+  }
+
+  const scrollDown = () => {
+    scrollRef.current.scrollTop += 50
+  }
 
   return (
     <div className={clsx(classes.root, className)} ref={ref}>
@@ -134,9 +142,10 @@ const LeftToolbar = (props: Props) => {
         </Group>
       </div>
       <ArrowScroll
-        scrollRef={scrollRef}
-        inView1={startInView}
-        inView2={endInView}
+        startInView={startInView}
+        endInView={endInView}
+        scrollUp={scrollUp}
+        scrollDown={scrollDown}
       />
     </div>
   )

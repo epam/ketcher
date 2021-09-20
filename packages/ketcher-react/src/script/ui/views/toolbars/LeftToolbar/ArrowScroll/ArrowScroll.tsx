@@ -2,23 +2,24 @@ import classes from './ArrowScroll.module.less'
 import clsx from 'clsx'
 
 interface ArrowScrollProps {
-  inView1: boolean
-  inView2: boolean
-  scrollRef: any
+  startInView: boolean
+  endInView: boolean
+  scrollUp: any
+  scrollDown: any
 }
 
 const ArrowScroll = (props: ArrowScrollProps) => {
-  const { inView1, inView2, scrollRef } = props
+  const { startInView, endInView, scrollUp, scrollDown } = props
 
-  if (inView1 && inView2) {
+  if (startInView && endInView) {
     return <div className={classes.scroll} />
   }
-  if (inView1) {
+  if (startInView) {
     return (
       <div className={classes.scroll}>
         <button
           onClick={() => {
-            scrollRef.current.scrollTop += 50
+            scrollDown()
           }}
           className={clsx(classes.button, classes.down)}>
           ▼
@@ -26,12 +27,12 @@ const ArrowScroll = (props: ArrowScrollProps) => {
       </div>
     )
   }
-  if (inView2) {
+  if (endInView) {
     return (
       <div className={classes.scroll}>
         <button
           onClick={() => {
-            scrollRef.current.scrollTop -= 50
+            scrollUp()
           }}
           className={clsx(classes.button, classes.up)}>
           ▲
@@ -43,14 +44,14 @@ const ArrowScroll = (props: ArrowScrollProps) => {
     <div className={classes.scroll}>
       <button
         onClick={() => {
-          scrollRef.current.scrollTop -= 50
+          scrollUp()
         }}
         className={classes.button}>
         ▲
       </button>
       <button
         onClick={() => {
-          scrollRef.current.scrollTop += 50
+          scrollDown()
         }}
         className={classes.button}>
         ▼

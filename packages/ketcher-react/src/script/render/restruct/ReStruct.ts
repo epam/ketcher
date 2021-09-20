@@ -14,8 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Pile, Pool, Struct, Vec2 } from 'ketcher-core'
-
+import {
+  Box2Abs,
+  Pile,
+  Pool,
+  Struct,
+  Vec2,
+  FunctionalGroup
+} from 'ketcher-core'
 import { LayerMap } from './GeneralEnumTypes'
 import ReAtom from './reatom'
 import ReBond from './rebond'
@@ -562,10 +568,30 @@ class ReStruct {
 
   setSelection(selection) {
     const redraw = arguments.length === 0 // render.update only
+    const atoms: { selected: boolean; sgroup: number }[] = []
 
     Object.keys(ReStruct.maps).forEach(map => {
-      if (ReStruct.maps[map].isSelectable()) {
+      const [mapValues] = this[map].values() // hack to include ReSGroup, figure out better solution
+      if (ReStruct.maps[map].isSelectable() || mapValues instanceof ReSGroup) {
         this[map].forEach((item, id) => {
+          if (item instanceof ReAtom) {
+            atoms.push({
+              selected: item.selected,
+              sgroup: item.a.sgs.values().next().value
+            })
+          }
+          if (
+            item instanceof ReSGroup &&
+            FunctionalGroup.isContractedFunctionalGroup(
+              item.item.id,
+              this.molecule.functionalGroups
+            )
+          ) {
+            const sGroupAtoms = atoms.filter(
+              atom => atom.sgroup === item.item.id
+            )
+            item.selected = sGroupAtoms.every(atom => atom.selected)
+          }
           const selected = redraw
             ? item.selected
             : selection && selection[map] && selection[map].indexOf(id) > -1
@@ -637,10 +663,11 @@ function scaleVisel(visel, s) {
  */
 function isSelectionSvgObjectExists(item) {
   return (
+    item &&
     item.selectionPlate !== null &&
-    ((!item.selectionPlate.items && !item.selectionPlate.removed) ||
-      (Array.isArray(item.selectionPlate.items) &&
-        !item.selectionPlate[0].removed))
+    ((!item.selectionPlate?.items && !item.selectionPlate?.removed) ||
+      (Array.isArray(item.selectionPlate?.items) &&
+        !item.selectionPlate[0]?.removed))
   )
 }
 

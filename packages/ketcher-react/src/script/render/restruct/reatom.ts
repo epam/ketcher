@@ -24,7 +24,8 @@ import {
   StereoFlag,
   StereoLabel,
   Struct,
-  Vec2
+  Vec2,
+  FunctionalGroup
 } from 'ketcher-core'
 import {
   LayerMap,
@@ -89,11 +90,36 @@ class ReAtom extends ReObject {
     const paper = render.paper
     const options = render.options
     const ps = Scale.obj2scaled(this.a.pp, options)
+    const atom = this.a
+    const sgroups = render.ctab.sgroups
+    const functionalGroups = render.ctab.molecule.functionalGroups
+    if (
+      FunctionalGroup.isAtomInContractedFinctionalGroup(
+        atom,
+        sgroups,
+        functionalGroups,
+        true
+      )
+    )
+      return null
     return paper
       .circle(ps.x, ps.y, options.atomSelectionPlateRadius)
       .attr(options.highlightStyle)
   }
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any) {
+    const atom = this.a
+    const sgroups = restruct.render.ctab.sgroups
+    const functionalGroups = restruct.render.ctab.molecule.functionalGroups
+    if (
+      FunctionalGroup.isAtomInContractedFinctionalGroup(
+        atom,
+        sgroups,
+        functionalGroups,
+        true
+      )
+    )
+      return null
+
     const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
     return paper
       .circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
@@ -101,6 +127,19 @@ class ReAtom extends ReObject {
   }
   show(restruct: ReStruct, aid: number, options: any): void {
     // eslint-disable-line max-statements
+    const atom = restruct.molecule.atoms.get(aid)
+    const sgroups = restruct.molecule.sgroups
+    const functionalGroups = restruct.molecule.functionalGroups
+    if (
+      FunctionalGroup.isAtomInContractedFinctionalGroup(
+        atom,
+        sgroups,
+        functionalGroups,
+        false
+      )
+    )
+      return
+
     const render = restruct.render
     const ps = Scale.obj2scaled(this.a.pp, render.options)
 

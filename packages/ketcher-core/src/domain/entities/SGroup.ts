@@ -76,6 +76,7 @@ export class SGroup {
   neiAtoms: any
   pp: Vec2 | null
   data: any
+  expanded: boolean
 
   constructor(type: string) {
     this.type = type
@@ -116,6 +117,7 @@ export class SGroup {
       query: '',
       queryOp: ''
     }
+    this.expanded = false
   }
 
   // TODO: these methods should be overridden
@@ -215,6 +217,7 @@ export class SGroup {
     cp.patoms = null
     cp.bonds = null
     cp.allAtoms = sgroup.allAtoms
+    cp.expanded = sgroup.expanded
     return cp
   }
 

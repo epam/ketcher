@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import { Pile, Struct, Vec2 } from 'domain/entities'
+import { Pile, Struct, Vec2, SGroup } from 'domain/entities'
 
 export function prepareStructForGraph(struct: Struct) {
   const graphNodes: any = []
@@ -87,6 +86,18 @@ export function prepareStructForGraph(struct: Struct) {
         position: item.position
       }
     })
+  })
+
+  graphNodes.forEach(graphNode => {
+    const sgroups: SGroup[] = Array.from(graphNode.fragment.sgroups.values())
+    const filteredSGroups = sgroups.filter((sg: SGroup) =>
+      sg.atoms.every(atom => atom !== undefined)
+    )
+    const filteredSGroupsMap = new Map()
+    filteredSGroups.forEach((sg, index) => {
+      filteredSGroupsMap.set(index, sg)
+    })
+    graphNode.fragment.sgroups = filteredSGroupsMap
   })
 
   return graphNodes.sort((a, b) => a.center.x - b.center.x)

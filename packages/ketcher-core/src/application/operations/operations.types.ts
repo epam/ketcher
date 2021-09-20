@@ -59,7 +59,7 @@ export type OperationType =
   | 'FRAGMENT_ADD_STEREO_ATOM'
   | 'FRAGMENT_DELETE_STEREO_ATOM'
   | 'ENHANCED_FLAG_MOVE'
-  | 'TEXT_CREATE'
+  | 'TEXT_ADD'
   | 'TEXT_UPDATE'
   | 'TEXT_DELETE'
   | 'TEXT_MOVE'

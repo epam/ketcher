@@ -26,6 +26,7 @@ import { pick } from 'lodash/fp'
 import requestReducer from './request'
 import thunk from 'redux-thunk'
 import toolbarReducer from './toolbar'
+import functionalGroupsReducer from './functionalGroups'
 
 export { onAction, load }
 
@@ -37,6 +38,7 @@ const shared = combineReducers({
   editor: (store = null) => store,
   options: optionsReducer,
   templates: templatesReducer,
+  functionalGroups: functionalGroupsReducer,
   requestsStatuses: requestReducer
 })
 

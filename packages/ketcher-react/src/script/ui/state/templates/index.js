@@ -142,7 +142,7 @@ function updateLocalStore(lib) {
 /* REDUCER */
 export const initTmplsState = {
   lib: [],
-  fGroups: [],
+  functionalGroups: [],
   selected: null,
   filter: '',
   group: null,

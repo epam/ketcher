@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",
+    "@types/react-redux": "^7.1.18",
     "clsx": "^1.1.1",
     "core-js": "^3.6.5",
     "draft-js": "^0.11.7",

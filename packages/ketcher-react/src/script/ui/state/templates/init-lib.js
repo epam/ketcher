@@ -38,7 +38,7 @@ export default function initTmplLib(dispatch, baseUrl, cacheEl) {
 }
 
 export const initFGroupsTemplates = (dispatch, baseUrl, cacheEl) => {
-  const fileName = 'fGroupsLib.sdf'
+  const fileName = 'fg.sdf'
   return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then(res => {
     dispatch(initFGroups(res))
     dispatch(appUpdate({ fGroups: true }))

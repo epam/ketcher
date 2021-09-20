@@ -20,13 +20,7 @@ import {
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
 
-import { makeItems } from '../../ToolbarGroupItem/utils'
-
-const rGroupOptions = makeItems([
-  'rgroup-label',
-  'rgroup-fragment',
-  'rgroup-attpoints'
-])
+import { rGroupOptions } from '../leftToolbarOptions'
 
 interface RGroupProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   height?: number

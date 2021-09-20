@@ -22,42 +22,14 @@ import {
 } from '../ToolbarGroupItem'
 import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
 
-import { Bond, bondCommon, bondQuery, bondSpecial, bondStereo } from './Bond'
-import { RGroup, rGroupOptions } from './RGroup'
-import { Shape, shapeOptions } from './Shape'
-import { Transform, transformOptions } from './Transform'
+import { Bond } from './Bond'
+import { RGroup } from './RGroup'
+import { Shape } from './Shape'
+import { Transform } from './Transform'
+import * as leftToolbarOptions from './leftToolbarOptions'
 import classes from './LeftToolbar.module.less'
 import clsx from 'clsx'
-import { makeItems } from '../ToolbarGroupItem/utils'
 import { useResizeObserver } from '../../../../../hooks'
-
-const selectOptions: ToolbarItem[] = makeItems([
-  'select-lasso',
-  'select-rectangle',
-  'select-fragment'
-])
-
-const arrowsOptions: ToolbarItem[] = makeItems([
-  'reaction-arrow-open-angle',
-  'reaction-arrow-filled-triangle',
-  'reaction-arrow-filled-bow',
-  'reaction-arrow-dashed-open-angle',
-  'reaction-arrow-failed',
-  'reaction-arrow-both-ends-filled-triangle',
-  'reaction-arrow-equilibrium-filled-half-bow',
-  'reaction-arrow-equilibrium-filled-triangle',
-  'reaction-arrow-equilibrium-open-angle',
-  'reaction-arrow-unbalanced-equilibrium-filled-half-bow',
-  'reaction-arrow-unbalanced-equilibrium-open-half-angle',
-  'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow',
-  'reaction-arrow-unbalanced-equilibrium-fille-half-triangle'
-])
-
-const mappingOptions: ToolbarItem[] = makeItems([
-  'reaction-map',
-  'reaction-unmap',
-  'reaction-automap'
-])
 
 interface LeftToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
@@ -122,7 +94,10 @@ const LeftToolbar = (props: Props) => {
   return (
     <div className={clsx(classes.root, className)} ref={ref}>
       <Group
-        items={[{ id: 'select', options: selectOptions }, { id: 'erase' }]}
+        items={[
+          { id: 'select', options: leftToolbarOptions.selectOptions },
+          { id: 'erase' }
+        ]}
       />
 
       <Group
@@ -130,10 +105,10 @@ const LeftToolbar = (props: Props) => {
           {
             id: 'bond-common',
             options: [
-              ...bondCommon,
-              ...bondQuery,
-              ...bondSpecial,
-              ...bondStereo
+              ...leftToolbarOptions.bondCommon,
+              ...leftToolbarOptions.bondQuery,
+              ...leftToolbarOptions.bondSpecial,
+              ...leftToolbarOptions.bondStereo
             ]
           },
           { id: 'chain' }
@@ -142,21 +117,35 @@ const LeftToolbar = (props: Props) => {
 
       <Group items={[{ id: 'charge-plus' }, { id: 'charge-minus' }]} />
 
-      <Group items={[{ id: 'transform-rotate', options: transformOptions }]} />
+      <Group
+        items={[
+          {
+            id: 'transform-rotate',
+            options: leftToolbarOptions.transformOptions
+          }
+        ]}
+      />
 
       <Group items={[{ id: 'sgroup' }, { id: 'sgroup-data' }]} />
 
       <Group
         items={[
           { id: 'reaction-plus' },
-          { id: 'reaction-arrows', options: arrowsOptions },
-          { id: 'reaction-mapping-tools', options: mappingOptions }
+          { id: 'reaction-arrows', options: leftToolbarOptions.arrowsOptions },
+          {
+            id: 'reaction-mapping-tools',
+            options: leftToolbarOptions.mappingOptions
+          }
         ]}
       />
 
-      <Group items={[{ id: 'rgroup', options: rGroupOptions }]} />
+      <Group
+        items={[{ id: 'rgroup', options: leftToolbarOptions.rGroupOptions }]}
+      />
 
-      <Group items={[{ id: 'shape', options: shapeOptions }]} />
+      <Group
+        items={[{ id: 'shape', options: leftToolbarOptions.shapeOptions }]}
+      />
 
       <Group items={[{ id: 'text' }]} />
     </div>

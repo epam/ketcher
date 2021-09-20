@@ -20,14 +20,8 @@ import {
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
 
-import { makeItems } from '../../ToolbarGroupItem/utils'
+import { transformOptions } from '../leftToolbarOptions'
 import { mediaSizes } from '../../mediaSizes'
-
-const transformOptions = makeItems([
-  'transform-rotate',
-  'transform-flip-h',
-  'transform-flip-v'
-])
 
 interface TransformProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   height?: number

@@ -20,13 +20,7 @@ import {
   ToolbarGroupItemProps
 } from '../../ToolbarGroupItem'
 
-import { makeItems } from '../../ToolbarGroupItem/utils'
-
-const shapeOptions = makeItems([
-  'shape-ellipse',
-  'shape-rectangle',
-  'shape-line'
-])
+import { shapeOptions } from '../leftToolbarOptions'
 
 interface ShapeProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   height?: number
@@ -40,4 +34,4 @@ const Shape = (props: Props) => {
 }
 
 export type { ShapeProps, ShapeCallProps }
-export { Shape, shapeOptions }
+export { Shape }

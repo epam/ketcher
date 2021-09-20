@@ -63,4 +63,4 @@ const Bond = (props: Props) => {
 }
 
 export type { BondProps, BondCallProps }
-export { Bond }
+export { Bond, bondCommon, bondQuery, bondSpecial, bondStereo }

@@ -59,4 +59,4 @@ const Transform = (props: Props) => {
 }
 
 export type { TransformProps, TransformCallProps }
-export { Transform }
+export { Transform, transformOptions }

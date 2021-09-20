@@ -40,4 +40,4 @@ const Shape = (props: Props) => {
 }
 
 export type { ShapeProps, ShapeCallProps }
-export { Shape }
+export { Shape, shapeOptions }

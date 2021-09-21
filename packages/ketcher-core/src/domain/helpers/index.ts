@@ -16,3 +16,4 @@
 
 export * from './Scale'
 export * from './StereoValidator'
+export * from './FunctionalGroupsProvider'

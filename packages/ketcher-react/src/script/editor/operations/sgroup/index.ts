@@ -15,7 +15,12 @@
  ***************************************************************************/
 
 import Restruct, { ReSGroup } from '../../../render/restruct'
-import { SGroup, Vec2 } from 'ketcher-core'
+import {
+  SGroup,
+  Vec2,
+  FunctionalGroup,
+  FunctionalGroupsProvider
+} from 'ketcher-core'
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
@@ -26,20 +31,34 @@ type Data = {
   sgid: any
   type?: any
   pp?: any
+  expanded?: boolean
+  name?: string
 }
 
 class SGroupCreate extends BaseOperation {
   data: Data
 
-  constructor(sgroupId?: any, type?: any, pp?: any) {
+  constructor(
+    sgroupId?: any,
+    type?: any,
+    pp?: any,
+    expanded?: boolean,
+    name?: string
+  ) {
     super(OperationType.S_GROUP_CREATE)
-    this.data = { sgid: sgroupId, type, pp }
+    this.data = {
+      sgid: sgroupId,
+      type,
+      pp,
+      expanded,
+      name
+    }
   }
 
   execute(restruct: Restruct) {
     const struct = restruct.molecule
     const sgroup = new SGroup(this.data.type)
-    const { sgid, pp } = this.data
+    const { sgid, pp, expanded, name } = this.data
 
     sgroup.id = sgid
     struct.sgroups.set(sgid, sgroup)
@@ -48,7 +67,25 @@ class SGroupCreate extends BaseOperation {
       struct.sgroups.get(sgid)!.pp = new Vec2(pp)
     }
 
+    if (expanded) {
+      sgroup.expanded = expanded
+    }
+
+    if (name) {
+      sgroup.data.name = name
+    }
+
     restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)))
+    if (
+      FunctionalGroup.isFunctionalGroup(
+        FunctionalGroupsProvider.getInstance().getFunctionalGroupsList(),
+        sgroup
+      )
+    ) {
+      restruct.molecule.functionalGroups.add(
+        new FunctionalGroup(sgroup.data.name, sgroup.id, sgroup.expanded)
+      )
+    }
     this.data.sgid = sgid
   }
 

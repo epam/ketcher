@@ -92,7 +92,8 @@ function defaultOptions(opt) {
       'stroke-linecap': 'round',
       'stroke-opacity': 0.6
     },
-    atomSelectionPlateRadius: labelFontSize * 1.2
+    atomSelectionPlateRadius: labelFontSize * 1.2,
+    contractedFunctionalGroupSize: 50
   }
 
   return Object.assign({}, defaultOptions, opt)

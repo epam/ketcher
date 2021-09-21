@@ -19,6 +19,7 @@ import { StereoFlag, Struct } from 'domain/entities'
 import { Elements } from 'domain/constants'
 import common from './common'
 import utils from './utils'
+import { FunctionalGroupsProvider } from 'index'
 
 const END_V2000 = '2D 1   1.00000     0.00000     0'
 
@@ -53,6 +54,9 @@ export class Molfile {
     }
     ret.initHalfBonds()
     ret.initNeighbors()
+    const functionalGroupsProvider = FunctionalGroupsProvider.getInstance()
+    const functionalGroupsList = functionalGroupsProvider.getFunctionalGroupsList()
+    ret.bindSGroupsToFunctionalGroups(functionalGroupsList)
 
     return ret
   }
@@ -485,6 +489,18 @@ export class Molfile {
     // TODO: write M  AAL
     // TODO: write M  RGP
     // TODO: write M  LOG
+
+    const expandedGroups: number[] = []
+    this.molecule.sgroups.forEach(sg => {
+      if (sg.expanded) expandedGroups.push(sg.id + 1)
+    })
+
+    if (expandedGroups.length) {
+      const expandedGroupsLine = `M  SDS EXP  ${
+        expandedGroups.length
+      }   ${expandedGroups.join('   ')}`
+      this.writeCR(expandedGroupsLine)
+    }
 
     this.writeCR('M  END')
   }

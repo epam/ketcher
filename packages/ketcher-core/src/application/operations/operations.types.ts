@@ -55,10 +55,10 @@ export type OperationType =
   | 'RESTORE_DESCRIPTORS_POSITION'
   | 'FRAGMENT_ADD'
   | 'FRAGMENT_DELETE'
-  | 'FRAGMENT_STEREO_FLAG'
+  | 'FRAGMENT_UPDATE_STEREO_FLAG'
   | 'FRAGMENT_ADD_STEREO_ATOM'
   | 'FRAGMENT_DELETE_STEREO_ATOM'
-  | 'ENHANCED_FLAG_MOVE'
+  | 'FRAGMENT_MOVE_STEREO_FLAG'
   | 'TEXT_ADD'
   | 'TEXT_UPDATE'
   | 'TEXT_DELETE'
@@ -74,7 +74,7 @@ export interface Operation {
   readonly type: OperationType
   readonly priority: number
 
-  perform: (target: Struct) => PerformOperationResult
+  perform: (struct: Struct) => PerformOperationResult
 }
 
 export type AttrValueType = string | number | boolean | null

@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AttrValueType, PerformOperationResult } from './operations.types'
 import { Struct, Text, TextAttributes, Vec2 } from 'domain/entities'
 
 import { BaseOperation } from './baseOperation'
+import { PerformOperationResult } from './operations.types'
 import { assert } from 'console'
 
 export class AddText extends BaseOperation {
@@ -33,14 +33,14 @@ export class AddText extends BaseOperation {
     this.#textId = textId
   }
 
-  execute(target: Struct): PerformOperationResult {
+  execute(struct: Struct): PerformOperationResult {
     const text = new Text(this.#textAttributes)
 
     let textId: number
     if (typeof this.#textId !== 'number') {
-      textId = target.texts.add(text)
+      textId = struct.texts.add(text)
     } else {
-      target.texts.set(this.#textId, text)
+      struct.texts.set(this.#textId, text)
       textId = this.#textId
     }
 
@@ -64,15 +64,15 @@ export class DeleteText extends BaseOperation {
     this.#textId = textId
   }
 
-  execute(target: Struct): PerformOperationResult {
-    const text = target.texts.get(this.#textId)!
+  execute(struct: Struct): PerformOperationResult {
+    const text = struct.texts.get(this.#textId)!
 
     // TODO: move to renderer
     // restruct.markItemRemoved()
     // restruct.clearVisel(restruct.texts.get(this.data.id)!.visel)
     // restruct.texts.delete(this.data.id)
 
-    target.texts.delete(this.#textId)
+    struct.texts.delete(this.#textId)
 
     const inverseOperation = new AddText(text, this.#textId)
 
@@ -82,12 +82,6 @@ export class DeleteText extends BaseOperation {
       operationType: this.type
     }
   }
-}
-
-interface TextMoveData {
-  id: any
-  d: any
-  noinvalidate: boolean
 }
 
 export class MoveText extends BaseOperation {
@@ -103,8 +97,8 @@ export class MoveText extends BaseOperation {
     this.#delta = delta
   }
 
-  execute(target: Struct): PerformOperationResult {
-    const text = target.texts.get(this.#textId)!
+  execute(struct: Struct): PerformOperationResult {
+    const text = struct.texts.get(this.#textId)!
 
     text.position.add_(this.#delta)
 
@@ -127,12 +121,6 @@ export class MoveText extends BaseOperation {
   }
 }
 
-interface TextUpdateData {
-  id: number
-  content: string
-  previousContent?: string
-}
-
 export class UpdateText extends BaseOperation {
   #textId: number
   #content: string
@@ -144,8 +132,8 @@ export class UpdateText extends BaseOperation {
     this.#content = content
   }
 
-  execute(target: Struct): PerformOperationResult {
-    const text = target.texts.get(this.#textId)!
+  execute(struct: Struct): PerformOperationResult {
+    const text = struct.texts.get(this.#textId)!
     const previousContent = text.content
 
     text.content = this.#content

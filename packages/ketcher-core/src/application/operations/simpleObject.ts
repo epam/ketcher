@@ -68,7 +68,7 @@ export class AddSimpleObject extends BaseOperation {
     this.#simpleObjectId = simpleObjectId
   }
 
-  execute(target: Struct): PerformOperationResult {
+  execute(struct: Struct): PerformOperationResult {
     const simpleObject = new SimpleObject({
       mode: this.#mode,
       points: this.#points
@@ -77,9 +77,9 @@ export class AddSimpleObject extends BaseOperation {
     let simpleObjectId: number
 
     if (typeof this.#simpleObjectId !== 'number') {
-      simpleObjectId = target.simpleObjects.add(simpleObject)
+      simpleObjectId = struct.simpleObjects.add(simpleObject)
     } else {
-      target.simpleObjects.set(this.#simpleObjectId, simpleObject)
+      struct.simpleObjects.set(this.#simpleObjectId, simpleObject)
       simpleObjectId = this.#simpleObjectId
     }
 
@@ -106,8 +106,8 @@ export class DeleteSimpleObject extends BaseOperation {
     this.#simpleObjectId = simpleObjectId
   }
 
-  execute(target: Struct): PerformOperationResult {
-    const simpleObject: SimpleObject = target.simpleObjects.get(
+  execute(struct: Struct): PerformOperationResult {
+    const simpleObject: SimpleObject = struct.simpleObjects.get(
       this.#simpleObjectId
     )!
 
@@ -116,7 +116,7 @@ export class DeleteSimpleObject extends BaseOperation {
     // restruct.clearVisel(restruct.simpleObjects.get(this.data.id).visel)
     // restruct.simpleObjects.delete(this.data.id)
 
-    target.simpleObjects.delete(this.#simpleObjectId)
+    struct.simpleObjects.delete(this.#simpleObjectId)
 
     const inverseOperation = new AddSimpleObject(
       simpleObject.points,
@@ -143,8 +143,8 @@ export class MoveSimpleObject extends BaseOperation {
     this.#delta = delta
   }
 
-  execute(target: Struct): PerformOperationResult {
-    const simpleObject = target.simpleObjects.get(this.#simpleObjectId)!
+  execute(struct: Struct): PerformOperationResult {
+    const simpleObject = struct.simpleObjects.get(this.#simpleObjectId)!
     simpleObject.points.forEach(p => p.add_(this.#delta))
 
     //TODO: move to  renderer
@@ -190,9 +190,9 @@ export class ResizeSimpleObject extends BaseOperation {
   }
 
   // TODO: rework logic how to detect anchor
-  execute(target: Struct): PerformOperationResult {
+  execute(struct: Struct): PerformOperationResult {
     // TODO: transfrom to clear fucntion
-    const simpleObject = target.simpleObjects.get(this.#simpleObjectId)!
+    const simpleObject = struct.simpleObjects.get(this.#simpleObjectId)!
 
     switch (simpleObject.mode) {
       case 'ELLIPSE': {

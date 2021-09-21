@@ -43,9 +43,9 @@ export abstract class BaseOperation implements Operation {
     this.#priority = priority
   }
 
-  protected abstract execute(target: Struct): PerformOperationResult
+  protected abstract execute(struct: Struct): PerformOperationResult
 
-  perform(target: Struct): PerformOperationResult {
+  perform(struct: Struct): PerformOperationResult {
     assert(target != null)
 
     return this.execute(target)

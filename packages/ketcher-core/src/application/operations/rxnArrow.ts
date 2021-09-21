@@ -40,14 +40,14 @@ export class AddRxnArrow extends BaseOperation {
     this.#rxnArrowId = rxnArrowId
   }
 
-  execute(target: Struct): PerformOperationResult {
+  execute(struct: Struct): PerformOperationResult {
     const rxnArrow = new RxnArrow({ mode: this.#mode, points: this.#points })
 
     let rxnArrowId: number
     if (typeof this.#rxnArrowId !== 'number') {
-      rxnArrowId = target.rxnArrows.add(rxnArrow)
+      rxnArrowId = struct.rxnArrows.add(rxnArrow)
     } else {
-      target.rxnArrows.set(this.#rxnArrowId, rxnArrow)
+      struct.rxnArrows.set(this.#rxnArrowId, rxnArrow)
       rxnArrowId = this.#rxnArrowId
     }
 
@@ -69,15 +69,15 @@ export class DeleteRxnArrow extends BaseOperation {
     this.#rxnArrowId = rxnArrowId
   }
 
-  execute(target: Struct): PerformOperationResult {
-    const rxnArrow = target.rxnArrows.get(this.#rxnArrowId)!
+  execute(struct: Struct): PerformOperationResult {
+    const rxnArrow = struct.rxnArrows.get(this.#rxnArrowId)!
 
     // TODO: move to renderer
     // restruct.markItemRemoved()
     // restruct.clearVisel(restruct.rxnArrows.get(this.data.id).visel)
     // restruct.rxnArrows.delete(this.data.id)
 
-    target.rxnArrows.delete(this.#rxnArrowId)
+    struct.rxnArrows.delete(this.#rxnArrowId)
 
     const inverseOperation = new AddRxnArrow(
       rxnArrow.points,
@@ -104,8 +104,8 @@ export class MoveRxnArrow extends BaseOperation {
     this.#delta = delta
   }
 
-  execute(target: Struct): PerformOperationResult {
-    const rxnArrow = target.rxnArrows.get(this.#rxnArrowId)!
+  execute(struct: Struct): PerformOperationResult {
+    const rxnArrow = struct.rxnArrows.get(this.#rxnArrowId)!
     rxnArrow.points.forEach(p => p.add_(this.#delta))
 
     // TODO: move to renderer
@@ -145,9 +145,9 @@ export class ResizeRxnArrow extends BaseOperation {
     this.#anchor = anchor
   }
 
-  execute(target: Struct): PerformOperationResult {
+  execute(struct: Struct): PerformOperationResult {
     // TODO: transfrom to clear function
-    const rxnArrow = target.rxnArrows.get(this.#rxnArrowId)!
+    const rxnArrow = struct.rxnArrows.get(this.#rxnArrowId)!
 
     const previousPos0 = rxnArrow.points[0].get_xy0()
     const previousPos1 = rxnArrow.points[1].get_xy0()

@@ -32,8 +32,8 @@ export class SetAtomAttr extends BaseOperation {
     this.#value = value
   }
 
-  execute(target: Struct): PerformOperationResult {
-    const atom = target.atoms.get(this.#atomId)!
+  execute(struct: Struct): PerformOperationResult {
+    const atom = struct.atoms.get(this.#atomId)!
     const previousValue = atom[this.#attribute]
     atom[this.#attribute] = this.#value
 
@@ -61,8 +61,8 @@ export class MoveAtom extends BaseOperation {
     this.#delta = delta
   }
 
-  execute(target: Struct): PerformOperationResult {
-    const atom = target.atoms.get(this.#atomId)!
+  execute(struct: Struct): PerformOperationResult {
+    const atom = struct.atoms.get(this.#atomId)!
     atom.pp.add_(this.#delta)
     //TODO: move to renderer
     // const reatom = restruct.atoms.get(aid)
@@ -92,7 +92,7 @@ class AddAtom extends BaseOperation {
     this.#atomAttributes = atomAttributes
   }
 
-  execute(target: Struct): PerformOperationResult {
+  execute(struct: Struct): PerformOperationResult {
     const atomAttributes: AtomAttributes = {
       ...{ label: 'C' },
       ...this.#atomAttributes
@@ -100,9 +100,9 @@ class AddAtom extends BaseOperation {
 
     let atomId: number
     if (typeof this.#atomId !== 'number') {
-      atomId = target.atoms.add(new Atom(atomAttributes))
+      atomId = struct.atoms.add(new Atom(atomAttributes))
     } else {
-      target.atoms.set(this.#atomId, new Atom(atomAttributes))
+      struct.atoms.set(this.#atomId, new Atom(atomAttributes))
       atomId = this.#atomId!
     }
 
@@ -133,8 +133,8 @@ class DeleteAtom extends BaseOperation {
     this.#atomId = atomId
   }
 
-  execute(target: Struct): PerformOperationResult {
-    const atom = target.atoms.get(this.#atomId)!
+  execute(struct: Struct): PerformOperationResult {
+    const atom = struct.atoms.get(this.#atomId)!
 
     //TODO: to delete
     // const set = restruct.connectedComponents.get(restructedAtom.component)
@@ -146,7 +146,7 @@ class DeleteAtom extends BaseOperation {
     // restruct.clearVisel(restructedAtom.visel)
     // restruct.atoms.delete(aid)
     // restruct.markItemRemoved()
-    target.atoms.delete(this.#atomId)
+    struct.atoms.delete(this.#atomId)
 
     const inverseOperation = new AddAtom(atom, this.#atomId)
 

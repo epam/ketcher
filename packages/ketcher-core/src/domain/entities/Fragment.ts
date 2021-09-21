@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Point, Vec2 } from './Vec2'
+
 import { Bond } from './Bond'
 import { StereoLabel } from './Atom'
 import { Struct } from './Struct'
-import { Vec2 } from './Vec2'
 
 export enum StereoFlag {
   Mixed = 'MIXED',
@@ -71,52 +72,68 @@ function calcStereoFlag(
 
 export class Fragment {
   #enhancedStereoFlag?: StereoFlag
+  #stereoAtoms: Array<number>
   stereoFlagPosition?: Vec2
-  stereoAtoms: Array<number> = []
 
   get enhancedStereoFlag() {
     return this.#enhancedStereoFlag
   }
 
-  constructor(stereoFlagPosition?: Vec2) {
-    this.stereoFlagPosition = stereoFlagPosition
+  get stereoAtoms(): Array<number> {
+    return [...this.#stereoAtoms]
+  }
+
+  constructor(stereoAtoms: Array<number> = [], stereoFlagPosition?: Point) {
+    if (stereoFlagPosition) {
+      this.stereoFlagPosition = new Vec2(stereoFlagPosition)
+    }
+
+    this.#stereoAtoms = stereoAtoms
   }
 
   static getDefaultStereoFlagPosition(
     struct: Struct,
     fragmentId: number
-  ): Vec2 | undefined {
+  ): Vec2 {
     const fragment = struct.getFragment(fragmentId)
-    if (!fragment) return undefined
     const bb = fragment.getCoordBoundingBox()
     return new Vec2(bb.max.x, bb.min.y - 1)
   }
 
   clone(aidMap: Map<number, number>) {
-    const fr = new Fragment(this.stereoFlagPosition)
-    fr.stereoAtoms = this.stereoAtoms.map(aid => aidMap.get(aid)!)
-    fr.#enhancedStereoFlag = this.#enhancedStereoFlag
-    return fr
+    const stereoAtoms = this.#stereoAtoms.map(aid => aidMap.get(aid)!)
+    const fragment = new Fragment(stereoAtoms, this.stereoFlagPosition)
+    fragment.#enhancedStereoFlag = this.#enhancedStereoFlag
+    return fragment
   }
 
-  updateStereoFlag(struct: Struct) {
+  updateStereoFlag(struct: Struct): StereoFlag | undefined {
     this.#enhancedStereoFlag = calcStereoFlag(struct, this.stereoAtoms)
     return this.#enhancedStereoFlag
   }
 
-  //TODO: split to 'add' and 'remove methods
-  updateStereoAtom(struct: Struct, aid: number, frId: number, isAdd: boolean) {
-    if (isAdd && !this.stereoAtoms.includes(aid)) this.stereoAtoms.push(aid)
-    if (
-      !isAdd &&
-      (struct.atoms.get(aid)?.fragment !== frId ||
-        !Array.from(struct.bonds.values())
-          .filter(bond => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE)
-          .some(bond => bond.begin === aid))
-    ) {
-      this.stereoAtoms = this.stereoAtoms.filter(item => item !== aid)
+  addStereoAtom(atomId: number): boolean {
+    if (!this.#stereoAtoms.includes(atomId)) {
+      this.stereoAtoms.push(atomId)
+      return true
     }
+    return false
+  }
 
-    this.#enhancedStereoFlag = calcStereoFlag(struct, this.stereoAtoms)
+  deleteStereoAtom(
+    struct: Struct,
+    fragmentId: number,
+    atomId: number
+  ): boolean {
+    if (
+      struct.atoms.get(atomId)?.fragment !== fragmentId ||
+      !Array.from(struct.bonds.values())
+        .filter(bond => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE)
+        .some(bond => bond.begin === atomId)
+    ) {
+      this.#stereoAtoms = this.#stereoAtoms.filter(item => item !== atomId)
+      return true
+    }
+    return false
   }
 }

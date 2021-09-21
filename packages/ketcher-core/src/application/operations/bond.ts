@@ -37,7 +37,7 @@ export class AddBond extends BaseOperation {
     this.#bondId = bondId
   }
 
-  execute(target: Struct): PerformOperationResult {
+  execute(struct: Struct): PerformOperationResult {
     // BaseOperation.invalidateAtom(restruct, begin, 1)
     // BaseOperation.invalidateAtom(restruct, end, 1)
 
@@ -48,17 +48,17 @@ export class AddBond extends BaseOperation {
 
     let bondId: number
     if (typeof this.#bondId === 'number') {
-      target.bonds.set(this.#bondId, bond)
+      struct.bonds.set(this.#bondId, bond)
       bondId = this.#bondId
     } else {
-      bondId = target.bonds.add(bond)
+      bondId = struct.bonds.add(bond)
     }
 
-    const structBond = target.bonds.get(bondId)!
+    const structBond = struct.bonds.get(bondId)!
 
-    target.bondInitHalfBonds(bondId)
-    target.atomAddNeighbor(structBond.hb1)
-    target.atomAddNeighbor(structBond.hb2)
+    struct.bondInitHalfBonds(bondId)
+    struct.atomAddNeighbor(structBond.hb1)
+    struct.atomAddNeighbor(structBond.hb2)
 
     // TODO: move to renderer
     // notifyBondAdded
@@ -80,8 +80,8 @@ export class DeleteBond extends BaseOperation {
     this.#bondId = bondId
   }
 
-  execute(target: Struct): PerformOperationResult {
-    const bond = target.bonds.get(this.#bondId)!
+  execute(struct: Struct): PerformOperationResult {
+    const bond = struct.bonds.get(this.#bondId)!
     //BaseOperation.invalidateBond(restruct, bid)
 
     // TODO: move to renderer
@@ -101,22 +101,22 @@ export class DeleteBond extends BaseOperation {
 
     const halfBonds = [bond.hb1!, bond.hb2!]
     halfBonds.forEach((hbid: number) => {
-      const halfBond = target.halfBonds.get(hbid!)
+      const halfBond = struct.halfBonds.get(hbid!)
       if (!halfBond) {
         return
       }
 
-      const atom = target.atoms.get(halfBond.begin)!
+      const atom = struct.atoms.get(halfBond.begin)!
       const pos = atom.neighbors.indexOf(hbid!)
       const prev = (pos + atom.neighbors.length - 1) % atom.neighbors.length
       const next = (pos + 1) % atom.neighbors.length
-      target.setHbNext(atom.neighbors[prev], atom.neighbors[next])
+      struct.setHbNext(atom.neighbors[prev], atom.neighbors[next])
       atom.neighbors.splice(pos, 1)
     })
-    target.halfBonds.delete(bond.hb1!)
-    target.halfBonds.delete(bond.hb2!)
+    struct.halfBonds.delete(bond.hb1!)
+    struct.halfBonds.delete(bond.hb2!)
 
-    target.bonds.delete(this.#bondId)
+    struct.bonds.delete(this.#bondId)
 
     const inverseOperation = new AddBond(bond, this.#bondId)
 
@@ -139,7 +139,7 @@ export class MoveBond extends BaseOperation {
     this.#delta = delta
   }
 
-  execute(_target: Struct): PerformOperationResult {
+  execute(_struct: Struct): PerformOperationResult {
     //TODO: move to renderer
     // const bond = restruct.bonds.get(bid)
     // const scaled = Scale.obj2scaled(d, restruct.render.options)
@@ -168,8 +168,8 @@ export class SetBondAttr extends BaseOperation {
     this.#value = value
   }
 
-  execute(target: Struct): PerformOperationResult {
-    const bond = target.bonds.get(this.#bondId)!
+  execute(struct: Struct): PerformOperationResult {
+    const bond = struct.bonds.get(this.#bondId)!
     const previousValue = bond[this.#attribute]
 
     bond[this.#attribute] = this.#value

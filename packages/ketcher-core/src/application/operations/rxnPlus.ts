@@ -32,15 +32,15 @@ class AddRxnPlus extends BaseOperation {
     this.#rxnPlusId = rxnPlusId
   }
 
-  execute(target: Struct): PerformOperationResult {
+  execute(struct: Struct): PerformOperationResult {
     const rxnPlus = new RxnPlus({ position: this.#position })
 
     let rxnPlusId: number
     if (typeof this.#rxnPlusId === 'number') {
-      target.rxnPluses.set(this.#rxnPlusId, rxnPlus)
+      struct.rxnPluses.set(this.#rxnPlusId, rxnPlus)
       rxnPlusId = this.#rxnPlusId
     } else {
-      rxnPlusId = target.rxnPluses.add(rxnPlus)
+      rxnPlusId = struct.rxnPluses.add(rxnPlus)
     }
 
     // TODO: move to renderer
@@ -65,8 +65,8 @@ class DeleteRxnPlus extends BaseOperation {
     this.#rxnPlusId = rxnPlusId
   }
 
-  execute(target: Struct): PerformOperationResult {
-    const rxnPlus = target.rxnPluses.get(this.#rxnPlusId)!
+  execute(struct: Struct): PerformOperationResult {
+    const rxnPlus = struct.rxnPluses.get(this.#rxnPlusId)!
 
     //TODO: move to renderer
     // // notifyRxnPlusRemoved
@@ -76,7 +76,7 @@ class DeleteRxnPlus extends BaseOperation {
     // restruct.clearVisel(rxn.visel)
     // restruct.rxnPluses.delete(plid)
 
-    target.rxnPluses.delete(this.#rxnPlusId)
+    struct.rxnPluses.delete(this.#rxnPlusId)
 
     const inverseOperation = new AddRxnPlus(rxnPlus.pp, this.#rxnPlusId)
 
@@ -99,8 +99,8 @@ export class MoveRxnPlus extends BaseOperation {
     this.#delta = delta
   }
 
-  execute(target: Struct): PerformOperationResult {
-    const rxnPlus = target.rxnPluses.get(this.#rxnPlusId)!
+  execute(struct: Struct): PerformOperationResult {
+    const rxnPlus = struct.rxnPluses.get(this.#rxnPlusId)!
     rxnPlus.pp.add_(this.#delta)
 
     // TODO: move to renderer

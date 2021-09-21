@@ -142,7 +142,6 @@ function updateLocalStore(lib) {
 /* REDUCER */
 export const initTmplsState = {
   lib: [],
-  functionalGroups: [],
   selected: null,
   filter: '',
   group: null,
@@ -153,8 +152,7 @@ const tmplActions = [
   'TMPL_INIT',
   'TMPL_SELECT',
   'TMPL_CHANGE_GROUP',
-  'TMPL_CHANGE_FILTER',
-  'FGROUPS_INIT'
+  'TMPL_CHANGE_FILTER'
 ]
 
 const attachActions = ['INIT_ATTACH', 'SET_ATTACH_POINTS', 'SET_TMPL_NAME']

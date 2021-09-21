@@ -24,6 +24,7 @@ import server from './server'
 import templates from './templates'
 import tools from './tools'
 import zoom from './zoom'
+import functionalGroups from './functionalGroups'
 
 export * from './action.types'
 
@@ -179,7 +180,8 @@ const config = {
   ...tools,
   ...atoms,
   ...zoom,
-  ...templates
+  ...templates,
+  ...functionalGroups
 }
 
 function hasSelection(editor) {

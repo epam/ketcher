@@ -14,13 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC } from 'react'
-//@ts-ignore
+import { FC, RefCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import TemplateTable, {
-  greekify,
-  Template
-} from '../../../dialog/template/TemplateTable'
+import TemplateTable, { Template } from '../../../dialog/template/TemplateTable'
 import classes from './functionalGroups.module.less'
 import { Dialog } from '../'
 import {
@@ -28,41 +24,89 @@ import {
   changeGroupList,
   selectFuncGroup
 } from '../../../state/functionalGroups'
-import { deleteTmpl, editTmpl } from '../../../state/templates'
-// import {omit} from "lodash/fp";
+import { editTmpl } from '../../../state/templates'
+import { onAction } from '../../../state'
 import SaveButton from '../../../component/view/savebutton'
 import Input from '../../../component/form/input'
 import clsx from 'clsx'
 import SelectList from '../../../component/form/select'
+import {
+  fgGroupSelector,
+  funcGroupsFilterSelector,
+  funcGroupsSelector,
+  selectedFGSelector
+} from '../../../state/functionalGroups/selectors'
+import { useResizeObserver } from '../../../../../hooks'
+import { filterLib, Result } from '../../../dialog/template/TemplateDialog'
+import { SdfSerializer } from 'ketcher-core'
 
 export interface FGProps {
-  onOk: (res: any) => void
+  className: string
+  onOk: () => void
+  onCancel: () => void
 }
 
-const FunctionalGroups: FC<FGProps> = ({ onOk }) => {
+const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
   const dispatch = useDispatch()
   const CONTAINER_MIN_WIDTH = 310
+
+  const lib = useSelector(funcGroupsSelector)
+  const group = useSelector(fgGroupSelector) || 'Functional Groups'
+  const selected = useSelector(selectedFGSelector)
+  const filter = useSelector(funcGroupsFilterSelector) // TODO:
 
   const onFilter = filter => dispatch(changeFilter(filter))
   const onSelect = tmpl => dispatch(selectFuncGroup(tmpl))
   const onChangeGroup = group => dispatch(changeGroupList(group))
   const onAttach = tmpl => dispatch(editTmpl(tmpl))
-  const onDelete = tmpl => dispatch(deleteTmpl(tmpl))
+  // const onDelete = tmpl => dispatch(deleteTmpl(tmpl))
   const handleOk = res => {
     dispatch(onAction({ tool: 'template', opts: res }))
-    onOk(res)
+    onOk()
   }
 
-  const select = (tmpl: Template): void => {
-    if (tmpl === props.selected) handleOk(result())
-    else props.onSelect(tmpl)
+  const filteredLib = filterLib(lib, filter)
+
+  const result = (): Result | null => {
+    const tmpl = selected
+    console.assert(!tmpl || tmpl.props, 'Incorrect SDF parse')
+    return tmpl
+      ? {
+          struct: tmpl.struct,
+          aid: parseInt(String(tmpl.props.atomid)) || null,
+          bid: parseInt(String(tmpl.props.bondid)) || null
+        }
+      : null
   }
+
+  const sdfSerializer = new SdfSerializer()
+  const data = sdfSerializer.serialize(lib)
+
+  const select = (tmpl: Template): void => {
+    if (tmpl === selected) handleOk(result())
+    else onSelect(tmpl)
+  }
+
+  const {
+    ref,
+    width
+  }: {
+    ref: RefCallback<HTMLDivElement>
+    width: number | undefined
+  } = useResizeObserver<HTMLDivElement>()
+
+  const params = {
+    onOk: handleOk,
+    onCancel,
+    className
+  }
+
   return (
     <Dialog
-      title="Template Library"
+      title="Functional Groups"
       className={classes.functionalGroups}
-      // params={omit(['group'], rest)}
-      // result={() => result()}
+      params={params}
+      result={() => result()}
       buttons={[
         <SaveButton key="save-to-SDF" data={data} filename="ketcher-tmpls.sdf">
           Save To SDF…
@@ -88,19 +132,19 @@ const FunctionalGroups: FC<FGProps> = ({ onOk }) => {
             className={classes.groups}
             classes={classes}
             component={SelectList}
-            splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
+            splitIndexes={[Object.keys(filteredLib).indexOf('User Templates')]}
             value={group}
             onChange={g => onChangeGroup(g)}
             schema={{
-              enum: Object.keys(lib),
-              enumNames: Object.keys(lib).map(g => greekify(g))
+              enum: Object.keys(filteredLib),
+              enumNames: Object.keys(filteredLib)
             }}
           />
           <TemplateTable
-            templates={lib[group]}
+            templates={filteredLib[group]}
             onSelect={select}
-            selected={props.selected}
-            onDelete={onDelete}
+            selected={selected}
+            onDelete={() => 'abc'} // TODO:
             onAttach={onAttach}
           />
         </div>

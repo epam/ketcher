@@ -14,6 +14,12 @@ M  SAL   1  3   1   2   3
 M  SMT   1 Ac
 M  END
 
+>  <group>
+Functional Groups
+
+>  <prerender>
+fg.svg#fg1
+
 >  <atomid>
 0
 
@@ -44,6 +50,9 @@ M  SAL   1  7   1   2   3   4   5   6   7
 M  SMT   1 Bn
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -66,6 +75,9 @@ M  SLB  1   1   1
 M  SAL   1  4   1   2   3   4
 M  SMT   1 Bu
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -98,6 +110,12 @@ M  SAL   1  8   1   2   3   4   5   6   7   8
 M  SMT   1 Bz
 M  END
 
+>  <group>
+Functional Groups
+
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 $$$$
@@ -115,6 +133,9 @@ M  SLB  1   1   1
 M  SAL   1  2   1   2
 M  SMT   1 C2H5
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -138,6 +159,9 @@ M  SAL   1  4   1   2   3   4
 M  SMT   1 CCl3
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 $$$$
@@ -159,6 +183,9 @@ M  SLB  1   1   1
 M  SAL   1  4   1   2   3   4
 M  SMT   1 CF3
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -186,6 +213,9 @@ M  SMT   1 CO2Et
 M  SDS EXP  1   1
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -206,6 +236,9 @@ M  SLB  1   1   1
 M  SAL   1  3   1   2   3
 M  SMT   1 CO2H
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -229,6 +262,9 @@ M  SLB  1   1   1
 M  SAL   1  4   1   2   3   4
 M  SMT   1 CO2Me
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -257,6 +293,9 @@ M  SAL   1  6   1   4   3   2   5   6
 M  SMT   1 CO2Pr
 M  SDS EXP  1   1
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -287,6 +326,9 @@ M  SAL   1  7   1   2   3   4   5   6   7
 M  SMT   1 CO\s2\n\it\n-Bu
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -312,6 +354,9 @@ M  SLB  1   1   1
 M  SAL   1  5   1   2   3   4   5
 M  SMT   1 Cp
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -370,6 +415,9 @@ M  SAL   1  4  16  17  18  19
 M  SMT   1 CPh3
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -389,6 +437,9 @@ M  SLB  1   1   1
 M  SAL   1  2   1   2
 M  SMT   1 Et
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -412,6 +463,9 @@ M  SLB  1   1   1
 M  SAL   1  4   1   2   3   4
 M  SMT   1 iBu
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -449,6 +503,9 @@ M  SMT   1 Indole
 M  SDS EXP  1   1
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -470,6 +527,9 @@ M  SAL   1  3   1   2   3
 M  SMT   1 iPr
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -486,6 +546,9 @@ M  SLB  1   1   1
 M  SAL   1  1   1
 M  SMT   1 Me
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -510,6 +573,9 @@ M  SAL   1  4   1   2   3   4
 M  SMT   1 Ms
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -531,6 +597,9 @@ M  SAL   1  3   1   2   3
 M  SMT   1 NCO
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -551,6 +620,9 @@ M  SLB  1   1   1
 M  SAL   1  3   1   2   3
 M  SMT   1 NCS
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -582,6 +654,9 @@ M  SAL   1  7   1   2   3   4   5   6   7
 M  SMT   1 NHPh
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -602,6 +677,9 @@ M  SLB  1   1   1
 M  SAL   1  3   1   2   3
 M  SMT   1 OCN
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -624,6 +702,9 @@ M  SAL   1  3   1   2   3
 M  SMT   1 OEt
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -642,6 +723,9 @@ M  SLB  1   1   1
 M  SAL   1  2   1   2
 M  SMT   1 OMe
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -670,6 +754,9 @@ M  SLB  1   1   1
 M  SAL   1  6   1   2   3   4   5   6
 M  SMT   1 Ph
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -705,6 +792,9 @@ M  SAL   1  9   1   2   3   4   5   6   7   8   9
 M  SMT   1 PhCOOH
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -726,6 +816,9 @@ M  SLB  1   1   1
 M  SAL   1  3   1   2   3
 M  SMT   1 PO2
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -750,6 +843,9 @@ M  SLB  1   1   1
 M  SAL   1  4   1   2   3   4
 M  SMT   1 PO3
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -777,6 +873,9 @@ M  SAL   1  5   1   2   3   4   5
 M  SMT   1 PO4
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -797,6 +896,9 @@ M  SLB  1   1   1
 M  SAL   1  3   1   2   3
 M  SMT   1 Pr
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -821,6 +923,9 @@ M  SAL   1  4   1   2   3   4
 M  SMT   1 sBu
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -842,6 +947,9 @@ M  SAL   1  3   1   2   3
 M  SMT   1 SCN
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -862,6 +970,9 @@ M  SLB  1   1   1
 M  SAL   1  3   1   2   3
 M  SMT   1 SO2
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -886,6 +997,9 @@ M  SAL   1  4   1   2   3   4
 M  SMT   1 SO2Cl
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -909,6 +1023,9 @@ M  SLB  1   1   1
 M  SAL   1  4   1   2   3   4
 M  SMT   1 SO3
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -935,6 +1052,9 @@ M  SLB  1   1   1
 M  SAL   1  5   1   2   3   4   5
 M  SMT   1 SO4
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -984,6 +1104,9 @@ Ketcher 11161713142D 1   1.00000     0.00000     0
  13 17  1  0  0  0  0
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -1006,6 +1129,9 @@ M  SLB  1   1   1
 M  SAL   1  4   1   2   3   4
 M  SMT   1 tBu
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -1035,6 +1161,9 @@ M  SLB  1   1   1
 M  SAL   1  7   1   2   3   4   5   6   7
 M  SMT   1 Tf
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -1071,6 +1200,9 @@ M  SLB  1   1   1
 M  SAL   1 10   1   2   3   4   5   6   7   8   9  10
 M  SMT   1 Ts
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0

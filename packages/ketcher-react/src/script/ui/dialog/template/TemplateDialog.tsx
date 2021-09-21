@@ -69,7 +69,7 @@ const filterLibSelector = createSelector(
   filterLib
 )
 
-function filterLib(lib, filter) {
+export function filterLib(lib, filter) {
   console.warn('Filter', filter)
   const re = new RegExp(escapeRegExp(greekify(filter)), 'i')
   return flow(
@@ -174,7 +174,7 @@ const TemplateDialog: FC<Props> = props => {
 }
 
 export default connect(
-  ({ templates }) => ({ ...omit(['attach'], templates) }),
+  store => ({ ...omit(['attach'], store.templates) }),
   (dispatch, props) => ({
     onFilter: filter => dispatch(changeFilter(filter)),
     onSelect: tmpl => dispatch(selectTmpl(tmpl)),

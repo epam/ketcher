@@ -19,7 +19,7 @@ import { AutoSizer, List } from 'react-virtualized'
 import { FC } from 'react'
 import { Struct } from 'ketcher-core'
 import StructRender from '../../component/structrender'
-import classes from './template-lib.module.less'
+import classes from './TemplateTable.module.less'
 
 interface TemplateTableProps {
   templates: Array<Template>
@@ -34,8 +34,8 @@ export interface Template {
   props: {
     atomid: number
     bondid: number
-    group: string
-    prerender: string
+    group?: string
+    prerender?: string
   }
 }
 
@@ -69,7 +69,7 @@ const RenderTmpl: FC<{
 }> = ({ tmpl, ...props }) => {
   return tmpl.props && tmpl.props.prerender ? (
     <svg {...props}>
-      <use xlinkHref={tmpl.props.prerender} />
+      <use href={tmpl.props.prerender} />
     </svg>
   ) : (
     <StructRender

@@ -14,9 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { initFGroupsTemplates } from '../templates'
+import { AnyAction } from 'redux'
 
-const initialState = {
+interface FGState {
+  lib: []
+  selected: any
+  filter: string
+  group: any
+  attach: any
+}
+
+const initialState: FGState = {
   lib: [],
   selected: null,
   filter: '',
@@ -24,7 +32,10 @@ const initialState = {
   attach: {}
 }
 
-const functionalGroupsReducer = (state = initialState, { type, payload }) => {
+const functionalGroupsReducer = (
+  state = initialState,
+  { type, payload }: AnyAction
+) => {
   switch (type) {
     case 'FG_INIT':
     case 'SELECT_FG':

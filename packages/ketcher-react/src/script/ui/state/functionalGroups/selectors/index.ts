@@ -14,16 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-const functionalGroupsLib = {
-  'functional-groups': {
-    // shortcut: '', TODO: Determine shortcut for Functional Groups window
-    // TODO Update HELP info about current tools
-    title: 'Functional groups',
-    action: { dialog: 'fGroups' },
-    disabled: (_, __, options) => {
-      return !options.app.functionalGroups
-    }
-  }
-}
+export const funcGroupsSelector = state => state.functionalGroups.lib
 
-export default functionalGroupsLib
+export const fgGroupSelector = state => state.functionalGroups.group
+
+export const selectedFGSelector = state => state.functionalGroups.selected
+
+export const funcGroupsFilterSelector = state => state.functionalGroups.filter

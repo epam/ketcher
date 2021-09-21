@@ -26,7 +26,7 @@ export function initLib(lib) {
   }
 }
 
-const initFGroups = fGroups => ({ type: 'FGROUPS_INIT', data: { fGroups } })
+const initFGroups = lib => ({ type: 'FG_INIT', payload: { lib } })
 
 export default function initTmplLib(dispatch, baseUrl, cacheEl) {
   const fileName = 'library.sdf'
@@ -40,8 +40,9 @@ export default function initTmplLib(dispatch, baseUrl, cacheEl) {
 export const initFGroupsTemplates = (dispatch, baseUrl, cacheEl) => {
   const fileName = 'fg.sdf'
   return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then(res => {
+    console.log(res)
     dispatch(initFGroups(res))
-    dispatch(appUpdate({ fGroups: true }))
+    dispatch(appUpdate({ functionalGroups: true }))
   })
 }
 

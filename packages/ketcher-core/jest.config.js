@@ -13,6 +13,7 @@ module.exports = {
     'application(.*)$': '<rootDir>/src/application/$1',
     'domain(.*)$': '<rootDir>/src/domain/$1',
     'infrastructure(.*)$': '<rootDir>/src/infrastructure/$1'
-    // "utils(.*)$": "<rootDir>/src/utils/$1",
-  }
+    // "utils(.*)$": "<rootDir>/src/utils/$1"
+  },
+  moduleDirectories: ['node_modules', 'src', 'utils']
 }

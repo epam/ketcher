@@ -74,12 +74,12 @@ interface LeftToolbarCallProps extends ToolbarGroupItemCallProps {}
 
 type Props = LeftToolbarProps & LeftToolbarCallProps
 
-const LeftToolbar = (props: Props) => {
-  const { className, ...rest } = props
+const LeftToolbar = ({ className, ...rest }: Props) => {
   const scrollRef = useRef() as MutableRefObject<HTMLDivElement>
   const { ref, height } = useResizeObserver<HTMLDivElement>()
   const [startRef, startInView] = useInView({ threshold: 1 })
-  const [endRef, endInView] = useInView({ threshold: 0.8 })
+  const [endRef, endInView] = useInView({ threshold: 1 })
+  const sizeRef = useRef() as MutableRefObject<HTMLDivElement>
 
   type ItemProps = {
     id: ToolbarItemVariant
@@ -89,11 +89,11 @@ const LeftToolbar = (props: Props) => {
     ToolbarGroupItem({ id, options, ...rest })
 
   const scrollUp = () => {
-    scrollRef.current.scrollTop -= 40
+    scrollRef.current.scrollTop -= sizeRef.current.offsetHeight
   }
 
   const scrollDown = () => {
-    scrollRef.current.scrollTop += 40
+    scrollRef.current.scrollTop += sizeRef.current.offsetHeight
   }
 
   return (
@@ -112,7 +112,9 @@ const LeftToolbar = (props: Props) => {
         </Group>
 
         <Group>
-          <Item id="charge-plus" />
+          <div ref={sizeRef}>
+            <Item id="charge-plus" />
+          </div>
           <Item id="charge-minus" />
         </Group>
 

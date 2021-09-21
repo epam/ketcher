@@ -66,6 +66,7 @@ const render: {
   doubleBondWidth: ExtendedSchema
   bondThickness: ExtendedSchema
   stereoBondWidth: ExtendedSchema
+  contractedFunctionalGroupSize: ExtendedSchema
 } = {
   showValenceWarnings: {
     title: 'Show valence warnings',
@@ -162,6 +163,13 @@ const render: {
     default: 13,
     minimum: 1,
     maximum: 96
+  },
+  contractedFunctionalGroupSize: {
+    title: 'Size of contracted functional group',
+    type: 'integer',
+    default: 50, //debatable
+    minimum: 30, //debatable
+    maximum: 70 //debatable
   },
   // Atom
   carbonExplicitly: {

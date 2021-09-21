@@ -22,7 +22,7 @@ export class FunctionalGroup {
     return cloned
   }
 
-  static isAtomInContractedFinctionalGroup(
+  static isAtomInContractedFunctionalGroup(
     atom,
     sgroups,
     functionalGroups,

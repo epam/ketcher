@@ -102,6 +102,10 @@ const SettingsDialog = (props: Props) => {
               <Field name="font" component={SystemFonts} />
               <Field name="fontsz" component={MeasureInput} />
               <Field name="fontszsub" component={MeasureInput} />
+              <Field
+                name="contractedFunctionalGroupSize"
+                component={MeasureInput}
+              />
             </fieldset>
           </Accordion.Group>
           <Accordion.Group caption="Stereochemistry">

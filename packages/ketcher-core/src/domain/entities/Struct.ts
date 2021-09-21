@@ -32,7 +32,7 @@ import { SGroupForest } from './sgroupForest'
 import { SimpleObject } from './simpleObject'
 import { Text } from './text'
 import { Vec2 } from './vec2'
-import { FunctionalGroup } from './FunctionalGroup'
+import { FunctionalGroup } from './functionalGroup'
 
 export type Neighbor = {
   aid: number

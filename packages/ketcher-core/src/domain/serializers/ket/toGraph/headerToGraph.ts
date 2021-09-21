@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Struct } from 'domain/entities'
-import { ifDef } from 'utils'
+import { ifDef } from 'utilities'
 
 export function headerToGraph(struct: Struct): any {
   const header = {}

@@ -17,8 +17,8 @@
 import { Atom, Bond, SGroup, Struct } from 'domain/entities'
 
 import { Elements } from 'domain/constants'
-import { ifDef } from 'utils'
 import { FunctionalGroupsProvider } from 'index'
+import { ifDef } from 'utilities'
 
 export function toRlabel(values) {
   let res = 0

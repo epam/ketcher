@@ -25,7 +25,7 @@ import {
 import { BaseOperation } from './baseOperation'
 import { PerformOperationResult } from './operations.types'
 import assert from 'assert'
-import { tfx } from 'utils'
+import { tfx } from 'utilities'
 
 function handleRectangleChangeWithAnchor(item, anchor, current) {
   const previousPos0 = item.pos[0].get_xy0()

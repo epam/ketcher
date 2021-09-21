@@ -1,5 +1,4 @@
-import { radicalElectrons, Atom } from '../Atom'
-import { Vec2 } from '../Vec2'
+import { Atom, Vec2, radicalElectrons } from 'domain/entities'
 
 describe('radicalElectrons', () => {
   it('should return 1 if passed radical is Douplet (value = 2)', () => {

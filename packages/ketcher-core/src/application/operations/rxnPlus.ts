@@ -18,8 +18,6 @@ import { Point, RxnPlus, Struct, Vec2 } from 'domain/entities'
 
 import { BaseOperation } from './baseOperation'
 import { PerformOperationResult } from './operations.types'
-import assert from 'assert'
-import { tfx } from 'utils'
 
 class AddRxnPlus extends BaseOperation {
   #position: Point

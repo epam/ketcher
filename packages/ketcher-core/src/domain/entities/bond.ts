@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'domain/entities'
+import { Vec2 } from './vec2'
 
 export interface BondAttributes {
   reactingCenterStatus?: number

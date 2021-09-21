@@ -22,7 +22,7 @@ export function rxnToStruct(graphItem: any, struct: Struct): Struct {
   } else {
     struct.rxnPluses.add(
       new RxnPlus({
-        pp: {
+        position: {
           x: graphItem.location[0],
           y: graphItem.location[1],
           z: graphItem.location[2]

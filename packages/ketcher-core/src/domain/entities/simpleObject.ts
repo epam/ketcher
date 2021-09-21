@@ -16,7 +16,7 @@
 
 import { Point, Vec2 } from './vec2'
 
-import { assert } from 'console'
+import assert from 'assert'
 
 export type SimpleObjectMode = 'ELLIPSE' | 'RECTANGLE' | 'LINE'
 

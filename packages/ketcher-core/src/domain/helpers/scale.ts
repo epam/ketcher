@@ -14,27 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Serializer } from '../serializers.types'
-import { SmiSerializerOptions } from './smi.types'
-import { Smiles } from './smiles'
-import { Struct } from 'domain/entities'
+import { Vec2 } from 'domain/entities'
 
-export class SmiSerializer implements Serializer<Struct> {
-  static DefaultOptions: SmiSerializerOptions = {
-    ignoreErrors: false
-  }
+export interface ScaleOptions {
+  scale: number
+}
 
-  private readonly options: SmiSerializerOptions
+function scaled2obj(v: Vec2, options: ScaleOptions): Vec2 {
+  return v.scaled(1 / options.scale)
+}
 
-  constructor(options?: Partial<SmiSerializerOptions>) {
-    this.options = { ...SmiSerializer.DefaultOptions, ...options }
-  }
+function obj2scaled(v: Vec2, options: ScaleOptions): Vec2 {
+  return v.scaled(options.scale)
+}
 
-  deserialize(_content: string): Struct {
-    throw new Error('Not implemented yet.')
-  }
-
-  serialize(struct: Struct): string {
-    return new Smiles().saveMolecule(struct, this.options.ignoreErrors)
-  }
+export const Scale = {
+  scaled2obj,
+  obj2scaled
 }

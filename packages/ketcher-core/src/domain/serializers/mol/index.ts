@@ -15,4 +15,4 @@
  ***************************************************************************/
 
 export * from './mol.types'
-export * from './MolSerializer'
+export * from './molSerializer'

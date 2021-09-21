@@ -46,8 +46,8 @@ export abstract class BaseOperation implements Operation {
   protected abstract execute(struct: Struct): PerformOperationResult
 
   perform(struct: Struct): PerformOperationResult {
-    assert(target != null)
+    assert(struct != null)
 
-    return this.execute(target)
+    return this.execute(struct)
   }
 }

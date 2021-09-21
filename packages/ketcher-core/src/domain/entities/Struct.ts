@@ -642,7 +642,7 @@ export class Struct {
 
     idSet.forEach(aid => {
       const atom = this.atoms.get(aid)!
-      if (atom.stereoLabel) frag.updateStereoAtom(this, aid, fid, true)
+      if (atom.stereoLabel) frag.addStereoAtom(fid)
       atom.fragment = fid
     })
   }
@@ -662,11 +662,11 @@ export class Struct {
     })
 
     this.rxnPluses.forEach(item => {
-      item.pp = item.pp.scaled(scale)
+      item.pp.scale(scale)
     })
 
     this.rxnArrows.forEach(item => {
-      item.points = item.points.map(p => p.scaled(scale))
+      item.points.forEach(p => p.scale(scale))
     })
 
     this.sgroups.forEach(item => {

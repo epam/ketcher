@@ -1,6 +1,6 @@
 import { ChemicalMimeType } from 'domain/services'
 import { SupportedFormat } from './structFormatter.types'
-import { SupportedFormatProperties } from './SupportedFormatProperties'
+import { SupportedFormatProperties } from './supportedFormatProperties'
 
 type FormatPropertiesMap = {
   [key in SupportedFormat]: SupportedFormatProperties

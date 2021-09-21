@@ -124,10 +124,17 @@ export class Vec2 {
     return new Vec2(this.x + v.x, this.y + v.y, this.z + v.z)
   }
 
-  add_(v: Vec2): void {
+  scale(s: number): Vec2 {
+    this.x = this.x * s
+    this.y = this.y * s
+    this.z = this.z * s
+    return this
+  }
+  add_(v: Vec2): Vec2 {
     this.x += v.x
     this.y += v.y
     this.z += v.z
+    return this
   }
 
   get_xy0(): Vec2 {

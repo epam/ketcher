@@ -26,7 +26,18 @@ import { Bond } from './Bond'
 import { RGroup } from './RGroup'
 import { Shape } from './Shape'
 import { Transform } from './Transform'
-import * as leftToolbarOptions from './leftToolbarOptions'
+import {
+  selectOptions,
+  bondCommon,
+  bondQuery,
+  bondSpecial,
+  bondStereo,
+  transformOptions,
+  arrowsOptions,
+  mappingOptions,
+  rGroupOptions,
+  shapeOptions
+} from './leftToolbarOptions'
 import classes from './LeftToolbar.module.less'
 import clsx from 'clsx'
 import { useResizeObserver } from '../../../../../hooks'
@@ -94,10 +105,7 @@ const LeftToolbar = (props: Props) => {
   return (
     <div className={clsx(classes.root, className)} ref={ref}>
       <Group
-        items={[
-          { id: 'select', options: leftToolbarOptions.selectOptions },
-          { id: 'erase' }
-        ]}
+        items={[{ id: 'select', options: selectOptions }, { id: 'erase' }]}
       />
 
       <Group
@@ -105,10 +113,10 @@ const LeftToolbar = (props: Props) => {
           {
             id: 'bond-common',
             options: [
-              ...leftToolbarOptions.bondCommon,
-              ...leftToolbarOptions.bondQuery,
-              ...leftToolbarOptions.bondSpecial,
-              ...leftToolbarOptions.bondStereo
+              ...bondCommon,
+              ...bondQuery,
+              ...bondSpecial,
+              ...bondStereo
             ]
           },
           { id: 'chain' }
@@ -121,7 +129,7 @@ const LeftToolbar = (props: Props) => {
         items={[
           {
             id: 'transform-rotate',
-            options: leftToolbarOptions.transformOptions
+            options: transformOptions
           }
         ]}
       />
@@ -131,21 +139,17 @@ const LeftToolbar = (props: Props) => {
       <Group
         items={[
           { id: 'reaction-plus' },
-          { id: 'reaction-arrows', options: leftToolbarOptions.arrowsOptions },
+          { id: 'reaction-arrows', options: arrowsOptions },
           {
             id: 'reaction-mapping-tools',
-            options: leftToolbarOptions.mappingOptions
+            options: mappingOptions
           }
         ]}
       />
 
-      <Group
-        items={[{ id: 'rgroup', options: leftToolbarOptions.rGroupOptions }]}
-      />
+      <Group items={[{ id: 'rgroup', options: rGroupOptions }]} />
 
-      <Group
-        items={[{ id: 'shape', options: leftToolbarOptions.shapeOptions }]}
-      />
+      <Group items={[{ id: 'shape', options: shapeOptions }]} />
 
       <Group items={[{ id: 'text' }]} />
     </div>

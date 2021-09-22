@@ -15,5 +15,4 @@ module.exports = {
     'infrastructure(.*)$': '<rootDir>/src/infrastructure/$1',
     'utilities(.*)$': '<rootDir>/src/utilities/$1'
   }
-  //transformIgnorePatterns: ["<rootDir>/node_modules/(?!utils).+\\\\.js$"]
 }

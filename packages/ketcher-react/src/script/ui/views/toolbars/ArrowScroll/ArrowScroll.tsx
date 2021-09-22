@@ -17,7 +17,7 @@
 import classes from './ArrowScroll.module.less'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
-import { useInterval } from '../../../../../../hooks'
+import { useInterval } from '../../../../../hooks'
 
 interface ArrowScrollProps {
   startInView: boolean

@@ -42,7 +42,7 @@ import classes from './LeftToolbar.module.less'
 import clsx from 'clsx'
 import { useResizeObserver } from '../../../../../hooks'
 import { useInView } from 'react-intersection-observer'
-import { ArrowScroll } from './ArrowScroll'
+import { ArrowScroll } from '../ArrowScroll'
 
 interface LeftToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {

@@ -21,13 +21,14 @@ import {
   TopToolbarContainer
 } from '../views/toolbars'
 import { useEffect } from 'react'
-
+import { useDispatch } from 'react-redux'
 import AppClipArea from '../views/AppClipArea'
 import { AppHiddenContainer } from './AppHidden'
 import AppModalContainer from '../views/modal'
 import Editor from '../views/Editor'
 import classes from './App.module.less'
-import { FunctionalGroupsProvider } from 'ketcher-core'
+import { initFGTemplates } from '../state/functionalGroups'
+import { useSettingsContext } from '../../../hooks'
 
 interface AppCallProps {
   checkServer: () => void
@@ -36,11 +37,13 @@ interface AppCallProps {
 type Props = AppCallProps
 
 const App = (props: Props) => {
+  const dispatch = useDispatch()
   const { checkServer } = props
-  const provider = FunctionalGroupsProvider.getInstance()
+  const { staticResourcesUrl } = useSettingsContext()
+
   useEffect(() => {
     checkServer()
-    provider.fetchFunctionalGroupsList()
+    dispatch(initFGTemplates(staticResourcesUrl))
   }, [])
 
   return (

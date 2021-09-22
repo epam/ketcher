@@ -23,10 +23,10 @@ import classes from './TemplateTable.module.less'
 
 interface TemplateTableProps {
   templates: Array<Template>
-  selected: Template
+  selected: Template | null
   onSelect: (tmpl: Template) => void
-  onDelete: (tmpl: Template) => void
-  onAttach: (tmpl: Template) => void
+  onDelete?: (tmpl: Template) => void
+  onAttach?: (tmpl: Template) => void
 }
 
 export interface Template {
@@ -34,7 +34,7 @@ export interface Template {
   props: {
     atomid: number
     bondid: number
-    group?: string
+    group: string
     prerender?: string
   }
 }
@@ -129,15 +129,17 @@ const TemplateTable: FC<TemplateTableProps> = props => {
                           {tmpl.props.group === 'User Templates' && (
                             <button
                               className={classes.deleteButton}
-                              onClick={() => onDelete(tmpl)}>
+                              onClick={() => onDelete!(tmpl)}>
                               Delete
                             </button>
                           )}
-                          <button
-                            className={classes.attachButton}
-                            onClick={() => onAttach(tmpl)}>
-                            Edit
-                          </button>
+                          {tmpl.props.group !== 'Functional Groups' && (
+                            <button
+                              className={classes.attachButton}
+                              onClick={() => onAttach!(tmpl)}>
+                              Edit
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}

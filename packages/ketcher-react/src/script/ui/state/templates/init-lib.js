@@ -26,23 +26,12 @@ export function initLib(lib) {
   }
 }
 
-const initFGroups = lib => ({ type: 'FG_INIT', payload: { lib } })
-
 export default function initTmplLib(dispatch, baseUrl, cacheEl) {
   const fileName = 'library.sdf'
   return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then(res => {
     const lib = res.concat(userTmpls())
     dispatch(initLib(lib))
     dispatch(appUpdate({ templates: true }))
-  })
-}
-
-export const initFGroupsTemplates = (dispatch, baseUrl, cacheEl) => {
-  const fileName = 'fg.sdf'
-  return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then(res => {
-    console.log(res)
-    dispatch(initFGroups(res))
-    dispatch(appUpdate({ functionalGroups: true }))
   })
 }
 
@@ -86,7 +75,7 @@ function userTmpls() {
     .filter(tmpl => tmpl !== null)
 }
 
-function prefetchStatic(url) {
+export function prefetchStatic(url) {
   return fetch(url, { credentials: 'same-origin' }).then(resp => {
     if (resp.ok) return resp.text()
     throw Error('Could not fetch ' + url)

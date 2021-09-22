@@ -15,21 +15,21 @@
  ***************************************************************************/
 
 import { AnyAction } from 'redux'
+import { appUpdate } from '../options'
+import {
+  FunctionalGroupsProvider,
+  SdfItem,
+  SdfSerializer,
+  Struct
+} from 'ketcher-core'
+import { prefetchStatic } from '../templates/init-lib'
 
 interface FGState {
   lib: []
-  selected: any
-  filter: string
-  group: any
-  attach: any
 }
 
 const initialState: FGState = {
-  lib: [],
-  selected: null,
-  filter: '',
-  group: null,
-  attach: {}
+  lib: []
 }
 
 const functionalGroupsReducer = (
@@ -38,9 +38,6 @@ const functionalGroupsReducer = (
 ) => {
   switch (type) {
     case 'FG_INIT':
-    case 'SELECT_FG':
-    case 'CHANGE_FG_GROUP':
-    case 'CHANGE_FG_FILTER':
       return { ...state, ...payload }
 
     default:
@@ -48,21 +45,25 @@ const functionalGroupsReducer = (
   }
 }
 
-// export const funcGroupsInit = (lib) => ({ type: 'FG_INIT', payload: { lib } })
+const initFGroups = (lib: SdfItem[]) => ({ type: 'FG_INIT', payload: { lib } })
 
-export const selectFuncGroup = selected => ({
-  type: 'SELECT_FG',
-  payload: { selected }
-})
-
-export const changeGroupList = group => ({
-  type: 'CHANGE_FG_GROUP',
-  payload: { group }
-})
-
-export const changeFilter = filter => ({
-  type: 'CHANGE_FG_FILTER',
-  payload: { filter }
-})
+export function initFGTemplates(baseUrl: string) {
+  return async dispatch => {
+    const fileName = 'fg.sdf'
+    const url = `${baseUrl}/templates/${fileName}`
+    const provider = FunctionalGroupsProvider.getInstance()
+    const sdfSerializer = new SdfSerializer()
+    const text = await prefetchStatic(url)
+    const templates = sdfSerializer.deserialize(text)
+    const functionalGroups = templates.reduce(
+      (acc: Struct[], { struct }) => [...acc, struct],
+      []
+    )
+    provider.setFunctionalGroupsList(functionalGroups)
+    debugger
+    dispatch(initFGroups(templates))
+    dispatch(appUpdate({ functionalGroups: true }))
+  }
+}
 
 export default functionalGroupsReducer

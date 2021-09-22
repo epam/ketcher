@@ -14,28 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, RefCallback } from 'react'
+import { FC, RefCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import TemplateTable, { Template } from '../../../dialog/template/TemplateTable'
 import classes from './functionalGroups.module.less'
 import { Dialog } from '../'
-import {
-  changeFilter,
-  changeGroupList,
-  selectFuncGroup
-} from '../../../state/functionalGroups'
-import { editTmpl } from '../../../state/templates'
 import { onAction } from '../../../state'
 import SaveButton from '../../../component/view/savebutton'
 import Input from '../../../component/form/input'
 import clsx from 'clsx'
 import SelectList from '../../../component/form/select'
-import {
-  fgGroupSelector,
-  funcGroupsFilterSelector,
-  funcGroupsSelector,
-  selectedFGSelector
-} from '../../../state/functionalGroups/selectors'
+import { functionalGroupsSelector } from '../../../state/functionalGroups/selectors'
 import { useResizeObserver } from '../../../../../hooks'
 import { filterLib, Result } from '../../../dialog/template/TemplateDialog'
 import { SdfSerializer } from 'ketcher-core'
@@ -50,16 +39,14 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
   const dispatch = useDispatch()
   const CONTAINER_MIN_WIDTH = 310
 
-  const lib = useSelector(funcGroupsSelector)
-  const group = useSelector(fgGroupSelector) || 'Functional Groups'
-  const selected = useSelector(selectedFGSelector)
-  const filter = useSelector(funcGroupsFilterSelector) // TODO:
+  const [group, setGroup] = useState<string>('Functional Groups')
+  const [selected, setSelected] = useState<Template | null>(null)
+  const [filter, setFilter] = useState<string>('')
 
-  const onFilter = filter => dispatch(changeFilter(filter))
-  const onSelect = tmpl => dispatch(selectFuncGroup(tmpl))
-  const onChangeGroup = group => dispatch(changeGroupList(group))
-  const onAttach = tmpl => dispatch(editTmpl(tmpl))
-  // const onDelete = tmpl => dispatch(deleteTmpl(tmpl))
+  const lib = useSelector(functionalGroupsSelector)
+
+  const onFilter = filter => setFilter(filter)
+  const onSelect = tmpl => setSelected(tmpl)
   const handleOk = res => {
     dispatch(onAction({ tool: 'template', opts: res }))
     onOk()
@@ -134,7 +121,7 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
             component={SelectList}
             splitIndexes={[Object.keys(filteredLib).indexOf('User Templates')]}
             value={group}
-            onChange={g => onChangeGroup(g)}
+            onChange={g => setGroup(g)}
             schema={{
               enum: Object.keys(filteredLib),
               enumNames: Object.keys(filteredLib)
@@ -144,8 +131,6 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
             templates={filteredLib[group]}
             onSelect={select}
             selected={selected}
-            onDelete={() => 'abc'} // TODO:
-            onAttach={onAttach}
           />
         </div>
       </div>

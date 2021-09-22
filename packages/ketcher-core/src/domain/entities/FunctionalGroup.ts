@@ -10,7 +10,10 @@ export class FunctionalGroup {
   }
 
   static isFunctionalGroup(list, sgroup): boolean {
-    return list.includes(sgroup.data.name) && sgroup.type === 'SUP'
+    return (
+      list.some(funcGroup => funcGroup.name === sgroup.data.name) &&
+      sgroup.type === 'SUP'
+    )
   }
 
   static clone(functionalGroup: FunctionalGroup): FunctionalGroup {

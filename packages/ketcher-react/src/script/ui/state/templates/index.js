@@ -21,7 +21,7 @@ import { omit } from 'lodash/fp'
 import { openDialog } from '../modal'
 import { storage } from '../../storage-ext'
 
-export { initTmplLib, initFGroupsTemplates }
+export { initTmplLib }
 
 /* TEMPLATES */
 export function selectTmpl(tmpl) {

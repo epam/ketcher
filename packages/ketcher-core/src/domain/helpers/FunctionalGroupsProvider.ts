@@ -1,49 +1,23 @@
-const LIST = [
-  'Ac',
-  'Bn',
-  'Bu',
-  'Bz',
-  'C2H5',
-  'CCl3',
-  'CF3',
-  'CO2Et',
-  'CO2H',
-  'CO2Me',
-  'CO2Pr',
-  'Cp',
-  'CPh3',
-  'Et',
-  'iBu',
-  'Indole',
-  'iPr',
-  'Me',
-  'Ms',
-  'NCO',
-  'NCS',
-  'NHPh',
-  'OCN',
-  'OEt',
-  'OMe',
-  'Ph',
-  'PhCOOH',
-  'PO2',
-  'PO3',
-  'PO4',
-  'Pr',
-  'sBu',
-  'SCN',
-  'SO2',
-  'SO2Cl',
-  'SO3',
-  'SO4',
-  'tBu',
-  'Tf',
-  'Ts'
-] // Temp data, should be removed after adding SDF for functional groups
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+import { Struct } from '../entities'
 
 export class FunctionalGroupsProvider {
   private static instance: FunctionalGroupsProvider
-  functionalGroupsList: string[]
+  functionalGroupsList: Struct[]
   constructor() {
     this.functionalGroupsList = []
   }
@@ -54,16 +28,13 @@ export class FunctionalGroupsProvider {
     }
     return FunctionalGroupsProvider.instance
   }
-  async fetchFunctionalGroupsList() {
-    //simulation of fetching data
-    if (this.fetchFunctionalGroupsList.length === 0) {
-      Promise.resolve(LIST).then(response => {
-        this.functionalGroupsList = response
-      })
-    }
-  }
 
   public getFunctionalGroupsList() {
     return this.functionalGroupsList
+  }
+
+  public setFunctionalGroupsList(list: Struct[]): void {
+    // TODO: Should I reassign type to FG?
+    this.functionalGroupsList = list
   }
 }

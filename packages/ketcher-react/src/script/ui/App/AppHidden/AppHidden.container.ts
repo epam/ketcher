@@ -18,12 +18,11 @@ import { AppHidden, AppHiddenCallProps } from './AppHidden'
 
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
-import { initTmplLib, initFGroupsTemplates } from '../../state/templates'
+import { initTmplLib } from '../../state/templates'
 
 const mapDispatchToProps = (dispatch: Dispatch): AppHiddenCallProps => ({
   onInitTmpls: (cacheEl, url) => {
     initTmplLib(dispatch, url, cacheEl)
-    initFGroupsTemplates(dispatch, url, cacheEl)
   }
 })
 

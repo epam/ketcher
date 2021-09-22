@@ -14,10 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const funcGroupsSelector = state => state.functionalGroups.lib
-
-export const fgGroupSelector = state => state.functionalGroups.group
-
-export const selectedFGSelector = state => state.functionalGroups.selected
-
-export const funcGroupsFilterSelector = state => state.functionalGroups.filter
+export const functionalGroupsSelector = state => state.functionalGroups.lib

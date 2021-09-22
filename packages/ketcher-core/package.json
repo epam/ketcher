@@ -59,6 +59,7 @@
     "@rollup/plugin-strip": "^2.0.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/user-event": "^7.2.1",
+    "@types/assert": "^1.5.6",
     "@types/jest": "^26.0.24",
     "@types/node": "^12.12.38",
     "@typescript-eslint/eslint-plugin": "^4.30.0",

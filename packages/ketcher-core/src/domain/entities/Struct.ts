@@ -20,6 +20,7 @@ import { Bond } from './bond'
 import { Box2Abs } from './box2Abs'
 import { Elements } from 'domain/constants'
 import { Fragment } from './fragment'
+import { FunctionalGroup } from './functionalGroup'
 import { HalfBond } from './halfBond'
 import { Loop } from './loop'
 import { Pile } from './pile'
@@ -32,7 +33,6 @@ import { SGroupForest } from './sgroupForest'
 import { SimpleObject } from './simpleObject'
 import { Text } from './text'
 import { Vec2 } from './vec2'
-import { FunctionalGroup } from './functionalGroup'
 
 export type Neighbor = {
   aid: number

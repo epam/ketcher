@@ -1,6 +1,6 @@
-import { Pool, RGroup, RGroupParams } from 'domain/entities'
+import { Pool, RGroup, RGroupAttributes } from 'domain/entities'
 
-const rGroupParams: RGroupParams = {
+const rGroupParams: RGroupAttributes = {
   ifthen: 0,
   resth: false,
   range: ''

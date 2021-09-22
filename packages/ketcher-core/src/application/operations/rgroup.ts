@@ -14,5 +14,42 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, AtomAttributes, Struct, Vec2 } from 'domain/entities'
 import { AttrValueType, PerformOperationResult } from './operations.types'
+
+import { BaseOperation } from './baseOperation'
+import { Struct } from 'domain/entities'
+
+export class SetRGroupAttr extends BaseOperation {
+  #rgroupId: number
+  #attribute: string
+  #value: AttrValueType
+
+  constructor(rgroupId: number, attribute: string, value: AttrValueType) {
+    super('R_GROUP_ATTR')
+
+    this.#rgroupId = rgroupId
+    this.#attribute = attribute
+    this.#value = value
+  }
+
+  execute(struct: Struct): PerformOperationResult {
+    const rgroup = struct.rgroups.get(this.#rgroupId)!
+    const previousValue = rgroup[this.#attribute]
+
+    rgroup[this.#attribute] = this.#value
+
+    //BaseOperation.invalidateItem(restruct, 'rgroups', rgid)
+
+    const inverseOperation = new SetRGroupAttr(
+      this.#rgroupId,
+      this.#attribute,
+      previousValue
+    )
+
+    return {
+      inverseOperation,
+      entityId: this.#rgroupId,
+      operationType: this.type
+    }
+  }
+}

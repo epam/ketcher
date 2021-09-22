@@ -36,9 +36,6 @@ export abstract class BaseOperation implements Operation {
   }
 
   constructor(type: OperationType, priority: number = 0) {
-    assert(typeof type === 'string' && type)
-    assert(typeof priority === 'number')
-
     this.#type = type
     this.#priority = priority
   }

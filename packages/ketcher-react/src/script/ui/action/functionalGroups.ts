@@ -16,9 +16,9 @@
 
 const functionalGroupsLib = {
   'functional-groups': {
-    // shortcut: '', TODO: Determine shortcut for Functional Groups window
-    // TODO Update HELP info about current tools
-    title: 'Functional groups',
+    shortcut: 'Shift+f',
+    // TODO Update HELP about current tools
+    title: 'Functional Groups',
     action: { dialog: 'fGroups' },
     disabled: (_, __, options) => {
       return !options.app.functionalGroups

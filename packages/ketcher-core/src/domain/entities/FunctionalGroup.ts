@@ -54,8 +54,6 @@ export class FunctionalGroup {
   }
 
   static isFunctionalGroup(sgroup): boolean {
-    const isFG = TYPES[sgroup.data.name] && sgroup.type === 'SUP'
-    console.log(isFG)
     return TYPES[sgroup.data.name] && sgroup.type === 'SUP'
   }
 

@@ -65,7 +65,6 @@ const RenderTmpl: FC<{
 
 const TemplateTable: FC<TemplateTableProps> = props => {
   const { templates, selected, onSelect, onDelete, onAttach } = props
-  debugger
   const ITEMS_COUNT = templates ? templates.length : 0
   const ITEM_SIZE = { width: 178, height: 120 }
   const tmplStyles = {
@@ -102,7 +101,11 @@ const TemplateTable: FC<TemplateTableProps> = props => {
                             : classes.td
                         }
                         title={greekify(tmplName(tmpl, i))}
-                        key={tmpl.struct.name}
+                        key={
+                          tmpl.struct.name !== selected?.struct.name
+                            ? tmpl.struct.name
+                            : `${tmpl.struct.name}_selected`
+                        }
                         style={tmplStyles}>
                         <RenderTmpl
                           tmpl={tmpl}

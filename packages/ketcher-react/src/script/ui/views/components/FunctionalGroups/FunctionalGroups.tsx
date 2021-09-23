@@ -97,8 +97,9 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
   const molSaveData = sdfSerializer.serialize(lib)
 
   const handleSelect = (tmpl: Template): void => {
-    if (tmpl === selected) handleOk(handleResult())
-    else onSelect(tmpl)
+    if (tmpl === selected) {
+      handleOk(handleResult())
+    } else onSelect(tmpl)
   }
 
   const {
@@ -114,8 +115,6 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
     onCancel,
     className
   }
-
-  console.log(filteredLib)
 
   return (
     <Dialog

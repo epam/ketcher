@@ -14,14 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Box2Abs,
-  Pile,
-  Pool,
-  Struct,
-  Vec2,
-  FunctionalGroup
-} from 'ketcher-core'
+import { Box2Abs, Pile, Pool, Struct, Vec2 } from 'ketcher-core'
 import { LayerMap } from './GeneralEnumTypes'
 import ReAtom from './reatom'
 import ReBond from './rebond'
@@ -582,10 +575,7 @@ class ReStruct {
           }
           if (
             item instanceof ReSGroup &&
-            FunctionalGroup.isContractedFunctionalGroup(
-              item.item.id,
-              this.molecule.functionalGroups
-            )
+            this.molecule.isContractedFunctionalGroup(item.item.id)
           ) {
             const sGroupAtoms = atoms.filter(
               atom => atom.sgroup === item.item.id

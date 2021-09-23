@@ -24,8 +24,7 @@ import {
   StereoFlag,
   StereoLabel,
   Struct,
-  Vec2,
-  FunctionalGroup
+  Vec2
 } from 'ketcher-core'
 import {
   LayerMap,
@@ -91,34 +90,16 @@ class ReAtom extends ReObject {
     const options = render.options
     const ps = Scale.obj2scaled(this.a.pp, options)
     const atom = this.a
-    const sgroups = render.ctab.sgroups
-    const functionalGroups = render.ctab.molecule.functionalGroups
-    if (
-      FunctionalGroup.isAtomInContractedFunctionalGroup(
-        atom,
-        sgroups,
-        functionalGroups,
-        true
-      )
-    )
-      return null
+    const struct = render.ctab.molecule
+    if (isAtomInContractedFunctionalGroup(atom, struct)) return null
     return paper
       .circle(ps.x, ps.y, options.atomSelectionPlateRadius)
       .attr(options.highlightStyle)
   }
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any) {
     const atom = this.a
-    const sgroups = restruct.render.ctab.sgroups
-    const functionalGroups = restruct.render.ctab.molecule.functionalGroups
-    if (
-      FunctionalGroup.isAtomInContractedFunctionalGroup(
-        atom,
-        sgroups,
-        functionalGroups,
-        true
-      )
-    )
-      return null
+    const struct = restruct.molecule
+    if (isAtomInContractedFunctionalGroup(atom, struct)) return null
 
     const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
     return paper
@@ -127,18 +108,9 @@ class ReAtom extends ReObject {
   }
   show(restruct: ReStruct, aid: number, options: any): void {
     // eslint-disable-line max-statements
-    const atom = restruct.molecule.atoms.get(aid)
-    const sgroups = restruct.molecule.sgroups
-    const functionalGroups = restruct.molecule.functionalGroups
-    if (
-      FunctionalGroup.isAtomInContractedFunctionalGroup(
-        atom,
-        sgroups,
-        functionalGroups,
-        false
-      )
-    )
-      return
+    const atom = this.a
+    const struct = restruct.molecule
+    if (isAtomInContractedFunctionalGroup(atom, struct)) return
 
     const render = restruct.render
     const ps = Scale.obj2scaled(this.a.pp, render.options)
@@ -1012,6 +984,13 @@ function shiftBondEnd(atom, pos0, dir, margin) {
   }
   if (t > 0) pos0 = pos0.addScaled(dir, t + margin)
   return pos0
+}
+
+function isAtomInContractedFunctionalGroup(atom, struct): boolean {
+  const listOfAtomSGroupIds = Array.from(atom.sgs.values())
+  return listOfAtomSGroupIds.some(sgId =>
+    struct.isContractedFunctionalGroup(sgId)
+  )
 }
 
 export default ReAtom

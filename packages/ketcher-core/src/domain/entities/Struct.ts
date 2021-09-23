@@ -1025,4 +1025,16 @@ export class Struct {
       }
     })
   }
+
+  isContractedFunctionalGroup(sgroupId: number): boolean {
+    let isFunctionalGroup = false
+    let expanded = false
+    this.functionalGroups.forEach(fg => {
+      if (fg.relatedSGroupId === sgroupId) {
+        isFunctionalGroup = true
+        expanded = fg.isExpanded
+      }
+    })
+    return !expanded && isFunctionalGroup
+  }
 }

@@ -49,10 +49,7 @@ class ReSGroup extends ReObject {
     const bracketBox = sgroup.bracketBox
     const d = sgroup.bracketDir
     sgroup.areas = [bracketBox]
-    const functionalGroups = remol.molecule.functionalGroups
-    if (
-      FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
-    ) {
+    if (remol.molecule.isContractedFunctionalGroup(sgroup.id)) {
       const leftBracketStart = Scale.obj2scaled(
         bracketBox.p0,
         remol.render.options
@@ -137,10 +134,7 @@ class ReSGroup extends ReObject {
   makeSelectionPlate(restruct, paper, options) {
     const sgroup = this.item
     const { startX, startY, size } = getHighlighPathInfo(sgroup, options)
-    const functionalGroups = restruct.molecule.functionalGroups
-    if (
-      FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
-    ) {
+    if (restruct.molecule.isContractedFunctionalGroup(sgroup.id)) {
       return paper.rect(startX, startY, size, size).attr(options.selectionStyle)
     }
   }
@@ -154,14 +148,8 @@ class ReSGroup extends ReObject {
       options
     )
 
-    const functionalGroups = render.ctab.molecule.functionalGroups
     const set = paper.set()
-    if (
-      FunctionalGroup.isContractedFunctionalGroup(
-        sGroupItem.id,
-        functionalGroups
-      )
-    ) {
+    if (render.ctab.molecule.isContractedFunctionalGroup(sGroupItem.id)) {
       sGroupItem.highlighting = paper
         .rect(startX, startY, size, size)
         .attr(options.highlightStyle)

@@ -14,15 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  Bond,
-  HalfBond,
-  Scale,
-  Struct,
-  Vec2,
-  FunctionalGroup
-} from 'ketcher-core'
+import { Atom, Bond, HalfBond, Scale, Struct, Vec2 } from 'ketcher-core'
 import { LayerMap, StereoColoringType } from './GeneralEnumTypes'
 import ReAtom, { getColorFromStereoLabel } from './reatom'
 
@@ -58,17 +50,8 @@ class ReBond extends ReObject {
     const options = render.options
     bondRecalc(this, render.ctab, options)
     const bond = this.b
-    const sgroups = render.ctab.sgroups
-    const functionalGroups = render.ctab.molecule.functionalGroups
-    if (
-      FunctionalGroup.isBondInContractedFunctionalGroup(
-        bond,
-        sgroups,
-        functionalGroups,
-        true
-      )
-    )
-      return null
+    const struct = render.ctab.molecule
+    if (isBondInContractedFunctionalGroup(bond, struct)) return null
 
     const c = Scale.obj2scaled(this.b.center, options)
     return render.paper
@@ -78,17 +61,8 @@ class ReBond extends ReObject {
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any) {
     bondRecalc(this, restruct, options)
     const bond = this.b
-    const sgroups = restruct.render.ctab.sgroups
-    const functionalGroups = restruct.render.ctab.molecule.functionalGroups
-    if (
-      FunctionalGroup.isBondInContractedFunctionalGroup(
-        bond,
-        sgroups,
-        functionalGroups,
-        true
-      )
-    )
-      return null
+    const struct = restruct.molecule
+    if (isBondInContractedFunctionalGroup(bond, struct)) return null
 
     const c = Scale.obj2scaled(this.b.center, options)
     return paper
@@ -99,19 +73,9 @@ class ReBond extends ReObject {
   show(restruct: ReStruct, bid: number, options: any): void {
     // eslint-disable-line max-statements
     const render = restruct.render
+    const bond = this.b
     const struct = restruct.molecule
-    const bond = restruct.molecule.bonds.get(bid)
-    const sgroups = restruct.molecule.sgroups
-    const functionalGroups = restruct.molecule.functionalGroups
-    if (
-      FunctionalGroup.isBondInContractedFunctionalGroup(
-        bond,
-        sgroups,
-        functionalGroups,
-        false
-      )
-    )
-      return
+    if (isBondInContractedFunctionalGroup(bond, struct)) return
 
     const paper = render.paper
     const hb1 =
@@ -993,6 +957,22 @@ function selectDoubleBondShiftChain(struct: Struct, bond: ReBond): number {
   if (nLeft < nRight) return 1
   if ((hb1.leftSin > 0.3 ? 1 : 0) + (hb1.rightSin > 0.3 ? 1 : 0) == 1) return 1
   return 0
+}
+
+function isBondInContractedFunctionalGroup(bond, struct): boolean {
+  const beginAtom = struct.atoms.get(bond.begin)
+  const endAtom = struct.atoms.get(bond.end)
+  const listOfBeginAtomSGroupIds = Array.from(beginAtom!.sgs.values())
+  const listOfEndAtomSGroupIds = Array.from(endAtom!.sgs.values())
+
+  return (
+    listOfBeginAtomSGroupIds.some(sgId =>
+      struct.isContractedFunctionalGroup(sgId)
+    ) &&
+    listOfEndAtomSGroupIds.some(sgId =>
+      struct.isContractedFunctionalGroup(sgId)
+    )
+  )
 }
 
 export default ReBond

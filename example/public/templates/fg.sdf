@@ -320,7 +320,7 @@ G    1  0
 M  STY  1   1 SUP
 M  SLB  1   1   1
 M  SAL   1  7   1   2   3   4   5   6   7
-M  SMT   1 CO\s2\n\it\n-Bu
+M  SMT   1 CO2tBu
 M  END
 
 >  <group>

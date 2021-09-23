@@ -1,3 +1,47 @@
+enum TYPES {
+  Ac = 'Ac',
+  Bn = 'Bn',
+  Bu = 'Bu',
+  Bz = 'Bz',
+  C2H5 = 'C2H5',
+  CCl3 = 'CCl3',
+  CF3 = 'CF3',
+  CO2Et = 'CO2Et',
+  CO2H = 'CO2H',
+  CO2Me = 'CO2Me',
+  CO2Pr = 'CO2Pr',
+  CO2tBu = 'CO2tBu',
+  Cp = 'Cp',
+  CPh3 = 'CPh3',
+  Et = 'Et',
+  iBu = 'iBu',
+  Indole = 'Indole',
+  iPr = 'iPr',
+  Me = 'Me',
+  Ms = 'Ms',
+  NCO = 'NCO',
+  NCS = 'NCS',
+  NHPh = 'NHPh',
+  OCN = 'OCN',
+  OEt = 'OEt',
+  OMe = 'OMe',
+  Ph = 'Ph',
+  PhCOOH = 'PhCOOH',
+  PO2 = 'PO2',
+  PO3 = 'PO3',
+  PO4 = 'PO4',
+  Pr = 'Pr',
+  sBu = 'sBu',
+  SCN = 'SCN',
+  SO2 = 'SO2',
+  SO2Cl = 'SO2Cl',
+  SO3 = 'SO3',
+  SO4 = 'SO4',
+  tBu = 'tBu',
+  Tf = 'Tf',
+  Ts = 'Ts'
+}
+
 export class FunctionalGroup {
   name: string
   relatedSGroupId: number
@@ -9,11 +53,10 @@ export class FunctionalGroup {
     this.isExpanded = isExpanded
   }
 
-  static isFunctionalGroup(list, sgroup): boolean {
-    return (
-      list.some(funcGroup => funcGroup.name === sgroup.data.name) &&
-      sgroup.type === 'SUP'
-    )
+  static isFunctionalGroup(sgroup): boolean {
+    const isFG = TYPES[sgroup.data.name] && sgroup.type === 'SUP'
+    console.log(isFG)
+    return TYPES[sgroup.data.name] && sgroup.type === 'SUP'
   }
 
   static clone(functionalGroup: FunctionalGroup): FunctionalGroup {

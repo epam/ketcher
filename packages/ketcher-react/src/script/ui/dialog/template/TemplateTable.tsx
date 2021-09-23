@@ -20,6 +20,7 @@ import { FC } from 'react'
 import { Struct } from 'ketcher-core'
 import StructRender from '../../component/structrender'
 import classes from './TemplateTable.module.less'
+import { greekify } from '../../utils'
 
 interface TemplateTableProps {
   templates: Array<Template>
@@ -37,24 +38,6 @@ export interface Template {
     group: string
     prerender?: string
   }
-}
-
-const GREEK_SIMBOLS = {
-  Alpha: 'A',
-  alpha: 'α',
-  Beta: 'B',
-  beta: 'β',
-  Gamma: 'Г',
-  gamma: 'γ'
-}
-
-const greekRe = new RegExp(
-  '\\b' + Object.keys(GREEK_SIMBOLS).join('\\b|\\b') + '\\b',
-  'g'
-)
-
-export function greekify(str: string): string {
-  return str.replace(greekRe, sym => GREEK_SIMBOLS[sym])
 }
 
 function tmplName(tmpl: Template, i: number): string {
@@ -82,6 +65,7 @@ const RenderTmpl: FC<{
 
 const TemplateTable: FC<TemplateTableProps> = props => {
   const { templates, selected, onSelect, onDelete, onAttach } = props
+  debugger
   const ITEMS_COUNT = templates ? templates.length : 0
   const ITEM_SIZE = { width: 178, height: 120 }
   const tmplStyles = {
@@ -118,7 +102,7 @@ const TemplateTable: FC<TemplateTableProps> = props => {
                             : classes.td
                         }
                         title={greekify(tmplName(tmpl, i))}
-                        key={i}
+                        key={tmpl.struct.name}
                         style={tmplStyles}>
                         <RenderTmpl
                           tmpl={tmpl}

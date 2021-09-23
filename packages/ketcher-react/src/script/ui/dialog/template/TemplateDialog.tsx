@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import { FC, RefCallback } from 'react'
-import TemplateTable, { Template, greekify } from './TemplateTable'
-import { filter as _filter, escapeRegExp, flow, omit, reduce } from 'lodash/fp'
+import TemplateTable, { Template } from './TemplateTable'
+import { omit } from 'lodash/fp'
 import {
   changeFilter,
   changeGroup,
@@ -37,6 +37,7 @@ import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { onAction } from '../../state'
 import { useResizeObserver } from '../../../../hooks'
+import { filterLib, greekify } from '../../utils'
 
 interface TemplateLibProps {
   filter: string
@@ -68,24 +69,6 @@ const filterLibSelector = createSelector(
   (props: Props) => props.filter,
   filterLib
 )
-
-export function filterLib(lib, filter) {
-  console.warn('Filter', filter)
-  const re = new RegExp(escapeRegExp(greekify(filter)), 'i')
-  return flow(
-    _filter(
-      (item: any) =>
-        !filter ||
-        re.test(greekify(item.struct.name)) ||
-        re.test(greekify(item.props.group))
-    ),
-    reduce((res, item) => {
-      if (!res[item.props.group]) res[item.props.group] = [item]
-      else res[item.props.group].push(item)
-      return res
-    }, {})
-  )(lib)
-}
 
 const TemplateDialog: FC<Props> = props => {
   const { filter, onFilter, onChangeGroup, ...rest } = props

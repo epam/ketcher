@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import initTmplLib, { initLib, initFGroupsTemplates } from './init-lib'
+import initTmplLib, { initLib } from './init-lib'
 
 import { MolSerializer } from 'ketcher-core'
 import { omit } from 'lodash/fp'

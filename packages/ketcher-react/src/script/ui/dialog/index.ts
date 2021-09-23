@@ -40,7 +40,7 @@ import Sgroup from './toolbox/sgroup'
 import TemplateAttach from './template/template-attach'
 import TemplatesDialog from './template/TemplateDialog'
 import Text from '../views/modal/components/Text'
-import FunctionalGroups from '../views/components/FunctionalGroups/FunctionalGroups'
+import { FunctionalGroups } from '../views/components/FunctionalGroups'
 
 export default {
   open: Open,

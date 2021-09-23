@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, RefCallback, useState } from 'react'
+import { FC, RefCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import TemplateTable, { Template } from '../../../dialog/template/TemplateTable'
 import classes from './functionalGroups.module.less'
@@ -26,8 +26,9 @@ import clsx from 'clsx'
 import SelectList from '../../../component/form/select'
 import { functionalGroupsSelector } from '../../../state/functionalGroups/selectors'
 import { useResizeObserver } from '../../../../../hooks'
-import { filterLib, Result } from '../../../dialog/template/TemplateDialog'
-import { SdfSerializer } from 'ketcher-core'
+import { filterLib } from '../../../utils'
+import { SdfItem, SdfSerializer, Struct } from 'ketcher-core'
+import { DialogParams } from '../Dialog/Dialog'
 
 export interface FGProps {
   className: string
@@ -35,42 +36,68 @@ export interface FGProps {
   onCancel: () => void
 }
 
+interface Result {
+  struct: Struct
+  aid: number | null
+}
+
+enum groups {
+  'Functional Groups' = 'Functional Groups'
+}
+
 const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
   const dispatch = useDispatch()
   const CONTAINER_MIN_WIDTH = 310
+  const lib: SdfItem[] = useSelector(functionalGroupsSelector)
 
+  const [expandedTemplates, setExpandedTemplates] = useState<SdfItem[]>([])
   const [group, setGroup] = useState<string>('Functional Groups')
   const [selected, setSelected] = useState<Template | null>(null)
   const [filter, setFilter] = useState<string>('')
+  const [filteredLib, setFilteredLib] = useState<
+    { [key in groups]?: SdfItem[] }
+  >({})
 
-  const lib = useSelector(functionalGroupsSelector)
+  useEffect(() => {
+    // Implemented to not mutate the redux store
+    const expandedTemplates: SdfItem[] = lib.map(template => {
+      const struct = template.struct.clone()
+      struct.functionalGroups.forEach(fg => (fg.isExpanded = true))
+      return { ...template, struct }
+    })
+    setExpandedTemplates(expandedTemplates)
+  }, [])
 
-  const onFilter = filter => setFilter(filter)
-  const onSelect = tmpl => setSelected(tmpl)
-  const handleOk = res => {
+  useEffect(() => {
+    setFilteredLib(filterLib(expandedTemplates, filter))
+  }, [filter, expandedTemplates])
+
+  const onFilter = (filter: string): void => setFilter(filter)
+  const onSelect = (tmpl: Template): void => setSelected(tmpl)
+  const handleOk = (res: Result | null): void => {
+    if (res) {
+      res.struct.functionalGroups.forEach(fg => (fg.isExpanded = false))
+    }
     dispatch(onAction({ tool: 'template', opts: res }))
     onOk()
   }
 
-  const filteredLib = filterLib(lib, filter)
-
-  const result = (): Result | null => {
+  const handleResult = (): Result | null => {
     const tmpl = selected
     console.assert(!tmpl || tmpl.props, 'Incorrect SDF parse')
     return tmpl
       ? {
           struct: tmpl.struct,
-          aid: parseInt(String(tmpl.props.atomid)) || null,
-          bid: parseInt(String(tmpl.props.bondid)) || null
+          aid: parseInt(String(tmpl.props.atomid)) || null
         }
       : null
   }
 
   const sdfSerializer = new SdfSerializer()
-  const data = sdfSerializer.serialize(lib)
+  const molSaveData = sdfSerializer.serialize(lib)
 
-  const select = (tmpl: Template): void => {
-    if (tmpl === selected) handleOk(result())
+  const handleSelect = (tmpl: Template): void => {
+    if (tmpl === selected) handleOk(handleResult())
     else onSelect(tmpl)
   }
 
@@ -82,20 +109,25 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
     width: number | undefined
   } = useResizeObserver<HTMLDivElement>()
 
-  const params = {
+  const params: DialogParams = {
     onOk: handleOk,
     onCancel,
     className
   }
+
+  console.log(filteredLib)
 
   return (
     <Dialog
       title="Functional Groups"
       className={classes.functionalGroups}
       params={params}
-      result={() => result()}
+      result={() => handleResult()}
       buttons={[
-        <SaveButton key="save-to-SDF" data={data} filename="ketcher-tmpls.sdf">
+        <SaveButton
+          key="save-to-SDF"
+          data={molSaveData}
+          filename="ketcher-tmpls.sdf">
           Save To SDF…
         </SaveButton>,
         'Cancel',
@@ -119,7 +151,6 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
             className={classes.groups}
             classes={classes}
             component={SelectList}
-            splitIndexes={[Object.keys(filteredLib).indexOf('User Templates')]}
             value={group}
             onChange={g => setGroup(g)}
             schema={{
@@ -129,7 +160,7 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
           />
           <TemplateTable
             templates={filteredLib[group]}
-            onSelect={select}
+            onSelect={handleSelect}
             selected={selected}
           />
         </div>

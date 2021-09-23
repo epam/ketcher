@@ -604,8 +604,8 @@ it will appear in brackets after the description of the button.
 | `P`            | Draw a phosphorus                                                                                          |
 | `I`            | Draw an iodine                                                                                             |
 | `T`            | Basic templates. Consecutive pressing switches between different templates                                 |
-| `Shift+t`      | Open template library             
-| `Shift+f`      | Open functional groups library
+| `Shift+t`      | Open template library                                                                                      |
+| `Shift+f`      | Open functional groups library                                                                             |
 | `Alt+r`        | Rotate tool                                                                                                |
 | `Alt+v`        | Flip vertically                                                                                            |
 | `Alt+h`        | Flip horizontally                                                                                          |

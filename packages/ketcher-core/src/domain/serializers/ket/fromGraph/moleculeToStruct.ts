@@ -18,7 +18,6 @@ import { Atom, Bond, SGroup, Struct } from 'domain/entities'
 
 import { Elements } from 'domain/constants'
 import { ifDef } from 'utils'
-import { FunctionalGroupsProvider } from 'index'
 
 export function toRlabel(values) {
   let res = 0
@@ -48,9 +47,7 @@ export function moleculeToStruct(graphItem: any): Struct {
   struct.initHalfBonds()
   struct.initNeighbors()
   struct.markFragments()
-  const functionalGroupsProvider = FunctionalGroupsProvider.getInstance()
-  const functionalGroupsList = functionalGroupsProvider.getFunctionalGroupsList()
-  struct.bindSGroupsToFunctionalGroups(functionalGroupsList)
+  struct.bindSGroupsToFunctionalGroups()
 
   return struct
 }

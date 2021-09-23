@@ -13,27 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Struct } from '../entities'
 
-export class FunctionalGroupsProvider {
-  private static instance: FunctionalGroupsProvider
-  functionalGroupsList: Struct[]
-  constructor() {
-    this.functionalGroupsList = []
-  }
-
-  public static getInstance(): FunctionalGroupsProvider {
-    if (!FunctionalGroupsProvider.instance) {
-      FunctionalGroupsProvider.instance = new FunctionalGroupsProvider()
-    }
-    return FunctionalGroupsProvider.instance
-  }
-
-  public getFunctionalGroupsList() {
-    return this.functionalGroupsList
-  }
-
-  public setFunctionalGroupsList(list: Struct[]): void {
-    this.functionalGroupsList = list
-  }
-}
+export { default as FunctionalGroups } from './FunctionalGroups'

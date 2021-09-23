@@ -60,7 +60,6 @@ export function initFGTemplates(baseUrl: string) {
       []
     )
     provider.setFunctionalGroupsList(functionalGroups)
-    debugger
     dispatch(initFGroups(templates))
     dispatch(appUpdate({ functionalGroups: true }))
   }

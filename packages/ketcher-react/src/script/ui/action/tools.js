@@ -188,7 +188,7 @@ const toolActions = {
     hidden: options =>
       isHidden(
         options,
-        'reaction-arrow-unbalanced-equilibrium-fille-half-triangle'
+        'reaction-arrow-unbalanced-equilibrium-filled-half-triangle'
       )
   },
   'reaction-plus': {

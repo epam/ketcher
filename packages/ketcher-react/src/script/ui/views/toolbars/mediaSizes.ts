@@ -18,10 +18,10 @@ const mediaSizes = {
   topSeparatorsShowingWidth: 1080,
   zoomShowingWidth: 780,
   infoShowingWidth: 790,
-  bondCollapsableHeight: 620,
-  rGroupCollapsableHeight: 850,
-  shapeCollapsableHeight: 850,
-  transformCollapsableHeight: 720
+  bondCollapsableHeight: 770,
+  rGroupCollapsableHeight: 1000,
+  shapeCollapsableHeight: 1000,
+  transformCollapsableHeight: 870
 }
 
 export { mediaSizes }

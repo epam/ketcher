@@ -22,6 +22,7 @@ import { UiActionAction } from '../../../../action'
 import classes from '../../ToolbarGroupItem/ActionButton/ActionButton.module.less'
 import clsx from 'clsx'
 import { shortcutStr } from '../../shortcutStr'
+import { forwardRef } from 'react'
 
 interface AtomsListProps {
   atoms: string[]
@@ -39,15 +40,34 @@ interface AtomsListCallProps {
 
 type Props = AtomsListProps & AtomsListCallProps
 
-const AtomsList = (props: Props) => {
+const AtomsList = forwardRef((props: Props, ref) => {
   const { atoms, active, onAction } = props
   const isAtom = active && active.tool === 'atom'
+
   return (
     <>
       {atoms.map(label => {
         const element = Elements.get(label)
         const shortcut =
           basicAtoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null
+
+        if (basicAtoms.indexOf(label) === 0) {
+          return (
+            // @ts-ignore
+            <div key={label} ref={ref}>
+              <Atom
+                key={label}
+                el={element}
+                shortcut={shortcut}
+                className={clsx(classes.button, {
+                  [classes.selected]:
+                    isAtom && active && active.opts.label === label
+                })}
+                onClick={() => onAction({ tool: 'atom', opts: { label } })}
+              />
+            </div>
+          )
+        }
         return (
           <Atom
             key={label}
@@ -63,7 +83,7 @@ const AtomsList = (props: Props) => {
       })}
     </>
   )
-}
+})
 
 export type { AtomsListProps, AtomsListCallProps }
 export { AtomsList }

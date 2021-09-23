@@ -16,7 +16,7 @@
 
 import { RGroup, Struct } from 'domain/entities'
 
-import { ifDef } from 'utils'
+import { ifDef } from 'utilities'
 import { moleculeToStruct } from './moleculeToStruct'
 
 export function rgroupToStruct(graphItem): Struct {

@@ -16,7 +16,7 @@
 
 import { SGroup, Struct } from 'domain/entities'
 
-import { ifDef } from 'utils'
+import { ifDef } from 'utilities'
 
 function fromRlabel(rg) {
   const res: Array<any> = []

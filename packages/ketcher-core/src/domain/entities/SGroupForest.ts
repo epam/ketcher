@@ -39,7 +39,10 @@ export class SGroupForest {
     let queue = Array.from(this.children.get(-1) as any)
     while (queue.length > 0) {
       id = queue.shift() as any
-      queue = queue.concat(this.children.get(id) as any)
+      const children = this.children.get(id)
+      if (children) {
+        queue = queue.concat(children as any)
+      }
       order.push(id)
     }
     return order

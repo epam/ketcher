@@ -89,15 +89,17 @@ export function prepareStructForGraph(struct: Struct) {
   })
 
   graphNodes.forEach(graphNode => {
-    const sgroups: SGroup[] = Array.from(graphNode.fragment.sgroups.values())
-    const filteredSGroups = sgroups.filter((sg: SGroup) =>
-      sg.atoms.every(atom => atom !== undefined)
-    )
-    const filteredSGroupsMap = new Map()
-    filteredSGroups.forEach((sg, index) => {
-      filteredSGroupsMap.set(index, sg)
-    })
-    graphNode.fragment.sgroups = filteredSGroupsMap
+    if (graphNode.fragment) {
+      const sgroups: SGroup[] = Array.from(graphNode.fragment.sgroups.values())
+      const filteredSGroups = sgroups.filter((sg: SGroup) =>
+        sg.atoms.every(atom => atom !== undefined)
+      )
+      const filteredSGroupsMap = new Map()
+      filteredSGroups.forEach((sg, index) => {
+        filteredSGroupsMap.set(index, sg)
+      })
+      graphNode.fragment.sgroups = filteredSGroupsMap
+    }
   })
 
   return graphNodes.sort((a, b) => a.center.x - b.center.x)

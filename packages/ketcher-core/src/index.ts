@@ -27,4 +27,4 @@ export * from 'application/editor'
 export * from 'application/Ketcher'
 export * from 'application/KetcherBuilder'
 
-export * from 'utils'
+export * from 'utilities'

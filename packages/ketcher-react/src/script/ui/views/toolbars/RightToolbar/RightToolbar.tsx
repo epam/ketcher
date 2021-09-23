@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC } from 'react'
+import { FC, MutableRefObject, useRef } from 'react'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -25,6 +25,8 @@ import { AtomsList } from './AtomsList'
 import { basicAtoms } from '../../../action/atoms'
 import classes from './RightToolbar.module.less'
 import clsx from 'clsx'
+import { useInView } from 'react-intersection-observer'
+import { ArrowScroll } from '../ArrowScroll'
 
 const Group: FC<{ className?: string }> = ({ children, className }) => (
   <div className={clsx(classes.group, className)}>{children}</div>
@@ -47,22 +49,51 @@ type Props = RightToolbarProps & RightToolbarCallProps
 const RightToolbar = (props: Props) => {
   const { className, ...rest } = props
   const { active, onAction, freqAtoms } = rest
+  const [startRef, startInView] = useInView({ threshold: 0.9 })
+  const [endRef, endInView] = useInView({ threshold: 0.9 })
+  const sizeRef = useRef() as MutableRefObject<HTMLDivElement>
+  const scrollRef = useRef() as MutableRefObject<HTMLDivElement>
+
+  const scrollUp = () => {
+    scrollRef.current.scrollTop -= sizeRef.current.offsetHeight
+  }
+
+  const scrollDown = () => {
+    scrollRef.current.scrollTop += sizeRef.current.offsetHeight
+  }
 
   return (
     <div className={clsx(classes.root, className)}>
-      <Group>
-        <AtomsList atoms={basicAtoms} active={active} onAction={onAction} />
-        <AtomsList atoms={freqAtoms} active={active} onAction={onAction} />
-      </Group>
+      <div className={classes.buttons} ref={scrollRef}>
+        <Group>
+          <AtomsList
+            ref={startRef}
+            atoms={basicAtoms}
+            active={active}
+            onAction={onAction}
+          />
+          <AtomsList atoms={freqAtoms} active={active} onAction={onAction} />
+        </Group>
 
-      <Group>
-        <ToolbarGroupItem id="period-table" {...rest} />
-      </Group>
-      <Group>
-        {process.env.ENABLE_STEREOCHEMISTRY && (
-          <ToolbarGroupItem id="enhanced-stereo" {...rest} />
-        )}
-      </Group>
+        <Group>
+          <div ref={sizeRef}>
+            <ToolbarGroupItem id="period-table" {...rest} />
+          </div>
+        </Group>
+        <div ref={endRef}>
+          <Group>
+            {process.env.ENABLE_STEREOCHEMISTRY && (
+              <ToolbarGroupItem id="enhanced-stereo" {...rest} />
+            )}
+          </Group>
+        </div>
+      </div>
+      <ArrowScroll
+        startInView={startInView}
+        endInView={endInView}
+        scrollUp={scrollUp}
+        scrollDown={scrollDown}
+      />
     </div>
   )
 }

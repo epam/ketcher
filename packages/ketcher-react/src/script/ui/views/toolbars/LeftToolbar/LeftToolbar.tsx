@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC } from 'react'
+import { FC, MutableRefObject, useRef } from 'react'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -26,42 +26,23 @@ import { Bond } from './Bond'
 import { RGroup } from './RGroup'
 import { Shape } from './Shape'
 import { Transform } from './Transform'
+import {
+  selectOptions,
+  bondCommon,
+  bondQuery,
+  bondSpecial,
+  bondStereo,
+  transformOptions,
+  arrowsOptions,
+  mappingOptions,
+  rGroupOptions,
+  shapeOptions
+} from './leftToolbarOptions'
 import classes from './LeftToolbar.module.less'
 import clsx from 'clsx'
-import { makeItems } from '../ToolbarGroupItem/utils'
 import { useResizeObserver } from '../../../../../hooks'
-
-const Group: FC<{ className?: string }> = ({ children, className }) => (
-  <div className={clsx(classes.group, className)}>{children}</div>
-)
-
-const selectOptions: ToolbarItem[] = makeItems([
-  'select-lasso',
-  'select-rectangle',
-  'select-fragment'
-])
-
-const arrowsOptions: ToolbarItem[] = makeItems([
-  'reaction-arrow-open-angle',
-  'reaction-arrow-filled-triangle',
-  'reaction-arrow-filled-bow',
-  'reaction-arrow-dashed-open-angle',
-  'reaction-arrow-failed',
-  'reaction-arrow-both-ends-filled-triangle',
-  'reaction-arrow-equilibrium-filled-half-bow',
-  'reaction-arrow-equilibrium-filled-triangle',
-  'reaction-arrow-equilibrium-open-angle',
-  'reaction-arrow-unbalanced-equilibrium-filled-half-bow',
-  'reaction-arrow-unbalanced-equilibrium-open-half-angle',
-  'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow',
-  'reaction-arrow-unbalanced-equilibrium-fille-half-triangle'
-])
-
-const mappingOptions: ToolbarItem[] = makeItems([
-  'reaction-map',
-  'reaction-unmap',
-  'reaction-automap'
-])
+import { useInView } from 'react-intersection-observer'
+import { ArrowScroll } from '../ArrowScroll'
 
 interface LeftToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
@@ -75,6 +56,10 @@ type Props = LeftToolbarProps & LeftToolbarCallProps
 const LeftToolbar = (props: Props) => {
   const { className, ...rest } = props
   const { ref, height } = useResizeObserver<HTMLDivElement>()
+  const scrollRef = useRef() as MutableRefObject<HTMLDivElement>
+  const [startRef, startInView] = useInView({ threshold: 1 })
+  const [endRef, endInView] = useInView({ threshold: 1 })
+  const sizeRef = useRef() as MutableRefObject<HTMLDivElement>
 
   type ItemProps = {
     id: ToolbarItemVariant
@@ -83,45 +68,117 @@ const LeftToolbar = (props: Props) => {
   const Item = ({ id, options }: ItemProps) =>
     ToolbarGroupItem({ id, options, ...rest })
 
+  const scrollUp = () => {
+    scrollRef.current.scrollTop -= sizeRef.current.offsetHeight
+  }
+
+  const scrollDown = () => {
+    scrollRef.current.scrollTop += sizeRef.current.offsetHeight
+  }
+
+  const status = rest.status
+
+  type GroupItem = ItemProps
+
+  const Group: FC<{ items?: GroupItem[]; className?: string }> = ({
+    items,
+    className
+  }) => {
+    const visibleItems: GroupItem[] = []
+    if (items) {
+      items.forEach(item => {
+        let visible = true
+        if (status[item.id]?.hidden) {
+          visible = false
+        } else if (item.options?.every(option => status[option.id]?.hidden)) {
+          visible = false
+        }
+        if (visible) visibleItems.push(item)
+      })
+    }
+    return visibleItems.length ? (
+      <div className={clsx(classes.group, className)}>
+        {visibleItems.map(item => {
+          switch (item.id) {
+            case 'bond-common':
+              return <Bond {...rest} height={height} key={item.id} />
+            case 'transform-rotate':
+              return <Transform {...rest} height={height} key={item.id} />
+            case 'rgroup':
+              return <RGroup {...rest} key={item.id} />
+            case 'shape':
+              return <Shape {...rest} key={item.id} />
+            default:
+              return <Item id={item.id} options={item.options} key={item.id} />
+          }
+        })}
+      </div>
+    ) : null
+  }
+
   return (
     <div className={clsx(classes.root, className)} ref={ref}>
-      <Group>
-        <Item id="select" options={selectOptions} />
-        <Item id="erase" />
-      </Group>
+      <div className={classes.buttons} ref={scrollRef}>
+        <div className={classes.listener} ref={startRef}>
+          <Group
+            items={[{ id: 'select', options: selectOptions }, { id: 'erase' }]}
+          />
+        </div>
 
-      <Group>
-        <Bond {...rest} height={height} />
-        <Item id="chain" />
-      </Group>
+        <Group
+          items={[
+            {
+              id: 'bond-common',
+              options: [
+                ...bondCommon,
+                ...bondQuery,
+                ...bondSpecial,
+                ...bondStereo
+              ]
+            },
+            { id: 'chain' }
+          ]}
+        />
 
-      <Group>
-        <Item id="charge-plus" />
-        <Item id="charge-minus" />
-      </Group>
+        <Group items={[{ id: 'charge-plus' }, { id: 'charge-minus' }]} />
 
-      <Group>
-        <Transform {...rest} height={height} />
-      </Group>
-      <Group>
-        <Item id="sgroup" />
-        <Item id="sgroup-data" />
-      </Group>
-      <Group>
-        <Item id="reaction-plus" />
-        <Item id="reaction-arrows" options={arrowsOptions} />
-        <Item id="reaction-mapping-tools" options={mappingOptions} />
-      </Group>
+        <Group
+          items={[
+            {
+              id: 'transform-rotate',
+              options: transformOptions
+            }
+          ]}
+        />
 
-      <Group>
-        <RGroup {...rest} />
-      </Group>
-      <Group>
-        <Shape {...rest} />
-      </Group>
-      <Group>
-        <Item id="text" />
-      </Group>
+        <Group items={[{ id: 'sgroup' }, { id: 'sgroup-data' }]} />
+
+        <Group
+          items={[
+            { id: 'reaction-plus' },
+            { id: 'reaction-arrows', options: arrowsOptions },
+            {
+              id: 'reaction-mapping-tools',
+              options: mappingOptions
+            }
+          ]}
+        />
+        <div className={classes.listener} ref={sizeRef}>
+          <Group items={[{ id: 'rgroup', options: rGroupOptions }]} />
+        </div>
+
+        <Group items={[{ id: 'shape', options: shapeOptions }]} />
+
+        <div ref={endRef}>
+          <Group items={[{ id: 'text' }]} />
+        </div>
+      </div>
+      <ArrowScroll
+        startInView={startInView}
+        endInView={endInView}
+        scrollUp={scrollUp}
+        scrollDown={scrollDown}
+      />
     </div>
   )
 }

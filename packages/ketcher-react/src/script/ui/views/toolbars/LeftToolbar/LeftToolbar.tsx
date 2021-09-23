@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC } from 'react'
+import { FC, MutableRefObject, useRef } from 'react'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -41,6 +41,8 @@ import {
 import classes from './LeftToolbar.module.less'
 import clsx from 'clsx'
 import { useResizeObserver } from '../../../../../hooks'
+import { useInView } from 'react-intersection-observer'
+import { ArrowScroll } from '../ArrowScroll'
 
 interface LeftToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
@@ -54,6 +56,10 @@ type Props = LeftToolbarProps & LeftToolbarCallProps
 const LeftToolbar = (props: Props) => {
   const { className, ...rest } = props
   const { ref, height } = useResizeObserver<HTMLDivElement>()
+  const scrollRef = useRef() as MutableRefObject<HTMLDivElement>
+  const [startRef, startInView] = useInView({ threshold: 1 })
+  const [endRef, endInView] = useInView({ threshold: 1 })
+  const sizeRef = useRef() as MutableRefObject<HTMLDivElement>
 
   type ItemProps = {
     id: ToolbarItemVariant
@@ -61,6 +67,14 @@ const LeftToolbar = (props: Props) => {
   }
   const Item = ({ id, options }: ItemProps) =>
     ToolbarGroupItem({ id, options, ...rest })
+
+  const scrollUp = () => {
+    scrollRef.current.scrollTop -= sizeRef.current.offsetHeight
+  }
+
+  const scrollDown = () => {
+    scrollRef.current.scrollTop += sizeRef.current.offsetHeight
+  }
 
   const status = rest.status
 
@@ -104,54 +118,67 @@ const LeftToolbar = (props: Props) => {
 
   return (
     <div className={clsx(classes.root, className)} ref={ref}>
-      <Group
-        items={[{ id: 'select', options: selectOptions }, { id: 'erase' }]}
+      <div className={classes.buttons} ref={scrollRef}>
+        <div className={classes.listener} ref={startRef}>
+          <Group
+            items={[{ id: 'select', options: selectOptions }, { id: 'erase' }]}
+          />
+        </div>
+
+        <Group
+          items={[
+            {
+              id: 'bond-common',
+              options: [
+                ...bondCommon,
+                ...bondQuery,
+                ...bondSpecial,
+                ...bondStereo
+              ]
+            },
+            { id: 'chain' }
+          ]}
+        />
+
+        <Group items={[{ id: 'charge-plus' }, { id: 'charge-minus' }]} />
+
+        <Group
+          items={[
+            {
+              id: 'transform-rotate',
+              options: transformOptions
+            }
+          ]}
+        />
+
+        <Group items={[{ id: 'sgroup' }, { id: 'sgroup-data' }]} />
+
+        <Group
+          items={[
+            { id: 'reaction-plus' },
+            { id: 'reaction-arrows', options: arrowsOptions },
+            {
+              id: 'reaction-mapping-tools',
+              options: mappingOptions
+            }
+          ]}
+        />
+        <div className={classes.listener} ref={sizeRef}>
+          <Group items={[{ id: 'rgroup', options: rGroupOptions }]} />
+        </div>
+
+        <Group items={[{ id: 'shape', options: shapeOptions }]} />
+
+        <div ref={endRef}>
+          <Group items={[{ id: 'text' }]} />
+        </div>
+      </div>
+      <ArrowScroll
+        startInView={startInView}
+        endInView={endInView}
+        scrollUp={scrollUp}
+        scrollDown={scrollDown}
       />
-
-      <Group
-        items={[
-          {
-            id: 'bond-common',
-            options: [
-              ...bondCommon,
-              ...bondQuery,
-              ...bondSpecial,
-              ...bondStereo
-            ]
-          },
-          { id: 'chain' }
-        ]}
-      />
-
-      <Group items={[{ id: 'charge-plus' }, { id: 'charge-minus' }]} />
-
-      <Group
-        items={[
-          {
-            id: 'transform-rotate',
-            options: transformOptions
-          }
-        ]}
-      />
-
-      <Group items={[{ id: 'sgroup' }, { id: 'sgroup-data' }]} />
-
-      <Group
-        items={[
-          { id: 'reaction-plus' },
-          { id: 'reaction-arrows', options: arrowsOptions },
-          {
-            id: 'reaction-mapping-tools',
-            options: mappingOptions
-          }
-        ]}
-      />
-
-      <Group items={[{ id: 'rgroup', options: rGroupOptions }]} />
-
-      <Group items={[{ id: 'shape', options: shapeOptions }]} />
-
-      <Group items={[{ id: 'text' }]} />
     </div>
   )
 }

@@ -14,18 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../toolbar';
-
-.root {
-  .toolbar();
-  .vertical-toolbar();
-
-  button {
-    font-size: 19px;
-  }
+.scroll {
+  min-height: 40px;
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
 }
 
-.buttons {
-  overflow: hidden;
-  scroll-behavior: smooth;
+.button {
+  height: 50%;
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 15px !important;
+}
+
+.down {
+  position: absolute;
+  bottom: 0;
+}
+
+.up {
+  position: absolute;
+  top: 0;
 }

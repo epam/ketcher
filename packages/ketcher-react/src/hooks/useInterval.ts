@@ -14,18 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../toolbar';
+import { useEffect, useRef } from 'react'
 
-.root {
-  .toolbar();
-  .vertical-toolbar();
+export const useInterval = (callback: () => void, delay: number | null) => {
+  const savedCallback = useRef(callback)
 
-  button {
-    font-size: 19px;
-  }
-}
+  // Remember the latest callback if it changes.
+  useEffect(() => {
+    savedCallback.current = callback
+  }, [callback])
 
-.buttons {
-  overflow: hidden;
-  scroll-behavior: smooth;
+  // Set up the interval.
+  useEffect(() => {
+    // Don't schedule if no delay is specified.
+    if (delay === null) {
+      return
+    }
+
+    const id = setInterval(() => savedCallback.current(), delay)
+
+    return () => clearInterval(id)
+  }, [delay])
 }

@@ -231,9 +231,9 @@
         },
         "rlogic": {
           "type": "object",
-          "required": ["number"],
+          "required": ["index"],
           "properties": {
-            "number": {
+            "index": {
               "type": "integer",
               "minimum": 1
             },

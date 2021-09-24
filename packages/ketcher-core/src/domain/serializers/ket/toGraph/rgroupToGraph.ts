@@ -30,10 +30,10 @@ export function rgroupToGraph(struct: Struct, data) {
   }
 }
 
-function rgroupLogicToGraph(rgnumber, rglogic) {
+function rgroupLogicToGraph(rgindex, rglogic) {
   const result = {}
 
-  ifDef(result, 'number', rgnumber)
+  ifDef(result, 'index', rgindex)
   ifDef(result, 'range', rglogic.range, '')
   ifDef(result, 'resth', rglogic.resth, false)
   ifDef(result, 'ifthen', rglogic.ifthen, 0)

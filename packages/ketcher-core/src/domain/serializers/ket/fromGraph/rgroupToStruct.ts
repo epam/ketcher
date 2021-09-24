@@ -25,15 +25,15 @@ export function rgroupToStruct(graphItem): Struct {
   struct.frags.forEach((_value: any, key) => {
     rgroup.frags.add(key)
   })
-  if (graphItem.rlogic) struct.rgroups.set(graphItem.rlogic.number, rgroup)
+  if (graphItem.rlogic) struct.rgroups.add(rgroup)
   return struct
 }
 
 export function rgroupLogicToStruct(rglogic) {
-  const params = {}
-  ifDef(params, 'range', rglogic.range)
-  ifDef(params, 'resth', rglogic.resth)
-  ifDef(params, 'ifthen', rglogic.ifthen)
+  const attributes = { index: rglogic.index }
+  ifDef(attributes, 'range', rglogic.range)
+  ifDef(attributes, 'resth', rglogic.resth)
+  ifDef(attributes, 'ifthen', rglogic.ifthen)
 
-  return new RGroup(params)
+  return new RGroup(attributes)
 }

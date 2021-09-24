@@ -17,9 +17,9 @@
 import { StereoFlag, Struct } from 'domain/entities'
 
 import { Elements } from 'domain/constants'
+import { FunctionalGroupsProvider } from 'index'
 import common from './common'
 import utils from './utils'
-import { FunctionalGroupsProvider } from 'index'
 
 const END_V2000 = '2D 1   1.00000     0.00000     0'
 
@@ -166,9 +166,9 @@ export class Molfile {
           '$MDL  REV  1\n$MOL\n$HDR\n' + molecule.name + '\n\n\n$END HDR\n'
         this.molfile += '$CTAB\n' + scaffold + '$END CTAB\n'
 
-        molecule.rgroups.forEach((rg, rgid) => {
+        molecule.rgroups.forEach(rg => {
           this.molfile += '$RGP\n'
-          this.writePaddedNumber(rgid, 3)
+          this.writePaddedNumber(rg.index, 3)
           this.molfile += '\n'
           rg.frags.forEach(fid => {
             const group = new Molfile().getCTab(molecule.getFragment(fid))

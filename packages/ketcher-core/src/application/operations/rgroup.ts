@@ -15,9 +15,138 @@
  ***************************************************************************/
 
 import { AttrValueType, PerformOperationResult } from './operations.types'
+import { RGroup, RGroupAttributes, Struct } from 'domain/entities'
 
 import { BaseOperation } from './baseOperation'
-import { Struct } from 'domain/entities'
+import assert from 'assert'
+
+export class AddRGroup extends BaseOperation {
+  #rgroupId?: number
+  #rgroupAttributes: RGroupAttributes
+
+  constructor(rgroupAttributes: RGroupAttributes, rgroupId?: number) {
+    super('R_GROUP_ADD')
+
+    this.#rgroupId = rgroupId
+    this.#rgroupAttributes = rgroupAttributes
+  }
+
+  execute(struct: Struct): PerformOperationResult {
+    assert(
+      struct.rgroups.find(
+        (_key, rgroup) => rgroup.index === this.#rgroupAttributes.index
+      ) === null,
+      `R-group with index ${this.#rgroupAttributes.index} already exists.`
+    )
+
+    const rgroup = new RGroup(this.#rgroupAttributes)
+
+    let rgroupId: number
+
+    if (typeof this.#rgroupId === 'number') {
+      struct.rgroups.set(this.#rgroupId, rgroup)
+      rgroupId = this.#rgroupId
+    } else {
+      rgroupId = struct.rgroups.add(rgroup)
+    }
+
+    const inverseOperation = new DeleteRGroup(rgroupId)
+
+    return { inverseOperation, entityId: rgroupId, operationType: this.type }
+  }
+}
+
+export class DeleteRGroup extends BaseOperation {
+  #rgroupId: number
+
+  constructor(rgroupId: number) {
+    super('R_GROUP_DELETE')
+
+    this.#rgroupId = rgroupId
+  }
+
+  execute(struct: Struct): PerformOperationResult {
+    const rgroup = struct.rgroups.get(this.#rgroupId)
+
+    assert(rgroup != null, `R-group ${this.#rgroupId} not found.`)
+
+    struct.rgroups.delete(this.#rgroupId)
+
+    const inverseOperation = new AddRGroup(rgroup, this.#rgroupId)
+
+    return {
+      inverseOperation,
+      entityId: this.#rgroupId,
+      operationType: this.type
+    }
+  }
+}
+
+export class AddFragmentToRGroup extends BaseOperation {
+  #rgroupId: number
+  #fragmentId: number
+
+  constructor(rgroupId: number, fragmentId: number) {
+    super('R_GROUP_ADD_FRAGMENT')
+
+    this.#rgroupId = rgroupId
+    this.#fragmentId = fragmentId
+  }
+
+  execute(struct: Struct): PerformOperationResult {
+    const rgroup = struct.rgroups.get(this.#rgroupId)
+
+    assert(rgroup != null, `R-group ${this.#rgroupId} not found.`)
+    assert(
+      struct.frags.get(this.#fragmentId) != null,
+      `Fragment ${this.#fragmentId} not found.`
+    )
+
+    rgroup.frags.add(this.#fragmentId)
+
+    const inverseOperation = new DeleteFragmentFromRGroup(
+      this.#rgroupId,
+      this.#fragmentId
+    )
+
+    return {
+      inverseOperation,
+      entityId: this.#rgroupId,
+      operationType: this.type
+    }
+  }
+}
+
+export class DeleteFragmentFromRGroup extends BaseOperation {
+  #rgroupId: number
+  #fragmentId: number
+
+  constructor(rgroupId: number, fragmentId: number) {
+    super('R_GROUP_DELETE_FRAGMENT')
+
+    this.#rgroupId = rgroupId
+    this.#fragmentId = fragmentId
+  }
+
+  execute(struct: Struct): PerformOperationResult {
+    const rgroup = struct.rgroups.get(this.#rgroupId)
+
+    assert(rgroup != null, `R-group ${this.#rgroupId} not found.`)
+
+    rgroup.frags.delete(this.#fragmentId)
+
+    const inverseOperation = new AddFragmentToRGroup(
+      this.#rgroupId,
+      this.#fragmentId
+    )
+
+    return {
+      inverseOperation,
+      entityId: this.#rgroupId,
+      operationType: this.type
+    }
+  }
+}
 
 export class SetRGroupAttr extends BaseOperation {
   #rgroupId: number
@@ -49,6 +178,37 @@ export class SetRGroupAttr extends BaseOperation {
     return {
       inverseOperation,
       entityId: this.#rgroupId,
+      operationType: this.type
+    }
+  }
+}
+
+export class UpdateIfThen extends BaseOperation {
+  #newRgroupIndex: number
+  #previousRgroupIndex: number
+
+  constructor(newRgroupIndex: number, previousRgroupIndex: number) {
+    super('R_GROUP_UPDATE_IF_THEN')
+
+    this.#newRgroupIndex = newRgroupIndex
+    this.#previousRgroupIndex = previousRgroupIndex
+  }
+
+  execute(struct: Struct): PerformOperationResult {
+    struct.rgroups.forEach(rg => {
+      if (rg.ifthen === this.#previousRgroupIndex) {
+        rg.ifthen = this.#newRgroupIndex
+      }
+    })
+
+    const inverseOperation = new UpdateIfThen(
+      this.#previousRgroupIndex,
+      this.#newRgroupIndex
+    )
+
+    return {
+      inverseOperation,
+      entityId: this.#newRgroupIndex,
       operationType: this.type
     }
   }

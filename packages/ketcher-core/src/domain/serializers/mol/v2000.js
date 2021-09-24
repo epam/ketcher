@@ -336,7 +336,7 @@ function parseCTabV2000(ctabLines, countsSplit) {
   }
   for (const id in rLogic) {
     const rgid = parseInt(id, 10)
-    ctab.rgroups.set(rgid, new RGroup(rLogic[rgid]))
+    ctab.rgroups.add(new RGroup({ index: rgid, ...rLogic[rgid] }))
   }
   return ctab
 }

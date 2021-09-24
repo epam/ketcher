@@ -16,20 +16,28 @@
 
 import { Pile } from './pile'
 import { Pool } from './pool'
+import assert from 'assert'
 
 export interface RGroupAttributes {
+  index: number
   ifthen?: number
   resth?: boolean
   range?: string
+  frags?: Pile<number>
 }
 export class RGroup {
+  index: number
   frags: Pile<number>
   resth: boolean
   range: string
   ifthen: number
 
-  constructor(attributes: RGroupAttributes = {}) {
-    this.frags = new Pile<number>()
+  constructor(attributes: RGroupAttributes) {
+    assert(attributes != null)
+    assert(attributes.index > 0)
+
+    this.index = attributes.index
+    this.frags = attributes.frags || new Pile<number>()
     this.resth = attributes.resth || false
     this.range = attributes.range || ''
     this.ifthen = attributes.ifthen || 0
@@ -41,6 +49,7 @@ export class RGroup {
 
   getAttrs(): RGroupAttributes {
     return {
+      index: this.index,
       resth: this.resth,
       range: this.range,
       ifthen: this.ifthen

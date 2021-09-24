@@ -18,7 +18,7 @@ import { Box2Abs, Scale, SimpleObjectMode, Vec2 } from 'ketcher-core'
 
 import { LayerMap } from './GeneralEnumTypes'
 import ReObject from './ReObject'
-import ReStruct from './index'
+import ReStruct from './ReStruct'
 import Render from '..'
 import draw from '../draw'
 import util from '../util'

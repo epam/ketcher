@@ -16,7 +16,7 @@
 
 import { Box2Abs, Scale } from 'ketcher-core'
 
-import ReStruct from './index'
+import ReStruct from './ReStruct'
 import Render from '..'
 import Visel from './visel'
 

@@ -19,7 +19,7 @@ import { Box2Abs, Scale, StereoFlag } from 'ketcher-core'
 import { Fragment } from 'ketcher-core'
 import { LayerMap } from './GeneralEnumTypes'
 import ReObject from './ReObject'
-import ReStruct from './index'
+import ReStruct from './ReStruct'
 import Render from '..'
 
 class ReEnhancedFlag extends ReObject {

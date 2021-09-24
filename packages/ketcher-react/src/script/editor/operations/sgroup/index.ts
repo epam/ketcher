@@ -77,12 +77,12 @@ class SGroupCreate extends BaseOperation {
 
     restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)))
     if (
-      FunctionalGroup.isFunctionalGroup(
+      struct.isFunctionalGroup(
         FunctionalGroupsProvider.getInstance().getFunctionalGroupsList(),
         sgroup
       )
     ) {
-      restruct.molecule.functionalGroups.add(
+      struct.functionalGroups.add(
         new FunctionalGroup(sgroup.data.name, sgroup.id, sgroup.expanded)
       )
     }

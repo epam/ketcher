@@ -1016,9 +1016,15 @@ export class Struct {
     return aid && this.atoms.get(aid)?.fragment
   }
 
+  isFunctionalGroup(functionalGroupsList, sgroup): boolean {
+    return (
+      functionalGroupsList.includes(sgroup.data.name) && sgroup.type === 'SUP'
+    )
+  }
+
   bindSGroupsToFunctionalGroups(functionalGroupsList) {
     this.sgroups.forEach(sgroup => {
-      if (FunctionalGroup.isFunctionalGroup(functionalGroupsList, sgroup)) {
+      if (this.isFunctionalGroup(functionalGroupsList, sgroup)) {
         this.functionalGroups.add(
           new FunctionalGroup(sgroup.data.name, sgroup.id, sgroup.expanded)
         )

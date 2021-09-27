@@ -48,14 +48,8 @@ class Attach extends Component {
   }
 
   render() {
-    const {
-      name,
-      atomid,
-      bondid,
-      onNameEdit,
-      onAttachEdit,
-      ...prop
-    } = this.props
+    const { name, onNameEdit, onAttachEdit, ...prop } = this.props
+    const { atomid, bondid } = this.tmpl.props
     const struct = this.tmpl.struct
     const options = Object.assign(EDITOR_STYLES, { scale: getScale(struct) })
 

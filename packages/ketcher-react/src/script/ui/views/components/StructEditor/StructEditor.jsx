@@ -81,7 +81,8 @@ class StructEditor extends Component {
     this.editor.event.message.add(msg => {
       const el = this.logRef.current
       if (msg.info) {
-        el.innerHTML = msg.info
+        const parsedInfo = JSON.parse(msg.info)
+        el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`
         el.classList.add(classes.visible)
       } else {
         el.classList.remove(classes.visible)
@@ -126,7 +127,7 @@ class StructEditor extends Component {
         {...props}>
         <div
           ref={this.editorRef}
-          className={clsx(classes.intermediateCanvas, className)}
+          className={clsx(classes.intermediateCanvas)}
           onMouseDown={event => event.preventDefault()}>
           {/* svg here */}
         </div>

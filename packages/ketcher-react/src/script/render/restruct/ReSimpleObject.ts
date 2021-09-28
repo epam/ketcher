@@ -240,22 +240,32 @@ class ReSimpleObject extends ReObject {
           )
         )
 
-        path.push(
-          render.paper.rect(
-            tfx(Math.min(point[0].x, point[1].x) + scaleFactor / 8),
-            tfx(Math.min(point[0].y, point[1].y) + scaleFactor / 8),
-            tfx(
-              Math.max(point[0].x, point[1].x) -
-                Math.min(point[0].x, point[1].x) -
-                scaleFactor / 4
-            ),
-            tfx(
-              Math.max(point[0].y, point[1].y) -
-                Math.min(point[0].y, point[1].y) -
-                scaleFactor / 4
+        if (
+          Math.max(point[0].x, point[1].x) -
+            Math.min(point[0].x, point[1].x) -
+            scaleFactor / 4 >
+            0 &&
+          Math.max(point[0].y, point[1].y) -
+            Math.min(point[0].y, point[1].y) -
+            scaleFactor / 4 >
+            0
+        )
+          path.push(
+            render.paper.rect(
+              tfx(Math.min(point[0].x, point[1].x) + scaleFactor / 8),
+              tfx(Math.min(point[0].y, point[1].y) + scaleFactor / 8),
+              tfx(
+                Math.max(point[0].x, point[1].x) -
+                  Math.min(point[0].x, point[1].x) -
+                  scaleFactor / 4
+              ),
+              tfx(
+                Math.max(point[0].y, point[1].y) -
+                  Math.min(point[0].y, point[1].y) -
+                  scaleFactor / 4
+              )
             )
           )
-        )
 
         break
       }

@@ -17,7 +17,7 @@
 import { appUpdate, setStruct } from '../options'
 import { omit, without } from 'lodash/fp'
 
-import { KetSerializer } from 'ketcher-core'
+import { MolSerializer } from 'ketcher-core'
 import { checkErrors } from '../modal/form'
 import { indigoVerification } from '../request'
 import { load } from '../shared'
@@ -149,7 +149,10 @@ export function serverTransform(method, data, struct) {
     serverCall(state.editor, state.server, method, opts, struct)
       .then(res => {
         // TODO: it should be removed after implementing of 'Internal Format'  epic
-        const loadedStruct = new KetSerializer().deserialize(res.struct)
+        const previousStruct = struct || state.editor.struct()
+        const loadedStruct = new MolSerializer().deserialize(res.struct)
+        loadedStruct.simpleObjects = previousStruct.simpleObjects
+        loadedStruct.texts = previousStruct.texts
 
         return dispatch(
           load(loadedStruct, {
@@ -190,13 +193,12 @@ export function serverCall(editor, server, method, options, struct) {
       selectedAtoms = selectedAtoms.map(aid => reindexMap.get(aid))
     }
   }
-  const ketSerializer = new KetSerializer()
+  const molSerializer = new MolSerializer({ ignoreErrors: true })
   return server.then(() =>
     server[method](
       Object.assign(
         {
-          output_format: 'chemical/x-indigo-ket',
-          struct: ketSerializer.serialize(currentStruct)
+          struct: molSerializer.serialize(currentStruct)
         },
         selectedAtoms && selectedAtoms.length > 0
           ? {

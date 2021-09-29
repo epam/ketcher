@@ -137,6 +137,6 @@ function getScale(struct) {
   let scale = VIEW_SIZE / Math.max(cbb.max.y - cbb.min.y, cbb.max.x - cbb.min.x)
 
   if (scale < 35) scale = 35
-  if (scale > 60) scale = 60
+  if (scale > 50) scale = 50
   return scale
 }

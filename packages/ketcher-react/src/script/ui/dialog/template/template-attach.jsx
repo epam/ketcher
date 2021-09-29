@@ -42,7 +42,8 @@ class Attach extends Component {
     return name &&
       (name !== this.tmpl.struct.name ||
         atomid !== this.tmpl.props.atomid ||
-        bondid !== this.tmpl.props.bondid)
+        bondid !== this.tmpl.props.bondid) &&
+      name.trim().length
       ? { name, attach: { atomid, bondid } }
       : null
   }
@@ -62,7 +63,12 @@ class Attach extends Component {
         params={prop}>
         <label>
           Template name:
-          <Input value={name} onChange={onNameEdit} placeholder="tmpl" />
+          <Input
+            value={name}
+            onChange={onNameEdit}
+            placeholder="tmpl"
+            maxLength="128"
+          />
         </label>
         <label>Choose attachment atom and bond:</label>
         <StructEditor

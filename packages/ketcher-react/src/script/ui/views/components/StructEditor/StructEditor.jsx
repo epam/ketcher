@@ -81,8 +81,12 @@ class StructEditor extends Component {
     this.editor.event.message.add(msg => {
       const el = this.logRef.current
       if (msg.info) {
-        const parsedInfo = JSON.parse(msg.info)
-        el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`
+        try {
+          const parsedInfo = JSON.parse(msg.info)
+          el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`
+        } catch {
+          el.innerHTML = msg.info
+        }
         el.classList.add(classes.visible)
       } else {
         el.classList.remove(classes.visible)

@@ -50,9 +50,11 @@ class Attach extends Component {
 
   render() {
     const { name, onNameEdit, onAttachEdit, ...prop } = this.props
-    const { atomid, bondid } =
-      this.tmpl.struct.name !== name ? this.tmpl.props : this.props
     const struct = this.tmpl.struct
+    const { atomid, bondid } =
+      struct.atoms.get(this.props.atomid) && struct.bonds.get(this.props.bondid)
+        ? this.props
+        : this.tmpl.props
     const options = Object.assign(EDITOR_STYLES, { scale: getScale(struct) })
 
     return (

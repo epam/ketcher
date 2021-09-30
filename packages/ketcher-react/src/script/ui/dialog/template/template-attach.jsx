@@ -54,6 +54,10 @@ class Attach extends Component {
       this.tmpl.struct.name !== name ? this.tmpl.props : this.props
     const struct = this.tmpl.struct
     const options = Object.assign(EDITOR_STYLES, { scale: getScale(struct) })
+    const maxValueSign =
+      name && name.length !== 128
+        ? { borderColor: '#CCCCCCFF' }
+        : { borderColor: '#FF5555FF' }
 
     return (
       <Dialog
@@ -66,8 +70,9 @@ class Attach extends Component {
           <Input
             value={name}
             onChange={onNameEdit}
-            placeholder="tmpl"
+            placeholder="template"
             maxLength="128"
+            style={maxValueSign}
           />
         </label>
         <label>Choose attachment atom and bond:</label>

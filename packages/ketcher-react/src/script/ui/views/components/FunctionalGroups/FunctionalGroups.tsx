@@ -126,7 +126,7 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
         <SaveButton
           key="save-to-SDF"
           data={molSaveData}
-          filename="ketcher-tmpls.sdf">
+          filename="ketcher-fg-tmpls.sdf">
           Save To SDF…
         </SaveButton>,
         'Cancel',

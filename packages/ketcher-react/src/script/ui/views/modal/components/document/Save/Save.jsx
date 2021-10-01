@@ -210,6 +210,8 @@ class SaveDialog extends Component {
     const formState = this.props.formState
     const { filename, format } = formState.result
     const isCleanStruct = this.props.struct.isBlank()
+    const isMoleculeContain =
+      this.props.struct.atoms.size && this.props.struct.bonds.size
     const buttons = [
       [
         <SaveButton
@@ -226,7 +228,7 @@ class SaveDialog extends Component {
         <button
           key="save-tmpl"
           className={classes.saveTmpl}
-          disabled={disableControls || isCleanStruct}
+          disabled={disableControls || isCleanStruct || !isMoleculeContain}
           onClick={() => this.props.onTmplSave(this.props.struct)}>
           Save to Templates...
         </button>,

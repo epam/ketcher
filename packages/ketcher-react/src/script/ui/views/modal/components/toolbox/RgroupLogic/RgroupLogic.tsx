@@ -27,6 +27,7 @@ interface RgroupLogicProps extends BaseProps {
   range: string
   resth: boolean
   rgroupLabels: Array<number>
+  name?: string
 }
 
 type Props = RgroupLogicProps & BaseCallProps
@@ -47,7 +48,7 @@ const RgroupLogic = (props: Props) => {
         {...formState}>
         <Field name="range" />
         <Field name="resth" />
-        <IfThenSelect label={label} rgroupLabels={rgroupLabels} />
+        <IfThenSelect name="ifthen" label={label} rgroupLabels={rgroupLabels} />
       </Form>
     </Dialog>
   )

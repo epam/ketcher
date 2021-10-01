@@ -125,6 +125,7 @@ class ReRGroup extends ReObject {
   // TODO need to review parameter list
   _draw(render, rgid, attrs) {
     // eslint-disable-line no-underscore-dangle
+    if (!this.getVBoxObj(render)) return null
     const bb = this.getVBoxObj(render).extend(BORDER_EXT, BORDER_EXT) // eslint-disable-line no-underscore-dangle
 
     if (!bb) return null

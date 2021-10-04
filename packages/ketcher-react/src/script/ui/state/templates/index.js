@@ -79,7 +79,7 @@ export function editTmpl(tmpl) {
     openDialog(dispatch, 'attach', { tmpl })
       .then(
         ({ name, attach }) => {
-          tmpl.struct.name = name
+          tmpl.struct.name = name.trim()
           tmpl.props = Object.assign({}, tmpl.props, attach)
 
           if (tmpl.props.group === 'User Templates')
@@ -116,7 +116,7 @@ export function saveUserTmpl(struct) {
   return (dispatch, getState) => {
     openDialog(dispatch, 'attach', { tmpl })
       .then(({ name, attach }) => {
-        tmpl.struct.name = name
+        tmpl.struct.name = name.trim()
         tmpl.props = { ...attach, group: 'User Templates' }
 
         const lib = getState().templates.lib.concat(tmpl)

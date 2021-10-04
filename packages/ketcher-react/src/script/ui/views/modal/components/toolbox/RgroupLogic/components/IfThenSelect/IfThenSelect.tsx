@@ -19,14 +19,13 @@ import { RgroupLogicProps } from '../../RgroupLogic'
 import classes from './IfThenSelect.module.less'
 import { useFormContext } from '../../../../../../../../../hooks'
 
-type Props = Pick<RgroupLogicProps, 'label' | 'rgroupLabels'>
+type Props = Pick<RgroupLogicProps, 'label' | 'rgroupLabels' | 'name'>
 
 const IfThenSelect = (props: Props) => {
-  const PROP_NAME = 'ifthen'
-  const { rgroupLabels, label } = props
+  const { rgroupLabels, label, name } = props
   const { schema } = useFormContext() as any
   const desc = {
-    title: schema.properties[PROP_NAME].title,
+    title: schema.properties[name!].title,
     enum: [0],
     enumNames: ['Always']
   }

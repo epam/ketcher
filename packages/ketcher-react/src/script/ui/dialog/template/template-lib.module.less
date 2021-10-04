@@ -113,6 +113,9 @@
       color: darken(@border-color, 30%);
       background-color: white;
       content: attr(title);
+      overflow: hidden;
+      max-width: 160px;
+      white-space: nowrap;
     }
     &.selected .struct {
       background-color: lighten(@form-selected-background, 15%);

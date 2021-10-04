@@ -42,22 +42,24 @@ class Attach extends Component {
     return name &&
       (name !== this.tmpl.struct.name ||
         atomid !== this.tmpl.props.atomid ||
-        bondid !== this.tmpl.props.bondid)
+        bondid !== this.tmpl.props.bondid) &&
+      name.trim().length
       ? { name, attach: { atomid, bondid } }
       : null
   }
 
   render() {
-    const {
-      name,
-      atomid,
-      bondid,
-      onNameEdit,
-      onAttachEdit,
-      ...prop
-    } = this.props
+    const { name, onNameEdit, onAttachEdit, ...prop } = this.props
     const struct = this.tmpl.struct
+    const { atomid, bondid } =
+      struct.atoms.get(this.props.atomid) && struct.bonds.get(this.props.bondid)
+        ? this.props
+        : this.tmpl.props
     const options = Object.assign(EDITOR_STYLES, { scale: getScale(struct) })
+    const maxValueSign =
+      name && name.length !== 128
+        ? { borderColor: '#CCCCCCFF' }
+        : { borderColor: '#FF5555FF' }
 
     return (
       <Dialog
@@ -67,7 +69,13 @@ class Attach extends Component {
         params={prop}>
         <label>
           Template name:
-          <Input value={name} onChange={onNameEdit} placeholder="tmpl" />
+          <Input
+            value={name}
+            onChange={onNameEdit}
+            placeholder="template"
+            maxLength="128"
+            style={maxValueSign}
+          />
         </label>
         <label>Choose attachment atom and bond:</label>
         <StructEditor
@@ -136,6 +144,6 @@ function getScale(struct) {
   let scale = VIEW_SIZE / Math.max(cbb.max.y - cbb.min.y, cbb.max.x - cbb.min.x)
 
   if (scale < 35) scale = 35
-  if (scale > 60) scale = 60
+  if (scale > 50) scale = 50
   return scale
 }

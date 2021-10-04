@@ -14,6 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Scale'
-export * from './StereoValidator'
-export * from './FunctionalGroupsProvider'
+export * from './scale'
+export * from './stereoValidator'
+export * from './functionalGroupsProvider'

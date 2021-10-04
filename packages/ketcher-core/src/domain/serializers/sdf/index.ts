@@ -15,4 +15,4 @@
  ***************************************************************************/
 
 export * from './sdf.types'
-export * from './SdfSerializer'
+export * from './sdfSerializer'

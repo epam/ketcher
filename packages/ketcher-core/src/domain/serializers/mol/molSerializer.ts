@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { MolSerializerOptions } from './mol.types'
-import { Molfile } from './Molfile'
+import { Molfile } from './molfile'
 import { Serializer } from '../serializers.types'
 import { Struct } from 'domain/entities'
 

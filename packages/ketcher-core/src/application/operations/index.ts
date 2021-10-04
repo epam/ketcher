@@ -16,3 +16,12 @@
 
 export * from './operations.types'
 export * from './atom'
+export * from './bond'
+export * from './fragment'
+export * from './loop'
+export * from './rgroup'
+export * from './rxnArrow'
+export * from './rxnPlus'
+export * from './sgroup'
+export * from './simpleObject'
+export * from './text'

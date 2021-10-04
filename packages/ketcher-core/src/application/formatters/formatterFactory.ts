@@ -11,11 +11,11 @@ import {
 } from 'domain/serializers'
 import { StructService, StructServiceOptions } from 'domain/services'
 
-import { GraphFormatter } from './GraphFormatter'
-import { MolfileV2000Formatter } from './MolfileV2000Formatter'
-import { RxnFormatter } from './RxnFormatter'
-import { ServerFormatter } from './ServerFormatter'
-import { SmilesFormatter } from './SmilesFormatter'
+import { GraphFormatter } from './graphFormatter'
+import { MolfileV2000Formatter } from './molfileV2000Formatter'
+import { RxnFormatter } from './rxnFormatter'
+import { ServerFormatter } from './serverFormatter'
+import { SmilesFormatter } from './smilesFormatter'
 
 export class FormatterFactory {
   constructor(private readonly structService: StructService) {}

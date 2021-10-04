@@ -71,7 +71,7 @@ export class AddSimpleObject extends BaseOperation {
   execute(struct: Struct): PerformOperationResult {
     const simpleObject = new SimpleObject({
       mode: this.#mode,
-      points: this.#points
+      pos: this.#points
     })
 
     let simpleObjectId: number
@@ -119,7 +119,7 @@ export class DeleteSimpleObject extends BaseOperation {
     struct.simpleObjects.delete(this.#simpleObjectId)
 
     const inverseOperation = new AddSimpleObject(
-      simpleObject.points,
+      simpleObject.pos,
       simpleObject.mode,
       this.#simpleObjectId
     )
@@ -145,7 +145,7 @@ export class MoveSimpleObject extends BaseOperation {
 
   execute(struct: Struct): PerformOperationResult {
     const simpleObject = struct.simpleObjects.get(this.#simpleObjectId)!
-    simpleObject.points.forEach(p => p.add_(this.#delta))
+    simpleObject.pos.forEach(p => p.add_(this.#delta))
 
     //TODO: move to  renderer
     // restruct.simpleObjects
@@ -204,26 +204,26 @@ export class ResizeSimpleObject extends BaseOperation {
         break
       }
       case 'LINE': {
-        const previousPos0 = simpleObject.points[0].get_xy0()
-        const previousPos1 = simpleObject.points[1].get_xy0()
+        const previousPos0 = simpleObject.pos[0].get_xy0()
+        const previousPos1 = simpleObject.pos[1].get_xy0()
 
         if (
-          tfx(this.#anchor.x) === tfx(simpleObject.points[1].x) &&
-          tfx(this.#anchor.y) === tfx(simpleObject.points[1].y)
+          tfx(this.#anchor.x) === tfx(simpleObject.pos[1].x) &&
+          tfx(this.#anchor.y) === tfx(simpleObject.pos[1].y)
         ) {
-          simpleObject.points[1].x = this.#anchor.x = this.#current.x
+          simpleObject.pos[1].x = this.#anchor.x = this.#current.x
           this.#current.x = previousPos1.x
-          simpleObject.points[1].y = this.#anchor.y = this.#current.y
+          simpleObject.pos[1].y = this.#anchor.y = this.#current.y
           this.#current.y = previousPos1.y
         }
 
         if (
-          tfx(this.#anchor.x) === tfx(simpleObject.points[0].x) &&
-          tfx(this.#anchor.y) === tfx(simpleObject.points[0].y)
+          tfx(this.#anchor.x) === tfx(simpleObject.pos[0].x) &&
+          tfx(this.#anchor.y) === tfx(simpleObject.pos[0].y)
         ) {
-          simpleObject.points[0].x = this.#anchor.x = this.#current.x
+          simpleObject.pos[0].x = this.#anchor.x = this.#current.x
           this.#current.x = previousPos0.x
-          simpleObject.points[0].y = this.#anchor.y = this.#current.y
+          simpleObject.pos[0].y = this.#anchor.y = this.#current.y
           this.#current.y = previousPos0.y
         }
         break

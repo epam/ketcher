@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from './Vec2'
+import { Point, Vec2 } from './Vec2'
 
 export enum SimpleObjectMode {
   ellipse = 'ellipse',
@@ -22,27 +22,26 @@ export enum SimpleObjectMode {
   line = 'line'
 }
 
-export interface SimpleObjectParams {
+export interface SimpleObjectAttributes {
   mode: SimpleObjectMode
-  pos?: Array<Vec2>
+  pos?: Array<Point>
 }
 
 export class SimpleObject {
   pos: Array<Vec2>
   mode: SimpleObjectMode
 
-  constructor(params: SimpleObjectParams) {
-    params = params || {}
+  constructor(attributes: SimpleObjectAttributes) {
     this.pos = []
 
-    if (params.pos) {
-      for (let i = 0; i < params.pos.length; i++) {
-        const currentP = params.pos[i]
-        this.pos[i] = currentP ? new Vec2(params.pos[i]) : new Vec2()
+    if (attributes.pos) {
+      for (let i = 0; i < attributes.pos.length; i++) {
+        const currentP = attributes.pos[i]
+        this.pos[i] = currentP ? new Vec2(attributes.pos[i]) : new Vec2()
       }
     }
 
-    this.mode = params.mode
+    this.mode = attributes.mode
   }
 
   clone(): SimpleObject {

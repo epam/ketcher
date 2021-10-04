@@ -197,7 +197,7 @@ export class MoveStereoFlag extends BaseOperation {
 
     const currentPosition = fragment.stereoFlagPosition
       ? new Vec2(fragment.stereoFlagPosition)
-      : Fragment.getDefaultStereoFlagPosition(struct, this.#fragmentId)
+      : Fragment.getDefaultStereoFlagPosition(struct, this.#fragmentId)!
 
     const newPosition = Vec2.sum(currentPosition, this.#delta)
     fragment.stereoFlagPosition = newPosition

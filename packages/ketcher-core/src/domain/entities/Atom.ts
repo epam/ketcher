@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 import { AtomList, AtomListParams } from './AtomList'
+import { Point, Vec2 } from './Vec2'
 
 import { Elements } from 'domain/constants'
 import { Pile } from './Pile'
-import { Vec2 } from './Vec2'
 
 function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
   return typeof value !== 'undefined' ? value : defaultValue
@@ -52,7 +52,7 @@ export enum StereoLabel {
   Or = 'or'
 }
 
-export interface AtomParams {
+export interface AtomAttributes {
   stereoParity?: number
   stereoLabel?: string | null
   exactChangeFlag?: number
@@ -74,8 +74,8 @@ export interface AtomParams {
   atomList?: AtomListParams | null
   label: string
   fragment?: number
-  pp?: Vec2
-  implicitH: number
+  pp?: Point
+  implicitH?: number
 }
 
 export class Atom {
@@ -146,23 +146,23 @@ export class Atom {
   hasImplicitH?: boolean
   pseudo!: string
 
-  constructor(params: AtomParams) {
-    this.label = params.label
-    this.fragment = getValueOrDefault(params.fragment, -1)
-    this.alias = getValueOrDefault(params.alias, Atom.attrlist.alias)
-    this.isotope = getValueOrDefault(params.isotope, Atom.attrlist.isotope)
-    this.radical = getValueOrDefault(params.radical, Atom.attrlist.radical)
-    this.charge = getValueOrDefault(params.charge, Atom.attrlist.charge)
-    this.rglabel = getValueOrDefault(params.rglabel, Atom.attrlist.rglabel)
-    this.attpnt = getValueOrDefault(params.attpnt, Atom.attrlist.attpnt)
+  constructor(attributes: AtomAttributes) {
+    this.label = attributes.label
+    this.fragment = getValueOrDefault(attributes.fragment, -1)
+    this.alias = getValueOrDefault(attributes.alias, Atom.attrlist.alias)
+    this.isotope = getValueOrDefault(attributes.isotope, Atom.attrlist.isotope)
+    this.radical = getValueOrDefault(attributes.radical, Atom.attrlist.radical)
+    this.charge = getValueOrDefault(attributes.charge, Atom.attrlist.charge)
+    this.rglabel = getValueOrDefault(attributes.rglabel, Atom.attrlist.rglabel)
+    this.attpnt = getValueOrDefault(attributes.attpnt, Atom.attrlist.attpnt)
     this.explicitValence = getValueOrDefault(
-      params.explicitValence,
+      attributes.explicitValence,
       Atom.attrlist.explicitValence
     )
 
     this.valence = 0
-    this.implicitH = params.implicitH || 0 // implicitH is not an attribute
-    this.pp = params.pp ? new Vec2(params.pp) : new Vec2()
+    this.implicitH = attributes.implicitH || 0 // implicitH is not an attribute
+    this.pp = attributes.pp ? new Vec2(attributes.pp) : new Vec2()
 
     // sgs should only be set when an atom is added to an s-group by an appropriate method,
     //   or else a copied atom might think it belongs to a group, but the group be unaware of the atom
@@ -171,39 +171,41 @@ export class Atom {
 
     // query
     this.ringBondCount = getValueOrDefault(
-      params.ringBondCount,
+      attributes.ringBondCount,
       Atom.attrlist.ringBondCount
     )
     this.substitutionCount = getValueOrDefault(
-      params.substitutionCount,
+      attributes.substitutionCount,
       Atom.attrlist.substitutionCount
     )
     this.unsaturatedAtom = getValueOrDefault(
-      params.unsaturatedAtom,
+      attributes.unsaturatedAtom,
       Atom.attrlist.unsaturatedAtom
     )
-    this.hCount = getValueOrDefault(params.hCount, Atom.attrlist.hCount)
+    this.hCount = getValueOrDefault(attributes.hCount, Atom.attrlist.hCount)
 
     // reaction
-    this.aam = getValueOrDefault(params.aam, Atom.attrlist.aam)
-    this.invRet = getValueOrDefault(params.invRet, Atom.attrlist.invRet)
+    this.aam = getValueOrDefault(attributes.aam, Atom.attrlist.aam)
+    this.invRet = getValueOrDefault(attributes.invRet, Atom.attrlist.invRet)
     this.exactChangeFlag = getValueOrDefault(
-      params.exactChangeFlag,
+      attributes.exactChangeFlag,
       Atom.attrlist.exactChangeFlag
     )
-    this.rxnFragmentType = getValueOrDefault(params.rxnFragmentType, -1)
+    this.rxnFragmentType = getValueOrDefault(attributes.rxnFragmentType, -1)
 
     // stereo
     this.stereoLabel = getValueOrDefault(
-      params.stereoLabel,
+      attributes.stereoLabel,
       Atom.attrlist.stereoLabel
     )
     this.stereoParity = getValueOrDefault(
-      params.stereoParity,
+      attributes.stereoParity,
       Atom.attrlist.stereoParity
     )
 
-    this.atomList = params.atomList ? new AtomList(params.atomList) : null
+    this.atomList = attributes.atomList
+      ? new AtomList(attributes.atomList)
+      : null
     this.neighbors = [] // set of half-bonds having this atom as their origin
     this.badConn = false
 

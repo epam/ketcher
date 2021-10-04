@@ -80,7 +80,7 @@ export class DeleteRxnArrow extends BaseOperation {
     struct.rxnArrows.delete(this.#rxnArrowId)
 
     const inverseOperation = new AddRxnArrow(
-      rxnArrow.points,
+      rxnArrow.pos,
       rxnArrow.mode,
       this.#rxnArrowId
     )
@@ -106,7 +106,7 @@ export class MoveRxnArrow extends BaseOperation {
 
   execute(struct: Struct): PerformOperationResult {
     const rxnArrow = struct.rxnArrows.get(this.#rxnArrowId)!
-    rxnArrow.points.forEach(p => p.add_(this.#delta))
+    rxnArrow.pos.forEach(p => p.add_(this.#delta))
 
     // TODO: move to renderer
     // restruct.rxnArrows
@@ -149,26 +149,26 @@ export class ResizeRxnArrow extends BaseOperation {
     // TODO: transfrom to clear function
     const rxnArrow = struct.rxnArrows.get(this.#rxnArrowId)!
 
-    const previousPos0 = rxnArrow.points[0].get_xy0()
-    const previousPos1 = rxnArrow.points[1].get_xy0()
+    const previousPos0 = rxnArrow.pos[0].get_xy0()
+    const previousPos1 = rxnArrow.pos[1].get_xy0()
 
     if (
-      tfx(this.#anchor.x) === tfx(rxnArrow.points[1].x) &&
-      tfx(this.#anchor.y) === tfx(rxnArrow.points[1].y)
+      tfx(this.#anchor.x) === tfx(rxnArrow.pos[1].x) &&
+      tfx(this.#anchor.y) === tfx(rxnArrow.pos[1].y)
     ) {
-      rxnArrow.points[1].x = this.#anchor.x = this.#current.x
+      rxnArrow.pos[1].x = this.#anchor.x = this.#current.x
       this.#current.x = previousPos1.x
-      rxnArrow.points[1].y = this.#anchor.y = this.#current.y
+      rxnArrow.pos[1].y = this.#anchor.y = this.#current.y
       this.#current.y = previousPos1.y
     }
 
     if (
-      tfx(this.#anchor.x) === tfx(rxnArrow.points[0].x) &&
-      tfx(this.#anchor.y) === tfx(rxnArrow.points[0].y)
+      tfx(this.#anchor.x) === tfx(rxnArrow.pos[0].x) &&
+      tfx(this.#anchor.y) === tfx(rxnArrow.pos[0].y)
     ) {
-      rxnArrow.points[0].x = this.#anchor.x = this.#current.x
+      rxnArrow.pos[0].x = this.#anchor.x = this.#current.x
       this.#current.x = previousPos0.x
-      rxnArrow.points[0].y = this.#anchor.y = this.#current.y
+      rxnArrow.pos[0].y = this.#anchor.y = this.#current.y
       this.#current.y = previousPos0.y
     }
 

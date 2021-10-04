@@ -14,18 +14,37 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from 'domain/constants'
-export * from 'domain/entities'
-export * from 'domain/serializers'
-export * from 'domain/services'
-export * from 'domain/helpers'
+import {
+  Operation,
+  OperationType,
+  PerformOperationResult
+} from './operations.types'
 
-export * from 'infrastructure/services'
+import { Struct } from 'domain/entities'
+import assert from 'assert'
 
-export * from 'application/formatters'
-export * from 'application/editor'
-export * from 'application/operations'
-export * from 'application/Ketcher'
-export * from 'application/KetcherBuilder'
+export abstract class BaseOperation implements Operation {
+  #type: OperationType
+  #priority: number
 
-export * from 'utilities'
+  get priority(): number {
+    return this.#priority
+  }
+
+  get type(): OperationType {
+    return this.#type
+  }
+
+  constructor(type: OperationType, priority: number = 0) {
+    this.#type = type
+    this.#priority = priority
+  }
+
+  protected abstract execute(struct: Struct): PerformOperationResult
+
+  perform(struct: Struct): PerformOperationResult {
+    assert(struct != null)
+
+    return this.execute(struct)
+  }
+}

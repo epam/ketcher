@@ -1,4 +1,4 @@
-import { KetSerializer } from '../../KetSerializer'
+import { KetSerializer } from '../../ketSerializer'
 
 const ket = new KetSerializer()
 export const baseContent =

@@ -14,18 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from 'domain/constants'
-export * from 'domain/entities'
-export * from 'domain/serializers'
-export * from 'domain/services'
-export * from 'domain/helpers'
-
-export * from 'infrastructure/services'
-
-export * from 'application/formatters'
-export * from 'application/editor'
-export * from 'application/operations'
-export * from 'application/Ketcher'
-export * from 'application/KetcherBuilder'
-
-export * from 'utilities'
+export * from './operations.types'
+export * from './atom'

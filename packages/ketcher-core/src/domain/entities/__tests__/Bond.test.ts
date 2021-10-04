@@ -1,7 +1,8 @@
-import { BondParams, Bond } from '../Bond'
+import { Bond, BondAttributes } from '../Bond'
+
 import { Vec2 } from '../Vec2'
 
-const bondParams: BondParams = {
+const bondParams: BondAttributes = {
   begin: 1,
   end: 2,
   type: 1,

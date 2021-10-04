@@ -1,4 +1,4 @@
-import { Action } from './../actions'
+import { Action } from 'application/actions'
 import { Struct } from 'domain/entities'
 
 export interface EditorHistory {

@@ -32,7 +32,7 @@ export enum RxnArrowMode {
   UnbalancedEquilibriumFilleHalfTriangle = 'unbalanced-equilibrium-fille-half-triangle'
 }
 
-export interface RxnArrowParams {
+export interface RxnArrowAttributes {
   mode: RxnArrowMode
   pos?: Array<Vec2>
 }
@@ -41,18 +41,17 @@ export class RxnArrow {
   mode: RxnArrowMode
   pos: Array<Vec2>
 
-  constructor(params: RxnArrowParams) {
-    params = params || {}
+  constructor(atrributes: RxnArrowAttributes) {
     this.pos = []
 
-    if (params.pos) {
-      for (let i = 0; i < params.pos.length; i++) {
-        const currentP = params.pos[i]
-        this.pos[i] = currentP ? new Vec2(params.pos[i]) : new Vec2()
+    if (atrributes.pos) {
+      for (let i = 0; i < atrributes.pos.length; i++) {
+        const currentP = atrributes.pos[i]
+        this.pos[i] = currentP ? new Vec2(atrributes.pos[i]) : new Vec2()
       }
     }
 
-    this.mode = params.mode
+    this.mode = atrributes.mode
   }
 
   clone() {

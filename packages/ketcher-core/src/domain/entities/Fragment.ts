@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Point, Vec2 } from './Vec2'
+
 import { Bond } from './Bond'
 import { StereoLabel } from './Atom'
 import { Struct } from './Struct'
-import { Vec2 } from './Vec2'
 
 export enum StereoFlag {
   Mixed = 'MIXED',
@@ -72,14 +73,22 @@ function calcStereoFlag(
 export class Fragment {
   #enhancedStereoFlag?: StereoFlag
   stereoFlagPosition?: Vec2
-  stereoAtoms: Array<number> = []
+  #stereoAtoms: Array<number>
+
+  get stereoAtoms(): Array<number> {
+    return [...this.#stereoAtoms]
+  }
 
   get enhancedStereoFlag() {
     return this.#enhancedStereoFlag
   }
 
-  constructor(stereoFlagPosition?: Vec2) {
-    this.stereoFlagPosition = stereoFlagPosition
+  constructor(stereoAtoms: Array<number> = [], stereoFlagPosition?: Point) {
+    if (stereoFlagPosition) {
+      this.stereoFlagPosition = new Vec2(stereoFlagPosition)
+    }
+
+    this.#stereoAtoms = stereoAtoms
   }
 
   static getDefaultStereoFlagPosition(
@@ -93,8 +102,8 @@ export class Fragment {
   }
 
   clone(aidMap: Map<number, number>) {
-    const fr = new Fragment(this.stereoFlagPosition)
-    fr.stereoAtoms = this.stereoAtoms.map(aid => aidMap.get(aid)!)
+    const stereoAtoms = this.#stereoAtoms.map(aid => aidMap.get(aid)!)
+    const fr = new Fragment(stereoAtoms, this.stereoFlagPosition)
     fr.#enhancedStereoFlag = this.#enhancedStereoFlag
     return fr
   }
@@ -114,9 +123,34 @@ export class Fragment {
           .filter(bond => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE)
           .some(bond => bond.begin === aid))
     ) {
-      this.stereoAtoms = this.stereoAtoms.filter(item => item !== aid)
+      this.#stereoAtoms = this.stereoAtoms.filter(item => item !== aid)
     }
 
     this.#enhancedStereoFlag = calcStereoFlag(struct, this.stereoAtoms)
+  }
+
+  addStereoAtom(atomId: number): boolean {
+    if (!this.#stereoAtoms.includes(atomId)) {
+      this.stereoAtoms.push(atomId)
+      return true
+    }
+    return false
+  }
+
+  deleteStereoAtom(
+    struct: Struct,
+    fragmentId: number,
+    atomId: number
+  ): boolean {
+    if (
+      struct.atoms.get(atomId)?.fragment !== fragmentId ||
+      !Array.from(struct.bonds.values())
+        .filter(bond => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE)
+        .some(bond => bond.begin === atomId)
+    ) {
+      this.#stereoAtoms = this.#stereoAtoms.filter(item => item !== atomId)
+      return true
+    }
+    return false
   }
 }

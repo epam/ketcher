@@ -1,5 +1,6 @@
-import { Vec2, Bond, AtomList } from '../../../entities'
+import { AtomList, Bond, Vec2 } from 'domain/entities'
 import { basic, reaction, rgroups } from './fixtures'
+
 import molParsers from '../v2000'
 import utils from '../utils'
 

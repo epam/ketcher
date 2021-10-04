@@ -1,8 +1,9 @@
-import { Pool } from '../Pool'
 // import { Pile } from '../Pile'
-import { RGroup, RGroupParams } from '../RGroup'
+import { RGroup, RGroupAttributes } from '../rgroup'
 
-const rGroupParams: RGroupParams = {
+import { Pool } from '../pool'
+
+const rGroupParams: RGroupAttributes = {
   ifthen: 0,
   resth: false,
   range: ''

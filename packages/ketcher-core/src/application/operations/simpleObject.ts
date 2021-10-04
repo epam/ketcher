@@ -195,7 +195,7 @@ export class ResizeSimpleObject extends BaseOperation {
     const simpleObject = struct.simpleObjects.get(this.#simpleObjectId)!
 
     switch (simpleObject.mode) {
-      case 'ELLIPSE': {
+      case SimpleObjectMode.ellipse: {
         handleRectangleChangeWithAnchor(
           simpleObject,
           this.#anchor,
@@ -203,7 +203,7 @@ export class ResizeSimpleObject extends BaseOperation {
         )
         break
       }
-      case 'LINE': {
+      case SimpleObjectMode.line: {
         const previousPos0 = simpleObject.pos[0].get_xy0()
         const previousPos1 = simpleObject.pos[1].get_xy0()
 
@@ -228,7 +228,7 @@ export class ResizeSimpleObject extends BaseOperation {
         }
         break
       }
-      case 'RECTANGLE': {
+      case SimpleObjectMode.rectangle: {
         handleRectangleChangeWithAnchor(
           simpleObject,
           this.#anchor,
@@ -272,6 +272,7 @@ export class ResizeSimpleObject extends BaseOperation {
 }
 
 //TODO: move to simple object tool
+// @ts-ignore
 function makeCircleFromEllipse(position0: Vec2, position1: Vec2): Vec2 {
   const diff = Vec2.diff(position1, position0)
   const min = Math.abs(diff.x) < Math.abs(diff.y) ? diff.x : diff.y

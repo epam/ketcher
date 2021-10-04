@@ -28,7 +28,7 @@ export class AddRxnArrow extends BaseOperation {
 
   constructor(
     points: Array<Vec2>,
-    mode: RxnArrowMode = 'OPEN_ANGLE',
+    mode: RxnArrowMode = RxnArrowMode.OpenAngle,
     rxnArrowId?: number
   ) {
     assert(points && points.length > 0)
@@ -41,7 +41,7 @@ export class AddRxnArrow extends BaseOperation {
   }
 
   execute(struct: Struct): PerformOperationResult {
-    const rxnArrow = new RxnArrow({ mode: this.#mode, points: this.#points })
+    const rxnArrow = new RxnArrow({ mode: this.#mode, pos: this.#points })
 
     let rxnArrowId: number
     if (typeof this.#rxnArrowId !== 'number') {

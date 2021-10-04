@@ -21,7 +21,7 @@ import {
   StructServiceProvider
 } from 'domain/services'
 
-import { RemoteStructService } from './RemoteStructService'
+import { RemoteStructService } from './remoteStructService'
 
 export class RemoteStructServiceProvider implements StructServiceProvider {
   private readonly apiPath: string

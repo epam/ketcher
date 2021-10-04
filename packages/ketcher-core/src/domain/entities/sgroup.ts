@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom } from './Atom'
-import { Bond } from './Bond'
-import { Box2Abs } from './Box2Abs'
-import { Pile } from './Pile'
-import { Struct } from './Struct'
-import { Vec2 } from './Vec2'
+import { Atom } from './atom'
+import { Bond } from './bond'
+import { Box2Abs } from './box2Abs'
+import { Pile } from './pile'
+import { Struct } from './struct'
+import { Vec2 } from './vec2'
 
 export class SGroupBracketParams {
   readonly c: Vec2

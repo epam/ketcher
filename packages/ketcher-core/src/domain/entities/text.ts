@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from './Vec2'
+import { Vec2 } from './vec2'
 
 //TODO: move to infrastructure
 export enum TextCommand {
@@ -25,7 +25,7 @@ export enum TextCommand {
   FontSize = 'CUSTOM_FONT_SIZE'
 }
 
-export interface TextParams {
+export interface TextAttributes {
   //TODO: add Interface for content type
   content?: string
   position?: Vec2
@@ -35,10 +35,11 @@ export class Text {
   content: string
   position: Vec2
 
-  constructor(params: TextParams) {
-    params = params || {}
-    this.content = params.content || ''
-    this.position = params.position ? new Vec2(params.position) : new Vec2()
+  constructor(attributes?: TextAttributes) {
+    this.content = attributes?.content || ''
+    this.position = attributes?.position
+      ? new Vec2(attributes.position)
+      : new Vec2()
   }
 
   clone(): Text {

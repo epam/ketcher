@@ -16,7 +16,7 @@
 
 import { SdfItem, StructAssociatedData } from './sdf.types'
 
-import { MolSerializer } from '../mol/MolSerializer'
+import { MolSerializer } from '../mol/molSerializer'
 import { Serializer } from '../serializers.types'
 
 const DelimeterRegex = /^[^]+?\$\$\$\$$/gm

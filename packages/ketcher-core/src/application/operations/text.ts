@@ -18,7 +18,7 @@ import { Struct, Text, TextAttributes, Vec2 } from 'domain/entities'
 
 import { BaseOperation } from './baseOperation'
 import { PerformOperationResult } from './operations.types'
-import { assert } from 'console'
+import assert from 'assert'
 
 export class AddText extends BaseOperation {
   #textAttributes: TextAttributes

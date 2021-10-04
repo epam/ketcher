@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Pile } from './Pile'
-import { SGroup } from './SGroup'
+import { Pile } from './pile'
+import { SGroup } from './sgroup'
 
 export class SGroupForest {
   /** node id -> parent id */

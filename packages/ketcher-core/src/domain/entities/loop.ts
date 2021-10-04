@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond } from './Bond'
-import { Struct } from './Struct'
+import { Bond } from './bond'
+import { Struct } from './struct'
 
 export class Loop {
   hbs: number[]

@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AtomList, AtomListParams } from './AtomList'
-import { Point, Vec2 } from './Vec2'
+import { AtomList, AtomListParams } from './atomList'
+import { Point, Vec2 } from './vec2'
 
 import { Elements } from 'domain/constants'
-import { Pile } from './Pile'
+import { Pile } from './pile'
 
 function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
   return typeof value !== 'undefined' ? value : defaultValue

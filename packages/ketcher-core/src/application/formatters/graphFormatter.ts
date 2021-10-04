@@ -14,18 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from 'domain/constants'
-export * from 'domain/entities'
-export * from 'domain/serializers'
-export * from 'domain/services'
-export * from 'domain/helpers'
+import { KetSerializer } from 'domain/serializers'
+import { Struct } from 'domain/entities'
+import { StructFormatter } from './structFormatter.types'
 
-export * from 'infrastructure/services'
+export class GraphFormatter implements StructFormatter {
+  constructor(private readonly serializer: KetSerializer) {}
 
-export * from 'application/formatters'
-export * from 'application/editor'
-export * from 'application/operations'
-export * from 'application/ketcher'
-export * from 'application/ketcherBuilder'
+  async getStructureFromStructAsync(struct: Struct): Promise<string> {
+    const graph = this.serializer.serialize(struct)
+    return graph
+  }
 
-export * from 'utilities'
+  async getStructureFromStringAsync(content: string): Promise<Struct> {
+    return this.serializer.deserialize(content)
+  }
+}

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from './Vec2'
+import { Vec2 } from './vec2'
 
 export class HalfBond {
   begin: number

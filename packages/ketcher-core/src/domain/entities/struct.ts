@@ -14,25 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, radicalElectrons } from './Atom'
+import { Atom, radicalElectrons } from './atom'
 
-import { Bond } from './Bond'
-import { Box2Abs } from './Box2Abs'
+import { Bond } from './bond'
+import { Box2Abs } from './box2Abs'
 import { Elements } from 'domain/constants'
-import { Fragment } from './Fragment'
-import { HalfBond } from './HalfBond'
-import { Loop } from './Loop'
-import { Pile } from './Pile'
-import { Pool } from './Pool'
-import { RGroup } from './RGroup'
-import { RxnArrow } from './RxnArrow'
-import { RxnPlus } from './RxnPlus'
-import { SGroup } from './SGroup'
-import { SGroupForest } from './SGroupForest'
-import { SimpleObject } from './SimpleObject'
-import { Text } from './Text'
-import { Vec2 } from './Vec2'
-import { FunctionalGroup } from './FunctionalGroup'
+import { Fragment } from './fragment'
+import { FunctionalGroup } from './functionalGroup'
+import { HalfBond } from './halfBond'
+import { Loop } from './loop'
+import { Pile } from './pile'
+import { Pool } from './pool'
+import { RGroup } from './rgroup'
+import { RxnArrow } from './rxnArrow'
+import { RxnPlus } from './rxnPlus'
+import { SGroup } from './sgroup'
+import { SGroupForest } from './sgroupForest'
+import { SimpleObject } from './simpleObject'
+import { Text } from './text'
+import { Vec2 } from './vec2'
 
 export type Neighbor = {
   aid: number

@@ -22,7 +22,7 @@ import {
 
 import { Editor } from 'application/editor'
 import { FormatterFactory } from 'application/formatters'
-import { Ketcher } from './Ketcher'
+import { Ketcher } from './ketcher'
 import assert from 'assert'
 
 const DefaultStructServiceOptions = {

@@ -75,7 +75,7 @@ export class Molfile {
 
         try {
           common.prepareForSaving[sgroup.type](sgroup, mol)
-        } catch (ex) {
+        } catch (ex: any) {
           if (!skipErrors || typeof ex.id != 'number') {
             throw new Error(`Error: ${ex.message}`)
           }

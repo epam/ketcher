@@ -18,7 +18,7 @@ import { Fragment, Point, Struct, Vec2 } from 'domain/entities'
 
 import { BaseOperation } from './baseOperation'
 import { PerformOperationResult } from './operations.types'
-import { assert } from 'console'
+import assert from 'assert'
 
 class AddFragment extends BaseOperation {
   #fragmentId?: number

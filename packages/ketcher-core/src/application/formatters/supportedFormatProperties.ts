@@ -14,25 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond } from './Bond'
-import { Struct } from './Struct'
+import { ChemicalMimeType } from 'domain/services'
 
-export class Loop {
-  hbs: number[]
-  dblBonds: number
-  aromatic: boolean
-  convex: boolean
+export class SupportedFormatProperties {
+  name: string
+  mime: ChemicalMimeType
+  extensions: string[]
+  supportsCoords?: boolean
+  options?: any
 
-  constructor(hbs: Array<number>, struct: Struct, isConvex: boolean) {
-    this.hbs = hbs // set of half-bonds involved
-    this.dblBonds = 0 // number of double bonds in the loop
-    this.aromatic = true
-    this.convex = isConvex || false
-
-    hbs.forEach(hb => {
-      const bond: Bond = struct.bonds.get(struct.halfBonds.get(hb)!.bid)!
-      if (bond.type !== Bond.PATTERN.TYPE.AROMATIC) this.aromatic = false
-      if (bond.type === Bond.PATTERN.TYPE.DOUBLE) this.dblBonds++
-    })
+  constructor(
+    name: string,
+    mime: ChemicalMimeType,
+    extensions: string[],
+    supportsCoords?: boolean,
+    options?: any
+  ) {
+    this.name = name
+    this.mime = mime
+    this.extensions = extensions
+    this.supportsCoords = supportsCoords || false
+    this.options = options || {}
   }
 }

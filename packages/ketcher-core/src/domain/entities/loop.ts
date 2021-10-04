@@ -14,18 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from 'domain/constants'
-export * from 'domain/entities'
-export * from 'domain/serializers'
-export * from 'domain/services'
-export * from 'domain/helpers'
+import { Bond } from './bond'
+import { Struct } from './struct'
 
-export * from 'infrastructure/services'
+export class Loop {
+  hbs: number[]
+  dblBonds: number
+  aromatic: boolean
+  convex: boolean
 
-export * from 'application/formatters'
-export * from 'application/editor'
-export * from 'application/operations'
-export * from 'application/ketcher'
-export * from 'application/ketcherBuilder'
+  constructor(hbs: Array<number>, struct: Struct, isConvex: boolean) {
+    this.hbs = hbs // set of half-bonds involved
+    this.dblBonds = 0 // number of double bonds in the loop
+    this.aromatic = true
+    this.convex = isConvex || false
 
-export * from 'utilities'
+    hbs.forEach(hb => {
+      const bond: Bond = struct.bonds.get(struct.halfBonds.get(hb)!.bid)!
+      if (bond.type !== Bond.PATTERN.TYPE.AROMATIC) this.aromatic = false
+      if (bond.type === Bond.PATTERN.TYPE.DOUBLE) this.dblBonds++
+    })
+  }
+}

@@ -1,3 +1,19 @@
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
 import {
   FormatterFactoryOptions,
   StructFormatter,
@@ -11,11 +27,11 @@ import {
 } from 'domain/serializers'
 import { StructService, StructServiceOptions } from 'domain/services'
 
-import { GraphFormatter } from './GraphFormatter'
-import { MolfileV2000Formatter } from './MolfileV2000Formatter'
-import { RxnFormatter } from './RxnFormatter'
-import { ServerFormatter } from './ServerFormatter'
-import { SmilesFormatter } from './SmilesFormatter'
+import { GraphFormatter } from './graphFormatter'
+import { MolfileV2000Formatter } from './molfileV2000Formatter'
+import { RxnFormatter } from './rxnFormatter'
+import { ServerFormatter } from './serverFormatter'
+import { SmilesFormatter } from './smilesFormatter'
 
 export class FormatterFactory {
   constructor(private readonly structService: StructService) {}

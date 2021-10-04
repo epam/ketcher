@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Loop, Struct, Vec2 } from 'domain/entities'
+import { Struct, Vec2 } from 'domain/entities'
 
 import { BaseOperation } from './baseOperation'
 import { PerformOperationResult } from './operations.types'
-import { Scale } from 'domain/helpers'
 import assert from 'assert'
 
 export class MoveLoop extends BaseOperation {

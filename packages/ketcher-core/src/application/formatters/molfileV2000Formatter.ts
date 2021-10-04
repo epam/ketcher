@@ -14,18 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from 'domain/constants'
-export * from 'domain/entities'
-export * from 'domain/serializers'
-export * from 'domain/services'
-export * from 'domain/helpers'
+import { MolSerializer } from 'domain/serializers'
+import { Struct } from 'domain/entities'
+import { StructFormatter } from './structFormatter.types'
 
-export * from 'infrastructure/services'
+export class MolfileV2000Formatter implements StructFormatter {
+  constructor(private readonly molfileManager: MolSerializer) {}
 
-export * from 'application/formatters'
-export * from 'application/editor'
-export * from 'application/operations'
-export * from 'application/ketcher'
-export * from 'application/ketcherBuilder'
+  async getStructureFromStructAsync(struct: Struct): Promise<string> {
+    const stringifiedMolfile = this.molfileManager.serialize(struct)
+    return stringifiedMolfile
+  }
 
-export * from 'utilities'
+  async getStructureFromStringAsync(
+    stringifiedStruct: string
+  ): Promise<Struct> {
+    const struct = this.molfileManager.deserialize(stringifiedStruct)
+    return struct
+  }
+}

@@ -31,7 +31,7 @@ class AddRxnPlus extends BaseOperation {
   }
 
   execute(struct: Struct): PerformOperationResult {
-    const rxnPlus = new RxnPlus({ position: this.#position })
+    const rxnPlus = new RxnPlus({ pp: this.#position })
 
     let rxnPlusId: number
     if (typeof this.#rxnPlusId === 'number') {

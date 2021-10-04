@@ -14,17 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Point, Vec2 } from './Vec2'
+import { Point, Vec2 } from './vec2'
 
-export interface RxnPlusParams {
-  pp: Point
+export interface RxnPlusAttributes {
+  pp?: Point
 }
 
 export class RxnPlus {
   pp: Vec2
 
-  constructor(params?: RxnPlusParams) {
-    this.pp = params?.pp ? new Vec2(params.pp) : new Vec2()
+  constructor(attributes?: RxnPlusAttributes) {
+    this.pp = attributes?.pp ? new Vec2(attributes.pp) : new Vec2()
   }
 
   clone() {

@@ -16,7 +16,7 @@
 
 import { Serializer } from '../serializers.types'
 import { SmiSerializerOptions } from './smi.types'
-import { Smiles } from './Smiles'
+import { Smiles } from './smiles'
 import { Struct } from 'domain/entities'
 
 export class SmiSerializer implements Serializer<Struct> {

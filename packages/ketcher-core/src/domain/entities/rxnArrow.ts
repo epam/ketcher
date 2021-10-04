@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from './Vec2'
+import { Point, Vec2 } from './vec2'
 
 export enum RxnArrowMode {
   OpenAngle = 'open-angle',
@@ -34,7 +34,7 @@ export enum RxnArrowMode {
 
 export interface RxnArrowAttributes {
   mode: RxnArrowMode
-  pos?: Array<Vec2>
+  pos?: Array<Point>
 }
 
 export class RxnArrow {

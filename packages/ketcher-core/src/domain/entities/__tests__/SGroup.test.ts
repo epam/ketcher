@@ -1,10 +1,10 @@
-import { SGroup } from '../SGroup'
-import { Vec2 } from '../Vec2'
-import { Box2Abs } from '../Box2Abs'
-import { Struct } from '../Struct'
-import { Pool } from '../Pool'
-import { Pile } from '../Pile'
-import { Bond } from '../Bond'
+import { Bond } from '../bond'
+import { Box2Abs } from '../box2Abs'
+import { Pile } from '../pile'
+import { Pool } from '../pool'
+import { SGroup } from '../sgroup'
+import { Struct } from '../struct'
+import { Vec2 } from '../vec2'
 
 describe('SGroup', () => {
   describe('getAttr', () => {

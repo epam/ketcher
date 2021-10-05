@@ -53,7 +53,7 @@ function handle(handler: handlerType, options?: CommandOptions) {
         payload,
         hasError: false
       }
-    } catch (error) {
+    } catch (error: any) {
       msg = {
         hasError: true,
         error: error

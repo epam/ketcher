@@ -1,5 +1,6 @@
-import { radicalElectrons, Atom } from '../Atom'
-import { Vec2 } from '../Vec2'
+import { Atom, radicalElectrons } from '../atom'
+
+import { Vec2 } from '../vec2'
 
 describe('radicalElectrons', () => {
   it('should return 1 if passed radical is Douplet (value = 2)', () => {

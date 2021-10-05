@@ -528,7 +528,7 @@ class IndigoService implements StructService {
     options?: StructServiceOptions
   ): Promise<CalculateResult> {
     const { properties, struct, selected } = data
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       const worker: Worker = new IndigoWorker()
 
       worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
@@ -549,7 +549,11 @@ class IndigoService implements StructService {
           }, {})
           resolve(result)
         } else {
-          reject(msg.error)
+          const result = {}
+          properties.forEach(property => {
+            result[property] = msg.error
+          })
+          resolve(result)
         }
       }
 

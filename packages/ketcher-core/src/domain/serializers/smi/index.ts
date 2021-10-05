@@ -15,4 +15,4 @@
  ***************************************************************************/
 
 export * from './smi.types'
-export * from './SmiSerializer'
+export * from './smiSerializer'

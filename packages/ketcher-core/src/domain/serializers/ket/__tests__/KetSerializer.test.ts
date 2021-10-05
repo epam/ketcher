@@ -1,4 +1,17 @@
-import { KetSerializer } from '../KetSerializer'
+import * as headerToGraph from '../toGraph/headerToGraph'
+import * as moleculeToGraph from '../toGraph/moleculeToGraph'
+import * as moleculeToStruct from '../fromGraph/moleculeToStruct'
+import * as prepareStructForGraph from '../toGraph/prepare'
+import * as rgroupToGraph from '../toGraph/rgroupToGraph'
+import * as rgroupToStruct from '../fromGraph/rgroupToStruct'
+import * as rxnToGraph from '../toGraph/rxnToGraph'
+import * as rxnToStruct from '../fromGraph/rxnToStruct'
+import * as simpleObjectToGraph from '../toGraph/simpleObjectToGraph'
+import * as simpleObjectToStruct from '../fromGraph/simpleObjectToStruct'
+import * as textToGraph from '../toGraph/textToGraph'
+import * as textToStruct from '../fromGraph/textToStruct'
+import * as validate from '../validate'
+
 import {
   AtomList,
   RGroup,
@@ -7,39 +20,28 @@ import {
   SimpleObject,
   Struct,
   Text
-} from '../../../entities'
-import * as validate from '../validate'
-import * as headerToGraph from '../toGraph/headerToGraph'
-import * as rgroupToGraph from '../toGraph/rgroupToGraph'
-import * as rxnToGraph from '../toGraph/rxnToGraph'
+} from 'domain/entities'
 import {
   baseContent,
   baseStruct,
+  contentRgroup,
   contentWithoutHeader,
-  rgroupStruct,
-  rxnStruct,
-  simpleObjectStruct,
-  textStruct,
-  moleculeStruct,
-  moleculeSgroupStruct,
-  prepareStruct,
   errorContent,
-  rxnContent,
-  simpleObjectContent,
-  textContent,
   moleculeContent,
   moleculeSgroup,
-  contentRgroup
+  moleculeSgroupStruct,
+  moleculeStruct,
+  prepareStruct,
+  rgroupStruct,
+  rxnContent,
+  rxnStruct,
+  simpleObjectContent,
+  simpleObjectStruct,
+  textContent,
+  textStruct
 } from './fixtures/data'
-import * as simpleObjectToGraph from '../toGraph/simpleObjectToGraph'
-import * as textToGraph from '../toGraph/textToGraph'
-import * as moleculeToGraph from '../toGraph/moleculeToGraph'
-import * as prepareStructForGraph from '../toGraph/prepare'
-import * as rxnToStruct from '../fromGraph/rxnToStruct'
-import * as simpleObjectToStruct from '../fromGraph/simpleObjectToStruct'
-import * as textToStruct from '../fromGraph/textToStruct'
-import * as moleculeToStruct from '../fromGraph/moleculeToStruct'
-import * as rgroupToStruct from '../fromGraph/rgroupToStruct'
+
+import { KetSerializer } from '../ketSerializer'
 
 const ket = new KetSerializer()
 

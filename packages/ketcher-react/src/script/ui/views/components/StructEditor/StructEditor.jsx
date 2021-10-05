@@ -92,6 +92,10 @@ class StructEditor extends Component {
         el.classList.remove(classes.visible)
       }
     })
+
+    this.editor.event.message.dispatch({
+      info: JSON.stringify(this.props.toolOpts)
+    })
   }
 
   componentWillUnmount() {

@@ -23,10 +23,10 @@ import { onAction } from '../../../state'
 import SaveButton from '../../../component/view/savebutton'
 import Input from '../../../component/form/input'
 import clsx from 'clsx'
-import SelectList from '../../../component/form/select'
+// import SelectList from '../../../component/form/select'
 import { functionalGroupsSelector } from '../../../state/functionalGroups/selectors'
 import { useResizeObserver } from '../../../../../hooks'
-import { filterLib } from '../../../utils'
+import { filterFGLib } from '../../../utils'
 import { SdfItem, SdfSerializer, Struct } from 'ketcher-core'
 import { DialogParams } from '../Dialog/Dialog'
 
@@ -41,9 +41,7 @@ interface Result {
   aid: number | null
 }
 
-enum groups {
-  'Functional Groups' = 'Functional Groups'
-}
+const group = 'Functional Groups'
 
 const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
   const dispatch = useDispatch()
@@ -51,12 +49,9 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
   const lib: SdfItem[] = useSelector(functionalGroupsSelector)
 
   const [expandedTemplates, setExpandedTemplates] = useState<SdfItem[]>([])
-  const [group, setGroup] = useState<string>('Functional Groups')
   const [selected, setSelected] = useState<Template | null>(null)
   const [filter, setFilter] = useState<string>('')
-  const [filteredLib, setFilteredLib] = useState<
-    { [key in groups]?: SdfItem[] }
-  >({})
+  const [filteredLib, setFilteredLib] = useState({})
 
   useEffect(() => {
     // Implemented to not mutate the redux store
@@ -69,7 +64,7 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
   }, [])
 
   useEffect(() => {
-    setFilteredLib(filterLib(expandedTemplates, filter))
+    setFilteredLib(filterFGLib(expandedTemplates, filter))
   }, [filter, expandedTemplates])
 
   const onFilter = (filter: string): void => setFilter(filter)
@@ -146,17 +141,6 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
             [classes.singleColLayout]: width && width < CONTAINER_MIN_WIDTH
           })}
           ref={ref}>
-          <Input
-            className={classes.groups}
-            classes={classes}
-            component={SelectList}
-            value={group}
-            onChange={g => setGroup(g)}
-            schema={{
-              enum: Object.keys(filteredLib),
-              enumNames: Object.keys(filteredLib)
-            }}
-          />
           <TemplateTable
             templates={filteredLib[group]}
             onSelect={handleSelect}

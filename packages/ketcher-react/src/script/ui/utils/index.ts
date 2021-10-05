@@ -50,3 +50,16 @@ export function filterLib(lib, filter) {
     }, {})
   )(lib)
 }
+
+export function filterFGLib(lib, filter) {
+  console.warn('Filter', filter)
+  const re = new RegExp(escapeRegExp(greekify(filter)), 'i')
+  return flow(
+    _filter((item: any) => !filter || re.test(greekify(item.struct.name))),
+    reduce((res, item) => {
+      if (!res[item.props.group]) res[item.props.group] = [item]
+      else res[item.props.group].push(item)
+      return res
+    }, {})
+  )(lib)
+}

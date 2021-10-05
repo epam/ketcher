@@ -21,6 +21,7 @@ import { Struct } from 'ketcher-core'
 import StructRender from '../../component/structrender'
 import classes from './TemplateTable.module.less'
 import { greekify } from '../../utils'
+import EmptySearchResult from './EmptySearchResult'
 
 interface TemplateTableProps {
   templates: Array<Template>
@@ -79,7 +80,9 @@ const TemplateTable: FC<TemplateTableProps> = props => {
           const itemsPerRow = Math.floor(width / ITEM_SIZE.width)
           const rowCount = Math.ceil(ITEMS_COUNT / itemsPerRow)
 
-          return (
+          return !ITEMS_COUNT ? (
+            <EmptySearchResult />
+          ) : (
             <List
               className={classes.tableContent}
               width={width}

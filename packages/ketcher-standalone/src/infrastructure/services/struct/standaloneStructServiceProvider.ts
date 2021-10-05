@@ -21,12 +21,11 @@ import {
   StructServiceProvider
 } from 'ketcher-core'
 
-import StandaloneStructService from './StandaloneStructService'
+import StandaloneStructService from './standaloneStructService'
 
 class StandaloneStructServiceProvider implements StructServiceProvider {
   mode: ServiceMode = 'standalone'
 
-  // @ts-ignore
   createStructService(options: StructServiceOptions): StructService {
     return new StandaloneStructService(options)
   }

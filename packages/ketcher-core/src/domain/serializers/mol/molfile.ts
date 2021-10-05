@@ -17,7 +17,6 @@
 import { StereoFlag, Struct } from 'domain/entities'
 
 import { Elements } from 'domain/constants'
-import { FunctionalGroupsProvider } from 'domain/helpers'
 import common from './common'
 import utils from './utils'
 

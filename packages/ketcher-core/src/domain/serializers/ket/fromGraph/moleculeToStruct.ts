@@ -17,7 +17,6 @@
 import { Atom, Bond, SGroup, Struct } from 'domain/entities'
 
 import { Elements } from 'domain/constants'
-import { FunctionalGroupsProvider } from 'domain/helpers'
 import { ifDef } from 'utilities'
 
 export function toRlabel(values) {

@@ -229,9 +229,9 @@ export class Struct {
     })
 
     fidMap.forEach((newfid, oldfid) => {
-      const frags = JSON.parse(JSON.stringify(this.frags.get(oldfid)))
+      const fragment = this.frags.get(oldfid)
 
-      if (frags && Object.keys(frags).length !== 0) {
+      if (fragment) {
         cp.frags.set(newfid, this.frags.get(oldfid)!.clone(aidMap!)) // clone Fragments
       }
     })

@@ -139,6 +139,10 @@ function structNormalization(struct) {
     simpleObject.pos = simpleObject.pos.map(p => p.sub(cbb.min))
   })
 
+  normStruct.texts.forEach(text => {
+    text.position = text.position.sub(cbb.min)
+  })
+
   return normStruct
 }
 

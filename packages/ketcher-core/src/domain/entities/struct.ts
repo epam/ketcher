@@ -561,6 +561,9 @@ export class Struct {
       this.simpleObjects.forEach(item => {
         extend(item.pos)
       })
+      this.texts.forEach(item => {
+        extend(item.position)
+      })
     }
     if (!bb && global) {
       bb = {

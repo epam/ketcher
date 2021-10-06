@@ -231,7 +231,8 @@ export class Struct {
     fidMap.forEach((newfid, oldfid) => {
       const fragment = this.frags.get(oldfid)
 
-      if (fragment) {
+      // TODO: delete type check
+      if (fragment && fragment instanceof Fragment) {
         cp.frags.set(newfid, this.frags.get(oldfid)!.clone(aidMap!)) // clone Fragments
       }
     })

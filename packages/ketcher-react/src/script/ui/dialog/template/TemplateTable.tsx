@@ -21,7 +21,7 @@ import { Struct } from 'ketcher-core'
 import StructRender from '../../component/structrender'
 import classes from './TemplateTable.module.less'
 import { greekify } from '../../utils'
-import EmptySearchResult from './emptySearchResult'
+import EmptySearchResult from './EmptySearchResult'
 
 interface TemplateTableProps {
   templates: Array<Template>

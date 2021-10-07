@@ -135,6 +135,14 @@ function structNormalization(struct) {
     rxnPlus.pp = rxnPlus.pp.sub(cbb.min)
   })
 
+  normStruct.simpleObjects.forEach(simpleObject => {
+    simpleObject.pos = simpleObject.pos.map(p => p.sub(cbb.min))
+  })
+
+  normStruct.texts.forEach(text => {
+    text.position = text.position.sub(cbb.min)
+  })
+
   return normStruct
 }
 

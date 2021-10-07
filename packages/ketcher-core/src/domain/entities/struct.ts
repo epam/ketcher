@@ -229,9 +229,10 @@ export class Struct {
     })
 
     fidMap.forEach((newfid, oldfid) => {
-      const frags = JSON.parse(JSON.stringify(this.frags.get(oldfid)))
+      const fragment = this.frags.get(oldfid)
 
-      if (frags && Object.keys(frags).length !== 0) {
+      // TODO: delete type check
+      if (fragment && fragment instanceof Fragment) {
         cp.frags.set(newfid, this.frags.get(oldfid)!.clone(aidMap!)) // clone Fragments
       }
     })
@@ -534,8 +535,15 @@ export class Struct {
           max: pp
         }
       } else {
-        bb.min = Vec2.min(bb.min, pp)
-        bb.max = Vec2.max(bb.max, pp)
+        if (pp instanceof Array) {
+          pp.forEach(vec => {
+            bb.min = Vec2.min(bb.min, vec)
+            bb.max = Vec2.max(bb.max, vec)
+          })
+        } else {
+          bb.min = Vec2.min(bb.min, pp)
+          bb.max = Vec2.max(bb.max, pp)
+        }
       }
     }
 
@@ -550,6 +558,12 @@ export class Struct {
       })
       this.rxnArrows.forEach(item => {
         extend(item.pos)
+      })
+      this.simpleObjects.forEach(item => {
+        extend(item.pos)
+      })
+      this.texts.forEach(item => {
+        extend(item.position)
       })
     }
     if (!bb && global) {

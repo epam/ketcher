@@ -14,6 +14,9 @@ M  SAL   1  3   1   2   3
 M  SMT   1 Ac
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -44,6 +47,9 @@ M  SAL   1  7   1   2   3   4   5   6   7
 M  SMT   1 Bn
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -66,6 +72,9 @@ M  SLB  1   1   1
 M  SAL   1  4   1   2   3   4
 M  SMT   1 Bu
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -98,6 +107,9 @@ M  SAL   1  8   1   2   3   4   5   6   7   8
 M  SMT   1 Bz
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 $$$$
@@ -115,6 +127,9 @@ M  SLB  1   1   1
 M  SAL   1  2   1   2
 M  SMT   1 C2H5
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -138,6 +153,9 @@ M  SAL   1  4   1   2   3   4
 M  SMT   1 CCl3
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 $$$$
@@ -159,6 +177,9 @@ M  SLB  1   1   1
 M  SAL   1  4   1   2   3   4
 M  SMT   1 CF3
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -183,8 +204,10 @@ M  STY  1   1 SUP
 M  SLB  1   1   1
 M  SAL   1  5   1   3   2   5   4
 M  SMT   1 CO2Et
-M  SDS EXP  1   1
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -206,6 +229,9 @@ M  SLB  1   1   1
 M  SAL   1  3   1   2   3
 M  SMT   1 CO2H
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -229,6 +255,9 @@ M  SLB  1   1   1
 M  SAL   1  4   1   2   3   4
 M  SMT   1 CO2Me
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -255,8 +284,10 @@ M  STY  1   1 SUP
 M  SLB  1   1   1
 M  SAL   1  6   1   4   3   2   5   6
 M  SMT   1 CO2Pr
-M  SDS EXP  1   1
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -284,8 +315,11 @@ G    1  0
 M  STY  1   1 SUP
 M  SLB  1   1   1
 M  SAL   1  7   1   2   3   4   5   6   7
-M  SMT   1 CO\s2\n\it\n-Bu
+M  SMT   1 CO2tBu
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -312,6 +346,9 @@ M  SLB  1   1   1
 M  SAL   1  5   1   2   3   4   5
 M  SMT   1 Cp
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -370,6 +407,9 @@ M  SAL   1  4  16  17  18  19
 M  SMT   1 CPh3
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -389,6 +429,9 @@ M  SLB  1   1   1
 M  SAL   1  2   1   2
 M  SMT   1 Et
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -412,6 +455,9 @@ M  SLB  1   1   1
 M  SAL   1  4   1   2   3   4
 M  SMT   1 iBu
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -446,8 +492,10 @@ M  STY  1   1 SUP
 M  SLB  1   1   1
 M  SAL   1  9   1   2   3   4   5   6   7   8   9
 M  SMT   1 Indole
-M  SDS EXP  1   1
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -470,6 +518,9 @@ M  SAL   1  3   1   2   3
 M  SMT   1 iPr
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -486,6 +537,9 @@ M  SLB  1   1   1
 M  SAL   1  1   1
 M  SMT   1 Me
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -510,6 +564,9 @@ M  SAL   1  4   1   2   3   4
 M  SMT   1 Ms
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -531,6 +588,9 @@ M  SAL   1  3   1   2   3
 M  SMT   1 NCO
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -551,6 +611,9 @@ M  SLB  1   1   1
 M  SAL   1  3   1   2   3
 M  SMT   1 NCS
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -582,6 +645,9 @@ M  SAL   1  7   1   2   3   4   5   6   7
 M  SMT   1 NHPh
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -602,6 +668,9 @@ M  SLB  1   1   1
 M  SAL   1  3   1   2   3
 M  SMT   1 OCN
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -624,6 +693,9 @@ M  SAL   1  3   1   2   3
 M  SMT   1 OEt
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -642,6 +714,9 @@ M  SLB  1   1   1
 M  SAL   1  2   1   2
 M  SMT   1 OMe
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -670,6 +745,9 @@ M  SLB  1   1   1
 M  SAL   1  6   1   2   3   4   5   6
 M  SMT   1 Ph
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -705,6 +783,9 @@ M  SAL   1  9   1   2   3   4   5   6   7   8   9
 M  SMT   1 PhCOOH
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -726,6 +807,9 @@ M  SLB  1   1   1
 M  SAL   1  3   1   2   3
 M  SMT   1 PO2
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -750,6 +834,9 @@ M  SLB  1   1   1
 M  SAL   1  4   1   2   3   4
 M  SMT   1 PO3
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -777,6 +864,9 @@ M  SAL   1  5   1   2   3   4   5
 M  SMT   1 PO4
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -797,6 +887,9 @@ M  SLB  1   1   1
 M  SAL   1  3   1   2   3
 M  SMT   1 Pr
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -821,6 +914,9 @@ M  SAL   1  4   1   2   3   4
 M  SMT   1 sBu
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -842,6 +938,9 @@ M  SAL   1  3   1   2   3
 M  SMT   1 SCN
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -862,6 +961,9 @@ M  SLB  1   1   1
 M  SAL   1  3   1   2   3
 M  SMT   1 SO2
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -886,6 +988,9 @@ M  SAL   1  4   1   2   3   4
 M  SMT   1 SO2Cl
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -909,6 +1014,9 @@ M  SLB  1   1   1
 M  SAL   1  4   1   2   3   4
 M  SMT   1 SO3
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -936,6 +1044,9 @@ M  SAL   1  5   1   2   3   4   5
 M  SMT   1 SO4
 M  END
 
+>  <group>
+Functional Groups
+
 >  <atomid>
 0
 
@@ -945,44 +1056,54 @@ ster
 Ketcher 11161713142D 1   1.00000     0.00000     0
 
  17 20  0  0  0  0  0  0  0  0999 V2000
-   14.0708  -13.7848    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   14.0708  -12.9569    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   14.7877  -12.5430    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   15.5046  -12.9569    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   15.5046  -13.7848    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   14.7877  -14.1987    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   16.2215  -14.1987    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   16.9384  -13.7848    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   16.9384  -12.9570    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   16.2215  -12.5431    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   16.2215  -11.7152    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   16.9385  -11.3013    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   17.6553  -11.7153    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   17.6553  -12.5431    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   18.4426  -12.7989    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   18.9292  -12.1293    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-   18.4427  -11.4595    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
-  2  1  1  0  0  0  0
-  2  3  1  0  0  0  0
-  4  3  1  0  0  0  0
-  5  4  1  0  0  0  0
-  6  5  1  0  0  0  0
-  1  6  1  0  0  0  0
-  5  7  1  0  0  0  0
-  7  8  1  0  0  0  0
-  8  9  1  0  0  0  0
-  9 10  1  0  0  0  0
- 10  4  1  0  0  0  0
- 11 10  1  0  0  0  0
- 12 11  1  0  0  0  0
- 13 12  1  0  0  0  0
- 14 13  1  0  0  0  0
-  9 14  1  0  0  0  0
- 15 14  1  0  0  0  0
- 16 15  1  0  0  0  0
- 17 16  1  0  0  0  0
+    8.9146  -12.2050    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    8.9146  -11.0242    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    9.9371  -10.4339    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+   10.9596  -11.0242    0.0000 C   0  0  3  0  0  0  0  0  0  0  0  0
+   10.9596  -12.2050    0.0000 C   0  0  3  0  0  0  0  0  0  0  0  0
+    9.9371  -12.7954    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+   11.9821  -12.7954    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+   13.0046  -12.2050    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+   13.0046  -11.0244    0.0000 C   0  0  3  0  0  0  0  0  0  0  0  0
+   11.9821  -10.4340    0.0000 C   0  0  3  0  0  0  0  0  0  0  0  0
+   11.9821   -9.2532    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+   13.0047   -8.6629    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+   14.0271   -9.2534    0.0000 C   0  0  3  0  0  0  0  0  0  0  0  0
+   14.0271  -10.4340    0.0000 C   0  0  3  0  0  0  0  0  0  0  0  0
+   15.1500  -10.7989    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+   15.8440   -9.8438    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+   15.1501   -8.8885    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
  13 17  1  0  0  0  0
+ 17 16  1  0  0  0  0
+ 16 15  1  0  0  0  0
+ 15 14  1  0  0  0  0
+  9 14  1  0  0  0  0
+ 14 13  1  0  0  0  0
+ 13 12  1  0  0  0  0
+ 12 11  1  0  0  0  0
+ 11 10  1  0  0  0  0
+ 10  4  1  0  0  0  0
+  9 10  1  0  0  0  0
+  8  9  1  0  0  0  0
+  7  8  1  0  0  0  0
+  5  7  1  0  0  0  0
+  1  6  1  0  0  0  0
+  6  5  1  0  0  0  0
+  5  4  1  0  0  0  0
+  4  3  1  0  0  0  0
+  2  3  1  0  0  0  0
+  2  1  1  0  0  0  0
+G    1  0
+ster
+M  STY  1   1 SUP
+M  SLB  1   1   1
+M  SAL   1 17   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17
+M  SMT   1 ster
 M  END
+
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -1001,11 +1122,15 @@ Ketcher 11161713142D 1   1.00000     0.00000     0
   1  3  1  0  0  0  0
   1  4  1  0  0  0  0
 G    1  0
+tBu
 M  STY  1   1 SUP
 M  SLB  1   1   1
 M  SAL   1  4   1   2   3   4
 M  SMT   1 tBu
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -1035,6 +1160,9 @@ M  SLB  1   1   1
 M  SAL   1  7   1   2   3   4   5   6   7
 M  SMT   1 Tf
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0
@@ -1071,6 +1199,9 @@ M  SLB  1   1   1
 M  SAL   1 10   1   2   3   4   5   6   7   8   9  10
 M  SMT   1 Ts
 M  END
+
+>  <group>
+Functional Groups
 
 >  <atomid>
 0

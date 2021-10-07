@@ -40,9 +40,7 @@ export class SGroupForest {
     while (queue.length > 0) {
       id = queue.shift() as any
       const children = this.children.get(id)
-      if (children) {
-        queue = queue.concat(children as any)
-      }
+      queue = queue.concat(children as any)
       order.push(id)
     }
     return order
@@ -106,7 +104,10 @@ export class SGroupForest {
     children.forEach(childId => {
       this.resetParentLink(childId, id)
     })
-    this.children.set(id, children)
+    this.children.set(
+      id,
+      children.filter(id => this.parent.get(id))
+    )
     this.parent.set(id, parent)
     this.children.get(parent)?.push(id)
     this.atomSets.set(id, new Pile(atoms))

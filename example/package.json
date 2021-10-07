@@ -24,8 +24,8 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "ketcher-core": "^1.1.0",
-    "ketcher-react": "^2.3.1",
+    "ketcher-core": "^1.1.2",
+    "ketcher-react": "^2.3.2",
     "ketcher-standalone": "^1.1.0",
     "miew": "^0.9.0",
     "react": "^17.0.2",
@@ -52,7 +52,7 @@
     "serve": "^12.0.0",
     "shx": "^0.3.3",
     "source-map-loader": "^1.1.2",
-    "typescript": "^4.3.5",
+    "typescript": "^4.4.3",
     "webpack-bundle-analyzer": "^3.9.0"
   },
   "browserslist": {

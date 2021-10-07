@@ -132,9 +132,8 @@ export function analyse() {
         })
       )
       .catch(e => {
-        //TODO: add error handler call
-        throw e
-      }) // eslint-disable-line no-undef
+        editor.errorHandler(e)
+      })
     // TODO: notification
   }
 }

@@ -148,11 +148,7 @@ export function serverTransform(method, data, struct) {
 
     serverCall(state.editor, state.server, method, opts, struct)
       .then(res => {
-        // TODO: it should be removed after implementing of 'Internal Format'  epic
-        const previousStruct = struct || state.editor.struct()
         const loadedStruct = new KetSerializer().deserialize(res.struct)
-        loadedStruct.simpleObjects = previousStruct.simpleObjects
-        loadedStruct.texts = previousStruct.texts
 
         return dispatch(
           load(loadedStruct, {

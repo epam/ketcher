@@ -16,7 +16,7 @@
 
 import * as KN from 'w3c-keyname'
 
-import { FC, useEffect, useRef, ReactElement } from 'react'
+import { FC, useLayoutEffect, useRef, ReactElement } from 'react'
 
 import clsx from 'clsx'
 import styles from './Dialog.module.less'
@@ -56,7 +56,7 @@ const Dialog: FC<Props> = props => {
   } = props
   const dialogRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     ;(dialogRef.current as any).focus()
     return () => {
       ;(dialogRef.current

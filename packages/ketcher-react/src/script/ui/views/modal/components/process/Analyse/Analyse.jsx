@@ -37,6 +37,10 @@ class AnalyseDialog extends Component {
     super(props)
   }
 
+  componentDidMount() {
+    this.props.onAnalyse()
+  }
+
   render() {
     const {
       values,

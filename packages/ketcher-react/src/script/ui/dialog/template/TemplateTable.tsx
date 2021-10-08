@@ -19,14 +19,16 @@ import { AutoSizer, List } from 'react-virtualized'
 import { FC } from 'react'
 import { Struct } from 'ketcher-core'
 import StructRender from '../../component/structrender'
-import classes from './template-lib.module.less'
+import classes from './TemplateTable.module.less'
+import { greekify } from '../../utils'
+import EmptySearchResult from './EmptySearchResult'
 
 interface TemplateTableProps {
   templates: Array<Template>
-  selected: Template
+  selected: Template | null
   onSelect: (tmpl: Template) => void
-  onDelete: (tmpl: Template) => void
-  onAttach: (tmpl: Template) => void
+  onDelete?: (tmpl: Template) => void
+  onAttach?: (tmpl: Template) => void
 }
 
 export interface Template {
@@ -35,26 +37,8 @@ export interface Template {
     atomid: number
     bondid: number
     group: string
-    prerender: string
+    prerender?: string
   }
-}
-
-const GREEK_SIMBOLS = {
-  Alpha: 'A',
-  alpha: 'α',
-  Beta: 'B',
-  beta: 'β',
-  Gamma: 'Г',
-  gamma: 'γ'
-}
-
-const greekRe = new RegExp(
-  '\\b' + Object.keys(GREEK_SIMBOLS).join('\\b|\\b') + '\\b',
-  'g'
-)
-
-export function greekify(str: string): string {
-  return str.replace(greekRe, sym => GREEK_SIMBOLS[sym])
 }
 
 function tmplName(tmpl: Template, i: number): string {
@@ -69,7 +53,7 @@ const RenderTmpl: FC<{
 }> = ({ tmpl, ...props }) => {
   return tmpl.props && tmpl.props.prerender ? (
     <svg {...props}>
-      <use xlinkHref={tmpl.props.prerender} />
+      <use href={tmpl.props.prerender} />
     </svg>
   ) : (
     <StructRender
@@ -96,7 +80,9 @@ const TemplateTable: FC<TemplateTableProps> = props => {
           const itemsPerRow = Math.floor(width / ITEM_SIZE.width)
           const rowCount = Math.ceil(ITEMS_COUNT / itemsPerRow)
 
-          return (
+          return !ITEMS_COUNT ? (
+            <EmptySearchResult textInfo="No items found" />
+          ) : (
             <List
               className={classes.tableContent}
               width={width}
@@ -118,7 +104,11 @@ const TemplateTable: FC<TemplateTableProps> = props => {
                             : classes.td
                         }
                         title={greekify(tmplName(tmpl, i))}
-                        key={i}
+                        key={
+                          tmpl.struct.name !== selected?.struct.name
+                            ? tmpl.struct.name
+                            : `${tmpl.struct.name}_selected`
+                        }
                         style={tmplStyles}>
                         <RenderTmpl
                           tmpl={tmpl}
@@ -129,15 +119,17 @@ const TemplateTable: FC<TemplateTableProps> = props => {
                           {tmpl.props.group === 'User Templates' && (
                             <button
                               className={classes.deleteButton}
-                              onClick={() => onDelete(tmpl)}>
+                              onClick={() => onDelete!(tmpl)}>
                               Delete
                             </button>
                           )}
-                          <button
-                            className={classes.attachButton}
-                            onClick={() => onAttach(tmpl)}>
-                            Edit
-                          </button>
+                          {tmpl.props.group !== 'Functional Groups' && (
+                            <button
+                              className={classes.attachButton}
+                              onClick={() => onAttach!(tmpl)}>
+                              Edit
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}

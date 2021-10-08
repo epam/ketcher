@@ -26,7 +26,8 @@ import { storage } from '../../storage-ext'
 export const initOptionsState = {
   app: {
     server: false,
-    templates: false
+    templates: false,
+    functionalGroups: false
   },
   analyse: {
     values: null,

@@ -38,8 +38,9 @@ import Rgroup from './toolbox/rgroup/rgroup'
 import Sdata from './toolbox/sdata'
 import Sgroup from './toolbox/sgroup'
 import TemplateAttach from './template/template-attach'
-import TemplatesLib from './template/TemplateLib'
+import TemplatesDialog from './template/TemplateDialog'
 import Text from '../views/modal/components/Text'
+import { FunctionalGroups } from '../views/components/FunctionalGroups'
 
 export default {
   open: Open,
@@ -48,7 +49,7 @@ export default {
   'period-table': PeriodTable,
   rgroup: Rgroup,
   attach: TemplateAttach,
-  templates: TemplatesLib,
+  templates: TemplatesDialog,
   about: About,
   help: Help,
   miew: Miew,
@@ -64,5 +65,6 @@ export default {
   settings: Settings,
   sgroup: Sgroup,
   sdata: Sdata,
-  text: Text
+  text: Text,
+  fGroups: FunctionalGroups
 }

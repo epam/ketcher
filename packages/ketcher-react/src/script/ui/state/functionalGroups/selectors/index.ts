@@ -14,18 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AppHidden, AppHiddenCallProps } from './AppHidden'
-
-import { Dispatch } from 'redux'
-import { connect } from 'react-redux'
-import { initTmplLib } from '../../state/templates'
-
-const mapDispatchToProps = (dispatch: Dispatch): AppHiddenCallProps => ({
-  onInitTmpls: (cacheEl, url) => {
-    initTmplLib(dispatch, url, cacheEl)
-  }
-})
-
-const AppHiddenContainer = connect(null, mapDispatchToProps)(AppHidden)
-
-export { AppHiddenContainer }
+export const functionalGroupsSelector = state => state.functionalGroups.lib

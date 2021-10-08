@@ -62,7 +62,7 @@ describe('deserialize (ToStruct)', () => {
     expect(spy.mock.results[1].value).toBeFalsy()
   })
   it('struct should not have name attr', () => {
-    expect(ket.deserialize(contentWithoutHeader).name).toBeNull()
+    expect(ket.deserialize(contentWithoutHeader).name).toBeFalsy()
   })
   it('rxnToStruct', () => {
     const spy = jest.spyOn(rxnToStruct, 'rxnToStruct')

@@ -27,28 +27,31 @@ export function initLib(lib) {
 }
 
 export default function initTmplLib(dispatch, baseUrl, cacheEl) {
+  const fileName = 'library.sdf'
+  return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then(res => {
+    const lib = res.concat(userTmpls())
+    dispatch(initLib(lib))
+    dispatch(appUpdate({ templates: true }))
+  })
+}
+
+const deserializeSdfTemplates = (baseUrl, cacheEl, fileName) => {
   const sdfSerializer = new SdfSerializer()
-  prefetchStatic(`${baseUrl}/templates/library.sdf`)
-    .then(text => {
-      const tmpls = sdfSerializer.deserialize(text)
-      const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheEl)
+  return prefetchStatic(`${baseUrl}/templates/${fileName}`).then(text => {
+    const tmpls = sdfSerializer.deserialize(text)
+    const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheEl)
 
-      return prefetch.then(cachedFiles =>
-        tmpls.map(tmpl => {
-          const pr = prefetchSplit(tmpl)
-          if (pr.file)
-            tmpl.props.prerender =
-              cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : ''
+    return prefetch.then(cachedFiles =>
+      tmpls.map(tmpl => {
+        const pr = prefetchSplit(tmpl)
+        if (pr.file)
+          tmpl.props.prerender =
+            cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : ''
 
-          return tmpl
-        })
-      )
-    })
-    .then(res => {
-      const lib = res.concat(userTmpls())
-      dispatch(initLib(lib))
-      dispatch(appUpdate({ templates: true }))
-    })
+        return tmpl
+      })
+    )
+  })
 }
 
 function userTmpls() {
@@ -72,7 +75,7 @@ function userTmpls() {
     .filter(tmpl => tmpl !== null)
 }
 
-function prefetchStatic(url) {
+export function prefetchStatic(url) {
   return fetch(url, { credentials: 'same-origin' }).then(resp => {
     if (resp.ok) return resp.text()
     throw Error('Could not fetch ' + url)
@@ -97,7 +100,6 @@ function prefetchRender(tmpls, baseUrl, cacheEl) {
 
     return res
   }, [])
-
   const fetch = Promise.all(
     files.map(fn => prefetchStatic(baseUrl + fn).catch(() => null))
   )

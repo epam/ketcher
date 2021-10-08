@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { FunctionalGroupsProvider } from './../helpers/functionalGroupsProvider'
 
 export class FunctionalGroup {
   name: string
@@ -25,8 +26,13 @@ export class FunctionalGroup {
     this.isExpanded = isExpanded
   }
 
-  static isFunctionalGroup(list, sgroup): boolean {
-    return list.includes(sgroup.data.name) && sgroup.type === 'SUP'
+  static isFunctionalGroup(sgroup): boolean {
+    const provider = FunctionalGroupsProvider.getInstance()
+    const types = provider.getFunctionalGroupsList()
+    return (
+      types.some(type => type.name === sgroup.data.name) &&
+      sgroup.type === 'SUP'
+    )
   }
 
   static clone(functionalGroup: FunctionalGroup): FunctionalGroup {

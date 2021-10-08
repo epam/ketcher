@@ -14,18 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AppHidden, AppHiddenCallProps } from './AppHidden'
+import classes from './emptySearchResult.module.less'
 
-import { Dispatch } from 'redux'
-import { connect } from 'react-redux'
-import { initTmplLib } from '../../state/templates'
+const EmptySearchResult = ({ textInfo }) => {
+  return <div className={classes.emptySearch}>{textInfo}</div>
+}
 
-const mapDispatchToProps = (dispatch: Dispatch): AppHiddenCallProps => ({
-  onInitTmpls: (cacheEl, url) => {
-    initTmplLib(dispatch, url, cacheEl)
-  }
-})
-
-const AppHiddenContainer = connect(null, mapDispatchToProps)(AppHidden)
-
-export { AppHiddenContainer }
+export default EmptySearchResult

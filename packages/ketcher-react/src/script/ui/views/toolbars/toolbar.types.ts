@@ -137,6 +137,7 @@ type BottomToolbarItemVariant =
   | 'template-common'
   | 'template-lib'
   | 'enhanced-stereo'
+  | 'functional-groups'
 
 type RightToolbarItemVariant = 'atom' | 'freq-atoms' | 'period-table'
 

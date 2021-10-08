@@ -15,12 +15,7 @@
  ***************************************************************************/
 
 import Restruct, { ReSGroup } from '../../../render/restruct'
-import {
-  SGroup,
-  Vec2,
-  FunctionalGroup,
-  FunctionalGroupsProvider
-} from 'ketcher-core'
+import { SGroup, Vec2, FunctionalGroup } from 'ketcher-core'
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
@@ -76,12 +71,7 @@ class SGroupCreate extends BaseOperation {
     }
 
     restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)))
-    if (
-      FunctionalGroup.isFunctionalGroup(
-        FunctionalGroupsProvider.getInstance().getFunctionalGroupsList(),
-        sgroup
-      )
-    ) {
+    if (FunctionalGroup.isFunctionalGroup(sgroup)) {
       restruct.molecule.functionalGroups.add(
         new FunctionalGroup(sgroup.data.name, sgroup.id, sgroup.expanded)
       )

@@ -17,7 +17,6 @@
 import { StereoFlag, Struct } from 'domain/entities'
 
 import { Elements } from 'domain/constants'
-import { FunctionalGroupsProvider } from 'domain/helpers'
 import common from './common'
 import utils from './utils'
 
@@ -54,9 +53,7 @@ export class Molfile {
     }
     ret.initHalfBonds()
     ret.initNeighbors()
-    const functionalGroupsProvider = FunctionalGroupsProvider.getInstance()
-    const functionalGroupsList = functionalGroupsProvider.getFunctionalGroupsList()
-    ret.bindSGroupsToFunctionalGroups(functionalGroupsList)
+    ret.bindSGroupsToFunctionalGroups()
 
     return ret
   }

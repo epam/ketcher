@@ -281,6 +281,8 @@ export class Struct {
       })
     }
 
+    cp.name = this.name
+
     return cp
   }
 
@@ -1030,9 +1032,9 @@ export class Struct {
     return aid && this.atoms.get(aid)?.fragment
   }
 
-  bindSGroupsToFunctionalGroups(functionalGroupsList) {
+  bindSGroupsToFunctionalGroups() {
     this.sgroups.forEach(sgroup => {
-      if (FunctionalGroup.isFunctionalGroup(functionalGroupsList, sgroup)) {
+      if (FunctionalGroup.isFunctionalGroup(sgroup)) {
         this.functionalGroups.add(
           new FunctionalGroup(sgroup.data.name, sgroup.id, sgroup.expanded)
         )

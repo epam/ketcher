@@ -903,7 +903,7 @@ function setDoubleBondShift(bond: ReBond, struct: Struct): void {
   const hb1 = bond.b.hb1
   const hb2 = bond.b.hb2
 
-  if (!hb1 || !hb2) {
+  if ((!hb1 && hb1 !== 0) || (!hb2 && hb2 !== 0)) {
     bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond)
     return
   }

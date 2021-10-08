@@ -157,7 +157,7 @@ export function serverTransform(method, data, struct) {
         )
       })
       .catch(e => {
-        //TODO: add error handler call
+        state.editor.errorHandler(e)
       })
       .finally(() => {
         dispatch(indigoVerification(false))

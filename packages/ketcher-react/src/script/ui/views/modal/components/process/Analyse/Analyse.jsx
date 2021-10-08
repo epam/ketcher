@@ -37,18 +37,6 @@ class AnalyseDialog extends Component {
     super(props)
   }
 
-  componentDidMount() {
-    const errorHandler = this.context.errorHandler
-    try {
-      this.props.onAnalyse()
-    } catch (e) {
-      // error could possibly be an invalid state of molecule.
-      // TODO: handling such cases described in #251
-      errorHandler(e.message)
-      this.props.onCancel()
-    }
-  }
-
   render() {
     const {
       values,

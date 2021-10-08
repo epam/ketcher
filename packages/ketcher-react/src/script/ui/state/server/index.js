@@ -208,7 +208,9 @@ export function serverCall(editor, server, method, options, struct) {
         options.data
       ),
       omit('data', options)
-    )
+    ).catch(e => {
+      editor.errorHandler(e)
+    })
   )
 }
 

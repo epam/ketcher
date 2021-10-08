@@ -78,7 +78,10 @@ class KetcherBuilder {
     })
 
     this.editor = editor
-    this.editor.errorHandler = errorHandler
+    this.editor.errorHandler =
+      errorHandler && typeof errorHandler === 'function'
+        ? errorHandler
+        : () => {}
     this.formatterFactory = new FormatterFactory(structService!)
   }
 

@@ -25,6 +25,7 @@ import closest from '../shared/closest'
 import { fromAromaticTemplateOnBond } from './aromatic-fusing'
 import { fromPaste } from './paste'
 import utils from '../shared/utils'
+import { fromSgroupAddition } from './sgroup'
 
 export function fromTemplateOnCanvas(restruct, template, pos, angle) {
   const [action, pasteItems] = fromPaste(
@@ -141,6 +142,25 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
     action.addOp(operation)
 
     pasteItems.bonds.push(operation.data.bid)
+  })
+
+  tmpl.sgroups.forEach(sg => {
+    const newsgid = restruct.molecule.sgroups.newId()
+    const sgAtoms = sg.atoms.map(aid => map.get(aid))
+    const firstAtom = tmpl.atoms.get(0).pp
+    const sgAction = fromSgroupAddition(
+      restruct,
+      sg.type,
+      sgAtoms,
+      sg.data,
+      newsgid,
+      firstAtom,
+      sg.type === 'SUP' ? sg.expanded : null,
+      sg.data.name
+    )
+    sgAction.operations.reverse().forEach(oper => {
+      action.addOp(oper)
+    })
   })
 
   action.operations.reverse()

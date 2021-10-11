@@ -26,10 +26,12 @@ import { prefetchStatic } from '../templates/init-lib'
 
 interface FGState {
   lib: []
+  mode: string
 }
 
 const initialState: FGState = {
-  lib: []
+  lib: [],
+  mode: 'Functional Groups'
 }
 
 const functionalGroupsReducer = (

@@ -355,23 +355,54 @@ function findClosestSGroup(restruct, pos) {
   let minDist = SELECTION_DISTANCE_COEFFICIENT
 
   restruct.molecule.sgroups.forEach((sg, sgid) => {
-    const d = sg.bracketDir
-    const n = d.rotateSC(1, 0)
-    const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n))
+    if (sg.functionalGroup && !sg.expanded) {
+      minDist = 1
+      const zeroAtomPp = restruct.molecule.atoms.get(sg.atoms[0]).pp
+      const d = sg.bracketDir
+      const n = d.rotateSC(1, 0)
+      const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n))
+      const shift = new Vec2(0.625, 0.625)
+      const triggerZone = {
+        p0: Vec2.diff(zeroAtomPp, shift),
+        p1: Vec2.sum(zeroAtomPp, shift)
+      }
 
-    sg.areas.forEach(box => {
       const inBox =
-        box.p0.y < pg.y && box.p1.y > pg.y && box.p0.x < pg.x && box.p1.x > pg.x
+        triggerZone.p0.y < pg.y &&
+        triggerZone.p1.y > pg.y &&
+        triggerZone.p0.x < pg.x &&
+        triggerZone.p1.x > pg.x
       const xDist = Math.min(
-        Math.abs(box.p0.x - pg.x),
-        Math.abs(box.p1.x - pg.x)
+        Math.abs(triggerZone.p0.x - pg.x),
+        Math.abs(triggerZone.p1.x - pg.x)
       )
 
       if (inBox && (ret === null || xDist < minDist)) {
         ret = sgid
         minDist = xDist
       }
-    })
+    } else {
+      const d = sg.bracketDir
+      const n = d.rotateSC(1, 0)
+      const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n))
+
+      sg.areas.forEach(box => {
+        const inBox =
+          box.p0.y < pg.y &&
+          box.p1.y > pg.y &&
+          box.p0.x < pg.x &&
+          box.p1.x > pg.x
+        const xDist = Math.min(
+          Math.abs(box.p0.x - pg.x),
+          Math.abs(box.p1.x - pg.x)
+        )
+
+        if (inBox && (ret === null || xDist < minDist)) {
+          ret = sgid
+          minDist = xDist
+        }
+      })
+    }
   })
 
   if (ret !== null) {

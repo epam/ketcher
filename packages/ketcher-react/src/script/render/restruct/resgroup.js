@@ -28,6 +28,7 @@ import ReDataSGroupData from './redatasgroupdata'
 import ReObject from './ReObject'
 import draw from '../draw'
 import util from '../util'
+import utils from '../../editor/shared/utils'
 
 const tfx = util.tfx
 
@@ -40,36 +41,36 @@ class ReSGroup extends ReObject {
     return false
   }
   draw(remol, sgroup) {
-    var render = remol.render
-    var set
-    set = render.paper.set()
-    var atomSet = new Pile(sgroup.atoms)
+    const render = remol.render
+    let set = render.paper.set()
+    const atomSet = new Pile(sgroup.atoms)
     const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet)
     SGroup.bracketPos(sgroup, remol.molecule, crossBonds)
-    var bracketBox = sgroup.bracketBox
-    var d = sgroup.bracketDir
+    const bracketBox = sgroup.bracketBox
+    const d = sgroup.bracketDir
     sgroup.areas = [bracketBox]
     const functionalGroups = remol.molecule.functionalGroups
     if (
       FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
     ) {
-      const leftBracketStart = Scale.obj2scaled(
-        bracketBox.p0,
+      sgroup.functionalGroup = true
+      let label = {}
+      const textPp = Scale.obj2scaled(
+        remol.molecule.atoms.get(sgroup.atoms[0]).pp,
         remol.render.options
       )
-      const rigthBracketEnd = Scale.obj2scaled(
-        bracketBox.p1,
-        remol.render.options
-      )
-      set.push(
-        render.paper
-          .text(
-            rigthBracketEnd.x - (rigthBracketEnd.x - leftBracketStart.x) / 2,
-            rigthBracketEnd.y - (rigthBracketEnd.y - leftBracketStart.y) / 2,
-            sgroup.data.name
-          )
-          .attr({ 'font-weight': 700, 'font-size': 14 })
-      )
+      sgroup.textPp = textPp
+      label.path = render.paper
+        .text(textPp.x, textPp.y, sgroup.data.name)
+        .attr({
+          'font-weight': 700,
+          'font-size': 14
+        })
+
+      label.rbb = util.relBox(label.path.getBBox())
+      draw.recenterText(label.path, label.rbb)
+
+      set.push(label.path)
     } else {
       switch (sgroup.type) {
         case 'MUL':
@@ -85,9 +86,9 @@ class ReSGroup extends ReObject {
           )
           break
         case 'SRU':
-          var connectivity = sgroup.data.connectivity || 'eu'
+          let connectivity = sgroup.data.connectivity || 'eu'
           if (connectivity === 'ht') connectivity = ''
-          var subscript = sgroup.data.subscript || 'n'
+          const subscript = sgroup.data.subscript || 'n'
           SGroupdrawBrackets(
             set,
             render,
@@ -149,10 +150,7 @@ class ReSGroup extends ReObject {
     var options = render.options
     var paper = render.paper
     var sGroupItem = this.item
-    const { a0, a1, b0, b1, startX, startY, size } = getHighlighPathInfo(
-      sGroupItem,
-      options
-    )
+    const { a0, a1, b0, b1 } = getHighlighPathInfo(sGroupItem, options)
 
     const functionalGroups = render.ctab.molecule.functionalGroups
     var set = paper.set()
@@ -162,6 +160,7 @@ class ReSGroup extends ReObject {
         functionalGroups
       )
     ) {
+      const { startX, startY, size } = getHighlighPathInfo(sGroupItem, options)
       sGroupItem.highlighting = paper
         .rect(startX, startY, size, size)
         .attr(options.highlightStyle)
@@ -466,17 +465,24 @@ function getHighlighPathInfo(sgroup, options) {
   const a1 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p1.y)
   const b0 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p0.y)
   const b1 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p1.y)
-  const size = options.contractedFunctionalGroupSize
-  const startX = (b0.x + a0.x) / 2 - size / 2
-  const startY = (a1.y + a0.y) / 2 - size / 2
+
+  if (sgroup.textPp) {
+    const shift = new Vec2(25, 25, 0)
+    const highlightPp = Vec2.diff(sgroup.textPp, shift)
+    const startX = highlightPp.x
+    const startY = highlightPp.y
+    const size = options.contractedFunctionalGroupSize
+    return {
+      startX,
+      startY,
+      size
+    }
+  }
   return {
     a0,
     a1,
     b0,
-    b1,
-    startX,
-    startY,
-    size
+    b1
   }
 }
 

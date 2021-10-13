@@ -13,31 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-// ReStruct is to store all the auxiliary information for
-//  Struct while rendering
 
-import ReAtom from './reatom'
-import ReBond from './rebond'
-import ReEnhancedFlag from './ReEnhancedFlag'
-import ReFrag from './refrag'
-import ReRGroup from './rergroup'
-import ReRxnArrow from './rerxnarrow'
-import ReRxnPlus from './rerxnplus'
-import ReSGroup from './resgroup'
-import ReSimpleObject from './ReSimpleObject'
-import ReStruct from './ReStruct'
-import ReText from './ReText'
+// Single entry point to Raphaël library
 
-export default ReStruct
-export {
-  ReAtom,
-  ReBond,
-  ReRxnPlus,
-  ReRxnArrow,
-  ReFrag,
-  ReRGroup,
-  ReEnhancedFlag,
-  ReSGroup,
-  ReSimpleObject,
-  ReText
+import Raphael from 'raphael'
+import { Vec2 } from 'domain/entities'
+
+// TODO: refactor ugly prototype extensions to plain old functions
+Raphael.el.translateAbs = function (x, y) {
+  this.delta = this.delta || new Vec2()
+  this.delta.x += x - 0
+  this.delta.y += y - 0
+  this.transform('t' + this.delta.x.toString() + ',' + this.delta.y.toString())
 }
+
+Raphael.st.translateAbs = function (x, y) {
+  this.forEach(el => {
+    el.translateAbs(x, y)
+  })
+}
+
+export default Raphael

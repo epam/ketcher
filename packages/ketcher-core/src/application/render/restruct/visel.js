@@ -16,7 +16,7 @@
 
 // Visel is a shorthand for VISual ELement
 // It corresponds to a visualization (i.e. set of paths) of an atom or a bond.
-import { Box2Abs, Vec2 } from 'ketcher-core'
+import { Box2Abs, Vec2 } from 'domain/entities'
 
 class Visel {
   constructor(type) {

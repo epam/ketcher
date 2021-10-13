@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Scale, Vec2 } from 'ketcher-core'
+import { Box2Abs, Vec2 } from 'domain/entities'
 
-import ReObject from './ReObject'
+import ReObject from './reobject'
+import { Scale } from 'domain/helpers'
 
 class ReFrag extends ReObject {
   constructor(/* Struct.Fragment */ frag) {

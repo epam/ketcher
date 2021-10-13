@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'ketcher-core'
-import utils from '../editor/shared/utils'
+import { Vec2 } from 'domain/entities'
 
 function defaultOptions(opt) {
   const scaleFactor = opt.scale || 100
 
-  if (opt.rotationStep) utils.setFracAngle(opt.rotationStep)
+  // TODO: test if rotation step is working now
+  // if (opt.rotationStep) utils.setFracAngle(opt.rotationStep)
 
   const labelFontSize = Math.ceil(1.9 * (scaleFactor / 6))
   const subFontSize = Math.ceil(0.7 * labelFontSize)

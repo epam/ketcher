@@ -13,20 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+// ReStruct is to store all the auxiliary information for
+//  Struct while rendering
 
-export * from 'domain/constants'
-export * from 'domain/entities'
-export * from 'domain/serializers'
-export * from 'domain/services'
-export * from 'domain/helpers'
+import ReAtom from './reatom'
+import ReBond from './rebond'
+import ReEnhancedFlag from './reenhancedFlag'
+import ReFrag from './refrag'
+import ReRGroup from './rergroup'
+import ReRxnArrow from './rerxnarrow'
+import ReRxnPlus from './rerxnplus'
+import ReSGroup from './resgroup'
+import ReSimpleObject from './resimpleObject'
+import ReStruct from './restruct'
+import ReText from './retext'
 
-export * from 'infrastructure/services'
-
-export * from 'application/formatters'
-export * from 'application/render'
-export * from 'application/editor'
-export * from 'application/operations'
-export * from 'application/ketcher'
-export * from 'application/ketcherBuilder'
-
-export * from 'utilities'
+export default ReStruct
+export {
+  ReAtom,
+  ReBond,
+  ReRxnPlus,
+  ReRxnArrow,
+  ReFrag,
+  ReRGroup,
+  ReEnhancedFlag,
+  ReSGroup,
+  ReSimpleObject,
+  ReText
+}

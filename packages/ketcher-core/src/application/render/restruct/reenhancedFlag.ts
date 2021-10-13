@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Scale, StereoFlag } from 'ketcher-core'
+import { Box2Abs, Fragment, StereoFlag } from 'domain/entities'
 
-import { Fragment } from 'ketcher-core'
-import { LayerMap } from './GeneralEnumTypes'
-import ReObject from './ReObject'
-import ReStruct from './index'
-import Render from '..'
+import { LayerMap } from './generalEnumTypes'
+import ReObject from './reobject'
+import ReStruct from './restruct'
+import { Render } from '../raphaelRender'
+import { Scale } from 'domain/helpers'
 
 class ReEnhancedFlag extends ReObject {
   #path: any

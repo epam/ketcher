@@ -16,26 +16,27 @@
 
 import {
   Box2Abs,
+  FunctionalGroup,
   Pile,
   Pool,
   Struct,
-  Vec2,
-  FunctionalGroup
-} from 'ketcher-core'
-import { LayerMap } from './GeneralEnumTypes'
+  Vec2
+} from 'domain/entities'
+
+import { LayerMap } from './generalEnumTypes'
 import ReAtom from './reatom'
 import ReBond from './rebond'
 import ReDataSGroupData from './redatasgroupdata'
-import ReEnhancedFlag from './ReEnhancedFlag'
+import ReEnhancedFlag from './reenhancedFlag'
 import ReFrag from './refrag'
 import ReLoop from './reloop'
 import ReRGroup from './rergroup'
 import ReRxnArrow from './rerxnarrow'
 import ReRxnPlus from './rerxnplus'
 import ReSGroup from './resgroup'
-import ReSimpleObject from './ReSimpleObject'
-import ReText from './ReText'
-import Render from '..'
+import ReSimpleObject from './resimpleObject'
+import ReText from './retext'
+import { Render } from '../raphaelRender'
 import Visel from './visel'
 import util from '../util'
 

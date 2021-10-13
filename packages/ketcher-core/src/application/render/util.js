@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'ketcher-core'
+import { Vec2 } from 'domain/entities'
+import assert from 'assert'
 
 function tfx(v) {
   return parseFloat(v).toFixed(8)
@@ -37,9 +38,9 @@ function relBox(box) {
  * @param bb { Box2Abs }
  */
 function shiftRayBox(p, d, bb) {
-  console.assert(!!p)
-  console.assert(!!d)
-  console.assert(!!bb)
+  assert(!!p)
+  assert(!!d)
+  assert(!!bb)
 
   // four corner points of the box
   const b = [
@@ -83,11 +84,12 @@ function shiftRayBox(p, d, bb) {
     (Math.abs(rc[id0]) * (rd[id1] - rd[id0])) /
       (Math.abs(rc[id0]) + Math.abs(rc[id1]))
   )
-  /* eslint-enable no-mixed-operators*/
 }
 
-export default {
+const util = {
   tfx,
   relBox,
   shiftRayBox
 }
+
+export default util

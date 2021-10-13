@@ -14,13 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Scale, Vec2 } from 'ketcher-core'
+import { Box2Abs, Vec2 } from 'domain/entities'
 
-import { LayerMap } from './GeneralEnumTypes'
-import Raphael from '../../raphael-ext'
-import ReObject from './ReObject'
-import ReStruct from './ReStruct'
-import Render from '..'
+import { LayerMap } from './generalEnumTypes'
+import Raphael from '../raphael-ext'
+import ReObject from './reobject'
+import ReStruct from './restruct'
+import { Render } from '../raphaelRender'
+import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
 

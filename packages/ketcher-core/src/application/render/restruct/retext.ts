@@ -20,12 +20,13 @@ import {
   RawDraftContentState,
   RawDraftInlineStyleRange
 } from 'draft-js'
-import { Scale, Text, TextCommand, Vec2 } from 'ketcher-core'
+import { Text, TextCommand, Vec2 } from 'domain/entities'
 import { flatten, isEqual } from 'lodash/fp'
 
-import { LayerMap } from './GeneralEnumTypes'
-import ReObject from './ReObject'
-import ReStruct from './ReStruct'
+import { LayerMap } from './generalEnumTypes'
+import ReObject from './reobject'
+import ReStruct from './restruct'
+import { Scale } from 'domain/helpers'
 
 class ReText extends ReObject {
   private item: Text

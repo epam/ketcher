@@ -14,18 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Box2Abs,
-  Pile,
-  SGroup,
-  Scale,
-  Vec2,
-  FunctionalGroup
-} from 'ketcher-core'
+import { Box2Abs, FunctionalGroup, Pile, SGroup, Vec2 } from 'domain/entities'
 
-import { LayerMap } from './GeneralEnumTypes'
+import { LayerMap } from './generalEnumTypes'
 import ReDataSGroupData from './redatasgroupdata'
-import ReObject from './ReObject'
+import ReObject from './reobject'
+import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
 

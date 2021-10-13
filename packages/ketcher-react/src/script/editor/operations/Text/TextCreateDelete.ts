@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct, { ReText } from '../../../render/restruct'
-import { Text, Vec2 } from 'ketcher-core'
+import { ReStruct, ReText, Text, Vec2 } from 'ketcher-core'
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
@@ -34,8 +33,8 @@ export class TextCreate extends BaseOperation {
     this.data = { content: content, position, id }
   }
 
-  execute(restruct: Restruct): void {
-    const struct = restruct.molecule
+  execute(ReStruct: ReStruct): void {
+    const struct = ReStruct.molecule
     const item = new Text(this.data)
 
     if (this.data.id == null) {
@@ -47,10 +46,10 @@ export class TextCreate extends BaseOperation {
 
     const itemId = this.data.id!
 
-    restruct.texts.set(itemId, new ReText(item))
+    ReStruct.texts.set(itemId, new ReText(item))
 
     struct.textSetPosition(itemId, new Vec2(this.data.position))
-    BaseOperation.invalidateItem(restruct, 'texts', itemId, 1)
+    BaseOperation.invalidateItem(ReStruct, 'texts', itemId, 1)
   }
 
   invert(): BaseOperation {
@@ -72,18 +71,18 @@ export class TextDelete extends BaseOperation {
     this.data = { id }
   }
 
-  execute(restruct: Restruct): void {
-    const struct = restruct.molecule
+  execute(ReStruct: ReStruct): void {
+    const struct = ReStruct.molecule
     const item = struct.texts.get(this.data.id)!
     if (!item) return
 
     this.data.content = item.content!
     this.data.position = item.position
 
-    restruct.markItemRemoved()
+    ReStruct.markItemRemoved()
 
-    restruct.clearVisel(restruct.texts.get(this.data.id)!.visel)
-    restruct.texts.delete(this.data.id)
+    ReStruct.clearVisel(ReStruct.texts.get(this.data.id)!.visel)
+    ReStruct.texts.delete(this.data.id)
 
     struct.texts.delete(this.data.id)
   }

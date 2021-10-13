@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Pile, Vec2 } from 'ketcher-core'
-import Restruct, { ReAtom } from '../../../render/restruct'
+import { Atom, Pile, ReAtom, ReStruct, Vec2 } from 'ketcher-core'
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
@@ -36,10 +35,10 @@ class AtomAdd extends BaseOperation {
     this.data = { atom, pos, aid: null }
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { atom, pos } = this.data
 
-    const struct = restruct.molecule
+    const struct = ReStruct.molecule
 
     const pp: { label?: string } = {}
     if (atom) {
@@ -62,9 +61,9 @@ class AtomAdd extends BaseOperation {
     // notifyAtomAdded
     const atomData = new ReAtom(struct.atoms.get(aid)!)
 
-    atomData.component = restruct.connectedComponents.add(new Pile([aid]))
-    restruct.atoms.set(aid, atomData)
-    restruct.markAtom(aid, 1)
+    atomData.component = ReStruct.connectedComponents.add(new Pile([aid]))
+    ReStruct.atoms.set(aid, atomData)
+    ReStruct.markAtom(aid, 1)
 
     struct.atomSetPos(aid, new Vec2(pos))
 
@@ -93,30 +92,30 @@ class AtomDelete extends BaseOperation {
     this.data = { aid: atomId, atom: null, pos: null }
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { aid } = this.data
 
-    const struct = restruct.molecule
+    const struct = ReStruct.molecule
     if (!this.data.atom) {
       this.data.atom = struct.atoms.get(aid)
       this.data.pos = this.data.atom.pp
     }
 
     // notifyAtomRemoved(aid);
-    const restructedAtom = restruct.atoms.get(aid)
-    if (!restructedAtom) {
+    const ReStructedAtom = ReStruct.atoms.get(aid)
+    if (!ReStructedAtom) {
       return
     }
 
-    const set = restruct.connectedComponents.get(restructedAtom.component)
+    const set = ReStruct.connectedComponents.get(ReStructedAtom.component)
     set.delete(aid)
     if (set.size === 0) {
-      restruct.connectedComponents.delete(restructedAtom.component)
+      ReStruct.connectedComponents.delete(ReStructedAtom.component)
     }
 
-    restruct.clearVisel(restructedAtom.visel)
-    restruct.atoms.delete(aid)
-    restruct.markItemRemoved()
+    ReStruct.clearVisel(ReStructedAtom.visel)
+    ReStruct.atoms.delete(aid)
+    ReStruct.markItemRemoved()
     struct.atoms.delete(aid)
   }
 

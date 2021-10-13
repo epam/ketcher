@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct, { ReEnhancedFlag, ReFrag } from '../../render/restruct'
+import { Fragment, ReEnhancedFlag, ReFrag, ReStruct } from 'ketcher-core'
 
 import { BaseOperation } from './base'
-import { Fragment } from 'ketcher-core'
 import { OperationType } from './OperationType'
 
 // todo: separate classes: now here is circular dependency in `invert` method
@@ -30,8 +29,8 @@ class FragmentAdd extends BaseOperation {
     this.frid = typeof fragmentId === 'undefined' ? null : fragmentId
   }
 
-  execute(restruct: Restruct) {
-    const struct = restruct.molecule
+  execute(ReStruct: ReStruct) {
+    const struct = ReStruct.molecule
     const frag = new Fragment()
 
     if (this.frid === null) {
@@ -40,8 +39,8 @@ class FragmentAdd extends BaseOperation {
       struct.frags.set(this.frid, frag)
     }
 
-    restruct.frags.set(this.frid, new ReFrag(frag)) // TODO add ReStruct.notifyFragmentAdded
-    restruct.enhancedFlags.set(this.frid, new ReEnhancedFlag())
+    ReStruct.frags.set(this.frid, new ReFrag(frag)) // TODO add ReStruct.notifyFragmentAdded
+    ReStruct.enhancedFlags.set(this.frid, new ReEnhancedFlag())
   }
 
   invert() {
@@ -57,20 +56,20 @@ class FragmentDelete extends BaseOperation {
     this.frid = fragmentId
   }
 
-  execute(restruct: Restruct) {
-    const struct = restruct.molecule
+  execute(ReStruct: ReStruct) {
+    const struct = ReStruct.molecule
     if (!struct.frags.get(this.frid)) {
       return
     }
 
-    BaseOperation.invalidateItem(restruct, 'frags', this.frid, 1)
-    restruct.frags.delete(this.frid)
+    BaseOperation.invalidateItem(ReStruct, 'frags', this.frid, 1)
+    ReStruct.frags.delete(this.frid)
     struct.frags.delete(this.frid) // TODO add ReStruct.notifyFragmentRemoved
 
-    const enhancedFalg = restruct.enhancedFlags.get(this.frid)
+    const enhancedFalg = ReStruct.enhancedFlags.get(this.frid)
     if (!enhancedFalg) return
-    restruct.clearVisel(enhancedFalg.visel)
-    restruct.enhancedFlags.delete(this.frid)
+    ReStruct.clearVisel(enhancedFalg.visel)
+    ReStruct.enhancedFlags.delete(this.frid)
   }
 
   invert() {

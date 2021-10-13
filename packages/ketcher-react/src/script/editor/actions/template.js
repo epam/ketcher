@@ -26,28 +26,28 @@ import { fromAromaticTemplateOnBond } from './aromatic-fusing'
 import { fromPaste } from './paste'
 import utils from '../shared/utils'
 
-export function fromTemplateOnCanvas(restruct, template, pos, angle) {
+export function fromTemplateOnCanvas(ReStruct, template, pos, angle) {
   const [action, pasteItems] = fromPaste(
-    restruct,
+    ReStruct,
     template.molecule,
     pos,
     angle
   )
 
-  action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct))
+  action.addOp(new CalcImplicitH(pasteItems.atoms).perform(ReStruct))
 
   return [action, pasteItems]
 }
 
-function extraBondAction(restruct, aid, angle) {
+function extraBondAction(ReStruct, aid, angle) {
   let action = new Action()
-  const frid = atomGetAttr(restruct, aid, 'fragment')
+  const frid = atomGetAttr(ReStruct, aid, 'fragment')
   let additionalAtom = null
 
   if (angle === null) {
-    const middleAtom = atomForNewBond(restruct, aid)
+    const middleAtom = atomForNewBond(ReStruct, aid)
     const actionRes = fromBondAddition(
-      restruct,
+      ReStruct,
       { type: 1 },
       aid,
       middleAtom.atom,
@@ -61,13 +61,13 @@ function extraBondAction(restruct, aid, angle) {
       { label: 'C', fragment: frid },
       new Vec2(1, 0)
         .rotate(angle)
-        .add(restruct.molecule.atoms.get(aid).pp)
+        .add(ReStruct.molecule.atoms.get(aid).pp)
         .get_xy0()
-    ).perform(restruct)
+    ).perform(ReStruct)
 
     action.addOp(operation)
     action.addOp(
-      new BondAdd(aid, operation.data.aid, { type: 1 }).perform(restruct)
+      new BondAdd(aid, operation.data.aid, { type: 1 }).perform(ReStruct)
     )
 
     additionalAtom = operation.data.aid
@@ -76,11 +76,11 @@ function extraBondAction(restruct, aid, angle) {
   return { action, aid1: additionalAtom }
 }
 
-export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
+export function fromTemplateOnAtom(ReStruct, template, aid, angle, extraBond) {
   let action = new Action()
 
   const tmpl = template.molecule
-  const struct = restruct.molecule
+  const struct = ReStruct.molecule
 
   let atom = struct.atoms.get(aid) // aid - the atom that was clicked on
   let aid1 = aid // aid1 - the atom on the other end of the extra bond || aid
@@ -89,7 +89,7 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
 
   if (extraBond) {
     // create extra bond after click on atom
-    const extraRes = extraBondAction(restruct, aid, angle)
+    const extraRes = extraBondAction(ReStruct, aid, angle)
     action = extraRes.action
     aid1 = extraRes.aid1
 
@@ -97,13 +97,13 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
     delta = utils.calcAngle(struct.atoms.get(aid).pp, atom.pp) - template.angle0
   } else {
     if (angle === null)
-      angle = utils.calcAngle(atom.pp, atomForNewBond(restruct, aid).pos)
+      angle = utils.calcAngle(atom.pp, atomForNewBond(ReStruct, aid).pos)
     delta = angle - template.angle0
   }
 
   const map = new Map()
   const xy0 = tmpl.atoms.get(template.aid).pp
-  const frid = atomGetAttr(restruct, aid, 'fragment')
+  const frid = atomGetAttr(ReStruct, aid, 'fragment')
 
   /* For merge */
   const pasteItems = {
@@ -118,26 +118,26 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
     attrs.fragment = frid
 
     if (id === template.aid) {
-      action.mergeWith(fromAtomsAttrs(restruct, aid1, attrs, true))
+      action.mergeWith(fromAtomsAttrs(ReStruct, aid1, attrs, true))
       map.set(id, aid1)
       pasteItems.atoms.push(aid1)
     } else {
       const v = Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp)
 
-      const operation = new AtomAdd(attrs, v.get_xy0()).perform(restruct)
+      const operation = new AtomAdd(attrs, v.get_xy0()).perform(ReStruct)
       action.addOp(operation)
       map.set(id, operation.data.aid)
       pasteItems.atoms.push(operation.data.aid)
     }
   })
-  mergeSgroups(action, restruct, pasteItems.atoms, aid)
+  mergeSgroups(action, ReStruct, pasteItems.atoms, aid)
 
   tmpl.bonds.forEach(bond => {
     const operation = new BondAdd(
       map.get(bond.begin),
       map.get(bond.end),
       bond
-    ).perform(restruct)
+    ).perform(ReStruct)
     action.addOp(operation)
 
     pasteItems.bonds.push(operation.data.bid)
@@ -145,11 +145,11 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
 
   action.operations.reverse()
 
-  action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct))
+  action.addOp(new CalcImplicitH(pasteItems.atoms).perform(ReStruct))
   action.mergeWith(
     fromBondStereoUpdate(
-      restruct,
-      restruct.molecule.bonds.get(pasteItems.bonds[0])
+      ReStruct,
+      ReStruct.molecule.bonds.get(pasteItems.bonds[0])
     )
   )
 
@@ -157,20 +157,20 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
 }
 
 export function fromTemplateOnBondAction(
-  restruct,
+  ReStruct,
   template,
   bid,
   events,
   flip,
   force
 ) {
-  if (!force) return fromTemplateOnBond(restruct, template, bid, flip)
+  if (!force) return fromTemplateOnBond(ReStruct, template, bid, flip)
 
-  const simpleFusing = (restruct, template, bid) =>
-    fromTemplateOnBond(restruct, template, bid, flip) // eslint-disable-line
+  const simpleFusing = (ReStruct, template, bid) =>
+    fromTemplateOnBond(ReStruct, template, bid, flip) // eslint-disable-line
   /* aromatic merge (Promise)*/
   return fromAromaticTemplateOnBond(
-    restruct,
+    ReStruct,
     template,
     bid,
     events,
@@ -178,12 +178,12 @@ export function fromTemplateOnBondAction(
   )
 }
 
-function fromTemplateOnBond(restruct, template, bid, flip) {
+function fromTemplateOnBond(ReStruct, template, bid, flip) {
   // TODO: refactor function !!
   const action = new Action()
 
   const tmpl = template.molecule
-  const struct = restruct.molecule
+  const struct = ReStruct.molecule
 
   const bond = struct.bonds.get(bid)
   const tmplBond = tmpl.bonds.get(template.bid)
@@ -216,7 +216,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
     const attrs = Atom.getAttrHash(atom)
     attrs.fragment = frid
     if (id === tmplBond.begin || id === tmplBond.end) {
-      action.mergeWith(fromAtomsAttrs(restruct, atomsMap.get(id), attrs, true))
+      action.mergeWith(fromAtomsAttrs(ReStruct, atomsMap.get(id), attrs, true))
       return
     }
 
@@ -224,21 +224,21 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
       .rotate(angle)
       .scaled(scale)
       .add(struct.atoms.get(bond.begin).pp)
-    const mergeA = closest.atom(restruct, v, null, 0.1)
+    const mergeA = closest.atom(ReStruct, v, null, 0.1)
 
     if (mergeA === null) {
-      const operation = new AtomAdd(attrs, v).perform(restruct)
+      const operation = new AtomAdd(attrs, v).perform(ReStruct)
       action.addOp(operation)
       atomsMap.set(id, operation.data.aid)
       pasteItems.atoms.push(operation.data.aid)
     } else {
       atomsMap.set(id, mergeA.id)
 
-      action.mergeWith(fromAtomsAttrs(restruct, atomsMap.get(id), attrs, true))
+      action.mergeWith(fromAtomsAttrs(ReStruct, atomsMap.get(id), attrs, true))
       // TODO [RB] need to merge fragments?
     }
   })
-  mergeSgroups(action, restruct, pasteItems.atoms, bond.begin)
+  mergeSgroups(action, ReStruct, pasteItems.atoms, bond.begin)
 
   tmpl.bonds.forEach(tBond => {
     const existId = struct.findBondId(
@@ -250,19 +250,19 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
         atomsMap.get(tBond.begin),
         atomsMap.get(tBond.end),
         tBond
-      ).perform(restruct)
+      ).perform(ReStruct)
       action.addOp(operation)
 
       pasteItems.bonds.push(operation.data.bid)
     } else {
-      action.mergeWith(fromBondsAttrs(restruct, existId, tmplBond, true))
+      action.mergeWith(fromBondsAttrs(ReStruct, existId, tmplBond, true))
     }
   })
 
   if (pasteItems.atoms.length) {
     action.addOp(
       new CalcImplicitH([bond.begin, bond.end, ...pasteItems.atoms]).perform(
-        restruct
+        ReStruct
       )
     )
   }
@@ -270,8 +270,8 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
   if (pasteItems.bonds.length) {
     action.mergeWith(
       fromBondStereoUpdate(
-        restruct,
-        restruct.molecule.bonds.get(pasteItems.bonds[0])
+        ReStruct,
+        ReStruct.molecule.bonds.get(pasteItems.bonds[0])
       )
     )
   }

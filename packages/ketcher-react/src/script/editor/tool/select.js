@@ -21,6 +21,7 @@ import {
 } from '../actions/closely-fusing'
 import { fromTextDeletion, fromTextUpdating } from '../actions/text'
 
+import Action from '../shared/action'
 import LassoHelper from './helper/lasso'
 import { SGroup } from 'ketcher-core'
 import { atomLongtapEvent } from './atom'
@@ -30,7 +31,6 @@ import { fromMultipleMove } from '../actions/fragment'
 import { sgroupDialog } from './sgroup'
 import utils from '../shared/utils'
 import { xor } from 'lodash/fp'
-import Action from '../shared/action'
 
 function SelectTool(editor, mode) {
   if (!(this instanceof SelectTool)) return new SelectTool(editor, mode)
@@ -127,11 +127,11 @@ SelectTool.prototype.mousedown = function (event) {
 SelectTool.prototype.mousemove = function (event) {
   const editor = this.editor
   const rnd = editor.render
-  const restruct = editor.render.ctab
+  const ReStruct = editor.render.ctab
   const dragCtx = this.dragCtx
   if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
   if (dragCtx && dragCtx.item) {
-    const atoms = restruct.molecule.atoms
+    const atoms = ReStruct.molecule.atoms
     const selection = editor.selection()
     const shouldDisplayDegree =
       dragCtx.item.map === 'atoms' &&
@@ -146,14 +146,14 @@ SelectTool.prototype.mousemove = function (event) {
       this.editor.event.message.dispatch({ info: degrees + 'º' })
     }
     if (dragCtx.action) {
-      dragCtx.action.perform(restruct)
+      dragCtx.action.perform(ReStruct)
       // redraw the elements in unshifted position, lest the have different offset
       editor.update(dragCtx.action, true)
     }
 
     const expSel = editor.explicitSelected()
     dragCtx.action = fromMultipleMove(
-      restruct,
+      ReStruct,
       expSel,
       editor.render.page2obj(event).sub(dragCtx.xy0)
     )
@@ -207,15 +207,15 @@ SelectTool.prototype.mousemove = function (event) {
 SelectTool.prototype.mouseup = function (event) {
   // eslint-disable-line max-statements
   const editor = this.editor
-  const restruct = editor.render.ctab
+  const ReStruct = editor.render.ctab
   const dragCtx = this.dragCtx
 
   if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
 
   if (dragCtx && dragCtx.item) {
     dragCtx.action = dragCtx.action
-      ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
-      : fromItemsFuse(restruct, dragCtx.mergeItems)
+      ? fromItemsFuse(ReStruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
+      : fromItemsFuse(ReStruct, dragCtx.mergeItems)
 
     editor.hover(null)
     if (dragCtx.mergeItems) editor.selection(null)

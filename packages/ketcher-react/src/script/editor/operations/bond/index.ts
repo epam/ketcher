@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct, { ReBond } from '../../../render/restruct'
+import { Bond, ReBond, ReStruct } from 'ketcher-core'
 
 import { BaseOperation } from '../base'
-import { Bond } from 'ketcher-core'
 import { OperationType } from '../OperationType'
 
 // todo: separate classes: now here is circular dependency in `invert` method
@@ -37,17 +36,17 @@ class BondAdd extends BaseOperation {
     this.data = { bond, begin, end, bid: null }
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { begin, bond, end } = this.data
     // eslint-disable-line max-statements
-    const struct = restruct.molecule
+    const struct = ReStruct.molecule
 
     if (begin === end) {
       throw new Error('Distinct atoms expected')
     }
 
-    BaseOperation.invalidateAtom(restruct, begin, 1)
-    BaseOperation.invalidateAtom(restruct, end, 1)
+    BaseOperation.invalidateAtom(ReStruct, begin, 1)
+    BaseOperation.invalidateAtom(ReStruct, end, 1)
 
     const pp: {
       type?: any
@@ -81,8 +80,8 @@ class BondAdd extends BaseOperation {
     struct.atomAddNeighbor(structBond.hb2)
 
     // notifyBondAdded
-    restruct.bonds.set(bid, new ReBond(structBond))
-    restruct.markBond(bid, 1)
+    ReStruct.bonds.set(bid, new ReBond(structBond))
+    ReStruct.markBond(bid, 1)
   }
 
   invert() {
@@ -100,32 +99,32 @@ class BondDelete extends BaseOperation {
     this.data = { bid: bondId, bond: null, begin: null, end: null }
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { bid } = this.data
 
     // eslint-disable-line max-statements
-    const struct = restruct.molecule
+    const struct = ReStruct.molecule
     if (!this.data.bond) {
       this.data.bond = struct.bonds.get(bid)
       this.data.begin = this.data.bond.begin
       this.data.end = this.data.bond.end
     }
 
-    BaseOperation.invalidateBond(restruct, bid)
+    BaseOperation.invalidateBond(ReStruct, bid)
 
     // notifyBondRemoved
-    const rebond = restruct.bonds.get(bid)
+    const rebond = ReStruct.bonds.get(bid)
     if (!rebond) return
     ;[rebond.b.hb1, rebond.b.hb2].forEach(hbid => {
       if (hbid === undefined) return
-      const halfBond = restruct.molecule.halfBonds.get(hbid)
+      const halfBond = ReStruct.molecule.halfBonds.get(hbid)
       if (halfBond && halfBond.loop >= 0) {
-        restruct.loopRemove(halfBond.loop)
+        ReStruct.loopRemove(halfBond.loop)
       }
-    }, restruct)
-    restruct.clearVisel(rebond.visel)
-    restruct.bonds.delete(bid)
-    restruct.markItemRemoved()
+    }, ReStruct)
+    ReStruct.clearVisel(rebond.visel)
+    ReStruct.bonds.delete(bid)
+    ReStruct.markItemRemoved()
 
     const structBond = struct.bonds.get(bid)!
     ;[structBond.hb1, structBond.hb2].forEach(hbid => {

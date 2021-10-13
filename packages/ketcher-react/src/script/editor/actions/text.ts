@@ -14,36 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct, Vec2 } from 'ketcher-core'
 import { TextCreate, TextDelete, TextUpdate } from '../operations'
 
 import Action from '../shared/action'
-import Restruct from '../../render/restruct'
-import { Vec2 } from 'ketcher-core'
 
 export function fromTextCreation(
-  restruct: Restruct,
+  ReStruct: ReStruct,
   content: string,
   position: Vec2
 ) {
   const action = new Action()
   action.addOp(new TextCreate(content, position))
-  return action.perform(restruct)
+  return action.perform(ReStruct)
 }
 
 export function fromTextUpdating(
-  restruct: Restruct,
+  ReStruct: ReStruct,
   id: number,
   content: string
 ) {
   const action = new Action()
   action.addOp(new TextUpdate(id, content))
-  return action.perform(restruct)
+  return action.perform(ReStruct)
 }
 
-export function fromTextDeletion(restruct: Restruct, id: number) {
+export function fromTextDeletion(ReStruct: ReStruct, id: number) {
   const action = new Action()
 
   action.addOp(new TextDelete(id))
 
-  return action.perform(restruct)
+  return action.perform(ReStruct)
 }

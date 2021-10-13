@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct, Scale } from 'ketcher-core'
+
 import { BaseOperation } from '../../base'
 import { OperationType } from '../../OperationType'
-import Restruct from '../../../../render/restruct'
-import { Scale } from 'ketcher-core'
 
 export class RxnPlusMove extends BaseOperation {
   data: {
@@ -31,20 +31,20 @@ export class RxnPlusMove extends BaseOperation {
     this.data = { id, d, noinvalidate }
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { id, d, noinvalidate } = this.data
 
-    const struct = restruct.molecule
+    const struct = ReStruct.molecule
     struct.rxnPluses.get(id)!.pp.add_(d) // eslint-disable-line no-underscore-dangle
 
-    const rxn = restruct.rxnPluses.get(id)!
-    const scaled = Scale.obj2scaled(d, restruct.render.options)
+    const rxn = ReStruct.rxnPluses.get(id)!
+    const scaled = Scale.obj2scaled(d, ReStruct.render.options)
     rxn.visel.translate(scaled)
 
     this.data.d = d.negated()
 
     if (!noinvalidate) {
-      BaseOperation.invalidateItem(restruct, 'rxnPluses', id, 1)
+      BaseOperation.invalidateItem(ReStruct, 'rxnPluses', id, 1)
     }
   }
 

@@ -14,14 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Scale, SimpleObject, SimpleObjectMode, Vec2 } from 'ketcher-core'
+import {
+  ReSimpleObject,
+  Scale,
+  SimpleObject,
+  SimpleObjectMode,
+  Vec2,
+  tfx
+} from 'ketcher-core'
 
 import Base from './base'
 import { OperationType } from './OperationType'
-import { ReSimpleObject } from '../../render/restruct'
-import util from '../../render/util'
-
-const tfx = util.tfx
 
 interface SimpleObjectAddData {
   id?: number
@@ -42,8 +45,8 @@ export class SimpleObjectAdd extends Base {
     this.data = { pos, mode, toCircle, id }
   }
 
-  execute(restruct: any): void {
-    const struct = restruct.molecule
+  execute(ReStruct: any): void {
+    const struct = ReStruct.molecule
     const item = new SimpleObject({ mode: this.data.mode })
 
     if (this.data.id == null) {
@@ -55,7 +58,7 @@ export class SimpleObjectAdd extends Base {
 
     const itemId = this.data.id!
 
-    restruct.simpleObjects.set(itemId, new ReSimpleObject(item))
+    ReStruct.simpleObjects.set(itemId, new ReSimpleObject(item))
 
     const positions = [...this.data.pos]
     if (this.data.toCircle) {
@@ -66,7 +69,7 @@ export class SimpleObjectAdd extends Base {
       positions.map(p => new Vec2(p))
     )
 
-    Base.invalidateItem(restruct, 'simpleObjects', itemId, 1)
+    Base.invalidateItem(ReStruct, 'simpleObjects', itemId, 1)
   }
   invert(): Base {
     return new SimpleObjectDelete(this.data.id!)
@@ -90,8 +93,8 @@ export class SimpleObjectDelete extends Base {
     this.performed = false
   }
 
-  execute(restruct: any): void {
-    const struct = restruct.molecule
+  execute(ReStruct: any): void {
+    const struct = ReStruct.molecule
     const item = struct.simpleObjects.get(this.data.id) as any
     //save to data current values. In future they could be used in invert for restoring simple object
     this.data.pos = item.pos
@@ -99,9 +102,9 @@ export class SimpleObjectDelete extends Base {
     this.data.toCircle = item.toCircle
     this.performed = true
 
-    restruct.markItemRemoved()
-    restruct.clearVisel(restruct.simpleObjects.get(this.data.id).visel)
-    restruct.simpleObjects.delete(this.data.id)
+    ReStruct.markItemRemoved()
+    ReStruct.clearVisel(ReStruct.simpleObjects.get(this.data.id).visel)
+    ReStruct.simpleObjects.delete(this.data.id)
 
     struct.simpleObjects.delete(this.data.id)
   }
@@ -129,18 +132,18 @@ export class SimpleObjectMove extends Base {
     super(OperationType.SIMPLE_OBJECT_MOVE)
     this.data = { id, d, noinvalidate }
   }
-  execute(restruct: any): void {
-    const struct = restruct.molecule
+  execute(ReStruct: any): void {
+    const struct = ReStruct.molecule
     const id = this.data.id
     const d = this.data.d
     const item = struct.simpleObjects.get(id)
     item.pos.forEach(p => p.add_(d))
-    restruct.simpleObjects
+    ReStruct.simpleObjects
       .get(id)
-      .visel.translate(Scale.obj2scaled(d, restruct.render.options))
+      .visel.translate(Scale.obj2scaled(d, ReStruct.render.options))
     this.data.d = d.negated()
     if (!this.data.noinvalidate) {
-      Base.invalidateItem(restruct, 'simpleObjects', id, 1)
+      Base.invalidateItem(ReStruct, 'simpleObjects', id, 1)
     }
   }
 
@@ -202,8 +205,8 @@ export class SimpleObjectResize extends Base {
     this.data = { id, d, current, anchor, noinvalidate, toCircle }
   }
 
-  execute(restruct: any): void {
-    const struct = restruct.molecule
+  execute(ReStruct: any): void {
+    const struct = ReStruct.molecule
     const id = this.data.id
     const d = this.data.d
     const current = this.data.current
@@ -251,13 +254,13 @@ export class SimpleObjectResize extends Base {
       handleRectangleChangeWithAnchor(item, anchor, current)
     } else item.pos[1].add_(d)
 
-    restruct.simpleObjects
+    ReStruct.simpleObjects
       .get(id)
-      .visel.translate(Scale.obj2scaled(d, restruct.render.options))
+      .visel.translate(Scale.obj2scaled(d, ReStruct.render.options))
     this.data.d = d.negated()
     if (!this.data.noinvalidate) {
       Base.invalidateItem(
-        restruct,
+        ReStruct,
         'simpleObjects',
         // @ts-ignore
         id,

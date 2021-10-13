@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { Scale } from 'ketcher-core'
-import draw from '../../../render/draw'
 import locate from './locate'
 
 function LassoHelper(mode, editor, fragment) {
@@ -70,8 +69,8 @@ LassoHelper.prototype.update = function () {
     )
     this.selection =
       this.mode === 0
-        ? draw.selectionPolygon(rnd.paper, dp, rnd.options)
-        : draw.selectionRectangle(rnd.paper, dp[0], dp[1], rnd.options)
+        ? rnd.selectionPolygon(dp)
+        : rnd.selectionRectangle(dp[0], dp[1])
   }
 }
 

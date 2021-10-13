@@ -16,7 +16,7 @@
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
+import { ReStruct } from 'ketcher-core'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -34,10 +34,10 @@ class SGroupAddToHierarchy extends BaseOperation {
     this.data = { sgid: sgroupId, parent, children }
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { sgid, parent, children } = this.data
 
-    const struct = restruct.molecule
+    const struct = ReStruct.molecule
     const sgroup = struct.sgroups.get(sgid)!
     const relations = struct.sGroupForest.insert(sgroup, parent, children)
 
@@ -60,9 +60,9 @@ class SGroupRemoveFromHierarchy extends BaseOperation {
     this.data = { sgid: sgroupId }
   }
 
-  execute(restruct: any) {
+  execute(ReStruct: any) {
     const { sgid } = this.data
-    const struct = restruct.molecule
+    const struct = ReStruct.molecule
 
     this.data.parent = struct.sGroupForest.parent.get(sgid)
     this.data.children = struct.sGroupForest.children.get(sgid)

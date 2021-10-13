@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct, Scale } from 'ketcher-core'
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
-import { Scale } from 'ketcher-core'
 
 interface TextMoveData {
   id: any
@@ -33,21 +33,21 @@ export class TextMove extends BaseOperation {
     this.data = { id, d, noinvalidate }
   }
 
-  execute(restruct: Restruct): void {
-    const struct = restruct.molecule
+  execute(ReStruct: ReStruct): void {
+    const struct = ReStruct.molecule
     const id = this.data.id
     const difference = this.data.d
     const item = struct.texts.get(id)
 
     item?.position?.add_(difference)
-    restruct.texts
+    ReStruct.texts
       .get(id)
-      ?.visel.translate(Scale.obj2scaled(difference, restruct.render.options))
+      ?.visel.translate(Scale.obj2scaled(difference, ReStruct.render.options))
 
     this.data.d = difference.negated()
 
     if (!this.data.noinvalidate) {
-      BaseOperation.invalidateItem(restruct, 'texts', id, 1)
+      BaseOperation.invalidateItem(ReStruct, 'texts', id, 1)
     }
   }
 

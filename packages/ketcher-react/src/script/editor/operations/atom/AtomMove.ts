@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct, Scale } from 'ketcher-core'
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
-import { Scale } from 'ketcher-core'
 
 export class AtomMove extends BaseOperation {
   data: {
@@ -31,22 +31,22 @@ export class AtomMove extends BaseOperation {
     this.data = { aid: atomId, d, noinvalidate }
   }
 
-  execute(restruct: Restruct) {
-    const struct = restruct.molecule
+  execute(ReStruct: ReStruct) {
+    const struct = ReStruct.molecule
     const { aid, d } = this.data
     const atom = struct.atoms.get(aid)
     if (!atom) return
     atom!.pp.add_(d) // eslint-disable-line no-underscore-dangle
-    const reatom = restruct.atoms.get(aid)
+    const reatom = ReStruct.atoms.get(aid)
     if (reatom) {
-      const scaled = Scale.obj2scaled(d, restruct.render.options)
+      const scaled = Scale.obj2scaled(d, ReStruct.render.options)
       reatom.visel.translate(scaled)
     }
 
     this.data.d = d.negated()
 
     if (!this.data.noinvalidate) {
-      BaseOperation.invalidateAtom(restruct, aid, 1)
+      BaseOperation.invalidateAtom(ReStruct, aid, 1)
     }
   }
 

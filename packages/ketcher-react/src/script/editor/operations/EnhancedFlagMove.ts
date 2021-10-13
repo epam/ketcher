@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Fragment, Vec2 } from 'ketcher-core'
+import { Fragment, ReStruct, Vec2 } from 'ketcher-core'
 
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
-import Restruct from '../../render/restruct'
 
 export class EnhancedFlagMove extends BaseOperation {
   data: {
@@ -31,21 +30,21 @@ export class EnhancedFlagMove extends BaseOperation {
     this.data = { frid: fragmentId, p }
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { frid } = this.data
     const { p } = this.data
-    const fragment = restruct.molecule.frags.get(frid)
+    const fragment = ReStruct.molecule.frags.get(frid)
     if (!fragment) return
 
     const currentPosition = fragment.stereoFlagPosition
       ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)
-      : Fragment.getDefaultStereoFlagPosition(restruct.molecule, frid)!
+      : Fragment.getDefaultStereoFlagPosition(ReStruct.molecule, frid)!
 
     const newPosition = Vec2.sum(currentPosition, p)
     fragment.stereoFlagPosition = newPosition
 
     this.data.p = p.negated()
-    BaseOperation.invalidateItem(restruct, 'enhancedFlags', frid, 1)
+    BaseOperation.invalidateItem(ReStruct, 'enhancedFlags', frid, 1)
   }
 
   invert() {

@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct, { ReRGroup } from '../../../render/restruct'
+import { RGroup, ReRGroup, ReStruct } from 'ketcher-core'
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import { RGroup } from 'ketcher-core'
 
 export class RGroupFragment extends BaseOperation {
   rgid_new: any
@@ -36,36 +35,36 @@ export class RGroupFragment extends BaseOperation {
     this.frid = fragmentId
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     // eslint-disable-line max-statements
-    const struct = restruct.molecule
+    const struct = ReStruct.molecule
     this.rgid_old =
       this.rgid_old || RGroup.findRGroupByFragment(struct.rgroups, this.frid)
 
     this.rg_old = this.rgid_old ? struct.rgroups.get(this.rgid_old) : null
 
-    this.removeOld(struct, restruct)
-    this.setNew(struct, restruct)
+    this.removeOld(struct, ReStruct)
+    this.setNew(struct, ReStruct)
   }
 
-  private removeOld(struct: any, restruct: any) {
+  private removeOld(struct: any, ReStruct: any) {
     if (!this.rg_old) {
       return
     }
 
     this.rg_old.frags.delete(this.frid)
-    restruct.clearVisel(restruct.rgroups.get(this.rgid_old).visel)
+    ReStruct.clearVisel(ReStruct.rgroups.get(this.rgid_old).visel)
 
     if (this.rg_old.frags.size === 0) {
-      restruct.rgroups.delete(this.rgid_old)
+      ReStruct.rgroups.delete(this.rgid_old)
       struct.rgroups.delete(this.rgid_old)
-      restruct.markItemRemoved()
+      ReStruct.markItemRemoved()
     } else {
-      restruct.markItem('rgroups', this.rgid_old, 1)
+      ReStruct.markItem('rgroups', this.rgid_old, 1)
     }
   }
 
-  private setNew(struct: any, restruct: Restruct) {
+  private setNew(struct: any, ReStruct: ReStruct) {
     if (!this.rgid_new) {
       return
     }
@@ -74,9 +73,9 @@ export class RGroupFragment extends BaseOperation {
     if (!rgNew) {
       rgNew = this.rg_new || new RGroup()
       struct.rgroups.set(this.rgid_new, rgNew)
-      restruct.rgroups.set(this.rgid_new, new ReRGroup(rgNew))
+      ReStruct.rgroups.set(this.rgid_new, new ReRGroup(rgNew))
     } else {
-      restruct.markItem('rgroups', this.rgid_new, 1)
+      ReStruct.markItem('rgroups', this.rgid_new, 1)
     }
 
     rgNew.frags.add(this.frid)

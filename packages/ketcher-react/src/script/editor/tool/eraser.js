@@ -78,26 +78,26 @@ EraserTool.prototype.mouseup = function (event) {
 }
 
 EraserTool.prototype.click = function (event) {
-  const restruct = this.editor.render.ctab
+  const ReStruct = this.editor.render.ctab
   const ci = this.editor.findItem(event, this.maps)
 
   if (!ci) return // ci.type == 'Canvas'
 
   this.editor.hover(null)
   if (ci.map === 'atoms') {
-    this.editor.update(fromOneAtomDeletion(restruct, ci.id))
+    this.editor.update(fromOneAtomDeletion(ReStruct, ci.id))
   } else if (ci.map === 'bonds') {
-    this.editor.update(fromOneBondDeletion(restruct, ci.id))
+    this.editor.update(fromOneBondDeletion(ReStruct, ci.id))
   } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
-    this.editor.update(fromSgroupDeletion(restruct, ci.id))
+    this.editor.update(fromSgroupDeletion(ReStruct, ci.id))
   } else if (ci.map === 'rxnArrows') {
-    this.editor.update(fromArrowDeletion(restruct, ci.id))
+    this.editor.update(fromArrowDeletion(ReStruct, ci.id))
   } else if (ci.map === 'rxnPluses') {
-    this.editor.update(fromPlusDeletion(restruct, ci.id))
+    this.editor.update(fromPlusDeletion(ReStruct, ci.id))
   } else if (ci.map === 'simpleObjects') {
-    this.editor.update(fromSimpleObjectDeletion(restruct, ci.id))
+    this.editor.update(fromSimpleObjectDeletion(ReStruct, ci.id))
   } else if (ci.map === 'texts') {
-    this.editor.update(fromTextDeletion(restruct, ci.id))
+    this.editor.update(fromTextDeletion(ReStruct, ci.id))
   } else {
     // TODO re-factoring needed - should be "map-independent"
     console.error(

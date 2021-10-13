@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct, SGroup } from 'ketcher-core'
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
-import { SGroup } from 'ketcher-core'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -34,10 +34,10 @@ class SGroupAtomAdd extends BaseOperation {
     this.data = { sgid: sgroupId, aid }
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { aid, sgid } = this.data
 
-    const struct = restruct.molecule
+    const struct = ReStruct.molecule
     const atom = struct.atoms.get(aid)!
     const sgroup = struct.sgroups.get(sgid)!
 
@@ -52,7 +52,7 @@ class SGroupAtomAdd extends BaseOperation {
     }
 
     struct.atomAddToSGroup(sgid, aid)
-    BaseOperation.invalidateAtom(restruct, aid)
+    BaseOperation.invalidateAtom(ReStruct, aid)
   }
 
   invert() {
@@ -70,16 +70,16 @@ class SGroupAtomRemove extends BaseOperation {
     this.data = { sgid: sgroupId, aid }
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { aid, sgid } = this.data
 
-    const struct = restruct.molecule
+    const struct = ReStruct.molecule
     const atom = struct.atoms.get(aid)!
     const sgroup = struct.sgroups.get(sgid)!
 
     SGroup.removeAtom(sgroup, aid)
     atom.sgs.delete(sgid)
-    BaseOperation.invalidateAtom(restruct, aid)
+    BaseOperation.invalidateAtom(ReStruct, aid)
   }
 
   invert() {

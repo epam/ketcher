@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct, Vec2 } from 'ketcher-core'
+
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
-import Restruct from '../../render/restruct'
-import { Vec2 } from 'ketcher-core'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -29,8 +29,8 @@ class AlignDescriptors extends BaseOperation {
     this.history = {}
   }
 
-  execute(restruct: Restruct) {
-    const struct = restruct.molecule
+  execute(ReStruct: ReStruct) {
+    const struct = ReStruct.molecule
     const sgroups: any[] = Array.from(struct.sgroups.values()).reverse()
 
     const structBox: any = struct.getCoordBoundingBoxObj()
@@ -43,7 +43,7 @@ class AlignDescriptors extends BaseOperation {
       alignPoint = alignPoint.add(new Vec2(0.0, 0.5))
       sgroup.pp = alignPoint
       struct.sgroups.set(sgroup.id, sgroup)
-      BaseOperation.invalidateItem(restruct, 'sgroupData', sgroup.id, 1)
+      BaseOperation.invalidateItem(ReStruct, 'sgroupData', sgroup.id, 1)
     })
   }
 
@@ -60,14 +60,14 @@ class RestoreDescriptorsPosition extends BaseOperation {
     this.history = history
   }
 
-  execute(restruct: Restruct) {
-    const struct = restruct.molecule
+  execute(ReStruct: ReStruct) {
+    const struct = ReStruct.molecule
     const sgroups: any[] = Array.from(struct.sgroups.values())
 
     sgroups.forEach(sgroup => {
       sgroup.pp = this.history[sgroup.id]
       struct.sgroups.set(sgroup.id, sgroup)
-      BaseOperation.invalidateItem(restruct, 'sgroupData', sgroup.id, 1)
+      BaseOperation.invalidateItem(ReStruct, 'sgroupData', sgroup.id, 1)
     })
   }
 

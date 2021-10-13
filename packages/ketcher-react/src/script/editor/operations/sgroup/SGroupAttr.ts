@@ -16,7 +16,7 @@
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
+import { ReStruct } from 'ketcher-core'
 
 export class SGroupAttr extends BaseOperation {
   data: {
@@ -34,16 +34,16 @@ export class SGroupAttr extends BaseOperation {
     }
   }
 
-  execute(restruct: Restruct) {
-    const struct = restruct.molecule
+  execute(ReStruct: ReStruct) {
+    const struct = ReStruct.molecule
     const sgroupId = this.data.sgid
     const sgroup = struct.sgroups.get(sgroupId)!
 
-    const sgroupData = restruct.sgroupData.get(sgroupId)
+    const sgroupData = ReStruct.sgroupData.get(sgroupId)
     if (sgroup.type === 'DAT' && sgroupData) {
       // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
-      restruct.clearVisel(sgroupData.visel)
-      restruct.sgroupData.delete(sgroupId)
+      ReStruct.clearVisel(sgroupData.visel)
+      ReStruct.sgroupData.delete(sgroupId)
     }
 
     this.data.value = sgroup.setAttr(this.data.attr, this.data.value)

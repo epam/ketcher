@@ -16,7 +16,7 @@
 
 import { Vec2 } from 'ketcher-core'
 
-function getElementsInRectangle(restruct, p0, p1) {
+function getElementsInRectangle(ReStruct, p0, p1) {
   const bondList = []
   const atomList = []
 
@@ -25,18 +25,18 @@ function getElementsInRectangle(restruct, p0, p1) {
   const y0 = Math.min(p0.y, p1.y)
   const y1 = Math.max(p0.y, p1.y)
 
-  restruct.bonds.forEach((bond, bid) => {
+  ReStruct.bonds.forEach((bond, bid) => {
     const centre = Vec2.lc2(
-      restruct.atoms.get(bond.b.begin).a.pp,
+      ReStruct.atoms.get(bond.b.begin).a.pp,
       0.5,
-      restruct.atoms.get(bond.b.end).a.pp,
+      ReStruct.atoms.get(bond.b.end).a.pp,
       0.5
     )
     if (centre.x > x0 && centre.x < x1 && centre.y > y0 && centre.y < y1)
       bondList.push(bid)
   })
 
-  restruct.atoms.forEach((atom, aid) => {
+  ReStruct.atoms.forEach((atom, aid) => {
     if (
       atom.a.pp.x > x0 &&
       atom.a.pp.x < x1 &&
@@ -50,7 +50,7 @@ function getElementsInRectangle(restruct, p0, p1) {
   const rxnPlusesList = []
   const simpleObjectsList = []
 
-  restruct.rxnArrows.forEach((item, id) => {
+  ReStruct.rxnArrows.forEach((item, id) => {
     if (
       item.item.center().x > x0 &&
       item.item.center().x < x1 &&
@@ -60,7 +60,7 @@ function getElementsInRectangle(restruct, p0, p1) {
       rxnArrowsList.push(id)
   })
 
-  restruct.rxnPluses.forEach((item, id) => {
+  ReStruct.rxnPluses.forEach((item, id) => {
     if (
       item.item.pp.x > x0 &&
       item.item.pp.x < x1 &&
@@ -70,7 +70,7 @@ function getElementsInRectangle(restruct, p0, p1) {
       rxnPlusesList.push(id)
   })
 
-  restruct.simpleObjects.forEach((item, id) => {
+  ReStruct.simpleObjects.forEach((item, id) => {
     const referencePoints = item.getReferencePoints(true)
     const referencePointInRectangle = referencePoints.find(
       point => point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1
@@ -79,14 +79,14 @@ function getElementsInRectangle(restruct, p0, p1) {
   })
 
   const enhancedFlagList = []
-  restruct.enhancedFlags.forEach((item, id) => {
+  ReStruct.enhancedFlags.forEach((item, id) => {
     if (!item.pp) return
     if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1)
       enhancedFlagList.push(id)
   })
 
   const sgroupDataList = []
-  restruct.sgroupData.forEach((item, id) => {
+  ReStruct.sgroupData.forEach((item, id) => {
     if (
       item.sgroup.pp.x > x0 &&
       item.sgroup.pp.x < x1 &&
@@ -97,7 +97,7 @@ function getElementsInRectangle(restruct, p0, p1) {
   })
 
   const textsList = []
-  restruct.texts.forEach((item, id) => {
+  ReStruct.texts.forEach((item, id) => {
     const referencePoints = item.getReferencePoints()
     const referencePointInRectangle = referencePoints.find(point => {
       return point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1
@@ -120,7 +120,7 @@ function getElementsInRectangle(restruct, p0, p1) {
   }
 }
 
-function getElementsInPolygon(restruct, rr) {
+function getElementsInPolygon(ReStruct, rr) {
   // eslint-disable-line max-statements
   const bondList = []
   const atomList = []
@@ -128,17 +128,17 @@ function getElementsInPolygon(restruct, rr) {
 
   for (let i = 0; i < rr.length; ++i) r[i] = new Vec2(rr[i].x, rr[i].y)
 
-  restruct.bonds.forEach((bond, bid) => {
+  ReStruct.bonds.forEach((bond, bid) => {
     const centre = Vec2.lc2(
-      restruct.atoms.get(bond.b.begin).a.pp,
+      ReStruct.atoms.get(bond.b.begin).a.pp,
       0.5,
-      restruct.atoms.get(bond.b.end).a.pp,
+      ReStruct.atoms.get(bond.b.end).a.pp,
       0.5
     )
     if (isPointInPolygon(r, centre)) bondList.push(bid)
   })
 
-  restruct.atoms.forEach((atom, aid) => {
+  ReStruct.atoms.forEach((atom, aid) => {
     if (isPointInPolygon(r, atom.a.pp)) atomList.push(aid)
   })
 
@@ -147,7 +147,7 @@ function getElementsInPolygon(restruct, rr) {
   const simpleObjectsList = []
   const textsList = []
 
-  restruct.rxnArrows.forEach((item, id) => {
+  ReStruct.rxnArrows.forEach((item, id) => {
     const referencePoints = item.getReferencePoints(true)
     const referencePointInPolygon = referencePoints.find(point =>
       isPointInPolygon(r, point)
@@ -155,11 +155,11 @@ function getElementsInPolygon(restruct, rr) {
     if (referencePointInPolygon) rxnArrowsList.push(id)
   })
 
-  restruct.rxnPluses.forEach((item, id) => {
+  ReStruct.rxnPluses.forEach((item, id) => {
     if (isPointInPolygon(r, item.item.pp)) rxnPlusesList.push(id)
   })
 
-  restruct.simpleObjects.forEach((item, id) => {
+  ReStruct.simpleObjects.forEach((item, id) => {
     const referencePoints = item.getReferencePoints(true)
     const referencePointInPolygon = referencePoints.find(point =>
       isPointInPolygon(r, point)
@@ -167,7 +167,7 @@ function getElementsInPolygon(restruct, rr) {
     if (referencePointInPolygon) simpleObjectsList.push(id)
   })
 
-  restruct.texts.forEach((item, id) => {
+  ReStruct.texts.forEach((item, id) => {
     const referencePoints = item.getReferencePoints()
     const referencePointInPolygon = referencePoints.find(point =>
       isPointInPolygon(r, point)
@@ -179,12 +179,12 @@ function getElementsInPolygon(restruct, rr) {
   })
 
   const enhancedFlagList = []
-  restruct.enhancedFlags.forEach((item, id) => {
+  ReStruct.enhancedFlags.forEach((item, id) => {
     if (item.pp && isPointInPolygon(r, item.pp)) enhancedFlagList.push(id)
   })
 
   const sgroupDataList = []
-  restruct.sgroupData.forEach((item, id) => {
+  ReStruct.sgroupData.forEach((item, id) => {
     if (isPointInPolygon(r, item.sgroup.pp)) sgroupDataList.push(id)
   })
 

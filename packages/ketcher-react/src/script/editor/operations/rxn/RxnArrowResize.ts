@@ -14,13 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Scale, Vec2 } from 'ketcher-core'
+import { Scale, Vec2, tfx } from 'ketcher-core'
 
 import Base from '../base'
 import { OperationType } from '../OperationType'
-import util from '../../../render/util'
-
-const tfx = util.tfx
 
 interface RxnArrowResizeData {
   id: number
@@ -44,8 +41,8 @@ export class RxnArrowResize extends Base {
     this.data = { id, d, current, anchor, noinvalidate }
   }
 
-  execute(restruct: any): void {
-    const struct = restruct.molecule
+  execute(ReStruct: any): void {
+    const struct = ReStruct.molecule
     const id = this.data.id
     const d = this.data.d
     const current = this.data.current
@@ -77,14 +74,14 @@ export class RxnArrowResize extends Base {
       }
     } else item.pos[1].add_(d)
 
-    restruct.rxnArrows
+    ReStruct.rxnArrows
       .get(id)
-      .visel.translate(Scale.obj2scaled(d, restruct.render.options))
+      .visel.translate(Scale.obj2scaled(d, ReStruct.render.options))
     this.data.d = d.negated()
 
     if (!this.data.noinvalidate) {
       Base.invalidateItem(
-        restruct,
+        ReStruct,
         'rxnArrows',
         // @ts-ignore
         id,

@@ -36,11 +36,11 @@ import Action from '../shared/action'
 import { fromAtomsFragmentAttr } from './atom'
 import { getRelSgroupsBySelection } from './utils'
 
-export function fromMultipleMove(restruct, lists, d) {
+export function fromMultipleMove(ReStruct, lists, d) {
   d = new Vec2(d)
 
   const action = new Action()
-  const struct = restruct.molecule
+  const struct = ReStruct.molecule
   const loops = new Pile()
   const atomsToInvalidate = new Pile()
 
@@ -48,7 +48,7 @@ export function fromMultipleMove(restruct, lists, d) {
     const atomSet = new Pile(lists.atoms)
     const bondlist = []
 
-    restruct.bonds.forEach((bond, bid) => {
+    ReStruct.bonds.forEach((bond, bid) => {
       if (atomSet.has(bond.b.begin) && atomSet.has(bond.b.end)) {
         bondlist.push(bid)
         // add all adjacent loops
@@ -73,7 +73,7 @@ export function fromMultipleMove(restruct, lists, d) {
     })
 
     loops.forEach(loopId => {
-      if (restruct.reloops.get(loopId) && restruct.reloops.get(loopId).visel)
+      if (ReStruct.reloops.get(loopId) && ReStruct.reloops.get(loopId).visel)
         // hack
         action.addOp(new LoopMove(loopId, d))
     })
@@ -83,7 +83,7 @@ export function fromMultipleMove(restruct, lists, d) {
     })
 
     if (lists.sgroupData && lists.sgroupData.length === 0) {
-      const sgroups = getRelSgroupsBySelection(restruct, lists.atoms)
+      const sgroups = getRelSgroupsBySelection(ReStruct, lists.atoms)
       sgroups.forEach(sg => {
         action.addOp(new SGroupDataMove(sg.id, d))
       })
@@ -126,15 +126,15 @@ export function fromMultipleMove(restruct, lists, d) {
     })
   }
 
-  return action.perform(restruct)
+  return action.perform(ReStruct)
 }
 
-export function fromStereoFlagUpdate(restruct, frid, flag) {
+export function fromStereoFlagUpdate(ReStruct, frid, flag) {
   const action = new Action()
 
   if (!flag) {
-    const struct = restruct.molecule
-    const frag = restruct.molecule.frags.get(frid)
+    const struct = ReStruct.molecule
+    const frag = ReStruct.molecule.frags.get(frid)
     frag.stereoAtoms.forEach(aid => {
       if (struct.atoms.get(aid).stereoLabel === null)
         action.addOp(new FragmentDeleteStereoAtom(frid, aid))
@@ -142,26 +142,26 @@ export function fromStereoFlagUpdate(restruct, frid, flag) {
   }
 
   action.addOp(new FragmentStereoFlag(frid, flag))
-  return action.perform(restruct)
+  return action.perform(ReStruct)
 }
 
 /**
- * @param restruct { ReStruct }
+ * @param ReStruct { ReStruct }
  * @param aid { number }
  * @param frid { number }
  * @param newfrid { number }
  * @returns { Action }
  */
-function processAtom(restruct, aid, frid, newfrid) {
+function processAtom(ReStruct, aid, frid, newfrid) {
   const queue = [aid]
   const usedIds = new Pile(queue)
 
   while (queue.length > 0) {
     const id = queue.shift()
 
-    restruct.molecule.atomGetNeighbors(id).forEach(nei => {
+    ReStruct.molecule.atomGetNeighbors(id).forEach(nei => {
       if (
-        restruct.molecule.atoms.get(nei.aid).fragment === frid &&
+        ReStruct.molecule.atoms.get(nei.aid).fragment === frid &&
         !usedIds.has(nei.aid)
       ) {
         usedIds.add(nei.aid)
@@ -170,34 +170,34 @@ function processAtom(restruct, aid, frid, newfrid) {
     })
   }
 
-  return fromAtomsFragmentAttr(restruct, usedIds, newfrid)
+  return fromAtomsFragmentAttr(ReStruct, usedIds, newfrid)
 }
 
 /**
- * @param restruct { ReStruct }
+ * @param ReStruct { ReStruct }
  * @param frid { number }
  * @param rgForRemove
  * @return { Action }
  */
 // TODO [RB] the thing is too tricky :) need something else in future
-export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
+export function fromFragmentSplit(ReStruct, frid, rgForRemove = []) {
   const action = new Action()
-  const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid)
+  const rgid = RGroup.findRGroupByFragment(ReStruct.molecule.rgroups, frid)
 
-  restruct.molecule.atoms.forEach((atom, aid) => {
+  ReStruct.molecule.atoms.forEach((atom, aid) => {
     if (atom.fragment === frid) {
-      const newfrid = action.addOp(new FragmentAdd().perform(restruct)).frid
+      const newfrid = action.addOp(new FragmentAdd().perform(ReStruct)).frid
 
-      action.mergeWith(processAtom(restruct, aid, frid, newfrid))
+      action.mergeWith(processAtom(ReStruct, aid, frid, newfrid))
 
-      if (rgid) action.mergeWith(fromRGroupFragment(restruct, rgid, newfrid))
+      if (rgid) action.mergeWith(fromRGroupFragment(ReStruct, rgid, newfrid))
     }
   })
 
   if (frid !== -1) {
-    action.mergeWith(fromRGroupFragment(restruct, 0, frid))
-    action.addOp(new FragmentDelete(frid).perform(restruct))
-    action.mergeWith(fromUpdateIfThen(restruct, 0, rgid, rgForRemove))
+    action.mergeWith(fromRGroupFragment(ReStruct, 0, frid))
+    action.addOp(new FragmentDelete(frid).perform(ReStruct))
+    action.mergeWith(fromUpdateIfThen(ReStruct, 0, rgid, rgForRemove))
   }
 
   action.operations.reverse()

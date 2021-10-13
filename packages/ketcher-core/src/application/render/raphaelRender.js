@@ -17,9 +17,10 @@
 import { Box2Abs, Struct, Vec2 } from 'domain/entities'
 
 import Raphael from 'raphael-ext'
-import ReStruct from './restruct'
+import { ReStruct } from './restruct'
 import { Scale } from 'domain/helpers'
 import defaultOptions from './options'
+import draw from './draw'
 
 export function Render(clientArea, opt) {
   let renderWidth = clientArea.clientWidth - 10
@@ -33,6 +34,18 @@ export function Render(clientArea, opt) {
   this.sz = Vec2.ZERO
   this.ctab = new ReStruct(new Struct(), this)
   this.options = defaultOptions(this.userOpts)
+}
+
+Render.prototype.selectionPolygon = function (r) {
+  return draw.selectionPolygon(this.paper, r, this.options)
+}
+
+Render.prototype.selectionLine = function (p0, p1) {
+  return draw.selectionLine(this.paper, p0, p1, this.options)
+}
+
+Render.prototype.selectionRectangle = function (p0, p1) {
+  return draw.selectionRectangle(this.paper, p0, p1, this.options)
 }
 
 Render.prototype.view2obj = function (p, isRelative) {
@@ -166,7 +179,7 @@ Render.prototype.setMolecule = function (ctab) {
   this.update(false)
 }
 
-Render.prototype.update = function (force, viewSz) {
+Render.prototype.update = function (force = false, viewSz = null) {
   // eslint-disable-line max-statements
   viewSz =
     viewSz ||

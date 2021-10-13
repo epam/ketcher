@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct, { ReRxnPlus } from '../../../../render/restruct'
-import { RxnPlus, Vec2 } from 'ketcher-core'
+import { ReRxnPlus, ReStruct, RxnPlus, Vec2 } from 'ketcher-core'
 
 import { BaseOperation } from '../../base'
 import { OperationType } from '../../OperationType'
@@ -35,8 +34,8 @@ class RxnPlusAdd extends BaseOperation {
     this.data = { plid: null, pos }
   }
 
-  execute(restruct: Restruct) {
-    const struct = restruct.molecule
+  execute(ReStruct: ReStruct) {
+    const struct = ReStruct.molecule
 
     const newRxn = new RxnPlus()
     if (typeof this.data.plid === 'number') {
@@ -49,11 +48,11 @@ class RxnPlusAdd extends BaseOperation {
 
     const structRxn = struct.rxnPluses.get(plid)
     // notifyRxnPlusAdded
-    restruct.rxnPluses.set(plid, new ReRxnPlus(structRxn))
+    ReStruct.rxnPluses.set(plid, new ReRxnPlus(structRxn))
 
     struct.rxnPlusSetPos(plid, new Vec2(pos))
 
-    BaseOperation.invalidateItem(restruct, 'rxnPluses', plid, 1)
+    BaseOperation.invalidateItem(ReStruct, 'rxnPluses', plid, 1)
   }
 
   invert() {
@@ -71,20 +70,20 @@ class RxnPlusDelete extends BaseOperation {
     this.data = { plid, pos: null }
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { plid } = this.data
 
-    const struct = restruct.molecule
+    const struct = ReStruct.molecule
     if (!this.data.pos) {
       this.data.pos = struct.rxnPluses.get(plid)!.pp
     }
 
     // notifyRxnPlusRemoved
-    restruct.markItemRemoved()
-    const rxn = restruct.rxnPluses.get(plid)
+    ReStruct.markItemRemoved()
+    const rxn = ReStruct.rxnPluses.get(plid)
     if (!rxn) return
-    restruct.clearVisel(rxn.visel)
-    restruct.rxnPluses.delete(plid)
+    ReStruct.clearVisel(rxn.visel)
+    ReStruct.rxnPluses.delete(plid)
 
     struct.rxnPluses.delete(plid)
   }

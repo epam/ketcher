@@ -41,13 +41,16 @@ class Visel {
     this.exts = []
     this.boundingBox = null
   }
-  translate(x, y) {
-    if (arguments.length > 2)
+  translate(...args) {
+    if (args.length > 2)
       // TODO: replace to debug time assert
       throw new Error('One vector or two scalar arguments expected')
-    if (y === undefined) {
-      this.translate(x.x, x.y)
+    if (args.length === 1) {
+      const vector = args[0]
+      this.translate(vector.x, vector.y)
     } else {
+      const x = args[0]
+      const y = args[1]
       var delta = new Vec2(x, y)
       for (var i = 0; i < this.paths.length; ++i)
         this.paths[i].translateAbs(x, y)

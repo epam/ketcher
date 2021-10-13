@@ -69,7 +69,7 @@ function TemplateTool(editor, tmpl) {
 TemplateTool.prototype.mousedown = function (event) {
   // eslint-disable-line max-statements
   const editor = this.editor
-  const restruct = editor.render.ctab
+  const ReStruct = editor.render.ctab
   this.editor.hover(null)
 
   this.dragCtx = {
@@ -88,7 +88,7 @@ TemplateTool.prototype.mousedown = function (event) {
 
   if (ci.map === 'bonds') {
     // calculate fragment center
-    const molecule = restruct.molecule
+    const molecule = ReStruct.molecule
     const xy0 = new Vec2()
     const bond = molecule.bonds.get(ci.id)
     const frid = molecule.atoms.get(bond.begin).fragment
@@ -126,7 +126,7 @@ TemplateTool.prototype.mousedown = function (event) {
 
 TemplateTool.prototype.mousemove = function (event) {
   // eslint-disable-line max-statements
-  const restruct = this.editor.render.ctab
+  const ReStruct = this.editor.render.ctab
 
   if (!this.dragCtx) {
     this.editor.hover(this.editor.findItem(event, this.findItems))
@@ -137,7 +137,7 @@ TemplateTool.prototype.mousemove = function (event) {
   const ci = dragCtx.item
   let pos0 = null
   const pos1 = this.editor.render.page2obj(event)
-  const struct = restruct.molecule
+  const struct = ReStruct.molecule
 
   /* moving when attached to bond */
   if (ci && ci.map === 'bonds') {
@@ -147,11 +147,11 @@ TemplateTool.prototype.mousemove = function (event) {
     if (dragCtx.sign1 * this.template.sign > 0) sign = -sign
 
     if (sign !== dragCtx.sign2 || !dragCtx.action) {
-      if (dragCtx.action) dragCtx.action.perform(restruct) // undo previous action
+      if (dragCtx.action) dragCtx.action.perform(ReStruct) // undo previous action
 
       dragCtx.sign2 = sign
       let [action, pasteItems] = fromTemplateOnBondAction(
-        restruct,
+        ReStruct,
         this.template,
         ci.id,
         this.editor.event,
@@ -195,7 +195,7 @@ TemplateTool.prototype.mousemove = function (event) {
     return true
 
   // undo previous action
-  if (dragCtx.action) dragCtx.action.perform(restruct)
+  if (dragCtx.action) dragCtx.action.perform(ReStruct)
 
   // create new action
   dragCtx.angle = degrees
@@ -205,14 +205,14 @@ TemplateTool.prototype.mousemove = function (event) {
   if (!ci) {
     // ci.type == 'Canvas'
     ;[action, pasteItems] = fromTemplateOnCanvas(
-      restruct,
+      ReStruct,
       this.template,
       pos0,
       angle
     )
   } else if (ci.map === 'atoms') {
     ;[action, pasteItems] = fromTemplateOnAtom(
-      restruct,
+      ReStruct,
       this.template,
       ci.id,
       angle,
@@ -236,15 +236,15 @@ TemplateTool.prototype.mouseup = function (event) {
   if (!dragCtx) return true
   delete this.dragCtx
 
-  const restruct = this.editor.render.ctab
-  const struct = restruct.molecule
+  const ReStruct = this.editor.render.ctab
+  const struct = ReStruct.molecule
   const ci = dragCtx.item
 
   /* after moving around bond */
   if (dragCtx.action && ci && ci.map === 'bonds') {
-    dragCtx.action.perform(restruct) // revert drag action
+    dragCtx.action.perform(ReStruct) // revert drag action
     fromTemplateOnBondAction(
-      restruct,
+      ReStruct,
       this.template,
       ci.id,
       this.editor.event,
@@ -252,7 +252,7 @@ TemplateTool.prototype.mouseup = function (event) {
       true
     ).then(([action, pasteItems]) => {
       const mergeItems = getItemsToFuse(this.editor, pasteItems)
-      action = fromItemsFuse(restruct, mergeItems).mergeWith(action)
+      action = fromItemsFuse(ReStruct, mergeItems).mergeWith(action)
       this.editor.update(action)
     })
     return true
@@ -266,14 +266,14 @@ TemplateTool.prototype.mouseup = function (event) {
     if (!ci) {
       //  ci.type == 'Canvas'
       ;[action, pasteItems] = fromTemplateOnCanvas(
-        restruct,
+        ReStruct,
         this.template,
         dragCtx.xy0,
         0
       )
       dragCtx.action = action
     } else if (ci.map === 'atoms') {
-      const degree = restruct.atoms.get(ci.id).a.neighbors.length
+      const degree = ReStruct.atoms.get(ci.id).a.neighbors.length
       let angle
       let extraBond
 
@@ -298,7 +298,7 @@ TemplateTool.prototype.mouseup = function (event) {
       }
 
       ;[action, pasteItems] = fromTemplateOnAtom(
-        restruct,
+        ReStruct,
         this.template,
         ci.id,
         angle,
@@ -307,7 +307,7 @@ TemplateTool.prototype.mouseup = function (event) {
       dragCtx.action = action
     } else if (ci.map === 'bonds') {
       fromTemplateOnBondAction(
-        restruct,
+        ReStruct,
         this.template,
         ci.id,
         this.editor.event,
@@ -316,7 +316,7 @@ TemplateTool.prototype.mouseup = function (event) {
       ).then(([action, pasteItems]) => {
         // eslint-disable-line no-shadow
         const mergeItems = getItemsToFuse(this.editor, pasteItems)
-        action = fromItemsFuse(restruct, mergeItems).mergeWith(action)
+        action = fromItemsFuse(ReStruct, mergeItems).mergeWith(action)
         this.editor.update(action)
       })
 
@@ -329,8 +329,8 @@ TemplateTool.prototype.mouseup = function (event) {
   if (!dragCtx.mergeItems && pasteItems)
     dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
   dragCtx.action = dragCtx.action
-    ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
-    : fromItemsFuse(restruct, dragCtx.mergeItems)
+    ? fromItemsFuse(ReStruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
+    : fromItemsFuse(ReStruct, dragCtx.mergeItems)
 
   this.editor.hover(null)
   const completeAction = dragCtx.action

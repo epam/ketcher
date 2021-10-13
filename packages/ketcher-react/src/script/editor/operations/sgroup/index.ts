@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct, { ReSGroup } from '../../../render/restruct'
-import { SGroup, Vec2, FunctionalGroup } from 'ketcher-core'
+import { FunctionalGroup, ReSGroup, ReStruct, SGroup, Vec2 } from 'ketcher-core'
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
@@ -50,8 +49,8 @@ class SGroupCreate extends BaseOperation {
     }
   }
 
-  execute(restruct: Restruct) {
-    const struct = restruct.molecule
+  execute(ReStruct: ReStruct) {
+    const struct = ReStruct.molecule
     const sgroup = new SGroup(this.data.type)
     const { sgid, pp, expanded, name } = this.data
 
@@ -70,9 +69,9 @@ class SGroupCreate extends BaseOperation {
       sgroup.data.name = name
     }
 
-    restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)))
+    ReStruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)))
     if (FunctionalGroup.isFunctionalGroup(sgroup)) {
-      restruct.molecule.functionalGroups.add(
+      ReStruct.molecule.functionalGroups.add(
         new FunctionalGroup(sgroup.data.name, sgroup.id, sgroup.expanded)
       )
     }
@@ -94,26 +93,26 @@ class SGroupDelete extends BaseOperation {
     this.data = { sgid: sgroupId }
   }
 
-  execute(restruct: Restruct) {
-    const struct = restruct.molecule
+  execute(ReStruct: ReStruct) {
+    const struct = ReStruct.molecule
     const { sgid } = this.data
-    const sgroup = restruct.sgroups.get(sgid)
-    const sgroupData = restruct.sgroupData.get(sgid)
+    const sgroup = ReStruct.sgroups.get(sgid)
+    const sgroupData = ReStruct.sgroupData.get(sgid)
     if (!sgroup) return
     this.data.type = sgroup.item.type
     this.data.pp = sgroup.item.pp
 
     if (sgroup.item.type === 'DAT' && sgroupData) {
-      restruct.clearVisel(sgroupData.visel)
-      restruct.sgroupData.delete(sgid)
+      ReStruct.clearVisel(sgroupData.visel)
+      ReStruct.sgroupData.delete(sgid)
     }
 
-    restruct.clearVisel(sgroup.visel)
+    ReStruct.clearVisel(sgroup.visel)
     if (sgroup.item.atoms.length !== 0) {
       throw new Error('S-Group not empty!')
     }
 
-    restruct.sgroups.delete(sgid)
+    ReStruct.sgroups.delete(sgid)
     struct.sgroups.delete(sgid)
   }
 

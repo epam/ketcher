@@ -16,7 +16,7 @@
 
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
-import Restruct from '../../render/restruct'
+import { ReStruct } from 'ketcher-core'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -34,14 +34,14 @@ class FragmentAddStereoAtom extends BaseOperation {
     this.data = { frid: fragmentId, aid: atomId }
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { aid, frid } = this.data
 
-    const frag = restruct.molecule.frags.get(frid)
+    const frag = ReStruct.molecule.frags.get(frid)
     if (frag) {
-      frag.updateStereoAtom(restruct.molecule, aid, frid, true)
+      frag.updateStereoAtom(ReStruct.molecule, aid, frid, true)
 
-      BaseOperation.invalidateEnhancedFlag(restruct, frid)
+      BaseOperation.invalidateEnhancedFlag(ReStruct, frid)
     }
   }
 
@@ -58,14 +58,14 @@ class FragmentDeleteStereoAtom extends BaseOperation {
     this.data = { frid: fragmentId, aid: atomId }
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { aid, frid } = this.data
 
-    const frag = restruct.molecule.frags.get(frid)
+    const frag = ReStruct.molecule.frags.get(frid)
     if (frag) {
-      frag.updateStereoAtom(restruct.molecule, aid, frid, false)
+      frag.updateStereoAtom(ReStruct.molecule, aid, frid, false)
 
-      BaseOperation.invalidateEnhancedFlag(restruct, frid)
+      BaseOperation.invalidateEnhancedFlag(ReStruct, frid)
     }
   }
 

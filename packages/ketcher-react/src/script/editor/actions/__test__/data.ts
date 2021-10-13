@@ -1,6 +1,4 @@
-import { Pool } from 'ketcher-core'
-import ReAtom from '../../../render/restruct/reatom'
-import { ReBond } from '../../../render/restruct'
+import { Pool, ReAtom, ReBond } from 'ketcher-core'
 
 const mockAtoms = [
   {
@@ -681,7 +679,7 @@ const molecule = {
   setImplicitHydrogen() {}
 }
 
-export const restruct = {
+export const ReStruct = {
   atoms: new Map(),
   bonds: new Map(),
   molecule: molecule,
@@ -697,10 +695,10 @@ export const restruct = {
 }
 
 molecule.atoms.forEach((atom, aid) => {
-  restruct.atoms.set(aid, new ReAtom(atom))
+  ReStruct.atoms.set(aid, new ReAtom(atom))
 })
 molecule.bonds.forEach((bond, bid) => {
-  restruct.bonds.set(bid, new ReBond(bond))
+  ReStruct.bonds.set(bid, new ReBond(bond))
 })
 
 export const singleBond = { type: 1, stereo: 0 }

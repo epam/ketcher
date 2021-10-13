@@ -47,7 +47,7 @@ function changeAtomsStereoAction(
   stereoAtoms: number[]
 ): Promise<Action> {
   const struct = editor.struct()
-  const restruct = editor.render.ctab
+  const ReStruct = editor.render.ctab
   const stereoLabels = stereoAtoms.map(stereoAtom => {
     const atom = struct.atoms.get(stereoAtom)
     return atom && atom.stereoLabel
@@ -63,11 +63,11 @@ function changeAtomsStereoAction(
     const action = stereoAtoms.reduce(
       (acc, stereoAtom) => {
         return acc.mergeWith(
-          fromStereoFlagUpdate(restruct, struct.atoms.get(stereoAtom)?.fragment)
+          fromStereoFlagUpdate(ReStruct, struct.atoms.get(stereoAtom)?.fragment)
         )
       },
       fromAtomsAttrs(
-        restruct,
+        ReStruct,
         stereoAtoms,
         {
           stereoLabel

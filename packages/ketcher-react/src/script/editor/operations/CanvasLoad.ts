@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct, Struct } from 'ketcher-core'
+
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
-import Restruct from '../../render/restruct'
-import { Struct } from 'ketcher-core'
 
 export class CanvasLoad extends BaseOperation {
   data: {
@@ -29,10 +29,10 @@ export class CanvasLoad extends BaseOperation {
     this.data = { struct }
   }
 
-  execute(restruct: Restruct) {
-    const oldStruct = restruct.molecule
-    restruct.clearVisels() // TODO: What is it?
-    restruct.render.setMolecule(this.data.struct)
+  execute(ReStruct: ReStruct) {
+    const oldStruct = ReStruct.molecule
+    ReStruct.clearVisels() // TODO: What is it?
+    ReStruct.render.setMolecule(this.data.struct)
     this.data.struct = oldStruct
   }
 

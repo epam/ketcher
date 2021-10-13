@@ -22,20 +22,20 @@ import {
 
 import Action from '../shared/action'
 
-export function fromSimpleObjectDeletion(restruct, id) {
+export function fromSimpleObjectDeletion(ReStruct, id) {
   const action = new Action()
   action.addOp(new SimpleObjectDelete(id))
-  return action.perform(restruct)
+  return action.perform(ReStruct)
 }
 
-export function fromSimpleObjectAddition(restruct, pos, mode, toCircle) {
+export function fromSimpleObjectAddition(ReStruct, pos, mode, toCircle) {
   var action = new Action()
   action.addOp(new SimpleObjectAdd(pos, mode, toCircle))
-  return action.perform(restruct)
+  return action.perform(ReStruct)
 }
 
 export function fromSimpleObjectResizing(
-  restruct,
+  ReStruct,
   id,
   d,
   current,
@@ -44,5 +44,5 @@ export function fromSimpleObjectResizing(
 ) {
   var action = new Action()
   action.addOp(new SimpleObjectResize(id, d, current, anchor, false, toCircle))
-  return action.perform(restruct)
+  return action.perform(ReStruct)
 }

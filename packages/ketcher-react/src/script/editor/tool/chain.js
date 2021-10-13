@@ -55,7 +55,7 @@ ChainTool.prototype.mousedown = function (event) {
 ChainTool.prototype.mousemove = function (event) {
   // eslint-disable-line max-statements
   const editor = this.editor
-  const restruct = editor.render.ctab
+  const ReStruct = editor.render.ctab
   const dragCtx = this.dragCtx
 
   editor.hover(this.editor.findItem(event, ['atoms', 'bonds']))
@@ -66,9 +66,9 @@ ChainTool.prototype.mousemove = function (event) {
   editor.selection(null)
 
   if (!dragCtx.item || dragCtx.item.map === 'atoms') {
-    if (dragCtx.action) dragCtx.action.perform(restruct)
+    if (dragCtx.action) dragCtx.action.perform(ReStruct)
 
-    const atoms = restruct.molecule.atoms
+    const atoms = ReStruct.molecule.atoms
 
     const pos0 = dragCtx.item ? atoms.get(dragCtx.item.id).pp : dragCtx.xy0
 
@@ -80,7 +80,7 @@ ChainTool.prototype.mousemove = function (event) {
       : utils.fracAngle(pos0, pos1)
 
     const [action, newItems] = fromChain(
-      restruct,
+      ReStruct,
       pos0,
       angle,
       sectCount,
@@ -109,22 +109,22 @@ ChainTool.prototype.mouseup = function () {
   delete this.dragCtx
 
   const editor = this.editor
-  const restruct = editor.render.ctab
-  const struct = restruct.molecule
+  const ReStruct = editor.render.ctab
+  const struct = ReStruct.molecule
 
   if (dragCtx.stopTapping) dragCtx.stopTapping()
 
   if (!dragCtx.action && dragCtx.item && dragCtx.item.map === 'bonds') {
     const bond = struct.bonds.get(dragCtx.item.id)
 
-    dragCtx.action = bondChangingAction(restruct, dragCtx.item.id, bond, {
+    dragCtx.action = bondChangingAction(ReStruct, dragCtx.item.id, bond, {
       type: Bond.PATTERN.TYPE.SINGLE,
       stereo: Bond.PATTERN.STEREO.NONE
     })
   } else {
     dragCtx.action = dragCtx.action
-      ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
-      : fromItemsFuse(restruct, dragCtx.mergeItems)
+      ? fromItemsFuse(ReStruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
+      : fromItemsFuse(ReStruct, dragCtx.mergeItems)
   }
 
   editor.selection(null)

@@ -20,7 +20,7 @@ import Action from '../shared/action'
 import { BondAttr } from '../operations'
 
 /**
- * @param restruct { ReStruct }
+ * @param ReStruct { ReStruct }
  * @param events { Array<PipelineSubscription> }
  * @param bid { number }
  * @param template {{
@@ -31,14 +31,14 @@ import { BondAttr } from '../operations'
  * @returns { Promise }
  */
 export function fromAromaticTemplateOnBond(
-  restruct,
+  ReStruct,
   template,
   bid,
   events,
   simpleFusing
 ) {
   const tmpl = template.molecule
-  const struct = restruct.molecule
+  const struct = ReStruct.molecule
 
   const frid = struct.getBondFragment(bid)
   const beforeMerge = getFragmentWithBondMap(struct, frid)
@@ -48,7 +48,7 @@ export function fromAromaticTemplateOnBond(
   let action = new Action()
 
   if (true) {
-    action = simpleFusing(restruct, template, bid)
+    action = simpleFusing(ReStruct, template, bid)
     return Promise.resolve(action)
   }
 
@@ -63,20 +63,20 @@ export function fromAromaticTemplateOnBond(
       .then(res => molSerialzer.deserialize(res.struct))
   ])
     .then(([astruct, atmpl]) => {
-      // aromatize restruct fragment
+      // aromatize ReStruct fragment
       const aromatizeAction = fromAromatize(
-        restruct,
+        ReStruct,
         astruct,
         beforeMerge.bondMap
       )
       // merge template with fragment
       const aromTemplate = { bid: template.bid, molecule: atmpl }
-      const templateFusingAction = simpleFusing(restruct, aromTemplate, bid)
+      const templateFusingAction = simpleFusing(ReStruct, aromTemplate, bid)
       pasteItems = templateFusingAction[1]
 
       action = templateFusingAction[0].mergeWith(aromatizeAction)
 
-      afterMerge = getFragmentWithBondMap(restruct.molecule, frid)
+      afterMerge = getFragmentWithBondMap(ReStruct.molecule, frid)
 
       return events.dearomatizeStruct
         .dispatch(afterMerge.frag)
@@ -88,9 +88,9 @@ export function fromAromaticTemplateOnBond(
           throw Error('Bad dearomatize')
       })
 
-      // dearomatize restruct fragment
+      // dearomatize ReStruct fragment
       const dearomatizeAction = fromDearomatize(
-        restruct,
+        ReStruct,
         destruct,
         afterMerge.bondMap
       )
@@ -100,13 +100,13 @@ export function fromAromaticTemplateOnBond(
     })
     .catch(err => {
       console.info(err.message)
-      action.perform(restruct) // revert actions if error
+      action.perform(ReStruct) // revert actions if error
 
-      return simpleFusing(restruct, template, bid)
+      return simpleFusing(ReStruct, template, bid)
     })
 }
 
-function fromAromatize(restruct, astruct, bondMap) {
+function fromAromatize(ReStruct, astruct, bondMap) {
   const action = new Action()
 
   astruct.bonds.forEach((bond, bid) => {
@@ -116,7 +116,7 @@ function fromAromatize(restruct, astruct, bondMap) {
         bondMap.get(bid),
         'type',
         Bond.PATTERN.TYPE.AROMATIC
-      ).perform(restruct)
+      ).perform(ReStruct)
     )
   })
 
@@ -124,17 +124,17 @@ function fromAromatize(restruct, astruct, bondMap) {
 }
 
 /**
- * @param restruct { ReStruct }
+ * @param ReStruct { ReStruct }
  * @param dastruct { ReStruct }
  * @param bondMap { Map<number, number> }
  * @returns { Action }
  */
-function fromDearomatize(restruct, dastruct, bondMap) {
+function fromDearomatize(ReStruct, dastruct, bondMap) {
   const action = new Action()
 
   dastruct.bonds.forEach((bond, bid) => {
     action.addOp(
-      new BondAttr(bondMap.get(bid), 'type', bond.type).perform(restruct)
+      new BondAttr(bondMap.get(bid), 'type', bond.type).perform(ReStruct)
     )
   })
 

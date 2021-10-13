@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RxnArrow, RxnArrowMode, Vec2 } from 'ketcher-core'
+import { ReRxnArrow, RxnArrow, RxnArrowMode, Vec2 } from 'ketcher-core'
 
 import Base from '../base'
 import { OperationType } from '../OperationType'
-import { ReRxnArrow } from '../../../render/restruct'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -40,8 +39,8 @@ class RxnArrowAdd extends Base {
     this.data = { pos, mode, id }
   }
 
-  execute(restruct: any): void {
-    const struct = restruct.molecule
+  execute(ReStruct: any): void {
+    const struct = ReStruct.molecule
     const item = new RxnArrow({ mode: this.data.mode })
 
     if (this.data.id == null) {
@@ -53,7 +52,7 @@ class RxnArrowAdd extends Base {
 
     const itemId = this.data.id!
 
-    restruct.rxnArrows.set(itemId, new ReRxnArrow(item))
+    ReStruct.rxnArrows.set(itemId, new ReRxnArrow(item))
 
     const positions = [...this.data.pos]
 
@@ -62,7 +61,7 @@ class RxnArrowAdd extends Base {
       positions.map(p => new Vec2(p))
     )
 
-    Base.invalidateItem(restruct, 'rxnArrows', itemId, 1)
+    Base.invalidateItem(ReStruct, 'rxnArrows', itemId, 1)
   }
   invert(): Base {
     return new RxnArrowDelete(this.data.id!)
@@ -85,16 +84,16 @@ class RxnArrowDelete extends Base {
     this.performed = false
   }
 
-  execute(restruct: any): void {
-    const struct = restruct.molecule
+  execute(ReStruct: any): void {
+    const struct = ReStruct.molecule
     const item = struct.rxnArrows.get(this.data.id) as any
     this.data.pos = item.pos
     this.data.mode = item.mode
     this.performed = true
 
-    restruct.markItemRemoved()
-    restruct.clearVisel(restruct.rxnArrows.get(this.data.id).visel)
-    restruct.rxnArrows.delete(this.data.id)
+    ReStruct.markItemRemoved()
+    ReStruct.clearVisel(ReStruct.rxnArrows.get(this.data.id).visel)
+    ReStruct.rxnArrows.delete(this.data.id)
 
     struct.rxnArrows.delete(this.data.id)
   }

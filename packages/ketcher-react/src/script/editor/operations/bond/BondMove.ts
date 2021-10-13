@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct, Scale } from 'ketcher-core'
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
-import { Scale } from 'ketcher-core'
 
 export class BondMove extends BaseOperation {
   data: {
@@ -30,12 +30,12 @@ export class BondMove extends BaseOperation {
     this.data = { bid: bondId, d }
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { bid, d } = this.data
-    const bond = restruct.bonds.get(bid)
+    const bond = ReStruct.bonds.get(bid)
     if (!bond) return
 
-    const scaled = Scale.obj2scaled(d, restruct.render.options)
+    const scaled = Scale.obj2scaled(d, ReStruct.render.options)
     bond.visel.translate(scaled)
     this.data.d = d.negated()
   }

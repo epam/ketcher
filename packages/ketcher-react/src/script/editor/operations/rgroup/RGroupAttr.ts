@@ -16,7 +16,7 @@
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
+import { ReStruct } from 'ketcher-core'
 
 type Data = {
   rgid: any
@@ -34,10 +34,10 @@ export class RGroupAttr extends BaseOperation {
     this.data2 = null
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { rgid, attribute, value } = this.data
 
-    const rgp = restruct.molecule.rgroups.get(rgid)!
+    const rgp = ReStruct.molecule.rgroups.get(rgid)!
     if (!this.data2) {
       this.data2 = {
         rgid,
@@ -48,7 +48,7 @@ export class RGroupAttr extends BaseOperation {
 
     rgp[attribute] = value
 
-    BaseOperation.invalidateItem(restruct, 'rgroups', rgid)
+    BaseOperation.invalidateItem(ReStruct, 'rgroups', rgid)
   }
 
   invert() {
@@ -59,9 +59,9 @@ export class RGroupAttr extends BaseOperation {
     return inverted
   }
 
-  isDummy(restruct: Restruct) {
+  isDummy(ReStruct: ReStruct) {
     const { rgid, attribute, value } = this.data
-    const rgroup = restruct.molecule.rgroups.get(rgid)!
+    const rgroup = ReStruct.molecule.rgroups.get(rgid)!
     return rgroup[attribute] === value
   }
 }

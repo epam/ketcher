@@ -104,8 +104,8 @@ SGroupTool.prototype.cancel = function () {
 }
 
 export function sgroupDialog(editor, id, defaultType) {
-  const restruct = editor.render.ctab
-  const struct = restruct.molecule
+  const ReStruct = editor.render.ctab
+  const struct = ReStruct.molecule
   const selection = editor.selection() || {}
   const sg = id !== null ? struct.sgroups.get(id) : null
   const type = sg ? sg.type : defaultType
@@ -119,10 +119,10 @@ export function sgroupDialog(editor, id, defaultType) {
   let attrs = null
   if (sg) {
     attrs = sg.getAttrs()
-    attrs.context = getContextBySgroup(restruct, sg.atoms)
+    attrs.context = getContextBySgroup(ReStruct, sg.atoms)
   } else {
     attrs = {
-      context: getContextBySelection(restruct, selection)
+      context: getContextBySelection(ReStruct, selection)
     }
   }
 
@@ -153,11 +153,11 @@ export function sgroupDialog(editor, id, defaultType) {
 
         if (isDataSg) {
           const action = fromSeveralSgroupAddition(
-            restruct,
+            ReStruct,
             newSg.type,
             sg.atoms,
             newSg.attrs
-          ).mergeWith(fromSgroupDeletion(restruct, id))
+          ).mergeWith(fromSgroupDeletion(ReStruct, id))
 
           editor.update(action)
           editor.selection(selection)
@@ -172,14 +172,14 @@ export function sgroupDialog(editor, id, defaultType) {
     .catch(() => null)
 }
 
-function getContextBySgroup(restruct, sgAtoms) {
-  const struct = restruct.molecule
+function getContextBySgroup(ReStruct, sgAtoms) {
+  const struct = ReStruct.molecule
 
   if (sgAtoms.length === 1) return SgContexts.Atom
 
-  if (manyComponentsSelected(restruct, sgAtoms)) return SgContexts.Multifragment
+  if (manyComponentsSelected(ReStruct, sgAtoms)) return SgContexts.Multifragment
 
-  if (singleComponentSelected(restruct, sgAtoms)) return SgContexts.Fragment
+  if (singleComponentSelected(ReStruct, sgAtoms)) return SgContexts.Fragment
 
   const atomSet = new Pile(sgAtoms)
 
@@ -190,8 +190,8 @@ function getContextBySgroup(restruct, sgAtoms) {
   return anyChainedBonds(sgBonds) ? SgContexts.Group : SgContexts.Bond
 }
 
-function getContextBySelection(restruct, selection) {
-  const struct = restruct.molecule
+function getContextBySelection(ReStruct, selection) {
+  const struct = ReStruct.molecule
 
   if (selection.atoms && !selection.bonds) return SgContexts.Atom
 
@@ -206,23 +206,23 @@ function getContextBySelection(restruct, selection) {
     bond => atomSet.has(bond.begin) && atomSet.has(bond.end)
   )
 
-  if (singleComponentSelected(restruct, selection.atoms) && allBondsSelected)
+  if (singleComponentSelected(ReStruct, selection.atoms) && allBondsSelected)
     return SgContexts.Fragment
 
-  return manyComponentsSelected(restruct, selection.atoms)
+  return manyComponentsSelected(ReStruct, selection.atoms)
     ? SgContexts.Multifragment
     : SgContexts.Group
 }
 
 function fromContextType(id, editor, newSg, currSelection) {
-  const restruct = editor.render.ctab
-  const sg = restruct.molecule.sgroups.get(id)
+  const ReStruct = editor.render.ctab
+  const sg = ReStruct.molecule.sgroups.get(id)
   const sourceAtoms = (sg && sg.atoms) || currSelection.atoms || []
   const context = newSg.attrs.context
 
   const result = fromSgroupAction(
     context,
-    restruct,
+    ReStruct,
     newSg,
     sourceAtoms,
     currSelection
@@ -231,7 +231,7 @@ function fromContextType(id, editor, newSg, currSelection) {
   result.selection = result.selection || currSelection
 
   if (id !== null && id !== undefined)
-    result.action = result.action.mergeWith(fromSgroupDeletion(restruct, id))
+    result.action = result.action.mergeWith(fromSgroupDeletion(ReStruct, id))
 
   editor.selection(result.selection)
 
@@ -256,18 +256,18 @@ function anyChainedBonds(bonds) {
   return false
 }
 
-function singleComponentSelected(restruct, atoms) {
-  return countOfSelectedComponents(restruct, atoms) === 1
+function singleComponentSelected(ReStruct, atoms) {
+  return countOfSelectedComponents(ReStruct, atoms) === 1
 }
 
-function manyComponentsSelected(restruct, atoms) {
-  return countOfSelectedComponents(restruct, atoms) > 1
+function manyComponentsSelected(ReStruct, atoms) {
+  return countOfSelectedComponents(ReStruct, atoms) > 1
 }
 
-function countOfSelectedComponents(restruct, atoms) {
+function countOfSelectedComponents(ReStruct, atoms) {
   const atomSet = new Pile(atoms)
 
-  return Array.from(restruct.connectedComponents.values()).reduce(
+  return Array.from(ReStruct.connectedComponents.values()).reduce(
     (acc, component) => acc + (atomSet.isSuperset(component) ? 1 : 0),
     0
   )

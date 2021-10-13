@@ -16,7 +16,7 @@
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
+import { ReStruct } from 'ketcher-core'
 
 export class SGroupDataMove extends BaseOperation {
   data: {
@@ -29,15 +29,15 @@ export class SGroupDataMove extends BaseOperation {
     this.data = { id, d }
   }
 
-  execute(restruct: Restruct) {
+  execute(ReStruct: ReStruct) {
     const { d, id } = this.data
-    const { sgroups } = restruct.molecule
+    const { sgroups } = ReStruct.molecule
 
     sgroups.get(id)!.pp?.add_(d) // eslint-disable-line no-underscore-dangle
     this.data.d = d.negated()
 
     // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway
-    BaseOperation.invalidateItem(restruct, 'sgroupData', id, 1)
+    BaseOperation.invalidateItem(ReStruct, 'sgroupData', id, 1)
   }
 
   invert() {

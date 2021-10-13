@@ -16,7 +16,7 @@
 
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
-import Restruct from '../../render/restruct'
+import { ReStruct } from 'ketcher-core'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -34,8 +34,8 @@ class UpdateIfThen extends BaseOperation {
     this.skipRgids = skipRgids || []
   }
 
-  execute(restruct: Restruct) {
-    const struct = restruct.molecule
+  execute(ReStruct: ReStruct) {
+    const struct = ReStruct.molecule
 
     struct.rgroups.forEach((rg, rgid) => {
       if (rg.ifthen === this.rgid_old && !this.skipRgids.includes(rgid)) {
@@ -63,8 +63,8 @@ class RestoreIfThen extends BaseOperation {
     this.ifThenHistory = history || new Map()
   }
 
-  execute(restruct: Restruct) {
-    const struct = restruct.molecule
+  execute(ReStruct: ReStruct) {
+    const struct = ReStruct.molecule
 
     this.ifThenHistory.forEach((rg, rgid) => {
       const rgValue = struct.rgroups.get(rgid)!

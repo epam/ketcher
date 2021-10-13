@@ -28,7 +28,7 @@ import ReSimpleObject from './resimpleObject'
 import ReStruct from './restruct'
 import ReText from './retext'
 
-export default ReStruct
+export * from './generalEnumTypes'
 export {
   ReAtom,
   ReBond,
@@ -39,5 +39,6 @@ export {
   ReEnhancedFlag,
   ReSGroup,
   ReSimpleObject,
-  ReText
+  ReText,
+  ReStruct
 }

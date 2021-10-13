@@ -10,7 +10,7 @@
     "serve:remote": "cd example && yarn serve:remote",
     "serve:standalone": "cd example && yarn serve:standalone",
     "serve": "run-p serve:*",
-    "audit:fix": "yarn-audit-fix"
+    "audit:fix": "npx yarn-audit-fix"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
@@ -41,8 +41,7 @@
     "stylelint-config-recommended-scss": "^4.3.0",
     "stylelint-config-standard": "^22.0.0",
     "stylelint-prettier": "^1.1.2",
-    "stylelint-scss": "^3.20.1",
-    "yarn-audit-fix": "^7.0.8"
+    "stylelint-scss": "^3.20.1"
   },
   "husky": {
     "hooks": {

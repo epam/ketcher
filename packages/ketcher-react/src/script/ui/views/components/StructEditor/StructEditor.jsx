@@ -132,8 +132,11 @@ class StructEditor extends Component {
 
     return (
       <div className={clsx(classes.canvas, className)}>
-        <ContextMenuTrigger id="fgid">
-          <Tag onMouseDown={event => event.preventDefault()} {...props}>
+        <ContextMenuTrigger id="fgid" className={clsx(classes.contextmenu)}>
+          <Tag
+            className={clsx(classes.contextmenu)}
+            onMouseDown={event => event.preventDefault()}
+            {...props}>
             <div
               ref={this.editorRef}
               className={clsx(classes.intermediateCanvas)}

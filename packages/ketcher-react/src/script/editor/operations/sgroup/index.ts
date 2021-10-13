@@ -49,8 +49,8 @@ class SGroupCreate extends BaseOperation {
     }
   }
 
-  execute(ReStruct: ReStruct) {
-    const struct = ReStruct.molecule
+  execute(restruct: ReStruct) {
+    const struct = restruct.molecule
     const sgroup = new SGroup(this.data.type)
     const { sgid, pp, expanded, name } = this.data
 
@@ -69,9 +69,9 @@ class SGroupCreate extends BaseOperation {
       sgroup.data.name = name
     }
 
-    ReStruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)))
+    restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)))
     if (FunctionalGroup.isFunctionalGroup(sgroup)) {
-      ReStruct.molecule.functionalGroups.add(
+      restruct.molecule.functionalGroups.add(
         new FunctionalGroup(sgroup.data.name, sgroup.id, sgroup.expanded)
       )
     }
@@ -93,26 +93,26 @@ class SGroupDelete extends BaseOperation {
     this.data = { sgid: sgroupId }
   }
 
-  execute(ReStruct: ReStruct) {
-    const struct = ReStruct.molecule
+  execute(restruct: ReStruct) {
+    const struct = restruct.molecule
     const { sgid } = this.data
-    const sgroup = ReStruct.sgroups.get(sgid)
-    const sgroupData = ReStruct.sgroupData.get(sgid)
+    const sgroup = restruct.sgroups.get(sgid)
+    const sgroupData = restruct.sgroupData.get(sgid)
     if (!sgroup) return
     this.data.type = sgroup.item.type
     this.data.pp = sgroup.item.pp
 
     if (sgroup.item.type === 'DAT' && sgroupData) {
-      ReStruct.clearVisel(sgroupData.visel)
-      ReStruct.sgroupData.delete(sgid)
+      restruct.clearVisel(sgroupData.visel)
+      restruct.sgroupData.delete(sgid)
     }
 
-    ReStruct.clearVisel(sgroup.visel)
+    restruct.clearVisel(sgroup.visel)
     if (sgroup.item.atoms.length !== 0) {
       throw new Error('S-Group not empty!')
     }
 
-    ReStruct.sgroups.delete(sgid)
+    restruct.sgroups.delete(sgid)
     struct.sgroups.delete(sgid)
   }
 

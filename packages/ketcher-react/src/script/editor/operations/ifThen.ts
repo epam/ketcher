@@ -34,8 +34,8 @@ class UpdateIfThen extends BaseOperation {
     this.skipRgids = skipRgids || []
   }
 
-  execute(ReStruct: ReStruct) {
-    const struct = ReStruct.molecule
+  execute(restruct: ReStruct) {
+    const struct = restruct.molecule
 
     struct.rgroups.forEach((rg, rgid) => {
       if (rg.ifthen === this.rgid_old && !this.skipRgids.includes(rgid)) {
@@ -63,8 +63,8 @@ class RestoreIfThen extends BaseOperation {
     this.ifThenHistory = history || new Map()
   }
 
-  execute(ReStruct: ReStruct) {
-    const struct = ReStruct.molecule
+  execute(restruct: ReStruct) {
+    const struct = restruct.molecule
 
     this.ifThenHistory.forEach((rg, rgid) => {
       const rgValue = struct.rgroups.get(rgid)!

@@ -31,22 +31,22 @@ export class AtomMove extends BaseOperation {
     this.data = { aid: atomId, d, noinvalidate }
   }
 
-  execute(ReStruct: ReStruct) {
-    const struct = ReStruct.molecule
+  execute(restruct: ReStruct) {
+    const struct = restruct.molecule
     const { aid, d } = this.data
     const atom = struct.atoms.get(aid)
     if (!atom) return
     atom!.pp.add_(d) // eslint-disable-line no-underscore-dangle
-    const reatom = ReStruct.atoms.get(aid)
+    const reatom = restruct.atoms.get(aid)
     if (reatom) {
-      const scaled = Scale.obj2scaled(d, ReStruct.render.options)
+      const scaled = Scale.obj2scaled(d, restruct.render.options)
       reatom.visel.translate(scaled)
     }
 
     this.data.d = d.negated()
 
     if (!this.data.noinvalidate) {
-      BaseOperation.invalidateAtom(ReStruct, aid, 1)
+      BaseOperation.invalidateAtom(restruct, aid, 1)
     }
   }
 

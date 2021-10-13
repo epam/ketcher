@@ -19,20 +19,20 @@ import { Vec2 } from 'ketcher-core'
 import closest from '../shared/closest'
 import { difference } from 'lodash'
 
-export function atomGetAttr(ReStruct, aid, name) {
-  return ReStruct.molecule.atoms.get(aid)[name]
+export function atomGetAttr(restruct, aid, name) {
+  return restruct.molecule.atoms.get(aid)[name]
 }
 
-export function atomGetDegree(ReStruct, aid) {
-  return ReStruct.atoms.get(aid).a.neighbors.length
+export function atomGetDegree(restruct, aid) {
+  return restruct.atoms.get(aid).a.neighbors.length
 }
 
-export function atomGetSGroups(ReStruct, aid) {
-  return Array.from(ReStruct.atoms.get(aid).a.sgs)
+export function atomGetSGroups(restruct, aid) {
+  return Array.from(restruct.atoms.get(aid).a.sgs)
 }
 
-export function atomGetPos(ReStruct, id) {
-  return ReStruct.molecule.atoms.get(id).pp
+export function atomGetPos(restruct, id) {
+  return restruct.molecule.atoms.get(id).pp
 }
 
 export function findStereoAtoms(struct, aids) {
@@ -57,18 +57,18 @@ export function structSelection(struct) {
 }
 
 // Get new atom id/label and pos for bond being added to existing atom
-export function atomForNewBond(ReStruct, id, bond) {
+export function atomForNewBond(restruct, id, bond) {
   // eslint-disable-line max-statements
   const neighbours = []
-  const pos = atomGetPos(ReStruct, id)
-  const prevBondId = ReStruct.molecule.findBondId(
+  const pos = atomGetPos(restruct, id)
+  const prevBondId = restruct.molecule.findBondId(
     id,
-    ReStruct.molecule.atomGetNeighbors(id)[0].aid
+    restruct.molecule.atomGetNeighbors(id)[0].aid
   )
-  const prevBondType = ReStruct.molecule.bonds.get(prevBondId).type
+  const prevBondType = restruct.molecule.bonds.get(prevBondId).type
 
-  ReStruct.molecule.atomGetNeighbors(id).forEach(nei => {
-    const neiPos = atomGetPos(ReStruct, nei.aid)
+  restruct.molecule.atomGetNeighbors(id).forEach(nei => {
+    const neiPos = atomGetPos(restruct, nei.aid)
 
     if (Vec2.dist(pos, neiPos) < 0.1) return
 
@@ -108,15 +108,15 @@ export function atomForNewBond(ReStruct, id, bond) {
       maxAngle = -((4 * Math.PI) / 3)
 
       // zig-zag
-      const nei = ReStruct.molecule.atomGetNeighbors(id)[0]
-      if (atomGetDegree(ReStruct, nei.aid) > 1) {
+      const nei = restruct.molecule.atomGetNeighbors(id)[0]
+      if (atomGetDegree(restruct, nei.aid) > 1) {
         const neiNeighbours = []
-        const neiPos = atomGetPos(ReStruct, nei.aid)
+        const neiPos = atomGetPos(restruct, nei.aid)
         const neiV = Vec2.diff(pos, neiPos)
         const neiAngle = Math.atan2(neiV.y, neiV.x)
 
-        ReStruct.molecule.atomGetNeighbors(nei.aid).forEach(neiNei => {
-          const neiNeiPos = atomGetPos(ReStruct, neiNei.aid)
+        restruct.molecule.atomGetNeighbors(nei.aid).forEach(neiNei => {
+          const neiNeiPos = atomGetPos(restruct, neiNei.aid)
 
           if (neiNei.bid === nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1)
             return
@@ -144,7 +144,7 @@ export function atomForNewBond(ReStruct, id, bond) {
       (bond.type === Bond.PATTERN.TYPE.DOUBLE ||
         bond.type === Bond.PATTERN.TYPE.TRIPLE)
     ) {
-      const prevBondAngle = ReStruct.molecule.bonds.get(prevBondId).angle
+      const prevBondAngle = restruct.molecule.bonds.get(prevBondId).angle
       angle = (prevBondAngle * Math.PI) / 180
     } else {
       angle =
@@ -156,14 +156,14 @@ export function atomForNewBond(ReStruct, id, bond) {
 
   v.add_(pos) // eslint-disable-line no-underscore-dangle
 
-  let a = closest.atom(ReStruct, v, null, 0.1)
+  let a = closest.atom(restruct, v, null, 0.1)
   a = a === null ? { label: 'C' } : a.id
 
   return { atom: a, pos: v }
 }
 
-export function getRelSgroupsBySelection(ReStruct, selectedAtoms) {
-  return ReStruct.molecule.sgroups.filter(
+export function getRelSgroupsBySelection(restruct, selectedAtoms) {
+  return restruct.molecule.sgroups.filter(
     (sgid, sg) =>
       !sg.data.attached &&
       !sg.data.absolute &&

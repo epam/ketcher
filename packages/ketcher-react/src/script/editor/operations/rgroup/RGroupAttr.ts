@@ -34,10 +34,10 @@ export class RGroupAttr extends BaseOperation {
     this.data2 = null
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { rgid, attribute, value } = this.data
 
-    const rgp = ReStruct.molecule.rgroups.get(rgid)!
+    const rgp = restruct.molecule.rgroups.get(rgid)!
     if (!this.data2) {
       this.data2 = {
         rgid,
@@ -48,7 +48,7 @@ export class RGroupAttr extends BaseOperation {
 
     rgp[attribute] = value
 
-    BaseOperation.invalidateItem(ReStruct, 'rgroups', rgid)
+    BaseOperation.invalidateItem(restruct, 'rgroups', rgid)
   }
 
   invert() {
@@ -59,9 +59,9 @@ export class RGroupAttr extends BaseOperation {
     return inverted
   }
 
-  isDummy(ReStruct: ReStruct) {
+  isDummy(restruct: ReStruct) {
     const { rgid, attribute, value } = this.data
-    const rgroup = ReStruct.molecule.rgroups.get(rgid)!
+    const rgroup = restruct.molecule.rgroups.get(rgid)!
     return rgroup[attribute] === value
   }
 }

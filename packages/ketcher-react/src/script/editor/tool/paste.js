@@ -59,13 +59,13 @@ PasteTool.prototype.mousemove = function (event) {
 
 PasteTool.prototype.mouseup = function () {
   const editor = this.editor
-  const ReStruct = editor.render.ctab
+  const restruct = editor.render.ctab
 
   editor.selection(null)
 
   this.action = this.action
-    ? fromItemsFuse(ReStruct, this.mergeItems).mergeWith(this.action)
-    : fromItemsFuse(ReStruct, this.mergeItems)
+    ? fromItemsFuse(restruct, this.mergeItems).mergeWith(this.action)
+    : fromItemsFuse(restruct, this.mergeItems)
 
   editor.hover(null)
 

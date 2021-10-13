@@ -29,15 +29,15 @@ import Action from '../shared/action'
 import { Fragment } from 'ketcher-core'
 import utils from '../shared/utils'
 
-export function fromFlip(ReStruct, selection, dir, center) {
+export function fromFlip(restruct, selection, dir, center) {
   // eslint-disable-line max-statements
-  const struct = ReStruct.molecule
+  const struct = restruct.molecule
 
   const action = new Action()
 
   if (!selection) selection = structSelection(struct)
 
-  if (!selection.atoms) return action.perform(ReStruct)
+  if (!selection.atoms) return action.perform(restruct)
 
   const fids = selection.atoms.reduce((acc, aid) => {
     const atom = struct.atoms.get(aid)
@@ -69,7 +69,7 @@ export function fromFlip(ReStruct, selection, dir, center) {
       action.addOp(new AtomMove(aid, d))
     })
 
-    const sgroups = getRelSgroupsBySelection(ReStruct, Array.from(fragment))
+    const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment))
     sgroups.forEach(sg => {
       const d = flipItemByCenter(sg, calcCenter, dir)
       action.addOp(new SGroupDataMove(sg.id, d))
@@ -92,7 +92,7 @@ export function fromFlip(ReStruct, selection, dir, center) {
     })
   }
 
-  return action.perform(ReStruct)
+  return action.perform(restruct)
 }
 
 function flipItemByCenter(item, center, dir) {
@@ -114,9 +114,9 @@ function flipItemByCenter(item, center, dir) {
   return d
 }
 
-export function fromRotate(ReStruct, selection, center, angle) {
+export function fromRotate(restruct, selection, center, angle) {
   // eslint-disable-line
-  const struct = ReStruct.molecule
+  const struct = restruct.molecule
 
   const action = new Action()
 
@@ -129,7 +129,7 @@ export function fromRotate(ReStruct, selection, center, angle) {
     })
 
     if (!selection.sgroupData) {
-      const sgroups = getRelSgroupsBySelection(ReStruct, selection.atoms)
+      const sgroups = getRelSgroupsBySelection(restruct, selection.atoms)
 
       sgroups.forEach(sg => {
         action.addOp(
@@ -163,17 +163,17 @@ export function fromRotate(ReStruct, selection, center, angle) {
   }
 
   const stereoFlags =
-    selection.enhancedFlags || Array.from(ReStruct.enhancedFlags.keys())
+    selection.enhancedFlags || Array.from(restruct.enhancedFlags.keys())
   if (stereoFlags) {
     stereoFlags.forEach(flagId => {
       const frId = flagId
-      const frag = ReStruct.molecule.frags.get(frId)
+      const frag = restruct.molecule.frags.get(frId)
       action.addOp(
         new EnhancedFlagMove(
           flagId,
           rotateDelta(
             frag.stereoFlagPosition ||
-              Fragment.getDefaultStereoFlagPosition(ReStruct.molecule, frId),
+              Fragment.getDefaultStereoFlagPosition(restruct.molecule, frId),
             center,
             angle
           )
@@ -182,11 +182,11 @@ export function fromRotate(ReStruct, selection, center, angle) {
     })
   }
 
-  return action.perform(ReStruct)
+  return action.perform(restruct)
 }
 
-export function fromBondAlign(ReStruct, bid, dir) {
-  const struct = ReStruct.molecule
+export function fromBondAlign(restruct, bid, dir) {
+  const struct = restruct.molecule
   const bond = struct.bonds.get(bid)
   const begin = struct.atoms.get(bond.begin)
   const end = struct.atoms.get(bond.end)
@@ -199,9 +199,9 @@ export function fromBondAlign(ReStruct, bid, dir) {
   angle = dir === 'horizontal' ? -angle : Math.PI / 2 - angle
 
   if (angle === 0 || Math.abs(angle) === Math.PI)
-    return fromFlip(ReStruct, { atoms }, dir, center)
+    return fromFlip(restruct, { atoms }, dir, center)
 
-  return fromRotate(ReStruct, { atoms }, center, angle)
+  return fromRotate(restruct, { atoms }, center, angle)
 }
 
 function rotateDelta(v, center, angle) {

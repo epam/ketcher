@@ -26,10 +26,10 @@ export class CalcImplicitH extends BaseOperation {
     this.atomIds = aids
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const aIds = this.atomIds
 
-    ReStruct.molecule.setImplicitHydrogen(aIds)
+    restruct.molecule.setImplicitHydrogen(aIds)
   }
 
   invert() {

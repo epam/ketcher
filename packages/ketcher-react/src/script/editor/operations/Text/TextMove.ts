@@ -33,21 +33,21 @@ export class TextMove extends BaseOperation {
     this.data = { id, d, noinvalidate }
   }
 
-  execute(ReStruct: ReStruct): void {
-    const struct = ReStruct.molecule
+  execute(restruct: ReStruct): void {
+    const struct = restruct.molecule
     const id = this.data.id
     const difference = this.data.d
     const item = struct.texts.get(id)
 
     item?.position?.add_(difference)
-    ReStruct.texts
+    restruct.texts
       .get(id)
-      ?.visel.translate(Scale.obj2scaled(difference, ReStruct.render.options))
+      ?.visel.translate(Scale.obj2scaled(difference, restruct.render.options))
 
     this.data.d = difference.negated()
 
     if (!this.data.noinvalidate) {
-      BaseOperation.invalidateItem(ReStruct, 'texts', id, 1)
+      BaseOperation.invalidateItem(restruct, 'texts', id, 1)
     }
   }
 

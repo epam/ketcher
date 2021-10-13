@@ -35,36 +35,36 @@ export class RGroupFragment extends BaseOperation {
     this.frid = fragmentId
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     // eslint-disable-line max-statements
-    const struct = ReStruct.molecule
+    const struct = restruct.molecule
     this.rgid_old =
       this.rgid_old || RGroup.findRGroupByFragment(struct.rgroups, this.frid)
 
     this.rg_old = this.rgid_old ? struct.rgroups.get(this.rgid_old) : null
 
-    this.removeOld(struct, ReStruct)
-    this.setNew(struct, ReStruct)
+    this.removeOld(struct, restruct)
+    this.setNew(struct, restruct)
   }
 
-  private removeOld(struct: any, ReStruct: any) {
+  private removeOld(struct: any, restruct: any) {
     if (!this.rg_old) {
       return
     }
 
     this.rg_old.frags.delete(this.frid)
-    ReStruct.clearVisel(ReStruct.rgroups.get(this.rgid_old).visel)
+    restruct.clearVisel(restruct.rgroups.get(this.rgid_old).visel)
 
     if (this.rg_old.frags.size === 0) {
-      ReStruct.rgroups.delete(this.rgid_old)
+      restruct.rgroups.delete(this.rgid_old)
       struct.rgroups.delete(this.rgid_old)
-      ReStruct.markItemRemoved()
+      restruct.markItemRemoved()
     } else {
-      ReStruct.markItem('rgroups', this.rgid_old, 1)
+      restruct.markItem('rgroups', this.rgid_old, 1)
     }
   }
 
-  private setNew(struct: any, ReStruct: ReStruct) {
+  private setNew(struct: any, restruct: ReStruct) {
     if (!this.rgid_new) {
       return
     }
@@ -73,9 +73,9 @@ export class RGroupFragment extends BaseOperation {
     if (!rgNew) {
       rgNew = this.rg_new || new RGroup()
       struct.rgroups.set(this.rgid_new, rgNew)
-      ReStruct.rgroups.set(this.rgid_new, new ReRGroup(rgNew))
+      restruct.rgroups.set(this.rgid_new, new ReRGroup(rgNew))
     } else {
-      ReStruct.markItem('rgroups', this.rgid_new, 1)
+      restruct.markItem('rgroups', this.rgid_new, 1)
     }
 
     rgNew.frags.add(this.frid)

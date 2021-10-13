@@ -32,18 +32,18 @@ export class RxnArrowMove extends Base {
     this.data = { id, d, noinvalidate }
   }
 
-  execute(ReStruct: any): void {
-    const struct = ReStruct.molecule
+  execute(restruct: any): void {
+    const struct = restruct.molecule
     const id = this.data.id
     const d = this.data.d
     const item = struct.rxnArrows.get(id)
     item.pos.forEach(p => p.add_(d))
-    ReStruct.rxnArrows
+    restruct.rxnArrows
       .get(id)
-      .visel.translate(Scale.obj2scaled(d, ReStruct.render.options))
+      .visel.translate(Scale.obj2scaled(d, restruct.render.options))
     this.data.d = d.negated()
     if (!this.data.noinvalidate) {
-      Base.invalidateItem(ReStruct, 'rxnArrows', id, 1)
+      Base.invalidateItem(restruct, 'rxnArrows', id, 1)
     }
   }
 

@@ -30,15 +30,15 @@ export class LoopMove extends BaseOperation {
     this.data = { id, d }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     // not sure if there should be an action to move a loop in the first place
     // but we have to somehow move the aromatic ring,
     // which is associated with the loop, rather than with any of the bonds
     const { id, d } = this.data
-    const reloop = ReStruct.reloops.get(id)
+    const reloop = restruct.reloops.get(id)
 
     if (reloop && reloop.visel) {
-      const scaled = Scale.obj2scaled(d, ReStruct.render.options)
+      const scaled = Scale.obj2scaled(d, restruct.render.options)
       reloop.visel.translate(scaled)
     }
     this.data.d = d.negated()

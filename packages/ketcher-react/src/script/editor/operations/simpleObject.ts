@@ -45,8 +45,8 @@ export class SimpleObjectAdd extends Base {
     this.data = { pos, mode, toCircle, id }
   }
 
-  execute(ReStruct: any): void {
-    const struct = ReStruct.molecule
+  execute(restruct: any): void {
+    const struct = restruct.molecule
     const item = new SimpleObject({ mode: this.data.mode })
 
     if (this.data.id == null) {
@@ -58,7 +58,7 @@ export class SimpleObjectAdd extends Base {
 
     const itemId = this.data.id!
 
-    ReStruct.simpleObjects.set(itemId, new ReSimpleObject(item))
+    restruct.simpleObjects.set(itemId, new ReSimpleObject(item))
 
     const positions = [...this.data.pos]
     if (this.data.toCircle) {
@@ -69,7 +69,7 @@ export class SimpleObjectAdd extends Base {
       positions.map(p => new Vec2(p))
     )
 
-    Base.invalidateItem(ReStruct, 'simpleObjects', itemId, 1)
+    Base.invalidateItem(restruct, 'simpleObjects', itemId, 1)
   }
   invert(): Base {
     return new SimpleObjectDelete(this.data.id!)
@@ -93,8 +93,8 @@ export class SimpleObjectDelete extends Base {
     this.performed = false
   }
 
-  execute(ReStruct: any): void {
-    const struct = ReStruct.molecule
+  execute(restruct: any): void {
+    const struct = restruct.molecule
     const item = struct.simpleObjects.get(this.data.id) as any
     //save to data current values. In future they could be used in invert for restoring simple object
     this.data.pos = item.pos
@@ -102,9 +102,9 @@ export class SimpleObjectDelete extends Base {
     this.data.toCircle = item.toCircle
     this.performed = true
 
-    ReStruct.markItemRemoved()
-    ReStruct.clearVisel(ReStruct.simpleObjects.get(this.data.id).visel)
-    ReStruct.simpleObjects.delete(this.data.id)
+    restruct.markItemRemoved()
+    restruct.clearVisel(restruct.simpleObjects.get(this.data.id).visel)
+    restruct.simpleObjects.delete(this.data.id)
 
     struct.simpleObjects.delete(this.data.id)
   }
@@ -132,18 +132,18 @@ export class SimpleObjectMove extends Base {
     super(OperationType.SIMPLE_OBJECT_MOVE)
     this.data = { id, d, noinvalidate }
   }
-  execute(ReStruct: any): void {
-    const struct = ReStruct.molecule
+  execute(restruct: any): void {
+    const struct = restruct.molecule
     const id = this.data.id
     const d = this.data.d
     const item = struct.simpleObjects.get(id)
     item.pos.forEach(p => p.add_(d))
-    ReStruct.simpleObjects
+    restruct.simpleObjects
       .get(id)
-      .visel.translate(Scale.obj2scaled(d, ReStruct.render.options))
+      .visel.translate(Scale.obj2scaled(d, restruct.render.options))
     this.data.d = d.negated()
     if (!this.data.noinvalidate) {
-      Base.invalidateItem(ReStruct, 'simpleObjects', id, 1)
+      Base.invalidateItem(restruct, 'simpleObjects', id, 1)
     }
   }
 
@@ -205,8 +205,8 @@ export class SimpleObjectResize extends Base {
     this.data = { id, d, current, anchor, noinvalidate, toCircle }
   }
 
-  execute(ReStruct: any): void {
-    const struct = ReStruct.molecule
+  execute(restruct: any): void {
+    const struct = restruct.molecule
     const id = this.data.id
     const d = this.data.d
     const current = this.data.current
@@ -254,13 +254,13 @@ export class SimpleObjectResize extends Base {
       handleRectangleChangeWithAnchor(item, anchor, current)
     } else item.pos[1].add_(d)
 
-    ReStruct.simpleObjects
+    restruct.simpleObjects
       .get(id)
-      .visel.translate(Scale.obj2scaled(d, ReStruct.render.options))
+      .visel.translate(Scale.obj2scaled(d, restruct.render.options))
     this.data.d = d.negated()
     if (!this.data.noinvalidate) {
       Base.invalidateItem(
-        ReStruct,
+        restruct,
         'simpleObjects',
         // @ts-ignore
         id,

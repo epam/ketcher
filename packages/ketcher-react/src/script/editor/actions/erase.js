@@ -38,22 +38,22 @@ import { fromBondStereoUpdate } from '../actions/bond'
 import { fromFragmentSplit } from './fragment'
 import { fromStereoAtomAttrs } from './atom'
 
-export function fromOneAtomDeletion(ReStruct, id) {
-  return fromFragmentDeletion(ReStruct, { atoms: [id] })
+export function fromOneAtomDeletion(restruct, id) {
+  return fromFragmentDeletion(restruct, { atoms: [id] })
 }
 
-function fromBondDeletion(ReStruct, bid, skipAtoms = []) {
+function fromBondDeletion(restruct, bid, skipAtoms = []) {
   let action = new Action()
-  const bond = ReStruct.molecule.bonds.get(bid)
+  const bond = restruct.molecule.bonds.get(bid)
   const atomsToRemove = []
 
   action.addOp(new BondDelete(bid))
 
   if (
     !skipAtoms.includes(bond.begin) &&
-    atomGetDegree(ReStruct, bond.begin) === 1
+    atomGetDegree(restruct, bond.begin) === 1
   ) {
-    if (removeAtomFromSgroupIfNeeded(action, ReStruct, bond.begin))
+    if (removeAtomFromSgroupIfNeeded(action, restruct, bond.begin))
       atomsToRemove.push(bond.begin)
 
     action.addOp(new AtomDelete(bond.begin))
@@ -61,34 +61,34 @@ function fromBondDeletion(ReStruct, bid, skipAtoms = []) {
 
   if (
     !skipAtoms.includes(bond.end) &&
-    atomGetDegree(ReStruct, bond.end) === 1
+    atomGetDegree(restruct, bond.end) === 1
   ) {
-    if (removeAtomFromSgroupIfNeeded(action, ReStruct, bond.end))
+    if (removeAtomFromSgroupIfNeeded(action, restruct, bond.end))
       atomsToRemove.push(bond.end)
 
     action.addOp(new AtomDelete(bond.end))
   }
 
-  removeSgroupIfNeeded(action, ReStruct, atomsToRemove)
-  action = action.perform(ReStruct)
-  action.addOp(new CalcImplicitH([bond.begin, bond.end]).perform(ReStruct))
-  action.mergeWith(fromBondStereoUpdate(ReStruct, bond, false))
+  removeSgroupIfNeeded(action, restruct, atomsToRemove)
+  action = action.perform(restruct)
+  action.addOp(new CalcImplicitH([bond.begin, bond.end]).perform(restruct))
+  action.mergeWith(fromBondStereoUpdate(restruct, bond, false))
 
   action.operations.reverse()
 
   return action
 }
 
-export function fromOneBondDeletion(ReStruct, id) {
-  const frid = ReStruct.molecule.getBondFragment(id)
-  let action = fromBondDeletion(ReStruct, id)
+export function fromOneBondDeletion(restruct, id) {
+  const frid = restruct.molecule.getBondFragment(id)
+  let action = fromBondDeletion(restruct, id)
 
-  action = fromFragmentSplit(ReStruct, frid).mergeWith(action)
+  action = fromFragmentSplit(restruct, frid).mergeWith(action)
 
   return action
 }
 
-export function fromFragmentDeletion(ReStruct, selection) {
+export function fromFragmentDeletion(restruct, selection) {
   // eslint-disable-line max-statements
   console.assert(!!selection)
   let action = new Action()
@@ -107,16 +107,16 @@ export function fromFragmentDeletion(ReStruct, selection) {
   }
 
   const actionRemoveDataSGroups = new Action()
-  ReStruct.molecule.sgroups.forEach((sg, id) => {
+  restruct.molecule.sgroups.forEach((sg, id) => {
     if (
       selection.sgroupData.includes(id) ||
       new Pile(selection.atoms).isSuperset(new Pile(sg.atoms))
     )
-      actionRemoveDataSGroups.mergeWith(fromSgroupDeletion(ReStruct, id))
+      actionRemoveDataSGroups.mergeWith(fromSgroupDeletion(restruct, id))
   })
 
   selection.atoms.forEach(aid => {
-    ReStruct.molecule.atomGetNeighbors(aid).forEach(nei => {
+    restruct.molecule.atomGetNeighbors(aid).forEach(nei => {
       if (selection.bonds.indexOf(nei.bid) === -1) {
         selection.bonds = selection.bonds.concat([nei.bid])
       }
@@ -125,25 +125,25 @@ export function fromFragmentDeletion(ReStruct, selection) {
 
   const actionRemoveBonds = new Action()
   selection.bonds.forEach(bid => {
-    const frid = ReStruct.molecule.getBondFragment(bid)
+    const frid = restruct.molecule.getBondFragment(bid)
     if (frids.indexOf(frid) < 0) frids.push(frid)
 
     actionRemoveBonds.mergeWith(
-      fromBondDeletion(ReStruct, bid, selection.atoms)
+      fromBondDeletion(restruct, bid, selection.atoms)
     )
   })
 
   selection.atoms.forEach(aid => {
-    const frid3 = ReStruct.molecule.atoms.get(aid).fragment
+    const frid3 = restruct.molecule.atoms.get(aid).fragment
     if (frids.indexOf(frid3) < 0) frids.push(frid3)
 
-    if (removeAtomFromSgroupIfNeeded(action, ReStruct, aid))
+    if (removeAtomFromSgroupIfNeeded(action, restruct, aid))
       atomsToRemove.push(aid)
 
     action.addOp(new AtomDelete(aid))
   })
 
-  removeSgroupIfNeeded(action, ReStruct, atomsToRemove)
+  removeSgroupIfNeeded(action, restruct, atomsToRemove)
 
   selection.rxnArrows.forEach(id => {
     action.addOp(new RxnArrowDelete(id))
@@ -161,14 +161,14 @@ export function fromFragmentDeletion(ReStruct, selection) {
     action.addOp(new TextDelete(id))
   })
 
-  action = action.perform(ReStruct)
+  action = action.perform(restruct)
   action.mergeWith(actionRemoveBonds)
 
   const rgForRemove = frids.map(frid =>
-    RGroup.findRGroupByFragment(ReStruct.molecule.rgroups, frid)
+    RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid)
   )
   while (frids.length > 0)
-    action = fromFragmentSplit(ReStruct, frids.pop(), rgForRemove).mergeWith(
+    action = fromFragmentSplit(restruct, frids.pop(), rgForRemove).mergeWith(
       action
     )
 

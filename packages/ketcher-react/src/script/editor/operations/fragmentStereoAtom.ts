@@ -34,14 +34,14 @@ class FragmentAddStereoAtom extends BaseOperation {
     this.data = { frid: fragmentId, aid: atomId }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { aid, frid } = this.data
 
-    const frag = ReStruct.molecule.frags.get(frid)
+    const frag = restruct.molecule.frags.get(frid)
     if (frag) {
-      frag.updateStereoAtom(ReStruct.molecule, aid, frid, true)
+      frag.updateStereoAtom(restruct.molecule, aid, frid, true)
 
-      BaseOperation.invalidateEnhancedFlag(ReStruct, frid)
+      BaseOperation.invalidateEnhancedFlag(restruct, frid)
     }
   }
 
@@ -58,14 +58,14 @@ class FragmentDeleteStereoAtom extends BaseOperation {
     this.data = { frid: fragmentId, aid: atomId }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { aid, frid } = this.data
 
-    const frag = ReStruct.molecule.frags.get(frid)
+    const frag = restruct.molecule.frags.get(frid)
     if (frag) {
-      frag.updateStereoAtom(ReStruct.molecule, aid, frid, false)
+      frag.updateStereoAtom(restruct.molecule, aid, frid, false)
 
-      BaseOperation.invalidateEnhancedFlag(ReStruct, frid)
+      BaseOperation.invalidateEnhancedFlag(restruct, frid)
     }
   }
 

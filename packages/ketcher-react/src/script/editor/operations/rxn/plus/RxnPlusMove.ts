@@ -31,20 +31,20 @@ export class RxnPlusMove extends BaseOperation {
     this.data = { id, d, noinvalidate }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { id, d, noinvalidate } = this.data
 
-    const struct = ReStruct.molecule
+    const struct = restruct.molecule
     struct.rxnPluses.get(id)!.pp.add_(d) // eslint-disable-line no-underscore-dangle
 
-    const rxn = ReStruct.rxnPluses.get(id)!
-    const scaled = Scale.obj2scaled(d, ReStruct.render.options)
+    const rxn = restruct.rxnPluses.get(id)!
+    const scaled = Scale.obj2scaled(d, restruct.render.options)
     rxn.visel.translate(scaled)
 
     this.data.d = d.negated()
 
     if (!noinvalidate) {
-      BaseOperation.invalidateItem(ReStruct, 'rxnPluses', id, 1)
+      BaseOperation.invalidateItem(restruct, 'rxnPluses', id, 1)
     }
   }
 

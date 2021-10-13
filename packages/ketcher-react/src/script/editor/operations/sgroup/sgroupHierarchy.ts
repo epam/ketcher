@@ -34,10 +34,10 @@ class SGroupAddToHierarchy extends BaseOperation {
     this.data = { sgid: sgroupId, parent, children }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { sgid, parent, children } = this.data
 
-    const struct = ReStruct.molecule
+    const struct = restruct.molecule
     const sgroup = struct.sgroups.get(sgid)!
     const relations = struct.sGroupForest.insert(sgroup, parent, children)
 
@@ -60,9 +60,9 @@ class SGroupRemoveFromHierarchy extends BaseOperation {
     this.data = { sgid: sgroupId }
   }
 
-  execute(ReStruct: any) {
+  execute(restruct: any) {
     const { sgid } = this.data
-    const struct = ReStruct.molecule
+    const struct = restruct.molecule
 
     this.data.parent = struct.sGroupForest.parent.get(sgid)
     this.data.children = struct.sGroupForest.children.get(sgid)

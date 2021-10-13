@@ -20,29 +20,29 @@ import { TextCreate, TextDelete, TextUpdate } from '../operations'
 import Action from '../shared/action'
 
 export function fromTextCreation(
-  ReStruct: ReStruct,
+  restruct: ReStruct,
   content: string,
   position: Vec2
 ) {
   const action = new Action()
   action.addOp(new TextCreate(content, position))
-  return action.perform(ReStruct)
+  return action.perform(restruct)
 }
 
 export function fromTextUpdating(
-  ReStruct: ReStruct,
+  restruct: ReStruct,
   id: number,
   content: string
 ) {
   const action = new Action()
   action.addOp(new TextUpdate(id, content))
-  return action.perform(ReStruct)
+  return action.perform(restruct)
 }
 
-export function fromTextDeletion(ReStruct: ReStruct, id: number) {
+export function fromTextDeletion(restruct: ReStruct, id: number) {
   const action = new Action()
 
   action.addOp(new TextDelete(id))
 
-  return action.perform(ReStruct)
+  return action.perform(restruct)
 }

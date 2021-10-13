@@ -30,21 +30,21 @@ export class EnhancedFlagMove extends BaseOperation {
     this.data = { frid: fragmentId, p }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { frid } = this.data
     const { p } = this.data
-    const fragment = ReStruct.molecule.frags.get(frid)
+    const fragment = restruct.molecule.frags.get(frid)
     if (!fragment) return
 
     const currentPosition = fragment.stereoFlagPosition
       ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)
-      : Fragment.getDefaultStereoFlagPosition(ReStruct.molecule, frid)!
+      : Fragment.getDefaultStereoFlagPosition(restruct.molecule, frid)!
 
     const newPosition = Vec2.sum(currentPosition, p)
     fragment.stereoFlagPosition = newPosition
 
     this.data.p = p.negated()
-    BaseOperation.invalidateItem(ReStruct, 'enhancedFlags', frid, 1)
+    BaseOperation.invalidateItem(restruct, 'enhancedFlags', frid, 1)
   }
 
   invert() {

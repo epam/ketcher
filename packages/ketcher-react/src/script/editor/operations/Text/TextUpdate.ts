@@ -32,16 +32,16 @@ export class TextUpdate extends BaseOperation {
     this.data = { id, content: content }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { id, content } = this.data
-    const text = ReStruct.molecule.texts.get(id)
+    const text = restruct.molecule.texts.get(id)
 
     if (text) {
       this.data.previousContent = text.content!
       text.content = content
     }
 
-    BaseOperation.invalidateItem(ReStruct, 'texts', id, 1)
+    BaseOperation.invalidateItem(restruct, 'texts', id, 1)
   }
 
   invert() {

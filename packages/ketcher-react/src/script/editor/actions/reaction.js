@@ -24,32 +24,32 @@ import {
 
 import Action from '../shared/action'
 
-export function fromArrowAddition(ReStruct, pos, mode) {
+export function fromArrowAddition(restruct, pos, mode) {
   const action = new Action()
   action.addOp(new RxnArrowAdd(pos, mode))
-  return action.perform(ReStruct)
+  return action.perform(restruct)
 }
 
-export function fromArrowResizing(ReStruct, id, d, current, anchor) {
+export function fromArrowResizing(restruct, id, d, current, anchor) {
   var action = new Action()
   action.addOp(new RxnArrowResize(id, d, current, anchor, false))
-  return action.perform(ReStruct)
+  return action.perform(restruct)
 }
 
-export function fromArrowDeletion(ReStruct, id) {
+export function fromArrowDeletion(restruct, id) {
   var action = new Action()
   action.addOp(new RxnArrowDelete(id))
-  return action.perform(ReStruct)
+  return action.perform(restruct)
 }
 
-export function fromPlusAddition(ReStruct, pos) {
+export function fromPlusAddition(restruct, pos) {
   var action = new Action()
-  action.addOp(new RxnPlusAdd(pos).perform(ReStruct))
+  action.addOp(new RxnPlusAdd(pos).perform(restruct))
   return action
 }
 
-export function fromPlusDeletion(ReStruct, id) {
+export function fromPlusDeletion(restruct, id) {
   var action = new Action()
   action.addOp(new RxnPlusDelete(id))
-  return action.perform(ReStruct)
+  return action.perform(restruct)
 }

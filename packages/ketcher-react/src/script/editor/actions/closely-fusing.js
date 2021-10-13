@@ -19,7 +19,7 @@ import { fromAtomMerge } from './atom'
 import { fromBondsMerge } from './bond'
 import utils from '../shared/utils'
 
-export function fromItemsFuse(ReStruct, items) {
+export function fromItemsFuse(restruct, items) {
   let action = new Action()
 
   if (!items) return action
@@ -30,12 +30,12 @@ export function fromItemsFuse(ReStruct, items) {
   items.atoms.forEach((dst, src) => {
     if (usedAtoms.has(dst) || usedAtoms.has(src)) return
 
-    action = fromAtomMerge(ReStruct, src, dst).mergeWith(action)
+    action = fromAtomMerge(restruct, src, dst).mergeWith(action)
     usedAtoms.add(dst).add(src)
   })
 
   // merge bonds
-  action = fromBondsMerge(ReStruct, items.bonds).mergeWith(action)
+  action = fromBondsMerge(restruct, items.bonds).mergeWith(action)
 
   return action
 }

@@ -34,10 +34,10 @@ class SGroupAtomAdd extends BaseOperation {
     this.data = { sgid: sgroupId, aid }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { aid, sgid } = this.data
 
-    const struct = ReStruct.molecule
+    const struct = restruct.molecule
     const atom = struct.atoms.get(aid)!
     const sgroup = struct.sgroups.get(sgid)!
 
@@ -52,7 +52,7 @@ class SGroupAtomAdd extends BaseOperation {
     }
 
     struct.atomAddToSGroup(sgid, aid)
-    BaseOperation.invalidateAtom(ReStruct, aid)
+    BaseOperation.invalidateAtom(restruct, aid)
   }
 
   invert() {
@@ -70,16 +70,16 @@ class SGroupAtomRemove extends BaseOperation {
     this.data = { sgid: sgroupId, aid }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { aid, sgid } = this.data
 
-    const struct = ReStruct.molecule
+    const struct = restruct.molecule
     const atom = struct.atoms.get(aid)!
     const sgroup = struct.sgroups.get(sgid)!
 
     SGroup.removeAtom(sgroup, aid)
     atom.sgs.delete(sgid)
-    BaseOperation.invalidateAtom(ReStruct, aid)
+    BaseOperation.invalidateAtom(restruct, aid)
   }
 
   invert() {

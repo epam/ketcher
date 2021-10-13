@@ -39,8 +39,8 @@ class RxnArrowAdd extends Base {
     this.data = { pos, mode, id }
   }
 
-  execute(ReStruct: any): void {
-    const struct = ReStruct.molecule
+  execute(restruct: any): void {
+    const struct = restruct.molecule
     const item = new RxnArrow({ mode: this.data.mode })
 
     if (this.data.id == null) {
@@ -52,7 +52,7 @@ class RxnArrowAdd extends Base {
 
     const itemId = this.data.id!
 
-    ReStruct.rxnArrows.set(itemId, new ReRxnArrow(item))
+    restruct.rxnArrows.set(itemId, new ReRxnArrow(item))
 
     const positions = [...this.data.pos]
 
@@ -61,7 +61,7 @@ class RxnArrowAdd extends Base {
       positions.map(p => new Vec2(p))
     )
 
-    Base.invalidateItem(ReStruct, 'rxnArrows', itemId, 1)
+    Base.invalidateItem(restruct, 'rxnArrows', itemId, 1)
   }
   invert(): Base {
     return new RxnArrowDelete(this.data.id!)
@@ -84,16 +84,16 @@ class RxnArrowDelete extends Base {
     this.performed = false
   }
 
-  execute(ReStruct: any): void {
-    const struct = ReStruct.molecule
+  execute(restruct: any): void {
+    const struct = restruct.molecule
     const item = struct.rxnArrows.get(this.data.id) as any
     this.data.pos = item.pos
     this.data.mode = item.mode
     this.performed = true
 
-    ReStruct.markItemRemoved()
-    ReStruct.clearVisel(ReStruct.rxnArrows.get(this.data.id).visel)
-    ReStruct.rxnArrows.delete(this.data.id)
+    restruct.markItemRemoved()
+    restruct.clearVisel(restruct.rxnArrows.get(this.data.id).visel)
+    restruct.rxnArrows.delete(this.data.id)
 
     struct.rxnArrows.delete(this.data.id)
   }

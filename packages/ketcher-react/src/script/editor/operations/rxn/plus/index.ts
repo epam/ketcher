@@ -34,8 +34,8 @@ class RxnPlusAdd extends BaseOperation {
     this.data = { plid: null, pos }
   }
 
-  execute(ReStruct: ReStruct) {
-    const struct = ReStruct.molecule
+  execute(restruct: ReStruct) {
+    const struct = restruct.molecule
 
     const newRxn = new RxnPlus()
     if (typeof this.data.plid === 'number') {
@@ -48,11 +48,11 @@ class RxnPlusAdd extends BaseOperation {
 
     const structRxn = struct.rxnPluses.get(plid)
     // notifyRxnPlusAdded
-    ReStruct.rxnPluses.set(plid, new ReRxnPlus(structRxn))
+    restruct.rxnPluses.set(plid, new ReRxnPlus(structRxn))
 
     struct.rxnPlusSetPos(plid, new Vec2(pos))
 
-    BaseOperation.invalidateItem(ReStruct, 'rxnPluses', plid, 1)
+    BaseOperation.invalidateItem(restruct, 'rxnPluses', plid, 1)
   }
 
   invert() {
@@ -70,20 +70,20 @@ class RxnPlusDelete extends BaseOperation {
     this.data = { plid, pos: null }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { plid } = this.data
 
-    const struct = ReStruct.molecule
+    const struct = restruct.molecule
     if (!this.data.pos) {
       this.data.pos = struct.rxnPluses.get(plid)!.pp
     }
 
     // notifyRxnPlusRemoved
-    ReStruct.markItemRemoved()
-    const rxn = ReStruct.rxnPluses.get(plid)
+    restruct.markItemRemoved()
+    const rxn = restruct.rxnPluses.get(plid)
     if (!rxn) return
-    ReStruct.clearVisel(rxn.visel)
-    ReStruct.rxnPluses.delete(plid)
+    restruct.clearVisel(rxn.visel)
+    restruct.rxnPluses.delete(plid)
 
     struct.rxnPluses.delete(plid)
   }

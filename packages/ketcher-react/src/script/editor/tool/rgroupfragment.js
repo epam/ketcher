@@ -59,20 +59,20 @@ RGroupFragmentTool.prototype.click = function (event) {
 
   Promise.resolve(res)
     .then(newRg => {
-      const ReStruct = editor.render.ctab
+      const restruct = editor.render.ctab
 
       let action = null
       if (ci.map !== 'rgroups') {
         const rgidOld = RGroup.findRGroupByFragment(
-          ReStruct.molecule.rgroups,
+          restruct.molecule.rgroups,
           ci.id
         )
 
-        action = fromRGroupFragment(ReStruct, newRg.label, ci.id).mergeWith(
-          fromUpdateIfThen(ReStruct, newRg.label, rgidOld)
+        action = fromRGroupFragment(restruct, newRg.label, ci.id).mergeWith(
+          fromUpdateIfThen(restruct, newRg.label, rgidOld)
         )
       } else {
-        action = fromRGroupAttrs(ReStruct, ci.id, newRg)
+        action = fromRGroupAttrs(restruct, ci.id, newRg)
       }
 
       editor.update(action)

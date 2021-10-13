@@ -28,7 +28,7 @@ function RotateTool(editor, dir) {
   if (!(this instanceof RotateTool)) {
     if (!dir) return new RotateTool(editor)
 
-    const ReStruct = editor.render.ctab
+    const restruct = editor.render.ctab
     const selection = editor.selection()
     const singleBond =
       selection &&
@@ -37,8 +37,8 @@ function RotateTool(editor, dir) {
       selection.bonds.length === 1
 
     const action = !singleBond
-      ? fromFlip(ReStruct, selection, dir)
-      : fromBondAlign(ReStruct, selection.bonds[0], dir)
+      ? fromFlip(restruct, selection, dir)
+      : fromBondAlign(restruct, selection.bonds[0], dir)
     editor.update(action)
     return null
   }
@@ -153,11 +153,11 @@ RotateTool.prototype.mousemove = function (event) {
 RotateTool.prototype.mouseup = function () {
   if (!this.dragCtx) return true
   const dragCtx = this.dragCtx
-  const ReStruct = this.editor.render.ctab
+  const restruct = this.editor.render.ctab
 
   const action = dragCtx.action
-    ? fromItemsFuse(ReStruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
-    : fromItemsFuse(ReStruct, dragCtx.mergeItems)
+    ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
+    : fromItemsFuse(restruct, dragCtx.mergeItems)
   delete this.dragCtx
 
   this.editor.update(action)

@@ -29,8 +29,8 @@ class AlignDescriptors extends BaseOperation {
     this.history = {}
   }
 
-  execute(ReStruct: ReStruct) {
-    const struct = ReStruct.molecule
+  execute(restruct: ReStruct) {
+    const struct = restruct.molecule
     const sgroups: any[] = Array.from(struct.sgroups.values()).reverse()
 
     const structBox: any = struct.getCoordBoundingBoxObj()
@@ -43,7 +43,7 @@ class AlignDescriptors extends BaseOperation {
       alignPoint = alignPoint.add(new Vec2(0.0, 0.5))
       sgroup.pp = alignPoint
       struct.sgroups.set(sgroup.id, sgroup)
-      BaseOperation.invalidateItem(ReStruct, 'sgroupData', sgroup.id, 1)
+      BaseOperation.invalidateItem(restruct, 'sgroupData', sgroup.id, 1)
     })
   }
 
@@ -60,14 +60,14 @@ class RestoreDescriptorsPosition extends BaseOperation {
     this.history = history
   }
 
-  execute(ReStruct: ReStruct) {
-    const struct = ReStruct.molecule
+  execute(restruct: ReStruct) {
+    const struct = restruct.molecule
     const sgroups: any[] = Array.from(struct.sgroups.values())
 
     sgroups.forEach(sgroup => {
       sgroup.pp = this.history[sgroup.id]
       struct.sgroups.set(sgroup.id, sgroup)
-      BaseOperation.invalidateItem(ReStruct, 'sgroupData', sgroup.id, 1)
+      BaseOperation.invalidateItem(restruct, 'sgroupData', sgroup.id, 1)
     })
   }
 

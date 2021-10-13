@@ -30,12 +30,12 @@ export class BondMove extends BaseOperation {
     this.data = { bid: bondId, d }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { bid, d } = this.data
-    const bond = ReStruct.bonds.get(bid)
+    const bond = restruct.bonds.get(bid)
     if (!bond) return
 
-    const scaled = Scale.obj2scaled(d, ReStruct.render.options)
+    const scaled = Scale.obj2scaled(d, restruct.render.options)
     bond.visel.translate(scaled)
     this.data.d = d.negated()
   }

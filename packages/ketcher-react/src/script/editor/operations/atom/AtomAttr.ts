@@ -34,10 +34,10 @@ export class AtomAttr extends BaseOperation {
     this.data2 = null
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { aid, attribute, value } = this.data
 
-    const atom = ReStruct.molecule.atoms.get(aid)!
+    const atom = restruct.molecule.atoms.get(aid)!
     if (!this.data2) {
       this.data2 = {
         aid,
@@ -47,7 +47,7 @@ export class AtomAttr extends BaseOperation {
     }
 
     atom[attribute] = value
-    BaseOperation.invalidateAtom(ReStruct, aid)
+    BaseOperation.invalidateAtom(restruct, aid)
   }
 
   invert() {
@@ -58,9 +58,9 @@ export class AtomAttr extends BaseOperation {
     return inverted
   }
 
-  isDummy(ReStruct: ReStruct) {
+  isDummy(restruct: ReStruct) {
     return (
-      ReStruct.molecule.atoms.get(this.data.aid)![this.data.attribute] ===
+      restruct.molecule.atoms.get(this.data.aid)![this.data.attribute] ===
       this.data.value
     )
   }

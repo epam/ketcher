@@ -29,8 +29,8 @@ class FragmentAdd extends BaseOperation {
     this.frid = typeof fragmentId === 'undefined' ? null : fragmentId
   }
 
-  execute(ReStruct: ReStruct) {
-    const struct = ReStruct.molecule
+  execute(restruct: ReStruct) {
+    const struct = restruct.molecule
     const frag = new Fragment()
 
     if (this.frid === null) {
@@ -39,8 +39,8 @@ class FragmentAdd extends BaseOperation {
       struct.frags.set(this.frid, frag)
     }
 
-    ReStruct.frags.set(this.frid, new ReFrag(frag)) // TODO add ReStruct.notifyFragmentAdded
-    ReStruct.enhancedFlags.set(this.frid, new ReEnhancedFlag())
+    restruct.frags.set(this.frid, new ReFrag(frag)) // TODO add restruct.notifyFragmentAdded
+    restruct.enhancedFlags.set(this.frid, new ReEnhancedFlag())
   }
 
   invert() {
@@ -56,20 +56,20 @@ class FragmentDelete extends BaseOperation {
     this.frid = fragmentId
   }
 
-  execute(ReStruct: ReStruct) {
-    const struct = ReStruct.molecule
+  execute(restruct: ReStruct) {
+    const struct = restruct.molecule
     if (!struct.frags.get(this.frid)) {
       return
     }
 
-    BaseOperation.invalidateItem(ReStruct, 'frags', this.frid, 1)
-    ReStruct.frags.delete(this.frid)
-    struct.frags.delete(this.frid) // TODO add ReStruct.notifyFragmentRemoved
+    BaseOperation.invalidateItem(restruct, 'frags', this.frid, 1)
+    restruct.frags.delete(this.frid)
+    struct.frags.delete(this.frid) // TODO add restruct.notifyFragmentRemoved
 
-    const enhancedFalg = ReStruct.enhancedFlags.get(this.frid)
+    const enhancedFalg = restruct.enhancedFlags.get(this.frid)
     if (!enhancedFalg) return
-    ReStruct.clearVisel(enhancedFalg.visel)
-    ReStruct.enhancedFlags.delete(this.frid)
+    restruct.clearVisel(enhancedFalg.visel)
+    restruct.enhancedFlags.delete(this.frid)
   }
 
   invert() {

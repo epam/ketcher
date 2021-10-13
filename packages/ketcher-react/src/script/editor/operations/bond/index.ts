@@ -36,17 +36,17 @@ class BondAdd extends BaseOperation {
     this.data = { bond, begin, end, bid: null }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { begin, bond, end } = this.data
     // eslint-disable-line max-statements
-    const struct = ReStruct.molecule
+    const struct = restruct.molecule
 
     if (begin === end) {
       throw new Error('Distinct atoms expected')
     }
 
-    BaseOperation.invalidateAtom(ReStruct, begin, 1)
-    BaseOperation.invalidateAtom(ReStruct, end, 1)
+    BaseOperation.invalidateAtom(restruct, begin, 1)
+    BaseOperation.invalidateAtom(restruct, end, 1)
 
     const pp: {
       type?: any
@@ -80,8 +80,8 @@ class BondAdd extends BaseOperation {
     struct.atomAddNeighbor(structBond.hb2)
 
     // notifyBondAdded
-    ReStruct.bonds.set(bid, new ReBond(structBond))
-    ReStruct.markBond(bid, 1)
+    restruct.bonds.set(bid, new ReBond(structBond))
+    restruct.markBond(bid, 1)
   }
 
   invert() {
@@ -99,32 +99,32 @@ class BondDelete extends BaseOperation {
     this.data = { bid: bondId, bond: null, begin: null, end: null }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { bid } = this.data
 
     // eslint-disable-line max-statements
-    const struct = ReStruct.molecule
+    const struct = restruct.molecule
     if (!this.data.bond) {
       this.data.bond = struct.bonds.get(bid)
       this.data.begin = this.data.bond.begin
       this.data.end = this.data.bond.end
     }
 
-    BaseOperation.invalidateBond(ReStruct, bid)
+    BaseOperation.invalidateBond(restruct, bid)
 
     // notifyBondRemoved
-    const rebond = ReStruct.bonds.get(bid)
+    const rebond = restruct.bonds.get(bid)
     if (!rebond) return
     ;[rebond.b.hb1, rebond.b.hb2].forEach(hbid => {
       if (hbid === undefined) return
-      const halfBond = ReStruct.molecule.halfBonds.get(hbid)
+      const halfBond = restruct.molecule.halfBonds.get(hbid)
       if (halfBond && halfBond.loop >= 0) {
-        ReStruct.loopRemove(halfBond.loop)
+        restruct.loopRemove(halfBond.loop)
       }
-    }, ReStruct)
-    ReStruct.clearVisel(rebond.visel)
-    ReStruct.bonds.delete(bid)
-    ReStruct.markItemRemoved()
+    }, restruct)
+    restruct.clearVisel(rebond.visel)
+    restruct.bonds.delete(bid)
+    restruct.markItemRemoved()
 
     const structBond = struct.bonds.get(bid)!
     ;[structBond.hb1, structBond.hb2].forEach(hbid => {

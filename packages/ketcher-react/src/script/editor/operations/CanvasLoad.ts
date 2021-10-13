@@ -29,10 +29,10 @@ export class CanvasLoad extends BaseOperation {
     this.data = { struct }
   }
 
-  execute(ReStruct: ReStruct) {
-    const oldStruct = ReStruct.molecule
-    ReStruct.clearVisels() // TODO: What is it?
-    ReStruct.render.setMolecule(this.data.struct)
+  execute(restruct: ReStruct) {
+    const oldStruct = restruct.molecule
+    restruct.clearVisels() // TODO: What is it?
+    restruct.render.setMolecule(this.data.struct)
     this.data.struct = oldStruct
   }
 

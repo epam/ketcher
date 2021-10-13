@@ -33,12 +33,12 @@ const findMaps = {
   texts: findClosestText
 }
 
-function findClosestText(ReStruct, cursorPosition) {
+function findClosestText(restruct, cursorPosition) {
   let minDist = null
   let ret = null
 
-  ReStruct.texts.forEach((text, id) => {
-    const referencePoints = text.getReferencePoints(ReStruct)
+  restruct.texts.forEach((text, id) => {
+    const referencePoints = text.getReferencePoints(restruct)
     const topX = referencePoints[0].x
     const topY = referencePoints[0].y
     const bottomX = referencePoints[2].x
@@ -92,13 +92,13 @@ function findClosestText(ReStruct, cursorPosition) {
   return ret
 }
 
-function findClosestSimpleObject(ReStruct, pos) {
+function findClosestSimpleObject(restruct, pos) {
   let minDist = null
   let refPoint = null
   let ret = null
 
-  ReStruct.simpleObjects.forEach((simpleObject, id) => {
-    const dist = simpleObject.calcDistance(pos, ReStruct.render.options.scale)
+  restruct.simpleObjects.forEach((simpleObject, id) => {
+    const dist = simpleObject.calcDistance(pos, restruct.render.options.scale)
 
     if (dist.minDist < 0.3 && (!ret || dist.minDist < minDist)) {
       minDist = dist.minDist
@@ -110,7 +110,7 @@ function findClosestSimpleObject(ReStruct, pos) {
   return ret
 }
 
-function findClosestAtom(ReStruct, pos, skip, minDist) {
+function findClosestAtom(restruct, pos, skip, minDist) {
   let closestAtom = null
   const maxMinDist = SELECTION_DISTANCE_COEFFICIENT
   const skipId = skip && skip.map === 'atoms' ? skip.id : null
@@ -118,7 +118,7 @@ function findClosestAtom(ReStruct, pos, skip, minDist) {
   minDist = minDist || maxMinDist
   minDist = Math.min(minDist, maxMinDist)
 
-  ReStruct.atoms.forEach((atom, aid) => {
+  restruct.atoms.forEach((atom, aid) => {
     if (aid === skipId) return
 
     const dist = Vec2.dist(pos, atom.a.pp)
@@ -139,7 +139,7 @@ function findClosestAtom(ReStruct, pos, skip, minDist) {
   return null
 }
 
-function findClosestBond(ReStruct, pos, skip, minDist, scale) {
+function findClosestBond(restruct, pos, skip, minDist, scale) {
   // eslint-disable-line max-params
   let closestBond = null
   let closestBondCenter = null
@@ -151,11 +151,11 @@ function findClosestBond(ReStruct, pos, skip, minDist, scale) {
 
   let minCDist = minDist
 
-  ReStruct.bonds.forEach((bond, bid) => {
+  restruct.bonds.forEach((bond, bid) => {
     if (bid === skipId) return
 
-    const p1 = ReStruct.atoms.get(bond.b.begin).a.pp
-    const p2 = ReStruct.atoms.get(bond.b.end).a.pp
+    const p1 = restruct.atoms.get(bond.b.begin).a.pp
+    const p2 = restruct.atoms.get(bond.b.end).a.pp
 
     const mid = Vec2.lc2(p1, 0.5, p2, 0.5)
     const cdist = Vec2.dist(pos, mid)
@@ -166,15 +166,15 @@ function findClosestBond(ReStruct, pos, skip, minDist, scale) {
     }
   })
 
-  ReStruct.bonds.forEach((bond, bid) => {
+  restruct.bonds.forEach((bond, bid) => {
     if (bid === skipId) return
 
-    const hb = ReStruct.molecule.halfBonds.get(bond.b.hb1)
+    const hb = restruct.molecule.halfBonds.get(bond.b.hb1)
     const dir = hb.dir
     const norm = hb.norm
 
-    const p1 = ReStruct.atoms.get(bond.b.begin).a.pp
-    const p2 = ReStruct.atoms.get(bond.b.end).a.pp
+    const p1 = restruct.atoms.get(bond.b.begin).a.pp
+    const p2 = restruct.atoms.get(bond.b.end).a.pp
 
     const inStripe = Vec2.dot(pos.sub(p1), dir) * Vec2.dot(pos.sub(p2), dir) < 0
 
@@ -208,16 +208,16 @@ function findClosestBond(ReStruct, pos, skip, minDist, scale) {
   return null
 }
 
-function findClosestEnhancedFlag(ReStruct, pos) {
+function findClosestEnhancedFlag(restruct, pos) {
   let minDist
   let ret = null
-  ReStruct.enhancedFlags.forEach((item, id) => {
-    const fragment = ReStruct.molecule.frags.get(id)
+  restruct.enhancedFlags.forEach((item, id) => {
+    const fragment = restruct.molecule.frags.get(id)
     if (!fragment) return
 
     const p = fragment.stereoFlagPosition
       ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)
-      : Fragment.getDefaultStereoFlagPosition(ReStruct.molecule, id)
+      : Fragment.getDefaultStereoFlagPosition(restruct.molecule, id)
     if (!p || Math.abs(pos.x - p.x) >= 1.0) return
 
     const dist = Math.abs(pos.y - p.y)
@@ -230,11 +230,11 @@ function findClosestEnhancedFlag(ReStruct, pos) {
   return ret
 }
 
-function findClosestDataSGroupData(ReStruct, pos) {
+function findClosestDataSGroupData(restruct, pos) {
   let minDist = null
   let ret = null
 
-  ReStruct.sgroupData.forEach((item, id) => {
+  restruct.sgroupData.forEach((item, id) => {
     if (item.sgroup.type !== 'DAT') throw new Error('Data group expected')
 
     if (item.sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
@@ -259,15 +259,15 @@ function findClosestDataSGroupData(ReStruct, pos) {
   return ret
 }
 
-function findClosestFrag(ReStruct, pos, skip, minDist, scale) {
+function findClosestFrag(restruct, pos, skip, minDist, scale) {
   minDist = Math.min(
     minDist || SELECTION_DISTANCE_COEFFICIENT,
     SELECTION_DISTANCE_COEFFICIENT
   )
 
-  const struct = ReStruct.molecule
+  const struct = restruct.molecule
 
-  const closestAtom = findClosestAtom(ReStruct, pos, skip, minDist)
+  const closestAtom = findClosestAtom(restruct, pos, skip, minDist)
 
   if (closestAtom) {
     return {
@@ -276,7 +276,7 @@ function findClosestFrag(ReStruct, pos, skip, minDist, scale) {
     }
   }
 
-  const closestBond = findClosestBond(ReStruct, pos, skip, minDist, scale)
+  const closestBond = findClosestBond(restruct, pos, skip, minDist, scale)
 
   if (closestBond) {
     const atomId = struct.bonds.get(closestBond.id).begin
@@ -289,7 +289,7 @@ function findClosestFrag(ReStruct, pos, skip, minDist, scale) {
   return null
 }
 
-function findClosestRGroup(ReStruct, pos, skip, minDist) {
+function findClosestRGroup(restruct, pos, skip, minDist) {
   minDist = Math.min(
     minDist || SELECTION_DISTANCE_COEFFICIENT,
     SELECTION_DISTANCE_COEFFICIENT
@@ -297,7 +297,7 @@ function findClosestRGroup(ReStruct, pos, skip, minDist) {
 
   let ret = null
 
-  ReStruct.rgroups.forEach((rgroup, rgid) => {
+  restruct.rgroups.forEach((rgroup, rgid) => {
     if (
       rgid !== skip &&
       rgroup.labelBox &&
@@ -315,13 +315,13 @@ function findClosestRGroup(ReStruct, pos, skip, minDist) {
   return ret
 }
 
-function findClosestRxnArrow(ReStruct, pos) {
+function findClosestRxnArrow(restruct, pos) {
   let minDist = null
   let refPoint = null
   let ret = null
 
-  ReStruct.rxnArrows.forEach((rxnArrow, id) => {
-    const dist = rxnArrow.calcDistance(pos, ReStruct.render.options.scale)
+  restruct.rxnArrows.forEach((rxnArrow, id) => {
+    const dist = rxnArrow.calcDistance(pos, restruct.render.options.scale)
 
     if (dist.minDist < 0.3 && (!ret || dist.minDist < minDist)) {
       minDist = dist.minDist
@@ -333,11 +333,11 @@ function findClosestRxnArrow(ReStruct, pos) {
   return ret
 }
 
-function findClosestRxnPlus(ReStruct, pos) {
+function findClosestRxnPlus(restruct, pos) {
   let minDist = null
   let ret = null
 
-  ReStruct.rxnPluses.forEach((plus, id) => {
+  restruct.rxnPluses.forEach((plus, id) => {
     const p = plus.item.pp
     const dist = Math.max(Math.abs(pos.x - p.x), Math.abs(pos.y - p.y))
 
@@ -350,11 +350,11 @@ function findClosestRxnPlus(ReStruct, pos) {
   return ret
 }
 
-function findClosestSGroup(ReStruct, pos) {
+function findClosestSGroup(restruct, pos) {
   let ret = null
   let minDist = SELECTION_DISTANCE_COEFFICIENT
 
-  ReStruct.molecule.sgroups.forEach((sg, sgid) => {
+  restruct.molecule.sgroups.forEach((sg, sgid) => {
     const d = sg.bracketDir
     const n = d.rotateSC(1, 0)
     const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n))
@@ -384,13 +384,13 @@ function findClosestSGroup(ReStruct, pos) {
   return null
 }
 
-function findClosestItem(ReStruct, pos, maps, skip, scale) {
+function findClosestItem(restruct, pos, maps, skip, scale) {
   // eslint-disable-line max-params
   maps = maps || Object.keys(findMaps)
 
   return maps.reduce((res, mp) => {
     const minDist = res ? res.dist : null
-    const item = findMaps[mp](ReStruct, pos, skip, minDist, scale)
+    const item = findMaps[mp](restruct, pos, skip, minDist, scale)
 
     if (item !== null && (res === null || item.dist < res.dist)) {
       const { id, dist, ...other } = item
@@ -407,7 +407,7 @@ function findClosestItem(ReStruct, pos, maps, skip, scale) {
 }
 
 /**
- * @param ReStruct { ReStruct }
+ * @param restruct { ReStruct }
  * @param selected { object }
  * @param maps { Array<string> }
  * @param scale { number }
@@ -416,13 +416,13 @@ function findClosestItem(ReStruct, pos, maps, skip, scale) {
  * 		bonds: Map<number, number>?
  * }}
  */
-function findCloseMerge(ReStruct, selected, maps = ['atoms', 'bonds'], scale) {
+function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
   const pos = {
     atoms: new Map(), // aid -> position
     bonds: new Map() // bid -> position
   }
 
-  const struct = ReStruct.molecule
+  const struct = restruct.molecule
 
   selected.atoms.forEach(aid => {
     pos.atoms.set(aid, struct.atoms.get(aid).pp)
@@ -445,7 +445,7 @@ function findCloseMerge(ReStruct, selected, maps = ['atoms', 'bonds'], scale) {
   maps.forEach(mp => {
     result[mp] = Array.from(pos[mp].keys()).reduce((res, srcId) => {
       const skip = { map: mp, id: srcId }
-      const item = findMaps[mp](ReStruct, pos[mp].get(srcId), skip, null, scale)
+      const item = findMaps[mp](restruct, pos[mp].get(srcId), skip, null, scale)
 
       if (item && !selected[mp].includes(item.id)) res.set(srcId, item.id)
 

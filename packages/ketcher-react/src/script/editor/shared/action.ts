@@ -26,8 +26,8 @@ class Action {
     this.operations = operations
   }
 
-  addOp(operation: BaseOperation, ReStruct?: ReStruct): BaseOperation {
-    if (!ReStruct || !operation.isDummy(ReStruct)) {
+  addOp(operation: BaseOperation, restruct?: ReStruct): BaseOperation {
+    if (!restruct || !operation.isDummy(restruct)) {
       this.operations.push(operation)
     }
 
@@ -40,24 +40,24 @@ class Action {
   }
 
   // Perform action and return inverted one
-  perform(ReStruct: ReStruct) {
+  perform(restruct: ReStruct) {
     const action = new Action()
     const sortedOperations = [...this.operations].sort(
       (a, b) => a.priority - b.priority
     )
     sortedOperations.forEach(operation => {
-      const invertedOperation = operation.perform(ReStruct)
+      const invertedOperation = operation.perform(restruct)
       action.addOp(invertedOperation)
     })
 
     return action
   }
 
-  isDummy(ReStruct?: ReStruct) {
+  isDummy(restruct?: ReStruct) {
     return (
       this.operations.find(
         // TODO [RB] the condition is always true for op.* operations
-        operation => (ReStruct ? !operation.isDummy(ReStruct) : true)
+        operation => (restruct ? !operation.isDummy(restruct) : true)
       ) === undefined
     )
   }

@@ -33,12 +33,12 @@ class BaseOperation {
   }
 
   // @ts-ignore
-  execute(ReStruct: ReStruct): void {
+  execute(restruct: ReStruct): void {
     throw new Error('Operation.execute() is not implemented')
   }
 
-  perform(ReStruct: ReStruct): BaseOperation {
-    this.execute(ReStruct)
+  perform(restruct: ReStruct): BaseOperation {
+    this.execute(restruct)
     if (!this._inverted) {
       this._inverted = this.invert()
       this._inverted._inverted = this
@@ -51,19 +51,19 @@ class BaseOperation {
   }
 
   // @ts-ignore
-  isDummy(ReStruct: ReStruct): boolean {
+  isDummy(restruct: ReStruct): boolean {
     return false
   }
 
-  protected static invalidateAtom(ReStruct: ReStruct, atomId: number, level?) {
-    const atom = ReStruct.atoms.get(atomId)
+  protected static invalidateAtom(restruct: ReStruct, atomId: number, level?) {
+    const atom = restruct.atoms.get(atomId)
     if (!atom) {
       return
     }
 
-    ReStruct.markAtom(atomId, level ? 1 : 0)
+    restruct.markAtom(atomId, level ? 1 : 0)
 
-    const halfBonds = ReStruct.molecule.halfBonds
+    const halfBonds = restruct.molecule.halfBonds
 
     atom.a.neighbors.forEach(halfBondId => {
       if (!halfBonds.has(halfBondId)) {
@@ -75,84 +75,84 @@ class BaseOperation {
         return
       }
 
-      ReStruct.markBond(halfBond.bid, 1)
-      ReStruct.markAtom(halfBond.end, 0)
+      restruct.markBond(halfBond.bid, 1)
+      restruct.markAtom(halfBond.end, 0)
 
       if (level) {
-        BaseOperation.invalidateLoop(ReStruct, halfBond.bid)
+        BaseOperation.invalidateLoop(restruct, halfBond.bid)
       }
     })
 
     const fragment = atom.a.fragment
-    const stereoLabelStyle = ReStruct.render.options.stereoLabelStyle
+    const stereoLabelStyle = restruct.render.options.stereoLabelStyle
 
-    ReStruct.atoms.forEach((atom, atomId) => {
+    restruct.atoms.forEach((atom, atomId) => {
       if (
         stereoLabelStyle === StereLabelStyleType.IUPAC ||
         stereoLabelStyle === StereLabelStyleType.Classic
       ) {
-        if (atom.a.fragment === fragment) ReStruct.markAtom(atomId, 0)
+        if (atom.a.fragment === fragment) restruct.markAtom(atomId, 0)
       }
     })
   }
 
-  protected static invalidateLoop(ReStruct: ReStruct, bondId: number) {
-    const bond = ReStruct.bonds.get(bondId)
+  protected static invalidateLoop(restruct: ReStruct, bondId: number) {
+    const bond = restruct.bonds.get(bondId)
     if (!bond || !bond.b.hb1 || !bond.b.hb2) {
       return
     }
 
-    const halfBond1 = ReStruct.molecule.halfBonds.get(bond.b.hb1)
-    const halfBond2 = ReStruct.molecule.halfBonds.get(bond.b.hb2)
+    const halfBond1 = restruct.molecule.halfBonds.get(bond.b.hb1)
+    const halfBond2 = restruct.molecule.halfBonds.get(bond.b.hb2)
 
     if (halfBond1 && halfBond1.loop >= 0) {
-      ReStruct.loopRemove(halfBond1.loop)
+      restruct.loopRemove(halfBond1.loop)
     }
 
     if (halfBond2 && halfBond2.loop >= 0) {
-      ReStruct.loopRemove(halfBond2.loop)
+      restruct.loopRemove(halfBond2.loop)
     }
   }
 
-  protected static invalidateBond(ReStruct: ReStruct, bondId: number) {
-    BaseOperation.invalidateLoop(ReStruct, bondId)
+  protected static invalidateBond(restruct: ReStruct, bondId: number) {
+    BaseOperation.invalidateLoop(restruct, bondId)
 
-    const bond = ReStruct.bonds.get(bondId)
+    const bond = restruct.bonds.get(bondId)
     if (!bond) {
       return
     }
-    BaseOperation.invalidateAtom(ReStruct, bond.b.begin, 0)
-    BaseOperation.invalidateAtom(ReStruct, bond.b.end, 0)
+    BaseOperation.invalidateAtom(restruct, bond.b.begin, 0)
+    BaseOperation.invalidateAtom(restruct, bond.b.end, 0)
   }
 
   protected static invalidateItem(
-    ReStruct: ReStruct,
+    restruct: ReStruct,
     map,
     id: number,
     level?: any
   ) {
     if (map === 'atoms') {
-      BaseOperation.invalidateAtom(ReStruct, id, level)
+      BaseOperation.invalidateAtom(restruct, id, level)
       return
     }
 
     if (map === 'bonds') {
-      BaseOperation.invalidateBond(ReStruct, id)
+      BaseOperation.invalidateBond(restruct, id)
 
       if (level > 0) {
-        BaseOperation.invalidateLoop(ReStruct, id)
+        BaseOperation.invalidateLoop(restruct, id)
       }
       return
     }
 
-    ReStruct.markItem(map, id, level)
+    restruct.markItem(map, id, level)
   }
 
   protected static invalidateEnhancedFlag(
-    ReStruct: ReStruct,
+    restruct: ReStruct,
     fragmentId: number
   ) {
-    BaseOperation.invalidateItem(ReStruct, 'enhancedFlags', fragmentId, 1)
+    BaseOperation.invalidateItem(restruct, 'enhancedFlags', fragmentId, 1)
   }
 }
 

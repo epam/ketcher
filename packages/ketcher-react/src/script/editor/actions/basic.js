@@ -18,15 +18,15 @@ import { AlignDescriptors, CanvasLoad } from '../operations'
 
 import Action from '../shared/action'
 
-export function fromNewCanvas(ReStruct, struct) {
+export function fromNewCanvas(restruct, struct) {
   var action = new Action()
 
   action.addOp(new CanvasLoad(struct))
-  return action.perform(ReStruct)
+  return action.perform(restruct)
 }
 
-export function fromDescriptorsAlign(ReStruct) {
+export function fromDescriptorsAlign(restruct) {
   const action = new Action()
-  action.addOp(new AlignDescriptors(ReStruct))
-  return action.perform(ReStruct)
+  action.addOp(new AlignDescriptors(restruct))
+  return action.perform(restruct)
 }

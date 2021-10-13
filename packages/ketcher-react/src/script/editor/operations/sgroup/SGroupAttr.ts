@@ -34,16 +34,16 @@ export class SGroupAttr extends BaseOperation {
     }
   }
 
-  execute(ReStruct: ReStruct) {
-    const struct = ReStruct.molecule
+  execute(restruct: ReStruct) {
+    const struct = restruct.molecule
     const sgroupId = this.data.sgid
     const sgroup = struct.sgroups.get(sgroupId)!
 
-    const sgroupData = ReStruct.sgroupData.get(sgroupId)
+    const sgroupData = restruct.sgroupData.get(sgroupId)
     if (sgroup.type === 'DAT' && sgroupData) {
       // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
-      ReStruct.clearVisel(sgroupData.visel)
-      ReStruct.sgroupData.delete(sgroupId)
+      restruct.clearVisel(sgroupData.visel)
+      restruct.sgroupData.delete(sgroupId)
     }
 
     this.data.value = sgroup.setAttr(this.data.attr, this.data.value)

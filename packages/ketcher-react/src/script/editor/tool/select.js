@@ -127,11 +127,11 @@ SelectTool.prototype.mousedown = function (event) {
 SelectTool.prototype.mousemove = function (event) {
   const editor = this.editor
   const rnd = editor.render
-  const ReStruct = editor.render.ctab
+  const restruct = editor.render.ctab
   const dragCtx = this.dragCtx
   if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
   if (dragCtx && dragCtx.item) {
-    const atoms = ReStruct.molecule.atoms
+    const atoms = restruct.molecule.atoms
     const selection = editor.selection()
     const shouldDisplayDegree =
       dragCtx.item.map === 'atoms' &&
@@ -146,14 +146,14 @@ SelectTool.prototype.mousemove = function (event) {
       this.editor.event.message.dispatch({ info: degrees + 'º' })
     }
     if (dragCtx.action) {
-      dragCtx.action.perform(ReStruct)
+      dragCtx.action.perform(restruct)
       // redraw the elements in unshifted position, lest the have different offset
       editor.update(dragCtx.action, true)
     }
 
     const expSel = editor.explicitSelected()
     dragCtx.action = fromMultipleMove(
-      ReStruct,
+      restruct,
       expSel,
       editor.render.page2obj(event).sub(dragCtx.xy0)
     )
@@ -207,15 +207,15 @@ SelectTool.prototype.mousemove = function (event) {
 SelectTool.prototype.mouseup = function (event) {
   // eslint-disable-line max-statements
   const editor = this.editor
-  const ReStruct = editor.render.ctab
+  const restruct = editor.render.ctab
   const dragCtx = this.dragCtx
 
   if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
 
   if (dragCtx && dragCtx.item) {
     dragCtx.action = dragCtx.action
-      ? fromItemsFuse(ReStruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
-      : fromItemsFuse(ReStruct, dragCtx.mergeItems)
+      ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
+      : fromItemsFuse(restruct, dragCtx.mergeItems)
 
     editor.hover(null)
     if (dragCtx.mergeItems) editor.selection(null)

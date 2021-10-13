@@ -679,7 +679,7 @@ const molecule = {
   setImplicitHydrogen() {}
 }
 
-export const ReStruct = {
+export const restruct = {
   atoms: new Map(),
   bonds: new Map(),
   molecule: molecule,
@@ -695,10 +695,10 @@ export const ReStruct = {
 }
 
 molecule.atoms.forEach((atom, aid) => {
-  ReStruct.atoms.set(aid, new ReAtom(atom))
+  restruct.atoms.set(aid, new ReAtom(atom))
 })
 molecule.bonds.forEach((bond, bid) => {
-  ReStruct.bonds.set(bid, new ReBond(bond))
+  restruct.bonds.set(bid, new ReBond(bond))
 })
 
 export const singleBond = { type: 1, stereo: 0 }

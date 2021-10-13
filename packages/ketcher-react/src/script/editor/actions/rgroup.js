@@ -18,27 +18,27 @@ import { RGroupAttr, RGroupFragment, UpdateIfThen } from '../operations'
 
 import Action from '../shared/action'
 
-export function fromRGroupAttrs(ReStruct, id, attrs) {
+export function fromRGroupAttrs(restruct, id, attrs) {
   const action = new Action()
 
   Object.keys(attrs).forEach(key => {
     action.addOp(new RGroupAttr(id, key, attrs[key]))
   })
 
-  return action.perform(ReStruct)
+  return action.perform(restruct)
 }
 
-export function fromRGroupFragment(ReStruct, rgidNew, frid) {
+export function fromRGroupFragment(restruct, rgidNew, frid) {
   const action = new Action()
   action.addOp(new RGroupFragment(rgidNew, frid))
 
-  return action.perform(ReStruct)
+  return action.perform(restruct)
 }
 
-export function fromUpdateIfThen(ReStruct, rgidNew, rgidOld, skipRgids) {
+export function fromUpdateIfThen(restruct, rgidNew, rgidOld, skipRgids) {
   const action = new Action()
-  if (!ReStruct.molecule.rgroups.get(rgidOld))
+  if (!restruct.molecule.rgroups.get(rgidOld))
     action.addOp(new UpdateIfThen(rgidNew, rgidOld, skipRgids))
 
-  return action.perform(ReStruct)
+  return action.perform(restruct)
 }

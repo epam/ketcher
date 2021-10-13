@@ -21,7 +21,7 @@ import { Vec2 } from 'ketcher-core'
 import { atomGetAttr } from './utils'
 import { fromBondAddition } from './bond'
 
-export function fromChain(ReStruct, p0, v, nSect, atomId) {
+export function fromChain(restruct, p0, v, nSect, atomId) {
   // eslint-disable-line max-params
   const dx = Math.cos(Math.PI / 6)
   const dy = Math.sin(Math.PI / 6)
@@ -30,8 +30,8 @@ export function fromChain(ReStruct, p0, v, nSect, atomId) {
 
   const frid =
     atomId !== null
-      ? atomGetAttr(ReStruct, atomId, 'fragment')
-      : action.addOp(new FragmentAdd().perform(ReStruct)).frid
+      ? atomGetAttr(restruct, atomId, 'fragment')
+      : action.addOp(new FragmentAdd().perform(restruct)).frid
 
   const chainItems = {
     atoms: [],
@@ -42,7 +42,7 @@ export function fromChain(ReStruct, p0, v, nSect, atomId) {
     atomId !== null
       ? atomId
       : action.addOp(
-          new AtomAdd({ label: 'C', fragment: frid }, p0).perform(ReStruct)
+          new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct)
         ).data.aid
 
   chainItems.atoms.push(id0)
@@ -51,7 +51,7 @@ export function fromChain(ReStruct, p0, v, nSect, atomId) {
   for (let i = 0; i < nSect; i++) {
     const pos = new Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0)
 
-    const ret = fromBondAddition(ReStruct, {}, id0, {}, pos)
+    const ret = fromBondAddition(restruct, {}, id0, {}, pos)
     action = ret[0].mergeWith(action)
     id0 = ret[2]
     chainItems.bonds.push(ret[3])

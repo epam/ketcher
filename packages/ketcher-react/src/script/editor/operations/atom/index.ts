@@ -35,10 +35,10 @@ class AtomAdd extends BaseOperation {
     this.data = { atom, pos, aid: null }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { atom, pos } = this.data
 
-    const struct = ReStruct.molecule
+    const struct = restruct.molecule
 
     const pp: { label?: string } = {}
     if (atom) {
@@ -61,9 +61,9 @@ class AtomAdd extends BaseOperation {
     // notifyAtomAdded
     const atomData = new ReAtom(struct.atoms.get(aid)!)
 
-    atomData.component = ReStruct.connectedComponents.add(new Pile([aid]))
-    ReStruct.atoms.set(aid, atomData)
-    ReStruct.markAtom(aid, 1)
+    atomData.component = restruct.connectedComponents.add(new Pile([aid]))
+    restruct.atoms.set(aid, atomData)
+    restruct.markAtom(aid, 1)
 
     struct.atomSetPos(aid, new Vec2(pos))
 
@@ -92,30 +92,30 @@ class AtomDelete extends BaseOperation {
     this.data = { aid: atomId, atom: null, pos: null }
   }
 
-  execute(ReStruct: ReStruct) {
+  execute(restruct: ReStruct) {
     const { aid } = this.data
 
-    const struct = ReStruct.molecule
+    const struct = restruct.molecule
     if (!this.data.atom) {
       this.data.atom = struct.atoms.get(aid)
       this.data.pos = this.data.atom.pp
     }
 
     // notifyAtomRemoved(aid);
-    const ReStructedAtom = ReStruct.atoms.get(aid)
-    if (!ReStructedAtom) {
+    const restructedAtom = restruct.atoms.get(aid)
+    if (!restructedAtom) {
       return
     }
 
-    const set = ReStruct.connectedComponents.get(ReStructedAtom.component)
+    const set = restruct.connectedComponents.get(restructedAtom.component)
     set.delete(aid)
     if (set.size === 0) {
-      ReStruct.connectedComponents.delete(ReStructedAtom.component)
+      restruct.connectedComponents.delete(restructedAtom.component)
     }
 
-    ReStruct.clearVisel(ReStructedAtom.visel)
-    ReStruct.atoms.delete(aid)
-    ReStruct.markItemRemoved()
+    restruct.clearVisel(restructedAtom.visel)
+    restruct.atoms.delete(aid)
+    restruct.markItemRemoved()
     struct.atoms.delete(aid)
   }
 

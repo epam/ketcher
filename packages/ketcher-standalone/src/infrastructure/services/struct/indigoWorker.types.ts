@@ -35,7 +35,8 @@ export enum SupportedFormat {
   Smarts = 'smarts',
   CML = 'cml',
   InChI = 'inchi',
-  InChIAuxInfo = 'inchi-aux'
+  InChIAuxInfo = 'inchi-aux',
+  Ket = 'ket'
 }
 
 export interface WithStruct {
@@ -68,18 +69,31 @@ export interface GenerateImageCommandData extends CommandData, WithStruct {
   backgroundColor?: string
 }
 
-export interface LayoutCommandData extends CommandData, WithStruct {}
+export interface LayoutCommandData
+  extends CommandData,
+    WithStruct,
+    WithFormat {}
 
 export interface CleanCommandData
   extends CommandData,
     WithStruct,
-    WithSelection {}
+    WithSelection,
+    WithFormat {}
 
-export interface AromatizeCommandData extends CommandData, WithStruct {}
+export interface AromatizeCommandData
+  extends CommandData,
+    WithStruct,
+    WithFormat {}
 
-export interface DearomatizeCommandData extends CommandData, WithStruct {}
+export interface DearomatizeCommandData
+  extends CommandData,
+    WithStruct,
+    WithFormat {}
 
-export interface CalculateCipCommandData extends CommandData, WithStruct {}
+export interface CalculateCipCommandData
+  extends CommandData,
+    WithStruct,
+    WithFormat {}
 
 export interface CalculateCommandData
   extends CommandData,
@@ -88,7 +102,10 @@ export interface CalculateCommandData
   properties: Array<string>
 }
 
-export interface AutomapCommandData extends CommandData, WithStruct {
+export interface AutomapCommandData
+  extends CommandData,
+    WithStruct,
+    WithFormat {
   mode: string
 }
 

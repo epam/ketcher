@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct, Vec2 } from 'ketcher-core'
+
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
-import Restruct from '../../render/restruct'
-import { Vec2 } from 'ketcher-core'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -29,7 +29,7 @@ class AlignDescriptors extends BaseOperation {
     this.history = {}
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const struct = restruct.molecule
     const sgroups: any[] = Array.from(struct.sgroups.values()).reverse()
 
@@ -60,7 +60,7 @@ class RestoreDescriptorsPosition extends BaseOperation {
     this.history = history
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const struct = restruct.molecule
     const sgroups: any[] = Array.from(struct.sgroups.values())
 

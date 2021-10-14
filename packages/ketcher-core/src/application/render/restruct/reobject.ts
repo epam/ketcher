@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Scale } from 'ketcher-core'
-
-import ReStruct from './index'
-import Render from '..'
+import { Box2Abs } from 'domain/entities'
+import ReStruct from './restruct'
+import { Render } from '../raphaelRender'
+import { Scale } from 'domain/helpers'
 import Visel from './visel'
 
 class ReObject {

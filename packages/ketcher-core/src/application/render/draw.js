@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RxnArrowMode, Vec2 } from 'ketcher-core'
+import { RxnArrowMode, Vec2 } from 'domain/entities'
 
-import Raphael from '../raphael-ext'
+import Raphael from './raphael-ext'
 import svgPath from 'svgpath'
-import { useWith } from 'lodash/fp'
 import util from './util'
 
 const tfx = util.tfx

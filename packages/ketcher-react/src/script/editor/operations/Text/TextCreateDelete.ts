@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct, { ReText } from '../../../render/restruct'
-import { Text, Vec2 } from 'ketcher-core'
+import { ReStruct, ReText, Text, Vec2 } from 'ketcher-core'
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
@@ -34,7 +33,7 @@ export class TextCreate extends BaseOperation {
     this.data = { content: content, position, id }
   }
 
-  execute(restruct: Restruct): void {
+  execute(restruct: ReStruct): void {
     const struct = restruct.molecule
     const item = new Text(this.data)
 
@@ -72,7 +71,7 @@ export class TextDelete extends BaseOperation {
     this.data = { id }
   }
 
-  execute(restruct: Restruct): void {
+  execute(restruct: ReStruct): void {
     const struct = restruct.molecule
     const item = struct.texts.get(this.data.id)!
     if (!item) return

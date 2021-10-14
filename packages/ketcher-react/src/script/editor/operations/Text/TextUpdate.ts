@@ -16,7 +16,7 @@
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
+import { ReStruct } from 'ketcher-core'
 
 interface TextUpdateData {
   id: number
@@ -32,7 +32,7 @@ export class TextUpdate extends BaseOperation {
     this.data = { id, content: content }
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const { id, content } = this.data
     const text = restruct.molecule.texts.get(id)
 

@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond, Scale, Vec2 } from 'ketcher-core'
+import { Bond, Vec2 } from 'domain/entities'
 
-import { LayerMap } from './GeneralEnumTypes'
-import ReObject from './ReObject'
+import { LayerMap } from './generalEnumTypes'
+import ReObject from './reobject'
+import { Scale } from 'domain/helpers'
 import util from '../util'
 
 const tfx = util.tfx

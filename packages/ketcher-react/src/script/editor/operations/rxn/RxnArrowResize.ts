@@ -14,13 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Scale, Vec2 } from 'ketcher-core'
+import { Scale, Vec2, tfx } from 'ketcher-core'
 
 import Base from '../base'
 import { OperationType } from '../OperationType'
-import util from '../../../render/util'
-
-const tfx = util.tfx
 
 interface RxnArrowResizeData {
   id: number

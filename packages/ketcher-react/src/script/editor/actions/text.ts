@@ -14,14 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct, Vec2 } from 'ketcher-core'
 import { TextCreate, TextDelete, TextUpdate } from '../operations'
 
 import Action from '../shared/action'
-import Restruct from '../../render/restruct'
-import { Vec2 } from 'ketcher-core'
 
 export function fromTextCreation(
-  restruct: Restruct,
+  restruct: ReStruct,
   content: string,
   position: Vec2
 ) {
@@ -31,7 +30,7 @@ export function fromTextCreation(
 }
 
 export function fromTextUpdating(
-  restruct: Restruct,
+  restruct: ReStruct,
   id: number,
   content: string
 ) {
@@ -40,7 +39,7 @@ export function fromTextUpdating(
   return action.perform(restruct)
 }
 
-export function fromTextDeletion(restruct: Restruct, id: number) {
+export function fromTextDeletion(restruct: ReStruct, id: number) {
   const action = new Action()
 
   action.addOp(new TextDelete(id))

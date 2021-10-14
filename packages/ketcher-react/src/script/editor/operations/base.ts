@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { OperationType } from './OperationType'
 // todo: rename file in another PR
-import Restruct from '../../render/restruct'
-import { StereLabelStyleType } from '../../render/restruct/GeneralEnumTypes'
+import { ReStruct, StereLabelStyleType } from 'ketcher-core'
+
+import { OperationType } from './OperationType'
 
 type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>
 type OperationType = ValueOf<typeof OperationType>
@@ -33,11 +33,11 @@ class BaseOperation {
   }
 
   // @ts-ignore
-  execute(restruct: Restruct): void {
+  execute(restruct: ReStruct): void {
     throw new Error('Operation.execute() is not implemented')
   }
 
-  perform(restruct: Restruct): BaseOperation {
+  perform(restruct: ReStruct): BaseOperation {
     this.execute(restruct)
     if (!this._inverted) {
       this._inverted = this.invert()
@@ -51,11 +51,11 @@ class BaseOperation {
   }
 
   // @ts-ignore
-  isDummy(restruct: Restruct): boolean {
+  isDummy(restruct: ReStruct): boolean {
     return false
   }
 
-  protected static invalidateAtom(restruct: Restruct, atomId: number, level?) {
+  protected static invalidateAtom(restruct: ReStruct, atomId: number, level?) {
     const atom = restruct.atoms.get(atomId)
     if (!atom) {
       return
@@ -96,7 +96,7 @@ class BaseOperation {
     })
   }
 
-  protected static invalidateLoop(restruct: Restruct, bondId: number) {
+  protected static invalidateLoop(restruct: ReStruct, bondId: number) {
     const bond = restruct.bonds.get(bondId)
     if (!bond || !bond.b.hb1 || !bond.b.hb2) {
       return
@@ -114,7 +114,7 @@ class BaseOperation {
     }
   }
 
-  protected static invalidateBond(restruct: Restruct, bondId: number) {
+  protected static invalidateBond(restruct: ReStruct, bondId: number) {
     BaseOperation.invalidateLoop(restruct, bondId)
 
     const bond = restruct.bonds.get(bondId)
@@ -126,7 +126,7 @@ class BaseOperation {
   }
 
   protected static invalidateItem(
-    restruct: Restruct,
+    restruct: ReStruct,
     map,
     id: number,
     level?: any
@@ -149,7 +149,7 @@ class BaseOperation {
   }
 
   protected static invalidateEnhancedFlag(
-    restruct: Restruct,
+    restruct: ReStruct,
     fragmentId: number
   ) {
     BaseOperation.invalidateItem(restruct, 'enhancedFlags', fragmentId, 1)

@@ -16,7 +16,7 @@
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
+import { ReStruct } from 'ketcher-core'
 
 export class SGroupDataMove extends BaseOperation {
   data: {
@@ -29,7 +29,7 @@ export class SGroupDataMove extends BaseOperation {
     this.data = { id, d }
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const { d, id } = this.data
     const { sgroups } = restruct.molecule
 

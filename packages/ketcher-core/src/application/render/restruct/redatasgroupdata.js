@@ -14,27 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Scale } from 'ketcher-core'
+import { LayerMap } from './generalEnumTypes'
+import ReObject from './reobject'
+import { Scale } from 'domain/helpers'
 
-import { LayerMap } from './GeneralEnumTypes'
-import ReObject from './ReObject'
-import draw from '../draw'
-import util from '../util'
-
-class ReRxnPlus extends ReObject {
-  constructor(/* chem.RxnPlus*/ plus) {
-    super('rxnPlus')
-    this.item = plus
+class ReDataSGroupData extends ReObject {
+  constructor(sgroup) {
+    super('sgroupData')
+    this.sgroup = sgroup
   }
   static isSelectable() {
     return true
   }
   highlightPath(render) {
-    var p = Scale.obj2scaled(this.item.pp, render.options)
-    var s = render.options.scale
-    /* eslint-disable no-mixed-operators*/
-    return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8)
-    /* eslint-enable no-mixed-operators*/
+    var box = this.sgroup.dataArea
+    var p0 = Scale.obj2scaled(box.p0, render.options)
+    var sz = Scale.obj2scaled(box.p1, render.options).sub(p0)
+    return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
   }
   drawHighlight(render) {
     var ret = this.highlightPath(render).attr(render.options.highlightStyle)
@@ -45,14 +41,6 @@ class ReRxnPlus extends ReObject {
     // TODO [MK] review parameters
     return this.highlightPath(restruct.render).attr(styles.selectionStyle)
   }
-  show(restruct, id, options) {
-    var render = restruct.render
-    var centre = Scale.obj2scaled(this.item.pp, options)
-    var path = draw.plus(render.paper, centre, options)
-    var offset = options.offset
-    if (offset != null) path.translateAbs(offset.x, offset.y)
-    this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())))
-  }
 }
 
-export default ReRxnPlus
+export default ReDataSGroupData

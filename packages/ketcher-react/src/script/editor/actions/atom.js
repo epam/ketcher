@@ -22,19 +22,19 @@ import {
   BondAdd,
   BondAttr,
   BondDelete,
+  CalcImplicitH,
   FragmentAdd,
   FragmentAddStereoAtom,
   FragmentDelete,
   FragmentDeleteStereoAtom,
-  SGroupAtomAdd,
-  CalcImplicitH
+  SGroupAtomAdd
 } from '../operations'
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils'
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup'
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup'
-import { fromBondStereoUpdate } from './bond'
 
 import Action from '../shared/action'
+import { fromBondStereoUpdate } from './bond'
 import { without } from 'lodash/fp'
 
 export function fromAtomAddition(restruct, pos, atom) {

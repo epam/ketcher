@@ -1,6 +1,8 @@
-import { fromBondAddition } from '../bond'
-import { restruct, singleBond } from './data'
 import * as utils from '../utils'
+
+import { restruct, singleBond } from './data'
+
+import { fromBondAddition } from '../bond'
 
 const [action, begin, end] = fromBondAddition(
   restruct as any,

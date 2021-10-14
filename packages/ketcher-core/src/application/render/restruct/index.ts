@@ -18,17 +18,17 @@
 
 import ReAtom from './reatom'
 import ReBond from './rebond'
-import ReEnhancedFlag from './ReEnhancedFlag'
+import ReEnhancedFlag from './reenhancedFlag'
 import ReFrag from './refrag'
 import ReRGroup from './rergroup'
 import ReRxnArrow from './rerxnarrow'
 import ReRxnPlus from './rerxnplus'
 import ReSGroup from './resgroup'
-import ReSimpleObject from './ReSimpleObject'
-import ReStruct from './ReStruct'
-import ReText from './ReText'
+import ReSimpleObject from './resimpleObject'
+import ReStruct from './restruct'
+import ReText from './retext'
 
-export default ReStruct
+export * from './generalEnumTypes'
 export {
   ReAtom,
   ReBond,
@@ -39,5 +39,6 @@ export {
   ReEnhancedFlag,
   ReSGroup,
   ReSimpleObject,
-  ReText
+  ReText,
+  ReStruct
 }

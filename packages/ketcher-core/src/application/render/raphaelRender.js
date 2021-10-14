@@ -14,17 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Scale, Struct, Vec2 } from 'ketcher-core'
+import { Box2Abs, Struct, Vec2 } from 'domain/entities'
 
-import Raphael from '../raphael-ext'
-import ReStruct from './restruct'
+import Raphael from './raphael-ext'
+import { ReStruct } from './restruct'
+import { Scale } from 'domain/helpers'
 import defaultOptions from './options'
+import draw from './draw'
 
-var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false }
-DEBUG.logMethod = function () {}
-// DEBUG.logMethod = function (method) {addionalAtoms("METHOD: " + method);
-
-function Render(clientArea, opt) {
+export function Render(clientArea, opt) {
   let renderWidth = clientArea.clientWidth - 10
   let renderHeight = clientArea.clientHeight - 10
   renderWidth = renderWidth > 0 ? renderWidth : 0
@@ -36,6 +34,18 @@ function Render(clientArea, opt) {
   this.sz = Vec2.ZERO
   this.ctab = new ReStruct(new Struct(), this)
   this.options = defaultOptions(this.userOpts)
+}
+
+Render.prototype.selectionPolygon = function (r) {
+  return draw.selectionPolygon(this.paper, r, this.options)
+}
+
+Render.prototype.selectionLine = function (p0, p1) {
+  return draw.selectionLine(this.paper, p0, p1, this.options)
+}
+
+Render.prototype.selectionRectangle = function (p0, p1) {
+  return draw.selectionRectangle(this.paper, p0, p1, this.options)
 }
 
 Render.prototype.view2obj = function (p, isRelative) {
@@ -83,14 +93,12 @@ Render.prototype.page2obj = function (pagePos) {
 }
 
 Render.prototype.setPaperSize = function (sz) {
-  DEBUG.logMethod('setPaperSize')
   this.sz = sz
   this.paper.setSize(sz.x * this.options.zoom, sz.y * this.options.zoom)
   this.setViewBox(this.options.zoom)
 }
 
 Render.prototype.setOffset = function (newoffset) {
-  DEBUG.logMethod('setOffset')
   var delta = new Vec2(
     newoffset.x - this.options.offset.x,
     newoffset.y - this.options.offset.y
@@ -103,7 +111,6 @@ Render.prototype.setOffset = function (newoffset) {
 Render.prototype.setZoom = function (zoom) {
   // when scaling the canvas down it may happen that the scaled canvas is smaller than the view window
   // don't forget to call setScrollOffset after zooming (or use extendCanvas directly)
-  console.info('set zoom', zoom)
   this.options.zoom = zoom
   this.paper.setSize(this.sz.x * zoom, this.sz.y * zoom)
   this.setViewBox(zoom)
@@ -166,14 +173,13 @@ Render.prototype.setViewBox = function (z) {
 }
 
 Render.prototype.setMolecule = function (ctab) {
-  DEBUG.logMethod('setMolecule')
   this.paper.clear()
   this.ctab = new ReStruct(ctab, this)
   this.options.offset = new Vec2()
   this.update(false)
 }
 
-Render.prototype.update = function (force, viewSz) {
+Render.prototype.update = function (force = false, viewSz = null) {
   // eslint-disable-line max-statements
   viewSz =
     viewSz ||
@@ -236,5 +242,3 @@ Render.prototype.update = function (force, viewSz) {
     }
   }
 }
-
-export default Render

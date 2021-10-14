@@ -16,7 +16,7 @@
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
+import { ReStruct } from 'ketcher-core'
 
 type Data = {
   rgid: any
@@ -34,7 +34,7 @@ export class RGroupAttr extends BaseOperation {
     this.data2 = null
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const { rgid, attribute, value } = this.data
 
     const rgp = restruct.molecule.rgroups.get(rgid)!
@@ -59,7 +59,7 @@ export class RGroupAttr extends BaseOperation {
     return inverted
   }
 
-  isDummy(restruct: Restruct) {
+  isDummy(restruct: ReStruct) {
     const { rgid, attribute, value } = this.data
     const rgroup = restruct.molecule.rgroups.get(rgid)!
     return rgroup[attribute] === value

@@ -21,6 +21,7 @@ import {
 } from '../actions/closely-fusing'
 import { fromTextDeletion, fromTextUpdating } from '../actions/text'
 
+import Action from '../shared/action'
 import LassoHelper from './helper/lasso'
 import { SGroup } from 'ketcher-core'
 import { atomLongtapEvent } from './atom'
@@ -30,7 +31,6 @@ import { fromMultipleMove } from '../actions/fragment'
 import { sgroupDialog } from './sgroup'
 import utils from '../shared/utils'
 import { xor } from 'lodash/fp'
-import Action from '../shared/action'
 
 function SelectTool(editor, mode) {
   if (!(this instanceof SelectTool)) return new SelectTool(editor, mode)

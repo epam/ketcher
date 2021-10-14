@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct, { ReRxnPlus } from '../../../../render/restruct'
-import { RxnPlus, Vec2 } from 'ketcher-core'
+import { ReRxnPlus, ReStruct, RxnPlus, Vec2 } from 'ketcher-core'
 
 import { BaseOperation } from '../../base'
 import { OperationType } from '../../OperationType'
@@ -35,7 +34,7 @@ class RxnPlusAdd extends BaseOperation {
     this.data = { plid: null, pos }
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const struct = restruct.molecule
 
     const newRxn = new RxnPlus()
@@ -71,7 +70,7 @@ class RxnPlusDelete extends BaseOperation {
     this.data = { plid, pos: null }
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const { plid } = this.data
 
     const struct = restruct.molecule

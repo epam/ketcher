@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Scale, Vec2 } from 'ketcher-core'
+import { Box2Abs, Vec2 } from 'domain/entities'
 
-import { LayerMap } from './GeneralEnumTypes'
-import ReObject from './ReObject'
+import { LayerMap } from './generalEnumTypes'
+import ReObject from './reobject'
+import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
 

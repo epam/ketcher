@@ -17,18 +17,18 @@
 import {
   Atom,
   Bond,
+  FunctionalGroup,
   HalfBond,
-  Scale,
   Struct,
-  Vec2,
-  FunctionalGroup
-} from 'ketcher-core'
-import { LayerMap, StereoColoringType } from './GeneralEnumTypes'
+  Vec2
+} from 'domain/entities'
+import { LayerMap, StereoColoringType } from './generalEnumTypes'
 import ReAtom, { getColorFromStereoLabel } from './reatom'
 
-import ReObject from './ReObject'
-import ReStruct from './ReStruct'
-import Render from '..'
+import ReObject from './reobject'
+import ReStruct from './restruct'
+import { Render } from '../raphaelRender'
+import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
 

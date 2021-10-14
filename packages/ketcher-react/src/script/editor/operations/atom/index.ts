@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Pile, Vec2 } from 'ketcher-core'
-import Restruct, { ReAtom } from '../../../render/restruct'
+import { Atom, Pile, ReAtom, ReStruct, Vec2 } from 'ketcher-core'
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
@@ -36,7 +35,7 @@ class AtomAdd extends BaseOperation {
     this.data = { atom, pos, aid: null }
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const { atom, pos } = this.data
 
     const struct = restruct.molecule
@@ -93,7 +92,7 @@ class AtomDelete extends BaseOperation {
     this.data = { aid: atomId, atom: null, pos: null }
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const { aid } = this.data
 
     const struct = restruct.molecule

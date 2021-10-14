@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RxnArrow, RxnArrowMode, Vec2 } from 'ketcher-core'
+import { ReRxnArrow, RxnArrow, RxnArrowMode, Vec2 } from 'ketcher-core'
 
 import Base from '../base'
 import { OperationType } from '../OperationType'
-import { ReRxnArrow } from '../../../render/restruct'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 

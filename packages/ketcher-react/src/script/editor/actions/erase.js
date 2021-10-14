@@ -16,8 +16,8 @@
 
 import { Atom, Bond, RGroup } from 'ketcher-core'
 import {
-  AtomDelete,
   AtomAttr,
+  AtomDelete,
   BondDelete,
   CalcImplicitH,
   RxnArrowDelete,
@@ -25,8 +25,6 @@ import {
   SimpleObjectDelete,
   TextDelete
 } from '../operations'
-import { fromBondStereoUpdate } from '../actions/bond'
-import { atomGetDegree } from './utils'
 import {
   fromSgroupDeletion,
   removeAtomFromSgroupIfNeeded,
@@ -35,6 +33,8 @@ import {
 
 import Action from '../shared/action'
 import { Pile } from 'ketcher-core'
+import { atomGetDegree } from './utils'
+import { fromBondStereoUpdate } from '../actions/bond'
 import { fromFragmentSplit } from './fragment'
 import { fromStereoAtomAttrs } from './atom'
 

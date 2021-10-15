@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Action from '../shared/action'
+import { Action } from './action'
 import { fromAtomMerge } from './atom'
 import { fromBondsMerge } from './bond'
 import utils from '../shared/utils'

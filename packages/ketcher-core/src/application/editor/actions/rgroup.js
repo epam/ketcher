@@ -16,7 +16,7 @@
 
 import { RGroupAttr, RGroupFragment, UpdateIfThen } from '../operations'
 
-import Action from '../shared/action'
+import { Action } from './action'
 
 export function fromRGroupAttrs(restruct, id, attrs) {
   const action = new Action()

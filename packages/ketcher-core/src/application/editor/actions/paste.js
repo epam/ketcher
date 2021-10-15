@@ -27,7 +27,7 @@ import {
 } from '../operations'
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup'
 
-import Action from '../shared/action'
+import { Action } from './action'
 import { Vec2 } from 'domain/entities'
 import { fromSgroupAddition } from './sgroup'
 

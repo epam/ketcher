@@ -22,7 +22,7 @@ import {
   RxnPlusDelete
 } from '../operations'
 
-import Action from '../shared/action'
+import { Action } from './action'
 
 export function fromArrowAddition(restruct, pos, mode) {
   const action = new Action()

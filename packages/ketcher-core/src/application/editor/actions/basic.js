@@ -16,7 +16,7 @@
 
 import { AlignDescriptors, CanvasLoad } from '../operations'
 
-import Action from '../shared/action'
+import { Action } from './action'
 
 export function fromNewCanvas(restruct, struct) {
   var action = new Action()

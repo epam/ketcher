@@ -16,7 +16,7 @@
 
 import { TextCreate, TextDelete, TextUpdate } from '../operations'
 
-import Action from '../shared/action'
+import { Action } from './action'
 import { ReStruct } from '../../render'
 import { Vec2 } from 'domain/entities'
 

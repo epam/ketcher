@@ -14,14 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromBondAlign, fromFlip, fromRotate } from '../actions/rotate'
 import {
+  Vec2,
+  fromBondAlign,
+  fromFlip,
   fromItemsFuse,
+  fromRotate,
   getHoverToFuse,
   getItemsToFuse
-} from '../actions/closely-fusing'
+} from 'ketcher-core'
 
-import { Vec2 } from 'ketcher-core'
 import utils from '../shared/utils'
 
 function RotateTool(editor, dir) {

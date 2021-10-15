@@ -32,7 +32,7 @@ import {
 import { Pile, RGroup, Vec2 } from 'domain/entities'
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup'
 
-import Action from '../shared/action'
+import { Action } from './action'
 import { fromAtomsFragmentAttr } from './atom'
 import { getRelSgroupsBySelection } from './utils'
 
@@ -129,7 +129,7 @@ export function fromMultipleMove(restruct, lists, d) {
   return action.perform(restruct)
 }
 
-export function fromStereoFlagUpdate(restruct, frid, flag) {
+export function fromStereoFlagUpdate(restruct, frid, flag = null) {
   const action = new Action()
 
   if (!flag) {

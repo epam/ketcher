@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 import { BaseOperation } from '../operations/base'
-import { ReStruct } from 'ketcher-core'
+import { ReStruct } from '../../render'
 //
 // Undo/redo actions
 //
-class Action {
+export class Action {
   operations: BaseOperation[]
 
   constructor(operations = []) {
@@ -62,5 +62,3 @@ class Action {
     )
   }
 }
-
-export default Action

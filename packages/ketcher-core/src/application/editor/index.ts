@@ -15,4 +15,5 @@
  ***************************************************************************/
 export * from './operations'
 export * from './actions'
+export * from './shared/constants'
 export * from './editor.types'

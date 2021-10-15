@@ -33,7 +33,7 @@ import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils'
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup'
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup'
 
-import Action from '../shared/action'
+import { Action } from './action'
 import { fromBondStereoUpdate } from './bond'
 import { without } from 'lodash/fp'
 

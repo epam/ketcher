@@ -31,7 +31,7 @@ import {
   removeSgroupIfNeeded
 } from './sgroup'
 
-import Action from '../shared/action'
+import { Action } from './action'
 import { Pile } from 'ketcher-core'
 import { atomGetDegree } from './utils'
 import { fromBondStereoUpdate } from '../actions/bond'

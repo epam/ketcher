@@ -20,7 +20,7 @@ import { atomForNewBond, atomGetAttr } from './utils'
 import { fromAtomsAttrs, mergeSgroups } from './atom'
 import { fromBondAddition, fromBondStereoUpdate, fromBondsAttrs } from './bond'
 
-import Action from '../shared/action'
+import { Action } from './action'
 import closest from '../shared/closest'
 import { fromAromaticTemplateOnBond } from './aromatic-fusing'
 import { fromPaste } from './paste'

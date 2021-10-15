@@ -25,7 +25,7 @@ import {
 import { Bond, Fragment, Pile, Vec2 } from 'domain/entities'
 import { getRelSgroupsBySelection, structSelection } from './utils'
 
-import Action from '../shared/action'
+import { Action } from './action'
 import utils from '../shared/utils'
 
 export function fromFlip(restruct, selection, dir, center) {

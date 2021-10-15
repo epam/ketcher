@@ -27,7 +27,7 @@ import {
 import { Pile, SGroup } from 'domain/entities'
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils'
 
-import Action from '../shared/action'
+import { Action } from './action'
 import { SgContexts } from '../shared/constants'
 import { uniq } from 'lodash/fp'
 

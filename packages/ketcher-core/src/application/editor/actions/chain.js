@@ -16,7 +16,7 @@
 
 import { AtomAdd, FragmentAdd } from '../operations'
 
-import Action from '../shared/action'
+import { Action } from './action'
 import { Vec2 } from 'domain/entities'
 import { atomGetAttr } from './utils'
 import { fromBondAddition } from './bond'

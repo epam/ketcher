@@ -14,11 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Action from '../shared/action'
+import {
+  Action,
+  findStereoAtoms,
+  fromAtomsAttrs,
+  fromStereoFlagUpdate
+} from 'ketcher-core'
+
 import Editor from '../Editor'
-import { findStereoAtoms } from '../actions/utils'
-import { fromAtomsAttrs } from '../actions/atom'
-import { fromStereoFlagUpdate } from '../actions/fragment'
 
 function EnhancedStereoTool(
   this: typeof EnhancedStereoTool,

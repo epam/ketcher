@@ -20,7 +20,7 @@ import {
   SimpleObjectResize
 } from '../operations'
 
-import Action from '../shared/action'
+import { Action } from './action'
 
 export function fromSimpleObjectDeletion(restruct, id) {
   const action = new Action()

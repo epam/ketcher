@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromMultipleMove } from '../actions/fragment'
-import { fromPlusAddition } from '../actions/reaction'
+import { fromMultipleMove, fromPlusAddition } from 'ketcher-core'
 
 function ReactionPlusTool(editor) {
   if (!(this instanceof ReactionPlusTool)) return new ReactionPlusTool(editor)

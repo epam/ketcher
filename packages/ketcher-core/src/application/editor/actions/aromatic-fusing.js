@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Action from '../shared/action'
+import { Action } from './action'
 import { Bond } from 'domain/entities'
 import { BondAttr } from '../operations'
 import { MolSerializer } from 'domain/serializers'

@@ -40,7 +40,7 @@ import {
   mergeSgroups
 } from './atom'
 
-import Action from '../shared/action'
+import { Action } from './action'
 import { ReStruct } from '../../render'
 import { StereoValidator } from 'domain/helpers'
 import utils from '../shared/utils'

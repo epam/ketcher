@@ -14,9 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Action from '../shared/action'
-import { Scale } from 'ketcher-core'
-import { fromAtomsAttrs } from '../actions/atom'
+import { Action, Scale, fromAtomsAttrs } from 'ketcher-core'
 
 function ReactionMapTool(editor) {
   if (!(this instanceof ReactionMapTool)) return new ReactionMapTool(editor)

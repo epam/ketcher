@@ -15,20 +15,21 @@
  ***************************************************************************/
 
 import {
-  DOMSubscription,
-  PipelineSubscription,
-  Subscription
-} from 'subscription'
-import {
+  Action,
   Editor as KetcherEditor,
   Pile,
   Render,
   Struct,
-  Vec2
+  Vec2,
+  fromDescriptorsAlign,
+  fromNewCanvas
 } from 'ketcher-core'
-import { fromDescriptorsAlign, fromNewCanvas } from './actions/basic'
+import {
+  DOMSubscription,
+  PipelineSubscription,
+  Subscription
+} from 'subscription'
 
-import Action from './shared/action'
 import closest from './shared/closest'
 import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'

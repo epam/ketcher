@@ -77,15 +77,13 @@ const TemplateTable: FC<TemplateTableProps> = props => {
     <div className={classes.table} style={{ minWidth: ITEM_SIZE.width }}>
       <AutoSizer>
         {({ height, width }) => {
-          const scrollWidth = width + 1
-
           return !ITEMS_COUNT ? (
             <EmptySearchResult textInfo="No items found" />
           ) : (
             <div
-              className={classes.tr}
+              className={classes.tableContent}
               style={{
-                width: scrollWidth,
+                width: width,
                 height: height,
                 overflowY: 'scroll'
               }}>

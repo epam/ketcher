@@ -34,8 +34,8 @@ class ReSGroup extends ReObject {
     return false
   }
   draw(remol, sgroup) {
-    const render = remol.render
-    let set = render.paper.set()
+    this.render = remol.render
+    let set = this.render.paper.set()
     const atomSet = new Pile(sgroup.atoms)
     const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet)
     SGroup.bracketPos(sgroup, remol.molecule, crossBonds)
@@ -53,7 +53,7 @@ class ReSGroup extends ReObject {
         case 'MUL':
           SGroupdrawBrackets(
             set,
-            render,
+            this.render,
             sgroup,
             crossBonds,
             atomSet,
@@ -68,7 +68,7 @@ class ReSGroup extends ReObject {
           const subscript = sgroup.data.subscript || 'n'
           SGroupdrawBrackets(
             set,
-            render,
+            this.render,
             sgroup,
             crossBonds,
             atomSet,
@@ -81,7 +81,7 @@ class ReSGroup extends ReObject {
         case 'SUP':
           SGroupdrawBrackets(
             set,
-            render,
+            this.render,
             sgroup,
             crossBonds,
             atomSet,
@@ -95,7 +95,7 @@ class ReSGroup extends ReObject {
         case 'GEN':
           SGroupdrawBrackets(
             set,
-            render,
+            this.render,
             sgroup,
             crossBonds,
             atomSet,
@@ -446,7 +446,10 @@ function getHighlighPathInfo(sgroup, options) {
   if (sgroup.firstSgroupAtom) {
     const size = options.contractedFunctionalGroupSize
     const shift = new Vec2(size / 2, size / 2, 0)
-    const highlightPp = Vec2.diff(sgroup.firstSgroupAtom.pp.scaled(40), shift)
+    const highlightPp = Vec2.diff(
+      sgroup.firstSgroupAtom.pp.scaled(this.render.userOpts.scale),
+      shift
+    )
     const startX = highlightPp.x
     const startY = highlightPp.y
     return {

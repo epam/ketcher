@@ -99,6 +99,10 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.CML
       break
     }
+    case ChemicalMimeType.KET: {
+      format = SupportedFormat.Ket
+      break
+    }
     default: {
       throw new Error('Unsupported chemical mime type')
     }
@@ -215,7 +219,8 @@ class IndigoService implements StructService {
     data: LayoutData,
     options?: StructServiceOptions
   ): Promise<LayoutResult> {
-    const { struct } = data
+    const { struct, output_format } = data
+    const format = convertMimeTypeToOutputFormat(output_format)
 
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()
@@ -241,6 +246,7 @@ class IndigoService implements StructService {
 
       const commandData: LayoutCommandData = {
         struct,
+        format,
         options: commandOptions
       }
 
@@ -254,7 +260,9 @@ class IndigoService implements StructService {
   }
 
   clean(data: CleanData, options?: StructServiceOptions): Promise<CleanResult> {
-    const { struct, selected } = data
+    const { struct, selected, output_format } = data
+    const format = convertMimeTypeToOutputFormat(output_format)
+
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()
 
@@ -279,6 +287,7 @@ class IndigoService implements StructService {
 
       const commandData: CleanCommandData = {
         struct,
+        format,
         options: commandOptions,
         selectedAtoms: selected || []
       }
@@ -296,7 +305,8 @@ class IndigoService implements StructService {
     data: AromatizeData,
     options?: StructServiceOptions
   ): Promise<AromatizeResult> {
-    const { struct } = data
+    const { struct, output_format } = data
+    const format = convertMimeTypeToOutputFormat(output_format)
 
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()
@@ -322,6 +332,7 @@ class IndigoService implements StructService {
 
       const commandData: AromatizeCommandData = {
         struct,
+        format,
         options: commandOptions
       }
 
@@ -338,7 +349,8 @@ class IndigoService implements StructService {
     data: DearomatizeData,
     options?: StructServiceOptions
   ): Promise<DearomatizeResult> {
-    const { struct } = data
+    const { struct, output_format } = data
+    const format = convertMimeTypeToOutputFormat(output_format)
 
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()
@@ -364,6 +376,7 @@ class IndigoService implements StructService {
 
       const commandData: DearomatizeCommandData = {
         struct,
+        format,
         options: commandOptions
       }
 
@@ -380,7 +393,9 @@ class IndigoService implements StructService {
     data: CalculateCipData,
     options?: StructServiceOptions
   ): Promise<CalculateCipResult> {
-    const { struct } = data
+    const { struct, output_format } = data
+    const format = convertMimeTypeToOutputFormat(output_format)
+
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()
 
@@ -405,6 +420,7 @@ class IndigoService implements StructService {
 
       const commandData: CalculateCipCommandData = {
         struct,
+        format,
         options: commandOptions
       }
 
@@ -421,7 +437,8 @@ class IndigoService implements StructService {
     data: AutomapData,
     options?: StructServiceOptions
   ): Promise<AutomapResult> {
-    const { mode, struct } = data
+    const { mode, struct, output_format } = data
+    const format = convertMimeTypeToOutputFormat(output_format)
 
     return new Promise((resolve, reject) => {
       const worker: Worker = new IndigoWorker()
@@ -447,6 +464,7 @@ class IndigoService implements StructService {
 
       const commandData: AutomapCommandData = {
         struct,
+        format,
         mode,
         options: commandOptions
       }

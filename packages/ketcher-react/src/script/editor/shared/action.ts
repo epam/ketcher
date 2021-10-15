@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { BaseOperation } from '../operations/base'
-import Restruct from '../../render/restruct'
+import { ReStruct } from 'ketcher-core'
 //
 // Undo/redo actions
 //
@@ -26,7 +26,7 @@ class Action {
     this.operations = operations
   }
 
-  addOp(operation: BaseOperation, restruct?: Restruct): BaseOperation {
+  addOp(operation: BaseOperation, restruct?: ReStruct): BaseOperation {
     if (!restruct || !operation.isDummy(restruct)) {
       this.operations.push(operation)
     }
@@ -40,7 +40,7 @@ class Action {
   }
 
   // Perform action and return inverted one
-  perform(restruct: Restruct) {
+  perform(restruct: ReStruct) {
     const action = new Action()
     const sortedOperations = [...this.operations].sort(
       (a, b) => a.priority - b.priority
@@ -53,7 +53,7 @@ class Action {
     return action
   }
 
-  isDummy(restruct?: Restruct) {
+  isDummy(restruct?: ReStruct) {
     return (
       this.operations.find(
         // TODO [RB] the condition is always true for op.* operations

@@ -14,10 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializer, Struct } from 'ketcher-core'
 import { Component, createRef } from 'react'
-
-import Render from '../../render'
+import { MolSerializer, Render, Struct } from 'ketcher-core'
 
 function renderStruct(el, struct, options = {}) {
   if (el) {

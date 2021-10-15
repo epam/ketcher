@@ -39,16 +39,18 @@ const Open: FC<Props> = props => {
   }
 
   const structAcceptMimes = () => {
-    return Object.keys(formatProperties)
-      .reduce(
-        (res, key) =>
-          res.concat(
-            formatProperties[key].mime,
-            ...formatProperties[key].extensions
-          ),
-        []
+    return Array.from(
+      new Set(
+        Object.keys(formatProperties).reduce(
+          (res, key) =>
+            res.concat(
+              formatProperties[key].mime,
+              ...formatProperties[key].extensions
+            ),
+          []
+        )
       )
-      .join(',')
+    ).join(',')
   }
 
   return (

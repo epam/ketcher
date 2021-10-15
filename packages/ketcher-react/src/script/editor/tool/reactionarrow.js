@@ -20,9 +20,7 @@ import {
   fromArrowResizing
 } from '../actions/reaction'
 
-import Action from '../shared/action'
-import Raphael from '../../raphael-ext'
-import { Vec2 } from '../../../../../ketcher-core/dist'
+import { Vec2 } from 'ketcher-core'
 import { fromMultipleMove } from '../actions/fragment'
 
 function ReactionArrowTool(editor, mode) {
@@ -137,7 +135,7 @@ ReactionArrowTool.prototype.click = function (event) {
 
 function getArrowParams(x1, y1, x2, y2) {
   const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-  const angle = Raphael.angle(x2, y2, x1, y1)
+  const angle = calcAngle(x2, y2, x1, y1)
   return { length, angle }
 }
 
@@ -157,6 +155,15 @@ function getDefaultLengthPos(pos1, pos2) {
     return newPos
   }
   return pos2
+}
+
+function calcAngle(x1, y1, x2, y2) {
+  const x = x1 - x2,
+    y = y1 - y2
+  if (!x && !y) {
+    return 0
+  }
+  return (180 + (Math.atan2(-y, -x) * 180) / Math.PI + 360) % 360
 }
 
 export default ReactionArrowTool

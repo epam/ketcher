@@ -23,7 +23,7 @@ export enum ChemicalMimeType {
   InChI = 'chemical/x-inchi',
   InChIAuxInfo = 'chemical/x-inchi-aux',
   CML = 'chemical/x-cml',
-  KET = 'application/json'
+  KET = 'chemical/x-indigo-ket'
 }
 
 export interface WithStruct {
@@ -32,6 +32,10 @@ export interface WithStruct {
 
 export interface WithFormat {
   format: ChemicalMimeType
+}
+
+export interface WithOutputFormat {
+  output_format: ChemicalMimeType
 }
 
 export interface WithSelection {
@@ -46,29 +50,30 @@ export interface CheckResult {
   [key: string]: string
 }
 
-export interface ConvertData extends WithStruct {
-  output_format: ChemicalMimeType
-}
+export interface ConvertData extends WithStruct, WithOutputFormat {}
 
 export interface ConvertResult extends WithStruct, WithFormat {}
 
-export interface LayoutData extends WithStruct {}
+export interface LayoutData extends WithStruct, WithOutputFormat {}
 
 export interface LayoutResult extends WithStruct, WithFormat {}
 
-export interface CleanData extends WithStruct, WithSelection {}
+export interface CleanData
+  extends WithStruct,
+    WithSelection,
+    WithOutputFormat {}
 
 export interface CleanResult extends WithStruct, WithFormat {}
 
-export interface AromatizeData extends WithStruct {}
+export interface AromatizeData extends WithStruct, WithOutputFormat {}
 
 export interface AromatizeResult extends WithStruct, WithFormat {}
 
-export interface DearomatizeData extends WithStruct {}
+export interface DearomatizeData extends WithStruct, WithOutputFormat {}
 
 export interface DearomatizeResult extends WithStruct, WithFormat {}
 
-export interface CalculateCipData extends WithStruct {}
+export interface CalculateCipData extends WithStruct, WithOutputFormat {}
 
 export interface CalculateCipResult extends WithStruct, WithFormat {}
 
@@ -80,7 +85,7 @@ export interface CalculateResult {
   [key: string]: string | number | boolean
 }
 
-export interface AutomapData extends WithStruct {
+export interface AutomapData extends WithStruct, WithOutputFormat {
   mode: string
 }
 
@@ -92,7 +97,7 @@ export interface InfoResult {
   isAvailable: boolean
 }
 
-export interface RecognizeResult extends WithStruct {}
+export interface RecognizeResult extends WithStruct, WithOutputFormat {}
 
 export interface StructServiceOptions {
   [key: string]: string | number | boolean | undefined

@@ -14,10 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  StereLabelStyleType,
-  StereoColoringType
-} from '../../../render/restruct/GeneralEnumTypes'
+import { StereLabelStyleType, StereoColoringType } from 'ketcher-core'
 import jsonschema, { Schema } from 'jsonschema'
 
 type ExtendedSchema = Schema & { enumNames?: Array<string>; default?: any }

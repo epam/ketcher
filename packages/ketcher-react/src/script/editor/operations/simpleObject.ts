@@ -14,14 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Scale, SimpleObject, SimpleObjectMode, Vec2 } from 'ketcher-core'
+import {
+  ReSimpleObject,
+  Scale,
+  SimpleObject,
+  SimpleObjectMode,
+  Vec2,
+  tfx
+} from 'ketcher-core'
 
 import Base from './base'
 import { OperationType } from './OperationType'
-import { ReSimpleObject } from '../../render/restruct'
-import util from '../../render/util'
-
-const tfx = util.tfx
 
 interface SimpleObjectAddData {
   id?: number

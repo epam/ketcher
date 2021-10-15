@@ -16,7 +16,7 @@
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
+import { ReStruct } from 'ketcher-core'
 
 type Data = {
   aid?: any
@@ -34,7 +34,7 @@ export class AtomAttr extends BaseOperation {
     this.data2 = null
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const { aid, attribute, value } = this.data
 
     const atom = restruct.molecule.atoms.get(aid)!
@@ -58,7 +58,7 @@ export class AtomAttr extends BaseOperation {
     return inverted
   }
 
-  isDummy(restruct: Restruct) {
+  isDummy(restruct: ReStruct) {
     return (
       restruct.molecule.atoms.get(this.data.aid)![this.data.attribute] ===
       this.data.value

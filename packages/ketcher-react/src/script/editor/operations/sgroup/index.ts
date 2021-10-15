@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct, { ReSGroup } from '../../../render/restruct'
-import { SGroup, Vec2, FunctionalGroup } from 'ketcher-core'
+import { FunctionalGroup, ReSGroup, ReStruct, SGroup, Vec2 } from 'ketcher-core'
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
@@ -50,7 +49,7 @@ class SGroupCreate extends BaseOperation {
     }
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const struct = restruct.molecule
     const sgroup = new SGroup(this.data.type)
     const { sgid, pp, expanded, name } = this.data
@@ -94,7 +93,7 @@ class SGroupDelete extends BaseOperation {
     this.data = { sgid: sgroupId }
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const struct = restruct.molecule
     const { sgid } = this.data
     const sgroup = restruct.sgroups.get(sgid)

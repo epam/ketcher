@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct, { ReRGroup } from '../../../render/restruct'
+import { RGroup, ReRGroup, ReStruct } from 'ketcher-core'
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import { RGroup } from 'ketcher-core'
 
 export class RGroupFragment extends BaseOperation {
   rgid_new: any
@@ -36,7 +35,7 @@ export class RGroupFragment extends BaseOperation {
     this.frid = fragmentId
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     // eslint-disable-line max-statements
     const struct = restruct.molecule
     this.rgid_old =
@@ -65,7 +64,7 @@ export class RGroupFragment extends BaseOperation {
     }
   }
 
-  private setNew(struct: any, restruct: Restruct) {
+  private setNew(struct: any, restruct: ReStruct) {
     if (!this.rgid_new) {
       return
     }

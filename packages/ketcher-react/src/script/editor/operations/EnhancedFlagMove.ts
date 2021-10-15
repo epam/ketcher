@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Fragment, Vec2 } from 'ketcher-core'
+import { Fragment, ReStruct, Vec2 } from 'ketcher-core'
 
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
-import Restruct from '../../render/restruct'
 
 export class EnhancedFlagMove extends BaseOperation {
   data: {
@@ -31,7 +30,7 @@ export class EnhancedFlagMove extends BaseOperation {
     this.data = { frid: fragmentId, p }
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const { frid } = this.data
     const { p } = this.data
     const fragment = restruct.molecule.frags.get(frid)

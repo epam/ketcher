@@ -16,7 +16,6 @@
 
 import Action from '../shared/action'
 import { Scale } from 'ketcher-core'
-import draw from '../../render/draw'
 import { fromAtomsAttrs } from '../actions/atom'
 
 function ReactionMapTool(editor) {
@@ -67,11 +66,9 @@ ReactionMapTool.prototype.updateLine = function (p1, p2) {
   }
   if (p1 && p2) {
     var rnd = this.editor.render
-    this.line = draw.selectionLine(
-      rnd.paper,
+    this.line = rnd.selectionLine(
       Scale.obj2scaled(p1, rnd.options).add(rnd.options.offset),
-      Scale.obj2scaled(p2, rnd.options).add(rnd.options.offset),
-      rnd.options
+      Scale.obj2scaled(p2, rnd.options).add(rnd.options.offset)
     )
   }
 }

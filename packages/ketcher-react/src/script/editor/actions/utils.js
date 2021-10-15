@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Bond } from 'ketcher-core'
 import { Vec2 } from 'ketcher-core'
 import closest from '../shared/closest'
 import { difference } from 'lodash'
-import { Bond } from 'ketcher-core'
 
 export function atomGetAttr(restruct, aid, name) {
   return restruct.molecule.atoms.get(aid)[name]

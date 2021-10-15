@@ -16,7 +16,8 @@
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
+import { ReStruct } from 'ketcher-core'
+
 type Data = {
   bid: any
   attribute: any
@@ -33,7 +34,7 @@ export class BondAttr extends BaseOperation {
     this.data2 = null
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const { attribute, bid, value } = this.data
     const bond = restruct.molecule.bonds.get(bid)!
 
@@ -53,7 +54,7 @@ export class BondAttr extends BaseOperation {
     }
   }
 
-  isDummy(restruct: Restruct) {
+  isDummy(restruct: ReStruct) {
     const { attribute, bid, value } = this.data
     const bond = restruct.molecule.bonds.get(bid)!
     return bond[attribute] === value

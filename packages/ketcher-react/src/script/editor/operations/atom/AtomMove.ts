@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct, Scale } from 'ketcher-core'
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
-import { Scale } from 'ketcher-core'
 
 export class AtomMove extends BaseOperation {
   data: {
@@ -31,7 +31,7 @@ export class AtomMove extends BaseOperation {
     this.data = { aid: atomId, d, noinvalidate }
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const struct = restruct.molecule
     const { aid, d } = this.data
     const atom = struct.atoms.get(aid)

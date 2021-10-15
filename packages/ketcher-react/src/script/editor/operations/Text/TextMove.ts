@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct, Scale } from 'ketcher-core'
+
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import Restruct from '../../../render/restruct'
-import { Scale } from 'ketcher-core'
 
 interface TextMoveData {
   id: any
@@ -33,7 +33,7 @@ export class TextMove extends BaseOperation {
     this.data = { id, d, noinvalidate }
   }
 
-  execute(restruct: Restruct): void {
+  execute(restruct: ReStruct): void {
     const struct = restruct.molecule
     const id = this.data.id
     const difference = this.data.d

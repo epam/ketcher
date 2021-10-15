@@ -16,7 +16,7 @@
 
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
-import Restruct from '../../render/restruct'
+import { ReStruct } from 'ketcher-core'
 
 export class CalcImplicitH extends BaseOperation {
   atomIds: Array<number>
@@ -26,7 +26,7 @@ export class CalcImplicitH extends BaseOperation {
     this.atomIds = aids
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const aIds = this.atomIds
 
     restruct.molecule.setImplicitHydrogen(aIds)

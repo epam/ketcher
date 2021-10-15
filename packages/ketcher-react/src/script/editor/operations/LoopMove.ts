@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct, Scale } from 'ketcher-core'
+
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
-import Restruct from '../../render/restruct'
-import { Scale } from 'ketcher-core'
+
 export class LoopMove extends BaseOperation {
   data: {
     id: any
@@ -29,7 +30,7 @@ export class LoopMove extends BaseOperation {
     this.data = { id, d }
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     // not sure if there should be an action to move a loop in the first place
     // but we have to somehow move the aromatic ring,
     // which is associated with the loop, rather than with any of the bonds

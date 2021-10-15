@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ChemicalMimeType, KetSerializer } from 'ketcher-core'
 import { appUpdate, setStruct } from '../options'
 import { omit, without } from 'lodash/fp'
 
-import { KetSerializer } from 'ketcher-core'
 import { checkErrors } from '../modal/form'
 import { indigoVerification } from '../request'
 import { load } from '../shared'
@@ -197,7 +197,7 @@ export function serverCall(editor, server, method, options, struct) {
         },
         method !== 'calculate' && method !== 'check'
           ? {
-              output_format: 'chemical/x-indigo-ket'
+              output_format: ChemicalMimeType.KET
             }
           : null,
         selectedAtoms && selectedAtoms.length > 0

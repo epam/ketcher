@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct, { ReEnhancedFlag, ReFrag } from '../../render/restruct'
+import { Fragment, ReEnhancedFlag, ReFrag, ReStruct } from 'ketcher-core'
 
 import { BaseOperation } from './base'
-import { Fragment } from 'ketcher-core'
 import { OperationType } from './OperationType'
 
 // todo: separate classes: now here is circular dependency in `invert` method
@@ -30,7 +29,7 @@ class FragmentAdd extends BaseOperation {
     this.frid = typeof fragmentId === 'undefined' ? null : fragmentId
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const struct = restruct.molecule
     const frag = new Fragment()
 
@@ -40,7 +39,7 @@ class FragmentAdd extends BaseOperation {
       struct.frags.set(this.frid, frag)
     }
 
-    restruct.frags.set(this.frid, new ReFrag(frag)) // TODO add ReStruct.notifyFragmentAdded
+    restruct.frags.set(this.frid, new ReFrag(frag)) // TODO add restruct.notifyFragmentAdded
     restruct.enhancedFlags.set(this.frid, new ReEnhancedFlag())
   }
 
@@ -57,7 +56,7 @@ class FragmentDelete extends BaseOperation {
     this.frid = fragmentId
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const struct = restruct.molecule
     if (!struct.frags.get(this.frid)) {
       return
@@ -65,7 +64,7 @@ class FragmentDelete extends BaseOperation {
 
     BaseOperation.invalidateItem(restruct, 'frags', this.frid, 1)
     restruct.frags.delete(this.frid)
-    struct.frags.delete(this.frid) // TODO add ReStruct.notifyFragmentRemoved
+    struct.frags.delete(this.frid) // TODO add restruct.notifyFragmentRemoved
 
     const enhancedFalg = restruct.enhancedFlags.get(this.frid)
     if (!enhancedFalg) return

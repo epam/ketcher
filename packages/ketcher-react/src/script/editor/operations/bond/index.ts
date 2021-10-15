@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Restruct, { ReBond } from '../../../render/restruct'
+import { Bond, ReBond, ReStruct } from 'ketcher-core'
 
 import { BaseOperation } from '../base'
-import { Bond } from 'ketcher-core'
 import { OperationType } from '../OperationType'
 
 // todo: separate classes: now here is circular dependency in `invert` method
@@ -37,7 +36,7 @@ class BondAdd extends BaseOperation {
     this.data = { bond, begin, end, bid: null }
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const { begin, bond, end } = this.data
     // eslint-disable-line max-statements
     const struct = restruct.molecule
@@ -100,7 +99,7 @@ class BondDelete extends BaseOperation {
     this.data = { bid: bondId, bond: null, begin: null, end: null }
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const { bid } = this.data
 
     // eslint-disable-line max-statements

@@ -16,7 +16,7 @@
 
 import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
-import Restruct from '../../render/restruct'
+import { ReStruct } from 'ketcher-core'
 
 export class FragmentStereoFlag extends BaseOperation {
   frid: number
@@ -26,7 +26,7 @@ export class FragmentStereoFlag extends BaseOperation {
     this.frid = fragmentId
   }
 
-  execute(restruct: Restruct) {
+  execute(restruct: ReStruct) {
     const struct = restruct.molecule
 
     const fragment = struct.frags.get(this.frid)!

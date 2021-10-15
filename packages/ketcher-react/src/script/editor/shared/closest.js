@@ -356,15 +356,14 @@ function findClosestSGroup(restruct, pos) {
 
   restruct.molecule.sgroups.forEach((sg, sgid) => {
     if (sg.functionalGroup && !sg.expanded) {
-      minDist = 1
-      const zeroAtomPp = restruct.molecule.atoms.get(sg.atoms[0]).pp
+      const firstAtomPp = sg.firstSgroupAtom.pp
       const d = sg.bracketDir
       const n = d.rotateSC(1, 0)
       const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n))
       const shift = new Vec2(0.625, 0.625)
       const triggerZone = {
-        p0: Vec2.diff(zeroAtomPp, shift),
-        p1: Vec2.sum(zeroAtomPp, shift)
+        p0: Vec2.diff(firstAtomPp, shift),
+        p1: Vec2.sum(firstAtomPp, shift)
       }
 
       const inBox =

@@ -28,7 +28,6 @@ import ReDataSGroupData from './redatasgroupdata'
 import ReObject from './ReObject'
 import draw from '../draw'
 import util from '../util'
-import utils from '../../editor/shared/utils'
 
 const tfx = util.tfx
 
@@ -53,24 +52,8 @@ class ReSGroup extends ReObject {
     if (
       FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
     ) {
+      sgroup.firstSgroupAtom = remol.molecule.atoms.get(sgroup.atoms[0])
       sgroup.functionalGroup = true
-      let label = {}
-      const textPp = Scale.obj2scaled(
-        remol.molecule.atoms.get(sgroup.atoms[0]).pp,
-        remol.render.options
-      )
-      sgroup.textPp = textPp
-      label.path = render.paper
-        .text(textPp.x, textPp.y, sgroup.data.name)
-        .attr({
-          'font-weight': 700,
-          'font-size': 14
-        })
-
-      label.rbb = util.relBox(label.path.getBBox())
-      draw.recenterText(label.path, label.rbb)
-
-      set.push(label.path)
     } else {
       switch (sgroup.type) {
         case 'MUL':
@@ -466,12 +449,12 @@ function getHighlighPathInfo(sgroup, options) {
   const b0 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p0.y)
   const b1 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p1.y)
 
-  if (sgroup.textPp) {
-    const shift = new Vec2(25, 25, 0)
-    const highlightPp = Vec2.diff(sgroup.textPp, shift)
+  if (sgroup.firstSgroupAtom) {
+    const size = options.contractedFunctionalGroupSize
+    const shift = new Vec2(size / 2, size / 2, 0)
+    const highlightPp = Vec2.diff(sgroup.firstSgroupAtom.pp.scaled(40), shift)
     const startX = highlightPp.x
     const startY = highlightPp.y
-    const size = options.contractedFunctionalGroupSize
     return {
       startX,
       startY,

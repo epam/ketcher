@@ -130,6 +130,9 @@ class ReAtom extends ReObject {
     const atom = restruct.molecule.atoms.get(aid)
     const sgroups = restruct.molecule.sgroups
     const functionalGroups = restruct.molecule.functionalGroups
+    const render = restruct.render
+    const ps = Scale.obj2scaled(this.a.pp, render.options)
+
     if (
       FunctionalGroup.isAtomInContractedFinctionalGroup(
         atom,
@@ -137,11 +140,25 @@ class ReAtom extends ReObject {
         functionalGroups,
         false
       )
-    )
+    ) {
+      const firstAtom = isFirstAtomInContracted(sgroups, aid)
+      if (firstAtom.result) {
+        let label: any = {}
+        label.path = render.paper.text(ps.x, ps.y, firstAtom.sgName).attr({
+          'font-weight': 700,
+          'font-size': 14
+        })
+        restruct.addReObjectPath(
+          LayerMap.data,
+          this.visel,
+          label.path,
+          ps,
+          true
+        )
+        return
+      }
       return
-
-    const render = restruct.render
-    const ps = Scale.obj2scaled(this.a.pp, render.options)
+    }
 
     this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this)
     this.showLabel = isLabelVisible(restruct, render.options, this)
@@ -1012,6 +1029,20 @@ function shiftBondEnd(atom, pos0, dir, margin) {
   }
   if (t > 0) pos0 = pos0.addScaled(dir, t + margin)
   return pos0
+}
+
+function isFirstAtomInContracted(sgroups, aid) {
+  for (let sg of sgroups.values()) {
+    if (aid === sg.atoms[0]) {
+      return {
+        sgName: sg.data.name,
+        result: true
+      }
+    }
+  }
+  return {
+    result: false
+  }
 }
 
 export default ReAtom

@@ -147,14 +147,13 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
   tmpl.sgroups.forEach(sg => {
     const newsgid = restruct.molecule.sgroups.newId()
     const sgAtoms = sg.atoms.map(aid => map.get(aid))
-    const firstAtom = tmpl.atoms.get(0).pp
     const sgAction = fromSgroupAddition(
       restruct,
       sg.type,
       sgAtoms,
       sg.data,
       newsgid,
-      firstAtom,
+      atom.pp,
       sg.type === 'SUP' ? sg.expanded : null,
       sg.data.name
     )

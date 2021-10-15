@@ -22,11 +22,10 @@ import {
   RxnPlusMove,
   SGroupDataMove
 } from '../operations'
-import { Bond, Pile, Vec2 } from 'ketcher-core'
+import { Bond, Fragment, Pile, Vec2 } from 'domain/entities'
 import { getRelSgroupsBySelection, structSelection } from './utils'
 
 import Action from '../shared/action'
-import { Fragment } from 'ketcher-core'
 import utils from '../shared/utils'
 
 export function fromFlip(restruct, selection, dir, center) {

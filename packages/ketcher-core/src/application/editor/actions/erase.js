@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, RGroup } from 'ketcher-core'
+import { Atom, Bond, RGroup } from 'domain/entities'
 import {
   AtomAttr,
   AtomDelete,

@@ -24,7 +24,7 @@ import {
   SGroupDelete,
   SGroupRemoveFromHierarchy
 } from '../operations'
-import { Pile, SGroup } from 'ketcher-core'
+import { Pile, SGroup } from 'domain/entities'
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils'
 
 import Action from '../shared/action'

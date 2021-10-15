@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond, MolSerializer } from 'ketcher-core'
-
 import Action from '../shared/action'
+import { Bond } from 'domain/entities'
 import { BondAttr } from '../operations'
+import { MolSerializer } from 'domain/serializers'
 
 /**
  * @param restruct { ReStruct }

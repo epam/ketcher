@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReStruct, Vec2 } from 'ketcher-core'
 import { TextCreate, TextDelete, TextUpdate } from '../operations'
 
 import Action from '../shared/action'
+import { ReStruct } from '../../render'
+import { Vec2 } from 'domain/entities'
 
 export function fromTextCreation(
   restruct: ReStruct,

@@ -28,7 +28,7 @@ import {
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup'
 
 import Action from '../shared/action'
-import { Vec2 } from 'ketcher-core'
+import { Vec2 } from 'domain/entities'
 import { fromSgroupAddition } from './sgroup'
 
 export function fromPaste(restruct, pstruct, point, angle = 0) {

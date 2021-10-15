@@ -18,12 +18,10 @@ import {
   Atom,
   Bond,
   Neighbor,
-  ReStruct,
   StereoLabel,
-  StereoValidator,
   Struct,
   Vec2
-} from 'ketcher-core'
+} from 'domain/entities'
 import {
   AtomAdd,
   AtomAttr,
@@ -43,6 +41,8 @@ import {
 } from './atom'
 
 import Action from '../shared/action'
+import { ReStruct } from '../../render'
+import { StereoValidator } from 'domain/helpers'
 import utils from '../shared/utils'
 
 export function fromBondAddition(

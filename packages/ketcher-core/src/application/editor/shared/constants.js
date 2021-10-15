@@ -14,18 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from 'domain/constants'
-export * from 'domain/entities'
-export * from 'domain/serializers'
-export * from 'domain/services'
-export * from 'domain/helpers'
-
-export * from 'infrastructure/services'
-
-export * from 'application/formatters'
-export * from 'application/render'
-export * from 'application/editor'
-export * from 'application/ketcher'
-export * from 'application/ketcherBuilder'
-
-export * from 'utilities'
+export const SgContexts = {
+  Fragment: 'Fragment',
+  Multifragment: 'Multifragment',
+  Bond: 'Bond',
+  Atom: 'Atom',
+  Group: 'Group'
+}

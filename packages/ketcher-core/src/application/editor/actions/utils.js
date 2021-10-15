@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond } from 'ketcher-core'
-import { Vec2 } from 'ketcher-core'
+import { Bond, Vec2 } from 'domain/entities'
+
 import closest from '../shared/closest'
 import { difference } from 'lodash'
 

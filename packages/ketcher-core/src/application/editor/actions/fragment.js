@@ -29,7 +29,7 @@ import {
   SimpleObjectMove,
   TextMove
 } from '../operations'
-import { Pile, RGroup, Vec2 } from 'ketcher-core'
+import { Pile, RGroup, Vec2 } from 'domain/entities'
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup'
 
 import Action from '../shared/action'

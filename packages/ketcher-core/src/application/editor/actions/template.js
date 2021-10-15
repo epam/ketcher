@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Vec2 } from 'ketcher-core'
+import { Atom, Vec2 } from 'domain/entities'
 import { AtomAdd, BondAdd, CalcImplicitH } from '../operations'
 import { atomForNewBond, atomGetAttr } from './utils'
 import { fromAtomsAttrs, mergeSgroups } from './atom'

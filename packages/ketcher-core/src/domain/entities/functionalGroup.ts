@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { FunctionalGroupsProvider } from './../helpers/functionalGroupsProvider'
+import { FunctionalGroupsProvider } from '../helpers'
 
 export class FunctionalGroup {
   name: string
@@ -24,6 +24,15 @@ export class FunctionalGroup {
     this.name = name
     this.relatedSGroupId = relatedSGroupId
     this.isExpanded = isExpanded
+  }
+
+  static isFirstAtomInFunctionalGroup(sgroups, aid): boolean {
+    for (let sg of sgroups.values()) {
+      if (FunctionalGroup.isFunctionalGroup(sg) && aid === sg.atoms[0]) {
+        return true
+      }
+    }
+    return false
   }
 
   static isFunctionalGroup(sgroup): boolean {

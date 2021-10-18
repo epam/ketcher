@@ -138,24 +138,18 @@ class ReAtom extends ReObject {
         sgroups,
         functionalGroups,
         false
-      )
+      ) &&
+      FunctionalGroup.isFirstAtomInFunctionalGroup(sgroups, aid)
     ) {
-      const firstAtom = isFirstAtomInContracted(sgroups, aid)
-      if (firstAtom.result) {
-        let label: any = {}
-        label.path = render.paper.text(ps.x, ps.y, firstAtom.sgName).attr({
-          'font-weight': 700,
-          'font-size': 14
-        })
-        restruct.addReObjectPath(
-          LayerMap.data,
-          this.visel,
-          label.path,
-          ps,
-          true
-        )
-        return
+      let sgroupName
+      for (let sg of sgroups.values()) {
+        if (aid === sg.atoms[0]) sgroupName = sg.data.name
       }
+      const path = render.paper.text(ps.x, ps.y, sgroupName).attr({
+        'font-weight': 700,
+        'font-size': 14
+      })
+      restruct.addReObjectPath(LayerMap.data, this.visel, path, ps, true)
       return
     }
 
@@ -1028,20 +1022,6 @@ function shiftBondEnd(atom, pos0, dir, margin) {
   }
   if (t > 0) pos0 = pos0.addScaled(dir, t + margin)
   return pos0
-}
-
-function isFirstAtomInContracted(sgroups, aid) {
-  for (let sg of sgroups.values()) {
-    if (aid === sg.atoms[0]) {
-      return {
-        sgName: sg.data.name,
-        result: true
-      }
-    }
-  }
-  return {
-    result: false
-  }
 }
 
 export default ReAtom

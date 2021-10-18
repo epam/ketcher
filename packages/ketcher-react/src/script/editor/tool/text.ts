@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Text, Vec2 } from 'ketcher-core'
 import {
+  Action,
+  Text,
+  Vec2,
+  fromMultipleMove,
   fromTextCreation,
   fromTextDeletion,
   fromTextUpdating
-} from '../actions/text'
-
-import Action from '../shared/action'
-import { fromMultipleMove } from '../actions/fragment'
+} from 'ketcher-core'
 
 interface Result {
   content: string

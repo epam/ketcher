@@ -18,10 +18,10 @@ import {
   FormatterFactory,
   Pile,
   SGroup,
+  getStereoAtomsMap,
   identifyStructFormat
 } from 'ketcher-core'
 
-import { getStereoAtomsMap } from '../../editor/actions/bond'
 import { supportedSGroupTypes } from './constants'
 
 export function onAction(action) {

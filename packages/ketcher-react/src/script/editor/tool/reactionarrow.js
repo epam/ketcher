@@ -15,13 +15,12 @@
  ***************************************************************************/
 
 import {
+  Vec2,
   fromArrowAddition,
   fromArrowDeletion,
-  fromArrowResizing
-} from '../actions/reaction'
-
-import { Vec2 } from 'ketcher-core'
-import { fromMultipleMove } from '../actions/fragment'
+  fromArrowResizing,
+  fromMultipleMove
+} from 'ketcher-core'
 
 function ReactionArrowTool(editor, mode) {
   if (!(this instanceof ReactionArrowTool))

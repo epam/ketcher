@@ -15,15 +15,15 @@
  ***************************************************************************/
 
 import {
+  Pile,
+  SgContexts,
+  checkOverlapping,
   fromSeveralSgroupAddition,
   fromSgroupAction,
   fromSgroupDeletion
-} from '../actions/sgroup'
+} from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
-import { Pile } from 'ketcher-core'
-import { SgContexts } from '../shared/constants'
-import { checkOverlapping } from 'ketcher-core'
 import { isEqual } from 'lodash/fp'
 
 const searchMaps = ['atoms', 'bonds', 'sgroups', 'sgroupData']

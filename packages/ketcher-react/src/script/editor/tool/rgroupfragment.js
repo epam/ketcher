@@ -15,12 +15,11 @@
  ***************************************************************************/
 
 import {
+  RGroup,
   fromRGroupAttrs,
   fromRGroupFragment,
   fromUpdateIfThen
-} from '../actions/rgroup'
-
-import { RGroup } from 'ketcher-core'
+} from 'ketcher-core'
 
 function RGroupFragmentTool(editor) {
   if (!(this instanceof RGroupFragmentTool)) {

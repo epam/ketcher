@@ -138,18 +138,19 @@ class ReAtom extends ReObject {
         sgroups,
         functionalGroups,
         false
-      ) &&
-      FunctionalGroup.isFirstAtomInFunctionalGroup(sgroups, aid)
+      )
     ) {
-      let sgroupName
-      for (let sg of sgroups.values()) {
-        if (aid === sg.atoms[0]) sgroupName = sg.data.name
+      if (FunctionalGroup.isFirstAtomInFunctionalGroup(sgroups, aid)) {
+        let sgroupName
+        for (let sg of sgroups.values()) {
+          if (aid === sg.atoms[0]) sgroupName = sg.data.name
+        }
+        const path = render.paper.text(ps.x, ps.y, sgroupName).attr({
+          'font-weight': 700,
+          'font-size': 14
+        })
+        restruct.addReObjectPath(LayerMap.data, this.visel, path, ps, true)
       }
-      const path = render.paper.text(ps.x, ps.y, sgroupName).attr({
-        'font-weight': 700,
-        'font-size': 14
-      })
-      restruct.addReObjectPath(LayerMap.data, this.visel, path, ps, true)
       return
     }
 

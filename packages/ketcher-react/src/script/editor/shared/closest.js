@@ -361,19 +361,16 @@ function findClosestSGroup(restruct, pos) {
       const n = d.rotateSC(1, 0)
       const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n))
       const shift = new Vec2(0.625, 0.625)
-      const triggerZone = {
+      const box = {
         p0: Vec2.diff(firstAtomPp, shift),
         p1: Vec2.sum(firstAtomPp, shift)
       }
 
       const inBox =
-        triggerZone.p0.y < pg.y &&
-        triggerZone.p1.y > pg.y &&
-        triggerZone.p0.x < pg.x &&
-        triggerZone.p1.x > pg.x
+        box.p0.y < pg.y && box.p1.y > pg.y && box.p0.x < pg.x && box.p1.x > pg.x
       const xDist = Math.min(
-        Math.abs(triggerZone.p0.x - pg.x),
-        Math.abs(triggerZone.p1.x - pg.x)
+        Math.abs(box.p0.x - pg.x),
+        Math.abs(box.p1.x - pg.x)
       )
 
       if (inBox && (ret === null || xDist < minDist)) {

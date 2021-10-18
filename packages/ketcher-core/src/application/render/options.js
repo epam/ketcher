@@ -15,12 +15,12 @@
  ***************************************************************************/
 
 import { Vec2 } from 'domain/entities'
+import utils from '../editor/shared/utils'
 
 function defaultOptions(opt) {
   const scaleFactor = opt.scale || 100
 
-  // TODO: test if rotation step is working now
-  // if (opt.rotationStep) utils.setFracAngle(opt.rotationStep)
+  if (opt.rotationStep) utils.setFracAngle(opt.rotationStep)
 
   const labelFontSize = Math.ceil(1.9 * (scaleFactor / 6))
   const subFontSize = Math.ceil(0.7 * labelFontSize)

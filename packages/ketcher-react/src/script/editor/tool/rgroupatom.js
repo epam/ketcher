@@ -14,10 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromAtomAddition, fromAtomsAttrs } from '../actions/atom'
-
-import { Atom } from 'ketcher-core'
 import { offFunctionsToFG } from './offFunctionsToFG'
+import { Atom, fromAtomAddition, fromAtomsAttrs } from 'ketcher-core'
 
 function RGroupAtomTool(editor) {
   if (!(this instanceof RGroupAtomTool)) {

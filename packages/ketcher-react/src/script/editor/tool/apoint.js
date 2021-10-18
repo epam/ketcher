@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromAtomsAttrs } from '../actions/atom'
+import { fromAtomsAttrs } from 'ketcher-core'
 import { offFunctionsToFG } from './offFunctionsToFG'
 
 function APointTool(editor) {

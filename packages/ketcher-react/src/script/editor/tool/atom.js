@@ -14,10 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond } from 'ketcher-core'
-import { fromAtomAddition, fromAtomsAttrs } from '../actions/atom'
+import {
+  Atom,
+  Bond,
+  fromAtomAddition,
+  fromAtomsAttrs,
+  fromBondAddition
+} from 'ketcher-core'
 
-import { fromBondAddition } from '../actions/bond'
 import utils from '../shared/utils'
 import { offFunctionsToFG } from './offFunctionsToFG'
 

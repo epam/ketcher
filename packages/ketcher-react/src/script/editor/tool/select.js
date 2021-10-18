@@ -15,19 +15,20 @@
  ***************************************************************************/
 
 import {
+  Action,
+  SGroup,
+  fromAtomsAttrs,
+  fromBondsAttrs,
   fromItemsFuse,
+  fromMultipleMove,
+  fromTextDeletion,
+  fromTextUpdating,
   getHoverToFuse,
   getItemsToFuse
-} from '../actions/closely-fusing'
-import { fromTextDeletion, fromTextUpdating } from '../actions/text'
+} from 'ketcher-core'
 
-import Action from '../shared/action'
 import LassoHelper from './helper/lasso'
-import { SGroup } from 'ketcher-core'
 import { atomLongtapEvent } from './atom'
-import { fromAtomsAttrs } from '../actions/atom'
-import { fromBondsAttrs } from '../actions/bond'
-import { fromMultipleMove } from '../actions/fragment'
 import { sgroupDialog } from './sgroup'
 import utils from '../shared/utils'
 import { xor } from 'lodash/fp'

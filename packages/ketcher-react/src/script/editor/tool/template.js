@@ -15,17 +15,15 @@
  ***************************************************************************/
 
 import {
+  Vec2,
   fromItemsFuse,
-  getHoverToFuse,
-  getItemsToFuse
-} from '../actions/closely-fusing'
-import {
   fromTemplateOnAtom,
   fromTemplateOnBondAction,
-  fromTemplateOnCanvas
-} from '../actions/template'
+  fromTemplateOnCanvas,
+  getHoverToFuse,
+  getItemsToFuse
+} from 'ketcher-core'
 
-import { Vec2 } from 'ketcher-core'
 import utils from '../shared/utils'
 import { offFunctionsToFG } from './offFunctionsToFG'
 

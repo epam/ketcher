@@ -14,17 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromArrowDeletion, fromPlusDeletion } from '../actions/reaction'
 import {
+  fromArrowDeletion,
   fromFragmentDeletion,
   fromOneAtomDeletion,
-  fromOneBondDeletion
-} from '../actions/erase'
+  fromOneBondDeletion,
+  fromPlusDeletion,
+  fromSgroupDeletion,
+  fromSimpleObjectDeletion,
+  fromTextDeletion
+} from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
-import { fromSgroupDeletion } from '../actions/sgroup'
-import { fromSimpleObjectDeletion } from '../actions/simpleobject'
-import { fromTextDeletion } from '../actions/text'
 import { offFunctionsToFG } from './offFunctionsToFG'
 
 function EraserTool(editor, mode) {

@@ -14,17 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond, Vec2 } from 'ketcher-core'
 import { offFunctionsToFG } from './offFunctionsToFG'
 import {
+  Bond,
+  Vec2,
+  bondChangingAction,
+  fromChain,
   fromItemsFuse,
   getHoverToFuse,
   getItemsToFuse
-} from '../actions/closely-fusing'
+} from 'ketcher-core'
 
 import { atomLongtapEvent } from './atom'
-import { bondChangingAction } from '../actions/bond'
-import { fromChain } from '../actions/chain'
 import utils from '../shared/utils'
 
 function ChainTool(editor) {

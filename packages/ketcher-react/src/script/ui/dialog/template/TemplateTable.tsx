@@ -87,7 +87,7 @@ const TemplateTable: FC<TemplateTableProps> = props => {
               title={greekify(tmplName(tmpl, i))}
               key={
                 tmpl.struct.name !== selected?.struct.name
-                  ? tmpl.struct.name
+                  ? `${tmpl.struct.name}_${i}`
                   : `${tmpl.struct.name}_selected`
               }
               style={tmplStyles}>

@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Action from '../shared/action'
-import { fromAtomsAttrs } from '../actions/atom'
+import { Action, fromAtomsAttrs } from 'ketcher-core'
 
 function ReactionUnmapTool(editor) {
   if (!(this instanceof ReactionUnmapTool)) return new ReactionUnmapTool(editor)

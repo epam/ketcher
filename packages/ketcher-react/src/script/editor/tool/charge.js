@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Elements } from 'ketcher-core'
-import { fromAtomsAttrs } from '../actions/atom'
+import { Elements, fromAtomsAttrs } from 'ketcher-core'
 
 function ChargeTool(editor, charge) {
   if (!(this instanceof ChargeTool)) return new ChargeTool(editor, charge)

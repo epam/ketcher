@@ -14,12 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond, Vec2 } from 'ketcher-core'
 import {
+  Bond,
+  Vec2,
   bondChangingAction,
   fromBondAddition,
   fromBondsAttrs
-} from '../actions/bond'
+} from 'ketcher-core'
 
 import utils from '../shared/utils'
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { OperationType } from '../operations'
+import { OperationType } from 'ketcher-core'
 
 type Data = {
   operation: any

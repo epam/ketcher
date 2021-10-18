@@ -16,11 +16,10 @@
 
 import {
   fromItemsFuse,
+  fromPaste,
   getHoverToFuse,
   getItemsToFuse
-} from '../actions/closely-fusing'
-
-import { fromPaste } from '../actions/paste'
+} from 'ketcher-core'
 
 function PasteTool(editor, struct) {
   if (!(this instanceof PasteTool)) return new PasteTool(editor, struct)

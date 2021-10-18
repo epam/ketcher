@@ -15,12 +15,11 @@
  ***************************************************************************/
 
 import {
+  fromMultipleMove,
   fromSimpleObjectAddition,
   fromSimpleObjectDeletion,
   fromSimpleObjectResizing
-} from '../actions/simpleobject'
-
-import { fromMultipleMove } from '../actions/fragment'
+} from 'ketcher-core'
 
 function SimpleObjectTool(editor, mode) {
   if (!(this instanceof SimpleObjectTool))

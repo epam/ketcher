@@ -146,7 +146,7 @@ export const initTmplsState = {
   filter: '',
   group: null,
   attach: {},
-  mode: 'Templates'
+  mode: 'classic'
 }
 
 const tmplActions = [

@@ -31,7 +31,7 @@ interface FGState {
 
 const initialState: FGState = {
   lib: [],
-  mode: 'Functional Groups'
+  mode: 'fg'
 }
 
 const functionalGroupsReducer = (

@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Bond, Vec2 } from 'ketcher-core'
+import { offFunctionsToFG } from './offFunctionsToFG'
 import {
   fromItemsFuse,
   getHoverToFuse,
@@ -31,11 +32,17 @@ function ChainTool(editor) {
 
   this.editor = editor
   this.editor.selection(null)
+  this.sgroups = editor.render.ctab.sgroups
+  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
 }
 
 ChainTool.prototype.mousedown = function (event) {
   const rnd = this.editor.render
   const ci = this.editor.findItem(event, ['atoms', 'bonds'])
+
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
+
   this.editor.hover(null)
   this.dragCtx = {
     xy0: rnd.page2obj(event),

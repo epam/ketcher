@@ -25,6 +25,7 @@ import LassoHelper from './helper/lasso'
 import { fromSgroupDeletion } from '../actions/sgroup'
 import { fromSimpleObjectDeletion } from '../actions/simpleobject'
 import { fromTextDeletion } from '../actions/text'
+import { offFunctionsToFG } from './offFunctionsToFG'
 
 function EraserTool(editor, mode) {
   if (!(this instanceof EraserTool)) {
@@ -37,6 +38,8 @@ function EraserTool(editor, mode) {
   }
 
   this.editor = editor
+  this.sgroups = editor.render.ctab.sgroups
+  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
 
   this.maps = [
     'atoms',
@@ -52,6 +55,8 @@ function EraserTool(editor, mode) {
 }
 
 EraserTool.prototype.mousedown = function (event) {
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
   const ci = this.editor.findItem(event, this.maps)
   if (!ci)
     //  ci.type == 'Canvas'
@@ -59,12 +64,16 @@ EraserTool.prototype.mousedown = function (event) {
 }
 
 EraserTool.prototype.mousemove = function (event) {
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
   if (this.lassoHelper.running())
     this.editor.selection(this.lassoHelper.addPoint(event))
   else this.editor.hover(this.editor.findItem(event, this.maps))
 }
 
 EraserTool.prototype.mouseup = function (event) {
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
   // eslint-disable-line max-statements
   const rnd = this.editor.render
 
@@ -78,6 +87,8 @@ EraserTool.prototype.mouseup = function (event) {
 }
 
 EraserTool.prototype.click = function (event) {
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
   const restruct = this.editor.render.ctab
   const ci = this.editor.findItem(event, this.maps)
 

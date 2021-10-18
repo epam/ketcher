@@ -19,6 +19,7 @@ import { fromAtomAddition, fromAtomsAttrs } from '../actions/atom'
 
 import { fromBondAddition } from '../actions/bond'
 import utils from '../shared/utils'
+import { offFunctionsToFG } from './offFunctionsToFG'
 
 function AtomTool(editor, atomProps) {
   if (!(this instanceof AtomTool)) {
@@ -39,9 +40,13 @@ function AtomTool(editor, atomProps) {
   this.editor = editor
   this.atomProps = atomProps
   this.bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE }
+  this.sgroups = editor.render.ctab.sgroups
+  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
 }
 
 AtomTool.prototype.mousedown = function (event) {
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
   this.editor.hover(null)
   this.editor.selection(null)
   const ci = this.editor.findItem(event, ['atoms'])

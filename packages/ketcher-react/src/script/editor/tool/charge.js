@@ -16,6 +16,7 @@
 
 import { Elements } from 'ketcher-core'
 import { fromAtomsAttrs } from '../actions/atom'
+import { offFunctionsToFG } from './offFunctionsToFG'
 
 function ChargeTool(editor, charge) {
   if (!(this instanceof ChargeTool)) return new ChargeTool(editor, charge)
@@ -23,9 +24,13 @@ function ChargeTool(editor, charge) {
   this.editor = editor
   this.editor.selection(null)
   this.charge = charge
+  this.sgroups = editor.render.ctab.sgroups
+  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
 }
 
 ChargeTool.prototype.mousemove = function (event) {
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
   var rnd = this.editor.render
   var ci = this.editor.findItem(event, ['atoms'])
   var struct = rnd.ctab.molecule
@@ -36,6 +41,8 @@ ChargeTool.prototype.mousemove = function (event) {
 }
 
 ChargeTool.prototype.click = function (event) {
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
   var editor = this.editor
   var rnd = editor.render
   var struct = rnd.ctab.molecule

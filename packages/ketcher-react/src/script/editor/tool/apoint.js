@@ -15,11 +15,14 @@
  ***************************************************************************/
 
 import { fromAtomsAttrs } from '../actions/atom'
+import { offFunctionsToFG } from './offFunctionsToFG'
 
 function APointTool(editor) {
   if (!(this instanceof APointTool)) return new APointTool(editor)
 
   this.editor = editor
+  this.sgroups = editor.render.ctab.sgroups
+  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
   this.editor.selection(null)
 }
 
@@ -28,6 +31,8 @@ APointTool.prototype.mousemove = function (event) {
 }
 
 APointTool.prototype.click = function (event) {
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
   var editor = this.editor
   var struct = editor.render.ctab.molecule
   var ci = editor.findItem(event, ['atoms'])

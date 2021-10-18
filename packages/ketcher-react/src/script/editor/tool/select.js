@@ -31,11 +31,14 @@ import { fromMultipleMove } from '../actions/fragment'
 import { sgroupDialog } from './sgroup'
 import utils from '../shared/utils'
 import { xor } from 'lodash/fp'
+import { offFunctionsToFG } from './offFunctionsToFG'
 
 function SelectTool(editor, mode) {
   if (!(this instanceof SelectTool)) return new SelectTool(editor, mode)
 
   this.editor = editor
+  this.sgroups = editor.render.ctab.sgroups
+  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
   this.lassoHelper = new LassoHelper(
     mode === 'lasso' ? 0 : 1,
     editor,
@@ -44,6 +47,8 @@ function SelectTool(editor, mode) {
 }
 
 SelectTool.prototype.mousedown = function (event) {
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
   // eslint-disable-line max-statements
   const rnd = this.editor.render
   const ctab = rnd.ctab

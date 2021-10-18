@@ -22,6 +22,7 @@ import {
 } from '../actions/bond'
 
 import utils from '../shared/utils'
+import { offFunctionsToFG } from './offFunctionsToFG'
 
 function BondTool(editor, bondProps) {
   if (!(this instanceof BondTool)) {
@@ -41,9 +42,13 @@ function BondTool(editor, bondProps) {
   this.editor = editor
   this.atomProps = { label: 'C' }
   this.bondProps = bondProps
+  this.sgroups = editor.render.ctab.sgroups
+  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
 }
 
 BondTool.prototype.mousedown = function (event) {
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
   const rnd = this.editor.render
   this.editor.hover(null)
   this.editor.selection(null)
@@ -125,6 +130,8 @@ BondTool.prototype.mousemove = function (event) {
 }
 
 BondTool.prototype.mouseup = function (event) {
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
   // eslint-disable-line max-statements
   if ('dragCtx' in this) {
     var dragCtx = this.dragCtx

@@ -17,6 +17,7 @@
 import { fromAtomAddition, fromAtomsAttrs } from '../actions/atom'
 
 import { Atom } from 'ketcher-core'
+import { offFunctionsToFG } from './offFunctionsToFG'
 
 function RGroupAtomTool(editor) {
   if (!(this instanceof RGroupAtomTool)) {
@@ -26,6 +27,8 @@ function RGroupAtomTool(editor) {
   }
 
   this.editor = editor
+  this.sgroups = editor.render.ctab.sgroups
+  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
 }
 
 RGroupAtomTool.prototype.mousemove = function (event) {
@@ -33,6 +36,8 @@ RGroupAtomTool.prototype.mousemove = function (event) {
 }
 
 RGroupAtomTool.prototype.click = function (event) {
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
   const rnd = this.editor.render
   const ci = this.editor.findItem(event, ['atoms'])
 

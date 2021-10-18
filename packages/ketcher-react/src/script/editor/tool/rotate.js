@@ -23,6 +23,7 @@ import {
 
 import { Vec2 } from 'ketcher-core'
 import utils from '../shared/utils'
+import { offFunctionsToFG } from './offFunctionsToFG'
 
 function RotateTool(editor, dir) {
   if (!(this instanceof RotateTool)) {
@@ -44,6 +45,8 @@ function RotateTool(editor, dir) {
   }
 
   this.editor = editor
+  this.sgroups = editor.render.ctab.sgroups
+  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
 
   if (!editor.selection() || !editor.selection().atoms)
     // otherwise, clear selection
@@ -51,6 +54,8 @@ function RotateTool(editor, dir) {
 }
 
 RotateTool.prototype.mousedown = function (event) {
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
   var xy0 = new Vec2()
   var selection = this.editor.selection()
   var rnd = this.editor.render
@@ -117,6 +122,8 @@ RotateTool.prototype.mousedown = function (event) {
 }
 
 RotateTool.prototype.mousemove = function (event) {
+  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+    return
   // eslint-disable-line max-statements
   if (!this.dragCtx) return true
 

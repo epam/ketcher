@@ -21,7 +21,7 @@ import Spinner from '../Spinner'
 import classes from './StructEditor.module.less'
 import clsx from 'clsx'
 import { upperFirst } from 'lodash/fp'
-import { FGContextMenu } from '../../../component/ContextMenu/FunctionalGroupContextMenu'
+import { ContextMenuContainer } from '../../../component/ContextMenu/ContextMenu'
 import { ContextMenuTrigger } from 'react-contextmenu'
 
 //TODO: need to update component after making refactoring of store
@@ -150,8 +150,8 @@ class StructEditor extends Component {
               </div>
             )}
           </Tag>
+          <ContextMenuContainer />
         </ContextMenuTrigger>
-        <FGContextMenu />
       </div>
     )
   }

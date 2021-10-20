@@ -1,15 +1,15 @@
-import ttypescript from 'ttypescript'
-import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import babel from '@rollup/plugin-babel'
+import cleanup from 'rollup-plugin-cleanup'
+import commonjs from '@rollup/plugin-commonjs'
+import del from 'rollup-plugin-delete'
+import json from '@rollup/plugin-json'
+import peerDepsExternal from 'rollup-plugin-peer-deps-external'
+import pkg from './package.json'
 import replace from '@rollup/plugin-replace'
 import resolve from '@rollup/plugin-node-resolve'
-import commonjs from '@rollup/plugin-commonjs'
-import json from '@rollup/plugin-json'
-import del from 'rollup-plugin-delete'
-import typescript from 'rollup-plugin-typescript2'
-import cleanup from 'rollup-plugin-cleanup'
 import strip from '@rollup/plugin-strip'
-import pkg from './package.json'
+import ttypescript from 'ttypescript'
+import typescript from 'rollup-plugin-typescript2'
 
 const mode = {
   PRODUCTION: 'production',
@@ -32,16 +32,6 @@ const config = {
       exports: 'named',
       format: 'es'
     }
-  ],
-  external: [
-    'url',
-    'remark-parse',
-    'unified',
-    'asap',
-    'object-assign',
-    'unist-util-visit',
-    'unist-util-visit-parents',
-    'xtend'
   ],
   plugins: [
     del({

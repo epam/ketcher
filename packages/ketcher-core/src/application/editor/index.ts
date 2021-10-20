@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import utils from './shared/utils'
+
+// TODO: delete it
+export const fracAngle = utils.fracAngle
 export * from './operations'
 export * from './actions'
 export * from './shared/constants'

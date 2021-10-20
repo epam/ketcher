@@ -14,23 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'ketcher-core'
+import { Vec2, fracAngle } from 'ketcher-core'
+
 import { inRange } from 'lodash'
-
-let FRAC = Math.PI / 12 // '15º'
-
-function setFracAngle(angle) {
-  FRAC = (Math.PI / 180) * angle
-}
 
 function calcAngle(pos0, pos1) {
   const v = Vec2.diff(pos1, pos0)
   return Math.atan2(v.y, v.x)
-}
-
-function fracAngle(angle, angle2) {
-  if (angle2) angle = calcAngle(angle, angle2)
-  return Math.round(angle / FRAC) * FRAC
 }
 
 function calcNewAtomPos(pos0, pos1, ctrlKey) {
@@ -74,6 +64,5 @@ export default {
   fracAngle,
   calcNewAtomPos,
   degrees,
-  setFracAngle,
   mergeBondsParams
 }

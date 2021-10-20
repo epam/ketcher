@@ -20,6 +20,7 @@ export class Box2Abs {
   readonly p0: Vec2
   readonly p1: Vec2
 
+  constructor()
   constructor(p: Vec2)
   constructor(p0: Vec2, p1: Vec2)
   constructor(x0: number, y0: number, x1: number, y1: number)

@@ -94,7 +94,8 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
     case Command.Layout: {
       const data: LayoutCommandData = message.data as LayoutCommandData
       handle(
-        (indigo, indigoOptions) => indigo.layout(data.struct, indigoOptions),
+        (indigo, indigoOptions) =>
+          indigo.layout(data.struct, data.format, indigoOptions),
         data.options
       )
       break
@@ -104,7 +105,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       const data: DearomatizeCommandData = message.data as DearomatizeCommandData
       handle(
         (indigo, indigoOptions) =>
-          indigo.dearomatize(data.struct, indigoOptions),
+          indigo.dearomatize(data.struct, data.format, indigoOptions),
         data.options
       )
       break
@@ -128,7 +129,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       const data: CalculateCipCommandData = message.data as CalculateCipCommandData
       handle(
         (indigo, indigoOptions) =>
-          indigo.calculateCip(data.struct, indigoOptions),
+          indigo.calculateCip(data.struct, data.format, indigoOptions),
         data.options
       )
       break
@@ -153,7 +154,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       const data: AutomapCommandData = message.data as AutomapCommandData
       handle(
         (indigo, indigoOptions) =>
-          indigo.automap(data.struct, data.mode, indigoOptions),
+          indigo.automap(data.struct, data.mode, data.format, indigoOptions),
         data.options
       )
       break
@@ -162,7 +163,8 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
     case Command.Aromatize: {
       const data: AromatizeCommandData = message.data as AromatizeCommandData
       handle(
-        (indigo, indigoOptions) => indigo.aromatize(data.struct, indigoOptions),
+        (indigo, indigoOptions) =>
+          indigo.aromatize(data.struct, data.format, indigoOptions),
         data.options
       )
       break
@@ -175,6 +177,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         data.selectedAtoms.forEach(atomId => selectedAtoms.push_back(atomId))
         const updatedStruct = indigo.clean2d(
           data.struct,
+          data.format,
           indigoOptions,
           selectedAtoms
         )

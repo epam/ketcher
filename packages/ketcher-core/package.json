@@ -29,7 +29,7 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c -m true --silent",
+    "build": "cross-env NODE_ENV=production rollup -c -m true",
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
     "test": "run-s prettier test:lint test:unit",
     "test:lint": "eslint src --ext .ts,.tsx,.js,.jsx",
@@ -41,7 +41,9 @@
     "@babel/runtime": "^7.12.5",
     "assert": "^2.0.0",
     "jsonschema": "^1.4.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "raphael": "^2.3.0",
+    "svgpath": "^2.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",

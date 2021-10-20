@@ -29,7 +29,7 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c -m true --silent",
+    "build": "cross-env NODE_ENV=production rollup -c -m true",
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
     "test": "run-s prettier stylelint test:lint test:unit",
     "test:lint": "eslint src --ext .ts,.tsx,.js,.jsx",
@@ -59,7 +59,6 @@
     "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",
-    "raphael": "^2.3.0",
     "react-colorful": "^5.4.0",
     "react-contextmenu": "^2.14.0",
     "react-intersection-observer": "^8.32.1",
@@ -75,7 +74,6 @@
     "replace": "^1.2.0",
     "reselect": "^4.0.0",
     "subscription": "^3.0.0",
-    "svgpath": "^2.3.1",
     "url-search-params-polyfill": "^8.1.0",
     "use-resize-observer": "^7.0.0",
     "w3c-keyname": "^2.2.4",

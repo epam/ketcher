@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromAtomsAttrs } from '../actions/atom'
+import { fromAtomsAttrs } from 'ketcher-core'
 
 function APointTool(editor) {
   if (!(this instanceof APointTool)) return new APointTool(editor)

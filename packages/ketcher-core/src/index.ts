@@ -23,8 +23,8 @@ export * from 'domain/helpers'
 export * from 'infrastructure/services'
 
 export * from 'application/formatters'
+export * from 'application/render'
 export * from 'application/editor'
-export * from 'application/operations'
 export * from 'application/ketcher'
 export * from 'application/ketcherBuilder'
 

@@ -15,17 +15,23 @@
  ***************************************************************************/
 
 import {
+  Action,
+  Editor as KetcherEditor,
+  Pile,
+  Render,
+  Struct,
+  Vec2,
+  fromDescriptorsAlign,
+  fromNewCanvas
+} from 'ketcher-core'
+import {
   DOMSubscription,
   PipelineSubscription,
   Subscription
 } from 'subscription'
-import { Editor as KetcherEditor, Pile, Struct, Vec2 } from 'ketcher-core'
-import { customOnChangeHandler } from './utils'
-import { fromDescriptorsAlign, fromNewCanvas } from './actions/basic'
 
-import Action from './shared/action'
-import Render from '../render'
 import closest from './shared/closest'
+import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 
@@ -245,20 +251,20 @@ class Editor implements KetcherEditor {
       return this._selection // eslint-disable-line
     }
 
-    let restruct = this.render.ctab
+    let ReStruct = this.render.ctab
 
     this._selection = null // eslint-disable-line
     if (ci === 'all') {
       // TODO: better way will be this.struct()
       ci = structObjects.reduce((res, key) => {
-        res[key] = Array.from(restruct[key].keys())
+        res[key] = Array.from(ReStruct[key].keys())
         return res
       }, {})
     }
 
     if (ci === 'descriptors') {
-      restruct = this.render.ctab
-      ci = { sgroupData: Array.from(restruct['sgroupData'].keys()) }
+      ReStruct = this.render.ctab
+      ci = { sgroupData: Array.from(ReStruct['sgroupData'].keys()) }
     }
 
     if (ci) {
@@ -586,8 +592,8 @@ function recoordinate(editor: Editor, rp /* , vp*/) {
   editor.render.setScrollOffset(0, 0)
 }
 
-function getStructCenter(restruct, selection?) {
-  const bb = restruct.getVBoxObj(selection || {})
+function getStructCenter(ReStruct, selection?) {
+  const bb = ReStruct.getVBoxObj(selection || {})
   return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5)
 }
 

@@ -40,7 +40,6 @@ const config = {
   ],
   external: [
     'url',
-    /@babel\/runtime/,
     'remark-parse',
     'unified',
     'asap',

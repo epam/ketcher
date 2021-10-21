@@ -149,7 +149,7 @@ export function sgroupToStruct(source) {
     }
     case 'SUP': {
       ifDef(sgroup.data, 'name', source.name)
-      ifDef(sgroup, 'expanded', source.expanded)
+      ifDef(sgroup, 'expanded', source.data.expanded)
       ifDef(sgroup, 'id', source.id)
       break
     }

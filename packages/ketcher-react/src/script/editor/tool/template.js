@@ -62,6 +62,11 @@ function TemplateTool(editor, tmpl) {
     this.template.sign = getSign(frag, bond, this.template.xy0)
     this.findItems.push('bonds')
   }
+
+  const sgroup = frag.sgroups.size
+  if (sgroup) {
+    this.findItems.push('sgroups')
+  }
 }
 
 TemplateTool.prototype.mousedown = function (event) {

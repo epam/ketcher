@@ -21,7 +21,7 @@ import Spinner from '../Spinner'
 import classes from './StructEditor.module.less'
 import clsx from 'clsx'
 import { upperFirst } from 'lodash/fp'
-import { ContextMenuContainer } from '../../../component/ContextMenu/ContextMenu'
+import { FGContextMenu } from '../../../component/ContextMenu/ContextMenu'
 import { ContextMenuTrigger } from 'react-contextmenu'
 
 //TODO: need to update component after making refactoring of store
@@ -132,7 +132,9 @@ class StructEditor extends Component {
 
     return (
       <div className={clsx(classes.canvas, className)}>
-        <ContextMenuTrigger id="fgid" className={clsx(classes.contextmenu)}>
+        <ContextMenuTrigger
+          id="contextmenu"
+          className={clsx(classes.contextmenu)}>
           <Tag
             className={clsx(classes.contextmenu)}
             onMouseDown={event => event.preventDefault()}
@@ -150,8 +152,8 @@ class StructEditor extends Component {
               </div>
             )}
           </Tag>
-          <ContextMenuContainer />
         </ContextMenuTrigger>
+        <FGContextMenu />
       </div>
     )
   }

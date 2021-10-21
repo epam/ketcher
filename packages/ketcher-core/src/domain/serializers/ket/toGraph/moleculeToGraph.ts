@@ -146,7 +146,7 @@ function sgroupToGraph(struct, source) {
     }
     case 'SUP': {
       ifDef(result, 'name', source.data.name || '')
-      ifDef(result, 'expanded', source.expanded)
+      ifDef(result, 'expanded', source.data.expanded)
       ifDef(result, 'id', source.id)
       break
     }

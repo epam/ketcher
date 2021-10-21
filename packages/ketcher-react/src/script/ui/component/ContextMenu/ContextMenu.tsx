@@ -1,127 +1,101 @@
 import { ContextMenu, MenuItem } from 'react-contextmenu'
 import closest from '../../../editor/shared/closest'
 import { useState } from 'react'
-import Action from '../../../editor/shared/action'
-import { FunctionalGroupsProvider, Vec2 } from 'ketcher-core'
-import {
-  fromSgroupAttrs,
-  fromSgroupDeletion
-} from '../../../editor/actions/sgroup'
-import { fromAtomsAttrs } from '../../../editor/actions/atom'
-import { connect } from 'react-redux'
+import { FunctionalGroup, setExpandSGroup } from 'ketcher-core'
+import { Vec2 } from 'ketcher-core'
+import { fromSgroupDeletion } from 'ketcher-core'
 import classes from './ContextMenu.module.less'
-//import {useAppContext} from "../../../../hooks";
+import { useAppContext } from '../../../../hooks'
 
-function KetcherContextMenu(prop) {
-  // const { getKetcherInstance } = useAppContext()
-  // const promise = new Promise(resolve => {
-  //   if (getKetcherInstance()) {
-  //     resolve(getKetcherInstance().editor)
-  //   }
-  // })
-  const editor = prop.editor
+const FGContextMenu = () => {
+  const { getKetcherInstance } = useAppContext()
 
-  const handleExpand = function () {
-    const provider = FunctionalGroupsProvider.getInstance()
-    const types = provider.getFunctionalGroupsList()
-    const rnd = editor.render
-    const ctab = rnd?.ctab
-
-    const sgroup = ctab.sgroups.get(targetItemId).item
-
-    if (
-      types.some(type => type.name === sgroup.data.name) &&
-      sgroup.type === 'SUP'
-    ) {
-      const action = new Action()
-      const functionalGroup = ctab.molecule.functionalGroups.get(targetItemId)
-      functionalGroup.isExpanded = !functionalGroup.isExpanded
-      const relatedSGroup = ctab.sgroups.get(functionalGroup.relatedSGroupId)
-      const atoms = relatedSGroup.item.atoms
-      action.mergeWith(fromSgroupAttrs(rnd.ctab, targetItemId, functionalGroup))
-      atoms.forEach(aid => {
-        action.mergeWith(
-          fromAtomsAttrs(rnd.ctab, aid, ctab.atoms.get(aid).a, false)
-        )
+  const handleExpand = () => {
+    const editor = getKetcherInstance().editor as any
+    editor.update(
+      setExpandSGroup(editor.render.ctab, targetFG?.relatedSGroupId, {
+        expanded: !targetFG?.isExpanded
       })
-      editor.update(action)
-    }
-    setsGroupMenu(false)
-    setTargetItemId(null)
+    )
+    setShowSGroupMenu(false)
+    setTargetFG(null)
   }
 
   const handleRemove = function () {
-    editor.update(fromSgroupDeletion(editor.render.ctab, targetItemId))
-    setsGroupMenu(false)
-    setTargetItemId(null)
+    const editor = getKetcherInstance().editor as any
+    editor.update(
+      fromSgroupDeletion(editor.render.ctab, targetFG?.relatedSGroupId)
+    )
+    setShowSGroupMenu(false)
+    setTargetFG(null)
   }
 
-  const [sGroupMenu, setsGroupMenu] = useState(false)
-  const [targetItemId, setTargetItemId] = useState(null)
+  const [showSGroupMenu, setShowSGroupMenu] = useState(false)
+  const [targetFG, setTargetFG] = useState(null as FunctionalGroup | null)
 
   function showMenu(e) {
+    const editor = getKetcherInstance().editor as any
+    const struct = editor.struct()
+    setShowSGroupMenu(false)
+    setTargetFG(null)
     const pos = new Vec2(
       editor.render.page2obj({
         pageX: e.detail.position.x,
         pageY: e.detail.position.y
       })
     )
-    const ci = closest.item(editor.render.ctab, pos, ['sgroups'])
-    console.log(ci)
+    const ci = closest.item(editor.render.ctab, pos, ['sgroups', 'atoms'])
     if (ci) {
       switch (ci.map) {
         case 'atoms':
-          const AtomFunctionalGroup = editor.render.ctab.sgroups.forEach(
-            (sg, key) => {
-              if (sg.item.atoms.includes(ci.id)) {
-                return key
-              }
+          let AtomSGroup = -1
+          struct.sgroups.forEach((sg, key) => {
+            if (sg.atoms.includes(ci.id)) {
+              AtomSGroup = key
             }
-          )
-          console.log(AtomFunctionalGroup)
+          })
+          if (AtomSGroup !== -1) {
+            const sgroup = struct.sgroups.get(AtomSGroup)
+            if (FunctionalGroup.isFunctionalGroup(sgroup)) {
+              struct.functionalGroups.forEach(fg => {
+                if (fg.relatedSGroupId === sgroup?.id) {
+                  setShowSGroupMenu(true)
+                  setTargetFG(fg)
+                }
+              })
+            }
+          }
           break
         case 'sgroups':
-          setsGroupMenu(true)
-          setTargetItemId(ci.id)
-          break
-        default:
+          const sgroup = struct.sgroups.get(ci.id)
+          if (FunctionalGroup.isFunctionalGroup(sgroup)) {
+            struct.functionalGroups.forEach(fg => {
+              if (fg.relatedSGroupId === sgroup?.id) {
+                setShowSGroupMenu(true)
+                setTargetFG(fg)
+              }
+            })
+          }
           break
       }
     }
   }
 
-  const menuItems = sGroupMenu => {
-    if (sGroupMenu) {
-      return (
+  return (
+    <ContextMenu id="contextmenu" onShow={e => showMenu(e)}>
+      {showSGroupMenu ? (
         <div className={classes.contextMenu}>
           <MenuItem onClick={handleExpand} className={classes.menuItem}>
-            {editor.render.ctab.molecule.functionalGroups.get(targetItemId)
-              .isExpanded
-              ? 'Contract'
-              : 'Expand'}{' '}
+            {targetFG?.isExpanded ? 'Contract ' : 'Expand '}
             Abbreviation
           </MenuItem>
           <MenuItem onClick={handleRemove} className={classes.menuItem}>
             Remove Abbreviation
           </MenuItem>
         </div>
-      )
-    } else {
-      return null
-    }
-  }
-
-  return (
-    <ContextMenu id="fgid" onShow={e => showMenu(e)}>
-      {menuItems(sGroupMenu)}
+      ) : null}
     </ContextMenu>
   )
 }
 
-const mapStateToProps = state => ({
-  editor: state.editor || {}
-})
-
-const ContextMenuContainer = connect(mapStateToProps)(KetcherContextMenu)
-
-export { ContextMenuContainer }
+export { FGContextMenu }

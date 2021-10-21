@@ -489,7 +489,7 @@ export class Molfile {
 
     const expandedGroups: number[] = []
     this.molecule.sgroups.forEach(sg => {
-      if (sg.expanded) expandedGroups.push(sg.id + 1)
+      if (sg.data.expanded) expandedGroups.push(sg.id + 1)
     })
 
     if (expandedGroups.length) {

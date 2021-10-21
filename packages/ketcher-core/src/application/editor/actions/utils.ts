@@ -57,9 +57,9 @@ export function structSelection(struct) {
 }
 
 // Get new atom id/label and pos for bond being added to existing atom
-export function atomForNewBond(restruct, id, bond) {
+export function atomForNewBond(restruct, id, bond?) {
   // eslint-disable-line max-statements
-  const neighbours = []
+  const neighbours: Array<any> = []
   const pos = atomGetPos(restruct, id)
   const prevBondId = restruct.molecule.findBondId(
     id,
@@ -110,7 +110,7 @@ export function atomForNewBond(restruct, id, bond) {
       // zig-zag
       const nei = restruct.molecule.atomGetNeighbors(id)[0]
       if (atomGetDegree(restruct, nei.aid) > 1) {
-        const neiNeighbours = []
+        const neiNeighbours: Array<any> = []
         const neiPos = atomGetPos(restruct, nei.aid)
         const neiV = Vec2.diff(pos, neiPos)
         const neiAngle = Math.atan2(neiV.y, neiV.x)
@@ -156,7 +156,7 @@ export function atomForNewBond(restruct, id, bond) {
 
   v.add_(pos) // eslint-disable-line no-underscore-dangle
 
-  let a = closest.atom(restruct, v, null, 0.1)
+  let a: any = closest.atom(restruct, v, null, 0.1)
   a = a === null ? { label: 'C' } : a.id
 
   return { atom: a, pos: v }
@@ -164,7 +164,7 @@ export function atomForNewBond(restruct, id, bond) {
 
 export function getRelSgroupsBySelection(restruct, selectedAtoms) {
   return restruct.molecule.sgroups.filter(
-    (sgid, sg) =>
+    (_sgid, sg) =>
       !sg.data.attached &&
       !sg.data.absolute &&
       difference(sg.atoms, selectedAtoms).length === 0

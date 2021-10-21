@@ -42,8 +42,8 @@ export function fromAromaticTemplateOnBond(
 
   const frid = struct.getBondFragment(bid)
   const beforeMerge = getFragmentWithBondMap(struct, frid)
-  let afterMerge = null
-  let pasteItems = null
+  let afterMerge: any = null
+  let pasteItems: any = null
 
   let action = new Action()
 
@@ -143,15 +143,16 @@ function fromDearomatize(restruct, dastruct, bondMap) {
 
 /* UTILS */
 
+// @ts-ignore
 function canBeAromatized(struct) {
   // TODO correct this checking && move to chem.Struct ??
   if (struct.loops.size === 0) struct.prepareLoopStructure()
 
-  const hasAromLoop = struct.loops.find((id, loop) => loop.aromatic)
+  const hasAromLoop = struct.loops.find((_id, loop) => loop.aromatic)
   if (struct.loops.size === 0 || hasAromLoop) return false
 
   const correctDblBonds = struct.loops.find(
-    (id, loop) => loop.dblBonds === loop.hbs.length / 2
+    (_id, loop) => loop.dblBonds === loop.hbs.length / 2
   )
 
   return correctDblBonds !== undefined

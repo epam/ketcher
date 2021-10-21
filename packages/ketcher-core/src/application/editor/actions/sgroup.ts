@@ -139,9 +139,9 @@ export function fromSgroupAddition(
   atoms,
   attrs,
   sgid,
-  pp,
-  expanded,
-  name
+  pp?,
+  expanded?,
+  name?
 ) {
   // eslint-disable-line
   let action = new Action()
@@ -287,7 +287,7 @@ function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
   if (currSelection.bonds) bonds = uniq(bonds.concat(currSelection.bonds))
 
   return bonds.reduce(
-    (acc, bondid) => {
+    (acc: any, bondid) => {
       const bond = struct.bonds.get(bondid)
 
       acc.action = acc.action.mergeWith(

@@ -40,9 +40,13 @@ import { without } from 'lodash/fp'
 export function fromAtomAddition(restruct, pos, atom) {
   atom = Object.assign({}, atom)
   const action = new Action()
-  atom.fragment = action.addOp(new FragmentAdd().perform(restruct)).frid
+  atom.fragment = (action.addOp(
+    new FragmentAdd().perform(restruct)
+  ) as FragmentAdd).frid
 
-  const aid = action.addOp(new AtomAdd(atom, pos).perform(restruct)).data.aid
+  const aid = (action.addOp(
+    new AtomAdd(atom, pos).perform(restruct)
+  ) as AtomAdd).data.aid
   action.addOp(new CalcImplicitH([aid]).perform(restruct))
 
   return action
@@ -232,7 +236,7 @@ export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {
 
   const fridAtoms = struct.getFragmentIds(frid)
 
-  const atomsToNewFrag = []
+  const atomsToNewFrag: Array<any> = []
   struct.atoms.forEach((atom, aid) => {
     if (atom.fragment === frid2) atomsToNewFrag.push(aid)
   })
@@ -254,7 +258,7 @@ export function mergeSgroups(action, restruct, srcAtoms, dstAtom) {
       notExpandedContexts.includes(sgroup.data.context)
     )
       return
-    const atomsToSgroup = without(sgroup.atoms, srcAtoms)
+    const atomsToSgroup: any = without(sgroup.atoms, srcAtoms)
     atomsToSgroup.forEach(aid =>
       action.addOp(new SGroupAtomAdd(sid, aid).perform(restruct))
     )

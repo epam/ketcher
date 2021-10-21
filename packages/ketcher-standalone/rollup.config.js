@@ -1,16 +1,15 @@
-import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import babel from '@rollup/plugin-babel'
-import replace from '@rollup/plugin-replace'
-import resolve from '@rollup/plugin-node-resolve'
-import commonjs from '@rollup/plugin-commonjs'
-import json from '@rollup/plugin-json'
-import del from 'rollup-plugin-delete'
-import typescript from 'rollup-plugin-typescript2'
 import cleanup from 'rollup-plugin-cleanup'
-import strip from '@rollup/plugin-strip'
-import webWorkerLoader from 'rollup-plugin-web-worker-loader'
+import commonjs from '@rollup/plugin-commonjs'
+import del from 'rollup-plugin-delete'
+import json from '@rollup/plugin-json'
 import nodePolyfills from 'rollup-plugin-node-polyfills'
 import pkg from './package.json'
+import replace from '@rollup/plugin-replace'
+import resolve from '@rollup/plugin-node-resolve'
+import strip from '@rollup/plugin-strip'
+import typescript from 'rollup-plugin-typescript2'
+import webWorkerLoader from 'rollup-plugin-web-worker-loader'
 
 const mode = {
   PRODUCTION: 'production',
@@ -33,29 +32,20 @@ const config = {
       format: 'es'
     }
   ],
-  external: [
-    'url',
-    'remark-parse',
-    'unified',
-    'asap',
-    'object-assign',
-    'unist-util-visit',
-    'unist-util-visit-parents',
-    'xtend'
-  ],
+  external: ['ketcher-core', /@babel\/runtime/],
   plugins: [
     del({
       targets: 'dist/*',
       runOnce: true
     }),
-    peerDepsExternal(),
     nodePolyfills(),
     resolve({ extensions, preferBuiltins: false }),
     commonjs(),
     webWorkerLoader({
       extensions,
       sourcemap: false,
-      targetPlatform: 'browser'
+      targetPlatform: 'browser',
+      external: ['@babel/runtime']
     }),
     replace(
       {

@@ -21,12 +21,12 @@ import {
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
 
+import { ArrowScroll } from '../ArrowScroll'
 import { AtomsList } from './AtomsList'
 import { basicAtoms } from '../../../action/atoms'
 import classes from './RightToolbar.module.less'
 import clsx from 'clsx'
 import { useInView } from 'react-intersection-observer'
-import { ArrowScroll } from '../ArrowScroll'
 
 const Group: FC<{ className?: string }> = ({ children, className }) => (
   <div className={clsx(classes.group, className)}>{children}</div>
@@ -82,9 +82,7 @@ const RightToolbar = (props: Props) => {
         </Group>
         <div ref={endRef}>
           <Group>
-            {process.env.ENABLE_STEREOCHEMISTRY && (
-              <ToolbarGroupItem id="enhanced-stereo" {...rest} />
-            )}
+            <ToolbarGroupItem id="enhanced-stereo" {...rest} />
           </Group>
         </div>
       </div>

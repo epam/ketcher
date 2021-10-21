@@ -32,18 +32,7 @@ const config = {
       format: 'es'
     }
   ],
-  external: [
-    'url',
-    'remark-parse',
-    'unified',
-    'asap',
-    'object-assign',
-    'unist-util-visit',
-    'unist-util-visit-parents',
-    'xtend',
-    'ketcher-core',
-    /@babel\/runtime/
-  ],
+  external: ['ketcher-core', /@babel\/runtime/],
   plugins: [
     del({
       targets: 'dist/*',

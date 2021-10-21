@@ -1,4 +1,6 @@
-import { Pool, ReAtom, ReBond } from 'ketcher-core'
+import { ReAtom, ReBond } from 'application/render'
+
+import { Pool } from 'domain/entities'
 
 const mockAtoms = [
   {

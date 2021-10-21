@@ -27,7 +27,7 @@ export class RGroupFragment extends BaseOperation {
   rg_old: any
   frid: any
 
-  constructor(rgroupId: any, fragmentId: any, rg: any) {
+  constructor(rgroupId: any, fragmentId: any, rg?: any) {
     super(OperationType.R_GROUP_FRAGMENT)
     this.rgid_new = rgroupId
     this.rg_new = rg

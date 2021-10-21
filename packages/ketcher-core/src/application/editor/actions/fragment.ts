@@ -46,7 +46,7 @@ export function fromMultipleMove(restruct, lists, d) {
 
   if (lists.atoms) {
     const atomSet = new Pile(lists.atoms)
-    const bondlist = []
+    const bondlist: Array<number> = []
 
     restruct.bonds.forEach((bond, bid) => {
       if (atomSet.has(bond.b.begin) && atomSet.has(bond.b.end)) {
@@ -141,7 +141,7 @@ export function fromStereoFlagUpdate(restruct, frid, flag = null) {
     })
   }
 
-  action.addOp(new FragmentStereoFlag(frid, flag))
+  action.addOp(new FragmentStereoFlag(frid))
   return action.perform(restruct)
 }
 
@@ -180,13 +180,19 @@ function processAtom(restruct, aid, frid, newfrid) {
  * @return { Action }
  */
 // TODO [RB] the thing is too tricky :) need something else in future
-export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
+export function fromFragmentSplit(
+  restruct,
+  frid,
+  rgForRemove: Array<number> = []
+) {
   const action = new Action()
   const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid)
 
   restruct.molecule.atoms.forEach((atom, aid) => {
     if (atom.fragment === frid) {
-      const newfrid = action.addOp(new FragmentAdd().perform(restruct)).frid
+      const newfrid = (action.addOp(
+        new FragmentAdd().perform(restruct)
+      ) as FragmentAdd).frid
 
       action.mergeWith(processAtom(restruct, aid, frid, newfrid))
 

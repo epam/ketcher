@@ -48,8 +48,8 @@ export function fromFlip(restruct, selection, dir, center) {
   }, {})
 
   const isFragFound = Object.keys(fids).find(frag => {
-    frag = parseInt(frag, 10)
-    return !struct.getFragmentIds(frag).equals(new Pile(fids[frag]))
+    const fragmentId = parseInt(frag, 10)
+    return !struct.getFragmentIds(frag).equals(new Pile(fids[fragmentId]))
   })
 
   if (isFragFound) return action // empty action

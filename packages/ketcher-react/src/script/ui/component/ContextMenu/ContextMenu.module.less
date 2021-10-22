@@ -1,11 +1,11 @@
-.react-contextmenu {
+.contextMenu {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.54);
   background-color: white;
   border-radius: 4px;
   padding: 4px;
 }
 
-.react-contextmenu-item {
+.MenuItem {
   background: 0 0;
   border: 0;
   color: #373a3c;
@@ -17,56 +17,25 @@
   white-space: nowrap;
 }
 
-.react-contextmenu-item.react-contextmenu-item--active,
-.react-contextmenu-item.react-contextmenu-item--selected {
+.MenuItemSelected {
   color: #fff;
   background-color: #20a0ff;
   border-color: #20a0ff;
   text-decoration: none;
 }
 
-.react-contextmenu-item.react-contextmenu-item--disabled,
-.react-contextmenu-item.react-contextmenu-item--disabled:hover {
-  background-color: transparent;
-  border-color: rgba(0,0,0,.15);
-  color: #878a8c;
-}
-
-.react-contextmenu-item--divider {
-  border-bottom: 1px solid rgba(0,0,0,.15);
+.MenuItemDivider {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   cursor: inherit;
   margin-bottom: 3px;
   padding: 2px 0;
 }
-.react-contextmenu-item--divider:hover {
-  background-color: transparent;
-  border-color: rgba(0,0,0,.15);
-}
-
-.react-contextmenu-item.react-contextmenu-submenu {
-  padding: 0;
-}
-
-.react-contextmenu-item.react-contextmenu-submenu > .react-contextmenu-item {
-}
-
-.react-contextmenu-item.react-contextmenu-submenu > .react-contextmenu-item:after {
-  content: "▶";
-  display: inline-block;
-  position: absolute;
-  right: 7px;
-}
-
-.example-multiple-targets::after {
-  content: attr(data-count);
-  display: block;
-}
 
 .wrapper {
-    height: 100%;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 }

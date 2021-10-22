@@ -8,9 +8,9 @@ import classes from './ContextMenu.module.less'
 import { useAppContext } from '../../../../hooks'
 
 const attributes = {
-  className: classes['react-contextmenu-item'],
-  dividerClassName: classes['react-contextmenu-item--divider'],
-  selectedClassName: classes['react-contextmenu-item--selected']
+  className: classes.MenuItem,
+  dividerClassName: classes.MenuItemDivider,
+  selectedClassName: classes.MenuItemSelected
 }
 
 const FGContextMenu = () => {
@@ -90,7 +90,7 @@ const FGContextMenu = () => {
   return (
     <ContextMenu id="contextmenu" onShow={e => showMenu(e)}>
       {showSGroupMenu && (
-        <div className={classes['react-contextmenu']}>
+        <div className={classes.contextMenu}>
           <MenuItem onClick={handleExpand} attributes={attributes}>
             {targetFG?.isExpanded ? 'Contract ' : 'Expand '}
             Abbreviation

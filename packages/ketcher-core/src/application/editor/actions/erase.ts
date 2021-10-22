@@ -14,9 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, RGroup } from 'domain/entities'
 import {
-  AtomAttr,
   AtomDelete,
   BondDelete,
   CalcImplicitH,
@@ -25,6 +23,7 @@ import {
   SimpleObjectDelete,
   TextDelete
 } from '../operations'
+import { Pile, RGroup } from 'domain/entities'
 import {
   fromSgroupDeletion,
   removeAtomFromSgroupIfNeeded,
@@ -32,20 +31,18 @@ import {
 } from './sgroup'
 
 import { Action } from './action'
-import { Pile } from 'ketcher-core'
 import { atomGetDegree } from './utils'
 import { fromBondStereoUpdate } from '../actions/bond'
 import { fromFragmentSplit } from './fragment'
-import { fromStereoAtomAttrs } from './atom'
 
 export function fromOneAtomDeletion(restruct, id) {
   return fromFragmentDeletion(restruct, { atoms: [id] })
 }
 
-function fromBondDeletion(restruct, bid, skipAtoms = []) {
+function fromBondDeletion(restruct, bid: number, skipAtoms: Array<any> = []) {
   let action = new Action()
-  const bond = restruct.molecule.bonds.get(bid)
-  const atomsToRemove = []
+  const bond: any = restruct.molecule.bonds.get(bid)
+  const atomsToRemove: Array<any> = []
 
   action.addOp(new BondDelete(bid))
 
@@ -92,8 +89,8 @@ export function fromFragmentDeletion(restruct, selection) {
   // eslint-disable-line max-statements
   console.assert(!!selection)
   let action = new Action()
-  const atomsToRemove = []
-  const frids = []
+  const atomsToRemove: Array<number> = []
+  const frids: Array<number> = []
 
   selection = {
     // TODO: refactor me
@@ -164,9 +161,10 @@ export function fromFragmentDeletion(restruct, selection) {
   action = action.perform(restruct)
   action.mergeWith(actionRemoveBonds)
 
-  const rgForRemove = frids.map(frid =>
-    RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid)
+  const rgForRemove: Array<number> = frids.map(
+    frid => RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid)!
   )
+
   while (frids.length > 0)
     action = fromFragmentSplit(restruct, frids.pop(), rgForRemove).mergeWith(
       action

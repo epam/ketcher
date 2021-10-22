@@ -47,7 +47,7 @@ import utils from '../shared/utils'
 
 export function fromBondAddition(
   restruct: ReStruct,
-  bond: Bond,
+  bond: any,
   begin: any,
   end: any,
   pos?: Vec2,

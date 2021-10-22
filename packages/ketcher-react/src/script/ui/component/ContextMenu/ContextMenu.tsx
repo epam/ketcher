@@ -7,6 +7,12 @@ import { fromSgroupDeletion } from 'ketcher-core'
 import classes from './ContextMenu.module.less'
 import { useAppContext } from '../../../../hooks'
 
+  const attributes = {
+    className: classes['react-contextmenu-item'],
+    dividerClassName: classes['react-contextmenu-item--divider'],
+    selectedClassName: classes['react-contextmenu-item--selected']
+  }
+
 const FGContextMenu = () => {
   const { getKetcherInstance } = useAppContext()
 
@@ -83,17 +89,18 @@ const FGContextMenu = () => {
 
   return (
     <ContextMenu id="contextmenu" onShow={e => showMenu(e)}>
-      {showSGroupMenu ? (
-        <div className={classes.contextMenu}>
-          <MenuItem onClick={handleExpand} className={classes.menuItem}>
+      {showSGroupMenu &&
+        <div className={classes['react-contextmenu']}>
+          <MenuItem onClick={handleExpand} attributes={attributes}>
             {targetFG?.isExpanded ? 'Contract ' : 'Expand '}
             Abbreviation
           </MenuItem>
-          <MenuItem onClick={handleRemove} className={classes.menuItem}>
+          <MenuItem divider attributes={attributes}/>
+          <MenuItem onClick={handleRemove} attributes={attributes}>
             Remove Abbreviation
           </MenuItem>
         </div>
-      ) : null}
+      }
     </ContextMenu>
   )
 }

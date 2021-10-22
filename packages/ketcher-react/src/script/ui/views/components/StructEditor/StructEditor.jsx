@@ -19,6 +19,7 @@ import { Component, createRef } from 'react'
 import Editor from '../../../../editor'
 import Spinner from '../Spinner'
 import classes from './StructEditor.module.less'
+import contextMenuClasses from '../../../../ui/component/ContextMenu/ContextMenu.module.less'
 import clsx from 'clsx'
 import { upperFirst } from 'lodash/fp'
 import { FGContextMenu } from '../../../component/ContextMenu/ContextMenu'
@@ -134,9 +135,9 @@ class StructEditor extends Component {
       <div className={clsx(classes.canvas, className)}>
         <ContextMenuTrigger
           id="contextmenu"
-          className={clsx(classes.contextmenu)}>
+          className={clsx(contextMenuClasses.wrapper)}>
           <Tag
-            className={clsx(classes.contextmenu)}
+            className={clsx(contextMenuClasses.wrapper)}
             onMouseDown={event => event.preventDefault()}
             {...props}>
             <div

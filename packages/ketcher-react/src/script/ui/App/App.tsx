@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import 'intersection-observer';
+import 'intersection-observer'
 import {
   BottomToolbarContainer,
   LeftToolbarContainer,

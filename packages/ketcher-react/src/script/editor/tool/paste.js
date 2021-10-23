@@ -17,16 +17,22 @@
 import {
   fromItemsFuse,
   fromPaste,
+  FunctionalGroup,
   getHoverToFuse,
   getItemsToFuse
 } from 'ketcher-core'
 
-function PasteTool(editor, struct) {
-  if (!(this instanceof PasteTool)) return new PasteTool(editor, struct)
+function PasteTool(editor, blockedEntities, struct) {
+  if (!(this instanceof PasteTool))
+    return new PasteTool(editor, blockedEntities, struct)
 
+  this.blockedEntities = blockedEntities
   this.editor = editor
   this.editor.selection(null)
   this.struct = struct
+  this.sgroups = editor.render.ctab.sgroups
+  this.molecule = editor.render.ctab.molecule
+  this.functionalGroups = this.molecule.functionalGroups
 
   const rnd = editor.render
   const point = editor.lastEvent ? rnd.page2obj(editor.lastEvent) : null
@@ -56,7 +62,52 @@ PasteTool.prototype.mousemove = function (event) {
   this.editor.hover(getHoverToFuse(this.mergeItems))
 }
 
-PasteTool.prototype.mouseup = function () {
+PasteTool.prototype.mouseup = function (event) {
+  const ci = this.editor.findItem(event, ['atoms', 'bonds'])
+  const atomResult = []
+  const bondResult = []
+  const result = []
+  if (ci && this.functionalGroups && ci.map === 'atoms') {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    if (atomId !== null) atomResult.push(atomId)
+  }
+  if (ci && this.functionalGroups && ci.map === 'bonds') {
+    const bondId = FunctionalGroup.bondsInFunctionalGroup(
+      this.molecule,
+      this.functionalGroups,
+      ci.id
+    )
+    if (bondId !== null) bondResult.push(bondId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  } else if (bondResult.length > 0) {
+    for (let id of bondResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
   const editor = this.editor
   const restruct = editor.render.ctab
 

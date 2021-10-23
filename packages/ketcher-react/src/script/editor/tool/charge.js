@@ -14,22 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { offFunctionsToFG } from './offFunctionsToFG'
-import { Elements, fromAtomsAttrs } from 'ketcher-core'
+import { Elements, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core'
 
-function ChargeTool(editor, charge) {
-  if (!(this instanceof ChargeTool)) return new ChargeTool(editor, charge)
+function ChargeTool(editor, blockedEntities, charge) {
+  if (!(this instanceof ChargeTool))
+    return new ChargeTool(editor, blockedEntities, charge)
 
+  this.blockedEntities = blockedEntities
   this.editor = editor
   this.editor.selection(null)
   this.charge = charge
   this.sgroups = editor.render.ctab.sgroups
-  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
+  this.molecule = editor.render.ctab.molecule
+  this.functionalGroups = this.molecule.functionalGroups
 }
 
 ChargeTool.prototype.mousemove = function (event) {
-  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
-    return
   var rnd = this.editor.render
   var ci = this.editor.findItem(event, ['atoms'])
   var struct = rnd.ctab.molecule
@@ -40,12 +40,54 @@ ChargeTool.prototype.mousemove = function (event) {
 }
 
 ChargeTool.prototype.click = function (event) {
-  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
-    return
   var editor = this.editor
   var rnd = editor.render
   var struct = rnd.ctab.molecule
-  var ci = editor.findItem(event, ['atoms'])
+  const ci = editor.findItem(event, ['atoms', 'bonds'])
+  const atomResult = []
+  const bondResult = []
+  const result = []
+  if (ci && this.functionalGroups && ci.map === 'atoms') {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    if (atomId !== null) atomResult.push(atomId)
+  }
+  if (ci && this.functionalGroups && ci.map === 'bonds') {
+    const bondId = FunctionalGroup.bondsInFunctionalGroup(
+      this.molecule,
+      this.functionalGroups,
+      ci.id
+    )
+    if (bondId !== null) bondResult.push(bondId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  } else if (bondResult.length > 0) {
+    for (let id of bondResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
   if (
     ci &&
     ci.map === 'atoms' &&

@@ -19,16 +19,16 @@ import {
   Bond,
   fromAtomAddition,
   fromAtomsAttrs,
-  fromBondAddition
+  fromBondAddition,
+  FunctionalGroup
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
-import { offFunctionsToFG } from './offFunctionsToFG'
 
-function AtomTool(editor, atomProps) {
+function AtomTool(editor, blockedEntities, atomProps) {
   if (!(this instanceof AtomTool)) {
     if (!editor.selection() || !editor.selection().atoms)
-      return new AtomTool(editor, atomProps)
+      return new AtomTool(editor, blockedEntities, atomProps)
 
     const action = fromAtomsAttrs(
       editor.render.ctab,
@@ -41,20 +41,63 @@ function AtomTool(editor, atomProps) {
     return null
   }
 
+  this.blockedEntities = blockedEntities
   this.editor = editor
   this.atomProps = atomProps
   this.bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE }
   this.sgroups = editor.render.ctab.sgroups
-  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
+  this.molecule = editor.render.ctab.molecule
+  this.functionalGroups = this.molecule.functionalGroups
 }
 
 AtomTool.prototype.mousedown = function (event) {
-  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
-    return
   this.editor.hover(null)
   this.editor.selection(null)
   const ci = this.editor.findItem(event, ['atoms'])
-
+  const atomResult = []
+  const bondResult = []
+  const result = []
+  if (ci && this.functionalGroups && ci.map === 'atoms') {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    if (atomId !== null) atomResult.push(atomId)
+  }
+  if (ci && this.functionalGroups && ci.map === 'bonds') {
+    const bondId = FunctionalGroup.bondsInFunctionalGroup(
+      this.molecule,
+      this.functionalGroups,
+      ci.id
+    )
+    if (bondId !== null) bondResult.push(bondId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  } else if (bondResult.length > 0) {
+    for (let id of bondResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
   if (!ci) {
     // ci.type == 'Canvas'
     this.dragCtx = {}
@@ -104,6 +147,51 @@ AtomTool.prototype.mousemove = function (event) {
 }
 
 AtomTool.prototype.mouseup = function (event) {
+  const ci = this.editor.findItem(event, ['atoms', 'bonds'])
+  const atomResult = []
+  const bondResult = []
+  const result = []
+  if (ci && this.functionalGroups && ci.map === 'atoms') {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    if (atomId !== null) atomResult.push(atomId)
+  }
+  if (ci && this.functionalGroups && ci.map === 'bonds') {
+    const bondId = FunctionalGroup.bondsInFunctionalGroup(
+      this.molecule,
+      this.functionalGroups,
+      ci.id
+    )
+    if (bondId !== null) bondResult.push(bondId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  } else if (bondResult.length > 0) {
+    for (let id of bondResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
   if (this.dragCtx) {
     const dragCtx = this.dragCtx
     const rnd = this.editor.render

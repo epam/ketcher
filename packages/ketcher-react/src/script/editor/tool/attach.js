@@ -14,16 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Elements } from 'ketcher-core'
+import { Elements, FunctionalGroup } from 'ketcher-core'
 
-function AttachTool(editor, attachPoints) {
-  if (!(this instanceof AttachTool)) return new AttachTool(editor, attachPoints)
+function AttachTool(editor, blockedEntities, attachPoints) {
+  if (!(this instanceof AttachTool))
+    return new AttachTool(editor, blockedEntities, attachPoints)
 
   this.attach = {
     atomid: attachPoints.atomid || 0,
     bondid: attachPoints.bondid || 0
   }
+  this.blockedEntities = blockedEntities
   this.editor = editor
+  this.sgroups = editor.render.ctab.sgroups
+  this.molecule = editor.render.ctab.molecule
+  this.functionalGroups = this.molecule.functionalGroups
 
   this.editor.selection({
     atoms: [this.attach.atomid],
@@ -51,6 +56,50 @@ AttachTool.prototype.click = function (event) {
   const rnd = editor.render
   const struct = rnd.ctab.molecule
   const ci = editor.findItem(event, ['atoms', 'bonds'])
+  const atomResult = []
+  const bondResult = []
+  const result = []
+  if (ci && this.functionalGroups && ci.map === 'atoms') {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    if (atomId !== null) atomResult.push(atomId)
+  }
+  if (ci && this.functionalGroups && ci.map === 'bonds') {
+    const bondId = FunctionalGroup.bondsInFunctionalGroup(
+      this.molecule,
+      this.functionalGroups,
+      ci.id
+    )
+    if (bondId !== null) bondResult.push(bondId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  } else if (bondResult.length > 0) {
+    for (let id of bondResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
 
   if (
     ci &&

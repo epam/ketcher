@@ -25,11 +25,10 @@ import {
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
-import { offFunctionsToFG } from './offFunctionsToFG'
 
-function RotateTool(editor, dir) {
+function RotateTool(editor, blockedEntities, dir) {
   if (!(this instanceof RotateTool)) {
-    if (!dir) return new RotateTool(editor)
+    if (!dir) return new RotateTool(editor, blockedEntities)
 
     const restruct = editor.render.ctab
     const selection = editor.selection()
@@ -46,6 +45,7 @@ function RotateTool(editor, dir) {
     return null
   }
 
+  this.blockedEntities = blockedEntities
   this.editor = editor
   this.sgroups = editor.render.ctab.sgroups
   this.functionalGroups = editor.render.ctab.molecule.functionalGroups
@@ -56,8 +56,14 @@ function RotateTool(editor, dir) {
 }
 
 RotateTool.prototype.mousedown = function (event) {
-  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+  if (this.functionalGroups.size > 0) {
+    const result = []
+    for (let fg of this.functionalGroups.values()) {
+      result.push(fg.relatedSGroupId)
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
     return
+  }
   var xy0 = new Vec2()
   var selection = this.editor.selection()
   var rnd = this.editor.render
@@ -124,8 +130,6 @@ RotateTool.prototype.mousedown = function (event) {
 }
 
 RotateTool.prototype.mousemove = function (event) {
-  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
-    return
   // eslint-disable-line max-statements
   if (!this.dragCtx) return true
 

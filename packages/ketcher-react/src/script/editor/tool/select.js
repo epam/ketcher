@@ -24,7 +24,8 @@ import {
   fromTextDeletion,
   fromTextUpdating,
   getHoverToFuse,
-  getItemsToFuse
+  getItemsToFuse,
+  FunctionalGroup
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -32,14 +33,16 @@ import { atomLongtapEvent } from './atom'
 import { sgroupDialog } from './sgroup'
 import utils from '../shared/utils'
 import { xor } from 'lodash/fp'
-import { offFunctionsToFG } from './offFunctionsToFG'
 
-function SelectTool(editor, mode) {
-  if (!(this instanceof SelectTool)) return new SelectTool(editor, mode)
+function SelectTool(editor, blockedEntities, mode) {
+  if (!(this instanceof SelectTool))
+    return new SelectTool(editor, blockedEntities, mode)
 
+  this.blockedEntities = blockedEntities
   this.editor = editor
   this.sgroups = editor.render.ctab.sgroups
-  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
+  this.molecule = editor.render.ctab.molecule
+  this.functionalGroups = this.molecule.functionalGroups
   this.lassoHelper = new LassoHelper(
     mode === 'lasso' ? 0 : 1,
     editor,
@@ -48,8 +51,6 @@ function SelectTool(editor, mode) {
 }
 
 SelectTool.prototype.mousedown = function (event) {
-  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
-    return
   // eslint-disable-line max-statements
   const rnd = this.editor.render
   const ctab = rnd.ctab
@@ -211,6 +212,54 @@ SelectTool.prototype.mousemove = function (event) {
 }
 
 SelectTool.prototype.mouseup = function (event) {
+  const selected = this.editor.selection()
+  const atomsResult = []
+  const bondsResult = []
+  const result = []
+
+  if (selected && this.functionalGroups && selected.atoms) {
+    for (let atom of selected.atoms) {
+      const atomId = FunctionalGroup.atomsInFunctionalGroup(
+        this.functionalGroups,
+        atom
+      )
+      if (atomId !== null) atomsResult.push(atomId)
+    }
+  }
+  if (selected && this.functionalGroups && selected.bonds) {
+    for (let bond of selected.bonds) {
+      const bondId = FunctionalGroup.bondsInFunctionalGroup(
+        this.molecule,
+        this.functionalGroups,
+        bond
+      )
+      if (bondId !== null) bondsResult.push(bondId)
+    }
+  }
+  if (atomsResult.length > 0) {
+    for (let id of atomsResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+    }
+  }
+  if (bondsResult.length > 0) {
+    for (let id of bondsResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+    }
+  }
+  if (result.length > 0) {
+    this.editor.selection(null)
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    this.lassoHelper.cancel()
+  }
   // eslint-disable-line max-statements
   const editor = this.editor
   const restruct = editor.render.ctab
@@ -252,6 +301,51 @@ SelectTool.prototype.dblclick = function (event) {
     'sgroupData',
     'texts'
   ])
+
+  const atomResult = []
+  const bondResult = []
+  const result = []
+  if (ci && this.functionalGroups && ci.map === 'atoms') {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    if (atomId !== null) atomResult.push(atomId)
+  }
+  if (ci && this.functionalGroups && ci.map === 'bonds') {
+    const bondId = FunctionalGroup.bondsInFunctionalGroup(
+      this.molecule,
+      this.functionalGroups,
+      ci.id
+    )
+    if (bondId !== null) bondResult.push(bondId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  } else if (bondResult.length > 0) {
+    for (let id of bondResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
   if (!ci) return true
 
   var struct = rnd.ctab.molecule

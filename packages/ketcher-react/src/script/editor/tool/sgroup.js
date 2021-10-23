@@ -20,7 +20,8 @@ import {
   checkOverlapping,
   fromSeveralSgroupAddition,
   fromSgroupAction,
-  fromSgroupDeletion
+  fromSgroupDeletion,
+  FunctionalGroup
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -28,11 +29,11 @@ import { isEqual } from 'lodash/fp'
 
 const searchMaps = ['atoms', 'bonds', 'sgroups', 'sgroupData']
 
-function SGroupTool(editor, type) {
+function SGroupTool(editor, blockedEntities, type) {
   if (!(this instanceof SGroupTool)) {
     var selection = editor.selection() || {}
     if (!selection.atoms && !selection.bonds)
-      return new SGroupTool(editor, type)
+      return new SGroupTool(editor, blockedEntities, type)
 
     var sgroups = editor.render.ctab.molecule.sgroups
     var selectedAtoms = editor.selection().atoms
@@ -43,7 +44,11 @@ function SGroupTool(editor, type) {
     return null
   }
 
+  this.blockedEntities = blockedEntities
   this.editor = editor
+  this.sgroups = editor.render.ctab.sgroups
+  this.molecule = editor.render.ctab.molecule
+  this.functionalGroups = this.molecule.functionalGroups
   this.type = type
 
   this.lassoHelper = new LassoHelper(1, editor)
@@ -52,6 +57,50 @@ function SGroupTool(editor, type) {
 
 SGroupTool.prototype.mousedown = function (event) {
   var ci = this.editor.findItem(event, searchMaps)
+  const atomResult = []
+  const bondResult = []
+  const result = []
+  if (ci && this.functionalGroups && ci.map === 'atoms') {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    if (atomId !== null) atomResult.push(atomId)
+  }
+  if (ci && this.functionalGroups && ci.map === 'bonds') {
+    const bondId = FunctionalGroup.bondsInFunctionalGroup(
+      this.molecule,
+      this.functionalGroups,
+      ci.id
+    )
+    if (bondId !== null) bondResult.push(bondId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  } else if (bondResult.length > 0) {
+    for (let id of bondResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
   if (!ci)
     //  ci.type == 'Canvas'
     this.lassoHelper.begin(event)
@@ -68,13 +117,61 @@ SGroupTool.prototype.mouseleave = function (event) {
 }
 
 SGroupTool.prototype.mouseup = function (event) {
+  const ci = this.editor.findItem(event, searchMaps)
+  const selected = this.editor.selection()
+  const atomsResult = []
+  const bondsResult = []
+  const result = []
+
+  if (selected && this.functionalGroups && selected.atoms) {
+    for (let atom of selected.atoms) {
+      const atomId = FunctionalGroup.atomsInFunctionalGroup(
+        this.functionalGroups,
+        atom
+      )
+      if (atomId !== null) atomsResult.push(atomId)
+    }
+  }
+  if (selected && this.functionalGroups && selected.bonds) {
+    for (let bond of selected.bonds) {
+      const bondId = FunctionalGroup.bondsInFunctionalGroup(
+        this.molecule,
+        this.functionalGroups,
+        bond
+      )
+      if (bondId !== null) bondsResult.push(bondId)
+    }
+  }
+  if (atomsResult.length > 0) {
+    for (let id of atomsResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+    }
+  }
+  if (bondsResult.length > 0) {
+    for (let id of bondsResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+    }
+  }
+  if (result.length > 0) {
+    this.editor.selection(null)
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    this.lassoHelper.cancel()
+  }
   var id = null // id of an existing group, if we're editing one
   var selection = null // atoms to include in a newly created group
   if (this.lassoHelper.running(event)) {
     // TODO it catches more events than needed, to be re-factored
     selection = this.lassoHelper.end(event)
   } else {
-    var ci = this.editor.findItem(event, searchMaps)
     if (!ci)
       // ci.type == 'Canvas'
       return

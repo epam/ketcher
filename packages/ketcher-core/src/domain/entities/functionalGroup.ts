@@ -14,16 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 import { FunctionalGroupsProvider } from './../helpers/functionalGroupsProvider'
+import { SGroup } from './sgroup'
 
 export class FunctionalGroup {
   name: string
   relatedSGroupId: number
   isExpanded: boolean
+  relatedSGroup: any
 
-  constructor(name: string, relatedSGroupId: number, isExpanded: boolean) {
+  constructor(
+    name: string,
+    relatedSGroupId: number,
+    isExpanded: boolean,
+    relatedSGroup: any
+  ) {
     this.name = name
     this.relatedSGroupId = relatedSGroupId
     this.isExpanded = isExpanded
+    this.relatedSGroup = relatedSGroup
   }
 
   static isFunctionalGroup(sgroup): boolean {
@@ -35,11 +43,56 @@ export class FunctionalGroup {
     )
   }
 
+  static atomsInFunctionalGroup(functionalGroups, atom): number | null {
+    if (functionalGroups.size === 0 || !atom) {
+      return null
+    }
+    for (let fg of functionalGroups.values()) {
+      if (fg.relatedSGroup.atoms.includes(atom)) return atom
+    }
+    return null
+  }
+
+  static bondsInFunctionalGroup(
+    molecule,
+    functionalGroups,
+    bond
+  ): number | null {
+    if (functionalGroups.size === 0 || !bond) {
+      return null
+    }
+    for (let fg of functionalGroups.values()) {
+      const bonds = SGroup.getBonds(molecule, fg.relatedSGroup)
+      if (bonds.includes(bond)) return bond
+    }
+    return null
+  }
+
+  static findFunctionalGroupByAtom(functionalGroups, atom): number | null {
+    for (let fg of functionalGroups.values()) {
+      if (fg.relatedSGroup.atoms.includes(atom)) return fg.relatedSGroupId
+    }
+    return null
+  }
+
+  static findFunctionalGroupByBond(
+    molecule,
+    functionalGroups,
+    bond
+  ): number | null {
+    for (let fg of functionalGroups.values()) {
+      const bonds = SGroup.getBonds(molecule, fg.relatedSGroup)
+      if (bonds.includes(bond)) return fg.relatedSGroupId
+    }
+    return null
+  }
+
   static clone(functionalGroup: FunctionalGroup): FunctionalGroup {
     const cloned = new FunctionalGroup(
       functionalGroup.name,
       functionalGroup.relatedSGroupId,
-      functionalGroup.isExpanded
+      functionalGroup.isExpanded,
+      functionalGroup.relatedSGroup
     )
     return cloned
   }

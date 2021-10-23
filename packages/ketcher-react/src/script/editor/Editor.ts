@@ -114,6 +114,7 @@ class Editor implements KetcherEditor {
     sdataEdit: PipelineSubscription
     quickEdit: PipelineSubscription
     attachEdit: PipelineSubscription
+    removeFG: PipelineSubscription
     change: Subscription
     selectionChange: PipelineSubscription
     aromatizeStruct: PipelineSubscription
@@ -148,6 +149,7 @@ class Editor implements KetcherEditor {
       sdataEdit: new PipelineSubscription(),
       quickEdit: new PipelineSubscription(),
       attachEdit: new PipelineSubscription(),
+      removeFG: new PipelineSubscription(),
       change: new Subscription(),
       selectionChange: new PipelineSubscription(),
       aromatizeStruct: new PipelineSubscription(),
@@ -174,6 +176,7 @@ class Editor implements KetcherEditor {
   }
 
   tool(name?: any, opts?: any) {
+    const blockedEntities = ['Functional Groups']
     /* eslint-disable no-underscore-dangle */
     if (arguments.length === 0) {
       return this._tool
@@ -183,7 +186,7 @@ class Editor implements KetcherEditor {
       this._tool.cancel()
     }
 
-    const tool = toolMap[name](this, opts)
+    const tool = toolMap[name](this, blockedEntities, opts)
     if (!tool) {
       return null
     }

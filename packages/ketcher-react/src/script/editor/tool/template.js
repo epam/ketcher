@@ -25,14 +25,14 @@ import {
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
-import { offFunctionsToFG } from './offFunctionsToFG'
 
-function TemplateTool(editor, tmpl) {
+function TemplateTool(editor, blockedEntities, tmpl) {
   // eslint-disable-line max-statements
-  if (!(this instanceof TemplateTool)) return new TemplateTool(editor, tmpl)
+  if (!(this instanceof TemplateTool))
+    return new TemplateTool(editor, blockedEntities, tmpl)
 
+  this.blockedEntities = blockedEntities
   this.editor = editor
-  this.mode = tmpl.mode
   this.sgroups = editor.render.ctab.sgroups
   this.functionalGroups = editor.render.ctab.molecule.functionalGroups
   this.editor.selection(null)
@@ -69,8 +69,6 @@ function TemplateTool(editor, tmpl) {
 }
 
 TemplateTool.prototype.mousedown = function (event) {
-  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
-    return
   // eslint-disable-line max-statements
   const editor = this.editor
   const restruct = editor.render.ctab

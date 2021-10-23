@@ -22,15 +22,16 @@ import {
   fromPlusDeletion,
   fromSgroupDeletion,
   fromSimpleObjectDeletion,
-  fromTextDeletion
+  fromTextDeletion,
+  FunctionalGroup
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
-import { offFunctionsToFG } from './offFunctionsToFG'
 
-function EraserTool(editor, mode) {
+function EraserTool(editor, blockedEntities, mode) {
   if (!(this instanceof EraserTool)) {
-    if (!editor.selection()) return new EraserTool(editor, mode)
+    if (!editor.selection())
+      return new EraserTool(editor, blockedEntities, mode)
 
     const action = fromFragmentDeletion(editor.render.ctab, editor.selection())
     editor.update(action)
@@ -38,9 +39,11 @@ function EraserTool(editor, mode) {
     return null
   }
 
+  this.blockedEntities = blockedEntities
   this.editor = editor
   this.sgroups = editor.render.ctab.sgroups
-  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
+  this.molecule = editor.render.ctab.molecule
+  this.functionalGroups = this.molecule.functionalGroups
 
   this.maps = [
     'atoms',
@@ -56,8 +59,6 @@ function EraserTool(editor, mode) {
 }
 
 EraserTool.prototype.mousedown = function (event) {
-  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
-    return
   const ci = this.editor.findItem(event, this.maps)
   if (!ci)
     //  ci.type == 'Canvas'
@@ -65,16 +66,61 @@ EraserTool.prototype.mousedown = function (event) {
 }
 
 EraserTool.prototype.mousemove = function (event) {
-  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
-    return
   if (this.lassoHelper.running())
     this.editor.selection(this.lassoHelper.addPoint(event))
   else this.editor.hover(this.editor.findItem(event, this.maps))
 }
 
 EraserTool.prototype.mouseup = function (event) {
-  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
-    return
+  const selected = this.editor.selection()
+  const atomsResult = []
+  const bondsResult = []
+  const result = []
+
+  if (selected && this.functionalGroups && selected.atoms) {
+    for (let atom of selected.atoms) {
+      const atomId = FunctionalGroup.atomsInFunctionalGroup(
+        this.functionalGroups,
+        atom
+      )
+      if (atomId !== null) atomsResult.push(atomId)
+    }
+  }
+  if (selected && this.functionalGroups && selected.bonds) {
+    for (let bond of selected.bonds) {
+      const bondId = FunctionalGroup.bondsInFunctionalGroup(
+        this.molecule,
+        this.functionalGroups,
+        bond
+      )
+      if (bondId !== null) bondsResult.push(bondId)
+    }
+  }
+  if (atomsResult.length > 0) {
+    for (let id of atomsResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+    }
+  }
+  if (bondsResult.length > 0) {
+    for (let id of bondsResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+    }
+  }
+  if (result.length > 0) {
+    this.editor.selection(null)
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    this.lassoHelper.cancel()
+  }
+
   // eslint-disable-line max-statements
   const rnd = this.editor.render
 
@@ -88,10 +134,52 @@ EraserTool.prototype.mouseup = function (event) {
 }
 
 EraserTool.prototype.click = function (event) {
-  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
-    return
   const restruct = this.editor.render.ctab
   const ci = this.editor.findItem(event, this.maps)
+  const atomResult = []
+  const bondResult = []
+  const result = []
+  if (ci && this.functionalGroups && ci.map === 'atoms') {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    if (atomId !== null) atomResult.push(atomId)
+  }
+  if (ci && this.functionalGroups && ci.map === 'bonds') {
+    const bondId = FunctionalGroup.bondsInFunctionalGroup(
+      this.molecule,
+      this.functionalGroups,
+      ci.id
+    )
+    if (bondId !== null) bondResult.push(bondId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  } else if (bondResult.length > 0) {
+    for (let id of bondResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
 
   if (!ci) return // ci.type == 'Canvas'
 

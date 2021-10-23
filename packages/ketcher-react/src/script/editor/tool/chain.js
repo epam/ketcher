@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { offFunctionsToFG } from './offFunctionsToFG'
 import {
   Bond,
   Vec2,
@@ -22,27 +21,73 @@ import {
   fromChain,
   fromItemsFuse,
   getHoverToFuse,
-  getItemsToFuse
+  getItemsToFuse,
+  FunctionalGroup
 } from 'ketcher-core'
 
 import { atomLongtapEvent } from './atom'
 import utils from '../shared/utils'
 
-function ChainTool(editor) {
-  if (!(this instanceof ChainTool)) return new ChainTool(editor)
+function ChainTool(editor, blockedEntities) {
+  if (!(this instanceof ChainTool))
+    return new ChainTool(editor, blockedEntities)
 
+  this.blockedEntities = blockedEntities
   this.editor = editor
   this.editor.selection(null)
   this.sgroups = editor.render.ctab.sgroups
-  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
+  this.molecule = editor.render.ctab.molecule
+  this.functionalGroups = this.molecule.functionalGroups
 }
 
 ChainTool.prototype.mousedown = function (event) {
+  if (this.dragCtx) return
   const rnd = this.editor.render
   const ci = this.editor.findItem(event, ['atoms', 'bonds'])
-
-  if (offFunctionsToFG(this.editor, this.functionalGroups, this.sgroups, event))
+  const atomResult = []
+  const bondResult = []
+  const result = []
+  if (ci && ci.map === 'atoms') {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    if (atomId !== null) atomResult.push(atomId)
+  }
+  if (ci && ci.map === 'bonds') {
+    const bondId = FunctionalGroup.bondsInFunctionalGroup(
+      this.molecule,
+      this.functionalGroups,
+      ci.id
+    )
+    if (bondId !== null) bondResult.push(bondId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
     return
+  } else if (bondResult.length > 0) {
+    for (let id of bondResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
 
   this.editor.hover(null)
   this.dragCtx = {
@@ -112,6 +157,32 @@ ChainTool.prototype.mousemove = function (event) {
 }
 
 ChainTool.prototype.mouseup = function () {
+  let atom
+  const atomResult = []
+  const result = []
+  if (this.dragCtx && this.dragCtx.mergeItems && this.functionalGroups) {
+    atom = this.dragCtx.mergeItems.atoms.values().next().value
+  }
+  if (atom) {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      atom
+    )
+    if (atomId !== null) atomResult.push(atomId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
   const dragCtx = this.dragCtx
   if (!dragCtx) return true
   delete this.dragCtx

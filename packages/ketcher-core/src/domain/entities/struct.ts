@@ -1036,7 +1036,12 @@ export class Struct {
     this.sgroups.forEach(sgroup => {
       if (FunctionalGroup.isFunctionalGroup(sgroup)) {
         this.functionalGroups.add(
-          new FunctionalGroup(sgroup.data.name, sgroup.id, sgroup.expanded)
+          new FunctionalGroup(
+            sgroup.data.name,
+            sgroup.id,
+            sgroup.expanded,
+            sgroup
+          )
         )
       }
     })

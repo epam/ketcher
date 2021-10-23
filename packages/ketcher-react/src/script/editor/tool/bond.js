@@ -44,6 +44,7 @@ function BondTool(editor, blockedEntities, bondProps) {
   this.editor = editor
   this.atomProps = { label: 'C' }
   this.bondProps = bondProps
+  this.struct = editor.render.ctab
   this.sgroups = editor.render.ctab.sgroups
   this.molecule = editor.render.ctab.molecule
   this.functionalGroups = this.molecule.functionalGroups
@@ -60,7 +61,17 @@ BondTool.prototype.mousedown = function (event) {
       this.functionalGroups,
       ci.id
     )
-    if (atomId !== null) atomResult.push(atomId)
+    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).a
+    if (
+      atomId &&
+      !FunctionalGroup.isBondInContractedFunctionalGroup(
+        atomFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      atomResult.push(atomId)
   }
   if (ci && this.functionalGroups && ci.map === 'bonds') {
     const bondId = FunctionalGroup.bondsInFunctionalGroup(
@@ -68,7 +79,17 @@ BondTool.prototype.mousedown = function (event) {
       this.functionalGroups,
       ci.id
     )
-    if (bondId !== null) bondResult.push(bondId)
+    const bondFromStruct = bondId !== null && this.struct.bonds.get(bondId).b
+    if (
+      bondId &&
+      !FunctionalGroup.isBondInContractedFunctionalGroup(
+        bondFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      bondResult.push(bondId)
   }
   if (atomResult.length > 0) {
     for (let id of atomResult) {
@@ -179,22 +200,23 @@ BondTool.prototype.mousemove = function (event) {
 BondTool.prototype.mouseup = function (event) {
   const ci = this.editor.findItem(event, ['atoms', 'bonds'])
   const atomResult = []
-  const bondResult = []
   const result = []
   if (ci && this.functionalGroups && ci.map === 'atoms') {
     const atomId = FunctionalGroup.atomsInFunctionalGroup(
       this.functionalGroups,
       ci.id
     )
-    if (atomId !== null) atomResult.push(atomId)
-  }
-  if (ci && this.functionalGroups && ci.map === 'bonds') {
-    const bondId = FunctionalGroup.bondsInFunctionalGroup(
-      this.molecule,
-      this.functionalGroups,
-      ci.id
+    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).a
+    if (
+      atomId &&
+      !FunctionalGroup.isBondInContractedFunctionalGroup(
+        atomFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
     )
-    if (bondId !== null) bondResult.push(bondId)
+      atomResult.push(atomId)
   }
   if (atomResult.length > 0) {
     for (let id of atomResult) {
@@ -202,19 +224,9 @@ BondTool.prototype.mouseup = function (event) {
         this.functionalGroups,
         id
       )
-      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
-    }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    delete this.dragCtx.item
-    return
-  } else if (bondResult.length > 0) {
-    for (let id of bondResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByBond(
-        this.molecule,
-        this.functionalGroups,
-        id
-      )
-      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
     }
     this.editor.event.removeFG.dispatch({ fgIds: result })
     return

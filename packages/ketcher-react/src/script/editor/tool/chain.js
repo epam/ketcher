@@ -35,6 +35,7 @@ function ChainTool(editor, blockedEntities) {
   this.blockedEntities = blockedEntities
   this.editor = editor
   this.editor.selection(null)
+  this.struct = editor.render.ctab
   this.sgroups = editor.render.ctab.sgroups
   this.molecule = editor.render.ctab.molecule
   this.functionalGroups = this.molecule.functionalGroups
@@ -47,20 +48,40 @@ ChainTool.prototype.mousedown = function (event) {
   const atomResult = []
   const bondResult = []
   const result = []
-  if (ci && ci.map === 'atoms') {
+  if (ci && this.functionalGroups && ci.map === 'atoms') {
     const atomId = FunctionalGroup.atomsInFunctionalGroup(
       this.functionalGroups,
       ci.id
     )
-    if (atomId !== null) atomResult.push(atomId)
+    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).a
+    if (
+      atomId &&
+      !FunctionalGroup.isBondInContractedFunctionalGroup(
+        atomFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      atomResult.push(atomId)
   }
-  if (ci && ci.map === 'bonds') {
+  if (ci && this.functionalGroups && ci.map === 'bonds') {
     const bondId = FunctionalGroup.bondsInFunctionalGroup(
       this.molecule,
       this.functionalGroups,
       ci.id
     )
-    if (bondId !== null) bondResult.push(bondId)
+    const bondFromStruct = bondId !== null && this.struct.bonds.get(bondId).b
+    if (
+      bondId &&
+      !FunctionalGroup.isBondInContractedFunctionalGroup(
+        bondFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      bondResult.push(bondId)
   }
   if (atomResult.length > 0) {
     for (let id of atomResult) {
@@ -168,7 +189,17 @@ ChainTool.prototype.mouseup = function () {
       this.functionalGroups,
       atom
     )
-    if (atomId !== null) atomResult.push(atomId)
+    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).a
+    if (
+      atomId &&
+      !FunctionalGroup.isBondInContractedFunctionalGroup(
+        atomFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      atomResult.push(atomId)
   }
   if (atomResult.length > 0) {
     for (let id of atomResult) {

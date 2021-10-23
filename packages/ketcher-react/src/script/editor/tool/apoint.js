@@ -23,6 +23,7 @@ function APointTool(editor, blockedEntities) {
   this.blockedEntities = blockedEntities
   this.editor = editor
   this.sgroups = editor.render.ctab.sgroups
+  this.struct = editor.render.ctab
   this.molecule = editor.render.ctab.molecule
   this.functionalGroups = this.molecule.functionalGroups
   this.editor.selection(null)
@@ -37,39 +38,27 @@ APointTool.prototype.click = function (event) {
   var struct = editor.render.ctab.molecule
   var ci = editor.findItem(event, ['atoms'])
   const atomResult = []
-  const bondResult = []
   const result = []
   if (ci && this.functionalGroups && ci.map === 'atoms') {
     const atomId = FunctionalGroup.atomsInFunctionalGroup(
       this.functionalGroups,
       ci.id
     )
-    if (atomId !== null) atomResult.push(atomId)
-  }
-  if (ci && this.functionalGroups && ci.map === 'bonds') {
-    const bondId = FunctionalGroup.bondsInFunctionalGroup(
-      this.molecule,
-      this.functionalGroups,
-      ci.id
+    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).a
+    if (
+      atomId &&
+      !FunctionalGroup.isBondInContractedFunctionalGroup(
+        atomFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
     )
-    if (bondId !== null) bondResult.push(bondId)
+      atomResult.push(atomId)
   }
   if (atomResult.length > 0) {
     for (let id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-        this.functionalGroups,
-        id
-      )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
-      }
-    }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
-  } else if (bondResult.length > 0) {
-    for (let id of bondResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByBond(
-        this.molecule,
         this.functionalGroups,
         id
       )

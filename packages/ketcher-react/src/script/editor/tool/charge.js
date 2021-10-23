@@ -24,6 +24,7 @@ function ChargeTool(editor, blockedEntities, charge) {
   this.editor = editor
   this.editor.selection(null)
   this.charge = charge
+  this.struct = editor.render.ctab
   this.sgroups = editor.render.ctab.sgroups
   this.molecule = editor.render.ctab.molecule
   this.functionalGroups = this.molecule.functionalGroups
@@ -45,39 +46,27 @@ ChargeTool.prototype.click = function (event) {
   var struct = rnd.ctab.molecule
   const ci = editor.findItem(event, ['atoms', 'bonds'])
   const atomResult = []
-  const bondResult = []
   const result = []
   if (ci && this.functionalGroups && ci.map === 'atoms') {
     const atomId = FunctionalGroup.atomsInFunctionalGroup(
       this.functionalGroups,
       ci.id
     )
-    if (atomId !== null) atomResult.push(atomId)
-  }
-  if (ci && this.functionalGroups && ci.map === 'bonds') {
-    const bondId = FunctionalGroup.bondsInFunctionalGroup(
-      this.molecule,
-      this.functionalGroups,
-      ci.id
+    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).a
+    if (
+      atomId &&
+      !FunctionalGroup.isBondInContractedFunctionalGroup(
+        atomFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
     )
-    if (bondId !== null) bondResult.push(bondId)
+      atomResult.push(atomId)
   }
   if (atomResult.length > 0) {
     for (let id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-        this.functionalGroups,
-        id
-      )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
-      }
-    }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
-  } else if (bondResult.length > 0) {
-    for (let id of bondResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByBond(
-        this.molecule,
         this.functionalGroups,
         id
       )

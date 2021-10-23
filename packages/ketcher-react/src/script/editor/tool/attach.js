@@ -26,6 +26,7 @@ function AttachTool(editor, blockedEntities, attachPoints) {
   }
   this.blockedEntities = blockedEntities
   this.editor = editor
+  this.struct = editor.render.ctab
   this.sgroups = editor.render.ctab.sgroups
   this.molecule = editor.render.ctab.molecule
   this.functionalGroups = this.molecule.functionalGroups
@@ -64,7 +65,16 @@ AttachTool.prototype.click = function (event) {
       this.functionalGroups,
       ci.id
     )
-    if (atomId !== null) atomResult.push(atomId)
+    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).a
+    if (
+      !FunctionalGroup.isBondInContractedFunctionalGroup(
+        atomFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      atomResult.push(atomId)
   }
   if (ci && this.functionalGroups && ci.map === 'bonds') {
     const bondId = FunctionalGroup.bondsInFunctionalGroup(
@@ -72,7 +82,16 @@ AttachTool.prototype.click = function (event) {
       this.functionalGroups,
       ci.id
     )
-    if (bondId !== null) bondResult.push(bondId)
+    const bondFromStruct = bondId !== null && this.struct.bonds.get(bondId).b
+    if (
+      !FunctionalGroup.isBondInContractedFunctionalGroup(
+        bondFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      bondResult.push(bondId)
   }
   if (atomResult.length > 0) {
     for (let id of atomResult) {

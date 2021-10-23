@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { FunctionalGroupsProvider } from './../helpers/functionalGroupsProvider'
+import { FunctionalGroupsProvider } from '../helpers'
 import { SGroup } from './sgroup'
 
 export class FunctionalGroup {
@@ -44,7 +44,7 @@ export class FunctionalGroup {
   }
 
   static atomsInFunctionalGroup(functionalGroups, atom): number | null {
-    if (functionalGroups.size === 0 || !atom) {
+    if (functionalGroups.size === 0) {
       return null
     }
     for (let fg of functionalGroups.values()) {
@@ -58,7 +58,7 @@ export class FunctionalGroup {
     functionalGroups,
     bond
   ): number | null {
-    if (functionalGroups.size === 0 || !bond) {
+    if (functionalGroups.size === 0) {
       return null
     }
     for (let fg of functionalGroups.values()) {

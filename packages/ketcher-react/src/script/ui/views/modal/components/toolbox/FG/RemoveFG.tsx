@@ -17,7 +17,7 @@
 import { FC } from 'react'
 import { BaseCallProps, BaseProps } from '../../../modal.types'
 import classes from './RemoveFG.module.less'
-import { useAppContext } from '../../../../../../../hooks'
+// import { useAppContext } from '../../../../../../../hooks'
 
 interface RemoveFGProps extends BaseProps {
   fgIds: any
@@ -26,8 +26,8 @@ interface RemoveFGProps extends BaseProps {
 type Props = RemoveFGProps & BaseCallProps
 
 const RemoveFG: FC<Props> = props => {
-  const { getKetcherInstance } = useAppContext()
-  const editor = getKetcherInstance().editor
+  // const { getKetcherInstance } = useAppContext()
+  // const editor = getKetcherInstance().editor
   const { fgIds } = props
 
   const remove = function () {
@@ -36,7 +36,6 @@ const RemoveFG: FC<Props> = props => {
     //         fromSgroupDeletion(editor.render.ctab, id)
     //     )
     // }
-    console.log(editor, fgIds)
     return fgIds
   }
 

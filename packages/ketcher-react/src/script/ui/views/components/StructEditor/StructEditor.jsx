@@ -23,7 +23,7 @@ import contextMenuClasses from '../../../../ui/component/ContextMenu/ContextMenu
 import clsx from 'clsx'
 import { upperFirst } from 'lodash/fp'
 import { FGContextMenu } from '../../../component/ContextMenu/ContextMenu'
-import { ContextMenuTrigger } from 'react-contextmenu'
+import { ContextMenuTrigger, hideMenu } from 'react-contextmenu'
 
 //TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -135,7 +135,10 @@ class StructEditor extends Component {
       <div className={clsx(classes.canvas, className)}>
         <ContextMenuTrigger
           id="contextmenu"
-          className={clsx(contextMenuClasses.wrapper)}>
+          className={clsx(contextMenuClasses.wrapper)}
+          attributes={{
+            onClick: hideMenu
+          }}>
           <Tag
             className={clsx(contextMenuClasses.wrapper)}
             onMouseDown={event => event.preventDefault()}

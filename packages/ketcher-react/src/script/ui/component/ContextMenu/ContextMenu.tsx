@@ -1,17 +1,12 @@
 import { ContextMenu, MenuItem } from 'react-contextmenu'
-import closest from '../../../editor/shared/closest'
 import { useState } from 'react'
-import { FunctionalGroup, setExpandSGroup } from 'ketcher-core'
-import { Vec2 } from 'ketcher-core'
-import { fromSgroupDeletion } from 'ketcher-core'
+import {
+  FunctionalGroup,
+  setExpandSGroup,
+  fromSgroupDeletion
+} from 'ketcher-core'
 import classes from './ContextMenu.module.less'
 import { useAppContext } from '../../../../hooks'
-
-const attributes = {
-  className: classes.MenuItem,
-  dividerClassName: classes.MenuItemDivider,
-  selectedClassName: classes.MenuItemSelected
-}
 
 const FGContextMenu = () => {
   const { getKetcherInstance } = useAppContext()
@@ -44,13 +39,13 @@ const FGContextMenu = () => {
     const struct = editor.struct()
     setShowSGroupMenu(false)
     setTargetFG(null)
-    const pos = new Vec2(
-      editor.render.page2obj({
+    const ci = editor.findItem(
+      {
         pageX: e.detail.position.x,
         pageY: e.detail.position.y
-      })
+      },
+      ['sgroups', 'atoms']
     )
-    const ci = closest.item(editor.render.ctab, pos, ['sgroups', 'atoms'])
     if (ci) {
       switch (ci.map) {
         case 'atoms':
@@ -91,12 +86,31 @@ const FGContextMenu = () => {
     <ContextMenu id="contextmenu" onShow={e => showMenu(e)}>
       {showSGroupMenu && (
         <div className={classes.contextMenu}>
-          <MenuItem onClick={handleExpand} attributes={attributes}>
+          <MenuItem
+            onClick={handleExpand}
+            attributes={{
+              className: classes.menuItem,
+              dividerClassName: classes.menuItemDivider,
+              selectedClassName: classes.menuItemSelected
+            }}>
             {targetFG?.isExpanded ? 'Contract ' : 'Expand '}
             Abbreviation
           </MenuItem>
-          <MenuItem divider attributes={attributes} />
-          <MenuItem onClick={handleRemove} attributes={attributes}>
+          <MenuItem
+            divider
+            attributes={{
+              className: classes.menuItem,
+              dividerClassName: classes.menuItemDivider,
+              selectedClassName: classes.menuItemSelected
+            }}
+          />
+          <MenuItem
+            onClick={handleRemove}
+            attributes={{
+              className: classes.menuItem,
+              dividerClassName: classes.menuItemDivider,
+              selectedClassName: classes.menuItemSelected
+            }}>
             Remove Abbreviation
           </MenuItem>
         </div>

@@ -60,6 +60,7 @@
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",
     "react-colorful": "^5.4.0",
+    "react-contextmenu": "^2.14.0",
     "react-intersection-observer": "^8.32.1",
     "react-markdown": "^5.0.2",
     "react-redux": "^7.2.1",

@@ -237,7 +237,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
         const expandedSGroups = propertyData.slice(7).trim().split('   ')
         expandedSGroups.forEach(eg => {
           const sGroupId = Number(eg) - 1
-          sGroups[sGroupId].expanded = true
+          sGroups[sGroupId].data.expanded = true
         })
       }
     }

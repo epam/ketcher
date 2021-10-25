@@ -26,7 +26,7 @@ import clsx from 'clsx'
 import { functionalGroupsSelector } from '../../../state/functionalGroups/selectors'
 import { useResizeObserver } from '../../../../../hooks'
 import { filterFGLib } from '../../../utils'
-import { SdfItem, SdfSerializer, Struct } from 'ketcher-core'
+import { FunctionalGroup, SdfItem, SdfSerializer, Struct } from 'ketcher-core'
 import { DialogParams } from '../Dialog/Dialog'
 
 export interface FGProps {
@@ -56,7 +56,11 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
     // Implemented to not mutate the redux store
     const expandedTemplates: SdfItem[] = lib.map(template => {
       const struct = template.struct.clone()
-      struct.functionalGroups.forEach(fg => (fg.isExpanded = true))
+      struct.sgroups.forEach(sgroup => {
+        if (FunctionalGroup.isFunctionalGroup(sgroup)) {
+          sgroup.data.expanded = true
+        }
+      })
       return { ...template, struct }
     })
     setExpandedTemplates(expandedTemplates)
@@ -70,7 +74,11 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
   const onSelect = (tmpl: Template): void => setSelected(tmpl)
   const handleOk = (res: Result | null): void => {
     if (res) {
-      res.struct.functionalGroups.forEach(fg => (fg.isExpanded = false))
+      res.struct.sgroups.forEach(sgroup => {
+        if (FunctionalGroup.isFunctionalGroup(sgroup)) {
+          sgroup.data.expanded = false
+        }
+      })
     }
     dispatch(onAction({ tool: 'template', opts: res }))
     onOk()

@@ -76,7 +76,6 @@ export class SGroup {
   neiAtoms: any
   pp: Vec2 | null
   data: any
-  expanded: boolean
 
   constructor(type: string) {
     this.type = type
@@ -102,7 +101,7 @@ export class SGroup {
       connectivity: 'ht', // head-to-head, head-to-tail or either-unknown
       name: '',
       subscript: 'n',
-
+      expanded: false,
       // data s-group fields
       attached: false,
       absolute: true,
@@ -117,7 +116,6 @@ export class SGroup {
       query: '',
       queryOp: ''
     }
-    this.expanded = false
   }
 
   // TODO: these methods should be overridden
@@ -217,7 +215,7 @@ export class SGroup {
     cp.patoms = null
     cp.bonds = null
     cp.allAtoms = sgroup.allAtoms
-    cp.expanded = sgroup.expanded
+    cp.data.expanded = sgroup.data.expanded
     return cp
   }
 

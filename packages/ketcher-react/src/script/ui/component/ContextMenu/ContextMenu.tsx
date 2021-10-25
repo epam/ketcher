@@ -88,29 +88,35 @@ const FGContextMenu = () => {
         <div className={classes.contextMenu}>
           <MenuItem
             onClick={handleExpand}
-            attributes={{
-              className: classes.menuItem,
-              dividerClassName: classes.menuItemDivider,
-              selectedClassName: classes.menuItemSelected
-            }}>
+            attributes={
+              {
+                className: classes.menuItem,
+                dividerClassName: classes.menuItemDivider,
+                selectedClassName: classes.menuItemSelected
+              } as Object
+            }>
             {targetFG?.isExpanded ? 'Contract ' : 'Expand '}
             Abbreviation
           </MenuItem>
           <MenuItem
             divider
-            attributes={{
-              className: classes.menuItem,
-              dividerClassName: classes.menuItemDivider,
-              selectedClassName: classes.menuItemSelected
-            }}
+            attributes={
+              {
+                className: classes.menuItem,
+                dividerClassName: classes.menuItemDivider,
+                selectedClassName: classes.menuItemSelected
+              } as Object
+            }
           />
           <MenuItem
             onClick={handleRemove}
-            attributes={{
-              className: classes.menuItem,
-              dividerClassName: classes.menuItemDivider,
-              selectedClassName: classes.menuItemSelected
-            }}>
+            attributes={
+              {
+                className: classes.menuItem,
+                dividerClassName: classes.menuItemDivider,
+                selectedClassName: classes.menuItemSelected
+              } as Object
+            }>
             Remove Abbreviation
           </MenuItem>
         </div>

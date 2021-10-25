@@ -66,10 +66,10 @@ SGroupTool.prototype.mousedown = function (event) {
       this.functionalGroups,
       ci.id
     )
-    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).a
+    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
     if (
-      atomId &&
-      !FunctionalGroup.isBondInContractedFunctionalGroup(
+      atomFromStruct &&
+      !FunctionalGroup.isAtomInContractedFinctionalGroup(
         atomFromStruct,
         this.sgroups,
         this.functionalGroups,
@@ -86,7 +86,7 @@ SGroupTool.prototype.mousedown = function (event) {
     )
     const bondFromStruct = bondId !== null && this.struct.bonds.get(bondId).b
     if (
-      bondId &&
+      bondFromStruct &&
       !FunctionalGroup.isBondInContractedFunctionalGroup(
         bondFromStruct,
         this.sgroups,
@@ -95,6 +95,13 @@ SGroupTool.prototype.mousedown = function (event) {
       )
     )
       bondResult.push(bondId)
+  }
+  if (ci && this.functionalGroups && ci.map === 'sgroups') {
+    const sgroup = this.sgroups.get(ci.id)
+    if (FunctionalGroup.isFunctionalGroup(sgroup.item)) {
+      this.editor.event.removeFG.dispatch({ fgIds: [ci.id] })
+      return
+    }
   }
   if (atomResult.length > 0) {
     for (let id of atomResult) {
@@ -140,8 +147,10 @@ SGroupTool.prototype.mouseleave = function (event) {
 SGroupTool.prototype.mouseup = function (event) {
   const ci = this.editor.findItem(event, searchMaps)
   const selected = this.editor.selection()
-  const atomsResult = []
-  const bondsResult = []
+  let atomsResult = []
+  let extraAtoms
+  let bondsResult = []
+  let extraBonds
   const result = []
 
   if (selected && this.functionalGroups && selected.atoms) {
@@ -150,9 +159,10 @@ SGroupTool.prototype.mouseup = function (event) {
         this.functionalGroups,
         atom
       )
+      if (atomId == null) extraAtoms = true
       const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
       if (
-        atomId &&
+        atomFromStruct &&
         !FunctionalGroup.isAtomInContractedFinctionalGroup(
           atomFromStruct,
           this.sgroups,
@@ -170,9 +180,10 @@ SGroupTool.prototype.mouseup = function (event) {
         this.functionalGroups,
         bond
       )
+      if (bondId === null) extraBonds = true
       const bondFromStruct = bondId !== null && this.struct.bonds.get(bondId).b
       if (
-        bondId &&
+        bondFromStruct &&
         !FunctionalGroup.isBondInContractedFunctionalGroup(
           bondFromStruct,
           this.sgroups,
@@ -183,7 +194,11 @@ SGroupTool.prototype.mouseup = function (event) {
         bondsResult.push(bondId)
     }
   }
-  if (atomsResult.length > 0) {
+  if (extraAtoms || extraBonds) {
+    atomsResult = null
+    bondsResult = null
+  }
+  if (atomsResult && atomsResult.length > 0) {
     for (let id of atomsResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
@@ -192,7 +207,7 @@ SGroupTool.prototype.mouseup = function (event) {
       if (fgId !== null && !result.includes(fgId)) result.push(fgId)
     }
   }
-  if (bondsResult.length > 0) {
+  if (bondsResult && bondsResult.length > 0) {
     for (let id of bondsResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,

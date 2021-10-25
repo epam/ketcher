@@ -76,7 +76,7 @@ EraserTool.prototype.mouseup = function (event) {
   const selected = this.editor.selection()
   const atomsResult = []
   const bondsResult = []
-  const result = []
+  const preResult = []
 
   if (selected && this.functionalGroups && selected.atoms) {
     for (let atom of selected.atoms) {
@@ -86,7 +86,7 @@ EraserTool.prototype.mouseup = function (event) {
       )
       const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
       if (
-        atomId &&
+        atomFromStruct &&
         !FunctionalGroup.isAtomInContractedFinctionalGroup(
           atomFromStruct,
           this.sgroups,
@@ -106,7 +106,7 @@ EraserTool.prototype.mouseup = function (event) {
       )
       const bondFromStruct = bondId !== null && this.struct.bonds.get(bondId).b
       if (
-        bondId &&
+        bondFromStruct &&
         !FunctionalGroup.isBondInContractedFunctionalGroup(
           bondFromStruct,
           this.sgroups,
@@ -123,7 +123,7 @@ EraserTool.prototype.mouseup = function (event) {
         this.functionalGroups,
         id
       )
-      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+      fgId !== null && !preResult.includes(fgId) && preResult.push(fgId)
     }
   }
   if (bondsResult.length > 0) {
@@ -133,13 +133,25 @@ EraserTool.prototype.mouseup = function (event) {
         this.functionalGroups,
         id
       )
-      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+      fgId !== null && !preResult.includes(fgId) && preResult.push(fgId)
     }
   }
-  if (result.length > 0) {
-    this.editor.selection(null)
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    this.lassoHelper.cancel()
+  if (preResult.length > 0) {
+    const result = []
+    const sgroups = this.sgroups
+    preResult.forEach(fgId => {
+      const sg = sgroups.get(fgId).item.atoms
+      for (let i = 0; i < sg.length - 1; i++) {
+        !atomsResult.includes(sg[i]) &&
+          !result.includes(fgId) &&
+          result.push(fgId)
+      }
+    })
+    if (result.length > 0) {
+      this.editor.selection(null)
+      this.editor.event.removeFG.dispatch({ fgIds: result })
+      this.lassoHelper.cancel()
+    }
   }
 
   // eslint-disable-line max-statements
@@ -165,10 +177,10 @@ EraserTool.prototype.click = function (event) {
       this.functionalGroups,
       ci.id
     )
-    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).a
+    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
     if (
-      atomId &&
-      !FunctionalGroup.isBondInContractedFunctionalGroup(
+      atomFromStruct &&
+      !FunctionalGroup.isAtomInContractedFinctionalGroup(
         atomFromStruct,
         this.sgroups,
         this.functionalGroups,
@@ -185,7 +197,7 @@ EraserTool.prototype.click = function (event) {
     )
     const bondFromStruct = bondId !== null && this.struct.bonds.get(bondId).b
     if (
-      bondId &&
+      bondFromStruct &&
       !FunctionalGroup.isBondInContractedFunctionalGroup(
         bondFromStruct,
         this.sgroups,

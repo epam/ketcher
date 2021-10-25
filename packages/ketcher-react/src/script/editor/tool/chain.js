@@ -53,10 +53,10 @@ ChainTool.prototype.mousedown = function (event) {
       this.functionalGroups,
       ci.id
     )
-    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).a
+    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
     if (
-      atomId &&
-      !FunctionalGroup.isBondInContractedFunctionalGroup(
+      atomFromStruct &&
+      !FunctionalGroup.isAtomInContractedFinctionalGroup(
         atomFromStruct,
         this.sgroups,
         this.functionalGroups,
@@ -73,7 +73,7 @@ ChainTool.prototype.mousedown = function (event) {
     )
     const bondFromStruct = bondId !== null && this.struct.bonds.get(bondId).b
     if (
-      bondId &&
+      bondFromStruct &&
       !FunctionalGroup.isBondInContractedFunctionalGroup(
         bondFromStruct,
         this.sgroups,
@@ -189,7 +189,7 @@ ChainTool.prototype.mouseup = function () {
       this.functionalGroups,
       atom
     )
-    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).a
+    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
     if (
       atomId &&
       !FunctionalGroup.isBondInContractedFunctionalGroup(

@@ -35,6 +35,10 @@ export class FunctionalGroup {
     return this.#sgroup.data.expanded
   }
 
+  get relatedSGroup(): SGroup {
+    return this.#sgroup
+  }
+
   static isFunctionalGroup(sgroup): boolean {
     const provider = FunctionalGroupsProvider.getInstance()
     const types = provider.getFunctionalGroupsList()

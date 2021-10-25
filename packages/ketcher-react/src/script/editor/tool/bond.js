@@ -61,7 +61,7 @@ BondTool.prototype.mousedown = function (event) {
       this.functionalGroups,
       ci.id
     )
-    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).a
+    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
     if (
       atomId &&
       !FunctionalGroup.isBondInContractedFunctionalGroup(
@@ -131,6 +131,39 @@ BondTool.prototype.mousedown = function (event) {
 }
 
 BondTool.prototype.mousemove = function (event) {
+  const ci = this.editor.findItem(event, ['atoms', 'bonds'])
+  const atomResult = []
+  const result = []
+  if (ci && this.functionalGroups && ci.map === 'atoms' && this.dragCtx) {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
+    if (
+      atomFromStruct &&
+      !FunctionalGroup.isAtomInContractedFinctionalGroup(
+        atomFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      atomResult.push(atomId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
   // eslint-disable-line max-statements
   const editor = this.editor
   const rnd = editor.render
@@ -198,39 +231,6 @@ BondTool.prototype.mousemove = function (event) {
 }
 
 BondTool.prototype.mouseup = function (event) {
-  const ci = this.editor.findItem(event, ['atoms', 'bonds'])
-  const atomResult = []
-  const result = []
-  if (ci && this.functionalGroups && ci.map === 'atoms') {
-    const atomId = FunctionalGroup.atomsInFunctionalGroup(
-      this.functionalGroups,
-      ci.id
-    )
-    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).a
-    if (
-      atomId &&
-      !FunctionalGroup.isBondInContractedFunctionalGroup(
-        atomFromStruct,
-        this.sgroups,
-        this.functionalGroups,
-        true
-      )
-    )
-      atomResult.push(atomId)
-  }
-  if (atomResult.length > 0) {
-    for (let id of atomResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-        this.functionalGroups,
-        id
-      )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
-      }
-    }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
-  }
   // eslint-disable-line max-statements
   if ('dragCtx' in this) {
     var dragCtx = this.dragCtx

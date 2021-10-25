@@ -17,7 +17,8 @@
 import { FC } from 'react'
 import { BaseCallProps, BaseProps } from '../../../modal.types'
 import classes from './RemoveFG.module.less'
-// import { useAppContext } from '../../../../../../../hooks'
+import { useAppContext } from '../../../../../../../hooks'
+import { fromSgroupDeletion } from 'ketcher-core'
 
 interface RemoveFGProps extends BaseProps {
   fgIds: any
@@ -26,21 +27,19 @@ interface RemoveFGProps extends BaseProps {
 type Props = RemoveFGProps & BaseCallProps
 
 const RemoveFG: FC<Props> = props => {
-  // const { getKetcherInstance } = useAppContext()
-  // const editor = getKetcherInstance().editor
+  const { getKetcherInstance } = useAppContext()
+  const editor = getKetcherInstance().editor as any
   const { fgIds } = props
 
   const remove = function () {
-    // for (let id of fgIds) {
-    //     editor.update(
-    //         fromSgroupDeletion(editor.render.ctab, id)
-    //     )
-    // }
-    return fgIds
+    for (let id of fgIds) {
+      editor.update(fromSgroupDeletion(editor.render.ctab, id))
+    }
+    return true
   }
 
-  const exit = res => {
-    props['onOk'](res)
+  const exit = (key, res) => {
+    props[key](res)
   }
 
   return (
@@ -50,7 +49,6 @@ const RemoveFG: FC<Props> = props => {
       className={classes.window}>
       <header className={classes.header}>Remove Functional Group</header>
       <div className={classes.question}>
-        {' '}
         Are you sure you want to remove chosen Functional Groups to edit unique
         atoms and bonds?
       </div>
@@ -59,13 +57,13 @@ const RemoveFG: FC<Props> = props => {
           type="button"
           value={'No'}
           className={classes.button_cancel}
-          onClick={() => exit(() => null)}
+          onClick={() => exit('onOk', false)}
         />
         <input
           type="button"
           value={'Yes'}
           className={classes.button_ok}
-          onClick={() => exit(remove())}
+          onClick={() => exit('onOk', remove())}
         />
       </footer>
     </div>

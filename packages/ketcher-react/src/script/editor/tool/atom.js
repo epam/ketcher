@@ -56,17 +56,16 @@ AtomTool.prototype.mousedown = function (event) {
   this.editor.selection(null)
   const ci = this.editor.findItem(event, ['atoms'])
   const atomResult = []
-  const bondResult = []
   const result = []
   if (ci && this.functionalGroups && ci.map === 'atoms') {
     const atomId = FunctionalGroup.atomsInFunctionalGroup(
       this.functionalGroups,
       ci.id
     )
-    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).b
+    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
     if (
       atomId &&
-      !FunctionalGroup.isBondInContractedFunctionalGroup(
+      !FunctionalGroup.isAtomInContractedFinctionalGroup(
         atomFromStruct,
         this.sgroups,
         this.functionalGroups,
@@ -75,40 +74,9 @@ AtomTool.prototype.mousedown = function (event) {
     )
       atomResult.push(atomId)
   }
-  if (ci && this.functionalGroups && ci.map === 'bonds') {
-    const bondId = FunctionalGroup.bondsInFunctionalGroup(
-      this.molecule,
-      this.functionalGroups,
-      ci.id
-    )
-    const bondFromStruct = bondId !== null && this.struct.bonds.get(bondId).b
-    if (
-      bondId &&
-      !FunctionalGroup.isBondInContractedFunctionalGroup(
-        bondFromStruct,
-        this.sgroups,
-        this.functionalGroups,
-        true
-      )
-    )
-      bondResult.push(bondId)
-  }
   if (atomResult.length > 0) {
     for (let id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-        this.functionalGroups,
-        id
-      )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
-      }
-    }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
-  } else if (bondResult.length > 0) {
-    for (let id of bondResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByBond(
-        this.molecule,
         this.functionalGroups,
         id
       )
@@ -176,10 +144,10 @@ AtomTool.prototype.mouseup = function (event) {
       this.functionalGroups,
       ci.id
     )
-    const atomFromStruct = atomId !== null && this.struct.bonds.get(atomId).a
+    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
     if (
-      atomId &&
-      !FunctionalGroup.isBondInContractedFunctionalGroup(
+      atomFromStruct &&
+      !FunctionalGroup.isAtomInContractedFinctionalGroup(
         atomFromStruct,
         this.sgroups,
         this.functionalGroups,

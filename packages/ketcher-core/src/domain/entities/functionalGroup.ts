@@ -17,21 +17,22 @@ import { FunctionalGroupsProvider } from '../helpers'
 import { SGroup } from './sgroup'
 
 export class FunctionalGroup {
-  name: string
-  relatedSGroupId: number
-  isExpanded: boolean
-  relatedSGroup: any
+  #sgroup: SGroup
 
-  constructor(
-    name: string,
-    relatedSGroupId: number,
-    isExpanded: boolean,
-    relatedSGroup: any
-  ) {
-    this.name = name
-    this.relatedSGroupId = relatedSGroupId
-    this.isExpanded = isExpanded
-    this.relatedSGroup = relatedSGroup
+  constructor(sgroup: SGroup) {
+    this.#sgroup = sgroup
+  }
+
+  get name(): string {
+    return this.#sgroup.data.name
+  }
+
+  get relatedSGroupId(): number {
+    return this.#sgroup.id
+  }
+
+  get isExpanded(): boolean {
+    return this.#sgroup.data.expanded
   }
 
   static isFunctionalGroup(sgroup): boolean {
@@ -88,13 +89,7 @@ export class FunctionalGroup {
   }
 
   static clone(functionalGroup: FunctionalGroup): FunctionalGroup {
-    const cloned = new FunctionalGroup(
-      functionalGroup.name,
-      functionalGroup.relatedSGroupId,
-      functionalGroup.isExpanded,
-      functionalGroup.relatedSGroup
-    )
-    return cloned
+    return new FunctionalGroup(functionalGroup.#sgroup)
   }
 
   static isAtomInContractedFinctionalGroup(

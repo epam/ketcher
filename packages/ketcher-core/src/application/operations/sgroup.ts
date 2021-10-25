@@ -51,7 +51,7 @@ class AddSGroup extends BaseOperation {
     }
 
     if (this.#expanded) {
-      sgroup.expanded = this.#expanded
+      sgroup.data.expanded = this.#expanded
     }
 
     if (this.#name) {
@@ -78,7 +78,7 @@ class AddSGroup extends BaseOperation {
     //   )
     // ) {
     //   restruct.molecule.functionalGroups.add(
-    //     new FunctionalGroup(sgroup.data.name, sgroup.id, sgroup.expanded)
+    //     new FunctionalGroup(sgroup.data.name, sgroup.id, sgroup.data.expanded)
     //   )
     // }
 
@@ -117,7 +117,7 @@ class DeleteSGroup extends BaseOperation {
     const inverseOperation = new AddSGroup(
       sgroup.type,
       sgroup.pp!,
-      sgroup.expanded,
+      sgroup.data.expanded,
       sgroup.data.name,
       this.#sgroupId
     )

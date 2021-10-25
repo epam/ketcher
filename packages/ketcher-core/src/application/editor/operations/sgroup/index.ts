@@ -63,7 +63,7 @@ class SGroupCreate extends BaseOperation {
     }
 
     if (expanded) {
-      sgroup.expanded = expanded
+      sgroup.data.expanded = expanded
     }
 
     if (name) {
@@ -72,14 +72,7 @@ class SGroupCreate extends BaseOperation {
 
     restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)))
     if (FunctionalGroup.isFunctionalGroup(sgroup)) {
-      restruct.molecule.functionalGroups.add(
-        new FunctionalGroup(
-          sgroup.data.name,
-          sgroup.id,
-          sgroup.expanded,
-          sgroup
-        )
-      )
+      restruct.molecule.functionalGroups.add(new FunctionalGroup(sgroup))
     }
     this.data.sgid = sgid
   }
@@ -116,6 +109,18 @@ class SGroupDelete extends BaseOperation {
     restruct.clearVisel(sgroup.visel)
     if (sgroup.item.atoms.length !== 0) {
       throw new Error('S-Group not empty!')
+    }
+
+    if (FunctionalGroup.isFunctionalGroup(sgroup.item)) {
+      let relatedFGroupId
+      this.data.name = sgroup.item.data.name
+      this.data.expanded = sgroup.item.expanded
+      restruct.molecule.functionalGroups.forEach((fg, fgid) => {
+        if (fg.relatedSGroupId === sgid) {
+          relatedFGroupId = fgid
+        }
+      })
+      restruct.molecule.functionalGroups.delete(relatedFGroupId)
     }
 
     restruct.sgroups.delete(sgid)

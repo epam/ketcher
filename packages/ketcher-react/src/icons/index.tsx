@@ -109,6 +109,7 @@ import TransfromFlipVIcon from './files/transform-flip-v.svg'
 import UndoIcon from './files/undo.svg'
 import ZoomInIcon from './files/zoom-in.svg'
 import ZoomOutIcon from './files/zoom-out.svg'
+import FunctionalGroupsIcon from './files/functional-groups.svg'
 
 const icons = {
   about: AboutIcon,
@@ -144,7 +145,7 @@ const icons = {
   dropdown: DropdownIcon,
   'enhanced-stereo': EnhancedStereoIcon,
   erase: EraseIcon,
-  'functional-groups': TemplateLibIcon, // temporary icon
+  'functional-groups': FunctionalGroupsIcon,
   'generic-groups': GenericGroupsIcon,
   help: HelpIcon,
   layout: LayoutIcon,

@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import 'intersection-observer'
 import 'element-closest-polyfill'
 import 'regenerator-runtime/runtime'
 import 'url-search-params-polyfill'

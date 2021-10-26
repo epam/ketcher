@@ -15,11 +15,14 @@
  ***************************************************************************/
 import { FunctionalGroupsProvider } from '../helpers'
 import { SGroup } from './sgroup'
+import assert from 'assert'
 
 export class FunctionalGroup {
   #sgroup: SGroup
 
   constructor(sgroup: SGroup) {
+    assert(sgroup != null)
+
     this.#sgroup = sgroup
   }
 
@@ -46,6 +49,15 @@ export class FunctionalGroup {
 
   static clone(functionalGroup: FunctionalGroup): FunctionalGroup {
     return new FunctionalGroup(functionalGroup.#sgroup)
+  }
+
+  static isFirstAtomInFunctionalGroup(sgroups, aid): boolean {
+    for (let sg of sgroups.values()) {
+      if (FunctionalGroup.isFunctionalGroup(sg) && aid === sg.atoms[0]) {
+        return true
+      }
+    }
+    return false
   }
 
   static isAtomInContractedFinctionalGroup(

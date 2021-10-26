@@ -23,7 +23,10 @@ import { onAction } from '../../../state'
 import SaveButton from '../../../component/view/savebutton'
 import Input from '../../../component/form/input'
 import clsx from 'clsx'
-import { functionalGroupsSelector } from '../../../state/functionalGroups/selectors'
+import {
+  functionalGroupsSelector,
+  modeSelector
+} from '../../../state/functionalGroups/selectors'
 import { useResizeObserver } from '../../../../../hooks'
 import { filterFGLib } from '../../../utils'
 import { FunctionalGroup, SdfItem, SdfSerializer, Struct } from 'ketcher-core'
@@ -38,6 +41,7 @@ export interface FGProps {
 interface Result {
   struct: Struct
   aid: number | null
+  mode: string
 }
 
 const group = 'Functional Groups'
@@ -46,6 +50,7 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
   const dispatch = useDispatch()
   const CONTAINER_MIN_WIDTH = 310
   const lib: SdfItem[] = useSelector(functionalGroupsSelector)
+  const mode = useSelector(modeSelector)
 
   const [expandedTemplates, setExpandedTemplates] = useState<SdfItem[]>([])
   const [selected, setSelected] = useState<Template | null>(null)
@@ -90,7 +95,8 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
     return tmpl
       ? {
           struct: tmpl.struct,
-          aid: parseInt(String(tmpl.props.atomid)) || null
+          aid: parseInt(String(tmpl.props.atomid)) || null,
+          mode: mode
         }
       : null
   }

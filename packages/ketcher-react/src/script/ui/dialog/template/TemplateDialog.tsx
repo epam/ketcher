@@ -44,6 +44,7 @@ interface TemplateLibProps {
   group: string
   lib: Array<Template>
   selected: Template
+  mode: string
 }
 
 interface TemplateLibCallProps {
@@ -62,6 +63,7 @@ export interface Result {
   struct: Struct
   aid: number | null
   bid: number | null
+  mode: string
 }
 
 const filterLibSelector = createSelector(
@@ -71,7 +73,7 @@ const filterLibSelector = createSelector(
 )
 
 const TemplateDialog: FC<Props> = props => {
-  const { filter, onFilter, onChangeGroup, ...rest } = props
+  const { filter, onFilter, onChangeGroup, mode, ...rest } = props
   const CONTAINER_MIN_WIDTH = 310
   let group = props.group
   const lib = filterLibSelector(props)
@@ -91,7 +93,8 @@ const TemplateDialog: FC<Props> = props => {
       ? {
           struct: tmpl.struct,
           aid: parseInt(String(tmpl.props.atomid)) || null,
-          bid: parseInt(String(tmpl.props.bondid)) || null
+          bid: parseInt(String(tmpl.props.bondid)) || null,
+          mode: mode
         }
       : null
   }

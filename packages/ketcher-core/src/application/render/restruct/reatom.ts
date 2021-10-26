@@ -129,6 +129,9 @@ class ReAtom extends ReObject {
     const atom = restruct.molecule.atoms.get(aid)
     const sgroups = restruct.molecule.sgroups
     const functionalGroups = restruct.molecule.functionalGroups
+    const render = restruct.render
+    const ps = Scale.obj2scaled(this.a.pp, render.options)
+
     if (
       FunctionalGroup.isAtomInContractedFinctionalGroup(
         atom,
@@ -136,11 +139,20 @@ class ReAtom extends ReObject {
         functionalGroups,
         false
       )
-    )
+    ) {
+      if (FunctionalGroup.isFirstAtomInFunctionalGroup(sgroups, aid)) {
+        let sgroupName
+        for (let sg of sgroups.values()) {
+          if (aid === sg.atoms[0]) sgroupName = sg.data.name
+        }
+        const path = render.paper.text(ps.x, ps.y, sgroupName).attr({
+          'font-weight': 700,
+          'font-size': 14
+        })
+        restruct.addReObjectPath(LayerMap.data, this.visel, path, ps, true)
+      }
       return
-
-    const render = restruct.render
-    const ps = Scale.obj2scaled(this.a.pp, render.options)
+    }
 
     this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this)
     this.showLabel = isLabelVisible(restruct, render.options, this)

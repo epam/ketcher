@@ -96,6 +96,15 @@ export class FunctionalGroup {
     return new FunctionalGroup(functionalGroup.#sgroup)
   }
 
+  static isFirstAtomInFunctionalGroup(sgroups, aid): boolean {
+    for (let sg of sgroups.values()) {
+      if (FunctionalGroup.isFunctionalGroup(sg) && aid === sg.atoms[0]) {
+        return true
+      }
+    }
+    return false
+  }
+
   static isAtomInContractedFinctionalGroup(
     atom,
     sgroups,

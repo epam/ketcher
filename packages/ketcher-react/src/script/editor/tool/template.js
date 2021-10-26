@@ -31,6 +31,7 @@ function TemplateTool(editor, tmpl) {
   if (!(this instanceof TemplateTool)) return new TemplateTool(editor, tmpl)
 
   this.editor = editor
+  this.mode = tmpl.mode
   this.editor.selection(null)
 
   this.template = {
@@ -89,7 +90,7 @@ TemplateTool.prototype.mousedown = function (event) {
     return true
   }
 
-  if (ci.map === 'bonds') {
+  if (ci.map === 'bonds' && this.mode !== 'fg') {
     // calculate fragment center
     const molecule = restruct.molecule
     const xy0 = new Vec2()
@@ -143,7 +144,7 @@ TemplateTool.prototype.mousemove = function (event) {
   const struct = restruct.molecule
 
   /* moving when attached to bond */
-  if (ci && ci.map === 'bonds') {
+  if (ci && ci.map === 'bonds' && this.mode !== 'fg') {
     const bond = struct.bonds.get(ci.id)
     let sign = getSign(struct, bond, pos1)
 
@@ -244,7 +245,7 @@ TemplateTool.prototype.mouseup = function (event) {
   const ci = dragCtx.item
 
   /* after moving around bond */
-  if (dragCtx.action && ci && ci.map === 'bonds') {
+  if (dragCtx.action && ci && ci.map === 'bonds' && this.mode !== 'fg') {
     dragCtx.action.perform(restruct) // revert drag action
     fromTemplateOnBondAction(
       restruct,
@@ -308,7 +309,7 @@ TemplateTool.prototype.mouseup = function (event) {
         extraBond
       )
       dragCtx.action = action
-    } else if (ci.map === 'bonds') {
+    } else if (ci.map === 'bonds' && this.mode !== 'fg') {
       fromTemplateOnBondAction(
         restruct,
         this.template,

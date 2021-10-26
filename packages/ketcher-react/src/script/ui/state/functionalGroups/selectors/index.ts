@@ -15,3 +15,4 @@
  ***************************************************************************/
 
 export const functionalGroupsSelector = state => state.functionalGroups.lib
+export const modeSelector = state => state.functionalGroups.mode

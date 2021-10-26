@@ -21,8 +21,8 @@ export class FunctionalGroup {
   #sgroup: SGroup
 
   constructor(sgroup: SGroup) {
+    assert(sgroup, "Source SGroup doesn't exist")
     this.#sgroup = sgroup
-    assert(this.#sgroup, "Source SGroup doesn't exist")
   }
 
   get name(): string {

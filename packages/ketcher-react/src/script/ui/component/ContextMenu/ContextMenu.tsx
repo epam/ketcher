@@ -7,6 +7,7 @@ import {
 } from 'ketcher-core'
 import { useAppContext } from '../../../../hooks'
 import clsx from 'clsx'
+import classes from './ContextMenu.module.less'
 
 const FGContextMenu = () => {
   const { getKetcherInstance } = useAppContext()
@@ -87,7 +88,7 @@ const FGContextMenu = () => {
       id="contextmenu"
       onShow={e => showMenu(e)}
       className={clsx({
-        'react-contextmenu--hidden': !showSGroupMenu
+        [classes['react-contextmenu--hidden']]: !showSGroupMenu
       })}>
       <MenuItem onClick={handleExpand}>
         {targetFG?.isExpanded ? 'Contract ' : 'Expand '}

@@ -15,13 +15,14 @@
  ***************************************************************************/
 import { FunctionalGroupsProvider } from '../helpers'
 import { SGroup } from './sgroup'
+import assert from 'assert'
 
 export class FunctionalGroup {
   #sgroup: SGroup
 
   constructor(sgroup: SGroup) {
     this.#sgroup = sgroup
-    console.assert(this.#sgroup, "Source SGroup doesn't exist")
+    assert(this.#sgroup, "Source SGroup doesn't exist")
   }
 
   get name(): string {

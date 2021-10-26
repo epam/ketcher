@@ -5,8 +5,8 @@ import {
   setExpandSGroup,
   fromSgroupDeletion
 } from 'ketcher-core'
-import classes from './ContextMenu.module.less'
 import { useAppContext } from '../../../../hooks'
+import clsx from 'clsx'
 
 const FGContextMenu = () => {
   const { getKetcherInstance } = useAppContext()
@@ -83,44 +83,18 @@ const FGContextMenu = () => {
   }
 
   return (
-    <ContextMenu id="contextmenu" onShow={e => showMenu(e)}>
-      {showSGroupMenu && (
-        <div className={classes.contextMenu}>
-          <MenuItem
-            onClick={handleExpand}
-            attributes={
-              {
-                className: classes.menuItem,
-                dividerClassName: classes.menuItemDivider,
-                selectedClassName: classes.menuItemSelected
-              } as Object
-            }>
-            {targetFG?.isExpanded ? 'Contract ' : 'Expand '}
-            Abbreviation
-          </MenuItem>
-          <MenuItem
-            divider
-            attributes={
-              {
-                className: classes.menuItem,
-                dividerClassName: classes.menuItemDivider,
-                selectedClassName: classes.menuItemSelected
-              } as Object
-            }
-          />
-          <MenuItem
-            onClick={handleRemove}
-            attributes={
-              {
-                className: classes.menuItem,
-                dividerClassName: classes.menuItemDivider,
-                selectedClassName: classes.menuItemSelected
-              } as Object
-            }>
-            Remove Abbreviation
-          </MenuItem>
-        </div>
-      )}
+    <ContextMenu
+      id="contextmenu"
+      onShow={e => showMenu(e)}
+      className={clsx({
+        'react-contextmenu--hidden': !showSGroupMenu
+      })}>
+      <MenuItem onClick={handleExpand}>
+        {targetFG?.isExpanded ? 'Contract ' : 'Expand '}
+        Abbreviation
+      </MenuItem>
+      <MenuItem divider />
+      <MenuItem onClick={handleRemove}>Remove Abbreviation</MenuItem>
     </ContextMenu>
   )
 }

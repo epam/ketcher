@@ -33,7 +33,7 @@ import { fromSgroupAddition } from './sgroup'
 
 export function fromPaste(restruct, pstruct, point, angle = 0) {
   const xy0 = getStructCenter(pstruct)
-  let offset = Vec2.diff(point, xy0)
+  const offset = Vec2.diff(point, xy0)
 
   const action = new Action()
 

@@ -31,9 +31,9 @@ export function fromChain(restruct, p0, v, nSect, atomId) {
   const frid =
     atomId !== null
       ? atomGetAttr(restruct, atomId, 'fragment')
-      : action.addOp(new FragmentAdd().perform(restruct)).frid
+      : (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd).frid
 
-  const chainItems = {
+  const chainItems: any = {
     atoms: [],
     bonds: []
   }
@@ -41,9 +41,9 @@ export function fromChain(restruct, p0, v, nSect, atomId) {
   let id0 =
     atomId !== null
       ? atomId
-      : action.addOp(
+      : (action.addOp(
           new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct)
-        ).data.aid
+        ) as AtomAdd).data.aid
 
   chainItems.atoms.push(id0)
   action.operations.reverse()

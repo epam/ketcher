@@ -22,7 +22,7 @@ import { fromBondAddition, fromBondStereoUpdate, fromBondsAttrs } from './bond'
 
 import { Action } from './action'
 import closest from '../shared/closest'
-import { fromAromaticTemplateOnBond } from './aromatic-fusing'
+import { fromAromaticTemplateOnBond } from './aromaticFusing'
 import { fromPaste } from './paste'
 import utils from '../shared/utils'
 import { fromSgroupAddition } from './sgroup'
@@ -43,7 +43,7 @@ export function fromTemplateOnCanvas(restruct, template, pos, angle) {
 function extraBondAction(restruct, aid, angle) {
   let action = new Action()
   const frid = atomGetAttr(restruct, aid, 'fragment')
-  let additionalAtom = null
+  let additionalAtom: any = null
 
   if (angle === null) {
     const middleAtom = atomForNewBond(restruct, aid)
@@ -64,7 +64,7 @@ function extraBondAction(restruct, aid, angle) {
         .rotate(angle)
         .add(restruct.molecule.atoms.get(aid).pp)
         .get_xy0()
-    ).perform(restruct)
+    ).perform(restruct) as AtomAdd
 
     action.addOp(operation)
     action.addOp(
@@ -86,7 +86,7 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
   let atom = struct.atoms.get(aid) // aid - the atom that was clicked on
   let aid1 = aid // aid1 - the atom on the other end of the extra bond || aid
 
-  let delta = null
+  let delta: any = null
 
   if (extraBond) {
     // create extra bond after click on atom
@@ -107,7 +107,7 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
   const frid = atomGetAttr(restruct, aid, 'fragment')
 
   /* For merge */
-  const pasteItems = {
+  const pasteItems: any = {
     // only atoms and bonds now
     atoms: [],
     bonds: []
@@ -115,7 +115,7 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
   /* ----- */
 
   tmpl.atoms.forEach((a, id) => {
-    const attrs = Atom.getAttrHash(a)
+    const attrs: any = Atom.getAttrHash(a)
     attrs.fragment = frid
 
     if (id === template.aid) {
@@ -125,7 +125,9 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
     } else {
       const v = Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp)
 
-      const operation = new AtomAdd(attrs, v.get_xy0()).perform(restruct)
+      const operation = new AtomAdd(attrs, v.get_xy0()).perform(
+        restruct
+      ) as AtomAdd
       action.addOp(operation)
       map.set(id, operation.data.aid)
       pasteItems.atoms.push(operation.data.aid)
@@ -138,7 +140,7 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
       map.get(bond.begin),
       map.get(bond.end),
       bond
-    ).perform(restruct)
+    ).perform(restruct) as BondAdd
     action.addOp(operation)
 
     pasteItems.bonds.push(operation.data.bid)
@@ -224,7 +226,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
   const frid = struct.getBondFragment(bid)
 
   /* For merge */
-  const pasteItems = {
+  const pasteItems: any = {
     // only atoms and bonds now
     atoms: [],
     bonds: []
@@ -232,7 +234,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
   /* ----- */
 
   tmpl.atoms.forEach((atom, id) => {
-    const attrs = Atom.getAttrHash(atom)
+    const attrs: any = Atom.getAttrHash(atom)
     attrs.fragment = frid
     if (id === tmplBond.begin || id === tmplBond.end) {
       action.mergeWith(fromAtomsAttrs(restruct, atomsMap.get(id), attrs, true))
@@ -246,7 +248,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
     const mergeA = closest.atom(restruct, v, null, 0.1)
 
     if (mergeA === null) {
-      const operation = new AtomAdd(attrs, v).perform(restruct)
+      const operation = new AtomAdd(attrs, v).perform(restruct) as AtomAdd
       action.addOp(operation)
       atomsMap.set(id, operation.data.aid)
       pasteItems.atoms.push(operation.data.aid)
@@ -269,7 +271,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
         atomsMap.get(tBond.begin),
         atomsMap.get(tBond.end),
         tBond
-      ).perform(restruct)
+      ).perform(restruct) as BondAdd
       action.addOp(operation)
 
       pasteItems.bonds.push(operation.data.bid)

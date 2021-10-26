@@ -27,6 +27,6 @@ export function fromNewCanvas(restruct, struct) {
 
 export function fromDescriptorsAlign(restruct) {
   const action = new Action()
-  action.addOp(new AlignDescriptors(restruct))
+  action.addOp(new AlignDescriptors())
   return action.perform(restruct)
 }

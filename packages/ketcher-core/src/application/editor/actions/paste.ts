@@ -40,7 +40,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   const aidMap = new Map()
   const fridMap = new Map()
 
-  const pasteItems = {
+  const pasteItems: any = {
     // only atoms and bonds now
     atoms: [],
     bonds: []
@@ -50,7 +50,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
     if (!fridMap.has(atom.fragment))
       fridMap.set(
         atom.fragment,
-        action.addOp(new FragmentAdd().perform(restruct)).frid
+        (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd).frid
       )
 
     const tmpAtom = Object.assign(atom.clone(), {
@@ -59,7 +59,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
     const operation = new AtomAdd(
       tmpAtom,
       Vec2.diff(atom.pp, xy0).rotate(angle).add(point)
-    ).perform(restruct)
+    ).perform(restruct) as AtomAdd
     action.addOp(operation)
     aidMap.set(aid, operation.data.aid)
 
@@ -82,7 +82,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
       aidMap.get(bond.begin),
       aidMap.get(bond.end),
       bond
-    ).perform(restruct)
+    ).perform(restruct) as BondAdd
     action.addOp(operation)
 
     pasteItems.bonds.push(operation.data.bid)
@@ -98,7 +98,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
       sg.data,
       newsgid,
       sg.pp ? sg.pp.add(offset) : null,
-      sg.type === 'SUP' ? sg.expanded : null,
+      sg.type === 'SUP' ? sg.data.expanded : null,
       sg.data.name
     )
     sgAction.operations.reverse().forEach(oper => {
@@ -135,7 +135,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   })
 
   pstruct.rgroups.forEach((rg, rgid) => {
-    rg.frags.forEach((frag, frid) => {
+    rg.frags.forEach((__frag, frid) => {
       action.addOp(
         new RGroupFragment(rgid, fridMap.get(frid)).perform(restruct)
       )

@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AutoSizer, List } from 'react-virtualized'
-
 import { FC } from 'react'
 import { Struct } from 'ketcher-core'
 import StructRender from '../../component/structrender'
@@ -73,73 +71,51 @@ const TemplateTable: FC<TemplateTableProps> = props => {
     height: `${ITEM_SIZE.height}px`
   }
 
-  return (
+  return !ITEMS_COUNT ? (
+    <EmptySearchResult textInfo="No items found" />
+  ) : (
     <div className={classes.table} style={{ minWidth: ITEM_SIZE.width }}>
-      <AutoSizer>
-        {({ height, width }) => {
-          const itemsPerRow = Math.floor(width / ITEM_SIZE.width)
-          const rowCount = Math.ceil(ITEMS_COUNT / itemsPerRow)
-
-          return !ITEMS_COUNT ? (
-            <EmptySearchResult textInfo="No items found" />
-          ) : (
-            <List
-              className={classes.tableContent}
-              width={width}
-              height={height}
-              rowCount={rowCount}
-              rowHeight={ITEM_SIZE.height}
-              rowRenderer={({ index, key, style }) => {
-                const fromIndex = index * itemsPerRow
-                const toIndex = Math.min(fromIndex + itemsPerRow, ITEMS_COUNT)
-                const items = templates.slice(fromIndex, toIndex)
-
-                return (
-                  <div className={classes.tr} key={key} style={style}>
-                    {items.map((tmpl, i) => (
-                      <div
-                        className={
-                          tmpl === selected
-                            ? `${classes.td} ${classes.selected}`
-                            : classes.td
-                        }
-                        title={greekify(tmplName(tmpl, i))}
-                        key={
-                          tmpl.struct.name !== selected?.struct.name
-                            ? tmpl.struct.name
-                            : `${tmpl.struct.name}_selected`
-                        }
-                        style={tmplStyles}>
-                        <RenderTmpl
-                          tmpl={tmpl}
-                          className={classes.struct}
-                          onClick={() => onSelect(tmpl)}
-                        />
-                        <div className={classes.btnContainer}>
-                          {tmpl.props.group === 'User Templates' && (
-                            <button
-                              className={classes.deleteButton}
-                              onClick={() => onDelete!(tmpl)}>
-                              Delete
-                            </button>
-                          )}
-                          {tmpl.props.group !== 'Functional Groups' && (
-                            <button
-                              className={classes.attachButton}
-                              onClick={() => onAttach!(tmpl)}>
-                              Edit
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )
-              }}
-            />
+      <div className={classes.tableContent}>
+        {templates.map((tmpl, i) => {
+          return (
+            <div
+              className={
+                tmpl === selected
+                  ? `${classes.td} ${classes.selected}`
+                  : classes.td
+              }
+              title={greekify(tmplName(tmpl, i))}
+              key={
+                tmpl.struct.name !== selected?.struct.name
+                  ? `${tmpl.struct.name}_${i}`
+                  : `${tmpl.struct.name}_selected`
+              }
+              style={tmplStyles}>
+              <RenderTmpl
+                tmpl={tmpl}
+                className={classes.struct}
+                onClick={() => onSelect(tmpl)}
+              />
+              <div className={classes.btnContainer}>
+                {tmpl.props.group === 'User Templates' && (
+                  <button
+                    className={classes.deleteButton}
+                    onClick={() => onDelete!(tmpl)}>
+                    Delete
+                  </button>
+                )}
+                {tmpl.props.group !== 'Functional Groups' && (
+                  <button
+                    className={classes.attachButton}
+                    onClick={() => onAttach!(tmpl)}>
+                    Edit
+                  </button>
+                )}
+              </div>
+            </div>
           )
-        }}
-      </AutoSizer>
+        })}
+      </div>
     </div>
   )
 }

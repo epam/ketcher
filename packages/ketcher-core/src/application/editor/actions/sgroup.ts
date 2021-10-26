@@ -28,8 +28,9 @@ import { Pile, SGroup } from 'domain/entities'
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils'
 
 import { Action } from './action'
-import { SgContexts } from '../shared/constants'
+import { SgContexts } from '..'
 import { uniq } from 'lodash/fp'
+import { fromAtomsAttrs } from './atom'
 
 export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
   const descriptors = attrs.fieldValue
@@ -64,6 +65,25 @@ export function fromSgroupAttrs(restruct, id, attrs) {
 
   Object.keys(attrs).forEach(key => {
     action.addOp(new SGroupAttr(id, key, attrs[key]))
+  })
+
+  return action.perform(restruct)
+}
+
+export function setExpandSGroup(restruct, sgid, attrs) {
+  const action = new Action()
+
+  Object.keys(attrs).forEach(key => {
+    action.addOp(new SGroupAttr(sgid, key, attrs[key]))
+  })
+
+  const sgroup = restruct.molecule.sgroups.get(sgid)
+  const atoms = SGroup.getAtoms(restruct, sgroup)
+
+  atoms.forEach(aid => {
+    action.mergeWith(
+      fromAtomsAttrs(restruct, aid, restruct.atoms.get(aid).a, false)
+    )
   })
 
   return action.perform(restruct)
@@ -119,9 +139,9 @@ export function fromSgroupAddition(
   atoms,
   attrs,
   sgid,
-  pp,
-  expanded,
-  name
+  pp?,
+  expanded?,
+  name?
 ) {
   // eslint-disable-line
   let action = new Action()
@@ -267,7 +287,7 @@ function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
   if (currSelection.bonds) bonds = uniq(bonds.concat(currSelection.bonds))
 
   return bonds.reduce(
-    (acc, bondid) => {
+    (acc: any, bondid) => {
       const bond = struct.bonds.get(bondid)
 
       acc.action = acc.action.mergeWith(

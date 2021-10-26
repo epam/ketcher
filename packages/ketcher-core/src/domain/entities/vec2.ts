@@ -117,7 +117,7 @@ export class Vec2 {
   }
 
   equals(v: Vec2): boolean {
-    return this.x === v.x && this.y === v.y
+    return this.x === v.x && this.y === v.y && this.z === v.z
   }
 
   add(v: Vec2): Vec2 {
@@ -191,11 +191,11 @@ export class Vec2 {
     return Vec2.min(this, v)
   }
 
-  ceil() {
+  ceil(): Vec2 {
     return new Vec2(Math.ceil(this.x), Math.ceil(this.y), Math.ceil(this.z))
   }
 
-  floor() {
+  floor(): Vec2 {
     return new Vec2(Math.floor(this.x), Math.floor(this.y), Math.floor(this.z))
   }
 

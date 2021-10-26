@@ -21,28 +21,28 @@ import {
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
 import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
-
-import { Bond } from './Bond'
-import { RGroup } from './RGroup'
-import { Shape } from './Shape'
-import { Transform } from './Transform'
 import {
-  selectOptions,
+  arrowsOptions,
   bondCommon,
   bondQuery,
   bondSpecial,
   bondStereo,
-  transformOptions,
-  arrowsOptions,
   mappingOptions,
   rGroupOptions,
-  shapeOptions
+  selectOptions,
+  shapeOptions,
+  transformOptions
 } from './leftToolbarOptions'
+
+import { ArrowScroll } from '../ArrowScroll'
+import { Bond } from './Bond'
+import { RGroup } from './RGroup'
+import { Shape } from './Shape'
+import { Transform } from './Transform'
 import classes from './LeftToolbar.module.less'
 import clsx from 'clsx'
-import { useResizeObserver } from '../../../../../hooks'
 import { useInView } from 'react-intersection-observer'
-import { ArrowScroll } from '../ArrowScroll'
+import { useResizeObserver } from '../../../../../hooks'
 
 interface LeftToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
@@ -57,8 +57,8 @@ const LeftToolbar = (props: Props) => {
   const { className, ...rest } = props
   const { ref, height } = useResizeObserver<HTMLDivElement>()
   const scrollRef = useRef() as MutableRefObject<HTMLDivElement>
-  const [startRef, startInView] = useInView({ threshold: 1 })
-  const [endRef, endInView] = useInView({ threshold: 1 })
+  const [startRef, startInView] = useInView({ threshold: 0.8 })
+  const [endRef, endInView] = useInView({ threshold: 0.8 })
   const sizeRef = useRef() as MutableRefObject<HTMLDivElement>
 
   type ItemProps = {

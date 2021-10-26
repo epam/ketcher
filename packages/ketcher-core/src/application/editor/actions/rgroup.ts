@@ -35,7 +35,12 @@ export function fromRGroupFragment(restruct, rgidNew, frid) {
   return action.perform(restruct)
 }
 
-export function fromUpdateIfThen(restruct, rgidNew, rgidOld, skipRgids) {
+export function fromUpdateIfThen(
+  restruct,
+  rgidNew,
+  rgidOld,
+  skipRgids: Array<number> = []
+) {
   const action = new Action()
   if (!restruct.molecule.rgroups.get(rgidOld))
     action.addOp(new UpdateIfThen(rgidNew, rgidOld, skipRgids))

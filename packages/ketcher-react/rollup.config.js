@@ -22,8 +22,7 @@ const mode = {
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION
-const enableFeaturesInDevelopment =
-  process.env.FEATURES_IN_DEVELOPMENT !== 'disabled'
+
 const config = {
   input: pkg.source,
   output: [
@@ -38,32 +37,18 @@ const config = {
       format: 'es'
     }
   ],
-  external: [
-    'url',
-    /@babel\/runtime/,
-    'remark-parse',
-    'unified',
-    'asap',
-    'object-assign',
-    'unist-util-visit',
-    'unist-util-visit-parents',
-    'xtend'
-  ],
   plugins: [
     del({
       targets: 'dist/*',
       runOnce: true
     }),
     peerDepsExternal({ includeDependencies: true }),
-    resolve({ extensions, preferBuiltins: true }),
+    resolve({ extensions, preferBuiltins: false }),
     commonjs({ sourceMap: false }),
     replace(
       {
         'process.env.NODE_ENV': JSON.stringify(
           isProduction ? mode.PRODUCTION : mode.DEVELOPMENT
-        ),
-        'process.env.ENABLE_STEREOCHEMISTRY': JSON.stringify(
-          enableFeaturesInDevelopment
         ),
         'process.env.VERSION': JSON.stringify(pkg.version),
         'process.env.BUILD_DATE': JSON.stringify(

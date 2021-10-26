@@ -355,7 +355,7 @@ function findClosestSGroup(restruct, pos) {
   let minDist = SELECTION_DISTANCE_COEFFICIENT
 
   restruct.molecule.sgroups.forEach((sg, sgid) => {
-    if (sg.functionalGroup && !sg.expanded) {
+    if (sg.functionalGroup && !sg.expanded && sg.firstSgroupAtom) {
       const firstAtomPp = sg.firstSgroupAtom.pp
       const d = sg.bracketDir
       const n = d.rotateSC(1, 0)

@@ -33,7 +33,8 @@ import { fromSgroupAddition } from './sgroup'
 
 export function fromPaste(restruct, pstruct, point, angle = 0) {
   const xy0 = getStructCenter(pstruct)
-  const offset = Vec2.diff(point, xy0)
+  let offset = Vec2.diff(point, xy0)
+  offset = point
 
   const action = new Action()
 
@@ -152,6 +153,9 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 }
 
 function getStructCenter(struct) {
+  if (struct.sgroups && !struct.sgroups.get(0).data.expanded) {
+    return struct.atoms.get(0).pp
+  }
   if (struct.atoms.size > 0) {
     let xmin = 1e50
     let ymin = xmin

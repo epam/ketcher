@@ -131,39 +131,6 @@ BondTool.prototype.mousedown = function (event) {
 }
 
 BondTool.prototype.mousemove = function (event) {
-  const ci = this.editor.findItem(event, ['atoms', 'bonds'])
-  const atomResult = []
-  const result = []
-  if (ci && this.functionalGroups && ci.map === 'atoms' && this.dragCtx) {
-    const atomId = FunctionalGroup.atomsInFunctionalGroup(
-      this.functionalGroups,
-      ci.id
-    )
-    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
-    if (
-      atomFromStruct &&
-      !FunctionalGroup.isAtomInContractedFinctionalGroup(
-        atomFromStruct,
-        this.sgroups,
-        this.functionalGroups,
-        true
-      )
-    )
-      atomResult.push(atomId)
-  }
-  if (atomResult.length > 0) {
-    for (let id of atomResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-        this.functionalGroups,
-        id
-      )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
-      }
-    }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
-  }
   // eslint-disable-line max-statements
   const editor = this.editor
   const rnd = editor.render
@@ -192,6 +159,40 @@ BondTool.prototype.mousemove = function (event) {
         i1 = this.atomProps
         p1 = dragCtx.xy0
         i2 = editor.findItem(event, ['atoms'])
+        const atomResult = []
+        const result = []
+        if (i2 && i2.map === 'atoms' && this.functionalGroups && this.dragCtx) {
+          const atomId = FunctionalGroup.atomsInFunctionalGroup(
+            this.functionalGroups,
+            i2.id
+          )
+          const atomFromStruct =
+            atomId !== null && this.struct.atoms.get(atomId).a
+          if (
+            atomFromStruct &&
+            !FunctionalGroup.isAtomInContractedFinctionalGroup(
+              atomFromStruct,
+              this.sgroups,
+              this.functionalGroups,
+              true
+            )
+          )
+            atomResult.push(atomId)
+        }
+        if (atomResult.length > 0) {
+          for (let id of atomResult) {
+            const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+              this.functionalGroups,
+              id
+            )
+            fgId !== null && !result.includes(fgId) && result.push(fgId)
+          }
+        }
+        if (result.length > 0) {
+          this.editor.event.removeFG.dispatch({ fgIds: result })
+          delete this.dragCtx
+          return
+        }
       }
       let dist = Number.MAX_VALUE
       if (i2 && i2.map === 'atoms') {

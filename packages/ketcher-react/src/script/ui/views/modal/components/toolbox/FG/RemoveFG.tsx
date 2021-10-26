@@ -32,9 +32,10 @@ const RemoveFG: FC<Props> = props => {
   const { fgIds } = props
 
   const remove = function () {
-    for (let id of fgIds) {
-      editor.update(fromSgroupDeletion(editor.render.ctab, id))
-    }
+    if (fgIds.length > 0)
+      for (let id of fgIds) {
+        editor.update(fromSgroupDeletion(editor.render.ctab, id))
+      }
     return true
   }
 

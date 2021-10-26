@@ -140,12 +140,12 @@ EraserTool.prototype.mouseup = function (event) {
     const result = []
     const sgroups = this.sgroups
     preResult.forEach(fgId => {
-      const sg = sgroups.get(fgId).item.atoms
-      for (let i = 0; i < sg.length - 1; i++) {
-        !atomsResult.includes(sg[i]) &&
+      const sgAtoms = sgroups.get(fgId).item.atoms
+      sgAtoms.forEach(atom => {
+        !atomsResult.includes(atom) &&
           !result.includes(fgId) &&
           result.push(fgId)
-      }
+      })
     })
     if (result.length > 0) {
       this.editor.selection(null)

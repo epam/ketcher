@@ -47,10 +47,11 @@ export function fromFlip(restruct, selection, dir, center) {
     return acc
   }, {})
 
-  const isFragFound = Object.keys(fids).find(frag => {
-    const fragmentId = parseInt(frag, 10)
-    return !struct.getFragmentIds(frag).equals(new Pile(fids[fragmentId]))
-  })
+  const isFragFound = Object.keys(fids)
+    .map(frag => parseInt(frag, 10))
+    .find(frag => {
+      return !struct.getFragmentIds(frag).equals(new Pile(fids[frag]))
+    })
 
   if (isFragFound) return action // empty action
 

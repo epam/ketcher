@@ -63,6 +63,44 @@
   }
 
   .scrollbar();
+
+  // stylelint-disable-next-line selector-pseudo-class-no-unknown
+  :global(.react-contextmenu-wrapper) {
+    height: 100%;
+  }
+  // stylelint-disable-next-line selector-pseudo-class-no-unknown
+  :global(.react-contextmenu) {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.54);
+    background-color: white;
+    border-radius: 4px;
+    padding: 4px;
+  }
+  // stylelint-disable-next-line selector-pseudo-class-no-unknown
+  :global(.react-contextmenu-item) {
+    background: 0 0;
+    border: 0;
+    color: #373a3c;
+    cursor: pointer;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 3px 20px;
+    text-align: inherit;
+    white-space: nowrap;
+
+    &--selected {
+      color: #fff;
+      background-color: #20a0ff;
+      border-color: #20a0ff;
+      text-decoration: none;
+    }
+
+    &--divider {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+      cursor: inherit;
+      margin-bottom: 3px;
+      padding: 2px 0;
+    }
+  }
 }
 .intermediateCanvas {
   width: 100%;

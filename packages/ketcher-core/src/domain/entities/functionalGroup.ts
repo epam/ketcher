@@ -15,11 +15,14 @@
  ***************************************************************************/
 import { FunctionalGroupsProvider } from '../helpers'
 import { SGroup } from './sgroup'
+import assert from 'assert'
 
 export class FunctionalGroup {
   #sgroup: SGroup
 
   constructor(sgroup: SGroup) {
+    assert(sgroup != null)
+
     this.#sgroup = sgroup
   }
 

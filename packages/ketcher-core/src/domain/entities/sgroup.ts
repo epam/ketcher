@@ -101,7 +101,7 @@ export class SGroup {
       connectivity: 'ht', // head-to-head, head-to-tail or either-unknown
       name: '',
       subscript: 'n',
-      expanded: false,
+      expanded: undefined,
       // data s-group fields
       attached: false,
       absolute: true,

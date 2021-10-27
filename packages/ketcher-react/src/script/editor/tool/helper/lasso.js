@@ -81,4 +81,9 @@ LassoHelper.prototype.end = function () {
   return ret
 }
 
+LassoHelper.prototype.cancel = function () {
+  this.points = null
+  this.update(null)
+}
+
 export default LassoHelper

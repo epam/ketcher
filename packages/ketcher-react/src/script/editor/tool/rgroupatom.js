@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, fromAtomAddition, fromAtomsAttrs } from 'ketcher-core'
+import {
+  Atom,
+  fromAtomAddition,
+  fromAtomsAttrs,
+  FunctionalGroup
+} from 'ketcher-core'
 
 function RGroupAtomTool(editor) {
   if (!(this instanceof RGroupAtomTool)) {
@@ -24,6 +29,9 @@ function RGroupAtomTool(editor) {
   }
 
   this.editor = editor
+  this.struct = editor.render.ctab
+  this.sgroups = editor.render.ctab.sgroups
+  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
 }
 
 RGroupAtomTool.prototype.mousemove = function (event) {
@@ -33,6 +41,38 @@ RGroupAtomTool.prototype.mousemove = function (event) {
 RGroupAtomTool.prototype.click = function (event) {
   const rnd = this.editor.render
   const ci = this.editor.findItem(event, ['atoms'])
+  const atomResult = []
+  const result = []
+  if (ci && this.functionalGroups && ci.map === 'atoms') {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
+    if (
+      atomFromStruct &&
+      !FunctionalGroup.isAtomInContractedFinctionalGroup(
+        atomFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      atomResult.push(atomId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
 
   if (!ci) {
     //  ci.type == 'Canvas'

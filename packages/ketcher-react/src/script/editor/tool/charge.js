@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Elements, fromAtomsAttrs } from 'ketcher-core'
+import { Elements, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core'
 
 function ChargeTool(editor, charge) {
   if (!(this instanceof ChargeTool)) return new ChargeTool(editor, charge)
@@ -22,6 +22,10 @@ function ChargeTool(editor, charge) {
   this.editor = editor
   this.editor.selection(null)
   this.charge = charge
+  this.struct = editor.render.ctab
+  this.sgroups = editor.render.ctab.sgroups
+  this.molecule = editor.render.ctab.molecule
+  this.functionalGroups = this.molecule.functionalGroups
 }
 
 ChargeTool.prototype.mousemove = function (event) {
@@ -38,7 +42,39 @@ ChargeTool.prototype.click = function (event) {
   var editor = this.editor
   var rnd = editor.render
   var struct = rnd.ctab.molecule
-  var ci = editor.findItem(event, ['atoms'])
+  const ci = editor.findItem(event, ['atoms', 'bonds'])
+  const atomResult = []
+  const result = []
+  if (ci && this.functionalGroups && ci.map === 'atoms') {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
+    if (
+      atomFromStruct &&
+      !FunctionalGroup.isAtomInContractedFinctionalGroup(
+        atomFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      atomResult.push(atomId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
   if (
     ci &&
     ci.map === 'atoms' &&

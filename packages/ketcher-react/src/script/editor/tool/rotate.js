@@ -46,6 +46,8 @@ function RotateTool(editor, dir) {
   }
 
   this.editor = editor
+  this.sgroups = editor.render.ctab.sgroups
+  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
 
   if (!editor.selection() || !editor.selection().atoms)
     // otherwise, clear selection
@@ -53,6 +55,14 @@ function RotateTool(editor, dir) {
 }
 
 RotateTool.prototype.mousedown = function (event) {
+  if (this.functionalGroups.size > 0) {
+    const result = []
+    for (let fg of this.functionalGroups.values()) {
+      result.push(fg.relatedSGroupId)
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
   var xy0 = new Vec2()
   var selection = this.editor.selection()
   var rnd = this.editor.render

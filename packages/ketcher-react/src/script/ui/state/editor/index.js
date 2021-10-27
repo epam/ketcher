@@ -150,6 +150,8 @@ export default function initEditor(dispatch, getState) {
       sleep(0) // huck to open dialog after dispatch sgroup tool action
         .then(() => openDialog(dispatch, 'sgroup', fromSgroup(sgroup)))
         .then(toSgroup),
+    onRemoveFG: result =>
+      sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
     onSdataEdit: sgroup =>
       sleep(0)
         .then(() =>

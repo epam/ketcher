@@ -20,7 +20,8 @@ import {
   checkOverlapping,
   fromSeveralSgroupAddition,
   fromSgroupAction,
-  fromSgroupDeletion
+  fromSgroupDeletion,
+  FunctionalGroup
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -44,6 +45,10 @@ function SGroupTool(editor, type) {
   }
 
   this.editor = editor
+  this.struct = editor.render.ctab
+  this.sgroups = editor.render.ctab.sgroups
+  this.molecule = editor.render.ctab.molecule
+  this.functionalGroups = this.molecule.functionalGroups
   this.type = type
 
   this.lassoHelper = new LassoHelper(1, editor)
@@ -52,6 +57,77 @@ function SGroupTool(editor, type) {
 
 SGroupTool.prototype.mousedown = function (event) {
   var ci = this.editor.findItem(event, searchMaps)
+  const atomResult = []
+  const bondResult = []
+  const result = []
+  if (ci && this.functionalGroups && ci.map === 'atoms') {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
+    if (
+      atomFromStruct &&
+      !FunctionalGroup.isAtomInContractedFinctionalGroup(
+        atomFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      atomResult.push(atomId)
+  }
+  if (ci && this.functionalGroups && ci.map === 'bonds') {
+    const bondId = FunctionalGroup.bondsInFunctionalGroup(
+      this.molecule,
+      this.functionalGroups,
+      ci.id
+    )
+    const bondFromStruct = bondId !== null && this.struct.bonds.get(bondId).b
+    if (
+      bondFromStruct &&
+      !FunctionalGroup.isBondInContractedFunctionalGroup(
+        bondFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      bondResult.push(bondId)
+  }
+  if (ci && this.functionalGroups && ci.map === 'sgroups') {
+    const sgroup = this.sgroups.get(ci.id)
+    if (FunctionalGroup.isFunctionalGroup(sgroup.item)) {
+      this.editor.event.removeFG.dispatch({ fgIds: [ci.id] })
+      return
+    }
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  } else if (bondResult.length > 0) {
+    for (let id of bondResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
   if (!ci)
     //  ci.type == 'Canvas'
     this.lassoHelper.begin(event)
@@ -68,13 +144,89 @@ SGroupTool.prototype.mouseleave = function (event) {
 }
 
 SGroupTool.prototype.mouseup = function (event) {
+  const ci = this.editor.findItem(event, searchMaps)
+  const selected = this.editor.selection()
+  let atomsResult = []
+  let extraAtoms
+  let bondsResult = []
+  let extraBonds
+  const result = []
+
+  if (selected && this.functionalGroups && selected.atoms) {
+    for (let atom of selected.atoms) {
+      const atomId = FunctionalGroup.atomsInFunctionalGroup(
+        this.functionalGroups,
+        atom
+      )
+      if (atomId == null) extraAtoms = true
+      const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
+      if (
+        atomFromStruct &&
+        !FunctionalGroup.isAtomInContractedFinctionalGroup(
+          atomFromStruct,
+          this.sgroups,
+          this.functionalGroups,
+          true
+        )
+      )
+        atomsResult.push(atomId)
+    }
+  }
+  if (selected && this.functionalGroups && selected.bonds) {
+    for (let bond of selected.bonds) {
+      const bondId = FunctionalGroup.bondsInFunctionalGroup(
+        this.molecule,
+        this.functionalGroups,
+        bond
+      )
+      if (bondId === null) extraBonds = true
+      const bondFromStruct = bondId !== null && this.struct.bonds.get(bondId).b
+      if (
+        bondFromStruct &&
+        !FunctionalGroup.isBondInContractedFunctionalGroup(
+          bondFromStruct,
+          this.sgroups,
+          this.functionalGroups,
+          true
+        )
+      )
+        bondsResult.push(bondId)
+    }
+  }
+  if (extraAtoms || extraBonds) {
+    atomsResult = null
+    bondsResult = null
+  }
+  if (atomsResult && atomsResult.length > 0) {
+    for (let id of atomsResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+    }
+  }
+  if (bondsResult && bondsResult.length > 0) {
+    for (let id of bondsResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+    }
+  }
+  if (result.length > 0) {
+    this.editor.selection(null)
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    this.lassoHelper.cancel()
+  }
   var id = null // id of an existing group, if we're editing one
   var selection = null // atoms to include in a newly created group
   if (this.lassoHelper.running(event)) {
     // TODO it catches more events than needed, to be re-factored
     selection = this.lassoHelper.end(event)
   } else {
-    var ci = this.editor.findItem(event, searchMaps)
     if (!ci)
       // ci.type == 'Canvas'
       return

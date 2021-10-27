@@ -119,6 +119,10 @@ function findClosestAtom(restruct, pos, skip, minDist) {
   minDist = Math.min(minDist, maxMinDist)
 
   restruct.atoms.forEach((atom, aid) => {
+    const sgroup = restruct.sgroups.get(atom.a.sgs.values().next().value)
+    if (sgroup && aid !== sgroup.item.atoms[0] && !sgroup.item.data.expanded) {
+      return null
+    }
     if (aid === skipId) return
 
     const dist = Vec2.dist(pos, atom.a.pp)
@@ -154,10 +158,17 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
   restruct.bonds.forEach((bond, bid) => {
     if (bid === skipId) return
 
-    const p1 = restruct.atoms.get(bond.b.begin).a.pp
-    const p2 = restruct.atoms.get(bond.b.end).a.pp
+    const a1 = restruct.atoms.get(bond.b.begin).a
+    const a2 = restruct.atoms.get(bond.b.end).a
+    const sgId1 = a1.sgs.values().next().value
+    const sgId2 = a2.sgs.values().next().value
 
-    const mid = Vec2.lc2(p1, 0.5, p2, 0.5)
+    const sgroup = restruct.sgroups.get(sgId1)
+    if (sgId1 === sgId2 && sgroup && !sgroup.item.data.expanded) {
+      return null
+    }
+
+    const mid = Vec2.lc2(a1.pp, 0.5, a2.pp, 0.5)
     const cdist = Vec2.dist(pos, mid)
 
     if (cdist < minCDist) {

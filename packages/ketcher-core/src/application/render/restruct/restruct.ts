@@ -591,7 +591,7 @@ class ReStruct {
             const sGroupAtoms = atoms.filter(
               atom => atom.sgroup === item.item.id
             )
-            item.selected = sGroupAtoms[0].selected
+            item.selected = sGroupAtoms.every(atom => atom.selected)
           }
           const selected = redraw
             ? item.selected

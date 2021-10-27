@@ -101,8 +101,10 @@ const FGContextMenu = () => {
           })
       })
     }
-    setTargetItems(selectedItems)
-    setShowSGroupMenu(true)
+    if (selectedItems.length) {
+      setTargetItems(selectedItems)
+      setShowSGroupMenu(true)
+    }
   }
 
   return (

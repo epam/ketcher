@@ -119,8 +119,12 @@ function findClosestAtom(restruct, pos, skip, minDist) {
   minDist = Math.min(minDist, maxMinDist)
 
   restruct.atoms.forEach((atom, aid) => {
-    const sgroup = restruct.sgroups.get(atom.a.sgs.values().next().value)
-    if (sgroup && aid !== sgroup.item.atoms[0] && !sgroup.item.data.expanded) {
+    let sgroupId
+    for (let sgId of atom.a.sgs.values()) {
+      sgroupId = sgId
+    }
+    const sgroup = restruct.sgroups.get(sgroupId)
+    if (sgroup && !sgroup.item.data.expanded) {
       return null
     }
     if (aid === skipId) return
@@ -160,8 +164,14 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
 
     const a1 = restruct.atoms.get(bond.b.begin).a
     const a2 = restruct.atoms.get(bond.b.end).a
-    const sgId1 = a1.sgs.values().next().value
-    const sgId2 = a2.sgs.values().next().value
+    let sgId1
+    for (let sgId of a1.sgs.values()) {
+      sgId1 = sgId
+    }
+    let sgId2
+    for (let sgId of a2.sgs.values()) {
+      sgId2 = sgId
+    }
 
     const sgroup = restruct.sgroups.get(sgId1)
     if (sgId1 === sgId2 && sgroup && !sgroup.item.data.expanded) {
@@ -368,9 +378,6 @@ function findClosestSGroup(restruct, pos) {
   restruct.molecule.sgroups.forEach((sg, sgid) => {
     if (sg.functionalGroup && !sg.expanded && sg.firstSgroupAtom) {
       const firstAtomPp = sg.firstSgroupAtom.pp
-      const d = sg.bracketDir
-      const n = d.rotateSC(1, 0)
-      const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n))
       const shift = new Vec2(0.625, 0.625)
       const box = {
         p0: Vec2.diff(firstAtomPp, shift),
@@ -378,10 +385,15 @@ function findClosestSGroup(restruct, pos) {
       }
 
       const inBox =
-        box.p0.y < pg.y && box.p1.y > pg.y && box.p0.x < pg.x && box.p1.x > pg.x
+        box.p0.y < pos.y &&
+        box.p1.y > pos.y &&
+        box.p0.x < pos.x &&
+        box.p1.x > pos.x
       const xDist = Math.min(
-        Math.abs(box.p0.x - pg.x),
-        Math.abs(box.p1.x - pg.x)
+        Math.abs(box.p0.x - pos.x),
+        Math.abs(box.p0.y - pos.y),
+        Math.abs(box.p1.x - pos.x),
+        Math.abs(box.p0.y - pos.y)
       )
 
       if (inBox && (ret === null || xDist < minDist)) {

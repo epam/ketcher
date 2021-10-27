@@ -576,9 +576,13 @@ class ReStruct {
       if (ReStruct.maps[map].isSelectable() || mapValues instanceof ReSGroup) {
         this[map].forEach((item, id) => {
           if (item instanceof ReAtom) {
+            let sgroup
+            for (let sgId of item.a.sgs.values()) {
+              sgroup = sgId
+            }
             atoms.push({
               selected: item.selected,
-              sgroup: item.a.sgs.values().next().value
+              sgroup: sgroup
             })
           }
           if (
@@ -591,7 +595,7 @@ class ReStruct {
             const sGroupAtoms = atoms.filter(
               atom => atom.sgroup === item.item.id
             )
-            item.selected = sGroupAtoms.every(atom => atom.selected)
+            item.selected = sGroupAtoms[0].selected
           }
           const selected = redraw
             ? item.selected

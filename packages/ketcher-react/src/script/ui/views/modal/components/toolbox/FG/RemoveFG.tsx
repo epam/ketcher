@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC } from 'react'
 import { BaseCallProps, BaseProps } from '../../../modal.types'
 import classes from './RemoveFG.module.less'
 import { useAppContext } from '../../../../../../../hooks'
@@ -26,7 +25,7 @@ interface RemoveFGProps extends BaseProps {
 
 type Props = RemoveFGProps & BaseCallProps
 
-const RemoveFG: FC<Props> = props => {
+const RemoveFG = (props: Props) => {
   const { getKetcherInstance } = useAppContext()
   const editor = getKetcherInstance().editor as any
   const { fgIds } = props

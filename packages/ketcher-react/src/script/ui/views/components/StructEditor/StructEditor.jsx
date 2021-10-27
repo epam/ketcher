@@ -19,11 +19,10 @@ import { Component, createRef } from 'react'
 import Editor from '../../../../editor'
 import Spinner from '../Spinner'
 import classes from './StructEditor.module.less'
-import contextMenuClasses from '../../../../ui/component/ContextMenu/ContextMenu.module.less'
 import clsx from 'clsx'
 import { upperFirst } from 'lodash/fp'
 import { FGContextMenu } from '../../../component/ContextMenu/ContextMenu'
-import { ContextMenuTrigger } from 'react-contextmenu'
+import { ContextMenuTrigger, hideMenu } from 'react-contextmenu'
 
 //TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -132,30 +131,30 @@ class StructEditor extends Component {
     } = this.props
 
     return (
-      <div className={clsx(classes.canvas, className)}>
+      <Tag
+        className={clsx(classes.canvas, className)}
+        onMouseDown={event => event.preventDefault()}
+        {...props}>
         <ContextMenuTrigger
           id="contextmenu"
-          className={clsx(contextMenuClasses.wrapper)}>
-          <Tag
-            className={clsx(contextMenuClasses.wrapper)}
-            onMouseDown={event => event.preventDefault()}
-            {...props}>
-            <div
-              ref={this.editorRef}
-              className={clsx(classes.intermediateCanvas)}
-              onMouseDown={event => event.preventDefault()}>
-              {/* svg here */}
+          attributes={{
+            onClick: hideMenu
+          }}>
+          <div
+            ref={this.editorRef}
+            className={clsx(classes.intermediateCanvas)}
+            onMouseDown={event => event.preventDefault()}>
+            {/* svg here */}
+          </div>
+          <div className={classes.measureLog} ref={this.logRef} />
+          {indigoVerification && (
+            <div className={classes.spinnerOverlay}>
+              <Spinner />
             </div>
-            <div className={classes.measureLog} ref={this.logRef} />
-            {indigoVerification && (
-              <div className={classes.spinnerOverlay}>
-                <Spinner />
-              </div>
-            )}
-          </Tag>
+          )}
         </ContextMenuTrigger>
         <FGContextMenu />
-      </div>
+      </Tag>
     )
   }
 }

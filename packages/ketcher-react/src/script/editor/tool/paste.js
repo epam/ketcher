@@ -22,11 +22,9 @@ import {
   getItemsToFuse
 } from 'ketcher-core'
 
-function PasteTool(editor, blockedEntities, struct) {
-  if (!(this instanceof PasteTool))
-    return new PasteTool(editor, blockedEntities, struct)
+function PasteTool(editor, struct) {
+  if (!(this instanceof PasteTool)) return new PasteTool(editor, struct)
 
-  this.blockedEntities = blockedEntities
   this.editor = editor
   this.editor.selection(null)
   this.struct = struct

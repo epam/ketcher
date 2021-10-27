@@ -25,10 +25,10 @@ import {
 
 import utils from '../shared/utils'
 
-function AtomTool(editor, blockedEntities, atomProps) {
+function AtomTool(editor, atomProps) {
   if (!(this instanceof AtomTool)) {
     if (!editor.selection() || !editor.selection().atoms)
-      return new AtomTool(editor, blockedEntities, atomProps)
+      return new AtomTool(editor, atomProps)
 
     const action = fromAtomsAttrs(
       editor.render.ctab,
@@ -41,7 +41,6 @@ function AtomTool(editor, blockedEntities, atomProps) {
     return null
   }
 
-  this.blockedEntities = blockedEntities
   this.editor = editor
   this.atomProps = atomProps
   this.struct = editor.render.ctab

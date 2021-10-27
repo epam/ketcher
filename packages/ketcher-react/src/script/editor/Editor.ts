@@ -176,7 +176,6 @@ class Editor implements KetcherEditor {
   }
 
   tool(name?: any, opts?: any) {
-    const blockedEntities = ['Functional Groups']
     /* eslint-disable no-underscore-dangle */
     if (arguments.length === 0) {
       return this._tool
@@ -186,7 +185,7 @@ class Editor implements KetcherEditor {
       this._tool.cancel()
     }
 
-    const tool = toolMap[name](this, blockedEntities, opts)
+    const tool = toolMap[name](this, opts)
     if (!tool) {
       return null
     }

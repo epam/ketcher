@@ -28,10 +28,9 @@ import {
 
 import LassoHelper from './helper/lasso'
 
-function EraserTool(editor, blockedEntities, mode) {
+function EraserTool(editor, mode) {
   if (!(this instanceof EraserTool)) {
-    if (!editor.selection())
-      return new EraserTool(editor, blockedEntities, mode)
+    if (!editor.selection()) return new EraserTool(editor, mode)
 
     const action = fromFragmentDeletion(editor.render.ctab, editor.selection())
     editor.update(action)
@@ -39,7 +38,6 @@ function EraserTool(editor, blockedEntities, mode) {
     return null
   }
 
-  this.blockedEntities = blockedEntities
   this.editor = editor
   this.sgroups = editor.render.ctab.sgroups
   this.struct = editor.render.ctab

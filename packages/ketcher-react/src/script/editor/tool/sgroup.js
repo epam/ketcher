@@ -29,11 +29,11 @@ import { isEqual } from 'lodash/fp'
 
 const searchMaps = ['atoms', 'bonds', 'sgroups', 'sgroupData']
 
-function SGroupTool(editor, blockedEntities, type) {
+function SGroupTool(editor, type) {
   if (!(this instanceof SGroupTool)) {
     var selection = editor.selection() || {}
     if (!selection.atoms && !selection.bonds)
-      return new SGroupTool(editor, blockedEntities, type)
+      return new SGroupTool(editor, type)
 
     var sgroups = editor.render.ctab.molecule.sgroups
     var selectedAtoms = editor.selection().atoms
@@ -44,7 +44,6 @@ function SGroupTool(editor, blockedEntities, type) {
     return null
   }
 
-  this.blockedEntities = blockedEntities
   this.editor = editor
   this.struct = editor.render.ctab
   this.sgroups = editor.render.ctab.sgroups

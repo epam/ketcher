@@ -26,9 +26,9 @@ import {
 
 import utils from '../shared/utils'
 
-function RotateTool(editor, blockedEntities, dir) {
+function RotateTool(editor, dir) {
   if (!(this instanceof RotateTool)) {
-    if (!dir) return new RotateTool(editor, blockedEntities)
+    if (!dir) return new RotateTool(editor)
 
     const restruct = editor.render.ctab
     const selection = editor.selection()
@@ -45,7 +45,6 @@ function RotateTool(editor, blockedEntities, dir) {
     return null
   }
 
-  this.blockedEntities = blockedEntities
   this.editor = editor
   this.sgroups = editor.render.ctab.sgroups
   this.functionalGroups = editor.render.ctab.molecule.functionalGroups

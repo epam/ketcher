@@ -34,11 +34,9 @@ import { sgroupDialog } from './sgroup'
 import utils from '../shared/utils'
 import { xor } from 'lodash/fp'
 
-function SelectTool(editor, blockedEntities, mode) {
-  if (!(this instanceof SelectTool))
-    return new SelectTool(editor, blockedEntities, mode)
+function SelectTool(editor, mode) {
+  if (!(this instanceof SelectTool)) return new SelectTool(editor, mode)
 
-  this.blockedEntities = blockedEntities
   this.editor = editor
   this.sgroups = editor.render.ctab.sgroups
   this.struct = editor.render.ctab

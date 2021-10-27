@@ -26,12 +26,10 @@ import {
 
 import utils from '../shared/utils'
 
-function TemplateTool(editor, blockedEntities, tmpl) {
+function TemplateTool(editor, tmpl) {
   // eslint-disable-line max-statements
-  if (!(this instanceof TemplateTool))
-    return new TemplateTool(editor, blockedEntities, tmpl)
+  if (!(this instanceof TemplateTool)) return new TemplateTool(editor, tmpl)
 
-  this.blockedEntities = blockedEntities
   this.editor = editor
   this.mode = tmpl.mode
   this.sgroups = editor.render.ctab.sgroups

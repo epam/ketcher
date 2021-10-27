@@ -21,14 +21,13 @@ import {
   FunctionalGroup
 } from 'ketcher-core'
 
-function RGroupAtomTool(editor, blockedEntities) {
+function RGroupAtomTool(editor) {
   if (!(this instanceof RGroupAtomTool)) {
     // TODO: map atoms with labels
     editor.selection(null)
-    return new RGroupAtomTool(editor, blockedEntities)
+    return new RGroupAtomTool(editor)
   }
 
-  this.blockedEntities = blockedEntities
   this.editor = editor
   this.struct = editor.render.ctab
   this.sgroups = editor.render.ctab.sgroups

@@ -16,15 +16,13 @@
 
 import { Elements, FunctionalGroup } from 'ketcher-core'
 
-function AttachTool(editor, blockedEntities, attachPoints) {
-  if (!(this instanceof AttachTool))
-    return new AttachTool(editor, blockedEntities, attachPoints)
+function AttachTool(editor, attachPoints) {
+  if (!(this instanceof AttachTool)) return new AttachTool(editor, attachPoints)
 
   this.attach = {
     atomid: attachPoints.atomid || 0,
     bondid: attachPoints.bondid || 0
   }
-  this.blockedEntities = blockedEntities
   this.editor = editor
   this.struct = editor.render.ctab
   this.sgroups = editor.render.ctab.sgroups

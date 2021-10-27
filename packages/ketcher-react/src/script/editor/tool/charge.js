@@ -16,11 +16,9 @@
 
 import { Elements, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core'
 
-function ChargeTool(editor, blockedEntities, charge) {
-  if (!(this instanceof ChargeTool))
-    return new ChargeTool(editor, blockedEntities, charge)
+function ChargeTool(editor, charge) {
+  if (!(this instanceof ChargeTool)) return new ChargeTool(editor, charge)
 
-  this.blockedEntities = blockedEntities
   this.editor = editor
   this.editor.selection(null)
   this.charge = charge

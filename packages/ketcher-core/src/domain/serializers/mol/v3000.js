@@ -356,19 +356,14 @@ function parseRxn3000(
     } else if (line === 'M  END') {
       break // stop reading
     } else if (line === 'M  V30 BEGIN PRODUCT') {
-      console.assert(current == null, 'CTab format invalid')
       current = molLinesProducts
     } else if (line === 'M  V30 END PRODUCT') {
-      console.assert(current === molLinesProducts, 'CTab format invalid')
       current = null
     } else if (line === 'M  V30 BEGIN REACTANT') {
-      console.assert(current == null, 'CTab format invalid')
       current = molLinesReactants
     } else if (line === 'M  V30 END REACTANT') {
-      console.assert(current === molLinesReactants, 'CTab format invalid')
       current = null
     } else if (line.startsWith('M  V30 BEGIN RGROUP')) {
-      console.assert(current == null, 'CTab format invalid')
       j = findRGroupEnd(i)
       rGroups.push(ctabLines.slice(i, j + 1))
       i = j

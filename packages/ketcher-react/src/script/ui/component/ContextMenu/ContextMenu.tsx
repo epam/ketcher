@@ -3,7 +3,8 @@ import { useState } from 'react'
 import {
   FunctionalGroup,
   setExpandSGroup,
-  fromSgroupDeletion
+  fromSgroupDeletion,
+  Action
 } from 'ketcher-core'
 import { useAppContext } from '../../../../hooks'
 import clsx from 'clsx'
@@ -14,72 +15,109 @@ const FGContextMenu = () => {
 
   const handleExpand = () => {
     const editor = getKetcherInstance().editor as any
-    editor.update(
-      setExpandSGroup(editor.render.ctab, targetFG?.relatedSGroupId, {
-        expanded: !targetFG?.isExpanded
-      })
-    )
+    const action = new Action()
+    const expandData = targetItems[0].isExpanded
+    targetItems?.forEach(item => {
+      action.mergeWith(
+        setExpandSGroup(editor.render.ctab, item.relatedSGroupId, {
+          expanded: !expandData
+        })
+      )
+    })
+    editor.update(action)
     setShowSGroupMenu(false)
-    setTargetFG(null)
+    setTargetItems([])
   }
 
   const handleRemove = function () {
     const editor = getKetcherInstance().editor as any
-    editor.update(
-      fromSgroupDeletion(editor.render.ctab, targetFG?.relatedSGroupId)
-    )
+    const action = new Action()
+    targetItems?.forEach(item => {
+      action.mergeWith(
+        fromSgroupDeletion(editor.render.ctab, item.relatedSGroupId)
+      )
+    })
+    editor.update(action)
     setShowSGroupMenu(false)
-    setTargetFG(null)
+    setTargetItems([])
   }
 
   const [showSGroupMenu, setShowSGroupMenu] = useState(false)
-  const [targetFG, setTargetFG] = useState(null as FunctionalGroup | null)
+  const [targetItems, setTargetItems] = useState([] as Array<any>)
 
   function showMenu(e) {
     const editor = getKetcherInstance().editor as any
     const struct = editor.struct()
+    const selection = editor.selection()
     setShowSGroupMenu(false)
-    setTargetFG(null)
+    setTargetItems([])
+    const selectedItems = [] as Array<any>
+    let fgId
+
     const ci = editor.findItem(
       {
         pageX: e.detail.position.x,
         pageY: e.detail.position.y
       },
-      ['sgroups', 'atoms']
+      ['sgroups', 'atoms', 'bonds']
     )
     if (ci) {
       switch (ci.map) {
         case 'atoms':
-          let AtomSGroup = -1
-          struct.sgroups.forEach((sg, key) => {
-            if (sg.atoms.includes(ci.id)) {
-              AtomSGroup = key
-            }
-          })
-          if (AtomSGroup !== -1) {
-            const sgroup = struct.sgroups.get(AtomSGroup)
-            if (FunctionalGroup.isFunctionalGroup(sgroup)) {
-              struct.functionalGroups.forEach(fg => {
-                if (fg.relatedSGroupId === sgroup?.id) {
-                  setShowSGroupMenu(true)
-                  setTargetFG(fg)
-                }
-              })
-            }
-          }
+          fgId = FunctionalGroup.findFunctionalGroupByAtom(
+            struct.functionalGroups,
+            ci.id
+          )
+          fgId !== null &&
+            struct.functionalGroups.forEach(fg => {
+              fg.relatedSGroupId === fgId &&
+                !selectedItems.includes(fg) &&
+                selectedItems.push(fg)
+            })
+          break
+        case 'bonds':
+          fgId = FunctionalGroup.findFunctionalGroupByBond(
+            struct,
+            struct.functionalGroups,
+            ci.id
+          )
+          fgId !== null &&
+            struct.functionalGroups.forEach(fg => {
+              fg.relatedSGroupId === fgId &&
+                !selectedItems.includes(fg) &&
+                selectedItems.push(fg)
+            })
           break
         case 'sgroups':
           const sgroup = struct.sgroups.get(ci.id)
           if (FunctionalGroup.isFunctionalGroup(sgroup)) {
             struct.functionalGroups.forEach(fg => {
-              if (fg.relatedSGroupId === sgroup?.id) {
-                setShowSGroupMenu(true)
-                setTargetFG(fg)
-              }
+              fg.relatedSGroupId === sgroup?.id &&
+                !selectedItems.includes(fg) &&
+                selectedItems.push(fg)
             })
           }
           break
       }
+    }
+
+    if (selection && selection.atoms) {
+      selection.atoms.forEach(aid => {
+        const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+          struct.functionalGroups,
+          aid
+        )
+        fgId !== null &&
+          struct.functionalGroups.forEach(fg => {
+            fg.relatedSGroupId === fgId &&
+              !selectedItems.includes(fg) &&
+              selectedItems.push(fg)
+          })
+      })
+    }
+    if (selectedItems.length) {
+      setTargetItems(selectedItems)
+      setShowSGroupMenu(true)
     }
   }
 
@@ -91,7 +129,9 @@ const FGContextMenu = () => {
         [classes.isHidden]: !showSGroupMenu
       })}>
       <MenuItem onClick={handleExpand}>
-        {targetFG?.isExpanded ? 'Contract ' : 'Expand '}
+        {targetItems.length && targetItems[0].isExpanded
+          ? 'Contract '
+          : 'Expand '}
         Abbreviation
       </MenuItem>
       <MenuItem divider />

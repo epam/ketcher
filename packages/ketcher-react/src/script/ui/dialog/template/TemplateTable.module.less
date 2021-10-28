@@ -20,8 +20,7 @@
 .table {
   display: flex;
   flex-wrap: wrap;
-  width: 550px;
-  min-height: 240px;
+  width: 555px;
   padding: 0;
   overflow: hidden;
 }
@@ -33,7 +32,9 @@
   height: 312px;
   display: flex;
   flex-wrap: wrap;
-  overflow: scroll;
+  align-content: flex-start;
+  overflow-y: scroll;
+  overflow-x: hidden;
 
   .scrollbar();
 }
@@ -91,4 +92,12 @@
 }
 div.struct {
   padding: 0; // TODO: tmp hack to fit viewbox
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 312px;
+  width: 555px;
 }

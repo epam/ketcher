@@ -20,8 +20,7 @@
 .table {
   display: flex;
   flex-wrap: wrap;
-  width: 550px;
-  min-height: 240px;
+  width: 555px;
   padding: 0;
   overflow: hidden;
 }
@@ -33,7 +32,10 @@
   height: 312px;
   display: flex;
   flex-wrap: wrap;
-  overflow: scroll;
+  align-content: flex-start;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  width: 100%;
 
   .scrollbar();
 }
@@ -64,6 +66,9 @@
     color: darken(@border-color, 30%);
     background-color: white;
     content: attr(title);
+    overflow: hidden;
+    width: content-box;
+    max-width: 155px;
   }
   &.selected .struct {
     background-color: lighten(@form-selected-background, 15%);

@@ -14,23 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, RefCallback, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { FC, RefCallback, useEffect, useMemo, useState } from 'react'
+import { FunctionalGroup, SdfItem, SdfSerializer, Struct } from 'ketcher-core'
 import TemplateTable, { Template } from '../../../dialog/template/TemplateTable'
-import classes from './functionalGroups.module.less'
-import { Dialog } from '../'
-import { onAction } from '../../../state'
-import SaveButton from '../../../component/view/savebutton'
-import Input from '../../../component/form/input'
-import clsx from 'clsx'
 import {
   functionalGroupsSelector,
   modeSelector
 } from '../../../state/functionalGroups/selectors'
-import { useResizeObserver } from '../../../../../hooks'
-import { filterFGLib } from '../../../utils'
-import { FunctionalGroup, SdfItem, SdfSerializer, Struct } from 'ketcher-core'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { Dialog } from '../'
 import { DialogParams } from '../Dialog/Dialog'
+import Input from '../../../component/form/input'
+import SaveButton from '../../../component/view/savebutton'
+import classes from './functionalGroups.module.less'
+import clsx from 'clsx'
+import { filterFGLib } from '../../../utils'
+import { onAction } from '../../../state'
+import { useResizeObserver } from '../../../../../hooks'
 
 export interface FGProps {
   className: string
@@ -52,14 +53,12 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
   const lib: SdfItem[] = useSelector(functionalGroupsSelector)
   const mode = useSelector(modeSelector)
 
-  const [expandedTemplates, setExpandedTemplates] = useState<SdfItem[]>([])
   const [selected, setSelected] = useState<Template | null>(null)
   const [filter, setFilter] = useState<string>('')
   const [filteredLib, setFilteredLib] = useState({})
 
-  useEffect(() => {
-    // Implemented to not mutate the redux store
-    const expandedTemplates: SdfItem[] = lib.map(template => {
+  const expandedTemplates: SdfItem[] = useMemo(() => {
+    return lib.map(template => {
       const struct = template.struct.clone()
       struct.sgroups.forEach(sgroup => {
         if (FunctionalGroup.isFunctionalGroup(sgroup)) {
@@ -68,12 +67,11 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
       })
       return { ...template, struct }
     })
-    setExpandedTemplates(expandedTemplates)
-  }, [])
+  }, [lib])
 
   useEffect(() => {
     setFilteredLib(filterFGLib(expandedTemplates, filter))
-  }, [filter, expandedTemplates])
+  }, [expandedTemplates, filter])
 
   const onFilter = (filter: string): void => setFilter(filter)
   const onSelect = (tmpl: Template): void => setSelected(tmpl)

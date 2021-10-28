@@ -182,7 +182,7 @@ TemplateTool.prototype.mousemove = function (event) {
     pos0 = dragCtx.xy0
   } else if (ci.map === 'atoms') {
     pos0 = struct.atoms.get(ci.id).pp
-    extraBond = Vec2.dist(pos0, pos1) > 1
+    extraBond = this.mode === 'fg' ? true : Vec2.dist(pos0, pos1) > 1
   }
 
   // calc angle

@@ -79,7 +79,7 @@ class ReFrag extends ReObject {
     }
 
     // TODO abnormal situation, empty fragments must be destroyed by tools
-    return console.assert(null, 'Empty fragment')
+    return
   }
   draw(render) {
     // eslint-disable-line no-unused-vars

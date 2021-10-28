@@ -16,7 +16,6 @@
 
 import { FC, RefCallback } from 'react'
 import TemplateTable, { Template } from './TemplateTable'
-import { omit } from 'lodash/fp'
 import {
   changeFilter,
   changeGroup,
@@ -24,6 +23,7 @@ import {
   editTmpl,
   selectTmpl
 } from '../../state/templates'
+import { filterLib, greekify } from '../../utils'
 
 import { Dialog } from '../../views/components'
 import Input from '../../component/form/input'
@@ -35,9 +35,9 @@ import classes from './template-lib.module.less'
 import clsx from 'clsx'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
+import { omit } from 'lodash/fp'
 import { onAction } from '../../state'
 import { useResizeObserver } from '../../../../hooks'
-import { filterLib, greekify } from '../../utils'
 
 interface TemplateLibProps {
   filter: string
@@ -88,7 +88,6 @@ const TemplateDialog: FC<Props> = props => {
 
   const result = (): Result | null => {
     const tmpl = props.selected
-    console.assert(!tmpl || tmpl.props, 'Incorrect SDF parse')
     return tmpl
       ? {
           struct: tmpl.struct,

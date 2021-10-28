@@ -16,6 +16,7 @@
 
 import { Pile } from './pile'
 import { SGroup } from './sgroup'
+import assert from 'assert'
 
 export class SGroupForest {
   /** node id -> parent id */
@@ -83,15 +84,14 @@ export class SGroupForest {
   getPathToRoot(sgid): number[] {
     const path: number[] = []
     for (let id = sgid; id >= 0; id = this.parent.get(id)) {
-      console.assert(path.indexOf(id) < 0, 'SGroupForest: loop detected')
       path.push(id)
     }
     return path
   }
 
   insert({ id, atoms }, parent?: number, children?: number[]) {
-    console.assert(!this.parent.has(id), 'sgid already present in the forest')
-    console.assert(!this.children.has(id), 'sgid already present in the forest')
+    assert(!this.parent.has(id), 'sgid already present in the forest')
+    assert(!this.children.has(id), 'sgid already present in the forest')
 
     if (!parent || !children) {
       // if these are not provided, deduce automatically
@@ -132,8 +132,8 @@ export class SGroupForest {
   }
 
   remove(id) {
-    console.assert(this.parent.has(id), 'sgid is not in the forest')
-    console.assert(this.children.has(id), 'sgid is not in the forest')
+    assert(this.parent.has(id), 'sgid is not in the forest')
+    assert(this.children.has(id), 'sgid is not in the forest')
 
     const parentId = this.parent.get(id) as any
     const childs = this.children.get(parentId) as any

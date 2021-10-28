@@ -102,12 +102,6 @@ describe('Atom', () => {
     it('should return default attr if value is in attrsList', () => {
       expect(Atom.attrGetDefault('label')).toBe('C')
     })
-
-    it('should call console.assert if passed value is not in attrsList', () => {
-      console.assert = jest.fn()
-      Atom.attrGetDefault('test')
-      expect(console.assert).toHaveBeenCalled()
-    })
   })
 
   describe('clone', () => {

@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import assert from 'assert'
+
 export interface Point {
   x?: number
   y?: number
@@ -183,7 +185,8 @@ export class Vec2 {
   }
 
   max(v: Vec2): Vec2 {
-    console.assert(!!v)
+    assert(v != null)
+
     return Vec2.max(this, v)
   }
 
@@ -207,8 +210,8 @@ export class Vec2 {
   }
 
   rotateSC(sin: number, cos: number): Vec2 {
-    console.assert(sin === 0 || !!sin)
-    console.assert(cos === 0 || !!cos)
+    assert(sin === 0 || !!sin)
+    assert(cos === 0 || !!cos)
 
     return new Vec2(
       this.x * cos - this.y * sin,

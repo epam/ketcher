@@ -252,7 +252,7 @@ function findIncomingUpBonds(
     const pos = findIncomingStereoUpBond(atom, bid0, true, restruct)
     return pos < 0 ? -1 : atom.neighbors[pos]
   })
-  console.assert(halfbonds.length === 2)
+
   bond.neihbid1 = restruct.atoms.get(bond.b.begin)?.showLabel
     ? -1
     : halfbonds[0]
@@ -265,7 +265,6 @@ function checkStereoBold(bid0, bond, restruct) {
     const pos = findIncomingStereoUpBond(atom, bid0, false, restruct)
     return pos < 0 ? -1 : atom.neighbors[pos]
   })
-  console.assert(halfbonds.length === 2)
   bond.boldStereo = halfbonds[0] >= 0 && halfbonds[1] >= 0
 }
 

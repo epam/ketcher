@@ -201,33 +201,33 @@ function parseCTabV3000(ctabLines, norgroups) {
   var ctab = new Struct()
 
   var shift = 0
-  if (ctabLines[shift++].trim() != 'M  V30 BEGIN CTAB')
+  if (ctabLines[shift++].trim() !== 'M  V30 BEGIN CTAB')
     throw Error('CTAB V3000 invalid')
-  if (ctabLines[shift].slice(0, 13) != 'M  V30 COUNTS')
+  if (ctabLines[shift].slice(0, 13) !== 'M  V30 COUNTS')
     throw Error('CTAB V3000 invalid')
   var vals = ctabLines[shift].slice(14).split(' ')
   const isAbs = utils.parseDecimalInt(vals[4]) === 1
   shift++
 
-  if (ctabLines[shift].trim() == 'M  V30 BEGIN ATOM') {
+  if (ctabLines[shift].trim() === 'M  V30 BEGIN ATOM') {
     shift++
     var line
     while (shift < ctabLines.length) {
       line = stripV30(ctabLines[shift++]).trim()
-      if (line == 'END ATOM') break
-      while (line.charAt(line.length - 1) == '-')
+      if (line === 'END ATOM') break
+      while (line.charAt(line.length - 1) === '-')
         line = (
           line.substring(0, line.length - 1) + stripV30(ctabLines[shift++])
         ).trim()
       ctab.atoms.add(parseAtomLineV3000(line))
     }
 
-    if (ctabLines[shift].trim() == 'M  V30 BEGIN BOND') {
+    if (ctabLines[shift].trim() === 'M  V30 BEGIN BOND') {
       shift++
       while (shift < ctabLines.length) {
         line = stripV30(ctabLines[shift++]).trim()
-        if (line == 'END BOND') break
-        while (line.charAt(line.length - 1) == '-')
+        if (line === 'END BOND') break
+        while (line.charAt(line.length - 1) === '-')
           line = (
             line.substring(0, line.length - 1) + stripV30(ctabLines[shift++])
           ).trim()
@@ -241,16 +241,16 @@ function parseCTabV3000(ctabLines, norgroups) {
     var sgroups = {}
     var atomMap = {}
 
-    while (ctabLines[shift].trim() != 'M  V30 END CTAB') {
-      if (ctabLines[shift].trim() == 'M  V30 BEGIN COLLECTION')
+    while (ctabLines[shift].trim() !== 'M  V30 END CTAB') {
+      if (ctabLines[shift].trim() === 'M  V30 BEGIN COLLECTION')
         // TODO: read collection information
         shift = v3000parseCollection(ctab, ctabLines, shift)
-      else if (ctabLines[shift].trim() == 'M  V30 BEGIN SGROUP')
+      else if (ctabLines[shift].trim() === 'M  V30 BEGIN SGROUP')
         shift = v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift)
       else throw Error('CTAB V3000 invalid')
     }
   }
-  if (ctabLines[shift++].trim() != 'M  V30 END CTAB')
+  if (ctabLines[shift++].trim() !== 'M  V30 END CTAB')
     throw Error('CTAB V3000 invalid')
 
   if (!norgroups) readRGroups3000(ctab, ctabLines.slice(shift))
@@ -266,7 +266,7 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ {
   var shift = 0
   while (
     shift < ctabLines.length &&
-    ctabLines[shift].search('M  V30 BEGIN RGROUP') == 0
+    ctabLines[shift].search('M  V30 BEGIN RGROUP') === 0
   ) {
     var id = ctabLines[shift++].split(' ').pop()
     rfrags[id] = []
@@ -274,7 +274,7 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ {
     while (true) {
       // eslint-disable-line no-constant-condition
       var line = ctabLines[shift].trim()
-      if (line.search('M  V30 RLOGIC') == 0) {
+      if (line.search('M  V30 RLOGIC') === 0) {
         line = line.slice(13)
         var rlsplit = line.trim().split(/\s+/g)
         var iii = utils.parseDecimalInt(rlsplit[0])
@@ -353,18 +353,18 @@ function parseRxn3000(
 
     if (line.startsWith('M  V30 COUNTS')) {
       // do nothing
-    } else if (line == 'M  END') {
+    } else if (line === 'M  END') {
       break // stop reading
-    } else if (line == 'M  V30 BEGIN PRODUCT') {
+    } else if (line === 'M  V30 BEGIN PRODUCT') {
       console.assert(current == null, 'CTab format invalid')
       current = molLinesProducts
-    } else if (line == 'M  V30 END PRODUCT') {
+    } else if (line === 'M  V30 END PRODUCT') {
       console.assert(current === molLinesProducts, 'CTab format invalid')
       current = null
-    } else if (line == 'M  V30 BEGIN REACTANT') {
+    } else if (line === 'M  V30 BEGIN REACTANT') {
       console.assert(current == null, 'CTab format invalid')
       current = molLinesReactants
-    } else if (line == 'M  V30 END REACTANT') {
+    } else if (line === 'M  V30 END REACTANT') {
       console.assert(current === molLinesReactants, 'CTab format invalid')
       current = null
     } else if (line.startsWith('M  V30 BEGIN RGROUP')) {
@@ -372,7 +372,7 @@ function parseRxn3000(
       j = findRGroupEnd(i)
       rGroups.push(ctabLines.slice(i, j + 1))
       i = j
-    } else if (line == 'M  V30 BEGIN CTAB') {
+    } else if (line === 'M  V30 BEGIN CTAB') {
       j = findCtabEnd(i)
       current.push(ctabLines.slice(i, j + 1))
       i = j

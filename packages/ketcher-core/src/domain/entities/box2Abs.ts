@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Vec2 } from './vec2'
+import assert from 'assert'
 
 export class Box2Abs {
   readonly p0: Vec2
@@ -60,12 +61,14 @@ export class Box2Abs {
   }
 
   include(p: Vec2): Box2Abs {
-    console.assert(!!p)
+    assert(p != null)
+
     return new Box2Abs(this.p0.min(p), this.p1.max(p))
   }
 
   contains(p: Vec2, ext: number = 0.0): boolean {
-    console.assert(!!p)
+    assert(p != null)
+
     return (
       p.x >= this.p0.x - ext &&
       p.x <= this.p1.x + ext &&
@@ -79,7 +82,8 @@ export class Box2Abs {
   }
 
   transform(f: (p: Vec2, options: any) => Vec2, options: any): Box2Abs {
-    console.assert(!!f)
+    assert(typeof f === 'function')
+
     return new Box2Abs(f(this.p0, options), f(this.p1, options))
   }
 

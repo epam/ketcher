@@ -78,8 +78,6 @@ RotateTool.prototype.mousedown = function (event) {
   var struct = rnd.ctab.molecule
 
   if (selection && selection.atoms) {
-    console.assert(selection.atoms.length > 0)
-
     var rotId = null
     var rotAll = false
 

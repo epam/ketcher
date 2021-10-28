@@ -42,7 +42,6 @@ Smiles._Atom = function (hСount) {
 
 // NB: only loops of length up to 6 are included here
 Smiles.prototype.isBondInRing = function (bid) {
-  console.assert(this.inLoop, 'Init this.inLoop prior to calling this method')
   return this.inLoop[bid]
 }
 

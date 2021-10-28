@@ -67,12 +67,12 @@ class ReObject {
 
   // @ts-ignore
   drawHighlight(render: Render): any {
-    console.assert(null, 'ReObject.drawHighlight is not overridden') // eslint-disable-line no-console
+    throw new Error('ReObject.drawHighlight is not overridden.')
   }
 
   // @ts-ignore
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any): any {
-    console.assert(null, 'ReObject.makeSelectionPlate is not overridden') // eslint-disable-line no-console
+    throw new Error('ReObject.makeSelectionPlate is not overridden')
   }
 }
 

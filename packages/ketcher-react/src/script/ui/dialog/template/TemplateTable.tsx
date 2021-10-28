@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
+import EmptySearchResult from './EmptySearchResult'
 import { FC } from 'react'
 import { Struct } from 'ketcher-core'
 import StructRender from '../../component/structrender'
 import classes from './TemplateTable.module.less'
 import { greekify } from '../../utils'
-import EmptySearchResult from './EmptySearchResult'
 
 interface TemplateTableProps {
   templates: Array<Template>
@@ -40,7 +40,6 @@ export interface Template {
 }
 
 function tmplName(tmpl: Template, i: number): string {
-  console.assert(tmpl.props && tmpl.props.group, 'No group')
   return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`
 }
 

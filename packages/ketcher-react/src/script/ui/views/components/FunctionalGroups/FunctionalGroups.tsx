@@ -89,7 +89,6 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
 
   const handleResult = (): Result | null => {
     const tmpl = selected
-    console.assert(!tmpl || tmpl.props, 'Incorrect SDF parse')
     return tmpl
       ? {
           struct: tmpl.struct,

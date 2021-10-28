@@ -47,7 +47,6 @@ function keyHandle(dispatch, state, hotKeys, event) {
   let group = null
 
   if (key && key.length === 1 && atomsSelected && key.match(/\w/)) {
-    console.assert(atomsSelected.length > 0)
     openDialog(dispatch, 'labelEdit', { letter: key })
       .then(res => {
         dispatch(onAction({ tool: 'atom', opts: res }))

@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Vec2 } from './vec2'
+import assert from 'assert'
 
 export class HalfBond {
   begin: number
@@ -35,7 +36,7 @@ export class HalfBond {
   rightNeighbor: number
 
   constructor(begin: number, end: number, bid: number) {
-    console.assert(arguments.length === 3, 'Invalid parameter number!')
+    assert(arguments.length === 3, 'Invalid parameter number.')
 
     this.begin = begin
     this.end = end

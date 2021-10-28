@@ -226,8 +226,9 @@ export class Atom {
   }
 
   static attrGetDefault(attr: string) {
-    if (attr in Atom.attrlist) return Atom.attrlist[attr]
-    return console.assert(false, 'Attribute unknown')
+    if (attr in Atom.attrlist) {
+      return Atom.attrlist[attr]
+    }
   }
 
   clone(fidMap: Map<number, number>): Atom {
@@ -507,7 +508,6 @@ export class Atom {
     const label = this.label
     const element = Elements.get(this.label)
     if (!element) {
-      console.assert('Element ' + label + ' unknown')
       // query atom, skip
       this.implicitH = 0
       return 0

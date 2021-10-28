@@ -999,8 +999,6 @@ function aromaticBondPaths(a2, a3, b2, b3, mask, dash) {
 function recenterText(path, rbb) {
   // TODO: find a better way
   if (Raphael.vml) {
-    // dirty hack
-    console.assert(null, "Souldn't go here!")
     var gap = rbb.height * 0.16
     path.translateAbs(0, gap)
     rbb.y += gap

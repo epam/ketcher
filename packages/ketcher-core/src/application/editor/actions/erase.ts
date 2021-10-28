@@ -31,6 +31,7 @@ import {
 } from './sgroup'
 
 import { Action } from './action'
+import assert from 'assert'
 import { atomGetDegree } from './utils'
 import { fromBondStereoUpdate } from '../actions/bond'
 import { fromFragmentSplit } from './fragment'
@@ -86,8 +87,8 @@ export function fromOneBondDeletion(restruct, id) {
 }
 
 export function fromFragmentDeletion(restruct, selection) {
-  // eslint-disable-line max-statements
-  console.assert(!!selection)
+  assert(!!selection != null)
+
   let action = new Action()
   const atomsToRemove: Array<number> = []
   const frids: Array<number> = []

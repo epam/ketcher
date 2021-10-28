@@ -53,17 +53,7 @@ RGroupFragmentTool.prototype.click = function (event) {
       this.functionalGroups,
       ce.id
     )
-    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
-    if (
-      atomFromStruct &&
-      !FunctionalGroup.isAtomInContractedFinctionalGroup(
-        atomFromStruct,
-        this.sgroups,
-        this.functionalGroups,
-        true
-      )
-    )
-      atomResult.push(atomId)
+    if (atomId !== null) atomResult.push(atomId)
   }
   if (ce && this.functionalGroups && ce.map === 'bonds') {
     const bondId = FunctionalGroup.bondsInFunctionalGroup(
@@ -71,17 +61,7 @@ RGroupFragmentTool.prototype.click = function (event) {
       this.functionalGroups,
       ce.id
     )
-    const bondFromStruct = bondId !== null && this.struct.bonds.get(bondId).b
-    if (
-      bondFromStruct &&
-      !FunctionalGroup.isBondInContractedFunctionalGroup(
-        bondFromStruct,
-        this.sgroups,
-        this.functionalGroups,
-        true
-      )
-    )
-      bondResult.push(bondId)
+    if (bondId !== null) bondResult.push(bondId)
   }
   if (atomResult.length > 0) {
     for (let id of atomResult) {

@@ -161,6 +161,7 @@ SelectTool.prototype.mousedown = function (event) {
 
   if (!ci) {
     //  ci.type == 'Canvas'
+    this.editor.selection(null)
     delete this.dragCtx.item
     if (!this.lassoHelper.fragment) this.lassoHelper.begin(event)
     return true
@@ -280,17 +281,40 @@ SelectTool.prototype.mousemove = function (event) {
 
 SelectTool.prototype.mouseup = function (event) {
   const selected = this.editor.selection()
+  let newSelected = { atoms: [] }
+  let actualSgroup
   const atomsResult = []
   const bondsResult = []
-  const result = []
+  const preResult = []
 
-  if (selected && this.functionalGroups && selected.atoms) {
+  if (selected && this.functionalGroups.size && selected.atoms) {
     for (let atom of selected.atoms) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         this.functionalGroups,
         atom
       )
       const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
+
+      if (atomFromStruct) {
+        for (let sgId of atomFromStruct.sgs.values()) {
+          actualSgroup = sgId
+        }
+      }
+      if (
+        atomFromStruct &&
+        FunctionalGroup.isAtomInContractedFinctionalGroup(
+          atomFromStruct,
+          this.sgroups,
+          this.functionalGroups,
+          true
+        )
+      ) {
+        const sgroupAtoms =
+          actualSgroup !== undefined &&
+          this.struct.sgroups.get(actualSgroup).item.atoms
+        atom === sgroupAtoms[0] && newSelected.atoms.push(...sgroupAtoms)
+      }
+
       if (
         atomFromStruct &&
         !FunctionalGroup.isAtomInContractedFinctionalGroup(
@@ -303,7 +327,7 @@ SelectTool.prototype.mouseup = function (event) {
         atomsResult.push(atomId)
     }
   }
-  if (selected && this.functionalGroups && selected.bonds) {
+  if (selected && this.functionalGroups.size && selected.bonds) {
     for (let bond of selected.bonds) {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         this.molecule,
@@ -329,7 +353,7 @@ SelectTool.prototype.mouseup = function (event) {
         this.functionalGroups,
         id
       )
-      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+      if (fgId !== null && !preResult.includes(fgId)) preResult.push(fgId)
     }
   }
   if (bondsResult.length > 0) {
@@ -339,13 +363,25 @@ SelectTool.prototype.mouseup = function (event) {
         this.functionalGroups,
         id
       )
-      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+      if (fgId !== null && !preResult.includes(fgId)) preResult.push(fgId)
     }
   }
-  if (result.length > 0) {
-    this.editor.selection(null)
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    this.lassoHelper.cancel()
+  if (preResult.length > 0) {
+    const result = []
+    const sgroups = this.sgroups
+    preResult.forEach(fgId => {
+      const sgAtoms = sgroups.get(fgId).item.atoms
+      sgAtoms.forEach(atom => {
+        !atomsResult.includes(atom) &&
+          !result.includes(fgId) &&
+          result.push(fgId)
+      })
+    })
+    if (result.length > 0) {
+      this.editor.selection(null)
+      this.editor.event.removeFG.dispatch({ fgIds: result })
+      this.lassoHelper.cancel()
+    }
   }
   // eslint-disable-line max-statements
   const editor = this.editor
@@ -366,7 +402,10 @@ SelectTool.prototype.mouseup = function (event) {
     delete this.dragCtx
   } else if (this.lassoHelper.running()) {
     // TODO it catches more events than needed, to be re-factored
-    const sel = this.lassoHelper.end()
+    const sel =
+      newSelected.atoms.length > 0
+        ? selMerge(this.lassoHelper.end(), newSelected)
+        : this.lassoHelper.end()
     editor.selection(!event.shiftKey ? sel : selMerge(sel, editor.selection()))
   } else if (this.lassoHelper.fragment) {
     if (!event.shiftKey) editor.selection(null)
@@ -527,7 +566,7 @@ function closestToSel(ci) {
 }
 
 // TODO: deep-merge?
-function selMerge(selection, add, reversible) {
+export function selMerge(selection, add, reversible) {
   if (add) {
     Object.keys(add).forEach(item => {
       if (!selection[item]) selection[item] = add[item].slice()

@@ -27,6 +27,8 @@ import {
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
+import { xor } from 'lodash/fp'
+import { selMerge } from './select'
 
 function EraserTool(editor, blockedEntities, mode) {
   if (!(this instanceof EraserTool)) {
@@ -74,17 +76,40 @@ EraserTool.prototype.mousemove = function (event) {
 
 EraserTool.prototype.mouseup = function (event) {
   const selected = this.editor.selection()
+  let newSelected = { atoms: [] }
+  let actualSgroup
   const atomsResult = []
   const bondsResult = []
   const preResult = []
 
-  if (selected && this.functionalGroups && selected.atoms) {
+  if (selected && this.functionalGroups.size && selected.atoms) {
     for (let atom of selected.atoms) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         this.functionalGroups,
         atom
       )
       const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
+
+      if (atomFromStruct) {
+        for (let sgId of atomFromStruct.sgs.values()) {
+          actualSgroup = sgId
+        }
+      }
+      if (
+        atomFromStruct &&
+        FunctionalGroup.isAtomInContractedFinctionalGroup(
+          atomFromStruct,
+          this.sgroups,
+          this.functionalGroups,
+          true
+        )
+      ) {
+        const sgroupAtoms =
+          actualSgroup !== undefined &&
+          this.struct.sgroups.get(actualSgroup).item.atoms
+        atom === sgroupAtoms[0] && newSelected.atoms.push(...sgroupAtoms)
+      }
+
       if (
         atomFromStruct &&
         !FunctionalGroup.isAtomInContractedFinctionalGroup(
@@ -97,7 +122,7 @@ EraserTool.prototype.mouseup = function (event) {
         atomsResult.push(atomId)
     }
   }
-  if (selected && this.functionalGroups && selected.bonds) {
+  if (selected && this.functionalGroups.size && selected.bonds) {
     for (let bond of selected.bonds) {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         this.molecule,
@@ -159,9 +184,11 @@ EraserTool.prototype.mouseup = function (event) {
 
   if (this.lassoHelper.running()) {
     // TODO it catches more events than needed, to be re-factored
-    this.editor.update(
-      fromFragmentDeletion(rnd.ctab, this.lassoHelper.end(event))
-    )
+    const sel =
+      newSelected.atoms.length > 0
+        ? selMerge(this.lassoHelper.end(event), newSelected)
+        : this.lassoHelper.end(event)
+    this.editor.update(fromFragmentDeletion(rnd.ctab, sel))
     this.editor.selection(null)
   }
 }

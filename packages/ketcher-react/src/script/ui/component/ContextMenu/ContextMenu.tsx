@@ -16,11 +16,11 @@ const FGContextMenu = () => {
   const handleExpand = () => {
     const editor = getKetcherInstance().editor as any
     const action = new Action()
-    console.log(targetItems)
+    const expandData = targetItems[0].isExpanded
     targetItems?.forEach(item => {
       action.mergeWith(
         setExpandSGroup(editor.render.ctab, item.relatedSGroupId, {
-          expanded: !item.isExpanded
+          expanded: !expandData
         })
       )
     })

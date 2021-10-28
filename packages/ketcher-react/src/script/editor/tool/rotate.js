@@ -38,6 +38,15 @@ function RotateTool(editor, dir) {
       Object.keys(selection).length === 1 &&
       selection.bonds.length === 1
 
+    if (restruct.molecule.functionalGroups.size) {
+      const functionalGroups = editor.render.ctab.molecule.functionalGroups
+      const result = []
+      for (let fg of functionalGroups.values()) {
+        result.push(fg.relatedSGroupId)
+      }
+      editor.event.removeFG.dispatch({ fgIds: result })
+      return
+    }
     const action = !singleBond
       ? fromFlip(restruct, selection, dir)
       : fromBondAlign(restruct, selection.bonds[0], dir)
@@ -55,7 +64,7 @@ function RotateTool(editor, dir) {
 }
 
 RotateTool.prototype.mousedown = function (event) {
-  if (this.functionalGroups.size > 0) {
+  if (this.functionalGroups.size) {
     const result = []
     for (let fg of this.functionalGroups.values()) {
       result.push(fg.relatedSGroupId)

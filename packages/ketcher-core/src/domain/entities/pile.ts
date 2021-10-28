@@ -17,7 +17,7 @@
 export class Pile<TValue = any> extends Set<TValue> {
   // TODO: it's used only in dfs.js in one place in some strange way.
   // Should be removed after dfs.js refactoring
-  find(predicate: (TValue) => boolean) {
+  find(predicate: (item: TValue) => boolean) {
     for (const item of this) {
       if (predicate(item)) return item
     }

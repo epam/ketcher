@@ -14,12 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromAtomsAttrs } from 'ketcher-core'
+import { fromAtomsAttrs, FunctionalGroup } from 'ketcher-core'
 
 function APointTool(editor) {
   if (!(this instanceof APointTool)) return new APointTool(editor)
 
   this.editor = editor
+  this.sgroups = editor.render.ctab.sgroups
+  this.struct = editor.render.ctab
+  this.molecule = editor.render.ctab.molecule
+  this.functionalGroups = this.molecule.functionalGroups
   this.editor.selection(null)
 }
 
@@ -31,6 +35,38 @@ APointTool.prototype.click = function (event) {
   var editor = this.editor
   var struct = editor.render.ctab.molecule
   var ci = editor.findItem(event, ['atoms'])
+  const atomResult = []
+  const result = []
+  if (ci && this.functionalGroups && ci.map === 'atoms') {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
+    if (
+      atomFromStruct &&
+      !FunctionalGroup.isAtomInContractedFinctionalGroup(
+        atomFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      atomResult.push(atomId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
 
   if (ci && ci.map === 'atoms') {
     this.editor.hover(null)

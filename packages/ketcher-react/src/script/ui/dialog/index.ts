@@ -40,6 +40,7 @@ import Sgroup from './toolbox/sgroup'
 import TemplateAttach from './template/template-attach'
 import TemplatesDialog from './template/TemplateDialog'
 import Text from '../views/modal/components/Text'
+import { RemoveFG } from '../views/modal/components/toolbox/FG/RemoveFG'
 import { FunctionalGroups } from '../views/components/FunctionalGroups'
 
 export default {
@@ -61,6 +62,7 @@ export default {
   enhancedStereo: EnhancedStereo,
   labelEdit: LabelEdit,
   rgroupLogic: RgroupLogic,
+  removeFG: RemoveFG,
   save: Save,
   settings: Settings,
   sgroup: Sgroup,

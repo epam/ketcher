@@ -38,6 +38,10 @@ export class FunctionalGroup {
     return this.#sgroup.data.expanded
   }
 
+  get relatedSGroup(): SGroup {
+    return this.#sgroup
+  }
+
   static isFunctionalGroup(sgroup): boolean {
     const provider = FunctionalGroupsProvider.getInstance()
     const types = provider.getFunctionalGroupsList()
@@ -45,6 +49,50 @@ export class FunctionalGroup {
       types.some(type => type.name === sgroup.data.name) &&
       sgroup.type === 'SUP'
     )
+  }
+
+  static atomsInFunctionalGroup(functionalGroups, atom): number | null {
+    if (functionalGroups.size === 0) {
+      return null
+    }
+    for (let fg of functionalGroups.values()) {
+      if (fg.relatedSGroup.atoms.includes(atom)) return atom
+    }
+    return null
+  }
+
+  static bondsInFunctionalGroup(
+    molecule,
+    functionalGroups,
+    bond
+  ): number | null {
+    if (functionalGroups.size === 0) {
+      return null
+    }
+    for (let fg of functionalGroups.values()) {
+      const bonds = SGroup.getBonds(molecule, fg.relatedSGroup)
+      if (bonds.includes(bond)) return bond
+    }
+    return null
+  }
+
+  static findFunctionalGroupByAtom(functionalGroups, atom): number | null {
+    for (let fg of functionalGroups.values()) {
+      if (fg.relatedSGroup.atoms.includes(atom)) return fg.relatedSGroupId
+    }
+    return null
+  }
+
+  static findFunctionalGroupByBond(
+    molecule,
+    functionalGroups,
+    bond
+  ): number | null {
+    for (let fg of functionalGroups.values()) {
+      const bonds = SGroup.getBonds(molecule, fg.relatedSGroup)
+      if (bonds.includes(bond)) return fg.relatedSGroupId
+    }
+    return null
   }
 
   static clone(functionalGroup: FunctionalGroup): FunctionalGroup {

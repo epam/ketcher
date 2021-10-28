@@ -19,7 +19,8 @@ import {
   Vec2,
   bondChangingAction,
   fromBondAddition,
-  fromBondsAttrs
+  fromBondsAttrs,
+  FunctionalGroup
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -42,9 +43,79 @@ function BondTool(editor, bondProps) {
   this.editor = editor
   this.atomProps = { label: 'C' }
   this.bondProps = bondProps
+  this.struct = editor.render.ctab
+  this.sgroups = editor.render.ctab.sgroups
+  this.molecule = editor.render.ctab.molecule
+  this.functionalGroups = this.molecule.functionalGroups
 }
 
 BondTool.prototype.mousedown = function (event) {
+  if (this.dragCtx) return
+  const ci = this.editor.findItem(event, ['atoms', 'bonds'])
+  const atomResult = []
+  const bondResult = []
+  const result = []
+  if (ci && this.functionalGroups && ci.map === 'atoms') {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      ci.id
+    )
+    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
+    if (
+      atomId &&
+      !FunctionalGroup.isBondInContractedFunctionalGroup(
+        atomFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      atomResult.push(atomId)
+  }
+  if (ci && this.functionalGroups && ci.map === 'bonds') {
+    const bondId = FunctionalGroup.bondsInFunctionalGroup(
+      this.molecule,
+      this.functionalGroups,
+      ci.id
+    )
+    const bondFromStruct = bondId !== null && this.struct.bonds.get(bondId).b
+    if (
+      bondId &&
+      !FunctionalGroup.isBondInContractedFunctionalGroup(
+        bondFromStruct,
+        this.sgroups,
+        this.functionalGroups,
+        true
+      )
+    )
+      bondResult.push(bondId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  } else if (bondResult.length > 0) {
+    for (let id of bondResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
   const rnd = this.editor.render
   this.editor.hover(null)
   this.editor.selection(null)
@@ -87,6 +158,40 @@ BondTool.prototype.mousemove = function (event) {
         i1 = this.atomProps
         p1 = dragCtx.xy0
         i2 = editor.findItem(event, ['atoms'])
+        const atomResult = []
+        const result = []
+        if (i2 && i2.map === 'atoms' && this.functionalGroups && this.dragCtx) {
+          const atomId = FunctionalGroup.atomsInFunctionalGroup(
+            this.functionalGroups,
+            i2.id
+          )
+          const atomFromStruct =
+            atomId !== null && this.struct.atoms.get(atomId).a
+          if (
+            atomFromStruct &&
+            !FunctionalGroup.isAtomInContractedFinctionalGroup(
+              atomFromStruct,
+              this.sgroups,
+              this.functionalGroups,
+              true
+            )
+          )
+            atomResult.push(atomId)
+        }
+        if (atomResult.length > 0) {
+          for (let id of atomResult) {
+            const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+              this.functionalGroups,
+              id
+            )
+            fgId !== null && !result.includes(fgId) && result.push(fgId)
+          }
+        }
+        if (result.length > 0) {
+          this.editor.event.removeFG.dispatch({ fgIds: result })
+          delete this.dragCtx
+          return
+        }
       }
       let dist = Number.MAX_VALUE
       if (i2 && i2.map === 'atoms') {

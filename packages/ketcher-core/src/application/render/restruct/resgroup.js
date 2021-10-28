@@ -442,24 +442,23 @@ function getHighlighPathInfo(sgroup, options) {
   const a1 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p1.y)
   const b0 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p0.y)
   const b1 = Vec2.lc2(d, bracketBox.p1.x, n, bracketBox.p1.y)
-
+  const size = options.contractedFunctionalGroupSize
+  let startX = (b0.x + a0.x) / 2 - size / 2
+  let startY = (a1.y + a0.y) / 2 - size / 2
   if (sgroup.firstSgroupAtom) {
-    const size = options.contractedFunctionalGroupSize
     const shift = new Vec2(size / 2, size / 2, 0)
     const highlightPp = Vec2.diff(sgroup.firstSgroupAtom.pp.scaled(40), shift)
-    const startX = highlightPp.x
-    const startY = highlightPp.y
-    return {
-      startX,
-      startY,
-      size
-    }
+    startX = highlightPp.x
+    startY = highlightPp.y
   }
   return {
     a0,
     a1,
     b0,
-    b1
+    b1,
+    startX,
+    startY,
+    size
   }
 }
 

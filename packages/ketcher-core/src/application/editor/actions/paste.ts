@@ -152,6 +152,12 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 }
 
 function getStructCenter(struct) {
+  if (
+    struct.sgroups.values().next().value &&
+    !struct.sgroups.get(0).data.expanded
+  ) {
+    return struct.atoms.get(0).pp
+  }
   if (struct.atoms.size > 0) {
     let xmin = 1e50
     let ymin = xmin

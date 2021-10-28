@@ -32,6 +32,8 @@ function TemplateTool(editor, tmpl) {
 
   this.editor = editor
   this.mode = tmpl.mode
+  this.sgroups = editor.render.ctab.sgroups
+  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
   this.editor.selection(null)
 
   this.template = {

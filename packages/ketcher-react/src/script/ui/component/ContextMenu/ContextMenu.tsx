@@ -52,22 +52,36 @@ const FGContextMenu = () => {
     setShowSGroupMenu(false)
     setTargetItems([])
     const selectedItems = [] as Array<any>
+    let fgId
 
     const ci = editor.findItem(
       {
         pageX: e.detail.position.x,
         pageY: e.detail.position.y
       },
-      ['sgroups', 'atoms']
+      ['sgroups', 'atoms', 'bonds']
     )
     if (ci) {
       switch (ci.map) {
         case 'atoms':
-          const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+          fgId = FunctionalGroup.findFunctionalGroupByAtom(
             struct.functionalGroups,
             ci.id
           )
-          fgId &&
+          fgId !== null &&
+            struct.functionalGroups.forEach(fg => {
+              fg.relatedSGroupId === fgId &&
+                !selectedItems.includes(fg) &&
+                selectedItems.push(fg)
+            })
+          break
+        case 'bonds':
+          fgId = FunctionalGroup.findFunctionalGroupByBond(
+            struct,
+            struct.functionalGroups,
+            ci.id
+          )
+          fgId !== null &&
             struct.functionalGroups.forEach(fg => {
               fg.relatedSGroupId === fgId &&
                 !selectedItems.includes(fg) &&

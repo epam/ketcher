@@ -49,20 +49,20 @@ const RemoveFG = (props: Props) => {
       className={classes.window}>
       <header className={classes.header}>Remove Functional Group</header>
       <div className={classes.question}>
-        Are you sure you want to remove chosen Functional Groups to edit unique
-        atoms and bonds?
+        Are you sure you want to remove the abbreviation? It will turn
+        Functional Group to separate atoms and bonds.
       </div>
       <footer className={classes.footer}>
         <input
           type="button"
           value={'No'}
-          className={classes.button_cancel}
+          className={classes.buttonCancel}
           onClick={() => exit('onOk', false)}
         />
         <input
           type="button"
           value={'Yes'}
-          className={classes.button_ok}
+          className={classes.buttonOk}
           onClick={() => exit('onOk', remove())}
         />
       </footer>

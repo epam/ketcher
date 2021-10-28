@@ -45,22 +45,12 @@ ChargeTool.prototype.click = function (event) {
   const ci = editor.findItem(event, ['atoms', 'bonds'])
   const atomResult = []
   const result = []
-  if (ci && this.functionalGroups && ci.map === 'atoms') {
+  if (ci && this.functionalGroups.size && ci.map === 'atoms') {
     const atomId = FunctionalGroup.atomsInFunctionalGroup(
       this.functionalGroups,
       ci.id
     )
-    const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
-    if (
-      atomFromStruct &&
-      !FunctionalGroup.isAtomInContractedFinctionalGroup(
-        atomFromStruct,
-        this.sgroups,
-        this.functionalGroups,
-        true
-      )
-    )
-      atomResult.push(atomId)
+    if (atomId !== null) atomResult.push(atomId)
   }
   if (atomResult.length > 0) {
     for (let id of atomResult) {

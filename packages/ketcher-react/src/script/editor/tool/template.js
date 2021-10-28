@@ -60,7 +60,7 @@ function TemplateTool(editor, tmpl) {
   }
 
   const bond = frag.bonds.get(this.template.bid)
-  if (bond) {
+  if (bond && this.mode !== 'fg') {
     // template location sign against attachment bond
     this.template.sign = getSign(frag, bond, this.template.xy0)
     this.findItems.push('bonds')

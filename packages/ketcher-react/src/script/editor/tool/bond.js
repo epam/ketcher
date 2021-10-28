@@ -25,10 +25,10 @@ import {
 
 import utils from '../shared/utils'
 
-function BondTool(editor, blockedEntities, bondProps) {
+function BondTool(editor, bondProps) {
   if (!(this instanceof BondTool)) {
     if (!editor.selection() || !editor.selection().bonds)
-      return new BondTool(editor, blockedEntities, bondProps)
+      return new BondTool(editor, bondProps)
 
     const action = fromBondsAttrs(
       editor.render.ctab,
@@ -40,7 +40,6 @@ function BondTool(editor, blockedEntities, bondProps) {
     return null
   }
 
-  this.blockedEntities = blockedEntities
   this.editor = editor
   this.atomProps = { label: 'C' }
   this.bondProps = bondProps

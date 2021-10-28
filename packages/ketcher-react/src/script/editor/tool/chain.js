@@ -28,11 +28,9 @@ import {
 import { atomLongtapEvent } from './atom'
 import utils from '../shared/utils'
 
-function ChainTool(editor, blockedEntities) {
-  if (!(this instanceof ChainTool))
-    return new ChainTool(editor, blockedEntities)
+function ChainTool(editor) {
+  if (!(this instanceof ChainTool)) return new ChainTool(editor)
 
-  this.blockedEntities = blockedEntities
   this.editor = editor
   this.editor.selection(null)
   this.struct = editor.render.ctab

@@ -16,11 +16,9 @@
 
 import { fromAtomsAttrs, FunctionalGroup } from 'ketcher-core'
 
-function APointTool(editor, blockedEntities) {
-  if (!(this instanceof APointTool))
-    return new APointTool(editor, blockedEntities)
+function APointTool(editor) {
+  if (!(this instanceof APointTool)) return new APointTool(editor)
 
-  this.blockedEntities = blockedEntities
   this.editor = editor
   this.sgroups = editor.render.ctab.sgroups
   this.struct = editor.render.ctab

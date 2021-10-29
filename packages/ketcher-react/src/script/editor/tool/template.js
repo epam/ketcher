@@ -21,7 +21,8 @@ import {
   fromTemplateOnBondAction,
   fromTemplateOnCanvas,
   getHoverToFuse,
-  getItemsToFuse
+  getItemsToFuse,
+  FunctionalGroup
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -32,8 +33,10 @@ function TemplateTool(editor, tmpl) {
 
   this.editor = editor
   this.mode = tmpl.mode
-  this.sgroups = editor.render.ctab.sgroups
-  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
+  this.struct = editor.render.ctab
+  this.sgroups = this.struct.sgroups
+  this.molecule = this.struct.molecule
+  this.functionalGroups = this.molecule.functionalGroups
   this.editor.selection(null)
 
   this.template = {
@@ -73,6 +76,59 @@ function TemplateTool(editor, tmpl) {
 }
 
 TemplateTool.prototype.mousedown = function (event) {
+  const closestItem = this.editor.findItem(event, ['atoms', 'bonds'])
+  const atomResult = []
+  const bondResult = []
+  const result = []
+  if (
+    closestItem &&
+    this.functionalGroups.size &&
+    closestItem.map === 'atoms'
+  ) {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      this.functionalGroups,
+      closestItem.id
+    )
+    if (atomId !== null) atomResult.push(atomId)
+  }
+  if (
+    closestItem &&
+    this.functionalGroups.size &&
+    closestItem.map === 'bonds'
+  ) {
+    const bondId = FunctionalGroup.bondsInFunctionalGroup(
+      this.molecule,
+      this.functionalGroups,
+      closestItem.id
+    )
+    if (bondId !== null) bondResult.push(bondId)
+  }
+  if (atomResult.length > 0) {
+    for (let id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  } else if (bondResult.length > 0) {
+    for (let id of bondResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  }
   // eslint-disable-line max-statements
   const editor = this.editor
   const restruct = editor.render.ctab

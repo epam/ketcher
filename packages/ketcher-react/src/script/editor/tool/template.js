@@ -76,22 +76,30 @@ function TemplateTool(editor, tmpl) {
 }
 
 TemplateTool.prototype.mousedown = function (event) {
-  const ce = this.editor.findItem(event, ['atoms', 'bonds'])
+  const closestItem = this.editor.findItem(event, ['atoms', 'bonds'])
   const atomResult = []
   const bondResult = []
   const result = []
-  if (ce && this.functionalGroups.size && ce.map === 'atoms') {
+  if (
+    closestItem &&
+    this.functionalGroups.size &&
+    closestItem.map === 'atoms'
+  ) {
     const atomId = FunctionalGroup.atomsInFunctionalGroup(
       this.functionalGroups,
-      ce.id
+      closestItem.id
     )
     if (atomId !== null) atomResult.push(atomId)
   }
-  if (ce && this.functionalGroups.size && ce.map === 'bonds') {
+  if (
+    closestItem &&
+    this.functionalGroups.size &&
+    closestItem.map === 'bonds'
+  ) {
     const bondId = FunctionalGroup.bondsInFunctionalGroup(
       this.molecule,
       this.functionalGroups,
-      ce.id
+      closestItem.id
     )
     if (bondId !== null) bondResult.push(bondId)
   }

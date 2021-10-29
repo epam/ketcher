@@ -60,28 +60,38 @@ PasteTool.prototype.mousemove = function (event) {
   this.editor.hover(getHoverToFuse(this.mergeItems))
 }
 
-PasteTool.prototype.mouseup = function (event) {
-  const ci = this.editor.findItem(event, ['atoms', 'bonds'])
-  const atomResult = []
-  const bondResult = []
+PasteTool.prototype.mouseup = function () {
+  const atomsResult = []
+  const bondsResult = []
   const result = []
-  if (ci && this.functionalGroups.size && ci.map === 'atoms') {
-    const atomId = FunctionalGroup.atomsInFunctionalGroup(
-      this.functionalGroups,
-      ci.id
-    )
-    if (atomId !== null) atomResult.push(atomId)
+  if (
+    this.mergeItems &&
+    this.functionalGroups.size &&
+    this.mergeItems.atoms.size
+  ) {
+    for (let id of this.mergeItems.atoms.values()) {
+      const atomId = FunctionalGroup.atomsInFunctionalGroup(
+        this.functionalGroups,
+        id
+      )
+      if (atomId !== null) atomsResult.push(atomId)
+    }
   }
-  if (ci && this.functionalGroups.size && ci.map === 'bonds') {
-    const bondId = FunctionalGroup.bondsInFunctionalGroup(
-      this.molecule,
-      this.functionalGroups,
-      ci.id
-    )
-    if (bondId !== null) bondResult.push(bondId)
+  if (
+    this.mergeItems &&
+    this.functionalGroups.size &&
+    this.mergeItems.bonds.size
+  ) {
+    for (let id of this.mergeItems.bonds.values()) {
+      const bondId = FunctionalGroup.atomsInFunctionalGroup(
+        this.functionalGroups,
+        id
+      )
+      if (bondId !== null) bondsResult.push(bondId)
+    }
   }
-  if (atomResult.length > 0) {
-    for (let id of atomResult) {
+  if (atomsResult.length > 0) {
+    for (let id of atomsResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
         id
@@ -92,8 +102,10 @@ PasteTool.prototype.mouseup = function (event) {
     }
     this.editor.event.removeFG.dispatch({ fgIds: result })
     return
-  } else if (bondResult.length > 0) {
-    for (let id of bondResult) {
+  }
+
+  if (bondsResult.length > 0) {
+    for (let id of bondsResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,
         this.functionalGroups,

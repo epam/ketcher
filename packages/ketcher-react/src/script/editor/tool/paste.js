@@ -102,9 +102,7 @@ PasteTool.prototype.mouseup = function () {
     }
     this.editor.event.removeFG.dispatch({ fgIds: result })
     return
-  }
-
-  if (bondsResult.length > 0) {
+  } else if (bondsResult.length > 0) {
     for (let id of bondsResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,

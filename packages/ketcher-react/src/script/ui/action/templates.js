@@ -21,6 +21,7 @@ const templateLib = {
     shortcut: 'Shift+t',
     title: 'Custom Templates',
     action: { dialog: 'templates' },
+    selected: editor => editor._tool.mode === 'classic',
     disabled: (editor, server, options) => !options.app.templates
   }
 }

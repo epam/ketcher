@@ -87,7 +87,7 @@ const TemplateTable: FC<TemplateTableProps> = props => {
               key={
                 tmpl.struct.name !== selected?.struct.name
                   ? `${tmpl.struct.name}_${i}`
-                  : `${tmpl.struct.name}_selected`
+                  : `${tmpl.struct.name}_${i}_selected`
               }
               style={tmplStyles}>
               <RenderTmpl

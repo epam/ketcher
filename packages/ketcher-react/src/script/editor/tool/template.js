@@ -286,8 +286,10 @@ TemplateTool.prototype.mousemove = function (event) {
 
   this.editor.update(dragCtx.action, true)
 
-  dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
-  this.editor.hover(getHoverToFuse(dragCtx.mergeItems))
+  if (this.mode !== 'fg') {
+    dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
+    this.editor.hover(getHoverToFuse(dragCtx.mergeItems))
+  }
 
   return true
 }
@@ -377,9 +379,11 @@ TemplateTool.prototype.mouseup = function (event) {
         true
       ).then(([action, pasteItems]) => {
         // eslint-disable-line no-shadow
-        const mergeItems = getItemsToFuse(this.editor, pasteItems)
-        action = fromItemsFuse(restruct, mergeItems).mergeWith(action)
-        this.editor.update(action)
+        if (this.mode !== 'fg') {
+          const mergeItems = getItemsToFuse(this.editor, pasteItems)
+          action = fromItemsFuse(restruct, mergeItems).mergeWith(action)
+          this.editor.update(action)
+        }
       })
 
       return true
@@ -388,7 +392,7 @@ TemplateTool.prototype.mouseup = function (event) {
 
   this.editor.selection(null)
 
-  if (!dragCtx.mergeItems && pasteItems)
+  if (!dragCtx.mergeItems && pasteItems && this.mode !== 'fg')
     dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
   dragCtx.action = dragCtx.action
     ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)

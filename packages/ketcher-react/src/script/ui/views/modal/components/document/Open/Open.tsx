@@ -16,8 +16,6 @@
 
 import { BaseCallProps, BaseProps } from '../../../modal.types'
 import { FC, useState } from 'react'
-
-import ClipArea from '../../../../../component/cliparea/cliparea'
 import { Dialog } from '../../../../components'
 import OpenButton from '../../../../../component/view/openbutton'
 import classes from './Open.module.less'
@@ -82,10 +80,6 @@ const Open: FC<Props> = props => {
         />
         Load as a fragment and copy to the Clipboard
       </label>
-      <ClipArea
-        focused={() => true}
-        onCopy={() => ({ 'text/plain': structStr })}
-      />
     </Dialog>
   )
 }

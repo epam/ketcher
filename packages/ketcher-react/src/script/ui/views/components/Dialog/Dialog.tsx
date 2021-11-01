@@ -91,14 +91,7 @@ const Dialog: FC<Props> = props => {
       tabIndex={-1}
       className={clsx(styles.form, className, params.className)}
       {...rest}>
-      <header>
-        {title}
-        {title && (
-          <button className={styles.close} onClick={() => exit('Cancel')}>
-            ×
-          </button>
-        )}
-      </header>
+      <header>{title}</header>
       <div className={styles.dialog_body}>{children}</div>
 
       <footer>
@@ -109,6 +102,7 @@ const Dialog: FC<Props> = props => {
             <input
               key={button}
               type="button"
+              className={button === 'OK' ? styles.Ok : styles.Cancel}
               value={button}
               disabled={button === 'OK' && !valid()}
               onClick={() => exit(button)}

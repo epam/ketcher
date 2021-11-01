@@ -286,8 +286,10 @@ TemplateTool.prototype.mousemove = function (event) {
 
   this.editor.update(dragCtx.action, true)
 
-  dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
-  this.editor.hover(getHoverToFuse(dragCtx.mergeItems))
+  if (this.mode !== 'fg') {
+    dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
+    this.editor.hover(getHoverToFuse(dragCtx.mergeItems))
+  }
 
   return true
 }

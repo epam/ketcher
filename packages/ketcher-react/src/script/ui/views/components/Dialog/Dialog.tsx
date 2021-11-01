@@ -102,7 +102,7 @@ const Dialog: FC<Props> = props => {
             <input
               key={button}
               type="button"
-              className={button === 'OK' ? styles.Ok : styles.Cancel}
+              className={button === 'OK' ? styles.ok : styles.cancel}
               value={button}
               disabled={button === 'OK' && !valid()}
               onClick={() => exit(button)}

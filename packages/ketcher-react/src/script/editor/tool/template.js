@@ -76,10 +76,23 @@ function TemplateTool(editor, tmpl) {
 }
 
 TemplateTool.prototype.mousedown = function (event) {
-  const closestItem = this.editor.findItem(event, ['atoms', 'bonds'])
+  const closestItem = this.editor.findItem(event, ['atoms', 'bonds', 'sgroups'])
   const atomResult = []
   const bondResult = []
+  const sGroupResult = []
   const result = []
+
+  if (
+    closestItem &&
+    this.functionalGroups.size &&
+    closestItem.map === 'sgroups' &&
+    FunctionalGroup.isContractedFunctionalGroup(
+      closestItem.id,
+      this.functionalGroups
+    )
+  ) {
+    sGroupResult.push(closestItem.id)
+  }
   if (
     closestItem &&
     this.functionalGroups.size &&
@@ -103,6 +116,11 @@ TemplateTool.prototype.mousedown = function (event) {
     )
     if (bondId !== null) bondResult.push(bondId)
   }
+  if (sGroupResult.length > 0) {
+    for (let id of sGroupResult) {
+      if (!result.includes(id)) result.push(id)
+    }
+  }
   if (atomResult.length > 0) {
     for (let id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
@@ -113,9 +131,8 @@ TemplateTool.prototype.mousedown = function (event) {
         result.push(fgId)
       }
     }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
-  } else if (bondResult.length > 0) {
+  }
+  if (bondResult.length > 0) {
     for (let id of bondResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,
@@ -126,6 +143,8 @@ TemplateTool.prototype.mousedown = function (event) {
         result.push(fgId)
       }
     }
+  }
+  if (result.length) {
     this.editor.event.removeFG.dispatch({ fgIds: result })
     return
   }

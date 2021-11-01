@@ -22,20 +22,12 @@
   color: #fff;
   margin-right: 2px;
   margin-left: 10px;
-}
-
-.Ok:hover {
-  background: #3265cd;
-}
-
-.Ok[disabled] {
-  opacity: 0.4;
-}
-
-.Cancel[disabled] {
-  border: 1px solid #5b6077;
-  background: transparent;
-  opacity: 0.4;
+  &:hover {
+    background: #3265cd;
+  }
+  &[disabled] {
+    opacity: 0.4;
+  }
 }
 
 .Cancel {
@@ -43,10 +35,14 @@
   background: #d1d5e3;
   color: #000;
   margin-left: auto;
-}
-
-.Cancel:hover {
-  background: #aaadb9;
+  &:hover {
+    background: #aaadb9;
+  }
+  &[disabled] {
+    border: 1px solid #5b6077;
+    background: transparent;
+    opacity: 0.4;
+  }
 }
 
 .form {

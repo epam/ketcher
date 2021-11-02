@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 import './ErrorModal.css'
-import clsx from 'clsx'
 
 const ErrorModal = (props: any) => {
   return (
-    <div className={clsx('modalOverlay')}>
+    <div className={'modalOverlay'}>
       <div className={'modalWindow'}>
         <header>Error message</header>
         <div className={'modalBody'}>{props.message?.message}</div>

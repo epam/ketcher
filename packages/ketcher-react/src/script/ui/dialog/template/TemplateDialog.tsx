@@ -113,9 +113,14 @@ const TemplateDialog: FC<Props> = props => {
       params={omit(['group'], rest)}
       result={() => result()}
       buttons={[
-        <SaveButton key="save-to-SDF" data={data} filename="ketcher-tmpls.sdf">
-          Save To SDF…
-        </SaveButton>,
+        group && (
+          <SaveButton
+            key="save-to-SDF"
+            data={data}
+            filename="ketcher-tmpls.sdf">
+            Save To SDF…
+          </SaveButton>
+        ),
         'Cancel',
         'OK'
       ]}>
@@ -133,18 +138,20 @@ const TemplateDialog: FC<Props> = props => {
             [classes.singleColLayout]: width && width < CONTAINER_MIN_WIDTH
           })}
           ref={ref}>
-          <Input
-            className={classes.groups}
-            classes={classes}
-            component={SelectList}
-            splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
-            value={group}
-            onChange={g => onChangeGroup(g)}
-            schema={{
-              enum: Object.keys(lib),
-              enumNames: Object.keys(lib).map(g => greekify(g))
-            }}
-          />
+          {group && (
+            <Input
+              className={classes.groups}
+              classes={classes}
+              component={SelectList}
+              splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
+              value={group}
+              onChange={g => onChangeGroup(g)}
+              schema={{
+                enum: Object.keys(lib),
+                enumNames: Object.keys(lib).map(g => greekify(g))
+              }}
+            />
+          )}
           <TemplateTable
             templates={lib[group]}
             onSelect={select}

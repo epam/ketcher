@@ -32,7 +32,7 @@
   /* .background-opacity(#777, 0.2); */
 }
 
-.modalWindow {
+.modalOverlay .modalWindow {
   padding: 10px;
   outline: 0;
   position: relative;
@@ -55,7 +55,7 @@
   max-height: 65vh;
 }
 
-.ok {
+footer .ok {
   background: #3e7bfa;
   width: 40px;
   color: #fff;
@@ -70,7 +70,7 @@
   background: #3265cd;
 }
 
-header {
+.modalWindow header {
   display: flex;
   align-items: center;
   font-size: 1.2em;
@@ -79,7 +79,7 @@ header {
   height: 40px;
 }
 
-footer {
+.modalWindow footer {
   clear: both;
   border-radius: 0 0 0.7em 0.7em;
   text-align: right;

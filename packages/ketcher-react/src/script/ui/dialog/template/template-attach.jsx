@@ -49,6 +49,12 @@ class Attach extends Component {
       : null
   }
 
+  checkUniqueName(name) {
+    return !this.props.templateLib.some(
+      tmpl => tmpl.struct.name === name && tmpl.props.group === 'User Templates'
+    )
+  }
+
   render() {
     const { name, onNameEdit, onAttachEdit, ...prop } = this.props
     const struct = this.tmpl.struct
@@ -63,17 +69,12 @@ class Attach extends Component {
         title="Template Edit"
         className={classes.attach}
         result={this.onResult}
-        valid={() => this.props.formState.valid}
+        valid={() => this.props.formState.valid && name}
         params={prop}>
         <Form
           schema={attachSchema}
           customValid={{
-            name: name =>
-              !this.props.templateLib.some(
-                tmpl =>
-                  tmpl.struct.name === name &&
-                  tmpl.props.group === 'User Templates'
-              )
+            name: name => this.checkUniqueName(name)
           }}
           {...this.props.formState}>
           <Field

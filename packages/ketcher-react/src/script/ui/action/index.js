@@ -38,17 +38,20 @@ const config = {
         if (!editor.struct().isBlank()) editor.struct(null)
         dispatch({ type: 'ACTION', action: tools['select-lasso'].action })
       }
-    }
+    },
+    hidden: options => isHidden(options, 'new')
   },
   open: {
     shortcut: 'Mod+o',
     title: 'Open…',
-    action: { dialog: 'open' }
+    action: { dialog: 'open' },
+    hidden: options => isHidden(options, 'open')
   },
   save: {
     shortcut: 'Mod+s',
     title: 'Save As…',
-    action: { dialog: 'save' }
+    action: { dialog: 'save' },
+    hidden: options => isHidden(options, 'save')
   },
   undo: {
     shortcut: 'Mod+z',
@@ -56,7 +59,8 @@ const config = {
     action: editor => {
       editor.undo()
     },
-    disabled: editor => editor.historySize().undo === 0
+    disabled: editor => editor.historySize().undo === 0,
+    hidden: options => isHidden(options, 'undo')
   },
   redo: {
     shortcut: ['Mod+Shift+z', 'Mod+y'],
@@ -64,7 +68,8 @@ const config = {
     action: editor => {
       editor.redo()
     },
-    disabled: editor => editor.historySize().redo === 0
+    disabled: editor => editor.historySize().redo === 0,
+    hidden: options => isHidden(options, 'redo')
   },
   cut: {
     shortcut: 'Mod+x',
@@ -72,7 +77,11 @@ const config = {
     action: editor => {
       exec('cut') || dontClipMessage('Cut', editor.errorHandler) // eslint-disable-line no-unused-expressions
     },
-    disabled: editor => !hasSelection(editor)
+    disabled: editor => !hasSelection(editor),
+    hidden: options => isHidden(options, 'cut')
+  },
+  copies: {
+    hidden: options => isHidden(options, 'copies')
   },
   copy: {
     shortcut: 'Mod+c',
@@ -80,7 +89,8 @@ const config = {
     action: editor => {
       exec('copy') || dontClipMessage('Copy', editor.errorHandler) // eslint-disable-line no-unused-expressions
     },
-    disabled: editor => !hasSelection(editor)
+    disabled: editor => !hasSelection(editor),
+    hidden: options => isHidden(options, 'copy')
   },
   'copy-image': {
     shortcut: 'Mod+Shift+f',
@@ -88,7 +98,8 @@ const config = {
     action: () => {
       copyImageToClipboard()
     },
-    disabled: editor => !hasSelection(editor)
+    disabled: editor => !hasSelection(editor),
+    hidden: options => isHidden(options, 'copy-image')
   },
   'copy-mol': {
     shortcut: 'Mod+m',
@@ -96,7 +107,8 @@ const config = {
     action: () => {
       copyAs('mol')
     },
-    disabled: editor => !hasSelection(editor)
+    disabled: editor => !hasSelection(editor),
+    hidden: options => isHidden(options, 'copy-mol')
   },
   'copy-ket': {
     shortcut: 'Mod+Shift+k',
@@ -104,7 +116,8 @@ const config = {
     action: () => {
       copyAs('ket')
     },
-    disabled: editor => !hasSelection(editor)
+    disabled: editor => !hasSelection(editor),
+    hidden: options => isHidden(options, 'copy-ket')
   },
   paste: {
     shortcut: 'Mod+v',
@@ -115,7 +128,8 @@ const config = {
     selected: ({ actions }) =>
       actions && // TMP
       actions.active &&
-      actions.active.tool === 'paste'
+      actions.active.tool === 'paste',
+    hidden: options => isHidden(options, 'paste')
   },
   settings: {
     title: 'Settings',
@@ -142,7 +156,8 @@ const config = {
   },
   'period-table': {
     title: 'Periodic Table',
-    action: { dialog: 'period-table' }
+    action: { dialog: 'period-table' },
+    hidden: options => isHidden(options, 'period-table')
   },
   'select-all': {
     title: 'Select All',
@@ -153,14 +168,16 @@ const config = {
         const selectionTool = getState().toolbar.visibleTools.select
         dispatch({ type: 'ACTION', action: tools[selectionTool].action })
       }
-    }
+    },
+    hidden: options => isHidden(options, 'select-all')
   },
   'deselect-all': {
     title: 'Deselect All',
     shortcut: 'Mod+Shift+a',
     action: editor => {
       editor.selection(null)
-    }
+    },
+    hidden: options => isHidden(options, 'deselect-all')
   },
   'select-descriptors': {
     title: 'Select descriptors',
@@ -173,7 +190,8 @@ const config = {
         editor.selection('descriptors')
         dispatch({ type: 'ACTION', action: tools[selectionTool].action })
       }
-    }
+    },
+    hidden: options => isHidden(options, 'select-descriptors')
   },
   ...server,
   ...debug,

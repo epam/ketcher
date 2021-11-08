@@ -532,7 +532,11 @@ SelectTool.prototype.dblclick = function (event) {
         editor.update(action)
       })
       .catch(() => null) // w/o changes
-  } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
+  } else if (
+    (ci.map === 'sgroups' &&
+      !FunctionalGroup.isFunctionalGroup(struct.sgroups.get(ci.id))) ||
+    ci.map === 'sgroupData'
+  ) {
     this.editor.selection(closestToSel(ci))
     sgroupDialog(this.editor, ci.id)
   } else if (ci.map === 'texts') {

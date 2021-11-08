@@ -3,11 +3,24 @@ import 'ketcher-react/dist/index.css'
 
 import { Ketcher, RemoteStructServiceProvider } from 'ketcher-core'
 
-import { Editor } from 'ketcher-react'
+import { Editor, ButtonsConfig } from 'ketcher-react'
 // @ts-ignore
 import Miew from 'miew'
 import ErrorModal from './ErrorModal/ErrorModal'
 import { useState } from 'react'
+
+const getHiddenButtonsConfig = (): ButtonsConfig => {
+  const searchParams = new URLSearchParams(window.location.search)
+  const hiddenButtons = searchParams.get('hiddenControls')
+
+  if (!hiddenButtons) return {}
+
+  return hiddenButtons.split(',').reduce((acc, button) => {
+    if (button) acc[button] = { hidden: true }
+
+    return acc
+  }, {})
+}
 
 ;(global as any).Miew = Miew
 
@@ -23,6 +36,8 @@ const App = () => {
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
+  const hiddenButtonsConfig = getHiddenButtonsConfig()
+
   return (
     <>
       <Editor
@@ -30,6 +45,7 @@ const App = () => {
           setHasError(true)
           setErrorMessage(message)
         }}
+        buttons={hiddenButtonsConfig}
         staticResourcesUrl={process.env.PUBLIC_URL}
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {

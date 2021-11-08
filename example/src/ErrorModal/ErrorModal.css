@@ -24,12 +24,7 @@
   bottom: 0;
   right: 0;
   z-index: 40;
-
-  /* .transition-zoom; */
-
-  /* background-image: data-uri('overlay.svg'); */
-
-  /* .background-opacity(#777, 0.2); */
+  background: rgba(119, 119, 119, 0.2) url('./overlay.svg');
 }
 
 .modalOverlay .modalWindow {

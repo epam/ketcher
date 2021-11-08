@@ -43,6 +43,9 @@ export function identifyStructFormat(
     return 'smiles'
   }
 
+  if (sanitizedString.indexOf('<CDXML') !== -1) {
+    return 'cdxml'
+  }
   // Molfile by default as Indigo does
   return 'mol'
 }

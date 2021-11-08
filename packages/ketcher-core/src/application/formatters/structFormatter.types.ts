@@ -19,6 +19,11 @@ export type SupportedFormat =
   | 'inChIAuxInfo'
   | 'cml'
   | 'graph'
+  | 'cdxml'
+
+export enum NeedToResize {
+  cdxml = 'cdxml'
+}
 
 export type FormatterFactoryOptions = Partial<
   MolSerializerOptions & StructServiceOptions

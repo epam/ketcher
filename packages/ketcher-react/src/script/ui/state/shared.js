@@ -2,7 +2,8 @@ import {
   FormatterFactory,
   Pile,
   SGroup,
-  identifyStructFormat
+  identifyStructFormat,
+  NeedToResize
 } from 'ketcher-core'
 
 import { getStereoAtomsMap } from '../../editor/actions/bond'
@@ -35,15 +36,18 @@ export function loadStruct(struct) {
 function parseStruct(struct, server, options) {
   if (typeof struct === 'string') {
     options = options || {}
-    const { rescale, fragment, ...formatterOptions } = options
+    const { fragment, ...formatterOptions } = options
 
     const format = identifyStructFormat(struct)
-    const factory = new FormatterFactory(server)
 
+    const factory = new FormatterFactory(server)
     const service = factory.create(format, formatterOptions)
-    return service.getStructureFromStringAsync(struct)
+    const resultStruct = service.getStructureFromStringAsync(struct)
+    return Promise.resolve(resultStruct).then(res => {
+      return { struct: res, format: format }
+    })
   } else {
-    return Promise.resolve(struct)
+    return Promise.resolve({ struct: struct, format: null })
   }
 }
 
@@ -56,8 +60,10 @@ export function load(struct, options) {
     options = options || {}
 
     return parseStruct(struct, server, options).then(
-      struct => {
-        const { rescale, fragment } = options
+      resolve => {
+        const { fragment } = options
+        const { struct, format } = resolve
+        const rescale = format && NeedToResize[format]
 
         if (struct.sgroups.some(sGroup => !supportedSGroupTypes[sGroup.type])) {
           const isConfirmed = window.confirm(

@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import isHidden from './isHidden'
+
 const functionalGroupsLib = {
   'functional-groups': {
     shortcut: 'Shift+f',
@@ -23,7 +25,8 @@ const functionalGroupsLib = {
     selected: editor => editor._tool.mode === 'fg',
     disabled: (_, __, options) => {
       return !options.app.functionalGroups
-    }
+    },
+    hidden: options => isHidden(options, 'functional-groups')
   }
 }
 

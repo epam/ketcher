@@ -21,29 +21,37 @@ import isHidden from './isHidden'
 import { toBondType } from '../data/convert/structconv'
 
 const toolActions = {
+  select: {
+    hidden: options => isHidden(options, 'select')
+  },
   'select-lasso': {
     title: 'Lasso Selection',
     shortcut: 'Escape',
-    action: { tool: 'select', opts: 'lasso' }
+    action: { tool: 'select', opts: 'lasso' },
+    hidden: options => isHidden(options, 'select-lasso')
   },
   'select-rectangle': {
     title: 'Rectangle Selection',
     shortcut: 'Escape',
-    action: { tool: 'select', opts: 'rectangle' }
+    action: { tool: 'select', opts: 'rectangle' },
+    hidden: options => isHidden(options, 'select-rectangle')
   },
   'select-fragment': {
     title: 'Fragment Selection',
     shortcut: 'Escape',
-    action: { tool: 'select', opts: 'fragment' }
+    action: { tool: 'select', opts: 'fragment' },
+    hidden: options => isHidden(options, 'select-fragment')
   },
   erase: {
     title: 'Erase',
     shortcut: ['Delete', 'Backspace'],
-    action: { tool: 'eraser', opts: 1 } // TODO last selector mode is better
+    action: { tool: 'eraser', opts: 1 }, // TODO last selector mode is better
+    hidden: options => isHidden(options, 'erase')
   },
   chain: {
     title: 'Chain',
-    action: { tool: 'chain' }
+    action: { tool: 'chain' },
+    hidden: options => isHidden(options, 'chain')
   },
   'enhanced-stereo': {
     shortcut: 'Alt+e',
@@ -54,27 +62,35 @@ const toolActions = {
   'charge-plus': {
     shortcut: '5',
     title: 'Charge Plus',
-    action: { tool: 'charge', opts: 1 }
+    action: { tool: 'charge', opts: 1 },
+    hidden: options => isHidden(options, 'charge-plus')
   },
   'charge-minus': {
     shortcut: '5',
     title: 'Charge Minus',
-    action: { tool: 'charge', opts: -1 }
+    action: { tool: 'charge', opts: -1 },
+    hidden: options => isHidden(options, 'charge-minus')
+  },
+  transforms: {
+    hidden: options => isHidden(options, 'transforms')
   },
   'transform-rotate': {
     shortcut: 'Alt+r',
     title: 'Rotate Tool',
-    action: { tool: 'rotate' }
+    action: { tool: 'rotate' },
+    hidden: options => isHidden(options, 'transform-rotate')
   },
   'transform-flip-h': {
     shortcut: 'Alt+h',
     title: 'Horizontal Flip',
-    action: { tool: 'rotate', opts: 'horizontal' }
+    action: { tool: 'rotate', opts: 'horizontal' },
+    hidden: options => isHidden(options, 'transform-flip-h')
   },
   'transform-flip-v': {
     shortcut: 'Alt+v',
     title: 'Vertical Flip',
-    action: { tool: 'rotate', opts: 'vertical' }
+    action: { tool: 'rotate', opts: 'vertical' },
+    hidden: options => isHidden(options, 'transform-flip-v')
   },
   sgroup: {
     shortcut: 'Mod+g',
@@ -230,8 +246,8 @@ const toolActions = {
     action: { tool: 'apoint' },
     hidden: options => isHidden(options, 'rgroup-attpoints')
   },
-  shape: {
-    hidden: options => isHidden(options, 'shape')
+  shapes: {
+    hidden: options => isHidden(options, 'shapes')
   },
   'shape-ellipse': {
     title: 'Shape Ellipse',
@@ -252,6 +268,9 @@ const toolActions = {
     title: 'Add text',
     action: { tool: 'text' },
     hidden: options => isHidden(options, 'text')
+  },
+  bonds: {
+    hidden: options => isHidden(options, 'bonds')
   }
 }
 
@@ -276,7 +295,8 @@ export default typeSchema.enum.reduce((res, type, i) => {
     action: {
       tool: 'bond',
       opts: toBondType(type)
-    }
+    },
+    hidden: options => isHidden(options, `bond-${type}`)
   }
   return res
 }, toolActions)

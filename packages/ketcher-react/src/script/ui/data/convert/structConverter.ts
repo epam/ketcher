@@ -113,7 +113,22 @@ export function couldBeSaved(
     )
   }
 
-  if (warnings.length !== 0) return warnings.join('\n')
+    if (
+        ([
+            'cml',
+            'inChI',
+            'inChIAuxInfo',
+            'smiles',
+            'smilesExt'
+        ] as SupportedFormat[]).includes(format)
+    ) {
+        if (struct.functionalGroups.size !== 0)
+            warnings.push(
+                `Structure contains functional groups. In ${formatName} information will be partly lost.`
+            )
+    }
+
+    if (warnings.length !== 0) return warnings.join('\n')
 
   return null
 }

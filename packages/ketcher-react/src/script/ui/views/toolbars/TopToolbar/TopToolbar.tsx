@@ -69,7 +69,8 @@ const TopToolbar = (props: Props) => {
       className={clsx(classes.root, className, {
         [classes.hideSeparators]:
           width && width < mediaSizes.topSeparatorsShowingWidth
-      })}>
+      })}
+    >
       <Group>
         <Item id="new" />
         <Item id="open" />

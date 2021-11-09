@@ -177,9 +177,8 @@ export function serverCall(editor, server, method, options, struct) {
     aidMap
   )
   if (selection) {
-    selectedAtoms = (selection.atoms
-      ? selection.atoms
-      : editor.explicitSelected().atoms
+    selectedAtoms = (
+      selection.atoms ? selection.atoms : editor.explicitSelected().atoms
     ).map(aid => aidMap.get(aid))
 
     if (currentStruct.hasRxnArrow()) {

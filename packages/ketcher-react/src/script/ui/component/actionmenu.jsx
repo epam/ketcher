@@ -85,7 +85,8 @@ function ActionButton({
       ref={menuRef}
       disabled={disabled}
       onClick={onClick}
-      title={shortcut ? `${action.title} (${shortcut})` : action.title}>
+      title={shortcut ? `${action.title} (${shortcut})` : action.title}
+    >
       <Icon name={name} />
       <kbd>{shortcut}</kbd>
     </button>
@@ -157,7 +158,8 @@ function ActionMenu({ name, menu, className, role, ...props }) {
     <menu
       className={className}
       role={role}
-      style={toolMargin(name, menu, props.visibleTools)}>
+      style={toolMargin(name, menu, props.visibleTools)}
+    >
       {visibleMenu.map(item => (
         <li
           key={item.id || item}
@@ -165,7 +167,8 @@ function ActionMenu({ name, menu, className, role, ...props }) {
           className={clsx(props.status[item], {
             opened: item.id === props.opened
           })}
-          onClick={ev => openHandle(ev, props.onOpen)}>
+          onClick={ev => openHandle(ev, props.onOpen)}
+        >
           {showMenuOrButton(action, item, props.status[item], props)}
           {item.menu && props.opened && renderActiveMenuItem(item, props)}
           {item.menu && <Icon name="dropdown" />}

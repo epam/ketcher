@@ -37,21 +37,10 @@ function isImage(file) {
 }
 
 function RecognizeDialog(prop) {
-  const {
-    file,
-    structStr,
-    fragment,
-    version,
-    imagoVersions,
-    ...partProps
-  } = prop
-  const {
-    onRecognize,
-    isFragment,
-    onImage,
-    onChangeImago,
-    ...props
-  } = partProps
+  const { file, structStr, fragment, version, imagoVersions, ...partProps } =
+    prop
+  const { onRecognize, isFragment, onImage, onChangeImago, ...props } =
+    partProps
   const [canPreviewImage, setCanPreviewImage] = useState(true)
   const result = () =>
     structStr && !(structStr instanceof Promise)
@@ -80,13 +69,15 @@ function RecognizeDialog(prop) {
           <button
             key="recognize"
             onClick={() => onRecognize(file, version)}
-            disabled={structStr && typeof structStr !== 'string'}>
+            disabled={structStr && typeof structStr !== 'string'}
+          >
             Recognize
           </button>
         ),
         'Cancel',
         'OK'
-      ]}>
+      ]}
+    >
       <label className={classes.change_version}>
         Imago version:
         <Input

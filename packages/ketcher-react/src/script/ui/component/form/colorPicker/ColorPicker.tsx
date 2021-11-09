@@ -54,7 +54,8 @@ const ColorPicker = (props: Props) => {
       <div
         className={classes.colorPickerBtn}
         onClick={handleClick}
-        data-testid="color-picker-btn">
+        data-testid="color-picker-btn"
+      >
         {props.value}
         <span
           className={classes.colorPickerPreview}

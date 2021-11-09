@@ -17,25 +17,22 @@
 import { BaseCallProps, BaseProps } from '../../../modal.types'
 
 import Automap from './Automap'
-import { ComponentType } from 'react'
 import { automap } from '../../../../../state/server'
 import { connect } from 'react-redux'
 
 type StateProps = Pick<BaseProps, 'formState'>
 type DispatchProps = Pick<BaseCallProps, 'onOk'>
-type OwnProps = Omit<BaseProps, 'formState'>
 
-const mapStateToProps = (state): StateProps => ({ formState: state.modal.form })
+const mapStateToProps = (state: any): StateProps => ({
+  formState: state.modal.form
+})
 
-const mapDispatchToProps = (dispatch, ownProps): DispatchProps => ({
+const mapDispatchToProps = (dispatch: any, ownProps: any): DispatchProps => ({
   onOk: result => {
     dispatch(automap(result))
     ownProps.onOk(result)
   }
 })
 
-const AutomapContainer: ComponentType<OwnProps> = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Automap)
+const AutomapContainer = connect(mapStateToProps, mapDispatchToProps)(Automap)
 export default AutomapContainer

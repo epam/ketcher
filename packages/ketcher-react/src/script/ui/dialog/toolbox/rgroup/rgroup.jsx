@@ -28,7 +28,8 @@ function RGroup({ disabledIds, values, formState, type, ...props }) {
       title="R-Group"
       className={classes.rgroup}
       params={props}
-      result={() => formState.result}>
+      result={() => formState.result}
+    >
       <Form schema={rgroupSchema} init={{ values }} {...formState}>
         <Field
           name="values"

@@ -48,7 +48,8 @@ class Tabs extends Component {
                 className={clsx({
                   [classes.active]: this.state.tabIndex === index
                 })}
-                onClick={ev => this.changeTab(ev, index)}>
+                onClick={ev => this.changeTab(ev, index)}
+              >
                 {tabPanel.caption}
               </a>
             ))}

@@ -41,9 +41,11 @@ export function fromChain(restruct, p0, v, nSect, atomId) {
   let id0 =
     atomId !== null
       ? atomId
-      : (action.addOp(
-          new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct)
-        ) as AtomAdd).data.aid
+      : (
+          action.addOp(
+            new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct)
+          ) as AtomAdd
+        ).data.aid
 
   chainItems.atoms.push(id0)
   action.operations.reverse()

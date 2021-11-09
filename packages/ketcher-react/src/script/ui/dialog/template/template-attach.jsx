@@ -66,7 +66,8 @@ class Attach extends Component {
         title="Template Edit"
         className={classes.attach}
         result={this.onResult}
-        params={prop}>
+        params={prop}
+      >
         <label>
           Template name:
           <Input

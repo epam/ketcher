@@ -280,18 +280,8 @@ function applyDataSGroupInfo(sg, propData) {
   var split = utils.partitionLine(
     propData,
     [
-      10 /* x.x*/,
-      10 /* y.y*/,
-      4 /* eee*/,
-      1 /* f*/,
-      1 /* g*/,
-      1 /* h*/,
-      3 /* i */,
-      3 /* jjj*/,
-      3 /* kkk*/,
-      3 /* ll*/,
-      2 /* m*/,
-      3 /* n*/,
+      10 /* x.x*/, 10 /* y.y*/, 4 /* eee*/, 1 /* f*/, 1 /* g*/, 1 /* h*/,
+      3 /* i */, 3 /* jjj*/, 3 /* kkk*/, 3 /* ll*/, 2 /* m*/, 3 /* n*/,
       2 /* oo*/
     ],
     false

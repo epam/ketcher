@@ -153,7 +153,8 @@ const Text = (props: TextProps) => {
       title="Text editor"
       params={props}
       result={result}
-      valid={() => formState.form.valid}>
+      valid={() => formState.form.valid}
+    >
       <ul className={classes.controlPanel}>
         <FontControl
           editorState={editorState}

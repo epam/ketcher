@@ -46,7 +46,8 @@ const RemoveFG = (props: Props) => {
     <div
       onSubmit={event => event.preventDefault()}
       tabIndex={-1}
-      className={classes.window}>
+      className={classes.window}
+    >
       <header className={classes.header}>Remove Functional Group</header>
       <div className={classes.question}>
         Are you sure you want to remove the abbreviation? It will turn

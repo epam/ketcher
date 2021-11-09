@@ -141,7 +141,8 @@ const ToolbarMultiToolItem = (props: Props) => {
             vertical && classes['portal-vertical'],
             portalClassName
           )}
-          style={portalStyle}>
+          style={portalStyle}
+        >
           <Component
             options={options}
             groups={groups}

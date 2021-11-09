@@ -7,7 +7,7 @@ import { mock } from 'jest-mock-extended'
 
 describe('contructor()', () => {
   it('should throw exception when editor is null', () => {
-    const editor: Editor = (null as unknown) as Editor
+    const editor: Editor = null as unknown as Editor
     const structService: StructService = mock<StructService>()
     const formatterFactory: FormatterFactory = mock<FormatterFactory>()
 
@@ -18,7 +18,7 @@ describe('contructor()', () => {
 
   it('should throw exception when structService is null', () => {
     const editor: Editor = mock<Editor>()
-    const structService: StructService = (null as unknown) as StructService
+    const structService: StructService = null as unknown as StructService
     const formatterFactory: FormatterFactory = mock<FormatterFactory>()
 
     expect(
@@ -29,7 +29,8 @@ describe('contructor()', () => {
   it('should throw exception when formatterFacory is null', () => {
     const editor: Editor = mock<Editor>()
     const structService: StructService = mock<StructService>()
-    const formatterFactory: FormatterFactory = (null as unknown) as FormatterFactory
+    const formatterFactory: FormatterFactory =
+      null as unknown as FormatterFactory
 
     expect(
       () => new Ketcher(editor, structService, formatterFactory)

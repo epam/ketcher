@@ -25,7 +25,6 @@ type OwnProps = Omit<RgroupLogicProps, 'formState'>
 
 const mapStateToProps = (state): StateProps => ({ formState: state.modal.form })
 
-const RgroupLogicContainer: ComponentType<OwnProps> = connect(mapStateToProps)(
-  RgroupLogic
-)
+const RgroupLogicContainer: ComponentType<OwnProps> =
+  connect(mapStateToProps)(RgroupLogic)
 export default RgroupLogicContainer

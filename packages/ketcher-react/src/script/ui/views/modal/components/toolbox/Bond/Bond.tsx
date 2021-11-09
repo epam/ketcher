@@ -37,7 +37,8 @@ const Bond = (props: Props) => {
       className={classes.bond}
       result={() => formState.result}
       valid={() => formState.valid}
-      params={rest}>
+      params={rest}
+    >
       <Form schema={bondSchema} init={rest} {...formState}>
         <Field name="type" />
         <Field name="topology" />

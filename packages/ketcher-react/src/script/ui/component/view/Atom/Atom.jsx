@@ -23,7 +23,8 @@ function Atom({ el, shortcut, className, ...props }) {
       className={className}
       style={{ color: ElementColor[el.label] }}
       value={el.number}
-      {...props}>
+      {...props}
+    >
       <span>{el.label}</span>
     </button>
   )

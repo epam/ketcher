@@ -35,7 +35,8 @@ const AttachPoints = (props: Props) => {
       className={classes.attachPoints}
       result={() => formState.result}
       valid={() => formState.valid}
-      params={rest}>
+      params={rest}
+    >
       <Form schema={attachmentPointsSchema} init={rest} {...formState}>
         <Field name="primary" />
         <Field name="secondary" />

@@ -25,7 +25,6 @@ type OwnProps = Omit<AttachPointsProps, 'formState'>
 
 const mapStateToProps = (state): StateProps => ({ formState: state.modal.form })
 
-const AttachPointsContainer: ComponentType<OwnProps> = connect(mapStateToProps)(
-  AttachPoints
-)
+const AttachPointsContainer: ComponentType<OwnProps> =
+  connect(mapStateToProps)(AttachPoints)
 export default AttachPointsContainer

@@ -89,13 +89,15 @@ function CheckDialog(props) {
       title="Structure Check"
       className={style.check}
       result={() => result}
-      params={prop}>
+      params={prop}
+    >
       <Form schema={checkSchema} init={checkState} {...formState}>
         <Tabs
           className={style.tabs}
           captions={tabs}
           changeTab={i => (i === 0 ? onCheck(result.checkOptions) : null)}
-          tabs={tabs}>
+          tabs={tabs}
+        >
           <ErrorsCheck
             moleculeErrors={moleculeErrors}
             checkSchema={checkSchema}

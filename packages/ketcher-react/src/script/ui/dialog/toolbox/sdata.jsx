@@ -86,12 +86,14 @@ function SData({
       className={classes.sgroup}
       result={() => result}
       valid={() => valid}
-      params={prop}>
+      params={prop}
+    >
       <Form
         serialize={serialize}
         schema={formSchema}
         init={init}
-        {...formState}>
+        {...formState}
+      >
         <SelectOneOf title="Context" name="context" schema={sdataSchema} />
         <fieldset className={classes.data}>
           <SelectInput

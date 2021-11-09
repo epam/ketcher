@@ -40,13 +40,13 @@ import { without } from 'lodash/fp'
 export function fromAtomAddition(restruct, pos, atom) {
   atom = Object.assign({}, atom)
   const action = new Action()
-  atom.fragment = (action.addOp(
-    new FragmentAdd().perform(restruct)
-  ) as FragmentAdd).frid
+  atom.fragment = (
+    action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd
+  ).frid
 
-  const aid = (action.addOp(
-    new AtomAdd(atom, pos).perform(restruct)
-  ) as AtomAdd).data.aid
+  const aid = (
+    action.addOp(new AtomAdd(atom, pos).perform(restruct)) as AtomAdd
+  ).data.aid
   action.addOp(new CalcImplicitH([aid]).perform(restruct))
 
   return action

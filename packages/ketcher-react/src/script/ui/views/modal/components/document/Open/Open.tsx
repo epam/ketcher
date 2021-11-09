@@ -62,12 +62,14 @@ const Open: FC<Props> = props => {
           key={structAcceptMimes().toString()}
           server={server}
           type={structAcceptMimes()}
-          onLoad={setStructStr}>
+          onLoad={setStructStr}
+        >
           Open From File…
         </OpenButton>,
         'Cancel',
         'OK'
-      ]}>
+      ]}
+    >
       <textarea
         value={structStr}
         onChange={event => setStructStr(event.target.value)}

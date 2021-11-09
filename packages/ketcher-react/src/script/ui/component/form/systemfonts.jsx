@@ -88,7 +88,8 @@ function SystemFonts(props) {
     <select
       disabled={availableFonts == null}
       value={value}
-      onChange={onChangeCallback}>
+      onChange={onChangeCallback}
+    >
       {availableFonts?.map(({ value, label }) => (
         <option key={value} value={value}>
           {label}

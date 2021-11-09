@@ -5,11 +5,11 @@
     "example"
   ],
   "scripts": {
-    "build": "yarn workspaces run build",
-    "test": "yarn workspaces run test",
+    "build": "yarn workspaces foreach -tv run build",
+    "test": "yarn workspaces foreach -v run test",
     "serve:remote": "cd example && yarn serve:remote",
     "serve:standalone": "cd example && yarn serve:standalone",
-    "serve": "run-p serve:*",
+    "serve": "run-p serve:remote serve:standalone",
     "audit:fix": "npx yarn-audit-fix"
   },
   "devDependencies": {

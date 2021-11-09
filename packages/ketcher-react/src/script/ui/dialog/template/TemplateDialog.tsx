@@ -169,16 +169,17 @@ const TemplateDialog: FC<Props> = props => {
 }
 
 export default connect(
-  store => ({ ...omit(['attach'], store.templates) }),
+  store => ({ ...omit(['attach'], (store as any).templates) }),
   (dispatch, props) => ({
     onFilter: filter => dispatch(changeFilter(filter)),
     onSelect: tmpl => dispatch(selectTmpl(tmpl)),
     onChangeGroup: group => dispatch(changeGroup(group)),
-    onAttach: tmpl => dispatch(editTmpl(tmpl)),
-    onDelete: tmpl => dispatch(deleteTmpl(tmpl)),
+    onAttach: tmpl => dispatch(editTmpl(tmpl) as any),
+    onDelete: tmpl => dispatch(deleteTmpl(tmpl) as any),
     onOk: res => {
-      dispatch(onAction({ tool: 'template', opts: res }))
-      props.onOk(res)
+      dispatch(onAction({ tool: 'template', opts: res }))(props as any).onOk(
+        res
+      )
     }
   })
 )(TemplateDialog)

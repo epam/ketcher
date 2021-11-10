@@ -27,7 +27,6 @@ import {
 import Editor from './editor'
 import Render from './render'
 import { isEqual } from 'lodash/fp'
-import assert from 'assert'
 
 interface UI {
   load: (structStr: string | null, options?: any) => undefined
@@ -114,7 +113,7 @@ class Ketcher {
   }
 
   async setMolecule(structStr: string): Promise<void> {
-    assert(typeof structStr === 'string')
+    if (typeof structStr !== 'string') return
 
     const struct: Struct = await parseStruct(structStr, this.structService)
     this.editor.struct(struct)

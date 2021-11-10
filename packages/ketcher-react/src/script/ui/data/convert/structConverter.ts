@@ -113,16 +113,13 @@ export function couldBeSaved(
   }
 
   if (
-    ([
-      'inChI',
-      'inChIAuxInfo',
-      'smiles',
-      'smilesExt'
-    ] as SupportedFormat[]).includes(format)
+    (
+      ['inChI', 'inChIAuxInfo', 'smiles', 'smilesExt'] as SupportedFormat[]
+    ).includes(format)
   ) {
     if (struct.functionalGroups.size !== 0)
       warnings.push(
-        `In ${formatName} the structure will be saved without functional groups`
+        `In ${formatName} the structure will be saved without functional groups.`
       )
   }
 

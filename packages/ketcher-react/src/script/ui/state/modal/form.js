@@ -112,6 +112,11 @@ export const formsState = {
     valid: true,
     result: {}
   },
+  attach: {
+    errors: {},
+    valid: true,
+    result: {}
+  },
   sdata: initSdata()
 }
 

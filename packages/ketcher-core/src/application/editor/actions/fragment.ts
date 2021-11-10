@@ -190,9 +190,9 @@ export function fromFragmentSplit(
 
   restruct.molecule.atoms.forEach((atom, aid) => {
     if (atom.fragment === frid) {
-      const newfrid = (action.addOp(
-        new FragmentAdd().perform(restruct)
-      ) as FragmentAdd).frid
+      const newfrid = (
+        action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd
+      ).frid
 
       action.mergeWith(processAtom(restruct, aid, frid, newfrid))
 

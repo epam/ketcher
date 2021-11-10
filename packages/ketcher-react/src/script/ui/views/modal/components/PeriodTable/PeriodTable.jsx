@@ -142,7 +142,8 @@ class Table extends Component {
         title="Periodic table"
         className={classes.elements_table}
         params={this.props}
-        result={this.result}>
+        result={this.result}
+      >
         <Tabs
           className={classes.tabs}
           contentClassName={classes.tabs_content}

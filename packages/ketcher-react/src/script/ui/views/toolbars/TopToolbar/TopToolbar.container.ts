@@ -16,15 +16,13 @@
 
 import { TopToolbar, TopToolbarCallProps, TopToolbarProps } from './TopToolbar'
 
-import { ComponentType } from 'react'
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
 import { onAction } from '../../../state'
 
 type StateProps = Omit<TopToolbarProps, 'className'>
-type OwnProps = Pick<TopToolbarProps, 'className'>
 
-const mapStateToProps = (state): StateProps => ({
+const mapStateToProps = (state: any): StateProps => ({
   status: state.actionState || {},
   opened: state.toolbar.opened,
   indigoVerification: state.requestsStatuses.indigoVerification,
@@ -40,7 +38,7 @@ const mapDispatchToProps = (dispatch: Dispatch): TopToolbarCallProps => ({
     })
 })
 
-const TopToolbarContainer: ComponentType<OwnProps> = connect(
+const TopToolbarContainer = connect(
   mapStateToProps,
   mapDispatchToProps
 )(TopToolbar)

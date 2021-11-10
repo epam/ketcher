@@ -35,7 +35,8 @@ function SelectList({
           className={
             (opt === value ? `${classes.selected} ` : '') +
             (isSplitIndex(index, splitIndexes) ? ` ${classes.split}` : '')
-          }>
+          }
+        >
           {schema.enumNames ? schema.enumNames[index] : opt}
         </li>
       ))}

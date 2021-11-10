@@ -42,20 +42,15 @@ class AnalyseDialog extends Component {
   }
 
   render() {
-    const {
-      values,
-      round,
-      loading,
-      onAnalyse,
-      onChangeRound,
-      ...props
-    } = this.props
+    const { values, round, loading, onAnalyse, onChangeRound, ...props } =
+      this.props
     return (
       <Dialog
         title="Calculated Values"
         className={classes.analyse}
         buttons={['Close']}
-        params={props}>
+        params={props}
+      >
         <ul>
           {[
             {

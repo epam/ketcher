@@ -32,12 +32,15 @@ function Sgroup({ formState, ...prop }) {
       className={classes.sgroup}
       result={() => result}
       valid={() => valid}
-      params={prop}>
+      params={prop}
+    >
       <Form schema={schemes[type]} init={prop} {...formState}>
         <SelectOneOf title="Type" name="type" schema={schemes} />
-        <fieldset className={type === 'DAT' ? classes.data : 'base'}>
-          {content(type)}
-        </fieldset>
+        {type !== 'GEN' && (
+          <fieldset className={type === 'DAT' ? classes.data : 'base'}>
+            {content(type)}
+          </fieldset>
+        )}
       </Form>
     </Dialog>
   )

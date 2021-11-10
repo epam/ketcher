@@ -311,3 +311,19 @@ export const textSchema = {
     }
   }
 }
+
+export const attachSchema = {
+  title: 'Template Edit',
+  type: 'object',
+  required: ['name'],
+  properties: {
+    name: {
+      title: 'Template name',
+      type: 'string',
+      minLength: 1,
+      maxLength: 128,
+      invalidMessage:
+        'Template must have a unique name and no more than 128 symbols in length'
+    }
+  }
+}

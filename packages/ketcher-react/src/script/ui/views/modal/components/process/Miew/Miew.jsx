@@ -128,7 +128,8 @@ class MiewDialog extends Component {
           <button key="apply" onClick={() => this.exportCML()}>
             Apply
           </button>
-        ]}>
+        ]}
+      >
         <div className={classes.dialog_body}>
           <div
             ref={el => {

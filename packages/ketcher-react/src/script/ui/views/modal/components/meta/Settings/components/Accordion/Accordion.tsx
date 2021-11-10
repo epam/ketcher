@@ -61,21 +61,18 @@ class Accordion extends Component<AccordionProps, AccordionState> {
   }
 
   static Group(props: GroupProps) {
-    const {
-      caption,
-      isActive,
-      onActive,
-      index,
-      children
-    } = props as ExtendedGroupProps
+    const { caption, isActive, onActive, index, children } =
+      props as ExtendedGroupProps
 
     return (
       <li
         className={clsx(classes.accordion_tab, {
           [classes.hidden]: !isActive(index)
-        })}>
+        })}
+      >
         <a // eslint-disable-line
-          onClick={() => onActive(index)}>
+          onClick={() => onActive(index)}
+        >
           {caption}
         </a>
         {children}

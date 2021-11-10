@@ -52,6 +52,7 @@ type Props = TopToolbarProps & TopToolbarCallProps
 const TopToolbar = (props: Props) => {
   const { className, ...rest } = props
   const { ref, width } = useResizeObserver<HTMLDivElement>()
+  const isZoomListHidden = !rest.status['zoom-list']?.hidden
 
   type ItemProps = {
     id: ToolbarItemVariant
@@ -68,9 +69,10 @@ const TopToolbar = (props: Props) => {
       className={clsx(classes.root, className, {
         [classes.hideSeparators]:
           width && width < mediaSizes.topSeparatorsShowingWidth
-      })}>
+      })}
+    >
       <Group>
-        <Item id="new" />
+        <Item id="clear" />
         <Item id="open" />
         <Item id="save" />
       </Group>
@@ -79,7 +81,7 @@ const TopToolbar = (props: Props) => {
         <Item id="undo" />
         <Item id="redo" />
         <Item id="cut" />
-        <Item id="copy" options={copyOptions} vertical={true} />
+        <Item id="copies" options={copyOptions} vertical={true} />
         <Item id="paste" />
       </Group>
 
@@ -90,7 +92,9 @@ const TopToolbar = (props: Props) => {
             <Item id="zoom-out" />
           </>
         ) : null}
-        <ZoomList status={rest.status} onAction={rest.onAction} />
+        {isZoomListHidden && (
+          <ZoomList status={rest.status} onAction={rest.onAction} />
+        )}
       </Group>
 
       <Group>

@@ -28,9 +28,8 @@ function createApi(
   structServiceProvider: StructServiceProvider,
   defaultOptions: StructServiceOptions
 ): Api {
-  const structService = structServiceProvider.createStructService(
-    defaultOptions
-  )
+  const structService =
+    structServiceProvider.createStructService(defaultOptions)
   const info = structService.info()
 
   return Object.assign(info, {
@@ -45,9 +44,8 @@ function createApi(
     check: structService.check.bind(structService),
     calculate: structService.calculate.bind(structService),
     recognize: structService.recognize.bind(structService),
-    generateImageAsBase64: structService.generateImageAsBase64.bind(
-      structService
-    )
+    generateImageAsBase64:
+      structService.generateImageAsBase64.bind(structService)
   })
 }
 

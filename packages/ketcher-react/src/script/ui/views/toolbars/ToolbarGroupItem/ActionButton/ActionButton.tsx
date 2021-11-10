@@ -78,7 +78,8 @@ const ActionButton = (props: Props) => {
           [classes.selected]: selected
         },
         className
-      )}>
+      )}
+    >
       <Icon name={name} />
       <kbd>{shortcut}</kbd>
     </button>

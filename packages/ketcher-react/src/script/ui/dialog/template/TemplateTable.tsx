@@ -87,9 +87,10 @@ const TemplateTable: FC<TemplateTableProps> = props => {
               key={
                 tmpl.struct.name !== selected?.struct.name
                   ? `${tmpl.struct.name}_${i}`
-                  : `${tmpl.struct.name}_selected`
+                  : `${tmpl.struct.name}_${i}_selected`
               }
-              style={tmplStyles}>
+              style={tmplStyles}
+            >
               <RenderTmpl
                 tmpl={tmpl}
                 className={classes.struct}
@@ -99,14 +100,16 @@ const TemplateTable: FC<TemplateTableProps> = props => {
                 {tmpl.props.group === 'User Templates' && (
                   <button
                     className={classes.deleteButton}
-                    onClick={() => onDelete!(tmpl)}>
+                    onClick={() => onDelete!(tmpl)}
+                  >
                     Delete
                   </button>
                 )}
                 {tmpl.props.group !== 'Functional Groups' && (
                   <button
                     className={classes.attachButton}
-                    onClick={() => onAttach!(tmpl)}>
+                    onClick={() => onAttach!(tmpl)}
+                  >
                     Edit
                   </button>
                 )}

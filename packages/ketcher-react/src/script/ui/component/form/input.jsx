@@ -85,7 +85,8 @@ function Select({
       value={value}
       name={name}
       multiple={multiple}
-      className={className}>
+      className={className}
+    >
       {enumSchema(schema, (title, val) => (
         <option key={val} value={val}>
           {title}
@@ -112,6 +113,7 @@ function FieldSet({
   selected,
   onSelect,
   type = 'radio',
+  checked,
   ...rest
 }) {
   return (
@@ -121,7 +123,9 @@ function FieldSet({
           <label className={classes.fieldSetLabel}>
             <input
               type={type}
-              defaultChecked={selected(val, value)}
+              defaultChecked={
+                type === 'radio' ? selected(val, checked) : selected(val, value)
+              }
               value={typeof val !== 'object' && val}
               {...rest}
             />

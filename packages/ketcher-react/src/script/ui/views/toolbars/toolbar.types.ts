@@ -33,12 +33,13 @@ type RightGroup = 'atom' | 'period-table'
 type ToolbarGroupVariant = TopGroup | LeftGroup | BottomGroup | RightGroup
 
 type TopToolbarItemVariant =
-  | 'new'
+  | 'clear'
   | 'open'
   | 'save'
   | 'undo'
   | 'redo'
   | 'cut'
+  | 'copies'
   | 'copy'
   | 'copy-image'
   | 'copy-mol'
@@ -68,6 +69,7 @@ type LeftToolbarItemVariant =
   | 'select-fragment'
   | 'erase'
   // bond group
+  | 'bonds'
   | 'bond-common'
   | 'bond-single'
   | 'bond-double'
@@ -91,6 +93,7 @@ type LeftToolbarItemVariant =
   | 'charge-plus'
   | 'charge-minus'
   // transform group
+  | 'transforms'
   | 'transform-rotate'
   | 'transform-flip-h'
   | 'transform-flip-v'
@@ -101,7 +104,7 @@ type LeftToolbarItemVariant =
   //plus
   | 'reaction-plus'
   // arrows
-  | 'reaction-arrows'
+  | 'arrows'
   | 'reaction-arrow-open-angle'
   | 'reaction-arrow-filled-triangle'
   | 'reaction-arrow-filled-bow'
@@ -114,7 +117,7 @@ type LeftToolbarItemVariant =
   | 'reaction-arrow-unbalanced-equilibrium-filled-half-bow'
   | 'reaction-arrow-unbalanced-equilibrium-open-half-angle'
   | 'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow'
-  | 'reaction-arrow-unbalanced-equilibrium-fille-half-triangle'
+  | 'reaction-arrow-unbalanced-equilibrium-filled-half-triangle'
   //mapping
   | 'reaction-mapping-tools'
   | 'reaction-automap'
@@ -126,7 +129,7 @@ type LeftToolbarItemVariant =
   | 'rgroup-fragment'
   | 'rgroup-attpoints'
   // shape group
-  | 'shape'
+  | 'shapes'
   | 'shape-ellipse'
   | 'shape-rectangle'
   | 'shape-line'

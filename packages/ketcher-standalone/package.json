@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",
-    "ketcher-core": "^1.1.0"
+    "ketcher-core": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",

@@ -32,9 +32,15 @@ export function couldBeSaved(
   const rxnArrowsSize = struct.rxnArrows.size
   const hasRxnArrow = struct.hasRxnArrow()
 
+  if (format === 'smiles' || format === 'smarts') {
+    warnings.push(
+      `Structure contains query properties of atoms and bonds that are not supported in the ${format?.toUpperCase()}. Query properties will not be reflected in the file saved.`
+    )
+  }
+
   if (format !== 'graph') {
     if (hasRxnArrow) {
-      const arrayOfArrows = Array.from(struct.rxnArrows.values())
+      const arrayOfArrows: Array<any> = Array.from(struct.rxnArrows.values())
       const rxnArrowMode: RxnArrowMode = arrayOfArrows[0].mode
       if (rxnArrowMode !== RxnArrowMode.OpenAngle) {
         warnings.push(
@@ -52,12 +58,9 @@ export function couldBeSaved(
   }
 
   if (
-    ([
-      'inChI',
-      'inChIAuxInfo',
-      'smiles',
-      'smilesExt'
-    ] as SupportedFormat[]).includes(format)
+    (
+      ['inChI', 'inChIAuxInfo', 'smiles', 'smilesExt'] as SupportedFormat[]
+    ).includes(format)
   ) {
     if (struct.rgroups.size !== 0)
       warnings.push(
@@ -84,14 +87,16 @@ export function couldBeSaved(
   }
 
   if (
-    ([
-      'smiles',
-      'smilesExt',
-      'smarts',
-      'inChI',
-      'inChIAuxInfo',
-      'cml'
-    ] as SupportedFormat[]).includes(format)
+    (
+      [
+        'smiles',
+        'smilesExt',
+        'smarts',
+        'inChI',
+        'inChIAuxInfo',
+        'cml'
+      ] as SupportedFormat[]
+    ).includes(format)
   ) {
     // @ts-ignore
     const isVal = struct.atoms.find((ind, atom) => atom.explicitValence >= 0)
@@ -111,6 +116,24 @@ export function couldBeSaved(
     warnings.push(
       `Structure contains enhanced stereochemistry features. Information will be partly lost.`
     )
+  }
+
+  if (
+    (
+      ['inChI', 'inChIAuxInfo', 'smiles', 'smilesExt'] as SupportedFormat[]
+    ).includes(format)
+  ) {
+    if (struct.functionalGroups.size !== 0)
+      warnings.push(
+        `In ${formatName} the structure will be saved without functional groups.`
+      )
+  }
+
+  if ((['cml'] as SupportedFormat[]).includes(format)) {
+    if (struct.functionalGroups.size !== 0)
+      warnings.push(
+        `Structure contains functional groups. In ${formatName} information will be partly lost.`
+      )
   }
 
   if (warnings.length !== 0) return warnings.join('\n')

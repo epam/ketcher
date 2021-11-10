@@ -113,12 +113,19 @@ const TemplateDialog: FC<Props> = props => {
       params={omit(['group'], rest)}
       result={() => result()}
       buttons={[
-        <SaveButton key="save-to-SDF" data={data} filename="ketcher-tmpls.sdf">
-          Save To SDF…
-        </SaveButton>,
+        group && (
+          <SaveButton
+            key="save-to-SDF"
+            data={data}
+            filename="ketcher-tmpls.sdf"
+          >
+            Save To SDF…
+          </SaveButton>
+        ),
         'Cancel',
         'OK'
-      ]}>
+      ]}
+    >
       <div className={classes.dialog_body}>
         <label>
           Filter:
@@ -132,19 +139,22 @@ const TemplateDialog: FC<Props> = props => {
           className={clsx(classes.tableGroupWrap, {
             [classes.singleColLayout]: width && width < CONTAINER_MIN_WIDTH
           })}
-          ref={ref}>
-          <Input
-            className={classes.groups}
-            classes={classes}
-            component={SelectList}
-            splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
-            value={group}
-            onChange={g => onChangeGroup(g)}
-            schema={{
-              enum: Object.keys(lib),
-              enumNames: Object.keys(lib).map(g => greekify(g))
-            }}
-          />
+          ref={ref}
+        >
+          {group && (
+            <Input
+              className={classes.groups}
+              classes={classes}
+              component={SelectList}
+              splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
+              value={group}
+              onChange={g => onChangeGroup(g)}
+              schema={{
+                enum: Object.keys(lib),
+                enumNames: Object.keys(lib).map(g => greekify(g))
+              }}
+            />
+          )}
           <TemplateTable
             templates={lib[group]}
             onSelect={select}
@@ -159,16 +169,18 @@ const TemplateDialog: FC<Props> = props => {
 }
 
 export default connect(
-  store => ({ ...omit(['attach'], store.templates) }),
+  store => ({ ...omit(['attach'], (store as any).templates) }),
   (dispatch, props) => ({
     onFilter: filter => dispatch(changeFilter(filter)),
     onSelect: tmpl => dispatch(selectTmpl(tmpl)),
     onChangeGroup: group => dispatch(changeGroup(group)),
+    // @ts-ignore
     onAttach: tmpl => dispatch(editTmpl(tmpl)),
+    // @ts-ignore
     onDelete: tmpl => dispatch(deleteTmpl(tmpl)),
     onOk: res => {
       dispatch(onAction({ tool: 'template', opts: res }))
-      props.onOk(res)
+      ;(props as any).onOk(res)
     }
   })
 )(TemplateDialog)

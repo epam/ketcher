@@ -128,9 +128,8 @@ class ReText extends ReObject {
       : null
     if (!rawContentState) return
     rawContentState.blocks.forEach((block: RawDraftContentBlock) => {
-      const ranges: Array<
-        [number, number, Record<string, any>]
-      > = this.getRanges(block, options)
+      const ranges: Array<[number, number, Record<string, any>]> =
+        this.getRanges(block, options)
       let shiftX: number = 0
       const row: Array<any> = []
       ranges.forEach(([start, end, styles]) => {

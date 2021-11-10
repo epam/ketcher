@@ -15,33 +15,17 @@
  ***************************************************************************/
 
 import { findIndex, findLastIndex } from 'lodash/fp'
+import isHidden from './isHidden'
 
 export const zoomList = [
-  0.2,
-  0.3,
-  0.4,
-  0.5,
-  0.6,
-  0.7,
-  0.8,
-  0.9,
-  1,
-  1.1,
-  1.2,
-  1.3,
-  1.4,
-  1.5,
-  1.7,
-  2,
-  2.5,
-  3,
-  3.5,
-  4
+  0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 2,
+  2.5, 3, 3.5, 4
 ]
 
 export default {
   zoom: {
-    selected: editor => editor.zoom()
+    selected: editor => editor.zoom(),
+    hidden: options => isHidden(options, 'zoom')
   },
   'zoom-out': {
     shortcut: ['-', '_', 'Shift+-'],
@@ -51,7 +35,8 @@ export default {
       const zoom = editor.zoom()
       const i = findIndex(z => z >= zoom, zoomList)
       editor.zoom(zoomList[zoomList[i] === zoom && i > 0 ? i - 1 : i])
-    }
+    },
+    hidden: options => isHidden(options, 'zoom-out')
   },
   'zoom-in': {
     shortcut: ['+', '=', 'Shift+='],
@@ -63,6 +48,10 @@ export default {
       editor.zoom(
         zoomList[zoomList[i] === zoom && i < zoomList.length - 1 ? i + 1 : i]
       )
-    }
+    },
+    hidden: options => isHidden(options, 'zoom-in')
+  },
+  'zoom-list': {
+    hidden: options => isHidden(options, 'zoom-list')
   }
 }

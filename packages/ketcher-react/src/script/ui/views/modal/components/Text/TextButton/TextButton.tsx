@@ -46,7 +46,8 @@ export const TextButton = (props: Props) => {
       title={props.button.command.toLowerCase()}
       onMouseDown={event => {
         toggleStyle(event, props.button.command)
-      }}>
+      }}
+    >
       <Icon name={props.button.name} />
     </button>
   )

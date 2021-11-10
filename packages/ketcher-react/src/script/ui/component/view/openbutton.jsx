@@ -48,7 +48,8 @@ class OpenButton extends Component {
       <button
         onClick={() => this.btn.click()}
         className={classes.openButton}
-        {...props}>
+        {...props}
+      >
         <input
           onChange={ev => this.open(ev)}
           accept={type}

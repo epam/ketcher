@@ -243,6 +243,10 @@ function applyDataSGroupName(sg, name) {
   sg.data.fieldName = name
 }
 
+function applyDataSGroupExpand(sg, expanded) {
+  sg.data.expanded = expanded
+}
+
 function applyDataSGroupQuery(sg, query) {
   /* reader */
   sg.data.query = query
@@ -276,18 +280,8 @@ function applyDataSGroupInfo(sg, propData) {
   var split = utils.partitionLine(
     propData,
     [
-      10 /* x.x*/,
-      10 /* y.y*/,
-      4 /* eee*/,
-      1 /* f*/,
-      1 /* g*/,
-      1 /* h*/,
-      3 /* i */,
-      3 /* jjj*/,
-      3 /* kkk*/,
-      3 /* ll*/,
-      2 /* m*/,
-      3 /* n*/,
+      10 /* x.x*/, 10 /* y.y*/, 4 /* eee*/, 1 /* f*/, 1 /* g*/, 1 /* h*/,
+      3 /* i */, 3 /* jjj*/, 3 /* kkk*/, 3 /* ll*/, 2 /* m*/, 3 /* n*/,
       2 /* oo*/
     ],
     false
@@ -374,5 +368,6 @@ export default {
   applyDataSGroupInfo,
   applyDataSGroupData,
   applyDataSGroupInfoLine,
-  applyDataSGroupDataLine
+  applyDataSGroupDataLine,
+  applyDataSGroupExpand
 }

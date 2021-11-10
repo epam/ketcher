@@ -32,6 +32,12 @@ export function couldBeSaved(
   const rxnArrowsSize = struct.rxnArrows.size
   const hasRxnArrow = struct.hasRxnArrow()
 
+  if (format === 'smiles' || format === 'smarts') {
+    warnings.push(
+      `Structure contains query properties of atoms and bonds that are not supported in the ${format?.toUpperCase()}. Query properties will not be reflected in the file saved.`
+    )
+  }
+
   if (format !== 'graph') {
     if (hasRxnArrow) {
       const arrayOfArrows: Array<any> = Array.from(struct.rxnArrows.values())

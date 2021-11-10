@@ -21,14 +21,10 @@ import isHidden from './isHidden'
 import { toBondType } from '../data/convert/structconv'
 
 const toolActions = {
-  select: {
-    hidden: options => isHidden(options, 'select')
-  },
   'select-lasso': {
     title: 'Lasso Selection',
     shortcut: 'Escape',
-    action: { tool: 'select', opts: 'lasso' },
-    hidden: options => isHidden(options, 'select-lasso')
+    action: { tool: 'select', opts: 'lasso' }
   },
   'select-rectangle': {
     title: 'Rectangle Selection',

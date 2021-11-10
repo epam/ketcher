@@ -203,7 +203,6 @@ EraserTool.prototype.mouseup = function (event) {
 }
 
 EraserTool.prototype.click = function (event) {
-  const selected = { atoms: [], bonds: [] }
   const rnd = this.editor.render
   const restruct = this.editor.render.ctab
   const ci = this.editor.findItem(event, this.maps)
@@ -274,15 +273,6 @@ EraserTool.prototype.click = function (event) {
 
   if (!ci) return // ci.type == 'Canvas'
 
-  if (
-    ci.map === 'sgroups' &&
-    FunctionalGroup.isContractedFunctionalGroup(ci.id, this.functionalGroups)
-  ) {
-    const sGroup = this.sgroups.get(ci.id)
-    selected.atoms.push(...SGroup.getAtoms(this.molecule, sGroup.item))
-    selected.bonds.push(...SGroup.getBonds(this.molecule, sGroup.item))
-  }
-
   this.editor.hover(null)
   if (ci.map === 'atoms') {
     this.editor.update(fromOneAtomDeletion(restruct, ci.id))
@@ -292,7 +282,13 @@ EraserTool.prototype.click = function (event) {
     ci.map === 'sgroups' &&
     FunctionalGroup.isContractedFunctionalGroup(ci.id, this.functionalGroups)
   ) {
-    this.editor.update(fromFragmentDeletion(rnd.ctab, selected))
+    const sGroup = this.sgroups.get(ci.id)
+    this.editor.update(
+      fromFragmentDeletion(rnd.ctab, {
+        atoms: [...SGroup.getAtoms(this.molecule, sGroup.item)],
+        bonds: [...SGroup.getBonds(this.molecule, sGroup.item)]
+      })
+    )
   } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
     this.editor.update(fromSgroupDeletion(restruct, ci.id))
   } else if (ci.map === 'rxnArrows') {

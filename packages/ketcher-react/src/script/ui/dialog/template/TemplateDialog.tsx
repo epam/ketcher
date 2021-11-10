@@ -174,12 +174,13 @@ export default connect(
     onFilter: filter => dispatch(changeFilter(filter)),
     onSelect: tmpl => dispatch(selectTmpl(tmpl)),
     onChangeGroup: group => dispatch(changeGroup(group)),
-    onAttach: tmpl => dispatch(editTmpl(tmpl) as any),
-    onDelete: tmpl => dispatch(deleteTmpl(tmpl) as any),
+    // @ts-ignore
+    onAttach: tmpl => dispatch(editTmpl(tmpl)),
+    // @ts-ignore
+    onDelete: tmpl => dispatch(deleteTmpl(tmpl)),
     onOk: res => {
-      dispatch(onAction({ tool: 'template', opts: res }))(props as any).onOk(
-        res
-      )
+      dispatch(onAction({ tool: 'template', opts: res }))
+      ;(props as any).onOk(res)
     }
   })
 )(TemplateDialog)

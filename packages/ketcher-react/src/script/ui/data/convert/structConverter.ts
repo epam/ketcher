@@ -34,7 +34,7 @@ export function couldBeSaved(
 
   if (format !== 'graph') {
     if (hasRxnArrow) {
-      const arrayOfArrows = Array.from(struct.rxnArrows.values())
+      const arrayOfArrows: Array<any> = Array.from(struct.rxnArrows.values())
       const rxnArrowMode: RxnArrowMode = arrayOfArrows[0].mode
       if (rxnArrowMode !== RxnArrowMode.OpenAngle) {
         warnings.push(

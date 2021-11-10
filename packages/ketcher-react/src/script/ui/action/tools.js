@@ -100,8 +100,8 @@ const toolActions = {
     action: { tool: 'sgroup', opts: 'DAT' },
     hidden: options => isHidden(options, 'sgroup-data')
   },
-  'reaction-arrows': {
-    hidden: options => isHidden(options, 'reaction-arrows')
+  arrows: {
+    hidden: options => isHidden(options, 'arrows')
   },
   'reaction-arrow-open-angle': {
     title: 'Arrow Open Angle Tool',
@@ -191,7 +191,7 @@ const toolActions = {
         'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow'
       )
   },
-  'reaction-arrow-unbalanced-equilibrium-fille-half-triangle': {
+  'reaction-arrow-unbalanced-equilibrium-filled-half-triangle': {
     title: 'Arrow Unbalanced Equilibrium Filled Half Triangle Tool',
     action: {
       tool: 'reactionarrow',

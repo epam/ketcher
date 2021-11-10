@@ -72,7 +72,7 @@ const TopToolbar = (props: Props) => {
       })}
     >
       <Group>
-        <Item id="new" />
+        <Item id="clear" />
         <Item id="open" />
         <Item id="save" />
       </Group>

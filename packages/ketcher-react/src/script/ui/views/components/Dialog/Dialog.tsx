@@ -59,9 +59,11 @@ const Dialog: FC<Props> = props => {
   useLayoutEffect(() => {
     ;(dialogRef.current as any).focus()
     return () => {
-      ;(dialogRef.current
-        ?.closest('.Ketcher-root')
-        ?.getElementsByClassName('cliparea')[0] as any).focus()
+      ;(
+        dialogRef.current
+          ?.closest('.Ketcher-root')
+          ?.getElementsByClassName('cliparea')[0] as any
+      ).focus()
     }
   }, [])
 
@@ -90,15 +92,9 @@ const Dialog: FC<Props> = props => {
       onKeyDown={keyDown}
       tabIndex={-1}
       className={clsx(styles.form, className, params.className)}
-      {...rest}>
-      <header>
-        {title}
-        {title && (
-          <button className={styles.close} onClick={() => exit('Cancel')}>
-            ×
-          </button>
-        )}
-      </header>
+      {...rest}
+    >
+      <header>{title}</header>
       <div className={styles.dialog_body}>{children}</div>
 
       <footer>
@@ -109,6 +105,7 @@ const Dialog: FC<Props> = props => {
             <input
               key={button}
               type="button"
+              className={button === 'OK' ? styles.ok : styles.cancel}
               value={button}
               disabled={button === 'OK' && !valid()}
               onClick={() => exit(button)}

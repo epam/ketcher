@@ -58,7 +58,8 @@ const Atom: FC<Props> = props => {
       className={classes.atomProps}
       result={() => formState.result}
       valid={() => formState.valid}
-      params={rest}>
+      params={rest}
+    >
       <Form
         schema={atomSchema}
         customValid={{
@@ -66,7 +67,8 @@ const Atom: FC<Props> = props => {
           charge: charge => chargeValid(charge)
         }}
         init={rest}
-        {...formState}>
+        {...formState}
+      >
         <fieldset className={classes.main}>
           <Field name="label" onChange={onLabelChangeCallback} autoFocus />
           <Field name="alias" />

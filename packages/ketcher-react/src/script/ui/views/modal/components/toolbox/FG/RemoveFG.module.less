@@ -1,11 +1,12 @@
 .window {
   display: flex;
   height: 11.5em;
-  width: 19em;
+  width: 21em;
   flex-direction: column;
   background: #fff;
-  border-radius: 0.7em;
+  border-radius: 10px;
   font-family: Roboto, sans-serif !important;
+  padding: 10px;
 }
 
 .question {
@@ -29,13 +30,17 @@
   margin-top: 20px;
 }
 
+.buttonOk,
+.buttonCancel {
+  border-radius: 2px;
+  border: none;
+  height: 1.8em;
+  width: content-box;
+}
+
 .buttonOk {
   margin-right: 15px;
   background: #3e7bfa;
-  border-radius: 0.2em;
-  border: none;
-  width: 3.5em;
-  height: 1.8em;
   color: #fff;
 }
 
@@ -46,10 +51,6 @@
 .buttonCancel {
   margin-right: 10px;
   background: #d1d5e3;
-  border-radius: 0.2em;
-  border: none;
-  width: 3em;
-  height: 1.8em;
   color: #000;
 }
 

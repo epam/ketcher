@@ -106,7 +106,7 @@ const LeftToolbar = (props: Props) => {
               return <Transform {...rest} height={height} key={item.id} />
             case 'rgroup':
               return <RGroup {...rest} key={item.id} />
-            case 'shape':
+            case 'shapes':
               return <Shape {...rest} key={item.id} />
             default:
               return <Item id={item.id} options={item.options} key={item.id} />
@@ -128,7 +128,7 @@ const LeftToolbar = (props: Props) => {
         <Group
           items={[
             {
-              id: 'bond-common',
+              id: 'bonds',
               options: [
                 ...bondCommon,
                 ...bondQuery,
@@ -145,7 +145,7 @@ const LeftToolbar = (props: Props) => {
         <Group
           items={[
             {
-              id: 'transform-rotate',
+              id: 'transforms',
               options: transformOptions
             }
           ]}
@@ -167,7 +167,7 @@ const LeftToolbar = (props: Props) => {
           <Group items={[{ id: 'rgroup', options: rGroupOptions }]} />
         </div>
 
-        <Group items={[{ id: 'shape', options: shapeOptions }]} />
+        <Group items={[{ id: 'shapes', options: shapeOptions }]} />
 
         <div ref={endRef}>
           <Group items={[{ id: 'text' }]} />

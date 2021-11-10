@@ -86,12 +86,14 @@ function SData({
       className={classes.sgroup}
       result={() => result}
       valid={() => valid}
-      params={prop}>
+      params={prop}
+    >
       <Form
         serialize={serialize}
         schema={formSchema}
         init={init}
-        {...formState}>
+        {...formState}
+      >
         <SelectOneOf title="Context" name="context" schema={sdataSchema} />
         <fieldset className={classes.data}>
           <SelectInput
@@ -99,14 +101,14 @@ function SData({
             name="fieldName"
             schema={sdataSchema[result.context]}
           />
-          {content(formSchema, result.context, result.fieldName)}
+          {content(formSchema, result.context, result.fieldName, radiobuttons)}
         </fieldset>
       </Form>
     </Dialog>
   )
 }
 
-const content = (schema, context, fieldName) =>
+const content = (schema, context, fieldName, checked) =>
   Object.keys(schema.properties)
     .filter(
       prop => prop !== 'type' && prop !== 'context' && prop !== 'fieldName'
@@ -115,6 +117,7 @@ const content = (schema, context, fieldName) =>
       prop === 'radiobuttons' ? (
         <Field
           name={prop}
+          checked={checked}
           type="radio"
           key={`${context}-${fieldName}-${prop}-radio`}
         />

@@ -16,8 +16,6 @@
 
 import { BaseCallProps, BaseProps } from '../../../modal.types'
 import { FC, useState } from 'react'
-
-import ClipArea from '../../../../../component/cliparea/cliparea'
 import { Dialog } from '../../../../components'
 import OpenButton from '../../../../../component/view/openbutton'
 import classes from './Open.module.less'
@@ -64,12 +62,14 @@ const Open: FC<Props> = props => {
           key={structAcceptMimes().toString()}
           server={server}
           type={structAcceptMimes()}
-          onLoad={setStructStr}>
+          onLoad={setStructStr}
+        >
           Open From File…
         </OpenButton>,
         'Cancel',
         'OK'
-      ]}>
+      ]}
+    >
       <textarea
         value={structStr}
         onChange={event => setStructStr(event.target.value)}
@@ -82,10 +82,6 @@ const Open: FC<Props> = props => {
         />
         Load as a fragment and copy to the Clipboard
       </label>
-      <ClipArea
-        focused={() => true}
-        onCopy={() => ({ 'text/plain': structStr })}
-      />
     </Dialog>
   )
 }

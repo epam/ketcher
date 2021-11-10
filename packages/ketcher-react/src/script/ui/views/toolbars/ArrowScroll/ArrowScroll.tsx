@@ -58,7 +58,8 @@ const ArrowScroll = ({
           onClick={() => scrollDown()}
           onMouseUp={() => setScrollDown(false)}
           onMouseDown={() => setScrollDown(true)}
-          className={clsx(classes.button, classes.down)}>
+          className={clsx(classes.button, classes.down)}
+        >
           ▼
         </button>
       )}
@@ -69,7 +70,8 @@ const ArrowScroll = ({
           onClick={() => scrollUp()}
           onMouseUp={() => setScrollUp(false)}
           onMouseDown={() => setScrollUp(true)}
-          className={clsx(classes.button, classes.up)}>
+          className={clsx(classes.button, classes.up)}
+        >
           ▲
         </button>
       )}

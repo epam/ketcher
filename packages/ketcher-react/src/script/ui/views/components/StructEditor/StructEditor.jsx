@@ -135,16 +135,19 @@ class StructEditor extends Component {
       <Tag
         className={clsx(classes.canvas, className)}
         onMouseDown={event => event.preventDefault()}
-        {...props}>
+        {...props}
+      >
         <ContextMenuTrigger
           id="contextmenu"
           attributes={{
             onClick: hideMenu
-          }}>
+          }}
+        >
           <div
             ref={this.editorRef}
             className={clsx(classes.intermediateCanvas)}
-            onMouseDown={event => event.preventDefault()}>
+            onMouseDown={event => event.preventDefault()}
+          >
             {/* svg here */}
           </div>
           <div className={classes.measureLog} ref={this.logRef} />

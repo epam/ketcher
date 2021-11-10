@@ -127,7 +127,8 @@ const FGContextMenu = () => {
       onShow={e => showMenu(e)}
       className={clsx({
         [classes.isHidden]: !showSGroupMenu
-      })}>
+      })}
+    >
       <MenuItem onClick={handleExpand}>
         {targetItems.length && targetItems[0].isExpanded
           ? 'Contract '

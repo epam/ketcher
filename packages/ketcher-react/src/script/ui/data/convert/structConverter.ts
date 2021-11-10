@@ -34,7 +34,7 @@ export function couldBeSaved(
 
   if (format !== 'graph') {
     if (hasRxnArrow) {
-      const arrayOfArrows = Array.from(struct.rxnArrows.values())
+      const arrayOfArrows: Array<any> = Array.from(struct.rxnArrows.values())
       const rxnArrowMode: RxnArrowMode = arrayOfArrows[0].mode
       if (rxnArrowMode !== RxnArrowMode.OpenAngle) {
         warnings.push(
@@ -52,12 +52,9 @@ export function couldBeSaved(
   }
 
   if (
-    ([
-      'inChI',
-      'inChIAuxInfo',
-      'smiles',
-      'smilesExt'
-    ] as SupportedFormat[]).includes(format)
+    (
+      ['inChI', 'inChIAuxInfo', 'smiles', 'smilesExt'] as SupportedFormat[]
+    ).includes(format)
   ) {
     if (struct.rgroups.size !== 0)
       warnings.push(
@@ -84,14 +81,16 @@ export function couldBeSaved(
   }
 
   if (
-    ([
-      'smiles',
-      'smilesExt',
-      'smarts',
-      'inChI',
-      'inChIAuxInfo',
-      'cml'
-    ] as SupportedFormat[]).includes(format)
+    (
+      [
+        'smiles',
+        'smilesExt',
+        'smarts',
+        'inChI',
+        'inChIAuxInfo',
+        'cml'
+      ] as SupportedFormat[]
+    ).includes(format)
   ) {
     // @ts-ignore
     const isVal = struct.atoms.find((ind, atom) => atom.explicitValence >= 0)

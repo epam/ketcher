@@ -74,7 +74,8 @@ const SaveButton = props => {
       onClick={event => {
         save(event)
       }}
-      {...props}>
+      {...props}
+    >
       {props.children}
     </button>
   )

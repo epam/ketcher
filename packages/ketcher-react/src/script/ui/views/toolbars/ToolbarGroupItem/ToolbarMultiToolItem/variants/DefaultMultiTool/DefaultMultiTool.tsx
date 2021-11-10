@@ -25,13 +25,8 @@ interface DefaultMultiToolCallProps extends MultiToolCallProps {}
 type Props = DefaultMultiToolProps & DefaultMultiToolCallProps
 
 const DefaultMultiTool = (props: Props) => {
-  const {
-    options,
-    status,
-    disableableButtons,
-    indigoVerification,
-    onAction
-  } = props
+  const { options, status, disableableButtons, indigoVerification, onAction } =
+    props
 
   return (
     <>

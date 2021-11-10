@@ -79,19 +79,21 @@ function GenGroup({ gen, name, path, selected, onSelect }) {
           className={classes.subgroup}
         />
       ) : null}
-      {schema.order.map((
-        child, // TODO:order = Object.keys ifndef
-        index
-      ) => (
-        <GenGroup
-          key={index}
-          gen={group}
-          name={child}
-          path={pk}
-          selected={selected}
-          onSelect={onSelect}
-        />
-      ))}
+      {schema.order.map(
+        (
+          child, // TODO:order = Object.keys ifndef
+          index
+        ) => (
+          <GenGroup
+            key={index}
+            gen={group}
+            name={child}
+            path={pk}
+            selected={selected}
+            onSelect={onSelect}
+          />
+        )
+      )}
     </fieldset>
   ) : (
     <GenSet

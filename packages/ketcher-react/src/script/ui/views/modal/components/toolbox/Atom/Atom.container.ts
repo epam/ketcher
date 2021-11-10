@@ -14,16 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Atom, { AtomProps } from './Atom'
-
+import Atom from './Atom'
 import { BaseProps } from '../../../modal.types'
-import { ComponentType } from 'react'
 import { connect } from 'react-redux'
 
 type StateProps = Pick<BaseProps, 'formState'>
-type OwnProps = Omit<AtomProps, 'formState'>
 
-const mapStateToProps = (state): StateProps => ({ formState: state.modal.form })
+const mapStateToProps = (state: any): StateProps => ({
+  formState: state.modal.form
+})
 
-const AtomContainer: ComponentType<OwnProps> = connect(mapStateToProps)(Atom)
+const AtomContainer = connect(mapStateToProps)(Atom)
 export default AtomContainer

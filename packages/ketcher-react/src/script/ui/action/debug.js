@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { MolSerializer } from 'ketcher-core'
+import isHidden from './isHidden'
 
 const debugObj = {
   // original: for dev purposes
@@ -22,7 +23,8 @@ const debugObj = {
     shortcut: 'Ctrl+Shift+r',
     action: editor => {
       editor.update(true)
-    }
+    },
+    hidden: options => isHidden(options, 'force-update')
   },
   'qs-serialize': {
     shortcut: 'Alt+Shift+r',
@@ -37,7 +39,8 @@ const debugObj = {
         ? qs + '&' + molQs
         : qs.replace(/mol=[^&$]*/, molQs)
     }
-  }
+  },
+  hidden: options => isHidden(options, 'qs-serialize')
 }
 
 export default debugObj

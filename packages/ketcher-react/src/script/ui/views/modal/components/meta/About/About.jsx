@@ -27,11 +27,13 @@ function AboutDialog(props) {
       title="About"
       className={classes.about}
       params={props}
-      buttons={['Close']}>
+      buttons={['Close']}
+    >
       <a
         href="http://lifescience.opensource.epam.com/ketcher/"
         target="_blank"
-        rel="noopener noreferrer">
+        rel="noopener noreferrer"
+      >
         <Logo />
       </a>
       <dl>
@@ -39,7 +41,8 @@ function AboutDialog(props) {
           <a
             href="http://lifescience.opensource.epam.com/ketcher/help.html"
             target="_blank"
-            rel="noopener noreferrer">
+            rel="noopener noreferrer"
+          >
             Ketcher
           </a>
         </dt>
@@ -56,7 +59,8 @@ function AboutDialog(props) {
               <a
                 href="http://lifescience.opensource.epam.com/indigo/"
                 target="_blank"
-                rel="noopener noreferrer">
+                rel="noopener noreferrer"
+              >
                 Indigo Toolkit
               </a>
             </dt>
@@ -75,7 +79,8 @@ function AboutDialog(props) {
           <a
             href="http://lifescience.opensource.epam.com/"
             target="_blank"
-            rel="noopener noreferrer">
+            rel="noopener noreferrer"
+          >
             EPAM Life Sciences
           </a>
         </dt>
@@ -83,7 +88,8 @@ function AboutDialog(props) {
           <a
             href="http://lifescience.opensource.epam.com/ketcher/#feedback"
             target="_blank"
-            rel="noopener noreferrer">
+            rel="noopener noreferrer"
+          >
             Feedback
           </a>
         </dd>

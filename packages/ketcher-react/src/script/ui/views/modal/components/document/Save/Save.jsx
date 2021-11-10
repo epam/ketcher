@@ -181,7 +181,8 @@ class SaveDialog extends Component {
             filename,
             format: this.isRxn ? 'rxn' : 'mol'
           }}
-          {...formState}>
+          {...formState}
+        >
           <Field name="filename" />
           <Field name="format" onChange={this.changeType} />
         </Form>
@@ -222,14 +223,16 @@ class SaveDialog extends Component {
           type={format.mime}
           server={this.props.server}
           onSave={this.props.onOk}
-          disabled={disableControls || !formState.valid || isCleanStruct}>
+          disabled={disableControls || !formState.valid || isCleanStruct}
+        >
           Save To File
         </SaveButton>,
         <button
           key="save-tmpl"
           className={classes.saveTmpl}
           disabled={disableControls || isCleanStruct || !isMoleculeContain}
-          onClick={() => this.props.onTmplSave(this.props.struct)}>
+          onClick={() => this.props.onTmplSave(this.props.struct)}
+        >
           Save to Templates...
         </button>,
         'Close'
@@ -248,7 +251,8 @@ class SaveDialog extends Component {
             !formState.valid ||
             isCleanStruct ||
             !this.props.server
-          }>
+          }
+        >
           Save As Image
         </SaveButton>,
         'Close'
@@ -277,7 +281,8 @@ class SaveDialog extends Component {
         title="Save Structure"
         className={classes.save}
         params={this.props}
-        buttons={this.getButtons()}>
+        buttons={this.getButtons()}
+      >
         <Tabs
           tabs={tabs}
           changeTab={tab => {

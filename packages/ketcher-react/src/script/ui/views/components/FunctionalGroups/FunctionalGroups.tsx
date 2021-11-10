@@ -131,12 +131,14 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
         <SaveButton
           key="save-to-SDF"
           data={molSaveData}
-          filename="ketcher-fg-tmpls.sdf">
+          filename="ketcher-fg-tmpls.sdf"
+        >
           Save To SDF…
         </SaveButton>,
         'Cancel',
         'OK'
-      ]}>
+      ]}
+    >
       <div className={classes.dialog_body}>
         <label>
           Filter:
@@ -150,7 +152,8 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
           className={clsx(classes.tableGroupWrap, {
             [classes.singleColLayout]: width && width < CONTAINER_MIN_WIDTH
           })}
-          ref={ref}>
+          ref={ref}
+        >
           <TemplateTable
             templates={filteredLib[group]}
             onSelect={handleSelect}

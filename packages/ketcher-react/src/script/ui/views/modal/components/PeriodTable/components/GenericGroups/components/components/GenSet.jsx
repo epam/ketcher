@@ -29,7 +29,8 @@ function GenSet({ labels, caption = '', selected, onSelect, ...props }) {
               [classes.selected]: selected(label)
             },
             classes.button
-          )}>
+          )}
+        >
           {label}
         </button>
       ))}

@@ -43,11 +43,8 @@ export class FormatterFactory {
       return [{}, {}]
     }
 
-    const {
-      reactionRelayout,
-      badHeaderRecover,
-      ...structServiceOptions
-    } = options
+    const { reactionRelayout, badHeaderRecover, ...structServiceOptions } =
+      options
 
     let molfileParseOptions: Partial<MolSerializerOptions> = {}
 
@@ -65,9 +62,8 @@ export class FormatterFactory {
     format: SupportedFormat,
     options?: FormatterFactoryOptions
   ): StructFormatter {
-    const [molSerializerOptions, structServiceOptions] = this.separateOptions(
-      options
-    )
+    const [molSerializerOptions, structServiceOptions] =
+      this.separateOptions(options)
 
     let formatter: StructFormatter
     switch (format) {

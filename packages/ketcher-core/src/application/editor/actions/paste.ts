@@ -153,7 +153,11 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 
 function getStructCenter(struct) {
   //TODO: Review, function may not work sometimes
-  if (struct.sgroups.size > 0 && !struct.sgroups.get(0).data.expanded) {
+  const onlyOneStructsSgroupId = struct.sgroups.keys().next().value
+  if (
+    struct.sgroups.size === 1 &&
+    !struct.sgroups.get(onlyOneStructsSgroupId).data.expanded
+  ) {
     return struct.atoms.get(0).pp
   }
   if (struct.atoms.size > 0) {

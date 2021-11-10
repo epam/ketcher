@@ -79,7 +79,8 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
 
   switch (message.type) {
     case Command.GenerateImageAsBase64: {
-      const data: GenerateImageCommandData = message.data as GenerateImageCommandData
+      const data: GenerateImageCommandData =
+        message.data as GenerateImageCommandData
       handle(
         (indigo, indigoOptions) => indigo.render(data.struct, indigoOptions),
         {
@@ -102,7 +103,8 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
     }
 
     case Command.Dearomatize: {
-      const data: DearomatizeCommandData = message.data as DearomatizeCommandData
+      const data: DearomatizeCommandData =
+        message.data as DearomatizeCommandData
       handle(
         (indigo, indigoOptions) =>
           indigo.dearomatize(data.struct, data.format, indigoOptions),
@@ -126,7 +128,8 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
     }
 
     case Command.CalculateCip: {
-      const data: CalculateCipCommandData = message.data as CalculateCipCommandData
+      const data: CalculateCipCommandData =
+        message.data as CalculateCipCommandData
       handle(
         (indigo, indigoOptions) =>
           indigo.calculateCip(data.struct, data.format, indigoOptions),

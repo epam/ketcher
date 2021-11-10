@@ -18,10 +18,11 @@ import { Dialog, StructEditor } from '../../views/components'
 import { Component } from 'react'
 import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
 
-import Input from '../../component/form/input'
 import classes from './template-lib.module.less'
 import { connect } from 'react-redux'
 import { storage } from '../../storage-ext'
+import Form, { Field } from '../../component/form/form/form'
+import { attachSchema } from '../../data/schema/struct-schema'
 
 const EDITOR_STYLES = {
   selectionStyle: { fill: '#47b3ec', stroke: 'none' },
@@ -48,6 +49,12 @@ class Attach extends Component {
       : null
   }
 
+  checkUniqueName(name) {
+    return !this.props.templateLib.some(
+      tmpl => tmpl.struct.name === name && tmpl.props.group === 'User Templates'
+    )
+  }
+
   render() {
     const { name, onNameEdit, onAttachEdit, ...prop } = this.props
     const struct = this.tmpl.struct
@@ -56,47 +63,52 @@ class Attach extends Component {
         ? this.props
         : this.tmpl.props
     const options = Object.assign(EDITOR_STYLES, { scale: getScale(struct) })
-    const maxValueSign =
-      name && name.length !== 128
-        ? { borderColor: '#CCCCCCFF' }
-        : { borderColor: '#FF5555FF' }
 
     return (
       <Dialog
         title="Template Edit"
         className={classes.attach}
         result={this.onResult}
+        valid={() => this.props.formState.valid && name}
         params={prop}
       >
-        <label>
-          Template name:
-          <Input
+        <Form
+          schema={attachSchema}
+          customValid={{
+            name: name => this.checkUniqueName(name)
+          }}
+          {...this.props.formState}
+        >
+          <Field
+            name="name"
             value={name}
             onChange={onNameEdit}
             placeholder="template"
-            maxLength="128"
-            style={maxValueSign}
           />
-        </label>
-        <label>Choose attachment atom and bond:</label>
-        <StructEditor
-          className={classes.editor}
-          struct={struct}
-          onAttachEdit={onAttachEdit}
-          tool="attach"
-          toolOpts={{ atomid, bondid }}
-          options={options}
-        />
-        {!storage.isAvailable() ? (
-          <div className={classes.warning}>{storage.warningMessage}</div>
-        ) : null}
+          <label>Choose attachment atom and bond:</label>
+          <StructEditor
+            className={classes.editor}
+            struct={struct}
+            onAttachEdit={onAttachEdit}
+            tool="attach"
+            toolOpts={{ atomid, bondid }}
+            options={options}
+          />
+          {!storage.isAvailable() ? (
+            <div className={classes.warning}>{storage.warningMessage}</div>
+          ) : null}
+        </Form>
       </Dialog>
     )
   }
 }
 
 export default connect(
-  store => ({ ...store.templates.attach }),
+  store => ({
+    ...store.templates.attach,
+    templateLib: store.templates.lib,
+    formState: store.modal.form
+  }),
   dispatch => ({
     onInit: (name, ap) => dispatch(initAttach(name, ap)),
     onAttachEdit: ap => dispatch(setAttachPoints(ap)),

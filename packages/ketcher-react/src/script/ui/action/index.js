@@ -29,7 +29,7 @@ import functionalGroups from './functionalGroups'
 export * from './action.types'
 
 const config = {
-  new: {
+  clear: {
     shortcut: 'Mod+Delete',
     title: 'Clear Canvas',
     action: {
@@ -39,7 +39,7 @@ const config = {
         dispatch({ type: 'ACTION', action: tools['select-lasso'].action })
       }
     },
-    hidden: options => isHidden(options, 'new')
+    hidden: options => isHidden(options, 'clear')
   },
   open: {
     shortcut: 'Mod+o',

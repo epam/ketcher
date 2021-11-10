@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import templates from '../data/templates'
+import isHidden from './isHidden'
 
 const templateLib = {
   'template-lib': {
@@ -22,7 +23,8 @@ const templateLib = {
     title: 'Custom Templates',
     action: { dialog: 'templates' },
     selected: editor => editor._tool.mode === 'classic',
-    disabled: (editor, server, options) => !options.app.templates
+    disabled: (editor, server, options) => !options.app.templates,
+    hidden: options => isHidden(options, 'template-lib')
   }
 }
 

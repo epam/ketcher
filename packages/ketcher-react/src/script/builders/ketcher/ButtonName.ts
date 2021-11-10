@@ -36,7 +36,7 @@ export type ButtonName =
   //plus
   | 'reaction-plus'
   // arrows
-  | 'reaction-arrows'
+  | 'arrows'
   | 'reaction-arrow-open-angle'
   | 'reaction-arrow-filled-triangle'
   | 'reaction-arrow-filled-bow'

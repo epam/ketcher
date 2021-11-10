@@ -56,7 +56,7 @@
     "html-to-react": "^1.4.5",
     "intersection-observer": "^0.12.0",
     "jsonschema": "^1.4.0",
-    "ketcher-core": "^1.1.2",
+    "ketcher-core": "workspace:*",
     "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",

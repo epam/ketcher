@@ -33,7 +33,8 @@ function formulaInputMarkdown(content) {
       onPaste={e => e.preventDefault()}
       onKeyDown={onKeyDown}
       contentEditable={true}
-      suppressContentEditableWarning={true}>
+      suppressContentEditableWarning={true}
+    >
       {content}
     </div>
   )

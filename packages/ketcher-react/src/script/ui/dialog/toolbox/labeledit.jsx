@@ -74,12 +74,14 @@ function LabelEdit(props) {
       className="labeledit"
       valid={() => valid}
       result={() => deserialize(result.label)}
-      params={prop}>
+      params={prop}
+    >
       <Form
         schema={labelEditSchema}
         customValid={{ label: l => deserialize(l) }}
         init={init}
-        {...formState}>
+        {...formState}
+      >
         <Field name="label" maxLength="20" size="10" autoFocus />
       </Form>
     </Dialog>

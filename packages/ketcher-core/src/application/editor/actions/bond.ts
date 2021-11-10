@@ -96,9 +96,9 @@ export function fromBondAddition(
     action.addOp(new AtomAttr(end, 'label', 'C').perform(restruct))
   }
 
-  const bid = (action.addOp(
-    new BondAdd(begin, end, bond).perform(restruct)
-  ) as BondAdd).data.bid
+  const bid = (
+    action.addOp(new BondAdd(begin, end, bond).perform(restruct)) as BondAdd
+  ).data.bid
 
   const bnd = struct.bonds.get(bid)
 

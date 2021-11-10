@@ -6,21 +6,20 @@ import { mock } from 'jest-mock-extended'
 
 describe('build()', () => {
   it('should throw exception when StructService is null', () => {
-    const provider: StructServiceProvider = (null as unknown) as StructServiceProvider
+    const provider: StructServiceProvider =
+      null as unknown as StructServiceProvider
     const editor: Editor = mock<Editor>()
-    const builder: KetcherBuilder = new KetcherBuilder().withStructServiceProvider(
-      provider
-    )
+    const builder: KetcherBuilder =
+      new KetcherBuilder().withStructServiceProvider(provider)
 
     expect(() => builder.build(editor)).toThrowError(AssertionError)
   })
 
   it('should throw exception when Editor is null', () => {
     const provider: StructServiceProvider = mock<StructServiceProvider>()
-    const editor: Editor = (null as any) as Editor
-    const builder: KetcherBuilder = new KetcherBuilder().withStructServiceProvider(
-      provider
-    )
+    const editor: Editor = null as any as Editor
+    const builder: KetcherBuilder =
+      new KetcherBuilder().withStructServiceProvider(provider)
 
     expect(() => builder.build(editor)).toThrowError(AssertionError)
   })

@@ -82,7 +82,8 @@ const SettingsDialog = (props: Props) => {
         <SaveButton
           key="ketcher-settings"
           data={JSON.stringify(formState.result)}
-          filename="ketcher-settings">
+          filename="ketcher-settings"
+        >
           Save To File…
         </SaveButton>,
         <button key="settings-button" onClick={onReset}>
@@ -90,7 +91,8 @@ const SettingsDialog = (props: Props) => {
         </button>,
         'Cancel',
         'OK'
-      ]}>
+      ]}
+    >
       <Form schema={settingsSchema} init={initState} {...formState}>
         <Accordion className={classes.accordion} multiple={false} active={[0]}>
           <Accordion.Group caption="General">

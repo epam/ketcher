@@ -117,13 +117,15 @@ const TemplateDialog: FC<Props> = props => {
           <SaveButton
             key="save-to-SDF"
             data={data}
-            filename="ketcher-tmpls.sdf">
+            filename="ketcher-tmpls.sdf"
+          >
             Save To SDF…
           </SaveButton>
         ),
         'Cancel',
         'OK'
-      ]}>
+      ]}
+    >
       <div className={classes.dialog_body}>
         <label>
           Filter:
@@ -137,7 +139,8 @@ const TemplateDialog: FC<Props> = props => {
           className={clsx(classes.tableGroupWrap, {
             [classes.singleColLayout]: width && width < CONTAINER_MIN_WIDTH
           })}
-          ref={ref}>
+          ref={ref}
+        >
           {group && (
             <Input
               className={classes.groups}
@@ -166,16 +169,18 @@ const TemplateDialog: FC<Props> = props => {
 }
 
 export default connect(
-  store => ({ ...omit(['attach'], store.templates) }),
+  store => ({ ...omit(['attach'], (store as any).templates) }),
   (dispatch, props) => ({
     onFilter: filter => dispatch(changeFilter(filter)),
     onSelect: tmpl => dispatch(selectTmpl(tmpl)),
     onChangeGroup: group => dispatch(changeGroup(group)),
+    // @ts-ignore
     onAttach: tmpl => dispatch(editTmpl(tmpl)),
+    // @ts-ignore
     onDelete: tmpl => dispatch(deleteTmpl(tmpl)),
     onOk: res => {
       dispatch(onAction({ tool: 'template', opts: res }))
-      props.onOk(res)
+      ;(props as any).onOk(res)
     }
   })
 )(TemplateDialog)

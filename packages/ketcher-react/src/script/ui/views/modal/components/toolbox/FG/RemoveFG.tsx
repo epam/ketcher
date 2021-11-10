@@ -46,22 +46,24 @@ const RemoveFG = (props: Props) => {
     <div
       onSubmit={event => event.preventDefault()}
       tabIndex={-1}
-      className={classes.window}>
-      <header className={classes.header}>Remove Functional Group</header>
+      className={classes.window}
+    >
+      <header className={classes.header}>Edit abbreviation</header>
       <div className={classes.question}>
-        Are you sure you want to remove the abbreviation? It will turn
-        Functional Group to separate atoms and bonds.
+        A change was detected for the abbreviation. Do you want to remove the
+        abbreviation information from the structure and continue work with
+        separate atoms and bonds?
       </div>
       <footer className={classes.footer}>
         <input
           type="button"
-          value={'No'}
+          value={'Cancel'}
           className={classes.buttonCancel}
           onClick={() => exit('onOk', false)}
         />
         <input
           type="button"
-          value={'Yes'}
+          value={'Remove Abbreviation'}
           className={classes.buttonOk}
           onClick={() => exit('onOk', remove())}
         />

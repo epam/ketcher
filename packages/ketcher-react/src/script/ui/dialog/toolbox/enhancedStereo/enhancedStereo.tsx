@@ -84,7 +84,8 @@ const EnhancedStereo: FC<Props> = props => {
       params={rest}
       result={() => result}
       valid={() => valid}
-      buttons={['Cancel', 'OK']}>
+      buttons={['Cancel', 'OK']}
+    >
       <Form schema={enhancedStereoSchema} init={init} {...formState}>
         <fieldset>
           <label className={classes.stereoLabelItem}>
@@ -182,6 +183,6 @@ function maxOfOrs(stereLabels): number {
 }
 
 export default connect(state => ({
-  formState: state.modal.form || { result: {}, valid: false },
-  struct: state.editor.struct()
+  formState: (state as any).modal.form || { result: {}, valid: false },
+  struct: (state as any).editor.struct()
 }))(EnhancedStereo)

@@ -41,7 +41,8 @@ function ButtonList({
               disabled={disabledIds.includes(item)}
               type="button"
               className={className}
-              onClick={() => onChange(oneOrMore(multiple, value, item))}>
+              onClick={() => onChange(oneOrMore(multiple, value, item))}
+            >
               {schema.items.enumNames[i]}
             </button>
           </li>

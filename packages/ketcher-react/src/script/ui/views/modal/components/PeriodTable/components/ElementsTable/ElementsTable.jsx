@@ -95,7 +95,8 @@ class ElementsTable extends Component {
     return (
       <table
         className={styles.table}
-        summary="Periodic table of the chemical elements">
+        summary="Periodic table of the chemical elements"
+      >
         <Header />
         {main.map((row, index) => (
           <MainRow

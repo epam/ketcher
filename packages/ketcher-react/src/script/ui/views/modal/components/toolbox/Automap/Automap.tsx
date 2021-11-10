@@ -43,7 +43,8 @@ const Automap = (props: Props) => {
       className={classes.automap}
       result={() => formState.result}
       valid={() => formState.valid}
-      params={rest}>
+      params={rest}
+    >
       <Form schema={automapSchema} {...formState}>
         <Field name="mode" />
       </Form>

@@ -85,7 +85,8 @@ function Select({
       value={value}
       name={name}
       multiple={multiple}
-      className={className}>
+      className={className}
+    >
       {enumSchema(schema, (title, val) => (
         <option key={val} value={val}>
           {title}

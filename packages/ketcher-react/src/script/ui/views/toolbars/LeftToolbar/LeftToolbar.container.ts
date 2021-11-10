@@ -20,15 +20,13 @@ import {
   LeftToolbarProps
 } from './LeftToolbar'
 
-import { ComponentType } from 'react'
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
 import { onAction } from '../../../state'
 
 type StateProps = Omit<LeftToolbarProps, 'className'>
-type OwnProps = Pick<LeftToolbarProps, 'className'>
 
-const mapStateToProps = (state): StateProps => ({
+const mapStateToProps = (state: any): StateProps => ({
   status: state.actionState || {},
   opened: state.toolbar.opened,
   indigoVerification: state.requestsStatuses.indigoVerification,
@@ -44,7 +42,7 @@ const mapDispatchToProps = (dispatch: Dispatch): LeftToolbarCallProps => ({
     })
 })
 
-const LeftToolbarContainer: ComponentType<OwnProps> = connect(
+const LeftToolbarContainer = connect(
   mapStateToProps,
   mapDispatchToProps
 )(LeftToolbar)

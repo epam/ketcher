@@ -26,7 +26,6 @@ import {
   convertToRaw,
   getDefaultKeyBinding
 } from 'draft-js'
-
 import { useCallback, useState } from 'react'
 
 import { Dialog } from '../../../components'
@@ -153,7 +152,8 @@ const Text = (props: TextProps) => {
       title="Text editor"
       params={props}
       result={result}
-      valid={() => formState.form.valid}>
+      valid={() => formState.form.valid}
+    >
       <ul className={classes.controlPanel}>
         <FontControl
           editorState={editorState}
@@ -184,4 +184,4 @@ const Text = (props: TextProps) => {
   )
 }
 
-export default connect(store => ({ formState: store.modal }))(Text)
+export default connect(store => ({ formState: (store as any).modal }))(Text)

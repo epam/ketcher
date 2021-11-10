@@ -78,9 +78,11 @@ export function editTmpl(tmpl) {
   return (dispatch, getState) => {
     openDialog(dispatch, 'attach', { tmpl })
       .then(
-        ({ name, attach }) => {
-          tmpl.struct.name = name.trim()
-          tmpl.props = Object.assign({}, tmpl.props, attach)
+        formData => {
+          tmpl.struct.name = formData ? formData.name.trim() : tmpl.struct.name
+          tmpl.props = formData
+            ? Object.assign({}, tmpl.props, formData.attach)
+            : tmpl.props
 
           if (tmpl.props.group === 'User Templates')
             updateLocalStore(getState().templates.lib)

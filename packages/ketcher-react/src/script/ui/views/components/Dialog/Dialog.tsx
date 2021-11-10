@@ -59,9 +59,11 @@ const Dialog: FC<Props> = props => {
   useLayoutEffect(() => {
     ;(dialogRef.current as any).focus()
     return () => {
-      ;(dialogRef.current
-        ?.closest('.Ketcher-root')
-        ?.getElementsByClassName('cliparea')[0] as any).focus()
+      ;(
+        dialogRef.current
+          ?.closest('.Ketcher-root')
+          ?.getElementsByClassName('cliparea')[0] as any
+      ).focus()
     }
   }, [])
 
@@ -90,7 +92,8 @@ const Dialog: FC<Props> = props => {
       onKeyDown={keyDown}
       tabIndex={-1}
       className={clsx(styles.form, className, params.className)}
-      {...rest}>
+      {...rest}
+    >
       <header>{title}</header>
       <div className={styles.dialog_body}>{children}</div>
 

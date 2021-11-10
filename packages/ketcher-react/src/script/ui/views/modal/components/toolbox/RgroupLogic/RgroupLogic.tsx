@@ -40,12 +40,14 @@ const RgroupLogic = (props: Props) => {
       className={classes.rgroupLogic}
       result={() => formState.result}
       valid={() => formState.valid}
-      params={rest}>
+      params={rest}
+    >
       <Form
         schema={rgroupSchema}
         customValid={{ range: r => rangeConv(r) }}
         init={rest}
-        {...formState}>
+        {...formState}
+      >
         <Field name="range" />
         <Field name="resth" />
         <IfThenSelect name="ifthen" label={label} rgroupLabels={rgroupLabels} />

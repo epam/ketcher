@@ -32,16 +32,16 @@ import {
 import { Open, Save } from '../views/modal/components/document'
 
 import EnhancedStereo from './toolbox/enhancedStereo/enhancedStereo'
+import { FunctionalGroups } from '../views/components/FunctionalGroups'
 import LabelEdit from './toolbox/labeledit'
 import PeriodTable from '../views/modal/components/PeriodTable'
+import { RemoveFG } from '../views/modal/components/toolbox/FG/RemoveFG'
 import Rgroup from './toolbox/rgroup/rgroup'
 import Sdata from './toolbox/sdata'
 import Sgroup from './toolbox/sgroup'
 import TemplateAttach from './template/template-attach'
 import TemplatesDialog from './template/TemplateDialog'
 import Text from '../views/modal/components/Text'
-import { RemoveFG } from '../views/modal/components/toolbox/FG/RemoveFG'
-import { FunctionalGroups } from '../views/components/FunctionalGroups'
 
 export default {
   open: Open,
@@ -69,4 +69,4 @@ export default {
   sdata: Sdata,
   text: Text,
   fGroups: FunctionalGroups
-}
+} as any

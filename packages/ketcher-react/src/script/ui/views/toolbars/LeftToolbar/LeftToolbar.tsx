@@ -156,7 +156,7 @@ const LeftToolbar = (props: Props) => {
         <Group
           items={[
             { id: 'reaction-plus' },
-            { id: 'reaction-arrows', options: arrowsOptions },
+            { id: 'arrows', options: arrowsOptions },
             {
               id: 'reaction-mapping-tools',
               options: mappingOptions

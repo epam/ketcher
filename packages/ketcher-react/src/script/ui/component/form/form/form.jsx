@@ -118,7 +118,8 @@ function Field(props) {
       className={clsx({ [classes.dataError]: dataError })}
       error={dataError}
       title={rest.title || desc.title}
-      labelPos={labelPos}>
+      labelPos={labelPos}
+    >
       {formField}
     </Label>
   )

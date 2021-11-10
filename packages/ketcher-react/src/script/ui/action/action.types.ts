@@ -54,7 +54,7 @@ type ToolVariant =
   | 'layout'
   | 'logo'
   | 'miew'
-  | 'new'
+  | 'clear'
   | 'open'
   | 'paste'
   | 'period-table'

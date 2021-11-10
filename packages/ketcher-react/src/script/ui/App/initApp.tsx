@@ -42,7 +42,8 @@ function initApp(
           <AppContext.Provider
             value={{
               getKetcherInstance: () => (window as any).ketcher as Ketcher
-            }}>
+            }}
+          >
             <App />
           </AppContext.Provider>
         </ErrorsContext.Provider>

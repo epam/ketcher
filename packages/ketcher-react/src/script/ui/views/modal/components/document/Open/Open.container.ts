@@ -17,7 +17,6 @@
 import Open, { OpenProps } from './Open'
 
 import { BaseCallProps } from '../../../modal.types'
-import { ComponentType } from 'react'
 import { connect } from 'react-redux'
 import { exec } from '../../../../../component/cliparea/cliparea'
 import { load } from '../../../../../state'
@@ -41,8 +40,5 @@ const mapDispatchToProps = (dispatch): DispatchProps => ({
   }
 })
 
-const OpenContainer: ComponentType = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Open)
+const OpenContainer = connect(mapStateToProps, mapDispatchToProps)(Open)
 export default OpenContainer

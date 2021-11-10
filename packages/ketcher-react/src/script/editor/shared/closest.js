@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Fragment, FunctionalGroup, Vec2 } from 'ketcher-core'
+import { Fragment, Vec2 } from 'ketcher-core'
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4
 const SELECTION_WITHIN_TEXT = 0
@@ -114,22 +114,19 @@ function findClosestAtom(restruct, pos, skip, minDist) {
   let closestAtom = null
   const maxMinDist = SELECTION_DISTANCE_COEFFICIENT
   const skipId = skip && skip.map === 'atoms' ? skip.id : null
-  const sGroups = restruct.sgroups
-  const functionalGroups = restruct.molecule.functionalGroups
 
   minDist = minDist || maxMinDist
   minDist = Math.min(minDist, maxMinDist)
 
   restruct.atoms.forEach((atom, aid) => {
-    if (
-      FunctionalGroup.isAtomInContractedFinctionalGroup(
-        atom.a,
-        sGroups,
-        functionalGroups,
-        true
-      )
-    )
+    let sgroupId
+    for (let sgId of atom.a.sgs.values()) {
+      sgroupId = sgId
+    }
+    const sgroup = restruct.sgroups.get(sgroupId)
+    if (sgroup && !sgroup.item.data.expanded) {
       return null
+    }
     if (aid === skipId) return
 
     const dist = Vec2.dist(pos, atom.a.pp)
@@ -156,8 +153,6 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
   let closestBondCenter = null
   const maxMinDist = 0.8 * SELECTION_DISTANCE_COEFFICIENT
   const skipId = skip && skip.map === 'bonds' ? skip.id : null
-  const sGroups = restruct.sgroups
-  const functionalGroups = restruct.molecule.functionalGroups
 
   minDist = minDist || maxMinDist
   minDist = Math.min(minDist, maxMinDist)
@@ -169,15 +164,19 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
 
     const a1 = restruct.atoms.get(bond.b.begin).a
     const a2 = restruct.atoms.get(bond.b.end).a
-    if (
-      FunctionalGroup.isBondInContractedFunctionalGroup(
-        bond.b,
-        sGroups,
-        functionalGroups,
-        true
-      )
-    )
+    let sgId1
+    for (let sgId of a1.sgs.values()) {
+      sgId1 = sgId
+    }
+    let sgId2
+    for (let sgId of a2.sgs.values()) {
+      sgId2 = sgId
+    }
+
+    const sgroup = restruct.sgroups.get(sgId1)
+    if (sgId1 === sgId2 && sgroup && !sgroup.item.data.expanded) {
       return null
+    }
 
     const mid = Vec2.lc2(a1.pp, 0.5, a2.pp, 0.5)
     const cdist = Vec2.dist(pos, mid)
@@ -190,15 +189,6 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
 
   restruct.bonds.forEach((bond, bid) => {
     if (bid === skipId) return
-    if (
-      FunctionalGroup.isBondInContractedFunctionalGroup(
-        bond.b,
-        sGroups,
-        functionalGroups,
-        true
-      )
-    )
-      return null
 
     const hb = restruct.molecule.halfBonds.get(bond.b.hb1)
     const dir = hb.dir

@@ -113,7 +113,6 @@ function FieldSet({
   selected,
   onSelect,
   type = 'radio',
-  checked,
   ...rest
 }) {
   return (
@@ -123,9 +122,7 @@ function FieldSet({
           <label className={classes.fieldSetLabel}>
             <input
               type={type}
-              defaultChecked={
-                type === 'radio' ? selected(val, checked) : selected(val, value)
-              }
+              defaultChecked={selected(val, value)}
               value={typeof val !== 'object' && val}
               {...rest}
             />

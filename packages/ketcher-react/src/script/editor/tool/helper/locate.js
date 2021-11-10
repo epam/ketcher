@@ -14,13 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FunctionalGroup, Vec2 } from 'ketcher-core'
+import { Vec2 } from 'ketcher-core'
 
 function getElementsInRectangle(restruct, p0, p1) {
   const bondList = []
   const atomList = []
-  const sGroups = restruct.sgroups
-  const functionalGroups = restruct.molecule.functionalGroups
 
   const x0 = Math.min(p0.x, p1.x)
   const x1 = Math.max(p0.x, p1.x)
@@ -34,39 +32,16 @@ function getElementsInRectangle(restruct, p0, p1) {
       restruct.atoms.get(bond.b.end).a.pp,
       0.5
     )
-    if (
-      centre.x > x0 &&
-      centre.x < x1 &&
-      centre.y > y0 &&
-      centre.y < y1 &&
-      !FunctionalGroup.isBondInContractedFunctionalGroup(
-        bond.b,
-        sGroups,
-        functionalGroups,
-        true
-      )
-    )
+    if (centre.x > x0 && centre.x < x1 && centre.y > y0 && centre.y < y1)
       bondList.push(bid)
   })
 
   restruct.atoms.forEach((atom, aid) => {
-    const relatedFGId = FunctionalGroup.findFunctionalGroupByAtom(
-      functionalGroups,
-      aid
-    )
-    const sGroup = restruct.sgroups.get(relatedFGId)
     if (
       atom.a.pp.x > x0 &&
       atom.a.pp.x < x1 &&
       atom.a.pp.y > y0 &&
-      atom.a.pp.y < y1 &&
-      (!FunctionalGroup.isAtomInContractedFinctionalGroup(
-        atom.a,
-        sGroups,
-        functionalGroups,
-        true
-      ) ||
-        aid === sGroup.item.atoms[0])
+      atom.a.pp.y < y1
     )
       atomList.push(aid)
   })
@@ -150,8 +125,6 @@ function getElementsInPolygon(restruct, rr) {
   const bondList = []
   const atomList = []
   const r = []
-  const sGroups = restruct.sgroups
-  const functionalGroups = restruct.molecule.functionalGroups
 
   for (let i = 0; i < rr.length; ++i) r[i] = new Vec2(rr[i].x, rr[i].y)
 
@@ -162,35 +135,11 @@ function getElementsInPolygon(restruct, rr) {
       restruct.atoms.get(bond.b.end).a.pp,
       0.5
     )
-    if (
-      isPointInPolygon(r, centre) &&
-      !FunctionalGroup.isBondInContractedFunctionalGroup(
-        bond.b,
-        sGroups,
-        functionalGroups,
-        true
-      )
-    )
-      bondList.push(bid)
+    if (isPointInPolygon(r, centre)) bondList.push(bid)
   })
 
   restruct.atoms.forEach((atom, aid) => {
-    const relatedFGId = FunctionalGroup.findFunctionalGroupByAtom(
-      functionalGroups,
-      aid
-    )
-    const sGroup = restruct.sgroups.get(relatedFGId)
-    if (
-      isPointInPolygon(r, atom.a.pp) &&
-      (!FunctionalGroup.isAtomInContractedFinctionalGroup(
-        atom.a,
-        sGroups,
-        functionalGroups,
-        true
-      ) ||
-        aid === sGroup.item.atoms[0])
-    )
-      atomList.push(aid)
+    if (isPointInPolygon(r, atom.a.pp)) atomList.push(aid)
   })
 
   const rxnArrowsList = []

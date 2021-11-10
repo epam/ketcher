@@ -39,7 +39,6 @@ type TopToolbarItemVariant =
   | 'undo'
   | 'redo'
   | 'cut'
-  | 'copies'
   | 'copy'
   | 'copy-image'
   | 'copy-mol'
@@ -69,7 +68,6 @@ type LeftToolbarItemVariant =
   | 'select-fragment'
   | 'erase'
   // bond group
-  | 'bonds'
   | 'bond-common'
   | 'bond-single'
   | 'bond-double'
@@ -93,7 +91,6 @@ type LeftToolbarItemVariant =
   | 'charge-plus'
   | 'charge-minus'
   // transform group
-  | 'transforms'
   | 'transform-rotate'
   | 'transform-flip-h'
   | 'transform-flip-v'
@@ -129,7 +126,7 @@ type LeftToolbarItemVariant =
   | 'rgroup-fragment'
   | 'rgroup-attpoints'
   // shape group
-  | 'shapes'
+  | 'shape'
   | 'shape-ellipse'
   | 'shape-rectangle'
   | 'shape-line'

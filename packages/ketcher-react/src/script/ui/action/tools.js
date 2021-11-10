@@ -29,25 +29,21 @@ const toolActions = {
   'select-rectangle': {
     title: 'Rectangle Selection',
     shortcut: 'Escape',
-    action: { tool: 'select', opts: 'rectangle' },
-    hidden: options => isHidden(options, 'select-rectangle')
+    action: { tool: 'select', opts: 'rectangle' }
   },
   'select-fragment': {
     title: 'Fragment Selection',
     shortcut: 'Escape',
-    action: { tool: 'select', opts: 'fragment' },
-    hidden: options => isHidden(options, 'select-fragment')
+    action: { tool: 'select', opts: 'fragment' }
   },
   erase: {
     title: 'Erase',
     shortcut: ['Delete', 'Backspace'],
-    action: { tool: 'eraser', opts: 1 }, // TODO last selector mode is better
-    hidden: options => isHidden(options, 'erase')
+    action: { tool: 'eraser', opts: 1 } // TODO last selector mode is better
   },
   chain: {
     title: 'Chain',
-    action: { tool: 'chain' },
-    hidden: options => isHidden(options, 'chain')
+    action: { tool: 'chain' }
   },
   'enhanced-stereo': {
     shortcut: 'Alt+e',
@@ -58,35 +54,27 @@ const toolActions = {
   'charge-plus': {
     shortcut: '5',
     title: 'Charge Plus',
-    action: { tool: 'charge', opts: 1 },
-    hidden: options => isHidden(options, 'charge-plus')
+    action: { tool: 'charge', opts: 1 }
   },
   'charge-minus': {
     shortcut: '5',
     title: 'Charge Minus',
-    action: { tool: 'charge', opts: -1 },
-    hidden: options => isHidden(options, 'charge-minus')
-  },
-  transforms: {
-    hidden: options => isHidden(options, 'transforms')
+    action: { tool: 'charge', opts: -1 }
   },
   'transform-rotate': {
     shortcut: 'Alt+r',
     title: 'Rotate Tool',
-    action: { tool: 'rotate' },
-    hidden: options => isHidden(options, 'transform-rotate')
+    action: { tool: 'rotate' }
   },
   'transform-flip-h': {
     shortcut: 'Alt+h',
     title: 'Horizontal Flip',
-    action: { tool: 'rotate', opts: 'horizontal' },
-    hidden: options => isHidden(options, 'transform-flip-h')
+    action: { tool: 'rotate', opts: 'horizontal' }
   },
   'transform-flip-v': {
     shortcut: 'Alt+v',
     title: 'Vertical Flip',
-    action: { tool: 'rotate', opts: 'vertical' },
-    hidden: options => isHidden(options, 'transform-flip-v')
+    action: { tool: 'rotate', opts: 'vertical' }
   },
   sgroup: {
     shortcut: 'Mod+g',
@@ -242,8 +230,8 @@ const toolActions = {
     action: { tool: 'apoint' },
     hidden: options => isHidden(options, 'rgroup-attpoints')
   },
-  shapes: {
-    hidden: options => isHidden(options, 'shapes')
+  shape: {
+    hidden: options => isHidden(options, 'shape')
   },
   'shape-ellipse': {
     title: 'Shape Ellipse',
@@ -264,9 +252,6 @@ const toolActions = {
     title: 'Add text',
     action: { tool: 'text' },
     hidden: options => isHidden(options, 'text')
-  },
-  bonds: {
-    hidden: options => isHidden(options, 'bonds')
   }
 }
 
@@ -291,8 +276,7 @@ export default typeSchema.enum.reduce((res, type, i) => {
     action: {
       tool: 'bond',
       opts: toBondType(type)
-    },
-    hidden: options => isHidden(options, `bond-${type}`)
+    }
   }
   return res
 }, toolActions)

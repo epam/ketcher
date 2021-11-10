@@ -243,10 +243,6 @@ function applyDataSGroupName(sg, name) {
   sg.data.fieldName = name
 }
 
-function applyDataSGroupExpand(sg, expanded) {
-  sg.data.expanded = expanded
-}
-
 function applyDataSGroupQuery(sg, query) {
   /* reader */
   sg.data.query = query
@@ -368,6 +364,5 @@ export default {
   applyDataSGroupInfo,
   applyDataSGroupData,
   applyDataSGroupInfoLine,
-  applyDataSGroupDataLine,
-  applyDataSGroupExpand
+  applyDataSGroupDataLine
 }

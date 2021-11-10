@@ -101,14 +101,14 @@ function SData({
             name="fieldName"
             schema={sdataSchema[result.context]}
           />
-          {content(formSchema, result.context, result.fieldName, radiobuttons)}
+          {content(formSchema, result.context, result.fieldName)}
         </fieldset>
       </Form>
     </Dialog>
   )
 }
 
-const content = (schema, context, fieldName, checked) =>
+const content = (schema, context, fieldName) =>
   Object.keys(schema.properties)
     .filter(
       prop => prop !== 'type' && prop !== 'context' && prop !== 'fieldName'
@@ -117,7 +117,6 @@ const content = (schema, context, fieldName, checked) =>
       prop === 'radiobuttons' ? (
         <Field
           name={prop}
-          checked={checked}
           type="radio"
           key={`${context}-${fieldName}-${prop}-radio`}
         />

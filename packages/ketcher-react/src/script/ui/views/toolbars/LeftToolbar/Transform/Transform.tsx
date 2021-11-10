@@ -35,7 +35,11 @@ const Transform = (props: Props) => {
 
   if (height && height <= mediaSizes.transformCollapsableHeight) {
     return (
-      <ToolbarGroupItem id="transforms" options={transformOptions} {...rest} />
+      <ToolbarGroupItem
+        id="transform-rotate"
+        options={transformOptions}
+        {...rest}
+      />
     )
   }
 

@@ -76,23 +76,10 @@ function TemplateTool(editor, tmpl) {
 }
 
 TemplateTool.prototype.mousedown = function (event) {
-  const closestItem = this.editor.findItem(event, ['atoms', 'bonds', 'sgroups'])
+  const closestItem = this.editor.findItem(event, ['atoms', 'bonds'])
   const atomResult = []
   const bondResult = []
-  const sGroupResult = []
   const result = []
-
-  if (
-    closestItem &&
-    this.functionalGroups.size &&
-    closestItem.map === 'sgroups' &&
-    FunctionalGroup.isContractedFunctionalGroup(
-      closestItem.id,
-      this.functionalGroups
-    )
-  ) {
-    sGroupResult.push(closestItem.id)
-  }
   if (
     closestItem &&
     this.functionalGroups.size &&
@@ -116,11 +103,6 @@ TemplateTool.prototype.mousedown = function (event) {
     )
     if (bondId !== null) bondResult.push(bondId)
   }
-  if (sGroupResult.length > 0) {
-    for (let id of sGroupResult) {
-      if (!result.includes(id)) result.push(id)
-    }
-  }
   if (atomResult.length > 0) {
     for (let id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
@@ -131,8 +113,9 @@ TemplateTool.prototype.mousedown = function (event) {
         result.push(fgId)
       }
     }
-  }
-  if (bondResult.length > 0) {
+    this.editor.event.removeFG.dispatch({ fgIds: result })
+    return
+  } else if (bondResult.length > 0) {
     for (let id of bondResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,
@@ -143,8 +126,6 @@ TemplateTool.prototype.mousedown = function (event) {
         result.push(fgId)
       }
     }
-  }
-  if (result.length) {
     this.editor.event.removeFG.dispatch({ fgIds: result })
     return
   }
@@ -305,10 +286,8 @@ TemplateTool.prototype.mousemove = function (event) {
 
   this.editor.update(dragCtx.action, true)
 
-  if (this.mode !== 'fg') {
-    dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
-    this.editor.hover(getHoverToFuse(dragCtx.mergeItems))
-  }
+  dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
+  this.editor.hover(getHoverToFuse(dragCtx.mergeItems))
 
   return true
 }
@@ -398,11 +377,9 @@ TemplateTool.prototype.mouseup = function (event) {
         true
       ).then(([action, pasteItems]) => {
         // eslint-disable-line no-shadow
-        if (this.mode !== 'fg') {
-          const mergeItems = getItemsToFuse(this.editor, pasteItems)
-          action = fromItemsFuse(restruct, mergeItems).mergeWith(action)
-          this.editor.update(action)
-        }
+        const mergeItems = getItemsToFuse(this.editor, pasteItems)
+        action = fromItemsFuse(restruct, mergeItems).mergeWith(action)
+        this.editor.update(action)
       })
 
       return true
@@ -411,7 +388,7 @@ TemplateTool.prototype.mouseup = function (event) {
 
   this.editor.selection(null)
 
-  if (!dragCtx.mergeItems && pasteItems && this.mode !== 'fg')
+  if (!dragCtx.mergeItems && pasteItems)
     dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
   dragCtx.action = dragCtx.action
     ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)

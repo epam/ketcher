@@ -23,11 +23,11 @@ import {
   fromSgroupDeletion,
   fromSimpleObjectDeletion,
   fromTextDeletion,
-  FunctionalGroup,
-  SGroup
+  FunctionalGroup
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
+import { xor } from 'lodash/fp'
 import { selMerge } from './select'
 
 function EraserTool(editor, mode) {
@@ -74,8 +74,8 @@ EraserTool.prototype.mousemove = function (event) {
 
 EraserTool.prototype.mouseup = function (event) {
   const selected = this.editor.selection()
-  let newSelected = { atoms: [], bonds: [] }
-  let actualSgroupId
+  let newSelected = { atoms: [] }
+  let actualSgroup
   const atomsResult = []
   const bondsResult = []
   const preResult = []
@@ -90,7 +90,7 @@ EraserTool.prototype.mouseup = function (event) {
 
       if (atomFromStruct) {
         for (let sgId of atomFromStruct.sgs.values()) {
-          actualSgroupId = sgId
+          actualSgroup = sgId
         }
       }
       if (
@@ -103,20 +103,9 @@ EraserTool.prototype.mouseup = function (event) {
         )
       ) {
         const sgroupAtoms =
-          actualSgroupId !== undefined &&
-          SGroup.getAtoms(
-            this.molecule,
-            this.struct.sgroups.get(actualSgroupId).item
-          )
-        const sgroupBonds =
-          actualSgroupId !== undefined &&
-          SGroup.getBonds(
-            this.molecule,
-            this.struct.sgroups.get(actualSgroupId).item
-          )
-        atom === sgroupAtoms[0] &&
-          newSelected.atoms.push(...sgroupAtoms) &&
-          newSelected.bonds.push(...sgroupBonds)
+          actualSgroup !== undefined &&
+          this.struct.sgroups.get(actualSgroup).item.atoms
+        atom === sgroupAtoms[0] && newSelected.atoms.push(...sgroupAtoms)
       }
 
       if (

@@ -43,7 +43,7 @@ const Bond = (props: Props) => {
   if (height && height <= mediaSizes.bondCollapsableHeight) {
     return (
       <ToolbarMultiToolItem
-        id="bonds"
+        id="bond-common"
         options={groupOptions}
         variant="grouped"
         groups={groupDescriptors}

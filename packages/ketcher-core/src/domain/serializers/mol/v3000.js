@@ -191,7 +191,6 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
       sGroup.applyDataSGroupQuery(sg, props['QUERYTYPE'][0])
     if (props['QUERYOP']) sGroup.applyDataSGroupQueryOp(sg, props['QUERYOP'][0])
     sGroup.loadSGroup(ctab, sg, atomMap)
-    if (props['ESTATE']) sGroup.applyDataSGroupExpand(sg, props['ESTATE'][0])
   }
   throw new Error('S-group declaration incomplete.')
 }

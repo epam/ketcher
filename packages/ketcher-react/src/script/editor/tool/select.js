@@ -25,7 +25,8 @@ import {
   fromTextUpdating,
   getHoverToFuse,
   getItemsToFuse,
-  FunctionalGroup
+  FunctionalGroup,
+  fromSimpleObjectResizing
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -206,6 +207,20 @@ SelectTool.prototype.mousemove = function (event) {
       const angle = utils.calcAngle(dragCtx.xy0, pos)
       const degrees = utils.degrees(angle)
       this.editor.event.message.dispatch({ info: degrees + 'º' })
+    }
+    if (dragCtx.item.map === 'simpleObjects' && dragCtx.item.ref) {
+      const current = rnd.page2obj(event)
+      const diff = current.sub(this.dragCtx.xy0)
+      dragCtx.action = fromSimpleObjectResizing(
+        rnd.ctab,
+        dragCtx.item.id,
+        diff,
+        current,
+        dragCtx.item.ref,
+        event.shiftKey
+      )
+      editor.update(dragCtx.action, true)
+      return true
     }
     if (dragCtx.action) {
       dragCtx.action.perform(restruct)

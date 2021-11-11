@@ -11,85 +11,65 @@ const formatProperties: FormatPropertiesMap = {
     'MDL Molfile V2000',
     ChemicalMimeType.Mol,
     ['.mol'],
-    true,
-    { rescale: false }
+    true
   ),
   molV3000: new SupportedFormatProperties(
     'MDL Molfile V3000',
     ChemicalMimeType.Mol,
     ['.mol'],
     true,
-    { 'molfile-saving-mode': '3000', rescale: false }
+    { 'molfile-saving-mode': '3000' }
   ),
   rxn: new SupportedFormatProperties(
     'MDL Rxnfile V2000',
     ChemicalMimeType.Rxn,
     ['.rxn'],
-    true,
-    { rescale: false }
+    true
   ),
   rxnV3000: new SupportedFormatProperties(
     'MDL Rxnfile V3000',
     ChemicalMimeType.Rxn,
     ['.rxn'],
     true,
-    { 'molfile-saving-mode': '3000', rescale: false }
+    { 'molfile-saving-mode': '3000' }
   ),
   smiles: new SupportedFormatProperties(
     'Daylight SMILES',
     ChemicalMimeType.DaylightSmiles,
-    ['.smi', '.smiles'],
-    false,
-    { rescale: false }
+    ['.smi', '.smiles']
   ),
   smilesExt: new SupportedFormatProperties(
     'Extended SMILES',
     ChemicalMimeType.ExtendedSmiles,
-    ['.cxsmi', '.cxsmiles'],
-    false,
-    { rescale: false }
+    ['.cxsmi', '.cxsmiles']
   ),
   smarts: new SupportedFormatProperties(
     'Daylight SMARTS',
     ChemicalMimeType.DaylightSmarts,
-    ['.smarts'],
-    false,
-    { rescale: false }
+    ['.smarts']
   ),
-  inChI: new SupportedFormatProperties(
-    'InChI',
-    ChemicalMimeType.InChI,
-    ['.inchi'],
-    false,
-    { rescale: false }
-  ),
+  inChI: new SupportedFormatProperties('InChI', ChemicalMimeType.InChI, [
+    '.inchi'
+  ]),
   inChIAuxInfo: new SupportedFormatProperties(
     'InChI AuxInfo',
     ChemicalMimeType.InChIAuxInfo,
-    ['.inchi'],
-    false,
-    { rescale: false }
+    ['.inchi']
   ),
   cml: new SupportedFormatProperties(
     'CML',
     ChemicalMimeType.CML,
     ['.cml', '.mrv'],
-    true,
-    { rescale: false }
+    true
   ),
-  graph: new SupportedFormatProperties(
-    'Graph Format',
-    ChemicalMimeType.KET,
-    ['.ket'],
-    false,
-    { rescale: false }
-  ),
+  graph: new SupportedFormatProperties('Graph Format', ChemicalMimeType.KET, [
+    '.ket'
+  ]),
   cdxml: new SupportedFormatProperties(
     'CDXML',
     ChemicalMimeType.CDXML,
     ['.cdxml'],
-    true,
-    { rescale: true }
+    true
   )
 }
 

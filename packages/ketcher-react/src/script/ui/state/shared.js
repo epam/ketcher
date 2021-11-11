@@ -2,8 +2,7 @@ import {
   FormatterFactory,
   Pile,
   SGroup,
-  identifyStructFormat,
-  formatProperties
+  identifyStructFormat
 } from 'ketcher-core'
 
 import { getStereoAtomsMap } from '../../editor/actions/bond'
@@ -36,18 +35,15 @@ export function loadStruct(struct) {
 function parseStruct(struct, server, options) {
   if (typeof struct === 'string') {
     options = options || {}
-    const { fragment, ...formatterOptions } = options
+    const { rescale, fragment, ...formatterOptions } = options
 
     const format = identifyStructFormat(struct)
-
     const factory = new FormatterFactory(server)
+
     const service = factory.create(format, formatterOptions)
-    const resultStruct = service.getStructureFromStringAsync(struct)
-    return Promise.resolve(resultStruct).then(res => {
-      return { struct: res, format: format }
-    })
+    return service.getStructureFromStringAsync(struct)
   } else {
-    return Promise.resolve({ struct: struct, format: null })
+    return Promise.resolve(struct)
   }
 }
 
@@ -60,10 +56,8 @@ export function load(struct, options) {
     options = options || {}
 
     return parseStruct(struct, server, options).then(
-      resolve => {
+      struct => {
         const { fragment } = options
-        const { struct, format } = resolve
-        const rescale = format && formatProperties[format].options.rescale
 
         if (struct.sgroups.some(sGroup => !supportedSGroupTypes[sGroup.type])) {
           const isConfirmed = window.confirm(
@@ -79,9 +73,9 @@ export function load(struct, options) {
           )
         }
 
-        if (rescale) {
-          struct.rescale() // TODO: move out parsing?
+        struct.rescale() // TODO: move out parsing?
 
+        if (editor.struct().atoms.size) {
           //NB: reset id
           const oldStruct = editor.struct().clone()
 

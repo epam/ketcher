@@ -20,8 +20,7 @@ import {
   MolfileFormat,
   Struct,
   StructService,
-  SupportedFormat,
-  identifyStructFormat
+  SupportedFormat
 } from 'ketcher-core'
 
 import Editor from './editor'
@@ -31,14 +30,6 @@ import { isEqual } from 'lodash/fp'
 interface UI {
   load: (structStr: string | null, options?: any) => undefined
   loadStruct: (struct: Struct) => any
-}
-
-function parseStruct(structStr: string, structService: StructService) {
-  const format = identifyStructFormat(structStr)
-  const factory = new FormatterFactory(structService)
-
-  const service = factory.create(format)
-  return service.getStructureFromStringAsync(structStr)
 }
 
 function getStructureAsync(
@@ -57,8 +48,7 @@ class Ketcher {
     readonly editor: Editor,
     readonly server: StructService, // todo: remove
     readonly ui: UI,
-    private readonly formatterFactory: FormatterFactory,
-    private readonly structService: StructService
+    private readonly formatterFactory: FormatterFactory
   ) {}
 
   getSmilesAsync(isExtended: boolean = false): Promise<string> {
@@ -112,11 +102,11 @@ class Ketcher {
     )
   }
 
-  async setMolecule(structStr: string): Promise<void> {
-    if (typeof structStr !== 'string') return
-
-    const struct: Struct = await parseStruct(structStr, this.structService)
-    this.editor.struct(struct)
+  setMolecule(molString: string, rescale = true): void {
+    if (typeof molString !== 'string') return
+    this.ui.load(molString, {
+      rescale
+    })
   }
 
   addFragment(molString: string): void {

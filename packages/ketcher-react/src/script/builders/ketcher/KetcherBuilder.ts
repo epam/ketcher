@@ -137,8 +137,7 @@ class KetcherBuilder {
       this.editor,
       this.structService,
       this.ui,
-      this.formatterFactory,
-      this.structService
+      this.formatterFactory
     )
     ketcher[this.serviceMode] = true
 

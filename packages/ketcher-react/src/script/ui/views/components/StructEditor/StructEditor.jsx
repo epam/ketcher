@@ -142,6 +142,7 @@ class StructEditor extends Component {
           attributes={{
             onClick: hideMenu
           }}
+          holdToDisplay={-1}
         >
           <div
             ref={this.editorRef}

@@ -97,22 +97,24 @@ const Dialog: FC<Props> = props => {
       <header>{title}</header>
       <div className={styles.dialog_body}>{children}</div>
 
-      <footer>
-        {buttons.map(button =>
-          typeof button !== 'string' ? (
-            button
-          ) : (
-            <input
-              key={button}
-              type="button"
-              className={button === 'OK' ? styles.ok : styles.cancel}
-              value={button}
-              disabled={button === 'OK' && !valid()}
-              onClick={() => exit(button)}
-            />
-          )
-        )}
-      </footer>
+      {buttons.length ? (
+        <footer>
+          {buttons.map(button =>
+            typeof button !== 'string' ? (
+              button
+            ) : (
+              <input
+                key={button}
+                type="button"
+                className={button === 'OK' ? styles.ok : styles.cancel}
+                value={button}
+                disabled={button === 'OK' && !valid()}
+                onClick={() => exit(button)}
+              />
+            )
+          )}
+        </footer>
+      ) : null}
     </div>
   )
 }

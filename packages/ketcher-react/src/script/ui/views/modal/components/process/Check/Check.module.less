@@ -17,32 +17,84 @@
 @import '../../../../../../../style/mixins.less';
 
 .check {
-  .tabs {
-    outline: none;
-  }
+  width: 522px;
+  height: 357px;
 
-  fieldset {
-    margin: 0;
-    padding: 0 0 0.3em 0.3em;
-    overflow-y: auto;
-    height: 30em;
-    width: 25em;
-    border-color: #ddd;
-    border-radius: 0 4px 4px 4px;
+  //fieldset {
+  //  margin: 0;
+  //  padding: 0 0 0.3em 0.3em;
+  //  overflow-y: auto;
+  //  height: 30em;
+  //  width: 25em;
+  //  border-radius: 0 4px 4px 4px;
+  //  display: flex;
+  //  flex-direction: column;
+  //  .scrollbar();
+  //  li {
+  //    display: block;
+  //    margin: 1.2em 0 0.3em 0.3em;
+  //  }
+  //  dt {
+  //    font-weight: bold;
+  //    margin: 1.1em 0 0.3em 0.3em;
+  //  }
+  //  dd {
+  //    margin-left: 1.5em;
+  //    word-break: break-word;
+  //  }
+  //}
+
+  .wrapper {
     display: flex;
-    flex-direction: column;
-    .scrollbar();
-    li {
-      display: block;
-      margin: 1.2em 0 0.3em 0.3em;
+    flex-direction: row;
+    height: 310px;
+    column-gap: 20px;
+    .settings {
+      flex-grow: 2;
     }
-    dt {
-      font-weight: bold;
-      margin: 1.1em 0 0.3em 0.3em;
+    .warnings {
+      flex-grow: 3;
     }
-    dd {
-      margin-left: 1.5em;
-      word-break: break-word;
+
+    .settings,
+    .warnings {
+      height: 100%;
+      overflow: hidden;
+
+      &:first-child {
+        font-size: 14px;
+        line-height: 17px;
+      }
+
+      fieldset {
+        display: flex;
+        flex-direction: column;
+        font-size: 12px;
+        line-height: 15px;
+        border: none;
+
+        li {
+          margin: 10px 0 0 0;
+        }
+
+        dd {
+          word-break: break-word;
+          margin-inline-start: 0;
+        }
+
+        div {
+          margin: 12px 0 0 0;
+
+          dt {
+            font-weight: bold;
+          }
+
+          dd {
+            word-break: break-word;
+            margin-inline-start: 0;
+          }
+        }
+      }
     }
   }
 }

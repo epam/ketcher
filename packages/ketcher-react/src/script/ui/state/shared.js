@@ -73,7 +73,7 @@ export function load(struct, options) {
           )
         }
 
-        if (rescale) {
+        if (rescale && editor.struct().atoms.size) {
           struct.rescale() // TODO: move out parsing?
 
           //NB: reset id

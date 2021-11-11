@@ -3,7 +3,7 @@ import {
   Pile,
   SGroup,
   identifyStructFormat,
-  NeedToResize
+  formatProperties
 } from 'ketcher-core'
 
 import { getStereoAtomsMap } from '../../editor/actions/bond'
@@ -63,7 +63,7 @@ export function load(struct, options) {
       resolve => {
         const { fragment } = options
         const { struct, format } = resolve
-        const rescale = format && NeedToResize[format]
+        const rescale = format && formatProperties[format].options.rescale
 
         if (struct.sgroups.some(sGroup => !supportedSGroupTypes[sGroup.type])) {
           const isConfirmed = window.confirm(

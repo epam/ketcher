@@ -21,10 +21,6 @@ export type SupportedFormat =
   | 'graph'
   | 'cdxml'
 
-export enum NeedToResize {
-  cdxml = 'cdxml'
-}
-
 export type FormatterFactoryOptions = Partial<
   MolSerializerOptions & StructServiceOptions
 >

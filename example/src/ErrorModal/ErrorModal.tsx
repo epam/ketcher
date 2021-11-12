@@ -20,7 +20,7 @@ const ErrorModal = (props: any) => {
         <div className={'modalOverlay'}>
             <div className={'modalWindow'}>
                 <header>Error message</header>
-                <div className={'modalBody'}>{props.message?.message}</div>
+                <div className={'modalBody'}>{props.message}</div>
                 <footer>
                     <button
                         className={'ok'}

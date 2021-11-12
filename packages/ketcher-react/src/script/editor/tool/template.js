@@ -77,6 +77,7 @@ function TemplateTool(editor, tmpl) {
 
 TemplateTool.prototype.mousedown = function (event) {
   const closestItem = this.editor.findItem(event, ['atoms', 'bonds', 'sgroups'])
+  const struct = this.editor.struct()
   const atomResult = []
   const bondResult = []
   const sGroupResult = []
@@ -84,34 +85,34 @@ TemplateTool.prototype.mousedown = function (event) {
 
   if (
     closestItem &&
-    this.functionalGroups.size &&
+    struct.functionalGroups.size &&
     closestItem.map === 'sgroups' &&
     FunctionalGroup.isContractedFunctionalGroup(
       closestItem.id,
-      this.functionalGroups
+      struct.functionalGroups
     )
   ) {
     sGroupResult.push(closestItem.id)
   }
   if (
     closestItem &&
-    this.functionalGroups.size &&
+    struct.functionalGroups.size &&
     closestItem.map === 'atoms'
   ) {
     const atomId = FunctionalGroup.atomsInFunctionalGroup(
-      this.functionalGroups,
+      struct.functionalGroups,
       closestItem.id
     )
     if (atomId !== null) atomResult.push(atomId)
   }
   if (
     closestItem &&
-    this.functionalGroups.size &&
+    struct.functionalGroups.size &&
     closestItem.map === 'bonds'
   ) {
     const bondId = FunctionalGroup.bondsInFunctionalGroup(
       this.molecule,
-      this.functionalGroups,
+      struct.functionalGroups,
       closestItem.id
     )
     if (bondId !== null) bondResult.push(bondId)
@@ -124,7 +125,7 @@ TemplateTool.prototype.mousedown = function (event) {
   if (atomResult.length > 0) {
     for (let id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-        this.functionalGroups,
+        struct.functionalGroups,
         id
       )
       if (fgId !== null && !result.includes(fgId)) {
@@ -136,7 +137,7 @@ TemplateTool.prototype.mousedown = function (event) {
     for (let id of bondResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,
-        this.functionalGroups,
+        struct.functionalGroups,
         id
       )
       if (fgId !== null && !result.includes(fgId)) {

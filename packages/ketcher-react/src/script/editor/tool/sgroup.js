@@ -219,6 +219,14 @@ SGroupTool.prototype.mouseup = function (event) {
   let extraBonds
   const result = []
 
+  if (
+    ci &&
+    ci.map === 'sgroups' &&
+    this.functionalGroups.size &&
+    FunctionalGroup.isContractedFunctionalGroup(ci.id, this.functionalGroups)
+  )
+    return
+
   if (selected && this.functionalGroups.size && selected.atoms) {
     for (let atom of selected.atoms) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(

@@ -15,12 +15,16 @@
  ***************************************************************************/
 
 import {
+  Action,
   Atom,
   Bond,
   fromAtomAddition,
   fromAtomsAttrs,
   fromBondAddition,
-  FunctionalGroup
+  fromFragmentDeletion,
+  fromSgroupDeletion,
+  FunctionalGroup,
+  SGroup
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -53,7 +57,41 @@ function AtomTool(editor, atomProps) {
 AtomTool.prototype.mousedown = function (event) {
   this.editor.hover(null)
   this.editor.selection(null)
-  const ci = this.editor.findItem(event, ['atoms'])
+  const ci = this.editor.findItem(event, ['atoms', 'sgroups'])
+  if (
+    ci &&
+    ci.map === 'sgroups' &&
+    this.functionalGroups &&
+    FunctionalGroup.isContractedFunctionalGroup(ci.id, this.functionalGroups)
+  ) {
+    const action = new Action()
+    const selectedSgroup = this.sgroups.get(ci.id)
+    const sGroupAtoms = SGroup.getAtoms(this.molecule, selectedSgroup.item)
+    const [firstAtom, ...atoms] = sGroupAtoms
+    const atomNeighbours = this.struct.molecule.atomGetNeighbors(firstAtom)
+    const extraNeighbour = atomNeighbours.some(
+      atom => !sGroupAtoms.includes(atom.aid)
+    )
+    if (extraNeighbour) {
+      action.mergeWith(fromSgroupDeletion(this.struct, ci.id))
+      action.mergeWith(fromFragmentDeletion(this.struct, { atoms: atoms }))
+      action.mergeWith(
+        fromAtomsAttrs(this.struct, firstAtom, this.atomProps, true)
+      )
+    } else {
+      const firstAtomPp = this.struct.atoms.get(firstAtom).a.pp
+      action.mergeWith(
+        fromFragmentDeletion(this.struct, {
+          atoms: SGroup.getAtoms(this.molecule, selectedSgroup.item),
+          bonds: SGroup.getBonds(this.molecule, selectedSgroup.item)
+        })
+      )
+      action.mergeWith(
+        fromAtomAddition(this.struct, firstAtomPp, this.atomProps)
+      )
+    }
+    this.editor.update(action)
+  }
   const atomResult = []
   const result = []
   if (ci && this.functionalGroups.size && ci.map === 'atoms') {
@@ -87,7 +125,7 @@ AtomTool.prototype.mousedown = function (event) {
 AtomTool.prototype.mousemove = function (event) {
   const rnd = this.editor.render
   if (!this.dragCtx || !this.dragCtx.item) {
-    this.editor.hover(this.editor.findItem(event, ['atoms']))
+    this.editor.hover(this.editor.findItem(event, ['atoms', 'sgroups']))
     return
   }
 

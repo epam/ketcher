@@ -16,11 +16,13 @@
 import './ErrorModal.css'
 
 const ErrorModal = (props: any) => {
+    let errorMessage = props.message.message ? props.message.message : props.message
+
     return (
         <div className={'modalOverlay'}>
             <div className={'modalWindow'}>
                 <header>Error message</header>
-                <div className={'modalBody'}>{props.message}</div>
+                <div className={'modalBody'}>{errorMessage}</div>
                 <footer>
                     <button
                         className={'ok'}

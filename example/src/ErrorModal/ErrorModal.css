@@ -34,8 +34,7 @@
     vertical-align: middle;
     display: flex;
     flex-direction: column;
-    max-width: 80%;
-    max-height: 80%;
+    max-width: 500px;
     text-align: left;
     background-color: #fff;
     border-radius: 10px;

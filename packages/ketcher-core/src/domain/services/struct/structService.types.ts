@@ -21,6 +21,7 @@ export enum ChemicalMimeType {
   DaylightSmarts = 'chemical/x-daylight-smarts',
   InChI = 'chemical/x-inchi',
   InChIAuxInfo = 'chemical/x-inchi-aux',
+  CDXML = 'chemical/x-cdxml',
   CML = 'chemical/x-cml',
   KET = 'application/json'
 }

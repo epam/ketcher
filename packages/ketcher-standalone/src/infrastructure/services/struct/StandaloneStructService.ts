@@ -98,6 +98,10 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.CML
       break
     }
+    case ChemicalMimeType.CDXML: {
+      format = SupportedFormat.CDXML
+      break
+    }
     default: {
       throw new Error('Unsupported chemical mime type')
     }

@@ -34,7 +34,8 @@ export enum SupportedFormat {
   Smarts = 'smarts',
   CML = 'cml',
   InChI = 'inchi',
-  InChIAuxInfo = 'inchi-aux'
+  InChIAuxInfo = 'inchi-aux',
+  CDXML = 'cdxml'
 }
 
 export interface WithStruct {

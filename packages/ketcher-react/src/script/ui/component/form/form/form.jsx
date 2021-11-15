@@ -93,7 +93,7 @@ export default connect(null, dispatch => ({
 function Label({ labelPos, title, children, ...props }) {
   return (
     <label {...props}>
-      {title && labelPos !== 'after' ? `${title}:` : ''}
+      {title && labelPos !== 'after' ? title : ''}
       {children}
       {title && labelPos === 'after' ? title : ''}
     </label>

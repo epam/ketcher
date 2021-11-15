@@ -44,7 +44,6 @@ const sData = {
           },
           fieldValue: {
             title: 'Field value',
-            type: 'array',
             items: {
               enum: [
                 'abs',
@@ -146,7 +145,6 @@ const sData = {
           },
           fieldValue: {
             title: 'Field value',
-            type: 'array',
             items: {
               enum: [
                 'aerosol',
@@ -186,7 +184,6 @@ const sData = {
           },
           fieldValue: {
             title: 'Field value',
-            type: 'array',
             items: {
               enum: [
                 'erythro',
@@ -219,7 +216,6 @@ const sData = {
           },
           fieldValue: {
             title: 'Field value',
-            type: 'array',
             items: {
               enum: ['Value=4']
             },
@@ -247,7 +243,6 @@ const sData = {
           },
           fieldValue: {
             title: 'Field value',
-            type: 'array',
             items: {
               enum: [
                 'RS',
@@ -296,7 +291,6 @@ const sData = {
           },
           fieldValue: {
             title: 'Field value',
-            type: 'array',
             items: {
               enum: ['cis', 'trans']
             },

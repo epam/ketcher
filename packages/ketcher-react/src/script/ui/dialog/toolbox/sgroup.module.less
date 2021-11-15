@@ -15,13 +15,19 @@
  ***************************************************************************/
 
 .sgroup {
-  min-width: 20em;
+  min-width: 19em;
+  background-color: #f3f3f3;
   label {
-    display: block;
-    text-align: right;
-    input,
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+    ul {
+      width: inherit;
+    }
+    input[type='text'],
     select {
-      width: 10em;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
     }
     &:hover::after {
       margin: 1px 0 0 3px;
@@ -31,29 +37,32 @@
     border: 0;
     padding: 0;
   }
+  fieldset[class='radio'] {
+    display: flex;
+    justify-content: space-between;
+  }
   .data {
     label {
       text-align: left;
       fieldset {
         label {
-          margin: 0.4em;
           display: inline-block;
         }
         input[type='radio'] {
           width: auto;
+          margin-right: 5px;
         }
       }
     }
     textarea,
     select[name='fieldValue'] {
       display: block;
-      width: 19em;
-      height: 12em;
+      width: 100%;
       overflow: auto;
     }
     input[type='text'],
     select[name='fieldName'] {
-      width: 19em;
+      width: 100%;
       display: block;
       margin-bottom: 0;
     }

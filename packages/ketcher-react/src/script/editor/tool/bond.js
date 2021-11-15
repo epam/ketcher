@@ -20,7 +20,8 @@ import {
   bondChangingAction,
   fromBondAddition,
   fromBondsAttrs,
-  FunctionalGroup
+  FunctionalGroup,
+  SGroup
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -51,7 +52,7 @@ function BondTool(editor, bondProps) {
 
 BondTool.prototype.mousedown = function (event) {
   if (this.dragCtx) return
-  const ci = this.editor.findItem(event, ['atoms', 'bonds'])
+  const ci = this.editor.findItem(event, ['atoms', 'bonds', 'sgroups'])
   const atomResult = []
   const bondResult = []
   const result = []
@@ -129,10 +130,51 @@ BondTool.prototype.mousemove = function (event) {
       let i2
       let p1
       let p2
+      const extraNeighbour = []
       if ('item' in dragCtx && dragCtx.item.map === 'atoms') {
         // first mousedown event intersect with any atom
         i1 = dragCtx.item.id
         i2 = editor.findItem(event, ['atoms'], dragCtx.item)
+        const closestSGroup = editor.findItem(event, ['sgroups'])
+        if (
+          closestSGroup &&
+          FunctionalGroup.isContractedFunctionalGroup(
+            closestSGroup.id,
+            this.functionalGroups
+          )
+        ) {
+          const sGroup = this.sgroups.get(closestSGroup.id)
+          const sGroupAtoms = SGroup.getAtoms(this.molecule, sGroup.item)
+          i2 = {
+            id: sGroupAtoms[0],
+            map: 'atoms'
+          }
+        }
+        const fGroupId =
+          i2 &&
+          FunctionalGroup.findFunctionalGroupByAtom(
+            this.functionalGroups,
+            i2.id
+          )
+        const fGroup =
+          typeof fGroupId === 'number' && this.sgroups.get(fGroupId)
+        const fGroupAtoms =
+          fGroup && SGroup.getAtoms(this.molecule, fGroup.item)
+        if (i2 && fGroup && i2.id !== fGroupAtoms[0]) {
+          this.editor.event.removeFG.dispatch({ fgIds: [fGroupId] })
+          i2 = null
+        }
+        if (i2 && fGroup && i2.id === fGroupAtoms[0]) {
+          const atomNeighbours = this.molecule.atomGetNeighbors(i2.id)
+          atomNeighbours.forEach(nei => {
+            !fGroupAtoms.includes(nei.aid) &&
+              !extraNeighbour.includes(nei.aid) &&
+              extraNeighbour.push(nei.aid)
+          })
+        }
+        if (extraNeighbour.length >= 1) {
+          i2 = null
+        }
       } else {
         // first mousedown event intersect with any canvas
         i1 = this.atomProps

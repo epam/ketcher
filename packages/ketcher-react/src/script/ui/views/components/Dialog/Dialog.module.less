@@ -73,13 +73,37 @@
   header {
     display: flex;
     align-items: center;
-    //font-size: 1.2em;
     font-size: 14px;
-    //line-height: 1.3;
     line-height: 17px;
     text-transform: uppercase;
     border-radius: 0.7em 0.7em 0 0;
     height: 40px;
+
+    .close {
+      position: absolute;
+      right: 12px;
+      top: 15px;
+      width: 10px;
+      height: 10px;
+      opacity: 0.5;
+    }
+    .close:hover {
+      opacity: 1;
+    }
+    .close::before,
+    .close::after {
+      position: absolute;
+      content: '';
+      height: 12px;
+      width: 2px;
+      background-color: #5b6077;
+    }
+    .close::before {
+      transform: rotate(45deg);
+    }
+    .close::after {
+      transform: rotate(-45deg);
+    }
   }
   footer {
     clear: both;
@@ -88,7 +112,7 @@
     max-height: 40px;
     display: flex;
     align-items: center;
-    height: content-box;
+    padding-top: 5px;
 
     button,
     input[type='submit'],
@@ -119,7 +143,7 @@
     }
   }
   &:last-child {
-    padding-bottom: 15px;
+    padding-bottom: 5px;
   }
   .body {
     font-size: 12px;

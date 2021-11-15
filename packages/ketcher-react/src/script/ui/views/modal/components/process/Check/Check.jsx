@@ -66,24 +66,6 @@ const checkSchema = {
 function CheckDialog(props) {
   const { formState, checkState, onCheck, ...prop } = props
   const { result = checkState, moleculeErrors } = formState
-  console.log(result)
-  // const tabs = [
-  //   {
-  //     caption: 'Check',
-  //     component: ErrorsCheck,
-  //     props: { moleculeErrors, checkSchema }
-  //   },
-  //   {
-  //     caption: 'Settings',
-  //     component: Field,
-  //     props: {
-  //       name: 'checkOptions',
-  //       multiple: true,
-  //       type: 'checkbox',
-  //       labelPos: false
-  //     }
-  //   }
-  // ]
 
   return (
     <Dialog
@@ -91,12 +73,14 @@ function CheckDialog(props) {
       className={style.check}
       params={prop}
       buttons={[]}
+      result={() => result}
     >
       <Form
         schema={checkSchema}
         init={checkState}
         {...formState}
         result={() => result}
+        onUpdate={onCheck(result.checkOptions)}
       >
         <div className={style.wrapper}>
           <div className={style.settings}>
@@ -104,6 +88,7 @@ function CheckDialog(props) {
               name="checkOptions"
               multiple
               type="checkbox"
+              value={result.checkOptions}
               onChange={() => onCheck(result.checkOptions)}
             />
           </div>
@@ -114,23 +99,6 @@ function CheckDialog(props) {
             />
           </div>
         </div>
-        {/*<Tabs*/}
-        {/*  className={style.tabs}*/}
-        {/*  captions={tabs}*/}
-        {/*  changeTab={i => (i === 0 ? onCheck(result.checkOptions) : null)}*/}
-        {/*  tabs={tabs}*/}
-        {/*>*/}
-        {/*  <ErrorsCheck*/}
-        {/*    moleculeErrors={moleculeErrors}*/}
-        {/*    checkSchema={checkSchema}*/}
-        {/*  />*/}
-        {/*  <Field*/}
-        {/*    name="checkOptions"*/}
-        {/*    multiple*/}
-        {/*    type="checkbox"*/}
-        {/*    labelPos={false}*/}
-        {/*  />*/}
-        {/*</Tabs>*/}
       </Form>
     </Dialog>
   )

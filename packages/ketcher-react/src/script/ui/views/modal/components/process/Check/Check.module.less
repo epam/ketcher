@@ -17,49 +17,20 @@
 @import '../../../../../../../style/mixins.less';
 
 .check {
-  width: 522px;
-  height: 357px;
-
-  //fieldset {
-  //  margin: 0;
-  //  padding: 0 0 0.3em 0.3em;
-  //  overflow-y: auto;
-  //  height: 30em;
-  //  width: 25em;
-  //  border-radius: 0 4px 4px 4px;
-  //  display: flex;
-  //  flex-direction: column;
-  //  .scrollbar();
-  //  li {
-  //    display: block;
-  //    margin: 1.2em 0 0.3em 0.3em;
-  //  }
-  //  dt {
-  //    font-weight: bold;
-  //    margin: 1.1em 0 0.3em 0.3em;
-  //  }
-  //  dd {
-  //    margin-left: 1.5em;
-  //    word-break: break-word;
-  //  }
-  //}
+  width: 35em;
+  height: 26em;
 
   .wrapper {
     display: flex;
     flex-direction: row;
-    height: 310px;
+    height: 22em;
     column-gap: 20px;
-    .settings {
-      flex-grow: 2;
-    }
-    .warnings {
-      flex-grow: 3;
-    }
 
     .settings,
     .warnings {
       height: 100%;
-      overflow: hidden;
+      flex-grow: 2;
+      flex-basis: 14em;
 
       &:first-child {
         font-size: 14px;
@@ -74,12 +45,7 @@
         border: none;
 
         li {
-          margin: 10px 0 0 0;
-        }
-
-        dd {
-          word-break: break-word;
-          margin-inline-start: 0;
+          margin: 9px 0 0 0;
         }
 
         div {
@@ -94,6 +60,14 @@
             margin-inline-start: 0;
           }
         }
+      }
+    }
+    .warnings {
+      flex-grow: 3;
+      flex-basis: 21em;
+
+      label {
+        padding-left: 3px;
       }
     }
   }

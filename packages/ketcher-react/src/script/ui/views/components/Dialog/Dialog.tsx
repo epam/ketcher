@@ -94,7 +94,10 @@ const Dialog: FC<Props> = props => {
       className={clsx(styles.form, className, params.className)}
       {...rest}
     >
-      <header>{title}</header>
+      <header>
+        {title}
+        <span className={styles.close} onClick={() => exit('Cancel')} />
+      </header>
       <div className={styles.dialog_body}>{children}</div>
 
       {buttons.length ? (

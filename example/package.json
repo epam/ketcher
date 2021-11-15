@@ -14,7 +14,7 @@
     "prebuild:remote": "run-s clean:remote",
     "build:remote": "cross-env MODE=remote react-app-rewired build && shx cp -r build/. dist/remote",
     "postbuild:remote": "run-s clean:build",
-    "prebuild": "run-p clean:standalone clean:remote",
+    "prebuild": "run-s clean:standalone clean:remote",
     "build": "run-s build:standalone build:remote",
     "build:standalone:analyze": "cross-env MODE=standalone react-app-rewired build --analyze",
     "build:remote:analyze": "cross-env MODE=remote react-app-rewired build --analyze",

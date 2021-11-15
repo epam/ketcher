@@ -15,8 +15,8 @@
  ***************************************************************************/
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import { SGroup } from 'ketcher-core'
 import Restruct from '../../../render/restruct'
+import { SGroup } from 'ketcher-core'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -65,7 +65,7 @@ class SGroupAtomRemove extends BaseOperation {
   data: Data
 
   constructor(sgroupId?: any, aid?: any) {
-    super(OperationType.S_GROUP_ATOM_REMOVE)
+    super(OperationType.S_GROUP_ATOM_REMOVE, 4)
     this.data = { sgid: sgroupId, aid }
   }
 

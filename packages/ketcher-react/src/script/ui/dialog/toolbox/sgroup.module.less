@@ -46,11 +46,13 @@
       text-align: left;
       fieldset {
         label {
-          display: inline-block;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          margin-left: 4px !important;
         }
-        input[type='radio'] {
-          width: auto;
-          margin-right: 5px;
+        span {
+          margin-right: 4px !important;
         }
       }
     }

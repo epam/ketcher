@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { Pile } from './Pile'
 import { SGroup } from './SGroup'
 
@@ -34,13 +35,24 @@ export class SGroupForest {
   /** returns an array or s-group ids in the order of breadth-first search */
   getSGroupsBFS(): number[] {
     const order: number[] = []
-    let id = -1
-    let queue = Array.from(this.children.get(-1) as any)
+    const queue = Array.from(this.children.get(-1) as Array<number>)
     while (queue.length > 0) {
-      id = queue.shift() as any
-      queue = queue.concat(this.children.get(id) as any)
+      const id = queue.shift()
+      if (typeof id !== 'number') {
+        break
+      }
+      const children = this.children.get(id)
+      if (typeof children === 'undefined') {
+        break
+      }
+
+      children.forEach(id => {
+        queue.push(id)
+      })
+
       order.push(id)
     }
+
     return order
   }
 

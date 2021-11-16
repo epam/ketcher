@@ -66,7 +66,7 @@ class SGroupAtomRemove extends BaseOperation {
   data: Data
 
   constructor(sgroupId?: any, aid?: any) {
-    super(OperationType.S_GROUP_ATOM_REMOVE)
+    super(OperationType.S_GROUP_ATOM_REMOVE, 4)
     this.data = { sgid: sgroupId, aid }
   }
 

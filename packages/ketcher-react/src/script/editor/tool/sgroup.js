@@ -39,8 +39,71 @@ function SGroupTool(editor, type) {
 
     var sgroups = editor.render.ctab.molecule.sgroups
     var selectedAtoms = editor.selection().atoms
+    const molecule = editor.render.ctab.molecule
+    const struct = editor.render.ctab
+    const newSelected = { atoms: [] }
+    let actualSgroupId
+    let atomsResult = []
+    let extraAtoms
+    const functionalGroups = editor.render.ctab.molecule.functionalGroups
+    const result = []
 
     var id = sgroups.find((_, sgroup) => isEqual(sgroup.atoms, selectedAtoms))
+
+    if (selectedAtoms && functionalGroups.size) {
+      for (let atom of selectedAtoms) {
+        const atomId = FunctionalGroup.atomsInFunctionalGroup(
+          functionalGroups,
+          atom
+        )
+        if (atomId == null) extraAtoms = true
+        const atomFromStruct = atomId !== null && struct.atoms.get(atomId).a
+
+        if (atomFromStruct) {
+          for (let sgId of atomFromStruct.sgs.values()) {
+            actualSgroupId = sgId
+          }
+        }
+        if (
+          atomFromStruct &&
+          FunctionalGroup.isAtomInContractedFinctionalGroup(
+            atomFromStruct,
+            sgroups,
+            functionalGroups,
+            false
+          )
+        ) {
+          const sgroupAtoms =
+            actualSgroupId !== undefined &&
+            SGroup.getAtoms(molecule, sgroups.get(actualSgroupId))
+          const sgroupBonds =
+            actualSgroupId !== undefined &&
+            SGroup.getBonds(molecule, sgroups.get(actualSgroupId))
+          atom === sgroupAtoms[0] &&
+            newSelected.atoms.push(...sgroupAtoms) &&
+            newSelected.bonds.push(...sgroupBonds)
+        }
+
+        if (atomFromStruct) atomsResult.push(atomId)
+      }
+    }
+    if (extraAtoms) atomsResult = []
+
+    if (atomsResult && atomsResult.length > 0) {
+      for (let id of atomsResult) {
+        const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+          functionalGroups,
+          id
+        )
+        if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+      }
+    }
+
+    if (result.length) {
+      editor.selection(null)
+      editor.event.removeFG.dispatch({ fgIds: result })
+      return
+    }
 
     sgroupDialog(editor, id !== undefined ? id : null, type)
     return null
@@ -156,6 +219,14 @@ SGroupTool.prototype.mouseup = function (event) {
   let extraBonds
   const result = []
 
+  if (
+    ci &&
+    ci.map === 'sgroups' &&
+    this.functionalGroups.size &&
+    FunctionalGroup.isContractedFunctionalGroup(ci.id, this.functionalGroups)
+  )
+    return
+
   if (selected && this.functionalGroups.size && selected.atoms) {
     for (let atom of selected.atoms) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
@@ -211,6 +282,34 @@ SGroupTool.prototype.mouseup = function (event) {
       if (bondFromStruct) bondsResult.push(bondId)
     }
   }
+
+  if (atomsResult.length) {
+    atomsResult.forEach(id => {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        this.functionalGroups,
+        id
+      )
+      const sgroupAtoms = SGroup.getAtoms(
+        this.molecule,
+        this.struct.sgroups.get(fgId).item
+      )
+      newSelected.atoms.push(...sgroupAtoms)
+    })
+  }
+  if (bondsResult.length) {
+    bondsResult.forEach(id => {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        this.molecule,
+        this.functionalGroups,
+        id
+      )
+      const sgroupBonds = SGroup.getBonds(
+        this.molecule,
+        this.struct.sgroups.get(fgId).item
+      )
+      newSelected.bonds.push(...sgroupBonds)
+    })
+  }
   if (extraAtoms || extraBonds) {
     atomsResult = null
     bondsResult = null
@@ -221,7 +320,9 @@ SGroupTool.prototype.mouseup = function (event) {
         this.functionalGroups,
         id
       )
-      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
     }
   }
   if (bondsResult && bondsResult.length > 0) {
@@ -231,7 +332,9 @@ SGroupTool.prototype.mouseup = function (event) {
         this.functionalGroups,
         id
       )
-      if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
     }
   }
   if (result.length === 1) {

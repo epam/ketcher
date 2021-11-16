@@ -175,7 +175,7 @@ export class SGroup {
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {
-    if (!sgroup.pp) return null
+    if (!sgroup?.pp) return null
     return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1)
   }
 

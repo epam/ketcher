@@ -203,12 +203,24 @@ EraserTool.prototype.mouseup = function (event) {
 }
 
 EraserTool.prototype.click = function (event) {
+  const rnd = this.editor.render
   const restruct = this.editor.render.ctab
   const ci = this.editor.findItem(event, this.maps)
   const atomResult = []
   const bondResult = []
   const result = []
-  if (ci && this.functionalGroups && ci.map === 'atoms') {
+
+  if (
+    ci &&
+    this.functionalGroups &&
+    ci.map === 'sgroups' &&
+    !FunctionalGroup.isContractedFunctionalGroup(ci.id, this.functionalGroups)
+  ) {
+    const sGroup = this.sgroups.get(ci.id)
+    if (FunctionalGroup.isFunctionalGroup(sGroup.item)) {
+      result.push(ci.id)
+    }
+  } else if (ci && this.functionalGroups && ci.map === 'atoms') {
     const atomId = FunctionalGroup.atomsInFunctionalGroup(
       this.functionalGroups,
       ci.id
@@ -224,8 +236,7 @@ EraserTool.prototype.click = function (event) {
       )
     )
       atomResult.push(atomId)
-  }
-  if (ci && this.functionalGroups && ci.map === 'bonds') {
+  } else if (ci && this.functionalGroups && ci.map === 'bonds') {
     const bondId = FunctionalGroup.bondsInFunctionalGroup(
       this.molecule,
       this.functionalGroups,
@@ -243,7 +254,7 @@ EraserTool.prototype.click = function (event) {
     )
       bondResult.push(bondId)
   }
-  if (atomResult.length > 0) {
+  if (atomResult.length) {
     for (let id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
@@ -253,9 +264,7 @@ EraserTool.prototype.click = function (event) {
         result.push(fgId)
       }
     }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
-  } else if (bondResult.length > 0) {
+  } else if (bondResult.length) {
     for (let id of bondResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,
@@ -266,6 +275,8 @@ EraserTool.prototype.click = function (event) {
         result.push(fgId)
       }
     }
+  }
+  if (result.length) {
     this.editor.event.removeFG.dispatch({ fgIds: result })
     return
   }
@@ -277,6 +288,17 @@ EraserTool.prototype.click = function (event) {
     this.editor.update(fromOneAtomDeletion(restruct, ci.id))
   } else if (ci.map === 'bonds') {
     this.editor.update(fromOneBondDeletion(restruct, ci.id))
+  } else if (
+    ci.map === 'sgroups' &&
+    FunctionalGroup.isContractedFunctionalGroup(ci.id, this.functionalGroups)
+  ) {
+    const sGroup = this.sgroups.get(ci.id)
+    this.editor.update(
+      fromFragmentDeletion(rnd.ctab, {
+        atoms: [...SGroup.getAtoms(this.molecule, sGroup.item)],
+        bonds: [...SGroup.getBonds(this.molecule, sGroup.item)]
+      })
+    )
   } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
     this.editor.update(fromSgroupDeletion(restruct, ci.id))
   } else if (ci.map === 'rxnArrows') {

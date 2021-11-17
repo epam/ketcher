@@ -117,7 +117,7 @@ export interface CommandOptions {
 export interface OutputMessage<T> {
   hasError?: boolean
   payload?: T
-  error?: string
+  message?: string
 }
 export interface InputMessage<T> {
   type: Command

@@ -96,7 +96,7 @@ function request(
   }
 
   return response.catch(err => {
-    throw Error(err).message
+    throw new Error(err)
   })
 }
 

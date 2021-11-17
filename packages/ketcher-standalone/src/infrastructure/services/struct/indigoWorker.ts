@@ -56,7 +56,7 @@ function handle(handler: handlerType, options?: CommandOptions) {
     } catch (error: any) {
       msg = {
         hasError: true,
-        error: error
+        message: error
       }
     }
 

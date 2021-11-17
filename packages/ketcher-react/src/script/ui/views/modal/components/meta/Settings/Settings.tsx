@@ -89,7 +89,6 @@ const SettingsDialog = (props: Props) => {
         <button key="settings-button" onClick={onReset}>
           Reset
         </button>,
-        'Cancel',
         'OK'
       ]}
     >

@@ -17,16 +17,17 @@
 @import '../../../../../style/mixins.less';
 
 .ok {
-  background: #3e7bfa;
+  background: #343434;
   width: 40px;
   color: #fff;
   margin-right: 2px;
   margin-left: 10px;
+  float: right;
   &:hover {
-    background: #3265cd;
+    background: #121212;
   }
   &[disabled] {
-    opacity: 0.4;
+    background: #bcbcbc;
   }
 }
 
@@ -35,6 +36,7 @@
   background: #d1d5e3;
   color: #000;
   margin-left: auto;
+  float: right;
   &:hover {
     background: #aaadb9;
   }
@@ -67,12 +69,10 @@
     max-height: 65vh;
     color: #585858;
   }
-  header,
-  footer {
+
+  header {
     margin: 0;
     padding: 0.2em 1em;
-  }
-  header {
     display: flex;
     align-items: center;
     font-size: 14px;
@@ -112,9 +112,8 @@
     border-radius: 0 0 0.7em 0.7em;
     text-align: right;
     max-height: 40px;
-    display: flex;
-    align-items: center;
-    padding-top: 5px;
+    margin: 0;
+    padding: 10px 1em;
 
     button,
     input[type='submit'],
@@ -130,6 +129,7 @@
       border-radius: 2px;
       border: none;
       height: 26px;
+      vertical-align: middle;
     }
     & button[disabled] {
       border: 1px solid #5b6077;
@@ -139,13 +139,11 @@
 
     button {
       background: #d1d5e3;
+      float: left;
     }
     button:hover {
       background: #aaadb9;
     }
-  }
-  &:last-child {
-    padding-bottom: 5px;
   }
   .body {
     font-size: 12px;

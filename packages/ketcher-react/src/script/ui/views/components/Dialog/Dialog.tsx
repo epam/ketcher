@@ -50,7 +50,7 @@ const Dialog: FC<Props> = props => {
     params,
     result = () => null,
     valid = () => !!result(),
-    buttons = ['Cancel', 'OK'],
+    buttons = ['OK'],
     className,
     ...rest
   } = props

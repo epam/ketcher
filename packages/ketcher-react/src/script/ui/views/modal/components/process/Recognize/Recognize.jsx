@@ -74,7 +74,6 @@ function RecognizeDialog(prop) {
             Recognize
           </button>
         ),
-        'Cancel',
         'OK'
       ]}
     >

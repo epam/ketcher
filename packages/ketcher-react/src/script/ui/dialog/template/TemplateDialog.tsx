@@ -122,7 +122,6 @@ const TemplateDialog: FC<Props> = props => {
             Save To SDF…
           </SaveButton>
         ),
-        'Cancel',
         'OK'
       ]}
     >

@@ -29,7 +29,13 @@ import LassoHelper from './helper/lasso'
 import { isEqual } from 'lodash/fp'
 import { selMerge } from './select'
 
-const searchMaps = ['atoms', 'bonds', 'sgroups', 'sgroupData']
+const searchMaps = [
+  'atoms',
+  'bonds',
+  'sgroups',
+  'functionalGroups',
+  'sgroupData'
+]
 
 function SGroupTool(editor, type) {
   if (!(this instanceof SGroupTool)) {
@@ -160,7 +166,7 @@ SGroupTool.prototype.mousedown = function (event) {
     )
       bondResult.push(bondId)
   }
-  if (ci && this.functionalGroups.size && ci.map === 'sgroups') {
+  if (ci && this.functionalGroups.size && ci.map === 'functionalGroups') {
     const sgroup = this.sgroups.get(ci.id)
     if (FunctionalGroup.isFunctionalGroup(sgroup.item)) {
       this.editor.event.removeFG.dispatch({ fgIds: [ci.id] })
@@ -221,7 +227,7 @@ SGroupTool.prototype.mouseup = function (event) {
 
   if (
     ci &&
-    ci.map === 'sgroups' &&
+    ci.map === 'functionalGroups' &&
     this.functionalGroups.size &&
     FunctionalGroup.isContractedFunctionalGroup(ci.id, this.functionalGroups)
   )

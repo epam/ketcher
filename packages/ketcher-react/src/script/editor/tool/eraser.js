@@ -52,6 +52,7 @@ function EraserTool(editor, mode) {
     'rxnArrows',
     'rxnPluses',
     'sgroups',
+    'functionalGroups',
     'sgroupData',
     'simpleObjects',
     'texts'
@@ -213,7 +214,7 @@ EraserTool.prototype.click = function (event) {
   if (
     ci &&
     this.functionalGroups &&
-    ci.map === 'sgroups' &&
+    ci.map === 'functionalGroups' &&
     !FunctionalGroup.isContractedFunctionalGroup(ci.id, this.functionalGroups)
   ) {
     const sGroup = this.sgroups.get(ci.id)
@@ -289,7 +290,7 @@ EraserTool.prototype.click = function (event) {
   } else if (ci.map === 'bonds') {
     this.editor.update(fromOneBondDeletion(restruct, ci.id))
   } else if (
-    ci.map === 'sgroups' &&
+    ci.map === 'functionalGroups' &&
     FunctionalGroup.isContractedFunctionalGroup(ci.id, this.functionalGroups)
   ) {
     const sGroup = this.sgroups.get(ci.id)

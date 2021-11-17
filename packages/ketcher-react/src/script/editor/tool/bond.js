@@ -52,7 +52,7 @@ function BondTool(editor, bondProps) {
 
 BondTool.prototype.mousedown = function (event) {
   if (this.dragCtx) return
-  const ci = this.editor.findItem(event, ['atoms', 'bonds', 'sgroups'])
+  const ci = this.editor.findItem(event, ['atoms', 'bonds'])
   const atomResult = []
   const bondResult = []
   const result = []
@@ -126,16 +126,16 @@ BondTool.prototype.mousemove = function (event) {
 
     if (!('item' in dragCtx) || dragCtx.item.map === 'atoms') {
       if ('action' in dragCtx) dragCtx.action.perform(rnd.ctab)
-      let i1
-      let i2
-      let p1
-      let p2
+      let beginAtom
+      let endAtom
+      let beginPos
+      let endPos
       const extraNeighbour = []
       if ('item' in dragCtx && dragCtx.item.map === 'atoms') {
         // first mousedown event intersect with any atom
-        i1 = dragCtx.item.id
-        i2 = editor.findItem(event, ['atoms'], dragCtx.item)
-        const closestSGroup = editor.findItem(event, ['sgroups'])
+        beginAtom = dragCtx.item.id
+        endAtom = editor.findItem(event, ['atoms'], dragCtx.item)
+        const closestSGroup = editor.findItem(event, ['functionalGroups'])
         if (
           closestSGroup &&
           FunctionalGroup.isContractedFunctionalGroup(
@@ -145,27 +145,27 @@ BondTool.prototype.mousemove = function (event) {
         ) {
           const sGroup = this.sgroups.get(closestSGroup.id)
           const sGroupAtoms = SGroup.getAtoms(this.molecule, sGroup.item)
-          i2 = {
+          endAtom = {
             id: sGroupAtoms[0],
             map: 'atoms'
           }
         }
         const fGroupId =
-          i2 &&
+          endAtom &&
           FunctionalGroup.findFunctionalGroupByAtom(
             this.functionalGroups,
-            i2.id
+            endAtom.id
           )
         const fGroup =
           typeof fGroupId === 'number' && this.sgroups.get(fGroupId)
         const fGroupAtoms =
           fGroup && SGroup.getAtoms(this.molecule, fGroup.item)
-        if (i2 && fGroup && i2.id !== fGroupAtoms[0]) {
+        if (endAtom && fGroup && endAtom.id !== fGroupAtoms[0]) {
           this.editor.event.removeFG.dispatch({ fgIds: [fGroupId] })
-          i2 = null
+          endAtom = null
         }
-        if (i2 && fGroup && i2.id === fGroupAtoms[0]) {
-          const atomNeighbours = this.molecule.atomGetNeighbors(i2.id)
+        if (endAtom && fGroup && endAtom.id === fGroupAtoms[0]) {
+          const atomNeighbours = this.molecule.atomGetNeighbors(endAtom.id)
           atomNeighbours.forEach(nei => {
             !fGroupAtoms.includes(nei.aid) &&
               !extraNeighbour.includes(nei.aid) &&
@@ -173,24 +173,24 @@ BondTool.prototype.mousemove = function (event) {
           })
         }
         if (extraNeighbour.length >= 1) {
-          i2 = null
+          endAtom = null
         }
       } else {
         // first mousedown event intersect with any canvas
-        i1 = this.atomProps
-        p1 = dragCtx.xy0
-        i2 = editor.findItem(event, ['atoms'])
+        beginAtom = this.atomProps
+        beginPos = dragCtx.xy0
+        endAtom = editor.findItem(event, ['atoms'])
         const atomResult = []
         const result = []
         if (
-          i2 &&
-          i2.map === 'atoms' &&
+          endAtom &&
+          endAtom.map === 'atoms' &&
           this.functionalGroups.size &&
           this.dragCtx
         ) {
           const atomId = FunctionalGroup.atomsInFunctionalGroup(
             this.functionalGroups,
-            i2.id
+            endAtom.id
           )
           if (atomId !== null) atomResult.push(atomId)
         }
@@ -210,21 +210,21 @@ BondTool.prototype.mousemove = function (event) {
         }
       }
       let dist = Number.MAX_VALUE
-      if (i2 && i2.map === 'atoms') {
+      if (endAtom && endAtom.map === 'atoms') {
         // after mousedown events is appered, cursor is moved and then cursor intersects any atoms
-        i2 = i2.id
+        endAtom = endAtom.id
       } else {
-        i2 = this.atomProps
+        endAtom = this.atomProps
         const xy1 = rnd.page2obj(event)
         dist = Vec2.dist(dragCtx.xy0, xy1)
-        if (p1) {
+        if (beginPos) {
           // rotation only, leght of bond = 1;
-          p2 = utils.calcNewAtomPos(p1, xy1, event.ctrlKey)
+          endPos = utils.calcNewAtomPos(beginPos, xy1, event.ctrlKey)
         } else {
           // first mousedown event intersect with any atom and
           // rotation only, leght of bond = 1;
-          const atom = rnd.ctab.molecule.atoms.get(i1)
-          p1 = utils.calcNewAtomPos(atom.pp.get_xy0(), xy1, event.ctrlKey)
+          const atom = rnd.ctab.molecule.atoms.get(beginAtom)
+          beginPos = utils.calcNewAtomPos(atom.pp.get_xy0(), xy1, event.ctrlKey)
         }
       }
       // don't rotate the bond if the distance between the start and end point is too small
@@ -232,10 +232,10 @@ BondTool.prototype.mousemove = function (event) {
         dragCtx.action = fromBondAddition(
           rnd.ctab,
           this.bondProps,
-          i1,
-          i2,
-          p1,
-          p2
+          beginAtom,
+          endAtom,
+          beginPos,
+          endPos
         )[0]
       else delete dragCtx.action
       this.editor.update(dragCtx.action, true)

@@ -57,10 +57,10 @@ function AtomTool(editor, atomProps) {
 AtomTool.prototype.mousedown = function (event) {
   this.editor.hover(null)
   this.editor.selection(null)
-  const ci = this.editor.findItem(event, ['atoms', 'sgroups'])
+  const ci = this.editor.findItem(event, ['atoms', 'functionalGroups'])
   if (
     ci &&
-    ci.map === 'sgroups' &&
+    ci.map === 'functionalGroups' &&
     this.functionalGroups &&
     FunctionalGroup.isContractedFunctionalGroup(ci.id, this.functionalGroups)
   ) {
@@ -125,7 +125,9 @@ AtomTool.prototype.mousedown = function (event) {
 AtomTool.prototype.mousemove = function (event) {
   const rnd = this.editor.render
   if (!this.dragCtx || !this.dragCtx.item) {
-    this.editor.hover(this.editor.findItem(event, ['atoms', 'sgroups']))
+    this.editor.hover(
+      this.editor.findItem(event, ['atoms', 'functionalGroups'])
+    )
     return
   }
 

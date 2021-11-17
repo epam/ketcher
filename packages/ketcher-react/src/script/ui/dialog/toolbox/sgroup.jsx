@@ -28,7 +28,7 @@ function Sgroup({ formState, ...prop }) {
 
   return (
     <Dialog
-      title="S-GROUP PROPERTIES"
+      title="S-Group Properties"
       className={classes.sgroup}
       result={() => result}
       valid={() => valid}

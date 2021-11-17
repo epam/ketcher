@@ -40,17 +40,10 @@ export function couldBeSaved(
 
   if (format === 'smiles') {
     const arrayOfAtoms: Array<any> = Array.from(struct.atoms.values())
-    const indexes = arrayOfAtoms.reduce((arr, atom, index) => {
-      if (atom.pseudo) {
-        arr.push(index)
-      }
-      return arr
-    }, [])
-    if (indexes.length > 0) {
+    const hasGenerics = arrayOfAtoms.some(atom => atom.pseudo)
+    if (hasGenerics) {
       warnings.push(
-        `Structure contains generic atoms. They will be saved as any atom (*). (${indexes.join(
-          ', '
-        )})`
+        `Structure contains generic atoms. They will be saved as any atom (*).`
       )
     }
   }

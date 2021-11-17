@@ -94,13 +94,13 @@ function SData({
         init={init}
         {...formState}
       >
-        <SelectOneOf title="Context" name="context" schema={sdataSchema} />
         <fieldset className={classes.data}>
           <SelectInput
             title="Field name"
             name="fieldName"
             schema={sdataSchema[result.context]}
           />
+          <SelectOneOf title="Context" name="context" schema={sdataSchema} />
           {content(formSchema, result.context, result.fieldName, radiobuttons)}
         </fieldset>
       </Form>
@@ -125,8 +125,6 @@ const content = (schema, context, fieldName, checked) =>
         <Field
           name={prop}
           type="textarea"
-          multiple
-          size="10"
           key={`${context}-${fieldName}-${prop}-select`}
         />
       )

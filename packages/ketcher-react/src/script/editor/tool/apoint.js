@@ -61,6 +61,7 @@ APointTool.prototype.click = function (event) {
   if (ci && ci.map === 'atoms') {
     this.editor.hover(null)
     var atom = struct.atoms.get(ci.id)
+    if (atom.label === 'R#' && atom.rglabel !== null) return
     var res = editor.event.elementEdit.dispatch({
       attpnt: atom.attpnt
     })

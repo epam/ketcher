@@ -71,6 +71,9 @@ RGroupAtomTool.prototype.click = function (event) {
     return true
   } else if (ci.map === 'atoms') {
     this.editor.hover(null)
+    const struct = this.editor.render.ctab.molecule
+    const atom = struct.atoms.get(ci.id)
+    if (atom.attpnt !== null) return
     propsDialog(this.editor, ci.id)
     return true
   }

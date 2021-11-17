@@ -76,7 +76,12 @@ function TemplateTool(editor, tmpl) {
 }
 
 TemplateTool.prototype.mousedown = function (event) {
-  const closestItem = this.editor.findItem(event, ['atoms', 'bonds', 'sgroups'])
+  const closestItem = this.editor.findItem(event, [
+    'atoms',
+    'bonds',
+    'sgroups',
+    'functionalGroups'
+  ])
   const struct = this.editor.struct()
   const atomResult = []
   const bondResult = []
@@ -86,7 +91,7 @@ TemplateTool.prototype.mousedown = function (event) {
   if (
     closestItem &&
     struct.functionalGroups.size &&
-    closestItem.map === 'sgroups' &&
+    closestItem.map === 'functionalGroups' &&
     FunctionalGroup.isContractedFunctionalGroup(
       closestItem.id,
       struct.functionalGroups

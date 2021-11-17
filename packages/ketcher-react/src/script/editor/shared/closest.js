@@ -25,6 +25,7 @@ const findMaps = {
   enhancedFlags: findClosestEnhancedFlag,
   sgroupData: findClosestDataSGroupData,
   sgroups: findClosestSGroup,
+  functionalGroups: findClosestFG,
   rxnArrows: findClosestRxnArrow,
   rxnPluses: findClosestRxnPlus,
   frags: findClosestFrag,
@@ -386,7 +387,42 @@ function findClosestSGroup(restruct, pos) {
   let minDist = SELECTION_DISTANCE_COEFFICIENT
 
   restruct.molecule.sgroups.forEach((sg, sgid) => {
-    if (sg.functionalGroup && !sg.expanded && sg.firstSgroupAtom) {
+    if (sg.functionalGroup && !sg.expanded && sg.firstSgroupAtom) return null
+
+    const d = sg.bracketDir
+    const n = d.rotateSC(1, 0)
+    const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n))
+
+    sg.areas.forEach(box => {
+      const inBox =
+        box.p0.y < pg.y && box.p1.y > pg.y && box.p0.x < pg.x && box.p1.x > pg.x
+      const xDist = Math.min(
+        Math.abs(box.p0.x - pg.x),
+        Math.abs(box.p1.x - pg.x)
+      )
+
+      if (inBox && (ret === null || xDist < minDist)) {
+        ret = sgid
+        minDist = xDist
+      }
+    })
+  })
+
+  if (ret !== null) {
+    return {
+      id: ret,
+      dist: minDist
+    }
+  }
+
+  return null
+}
+
+function findClosestFG(restruct, pos) {
+  let ret = null
+  let minDist = SELECTION_DISTANCE_COEFFICIENT
+  restruct.molecule.sgroups.forEach((sg, sgid) => {
+    if (sg.functionalGroup && !sg.data.expanded && sg.firstSgroupAtom) {
       const firstAtomPp = sg.firstSgroupAtom.pp
       const shift = new Vec2(0.625, 0.625)
       const box = {
@@ -410,30 +446,8 @@ function findClosestSGroup(restruct, pos) {
         ret = sgid
         minDist = xDist
       }
-    } else {
-      const d = sg.bracketDir
-      const n = d.rotateSC(1, 0)
-      const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n))
-
-      sg.areas.forEach(box => {
-        const inBox =
-          box.p0.y < pg.y &&
-          box.p1.y > pg.y &&
-          box.p0.x < pg.x &&
-          box.p1.x > pg.x
-        const xDist = Math.min(
-          Math.abs(box.p0.x - pg.x),
-          Math.abs(box.p1.x - pg.x)
-        )
-
-        if (inBox && (ret === null || xDist < minDist)) {
-          ret = sgid
-          minDist = xDist
-        }
-      })
     }
   })
-
   if (ret !== null) {
     return {
       id: ret,

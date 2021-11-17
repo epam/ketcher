@@ -225,7 +225,6 @@ SGroupTool.prototype.mouseup = function (event) {
   let extraBonds
   const result = []
 
-
   if (
     ci &&
     ci.map === 'functionalGroups' &&

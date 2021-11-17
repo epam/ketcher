@@ -31,7 +31,7 @@ const AttachPoints = (props: Props) => {
   const { formState, ...rest } = props
   return (
     <Dialog
-      title="ATTACHMENT POINTS"
+      title="Attachment Point"
       className={classes.attachPoints}
       result={() => formState.result}
       valid={() => formState.valid}

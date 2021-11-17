@@ -47,7 +47,7 @@ function SGroupTool(editor, type) {
     var selectedAtoms = editor.selection().atoms
     const molecule = editor.render.ctab.molecule
     const struct = editor.render.ctab
-    const newSelected = { atoms: [] }
+    const newSelected = { atoms: [], bonds: [] }
     let actualSgroupId
     let atomsResult = []
     let extraAtoms
@@ -224,6 +224,7 @@ SGroupTool.prototype.mouseup = function (event) {
   let bondsResult = []
   let extraBonds
   const result = []
+
 
   if (
     ci &&

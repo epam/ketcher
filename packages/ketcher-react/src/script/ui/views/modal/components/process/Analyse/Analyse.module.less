@@ -15,20 +15,62 @@
  ***************************************************************************/
 
 .analyse {
-  label {
-    width: 10em;
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 1em;
-  }
+  li {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    margin-bottom: 18px !important;
 
-  input[type='text'] {
-    width: 14em;
-    margin-right: 1em;
-  }
+    label {
+      width: 10em;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 1em;
+    }
 
-  select {
-    width: 10em;
-    margin: 0;
+    input[type='text'] {
+      width: 12em;
+      margin-right: 1em;
+    }
+
+    .wrapperSelector {
+      display: flex;
+      flex-direction: column;
+
+      select {
+        width: 7em;
+        margin: 0;
+      }
+
+      span {
+        font-size: 12px;
+        line-height: 15px;
+        padding-bottom: 3px;
+        text-align: center;
+      }
+    }
+
+    .wrapperInput {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      textarea {
+        width: 20em;
+        height: 7em;
+        resize: none;
+      }
+    }
+
+    &:last-child {
+      padding-top: 14px;
+      .wrapperInput {
+        align-items: flex-start;
+      }
+      label {
+        padding-top: 5px;
+      }
+    }
   }
 }

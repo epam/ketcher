@@ -100,7 +100,7 @@ const Dialog: FC<Props> = props => {
       </header>
       <div className={styles.dialog_body}>{children}</div>
 
-      {buttons.length ? (
+      {buttons.length > 0 && (
         <footer>
           {buttons.map(button =>
             typeof button !== 'string' ? (
@@ -117,7 +117,7 @@ const Dialog: FC<Props> = props => {
             )
           )}
         </footer>
-      ) : null}
+      )}
     </div>
   )
 }

@@ -88,23 +88,23 @@
       width: 10px;
       height: 10px;
       opacity: 0.5;
-    }
-    .close:hover {
-      opacity: 1;
-    }
-    .close::before,
-    .close::after {
-      position: absolute;
-      content: '';
-      height: 12px;
-      width: 2px;
-      background-color: #5b6077;
-    }
-    .close::before {
-      transform: rotate(45deg);
-    }
-    .close::after {
-      transform: rotate(-45deg);
+      &:hover {
+        opacity: 1;
+      }
+      &::before,
+      &::after {
+        position: absolute;
+        content: '';
+        height: 12px;
+        width: 2px;
+        background-color: #5b6077;
+      }
+      &::before {
+        transform: rotate(45deg);
+      }
+      &::after {
+        transform: rotate(-45deg);
+      }
     }
   }
   footer {

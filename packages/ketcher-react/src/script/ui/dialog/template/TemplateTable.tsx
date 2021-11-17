@@ -20,6 +20,8 @@ import { Struct } from 'ketcher-core'
 import StructRender from '../../component/structrender'
 import classes from './TemplateTable.module.less'
 import { greekify } from '../../utils'
+import { useSelector } from 'react-redux'
+import { getSettingsSelector } from '../../state/options/selectors'
 
 interface TemplateTableProps {
   templates: Array<Template>
@@ -45,9 +47,10 @@ function tmplName(tmpl: Template, i: number): string {
 
 const RenderTmpl: FC<{
   tmpl: Template
+  options: any
   className: string
   onClick: () => void
-}> = ({ tmpl, ...props }) => {
+}> = ({ tmpl, options, ...props }) => {
   return tmpl.props && tmpl.props.prerender ? (
     <svg {...props}>
       <use href={tmpl.props.prerender} />
@@ -55,7 +58,7 @@ const RenderTmpl: FC<{
   ) : (
     <StructRender
       struct={tmpl.struct}
-      options={{ autoScaleMargin: 15 }}
+      options={{ autoScaleMargin: 15, ...options }}
       {...props}
     />
   )
@@ -69,6 +72,7 @@ const TemplateTable: FC<TemplateTableProps> = props => {
     width: `${ITEM_SIZE.width}px`,
     height: `${ITEM_SIZE.height}px`
   }
+  const options = useSelector(state => getSettingsSelector(state))
 
   return !ITEMS_COUNT ? (
     <EmptySearchResult textInfo="No items found" />
@@ -93,6 +97,7 @@ const TemplateTable: FC<TemplateTableProps> = props => {
             >
               <RenderTmpl
                 tmpl={tmpl}
+                options={options}
                 className={classes.struct}
                 onClick={() => onSelect(tmpl)}
               />

@@ -36,7 +36,8 @@ export enum SupportedFormat {
   CML = 'cml',
   InChI = 'inchi',
   InChIAuxInfo = 'inchi-aux',
-  Ket = 'ket'
+  Ket = 'ket',
+  CDXML = 'cdxml'
 }
 
 export interface WithStruct {

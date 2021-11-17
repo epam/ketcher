@@ -35,6 +35,7 @@ export type SupportedFormat =
   | 'inChIAuxInfo'
   | 'cml'
   | 'graph'
+  | 'cdxml'
 
 export type FormatterFactoryOptions = Partial<
   MolSerializerOptions & StructServiceOptions

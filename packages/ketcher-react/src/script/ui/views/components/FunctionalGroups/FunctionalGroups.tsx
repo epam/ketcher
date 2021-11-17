@@ -135,7 +135,6 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
         >
           Save To SDF…
         </SaveButton>,
-        'Cancel',
         'OK'
       ]}
     >

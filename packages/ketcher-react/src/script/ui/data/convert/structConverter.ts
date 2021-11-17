@@ -38,6 +38,23 @@ export function couldBeSaved(
     )
   }
 
+  if (format === 'smiles') {
+    const arrayOfAtoms: Array<any> = Array.from(struct.atoms.values())
+    const indexes = arrayOfAtoms.reduce((arr, atom, index) => {
+      if (atom.pseudo) {
+        arr.push(index)
+      }
+      return arr
+    }, [])
+    if (indexes.length > 0) {
+      warnings.push(
+        `Structure contains generic atoms. They will be saved as any atom (*). (${indexes.join(
+          ', '
+        )})`
+      )
+    }
+  }
+
   if (format !== 'graph') {
     if (hasRxnArrow) {
       const arrayOfArrows: Array<any> = Array.from(struct.rxnArrows.values())

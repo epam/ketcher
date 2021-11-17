@@ -132,7 +132,7 @@ export function analyse() {
         })
       )
       .catch(e => {
-        editor.errorHandler(e)
+        editor.errorHandler(e.message)
       })
     // TODO: notification
   }
@@ -208,7 +208,7 @@ export function serverCall(editor, server, method, options, struct) {
       ),
       omit('data', options)
     ).catch(e => {
-      editor.errorHandler(e)
+      editor.errorHandler(e.message)
     })
   )
 }

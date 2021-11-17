@@ -163,7 +163,7 @@ class IndigoService implements StructService {
           }
           resolve(result)
         } else {
-          reject(msg.error)
+          reject(msg)
         }
       }
 
@@ -191,7 +191,7 @@ class IndigoService implements StructService {
           }
           resolve(result)
         } else {
-          reject(msg.error)
+          reject(msg)
         }
       }
 
@@ -235,7 +235,7 @@ class IndigoService implements StructService {
           }
           resolve(result)
         } else {
-          reject(msg.error)
+          reject(msg)
         }
       }
 
@@ -276,7 +276,7 @@ class IndigoService implements StructService {
           }
           resolve(result)
         } else {
-          reject(msg.error)
+          reject(msg)
         }
       }
 
@@ -321,7 +321,7 @@ class IndigoService implements StructService {
           }
           resolve(result)
         } else {
-          reject(msg.error)
+          reject(msg)
         }
       }
 
@@ -365,7 +365,7 @@ class IndigoService implements StructService {
           }
           resolve(result)
         } else {
-          reject(msg.error)
+          reject(msg)
         }
       }
 
@@ -409,7 +409,7 @@ class IndigoService implements StructService {
           }
           resolve(result)
         } else {
-          reject(msg.error)
+          reject(msg)
         }
       }
 
@@ -453,7 +453,7 @@ class IndigoService implements StructService {
           }
           resolve(result)
         } else {
-          reject(msg.error)
+          reject(msg)
         }
       }
 
@@ -502,7 +502,7 @@ class IndigoService implements StructService {
           )
           resolve(result)
         } else {
-          reject(msg.error)
+          reject(msg)
         }
       }
 
@@ -552,7 +552,7 @@ class IndigoService implements StructService {
           }, {})
           resolve(result)
         } else {
-          reject(msg.error)
+          reject(msg)
         }
       }
 
@@ -596,7 +596,7 @@ class IndigoService implements StructService {
         if (!msg.hasError) {
           resolve(msg.payload!)
         } else {
-          reject(msg.error)
+          reject(msg)
         }
       }
 

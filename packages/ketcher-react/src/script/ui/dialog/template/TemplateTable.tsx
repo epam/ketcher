@@ -51,11 +51,7 @@ const RenderTmpl: FC<{
   className: string
   onClick: () => void
 }> = ({ tmpl, options, ...props }) => {
-  return tmpl.props && tmpl.props.prerender ? (
-    <svg {...props}>
-      <use href={tmpl.props.prerender} />
-    </svg>
-  ) : (
+  return (
     <StructRender
       struct={tmpl.struct}
       options={{ autoScaleMargin: 15, ...options }}

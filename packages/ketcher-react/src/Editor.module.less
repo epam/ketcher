@@ -50,10 +50,6 @@
     padding: 0;
   }
 
-  select,
-  textarea,
-  input[type='text'],
-  input[type='number'],
   input[type='search'] {
     border-radius: 4px;
     display: inline-block;
@@ -63,8 +59,42 @@
     height: 2.4em;
     padding: 0.35em 0.15em 0.35em 0.3em;
     margin: 2px;
-    border: 1px solid @border-color;
+    border: none;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-sizing: border-box;
+
+    &:active,
+    &:focus {
+      outline: 0;
+    }
+
+    &:hover,
+    &:focus {
+      .highlight-shadow(black);
+    }
+
+    &[disabled],
+    &[readonly],
+    fieldset[disabled] & {
+      cursor: not-allowed;
+      background: #efefef;
+      opacity: 0.6;
+    }
+  }
+
+  input[type='text'],
+  input[type='number'],
+  select,
+  textarea {
+    border-radius: 4px;
+    display: inline-block;
+    vertical-align: middle;
+    background: white;
+    line-height: 20 / 14;
+    height: 32px;
+    padding: 0.35em 0.15em 0.35em 0.3em;
+    margin: 2px;
+    border: none;
     box-sizing: border-box;
 
     &:active,
@@ -107,10 +137,15 @@
     text-align: left;
   }
 
-  input[type='radio'],
-  input[type='checkbox'] {
+  input[type='radio'] {
     vertical-align: middle;
     margin: 0 0.3em;
+    margin-top: 1px \9; // IE8-9
+    line-height: normal;
+    // TODO: style focus, active, etc
+  }
+  input[type='checkbox'] {
+    vertical-align: middle;
     margin-top: 1px \9; // IE8-9
     line-height: normal;
     // TODO: style focus, active, etc

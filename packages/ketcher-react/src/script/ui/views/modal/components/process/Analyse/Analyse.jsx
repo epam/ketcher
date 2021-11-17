@@ -48,7 +48,7 @@ class AnalyseDialog extends Component {
       <Dialog
         title="Calculated Values"
         className={classes.analyse}
-        buttons={['Close']}
+        buttons={[]}
         params={props}
       >
         <ul>
@@ -78,29 +78,41 @@ class AnalyseDialog extends Component {
             }
           ].map(item => (
             <li key={item.key}>
-              <label>{item.name}:</label>
-              {item.key === 'gross' ? (
-                <FormulaInput
-                  value={values && !loading ? values[item.key] : ''}
-                />
-              ) : (
-                <FrozenInput
-                  value={
-                    values && !loading
-                      ? roundOff(values[item.key], round[item.round])
-                      : 0
-                  }
-                />
-              )}
+              <div className={classes.wrapperInput}>
+                <label>{item.name}:</label>
+                {item.key === 'gross' ? (
+                  <FormulaInput
+                    value={values && !loading ? values[item.key] : ''}
+                  />
+                ) : item.key === 'mass-composition' ? (
+                  <textarea
+                    value={
+                      values && !loading
+                        ? roundOff(values[item.key], round[item.round])
+                        : 0
+                    }
+                  />
+                ) : (
+                  <FrozenInput
+                    value={
+                      values && !loading
+                        ? roundOff(values[item.key], round[item.round])
+                        : 0
+                    }
+                  />
+                )}
+              </div>
               {item.withSelector ? (
-                <Input
-                  schema={{
-                    enum: range(0, 8),
-                    enumNames: range(0, 8).map(i => `${i} decimal places`)
-                  }}
-                  value={round[item.round]}
-                  onChange={val => onChangeRound(item.round, val)}
-                />
+                <div className={classes.wrapperSelector}>
+                  <span>Decimal places</span>
+                  <Input
+                    schema={{
+                      enum: range(0, 8)
+                    }}
+                    value={round[item.round]}
+                    onChange={val => onChangeRound(item.round, val)}
+                  />
+                </div>
               ) : null}
             </li>
           ))}

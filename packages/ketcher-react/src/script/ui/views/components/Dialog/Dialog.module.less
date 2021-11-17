@@ -17,16 +17,17 @@
 @import '../../../../../style/mixins.less';
 
 .ok {
-  background: #3e7bfa;
+  background: #343434;
   width: 40px;
   color: #fff;
   margin-right: 2px;
   margin-left: 10px;
+  float: right;
   &:hover {
-    background: #3265cd;
+    background: #121212;
   }
   &[disabled] {
-    opacity: 0.4;
+    background: #bcbcbc;
   }
 }
 
@@ -35,6 +36,7 @@
   background: #d1d5e3;
   color: #000;
   margin-left: auto;
+  float: right;
   &:hover {
     background: #aaadb9;
   }
@@ -54,36 +56,64 @@
   max-width: 80%;
   max-height: 80%;
   text-align: left;
-  background-color: #fff;
+  background-color: #f3f3f3;
   border-radius: 10px;
   background-clip: padding-box;
   overflow-y: auto;
   overflow-x: auto;
+  font-family: Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
+    Arial, sans-serif;
   .transition-zoom;
   > * {
     margin: 0 15px;
     max-height: 65vh;
+    color: #585858;
   }
-  header,
-  footer {
+
+  header {
     margin: 0;
     padding: 0.2em 1em;
-  }
-  header {
     display: flex;
     align-items: center;
-    font-size: 1.2em;
-    line-height: 1.3;
+    font-size: 14px;
+    line-height: 17px;
+    text-transform: uppercase;
     border-radius: 0.7em 0.7em 0 0;
     height: 40px;
+
+    .close {
+      position: absolute;
+      right: 12px;
+      top: 15px;
+      width: 10px;
+      height: 10px;
+      opacity: 0.5;
+      &:hover {
+        opacity: 1;
+      }
+      &::before,
+      &::after {
+        position: absolute;
+        content: '';
+        height: 12px;
+        width: 2px;
+        background-color: #5b6077;
+      }
+      &::before {
+        transform: rotate(45deg);
+      }
+      &::after {
+        transform: rotate(-45deg);
+      }
+    }
   }
   footer {
     clear: both;
     border-radius: 0 0 0.7em 0.7em;
     text-align: right;
-    height: 40px;
-    display: flex;
-    align-items: center;
+    max-height: 40px;
+    margin: 0;
+    padding: 10px 1em;
 
     button,
     input[type='submit'],
@@ -99,6 +129,7 @@
       border-radius: 2px;
       border: none;
       height: 26px;
+      vertical-align: middle;
     }
     & button[disabled] {
       border: 1px solid #5b6077;
@@ -108,9 +139,14 @@
 
     button {
       background: #d1d5e3;
+      float: left;
     }
     button:hover {
       background: #aaadb9;
     }
+  }
+  .body {
+    font-size: 12px;
+    line-height: 15px;
   }
 }

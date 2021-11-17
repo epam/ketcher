@@ -101,6 +101,7 @@ export class FormatterFactory {
       case 'rxnV3000':
       case 'smilesExt':
       case 'smarts':
+      case 'cdxml':
       default:
         formatter = new ServerFormatter(
           this.structService,

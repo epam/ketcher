@@ -132,6 +132,7 @@ function FieldSet({
             {type === 'checkbox' && (
               <span className={classes.customCheckbox}></span>
             )}
+            {type === 'radio' && <span className={classes.customRadio}></span>}
             {title}
           </label>
         </li>

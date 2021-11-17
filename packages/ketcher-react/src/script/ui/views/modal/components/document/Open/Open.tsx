@@ -66,7 +66,6 @@ const Open: FC<Props> = props => {
         >
           Open From File…
         </OpenButton>,
-        'Cancel',
         'OK'
       ]}
     >

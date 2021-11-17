@@ -75,7 +75,7 @@ export function load(struct, options) {
     return parseStruct(struct, server, options)
       .then(
         struct => {
-        const { fragment } = options
+          const { fragment } = options
 
           if (
             struct.sgroups.some(sGroup => !supportedSGroupTypes[sGroup.type])
@@ -93,9 +93,9 @@ export function load(struct, options) {
             )
           }
 
-        struct.rescale() // TODO: move out parsing?
+          struct.rescale() // TODO: move out parsing?
 
-        if (editor.struct().atoms.size) {
+          if (editor.struct().atoms.size) {
             //NB: reset id
             const oldStruct = editor.struct().clone()
 

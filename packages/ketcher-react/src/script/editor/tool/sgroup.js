@@ -41,7 +41,7 @@ function SGroupTool(editor, type) {
     var selectedAtoms = editor.selection().atoms
     const molecule = editor.render.ctab.molecule
     const struct = editor.render.ctab
-    const newSelected = { atoms: [] }
+    const newSelected = { atoms: [], bonds: [] }
     let actualSgroupId
     let atomsResult = []
     let extraAtoms
@@ -219,13 +219,10 @@ SGroupTool.prototype.mouseup = function (event) {
   let extraBonds
   const result = []
 
-  if (
-    ci &&
-    ci.map === 'sgroups' &&
-    this.functionalGroups.size &&
-    FunctionalGroup.isContractedFunctionalGroup(ci.id, this.functionalGroups)
-  )
-    return
+  if (ci && ci.map === 'sgroups' && this.functionalGroups.size) {
+    const sGroup = this.sgroups.get(ci.id)
+    if (FunctionalGroup.isFunctionalGroup(sGroup.item)) return
+  }
 
   if (selected && this.functionalGroups.size && selected.atoms) {
     for (let atom of selected.atoms) {

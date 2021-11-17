@@ -59,6 +59,8 @@
   background-clip: padding-box;
   overflow-y: auto;
   overflow-x: auto;
+  font-family: Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
+    Arial, sans-serif;
   .transition-zoom;
   > * {
     margin: 0 15px;
@@ -71,21 +73,49 @@
     padding: 0.2em 1em;
   }
   header {
-    text-transform: uppercase;
     display: flex;
     align-items: center;
-    font-size: 1.2em;
-    line-height: 1.3;
+    font-size: 14px;
+    line-height: 17px;
+    text-transform: uppercase;
     border-radius: 0.7em 0.7em 0 0;
     height: 40px;
+
+    .close {
+      position: absolute;
+      right: 12px;
+      top: 15px;
+      width: 10px;
+      height: 10px;
+      opacity: 0.5;
+      &:hover {
+        opacity: 1;
+      }
+      &::before,
+      &::after {
+        position: absolute;
+        content: '';
+        height: 12px;
+        width: 2px;
+        background-color: #5b6077;
+      }
+      &::before {
+        transform: rotate(45deg);
+      }
+      &::after {
+        transform: rotate(-45deg);
+      }
+    }
   }
   footer {
     clear: both;
     border-radius: 0 0 0.7em 0.7em;
     text-align: right;
-    height: 40px;
+    max-height: 40px;
     display: flex;
     align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
 
     button,
     input[type='submit'],
@@ -114,5 +144,12 @@
     button:hover {
       background: #aaadb9;
     }
+  }
+  &:last-child {
+    padding-bottom: 5px;
+  }
+  .body {
+    font-size: 12px;
+    line-height: 15px;
   }
 }

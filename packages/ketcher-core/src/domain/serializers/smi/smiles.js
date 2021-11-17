@@ -486,7 +486,7 @@ Smiles.prototype.writeAtom = function (
     needBrackets = false // atom list label already has brackets
   } else if (atom.isPseudo() || (atom.atomList && atom.atomList.notList)) {
     label = '*'
-    needBrackets = true
+    needBrackets = false
   } else if (
     chirality ||
     atom.charge != 0 ||

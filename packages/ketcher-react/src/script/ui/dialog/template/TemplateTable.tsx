@@ -21,7 +21,6 @@ import StructRender from '../../component/structrender'
 import classes from './TemplateTable.module.less'
 import { greekify } from '../../utils'
 import { useSelector } from 'react-redux'
-import { getSettingsSelector } from '../../state/options/selectors'
 
 interface TemplateTableProps {
   templates: Array<Template>
@@ -41,6 +40,8 @@ export interface Template {
   }
 }
 
+const getSettingsSelector = state => state.options.settings
+
 function tmplName(tmpl: Template, i: number): string {
   return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`
 }
@@ -54,7 +55,7 @@ const RenderTmpl: FC<{
   return (
     <StructRender
       struct={tmpl.struct}
-      options={{ autoScaleMargin: 15, ...options }}
+      options={{ ...options, autoScaleMargin: 15 }}
       {...props}
     />
   )

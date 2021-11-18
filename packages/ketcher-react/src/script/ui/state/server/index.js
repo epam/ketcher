@@ -208,7 +208,7 @@ export function serverCall(editor, server, method, options, struct) {
       ),
       omit('data', options)
     ).catch(e => {
-      editor.errorHandler(e.message)
+      editor.errorHandler(e)
     })
   )
 }

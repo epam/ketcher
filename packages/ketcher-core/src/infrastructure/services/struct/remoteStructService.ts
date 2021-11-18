@@ -95,9 +95,7 @@ function request(
     )
   }
 
-  return response.catch(err => {
-    throw new Error(err)
-  })
+  return response
 }
 
 function indigoCall(

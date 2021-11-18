@@ -95,7 +95,7 @@ export function check(optsTypes) {
         dispatch(checkErrors(res))
       })
       .catch(e => {
-        //TODO: add error handler call
+        editor.errorHandler(e.message || e)
         //legacy message: Failed check
       })
     // TODO: notification
@@ -157,7 +157,7 @@ export function serverTransform(method, data, struct) {
         )
       })
       .catch(e => {
-        state.editor.errorHandler(e.message)
+        state.editor.errorHandler(e.message || e)
       })
       .finally(() => {
         dispatch(indigoVerification(false))
@@ -207,9 +207,7 @@ export function serverCall(editor, server, method, options, struct) {
         options.data
       ),
       omit('data', options)
-    ).catch(e => {
-      editor.errorHandler(e.message)
-    })
+    )
   )
 }
 

@@ -56,13 +56,16 @@ TextArea.val = ev => ev.target.value
 
 function CheckBox({ schema, value = '', onChange, ...rest }) {
   return (
-    <input
-      type="checkbox"
-      checked={value}
-      onClick={onChange}
-      onChange={onChange}
-      {...rest}
-    />
+    <div className={classes.fieldSetItem}>
+      <input
+        type="checkbox"
+        checked={value}
+        onClick={onChange}
+        onChange={onChange}
+        {...rest}
+      />
+      <span className={classes.customCheckbox}></span>
+    </div>
   )
 }
 

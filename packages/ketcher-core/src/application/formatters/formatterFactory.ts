@@ -27,7 +27,7 @@ import {
 } from 'domain/serializers'
 import { StructService, StructServiceOptions } from 'domain/services'
 
-import { GraphFormatter } from './graphFormatter'
+import { KetFormatter } from './ketFormatter'
 import { MolfileV2000Formatter } from './molfileV2000Formatter'
 import { RxnFormatter } from './rxnFormatter'
 import { ServerFormatter } from './serverFormatter'
@@ -67,8 +67,8 @@ export class FormatterFactory {
 
     let formatter: StructFormatter
     switch (format) {
-      case 'graph':
-        formatter = new GraphFormatter(new KetSerializer())
+      case 'ket':
+        formatter = new KetFormatter(new KetSerializer())
         break
 
       case 'mol':

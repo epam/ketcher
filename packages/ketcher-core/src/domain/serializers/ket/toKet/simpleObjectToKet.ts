@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-export function textToGraph(textNode) {
+export function simpleObjectToKet(simpleObjectNode) {
   return {
-    type: 'text',
-    data: textNode.data
+    type: 'simpleObject',
+    data: simpleObjectNode.data
   }
 }

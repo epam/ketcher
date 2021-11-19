@@ -25,8 +25,18 @@
 .settings {
   width: 38em;
 
+  > * {
+    margin: 0;
+  }
+
   .warning {
     margin: 0.3em;
+  }
+}
+
+.sidebar {
+  fieldset {
+    border: none;
   }
 }
 
@@ -45,8 +55,8 @@
   }
 
   fieldset {
-    border-radius: 0 0 6px 6px;
     height: @input-height * @fieldset-inputs-number;
+    border: 0 none;
   }
 
   .server {
@@ -59,6 +69,7 @@
 
   .general {
     height: @input-height * @general-inputs-number;
+    border: none;
   }
 
   .stereochemistry {

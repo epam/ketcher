@@ -24,7 +24,7 @@ import { load } from '../shared'
 
 export function checkServer() {
   return (dispatch, getState) => {
-    const server = getState().server
+    const { editor, server } = getState()
 
     server.then(
       res =>
@@ -35,8 +35,7 @@ export function checkServer() {
             server: res?.isAvailable
           })
         ),
-      err => console.info(err)
-      // TODO: notification info
+      e => editor.errorHandler(e)
     )
   }
 }
@@ -44,15 +43,15 @@ export function checkServer() {
 export function recognize(file, version) {
   return (dispatch, getState) => {
     const rec = getState().server.recognize
+    const editor = getState()
 
     const process = rec(file, version).then(
       res => {
         dispatch(setStruct(res.struct))
       },
-      () => {
+      e => {
         dispatch(setStruct(null))
-        //TODO: add error handler call
-        //legacy message: The picture isn't recognized
+        editor.errorHandler(e)
       }
     )
     dispatch(setStruct(process))
@@ -95,10 +94,8 @@ export function check(optsTypes) {
         dispatch(checkErrors(res))
       })
       .catch(e => {
-        //TODO: add error handler call
-        //legacy message: Failed check
+        editor.errorHandler(e)
       })
-    // TODO: notification
   }
 }
 
@@ -134,7 +131,6 @@ export function analyse() {
       .catch(e => {
         editor.errorHandler(e)
       })
-    // TODO: notification
   }
 }
 
@@ -166,6 +162,7 @@ export function serverTransform(method, data, struct) {
   }
 }
 
+//TODO: serverCall function should not be exported
 export function serverCall(editor, server, method, options, struct) {
   const selection = editor.selection()
   let selectedAtoms = []
@@ -207,9 +204,7 @@ export function serverCall(editor, server, method, options, struct) {
         options.data
       ),
       omit('data', options)
-    ).catch(e => {
-      editor.errorHandler(e)
-    })
+    )
   )
 }
 

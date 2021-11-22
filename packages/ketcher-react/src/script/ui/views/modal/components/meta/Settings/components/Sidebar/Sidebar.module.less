@@ -14,17 +14,51 @@
  * limitations under the License.
  ***************************************************************************/
 
-@bcg-blue: #f6f9ff;
-@bcg-white: #ffffff;
+@import '../../../../../../../../../style/variables';
+
+@sidebar_width: 33.3%;
 
 .sidebar {
   display: flex;
+  width: 100%;
 
   .tabs {
-    background-color: @bcg-blue;
+    background-color: @color-blue;
+    position: fixed;
+    bottom: 0;
+    top: 40px;
+    width: @sidebar_width;
+    color: @color-gray2;
+
+    .tab {
+      cursor: pointer;
+
+      &::before {
+        content: '';
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background-color: #c4c4c4;
+        border-radius: 2px;
+        margin-right: 8px;
+        vertical-align: text-bottom;
+      }
+    }
+
+    .tab_active {
+      background-color: @color-gray1;
+      color: @color-white;
+
+      &::before {
+        background-color: #fff;
+      }
+    }
   }
 
   .content {
-    background-color: @bcg-white;
+    background-color: @color-white;
+    margin-left: @sidebar_width;
+    max-height: 260px;
+    width: 100%;
   }
 }

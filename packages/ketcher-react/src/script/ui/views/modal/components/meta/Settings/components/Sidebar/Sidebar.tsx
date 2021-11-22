@@ -32,7 +32,10 @@ const Sidebar = ({ tabs, className }): React.ReactElement => {
           <li
             key={index}
             onClick={() => handleSwitchTab(tab.label)}
-            className={activeTab === tab ? 'active' : ''}
+            className={clsx(
+              classes.tab,
+              activeTab === tab.label && classes.tab_active
+            )}
           >
             {tab.label}
           </li>

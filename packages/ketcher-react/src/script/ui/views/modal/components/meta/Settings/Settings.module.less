@@ -23,7 +23,20 @@
 @stereochemistry-inputs-number: 11;
 
 .settings {
-  width: 38em;
+  width: 37em;
+  height: 25em;
+  background-color: #fff;
+
+  > header {
+    color: #3e7bfa;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 16px;
+  }
+
+  > .dialog_body {
+    height: 100%;
+  }
 
   > * {
     margin: 0;
@@ -32,47 +45,151 @@
   .warning {
     margin: 0.3em;
   }
+
+  footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+  }
 }
 
 .sidebar {
   fieldset {
     border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 0 28px;
   }
-}
 
-.accordion {
-  margin: 0.3em;
-
-  label {
-    display: block;
-    text-align: right;
-    line-height: @input-height;
-    height: @input-height;
-    select,
-    input {
-      width: 50%;
+  ul {
+    > li {
+      padding: 10px 16px;
     }
   }
 
-  fieldset {
-    height: @input-height * @fieldset-inputs-number;
-    border: 0 none;
-  }
+  label {
+    display: flex;
+    justify-content: space-between;
+    //height: @input-height;
+    font-size: 12px;
+    align-items: center;
+    line-height: 20px;
+    margin-bottom: 16px;
+    color: @color-black;
 
-  .server {
-    height: @input-height * @server-inputs-number;
-  }
+    > select,
+    > input,
+    > div {
+      width: 45%;
+    }
 
-  .viewer {
-    height: @input-height * @viewer-inputs-number;
-  }
-
-  .general {
-    height: @input-height * @general-inputs-number;
-    border: none;
+    select,
+    input {
+      border: 0.5px solid @color-gray2 !important;
+      border-radius: 2px !important;
+      color: @color-gray2;
+      height: inherit !important;
+    }
   }
 
   .stereochemistry {
-    height: @input-height * @stereochemistry-inputs-number;
+    // stylelint-disable-next-line selector-pseudo-class-no-unknown
+    :global(.ColorPicker-module_colorPickerInput__2GTGr) {
+      border: 0.5px solid @color-gray2;
+      border-radius: 2px;
+      color: @color-gray2;
+    }
   }
 }
+
+.checkbox.checkbox {
+  position: relative;
+  display: inline-block;
+  width: 26px;
+  height: 14px;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  span {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: @color-gray;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+    border-radius: 34px;
+  }
+
+  span::before {
+    position: absolute;
+    content: '';
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    left: 2px;
+    bottom: 2px;
+    background-color: @color-gray1;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+  }
+
+  input:checked + span {
+    background-color: @color-gray1;
+  }
+
+  input:focus + span {
+    box-shadow: 0 0 1px @color-gray1;
+  }
+
+  input:checked + span::before {
+    background-color: @color-white;
+    -webkit-transform: translateX(12px);
+    -ms-transform: translateX(12px);
+    transform: translateX(12px);
+  }
+}
+
+//.accordion {
+//  margin: 0.3em;
+//
+//  label {
+//    display: block;
+//    text-align: right;
+//    line-height: @input-height;
+//    height: @input-height;
+//    select,
+//    input {
+//      width: 50%;
+//    }
+//  }
+//
+//  fieldset {
+//    height: @input-height * @fieldset-inputs-number;
+//    border: 0 none;
+//  }
+//
+//  .server {
+//    height: @input-height * @server-inputs-number;
+//  }
+//
+//  .viewer {
+//    height: @input-height * @viewer-inputs-number;
+//  }
+//
+//  .general {
+//    height: @input-height * @general-inputs-number;
+//    border: none;
+//  }
+//
+//  .stereochemistry {
+//    height: @input-height * @stereochemistry-inputs-number;
+//  }
+//}

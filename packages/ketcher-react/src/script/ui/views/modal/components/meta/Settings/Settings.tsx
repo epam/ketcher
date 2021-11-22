@@ -25,8 +25,8 @@ import {
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker'
 import { Dialog } from '../../../../components'
 import MeasureInput from '../../../../../component/form/measure-input'
-import OpenButton from '../../../../../component/view/openbutton'
-import SaveButton from '../../../../../component/view/savebutton'
+// import OpenButton from '../../../../../component/view/openbutton'
+// import SaveButton from '../../../../../component/view/savebutton'
 import SelectCheckbox from '../../../../../component/form/select-checkbox'
 import { StructService } from 'ketcher-core'
 import SystemFonts from '../../../../../component/form/systemfonts'
@@ -181,105 +181,25 @@ const SettingsDialog = (props: Props) => {
       valid={() => formState.valid}
       params={prop}
       buttons={[
-        <OpenButton key="settings" server={server} onLoad={onOpenFile}>
-          Open From File…
-        </OpenButton>,
-        <SaveButton
-          key="ketcher-settings"
-          data={JSON.stringify(formState.result)}
-          filename="ketcher-settings"
-        >
-          Save To File…
-        </SaveButton>,
-        <button key="settings-button" onClick={onReset}>
-          Reset
-        </button>,
-        'OK'
+        // <OpenButton key="settings" server={server} onLoad={onOpenFile}>
+        //   Open From File…
+        // </OpenButton>,
+        // <SaveButton
+        //   key="ketcher-settings"
+        //   data={JSON.stringify(formState.result)}
+        //   filename="ketcher-settings"
+        // >
+        //   Save To File…
+        // </SaveButton>,
+        // <button key="settings-button" onClick={onReset}>
+        //   Reset
+        // </button>,
+        'Save'
       ]}
     >
       <Form schema={settingsSchema} init={initState} {...formState}>
         <Sidebar tabs={tabs} className={classes.sidebar} />
 
-        {/*<Accordion className={classes.accordion} multiple={false} active={[0]}>*/}
-        {/*  <Accordion.Group caption="General">*/}
-        {/*    <fieldset className={classes.general}>*/}
-        {/*      <Field name="resetToSelect" />*/}
-        {/*      <Field name="rotationStep" />*/}
-        {/*      <Field name="showValenceWarnings" component={SelectCheckbox} />*/}
-        {/*      <Field name="atomColoring" component={SelectCheckbox} />*/}
-        {/*      <Field name="font" component={SystemFonts} />*/}
-        {/*      <Field name="fontsz" component={MeasureInput} />*/}
-        {/*      <Field name="fontszsub" component={MeasureInput} />*/}
-        {/*    </fieldset>*/}
-        {/*  </Accordion.Group>*/}
-        {/*  <Accordion.Group caption="Stereochemistry">*/}
-        {/*    <fieldset className={classes.stereochemistry}>*/}
-        {/*      <Field name="showStereoFlags" component={SelectCheckbox} />*/}
-        {/*      <Field name="stereoLabelStyle" />*/}
-        {/*      <Field name="colorOfAbsoluteCenters" component={ColorPicker} />*/}
-        {/*      <Field name="colorOfAndCenters" component={ColorPicker} />*/}
-        {/*      <Field name="colorOfOrCenters" component={ColorPicker} />*/}
-        {/*      <Field name="colorStereogenicCenters" />*/}
-        {/*      <Field name="autoFadeOfStereoLabels" component={SelectCheckbox} />*/}
-        {/*      <Field name="absFlagLabel" />*/}
-        {/*      <Field name="andFlagLabel" />*/}
-        {/*      <Field name="orFlagLabel" />*/}
-        {/*      <Field name="mixedFlagLabel" />*/}
-        {/*    </fieldset>*/}
-        {/*  </Accordion.Group>*/}
-        {/*  <Accordion.Group caption="Atoms">*/}
-        {/*    <fieldset>*/}
-        {/*      <Field name="carbonExplicitly" component={SelectCheckbox} />*/}
-        {/*      <Field name="showCharge" component={SelectCheckbox} />*/}
-        {/*      <Field name="showValence" component={SelectCheckbox} />*/}
-        {/*      <Field name="showHydrogenLabels" component={SelectCheckbox} />*/}
-        {/*    </fieldset>*/}
-        {/*  </Accordion.Group>*/}
-        {/*  <Accordion.Group caption="Bonds">*/}
-        {/*    <fieldset>*/}
-        {/*      <Field name="aromaticCircle" component={SelectCheckbox} />*/}
-        {/*      <Field name="doubleBondWidth" component={MeasureInput} />*/}
-        {/*      <Field name="bondThickness" component={MeasureInput} />*/}
-        {/*      <Field name="stereoBondWidth" component={MeasureInput} />*/}
-        {/*    </fieldset>*/}
-        {/*  </Accordion.Group>*/}
-        {/*  <Accordion.Group caption="Server">*/}
-        {/*    <fieldset className={classes.server} disabled={!appOpts.server}>*/}
-        {/*      <Field name="smart-layout" component={SelectCheckbox} />*/}
-        {/*      <Field*/}
-        {/*        name="ignore-stereochemistry-errors"*/}
-        {/*        component={SelectCheckbox}*/}
-        {/*      />*/}
-        {/*      <Field*/}
-        {/*        name="mass-skip-error-on-pseudoatoms"*/}
-        {/*        component={SelectCheckbox}*/}
-        {/*      />*/}
-        {/*      <Field*/}
-        {/*        name="gross-formula-add-rsites"*/}
-        {/*        component={SelectCheckbox}*/}
-        {/*      />*/}
-        {/*      <Field*/}
-        {/*        name="gross-formula-add-isotopes"*/}
-        {/*        component={SelectCheckbox}*/}
-        {/*      />*/}
-        {/*    </fieldset>*/}
-        {/*  </Accordion.Group>*/}
-        {/*  <Accordion.Group caption="3D Viewer">*/}
-        {/*    <fieldset className={classes.viewer} disabled={!window['Miew']}>*/}
-        {/*      <Field name="miewMode" />*/}
-        {/*      <Field name="miewTheme" />*/}
-        {/*      <Field name="miewAtomLabel" />*/}
-        {/*    </fieldset>*/}
-        {/*  </Accordion.Group>*/}
-        {/*  <Accordion.Group caption="Options for debugging">*/}
-        {/*    <fieldset>*/}
-        {/*      <Field name="showAtomIds" component={SelectCheckbox} />*/}
-        {/*      <Field name="showBondIds" component={SelectCheckbox} />*/}
-        {/*      <Field name="showHalfBondIds" component={SelectCheckbox} />*/}
-        {/*      <Field name="showLoopIds" component={SelectCheckbox} />*/}
-        {/*    </fieldset>*/}
-        {/*  </Accordion.Group>*/}
-        {/*</Accordion>*/}
         {!storage.isAvailable() ? (
           <div className={classes.warning}>{storage.warningMessage}</div>
         ) : null}

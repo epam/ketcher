@@ -68,7 +68,7 @@ const Dialog: FC<Props> = props => {
   }, [])
 
   const exit = mode => {
-    const key = mode === 'OK' ? 'onOk' : 'onCancel'
+    const key = mode === 'OK' || mode === 'Save' ? 'onOk' : 'onCancel'
     if (params && key in params && (key !== 'onOk' || valid()))
       params[key](result())
   }

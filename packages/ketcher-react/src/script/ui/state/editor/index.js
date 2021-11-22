@@ -167,7 +167,7 @@ export default function initEditor(dispatch, getState) {
       }
     },
     onAromatizeStruct: struct => {
-      const { editor, state } = getState()
+      const state = getState()
       const serverOpts = state.options.getServerSettings()
       return serverCall(
         state.editor,
@@ -175,10 +175,10 @@ export default function initEditor(dispatch, getState) {
         'aromatize',
         serverOpts,
         struct
-      ).catch(e => editor.errorHandler(e))
+      ).catch(e => state.server.errorHandler(e))
     },
     onDearomatizeStruct: struct => {
-      const { editor, state } = getState()
+      const state = getState()
       const serverOpts = state.options.getServerSettings()
       return serverCall(
         state.editor,
@@ -186,7 +186,7 @@ export default function initEditor(dispatch, getState) {
         'dearomatize',
         serverOpts,
         struct
-      ).catch(e => editor.errorHandler(e))
+      ).catch(e => state.editor.errorHandler(e))
     },
     onMouseDown: () => {
       updateAction()

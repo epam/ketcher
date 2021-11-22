@@ -43,7 +43,7 @@ export function checkServer() {
 export function recognize(file, version) {
   return (dispatch, getState) => {
     const rec = getState().server.recognize
-    const editor = getState()
+    const editor = getState().editor
 
     const process = rec(file, version).then(
       res => {

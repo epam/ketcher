@@ -175,7 +175,7 @@ export default function initEditor(dispatch, getState) {
         'aromatize',
         serverOpts,
         struct
-      ).catch(e => state.server.errorHandler(e))
+      ).catch(e => state.editor.errorHandler(e))
     },
     onDearomatizeStruct: struct => {
       const state = getState()

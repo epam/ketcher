@@ -24,7 +24,7 @@ export function identifyStructFormat(
 
   try {
     if (JSON.parse(sanitizedString)) {
-      return 'graph'
+      return 'ket'
     }
   } catch (er) {} // eslint-disable-line
 
@@ -59,6 +59,9 @@ export function identifyStructFormat(
     return 'smiles'
   }
 
+  if (sanitizedString.indexOf('<CDXML') !== -1) {
+    return 'cdxml'
+  }
   // Molfile by default as Indigo does
   return 'mol'
 }

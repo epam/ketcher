@@ -14,18 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-export function arrowToGraph(arrowNode) {
+export function textToKet(textNode) {
   return {
-    type: 'arrow',
-    data: arrowNode.data
-  }
-}
-
-export function plusToGraph(plusNode) {
-  const coord = plusNode.center
-  return {
-    type: 'plus',
-    location: [coord.x, coord.y, coord.z],
-    prop: plusNode.data
+    type: 'text',
+    data: textNode.data
   }
 }

@@ -48,7 +48,7 @@ export function couldBeSaved(
     }
   }
 
-  if (format !== 'graph') {
+  if (format !== 'ket') {
     if (hasRxnArrow) {
       const arrayOfArrows: Array<any> = Array.from(struct.rxnArrows.values())
       const rxnArrowMode: RxnArrowMode = arrayOfArrows[0].mode

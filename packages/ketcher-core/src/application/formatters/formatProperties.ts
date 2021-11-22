@@ -78,9 +78,15 @@ const formatProperties: FormatPropertiesMap = {
     ['.cml', '.mrv'],
     true
   ),
-  graph: new SupportedFormatProperties('Graph Format', ChemicalMimeType.KET, [
+  ket: new SupportedFormatProperties('Ket Format', ChemicalMimeType.KET, [
     '.ket'
-  ])
+  ]),
+  cdxml: new SupportedFormatProperties(
+    'CDXML',
+    ChemicalMimeType.CDXML,
+    ['.cdxml'],
+    true
+  )
 }
 
 function getPropertiesByFormat(format: SupportedFormat) {

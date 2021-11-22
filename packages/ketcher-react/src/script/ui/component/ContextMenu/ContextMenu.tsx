@@ -59,7 +59,7 @@ const FGContextMenu = () => {
         pageX: e.detail.position.x,
         pageY: e.detail.position.y
       },
-      ['sgroups', 'atoms', 'bonds']
+      ['sgroups', 'functionalGroups', 'atoms', 'bonds']
     )
     if (ci) {
       switch (ci.map) {
@@ -93,6 +93,16 @@ const FGContextMenu = () => {
           if (FunctionalGroup.isFunctionalGroup(sgroup)) {
             struct.functionalGroups.forEach(fg => {
               fg.relatedSGroupId === sgroup?.id &&
+                !selectedItems.includes(fg) &&
+                selectedItems.push(fg)
+            })
+          }
+          break
+        case 'functionalGroups':
+          const fgroup = struct.sgroups.get(ci.id)
+          if (FunctionalGroup.isFunctionalGroup(fgroup)) {
+            struct.functionalGroups.forEach(fg => {
+              fg.relatedSGroupId === fgroup?.id &&
                 !selectedItems.includes(fg) &&
                 selectedItems.push(fg)
             })

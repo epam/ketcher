@@ -28,19 +28,19 @@ export function toRlabel(values) {
   return res
 }
 
-export function moleculeToStruct(graphItem: any): Struct {
+export function moleculeToStruct(ketItem: any): Struct {
   const struct = new Struct()
-  graphItem.atoms.forEach(atom => {
+  ketItem.atoms.forEach(atom => {
     if (atom.type === 'rg-label') struct.atoms.add(rglabelToStruct(atom))
     if (atom.type === 'atom-list') struct.atoms.add(atomListToStruct(atom))
     if (!atom.type) struct.atoms.add(atomToStruct(atom))
   })
 
-  if (graphItem.bonds)
-    graphItem.bonds.forEach(bond => struct.bonds.add(bondToStruct(bond)))
+  if (ketItem.bonds)
+    ketItem.bonds.forEach(bond => struct.bonds.add(bondToStruct(bond)))
 
-  if (graphItem.sgroups)
-    graphItem.sgroups.forEach(sgroup =>
+  if (ketItem.sgroups)
+    ketItem.sgroups.forEach(sgroup =>
       struct.sgroups.add(sgroupToStruct(sgroup))
     )
 

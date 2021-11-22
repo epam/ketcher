@@ -81,6 +81,7 @@ const config = {
     hidden: options => isHidden(options, 'cut')
   },
   copies: {
+    disabled: editor => !hasSelection(editor),
     hidden: options => isHidden(options, 'copies')
   },
   copy: {

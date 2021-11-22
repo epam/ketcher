@@ -107,7 +107,7 @@ export class Ketcher {
   }
 
   getKet(): Promise<string> {
-    return getStructure('graph', this.#formatterFactory, this.#editor.struct())
+    return getStructure('ket', this.#formatterFactory, this.#editor.struct())
   }
 
   getSmarts(): Promise<string> {

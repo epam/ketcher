@@ -174,8 +174,8 @@ function clipData(editor) {
   const molSerializer = new MolSerializer()
   try {
     const serializer = new KetSerializer()
-    const graph = serializer.serialize(struct)
-    res['application/json'] = graph
+    const ket = serializer.serialize(struct)
+    res['application/json'] = ket
 
     const type = struct.isReaction
       ? 'chemical/x-mdl-molfile'

@@ -71,7 +71,7 @@ class SaveDialog extends Component {
     }
     this.isRxn = this.props.struct.hasRxnArrow()
     this.textAreaRef = createRef()
-    const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'graph']
+    const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'ket']
     if (this.props.server)
       formats.push(
         this.isRxn ? 'rxnV3000' : 'molV3000',

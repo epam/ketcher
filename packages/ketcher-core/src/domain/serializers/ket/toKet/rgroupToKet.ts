@@ -16,12 +16,12 @@
 
 import { Struct } from 'domain/entities'
 import { ifDef } from 'utilities'
-import { moleculeToGraph } from './moleculeToGraph'
+import { moleculeToKet } from './moleculeToKet'
 
-export function rgroupToGraph(struct: Struct, data) {
+export function rgroupToKet(struct: Struct, data) {
   const body = {
-    rlogic: rgroupLogicToGraph(data.rgnumber, data.rgroup),
-    ...moleculeToGraph(struct)
+    rlogic: rgroupLogicToKet(data.rgnumber, data.rgroup),
+    ...moleculeToKet(struct)
   }
 
   return {
@@ -30,7 +30,7 @@ export function rgroupToGraph(struct: Struct, data) {
   }
 }
 
-function rgroupLogicToGraph(rgnumber, rglogic) {
+function rgroupLogicToKet(rgnumber, rglogic) {
   const result = {}
 
   ifDef(result, 'number', rgnumber)

@@ -14,26 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RGroup, Struct } from 'domain/entities'
+import { KetSerializer } from 'domain/serializers'
+import { Struct } from 'domain/entities'
+import { StructFormatter } from './structFormatter.types'
 
-import { ifDef } from 'utilities'
-import { moleculeToStruct } from './moleculeToStruct'
+export class KetFormatter implements StructFormatter {
+  constructor(private readonly serializer: KetSerializer) {}
 
-export function rgroupToStruct(graphItem): Struct {
-  const struct = moleculeToStruct(graphItem)
-  const rgroup = rgroupLogicToStruct(graphItem.rlogic)
-  struct.frags.forEach((_value: any, key) => {
-    rgroup.frags.add(key)
-  })
-  if (graphItem.rlogic) struct.rgroups.set(graphItem.rlogic.number, rgroup)
-  return struct
-}
+  async getStructureFromStructAsync(struct: Struct): Promise<string> {
+    const ket = this.serializer.serialize(struct)
+    return ket
+  }
 
-export function rgroupLogicToStruct(rglogic) {
-  const params = {}
-  ifDef(params, 'range', rglogic.range)
-  ifDef(params, 'resth', rglogic.resth)
-  ifDef(params, 'ifthen', rglogic.ifthen)
-
-  return new RGroup(params)
+  async getStructureFromStringAsync(content: string): Promise<Struct> {
+    return this.serializer.deserialize(content)
+  }
 }

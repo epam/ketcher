@@ -15,20 +15,20 @@
  ***************************************************************************/
 
 import { Struct, Vec2 } from 'domain/entities'
-import { arrowToGraph, plusToGraph } from './toGraph/rxnToGraph'
+import { arrowToKet, plusToKet } from './toKet/rxnToKet'
 
 import { Serializer } from '../serializers.types'
-import { headerToGraph } from './toGraph/headerToGraph'
-import { moleculeToGraph } from './toGraph/moleculeToGraph'
-import { moleculeToStruct } from './fromGraph/moleculeToStruct'
-import { prepareStructForGraph } from './toGraph/prepare'
-import { rgroupToGraph } from './toGraph/rgroupToGraph'
-import { rgroupToStruct } from './fromGraph/rgroupToStruct'
-import { rxnToStruct } from './fromGraph/rxnToStruct'
-import { simpleObjectToGraph } from './toGraph/simpleObjectToGraph'
-import { simpleObjectToStruct } from './fromGraph/simpleObjectToStruct'
-import { textToGraph } from './toGraph/textToGraph'
-import { textToStruct } from './fromGraph/textToStruct'
+import { headerToKet } from './toKet/headerToKet'
+import { moleculeToKet } from './toKet/moleculeToKet'
+import { moleculeToStruct } from './fromKet/moleculeToStruct'
+import { prepareStructForKet } from './toKet/prepare'
+import { rgroupToKet } from './toKet/rgroupToKet'
+import { rgroupToStruct } from './fromKet/rgroupToStruct'
+import { rxnToStruct } from './fromKet/rxnToStruct'
+import { simpleObjectToKet } from './toKet/simpleObjectToKet'
+import { simpleObjectToStruct } from './fromKet/simpleObjectToStruct'
+import { textToKet } from './toKet/textToKet'
+import { textToStruct } from './fromKet/textToStruct'
 import { validate } from './validate'
 
 function parseNode(node: any, struct: any) {
@@ -65,16 +65,16 @@ function parseNode(node: any, struct: any) {
 export class KetSerializer implements Serializer<Struct> {
   deserialize(content: string): Struct {
     const resultingStruct = new Struct()
-    const graph = JSON.parse(content)
-    if (!validate(graph)) {
+    const ket = JSON.parse(content)
+    if (!validate(ket)) {
       throw new Error('Cannot deserialize input JSON.')
     }
-    resultingStruct.name = graph.header ? graph.header.moleculeName : null
+    resultingStruct.name = ket.header ? ket.header.moleculeName : null
 
-    const nodes = graph.root.nodes
+    const nodes = ket.root.nodes
     Object.keys(nodes).forEach(i => {
       if (nodes[i].type) parseNode(nodes[i], resultingStruct)
-      else if (nodes[i].$ref) parseNode(graph[nodes[i].$ref], resultingStruct)
+      else if (nodes[i].$ref) parseNode(ket[nodes[i].$ref], resultingStruct)
     })
 
     return resultingStruct
@@ -87,41 +87,41 @@ export class KetSerializer implements Serializer<Struct> {
       }
     }
 
-    const header = headerToGraph(struct)
+    const header = headerToKet(struct)
     if (header) result.header = header
 
-    const graphNodes = prepareStructForGraph(struct)
+    const ketNodes = prepareStructForKet(struct)
 
     let moleculeId = 0
-    graphNodes.forEach(item => {
+    ketNodes.forEach(item => {
       switch (item.type) {
         case 'molecule': {
           result.root.nodes.push({ $ref: `mol${moleculeId}` })
-          result[`mol${moleculeId++}`] = moleculeToGraph(item.fragment)
+          result[`mol${moleculeId++}`] = moleculeToKet(item.fragment)
           break
         }
         case 'rgroup': {
           result.root.nodes.push({ $ref: `rg${item.data!.rgnumber}` })
-          result[`rg${item.data!.rgnumber}`] = rgroupToGraph(
+          result[`rg${item.data!.rgnumber}`] = rgroupToKet(
             item.fragment,
             item.data
           )
           break
         }
         case 'plus': {
-          result.root.nodes.push(plusToGraph(item))
+          result.root.nodes.push(plusToKet(item))
           break
         }
         case 'arrow': {
-          result.root.nodes.push(arrowToGraph(item))
+          result.root.nodes.push(arrowToKet(item))
           break
         }
         case 'simpleObject': {
-          result.root.nodes.push(simpleObjectToGraph(item))
+          result.root.nodes.push(simpleObjectToKet(item))
           break
         }
         case 'text': {
-          result.root.nodes.push(textToGraph(item))
+          result.root.nodes.push(textToKet(item))
           break
         }
         default:

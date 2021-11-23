@@ -1,16 +1,13 @@
-import * as headerToGraph from '../toKet/headerToKet'
-import * as moleculeToGraph from '../toKet/moleculeToKet'
-import * as moleculeToStruct from '../fromKet/moleculeToStruct'
-import * as prepareStructForGraph from '../toKet/prepare'
-import * as rgroupToGraph from '../toKet/rgroupToKet'
-import * as rgroupToStruct from '../fromKet/rgroupToStruct'
-import * as rxnToGraph from '../toKet/rxnToKet'
-import * as rxnToStruct from '../fromKet/rxnToStruct'
-import * as simpleObjectToGraph from '../toKet/simpleObjectToKet'
-import * as simpleObjectToStruct from '../fromKet/simpleObjectToStruct'
-import * as textToGraph from '../toKet/textToKet'
-import * as textToStruct from '../fromKet/textToStruct'
-import * as validate from '../validate'
+import * as moleculeToKet from '../../../../domain/serializers/ket/toKet/moleculeToKet'
+import * as moleculeToStruct from '../../../../domain/serializers/ket/fromKet/moleculeToStruct'
+import * as prepareStructForKet from '../../../../domain/serializers/ket/toKet/prepare'
+import * as rgroupToKet from '../../../../domain/serializers/ket/toKet/rgroupToKet'
+import * as rgroupToStruct from '../../../../domain/serializers/ket/fromKet/rgroupToStruct'
+import * as rxnToKet from '../../../../domain/serializers/ket/toKet/rxnToKet'
+import * as rxnToStruct from '../../../../domain/serializers/ket/fromKet/rxnToStruct'
+import * as simpleObjectToStruct from '../../../../domain/serializers/ket/fromKet/simpleObjectToStruct'
+import * as textToStruct from '../../../../domain/serializers/ket/fromKet/textToStruct'
+import * as validate from '../../../../domain/serializers/ket/validate'
 
 import {
   AtomList,
@@ -204,7 +201,7 @@ describe('serialize (ToKet)', () => {
     expect(structPlus).toEqual(plusKet)
   })
   it('moleculeToKet', () => {
-    const spy = jest.spyOn(moleculeToGraph, 'moleculeToGraph')
+    const spy = jest.spyOn(moleculeToKet, 'moleculeToKet')
     ket.serialize(moleculeContentStruct)
     //atoms
     expect(spy).toBeCalled()
@@ -241,7 +238,7 @@ describe('serialize (ToKet)', () => {
     expect(spy.mock.results[2].value.sgroups[5].connectivity).toEqual('HT')
   })
   it('rgroupToKet', () => {
-    const spy = jest.spyOn(rgroupToGraph, 'rgroupToGraph')
+    const spy = jest.spyOn(rgroupToKet, 'rgroupToKet')
     const result = JSON.parse(ket.serialize(contentRgroupStruct)).rg14
     expect(spy).toBeCalled()
     expect(result).toBeTruthy()
@@ -250,8 +247,8 @@ describe('serialize (ToKet)', () => {
     expect(result.rlogic.number).toEqual(14)
   })
   it('rxnToKet', () => {
-    const spyArrow = jest.spyOn(rxnToGraph, 'arrowToGraph')
-    const spyPlus = jest.spyOn(rxnToGraph, 'plusToGraph')
+    const spyArrow = jest.spyOn(rxnToKet, 'arrowToKet')
+    const spyPlus = jest.spyOn(rxnToKet, 'plusToKet')
     const result = JSON.parse(ket.serialize(prepareStruct))
     const plus = result.root.nodes.filter(item => item.type === 'plus')
     const arrow = result.root.nodes.filter(item => item.type === 'arrow')
@@ -262,7 +259,7 @@ describe('serialize (ToKet)', () => {
     expect(arrow[0].data.mode).toEqual('open-angle')
   })
   it('prepareStructForKet', () => {
-    const spy = jest.spyOn(prepareStructForGraph, 'prepareStructForGraph')
+    const spy = jest.spyOn(prepareStructForKet, 'prepareStructForKet')
     ket.serialize(prepareStruct)
     expect(spy).toBeCalled()
     expect(

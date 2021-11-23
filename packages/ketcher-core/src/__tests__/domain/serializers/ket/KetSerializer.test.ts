@@ -1,13 +1,13 @@
-import * as moleculeToGraph from '../toGraph/moleculeToGraph'
-import * as moleculeToStruct from '../fromGraph/moleculeToStruct'
-import * as prepareStructForGraph from '../toGraph/prepare'
-import * as rgroupToGraph from '../toGraph/rgroupToGraph'
-import * as rgroupToStruct from '../fromGraph/rgroupToStruct'
-import * as rxnToGraph from '../toGraph/rxnToGraph'
-import * as rxnToStruct from '../fromGraph/rxnToStruct'
-import * as simpleObjectToStruct from '../fromGraph/simpleObjectToStruct'
-import * as textToStruct from '../fromGraph/textToStruct'
-import * as validate from '../validate'
+import * as moleculeToGraph from '../../../../domain/serializers/ket/toGraph/moleculeToGraph'
+import * as moleculeToStruct from '../../../../domain/serializers/ket/fromGraph/moleculeToStruct'
+import * as prepareStructForGraph from '../../../../domain/serializers/ket/toGraph/prepare'
+import * as rgroupToGraph from '../../../../domain/serializers/ket/toGraph/rgroupToGraph'
+import * as rgroupToStruct from '../../../../domain/serializers/ket/fromGraph/rgroupToStruct'
+import * as rxnToGraph from '../../../../domain/serializers/ket/toGraph/rxnToGraph'
+import * as rxnToStruct from '../../../../domain/serializers/ket/fromGraph/rxnToStruct'
+import * as simpleObjectToStruct from '../../../../domain/serializers/ket/fromGraph/simpleObjectToStruct'
+import * as textToStruct from '../../../../domain/serializers/ket/fromGraph/textToStruct'
+import * as validate from '../../../../domain/serializers/ket/validate'
 
 import {
   AtomList,
@@ -19,36 +19,37 @@ import {
   Vec2
 } from 'domain/entities'
 import {
-  baseContent,
-  contentRgroup,
-  contentWithoutHeader,
-  errorContent,
-  moleculeContent,
-  moleculeSgroup,
-  newContentRgroup,
-  newMoleculeContent,
-  newMoleculeSgroup,
-  newPrepareStruct,
-  prepareContent,
-  rxnContent,
-  simpleObjectContent,
-  textContent
-} from './fixtures/data'
+  preparedKet,
+  textKet,
+  rxnKet,
+  simpleObjectKet,
+  moleculeRgroupKet,
+  moleculeKet,
+  moleculeSgroupKet,
+  withoutHeaderKet,
+  errorKet
+} from './fixtures/toStruct'
+import {
+  contentRgroupStruct,
+  moleculeContentStruct,
+  moleculeSgroupStruct,
+  prepareStruct
+} from './fixtures/toKet'
 
-import { KetSerializer } from '../ketSerializer'
+import { KetSerializer } from '../../../../domain/serializers'
 
 const ket = new KetSerializer()
 
 describe('deserialize (ToStruct)', () => {
-  const parsedPrepareContent = JSON.parse(prepareContent)
-  const deserData = ket.deserialize(prepareContent)
+  const parsedPrepareContent = JSON.parse(preparedKet)
+  const deserData = ket.deserialize(preparedKet)
   it('correct work with atoms', () => {
     const preparedAtoms = parsedPrepareContent.mol0.atoms
     preparedAtoms.forEach((props, id) => {
       const relatedAtom = deserData.atoms.get(id)
+      const label = props.type === 'rg-label' ? 'R#' : 'C'
       const vec = new Vec2(...props.location)
-      expect(props.label).toEqual(relatedAtom!.label)
-      expect(relatedAtom!.label).toEqual('R#')
+      expect(label).toEqual(relatedAtom!.label)
       expect(vec).toEqual(relatedAtom!.pp)
     })
   })
@@ -62,11 +63,11 @@ describe('deserialize (ToStruct)', () => {
     })
   })
   it('struct should not have name attr', () => {
-    expect(ket.deserialize(contentWithoutHeader).name).toBeFalsy()
+    expect(ket.deserialize(withoutHeaderKet).name).toBeFalsy()
   })
   it('rxnToStruct', () => {
     const spy = jest.spyOn(rxnToStruct, 'rxnToStruct')
-    ket.deserialize(rxnContent)
+    ket.deserialize(rxnKet)
     expect(spy).toBeCalled()
     expect(spy.mock.results[0].value.rxnArrows).toBeDefined()
     expect(
@@ -84,7 +85,7 @@ describe('deserialize (ToStruct)', () => {
   })
   it('simpleObjectToStruct', () => {
     const spy = jest.spyOn(simpleObjectToStruct, 'simpleObjectToStruct')
-    ket.deserialize(simpleObjectContent)
+    ket.deserialize(simpleObjectKet)
     expect(spy).toBeCalled()
     expect(spy.mock.results[0].value.simpleObjects).toBeDefined()
     expect(spy.mock.results[0].value.simpleObjects.size).toEqual(1)
@@ -97,14 +98,14 @@ describe('deserialize (ToStruct)', () => {
   })
   it('textToStruct', () => {
     const spy = jest.spyOn(textToStruct, 'textToStruct')
-    ket.deserialize(textContent)
+    ket.deserialize(textKet)
     expect(spy).toBeCalled()
     expect(spy.mock.results[0].value.texts).toBeDefined()
     expect(spy.mock.results[0].value.texts.get(0) instanceof Text).toBeTruthy()
   })
   it('moleculeToStruct', () => {
     const spy = jest.spyOn(moleculeToStruct, 'moleculeToStruct')
-    ket.deserialize(moleculeContent)
+    ket.deserialize(moleculeKet)
     expect(spy).toBeCalled()
     //atoms
     expect(spy.mock.results[0].value.atoms.get(0).label).toEqual('R#')
@@ -121,7 +122,7 @@ describe('deserialize (ToStruct)', () => {
     expect(spy.mock.results[1].value.bonds.get(0).type).toEqual(1)
     expect(spy.mock.results[1].value.bonds.get(1).type).toEqual(2)
     //sgroups
-    ket.deserialize(moleculeSgroup)
+    ket.deserialize(moleculeSgroupKet)
     expect(spy.mock.results[2].value.sgroups.get(0).type).toEqual('GEN')
     expect(spy.mock.results[3].value.sgroups.get(0).type).toEqual('MUL')
     expect(spy.mock.results[3].value.sgroups.get(0).data.mul).toEqual(1)
@@ -142,7 +143,7 @@ describe('deserialize (ToStruct)', () => {
   })
   it('rgroupToStruct', () => {
     const spy = jest.spyOn(rgroupToStruct, 'rgroupToStruct')
-    ket.deserialize(contentRgroup)
+    ket.deserialize(moleculeRgroupKet)
     expect(spy).toBeCalled()
     expect(spy.mock.results[0].value).toBeTruthy()
     expect(spy.mock.results[0].value.atoms.size).toEqual(4)
@@ -154,10 +155,10 @@ describe('deserialize (ToStruct)', () => {
   })
   it('validation function', () => {
     const spy = jest.spyOn(validate, 'validate')
-    ket.deserialize(baseContent)
+    ket.deserialize(preparedKet)
     expect(spy).toBeCalled()
     expect(spy.mock.results[0].value).toBeTruthy()
-    expect(() => ket.deserialize(errorContent)).toThrow(
+    expect(() => ket.deserialize(errorKet)).toThrow(
       'Cannot deserialize input JSON.'
     )
     expect(spy.mock.results[1].value).toBeFalsy()
@@ -165,8 +166,8 @@ describe('deserialize (ToStruct)', () => {
 })
 
 describe('serialize (ToKet)', () => {
-  const parsedNewPrepareStruct = JSON.parse(ket.serialize(newPrepareStruct))
-  const parsedPrepareContent = JSON.parse(prepareContent)
+  const parsedNewPrepareStruct = JSON.parse(ket.serialize(prepareStruct))
+  const parsedPrepareContent = JSON.parse(preparedKet)
   it('correct work with atoms', () => {
     parsedNewPrepareStruct.mol0.atoms.forEach((atom, id) => {
       const relatedAtom = parsedPrepareContent.mol0.atoms[id]
@@ -186,22 +187,22 @@ describe('serialize (ToKet)', () => {
   })
   it('correct work with text', () => {
     const structText = parsedNewPrepareStruct.root.nodes[4]
-    const contentText = parsedPrepareContent.root.nodes[4]
-    expect(structText).toEqual(contentText)
+    const textKet = parsedPrepareContent.root.nodes[4]
+    expect(structText).toEqual(textKet)
   })
   it('correct work with rxnArrow', () => {
     const structArrow = parsedNewPrepareStruct.root.nodes[2]
-    const contentArrow = parsedPrepareContent.root.nodes[2]
-    expect(structArrow).toEqual(contentArrow)
+    const arrowKet = parsedPrepareContent.root.nodes[2]
+    expect(structArrow).toEqual(arrowKet)
   })
   it('correct work with rxnPlus', () => {
     const structPlus = parsedNewPrepareStruct.root.nodes[3]
-    const contentPlus = parsedPrepareContent.root.nodes[3]
-    expect(structPlus).toEqual(contentPlus)
+    const plusKet = parsedPrepareContent.root.nodes[3]
+    expect(structPlus).toEqual(plusKet)
   })
   it('moleculeToKet', () => {
     const spy = jest.spyOn(moleculeToGraph, 'moleculeToGraph')
-    ket.serialize(newMoleculeContent)
+    ket.serialize(moleculeContentStruct)
     //atoms
     expect(spy).toBeCalled()
     expect(spy.mock.results[0].value.atoms[0].type).toEqual('rg-label')
@@ -223,7 +224,7 @@ describe('serialize (ToKet)', () => {
       spy.mock.results[1].value.bonds.filter(bond => bond.type === 2).length
     ).toEqual(3)
     //sgroups
-    ket.serialize(newMoleculeSgroup)
+    ket.serialize(moleculeSgroupStruct)
     expect(spy.mock.results[2].value.sgroups[0].type).toEqual('GEN')
     expect(spy.mock.results[2].value.sgroups[1].type).toEqual('MUL')
     expect(spy.mock.results[2].value.sgroups[1].mul).toEqual(1)
@@ -238,7 +239,7 @@ describe('serialize (ToKet)', () => {
   })
   it('rgroupToKet', () => {
     const spy = jest.spyOn(rgroupToGraph, 'rgroupToGraph')
-    const result = JSON.parse(ket.serialize(newContentRgroup)).rg0
+    const result = JSON.parse(ket.serialize(contentRgroupStruct)).rg14
     expect(spy).toBeCalled()
     expect(result).toBeTruthy()
     expect(result.atoms.length).toEqual(4)
@@ -248,7 +249,7 @@ describe('serialize (ToKet)', () => {
   it('rxnToKet', () => {
     const spyArrow = jest.spyOn(rxnToGraph, 'arrowToGraph')
     const spyPlus = jest.spyOn(rxnToGraph, 'plusToGraph')
-    const result = JSON.parse(ket.serialize(newPrepareStruct))
+    const result = JSON.parse(ket.serialize(prepareStruct))
     const plus = result.root.nodes.filter(item => item.type === 'plus')
     const arrow = result.root.nodes.filter(item => item.type === 'arrow')
     expect(spyArrow).toBeCalled()
@@ -259,7 +260,7 @@ describe('serialize (ToKet)', () => {
   })
   it('prepareStructForKet', () => {
     const spy = jest.spyOn(prepareStructForGraph, 'prepareStructForGraph')
-    ket.serialize(newPrepareStruct)
+    ket.serialize(prepareStruct)
     expect(spy).toBeCalled()
     expect(
       spy.mock.results[0].value.filter(item => item.type === 'molecule').length

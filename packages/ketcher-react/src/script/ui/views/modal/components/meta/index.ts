@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import About from './About'
-import Help from './Help'
 import Settings from './Settings'
 
-export { About, Help, Settings }
+export { About, Settings }

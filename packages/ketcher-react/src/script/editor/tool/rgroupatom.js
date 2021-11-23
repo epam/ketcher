@@ -35,7 +35,14 @@ function RGroupAtomTool(editor) {
 }
 
 RGroupAtomTool.prototype.mousemove = function (event) {
-  this.editor.hover(this.editor.findItem(event, ['atoms']))
+  const struct = this.editor.render.ctab.molecule
+  const ci = this.editor.findItem(event, ['atoms'])
+  if (ci) {
+    const atom = struct.atoms.get(ci.id)
+    if (atom.attpnt === null) this.editor.hover(ci)
+  } else {
+    this.editor.hover(null)
+  }
 }
 
 RGroupAtomTool.prototype.click = function (event) {
@@ -71,6 +78,9 @@ RGroupAtomTool.prototype.click = function (event) {
     return true
   } else if (ci.map === 'atoms') {
     this.editor.hover(null)
+    const struct = this.editor.render.ctab.molecule
+    const atom = struct.atoms.get(ci.id)
+    if (atom.attpnt !== null) return
     propsDialog(this.editor, ci.id)
     return true
   }

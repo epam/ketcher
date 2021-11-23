@@ -16,8 +16,8 @@
 
 import { Struct, Text } from 'domain/entities'
 
-export function textToStruct(graphItem: any, struct: Struct) {
-  const object = graphItem.data
+export function textToStruct(ketItem: any, struct: Struct) {
+  const object = ketItem.data
   struct.texts.add(new Text(object))
 
   return struct

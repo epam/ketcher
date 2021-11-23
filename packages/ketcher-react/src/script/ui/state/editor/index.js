@@ -28,7 +28,6 @@ import {
 import { Elements } from 'ketcher-core'
 import acts from '../../action'
 import { debounce } from 'lodash/fp'
-import { onAction } from '../shared'
 import { openDialog } from '../modal'
 import { serverCall } from '../server'
 
@@ -176,7 +175,7 @@ export default function initEditor(dispatch, getState) {
         'aromatize',
         serverOpts,
         struct
-      )
+      ).catch(e => state.editor.errorHandler(e))
     },
     onDearomatizeStruct: struct => {
       const state = getState()
@@ -187,7 +186,7 @@ export default function initEditor(dispatch, getState) {
         'dearomatize',
         serverOpts,
         struct
-      )
+      ).catch(e => state.editor.errorHandler(e))
     },
     onMouseDown: () => {
       updateAction()

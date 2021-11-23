@@ -16,11 +16,9 @@
 
 import { SimpleObject, SimpleObjectMode, Struct, Vec2 } from 'domain/entities'
 
-export function simpleObjectToStruct(graphItem: any, struct: Struct): Struct {
+export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
   const object =
-    graphItem.data.mode === 'circle'
-      ? circleToEllipse(graphItem)
-      : graphItem.data
+    ketItem.data.mode === 'circle' ? circleToEllipse(ketItem) : ketItem.data
   struct.simpleObjects.add(new SimpleObject(object))
   return struct
 }
@@ -28,11 +26,11 @@ export function simpleObjectToStruct(graphItem: any, struct: Struct): Struct {
 /**
  * @deprecated TODO to remove after release 2.3
  * As circle has been migrated to ellipses here is function for converting old files data with circles to ellipse type
- * @param graphItem
+ * @param ketItem
  */
-function circleToEllipse(graphItem) {
-  const radius = Vec2.dist(graphItem.data.pos[1], graphItem.data.pos[0])
-  const pos0 = graphItem.data.pos[0]
+function circleToEllipse(ketItem) {
+  const radius = Vec2.dist(ketItem.data.pos[1], ketItem.data.pos[0])
+  const pos0 = ketItem.data.pos[0]
   return {
     mode: SimpleObjectMode.ellipse,
     pos: [

@@ -243,6 +243,8 @@ export class Struct {
     })
 
     this.sgroups.forEach(sg => {
+      if (sg.atoms.some(aid => !atomSet!.has(aid))) return
+
       sg = SGroup.clone(sg, aidMap!)
       const id = cp.sgroups.add(sg)
       sg.id = id

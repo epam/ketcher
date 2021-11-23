@@ -31,21 +31,21 @@ function fromRlabel(rg) {
   return res
 }
 
-export function moleculeToGraph(struct: Struct): any {
+export function moleculeToKet(struct: Struct): any {
   const body: any = {
     atoms: Array.from(struct.atoms.values()).map(atom => {
-      if (atom.label === 'R#') return rglabelToGraph(atom)
-      if (atom.label === 'L#') return atomListToGraph(atom)
-      return atomToGraph(atom)
+      if (atom.label === 'R#') return rglabelToKet(atom)
+      if (atom.label === 'L#') return atomListToKet(atom)
+      return atomToKet(atom)
     })
   }
 
   if (struct.bonds.size !== 0)
-    body.bonds = Array.from(struct.bonds.values()).map(bondToGraph)
+    body.bonds = Array.from(struct.bonds.values()).map(bondToKet)
 
   if (struct.sgroups.size !== 0)
     body.sgroups = Array.from(struct.sgroups.values()).map(sGroup =>
-      sgroupToGraph(struct, sGroup)
+      sgroupToKet(struct, sGroup)
     )
 
   const fragment = struct.frags.get(0)
@@ -58,7 +58,7 @@ export function moleculeToGraph(struct: Struct): any {
   }
 }
 
-function atomToGraph(source) {
+function atomToKet(source) {
   const result = {}
   ifDef(result, 'label', source.label)
   ifDef(result, 'alias', source.alias)
@@ -84,7 +84,7 @@ function atomToGraph(source) {
   return result
 }
 
-function rglabelToGraph(source) {
+function rglabelToKet(source) {
   const result = {
     type: 'rg-label'
   }
@@ -99,7 +99,7 @@ function rglabelToGraph(source) {
   return result
 }
 
-function atomListToGraph(source) {
+function atomListToKet(source) {
   const result = {
     type: 'atom-list'
   }
@@ -110,7 +110,7 @@ function atomListToGraph(source) {
   return result
 }
 
-function bondToGraph(source) {
+function bondToKet(source) {
   const result = {}
 
   ifDef(result, 'type', source.type)
@@ -122,7 +122,7 @@ function bondToGraph(source) {
   return result
 }
 
-function sgroupToGraph(struct, source) {
+function sgroupToKet(struct, source) {
   const result = {}
 
   ifDef(result, 'type', source.type)

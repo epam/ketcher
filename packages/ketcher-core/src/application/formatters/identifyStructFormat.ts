@@ -24,7 +24,7 @@ export function identifyStructFormat(
 
   try {
     if (JSON.parse(sanitizedString)) {
-      return 'graph'
+      return 'ket'
     }
   } catch (er) {} // eslint-disable-line
 

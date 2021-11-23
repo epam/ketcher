@@ -138,12 +138,17 @@ export function atomForNewBond(restruct, id, bond?) {
       }
     }
 
-    if (
-      neighbours.length === 1 &&
-      prevBondType === bond.type &&
-      (bond.type === Bond.PATTERN.TYPE.DOUBLE ||
-        bond.type === Bond.PATTERN.TYPE.TRIPLE)
-    ) {
+    const shallBe180DegToPrevBond =
+      (neighbours.length === 1 &&
+        prevBondType === bond.type &&
+        (bond.type === Bond.PATTERN.TYPE.DOUBLE ||
+          bond.type === Bond.PATTERN.TYPE.TRIPLE)) ||
+      (prevBondType === Bond.PATTERN.TYPE.SINGLE &&
+        bond.type === Bond.PATTERN.TYPE.TRIPLE) ||
+      (prevBondType === Bond.PATTERN.TYPE.TRIPLE &&
+        bond.type === Bond.PATTERN.TYPE.SINGLE)
+
+    if (shallBe180DegToPrevBond) {
       const prevBondAngle = restruct.molecule.bonds.get(prevBondId).angle
       if (prevBondAngle > -90 && prevBondAngle < 90 && neighbours[0].v.x > 0) {
         angle = (prevBondAngle * Math.PI) / 180 + Math.PI

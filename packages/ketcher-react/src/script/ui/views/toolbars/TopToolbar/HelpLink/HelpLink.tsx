@@ -22,25 +22,17 @@ const HelpLink = ({ status }) => {
   if (status?.hidden) {
     return null
   }
-
+  console.log(JSON.stringify(process.env.HELP_LINK))
   const shortcut = shortcutStr(['?', '&', 'Shift+/'])
-  const currentBranchName = process.env.BRANCH_NAME
-
-  const initLink = branchName => {
-    if (branchName && branchName.substring(0, 7) === 'release') {
-      const appVer = branchName.substring(7, branchName.length)
-      return `https://github.com/epam/ketcher/blob/release/${appVer}/example/public/docs/help.md#ketcher-overview`
-    } else {
-      return 'https://github.com/epam/ketcher/blob/master/example/public/docs/help.md#ketcher-overview'
-    }
-  }
+  const helpLink = process.env.HELP_LINK
 
   return (
     <a
       target="_blank"
       className={classes.button}
       title={`Help (${shortcut})`}
-      href={initLink(currentBranchName)} rel="noreferrer"
+      href={`https://github.com/epam/ketcher/blob/${helpLink}/example/public/docs/help.md#ketcher-overview`}
+      rel="noreferrer"
     >
       <Icon name="help" />
       <kbd>{shortcut}</kbd>

@@ -70,7 +70,6 @@ export class KetSerializer implements Serializer<Struct> {
       throw new Error('Cannot deserialize input JSON.')
     }
     resultingStruct.name = ket.header ? ket.header.moleculeName : null
-
     const nodes = ket.root.nodes
     Object.keys(nodes).forEach(i => {
       if (nodes[i].type) parseNode(nodes[i], resultingStruct)

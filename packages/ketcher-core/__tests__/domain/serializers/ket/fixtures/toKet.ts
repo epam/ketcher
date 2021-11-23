@@ -11,7 +11,7 @@ import {
   SimpleObject,
   Struct,
   Text
-} from '../../../../../domain/entities'
+} from 'domain/entities'
 
 const structs = {
   prepareContent: {

@@ -1,13 +1,13 @@
-import * as moleculeToKet from '../../../../domain/serializers/ket/toKet/moleculeToKet'
-import * as moleculeToStruct from '../../../../domain/serializers/ket/fromKet/moleculeToStruct'
-import * as prepareStructForKet from '../../../../domain/serializers/ket/toKet/prepare'
-import * as rgroupToKet from '../../../../domain/serializers/ket/toKet/rgroupToKet'
-import * as rgroupToStruct from '../../../../domain/serializers/ket/fromKet/rgroupToStruct'
-import * as rxnToKet from '../../../../domain/serializers/ket/toKet/rxnToKet'
-import * as rxnToStruct from '../../../../domain/serializers/ket/fromKet/rxnToStruct'
-import * as simpleObjectToStruct from '../../../../domain/serializers/ket/fromKet/simpleObjectToStruct'
-import * as textToStruct from '../../../../domain/serializers/ket/fromKet/textToStruct'
-import * as validate from '../../../../domain/serializers/ket/validate'
+import * as moleculeToKet from 'domain/serializers/ket/toKet/moleculeToKet'
+import * as moleculeToStruct from 'domain/serializers/ket/fromKet/moleculeToStruct'
+import * as prepareStructForKet from 'domain/serializers/ket/toKet/prepare'
+import * as rgroupToKet from 'domain/serializers/ket/toKet/rgroupToKet'
+import * as rgroupToStruct from 'domain/serializers/ket/fromKet/rgroupToStruct'
+import * as rxnToKet from 'domain/serializers/ket/toKet/rxnToKet'
+import * as rxnToStruct from 'domain/serializers/ket/fromKet/rxnToStruct'
+import * as simpleObjectToStruct from 'domain/serializers/ket/fromKet/simpleObjectToStruct'
+import * as textToStruct from 'domain/serializers/ket/fromKet/textToStruct'
+import * as validate from 'domain/serializers/ket/validate'
 
 import {
   AtomList,
@@ -19,24 +19,24 @@ import {
   Vec2
 } from 'domain/entities'
 import {
-  preparedKet,
-  textKet,
-  rxnKet,
-  simpleObjectKet,
-  moleculeRgroupKet,
-  moleculeKet,
-  moleculeSgroupKet,
-  withoutHeaderKet,
-  errorKet
-} from './fixtures/toStruct'
-import {
   contentRgroupStruct,
   moleculeContentStruct,
   moleculeSgroupStruct,
   prepareStruct
 } from './fixtures/toKet'
+import {
+  errorKet,
+  moleculeKet,
+  moleculeRgroupKet,
+  moleculeSgroupKet,
+  preparedKet,
+  rxnKet,
+  simpleObjectKet,
+  textKet,
+  withoutHeaderKet
+} from './fixtures/toStruct'
 
-import { KetSerializer } from '../../../../domain/serializers'
+import { KetSerializer } from 'domain/serializers'
 
 const ket = new KetSerializer()
 

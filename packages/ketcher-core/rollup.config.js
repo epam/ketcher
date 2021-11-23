@@ -52,7 +52,12 @@ const config = {
       }
     ),
     json(),
-    typescript({ typescript: ttypescript }),
+    typescript({
+      typescript: ttypescript,
+      tsconfigOverride: {
+        exclude: ['__tests__/**/*']
+      }
+    }),
     babel({
       extensions,
       babelHelpers: 'runtime',

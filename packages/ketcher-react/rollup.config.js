@@ -25,7 +25,7 @@ const extensions = ['.js', '.jsx', '.ts', '.tsx']
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION
 
 const initLink = name => {
-  const branchName = JSON.stringify(name)
+  const branchName = name && JSON.stringify(name)
   if (branchName && branchName.substring(0, 7) === 'release') {
     const appVer = branchName.substring(7, branchName.length)
     return `release/${appVer}`

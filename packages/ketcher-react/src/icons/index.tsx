@@ -136,6 +136,7 @@ const icons = {
   'chiral-flag': ChiralFlagIcon,
   cip: CipIcon,
   clean: CleanIcon,
+  copies: CopyIcon,
   copy: CopyIcon,
   'copy-image': CopyImageIcon,
   'copy-mol': CopyMolIcon,

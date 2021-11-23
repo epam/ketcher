@@ -28,7 +28,7 @@ export function Smiles() {
   this.ignoreErrors = false
 }
 
-Smiles._Atom = function (hСount) {
+Smiles._Atom = function (hCount) {
   // eslint-disable-line no-underscore-dangle
   this.neighbours = [] // Array of integer pairs {a, b}
   this.aromatic = false // has aromatic bond
@@ -36,7 +36,7 @@ Smiles._Atom = function (hСount) {
   this.chirality = 0 // 0 means no chirality, 1 means CCW pyramid, 2 means CW pyramid
   this.branch_cnt = 0 // runs from 0 to (branches - 1)
   this.paren_written = false
-  this.h_count = hСount
+  this.h_count = hCount
   this.parent = -1
 }
 
@@ -213,9 +213,9 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
         }
       }
 
-      if (implicitHIdx != -1) pyramidMapping[counter++] = implicitHIdx
+      if (implicitHIdx !== -1) pyramidMapping[counter++] = implicitHIdx
 
-      for (j = 0; j != atom.neighbours.length; j++) {
+      for (j = 0; j !== atom.neighbours.length; j++) {
         if (atom.neighbours[j].aid == atom.parent) continue // eslint-disable-line no-continue
 
         for (k = 0; k < 4; k++) {
@@ -227,14 +227,14 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
         }
       }
 
-      if (counter == 4) {
+      if (counter === 4) {
         // move the 'from' atom to the end
         counter = pyramidMapping[0]
         pyramidMapping[0] = pyramidMapping[1]
         pyramidMapping[1] = pyramidMapping[2]
         pyramidMapping[2] = pyramidMapping[3]
         pyramidMapping[3] = counter
-      } else if (counter != 3) {
+      } else if (counter !== 3) {
         throw new Error('cannot calculate chirality')
       }
 
@@ -280,7 +280,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
             // eslint-disable-line max-depth
             break
         }
-        if (k == cycleNumbers.length) cycleNumbers.push(vPrevIdx)
+        if (k === cycleNumbers.length) cycleNumbers.push(vPrevIdx)
         else cycleNumbers[k] = vPrevIdx
 
         this.writeCycleNumber(k)
@@ -351,7 +351,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
           if (cycleNumbers[j] == vIdx) break
         }
 
-        if (j == cycleNumbers.length) throw new Error('cycle number not found')
+        if (j === cycleNumbers.length) throw new Error('cycle number not found')
 
         this.writeCycleNumber(j)
 
@@ -437,12 +437,12 @@ Smiles.prototype.writeAtom = function (
 	}
 	*/
 
-  if (atom.label == 'A') {
+  if (atom.label === 'A') {
     this.smiles += '*'
     return
   }
 
-  if (atom.label == 'R' || atom.label == 'R#') {
+  if (atom.label === 'R' || atom.label === 'R#') {
     this.smiles += '[*]'
     return
   }
@@ -455,28 +455,28 @@ Smiles.prototype.writeAtom = function (
   // END
 
   if (
-    atom.label != 'C' &&
-    atom.label != 'P' &&
-    atom.label != 'N' &&
-    atom.label != 'S' &&
-    atom.label != 'O' &&
-    atom.label != 'Cl' &&
-    atom.label != 'F' &&
-    atom.label != 'Br' &&
-    atom.label != 'B' &&
-    atom.label != 'I'
+    atom.label !== 'C' &&
+    atom.label !== 'P' &&
+    atom.label !== 'N' &&
+    atom.label !== 'S' &&
+    atom.label !== 'O' &&
+    atom.label !== 'Cl' &&
+    atom.label !== 'F' &&
+    atom.label !== 'Br' &&
+    atom.label !== 'B' &&
+    atom.label !== 'I'
   )
     needBrackets = true
 
   if (
     atom.explicitValence >= 0 ||
-    atom.radical != 0 ||
+    atom.radical !== 0 ||
     chirality > 0 ||
-    (aromatic && atom.label != 'C' && atom.label != 'O') ||
+    (aromatic && atom.label !== 'C' && atom.label !== 'O') ||
     (aromatic &&
-      atom.label == 'C' &&
+      atom.label === 'C' &&
       this.atoms[idx].neighbours.length < 3 &&
-      this.atoms[idx].h_count == 0)
+      this.atoms[idx].h_count === 0)
   )
     hydro = this.atoms[idx].h_count
 
@@ -486,10 +486,10 @@ Smiles.prototype.writeAtom = function (
     needBrackets = false // atom list label already has brackets
   } else if (atom.isPseudo() || (atom.atomList && atom.atomList.notList)) {
     label = '*'
-    needBrackets = true
+    needBrackets = false
   } else if (
     chirality ||
-    atom.charge != 0 ||
+    atom.charge !== 0 ||
     atom.isotope > 0 ||
     hydro >= 0 ||
     aam > 0
@@ -498,7 +498,7 @@ Smiles.prototype.writeAtom = function (
   }
 
   if (needBrackets) {
-    if (hydro == -1) hydro = this.atoms[idx].h_count
+    if (hydro === -1) hydro = this.atoms[idx].h_count
     this.smiles += '['
   }
 
@@ -508,7 +508,7 @@ Smiles.prototype.writeAtom = function (
   else this.smiles += label
 
   if (chirality > 0) {
-    if (chirality == 1) this.smiles += '@'
+    if (chirality === 1) this.smiles += '@'
     // chirality == 2
     else this.smiles += '@@'
 
@@ -516,15 +516,15 @@ Smiles.prototype.writeAtom = function (
       throw new Error(atom.implicitH + ' implicit H near stereocenter')
   }
 
-  if (atom.label != 'H') {
-    if (hydro > 1 || (hydro == 0 && !needBrackets)) this.smiles += 'H' + hydro
-    else if (hydro == 1) this.smiles += 'H'
+  if (atom.label !== 'H') {
+    if (hydro > 1 || (hydro === 0 && !needBrackets)) this.smiles += 'H' + hydro
+    else if (hydro === 1) this.smiles += 'H'
   }
 
   if (atom.charge > 1) this.smiles += '+' + atom.charge
   else if (atom.charge < -1) this.smiles += atom.charge
-  else if (atom.charge == 1) this.smiles += '+'
-  else if (atom.charge == -1) this.smiles += '-'
+  else if (atom.charge === 1) this.smiles += '+'
+  else if (atom.charge === -1) this.smiles += '-'
 
   if (aam > 0) this.smiles += ':' + aam
 
@@ -684,7 +684,7 @@ Smiles.prototype.updateSideBonds = function (mol, bondIdx) {
 
   if (n1 > 0 && n2 > 0) throw new Error('incompatible cis-trans configuration')
 
-  if (n1 == 0 && n2 == 0) return false
+  if (n1 === 0 && n2 === 0) return false
 
   if (n1 > 0) {
     this.dbonds[sidebonds[0]].saved =
@@ -771,7 +771,7 @@ Smiles.prototype.writeRadicals = function (mol) {
 
     var radical = mol.atoms.get(this.writtenAtoms[i]).radical
 
-    if (radical == 0) continue // eslint-disable-line no-continue
+    if (radical === 0) continue // eslint-disable-line no-continue
 
     if (this.comma) {
       this.smiles += ','
@@ -788,7 +788,7 @@ Smiles.prototype.writeRadicals = function (mol) {
     this.smiles += i
 
     for (j = i + 1; j < this.writtenAtoms.length; j++) {
-      if (mol.atoms.get(this.writtenAtoms[j]).radical == radical) {
+      if (mol.atoms.get(this.writtenAtoms[j]).radical === radical) {
         marked[j] = true
         this.smiles += ',' + j
       }

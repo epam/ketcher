@@ -54,9 +54,9 @@ function TextArea({ schema, value, onChange, ...rest }) {
 
 TextArea.val = ev => ev.target.value
 
-function CheckBox({ schema, value = '', onChange, ...rest }) {
+function CheckBox({ schema, value = '', onChange, className, ...rest }) {
   return (
-    <div className={classes.fieldSetItem}>
+    <div className={className || classes.fieldSetItem}>
       <input
         type="checkbox"
         checked={value}
@@ -64,7 +64,7 @@ function CheckBox({ schema, value = '', onChange, ...rest }) {
         onChange={onChange}
         {...rest}
       />
-      <span className={classes.customCheckbox}></span>
+      <span className={className ? classes.customCheckbox : ''} />
     </div>
   )
 }
@@ -132,10 +132,8 @@ function FieldSet({
               value={typeof val !== 'object' && val}
               {...rest}
             />
-            {type === 'checkbox' && (
-              <span className={classes.customCheckbox}></span>
-            )}
-            {type === 'radio' && <span className={classes.customRadio}></span>}
+            {type === 'checkbox' && <span className={classes.customCheckbox} />}
+            {type === 'radio' && <span className={classes.customRadio} />}
             {title}
           </label>
         </li>

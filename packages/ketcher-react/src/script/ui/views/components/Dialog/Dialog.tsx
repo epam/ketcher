@@ -20,11 +20,13 @@ import { FC, useLayoutEffect, useRef, ReactElement } from 'react'
 
 import clsx from 'clsx'
 import styles from './Dialog.module.less'
+import Icon from '../../../component/view/icon'
 
 interface DialogProps {
   title: string
   params: DialogParams
   buttons?: Array<string | ReactElement>
+  buttonsTop?: Array<ReactElement>
   className: string
 }
 export interface DialogParams extends DialogParamsCallProps {
@@ -52,6 +54,7 @@ const Dialog: FC<Props> = props => {
     valid = () => !!result(),
     buttons = ['OK'],
     className,
+    buttonsTop,
     ...rest
   } = props
   const dialogRef = useRef<HTMLDivElement>(null)
@@ -96,7 +99,12 @@ const Dialog: FC<Props> = props => {
     >
       <header>
         {title}
-        <span className={styles.close} onClick={() => exit('Cancel')} />
+        <div>
+          {buttonsTop && buttonsTop.map(button => button)}
+          <button className={styles.buttonTop} onClick={() => exit('Cancel')}>
+            <Icon name={'close'} />
+          </button>
+        </div>
       </header>
       <div className={styles.dialog_body}>{children}</div>
 

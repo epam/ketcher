@@ -28,9 +28,9 @@ const Sidebar = ({ tabs, className }): React.ReactElement => {
   return (
     <div className={clsx(classes.sidebar, className)}>
       <ul className={classes.tabs}>
-        {tabs.map((tab, index) => (
+        {tabs.map(tab => (
           <li
-            key={index}
+            key={tab.key}
             onClick={() => handleSwitchTab(tab.label)}
             className={clsx(
               classes.tab,

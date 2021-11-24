@@ -80,31 +80,12 @@
     text-transform: uppercase;
     border-radius: 0.7em 0.7em 0 0;
     height: 40px;
+    justify-content: space-between;
 
-    .close {
-      position: absolute;
-      right: 12px;
-      top: 15px;
-      width: 10px;
-      height: 10px;
-      opacity: 0.5;
-      &:hover {
-        opacity: 1;
-      }
-      &::before,
-      &::after {
-        position: absolute;
-        content: '';
-        height: 12px;
-        width: 2px;
-        background-color: #5b6077;
-      }
-      &::before {
-        transform: rotate(45deg);
-      }
-      &::after {
-        transform: rotate(-45deg);
-      }
+    .buttonTop {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
     }
   }
   footer {

@@ -27,7 +27,8 @@ const SaveButton = props => {
     type,
     mode = 'saveFile',
     onSave = noop,
-    onError = noop
+    onError = noop,
+    className
   } = props
   const { getKetcherInstance } = useAppContext()
 
@@ -71,6 +72,7 @@ const SaveButton = props => {
 
   return (
     <button
+      className={className}
       onClick={event => {
         save(event)
       }}

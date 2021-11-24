@@ -21,12 +21,11 @@ import {
   updateFormState
 } from '../../../../../state/modal/form'
 
-// import Accordion from './components/Accordion'
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker'
 import { Dialog } from '../../../../components'
 import MeasureInput from '../../../../../component/form/measure-input'
-// import OpenButton from '../../../../../component/view/openbutton'
-// import SaveButton from '../../../../../component/view/savebutton'
+import OpenButton from '../../../../../component/view/openbutton'
+import SaveButton from '../../../../../component/view/savebutton'
 import SelectCheckbox from '../../../../../component/form/select-checkbox'
 import { StructService } from 'ketcher-core'
 import SystemFonts from '../../../../../component/form/systemfonts'
@@ -36,6 +35,8 @@ import { saveSettings } from '../../../../../state/options'
 import settingsSchema from '../../../../../data/schema/options-schema'
 import { storage } from '../../../../../storage-ext'
 import Sidebar from './components/Sidebar'
+import Icon from '../../../../../component/view/icon'
+import clsx from 'clsx'
 
 interface SettingsProps extends BaseProps {
   initState: any
@@ -70,6 +71,7 @@ const SettingsDialog = (props: Props) => {
   } = props
 
   const generalTab = {
+    key: 'general',
     label: 'General',
     content: (
       <fieldset className={classes.general}>
@@ -84,6 +86,7 @@ const SettingsDialog = (props: Props) => {
     )
   }
   const stereoTab = {
+    key: 'stereo',
     label: 'Stereochemistry',
     content: (
       <fieldset className={classes.stereochemistry}>
@@ -102,6 +105,7 @@ const SettingsDialog = (props: Props) => {
     )
   }
   const atomsTab = {
+    key: 'atoms',
     label: 'Atoms',
     content: (
       <fieldset>
@@ -113,6 +117,7 @@ const SettingsDialog = (props: Props) => {
     )
   }
   const bondsTab = {
+    key: 'bonds',
     label: 'Bonds',
     content: (
       <fieldset>
@@ -124,6 +129,7 @@ const SettingsDialog = (props: Props) => {
     )
   }
   const serverTab = {
+    key: 'server',
     label: 'Server',
     content: (
       <fieldset className={classes.server} disabled={!appOpts.server}>
@@ -142,6 +148,7 @@ const SettingsDialog = (props: Props) => {
     )
   }
   const threeDViewerTab = {
+    key: '3dviewer',
     label: '3D Viewer',
     content: (
       <fieldset className={classes.viewer} disabled={!window['Miew']}>
@@ -152,6 +159,7 @@ const SettingsDialog = (props: Props) => {
     )
   }
   const debuggingTab = {
+    key: 'debugging',
     label: 'Options for debugging',
     content: (
       <fieldset>
@@ -180,21 +188,31 @@ const SettingsDialog = (props: Props) => {
       result={() => formState.result}
       valid={() => formState.valid}
       params={prop}
-      buttons={[
-        // <OpenButton key="settings" server={server} onLoad={onOpenFile}>
-        //   Open From File…
-        // </OpenButton>,
-        // <SaveButton
-        //   key="ketcher-settings"
-        //   data={JSON.stringify(formState.result)}
-        //   filename="ketcher-settings"
-        // >
-        //   Save To File…
-        // </SaveButton>,
-        // <button key="settings-button" onClick={onReset}>
-        //   Reset
-        // </button>,
-        'Save'
+      buttons={['Save']}
+      buttonsTop={[
+        <OpenButton
+          key="settings"
+          server={server}
+          onLoad={onOpenFile}
+          className={clsx(classes.button, classes.buttonOpen)}
+        >
+          <Icon name={'open-1'} />
+        </OpenButton>,
+        <SaveButton
+          key="ketcher-settings"
+          data={JSON.stringify(formState.result)}
+          filename="ketcher-settings"
+          className={classes.button}
+        >
+          <Icon name={'save-1'} />
+        </SaveButton>,
+        <button
+          key="settings-button"
+          onClick={onReset}
+          className={classes.button}
+        >
+          <Icon name={'reset'} />
+        </button>
       ]}
     >
       <Form schema={settingsSchema} init={initState} {...formState}>

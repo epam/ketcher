@@ -53,6 +53,18 @@
   }
 }
 
+.button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.buttonOpen {
+  > input {
+    display: none;
+  }
+}
+
 .sidebar {
   fieldset {
     border: none;
@@ -71,7 +83,6 @@
   label {
     display: flex;
     justify-content: space-between;
-    //height: @input-height;
     font-size: 12px;
     align-items: center;
     line-height: 20px;
@@ -156,40 +167,3 @@
     transform: translateX(12px);
   }
 }
-
-//.accordion {
-//  margin: 0.3em;
-//
-//  label {
-//    display: block;
-//    text-align: right;
-//    line-height: @input-height;
-//    height: @input-height;
-//    select,
-//    input {
-//      width: 50%;
-//    }
-//  }
-//
-//  fieldset {
-//    height: @input-height * @fieldset-inputs-number;
-//    border: 0 none;
-//  }
-//
-//  .server {
-//    height: @input-height * @server-inputs-number;
-//  }
-//
-//  .viewer {
-//    height: @input-height * @viewer-inputs-number;
-//  }
-//
-//  .general {
-//    height: @input-height * @general-inputs-number;
-//    border: none;
-//  }
-//
-//  .stereochemistry {
-//    height: @input-height * @stereochemistry-inputs-number;
-//  }
-//}

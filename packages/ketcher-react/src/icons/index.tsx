@@ -110,6 +110,10 @@ import UndoIcon from './files/undo.svg'
 import ZoomInIcon from './files/zoom-in.svg'
 import ZoomOutIcon from './files/zoom-out.svg'
 import FunctionalGroupsIcon from './files/functional-groups.svg'
+import Save1Icon from './files/save-1.svg'
+import Open1Icon from './files/open-1.svg'
+import ResetIcon from './files/reset.svg'
+import CloseIcon from './files/close.svg'
 
 const icons = {
   about: AboutIcon,
@@ -214,7 +218,11 @@ const icons = {
   'shape-ellipse': ShapeEllipseIcon,
   'shape-rectangle': ShapeRectangleIcon,
   'shape-polyline': ShapePolylineIcon,
-  'shape-line': ShapeLineIcon
+  'shape-line': ShapeLineIcon,
+  'save-1': Save1Icon,
+  'open-1': Open1Icon,
+  reset: ResetIcon,
+  close: CloseIcon
 }
 
 function emptyIcon() {

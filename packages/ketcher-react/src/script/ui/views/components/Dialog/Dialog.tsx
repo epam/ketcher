@@ -94,30 +94,25 @@ const Dialog: FC<Props> = props => {
       className={clsx(styles.form, className, params.className)}
       {...rest}
     >
-      <header>
-        {title}
-        <span className={styles.close} onClick={() => exit('Cancel')} />
-      </header>
+      <header>{title}</header>
       <div className={styles.dialog_body}>{children}</div>
 
-      {buttons.length ? (
-        <footer>
-          {buttons.map(button =>
-            typeof button !== 'string' ? (
-              button
-            ) : (
-              <input
-                key={button}
-                type="button"
-                className={button === 'OK' ? styles.ok : styles.cancel}
-                value={button}
-                disabled={button === 'OK' && !valid()}
-                onClick={() => exit(button)}
-              />
-            )
-          )}
-        </footer>
-      ) : null}
+      <footer>
+        {buttons.map(button =>
+          typeof button !== 'string' ? (
+            button
+          ) : (
+            <input
+              key={button}
+              type="button"
+              className={button === 'OK' ? styles.ok : styles.cancel}
+              value={button}
+              disabled={button === 'OK' && !valid()}
+              onClick={() => exit(button)}
+            />
+          )
+        )}
+      </footer>
     </div>
   )
 }

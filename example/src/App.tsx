@@ -39,12 +39,12 @@ const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig()
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [peptides, setPeptides] = useState(false)
+  const [peptides, enablePeptides] = useState(false)
 
   return peptides ? (
     <>
       <div>Peptide Editor Enabled</div>
-      <PeptidesToggler toggle={setPeptides} />
+      <PeptidesToggler toggle={enablePeptides} />
     </>
   ) : (
     <>
@@ -60,7 +60,7 @@ const App = () => {
           ;(global as any).ketcher = ketcher
         }}
       />
-      {peptideEditor && <PeptidesToggler toggle={setPeptides} />}
+      {peptideEditor && <PeptidesToggler toggle={enablePeptides} />}
       {hasError && <ErrorModal message={errorMessage} update={setHasError} />}
     </>
   )

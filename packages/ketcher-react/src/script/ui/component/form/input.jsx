@@ -159,6 +159,26 @@ FieldSet.val = function (ev, schema) {
   return input.type === 'radio' ? result[0] : result
 }
 
+function Slider({ value = '', onChange, ...rest }) {
+  return (
+    <div className={classes.slider}>
+      <input
+        type="checkbox"
+        checked={value}
+        onClick={onChange}
+        onChange={onChange}
+        {...rest}
+      />
+      <span />
+    </div>
+  )
+}
+
+Slider.val = function (ev) {
+  ev.stopPropagation()
+  return !!ev.target.checked
+}
+
 function enumSchema(schema, cbOrIndex) {
   const isTypeValue = Array.isArray(schema)
   if (!isTypeValue && schema.items) schema = schema.items
@@ -240,9 +260,14 @@ function ctrlMap(component, { schema, multiple, onChange }) {
 }
 
 function componentMap({ schema, type, multiple }) {
+  if (schema.type === 'slider') {
+    return Slider
+  }
+
   if (!schema || (!schema.enum && !schema.items && !Array.isArray(schema))) {
-    if (type === 'checkbox' || (schema && schema.type === 'boolean'))
+    if (type === 'checkbox' || (schema && schema.type === 'boolean')) {
       return CheckBox
+    }
 
     return type === 'textarea' ? TextArea : GenericInput
   }

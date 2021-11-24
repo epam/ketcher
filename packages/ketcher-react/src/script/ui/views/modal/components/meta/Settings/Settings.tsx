@@ -77,8 +77,8 @@ const SettingsDialog = (props: Props) => {
       <fieldset className={classes.general}>
         <Field name="resetToSelect" />
         <Field name="rotationStep" />
-        <Field name="showValenceWarnings" component={SelectCheckbox} />
-        <Field name="atomColoring" component={SelectCheckbox} />
+        <Field name="showValenceWarnings" />
+        <Field name="atomColoring" />
         <Field name="font" component={SystemFonts} />
         <Field name="fontsz" component={MeasureInput} />
         <Field name="fontszsub" component={MeasureInput} />
@@ -90,13 +90,13 @@ const SettingsDialog = (props: Props) => {
     label: 'Stereochemistry',
     content: (
       <fieldset className={classes.stereochemistry}>
-        <Field name="showStereoFlags" component={SelectCheckbox} />
+        <Field name="showStereoFlags" />
         <Field name="stereoLabelStyle" />
         <Field name="colorOfAbsoluteCenters" component={ColorPicker} />
         <Field name="colorOfAndCenters" component={ColorPicker} />
         <Field name="colorOfOrCenters" component={ColorPicker} />
         <Field name="colorStereogenicCenters" />
-        <Field name="autoFadeOfStereoLabels" component={SelectCheckbox} />
+        <Field name="autoFadeOfStereoLabels" />
         <Field name="absFlagLabel" />
         <Field name="andFlagLabel" />
         <Field name="orFlagLabel" />
@@ -109,9 +109,9 @@ const SettingsDialog = (props: Props) => {
     label: 'Atoms',
     content: (
       <fieldset>
-        <Field name="carbonExplicitly" component={SelectCheckbox} />
-        <Field name="showCharge" component={SelectCheckbox} />
-        <Field name="showValence" component={SelectCheckbox} />
+        <Field name="carbonExplicitly" />
+        <Field name="showCharge" />
+        <Field name="showValence" />
         <Field name="showHydrogenLabels" component={SelectCheckbox} />
       </fieldset>
     )
@@ -121,7 +121,7 @@ const SettingsDialog = (props: Props) => {
     label: 'Bonds',
     content: (
       <fieldset>
-        <Field name="aromaticCircle" component={SelectCheckbox} />
+        <Field name="aromaticCircle" />
         <Field name="doubleBondWidth" component={MeasureInput} />
         <Field name="bondThickness" component={MeasureInput} />
         <Field name="stereoBondWidth" component={MeasureInput} />
@@ -133,17 +133,11 @@ const SettingsDialog = (props: Props) => {
     label: 'Server',
     content: (
       <fieldset className={classes.server} disabled={!appOpts.server}>
-        <Field name="smart-layout" component={SelectCheckbox} />
-        <Field
-          name="ignore-stereochemistry-errors"
-          component={SelectCheckbox}
-        />
-        <Field
-          name="mass-skip-error-on-pseudoatoms"
-          component={SelectCheckbox}
-        />
-        <Field name="gross-formula-add-rsites" component={SelectCheckbox} />
-        <Field name="gross-formula-add-isotopes" component={SelectCheckbox} />
+        <Field name="smart-layout" />
+        <Field name="ignore-stereochemistry-errors" />
+        <Field name="mass-skip-error-on-pseudoatoms" />
+        <Field name="gross-formula-add-rsites" />
+        <Field name="gross-formula-add-isotopes" />
       </fieldset>
     )
   }
@@ -163,10 +157,10 @@ const SettingsDialog = (props: Props) => {
     label: 'Options for debugging',
     content: (
       <fieldset>
-        <Field name="showAtomIds" component={SelectCheckbox} />
-        <Field name="showBondIds" component={SelectCheckbox} />
-        <Field name="showHalfBondIds" component={SelectCheckbox} />
-        <Field name="showLoopIds" component={SelectCheckbox} />
+        <Field name="showAtomIds" />
+        <Field name="showBondIds" />
+        <Field name="showHalfBondIds" />
+        <Field name="showLoopIds" />
       </fieldset>
     )
   }

@@ -28,14 +28,7 @@ function APointTool(editor) {
 }
 
 APointTool.prototype.mousemove = function (event) {
-  const struct = this.editor.render.ctab.molecule
-  const ci = this.editor.findItem(event, ['atoms'])
-  if (ci) {
-    const atom = struct.atoms.get(ci.id)
-    if (atom.label !== 'R#' && atom.rglabel === null) this.editor.hover(ci)
-  } else {
-    this.editor.hover(null)
-  }
+  this.editor.hover(this.editor.findItem(event, ['atoms']))
 }
 
 APointTool.prototype.click = function (event) {
@@ -68,7 +61,6 @@ APointTool.prototype.click = function (event) {
   if (ci && ci.map === 'atoms') {
     this.editor.hover(null)
     var atom = struct.atoms.get(ci.id)
-    if (atom.label === 'R#' && atom.rglabel !== null) return
     var res = editor.event.elementEdit.dispatch({
       attpnt: atom.attpnt
     })

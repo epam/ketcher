@@ -5,8 +5,8 @@
   "scripts": {
     "start:standalone": "cross-env MODE=standalone react-app-rewired start",
     "start:remote": "cross-env MODE=remote react-app-rewired start",
-    "start:standalone:peptides": "cross-env MODE=standalone ENABLE_PEPTIDE_EDITOR=true react-app-rewired start",
-    "start:remote:peptides": "cross-env MODE=remote ENABLE_PEPTIDE_EDITOR=true react-app-rewired start",
+    "start:standalone:peptides": "cross-env MODE=standalone ENABLE_PEPTIDES_EDITOR=true react-app-rewired start",
+    "start:remote:peptides": "cross-env MODE=remote ENABLE_PEPTIDES_EDITOR=true react-app-rewired start",
     "clean:build": "shx rm -rf build",
     "delete:dist": "shx rm -rf dist/$MODE",
     "init:dist": "shx mkdir -p dist/$MODE",

@@ -33,7 +33,7 @@ if (process.env.MODE === 'standalone') {
   structServiceProvider = new StandaloneStructServiceProvider()
 }
 
-const peptideEditor = JSON.parse(process.env.ENABLE_PEPTIDE_EDITOR!)
+const peptideEditor = JSON.parse(process.env.ENABLE_PEPTIDES_EDITOR!)
 
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig()

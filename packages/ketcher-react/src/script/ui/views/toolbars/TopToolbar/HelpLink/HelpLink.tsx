@@ -14,4 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './Help'
+import Icon from '../../../../component/view/icon'
+import { shortcutStr } from '../../shortcutStr'
+import classes from './HelpLink.module.less'
+
+const HelpLink = ({ status }) => {
+  if (status?.hidden) {
+    return null
+  }
+  console.log(JSON.stringify(process.env.HELP_LINK))
+  const shortcut = shortcutStr(['?', '&', 'Shift+/'])
+  const helpLink = process.env.HELP_LINK
+
+  return (
+    <a
+      target="_blank"
+      className={classes.button}
+      title={`Help (${shortcut})`}
+      href={`https://github.com/epam/ketcher/blob/${helpLink}/example/public/docs/help.md#ketcher-overview`}
+      rel="noreferrer"
+    >
+      <Icon name="help" />
+      <kbd>{shortcut}</kbd>
+    </a>
+  )
+}
+
+export { HelpLink }

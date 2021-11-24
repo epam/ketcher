@@ -63,25 +63,24 @@ const ColorPicker = (props: Props) => {
           style={{ backgroundColor: value }}
         />
       </div>
-      <div className={classes.colorPickerWrap}>
-        {isOpen ? (
-          <>
-            <div
-              className={classes.colorPickerOverlay}
-              onClick={handleClose}
-              data-testid="color-picker-overlay"
+
+      {isOpen ? (
+        <div className={classes.colorPickerWrap}>
+          <div
+            className={classes.colorPickerOverlay}
+            onClick={handleClose}
+            data-testid="color-picker-overlay"
+          />
+          <div className={classes.colorPicker}>
+            <HexColorPicker color={value} onChange={handleChange} />
+            <HexColorInput
+              data-testid="color-picker-input"
+              color={value}
+              onChange={handleChange}
             />
-            <div className={classes.colorPicker}>
-              <HexColorPicker color={value} onChange={handleChange} />
-              <HexColorInput
-                data-testid="color-picker-input"
-                color={value}
-                onChange={handleChange}
-              />
-            </div>
-          </>
-        ) : null}
-      </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

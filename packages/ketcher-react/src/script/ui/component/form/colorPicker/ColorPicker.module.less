@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+@import '../../../../../style/variables';
+
 .colorPickerInput {
   position: relative;
   display: inline-block;
@@ -37,6 +39,10 @@
   right: 0;
   top: 100%;
   z-index: 1;
+  background-color: @color-white;
+  padding: 5px;
+  border-radius: 4px;
+  box-shadow: 0 0 3px 0 @color-gray1;
 }
 
 .colorPicker {
@@ -48,6 +54,22 @@
   }
   div {
     border-radius: 0;
+  }
+  // stylelint-disable-next-line selector-pseudo-class-no-unknown
+  :global(.react-colorful) {
+    width: 140px;
+    height: 160px;
+  }
+  // stylelint-disable-next-line selector-pseudo-class-no-unknown
+  :global(.react-colorful__hue) {
+    height: 20px;
+  }
+  // stylelint-disable-next-line selector-pseudo-class-no-unknown
+  :global(.react-colorful__pointer) {
+    border-radius: 50%;
+    border-width: 1px;
+    width: 10px;
+    height: 10px;
   }
 }
 

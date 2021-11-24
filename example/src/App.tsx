@@ -6,8 +6,9 @@ import { Ketcher, RemoteStructServiceProvider } from 'ketcher-core'
 import { Editor, ButtonsConfig } from 'ketcher-react'
 // @ts-ignore
 import Miew from 'miew'
-import {useState} from "react";
-import ErrorModal from "./ErrorModal/ErrorModal";
+import { useState } from 'react'
+import ErrorModal from './ErrorModal/ErrorModal'
+import { PeptidesToggler } from './PeptidesToggler/PeptidesToggler'
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search)
@@ -32,27 +33,36 @@ if (process.env.MODE === 'standalone') {
   structServiceProvider = new StandaloneStructServiceProvider()
 }
 
+const peptideEditor = JSON.parse(process.env.ENABLE_PEPTIDE_EDITOR!)
+
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig()
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [peptides, setPeptides] = useState(false)
 
-  return (
-      <>
-        <Editor
-            errorHandler={(message: string) => {
-              setHasError(true)
-              setErrorMessage(message)
-            }}
-            buttons={hiddenButtonsConfig}
-            staticResourcesUrl={process.env.PUBLIC_URL}
-            structServiceProvider={structServiceProvider}
-            onInit={(ketcher: Ketcher) => {
-              ;(global as any).ketcher = ketcher
-            }}
-        />
-        {hasError && <ErrorModal message={errorMessage} update={setHasError} />}
-      </>
+  return peptides ? (
+    <>
+      <div>Peptide Editor Enabled</div>
+      <PeptidesToggler toggle={setPeptides} />
+    </>
+  ) : (
+    <>
+      <Editor
+        errorHandler={(message: string) => {
+          setHasError(true)
+          setErrorMessage(message)
+        }}
+        buttons={hiddenButtonsConfig}
+        staticResourcesUrl={process.env.PUBLIC_URL}
+        structServiceProvider={structServiceProvider}
+        onInit={(ketcher: Ketcher) => {
+          ;(global as any).ketcher = ketcher
+        }}
+      />
+      {peptideEditor && <PeptidesToggler toggle={setPeptides} />}
+      {hasError && <ErrorModal message={errorMessage} update={setHasError} />}
+    </>
   )
 }
 

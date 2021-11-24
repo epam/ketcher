@@ -21,7 +21,8 @@ module.exports = override(
   addWebpackPlugin(
     new webpack.EnvironmentPlugin({
       MODE: process.env.MODE,
-      API_PATH: process.env.API_PATH
+      API_PATH: process.env.API_PATH,
+      ENABLE_PEPTIDE_EDITOR: process.env.ENABLE_PEPTIDE_EDITOR
     })
   ),
   addWebpackPlugin(

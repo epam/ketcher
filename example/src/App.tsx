@@ -8,7 +8,7 @@ import { Editor, ButtonsConfig } from 'ketcher-react'
 import Miew from 'miew'
 import { useState } from 'react'
 import ErrorModal from './ErrorModal/ErrorModal'
-import { PeptidesToggler } from './PeptidesToggler/PeptidesToggler'
+import { PeptidesToggler } from './PeptidesToggler'
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search)
@@ -39,12 +39,12 @@ const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig()
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [peptides, enablePeptides] = useState(false)
+  const [showPeptides, setShowPeptides] = useState(false)
 
-  return peptides ? (
+  return showPeptides ? (
     <>
-      <div>Peptide Editor Enabled</div>
-      <PeptidesToggler toggle={enablePeptides} />
+      <div>Peptides Editor Enabled</div>
+      <PeptidesToggler toggle={setShowPeptides} />
     </>
   ) : (
     <>
@@ -60,7 +60,7 @@ const App = () => {
           ;(global as any).ketcher = ketcher
         }}
       />
-      {peptideEditor && <PeptidesToggler toggle={enablePeptides} />}
+      {peptideEditor && <PeptidesToggler toggle={setShowPeptides} />}
       {hasError && <ErrorModal message={errorMessage} update={setHasError} />}
     </>
   )

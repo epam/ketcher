@@ -17,7 +17,7 @@
 import './PeptidesToggler.css'
 
 interface PeptidesTogglerProps {
-  toggle: any
+  toggle: (isEnabled: boolean) => void
 }
 
 const PeptidesToggler = ({ toggle }: PeptidesTogglerProps) => {

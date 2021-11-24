@@ -7,7 +7,7 @@ import { Editor, ButtonsConfig } from 'ketcher-react'
 // @ts-ignore
 import Miew from 'miew'
 import { useState } from 'react'
-import ErrorModal from './ErrorModal/ErrorModal'
+import { ErrorModal } from './ErrorModal'
 import { PeptidesToggler } from './PeptidesToggler'
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {

@@ -36,4 +36,4 @@ const ErrorModal = (props: any) => {
   )
 }
 
-export default ErrorModal
+export { ErrorModal }

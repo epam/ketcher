@@ -34,41 +34,46 @@
   vertical-align: middle;
   display: flex;
   flex-direction: column;
-  max-width: 500px;
+  max-width: 400px;
   text-align: left;
-  background-color: #fff;
+  background-color: #f3f3f3;
   border-radius: 10px;
   background-clip: padding-box;
   opacity: 1;
   transform: scale(1);
   transition: transform 0.3s, opacity 0.3s;
+  font-family: Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
+    Arial, sans-serif;
 }
 
 .modalWindow > * {
-  margin: 0 15px;
+  margin: 0 10px;
   max-height: 65vh;
+  color: #585858;
 }
 
 footer .ok {
-  background: #3e7bfa;
+  background: #343434;
   width: 40px;
   color: #fff;
-  margin-right: 2px;
   margin-left: 10px;
-  border-radius: 2px;
+  float: right;
   border: none;
+  border-radius: 2px;
   height: 26px;
+  vertical-align: middle;
 }
 
 .ok:hover {
-  background: #3265cd;
+  background: #121212;
 }
 
 .modalWindow header {
   display: flex;
   align-items: center;
-  font-size: 1.2em;
-  line-height: 1.3;
+  font-size: 14px;
+  line-height: 17px;
+  text-transform: uppercase;
   border-radius: 0.7em 0.7em 0 0;
   height: 40px;
 }
@@ -85,6 +90,8 @@ footer .ok {
 
 .modalBody {
   padding: 5px;
+  font-size: 12px;
+  line-height: 15px;
 }
 
 .modalHidden {

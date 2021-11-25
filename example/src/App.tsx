@@ -1,9 +1,10 @@
 import 'miew/dist/Miew.min.css'
 import 'ketcher-react/dist/index.css'
 
+import { ButtonsConfig, Editor } from 'ketcher-react'
 import { Ketcher, RemoteStructServiceProvider } from 'ketcher-core'
 
-import { Editor, ButtonsConfig } from 'ketcher-react'
+import ErrorModal from './ErrorModal/ErrorModal'
 // @ts-ignore
 import Miew from 'miew'
 import { useState } from 'react'
@@ -51,7 +52,7 @@ const App = () => {
       <Editor
         errorHandler={(message: string) => {
           setHasError(true)
-          setErrorMessage(message)
+          setErrorMessage(message.toString())
         }}
         buttons={hiddenButtonsConfig}
         staticResourcesUrl={process.env.PUBLIC_URL}
@@ -61,7 +62,9 @@ const App = () => {
         }}
       />
       {peptideEditor && <PeptidesToggler toggle={setShowPeptides} />}
-      {hasError && <ErrorModal message={errorMessage} update={setHasError} />}
+      {hasError && (
+        <ErrorModal message={errorMessage} close={() => setHasError(false)} />
+      )}
     </>
   )
 }

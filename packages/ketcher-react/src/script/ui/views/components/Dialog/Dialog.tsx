@@ -70,8 +70,12 @@ const Dialog: FC<Props> = props => {
     }
   }, [])
 
+  const isButtonOk = button => {
+    return button === 'OK' || button === 'Save'
+  }
+
   const exit = mode => {
-    const key = mode === 'OK' || mode === 'Save' ? 'onOk' : 'onCancel'
+    const key = isButtonOk(mode) ? 'onOk' : 'onCancel'
     if (params && key in params && (key !== 'onOk' || valid()))
       params[key](result())
   }
@@ -106,7 +110,7 @@ const Dialog: FC<Props> = props => {
           </button>
         </div>
       </header>
-      <div className={styles.dialog_body}>{children}</div>
+      <div className={clsx(styles.dialog_body, styles.body)}>{children}</div>
 
       {buttons.length > 0 && (
         <footer>
@@ -117,9 +121,12 @@ const Dialog: FC<Props> = props => {
               <input
                 key={button}
                 type="button"
-                className={button === 'OK' ? styles.ok : styles.cancel}
+                className={clsx(
+                  isButtonOk(button) ? styles.ok : styles.cancel,
+                  button === 'Save' && styles.save
+                )}
                 value={button}
-                disabled={button === 'OK' && !valid()}
+                disabled={isButtonOk(button) && !valid()}
                 onClick={() => exit(button)}
               />
             )

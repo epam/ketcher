@@ -37,7 +37,7 @@ const Sidebar = ({ tabs, className }): React.ReactElement => {
               activeTab === tab.label && classes.tab_active
             )}
           >
-            {tab.label}
+            <span>{tab.label}</span>
           </li>
         ))}
       </ul>

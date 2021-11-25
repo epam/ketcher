@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { About, Help, Settings } from '../views/modal/components/meta'
+import { About, Settings } from '../views/modal/components/meta'
 import {
   Analyse,
   Check,
@@ -52,7 +52,6 @@ export default {
   attach: TemplateAttach,
   templates: TemplatesDialog,
   about: About,
-  help: Help,
   miew: Miew,
   atomProps: Atom,
   attachmentPoints: AttachPoints,

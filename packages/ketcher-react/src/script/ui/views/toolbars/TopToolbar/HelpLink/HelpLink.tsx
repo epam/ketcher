@@ -22,7 +22,6 @@ const HelpLink = ({ status }) => {
   if (status?.hidden) {
     return null
   }
-  console.log(JSON.stringify(process.env.HELP_LINK))
   const shortcut = shortcutStr(['?', '&', 'Shift+/'])
   const helpLink = process.env.HELP_LINK
 

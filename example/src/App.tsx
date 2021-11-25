@@ -3,8 +3,6 @@ import 'ketcher-react/dist/index.css'
 
 import { ButtonsConfig, Editor } from 'ketcher-react'
 import { Ketcher, RemoteStructServiceProvider } from 'ketcher-core'
-
-import ErrorModal from './ErrorModal/ErrorModal'
 // @ts-ignore
 import Miew from 'miew'
 import { useState } from 'react'

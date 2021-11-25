@@ -288,19 +288,16 @@ function shallowCompare(a, b) {
 }
 
 export default class Input extends Component {
-  constructor(props) {
-    super(props)
-    const { component } = this.props
-    this.component = component || componentMap(props)
-    this.ctrl = ctrlMap(this.component, props)
-  }
-
   shouldComponentUpdate({ children, onChange, style, ...nextProps }) {
     const oldProps = omit(this.props, ['children', 'onChange', 'style'])
     return shallowCompare(oldProps, nextProps)
   }
 
   render() {
+    const { component } = this.props
+    this.component = component || componentMap(this.props)
+    this.ctrl = ctrlMap(this.component, this.props)
+
     const { children, onChange, ...props } = this.props
     const Component = this.component
     return <Component {...this.ctrl} {...props} />

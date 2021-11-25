@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { FC, RefCallback, useEffect, useMemo, useState } from 'react'
-import { FunctionalGroup, SdfItem, SdfSerializer, Struct } from 'ketcher-core'
+import { SdfItem, SdfSerializer, Struct } from 'ketcher-core'
 import TemplateTable, { Template } from '../../../dialog/template/TemplateTable'
 import {
   functionalGroupsSelector,
@@ -55,34 +55,25 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
 
   const [selected, setSelected] = useState<Template | null>(null)
   const [filter, setFilter] = useState<string>('')
-  const [filteredLib, setFilteredLib] = useState({})
+  const [filteredOriginalLib, setFilteredOriginalLib] = useState({})
+  const [filteredModifiedLib, setFilteredModifiedLib] = useState({})
 
   const expandedTemplates: SdfItem[] = useMemo(() => {
     return lib.map(template => {
       const struct = template.struct.clone()
-      struct.sgroups.forEach(sgroup => {
-        if (FunctionalGroup.isFunctionalGroup(sgroup)) {
-          sgroup.data.expanded = true
-        }
-      })
+      struct.sgroups.delete(0)
       return { ...template, struct }
     })
   }, [lib])
 
   useEffect(() => {
-    setFilteredLib(filterFGLib(expandedTemplates, filter))
+    setFilteredModifiedLib(filterFGLib(expandedTemplates, filter))
+    setFilteredOriginalLib(filterFGLib(lib, filter))
   }, [expandedTemplates, filter])
 
   const onFilter = (filter: string): void => setFilter(filter)
   const onSelect = (tmpl: Template): void => setSelected(tmpl)
   const handleOk = (res: Result | null): void => {
-    if (res) {
-      res.struct.sgroups.forEach(sgroup => {
-        if (FunctionalGroup.isFunctionalGroup(sgroup)) {
-          sgroup.data.expanded = false
-        }
-      })
-    }
     dispatch(onAction({ tool: 'template', opts: res }))
     onOk()
   }
@@ -154,7 +145,8 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
           ref={ref}
         >
           <TemplateTable
-            templates={filteredLib[group]}
+            templates={filteredOriginalLib[group]}
+            modifiedTemplates={filteredModifiedLib[group]}
             onSelect={handleSelect}
             selected={selected}
           />

@@ -24,6 +24,7 @@ import { useSelector } from 'react-redux'
 
 interface TemplateTableProps {
   templates: Array<Template>
+  modifiedTemplates?: Array<Template>
   selected: Template | null
   onSelect: (tmpl: Template) => void
   onDelete?: (tmpl: Template) => void
@@ -48,13 +49,14 @@ function tmplName(tmpl: Template, i: number): string {
 
 const RenderTmpl: FC<{
   tmpl: Template
+  modifiedTmpl?: Template
   options: any
   className: string
   onClick: () => void
-}> = ({ tmpl, options, ...props }) => {
+}> = ({ tmpl, modifiedTmpl, options, ...props }) => {
   return (
     <StructRender
-      struct={tmpl.struct}
+      struct={modifiedTmpl?.struct || tmpl.struct}
       options={{ ...options, autoScaleMargin: 15 }}
       {...props}
     />
@@ -62,7 +64,14 @@ const RenderTmpl: FC<{
 }
 
 const TemplateTable: FC<TemplateTableProps> = props => {
-  const { templates, selected, onSelect, onDelete, onAttach } = props
+  const {
+    templates,
+    modifiedTemplates,
+    selected,
+    onSelect,
+    onDelete,
+    onAttach
+  } = props
   const ITEMS_COUNT = templates ? templates.length : 0
   const ITEM_SIZE = { width: 178, height: 120 }
   const tmplStyles = {
@@ -94,6 +103,7 @@ const TemplateTable: FC<TemplateTableProps> = props => {
             >
               <RenderTmpl
                 tmpl={tmpl}
+                modifiedTmpl={modifiedTemplates && modifiedTemplates[i]}
                 options={options}
                 className={classes.struct}
                 onClick={() => onSelect(tmpl)}

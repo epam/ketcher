@@ -99,7 +99,11 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
   }
 
   const sdfSerializer = new SdfSerializer()
-  const molSaveData = sdfSerializer.serialize(lib)
+  const molSaveData = sdfSerializer.serialize(
+    selected
+      ? lib.filter(item => item.struct.name === selected?.struct.name)
+      : lib
+  )
 
   const handleSelect = (tmpl: Template): void => {
     if (tmpl === selected) {

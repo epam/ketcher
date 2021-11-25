@@ -86,7 +86,8 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.CDXML,
     ['.cdxml'],
     true
-  )
+  ),
+  sdf: new SupportedFormatProperties('SDF', ChemicalMimeType.SDF, ['.sdf'])
 }
 
 function getPropertiesByFormat(format: SupportedFormat) {

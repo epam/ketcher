@@ -99,7 +99,9 @@ const TemplateDialog: FC<Props> = props => {
   }
 
   const sdfSerializer = new SdfSerializer()
-  const data = sdfSerializer.serialize(props.lib)
+  const data = sdfSerializer.serialize(
+    props.selected ? [props.selected] : props.lib
+  )
 
   const select = (tmpl: Template): void => {
     if (tmpl === props.selected) props.onOk(result())

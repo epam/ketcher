@@ -36,6 +36,7 @@ export type SupportedFormat =
   | 'cml'
   | 'ket'
   | 'cdxml'
+  | 'sdf'
 
 export type FormatterFactoryOptions = Partial<
   MolSerializerOptions & StructServiceOptions

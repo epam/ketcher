@@ -22,7 +22,6 @@ const HelpLink = ({ status }) => {
   if (status?.hidden) {
     return null
   }
-  console.log(JSON.stringify(process.env.HELP_LINK))
   const shortcut = shortcutStr(['?', '&', 'Shift+/'])
   const helpLink = process.env.HELP_LINK
 
@@ -31,7 +30,7 @@ const HelpLink = ({ status }) => {
       target="_blank"
       className={classes.button}
       title={`Help (${shortcut})`}
-      href={`https://github.com/epam/ketcher/blob/${helpLink}/example/public/docs/help.md#ketcher-overview`}
+      href={`https://github.com/epam/ketcher/blob/${helpLink}/documentation/help.md#ketcher-overview`}
       rel="noreferrer"
     >
       <Icon name="help" />

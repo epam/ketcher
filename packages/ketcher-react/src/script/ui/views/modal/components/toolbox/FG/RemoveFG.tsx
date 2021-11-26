@@ -48,7 +48,7 @@ const RemoveFG = (props: Props) => {
       tabIndex={-1}
       className={classes.window}
     >
-      <header className={classes.header}>Edit abbreviation</header>
+      <header className={classes.header}>Edit Abbreviation</header>
       <div className={classes.question}>
         A change was detected for the abbreviation. Do you want to remove the
         abbreviation information from the structure and continue work with

@@ -64,7 +64,7 @@ const RenderTmpl: FC<{
 const TemplateTable: FC<TemplateTableProps> = props => {
   const { templates, selected, onSelect, onDelete, onAttach } = props
   const ITEMS_COUNT = templates ? templates.length : 0
-  const ITEM_SIZE = { width: 178, height: 120 }
+  const ITEM_SIZE = { width: 100, height: 100 }
   const tmplStyles = {
     width: `${ITEM_SIZE.width}px`,
     height: `${ITEM_SIZE.height}px`

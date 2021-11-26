@@ -13,31 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import './ErrorModal.css'
 
-interface ErrorModalProps {
-  message: string
-  close: () => void
+import './PeptidesToggler.css'
+
+interface PeptidesTogglerProps {
+  toggle: (isEnabled: boolean) => void
 }
 
-const ErrorModal = ({ message, close }: ErrorModalProps) => {
+const PeptidesToggler = ({ toggle }: PeptidesTogglerProps) => {
   return (
-    <div className={'modalOverlay'}>
-      <div className={'modalWindow'}>
-        <header>Error message</header>
-        <div className={'modalBody'}>{message}</div>
-        <footer>
-          <button
-            className={'ok'}
-            onClick={() => {
-              close()
-            }}>
-            OK
-          </button>
-        </footer>
-      </div>
-    </div>
+    <label className="switch">
+      <input type="checkbox" onChange={e => toggle(e.target.checked)} />
+      <span className="slider" />
+    </label>
   )
 }
 
-export { ErrorModal }
+export { PeptidesToggler }

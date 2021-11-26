@@ -3,11 +3,11 @@ import 'ketcher-react/dist/index.css'
 
 import { ButtonsConfig, Editor } from 'ketcher-react'
 import { Ketcher, RemoteStructServiceProvider } from 'ketcher-core'
-
-import ErrorModal from './ErrorModal/ErrorModal'
 // @ts-ignore
 import Miew from 'miew'
 import { useState } from 'react'
+import { ErrorModal } from './ErrorModal'
+import { PeptidesToggler } from './PeptidesToggler'
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search)
@@ -32,12 +32,20 @@ if (process.env.MODE === 'standalone') {
   structServiceProvider = new StandaloneStructServiceProvider()
 }
 
+const peptideEditor = process.env.ENABLE_PEPTIDES_EDITOR
+
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig()
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [showPeptides, setShowPeptides] = useState(false)
 
-  return (
+  return showPeptides ? (
+    <>
+      <div>Peptides Editor Enabled</div>
+      <PeptidesToggler toggle={setShowPeptides} />
+    </>
+  ) : (
     <>
       <Editor
         errorHandler={(message: string) => {
@@ -51,6 +59,7 @@ const App = () => {
           ;(global as any).ketcher = ketcher
         }}
       />
+      {peptideEditor && <PeptidesToggler toggle={setShowPeptides} />}
       {hasError && (
         <ErrorModal message={errorMessage} close={() => setHasError(false)} />
       )}

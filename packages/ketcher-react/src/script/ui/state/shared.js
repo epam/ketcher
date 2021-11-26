@@ -75,6 +75,10 @@ export function load(struct, options) {
     return parseStruct(struct, server, options)
       .then(
         struct => {
+          if (!struct) {
+            return
+          }
+
           const { fragment } = options
 
           if (

@@ -34,7 +34,7 @@ import {
 } from './indigoWorker.types'
 
 // @ts-ignore
-import indigoModuleFn from '../../../generated/libindigo'
+import indigoModuleFn from 'indigo-ketcher'
 
 interface IndigoOptions {
   set: (key: string, value: string) => void

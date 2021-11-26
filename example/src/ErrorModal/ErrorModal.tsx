@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { FC } from 'react'
 import './ErrorModal.css'
 
 interface ErrorModalProps {
   message: string
-  update: (b: boolean) => void
+  close: () => void
 }
 
-const ErrorModal: FC<ErrorModalProps> = ({ message, update }) => {
+const ErrorModal = ({ message, close }: ErrorModalProps) => {
   return (
     <div className={'modalOverlay'}>
       <div className={'modalWindow'}>
@@ -31,7 +30,7 @@ const ErrorModal: FC<ErrorModalProps> = ({ message, update }) => {
           <button
             className={'ok'}
             onClick={() => {
-              update(false)
+              close()
             }}
           >
             OK

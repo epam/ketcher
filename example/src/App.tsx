@@ -1,13 +1,13 @@
 import 'miew/dist/Miew.min.css'
 import 'ketcher-react/dist/index.css'
 
+import { ButtonsConfig, Editor } from 'ketcher-react'
 import { Ketcher, RemoteStructServiceProvider } from 'ketcher-core'
 
-import { Editor, ButtonsConfig } from 'ketcher-react'
+import ErrorModal from './ErrorModal/ErrorModal'
 // @ts-ignore
 import Miew from 'miew'
-import {useState} from "react";
-import ErrorModal from "./ErrorModal/ErrorModal";
+import { useState } from 'react'
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search)
@@ -38,21 +38,23 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState('')
 
   return (
-      <>
-        <Editor
-            errorHandler={(message: string) => {
-              setHasError(true)
-              setErrorMessage(message)
-            }}
-            buttons={hiddenButtonsConfig}
-            staticResourcesUrl={process.env.PUBLIC_URL}
-            structServiceProvider={structServiceProvider}
-            onInit={(ketcher: Ketcher) => {
-              ;(global as any).ketcher = ketcher
-            }}
-        />
-        {hasError && <ErrorModal message={errorMessage} update={setHasError} />}
-      </>
+    <>
+      <Editor
+        errorHandler={(message: string) => {
+          setHasError(true)
+          setErrorMessage(message.toString())
+        }}
+        buttons={hiddenButtonsConfig}
+        staticResourcesUrl={process.env.PUBLIC_URL}
+        structServiceProvider={structServiceProvider}
+        onInit={(ketcher: Ketcher) => {
+          ;(global as any).ketcher = ketcher
+        }}
+      />
+      {hasError && (
+        <ErrorModal message={errorMessage} close={() => setHasError(false)} />
+      )}
+    </>
   )
 }
 

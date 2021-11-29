@@ -55,21 +55,19 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
 
   const [selected, setSelected] = useState<Template | null>(null)
   const [filter, setFilter] = useState<string>('')
-  const [filteredOriginalLib, setFilteredOriginalLib] = useState({})
-  const [filteredModifiedLib, setFilteredModifiedLib] = useState({})
+  const [filteredLib, setFilteredLib] = useState({})
 
-  const expandedTemplates: SdfItem[] = useMemo(() => {
+  const templatesLib = useMemo(() => {
     return lib.map(template => {
       const struct = template.struct.clone()
       struct.sgroups.delete(0)
-      return { ...template, struct }
+      return { ...template, modifiedStruct: struct }
     })
   }, [lib])
 
   useEffect(() => {
-    setFilteredModifiedLib(filterFGLib(expandedTemplates, filter))
-    setFilteredOriginalLib(filterFGLib(lib, filter))
-  }, [expandedTemplates, filter])
+    setFilteredLib(filterFGLib(templatesLib, filter))
+  }, [templatesLib, filter])
 
   const onFilter = (filter: string): void => setFilter(filter)
   const onSelect = (tmpl: Template): void => setSelected(tmpl)
@@ -145,8 +143,7 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
           ref={ref}
         >
           <TemplateTable
-            templates={filteredOriginalLib[group]}
-            modifiedTemplates={filteredModifiedLib[group]}
+            templates={filteredLib[group]}
             onSelect={handleSelect}
             selected={selected}
           />

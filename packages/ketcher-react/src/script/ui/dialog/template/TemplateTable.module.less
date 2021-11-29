@@ -21,6 +21,7 @@
   display: flex;
   flex-wrap: wrap;
   width: 555px;
+  min-width: 100px;
   padding: 0;
   overflow: hidden;
 }
@@ -36,7 +37,7 @@
   overflow-y: scroll;
   overflow-x: hidden;
   width: 100%;
-  margin: 0 15px;
+  margin: 10px 15px;
 
   .scrollbar();
 }
@@ -56,6 +57,8 @@
 
 .td {
   position: relative;
+  width: 100px;
+  height: 100px;
   &::before {
     position: absolute;
     z-index: 10;

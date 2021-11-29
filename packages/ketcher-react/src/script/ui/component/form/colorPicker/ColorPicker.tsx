@@ -56,12 +56,13 @@ const ColorPicker = (props: Props) => {
   )
   const handleClick = () => {
     setIsOpen(prevState => !prevState)
+    setIsPaletteOpen(true)
   }
   const handleClose = () => {
     setIsOpen(false)
   }
   const handlePaletteOpen = () => {
-    setIsPaletteOpen(true)
+    setIsPaletteOpen(prev => !prev)
   }
   const handleColorChange = color => {
     handleChange(color)
@@ -77,7 +78,7 @@ const ColorPicker = (props: Props) => {
         onClick={handleClick}
       />
 
-      {isOpen ? (
+      {isOpen && (
         <div
           className={clsx(
             classes.colorPickerWrap,
@@ -107,7 +108,7 @@ const ColorPicker = (props: Props) => {
             ))}
           </div>
 
-          {isPaletteOpen ? (
+          {isPaletteOpen && (
             <div className={classes.colorPicker}>
               <HexColorPicker color={value} onChange={handleChange} />
               <HexColorInput
@@ -117,9 +118,9 @@ const ColorPicker = (props: Props) => {
               />
               <span className={classes.hex}>HEX</span>
             </div>
-          ) : null}
+          )}
         </div>
-      ) : null}
+      )}
     </div>
   )
 }

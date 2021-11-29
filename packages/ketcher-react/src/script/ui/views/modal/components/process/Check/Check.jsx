@@ -71,7 +71,6 @@ function CheckDialog(props) {
     <Dialog
       title="Structure Check"
       className={style.check}
-      result={() => result}
       params={prop}
       buttons={[]}
     >
@@ -79,8 +78,7 @@ function CheckDialog(props) {
         schema={checkSchema}
         init={checkState}
         {...formState}
-        result={() => result}
-        onUpdate={onCheck(result.checkOptions)}
+        result={result}
       >
         <div className={style.wrapper}>
           <div className={style.settings}>
@@ -88,8 +86,7 @@ function CheckDialog(props) {
               name="checkOptions"
               multiple
               type="checkbox"
-              value={result.checkOptions}
-              onChange={() => onCheck(result.checkOptions)}
+              onChange={onCheck}
             />
           </div>
           <div className={style.warnings}>

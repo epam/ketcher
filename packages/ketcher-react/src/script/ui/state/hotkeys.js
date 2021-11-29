@@ -144,7 +144,7 @@ export function initClipboard(dispatch, getState) {
     },
     onPaste(data) {
       const structStr =
-        data['application/json'] ||
+        data['chemical/x-indigo-ket'] ||
         data['chemical/x-mdl-molfile'] ||
         data['chemical/x-mdl-rxnfile'] ||
         data['text/plain']
@@ -175,7 +175,7 @@ function clipData(editor) {
   try {
     const serializer = new KetSerializer()
     const ket = serializer.serialize(struct)
-    res['application/json'] = ket
+    res['chemical/x-indigo-ket'] = ket
 
     const type = struct.isReaction
       ? 'chemical/x-mdl-molfile'

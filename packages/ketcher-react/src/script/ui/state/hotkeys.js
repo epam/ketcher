@@ -16,7 +16,12 @@
 
 import * as clipArea from '../component/cliparea/cliparea'
 
-import {KetSerializer, MolSerializer, formatProperties, ChemicalMimeType} from 'ketcher-core'
+import {
+  KetSerializer,
+  MolSerializer,
+  formatProperties,
+  ChemicalMimeType
+} from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction } from './shared'
 
@@ -177,9 +182,7 @@ function clipData(editor) {
     const ket = serializer.serialize(struct)
     res[ChemicalMimeType.KET] = ket
 
-    const type = struct.isReaction
-      ? ChemicalMimeType.Mol
-      : ChemicalMimeType.Rxn
+    const type = struct.isReaction ? ChemicalMimeType.Mol : ChemicalMimeType.Rxn
     const data = molSerializer.serialize(struct)
     res['text/plain'] = data
     res[type] = data

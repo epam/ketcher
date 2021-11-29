@@ -34,14 +34,20 @@ export function fromFlip(restruct, selection, dir, center) {
 
   const action = new Action()
 
-  if (!selection) selection = structSelection(struct)
+  if (!selection) {
+    selection = structSelection(struct)
+  }
 
-  if (!selection.atoms) return action.perform(restruct)
+  if (!selection.atoms) {
+    return action.perform(restruct)
+  }
 
   const fids = selection.atoms.reduce((acc, aid) => {
     const atom = struct.atoms.get(aid)
 
-    if (!acc[atom.fragment]) acc[atom.fragment] = []
+    if (!acc[atom.fragment]) {
+      acc[atom.fragment] = []
+    }
 
     acc[atom.fragment].push(aid)
     return acc
@@ -53,7 +59,9 @@ export function fromFlip(restruct, selection, dir, center) {
       return !struct.getFragmentIds(frag).equals(new Pile(fids[frag]))
     })
 
-  if (isFragFound) return action // empty action
+  if (isFragFound === 0) {
+    return action // empty action
+  }
 
   Object.keys(fids).forEach(frag => {
     const fragment = new Pile(fids[frag])
@@ -80,7 +88,9 @@ export function fromFlip(restruct, selection, dir, center) {
     selection.bonds.forEach(bid => {
       const bond = struct.bonds.get(bid)
 
-      if (bond.type !== Bond.PATTERN.TYPE.SINGLE) return
+      if (bond.type !== Bond.PATTERN.TYPE.SINGLE) {
+        return
+      }
 
       if (bond.stereo === Bond.PATTERN.STEREO.UP) {
         action.addOp(new BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.DOWN))
@@ -120,7 +130,9 @@ export function fromRotate(restruct, selection, center, angle) {
 
   const action = new Action()
 
-  if (!selection) selection = structSelection(struct)
+  if (!selection) {
+    selection = structSelection(struct)
+  }
 
   if (selection.atoms) {
     selection.atoms.forEach(aid => {

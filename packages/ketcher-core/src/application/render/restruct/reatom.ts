@@ -305,7 +305,7 @@ class ReAtom extends ReObject {
     }
 
     if (this.a.attpnt) {
-      const lsb = bisectSmallestSector(this, restruct.molecule)
+      const lsb = bisectLargestSector(this, restruct.molecule)
       showAttpnt(this, render, lsb, restruct.addReObjectPath.bind(restruct))
     }
 
@@ -349,7 +349,7 @@ class ReAtom extends ReObject {
       draw.recenterText(aamPath, aamBox)
       const visel = this.visel
       let t = 3
-      let dir = bisectSmallestSector(this, restruct.molecule)
+      let dir = bisectLargestSector(this, restruct.molecule)
       // estimate the shift to clear the atom label
       for (let i = 0; i < visel.exts.length; ++i)
         t = Math.max(t, util.shiftRayBox(ps, dir, visel.exts[i].translate(ps)))
@@ -991,7 +991,7 @@ function pathAndRBoxTranslate(path, rbb, x, y) {
   rbb.y += y
 }
 
-function bisectSmallestSector(atom: ReAtom, struct: Struct) {
+function bisectLargestSector(atom: ReAtom, struct: Struct) {
   let angles: Array<number> = []
   atom.a.neighbors.forEach(hbid => {
     const hb = struct.halfBonds.get(hbid)
@@ -1003,11 +1003,11 @@ function bisectSmallestSector(atom: ReAtom, struct: Struct) {
     da.push(angles[(i + 1) % angles.length] - angles[i])
   }
   da.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI)
-  let daMin = Number.MAX_VALUE
+  let daMax = 0
   let ang = -Math.PI / 2
   for (let i = 0; i < angles.length; ++i) {
-    if (da[i] < daMin) {
-      daMin = da[i]
+    if (da[i] > daMax) {
+      daMax = da[i]
       ang = angles[i] + da[i] / 2
     }
   }

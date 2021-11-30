@@ -57,6 +57,7 @@ const highlightTargets = [
   'bonds',
   'rxnArrows',
   'rxnPluses',
+  'functionalGroups',
   'frags',
   'merge',
   'rgroups',
@@ -336,6 +337,8 @@ class Editor implements KetcherEditor {
 
       return true
     }
+
+    if (ci.map === 'functionalGroups') ci.map = 'sgroups' // TODO: Refactor object
 
     item = (render.ctab[ci.map] as Map<any, any>).get(ci.id)
     if (!item) {

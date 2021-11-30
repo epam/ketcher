@@ -81,6 +81,7 @@ const config = {
     hidden: options => isHidden(options, 'cut')
   },
   copies: {
+    disabled: editor => !hasSelection(editor),
     hidden: options => isHidden(options, 'copies')
   },
   copy: {
@@ -137,9 +138,6 @@ const config = {
     hidden: options => isHidden(options, 'settings')
   },
   help: {
-    shortcut: ['?', '&', 'Shift+/'],
-    title: 'Help',
-    action: { dialog: 'help' },
     hidden: options => isHidden(options, 'help')
   },
   about: {

@@ -15,24 +15,29 @@
  ***************************************************************************/
 import './ErrorModal.css'
 
-const ErrorModal = (props: any) => {
-    return (
-        <div className={'modalOverlay'}>
-            <div className={'modalWindow'}>
-                <header>Error message</header>
-                <div className={'modalBody'}>{props.message}</div>
-                <footer>
-                    <button
-                        className={'ok'}
-                        onClick={() => {
-                            props.update(false)
-                        }}>
-                        OK
-                    </button>
-                </footer>
-            </div>
-        </div>
-    )
+interface ErrorModalProps {
+  message: string
+  close: () => void
 }
 
-export default ErrorModal
+const ErrorModal = ({ message, close }: ErrorModalProps) => {
+  return (
+    <div className={'modalOverlay'}>
+      <div className={'modalWindow'}>
+        <header>Error message</header>
+        <div className={'modalBody'}>{message}</div>
+        <footer>
+          <button
+            className={'ok'}
+            onClick={() => {
+              close()
+            }}>
+            OK
+          </button>
+        </footer>
+      </div>
+    </div>
+  )
+}
+
+export { ErrorModal }

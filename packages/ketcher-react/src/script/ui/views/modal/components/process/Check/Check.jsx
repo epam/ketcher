@@ -18,6 +18,7 @@ import Form, { Field } from '../../../../../component/form/form/form'
 
 import { Dialog } from '../../../../components'
 import ErrorsCheck from './components'
+import Tabs from '../../../../../component/view/Tabs'
 import { check } from '../../../../../state/server'
 import { checkOpts } from '../../../../../state/options'
 import { connect } from 'react-redux'
@@ -28,7 +29,6 @@ const checkSchema = {
   type: 'object',
   properties: {
     checkOptions: {
-      title: 'Settings',
       type: 'array',
       items: {
         type: 'string',
@@ -66,39 +66,49 @@ const checkSchema = {
 function CheckDialog(props) {
   const { formState, checkState, onCheck, ...prop } = props
   const { result = checkState, moleculeErrors } = formState
+  const tabs = [
+    {
+      caption: 'Check',
+      component: ErrorsCheck,
+      props: { moleculeErrors, checkSchema }
+    },
+    {
+      caption: 'Settings',
+      component: Field,
+      props: {
+        name: 'checkOptions',
+        multiple: true,
+        type: 'checkbox',
+        labelPos: false
+      }
+    }
+  ]
 
   return (
     <Dialog
       title="Structure Check"
       className={style.check}
-      params={prop}
-      buttons={[]}
       result={() => result}
+      params={prop}
     >
-      <Form
-        schema={checkSchema}
-        init={checkState}
-        {...formState}
-        result={() => result}
-        onUpdate={onCheck(result.checkOptions)}
-      >
-        <div className={style.wrapper}>
-          <div className={style.settings}>
-            <Field
-              name="checkOptions"
-              multiple
-              type="checkbox"
-              value={result.checkOptions}
-              onChange={() => onCheck(result.checkOptions)}
-            />
-          </div>
-          <div className={style.warnings}>
-            <ErrorsCheck
-              moleculeErrors={moleculeErrors}
-              checkSchema={checkSchema}
-            />
-          </div>
-        </div>
+      <Form schema={checkSchema} init={checkState} {...formState}>
+        <Tabs
+          className={style.tabs}
+          captions={tabs}
+          changeTab={i => (i === 0 ? onCheck(result.checkOptions) : null)}
+          tabs={tabs}
+        >
+          <ErrorsCheck
+            moleculeErrors={moleculeErrors}
+            checkSchema={checkSchema}
+          />
+          <Field
+            name="checkOptions"
+            multiple
+            type="checkbox"
+            labelPos={false}
+          />
+        </Tabs>
       </Form>
     </Dialog>
   )

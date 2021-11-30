@@ -28,6 +28,7 @@ import clsx from 'clsx'
 import { makeItems } from '../ToolbarGroupItem/utils'
 import { mediaSizes } from '../mediaSizes'
 import { useResizeObserver } from '../../../../../hooks'
+import { HelpLink } from './HelpLink/HelpLink'
 
 const Group: FC<{ className?: string }> = ({ children, className }) => (
   <div className={clsx(classes.group, className)}>{children}</div>
@@ -50,9 +51,9 @@ interface TopToolbarCallProps extends ToolbarGroupItemCallProps {}
 type Props = TopToolbarProps & TopToolbarCallProps
 
 const TopToolbar = (props: Props) => {
-  const { className, ...rest } = props
+  const { className, status, ...rest } = props
   const { ref, width } = useResizeObserver<HTMLDivElement>()
-  const isZoomListHidden = !rest.status['zoom-list']?.hidden
+  const isZoomListHidden = !status['zoom-list']?.hidden
 
   type ItemProps = {
     id: ToolbarItemVariant
@@ -61,7 +62,7 @@ const TopToolbar = (props: Props) => {
     vertical?: boolean
   }
   const Item = ({ id, options, className, vertical }: ItemProps) =>
-    ToolbarGroupItem({ id, options, className, vertical, ...rest })
+    ToolbarGroupItem({ id, options, className, vertical, status, ...rest })
 
   return (
     <div
@@ -93,7 +94,7 @@ const TopToolbar = (props: Props) => {
           </>
         ) : null}
         {isZoomListHidden && (
-          <ZoomList status={rest.status} onAction={rest.onAction} />
+          <ZoomList status={status} onAction={rest.onAction} />
         )}
       </Group>
 
@@ -116,7 +117,7 @@ const TopToolbar = (props: Props) => {
         <Item id="settings" />
         {width && width >= mediaSizes.infoShowingWidth ? (
           <>
-            <Item id="help" />
+            <HelpLink status={status['help']} />
             <Item id="about" />
           </>
         ) : null}

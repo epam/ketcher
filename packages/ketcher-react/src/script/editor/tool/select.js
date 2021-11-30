@@ -68,6 +68,7 @@ SelectTool.prototype.mousedown = function (event) {
       ? [
           'frags',
           'sgroups',
+          'functionalGroups',
           'sgroupData',
           'rgroups',
           'rxnArrows',
@@ -80,6 +81,7 @@ SelectTool.prototype.mousedown = function (event) {
           'atoms',
           'bonds',
           'sgroups',
+          'functionalGroups',
           'sgroupData',
           'rgroups',
           'rxnArrows',
@@ -163,7 +165,7 @@ SelectTool.prototype.mousedown = function (event) {
       atoms: frag.fragGetAtoms(ctab, ci.id),
       bonds: frag.fragGetBonds(ctab, ci.id)
     }
-  } else if (ci.map === 'sgroups') {
+  } else if (ci.map === 'sgroups' || ci.map === 'functionalGroups') {
     const sgroup = ctab.sgroups.get(ci.id).item
     sel = {
       atoms: SGroup.getAtoms(struct, sgroup),
@@ -255,6 +257,7 @@ SelectTool.prototype.mousemove = function (event) {
       ? [
           'frags',
           'sgroups',
+          'functionalGroups',
           'sgroupData',
           'rgroups',
           'rxnArrows',
@@ -267,6 +270,7 @@ SelectTool.prototype.mousemove = function (event) {
           'atoms',
           'bonds',
           'sgroups',
+          'functionalGroups',
           'sgroupData',
           'rgroups',
           'rxnArrows',
@@ -382,6 +386,7 @@ SelectTool.prototype.dblclick = function (event) {
     'atoms',
     'bonds',
     'sgroups',
+    'functionalGroups',
     'sgroupData',
     'texts'
   ])

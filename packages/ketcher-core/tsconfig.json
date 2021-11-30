@@ -2,10 +2,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "module": "esnext",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
+    "lib": ["dom", "esnext"],
     "moduleResolution": "node",
     "sourceMap": true,
     "declaration": true,
@@ -26,22 +23,20 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "baseUrl": "./src",
+    "baseUrl": "./",
+    "paths": {
+      "domain/*": ["src/domain/*"],
+      "application/*": ["src/application/*"],
+      "infrastructure/*": ["src/infrastructure/*"],
+      "utilities": ["src/utilities"]
+    },
     "plugins": [
       {
         "transform": "@zerollup/ts-transform-paths",
-        "exclude": [
-          "*"
-        ]
+        "exclude": ["*"]
       }
     ],
     "jsx": "react"
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*", "__tests__/**/*"]
 }

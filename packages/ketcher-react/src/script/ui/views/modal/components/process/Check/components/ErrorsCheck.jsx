@@ -25,23 +25,18 @@ function ErrorsCheck(props) {
   }
 
   return (
-    <>
-      <label>Warnings</label>
-      <fieldset>
-        {moleculeErrorsTypes.length === 0 ? (
+    <fieldset>
+      {moleculeErrorsTypes.length === 0 ? (
+        <dt>No errors found</dt>
+      ) : (
+        moleculeErrorsTypes.map(type => (
           <div>
-            <dd>No errors found</dd>
+            <dt>{getOptionName(type)} warning:</dt>
+            <dd>{moleculeErrors[type]}</dd>
           </div>
-        ) : (
-          moleculeErrorsTypes.map((type, key) => (
-            <div key={key}>
-              <dt>{getOptionName(type)} warning:</dt>
-              <dd>{moleculeErrors[type]}</dd>
-            </div>
-          ))
-        )}
-      </fieldset>
-    </>
+        ))
+      )}
+    </fieldset>
   )
 }
 

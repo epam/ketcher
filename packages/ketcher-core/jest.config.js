@@ -1,7 +1,6 @@
 module.exports = {
-  roots: ['<rootDir>/src/'],
   testMatch: ['**/__tests__/**/?(*.)+(spec|test).+(ts|js)'],
-  testPathIgnorePatterns: ['fixtures'],
+  testPathIgnorePatterns: ['fixtures', 'dist', 'node_modules'],
   transform: {
     '\\.js?$': 'babel-jest',
     '^.+\\.(ts|tsx)$': 'ts-jest'

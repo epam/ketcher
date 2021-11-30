@@ -17,8 +17,8 @@
 import { Validator } from 'jsonschema'
 import schema from './schema.json'
 
-export function validate(graph: any): boolean {
+export function validate(ket: any): boolean {
   const validator = new Validator()
-  const result = validator.validate(graph, schema)
+  const result = validator.validate(ket, schema)
   return result.valid
 }

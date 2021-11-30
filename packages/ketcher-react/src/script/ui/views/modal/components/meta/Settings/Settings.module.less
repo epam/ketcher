@@ -23,12 +23,12 @@
 @stereochemistry-inputs-number: 11;
 
 .settings {
-  width: 37em;
-  height: 25em;
-  background-color: #fff;
+  width: 522px;
+  height: 357px;
+  background-color: @color-white;
 
   > header {
-    color: #3e7bfa;
+    color: @color-blue2;
     padding: 0 16px;
   }
 
@@ -50,7 +50,6 @@
 .button {
   background-color: transparent;
   border: none;
-  cursor: pointer;
 }
 
 .buttonOpen {
@@ -89,12 +88,32 @@
       width: 45%;
     }
 
+    > span {
+      flex-basis: 50%;
+    }
+
     select,
     input {
       border: 0.5px solid @color-gray2 !important;
       border-radius: 2px !important;
       color: @color-gray2;
       height: inherit !important;
+    }
+  }
+
+  .server {
+    label {
+      > span {
+        flex-basis: 70%;
+      }
+    }
+  }
+
+  .stereochemistry {
+    label {
+      > span {
+        flex-basis: 55%;
+      }
     }
   }
 }
@@ -113,7 +132,6 @@
 
   span {
     position: absolute;
-    cursor: pointer;
     top: 0;
     left: 0;
     right: 0;

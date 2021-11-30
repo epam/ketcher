@@ -17,6 +17,7 @@
 import React, { useState } from 'react'
 import classes from './Sidebar.module.less'
 import clsx from 'clsx'
+import Icon from "../../../../../../../component/view/icon";
 
 const Sidebar = ({ tabs, className }): React.ReactElement => {
   const [activeTab, setActiveTab] = useState('General')
@@ -28,18 +29,21 @@ const Sidebar = ({ tabs, className }): React.ReactElement => {
   return (
     <div className={clsx(classes.sidebar, className)}>
       <ul className={classes.tabs}>
-        {tabs.map(tab => (
-          <li
-            key={tab.key}
-            onClick={() => handleSwitchTab(tab.label)}
-            className={clsx(
-              classes.tab,
-              activeTab === tab.label && classes.tab_active
-            )}
-          >
-            <span>{tab.label}</span>
-          </li>
-        ))}
+        {tabs.map(tab => {
+            const isActive = (activeTab === tab.label)
+            return <li
+                key={tab.key}
+                onClick={() => handleSwitchTab(tab.label)}
+                className={clsx(
+                    classes.tab,
+                    isActive && classes.tab_active
+                )}
+            >
+                <Icon name={isActive ? `${tab.key}-white` : tab.key} className={classes.icon}/>
+                <span>{tab.label}</span>
+            </li>
+            })
+        }
       </ul>
       <div className={classes.content}>
         {tabs.find(tab => tab.label === activeTab).content}

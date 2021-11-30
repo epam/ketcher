@@ -114,6 +114,18 @@ import Save1Icon from './files/save-1.svg'
 import Open1Icon from './files/open-1.svg'
 import ResetIcon from './files/reset.svg'
 import CloseIcon from './files/close.svg'
+import GeneralIcon from './files/general.svg'
+import GeneralWhiteIcon from './files/general-white.svg'
+import StereoIcon from './files/stereo.svg'
+import AtomsIcon from './files/atoms.svg'
+import AtomsWhiteIcon from './files/atoms-white.svg'
+import BondsIcon from './files/bonds.svg'
+import BondsWhiteIcon from './files/bonds-white.svg'
+import ServerIcon from './files/server.svg'
+import ThreeDViewerIcon from './files/3d.svg'
+import ThreeDViewerWhiteIcon from './files/3d-white.svg'
+import DebuggingIcon from './files/debugging.svg'
+import DebuggingWhiteIcon from './files/debugging-white.svg'
 
 const icons = {
   about: AboutIcon,
@@ -223,7 +235,19 @@ const icons = {
   'save-1': Save1Icon,
   'open-1': Open1Icon,
   reset: ResetIcon,
-  close: CloseIcon
+  close: CloseIcon,
+  general: GeneralIcon,
+  'general-white': GeneralWhiteIcon,
+  stereo: StereoIcon,
+  atoms: AtomsIcon,
+  'atoms-white': AtomsWhiteIcon,
+  bonds: BondsIcon,
+  'bonds-white': BondsWhiteIcon,
+  server: ServerIcon,
+  '3dviewer': ThreeDViewerIcon,
+  '3dviewer-white': ThreeDViewerWhiteIcon,
+  debugging: DebuggingIcon,
+  'debugging-white': DebuggingWhiteIcon,
 }
 
 function emptyIcon() {

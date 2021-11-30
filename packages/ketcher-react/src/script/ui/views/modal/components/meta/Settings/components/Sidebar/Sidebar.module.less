@@ -16,7 +16,7 @@
 
 @import '../../../../../../../../../style/variables';
 
-@sidebar_width: 33.3%;
+@sidebar-width: 33.3%;
 
 .sidebar {
   display: flex;
@@ -27,34 +27,25 @@
     position: fixed;
     bottom: 0;
     top: 40px;
-    width: @sidebar_width;
+    width: @sidebar-width;
     color: @color-gray2;
 
     .tab {
-      cursor: pointer;
+      cursor: default;
       display: flex;
       font-size: 14px;
       line-height: 17px;
+    }
 
-      &::before {
-        content: '';
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        background-color: #c4c4c4;
-        border-radius: 2px;
-        margin-right: 8px;
-        vertical-align: text-bottom;
-      }
+    .icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
     }
 
     .tab_active {
       background-color: @color-gray1;
       color: @color-white;
-
-      &::before {
-        background-color: #fff;
-      }
     }
 
     span {
@@ -64,7 +55,7 @@
 
   .content {
     background-color: @color-white;
-    margin-left: @sidebar_width;
+    margin-left: @sidebar-width;
     max-height: 260px;
     width: 100%;
   }

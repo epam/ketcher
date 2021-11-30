@@ -36,7 +36,7 @@ const RgroupLogic = (props: Props) => {
   const { formState, label, rgroupLabels, ...rest } = props
   return (
     <Dialog
-      title="R-Group Logic"
+      title="R-Group Logic Condition"
       className={classes.rgroupLogic}
       result={() => formState.result}
       valid={() => formState.valid}

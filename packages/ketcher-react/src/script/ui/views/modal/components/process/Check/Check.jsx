@@ -22,6 +22,7 @@ import { check } from '../../../../../state/server'
 import { checkOpts } from '../../../../../state/options'
 import { connect } from 'react-redux'
 import style from './Check.module.less'
+import { useEffect } from 'react'
 
 const checkSchema = {
   title: 'Check',
@@ -66,6 +67,10 @@ const checkSchema = {
 function CheckDialog(props) {
   const { formState, checkState, onCheck, ...prop } = props
   const { result = checkState, moleculeErrors } = formState
+
+  useEffect(() => {
+    onCheck(result.checkOptions)
+  }, [])
 
   return (
     <Dialog

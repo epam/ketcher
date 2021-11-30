@@ -53,13 +53,16 @@ export function fromFlip(restruct, selection, dir, center) {
     return acc
   }, {})
 
-  const isFragFound = Object.keys(fids)
-    .map(frag => parseInt(frag, 10))
-    .find(frag => {
-      return !struct.getFragmentIds(frag).equals(new Pile(fids[frag]))
-    })
+  const fidsNumberKeys = Object.keys(fids).map(frag => parseInt(frag, 10))
 
-  if (isFragFound === 0) {
+  const isFragFound = fidsNumberKeys.find(frag => {
+    const allFragmentsOfStructure = struct.getFragmentIds(frag)
+    const selectedFragmentsOfStructure = new Pile(fids[frag])
+    const res = allFragmentsOfStructure.equals(selectedFragmentsOfStructure)
+    return !res
+  })
+
+  if (typeof isFragFound === 'number') {
     return action // empty action
   }
 

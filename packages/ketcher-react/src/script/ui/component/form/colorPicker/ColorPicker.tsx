@@ -54,24 +54,30 @@ const ColorPicker = (props: Props) => {
     },
     [onChange]
   )
-  const handleClick = () => {
-    setIsOpen(prevState => !prevState)
-    setIsPaletteOpen(true)
+  const handleClick = (e) => {
+    e.preventDefault()
+    setIsOpen(true)
   }
   const handleClose = () => {
     setIsOpen(false)
+    setIsPaletteOpen(false)
   }
   const handlePaletteOpen = () => {
-    setIsPaletteOpen(prev => !prev)
+    setIsPaletteOpen(true)
   }
   const handleColorChange = color => {
     handleChange(color)
-    handleClose()
+  }
+
+  const handleBlur = (e) => {
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      handleClose()
+    }
   }
 
   return (
-    <div className={classes.colorPickerInput}>
-      <div
+    <div className={classes.colorPickerInput} onClick={(e) => e.preventDefault()}>
+      <button
         className={classes.colorPickerPreview}
         data-testid="color-picker-preview"
         style={{ backgroundColor: value }}
@@ -84,12 +90,8 @@ const ColorPicker = (props: Props) => {
             classes.colorPickerWrap,
             isPaletteOpen && classes.withPalette
           )}
+          onBlur={handleBlur}
         >
-          <div
-            className={classes.colorPickerOverlay}
-            onClick={handleClose}
-            data-testid="color-picker-overlay"
-          />
           <div className={classes.presetColors}>
             <button
               className={clsx(
@@ -97,6 +99,7 @@ const ColorPicker = (props: Props) => {
                 isPaletteOpen && classes.clicked
               )}
               onClick={handlePaletteOpen}
+              autoFocus
             />
             {presetColors.map(color => (
               <button

@@ -2,10 +2,8 @@ import babel from '@rollup/plugin-babel'
 import cleanup from 'rollup-plugin-cleanup'
 import commonjs from '@rollup/plugin-commonjs'
 import del from 'rollup-plugin-delete'
-import json from '@rollup/plugin-json'
 import nodePolyfills from 'rollup-plugin-node-polyfills'
 import pkg from './package.json'
-import replace from '@rollup/plugin-replace'
 import resolve from '@rollup/plugin-node-resolve'
 import strip from '@rollup/plugin-strip'
 import typescript from 'rollup-plugin-typescript2'
@@ -16,8 +14,9 @@ const mode = {
   DEVELOPMENT: 'development'
 }
 
-const extensions = ['.js', '.jsx', '.ts', '.tsx']
+const extensions = ['.js', '.ts']
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION
+
 const config = {
   input: pkg.source,
   output: [
@@ -47,18 +46,6 @@ const config = {
       targetPlatform: 'browser',
       external: ['@babel/runtime']
     }),
-    replace(
-      {
-        'process.env.NODE_ENV': JSON.stringify(
-          isProduction ? mode.PRODUCTION : mode.DEVELOPMENT
-        )
-      },
-      {
-        include: 'src/**/*.{js,jsx,ts,tsx}'
-      }
-    ),
-
-    json(),
     typescript(),
     babel({
       extensions,
@@ -67,9 +54,10 @@ const config = {
     }),
     cleanup({
       extensions: extensions.map(ext => ext.trimStart('.')),
+      include: ['src/**/*'],
       comments: 'none'
     }),
-    ...(isProduction ? [strip()] : [])
+    ...(isProduction ? [strip({ include: ['src/**/*'] })] : [])
   ]
 }
 

@@ -14,6 +14,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import strip from '@rollup/plugin-strip'
 import svgr from '@svgr/rollup'
 import typescript from 'rollup-plugin-typescript2'
+import branchName from 'current-git-branch'
 
 const mode = {
   PRODUCTION: 'production',
@@ -22,6 +23,13 @@ const mode = {
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION
+
+const initLink = branchName => {
+  if (branchName && branchName.substring(0, 7) === 'release') {
+    return branchName
+  }
+  return 'master'
+}
 
 const config = {
   input: pkg.source,
@@ -55,7 +63,8 @@ const config = {
           new Date().toISOString().slice(0, 19)
         ),
         //TODO: add logic to init BUILD_NUMBER
-        'process.env.BUILD_NUMBER': JSON.stringify(undefined)
+        'process.env.BUILD_NUMBER': JSON.stringify(undefined),
+        'process.env.HELP_LINK': JSON.stringify(initLink(branchName()))
       },
       {
         include: 'src/**/*.{js,jsx,ts,tsx}'

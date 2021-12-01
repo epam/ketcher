@@ -24,7 +24,8 @@ import {
   RichUtils,
   convertFromRaw,
   convertToRaw,
-  getDefaultKeyBinding, Modifier
+  getDefaultKeyBinding,
+  Modifier
 } from 'draft-js'
 import { useCallback, useState } from 'react'
 
@@ -36,7 +37,7 @@ import { TextCommand } from 'ketcher-core'
 import classes from './Text.module.less'
 import { connect } from 'react-redux'
 import createStyles from 'draft-js-custom-styles'
-import {SpecialSymbolsButton} from "./SpecialSymbols/SpecialSymbolsButton";
+import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton'
 
 const { styles, customStyleFn } = createStyles(['font-size'])
 
@@ -100,17 +101,21 @@ const Text = (props: TextProps) => {
     setEditorState(state)
   }
 
-  const addText = (value) => {
+  const addText = value => {
     const selection = editorState.getSelection()
-    const contentState = editorState.getCurrentContent();
+    const contentState = editorState.getCurrentContent()
     let nextEditorState
     if (selection.isCollapsed()) {
-      const nextContentState = Modifier.insertText(contentState, selection, value);
+      const nextContentState = Modifier.insertText(
+        contentState,
+        selection,
+        value
+      )
       nextEditorState = EditorState.push(
-          editorState,
-          nextContentState,
-          'insert-characters'
-      );
+        editorState,
+        nextContentState,
+        'insert-characters'
+      )
     }
 
     setEditorState(nextEditorState)
@@ -187,7 +192,7 @@ const Text = (props: TextProps) => {
             />
           )
         })}
-        <SpecialSymbolsButton select={addText}/>
+        <SpecialSymbolsButton select={addText} />
       </ul>
       <div className={classes.textEditorInput}>
         <Editor

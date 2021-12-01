@@ -15,28 +15,82 @@
  ***************************************************************************/
 
 import classes from './SpecialSymbolsList.module.less'
-import {SpecialSymbolsButtonProps} from "../SpecialSymbols/SpecialSymbolsButton";
-import React from "react";
+import { SpecialSymbolsButtonProps } from '../SpecialSymbols/SpecialSymbolsButton'
+import React from 'react'
 
-interface SpecialSymbolsListProps extends SpecialSymbolsButtonProps{
-    hideMenu: (event: React.MouseEvent<HTMLButtonElement>) => void
+interface SpecialSymbolsListProps extends SpecialSymbolsButtonProps {
+  hideMenu: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
-const SpecialSymbolsList = ({select, hideMenu}: SpecialSymbolsListProps) => {
-    const symbols = [
-        'α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ', 'ι', 'κ', 'λ', 'μ', 'ν', 'ξ', 'ο', 'π', 'ρ', 'σ', 'τ', 'υ', 'φ', 'χ', 'ψ', 'ω', '℃', '℉', 'Å', '°', 'ħ', '±', '‰', '√', '←', '→', '↚', '↛', '↔', '⇌', '∏', '∑', '∞', '∂', '∆', '∫', '≈', '≠', '≤', '≥'
-    ]
-    return (
-        <div className={classes.window}>
-            {symbols.map((symbol, id) => {
-                return (
-                    <button className={classes.button} key={`symbol-${id}`} value={symbol} onClick={event => {
-                        select(symbol)
-                        hideMenu(event)
-                    }}>{symbol}</button>
-                )
-            })}
-        </div>
-    )
+const SpecialSymbolsList = ({ select, hideMenu }: SpecialSymbolsListProps) => {
+  const symbols = [
+    'α',
+    'β',
+    'γ',
+    'δ',
+    'ε',
+    'ζ',
+    'η',
+    'θ',
+    'ι',
+    'κ',
+    'λ',
+    'μ',
+    'ν',
+    'ξ',
+    'ο',
+    'π',
+    'ρ',
+    'σ',
+    'τ',
+    'υ',
+    'φ',
+    'χ',
+    'ψ',
+    'ω',
+    '℃',
+    '℉',
+    'Å',
+    '°',
+    'ħ',
+    '±',
+    '‰',
+    '√',
+    '←',
+    '→',
+    '↚',
+    '↛',
+    '↔',
+    '⇌',
+    '∏',
+    '∑',
+    '∞',
+    '∂',
+    '∆',
+    '∫',
+    '≈',
+    '≠',
+    '≤',
+    '≥'
+  ]
+  return (
+    <div className={classes.window}>
+      {symbols.map((symbol, id) => {
+        return (
+          <button
+            className={classes.button}
+            key={`symbol-${id}`}
+            value={symbol}
+            onClick={event => {
+              select(symbol)
+              hideMenu(event)
+            }}
+          >
+            {symbol}
+          </button>
+        )
+      })}
+    </div>
+  )
 }
-export {SpecialSymbolsList}
+export { SpecialSymbolsList }

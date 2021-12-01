@@ -14,39 +14,45 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {useState} from "react";
-import {SpecialSymbolsList} from "../SpecialSymbolsList/SpecialSymbolsList";
+import { useState } from 'react'
+import { SpecialSymbolsList } from '../SpecialSymbolsList/SpecialSymbolsList'
 import classes from './SpecialSymbolsButton.module.less'
-import Icon from "../../../../../component/view/icon";
+import Icon from '../../../../../component/view/icon'
 
 export interface SpecialSymbolsButtonProps {
-    select: (symbol: string) => void
+  select: (symbol: string) => void
 }
 
-const SpecialSymbolsButton = ({select}: SpecialSymbolsButtonProps) => {
-    const [showSpecialSymbols, setShowSpecialSymbols] = useState(false)
+const SpecialSymbolsButton = ({ select }: SpecialSymbolsButtonProps) => {
+  const [showSpecialSymbols, setShowSpecialSymbols] = useState(false)
 
-    const handleClose = event => {
-        event.stopPropagation()
-        event.preventDefault()
-        setShowSpecialSymbols(false)
+  const handleClose = event => {
+    event.stopPropagation()
+    event.preventDefault()
+    setShowSpecialSymbols(false)
+  }
+  const handleOpen = () => {
+    setShowSpecialSymbols(true)
+  }
+  const closeSymbolsList = event => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      handleClose(event)
     }
-    const handleOpen = () => {
-        setShowSpecialSymbols(true)
-    }
-    const closeSymbolsList = event => {
-        if (!event.currentTarget.contains(event.relatedTarget)) {
-            handleClose(event)
-        }
-    }
-    return (
-        <div onBlur={closeSymbolsList}>
-            <button title='symbols' onClick={handleOpen} className={classes.textButton}>
-                <Icon name='symbols'/>
-                {showSpecialSymbols && <SpecialSymbolsList hideMenu={handleClose} select={select}/>}
-            </button>
-        </div>
-    )
+  }
+  return (
+    <div onBlur={closeSymbolsList}>
+      <button
+        title="symbols"
+        onClick={handleOpen}
+        className={classes.textButton}
+      >
+        <Icon name="symbols" />
+        {showSpecialSymbols && (
+          <SpecialSymbolsList hideMenu={handleClose} select={select} />
+        )}
+      </button>
+    </div>
+  )
 }
 
 export { SpecialSymbolsButton }

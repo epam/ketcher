@@ -217,7 +217,7 @@ const icons = {
   'shape-rectangle': ShapeRectangleIcon,
   'shape-polyline': ShapePolylineIcon,
   'shape-line': ShapeLineIcon,
-  'symbols': Symbols
+  symbols: Symbols
 }
 
 function emptyIcon() {

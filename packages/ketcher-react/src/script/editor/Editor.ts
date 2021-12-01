@@ -186,7 +186,7 @@ class Editor implements KetcherEditor {
       this._tool.cancel()
     }
 
-    const tool = toolMap[name](this, opts)
+    const tool = new toolMap[name](this, opts)
     if (!tool) {
       return null
     }
@@ -582,7 +582,7 @@ function domEventSetup(editor: Editor, clientArea) {
       const EditorTool = editor.tool()
       editor.lastEvent = event
       if (EditorTool && eventName in EditorTool) {
-        EditorTool[eventName](event)
+        EditorTool[eventName](event, editor)
       }
       return true
     }, -1)

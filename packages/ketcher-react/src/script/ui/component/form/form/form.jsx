@@ -101,7 +101,7 @@ function Label({ labelPos, title, children, ...props }) {
 }
 
 function Field(props) {
-  const { name, onChange, component, labelPos, ...rest } = props
+  const { name, onChange, component, labelPos, className, ...rest } = props
   const { schema, stateStore } = useFormContext()
   const desc = rest.schema || schema.properties[name]
   const { dataError, ...fieldOpts } = stateStore.field(name, onChange)
@@ -115,7 +115,7 @@ function Field(props) {
   if (labelPos === false) return formField
   return (
     <Label
-      className={clsx({ [classes.dataError]: dataError })}
+      className={clsx({ [classes.dataError]: dataError }, className)}
       error={dataError}
       title={rest.title || desc.title}
       labelPos={labelPos}

@@ -15,9 +15,15 @@
  ***************************************************************************/
 
 import classes from './emptySearchResult.module.less'
+import Icon from '../../component/view/icon'
 
 const EmptySearchResult = ({ textInfo }) => {
-  return <div className={classes.emptySearch}>{textInfo}</div>
+  return (
+    <div className={classes.emptySearch}>
+      <p>{textInfo}</p>
+      <Icon name="not-found" />
+    </div>
+  )
 }
 
 export default EmptySearchResult

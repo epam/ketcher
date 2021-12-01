@@ -37,11 +37,13 @@ import { xor } from 'lodash/fp'
 import { Editor } from '../Editor'
 
 class SelectTool {
+  editor: Editor
   mode: string
   lassoHelper: any
   dragCtx: any
 
   constructor(editor, mode) {
+    this.editor = editor
     this.mode = mode
     this.lassoHelper = new LassoHelper(
       this.mode === 'lasso' ? 0 : 1,
@@ -49,20 +51,31 @@ class SelectTool {
       this.mode === 'fragment'
     )
   }
+  get molecule() {
+    return this.editor.render.ctab.molecule
+  }
+  get struct() {
+    return this.editor.render.ctab
+  }
+  get sgroups() {
+    return this.editor.render.ctab.sgroups
+  }
+  get functionalGroups() {
+    return this.editor.render.ctab.molecule.functionalGroups
+  }
 
-  mousedown(event, editor: Editor) {
-    const rnd = editor.render
+  mousedown(event) {
+    const rnd = this.editor.render
     const ctab = rnd.ctab
     const struct = ctab.molecule
-    const functionalGroups = struct.functionalGroups
     const selectedSgroups: any[] = []
     const newSelected = { atoms: [] as any[], bonds: [] as any[] }
     let actualSgroupId
 
-    editor.hover(null) // TODO review hovering for touch devicess
+    this.editor.hover(null) // TODO review hovering for touch devicess
 
     const selectFragment = this.lassoHelper.fragment || event.ctrlKey
-    const ci = editor.findItem(
+    const ci = this.editor.findItem(
       event,
       selectFragment
         ? [
@@ -93,12 +106,12 @@ class SelectTool {
       null
     )
 
-    if (ci && ci.map === 'atoms' && functionalGroups.size) {
+    if (ci && ci.map === 'atoms' && this.functionalGroups.size) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
-        functionalGroups,
+        this.functionalGroups,
         ci.id
       )
-      const atomFromStruct = atomId !== null && ctab.atoms.get(ci.id)?.a
+      const atomFromStruct = atomId !== null && this.struct.atoms.get(ci.id)?.a
 
       if (atomFromStruct) {
         for (let sgId of atomFromStruct.sgs.values()) {
@@ -112,15 +125,15 @@ class SelectTool {
       )
         selectedSgroups.push(actualSgroupId)
     }
-    if (ci && ci.map === 'bonds' && functionalGroups.size) {
+    if (ci && ci.map === 'bonds' && this.functionalGroups.size) {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
-        struct,
-        functionalGroups,
+        this.molecule,
+        this.functionalGroups,
         ci.id
       )
       const sGroupId = FunctionalGroup.findFunctionalGroupByBond(
-        struct,
-        functionalGroups,
+        this.molecule,
+        this.functionalGroups,
         bondId
       )
       if (sGroupId !== null && !selectedSgroups.includes(sGroupId))
@@ -129,15 +142,15 @@ class SelectTool {
 
     if (selectedSgroups.length) {
       for (let sgId of selectedSgroups) {
-        const sgroup = ctab.sgroups.get(sgId)
+        const sgroup = this.struct.sgroups.get(sgId)
         if (sgroup) {
-          const sgroupAtoms = SGroup.getAtoms(struct, sgroup.item)
-          const sgroupBonds = SGroup.getBonds(struct, sgroup.item)
+          const sgroupAtoms = SGroup.getAtoms(this.molecule, sgroup.item)
+          const sgroupBonds = SGroup.getBonds(this.molecule, sgroup.item)
           newSelected.atoms.push(...sgroupAtoms) &&
             newSelected.bonds.push(...sgroupBonds)
         }
       }
-      editor.selection(newSelected)
+      this.editor.selection(newSelected)
     }
 
     this.dragCtx = {
@@ -149,7 +162,7 @@ class SelectTool {
 
     if (!ci) {
       //  ci.type == 'Canvas'
-      editor.selection(null)
+      this.editor.selection(null)
       delete this.dragCtx.item
       if (!this.lassoHelper.fragment) this.lassoHelper.begin(event)
       return true
@@ -157,7 +170,7 @@ class SelectTool {
 
     let sel = closestToSel(ci)
     let sgroups = ctab.sgroups.get(ci.id)
-    const selection = editor.selection()
+    const selection = this.editor.selection()
     if (ci.map === 'frags') {
       const frag = ctab.frags.get(ci.id)
       sel = {
@@ -184,14 +197,15 @@ class SelectTool {
     }
 
     if (!event.shiftKey) {
-      editor.selection(isSelected(selection, ci) ? selection : sel)
+      this.editor.selection(isSelected(selection, ci) ? selection : sel)
     } else {
-      editor.selection(selMerge(sel, selection, true))
+      this.editor.selection(selMerge(sel, selection, true))
     }
     return true
   }
 
-  mousemove(event, editor: Editor) {
+  mousemove(event) {
+    const editor = this.editor
     const rnd = editor.render
     const restruct = editor.render.ctab
     const dragCtx = this.dragCtx
@@ -209,7 +223,7 @@ class SelectTool {
         const pos = rnd.page2obj(event)
         const angle = utils.calcAngle(dragCtx.xy0, pos)
         const degrees = utils.degrees(angle)
-        editor.event.message.dispatch({ info: degrees + 'º' })
+        this.editor.event.message.dispatch({ info: degrees + 'º' })
       }
       if (dragCtx.item.map === 'simpleObjects' && dragCtx.item.ref) {
         const current = rnd.page2obj(event)
@@ -286,22 +300,20 @@ class SelectTool {
     return true
   }
 
-  mouseup(event, editor: Editor) {
-    const selected = editor.selection()
-    const struct = editor.render.ctab
-    const molecule = struct.molecule
-    const functionalGroups = molecule.functionalGroups
+  mouseup(event) {
+    const selected = this.editor.selection()
     const selectedSgroups: any[] = []
     const newSelected = { atoms: [] as any[], bonds: [] as any[] }
     let actualSgroupId
 
-    if (selected && functionalGroups.size && selected.atoms) {
+    if (selected && this.functionalGroups.size && selected.atoms) {
       for (let atom of selected.atoms) {
         const atomId = FunctionalGroup.atomsInFunctionalGroup(
-          functionalGroups,
+          this.functionalGroups,
           atom
         )
-        const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a
+        const atomFromStruct =
+          atomId !== null && this.struct.atoms.get(atomId)?.a
 
         if (atomFromStruct) {
           for (let sgId of atomFromStruct.sgs.values()) {
@@ -317,16 +329,16 @@ class SelectTool {
       }
     }
 
-    if (selected && functionalGroups.size && selected.bonds) {
+    if (selected && this.functionalGroups.size && selected.bonds) {
       for (let atom of selected.bonds) {
         const bondId = FunctionalGroup.bondsInFunctionalGroup(
-          molecule,
-          functionalGroups,
+          this.molecule,
+          this.functionalGroups,
           atom
         )
         const sGroupId = FunctionalGroup.findFunctionalGroupByBond(
-          molecule,
-          functionalGroups,
+          this.molecule,
+          this.functionalGroups,
           bondId
         )
         if (sGroupId !== null && !selectedSgroups.includes(sGroupId))
@@ -336,16 +348,17 @@ class SelectTool {
 
     if (selectedSgroups.length) {
       for (let sgId of selectedSgroups) {
-        const sgroup = struct.sgroups.get(sgId)
+        const sgroup = this.struct.sgroups.get(sgId)
         if (sgroup) {
-          const sgroupAtoms = SGroup.getAtoms(molecule, sgroup.item)
-          const sgroupBonds = SGroup.getBonds(molecule, sgroup.item)
+          const sgroupAtoms = SGroup.getAtoms(this.molecule, sgroup.item)
+          const sgroupBonds = SGroup.getBonds(this.molecule, sgroup.item)
           newSelected.atoms.push(...sgroupAtoms) &&
             newSelected.bonds.push(...sgroupBonds)
         }
       }
     }
 
+    const editor = this.editor
     const restruct = editor.render.ctab
     const dragCtx = this.dragCtx
 
@@ -373,18 +386,15 @@ class SelectTool {
     } else if (this.lassoHelper.fragment) {
       if (!event.shiftKey) editor.selection(null)
     }
-    editor.event.message.dispatch({
+    this.editor.event.message.dispatch({
       info: false
     })
     return true
   }
 
-  dblclick(event, editor: Editor) {
+  dblclick(event) {
+    const editor = this.editor
     const rnd = editor.render
-    const ctab = editor.render.ctab
-    const molecule = ctab.molecule
-    const sgroups = ctab.sgroups
-    const functionalGroups = molecule.functionalGroups
     const ci = editor.findItem(
       event,
       ['atoms', 'bonds', 'sgroups', 'functionalGroups', 'sgroupData', 'texts'],
@@ -394,36 +404,36 @@ class SelectTool {
     const atomResult: any[] = []
     const bondResult: any[] = []
     const result: any[] = []
-    if (ci && functionalGroups && ci.map === 'atoms') {
+    if (ci && this.functionalGroups && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
-        functionalGroups,
+        this.functionalGroups,
         ci.id
       )
-      const atomFromStruct = atomId !== null && ctab.atoms.get(atomId)?.a
+      const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId)?.a
       if (
         atomId &&
         !FunctionalGroup.isBondInContractedFunctionalGroup(
           atomFromStruct,
-          sgroups,
-          functionalGroups,
+          this.sgroups,
+          this.functionalGroups,
           true
         )
       )
         atomResult.push(atomId)
     }
-    if (ci && functionalGroups && ci.map === 'bonds') {
+    if (ci && this.functionalGroups && ci.map === 'bonds') {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
-        molecule,
-        functionalGroups,
+        this.molecule,
+        this.functionalGroups,
         ci.id
       )
-      const bondFromStruct = bondId !== null && ctab.bonds.get(bondId)?.b
+      const bondFromStruct = bondId !== null && this.struct.bonds.get(bondId)?.b
       if (
         bondId &&
         !FunctionalGroup.isBondInContractedFunctionalGroup(
           bondFromStruct,
-          sgroups,
-          functionalGroups,
+          this.sgroups,
+          this.functionalGroups,
           true
         )
       )
@@ -432,33 +442,33 @@ class SelectTool {
     if (atomResult.length > 0) {
       for (let id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-          functionalGroups,
+          this.functionalGroups,
           id
         )
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
       }
-      editor.event.removeFG.dispatch({ fgIds: result })
+      this.editor.event.removeFG.dispatch({ fgIds: result })
       return
     } else if (bondResult.length > 0) {
       for (let id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
-          molecule,
-          functionalGroups,
+          this.molecule,
+          this.functionalGroups,
           id
         )
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
       }
-      editor.event.removeFG.dispatch({ fgIds: result })
+      this.editor.event.removeFG.dispatch({ fgIds: result })
       return
     }
     if (!ci) return true
 
     const struct = rnd.ctab.molecule
-    const selection = editor.selection()
+    const selection = this.editor.selection()
 
     if (ci.map === 'atoms') {
       const action = new Action()
@@ -478,13 +488,8 @@ class SelectTool {
           .catch(() => null)
       }
     } else if (ci.map === 'bonds') {
-      const bonds = rnd.ctab.bonds.get(ci.id)
-      var bond
-      // why so ugly, what does it do?
-      if (bonds) {
-        bond = bonds.b
-      }
-      var rb = editor.event.bondEdit.dispatch(bond)
+      const bond = rnd.ctab.bonds.get(ci.id)?.b
+      const rb = editor.event.bondEdit.dispatch(bond)
 
       if (selection?.bonds) {
         const action = new Action()
@@ -503,10 +508,10 @@ class SelectTool {
         !FunctionalGroup.isFunctionalGroup(struct.sgroups.get(ci.id))) ||
       ci.map === 'sgroupData'
     ) {
-      editor.selection(closestToSel(ci))
-      sgroupDialog(editor, ci.id)
+      this.editor.selection(closestToSel(ci))
+      sgroupDialog(this.editor, ci.id)
     } else if (ci.map === 'texts') {
-      editor.selection(closestToSel(ci))
+      this.editor.selection(closestToSel(ci))
       const text = struct.texts.get(ci.id)
       const dialog = editor.event.elementEdit.dispatch({
         ...text,
@@ -526,18 +531,19 @@ class SelectTool {
     return true
   }
 
-  mouseleave(_, editor: Editor) {
+  mouseleave(_) {
     if (this.dragCtx && this.dragCtx.stopTapping) this.dragCtx.stopTapping()
 
     if (this.dragCtx && this.dragCtx.action) {
       var action = this.dragCtx.action
-      editor.update(action)
+      this.editor.update(action)
     }
-    if (this.lassoHelper.running()) editor.selection(this.lassoHelper.end())
+    if (this.lassoHelper.running())
+      this.editor.selection(this.lassoHelper.end())
 
     delete this.dragCtx
 
-    editor.hover(null)
+    this.editor.hover(null)
   }
 }
 function closestToSel(ci) {

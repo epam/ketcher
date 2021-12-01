@@ -17,26 +17,24 @@
 @import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
-@save-container-width-large: 480px;
-@save-container-height-large: 415px;
+@save-container-width-large: 495px;
+@save-container-height-large: 315px;
 @save-container-width-small: 380px;
 @save-container-height-small: 325px;
 
 .save {
-  .saveTmpl {
-    float: left;
-  }
-
   .formContainer {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     width: @save-container-width-large;
     height: @save-container-height-large;
   }
 
   .warnings {
-    height: 50px;
-    border: 1px solid @border-color;
+    max-height: 50px;
+    height: fit-content;
+    border: none;
     border-radius: 4px;
     margin: 2px;
     padding: 2px 5px;
@@ -48,31 +46,51 @@
         margin: 2px;
         white-space: pre-line;
         word-break: break-word;
+        font-size: 12px;
       }
     }
-    .warning {
-      .warning;
+    .warningIcon {
+      width: 16px;
+      height: 16px;
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8.0013 13.9999C8.73768 13.9999 9.33464 13.403 9.33464 12.6666C9.33464 11.9302 8.73768 11.3333 8.0013 11.3333C7.26492 11.3333 6.66797 11.9302 6.66797 12.6666C6.66797 13.403 7.26492 13.9999 8.0013 13.9999Z' fill='%23FF2222'/%3E%3Cpath d='M6.66797 2H9.33464V10H6.66797V2Z' fill='%23FF2222'/%3E%3C/svg%3E");
     }
   }
 
-  form > label {
-    display: inline-block;
-    text-align: right;
-    margin: 0 0.3em;
-    select,
-    input {
-      width: 12.25em;
+  form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-content: center;
+    margin-bottom: 10px;
+    font-size: 12px;
+
+    & > label {
+      display: inline-block;
+      text-align: left;
+      margin: 0 0.3em;
+      select,
+      input {
+        height: 25px !important;
+        width: 190px;
+      }
+      select {
+        width: 145px;
+      }
     }
   }
 
   .previewArea {
     display: block;
-    min-width: 34em;
+    min-height: 225px;
+    min-width: 325px;
     height: 100%;
     overflow: auto;
     white-space: pre;
     cursor: text;
     resize: none;
+    color: #5b6077;
+    font-size: 12px;
 
     .scrollbar();
   }
@@ -83,6 +101,45 @@
     label {
       margin: 0 0.3em;
     }
+  }
+
+  footer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    .ok {
+      background: #343434;
+      color: #fff;
+      margin-right: 2px;
+      margin-left: 10px;
+      float: right;
+      &:hover {
+        background: #000;
+        color: #fff;
+      }
+      &:disabled {
+        background: #bcbcbc;
+        opacity: 0.4;
+        color: #fff;
+      }
+    }
+  }
+
+  .imageContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    img {
+      background-color: white;
+      height: 220px;
+      width: 220px;
+      padding: 5px;
+    }
+  }
+  .previewMessage {
+    text-align: center;
   }
 }
 

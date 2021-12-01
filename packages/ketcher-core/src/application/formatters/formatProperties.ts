@@ -89,8 +89,17 @@ const formatProperties: FormatPropertiesMap = {
   )
 }
 
+const imgFormatProperties = {
+  svg: { extension: '.svg', name: 'SVG Document' },
+  png: { extension: '.png', name: 'PNG Image' }
+}
+
+function getPropertiesByImgFormat(format) {
+  return imgFormatProperties[format]
+}
+
 function getPropertiesByFormat(format: SupportedFormat) {
   return formatProperties[format]
 }
 
-export { formatProperties, getPropertiesByFormat }
+export { formatProperties, getPropertiesByFormat, getPropertiesByImgFormat }

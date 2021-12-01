@@ -109,12 +109,10 @@ class MiewDialog extends Component {
   }
 
   exportCML() {
-    const emptyStruct = `<?xml version="1.0"?><cml>
-    <molecule title="">
-      <atomArray></atomArray>
-    </molecule>
-    </cml>`
-    const cmlStruct = this.viewer.exportCML() || emptyStruct
+    const cmlStruct = this.viewer.exportCML()
+    if (!cmlStruct) {
+      return
+    }
     this.props.onExportCML(cmlStruct)
   }
 

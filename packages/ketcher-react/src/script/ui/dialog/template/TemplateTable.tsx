@@ -65,17 +65,12 @@ const RenderTmpl: FC<{
 const TemplateTable: FC<TemplateTableProps> = props => {
   const { templates, selected, onSelect, onDelete, onAttach } = props
   const ITEMS_COUNT = templates ? templates.length : 0
-  const ITEM_SIZE = { width: 178, height: 120 }
-  const tmplStyles = {
-    width: `${ITEM_SIZE.width}px`,
-    height: `${ITEM_SIZE.height}px`
-  }
   const options = useSelector(state => getSettingsSelector(state))
 
   return !ITEMS_COUNT ? (
     <EmptySearchResult textInfo="No items found" />
   ) : (
-    <div className={classes.table} style={{ minWidth: ITEM_SIZE.width }}>
+    <div className={classes.table}>
       <div className={classes.tableContent}>
         {templates.map((tmpl, i) => {
           return (
@@ -91,7 +86,6 @@ const TemplateTable: FC<TemplateTableProps> = props => {
                   ? `${tmpl.struct.name}_${i}`
                   : `${tmpl.struct.name}_${i}_selected`
               }
-              style={tmplStyles}
             >
               <RenderTmpl
                 tmpl={tmpl}

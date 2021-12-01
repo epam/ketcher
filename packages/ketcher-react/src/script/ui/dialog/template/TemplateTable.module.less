@@ -21,6 +21,7 @@
   display: flex;
   flex-wrap: wrap;
   width: 555px;
+  min-width: 100px;
   padding: 0;
   overflow: hidden;
 }
@@ -30,12 +31,13 @@
   }
 
   height: 312px;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-gap: 24px;
   overflow-y: scroll;
   overflow-x: hidden;
   width: 100%;
+  margin: 10px 15px;
 
   .scrollbar();
 }
@@ -55,6 +57,8 @@
 
 .td {
   position: relative;
+  width: 100px;
+  height: 100px;
   &::before {
     position: absolute;
     z-index: 10;
@@ -68,7 +72,7 @@
     content: attr(title);
     overflow: hidden;
     width: content-box;
-    max-width: 155px;
+    max-width: 85px;
   }
   &.selected .struct {
     background-color: lighten(@form-selected-background, 15%);
@@ -96,4 +100,5 @@
 }
 div.struct {
   padding: 0; // TODO: tmp hack to fit viewbox
+  background-color: white;
 }

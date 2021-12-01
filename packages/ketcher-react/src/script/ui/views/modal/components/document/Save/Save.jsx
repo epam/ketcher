@@ -131,7 +131,7 @@ class SaveDialog extends Component {
           this.setState({ imageSrc: base64 })
         })
         .catch(e => {
-          errorHandler(e.message)
+          errorHandler(e)
           this.props.onResetForm(formState)
           return e
         })

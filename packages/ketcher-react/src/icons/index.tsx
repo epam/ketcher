@@ -59,6 +59,10 @@ import PasteIcon from './files/paste.svg'
 import PeriodTableIcon from './files/period-table.svg'
 import ReactionArrowBothEndsFilledTriangle from './files/reaction-arrow-both-ends-filled-triangle.svg'
 import ReactionArrowDashedOpenAngle from './files/reaction-arrow-dashed-open-angle.svg'
+import ReactionArrowEllipticalArcArrowFilledBow from './files/reaction-arrow-elliptical-arc-arrow-filled-bow.svg'
+import ReactionArrowEllipticalArcArrowFilledTriangle from './files/reaction-arrow-elliptical-arc-arrow-filled-triangle.svg'
+import ReactionArrowEllipticalArcArrowOpenAngle from './files/reaction-arrow-elliptical-arc-arrow-open-angle.svg'
+import ReactionArrowEllipticalArcArrowOpenHalfAngle from './files/reaction-arrow-elliptical-arc-arrow-open-half-angle.svg'
 import ReactionArrowEquilibriumFilledHalfBow from './files/reaction-arrow-equilibrium-filled-half-bow.svg'
 import ReactionArrowEquilibriumFilledTriangle from './files/reaction-arrow-equilibrium-filled-triangle.svg'
 import ReactionArrowEquilibriumOpenAngle from './files/reaction-arrow-equilibrium-open-angle.svg'
@@ -157,6 +161,14 @@ const icons = {
   open: OpenIcon,
   paste: PasteIcon,
   'period-table': PeriodTableIcon,
+  'reaction-arrow-elliptical-arc-arrow-filled-bow':
+    ReactionArrowEllipticalArcArrowFilledBow,
+  'reaction-arrow-elliptical-arc-arrow-filled-triangle':
+    ReactionArrowEllipticalArcArrowFilledTriangle,
+  'reaction-arrow-elliptical-arc-arrow-open-angle':
+    ReactionArrowEllipticalArcArrowOpenAngle,
+  'reaction-arrow-elliptical-arc-arrow-open-half-angle':
+    ReactionArrowEllipticalArcArrowOpenHalfAngle,
   'reaction-arrow-open-angle': ReactionArrowOpenAngleIcon,
   'reaction-arrow-filled-triangle': ReactionArrowFilledTriangle,
   'reaction-arrow-filled-bow': ReactionArrowFilledBow,

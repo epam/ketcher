@@ -31,7 +31,8 @@ const ErrorModal = ({ message, close }: ErrorModalProps) => {
             className={'ok'}
             onClick={() => {
               close()
-            }}>
+            }}
+          >
             OK
           </button>
         </footer>

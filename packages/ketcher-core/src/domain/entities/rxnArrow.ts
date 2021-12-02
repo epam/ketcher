@@ -29,7 +29,11 @@ export enum RxnArrowMode {
   UnbalancedEquilibriumFilledHalfBow = 'unbalanced-equilibrium-filled-half-bow',
   UnbalancedEquilibriumOpenHalfAngle = 'unbalanced-equilibrium-open-half-angle',
   UnbalancedEquilibriumLargeFilledHalfBow = 'unbalanced-equilibrium-large-filled-half-bow',
-  UnbalancedEquilibriumFilleHalfTriangle = 'unbalanced-equilibrium-fille-half-triangle'
+  UnbalancedEquilibriumFilleHalfTriangle = 'unbalanced-equilibrium-fille-half-triangle',
+  EllipticalArcFilledBow = 'elliptical-arc-arrow-filled-bow',
+  EllipticalArcFilledTriangle = 'elliptical-arc-arrow-filled-triangle',
+  EllipticalArcOpenAngle = 'elliptical-arc-arrow-open-angle',
+  EllipticalArcOpenHalfAngle = 'elliptical-arc-arrow-open-half-angle'
 }
 
 export interface RxnArrowAttributes {

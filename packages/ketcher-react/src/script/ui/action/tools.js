@@ -203,6 +203,42 @@ const toolActions = {
         'reaction-arrow-unbalanced-equilibrium-filled-half-triangle'
       )
   },
+  'reaction-arrow-elliptical-arc-arrow-filled-bow': {
+    title: 'Arrow Elliptical Arc Filled Bow Tool',
+    action: {
+      tool: 'reactionarrow',
+      opts: RxnArrowMode.EllipticalArcFilledBow
+    },
+    hidden: options =>
+      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-filled-bow')
+  },
+  'reaction-arrow-elliptical-arc-arrow-filled-triangle': {
+    title: 'Arrow Elliptical Arc Filled Triangle Tool',
+    action: {
+      tool: 'reactionarrow',
+      opts: RxnArrowMode.EllipticalArcFilledTriangle
+    },
+    hidden: options =>
+      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-filled-triangle')
+  },
+  'reaction-arrow-elliptical-arc-arrow-open-angle': {
+    title: 'Arrow Elliptical Arc Open Angle Tool',
+    action: {
+      tool: 'reactionarrow',
+      opts: RxnArrowMode.EllipticalArcOpenAngle
+    },
+    hidden: options =>
+      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-open-angle')
+  },
+  'reaction-arrow-elliptical-arc-arrow-open-half-angle': {
+    title: 'Arrow Elliptical Arc Open Half Angle Tool',
+    action: {
+      tool: 'reactionarrow',
+      opts: RxnArrowMode.EllipticalArcOpenHalfAngle
+    },
+    hidden: options =>
+      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-open-half-angle')
+  },
   'reaction-plus': {
     title: 'Reaction Plus Tool',
     action: { tool: 'reactionplus' },

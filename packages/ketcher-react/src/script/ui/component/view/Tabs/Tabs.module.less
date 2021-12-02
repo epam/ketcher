@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import 'src/style/variables';
 
 .tabs {
   width: 100%;
@@ -24,17 +25,17 @@
     display: inline-block;
     cursor: pointer;
     text-align: center;
-    background-color: #eee;
+    background-color: @gray-background-color;
     border: 1px solid transparent;
     border-radius: 4px 4px 0 0;
     &:hover {
-      background-color: #9dc2d0;
+      background-color: @form-selected-background;
     }
   }
 
   .active {
-    border: 1px solid #ddd;
+    border: 1px solid @main-gray-color;
     border-bottom-color: transparent;
-    background-color: white;
+    background-color: @light-background-color;
   }
 }

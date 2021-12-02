@@ -37,18 +37,18 @@ import { xor } from 'lodash/fp'
 import { Editor } from '../Editor'
 
 class SelectTool {
+  #mode: string
+  #lassoHelper: any
   editor: Editor
-  mode: string
-  lassoHelper: any
   dragCtx: any
 
   constructor(editor, mode) {
     this.editor = editor
-    this.mode = mode
-    this.lassoHelper = new LassoHelper(
-      this.mode === 'lasso' ? 0 : 1,
+    this.#mode = mode
+    this.#lassoHelper = new LassoHelper(
+      this.#mode === 'lasso' ? 0 : 1,
       editor,
-      this.mode === 'fragment'
+      this.#mode === 'fragment'
     )
   }
   get molecule() {
@@ -74,7 +74,7 @@ class SelectTool {
 
     this.editor.hover(null) // TODO review hovering for touch devicess
 
-    const selectFragment = this.lassoHelper.fragment || event.ctrlKey
+    const selectFragment = this.#lassoHelper.fragment || event.ctrlKey
     const ci = this.editor.findItem(
       event,
       selectFragment
@@ -164,7 +164,7 @@ class SelectTool {
       //  ci.type == 'Canvas'
       this.editor.selection(null)
       delete this.dragCtx.item
-      if (!this.lassoHelper.fragment) this.lassoHelper.begin(event)
+      if (!this.#lassoHelper.fragment) this.#lassoHelper.begin(event)
       return true
     }
 
@@ -259,8 +259,8 @@ class SelectTool {
       return true
     }
 
-    if (this.lassoHelper.running()) {
-      const sel = this.lassoHelper.addPoint(event)
+    if (this.#lassoHelper.running()) {
+      const sel = this.#lassoHelper.addPoint(event)
       editor.selection(
         !event.shiftKey ? sel : selMerge(sel, editor.selection(), false)
       )
@@ -268,7 +268,7 @@ class SelectTool {
     }
 
     const maps =
-      this.lassoHelper.fragment || event.ctrlKey
+      this.#lassoHelper.fragment || event.ctrlKey
         ? [
             'frags',
             'sgroups',
@@ -374,16 +374,16 @@ class SelectTool {
       if (dragCtx.action.operations.length !== 0) editor.update(dragCtx.action)
 
       delete this.dragCtx
-    } else if (this.lassoHelper.running()) {
+    } else if (this.#lassoHelper.running()) {
       // TODO it catches more events than needed, to be re-factored
       const sel =
         newSelected.atoms.length > 0
-          ? selMerge(this.lassoHelper.end(), newSelected, false)
-          : this.lassoHelper.end()
+          ? selMerge(this.#lassoHelper.end(), newSelected, false)
+          : this.#lassoHelper.end()
       editor.selection(
         !event.shiftKey ? sel : selMerge(sel, editor.selection(), false)
       )
-    } else if (this.lassoHelper.fragment) {
+    } else if (this.#lassoHelper.fragment) {
       if (!event.shiftKey) editor.selection(null)
     }
     this.editor.event.message.dispatch({
@@ -538,8 +538,8 @@ class SelectTool {
       var action = this.dragCtx.action
       this.editor.update(action)
     }
-    if (this.lassoHelper.running())
-      this.editor.selection(this.lassoHelper.end())
+    if (this.#lassoHelper.running())
+      this.editor.selection(this.#lassoHelper.end())
 
     delete this.dragCtx
 

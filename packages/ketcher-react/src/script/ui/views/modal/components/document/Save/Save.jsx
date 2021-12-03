@@ -232,7 +232,7 @@ class SaveDialog extends Component {
           <div className={classes.warnings}>
             {warnings.map(warning => (
               <div className={classes.warningsContainer}>
-                <div className={classes.warningIcon} />
+                <div className={classes.warning} />
                 <div className={classes.warningsArr}>{warning}</div>
               </div>
             ))}

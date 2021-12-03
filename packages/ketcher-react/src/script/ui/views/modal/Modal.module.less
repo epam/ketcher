@@ -27,14 +27,14 @@
   right: 0;
   z-index: 40;
   background-image: data-uri('overlay.svg');
-  .background-opacity(#777, 0.2);
+  .background-opacity(@hover-color, 0.2);
 
   &.animate {
     transition: background-color 0.3s;
   }
 
   &.hide {
-    background-color: fade(#777, 1%);
+    background-color: fade(@hover-color, 1%);
   }
 
   &::after {

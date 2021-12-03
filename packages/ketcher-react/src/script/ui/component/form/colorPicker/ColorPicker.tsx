@@ -54,7 +54,7 @@ const ColorPicker = (props: Props) => {
     },
     [onChange]
   )
-  const handleClick = (e) => {
+  const handleClick = e => {
     e.preventDefault()
     setIsOpen(prev => !prev)
   }
@@ -69,16 +69,14 @@ const ColorPicker = (props: Props) => {
     handleChange(color)
   }
 
-  const handleBlur = (e) => {
+  const handleBlur = e => {
     if (!e.currentTarget.contains(e.relatedTarget)) {
       handleClose()
     }
   }
 
   return (
-    <div className={classes.colorPickerInput}
-         onClick={(e) => e.preventDefault()}
-    >
+    <div className={classes.colorPickerInput} onClick={e => e.preventDefault()}>
       <button
         className={classes.colorPickerPreview}
         data-testid="color-picker-preview"

@@ -253,7 +253,7 @@ const icons = {
   '3dviewer': ThreeDViewerIcon,
   '3dviewer-white': ThreeDViewerWhiteIcon,
   debugging: DebuggingIcon,
-  'debugging-white': DebuggingWhiteIcon,
+  'debugging-white': DebuggingWhiteIcon
 }
 
 function emptyIcon() {

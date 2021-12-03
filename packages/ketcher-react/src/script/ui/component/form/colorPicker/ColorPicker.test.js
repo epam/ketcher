@@ -24,7 +24,9 @@ describe('should toggle color picker dialog', () => {
   it('should show color preset on click', () => {
     const { container } = render(<ColorPicker />)
     openPreset()
-    expect(container.getElementsByClassName('classes.colorPickerWrap')).toBeDefined()
+    expect(
+      container.getElementsByClassName('classes.colorPickerWrap')
+    ).toBeDefined()
   })
 
   it('should show color picker dialog on click', () => {

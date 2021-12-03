@@ -76,7 +76,11 @@ const ColorPicker = (props: Props) => {
   }
 
   return (
-    <div className={classes.colorPickerInput} data-testid="color-picker-field" onClick={e => e.preventDefault()}>
+    <div
+      className={classes.colorPickerInput}
+      data-testid="color-picker-field"
+      onClick={e => e.preventDefault()}
+    >
       <button
         className={classes.colorPickerPreview}
         data-testid="color-picker-preview"

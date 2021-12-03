@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { FC, RefCallback, useEffect, useMemo, useState } from 'react'
-import { FunctionalGroup, SdfItem, SdfSerializer, Struct } from 'ketcher-core'
+import { SdfItem, SdfSerializer, Struct } from 'ketcher-core'
 import TemplateTable, { Template } from '../../../dialog/template/TemplateTable'
 import {
   functionalGroupsSelector,
@@ -57,32 +57,21 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
   const [filter, setFilter] = useState<string>('')
   const [filteredLib, setFilteredLib] = useState({})
 
-  const expandedTemplates: SdfItem[] = useMemo(() => {
+  const templatesLib = useMemo(() => {
     return lib.map(template => {
       const struct = template.struct.clone()
-      struct.sgroups.forEach(sgroup => {
-        if (FunctionalGroup.isFunctionalGroup(sgroup)) {
-          sgroup.data.expanded = true
-        }
-      })
-      return { ...template, struct }
+      struct.sgroups.delete(0)
+      return { ...template, modifiedStruct: struct }
     })
   }, [lib])
 
   useEffect(() => {
-    setFilteredLib(filterFGLib(expandedTemplates, filter))
-  }, [expandedTemplates, filter])
+    setFilteredLib(filterFGLib(templatesLib, filter))
+  }, [templatesLib, filter])
 
   const onFilter = (filter: string): void => setFilter(filter)
   const onSelect = (tmpl: Template): void => setSelected(tmpl)
   const handleOk = (res: Result | null): void => {
-    if (res) {
-      res.struct.sgroups.forEach(sgroup => {
-        if (FunctionalGroup.isFunctionalGroup(sgroup)) {
-          sgroup.data.expanded = false
-        }
-      })
-    }
     dispatch(onAction({ tool: 'template', opts: res }))
     onOk()
   }

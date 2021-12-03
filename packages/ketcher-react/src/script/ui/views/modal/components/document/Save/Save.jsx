@@ -20,15 +20,15 @@ import Form, { Field } from '../../../../../component/form/form/form'
 import {
   FormatterFactory,
   formatProperties,
-  getPropertiesByFormat
+  getPropertiesByFormat,
+  getPropertiesByImgFormat,
+  KetSerializer
 } from 'ketcher-core'
 import { Component, createRef } from 'react'
 
 import { Dialog } from '../../../../components'
 import { ErrorsContext } from '../../../../../../../contexts'
 import SaveButton from '../../../../../component/view/savebutton'
-import SaveImageTab from './SaveImageTab'
-import Tabs from '../../../../../component/view/Tabs'
 import { check } from '../../../../../state/server'
 import classes from './Save.module.less'
 import { connect } from 'react-redux'
@@ -40,7 +40,7 @@ const saveSchema = {
   type: 'object',
   properties: {
     filename: {
-      title: 'Filename',
+      title: 'File name:',
       type: 'string',
       maxLength: 128,
       pattern: /^[^.<>:?"*|/\\][^<>:?"*|/\\]*$/,
@@ -51,7 +51,7 @@ const saveSchema = {
       }
     },
     format: {
-      title: 'Format',
+      title: 'File format:',
       enum: Object.keys(formatProperties),
       enumNames: Object.keys(formatProperties).map(
         format => formatProperties[format].name
@@ -79,7 +79,9 @@ class SaveDialog extends Component {
         'smarts',
         'inChI',
         'inChIAuxInfo',
-        'cml'
+        'cml',
+        'svg',
+        'png'
       )
 
     this.saveSchema = saveSchema
@@ -87,7 +89,11 @@ class SaveDialog extends Component {
       this.saveSchema.properties.format,
       {
         enum: formats,
-        enumNames: formats.map(format => getPropertiesByFormat(format).name)
+        enumNames: formats.map(format => {
+          const formatProps =
+            getPropertiesByFormat(format) || getPropertiesByImgFormat(format)
+          return formatProps.name
+        })
       }
     )
   }
@@ -100,41 +106,61 @@ class SaveDialog extends Component {
     )
   }
 
+  isImageFormat = format => {
+    return !!getPropertiesByImgFormat(format)
+  }
+
   showStructWarningMessage = format => {
     const { errors } = this.props.formState
     return format !== 'mol' && Object.keys(errors).length > 0
   }
 
   changeType = type => {
-    const errorHandler = this.context.errorHandler
-    this.setState({ disableControls: true })
-
     const { struct, server, options, formState } = this.props
+    const errorHandler = this.context.errorHandler
+    if (this.isImageFormat(type)) {
+      const ketSerialize = new KetSerializer()
+      const structStr = ketSerialize.serialize(struct)
+      this.setState({ imageFormat: type, structStr })
+      let options = {}
+      options.outputFormat = type
 
-    const factory = new FormatterFactory(server)
-
-    const service = factory.create(type, options)
-
-    return service
-      .getStructureFromStructAsync(struct)
-      .then(
-        structStr => {
-          this.setState({ structStr })
-          setTimeout(() => {
-            if (this.textAreaRef.current) {
-              this.textAreaRef.current.select()
-            }
-          }, 10) // TODO: remove hack
-        },
-        e => {
-          errorHandler(e.message)
+      return server
+        .generateImageAsBase64(structStr, options)
+        .then(base64 => {
+          this.setState({ imageSrc: base64 })
+        })
+        .catch(e => {
+          errorHandler(e)
           this.props.onResetForm(formState)
           return e
-        }
-      )
-      .finally(() => {
-        this.setState({ disableControls: false })
-      })
+        })
+    } else {
+      this.setState({ disableControls: true })
+      const factory = new FormatterFactory(server)
+      const service = factory.create(type, options)
+
+      return service
+        .getStructureFromStructAsync(struct)
+        .then(
+          structStr => {
+            this.setState({ structStr })
+            setTimeout(() => {
+              if (this.textAreaRef.current) {
+                this.textAreaRef.current.select()
+              }
+            }, 10) // TODO: remove hack
+          },
+          e => {
+            errorHandler(e.message)
+            this.props.onResetForm(formState)
+            return e
+          }
+        )
+        .finally(() => {
+          this.setState({ disableControls: false })
+        })
+    }
   }
 
   getWarnings = format => {
@@ -143,14 +169,15 @@ class SaveDialog extends Component {
     const structWarning =
       'Structure contains errors, please check the data, otherwise you ' +
       'can lose some properties or the whole structure after saving in this format.'
-    const saveWarning = structFormat.couldBeSaved(struct, format)
-    const isStructInvalid = this.showStructWarningMessage(format)
-
-    if (isStructInvalid) {
-      warnings.push(structWarning)
-    }
-    if (saveWarning) {
-      warnings.push(saveWarning)
+    if (!this.isImageFormat(format)) {
+      const saveWarning = structFormat.couldBeSaved(struct, format)
+      const isStructInvalid = this.showStructWarningMessage(format)
+      if (isStructInvalid) {
+        warnings.push(structWarning)
+      }
+      if (saveWarning) {
+        warnings.push(saveWarning)
+      }
     }
 
     if (moleculeErrors) {
@@ -159,20 +186,14 @@ class SaveDialog extends Component {
     return warnings
   }
 
-  changeTab = tabIndex => {
-    this.setState({ tabIndex })
-  }
-
-  changeImageFormat = imageFormat => {
-    this.setState({ imageFormat })
-  }
-
   renderSaveFile = () => {
     const formState = Object.assign({}, this.props.formState)
     delete formState.moleculeErrors
     const { filename, format } = formState.result
     const warnings = this.getWarnings(format)
-    const { structStr } = this.state
+    const { structStr, imageSrc } = this.state
+    const isCleanStruct = this.props.struct.isBlank()
+
     return (
       <div className={classes.formContainer}>
         <Form
@@ -186,17 +207,32 @@ class SaveDialog extends Component {
           <Field name="filename" />
           <Field name="format" onChange={this.changeType} />
         </Form>
-        <textarea
-          value={structStr}
-          className={classes.previewArea}
-          readOnly
-          ref={this.textAreaRef}
-        />
+        {this.isImageFormat(format) ? (
+          //TODO: remove this conditional after fixing problems with png format on BE side
+          format === 'png' ? (
+            <div className={classes.previewMessage}>
+              Preview is not available for this format
+            </div>
+          ) : (
+            <div className={classes.imageContainer}>
+              {!isCleanStruct && (
+                <img src={`data:image/svg+xml;base64,${imageSrc}`} />
+              )}
+            </div>
+          )
+        ) : (
+          <textarea
+            value={structStr}
+            className={classes.previewArea}
+            readOnly
+            ref={this.textAreaRef}
+          />
+        )}
         {warnings.length ? (
           <div className={classes.warnings}>
             {warnings.map(warning => (
               <div className={classes.warningsContainer}>
-                <div className={classes.warning} />
+                <div className={classes.warningIcon} />
                 <div className={classes.warningsArr}>{warning}</div>
               </div>
             ))}
@@ -207,37 +243,25 @@ class SaveDialog extends Component {
   }
 
   getButtons = () => {
-    const { disableControls, imageFormat, structStr, tabIndex } = this.state
+    const { disableControls, imageFormat, structStr } = this.state
     const formState = this.props.formState
     const { filename, format } = formState.result
     const isCleanStruct = this.props.struct.isBlank()
     const isMoleculeContain =
       this.props.struct.atoms.size && this.props.struct.bonds.size
     const buttons = [
-      [
-        <SaveButton
-          mode="saveFile"
-          data={structStr}
-          filename={filename + getPropertiesByFormat(format).extensions[0]}
-          key="save-file-button"
-          type={format.mime}
-          server={this.props.server}
-          onSave={this.props.onOk}
-          disabled={disableControls || !formState.valid || isCleanStruct}
-        >
-          Save To File
-        </SaveButton>,
-        <button
-          key="save-tmpl"
-          className={classes.saveTmpl}
-          disabled={disableControls || isCleanStruct || !isMoleculeContain}
-          onClick={() => this.props.onTmplSave(this.props.struct)}
-        >
-          Save to Templates...
-        </button>,
-        'Close'
-      ],
-      [
+      <button
+        key="save-tmpl"
+        className={classes.saveTmpl}
+        disabled={disableControls || isCleanStruct || !isMoleculeContain}
+        onClick={() => this.props.onTmplSave(this.props.struct)}
+      >
+        Save to Templates
+      </button>
+    ]
+
+    if (this.isImageFormat(format)) {
+      buttons.push(
         <SaveButton
           mode="saveImage"
           data={structStr}
@@ -252,30 +276,33 @@ class SaveDialog extends Component {
             isCleanStruct ||
             !this.props.server
           }
+          className={classes.ok}
         >
-          Save As Image
-        </SaveButton>,
-        'Close'
-      ]
-    ]
-    return buttons[tabIndex]
+          Save To File
+        </SaveButton>
+      )
+    } else {
+      buttons.push(
+        <SaveButton
+          mode="saveFile"
+          data={structStr}
+          filename={filename + getPropertiesByFormat(format).extensions[0]}
+          key="save-file-button"
+          type={format.mime}
+          server={this.props.server}
+          onSave={this.props.onOk}
+          disabled={disableControls || !formState.valid || isCleanStruct}
+          className={classes.ok}
+        >
+          Save To File
+        </SaveButton>
+      )
+    }
+
+    return buttons
   }
 
   render() {
-    const tabs = [
-      {
-        caption: 'Structure',
-        component: this.renderSaveFile
-      },
-      {
-        caption: 'Image',
-        component: SaveImageTab,
-        props: {
-          changeImageFormat: this.changeImageFormat
-        }
-      }
-    ]
-
     return (
       <Dialog
         title="Save Structure"
@@ -283,12 +310,7 @@ class SaveDialog extends Component {
         params={this.props}
         buttons={this.getButtons()}
       >
-        <Tabs
-          tabs={tabs}
-          changeTab={tab => {
-            this.changeTab(tab)
-          }}
-        />
+        {this.renderSaveFile()}
       </Dialog>
     )
   }

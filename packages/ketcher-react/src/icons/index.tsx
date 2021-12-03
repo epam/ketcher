@@ -53,6 +53,7 @@ import LayoutIcon from './files/layout.svg'
 import LogoIcon from './files/logo.svg'
 import MiewIcon from './files/miew.svg'
 import ClearIcon from './files/clear.svg'
+import NotFoundIcon from './files/not-found.svg'
 import OpenIcon from './files/open.svg'
 import PasteIcon from './files/paste.svg'
 import PeriodTableIcon from './files/period-table.svg'
@@ -234,6 +235,7 @@ const icons = {
   'shape-rectangle': ShapeRectangleIcon,
   'shape-polyline': ShapePolylineIcon,
   'shape-line': ShapeLineIcon,
+  'not-found': NotFoundIcon,
   'save-1': Save1Icon,
   'open-1': Open1Icon,
   reset: ResetIcon,

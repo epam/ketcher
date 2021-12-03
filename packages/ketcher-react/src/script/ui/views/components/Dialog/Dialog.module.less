@@ -123,11 +123,17 @@
     }
 
     button {
-      background: #d1d5e3;
+      background: transparent;
+      border: 1px solid #343434;
+      color: #343434;
       float: left;
-    }
-    button:hover {
-      background: #aaadb9;
+      &:hover {
+        border: 1px solid #000;
+        color: #000;
+      }
+      &:disabled {
+        opacity: 0.4;
+      }
     }
   }
   .body {

@@ -36,7 +36,7 @@ const RgroupLogic = (props: Props) => {
   const { formState, label, rgroupLabels, ...rest } = props
   return (
     <Dialog
-      title="R-Group Logic"
+      title="R-Group Logic Condition"
       className={classes.rgroupLogic}
       result={() => formState.result}
       valid={() => formState.valid}
@@ -49,7 +49,7 @@ const RgroupLogic = (props: Props) => {
         {...formState}
       >
         <Field name="range" />
-        <Field name="resth" />
+        <Field name="resth" labelPos="after" className={classes.resth} />
         <IfThenSelect name="ifthen" label={label} rgroupLabels={rgroupLabels} />
       </Form>
     </Dialog>

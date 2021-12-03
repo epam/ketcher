@@ -76,7 +76,7 @@ const ColorPicker = (props: Props) => {
   }
 
   return (
-    <div className={classes.colorPickerInput} onClick={e => e.preventDefault()}>
+    <div className={classes.colorPickerInput} data-testid="color-picker-field" onClick={e => e.preventDefault()}>
       <button
         className={classes.colorPickerPreview}
         data-testid="color-picker-preview"
@@ -91,6 +91,7 @@ const ColorPicker = (props: Props) => {
             isPaletteOpen && classes.withPalette
           )}
           onBlur={handleBlur}
+          data-testid="color-picker-preset"
         >
           <div className={classes.presetColors}>
             <button
@@ -100,6 +101,7 @@ const ColorPicker = (props: Props) => {
               )}
               onClick={handlePaletteOpen}
               autoFocus
+              data-testid="color-picker-btn"
             />
             {presetColors.map(color => (
               <button

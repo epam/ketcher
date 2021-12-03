@@ -1,3 +1,5 @@
+@import 'src/style/variables.less';
+
 .fieldSetItem {
   .fieldSetLabel {
     position: relative;
@@ -13,13 +15,13 @@
     height: 16px;
     vertical-align: middle;
     margin-right: 8px;
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='1' y='1' width='14' height='14' rx='1' stroke='%23343434' stroke-width='2'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='1' y='1' width='14' height='14' rx='1' stroke='@{input-color}' stroke-width='2'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-size: 100%;
   }
 
   input[type='checkbox']:checked + .customCheckbox {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='1' y='1' width='14' height='14' rx='1' stroke='%23343434' stroke-width='2'/%3E%3Cpath d='M3.92175 6.95298L6.59925 9.62465L12.0798 4.1499L12.9023 4.9724L6.59925 11.2755L3.09926 7.77548L3.92175 6.95298Z' fill='black'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='1' y='1' width='14' height='14' rx='1' stroke='@{input-color}' stroke-width='2'/%3E%3Cpath d='M3.92175 6.95298L6.59925 9.62465L12.0798 4.1499L12.9023 4.9724L6.59925 11.2755L3.09926 7.77548L3.92175 6.95298Z' fill='@{input-color}'/%3E%3C/svg%3E");
   }
 
   input[type='radio'] + .customRadio {
@@ -28,12 +30,12 @@
     height: 16px;
     vertical-align: middle;
     margin-right: 8px;
-    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='%23343434' stroke-width='2'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{input-color}' stroke-width='2'/%3E%3C/svg%3E%0A");
     background-repeat: no-repeat;
     background-size: 100%;
   }
 
   input[type='radio']:checked + .customRadio {
-    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='%23343434' stroke-width='2'/%3E%3Ccircle cx='8' cy='8' r='4' fill='%23343434'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{input-color}' stroke-width='2'/%3E%3Ccircle cx='8' cy='8' r='4' fill='@{input-color}'/%3E%3C/svg%3E%0A");
   }
 }

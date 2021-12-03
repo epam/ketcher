@@ -31,21 +31,24 @@ Arial, sans-serif;
 //Colors
 @main-font-color: #585858;
 
-@main-dark-color: #343434;
-@main-active-color: #121212;
+@main-active-color: #343434;
+@main-hover-color: #121212;
 @main-gray-color: #DDDDDD;
+
+//using for changing color of SVG for checkboxes and radiobuttons
+@input-color: escape(@main-active-color);
 
 @light-background-color: #fff;
 @gray-background-color: #F3F3F3;;
 
 // Buttons
-@primary-button-color: @main-dark-color;
-@primary-button-hover-color: @main-active-color;
+@primary-button-color: @main-active-color;
+@primary-button-hover-color: @main-hover-color;
 @primary-button-disabled-color: @main-gray-color;
 @primary-button-text: #fff;
 
-@secondary-button-color: @main-dark-color;
-@secondary-button-hover-color: @main-active-color;
+@secondary-button-color: @main-active-color;
+@secondary-button-hover-color: @main-hover-color;
 @secondary-button-disabled-color: @main-gray-color;
 
 // old styles 

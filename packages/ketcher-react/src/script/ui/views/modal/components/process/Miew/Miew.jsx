@@ -110,6 +110,9 @@ class MiewDialog extends Component {
 
   exportCML() {
     const cmlStruct = this.viewer.exportCML()
+    if (!cmlStruct) {
+      return
+    }
     this.props.onExportCML(cmlStruct)
   }
 

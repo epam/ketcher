@@ -16,7 +16,12 @@
 
 import * as clipArea from '../component/cliparea/cliparea'
 
-import { KetSerializer, MolSerializer, formatProperties } from 'ketcher-core'
+import {
+  KetSerializer,
+  MolSerializer,
+  formatProperties,
+  ChemicalMimeType
+} from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction } from './shared'
 
@@ -144,9 +149,9 @@ export function initClipboard(dispatch, getState) {
     },
     onPaste(data) {
       const structStr =
-        data['application/json'] ||
-        data['chemical/x-mdl-molfile'] ||
-        data['chemical/x-mdl-rxnfile'] ||
+        data[ChemicalMimeType.KET] ||
+        data[ChemicalMimeType.Mol] ||
+        data[ChemicalMimeType.Rxn] ||
         data['text/plain']
 
       if (structStr || !rxnTextPlain.test(data['text/plain']))
@@ -175,11 +180,9 @@ function clipData(editor) {
   try {
     const serializer = new KetSerializer()
     const ket = serializer.serialize(struct)
-    res['application/json'] = ket
+    res[ChemicalMimeType.KET] = ket
 
-    const type = struct.isReaction
-      ? 'chemical/x-mdl-molfile'
-      : 'chemical/x-mdl-rxnfile'
+    const type = struct.isReaction ? ChemicalMimeType.Mol : ChemicalMimeType.Rxn
     const data = molSerializer.serialize(struct)
     res['text/plain'] = data
     res[type] = data

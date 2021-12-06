@@ -54,9 +54,9 @@ function TextArea({ schema, value, onChange, ...rest }) {
 
 TextArea.val = ev => ev.target.value
 
-function CheckBox({ schema, value = '', onChange, className, ...rest }) {
+function CheckBox({ schema, value = '', onChange, ...rest }) {
   return (
-    <div className={className || classes.fieldSetItem}>
+    <div className={classes.fieldSetItem}>
       <input
         type="checkbox"
         checked={value}
@@ -64,7 +64,7 @@ function CheckBox({ schema, value = '', onChange, className, ...rest }) {
         onChange={onChange}
         {...rest}
       />
-      <span className={className ? classes.customCheckbox : ''} />
+      <span className={classes.customCheckbox} />
     </div>
   )
 }
@@ -260,7 +260,7 @@ function ctrlMap(component, { schema, multiple, onChange }) {
 }
 
 function componentMap({ schema, type, multiple }) {
-  if (schema.type === 'slider') {
+  if (schema?.type === 'slider') {
     return Slider
   }
 

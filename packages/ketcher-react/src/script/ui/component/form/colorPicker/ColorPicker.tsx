@@ -18,6 +18,7 @@ import { useCallback, useState } from 'react'
 
 import { HexColorPicker, HexColorInput } from 'react-colorful'
 import classes from './ColorPicker.module.less'
+import clsx from 'clsx'
 
 interface ColorPickerProps {
   value: string
@@ -32,8 +33,19 @@ interface ColorPickerCallProps {
 
 type Props = ColorPickerProps & ColorPickerCallProps
 
+const presetColors = [
+  '#FF4545',
+  '#FFAD31',
+  '#68D442',
+  '#3ACACC',
+  '#4434FF',
+  '#9C9C9C',
+  '#000000'
+]
+
 const ColorPicker = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false)
   const { onChange, value } = props
 
   const handleChange = useCallback(
@@ -42,35 +54,70 @@ const ColorPicker = (props: Props) => {
     },
     [onChange]
   )
-  const handleClick = () => {
-    setIsOpen(isOpen => !isOpen)
+  const handleClick = e => {
+    e.preventDefault()
+    setIsOpen(prev => !prev)
   }
   const handleClose = () => {
     setIsOpen(false)
+    setIsPaletteOpen(false)
+  }
+  const handlePaletteOpen = () => {
+    setIsPaletteOpen(true)
+  }
+  const handleColorChange = color => {
+    handleChange(color)
+  }
+
+  const handleBlur = e => {
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      handleClose()
+    }
   }
 
   return (
-    <div className={classes.colorPickerInput}>
-      <div
-        className={classes.colorPickerBtn}
+    <div
+      className={classes.colorPickerInput}
+      data-testid="color-picker-field"
+      onClick={e => e.preventDefault()}
+    >
+      <button
+        className={classes.colorPickerPreview}
+        data-testid="color-picker-preview"
+        style={{ backgroundColor: value }}
         onClick={handleClick}
-        data-testid="color-picker-btn"
-      >
-        {props.value}
-        <span
-          className={classes.colorPickerPreview}
-          data-testid="color-picker-preview"
-          style={{ backgroundColor: value }}
-        />
-      </div>
-      <div className={classes.colorPickerWrap}>
-        {isOpen ? (
-          <>
-            <div
-              className={classes.colorPickerOverlay}
-              onClick={handleClose}
-              data-testid="color-picker-overlay"
+      />
+
+      {isOpen && (
+        <div
+          className={clsx(
+            classes.colorPickerWrap,
+            isPaletteOpen && classes.withPalette
+          )}
+          onBlur={handleBlur}
+          data-testid="color-picker-preset"
+        >
+          <div className={classes.presetColors}>
+            <button
+              className={clsx(
+                classes.chooseColor,
+                isPaletteOpen && classes.clicked
+              )}
+              onClick={handlePaletteOpen}
+              autoFocus
+              data-testid="color-picker-btn"
             />
+            {presetColors.map(color => (
+              <button
+                key={color}
+                onClick={() => handleColorChange(color)}
+                style={{ backgroundColor: color }}
+                className={classes.presetColor}
+              />
+            ))}
+          </div>
+
+          {isPaletteOpen && (
             <div className={classes.colorPicker}>
               <HexColorPicker color={value} onChange={handleChange} />
               <HexColorInput
@@ -78,10 +125,11 @@ const ColorPicker = (props: Props) => {
                 color={value}
                 onChange={handleChange}
               />
+              <span className={classes.hex}>HEX</span>
             </div>
-          </>
-        ) : null}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

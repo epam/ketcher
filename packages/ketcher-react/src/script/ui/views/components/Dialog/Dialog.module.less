@@ -32,6 +32,10 @@
   }
 }
 
+.save {
+  width: auto;
+}
+
 .cancel {
   margin-right: 2px;
   background: #d1d5e3;
@@ -76,32 +80,14 @@
     font-size: @header-font-size;
     line-height: @header-line-height;
     text-transform: uppercase;
+    border-radius: 0.7em 0.7em 0 0;
     height: 20px;
+    justify-content: space-between;
 
-    .close {
-      position: absolute;
-      right: 12px;
-      top: 15px;
-      width: 10px;
-      height: 10px;
-      opacity: 0.5;
-      &:hover {
-        opacity: 1;
-      }
-      &::before,
-      &::after {
-        position: absolute;
-        content: '';
-        height: 12px;
-        width: 2px;
-        background-color: @main-font-color;
-      }
-      &::before {
-        transform: rotate(45deg);
-      }
-      &::after {
-        transform: rotate(-45deg);
-      }
+    .buttonTop {
+      background-color: transparent;
+      border: none;
+      padding-right: 0;
     }
   }
   footer {
@@ -142,5 +128,7 @@
   .body {
     font-size: @regular-font-size;
     line-height: @regular-line-height;
+    margin-right: 16px;
+    .scrollbar_thin();
   }
 }

@@ -4,6 +4,15 @@ import userEvent from '@testing-library/user-event'
 
 import ColorPicker from './ColorPicker'
 
+const openPreset = () => {
+  const presetToggleBtn = screen.getByTestId('color-picker-preview')
+  userEvent.click(presetToggleBtn)
+}
+const openPalette = () => {
+  const pickerToggleBtn = screen.getByTestId('color-picker-btn')
+  userEvent.click(pickerToggleBtn)
+}
+
 describe('should be rendered correctly', () => {
   it('should be rendered without crashing', () => {
     const { asFragment } = render(<ColorPicker value="#000000" />)
@@ -12,18 +21,26 @@ describe('should be rendered correctly', () => {
 })
 
 describe('should toggle color picker dialog', () => {
+  it('should show color preset on click', () => {
+    const { container } = render(<ColorPicker />)
+    openPreset()
+    expect(
+      container.getElementsByClassName('classes.colorPickerWrap')
+    ).toBeDefined()
+  })
+
   it('should show color picker dialog on click', () => {
     const { container } = render(<ColorPicker />)
-    const pickerToggleBtn = screen.getByTestId('color-picker-btn')
-    userEvent.click(pickerToggleBtn)
+    openPreset()
+    openPalette()
     expect(container.getElementsByClassName('react-colorful')[0]).toBeDefined()
   })
 
-  it('should hide color picker dialog on overlay click', () => {
+  it('should hide color picker dialog on click outside picker', () => {
     const { container } = render(<ColorPicker />)
-    const pickerToggleBtn = screen.getByTestId('color-picker-btn')
-    userEvent.click(pickerToggleBtn)
-    const overlay = screen.getByTestId('color-picker-overlay')
+    openPreset()
+    openPalette()
+    const overlay = screen.getByTestId('color-picker-field')
     userEvent.click(overlay)
     expect(
       container.getElementsByClassName('react-colorful')[0]
@@ -35,8 +52,8 @@ describe('should pick color correctly', () => {
   it('should call onChange callback with picked color', () => {
     const onChange = jest.fn()
     render(<ColorPicker onChange={onChange} />)
-    const pickerToggleBtn = screen.getByTestId('color-picker-btn')
-    userEvent.click(pickerToggleBtn)
+    openPreset()
+    openPalette()
     const colorInput = screen.getByTestId('color-picker-input')
     userEvent.type(colorInput, '#4d4d4d')
     expect(onChange).toBeCalledWith('#4d4d4d')
@@ -44,7 +61,6 @@ describe('should pick color correctly', () => {
 
   it('should display picked color correctly', () => {
     render(<ColorPicker value="#000000" />)
-    expect(screen.getByText('#000000')).toBeDefined()
     expect(
       screen.getByTestId('color-picker-preview').style.backgroundColor
     ).toBe('rgb(0, 0, 0)')

@@ -21,7 +21,6 @@ import {
   updateFormState
 } from '../../../../../state/modal/form'
 
-import Accordion from './components/Accordion'
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker'
 import { Dialog } from '../../../../components'
 import MeasureInput from '../../../../../component/form/measure-input'
@@ -35,6 +34,9 @@ import { connect } from 'react-redux'
 import { saveSettings } from '../../../../../state/options'
 import settingsSchema from '../../../../../data/schema/options-schema'
 import { storage } from '../../../../../storage-ext'
+import Sidebar from './components/Sidebar'
+import Icon from '../../../../../component/view/icon'
+import clsx from 'clsx'
 
 interface SettingsProps extends BaseProps {
   initState: any
@@ -68,6 +70,111 @@ const SettingsDialog = (props: Props) => {
     ...prop
   } = props
 
+  const generalTab = {
+    key: 'general',
+    label: 'General',
+    content: (
+      <fieldset className={classes.general}>
+        <Field name="resetToSelect" />
+        <Field name="rotationStep" />
+        <Field name="showValenceWarnings" />
+        <Field name="atomColoring" />
+        <Field name="font" component={SystemFonts} />
+        <Field name="fontsz" component={MeasureInput} />
+        <Field name="fontszsub" component={MeasureInput} />
+      </fieldset>
+    )
+  }
+  const stereoTab = {
+    key: 'stereo',
+    label: 'Stereochemistry',
+    content: (
+      <fieldset className={classes.stereochemistry}>
+        <Field name="showStereoFlags" />
+        <Field name="stereoLabelStyle" />
+        <Field name="colorOfAbsoluteCenters" component={ColorPicker} />
+        <Field name="colorOfAndCenters" component={ColorPicker} />
+        <Field name="colorOfOrCenters" component={ColorPicker} />
+        <Field name="colorStereogenicCenters" />
+        <Field name="autoFadeOfStereoLabels" />
+        <Field name="absFlagLabel" />
+        <Field name="andFlagLabel" />
+        <Field name="orFlagLabel" />
+        <Field name="mixedFlagLabel" />
+      </fieldset>
+    )
+  }
+  const atomsTab = {
+    key: 'atoms',
+    label: 'Atoms',
+    content: (
+      <fieldset>
+        <Field name="carbonExplicitly" />
+        <Field name="showCharge" />
+        <Field name="showValence" />
+        <Field name="showHydrogenLabels" component={SelectCheckbox} />
+      </fieldset>
+    )
+  }
+  const bondsTab = {
+    key: 'bonds',
+    label: 'Bonds',
+    content: (
+      <fieldset>
+        <Field name="aromaticCircle" />
+        <Field name="doubleBondWidth" component={MeasureInput} />
+        <Field name="bondThickness" component={MeasureInput} />
+        <Field name="stereoBondWidth" component={MeasureInput} />
+      </fieldset>
+    )
+  }
+  const serverTab = {
+    key: 'server',
+    label: 'Server',
+    content: (
+      <fieldset className={classes.server} disabled={!appOpts.server}>
+        <Field name="smart-layout" />
+        <Field name="ignore-stereochemistry-errors" />
+        <Field name="mass-skip-error-on-pseudoatoms" />
+        <Field name="gross-formula-add-rsites" />
+        <Field name="gross-formula-add-isotopes" />
+      </fieldset>
+    )
+  }
+  const threeDViewerTab = {
+    key: '3dviewer',
+    label: '3D Viewer',
+    content: (
+      <fieldset className={classes.viewer} disabled={!window['Miew']}>
+        <Field name="miewMode" />
+        <Field name="miewTheme" />
+        <Field name="miewAtomLabel" />
+      </fieldset>
+    )
+  }
+  const debuggingTab = {
+    key: 'debugging',
+    label: 'Options for debugging',
+    content: (
+      <fieldset>
+        <Field name="showAtomIds" />
+        <Field name="showBondIds" />
+        <Field name="showHalfBondIds" />
+        <Field name="showLoopIds" />
+      </fieldset>
+    )
+  }
+
+  const tabs = [
+    generalTab,
+    stereoTab,
+    atomsTab,
+    bondsTab,
+    serverTab,
+    threeDViewerTab,
+    debuggingTab
+  ]
+
   return (
     <Dialog
       title="Settings"
@@ -75,104 +182,36 @@ const SettingsDialog = (props: Props) => {
       result={() => formState.result}
       valid={() => formState.valid}
       params={prop}
-      buttons={[
-        <OpenButton key="settings" server={server} onLoad={onOpenFile}>
-          Open From File…
+      buttons={['Save']}
+      buttonsTop={[
+        <OpenButton
+          key="settings"
+          server={server}
+          onLoad={onOpenFile}
+          className={clsx(classes.button, classes.buttonOpen)}
+        >
+          <Icon name={'open-1'} />
         </OpenButton>,
         <SaveButton
           key="ketcher-settings"
           data={JSON.stringify(formState.result)}
           filename="ketcher-settings"
+          className={classes.button}
         >
-          Save To File…
+          <Icon name={'save-1'} />
         </SaveButton>,
-        <button key="settings-button" onClick={onReset}>
-          Reset
-        </button>,
-        'OK'
+        <button
+          key="settings-button"
+          onClick={onReset}
+          className={classes.button}
+        >
+          <Icon name={'reset'} />
+        </button>
       ]}
     >
       <Form schema={settingsSchema} init={initState} {...formState}>
-        <Accordion className={classes.accordion} multiple={false} active={[0]}>
-          <Accordion.Group caption="General">
-            <fieldset className={classes.general}>
-              <Field name="resetToSelect" />
-              <Field name="rotationStep" />
-              <Field name="showValenceWarnings" component={SelectCheckbox} />
-              <Field name="atomColoring" component={SelectCheckbox} />
-              <Field name="font" component={SystemFonts} />
-              <Field name="fontsz" component={MeasureInput} />
-              <Field name="fontszsub" component={MeasureInput} />
-            </fieldset>
-          </Accordion.Group>
-          <Accordion.Group caption="Stereochemistry">
-            <fieldset className={classes.stereochemistry}>
-              <Field name="showStereoFlags" component={SelectCheckbox} />
-              <Field name="stereoLabelStyle" />
-              <Field name="colorOfAbsoluteCenters" component={ColorPicker} />
-              <Field name="colorOfAndCenters" component={ColorPicker} />
-              <Field name="colorOfOrCenters" component={ColorPicker} />
-              <Field name="colorStereogenicCenters" />
-              <Field name="autoFadeOfStereoLabels" component={SelectCheckbox} />
-              <Field name="absFlagLabel" />
-              <Field name="andFlagLabel" />
-              <Field name="orFlagLabel" />
-              <Field name="mixedFlagLabel" />
-            </fieldset>
-          </Accordion.Group>
-          <Accordion.Group caption="Atoms">
-            <fieldset>
-              <Field name="carbonExplicitly" component={SelectCheckbox} />
-              <Field name="showCharge" component={SelectCheckbox} />
-              <Field name="showValence" component={SelectCheckbox} />
-              <Field name="showHydrogenLabels" component={SelectCheckbox} />
-            </fieldset>
-          </Accordion.Group>
-          <Accordion.Group caption="Bonds">
-            <fieldset>
-              <Field name="aromaticCircle" component={SelectCheckbox} />
-              <Field name="doubleBondWidth" component={MeasureInput} />
-              <Field name="bondThickness" component={MeasureInput} />
-              <Field name="stereoBondWidth" component={MeasureInput} />
-            </fieldset>
-          </Accordion.Group>
-          <Accordion.Group caption="Server">
-            <fieldset className={classes.server} disabled={!appOpts.server}>
-              <Field name="smart-layout" component={SelectCheckbox} />
-              <Field
-                name="ignore-stereochemistry-errors"
-                component={SelectCheckbox}
-              />
-              <Field
-                name="mass-skip-error-on-pseudoatoms"
-                component={SelectCheckbox}
-              />
-              <Field
-                name="gross-formula-add-rsites"
-                component={SelectCheckbox}
-              />
-              <Field
-                name="gross-formula-add-isotopes"
-                component={SelectCheckbox}
-              />
-            </fieldset>
-          </Accordion.Group>
-          <Accordion.Group caption="3D Viewer">
-            <fieldset className={classes.viewer} disabled={!window['Miew']}>
-              <Field name="miewMode" />
-              <Field name="miewTheme" />
-              <Field name="miewAtomLabel" />
-            </fieldset>
-          </Accordion.Group>
-          <Accordion.Group caption="Options for debugging">
-            <fieldset>
-              <Field name="showAtomIds" component={SelectCheckbox} />
-              <Field name="showBondIds" component={SelectCheckbox} />
-              <Field name="showHalfBondIds" component={SelectCheckbox} />
-              <Field name="showLoopIds" component={SelectCheckbox} />
-            </fieldset>
-          </Accordion.Group>
-        </Accordion>
+        <Sidebar tabs={tabs} className={classes.sidebar} />
+
         {!storage.isAvailable() ? (
           <div className={classes.warning}>{storage.warningMessage}</div>
         ) : null}

@@ -29,7 +29,7 @@ import {
 
 import LassoHelper from './helper/lasso'
 import { selMerge } from './select'
-import { Editor } from "../Editor";
+import { Editor } from '../Editor'
 
 class EraserTool {
   editor: Editor
@@ -55,7 +55,7 @@ class EraserTool {
   mousedown(event) {
     const ci = this.editor.findItem(event, this.maps, null)
     if (!ci)
-        //  ci.type == 'Canvas'
+      //  ci.type == 'Canvas'
       this.lassoHelper.begin(event)
   }
 
@@ -67,7 +67,10 @@ class EraserTool {
 
   mouseup() {
     const selected = this.editor.selection()
-    let newSelected: {atoms: Array<any>, bonds: Array<any>} = { atoms: [], bonds: [] }
+    let newSelected: { atoms: Array<any>; bonds: Array<any> } = {
+      atoms: [],
+      bonds: []
+    }
     let actualSgroupId
     const atomsResult: Array<any> = []
     const bondsResult: Array<any> = []
@@ -81,8 +84,8 @@ class EraserTool {
     if (selected && functionalGroups.size && selected.atoms) {
       for (let atom of selected.atoms) {
         const atomId = FunctionalGroup.atomsInFunctionalGroup(
-            functionalGroups,
-            atom
+          functionalGroups,
+          atom
         )
         const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a
 
@@ -92,40 +95,34 @@ class EraserTool {
           }
         }
         if (
-            atomFromStruct &&
-            FunctionalGroup.isAtomInContractedFinctionalGroup(
-                atomFromStruct,
-                sgroups,
-                functionalGroups,
-                true
-            )
+          atomFromStruct &&
+          FunctionalGroup.isAtomInContractedFinctionalGroup(
+            atomFromStruct,
+            sgroups,
+            functionalGroups,
+            true
+          )
         ) {
           const sgroupAtoms =
-              actualSgroupId !== undefined &&
-              SGroup.getAtoms(
-                  molecule,
-                  sgroups.get(actualSgroupId)?.item
-              )
+            actualSgroupId !== undefined &&
+            SGroup.getAtoms(molecule, sgroups.get(actualSgroupId)?.item)
           const sgroupBonds =
-              actualSgroupId !== undefined &&
-              SGroup.getBonds(
-                  molecule,
-                  sgroups.get(actualSgroupId)?.item
-              )
+            actualSgroupId !== undefined &&
+            SGroup.getBonds(molecule, sgroups.get(actualSgroupId)?.item)
           atom === sgroupAtoms[0] &&
-          // @ts-ignore
-          newSelected.atoms.push(...sgroupAtoms) &&
-          newSelected.bonds.push(...sgroupBonds)
+            // @ts-ignore
+            newSelected.atoms.push(...sgroupAtoms) &&
+            newSelected.bonds.push(...sgroupBonds)
         }
 
         if (
-            atomFromStruct &&
-            !FunctionalGroup.isAtomInContractedFinctionalGroup(
-                atomFromStruct,
-                sgroups,
-                functionalGroups,
-                true
-            )
+          atomFromStruct &&
+          !FunctionalGroup.isAtomInContractedFinctionalGroup(
+            atomFromStruct,
+            sgroups,
+            functionalGroups,
+            true
+          )
         )
           atomsResult.push(atomId)
       }
@@ -133,19 +130,19 @@ class EraserTool {
     if (selected && functionalGroups.size && selected.bonds) {
       for (let bond of selected.bonds) {
         const bondId = FunctionalGroup.bondsInFunctionalGroup(
-            molecule,
-            functionalGroups,
-            bond
+          molecule,
+          functionalGroups,
+          bond
         )
         const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b
         if (
-            bondFromStruct &&
-            !FunctionalGroup.isBondInContractedFunctionalGroup(
-                bondFromStruct,
-                sgroups,
-                functionalGroups,
-                true
-            )
+          bondFromStruct &&
+          !FunctionalGroup.isBondInContractedFunctionalGroup(
+            bondFromStruct,
+            sgroups,
+            functionalGroups,
+            true
+          )
         )
           bondsResult.push(bondId)
       }
@@ -153,8 +150,8 @@ class EraserTool {
     if (atomsResult.length > 0) {
       for (let id of atomsResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-            functionalGroups,
-            id
+          functionalGroups,
+          id
         )
         fgId !== null && !preResult.includes(fgId) && preResult.push(fgId)
       }
@@ -162,9 +159,9 @@ class EraserTool {
     if (bondsResult.length > 0) {
       for (let id of bondsResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
-            molecule,
-            functionalGroups,
-            id
+          molecule,
+          functionalGroups,
+          id
         )
         fgId !== null && !preResult.includes(fgId) && preResult.push(fgId)
       }
@@ -175,8 +172,8 @@ class EraserTool {
         const sgAtoms = sgroups.get(fgId)?.item.atoms
         sgAtoms.forEach(atom => {
           !atomsResult.includes(atom) &&
-          !result.includes(fgId) &&
-          result.push(fgId)
+            !result.includes(fgId) &&
+            result.push(fgId)
         })
       })
       if (result.length > 0) {
@@ -192,9 +189,9 @@ class EraserTool {
     if (this.lassoHelper.running()) {
       // TODO it catches more events than needed, to be re-factored
       const sel =
-          newSelected.atoms.length > 0
-              ? selMerge(this.lassoHelper.end(), newSelected, true)
-              : this.lassoHelper.end()
+        newSelected.atoms.length > 0
+          ? selMerge(this.lassoHelper.end(), newSelected, true)
+          : this.lassoHelper.end()
       this.editor.update(fromFragmentDeletion(rnd.ctab, sel))
       this.editor.selection(null)
     }
@@ -213,10 +210,10 @@ class EraserTool {
     const sgroups = restruct.sgroups
 
     if (
-        ci &&
-        functionalGroups &&
-        ci.map === 'functionalGroups' &&
-        !FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
+      ci &&
+      functionalGroups &&
+      ci.map === 'functionalGroups' &&
+      !FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
     ) {
       const sGroup = sgroups.get(ci.id)
       if (FunctionalGroup.isFunctionalGroup(sGroup?.item)) {
@@ -224,43 +221,43 @@ class EraserTool {
       }
     } else if (ci && functionalGroups && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
-          functionalGroups,
-          ci.id
+        functionalGroups,
+        ci.id
       )
       const atomFromStruct = atomId !== null && restruct.atoms.get(atomId)?.a
       if (
-          atomFromStruct &&
-          !FunctionalGroup.isAtomInContractedFinctionalGroup(
-              atomFromStruct,
-              sgroups,
-              functionalGroups,
-              true
-          )
+        atomFromStruct &&
+        !FunctionalGroup.isAtomInContractedFinctionalGroup(
+          atomFromStruct,
+          sgroups,
+          functionalGroups,
+          true
+        )
       )
         atomResult.push(atomId)
     } else if (ci && functionalGroups && ci.map === 'bonds') {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
-          molecule,
-          functionalGroups,
-          ci.id
+        molecule,
+        functionalGroups,
+        ci.id
       )
       const bondFromStruct = bondId !== null && restruct.bonds.get(bondId)?.b
       if (
-          bondFromStruct &&
-          !FunctionalGroup.isBondInContractedFunctionalGroup(
-              bondFromStruct,
-              sgroups,
-              functionalGroups,
-              true
-          )
+        bondFromStruct &&
+        !FunctionalGroup.isBondInContractedFunctionalGroup(
+          bondFromStruct,
+          sgroups,
+          functionalGroups,
+          true
+        )
       )
         bondResult.push(bondId)
     }
     if (atomResult.length) {
       for (let id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-            functionalGroups,
-            id
+          functionalGroups,
+          id
         )
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
@@ -269,9 +266,9 @@ class EraserTool {
     } else if (bondResult.length) {
       for (let id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
-            molecule,
-            functionalGroups,
-            id
+          molecule,
+          functionalGroups,
+          id
         )
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
@@ -291,15 +288,15 @@ class EraserTool {
     } else if (ci.map === 'bonds') {
       this.editor.update(fromOneBondDeletion(restruct, ci.id))
     } else if (
-        ci.map === 'functionalGroups' &&
-        FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
+      ci.map === 'functionalGroups' &&
+      FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
     ) {
       const sGroup = sgroups.get(ci.id)
       this.editor.update(
-          fromFragmentDeletion(rnd.ctab, {
-            atoms: [...SGroup.getAtoms(molecule, sGroup?.item)],
-            bonds: [...SGroup.getBonds(molecule, sGroup?.item)]
-          })
+        fromFragmentDeletion(rnd.ctab, {
+          atoms: [...SGroup.getAtoms(molecule, sGroup?.item)],
+          bonds: [...SGroup.getBonds(molecule, sGroup?.item)]
+        })
       )
     } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
       this.editor.update(fromSgroupDeletion(restruct, ci.id))
@@ -314,7 +311,7 @@ class EraserTool {
     } else {
       // TODO re-factoring needed - should be "map-independent"
       console.error(
-          'EraserTool: unable to delete the object ' + ci.map + '[' + ci.id + ']'
+        'EraserTool: unable to delete the object ' + ci.map + '[' + ci.id + ']'
       )
       return
     }

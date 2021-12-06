@@ -111,7 +111,7 @@ import UndoIcon from './files/undo.svg'
 import ZoomInIcon from './files/zoom-in.svg'
 import ZoomOutIcon from './files/zoom-out.svg'
 import FunctionalGroupsIcon from './files/functional-groups.svg'
-import Symbols from './files/symbols.svg'
+import TextSpecialSymbolsIcon from './files/text-special-symbols.svg'
 
 const icons = {
   about: AboutIcon,
@@ -218,7 +218,7 @@ const icons = {
   'shape-rectangle': ShapeRectangleIcon,
   'shape-polyline': ShapePolylineIcon,
   'shape-line': ShapeLineIcon,
-  symbols: Symbols,
+  'text-special-symbols': TextSpecialSymbolsIcon,
   'not-found': NotFoundIcon
 }
 

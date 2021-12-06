@@ -15,14 +15,8 @@
  ***************************************************************************/
 
 import classes from './SpecialSymbolsList.module.less'
-import { SpecialSymbolsButtonProps } from '../SpecialSymbols/SpecialSymbolsButton'
-import React from 'react'
 
-interface SpecialSymbolsListProps extends SpecialSymbolsButtonProps {
-  hideMenu: (event: React.MouseEvent<HTMLButtonElement>) => void
-}
-
-const SpecialSymbolsList = ({ select, hideMenu }: SpecialSymbolsListProps) => {
+const SpecialSymbolsList = ({ select }) => {
   const symbols = [
     'α',
     'β',
@@ -81,9 +75,8 @@ const SpecialSymbolsList = ({ select, hideMenu }: SpecialSymbolsListProps) => {
             className={classes.button}
             key={`symbol-${id}`}
             value={symbol}
-            onClick={event => {
-              select(symbol)
-              hideMenu(event)
+            onMouseDown={event => {
+              select(event, symbol)
             }}
           >
             {symbol}

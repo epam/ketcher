@@ -18,12 +18,9 @@ import { useState } from 'react'
 import { SpecialSymbolsList } from '../SpecialSymbolsList/SpecialSymbolsList'
 import classes from './SpecialSymbolsButton.module.less'
 import Icon from '../../../../../component/view/icon'
+import { EditorState, Modifier } from 'draft-js'
 
-export interface SpecialSymbolsButtonProps {
-  select: (symbol: string) => void
-}
-
-const SpecialSymbolsButton = ({ select }: SpecialSymbolsButtonProps) => {
+const SpecialSymbolsButton = ({ editorState, setEditorState }) => {
   const [showSpecialSymbols, setShowSpecialSymbols] = useState(false)
 
   const handleClose = event => {
@@ -31,26 +28,45 @@ const SpecialSymbolsButton = ({ select }: SpecialSymbolsButtonProps) => {
     event.preventDefault()
     setShowSpecialSymbols(false)
   }
-  const handleOpen = () => {
-    setShowSpecialSymbols(true)
-  }
+
   const closeSymbolsList = event => {
     if (!event.currentTarget.contains(event.relatedTarget)) {
       handleClose(event)
     }
   }
+
+  const addText = (e, value) => {
+    e.preventDefault()
+    const selection = editorState.getSelection()
+    const contentState = editorState.getCurrentContent()
+    let nextEditorState
+    const nextContentState = Modifier.replaceText(
+      contentState,
+      selection,
+      value
+    )
+    nextEditorState = EditorState.push(
+      editorState,
+      nextContentState,
+      'insert-characters'
+    )
+    setEditorState(nextEditorState)
+    setShowSpecialSymbols(false)
+  }
+
   return (
     <div onBlur={closeSymbolsList}>
       <button
         title="symbols"
-        onClick={handleOpen}
+        onMouseDown={e => {
+          e.preventDefault()
+          setShowSpecialSymbols(!showSpecialSymbols)
+        }}
         className={classes.textButton}
       >
         <Icon name="symbols" />
-        {showSpecialSymbols && (
-          <SpecialSymbolsList hideMenu={handleClose} select={select} />
-        )}
       </button>
+      {showSpecialSymbols && <SpecialSymbolsList select={addText} />}
     </div>
   )
 }

@@ -24,8 +24,7 @@ import {
   RichUtils,
   convertFromRaw,
   convertToRaw,
-  getDefaultKeyBinding,
-  Modifier
+  getDefaultKeyBinding
 } from 'draft-js'
 import { useCallback, useState } from 'react'
 
@@ -101,26 +100,6 @@ const Text = (props: TextProps) => {
     setEditorState(state)
   }
 
-  const addText = value => {
-    const selection = editorState.getSelection()
-    const contentState = editorState.getCurrentContent()
-    let nextEditorState
-    if (selection.isCollapsed()) {
-      const nextContentState = Modifier.insertText(
-        contentState,
-        selection,
-        value
-      )
-      nextEditorState = EditorState.push(
-        editorState,
-        nextContentState,
-        'insert-characters'
-      )
-    }
-
-    setEditorState(nextEditorState)
-  }
-
   const currentStyle = editorState.getCurrentInlineStyle()
 
   const toggleStyle = useCallback(
@@ -192,7 +171,10 @@ const Text = (props: TextProps) => {
             />
           )
         })}
-        <SpecialSymbolsButton select={addText} />
+        <SpecialSymbolsButton
+          editorState={editorState}
+          setEditorState={setEditorState}
+        />
       </ul>
       <div className={classes.textEditorInput}>
         <Editor

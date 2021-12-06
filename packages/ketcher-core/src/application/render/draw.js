@@ -1,3 +1,6 @@
+/* eslint-disable default-case */
+/* eslint-disable import/no-anonymous-default-export */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -179,7 +182,147 @@ function arrow(paper, startPoint, endPoint, length, angle, options, type) {
         options
       )
     }
+    case RxnArrowMode.EllipticalArcFilledBow: {
+      return arrowEllipticalArcFilledBow(
+        paper,
+        startPoint,
+        endPoint,
+        length,
+        angle,
+        options
+      )
+    }
+    case RxnArrowMode.EllipticalArcFilledTriangle: {
+      return arrowEllipticalArcFilledTriangle(
+        paper,
+        startPoint,
+        endPoint,
+        length,
+        angle,
+        options
+      )
+    }
+    case RxnArrowMode.EllipticalArcOpenAngle: {
+      return arrowEllipticalArcOpenAngle(
+        paper,
+        startPoint,
+        endPoint,
+        length,
+        angle,
+        options
+      )
+    }
+    case RxnArrowMode.EllipticalArcOpenHalfAngle: {
+      return arrowEllipticalArcOpenHalfAngle(
+        paper,
+        startPoint,
+        endPoint,
+        length,
+        angle,
+        options
+      )
+    }
   }
+}
+
+function arrowEllipticalArcFilledBow(
+  paper,
+  a,
+  b,
+  arrowLength,
+  arrowAngle,
+  options
+) {
+  const arrowHeadLength = 10
+  const arrowHeadWidth = 5
+  const arrowHeadAttr = 4
+
+  const b0x = a.x + arrowLength
+
+  const path =
+    `M${tfx(a.x)},${tfx(a.y)}` +
+    `A${10},${20},${0},${0},${1},${tfx(b0x)},${tfx(a.y)}` +
+    `L${tfx(b0x - arrowHeadWidth)},${tfx(a.y - arrowHeadLength)}` +
+    `l${tfx(arrowHeadWidth)},${tfx(arrowHeadAttr)}` +
+    `l${tfx(arrowHeadWidth)},${tfx(-arrowHeadAttr)}` +
+    `l${tfx(-arrowHeadWidth)},${arrowHeadLength}`
+
+  const transformedPath = svgPath(path).rotate(arrowAngle, a.x, a.y).toString()
+
+  return paper.path(transformedPath).attr({ ...options.lineattr })
+}
+
+function arrowEllipticalArcFilledTriangle(
+  paper,
+  a,
+  b,
+  arrowLength,
+  arrowAngle,
+  options
+) {
+  const triangleLength = 10
+  const triangleWidth = 5
+
+  const b0x = a.x + arrowLength
+
+  const path =
+    `M${tfx(a.x)},${tfx(a.y)}` +
+    `A${10},${20},${0},${0},${1},${tfx(b0x)},${tfx(a.y)}` +
+    `L${tfx(b0x - triangleWidth)},${tfx(a.y - triangleLength)}` +
+    `l${tfx(triangleLength)},${tfx(0)}` +
+    `l${tfx(-triangleWidth)},${tfx(triangleLength)}`
+
+  const transformedPath = svgPath(path).rotate(arrowAngle, a.x, a.y).toString()
+
+  return paper.path(transformedPath).attr({ ...options.lineattr })
+}
+
+function arrowEllipticalArcOpenAngle(
+  paper,
+  a,
+  b,
+  arrowLength,
+  arrowAngle,
+  options
+) {
+  const width = 5
+  const length = 7
+
+  const b0x = a.x + arrowLength
+
+  const path =
+    `M${tfx(a.x)},${tfx(a.y)}` +
+    `A${10},${20},${0},${0},${1},${tfx(b0x)},${tfx(a.y)}` +
+    `L${tfx(b0x - width)},${tfx(a.y - length)}` +
+    `M${tfx(b0x)},${tfx(a.y)}` +
+    `L${tfx(b0x + width)}, ${tfx(a.y - length)}`
+
+  const transformedPath = svgPath(path).rotate(arrowAngle, a.x, a.y).toString()
+
+  return paper.path(transformedPath).attr(options.lineattr)
+}
+
+function arrowEllipticalArcOpenHalfAngle(
+  paper,
+  a,
+  b,
+  arrowLength,
+  arrowAngle,
+  options
+) {
+  const width = 5
+  const length = 7
+
+  const b0x = a.x + arrowLength
+
+  const path =
+    `M${tfx(a.x)},${tfx(a.y)}` +
+    `A${10},${20},${0},${0},${1},${tfx(b0x)},${tfx(a.y)}` +
+    `L${tfx(b0x + width)}, ${tfx(a.y - length)}`
+
+  const transformedPath = svgPath(path).rotate(arrowAngle, a.x, a.y).toString()
+
+  return paper.path(transformedPath).attr(options.lineattr)
 }
 
 function arrowOpenAngle(paper, a, b, arrowLength, arrowAngle, options) {

@@ -24,6 +24,9 @@ function renderStruct(el, struct, options = {}) {
       el.innerHTML = struct.prerender
     } else if (struct) {
       console.info('render!', el.clientWidth, el.clientWidth)
+      struct.initHalfBonds()
+      struct.initNeighbors()
+      struct.setImplicitHydrogen()
       const rnd = new Render(el, {
         autoScale: true,
         ...options

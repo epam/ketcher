@@ -17,6 +17,7 @@
 import { Component } from 'react'
 
 import classes from './buttons.module.less'
+import clsx from 'clsx'
 
 class OpenButton extends Component {
   constructor(props) {
@@ -42,12 +43,12 @@ class OpenButton extends Component {
   }
 
   render() {
-    const { children, type, server, ...props } = this.props
+    const { children, type, server, className, ...props } = this.props
 
     return (
       <button
         onClick={() => this.btn.click()}
-        className={classes.openButton}
+        className={clsx(classes.openButton, className)}
         {...props}
       >
         <input

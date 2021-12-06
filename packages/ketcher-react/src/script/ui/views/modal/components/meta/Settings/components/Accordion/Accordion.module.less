@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import 'src/style/variables';
 
 .accordion_tab {
   margin-top: 2px;
@@ -23,8 +24,8 @@
     display: block;
     cursor: pointer;
     text-align: center;
-    background-color: #eee;
-    border: 1px solid #ccc;
+    background-color: @gray-background-color;
+    border: 1px solid @border-color;
     transition: border-radius 0.1s linear;
     border-radius: 6px 6px 0 0;
     border-bottom: 0;
@@ -37,7 +38,7 @@
     }
 
     &:hover {
-      background-color: #9dc2d0;
+      background-color: @form-selected-background;
     }
   }
 

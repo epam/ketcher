@@ -14,25 +14,49 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../toolbar';
+@import '../../../../../../../../../style/variables';
 
-.root {
-  .toolbar();
-  .vertical-toolbar();
-}
+@sidebar-width: 33.3%;
 
-.buttons {
-  overflow: hidden;
-  scroll-behavior: smooth;
-}
-
-.listener {
+.sidebar {
   display: flex;
-  margin-bottom: 4px;
-  border-bottom: 1px solid @border-color;
-  padding-bottom: 5px;
-}
+  width: 100%;
 
-.borderOff {
-  border-bottom: none !important;
+  .tabs {
+    background-color: @color-blue;
+    position: fixed;
+    bottom: 0;
+    top: 40px;
+    width: @sidebar-width;
+    color: @color-gray2;
+
+    .tab {
+      cursor: default;
+      display: flex;
+      font-size: 14px;
+      line-height: 17px;
+    }
+
+    .icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+    }
+
+    .tab_active {
+      background-color: @color-gray1;
+      color: @color-white;
+    }
+
+    span {
+      max-width: 80%;
+    }
+  }
+
+  .content {
+    background-color: @color-white;
+    margin-left: @sidebar-width;
+    max-height: 260px;
+    width: 100%;
+  }
 }

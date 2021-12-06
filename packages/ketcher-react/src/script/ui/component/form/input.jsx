@@ -64,7 +64,7 @@ function CheckBox({ schema, value = '', onChange, ...rest }) {
         onChange={onChange}
         {...rest}
       />
-      <span className={classes.customCheckbox}></span>
+      <span className={classes.customCheckbox} />
     </div>
   )
 }
@@ -132,10 +132,8 @@ function FieldSet({
               value={typeof val !== 'object' && val}
               {...rest}
             />
-            {type === 'checkbox' && (
-              <span className={classes.customCheckbox}></span>
-            )}
-            {type === 'radio' && <span className={classes.customRadio}></span>}
+            {type === 'checkbox' && <span className={classes.customCheckbox} />}
+            {type === 'radio' && <span className={classes.customRadio} />}
             {title}
           </label>
         </li>
@@ -159,6 +157,26 @@ FieldSet.val = function (ev, schema) {
     []
   )
   return input.type === 'radio' ? result[0] : result
+}
+
+function Slider({ value = '', onChange, ...rest }) {
+  return (
+    <div className={classes.slider}>
+      <input
+        type="checkbox"
+        checked={value}
+        onClick={onChange}
+        onChange={onChange}
+        {...rest}
+      />
+      <span />
+    </div>
+  )
+}
+
+Slider.val = function (ev) {
+  ev.stopPropagation()
+  return !!ev.target.checked
 }
 
 function enumSchema(schema, cbOrIndex) {
@@ -242,9 +260,14 @@ function ctrlMap(component, { schema, multiple, onChange }) {
 }
 
 function componentMap({ schema, type, multiple }) {
+  if (schema?.type === 'slider') {
+    return Slider
+  }
+
   if (!schema || (!schema.enum && !schema.items && !Array.isArray(schema))) {
-    if (type === 'checkbox' || (schema && schema.type === 'boolean'))
+    if (type === 'checkbox' || (schema && schema.type === 'boolean')) {
       return CheckBox
+    }
 
     return type === 'textarea' ? TextArea : GenericInput
   }
@@ -265,19 +288,16 @@ function shallowCompare(a, b) {
 }
 
 export default class Input extends Component {
-  constructor(props) {
-    super(props)
-    const { component } = this.props
-    this.component = component || componentMap(props)
-    this.ctrl = ctrlMap(this.component, props)
-  }
-
   shouldComponentUpdate({ children, onChange, style, ...nextProps }) {
     const oldProps = omit(this.props, ['children', 'onChange', 'style'])
     return shallowCompare(oldProps, nextProps)
   }
 
   render() {
+    const { component } = this.props
+    this.component = component || componentMap(this.props)
+    this.ctrl = ctrlMap(this.component, this.props)
+
     const { children, onChange, ...props } = this.props
     const Component = this.component
     return <Component {...this.ctrl} {...props} />

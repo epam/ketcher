@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import 'src/style/variables';
 
 .suggestList {
-  border: 1px solid #3297fd;
+  border: 1px solid @main-color;
   position: absolute;
   background-color: white;
   margin-left: 3px;
@@ -25,6 +26,6 @@
 }
 
 .suggestList li:hover {
-  background-color: #3297fd;
+  background-color: @color-gray;
   color: white;
 }

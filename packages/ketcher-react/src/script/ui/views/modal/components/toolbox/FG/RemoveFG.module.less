@@ -1,12 +1,13 @@
+@import '../../../../../../../style/variables';
+
 .window {
   display: flex;
   width: 21em;
   flex-direction: column;
-  background: #f3f3f3;
+  background: @gray-background-color;
   border-radius: 10px;
   padding: 5px;
-  font-family: Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
-    Arial, sans-serif;
+  font-family: @Inter;
 
   & > * {
     margin: 10px 10px;
@@ -15,7 +16,7 @@
 
 .question {
   text-align: left;
-  color: gray;
+  color: @main-font-color;
 }
 
 .header {
@@ -39,20 +40,20 @@
 }
 
 .buttonOk {
-  background: #343434;
-  color: #fff;
-}
-
-.buttonOk:hover {
-  background: #000;
+  background: @primary-button-color;
+  color: @primary-button-text;
+  &:hover {
+    background: @primary-button-hover-color;
+  }
 }
 
 .buttonCancel {
   margin-right: 15px;
-  background: #d1d5e3;
-  color: #000;
-}
-
-.buttonCancel:hover {
-  background: #aaadb9;
+  background: transparent;
+  border: 1px solid @secondary-button-color;
+  color: @secondary-button-color;
+  &:hover {
+    border-color: @secondary-button-hover-color;
+    color: @secondary-button-hover-color;
+  }
 }

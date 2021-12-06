@@ -66,17 +66,17 @@ const render: {
 } = {
   showValenceWarnings: {
     title: 'Show valence warnings',
-    type: 'boolean',
+    type: 'slider',
     default: true
   },
   atomColoring: {
     title: 'Atom coloring',
-    type: 'boolean',
+    type: 'slider',
     default: true
   },
   showStereoFlags: {
     title: 'Show the Stereo flags',
-    type: 'boolean',
+    type: 'slider',
     default: true
   },
   stereoLabelStyle: {
@@ -118,7 +118,7 @@ const render: {
   },
   autoFadeOfStereoLabels: {
     title: 'Auto fade And/Or center labels',
-    type: 'boolean',
+    type: 'slider',
     default: true
   },
   absFlagLabel: {
@@ -163,17 +163,17 @@ const render: {
   // Atom
   carbonExplicitly: {
     title: 'Display carbon explicitly',
-    type: 'boolean',
+    type: 'slider',
     default: false
   },
   showCharge: {
     title: 'Display charge',
-    type: 'boolean',
+    type: 'slider',
     default: true
   },
   showValence: {
     title: 'Display valence',
-    type: 'boolean',
+    type: 'slider',
     default: true
   },
   showHydrogenLabels: {
@@ -184,7 +184,7 @@ const render: {
   // Bonds
   aromaticCircle: {
     title: 'Aromatic Bonds as circle',
-    type: 'boolean',
+    type: 'slider',
     default: true
   },
   doubleBondWidth: {
@@ -219,27 +219,27 @@ const server: {
 } = {
   'smart-layout': {
     title: 'Smart-layout',
-    type: 'boolean',
+    type: 'slider',
     default: true
   },
   'ignore-stereochemistry-errors': {
     title: 'Ignore stereochemistry errors',
-    type: 'boolean',
+    type: 'slider',
     default: true
   },
   'mass-skip-error-on-pseudoatoms': {
     title: 'Ignore pseudoatoms at mass',
-    type: 'boolean',
+    type: 'slider',
     default: false
   },
   'gross-formula-add-rsites': {
     title: 'Add Rsites at mass calculation',
-    type: 'boolean',
+    type: 'slider',
     default: true
   },
   'gross-formula-add-isotopes': {
     title: 'Add Isotopes at mass calculation',
-    type: 'boolean',
+    type: 'slider',
     default: true
   }
 }
@@ -254,22 +254,22 @@ const debug: {
 } = {
   showAtomIds: {
     title: 'Show atom Ids',
-    type: 'boolean',
+    type: 'slider',
     default: false
   },
   showBondIds: {
     title: 'Show bonds Ids',
-    type: 'boolean',
+    type: 'slider',
     default: false
   },
   showHalfBondIds: {
     title: 'Show half bonds Ids',
-    type: 'boolean',
+    type: 'slider',
     default: false
   },
   showLoopIds: {
     title: 'Show loop Ids',
-    type: 'boolean',
+    type: 'slider',
     default: false
   }
 }

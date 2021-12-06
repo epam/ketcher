@@ -20,6 +20,7 @@ import { Dialog } from '../../../../components'
 import OpenButton from '../../../../../component/view/openbutton'
 import classes from './Open.module.less'
 import { formatProperties } from 'ketcher-core'
+import ClipArea from '../../../../../component/cliparea/cliparea'
 
 interface OpenProps {
   server: any
@@ -81,6 +82,10 @@ const Open: FC<Props> = props => {
         />
         Load as a fragment and copy to the Clipboard
       </label>
+      <ClipArea
+        focused={() => true}
+        onCopy={() => ({ 'text/plain': structStr })}
+      />
     </Dialog>
   )
 }

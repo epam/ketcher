@@ -14,25 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../toolbar';
-
-.root {
-  .toolbar();
-  .vertical-toolbar();
-}
-
-.buttons {
-  overflow: hidden;
-  scroll-behavior: smooth;
-}
-
-.listener {
-  display: flex;
-  margin-bottom: 4px;
-  border-bottom: 1px solid @border-color;
-  padding-bottom: 5px;
-}
-
-.borderOff {
-  border-bottom: none !important;
-}
+export { default } from './Sidebar'

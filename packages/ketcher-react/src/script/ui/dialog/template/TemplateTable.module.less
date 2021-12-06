@@ -68,7 +68,7 @@
     border-radius: 3px;
     font-size: 10px;
     color: darken(@border-color, 30%);
-    background-color: white;
+    background-color: @light-background-color;
     content: attr(title);
     overflow: hidden;
     width: content-box;
@@ -90,15 +90,15 @@
 
     margin: 0 0 0 0;
     border-radius: 0;
-    border: 1px solid #ccc;
+    border: 1px solid @border-color;
   }
   .deleteButton {
     margin: 0 0 0 0;
     border-radius: 0;
-    border: 1px solid #ccc;
+    border: 1px solid @border-color;
   }
 }
 div.struct {
   padding: 0; // TODO: tmp hack to fit viewbox
-  background-color: white;
+  background-color: @light-background-color;
 }

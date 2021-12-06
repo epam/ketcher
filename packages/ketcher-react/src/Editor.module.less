@@ -36,7 +36,7 @@
   position: relative;
   font: @base-size FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
     Arial, sans-serif;
-  background-color: white;
+  background-color: @light-background-color;
   color: @main-color;
   min-width: 640px;
   min-height: 400px;
@@ -54,17 +54,16 @@
     border-radius: 4px;
     display: inline-block;
     vertical-align: middle;
-    background: white;
+    background: @light-background-color;
     line-height: 20 / 14;
     height: 2.4em;
     padding: 0.35em 0.15em 0.35em 0.3em;
     border: none;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     box-sizing: border-box;
 
     &:active,
     &:focus {
-      outline: 1px solid @active-color;
+      outline: 1px solid @main-color;
     }
 
     &:hover,
@@ -76,7 +75,7 @@
     &[readonly],
     fieldset[disabled] & {
       cursor: not-allowed;
-      background: #efefef;
+      background: @gray-background-color;
       opacity: 0.6;
     }
   }
@@ -88,7 +87,7 @@
     border-radius: 4px;
     display: inline-block;
     vertical-align: middle;
-    background: white;
+    background: @light-background-color;
     line-height: 20 / 14;
     height: 32px;
     padding: 0.35em 0.15em 0.35em 0.3em;

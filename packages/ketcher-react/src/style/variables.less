@@ -13,12 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
- 
-// new styles
-@button-hover-color: #ddd;
+
+//Fonts
+@header-font-size: 14px;
+@header-line-height: 17px;
+
+@regular-font-size: 12px;
+@regular-line-height: 14px;
+
+@Inter: Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
+Arial, sans-serif;
+
+//Modal margin
+@margin-top-bottom: 10px;
+@margin-left-right: 15px;
+
+//Colors
 @main-font-color: #585858;
-@main-dark-color: #343434;
+
+@color-gray1: #343434;
+@color-gray: #DDDDDD;
+@color-black: #000000;
+@color-gray2: #585858;
+@color-blue: #f6f9ff;
+@color-white: #ffffff;
+@color-blue2: #3E7BFA;
+
+//using for changing color of SVG for checkboxes and radiobuttons
+@input-color: escape(@color-gray1);
+
 @light-background-color: #fff;
+@gray-background-color: #F3F3F3;;
+
+// Buttons
+@primary-button-color: @color-gray1;
+@primary-button-hover-color: @color-black;
+@primary-button-disabled-color: @color-gray;
+@primary-button-text: #fff;
+
+@secondary-button-color: @color-gray1;
+@secondary-button-hover-color: @color-black;
+@secondary-button-disabled-color: @color-gray;
 
 // old styles 
 @static-path: '.';
@@ -27,14 +62,7 @@
 @active-color: #1a7090;
 @hover-color: #5e5e5e;
 @border-color: #ccc;
-@error-color: #ff5555;
-@color-gray1: #343434;
-@color-gray: #c4c4c4;
-@color-black: #000000;
-@color-gray2: #585858;
-@color-blue: #f6f9ff;
-@color-white: #ffffff;
-@color-blue2: #3E7BFA;
+@error-color: #FF4A4A;
 
 @disabled-color: #baa;
 @form-hover-background: lighten(@border-color, 15%);

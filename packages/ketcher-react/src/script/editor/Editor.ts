@@ -189,7 +189,12 @@ class Editor implements KetcherEditor {
     // TODO: when all tools are refactored to classes, remove this check
     // and use new keyword for every tool
     let tool
-    if (name === 'select' || name === 'eraser' || name === 'bond') {
+    if (
+      name === 'select' ||
+      name === 'eraser' ||
+      name === 'bond' ||
+      name === 'chain'
+    ) {
       tool = new toolMap[name](this, opts)
     } else {
       tool = toolMap[name](this, opts)

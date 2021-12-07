@@ -501,7 +501,7 @@ class SelectTool {
       ci.map === 'sgroupData'
     ) {
       editor.selection(closestToSel(ci))
-      sgroupDialog(editor, ci.id)
+      sgroupDialog(editor, ci.id, null)
     } else if (ci.map === 'texts') {
       editor.selection(closestToSel(ci))
       const text = molecule.texts.get(ci.id)

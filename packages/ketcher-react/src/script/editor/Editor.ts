@@ -198,7 +198,8 @@ class Editor implements KetcherEditor {
       'rotate',
       'atom',
       'apoint',
-      'template'
+      'template',
+      'sgroup'
     ]
     if (toolsAsClasses.includes(name)) {
       tool = new toolMap[name](this, opts)

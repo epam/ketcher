@@ -194,7 +194,8 @@ class Editor implements KetcherEditor {
       name === 'eraser' ||
       name === 'bond' ||
       name === 'chain' ||
-      name === 'charge'
+      name === 'charge' ||
+      name === 'rotate'
     ) {
       tool = new toolMap[name](this, opts)
     } else {

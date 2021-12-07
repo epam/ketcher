@@ -174,6 +174,7 @@ const Text = (props: TextProps) => {
         <SpecialSymbolsButton
           editorState={editorState}
           setEditorState={setEditorState}
+          styles={currentStyle}
         />
       </ul>
       <div className={classes.textEditorInput}>

@@ -20,7 +20,7 @@ import classes from './SpecialSymbolsButton.module.less'
 import Icon from '../../../../../component/view/icon'
 import { EditorState, Modifier } from 'draft-js'
 
-const SpecialSymbolsButton = ({ editorState, setEditorState }) => {
+const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
   const [showSpecialSymbols, setShowSpecialSymbols] = useState(false)
 
   const handleClose = event => {
@@ -35,7 +35,7 @@ const SpecialSymbolsButton = ({ editorState, setEditorState }) => {
     }
   }
 
-  const addText = (e, value) => {
+  const addSymbol = (e, value) => {
     e.preventDefault()
     const selection = editorState.getSelection()
     const contentState = editorState.getCurrentContent()
@@ -43,7 +43,8 @@ const SpecialSymbolsButton = ({ editorState, setEditorState }) => {
     const nextContentState = Modifier.replaceText(
       contentState,
       selection,
-      value
+      value,
+      styles
     )
     nextEditorState = EditorState.push(
       editorState,
@@ -64,9 +65,9 @@ const SpecialSymbolsButton = ({ editorState, setEditorState }) => {
         }}
         className={classes.textButton}
       >
-        <Icon name="symbols" />
+        <Icon name="text-special-symbols" />
       </button>
-      {showSpecialSymbols && <SpecialSymbolsList select={addText} />}
+      {showSpecialSymbols && <SpecialSymbolsList select={addSymbol} />}
     </div>
   )
 }

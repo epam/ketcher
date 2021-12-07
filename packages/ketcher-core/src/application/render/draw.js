@@ -34,18 +34,16 @@ function rectangle(paper, pos, options) {
   )
 }
 
-function rectangleWithAngle(paper, a, b, length, angle, options) {
-  const wOffset = 5
-  const hOffset = 8
-
+function rectangleWithAngle(paper, a, b, length, angle, options, isElliptical) {
   const b0x = a.x + length
+  const [wOffset, hOffset] = [5, isElliptical ? length : 8]
 
   const path =
     `M${tfx(a.x - wOffset)},${tfx(a.y)}` +
-    `L${tfx(a.x - wOffset)},${tfx(a.y + hOffset)}` +
-    `L${tfx(b0x + wOffset)},${tfx(a.y + hOffset)}` +
+    `L${tfx(a.x - wOffset)},${tfx(a.y - hOffset)}` +
     `L${tfx(b0x + wOffset)},${tfx(a.y - hOffset)}` +
-    `L${tfx(a.x - wOffset)},${tfx(a.y - hOffset)}Z`
+    `L${tfx(b0x + wOffset)},${tfx(a.y + (!isElliptical && hOffset))}` +
+    `L${tfx(a.x - wOffset)},${tfx(a.y + (!isElliptical && hOffset))}Z`
 
   const transformedPath = svgPath(path).rotate(angle, a.x, a.y).toString()
 

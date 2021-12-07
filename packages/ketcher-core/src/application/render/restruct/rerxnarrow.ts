@@ -153,7 +153,8 @@ class ReRxnArrow extends ReObject {
           endPoint,
           arrowParams.length,
           arrowParams.angle,
-          options
+          options,
+          this.item.mode.includes('elliptical')
         )
         break
       case 'arrow':

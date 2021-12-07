@@ -15,74 +15,79 @@
  ***************************************************************************/
 
 import { fromAtomsAttrs, FunctionalGroup } from 'ketcher-core'
+import Editor from '../Editor'
 
-function APointTool(editor) {
-  if (!(this instanceof APointTool)) return new APointTool(editor)
+class APointTool {
+  editor: Editor
 
-  this.editor = editor
-  this.sgroups = editor.render.ctab.sgroups
-  this.struct = editor.render.ctab
-  this.molecule = editor.render.ctab.molecule
-  this.functionalGroups = this.molecule.functionalGroups
-  this.editor.selection(null)
-}
-
-APointTool.prototype.mousemove = function (event) {
-  const struct = this.editor.render.ctab.molecule
-  const ci = this.editor.findItem(event, ['atoms'])
-  if (ci) {
-    const atom = struct.atoms.get(ci.id)
-    if (atom.label !== 'R#' && atom.rglabel === null) this.editor.hover(ci)
-  } else {
-    this.editor.hover(null)
+  constructor(editor) {
+    this.editor = editor
+    this.editor.selection(null)
   }
-}
 
-APointTool.prototype.click = function (event) {
-  var editor = this.editor
-  var struct = editor.render.ctab.molecule
-  var ci = editor.findItem(event, ['atoms'])
-  const atomResult = []
-  const result = []
-  if (ci && this.functionalGroups.size && ci.map === 'atoms') {
-    const atomId = FunctionalGroup.atomsInFunctionalGroup(
-      this.functionalGroups,
-      ci.id
-    )
-    if (atomId !== null) atomResult.push(atomId)
-  }
-  if (atomResult.length > 0) {
-    for (let id of atomResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-        this.functionalGroups,
-        id
-      )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
-      }
+  mousemove(event) {
+    const struct = this.editor.render.ctab.molecule
+    const ci = this.editor.findItem(event, ['atoms'], null)
+    if (ci) {
+      const atom = struct.atoms.get(ci.id)
+      if (atom?.label !== 'R#' && atom?.rglabel === null) this.editor.hover(ci)
+    } else {
+      this.editor.hover(null)
     }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
   }
 
-  if (ci && ci.map === 'atoms') {
-    this.editor.hover(null)
-    var atom = struct.atoms.get(ci.id)
-    if (atom.label === 'R#' && atom.rglabel !== null) return
-    var res = editor.event.elementEdit.dispatch({
-      attpnt: atom.attpnt
-    })
-    Promise.resolve(res)
-      .then(newatom => {
-        if (atom.attpnt !== newatom.attpnt) {
-          var action = fromAtomsAttrs(editor.render.ctab, ci.id, newatom)
-          editor.update(action)
+  click(event) {
+    const editor = this.editor
+    const struct = editor.render.ctab.molecule
+    const functionalGroups = struct.functionalGroups
+    const ci = editor.findItem(event, ['atoms'], null)
+    const atomResult: Array<any> = []
+    const result: Array<any> = []
+    if (ci && functionalGroups.size && ci.map === 'atoms') {
+      const atomId = FunctionalGroup.atomsInFunctionalGroup(
+        functionalGroups,
+        ci.id
+      )
+      if (atomId !== null) atomResult.push(atomId)
+    }
+    if (atomResult.length > 0) {
+      for (let id of atomResult) {
+        const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+          functionalGroups,
+          id
+        )
+        if (fgId !== null && !result.includes(fgId)) {
+          result.push(fgId)
         }
+      }
+      this.editor.event.removeFG.dispatch({ fgIds: result })
+      return
+    }
+
+    if (ci && ci.map === 'atoms') {
+      this.editor.hover(null)
+      const atom = struct.atoms.get(ci.id)
+      if (atom?.label === 'R#' && atom.rglabel !== null) return
+      const res = editor.event.elementEdit.dispatch({
+        attpnt: atom?.attpnt
       })
-      .catch(() => null) // w/o changes
+      Promise.resolve(res)
+        .then(newatom => {
+          if (atom?.attpnt !== newatom.attpnt) {
+            const action = fromAtomsAttrs(
+              editor.render.ctab,
+              ci.id,
+              newatom,
+              null
+            )
+            editor.update(action)
+          }
+        })
+        .catch(() => null) // w/o changes
+      return true
+    }
     return true
   }
-  return true
 }
 
 export default APointTool

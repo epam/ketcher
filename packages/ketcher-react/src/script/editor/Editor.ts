@@ -201,7 +201,8 @@ class Editor implements KetcherEditor {
       'template',
       'sgroup',
       'rgroupfragment',
-      'rgroupatom'
+      'rgroupatom',
+      'paste'
     ]
     if (toolsAsClasses.includes(name)) {
       tool = new toolMap[name](this, opts)

@@ -1,7 +1,3 @@
 {
-  "extends": [
-    "stylelint-config-standard",
-    "stylelint-config-recommended-less",
-    "stylelint-prettier/recommended"
-  ]
+  "extends": ["stylelint-config-standard", "stylelint-prettier/recommended"]
 }

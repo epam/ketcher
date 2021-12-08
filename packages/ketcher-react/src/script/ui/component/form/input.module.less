@@ -4,11 +4,13 @@
   .fieldSetLabel {
     position: relative;
   }
+
   input[type='radio'],
   input[type='checkbox'] {
     position: absolute;
     opacity: 0;
   }
+
   input[type='checkbox'] + .customCheckbox {
     display: inline-block;
     width: 16px;
@@ -59,7 +61,6 @@
     right: 0;
     bottom: 0;
     background-color: @color-gray;
-    -webkit-transition: 0.4s;
     transition: 0.4s;
     border-radius: 34px;
   }
@@ -73,7 +74,6 @@
     left: 2px;
     bottom: 2px;
     background-color: @color-gray1;
-    -webkit-transition: 0.4s;
     transition: 0.4s;
   }
 
@@ -87,8 +87,8 @@
 
   input:checked + span::before {
     background-color: @color-white;
-    -webkit-transform: translateX(12px);
-    -ms-transform: translateX(12px);
+    transform: translateX(12px);
+    transform: translateX(12px);
     transform: translateX(12px);
   }
 }

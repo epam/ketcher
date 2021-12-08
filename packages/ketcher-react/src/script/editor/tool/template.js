@@ -48,7 +48,7 @@ function TemplateTool(editor, tmpl) {
   frag.rescale()
 
   const xy0 = new Vec2()
-  frag.atoms.forEach(atom => {
+  frag.atoms.forEach((atom) => {
     xy0.add_(atom.pp) // eslint-disable-line no-underscore-dangle
   })
 
@@ -188,12 +188,12 @@ TemplateTool.prototype.mousedown = function (event) {
 
     if (loop >= 0) {
       const loopHbs = molecule.loops.get(loop).hbs
-      loopHbs.forEach(hb => {
+      loopHbs.forEach((hb) => {
         xy0.add_(molecule.atoms.get(molecule.halfBonds.get(hb).begin).pp) // eslint-disable-line no-underscore-dangle, max-len
         count++
       })
     } else {
-      frIds.forEach(id => {
+      frIds.forEach((id) => {
         xy0.add_(molecule.atoms.get(id).pp) // eslint-disable-line no-underscore-dangle
         count++
       })

@@ -98,7 +98,7 @@ function getElementsInRectangle(restruct, p0, p1) {
   restruct.simpleObjects.forEach((item, id) => {
     const referencePoints = item.getReferencePoints(true)
     const referencePointInRectangle = referencePoints.find(
-      point => point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1
+      (point) => point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1
     )
     if (referencePointInRectangle) simpleObjectsList.push(id)
   })
@@ -124,7 +124,7 @@ function getElementsInRectangle(restruct, p0, p1) {
   const textsList = []
   restruct.texts.forEach((item, id) => {
     const referencePoints = item.getReferencePoints()
-    const referencePointInRectangle = referencePoints.find(point => {
+    const referencePointInRectangle = referencePoints.find((point) => {
       return point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1
     })
 
@@ -200,7 +200,7 @@ function getElementsInPolygon(restruct, rr) {
 
   restruct.rxnArrows.forEach((item, id) => {
     const referencePoints = item.getReferencePoints(true)
-    const referencePointInPolygon = referencePoints.find(point =>
+    const referencePointInPolygon = referencePoints.find((point) =>
       isPointInPolygon(r, point)
     )
     if (referencePointInPolygon) rxnArrowsList.push(id)
@@ -212,7 +212,7 @@ function getElementsInPolygon(restruct, rr) {
 
   restruct.simpleObjects.forEach((item, id) => {
     const referencePoints = item.getReferencePoints(true)
-    const referencePointInPolygon = referencePoints.find(point =>
+    const referencePointInPolygon = referencePoints.find((point) =>
       isPointInPolygon(r, point)
     )
     if (referencePointInPolygon) simpleObjectsList.push(id)
@@ -220,7 +220,7 @@ function getElementsInPolygon(restruct, rr) {
 
   restruct.texts.forEach((item, id) => {
     const referencePoints = item.getReferencePoints()
-    const referencePointInPolygon = referencePoints.find(point =>
+    const referencePointInPolygon = referencePoints.find((point) =>
       isPointInPolygon(r, point)
     )
 

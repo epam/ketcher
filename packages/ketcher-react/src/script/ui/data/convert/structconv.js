@@ -105,7 +105,7 @@ function toAtom(atom) {
 function fromAtomList(satom) {
   return {
     type: satom.atomList.notList ? 'not-list' : 'list',
-    values: satom.atomList.ids.map(i => Elements.get(i).label)
+    values: satom.atomList.ids.map((i) => Elements.get(i).label)
   }
 }
 
@@ -115,7 +115,7 @@ function toAtomList(atom) {
     label: 'L#',
     atomList: new AtomList({
       notList: atom.type === 'not-list',
-      ids: atom.values.map(el => Elements.get(el).number)
+      ids: atom.values.map((el) => Elements.get(el).number)
     })
   }
 }
@@ -189,7 +189,7 @@ function fromRlabel(rg) {
 
 function toRlabel(values) {
   let res = 0
-  values.forEach(val => {
+  values.forEach((val) => {
     const rgi = val - 1
     res |= 1 << rgi
   })

@@ -22,8 +22,8 @@ const SaveImageTab = ({ changeImageFormat }) => {
     { extension: 'png', text: 'PNG Image' }
   ]
 
-  const renderOptions = formats => {
-    return formats.map(format => {
+  const renderOptions = (formats) => {
+    return formats.map((format) => {
       const { extension, text } = format
       return (
         <option key={extension} value={extension}>

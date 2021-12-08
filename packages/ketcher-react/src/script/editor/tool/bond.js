@@ -166,7 +166,7 @@ BondTool.prototype.mousemove = function (event) {
         }
         if (endAtom && fGroup && endAtom.id === fGroupAtoms[0]) {
           const atomNeighbours = this.molecule.atomGetNeighbors(endAtom.id)
-          atomNeighbours.forEach(nei => {
+          atomNeighbours.forEach((nei) => {
             !fGroupAtoms.includes(nei.aid) &&
               !extraNeighbour.includes(nei.aid) &&
               extraNeighbour.push(nei.aid)

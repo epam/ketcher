@@ -39,7 +39,7 @@ function setupEditor(editor, props, oldProps = {}) {
 
   if (oldProps.options && options !== oldProps.options) editor.options(options)
 
-  Object.keys(editor.event).forEach(name => {
+  Object.keys(editor.event).forEach((name) => {
     const eventName = `on${upperFirst(name)}`
 
     if (props[eventName] !== oldProps[eventName]) {
@@ -51,7 +51,7 @@ function setupEditor(editor, props, oldProps = {}) {
 }
 
 function removeEditorHandlers(editor, props) {
-  Object.keys(editor.event).forEach(name => {
+  Object.keys(editor.event).forEach((name) => {
     const eventName = `on${upperFirst(name)}`
 
     if (props[eventName]) editor.event[name].remove(props[eventName])
@@ -80,7 +80,7 @@ class StructEditor extends Component {
     setupEditor(this.editor, this.props)
     if (this.props.onInit) this.props.onInit(this.editor)
 
-    this.editor.event.message.add(msg => {
+    this.editor.event.message.add((msg) => {
       const el = this.logRef.current
       if (msg.info) {
         try {
@@ -134,7 +134,7 @@ class StructEditor extends Component {
     return (
       <Tag
         className={clsx(classes.canvas, className)}
-        onMouseDown={event => event.preventDefault()}
+        onMouseDown={(event) => event.preventDefault()}
         {...props}
       >
         <ContextMenuTrigger
@@ -147,7 +147,7 @@ class StructEditor extends Component {
           <div
             ref={this.editorRef}
             className={clsx(classes.intermediateCanvas)}
-            onMouseDown={event => event.preventDefault()}
+            onMouseDown={(event) => event.preventDefault()}
           >
             {/* svg here */}
           </div>

@@ -31,18 +31,18 @@ class ClipArea extends Component {
     this.target = this.props.target || el.parentNode
 
     this.listeners = {
-      mouseup: event => {
+      mouseup: (event) => {
         if (
           el === event.target ||
           (!isActiveElement(event.target) && this.props.focused())
         )
           autofocus(el)
       },
-      mousedown: event => {
+      mousedown: (event) => {
         if (event.shiftKey && !isActiveElement(event.target))
           event.preventDefault()
       },
-      copy: event => {
+      copy: (event) => {
         if (this.props.focused() && this.props.onCopy) {
           const data = this.props.onCopy()
 
@@ -51,7 +51,7 @@ class ClipArea extends Component {
           event.preventDefault()
         }
       },
-      cut: event => {
+      cut: (event) => {
         if (this.props.focused() && this.props.onCut) {
           const data = this.props.onCut()
 
@@ -60,7 +60,7 @@ class ClipArea extends Component {
           event.preventDefault()
         }
       },
-      paste: event => {
+      paste: (event) => {
         if (this.props.focused() && this.props.onPaste) {
           const data = paste(event.clipboardData, this.props.formats)
 
@@ -71,7 +71,7 @@ class ClipArea extends Component {
       }
     }
 
-    Object.keys(this.listeners).forEach(en => {
+    Object.keys(this.listeners).forEach((en) => {
       this.target.addEventListener(en, this.listeners[en])
     })
   }
@@ -81,7 +81,7 @@ class ClipArea extends Component {
   }
 
   componentWillUnmount() {
-    Object.keys(this.listeners).forEach(en => {
+    Object.keys(this.listeners).forEach((en) => {
       this.target.removeEventListener(en, this.listeners[en])
     })
   }
@@ -117,7 +117,7 @@ function copy(cb, data) {
     let curFmt = null
     cb.setData('text/plain', data['text/plain'])
     try {
-      Object.keys(data).forEach(fmt => {
+      Object.keys(data).forEach((fmt) => {
         curFmt = fmt
         cb.setData(fmt, data[fmt])
       })

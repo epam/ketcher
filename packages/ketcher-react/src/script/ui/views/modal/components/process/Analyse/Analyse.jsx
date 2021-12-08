@@ -28,7 +28,7 @@ import { range } from 'lodash/fp'
 
 function roundOff(value, round) {
   if (typeof value === 'number') return value.toFixed(round)
-  return value.replace(/[0-9]*\.[0-9]+/g, str => (+str).toFixed(round))
+  return value.replace(/[0-9]*\.[0-9]+/g, (str) => (+str).toFixed(round))
 }
 
 class AnalyseDialog extends Component {
@@ -76,7 +76,7 @@ class AnalyseDialog extends Component {
               round: 'roundElAnalysis',
               withSelector: false
             }
-          ].map(item => (
+          ].map((item) => (
             <li key={item.key}>
               <div className={classes.wrapperInput}>
                 <label>{item.name}:</label>
@@ -110,7 +110,7 @@ class AnalyseDialog extends Component {
                       enum: range(0, 8)
                     }}
                     value={round[item.round]}
-                    onChange={val => onChangeRound(item.round, val)}
+                    onChange={(val) => onChangeRound(item.round, val)}
                   />
                 </div>
               ) : null}
@@ -122,7 +122,7 @@ class AnalyseDialog extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   values: state.options.analyse.values,
   loading: state.options.analyse.loading,
   round: {
@@ -132,7 +132,7 @@ const mapStateToProps = state => ({
   }
 })
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   onAnalyse: () => dispatch(analyse()),
   onChangeRound: (roundName, val) => dispatch(changeRound(roundName, val))
 })

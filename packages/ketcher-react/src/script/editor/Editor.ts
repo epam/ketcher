@@ -81,9 +81,9 @@ function selectStereoFlagsIfNecessary(
 
   let stereoFlags: number[] = []
 
-  Object.keys(atomsOfFragments).forEach(fragId => {
+  Object.keys(atomsOfFragments).forEach((fragId) => {
     let shouldSelSFlag: boolean = true
-    atomsOfFragments[fragId].forEach(atomId => {
+    atomsOfFragments[fragId].forEach((atomId) => {
       if (!expAtoms.includes(atomId)) shouldSelSFlag = false
     })
     shouldSelSFlag && stereoFlags.push(Number(fragId))
@@ -280,7 +280,7 @@ class Editor implements KetcherEditor {
     if (ci) {
       let res: Selection = {}
 
-      Object.keys(ci).forEach(key => {
+      Object.keys(ci).forEach((key) => {
         if (ci[key].length > 0)
           // TODO: deep merge
           res[key] = ci[key].slice()
@@ -332,8 +332,8 @@ class Editor implements KetcherEditor {
     let item: any = null
 
     if (ci.map === 'merge') {
-      Object.keys(ci.items).forEach(mp => {
-        ci.items[mp].forEach(dstId => {
+      Object.keys(ci.items).forEach((mp) => {
+        ci.items[mp].forEach((dstId) => {
           item = render.ctab[mp].get(dstId)!
 
           if (item) {
@@ -448,7 +448,7 @@ class Editor implements KetcherEditor {
 
     switch (eventName) {
       case 'change':
-        const subscribeFuncWrapper = action =>
+        const subscribeFuncWrapper = (action) =>
           customOnChangeHandler(action, handler)
         subscriber.handler = subscribeFuncWrapper
         this.event[eventName].add(subscribeFuncWrapper)
@@ -487,7 +487,7 @@ class Editor implements KetcherEditor {
 
     // "auto-select" the atoms for the bonds in selection
     if (res.bonds) {
-      res.bonds.forEach(bid => {
+      res.bonds.forEach((bid) => {
         const bond = struct.bonds.get(bid)!
         res.atoms = res.atoms || []
         if (res.atoms.indexOf(bond.begin) < 0) {
@@ -568,12 +568,12 @@ function domEventSetup(editor: Editor, clientArea) {
     'mousemove',
     'mouseup',
     'mouseleave'
-  ].forEach(eventName => {
+  ].forEach((eventName) => {
     editor.event[eventName] = new DOMSubscription()
     const subs = editor.event[eventName]
     clientArea.addEventListener(eventName, subs.dispatch.bind(subs))
 
-    subs.add(event => {
+    subs.add((event) => {
       if (eventName !== 'mouseup' && eventName !== 'mouseleave') {
         // to complete drag actions
         if (

@@ -100,7 +100,7 @@ function propsDialog(editor, id, pos) {
   })
 
   Promise.resolve(res)
-    .then(elem => {
+    .then((elem) => {
       // TODO review: using Atom.attrlist as a source of default property values
       elem = Object.assign({}, Atom.attrlist, elem)
 

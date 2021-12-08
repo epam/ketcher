@@ -41,7 +41,7 @@ export interface Template {
   }
 }
 
-const getSettingsSelector = state => state.options.settings
+const getSettingsSelector = (state) => state.options.settings
 
 function tmplName(tmpl: Template, i: number): string {
   return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`
@@ -62,10 +62,10 @@ const RenderTmpl: FC<{
   )
 }
 
-const TemplateTable: FC<TemplateTableProps> = props => {
+const TemplateTable: FC<TemplateTableProps> = (props) => {
   const { templates, selected, onSelect, onDelete, onAttach } = props
   const ITEMS_COUNT = templates ? templates.length : 0
-  const options = useSelector(state => getSettingsSelector(state))
+  const options = useSelector((state) => getSettingsSelector(state))
 
   return !ITEMS_COUNT ? (
     <EmptySearchResult textInfo="No items found" />

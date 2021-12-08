@@ -30,7 +30,7 @@ const DefaultMultiTool = (props: Props) => {
 
   return (
     <>
-      {options.map(toolbarItem => {
+      {options.map((toolbarItem) => {
         const currentStatus = status[toolbarItem.id]
         return (
           <ActionButton

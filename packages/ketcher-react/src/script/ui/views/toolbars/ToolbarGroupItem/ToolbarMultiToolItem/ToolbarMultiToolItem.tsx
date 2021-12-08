@@ -78,7 +78,7 @@ const ToolbarMultiToolItem = (props: Props) => {
   let currentId = id
 
   const selectedTool = options.find(
-    toolbarItem => status[toolbarItem.id]?.selected
+    (toolbarItem) => status[toolbarItem.id]?.selected
   )
   if (selectedTool) {
     currentId = selectedTool.id
@@ -91,7 +91,7 @@ const ToolbarMultiToolItem = (props: Props) => {
   selected = selected || Boolean(currentStatus?.selected)
 
   const allInnerItemsHidden: boolean = options.every(
-    option => status[option.id]?.hidden
+    (option) => status[option.id]?.hidden
   )
 
   const displayMultiToolItem: boolean = !(
@@ -100,7 +100,7 @@ const ToolbarMultiToolItem = (props: Props) => {
 
   if (!currentStatus && options.length) {
     currentId =
-      options.filter(option => !status[option.id]?.hidden)[0]?.id ||
+      options.filter((option) => !status[option.id]?.hidden)[0]?.id ||
       options[0].id
   }
 

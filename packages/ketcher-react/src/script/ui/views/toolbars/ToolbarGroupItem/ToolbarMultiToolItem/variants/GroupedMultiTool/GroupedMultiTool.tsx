@@ -41,24 +41,26 @@ const GroupedMultiTool = (props: Props) => {
 
   return (
     <>
-      {groups.map(descriptor => (
+      {groups.map((descriptor) => (
         <div className={classes.group} key={descriptor.start}>
-          {options.slice(descriptor.start, descriptor.end).map(toolbarItem => {
-            const currentStatus = status[toolbarItem.id]
-            return (
-              <ActionButton
-                key={toolbarItem.id}
-                name={toolbarItem.id}
-                action={action[toolbarItem.id]}
-                // @ts-ignore
-                status={currentStatus}
-                selected={!!currentStatus?.selected}
-                disableableButtons={disableableButtons}
-                indigoVerification={indigoVerification}
-                onAction={onAction}
-              />
-            )
-          })}
+          {options
+            .slice(descriptor.start, descriptor.end)
+            .map((toolbarItem) => {
+              const currentStatus = status[toolbarItem.id]
+              return (
+                <ActionButton
+                  key={toolbarItem.id}
+                  name={toolbarItem.id}
+                  action={action[toolbarItem.id]}
+                  // @ts-ignore
+                  status={currentStatus}
+                  selected={!!currentStatus?.selected}
+                  disableableButtons={disableableButtons}
+                  indigoVerification={indigoVerification}
+                  onAction={onAction}
+                />
+              )
+            })}
         </div>
       ))}
     </>

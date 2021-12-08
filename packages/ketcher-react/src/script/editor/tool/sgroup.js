@@ -290,7 +290,7 @@ SGroupTool.prototype.mouseup = function (event) {
   }
 
   if (atomsResult.length) {
-    atomsResult.forEach(id => {
+    atomsResult.forEach((id) => {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
         id
@@ -303,7 +303,7 @@ SGroupTool.prototype.mouseup = function (event) {
     })
   }
   if (bondsResult.length) {
-    bondsResult.forEach(id => {
+    bondsResult.forEach((id) => {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,
         this.functionalGroups,
@@ -416,7 +416,7 @@ export function sgroupDialog(editor, id, defaultType) {
   })
 
   Promise.resolve(res)
-    .then(newSg => {
+    .then((newSg) => {
       // TODO: check before signal
       if (
         newSg.type !== 'DAT' && // when data s-group separates
@@ -468,7 +468,7 @@ function getContextBySgroup(restruct, sgAtoms) {
   const atomSet = new Pile(sgAtoms)
 
   const sgBonds = Array.from(struct.bonds.values()).filter(
-    bond => atomSet.has(bond.begin) && atomSet.has(bond.end)
+    (bond) => atomSet.has(bond.begin) && atomSet.has(bond.end)
   )
 
   return anyChainedBonds(sgBonds) ? SgContexts.Group : SgContexts.Bond
@@ -479,7 +479,7 @@ function getContextBySelection(restruct, selection) {
 
   if (selection.atoms && !selection.bonds) return SgContexts.Atom
 
-  const bonds = selection.bonds.map(bondid => struct.bonds.get(bondid))
+  const bonds = selection.bonds.map((bondid) => struct.bonds.get(bondid))
 
   if (!anyChainedBonds(bonds)) return SgContexts.Bond
 
@@ -487,7 +487,7 @@ function getContextBySelection(restruct, selection) {
 
   const atomSet = new Pile(selection.atoms)
   const allBondsSelected = bonds.every(
-    bond => atomSet.has(bond.begin) && atomSet.has(bond.end)
+    (bond) => atomSet.has(bond.begin) && atomSet.has(bond.end)
   )
 
   if (singleComponentSelected(restruct, selection.atoms) && allBondsSelected)

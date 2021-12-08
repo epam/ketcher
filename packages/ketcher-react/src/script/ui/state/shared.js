@@ -74,11 +74,11 @@ export function load(struct, options) {
 
     return parseStruct(struct, server, options)
       .then(
-        struct => {
+        (struct) => {
           const { fragment } = options
 
           if (
-            struct.sgroups.some(sGroup => !supportedSGroupTypes[sGroup.type])
+            struct.sgroups.some((sGroup) => !supportedSGroupTypes[sGroup.type])
           ) {
             const isConfirmed = window.confirm(
               `Unsupported S-group type found. Would you like to import structure without it?`
@@ -142,11 +142,11 @@ export function load(struct, options) {
 
           dispatch({ type: 'MODAL_CLOSE' })
         },
-        err => {
+        (err) => {
           errorHandler(err.message)
         }
       )
-      .catch(err => {
+      .catch((err) => {
         errorHandler(err.message)
       })
   }

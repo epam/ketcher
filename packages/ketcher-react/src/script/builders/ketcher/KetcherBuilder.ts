@@ -61,7 +61,7 @@ class KetcherBuilder {
   ): Promise<void> {
     const { structService } = this
 
-    const editor = await new Promise<Editor>(resolve => {
+    const editor = await new Promise<Editor>((resolve) => {
       initApp(
         element,
         staticResourcesUrl,

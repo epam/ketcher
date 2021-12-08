@@ -20,7 +20,6 @@
     "test": "react-app-rewired test --passWithNoTests",
     "serve:remote": "serve -s dist/remote -l 4001",
     "serve:standalone": "serve -s dist/standalone -l 4002",
-    "testCommand": "cross-env MODE=test run-s copy:build",
     "eject": "react-scripts eject"
   },
   "dependencies": {

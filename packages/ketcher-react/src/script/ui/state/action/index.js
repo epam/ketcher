@@ -52,7 +52,7 @@ function hidden(actObj, { options }) {
 
 function status(actionName, activeTool, params) {
   const actObj = actions[actionName]
-  return pickBy(x => x, {
+  return pickBy((x) => x, {
     selected: selected(actObj, activeTool, params),
     disabled: disabled(actObj, params),
     hidden: hidden(actObj, params)

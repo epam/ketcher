@@ -44,7 +44,7 @@ const RemoveFG = (props: Props) => {
 
   return (
     <div
-      onSubmit={event => event.preventDefault()}
+      onSubmit={(event) => event.preventDefault()}
       tabIndex={-1}
       className={classes.window}
     >

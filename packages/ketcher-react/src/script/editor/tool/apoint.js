@@ -73,7 +73,7 @@ APointTool.prototype.click = function (event) {
       attpnt: atom.attpnt
     })
     Promise.resolve(res)
-      .then(newatom => {
+      .then((newatom) => {
         if (atom.attpnt !== newatom.attpnt) {
           var action = fromAtomsAttrs(editor.render.ctab, ci.id, newatom)
           editor.update(action)

@@ -70,7 +70,7 @@ AtomTool.prototype.mousedown = function (event) {
     const [firstAtom, ...atoms] = sGroupAtoms
     const atomNeighbours = this.struct.molecule.atomGetNeighbors(firstAtom)
     const extraNeighbour = atomNeighbours.some(
-      atom => !sGroupAtoms.includes(atom.aid)
+      (atom) => !sGroupAtoms.includes(atom.aid)
     )
     if (extraNeighbour) {
       action.mergeWith(fromSgroupDeletion(this.struct, ci.id))
@@ -225,7 +225,7 @@ export function atomLongtapEvent(tool, render) {
     editor.selection(null)
     const res = editor.event.quickEdit.dispatch(atom)
     Promise.resolve(res)
-      .then(newatom => {
+      .then((newatom) => {
         const action = atomid
           ? fromAtomsAttrs(render.ctab, atomid, newatom)
           : fromAtomAddition(render.ctab, dragCtx.xy0, newatom)

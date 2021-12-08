@@ -43,7 +43,7 @@ interface IndigoOptions {
 type handlerType = (indigo: any, indigoOptions: IndigoOptions) => string
 
 function handle(handler: handlerType, options?: CommandOptions) {
-  module.then(indigo => {
+  module.then((indigo) => {
     const indigoOptions = new indigo.MapStringString()
     setOptions(indigoOptions, options || {})
     let msg: OutputMessage<string>
@@ -142,7 +142,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       const data: CalculateCommandData = message.data as CalculateCommandData
       handle((indigo, indigoOptions) => {
         const selectedAtoms = new indigo.VectorInt()
-        data.selectedAtoms.forEach(atomId => selectedAtoms.push_back(atomId))
+        data.selectedAtoms.forEach((atomId) => selectedAtoms.push_back(atomId))
         const result = indigo.calculate(
           data.struct,
           indigoOptions,
@@ -177,7 +177,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       const data: CleanCommandData = message.data as CleanCommandData
       handle((indigo, indigoOptions) => {
         const selectedAtoms = new indigo.VectorInt()
-        data.selectedAtoms.forEach(atomId => selectedAtoms.push_back(atomId))
+        data.selectedAtoms.forEach((atomId) => selectedAtoms.push_back(atomId))
         const updatedStruct = indigo.clean2d(
           data.struct,
           data.format,
@@ -200,7 +200,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
     }
 
     case Command.Info: {
-      handle(indigo => indigo.version())
+      handle((indigo) => indigo.version())
       break
     }
 

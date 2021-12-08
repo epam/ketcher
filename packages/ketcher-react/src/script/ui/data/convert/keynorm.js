@@ -51,7 +51,7 @@ function normalizeKeyName(name) {
 function normalizeKeyMap(map) {
   const copy = Object.create(null)
 
-  Object.keys(map).forEach(prop => {
+  Object.keys(map).forEach((prop) => {
     copy[normalizeKeyName(prop)] = map[prop]
   })
 

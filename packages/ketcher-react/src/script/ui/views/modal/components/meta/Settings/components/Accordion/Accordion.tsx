@@ -53,7 +53,7 @@ class Accordion extends Component<AccordionProps, AccordionState> {
 
     if (!multiple) this.setState({ active: [index] })
     else
-      this.setState(prevState => ({ active: xor(prevState.active, [index]) }))
+      this.setState((prevState) => ({ active: xor(prevState.active, [index]) }))
   }
 
   groupIsActive(index: number): boolean {

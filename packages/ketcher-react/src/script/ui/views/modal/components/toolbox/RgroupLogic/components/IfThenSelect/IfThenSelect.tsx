@@ -30,7 +30,7 @@ const IfThenSelect = (props: Props) => {
     enumNames: ['Always']
   }
 
-  rgroupLabels.forEach(rgroupLabel => {
+  rgroupLabels.forEach((rgroupLabel) => {
     if (label !== rgroupLabel) {
       desc.enum.push(rgroupLabel)
       desc.enumNames.push(`IF R${label} THEN R${rgroupLabel}`)

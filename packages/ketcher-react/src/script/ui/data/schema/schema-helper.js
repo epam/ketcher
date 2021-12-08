@@ -36,7 +36,7 @@ export function selectListOf(schema, prop) {
       return title ? { title, value } : value
     })
   }
-  return schema.oneOf.map(ds =>
+  return schema.oneOf.map((ds) =>
     !ds.title
       ? constant(ds, prop)
       : {

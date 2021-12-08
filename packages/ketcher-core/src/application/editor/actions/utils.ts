@@ -80,10 +80,10 @@ export function atomForNewBond(restruct, id, bond?) {
       Math.atan2(nei1.v.y, nei1.v.x) - Math.atan2(nei2.v.y, nei2.v.x)
   )
 
-  var i
-  var maxI = 0
-  var angle
-  var maxAngle = 0
+  let i
+  let maxI = 0
+  let angle
+  let maxAngle = 0
 
   // TODO: impove layout: tree, ...
 
@@ -118,8 +118,9 @@ export function atomForNewBond(restruct, id, bond?) {
         restruct.molecule.atomGetNeighbors(nei.aid).forEach((neiNei) => {
           const neiNeiPos = atomGetPos(restruct, neiNei.aid)
 
-          if (neiNei.bid === nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1)
+          if (neiNei.bid === nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1) {
             return
+          }
 
           const vDiff = Vec2.diff(neiNeiPos, neiPos)
           let ang = Math.atan2(vDiff.y, vDiff.x) - neiAngle
@@ -133,8 +134,9 @@ export function atomForNewBond(restruct, id, bond?) {
         if (
           neiNeighbours[0] <= Math.PI * 1.01 &&
           neiNeighbours[neiNeighbours.length - 1] <= 1.01 * Math.PI
-        )
+        ) {
           maxAngle *= -1
+        }
       }
     }
 

@@ -64,6 +64,7 @@ class RxnArrowAdd extends Base {
 
     Base.invalidateItem(restruct, 'rxnArrows', itemId, 1)
   }
+
   invert(): Base {
     return new RxnArrowDelete(this.data.id!)
   }

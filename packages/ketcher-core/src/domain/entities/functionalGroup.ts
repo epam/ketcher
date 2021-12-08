@@ -55,7 +55,7 @@ export class FunctionalGroup {
     if (functionalGroups.size === 0) {
       return null
     }
-    for (let fg of functionalGroups.values()) {
+    for (const fg of functionalGroups.values()) {
       if (fg.relatedSGroup.atoms.includes(atom)) return atom
     }
     return null
@@ -69,7 +69,7 @@ export class FunctionalGroup {
     if (functionalGroups.size === 0) {
       return null
     }
-    for (let fg of functionalGroups.values()) {
+    for (const fg of functionalGroups.values()) {
       const bonds = SGroup.getBonds(molecule, fg.relatedSGroup)
       if (bonds.includes(bond)) return bond
     }
@@ -77,7 +77,7 @@ export class FunctionalGroup {
   }
 
   static findFunctionalGroupByAtom(functionalGroups, atom): number | null {
-    for (let fg of functionalGroups.values()) {
+    for (const fg of functionalGroups.values()) {
       if (fg.relatedSGroup.atoms.includes(atom)) return fg.relatedSGroupId
     }
     return null
@@ -88,7 +88,7 @@ export class FunctionalGroup {
     functionalGroups,
     bond
   ): number | null {
-    for (let fg of functionalGroups.values()) {
+    for (const fg of functionalGroups.values()) {
       const bonds = SGroup.getBonds(molecule, fg.relatedSGroup)
       if (bonds.includes(bond)) return fg.relatedSGroupId
     }
@@ -100,7 +100,7 @@ export class FunctionalGroup {
   }
 
   static isFirstAtomInFunctionalGroup(sgroups, aid): boolean {
-    for (let sg of sgroups.values()) {
+    for (const sg of sgroups.values()) {
       if (FunctionalGroup.isFunctionalGroup(sg) && aid === sg.atoms[0]) {
         return true
       }

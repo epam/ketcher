@@ -113,7 +113,7 @@ export class Fragment {
     return this.#enhancedStereoFlag
   }
 
-  //TODO: split to 'add' and 'remove methods
+  // TODO: split to 'add' and 'remove methods
   updateStereoAtom(struct: Struct, aid: number, frId: number, isAdd: boolean) {
     if (isAdd && !this.#stereoAtoms.includes(aid)) this.#stereoAtoms.push(aid)
     if (

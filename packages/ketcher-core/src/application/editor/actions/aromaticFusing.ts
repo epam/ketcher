@@ -84,8 +84,9 @@ export function fromAromaticTemplateOnBond(
     })
     .then((destruct) => {
       destruct.bonds.forEach((bond) => {
-        if (bond.type === Bond.PATTERN.TYPE.AROMATIC)
+        if (bond.type === Bond.PATTERN.TYPE.AROMATIC) {
           throw Error('Bad dearomatize')
+        }
       })
 
       // dearomatize restruct fragment

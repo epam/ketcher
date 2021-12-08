@@ -19,14 +19,18 @@ import { Struct } from 'domain/entities'
 import { StructFormatter } from './structFormatter.types'
 
 export class KetFormatter implements StructFormatter {
-  constructor(private readonly serializer: KetSerializer) {}
+  #ketSerializer: KetSerializer
+
+  constructor(serializer: KetSerializer) {
+    this.#ketSerializer = serializer
+  }
 
   async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    const ket = this.serializer.serialize(struct)
+    const ket = this.#ketSerializer.serialize(struct)
     return ket
   }
 
   async getStructureFromStringAsync(content: string): Promise<Struct> {
-    return this.serializer.deserialize(content)
+    return this.#ketSerializer.deserialize(content)
   }
 }

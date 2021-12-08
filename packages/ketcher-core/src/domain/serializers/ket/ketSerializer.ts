@@ -34,16 +34,19 @@ import { validate } from './validate'
 function parseNode(node: any, struct: any) {
   const type = node.type
   switch (type) {
-    case 'arrow':
+    case 'arrow': {
       rxnToStruct(node, struct)
       break
-    case 'plus':
+    }
+    case 'plus': {
       rxnToStruct(node, struct)
       break
-    case 'simpleObject':
+    }
+    case 'simpleObject': {
       simpleObjectToStruct(node, struct)
       break
-    case 'molecule':
+    }
+    case 'molecule': {
       const currentStruct = moleculeToStruct(node)
       if (node.stereoFlagPosition) {
         const fragment = currentStruct.frags.get(0)!
@@ -52,12 +55,15 @@ function parseNode(node: any, struct: any) {
 
       currentStruct.mergeInto(struct)
       break
-    case 'rgroup':
+    }
+    case 'rgroup': {
       rgroupToStruct(node).mergeInto(struct)
       break
-    case 'text':
+    }
+    case 'text': {
       textToStruct(node, struct)
       break
+    }
     default:
       break
   }

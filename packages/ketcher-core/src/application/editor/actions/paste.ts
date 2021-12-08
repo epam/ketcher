@@ -47,11 +47,12 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   }
 
   pstruct.atoms.forEach((atom, aid) => {
-    if (!fridMap.has(atom.fragment))
+    if (!fridMap.has(atom.fragment)) {
       fridMap.set(
         atom.fragment,
         (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd).frid
       )
+    }
 
     const tmpAtom = Object.assign(atom.clone(), {
       fragment: fridMap.get(atom.fragment)
@@ -152,7 +153,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 }
 
 function getStructCenter(struct) {
-  //TODO: Review, function may not work sometimes
+  // TODO: Review, function may not work sometimes
   const onlyOneStructsSgroupId = struct.sgroups.keys().next().value
   if (
     struct.sgroups.size === 1 &&

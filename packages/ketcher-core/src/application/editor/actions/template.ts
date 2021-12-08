@@ -97,8 +97,9 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
     atom = struct.atoms.get(aid1)
     delta = utils.calcAngle(struct.atoms.get(aid).pp, atom.pp) - template.angle0
   } else {
-    if (angle === null)
+    if (angle === null) {
       angle = utils.calcAngle(atom.pp, atomForNewBond(restruct, aid).pos)
+    }
     delta = angle - template.angle0
   }
 
@@ -189,7 +190,7 @@ export function fromTemplateOnBondAction(
 
   const simpleFusing = (restruct, template, bid) =>
     fromTemplateOnBond(restruct, template, bid, flip) // eslint-disable-line
-  /* aromatic merge (Promise)*/
+  /* aromatic merge (Promise) */
   return fromAromaticTemplateOnBond(
     restruct,
     template,

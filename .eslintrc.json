@@ -1,8 +1,22 @@
 {
+  "root": true,
   "extends": [
     "eslint:recommended",
     "standard",
-    "plugin:jest/recommended",
-    "plugin:jsx-a11y/recommended"
-  ]
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:workspaces/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "off",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ]
+  }
 }

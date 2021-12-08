@@ -35,7 +35,7 @@ import { fromAtomsAttrs } from './atom'
 export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
   const descriptors = attrs.fieldValue
 
-  if (typeof descriptors === 'string' || type !== 'DAT')
+  if (typeof descriptors === 'string' || type !== 'DAT') {
     return fromSgroupAddition(
       restruct,
       type,
@@ -43,6 +43,7 @@ export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
       attrs,
       restruct.molecule.sgroups.newId()
     )
+  }
 
   return descriptors.reduce((acc, fValue) => {
     const localAttrs = Object.assign({}, attrs)
@@ -110,8 +111,9 @@ export function fromSgroupDeletion(restruct, id) {
     struct.sGroupsRecalcCrossBonds()
 
     sG.neiAtoms.forEach((aid) => {
-      if (atomGetAttr(restruct, aid, 'label') === '*')
+      if (atomGetAttr(restruct, aid, 'label') === '*') {
         action.addOp(new AtomAttr(aid, 'label', 'C'))
+      }
     })
   }
 
@@ -176,8 +178,9 @@ export function fromSgroupAddition(
     restruct.sgroups.get(sgid).item.neiAtoms.forEach((aid) => {
       const plainCarbon = restruct.atoms.get(aid).a.isPlainCarbon()
 
-      if (atomGetDegree(restruct, aid) === 1 && plainCarbon)
+      if (atomGetDegree(restruct, aid) === 1 && plainCarbon) {
         asteriskAction.addOp(new AtomAttr(aid, 'label', '*'))
+      }
     })
 
     asteriskAction = asteriskAction.perform(restruct)
@@ -195,28 +198,33 @@ export function fromSgroupAction(
   sourceAtoms,
   selection
 ) {
-  if (context === SgContexts.Bond)
+  if (context === SgContexts.Bond) {
     return fromBondAction(restruct, newSg, sourceAtoms, selection)
+  }
 
   const atomsFromBonds = getAtomsFromBonds(restruct.molecule, selection.bonds)
   const newSourceAtoms = uniq(sourceAtoms.concat(atomsFromBonds))
 
-  if (context === SgContexts.Fragment)
+  if (context === SgContexts.Fragment) {
     return fromGroupAction(
       restruct,
       newSg,
       newSourceAtoms,
       Array.from(restruct.atoms.keys())
     )
+  }
 
-  if (context === SgContexts.Multifragment)
+  if (context === SgContexts.Multifragment) {
     return fromMultiFragmentAction(restruct, newSg, newSourceAtoms)
+  }
 
-  if (context === SgContexts.Group)
+  if (context === SgContexts.Group) {
     return fromGroupAction(restruct, newSg, newSourceAtoms, newSourceAtoms)
+  }
 
-  if (context === SgContexts.Atom)
+  if (context === SgContexts.Atom) {
     return fromAtomAction(restruct, newSg, newSourceAtoms)
+  }
 
   return {
     action: fromSeveralSgroupAddition(

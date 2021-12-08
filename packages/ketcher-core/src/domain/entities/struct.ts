@@ -40,7 +40,7 @@ export type Neighbor = {
 }
 
 function arrayAddIfMissing(array, item) {
-  for (var i = 0; i < array.length; ++i) {
+  for (let i = 0; i < array.length; ++i) {
     if (array[i] === item) return false
   }
   array.push(item)
@@ -219,13 +219,15 @@ export class Struct {
 
     // atoms in not RGroup
     this.atoms.forEach((atom, aid) => {
-      if (atomSet!.has(aid) && rgroupsIds.indexOf(atom.fragment) === -1)
+      if (atomSet!.has(aid) && rgroupsIds.indexOf(atom.fragment) === -1) {
         aidMap!.set(aid, cp.atoms.add(atom.clone(fidMap)))
+      }
     })
     // atoms in RGroup
     this.atoms.forEach((atom, aid) => {
-      if (atomSet!.has(aid) && rgroupsIds.indexOf(atom.fragment) !== -1)
+      if (atomSet!.has(aid) && rgroupsIds.indexOf(atom.fragment) !== -1) {
         aidMap!.set(aid, cp.atoms.add(atom.clone(fidMap)))
+      }
     })
 
     fidMap.forEach((newfid, oldfid) => {
@@ -410,8 +412,8 @@ export class Struct {
       if (this.halfBonds.get(atom.neighbors[i])!.ang > hb.ang) break
     }
     atom.neighbors.splice(i, 0, hbid)
-    var ir = atom.neighbors[(i + 1) % atom.neighbors.length]
-    var il =
+    const ir = atom.neighbors[(i + 1) % atom.neighbors.length]
+    const il =
       atom.neighbors[(i + atom.neighbors.length - 1) % atom.neighbors.length]
     this.setHbNext(il, hbid)
     this.setHbNext(hbid, ir)
@@ -551,7 +553,7 @@ export class Struct {
       }
     }
 
-    let global = !atomSet || atomSet.size === 0
+    const global = !atomSet || atomSet.size === 0
 
     this.atoms.forEach((atom, aid) => {
       if (global || atomSet!.has(aid)) extend(atom.pp)
@@ -580,7 +582,7 @@ export class Struct {
   }
 
   getCoordBoundingBoxObj() {
-    var bb: any = null
+    let bb: any = null
     function extend(pp) {
       if (!bb) {
         bb = {
@@ -618,12 +620,12 @@ export class Struct {
   }
 
   getAvgClosestAtomDistance(): number {
-    var totalDist = 0
-    var minDist
-    var dist = 0
-    var keys = Array.from(this.atoms.keys())
-    var k
-    var j
+    let totalDist = 0
+    let minDist
+    let dist = 0
+    const keys = Array.from(this.atoms.keys())
+    let k
+    let j
     for (k = 0; k < keys.length; ++k) {
       minDist = -1
       for (j = 0; j < keys.length; ++j) {
@@ -733,11 +735,12 @@ export class Struct {
 
   rescale() {
     let avg = this.getAvgBondLength()
-    if (avg < 0 && !this.isReaction)
+    if (avg < 0 && !this.isReaction) {
       // TODO [MK] this doesn't work well for reactions as the distances between
       // the atoms in different components are generally larger than those between atoms of a single component
       // (KETCHER-341)
       avg = this.getAvgClosestAtomDistance()
+    }
     if (avg < 1e-3) avg = 1
 
     const scale = 1 / avg
@@ -784,9 +787,10 @@ export class Struct {
           const s = atomToHalfBond[aid2] // where the subloop begins
           const subloop = loop.slice(s, l + 1)
           subloops.push(subloop)
-          if (l < loop.length)
+          if (l < loop.length) {
             // remove half-bonds corresponding to the subloop
             loop.splice(s, l - s + 1)
+          }
           continueFlag = true
           break
         }
@@ -924,7 +928,7 @@ export class Struct {
 
     if (atom.explicitValence >= 0) {
       const elem = Elements.get(atom.label)
-      atom.implicitH = !!elem
+      atom.implicitH = elem
         ? atom.explicitValence - atom.calcValenceMinusHyd(correctConn)
         : 0
       if (atom.implicitH < 0) {
@@ -938,8 +942,9 @@ export class Struct {
 
   setImplicitHydrogen(list?: Array<number>) {
     this.sgroups.forEach((item) => {
-      if (item.data.fieldName === 'MRV_IMPLICIT_H')
+      if (item.data.fieldName === 'MRV_IMPLICIT_H') {
         this.atoms.get(item.atoms[0])!.hasImplicitH = true
+      }
     })
 
     if (!list) {

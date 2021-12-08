@@ -52,8 +52,8 @@ export class AddRxnArrow extends BaseOperation {
     }
 
     // TODO: move to renderer
-    //restruct.rxnArrows.set(itemId, new ReRxnArrow(rxnArrow))
-    //Base.invalidateItem(restruct, 'rxnArrows', itemId, 1)
+    // restruct.rxnArrows.set(itemId, new ReRxnArrow(rxnArrow))
+    // Base.invalidateItem(restruct, 'rxnArrows', itemId, 1)
 
     const inverseOperation = new DeleteRxnArrow(rxnArrowId)
     return { inverseOperation, entityId: rxnArrowId, operationType: this.type }

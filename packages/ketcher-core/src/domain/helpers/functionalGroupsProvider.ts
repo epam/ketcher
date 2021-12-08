@@ -16,6 +16,7 @@
 import { Struct } from '../entities'
 
 export class FunctionalGroupsProvider {
+  // eslint-disable-next-line no-use-before-define
   private static instance: FunctionalGroupsProvider
   functionalGroupsList: Struct[]
   constructor() {

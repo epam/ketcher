@@ -71,12 +71,14 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
 
       switch (key) {
         case 'stereoLabel':
-          if (key in attrs && value)
+          if (key in attrs && value) {
             action.addOp(new AtomAttr(aid, key, value).perform(restruct))
+          }
           break
         case 'stereoParity':
-          if (key in attrs && value)
+          if (key in attrs && value) {
             action.addOp(new AtomAttr(aid, key, value).perform(restruct))
+          }
           break
         default:
           action.addOp(new AtomAttr(aid, key, value).perform(restruct))
@@ -89,9 +91,10 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
       'label' in attrs &&
       attrs.label !== null &&
       attrs.label !== 'L#' &&
-      !attrs['atomList']
-    )
+      !attrs.atomList
+    ) {
       action.addOp(new AtomAttr(aid, 'atomList', null).perform(restruct))
+    }
 
     action.addOp(new CalcImplicitH([aid]).perform(restruct))
 
@@ -111,17 +114,16 @@ export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse) {
   if (atom) {
     const frid = atom.fragment
 
-    if ('stereoParity' in attrs)
+    if ('stereoParity' in attrs) {
       action.addOp(
-        new AtomAttr(aid, 'stereoParity', attrs['stereoParity']).perform(
-          restruct
-        )
+        new AtomAttr(aid, 'stereoParity', attrs.stereoParity).perform(restruct)
       )
+    }
     if ('stereoLabel' in attrs) {
       action.addOp(
-        new AtomAttr(aid, 'stereoLabel', attrs['stereoLabel']).perform(restruct)
+        new AtomAttr(aid, 'stereoLabel', attrs.stereoLabel).perform(restruct)
       )
-      if (attrs['stereoLabel'] === null) {
+      if (attrs.stereoLabel === null) {
         action.addOp(new FragmentDeleteStereoAtom(frid, aid).perform(restruct))
       } else {
         action.addOp(new FragmentAddStereoAtom(frid, aid).perform(restruct))
@@ -194,8 +196,9 @@ export function fromAtomMerge(restruct, srcId, dstId) {
 
   const attrs = Atom.getAttrHash(restruct.molecule.atoms.get(srcId))
 
-  if (atomGetDegree(restruct, srcId) === 1 && attrs['label'] === '*')
-    attrs['label'] = 'C'
+  if (atomGetDegree(restruct, srcId) === 1 && attrs.label === '*') {
+    attrs.label = 'C'
+  }
 
   Object.keys(attrs).forEach((key) => {
     if (key !== 'stereoLabel' && key !== 'stereoParity') {
@@ -256,8 +259,9 @@ export function mergeSgroups(action, restruct, srcAtoms, dstAtom) {
     if (
       sgroup.type === 'DAT' &&
       notExpandedContexts.includes(sgroup.data.context)
-    )
+    ) {
       return
+    }
     const atomsToSgroup: any = without(sgroup.atoms, srcAtoms)
     atomsToSgroup.forEach((aid) =>
       action.addOp(new SGroupAtomAdd(sid, aid).perform(restruct))

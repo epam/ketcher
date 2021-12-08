@@ -69,16 +69,17 @@ function shiftRayBox(p, d, bb) {
     }
   }
 
-  if (nid < 0 || pid < 0)
+  if (nid < 0 || pid < 0) {
     // no intersection, no shift
     return 0
+  }
 
   // check the order
   const id0 = rd[pid] > rd[nid] ? nid : pid
   const id1 = rd[pid] > rd[nid] ? pid : nid
 
   // simple proportion to calculate the shift
-  /* eslint-disable no-mixed-operators*/
+  /* eslint-disable no-mixed-operators */
   return (
     rd[id0] +
     (Math.abs(rc[id0]) * (rd[id1] - rd[id0])) /

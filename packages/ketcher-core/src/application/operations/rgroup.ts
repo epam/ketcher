@@ -169,7 +169,7 @@ export class SetRGroupAttr extends BaseOperation {
 
     rgroup[this.#attribute] = this.#value
 
-    //BaseOperation.invalidateItem(restruct, 'rgroups', rgid)
+    // BaseOperation.invalidateItem(restruct, 'rgroups', rgid)
 
     const inverseOperation = new SetRGroupAttr(
       this.#rgroupId,

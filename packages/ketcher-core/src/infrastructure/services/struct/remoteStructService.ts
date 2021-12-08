@@ -135,12 +135,12 @@ export class RemoteStructService implements StructService {
   async info(): Promise<InfoResult> {
     let indigoVersion: string
     let imagoVersions: Array<string>
-    let isAvailable: boolean = false
+    let isAvailable = false
 
     try {
       const response = await request('GET', this.apiPath + 'info')
-      indigoVersion = response['indigo_version']
-      imagoVersions = response['imago_versions']
+      indigoVersion = response.indigo_version
+      imagoVersions = response.imago_versions
       isAvailable = true
     } catch (e) {
       indigoVersion = ''
@@ -296,7 +296,7 @@ export class RemoteStructService implements StructService {
     )({ struct: data }, { 'render-output-format': outputFormat }, (response) =>
       response
         .then((resp) => resp.text())
-        //TODO: Indigo does not encode svg to base64. This code should be deleted after fix
+        // TODO: Indigo does not encode svg to base64. This code should be deleted after fix
         .then((text) => {
           if (outputFormat === 'svg') {
             return btoa(text)

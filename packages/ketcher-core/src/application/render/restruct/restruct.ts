@@ -55,6 +55,7 @@ class ReStruct {
     simpleObjects: ReSimpleObject,
     texts: ReText
   }
+
   public render: Render
   public molecule: Struct
   public atoms: Map<number, ReAtom> = new Map()
@@ -69,11 +70,11 @@ class ReStruct {
   public enhancedFlags: Map<number, ReEnhancedFlag> = new Map()
   private simpleObjects: Map<number, ReSimpleObject> = new Map()
   public texts: Map<number, ReText> = new Map()
-  private initialized: boolean = false
+  private initialized = false
   private layers: Array<any> = []
   public connectedComponents: Pool = new Pool()
   private ccFragmentType: Pool = new Pool()
-  private structChanged: boolean = false
+  private structChanged = false
 
   private atomsChanged: Map<number, ReAtom> = new Map()
   private simpleObjectsChanged: Map<number, ReSimpleObject> = new Map()
@@ -129,8 +130,9 @@ class ReStruct {
 
     molecule.sgroups.forEach((item, id) => {
       this.sgroups.set(id, new ReSGroup(item))
-      if (item.type === 'DAT' && !item.data.attached)
-        this.sgroupData.set(id, new ReDataSGroupData(item)) // [MK] sort of a hack, we use the SGroup id for the data field id
+      if (item.type === 'DAT' && !item.data.attached) {
+        this.sgroupData.set(id, new ReDataSGroupData(item))
+      } // [MK] sort of a hack, we use the SGroup id for the data field id
       if (FunctionalGroup.isFunctionalGroup(item)) {
         this.molecule.functionalGroups.set(id, new FunctionalGroup(item))
       }
@@ -140,7 +142,7 @@ class ReStruct {
   connectedComponentRemoveAtom(aid: number, reAtom?: ReAtom): void {
     const atom = reAtom || this.atoms.get(aid)
     if (!atom || atom.component < 0) return
-    var cc = this.connectedComponents.get(atom.component)
+    const cc = this.connectedComponents.get(atom.component)
 
     cc.delete(aid)
     if (cc.size < 1) this.connectedComponents.delete(atom.component)
@@ -170,7 +172,7 @@ class ReStruct {
       if (atom.component >= 0) adjacentComponents.add(atom.component)
 
       atom.a.neighbors.forEach((neighbor) => {
-        let halfBond = this.molecule.halfBonds.get(neighbor)
+        const halfBond = this.molecule.halfBonds.get(neighbor)
         if (!halfBond) return
         const neiId = halfBond.end
         if (!ids.has(neiId)) list.push(neiId)
@@ -243,7 +245,7 @@ class ReStruct {
     visel: Visel,
     path,
     pos: Vec2 | null = null,
-    visible: boolean = false
+    visible = false
   ): void {
     // eslint-disable-line max-params
     if (!path || !this.layers[group].node.parentNode) return
@@ -500,8 +502,9 @@ class ReStruct {
   showFragments(): void {
     this.frags.forEach((frag, id) => {
       const path = frag.draw(this.render, id)
-      if (path)
+      if (path) {
         this.addReObjectPath(LayerMap.data, frag.visel, path, null, true)
+      }
       // TODO fragment selection & highlighting
     })
   }
@@ -580,7 +583,7 @@ class ReStruct {
         this[map].forEach((item, id) => {
           if (item instanceof ReAtom) {
             let sgroup
-            for (let sgId of item.a.sgs.values()) {
+            for (const sgId of item.a.sgs.values()) {
               sgroup = sgId
             }
             atoms.push({
@@ -609,16 +612,17 @@ class ReStruct {
       }
     })
   }
+
   showItemSelection(item, selected) {
-    var exists = isSelectionSvgObjectExists(item)
+    const exists = isSelectionSvgObjectExists(item)
     // TODO: simplify me, who sets `removed`?
     item.selected = selected
     if (item instanceof ReDataSGroupData) item.sgroup.selected = selected
     if (selected) {
       if (!exists) {
-        var render = this.render
-        var options = render.options
-        var paper = render.paper
+        const render = this.render
+        const options = render.options
+        const paper = render.paper
 
         item.selectionPlate = item.makeSelectionPlate(this, paper, options)
         this.addReObjectPath(
@@ -647,13 +651,14 @@ function isSelectionEmpty(selection) {
 function scaleRPath(path, scaleFactor: number): void {
   if (path.type == 'set') {
     // TODO: rework scaling
-    for (var i = 0; i < path.length; ++i) scaleRPath(path[i], scaleFactor)
+    for (let i = 0; i < path.length; ++i) scaleRPath(path[i], scaleFactor)
   } else {
     if (!(typeof path.attrs === 'undefined')) {
-      if ('font-size' in path.attrs)
+      if ('font-size' in path.attrs) {
         path.attr('font-size', path.attrs['font-size'] * scaleFactor)
-      else if ('stroke-width' in path.attrs)
+      } else if ('stroke-width' in path.attrs) {
         path.attr('stroke-width', path.attrs['stroke-width'] * scaleFactor)
+      }
     }
     path.scale(scaleFactor, scaleFactor, 0, 0)
   }

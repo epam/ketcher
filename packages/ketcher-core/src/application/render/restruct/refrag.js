@@ -24,14 +24,17 @@ class ReFrag extends ReObject {
     super('frag')
     this.item = frag
   }
+
   static isSelectable() {
     return false
   }
+
   fragGetAtoms(restruct, fid) {
     return Array.from(restruct.atoms.keys()).filter(
       (aid) => restruct.atoms.get(aid).a.fragment === fid
     )
   }
+
   fragGetBonds(restruct, fid) {
     return Array.from(restruct.bonds.keys()).filter((bid) => {
       const bond = restruct.bonds.get(bid).b
@@ -42,9 +45,10 @@ class ReFrag extends ReObject {
       return firstFrag === fid && secondFrag === fid
     })
   }
+
   calcBBox(restruct, fid, render) {
     // TODO need to review parameter list
-    var ret
+    let ret
     restruct.atoms.forEach((atom) => {
       if (atom.a.fragment !== fid) return
 
@@ -65,6 +69,7 @@ class ReFrag extends ReObject {
 
     return ret
   }
+
   // TODO need to review parameter list
   _draw(render, fid, attrs) {
     // eslint-disable-line no-underscore-dangle
@@ -79,16 +84,18 @@ class ReFrag extends ReObject {
     }
 
     // TODO abnormal situation, empty fragments must be destroyed by tools
-    return
   }
+
   draw(render) {
     // eslint-disable-line no-unused-vars
     return null // this._draw(render, fid, { 'stroke' : 'lightgray' }); // [RB] for debugging only
   }
+
   drawHighlight(render) {
     // eslint-disable-line no-unused-vars
     // Do nothing. This method shouldn't actually be called.
   }
+
   setHighlight(highLight, render) {
     let fid = render.ctab.frags.keyOf(this)
 
@@ -104,8 +111,9 @@ class ReFrag extends ReObject {
     })
 
     render.ctab.bonds.forEach((bond) => {
-      if (render.ctab.atoms.get(bond.b.begin).a.fragment === fid)
+      if (render.ctab.atoms.get(bond.b.begin).a.fragment === fid) {
         bond.setHighlight(highLight, render)
+      }
     })
   }
 }

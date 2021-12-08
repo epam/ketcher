@@ -34,7 +34,7 @@ export class SimpleObjectAdd extends Base {
   constructor(
     pos: Array<Vec2> = [],
     mode: SimpleObjectMode = SimpleObjectMode.line,
-    toCircle: boolean = false,
+    toCircle = false,
     id?: number
   ) {
     super(OperationType.SIMPLE_OBJECT_ADD)
@@ -67,6 +67,7 @@ export class SimpleObjectAdd extends Base {
 
     Base.invalidateItem(restruct, 'simpleObjects', itemId, 1)
   }
+
   invert(): Base {
     return new SimpleObjectDelete(this.data.id!)
   }
@@ -92,7 +93,7 @@ export class SimpleObjectDelete extends Base {
   execute(restruct: any): void {
     const struct = restruct.molecule
     const item = struct.simpleObjects.get(this.data.id) as any
-    //save to data current values. In future they could be used in invert for restoring simple object
+    // save to data current values. In future they could be used in invert for restoring simple object
     this.data.pos = item.pos
     this.data.mode = item.mode
     this.data.toCircle = item.toCircle
@@ -128,6 +129,7 @@ export class SimpleObjectMove extends Base {
     super(OperationType.SIMPLE_OBJECT_MOVE)
     this.data = { id, d, noinvalidate }
   }
+
   execute(restruct: any): void {
     const struct = restruct.molecule
     const id = this.data.id
@@ -149,7 +151,7 @@ export class SimpleObjectMove extends Base {
       this.data.d,
       this.data.noinvalidate
     )
-    //todo Need further investigation on why this is needed?
+    // todo Need further investigation on why this is needed?
     move.data = this.data
     return move
   }
@@ -264,6 +266,7 @@ export class SimpleObjectResize extends Base {
       )
     }
   }
+
   invert(): Base {
     return new SimpleObjectResize(
       this.data.id,

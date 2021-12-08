@@ -73,9 +73,10 @@ export function fromMultipleMove(restruct, lists, d) {
     })
 
     loops.forEach((loopId) => {
-      if (restruct.reloops.get(loopId) && restruct.reloops.get(loopId).visel)
+      if (restruct.reloops.get(loopId) && restruct.reloops.get(loopId).visel) {
         // hack
         action.addOp(new LoopMove(loopId, d))
+      }
     })
 
     lists.atoms.forEach((aid) => {
@@ -136,8 +137,9 @@ export function fromStereoFlagUpdate(restruct, frid, flag = null) {
     const struct = restruct.molecule
     const frag = restruct.molecule.frags.get(frid)
     frag.stereoAtoms.forEach((aid) => {
-      if (struct.atoms.get(aid).stereoLabel === null)
+      if (struct.atoms.get(aid).stereoLabel === null) {
         action.addOp(new FragmentDeleteStereoAtom(frid, aid))
+      }
     })
   }
 

@@ -42,25 +42,25 @@ interface MinDistanceWithReferencePoint {
 class ReRxnArrow extends ReObject {
   item: Arrow
 
-  constructor(/* chem.RxnArrow*/ arrow: Arrow) {
+  constructor(/* chem.RxnArrow */ arrow: Arrow) {
     super('rxnArrow')
     this.item = arrow
   }
+
   static isSelectable(): boolean {
     return true
   }
 
   calcDistance(p: Vec2, s: any): MinDistanceWithReferencePoint {
     const point: Vec2 = new Vec2(p.x, p.y)
-    let dist: number
-    let distRef: MinDistanceWithReferencePoint
+    const distRef: MinDistanceWithReferencePoint =
+      this.getReferencePointDistance(p)
     const item = this.item
 
     const pos = item.pos
 
-    dist = calculateDistanceToLine(pos, point)
+    let dist: number = calculateDistanceToLine(pos, point)
 
-    distRef = this.getReferencePointDistance(p)
     const refPoint: Vec2 | null =
       distRef.minDist <= 8 / s ? distRef.refPoint : null
     // distance is a smallest between dist to figure and it's reference points
@@ -69,7 +69,7 @@ class ReRxnArrow extends ReObject {
   }
 
   getReferencePointDistance(p: Vec2): MinDistanceWithReferencePoint {
-    let dist: any = []
+    const dist: any = []
     const refPoints = this.getReferencePoints()
     refPoints.forEach((rp) => {
       dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp })
@@ -196,9 +196,9 @@ function calculateDistanceToLine(pos: Array<Vec2>, point: Vec2): number {
       point.x > Math.max(pos[0].x, pos[1].x)) &&
     (point.y < Math.min(pos[0].y, pos[1].y) ||
       point.y > Math.max(pos[0].y, pos[1].y))
-  )
+  ) {
     dist = Math.min(Vec2.dist(pos[0], point), Vec2.dist(pos[1], point))
-  else {
+  } else {
     const a = Vec2.dist(pos[0], pos[1])
     const b = Vec2.dist(pos[0], point)
     const c = Vec2.dist(pos[1], point)

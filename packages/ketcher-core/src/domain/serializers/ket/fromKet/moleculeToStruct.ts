@@ -36,13 +36,15 @@ export function moleculeToStruct(ketItem: any): Struct {
     if (!atom.type) struct.atoms.add(atomToStruct(atom))
   })
 
-  if (ketItem.bonds)
+  if (ketItem.bonds) {
     ketItem.bonds.forEach((bond) => struct.bonds.add(bondToStruct(bond)))
+  }
 
-  if (ketItem.sgroups)
+  if (ketItem.sgroups) {
     ketItem.sgroups.forEach((sgroup) =>
       struct.sgroups.add(sgroupToStruct(sgroup))
     )
+  }
 
   struct.initHalfBonds()
   struct.initNeighbors()

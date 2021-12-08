@@ -100,8 +100,9 @@ export function fromFlip(restruct, selection, dir, center) {
         return
       }
 
-      if (bond.stereo === Bond.PATTERN.STEREO.DOWN)
+      if (bond.stereo === Bond.PATTERN.STEREO.DOWN) {
         action.addOp(new BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.UP))
+      }
     })
   }
 
@@ -110,7 +111,7 @@ export function fromFlip(restruct, selection, dir, center) {
 
 function flipItemByCenter(item, center, dir) {
   const d = new Vec2()
-  /* eslint-disable no-mixed-operators*/
+  /* eslint-disable no-mixed-operators */
   if (dir === 'horizontal') {
     d.x =
       center.x > item.pp.x
@@ -123,7 +124,7 @@ function flipItemByCenter(item, center, dir) {
         ? 2 * (center.y - item.pp.y)
         : -2 * (item.pp.y - center.y)
   }
-  /* eslint-enable no-mixed-operators*/
+  /* eslint-enable no-mixed-operators */
   return d
 }
 
@@ -156,7 +157,7 @@ export function fromRotate(restruct, selection, center, angle) {
 
   if (selection.rxnArrows) {
     selection.rxnArrows.forEach((aid) => {
-      var arrow = struct.rxnArrows.get(aid)
+      const arrow = struct.rxnArrows.get(aid)
       action.addOp(
         new RxnArrowMove(aid, rotateDelta(arrow.center(), center, angle))
       )
@@ -165,14 +166,14 @@ export function fromRotate(restruct, selection, center, angle) {
 
   if (selection.rxnPluses) {
     selection.rxnPluses.forEach((pid) => {
-      var plus = struct.rxnPluses.get(pid)
+      const plus = struct.rxnPluses.get(pid)
       action.addOp(new RxnPlusMove(pid, rotateDelta(plus.pp, center, angle)))
     })
   }
 
   if (selection.sgroupData) {
     selection.sgroupData.forEach((did) => {
-      var data = struct.sgroups.get(did)
+      const data = struct.sgroups.get(did)
       action.addOp(new SGroupDataMove(did, rotateDelta(data.pp, center, angle)))
     })
   }
@@ -213,14 +214,15 @@ export function fromBondAlign(restruct, bid, dir) {
   // TODO: choose minimal angle
   angle = dir === 'horizontal' ? -angle : Math.PI / 2 - angle
 
-  if (angle === 0 || Math.abs(angle) === Math.PI)
+  if (angle === 0 || Math.abs(angle) === Math.PI) {
     return fromFlip(restruct, { atoms }, dir, center)
+  }
 
   return fromRotate(restruct, { atoms }, center, angle)
 }
 
 function rotateDelta(v, center, angle) {
-  var v1 = v.sub(center)
+  let v1 = v.sub(center)
   v1 = v1.rotate(angle)
   v1.add_(center) // eslint-disable-line no-underscore-dangle
   return v1.sub(v)

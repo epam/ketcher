@@ -150,7 +150,7 @@ class ReStruct {
 
   clearConnectedComponents(): void {
     this.connectedComponents.clear()
-    this.atoms.forEach(atom => {
+    this.atoms.forEach((atom) => {
       atom.component = -1
     })
   }
@@ -169,7 +169,7 @@ class ReStruct {
       if (!atom) continue
       if (atom.component >= 0) adjacentComponents.add(atom.component)
 
-      atom.a.neighbors.forEach(neighbor => {
+      atom.a.neighbors.forEach((neighbor) => {
         let halfBond = this.molecule.halfBonds.get(neighbor)
         if (!halfBond) return
         const neiId = halfBond.end
@@ -191,7 +191,7 @@ class ReStruct {
     adjacentComponents.delete(compId)
 
     let type = -1
-    aidSet.forEach(aid => {
+    aidSet.forEach((aid) => {
       const atom = this.atoms.get(aid)
       if (!atom) return
       atom.component = compId
@@ -203,7 +203,7 @@ class ReStruct {
   }
 
   removeConnectedComponent(ccid: number): boolean {
-    this.connectedComponents.get(ccid).forEach(aid => {
+    this.connectedComponents.get(ccid).forEach((aid) => {
       const atom = this.atoms.get(aid)
       if (atom) atom.component = -1
     })
@@ -217,7 +217,7 @@ class ReStruct {
 
       const adjacentComponents = new Pile()
       const idSet = this.getConnectedComponent(aid, adjacentComponents)
-      adjacentComponents.forEach(ccid => {
+      adjacentComponents.forEach((ccid) => {
         this.removeConnectedComponent(ccid)
       })
 
@@ -250,7 +250,7 @@ class ReStruct {
 
     const paths = Array.isArray(path) ? path : [path]
 
-    paths.forEach(path => {
+    paths.forEach((path) => {
       const offset = this.render.options.offset
       let bb = visible ? Box2Abs.fromRelBox(util.relBox(path.getBBox())) : null
       const ext = pos && bb ? bb.translate(pos.negated()) : null
@@ -264,7 +264,7 @@ class ReStruct {
   }
 
   clearMarks(): void {
-    Object.keys(ReStruct.maps).forEach(map => {
+    Object.keys(ReStruct.maps).forEach((map) => {
       this[map + 'Changed'] = new Map()
     })
 
@@ -294,14 +294,14 @@ class ReStruct {
   }
 
   clearVisel(visel: Visel): void {
-    visel.paths.forEach(path => {
+    visel.paths.forEach((path) => {
       path.remove()
     })
     visel.clear()
   }
 
   eachItem(func) {
-    Object.keys(ReStruct.maps).forEach(map => {
+    Object.keys(ReStruct.maps).forEach((map) => {
       this[map].forEach(func)
     })
   }
@@ -310,16 +310,16 @@ class ReStruct {
     selection = selection || {}
 
     if (isSelectionEmpty(selection)) {
-      Object.keys(ReStruct.maps).forEach(map => {
+      Object.keys(ReStruct.maps).forEach((map) => {
         selection[map] = Array.from(this[map].keys())
       })
     }
 
     let vbox: Box2Abs | null = null
-    Object.keys(ReStruct.maps).forEach(map => {
+    Object.keys(ReStruct.maps).forEach((map) => {
       if (!selection[map]) return
 
-      selection[map].forEach(id => {
+      selection[map].forEach((id) => {
         const box = this[map].get(id).getVBoxObj(this.render)
         if (box) vbox = vbox ? Box2Abs.union(vbox, box) : box.clone()
       })
@@ -330,16 +330,16 @@ class ReStruct {
   }
 
   translate(d): void {
-    this.eachItem(item => item.visel.translate(d))
+    this.eachItem((item) => item.visel.translate(d))
   }
 
   scale(s: number): void {
     // NOTE: bounding boxes are not valid after scaling
-    this.eachItem(item => scaleVisel(item.visel, s))
+    this.eachItem((item) => scaleVisel(item.visel, s))
   }
 
   clearVisels(): void {
-    this.eachItem(item => this.clearVisel(item.visel))
+    this.eachItem((item) => this.clearVisel(item.visel))
   }
 
   update(force: boolean): boolean {
@@ -347,7 +347,7 @@ class ReStruct {
     force = force || !this.initialized
 
     // check items to update
-    Object.keys(ReStruct.maps).forEach(map => {
+    Object.keys(ReStruct.maps).forEach((map) => {
       const mapChanged = this[map + 'Changed']
       if (force) {
         this[map].forEach((_item, id) => mapChanged.set(id, 1))
@@ -375,7 +375,7 @@ class ReStruct {
       this.molecule.frags.delete(fid)
     })
 
-    Object.keys(ReStruct.maps).forEach(map => {
+    Object.keys(ReStruct.maps).forEach((map) => {
       const mapChanged = this[map + 'Changed']
 
       mapChanged.forEach((_value, id) => {
@@ -385,18 +385,18 @@ class ReStruct {
     })
 
     // TODO: when to update sgroup?
-    this.sgroups.forEach(sgroup => {
+    this.sgroups.forEach((sgroup) => {
       this.clearVisel(sgroup.visel)
       sgroup.highlighting = null
       sgroup.selectionPlate = null
     })
 
     // TODO [RB] need to implement update-on-demand for fragments and r-groups
-    this.frags.forEach(frag => {
+    this.frags.forEach((frag) => {
       this.clearVisel(frag.visel)
     })
 
-    this.rgroups.forEach(rgroup => {
+    this.rgroups.forEach((rgroup) => {
       this.clearVisel(rgroup.visel)
     })
 
@@ -435,14 +435,14 @@ class ReStruct {
   }
 
   updateLoops(): void {
-    this.reloops.forEach(reloop => {
+    this.reloops.forEach((reloop) => {
       this.clearVisel(reloop.visel)
     })
     const ret = this.molecule.findLoops()
-    ret.bondsToMark.forEach(bid => {
+    ret.bondsToMark.forEach((bid) => {
       this.markBond(bid, 1)
     })
-    ret.newLoops.forEach(loopId => {
+    ret.newLoops.forEach((loopId) => {
       this.reloops.set(loopId, new ReLoop(this.molecule.loops.get(loopId)))
     })
   }
@@ -490,7 +490,7 @@ class ReStruct {
     this.molecule.sGroupForest
       .getSGroupsBFS()
       .reverse()
-      .forEach(id => {
+      .forEach((id) => {
         const resgroup = this.sgroups.get(id)
         if (!resgroup) return
         resgroup.show(this)
@@ -522,7 +522,7 @@ class ReStruct {
 
     const bondlist: Array<number> = []
 
-    reloop.loop.hbs.forEach(hbid => {
+    reloop.loop.hbs.forEach((hbid) => {
       const hb = this.molecule.halfBonds.get(hbid)
       if (!hb) return
       hb.loop = -1
@@ -574,7 +574,7 @@ class ReStruct {
     const redraw = arguments.length === 0 // render.update only
     const atoms: { selected: boolean; sgroup: number }[] = []
 
-    Object.keys(ReStruct.maps).forEach(map => {
+    Object.keys(ReStruct.maps).forEach((map) => {
       const [mapValues] = this[map].values() // hack to include ReSGroup, figure out better solution
       if (ReStruct.maps[map].isSelectable() || mapValues instanceof ReSGroup) {
         this[map].forEach((item, id) => {
@@ -596,7 +596,7 @@ class ReStruct {
             )
           ) {
             const sGroupAtoms = atoms.filter(
-              atom => atom.sgroup === item.item.id
+              (atom) => atom.sgroup === item.item.id
             )
             item.selected = sGroupAtoms.length > 0 && sGroupAtoms[0].selected
           }
@@ -638,7 +638,7 @@ function isSelectionEmpty(selection) {
   if (!selection) return true
 
   const anySelection = Object.keys(ReStruct.maps).some(
-    map => selection[map] && selection[map].length > 0
+    (map) => selection[map] && selection[map].length > 0
   )
 
   return !anySelection

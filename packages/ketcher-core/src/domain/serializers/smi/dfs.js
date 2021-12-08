@@ -69,7 +69,7 @@ Dfs.prototype.walk = function () {
       var selected = -1
 
       while (cid < this.components.length && selected == -1) {
-        selected = this.components[cid].find(aid => {
+        selected = this.components[cid].find((aid) => {
           if (this.vertices[aid].dfs_state === 0) {
             selected = aid
             return true
@@ -83,7 +83,7 @@ Dfs.prototype.walk = function () {
         if (cid == this.nReactants) this.nComponentsInReactants = component
       }
       if (selected < -1) {
-        this.molecule.atoms.find(aid => {
+        this.molecule.atoms.find((aid) => {
           if (this.vertices[aid].dfs_state === 0) {
             selected = aid
             return true
@@ -174,7 +174,7 @@ Dfs.prototype.numOpeningCycles = function (eIdx) {
 
 Dfs.prototype.toString = function () {
   var str = ''
-  this.v_seq.forEach(seqElem => {
+  this.v_seq.forEach((seqElem) => {
     str += seqElem.idx + ' -> '
   })
   str += '*'

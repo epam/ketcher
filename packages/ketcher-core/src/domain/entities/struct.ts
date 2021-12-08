@@ -137,7 +137,7 @@ export class Struct {
       atomSet.add(aid)
     })
 
-    this.rgroups.forEach(rg => {
+    this.rgroups.forEach((rg) => {
       rg.frags.forEach((_fnum, fid) => {
         this.atoms.forEach((atom, aid) => {
           if (atom.fragment === fid) atomSet.delete(aid)
@@ -179,7 +179,7 @@ export class Struct {
     textsSet = textsSet || new Pile<number>(this.texts.keys())
     aidMap = aidMap || new Map()
 
-    bondSet = bondSet.filter(bid => {
+    bondSet = bondSet.filter((bid) => {
       const bond = this.bonds.get(bid)!
       return atomSet!.has(bond.begin) && atomSet!.has(bond.end)
     })
@@ -242,14 +242,14 @@ export class Struct {
       if (bondSet!.has(bid)) bidMap.set(bid, cp.bonds.add(bond.clone(aidMap!)))
     })
 
-    this.sgroups.forEach(sg => {
-      if (sg.atoms.some(aid => !atomSet!.has(aid))) return
+    this.sgroups.forEach((sg) => {
+      if (sg.atoms.some((aid) => !atomSet!.has(aid))) return
 
       sg = SGroup.clone(sg, aidMap!)
       const id = cp.sgroups.add(sg)
       sg.id = id
 
-      sg.atoms.forEach(aid => {
+      sg.atoms.forEach((aid) => {
         const atom = cp.atoms.get(aid)
         if (atom) {
           atom.sgs.add(id)
@@ -260,25 +260,25 @@ export class Struct {
       else cp.sGroupForest.insert(sg)
     })
 
-    this.functionalGroups.forEach(fg => {
+    this.functionalGroups.forEach((fg) => {
       fg = FunctionalGroup.clone(fg)
       cp.functionalGroups.add(fg)
     })
 
-    simpleObjectsSet.forEach(soid => {
+    simpleObjectsSet.forEach((soid) => {
       cp.simpleObjects.add(this.simpleObjects.get(soid)!.clone())
     })
 
-    textsSet.forEach(id => {
+    textsSet.forEach((id) => {
       cp.texts.add(this.texts.get(id)!.clone())
     })
 
     if (!dropRxnSymbols) {
       cp.isReaction = this.isReaction
-      this.rxnArrows.forEach(item => {
+      this.rxnArrows.forEach((item) => {
         cp.rxnArrows.add(item.clone())
       })
-      this.rxnPluses.forEach(item => {
+      this.rxnPluses.forEach((item) => {
         cp.rxnPluses.add(item.clone())
       })
     }
@@ -342,11 +342,11 @@ export class Struct {
   }
 
   initNeighbors() {
-    this.atoms.forEach(atom => {
+    this.atoms.forEach((atom) => {
       atom.neighbors = []
     })
 
-    this.bonds.forEach(bond => {
+    this.bonds.forEach((bond) => {
       const a1 = this.atoms.get(bond.begin)!
       const a2 = this.atoms.get(bond.end)!
       a1.neighbors.push(bond.hb1!)
@@ -438,14 +438,14 @@ export class Struct {
         this.atomSortNeighbors(aid)
       })
     } else {
-      list.forEach(aid => {
+      list.forEach((aid) => {
         this.atomSortNeighbors(aid)
       })
     }
   }
 
   atomUpdateHalfBonds(aid) {
-    this.atoms.get(aid)!.neighbors.forEach(hbid => {
+    this.atoms.get(aid)!.neighbors.forEach((hbid) => {
       this.halfBondUpdate(hbid)
       this.halfBondUpdate(this.halfBonds.get(hbid)!.contra)
     })
@@ -457,14 +457,14 @@ export class Struct {
         this.atomUpdateHalfBonds(aid)
       })
     } else {
-      list.forEach(aid => {
+      list.forEach((aid) => {
         this.atomUpdateHalfBonds(aid)
       })
     }
   }
 
   sGroupsRecalcCrossBonds() {
-    this.sgroups.forEach(sg => {
+    this.sgroups.forEach((sg) => {
       sg.xBonds = []
       sg.neiAtoms = []
     })
@@ -473,7 +473,7 @@ export class Struct {
       const a1 = this.atoms.get(bond.begin)!
       const a2 = this.atoms.get(bond.end)!
 
-      a1.sgs.forEach(sgid => {
+      a1.sgs.forEach((sgid) => {
         if (!a2.sgs.has(sgid)) {
           const sg = this.sgroups.get(sgid)!
           sg.xBonds.push(bid)
@@ -481,7 +481,7 @@ export class Struct {
         }
       })
 
-      a2.sgs.forEach(sgid => {
+      a2.sgs.forEach((sgid) => {
         if (!a1.sgs.has(sgid)) {
           const sg = this.sgroups.get(sgid)!
           sg.xBonds.push(bid)
@@ -492,7 +492,7 @@ export class Struct {
   }
 
   sGroupDelete(sgid: number) {
-    this.sgroups.get(sgid)!.atoms.forEach(atom => {
+    this.sgroups.get(sgid)!.atoms.forEach((atom) => {
       this.atoms.get(atom)!.sgs.delete(sgid)
     })
 
@@ -540,7 +540,7 @@ export class Struct {
         }
       } else {
         if (pp instanceof Array) {
-          pp.forEach(vec => {
+          pp.forEach((vec) => {
             bb.min = Vec2.min(bb.min, vec)
             bb.max = Vec2.max(bb.max, vec)
           })
@@ -557,16 +557,16 @@ export class Struct {
       if (global || atomSet!.has(aid)) extend(atom.pp)
     })
     if (global) {
-      this.rxnPluses.forEach(item => {
+      this.rxnPluses.forEach((item) => {
         extend(item.pp)
       })
-      this.rxnArrows.forEach(item => {
+      this.rxnArrows.forEach((item) => {
         extend(item.pos)
       })
-      this.simpleObjects.forEach(item => {
+      this.simpleObjects.forEach((item) => {
         extend(item.pos)
       })
-      this.texts.forEach(item => {
+      this.texts.forEach((item) => {
         extend(item.position)
       })
     }
@@ -593,7 +593,7 @@ export class Struct {
       }
     }
 
-    this.atoms.forEach(atom => {
+    this.atoms.forEach((atom) => {
       extend(atom.pp)
     })
     return bb
@@ -602,7 +602,7 @@ export class Struct {
   getBondLengthData() {
     let totalLength = 0
     let cnt = 0
-    this.bonds.forEach(bond => {
+    this.bonds.forEach((bond) => {
       totalLength += Vec2.dist(
         this.atoms.get(bond.begin)!.pp,
         this.atoms.get(bond.end)!.pp
@@ -657,7 +657,7 @@ export class Struct {
       const aid = list.pop()!
       ids.add(aid)
       const atom = this.atoms.get(aid)!
-      atom.neighbors.forEach(nei => {
+      atom.neighbors.forEach((nei) => {
         const neiId = this.halfBonds.get(nei)!.end
         if (!ids.has(neiId)) list.push(neiId)
       })
@@ -697,7 +697,7 @@ export class Struct {
     const frag = new Fragment()
     const fid = this.frags.add(frag)
 
-    idSet.forEach(aid => {
+    idSet.forEach((aid) => {
       const atom = this.atoms.get(aid)!
       if (atom.stereoLabel) frag.updateStereoAtom(this, aid, fid, true)
       atom.fragment = fid
@@ -706,7 +706,7 @@ export class Struct {
 
   markFragments() {
     const components = this.findConnectedComponents()
-    components.forEach(comp => {
+    components.forEach((comp) => {
       this.markFragment(comp)
     })
   }
@@ -714,19 +714,19 @@ export class Struct {
   scale(scale: number) {
     if (scale === 1) return
 
-    this.atoms.forEach(atom => {
+    this.atoms.forEach((atom) => {
       atom.pp = atom.pp.scaled(scale)
     })
 
-    this.rxnPluses.forEach(item => {
+    this.rxnPluses.forEach((item) => {
       item.pp = item.pp.scaled(scale)
     })
 
-    this.rxnArrows.forEach(item => {
-      item.pos = item.pos.map(p => p.scaled(scale))
+    this.rxnArrows.forEach((item) => {
+      item.pos = item.pos.map((p) => p.scaled(scale))
     })
 
-    this.sgroups.forEach(item => {
+    this.sgroups.forEach((item) => {
       item.pp = item.pp ? item.pp.scaled(scale) : null
     })
   }
@@ -853,7 +853,7 @@ export class Struct {
 
         // loop found
         const subloops = this.partitionLoop(loop)
-        subloops.forEach(loop => {
+        subloops.forEach((loop) => {
           let loopId
           if (this.loopIsInner(loop) && !this.loopHasSelfIntersections(loop)) {
             /*
@@ -871,7 +871,7 @@ export class Struct {
             loopId = -2
           }
 
-          loop.forEach(hbid => {
+          loop.forEach((hbid) => {
             this.halfBonds.get(hbid)!.loop = loopId
             bondsToMark.add(this.halfBonds.get(hbid)!.bid)
           })
@@ -937,7 +937,7 @@ export class Struct {
   }
 
   setImplicitHydrogen(list?: Array<number>) {
-    this.sgroups.forEach(item => {
+    this.sgroups.forEach((item) => {
       if (item.data.fieldName === 'MRV_IMPLICIT_H')
         this.atoms.get(item.atoms[0])!.hasImplicitH = true
     })
@@ -947,7 +947,7 @@ export class Struct {
         this.calcImplicitHydrogen(aid)
       })
     } else {
-      list.forEach(aid => {
+      list.forEach((aid) => {
         if (this.atoms.get(aid)) {
           this.calcImplicitHydrogen(aid)
         }
@@ -956,7 +956,7 @@ export class Struct {
   }
 
   atomGetNeighbors(aid: number): Array<Neighbor> | undefined {
-    return this.atoms.get(aid)?.neighbors.map(nei => {
+    return this.atoms.get(aid)?.neighbors.map((nei) => {
       const hb = this.halfBonds.get(nei)!
       return {
         aid: hb.end,
@@ -972,12 +972,12 @@ export class Struct {
     const barriers: Array<any> = []
     let arrowPos: number | null = null
 
-    this.rxnArrows.forEach(item => {
+    this.rxnArrows.forEach((item) => {
       // there's just one arrow
       arrowPos = item.center().x
     })
 
-    this.rxnPluses.forEach(item => {
+    this.rxnPluses.forEach((item) => {
       barriers.push(item.pp.x)
     })
 
@@ -987,7 +987,7 @@ export class Struct {
 
     const components: Array<any> = []
 
-    connectedComponents.forEach(component => {
+    connectedComponents.forEach((component) => {
       const bb = this.getCoordBoundingBox(component)
       const c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5)
       let j = 0
@@ -1002,7 +1002,7 @@ export class Struct {
     const reactants: Array<any> = []
     const products: Array<any> = []
 
-    components.forEach(component => {
+    components.forEach((component) => {
       if (!component) {
         submolTexts.push('')
         return
@@ -1035,7 +1035,7 @@ export class Struct {
   }
 
   bindSGroupsToFunctionalGroups() {
-    this.sgroups.forEach(sgroup => {
+    this.sgroups.forEach((sgroup) => {
       if (FunctionalGroup.isFunctionalGroup(sgroup)) {
         this.functionalGroups.add(new FunctionalGroup(sgroup))
       }

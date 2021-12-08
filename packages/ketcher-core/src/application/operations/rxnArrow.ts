@@ -106,7 +106,7 @@ export class MoveRxnArrow extends BaseOperation {
 
   execute(struct: Struct): PerformOperationResult {
     const rxnArrow = struct.rxnArrows.get(this.#rxnArrowId)!
-    rxnArrow.pos.forEach(p => p.add_(this.#delta))
+    rxnArrow.pos.forEach((p) => p.add_(this.#delta))
 
     // TODO: move to renderer
     // restruct.rxnArrows

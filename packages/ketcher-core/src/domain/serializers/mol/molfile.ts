@@ -66,7 +66,7 @@ export class Molfile {
     this.molecule.sGroupForest
       .getSGroupsBFS()
       .reverse()
-      .forEach(id => {
+      .forEach((id) => {
         let sgroup = mol.sgroups.get(id)!
         let errorIgnore = false
 
@@ -167,7 +167,7 @@ export class Molfile {
           this.molfile += '$RGP\n'
           this.writePaddedNumber(rgid, 3)
           this.molfile += '\n'
-          rg.frags.forEach(fid => {
+          rg.frags.forEach((fid) => {
             const group = new Molfile().getCTab(molecule.getFragment(fid))
             this.molfile += '$CTAB\n' + group + '$END CTAB\n'
           })
@@ -258,7 +258,7 @@ export class Molfile {
 
     this.writePaddedNumber(0, 3)
     this.writePaddedNumber(0, 3)
-    const isAbsFlag = Array.from(this.molecule.frags.values()).some(fr =>
+    const isAbsFlag = Array.from(this.molecule.frags.values()).some((fr) =>
       fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false
     )
     this.writePaddedNumber(isAbsFlag ? 1 : 0, 3)
@@ -414,7 +414,7 @@ export class Molfile {
     let cnt = 1
     const sgmapback = {}
     const sgorder = this.molecule.sGroupForest.getSGroupsBFS()
-    sgorder.forEach(id => {
+    sgorder.forEach((id) => {
       sgmapback[cnt] = id
       sgmap[id] = cnt++
     })
@@ -488,7 +488,7 @@ export class Molfile {
     // TODO: write M  LOG
 
     const expandedGroups: number[] = []
-    this.molecule.sgroups.forEach(sg => {
+    this.molecule.sgroups.forEach((sg) => {
       if (sg.data.expanded) expandedGroups.push(sg.id + 1)
     })
 
@@ -598,7 +598,7 @@ export class Molfile {
       this.write(propId)
       this.writePaddedNumber(part.length, 3)
 
-      part.forEach(value => {
+      part.forEach((value) => {
         this.writeWhiteSpace()
         this.writePaddedNumber(this.mapping[value[0]], 3)
         this.writeWhiteSpace()

@@ -65,7 +65,7 @@ class BaseOperation {
 
     const halfBonds = restruct.molecule.halfBonds
 
-    atom.a.neighbors.forEach(halfBondId => {
+    atom.a.neighbors.forEach((halfBondId) => {
       if (!halfBonds.has(halfBondId)) {
         return
       }

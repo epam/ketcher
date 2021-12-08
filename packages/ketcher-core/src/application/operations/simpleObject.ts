@@ -145,7 +145,7 @@ export class MoveSimpleObject extends BaseOperation {
 
   execute(struct: Struct): PerformOperationResult {
     const simpleObject = struct.simpleObjects.get(this.#simpleObjectId)!
-    simpleObject.pos.forEach(p => p.add_(this.#delta))
+    simpleObject.pos.forEach((p) => p.add_(this.#delta))
 
     //TODO: move to  renderer
     // restruct.simpleObjects

@@ -48,7 +48,7 @@ Stereocenters.prototype.buildFromBonds = function (
     // check atom labels
     if (
       [aid, nei1.aid, nei2.aid].findIndex(
-        aid => ['C', 'Si'].indexOf(atoms.get(aid).label) < 0,
+        (aid) => ['C', 'Si'].indexOf(atoms.get(aid).label) < 0,
         this
       ) >= 0
     )
@@ -57,7 +57,7 @@ Stereocenters.prototype.buildFromBonds = function (
     // check adjacent bond types
     if (
       [nei1.bid, nei2.bid].findIndex(
-        bid => bonds.get(bid).type !== Bond.PATTERN.TYPE.DOUBLE,
+        (bid) => bonds.get(bid).type !== Bond.PATTERN.TYPE.DOUBLE,
         this
       ) >= 0
     )
@@ -66,10 +66,10 @@ Stereocenters.prototype.buildFromBonds = function (
     // get the other neighbors of the two adjacent atoms except for the central atom
     var nei1nei = this.getNeighbors
       .call(this.context, nei1.aid)
-      .filter(nei => nei.aid != aid)
+      .filter((nei) => nei.aid != aid)
     var nei2nei = this.getNeighbors
       .call(this.context, nei2.aid)
-      .filter(nei => nei.aid != aid)
+      .filter((nei) => nei.aid != aid)
     if (
       nei1nei.length < 1 ||
       nei1nei.length > 2 ||
@@ -82,7 +82,7 @@ Stereocenters.prototype.buildFromBonds = function (
       nei1nei
         .concat(nei2nei)
         .findIndex(
-          nei => bonds.get(nei.bid).type != Bond.PATTERN.TYPE.SINGLE,
+          (nei) => bonds.get(nei.bid).type != Bond.PATTERN.TYPE.SINGLE,
           this
         ) >= 0
     )
@@ -92,7 +92,7 @@ Stereocenters.prototype.buildFromBonds = function (
       nei1nei
         .concat(nei2nei)
         .findIndex(
-          nei => bonds.get(nei.bid).stereo == Bond.PATTERN.STEREO.EITHER,
+          (nei) => bonds.get(nei.bid).stereo == Bond.PATTERN.STEREO.EITHER,
           this
         ) >= 0
     )
@@ -215,7 +215,7 @@ Stereocenters.prototype.buildOneCenter = function (
     else if (bond.type === Bond.PATTERN.TYPE.DOUBLE) nDoubleBonds++
   })
 
-  Stereocenters.allowed_stereocenters.find(as => {
+  Stereocenters.allowed_stereocenters.find((as) => {
     if (
       as.elem === atom.label &&
       as.charge === atom.charge &&

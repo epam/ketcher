@@ -36,7 +36,7 @@ export function atomGetPos(restruct, id) {
 }
 
 export function findStereoAtoms(struct, aids) {
-  return aids.filter(aid => struct.atoms.get(aid).stereoLabel !== null)
+  return aids.filter((aid) => struct.atoms.get(aid).stereoLabel !== null)
 }
 
 export function structSelection(struct) {
@@ -67,7 +67,7 @@ export function atomForNewBond(restruct, id, bond?) {
   )
   const prevBondType = restruct.molecule.bonds.get(prevBondId).type
 
-  restruct.molecule.atomGetNeighbors(id).forEach(nei => {
+  restruct.molecule.atomGetNeighbors(id).forEach((nei) => {
     const neiPos = atomGetPos(restruct, nei.aid)
 
     if (Vec2.dist(pos, neiPos) < 0.1) return
@@ -115,7 +115,7 @@ export function atomForNewBond(restruct, id, bond?) {
         const neiV = Vec2.diff(pos, neiPos)
         const neiAngle = Math.atan2(neiV.y, neiV.x)
 
-        restruct.molecule.atomGetNeighbors(nei.aid).forEach(neiNei => {
+        restruct.molecule.atomGetNeighbors(nei.aid).forEach((neiNei) => {
           const neiNeiPos = atomGetPos(restruct, neiNei.aid)
 
           if (neiNei.bid === nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1)

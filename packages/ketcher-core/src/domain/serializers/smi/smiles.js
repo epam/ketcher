@@ -66,7 +66,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
   struct.initNeighbors()
   struct.sortNeighbors()
   struct.setImplicitHydrogen()
-  struct.sgroups.forEach(sg => {
+  struct.sgroups.forEach((sg) => {
     if (sg.type === 'MUL') {
       try {
         SGroup.prepareMulForSaving(sg, struct)
@@ -106,14 +106,14 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
   this.inLoop = (function () {
     struct.prepareLoopStructure()
     let bondsInLoops = new Pile()
-    struct.loops.forEach(loop => {
+    struct.loops.forEach((loop) => {
       if (loop.hbs.length <= 6) {
-        const hbids = loop.hbs.map(hbid => struct.halfBonds.get(hbid).bid)
+        const hbids = loop.hbs.map((hbid) => struct.halfBonds.get(hbid).bid)
         bondsInLoops = bondsInLoops.union(new Pile(hbids))
       }
     })
     const inLoop = {}
-    bondsInLoops.forEach(bid => {
+    bondsInLoops.forEach((bid) => {
       inLoop[bid] = 1
     })
     return inLoop
@@ -133,7 +133,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
   )
 
   walk.walk()
-  this.atoms.forEach(atom => {
+  this.atoms.forEach((atom) => {
     atom.neighbours = []
   })
 
@@ -579,7 +579,7 @@ Smiles.prototype.markCisTrans = function (mol) {
       var aromFailBeg = true
       var aromFailEnd = true
 
-      neiBeg.forEach(nei => {
+      neiBeg.forEach((nei) => {
         if (
           nei.bid !== bid &&
           mol.bonds.get(nei.bid).type === Bond.PATTERN.TYPE.SINGLE
@@ -587,7 +587,7 @@ Smiles.prototype.markCisTrans = function (mol) {
           aromFailBeg = false
       })
 
-      neiEnd.forEach(nei => {
+      neiEnd.forEach((nei) => {
         if (
           nei.bid !== bid &&
           mol.bonds.get(nei.bid).type === Bond.PATTERN.TYPE.SINGLE
@@ -597,14 +597,14 @@ Smiles.prototype.markCisTrans = function (mol) {
 
       if (aromFailBeg || aromFailEnd) return
 
-      neiBeg.forEach(nei => {
+      neiBeg.forEach((nei) => {
         if (nei.bid === bid) return
         if (mol.bonds.get(nei.bid).begin === bond.begin)
           this.dbonds[nei.bid].ctbond_beg = bid
         else this.dbonds[nei.bid].ctbond_end = bid
       })
 
-      neiEnd.forEach(nei => {
+      neiEnd.forEach((nei) => {
         if (nei.bid === bid) return
         if (mol.bonds.get(nei.bid).begin === bond.end)
           this.dbonds[nei.bid].ctbond_beg = bid

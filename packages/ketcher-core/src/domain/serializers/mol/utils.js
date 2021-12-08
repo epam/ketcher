@@ -181,7 +181,7 @@ function rxnMerge(
       molProd.push(mol)
     }
 
-    mol.atoms.forEach(atom => {
+    mol.atoms.forEach((atom) => {
       atom.rxnFragmentType = fragmentType
     })
   }
@@ -192,11 +192,11 @@ function rxnMerge(
       xorig - bb.min.x,
       over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2
     )
-    mol.atoms.forEach(atom => {
+    mol.atoms.forEach((atom) => {
       atom.pp.add_(d) // eslint-disable-line no-underscore-dangle
     })
 
-    mol.sgroups.forEach(item => {
+    mol.sgroups.forEach((item) => {
       if (item.pp) item.pp.add_(d) // eslint-disable-line no-underscore-dangle
     })
     bb.min.add_(d) // eslint-disable-line no-underscore-dangle
@@ -312,7 +312,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
 
   scaffold.mergeInto(ret, null, null, false, true)
 
-  Object.keys(rgroups).forEach(id => {
+  Object.keys(rgroups).forEach((id) => {
     const rgid = parseInt(id, 10)
 
     for (let j = 0; j < rgroups[rgid].length; ++j) {
@@ -321,7 +321,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
       const frag = {}
       const frid = ctab.frags.add(frag)
       ctab.rgroups.get(rgid).frags.add(frid)
-      ctab.atoms.forEach(atom => {
+      ctab.atoms.forEach((atom) => {
         atom.fragment = frid
       })
       ctab.mergeInto(ret)

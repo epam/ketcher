@@ -304,12 +304,12 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ {
     }
   }
 
-  Object.keys(rfrags).forEach(rgid => {
-    rfrags[rgid].forEach(rg => {
+  Object.keys(rfrags).forEach((rgid) => {
+    rfrags[rgid].forEach((rg) => {
       rg.rgroups.set(rgid, new RGroup(rLogic[rgid]))
       const frid = rg.frags.add({})
       rg.rgroups.get(rgid).frags.add(frid)
-      rg.atoms.forEach(atom => {
+      rg.atoms.forEach((atom) => {
         atom.fragment = frid
       })
       rg.mergeInto(ctab)

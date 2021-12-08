@@ -49,7 +49,7 @@ export class RGroup {
 
   clone(fidMap?: Map<number, number> | null): RGroup {
     const ret = new RGroup(this)
-    this.frags.forEach(fid => {
+    this.frags.forEach((fid) => {
       ret.frags.add(fidMap ? fidMap.get(fid)! : fid)
     })
     return ret

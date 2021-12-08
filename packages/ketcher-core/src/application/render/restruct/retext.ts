@@ -72,7 +72,9 @@ class ReText extends ReObject {
     const leftEdge = firstElOfFirstRow.getBBox().x
 
     const firstRow: Array<any> = paths[0]
-    const topEdge: number = Math.min(...firstRow.map(path => path.getBBox().y))
+    const topEdge: number = Math.min(
+      ...firstRow.map((path) => path.getBBox().y)
+    )
 
     const widestRow: Array<any> = paths.reduce(
       (widestRow, nextRow) =>
@@ -87,7 +89,7 @@ class ReText extends ReObject {
 
     const lastRow: Array<any> = paths[paths.length - 1]
     const bottomEdge: number = Math.max(
-      ...lastRow.map(path => path.getBBox().y + path.getBBox().height)
+      ...lastRow.map((path) => path.getBBox().y + path.getBBox().height)
     )
 
     return {

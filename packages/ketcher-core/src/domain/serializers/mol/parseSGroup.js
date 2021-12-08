@@ -233,7 +233,7 @@ function applySGroupArrayProp(sGroups, propName, propData, shift) {
   let part = toIntArray(utils.partitionLineFixed(propData.slice(8), 3, true))
 
   if (part.length !== num) throw new Error('File format invalid')
-  if (shift) part = part.map(v => v + shift)
+  if (shift) part = part.map((v) => v + shift)
 
   sGroups[sid][propName] = sGroups[sid][propName].concat(part)
 }

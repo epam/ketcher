@@ -197,7 +197,7 @@ export class UpdateIfThen extends BaseOperation {
   }
 
   execute(struct: Struct): PerformOperationResult {
-    struct.rgroups.forEach(rg => {
+    struct.rgroups.forEach((rg) => {
       if (rg.ifthen === this.#previousRgroupIndex) {
         rg.ifthen = this.#newRgroupIndex
       }

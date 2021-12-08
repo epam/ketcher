@@ -59,7 +59,7 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
     return sdfItems.reduce((res, item) => {
       res += molSerializer.serialize(item.struct)
 
-      Object.keys(item.props).forEach(prop => {
+      Object.keys(item.props).forEach((prop) => {
         res += '> <' + prop + '>\n'
         res += item.props[prop] + '\n\n'
       })

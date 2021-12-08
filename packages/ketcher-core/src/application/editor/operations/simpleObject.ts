@@ -62,7 +62,7 @@ export class SimpleObjectAdd extends Base {
     }
     struct.simpleObjectSetPos(
       itemId,
-      positions.map(p => new Vec2(p))
+      positions.map((p) => new Vec2(p))
     )
 
     Base.invalidateItem(restruct, 'simpleObjects', itemId, 1)
@@ -133,7 +133,7 @@ export class SimpleObjectMove extends Base {
     const id = this.data.id
     const d = this.data.d
     const item = struct.simpleObjects.get(id)
-    item.pos.forEach(p => p.add_(d))
+    item.pos.forEach((p) => p.add_(d))
     restruct.simpleObjects
       .get(id)
       .visel.translate(Scale.obj2scaled(d, restruct.render.options))

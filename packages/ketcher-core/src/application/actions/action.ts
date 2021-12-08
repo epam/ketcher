@@ -39,7 +39,7 @@ export class Action {
     const sortedOperations = [...this.#operations].sort(
       (a, b) => a.priority - b.priority
     )
-    sortedOperations.forEach(operation => {
+    sortedOperations.forEach((operation) => {
       const result = operation.perform(restruct)
       results.push(result)
     })

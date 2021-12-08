@@ -128,8 +128,8 @@ export function fromBondsAttrs(
   const action = new Action()
   const bids = Array.isArray(ids) ? ids : [ids]
 
-  bids.forEach(bid => {
-    Object.keys(Bond.attrlist).forEach(key => {
+  bids.forEach((bid) => {
+    Object.keys(Bond.attrlist).forEach((key) => {
       if (!(key in attrs) && !reset) return
 
       const value = key in attrs ? attrs[key] : Bond.attrGetDefault(key)
@@ -205,7 +205,7 @@ export function fromBondStereoUpdate(
 
   const fragmentStereoBonds: Array<Bond> = []
 
-  struct.bonds.forEach(bond => {
+  struct.bonds.forEach((bond) => {
     if (struct.atoms.get(bond.begin)?.fragment === beginFrId) {
       fragmentStereoBonds.push(bond)
     }

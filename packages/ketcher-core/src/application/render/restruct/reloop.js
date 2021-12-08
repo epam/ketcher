@@ -40,7 +40,7 @@ class ReLoop extends ReObject {
     var molecule = restruct.molecule
     var loop = this.loop
     this.centre = new Vec2()
-    loop.hbs.forEach(hbid => {
+    loop.hbs.forEach((hbid) => {
       var hb = molecule.halfBonds.get(hbid)
       var bond = restruct.bonds.get(hb.bid)
       var apos = Scale.obj2scaled(restruct.atoms.get(hb.begin).a.pp, options)
@@ -60,7 +60,7 @@ class ReLoop extends ReObject {
 
     this.centre = this.centre.scaled(1.0 / loop.hbs.length)
     this.radius = -1
-    loop.hbs.forEach(hbid => {
+    loop.hbs.forEach((hbid) => {
       var hb = molecule.halfBonds.get(hbid)
       var apos = Scale.obj2scaled(restruct.atoms.get(hb.begin).a.pp, options)
       var bpos = Scale.obj2scaled(restruct.atoms.get(hb.end).a.pp, options)
@@ -108,7 +108,7 @@ class ReLoop extends ReObject {
   isValid(struct, rlid) {
     const halfBonds = struct.halfBonds
     return this.loop.hbs.every(
-      hbid => halfBonds.has(hbid) && halfBonds.get(hbid).loop === rlid
+      (hbid) => halfBonds.has(hbid) && halfBonds.get(hbid).loop === rlid
     )
   }
 }

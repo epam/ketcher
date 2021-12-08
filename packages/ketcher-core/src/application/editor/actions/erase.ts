@@ -113,8 +113,8 @@ export function fromFragmentDeletion(restruct, selection) {
       actionRemoveDataSGroups.mergeWith(fromSgroupDeletion(restruct, id))
   })
 
-  selection.atoms.forEach(aid => {
-    restruct.molecule.atomGetNeighbors(aid).forEach(nei => {
+  selection.atoms.forEach((aid) => {
+    restruct.molecule.atomGetNeighbors(aid).forEach((nei) => {
       if (selection.bonds.indexOf(nei.bid) === -1) {
         selection.bonds = selection.bonds.concat([nei.bid])
       }
@@ -122,7 +122,7 @@ export function fromFragmentDeletion(restruct, selection) {
   })
 
   const actionRemoveBonds = new Action()
-  selection.bonds.forEach(bid => {
+  selection.bonds.forEach((bid) => {
     const frid = restruct.molecule.getBondFragment(bid)
     if (frids.indexOf(frid) < 0) frids.push(frid)
 
@@ -131,7 +131,7 @@ export function fromFragmentDeletion(restruct, selection) {
     )
   })
 
-  selection.atoms.forEach(aid => {
+  selection.atoms.forEach((aid) => {
     const frid3 = restruct.molecule.atoms.get(aid).fragment
     if (frids.indexOf(frid3) < 0) frids.push(frid3)
 
@@ -143,19 +143,19 @@ export function fromFragmentDeletion(restruct, selection) {
 
   removeSgroupIfNeeded(action, restruct, atomsToRemove)
 
-  selection.rxnArrows.forEach(id => {
+  selection.rxnArrows.forEach((id) => {
     action.addOp(new RxnArrowDelete(id))
   })
 
-  selection.rxnPluses.forEach(id => {
+  selection.rxnPluses.forEach((id) => {
     action.addOp(new RxnPlusDelete(id))
   })
 
-  selection.simpleObjects.forEach(id => {
+  selection.simpleObjects.forEach((id) => {
     action.addOp(new SimpleObjectDelete(id))
   })
 
-  selection.texts.forEach(id => {
+  selection.texts.forEach((id) => {
     action.addOp(new TextDelete(id))
   })
 
@@ -163,7 +163,7 @@ export function fromFragmentDeletion(restruct, selection) {
   action.mergeWith(actionRemoveBonds)
 
   const rgForRemove: Array<number> = frids.map(
-    frid => RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid)!
+    (frid) => RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid)!
   )
 
   while (frids.length > 0)

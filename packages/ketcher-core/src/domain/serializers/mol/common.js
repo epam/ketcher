@@ -227,7 +227,7 @@ function saveDatToMolfile(sgroup, mol, sgMap, atomMap) {
   lines.push(sddLine)
   const val = normalizeNewlines(data.fieldValue).replace(/\n*$/, '')
   const charsPerLine = 69
-  val.split('\n').forEach(chars => {
+  val.split('\n').forEach((chars) => {
     while (chars.length > charsPerLine) {
       lines.push('M  SCD ' + idstr + ' ' + chars.slice(0, charsPerLine))
       chars = chars.slice(charsPerLine)

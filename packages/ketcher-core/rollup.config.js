@@ -3,10 +3,10 @@ import cleanup from 'rollup-plugin-cleanup'
 import commonjs from '@rollup/plugin-commonjs'
 import del from 'rollup-plugin-delete'
 import json from '@rollup/plugin-json'
+import nodeResolve from '@rollup/plugin-node-resolve'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 import pkg from './package.json'
 import replace from '@rollup/plugin-replace'
-import resolve from '@rollup/plugin-node-resolve'
 import strip from '@rollup/plugin-strip'
 import ttypescript from 'ttypescript'
 import typescript from 'rollup-plugin-typescript2'
@@ -18,6 +18,7 @@ const mode = {
 
 const extensions = ['.js', '.ts']
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION
+const includePattern = 'src/**/*'
 
 const config = {
   input: pkg.source,
@@ -39,19 +40,20 @@ const config = {
       runOnce: true
     }),
     peerDepsExternal({ includeDependencies: true }),
-    resolve({ extensions, preferBuiltins: false }),
-    commonjs({ sourceMap: false }),
+    nodeResolve({ extensions }),
+    commonjs(),
     replace(
       {
         'process.env.NODE_ENV': JSON.stringify(
           isProduction ? mode.PRODUCTION : mode.DEVELOPMENT
-        )
+        ),
+        preventAssignment: true
       },
       {
-        include: 'src/**/*.{js,ts}'
+        include: includePattern
       }
     ),
-    json(),
+    json({ include: includePattern }),
     typescript({
       typescript: ttypescript,
       tsconfigOverride: {
@@ -61,13 +63,14 @@ const config = {
     babel({
       extensions,
       babelHelpers: 'runtime',
-      include: ['src/**/*']
+      include: includePattern
     }),
     cleanup({
-      extensions: extensions.map(ext => ext.trimStart('.')),
-      comments: 'none'
+      extensions: extensions.map((ext) => ext.trimStart('.')),
+      comments: 'none',
+      include: includePattern
     }),
-    ...(isProduction ? [strip()] : [])
+    ...(isProduction ? [strip({ include: includePattern })] : [])
   ]
 }
 

@@ -62,8 +62,8 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
   const action = new Action()
   const aids = Array.isArray(ids) ? ids : [ids]
 
-  aids.forEach(aid => {
-    Object.keys(Atom.attrlist).forEach(key => {
+  aids.forEach((aid) => {
+    Object.keys(Atom.attrlist).forEach((key) => {
       if (key === 'attpnt' && !(key in attrs)) return
       if (!(key in attrs) && !reset) return
 
@@ -136,7 +136,7 @@ export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse) {
 export function fromAtomsFragmentAttr(restruct, aids, newfrid) {
   const action = new Action()
 
-  aids.forEach(aid => {
+  aids.forEach((aid) => {
     const atom = restruct.molecule.atoms.get(aid)
     const oldfrid = atom.fragment
     action.addOp(new AtomAttr(aid, 'fragment', newfrid))
@@ -165,7 +165,7 @@ export function fromAtomMerge(restruct, srcId, dstId) {
   const action = new Action()
 
   const atomNeighbors = restruct.molecule.atomGetNeighbors(srcId)
-  atomNeighbors.forEach(nei => {
+  atomNeighbors.forEach((nei) => {
     const bond = restruct.molecule.bonds.get(nei.bid)
 
     if (dstId === bond.begin || dstId === bond.end) {
@@ -184,7 +184,7 @@ export function fromAtomMerge(restruct, srcId, dstId) {
     } else {
       // replace old bond with new bond
       const attrs = Bond.getAttrHash(bond)
-      Object.keys(attrs).forEach(key => {
+      Object.keys(attrs).forEach((key) => {
         action.addOp(new BondAttr(mergeBondId, key, attrs[key]))
       })
     }
@@ -197,7 +197,7 @@ export function fromAtomMerge(restruct, srcId, dstId) {
   if (atomGetDegree(restruct, srcId) === 1 && attrs['label'] === '*')
     attrs['label'] = 'C'
 
-  Object.keys(attrs).forEach(key => {
+  Object.keys(attrs).forEach((key) => {
     if (key !== 'stereoLabel' && key !== 'stereoParity') {
       action.addOp(new AtomAttr(dstId, key, attrs[key]))
     }
@@ -250,7 +250,7 @@ export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {
 export function mergeSgroups(action, restruct, srcAtoms, dstAtom) {
   const sgroups = atomGetSGroups(restruct, dstAtom)
 
-  sgroups.forEach(sid => {
+  sgroups.forEach((sid) => {
     const sgroup = restruct.molecule.sgroups.get(sid)
     const notExpandedContexts = ['Atom', 'Bond', 'Group']
     if (
@@ -259,7 +259,7 @@ export function mergeSgroups(action, restruct, srcAtoms, dstAtom) {
     )
       return
     const atomsToSgroup: any = without(sgroup.atoms, srcAtoms)
-    atomsToSgroup.forEach(aid =>
+    atomsToSgroup.forEach((aid) =>
       action.addOp(new SGroupAtomAdd(sid, aid).perform(restruct))
     )
   })

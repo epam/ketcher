@@ -63,7 +63,7 @@ export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
 export function fromSgroupAttrs(restruct, id, attrs) {
   const action = new Action()
 
-  Object.keys(attrs).forEach(key => {
+  Object.keys(attrs).forEach((key) => {
     action.addOp(new SGroupAttr(id, key, attrs[key]))
   })
 
@@ -73,7 +73,7 @@ export function fromSgroupAttrs(restruct, id, attrs) {
 export function setExpandSGroup(restruct, sgid, attrs) {
   const action = new Action()
 
-  Object.keys(attrs).forEach(key => {
+  Object.keys(attrs).forEach((key) => {
     action.addOp(new SGroupAttr(sgid, key, attrs[key]))
   })
 
@@ -81,7 +81,7 @@ export function setExpandSGroup(restruct, sgid, attrs) {
   if (sgroup.firstSgroupAtom) delete sgroup.firstSgroupAtom
   const atoms = SGroup.getAtoms(restruct, sgroup)
 
-  atoms.forEach(aid => {
+  atoms.forEach((aid) => {
     action.mergeWith(
       fromAtomsAttrs(restruct, aid, restruct.atoms.get(aid).a, false)
     )
@@ -93,7 +93,7 @@ export function setExpandSGroup(restruct, sgid, attrs) {
 export function sGroupAttributeAction(id, attrs) {
   const action = new Action()
 
-  Object.keys(attrs).forEach(key => {
+  Object.keys(attrs).forEach((key) => {
     action.addOp(new SGroupAttr(id, key, attrs[key]))
   })
 
@@ -109,7 +109,7 @@ export function fromSgroupDeletion(restruct, id) {
   if (sG.type === 'SRU') {
     struct.sGroupsRecalcCrossBonds()
 
-    sG.neiAtoms.forEach(aid => {
+    sG.neiAtoms.forEach((aid) => {
       if (atomGetAttr(restruct, aid, 'label') === '*')
         action.addOp(new AtomAttr(aid, 'label', 'C'))
     })
@@ -121,7 +121,7 @@ export function fromSgroupDeletion(restruct, id) {
 
   action.addOp(new SGroupRemoveFromHierarchy(id))
 
-  atoms.forEach(atom => {
+  atoms.forEach((atom) => {
     action.addOp(new SGroupAtomRemove(id, atom))
   })
 
@@ -157,7 +157,7 @@ export function fromSgroupAddition(
     action.addOp(new SGroupCreate(sgid, type, pp))
   }
 
-  atoms.forEach(atom => {
+  atoms.forEach((atom) => {
     action.addOp(new SGroupAtomAdd(sgid, atom))
   })
 
@@ -173,7 +173,7 @@ export function fromSgroupAddition(
     restruct.molecule.sGroupsRecalcCrossBonds()
     let asteriskAction = new Action()
 
-    restruct.sgroups.get(sgid).item.neiAtoms.forEach(aid => {
+    restruct.sgroups.get(sgid).item.neiAtoms.forEach((aid) => {
       const plainCarbon = restruct.atoms.get(aid).a.isPlainCarbon()
 
       if (atomGetDegree(restruct, aid) === 1 && plainCarbon)
@@ -248,7 +248,7 @@ function fromAtomAction(restruct, newSg, sourceAtoms) {
 
 function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
   const allFragments = new Pile(
-    sourceAtoms.map(aid => restruct.atoms.get(aid).a.fragment)
+    sourceAtoms.map((aid) => restruct.atoms.get(aid).a.fragment)
   )
 
   return Array.from(allFragments).reduce(
@@ -330,7 +330,7 @@ export function removeAtomFromSgroupIfNeeded(action, restruct, id) {
   const sgroups = atomGetSGroups(restruct, id)
 
   if (sgroups.length > 0) {
-    sgroups.forEach(sid => {
+    sgroups.forEach((sid) => {
       action.addOp(new SGroupAtomRemove(sid, id))
     })
 
@@ -345,10 +345,10 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
   const struct = restruct.molecule
   const sgCounts = new Map()
 
-  atoms.forEach(id => {
+  atoms.forEach((id) => {
     const sgroups = atomGetSGroups(restruct, id)
 
-    sgroups.forEach(sid => {
+    sgroups.forEach((sid) => {
       sgCounts.set(sid, sgCounts.has(sid) ? sgCounts.get(sid) + 1 : 1)
     })
   })
@@ -370,7 +370,7 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
 function getAtomsBondIds(struct, atoms) {
   const atomSet = new Pile(atoms)
 
-  return Array.from(struct.bonds.keys()).filter(bid => {
+  return Array.from(struct.bonds.keys()).filter((bid) => {
     const bond = struct.bonds.get(bid)
     return atomSet.has(bond.begin) && atomSet.has(bond.end)
   })

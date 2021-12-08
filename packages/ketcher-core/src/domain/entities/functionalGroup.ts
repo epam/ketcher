@@ -46,7 +46,7 @@ export class FunctionalGroup {
     const provider = FunctionalGroupsProvider.getInstance()
     const types = provider.getFunctionalGroupsList()
     return (
-      types.some(type => type.name === sgroup.data.name) &&
+      types.some((type) => type.name === sgroup.data.name) &&
       sgroup.type === 'SUP'
     )
   }
@@ -116,7 +116,7 @@ export class FunctionalGroup {
   ): boolean {
     const contractedFunctionalGroups: number[] = []
     if (sgroupsFromReStruct) {
-      sgroups.forEach(sg => {
+      sgroups.forEach((sg) => {
         if (
           FunctionalGroup.isContractedFunctionalGroup(
             sg.item.id,
@@ -127,7 +127,7 @@ export class FunctionalGroup {
         }
       })
     } else {
-      sgroups.forEach(sg => {
+      sgroups.forEach((sg) => {
         if (
           FunctionalGroup.isContractedFunctionalGroup(sg.id, functionalGroups)
         ) {
@@ -135,7 +135,7 @@ export class FunctionalGroup {
         }
       })
     }
-    return contractedFunctionalGroups.some(sg => atom.sgs.has(sg))
+    return contractedFunctionalGroups.some((sg) => atom.sgs.has(sg))
   }
 
   static isBondInContractedFunctionalGroup(
@@ -146,7 +146,7 @@ export class FunctionalGroup {
   ): boolean {
     const contractedFunctionalGroupsAtoms: number[] = []
     if (sgroupsFromReStruct) {
-      sgroups.forEach(sg => {
+      sgroups.forEach((sg) => {
         if (
           FunctionalGroup.isContractedFunctionalGroup(
             sg.item.id,
@@ -157,7 +157,7 @@ export class FunctionalGroup {
         }
       })
     } else {
-      sgroups.forEach(sg => {
+      sgroups.forEach((sg) => {
         if (
           FunctionalGroup.isContractedFunctionalGroup(sg.id, functionalGroups)
         ) {
@@ -174,7 +174,7 @@ export class FunctionalGroup {
   static isContractedFunctionalGroup(sgroupId, functionalGroups): boolean {
     let isFunctionalGroup = false
     let expanded = false
-    functionalGroups.forEach(fg => {
+    functionalGroups.forEach((fg) => {
       if (fg.relatedSGroupId === sgroupId) {
         isFunctionalGroup = true
         expanded = fg.isExpanded

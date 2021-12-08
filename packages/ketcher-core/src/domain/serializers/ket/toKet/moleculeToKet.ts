@@ -33,7 +33,7 @@ function fromRlabel(rg) {
 
 export function moleculeToKet(struct: Struct): any {
   const body: any = {
-    atoms: Array.from(struct.atoms.values()).map(atom => {
+    atoms: Array.from(struct.atoms.values()).map((atom) => {
       if (atom.label === 'R#') return rglabelToKet(atom)
       if (atom.label === 'L#') return atomListToKet(atom)
       return atomToKet(atom)
@@ -44,7 +44,7 @@ export function moleculeToKet(struct: Struct): any {
     body.bonds = Array.from(struct.bonds.values()).map(bondToKet)
 
   if (struct.sgroups.size !== 0)
-    body.sgroups = Array.from(struct.sgroups.values()).map(sGroup =>
+    body.sgroups = Array.from(struct.sgroups.values()).map((sGroup) =>
       sgroupToKet(struct, sGroup)
     )
 
@@ -92,7 +92,7 @@ function rglabelToKet(source) {
   ifDef(result, 'attachmentPoints', source.attpnt, 0)
 
   const refsToRGroups = fromRlabel(source.rglabel).map(
-    rgnumber => `rg-${rgnumber}`
+    (rgnumber) => `rg-${rgnumber}`
   )
   ifDef(result, '$refs', refsToRGroups)
 

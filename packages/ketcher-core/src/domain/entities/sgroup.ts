@@ -129,7 +129,7 @@ export class SGroup {
   // TODO: should be group-specific
   getAttrs(): any {
     var attrs = {}
-    Object.keys(this.data).forEach(attr => {
+    Object.keys(this.data).forEach((attr) => {
       attrs[attr] = this.data[attr]
     })
     return attrs
@@ -205,11 +205,11 @@ export class SGroup {
   static clone(sgroup: SGroup, aidMap: Map<number, number>): SGroup {
     const cp = new SGroup(sgroup.type)
 
-    Object.keys(sgroup.data).forEach(field => {
+    Object.keys(sgroup.data).forEach((field) => {
       cp.data[field] = sgroup.data[field]
     })
 
-    cp.atoms = sgroup.atoms.map(elem => aidMap.get(elem))
+    cp.atoms = sgroup.atoms.map((elem) => aidMap.get(elem))
     cp.pp = sgroup.pp
     cp.bracketBox = sgroup.bracketBox
     cp.patoms = null
@@ -274,17 +274,17 @@ export class SGroup {
 
     var braketBox: Box2Abs | null = null
     var contentBoxes: Array<any> = []
-    atoms.forEach(aid => {
+    atoms.forEach((aid) => {
       var atom = mol.atoms.get(aid)
       var pos = new Vec2(atom.pp)
       var ext = new Vec2(0.05 * 3, 0.05 * 3)
       var bba = new Box2Abs(pos, pos).extend(ext, ext)
       contentBoxes.push(bba)
     })
-    contentBoxes.forEach(bba => {
+    contentBoxes.forEach((bba) => {
       var bbb: Box2Abs | null = null
-      ;[bba.p0.x, bba.p1.x].forEach(x => {
-        ;[bba.p0.y, bba.p1.y].forEach(y => {
+      ;[bba.p0.x, bba.p1.x].forEach((x) => {
+        ;[bba.p0.y, bba.p1.y].forEach((y) => {
           var v = new Vec2(x, y)
           var p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, d.rotateSC(1, 0)))
           bbb = !bbb ? new Box2Abs(p, p) : bbb!.include(p)
@@ -435,14 +435,14 @@ export class SGroup {
     var newAtoms: Array<any> = []
     for (var j = 0; j < sgroup.data.mul - 1; j++) {
       let amap = {}
-      sgroup.atoms.forEach(aid => {
+      sgroup.atoms.forEach((aid) => {
         var atom = mol.atoms.get(aid)
         var aid2 = mol.atoms.add(new Atom(atom))
         newAtoms.push(aid2)
         sgroup.atomSet.add(aid2)
         amap[aid] = aid2
       })
-      inBonds.forEach(bid => {
+      inBonds.forEach((bid) => {
         var bond = mol.bonds.get(bid)
         var newBond = new Bond(bond)
         newBond.begin = amap[newBond.begin]
@@ -464,11 +464,11 @@ export class SGroup {
     }
     sgroup.bonds = xBonds
 
-    newAtoms.forEach(aid => {
+    newAtoms.forEach((aid) => {
       mol.sGroupForest
         .getPathToRoot(sgroup.id)
         .reverse()
-        .forEach(sgid => {
+        .forEach((sgid) => {
           mol.atomAddToSGroup(sgid, aid)
         })
     })

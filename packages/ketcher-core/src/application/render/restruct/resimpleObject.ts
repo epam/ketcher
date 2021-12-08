@@ -133,7 +133,7 @@ class ReSimpleObject extends ReObject {
   getReferencePointDistance(p: Vec2): MinDistanceWithReferencePoint {
     let dist: any = []
     const refPoints = this.getReferencePoints()
-    refPoints.forEach(rp => {
+    refPoints.forEach((rp) => {
       dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp })
     })
 
@@ -174,7 +174,7 @@ class ReSimpleObject extends ReObject {
         break
       }
       case SimpleObjectMode.line: {
-        this.item.pos.forEach(i => refPoints.push(new Vec2(i.x, i.y, 0)))
+        this.item.pos.forEach((i) => refPoints.push(new Vec2(i.x, i.y, 0)))
         break
       }
 
@@ -322,7 +322,7 @@ class ReSimpleObject extends ReObject {
       }
     }
 
-    const enhPaths: Array<StyledPath> = path.map(p => {
+    const enhPaths: Array<StyledPath> = path.map((p) => {
       return { path: p, stylesApplied: false }
     })
 
@@ -330,7 +330,7 @@ class ReSimpleObject extends ReObject {
   }
 
   drawHighlight(render: Render): Array<any> {
-    const paths: Array<any> = this.highlightPath(render).map(enhPath => {
+    const paths: Array<any> = this.highlightPath(render).map((enhPath) => {
       if (!enhPath.stylesApplied) {
         return enhPath.path.attr(render.options.highlightStyle)
       }
@@ -342,7 +342,7 @@ class ReSimpleObject extends ReObject {
   }
 
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any): any {
-    const pos = this.item.pos.map(p => {
+    const pos = this.item.pos.map((p) => {
       return Scale.obj2scaled(p, restruct.render.options) || new Vec2()
     })
 
@@ -354,7 +354,7 @@ class ReSimpleObject extends ReObject {
         styles.highlightStyleSimpleObject
       )
     )
-    refPoints.forEach(rp => {
+    refPoints.forEach((rp) => {
       const scaledRP = Scale.obj2scaled(rp, restruct.render.options)
       selectionSet.push(
         restruct.render.paper
@@ -366,7 +366,7 @@ class ReSimpleObject extends ReObject {
   }
   show(restruct: ReStruct, options: any): void {
     const render = restruct.render
-    const pos = this.item.pos.map(p => {
+    const pos = this.item.pos.map((p) => {
       return Scale.obj2scaled(p, options) || new Vec2()
     })
 

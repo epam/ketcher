@@ -71,7 +71,7 @@ export class KetSerializer implements Serializer<Struct> {
     }
     resultingStruct.name = ket.header ? ket.header.moleculeName : null
     const nodes = ket.root.nodes
-    Object.keys(nodes).forEach(i => {
+    Object.keys(nodes).forEach((i) => {
       if (nodes[i].type) parseNode(nodes[i], resultingStruct)
       else if (nodes[i].$ref) parseNode(ket[nodes[i].$ref], resultingStruct)
     })
@@ -92,7 +92,7 @@ export class KetSerializer implements Serializer<Struct> {
     const ketNodes = prepareStructForKet(struct)
 
     let moleculeId = 0
-    ketNodes.forEach(item => {
+    ketNodes.forEach((item) => {
       switch (item.type) {
         case 'molecule': {
           result.root.nodes.push({ $ref: `mol${moleculeId}` })

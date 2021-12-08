@@ -1,4 +1,8 @@
 {
-  "extends": ["react-app", "react-app/jest"],
-  "plugins": ["promise"]
+  "extends": [
+    "eslint:recommended",
+    "standard",
+    "plugin:jest/recommended",
+    "plugin:jsx-a11y/recommended"
+  ]
 }

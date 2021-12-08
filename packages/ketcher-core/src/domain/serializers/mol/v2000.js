@@ -235,7 +235,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
         sGroup.applyDataSGroupDataLine(sGroups, propertyData, true)
       } else if (type === 'SDS') {
         const expandedSGroups = propertyData.slice(7).trim().split('   ')
-        expandedSGroups.forEach(eg => {
+        expandedSGroups.forEach((eg) => {
           const sGroupId = Number(eg) - 1
           sGroups[sGroupId].data.expanded = true
         })
@@ -279,10 +279,10 @@ function parseCTabV2000(ctabLines, countsSplit) {
   shift += atomListCount + stextLinesCount
 
   const atoms = atomLines.map(parseAtomLine)
-  atoms.forEach(atom => ctab.atoms.add(atom))
+  atoms.forEach((atom) => ctab.atoms.add(atom))
 
   const bonds = bondLines.map(parseBondLine)
-  bonds.forEach(bond => {
+  bonds.forEach((bond) => {
     if (bond.stereo && isAbs)
       ctab.atoms.get(bond.begin).stereoLabel = StereoLabel.Abs
     if (bond.stereo && isAnd)
@@ -291,7 +291,7 @@ function parseCTabV2000(ctabLines, countsSplit) {
   })
 
   const atomLists = atomListLines.map(parseAtomListLine)
-  atomLists.forEach(pair => {
+  atomLists.forEach((pair) => {
     ctab.atoms.get(pair.aid).atomList = pair.atomList
     ctab.atoms.get(pair.aid).label = 'L#'
   })

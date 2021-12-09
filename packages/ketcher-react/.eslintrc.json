@@ -1,18 +1,3 @@
 {
-  "root": false,
-  "extends": "plugin:jest/recommended",
-  "rules": {
-    "@typescript-eslint/no-explicit-any": "off",
-    "eqeqeq": "off",
-    "no-var": "off",
-    "@typescript-eslint/no-non-null-assertion": "off",
-    "@typescript-eslint/ban-ts-comment": "warn",
-    "no-throw-literal": "warn",
-    "@typescript-eslint/no-empty-function": "warn",
-    "no-constant-condition": "warn",
-    "@typescript-eslint/no-use-before-define": [
-      "warn",
-      { "functions": false, "typedefs": false }
-    ]
-  }
+  "root": false
 }

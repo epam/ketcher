@@ -32,12 +32,12 @@
     "build": "cross-env NODE_ENV=production rollup -c -m true",
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
     "test": "run-s test:prettier test:stylelint test:eslint test:unit",
-    "test:eslint": "eslint src --ext .ts,.tsx,.js,.jsx",
+    "test:eslint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "test:unit": "react-scripts test --env=jsdom  --passWithNoTests",
-    "test:prettier": "prettier --check \"src/**/*.{js,jsx,json,ts,tsx}\"",
-    "test:stylelint": "stylelint \"src/**/*.{css,less}\" --formatter verbose",
-    "prettier:write": "prettier --write \"src/**/*.{js,jsx,json,ts,tsx}\"",
-    "stylelint:fix": "stylelint \"src/**/*.{css,less}\" --formatter verbose --fix"
+    "test:prettier": "prettier --check \"./**/*.{js,jsx,json,ts,tsx}\"",
+    "test:stylelint": "stylelint \"./**/*.{css,less}\" --formatter verbose",
+    "prettier:write": "prettier --write \"./**/*.{js,jsx,json,ts,tsx}\"",
+    "stylelint:fix": "stylelint \"./**/*.{css,less}\" --formatter verbose --fix"
   },
   "peerDependencies": {
     "react": "^17.0.2",

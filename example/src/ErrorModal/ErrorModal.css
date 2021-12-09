@@ -53,7 +53,7 @@
 }
 
 footer .ok {
-  background: #343434;
+  background: #005662;
   width: 40px;
   color: #fff;
   margin-left: 10px;
@@ -65,7 +65,7 @@ footer .ok {
 }
 
 .ok:hover {
-  background: #121212;
+  background: #00838F;
 }
 
 .modalWindow header {

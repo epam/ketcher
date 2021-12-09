@@ -36,16 +36,16 @@
     height: 100%;
     line-height: 1;
     padding: 0.15em;
-    background: @light-background-color;
-    color: @main-font-color;
+    background: @background-primary-color;
+    color: @text-primary-color;
+    font-weight: 400;
     &::first-letter {
-      font-weight: 600;
-      color: @main-color;
+      font-weight: 700;
     }
     &:hover,
     &:active,
     &.selected {
-      background: @color-gray;
+      background: @dropdown-hover-color;
     }
   }
 }

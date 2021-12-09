@@ -17,19 +17,12 @@
 @import '../../../../../style/mixins.less';
 
 .ok {
-  background: @primary-button-color;
+  .button_main();
+
   width: 40px;
-  color: @primary-button-text;
   margin-right: 2px;
   margin-left: 10px;
   float: right;
-  border-radius: 2px;
-  &:hover {
-    background: @primary-button-hover-color;
-  }
-  &[disabled] {
-    background: @primary-button-disabled-color;
-  }
 }
 
 .save {
@@ -67,11 +60,11 @@
   overflow-y: auto;
   overflow-x: auto;
   font-family: @Inter;
+  color: @text-secondary-color;
   .transition-zoom;
   > * {
     margin: @margin-top-bottom @margin-left-right;
     max-height: 65vh;
-    color: @main-font-color;
   }
 
   header {
@@ -83,6 +76,11 @@
     border-radius: 0.7em 0.7em 0 0;
     height: 20px;
     justify-content: space-between;
+    color: @text-primary-color;
+
+    .btnContainer {
+      display: flex;
+    }
 
     .buttonTop {
       background-color: transparent;
@@ -111,18 +109,9 @@
     }
 
     button {
-      background: transparent;
-      border: 1px solid @secondary-button-color;
-      color: @secondary-button-color;
+      .button_secondary();
+
       float: left;
-      &:hover {
-        border-color: @secondary-button-hover-color;
-        color: @secondary-button-hover-color;
-      }
-      &:disabled {
-        border-color: @secondary-button-disabled-color;
-        color: @secondary-button-disabled-color;
-      }
     }
   }
   .body {

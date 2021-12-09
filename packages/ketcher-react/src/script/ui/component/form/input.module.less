@@ -58,7 +58,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: @color-gray;
+    background-color: @secondary-button-disabled-color;
     -webkit-transition: 0.4s;
     transition: 0.4s;
     border-radius: 34px;
@@ -72,23 +72,28 @@
     border-radius: 50%;
     left: 2px;
     bottom: 2px;
-    background-color: @color-gray1;
+    background-color: @primary-button-color;
     -webkit-transition: 0.4s;
     transition: 0.4s;
   }
 
   input:checked + span {
-    background-color: @color-gray1;
+    background-color: @primary-button-hover-color;
   }
 
   input:focus + span {
-    box-shadow: 0 0 1px @color-gray1;
+    box-shadow: 0 0 1px @border-hover-color;
   }
 
   input:checked + span::before {
-    background-color: @color-white;
+    background-color: @background-primary-color;
     -webkit-transform: translateX(12px);
     -ms-transform: translateX(12px);
     transform: translateX(12px);
   }
+}
+
+.select,
+.input {
+  color: inherit;
 }

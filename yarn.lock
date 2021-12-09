@@ -4604,7 +4604,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-eslint@npm:^10.0.0, babel-eslint@npm:^10.1.0":
+"babel-eslint@npm:^10.1.0":
   version: 10.1.0
   resolution: "babel-eslint@npm:10.1.0"
   dependencies:
@@ -8658,13 +8658,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-diff@npm:^1.1.2":
-  version: 1.2.0
-  resolution: "fast-diff@npm:1.2.0"
-  checksum: 1b5306eaa9e826564d9e5ffcd6ebd881eb5f770b3f977fcbf38f05c824e42172b53c79920e8429c54eb742ce15a0caf268b0fdd5b38f6de52234c4a8368131ae
-  languageName: node
-  linkType: hard
-
 "fast-glob@npm:^3.0.3, fast-glob@npm:^3.1.1, fast-glob@npm:^3.2.5":
   version: 3.2.7
   resolution: "fast-glob@npm:3.2.7"
@@ -10197,7 +10190,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"indigo-ketcher@npm:^1.6.0":
+"indigo-ketcher@npm:1.6.0":
   version: 1.6.0
   resolution: "indigo-ketcher@npm:1.6.0"
   checksum: 91e8e5957113f7be2b603dffe19883b4536eaea5a2c13d0126009146b566fa0a79ece312599aa8823534281e37c7f7eb024a5394fcf49448ff58331a9094d32b
@@ -12365,9 +12358,7 @@ __metadata:
   resolution: "ketcher-react@workspace:packages/ketcher-react"
   dependencies:
     "@babel/core": ^7.16.0
-    "@babel/plugin-proposal-class-properties": ^7.16.0
     "@babel/plugin-proposal-object-rest-spread": ^7.16.0
-    "@babel/plugin-transform-runtime": ^7.16.4
     "@babel/preset-env": ^7.16.4
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
@@ -12391,7 +12382,6 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.6.0
     "@typescript-eslint/parser": ^5.6.0
     autoprefixer: ^10.2.5
-    babel-eslint: ^10.0.0
     clsx: ^1.1.1
     cross-env: ^7.0.3
     current-git-branch: ^1.1.0
@@ -12400,10 +12390,7 @@ __metadata:
     element-closest-polyfill: ^1.0.2
     eslint: ^8.4.1
     eslint-config-react-app: ^6.0.0
-    eslint-plugin-import: ^2.25.3
-    eslint-plugin-jest: ^25.3.0
     eslint-plugin-jsx-a11y: ^6.5.1
-    eslint-plugin-promise: ^5.2.0
     eslint-plugin-react-hooks: ^4.3.0
     eslint-plugin-testing-library: ^5.0.1
     file-saver: ^2.0.2
@@ -12442,11 +12429,6 @@ __metadata:
     rollup-plugin-typescript2: ^0.31.1
     rollup-plugin-visualizer: ^5.5.2
     stylelint: 13.13.1
-    stylelint-config-prettier: ^9.0.3
-    stylelint-config-recommended-scss: ^5.0.2
-    stylelint-config-standard: 22.0.0
-    stylelint-prettier: ^2.0.0
-    stylelint-scss: ^4.0.0
     subscription: ^3.0.0
     typescript: ^4.5.2
     url-search-params-polyfill: ^8.1.1
@@ -12477,7 +12459,7 @@ __metadata:
     cross-env: ^7.0.3
     eslint: ^8.4.1
     eslint-plugin-jest: ^25.3.0
-    indigo-ketcher: ^1.6.0
+    indigo-ketcher: 1.6.0
     jest: ^27.4.3
     ketcher-core: "workspace:*"
     npm-run-all: ^4.1.5
@@ -16036,15 +16018,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-scss@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "postcss-scss@npm:4.0.2"
-  peerDependencies:
-    postcss: ^8.3.3
-  checksum: b6506c1d9bc86f056e34c537447a35d2a90bc9f6afcffea9c5a8bf265334234592150c862351db9334e9b9109209ada023783ce22e56ca51221c1106591423d4
-  languageName: node
-  linkType: hard
-
 "postcss-selector-matches@npm:^4.0.0":
   version: 4.0.0
   resolution: "postcss-selector-matches@npm:4.0.0"
@@ -16087,7 +16060,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-selector-parser@npm:^6.0.0, postcss-selector-parser@npm:^6.0.2, postcss-selector-parser@npm:^6.0.4, postcss-selector-parser@npm:^6.0.5, postcss-selector-parser@npm:^6.0.6":
+"postcss-selector-parser@npm:^6.0.0, postcss-selector-parser@npm:^6.0.2, postcss-selector-parser@npm:^6.0.4, postcss-selector-parser@npm:^6.0.5":
   version: 6.0.6
   resolution: "postcss-selector-parser@npm:6.0.6"
   dependencies:
@@ -16153,17 +16126,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-value-parser@npm:4.1.0, postcss-value-parser@npm:^4.0.2, postcss-value-parser@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "postcss-value-parser@npm:4.1.0"
-  checksum: 68a9ea27c780fa3cc350be37b47cc46385c61dd9627990909230e0e9c3debf6d5beb49006bd743a2e506cdd6fa7d07637f2d9504a394f67cc3011d1ff0134886
-  languageName: node
-  linkType: hard
-
 "postcss-value-parser@npm:^3.0.0":
   version: 3.3.1
   resolution: "postcss-value-parser@npm:3.3.1"
   checksum: 62cd26e1cdbcf2dcc6bcedf3d9b409c9027bc57a367ae20d31dd99da4e206f730689471fd70a2abe866332af83f54dc1fa444c589e2381bf7f8054c46209ce16
+  languageName: node
+  linkType: hard
+
+"postcss-value-parser@npm:^4.0.2, postcss-value-parser@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "postcss-value-parser@npm:4.1.0"
+  checksum: 68a9ea27c780fa3cc350be37b47cc46385c61dd9627990909230e0e9c3debf6d5beb49006bd743a2e506cdd6fa7d07637f2d9504a394f67cc3011d1ff0134886
   languageName: node
   linkType: hard
 
@@ -16186,17 +16159,6 @@ __metadata:
     source-map: ^0.6.1
     supports-color: ^6.1.0
   checksum: 4cfc0989b9ad5d0e8971af80d87f9c5beac5c84cb89ff22ad69852edf73c0a2fa348e7e0a135b5897bf893edad0fe86c428769050431ad9b532f072ff530828d
-  languageName: node
-  linkType: hard
-
-"postcss@npm:^6.0.22":
-  version: 6.0.23
-  resolution: "postcss@npm:6.0.23"
-  dependencies:
-    chalk: ^2.4.1
-    source-map: ^0.6.1
-    supports-color: ^5.4.0
-  checksum: cc6cb2c1dbcdefa6f57a71d67fe535c9e96543298bbe28f9a6a64c4f1e21b6127113890dd4cda8873d3f4e6613a0566b7b4bbb230204f3a9a309190bda065d81
   languageName: node
   linkType: hard
 
@@ -16246,15 +16208,6 @@ __metadata:
   version: 4.0.0
   resolution: "prettier-config-standard@npm:4.0.0"
   checksum: f72ef5858cf7330275be6dafe650b7a0a66736c134c67b17a1c5d8c737c8c7f04ff831f73f6ce9ab289832b75400da3cc8aad44e9fc94238142a8170dfa613dc
-  languageName: node
-  linkType: hard
-
-"prettier-linter-helpers@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "prettier-linter-helpers@npm:1.0.0"
-  dependencies:
-    fast-diff: ^1.1.2
-  checksum: 00ce8011cf6430158d27f9c92cfea0a7699405633f7f1d4a45f07e21bf78e99895911cbcdc3853db3a824201a7c745bd49bfea8abd5fb9883e765a90f74f8392
   languageName: node
   linkType: hard
 
@@ -17771,20 +17724,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@babel/core": ^7.16.0
-    "@babel/plugin-transform-runtime": ^7.16.4
-    "@babel/preset-env": ^7.16.4
-    "@babel/preset-react": ^7.16.0
-    "@babel/preset-typescript": ^7.16.0
     "@typescript-eslint/eslint-plugin": ^5.6.0
     "@typescript-eslint/parser": ^5.6.0
-    babel-eslint: ^10.1.0
     eslint: ^8.4.1
     eslint-config-prettier: ^8.3.0
     eslint-config-standard: ^16.0.3
     eslint-plugin-import: ^2.25.3
-    eslint-plugin-jest: ^25.3.0
-    eslint-plugin-jsx-a11y: ^6.5.1
     eslint-plugin-node: ^11.1.0
     eslint-plugin-promise: ^5.2.0
     eslint-plugin-workspaces: ^0.7.0
@@ -17795,9 +17740,7 @@ __metadata:
     prettier-config-standard: ^4.0.0
     stylelint: 13.13.1
     stylelint-config-prettier: ^9.0.3
-    stylelint-config-recommended-less: ^1.0.1
     stylelint-config-standard: 22.0.0
-    stylelint-prettier: ^2.0.0
   languageName: unknown
   linkType: soft
 
@@ -19065,44 +19008,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stylelint-config-recommended-less@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "stylelint-config-recommended-less@npm:1.0.1"
-  dependencies:
-    stylelint: ^13.8.0
-    stylelint-less: 1.0.1
-  checksum: b5aa7ef842cd4fdc17177747edc6e0f2d732a17ed52893116835d0cc810f60ceceed59703b171a52a535c0872511ba5ef7342ba295927164239ff54d805c5324
-  languageName: node
-  linkType: hard
-
-"stylelint-config-recommended-scss@npm:^5.0.2":
-  version: 5.0.2
-  resolution: "stylelint-config-recommended-scss@npm:5.0.2"
-  dependencies:
-    postcss-scss: ^4.0.2
-    stylelint-config-recommended: ^6.0.0
-    stylelint-scss: ^4.0.0
-  peerDependencies:
-    stylelint: ^14.0.0
-  checksum: e882bde8a0846c421e2662f9e7a9c2646120c492528f7ad715d927db6954b8a2499476de0792b15f0044217f72c81edc97afc640c5b4d7618a9f96dc7045e4c1
-  languageName: node
-  linkType: hard
-
 "stylelint-config-recommended@npm:^5.0.0":
   version: 5.0.0
   resolution: "stylelint-config-recommended@npm:5.0.0"
   peerDependencies:
     stylelint: ^13.13.0
   checksum: 574468542e9f143838feff91771a5901454d6ed89c671bc561373e0509d1414d4a856e5e251c22630c18eb02819c94137eb7a091959dc225f0d91a3eb49538c4
-  languageName: node
-  linkType: hard
-
-"stylelint-config-recommended@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "stylelint-config-recommended@npm:6.0.0"
-  peerDependencies:
-    stylelint: ^14.0.0
-  checksum: 103b3c122253a908f91f5728d39eff6fed3866157e29a6e550da051cfc207b0d159b7434e0806126e3c3939e6528a0a1cd5a1cf00b835dd49b3a18ba4a007fa1
   languageName: node
   linkType: hard
 
@@ -19117,45 +19028,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stylelint-less@npm:1.0.1":
-  version: 1.0.1
-  resolution: "stylelint-less@npm:1.0.1"
-  dependencies:
-    postcss: ^6.0.22
-    postcss-value-parser: 4.1.0
-    stylelint: ^13.8.0
-  checksum: e9aad8097af5a63faf9732ee36bc7ce47df7cc9a81e625f3fb1101416dc0e7981dea53ccd7a151d9506f65a0d8aebaca5fbfdd20ca87117f01325701a3dc8e08
-  languageName: node
-  linkType: hard
-
-"stylelint-prettier@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "stylelint-prettier@npm:2.0.0"
-  dependencies:
-    prettier-linter-helpers: ^1.0.0
-  peerDependencies:
-    prettier: ">=2.0.0"
-    stylelint: ">=14.0.0"
-  checksum: 6ce7628517a492e0c2e6104f654c9bc710f1aaf035c8b5274e187b68e8d510e70bae5ded2cb65df76aa01096460b9dfe02f844fea13bfba7e3dcca13baec2ff4
-  languageName: node
-  linkType: hard
-
-"stylelint-scss@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "stylelint-scss@npm:4.0.0"
-  dependencies:
-    lodash: ^4.17.15
-    postcss-media-query-parser: ^0.2.3
-    postcss-resolve-nested-selector: ^0.1.1
-    postcss-selector-parser: ^6.0.6
-    postcss-value-parser: ^4.1.0
-  peerDependencies:
-    stylelint: ^14.0.0
-  checksum: 98f835547b7f60dcd1f3725d4d67dafaae89fd38e7fb62fb59afba5e8511b8552ca658908ced7421a83b2a6ef4174f575625e4e56113ec9a54aa42435ceae5cc
-  languageName: node
-  linkType: hard
-
-"stylelint@npm:13.13.1, stylelint@npm:^13.8.0":
+"stylelint@npm:13.13.1":
   version: 13.13.1
   resolution: "stylelint@npm:13.13.1"
   dependencies:
@@ -19229,7 +19102,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supports-color@npm:^5.3.0, supports-color@npm:^5.4.0":
+"supports-color@npm:^5.3.0":
   version: 5.5.0
   resolution: "supports-color@npm:5.5.0"
   dependencies:

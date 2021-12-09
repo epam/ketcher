@@ -1,1 +1,7 @@
-{ "extends": "../../.babelrc" }
+{
+  "presets": [
+    "@babel/env",
+    ["@babel/react", { "runtime": "automatic" }],
+    "@babel/typescript"
+  ]
+}

@@ -14,20 +14,12 @@
     "serve": "run-p 'serve:*'"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.0",
-    "@babel/plugin-transform-runtime": "^7.16.4",
-    "@babel/preset-env": "^7.16.4",
-    "@babel/preset-react": "^7.16.0",
-    "@babel/preset-typescript": "^7.16.0",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
     "@typescript-eslint/parser": "^5.6.0",
-    "babel-eslint": "^10.1.0",
     "eslint": "^8.4.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.3",
-    "eslint-plugin-jest": "^25.3.0",
-    "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.2.0",
     "eslint-plugin-workspaces": "^0.7.0",
@@ -38,9 +30,7 @@
     "prettier-config-standard": "^4.0.0",
     "stylelint": "13.13.1",
     "stylelint-config-prettier": "^9.0.3",
-    "stylelint-config-recommended-less": "^1.0.1",
-    "stylelint-config-standard": "22.0.0",
-    "stylelint-prettier": "^2.0.0"
+    "stylelint-config-standard": "22.0.0"
   },
   "packageManager": "yarn@3.1.0"
 }

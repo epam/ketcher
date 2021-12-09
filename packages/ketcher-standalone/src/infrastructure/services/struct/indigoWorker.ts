@@ -33,6 +33,7 @@ import {
   OutputMessage
 } from './indigoWorker.types'
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import indigoModuleFn from 'indigo-ketcher'
 
@@ -60,13 +61,14 @@ function handle(handler: handlerType, options?: CommandOptions) {
       }
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     self.postMessage(msg)
   })
 }
 
 function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {
-  for (let [key, value] of Object.entries(options)) {
+  for (const [key, value] of Object.entries(options)) {
     if (value == null) continue
     indigoOptions.set(key, (value as any).toString())
   }

@@ -16,6 +16,7 @@ const mode = {
 
 const extensions = ['.js', '.ts']
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION
+const includePattern = 'src/**/*'
 
 const config = {
   input: pkg.source,
@@ -38,7 +39,7 @@ const config = {
       runOnce: true
     }),
     nodePolyfills(),
-    resolve({ extensions, preferBuiltins: false }),
+    resolve({ extensions }),
     commonjs(),
     webWorkerLoader({
       extensions,
@@ -50,14 +51,14 @@ const config = {
     babel({
       extensions,
       babelHelpers: 'runtime',
-      include: ['src/**/*']
+      include: includePattern
     }),
     cleanup({
-      extensions: extensions.map(ext => ext.trimStart('.')),
-      include: ['src/**/*'],
+      extensions: extensions.map((ext) => ext.trimStart('.')),
+      include: includePattern,
       comments: 'none'
     }),
-    ...(isProduction ? [strip({ include: ['src/**/*'] })] : [])
+    ...(isProduction ? [strip({ include: includePattern })] : [])
   ]
 }
 

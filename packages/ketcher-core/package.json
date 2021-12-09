@@ -26,13 +26,13 @@
   "module": "dist/index.modern.js",
   "source": "src/index.ts",
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c -m true",
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
     "test": "run-s test:prettier test:eslint test:unit",
-    "test:eslint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "test:eslint": "eslint . --ext .ts,.js",
     "test:unit": "jest",
     "test:prettier": "prettier --check \"./**/*.{js,ts,json}\"",
     "prettier:write": "prettier --write \"./**/*.{js,ts,json}\""

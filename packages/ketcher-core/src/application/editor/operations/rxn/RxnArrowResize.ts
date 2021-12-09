@@ -53,6 +53,7 @@ export class RxnArrowResize extends Base {
     if (anchor) {
       const previousPos0 = item.pos[0].get_xy0()
       const previousPos1 = item.pos[1].get_xy0()
+      const previousPos2 = item.pos?.[2]?.get_xy0()
 
       if (
         tfx(anchor.x) === tfx(item.pos[1].x) &&
@@ -62,6 +63,17 @@ export class RxnArrowResize extends Base {
         current.x = previousPos1.x
         item.pos[1].y = anchor.y = current.y
         current.y = previousPos1.y
+        item.pos?.[2] && (item.pos[2].x = item.pos[2].x + d.x / 2)
+      }
+
+      if (
+        tfx(anchor.x) === tfx(item?.pos?.[2]?.x) &&
+        tfx(anchor.y) === tfx(item?.pos?.[2]?.y)
+      ) {
+        // item.pos[2].x = anchor.x = current.x
+        // current.x = previousPos2.x
+        item.pos[2].y = anchor.y = current.y
+        current.y = previousPos2.y
       }
 
       if (
@@ -72,6 +84,7 @@ export class RxnArrowResize extends Base {
         current.x = previousPos0.x
         item.pos[0].y = anchor.y = current.y
         current.y = previousPos0.y
+        item.pos?.[2] && (item.pos[2].x = item.pos[2].x + d.x / 2)
       }
     } else item.pos[1].add_(d)
 

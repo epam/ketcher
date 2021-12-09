@@ -127,7 +127,15 @@ ReactionArrowTool.prototype.click = function (event) {
   const p0 = rnd.page2obj(event)
   if (!ci) {
     this.editor.update(
-      fromArrowAddition(rnd.ctab, [p0, getDefaultLengthPos(p0)], this.mode)
+      fromArrowAddition(
+        rnd.ctab,
+        [
+          p0,
+          getDefaultLengthPos(p0),
+          this.mode.includes('elliptical') && new Vec2(p0.x + 1, p0.y - 2)
+        ],
+        this.mode
+      )
     )
   }
 }

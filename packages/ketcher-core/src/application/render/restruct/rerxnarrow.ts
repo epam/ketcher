@@ -130,6 +130,7 @@ class ReRxnArrow extends ReObject {
 
   generatePath(render: Render, options, type) {
     let path
+    const isElliptical = this.item.mode.includes('elliptical')
 
     const pos = this.item.pos.map(p => {
       return Scale.obj2scaled(p, options) || new Vec2()
@@ -144,6 +145,7 @@ class ReRxnArrow extends ReObject {
 
     const startPoint = new Vec2(pos[0].x, pos[0].y)
     const endPoint = new Vec2(pos[1].x, pos[1].y)
+    const middlePoint = isElliptical && new Vec2(pos[2].x, pos[2].y)
 
     switch (type) {
       case 'selection':
@@ -154,7 +156,8 @@ class ReRxnArrow extends ReObject {
           arrowParams.length,
           arrowParams.angle,
           options,
-          this.item.mode.includes('elliptical')
+          isElliptical,
+          middlePoint
         )
         break
       case 'arrow':
@@ -165,7 +168,8 @@ class ReRxnArrow extends ReObject {
           arrowParams.length,
           arrowParams.angle,
           options,
-          this.item.mode
+          this.item.mode,
+          middlePoint
         )
         break
     }

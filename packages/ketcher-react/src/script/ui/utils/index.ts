@@ -63,3 +63,5 @@ export function filterFGLib(lib, filter) {
     }, {})
   )(lib)
 }
+
+export { fileOpener } from './fileOpener'

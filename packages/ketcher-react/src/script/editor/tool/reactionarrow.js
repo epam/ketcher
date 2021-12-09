@@ -126,17 +126,10 @@ ReactionArrowTool.prototype.click = function (event) {
   const ci = this.editor.findItem(event, ['rxnArrows'])
   const p0 = rnd.page2obj(event)
   if (!ci) {
-    this.editor.update(
-      fromArrowAddition(
-        rnd.ctab,
-        [
-          p0,
-          getDefaultLengthPos(p0),
-          this.mode.includes('elliptical') && new Vec2(p0.x + 1, p0.y - 2)
-        ],
-        this.mode
-      )
-    )
+    const pos = this.mode.includes('elliptical')
+      ? [p0, getDefaultLengthPos(p0), new Vec2(p0.x + 1, p0.y - 2)]
+      : [p0, getDefaultLengthPos(p0)]
+    this.editor.update(fromArrowAddition(rnd.ctab, pos, this.mode))
   }
 }
 

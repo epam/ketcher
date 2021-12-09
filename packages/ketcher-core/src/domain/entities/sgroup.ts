@@ -154,7 +154,7 @@ export class SGroup {
   calculatePP(struct: Struct): void {
     let topLeftPoint
 
-    if (this.data.context === 'Atom' || this.data.context === 'Bond'){
+    if (this.data.context === 'Atom' || this.data.context === 'Bond') {
       const contentBoxes: Array<any> = []
       let contentBB: Box2Abs | null = null
       const direction = new Vec2(1, 0)
@@ -171,7 +171,10 @@ export class SGroup {
         ;[bba.p0.x, bba.p1.x].forEach(x => {
           ;[bba.p0.y, bba.p1.y].forEach(y => {
             var v = new Vec2(x, y)
-            var p = new Vec2(Vec2.dot(v, direction), Vec2.dot(v, direction.rotateSC(1, 0)))
+            var p = new Vec2(
+              Vec2.dot(v, direction),
+              Vec2.dot(v, direction.rotateSC(1, 0))
+            )
             bbb = !bbb ? new Box2Abs(p, p) : bbb!.include(p)
           })
         })
@@ -179,7 +182,7 @@ export class SGroup {
       })
 
       topLeftPoint = contentBB!.p0
-    }else{
+    } else {
       topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5))
     }
 

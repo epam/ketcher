@@ -33,7 +33,7 @@ import { mediaSizes } from '../../mediaSizes'
 interface BondProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   height?: number
 }
-interface BondCallProps extends ToolbarGroupItemCallProps {}
+type BondCallProps = ToolbarGroupItemCallProps
 
 type Props = BondProps & BondCallProps
 

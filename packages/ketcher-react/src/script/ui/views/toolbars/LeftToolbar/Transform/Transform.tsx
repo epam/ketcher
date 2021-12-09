@@ -26,7 +26,7 @@ import { mediaSizes } from '../../mediaSizes'
 interface TransformProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   height?: number
 }
-interface TransformCallProps extends ToolbarGroupItemCallProps {}
+type TransformCallProps = ToolbarGroupItemCallProps
 
 type Props = TransformProps & TransformCallProps
 

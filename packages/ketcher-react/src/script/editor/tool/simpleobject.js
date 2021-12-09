@@ -78,7 +78,7 @@ SimpleObjectTool.prototype.mousemove = function (event) {
           [this.dragCtx.p0, this.dragCtx.p0],
           this.mode
         )
-        //TODO: need to rework  actions/operations logic
+        // TODO: need to rework  actions/operations logic
         const addOperation = action.operations[0]
         const itemId = addOperation.data.id
         this.dragCtx.itemId = itemId

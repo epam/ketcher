@@ -123,12 +123,12 @@ TemplateTool.prototype.mousedown = function (event) {
     if (bondId !== null) bondResult.push(bondId)
   }
   if (sGroupResult.length > 0) {
-    for (let id of sGroupResult) {
+    for (const id of sGroupResult) {
       if (!result.includes(id)) result.push(id)
     }
   }
   if (atomResult.length > 0) {
-    for (let id of atomResult) {
+    for (const id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         struct.functionalGroups,
         id
@@ -139,7 +139,7 @@ TemplateTool.prototype.mousedown = function (event) {
     }
   }
   if (bondResult.length > 0) {
-    for (let id of bondResult) {
+    for (const id of bondResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,
         struct.functionalGroups,
@@ -237,7 +237,7 @@ TemplateTool.prototype.mousemove = function (event) {
       if (dragCtx.action) dragCtx.action.perform(restruct) // undo previous action
 
       dragCtx.sign2 = sign
-      let [action, pasteItems] = fromTemplateOnBondAction(
+      const [action, pasteItems] = fromTemplateOnBondAction(
         restruct,
         this.template,
         ci.id,

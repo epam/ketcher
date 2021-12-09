@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { Component } from 'react'
-
 import classes from './Tabs.module.less'
 import clsx from 'clsx'
 
@@ -27,7 +26,7 @@ class Tabs extends Component {
     this.props.changeTab(this.state.tabIndex)
   }
 
-  //TODO: refactor the component
+  // TODO: refactor the component
   changeTab(ev, index) {
     this.setState({ tabIndex: index })
     if (this.props.changeTab) this.props.changeTab(index)

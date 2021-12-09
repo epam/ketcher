@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import { FormulaInput, FrozenInput } from './components'
-import { Component } from 'react'
 
+import { Component } from 'react'
 import { Dialog } from '../../../../components'
 import { ErrorsContext } from '../../../../../../../contexts'
 import Input from '../../../../../component/form/input'
@@ -33,9 +33,6 @@ function roundOff(value, round) {
 
 class AnalyseDialog extends Component {
   static contextType = ErrorsContext
-  constructor(props) {
-    super(props)
-  }
 
   componentDidMount() {
     this.props.onAnalyse()

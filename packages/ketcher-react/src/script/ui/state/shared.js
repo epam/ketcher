@@ -96,7 +96,7 @@ export function load(struct, options) {
           struct.rescale() // TODO: move out parsing?
 
           if (editor.struct().atoms.size) {
-            //NB: reset id
+            // NB: reset id
             const oldStruct = editor.struct().clone()
 
             struct.sgroups.forEach((sg, sgId) => {

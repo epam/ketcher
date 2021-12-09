@@ -103,7 +103,7 @@ class SelectTool {
       const atomFromStruct = atomId !== null && ctab.atoms.get(ci.id)?.a
 
       if (atomFromStruct) {
-        for (let sgId of atomFromStruct.sgs.values()) {
+        for (const sgId of atomFromStruct.sgs.values()) {
           actualSgroupId = sgId
         }
       }
@@ -130,7 +130,7 @@ class SelectTool {
     }
 
     if (selectedSgroups.length) {
-      for (let sgId of selectedSgroups) {
+      for (const sgId of selectedSgroups) {
         const sgroup = ctab.sgroups.get(sgId)
         if (sgroup) {
           const sgroupAtoms = SGroup.getAtoms(molecule, sgroup.item)
@@ -158,7 +158,7 @@ class SelectTool {
     }
 
     let sel = closestToSel(ci)
-    let sgroups = ctab.sgroups.get(ci.id)
+    const sgroups = ctab.sgroups.get(ci.id)
     const selection = this.editor.selection()
     if (ci.map === 'frags') {
       const frag = ctab.frags.get(ci.id)
@@ -300,7 +300,7 @@ class SelectTool {
     let actualSgroupId
 
     if (selected && functionalGroups.size && selected.atoms) {
-      for (let atom of selected.atoms) {
+      for (const atom of selected.atoms) {
         const atomId = FunctionalGroup.atomsInFunctionalGroup(
           functionalGroups,
           atom
@@ -308,7 +308,7 @@ class SelectTool {
         const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a
 
         if (atomFromStruct) {
-          for (let sgId of atomFromStruct.sgs.values()) {
+          for (const sgId of atomFromStruct.sgs.values()) {
             actualSgroupId = sgId
           }
         }
@@ -322,7 +322,7 @@ class SelectTool {
     }
 
     if (selected && functionalGroups.size && selected.bonds) {
-      for (let atom of selected.bonds) {
+      for (const atom of selected.bonds) {
         const bondId = FunctionalGroup.bondsInFunctionalGroup(
           molecule,
           functionalGroups,
@@ -339,7 +339,7 @@ class SelectTool {
     }
 
     if (selectedSgroups.length) {
-      for (let sgId of selectedSgroups) {
+      for (const sgId of selectedSgroups) {
         const sgroup = struct.sgroups.get(sgId)
         if (sgroup) {
           const sgroupAtoms = SGroup.getAtoms(molecule, sgroup.item)
@@ -433,7 +433,7 @@ class SelectTool {
         bondResult.push(bondId)
     }
     if (atomResult.length > 0) {
-      for (let id of atomResult) {
+      for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
           id
@@ -445,7 +445,7 @@ class SelectTool {
       editor.event.removeFG.dispatch({ fgIds: result })
       return
     } else if (bondResult.length > 0) {
-      for (let id of bondResult) {
+      for (const id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
           functionalGroups,

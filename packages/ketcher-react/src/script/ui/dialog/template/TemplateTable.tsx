@@ -22,23 +22,23 @@ import classes from './TemplateTable.module.less'
 import { greekify } from '../../utils'
 import { useSelector } from 'react-redux'
 
-interface TemplateTableProps {
-  templates: Array<Template>
-  selected: Template | null
-  onSelect: (tmpl: Template) => void
-  onDelete?: (tmpl: Template) => void
-  onAttach?: (tmpl: Template) => void
-}
-
 export interface Template {
   struct: Struct
-  modifiedStruct?: Struct //TODO: Do something with that, in future it shouldn't be here
+  modifiedStruct?: Struct // TODO: Do something with that, in future it shouldn't be here
   props: {
     atomid: number
     bondid: number
     group: string
     prerender?: string
   }
+}
+
+interface TemplateTableProps {
+  templates: Array<Template>
+  selected: Template | null
+  onSelect: (tmpl: Template) => void
+  onDelete?: (tmpl: Template) => void
+  onAttach?: (tmpl: Template) => void
 }
 
 const getSettingsSelector = (state) => state.options.settings

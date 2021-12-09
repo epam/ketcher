@@ -15,16 +15,16 @@
  ***************************************************************************/
 
 import { Component, createRef } from 'react'
+import { ContextMenuTrigger, hideMenu } from 'react-contextmenu'
 
 import Editor from '../../../../editor'
+import { FGContextMenu } from '../../../component/ContextMenu/ContextMenu'
 import Spinner from '../Spinner'
 import classes from './StructEditor.module.less'
 import clsx from 'clsx'
 import { upperFirst } from 'lodash/fp'
-import { FGContextMenu } from '../../../component/ContextMenu/ContextMenu'
-import { ContextMenuTrigger, hideMenu } from 'react-contextmenu'
 
-//TODO: need to update component after making refactoring of store
+// TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
   const { struct, tool, toolOpts, options } = props
 

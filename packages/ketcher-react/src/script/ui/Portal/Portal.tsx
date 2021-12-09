@@ -128,7 +128,8 @@ class Portal extends Component<Props> {
 
   render() {
     const { children } = this.props
-    return ReactDOM.createPortal(children, this.element)
+    const component = ReactDOM.createPortal(children, this.element)
+    return component as any
   }
 }
 

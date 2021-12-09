@@ -49,7 +49,7 @@ interface LeftToolbarProps
   className?: string
 }
 
-interface LeftToolbarCallProps extends ToolbarGroupItemCallProps {}
+type LeftToolbarCallProps = ToolbarGroupItemCallProps
 
 type Props = LeftToolbarProps & LeftToolbarCallProps
 

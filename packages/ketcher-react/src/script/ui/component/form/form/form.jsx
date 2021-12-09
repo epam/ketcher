@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { Component } from 'react'
-
 import { FormContext } from '../../../../../contexts'
 import Input from '../input'
 import classes from './form.module.less'
@@ -59,13 +58,13 @@ class Form extends Component {
   field(name, onChange) {
     const { result, errors } = this.props
     const value = result[name]
-    const self = this
+
     return {
       dataError: errors && errors[name],
       value,
-      onChange(val) {
-        const newState = Object.assign({}, self.props.result, { [name]: val })
-        self.updateState(newState)
+      onChange: (val) => {
+        const newState = Object.assign({}, this.props.result, { [name]: val })
+        this.updateState(newState)
         if (onChange) onChange(val)
       }
     }

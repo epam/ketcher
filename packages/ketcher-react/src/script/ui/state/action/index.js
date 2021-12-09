@@ -64,7 +64,7 @@ export default function (state = null, { type, action, ...params }) {
   switch (type) {
     case 'INIT':
       action = actions['select-lasso'].action
-    case 'ACTION': // eslint-disable-line no-case-declarations
+    case 'ACTION':
       activeTool = execute(state && state.activeTool, {
         ...params,
         action

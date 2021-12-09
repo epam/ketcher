@@ -26,7 +26,7 @@ export function couldBeSaved(
   struct: Struct,
   format: SupportedFormat
 ): string | null {
-  let warnings: Array<string> = []
+  const warnings: Array<string> = []
   const formatName: string = getPropertiesByFormat(format).name
 
   const rxnArrowsSize = struct.rxnArrows.size

@@ -58,7 +58,7 @@ RGroupAtomTool.prototype.click = function (event) {
     if (atomId !== null) atomResult.push(atomId)
   }
   if (atomResult.length > 0) {
-    for (let id of atomResult) {
+    for (const id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
         id

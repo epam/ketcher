@@ -16,11 +16,20 @@
 
 import * as KN from 'w3c-keyname'
 
-import { FC, useLayoutEffect, useRef, ReactElement } from 'react'
+import { FC, ReactElement, useLayoutEffect, useRef } from 'react'
 
+import Icon from '../../../component/view/icon'
 import clsx from 'clsx'
 import styles from './Dialog.module.less'
-import Icon from '../../../component/view/icon'
+
+interface DialogParamsCallProps {
+  onCancel: () => void
+  onOk: (result: any) => void
+}
+
+export interface DialogParams extends DialogParamsCallProps {
+  className?: string
+}
 
 interface DialogProps {
   title: string
@@ -28,14 +37,6 @@ interface DialogProps {
   buttons?: Array<string | ReactElement>
   buttonsTop?: Array<ReactElement>
   className: string
-}
-export interface DialogParams extends DialogParamsCallProps {
-  className?: string
-}
-
-interface DialogParamsCallProps {
-  onCancel: () => void
-  onOk: (result: any) => void
 }
 
 interface DialogCallProps {

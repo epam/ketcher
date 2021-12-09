@@ -79,10 +79,10 @@ function selectStereoFlagsIfNecessary(
       : (atomsOfFragments[atom.fragment] = [atomId])
   })
 
-  let stereoFlags: number[] = []
+  const stereoFlags: number[] = []
 
   Object.keys(atomsOfFragments).forEach((fragId) => {
-    let shouldSelSFlag: boolean = true
+    let shouldSelSFlag = true
     atomsOfFragments[fragId].forEach((atomId) => {
       if (!expAtoms.includes(atomId)) shouldSelSFlag = false
     })
@@ -122,6 +122,7 @@ class Editor implements KetcherEditor {
     dearomatizeStruct: PipelineSubscription
     enhancedStereoEdit: PipelineSubscription
   }
+
   lastEvent: any
 
   constructor(clientArea, options) {
@@ -274,11 +275,11 @@ class Editor implements KetcherEditor {
 
     if (ci === 'descriptors') {
       ReStruct = this.render.ctab
-      ci = { sgroupData: Array.from(ReStruct['sgroupData'].keys()) }
+      ci = { sgroupData: Array.from(ReStruct.sgroupData.keys()) }
     }
 
     if (ci) {
-      let res: Selection = {}
+      const res: Selection = {}
 
       Object.keys(ci).forEach((key) => {
         if (ci[key].length > 0)
@@ -405,7 +406,7 @@ class Editor implements KetcherEditor {
 
     this.selection(null)
 
-    if (this._tool instanceof toolMap['paste']) {
+    if (this._tool instanceof toolMap.paste) {
       this.event.change.dispatch()
       return
     }
@@ -429,7 +430,7 @@ class Editor implements KetcherEditor {
     }
 
     this.selection(null)
-    if (this._tool instanceof toolMap['paste']) {
+    if (this._tool instanceof toolMap.paste) {
       this.event.change.dispatch()
       return
     }
@@ -442,7 +443,7 @@ class Editor implements KetcherEditor {
   }
 
   subscribe(eventName: any, handler: any) {
-    let subscriber = {
+    const subscriber = {
       handler: handler
     }
 
@@ -462,7 +463,7 @@ class Editor implements KetcherEditor {
   }
 
   unsubscribe(eventName: any, subscriber: any) {
-    //Only for event type - subscription
+    // Only for event type - subscription
     this.event[eventName].remove(subscriber.handler)
   }
 
@@ -596,7 +597,7 @@ function domEventSetup(editor: Editor, clientArea) {
   })
 }
 
-function recoordinate(editor: Editor, rp /* , vp*/) {
+function recoordinate(editor: Editor, rp /* , vp */) {
   // rp is a point in scaled coordinates, which will be positioned
   // vp is the point where the reference point should now be (in view coordinates)
   //    or the center if not set

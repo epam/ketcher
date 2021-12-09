@@ -16,15 +16,15 @@
 
 import * as structFormat from '../../../../../data/convert/structConverter'
 
+import { Component, createRef } from 'react'
 import Form, { Field } from '../../../../../component/form/form/form'
 import {
   FormatterFactory,
+  KetSerializer,
   formatProperties,
   getPropertiesByFormat,
-  getPropertiesByImgFormat,
-  KetSerializer
+  getPropertiesByImgFormat
 } from 'ketcher-core'
-import { Component, createRef } from 'react'
 
 import { Dialog } from '../../../../components'
 import { ErrorsContext } from '../../../../../../../contexts'
@@ -122,7 +122,7 @@ class SaveDialog extends Component {
       const ketSerialize = new KetSerializer()
       const structStr = ketSerialize.serialize(struct)
       this.setState({ imageFormat: type, structStr })
-      let options = {}
+      const options = {}
       options.outputFormat = type
 
       return server
@@ -208,7 +208,7 @@ class SaveDialog extends Component {
           <Field name="format" onChange={this.changeType} />
         </Form>
         {this.isImageFormat(format) ? (
-          //TODO: remove this conditional after fixing problems with png format on BE side
+          // TODO: remove this conditional after fixing problems with png format on BE side
           format === 'png' ? (
             <div className={classes.previewMessage}>
               Preview is not available for this format

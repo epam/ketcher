@@ -20,8 +20,8 @@ import { ActionButton } from '../../../ActionButton'
 import action from '../../../../../../action'
 import classes from './GroupedMultiTool.module.less'
 
-interface GroupedMultiToolProps extends MultiToolProps {}
-interface GroupedMultiToolCallProps extends MultiToolCallProps {}
+type GroupedMultiToolProps = MultiToolProps
+type GroupedMultiToolCallProps = MultiToolCallProps
 
 type Props = GroupedMultiToolProps & GroupedMultiToolCallProps
 

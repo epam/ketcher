@@ -163,7 +163,7 @@ export default function initEditor(dispatch, getState) {
         .then(toSgroup),
     onMessage: (msg) => {
       if (msg.error) {
-        //TODO: add error handler call
+        // TODO: add error handler call
       }
     },
     onAromatizeStruct: (struct) => {

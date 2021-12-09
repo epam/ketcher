@@ -32,7 +32,7 @@ const RemoveFG = (props: Props) => {
 
   const remove = function () {
     if (fgIds.length > 0)
-      for (let id of fgIds) {
+      for (const id of fgIds) {
         editor.update(fromSgroupDeletion(editor.render.ctab, id))
       }
     return true

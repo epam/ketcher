@@ -48,6 +48,7 @@ class Accordion extends Component<AccordionProps, AccordionState> {
       active: props.active || []
     }
   }
+
   onActive(index: number): void {
     const { multiple = true } = this.props
 
@@ -79,6 +80,7 @@ class Accordion extends Component<AccordionProps, AccordionState> {
       </li>
     )
   }
+
   render() {
     const { children, ...props } = this.props
     const childrenWithProps = React.Children.map(

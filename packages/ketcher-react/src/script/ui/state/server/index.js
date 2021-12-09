@@ -65,14 +65,14 @@ function ketcherCheck(struct, checkParams) {
     const isAbs = Array.from(struct.frags.values()).some((fr) =>
       fr ? fr.enhancedStereoFlag === 'abs' : false
     )
-    if (isAbs) errors['chiral_flag'] = 'Chiral flag is present on the canvas'
+    if (isAbs) errors.chiral_flag = 'Chiral flag is present on the canvas'
   }
 
   if (checkParams.includes('valence')) {
     let badVal = 0
     struct.atoms.forEach((atom) => atom.badConn && badVal++)
     if (badVal > 0)
-      errors['valence'] = `Structure contains ${badVal} atom${
+      errors.valence = `Structure contains ${badVal} atom${
         badVal !== 1 ? 's' : ''
       } with bad valence`
   }
@@ -105,7 +105,7 @@ export function automap(res) {
 
 export function analyse() {
   return (dispatch, getState) => {
-    //reset values to initial state
+    // reset values to initial state
     dispatch({
       type: 'ANALYSE_LOADING'
     })
@@ -162,7 +162,7 @@ export function serverTransform(method, data, struct) {
   }
 }
 
-//TODO: serverCall function should not be exported
+// TODO: serverCall function should not be exported
 export function serverCall(editor, server, method, options, struct) {
   const selection = editor.selection()
   let selectedAtoms = []

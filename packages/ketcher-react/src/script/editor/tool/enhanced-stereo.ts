@@ -23,13 +23,11 @@ import {
 
 import Editor from '../Editor'
 
-function EnhancedStereoTool(
-  this: typeof EnhancedStereoTool,
-  editor: Editor
-): null | void {
-  if (!(this instanceof EnhancedStereoTool)) {
-    const selection = editor.selection()
+class EnhancedStereoTool {
+  editor: Editor | undefined
 
+  constructor(editor) {
+    const selection = editor.selection()
     const stereoAtoms = findStereoAtoms(
       editor.struct(),
       selection
@@ -37,11 +35,11 @@ function EnhancedStereoTool(
         : Array.from(editor.struct().atoms.keys())
     )
 
-    if (stereoAtoms.length === 0) return null
-
-    changeAtomsStereoAction(editor, stereoAtoms).then(
-      action => action && editor.update(action)
-    )
+    if (stereoAtoms.length !== 0) {
+      changeAtomsStereoAction(editor, stereoAtoms).then(
+        action => action && editor.update(action)
+      )
+    }
   }
 }
 

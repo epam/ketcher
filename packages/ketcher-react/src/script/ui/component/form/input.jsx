@@ -159,14 +159,15 @@ FieldSet.val = function (ev, schema) {
   return input.type === 'radio' ? result[0] : result
 }
 
-function Slider({ value = '', onChange, ...rest }) {
+function Slider({ value, onChange, name, ...rest }) {
   return (
-    <div className={classes.slider}>
+    <div className={classes.slider} key={name}>
       <input
         type="checkbox"
         checked={value}
         onClick={onChange}
         onChange={onChange}
+        name={name}
         {...rest}
       />
       <span />

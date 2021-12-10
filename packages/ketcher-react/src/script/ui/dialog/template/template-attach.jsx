@@ -63,7 +63,9 @@ class Attach extends Component {
       struct.atoms.get(this.props.atomid) && struct.bonds.get(this.props.bondid)
         ? this.props
         : this.tmpl.props
-    const options = Object.assign(EDITOR_STYLES, { scale: getScale(struct) })
+    const options = Object.assign(EDITOR_STYLES, this.props.globalSettings, {
+      scale: getScale(struct)
+    })
 
     return (
       <Dialog
@@ -108,7 +110,8 @@ export default connect(
   (store) => ({
     ...store.templates.attach,
     templateLib: store.templates.lib,
-    formState: store.modal.form
+    formState: store.modal.form,
+    globalSettings: store.options.settings
   }),
   (dispatch) => ({
     onInit: (name, ap) => dispatch(initAttach(name, ap)),

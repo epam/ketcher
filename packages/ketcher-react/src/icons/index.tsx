@@ -111,6 +111,7 @@ import UndoIcon from './files/undo.svg'
 import ZoomInIcon from './files/zoom-in.svg'
 import ZoomOutIcon from './files/zoom-out.svg'
 import FunctionalGroupsIcon from './files/functional-groups.svg'
+import TextSpecialSymbolsIcon from './files/text-special-symbols.svg'
 import Save1Icon from './files/save-1.svg'
 import Open1Icon from './files/open-1.svg'
 import ResetIcon from './files/reset.svg'
@@ -253,7 +254,8 @@ const icons = {
   '3dviewer': ThreeDViewerIcon,
   '3dviewer-white': ThreeDViewerWhiteIcon,
   debugging: DebuggingIcon,
-  'debugging-white': DebuggingWhiteIcon
+  'debugging-white': DebuggingWhiteIcon,
+  'text-special-symbols': TextSpecialSymbolsIcon
 }
 
 function emptyIcon() {

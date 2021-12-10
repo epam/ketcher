@@ -143,6 +143,7 @@ class Table extends Component {
         className={classes.elements_table}
         params={this.props}
         result={this.result}
+        buttons={['Add']}
       >
         <Tabs
           className={classes.tabs}

@@ -260,11 +260,11 @@ function arrowEllipticalArcFilledBow(
   options,
   middlePoint
 ) {
-  // const arrowHeadLength = 10
-  // const arrowHeadWidth = 5
-  // const arrowHeadAttr = 4
+  const arrowHeadLength = 10
+  const arrowHeadWidth = 5
+  const arrowHeadAttr = 4
 
-  // const b0x = a.x + arrowLength
+  const b0x = a.x + arrowLength
   // const c0x = a.x + arrowLength / 2
   const path =
     // `M${tfx(a.x)},${tfx(a.y)}` +
@@ -277,7 +277,11 @@ function arrowEllipticalArcFilledBow(
     `Q${tfx(a.x)},${tfx(middlePoint.y)},${tfx(middlePoint.x)},${tfx(
       middlePoint.y
     )}` +
-    `Q${tfx(b.x)},${tfx(middlePoint.y)},${tfx(b.x)},${tfx(b.y)}`
+    `Q${tfx(b.x)},${tfx(middlePoint.y)},${tfx(b.x)},${tfx(b.y)}` +
+    `L${tfx(b0x - arrowHeadWidth)},${tfx(a.y - arrowHeadLength)}` +
+    `l${tfx(arrowHeadWidth)},${tfx(arrowHeadAttr)}` +
+    `l${tfx(arrowHeadWidth)},${tfx(-arrowHeadAttr)}` +
+    `l${tfx(-arrowHeadWidth)},${arrowHeadLength}`
   // `A${10},${20},${0},${0},${1},${tfx(middlePoint.x)},${tfx(middlePoint.y)}` +
   // `A${10},${20},${0},${0},${1},${tfx(b.x)},${tfx(a.y)}`
 
@@ -301,8 +305,16 @@ function arrowEllipticalArcFilledTriangle(
   const b0x = a.x + arrowLength
 
   const path =
+    // `M${tfx(a.x)},${tfx(a.y)}` +
+    // `A${10},${20},${0},${0},${1},${tfx(b0x)},${tfx(a.y)}` +
+    // `L${tfx(b0x - triangleWidth)},${tfx(a.y - triangleLength)}` +
+    // `l${tfx(triangleLength)},${tfx(0)}` +
+    // `l${tfx(-triangleWidth)},${tfx(triangleLength)}`
     `M${tfx(a.x)},${tfx(a.y)}` +
-    `A${10},${20},${0},${0},${1},${tfx(b0x)},${tfx(a.y)}` +
+    `Q${tfx(a.x)},${tfx(middlePoint.y)},${tfx(middlePoint.x)},${tfx(
+      middlePoint.y
+    )}` +
+    `Q${tfx(b.x)},${tfx(middlePoint.y)},${tfx(b.x)},${tfx(b.y)}` +
     `L${tfx(b0x - triangleWidth)},${tfx(a.y - triangleLength)}` +
     `l${tfx(triangleLength)},${tfx(0)}` +
     `l${tfx(-triangleWidth)},${tfx(triangleLength)}`
@@ -328,10 +340,18 @@ function arrowEllipticalArcOpenAngle(
 
   const path =
     `M${tfx(a.x)},${tfx(a.y)}` +
-    `A${10},${20},${0},${0},${1},${tfx(b0x)},${tfx(a.y)}` +
+    `Q${tfx(a.x)},${tfx(middlePoint.y)},${tfx(middlePoint.x)},${tfx(
+      middlePoint.y
+    )}` +
+    `Q${tfx(b.x)},${tfx(middlePoint.y)},${tfx(b.x)},${tfx(b.y)}` +
     `L${tfx(b0x - width)},${tfx(a.y - length)}` +
     `M${tfx(b0x)},${tfx(a.y)}` +
     `L${tfx(b0x + width)}, ${tfx(a.y - length)}`
+  // `M${tfx(a.x)},${tfx(a.y)}` +
+  // `A${10},${20},${0},${0},${1},${tfx(b0x)},${tfx(a.y)}` +
+  // `L${tfx(b0x - width)},${tfx(a.y - length)}` +
+  // `M${tfx(b0x)},${tfx(a.y)}` +
+  // `L${tfx(b0x + width)}, ${tfx(a.y - length)}`
 
   const transformedPath = svgPath(path).rotate(arrowAngle, a.x, a.y).toString()
 
@@ -354,8 +374,14 @@ function arrowEllipticalArcOpenHalfAngle(
 
   const path =
     `M${tfx(a.x)},${tfx(a.y)}` +
-    `A${10},${20},${0},${0},${1},${tfx(b0x)},${tfx(a.y)}` +
+    `Q${tfx(a.x)},${tfx(middlePoint.y)},${tfx(middlePoint.x)},${tfx(
+      middlePoint.y
+    )}` +
+    `Q${tfx(b.x)},${tfx(middlePoint.y)},${tfx(b.x)},${tfx(b.y)}` +
     `L${tfx(b0x + width)}, ${tfx(a.y - length)}`
+  // `M${tfx(a.x)},${tfx(a.y)}` +
+  // `A${10},${20},${0},${0},${1},${tfx(b0x)},${tfx(a.y)}` +
+  // `L${tfx(b0x + width)}, ${tfx(a.y - length)}`
 
   const transformedPath = svgPath(path).rotate(arrowAngle, a.x, a.y).toString()
 

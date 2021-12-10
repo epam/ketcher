@@ -11607,7 +11607,6 @@ __metadata:
   resolution: "ketcher-react@workspace:packages/ketcher-react"
   dependencies:
     "@babel/core": ^7.16.0
-    "@babel/plugin-proposal-object-rest-spread": ^7.16.0
     "@babel/preset-env": ^7.16.4
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
@@ -17006,7 +17005,6 @@ __metadata:
   dependencies:
     "@typescript-eslint/eslint-plugin": ^5.6.0
     "@typescript-eslint/parser": ^5.6.0
-    eslint: ^8.4.1
     eslint-config-prettier: ^8.3.0
     eslint-config-standard: ^16.0.3
     eslint-plugin-import: ^2.25.3

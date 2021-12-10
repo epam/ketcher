@@ -78,7 +78,7 @@ function LabelEdit(props) {
     >
       <Form
         schema={labelEditSchema}
-        customValid={{ label: l => deserialize(l) }}
+        customValid={{ label: (l) => deserialize(l) }}
         init={init}
         {...formState}
       >
@@ -88,4 +88,4 @@ function LabelEdit(props) {
   )
 }
 
-export default connect(store => ({ formState: store.modal.form }))(LabelEdit)
+export default connect((store) => ({ formState: store.modal.form }))(LabelEdit)

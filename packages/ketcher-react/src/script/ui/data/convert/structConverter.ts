@@ -26,7 +26,7 @@ export function couldBeSaved(
   struct: Struct,
   format: SupportedFormat
 ): string | null {
-  let warnings: Array<string> = []
+  const warnings: Array<string> = []
   const formatName: string = getPropertiesByFormat(format).name
 
   const rxnArrowsSize = struct.rxnArrows.size
@@ -40,7 +40,7 @@ export function couldBeSaved(
 
   if (format === 'smiles') {
     const arrayOfAtoms: Array<any> = Array.from(struct.atoms.values())
-    const hasGenerics = arrayOfAtoms.some(atom => atom.pseudo)
+    const hasGenerics = arrayOfAtoms.some((atom) => atom.pseudo)
     if (hasGenerics) {
       warnings.push(
         `Structure contains generic atoms. They will be saved as any atom (*).`
@@ -116,7 +116,7 @@ export function couldBeSaved(
 
   if (
     (['mol', 'rxn'] as SupportedFormat[]).includes(format) &&
-    Array.from(struct.frags.values()).some(fr => {
+    Array.from(struct.frags.values()).some((fr) => {
       if (fr?.enhancedStereoFlag) {
         return fr.enhancedStereoFlag !== StereoFlag.Abs
       }

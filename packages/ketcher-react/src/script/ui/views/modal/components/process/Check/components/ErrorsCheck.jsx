@@ -18,7 +18,7 @@ function ErrorsCheck(props) {
   const { moleculeErrors, checkSchema } = props
   const moleculeErrorsTypes = Object.keys(moleculeErrors)
 
-  const getOptionName = option => {
+  const getOptionName = (option) => {
     const { items } = checkSchema.properties.checkOptions
     const nameIndex = items.enum.indexOf(option)
     return items.enumNames[nameIndex]

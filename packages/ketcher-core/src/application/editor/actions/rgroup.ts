@@ -21,7 +21,7 @@ import { Action } from './action'
 export function fromRGroupAttrs(restruct, id, attrs) {
   const action = new Action()
 
-  Object.keys(attrs).forEach(key => {
+  Object.keys(attrs).forEach((key) => {
     action.addOp(new RGroupAttr(id, key, attrs[key]))
   })
 
@@ -42,8 +42,9 @@ export function fromUpdateIfThen(
   skipRgids: Array<number> = []
 ) {
   const action = new Action()
-  if (!restruct.molecule.rgroups.get(rgidOld))
+  if (!restruct.molecule.rgroups.get(rgidOld)) {
     action.addOp(new UpdateIfThen(rgidNew, rgidOld, skipRgids))
+  }
 
   return action.perform(restruct)
 }

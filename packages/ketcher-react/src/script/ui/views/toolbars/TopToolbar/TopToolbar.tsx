@@ -46,7 +46,7 @@ interface TopToolbarProps
   className?: string
 }
 
-interface TopToolbarCallProps extends ToolbarGroupItemCallProps {}
+type TopToolbarCallProps = ToolbarGroupItemCallProps
 
 type Props = TopToolbarProps & TopToolbarCallProps
 
@@ -117,7 +117,7 @@ const TopToolbar = (props: Props) => {
         <Item id="settings" />
         {width && width >= mediaSizes.infoShowingWidth ? (
           <>
-            <HelpLink status={status['help']} />
+            <HelpLink status={status.help} />
             <Item id="about" />
           </>
         ) : null}

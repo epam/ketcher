@@ -75,7 +75,7 @@ const SpecialSymbolsList = ({ select }) => {
             className={classes.button}
             key={`symbol-${id}`}
             value={symbol}
-            onMouseDown={event => {
+            onMouseDown={(event) => {
               select(event, symbol)
             }}
           >

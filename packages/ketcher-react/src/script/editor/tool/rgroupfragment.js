@@ -64,7 +64,7 @@ RGroupFragmentTool.prototype.click = function (event) {
     if (bondId !== null) bondResult.push(bondId)
   }
   if (atomResult.length > 0) {
-    for (let id of atomResult) {
+    for (const id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
         id
@@ -76,7 +76,7 @@ RGroupFragmentTool.prototype.click = function (event) {
     this.editor.event.removeFG.dispatch({ fgIds: result })
     return
   } else if (bondResult.length > 0) {
-    for (let id of bondResult) {
+    for (const id of bondResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,
         this.functionalGroups,
@@ -107,7 +107,7 @@ RGroupFragmentTool.prototype.click = function (event) {
   const res = editor.event.rgroupEdit.dispatch(rg)
 
   Promise.resolve(res)
-    .then(newRg => {
+    .then((newRg) => {
       const restruct = editor.render.ctab
 
       let action = null

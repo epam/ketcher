@@ -62,7 +62,7 @@ ChainTool.prototype.mousedown = function (event) {
     if (bondId !== null) bondResult.push(bondId)
   }
   if (atomResult.length > 0) {
-    for (let id of atomResult) {
+    for (const id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
         id
@@ -74,7 +74,7 @@ ChainTool.prototype.mousedown = function (event) {
     this.editor.event.removeFG.dispatch({ fgIds: result })
     return
   } else if (bondResult.length > 0) {
-    for (let id of bondResult) {
+    for (const id of bondResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,
         this.functionalGroups,
@@ -170,7 +170,7 @@ ChainTool.prototype.mouseup = function () {
     if (atomId !== null) atomResult.push(atomId)
   }
   if (atomResult.length > 0) {
-    for (let id of atomResult) {
+    for (const id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
         id

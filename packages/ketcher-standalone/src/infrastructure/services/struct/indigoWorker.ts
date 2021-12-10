@@ -33,6 +33,7 @@ import {
   OutputMessage
 } from './indigoWorker.types'
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import indigoModuleFn from 'indigo-ketcher'
 
@@ -43,7 +44,7 @@ interface IndigoOptions {
 type handlerType = (indigo: any, indigoOptions: IndigoOptions) => string
 
 function handle(handler: handlerType, options?: CommandOptions) {
-  module.then(indigo => {
+  module.then((indigo) => {
     const indigoOptions = new indigo.MapStringString()
     setOptions(indigoOptions, options || {})
     let msg: OutputMessage<string>
@@ -60,13 +61,14 @@ function handle(handler: handlerType, options?: CommandOptions) {
       }
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     self.postMessage(msg)
   })
 }
 
 function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {
-  for (let [key, value] of Object.entries(options)) {
+  for (const [key, value] of Object.entries(options)) {
     if (value == null) continue
     indigoOptions.set(key, (value as any).toString())
   }
@@ -142,7 +144,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       const data: CalculateCommandData = message.data as CalculateCommandData
       handle((indigo, indigoOptions) => {
         const selectedAtoms = new indigo.VectorInt()
-        data.selectedAtoms.forEach(atomId => selectedAtoms.push_back(atomId))
+        data.selectedAtoms.forEach((atomId) => selectedAtoms.push_back(atomId))
         const result = indigo.calculate(
           data.struct,
           indigoOptions,
@@ -177,7 +179,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       const data: CleanCommandData = message.data as CleanCommandData
       handle((indigo, indigoOptions) => {
         const selectedAtoms = new indigo.VectorInt()
-        data.selectedAtoms.forEach(atomId => selectedAtoms.push_back(atomId))
+        data.selectedAtoms.forEach((atomId) => selectedAtoms.push_back(atomId))
         const updatedStruct = indigo.clean2d(
           data.struct,
           data.format,
@@ -200,7 +202,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
     }
 
     case Command.Info: {
-      handle(indigo => indigo.version())
+      handle((indigo) => indigo.version())
       break
     }
 

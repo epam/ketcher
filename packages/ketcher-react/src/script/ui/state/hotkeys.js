@@ -32,7 +32,7 @@ import { openDialog } from './modal'
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
     const hotKeys = initHotKeys()
-    element.addEventListener('keydown', event =>
+    element.addEventListener('keydown', (event) =>
       keyHandle(dispatch, getState(), hotKeys, event)
     )
   }
@@ -53,7 +53,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
 
   if (key && key.length === 1 && atomsSelected && key.match(/\w/)) {
     openDialog(dispatch, 'labelEdit', { letter: key })
-      .then(res => {
+      .then((res) => {
         dispatch(onAction({ tool: 'atom', opts: res }))
       })
       .catch(() => null)
@@ -87,12 +87,12 @@ function initHotKeys() {
   const hotKeys = {}
   let act
 
-  Object.keys(actions).forEach(actName => {
+  Object.keys(actions).forEach((actName) => {
     act = actions[actName]
     if (!act.shortcut) return
 
     if (Array.isArray(act.shortcut)) {
-      act.shortcut.forEach(key => {
+      act.shortcut.forEach((key) => {
         setHotKey(key, actName, hotKeys)
       })
     } else {
@@ -118,10 +118,10 @@ const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/
 /* ClipArea */
 export function initClipboard(dispatch, getState) {
   const formats = Object.keys(formatProperties).map(
-    format => formatProperties[format].mime
+    (format) => formatProperties[format].mime
   )
 
-  const debAction = debounce(0, action => dispatch(onAction(action)))
+  const debAction = debounce(0, (action) => dispatch(onAction(action)))
   const loadStruct = debounce(0, (structStr, opts) =>
     dispatch(load(structStr, opts))
   )

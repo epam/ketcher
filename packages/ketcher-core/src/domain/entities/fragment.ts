@@ -33,15 +33,15 @@ function calcStereoFlag(
 ): StereoFlag | undefined {
   if (!stereoAids || stereoAids.length === 0) return undefined
   const filteredStereoAtoms = stereoAids
-    .map(aid => struct.atoms.get(aid))
-    .filter(atom => atom?.stereoLabel)
+    .map((aid) => struct.atoms.get(aid))
+    .filter((atom) => atom?.stereoLabel)
   if (!filteredStereoAtoms.length) return undefined
 
   const atom = filteredStereoAtoms[0]!
   const stereoLabel = atom.stereoLabel! // {string | null} "<abs|and|or>-<group>"
 
   const hasAnotherLabel = filteredStereoAtoms.some(
-    atom => atom?.stereoLabel !== stereoLabel
+    (atom) => atom?.stereoLabel !== stereoLabel
   )
 
   let stereoFlag: StereoFlag
@@ -102,7 +102,7 @@ export class Fragment {
   }
 
   clone(aidMap: Map<number, number>) {
-    const stereoAtoms = this.#stereoAtoms.map(aid => aidMap.get(aid)!)
+    const stereoAtoms = this.#stereoAtoms.map((aid) => aidMap.get(aid)!)
     const fr = new Fragment(stereoAtoms, this.stereoFlagPosition)
     fr.#enhancedStereoFlag = this.#enhancedStereoFlag
     return fr
@@ -113,17 +113,19 @@ export class Fragment {
     return this.#enhancedStereoFlag
   }
 
-  //TODO: split to 'add' and 'remove methods
+  // TODO: split to 'add' and 'remove methods
   updateStereoAtom(struct: Struct, aid: number, frId: number, isAdd: boolean) {
     if (isAdd && !this.#stereoAtoms.includes(aid)) this.#stereoAtoms.push(aid)
     if (
       !isAdd &&
       (struct.atoms.get(aid)?.fragment !== frId ||
         !Array.from(struct.bonds.values())
-          .filter(bond => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE)
-          .some(bond => bond.begin === aid))
+          .filter(
+            (bond) => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE
+          )
+          .some((bond) => bond.begin === aid))
     ) {
-      this.#stereoAtoms = this.stereoAtoms.filter(item => item !== aid)
+      this.#stereoAtoms = this.stereoAtoms.filter((item) => item !== aid)
     }
 
     this.#enhancedStereoFlag = calcStereoFlag(struct, this.stereoAtoms)
@@ -145,10 +147,10 @@ export class Fragment {
     if (
       struct.atoms.get(atomId)?.fragment !== fragmentId ||
       !Array.from(struct.bonds.values())
-        .filter(bond => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE)
-        .some(bond => bond.begin === atomId)
+        .filter((bond) => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE)
+        .some((bond) => bond.begin === atomId)
     ) {
-      this.#stereoAtoms = this.#stereoAtoms.filter(item => item !== atomId)
+      this.#stereoAtoms = this.#stereoAtoms.filter((item) => item !== atomId)
       return true
     }
     return false

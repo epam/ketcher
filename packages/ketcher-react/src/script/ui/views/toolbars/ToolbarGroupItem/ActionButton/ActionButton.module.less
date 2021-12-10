@@ -32,16 +32,19 @@
     display: inline-block;
     vertical-align: middle;
   }
+
   &::after {
     position: absolute;
     left: 0;
   }
+
   &:hover {
     .highlight-scale(@scale:1.25);
     .highlight-shadow(black);
 
     background-image: none;
   }
+
   &:active,
   &[disabled] {
     .highlight-scale(none);

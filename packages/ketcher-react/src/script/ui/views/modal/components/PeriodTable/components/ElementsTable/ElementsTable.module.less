@@ -18,6 +18,7 @@
 
 .table {
   position: relative;
+
   td,
   th {
     padding: 0;
@@ -25,6 +26,7 @@
     text-align: center;
     vertical-align: middle;
   }
+
   th,
   .main_row {
     opacity: 0.6;
@@ -32,66 +34,84 @@
     font-size: 0.8em;
     padding: 0.3em 0.8em;
   }
+
   .outiner_row {
     vertical-align: top;
     text-align: right;
   }
+
   tr:nth-of-type(8) {
     border-bottom: 1em solid transparent;
   }
+
   .diatomic {
     background: @atom-periodic-diatomic;
   }
+
   .noble {
     background: @atom-periodic-noble-gas;
   }
+
   .alkali {
     background: @atom-periodic-alkali-metal;
   }
+
   .alkaline-earth {
     background: @atom-periodic-alkaline-earth-metal;
   }
+
   .metalloid {
     background: @atom-periodic-metalloid;
   }
+
   .polyatomic {
     background: @atom-periodic-polyatomic;
   }
+
   .post-transition {
     background: @atom-periodic-post-transition-metal;
   }
+
   .transition {
     background: @atom-periodic-transition-metal;
   }
+
   .lanthanide {
     background: @atom-periodic-lanthanide;
   }
+
   .actinide {
     background: @atom-periodic-actinide;
   }
+
   .unknown-props {
     background: @atom-periodic-unknown-properties;
   }
+
   .unknown-state {
     &::after {
       color: #222;
     }
   }
+
   .solid {
     &::after {
       color: #222;
     }
   }
+
   .metal {
     &::after {
       color: #006;
     }
   }
+
   .gas {
     &::after {
       color: #c00;
     }
   }
+
   .liquid {
     &::after {
       color: #0a0;
@@ -123,23 +143,28 @@
     vertical-align: top;
     content: attr(value);
   }
+
   &:hover {
     .highlight-scale(@scale:1.25);
     .highlight-shadow(black);
 
     z-index: 60;
     background: #fff;
+
     &::after {
       visibility: hidden;
     }
   }
+
   &:not(:hover) > span {
     color: black;
   }
+
   &:active {
     .highlight-scale(none);
     .highlight-shadow(none);
   }
+
   &.selected {
     &::after {
       visibility: hidden;

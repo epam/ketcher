@@ -17,7 +17,7 @@ const FGContextMenu = () => {
     const editor = getKetcherInstance().editor as any
     const action = new Action()
     const expandData = targetItems[0].isExpanded
-    targetItems?.forEach(item => {
+    targetItems?.forEach((item) => {
       action.mergeWith(
         setExpandSGroup(editor.render.ctab, item.relatedSGroupId, {
           expanded: !expandData
@@ -32,7 +32,7 @@ const FGContextMenu = () => {
   const handleRemove = function () {
     const editor = getKetcherInstance().editor as any
     const action = new Action()
-    targetItems?.forEach(item => {
+    targetItems?.forEach((item) => {
       action.mergeWith(
         fromSgroupDeletion(editor.render.ctab, item.relatedSGroupId)
       )
@@ -69,7 +69,7 @@ const FGContextMenu = () => {
             ci.id
           )
           fgId !== null &&
-            struct.functionalGroups.forEach(fg => {
+            struct.functionalGroups.forEach((fg) => {
               fg.relatedSGroupId === fgId &&
                 !selectedItems.includes(fg) &&
                 selectedItems.push(fg)
@@ -82,7 +82,7 @@ const FGContextMenu = () => {
             ci.id
           )
           fgId !== null &&
-            struct.functionalGroups.forEach(fg => {
+            struct.functionalGroups.forEach((fg) => {
               fg.relatedSGroupId === fgId &&
                 !selectedItems.includes(fg) &&
                 selectedItems.push(fg)
@@ -91,7 +91,7 @@ const FGContextMenu = () => {
         case 'sgroups':
           const sgroup = struct.sgroups.get(ci.id)
           if (FunctionalGroup.isFunctionalGroup(sgroup)) {
-            struct.functionalGroups.forEach(fg => {
+            struct.functionalGroups.forEach((fg) => {
               fg.relatedSGroupId === sgroup?.id &&
                 !selectedItems.includes(fg) &&
                 selectedItems.push(fg)
@@ -101,7 +101,7 @@ const FGContextMenu = () => {
         case 'functionalGroups':
           const fgroup = struct.sgroups.get(ci.id)
           if (FunctionalGroup.isFunctionalGroup(fgroup)) {
-            struct.functionalGroups.forEach(fg => {
+            struct.functionalGroups.forEach((fg) => {
               fg.relatedSGroupId === fgroup?.id &&
                 !selectedItems.includes(fg) &&
                 selectedItems.push(fg)
@@ -112,13 +112,13 @@ const FGContextMenu = () => {
     }
 
     if (selection && selection.atoms) {
-      selection.atoms.forEach(aid => {
+      selection.atoms.forEach((aid) => {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           struct.functionalGroups,
           aid
         )
         fgId !== null &&
-          struct.functionalGroups.forEach(fg => {
+          struct.functionalGroups.forEach((fg) => {
             fg.relatedSGroupId === fgId &&
               !selectedItems.includes(fg) &&
               selectedItems.push(fg)
@@ -134,7 +134,7 @@ const FGContextMenu = () => {
   return (
     <ContextMenu
       id="contextmenu"
-      onShow={e => showMenu(e)}
+      onShow={(e) => showMenu(e)}
       className={clsx({
         [classes.isHidden]: !showSGroupMenu
       })}

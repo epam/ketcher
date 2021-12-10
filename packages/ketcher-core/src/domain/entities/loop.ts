@@ -29,7 +29,7 @@ export class Loop {
     this.aromatic = true
     this.convex = isConvex || false
 
-    hbs.forEach(hb => {
+    hbs.forEach((hb) => {
       const bond: Bond = struct.bonds.get(struct.halfBonds.get(hb)!.bid)!
       if (bond.type !== Bond.PATTERN.TYPE.AROMATIC) this.aromatic = false
       if (bond.type === Bond.PATTERN.TYPE.DOUBLE) this.dblBonds++

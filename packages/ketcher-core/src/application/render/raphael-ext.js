@@ -28,7 +28,7 @@ Raphael.el.translateAbs = function (x, y) {
 }
 
 Raphael.st.translateAbs = function (x, y) {
-  this.forEach(el => {
+  this.forEach((el) => {
     el.translateAbs(x, y)
   })
 }

@@ -1424,49 +1424,49 @@ const structs = {
   }
 }
 
-const initStruct = structName => {
+const initStruct = (structName) => {
   const structData = structs[structName]
   const struct = new Struct()
-  Object.keys(structData).forEach(key => {
+  Object.keys(structData).forEach((key) => {
     switch (key) {
       case 'atoms':
-        structData.atoms.forEach(props => struct.atoms.add(new Atom(props)))
+        structData.atoms.forEach((props) => struct.atoms.add(new Atom(props)))
         break
       case 'bonds':
-        structData.bonds.forEach(props => struct.bonds.add(new Bond(props)))
+        structData.bonds.forEach((props) => struct.bonds.add(new Bond(props)))
         break
       case 'frags':
-        structData.frags.forEach(props =>
+        structData.frags.forEach((props) =>
           struct.frags.add(new Fragment(props.stereoAtoms))
         )
         break
       case 'halfBonds':
-        structData.halfBonds.forEach(props =>
+        structData.halfBonds.forEach((props) =>
           struct.halfBonds.add(new HalfBond(props.begin, props.end, props.bid))
         )
         break
       case 'loops':
-        structData.loops.forEach(props =>
+        structData.loops.forEach((props) =>
           struct.loops.add(new Loop(props.hbs, struct, props.convex))
         )
         break
       case 'rxnArrows':
-        structData.rxnArrows.forEach(props =>
+        structData.rxnArrows.forEach((props) =>
           struct.rxnArrows.add(new RxnArrow(props))
         )
         break
       case 'rxnPluses':
-        structData.rxnPluses.forEach(props =>
+        structData.rxnPluses.forEach((props) =>
           struct.rxnPluses.add(new RxnPlus(props))
         )
         break
       case 'simpleObjects':
-        structData.simpleObjects.forEach(props =>
+        structData.simpleObjects.forEach((props) =>
           struct.simpleObjects.add(new SimpleObject(props))
         )
         break
       case 'sgroups':
-        structData.sgroups.forEach(props =>
+        structData.sgroups.forEach((props) =>
           struct.sgroups.add(new SGroup(props.type))
         )
         break
@@ -1478,7 +1478,7 @@ const initStruct = structName => {
         })
         break
       case 'texts':
-        structData.texts.forEach(props => struct.texts.add(new Text(props)))
+        structData.texts.forEach((props) => struct.texts.add(new Text(props)))
         break
     }
   })

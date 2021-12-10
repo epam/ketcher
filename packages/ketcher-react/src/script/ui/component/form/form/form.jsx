@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { Component } from 'react'
-
 import { FormContext } from '../../../../../contexts'
 import Input from '../input'
 import classes from './form.module.less'
@@ -59,13 +58,13 @@ class Form extends Component {
   field(name, onChange) {
     const { result, errors } = this.props
     const value = result[name]
-    const self = this
+
     return {
       dataError: errors && errors[name],
       value,
-      onChange(val) {
-        const newState = Object.assign({}, self.props.result, { [name]: val })
-        self.updateState(newState)
+      onChange: (val) => {
+        const newState = Object.assign({}, this.props.result, { [name]: val })
+        this.updateState(newState)
         if (onChange) onChange(val)
       }
     }
@@ -84,7 +83,7 @@ class Form extends Component {
   }
 }
 
-export default connect(null, dispatch => ({
+export default connect(null, (dispatch) => ({
   onUpdate: (result, valid, errors) => {
     dispatch(updateFormState({ result, valid, errors }))
   }
@@ -125,7 +124,7 @@ function Field(props) {
   )
 }
 
-const SelectOneOf = props => {
+const SelectOneOf = (props) => {
   const { title, name, schema, ...prop } = props
 
   const selectDesc = {
@@ -134,7 +133,7 @@ const SelectOneOf = props => {
     enumNames: []
   }
 
-  Object.keys(schema).forEach(item => {
+  Object.keys(schema).forEach((item) => {
     selectDesc.enum.push(item)
     selectDesc.enumNames.push(schema[item].title || item)
   })
@@ -158,11 +157,11 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
 
   return {
     key: schema.key || '',
-    serialize: inst =>
+    serialize: (inst) =>
       validator.validate(inst, schema, {
         rewrite: serializeRewrite.bind(null, serialize)
       }),
-    deserialize: inst =>
+    deserialize: (inst) =>
       validator.validate(inst, schema, {
         rewrite: deserializeRewrite.bind(null, deserialize)
       })
@@ -175,7 +174,7 @@ function serializeRewrite(serializeMap, instance, schema) {
     return instance !== undefined ? instance : schema.default
   }
 
-  Object.keys(schema.properties).forEach(p => {
+  Object.keys(schema.properties).forEach((p) => {
     if (p in instance) res[p] = instance[serializeMap[p]] || instance[p]
   })
 
@@ -197,7 +196,7 @@ function getErrorsObj(errors) {
   const errs = {}
   let field
 
-  errors.forEach(item => {
+  errors.forEach((item) => {
     field = item.property.split('.')[1]
     if (!errs[field]) errs[field] = getInvalidMessage(item)
   })

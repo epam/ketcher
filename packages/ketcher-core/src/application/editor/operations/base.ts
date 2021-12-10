@@ -23,6 +23,7 @@ type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>
 type OperationType = ValueOf<typeof OperationType>
 
 class BaseOperation {
+  // eslint-disable-next-line no-use-before-define
   private _inverted: BaseOperation | undefined
   type: OperationType
   priority: number
@@ -32,8 +33,7 @@ class BaseOperation {
     this.priority = priority
   }
 
-  // @ts-ignore
-  execute(restruct: ReStruct): void {
+  execute(_restruct: ReStruct): void {
     throw new Error('Operation.execute() is not implemented')
   }
 
@@ -65,7 +65,7 @@ class BaseOperation {
 
     const halfBonds = restruct.molecule.halfBonds
 
-    atom.a.neighbors.forEach(halfBondId => {
+    atom.a.neighbors.forEach((halfBondId) => {
       if (!halfBonds.has(halfBondId)) {
         return
       }

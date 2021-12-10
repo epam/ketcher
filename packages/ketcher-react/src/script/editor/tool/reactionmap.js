@@ -102,7 +102,7 @@ ReactionMapTool.prototype.mouseup = function (event) {
           action.mergeWith(fromAtomsAttrs(rnd.ctab, ci.id, { aam: aam1 }))
         } else {
           var aam = 0
-          atoms.forEach(atom => {
+          atoms.forEach((atom) => {
             aam = Math.max(aam, atom.aam || 0)
           })
           action.mergeWith(

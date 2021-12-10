@@ -21,7 +21,7 @@ export function prepareStructForKet(struct: Struct) {
   const rgFrags = new Set() // skip this when writing molecules
   for (const [rgnumber, rgroup] of struct.rgroups.entries()) {
     // RGroups writing
-    rgroup.frags.forEach(frid => rgFrags.add(frid))
+    rgroup.frags.forEach((frid) => rgFrags.add(frid))
 
     const fragsAtoms = Array.from(rgroup.frags.values()).reduce(
       (res, frid) => res.union(struct.getFragmentIds(frid)),
@@ -37,8 +37,8 @@ export function prepareStructForKet(struct: Struct) {
   }
 
   Array.from(struct.frags.keys())
-    .filter(fid => !rgFrags.has(fid))
-    .forEach(fid => {
+    .filter((fid) => !rgFrags.has(fid))
+    .forEach((fid) => {
       const fragAtoms = struct.getFragmentIds(fid)
       ketNodes.push({
         type: 'molecule',
@@ -47,7 +47,7 @@ export function prepareStructForKet(struct: Struct) {
       })
     })
 
-  struct.rxnArrows.forEach(item => {
+  struct.rxnArrows.forEach((item) => {
     ketNodes.push({
       type: 'arrow',
       center: item.pos[0],
@@ -58,7 +58,7 @@ export function prepareStructForKet(struct: Struct) {
     })
   })
 
-  struct.rxnPluses.forEach(item => {
+  struct.rxnPluses.forEach((item) => {
     ketNodes.push({
       type: 'plus',
       center: item.pp,
@@ -66,7 +66,7 @@ export function prepareStructForKet(struct: Struct) {
     })
   })
 
-  struct.simpleObjects.forEach(item => {
+  struct.simpleObjects.forEach((item) => {
     ketNodes.push({
       type: 'simpleObject',
       center: item.pos[0],
@@ -77,7 +77,7 @@ export function prepareStructForKet(struct: Struct) {
     })
   })
 
-  struct.texts.forEach(item => {
+  struct.texts.forEach((item) => {
     ketNodes.push({
       type: 'text',
       center: item.position,
@@ -88,11 +88,11 @@ export function prepareStructForKet(struct: Struct) {
     })
   })
 
-  ketNodes.forEach(ketNode => {
+  ketNodes.forEach((ketNode) => {
     if (ketNode.fragment) {
       const sgroups: SGroup[] = Array.from(ketNode.fragment.sgroups.values())
       const filteredSGroups = sgroups.filter((sg: SGroup) =>
-        sg.atoms.every(atom => atom !== undefined)
+        sg.atoms.every((atom) => atom !== undefined)
       )
       const filteredSGroupsMap = new Map()
       filteredSGroups.forEach((sg, index) => {

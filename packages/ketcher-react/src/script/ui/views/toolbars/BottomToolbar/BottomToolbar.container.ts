@@ -37,7 +37,7 @@ const mapStateToProps = (state): StateProps => ({
 })
 
 const mapDispatchToProps = (dispatch: Dispatch): BottomToolbarCallProps => ({
-  onAction: action => dispatch(onAction(action)),
+  onAction: (action) => dispatch(onAction(action)),
   onOpen: (menuName, isSelected) =>
     dispatch({
       type: 'OPENED',

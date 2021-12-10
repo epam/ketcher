@@ -37,7 +37,7 @@ export class RxnArrowMove extends Base {
     const id = this.data.id
     const d = this.data.d
     const item = struct.rxnArrows.get(id)
-    item.pos.forEach(p => p.add_(d))
+    item.pos.forEach((p) => p.add_(d))
     restruct.rxnArrows
       .get(id)
       .visel.translate(Scale.obj2scaled(d, restruct.render.options))

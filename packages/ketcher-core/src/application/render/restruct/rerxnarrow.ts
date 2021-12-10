@@ -57,8 +57,22 @@ class ReRxnArrow extends ReObject {
     const item = this.item
 
     const pos = item.pos
+    const mode = item.mode
 
-    dist = calculateDistanceToLine(pos, point)
+    const [startPoint, endPoint, middlePoint] = pos
+
+    dist = calculateDistanceToLine([startPoint, endPoint], point)
+
+    if (mode.includes('elliptical')) {
+      const topLeftCorner = new Vec2(startPoint.x, middlePoint.y)
+      const topRightCorner = new Vec2(endPoint.x, middlePoint.y)
+      dist = Math.min(
+        dist,
+        calculateDistanceToLine([startPoint, topLeftCorner], point),
+        calculateDistanceToLine([topLeftCorner, topRightCorner], point),
+        calculateDistanceToLine([topRightCorner, endPoint], point)
+      )
+    }
 
     distRef = this.getReferencePointDistance(p)
     const refPoint: Vec2 | null =

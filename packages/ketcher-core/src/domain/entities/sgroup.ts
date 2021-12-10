@@ -152,7 +152,40 @@ export class SGroup {
   }
 
   calculatePP(struct: Struct): void {
-    let topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5))
+    let topLeftPoint
+
+    if (this.data.context === 'Atom' || this.data.context === 'Bond') {
+      const contentBoxes: Array<any> = []
+      let contentBB: Box2Abs | null = null
+      const direction = new Vec2(1, 0)
+
+      this.atoms.forEach(aid => {
+        const atom = struct.atoms.get(aid)
+        const pos = new Vec2(atom!.pp)
+        const ext = new Vec2(0.05 * 3, 0.05 * 3)
+        const bba = new Box2Abs(pos, pos).extend(ext, ext)
+        contentBoxes.push(bba)
+      })
+      contentBoxes.forEach(bba => {
+        var bbb: Box2Abs | null = null
+        ;[bba.p0.x, bba.p1.x].forEach(x => {
+          ;[bba.p0.y, bba.p1.y].forEach(y => {
+            var v = new Vec2(x, y)
+            var p = new Vec2(
+              Vec2.dot(v, direction),
+              Vec2.dot(v, direction.rotateSC(1, 0))
+            )
+            bbb = !bbb ? new Box2Abs(p, p) : bbb!.include(p)
+          })
+        })
+        contentBB = !contentBB ? bbb : Box2Abs.union(contentBB, bbb!)
+      })
+
+      topLeftPoint = contentBB!.p0
+    } else {
+      topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5))
+    }
+
     const sgroups = Array.from(struct.sgroups.values())
     for (let i = 0; i < struct.sgroups.size; ++i) {
       if (!descriptorIntersects(sgroups as [], topLeftPoint)) break

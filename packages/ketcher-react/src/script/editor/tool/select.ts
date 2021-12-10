@@ -103,7 +103,7 @@ class SelectTool {
       const atomFromStruct = atomId !== null && ctab.atoms.get(ci.id)?.a
 
       if (atomFromStruct) {
-        for (let sgId of atomFromStruct.sgs.values()) {
+        for (const sgId of atomFromStruct.sgs.values()) {
           actualSgroupId = sgId
         }
       }
@@ -130,7 +130,7 @@ class SelectTool {
     }
 
     if (selectedSgroups.length) {
-      for (let sgId of selectedSgroups) {
+      for (const sgId of selectedSgroups) {
         const sgroup = ctab.sgroups.get(sgId)
         if (sgroup) {
           const sgroupAtoms = SGroup.getAtoms(molecule, sgroup.item)
@@ -158,7 +158,7 @@ class SelectTool {
     }
 
     let sel = closestToSel(ci)
-    let sgroups = ctab.sgroups.get(ci.id)
+    const sgroups = ctab.sgroups.get(ci.id)
     const selection = this.editor.selection()
     if (ci.map === 'frags') {
       const frag = ctab.frags.get(ci.id)
@@ -300,7 +300,7 @@ class SelectTool {
     let actualSgroupId
 
     if (selected && functionalGroups.size && selected.atoms) {
-      for (let atom of selected.atoms) {
+      for (const atom of selected.atoms) {
         const atomId = FunctionalGroup.atomsInFunctionalGroup(
           functionalGroups,
           atom
@@ -308,7 +308,7 @@ class SelectTool {
         const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a
 
         if (atomFromStruct) {
-          for (let sgId of atomFromStruct.sgs.values()) {
+          for (const sgId of atomFromStruct.sgs.values()) {
             actualSgroupId = sgId
           }
         }
@@ -322,7 +322,7 @@ class SelectTool {
     }
 
     if (selected && functionalGroups.size && selected.bonds) {
-      for (let atom of selected.bonds) {
+      for (const atom of selected.bonds) {
         const bondId = FunctionalGroup.bondsInFunctionalGroup(
           molecule,
           functionalGroups,
@@ -339,7 +339,7 @@ class SelectTool {
     }
 
     if (selectedSgroups.length) {
-      for (let sgId of selectedSgroups) {
+      for (const sgId of selectedSgroups) {
         const sgroup = struct.sgroups.get(sgId)
         if (sgroup) {
           const sgroupAtoms = SGroup.getAtoms(molecule, sgroup.item)
@@ -433,7 +433,7 @@ class SelectTool {
         bondResult.push(bondId)
     }
     if (atomResult.length > 0) {
-      for (let id of atomResult) {
+      for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
           id
@@ -445,7 +445,7 @@ class SelectTool {
       editor.event.removeFG.dispatch({ fgIds: result })
       return
     } else if (bondResult.length > 0) {
-      for (let id of bondResult) {
+      for (const id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
           functionalGroups,
@@ -469,10 +469,10 @@ class SelectTool {
       if (selection?.atoms) {
         const selectionAtoms = selection.atoms
         Promise.resolve(ra)
-          .then(newatom => {
+          .then((newatom) => {
             // TODO: deep compare to not produce dummy, e.g.
             // atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
-            selectionAtoms.forEach(aid => {
+            selectionAtoms.forEach((aid) => {
               action.mergeWith(fromAtomsAttrs(struct, aid, newatom, false))
             })
             editor.update(action)
@@ -487,8 +487,8 @@ class SelectTool {
         const action = new Action()
         const bondsSelection = selection.bonds
         Promise.resolve(rb)
-          .then(newbond => {
-            bondsSelection.forEach(bid => {
+          .then((newbond) => {
+            bondsSelection.forEach((bid) => {
               action.mergeWith(fromBondsAttrs(struct, bid, newbond))
             })
             editor.update(action)
@@ -547,7 +547,7 @@ function closestToSel(ci) {
 // TODO: deep-merge?
 export function selMerge(selection, add, reversible: boolean) {
   if (add) {
-    Object.keys(add).forEach(item => {
+    Object.keys(add).forEach((item) => {
       if (!selection[item]) selection[item] = add[item].slice()
       else selection[item] = uniqArray(selection[item], add[item], reversible)
     })

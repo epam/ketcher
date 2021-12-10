@@ -56,7 +56,7 @@ class BondAdd extends BaseOperation {
     } = {}
 
     if (bond) {
-      Object.keys(bond).forEach(p => {
+      Object.keys(bond).forEach((p) => {
         pp[p] = bond[p]
       })
     }
@@ -116,7 +116,7 @@ class BondDelete extends BaseOperation {
     // notifyBondRemoved
     const rebond = restruct.bonds.get(bid)
     if (!rebond) return
-    ;[rebond.b.hb1, rebond.b.hb2].forEach(hbid => {
+    ;[rebond.b.hb1, rebond.b.hb2].forEach((hbid) => {
       if (hbid === undefined) return
       const halfBond = restruct.molecule.halfBonds.get(hbid)
       if (halfBond && halfBond.loop >= 0) {
@@ -128,7 +128,7 @@ class BondDelete extends BaseOperation {
     restruct.markItemRemoved()
 
     const structBond = struct.bonds.get(bid)!
-    ;[structBond.hb1, structBond.hb2].forEach(hbid => {
+    ;[structBond.hb1, structBond.hb2].forEach((hbid) => {
       const halfBond = struct.halfBonds.get(hbid!)
       if (!halfBond) {
         return

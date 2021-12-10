@@ -32,19 +32,22 @@ class ReEnhancedFlag extends ReObject {
   static isSelectable() {
     return true
   }
+
   highlightPath(render: Render): any {
-    var box = Box2Abs.fromRelBox(this.#path.getBBox())
-    var sz = box.p1.sub(box.p0)
-    var p0 = box.p0.sub(render.options.offset)
+    const box = Box2Abs.fromRelBox(this.#path.getBBox())
+    const sz = box.p1.sub(box.p0)
+    const p0 = box.p0.sub(render.options.offset)
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
   }
+
   drawHighlight(render: Render): any {
     // TODO: after the enhanced flag stops being displayed, need to remove the reEnhancedflag object from ctab
     if (!this.#path?.attrs) return null
-    var ret = this.highlightPath(render).attr(render.options.highlightStyle)
+    const ret = this.highlightPath(render).attr(render.options.highlightStyle)
     render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
     return ret
   }
+
   // @ts-ignore
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any): any {
     // TODO: after the enhanced flag stops being displayed, need to remove the reEnhancedflag object from ctab

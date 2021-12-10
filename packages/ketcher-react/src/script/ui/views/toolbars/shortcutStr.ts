@@ -29,6 +29,6 @@ export function shortcutStr(shortcut?: string | string[]) {
   const shortcutKey = Array.isArray(shortcut) ? shortcut[0] : shortcut
   return shortcutKey.replace(
     /(\b[a-z]\b$|Mod|Escape|Delete)/g,
-    key => shortcutAliasMap[key] || key.toUpperCase()
+    (key) => shortcutAliasMap[key] || key.toUpperCase()
   )
 }

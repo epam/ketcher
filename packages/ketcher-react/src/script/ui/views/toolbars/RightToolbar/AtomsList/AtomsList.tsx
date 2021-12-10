@@ -46,7 +46,7 @@ const AtomsList = forwardRef((props: Props, ref) => {
 
   return (
     <>
-      {atoms.map(label => {
+      {atoms.map((label) => {
         const element = Elements.get(label)
         const shortcut =
           basicAtoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null

@@ -64,7 +64,7 @@ describe('Smiles.writeAtom method', () => {
     [7, '[H+2]'],
     [8, '[H-]'],
     [9, '[H-2]']
-  ])(`should add atom charge to smiles`, (index, expected) => {
+  ])('should add atom charge to smiles', (index, expected) => {
     smiles.writeAtom(struct, index)
     expect(smiles.smiles).toBe(expected)
   })

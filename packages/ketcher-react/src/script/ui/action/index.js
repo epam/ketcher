@@ -39,59 +39,59 @@ const config = {
         dispatch({ type: 'ACTION', action: tools['select-lasso'].action })
       }
     },
-    hidden: options => isHidden(options, 'clear')
+    hidden: (options) => isHidden(options, 'clear')
   },
   open: {
     shortcut: 'Mod+o',
     title: 'Open…',
     action: { dialog: 'open' },
-    hidden: options => isHidden(options, 'open')
+    hidden: (options) => isHidden(options, 'open')
   },
   save: {
     shortcut: 'Mod+s',
     title: 'Save As…',
     action: { dialog: 'save' },
-    hidden: options => isHidden(options, 'save')
+    hidden: (options) => isHidden(options, 'save')
   },
   undo: {
     shortcut: 'Mod+z',
     title: 'Undo',
-    action: editor => {
+    action: (editor) => {
       editor.undo()
     },
-    disabled: editor => editor.historySize().undo === 0,
-    hidden: options => isHidden(options, 'undo')
+    disabled: (editor) => editor.historySize().undo === 0,
+    hidden: (options) => isHidden(options, 'undo')
   },
   redo: {
     shortcut: ['Mod+Shift+z', 'Mod+y'],
     title: 'Redo',
-    action: editor => {
+    action: (editor) => {
       editor.redo()
     },
-    disabled: editor => editor.historySize().redo === 0,
-    hidden: options => isHidden(options, 'redo')
+    disabled: (editor) => editor.historySize().redo === 0,
+    hidden: (options) => isHidden(options, 'redo')
   },
   cut: {
     shortcut: 'Mod+x',
     title: 'Cut',
-    action: editor => {
+    action: (editor) => {
       exec('cut') || dontClipMessage('Cut', editor.errorHandler) // eslint-disable-line no-unused-expressions
     },
-    disabled: editor => !hasSelection(editor),
-    hidden: options => isHidden(options, 'cut')
+    disabled: (editor) => !hasSelection(editor),
+    hidden: (options) => isHidden(options, 'cut')
   },
   copies: {
-    disabled: editor => !hasSelection(editor),
-    hidden: options => isHidden(options, 'copies')
+    disabled: (editor) => !hasSelection(editor),
+    hidden: (options) => isHidden(options, 'copies')
   },
   copy: {
     shortcut: 'Mod+c',
     title: 'Copy',
-    action: editor => {
+    action: (editor) => {
       exec('copy') || dontClipMessage('Copy', editor.errorHandler) // eslint-disable-line no-unused-expressions
     },
-    disabled: editor => !hasSelection(editor),
-    hidden: options => isHidden(options, 'copy')
+    disabled: (editor) => !hasSelection(editor),
+    hidden: (options) => isHidden(options, 'copy')
   },
   'copy-image': {
     shortcut: 'Mod+Shift+f',
@@ -99,8 +99,8 @@ const config = {
     action: () => {
       copyImageToClipboard()
     },
-    disabled: editor => !hasSelection(editor),
-    hidden: options => isHidden(options, 'copy-image')
+    disabled: (editor) => !hasSelection(editor),
+    hidden: (options) => isHidden(options, 'copy-image')
   },
   'copy-mol': {
     shortcut: 'Mod+m',
@@ -108,8 +108,8 @@ const config = {
     action: () => {
       copyAs('mol')
     },
-    disabled: editor => !hasSelection(editor),
-    hidden: options => isHidden(options, 'copy-mol')
+    disabled: (editor) => !hasSelection(editor),
+    hidden: (options) => isHidden(options, 'copy-mol')
   },
   'copy-ket': {
     shortcut: 'Mod+Shift+k',
@@ -117,45 +117,45 @@ const config = {
     action: () => {
       copyAs('ket')
     },
-    disabled: editor => !hasSelection(editor),
-    hidden: options => isHidden(options, 'copy-ket')
+    disabled: (editor) => !hasSelection(editor),
+    hidden: (options) => isHidden(options, 'copy-ket')
   },
   paste: {
     shortcut: 'Mod+v',
     title: 'Paste',
-    action: editor => {
+    action: (editor) => {
       exec('paste') || dontClipMessage('Paste', editor.errorHandler) // eslint-disable-line no-unused-expressions
     },
     selected: ({ actions }) =>
       actions && // TMP
       actions.active &&
       actions.active.tool === 'paste',
-    hidden: options => isHidden(options, 'paste')
+    hidden: (options) => isHidden(options, 'paste')
   },
   settings: {
     title: 'Settings',
     action: { dialog: 'settings' },
-    hidden: options => isHidden(options, 'settings')
+    hidden: (options) => isHidden(options, 'settings')
   },
   help: {
-    hidden: options => isHidden(options, 'help')
+    hidden: (options) => isHidden(options, 'help')
   },
   about: {
     title: 'About',
     action: { dialog: 'about' },
-    hidden: options => isHidden(options, 'about')
+    hidden: (options) => isHidden(options, 'about')
   },
   'reaction-automap': {
     title: 'Reaction Auto-Mapping Tool',
     action: { dialog: 'automap' },
-    hidden: options => isHidden(options, 'reaction-automap'),
+    hidden: (options) => isHidden(options, 'reaction-automap'),
     disabled: (editor, server, options) =>
       !options.app.server || !editor.struct().hasRxnArrow()
   },
   'period-table': {
     title: 'Periodic Table',
     action: { dialog: 'period-table' },
-    hidden: options => isHidden(options, 'period-table')
+    hidden: (options) => isHidden(options, 'period-table')
   },
   'select-all': {
     title: 'Select All',
@@ -167,15 +167,15 @@ const config = {
         dispatch({ type: 'ACTION', action: tools[selectionTool].action })
       }
     },
-    hidden: options => isHidden(options, 'select-all')
+    hidden: (options) => isHidden(options, 'select-all')
   },
   'deselect-all': {
     title: 'Deselect All',
     shortcut: 'Mod+Shift+a',
-    action: editor => {
+    action: (editor) => {
       editor.selection(null)
     },
-    hidden: options => isHidden(options, 'deselect-all')
+    hidden: (options) => isHidden(options, 'deselect-all')
   },
   'select-descriptors': {
     title: 'Select descriptors',
@@ -189,7 +189,7 @@ const config = {
         dispatch({ type: 'ACTION', action: tools[selectionTool].action })
       }
     },
-    hidden: options => isHidden(options, 'select-descriptors')
+    hidden: (options) => isHidden(options, 'select-descriptors')
   },
   ...server,
   ...debug,
@@ -204,8 +204,8 @@ function hasSelection(editor) {
   const selection = editor.selection()
   return (
     selection && // if not only sgroupData selected
-    Object.keys(selection).filter(key => !['sgroupData'].includes(key)).length >
-      0
+    Object.keys(selection).filter((key) => !['sgroupData'].includes(key))
+      .length > 0
   )
 }
 

@@ -45,7 +45,7 @@ export class Action {
     const sortedOperations = [...this.operations].sort(
       (a, b) => a.priority - b.priority
     )
-    sortedOperations.forEach(operation => {
+    sortedOperations.forEach((operation) => {
       const invertedOperation = operation.perform(restruct)
       action.addOp(invertedOperation)
     })
@@ -57,7 +57,7 @@ export class Action {
     return (
       this.operations.find(
         // TODO [RB] the condition is always true for op.* operations
-        operation => (restruct ? !operation.isDummy(restruct) : true)
+        (operation) => (restruct ? !operation.isDummy(restruct) : true)
       ) === undefined
     )
   }

@@ -16,11 +16,20 @@
 
 import * as KN from 'w3c-keyname'
 
-import { FC, useLayoutEffect, useRef, ReactElement } from 'react'
+import { FC, ReactElement, useLayoutEffect, useRef } from 'react'
 
+import Icon from '../../../component/view/icon'
 import clsx from 'clsx'
 import styles from './Dialog.module.less'
-import Icon from '../../../component/view/icon'
+
+interface DialogParamsCallProps {
+  onCancel: () => void
+  onOk: (result: any) => void
+}
+
+export interface DialogParams extends DialogParamsCallProps {
+  className?: string
+}
 
 interface DialogProps {
   title: string
@@ -28,14 +37,6 @@ interface DialogProps {
   buttons?: Array<string | ReactElement>
   buttonsTop?: Array<ReactElement>
   className: string
-}
-export interface DialogParams extends DialogParamsCallProps {
-  className?: string
-}
-
-interface DialogParamsCallProps {
-  onCancel: () => void
-  onOk: (result: any) => void
 }
 
 interface DialogCallProps {
@@ -45,7 +46,7 @@ interface DialogCallProps {
 
 type Props = DialogProps & DialogCallProps
 
-const Dialog: FC<Props> = props => {
+const Dialog: FC<Props> = (props) => {
   const {
     children,
     title,
@@ -70,17 +71,17 @@ const Dialog: FC<Props> = props => {
     }
   }, [])
 
-  const isButtonOk = button => {
+  const isButtonOk = (button) => {
     return button === 'OK' || button === 'Save'
   }
 
-  const exit = mode => {
+  const exit = (mode) => {
     const key = isButtonOk(mode) ? 'onOk' : 'onCancel'
     if (params && key in params && (key !== 'onOk' || valid()))
       params[key](result())
   }
 
-  const keyDown = event => {
+  const keyDown = (event) => {
     const key = KN.keyName(event)
     const active = document.activeElement
     const activeTextarea = active && active.tagName === 'TEXTAREA'
@@ -95,7 +96,7 @@ const Dialog: FC<Props> = props => {
     <div
       ref={dialogRef}
       role="dialog"
-      onSubmit={event => event.preventDefault()}
+      onSubmit={(event) => event.preventDefault()}
       onKeyDown={keyDown}
       tabIndex={-1}
       className={clsx(styles.form, className, params.className)}
@@ -104,7 +105,7 @@ const Dialog: FC<Props> = props => {
       <header>
         {title}
         <div className={styles.btnContainer}>
-          {buttonsTop && buttonsTop.map(button => button)}
+          {buttonsTop && buttonsTop.map((button) => button)}
           <button className={styles.buttonTop} onClick={() => exit('Cancel')}>
             <Icon name={'close'} />
           </button>
@@ -114,7 +115,7 @@ const Dialog: FC<Props> = props => {
 
       {buttons.length > 0 && (
         <footer>
-          {buttons.map(button =>
+          {buttons.map((button) =>
             typeof button !== 'string' ? (
               button
             ) : (

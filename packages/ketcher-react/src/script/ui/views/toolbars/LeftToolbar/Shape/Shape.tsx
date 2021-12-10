@@ -25,7 +25,7 @@ import { shapeOptions } from '../leftToolbarOptions'
 interface ShapeProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   height?: number
 }
-interface ShapeCallProps extends ToolbarGroupItemCallProps {}
+type ShapeCallProps = ToolbarGroupItemCallProps
 
 type Props = ShapeProps & ShapeCallProps
 

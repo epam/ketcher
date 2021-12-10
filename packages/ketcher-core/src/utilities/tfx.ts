@@ -1,6 +1,6 @@
 export function tfx<TValue extends number | string>(value: TValue): string {
   let parsedValue: number
-  if (typeof value == 'number') {
+  if (typeof value === 'number') {
     parsedValue = value
   } else {
     parsedValue = parseFloat(value)

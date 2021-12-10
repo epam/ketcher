@@ -25,7 +25,7 @@ const typeSchema = [
 function TypeChoice({ value, onChange, ...props }) {
   return (
     <fieldset className={classes.fieldset}>
-      {typeSchema.map(type => (
+      {typeSchema.map((type) => (
         <label key={type.title}>
           <input
             type="radio"

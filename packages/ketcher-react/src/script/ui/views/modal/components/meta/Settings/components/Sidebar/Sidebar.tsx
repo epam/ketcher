@@ -22,14 +22,14 @@ import Icon from '../../../../../../../component/view/icon'
 const Sidebar = ({ tabs, className }): React.ReactElement => {
   const [activeTab, setActiveTab] = useState('General')
 
-  const handleSwitchTab = tab => {
+  const handleSwitchTab = (tab) => {
     setActiveTab(tab)
   }
 
   return (
     <div className={clsx(classes.sidebar, className)}>
       <ul className={classes.tabs}>
-        {tabs.map(tab => {
+        {tabs.map((tab) => {
           const isActive = activeTab === tab.label
           return (
             <li
@@ -47,7 +47,7 @@ const Sidebar = ({ tabs, className }): React.ReactElement => {
         })}
       </ul>
       <div className={classes.content}>
-        {tabs.find(tab => tab.label === activeTab).content}
+        {tabs.find((tab) => tab.label === activeTab).content}
       </div>
     </div>
   )

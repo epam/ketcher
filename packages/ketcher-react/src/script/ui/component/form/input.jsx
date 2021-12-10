@@ -54,7 +54,7 @@ function TextArea({ schema, value, onChange, ...rest }) {
   return <textarea value={value} onInput={onChange} {...rest} />
 }
 
-TextArea.val = ev => ev.target.value
+TextArea.val = (ev) => ev.target.value
 
 function CheckBox({ schema, value = '', onChange, ...rest }) {
   return (
@@ -161,14 +161,15 @@ FieldSet.val = function (ev, schema) {
   return input.type === 'radio' ? result[0] : result
 }
 
-function Slider({ value = '', onChange, ...rest }) {
+function Slider({ value, onChange, name, ...rest }) {
   return (
-    <div className={classes.slider}>
+    <div className={classes.slider} key={name}>
       <input
         type="checkbox"
         checked={value}
         onClick={onChange}
         onChange={onChange}
+        name={name}
         {...rest}
       />
       <span />
@@ -212,7 +213,7 @@ function inputCtrl(component, schema, onChange) {
   }
 
   return {
-    onChange: ev => {
+    onChange: (ev) => {
       const val = !component.val ? ev : component.val(ev, schema)
       onChange(val)
     },
@@ -223,7 +224,7 @@ function inputCtrl(component, schema, onChange) {
 function singleSelectCtrl(component, schema, onChange) {
   return {
     selected: (testVal, value) => value === testVal,
-    onSelect: ev => {
+    onSelect: (ev) => {
       const val = !component.val ? ev : component.val(ev, schema)
       if (val !== undefined) onChange(val)
     }

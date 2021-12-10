@@ -22,11 +22,11 @@ const functionalGroupsLib = {
     // TODO Update HELP about current tools
     title: 'Functional Groups',
     action: { dialog: 'fGroups' },
-    selected: editor => editor._tool.mode === 'fg',
+    selected: (editor) => editor._tool.mode === 'fg',
     disabled: (_, __, options) => {
       return !options.app.functionalGroups
     },
-    hidden: options => isHidden(options, 'functional-groups')
+    hidden: (options) => isHidden(options, 'functional-groups')
   }
 }
 

@@ -14,9 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-export default function isHidden(
-  options: { buttons?: {} },
-  buttonName: string
-): boolean {
+export default function isHidden(options: any, buttonName: string): boolean {
   return Boolean(options.buttons?.[buttonName]?.hidden)
 }

@@ -82,7 +82,7 @@ export class DeleteBond extends BaseOperation {
 
   execute(struct: Struct): PerformOperationResult {
     const bond = struct.bonds.get(this.#bondId)!
-    //BaseOperation.invalidateBond(restruct, bid)
+    // BaseOperation.invalidateBond(restruct, bid)
 
     // TODO: move to renderer
     // notifyBondRemoved
@@ -140,7 +140,7 @@ export class MoveBond extends BaseOperation {
   }
 
   execute(_struct: Struct): PerformOperationResult {
-    //TODO: move to renderer
+    // TODO: move to renderer
     // const bond = restruct.bonds.get(bid)
     // const scaled = Scale.obj2scaled(d, restruct.render.options)
     // bond.visel.translate(scaled)

@@ -35,7 +35,7 @@ function usePortalStyle([ref, isOpen]: HookParams): [CSSProperties] {
     const left = rect.left + rect.width + spaceBetween
 
     setPortalStyle({ top: `${top}px`, left: `${left}px` })
-  }, [ref, ref.current, isOpen])
+  }, [ref, isOpen])
 
   return [portalStyle]
 }

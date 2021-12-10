@@ -19,11 +19,11 @@ import { connect } from 'react-redux'
 import initEditor from '../state/editor'
 
 const Editor = connect(
-  state => ({
+  (state) => ({
     options: state.options.settings,
     indigoVerification: state.requestsStatuses.indigoVerification
   }),
-  dispatch => dispatch(initEditor)
+  (dispatch) => dispatch(initEditor)
 )(StructEditor)
 
 export default Editor

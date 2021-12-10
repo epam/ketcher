@@ -16,7 +16,7 @@
 
 import { Vec2 } from './vec2'
 
-//TODO: move to infrastructure
+// TODO: move to infrastructure
 export enum TextCommand {
   Bold = 'BOLD',
   Italic = 'ITALIC',
@@ -26,7 +26,7 @@ export enum TextCommand {
 }
 
 export interface TextAttributes {
-  //TODO: add Interface for content type
+  // TODO: add Interface for content type
   content?: string
   position?: Vec2
 }

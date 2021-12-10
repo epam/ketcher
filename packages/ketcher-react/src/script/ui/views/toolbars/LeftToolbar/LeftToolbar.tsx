@@ -49,7 +49,7 @@ interface LeftToolbarProps
   className?: string
 }
 
-interface LeftToolbarCallProps extends ToolbarGroupItemCallProps {}
+type LeftToolbarCallProps = ToolbarGroupItemCallProps
 
 type Props = LeftToolbarProps & LeftToolbarCallProps
 
@@ -86,11 +86,11 @@ const LeftToolbar = (props: Props) => {
   }) => {
     const visibleItems: GroupItem[] = []
     if (items) {
-      items.forEach(item => {
+      items.forEach((item) => {
         let visible = true
         if (status[item.id]?.hidden) {
           visible = false
-        } else if (item.options?.every(option => status[option.id]?.hidden)) {
+        } else if (item.options?.every((option) => status[option.id]?.hidden)) {
           visible = false
         }
         if (visible) visibleItems.push(item)
@@ -98,7 +98,7 @@ const LeftToolbar = (props: Props) => {
     }
     return visibleItems.length ? (
       <div className={clsx(classes.group, className)}>
-        {visibleItems.map(item => {
+        {visibleItems.map((item) => {
           switch (item.id) {
             case 'bond-common':
               return <Bond {...rest} height={height} key={item.id} />

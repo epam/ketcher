@@ -28,7 +28,7 @@ interface OpenProps {
 
 type Props = OpenProps & Pick<BaseProps, 'className'> & BaseCallProps
 
-const Open: FC<Props> = props => {
+const Open: FC<Props> = (props) => {
   const [structStr, setStructStr] = useState<string>('')
   const [fragment, setFragment] = useState<boolean>(false)
   const { server, ...rest } = props
@@ -72,13 +72,13 @@ const Open: FC<Props> = props => {
     >
       <textarea
         value={structStr}
-        onChange={event => setStructStr(event.target.value)}
+        onChange={(event) => setStructStr(event.target.value)}
       />
       <label>
         <input
           type="checkbox"
           checked={fragment}
-          onChange={event => setFragment(event.target.checked)}
+          onChange={(event) => setFragment(event.target.checked)}
         />
         Load as a fragment and copy to the Clipboard
       </label>

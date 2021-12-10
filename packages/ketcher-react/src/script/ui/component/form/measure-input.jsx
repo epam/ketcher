@@ -38,14 +38,14 @@ class MeasureInput extends Component {
   }
 
   handleMeasChange(m) {
-    this.setState(state => ({
+    this.setState((state) => ({
       meas: m,
       cust: convertValue(state.cust, state.meas, m)
     }))
   }
 
   calcValue() {
-    this.setState(state => ({
+    this.setState((state) => ({
       cust: convertValue(this.props.value, 'px', state.meas)
     }))
   }

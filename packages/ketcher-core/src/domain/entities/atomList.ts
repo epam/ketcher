@@ -32,7 +32,7 @@ export class AtomList {
 
   labelList() {
     const labels: Array<ElementLabel> = []
-    for (let id of this.ids) {
+    for (const id of this.ids) {
       const currenElement = Elements.get(id)
       currenElement && labels.push(currenElement!.label)
     }

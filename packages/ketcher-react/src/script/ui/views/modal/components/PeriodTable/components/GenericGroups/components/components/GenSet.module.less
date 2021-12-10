@@ -26,14 +26,17 @@
   vertical-align: middle;
   padding: 0.15em;
   background: inherit;
+
   &:hover {
     .highlight-scale(@scale:1.25);
     .highlight-shadow(black);
   }
+
   &:active {
     .highlight-scale(none);
     .highlight-shadow(none);
   }
+
   &.selected {
     .highlight-invert;
   }

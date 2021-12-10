@@ -111,9 +111,9 @@ function SData({
 const content = (schema, context, fieldName, checked) =>
   Object.keys(schema.properties)
     .filter(
-      prop => prop !== 'type' && prop !== 'context' && prop !== 'fieldName'
+      (prop) => prop !== 'type' && prop !== 'context' && prop !== 'fieldName'
     )
-    .map(prop =>
+    .map((prop) =>
       prop === 'radiobuttons' ? (
         <Field
           name={prop}
@@ -130,4 +130,4 @@ const content = (schema, context, fieldName, checked) =>
       )
     )
 
-export default connect(store => ({ formState: store.modal.form }))(SData)
+export default connect((store) => ({ formState: store.modal.form }))(SData)

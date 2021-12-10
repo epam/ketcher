@@ -19,6 +19,7 @@
 
 .warning {
   color: @error-color;
+
   &::before {
     content: '⚠ ';
   }
@@ -28,20 +29,24 @@
   & > div {
     display: flex;
   }
+
   label {
     text-align: center;
     line-height: 2.6em;
     display: flex;
     margin-bottom: 1em;
+
     input[type='search'] {
       width: 100%;
       margin-left: 4px;
     }
   }
+
   .tableGroupWrap {
     display: flex;
     height: calc(100% - 3.6em - 4px);
   }
+
   .groups {
     .input();
 
@@ -50,10 +55,12 @@
     width: 11em;
     overflow: auto;
     flex-shrink: 0;
+
     li {
       display: block;
       padding: 0 2px 1px;
       cursor: default;
+
       &:hover {
         background-color: @form-hover-background;
       }
@@ -70,8 +77,10 @@
       }
     }
   }
+
   .singleColLayout {
     flex-wrap: wrap;
+
     .td {
       flex-grow: 1;
       max-width: 230px;
@@ -85,6 +94,7 @@
     padding: 0 5px;
     font-size: 16px;
   }
+
   .warning {
     padding: 0 5px;
   }

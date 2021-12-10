@@ -44,11 +44,11 @@ interface AtomProps extends BaseProps {
 
 type Props = AtomProps & BaseCallProps
 
-const Atom: FC<Props> = props => {
+const Atom: FC<Props> = (props) => {
   const { formState, stereoParity, ...rest } = props
   const [currentLabel, setCurrentLabel] = useState<string>(rest.label)
 
-  const onLabelChangeCallback = useCallback(newValue => {
+  const onLabelChangeCallback = useCallback((newValue) => {
     setCurrentLabel(newValue)
   }, [])
 
@@ -63,8 +63,8 @@ const Atom: FC<Props> = props => {
       <Form
         schema={atomSchema}
         customValid={{
-          label: label => atomValid(label),
-          charge: charge => chargeValid(charge)
+          label: (label) => atomValid(label),
+          charge: (charge) => chargeValid(charge)
         }}
         init={rest}
         {...formState}

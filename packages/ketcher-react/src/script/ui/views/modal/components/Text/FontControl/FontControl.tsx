@@ -45,11 +45,11 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
 
   const fontSizeOptions = useMemo(
     () =>
-      fontSizes.map(fontSize => (
+      fontSizes.map((fontSize) => (
         <div
           key={fontSize}
           className={classes.fontSizeOption}
-          onMouseDown={e => setFontSize(e, `${fontSize}px`)}
+          onMouseDown={(e) => setFontSize(e, `${fontSize}px`)}
         >
           {fontSize}
         </div>
@@ -61,7 +61,7 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
     <div>
       <button
         className={classes.fontBtn}
-        onMouseDown={e => {
+        onMouseDown={(e) => {
           e.preventDefault()
           setIsShowingFontSizeMenu(!isShowingFontSizeMenu)
         }}

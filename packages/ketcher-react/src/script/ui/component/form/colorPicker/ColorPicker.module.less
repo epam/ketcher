@@ -42,10 +42,10 @@
   right: 0;
   top: 20px;
   z-index: 1;
-  background-color: @background-primary-color;
+  background-color: @color-background-primary;
   padding: 5px;
   border-radius: 4px;
-  border: 1px solid @border-hover-color;
+  border: 1px solid @color-border-hover;
   width: 70px;
   height: 35px;
 }
@@ -67,14 +67,14 @@
     border: 1px solid transparent !important;
     text-align: right;
     float: right;
-    color: @text-primary-color;
+    color: @color-text-primary;
     font-size: 10px;
     text-transform: uppercase;
     padding: 1px 2px !important;
     outline: transparent;
 
     &:focus {
-      border: 1px solid @border-hover-color !important;
+      border: 1px solid @color-border-hover !important;
     }
   }
 
@@ -132,7 +132,7 @@
   align-items: baseline;
 
   .hex {
-    color: @text-primary-color;
+    color: @color-text-primary;
     font-size: 10px;
   }
 }
@@ -160,8 +160,8 @@
   }
 
   .chooseColor {
-    border: 1px solid @primary-button-hover-color;
-    background-color: @background-primary-color;
+    border: 1px solid @color-button-primary-hover;
+    background-color: @color-background-primary;
     background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMC41IiB5PSIwLjUiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgcng9IjEuNSIgc3Ryb2tlPSIjMDA1NjYyIi8+CjxyZWN0IHg9IjcuMzQ1NyIgeT0iMy40Mjg0NyIgd2lkdGg9IjEuMzA2MTIiIGhlaWdodD0iOS4xNDI4NiIgZmlsbD0iIzAwNTY2MiIvPgo8cmVjdCB4PSIzLjQyNzczIiB5PSI4LjY1MzA4IiB3aWR0aD0iMS4zMDYxMiIgaGVpZ2h0PSI5LjE0Mjg2IiB0cmFuc2Zvcm09InJvdGF0ZSgtOTAgMy40Mjc3MyA4LjY1MzA4KSIgZmlsbD0iIzAwNTY2MiIvPgo8L3N2Zz4K');
     background-repeat: no-repeat;
     background-position: center;
@@ -169,6 +169,6 @@
 
   .clicked {
     background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iNC4zNDU3IiB5PSIwLjQyODU4OSIgd2lkdGg9IjEuMzA2MTIiIGhlaWdodD0iOS4xNDI4NiIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeD0iMC40Mjc3MzQiIHk9IjUuNjUzMDgiIHdpZHRoPSIxLjMwNjEyIiBoZWlnaHQ9IjkuMTQyODYiIHRyYW5zZm9ybT0icm90YXRlKC05MCAwLjQyNzczNCA1LjY1MzA4KSIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==');
-    background-color: @primary-button-hover-color;
+    background-color: @color-button-primary-hover;
   }
 }

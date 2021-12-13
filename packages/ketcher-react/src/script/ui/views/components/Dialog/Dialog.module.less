@@ -62,7 +62,7 @@
   overflow-y: auto;
   overflow-x: auto;
   font-family: @Inter;
-  color: @text-secondary-color;
+  color: @color-text-secondary;
   .transition-zoom;
 
   > * {
@@ -73,13 +73,13 @@
   header {
     display: flex;
     align-items: center;
-    font-size: @header-font-size;
-    line-height: @header-line-height;
+    font-size: @font-size-header;
+    line-height: @line-height-header;
     text-transform: uppercase;
     border-radius: 0.7em 0.7em 0 0;
     height: 20px;
     justify-content: space-between;
-    color: @text-primary-color;
+    color: @color-text-primary;
 
     .btnContainer {
       display: flex;
@@ -120,8 +120,8 @@
   }
 
   .body {
-    font-size: @regular-font-size;
-    line-height: @regular-line-height;
+    font-size: @font-size-regular;
+    line-height: @line-height-regular;
     margin-right: 16px;
     .scrollbar_thin();
   }

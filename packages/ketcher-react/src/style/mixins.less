@@ -315,7 +315,7 @@
   background-image: none;
 
   color: @main-color;
-  background-color: @background-primary-color;
+  background-color: @color-background-primary;
   border-color: @border-color;
   border-radius: 2px;
   user-select: none;
@@ -347,37 +347,37 @@
 }
 
 .button_main() {
-  background: @primary-button-color;
-  color: @text-light-color;
+  background: @color-button-primary;
+  color: @color-text-light;
   border-radius: 2px;
   &:hover {
-    background: @primary-button-hover-color;
-    color: @text-light-color;
+    background: @color-button-primary-hover;
+    color: @color-text-light;
   }
   &:disabled {
-    background: @primary-button-disabled-color;
-    color: @text-light-color;
+    background: @color-button-primary-disabled;
+    color: @color-text-light;
   }
   &:focus {
-    background: @primary-button-clicked-color;
+    background: @color-button-primary-clicked;
   }
 }
 
 .button_secondary() {
   background: transparent;
-  border: 1px solid @secondary-button-color;
-  color: @secondary-button-color;
+  border: 1px solid @color-button-secondary;
+  color: @color-button-secondary;
   &:hover {
-    border-color: @secondary-button-hover-color;
-    color: @secondary-button-hover-color;
+    border-color: @color-button-secondary-hover;
+    color: @color-button-secondary-hover;
   }
   &:disabled {
-    border-color: @secondary-button-disabled-color;
-    color: @secondary-button-disabled-color;
+    border-color: @color-button-secondary-disabled;
+    color: @color-button-secondary-disabled;
   }
   &:focus {
-    border-color: @secondary-button-clicked-color;
-    color: @secondary-button-clicked-color;
+    border-color: @color-button-secondary-clicked;
+    color: @color-button-secondary-clicked;
   }
 }
 
@@ -434,18 +434,18 @@
 .scrollbar_thin {
   &::-webkit-scrollbar {
     width: 4px;
-    background-color: @scroll-inactive-color;
+    background-color: @color-scroll-inactive;
     border-radius: 2px;
     -webkit-border-radius: 2px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: @scroll-color;
+    background-color: @color-scroll;
     border-radius: 2px;
     -webkit-border-radius: 2px;
   }
 
   &::-webkit-scrollbar-thumb:active {
-    background-color: @scroll-color;
+    background-color: @color-scroll;
   }
 }

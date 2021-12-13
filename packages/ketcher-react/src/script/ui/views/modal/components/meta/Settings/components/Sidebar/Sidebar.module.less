@@ -23,19 +23,19 @@
   width: 100%;
 
   .tabs {
-    background-color: @background-primary-color;
+    background-color: @color-background-primary;
     position: fixed;
     bottom: 0;
     top: 40px;
     width: @sidebar-width;
-    color: @text-primary-color;
+    color: @color-text-primary;
 
     .tab {
       cursor: default;
       display: flex;
       font-size: 14px;
       line-height: 17px;
-      border-bottom: 1px solid @divider-color;
+      border-bottom: 1px solid @color-divider;
 
       &:last-of-type {
         border: none;
@@ -49,8 +49,8 @@
     }
 
     .tab_active {
-      background-color: @tab-active-color;
-      color: @text-light-color;
+      background-color: @color-tab-active;
+      color: @color-text-light;
     }
 
     span {

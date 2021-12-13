@@ -17,21 +17,12 @@
 @import '../../../../../style/mixins.less';
 
 .ok {
-  background: @primary-button-color;
+  .button_main();
+
   width: 40px;
-  color: @primary-button-text;
   margin-right: 2px;
   margin-left: 10px;
   float: right;
-  border-radius: 2px;
-
-  &:hover {
-    background: @primary-button-hover-color;
-  }
-
-  &[disabled] {
-    background: @primary-button-disabled-color;
-  }
 }
 
 .save {
@@ -71,23 +62,28 @@
   overflow-y: auto;
   overflow-x: auto;
   font-family: @Inter;
+  color: @color-text-secondary;
   .transition-zoom;
 
   > * {
     margin: @margin-top-bottom @margin-left-right;
     max-height: 65vh;
-    color: @main-font-color;
   }
 
   header {
     display: flex;
     align-items: center;
-    font-size: @header-font-size;
-    line-height: @header-line-height;
+    font-size: @font-size-header;
+    line-height: @line-height-header;
     text-transform: uppercase;
     border-radius: 0.7em 0.7em 0 0;
     height: 20px;
     justify-content: space-between;
+    color: @color-text-primary;
+
+    .btnContainer {
+      display: flex;
+    }
 
     .buttonTop {
       background-color: transparent;
@@ -117,26 +113,15 @@
     }
 
     button {
-      background: transparent;
-      border: 1px solid @secondary-button-color;
-      color: @secondary-button-color;
+      .button_secondary();
+
       float: left;
-
-      &:hover {
-        border-color: @secondary-button-hover-color;
-        color: @secondary-button-hover-color;
-      }
-
-      &:disabled {
-        border-color: @secondary-button-disabled-color;
-        color: @secondary-button-disabled-color;
-      }
     }
   }
 
   .body {
-    font-size: @regular-font-size;
-    line-height: @regular-line-height;
+    font-size: @font-size-regular;
+    line-height: @line-height-regular;
     margin-right: 16px;
     .scrollbar_thin();
   }

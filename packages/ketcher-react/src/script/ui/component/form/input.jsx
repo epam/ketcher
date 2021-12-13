@@ -18,6 +18,7 @@ import { Component } from 'react'
 
 import { omit } from 'lodash/fp'
 import classes from './input.module.less'
+import clsx from 'clsx'
 
 function GenericInput({
   schema,
@@ -32,6 +33,7 @@ function GenericInput({
       value={value}
       onInput={onChange}
       onChange={onChange}
+      className={classes.input}
       {...props}
     />
   )
@@ -88,7 +90,7 @@ function Select({
       value={value}
       name={name}
       multiple={multiple}
-      className={className}
+      className={clsx(classes.select, className)}
     >
       {enumSchema(schema, (title, val) => (
         <option key={val} value={val}>

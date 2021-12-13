@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 //Fonts
-@header-font-size: 14px;
-@header-line-height: 17px;
+@font-size-header: 14px;
+@line-height-header: 17px;
 
-@regular-font-size: 12px;
-@regular-line-height: 14px;
+@font-size-regular: 12px;
+@line-height-regular: 14px;
 
 @Inter: Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
 Arial, sans-serif;
@@ -28,35 +28,54 @@ Arial, sans-serif;
 @margin-top-bottom: 10px;
 @margin-left-right: 15px;
 
-//Colors
-@main-font-color: #585858;
-
-@color-gray1: #343434;
 @color-gray: #DDDDDD;
-@color-black: #000000;
-@color-gray2: #585858;
-@color-blue: #f6f9ff;
-@color-white: #ffffff;
-@color-blue2: #3E7BFA;
 
 //using for changing color of SVG for checkboxes and radiobuttons
-@input-color: escape(@color-gray1);
+@color-input: escape(@color-button-primary);
 
-@light-background-color: #fff;
-@gray-background-color: #F3F3F3;;
+@color-background-primary: #FFFFFF;
+@color-background-canvas: #F2F2F2;
+@color-background-secondary: #F8FEFF;
 
 // Buttons
-@primary-button-color: @color-gray1;
-@primary-button-hover-color: @color-black;
-@primary-button-disabled-color: @color-gray;
-@primary-button-text: #fff;
+@color-button-primary: #005662;
+@color-button-primary-hover: #00838F;
+@color-button-primary-clicked: #4FB3BF;
+@color-button-primary-disabled: rgba(0, 131, 143, 0.4);
 
-@secondary-button-color: @color-gray1;
-@secondary-button-hover-color: @color-black;
-@secondary-button-disabled-color: @color-gray;
+@color-button-secondary: #717171;
+@color-button-secondary-hover: #333333;
+@color-button-secondary-disabled: rgba(113, 113, 113, 0.4);
+@color-button-secondary-clicked: #AEAEAE;
+
+// Text
+@color-text-primary: #333333;
+@color-text-secondary: #585858;
+@color-text-light: #FFFFFF;
+
+// Icons
+@color-icon-active: #525252;
+
+// Tabs
+@color-tab-active:#005662;
+
+@color-divider: #AEAEAE;
+
+// Scroll
+@color-scroll: #717171;
+@color-scroll-inactive: #DDDDDD;
+
+// Borders
+@color-border-hover: #DDDDDD;
+@color-border-main: #005662;
+
+// Dropdown
+@color-dropdown-hover: #DDDDDD;
 
 // old styles 
 @static-path: '.';
+
+@gray-background-color: #F3F3F3;
 
 @main-color: #333;
 @active-color: #1a7090;

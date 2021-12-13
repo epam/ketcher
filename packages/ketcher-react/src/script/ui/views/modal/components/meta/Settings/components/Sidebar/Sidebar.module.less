@@ -23,18 +23,23 @@
   width: 100%;
 
   .tabs {
-    background-color: @color-blue;
+    background-color: @color-background-primary;
     position: fixed;
     bottom: 0;
     top: 40px;
     width: @sidebar-width;
-    color: @color-gray2;
+    color: @color-text-primary;
 
     .tab {
       cursor: default;
       display: flex;
       font-size: 14px;
       line-height: 17px;
+      border-bottom: 1px solid @color-divider;
+
+      &:last-of-type {
+        border: none;
+      }
     }
 
     .icon {
@@ -44,8 +49,8 @@
     }
 
     .tab_active {
-      background-color: @color-gray1;
-      color: @color-white;
+      background-color: @color-tab-active;
+      color: @color-text-light;
     }
 
     span {
@@ -54,7 +59,7 @@
   }
 
   .content {
-    background-color: @color-white;
+    background-color: inherit;
     margin-left: @sidebar-width;
     max-height: 260px;
     width: 100%;

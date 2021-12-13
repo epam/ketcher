@@ -39,6 +39,8 @@
     padding: 2px 5px;
     overflow: auto;
 
+    .scrollbar_thin();
+
     .warningsContainer {
       display: flex;
 
@@ -91,10 +93,10 @@
     white-space: pre;
     cursor: text;
     resize: none;
-    color: @main-font-color;
+    color: @color-text-primary;
     font-size: 12px;
 
-    .scrollbar();
+    .scrollbar_thin();
   }
 
   .saveImageContainer {
@@ -114,22 +116,12 @@
     margin-bottom: 10px;
 
     .ok {
-      background: @primary-button-color;
-      color: @primary-button-text;
+      .button_main();
+
       border: none;
       margin-right: 2px;
       margin-left: 10px;
       float: right;
-
-      &:hover {
-        background: @primary-button-hover-color;
-        color: @primary-button-text;
-      }
-
-      &:disabled {
-        background: @primary-button-disabled-color;
-        color: @primary-button-text;
-      }
     }
   }
 
@@ -141,7 +133,7 @@
     height: 100%;
 
     img {
-      background-color: @light-background-color;
+      background-color: @color-background-primary;
       height: 220px;
       width: 220px;
       padding: 5px;

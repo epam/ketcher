@@ -120,12 +120,14 @@ const ColorPicker = (props: Props) => {
           {isPaletteOpen && (
             <div className={classes.colorPicker}>
               <HexColorPicker color={value} onChange={handleChange} />
-              <HexColorInput
-                data-testid="color-picker-input"
-                color={value}
-                onChange={handleChange}
-              />
-              <span className={classes.hex}>HEX</span>
+              <div className={classes.colorContainer}>
+                <span className={classes.hex}>HEX</span>
+                <HexColorInput
+                  data-testid="color-picker-input"
+                  color={value}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
           )}
         </div>

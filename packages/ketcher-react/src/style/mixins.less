@@ -319,7 +319,7 @@
   background-image: none;
 
   color: @main-color;
-  background-color: @light-background-color;
+  background-color: @color-background-primary;
   border-color: @border-color;
   border-radius: 2px;
   user-select: none;
@@ -347,6 +347,41 @@
   & + input[type='submit'],
   & + input[type='reset'] {
     margin-left: 0.3em;
+  }
+}
+
+.button_main() {
+  background: @color-button-primary;
+  color: @color-text-light;
+  border-radius: 2px;
+  &:hover {
+    background: @color-button-primary-hover;
+    color: @color-text-light;
+  }
+  &:disabled {
+    background: @color-button-primary-disabled;
+    color: @color-text-light;
+  }
+  &:focus {
+    background: @color-button-primary-clicked;
+  }
+}
+
+.button_secondary() {
+  background: transparent;
+  border: 1px solid @color-button-secondary;
+  color: @color-button-secondary;
+  &:hover {
+    border-color: @color-button-secondary-hover;
+    color: @color-button-secondary-hover;
+  }
+  &:disabled {
+    border-color: @color-button-secondary-disabled;
+    color: @color-button-secondary-disabled;
+  }
+  &:focus {
+    border-color: @color-button-secondary-clicked;
+    color: @color-button-secondary-clicked;
   }
 }
 
@@ -403,10 +438,18 @@
 .scrollbar_thin {
   &::-webkit-scrollbar {
     width: 4px;
-    background-color: #e8e8e8;
+    background-color: @color-scroll-inactive;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: @color-gray;
+    background-color: @color-scroll;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb:active {
+    background-color: @color-scroll;
   }
 }

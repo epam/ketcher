@@ -1,0 +1,4 @@
+{
+  "*.{js,jsx,ts,tsx,json}": ["prettier --write"],
+  "*.{css,less}": ["stylelint --formatter verbose --fix --allow-empty-input"]
+}

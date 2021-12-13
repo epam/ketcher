@@ -161,7 +161,7 @@ const Text = (props: TextProps) => {
           setEditorState={setEditorState}
           styles={styles}
         />
-        {buttons.map(button => {
+        {buttons.map((button) => {
           return (
             <TextButton
               button={button}
@@ -190,4 +190,4 @@ const Text = (props: TextProps) => {
   )
 }
 
-export default connect(store => ({ formState: (store as any).modal }))(Text)
+export default connect((store) => ({ formState: (store as any).modal }))(Text)

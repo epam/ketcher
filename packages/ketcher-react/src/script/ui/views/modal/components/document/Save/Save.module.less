@@ -38,8 +38,10 @@
     margin: 2px;
     padding: 2px 5px;
     overflow: auto;
+
     .warningsContainer {
       display: flex;
+
       .warningsArr {
         color: @error-color;
         margin: 2px;
@@ -48,6 +50,7 @@
         font-size: 12px;
       }
     }
+
     .warning {
       .warning;
     }
@@ -66,11 +69,13 @@
       display: inline-block;
       text-align: left;
       margin: 0 0.3em;
+
       select,
       input {
         height: 25px !important;
         width: 190px;
       }
+
       select {
         width: 145px;
       }
@@ -95,6 +100,7 @@
   .saveImageContainer {
     width: @save-container-width-large;
     height: @save-container-height-large;
+
     label {
       margin: 0 0.3em;
     }
@@ -106,6 +112,7 @@
     flex-wrap: nowrap;
     justify-content: flex-end;
     margin-bottom: 10px;
+
     .ok {
       background: @primary-button-color;
       color: @primary-button-text;
@@ -113,10 +120,12 @@
       margin-right: 2px;
       margin-left: 10px;
       float: right;
+
       &:hover {
         background: @primary-button-hover-color;
         color: @primary-button-text;
       }
+
       &:disabled {
         background: @primary-button-disabled-color;
         color: @primary-button-text;
@@ -130,6 +139,7 @@
     align-items: center;
     justify-content: center;
     height: 100%;
+
     img {
       background-color: @light-background-color;
       height: 220px;
@@ -137,6 +147,7 @@
       padding: 5px;
     }
   }
+
   .previewMessage {
     text-align: center;
     margin: auto;
@@ -149,9 +160,11 @@
     width: @save-container-width-small;
     height: @save-container-height-small;
   }
+
   .warnings {
     height: 50px;
   }
+
   .saveImageContainer {
     width: @save-container-width-small;
     height: @save-container-height-small;

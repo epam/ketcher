@@ -97,8 +97,9 @@ export class Vec2 {
   // where v[i] are vectors and f[i] are corresponding coefficients
   static lc(...args: Array<Vec2 | number>): Vec2 {
     let v = new Vec2()
-    for (let i = 0; i < arguments.length / 2; ++i)
+    for (let i = 0; i < arguments.length / 2; ++i) {
       v = v.addScaled(args[2 * i] as Vec2, args[2 * i + 1] as number)
+    }
     return v
   }
 

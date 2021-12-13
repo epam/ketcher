@@ -95,7 +95,7 @@ class Portal extends Component<Props> {
       return
     }
 
-    classNames.split(CLASSNAME_SEPARATOR).forEach(className => {
+    classNames.split(CLASSNAME_SEPARATOR).forEach((className) => {
       this.element.classList.remove(className)
     })
   }
@@ -105,14 +105,14 @@ class Portal extends Component<Props> {
       return
     }
 
-    classNames.split(CLASSNAME_SEPARATOR).forEach(className => {
+    classNames.split(CLASSNAME_SEPARATOR).forEach((className) => {
       this.element.classList.add(className)
     })
   }
 
   private updateStyle(style?: CSSProperties, prevStyle?: CSSProperties) {
     if (prevStyle) {
-      Object.keys(prevStyle).forEach(property => {
+      Object.keys(prevStyle).forEach((property) => {
         this.element.style[property] = ''
       }, this)
     }
@@ -121,14 +121,15 @@ class Portal extends Component<Props> {
       return
     }
 
-    Object.keys(style).forEach(property => {
+    Object.keys(style).forEach((property) => {
       this.element.style[property] = style[property]
     }, this)
   }
 
   render() {
     const { children } = this.props
-    return ReactDOM.createPortal(children, this.element)
+    const component = ReactDOM.createPortal(children, this.element)
+    return component as any
   }
 }
 

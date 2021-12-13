@@ -1,2 +1,3 @@
-style
-dist
+dist/
+node_modules/
+style/

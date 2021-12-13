@@ -66,7 +66,7 @@ export class Ketcher {
     this.#formatterFactory = formatterFactory
   }
 
-  getSmiles(isExtended: boolean = false): Promise<string> {
+  getSmiles(isExtended = false): Promise<string> {
     const format: SupportedFormat = isExtended ? 'smilesExt' : 'smiles'
     return getStructure(format, this.#formatterFactory, this.editor.struct())
   }

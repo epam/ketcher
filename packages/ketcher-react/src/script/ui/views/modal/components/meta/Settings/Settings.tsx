@@ -23,20 +23,20 @@ import {
 
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker'
 import { Dialog } from '../../../../components'
+import Icon from '../../../../../component/view/icon'
 import MeasureInput from '../../../../../component/form/measure-input'
 import OpenButton from '../../../../../component/view/openbutton'
 import SaveButton from '../../../../../component/view/savebutton'
 import SelectCheckbox from '../../../../../component/form/select-checkbox'
+import Sidebar from './components/Sidebar'
 import { StructService } from 'ketcher-core'
 import SystemFonts from '../../../../../component/form/systemfonts'
 import classes from './Settings.module.less'
+import clsx from 'clsx'
 import { connect } from 'react-redux'
 import { saveSettings } from '../../../../../state/options'
 import settingsSchema from '../../../../../data/schema/options-schema'
 import { storage } from '../../../../../storage-ext'
-import Sidebar from './components/Sidebar'
-import Icon from '../../../../../component/view/icon'
-import clsx from 'clsx'
 
 interface SettingsProps extends BaseProps {
   initState: any
@@ -145,7 +145,7 @@ const SettingsDialog = (props: Props) => {
     key: '3dviewer',
     label: '3D Viewer',
     content: (
-      <fieldset className={classes.viewer} disabled={!window['Miew']}>
+      <fieldset className={classes.viewer} disabled={!(window as any).Miew}>
         <Field name="miewMode" />
         <Field name="miewTheme" />
         <Field name="miewAtomLabel" />
@@ -220,7 +220,7 @@ const SettingsDialog = (props: Props) => {
   )
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   server: state.options.app.server ? state.server : null,
   appOpts: state.options.app,
   initState: state.options.settings,
@@ -228,7 +228,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  onOpenFile: newOpts => {
+  onOpenFile: (newOpts) => {
     try {
       dispatch(updateFormState({ result: JSON.parse(newOpts) }))
     } catch (ex) {
@@ -236,7 +236,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
   },
   onReset: () => dispatch(setDefaultSettings()),
-  onOk: res => {
+  onOk: (res) => {
     dispatch(saveSettings(res))
     ownProps.onOk(res)
   }

@@ -14,22 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState } from 'react'
+import { EditorState, Modifier } from 'draft-js'
+
+import Icon from '../../../../../component/view/icon'
 import { SpecialSymbolsList } from '../SpecialSymbolsList/SpecialSymbolsList'
 import classes from './SpecialSymbolsButton.module.less'
-import Icon from '../../../../../component/view/icon'
-import { EditorState, Modifier } from 'draft-js'
+import { useState } from 'react'
 
 const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
   const [showSpecialSymbols, setShowSpecialSymbols] = useState(false)
 
-  const handleClose = event => {
+  const handleClose = (event) => {
     event.stopPropagation()
     event.preventDefault()
     setShowSpecialSymbols(false)
   }
 
-  const closeSymbolsList = event => {
+  const closeSymbolsList = (event) => {
     if (!event.currentTarget.contains(event.relatedTarget)) {
       handleClose(event)
     }
@@ -39,14 +40,13 @@ const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
     e.preventDefault()
     const selection = editorState.getSelection()
     const contentState = editorState.getCurrentContent()
-    let nextEditorState
     const nextContentState = Modifier.replaceText(
       contentState,
       selection,
       value,
       styles
     )
-    nextEditorState = EditorState.push(
+    const nextEditorState = EditorState.push(
       editorState,
       nextContentState,
       'insert-characters'
@@ -59,7 +59,7 @@ const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
     <div onBlur={closeSymbolsList}>
       <button
         title="symbols"
-        onMouseDown={e => {
+        onMouseDown={(e) => {
           e.preventDefault()
           setShowSpecialSymbols(!showSpecialSymbols)
         }}

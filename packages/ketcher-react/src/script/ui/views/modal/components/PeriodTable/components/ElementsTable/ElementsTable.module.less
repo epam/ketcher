@@ -18,6 +18,7 @@
 
 .table {
   position: relative;
+
   td,
   th {
     padding: 0;
@@ -25,6 +26,7 @@
     text-align: center;
     vertical-align: middle;
   }
+
   th,
   .main_row {
     opacity: 0.6;
@@ -32,10 +34,12 @@
     font-size: 0.8em;
     padding: 0.3em 0.8em;
   }
+
   .outiner_row {
     vertical-align: top;
     text-align: right;
   }
+
   tr:nth-of-type(8) {
     border-bottom: 1em solid transparent;
   }
@@ -43,14 +47,17 @@
     background: @atom-periodic-noble-gas;
     border: 2px solid @atom-periodic-noble-gas;
   }
+
   .alkali {
     background: @atom-periodic-alkali-metal;
     border: 2px solid @atom-periodic-alkali-metal;
   }
+
   .alkaline-earth {
     background: @atom-periodic-alkaline-earth-metal;
     border: 2px solid @atom-periodic-alkaline-earth-metal;
   }
+
   .metalloid {
     background: @atom-periodic-metalloid;
     border: 2px solid @atom-periodic-metalloid;
@@ -59,18 +66,22 @@
     background: @atom-periodic-other-nonmetal;
     border: 2px solid @atom-periodic-other-nonmetal;
   }
+
   .post-transition {
     background: @atom-periodic-post-transition-metal;
     border: 2px solid @atom-periodic-post-transition-metal;
   }
+
   .transition {
     background: @atom-periodic-transition-metal;
     border: 2px solid @atom-periodic-transition-metal;
   }
+
   .lanthanide {
     background: @atom-periodic-lanthanide;
     border: 2px solid @atom-periodic-lanthanide;
   }
+
   .actinide {
     background: @atom-periodic-actinide;
     border: 2px solid @atom-periodic-actinide;
@@ -79,9 +90,11 @@
     background: @atom-periodic-halogen;
     border: 2px solid @atom-periodic-halogen;
   }
+
   .unknown-props {
     background: @atom-periodic-unknown-properties;
   }
+
   .unknown-state {
     &::after {
       color: #222;
@@ -116,14 +129,17 @@
     vertical-align: top;
     content: attr(value);
   }
+
   &:hover {
     z-index: 60;
     background: #fff;
   }
+
   &:active {
     .highlight-scale(none);
     .highlight-shadow(none);
   }
+
   &.selected {
     .highlight-invert;
 

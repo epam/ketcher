@@ -23,13 +23,11 @@ import {
 
 import Editor from '../Editor'
 
-function EnhancedStereoTool(
-  this: typeof EnhancedStereoTool,
-  editor: Editor
-): null | void {
-  if (!(this instanceof EnhancedStereoTool)) {
-    const selection = editor.selection()
+class EnhancedStereoTool {
+  editor: Editor | undefined
 
+  constructor(editor) {
+    const selection = editor.selection()
     const stereoAtoms = findStereoAtoms(
       editor.struct(),
       selection
@@ -37,11 +35,11 @@ function EnhancedStereoTool(
         : Array.from(editor.struct().atoms.keys())
     )
 
-    if (stereoAtoms.length === 0) return null
-
-    changeAtomsStereoAction(editor, stereoAtoms).then(
-      action => action && editor.update(action)
-    )
+    if (stereoAtoms.length !== 0) {
+      changeAtomsStereoAction(editor, stereoAtoms).then(
+        (action) => action && editor.update(action)
+      )
+    }
   }
 }
 
@@ -51,17 +49,17 @@ function changeAtomsStereoAction(
 ): Promise<Action> {
   const struct = editor.struct()
   const restruct = editor.render.ctab
-  const stereoLabels = stereoAtoms.map(stereoAtom => {
+  const stereoLabels = stereoAtoms.map((stereoAtom) => {
     const atom = struct.atoms.get(stereoAtom)
     return atom && atom.stereoLabel
   })
   const hasAnotherLabel = stereoLabels.some(
-    stereoLabel => stereoLabel !== stereoLabels[0]
+    (stereoLabel) => stereoLabel !== stereoLabels[0]
   )
   const res = editor.event.enhancedStereoEdit.dispatch({
     stereoLabel: hasAnotherLabel ? null : stereoLabels[0]
   })
-  return res.then(stereoLabel => {
+  return res.then((stereoLabel) => {
     if (!stereoLabel) return null
     const action = stereoAtoms.reduce(
       (acc, stereoAtom) => {

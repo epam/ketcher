@@ -45,7 +45,7 @@ class Table extends Component {
     this.firstType = true
   }
 
-  changeType = type => {
+  changeType = (type) => {
     if (this.firstType) {
       this.firstType = false
       return
@@ -63,19 +63,19 @@ class Table extends Component {
     }
   }
 
-  changeTabType = event => {
+  changeTabType = (event) => {
     const type = event === 0 ? 'atom' : 'gen'
     this.changeType(type)
   }
 
-  selected = label => {
+  selected = (label) => {
     const { type, value } = this.state
     return type === 'atom' || type === 'gen'
       ? value === label
       : value.includes(label)
   }
 
-  onSelect = label => {
+  onSelect = (label) => {
     const { type, value } = this.state
     this.setState({
       value: type === 'atom' || type === 'gen' ? label : xor([label], value)
@@ -95,14 +95,14 @@ class Table extends Component {
     return { type, values: value }
   }
 
-  currentEvents = element => {
+  currentEvents = (element) => {
     return {
       onMouseEnter: () => this.setState({ current: element, isInfo: true }),
       onMouseLeave: () => this.setState({ isInfo: false })
     }
   }
 
-  periodicTable = value => {
+  periodicTable = (value) => {
     const { type, current, isInfo } = this.state
     return (
       <div className={classes.period_table}>
@@ -197,7 +197,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    onOk: result => {
+    onOk: (result) => {
       if (!result.type || result.type === 'atom') {
         dispatch(addAtoms(result.label))
       }

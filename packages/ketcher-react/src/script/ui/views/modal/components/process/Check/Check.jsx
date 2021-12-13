@@ -106,14 +106,14 @@ function CheckDialog(props) {
   )
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   formState: state.modal.form,
   checkState: state.options.check
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  onCheck: opts => dispatch(check(opts)).catch(ownProps.onCancel),
-  onOk: res => {
+  onCheck: (opts) => dispatch(check(opts)).catch(ownProps.onCancel),
+  onOk: (res) => {
     dispatch(checkOpts(res))
     ownProps.onOk(res)
   }

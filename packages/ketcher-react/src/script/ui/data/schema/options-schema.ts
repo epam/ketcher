@@ -330,7 +330,7 @@ export function validation(settings): Record<string, string> | null {
 
   const v = new jsonschema.Validator()
   const { errors } = v.validate(settings, optionsSchema)
-  const errProps = errors.map(err => err.property.split('.')[1])
+  const errProps = errors.map((err) => err.property.split('.')[1])
 
   return Object.keys(settings).reduce((res, prop) => {
     if (!optionsSchema.properties) return res

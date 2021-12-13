@@ -111,7 +111,7 @@ export const rgroupSchema = {
       items: {
         type: 'string',
         enum: range(1, 33),
-        enumNames: range(1, 33).map(item => 'R' + item)
+        enumNames: range(1, 33).map((item) => 'R' + item)
       }
     }
   }

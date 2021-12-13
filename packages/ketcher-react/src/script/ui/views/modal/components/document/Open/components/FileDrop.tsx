@@ -41,6 +41,7 @@ const FileDrop = ({
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     multiple: false,
     noClick: true,
+    disabled,
     ...rest
   })
 

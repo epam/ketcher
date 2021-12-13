@@ -25,16 +25,17 @@
     cursor: pointer;
     text-align: center;
     background-color: @color-gray;
-    color: @main-font-color;
+    color: @color-text-primary;
 
     &:hover {
-      background-color: @form-selected-background;
+      background-color: @color-button-primary-hover;
+      color: @color-text-light;
     }
   }
 
   .active {
-    color: @color-white;
-    background-color: @color-gray1;
+    color: @color-text-light;
+    background-color: @color-tab-active;
   }
 
   :first-child {

@@ -13,7 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Bond, RxnArrow, RxnPlus, Struct, Vec2, RGroup } from 'domain/entities'
+import {
+  Bond,
+  RxnArrow,
+  RxnPlus,
+  Struct,
+  Vec2,
+  RGroup,
+  Fragment
+} from 'domain/entities'
 
 function paddedNum(number, width, precision) {
   number = parseFloat(number)
@@ -318,7 +326,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
     for (let j = 0; j < rgroups[rgid].length; ++j) {
       const ctab = rgroups[rgid][j]
       ctab.rgroups.set(rgid, new RGroup())
-      const frag = {}
+      const frag = new Fragment()
       const frid = ctab.frags.add(frag)
       ctab.rgroups.get(rgid).frags.add(frid)
       ctab.atoms.forEach(atom => {

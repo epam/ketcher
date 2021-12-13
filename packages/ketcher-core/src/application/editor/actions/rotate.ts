@@ -183,19 +183,17 @@ export function fromRotate(restruct, selection, center, angle) {
     stereoFlags.forEach(flagId => {
       const frId = flagId
       const frag = restruct.molecule.frags.get(frId)
-      if (frag) {
-        action.addOp(
-          new EnhancedFlagMove(
-            flagId,
-            rotateDelta(
-              frag.stereoFlagPosition ||
-                Fragment.getDefaultStereoFlagPosition(restruct.molecule, frId),
-              center,
-              angle
-            )
+      action.addOp(
+        new EnhancedFlagMove(
+          flagId,
+          rotateDelta(
+            frag.stereoFlagPosition ||
+              Fragment.getDefaultStereoFlagPosition(restruct.molecule, frId),
+            center,
+            angle
           )
         )
-      }
+      )
     })
   }
 

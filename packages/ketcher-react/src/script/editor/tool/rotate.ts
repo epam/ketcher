@@ -135,8 +135,8 @@ class RotateTool {
 
     const degrees = utils.degrees(angle)
 
-    if (dragCtx.angle && dragCtx.angle === degrees) return true
-    if (dragCtx.action) dragCtx.action.perform(rnd.ctab)
+    if ('angle' in dragCtx && dragCtx.angle === degrees) return true
+    if ('action' in dragCtx) dragCtx.action.perform(rnd.ctab)
 
     dragCtx.angle = degrees
     dragCtx.action = fromRotate(

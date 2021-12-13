@@ -29,7 +29,11 @@ type DispatchProps = {
   onImageUpload: (file: File) => void
 }
 
-const mapStateToProps = (state): StateProps => ({ server: state.server })
+const mapStateToProps = (state): StateProps => ({
+  server: state.server,
+  errorHandler: state.editor.errorHandler,
+  isRecognizeDisabled: state.actionState.recognize?.disabled
+})
 
 const mapDispatchToProps = (dispatch): DispatchProps => ({
   onOk: (result) => {

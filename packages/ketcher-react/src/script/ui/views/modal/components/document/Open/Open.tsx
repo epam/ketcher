@@ -28,6 +28,8 @@ import Icon from 'src/script/ui/component/view/icon'
 
 interface OpenProps {
   server: any
+  errorHandler: (err: string) => void
+  isRecognizeDisabled: boolean
 }
 
 type Props = OpenProps &
@@ -62,14 +64,15 @@ const structAcceptMimes = () => {
 }
 
 const Open: FC<Props> = (props) => {
-  const { server, onImageUpload, ...rest } = props
+  const { server, onImageUpload, errorHandler, isRecognizeDisabled, ...rest } =
+    props
 
   const [structStr, setStructStr] = useState<string>('')
   const [fragment, setFragment] = useState<boolean>(false)
+  const [opener, setOpener] = useState<any>()
   const [currentState, setCurrentState] = useState<MODAL_STATES>(
     MODAL_STATES.idle
   )
-  const [opener, setOpener] = useState<any>()
 
   useEffect(() => {
     if (server) {
@@ -89,7 +92,7 @@ const Open: FC<Props> = (props) => {
       setCurrentState(MODAL_STATES.textEditor)
       setStructStr(fileContent)
     }
-    const onError = () => null
+    const onError = () => errorHandler('Error processing file')
     opener.chosenOpener(files[0]).then(onLoad, onError)
   }
 
@@ -119,7 +122,12 @@ const Open: FC<Props> = (props) => {
 
           <FileDrop
             accept={structAcceptMimes()}
-            onDrop={onFileLoad}
+            onDropAccepted={onFileLoad}
+            onDropRejected={() =>
+              errorHandler(
+                `Unable to accept file(s). Make sure you upload 1 file of type: ${structAcceptMimes()}`
+              )
+            }
             buttonLabel="Open from file"
             textLabel="or drag file here"
             iconName={ICON_NAMES.FILE}
@@ -127,7 +135,14 @@ const Open: FC<Props> = (props) => {
 
           <FileDrop
             accept="image/*"
-            onDrop={onImageLoad}
+            disabled={isRecognizeDisabled}
+            disabledText="Ketcher supports image recognition only in Remote mode"
+            onDropAccepted={onImageLoad}
+            onDropRejected={() =>
+              errorHandler(
+                'Unable to accept file(s). Make sure you upload 1 image.'
+              )
+            }
             buttonLabel="Open from image"
             textLabel="or drag file here"
             iconName={ICON_NAMES.IMAGE}

@@ -26,12 +26,16 @@ type FileDropProps = {
   buttonLabel: string
   textLabel: string
   iconName: string
+  disabled?: boolean
+  disabledText?: string
 } & DropzoneOptions
 
 const FileDrop = ({
   buttonLabel,
   textLabel,
   iconName,
+  disabled,
+  disabledText,
   ...rest
 }: FileDropProps) => {
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
@@ -54,11 +58,17 @@ const FileDrop = ({
         className: getClassesString
       })}>
       <input {...getInputProps()} />
-      <DropButton label={buttonLabel} clickHandler={open} />
-      <p>{textLabel}</p>
-      <div className={parentStyles.dropIconWrapper}>
-        <Icon name={iconName} />
-      </div>
+      <DropButton label={buttonLabel} clickHandler={open} disabled={disabled} />
+      {disabled ? (
+        <p>{disabledText}</p>
+      ) : (
+        <>
+          <p>{textLabel}</p>
+          <div className={parentStyles.dropIconWrapper}>
+            <Icon name={iconName} />
+          </div>
+        </>
+      )}
     </div>
   )
 }

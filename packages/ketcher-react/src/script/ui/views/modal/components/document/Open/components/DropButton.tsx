@@ -19,14 +19,16 @@ import styles from '../Open.module.less'
 type Props = {
   label: string
   clickHandler: () => void
+  disabled?: boolean
 }
 
-export const DropButton = ({ label, clickHandler }: Props) => {
+export const DropButton = ({ label, clickHandler, disabled }: Props) => {
   return (
     <button
       className={styles.dropButton}
       title={label}
-      onMouseDown={clickHandler}>
+      onMouseDown={clickHandler}
+      disabled={disabled}>
       {label}
     </button>
   )

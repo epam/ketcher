@@ -44,11 +44,20 @@ const ACTINIDE = 'actinide'
 const LANTHANIDE = 'lanthanide'
 const main = rowPartition(
   Elements.filter(
-    item => item && item.type !== ACTINIDE && item.type !== LANTHANIDE
+    item =>
+      item &&
+      item.type !== ACTINIDE &&
+      item.type !== LANTHANIDE &&
+      item.number !== 89 &&
+      item.number !== 57
   )
 )
-const lanthanides = Elements.filter(item => item && item.type === LANTHANIDE)
-const actinides = Elements.filter(item => item && item.type === ACTINIDE)
+const lanthanides = Elements.filter(
+  item => item && (item.type === LANTHANIDE || item.number === 57)
+)
+const actinides = Elements.filter(
+  item => item && (item.type === ACTINIDE || item.number === 89)
+)
 
 function rowPartition(elements) {
   return elements.reduce((result, item) => {

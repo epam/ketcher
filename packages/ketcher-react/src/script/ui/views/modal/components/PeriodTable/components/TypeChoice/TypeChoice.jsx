@@ -34,6 +34,7 @@ function TypeChoice({ value, onChange, ...props }) {
             onChange={() => onChange(type.value)}
             {...props}
           />
+          <span className={classes.customRadio} />
           {type.title}
         </label>
       ))}

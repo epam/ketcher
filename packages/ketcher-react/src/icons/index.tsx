@@ -17,6 +17,7 @@
 import AboutIcon from './files/about.svg'
 import AnalyseIcon from './files/analyse.svg'
 import AromIcon from './files/arom.svg'
+import ArrowUpward from './files/arrow-upward.svg'
 import BondAnyIcon from './files/bond-any.svg'
 import BondAromaticIcon from './files/bond-aromatic.svg'
 import BondCrossedIcon from './files/bond-crossed.svg'
@@ -31,6 +32,7 @@ import BondSingleIcon from './files/bond-single.svg'
 import BondTripleIcon from './files/bond-triple.svg'
 import BondUpIcon from './files/bond-up.svg'
 import BondUpdownIcon from './files/bond-updown.svg'
+import CapitalT from './files/capital-t.svg'
 import ChainIcon from './files/chain.svg'
 import ChargeMinusIcon from './files/charge-minus.svg'
 import ChargePlusIcon from './files/charge-plus.svg'
@@ -49,6 +51,7 @@ import EnhancedStereoIcon from './files/enhanced-stereo.svg'
 import EraseIcon from './files/erase.svg'
 import GenericGroupsIcon from './files/generic-groups.svg'
 import HelpIcon from './files/help.svg'
+import ImageFrame from './files/image-frame.svg'
 import LayoutIcon from './files/layout.svg'
 import LogoIcon from './files/logo.svg'
 import MiewIcon from './files/miew.svg'
@@ -135,6 +138,7 @@ const icons = {
   about: AboutIcon,
   analyse: AnalyseIcon,
   arom: AromIcon,
+  'arrow-upward': ArrowUpward,
   'bond-any': BondAnyIcon,
   'bond-aromatic': BondAromaticIcon,
   'bond-crossed': BondCrossedIcon,
@@ -149,6 +153,7 @@ const icons = {
   'bond-triple': BondTripleIcon,
   'bond-up': BondUpIcon,
   'bond-updown': BondUpdownIcon,
+  'capital-t': CapitalT,
   chain: ChainIcon,
   'charge-minus': ChargeMinusIcon,
   'charge-plus': ChargePlusIcon,
@@ -169,6 +174,7 @@ const icons = {
   'functional-groups': FunctionalGroupsIcon,
   'generic-groups': GenericGroupsIcon,
   help: HelpIcon,
+  'image-frame': ImageFrame,
   layout: LayoutIcon,
   logo: LogoIcon,
   miew: MiewIcon,

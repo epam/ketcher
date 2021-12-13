@@ -20,9 +20,14 @@ import { BaseCallProps } from '../../../modal.types'
 import { connect } from 'react-redux'
 import { exec } from '../../../../../component/cliparea/cliparea'
 import { load } from '../../../../../state'
+import { changeImage } from '../../../../../state/options'
 
 type StateProps = OpenProps
-type DispatchProps = Pick<BaseCallProps, 'onOk'>
+
+type DispatchProps = {
+  onOk: BaseCallProps['onOk']
+  onImageUpload: (file: File) => void
+}
 
 const mapStateToProps = (state): StateProps => ({ server: state.server })
 
@@ -37,6 +42,9 @@ const mapDispatchToProps = (dispatch): DispatchProps => ({
       // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
       // See PR #731 (https://github.com/epam/ketcher/pull/731)
     )
+  },
+  onImageUpload: (file) => {
+    dispatch(changeImage(file))
   }
 })
 

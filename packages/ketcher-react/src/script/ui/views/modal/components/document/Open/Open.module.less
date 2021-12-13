@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+@import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
 .open {
@@ -35,5 +36,73 @@
     resize: both;
 
     .scrollbar();
+  }
+}
+
+.optionsContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.dropContainer {
+  width: 152px;
+  height: 112px;
+  border: 1px solid #aeaeae; //@TODO Change to variable
+  border-radius: 4px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 15px;
+  align-items: center;
+  box-sizing: border-box;
+  color: #bdbdbd;
+  position: relative;
+
+  &:first-child {
+    margin-right: 16px;
+  }
+
+  &:last-child {
+    margin-left: 16px;
+  }
+
+  & > p {
+    margin-top: 6px;
+    color: #585858; // @TODO change to @text-secondary-color
+  }
+
+  .dropIconWrapper {
+    position: absolute;
+    bottom: 13px;
+    height: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    svg {
+      fill: @primary-button-color;
+    }
+  }
+}
+
+.dropButton {
+  .btn(); // change to .button_main() mixin and skip styles below when PR 1071 is merged
+
+  background: @primary-button-color;
+  color: @primary-button-text;
+  border: none;
+  border-radius: 2px;
+  text-align: center;
+  height: 24px;
+
+  &:hover {
+    background-color: @primary-button-hover-color;
+  }
+
+  &:disabled {
+    background-color: @primary-button-disabled-color;
   }
 }

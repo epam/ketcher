@@ -15,79 +15,162 @@
  ***************************************************************************/
 
 import { BaseCallProps, BaseProps } from '../../../modal.types'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Dialog } from '../../../../components'
-import OpenButton from '../../../../../component/view/openbutton'
 import classes from './Open.module.less'
 import { formatProperties } from 'ketcher-core'
 import ClipArea from '../../../../../component/cliparea/cliparea'
+import { FileDrop } from './components/FileDrop'
+import Recognize from '../../process/Recognize/Recognize'
+import { fileOpener } from '../../../../../utils/'
+import { DropButton } from './components/DropButton'
+import Icon from 'src/script/ui/component/view/icon'
 
 interface OpenProps {
   server: any
 }
 
-type Props = OpenProps & Pick<BaseProps, 'className'> & BaseCallProps
+type Props = OpenProps &
+  Pick<BaseProps, 'className'> &
+  BaseCallProps & { onImageUpload: (file: File) => void }
+
+enum MODAL_STATES {
+  idle = 'idle',
+  textEditor = 'textEditor',
+  imageRec = 'imageRec'
+}
+
+const ICON_NAMES = {
+  PASTE: 'capital-t',
+  FILE: 'arrow-upward',
+  IMAGE: 'image-frame'
+}
+
+const structAcceptMimes = () => {
+  return Array.from(
+    new Set(
+      Object.keys(formatProperties).reduce(
+        (res, key) =>
+          res.concat(
+            formatProperties[key].mime,
+            ...formatProperties[key].extensions
+          ),
+        []
+      )
+    )
+  ).join(',')
+}
 
 const Open: FC<Props> = (props) => {
+  const { server, onImageUpload, ...rest } = props
+
   const [structStr, setStructStr] = useState<string>('')
   const [fragment, setFragment] = useState<boolean>(false)
-  const { server, ...rest } = props
+  const [currentState, setCurrentState] = useState<MODAL_STATES>(
+    MODAL_STATES.idle
+  )
+  const [opener, setOpener] = useState<any>()
+
+  useEffect(() => {
+    if (server) {
+      fileOpener(server).then((chosenOpener) => {
+        // nesting function into object, otherwise React calls function right away
+        setOpener({ chosenOpener })
+      })
+    }
+  }, [server])
 
   const result = () => {
     return structStr ? { structStr, fragment } : null
   }
 
-  const structAcceptMimes = () => {
-    return Array.from(
-      new Set(
-        Object.keys(formatProperties).reduce(
-          (res, key) =>
-            res.concat(
-              formatProperties[key].mime,
-              ...formatProperties[key].extensions
-            ),
-          []
-        )
-      )
-    ).join(',')
+  const onFileLoad = (files) => {
+    const onLoad = (fileContent) => {
+      setCurrentState(MODAL_STATES.textEditor)
+      setStructStr(fileContent)
+    }
+    const onError = () => null
+    opener.chosenOpener(files[0]).then(onLoad, onError)
   }
 
-  return (
-    <Dialog
-      title="Open Structure"
-      className={classes.open}
-      result={result}
-      params={rest}
-      buttons={[
-        <OpenButton
-          key={structAcceptMimes().toString()}
-          server={server}
-          type={structAcceptMimes()}
-          onLoad={setStructStr}
-        >
-          Open From File…
-        </OpenButton>,
-        'OK'
-      ]}
-    >
-      <textarea
-        value={structStr}
-        onChange={(event) => setStructStr(event.target.value)}
-      />
-      <label>
-        <input
-          type="checkbox"
-          checked={fragment}
-          onChange={(event) => setFragment(event.target.checked)}
+  const onImageLoad = (files) => {
+    onImageUpload(files[0])
+    setCurrentState(MODAL_STATES.imageRec)
+  }
+
+  if (currentState === MODAL_STATES.idle) {
+    return (
+      <Dialog
+        title="Open structure"
+        className={classes.open}
+        params={rest}
+        result={result}
+        buttons={[]}>
+        <div className={classes.optionsContainer}>
+          <div className={classes.dropContainer}>
+            <DropButton
+              clickHandler={() => setCurrentState(MODAL_STATES.textEditor)}
+              label="Paste from Clipboard"
+            />
+            <div className={classes.dropIconWrapper}>
+              <Icon name={ICON_NAMES.PASTE} />
+            </div>
+          </div>
+
+          <FileDrop
+            accept={structAcceptMimes()}
+            onDrop={onFileLoad}
+            buttonLabel="Open from file"
+            textLabel="or drag file here"
+            iconName={ICON_NAMES.FILE}
+          />
+
+          <FileDrop
+            accept="image/*"
+            onDrop={onImageLoad}
+            buttonLabel="Open from image"
+            textLabel="or drag file here"
+            iconName={ICON_NAMES.IMAGE}
+          />
+        </div>
+      </Dialog>
+    )
+  }
+
+  if (currentState === MODAL_STATES.textEditor) {
+    return (
+      <Dialog
+        title="Open Structure"
+        className={classes.open}
+        result={result}
+        params={rest}
+        buttons={['OK']}>
+        {currentState === MODAL_STATES.textEditor ? (
+          <textarea
+            value={structStr}
+            onChange={(event) => setStructStr(event.target.value)}
+          />
+        ) : null}
+        <label>
+          <input
+            type="checkbox"
+            checked={fragment}
+            onChange={(event) => setFragment(event.target.checked)}
+          />
+          Load as a fragment and copy to the Clipboard
+        </label>
+        <ClipArea
+          focused={() => true}
+          onCopy={() => ({ 'text/plain': structStr })}
         />
-        Load as a fragment and copy to the Clipboard
-      </label>
-      <ClipArea
-        focused={() => true}
-        onCopy={() => ({ 'text/plain': structStr })}
-      />
-    </Dialog>
-  )
+      </Dialog>
+    )
+  }
+
+  if (currentState === MODAL_STATES.imageRec) {
+    return <Recognize {...rest} />
+  }
+  return null
 }
 
 export type { OpenProps }

@@ -25,7 +25,7 @@ class OpenButton extends Component {
     super(props)
     this.state = {}
     if (props.server) {
-      fileOpener(props.server).then(opener => {
+      fileOpener(props.server).then((opener) => {
         this.setState({ opener })
       })
     }
@@ -52,10 +52,10 @@ class OpenButton extends Component {
         className={clsx(classes.openButton, className)}
         {...props}>
         <input
-          onChange={ev => this.open(ev)}
+          onChange={(ev) => this.open(ev)}
           accept={type}
           type="file"
-          ref={el => {
+          ref={(el) => {
             this.btn = el
           }}
         />

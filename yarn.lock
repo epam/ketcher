@@ -9894,7 +9894,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"indigo-ketcher@npm:1.6.0":
+"indigo-ketcher@npm:1.6.1-beta":
   version: 1.6.1-beta
   resolution: "indigo-ketcher@npm:1.6.1-beta"
   checksum: ee7f0ffffa246f9f66f8755c7346cf4a466dd9298a564b8f0897950d6e49cb01ec95ee6f75133be8250e1767312387a9a9e52373e40541d26f40f300ebd83b63

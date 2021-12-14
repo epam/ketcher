@@ -49,44 +49,44 @@ export class RxnArrowResize extends Base {
     const current = this.data.current
     const item = struct.rxnArrows.get(id)
     const anchor = this.data.anchor
+    const [a, b] = item.pos
 
     if (anchor) {
-      const previousPos0 = item.pos[0].get_xy0()
-      const previousPos1 = item.pos[1].get_xy0()
-      const previousPos2 = item.pos?.[2]?.get_xy0()
+      // const previousPos0 = a.get_xy0()
+      // const previousPos1 = b.get_xy0()
 
-      if (
-        tfx(anchor.x) === tfx(item.pos[1].x) &&
-        tfx(anchor.y) === tfx(item.pos[1].y)
-      ) {
-        item.pos[1].x = anchor.x = current.x
-        current.x = previousPos1.x
-        item.pos[1].y = anchor.y = current.y
-        current.y = previousPos1.y
-        item.pos?.[2] && (item.pos[2].x = item.pos[2].x + d.x / 2)
+      let length
+      let middlePoint
+
+      if (item.height != null) {
+        length = Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2)
+        middlePoint = new Vec2(a.x + length / 2, a.y - item.height)
+      }
+
+      if (tfx(anchor.x) === tfx(a.x) && tfx(anchor.y) === tfx(a.y)) {
+        a.x = anchor.x = current.x
+        // current.x = previousPos0.x
+        a.y = anchor.y = current.y
+        // current.y = previousPos0.y
+      }
+
+      if (tfx(anchor.x) === tfx(b.x) && tfx(anchor.y) === tfx(b.y)) {
+        b.x = anchor.x = current.x
+        // current.x = previousPos1.x
+        b.y = anchor.y = current.y
+        // current.y = previousPos1.y
       }
 
       if (
-        tfx(anchor.x) === tfx(item?.pos?.[2]?.x) &&
-        tfx(anchor.y) === tfx(item?.pos?.[2]?.y)
+        tfx(anchor.x) === tfx(middlePoint?.x) &&
+        tfx(anchor.y) === tfx(middlePoint?.y)
       ) {
-        // item.pos[2].x = anchor.x = current.x
-        // current.x = previousPos2.x
-        item.pos[2].y = anchor.y = current.y
-        current.y = previousPos2.y
+        item.height -= current.y - anchor.y
+        anchor.y = current.y
       }
-
-      if (
-        tfx(anchor.x) === tfx(item.pos[0].x) &&
-        tfx(anchor.y) === tfx(item.pos[0].y)
-      ) {
-        item.pos[0].x = anchor.x = current.x
-        current.x = previousPos0.x
-        item.pos[0].y = anchor.y = current.y
-        current.y = previousPos0.y
-        item.pos?.[2] && (item.pos[2].x = item.pos[2].x + d.x / 2)
-      }
-    } else item.pos[1].add_(d)
+    } else {
+      item.pos[1].add_(d)
+    }
 
     restruct.rxnArrows
       .get(id)

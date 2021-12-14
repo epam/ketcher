@@ -44,18 +44,38 @@ export interface RxnArrowAttributes {
 export class RxnArrow {
   mode: RxnArrowMode
   pos: Array<Vec2>
+  height?: number
 
-  constructor(atrributes: RxnArrowAttributes) {
+  constructor(attributes: RxnArrowAttributes) {
     this.pos = []
 
-    if (atrributes.pos) {
-      for (let i = 0; i < atrributes.pos.length; i++) {
-        const currentP = atrributes.pos[i]
-        this.pos[i] = currentP ? new Vec2(atrributes.pos[i]) : new Vec2()
+    if (attributes.pos) {
+      for (let i = 0; i < attributes.pos.length; i++) {
+        const currentP = attributes.pos[i]
+        this.pos[i] = currentP ? new Vec2(attributes.pos[i]) : new Vec2()
       }
     }
+    this.mode = attributes.mode
 
-    this.mode = atrributes.mode
+    const {
+      EllipticalArcFilledBow,
+      EllipticalArcFilledTriangle,
+      EllipticalArcOpenAngle,
+      EllipticalArcOpenHalfAngle
+    } = RxnArrowMode
+
+    const isElliptical = [
+      EllipticalArcFilledBow,
+      EllipticalArcFilledTriangle,
+      EllipticalArcOpenHalfAngle,
+      EllipticalArcOpenAngle
+    ].includes(attributes.mode)
+
+    const defaultHeight = 2
+
+    if (!this.height && isElliptical) {
+      this.height = defaultHeight
+    }
   }
 
   clone() {

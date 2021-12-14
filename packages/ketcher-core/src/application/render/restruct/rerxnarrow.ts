@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Vec2 } from 'domain/entities'
+import { Box2Abs, RxnArrowMode, Vec2 } from 'domain/entities'
 
 import { LayerMap } from './generalEnumTypes'
 import Raphael from '../raphael-ext'
@@ -27,7 +27,8 @@ import util from '../util'
 
 type Arrow = {
   pos: Array<Vec2>
-  mode: string
+  mode: RxnArrowMode
+  height?: number
 }
 
 type ArrowParams = {
@@ -57,15 +58,14 @@ class ReRxnArrow extends ReObject {
     const item = this.item
 
     const pos = item.pos
-    const mode = item.mode
+    const height = item.height
 
-    const [startPoint, endPoint, middlePoint] = pos
+    dist = calculateDistanceToLine(pos, point)
 
-    dist = calculateDistanceToLine([startPoint, endPoint], point)
-
-    if (mode.includes('elliptical')) {
-      const topLeftCorner = new Vec2(startPoint.x, middlePoint.y)
-      const topRightCorner = new Vec2(endPoint.x, middlePoint.y)
+    if (height != null) {
+      const [startPoint, endPoint] = pos
+      const topLeftCorner = new Vec2(startPoint.x, startPoint.y - height)
+      const topRightCorner = new Vec2(endPoint.x, endPoint.y - height)
       dist = Math.min(
         dist,
         calculateDistanceToLine([startPoint, topLeftCorner], point),
@@ -112,8 +112,15 @@ class ReRxnArrow extends ReObject {
 
   getReferencePoints(): Array<Vec2> {
     const refPoints: Array<Vec2> = []
+    const [a, b] = this.item.pos
+    const height = this.item.height
 
-    this.item.pos.forEach(i => refPoints.push(new Vec2(i.x, i.y, 0)))
+    refPoints.push(new Vec2(a.x, a.y))
+    refPoints.push(new Vec2(b.x, b.y))
+    if (height != null) {
+      const { length } = this.getArrowParams(a.x, a.y, b.x, b.y)
+      refPoints.push(new Vec2(a.x + length / 2, a.y - height))
+    }
 
     return refPoints
   }
@@ -144,13 +151,13 @@ class ReRxnArrow extends ReObject {
 
   generatePath(render: Render, options, type) {
     let path
-    const isElliptical = this.item.mode.includes('elliptical')
+    const height = this.item.height != null && this.item.height * options.scale
 
     const pos = this.item.pos.map(p => {
       return Scale.obj2scaled(p, options) || new Vec2()
     })
 
-    const arrowParams: ArrowParams = this.getArrowParams(
+    const { length, angle } = this.getArrowParams(
       pos[0].x,
       pos[0].y,
       pos[1].x,
@@ -159,7 +166,6 @@ class ReRxnArrow extends ReObject {
 
     const startPoint = new Vec2(pos[0].x, pos[0].y)
     const endPoint = new Vec2(pos[1].x, pos[1].y)
-    const middlePoint = isElliptical && new Vec2(pos[2].x, pos[2].y)
 
     switch (type) {
       case 'selection':
@@ -167,11 +173,10 @@ class ReRxnArrow extends ReObject {
           render.paper,
           startPoint,
           endPoint,
-          arrowParams.length,
-          arrowParams.angle,
+          length,
+          angle,
           options,
-          isElliptical,
-          middlePoint
+          height
         )
         break
       case 'arrow':
@@ -179,11 +184,11 @@ class ReRxnArrow extends ReObject {
           render.paper,
           startPoint,
           endPoint,
-          arrowParams.length,
-          arrowParams.angle,
+          length,
+          angle,
           options,
           this.item.mode,
-          middlePoint
+          height
         )
         break
     }

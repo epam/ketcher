@@ -87,8 +87,10 @@ function CheckDialog(props) {
       >
         <div className={style.wrapper}>
           <div className={style.settings}>
+            <label>Settings</label>
             <Field
               name="checkOptions"
+              labelPos={false}
               multiple
               type="checkbox"
               onChange={onCheck}

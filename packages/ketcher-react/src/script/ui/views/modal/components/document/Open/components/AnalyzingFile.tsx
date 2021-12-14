@@ -14,36 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../../../../../../../style/variables.less';
-@import '../../../../../../../style/mixins.less';
+import Icon from 'src/script/ui/component/view/icon'
+import styles from './AnalyzingFile.module.less'
+import { LoadingCircles } from './LoadingCircles'
 
-.open {
-  label {
-    display: block;
-    width: 22.5em;
-
-    input {
-      margin-bottom: 0.1em;
-    }
-  }
-
-  textarea {
-    min-width: 32em;
-    min-height: 23em;
-    overflow: auto;
-    white-space: pre;
-    //make it resizable
-    resize: both;
-
-    .scrollbar();
-  }
+export type AnalyzingFileProps = {
+  fileName?: string
 }
 
-.dropButton {
-  .button_main();
+const ICON_NAME = 'file-thumbnail'
 
-  border: none;
-  border-radius: 2px;
-  text-align: center;
-  height: 24px;
-}
+export const AnalyzingFile = ({ fileName }: AnalyzingFileProps) => (
+  <div className={styles.analyzingFileWrapper}>
+    {fileName && (
+      <div className={styles.fileBox}>
+        <Icon name={ICON_NAME} />
+        <p>{fileName}</p>
+      </div>
+    )}
+    <LoadingCircles />
+  </div>
+)

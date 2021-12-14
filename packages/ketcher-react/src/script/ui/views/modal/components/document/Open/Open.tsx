@@ -19,14 +19,10 @@ import { FC, useEffect, useState } from 'react'
 import { Dialog } from '../../../../components'
 import classes from './Open.module.less'
 import { formatProperties } from 'ketcher-core'
-import ClipArea from '../../../../../component/cliparea/cliparea'
-import { FileDrop } from './components/FileDrop'
 import Recognize from '../../process/Recognize/Recognize'
 import { fileOpener } from '../../../../../utils/'
-import { DropButton } from './components/DropButton'
-import Icon from 'src/script/ui/component/view/icon'
-import { LoadingCircles } from './components/LoadingCircles'
 import { OpenFileButton } from './components/OpenFileButton'
+import { ViewSwitcher } from './components/ViewSwitcher'
 
 interface OpenProps {
   server: any
@@ -39,17 +35,10 @@ type Props = OpenProps &
   Pick<BaseProps, 'className'> &
   BaseCallProps & { onImageUpload: (file: File) => void }
 
-enum MODAL_STATES {
-  idle = 'idle',
-  textEditor = 'textEditor',
-  imageRec = 'imageRec'
-}
-
-const ICON_NAMES = {
-  PASTE: 'capital-t',
-  FILE: 'arrow-upward',
-  IMAGE: 'image-frame',
-  FILE_THUMBNAIL: 'file-thumbnail'
+const MODAL_STATES = {
+  idle: 'idle',
+  textEditor: 'textEditor',
+  imageRec: 'imageRec'
 }
 
 const structAcceptMimes = () => {
@@ -81,14 +70,11 @@ const Open: FC<Props> = (props) => {
   const [fragment, setFragment] = useState<boolean>(false)
   const [fileName, setFileName] = useState<string>('')
   const [opener, setOpener] = useState<any>()
-  const [currentState, setCurrentState] = useState<MODAL_STATES>(
-    MODAL_STATES.idle
-  )
+  const [currentState, setCurrentState] = useState(MODAL_STATES.idle)
 
   useEffect(() => {
     if (server) {
       fileOpener(server).then((chosenOpener) => {
-        // nesting function into object, otherwise React calls function right away
         setOpener({ chosenOpener })
       })
     }
@@ -96,6 +82,20 @@ const Open: FC<Props> = (props) => {
 
   const result = () => {
     return structStr ? { structStr, fragment } : null
+  }
+
+  const getButtons = () => {
+    if (currentState === MODAL_STATES.textEditor && !isAnalyzingFile) {
+      return [
+        <OpenFileButton
+          key="openButton"
+          disabled={!result()}
+          clickHandler={openHandler}
+        />
+      ]
+    } else {
+      return []
+    }
   }
 
   const onFileLoad = (files) => {
@@ -119,117 +119,37 @@ const Open: FC<Props> = (props) => {
     onOk(result())
   }
 
-  if (isAnalyzingFile) {
-    return (
-      <Dialog
-        title="Open structure"
-        className={classes.open}
-        params={rest}
-        result={result}
-        buttons={[]}>
-        <div className={classes.fileLoadingWrapper}>
-          {!!fileName && (
-            <div className={classes.fileBox}>
-              <Icon name={ICON_NAMES.FILE_THUMBNAIL} />
-              <p>{fileName}</p>
-            </div>
-          )}
-          <LoadingCircles />
-        </div>
-      </Dialog>
-    )
-  }
-
-  if (currentState === MODAL_STATES.idle) {
-    return (
-      <Dialog
-        title="Open structure"
-        className={classes.open}
-        params={rest}
-        result={result}
-        buttons={[]}>
-        <div className={classes.optionsContainer}>
-          <div className={classes.dropContainer}>
-            <DropButton
-              clickHandler={() => setCurrentState(MODAL_STATES.textEditor)}
-              label="Paste from Clipboard"
-            />
-            <div className={classes.dropIconWrapper}>
-              <Icon name={ICON_NAMES.PASTE} />
-            </div>
-          </div>
-
-          <FileDrop
-            accept={structAcceptMimes()}
-            onDropAccepted={onFileLoad}
-            onDropRejected={() =>
-              errorHandler(
-                `Unable to accept file(s). Make sure you upload 1 file of type: ${structAcceptMimes()}`
-              )
-            }
-            buttonLabel="Open from file"
-            textLabel="or drag file here"
-            iconName={ICON_NAMES.FILE}
-          />
-
-          <FileDrop
-            accept="image/*"
-            disabled={isRecognizeDisabled}
-            disabledText="Ketcher supports image recognition only in Remote mode"
-            onDropAccepted={onImageLoad}
-            onDropRejected={() =>
-              errorHandler(
-                'Unable to accept file(s). Make sure you upload 1 image.'
-              )
-            }
-            buttonLabel="Open from image"
-            textLabel="or drag file here"
-            iconName={ICON_NAMES.IMAGE}
-          />
-        </div>
-      </Dialog>
-    )
-  }
-
-  if (currentState === MODAL_STATES.textEditor) {
-    return (
-      <Dialog
-        title="Open Structure"
-        className={classes.open}
-        result={result}
-        params={rest}
-        buttons={[
-          <OpenFileButton
-            key="openButton"
-            disabled={!result()}
-            clickHandler={openHandler}
-          />
-        ]}>
-        <textarea
-          value={structStr}
-          onChange={(event) => setStructStr(event.target.value)}
-        />
-
-        <label>
-          <input
-            type="checkbox"
-            checked={fragment}
-            onChange={(event) => setFragment(event.target.checked)}
-          />
-          Load as a fragment and copy to the Clipboard
-        </label>
-        <ClipArea
-          focused={() => true}
-          onCopy={() => ({ 'text/plain': structStr })}
-        />
-      </Dialog>
-    )
-  }
-
+  // @TODO after refactoring of Recognize modal
+  // add this logic into ViewSwitcher component
   if (currentState === MODAL_STATES.imageRec) {
     return <Recognize {...rest} />
   }
-  return null
+
+  return (
+    <Dialog
+      title="Open structure"
+      className={classes.open}
+      params={rest}
+      result={result}
+      buttons={getButtons()}>
+      <ViewSwitcher
+        isAnalyzingFile={isAnalyzingFile}
+        fileName={fileName}
+        currentState={currentState}
+        states={MODAL_STATES}
+        clipboardHandler={() => setCurrentState(MODAL_STATES.textEditor)}
+        fileLoadHandler={onFileLoad}
+        imageLoadHandler={onImageLoad}
+        acceptedNonImageTypes={structAcceptMimes()}
+        errorHandler={errorHandler}
+        isRecognizeDisabled={isRecognizeDisabled}
+        structStr={structStr}
+        inputHandler={setStructStr}
+        fragment={fragment}
+        fragmentHandler={setFragment}
+      />
+    </Dialog>
+  )
 }
 
 export type { OpenProps }

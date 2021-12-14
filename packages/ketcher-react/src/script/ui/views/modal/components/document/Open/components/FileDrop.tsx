@@ -17,7 +17,7 @@
 import { useMemo } from 'react'
 import { useDropzone, DropzoneOptions } from 'react-dropzone'
 
-import parentStyles from '../Open.module.less'
+import parentStyles from './OpenOptions.module.less'
 import styles from './FileDrop.module.less'
 import { DropButton } from './DropButton'
 import Icon from 'src/script/ui/component/view/icon'

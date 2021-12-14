@@ -14,36 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../../../../../../../style/variables.less';
-@import '../../../../../../../style/mixins.less';
+.analyzingFileWrapper {
+  min-width: 32em;
+  min-height: 23em;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
-.open {
-  label {
-    display: block;
-    width: 22.5em;
+  .fileBox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
-    input {
-      margin-bottom: 0.1em;
+    svg {
+      margin-right: 13px;
+    }
+
+    p {
+      color: #585858;
+      font-size: 16px;
+      line-height: 19px;
     }
   }
-
-  textarea {
-    min-width: 32em;
-    min-height: 23em;
-    overflow: auto;
-    white-space: pre;
-    //make it resizable
-    resize: both;
-
-    .scrollbar();
-  }
-}
-
-.dropButton {
-  .button_main();
-
-  border: none;
-  border-radius: 2px;
-  text-align: center;
-  height: 24px;
 }

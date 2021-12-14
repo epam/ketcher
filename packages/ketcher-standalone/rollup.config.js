@@ -8,6 +8,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import strip from '@rollup/plugin-strip'
 import typescript from 'rollup-plugin-typescript2'
 import webWorkerLoader from 'rollup-plugin-web-worker-loader'
+import banner from "rollup-plugin-banner";
 
 const mode = {
   PRODUCTION: 'production',
@@ -57,6 +58,9 @@ const config = {
       extensions: extensions.map((ext) => ext.trimStart('.')),
       include: includePattern,
       comments: 'none'
+    }),
+    banner({
+      file: "../ketcher-core/license.txt"
     }),
     ...(isProduction ? [strip({ include: includePattern })] : [])
   ]

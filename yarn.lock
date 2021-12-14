@@ -12074,7 +12074,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.template@npm:^4.5.0":
+"lodash.template@npm:^4.4.0, lodash.template@npm:^4.5.0":
   version: 4.5.0
   resolution: "lodash.template@npm:4.5.0"
   dependencies:
@@ -16776,6 +16776,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rollup-plugin-banner@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "rollup-plugin-banner@npm:0.2.1"
+  dependencies:
+    lodash.template: ^4.4.0
+  checksum: cd9799fcb69d290736f6d26034ccfcc668238fe314d018673a06685036f22403bf49ae263d73625d0c981a52e9da195a40b582754b5cd43af2567cdee422e9b1
+  languageName: node
+  linkType: hard
+
 "rollup-plugin-cleanup@npm:^3.2.1":
   version: 3.2.1
   resolution: "rollup-plugin-cleanup@npm:3.2.1"
@@ -16972,6 +16981,7 @@ __metadata:
     npm-run-all: ^4.1.5
     prettier: ^2.5.1
     prettier-config-standard: ^4.0.0
+    rollup-plugin-banner: ^0.2.1
     stylelint: 13.13.1
     stylelint-config-prettier: ^9.0.3
     stylelint-config-standard: 22.0.0

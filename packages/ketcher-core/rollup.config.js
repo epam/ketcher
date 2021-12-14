@@ -10,6 +10,7 @@ import replace from '@rollup/plugin-replace'
 import strip from '@rollup/plugin-strip'
 import ttypescript from 'ttypescript'
 import typescript from 'rollup-plugin-typescript2'
+import banner from 'rollup-plugin-banner'
 
 const mode = {
   PRODUCTION: 'production',
@@ -70,6 +71,9 @@ const config = {
       comments: 'none',
       include: includePattern
     }),
+     banner({
+       file: "./license.txt"
+     }),
     ...(isProduction ? [strip({ include: includePattern })] : [])
   ]
 }

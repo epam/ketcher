@@ -15,6 +15,7 @@ import replace from '@rollup/plugin-replace'
 import strip from '@rollup/plugin-strip'
 import svgr from '@svgr/rollup'
 import typescript from 'rollup-plugin-typescript2'
+import banner from "rollup-plugin-banner";
 
 const mode = {
   PRODUCTION: 'production',
@@ -93,6 +94,9 @@ const config = {
       extensions: extensions.map((ext) => ext.trimStart('.')),
       comments: 'none',
       include: includePattern
+    }),
+    banner({
+      file: "../ketcher-core/license.txt"
     }),
     ...(isProduction ? [strip({ include: includePattern })] : [])
   ]

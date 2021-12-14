@@ -15,7 +15,7 @@ import replace from '@rollup/plugin-replace'
 import strip from '@rollup/plugin-strip'
 import svgr from '@svgr/rollup'
 import typescript from 'rollup-plugin-typescript2'
-import banner from "rollup-plugin-banner";
+import banner from 'rollup-plugin-banner'
 
 const mode = {
   PRODUCTION: 'production',
@@ -96,7 +96,7 @@ const config = {
       include: includePattern
     }),
     banner({
-      file: "../ketcher-core/license.txt"
+      file: '../ketcher-core/license.txt'
     }),
     ...(isProduction ? [strip({ include: includePattern })] : [])
   ]

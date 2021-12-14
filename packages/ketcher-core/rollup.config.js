@@ -71,9 +71,9 @@ const config = {
       comments: 'none',
       include: includePattern
     }),
-     banner({
-       file: "./license.txt"
-     }),
+    banner({
+      file: './license.txt'
+    }),
     ...(isProduction ? [strip({ include: includePattern })] : [])
   ]
 }

@@ -22,7 +22,7 @@ export function fileOpener(server) {
     } else if (global.ActiveXObject) {
       try {
         const fso = new ActiveXObject('Scripting.FileSystemObject') // eslint-disable-line no-undef
-        resolve(file => Promise.resolve(throughFileSystemObject(fso, file)))
+        resolve((file) => Promise.resolve(throughFileSystemObject(fso, file)))
       } catch (e) {
         reject(e)
       }
@@ -49,7 +49,7 @@ function throughFileReader(file) {
       resolve(content)
     }
 
-    rd.onerror = event => {
+    rd.onerror = (event) => {
       reject(event)
     }
 

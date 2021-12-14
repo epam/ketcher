@@ -50,7 +50,8 @@ class OpenButton extends Component {
       <button
         onClick={() => this.btn.click()}
         className={clsx(classes.openButton, className)}
-        {...props}>
+        {...props}
+      >
         <input
           onChange={(ev) => this.open(ev)}
           accept={type}

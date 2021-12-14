@@ -131,7 +131,8 @@ const Open: FC<Props> = (props) => {
       className={classes.open}
       params={rest}
       result={result}
-      buttons={getButtons()}>
+      buttons={getButtons()}
+    >
       <ViewSwitcher
         isAnalyzingFile={isAnalyzingFile}
         fileName={fileName}

@@ -28,7 +28,8 @@ export const DropButton = ({ label, clickHandler, disabled }: Props) => {
       className={styles.dropButton}
       title={label}
       onMouseDown={clickHandler}
-      disabled={disabled}>
+      disabled={disabled}
+    >
       {label}
     </button>
   )

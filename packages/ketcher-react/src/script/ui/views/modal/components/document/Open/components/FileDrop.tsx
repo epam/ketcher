@@ -57,7 +57,8 @@ const FileDrop = ({
     <div
       {...getRootProps({
         className: getClassesString
-      })}>
+      })}
+    >
       <input {...getInputProps()} />
       <DropButton label={buttonLabel} clickHandler={open} disabled={disabled} />
       {disabled ? (

@@ -5,7 +5,7 @@
     "example"
   ],
   "scripts": {
-    "prepare": "husky install",
+    "postinstall": "husky install",
     "precommit": "lint-staged --allow-empty",
     "prepush": "yarn workspaces foreach -pv run test:eslint",
     "build": "yarn workspaces foreach -ptv run build",

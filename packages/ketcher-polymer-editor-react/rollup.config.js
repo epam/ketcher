@@ -2,7 +2,6 @@ import autoprefixer from 'autoprefixer'
 import babel from '@rollup/plugin-babel'
 import cleanup from 'rollup-plugin-cleanup'
 import commonjs from '@rollup/plugin-commonjs'
-import copy from 'rollup-plugin-copy'
 import del from 'rollup-plugin-delete'
 import json from '@rollup/plugin-json'
 import nodeResolve from '@rollup/plugin-node-resolve'
@@ -43,11 +42,21 @@ const config = {
       targets: 'dist/*',
       runOnce: true
     }),
+    postcss({
+      plugins: [autoprefixer({ grid: 'autoplace' })],
+      extract: path.resolve('dist/index.css'),
+      minimize: isProduction,
+      sourceMap: true,
+      include: includePattern
+    }),
+    svgr({ include: includePattern }),
     peerDepsExternal({ includeDependencies: true }),
     nodeResolve({ extensions }),
     commonjs(),
-    replace(
-      {
+    replace({
+      include: includePattern,
+      preventAssignment: true,
+      values: {
         'process.env.NODE_ENV': JSON.stringify(
           isProduction ? mode.PRODUCTION : mode.DEVELOPMENT
         ),
@@ -57,28 +66,14 @@ const config = {
         ),
         // TODO: add logic to init BUILD_NUMBER
         'process.env.BUILD_NUMBER': JSON.stringify(undefined)
-      },
-      {
-        include: includePattern
       }
-    ),
+    }),
     json(),
     typescript(),
     babel({
       extensions,
       babelHelpers: 'runtime',
       include: includePattern
-    }),
-    postcss({
-      plugins: [autoprefixer({ grid: 'autoplace' })],
-      extract: path.resolve('dist/index.css'),
-      minimize: isProduction,
-      sourceMap: true,
-      include: includePattern
-    }),
-    svgr({ include: includePattern }),
-    copy({
-      targets: [{ src: 'src/style/*.svg', dest: 'dist' }]
     }),
     cleanup({
       extensions: extensions.map((ext) => ext.trimStart('.')),

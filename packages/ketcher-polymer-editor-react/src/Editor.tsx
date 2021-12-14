@@ -35,7 +35,7 @@ function Editor(props: EditorProps) {
       ref={rootElRef}
       className={clsx('Ketcher-polymer-editor-root', classes.root)}
     >
-      Hello from ketcher polymer editor
+      {`Hello from ketcher polymer editor: build date: ${process.env.BUILD_DATE}`}
     </div>
   )
 }

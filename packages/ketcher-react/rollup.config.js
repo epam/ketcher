@@ -51,11 +51,21 @@ const config = {
       targets: 'dist/*',
       runOnce: true
     }),
+    postcss({
+      plugins: [autoprefixer({ grid: 'autoplace' })],
+      extract: path.resolve('dist/index.css'),
+      minimize: isProduction,
+      sourceMap: true,
+      include: includePattern
+    }),
+    svgr({ include: includePattern }),
     peerDepsExternal({ includeDependencies: true }),
     nodeResolve({ extensions }),
     commonjs(),
-    replace(
-      {
+    replace({
+      include: includePattern,
+      preventAssignment: true,
+      values: {
         'process.env.NODE_ENV': JSON.stringify(
           isProduction ? mode.PRODUCTION : mode.DEVELOPMENT
         ),
@@ -66,11 +76,8 @@ const config = {
         // TODO: add logic to init BUILD_NUMBER
         'process.env.BUILD_NUMBER': JSON.stringify(undefined),
         'process.env.HELP_LINK': JSON.stringify(initLink(branchName()))
-      },
-      {
-        include: includePattern
       }
-    ),
+    }),
     json(),
     typescript(),
     babel({
@@ -78,14 +85,6 @@ const config = {
       babelHelpers: 'runtime',
       include: includePattern
     }),
-    postcss({
-      plugins: [autoprefixer({ grid: 'autoplace' })],
-      extract: path.resolve('dist/index.css'),
-      minimize: isProduction,
-      sourceMap: true,
-      include: includePattern
-    }),
-    svgr({ include: includePattern }),
     copy({
       targets: [{ src: 'src/style/*.svg', dest: 'dist' }]
     }),

@@ -179,20 +179,16 @@ class TemplateTool {
       // calculate fragment center
       const xy0 = new Vec2()
       const bond = molecule.bonds.get(ci.id)
-      if (!bond) return
-      const frid = molecule.atoms.get(bond.begin)?.fragment
-      if (!frid) return
-      const frIds = molecule.getFragmentIds(frid)
+      const frid = molecule.atoms.get(bond?.begin as number)?.fragment
+      const frIds = molecule.getFragmentIds(frid as number)
       let count = 0
 
-      let loop
-      if (bond.hb1) {
-        loop = molecule.halfBonds.get(bond.hb1)?.loop
-      }
+      let loop = molecule.halfBonds.get(bond?.hb1 as number)?.loop
 
-      if (loop < 0 && bond.hb2) loop = molecule.halfBonds.get(bond.hb2)?.loop
+      if (!!loop && loop < 0 && bond?.hb2)
+        loop = molecule.halfBonds.get(bond.hb2)?.loop
 
-      if (loop >= 0) {
+      if (!!loop && loop >= 0) {
         const loopHbs = molecule.loops.get(loop)?.hbs
         loopHbs?.forEach(hb => {
           const halfBondBegin = molecule.halfBonds.get(hb)?.begin

@@ -14,17 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const INDIGO_VERIFICATION = 'INDIGO_VERIFICATION'
-export const ANALYZING_FILE = 'ANALYZING_FILE'
+import clsx from 'clsx'
 
-export interface RequestState {
-  indigoVerification: boolean
-  isAnalyzingFile: boolean
+import styles from '../../../../../components/Dialog/Dialog.module.less'
+
+type Props = {
+  clickHandler: () => void
+  disabled: boolean
 }
 
-interface IndigoVerificationAction {
-  type: string
-  data: boolean
-}
-
-export type RequestActionTypes = IndigoVerificationAction
+export const OpenFileButton = ({ clickHandler, disabled }: Props) => (
+  <input
+    key="Open"
+    type="button"
+    className={clsx(styles.ok, styles.save)}
+    value="Open"
+    disabled={disabled}
+    onClick={clickHandler}
+  />
+)

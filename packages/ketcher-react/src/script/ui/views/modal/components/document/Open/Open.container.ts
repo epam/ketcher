@@ -32,7 +32,8 @@ type DispatchProps = {
 const mapStateToProps = (state): StateProps => ({
   server: state.server,
   errorHandler: state.editor.errorHandler,
-  isRecognizeDisabled: state.actionState.recognize?.disabled
+  isRecognizeDisabled: state.actionState.recognize?.disabled,
+  isAnalyzingFile: state.requestsStatuses.isAnalyzingFile
 })
 
 const mapDispatchToProps = (dispatch): DispatchProps => ({

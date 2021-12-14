@@ -25,11 +25,14 @@ import Recognize from '../../process/Recognize/Recognize'
 import { fileOpener } from '../../../../../utils/'
 import { DropButton } from './components/DropButton'
 import Icon from 'src/script/ui/component/view/icon'
+import { LoadingCircles } from './components/LoadingCircles'
+import { OpenFileButton } from './components/OpenFileButton'
 
 interface OpenProps {
   server: any
   errorHandler: (err: string) => void
   isRecognizeDisabled: boolean
+  isAnalyzingFile: boolean
 }
 
 type Props = OpenProps &
@@ -45,7 +48,8 @@ enum MODAL_STATES {
 const ICON_NAMES = {
   PASTE: 'capital-t',
   FILE: 'arrow-upward',
-  IMAGE: 'image-frame'
+  IMAGE: 'image-frame',
+  FILE_THUMBNAIL: 'file-thumbnail'
 }
 
 const structAcceptMimes = () => {
@@ -64,11 +68,18 @@ const structAcceptMimes = () => {
 }
 
 const Open: FC<Props> = (props) => {
-  const { server, onImageUpload, errorHandler, isRecognizeDisabled, ...rest } =
-    props
+  const {
+    server,
+    onImageUpload,
+    errorHandler,
+    isAnalyzingFile,
+    isRecognizeDisabled,
+    ...rest
+  } = props
 
   const [structStr, setStructStr] = useState<string>('')
   const [fragment, setFragment] = useState<boolean>(false)
+  const [fileName, setFileName] = useState<string>('')
   const [opener, setOpener] = useState<any>()
   const [currentState, setCurrentState] = useState<MODAL_STATES>(
     MODAL_STATES.idle
@@ -93,12 +104,40 @@ const Open: FC<Props> = (props) => {
       setStructStr(fileContent)
     }
     const onError = () => errorHandler('Error processing file')
+
+    setFileName(files[0].name)
     opener.chosenOpener(files[0]).then(onLoad, onError)
   }
 
   const onImageLoad = (files) => {
     onImageUpload(files[0])
     setCurrentState(MODAL_STATES.imageRec)
+  }
+
+  const openHandler = () => {
+    const { onOk } = rest
+    onOk(result())
+  }
+
+  if (isAnalyzingFile) {
+    return (
+      <Dialog
+        title="Open structure"
+        className={classes.open}
+        params={rest}
+        result={result}
+        buttons={[]}>
+        <div className={classes.fileLoadingWrapper}>
+          {!!fileName && (
+            <div className={classes.fileBox}>
+              <Icon name={ICON_NAMES.FILE_THUMBNAIL} />
+              <p>{fileName}</p>
+            </div>
+          )}
+          <LoadingCircles />
+        </div>
+      </Dialog>
+    )
   }
 
   if (currentState === MODAL_STATES.idle) {
@@ -159,13 +198,18 @@ const Open: FC<Props> = (props) => {
         className={classes.open}
         result={result}
         params={rest}
-        buttons={['OK']}>
-        {currentState === MODAL_STATES.textEditor ? (
-          <textarea
-            value={structStr}
-            onChange={(event) => setStructStr(event.target.value)}
+        buttons={[
+          <OpenFileButton
+            key="openButton"
+            disabled={!result()}
+            clickHandler={openHandler}
           />
-        ) : null}
+        ]}>
+        <textarea
+          value={structStr}
+          onChange={(event) => setStructStr(event.target.value)}
+        />
+
         <label>
           <input
             type="checkbox"

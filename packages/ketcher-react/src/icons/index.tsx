@@ -49,6 +49,7 @@ import DearomIcon from './files/dearom.svg'
 import DropdownIcon from './files/dropdown.svg'
 import EnhancedStereoIcon from './files/enhanced-stereo.svg'
 import EraseIcon from './files/erase.svg'
+import FileThumbnail from './files/file-thumbnail.svg'
 import GenericGroupsIcon from './files/generic-groups.svg'
 import HelpIcon from './files/help.svg'
 import ImageFrame from './files/image-frame.svg'
@@ -171,6 +172,7 @@ const icons = {
   dropdown: DropdownIcon,
   'enhanced-stereo': EnhancedStereoIcon,
   erase: EraseIcon,
+  'file-thumbnail': FileThumbnail,
   'functional-groups': FunctionalGroupsIcon,
   'generic-groups': GenericGroupsIcon,
   help: HelpIcon,

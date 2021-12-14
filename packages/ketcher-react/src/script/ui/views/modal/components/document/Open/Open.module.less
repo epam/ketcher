@@ -37,6 +37,32 @@
 
     .scrollbar();
   }
+
+  .fileLoadingWrapper {
+    min-width: 32em;
+    min-height: 23em;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .fileBox {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      svg {
+        margin-right: 13px;
+      }
+
+      p {
+        color: #585858;
+        font-size: 16px;
+        line-height: 19px;
+      }
+    }
+  }
 }
 
 .optionsContainer {

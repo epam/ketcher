@@ -16,6 +16,7 @@
 
 import {
   INDIGO_VERIFICATION,
+  ANALYZING_FILE,
   RequestActionTypes,
   RequestState
 } from './request.types'
@@ -27,8 +28,16 @@ export function indigoVerification(data: boolean): RequestActionTypes {
   }
 }
 
+export function setAnalyzingFile(data: boolean): RequestActionTypes {
+  return {
+    type: ANALYZING_FILE,
+    data
+  }
+}
+
 const initialState = {
-  indigoVerification: false
+  indigoVerification: false,
+  isAnalyzingFile: false
 }
 
 export default function (
@@ -42,6 +51,12 @@ export default function (
       return {
         ...state,
         indigoVerification: data
+      }
+    }
+    case ANALYZING_FILE: {
+      return {
+        ...state,
+        isAnalyzingFile: data
       }
     }
     default:

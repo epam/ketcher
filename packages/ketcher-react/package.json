@@ -52,7 +52,6 @@
     "file-saver": "^2.0.2",
     "font-face-observer": "^1.0.0",
     "hoist-non-react-statics": "^3.3.2",
-    "html-to-react": "^1.4.5",
     "intersection-observer": "^0.12.0",
     "jsonschema": "^1.4.0",
     "ketcher-core": "workspace:*",

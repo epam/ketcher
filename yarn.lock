@@ -7054,7 +7054,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domhandler@npm:^4.0, domhandler@npm:^4.0.0, domhandler@npm:^4.2.0, domhandler@npm:^4.2.2":
+"domhandler@npm:^4.0.0, domhandler@npm:^4.2.0":
   version: 4.2.2
   resolution: "domhandler@npm:4.2.2"
   dependencies:
@@ -7073,7 +7073,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domutils@npm:^2.5.2, domutils@npm:^2.6.0, domutils@npm:^2.8.0":
+"domutils@npm:^2.5.2, domutils@npm:^2.6.0":
   version: 2.8.0
   resolution: "domutils@npm:2.8.0"
   dependencies:
@@ -7311,13 +7311,6 @@ __metadata:
   version: 2.2.0
   resolution: "entities@npm:2.2.0"
   checksum: 19010dacaf0912c895ea262b4f6128574f9ccf8d4b3b65c7e8334ad0079b3706376360e28d8843ff50a78aabcb8f08f0a32dbfacdc77e47ed77ca08b713669b3
-  languageName: node
-  linkType: hard
-
-"entities@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "entities@npm:3.0.1"
-  checksum: aaf7f12033f0939be91f5161593f853f2da55866db55ccbf72f45430b8977e2b79dbd58c53d0fdd2d00bd7d313b75b0968d09f038df88e308aa97e39f9456572
   languageName: node
   linkType: hard
 
@@ -9463,20 +9456,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-to-react@npm:^1.4.5":
-  version: 1.4.7
-  resolution: "html-to-react@npm:1.4.7"
-  dependencies:
-    domhandler: ^4.0
-    htmlparser2: ^7.0
-    lodash.camelcase: ^4.3.0
-    ramda: ^0.27.1
-  peerDependencies:
-    react: ^16.0 || ^17.0
-  checksum: 1ff0aa8062844eeb5212dbad59573e7273aae676fc19a21a94b963e645d24d43858a6245de36ec28aabe50911e7ad42a2d653d3bbc3aef91645af3c906b238b7
-  languageName: node
-  linkType: hard
-
 "html-webpack-plugin@npm:4.5.0":
   version: 4.5.0
   resolution: "html-webpack-plugin@npm:4.5.0"
@@ -9519,18 +9498,6 @@ __metadata:
     domutils: ^2.5.2
     entities: ^2.0.0
   checksum: 81a7b3d9c3bb9acb568a02fc9b1b81ffbfa55eae7f1c41ae0bf840006d1dbf54cb3aa245b2553e2c94db674840a9f0fdad7027c9a9d01a062065314039058c4e
-  languageName: node
-  linkType: hard
-
-"htmlparser2@npm:^7.0":
-  version: 7.1.2
-  resolution: "htmlparser2@npm:7.1.2"
-  dependencies:
-    domelementtype: ^2.0.1
-    domhandler: ^4.2.2
-    domutils: ^2.8.0
-    entities: ^3.0.1
-  checksum: 80374dce981d94ff03155733cda289534878e2d05cb435cc9eddc64716e617abf720938d813f18a16878254c8eb5873c7d9e2964bf240202f0a5b71b8e06069f
   languageName: node
   linkType: hard
 
@@ -11695,7 +11662,6 @@ __metadata:
     file-saver: ^2.0.2
     font-face-observer: ^1.0.0
     hoist-non-react-statics: ^3.3.2
-    html-to-react: ^1.4.5
     intersection-observer: ^0.12.0
     jsonschema: ^1.4.0
     ketcher-core: "workspace:*"
@@ -15856,13 +15822,6 @@ __metadata:
   dependencies:
     performance-now: ^2.1.0
   checksum: 50ba284e481c8185dbcf45fc4618ba3aec580bb50c9121385d5698cb6012fe516d2015b1df6dd407a7b7c58d44be8086108236affbce1861edd6b44637c8cd52
-  languageName: node
-  linkType: hard
-
-"ramda@npm:^0.27.1":
-  version: 0.27.1
-  resolution: "ramda@npm:0.27.1"
-  checksum: 31a0c0ef739b2525d7615f84cbb5d3cb89ee0c795469b711f729ea1d8df0dccc3cd75d3717a1e9742d42315ce86435680b7c87743eb7618111c60c144a5b8059
   languageName: node
   linkType: hard
 

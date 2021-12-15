@@ -63,14 +63,15 @@ class ReRxnArrow extends ReObject {
     dist = calculateDistanceToLine(pos, point)
 
     if (height != null) {
-      const [startPoint, endPoint] = pos
-      const topLeftCorner = new Vec2(startPoint.x, startPoint.y - height)
-      const topRightCorner = new Vec2(endPoint.x, endPoint.y - height)
+      const [startPoint, endPoint, middlePoint] = this.getReferencePoints()
+      // const [startPoint, endPoint] = pos
+      // const topLeftCorner = new Vec2(startPoint.x, startPoint.y - height)
+      // const topRightCorner = new Vec2(endPoint.x, endPoint.y - height)
       dist = Math.min(
         dist,
-        calculateDistanceToLine([startPoint, topLeftCorner], point),
-        calculateDistanceToLine([topLeftCorner, topRightCorner], point),
-        calculateDistanceToLine([topRightCorner, endPoint], point)
+        calculateDistanceToLine([startPoint, middlePoint], point),
+        calculateDistanceToLine([middlePoint, endPoint], point)
+        // calculateDistanceToLine([topRightCorner, endPoint], point)
       )
     }
 
@@ -128,7 +129,7 @@ class ReRxnArrow extends ReObject {
         refPoints.push(new Vec2(coordinates2?.x, coordinates2?.y))
       }
     }
-
+    // this.item.refPoints = refPoints
     return refPoints
   }
 

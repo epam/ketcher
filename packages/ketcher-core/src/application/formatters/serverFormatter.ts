@@ -24,14 +24,14 @@ import {
 } from 'domain/services'
 import { StructFormatter, SupportedFormat } from './structFormatter.types'
 
-import { MolSerializer } from 'domain/serializers'
+import { KetSerializer } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import { getPropertiesByFormat } from './formatProperties'
 
 export class ServerFormatter implements StructFormatter {
   constructor(
     private readonly structService: StructService,
-    private readonly molfileManager: MolSerializer,
+    private readonly ketSerializer: KetSerializer,
     private readonly format: SupportedFormat,
     private readonly options?: StructServiceOptions
   ) {}
@@ -45,7 +45,7 @@ export class ServerFormatter implements StructFormatter {
     const formatProperties = getPropertiesByFormat(this.format)
 
     try {
-      const stringifiedStruct = this.molfileManager.serialize(struct)
+      const stringifiedStruct = this.ketSerializer.serialize(struct)
       const convertResult = await this.structService.convert(
         {
           struct: stringifiedStruct,
@@ -89,7 +89,7 @@ export class ServerFormatter implements StructFormatter {
 
     let data: ConvertData | LayoutData = {
       struct: undefined as any,
-      output_format: getPropertiesByFormat('mol').mime
+      output_format: getPropertiesByFormat('ket').mime
     }
 
     const withCoords = getPropertiesByFormat(this.format).supportsCoords
@@ -103,7 +103,7 @@ export class ServerFormatter implements StructFormatter {
 
     try {
       const result = await promise(data, this.options)
-      const parsedStruct = this.molfileManager.deserialize(result.struct)
+      const parsedStruct = this.ketSerializer.deserialize(result.struct)
       if (!withCoords) {
         parsedStruct.rescale()
       }

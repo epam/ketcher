@@ -19,6 +19,7 @@ import { OperationType } from '../OperationType'
 import { Scale } from 'domain/helpers'
 import { Vec2 } from 'domain/entities'
 import { tfx } from 'utilities'
+import util from 'application/render/util'
 
 interface RxnArrowResizeData {
   id: number
@@ -58,9 +59,22 @@ export class RxnArrowResize extends Base {
       let length
       let middlePoint
 
+      // if (item.height) {
+      //   middlePoint = new Vec2(a.x + length / 2, a.y - item.height)
+      // }
+
       if (item.height != null) {
-        length = Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2)
-        middlePoint = new Vec2(a.x + length / 2, a.y - item.height)
+        length = Math.hypot(b.x - a.x, b.y - a.y)
+        const lengthHyp = Math.hypot(length / 2, item.height)
+        const coordinates1 = util.calcCoordinates(a, b, lengthHyp).pos1
+        const coordinates2 = util.calcCoordinates(a, b, lengthHyp).pos2
+        if (b.x < a.x) {
+          // refPoints.push(new Vec2(coordinates1?.x, coordinates1?.y))
+          middlePoint = new Vec2(coordinates1?.x, coordinates1?.y)
+        } else {
+          // refPoints.push(new Vec2(coordinates2?.x, coordinates2?.y))
+          middlePoint = new Vec2(coordinates2?.x, coordinates2?.y)
+        }
       }
 
       if (tfx(anchor.x) === tfx(a.x) && tfx(anchor.y) === tfx(a.y)) {
@@ -81,8 +95,13 @@ export class RxnArrowResize extends Base {
         tfx(anchor.x) === tfx(middlePoint?.x) &&
         tfx(anchor.y) === tfx(middlePoint?.y)
       ) {
-        item.height -= current.y - anchor.y
-        anchor.y = current.y
+        console.log(anchor, current, item.height, d)
+        item.height -= Math.hypot(current.y - anchor.y, current.x - anchor.x)
+        // item.height -= current.y - anchor.y
+        // anchor.x = current.x
+        // anchor.y = current.y
+        // console.log(anchor, current, item.height)
+        console.log(anchor, current, item.height, d)
       }
     } else {
       item.pos[1].add_(d)

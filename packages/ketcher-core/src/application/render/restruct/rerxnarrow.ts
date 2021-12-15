@@ -118,8 +118,15 @@ class ReRxnArrow extends ReObject {
     refPoints.push(new Vec2(a.x, a.y))
     refPoints.push(new Vec2(b.x, b.y))
     if (height != null) {
-      const { length } = this.getArrowParams(a.x, a.y, b.x, b.y)
-      refPoints.push(new Vec2(a.x + length / 2, a.y - height))
+      const length = Math.hypot(b.x - a.x, b.y - a.y)
+      const lengthHyp = Math.hypot(length / 2, height)
+      const coordinates1 = util.calcCoordinates(a, b, lengthHyp).pos1
+      const coordinates2 = util.calcCoordinates(a, b, lengthHyp).pos2
+      if (b.x < a.x) {
+        refPoints.push(new Vec2(coordinates1?.x, coordinates1?.y))
+      } else {
+        refPoints.push(new Vec2(coordinates2?.x, coordinates2?.y))
+      }
     }
 
     return refPoints
@@ -153,19 +160,14 @@ class ReRxnArrow extends ReObject {
     let path
     const height = this.item.height != null && this.item.height * options.scale
 
-    const pos = this.item.pos.map(p => {
+    const [a, b] = this.item.pos.map(p => {
       return Scale.obj2scaled(p, options) || new Vec2()
     })
 
-    const { length, angle } = this.getArrowParams(
-      pos[0].x,
-      pos[0].y,
-      pos[1].x,
-      pos[1].y
-    )
+    const { length, angle } = this.getArrowParams(a.x, a.y, b.x, b.y)
 
-    const startPoint = new Vec2(pos[0].x, pos[0].y)
-    const endPoint = new Vec2(pos[1].x, pos[1].y)
+    const startPoint = new Vec2(a.x, a.y)
+    const endPoint = new Vec2(b.x, b.y)
 
     switch (type) {
       case 'selection':
@@ -197,7 +199,7 @@ class ReRxnArrow extends ReObject {
   }
 
   getArrowParams(x1, y1, x2, y2): ArrowParams {
-    const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+    const length = Math.hypot(x2 - x1, y2 - y1)
     const angle = Raphael.angle(x1, y1, x2, y2) - 180
 
     return { length, angle }

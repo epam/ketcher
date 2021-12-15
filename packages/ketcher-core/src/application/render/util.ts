@@ -85,11 +85,46 @@ function shiftRayBox(p, d, bb) {
       (Math.abs(rc[id0]) + Math.abs(rc[id1]))
   )
 }
+function calcCoordinates(aPoint, bPoint, lengthHyp) {
+  const obj: {
+    pos1: null | { x: number; y: number }
+    pos2: null | { x: number; y: number }
+  } = { pos1: null, pos2: null }
+  // const oPos1 = {x: 0,  y: 0}
+  const oPos2 = { x: bPoint.x - aPoint.x, y: bPoint.y - aPoint.y }
+  const c =
+    (lengthHyp ** 2 - oPos2.x * oPos2.x - oPos2.y * oPos2.y - lengthHyp ** 2) /
+    -2
+  const a = oPos2.x * oPos2.x + oPos2.y * oPos2.y
+  if (oPos2.x !== 0) {
+    const b = -2 * oPos2.y * c
+    const e = c * c - lengthHyp * lengthHyp * oPos2.x * oPos2.x
+    const D = b * b - 4 * a * e
+    if (D > 0) {
+      obj.pos1 = { x: 0, y: 0 }
+      obj.pos2 = { x: 0, y: 0 }
+      obj.pos1.y = (-b + Math.sqrt(D)) / (2 * a)
+      obj.pos2.y = (-b - Math.sqrt(D)) / (2 * a)
+      obj.pos1.x = (c - obj.pos1.y * oPos2.y) / oPos2.x
+      obj.pos2.x = (c - obj.pos2.y * oPos2.y) / oPos2.x
+    }
+  }
+  if (obj.pos1 !== null) {
+    obj.pos1.x += aPoint.x
+    obj.pos1.y += aPoint.y
+  }
+  if (obj.pos2 !== null) {
+    obj.pos2.x += aPoint.x
+    obj.pos2.y += aPoint.y
+  }
+  return obj
+}
 
 const util = {
   tfx,
   relBox,
-  shiftRayBox
+  shiftRayBox,
+  calcCoordinates
 }
 
 export default util

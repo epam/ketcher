@@ -15,6 +15,7 @@ import replace from '@rollup/plugin-replace'
 import strip from '@rollup/plugin-strip'
 import svgr from '@svgr/rollup'
 import typescript from 'rollup-plugin-typescript2'
+import { license } from '../../license.ts'
 
 const mode = {
   PRODUCTION: 'production',
@@ -38,12 +39,14 @@ const config = {
     {
       file: pkg.main,
       exports: 'named',
-      format: 'cjs'
+      format: 'cjs',
+      banner: license
     },
     {
       file: pkg.module,
       exports: 'named',
-      format: 'es'
+      format: 'es',
+      banner: license
     }
   ],
   plugins: [

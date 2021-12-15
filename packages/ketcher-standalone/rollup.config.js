@@ -8,6 +8,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import strip from '@rollup/plugin-strip'
 import typescript from 'rollup-plugin-typescript2'
 import webWorkerLoader from 'rollup-plugin-web-worker-loader'
+import { license } from '../../license.ts'
 
 const mode = {
   PRODUCTION: 'production',
@@ -24,12 +25,14 @@ const config = {
     {
       file: pkg.main,
       exports: 'named',
-      format: 'cjs'
+      format: 'cjs',
+      banner: license
     },
     {
       file: pkg.module,
       exports: 'named',
-      format: 'es'
+      format: 'es',
+      banner: license
     }
   ],
   external: ['ketcher-core', /@babel\/runtime/],

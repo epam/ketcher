@@ -178,19 +178,23 @@ class TemplateTool {
     if (ci.map === 'bonds' && this.mode !== 'fg') {
       // calculate fragment center
       const xy0 = new Vec2()
-      const bond = molecule.bonds.get(ci.id)
-      const frid = molecule.atoms.get(bond?.begin as number)?.fragment
-      const frIds = molecule.getFragmentIds(frid as number)
+      const bond = molecule.bonds.get(ci.id)!
+      const frid = molecule.atoms.get(bond.begin)!.fragment
+      const frIds = molecule.getFragmentIds(frid)
       let count = 0
 
-      let loop = molecule.halfBonds.get(bond?.hb1 as number)?.loop
+      let loop
+      if (bond.hb1) {
+        loop = molecule.halfBonds.get(bond.hb1)!.loop
+      }
 
-      if (loop && loop < 0 && bond?.hb2)
-        loop = molecule.halfBonds.get(bond.hb2)?.loop
+      if (loop < 0 && bond.hb2) {
+        loop = molecule.halfBonds.get(bond.hb2)!.loop
+      }
 
-      if (loop && loop >= 0) {
-        const loopHbs = molecule.loops.get(loop)?.hbs
-        loopHbs?.forEach(hb => {
+      if (loop >= 0) {
+        const loopHbs = molecule.loops.get(loop)!.hbs
+        loopHbs.forEach(hb => {
           const halfBondBegin = molecule.halfBonds.get(hb)?.begin
           if (!halfBondBegin) return
 
@@ -384,11 +388,9 @@ class TemplateTool {
           extraBond = true
         } else if (degree === 1) {
           // on chain end
-          const atom = struct.atoms.get(ci.id)
-          const atomNeighbors = atom?.neighbors[0]
-          // @ts-ignore
-          const neiId = struct.halfBonds.get(atomNeighbors)?.end
-          // @ts-ignore
+          const atom = struct.atoms.get(ci.id)!
+          const atomNeighbors = atom.neighbors[0]
+          const neiId = struct.halfBonds.get(atomNeighbors)!.end
           const nei = struct.atoms.get(neiId)
 
           angle = event.ctrlKey

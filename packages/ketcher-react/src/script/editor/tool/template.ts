@@ -185,10 +185,10 @@ class TemplateTool {
 
       let loop = molecule.halfBonds.get(bond?.hb1 as number)?.loop
 
-      if (!!loop && loop < 0 && bond?.hb2)
+      if (loop && loop < 0 && bond?.hb2)
         loop = molecule.halfBonds.get(bond.hb2)?.loop
 
-      if (!!loop && loop >= 0) {
+      if (loop && loop >= 0) {
         const loopHbs = molecule.loops.get(loop)?.hbs
         loopHbs?.forEach(hb => {
           const halfBondBegin = molecule.halfBonds.get(hb)?.begin
@@ -378,7 +378,7 @@ class TemplateTool {
         let angle
         let extraBond
 
-        if (!!degree && degree > 1) {
+        if (degree && degree > 1) {
           // common case
           angle = null
           extraBond = true

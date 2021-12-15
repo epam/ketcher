@@ -118,6 +118,19 @@ class Table extends Component {
     )
   }
 
+  getButton = () => {
+    const result = this.result()
+    return [
+      <button
+        className={classes.addAtom}
+        disabled={!result}
+        onClick={() => this.props.onOk(result)}
+      >
+        Add
+      </button>
+    ]
+  }
+
   render() {
     const { type, value } = this.state
     const tabs = [
@@ -143,6 +156,7 @@ class Table extends Component {
         className={classes.elements_table}
         params={this.props}
         result={this.result}
+        buttons={this.getButton()}
       >
         <Tabs
           className={classes.tabs}

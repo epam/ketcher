@@ -21,7 +21,7 @@ import classes from './Open.module.less'
 import { formatProperties } from 'ketcher-core'
 import Recognize from '../../process/Recognize/Recognize'
 import { fileOpener } from '../../../../../utils/'
-import { OpenFileButton } from './components/OpenFileButton'
+import { DialogActionButton } from './components/DialogActionButton'
 import { ViewSwitcher } from './components/ViewSwitcher'
 
 interface OpenProps {
@@ -67,7 +67,6 @@ const Open: FC<Props> = (props) => {
   } = props
 
   const [structStr, setStructStr] = useState<string>('')
-  const [fragment, setFragment] = useState<boolean>(false)
   const [fileName, setFileName] = useState<string>('')
   const [opener, setOpener] = useState<any>()
   const [currentState, setCurrentState] = useState(MODAL_STATES.idle)
@@ -80,28 +79,10 @@ const Open: FC<Props> = (props) => {
     }
   }, [server])
 
-  const result = () => {
-    return structStr ? { structStr, fragment } : null
-  }
-
-  const getButtons = () => {
-    if (currentState === MODAL_STATES.textEditor && !isAnalyzingFile) {
-      return [
-        <OpenFileButton
-          key="openButton"
-          disabled={!result()}
-          clickHandler={openHandler}
-        />
-      ]
-    } else {
-      return []
-    }
-  }
-
   const onFileLoad = (files) => {
     const onLoad = (fileContent) => {
-      setCurrentState(MODAL_STATES.textEditor)
       setStructStr(fileContent)
+      setCurrentState(MODAL_STATES.textEditor)
     }
     const onError = () => errorHandler('Error processing file')
 
@@ -114,13 +95,44 @@ const Open: FC<Props> = (props) => {
     setCurrentState(MODAL_STATES.imageRec)
   }
 
+  // @TODO after Recognize is refactored this will not be necessary
+  // currently not destructuring onOk with other props so we can pass it with ...rest to Recognize below
+  const { onOk } = rest
+
+  const copyHandler = () => {
+    onOk({ structStr, fragment: true })
+  }
+
   const openHandler = () => {
-    const { onOk } = rest
-    onOk(result())
+    onOk({ structStr, fragment: false })
+  }
+
+  const getButtons = () => {
+    if (currentState === MODAL_STATES.textEditor && !isAnalyzingFile) {
+      return [
+        <DialogActionButton
+          key="openButton"
+          disabled={!structStr}
+          clickHandler={openHandler}
+          styles={classes.primaryButton}
+          label="Open as New Project"
+        />,
+        <DialogActionButton
+          key="copyButton"
+          disabled={!structStr}
+          clickHandler={copyHandler}
+          styles={classes.secondaryButton}
+          label="Add to Canvas"
+          title="Structure will be loaded as fragment and added to Clipboard"
+        />
+      ]
+    } else {
+      return []
+    }
   }
 
   // @TODO after refactoring of Recognize modal
-  // add this logic into ViewSwitcher component
+  // add Recognize rendering logic into ViewSwitcher component here
   if (currentState === MODAL_STATES.imageRec) {
     return <Recognize {...rest} />
   }
@@ -130,7 +142,7 @@ const Open: FC<Props> = (props) => {
       title="Open structure"
       className={classes.open}
       params={rest}
-      result={result}
+      result={() => null}
       buttons={getButtons()}
     >
       <ViewSwitcher
@@ -138,7 +150,7 @@ const Open: FC<Props> = (props) => {
         fileName={fileName}
         currentState={currentState}
         states={MODAL_STATES}
-        clipboardHandler={() => setCurrentState(MODAL_STATES.textEditor)}
+        selectClipboard={() => setCurrentState(MODAL_STATES.textEditor)}
         fileLoadHandler={onFileLoad}
         imageLoadHandler={onImageLoad}
         acceptedNonImageTypes={structAcceptMimes()}
@@ -146,8 +158,6 @@ const Open: FC<Props> = (props) => {
         isRecognizeDisabled={isRecognizeDisabled}
         structStr={structStr}
         inputHandler={setStructStr}
-        fragment={fragment}
-        fragmentHandler={setFragment}
       />
     </Dialog>
   )

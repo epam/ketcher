@@ -19,34 +19,19 @@ import ClipArea from '../../../../../../component/cliparea/cliparea'
 export type TextEditorProps = {
   structStr: string
   inputHandler: (str: string) => void
-  fragment: boolean
-  fragmentHandler: (check: boolean) => void
 }
 
-export const TextEditor = ({
-  structStr,
-  inputHandler,
-  fragment,
-  fragmentHandler
-}: TextEditorProps) => {
+export const TextEditor = ({ structStr, inputHandler }: TextEditorProps) => {
   return (
     <>
       <textarea
         value={structStr}
         onChange={(event) => inputHandler(event.target.value)}
       />
-      <label>
-        <input
-          type="checkbox"
-          checked={fragment}
-          onChange={(event) => fragmentHandler(event.target.checked)}
-        />
-        Load as a fragment and copy to the Clipboard
-      </label>
       <ClipArea
         focused={() => true}
         onCopy={() => ({ 'text/plain': structStr })}
-      />{' '}
+      />
     </>
   )
 }

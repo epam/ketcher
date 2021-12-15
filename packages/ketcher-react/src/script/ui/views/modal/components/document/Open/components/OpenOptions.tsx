@@ -28,7 +28,7 @@ const ICON_NAMES = {
 }
 
 export type OpenOptionsProps = {
-  clipboardHandler: () => void
+  selectClipboard: () => void
   errorHandler: (err: string) => void
   fileLoadHandler: (files: File[]) => void
   imageLoadHandler: (files: File[]) => void
@@ -37,7 +37,7 @@ export type OpenOptionsProps = {
 }
 
 export const OpenOptions: FC<OpenOptionsProps> = ({
-  clipboardHandler,
+  selectClipboard,
   acceptedNonImageTypes,
   fileLoadHandler,
   imageLoadHandler,
@@ -48,7 +48,7 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
     <div className={styles.optionsContainer}>
       <div className={styles.dropContainer}>
         <DropButton
-          clickHandler={clipboardHandler}
+          clickHandler={selectClipboard}
           label="Paste from Clipboard"
         />
         <div className={styles.dropIconWrapper}>

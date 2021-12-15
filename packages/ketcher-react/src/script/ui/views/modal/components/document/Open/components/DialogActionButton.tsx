@@ -14,21 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
-import clsx from 'clsx'
-
-import styles from '../../../../../components/Dialog/Dialog.module.less'
-
 type Props = {
   clickHandler: () => void
   disabled: boolean
+  label: string
+  styles: string
+  title?: string
 }
 
-export const OpenFileButton = ({ clickHandler, disabled }: Props) => (
+export const DialogActionButton = ({
+  clickHandler,
+  label,
+  title,
+  styles,
+  disabled
+}: Props) => (
   <input
     key="Open"
     type="button"
-    className={clsx(styles.ok, styles.save)}
-    value="Open"
+    className={styles}
+    value={label}
+    title={title || label}
     disabled={disabled}
     onClick={clickHandler}
   />

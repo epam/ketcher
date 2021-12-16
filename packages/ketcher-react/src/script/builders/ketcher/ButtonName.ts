@@ -54,7 +54,7 @@ export type ButtonName =
   | 'reaction-arrow-elliptical-arc-arrow-filled-triangle'
   | 'reaction-arrow-elliptical-arc-arrow-open-angle'
   | 'reaction-arrow-elliptical-arc-arrow-open-half-angle'
-  //mapping
+  // mapping
   | 'reaction-mapping-tools'
   | 'reaction-automap'
   | 'reaction-map'

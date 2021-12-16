@@ -189,23 +189,7 @@ class Editor implements KetcherEditor {
     // TODO: when all tools are refactored to classes, remove this check
     // and use new keyword for every tool
     let tool
-    const toolsAsClasses = [
-      'select',
-      'eraser',
-      'bond',
-      'chain',
-      'charge',
-      'rotate',
-      'atom',
-      'apoint',
-      'template',
-      'sgroup',
-      'rgroupfragment',
-      'rgroupatom',
-      'paste',
-      'attach'
-    ]
-    if (toolsAsClasses.includes(name)) {
+    if (name === 'select') {
       tool = new toolMap[name](this, opts)
     } else {
       tool = toolMap[name](this, opts)

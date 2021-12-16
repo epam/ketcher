@@ -28,22 +28,24 @@
   .button-size(large);
 
   & > svg {
-    fill: #666;
+    fill: @color-text-secondary;
     transition: 0.2s;
   }
 
   &.isActive {
-    background-color: #eee;
+    background-color: @color-gray;
     border-radius: 2px;
+
     & > svg {
-      fill: #000;
+      fill: @main-color;
     }
   }
 
   &:hover {
     background-image: none;
+
     & > svg {
-      fill: #000;
+      fill: @main-color;
     }
   }
 }

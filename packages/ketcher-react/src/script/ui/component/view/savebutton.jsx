@@ -17,7 +17,7 @@
 import { saveAs } from 'file-saver'
 import { useAppContext } from '../../../../hooks'
 
-const SaveButton = props => {
+const SaveButton = (props) => {
   const noop = () => null
   const {
     server,
@@ -27,11 +27,12 @@ const SaveButton = props => {
     type,
     mode = 'saveFile',
     onSave = noop,
-    onError = noop
+    onError = noop,
+    className
   } = props
   const { getKetcherInstance } = useAppContext()
 
-  const save = event => {
+  const save = (event) => {
     event.preventDefault()
     switch (mode) {
       case 'saveImage':
@@ -46,7 +47,7 @@ const SaveButton = props => {
   const saveFile = () => {
     if (data) {
       try {
-        fileSaver(server).then(saver => {
+        fileSaver(server).then((saver) => {
           saver(data, filename, type)
           onSave()
         })
@@ -60,18 +61,19 @@ const SaveButton = props => {
     const ketcherInstance = getKetcherInstance()
     ketcherInstance
       .generateImage(data, { outputFormat })
-      .then(blob => {
+      .then((blob) => {
         saveAs(blob, `${filename}.${outputFormat}`)
         onSave()
       })
-      .catch(error => {
+      .catch((error) => {
         onError(error)
       })
   }
 
   return (
     <button
-      onClick={event => {
+      className={className}
+      onClick={(event) => {
         save(event)
       }}
       {...props}
@@ -81,7 +83,7 @@ const SaveButton = props => {
   )
 }
 
-const fileSaver = server => {
+const fileSaver = (server) => {
   return new Promise((resolve, reject) => {
     if (global.Blob && saveAs) {
       resolve((data, fn, type) => {

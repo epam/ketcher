@@ -83,8 +83,8 @@ export class AddSimpleObject extends BaseOperation {
       simpleObjectId = this.#simpleObjectId
     }
 
-    //TODO: move to renderer
-    //restruct.simpleObjects.set(itemId, new ReSimpleObject(simpleObject))
+    // TODO: move to renderer
+    // restruct.simpleObjects.set(itemId, new ReSimpleObject(simpleObject))
 
     const inverseOperation = new DeleteSimpleObject(simpleObjectId)
 
@@ -93,7 +93,7 @@ export class AddSimpleObject extends BaseOperation {
       entityId: simpleObjectId,
       operationType: this.type
     }
-    //Base.invalidateItem(restruct, 'simpleObjects', simpleObjectId, 1)
+    // Base.invalidateItem(restruct, 'simpleObjects', simpleObjectId, 1)
   }
 }
 
@@ -111,7 +111,7 @@ export class DeleteSimpleObject extends BaseOperation {
       this.#simpleObjectId
     )!
 
-    //TODO: move to renderer
+    // TODO: move to renderer
     // restruct.markItemRemoved()
     // restruct.clearVisel(restruct.simpleObjects.get(this.data.id).visel)
     // restruct.simpleObjects.delete(this.data.id)
@@ -145,9 +145,9 @@ export class MoveSimpleObject extends BaseOperation {
 
   execute(struct: Struct): PerformOperationResult {
     const simpleObject = struct.simpleObjects.get(this.#simpleObjectId)!
-    simpleObject.pos.forEach(p => p.add_(this.#delta))
+    simpleObject.pos.forEach((p) => p.add_(this.#delta))
 
-    //TODO: move to  renderer
+    // TODO: move to  renderer
     // restruct.simpleObjects
     //   .get(id)
     //   .visel.translate(Scale.obj2scaled(d, restruct.render.options))
@@ -271,7 +271,7 @@ export class ResizeSimpleObject extends BaseOperation {
   }
 }
 
-//TODO: move to simple object tool
+// TODO: move to simple object tool
 // @ts-ignore
 function makeCircleFromEllipse(position0: Vec2, position1: Vec2): Vec2 {
   const diff = Vec2.diff(position1, position0)

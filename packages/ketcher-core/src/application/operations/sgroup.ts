@@ -154,7 +154,7 @@ export class AddSGroupAtom extends BaseOperation {
 
     SGroup.addAtom(sgroup, this.#atomId)
     atom.sgs.add(this.#sgroupId)
-    //BaseOperation.invalidateAtom(restruct, aid)
+    // BaseOperation.invalidateAtom(restruct, aid)
 
     const inverseOperation = new DeleteSGroupAtom(this.#sgroupId, this.#atomId)
 
@@ -186,7 +186,7 @@ export class DeleteSGroupAtom extends BaseOperation {
 
     SGroup.removeAtom(sgroup, this.#atomId)
     atom.sgs.delete(this.#sgroupId)
-    //BaseOperation.invalidateAtom(restruct, aid)
+    // BaseOperation.invalidateAtom(restruct, aid)
 
     const inverseOperation = new AddSGroupAtom(this.#sgroupId, this.#atomId)
 
@@ -215,7 +215,7 @@ export class SetSGroupAttr extends BaseOperation {
     const sgroup = struct.sgroups.get(this.#sgroupId)
 
     assert(sgroup != null, `S-group ${this.#sgroupId} not found.`)
-    //TODO: move to renderer
+    // TODO: move to renderer
     // const sgroupData = restruct.sgroupData.get(sgroupId)
     // if (sgroup.type === 'DAT' && sgroupData) {
     //   // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
@@ -261,7 +261,7 @@ export class MoveSGroupData extends BaseOperation {
     sgroup.pp?.add_(this.#delta)
 
     // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway
-    //BaseOperation.invalidateItem(restruct, 'sgroupData', id, 1)
+    // BaseOperation.invalidateItem(restruct, 'sgroupData', id, 1)
 
     const inverseOperation = new MoveSGroupData(
       this.#sgroupId,

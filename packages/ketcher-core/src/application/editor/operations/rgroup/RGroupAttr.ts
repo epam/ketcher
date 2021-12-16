@@ -38,6 +38,11 @@ export class RGroupAttr extends BaseOperation {
     const { rgid, attribute, value } = this.data
 
     const rgp = restruct.molecule.rgroups.get(rgid)!
+
+    if (!rgp) {
+      return
+    }
+
     if (!this.data2) {
       this.data2 = {
         rgid,

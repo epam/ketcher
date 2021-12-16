@@ -33,7 +33,7 @@ import { serverCall } from '../server'
 
 export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }))
-  const sleep = time => new Promise(resolve => setTimeout(resolve, time))
+  const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time))
 
   function resetToSelect(dispatch) {
     // eslint-disable-line no-shadow
@@ -49,10 +49,10 @@ export default function initEditor(dispatch, getState) {
   }
 
   return {
-    onInit: editor => {
+    onInit: (editor) => {
       dispatch({ type: 'INIT', editor })
     },
-    onChange: action => {
+    onChange: (action) => {
       if (action === undefined) sleep(0).then(() => dispatch(resetToSelect))
       // new tool in reducer
       else dispatch(resetToSelect)
@@ -60,7 +60,7 @@ export default function initEditor(dispatch, getState) {
     onSelectionChange: () => {
       updateAction()
     },
-    onElementEdit: selem => {
+    onElementEdit: (selem) => {
       const elem = selem.type === 'text' ? selem : fromElement(selem)
       let dlg = null
       if (elem.type === 'text') {
@@ -69,7 +69,7 @@ export default function initEditor(dispatch, getState) {
       } else if (Elements.get(elem.label)) {
         dlg = openDialog(dispatch, 'atomProps', elem)
       } else if (Object.keys(elem).length === 1 && 'ap' in elem) {
-        dlg = openDialog(dispatch, 'attachmentPoints', elem.ap).then(res => ({
+        dlg = openDialog(dispatch, 'attachmentPoints', elem.ap).then((res) => ({
           ap: res
         }))
       } else if (elem.type === 'list' || elem.type === 'not-list') {
@@ -88,7 +88,7 @@ export default function initEditor(dispatch, getState) {
             []
           )
         }
-        dlg = openDialog(dispatch, 'rgroup', params).then(res => ({
+        dlg = openDialog(dispatch, 'rgroup', params).then((res) => ({
           values: res.values,
           type: 'rlabel'
         }))
@@ -105,15 +105,15 @@ export default function initEditor(dispatch, getState) {
         return openDialog(dispatch, 'enhancedStereo', {
           init
         }).then(
-          res => toStereoLabel(res),
+          (res) => toStereoLabel(res),
           () => null
         )
       }),
 
-    onQuickEdit: atom => openDialog(dispatch, 'labelEdit', atom),
-    onBondEdit: bond =>
+    onQuickEdit: (atom) => openDialog(dispatch, 'labelEdit', atom),
+    onBondEdit: (bond) =>
       openDialog(dispatch, 'bondProps', fromBond(bond)).then(toBond),
-    onRgroupEdit: rgroup => {
+    onRgroupEdit: (rgroup) => {
       const struct = getState().editor.struct()
 
       if (Object.keys(rgroup).length > 2) {
@@ -141,17 +141,17 @@ export default function initEditor(dispatch, getState) {
         values: [rgroup.label],
         disabledIds
       }
-      return openDialog(dispatch, 'rgroup', params).then(res => ({
+      return openDialog(dispatch, 'rgroup', params).then((res) => ({
         label: res.values[0]
       }))
     },
-    onSgroupEdit: sgroup =>
+    onSgroupEdit: (sgroup) =>
       sleep(0) // huck to open dialog after dispatch sgroup tool action
         .then(() => openDialog(dispatch, 'sgroup', fromSgroup(sgroup)))
         .then(toSgroup),
-    onRemoveFG: result =>
+    onRemoveFG: (result) =>
       sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
-    onSdataEdit: sgroup =>
+    onSdataEdit: (sgroup) =>
       sleep(0)
         .then(() =>
           openDialog(
@@ -161,12 +161,12 @@ export default function initEditor(dispatch, getState) {
           )
         )
         .then(toSgroup),
-    onMessage: msg => {
+    onMessage: (msg) => {
       if (msg.error) {
-        //TODO: add error handler call
+        // TODO: add error handler call
       }
     },
-    onAromatizeStruct: struct => {
+    onAromatizeStruct: (struct) => {
       const state = getState()
       const serverOpts = state.options.getServerSettings()
       return serverCall(
@@ -175,9 +175,9 @@ export default function initEditor(dispatch, getState) {
         'aromatize',
         serverOpts,
         struct
-      ).catch(e => state.editor.errorHandler(e))
+      ).catch((e) => state.editor.errorHandler(e))
     },
-    onDearomatizeStruct: struct => {
+    onDearomatizeStruct: (struct) => {
       const state = getState()
       const serverOpts = state.options.getServerSettings()
       return serverCall(
@@ -186,7 +186,7 @@ export default function initEditor(dispatch, getState) {
         'dearomatize',
         serverOpts,
         struct
-      ).catch(e => state.editor.errorHandler(e))
+      ).catch((e) => state.editor.errorHandler(e))
     },
     onMouseDown: () => {
       updateAction()

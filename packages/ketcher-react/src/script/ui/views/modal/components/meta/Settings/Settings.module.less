@@ -22,46 +22,111 @@
 @general-inputs-number: 7;
 @stereochemistry-inputs-number: 11;
 
+@field-height: 24px;
+
 .settings {
-  width: 38em;
+  width: 522px;
+  height: 357px;
+  background-color: @color-background-canvas;
+
+  > header {
+    padding: 10px 16px;
+  }
+
+  > header + div {
+    height: 270px;
+  }
+
+  > * {
+    margin: 0;
+  }
 
   .warning {
     margin: 0.3em;
   }
+
+  footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 10px 16px;
+  }
 }
 
-.accordion {
-  margin: 0.3em;
+.button {
+  background-color: transparent;
+  border: none;
+}
 
-  label {
-    display: block;
-    text-align: right;
-    line-height: @input-height;
-    height: @input-height;
-    select,
-    input {
-      width: 50%;
+.buttonOpen {
+  > input {
+    display: none;
+  }
+}
+
+.sidebar {
+  fieldset {
+    border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 2px 28px 0;
+  }
+
+  ul {
+    > li {
+      padding: 10px 16px;
     }
   }
 
-  fieldset {
-    border-radius: 0 0 6px 6px;
-    height: @input-height * @fieldset-inputs-number;
+  label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    align-items: center;
+    line-height: 20px;
+    margin-bottom: 16px;
+    color: @color-text-primary;
+    height: @field-height;
+
+    > select,
+    > input,
+    > div {
+      width: 127px;
+    }
+
+    > span {
+      flex-basis: 50%;
+    }
+
+    select,
+    input {
+      border-radius: 2px !important;
+      color: @color-text-primary;
+      height: inherit !important;
+      margin: 0 !important;
+      line-height: 12px !important;
+      padding: 2px 8px !important;
+    }
+
+    select {
+      margin-left: 2px !important;
+    }
   }
 
   .server {
-    height: @input-height * @server-inputs-number;
-  }
-
-  .viewer {
-    height: @input-height * @viewer-inputs-number;
-  }
-
-  .general {
-    height: @input-height * @general-inputs-number;
+    label {
+      > span {
+        flex-basis: 70%;
+      }
+    }
   }
 
   .stereochemistry {
-    height: @input-height * @stereochemistry-inputs-number;
+    label {
+      > span {
+        flex-basis: 55%;
+      }
+    }
   }
 }

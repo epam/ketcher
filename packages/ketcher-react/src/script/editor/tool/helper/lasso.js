@@ -64,7 +64,7 @@ LassoHelper.prototype.update = function () {
 
   if (this.points && this.points.length > 1) {
     const rnd = this.editor.render
-    const dp = this.points.map(p =>
+    const dp = this.points.map((p) =>
       Scale.obj2scaled(p, rnd.options).add(rnd.options.offset)
     )
     this.selection =

@@ -44,7 +44,7 @@ const RgroupLogic = (props: Props) => {
     >
       <Form
         schema={rgroupSchema}
-        customValid={{ range: r => rangeConv(r) }}
+        customValid={{ range: (r) => rangeConv(r) }}
         init={rest}
         {...formState}
       >
@@ -66,7 +66,7 @@ function rangeConv(range) {
 
   return res
     .split(',')
-    .every(s => s.match(/^[>,<=]?[0-9]+$/g) || s.match(/^[0-9]+-[0-9]+$/g))
+    .every((s) => s.match(/^[>,<=]?[0-9]+$/g) || s.match(/^[0-9]+-[0-9]+$/g))
 }
 
 export type { RgroupLogicProps }

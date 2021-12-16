@@ -22,28 +22,37 @@ import { ServerFormatter } from './serverFormatter'
 import { Struct } from 'domain/entities'
 
 export class SmilesFormatter implements StructFormatter {
+  #smiSerializer: SmiSerializer
+  #structService: StructService
+  #molSerializer: MolSerializer
+  #format: SupportedFormat
+  #options?: StructServiceOptions
+
   constructor(
-    private readonly smiSerializer: SmiSerializer,
-
-    // only for ServerFormatter
-
-    private readonly structService: StructService,
-    private readonly molfileManager: MolSerializer,
-    private readonly format: SupportedFormat,
-    private readonly options?: StructServiceOptions
-  ) {}
+    smiSerializer: SmiSerializer,
+    structService: StructService,
+    molSerializer: MolSerializer,
+    format: SupportedFormat,
+    options?: StructServiceOptions
+  ) {
+    this.#smiSerializer = smiSerializer
+    this.#molSerializer = molSerializer
+    this.#structService = structService
+    this.#format = format
+    this.#options = options
+  }
 
   async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    const stringifiedMolfile = this.smiSerializer.serialize(struct)
+    const stringifiedMolfile = this.#smiSerializer.serialize(struct)
     return stringifiedMolfile
   }
 
   getStructureFromStringAsync(stringifiedStruct: string): Promise<Struct> {
     const serverFormatter = new ServerFormatter(
-      this.structService,
-      this.molfileManager,
-      this.format,
-      this.options
+      this.#structService,
+      this.#molSerializer,
+      this.#format,
+      this.#options
     )
 
     return serverFormatter.getStructureFromStringAsync(stringifiedStruct)

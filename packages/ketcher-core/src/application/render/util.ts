@@ -50,12 +50,12 @@ function shiftRayBox(p, d, bb) {
     new Vec2(bb.p0.x, bb.p1.y)
   ]
 
-  const r = b.map(v => v.sub(p)) // b relative to p
+  const r = b.map((v) => v.sub(p)) // b relative to p
 
   d = d.normalized()
 
-  const rc = r.map(v => Vec2.cross(v, d)) // cross prods
-  const rd = r.map(v => Vec2.dot(v, d)) // dot prods
+  const rc = r.map((v) => Vec2.cross(v, d)) // cross prods
+  const rd = r.map((v) => Vec2.dot(v, d)) // dot prods
 
   // find foremost points on the right and on the left of the ray
   let pid = -1
@@ -69,16 +69,17 @@ function shiftRayBox(p, d, bb) {
     }
   }
 
-  if (nid < 0 || pid < 0)
+  if (nid < 0 || pid < 0) {
     // no intersection, no shift
     return 0
+  }
 
   // check the order
   const id0 = rd[pid] > rd[nid] ? nid : pid
   const id1 = rd[pid] > rd[nid] ? pid : nid
 
   // simple proportion to calculate the shift
-  /* eslint-disable no-mixed-operators*/
+  /* eslint-disable no-mixed-operators */
   return (
     rd[id0] +
     (Math.abs(rc[id0]) * (rd[id1] - rd[id0])) /

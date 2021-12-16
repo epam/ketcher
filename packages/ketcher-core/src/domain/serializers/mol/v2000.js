@@ -36,8 +36,11 @@ const loadRGroupFragments = true // TODO: set to load the fragments
 
 function parseAtomLine(atomLine) {
   /* reader */
-  var atomSplit = utils.partitionLine(atomLine, utils.fmtInfo.atomLinePartition)
-  var params = {
+  const atomSplit = utils.partitionLine(
+    atomLine,
+    utils.fmtInfo.atomLinePartition
+  )
+  const params = {
     // generic
     pp: new Vec2(
       parseFloat(atomSplit[0]),
@@ -68,9 +71,12 @@ function parseAtomLine(atomLine) {
 
 function parseBondLine(bondLine) {
   /* reader */
-  var bondSplit = utils.partitionLine(bondLine, utils.fmtInfo.bondLinePartition)
+  const bondSplit = utils.partitionLine(
+    bondLine,
+    utils.fmtInfo.bondLinePartition
+  )
 
-  var params = {
+  const params = {
     begin: utils.parseDecimalInt(bondSplit[0]) - 1,
     end: utils.parseDecimalInt(bondSplit[1]) - 1,
     type: utils.fmtInfo.bondTypeMap[utils.parseDecimalInt(bondSplit[2])],
@@ -86,22 +92,23 @@ function parseBondLine(bondLine) {
 
 function parseAtomListLine(/* string */ atomListLine) {
   /* reader */
-  var split = utils.partitionLine(
+  const split = utils.partitionLine(
     atomListLine,
     utils.fmtInfo.atomListHeaderPartition
   )
 
-  var number = utils.parseDecimalInt(split[0]) - 1
-  var notList = split[2].trim() === 'T'
-  var count = utils.parseDecimalInt(split[4].trim())
+  const number = utils.parseDecimalInt(split[0]) - 1
+  const notList = split[2].trim() === 'T'
+  const count = utils.parseDecimalInt(split[4].trim())
 
-  var ids = atomListLine.slice(utils.fmtInfo.atomListHeaderLength)
-  var list = []
-  var itemLength = utils.fmtInfo.atomListHeaderItemLength
-  for (var i = 0; i < count; ++i)
+  const ids = atomListLine.slice(utils.fmtInfo.atomListHeaderLength)
+  const list = []
+  const itemLength = utils.fmtInfo.atomListHeaderItemLength
+  for (let i = 0; i < count; ++i) {
     list[i] = utils.parseDecimalInt(
       ids.slice(i * itemLength, (i + 1) * itemLength - 1)
     )
+  }
 
   return {
     aid: number,
@@ -127,13 +134,13 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
   const props = new Pool()
 
   while (shift < end) {
-    var line = ctabLines[shift]
+    const line = ctabLines[shift]
     if (line.charAt(0) === 'A') {
-      var propValue = ctabLines[++shift]
-      //TODO: Atom entity only have pseudo getter. Check during refactoring
-      //this type of pseudo labeling is not used in current BIOVIA products. See ctab documentation 2020
+      let propValue = ctabLines[++shift]
+      // TODO: Atom entity only have pseudo getter. Check during refactoring
+      // this type of pseudo labeling is not used in current BIOVIA products. See ctab documentation 2020
       // https://discover.3ds.com/sites/default/files/2020-08/biovia_ctfileformats_2020.pdf (page 47)
-      var isPseudo = /'.+'/.test(propValue)
+      const isPseudo = /'.+'/.test(propValue)
       if (isPseudo && !props.get('pseudo')) props.set('pseudo', new Pool())
       if (!isPseudo && !props.get('alias')) props.set('alias', new Pool())
       if (isPseudo) propValue = propValue.replace(/'/g, '')
@@ -141,36 +148,42 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
         .get(isPseudo ? 'pseudo' : 'alias')
         .set(utils.parseDecimalInt(line.slice(3, 6)) - 1, propValue)
     } else if (line.charAt(0) === 'M') {
-      var type = line.slice(3, 6)
-      var propertyData = line.slice(6)
+      const type = line.slice(3, 6)
+      let propertyData = line.slice(6)
       if (type === 'END') {
         break
       } else if (type === 'CHG') {
-        if (!props.get('charge'))
+        if (!props.get('charge')) {
           props.set('charge', sGroup.readKeyValuePairs(propertyData))
+        }
       } else if (type === 'RAD') {
-        if (!props.get('radical'))
+        if (!props.get('radical')) {
           props.set('radical', sGroup.readKeyValuePairs(propertyData))
+        }
       } else if (type === 'ISO') {
-        if (!props.get('isotope'))
+        if (!props.get('isotope')) {
           props.set('isotope', sGroup.readKeyValuePairs(propertyData))
+        }
       } else if (type === 'RBC') {
-        if (!props.get('ringBondCount'))
+        if (!props.get('ringBondCount')) {
           props.set('ringBondCount', sGroup.readKeyValuePairs(propertyData))
+        }
       } else if (type === 'SUB') {
-        if (!props.get('substitutionCount'))
+        if (!props.get('substitutionCount')) {
           props.set('substitutionCount', sGroup.readKeyValuePairs(propertyData))
+        }
       } else if (type === 'UNS') {
-        if (!props.get('unsaturatedAtom'))
+        if (!props.get('unsaturatedAtom')) {
           props.set('unsaturatedAtom', sGroup.readKeyValuePairs(propertyData))
+        }
         // else if (type == "LIN") // link atom
       } else if (type === 'RGP') {
         // rgroup atom
         if (!props.get('rglabel')) props.set('rglabel', new Pool())
-        var rglabels = props.get('rglabel')
-        var a2rs = sGroup.readKeyMultiValuePairs(propertyData)
-        for (var a2ri = 0; a2ri < a2rs.length; a2ri++) {
-          var a2r = a2rs[a2ri]
+        const rglabels = props.get('rglabel')
+        const a2rs = sGroup.readKeyMultiValuePairs(propertyData)
+        for (let a2ri = 0; a2ri < a2rs.length; a2ri++) {
+          const a2r = a2rs[a2ri]
           rglabels.set(
             a2r[0],
             (rglabels.get(a2r[0]) || 0) | (1 << (a2r[1] - 1))
@@ -179,18 +192,19 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
       } else if (type === 'LOG') {
         // rgroup atom
         propertyData = propertyData.slice(4)
-        var rgid = utils.parseDecimalInt(propertyData.slice(0, 3).trim())
-        var iii = utils.parseDecimalInt(propertyData.slice(4, 7).trim())
-        var hhh = utils.parseDecimalInt(propertyData.slice(8, 11).trim())
-        var ooo = propertyData.slice(12).trim()
-        var logic = {}
+        const rgid = utils.parseDecimalInt(propertyData.slice(0, 3).trim())
+        const iii = utils.parseDecimalInt(propertyData.slice(4, 7).trim())
+        const hhh = utils.parseDecimalInt(propertyData.slice(8, 11).trim())
+        const ooo = propertyData.slice(12).trim()
+        const logic = {}
         if (iii > 0) logic.ifthen = iii
         logic.resth = hhh === 1
         logic.range = ooo
         rLogic[rgid] = logic
       } else if (type === 'APO') {
-        if (!props.get('attpnt'))
+        if (!props.get('attpnt')) {
           props.set('attpnt', sGroup.readKeyValuePairs(propertyData))
+        }
       } else if (type === 'ALS') {
         // atom list
         const pool = parsePropertyLineAtomList(
@@ -223,7 +237,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
       } else if (type === 'SPA') {
         sGroup.applySGroupArrayProp(sGroups, 'patoms', propertyData, -1)
       } else if (type === 'SMT') {
-        var sid = utils.parseDecimalInt(propertyData.slice(0, 4)) - 1
+        const sid = utils.parseDecimalInt(propertyData.slice(0, 4)) - 1
         sGroups[sid].data.subscript = propertyData.slice(4).trim()
       } else if (type === 'SDT') {
         sGroup.applyDataSGroupDesc(sGroups, propertyData)
@@ -235,7 +249,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
         sGroup.applyDataSGroupDataLine(sGroups, propertyData, true)
       } else if (type === 'SDS') {
         const expandedSGroups = propertyData.slice(7).trim().split('   ')
-        expandedSGroups.forEach(eg => {
+        expandedSGroups.forEach((eg) => {
           const sGroupId = Number(eg) - 1
           sGroups[sGroupId].data.expanded = true
         })
@@ -279,19 +293,21 @@ function parseCTabV2000(ctabLines, countsSplit) {
   shift += atomListCount + stextLinesCount
 
   const atoms = atomLines.map(parseAtomLine)
-  atoms.forEach(atom => ctab.atoms.add(atom))
+  atoms.forEach((atom) => ctab.atoms.add(atom))
 
   const bonds = bondLines.map(parseBondLine)
-  bonds.forEach(bond => {
-    if (bond.stereo && isAbs)
+  bonds.forEach((bond) => {
+    if (bond.stereo && isAbs) {
       ctab.atoms.get(bond.begin).stereoLabel = StereoLabel.Abs
-    if (bond.stereo && isAnd)
+    }
+    if (bond.stereo && isAnd) {
       ctab.atoms.get(bond.begin).stereoLabel = `${StereoLabel.And}1`
+    }
     ctab.bonds.add(bond)
   })
 
   const atomLists = atomListLines.map(parseAtomListLine)
-  atomLists.forEach(pair => {
+  atomLists.forEach((pair) => {
     ctab.atoms.get(pair.aid).atomList = pair.atomList
     ctab.atoms.get(pair.aid).label = 'L#'
   })
@@ -327,8 +343,9 @@ function parseCTabV2000(ctabLines, countsSplit) {
   for (sid in sGroups) {
     // TODO: why do we need that?
     SGroup.filter(ctab, sGroups[sid], atomMap)
-    if (sGroups[sid].atoms.length === 0 && !sGroups[sid].allAtoms)
+    if (sGroups[sid].atoms.length === 0 && !sGroups[sid].allAtoms) {
       emptyGroups.push(+sid)
+    }
   }
   for (i = 0; i < emptyGroups.length; ++i) {
     ctab.sGroupForest.remove(emptyGroups[i])
@@ -345,17 +362,18 @@ function parseRg2000(/* string[] */ ctabLines) /* Struct */ {
   // eslint-disable-line max-statements
   ctabLines = ctabLines.slice(7)
   if (ctabLines[0].trim() !== '$CTAB') throw new Error('RGFile format invalid')
-  var i = 1
+  let i = 1
   while (ctabLines[i].charAt(0) !== '$') i++
-  if (ctabLines[i].trim() !== '$END CTAB')
+  if (ctabLines[i].trim() !== '$END CTAB') {
     throw new Error('RGFile format invalid')
-  var coreLines = ctabLines.slice(1, i)
+  }
+  const coreLines = ctabLines.slice(1, i)
   ctabLines = ctabLines.slice(i + 1)
-  var fragmentLines = {}
+  const fragmentLines = {}
   while (true) {
     // eslint-disable-line no-constant-condition
     if (ctabLines.length === 0) throw new Error('Unexpected end of file')
-    var line = ctabLines[0].trim()
+    let line = ctabLines[0].trim()
     if (line === '$END MOL') {
       ctabLines = ctabLines.slice(1)
       break
@@ -376,21 +394,23 @@ function parseRg2000(/* string[] */ ctabLines) /* Struct */ {
       if (line !== '$CTAB') throw new Error('RGFile format invalid')
       i = 1
       while (ctabLines[i].charAt(0) !== '$') i++
-      if (ctabLines[i].trim() !== '$END CTAB')
+      if (ctabLines[i].trim() !== '$END CTAB') {
         throw new Error('RGFile format invalid')
+      }
       fragmentLines[rgid].push(ctabLines.slice(1, i))
       ctabLines = ctabLines.slice(i + 1)
     }
   }
 
-  var core = parseCTab(coreLines)
-  var frag = {}
+  const core = parseCTab(coreLines)
+  const frag = {}
   if (loadRGroupFragments) {
-    for (var strId in fragmentLines) {
+    for (const strId in fragmentLines) {
       const id = parseInt(strId, 10)
       frag[id] = []
-      for (var j = 0; j < fragmentLines[id].length; ++j)
+      for (let j = 0; j < fragmentLines[id].length; ++j) {
         frag[id].push(parseCTab(fragmentLines[id][j]))
+      }
     }
   }
   return utils.rgMerge(core, frag)
@@ -403,21 +423,21 @@ function parseRxn2000(
   // eslint-disable-line max-statements
   /* reader */
   ctabLines = ctabLines.slice(4)
-  var countsSplit = utils.partitionLine(
+  const countsSplit = utils.partitionLine(
     ctabLines[0],
     utils.fmtInfo.rxnItemsPartition
   )
-  var nReactants = countsSplit[0] - 0,
-    nProducts = countsSplit[1] - 0,
-    nAgents = countsSplit[2] - 0
+  const nReactants = countsSplit[0] - 0
+  const nProducts = countsSplit[1] - 0
+  const nAgents = countsSplit[2] - 0
   ctabLines = ctabLines.slice(1) // consume counts line
-  var mols = []
+  const mols = []
   while (ctabLines.length > 0 && ctabLines[0].substr(0, 4) === '$MOL') {
     ctabLines = ctabLines.slice(1)
-    var n = 0
+    let n = 0
     while (n < ctabLines.length && ctabLines[n].substr(0, 4) !== '$MOL') n++
 
-    var lines = ctabLines.slice(0, n)
+    const lines = ctabLines.slice(0, n)
     var struct
     if (lines[0].search('\\$MDL') === 0) {
       struct = parseRg2000(lines)
@@ -439,7 +459,7 @@ function parseRxn2000(
 
 function parseCTab(/* string */ ctabLines) /* Struct */ {
   /* reader */
-  var countsSplit = utils.partitionLine(
+  const countsSplit = utils.partitionLine(
     ctabLines[0],
     utils.fmtInfo.countsLinePartition
   )
@@ -449,8 +469,8 @@ function parseCTab(/* string */ ctabLines) /* Struct */ {
 
 function labelsListToIds(labels) {
   /* reader */
-  var ids = []
-  for (var i = 0; i < labels.length; ++i) {
+  const ids = []
+  for (let i = 0; i < labels.length; ++i) {
     const element = Elements.get(labels[i].trim())
     if (element) {
       ids.push(element.number)
@@ -467,11 +487,11 @@ function labelsListToIds(labels) {
  */
 function parsePropertyLineAtomList(hdr, lst) {
   /* reader */
-  var aid = utils.parseDecimalInt(hdr[1]) - 1
-  var count = utils.parseDecimalInt(hdr[2])
-  var notList = hdr[4].trim() === 'T'
-  var ids = labelsListToIds(lst.slice(0, count))
-  var ret = new Pool()
+  const aid = utils.parseDecimalInt(hdr[1]) - 1
+  const count = utils.parseDecimalInt(hdr[2])
+  const notList = hdr[4].trim() === 'T'
+  const ids = labelsListToIds(lst.slice(0, count))
+  const ret = new Pool()
   ret.set(
     aid,
     new AtomList({

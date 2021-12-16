@@ -14,40 +14,91 @@
  * limitations under the License.
  ***************************************************************************/
 
-.colorPickerInput {
+@import '../../../../../style/variables';
+
+.colorPickerInput.colorPickerInput {
   position: relative;
   display: inline-block;
   border-radius: 4px;
   vertical-align: middle;
   line-height: 1.4;
-  padding: 0.35em 0.3em;
   margin: 2px;
-  border: 1px solid #ccc;
-  box-shadow: inset 0 1px 1px #00000013;
+  box-shadow: inset 0 1px 1px @form-hover-background;
   box-sizing: border-box;
-  width: 50%;
   text-align: left;
+  width: 16px;
+  height: 16px;
+  border: none;
+  outline-color: transparent;
+  padding: 0;
+
   &:hover {
-    box-shadow: inset 0 0 1px 1px #0000001f;
+    box-shadow: inset 0 0 1px 1px @form-hover-background;
   }
 }
 
 .colorPickerWrap {
   position: absolute;
   right: 0;
-  top: 100%;
+  top: 20px;
   z-index: 1;
+  background-color: @color-background-primary;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid @color-border-hover;
+  width: 70px;
+  height: 35px;
 }
 
-.colorPicker {
+.withPalette {
+  height: 140px;
+}
+
+.colorPicker.colorPicker {
   right: 0;
   top: 0;
+  height: 80%;
+
   input {
     margin-top: 2px;
     position: relative;
+    height: 12px !important;
+    width: 60%;
+    border: 1px solid transparent !important;
+    text-align: right;
+    float: right;
+    color: @color-text-primary;
+    font-size: 10px;
+    text-transform: uppercase;
+    padding: 1px 2px !important;
+    outline: transparent;
+
+    &:focus {
+      border: 1px solid @color-border-hover !important;
+    }
   }
+
   div {
     border-radius: 0;
+  }
+
+  // stylelint-disable-next-line selector-pseudo-class-no-unknown
+  :global(.react-colorful) {
+    width: 100%;
+    height: 80%;
+  }
+
+  // stylelint-disable-next-line selector-pseudo-class-no-unknown
+  :global(.react-colorful__hue) {
+    height: 15px;
+  }
+
+  // stylelint-disable-next-line selector-pseudo-class-no-unknown
+  :global(.react-colorful__pointer) {
+    border-radius: 50%;
+    border-width: 1px;
+    width: 10px;
+    height: 10px;
   }
 }
 
@@ -59,8 +110,10 @@
 }
 
 .colorPickerPreview {
-  width: 15px;
-  height: 15px;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  border: none;
 }
 
 .colorPickerOverlay {
@@ -69,4 +122,53 @@
   bottom: 0;
   right: 0;
   left: 0;
+  z-index: -10;
+}
+
+.colorContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2px;
+  align-items: baseline;
+
+  .hex {
+    color: @color-text-primary;
+    font-size: 10px;
+  }
+}
+
+.presetColors {
+  display: flex;
+  flex-wrap: wrap;
+  width: 78px;
+
+  button {
+    width: 16px;
+    height: 16px;
+    border: none;
+    border-radius: 2px;
+    margin-right: 2px;
+    margin-bottom: 2px;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+
+    &:nth-of-type(4) {
+      margin-right: 0;
+    }
+  }
+
+  .chooseColor {
+    border: 1px solid @color-button-primary-hover;
+    background-color: @color-background-primary;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMC41IiB5PSIwLjUiIHdpZHRoPSIxNSIgaGVpZ2h0PSIxNSIgcng9IjEuNSIgc3Ryb2tlPSIjMDA1NjYyIi8+CjxyZWN0IHg9IjcuMzQ1NyIgeT0iMy40Mjg0NyIgd2lkdGg9IjEuMzA2MTIiIGhlaWdodD0iOS4xNDI4NiIgZmlsbD0iIzAwNTY2MiIvPgo8cmVjdCB4PSIzLjQyNzczIiB5PSI4LjY1MzA4IiB3aWR0aD0iMS4zMDYxMiIgaGVpZ2h0PSI5LjE0Mjg2IiB0cmFuc2Zvcm09InJvdGF0ZSgtOTAgMy40Mjc3MyA4LjY1MzA4KSIgZmlsbD0iIzAwNTY2MiIvPgo8L3N2Zz4K');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .clicked {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iNC4zNDU3IiB5PSIwLjQyODU4OSIgd2lkdGg9IjEuMzA2MTIiIGhlaWdodD0iOS4xNDI4NiIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeD0iMC40Mjc3MzQiIHk9IjUuNjUzMDgiIHdpZHRoPSIxLjMwNjEyIiBoZWlnaHQ9IjkuMTQyODYiIHRyYW5zZm9ybT0icm90YXRlKC05MCAwLjQyNzczNCA1LjY1MzA4KSIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==');
+    background-color: @color-button-primary-hover;
+  }
 }

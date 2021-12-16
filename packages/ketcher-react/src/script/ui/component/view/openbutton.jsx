@@ -17,13 +17,14 @@
 import { Component } from 'react'
 
 import classes from './buttons.module.less'
+import clsx from 'clsx'
 
 class OpenButton extends Component {
   constructor(props) {
     super(props)
     this.state = {}
     if (props.server) {
-      fileOpener(props.server).then(opener => {
+      fileOpener(props.server).then((opener) => {
         this.setState({ opener })
       })
     }
@@ -42,19 +43,19 @@ class OpenButton extends Component {
   }
 
   render() {
-    const { children, type, server, ...props } = this.props
+    const { children, type, server, className, ...props } = this.props
 
     return (
       <button
         onClick={() => this.btn.click()}
-        className={classes.openButton}
+        className={clsx(classes.openButton, className)}
         {...props}
       >
         <input
-          onChange={ev => this.open(ev)}
+          onChange={(ev) => this.open(ev)}
           accept={type}
           type="file"
-          ref={el => {
+          ref={(el) => {
             this.btn = el
           }}
         />
@@ -72,7 +73,7 @@ function fileOpener(server) {
     } else if (global.ActiveXObject) {
       try {
         const fso = new ActiveXObject('Scripting.FileSystemObject') // eslint-disable-line no-undef
-        resolve(file => Promise.resolve(throughFileSystemObject(fso, file)))
+        resolve((file) => Promise.resolve(throughFileSystemObject(fso, file)))
       } catch (e) {
         reject(e)
       }
@@ -99,7 +100,7 @@ function throughFileReader(file) {
       resolve(content)
     }
 
-    rd.onerror = event => {
+    rd.onerror = (event) => {
       reject(event)
     }
 

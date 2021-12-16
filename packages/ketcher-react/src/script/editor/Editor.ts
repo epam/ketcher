@@ -79,11 +79,11 @@ function selectStereoFlagsIfNecessary(
       : (atomsOfFragments[atom.fragment] = [atomId])
   })
 
-  let stereoFlags: number[] = []
+  const stereoFlags: number[] = []
 
-  Object.keys(atomsOfFragments).forEach(fragId => {
-    let shouldSelSFlag: boolean = true
-    atomsOfFragments[fragId].forEach(atomId => {
+  Object.keys(atomsOfFragments).forEach((fragId) => {
+    let shouldSelSFlag = true
+    atomsOfFragments[fragId].forEach((atomId) => {
       if (!expAtoms.includes(atomId)) shouldSelSFlag = false
     })
     shouldSelSFlag && stereoFlags.push(Number(fragId))
@@ -122,6 +122,7 @@ class Editor implements KetcherEditor {
     dearomatizeStruct: PipelineSubscription
     enhancedStereoEdit: PipelineSubscription
   }
+
   lastEvent: any
 
   constructor(clientArea, options) {
@@ -186,7 +187,8 @@ class Editor implements KetcherEditor {
       this._tool.cancel()
     }
 
-    const tool = toolMap[name](this, opts)
+    const tool = new toolMap[name](this, opts)
+
     if (!tool) {
       return null
     }
@@ -267,13 +269,13 @@ class Editor implements KetcherEditor {
 
     if (ci === 'descriptors') {
       ReStruct = this.render.ctab
-      ci = { sgroupData: Array.from(ReStruct['sgroupData'].keys()) }
+      ci = { sgroupData: Array.from(ReStruct.sgroupData.keys()) }
     }
 
     if (ci) {
-      let res: Selection = {}
+      const res: Selection = {}
 
-      Object.keys(ci).forEach(key => {
+      Object.keys(ci).forEach((key) => {
         if (ci[key].length > 0)
           // TODO: deep merge
           res[key] = ci[key].slice()
@@ -325,8 +327,8 @@ class Editor implements KetcherEditor {
     let item: any = null
 
     if (ci.map === 'merge') {
-      Object.keys(ci.items).forEach(mp => {
-        ci.items[mp].forEach(dstId => {
+      Object.keys(ci.items).forEach((mp) => {
+        ci.items[mp].forEach((dstId) => {
           item = render.ctab[mp].get(dstId)!
 
           if (item) {
@@ -398,7 +400,7 @@ class Editor implements KetcherEditor {
 
     this.selection(null)
 
-    if (this._tool instanceof toolMap['paste']) {
+    if (this._tool instanceof toolMap.paste) {
       this.event.change.dispatch()
       return
     }
@@ -422,7 +424,7 @@ class Editor implements KetcherEditor {
     }
 
     this.selection(null)
-    if (this._tool instanceof toolMap['paste']) {
+    if (this._tool instanceof toolMap.paste) {
       this.event.change.dispatch()
       return
     }
@@ -435,13 +437,13 @@ class Editor implements KetcherEditor {
   }
 
   subscribe(eventName: any, handler: any) {
-    let subscriber = {
+    const subscriber = {
       handler: handler
     }
 
     switch (eventName) {
       case 'change':
-        const subscribeFuncWrapper = action =>
+        const subscribeFuncWrapper = (action) =>
           customOnChangeHandler(action, handler)
         subscriber.handler = subscribeFuncWrapper
         this.event[eventName].add(subscribeFuncWrapper)
@@ -455,7 +457,7 @@ class Editor implements KetcherEditor {
   }
 
   unsubscribe(eventName: any, subscriber: any) {
-    //Only for event type - subscription
+    // Only for event type - subscription
     this.event[eventName].remove(subscriber.handler)
   }
 
@@ -480,7 +482,7 @@ class Editor implements KetcherEditor {
 
     // "auto-select" the atoms for the bonds in selection
     if (res.bonds) {
-      res.bonds.forEach(bid => {
+      res.bonds.forEach((bid) => {
         const bond = struct.bonds.get(bid)!
         res.atoms = res.atoms || []
         if (res.atoms.indexOf(bond.begin) < 0) {
@@ -561,12 +563,12 @@ function domEventSetup(editor: Editor, clientArea) {
     'mousemove',
     'mouseup',
     'mouseleave'
-  ].forEach(eventName => {
+  ].forEach((eventName) => {
     editor.event[eventName] = new DOMSubscription()
     const subs = editor.event[eventName]
     clientArea.addEventListener(eventName, subs.dispatch.bind(subs))
 
-    subs.add(event => {
+    subs.add((event) => {
       if (eventName !== 'mouseup' && eventName !== 'mouseleave') {
         // to complete drag actions
         if (
@@ -589,7 +591,7 @@ function domEventSetup(editor: Editor, clientArea) {
   })
 }
 
-function recoordinate(editor: Editor, rp /* , vp*/) {
+function recoordinate(editor: Editor, rp /* , vp */) {
   // rp is a point in scaled coordinates, which will be positioned
   // vp is the point where the reference point should now be (in view coordinates)
   //    or the center if not set

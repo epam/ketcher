@@ -169,7 +169,7 @@ export class SetRGroupAttr extends BaseOperation {
 
     rgroup[this.#attribute] = this.#value
 
-    //BaseOperation.invalidateItem(restruct, 'rgroups', rgid)
+    // BaseOperation.invalidateItem(restruct, 'rgroups', rgid)
 
     const inverseOperation = new SetRGroupAttr(
       this.#rgroupId,
@@ -197,7 +197,7 @@ export class UpdateIfThen extends BaseOperation {
   }
 
   execute(struct: Struct): PerformOperationResult {
-    struct.rgroups.forEach(rg => {
+    struct.rgroups.forEach((rg) => {
       if (rg.ifthen === this.#previousRgroupIndex) {
         rg.ifthen = this.#newRgroupIndex
       }

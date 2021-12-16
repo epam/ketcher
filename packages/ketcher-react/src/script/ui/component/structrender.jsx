@@ -24,6 +24,9 @@ function renderStruct(el, struct, options = {}) {
       el.innerHTML = struct.prerender
     } else if (struct) {
       console.info('render!', el.clientWidth, el.clientWidth)
+      struct.initHalfBonds()
+      struct.initNeighbors()
+      struct.setImplicitHydrogen()
       const rnd = new Render(el, {
         autoScale: true,
         ...options
@@ -55,8 +58,8 @@ class StructRender extends Component {
         const molSerialzer = new MolSerializer()
         parsedStruct = molSerialzer.deserialize(struct)
       } catch (e) {
-        //TODO: add error handler call
-        //legacy message: Could not parse structure
+        // TODO: add error handler call
+        // legacy message: Could not parse structure
         parsedStruct = null
       }
     } else {

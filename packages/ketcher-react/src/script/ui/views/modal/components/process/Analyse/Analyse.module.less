@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import 'src/style/variables';
 
 .analyse {
   li {
@@ -44,8 +45,8 @@
       }
 
       span {
-        font-size: 12px;
-        line-height: 15px;
+        font-size: @font-size-regular;
+        line-height: @line-height-regular;
         padding-bottom: 3px;
         text-align: center;
       }
@@ -65,9 +66,11 @@
 
     &:last-child {
       padding-top: 14px;
+
       .wrapperInput {
         align-items: flex-start;
       }
+
       label {
         padding-top: 5px;
       }

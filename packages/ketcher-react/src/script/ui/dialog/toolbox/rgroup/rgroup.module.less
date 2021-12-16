@@ -27,6 +27,7 @@
     grid-row-gap: 10px;
     overflow: hidden;
   }
+
   form button {
     .btn();
 
@@ -36,16 +37,18 @@
     height: 100%;
     line-height: 1;
     padding: 0.15em;
-    background: @light-background-color;
-    color: @main-font-color;
+    background: @color-background-primary;
+    color: @color-text-primary;
+    font-weight: 400;
+
     &::first-letter {
-      font-weight: 600;
-      color: @main-dark-color;
+      font-weight: 700;
     }
+
     &:hover,
     &:active,
     &.selected {
-      background: @button-hover-color;
+      background: @color-dropdown-hover;
     }
   }
 }

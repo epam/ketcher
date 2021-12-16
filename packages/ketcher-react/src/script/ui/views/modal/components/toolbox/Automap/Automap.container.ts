@@ -28,7 +28,7 @@ const mapStateToProps = (state: any): StateProps => ({
 })
 
 const mapDispatchToProps = (dispatch: any, ownProps: any): DispatchProps => ({
-  onOk: result => {
+  onOk: (result) => {
     dispatch(automap(result))
     ownProps.onOk(result)
   }

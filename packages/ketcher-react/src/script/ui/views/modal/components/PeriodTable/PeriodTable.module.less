@@ -17,15 +17,29 @@
 @import '../../../../../../style/mixins.less';
 
 .elements_table {
+  background-color: @color-background-primary;
   width: 57em;
 
   .tabs {
     outline: none;
+
     .tabs_content {
       height: 31em;
     }
   }
+
   .period_table {
     position: relative;
+
+    & > * {
+      font-size: 14px;
+      line-height: normal;
+    }
+  }
+
+  .addAtom {
+    .button_main();
+
+    float: right;
   }
 }

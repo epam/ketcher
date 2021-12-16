@@ -4,20 +4,12 @@ exports[`should be rendered correctly should be rendered without crashing 1`] = 
 <DocumentFragment>
   <div
     class="colorPickerInput"
+    data-testid="color-picker-field"
   >
-    <div
-      class="colorPickerBtn"
-      data-testid="color-picker-btn"
-    >
-      #000000
-      <span
-        class="colorPickerPreview"
-        data-testid="color-picker-preview"
-        style="background-color: rgb(0, 0, 0);"
-      />
-    </div>
-    <div
-      class="colorPickerWrap"
+    <button
+      class="colorPickerPreview"
+      data-testid="color-picker-preview"
+      style="background-color: rgb(0, 0, 0);"
     />
   </div>
 </DocumentFragment>

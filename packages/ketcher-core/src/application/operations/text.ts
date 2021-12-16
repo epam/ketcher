@@ -45,9 +45,9 @@ export class AddText extends BaseOperation {
     }
 
     // TODO: move to renderer
-    //restruct.texts.set(itemId, new ReText(text))
+    // restruct.texts.set(itemId, new ReText(text))
 
-    //BaseOperation.invalidateItem(restruct, 'texts', itemId, 1)
+    // BaseOperation.invalidateItem(restruct, 'texts', itemId, 1)
 
     const inverseOperation = new DeleteText(textId)
 
@@ -146,6 +146,6 @@ export class UpdateText extends BaseOperation {
       operationType: this.type
     }
 
-    //BaseOperation.invalidateItem(restruct, 'texts', id, 1)
+    // BaseOperation.invalidateItem(restruct, 'texts', id, 1)
   }
 }

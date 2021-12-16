@@ -48,12 +48,13 @@ class Accordion extends Component<AccordionProps, AccordionState> {
       active: props.active || []
     }
   }
+
   onActive(index: number): void {
     const { multiple = true } = this.props
 
     if (!multiple) this.setState({ active: [index] })
     else
-      this.setState(prevState => ({ active: xor(prevState.active, [index]) }))
+      this.setState((prevState) => ({ active: xor(prevState.active, [index]) }))
   }
 
   groupIsActive(index: number): boolean {
@@ -79,6 +80,7 @@ class Accordion extends Component<AccordionProps, AccordionState> {
       </li>
     )
   }
+
   render() {
     const { children, ...props } = this.props
     const childrenWithProps = React.Children.map(

@@ -48,7 +48,7 @@
 
   .measureLog {
     position: absolute;
-    background-color: white;
+    background-color: @color-background-primary;
     border: @border-color 1px solid;
     border-radius: 0 5px;
     min-width: 8em;
@@ -57,6 +57,7 @@
     text-align: center;
     opacity: 0;
     transition: opacity 0.5s;
+
     &.visible {
       opacity: 1;
     }
@@ -70,8 +71,8 @@
   }
   // stylelint-disable-next-line selector-pseudo-class-no-unknown
   :global(.react-contextmenu) {
-    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.54);
-    background-color: white;
+    box-shadow: 0 2px 5px 0 rgba(@main-color, 0.54);
+    background-color: @color-background-primary;
     border-radius: 4px;
     padding: 4px;
   }
@@ -79,7 +80,7 @@
   :global(.react-contextmenu-item) {
     background: 0 0;
     border: 0;
-    color: #373a3c;
+    color: @color-text-secondary;
     cursor: pointer;
     font-weight: 400;
     line-height: 1.5;
@@ -88,20 +89,19 @@
     white-space: nowrap;
 
     &--selected {
-      color: #fff;
-      background-color: #20a0ff;
-      border-color: #20a0ff;
+      background-color: @color-gray;
       text-decoration: none;
     }
 
     &--divider {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+      border-bottom: 1px solid @border-color;
       cursor: inherit;
       margin-bottom: 3px;
       padding: 2px 0;
     }
   }
 }
+
 .intermediateCanvas {
   width: 100%;
   height: 100%;

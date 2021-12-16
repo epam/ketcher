@@ -36,7 +36,7 @@
   position: relative;
   font: @base-size FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
     Arial, sans-serif;
-  background-color: white;
+  background-color: @color-background-primary;
   color: @main-color;
   min-width: 640px;
   min-height: 400px;
@@ -54,17 +54,17 @@
     border-radius: 4px;
     display: inline-block;
     vertical-align: middle;
-    background: white;
+    background: @color-background-primary;
     line-height: 20 / 14;
     height: 2.4em;
     padding: 0.35em 0.15em 0.35em 0.3em;
     border: none;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     box-sizing: border-box;
+    color: inherit;
 
     &:active,
     &:focus {
-      outline: 1px solid @active-color;
+      outline: 1px solid @color-border-main;
     }
 
     &:hover,
@@ -76,7 +76,7 @@
     &[readonly],
     fieldset[disabled] & {
       cursor: not-allowed;
-      background: #efefef;
+      background: @gray-background-color;
       opacity: 0.6;
     }
   }
@@ -88,13 +88,14 @@
     border-radius: 4px;
     display: inline-block;
     vertical-align: middle;
-    background: white;
+    background: @color-background-primary;
     line-height: 20 / 14;
     height: 32px;
     padding: 0.35em 0.15em 0.35em 0.3em;
     margin: 2px;
     border: none;
     box-sizing: border-box;
+    color: inherit;
 
     &:active,
     &:focus {
@@ -110,8 +111,6 @@
     &[readonly],
     fieldset[disabled] & {
       cursor: not-allowed;
-      background: #efefef;
-      opacity: 0.6;
     }
   }
 

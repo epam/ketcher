@@ -27,7 +27,7 @@ type DispatchProps = Pick<BaseCallProps, 'onOk'>
 const mapStateToProps = (state): StateProps => ({ server: state.server })
 
 const mapDispatchToProps = (dispatch): DispatchProps => ({
-  onOk: result => {
+  onOk: (result) => {
     if (result.fragment) exec('copy')
     dispatch(
       load(result.structStr, {

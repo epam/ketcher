@@ -58,13 +58,13 @@ function ellipse(paper, pos, options) {
 }
 
 function polyline(paper, pos, options) {
-  let path = ['M', pos[0].x, pos[0].y]
+  const path = ['M', pos[0].x, pos[0].y]
   for (let i = 1; i < pos.length; i++) path.push('L', pos[i].x, pos[i].y)
   return paper.path(path)
 }
 
 function line(paper, pos, options) {
-  let path = ['M', pos[0].x, pos[0].y]
+  const path = ['M', pos[0].x, pos[0].y]
   path.push('L', pos[1].x, pos[1].y)
   return paper.path(path)
 }
@@ -808,7 +808,7 @@ function arrowUnbalancedEquilibriumFilleHalfTriangle(
 }
 
 function plus(paper, c, options) {
-  var s = options.scale / 5
+  const s = options.scale / 5
   return paper
     .path(
       'M{0},{4}L{0},{5}M{2},{1}L{3},{1}',
@@ -823,8 +823,8 @@ function plus(paper, c, options) {
 }
 
 function bondSingle(paper, hb1, hb2, options, color = '#000') {
-  var a = hb1.p,
-    b = hb2.p
+  const a = hb1.p
+  const b = hb2.p
   return paper.path(makeStroke(a, b)).attr(options.lineattr).attr({
     fill: color,
     stroke: color
@@ -895,15 +895,15 @@ function bondDoubleStereoBold(
 
 function bondSingleDown(paper, hb1, d, nlines, step, options, color = '#000') {
   // eslint-disable-line max-params
-  var a = hb1.p,
-    n = hb1.norm
-  var bsp = 0.7 * options.stereoBond
+  const a = hb1.p
+  const n = hb1.norm
+  const bsp = 0.7 * options.stereoBond
 
-  var path = '',
-    p,
-    q,
-    r
-  for (var i = 0; i < nlines; ++i) {
+  let path = ''
+  let p
+  let q
+  let r
+  for (let i = 0; i < nlines; ++i) {
     r = a.addScaled(d, step * i)
     p = r.addScaled(n, (bsp * (i + 0.5)) / (nlines - 0.5))
     q = r.addScaled(n, (-bsp * (i + 0.5)) / (nlines - 0.5))
@@ -925,13 +925,13 @@ function bondSingleEither(
   color = '#000'
 ) {
   // eslint-disable-line max-params
-  var a = hb1.p,
-    n = hb1.norm
-  var bsp = 0.7 * options.stereoBond
+  const a = hb1.p
+  const n = hb1.norm
+  const bsp = 0.7 * options.stereoBond
 
-  var path = 'M' + tfx(a.x) + ',' + tfx(a.y),
-    r = a
-  for (var i = 0; i < nlines; ++i) {
+  let path = 'M' + tfx(a.x) + ',' + tfx(a.y)
+  let r = a
+  for (let i = 0; i < nlines; ++i) {
     r = a
       .addScaled(d, step * (i + 0.5))
       .addScaled(n, ((i & 1 ? -1 : +1) * bsp * (i + 0.5)) / (nlines - 0.5))
@@ -964,15 +964,15 @@ function bondDouble(paper, a1, a2, b1, b2, cisTrans, options) {
 
 function bondSingleOrDouble(paper, hb1, hb2, nSect, options) {
   // eslint-disable-line max-statements, max-params
-  var a = hb1.p,
-    b = hb2.p,
-    n = hb1.norm
-  var bsp = options.bondSpace / 2
+  const a = hb1.p
+  const b = hb2.p
+  const n = hb1.norm
+  const bsp = options.bondSpace / 2
 
-  var path = '',
-    pi,
-    pp = a
-  for (var i = 1; i <= nSect; ++i) {
+  let path = ''
+  let pi
+  let pp = a
+  for (let i = 1; i <= nSect; ++i) {
     pi = Vec2.lc2(a, (nSect - i) / nSect, b, i / nSect)
     if (i & 1) {
       path += makeStroke(pp, pi)
@@ -986,13 +986,13 @@ function bondSingleOrDouble(paper, hb1, hb2, nSect, options) {
 }
 
 function bondTriple(paper, hb1, hb2, options, color = '#000') {
-  var a = hb1.p,
-    b = hb2.p,
-    n = hb1.norm
-  var a2 = a.addScaled(n, options.bondSpace)
-  var b2 = b.addScaled(n, options.bondSpace)
-  var a3 = a.addScaled(n, -options.bondSpace)
-  var b3 = b.addScaled(n, -options.bondSpace)
+  const a = hb1.p
+  const b = hb2.p
+  const n = hb1.norm
+  const a2 = a.addScaled(n, options.bondSpace)
+  const b2 = b.addScaled(n, options.bondSpace)
+  const a3 = a.addScaled(n, -options.bondSpace)
+  const b3 = b.addScaled(n, -options.bondSpace)
   return paper
     .path(makeStroke(a, b) + makeStroke(a2, b2) + makeStroke(a3, b3))
     .attr(options.lineattr)
@@ -1003,17 +1003,18 @@ function bondTriple(paper, hb1, hb2, options, color = '#000') {
 }
 
 function bondAromatic(paper, paths, bondShift, options) {
-  var l1 = paper.path(paths[0]).attr(options.lineattr)
-  var l2 = paper.path(paths[1]).attr(options.lineattr)
-  if (bondShift !== undefined && bondShift !== null)
-    (bondShift > 0 ? l1 : l2).attr({ 'stroke-dasharray': '- ' })
+  const l1 = paper.path(paths[0]).attr(options.lineattr)
+  const l2 = paper.path(paths[1]).attr(options.lineattr)
+  if (bondShift !== undefined && bondShift !== null) {
+    ;(bondShift > 0 ? l1 : l2).attr({ 'stroke-dasharray': '- ' })
+  }
 
   return paper.set([l1, l2])
 }
 
 function bondAny(paper, hb1, hb2, options) {
-  var a = hb1.p,
-    b = hb2.p
+  const a = hb1.p
+  const b = hb2.p
   return paper
     .path(makeStroke(a, b))
     .attr(options.lineattr)
@@ -1021,8 +1022,8 @@ function bondAny(paper, hb1, hb2, options) {
 }
 
 function bondHydrogen(paper, hb1, hb2, options) {
-  var a = hb1.p,
-    b = hb2.p
+  const a = hb1.p
+  const b = hb2.p
   return paper.path(makeStroke(a, b)).attr(options.lineattr).attr({
     'stroke-dasharray': '.',
     'stroke-linecap': 'square'
@@ -1030,8 +1031,8 @@ function bondHydrogen(paper, hb1, hb2, options) {
 }
 
 function bondDative(paper, hb1, hb2, options) {
-  var a = hb1.p,
-    b = hb2.p
+  const a = hb1.p
+  const b = hb2.p
   return paper
     .path(makeStroke(a, b))
     .attr(options.lineattr)
@@ -1039,27 +1040,28 @@ function bondDative(paper, hb1, hb2, options) {
 }
 
 function reactingCenter(paper, p, options) {
-  var pathdesc = ''
-  for (var i = 0; i < p.length / 2; ++i)
+  let pathdesc = ''
+  for (let i = 0; i < p.length / 2; ++i) {
     pathdesc += makeStroke(p[2 * i], p[2 * i + 1])
+  }
   return paper.path(pathdesc).attr(options.lineattr)
 }
 
 function topologyMark(paper, p, mark, options) {
-  var path = paper.text(p.x, p.y, mark).attr({
+  const path = paper.text(p.x, p.y, mark).attr({
     font: options.font,
     'font-size': options.fontszsub,
     fill: '#000'
   })
-  var rbb = util.relBox(path.getBBox())
+  const rbb = util.relBox(path.getBBox())
   recenterText(path, rbb)
   return path
 }
 
 function radicalCap(paper, p, options) {
-  var s = options.lineWidth * 0.9
-  var dw = s,
-    dh = 2 * s
+  const s = options.lineWidth * 0.9
+  const dw = s
+  const dh = 2 * s
   return paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}',
@@ -1089,10 +1091,10 @@ function bracket(paper, d, n, c, bracketWidth, bracketHeight, options) {
   // eslint-disable-line max-params
   bracketWidth = bracketWidth || 0.25
   bracketHeight = bracketHeight || 1.0
-  var a0 = c.addScaled(n, -0.5 * bracketHeight)
-  var a1 = c.addScaled(n, 0.5 * bracketHeight)
-  var b0 = a0.addScaled(d, -bracketWidth)
-  var b1 = a1.addScaled(d, -bracketWidth)
+  const a0 = c.addScaled(n, -0.5 * bracketHeight)
+  const a1 = c.addScaled(n, 0.5 * bracketHeight)
+  const b0 = a0.addScaled(d, -bracketWidth)
+  const b1 = a1.addScaled(d, -bracketWidth)
 
   return paper
     .path(
@@ -1121,10 +1123,11 @@ function selectionRectangle(paper, p0, p1, options) {
 }
 
 function selectionPolygon(paper, r, options) {
-  var v = r[r.length - 1]
-  var pstr = 'M' + tfx(v.x) + ',' + tfx(v.y)
-  for (var i = 0; i < r.length; ++i)
+  const v = r[r.length - 1]
+  let pstr = 'M' + tfx(v.x) + ',' + tfx(v.y)
+  for (let i = 0; i < r.length; ++i) {
     pstr += 'L' + tfx(r[i].x) + ',' + tfx(r[i].y)
+  }
   return paper.path(pstr).attr(options.lassoStyle)
 }
 
@@ -1137,22 +1140,23 @@ function makeStroke(a, b) {
 }
 
 function dashedPath(p0, p1, dash) {
-  var t0 = 0
-  var t1 = Vec2.dist(p0, p1)
-  var d = Vec2.diff(p1, p0).normalized()
-  var black = true
-  var path = ''
-  var i = 0
+  let t0 = 0
+  const t1 = Vec2.dist(p0, p1)
+  const d = Vec2.diff(p1, p0).normalized()
+  let black = true
+  let path = ''
+  let i = 0
 
   while (t0 < t1) {
-    var len = dash[i % dash.length]
-    var t2 = t0 + Math.min(len, t1 - t0)
-    if (black)
+    const len = dash[i % dash.length]
+    const t2 = t0 + Math.min(len, t1 - t0)
+    if (black) {
       path +=
         'M ' +
         p0.addScaled(d, t0).coordStr() +
         ' L ' +
         p0.addScaled(d, t2).coordStr()
+    }
     t0 += len
     black = !black
     i++
@@ -1162,8 +1166,8 @@ function dashedPath(p0, p1, dash) {
 
 function aromaticBondPaths(a2, a3, b2, b3, mask, dash) {
   // eslint-disable-line max-params
-  var l1 = dash && mask & 1 ? dashedPath(a2, b2, dash) : makeStroke(a2, b2)
-  var l2 = dash && mask & 2 ? dashedPath(a3, b3, dash) : makeStroke(a3, b3)
+  const l1 = dash && mask & 1 ? dashedPath(a2, b2, dash) : makeStroke(a2, b2)
+  const l2 = dash && mask & 2 ? dashedPath(a3, b3, dash) : makeStroke(a3, b3)
 
   return [l1, l2]
 }
@@ -1171,7 +1175,7 @@ function aromaticBondPaths(a2, a3, b2, b3, mask, dash) {
 function recenterText(path, rbb) {
   // TODO: find a better way
   if (Raphael.vml) {
-    var gap = rbb.height * 0.16
+    const gap = rbb.height * 0.16
     path.translateAbs(0, gap)
     rbb.y += gap
   }

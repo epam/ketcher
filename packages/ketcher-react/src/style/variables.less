@@ -13,21 +13,75 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
- 
-// new styles
-@button-hover-color: #ddd;
-@main-font-color: #585858;
-@main-dark-color: #343434;
-@light-background-color: #fff;
+
+//Fonts
+@font-size-header: 14px;
+@line-height-header: 17px;
+
+@font-size-regular: 12px;
+@line-height-regular: 14px;
+
+@Inter: Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
+Arial, sans-serif;
+
+//Modal margin
+@margin-top-bottom: 10px;
+@margin-left-right: 15px;
+
+@color-gray: #DDDDDD;
+
+//using for changing color of SVG for checkboxes and radiobuttons
+@color-input: escape(@color-button-primary);
+
+@color-background-primary: #FFFFFF;
+@color-background-canvas: #F2F2F2;
+@color-background-secondary: #F8FEFF;
+
+// Buttons
+@color-button-primary: #005662;
+@color-button-primary-hover: #00838F;
+@color-button-primary-clicked: #4FB3BF;
+@color-button-primary-disabled: rgba(0, 131, 143, 0.4);
+
+@color-button-secondary: #717171;
+@color-button-secondary-hover: #333333;
+@color-button-secondary-disabled: rgba(113, 113, 113, 0.4);
+@color-button-secondary-clicked: #AEAEAE;
+
+// Text
+@color-text-primary: #333333;
+@color-text-secondary: #585858;
+@color-text-light: #FFFFFF;
+
+// Icons
+@color-icon-active: #525252;
+
+// Tabs
+@color-tab-active:#005662;
+
+@color-divider: #AEAEAE;
+
+// Scroll
+@color-scroll: #717171;
+@color-scroll-inactive: #DDDDDD;
+
+// Borders
+@color-border-hover: #DDDDDD;
+@color-border-main: #005662;
+
+// Dropdown
+@color-dropdown-hover: #DDDDDD;
 
 // old styles 
 @static-path: '.';
+
+@gray-background-color: #F3F3F3;
 
 @main-color: #333;
 @active-color: #1a7090;
 @hover-color: #5e5e5e;
 @border-color: #ccc;
-@error-color: #ff5555;
+@error-color: #FF4A4A;
 
 @disabled-color: #baa;
 @form-hover-background: lighten(@border-color, 15%);
@@ -87,14 +141,14 @@
 
 // Periodic table coloring
 
-@atom-periodic-diatomic: #e7ff8f;
-@atom-periodic-noble-gas: #c0ffff;
-@atom-periodic-alkali-metal: #ff6666;
-@atom-periodic-alkaline-earth-metal: #ffdead;
-@atom-periodic-metalloid: #cccc99;
-@atom-periodic-polyatomic: #a1ffc3;
-@atom-periodic-post-transition-metal: #cccccc;
-@atom-periodic-transition-metal: #ffc0c0;
-@atom-periodic-lanthanide: #ffbfff;
-@atom-periodic-actinide: #ff99cc;
+@atom-periodic-alkali-metal: #FFA2A5;
+@atom-periodic-alkaline-earth-metal: #FFE0B5;
+@atom-periodic-transition-metal: #FFD2D4;
+@atom-periodic-post-transition-metal: #C5C5C5;
+@atom-periodic-metalloid: #E2E2BE;
+@atom-periodic-other-nonmetal: #E8FF94;
+@atom-periodic-halogen: #FFFEA6;
+@atom-periodic-noble-gas: #C2FFFF;
+@atom-periodic-lanthanide: #F4C8F4;
+@atom-periodic-actinide: #FD98CB;
 @atom-periodic-unknown-properties: #e8e8e8;

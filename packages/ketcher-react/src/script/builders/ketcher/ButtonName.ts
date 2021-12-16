@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 export type ButtonName =
-  //top
+  // top
   | 'layout'
   | 'clean'
   | 'arom'
@@ -28,12 +28,12 @@ export type ButtonName =
   | 'settings'
   | 'help'
   | 'about'
-  //left
+  // left
   // sgroup group
   | 'sgroup'
   | 'sgroup-data'
   // reaction
-  //plus
+  // plus
   | 'reaction-plus'
   // arrows
   | 'arrows'
@@ -71,5 +71,5 @@ export type ButtonName =
   | 'shape-line'
   // text group
   | 'text'
-  //right
+  // right
   | 'enhanced-stereo'

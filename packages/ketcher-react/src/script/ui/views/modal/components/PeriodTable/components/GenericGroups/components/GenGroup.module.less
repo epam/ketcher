@@ -25,6 +25,7 @@
 .atom > fieldset {
   display: inline-block;
   vertical-align: top;
+
   & + fieldset {
     margin-left: 0.4em;
   }
@@ -37,6 +38,10 @@
 
 .fieldset {
   text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.3em;
+  margin: 0 0.2em !important;
 
   .subgroup,
   .any,
@@ -48,9 +53,10 @@
   .hetero fieldset {
     position: relative;
     border: 0;
-    padding: 0 0 1em;
+    padding: 0 0 1.2em;
+
     legend {
-      font-size: 0.7em;
+      font-size: 0.8em;
       bottom: 0.1em;
       left: 0;
       right: 0;

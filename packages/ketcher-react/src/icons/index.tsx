@@ -115,6 +115,25 @@ import UndoIcon from './files/undo.svg'
 import ZoomInIcon from './files/zoom-in.svg'
 import ZoomOutIcon from './files/zoom-out.svg'
 import FunctionalGroupsIcon from './files/functional-groups.svg'
+import TextSpecialSymbolsIcon from './files/text-special-symbols.svg'
+import Save1Icon from './files/save-1.svg'
+import Open1Icon from './files/open-1.svg'
+import ResetIcon from './files/reset.svg'
+import CloseIcon from './files/close.svg'
+import GeneralIcon from './files/general.svg'
+import GeneralWhiteIcon from './files/general-white.svg'
+import StereoIcon from './files/stereo.svg'
+import StereoWhiteIcon from './files/stereo-white.svg'
+import AtomsIcon from './files/atoms.svg'
+import AtomsWhiteIcon from './files/atoms-white.svg'
+import BondsIcon from './files/bonds.svg'
+import BondsWhiteIcon from './files/bonds-white.svg'
+import ServerIcon from './files/server.svg'
+import ServerWhiteIcon from './files/server-white.svg'
+import ThreeDViewerIcon from './files/3d.svg'
+import ThreeDViewerWhiteIcon from './files/3d-white.svg'
+import DebuggingIcon from './files/debugging.svg'
+import DebuggingWhiteIcon from './files/debugging-white.svg'
 
 const icons = {
   about: AboutIcon,
@@ -229,7 +248,26 @@ const icons = {
   'shape-rectangle': ShapeRectangleIcon,
   'shape-polyline': ShapePolylineIcon,
   'shape-line': ShapeLineIcon,
-  'not-found': NotFoundIcon
+  'not-found': NotFoundIcon,
+  'save-1': Save1Icon,
+  'open-1': Open1Icon,
+  reset: ResetIcon,
+  close: CloseIcon,
+  general: GeneralIcon,
+  'general-white': GeneralWhiteIcon,
+  stereo: StereoIcon,
+  'stereo-white': StereoWhiteIcon,
+  atoms: AtomsIcon,
+  'atoms-white': AtomsWhiteIcon,
+  bonds: BondsIcon,
+  'bonds-white': BondsWhiteIcon,
+  server: ServerIcon,
+  'server-white': ServerWhiteIcon,
+  '3dviewer': ThreeDViewerIcon,
+  '3dviewer-white': ThreeDViewerWhiteIcon,
+  debugging: DebuggingIcon,
+  'debugging-white': DebuggingWhiteIcon,
+  'text-special-symbols': TextSpecialSymbolsIcon
 }
 
 function emptyIcon() {

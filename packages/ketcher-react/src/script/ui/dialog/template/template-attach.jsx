@@ -51,7 +51,8 @@ class Attach extends Component {
 
   checkUniqueName(name) {
     return !this.props.templateLib.some(
-      tmpl => tmpl.struct.name === name && tmpl.props.group === 'User Templates'
+      (tmpl) =>
+        tmpl.struct.name === name && tmpl.props.group === 'User Templates'
     )
   }
 
@@ -62,7 +63,9 @@ class Attach extends Component {
       struct.atoms.get(this.props.atomid) && struct.bonds.get(this.props.bondid)
         ? this.props
         : this.tmpl.props
-    const options = Object.assign(EDITOR_STYLES, { scale: getScale(struct) })
+    const options = Object.assign(EDITOR_STYLES, this.props.globalSettings, {
+      scale: getScale(struct)
+    })
 
     return (
       <Dialog
@@ -75,7 +78,7 @@ class Attach extends Component {
         <Form
           schema={attachSchema}
           customValid={{
-            name: name => this.checkUniqueName(name)
+            name: (name) => this.checkUniqueName(name)
           }}
           {...this.props.formState}
         >
@@ -104,15 +107,16 @@ class Attach extends Component {
 }
 
 export default connect(
-  store => ({
+  (store) => ({
     ...store.templates.attach,
     templateLib: store.templates.lib,
-    formState: store.modal.form
+    formState: store.modal.form,
+    globalSettings: store.options.settings
   }),
-  dispatch => ({
+  (dispatch) => ({
     onInit: (name, ap) => dispatch(initAttach(name, ap)),
-    onAttachEdit: ap => dispatch(setAttachPoints(ap)),
-    onNameEdit: name => dispatch(setTmplName(name))
+    onAttachEdit: (ap) => dispatch(setAttachPoints(ap)),
+    onNameEdit: (name) => dispatch(setTmplName(name))
   })
 )(Attach)
 
@@ -132,27 +136,27 @@ function structNormalization(struct) {
   const normStruct = struct.clone()
   const cbb = normStruct.getCoordBoundingBox()
 
-  normStruct.atoms.forEach(atom => {
+  normStruct.atoms.forEach((atom) => {
     atom.pp = atom.pp.sub(cbb.min)
   })
 
-  normStruct.sgroups.forEach(sg => {
+  normStruct.sgroups.forEach((sg) => {
     sg.pp = sg.pp ? sg.pp.sub(cbb.min) : cbb.min
   })
 
-  normStruct.rxnArrows.forEach(rxnArrow => {
-    rxnArrow.pos = rxnArrow.pos.map(p => p.sub(cbb.min))
+  normStruct.rxnArrows.forEach((rxnArrow) => {
+    rxnArrow.pos = rxnArrow.pos.map((p) => p.sub(cbb.min))
   })
 
-  normStruct.rxnPluses.forEach(rxnPlus => {
+  normStruct.rxnPluses.forEach((rxnPlus) => {
     rxnPlus.pp = rxnPlus.pp.sub(cbb.min)
   })
 
-  normStruct.simpleObjects.forEach(simpleObject => {
-    simpleObject.pos = simpleObject.pos.map(p => p.sub(cbb.min))
+  normStruct.simpleObjects.forEach((simpleObject) => {
+    simpleObject.pos = simpleObject.pos.map((p) => p.sub(cbb.min))
   })
 
-  normStruct.texts.forEach(text => {
+  normStruct.texts.forEach((text) => {
     text.position = text.position.sub(cbb.min)
   })
 

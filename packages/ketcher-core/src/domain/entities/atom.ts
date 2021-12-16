@@ -39,9 +39,9 @@ export function radicalElectrons(radical: any) {
   else if (
     radical === Atom.PATTERN.RADICAL.SINGLET ||
     radical === Atom.PATTERN.RADICAL.TRIPLET
-  )
+  ) {
     return 2
-  else {
+  } else {
     return 0
   }
 }
@@ -94,7 +94,7 @@ export class Atom {
     }
   }
 
-  //TODO: rename
+  // TODO: rename
   static attrlist = {
     alias: null,
     label: 'C',
@@ -218,8 +218,8 @@ export class Atom {
   }
 
   static getAttrHash(atom: Atom) {
-    const attrs = {}
-    for (let attr in Atom.attrlist) {
+    const attrs: any = {}
+    for (const attr in Atom.attrlist) {
       if (typeof atom[attr] !== 'undefined') attrs[attr] = atom[attr]
     }
     return attrs
@@ -233,8 +233,9 @@ export class Atom {
 
   clone(fidMap: Map<number, number>): Atom {
     const ret = new Atom(this)
-    if (fidMap && fidMap.has(this.fragment))
+    if (fidMap && fidMap.has(this.fragment)) {
       ret.fragment = fidMap.get(this.fragment)!
+    }
     return ret
   }
 
@@ -290,11 +291,11 @@ export class Atom {
       return true
     }
 
-    var groupno = element.group
-    var rad = radicalElectrons(this.radical)
-    var valence = conn
-    var hyd = 0
-    var absCharge = Math.abs(charge)
+    const groupno = element.group
+    const rad = radicalElectrons(this.radical)
+    let valence = conn
+    let hyd = 0
+    const absCharge = Math.abs(charge)
     if (groupno === 1) {
       if (
         label === 'H' ||
@@ -309,9 +310,9 @@ export class Atom {
         hyd = 1 - rad - conn - absCharge
       }
     } else if (groupno === 2) {
-      if (conn + rad + absCharge === 2 || conn + rad + absCharge === 0)
+      if (conn + rad + absCharge === 2 || conn + rad + absCharge === 0) {
         valence = 2
-      else hyd = -1
+      } else hyd = -1
     } else if (groupno === 3) {
       if (label === 'B' || label === 'Al' || label === 'Ga' || label === 'In') {
         if (charge === -1) {
@@ -513,8 +514,8 @@ export class Atom {
       return 0
     }
 
-    var groupno = element.group
-    var rad = radicalElectrons(this.radical)
+    const groupno = element.group
+    const rad = radicalElectrons(this.radical)
 
     if (groupno === 3) {
       if (label === 'B' || label === 'Al' || label === 'Ga' || label === 'In') {

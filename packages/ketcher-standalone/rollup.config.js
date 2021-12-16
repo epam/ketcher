@@ -8,6 +8,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import strip from '@rollup/plugin-strip'
 import typescript from 'rollup-plugin-typescript2'
 import webWorkerLoader from 'rollup-plugin-web-worker-loader'
+import { license } from '../../license.ts'
 
 const mode = {
   PRODUCTION: 'production',
@@ -16,6 +17,7 @@ const mode = {
 
 const extensions = ['.js', '.ts']
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION
+const includePattern = 'src/**/*'
 
 const config = {
   input: pkg.source,
@@ -23,12 +25,14 @@ const config = {
     {
       file: pkg.main,
       exports: 'named',
-      format: 'cjs'
+      format: 'cjs',
+      banner: license
     },
     {
       file: pkg.module,
       exports: 'named',
-      format: 'es'
+      format: 'es',
+      banner: license
     }
   ],
   external: ['ketcher-core', /@babel\/runtime/],
@@ -38,7 +42,7 @@ const config = {
       runOnce: true
     }),
     nodePolyfills(),
-    resolve({ extensions, preferBuiltins: false }),
+    resolve({ extensions }),
     commonjs(),
     webWorkerLoader({
       extensions,
@@ -50,14 +54,14 @@ const config = {
     babel({
       extensions,
       babelHelpers: 'runtime',
-      include: ['src/**/*']
+      include: includePattern
     }),
     cleanup({
-      extensions: extensions.map(ext => ext.trimStart('.')),
-      include: ['src/**/*'],
+      extensions: extensions.map((ext) => ext.trimStart('.')),
+      include: includePattern,
       comments: 'none'
     }),
-    ...(isProduction ? [strip({ include: ['src/**/*'] })] : [])
+    ...(isProduction ? [strip({ include: includePattern })] : [])
   ]
 }
 

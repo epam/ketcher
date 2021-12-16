@@ -101,7 +101,7 @@ type LeftToolbarItemVariant =
   | 'sgroup'
   | 'sgroup-data'
   // reaction
-  //plus
+  // plus
   | 'reaction-plus'
   // arrows
   | 'arrows'

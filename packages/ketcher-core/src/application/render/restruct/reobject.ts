@@ -22,9 +22,9 @@ import Visel from './visel'
 
 class ReObject {
   public visel: Visel
-  public highlight: boolean = false
+  public highlight = false
   public highlighting: any = null
-  public selected: boolean = false
+  public selected = false
   public selectionPlate: any = null
 
   constructor(viselType: string) {
@@ -32,10 +32,11 @@ class ReObject {
   }
 
   getVBoxObj(render: Render): Box2Abs | null {
-    var vbox = this.visel.boundingBox
+    let vbox = this.visel.boundingBox
     if (vbox === null) return null
-    if (render.options.offset)
+    if (render.options.offset) {
       vbox = vbox.translate(render.options.offset.negated())
+    }
     return vbox.transform(Scale.scaled2obj, render.options)
   }
 

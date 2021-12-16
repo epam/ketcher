@@ -52,7 +52,7 @@ function hidden(actObj, { options }) {
 
 function status(actionName, activeTool, params) {
   const actObj = actions[actionName]
-  return pickBy(x => x, {
+  return pickBy((x) => x, {
     selected: selected(actObj, activeTool, params),
     disabled: disabled(actObj, params),
     hidden: hidden(actObj, params)
@@ -64,7 +64,7 @@ export default function (state = null, { type, action, ...params }) {
   switch (type) {
     case 'INIT':
       action = actions['select-lasso'].action
-    case 'ACTION': // eslint-disable-line no-case-declarations
+    case 'ACTION':
       activeTool = execute(state && state.activeTool, {
         ...params,
         action

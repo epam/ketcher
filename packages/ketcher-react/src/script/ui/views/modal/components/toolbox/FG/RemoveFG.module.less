@@ -1,21 +1,22 @@
+@import '../../../../../../../style/variables';
+
 .window {
   display: flex;
   width: 21em;
   flex-direction: column;
-  background: #f3f3f3;
+  background: @gray-background-color;
   border-radius: 10px;
   padding: 5px;
-  font-family: Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
-    Arial, sans-serif;
+  font-family: @Inter;
 
   & > * {
-    margin: 10px 10px;
+    margin: 10px;
   }
 }
 
 .question {
   text-align: left;
-  color: gray;
+  color: @color-text-secondary;
 }
 
 .header {
@@ -39,20 +40,22 @@
 }
 
 .buttonOk {
-  background: #343434;
-  color: #fff;
-}
+  background: @color-button-primary;
+  color: @color-text-light;
 
-.buttonOk:hover {
-  background: #000;
+  &:hover {
+    background: @color-button-primary-hover;
+  }
 }
 
 .buttonCancel {
   margin-right: 15px;
-  background: #d1d5e3;
-  color: #000;
-}
+  background: transparent;
+  border: 1px solid @color-button-secondary;
+  color: @color-button-secondary;
 
-.buttonCancel:hover {
-  background: #aaadb9;
+  &:hover {
+    border-color: @color-button-secondary-hover;
+    color: @color-button-secondary-hover;
+  }
 }

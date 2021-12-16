@@ -73,7 +73,7 @@ export class RxnArrow {
 
     const defaultHeight = 2
 
-    if (!this.height && isElliptical) {
+    if (isElliptical) {
       this.height = defaultHeight
     }
   }

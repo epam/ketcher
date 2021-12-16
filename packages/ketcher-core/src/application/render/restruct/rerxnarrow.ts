@@ -119,17 +119,29 @@ class ReRxnArrow extends ReObject {
     refPoints.push(new Vec2(a.x, a.y))
     refPoints.push(new Vec2(b.x, b.y))
     if (height != null) {
+      if (height === 0) {
+        const minX = Math.min(a.x, b.x)
+        const minY = Math.min(a.y, b.y)
+        const x = minX + Math.abs(a.x - b.x) / 2
+        const y = minY + Math.abs(a.y - b.y) / 2
+        refPoints.push(new Vec2(x, y))
+        return refPoints
+      }
       const length = Math.hypot(b.x - a.x, b.y - a.y)
       const lengthHyp = Math.hypot(length / 2, height)
       const coordinates1 = util.calcCoordinates(a, b, lengthHyp).pos1
       const coordinates2 = util.calcCoordinates(a, b, lengthHyp).pos2
-      if (b.x < a.x) {
+      // console.log('length: ', length, 'lengthHyp: ', lengthHyp, 'coordinates1: ', coordinates1, 'coordinates2: ', coordinates2)
+      if (b.x < a.x && height > 0) {
         refPoints.push(new Vec2(coordinates1?.x, coordinates1?.y))
-      } else {
+      } else if (b.x > a.x && height < 0) {
+        refPoints.push(new Vec2(coordinates1?.x, coordinates1?.y))
+      } else if (b.x > a.x && height > 0) {
+        refPoints.push(new Vec2(coordinates2?.x, coordinates2?.y))
+      } else if (b.x < a.x && height < 0) {
         refPoints.push(new Vec2(coordinates2?.x, coordinates2?.y))
       }
     }
-    // this.item.refPoints = refPoints
     return refPoints
   }
 

@@ -19,7 +19,7 @@ import { OperationType } from '../OperationType'
 import { Scale } from 'domain/helpers'
 import { Vec2 } from 'domain/entities'
 import { tfx } from 'utilities'
-import util from 'application/render/util'
+// import util from 'application/render/util'
 
 interface RxnArrowResizeData {
   id: number
@@ -50,13 +50,9 @@ export class RxnArrowResize extends Base {
     const current = this.data.current
     const item = struct.rxnArrows.get(id)
     const anchor = this.data.anchor
-    const [a, b] = item.pos
-
     if (anchor) {
-      // const previousPos0 = a.get_xy0()
-      // const previousPos1 = b.get_xy0()
-
-      let length
+      const previousPos0 = item.pos[0].get_xy0()
+      const previousPos1 = item.pos[1].get_xy0()
       let middlePoint
 
       // if (item.height) {
@@ -64,46 +60,62 @@ export class RxnArrowResize extends Base {
       // }
 
       if (item.height != null) {
-        length = Math.hypot(b.x - a.x, b.y - a.y)
-        const lengthHyp = Math.hypot(length / 2, item.height)
-        const coordinates1 = util.calcCoordinates(a, b, lengthHyp).pos1
-        const coordinates2 = util.calcCoordinates(a, b, lengthHyp).pos2
-        if (b.x < a.x) {
-          // refPoints.push(new Vec2(coordinates1?.x, coordinates1?.y))
-          middlePoint = new Vec2(coordinates1?.x, coordinates1?.y)
-        } else {
-          // refPoints.push(new Vec2(coordinates2?.x, coordinates2?.y))
-          middlePoint = new Vec2(coordinates2?.x, coordinates2?.y)
-        }
+        ;[, , middlePoint] = restruct.rxnArrows.get(id).getReferencePoints()
       }
 
-      if (tfx(anchor.x) === tfx(a.x) && tfx(anchor.y) === tfx(a.y)) {
-        a.x = anchor.x = current.x
-        // current.x = previousPos0.x
-        a.y = anchor.y = current.y
-        // current.y = previousPos0.y
+      if (
+        tfx(anchor.x) === tfx(item.pos[1].x) &&
+        tfx(anchor.y) === tfx(item.pos[1].y)
+      ) {
+        item.pos[1].x = anchor.x = current.x
+        current.x = previousPos1.x
+        item.pos[1].y = anchor.y = current.y
+        current.y = previousPos1.y
       }
 
-      if (tfx(anchor.x) === tfx(b.x) && tfx(anchor.y) === tfx(b.y)) {
-        b.x = anchor.x = current.x
-        // current.x = previousPos1.x
-        b.y = anchor.y = current.y
-        // current.y = previousPos1.y
+      if (
+        tfx(anchor.x) === tfx(item.pos[0].x) &&
+        tfx(anchor.y) === tfx(item.pos[0].y)
+      ) {
+        item.pos[0].x = anchor.x = current.x
+        current.x = previousPos0.x
+        item.pos[0].y = anchor.y = current.y
+        current.y = previousPos0.y
       }
-
       if (
         tfx(anchor.x) === tfx(middlePoint?.x) &&
         tfx(anchor.y) === tfx(middlePoint?.y)
       ) {
-        console.log(anchor, current, item.height, d)
-        item.height -= Math.hypot(current.y - anchor.y, current.x - anchor.x)
-        // item.height -= current.y - anchor.y
-        // anchor.x = current.x
+        // console.log(anchor, current, item.height, d)
+
+        // console.log(current.y - anchor.y, current.x - anchor.x)
+        // console.log(Math.hypot(current.y - anchor.y))
+        // const prevCurrent = middlePoint.y
+        const diffY = current.y - anchor.y
+        // const diffX = current.x - anchor.x;
+        // const minDiff = Math.min(diffX, diffY)
+        if (item.pos[1].x >= item.pos[0].x) {
+          item.height -= diffY
+        } else {
+          item.height += diffY
+        }
+        // item.height -= diffY
+
+        console.log(item.height)
+        // const hypot = Math.hypot(current.y - anchor.y, current.x - anchor.x)
+        // item.height -= hypot
+        const [, , newMP] = restruct.rxnArrows.get(id).getReferencePoints()
+        // console.log(diff, hypot)
+        // middlePoint.x = anchor.x = current.x
         // anchor.y = current.y
+        anchor.y = newMP.y
+        anchor.x = newMP.x
+        // current.y = prevCurrent
         // console.log(anchor, current, item.height)
-        console.log(anchor, current, item.height, d)
+        // console.log(anchor, current, item.height, d)
       }
     } else {
+      // item.height += d.x
       item.pos[1].add_(d)
     }
 

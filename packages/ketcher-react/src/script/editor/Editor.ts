@@ -188,7 +188,7 @@ class Editor implements KetcherEditor {
 
     let tool = new toolMap[name](this, opts)
 
-    if (!tool || tool?.shouldActiveToolRemain) {
+    if (!tool) {
       return null
     }
 

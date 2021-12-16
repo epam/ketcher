@@ -35,7 +35,6 @@ class EraserTool {
   editor: Editor
   lassoHelper: LassoHelper
   maps: Array<string>
-  shouldActiveToolRemain: boolean | undefined
 
   constructor(editor, mode) {
     this.editor = editor
@@ -51,15 +50,6 @@ class EraserTool {
       'texts'
     ]
     this.lassoHelper = new LassoHelper(mode || 0, editor)
-    if (editor.selection()) {
-      const action = fromFragmentDeletion(
-        editor.render.ctab,
-        editor.selection()
-      )
-      editor.update(action)
-      editor.selection(null)
-      this.shouldActiveToolRemain = true
-    }
   }
 
   mousedown(event) {

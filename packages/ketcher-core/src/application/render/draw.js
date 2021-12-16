@@ -36,7 +36,7 @@ function rectangle(paper, pos, options) {
 
 function rectangleWithAngle(paper, a, b, length, angle, options, height) {
   const b0x = a.x + length
-  const [wOffset, hOffset] = [5, height ? height : 8]
+  const [wOffset, hOffset] = [5, height || 8]
 
   const path =
     `M${tfx(a.x - wOffset)},${tfx(a.y)}` +

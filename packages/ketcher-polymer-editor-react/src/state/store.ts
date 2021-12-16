@@ -14,34 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { Provider } from 'react-redux'
-import store from 'state/store'
-import { Layout } from 'components/Layout'
+import { createStore, applyMiddleware } from 'redux'
+import rootReducer from './rootReducer'
+import createSagaMiddleware from 'redux-saga'
+import rootSaga from './rootSaga'
 
-interface EditorProps {
-  onInit: () => void
-}
+const sagaMiddleware = createSagaMiddleware()
 
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
-  useEffect(() => {
-    onInit()
-  }, [onInit])
+const store = createStore(rootReducer, applyMiddleware(sagaMiddleware))
 
-  return (
-    <Provider store={store}>
-      <div
-        ref={rootElRef}
-        className={clsx('Ketcher-polymer-editor-root', classes.root)}
-      >
-        <Layout />
-      </div>
-    </Provider>
-  )
-}
+sagaMiddleware.run(rootSaga)
 
-export { Editor }
+export type RootState = ReturnType<typeof store.getState>
+export default store

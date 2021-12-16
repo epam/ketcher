@@ -14,34 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { Provider } from 'react-redux'
-import store from 'state/store'
-import { Layout } from 'components/Layout'
+import { put, takeEvery } from 'redux-saga/effects'
+import { init } from './layoutActionCreators'
+import { AnyAction } from 'redux'
 
-interface EditorProps {
-  onInit: () => void
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+function* initAsync({ payload }: AnyAction) {
+  yield delay(1000)
+  yield put(init(payload))
 }
 
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
-  useEffect(() => {
-    onInit()
-  }, [onInit])
-
-  return (
-    <Provider store={store}>
-      <div
-        ref={rootElRef}
-        className={clsx('Ketcher-polymer-editor-root', classes.root)}
-      >
-        <Layout />
-      </div>
-    </Provider>
-  )
+export function* watchInitAsync() {
+  yield takeEvery('INIT_ASYNC', initAsync)
 }
-
-export { Editor }

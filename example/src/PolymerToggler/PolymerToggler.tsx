@@ -14,34 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { Provider } from 'react-redux'
-import store from 'state/store'
-import { Layout } from 'components/Layout'
+import './PolymerToggler.css'
 
-interface EditorProps {
-  onInit: () => void
+interface PolymerTogglerProps {
+  toggle: (isEnabled: boolean) => void
 }
 
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
-  useEffect(() => {
-    onInit()
-  }, [onInit])
-
+const PolymerToggler = ({ toggle }: PolymerTogglerProps) => {
   return (
-    <Provider store={store}>
-      <div
-        ref={rootElRef}
-        className={clsx('Ketcher-polymer-editor-root', classes.root)}
-      >
-        <Layout />
-      </div>
-    </Provider>
+    <label className="switch">
+      <input type="checkbox" onChange={(e) => toggle(e.target.checked)} />
+      <span className="slider" />
+    </label>
   )
 }
 
-export { Editor }
+export { PolymerToggler }

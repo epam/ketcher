@@ -14,34 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { Provider } from 'react-redux'
-import store from 'state/store'
-import { Layout } from 'components/Layout'
+@import "./src/styles/variables";
 
-interface EditorProps {
-  onInit: () => void
+.layout {
+  height: 100%;
+  width: 100%;
+  background-color: @color-background-canvas;
+  position: relative;
+  padding: 14px 11px 0 11px;
+  box-sizing: border-box;
+
+  .logo {
+    font-family: @font-family-montserrat;
+    font-size: @font-size-m;
+    font-weight: @font-weight-600;
+    color: @color-text-gray;
+    position: absolute;
+    bottom: 18px;
+    left: 13px;
+    display: flex;
+    flex-direction: column;
+
+    .firstLine {
+      font-weight: @font-weight-300;
+      font-size: @font-size-xs;
+    }
+
+    .ketcher {
+      color: @color-text-black;
+    }
+  }
 }
-
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
-  useEffect(() => {
-    onInit()
-  }, [onInit])
-
-  return (
-    <Provider store={store}>
-      <div
-        ref={rootElRef}
-        className={clsx('Ketcher-polymer-editor-root', classes.root)}
-      >
-        <Layout />
-      </div>
-    </Provider>
-  )
-}
-
-export { Editor }

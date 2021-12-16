@@ -1,14 +1,16 @@
 import 'miew/dist/Miew.min.css'
 import 'ketcher-react/dist/index.css'
+import 'ketcher-polymer-editor-react/dist/index.css'
 
 import { ButtonsConfig, Editor } from 'ketcher-react'
 import { Ketcher, RemoteStructServiceProvider } from 'ketcher-core'
+import { Editor as PolymerEditor } from 'ketcher-polymer-editor-react'
 
 import { ErrorModal } from './ErrorModal'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import Miew from 'miew'
-import { PeptidesToggler } from './PeptidesToggler'
+import { PolymerToggler } from './PolymerToggler'
 import { useState } from 'react'
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
@@ -35,7 +37,7 @@ if (process.env.MODE === 'standalone') {
   structServiceProvider = new StandaloneStructServiceProvider()
 }
 
-const peptideEditor = process.env.ENABLE_PEPTIDES_EDITOR
+const polymerEditor = process.env.ENABLE_PEPTIDES_EDITOR
 
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig()
@@ -45,8 +47,8 @@ const App = () => {
 
   return showPeptides ? (
     <>
-      <div>Peptides Editor Enabled</div>
-      <PeptidesToggler toggle={setShowPeptides} />
+      <PolymerEditor onInit={() => ''} />
+      <PolymerToggler toggle={setShowPeptides} />
     </>
   ) : (
     <>
@@ -62,7 +64,7 @@ const App = () => {
           ;(global as any).ketcher = ketcher
         }}
       />
-      {peptideEditor && <PeptidesToggler toggle={setShowPeptides} />}
+      {polymerEditor && <PolymerToggler toggle={setShowPeptides} />}
       {hasError && (
         <ErrorModal message={errorMessage} close={() => setHasError(false)} />
       )}

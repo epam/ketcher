@@ -211,7 +211,7 @@ function hasSelection(editor) {
 
 function dontClipMessage(title, errorHandler) {
   errorHandler(
-    'This action is unavailable via menu.\n' + // eslint-disable-line no-undef
+    'This action is unavailable via layout.\n' + // eslint-disable-line no-undef
       'Instead, use shortcut to ' +
       title +
       '.'

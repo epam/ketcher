@@ -14,34 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { Provider } from 'react-redux'
-import store from 'state/store'
-import { Layout } from 'components/Layout'
+import { RootState } from 'state/store'
 
-interface EditorProps {
-  onInit: () => void
-}
-
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
-  useEffect(() => {
-    onInit()
-  }, [onInit])
-
-  return (
-    <Provider store={store}>
-      <div
-        ref={rootElRef}
-        className={clsx('Ketcher-polymer-editor-root', classes.root)}
-      >
-        <Layout />
-      </div>
-    </Provider>
-  )
-}
-
-export { Editor }
+export const selectLayoutIsOpened = (state: RootState) => state.layout.isOpened

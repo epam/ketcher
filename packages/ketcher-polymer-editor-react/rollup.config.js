@@ -13,6 +13,7 @@ import replace from '@rollup/plugin-replace'
 import strip from '@rollup/plugin-strip'
 import svgr from '@svgr/rollup'
 import typescript from 'rollup-plugin-typescript2'
+import ttypescript from 'ttypescript'
 
 const mode = {
   PRODUCTION: 'production',
@@ -69,7 +70,12 @@ const config = {
       }
     }),
     json(),
-    typescript(),
+    typescript({
+      typescript: ttypescript,
+      tsconfigOverride: {
+        exclude: ['__tests__/**/*']
+      }
+    }),
     babel({
       extensions,
       babelHelpers: 'runtime',

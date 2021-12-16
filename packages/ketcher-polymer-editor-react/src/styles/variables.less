@@ -14,19 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import './PeptidesToggler.css'
+// colors
+@color-background-canvas: #F2F2F2;
 
-interface PeptidesTogglerProps {
-  toggle: (isEnabled: boolean) => void
-}
+@color-text-black: #121212;
+@color-text-gray: #BCBCBC;
 
-const PeptidesToggler = ({ toggle }: PeptidesTogglerProps) => {
-  return (
-    <label className="switch">
-      <input type="checkbox" onChange={(e) => toggle(e.target.checked)} />
-      <span className="slider" />
-    </label>
-  )
-}
+// fonts
+@font-size-m: 14px;
+@font-size-xs: 6px;
 
-export { PeptidesToggler }
+@font-family-montserrat: 'Montserrat', sans-serif;
+
+@font-weight-300: 300;
+@font-weight-600: 600;

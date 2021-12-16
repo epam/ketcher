@@ -2,7 +2,10 @@
   "compilerOptions": {
     "outDir": "dist",
     "module": "esnext",
-    "lib": ["dom", "esnext"],
+    "lib": [
+      "dom",
+      "esnext"
+    ],
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "sourceMap": true,
@@ -26,7 +29,21 @@
     "isolatedModules": true,
     "noEmit": true,
     "baseUrl": ".",
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "components/*": ["src/components/*"],
+      "state/*": ["src/state/*"]
+    },
+    "plugins": [
+      {
+        "transform": "@zerollup/ts-transform-paths",
+        "exclude": [
+          "*"
+        ]
+      }
+    ]
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

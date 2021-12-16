@@ -24,6 +24,7 @@ import { Render } from '../raphaelRender'
 import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
+// import { tfx } from 'utilities'
 
 type Arrow = {
   pos: Array<Vec2>
@@ -116,11 +117,11 @@ class ReRxnArrow extends ReObject {
     const refPoints: Array<Vec2> = []
     const [a, b] = this.item.pos
     const height = this.item.height
-
     refPoints.push(new Vec2(a.x, a.y))
     refPoints.push(new Vec2(b.x, b.y))
+
     if (height != null) {
-      if (height === 0) {
+      if (+util.tfx(height) === 0) {
         const minX = Math.min(a.x, b.x)
         const minY = Math.min(a.y, b.y)
         const x = minX + Math.abs(a.x - b.x) / 2
@@ -132,15 +133,52 @@ class ReRxnArrow extends ReObject {
       const lengthHyp = Math.hypot(length / 2, height)
       const coordinates1 = util.calcCoordinates(a, b, lengthHyp).pos1
       const coordinates2 = util.calcCoordinates(a, b, lengthHyp).pos2
-      // console.log('length: ', length, 'lengthHyp: ', lengthHyp, 'coordinates1: ', coordinates1, 'coordinates2: ', coordinates2)
-      if (b.x < a.x && height > 0) {
-        refPoints.push(new Vec2(coordinates1?.x, coordinates1?.y))
-      } else if (b.x > a.x && height < 0) {
-        refPoints.push(new Vec2(coordinates1?.x, coordinates1?.y))
-      } else if (b.x > a.x && height > 0) {
-        refPoints.push(new Vec2(coordinates2?.x, coordinates2?.y))
-      } else if (b.x < a.x && height < 0) {
-        refPoints.push(new Vec2(coordinates2?.x, coordinates2?.y))
+      if (height > 0) {
+        if (b.x < a.x) {
+          refPoints.push(new Vec2(coordinates1?.x, coordinates1?.y))
+          return refPoints
+        }
+        if (b.x > a.x) {
+          refPoints.push(new Vec2(coordinates2?.x, coordinates2?.y))
+          return refPoints
+        }
+        if (b.x === a.x) {
+          if (b.y > a.y) {
+            refPoints.push(new Vec2(coordinates2?.x, coordinates2?.y))
+            return refPoints
+          }
+          if (b.y < a.y) {
+            refPoints.push(new Vec2(coordinates1?.x, coordinates1?.y))
+            return refPoints
+          }
+          if (b.y === a.y) {
+            refPoints.push(new Vec2(a.x, a.y))
+            return refPoints
+          }
+        }
+      } else {
+        if (b.x > a.x) {
+          refPoints.push(new Vec2(coordinates1?.x, coordinates1?.y))
+          return refPoints
+        }
+        if (b.x < a.x) {
+          refPoints.push(new Vec2(coordinates2?.x, coordinates2?.y))
+          return refPoints
+        }
+        if (b.x === a.x) {
+          if (b.y > a.y) {
+            refPoints.push(new Vec2(coordinates1?.x, coordinates1?.y))
+            return refPoints
+          }
+          if (b.y < a.y) {
+            refPoints.push(new Vec2(coordinates2?.x, coordinates2?.y))
+            return refPoints
+          }
+          if (b.y === a.y) {
+            refPoints.push(new Vec2(a.x, a.y))
+            return refPoints
+          }
+        }
       }
     }
     return refPoints

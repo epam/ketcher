@@ -20,7 +20,6 @@ import { Scale } from 'domain/helpers'
 import { Vec2 } from 'domain/entities'
 import { tfx } from 'utilities'
 import Raphael from 'application/render/raphael-ext'
-// import util from 'application/render/util'
 
 interface RxnArrowResizeData {
   id: number
@@ -55,10 +54,6 @@ export class RxnArrowResize extends Base {
       const previousPos0 = item.pos[0].get_xy0()
       const previousPos1 = item.pos[1].get_xy0()
       let middlePoint
-
-      // if (item.height) {
-      //   middlePoint = new Vec2(a.x + length / 2, a.y - item.height)
-      // }
 
       if (item.height != null) {
         ;[, , middlePoint] = restruct.rxnArrows.get(id).getReferencePoints()
@@ -102,7 +97,6 @@ export class RxnArrowResize extends Base {
         const diffY = current.y - anchor.y
 
         const diff = diffY * cosAngle - diffX * sinAngle
-
         item.height -= diff
 
         const [, , newMiddlePoint] = restruct.rxnArrows
@@ -113,7 +107,6 @@ export class RxnArrowResize extends Base {
         anchor.x = newMiddlePoint.x
       }
     } else {
-      // item.height += d.x
       item.pos[1].add_(d)
     }
 

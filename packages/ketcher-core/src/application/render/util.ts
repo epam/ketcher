@@ -91,7 +91,6 @@ function calcCoordinates(aPoint, bPoint, lengthHyp) {
     pos1: null | { x: number; y: number }
     pos2: null | { x: number; y: number }
   } = { pos1: null, pos2: null }
-  // const oPos1 = {x: 0,  y: 0}
   const oPos2 = { x: bPoint.x - aPoint.x, y: bPoint.y - aPoint.y }
   const c =
     (lengthHyp ** 2 - oPos2.x * oPos2.x - oPos2.y * oPos2.y - lengthHyp ** 2) /
@@ -109,6 +108,13 @@ function calcCoordinates(aPoint, bPoint, lengthHyp) {
       obj.pos1.x = (c - obj.pos1.y * oPos2.y) / oPos2.x
       obj.pos2.x = (c - obj.pos2.y * oPos2.y) / oPos2.x
     }
+  } else {
+    obj.pos1 = { x: 0, y: 0 }
+    obj.pos2 = { x: 0, y: 0 }
+    obj.pos1.y = c / oPos2.y
+    obj.pos2.y = c / oPos2.y
+    obj.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2)
+    obj.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2)
   }
   if (obj.pos1 !== null) {
     obj.pos1.x += aPoint.x

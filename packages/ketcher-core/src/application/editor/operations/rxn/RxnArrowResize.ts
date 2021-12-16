@@ -19,6 +19,7 @@ import { OperationType } from '../OperationType'
 import { Scale } from 'domain/helpers'
 import { Vec2 } from 'domain/entities'
 import { tfx } from 'utilities'
+import Raphael from 'application/render/raphael-ext'
 // import util from 'application/render/util'
 
 interface RxnArrowResizeData {
@@ -86,33 +87,30 @@ export class RxnArrowResize extends Base {
         tfx(anchor.x) === tfx(middlePoint?.x) &&
         tfx(anchor.y) === tfx(middlePoint?.y)
       ) {
-        // console.log(anchor, current, item.height, d)
+        const angle =
+          Raphael.angle(
+            item.pos[0].x,
+            item.pos[0].y,
+            item.pos[1].x,
+            item.pos[1].y
+          ) - 180
+        const angleInRadians = (angle * Math.PI) / 180
+        const cosAngle = Math.cos(angleInRadians)
+        const sinAngle = Math.sin(angleInRadians)
 
-        // console.log(current.y - anchor.y, current.x - anchor.x)
-        // console.log(Math.hypot(current.y - anchor.y))
-        // const prevCurrent = middlePoint.y
+        const diffX = current.x - anchor.x
         const diffY = current.y - anchor.y
-        // const diffX = current.x - anchor.x;
-        // const minDiff = Math.min(diffX, diffY)
-        if (item.pos[1].x >= item.pos[0].x) {
-          item.height -= diffY
-        } else {
-          item.height += diffY
-        }
-        // item.height -= diffY
 
-        console.log(item.height)
-        // const hypot = Math.hypot(current.y - anchor.y, current.x - anchor.x)
-        // item.height -= hypot
-        const [, , newMP] = restruct.rxnArrows.get(id).getReferencePoints()
-        // console.log(diff, hypot)
-        // middlePoint.x = anchor.x = current.x
-        // anchor.y = current.y
-        anchor.y = newMP.y
-        anchor.x = newMP.x
-        // current.y = prevCurrent
-        // console.log(anchor, current, item.height)
-        // console.log(anchor, current, item.height, d)
+        const diff = diffY * cosAngle - diffX * sinAngle
+
+        item.height -= diff
+
+        const [, , newMiddlePoint] = restruct.rxnArrows
+          .get(id)
+          .getReferencePoints()
+
+        anchor.y = newMiddlePoint.y
+        anchor.x = newMiddlePoint.x
       }
     } else {
       // item.height += d.x

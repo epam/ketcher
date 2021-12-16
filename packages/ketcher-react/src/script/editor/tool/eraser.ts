@@ -52,7 +52,10 @@ class EraserTool {
     ]
     this.lassoHelper = new LassoHelper(mode || 0, editor)
     if (editor.selection()) {
-      const action = fromFragmentDeletion(editor.render.ctab, editor.selection())
+      const action = fromFragmentDeletion(
+        editor.render.ctab,
+        editor.selection()
+      )
       editor.update(action)
       editor.selection(null)
       this.shouldActiveToolRemain = true

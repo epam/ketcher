@@ -35,11 +35,23 @@ class AtomTool {
   atomProps: any
   bondProps: any
   dragCtx: any
+  shouldActiveToolRemain: boolean | undefined
 
   constructor(editor, atomProps) {
     this.editor = editor
     this.atomProps = atomProps
     this.bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE }
+    if (editor.selection() && editor.selection().atoms) {
+      const action = fromAtomsAttrs(
+        editor.render.ctab,
+        editor.selection().atoms,
+        atomProps,
+        true
+      )
+      editor.update(action)
+      editor.selection(null)
+      this.shouldActiveToolRemain = true
+    }
   }
 
   mousedown(event) {

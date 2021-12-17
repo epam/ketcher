@@ -2,10 +2,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "module": "esnext",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
+    "lib": ["dom", "esnext"],
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "sourceMap": true,
@@ -37,13 +34,9 @@
     "plugins": [
       {
         "transform": "@zerollup/ts-transform-paths",
-        "exclude": [
-          "*"
-        ]
+        "exclude": ["*"]
       }
     ]
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

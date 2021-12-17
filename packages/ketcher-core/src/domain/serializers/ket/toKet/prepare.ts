@@ -102,6 +102,8 @@ export function prepareStructForKet(struct: Struct) {
     }
   })
 
+  //TODO: check if this sorting operation is needed
+  //return ketNodes.sort((a, b) => a.center.x - b.center.x)
   return ketNodes
 }
 

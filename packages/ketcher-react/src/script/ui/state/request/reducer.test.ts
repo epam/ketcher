@@ -23,14 +23,14 @@ import {
 import reducer from '.'
 
 describe('requests reducer', () => {
-  it('returns the initial state', () => {
+  it('should return the initial state when action payload is empty', () => {
     expect(reducer(undefined, {} as RequestActionTypes)).toEqual({
       indigoVerification: false,
       isAnalyzingFile: false
     })
   })
 
-  it('handles INDIGO_VERIFICATION', () => {
+  it('should set indigoVerification to value provided in INDIGO_VERIFICATION action', () => {
     expect(
       reducer(undefined, {
         type: INDIGO_VERIFICATION,
@@ -58,7 +58,7 @@ describe('requests reducer', () => {
     })
   })
 
-  it('handles ANALYZING_FILE', () => {
+  it('should set isAnalyzingFile to value provided in ANALYZING_FILE action', () => {
     expect(
       reducer(undefined, {
         type: ANALYZING_FILE,

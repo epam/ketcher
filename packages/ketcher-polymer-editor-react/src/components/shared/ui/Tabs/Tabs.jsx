@@ -26,7 +26,6 @@ class Tabs extends Component {
     this.props.changeTab(this.state.tabIndex)
   }
 
-  // TODO: refactor the component
   changeTab(ev, index) {
     this.setState({ tabIndex: index })
     if (this.props.changeTab) this.props.changeTab(index)

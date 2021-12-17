@@ -15,6 +15,7 @@
  ***************************************************************************/
 import { MonomerItem } from './components/MonomerItem'
 import Tabs from '../shared/ui/Tabs'
+import classes from './MonomerLibrary.module.less'
 
 const MonomerLibrary = () => {
   const MonomerList = (props) => {
@@ -48,23 +49,16 @@ const MonomerLibrary = () => {
     }
   ]
 
-  //     props: {
-  //         className: 'generic-groups',
-  //         selected: this.selected,
-  //         onSelect: this.onSelect
-  //     }
-
   return (
-    <>
+    <div className={classes.library}>
       <Tabs
-        // className={classes.tabs}
+        className={classes.tabs}
         // contentClassName={classes.tabs_content}
         captions={tabs}
-        // tabIndex={type !== 'gen' ? 0 : 1}
         changeTab={() => {}}
         tabs={tabs}
       />
-    </>
+    </div>
   )
 }
 

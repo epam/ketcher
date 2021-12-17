@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import classes from './MonomerItem.module.less'
 
 const MonomerItem = (props) => {
   const { item } = props
   const symbol = item.name.substring(0, 1)
-  return <div>{symbol}</div>
+  return <div className={classes.card}>{symbol}</div>
 }
 
 export { MonomerItem }

@@ -43,12 +43,12 @@ const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig()
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [showPeptides, setShowPeptides] = useState(false)
+  const [showPolymerEditor, setShowPolymerEditor] = useState(false)
 
-  return showPeptides ? (
+  return showPolymerEditor ? (
     <>
       <PolymerEditor onInit={() => ''} />
-      <PolymerToggler toggle={setShowPeptides} />
+      <PolymerToggler toggle={setShowPolymerEditor} />
     </>
   ) : (
     <>
@@ -64,7 +64,7 @@ const App = () => {
           ;(global as any).ketcher = ketcher
         }}
       />
-      {polymerEditor && <PolymerToggler toggle={setShowPeptides} />}
+      {polymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}
       {hasError && (
         <ErrorModal message={errorMessage} close={() => setHasError(false)} />
       )}

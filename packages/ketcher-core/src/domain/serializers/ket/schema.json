@@ -529,6 +529,9 @@
                   }
                 }
               }
+            },
+            "height": {
+              "type": "number"
             }
           }
         }

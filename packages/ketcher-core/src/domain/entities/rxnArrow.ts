@@ -39,6 +39,7 @@ export enum RxnArrowMode {
 export interface RxnArrowAttributes {
   mode: RxnArrowMode
   pos?: Array<Point>
+  height?: number
 }
 
 export class RxnArrow {
@@ -55,6 +56,7 @@ export class RxnArrow {
         this.pos[i] = currentP ? new Vec2(attributes.pos[i]) : new Vec2()
       }
     }
+
     this.mode = attributes.mode
 
     const {
@@ -74,7 +76,7 @@ export class RxnArrow {
     const defaultHeight = 2
 
     if (isElliptical) {
-      this.height = defaultHeight
+      this.height = attributes.height ?? defaultHeight
     }
   }
 

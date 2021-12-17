@@ -102,7 +102,7 @@ export function prepareStructForKet(struct: Struct) {
     }
   })
 
-  return ketNodes.sort((a, b) => a.center.x - b.center.x)
+  return ketNodes
 }
 
 function getFragmentCenter(struct, atomSet) {

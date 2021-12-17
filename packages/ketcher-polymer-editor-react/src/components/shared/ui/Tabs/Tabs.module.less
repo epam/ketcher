@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import "./src/styles/variables";
 
 .tabs {
   width: 100%;
-
 
   a {
     padding: 5px;
@@ -26,18 +26,18 @@
     cursor: pointer;
     text-align: center;
     vertical-align: middle;
-    background-color: #DDD;
-    color: black;
+    background-color: @color-gray;
+    color: @color-text-black;
 
     &:hover {
-      background-color: #00838F;
-      color: #FFF;
+      background-color: @color-tab-hover;
+      color: @color-text-white;
     }
   }
 
   .active {
-    color: #FFF;
-    background-color: #005662;
+    color: @color-text-white;
+    background-color: @color-tab-active;
   }
 
   :first-child {

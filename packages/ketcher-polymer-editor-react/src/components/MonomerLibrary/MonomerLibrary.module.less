@@ -13,13 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import '../../styles/mixins';
 
 .library {
   position: absolute;
-  width: 310px;
-  height: 100%;
-  margin-left: auto;
-  overflow-y: scroll;
+  max-width: 300px;
+  width: fit-content;
+  height: 700px;
+
+  .tabs_content {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: row;
+    overflow-y: scroll;
+
+    .scrollbar_thin()
+  }
 
   .tabs {
     list-style-type: none;

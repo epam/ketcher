@@ -24,28 +24,28 @@ const MonomerLibrary = () => {
     })
   }
 
-  const testList = [{ name: 'H' }, { name: 'L' }]
-
   const tabs = [
     {
       caption: '✩',
       component: MonomerList,
-      props: { list: testList }
+      props: { list: [{ name: 'S' }] }
     },
     {
       caption: 'Peptides',
       component: MonomerList,
-      props: { list: testList }
+      props: { list: [{ name: 'P' }] }
     },
     {
       caption: 'RNA',
       component: MonomerList,
-      props: { list: testList }
+      props: { list: [{ name: 'R' }, { name: 'N' }, { name: 'A' }] }
     },
     {
       caption: 'CHEM',
       component: MonomerList,
-      props: { list: testList }
+      props: {
+        list: [{ name: 'C' }, { name: 'H' }, { name: 'E' }, { name: 'M' }]
+      }
     }
   ]
 
@@ -53,7 +53,7 @@ const MonomerLibrary = () => {
     <div className={classes.library}>
       <Tabs
         className={classes.tabs}
-        // contentClassName={classes.tabs_content}
+        contentClassName={classes.tabs_content}
         captions={tabs}
         changeTab={() => {}}
         tabs={tabs}

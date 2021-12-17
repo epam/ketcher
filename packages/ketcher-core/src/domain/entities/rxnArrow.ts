@@ -47,6 +47,15 @@ export class RxnArrow {
   pos: Array<Vec2>
   height?: number
 
+  static isElliptical(arrow) {
+    return [
+      RxnArrowMode.EllipticalArcFilledBow,
+      RxnArrowMode.EllipticalArcFilledTriangle,
+      RxnArrowMode.EllipticalArcOpenHalfAngle,
+      RxnArrowMode.EllipticalArcOpenAngle
+    ].includes(arrow.mode)
+  }
+
   constructor(attributes: RxnArrowAttributes) {
     this.pos = []
 
@@ -56,26 +65,10 @@ export class RxnArrow {
         this.pos[i] = currentP ? new Vec2(attributes.pos[i]) : new Vec2()
       }
     }
-
     this.mode = attributes.mode
-
-    const {
-      EllipticalArcFilledBow,
-      EllipticalArcFilledTriangle,
-      EllipticalArcOpenAngle,
-      EllipticalArcOpenHalfAngle
-    } = RxnArrowMode
-
-    const isElliptical = [
-      EllipticalArcFilledBow,
-      EllipticalArcFilledTriangle,
-      EllipticalArcOpenHalfAngle,
-      EllipticalArcOpenAngle
-    ].includes(attributes.mode)
-
     const defaultHeight = 2
 
-    if (isElliptical) {
+    if (RxnArrow.isElliptical(this)) {
       this.height = attributes.height ?? defaultHeight
     }
   }

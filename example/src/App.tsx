@@ -37,7 +37,7 @@ if (process.env.MODE === 'standalone') {
   structServiceProvider = new StandaloneStructServiceProvider()
 }
 
-const polymerEditor = process.env.ENABLE_PEPTIDES_EDITOR
+const polymerEditor = process.env.ENABLE_POLYMER_EDITOR
 
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig()

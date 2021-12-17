@@ -187,8 +187,14 @@ class Editor implements KetcherEditor {
       this._tool.cancel()
     }
 
-    const tool = new toolMap[name](this, opts)
-
+    // TODO: when all tools are refactored to classes, remove this check
+    // and use new keyword for every tool
+    let tool
+    if (name === 'select') {
+      tool = new toolMap[name](this, opts)
+    } else {
+      tool = toolMap[name](this, opts)
+    }
     if (!tool) {
       return null
     }

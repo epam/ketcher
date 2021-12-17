@@ -109,7 +109,7 @@ export class FormatterFactory {
       default:
         formatter = new ServerFormatter(
           this.#structService,
-          new MolSerializer(molSerializerOptions),
+          new KetSerializer(),
           format,
           structServiceOptions
         )

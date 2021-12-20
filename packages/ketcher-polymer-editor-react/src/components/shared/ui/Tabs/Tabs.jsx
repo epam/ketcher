@@ -23,7 +23,7 @@ class Tabs extends Component {
     super(props)
     this.state = {}
     this.state.tabIndex = props.tabIndex || 0
-    this.props.changeTab(this.state.tabIndex)
+    if (this.props.changeTab) this.props.changeTab(this.state.tabIndex)
   }
 
   changeTab(ev, index) {

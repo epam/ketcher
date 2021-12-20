@@ -55,7 +55,6 @@ const MonomerLibrary = () => {
         className={classes.tabs}
         contentClassName={classes.tabs_content}
         captions={tabs}
-        changeTab={() => {}}
         tabs={tabs}
       />
     </div>

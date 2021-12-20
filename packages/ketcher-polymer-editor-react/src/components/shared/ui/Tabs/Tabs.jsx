@@ -13,54 +13,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import { Component } from 'react'
-import classes from './Tabs.module.less'
+import * as React from 'react'
+import Tabs from '@mui/material/Tabs'
+import Tab from '@mui/material/Tab'
+import { useState } from 'react'
 import clsx from 'clsx'
+import classes from './Tabs.module.less'
+import Box from '@mui/material/Box'
 
-class Tabs extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {}
-    this.state.tabIndex = props.tabIndex || 0
-    if (this.props.changeTab) this.props.changeTab(this.state.tabIndex)
+function TabPanel(props) {
+  const { children, value, index, ...other } = props
+
+  return (
+    <div role="tabpanel" hidden={value !== index} id={index} {...other}>
+      {value === index && <Box>{children}</Box>}
+    </div>
+  )
+}
+
+function CustomTabs(props) {
+  const [tabIndex, setTabIndex] = useState(0)
+  const { tabs, contentClassName, className } = props
+  const tabPanel = tabs[tabIndex]
+  const Component = tabPanel?.component
+  const componentProps = tabPanel?.props
+
+  const handleChange = (event, newTabIndex) => {
+    setTabIndex(newTabIndex)
   }
 
-  changeTab(ev, index) {
-    this.setState({ tabIndex: index })
-    if (this.props.changeTab) this.props.changeTab(index)
-  }
-
-  render() {
-    const { tabs, contentClassName, className, tabIndex } = this.props
-    const tabPanel = tabs[this.state.tabIndex]
-    const Component = tabPanel?.component
-    const componentProps = tabPanel?.props
-    return (
-      <div>
-        <ul className={className} tabIndex={tabIndex}>
-          <li className={classes.tabs}>
-            {tabs.map((tabPanel, index) => (
-              <a // eslint-disable-line
-                key={index}
-                className={clsx({
-                  [classes.active]: this.state.tabIndex === index
-                })}
-                onClick={(ev) => this.changeTab(ev, index)}
-              >
-                {tabPanel.caption}
-              </a>
-            ))}
-          </li>
-        </ul>
-        {tabPanel && (
+  return (
+    <>
+      <Tabs
+        value={tabIndex}
+        onChange={handleChange}
+        className={clsx(classes.tabs, className)}
+      >
+        {tabs.map((tabPanel, index) => (
+          <Tab
+            label={tabPanel.caption}
+            key={index}
+            className={clsx(classes.tab, {
+              [classes.active]: tabIndex === index
+            })}
+          />
+        ))}
+      </Tabs>
+      {tabPanel && (
+        <TabPanel value={tabIndex} index={tabIndex}>
           <div className={contentClassName}>
             <Component {...componentProps} />
           </div>
-        )}
-      </div>
-    )
-  }
+        </TabPanel>
+      )}
+    </>
+  )
 }
 
-export default Tabs
+export { CustomTabs as Tabs }

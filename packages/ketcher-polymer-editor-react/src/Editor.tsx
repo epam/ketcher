@@ -18,17 +18,19 @@ import { useEffect, useRef } from 'react'
 
 import classes from './Editor.module.less'
 import clsx from 'clsx'
-import { MonomerLibrary } from './components/MonomerLibrary/MonomerLibrary'
+import { MonomerLibrary } from 'components/MonomerLibrary/MonomerLibrary'
 
 interface EditorProps {
-  onInit: () => void
+  onInit?: () => void
 }
 
 function Editor(props: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
   const { onInit } = props
   useEffect(() => {
-    onInit()
+    if (onInit) {
+      onInit()
+    }
   }, [onInit])
 
   return (

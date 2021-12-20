@@ -15,7 +15,12 @@
  ***************************************************************************/
 import classes from './MonomerItem.module.less'
 
-const MonomerItem = (props) => {
+interface MonomerItemPropTypes {
+  key: number
+  item: Record<string, string>
+}
+
+const MonomerItem = (props: MonomerItemPropTypes) => {
   const { item } = props
 
   return <div className={classes.card}>{item.name}</div>

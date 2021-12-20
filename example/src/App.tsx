@@ -10,7 +10,6 @@ import { ErrorModal } from './ErrorModal'
 import Miew from 'miew'
 import { PeptidesToggler } from './PeptidesToggler'
 import { useState } from 'react'
-// @ts-ignore
 import { Editor as PeptideEditor } from 'ketcher-polymer-editor-react'
 import 'ketcher-polymer-editor-react/dist/index.css'
 
@@ -48,11 +47,7 @@ const App = () => {
 
   return showPeptides ? (
     <>
-      <PeptideEditor
-        onInit={() => {
-          console.log('PeptideEditor щзутув')
-        }}
-      />
+      <PeptideEditor />
       <PeptidesToggler toggle={setShowPeptides} />
     </>
   ) : (

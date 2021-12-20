@@ -15,10 +15,14 @@
  ***************************************************************************/
 import { MonomerItem } from './components/MonomerItem'
 import classes from './MonomerLibrary.module.less'
-import { Tabs } from '../shared/ui/Tabs/Tabs'
+import { Tabs } from 'components/shared/ui/Tabs'
+
+interface MonomerListPropTypes {
+  list: Array<Record<string, string>>
+}
 
 const MonomerLibrary = () => {
-  const MonomerList = (props) => {
+  const MonomerList = (props: MonomerListPropTypes) => {
     return props.list.map((monomer, key) => {
       return <MonomerItem key={key} item={monomer} />
     })

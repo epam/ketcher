@@ -181,7 +181,7 @@ describe('serialize (ToKet)', () => {
     })
   })
   it('correct work with simple object', () => {
-    const structSimpleObject = parsedNewPrepareStruct.root.nodes[0]
+    const structSimpleObject = parsedNewPrepareStruct.root.nodes[3]
     const simpleObjectKet = parsedPrepareContent.root.nodes[0]
     expect(structSimpleObject).toEqual(simpleObjectKet)
   })
@@ -191,12 +191,12 @@ describe('serialize (ToKet)', () => {
     expect(structText).toEqual(textKet)
   })
   it('correct work with rxnArrow', () => {
-    const structArrow = parsedNewPrepareStruct.root.nodes[2]
+    const structArrow = parsedNewPrepareStruct.root.nodes[1]
     const arrowKet = parsedPrepareContent.root.nodes[2]
     expect(structArrow).toEqual(arrowKet)
   })
   it('correct work with rxnPlus', () => {
-    const structPlus = parsedNewPrepareStruct.root.nodes[3]
+    const structPlus = parsedNewPrepareStruct.root.nodes[2]
     const plusKet = parsedPrepareContent.root.nodes[3]
     expect(structPlus).toEqual(plusKet)
   })

@@ -14,6 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RootState } from 'state/store'
+import { Provider } from 'react-redux'
+import { store } from 'state'
+import { App } from 'components/App'
 
-export const selectLayoutIsOpened = (state: RootState) => state.layout.isOpened
+export const AppContainer = () => {
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  )
+}

@@ -29,7 +29,8 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "components/*": ["src/components/*"],
-      "state/*": ["src/state/*"]
+      "state/*": ["src/state/*"],
+      "state": ["src/state"]
     },
     "plugins": [
       {

@@ -14,9 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { combineReducers } from 'redux'
-import { layoutReducer } from './layout'
-
-export default combineReducers({
-  layout: layoutReducer
-})
+export * from './editorSlice'
+export * from './editorSaga'

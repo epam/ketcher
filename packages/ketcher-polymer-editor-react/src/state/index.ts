@@ -14,34 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import "./src/styles/variables";
-
-.layout {
-  height: 100%;
-  width: 100%;
-  background-color: @color-background-canvas;
-  position: relative;
-  padding: 14px 11px 0 11px;
-  box-sizing: border-box;
-
-  .logo {
-    font-family: @font-family-montserrat;
-    font-size: @font-size-m;
-    font-weight: @font-weight-600;
-    color: @color-text-gray;
-    position: absolute;
-    bottom: 18px;
-    left: 13px;
-    display: flex;
-    flex-direction: column;
-
-    .firstLine {
-      font-weight: @font-weight-300;
-      font-size: @font-size-xs;
-    }
-
-    .ketcher {
-      color: @color-text-black;
-    }
-  }
-}
+export * from './store'
+export * from './rootSaga'
+export * from './hooks'

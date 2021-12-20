@@ -14,33 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { AppContainer } from 'components/App'
+import classes from './App.module.less'
+import React, { useEffect } from 'react'
+import { useAppDispatch, useAppSelector } from 'state'
+import { selectEditorIsReady, fetchInitData } from 'state/common'
 
-interface EditorProps {
-  onInit?: () => void
-}
+export const fetchData = () =>
+  new Promise((resolve) => {
+    setTimeout(() => resolve('some data'), 1000)
+  })
 
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
+export const App = (): React.ReactElement => {
+  const dispatch = useAppDispatch()
+  const isReady = useAppSelector(selectEditorIsReady)
 
   useEffect(() => {
-    if (onInit) {
-      onInit()
-    }
-  }, [onInit])
+    dispatch(fetchInitData())
+  }, [dispatch])
+
+  if (!isReady) {
+    return <div>App is not ready</div>
+  }
 
   return (
-    <div
-      ref={rootElRef}
-      className={clsx('Ketcher-polymer-editor-root', classes.root)}
-    >
-      <AppContainer />
+    <div className={classes.container}>
+      <div className={classes.logo}>
+        <span>Polymer Editor</span>
+        <span>Ketcher</span>
+        <span>EPAM</span>
+      </div>
     </div>
   )
 }
-
-export { Editor }

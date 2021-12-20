@@ -73,7 +73,7 @@ const config = {
     typescript({
       typescript: ttypescript,
       tsconfigOverride: {
-        exclude: ['__tests__/**/*']
+        exclude: ['*.test.ts']
       }
     }),
     babel({

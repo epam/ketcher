@@ -14,17 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { put, takeEvery } from 'redux-saga/effects'
-import { init } from './layoutActionCreators'
-import { AnyAction } from 'redux'
+import { put, takeEvery, call } from 'redux-saga/effects'
+import { init, initFailure, initSuccess } from 'state/common'
+import { fetchData as fetchDataCall } from 'components/App'
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+const FETCH_DATA = 'editor/fetchData'
 
-function* initAsync({ payload }: AnyAction) {
-  yield delay(1000)
-  yield put(init(payload))
+function* fetchData() {
+  yield put(init())
+  try {
+    yield call(fetchDataCall)
+    yield put(initSuccess())
+  } catch (e) {
+    yield put(initFailure())
+  }
 }
 
-export function* watchInitAsync() {
-  yield takeEvery('INIT_ASYNC', initAsync)
+export function* watchFetchData() {
+  yield takeEvery(FETCH_DATA, fetchData)
 }
+
+export const fetchInitData = () => ({
+  type: FETCH_DATA
+})

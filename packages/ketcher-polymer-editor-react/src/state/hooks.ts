@@ -14,9 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { spawn } from 'redux-saga/effects'
-import { watchFetchData } from 'state/common/editorSaga'
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from 'state'
 
-export function* rootSaga() {
-  yield spawn(watchFetchData)
-}
+export const useAppDispatch = () => useDispatch<AppDispatch>()
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector

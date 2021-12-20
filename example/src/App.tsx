@@ -47,7 +47,7 @@ const App = () => {
 
   return showPolymerEditor ? (
     <>
-      <PolymerEditor onInit={() => ''} />
+      <PolymerEditor />
       <PolymerToggler toggle={setShowPolymerEditor} />
     </>
   ) : (

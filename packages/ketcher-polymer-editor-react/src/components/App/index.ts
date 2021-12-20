@@ -14,9 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { layoutReducer } from './layoutReducer'
-import { init, initAsync } from './layoutActionCreators'
-import { selectLayoutIsOpened } from './layoutSelectors'
-import { watchInitAsync } from './layoutSaga'
-
-export { watchInitAsync, initAsync, init, layoutReducer, selectLayoutIsOpened }
+export * from './App'
+export * from './AppContainer'

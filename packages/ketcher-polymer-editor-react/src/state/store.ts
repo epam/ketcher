@@ -14,16 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { createStore, applyMiddleware } from 'redux'
-import rootReducer from './rootReducer'
+import { configureStore, Store } from '@reduxjs/toolkit'
+import { editorReducer } from 'state/common'
 import createSagaMiddleware from 'redux-saga'
-import rootSaga from './rootSaga'
+import { rootSaga } from 'state/rootSaga'
 
 const sagaMiddleware = createSagaMiddleware()
 
-const store = createStore(rootReducer, applyMiddleware(sagaMiddleware))
+export const store: Store = configureStore({
+  reducer: {
+    editor: editorReducer
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      thunk: false
+    }).concat(sagaMiddleware)
+})
 
 sagaMiddleware.run(rootSaga)
 
 export type RootState = ReturnType<typeof store.getState>
-export default store
+export type AppDispatch = typeof store.dispatch

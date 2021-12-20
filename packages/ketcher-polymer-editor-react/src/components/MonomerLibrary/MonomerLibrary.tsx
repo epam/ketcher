@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 import { MonomerItem } from './components/MonomerItem'
-import Tabs from '../shared/ui/Tabs'
 import classes from './MonomerLibrary.module.less'
+import { Tabs } from '../shared/ui/Tabs/Tabs'
 
 const MonomerLibrary = () => {
   const MonomerList = (props) => {
@@ -53,8 +53,7 @@ const MonomerLibrary = () => {
     <div className={classes.library}>
       <Tabs
         className={classes.tabs}
-        contentClassName={classes.tabs_content}
-        captions={tabs}
+        contentClassName={classes.tabsContent}
         tabs={tabs}
       />
     </div>

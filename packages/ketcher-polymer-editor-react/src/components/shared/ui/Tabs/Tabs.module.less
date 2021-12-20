@@ -18,14 +18,10 @@
 .tabs {
   width: 100%;
 
-  a {
-    padding: 5px;
+  .tab {
     font-size: 12px;
-    line-height: 14px;
-    display: inline-block;
     cursor: pointer;
     text-align: center;
-    vertical-align: middle;
     background-color: @color-gray;
     color: @color-text-black;
 
@@ -33,18 +29,12 @@
       background-color: @color-tab-hover;
       color: @color-text-white;
     }
+
+    &.active {
+      color: @color-text-white;
+      background-color: @color-tab-active;
+    }
   }
 
-  .active {
-    color: @color-text-white;
-    background-color: @color-tab-active;
-  }
 
-  :first-child {
-    border-radius: 4px 0 0 0;
-  }
-
-  :last-child {
-    border-radius: 0 4px 0 0;
-  }
 }

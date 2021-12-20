@@ -18,12 +18,17 @@ import classes from './MonomerItem.module.less'
 interface MonomerItemPropTypes {
   key: number
   item: Record<string, string>
+  onClick: () => void
 }
 
 const MonomerItem = (props: MonomerItemPropTypes) => {
-  const { item } = props
+  const { item, onClick } = props
 
-  return <div className={classes.card}>{item.name}</div>
+  return (
+    <div className={classes.card} onClick={onClick}>
+      {item.name}
+    </div>
+  )
 }
 
 export { MonomerItem }

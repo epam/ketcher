@@ -21,10 +21,20 @@ interface MonomerListPropTypes {
   list: Array<Record<string, string>>
 }
 
+const monomerItemHandleClick = () => {
+  console.log('callback for monomer item')
+}
+
 const MonomerLibrary = () => {
   const MonomerList = (props: MonomerListPropTypes) => {
     return props.list.map((monomer, key) => {
-      return <MonomerItem key={key} item={monomer} />
+      return (
+        <MonomerItem
+          key={key}
+          item={monomer}
+          onClick={monomerItemHandleClick}
+        />
+      )
     })
   }
 

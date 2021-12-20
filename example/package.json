@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "ketcher-core": "workspace:*",
-    "ketcher-polymer-editor-react": "workspace:^",
+    "ketcher-polymer-editor-react": "workspace:*",
     "ketcher-react": "workspace:*",
     "ketcher-standalone": "workspace:*",
     "miew": "^0.9.0",

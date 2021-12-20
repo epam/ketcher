@@ -14,17 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const INDIGO_VERIFICATION = 'INDIGO_VERIFICATION'
-export const ANALYZING_FILE = 'ANALYZING_FILE'
-
-export interface RequestState {
-  indigoVerification: boolean
-  isAnalyzingFile: boolean
+type Props = {
+  clickHandler: () => void
+  disabled: boolean
+  label: string
+  styles: string
+  title?: string
 }
 
-interface IndigoVerificationAction {
-  type: string
-  data: boolean
-}
-
-export type RequestActionTypes = IndigoVerificationAction
+export const DialogActionButton = ({
+  clickHandler,
+  label,
+  title,
+  styles,
+  disabled
+}: Props) => (
+  <input
+    key="Open"
+    type="button"
+    className={styles}
+    value={label}
+    title={title || label}
+    disabled={disabled}
+    onClick={clickHandler}
+  />
+)

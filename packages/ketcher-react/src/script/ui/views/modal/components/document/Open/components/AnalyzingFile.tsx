@@ -14,17 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const INDIGO_VERIFICATION = 'INDIGO_VERIFICATION'
-export const ANALYZING_FILE = 'ANALYZING_FILE'
+import Icon from 'src/script/ui/component/view/icon'
+import styles from './AnalyzingFile.module.less'
+import { LoadingCircles } from './LoadingCircles'
 
-export interface RequestState {
-  indigoVerification: boolean
-  isAnalyzingFile: boolean
+export type AnalyzingFileProps = {
+  fileName?: string
 }
 
-interface IndigoVerificationAction {
-  type: string
-  data: boolean
-}
+const ICON_NAME = 'file-thumbnail'
 
-export type RequestActionTypes = IndigoVerificationAction
+export const AnalyzingFile = ({ fileName }: AnalyzingFileProps) => (
+  <div className={styles.analyzingFileWrapper}>
+    {fileName && (
+      <div className={styles.fileBox}>
+        <Icon name={ICON_NAME} />
+        <p>{fileName}</p>
+      </div>
+    )}
+    <LoadingCircles />
+  </div>
+)

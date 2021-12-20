@@ -14,17 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const INDIGO_VERIFICATION = 'INDIGO_VERIFICATION'
-export const ANALYZING_FILE = 'ANALYZING_FILE'
+@import 'src/style/variables.less';
 
-export interface RequestState {
-  indigoVerification: boolean
-  isAnalyzingFile: boolean
+.isHovered {
+  background-color: @color-background-secondary;
 }
-
-interface IndigoVerificationAction {
-  type: string
-  data: boolean
-}
-
-export type RequestActionTypes = IndigoVerificationAction

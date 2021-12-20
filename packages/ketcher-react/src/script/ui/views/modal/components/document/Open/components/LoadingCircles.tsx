@@ -14,17 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const INDIGO_VERIFICATION = 'INDIGO_VERIFICATION'
-export const ANALYZING_FILE = 'ANALYZING_FILE'
+import styles from './LoadingCircles.module.less'
 
-export interface RequestState {
-  indigoVerification: boolean
-  isAnalyzingFile: boolean
-}
-
-interface IndigoVerificationAction {
-  type: string
-  data: boolean
-}
-
-export type RequestActionTypes = IndigoVerificationAction
+export const LoadingCircles = () => (
+  <div className={styles.container}>
+    <span />
+    <span />
+    <span />
+  </div>
+)

@@ -23,6 +23,7 @@ import {
 } from 'ketcher-core'
 
 import { supportedSGroupTypes } from './constants'
+import { setAnalyzingFile } from './request'
 
 export function onAction(action) {
   if (action && action.dialog) {
@@ -71,6 +72,8 @@ export function load(struct, options) {
     const errorHandler = editor.errorHandler
 
     options = options || {}
+
+    dispatch(setAnalyzingFile(true))
 
     return parseStruct(struct, server, options)
       .then(
@@ -139,14 +142,16 @@ export function load(struct, options) {
           } else {
             editor.struct(struct)
           }
-
+          dispatch(setAnalyzingFile(false))
           dispatch({ type: 'MODAL_CLOSE' })
         },
         (err) => {
+          dispatch(setAnalyzingFile(false))
           errorHandler(err.message)
         }
       )
       .catch((err) => {
+        dispatch(setAnalyzingFile(false))
         errorHandler(err.message)
       })
   }

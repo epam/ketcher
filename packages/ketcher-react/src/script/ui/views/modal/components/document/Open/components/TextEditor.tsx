@@ -14,17 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const INDIGO_VERIFICATION = 'INDIGO_VERIFICATION'
-export const ANALYZING_FILE = 'ANALYZING_FILE'
+import ClipArea from '../../../../../../component/cliparea/cliparea'
 
-export interface RequestState {
-  indigoVerification: boolean
-  isAnalyzingFile: boolean
+export type TextEditorProps = {
+  structStr: string
+  inputHandler: (str: string) => void
 }
 
-interface IndigoVerificationAction {
-  type: string
-  data: boolean
+export const TextEditor = ({ structStr, inputHandler }: TextEditorProps) => {
+  return (
+    <>
+      <textarea
+        value={structStr}
+        onChange={(event) => inputHandler(event.target.value)}
+      />
+      <ClipArea
+        focused={() => true}
+        onCopy={() => ({ 'text/plain': structStr })}
+      />
+    </>
+  )
 }
-
-export type RequestActionTypes = IndigoVerificationAction

@@ -14,17 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const INDIGO_VERIFICATION = 'INDIGO_VERIFICATION'
-export const ANALYZING_FILE = 'ANALYZING_FILE'
+import styles from '../Open.module.less'
 
-export interface RequestState {
-  indigoVerification: boolean
-  isAnalyzingFile: boolean
+type Props = {
+  label: string
+  clickHandler: () => void
+  disabled?: boolean
 }
 
-interface IndigoVerificationAction {
-  type: string
-  data: boolean
+export const DropButton = ({ label, clickHandler, disabled }: Props) => {
+  return (
+    <button
+      className={styles.dropButton}
+      title={label}
+      onMouseDown={clickHandler}
+      disabled={disabled}
+    >
+      {label}
+    </button>
+  )
 }
-
-export type RequestActionTypes = IndigoVerificationAction

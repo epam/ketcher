@@ -14,17 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const INDIGO_VERIFICATION = 'INDIGO_VERIFICATION'
-export const ANALYZING_FILE = 'ANALYZING_FILE'
+.analyzingFileWrapper {
+  min-width: 32em;
+  min-height: 23em;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
-export interface RequestState {
-  indigoVerification: boolean
-  isAnalyzingFile: boolean
+  .fileBox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    svg {
+      margin-right: 13px;
+    }
+
+    p {
+      color: #585858;
+      font-size: 16px;
+      line-height: 19px;
+    }
+  }
 }
-
-interface IndigoVerificationAction {
-  type: string
-  data: boolean
-}
-
-export type RequestActionTypes = IndigoVerificationAction

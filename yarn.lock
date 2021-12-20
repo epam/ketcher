@@ -11882,7 +11882,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ketcher-polymer-editor-react@workspace:^, ketcher-polymer-editor-react@workspace:packages/ketcher-polymer-editor-react":
+"ketcher-polymer-editor-react@workspace:*, ketcher-polymer-editor-react@workspace:packages/ketcher-polymer-editor-react":
   version: 0.0.0-use.local
   resolution: "ketcher-polymer-editor-react@workspace:packages/ketcher-polymer-editor-react"
   dependencies:
@@ -11960,7 +11960,7 @@ __metadata:
     git-revision-webpack-plugin: ^3.0.6
     html-replace-webpack-plugin: ^2.5.6
     ketcher-core: "workspace:*"
-    ketcher-polymer-editor-react: "workspace:^"
+    ketcher-polymer-editor-react: "workspace:*"
     ketcher-react: "workspace:*"
     ketcher-standalone: "workspace:*"
     miew: ^0.9.0

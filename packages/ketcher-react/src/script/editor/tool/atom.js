@@ -207,11 +207,9 @@ AtomTool.prototype.mouseup = function (event) {
   })
 }
 
-export function atomLongtapEvent(tool, render) {
-  const dragCtx = tool.dragCtx
-  const editor = tool.editor
-
-  const atomid = dragCtx.item && dragCtx.item.id
+export function atomLongtapEvent(tool, render, groupId) {
+  const { dragCtx, editor } = tool
+  const atomid = dragCtx.item?.id
 
   // edit atom or add atom
   const atom =
@@ -222,6 +220,10 @@ export function atomLongtapEvent(tool, render) {
   // TODO: longtab event
   dragCtx.timeout = setTimeout(() => {
     delete tool.dragCtx
+    if (groupId != null) {
+      editor.event.removeFG.dispatch({ fgIds: [groupId] })
+      return
+    }
     editor.selection(null)
     const res = editor.event.quickEdit.dispatch(atom)
     Promise.resolve(res)

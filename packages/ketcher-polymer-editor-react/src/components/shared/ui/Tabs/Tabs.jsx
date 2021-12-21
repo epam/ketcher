@@ -48,14 +48,19 @@ function CustomTabs(props) {
         value={tabIndex}
         onChange={handleChange}
         className={clsx(classes.tabs, className)}
+        sx={{ minHeight: 24 }}
+        TabIndicatorProps={{
+          className: classes.tabIndicator
+        }}
       >
         {tabs.map((tabPanel, index) => (
           <Tab
             label={tabPanel.caption}
             key={index}
-            className={clsx(classes.tab, {
+            className={clsx(classes.tab, className, {
               [classes.active]: tabIndex === index
             })}
+            sx={{ minHeight: 24, minWidth: 60, height: 1 }}
           />
         ))}
       </Tabs>

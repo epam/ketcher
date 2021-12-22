@@ -13,33 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import classes from './MonomerItem.module.less'
 
-import { useEffect, useRef } from 'react'
-
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { MonomerLibrary } from 'components/monomerLibrary'
-
-interface EditorProps {
-  onInit?: () => void
+interface MonomerItemPropTypes {
+  key: number
+  item: Record<string, string>
+  onClick: () => void
 }
 
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
-  useEffect(() => {
-    onInit?.()
-  }, [onInit])
+const MonomerItem = (props: MonomerItemPropTypes) => {
+  const { item, onClick } = props
 
   return (
-    <div
-      ref={rootElRef}
-      className={clsx('Ketcher-polymer-editor-root', classes.root)}
-    >
-      {`Hello from ketcher polymer editor: build date: ${process.env.BUILD_DATE}`}
-      <MonomerLibrary />
+    <div className={classes.card} onClick={onClick}>
+      {item.name}
     </div>
   )
 }
 
-export { Editor }
+export { MonomerItem }

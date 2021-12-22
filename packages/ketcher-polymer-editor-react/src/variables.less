@@ -14,32 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
+// colors
+@color-background-canvas: #F2F2F2;
 
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { MonomerLibrary } from 'components/monomerLibrary'
+@color-text-black: #121212;
+@color-text-gray: #BCBCBC;
+@color-text-white: #FFF;
 
-interface EditorProps {
-  onInit?: () => void
-}
+@color-gray: #DDDDDD;
 
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
-  useEffect(() => {
-    onInit?.()
-  }, [onInit])
 
-  return (
-    <div
-      ref={rootElRef}
-      className={clsx('Ketcher-polymer-editor-root', classes.root)}
-    >
-      {`Hello from ketcher polymer editor: build date: ${process.env.BUILD_DATE}`}
-      <MonomerLibrary />
-    </div>
-  )
-}
+// Tabs
+@color-tab-active:#005662;
+@color-tab-hover: #00838F;
 
-export { Editor }
+// Scroll
+@color-scroll: #717171;
+@color-scroll-inactive: #DDDDDD;
+
+// fonts
+@font-size-m: 14px;
+@font-size-xs: 6px;
+
+@font-family-montserrat: 'Montserrat', sans-serif;
+
+@font-weight-300: 300;
+@font-weight-600: 600;

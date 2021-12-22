@@ -13,33 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import 'src/mixins';
 
-import { useEffect, useRef } from 'react'
+.library {
+  position: absolute;
+  width: fit-content;
+  height: 700px;
 
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { MonomerLibrary } from 'components/monomerLibrary'
+  .tabsContent {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    overflow-y: scroll;
+    width: 260px;
 
-interface EditorProps {
-  onInit?: () => void
+    & > * {
+      margin: 25px 8px;
+    }
+
+    .scrollbarThin()
+  }
+
+  .tabs {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
 }
 
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
-  useEffect(() => {
-    onInit?.()
-  }, [onInit])
-
-  return (
-    <div
-      ref={rootElRef}
-      className={clsx('Ketcher-polymer-editor-root', classes.root)}
-    >
-      {`Hello from ketcher polymer editor: build date: ${process.env.BUILD_DATE}`}
-      <MonomerLibrary />
-    </div>
-  )
-}
-
-export { Editor }

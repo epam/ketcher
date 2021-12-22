@@ -369,13 +369,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-plugin-utils@npm:^7.16.5":
-  version: 7.16.5
-  resolution: "@babel/helper-plugin-utils@npm:7.16.5"
-  checksum: 3ff605f879a9ed287952b538a8334bb16e6cf7cf441f205713b1cf8043b047a965773b66e50575018504f349e16368acfe4702a2f376e16263733e2c7c6c3e39
-  languageName: node
-  linkType: hard
-
 "@babel/helper-remap-async-to-generator@npm:^7.16.0":
   version: 7.16.0
   resolution: "@babel/helper-remap-async-to-generator@npm:7.16.0"

@@ -14,32 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
+import styles from '../Open.module.less'
 
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { MonomerLibrary } from 'components/monomerLibrary'
-
-interface EditorProps {
-  onInit?: () => void
+type Props = {
+  label: string
+  clickHandler: () => void
+  disabled?: boolean
 }
 
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
-  useEffect(() => {
-    onInit?.()
-  }, [onInit])
-
+export const DropButton = ({ label, clickHandler, disabled }: Props) => {
   return (
-    <div
-      ref={rootElRef}
-      className={clsx('Ketcher-polymer-editor-root', classes.root)}
+    <button
+      className={styles.dropButton}
+      title={label}
+      onMouseDown={clickHandler}
+      disabled={disabled}
     >
-      {`Hello from ketcher polymer editor: build date: ${process.env.BUILD_DATE}`}
-      <MonomerLibrary />
-    </div>
+      {label}
+    </button>
   )
 }
-
-export { Editor }

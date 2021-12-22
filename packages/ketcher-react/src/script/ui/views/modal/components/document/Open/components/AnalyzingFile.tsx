@@ -14,32 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
+import Icon from 'src/script/ui/component/view/icon'
+import styles from './AnalyzingFile.module.less'
+import { LoadingCircles } from './LoadingCircles'
 
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { MonomerLibrary } from 'components/monomerLibrary'
-
-interface EditorProps {
-  onInit?: () => void
+export type AnalyzingFileProps = {
+  fileName?: string
 }
 
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
-  useEffect(() => {
-    onInit?.()
-  }, [onInit])
+const ICON_NAME = 'file-thumbnail'
 
-  return (
-    <div
-      ref={rootElRef}
-      className={clsx('Ketcher-polymer-editor-root', classes.root)}
-    >
-      {`Hello from ketcher polymer editor: build date: ${process.env.BUILD_DATE}`}
-      <MonomerLibrary />
-    </div>
-  )
-}
-
-export { Editor }
+export const AnalyzingFile = ({ fileName }: AnalyzingFileProps) => (
+  <div className={styles.analyzingFileWrapper}>
+    {fileName && (
+      <div className={styles.fileBox}>
+        <Icon name={ICON_NAME} />
+        <p>{fileName}</p>
+      </div>
+    )}
+    <LoadingCircles />
+  </div>
+)

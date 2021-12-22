@@ -14,32 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
+.analyzingFileWrapper {
+  min-width: 32em;
+  min-height: 23em;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { MonomerLibrary } from 'components/monomerLibrary'
+  .fileBox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
-interface EditorProps {
-  onInit?: () => void
+    svg {
+      margin-right: 13px;
+    }
+
+    p {
+      color: #585858;
+      font-size: 16px;
+      line-height: 19px;
+    }
+  }
 }
-
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
-  useEffect(() => {
-    onInit?.()
-  }, [onInit])
-
-  return (
-    <div
-      ref={rootElRef}
-      className={clsx('Ketcher-polymer-editor-root', classes.root)}
-    >
-      {`Hello from ketcher polymer editor: build date: ${process.env.BUILD_DATE}`}
-      <MonomerLibrary />
-    </div>
-  )
-}
-
-export { Editor }

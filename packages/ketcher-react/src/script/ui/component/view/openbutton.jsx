@@ -15,9 +15,10 @@
  ***************************************************************************/
 
 import { Component } from 'react'
-
-import classes from './buttons.module.less'
 import clsx from 'clsx'
+
+import { fileOpener } from '../../utils'
+import classes from './buttons.module.less'
 
 class OpenButton extends Component {
   constructor(props) {
@@ -63,57 +64,6 @@ class OpenButton extends Component {
       </button>
     )
   }
-}
-
-function fileOpener(server) {
-  return new Promise((resolve, reject) => {
-    // TODO: refactor return
-    if (global.FileReader) {
-      resolve(throughFileReader)
-    } else if (global.ActiveXObject) {
-      try {
-        const fso = new ActiveXObject('Scripting.FileSystemObject') // eslint-disable-line no-undef
-        resolve((file) => Promise.resolve(throughFileSystemObject(fso, file)))
-      } catch (e) {
-        reject(e)
-      }
-    } else if (server) {
-      resolve(
-        server.then(() => {
-          throw Error("Server doesn't still support echo method")
-          // return resolve(throughForm2IframePosting);
-        })
-      )
-    } else {
-      reject(new Error('Your browser does not support opening files locally'))
-    }
-  })
-}
-
-function throughFileReader(file) {
-  return new Promise((resolve, reject) => {
-    const rd = new FileReader() // eslint-disable-line no-undef
-
-    rd.onload = () => {
-      const content = rd.result
-      if (file.msClose) file.msClose()
-      resolve(content)
-    }
-
-    rd.onerror = (event) => {
-      reject(event)
-    }
-
-    rd.readAsText(file, 'UTF-8')
-  })
-}
-
-function throughFileSystemObject(fso, file) {
-  // IE9 and below
-  const fd = fso.OpenTextFile(file.name, 1)
-  const content = fd.ReadAll()
-  fd.Close()
-  return content
 }
 
 export default OpenButton

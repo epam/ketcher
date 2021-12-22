@@ -14,32 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
+@import 'src/style/variables.less';
 
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { MonomerLibrary } from 'components/monomerLibrary'
-
-interface EditorProps {
-  onInit?: () => void
+.isHovered {
+  background-color: @color-background-secondary;
 }
-
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
-  useEffect(() => {
-    onInit?.()
-  }, [onInit])
-
-  return (
-    <div
-      ref={rootElRef}
-      className={clsx('Ketcher-polymer-editor-root', classes.root)}
-    >
-      {`Hello from ketcher polymer editor: build date: ${process.env.BUILD_DATE}`}
-      <MonomerLibrary />
-    </div>
-  )
-}
-
-export { Editor }

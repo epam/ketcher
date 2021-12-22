@@ -14,32 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
+import ClipArea from '../../../../../../component/cliparea/cliparea'
 
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { MonomerLibrary } from 'components/monomerLibrary'
-
-interface EditorProps {
-  onInit?: () => void
+export type TextEditorProps = {
+  structStr: string
+  inputHandler: (str: string) => void
 }
 
-function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
-  useEffect(() => {
-    onInit?.()
-  }, [onInit])
-
+export const TextEditor = ({ structStr, inputHandler }: TextEditorProps) => {
   return (
-    <div
-      ref={rootElRef}
-      className={clsx('Ketcher-polymer-editor-root', classes.root)}
-    >
-      {`Hello from ketcher polymer editor: build date: ${process.env.BUILD_DATE}`}
-      <MonomerLibrary />
-    </div>
+    <>
+      <textarea
+        value={structStr}
+        onChange={(event) => inputHandler(event.target.value)}
+      />
+      <ClipArea
+        focused={() => true}
+        onCopy={() => ({ 'text/plain': structStr })}
+      />
+    </>
   )
 }
-
-export { Editor }

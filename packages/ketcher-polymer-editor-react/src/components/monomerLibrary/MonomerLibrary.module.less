@@ -21,10 +21,16 @@
   height: 700px;
 
   .tabsContent {
-    margin-left: 20px;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
     overflow-y: scroll;
+    width: 260px;
+
+    & > * {
+      margin: 25px 8px;
+    }
 
     .scrollbarThin()
   }

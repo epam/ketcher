@@ -58,7 +58,16 @@ const MonomerLibrary = () => {
       caption: 'CHEM',
       component: MonomerList,
       props: {
-        list: [{ name: 'C' }, { name: 'H' }, { name: 'E' }, { name: 'M' }]
+        list: [
+          { name: 'C' },
+          { name: 'H' },
+          { name: 'E' },
+          { name: 'M' },
+          { name: 'C' },
+          { name: 'H' },
+          { name: 'E' },
+          { name: 'M' }
+        ]
       }
     }
   ]

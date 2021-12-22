@@ -18,14 +18,23 @@
 
 .elements_table {
   background-color: @color-background-primary;
-  width: 57em;
+  #size-window-large();
+
+  > div {
+    overflow: hidden;
+    margin-left: 0;
+    margin-right: 0 !important;
+  }
 
   .tabs {
     outline: none;
+    border-bottom: 1px solid @color-divider;
+    padding-left: 15px;
+  }
 
-    .tabs_content {
-      height: 31em;
-    }
+  .tabs_content {
+    padding-left: 13px;
+    padding-right: 15px;
   }
 
   .period_table {

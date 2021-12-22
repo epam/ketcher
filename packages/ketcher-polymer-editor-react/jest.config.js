@@ -8,8 +8,7 @@ module.exports = {
   },
   moduleNameMapper: {
     '\\.(css|less)$': 'identity-obj-proxy',
-    'src(.*)$': '<rootDir>/src/$1',
-    'components(.*)$': '<rootDir>/src/components/$1',
-    'state(.*)$': '<rootDir>/src/state/$1'
+    '^components(.*)$': '<rootDir>/src/components/$1',
+    '^state(.*)$': '<rootDir>/src/state/$1'
   }
 }

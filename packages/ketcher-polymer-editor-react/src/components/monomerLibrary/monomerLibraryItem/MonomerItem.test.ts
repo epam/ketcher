@@ -1,4 +1,4 @@
-import { MonomerItem } from '../components/MonomerItem'
+import { MonomerItem } from './MonomerItem'
 import { render, fireEvent } from '@testing-library/react'
 
 describe('Test Monomer Item component', () => {

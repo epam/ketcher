@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { MonomerItem } from './components/MonomerItem'
+import { MonomerItem } from './monomerLibraryItem/MonomerItem'
 import classes from './MonomerLibrary.module.less'
 import { Tabs } from 'components/shared/ui/Tabs'
 

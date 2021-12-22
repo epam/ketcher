@@ -21,9 +21,7 @@ import clsx from 'clsx'
 import classes from './Tabs.module.less'
 import Box from '@mui/material/Box'
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props
-
+function TabPanel({ children, value, index, ...other }) {
   return (
     <div role="tabpanel" hidden={value !== index} id={index} {...other}>
       {value === index && <Box>{children}</Box>}

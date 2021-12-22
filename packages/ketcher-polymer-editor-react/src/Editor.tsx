@@ -19,7 +19,6 @@ import { useEffect, useRef } from 'react'
 import classes from './Editor.module.less'
 import clsx from 'clsx'
 import { AppContainer } from 'components/App'
-import { MonomerLibrary } from 'components/monomerLibrary'
 
 interface EditorProps {
   onInit?: () => void
@@ -39,7 +38,6 @@ function Editor(props: EditorProps) {
       className={clsx('Ketcher-polymer-editor-root', classes.root)}
     >
       <AppContainer />
-      <MonomerLibrary />
     </div>
   )
 }

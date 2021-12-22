@@ -58,7 +58,7 @@ const App = () => {
           setErrorMessage(message.toString())
         }}
         buttons={hiddenButtonsConfig}
-        staticResourcesUrl={process.env.PUBLIC_URL}
+        staticResourcesUrl={process.env.PUBLIC_URL!}
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {
           ;(global as any).ketcher = ketcher

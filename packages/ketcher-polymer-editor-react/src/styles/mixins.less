@@ -13,30 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import './src/styles/variables';
 
-// colors
-@color-background-canvas: #F2F2F2;
+.scrollbarThin {
+  &::-webkit-scrollbar {
+    width: 4px;
+    background-color: @color-scroll-inactive;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+  }
 
-@color-text-black: #121212;
-@color-text-gray: #BCBCBC;
-@color-text-white: #FFF;
+  &::-webkit-scrollbar-thumb {
+    background-color: @color-scroll;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+  }
 
-@color-gray: #DDDDDD;
-
-
-// Tabs
-@color-tab-active:#005662;
-@color-tab-hover: #00838F;
-
-// Scroll
-@color-scroll: #717171;
-@color-scroll-inactive: #DDDDDD;
-
-// fonts
-@font-size-m: 14px;
-@font-size-xs: 6px;
-
-@font-family-montserrat: 'Montserrat', sans-serif;
-
-@font-weight-300: 300;
-@font-weight-600: 600;
+  &::-webkit-scrollbar-thumb:active {
+    background-color: @color-scroll;
+  }
+}

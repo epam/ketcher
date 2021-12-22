@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { render } from '@testing-library/react'
-import { Editor } from './index'
+import { Editor } from './Editor'
 
 describe('Editor', () => {
   it('should be rendered correctly', () => {

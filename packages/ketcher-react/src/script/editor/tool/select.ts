@@ -404,7 +404,7 @@ class SelectTool {
       )
       const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a
       if (
-        atomId &&
+        atomId !== null &&
         !FunctionalGroup.isBondInContractedFunctionalGroup(
           atomFromStruct,
           sgroups,
@@ -422,7 +422,7 @@ class SelectTool {
       )
       const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b
       if (
-        bondId &&
+        bondId !== null &&
         !FunctionalGroup.isBondInContractedFunctionalGroup(
           bondFromStruct,
           sgroups,
@@ -501,7 +501,7 @@ class SelectTool {
       ci.map === 'sgroupData'
     ) {
       editor.selection(closestToSel(ci))
-      sgroupDialog(editor, ci.id, null)
+      sgroupDialog(editor, ci.id)
     } else if (ci.map === 'texts') {
       editor.selection(closestToSel(ci))
       const text = molecule.texts.get(ci.id)

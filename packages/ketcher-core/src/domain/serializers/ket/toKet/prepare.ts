@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Pile, Struct, Vec2, SGroup } from 'domain/entities'
+import { Pile, SGroup, Struct, Vec2 } from 'domain/entities'
 
 export function prepareStructForKet(struct: Struct) {
   const ketNodes: any = []
@@ -102,7 +102,9 @@ export function prepareStructForKet(struct: Struct) {
     }
   })
 
-  return ketNodes.sort((a, b) => a.center.x - b.center.x)
+  // TODO: check if this sorting operation is needed
+  // return ketNodes.sort((a, b) => a.center.x - b.center.x)
+  return ketNodes
 }
 
 function getFragmentCenter(struct, atomSet) {

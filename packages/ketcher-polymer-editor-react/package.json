@@ -33,7 +33,8 @@
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
     "test": "run-s test:prettier test:stylelint test:eslint test:unit",
     "test:eslint": "eslint . --ext .ts,.tsx,.js,.jsx",
-    "test:unit": "react-scripts test --env=jsdom  --passWithNoTests",
+    "test:unit": "jest --passWithNoTests",
+    "test:unit:update": "jest -u",
     "test:prettier": "prettier --check \"./**/*.{js,jsx,json,ts,tsx}\"",
     "test:stylelint": "stylelint \"./**/*.{css,less}\" --formatter verbose",
     "prettier:write": "prettier --write \"./**/*.{js,jsx,json,ts,tsx}\"",
@@ -46,6 +47,9 @@
   "dependencies": {
     "@babel/runtime": "^7.16.3",
     "@reduxjs/toolkit": "^1.7.1",
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@mui/material": "^5.2.4",
     "clsx": "^1.1.1",
     "lodash": "^4.17.21",
     "react-redux": "^7.2.1",
@@ -73,6 +77,7 @@
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
     "autoprefixer": "^10.2.5",
+    "babel-jest": "^27.4.5",
     "cross-env": "^7.0.3",
     "eslint": "^8.4.1",
     "eslint-plugin-jest": "^25.3.0",
@@ -81,11 +86,11 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-testing-library": "^5.0.1",
     "identity-obj-proxy": "^3.0.0",
+    "jest": "^27.4.5",
     "less": "^3.12.2",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.2.10",
     "prettier": "^2.5.1",
-    "react-scripts": "^4.0.3",
     "rollup": "^2.60.2",
     "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-delete": "^2.0.0",
@@ -94,12 +99,8 @@
     "rollup-plugin-typescript2": "^0.31.1",
     "rollup-plugin-visualizer": "^5.5.2",
     "stylelint": "13.13.1",
+    "ts-jest": "^27.1.2",
     "typescript": "^4.5.2"
-  },
-  "jest": {
-    "moduleNameMapper": {
-      "\\.(css|less)$": "identity-obj-proxy"
-    }
   },
   "files": [
     "dist"

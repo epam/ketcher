@@ -18,21 +18,35 @@
 
 .elements_table {
   background-color: @color-background-primary;
-  width: 57em;
+  width: @width-large;
+  height: @height-large;
+
+  > div {
+    overflow: hidden;
+    margin-left: 0;
+    margin-right: 0 !important;
+    margin-bottom: 0;
+  }
 
   .tabs {
     outline: none;
+    border-bottom: 1px solid @color-divider;
+    padding-left: 15px;
+  }
 
-    .tabs_content {
-      height: 31em;
-    }
+  .tabs_content {
+    height: 31em;
+  }
+
+  .content_general {
+    padding-left: 13px;
+    padding-right: 5px;
   }
 
   .period_table {
     position: relative;
 
     & > * {
-      font-size: 14px;
       line-height: normal;
     }
   }

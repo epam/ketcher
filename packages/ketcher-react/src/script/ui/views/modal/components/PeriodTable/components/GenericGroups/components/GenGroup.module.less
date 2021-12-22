@@ -14,34 +14,40 @@
  * limitations under the License.
  ***************************************************************************/
 
-.carbo,
-.hetero,
-.cyclic > fieldset {
-  float: left;
-}
+@import "./src/style/variables";
 
 .acyclic,
-.cyclic,
-.atom > fieldset {
-  display: inline-block;
-  vertical-align: top;
+.cyclic {
+  padding-left: 40px;
+  width: calc(100% - 40px);
 
-  & + fieldset {
-    margin-left: 0.4em;
+  > .fieldset {
+    padding-left: 40px;
+    width: calc(100% - 40px);
   }
 }
 
-.cyclic > legend + fieldset {
-  // a hack
-  margin: 0 0.4em 0 0.8em;
-}
-
 .fieldset {
-  text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 0.3em;
-  margin: 0 0.2em !important;
+  border: none;
+
+  > legend {
+    margin-bottom: 8px;
+    margin-left: 2px;
+    width: 100%;
+
+    &:after {
+      content: '';
+      display: block;
+      border: 1px solid @color-divider;
+      width: 100%;
+      margin-top: 7px;
+      margin-left: -2px;
+    }
+
+    & + fieldset {
+      margin-left: 2px;
+    }
+  }
 
   .subgroup,
   .any,
@@ -53,7 +59,7 @@
   .hetero fieldset {
     position: relative;
     border: 0;
-    padding: 0 0 1.2em;
+    padding: 0 0 17px;
 
     legend {
       font-size: 0.8em;
@@ -68,5 +74,11 @@
   &.carbo {
     clear: both;
     margin-right: 0.4em;
+  }
+
+  fieldset {
+    display: inline-block;
+    padding-right: 0;
+    padding-bottom: 0;
   }
 }

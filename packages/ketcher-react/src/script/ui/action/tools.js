@@ -195,7 +195,7 @@ const toolActions = {
     title: 'Arrow Unbalanced Equilibrium Filled Half Triangle Tool',
     action: {
       tool: 'reactionarrow',
-      opts: RxnArrowMode.UnbalancedEquilibriumFilleHalfTriangle
+      opts: RxnArrowMode.UnbalancedEquilibriumFilledHalfTriangle
     },
     hidden: (options) =>
       isHidden(

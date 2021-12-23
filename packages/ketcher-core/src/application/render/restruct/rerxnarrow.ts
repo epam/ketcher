@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, RxnArrowMode, Vec2 } from 'domain/entities'
+import { Box2Abs, RxnArrow, RxnArrowMode, Vec2 } from 'domain/entities'
 
 import { LayerMap } from './generalEnumTypes'
 import Raphael from '../raphael-ext'
@@ -57,13 +57,14 @@ class ReRxnArrow extends ReObject {
     const distRef: MinDistanceWithReferencePoint =
       this.getReferencePointDistance(p)
     const item = this.item
-
     const pos = item.pos
-    const height = item.height
 
     let dist: number = calculateDistanceToLine(pos, point)
 
-    if (height != null) {
+    if (RxnArrow.isElliptical(item)) {
+      // currently an elliptical arrow is highlighted if a pointer is close to one of the 3 virtual lines
+      // that form a triangle from the arrow's 3 reference points
+      // TODO: make a better detection (maybe rectangular, so it's similar to visual highlight/selection)
       const [startPoint, endPoint, middlePoint] = this.getReferencePoints()
       dist = Math.min(
         dist,
@@ -72,7 +73,6 @@ class ReRxnArrow extends ReObject {
       )
     }
 
-    // distRef = this.getReferencePointDistance(p)
     const refPoint: Vec2 | null =
       distRef.minDist <= 8 / s ? distRef.refPoint : null
     // distance is a smallest between dist to figure and it's reference points
@@ -110,13 +110,14 @@ class ReRxnArrow extends ReObject {
 
   getReferencePoints(): Array<Vec2> {
     const refPoints: Array<Vec2> = []
-    const [a, b] = this.item.pos
-    const height = this.item.height
+    const item = this.item
+    const [a, b] = item.pos
+    const height = item.height
     refPoints.push(new Vec2(a.x, a.y))
     refPoints.push(new Vec2(b.x, b.y))
 
-    if (height != null) {
-      const middlePoint = findMiddlePoint(height, a, b)
+    if (RxnArrow.isElliptical(item)) {
+      const middlePoint = findMiddlePoint(height!, a, b)
       refPoints.push(middlePoint)
     }
     return refPoints
@@ -148,39 +149,35 @@ class ReRxnArrow extends ReObject {
 
   generatePath(render: Render, options, type) {
     let path
-    const height = this.item.height != null && this.item.height * options.scale
-
-    const [a, b] = this.item.pos.map((p) => {
+    const item = this.item
+    const height = RxnArrow.isElliptical(item) && item.height! * options.scale
+    const pos = item.pos.map((p) => {
       return Scale.obj2scaled(p, options) || new Vec2()
     })
-
-    const { length, angle } = this.getArrowParams(a.x, a.y, b.x, b.y)
-
-    const startPoint = new Vec2(a.x, a.y)
-    const endPoint = new Vec2(b.x, b.y)
+    const { length, angle } = this.getArrowParams(
+      pos[0].x,
+      pos[0].y,
+      pos[1].x,
+      pos[1].y
+    )
 
     switch (type) {
       case 'selection':
-        path = draw.rectangleWithAngle(
+        path = draw.rectangleArrowHighlightAndSelection(
           render.paper,
-          startPoint,
-          endPoint,
+          { pos, height },
           length,
           angle,
-          options,
-          height
+          options
         )
         break
       case 'arrow':
         path = draw.arrow(
           render.paper,
-          startPoint,
-          endPoint,
+          { ...item, pos, height },
           length,
           angle,
-          options,
-          this.item.mode,
-          height
+          options
         )
         break
     }

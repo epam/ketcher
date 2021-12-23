@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializer, SmiSerializer } from 'domain/serializers'
+import { KetSerializer, SmiSerializer } from 'domain/serializers'
 import { StructFormatter, SupportedFormat } from './structFormatter.types'
 import { StructService, StructServiceOptions } from 'domain/services'
 
@@ -28,7 +28,7 @@ export class SmilesFormatter implements StructFormatter {
     // only for ServerFormatter
 
     private readonly structService: StructService,
-    private readonly molfileManager: MolSerializer,
+    private readonly ketSerializer: KetSerializer,
     private readonly format: SupportedFormat,
     private readonly options?: StructServiceOptions
   ) {}
@@ -41,7 +41,7 @@ export class SmilesFormatter implements StructFormatter {
   getStructureFromStringAsync(stringifiedStruct: string): Promise<Struct> {
     const serverFormatter = new ServerFormatter(
       this.structService,
-      this.molfileManager,
+      this.ketSerializer,
       this.format,
       this.options
     )

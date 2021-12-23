@@ -88,7 +88,7 @@ export class FormatterFactory {
           // only for ServerFormatter, because 'getStructureFromStringAsync' is delegated to it
 
           this.structService,
-          new MolSerializer(molSerializerOptions),
+          new KetSerializer(),
           format,
           structServiceOptions
         )

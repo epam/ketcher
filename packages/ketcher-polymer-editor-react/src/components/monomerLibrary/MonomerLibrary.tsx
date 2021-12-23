@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import { css } from '@emotion/react'
+
 import { MonomerItem } from './monomerLibraryItem/MonomerItem'
-import classes from './MonomerLibrary.module.less'
 import { Tabs } from 'components/shared/ui/Tabs'
+import { COLORS } from '../../styles/variables'
+import { scrollbarThin } from '../../styles/mixins'
 
 interface MonomerListPropTypes {
   list: Array<Record<string, string>>
@@ -72,13 +76,37 @@ const MonomerLibrary = () => {
     }
   ]
 
+  const styleContainer = css({
+    position: 'absolute',
+    width: 'fit-content',
+    height: '700px',
+    backgroundColor: COLORS.background.white
+  })
+
+  const styleTabs = {
+    listStyleType: 'none',
+    margin: 0,
+    padding: 0
+  }
+
+  const styleContent = css({
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    overflowY: 'scroll',
+    width: '260px',
+
+    '& > *': {
+      margin: '25px 8px'
+    },
+
+    ...scrollbarThin
+  })
+
   return (
-    <div className={classes.library}>
-      <Tabs
-        className={classes.tabs}
-        contentClassName={classes.tabsContent}
-        tabs={tabs}
-      />
+    <div css={styleContainer}>
+      <Tabs tabsStyle={styleTabs} contentStyle={styleContent} tabs={tabs} />
     </div>
   )
 }

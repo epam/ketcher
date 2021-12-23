@@ -14,15 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import "./src/styles/variables";
+import { COLORS } from './variables'
 
-.root {
-	height: 100%;
-	width: 100%;
-	position: relative;
-	min-width: 640px;
-	min-height: 400px;
-	background-color: @color-background-canvas;
-	padding: 14px 11px 0 11px;
-	box-sizing: border-box;
+export const scrollbarThin = {
+  '&:-webkit-scrollbar': {
+    width: '4px',
+    backgroundColor: COLORS.scroll.inactive,
+    borderRadius: '2px',
+    webkitBorderRadius: '2px'
+  },
+  '&:-webkit-scrollbar-thumb': {
+    backgroundColor: COLORS.scroll.regular,
+    borderRadius: '2px',
+    webkitBorderRadius: '2px'
+  },
+  '&:-webkit-scrollbar-thumb:active': {
+    backgroundColor: COLORS.scroll.regular
+  }
 }

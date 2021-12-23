@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 import { useEffect, useRef } from 'react'
-
-import classes from './Editor.module.less'
+import { css } from '@emotion/react'
 import clsx from 'clsx'
 import { AppContainer } from 'components/App'
+import { COLORS } from './styles/variables'
 
 interface EditorProps {
   onInit?: () => void
@@ -32,10 +32,22 @@ function Editor(props: EditorProps) {
     onInit?.()
   }, [onInit])
 
+  const styleRoot = css({
+    height: '100%',
+    width: '100%',
+    position: 'relative',
+    minWidth: 640,
+    minHeight: 400,
+    backgroundColor: COLORS.background.canvas,
+    padding: '14px 11px 0 11px',
+    boxSizing: 'border-box'
+  })
+
   return (
     <div
       ref={rootElRef}
-      className={clsx('Ketcher-polymer-editor-root', classes.root)}
+      className={clsx('Ketcher-polymer-editor-root')}
+      css={styleRoot}
     >
       <AppContainer />
     </div>

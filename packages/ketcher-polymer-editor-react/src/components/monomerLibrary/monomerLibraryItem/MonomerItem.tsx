@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import classes from './MonomerItem.module.less'
+
+import { css } from '@emotion/react'
+import { COLORS } from '../../../styles/variables'
 
 interface MonomerItemPropTypes {
   key: number
@@ -24,8 +26,22 @@ interface MonomerItemPropTypes {
 const MonomerItem = (props: MonomerItemPropTypes) => {
   const { item, onClick } = props
 
+  const styleCard = css({
+    background: COLORS.text.white,
+    border: `1px solid ${COLORS.text.black}`,
+    boxSizing: 'border-box',
+    borderRadius: '2px',
+    width: '32px',
+    height: '32px',
+    textAlign: 'center',
+    cursor: 'pointer',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  })
+
   return (
-    <div className={classes.card} onClick={onClick}>
+    <div css={styleCard} onClick={onClick}>
       {item.name}
     </div>
   )

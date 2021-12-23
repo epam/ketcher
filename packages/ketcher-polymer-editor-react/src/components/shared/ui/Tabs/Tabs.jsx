@@ -17,9 +17,8 @@ import * as React from 'react'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import { useState } from 'react'
-import clsx from 'clsx'
-import classes from './Tabs.module.less'
 import Box from '@mui/material/Box'
+import { COLORS } from '../../../../styles/variables'
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -31,7 +30,7 @@ function TabPanel({ children, value, index, ...other }) {
 
 function CustomTabs(props) {
   const [tabIndex, setTabIndex] = useState(0)
-  const { tabs, contentClassName, className } = props
+  const { tabs, contentStyle, tabsStyle } = props
   const tabPanel = tabs[tabIndex]
   const Component = tabPanel?.component
   const componentProps = tabPanel?.props
@@ -40,31 +39,60 @@ function CustomTabs(props) {
     setTabIndex(newTabIndex)
   }
 
+  const styleTabs = {
+    height: 24,
+    minHeight: 24
+  }
+
+  const styleTab = {
+    minHeight: 24,
+    minWidth: 60,
+    height: 1,
+    width: 65,
+    padding: 0,
+    fontSize: 10,
+    cursor: 'pointer',
+    textAlign: 'center',
+    backgroundColor: COLORS.tab.regular,
+    color: COLORS.text.black,
+
+    '&:hover': {
+      backgroundColor: COLORS.tab.hover,
+      color: COLORS.text.white
+    },
+
+    '&.active': {
+      color: COLORS.text.white,
+      backgroundColor: COLORS.tab.active
+    }
+  }
+
+  const styleIndicator = {
+    display: 'none'
+  }
+
   return (
     <>
       <Tabs
         value={tabIndex}
         onChange={handleChange}
-        className={clsx(classes.tabs, className)}
-        sx={{ minHeight: 24 }}
+        sx={{ ...styleTabs, ...tabsStyle }}
         TabIndicatorProps={{
-          className: classes.tabIndicator
+          sx: styleIndicator
         }}
       >
         {tabs.map((tabPanel, index) => (
           <Tab
             label={tabPanel.caption}
             key={index}
-            className={clsx(classes.tab, className, {
-              [classes.active]: tabIndex === index
-            })}
-            sx={{ minHeight: 24, minWidth: 60, height: 1 }}
+            className={tabIndex === index && 'active'}
+            sx={{ ...styleTab, ...tabsStyle }}
           />
         ))}
       </Tabs>
       {tabPanel && (
         <TabPanel value={tabIndex} index={tabIndex}>
-          <div className={contentClassName}>
+          <div css={contentStyle}>
             <Component {...componentProps} />
           </div>
         </TabPanel>

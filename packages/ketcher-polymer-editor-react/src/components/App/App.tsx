@@ -14,11 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from './App.module.less'
 import React, { useEffect } from 'react'
+import { css } from '@emotion/react'
+
 import { useAppDispatch, useAppSelector } from 'state'
 import { selectEditorIsReady, fetchInitData } from 'state/common'
 import { MonomerLibrary } from 'components/monomerLibrary'
+import { COLORS, FONTS } from '../../styles/variables'
 
 export const fetchData = () =>
   new Promise((resolve) => {
@@ -33,15 +35,52 @@ export const App = (): React.ReactElement => {
     dispatch(fetchInitData())
   }, [dispatch])
 
+  const styleContainer = css({
+    height: '100%',
+    width: '100%',
+    position: 'relative'
+  })
+
+  const styleLogo = css({
+    fontFamily: FONTS.family.montserrat,
+    fontSize: FONTS.size.medium,
+    fontWeight: FONTS.weight['600'],
+    color: COLORS.text.gray,
+    position: 'absolute',
+    bottom: '18px',
+    left: '13px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+
+    '> span:first-of-type, > span:last-of-type': {
+      fontWeight: FONTS.weight['300'],
+      fontSize: FONTS.size.xsmall,
+      textTransform: 'uppercase'
+    },
+
+    '> span:last-of-type': {
+      fontWeight: FONTS.weight['400']
+    },
+
+    '> span:nth-of-type(2)': {
+      color: COLORS.text.black,
+
+      '&:first-letter': {
+        color: COLORS.text.gray
+      }
+    }
+  })
+
   if (!isReady) {
     return <div>App is not ready</div>
   }
 
   return (
-    <div className={classes.container}>
+    <div css={styleContainer}>
       <MonomerLibrary />
 
-      <div className={classes.logo}>
+      <div css={styleLogo}>
         <span>Polymer Editor</span>
         <span>Ketcher</span>
         <span>EPAM</span>

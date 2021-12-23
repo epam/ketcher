@@ -14,43 +14,38 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import "../../styles/variables";
-
-.container {
-  height: 100%;
-  width: 100%;
-  position: relative;
-
-  .logo {
-    font-family: @font-family-montserrat;
-    font-size: @font-size-m;
-    font-weight: @font-weight-600;
-    color: @color-text-gray;
-    position: absolute;
-    bottom: 18px;
-    left: 13px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    > span:first-of-type,
-    > span:last-of-type {
-      font-weight: @font-weight-300;
-      font-size: @font-size-xs;
-      text-transform: uppercase;
-    }
-
-    > span:last-of-type {
-      font-weight: @font-weight-400;
-    }
-
-    > span:nth-of-type(2) {
-      color: @color-text-black;
-
-      &::first-letter {
-        color: @color-text-gray;
-      }
-    }
+export const COLORS = {
+  background: {
+    canvas: '#F2F2F2',
+    white: '#FFFFFF'
+  },
+  text: {
+    black: '#121212',
+    gray: '#BCBCBC',
+    white: '#FFFFFF'
+  },
+  tab: {
+    regular: '#F3F3F3',
+    active: '#005662',
+    hover: '#00838F'
+  },
+  scroll: {
+    regular: '#717171',
+    inactive: '#DDDDDD'
   }
 }
 
+export const FONTS = {
+  size: {
+    medium: '14px',
+    xsmall: '6px'
+  },
+  family: {
+    montserrat: 'Montserrat, sans-serif'
+  },
+  weight: {
+    300: 300,
+    400: 400,
+    600: 600
+  }
+}

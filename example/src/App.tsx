@@ -10,6 +10,8 @@ import { ErrorModal } from './ErrorModal'
 import Miew from 'miew'
 import { PeptidesToggler } from './PeptidesToggler'
 import { useState } from 'react'
+import { Editor as PolymerEditor } from 'ketcher-polymer-editor-react'
+import 'ketcher-polymer-editor-react/dist/index.css'
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search)
@@ -45,7 +47,7 @@ const App = () => {
 
   return showPeptides ? (
     <>
-      <div>Peptides Editor Enabled</div>
+      <PolymerEditor />
       <PeptidesToggler toggle={setShowPeptides} />
     </>
   ) : (

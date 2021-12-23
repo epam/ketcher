@@ -18,6 +18,7 @@
 
 .table {
   position: relative;
+  border-spacing: 3px;
 
   td,
   th {
@@ -31,7 +32,7 @@
   .main_row {
     opacity: 0.6;
     font-weight: normal;
-    font-size: 0.8em;
+    font-size: @font-size-small;
     padding: 0.3em 0.8em;
   }
 
@@ -108,18 +109,18 @@
 .button {
   .btn();
 
-  font-size: 1.3em;
+  font-size: @font-size-regular;
   font-weight: 500;
-  width: 2em;
-  height: 2em;
+  width: 24px;
+  height: 24px;
   line-height: 2;
   vertical-align: middle;
   padding: 0.15em;
-  margin: 1px;
   border: 0;
   display: block;
   position: relative;
   color: @color-text-secondary !important;
+  margin: 0 !important;
 
   &::after {
     color: @color-text-secondary;
@@ -136,11 +137,6 @@
   &:hover {
     z-index: 60;
     background: #fff;
-  }
-
-  &:active {
-    .highlight-scale(none);
-    .highlight-shadow(none);
   }
 
   &.selected {

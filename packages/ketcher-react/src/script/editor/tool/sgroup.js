@@ -72,7 +72,7 @@ function SGroupTool(editor, type) {
         }
         if (
           atomFromStruct &&
-          FunctionalGroup.isAtomInContractedFinctionalGroup(
+          FunctionalGroup.isAtomInContractedFunctionalGroup(
             atomFromStruct,
             sgroups,
             functionalGroups,
@@ -139,7 +139,7 @@ SGroupTool.prototype.mousedown = function (event) {
     const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
     if (
       atomFromStruct &&
-      !FunctionalGroup.isAtomInContractedFinctionalGroup(
+      !FunctionalGroup.isAtomInContractedFunctionalGroup(
         atomFromStruct,
         this.sgroups,
         this.functionalGroups,
@@ -249,7 +249,7 @@ SGroupTool.prototype.mouseup = function (event) {
       }
       if (
         atomFromStruct &&
-        FunctionalGroup.isAtomInContractedFinctionalGroup(
+        FunctionalGroup.isAtomInContractedFunctionalGroup(
           atomFromStruct,
           this.sgroups,
           this.functionalGroups,

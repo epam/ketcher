@@ -60,7 +60,7 @@ function getElementsInRectangle(restruct, p0, p1) {
       atom.a.pp.x < x1 &&
       atom.a.pp.y > y0 &&
       atom.a.pp.y < y1 &&
-      (!FunctionalGroup.isAtomInContractedFinctionalGroup(
+      (!FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom.a,
         sGroups,
         functionalGroups,
@@ -182,7 +182,7 @@ function getElementsInPolygon(restruct, rr) {
     const sGroup = restruct.sgroups.get(relatedFGId)
     if (
       isPointInPolygon(r, atom.a.pp) &&
-      (!FunctionalGroup.isAtomInContractedFinctionalGroup(
+      (!FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom.a,
         sGroups,
         functionalGroups,

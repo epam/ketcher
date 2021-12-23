@@ -123,7 +123,7 @@ function findClosestAtom(restruct, pos, skip, minDist) {
 
   restruct.atoms.forEach((atom, aid) => {
     if (
-      FunctionalGroup.isAtomInContractedFinctionalGroup(
+      FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom.a,
         sGroups,
         functionalGroups,

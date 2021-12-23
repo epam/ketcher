@@ -551,7 +551,7 @@ function buildLabel(
       label.rbb,
       ((atom.hydrogenOnTheLeft ? -1 : 1) *
         (label.rbb.width - label.rbb.height)) /
-      2,
+        2,
       0
     )
 
@@ -809,8 +809,8 @@ function showHydrogen(
         hydroIndex.path,
         hydroIndex.rbb,
         data.rightMargin +
-        0.5 * hydroIndex.rbb.width * (options.zoom > 1 ? 1 : options.zoom) +
-        delta,
+          0.5 * hydroIndex.rbb.width * (options.zoom > 1 ? 1 : options.zoom) +
+          delta,
         0.2 * atom.label!.rbb.height
       )
       data.rightMargin += hydroIndex.rbb.width + delta
@@ -830,10 +830,10 @@ function showHydrogen(
       hydrogen.path,
       hydrogen.rbb,
       data.leftMargin -
-      0.5 *
-      hydrogen.rbb.width *
-      (implh > 1 && options.zoom < 1 ? options.zoom : 1) -
-      delta,
+        0.5 *
+          hydrogen.rbb.width *
+          (implh > 1 && options.zoom < 1 ? options.zoom : 1) -
+        delta,
       0
     )
     data.leftMargin -= hydrogen.rbb.width + delta
@@ -895,7 +895,7 @@ function showAttpnt(atom, render, lsb, addReObjectPath) {
       pos1 = pos1.addScaled(
         lsbn,
         util.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) +
-        options.lineWidth / 2
+          options.lineWidth / 2
       )
       /* eslint-enable no-mixed-operators*/
       pos0 = shiftBondEnd(atom, pos0, lsb, options.lineWidth)

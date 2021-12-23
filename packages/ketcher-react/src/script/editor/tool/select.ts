@@ -68,30 +68,30 @@ class SelectTool {
       event,
       selectFragment
         ? [
-          'frags',
-          'sgroups',
-          'functionalGroups',
-          'sgroupData',
-          'rgroups',
-          'rxnArrows',
-          'rxnPluses',
-          'enhancedFlags',
-          'simpleObjects',
-          'texts'
-        ]
+            'frags',
+            'sgroups',
+            'functionalGroups',
+            'sgroupData',
+            'rgroups',
+            'rxnArrows',
+            'rxnPluses',
+            'enhancedFlags',
+            'simpleObjects',
+            'texts'
+          ]
         : [
-          'atoms',
-          'bonds',
-          'sgroups',
-          'functionalGroups',
-          'sgroupData',
-          'rgroups',
-          'rxnArrows',
-          'rxnPluses',
-          'enhancedFlags',
-          'simpleObjects',
-          'texts'
-        ],
+            'atoms',
+            'bonds',
+            'sgroups',
+            'functionalGroups',
+            'sgroupData',
+            'rgroups',
+            'rxnArrows',
+            'rxnPluses',
+            'enhancedFlags',
+            'simpleObjects',
+            'texts'
+          ],
       null
     )
 
@@ -261,30 +261,30 @@ class SelectTool {
     const maps =
       this.#lassoHelper.fragment || event.ctrlKey
         ? [
-          'frags',
-          'sgroups',
-          'functionalGroups',
-          'sgroupData',
-          'rgroups',
-          'rxnArrows',
-          'rxnPluses',
-          'enhancedFlags',
-          'simpleObjects',
-          'texts'
-        ]
+            'frags',
+            'sgroups',
+            'functionalGroups',
+            'sgroupData',
+            'rgroups',
+            'rxnArrows',
+            'rxnPluses',
+            'enhancedFlags',
+            'simpleObjects',
+            'texts'
+          ]
         : [
-          'atoms',
-          'bonds',
-          'sgroups',
-          'functionalGroups',
-          'sgroupData',
-          'rgroups',
-          'rxnArrows',
-          'rxnPluses',
-          'enhancedFlags',
-          'simpleObjects',
-          'texts'
-        ]
+            'atoms',
+            'bonds',
+            'sgroups',
+            'functionalGroups',
+            'sgroupData',
+            'rgroups',
+            'rxnArrows',
+            'rxnPluses',
+            'enhancedFlags',
+            'simpleObjects',
+            'texts'
+          ]
 
     editor.hover(editor.findItem(event, maps, null))
 
@@ -407,7 +407,8 @@ class SelectTool {
       const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a
       if (
         atomId !== null &&
-        !FunctionalGroup.isAtomInContractedFunctionalGroup(  // TODO: examine if this code is really needed, seems like its a hack
+        !FunctionalGroup.isAtomInContractedFunctionalGroup(
+          // TODO: examine if this code is really needed, seems like its a hack
           atomFromStruct,
           sgroups,
           functionalGroups,
@@ -425,7 +426,8 @@ class SelectTool {
       const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b
       if (
         bondId !== null &&
-        !FunctionalGroup.isBondInContractedFunctionalGroup(  // TODO: examine if this code is really needed, seems like its a hack
+        !FunctionalGroup.isBondInContractedFunctionalGroup(
+          // TODO: examine if this code is really needed, seems like its a hack
           bondFromStruct,
           sgroups,
           functionalGroups,

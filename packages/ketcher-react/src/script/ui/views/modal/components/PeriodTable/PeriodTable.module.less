@@ -16,15 +16,15 @@
 
 @import '../../../../../../style/mixins.less';
 
-.elements_table {
+.elementsTable.elementsTable {
   background-color: @color-background-primary;
   width: @width-large;
-  height: @height-large;
+  height: 390px;
 
   > div {
     overflow: hidden;
     margin-left: 0;
-    margin-right: 0 !important;
+    margin-right: 0;
     margin-bottom: 0;
   }
 
@@ -34,16 +34,16 @@
     padding-left: 15px;
   }
 
-  .tabs_content {
+  .tabsContent {
     height: 31em;
   }
 
-  .content_general {
+  .contentGeneral {
     padding-left: 13px;
     padding-right: 5px;
   }
 
-  .period_table {
+  .periodTable {
     position: fixed;
 
     & > * {
@@ -52,7 +52,7 @@
   }
 
   .addAtom {
-    .button_main();
+    .button-main();
 
     float: right;
     position: relative;

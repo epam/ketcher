@@ -18,7 +18,6 @@ import { useEffect, useRef } from 'react'
 import { css } from '@emotion/react'
 import clsx from 'clsx'
 import { AppContainer } from 'components/App'
-import { COLORS } from './styles/variables'
 
 interface EditorProps {
   onInit?: () => void
@@ -38,8 +37,6 @@ function Editor(props: EditorProps) {
     position: 'relative',
     minWidth: 640,
     minHeight: 400,
-    backgroundColor: COLORS.background.canvas,
-    padding: '14px 11px 0 11px',
     boxSizing: 'border-box'
   })
 

@@ -3,10 +3,19 @@
 exports[`Editor should be rendered correctly 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": <body>
+  "baseElement": .emotion-0 {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  min-width: 640px;
+  min-height: 400px;
+  box-sizing: border-box;
+}
+
+<body>
     <div>
       <div
-        class="Ketcher-polymer-editor-root css-qu65my-Editor"
+        class="Ketcher-polymer-editor-root emotion-0"
       >
         <div>
           App is not ready
@@ -14,9 +23,18 @@ Object {
       </div>
     </div>
   </body>,
-  "container": <div>
+  "container": .emotion-0 {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  min-width: 640px;
+  min-height: 400px;
+  box-sizing: border-box;
+}
+
+<div>
     <div
-      class="Ketcher-polymer-editor-root css-qu65my-Editor"
+      class="Ketcher-polymer-editor-root emotion-0"
     >
       <div>
         App is not ready

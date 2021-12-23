@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const COLORS = {
+const colors = {
   background: {
     canvas: '#F2F2F2',
     white: '#FFFFFF'
@@ -35,7 +35,7 @@ export const COLORS = {
   }
 }
 
-export const FONTS = {
+const fonts = {
   size: {
     medium: '14px',
     xsmall: '6px'
@@ -48,4 +48,9 @@ export const FONTS = {
     400: 400,
     600: 600
   }
+}
+
+export const defaultTheme = {
+  colors,
+  fonts
 }

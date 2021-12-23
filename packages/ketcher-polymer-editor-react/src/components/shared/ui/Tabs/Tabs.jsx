@@ -18,7 +18,7 @@ import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import { useState } from 'react'
 import Box from '@mui/material/Box'
-import { COLORS } from '../../../../styles/variables'
+import { useTheme } from '@emotion/react'
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -34,6 +34,7 @@ function CustomTabs(props) {
   const tabPanel = tabs[tabIndex]
   const Component = tabPanel?.component
   const componentProps = tabPanel?.props
+  const theme = useTheme()
 
   const handleChange = (event, newTabIndex) => {
     setTabIndex(newTabIndex)
@@ -53,17 +54,17 @@ function CustomTabs(props) {
     fontSize: 10,
     cursor: 'pointer',
     textAlign: 'center',
-    backgroundColor: COLORS.tab.regular,
-    color: COLORS.text.black,
+    backgroundColor: theme.colors.tab.regular,
+    color: theme.colors.text.black,
 
     '&:hover': {
-      backgroundColor: COLORS.tab.hover,
-      color: COLORS.text.white
+      backgroundColor: theme.colors.tab.hover,
+      color: theme.colors.text.white
     },
 
     '&.active': {
-      color: COLORS.text.white,
-      backgroundColor: COLORS.tab.active
+      color: theme.colors.text.white,
+      backgroundColor: theme.colors.tab.active
     }
   }
 

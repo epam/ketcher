@@ -14,21 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { COLORS } from './variables'
-
-export const scrollbarThin = {
-  '&:-webkit-scrollbar': {
+export const scrollbarThin = (theme) => ({
+  '&::-webkit-scrollbar': {
     width: '4px',
-    backgroundColor: COLORS.scroll.inactive,
+    backgroundColor: theme.colors.scroll.inactive,
     borderRadius: '2px',
     webkitBorderRadius: '2px'
   },
-  '&:-webkit-scrollbar-thumb': {
-    backgroundColor: COLORS.scroll.regular,
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: theme.colors.scroll.regular,
     borderRadius: '2px',
     webkitBorderRadius: '2px'
   },
-  '&:-webkit-scrollbar-thumb:active': {
-    backgroundColor: COLORS.scroll.regular
+  '&::-webkit-scrollbar-thumb:active': {
+    backgroundColor: theme.colors.scroll.regular
   }
-}
+})

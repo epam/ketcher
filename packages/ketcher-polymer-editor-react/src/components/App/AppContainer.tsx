@@ -17,11 +17,20 @@
 import { Provider } from 'react-redux'
 import { store } from 'state'
 import { App } from 'components/App'
+import { ThemeProvider } from '@emotion/react'
+import { defaultTheme } from '../../styles/variables'
+import { createTheme } from '@mui/material'
+
+const themeMui = createTheme()
 
 export const AppContainer = () => {
   return (
     <Provider store={store}>
-      <App />
+      <ThemeProvider theme={themeMui}>
+        <ThemeProvider theme={defaultTheme}>
+          <App />
+        </ThemeProvider>
+      </ThemeProvider>
     </Provider>
   )
 }

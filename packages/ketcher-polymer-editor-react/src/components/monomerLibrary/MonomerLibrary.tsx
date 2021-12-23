@@ -18,7 +18,6 @@ import { css } from '@emotion/react'
 
 import { MonomerItem } from './monomerLibraryItem/MonomerItem'
 import { Tabs } from 'components/shared/ui/Tabs'
-import { COLORS } from '../../styles/variables'
 import { scrollbarThin } from '../../styles/mixins'
 
 interface MonomerListPropTypes {
@@ -76,12 +75,13 @@ const MonomerLibrary = () => {
     }
   ]
 
-  const styleContainer = css({
-    position: 'absolute',
-    width: 'fit-content',
-    height: '700px',
-    backgroundColor: COLORS.background.white
-  })
+  const styleContainer = (theme) =>
+    css({
+      position: 'absolute',
+      width: 'fit-content',
+      height: '700px',
+      backgroundColor: theme.colors.background.white
+    })
 
   const styleTabs = {
     listStyleType: 'none',
@@ -89,20 +89,21 @@ const MonomerLibrary = () => {
     padding: 0
   }
 
-  const styleContent = css({
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    overflowY: 'scroll',
-    width: '260px',
+  const styleContent = (theme) =>
+    css({
+      ...scrollbarThin(theme),
 
-    '& > *': {
-      margin: '25px 8px'
-    },
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'flex-start',
+      overflowY: 'auto',
+      width: '260px',
 
-    ...scrollbarThin
-  })
+      '& > *': {
+        margin: '25px 8px'
+      }
+    })
 
   return (
     <div css={styleContainer}>

@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import classes from './MonomerItem.module.less'
 
-import './PeptidesToggler.css'
-
-interface PeptidesTogglerProps {
-  toggle: (isEnabled: boolean) => void
+interface MonomerItemPropTypes {
+  key: number
+  item: Record<string, string>
+  onClick: () => void
 }
 
-const PeptidesToggler = ({ toggle }: PeptidesTogglerProps) => {
+const MonomerItem = (props: MonomerItemPropTypes) => {
+  const { item, onClick } = props
+
   return (
-    <label className="switch">
-      <input type="checkbox" onChange={(e) => toggle(e.target.checked)} />
-      <span className="slider" />
-    </label>
+    <div className={classes.card} onClick={onClick}>
+      {item.name}
+    </div>
   )
 }
 
-export { PeptidesToggler }
+export { MonomerItem }

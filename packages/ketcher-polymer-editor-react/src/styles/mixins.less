@@ -13,12 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import './src/styles/variables';
 
-import { render } from '@testing-library/react'
-import { Editor } from './Editor'
+.scrollbarThin {
+  &::-webkit-scrollbar {
+    width: 4px;
+    background-color: @color-scroll-inactive;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+  }
 
-describe('Editor', () => {
-  it('should be rendered correctly', () => {
-    expect(render(<Editor />)).toMatchSnapshot()
-  })
-})
+  &::-webkit-scrollbar-thumb {
+    background-color: @color-scroll;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb:active {
+    background-color: @color-scroll;
+  }
+}

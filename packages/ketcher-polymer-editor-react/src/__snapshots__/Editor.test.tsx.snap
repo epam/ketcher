@@ -8,7 +8,9 @@ Object {
       <div
         class="Ketcher-polymer-editor-root root"
       >
-        Hello from ketcher polymer editor: build date: undefined
+        <div>
+          App is not ready
+        </div>
       </div>
     </div>
   </body>,
@@ -16,7 +18,9 @@ Object {
     <div
       class="Ketcher-polymer-editor-root root"
     >
-      Hello from ketcher polymer editor: build date: undefined
+      <div>
+        App is not ready
+      </div>
     </div>
   </div>,
   "debug": [Function],

@@ -14,11 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render } from '@testing-library/react'
-import { Editor } from './Editor'
+import './PolymerToggler.css'
 
-describe('Editor', () => {
-  it('should be rendered correctly', () => {
-    expect(render(<Editor />)).toMatchSnapshot()
-  })
-})
+interface PolymerTogglerProps {
+  toggle: (isEnabled: boolean) => void
+}
+
+const PolymerToggler = ({ toggle }: PolymerTogglerProps) => {
+  return (
+    <label className="switch">
+      <input type="checkbox" onChange={(e) => toggle(e.target.checked)} />
+      <span className="slider" />
+    </label>
+  )
+}
+
+export { PolymerToggler }

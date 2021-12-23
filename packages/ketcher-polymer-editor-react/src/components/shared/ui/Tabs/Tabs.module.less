@@ -13,12 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import "./src/styles/variables";
 
-import { render } from '@testing-library/react'
-import { Editor } from './Editor'
+.tabs {
+  height: 24px;
 
-describe('Editor', () => {
-  it('should be rendered correctly', () => {
-    expect(render(<Editor />)).toMatchSnapshot()
-  })
-})
+  .tab {
+    width: 65px;
+    padding: 0;
+    font-size: 10px;
+    cursor: pointer;
+    text-align: center;
+    background-color: @color-tab;
+    color: @color-text-black;
+
+    &:hover {
+      background-color: @color-tab-hover;
+      color: @color-text-white;
+    }
+
+    &.active {
+      color: @color-text-white;
+      background-color: @color-tab-active;
+    }
+  }
+
+  .tabIndicator {
+    display: none;
+  }
+}

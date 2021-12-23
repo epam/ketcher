@@ -13,12 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import './src/styles/variables';
 
-import { render } from '@testing-library/react'
-import { Editor } from './Editor'
-
-describe('Editor', () => {
-  it('should be rendered correctly', () => {
-    expect(render(<Editor />)).toMatchSnapshot()
-  })
-})
+.card {
+  background: @color-text-white;
+  border: 1px solid @color-text-black;
+  box-sizing: border-box;
+  border-radius: 2px;
+  width: 32px;
+  height: 32px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -14,11 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render } from '@testing-library/react'
-import { Editor } from './Editor'
+import { createSlice } from '@reduxjs/toolkit'
+import { RootState } from 'state'
 
-describe('Editor', () => {
-  it('should be rendered correctly', () => {
-    expect(render(<Editor />)).toMatchSnapshot()
-  })
+interface EditorState {
+  isReady: boolean | null
+}
+
+const initialState: EditorState = {
+  isReady: null
+}
+
+export const editorSlice: any = createSlice({
+  name: 'editor',
+  initialState,
+  reducers: {
+    init: (state) => {
+      state.isReady = false
+    },
+    initSuccess: (state) => {
+      state.isReady = true
+    },
+    initFailure: (state) => {
+      state.isReady = false
+    }
+  }
 })
+
+export const { init, initSuccess, initFailure } = editorSlice.actions
+
+export const selectEditorIsReady = (state: RootState) => state.editor.isReady
+
+export const editorReducer = editorSlice.reducer

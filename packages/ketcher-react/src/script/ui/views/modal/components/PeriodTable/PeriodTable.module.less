@@ -44,7 +44,7 @@
   }
 
   .period_table {
-    position: relative;
+    position: fixed;
 
     & > * {
       line-height: normal;
@@ -55,5 +55,7 @@
     .button_main();
 
     float: right;
+    position: relative;
+    z-index: 10;
   }
 }

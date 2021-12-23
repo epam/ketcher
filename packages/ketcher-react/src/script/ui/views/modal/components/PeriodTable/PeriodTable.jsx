@@ -160,7 +160,9 @@ class Table extends Component {
       >
         <Tabs
           className={classes.tabs}
-          contentClassName={type !== 'gen' ? classes.tabs_content : classes.content_general}
+          contentClassName={
+            type !== 'gen' ? classes.tabs_content : classes.content_general
+          }
           captions={tabs}
           tabIndex={type !== 'gen' ? 0 : 1}
           changeTab={this.changeTabType}

@@ -207,21 +207,21 @@ AtomTool.prototype.mouseup = function (event) {
   })
 }
 
-export function atomLongtapEvent(tool, render, groupId) {
+export function atomLongtapEvent(tool, render) {
   const { dragCtx, editor } = tool
   const atomid = dragCtx.item?.id
-
+  const fgs = render.ctab.molecule.functionalGroups
   // edit atom or add atom
   const atom =
     atomid !== undefined && atomid !== null
       ? render.ctab.molecule.atoms.get(atomid)
       : new Atom({ label: '' })
-
+  const fgId = FunctionalGroup.findFunctionalGroupByAtom(fgs, atomid)
   // TODO: longtab event
   dragCtx.timeout = setTimeout(() => {
     delete tool.dragCtx
-    if (groupId != null) {
-      editor.event.removeFG.dispatch({ fgIds: [groupId] })
+    if (fgId != null) {
+      editor.event.removeFG.dispatch({ fgIds: [fgId] })
       return
     }
     editor.selection(null)

@@ -96,7 +96,7 @@ EraserTool.prototype.mouseup = function (event) {
       }
       if (
         atomFromStruct &&
-        FunctionalGroup.isAtomInContractedFinctionalGroup(
+        FunctionalGroup.isAtomInContractedFunctionalGroup(
           atomFromStruct,
           this.sgroups,
           this.functionalGroups,
@@ -122,7 +122,7 @@ EraserTool.prototype.mouseup = function (event) {
 
       if (
         atomFromStruct &&
-        !FunctionalGroup.isAtomInContractedFinctionalGroup(
+        !FunctionalGroup.isAtomInContractedFunctionalGroup(
           atomFromStruct,
           this.sgroups,
           this.functionalGroups,
@@ -229,7 +229,7 @@ EraserTool.prototype.click = function (event) {
     const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
     if (
       atomFromStruct &&
-      !FunctionalGroup.isAtomInContractedFinctionalGroup(
+      !FunctionalGroup.isAtomInContractedFunctionalGroup(
         atomFromStruct,
         this.sgroups,
         this.functionalGroups,

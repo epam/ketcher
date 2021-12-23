@@ -14,11 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render } from '@testing-library/react'
-import { Editor } from './Editor'
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from 'state'
 
-describe('Editor', () => {
-  it('should be rendered correctly', () => {
-    expect(render(<Editor />)).toMatchSnapshot()
-  })
-})
+export const useAppDispatch = () => useDispatch<AppDispatch>()
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector

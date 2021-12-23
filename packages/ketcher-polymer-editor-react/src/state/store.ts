@@ -14,11 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render } from '@testing-library/react'
-import { Editor } from './Editor'
+import { configureStore, Store } from '@reduxjs/toolkit'
+import { editorReducer } from 'state/common'
+import createSagaMiddleware from 'redux-saga'
+import { rootSaga } from 'state/rootSaga'
 
-describe('Editor', () => {
-  it('should be rendered correctly', () => {
-    expect(render(<Editor />)).toMatchSnapshot()
-  })
+const sagaMiddleware = createSagaMiddleware()
+
+export const store: Store = configureStore({
+  reducer: {
+    editor: editorReducer
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      thunk: false
+    }).concat(sagaMiddleware)
 })
+
+sagaMiddleware.run(rootSaga)
+
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch

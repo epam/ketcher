@@ -28,8 +28,16 @@
     "baseUrl": ".",
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "components/*": ["src/components/*"]
-    }
+      "components/*": ["src/components/*"],
+      "state/*": ["src/state/*"],
+      "state": ["src/state"]
+    },
+    "plugins": [
+      {
+        "transform": "@zerollup/ts-transform-paths",
+        "exclude": ["*"]
+      }
+    ]
   },
   "include": ["src"]
 }

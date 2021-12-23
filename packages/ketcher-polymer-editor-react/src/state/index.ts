@@ -14,11 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render } from '@testing-library/react'
-import { Editor } from './Editor'
-
-describe('Editor', () => {
-  it('should be rendered correctly', () => {
-    expect(render(<Editor />)).toMatchSnapshot()
-  })
-})
+export * from './store'
+export * from './rootSaga'
+export * from './hooks'

@@ -14,11 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render } from '@testing-library/react'
-import { Editor } from './Editor'
+import { spawn } from 'redux-saga/effects'
+import { watchFetchData } from 'state/common/editorSaga'
 
-describe('Editor', () => {
-  it('should be rendered correctly', () => {
-    expect(render(<Editor />)).toMatchSnapshot()
-  })
-})
+export function* rootSaga() {
+  yield spawn(watchFetchData)
+}

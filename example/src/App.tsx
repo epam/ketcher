@@ -1,17 +1,17 @@
 import 'miew/dist/Miew.min.css'
 import 'ketcher-react/dist/index.css'
+import 'ketcher-polymer-editor-react/dist/index.css'
 
 import { ButtonsConfig, Editor } from 'ketcher-react'
 import { Ketcher, RemoteStructServiceProvider } from 'ketcher-core'
+import { Editor as PolymerEditor } from 'ketcher-polymer-editor-react'
 
 import { ErrorModal } from './ErrorModal'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import Miew from 'miew'
-import { PeptidesToggler } from './PeptidesToggler'
+import { PolymerToggler } from './PolymerToggler'
 import { useState } from 'react'
-import { Editor as PolymerEditor } from 'ketcher-polymer-editor-react'
-import 'ketcher-polymer-editor-react/dist/index.css'
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search)
@@ -37,18 +37,18 @@ if (process.env.MODE === 'standalone') {
   structServiceProvider = new StandaloneStructServiceProvider()
 }
 
-const peptideEditor = process.env.ENABLE_PEPTIDES_EDITOR
+const polymerEditor = process.env.ENABLE_POLYMER_EDITOR
 
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig()
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [showPeptides, setShowPeptides] = useState(false)
+  const [showPolymerEditor, setShowPolymerEditor] = useState(false)
 
-  return showPeptides ? (
+  return showPolymerEditor ? (
     <>
       <PolymerEditor />
-      <PeptidesToggler toggle={setShowPeptides} />
+      <PolymerToggler toggle={setShowPolymerEditor} />
     </>
   ) : (
     <>
@@ -58,13 +58,13 @@ const App = () => {
           setErrorMessage(message.toString())
         }}
         buttons={hiddenButtonsConfig}
-        staticResourcesUrl={process.env.PUBLIC_URL}
+        staticResourcesUrl={process.env.PUBLIC_URL!}
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {
           ;(global as any).ketcher = ketcher
         }}
       />
-      {peptideEditor && <PeptidesToggler toggle={setShowPeptides} />}
+      {polymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}
       {hasError && (
         <ErrorModal message={errorMessage} close={() => setHasError(false)} />
       )}

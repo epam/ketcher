@@ -18,7 +18,7 @@ import { useEffect, useRef } from 'react'
 
 import classes from './Editor.module.less'
 import clsx from 'clsx'
-import { MonomerLibrary } from 'components/monomerLibrary'
+import { AppContainer } from 'components/App'
 
 interface EditorProps {
   onInit?: () => void
@@ -27,6 +27,7 @@ interface EditorProps {
 function Editor(props: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
   const { onInit } = props
+
   useEffect(() => {
     onInit?.()
   }, [onInit])
@@ -36,8 +37,7 @@ function Editor(props: EditorProps) {
       ref={rootElRef}
       className={clsx('Ketcher-polymer-editor-root', classes.root)}
     >
-      {`Hello from ketcher polymer editor: build date: ${process.env.BUILD_DATE}`}
-      <MonomerLibrary />
+      <AppContainer />
     </div>
   )
 }

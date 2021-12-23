@@ -14,29 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-// colors
-@color-background-canvas: #F2F2F2;
+import { put, takeEvery, call } from 'redux-saga/effects'
+import { init, initFailure, initSuccess } from 'state/common'
+import { fetchData as fetchDataCall } from 'components/App'
 
-@color-text-black: #121212;
-@color-text-gray: #BCBCBC;
-@color-text-white: #FFF;
+const FETCH_DATA = 'editor/fetchData'
 
-@color-gray: #DDDDDD;
+function* fetchData() {
+  yield put(init())
+  try {
+    yield call(fetchDataCall)
+    yield put(initSuccess())
+  } catch (e) {
+    yield put(initFailure())
+  }
+}
 
+export function* watchFetchData() {
+  yield takeEvery(FETCH_DATA, fetchData)
+}
 
-// Tabs
-@color-tab-active:#005662;
-@color-tab-hover: #00838F;
-
-// Scroll
-@color-scroll: #717171;
-@color-scroll-inactive: #DDDDDD;
-
-// fonts
-@font-size-m: 14px;
-@font-size-xs: 6px;
-
-@font-family-montserrat: 'Montserrat', sans-serif;
-
-@font-weight-300: 300;
-@font-weight-600: 600;
+export const fetchInitData = () => ({
+  type: FETCH_DATA
+})

@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-@import 'src/mixins';
+@import '../../styles/mixins';
+@import './src/styles/variables';
 
 .library {
   position: absolute;
   width: fit-content;
   height: 700px;
+  background-color: @color-background-white;
 
   .tabsContent {
     display: flex;

@@ -14,11 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render } from '@testing-library/react'
-import { Editor } from './Editor'
+import { Provider } from 'react-redux'
+import { store } from 'state'
+import { App } from 'components/App'
 
-describe('Editor', () => {
-  it('should be rendered correctly', () => {
-    expect(render(<Editor />)).toMatchSnapshot()
-  })
-})
+export const AppContainer = () => {
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  )
+}

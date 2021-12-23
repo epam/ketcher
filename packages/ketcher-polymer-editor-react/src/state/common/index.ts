@@ -13,23 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-@import 'variables';
 
-.scrollbarThin {
-  &::-webkit-scrollbar {
-    width: 4px;
-    background-color: @color-scroll-inactive;
-    border-radius: 2px;
-    -webkit-border-radius: 2px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: @color-scroll;
-    border-radius: 2px;
-    -webkit-border-radius: 2px;
-  }
-
-  &::-webkit-scrollbar-thumb:active {
-    background-color: @color-scroll;
-  }
-}
+export * from './editorSlice'
+export * from './editorSaga'

@@ -16,6 +16,7 @@
 import { MonomerItem } from './monomerLibraryItem/MonomerItem'
 import classes from './MonomerLibrary.module.less'
 import { Tabs } from 'components/shared/ui/Tabs'
+import { Switcher } from 'components/rna/Switcher/Switcher'
 
 interface MonomerListPropTypes {
   list: Array<Record<string, string>>
@@ -51,8 +52,8 @@ const MonomerLibrary = () => {
     },
     {
       caption: 'RNA',
-      component: MonomerList,
-      props: { list: [{ name: 'R' }, { name: 'N' }, { name: 'A' }] }
+      component: Switcher
+      // props: { list: [{ name: 'R' }, { name: 'N' }, { name: 'A' }] }
     },
     {
       caption: 'CHEM',

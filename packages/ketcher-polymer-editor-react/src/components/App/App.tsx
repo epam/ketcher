@@ -18,6 +18,7 @@ import classes from './App.module.less'
 import React, { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from 'state'
 import { selectEditorIsReady, fetchInitData } from 'state/common'
+import { Menu } from 'components/menu'
 import { MonomerLibrary } from 'components/monomerLibrary'
 
 export const fetchData = () =>
@@ -40,7 +41,7 @@ export const App = (): React.ReactElement => {
   return (
     <div className={classes.container}>
       <MonomerLibrary />
-
+      <Menu />
       <div className={classes.logo}>
         <span>Polymer Editor</span>
         <span>Ketcher</span>

@@ -14,15 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from 'state'
 
 interface EditorState {
   isReady: boolean | null
+  activeTool: string
 }
 
 const initialState: EditorState = {
-  isReady: null
+  isReady: null,
+  activeTool: 'select'
 }
 
 export const editorSlice: any = createSlice({
@@ -37,12 +39,18 @@ export const editorSlice: any = createSlice({
     },
     initFailure: (state) => {
       state.isReady = false
+    },
+    selectTool: (state, action: PayloadAction<string>) => {
+      state.activeTool = action.payload
     }
   }
 })
 
-export const { init, initSuccess, initFailure } = editorSlice.actions
+export const { init, initSuccess, initFailure, selectTool } =
+  editorSlice.actions
 
 export const selectEditorIsReady = (state: RootState) => state.editor.isReady
+export const selectEditorActiveTool = (state: RootState) =>
+  state.editor.activeTool
 
 export const editorReducer = editorSlice.reducer

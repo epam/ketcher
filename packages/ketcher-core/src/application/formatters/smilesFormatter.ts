@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializer, SmiSerializer } from 'domain/serializers'
+import { KetSerializer, SmiSerializer } from 'domain/serializers'
 import { StructFormatter, SupportedFormat } from './structFormatter.types'
 import { StructService, StructServiceOptions } from 'domain/services'
 
@@ -24,19 +24,19 @@ import { Struct } from 'domain/entities'
 export class SmilesFormatter implements StructFormatter {
   #smiSerializer: SmiSerializer
   #structService: StructService
-  #molSerializer: MolSerializer
+  #ketSerializer: KetSerializer
   #format: SupportedFormat
   #options?: StructServiceOptions
 
   constructor(
     smiSerializer: SmiSerializer,
     structService: StructService,
-    molSerializer: MolSerializer,
+    ketSerializer: KetSerializer,
     format: SupportedFormat,
     options?: StructServiceOptions
   ) {
     this.#smiSerializer = smiSerializer
-    this.#molSerializer = molSerializer
+    this.#ketSerializer = ketSerializer
     this.#structService = structService
     this.#format = format
     this.#options = options
@@ -50,7 +50,7 @@ export class SmilesFormatter implements StructFormatter {
   getStructureFromStringAsync(stringifiedStruct: string): Promise<Struct> {
     const serverFormatter = new ServerFormatter(
       this.#structService,
-      this.#molSerializer,
+      this.#ketSerializer,
       this.#format,
       this.#options
     )

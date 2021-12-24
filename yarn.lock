@@ -3628,7 +3628,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^27.0.3":
+"@types/jest@npm:*, @types/jest@npm:^27.0.3":
   version: 27.0.3
   resolution: "@types/jest@npm:27.0.3"
   dependencies:
@@ -3867,6 +3867,15 @@ __metadata:
   dependencies:
     pretty-format: ^24.3.0
   checksum: 1563762a685bb15da02499e826e0dd217c209e8bcdde9f65d98090cc0d50fc74a22af0ecb8803edd48159f8cc2bb0d750acdea0f2a11d0c59e969e69ab2fc8b8
+  languageName: node
+  linkType: hard
+
+"@types/testing-library__jest-dom@npm:^5.14.2":
+  version: 5.14.2
+  resolution: "@types/testing-library__jest-dom@npm:5.14.2"
+  dependencies:
+    "@types/jest": "*"
+  checksum: e08715a565cc189112a6611485d779a0f1ceb546a9d4601b21aacff7596d7acf8b7c702e4c5f825677431ff601df3e635887dc8a5735da1a263cc857eb7c3833
   languageName: node
   linkType: hard
 
@@ -12875,6 +12884,7 @@ __metadata:
     "@types/node": ^16.11.12
     "@types/react": ^17.0.37
     "@types/react-dom": ^17.0.11
+    "@types/testing-library__jest-dom": ^5.14.2
     autoprefixer: ^10.2.5
     babel-jest: ^27.4.5
     clsx: ^1.1.1

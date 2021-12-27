@@ -13,7 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ListItem, ListItemProps, Box, ClickAwayListener } from '@mui/material'
+import {
+  ListItem,
+  ListItemProps,
+  Box,
+  BoxProps,
+  ClickAwayListener
+} from '@mui/material'
 import Collapse from '@mui/material/Collapse'
 import { useState } from 'react'
 import Icon from 'components/shared/ui/Icon/Icon'
@@ -26,6 +32,7 @@ interface MenuItemPropType {
   key: string
   name: MenuItemVariant
   options?: MenuItemVariant[]
+  vertical?: boolean
 }
 
 interface SingleItemPropType {
@@ -39,11 +46,16 @@ interface MultiItemPropType {
   options: MenuItemVariant[]
   onClick: (name: MenuItemVariant) => any
   activeTool: MenuItemVariant
+  vertical?: boolean
 }
 
 type StyledListItem = {
   'data-active': boolean
 } & ListItemProps
+
+type StyledCollapseWrapper = {
+  'data-orientation': boolean | undefined
+} & BoxProps
 
 const StyledListItem = styled(ListItem)<StyledListItem>`
   width: 28px;
@@ -65,13 +77,13 @@ const StyledBoxRelative = styled(Box)`
   position: relative;
 `
 
-const StyledCollapseWrapper = styled(Box)`
+const StyledCollapseWrapper = styled(Box)<StyledCollapseWrapper>`
   display: flex;
   position: absolute;
   background-color: white;
   left: 5px;
   border-radius: 2px;
-  flex-direction: row;
+  flex-direction: ${(props) => (props['data-orientation'] ? 'column' : 'row')};
 `
 
 const StyledDropDownIcon = styled(Icon)`
@@ -84,7 +96,7 @@ const StyledCollapse = styled(Collapse)`
   position: relative;
 `
 
-const MenuItem = ({ name, options }: MenuItemPropType) => {
+const MenuItem = ({ name, options, vertical }: MenuItemPropType) => {
   const dispatch = useDispatch()
   const activeTool = useSelector(selectEditorActiveTool)
 
@@ -93,6 +105,7 @@ const MenuItem = ({ name, options }: MenuItemPropType) => {
       options={options}
       onClick={(name) => dispatch(selectTool(name))}
       activeTool={activeTool}
+      vertical={vertical}
     />
   ) : (
     <SingleItem
@@ -114,7 +127,12 @@ const SingleItem = ({ name, activeTool, ...props }: SingleItemPropType) => {
   )
 }
 
-const MultiItem = ({ options, activeTool, onClick }: MultiItemPropType) => {
+const MultiItem = ({
+  options,
+  activeTool,
+  onClick,
+  vertical
+}: MultiItemPropType) => {
   const [open, setOpen] = useState(false)
 
   const handleDropDownClick = () => {
@@ -139,7 +157,7 @@ const MultiItem = ({ options, activeTool, onClick }: MultiItemPropType) => {
             if (open) setOpen(false)
           }}
         >
-          <StyledCollapseWrapper>
+          <StyledCollapseWrapper data-orientation={vertical}>
             {options?.map((name) => (
               <SingleItem
                 key={name}

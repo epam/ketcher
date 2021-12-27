@@ -19,20 +19,23 @@ import styled from '@emotion/styled'
 import { Divider } from 'components/menu/menuDivider/Divider'
 import { MenuItemVariant } from 'components/menu/menu.types'
 
-interface groupItems {
+interface groupItem {
   name: MenuItemVariant
   options?: MenuItemVariant[]
+  vertical?: boolean
 }
 
-const Group: FC<{ items: groupItems[]; className?: string }> = ({
-  items,
-  className
-}) => {
+const Group: FC<{ items: groupItem[] }> = ({ items }) => {
   return (
-    <div className={className}>
+    <div>
       {items.map((item) => {
         return (
-          <MenuItem name={item.name} options={item.options} key={item.name} />
+          <MenuItem
+            key={item.name}
+            name={item.name}
+            options={item.options}
+            vertical={item.vertical}
+          />
         )
       })}
     </div>
@@ -67,7 +70,8 @@ const Menu = () => {
           { name: 'erase' },
           {
             name: 'select',
-            options: ['select-lasso', 'select-rectangle', 'select-fragment']
+            options: ['select-lasso', 'select-rectangle', 'select-fragment'],
+            vertical: true
           },
           { name: 'shapes', options: ['rectangle', 'ellipse'] },
           { name: 'redo' }

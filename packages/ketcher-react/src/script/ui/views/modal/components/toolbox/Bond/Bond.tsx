@@ -20,6 +20,7 @@ import Form, { Field } from '../../../../../component/form/form/form'
 import { Dialog } from '../../../../components'
 import { bond as bondSchema } from '../../../../../data/schema/struct-schema'
 import classes from './Bond.module.less'
+import { dialogWindowsMargin } from '../../../../../../../style'
 
 interface BondProps extends BaseProps {
   center: number
@@ -38,6 +39,7 @@ const Bond = (props: Props) => {
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}
+      {...dialogWindowsMargin}
     >
       <Form schema={bondSchema} init={rest} {...formState}>
         <Field name="type" />

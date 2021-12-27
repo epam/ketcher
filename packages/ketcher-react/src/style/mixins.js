@@ -14,14 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../../../../../../../style/variables.less';
+import { margin } from './variables'
 
-.automap {
-  width: 22em;
-
-  label {
-    display: block;
-    text-align: left;
-    line-height: @input-height;
-  }
+export const dialogWindowsMargin = {
+  bodyMargin: `0 ${margin.leftRight}`,
+  headerMargin: `${margin.topBottom} ${margin.leftRight}`,
+  footerMargin: `${margin.topBottom1} ${margin.leftRight}`
 }

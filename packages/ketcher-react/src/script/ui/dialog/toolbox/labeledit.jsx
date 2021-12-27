@@ -21,6 +21,7 @@ import { Elements } from 'ketcher-core'
 import { capitalize } from 'lodash/fp'
 import { connect } from 'react-redux'
 import { labelEdit as labelEditSchema } from '../../data/schema/struct-schema'
+import { dialogWindowsMargin } from '../../../../style'
 
 function serialize(lc) {
   const charge = Math.abs(lc.charge)
@@ -75,6 +76,7 @@ function LabelEdit(props) {
       valid={() => valid}
       result={() => deserialize(result.label)}
       params={prop}
+      {...dialogWindowsMargin}
     >
       <Form
         schema={labelEditSchema}

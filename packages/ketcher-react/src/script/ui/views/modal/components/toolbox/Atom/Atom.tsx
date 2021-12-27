@@ -25,6 +25,7 @@ import { Elements } from 'ketcher-core'
 import { atom as atomSchema } from '../../../../../data/schema/struct-schema'
 import { capitalize } from 'lodash/fp'
 import classes from './Atom.module.less'
+import { dialogWindowsMargin } from '../../../../../../../style'
 
 interface AtomProps extends BaseProps {
   alias: string
@@ -59,6 +60,7 @@ const Atom: FC<Props> = (props) => {
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}
+      {...dialogWindowsMargin}
     >
       <Form
         schema={atomSchema}

@@ -37,6 +37,9 @@ interface DialogProps {
   buttons?: Array<string | ReactElement>
   buttonsTop?: Array<ReactElement>
   className: string
+  bodyMargin?: string
+  headerMargin?: string
+  footerMargin?: string
 }
 
 interface DialogCallProps {
@@ -56,6 +59,9 @@ const Dialog: FC<Props> = (props) => {
     buttons = ['OK'],
     className,
     buttonsTop,
+    bodyMargin = '0',
+    headerMargin = '0',
+    footerMargin = '0',
     ...rest
   } = props
   const dialogRef = useRef<HTMLDivElement>(null)
@@ -102,7 +108,7 @@ const Dialog: FC<Props> = (props) => {
       className={clsx(styles.form, className, params.className)}
       {...rest}
     >
-      <header>
+      <header style={{ margin: headerMargin }}>
         {title}
         <div className={styles.btnContainer}>
           {buttonsTop && buttonsTop.map((button) => button)}
@@ -111,10 +117,15 @@ const Dialog: FC<Props> = (props) => {
           </button>
         </div>
       </header>
-      <div className={clsx(styles.dialog_body, styles.body)}>{children}</div>
+      <div
+        className={clsx(styles.dialog_body, styles.body)}
+        style={{ margin: bodyMargin }}
+      >
+        {children}
+      </div>
 
       {buttons.length > 0 && (
-        <footer>
+        <footer style={{ margin: footerMargin }}>
           {buttons.map((button) =>
             typeof button !== 'string' ? (
               button

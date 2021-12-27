@@ -14,14 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../../../../../../../style/variables.less';
-
-.automap {
-  width: 22em;
-
-  label {
-    display: block;
-    text-align: left;
-    line-height: @input-height;
-  }
+export const margin = {
+  leftRight: '15px',
+  topBottom: '10px',
+  topBottom1: '15px'
 }

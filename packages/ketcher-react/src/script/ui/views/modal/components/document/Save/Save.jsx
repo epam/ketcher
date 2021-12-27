@@ -34,6 +34,7 @@ import classes from './Save.module.less'
 import { connect } from 'react-redux'
 import { saveUserTmpl } from '../../../../../state/templates'
 import { updateFormState } from '../../../../../state/modal/form'
+import { dialogWindowsMargin } from '../../../../../../../style'
 
 const saveSchema = {
   title: 'Save',
@@ -309,6 +310,7 @@ class SaveDialog extends Component {
         className={classes.save}
         params={this.props}
         buttons={this.getButtons()}
+        {...dialogWindowsMargin}
       >
         {this.renderSaveFile()}
       </Dialog>

@@ -37,6 +37,7 @@ import { createSelector } from 'reselect'
 import { omit } from 'lodash/fp'
 import { onAction } from '../../state'
 import { useResizeObserver } from '../../../../hooks'
+import { dialogWindowsMargin } from '../../../../style'
 
 interface TemplateLibProps {
   filter: string
@@ -123,6 +124,7 @@ const TemplateDialog: FC<Props> = (props) => {
         ),
         'OK'
       ]}
+      {...dialogWindowsMargin}
     >
       <div className={classes.dialog_body}>
         <label>

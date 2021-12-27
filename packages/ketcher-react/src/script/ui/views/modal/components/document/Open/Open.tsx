@@ -23,6 +23,7 @@ import Recognize from '../../process/Recognize/Recognize'
 import { fileOpener } from '../../../../../utils/'
 import { DialogActionButton } from './components/DialogActionButton'
 import { ViewSwitcher } from './components/ViewSwitcher'
+import { dialogWindowsMargin } from '../../../../../../../style'
 
 interface OpenProps {
   server: any
@@ -144,6 +145,7 @@ const Open: FC<Props> = (props) => {
       params={rest}
       result={() => null}
       buttons={getButtons()}
+      {...dialogWindowsMargin}
     >
       <ViewSwitcher
         isAnalyzingFile={isAnalyzingFile}

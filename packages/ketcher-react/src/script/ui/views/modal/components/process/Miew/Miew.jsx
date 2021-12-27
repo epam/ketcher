@@ -23,6 +23,7 @@ import classes from './Miew.module.less'
 import { connect } from 'react-redux'
 import { load } from '../../../../../state'
 import { pick } from 'lodash/fp'
+import { dialogWindowsMargin } from '../../../../../../../style'
 
 /* OPTIONS for MIEW */
 const BACKGROUND_COLOR = {
@@ -132,6 +133,7 @@ class MiewDialog extends Component {
             Apply
           </button>
         ]}
+        {...dialogWindowsMargin}
       >
         <div className={classes.dialog_body}>
           <div

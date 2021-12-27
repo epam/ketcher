@@ -19,6 +19,7 @@ import Form, { Field } from '../../../../../component/form/form/form'
 import { Dialog } from '../../../../components'
 import { attachmentPoints as attachmentPointsSchema } from '../../../../../data/schema/struct-schema'
 import classes from './Attach.module.less'
+import { dialogWindowsMargin } from '../../../../../../../style'
 
 interface AttachPointsProps extends BaseProps {
   primary: boolean
@@ -36,6 +37,7 @@ const AttachPoints = (props: Props) => {
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}
+      {...dialogWindowsMargin}
     >
       <Form schema={attachmentPointsSchema} init={rest} {...formState}>
         <Field name="primary" />

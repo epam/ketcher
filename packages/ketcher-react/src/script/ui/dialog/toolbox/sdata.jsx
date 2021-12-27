@@ -25,6 +25,7 @@ import ComboBox from '../../component/form/combobox/combobox'
 import { Dialog } from '../../views/components'
 import classes from './sgroup.module.less'
 import { connect } from 'react-redux'
+import { dialogWindowsMargin } from '../../../../style'
 
 function SelectInput({ title, name, schema, ...prop }) {
   const inputSelect = Object.keys(schema).reduce(
@@ -87,6 +88,7 @@ function SData({
       result={() => result}
       valid={() => valid}
       params={prop}
+      {...dialogWindowsMargin}
     >
       <Form
         serialize={serialize}

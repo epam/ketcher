@@ -32,6 +32,7 @@ import clsx from 'clsx'
 import { filterFGLib } from '../../../utils'
 import { onAction } from '../../../state'
 import { useResizeObserver } from '../../../../../hooks'
+import { dialogWindowsMargin } from '../../../../../style'
 
 export interface FGProps {
   className: string
@@ -126,6 +127,7 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
         </SaveButton>,
         'OK'
       ]}
+      {...dialogWindowsMargin}
     >
       <div className={classes.dialog_body}>
         <label>

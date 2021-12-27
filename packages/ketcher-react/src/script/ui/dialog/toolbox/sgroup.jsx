@@ -20,6 +20,7 @@ import { Dialog } from '../../views/components'
 import classes from './sgroup.module.less'
 import { connect } from 'react-redux'
 import { sgroupMap as schemes } from '../../data/schema/struct-schema'
+import { dialogWindowsMargin } from '../../../../style'
 
 function Sgroup({ formState, ...prop }) {
   const { result, valid } = formState
@@ -33,6 +34,7 @@ function Sgroup({ formState, ...prop }) {
       result={() => result}
       valid={() => valid}
       params={prop}
+      {...dialogWindowsMargin}
     >
       <Form schema={schemes[type]} init={prop} {...formState}>
         <SelectOneOf title="Type" name="type" schema={schemes} />

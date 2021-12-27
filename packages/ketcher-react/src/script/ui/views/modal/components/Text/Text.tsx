@@ -37,6 +37,7 @@ import classes from './Text.module.less'
 import { connect } from 'react-redux'
 import createStyles from 'draft-js-custom-styles'
 import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton'
+import { dialogWindowsMargin } from '../../../../../../style'
 
 const { styles, customStyleFn } = createStyles(['font-size'])
 
@@ -154,6 +155,7 @@ const Text = (props: TextProps) => {
       params={props}
       result={result}
       valid={() => formState.form.valid}
+      {...dialogWindowsMargin}
     >
       <ul className={classes.controlPanel}>
         <FontControl

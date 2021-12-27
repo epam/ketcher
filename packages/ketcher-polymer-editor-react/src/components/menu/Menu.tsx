@@ -18,6 +18,7 @@ import { FC } from 'react'
 import styled from '@emotion/styled'
 import { Divider } from 'components/menu/menuDivider/Divider'
 import { MenuItemVariant } from 'components/menu/menu.types'
+import { Box } from '@mui/material'
 
 interface groupItem {
   name: MenuItemVariant
@@ -55,7 +56,7 @@ const StyledGroup = styled(Group)`
 
 const Menu = () => {
   return (
-    <div>
+    <StyledBox>
       <StyledGroup
         items={[
           {
@@ -88,14 +89,12 @@ const Menu = () => {
       <StyledGroup items={[{ name: 'bracket' }]} />
       <Divider />
       <StyledGroup items={[{ name: 'settings' }, { name: 'help' }]} />
-    </div>
+    </StyledBox>
   )
 }
 
-const StyledMenu = styled(Menu)`
-  position: absolute;
+const StyledBox = styled(Box)`
   width: 32px;
-  right: 0;
 `
 
-export { StyledMenu as Menu }
+export { Menu }

@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import {
-  ListItem,
-  ListItemProps,
-  Box,
-  BoxProps,
-  ClickAwayListener
-} from '@mui/material'
-import Collapse from '@mui/material/Collapse'
-import { useState } from 'react'
-import Icon from 'components/shared/ui/Icon/Icon'
+import { ListItem, ListItemProps } from '@mui/material'
 import styled from '@emotion/styled'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectEditorActiveTool, selectTool } from 'state/common'
 import { MenuItemVariant } from 'components/menu/menu.types'
+import { SingleItem } from 'components/menu/menuItem/singleItem/SingleItem'
+import { MultiItem } from 'components/menu/menuItem/multiItem/MultiItem'
 
 interface MenuItemPropType {
   key: string
@@ -35,27 +28,9 @@ interface MenuItemPropType {
   vertical?: boolean
 }
 
-interface SingleItemPropType {
-  key: MenuItemVariant
-  name: MenuItemVariant
-  onClick: () => void
-  activeTool: MenuItemVariant
-}
-
-interface MultiItemPropType {
-  options: MenuItemVariant[]
-  onClick: (name: MenuItemVariant) => any
-  activeTool: MenuItemVariant
-  vertical?: boolean
-}
-
 type StyledListItem = {
   'data-active': boolean
 } & ListItemProps
-
-type StyledCollapseWrapper = {
-  'data-orientation': boolean | undefined
-} & BoxProps
 
 const StyledListItem = styled(ListItem)<StyledListItem>`
   width: 28px;
@@ -70,30 +45,6 @@ const StyledListItem = styled(ListItem)<StyledListItem>`
   :hover {
     transform: scale(1.2);
   }
-`
-
-const StyledBoxRelative = styled(Box)`
-  display: flex;
-  position: relative;
-`
-
-const StyledCollapseWrapper = styled(Box)<StyledCollapseWrapper>`
-  display: flex;
-  position: absolute;
-  background-color: white;
-  left: 5px;
-  border-radius: 2px;
-  flex-direction: ${(props) => (props['data-orientation'] ? 'column' : 'row')};
-`
-
-const StyledDropDownIcon = styled(Icon)`
-  position: absolute;
-  bottom: 0;
-  right: 0;
-`
-
-const StyledCollapse = styled(Collapse)`
-  position: relative;
 `
 
 const MenuItem = ({ name, options, vertical }: MenuItemPropType) => {
@@ -117,63 +68,4 @@ const MenuItem = ({ name, options, vertical }: MenuItemPropType) => {
   )
 }
 
-const SingleItem = ({ name, activeTool, ...props }: SingleItemPropType) => {
-  const isActiveTool = activeTool === name
-
-  return (
-    <StyledListItem data-active={isActiveTool} {...props}>
-      <Icon name={name} />
-    </StyledListItem>
-  )
-}
-
-const MultiItem = ({
-  options,
-  activeTool,
-  onClick,
-  vertical
-}: MultiItemPropType) => {
-  const [open, setOpen] = useState(false)
-
-  const handleDropDownClick = () => {
-    setOpen((prev) => !prev)
-  }
-
-  const headerMultiTool = options.includes(activeTool) ? activeTool : options[0]
-  const isActiveTool = activeTool === headerMultiTool
-
-  return (
-    <StyledBoxRelative>
-      <StyledListItem
-        data-active={isActiveTool}
-        onClick={() => onClick(headerMultiTool)}
-      >
-        <Icon name={headerMultiTool} />
-        <StyledDropDownIcon name="dropdown" onClick={handleDropDownClick} />
-      </StyledListItem>
-      <StyledCollapse in={open} timeout="auto" unmountOnExit>
-        <ClickAwayListener
-          onClickAway={() => {
-            if (open) setOpen(false)
-          }}
-        >
-          <StyledCollapseWrapper data-orientation={vertical}>
-            {options?.map((name) => (
-              <SingleItem
-                key={name}
-                name={name}
-                activeTool={activeTool}
-                onClick={() => {
-                  onClick(name)
-                  setOpen(false)
-                }}
-              />
-            ))}
-          </StyledCollapseWrapper>
-        </ClickAwayListener>
-      </StyledCollapse>
-    </StyledBoxRelative>
-  )
-}
-
-export { MenuItem }
+export { MenuItem, StyledListItem }

@@ -4,7 +4,9 @@ module.exports = {
   testEnvironment: 'jsdom',
   transform: {
     '\\.(js|jsx)$': 'babel-jest',
-    '^.+\\.(ts|tsx)$': 'ts-jest'
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)$':
+      '<rootDir>/fileTransformer.js'
   },
   moduleNameMapper: {
     '\\.(css|less)$': 'identity-obj-proxy',

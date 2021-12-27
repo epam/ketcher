@@ -13,35 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-@import '../../styles/mixins';
-@import './src/styles/variables';
+import Icon from 'components/shared/ui/Icon/Icon'
+import { MenuItemVariant } from 'components/menu/menu.types'
+import { StyledListItem } from 'components/menu/menuItem/MenuItem'
 
-.library {
-  position: absolute;
-  right: 0;
-  width: fit-content;
-  height: 700px;
-  background-color: @color-background-white;
-
-  .tabsContent {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    overflow-y: scroll;
-    width: 260px;
-
-    & > * {
-      margin: 25px 8px;
-    }
-
-    .scrollbarThin()
-  }
-
-  .tabs {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-  }
+interface SingleItemPropType {
+  key: MenuItemVariant
+  name: MenuItemVariant
+  onClick: () => void
+  activeTool: MenuItemVariant
 }
 
+const SingleItem = ({ name, activeTool, ...props }: SingleItemPropType) => {
+  const isActiveTool = activeTool === name
+
+  return (
+    <StyledListItem data-active={isActiveTool} {...props}>
+      <Icon name={name} />
+    </StyledListItem>
+  )
+}
+
+export { SingleItem }

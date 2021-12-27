@@ -10,5 +10,6 @@ module.exports = {
     '\\.(css|less)$': 'identity-obj-proxy',
     '^components(.*)$': '<rootDir>/src/components/$1',
     '^state(.*)$': '<rootDir>/src/state/$1'
-  }
+  },
+  setupFilesAfterEnv: ['<rootDir>/setupTests.ts']
 }

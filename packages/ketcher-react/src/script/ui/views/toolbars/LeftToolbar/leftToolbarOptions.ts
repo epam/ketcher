@@ -39,7 +39,11 @@ const arrowsOptions: ToolbarItem[] = makeItems([
   'reaction-arrow-unbalanced-equilibrium-filled-half-bow',
   'reaction-arrow-unbalanced-equilibrium-open-half-angle',
   'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow',
-  'reaction-arrow-unbalanced-equilibrium-filled-half-triangle'
+  'reaction-arrow-unbalanced-equilibrium-filled-half-triangle',
+  'reaction-arrow-elliptical-arc-arrow-filled-bow',
+  'reaction-arrow-elliptical-arc-arrow-filled-triangle',
+  'reaction-arrow-elliptical-arc-arrow-open-angle',
+  'reaction-arrow-elliptical-arc-arrow-open-half-angle'
 ])
 
 const mappingOptions: ToolbarItem[] = makeItems([

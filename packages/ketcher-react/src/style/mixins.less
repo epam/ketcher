@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
- 
+
 // Workaround less issue:
 // https://github.com/less/less.js/issues/2004
 @import 'variables';
@@ -126,6 +126,9 @@
     fill: white;
     stroke: white;
     stroke-width: 5;
+  }
+  & path {
+    stroke: white;
   }
   &::after {
     color: white;
@@ -397,7 +400,7 @@
 .dialog_body {
   overflow: auto;
 
-  .scrollbar()
+  .scrollbar();
 }
 
 .kbd() {
@@ -419,7 +422,7 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(@main-color, 0.30);
+    background: rgba(@main-color, 0.3);
     -webkit-border-radius: 100px;
   }
 

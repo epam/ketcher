@@ -108,7 +108,7 @@ export class FunctionalGroup {
     return false
   }
 
-  static isAtomInContractedFinctionalGroup(
+  static isAtomInContractedFunctionalGroup(
     atom,
     sgroups,
     functionalGroups,

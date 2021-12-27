@@ -53,7 +53,8 @@ export function prepareStructForKet(struct: Struct) {
       center: item.pos[0],
       data: {
         mode: item.mode,
-        pos: item.pos
+        pos: item.pos,
+        height: item.height
       }
     })
   })

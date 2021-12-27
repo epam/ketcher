@@ -24,6 +24,7 @@ import {
 
 import { supportedSGroupTypes } from './constants'
 import { setAnalyzingFile } from './request'
+import tools from '../action/tools'
 
 export function onAction(action) {
   if (action && action.dialog) {
@@ -134,11 +135,12 @@ export function load(struct, options) {
 
           struct.markFragments()
 
-          if (struct.isBlank()) {
-            return
-          }
           if (fragment) {
-            dispatch(onAction({ tool: 'paste', opts: struct }))
+            if (struct.isBlank()) {
+              dispatch({ type: 'ACTION', action: tools['select-lasso'].action })
+            } else {
+              dispatch(onAction({ tool: 'paste', opts: struct }))
+            }
           } else {
             editor.struct(struct)
           }

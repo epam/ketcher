@@ -46,7 +46,7 @@ class KetcherBuilder {
       'ignore-stereochemistry-errors': true,
       'mass-skip-error-on-pseudoatoms': false,
       'gross-formula-add-rsites': true,
-      'aromatize-skip-super-atoms': true
+      'aromatize-skip-superatoms': true
     })
   }
 
@@ -62,7 +62,7 @@ class KetcherBuilder {
   ): Promise<void> {
     const { structService } = this
 
-    const editor = await new Promise<Editor>(resolve => {
+    const editor = await new Promise<Editor>((resolve) => {
       initApp(
         element,
         staticResourcesUrl,

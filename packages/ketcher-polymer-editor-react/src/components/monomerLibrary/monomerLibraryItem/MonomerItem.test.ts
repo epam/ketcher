@@ -1,5 +1,5 @@
 import { MonomerItem } from './MonomerItem'
-import { render, fireEvent } from '@testing-library/react'
+import { render, fireEvent } from 'utils'
 
 describe('Test Monomer Item component', () => {
   it('Test click event', () => {

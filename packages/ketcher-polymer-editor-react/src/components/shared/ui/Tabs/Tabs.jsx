@@ -42,7 +42,11 @@ function CustomTabs(props) {
 
   const styleTabs = {
     height: 24,
-    minHeight: 24
+    minHeight: 24,
+
+    '& .MuiTabs-indicator': {
+      display: 'none'
+    }
   }
 
   const styleTab = {
@@ -68,26 +72,19 @@ function CustomTabs(props) {
     }
   }
 
-  const styleIndicator = {
-    display: 'none'
-  }
-
   return (
     <>
       <Tabs
         value={tabIndex}
         onChange={handleChange}
-        sx={{ ...styleTabs, ...tabsStyle }}
-        TabIndicatorProps={{
-          sx: styleIndicator
-        }}
+        css={{ ...styleTabs, ...tabsStyle }}
       >
         {tabs.map((tabPanel, index) => (
           <Tab
             label={tabPanel.caption}
             key={index}
             className={tabIndex === index && 'active'}
-            sx={{ ...styleTab, ...tabsStyle }}
+            css={{ ...styleTab, ...tabsStyle }}
           />
         ))}
       </Tabs>

@@ -15,11 +15,16 @@
  ***************************************************************************/
 import { MenuItem } from './menuItem/MenuItem'
 import { FC } from 'react'
-import { MenuItemType } from 'components/menu/menu.types'
 import styled from '@emotion/styled'
 import { Divider } from 'components/menu/menuDivider/Divider'
+import { MenuItemVariant } from 'components/menu/menu.types'
 
-const Group: FC<{ items: MenuItemType[]; className?: string }> = ({
+interface groupItems {
+  name: MenuItemVariant
+  options?: MenuItemVariant[]
+}
+
+const Group: FC<{ items: groupItems[]; className?: string }> = ({
   items,
   className
 }) => {
@@ -49,26 +54,34 @@ const Menu = () => {
   return (
     <div>
       <StyledGroup
-        items={[{ name: 'open', options: ['open', 'open', 'open'] }]}
+        items={[
+          {
+            name: 'open'
+          }
+        ]}
       />
       <Divider />
       <StyledGroup items={[{ name: 'undo' }]} />
       <StyledGroup
         items={[
-          { name: 'erase', options: ['erase', 'erase', 'erase'] },
-          { name: 'select', options: ['select', 'select', 'select'] },
-          { name: 'rectangle', options: ['rectangle', 'rectangle'] },
-          { name: 'arom' }
+          { name: 'erase' },
+          {
+            name: 'select',
+            options: ['select-lasso', 'select-rectangle', 'select-fragment']
+          },
+          { name: 'shapes', options: ['rectangle', 'ellipse'] },
+          { name: 'redo' }
         ]}
-      />
-      <StyledGroup
-        items={[{ name: 'single', options: ['single', 'single', 'single'] }]}
       />
       <StyledGroup
         items={[
-          { name: 'bracket', options: ['bracket', 'bracket', 'bracket'] }
+          {
+            name: 'bonds',
+            options: ['single-bond', 'double-bond', 'triple-bond']
+          }
         ]}
       />
+      <StyledGroup items={[{ name: 'bracket' }]} />
       <Divider />
       <StyledGroup items={[{ name: 'settings' }, { name: 'help' }]} />
     </div>

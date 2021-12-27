@@ -17,18 +17,21 @@
 type MenuItemVariant =
   | 'open'
   | 'select'
+  | 'select-lasso'
+  | 'select-rectangle'
+  | 'select-fragment'
   | 'settings'
   | 'help'
   | 'undo'
   | 'bracket'
   | 'erase'
-  | 'single'
+  | 'bonds'
+  | 'single-bond'
+  | 'double-bond'
+  | 'triple-bond'
   | 'rectangle'
-  | 'arom'
+  | 'redo'
+  | 'shapes'
+  | 'ellipse'
 
-interface MenuItemType {
-  name: MenuItemVariant
-  options?: MenuItemVariant[]
-}
-
-export type { MenuItemType }
+export type { MenuItemVariant }

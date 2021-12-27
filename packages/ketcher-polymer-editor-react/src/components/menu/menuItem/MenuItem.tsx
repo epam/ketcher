@@ -13,21 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ListItem, ListItemProps, Box } from '@mui/material'
+import { ListItem, ListItemProps, Box, ClickAwayListener } from '@mui/material'
 import Collapse from '@mui/material/Collapse'
 import { useState } from 'react'
 import Icon from 'components/shared/ui/Icon/Icon'
 import styled from '@emotion/styled'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectEditorActiveTool, selectTool } from 'state/common'
+import { MenuItemVariant } from 'components/menu/menu.types'
 
-// interface MenuItemPropType extends MenuItemType {
-//   key: string,
-//     onClick: () => void
-// }
+interface MenuItemPropType {
+  key: string
+  name: MenuItemVariant
+  options?: MenuItemVariant[]
+}
+
+interface SingleItemPropType {
+  key: MenuItemVariant
+  name: MenuItemVariant
+  onClick: () => void
+  activeTool: MenuItemVariant
+}
+
+interface MultiItemPropType {
+  options: MenuItemVariant[]
+  onClick: (name: MenuItemVariant) => any
+  activeTool: MenuItemVariant
+}
 
 type StyledListItem = {
-  active: boolean
+  'data-active': boolean
 } & ListItemProps
 
 const StyledListItem = styled(ListItem)<StyledListItem>`
@@ -38,7 +53,7 @@ const StyledListItem = styled(ListItem)<StyledListItem>`
   justify-content: center;
   border-radius: 2px;
   background-color: ${(props) =>
-    props.active ? 'rgba(0, 131, 143, 0.4)' : 'white'};
+    props['data-active'] ? 'rgba(0, 131, 143, 0.4)' : 'white'};
 
   :hover {
     transform: scale(1.2);
@@ -69,51 +84,75 @@ const StyledCollapse = styled(Collapse)`
   position: relative;
 `
 
-const MenuItem = ({ name, options }) => {
+const MenuItem = ({ name, options }: MenuItemPropType) => {
   const dispatch = useDispatch()
   const activeTool = useSelector(selectEditorActiveTool)
 
-  const isActiveTool = activeTool === name
-
-  const Component = options ? MultiItem : SingleItem
-  return (
-    <Component
+  return options ? (
+    <MultiItem
+      options={options}
+      onClick={(name) => dispatch(selectTool(name))}
+      activeTool={activeTool}
+    />
+  ) : (
+    <SingleItem
       key={name}
       name={name}
-      options={options}
       onClick={() => dispatch(selectTool(name))}
-      active={isActiveTool}
+      activeTool={activeTool}
     />
   )
 }
 
-const SingleItem = ({ name, active, ...props }) => {
+const SingleItem = ({ name, activeTool, ...props }: SingleItemPropType) => {
+  const isActiveTool = activeTool === name
+
   return (
-    <StyledListItem active={active} {...props}>
+    <StyledListItem data-active={isActiveTool} {...props}>
       <Icon name={name} />
     </StyledListItem>
   )
 }
 
-const MultiItem = ({ name, options, active, ...props }) => {
+const MultiItem = ({ options, activeTool, onClick }: MultiItemPropType) => {
   const [open, setOpen] = useState(false)
 
-  const handleClick = () => {
+  const handleDropDownClick = () => {
     setOpen((prev) => !prev)
   }
 
+  const headerMultiTool = options.includes(activeTool) ? activeTool : options[0]
+  const isActiveTool = activeTool === headerMultiTool
+
   return (
     <StyledBoxRelative>
-      <StyledListItem active={active} {...props}>
-        <Icon name={name} />
-        <StyledDropDownIcon name="dropdown" onClick={handleClick} />
+      <StyledListItem
+        data-active={isActiveTool}
+        onClick={() => onClick(headerMultiTool)}
+      >
+        <Icon name={headerMultiTool} />
+        <StyledDropDownIcon name="dropdown" onClick={handleDropDownClick} />
       </StyledListItem>
       <StyledCollapse in={open} timeout="auto" unmountOnExit>
-        <StyledCollapseWrapper>
-          {options?.map((name, index) => (
-            <SingleItem key={index} name={name} active={active} {...props} />
-          ))}
-        </StyledCollapseWrapper>
+        <ClickAwayListener
+          onClickAway={() => {
+            if (open) setOpen(false)
+          }}
+        >
+          <StyledCollapseWrapper>
+            {options?.map((name) => (
+              <SingleItem
+                key={name}
+                name={name}
+                activeTool={activeTool}
+                onClick={() => {
+                  onClick(name)
+                  setOpen(false)
+                }}
+              />
+            ))}
+          </StyledCollapseWrapper>
+        </ClickAwayListener>
       </StyledCollapse>
     </StyledBoxRelative>
   )

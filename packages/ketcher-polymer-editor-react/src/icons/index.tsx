@@ -14,31 +14,31 @@
  * limitations under the License.
  ***************************************************************************/
 
-import AromIcon from './files/arom.svg'
 import BracketIcon from './files/bracket.svg'
 import DividerIcon from './files/divider.svg'
 import DropDownIcon from './files/dropdown.svg'
 import EraseIcon from './files/erase.svg'
 import HelpIcon from './files/help.svg'
 import OpenIcon from './files/open.svg'
+import RedoIcon from './files/redo.svg'
 import RectangleIcon from './files/rectangle.svg'
-import SelectIcon from './files/select.svg'
+import SelectLassoIcon from './files/select-lasso.svg'
 import SettingsIcon from './files/settings.svg'
-import SingleIcon from './files/single.svg'
+import SingleBondIcon from './files/single-bond.svg'
 import UndoIcon from './files/undo.svg'
 
 const icons = {
-  arom: AromIcon,
   bracket: BracketIcon,
   divider: DividerIcon,
   dropdown: DropDownIcon,
   erase: EraseIcon,
   help: HelpIcon,
   open: OpenIcon,
+  redo: RedoIcon,
   rectangle: RectangleIcon,
-  select: SelectIcon,
+  'select-lasso': SelectLassoIcon,
   settings: SettingsIcon,
-  single: SingleIcon,
+  'single-bond': SingleBondIcon,
   undo: UndoIcon
 }
 

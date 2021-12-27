@@ -26,7 +26,8 @@ import {
   getHoverToFuse,
   getItemsToFuse,
   FunctionalGroup,
-  fromSimpleObjectResizing
+  fromSimpleObjectResizing,
+  fromArrowResizing
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -217,6 +218,7 @@ class SelectTool {
         this.editor.event.message.dispatch({ info: degrees + 'º' })
       }
       if (dragCtx.item.map === 'simpleObjects' && dragCtx.item.ref) {
+        if (dragCtx?.action) dragCtx.action.perform(rnd.ctab)
         const current = rnd.page2obj(event)
         const diff = current.sub(this.dragCtx.xy0)
         dragCtx.action = fromSimpleObjectResizing(
@@ -226,6 +228,21 @@ class SelectTool {
           current,
           dragCtx.item.ref,
           event.shiftKey
+        )
+        editor.update(dragCtx.action, true)
+        return true
+      }
+      if (dragCtx.item.map === 'rxnArrows' && dragCtx.item.ref) {
+        if (dragCtx?.action) dragCtx.action.perform(rnd.ctab)
+        const current = rnd.page2obj(event)
+        const diff = current.sub(dragCtx.xy0)
+        dragCtx.previous = current
+        dragCtx.action = fromArrowResizing(
+          rnd.ctab,
+          dragCtx.item.id,
+          diff,
+          current,
+          dragCtx.item.ref
         )
         editor.update(dragCtx.action, true)
         return true

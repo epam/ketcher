@@ -46,7 +46,7 @@ class KetcherBuilder {
       'ignore-stereochemistry-errors': true,
       'mass-skip-error-on-pseudoatoms': false,
       'gross-formula-add-rsites': true,
-      'aromatize-skip-super-atoms': true
+      'aromatize-skip-superatoms': true
     })
   }
 

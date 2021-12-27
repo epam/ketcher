@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RxnArrowMode, Vec2 } from 'domain/entities'
+import { RxnArrowMode, Vec2, RxnArrow } from 'domain/entities'
 
 import Raphael from './raphael-ext'
 import svgPath from 'svgpath'
@@ -31,18 +31,23 @@ function rectangle(paper, pos, options) {
   )
 }
 
-function rectangleWithAngle(paper, a, b, length, angle, options) {
-  const wOffset = 5
-  const hOffset = 8
-
+function rectangleArrowHighlightAndSelection(
+  paper,
+  { pos, height },
+  length,
+  angle,
+  options
+) {
+  const [a, b] = pos
   const b0x = a.x + length
+  const [wOffset, hOffset] = [5, height || 8]
 
   const path =
     `M${tfx(a.x - wOffset)},${tfx(a.y)}` +
-    `L${tfx(a.x - wOffset)},${tfx(a.y + hOffset)}` +
-    `L${tfx(b0x + wOffset)},${tfx(a.y + hOffset)}` +
+    `L${tfx(a.x - wOffset)},${tfx(a.y - hOffset)}` +
     `L${tfx(b0x + wOffset)},${tfx(a.y - hOffset)}` +
-    `L${tfx(a.x - wOffset)},${tfx(a.y - hOffset)}Z`
+    `L${tfx(b0x + wOffset)},${tfx(a.y + (!height && hOffset))}` +
+    `L${tfx(a.x - wOffset)},${tfx(a.y + (!height && hOffset))}Z`
 
   const transformedPath = svgPath(path).rotate(angle, a.x, a.y).toString()
 
@@ -68,82 +73,39 @@ function line(paper, pos, options) {
   return paper.path(path)
 }
 
-function arrow(paper, startPoint, endPoint, length, angle, options, type) {
-  switch (type) {
+function arrow(paper, item, length, angle, options) {
+  switch (item.mode) {
     case RxnArrowMode.OpenAngle: {
-      return arrowOpenAngle(paper, startPoint, endPoint, length, angle, options)
+      return arrowOpenAngle(paper, item, length, angle, options)
     }
     case RxnArrowMode.FilledTriangle: {
-      return arrowFilledTriangle(
-        paper,
-        startPoint,
-        endPoint,
-        length,
-        angle,
-        options
-      )
+      return arrowFilledTriangle(paper, item, length, angle, options)
     }
     case RxnArrowMode.FilledBow: {
-      return arrowFilledBow(paper, startPoint, endPoint, length, angle, options)
+      return arrowFilledBow(paper, item, length, angle, options)
     }
     case RxnArrowMode.DashedOpenAngle: {
-      return arrowDashedOpenAngle(
-        paper,
-        startPoint,
-        endPoint,
-        length,
-        angle,
-        options
-      )
+      return arrowDashedOpenAngle(paper, item, length, angle, options)
     }
     case RxnArrowMode.Failed: {
-      return arrowFailed(paper, startPoint, endPoint, length, angle, options)
+      return arrowFailed(paper, item, length, angle, options)
     }
     case RxnArrowMode.BothEndsFilledTriangle: {
-      return arrowBothEndsFilledTriangle(
-        paper,
-        startPoint,
-        endPoint,
-        length,
-        angle,
-        options
-      )
+      return arrowBothEndsFilledTriangle(paper, item, length, angle, options)
     }
     case RxnArrowMode.EquilibriumFilledHalfBow: {
-      return arrowEquilibriumFilledHalfBow(
-        paper,
-        startPoint,
-        endPoint,
-        length,
-        angle,
-        options
-      )
+      return arrowEquilibriumFilledHalfBow(paper, item, length, angle, options)
     }
     case RxnArrowMode.EquilibriumFilledTriangle: {
-      return arrowEquilibriumFilledTriangle(
-        paper,
-        startPoint,
-        endPoint,
-        length,
-        angle,
-        options
-      )
+      return arrowEquilibriumFilledTriangle(paper, item, length, angle, options)
     }
     case RxnArrowMode.EquilibriumOpenAngle: {
-      return arrowEquilibriumOpenAngle(
-        paper,
-        startPoint,
-        endPoint,
-        length,
-        angle,
-        options
-      )
+      return arrowEquilibriumOpenAngle(paper, item, length, angle, options)
     }
     case RxnArrowMode.UnbalancedEquilibriumFilledHalfBow: {
       return arrowUnbalancedEquilibriumFilledHalfBow(
         paper,
-        startPoint,
-        endPoint,
+        item,
         length,
         angle,
         options
@@ -152,8 +114,7 @@ function arrow(paper, startPoint, endPoint, length, angle, options, type) {
     case RxnArrowMode.UnbalancedEquilibriumOpenHalfAngle: {
       return arrowUnbalancedEquilibriumOpenHalfAngle(
         paper,
-        startPoint,
-        endPoint,
+        item,
         length,
         angle,
         options
@@ -162,18 +123,40 @@ function arrow(paper, startPoint, endPoint, length, angle, options, type) {
     case RxnArrowMode.UnbalancedEquilibriumLargeFilledHalfBow: {
       return arrowUnbalancedEquilibriumLargeFilledHalfBow(
         paper,
-        startPoint,
-        endPoint,
+        item,
         length,
         angle,
         options
       )
     }
-    case RxnArrowMode.UnbalancedEquilibriumFilleHalfTriangle: {
-      return arrowUnbalancedEquilibriumFilleHalfTriangle(
+    case RxnArrowMode.UnbalancedEquilibriumFilledHalfTriangle: {
+      return arrowUnbalancedEquilibriumFilledHalfTriangle(
         paper,
-        startPoint,
-        endPoint,
+        item,
+        length,
+        angle,
+        options
+      )
+    }
+    case RxnArrowMode.EllipticalArcFilledBow: {
+      return arrowEllipticalArcFilledBow(paper, item, length, angle, options)
+    }
+    case RxnArrowMode.EllipticalArcFilledTriangle: {
+      return arrowEllipticalArcFilledTriangle(
+        paper,
+        item,
+        length,
+        angle,
+        options
+      )
+    }
+    case RxnArrowMode.EllipticalArcOpenAngle: {
+      return arrowEllipticalArcOpenAngle(paper, item, length, angle, options)
+    }
+    case RxnArrowMode.EllipticalArcOpenHalfAngle: {
+      return arrowEllipticalArcOpenHalfAngle(
+        paper,
+        item,
         length,
         angle,
         options
@@ -182,7 +165,118 @@ function arrow(paper, startPoint, endPoint, length, angle, options, type) {
   }
 }
 
-function arrowOpenAngle(paper, a, b, arrowLength, arrowAngle, options) {
+function arrowEllipticalArcFilledBow(
+  paper,
+  { pos: [a, b], height },
+  arrowLength,
+  arrowAngle,
+  options
+) {
+  const direction = height >= 0 ? 1 : -1
+  const arrowHeadLength = direction * 10
+  const arrowHeadWidth = direction * 5
+  const arrowHeadAttr = direction * 4
+
+  const b0x = a.x + arrowLength
+  const path =
+    `M${tfx(a.x)},${tfx(a.y)}` +
+    `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${tfx(
+      b0x
+    )},${tfx(a.y)}` +
+    `L${tfx(b0x - arrowHeadWidth)},${tfx(a.y - arrowHeadLength)}` +
+    `l${tfx(arrowHeadWidth)},${tfx(arrowHeadAttr)}` +
+    `l${tfx(arrowHeadWidth)},${tfx(-arrowHeadAttr)}` +
+    `l${tfx(-arrowHeadWidth)},${arrowHeadLength}`
+
+  const transformedPath = svgPath(path).rotate(arrowAngle, a.x, a.y).toString()
+
+  return paper.path(transformedPath).attr({ ...options.lineattr })
+}
+
+function arrowEllipticalArcFilledTriangle(
+  paper,
+  { pos: [a, b], height },
+  arrowLength,
+  arrowAngle,
+  options
+) {
+  const direction = height >= 0 ? 1 : -1
+  const triangleLength = direction * 10
+  const triangleWidth = direction * 5
+
+  const b0x = a.x + arrowLength
+
+  const path =
+    `M${tfx(a.x)},${tfx(a.y)}` +
+    `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${tfx(
+      b0x
+    )},${tfx(a.y)}` +
+    `L${tfx(b0x - triangleWidth)},${tfx(a.y - triangleLength)}` +
+    `l${tfx(triangleLength)},${tfx(0)}` +
+    `l${tfx(-triangleWidth)},${tfx(triangleLength)}`
+
+  const transformedPath = svgPath(path).rotate(arrowAngle, a.x, a.y).toString()
+
+  return paper.path(transformedPath).attr({ ...options.lineattr })
+}
+
+function arrowEllipticalArcOpenAngle(
+  paper,
+  { pos: [a, b], height },
+  arrowLength,
+  arrowAngle,
+  options
+) {
+  const direction = height >= 0 ? 1 : -1
+  const width = direction * 5
+  const length = direction * 7
+  const b0x = a.x + arrowLength
+
+  const path =
+    `M${tfx(a.x)},${tfx(a.y)}` +
+    `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${tfx(
+      b0x
+    )},${tfx(a.y)}` +
+    `L${tfx(b0x - width)},${tfx(a.y - length)}` +
+    `M${tfx(b0x)},${tfx(a.y)}` +
+    `L${tfx(b0x + width)}, ${tfx(a.y - length)}`
+
+  const transformedPath = svgPath(path).rotate(arrowAngle, a.x, a.y).toString()
+
+  return paper.path(transformedPath).attr(options.lineattr)
+}
+
+function arrowEllipticalArcOpenHalfAngle(
+  paper,
+  { pos: [a, b], height },
+  arrowLength,
+  arrowAngle,
+  options
+) {
+  const direction = height >= 0 ? 1 : -1
+  const width = direction * 5
+  const length = direction * 7
+  const b0x = a.x + arrowLength
+
+  const path =
+    `M${tfx(a.x)},${tfx(a.y)}` +
+    `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0}, ${tfx(
+      b0x
+    )},${tfx(a.y)}` +
+    `L${tfx(b0x + width)}, ${tfx(a.y - length)}`
+
+  const transformedPath = svgPath(path).rotate(arrowAngle, a.x, a.y).toString()
+
+  return paper.path(transformedPath).attr(options.lineattr)
+}
+
+function arrowOpenAngle(
+  paper,
+  { pos: [a, b] },
+  arrowLength,
+  arrowAngle,
+  options
+) {
   const width = 5
   const length = 7
 
@@ -200,7 +294,13 @@ function arrowOpenAngle(paper, a, b, arrowLength, arrowAngle, options) {
   return paper.path(transformedPath).attr(options.lineattr)
 }
 
-function arrowFilledTriangle(paper, a, b, arrowLength, arrowAngle, options) {
+function arrowFilledTriangle(
+  paper,
+  { pos: [a, b] },
+  arrowLength,
+  arrowAngle,
+  options
+) {
   const triangleLength = 10
   const triangleWidth = 5
 
@@ -218,7 +318,13 @@ function arrowFilledTriangle(paper, a, b, arrowLength, arrowAngle, options) {
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
 }
 
-function arrowFilledBow(paper, a, b, arrowLength, arrowAngle, options) {
+function arrowFilledBow(
+  paper,
+  { pos: [a, b] },
+  arrowLength,
+  arrowAngle,
+  options
+) {
   const arrowHeadLength = 10
   const arrowHeadWidth = 5
   const arrowHeadAttr = 4
@@ -238,7 +344,13 @@ function arrowFilledBow(paper, a, b, arrowLength, arrowAngle, options) {
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
 }
 
-function arrowDashedOpenAngle(paper, a, b, arrowLength, arrowAngle, options) {
+function arrowDashedOpenAngle(
+  paper,
+  { pos: [a, b] },
+  arrowLength,
+  arrowAngle,
+  options
+) {
   const triangleLength = 10
   const triangleWidth = 5
   const dashInterval = 3.5
@@ -271,7 +383,7 @@ function arrowDashedOpenAngle(paper, a, b, arrowLength, arrowAngle, options) {
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
 }
 
-function arrowFailed(paper, a, b, arrowLength, arrowAngle, options) {
+function arrowFailed(paper, { pos: [a, b] }, arrowLength, arrowAngle, options) {
   const arrowHeadLength = 10
   const arrowHeadWidth = 5
   const arrowHeadAttr = 4
@@ -314,8 +426,7 @@ function arrowFailed(paper, a, b, arrowLength, arrowAngle, options) {
 
 function arrowBothEndsFilledTriangle(
   paper,
-  a,
-  b,
+  { pos: [a, b] },
   arrowLength,
   arrowAngle,
   options
@@ -343,8 +454,7 @@ function arrowBothEndsFilledTriangle(
 
 function arrowEquilibriumFilledHalfBow(
   paper,
-  a,
-  b,
+  { pos: [a, b] },
   arrowLength,
   arrowAngle,
   options
@@ -383,8 +493,7 @@ function arrowEquilibriumFilledHalfBow(
 
 function arrowEquilibriumFilledTriangle(
   paper,
-  a,
-  b,
+  { pos: [a, b] },
   arrowLength,
   arrowAngle,
   options
@@ -427,8 +536,7 @@ function arrowEquilibriumFilledTriangle(
 
 function arrowEquilibriumOpenAngle(
   paper,
-  a,
-  b,
+  { pos: [a, b] },
   arrowLength,
   arrowAngle,
   options
@@ -467,8 +575,7 @@ function arrowEquilibriumOpenAngle(
 
 function arrowUnbalancedEquilibriumFilledHalfBow(
   paper,
-  a,
-  b,
+  { pos: [a, b] },
   arrowLength,
   arrowAngle,
   options
@@ -511,8 +618,7 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
 
 function arrowUnbalancedEquilibriumOpenHalfAngle(
   paper,
-  a,
-  b,
+  { pos: [a, b] },
   arrowLength,
   arrowAngle,
   options
@@ -552,8 +658,7 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
 
 function arrowUnbalancedEquilibriumLargeFilledHalfBow(
   paper,
-  a,
-  b,
+  { pos: [a, b] },
   arrowLength,
   arrowAngle,
   options
@@ -594,10 +699,9 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
 }
 
-function arrowUnbalancedEquilibriumFilleHalfTriangle(
+function arrowUnbalancedEquilibriumFilledHalfTriangle(
   paper,
-  a,
-  b,
+  { pos: [a, b] },
   arrowLength,
   arrowAngle,
   options
@@ -1037,7 +1141,7 @@ export default {
   selectionLine,
   ellipse,
   rectangle,
-  rectangleWithAngle,
+  rectangleArrowHighlightAndSelection,
   polyline,
   line
 }

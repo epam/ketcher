@@ -98,7 +98,7 @@ class ReAtom extends ReObject {
     const sgroups = render.ctab.sgroups
     const functionalGroups = render.ctab.molecule.functionalGroups
     if (
-      FunctionalGroup.isAtomInContractedFinctionalGroup(
+      FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
         functionalGroups,
@@ -117,7 +117,7 @@ class ReAtom extends ReObject {
     const sgroups = restruct.render.ctab.sgroups
     const functionalGroups = restruct.render.ctab.molecule.functionalGroups
     if (
-      FunctionalGroup.isAtomInContractedFinctionalGroup(
+      FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
         functionalGroups,
@@ -142,7 +142,7 @@ class ReAtom extends ReObject {
     const ps = Scale.obj2scaled(this.a.pp, render.options)
 
     if (
-      FunctionalGroup.isAtomInContractedFinctionalGroup(
+      FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
         functionalGroups,

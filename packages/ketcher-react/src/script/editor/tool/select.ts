@@ -147,7 +147,9 @@ class SelectTool {
       xy0: rnd.page2obj(event)
     }
 
-    if (!ci || ci.map === 'atoms') atomLongtapEvent(this, rnd)
+    if (!ci || ci.map === 'atoms') {
+      atomLongtapEvent(this, rnd)
+    }
 
     if (!ci) {
       //  ci.type == 'Canvas'
@@ -405,7 +407,8 @@ class SelectTool {
       const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a
       if (
         atomId !== null &&
-        !FunctionalGroup.isBondInContractedFunctionalGroup(
+        !FunctionalGroup.isAtomInContractedFunctionalGroup(
+          // TODO: examine if this code is really needed, seems like its a hack
           atomFromStruct,
           sgroups,
           functionalGroups,
@@ -424,6 +427,7 @@ class SelectTool {
       if (
         bondId !== null &&
         !FunctionalGroup.isBondInContractedFunctionalGroup(
+          // TODO: examine if this code is really needed, seems like its a hack
           bondFromStruct,
           sgroups,
           functionalGroups,

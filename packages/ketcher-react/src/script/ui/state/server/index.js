@@ -177,12 +177,6 @@ export function serverCall(editor, server, method, options, struct) {
     selectedAtoms = (
       selection.atoms ? selection.atoms : editor.explicitSelected().atoms
     ).map(aid => aidMap.get(aid))
-
-    if (currentStruct.hasRxnArrow()) {
-      const components = currentStruct.getComponents()
-      const reindexMap = getReindexMap(components)
-      selectedAtoms = selectedAtoms.map(aid => reindexMap.get(aid))
-    }
   }
   const ketSerializer = new KetSerializer()
   return server.then(() =>
@@ -206,18 +200,4 @@ export function serverCall(editor, server, method, options, struct) {
       omit('data', options)
     )
   )
-}
-
-function getReindexMap(components) {
-  const map = [...components.reactants, ...components.products]
-    .reduce((acc, set) => {
-      acc = [...acc, ...set]
-      return acc
-    }, [])
-    .reduce((acc, aid, index) => {
-      acc.set(aid, index)
-      return acc
-    }, new Map())
-
-  return map
 }

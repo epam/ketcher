@@ -195,12 +195,16 @@ export class SGroup {
 
     // TODO: the code below is a temporary solution that will be removed after the implementation of the internal format
     // TODO: in schema.json required fields ["context", "FieldValue"] in sgroups type DAT must be returned
-    if (this.data.fieldName === 'INDIGO_CIP_DESC' && this.atoms.length === 1) {
-      const sAtom = this.atoms[0]
-      const sAtomPP = struct.atoms.get(sAtom)?.pp
+    if (this.data.fieldName === 'INDIGO_CIP_DESC') {
+      if (this.atoms.length === 1) {
+        const sAtom = this.atoms[0]
+        const sAtomPP = struct.atoms.get(sAtom)?.pp
 
-      if (sAtomPP) {
-        topLeftPoint = sAtomPP
+        if (sAtomPP) {
+          topLeftPoint = sAtomPP
+        }
+      } else {
+        topLeftPoint = SGroup.getMassCentre(struct, this.atoms)
       }
     }
 

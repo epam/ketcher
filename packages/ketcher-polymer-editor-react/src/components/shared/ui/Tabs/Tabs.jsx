@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import * as React from 'react'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import { useState } from 'react'
 import Box from '@mui/material/Box'
-import { useTheme } from '@emotion/react'
+import { useAppTheme } from 'hooks'
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -34,7 +35,7 @@ function CustomTabs(props) {
   const tabPanel = tabs[tabIndex]
   const Component = tabPanel?.component
   const componentProps = tabPanel?.props
-  const theme = useTheme()
+  const theme = useAppTheme()
 
   const handleChange = (event, newTabIndex) => {
     setTabIndex(newTabIndex)

@@ -14,67 +14,67 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useEffect } from 'react'
+import { ReactElement, useEffect } from 'react'
 import { css } from '@emotion/react'
 
 import { useAppDispatch, useAppSelector } from 'state'
 import { selectEditorIsReady, fetchInitData } from 'state/common'
 import { MonomerLibrary } from 'components/monomerLibrary'
+import { useAppTheme } from 'hooks'
 
 export const fetchData = () =>
   new Promise((resolve) => {
     setTimeout(() => resolve('some data'), 1000)
   })
 
-export const App = (): React.ReactElement => {
+export const App = (): ReactElement => {
   const dispatch = useAppDispatch()
   const isReady = useAppSelector(selectEditorIsReady)
+  const theme = useAppTheme()
 
   useEffect(() => {
     dispatch(fetchInitData())
   }, [dispatch])
 
-  const styleContainer = (theme) =>
-    css({
-      height: '100%',
-      width: '100%',
-      position: 'relative',
-      padding: '14px 11px 0 11px',
-      backgroundColor: theme.colors.background.canvas,
-      boxSizing: 'border-box'
-    })
+  const styleContainer = css({
+    height: '100%',
+    width: '100%',
+    position: 'relative',
+    padding: '14px 11px 0 11px',
+    backgroundColor: theme.colors.background.canvas,
+    boxSizing: 'border-box'
+  })
 
-  const styleLogo = (theme) =>
-    css({
-      fontFamily: theme.fonts.family.montserrat,
-      fontSize: theme.fonts.size.medium,
-      fontWeight: theme.fonts.weight['600'],
-      color: theme.colors.text.gray,
-      position: 'absolute',
-      bottom: '18px',
-      left: '13px',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
+  const styleLogo = css({
+    fontFamily: theme.fonts.family.montserrat,
+    fontSize: theme.fonts.size.medium,
+    fontWeight: theme.fonts.weight['600'],
+    color: theme.colors.text.gray,
+    position: 'absolute',
+    bottom: '18px',
+    left: '13px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
 
-      '> span:first-of-type, > span:last-of-type': {
-        fontWeight: theme.fonts.weight['300'],
-        fontSize: theme.fonts.size.xsmall,
-        textTransform: 'uppercase'
-      },
+    '> span:first-of-type, > span:last-of-type': {
+      fontWeight: theme.fonts.weight['300'],
+      fontSize: theme.fonts.size.xsmall,
+      textTransform: 'uppercase'
+    },
 
-      '> span:last-of-type': {
-        fontWeight: theme.fonts.weight['400']
-      },
+    '> span:last-of-type': {
+      fontWeight: theme.fonts.weight['400']
+    },
 
-      '> span:nth-of-type(2)': {
-        color: theme.colors.text.black,
+    '> span:nth-of-type(2)': {
+      color: theme.colors.text.black,
 
-        '&:first-letter': {
-          color: theme.colors.text.gray
-        }
+      '&:first-letter': {
+        color: theme.colors.text.gray
       }
-    })
+    }
+  })
 
   if (!isReady) {
     return <div>App is not ready</div>

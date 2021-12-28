@@ -14,13 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 import './ErrorModal.css'
+import {ReactElement} from "react";
 
 interface ErrorModalProps {
   message: string
   close: () => void
 }
 
-const ErrorModal = ({ message, close }: ErrorModalProps) => {
+const ErrorModal = ({ message, close }: ErrorModalProps): ReactElement => {
   return (
     <div className={'modalOverlay'}>
       <div className={'modalWindow'}>

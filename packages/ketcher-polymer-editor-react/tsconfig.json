@@ -32,7 +32,8 @@
       "components/*": ["src/components/*"],
       "state/*": ["src/state/*"],
       "state": ["src/state"],
-      "utils": ["src/utils"]
+      "hooks": ["src/hooks"],
+      "styles/*": ["src/styles/*"]
     },
     "plugins": [
       {

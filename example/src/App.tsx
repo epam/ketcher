@@ -1,6 +1,5 @@
 import 'miew/dist/Miew.min.css'
 import 'ketcher-react/dist/index.css'
-// import 'ketcher-polymer-editor-react/dist/index.css'
 
 import { ButtonsConfig, Editor } from 'ketcher-react'
 import { Ketcher, RemoteStructServiceProvider } from 'ketcher-core'

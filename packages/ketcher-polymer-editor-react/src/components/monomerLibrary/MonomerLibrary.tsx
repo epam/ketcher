@@ -18,7 +18,8 @@ import { css } from '@emotion/react'
 
 import { MonomerItem } from './monomerLibraryItem/MonomerItem'
 import { Tabs } from 'components/shared/ui/Tabs'
-import { scrollbarThin } from '../../styles/mixins'
+import { scrollbarThin } from 'styles/mixins'
+import { useAppTheme } from 'hooks'
 
 interface MonomerListPropTypes {
   list: Array<Record<string, string>>
@@ -40,6 +41,7 @@ const MonomerLibrary = () => {
       )
     })
   }
+  const theme = useAppTheme()
 
   const tabs = [
     {
@@ -75,13 +77,12 @@ const MonomerLibrary = () => {
     }
   ]
 
-  const styleContainer = (theme) =>
-    css({
-      position: 'absolute',
-      width: 'fit-content',
-      height: '700px',
-      backgroundColor: theme.colors.background.white
-    })
+  const styleContainer = css({
+    position: 'absolute',
+    width: 'fit-content',
+    height: '700px',
+    backgroundColor: theme.colors.background.white
+  })
 
   const styleTabs = {
     listStyleType: 'none',
@@ -89,21 +90,20 @@ const MonomerLibrary = () => {
     padding: 0
   }
 
-  const styleContent = (theme) =>
-    css({
-      ...scrollbarThin(theme),
+  const styleContent = css({
+    ...scrollbarThin(theme),
 
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'flex-start',
-      overflowY: 'auto',
-      width: '260px',
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    overflowY: 'auto',
+    width: '260px',
 
-      '& > *': {
-        margin: '25px 8px'
-      }
-    })
+    '& > *': {
+      margin: '25px 8px'
+    }
+  })
 
   return (
     <div css={styleContainer}>

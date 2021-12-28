@@ -1,5 +1,15 @@
 import { MonomerItem } from './MonomerItem'
-import { render, fireEvent } from 'utils'
+import { render, fireEvent } from '@testing-library/react'
+import { createTheme } from '@mui/material/styles'
+import { defaultTheme } from 'styles/variables'
+
+const theme = createTheme(defaultTheme)
+
+jest.mock('hooks', () => {
+  return {
+    useAppTheme: () => theme
+  }
+})
 
 describe('Test Monomer Item component', () => {
   it('Test click event', () => {

@@ -17,7 +17,13 @@
 import { useEffect, useRef } from 'react'
 import { css } from '@emotion/react'
 import clsx from 'clsx'
-import { AppContainer } from 'components/App'
+import { App } from 'components/App'
+import { store } from 'state'
+import { Provider } from 'react-redux'
+import { defaultTheme } from 'styles/variables'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+
+const themeMui = createTheme(defaultTheme)
 
 interface EditorProps {
   onInit?: () => void
@@ -41,13 +47,17 @@ function Editor(props: EditorProps) {
   })
 
   return (
-    <div
-      ref={rootElRef}
-      className={clsx('Ketcher-polymer-editor-root')}
-      css={styleRoot}
-    >
-      <AppContainer />
-    </div>
+    <Provider store={store}>
+      <ThemeProvider theme={themeMui}>
+        <div
+          ref={rootElRef}
+          className={clsx('Ketcher-polymer-editor-root')}
+          css={styleRoot}
+        >
+          <App />
+        </div>
+      </ThemeProvider>
+    </Provider>
   )
 }
 

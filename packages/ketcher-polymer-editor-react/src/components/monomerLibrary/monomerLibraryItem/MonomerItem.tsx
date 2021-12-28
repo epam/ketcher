@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { css } from '@emotion/react'
+import { useAppTheme } from 'hooks'
 
 interface MonomerItemPropTypes {
   key: number
@@ -24,21 +25,21 @@ interface MonomerItemPropTypes {
 
 const MonomerItem = (props: MonomerItemPropTypes) => {
   const { item, onClick } = props
+  const theme = useAppTheme()
 
-  const styleCard = (theme) =>
-    css({
-      background: theme.colors.text.white,
-      border: `1px solid ${theme.colors.text.black}`,
-      boxSizing: 'border-box',
-      borderRadius: '2px',
-      width: '32px',
-      height: '32px',
-      textAlign: 'center',
-      cursor: 'pointer',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center'
-    })
+  const styleCard = css({
+    background: theme.colors.text.white,
+    border: `1px solid ${theme.colors.text.black}`,
+    boxSizing: 'border-box',
+    borderRadius: '2px',
+    width: '32px',
+    height: '32px',
+    textAlign: 'center',
+    cursor: 'pointer',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  })
 
   return (
     <div css={styleCard} onClick={onClick}>

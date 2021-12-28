@@ -14,4 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './testUtils'
+import { Theme, useTheme } from '@mui/material'
+
+export const useAppTheme: () => Theme = () => useTheme()

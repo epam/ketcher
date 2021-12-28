@@ -15,12 +15,13 @@
  ***************************************************************************/
 
 import './PolymerToggler.css'
+import {ReactElement} from "react";
 
 interface PolymerTogglerProps {
   toggle: (isEnabled: boolean) => void
 }
 
-const PolymerToggler = ({ toggle }: PolymerTogglerProps) => {
+const PolymerToggler = ({ toggle }: PolymerTogglerProps): ReactElement => {
   return (
     <label className="switch">
       <input type="checkbox" onChange={(e) => toggle(e.target.checked)} />

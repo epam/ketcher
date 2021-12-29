@@ -1,4 +1,6 @@
 import '@mui/material/styles'
+import '@emotion/react'
+import { Theme as MuiTheme } from '@mui/material'
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -74,4 +76,9 @@ declare module '@mui/material/styles' {
       }
     }
   }
+}
+
+declare module '@emotion/react' {
+  /* eslint-disable  @typescript-eslint/no-empty-interface */
+  export interface Theme extends MuiTheme {}
 }

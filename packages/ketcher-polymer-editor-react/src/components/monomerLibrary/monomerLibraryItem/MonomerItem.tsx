@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { css } from '@emotion/react'
-import { useAppTheme } from 'hooks'
+import styled from '@emotion/styled'
 
 interface MonomerItemPropTypes {
   key: number
@@ -25,9 +24,8 @@ interface MonomerItemPropTypes {
 
 const MonomerItem = (props: MonomerItemPropTypes) => {
   const { item, onClick } = props
-  const theme = useAppTheme()
 
-  const styleCard = css({
+  const Card = styled.div(({ theme }) => ({
     background: theme.colors.text.white,
     border: `1px solid ${theme.colors.text.black}`,
     boxSizing: 'border-box',
@@ -39,13 +37,9 @@ const MonomerItem = (props: MonomerItemPropTypes) => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center'
-  })
+  }))
 
-  return (
-    <div css={styleCard} onClick={onClick}>
-      {item.name}
-    </div>
-  )
+  return <Card onClick={onClick}>{item.name}</Card>
 }
 
 export { MonomerItem }

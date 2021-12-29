@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 import { ReactElement, useEffect } from 'react'
-import { css } from '@emotion/react'
 
-import { useAppDispatch, useAppSelector, useAppTheme } from 'hooks'
+import { useAppDispatch, useAppSelector } from 'hooks'
 import { selectEditorIsReady, fetchInitData } from 'state/common'
 import { MonomerLibrary } from 'components/monomerLibrary'
+import styled from '@emotion/styled'
 
 export const fetchData = () =>
   new Promise((resolve) => {
@@ -29,22 +29,21 @@ export const fetchData = () =>
 export const App = (): ReactElement => {
   const dispatch = useAppDispatch()
   const isReady = useAppSelector(selectEditorIsReady)
-  const theme = useAppTheme()
 
   useEffect(() => {
     dispatch(fetchInitData())
   }, [dispatch])
 
-  const styleContainer = css({
+  const AppContainer = styled.div(({ theme }) => ({
     height: '100%',
     width: '100%',
     position: 'relative',
     padding: '14px 11px 0 11px',
     backgroundColor: theme.colors.background.canvas,
     boxSizing: 'border-box'
-  })
+  }))
 
-  const styleLogo = css({
+  const Logo = styled.div(({ theme }) => ({
     fontFamily: theme.fonts.family.montserrat,
     fontSize: theme.fonts.size.medium,
     fontWeight: theme.fonts.weight['600'],
@@ -73,21 +72,21 @@ export const App = (): ReactElement => {
         color: theme.colors.text.gray
       }
     }
-  })
+  }))
 
   if (!isReady) {
     return <div>App is not ready</div>
   }
 
   return (
-    <div css={styleContainer}>
+    <AppContainer>
       <MonomerLibrary />
 
-      <div css={styleLogo} data-testid="ketcher-logo">
+      <Logo data-testid="ketcher-logo">
         <span>Polymer Editor</span>
         <span>Ketcher</span>
         <span>EPAM</span>
-      </div>
-    </div>
+      </Logo>
+    </AppContainer>
   )
 }

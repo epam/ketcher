@@ -20,6 +20,7 @@ import { MonomerItem } from './monomerLibraryItem/MonomerItem'
 import { Tabs } from 'components/shared/ui/Tabs'
 import { scrollbarThin } from 'styles/mixins'
 import { useAppTheme } from 'hooks'
+import styled from '@emotion/styled'
 
 interface MonomerListPropTypes {
   list: Array<Record<string, string>>
@@ -77,12 +78,12 @@ const MonomerLibrary = () => {
     }
   ]
 
-  const styleContainer = css({
+  const MonomerLibraryContainer = styled.div(({ theme }) => ({
     position: 'absolute',
     width: 'fit-content',
     height: '700px',
     backgroundColor: theme.colors.background.white
-  })
+  }))
 
   const styleTabs = {
     listStyleType: 'none',
@@ -106,9 +107,9 @@ const MonomerLibrary = () => {
   })
 
   return (
-    <div css={styleContainer}>
+    <MonomerLibraryContainer>
       <Tabs tabsStyle={styleTabs} contentStyle={styleContent} tabs={tabs} />
-    </div>
+    </MonomerLibraryContainer>
   )
 }
 

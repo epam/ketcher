@@ -14,12 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import * as React from 'react'
-import Tabs from '@mui/material/Tabs'
-import Tab from '@mui/material/Tab'
-import { useState } from 'react'
+import Tabs, { TabsProps } from '@mui/material/Tabs'
+import Tab, { TabProps } from '@mui/material/Tab'
+import { ReactElement, useState } from 'react'
 import Box from '@mui/material/Box'
-import { useAppTheme } from 'hooks'
+import { styled } from '@mui/material'
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -29,28 +28,35 @@ function TabPanel({ children, value, index, ...other }) {
   )
 }
 
-function CustomTabs(props) {
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`
+  }
+}
+
+function CustomTabs(props): ReactElement {
   const [tabIndex, setTabIndex] = useState(0)
   const { tabs, contentStyle, tabsStyle } = props
   const tabPanel = tabs[tabIndex]
   const Component = tabPanel?.component
   const componentProps = tabPanel?.props
-  const theme = useAppTheme()
 
-  const handleChange = (event, newTabIndex) => {
+  const handleChange = (_event, newTabIndex) => {
     setTabIndex(newTabIndex)
   }
 
-  const styleTabs = {
+  const StyledTabs = styled(Tabs)<TabsProps>({
     height: 24,
     minHeight: 24,
 
     '& .MuiTabs-indicator': {
       display: 'none'
-    }
-  }
+    },
+    ...tabsStyle
+  })
 
-  const styleTab = {
+  const StyledTab = styled(Tab)<TabProps>(({ theme }) => ({
     minHeight: 24,
     minWidth: 60,
     height: 1,
@@ -67,33 +73,34 @@ function CustomTabs(props) {
       color: theme.colors.text.white
     },
 
-    '&.active': {
+    '&.Mui-selected': {
       color: theme.colors.text.white,
       backgroundColor: theme.colors.tab.active
-    }
-  }
+    },
+
+    ...tabsStyle
+  }))
+
+  const TabListContent = styled('div')({
+    ...contentStyle
+  })
 
   return (
     <>
-      <Tabs
-        value={tabIndex}
-        onChange={handleChange}
-        css={{ ...styleTabs, ...tabsStyle }}
-      >
+      <StyledTabs value={tabIndex} onChange={handleChange}>
         {tabs.map((tabPanel, index) => (
-          <Tab
+          <StyledTab
             label={tabPanel.caption}
             key={index}
-            className={tabIndex === index && 'active'}
-            css={{ ...styleTab, ...tabsStyle }}
+            {...a11yProps(index)}
           />
         ))}
-      </Tabs>
+      </StyledTabs>
       {tabPanel && (
         <TabPanel value={tabIndex} index={tabIndex}>
-          <div css={contentStyle}>
+          <TabListContent>
             <Component {...componentProps} />
-          </div>
+          </TabListContent>
         </TabPanel>
       )}
     </>

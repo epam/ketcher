@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import './PolymerToggler.css'
-import {ReactElement} from "react";
+import { ReactElement } from 'react'
 
 interface PolymerTogglerProps {
   toggle: (isEnabled: boolean) => void

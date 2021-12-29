@@ -6,14 +6,16 @@ import RightLink from '../../../icons/rightLink.svg'
 import { FC, useState } from 'react'
 
 const RAPButton = styled(Button)<{ isActive: boolean }>`
-  color: rgba(0, 0, 0, 1);
-  padding: 6px 12px;
+  padding: 3px 12px;
   border-radius: 8px;
+  line-height: 18px;
   background-color: ${(props) =>
     props.isActive ? 'rgba(0, 131, 143, 1)' : 'rgba(242, 242, 242, 1)'};
   min-width: 33px;
+  color: ${(props) => (props.isActive ? 'white' : 'black')};
   :hover {
     background-color: rgba(0, 131, 143, 1);
+    color: white;
   }
 `
 const SwitcherContainer = styled('div')`
@@ -22,9 +24,9 @@ const SwitcherContainer = styled('div')`
   flex-direction: column;
   align-items: center;
 `
-const ButtonsContainer = styled('div')`
+const Container = styled('div')<{ gap: string }>`
   display: flex;
-  gap: 5px;
+  gap: ${({ gap }) => gap};
 `
 
 const buttons = ['R', 'A', 'P']
@@ -40,28 +42,28 @@ const svgLinks = [LeftLink, MiddleLink, RightLink].map(
 )
 
 export const Switcher: FC = () => {
-  const [active, setActive] = useState(3)
+  const [active, setActive] = useState(0)
   return (
     <SwitcherContainer>
-      <RAPButton onClick={() => setActive(3)} isActive={active === 3}>
+      <RAPButton onClick={() => setActive(0)} isActive={active === 0}>
         R(A)P
       </RAPButton>
-      <ButtonsContainer>
+      <Container gap="11px">
         {svgLinks.map((Component, index) => (
-          <Component isActive={active === index} />
+          <Component key={index} isActive={active === index + 1} />
         ))}
-      </ButtonsContainer>
-      <ButtonsContainer>
+      </Container>
+      <Container gap="4px">
         {buttons.map((button, index) => (
           <RAPButton
             key={button}
-            onClick={() => setActive(index)}
-            isActive={active === index}
+            onClick={() => setActive(index + 1)}
+            isActive={active === index + 1}
           >
             {button}
           </RAPButton>
         ))}
-      </ButtonsContainer>
+      </Container>
     </SwitcherContainer>
   )
 }

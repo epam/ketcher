@@ -62,7 +62,7 @@ function atomToKet(source) {
   const result = {}
   ifDef(result, 'label', source.label)
   ifDef(result, 'alias', source.alias)
-  ifDef(result, 'location', [source.pp.x, source.pp.y, source.pp.z])
+  ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z])
   ifDef(result, 'charge', source.charge, 0)
   ifDef(result, 'explicitValence', source.explicitValence, -1)
   ifDef(result, 'isotope', source.isotope, 0)

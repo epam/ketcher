@@ -59,7 +59,7 @@ export function atomToStruct(source) {
   ifDef(params, 'alias', source.alias)
   ifDef(params, 'pp', {
     x: source.location[0],
-    y: source.location[1],
+    y: -source.location[1],
     z: source.location[2] || 0.0
   })
   ifDef(params, 'charge', source.charge)

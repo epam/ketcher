@@ -6,7 +6,7 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="Ketcher-polymer-editor-root css-10fbz8a-Editor"
+        class="Ketcher-polymer-editor-root css-5mdzd6"
       >
         <div
           class="css-uvjuir"
@@ -127,7 +127,7 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="Ketcher-polymer-editor-root css-10fbz8a-Editor"
+      class="Ketcher-polymer-editor-root css-5mdzd6"
     >
       <div
         class="css-uvjuir"

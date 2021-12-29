@@ -15,15 +15,14 @@
  ***************************************************************************/
 
 import { useEffect, useRef } from 'react'
-import { css } from '@emotion/react'
-import clsx from 'clsx'
 import { App } from 'components/App'
 import { store } from 'state'
 import { Provider } from 'react-redux'
 import { defaultTheme } from 'styles/variables'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
+import styled from '@emotion/styled'
 
-const themeMui = createTheme(defaultTheme)
+const theme = createTheme(defaultTheme)
 
 interface EditorProps {
   onInit?: () => void
@@ -37,7 +36,7 @@ function Editor(props: EditorProps) {
     onInit?.()
   }, [onInit])
 
-  const styleRoot = css({
+  const RootContainer = styled.div({
     height: '100%',
     width: '100%',
     position: 'relative',
@@ -48,14 +47,10 @@ function Editor(props: EditorProps) {
 
   return (
     <Provider store={store}>
-      <ThemeProvider theme={themeMui}>
-        <div
-          ref={rootElRef}
-          className={clsx('Ketcher-polymer-editor-root')}
-          css={styleRoot}
-        >
+      <ThemeProvider theme={theme}>
+        <RootContainer ref={rootElRef} className="Ketcher-polymer-editor-root">
           <App />
-        </div>
+        </RootContainer>
       </ThemeProvider>
     </Provider>
   )

@@ -14,5 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './useAppTheme'
-export * from './stateHooks'
+import { render, screen } from '@testing-library/react'
+import { App } from 'components/App'
+
+describe('App', () => {
+  it('renders a message', () => {
+    render(<App />)
+    expect(screen.getByTestId('ketcher-logo')).toBeInTheDocument()
+    expect(screen.getByText('Polymer Editor')).toBeVisible()
+    expect(screen.getByText('Ketcher')).toBeVisible()
+    expect(screen.getByText('EPAM')).toBeVisible()
+  })
+})

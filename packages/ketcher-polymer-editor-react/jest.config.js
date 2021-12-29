@@ -13,5 +13,5 @@ module.exports = {
     '^styles(.*)$': '<rootDir>/src/styles/$1',
     '^hooks(.*)$': '<rootDir>/src/hooks/$1'
   },
-  setupFilesAfterEnv: ['<rootDir>/setupTests.ts']
+  setupFilesAfterEnv: ['<rootDir>/src/testsSetup.ts']
 }

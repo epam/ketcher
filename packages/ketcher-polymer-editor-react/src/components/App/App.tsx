@@ -17,10 +17,9 @@
 import { ReactElement, useEffect } from 'react'
 import { css } from '@emotion/react'
 
-import { useAppDispatch, useAppSelector } from 'state'
+import { useAppDispatch, useAppSelector, useAppTheme } from 'hooks'
 import { selectEditorIsReady, fetchInitData } from 'state/common'
 import { MonomerLibrary } from 'components/monomerLibrary'
-import { useAppTheme } from 'hooks'
 
 export const fetchData = () =>
   new Promise((resolve) => {
@@ -84,7 +83,7 @@ export const App = (): ReactElement => {
     <div css={styleContainer}>
       <MonomerLibrary />
 
-      <div css={styleLogo}>
+      <div css={styleLogo} data-testid="ketcher-logo">
         <span>Polymer Editor</span>
         <span>Ketcher</span>
         <span>EPAM</span>

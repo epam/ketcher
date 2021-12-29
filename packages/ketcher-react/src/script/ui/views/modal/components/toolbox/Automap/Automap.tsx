@@ -18,7 +18,6 @@ import { BaseCallProps, BaseProps } from '../../../modal.types'
 import Form, { Field } from '../../../../../component/form/form/form'
 import { Dialog } from '../../../../components'
 import classes from './Automap.module.less'
-import { dialogWindowsMargin } from '../../../../../../../style'
 
 type Props = BaseProps & BaseCallProps
 
@@ -45,7 +44,6 @@ const Automap = (props: Props) => {
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}
-      {...dialogWindowsMargin}
     >
       <Form schema={automapSchema} {...formState}>
         <Field name="mode" />

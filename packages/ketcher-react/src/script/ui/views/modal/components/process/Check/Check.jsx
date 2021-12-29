@@ -23,7 +23,6 @@ import { checkOpts } from '../../../../../state/options'
 import { connect } from 'react-redux'
 import style from './Check.module.less'
 import { useEffect } from 'react'
-import { dialogWindowsMargin } from '../../../../../../../style'
 
 const checkSchema = {
   title: 'Check',
@@ -79,7 +78,6 @@ function CheckDialog(props) {
       className={style.check}
       params={prop}
       buttons={[]}
-      {...dialogWindowsMargin}
     >
       <Form
         schema={checkSchema}

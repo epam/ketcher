@@ -22,7 +22,6 @@ import { FC } from 'react'
 import classes from './enhancedStereo.module.less'
 import { connect } from 'react-redux'
 import { range } from 'lodash'
-import { dialogWindowsMargin } from '../../../../../style'
 
 interface EnhancedStereoResult {
   andNumber: number
@@ -86,7 +85,6 @@ const EnhancedStereo: FC<Props> = (props) => {
       result={() => result}
       valid={() => valid}
       buttons={['OK']}
-      {...dialogWindowsMargin}
     >
       <Form schema={enhancedStereoSchema} init={init} {...formState}>
         <fieldset>

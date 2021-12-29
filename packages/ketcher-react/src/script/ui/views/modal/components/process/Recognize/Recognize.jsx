@@ -31,7 +31,6 @@ import { connect } from 'react-redux'
 import { load } from '../../../../../state'
 import { range } from 'lodash/fp'
 import { recognize } from '../../../../../state/server'
-import { dialogWindowsMargin } from '../../../../../../../style'
 
 function isImage(file) {
   return file?.type?.includes('image')
@@ -77,7 +76,6 @@ function RecognizeDialog(prop) {
         ),
         'OK'
       ]}
-      {...dialogWindowsMargin}
     >
       <label className={classes.change_version}>
         Imago version:

@@ -31,7 +31,6 @@ import classes from './PeriodTable.module.less'
 import { connect } from 'react-redux'
 import { onAction } from '../../../../state'
 import { xor } from 'lodash/fp'
-import { margin } from '../../../../../../style'
 
 class Table extends Component {
   constructor(props) {
@@ -158,9 +157,7 @@ class Table extends Component {
         params={this.props}
         result={this.result}
         buttons={this.getButton()}
-        bodyMargin="0"
-        headerMargin={`${margin.topBottom1} ${margin.leftRight}`}
-        footerMargin={`${margin.topBottom1} ${margin.leftRight}`}
+        needMargin={false}
       >
         <Tabs
           className={classes.tabs}

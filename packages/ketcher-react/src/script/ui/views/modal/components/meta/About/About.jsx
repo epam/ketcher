@@ -18,7 +18,6 @@ import { Dialog } from '../../../../components'
 import Logo from './logo.svg'
 import classes from './About.module.less'
 import { connect } from 'react-redux'
-import { dialogWindowsMargin } from '../../../../../../../style'
 
 function AboutDialog(props) {
   const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info
@@ -29,7 +28,6 @@ function AboutDialog(props) {
       className={classes.about}
       params={props}
       buttons={['Close']}
-      {...dialogWindowsMargin}
     >
       <a
         href="http://lifescience.opensource.epam.com/ketcher/"

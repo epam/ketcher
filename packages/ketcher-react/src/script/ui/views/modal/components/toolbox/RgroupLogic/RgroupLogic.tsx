@@ -19,7 +19,6 @@ import { Dialog } from '../../../../components'
 import IfThenSelect from './components'
 import classes from './RgroupLogic.module.less'
 import { rgroupLogic as rgroupSchema } from '../../../../../data/schema/struct-schema'
-import { dialogWindowsMargin } from '../../../../../../../style'
 
 interface RgroupLogicProps extends BaseProps {
   frags: Set<number>
@@ -42,7 +41,6 @@ const RgroupLogic = (props: Props) => {
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}
-      {...dialogWindowsMargin}
     >
       <Form
         schema={rgroupSchema}

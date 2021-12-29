@@ -23,7 +23,6 @@ import { connect } from 'react-redux'
 import { storage } from '../../storage-ext'
 import Form, { Field } from '../../component/form/form/form'
 import { attachSchema } from '../../data/schema/struct-schema'
-import { dialogWindowsMargin } from '../../../../style'
 
 const EDITOR_STYLES = {
   selectionStyle: { fill: '#47b3ec', stroke: 'none' },
@@ -75,7 +74,6 @@ class Attach extends Component {
         result={this.onResult}
         valid={() => this.props.formState.valid && name}
         params={prop}
-        {...dialogWindowsMargin}
       >
         <Form
           schema={attachSchema}

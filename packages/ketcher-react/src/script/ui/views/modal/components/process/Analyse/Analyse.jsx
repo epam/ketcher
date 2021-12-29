@@ -25,7 +25,6 @@ import { changeRound } from '../../../../../state/options'
 import classes from './Analyse.module.less'
 import { connect } from 'react-redux'
 import { range } from 'lodash/fp'
-import { dialogWindowsMargin } from '../../../../../../../style'
 
 function roundOff(value, round) {
   if (typeof value === 'number') return value.toFixed(round)
@@ -48,7 +47,6 @@ class AnalyseDialog extends Component {
         className={classes.analyse}
         buttons={[]}
         params={props}
-        {...dialogWindowsMargin}
       >
         <ul>
           {[

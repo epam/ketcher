@@ -21,7 +21,6 @@ import { Dialog } from '../../../views/components'
 import classes from './rgroup.module.less'
 import { connect } from 'react-redux'
 import { rgroupSchema } from '../../../data/schema/struct-schema'
-import { dialogWindowsMargin } from '../../../../../style'
 
 function RGroup({ disabledIds, values, formState, type, ...props }) {
   return (
@@ -30,7 +29,6 @@ function RGroup({ disabledIds, values, formState, type, ...props }) {
       className={classes.rgroup}
       params={props}
       result={() => formState.result}
-      {...dialogWindowsMargin}
     >
       <Form schema={rgroupSchema} init={{ values }} {...formState}>
         <Field

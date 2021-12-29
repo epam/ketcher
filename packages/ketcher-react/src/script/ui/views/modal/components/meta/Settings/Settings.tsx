@@ -37,7 +37,6 @@ import { connect } from 'react-redux'
 import { saveSettings } from '../../../../../state/options'
 import settingsSchema from '../../../../../data/schema/options-schema'
 import { storage } from '../../../../../storage-ext'
-import { margin } from '../../../../../../../style'
 
 interface SettingsProps extends BaseProps {
   initState: any
@@ -209,9 +208,7 @@ const SettingsDialog = (props: Props) => {
           <Icon name={'reset'} />
         </button>
       ]}
-      bodyMargin={`0 ${margin.leftRight} 0 0`}
-      headerMargin={`${margin.topBottom} ${margin.leftRight}`}
-      footerMargin={`${margin.topBottom1} ${margin.leftRight} ${margin.topBottom} ${margin.leftRight}`}
+      needMargin={false}
     >
       <Form schema={settingsSchema} init={initState} {...formState}>
         <Sidebar tabs={tabs} className={classes.sidebar} />

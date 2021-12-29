@@ -301,7 +301,12 @@ EraserTool.prototype.click = function (event) {
       })
     )
   } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
-    this.editor.update(fromSgroupDeletion(restruct, ci.id))
+    const sGroup = this.sgroups.get(ci.id)
+    if (FunctionalGroup.isFunctionalGroup(sGroup.item)) {
+      this.editor.event.removeFG.dispatch({ fgIds: [ci.id] })
+    } else {
+      this.editor.update(fromSgroupDeletion(restruct, ci.id))
+    }
   } else if (ci.map === 'rxnArrows') {
     this.editor.update(fromArrowDeletion(restruct, ci.id))
   } else if (ci.map === 'rxnPluses') {

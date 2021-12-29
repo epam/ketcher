@@ -17,16 +17,16 @@
 export const scrollbarThin = (theme) => ({
   '&::-webkit-scrollbar': {
     width: '4px',
-    backgroundColor: theme.colors.scroll.inactive,
+    backgroundColor: theme.color.scroll.inactive,
     borderRadius: '2px',
     webkitBorderRadius: '2px'
   },
   '&::-webkit-scrollbar-thumb': {
-    backgroundColor: theme.colors.scroll.regular,
+    backgroundColor: theme.color.scroll.regular,
     borderRadius: '2px',
     webkitBorderRadius: '2px'
   },
   '&::-webkit-scrollbar-thumb:active': {
-    backgroundColor: theme.colors.scroll.regular
+    backgroundColor: theme.color.scroll.regular
   }
 })

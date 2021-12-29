@@ -82,7 +82,7 @@ const MonomerLibrary = () => {
     position: 'absolute',
     width: 'fit-content',
     height: '700px',
-    backgroundColor: theme.colors.background.white
+    backgroundColor: theme.color.background.primary
   }))
 
   const styleTabs = {

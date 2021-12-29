@@ -65,17 +65,17 @@ function CustomTabs(props): ReactElement {
     fontSize: 10,
     cursor: 'pointer',
     textAlign: 'center',
-    backgroundColor: theme.colors.tab.regular,
-    color: theme.colors.text.black,
+    backgroundColor: theme.color.tab.regular,
+    color: theme.color.text.primary,
 
     '&:hover': {
-      backgroundColor: theme.colors.tab.hover,
-      color: theme.colors.text.white
+      backgroundColor: theme.color.tab.hover,
+      color: theme.color.text.light
     },
 
     '&.Mui-selected': {
-      color: theme.colors.text.white,
-      backgroundColor: theme.colors.tab.active
+      color: theme.color.text.light,
+      backgroundColor: theme.color.tab.active
     },
 
     ...tabsStyle

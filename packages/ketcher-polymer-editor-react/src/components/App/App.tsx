@@ -39,15 +39,15 @@ export const App = (): ReactElement => {
     width: '100%',
     position: 'relative',
     padding: '14px 11px 0 11px',
-    backgroundColor: theme.colors.background.canvas,
+    backgroundColor: theme.color.background.canvas,
     boxSizing: 'border-box'
   }))
 
   const Logo = styled.div(({ theme }) => ({
-    fontFamily: theme.fonts.family.montserrat,
-    fontSize: theme.fonts.size.medium,
-    fontWeight: theme.fonts.weight['600'],
-    color: theme.colors.text.gray,
+    fontFamily: theme.font.family.montserrat,
+    fontSize: theme.font.size.medium,
+    fontWeight: theme.font.weight['600'],
+    color: theme.color.text.secondary,
     position: 'absolute',
     bottom: '18px',
     left: '13px',
@@ -56,20 +56,20 @@ export const App = (): ReactElement => {
     alignItems: 'center',
 
     '> span:first-of-type, > span:last-of-type': {
-      fontWeight: theme.fonts.weight['300'],
-      fontSize: theme.fonts.size.xsmall,
+      fontWeight: theme.font.weight['300'],
+      fontSize: theme.font.size.xsmall,
       textTransform: 'uppercase'
     },
 
     '> span:last-of-type': {
-      fontWeight: theme.fonts.weight['400']
+      fontWeight: theme.font.weight['400']
     },
 
     '> span:nth-of-type(2)': {
-      color: theme.colors.text.black,
+      color: theme.color.text.primary,
 
       '&:first-letter': {
-        color: theme.colors.text.gray
+        color: theme.color.text.secondary
       }
     }
   }))

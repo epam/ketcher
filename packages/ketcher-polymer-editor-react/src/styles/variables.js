@@ -14,15 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-const colors = {
+const color = {
   background: {
     canvas: '#F2F2F2',
-    white: '#FFFFFF'
+    primary: '#FFFFFF',
+    secondary: '#F8FEFF'
   },
   text: {
-    black: '#121212',
-    gray: '#BCBCBC',
-    white: '#FFFFFF'
+    primary: '#121212',
+    secondary: '#BCBCBC',
+    light: '#FFFFFF'
   },
   tab: {
     regular: '#F3F3F3',
@@ -32,10 +33,59 @@ const colors = {
   scroll: {
     regular: '#717171',
     inactive: '#DDDDDD'
+  },
+  button: {
+    primary: {
+      active: '#005662',
+      hover: '#00838F',
+      clicked: '#4FB3BF',
+      disabled: 'rgba(0, 131, 143, 0.4)'
+    },
+    secondary: {
+      active: '#717171',
+      hover: '#333333',
+      clicked: '#AEAEAE',
+      disabled: 'rgba(113, 113, 113, 0.4)'
+    },
+    text: {
+      primary: '#FFFFFF',
+      secondary: '#005662',
+      disabled: '#7A7A7A'
+    }
+  },
+  dropdown: {
+    primary: '#333333',
+    secondary: '#FFFFFF',
+    hover: '#DDDDDD',
+    disabled: '#7A7A7A'
+  },
+  tooltip: {
+    background: '#FFFFFF',
+    text: '#333333'
+  },
+  link: {
+    active: '#00838F',
+    hover: '#005662'
+  },
+  divider: '#AEAEAE',
+  error: '#FF4A4A',
+  input: {
+    border: {
+      regular: '#005662',
+      active: '#FFFFFF',
+      hover: '#DDDDDD'
+    }
+  },
+  icon: {
+    hover: '#005662',
+    active: '#525252',
+    activeMenu: '#00838F',
+    clicked: '#FFFFFF',
+    disabled: 'rgba(82, 82, 82, 0.4)'
   }
 }
 
-const fonts = {
+const font = {
   size: {
     medium: '14px',
     xsmall: '6px'
@@ -51,6 +101,6 @@ const fonts = {
 }
 
 export const defaultTheme = {
-  colors,
-  fonts
+  color,
+  font
 }

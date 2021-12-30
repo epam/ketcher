@@ -87,16 +87,21 @@ const color = {
 
 const font = {
   size: {
+    small: '10px',
+    regular: '12px',
     medium: '14px',
     xsmall: '6px'
   },
   family: {
-    montserrat: 'Montserrat, sans-serif'
+    montserrat: 'Montserrat, sans-serif',
+    inter:
+      "Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',\n" +
+      'Arial, sans-serif'
   },
   weight: {
-    300: 300,
-    400: 400,
-    600: 600
+    light: 300,
+    regular: 400,
+    bold: 600
   }
 }
 

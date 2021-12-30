@@ -1,8 +1,7 @@
 /// <reference types="react-scripts" />
 
-import {Theme as MuiTheme} from "@mui/material";
+import { Theme as MuiTheme } from '@mui/material'
 import '@emotion/react'
-
 
 declare module '*.less' {
   const classes: { [className: string]: string }

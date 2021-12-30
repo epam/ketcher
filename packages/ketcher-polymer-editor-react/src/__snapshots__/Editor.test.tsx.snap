@@ -9,13 +9,13 @@ Object {
         class="Ketcher-polymer-editor-root css-5mdzd6"
       >
         <div
-          class="css-uvjuir"
+          class="css-ynu07z"
         >
           <div
             class="css-x4dvvf"
           >
             <div
-              class="MuiTabs-root css-1k30lg6-MuiTabs-root"
+              class="MuiTabs-root css-o3c7w6-MuiTabs-root"
             >
               <div
                 class="MuiTabs-scroller MuiTabs-fixed css-jpln7h-MuiTabs-scroller"
@@ -28,7 +28,7 @@ Object {
                   <button
                     aria-controls="simple-tabpanel-0"
                     aria-selected="true"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-whr8gr-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-16kce1u-MuiButtonBase-root-MuiTab-root"
                     id="simple-tab-0"
                     role="tab"
                     tabindex="0"
@@ -42,7 +42,7 @@ Object {
                   <button
                     aria-controls="simple-tabpanel-1"
                     aria-selected="false"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-whr8gr-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-16kce1u-MuiButtonBase-root-MuiTab-root"
                     id="simple-tab-1"
                     role="tab"
                     tabindex="-1"
@@ -56,7 +56,7 @@ Object {
                   <button
                     aria-controls="simple-tabpanel-2"
                     aria-selected="false"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-whr8gr-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-16kce1u-MuiButtonBase-root-MuiTab-root"
                     id="simple-tab-2"
                     role="tab"
                     tabindex="-1"
@@ -70,7 +70,7 @@ Object {
                   <button
                     aria-controls="simple-tabpanel-3"
                     aria-selected="false"
-                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-whr8gr-MuiButtonBase-root-MuiTab-root"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-16kce1u-MuiButtonBase-root-MuiTab-root"
                     id="simple-tab-3"
                     role="tab"
                     tabindex="-1"
@@ -96,7 +96,7 @@ Object {
                 class="MuiBox-root css-0"
               >
                 <div
-                  class="css-i5dvpw"
+                  class="css-131crr"
                 >
                   <div
                     class="css-y63346"
@@ -130,13 +130,13 @@ Object {
       class="Ketcher-polymer-editor-root css-5mdzd6"
     >
       <div
-        class="css-uvjuir"
+        class="css-ynu07z"
       >
         <div
           class="css-x4dvvf"
         >
           <div
-            class="MuiTabs-root css-1k30lg6-MuiTabs-root"
+            class="MuiTabs-root css-o3c7w6-MuiTabs-root"
           >
             <div
               class="MuiTabs-scroller MuiTabs-fixed css-jpln7h-MuiTabs-scroller"
@@ -149,7 +149,7 @@ Object {
                 <button
                   aria-controls="simple-tabpanel-0"
                   aria-selected="true"
-                  class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-whr8gr-MuiButtonBase-root-MuiTab-root"
+                  class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-16kce1u-MuiButtonBase-root-MuiTab-root"
                   id="simple-tab-0"
                   role="tab"
                   tabindex="0"
@@ -163,7 +163,7 @@ Object {
                 <button
                   aria-controls="simple-tabpanel-1"
                   aria-selected="false"
-                  class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-whr8gr-MuiButtonBase-root-MuiTab-root"
+                  class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-16kce1u-MuiButtonBase-root-MuiTab-root"
                   id="simple-tab-1"
                   role="tab"
                   tabindex="-1"
@@ -177,7 +177,7 @@ Object {
                 <button
                   aria-controls="simple-tabpanel-2"
                   aria-selected="false"
-                  class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-whr8gr-MuiButtonBase-root-MuiTab-root"
+                  class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-16kce1u-MuiButtonBase-root-MuiTab-root"
                   id="simple-tab-2"
                   role="tab"
                   tabindex="-1"
@@ -191,7 +191,7 @@ Object {
                 <button
                   aria-controls="simple-tabpanel-3"
                   aria-selected="false"
-                  class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-whr8gr-MuiButtonBase-root-MuiTab-root"
+                  class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-16kce1u-MuiButtonBase-root-MuiTab-root"
                   id="simple-tab-3"
                   role="tab"
                   tabindex="-1"
@@ -217,7 +217,7 @@ Object {
               class="MuiBox-root css-0"
             >
               <div
-                class="css-i5dvpw"
+                class="css-131crr"
               >
                 <div
                   class="css-y63346"

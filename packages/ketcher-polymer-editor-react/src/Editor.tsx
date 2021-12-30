@@ -18,7 +18,7 @@ import { useEffect, useRef } from 'react'
 import { App } from 'components/App'
 import { store } from 'state'
 import { Provider } from 'react-redux'
-import { defaultTheme } from 'styles/variables'
+import { defaultTheme } from 'styles/theme'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import styled from '@emotion/styled'
 

@@ -14,11 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Tabs, { TabsProps } from '@mui/material/Tabs'
-import Tab, { TabProps } from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
+import Tab from '@mui/material/Tab'
 import { ReactElement, useState } from 'react'
 import Box from '@mui/material/Box'
-import { styled } from '@mui/material'
+import styled from '@emotion/styled'
+import { scrollbarThin } from 'styles/mixins'
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -37,7 +38,7 @@ function a11yProps(index: number) {
 
 function CustomTabs(props): ReactElement {
   const [tabIndex, setTabIndex] = useState(0)
-  const { tabs, contentStyle, tabsStyle } = props
+  const { tabs } = props
   const tabPanel = tabs[tabIndex]
   const Component = tabPanel?.component
   const componentProps = tabPanel?.props
@@ -46,27 +47,33 @@ function CustomTabs(props): ReactElement {
     setTabIndex(newTabIndex)
   }
 
-  const StyledTabs = styled(Tabs)<TabsProps>({
+  const StyledTabs = styled(Tabs)({
     height: 24,
     minHeight: 24,
+    listStyleType: 'none',
+    margin: 0,
+    padding: 0,
 
     '& .MuiTabs-indicator': {
       display: 'none'
-    },
-    ...tabsStyle
+    }
   })
 
-  const StyledTab = styled(Tab)<TabProps>(({ theme }) => ({
+  const StyledTab = styled(Tab)(({ theme }) => ({
     minHeight: 24,
     minWidth: 60,
     height: 1,
     width: 65,
     padding: 0,
-    fontSize: 10,
+    fontSize: theme.font.size.small,
     cursor: 'pointer',
     textAlign: 'center',
     backgroundColor: theme.color.tab.regular,
     color: theme.color.text.primary,
+    listStyleType: 'none',
+    margin: 0,
+    fontFamily: 'inherit',
+    fontWeight: 'inherit',
 
     '&:hover': {
       backgroundColor: theme.color.tab.hover,
@@ -76,14 +83,23 @@ function CustomTabs(props): ReactElement {
     '&.Mui-selected': {
       color: theme.color.text.light,
       backgroundColor: theme.color.tab.active
-    },
-
-    ...tabsStyle
+    }
   }))
 
-  const TabListContent = styled('div')({
-    ...contentStyle
-  })
+  const TabPanelContent = styled.div(({ theme }) => ({
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    overflowY: 'auto',
+    width: '260px',
+
+    '& > *': {
+      margin: '25px 8px'
+    },
+
+    ...scrollbarThin(theme)
+  }))
 
   return (
     <>
@@ -98,9 +114,9 @@ function CustomTabs(props): ReactElement {
       </StyledTabs>
       {tabPanel && (
         <TabPanel value={tabIndex} index={tabIndex}>
-          <TabListContent>
+          <TabPanelContent>
             <Component {...componentProps} />
-          </TabListContent>
+          </TabPanelContent>
         </TabPanel>
       )}
     </>

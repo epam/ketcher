@@ -14,12 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { css } from '@emotion/react'
-
 import { MonomerItem } from './monomerLibraryItem/MonomerItem'
 import { Tabs } from 'components/shared/ui/Tabs'
-import { scrollbarThin } from 'styles/mixins'
-import { useAppTheme } from 'hooks'
 import styled from '@emotion/styled'
 
 interface MonomerListPropTypes {
@@ -42,7 +38,6 @@ const MonomerLibrary = () => {
       )
     })
   }
-  const theme = useAppTheme()
 
   const tabs = [
     {
@@ -85,30 +80,9 @@ const MonomerLibrary = () => {
     backgroundColor: theme.color.background.primary
   }))
 
-  const styleTabs = {
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0
-  }
-
-  const styleContent = css({
-    ...scrollbarThin(theme),
-
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    overflowY: 'auto',
-    width: '260px',
-
-    '& > *': {
-      margin: '25px 8px'
-    }
-  })
-
   return (
     <MonomerLibraryContainer>
-      <Tabs tabsStyle={styleTabs} contentStyle={styleContent} tabs={tabs} />
+      <Tabs tabs={tabs} />
     </MonomerLibraryContainer>
   )
 }

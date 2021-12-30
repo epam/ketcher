@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom/extend-expect'
 
 import { createTheme } from '@mui/material/styles'
-import { defaultTheme } from 'styles/variables'
+import { defaultTheme } from 'styles/theme'
 import * as reactRedux from 'react-redux'
 import { useAppDispatch, useAppSelector } from 'hooks'
 

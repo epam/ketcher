@@ -75,16 +75,19 @@ declare module '@mui/material/styles' {
     }
     font: {
       size: {
+        small: string
+        regular: string
         medium: string
         xsmall: string
       }
       family: {
         montserrat: string
+        inter: string
       }
       weight: {
-        300: number
-        400: number
-        600: number
+        light: number
+        regular: number
+        bold: number
       }
     }
   }
@@ -163,16 +166,19 @@ declare module '@mui/material/styles' {
     }
     font?: {
       size?: {
+        small?: string
+        regular?: string
         medium?: string
         xsmall?: string
       }
       family?: {
         montserrat?: string
+        inter?: string
       }
       weight?: {
-        300?: number
-        400?: number
-        600?: number
+        light?: number
+        regular?: number
+        bold?: number
       }
     }
   }

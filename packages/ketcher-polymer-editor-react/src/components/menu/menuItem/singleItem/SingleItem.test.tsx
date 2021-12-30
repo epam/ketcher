@@ -15,14 +15,15 @@
  ***************************************************************************/
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MultiItem } from 'components/menu/menuItem/multiItem/MultiItem'
+import { SingleItem } from 'components/menu/menuItem/singleItem/SingleItem'
 
 const handleClick = jest.fn()
-describe('Test Menu Multi Item component', () => {
-  it('Test click Multi Item event', () => {
+describe('Test Menu Single Item component', () => {
+  it('Test click Single Item event', () => {
     const { container } = render(
-      <MultiItem
-        options={['select-lasso']}
+      <SingleItem
+        key={'select-lasso'}
+        name={'select-lasso'}
         onClick={handleClick}
         activeTool={'select-lasso'}
       />

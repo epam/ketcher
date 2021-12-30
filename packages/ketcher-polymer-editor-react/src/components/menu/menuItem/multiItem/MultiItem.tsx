@@ -53,6 +53,8 @@ const OptionsItemsCollapse = styled(Collapse)`
 `
 
 const MultiItemHeader = styled('div')`
+  display: flex;
+  align-items: center;
   position: relative;
   width: 28px;
   height: 28px;

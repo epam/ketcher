@@ -25,6 +25,8 @@ interface SingleItemPropType {
 }
 
 const SingleItemContainer = styled('div')`
+  display: flex;
+  align-items: center;
   width: 28px;
   height: 28px;
   margin: 4px 0;

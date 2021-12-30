@@ -18,7 +18,6 @@ import { FC } from 'react'
 import styled from '@emotion/styled'
 import { Divider } from 'components/menu/menuDivider/Divider'
 import { MenuItemVariant } from 'components/menu/menu.types'
-import { Box } from '@mui/material'
 
 interface groupItem {
   name: MenuItemVariant
@@ -43,7 +42,7 @@ const Group: FC<{ items: groupItem[] }> = ({ items }) => {
   )
 }
 
-const StyledGroup = styled(Group)`
+const GroupMenuItems = styled(Group)`
   width: 32px;
   border-radius: 2px;
   background-color: white;
@@ -54,10 +53,14 @@ const StyledGroup = styled(Group)`
   margin-bottom: 8px;
 `
 
+const MenuComponent = styled('div')`
+  width: 32px;
+`
+
 const Menu = () => {
   return (
-    <StyledBox>
-      <StyledGroup
+    <MenuComponent>
+      <GroupMenuItems
         items={[
           {
             name: 'open'
@@ -65,8 +68,8 @@ const Menu = () => {
         ]}
       />
       <Divider />
-      <StyledGroup items={[{ name: 'undo' }]} />
-      <StyledGroup
+      <GroupMenuItems items={[{ name: 'undo' }]} />
+      <GroupMenuItems
         items={[
           { name: 'erase' },
           {
@@ -78,7 +81,7 @@ const Menu = () => {
           { name: 'redo' }
         ]}
       />
-      <StyledGroup
+      <GroupMenuItems
         items={[
           {
             name: 'bonds',
@@ -86,15 +89,11 @@ const Menu = () => {
           }
         ]}
       />
-      <StyledGroup items={[{ name: 'bracket' }]} />
+      <GroupMenuItems items={[{ name: 'bracket' }]} />
       <Divider />
-      <StyledGroup items={[{ name: 'settings' }, { name: 'help' }]} />
-    </StyledBox>
+      <GroupMenuItems items={[{ name: 'settings' }, { name: 'help' }]} />
+    </MenuComponent>
   )
 }
-
-const StyledBox = styled(Box)`
-  width: 32px;
-`
 
 export { Menu }

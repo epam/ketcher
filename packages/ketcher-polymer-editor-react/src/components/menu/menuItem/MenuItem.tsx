@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ListItem, ListItemProps } from '@mui/material'
-import styled from '@emotion/styled'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectEditorActiveTool, selectTool } from 'state/common'
 import { MenuItemVariant } from 'components/menu/menu.types'
@@ -27,25 +25,6 @@ interface MenuItemPropType {
   options?: MenuItemVariant[]
   vertical?: boolean
 }
-
-type StyledListItem = {
-  'data-active': boolean
-} & ListItemProps
-
-const StyledListItem = styled(ListItem)<StyledListItem>`
-  width: 28px;
-  height: 28px;
-  margin: 4px 0;
-  padding: 0;
-  justify-content: center;
-  border-radius: 2px;
-  background-color: ${(props) =>
-    props['data-active'] ? 'rgba(0, 131, 143, 0.4)' : 'white'};
-
-  :hover {
-    transform: scale(1.2);
-  }
-`
 
 const MenuItem = ({ name, options, vertical }: MenuItemPropType) => {
   const dispatch = useDispatch()
@@ -68,4 +47,4 @@ const MenuItem = ({ name, options, vertical }: MenuItemPropType) => {
   )
 }
 
-export { MenuItem, StyledListItem }
+export { MenuItem }

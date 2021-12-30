@@ -16,9 +16,8 @@
 import { MenuItemVariant } from 'components/menu/menu.types'
 import { useState } from 'react'
 import Icon from 'components/shared/ui/Icon/Icon'
-import { Box, BoxProps, ClickAwayListener } from '@mui/material'
+import { ClickAwayListener } from '@mui/material'
 import { SingleItem } from 'components/menu/menuItem/singleItem/SingleItem'
-import { StyledListItem } from 'components/menu/menuItem/MenuItem'
 import styled from '@emotion/styled'
 import Collapse from '@mui/material/Collapse'
 
@@ -29,16 +28,12 @@ interface MultiItemPropType {
   vertical?: boolean
 }
 
-type StyledCollapseWrapper = {
-  'data-orientation': boolean | undefined
-} & BoxProps
-
-const StyledBoxRelative = styled(Box)`
+const MultiItemContainer = styled('div')`
   display: flex;
   position: relative;
 `
 
-const StyledCollapseWrapper = styled(Box)<StyledCollapseWrapper>`
+const OptionsFlexContainer = styled('div')`
   display: flex;
   position: absolute;
   background-color: white;
@@ -47,14 +42,30 @@ const StyledCollapseWrapper = styled(Box)<StyledCollapseWrapper>`
   flex-direction: ${(props) => (props['data-orientation'] ? 'column' : 'row')};
 `
 
-const StyledDropDownIcon = styled(Icon)`
+const DropDownIcon = styled(Icon)`
   position: absolute;
   bottom: 0;
   right: 0;
 `
 
-const StyledCollapse = styled(Collapse)`
+const OptionsItemsCollapse = styled(Collapse)`
   position: relative;
+`
+
+const MultiItemHeader = styled('div')`
+  position: relative;
+  width: 28px;
+  height: 28px;
+  margin: 4px 0;
+  padding: 0;
+  justify-content: center;
+  border-radius: 2px;
+  background-color: ${(props) =>
+    props['data-active'] ? 'rgba(0, 131, 143, 0.4)' : 'white'};
+
+  :hover {
+    transform: scale(1.2);
+  }
 `
 
 const MultiItem = ({
@@ -73,21 +84,21 @@ const MultiItem = ({
   const isActiveTool = activeTool === headerMultiTool
 
   return (
-    <StyledBoxRelative>
-      <StyledListItem
+    <MultiItemContainer>
+      <MultiItemHeader
         data-active={isActiveTool}
         onClick={() => onClick(headerMultiTool)}
       >
         <Icon name={headerMultiTool} />
-        <StyledDropDownIcon name="dropdown" onClick={handleDropDownClick} />
-      </StyledListItem>
-      <StyledCollapse in={open} timeout="auto" unmountOnExit>
+        <DropDownIcon name="dropdown" onClick={handleDropDownClick} />
+      </MultiItemHeader>
+      <OptionsItemsCollapse in={open} timeout="auto" unmountOnExit>
         <ClickAwayListener
           onClickAway={() => {
             if (open) setOpen(false)
           }}
         >
-          <StyledCollapseWrapper data-orientation={vertical}>
+          <OptionsFlexContainer data-orientation={vertical}>
             {options?.map((name) => (
               <SingleItem
                 key={name}
@@ -99,10 +110,10 @@ const MultiItem = ({
                 }}
               />
             ))}
-          </StyledCollapseWrapper>
+          </OptionsFlexContainer>
         </ClickAwayListener>
-      </StyledCollapse>
-    </StyledBoxRelative>
+      </OptionsItemsCollapse>
+    </MultiItemContainer>
   )
 }
 

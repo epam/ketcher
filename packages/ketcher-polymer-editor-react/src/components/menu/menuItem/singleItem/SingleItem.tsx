@@ -15,7 +15,7 @@
  ***************************************************************************/
 import Icon from 'components/shared/ui/Icon/Icon'
 import { MenuItemVariant } from 'components/menu/menu.types'
-import { StyledListItem } from 'components/menu/menuItem/MenuItem'
+import styled from '@emotion/styled'
 
 interface SingleItemPropType {
   key: MenuItemVariant
@@ -24,13 +24,28 @@ interface SingleItemPropType {
   activeTool: MenuItemVariant
 }
 
+const SingleItemContainer = styled('div')`
+  width: 28px;
+  height: 28px;
+  margin: 4px 0;
+  padding: 0;
+  justify-content: center;
+  border-radius: 2px;
+  background-color: ${(props) =>
+    props['data-active'] ? 'rgba(0, 131, 143, 0.4)' : 'white'};
+
+  :hover {
+    transform: scale(1.2);
+  }
+`
+
 const SingleItem = ({ name, activeTool, ...props }: SingleItemPropType) => {
   const isActiveTool = activeTool === name
 
   return (
-    <StyledListItem data-active={isActiveTool} {...props}>
+    <SingleItemContainer data-active={isActiveTool} {...props}>
       <Icon name={name} />
-    </StyledListItem>
+    </SingleItemContainer>
   )
 }
 

@@ -48,7 +48,8 @@ function emptyIcon() {
 
 export default function findIconByName(name) {
   if (name && icons.hasOwnProperty(name)) {
-    return icons[name]
+    const component = icons[name]
+    return component
   } else {
     return emptyIcon
   }

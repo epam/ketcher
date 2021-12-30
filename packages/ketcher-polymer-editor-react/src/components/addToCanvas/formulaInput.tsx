@@ -67,13 +67,12 @@ export const FormulaInput = ({
     console.log('Use effect')
     // focus and place cursor to the end of textarea
     if (el && focused && typeof el.selectionStart === 'number') {
-      el?.focus()
+      el.focus()
       el.selectionStart = el.selectionEnd = el.value.length
     }
   }, [focused])
 
   // @TODO add clickable arrow to expand/collapse input text
-  // and
   return (
     <>
       <FormulaWrapper>
@@ -93,7 +92,7 @@ export const FormulaInput = ({
           )}
         </TextareaWrapper>
       </FormulaWrapper>
-      {/* Make button component */}
+      {/* Make button component instead of this */}
       <button onClick={() => setExpanded((prevState) => !prevState)}>⬆</button>
     </>
   )

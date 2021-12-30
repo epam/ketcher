@@ -24,6 +24,7 @@ const textWithBorder = LINE_HEIGHT + BORDER_THICKNESS * 2
 // How much we need to move wrapper with textarea from top to vertically center it in a parent div
 const verticalOffset = COMPONENT_HEIGHT / 2 - textWithBorder / 2
 
+// @TODO Change to explicit units, '12px' and so on
 export const CONSTANTS = {
   componentWidth: 670,
   inputFieldWidth: 355,
@@ -32,5 +33,6 @@ export const CONSTANTS = {
   borderThickness: BORDER_THICKNESS,
   verticalOffset: verticalOffset,
   extraMargin: 10,
-  inputPadding: 10
+  inputPadding: 10,
+  dropDownFont: 12
 }

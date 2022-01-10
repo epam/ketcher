@@ -294,16 +294,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions
     )({ struct: data }, { 'render-output-format': outputFormat }, (response) =>
-      response
-        .then((resp) => resp.text())
-        // TODO: Indigo does not encode svg to base64. This code should be deleted after fix
-        .then((text) => {
-          if (outputFormat === 'svg') {
-            return btoa(text)
-          } else {
-            return text
-          }
-        })
+      response.then((resp) => resp.text())
     )
   }
 }

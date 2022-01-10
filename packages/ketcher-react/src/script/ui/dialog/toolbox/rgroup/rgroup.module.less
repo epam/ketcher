@@ -18,13 +18,15 @@
 @import '../../../../../style/mixins.less';
 
 .rgroup {
+  width: @width-medium;
+
   ul {
     padding: 0.5em;
     display: grid;
     grid-template-columns: repeat(8, 41px);
     grid-template-rows: repeat(4, 29px);
-    grid-column-gap: 6px;
-    grid-row-gap: 10px;
+    grid-column-gap: 12px;
+    grid-row-gap: 8px;
     overflow: hidden;
   }
 

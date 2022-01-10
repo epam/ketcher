@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReactElement, useEffect } from 'react'
+import { useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from 'hooks'
 import { selectEditorIsReady, fetchInitData } from 'state/common'
@@ -26,7 +26,7 @@ export const fetchData = () =>
     setTimeout(() => resolve('some data'), 1000)
   })
 
-export const App = (): ReactElement => {
+export const App = (): JSX.Element => {
   const dispatch = useAppDispatch()
   const isReady = useAppSelector(selectEditorIsReady)
 

@@ -32,13 +32,11 @@ export type OpenOptionsProps = {
   errorHandler: (err: string) => void
   fileLoadHandler: (files: File[]) => void
   imageLoadHandler: (files: File[]) => void
-  acceptedNonImageTypes: string
   isRecognizeDisabled: boolean
 }
 
 export const OpenOptions: FC<OpenOptionsProps> = ({
   selectClipboard,
-  acceptedNonImageTypes,
   fileLoadHandler,
   imageLoadHandler,
   isRecognizeDisabled,
@@ -57,13 +55,8 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
       </div>
 
       <FileDrop
-        accept={acceptedNonImageTypes}
         onDropAccepted={fileLoadHandler}
-        onDropRejected={() =>
-          errorHandler(
-            `Unable to accept file(s). Make sure you upload 1 file of type: ${acceptedNonImageTypes}`
-          )
-        }
+        onDropRejected={(e) => errorHandler(`Unable to accept file(s). ${e}`)}
         buttonLabel="Open from file"
         textLabel="or drag file here"
         iconName={ICON_NAMES.FILE}

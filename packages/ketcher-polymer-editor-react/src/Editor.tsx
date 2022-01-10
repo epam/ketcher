@@ -15,10 +15,14 @@
  ***************************************************************************/
 
 import { useEffect, useRef } from 'react'
+import { App } from 'components/App'
+import { store } from 'state'
+import { Provider } from 'react-redux'
+import { defaultTheme } from 'styles/theme'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+import styled from '@emotion/styled'
 
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { AppContainer } from 'components/App'
+const theme = createTheme(defaultTheme)
 
 interface EditorProps {
   onInit?: () => void
@@ -32,13 +36,23 @@ function Editor(props: EditorProps) {
     onInit?.()
   }, [onInit])
 
+  const RootContainer = styled.div({
+    height: '100%',
+    width: '100%',
+    position: 'relative',
+    minWidth: 640,
+    minHeight: 400,
+    boxSizing: 'border-box'
+  })
+
   return (
-    <div
-      ref={rootElRef}
-      className={clsx('Ketcher-polymer-editor-root', classes.root)}
-    >
-      <AppContainer />
-    </div>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <RootContainer ref={rootElRef} className="Ketcher-polymer-editor-root">
+          <App />
+        </RootContainer>
+      </ThemeProvider>
+    </Provider>
   )
 }
 

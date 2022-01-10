@@ -14,18 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from './App.module.less'
-import React, { useEffect } from 'react'
-import { useAppDispatch, useAppSelector } from 'state'
+import { useEffect } from 'react'
+
+import { useAppDispatch, useAppSelector } from 'hooks'
 import { selectEditorIsReady, fetchInitData } from 'state/common'
 import { MonomerLibrary } from 'components/monomerLibrary'
+import styled from '@emotion/styled'
 
 export const fetchData = () =>
   new Promise((resolve) => {
     setTimeout(() => resolve('some data'), 1000)
   })
 
-export const App = (): React.ReactElement => {
+export const App = (): JSX.Element => {
   const dispatch = useAppDispatch()
   const isReady = useAppSelector(selectEditorIsReady)
 
@@ -33,19 +34,62 @@ export const App = (): React.ReactElement => {
     dispatch(fetchInitData())
   }, [dispatch])
 
+  const AppContainer = styled.div(({ theme }) => ({
+    height: '100%',
+    width: '100%',
+    position: 'relative',
+    padding: '14px 11px 0 11px',
+    backgroundColor: theme.color.background.canvas,
+    boxSizing: 'border-box',
+    fontFamily: theme.font.family.inter,
+    fontSize: theme.font.size.regular,
+    fontWeight: theme.font.weight.regular
+  }))
+
+  const Logo = styled.div(({ theme }) => ({
+    fontFamily: theme.font.family.montserrat,
+    fontSize: theme.font.size.medium,
+    fontWeight: theme.font.weight.bold,
+    color: theme.color.text.secondary,
+    position: 'absolute',
+    bottom: '18px',
+    left: '13px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+
+    '> span:first-of-type, > span:last-of-type': {
+      fontWeight: theme.font.weight.light,
+      fontSize: theme.font.size.xsmall,
+      textTransform: 'uppercase'
+    },
+
+    '> span:last-of-type': {
+      fontWeight: theme.font.weight.regular
+    },
+
+    '> span:nth-of-type(2)': {
+      color: theme.color.text.primary,
+
+      '&:first-letter': {
+        color: theme.color.text.secondary
+      }
+    }
+  }))
+
   if (!isReady) {
     return <div>App is not ready</div>
   }
 
   return (
-    <div className={classes.container}>
+    <AppContainer>
       <MonomerLibrary />
 
-      <div className={classes.logo}>
+      <Logo>
         <span>Polymer Editor</span>
         <span>Ketcher</span>
         <span>EPAM</span>
-      </div>
-    </div>
+      </Logo>
+    </AppContainer>
   )
 }

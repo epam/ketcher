@@ -33,7 +33,8 @@
       "state/*": ["src/state/*"],
       "state": ["src/state"],
       "hooks": ["src/hooks"],
-      "styles/*": ["src/styles/*"]
+      "styles/*": ["src/styles/*"],
+      "test-utils": ["src/test-utils"]
     },
     "plugins": [
       {

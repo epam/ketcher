@@ -14,15 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from '@testing-library/react'
+import { render, screen } from 'test-utils'
 import { App } from 'components/App'
 
-describe.skip('App', () => {
-  it('renders a message', () => {
+describe('App', () => {
+  it('renders a message', async () => {
     render(<App />)
-    expect(screen.getByTestId('ketcher-logo')).toBeInTheDocument()
-    expect(screen.getByText('Polymer Editor')).toBeVisible()
-    expect(screen.getByText('Ketcher')).toBeVisible()
-    expect(screen.getByText('EPAM')).toBeVisible()
+
+    expect(screen.getByText('App is not ready')).toBeVisible()
+
+    expect(await screen.findByText('Polymer Editor')).toBeVisible()
+    expect(await screen.findByText('Ketcher')).toBeVisible()
+    expect(await screen.findByText('EPAM')).toBeVisible()
   })
 })

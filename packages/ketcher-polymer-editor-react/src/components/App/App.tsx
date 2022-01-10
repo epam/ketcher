@@ -85,7 +85,7 @@ export const App = (): ReactElement => {
     <AppContainer>
       <MonomerLibrary />
 
-      <Logo data-testid="ketcher-logo">
+      <Logo>
         <span>Polymer Editor</span>
         <span>Ketcher</span>
         <span>EPAM</span>

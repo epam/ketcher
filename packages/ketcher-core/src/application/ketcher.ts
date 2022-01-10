@@ -52,6 +52,10 @@ export class Ketcher {
     return this.#editor
   }
 
+  get server(): StructService {
+    return this.#structService
+  }
+
   constructor(
     editor: Editor,
     structService: StructService,

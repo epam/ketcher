@@ -105,7 +105,7 @@ class Table extends Component {
   periodicTable = (value) => {
     const { type, current, isInfo } = this.state
     return (
-      <div className={classes.period_table}>
+      <div className={classes.periodTable}>
         <AtomInfo el={current} isInfo={isInfo} />
         <ElementsTable
           value={value}
@@ -153,14 +153,17 @@ class Table extends Component {
     return (
       <Dialog
         title="Periodic table"
-        className={classes.elements_table}
+        className={classes.elementsTable}
         params={this.props}
         result={this.result}
         buttons={this.getButton()}
+        needMargin={false}
       >
         <Tabs
           className={classes.tabs}
-          contentClassName={classes.tabs_content}
+          contentClassName={
+            type !== 'gen' ? classes.tabsContent : classes.contentGeneral
+          }
           captions={tabs}
           tabIndex={type !== 'gen' ? 0 : 1}
           changeTab={this.changeTabType}

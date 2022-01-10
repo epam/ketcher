@@ -19,19 +19,26 @@ import { editorReducer } from 'state/common'
 import createSagaMiddleware from 'redux-saga'
 import { rootSaga } from 'state/rootSaga'
 
-const sagaMiddleware = createSagaMiddleware()
+export function configureAppStore(preloadedState = {}) {
+  const sagaMiddleware = createSagaMiddleware()
 
-export const store: Store = configureStore({
-  reducer: {
-    editor: editorReducer
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      thunk: false
-    }).concat(sagaMiddleware)
-})
+  const store: Store = configureStore({
+    reducer: {
+      editor: editorReducer
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        thunk: false
+      }).concat(sagaMiddleware),
+    preloadedState
+  })
 
-sagaMiddleware.run(rootSaga)
+  sagaMiddleware.run(rootSaga)
+
+  return store
+}
+
+export const store = configureAppStore()
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch

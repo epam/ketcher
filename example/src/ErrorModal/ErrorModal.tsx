@@ -20,7 +20,7 @@ interface ErrorModalProps {
   close: () => void
 }
 
-const ErrorModal = ({ message, close }: ErrorModalProps) => {
+const ErrorModal = ({ message, close }: ErrorModalProps): JSX.Element => {
   return (
     <div className={'modalOverlay'}>
       <div className={'modalWindow'}>

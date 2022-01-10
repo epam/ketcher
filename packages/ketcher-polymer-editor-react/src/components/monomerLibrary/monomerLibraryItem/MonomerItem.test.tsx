@@ -1,16 +1,18 @@
 import { MonomerItem } from './MonomerItem'
-import { render, fireEvent } from '@testing-library/react'
+import { render, screen } from 'test-utils'
+import userEvent from '@testing-library/user-event'
 
 describe('Test Monomer Item component', () => {
   it('Test click event', () => {
     const monomerItemHandleClick = jest.fn()
     const monomer = { name: 'L' }
-    const { container } = render(
-      MonomerItem({ key: 1, item: monomer, onClick: monomerItemHandleClick })
+    render(
+      <MonomerItem key={1} item={monomer} onClick={monomerItemHandleClick} />
     )
-    const div = container.querySelector('div')
+
+    const div = screen.getByText('L')
     // @ts-ignore
-    fireEvent.click(div)
+    userEvent.click(div)
 
     expect(monomerItemHandleClick.mock.calls.length).toEqual(1)
   })

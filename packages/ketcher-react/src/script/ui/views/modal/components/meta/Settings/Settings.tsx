@@ -208,6 +208,7 @@ const SettingsDialog = (props: Props) => {
           <Icon name={'reset'} />
         </button>
       ]}
+      needMargin={false}
     >
       <Form schema={settingsSchema} init={initState} {...formState}>
         <Sidebar tabs={tabs} className={classes.sidebar} />

@@ -23,7 +23,8 @@ const color = {
   text: {
     primary: '#121212',
     secondary: '#BCBCBC',
-    light: '#FFFFFF'
+    light: '#FFFFFF',
+    dark: '#000000'
   },
   tab: {
     regular: '#F3F3F3',

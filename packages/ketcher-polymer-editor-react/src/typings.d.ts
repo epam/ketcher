@@ -28,6 +28,7 @@ declare module '@mui/material/styles' {
         primary: string
         secondary: string
         light: string
+        dark: string
       }
       tab: {
         regular: string
@@ -119,6 +120,7 @@ declare module '@mui/material/styles' {
         primary?: string
         secondary?: string
         light?: string
+        dark?: string
       }
       tab?: {
         regular?: string

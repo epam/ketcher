@@ -5,19 +5,23 @@ import MiddleLink from '../../../icons/middleLink.svg'
 import RightLink from '../../../icons/rightLink.svg'
 import { FC, useState } from 'react'
 
-const RAPButton = styled(Button)<{ isActive: boolean }>`
-  padding: 3px 12px;
-  border-radius: 8px;
-  line-height: 18px;
-  background-color: ${(props) =>
-    props.isActive ? 'rgba(0, 131, 143, 1)' : 'rgba(242, 242, 242, 1)'};
-  min-width: 33px;
-  color: ${(props) => (props.isActive ? 'white' : 'black')};
-  :hover {
-    background-color: rgba(0, 131, 143, 1);
-    color: white;
-  }
-`
+const RAPButton = styled(Button)<{ isActive: boolean }>(
+  ({ theme, isActive }) => ({
+    padding: '3px 12px',
+    backgroundColor: isActive
+      ? theme.color.button.primary.active
+      : theme.color.background.canvas,
+    borderRadius: '8px',
+    lineHeight: '18px',
+    minWidth: '33px',
+    color: isActive ? theme.color.text.light : theme.color.text.dark,
+    ':hover': {
+      backgroundColor: theme.color.button.primary.hover,
+      color: theme.color.text.light
+    }
+  })
+)
+
 const SwitcherContainer = styled('div')`
   width: 100%;
   display: flex;
@@ -30,15 +34,14 @@ const Container = styled('div')<{ gap: string }>`
 `
 
 const buttons = ['R', 'A', 'P']
-const svgLinks = [LeftLink, MiddleLink, RightLink].map(
-  (Component) =>
-    // @ts-ignore
-    styled(Component)<{ isActive: boolean }>`
-      & path {
-        stroke-dasharray: ${({ isActive }) => (isActive ? 'none' : '4, 4')};
-        stroke: ${({ isActive }) => (isActive ? '#005662' : '#D1D5E3')};
-      }
-    `
+const svgLinks = [LeftLink, MiddleLink, RightLink].map((Component) =>
+  // @ts-ignore
+  styled(Component)<{ isActive: boolean }>(({ theme, isActive }) => ({
+    '& path': {
+      strokeDasharray: isActive ? 'none' : '4,4',
+      stroke: isActive ? theme.color.button.primary.active : '#D1D5E3'
+    }
+  }))
 )
 
 export const Switcher: FC = () => {

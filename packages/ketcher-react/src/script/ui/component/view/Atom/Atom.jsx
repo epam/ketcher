@@ -14,14 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ElementColor } from 'ketcher-core'
-
 function Atom({ el, shortcut, className, ...props }) {
   return (
     <button
       title={shortcut ? `${el.title} (${shortcut})` : el.title}
       className={className}
-      style={{ color: ElementColor[el.label] }}
       value={el.number}
       {...props}
     >

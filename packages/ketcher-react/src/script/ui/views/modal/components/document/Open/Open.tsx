@@ -18,7 +18,6 @@ import { BaseCallProps, BaseProps } from '../../../modal.types'
 import { FC, useEffect, useState } from 'react'
 import { Dialog } from '../../../../components'
 import classes from './Open.module.less'
-import { formatProperties } from 'ketcher-core'
 import Recognize from '../../process/Recognize/Recognize'
 import { fileOpener } from '../../../../../utils/'
 import { DialogActionButton } from './components/DialogActionButton'
@@ -39,21 +38,6 @@ const MODAL_STATES = {
   idle: 'idle',
   textEditor: 'textEditor',
   imageRec: 'imageRec'
-}
-
-const structAcceptMimes = () => {
-  return Array.from(
-    new Set(
-      Object.keys(formatProperties).reduce(
-        (res, key) =>
-          res.concat(
-            formatProperties[key].mime,
-            ...formatProperties[key].extensions
-          ),
-        []
-      )
-    )
-  ).join(',')
 }
 
 const Open: FC<Props> = (props) => {
@@ -153,7 +137,6 @@ const Open: FC<Props> = (props) => {
         selectClipboard={() => setCurrentState(MODAL_STATES.textEditor)}
         fileLoadHandler={onFileLoad}
         imageLoadHandler={onImageLoad}
-        acceptedNonImageTypes={structAcceptMimes()}
         errorHandler={errorHandler}
         isRecognizeDisabled={isRecognizeDisabled}
         structStr={structStr}

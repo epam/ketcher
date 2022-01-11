@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { MonomerItem } from './monomerLibraryItem/MonomerItem'
-import classes from './MonomerLibrary.module.less'
 import { Tabs } from 'components/shared/ui/Tabs'
 import { Switcher } from 'components/rna/Switcher/Switcher'
+import styled from '@emotion/styled'
 
 interface MonomerListPropTypes {
   list: Array<Record<string, string>>
@@ -73,14 +74,17 @@ const MonomerLibrary = () => {
     }
   ]
 
+  const MonomerLibraryContainer = styled.div(({ theme }) => ({
+    position: 'absolute',
+    width: 'fit-content',
+    height: '700px',
+    backgroundColor: theme.color.background.primary
+  }))
+
   return (
-    <div className={classes.library}>
-      <Tabs
-        className={classes.tabs}
-        contentClassName={classes.tabsContent}
-        tabs={tabs}
-      />
-    </div>
+    <MonomerLibraryContainer>
+      <Tabs tabs={tabs} />
+    </MonomerLibraryContainer>
   )
 }
 

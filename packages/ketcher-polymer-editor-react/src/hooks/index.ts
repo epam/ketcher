@@ -14,15 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import "./src/styles/variables";
-
-.root {
-	height: 100%;
-	width: 100%;
-	position: relative;
-	min-width: 640px;
-	min-height: 400px;
-	background-color: @color-background-canvas;
-	padding: 14px 11px 0 11px;
-	box-sizing: border-box;
-}
+export * from './useAppTheme'
+export * from './stateHooks'

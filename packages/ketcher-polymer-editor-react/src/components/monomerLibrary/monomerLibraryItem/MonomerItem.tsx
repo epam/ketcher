@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import classes from './MonomerItem.module.less'
+
+import styled from '@emotion/styled'
 
 interface MonomerItemPropTypes {
   key: number
@@ -24,11 +25,21 @@ interface MonomerItemPropTypes {
 const MonomerItem = (props: MonomerItemPropTypes) => {
   const { item, onClick } = props
 
-  return (
-    <div className={classes.card} onClick={onClick}>
-      {item.name}
-    </div>
-  )
+  const Card = styled.div(({ theme }) => ({
+    background: theme.color.text.light,
+    border: `1px solid ${theme.color.text.primary}`,
+    boxSizing: 'border-box',
+    borderRadius: '2px',
+    width: '32px',
+    height: '32px',
+    textAlign: 'center',
+    cursor: 'pointer',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }))
+
+  return <Card onClick={onClick}>{item.name}</Card>
 }
 
 export { MonomerItem }

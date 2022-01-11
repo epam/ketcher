@@ -20,20 +20,18 @@ import { CONSTANTS } from './stylingHelpers'
 
 const { borderThickness, verticalOffset, extraMargin, inputPadding } = CONSTANTS
 
+// @TODO use theme
 export const TextareaWrapper = styled('div')<{ hasInput: boolean }>`
-  position: absolute;
   top: ${verticalOffset}px;
-  left: 0;
+  position: relative;
   padding-left: ${inputPadding}px;
   padding-right: ${inputPadding}px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   flex-direction: column;
   background-color: white;
   border-radius: 2px;
   border: ${borderThickness}px solid white;
-  box-sizing: border-box;
-  width: 100%;
   z-index: 1;
 
   // If there's input, make text box bigger,

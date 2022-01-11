@@ -82,7 +82,6 @@ const stylesForExpanded: CSSProperties = {
 export const DropDown = () => {
   const [expanded, setExpanded] = useState(false)
   const [selection, setSelection] = useState<string>(LIST_VALUES[0])
-  console.log(selection)
 
   const handleSelection = (event) => {
     setSelection(event.target.value)

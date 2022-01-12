@@ -108,7 +108,8 @@ export const DropDown = ({
           PaperProps: {
             style: stylesForExpanded
           }
-        }}>
+        }}
+      >
         {options.map((item) => (
           <DropDownItem key={item} value={item}>
             <ListItemText primary={item} />

@@ -18,7 +18,6 @@ import styled from '@emotion/styled'
 
 import Icon from 'components/shared/ui/Icon/Icon'
 
-// @TODO use theme
 const CheckMarkStyled = styled(Icon)`
   fill: #343434;
 `

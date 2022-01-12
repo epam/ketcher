@@ -14,25 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-const COMPONENT_HEIGHT = 24
-const LINE_HEIGHT = 16
-const BORDER_THICKNESS = 1
-
-// Wrapper for textarea with border will be of this height
-const textWithBorder = LINE_HEIGHT + BORDER_THICKNESS * 2
-
-// How much we need to move wrapper with textarea from top to vertically center it in a parent div
-const verticalOffset = COMPONENT_HEIGHT / 2 - textWithBorder / 2
-
-export const CONSTANTS = {
-  fontSize: 14,
-  componentWidth: 670,
-  inputFieldWidth: 355,
-  height: COMPONENT_HEIGHT,
-  lineHeight: LINE_HEIGHT,
-  borderThickness: BORDER_THICKNESS,
-  verticalOffset: verticalOffset,
-  extraMargin: 10,
-  inputPadding: 10,
-  dropDownFont: 12
-}
+export default 'icon-mock'

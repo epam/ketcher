@@ -59,7 +59,8 @@ export const NotationInput = ({
       <InputBox
         hasInput={Boolean(inputValue)}
         onClick={inputClickHandler}
-        onBlur={() => setFocused(false)}>
+        onBlur={() => setFocused(false)}
+      >
         <TextareaAutoResize
           inputValue={inputValue}
           maxRows={8}

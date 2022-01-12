@@ -31,7 +31,6 @@ const NOTATION_OPTIONS = [
   'Black'
 ]
 
-// @TODO Use theme or constants
 const AddToCanvasBar = styled('div')`
   display: flex;
   align-items: center;
@@ -42,7 +41,6 @@ const AddToCanvasBar = styled('div')`
 `
 
 export const AddToCanvas = () => {
-  // @TODO START WITH EMPTY STRING
   const [selection, setSelection] = useState<string>(NOTATION_OPTIONS[2])
   const [inputValue, setInputValue] = useState<string>('')
 

@@ -38,7 +38,11 @@ export const ExpandButton = ({
   expanded
 }: ExpandButtonProps) => {
   return (
-    <ArrowButton data-isflipped={expanded} onClick={expandHandler}>
+    <ArrowButton
+      data-isflipped={expanded}
+      onClick={expandHandler}
+      title="Expand input area"
+    >
       <Icon name="arrow-down" />
     </ArrowButton>
   )

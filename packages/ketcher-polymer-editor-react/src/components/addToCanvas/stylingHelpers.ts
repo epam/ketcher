@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-const COMPONENT_HEIGHT = 25
+const COMPONENT_HEIGHT = 24
 const LINE_HEIGHT = 16
 const BORDER_THICKNESS = 1
 

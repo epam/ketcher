@@ -14,31 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { IconButton } from '@mui/material'
-
-import Icon from '../shared/ui/Icon/Icon'
-
-type ExpandButtonProps = {
-  expandHandler: () => void
-  expanded: boolean
-}
-
-// @TODO use theme
-const ArrowButton = styled(IconButton)<{ isFlipped: boolean }>`
-  & svg {
-    ${(props) => (props.isFlipped ? `transform: rotate(0.5turn);` : null)}
-    fill: #585858;
-  }
-`
-
-export const ExpandButton = ({
-  expandHandler,
-  expanded
-}: ExpandButtonProps) => {
-  return (
-    <ArrowButton isFlipped={expanded} onClick={expandHandler}>
-      <Icon name="arrow-down" />
-    </ArrowButton>
-  )
-}
+export { CheckMarkIcon, ChevronIcon } from './styledIcons'

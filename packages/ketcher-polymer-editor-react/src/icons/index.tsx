@@ -14,31 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { IconButton } from '@mui/material'
+import ArrowDownIcon from './files/arrow-down.svg'
+import CheckMarkIcon from './files/checkmark.svg'
+import ChevronIcon from './files/chevron.svg'
 
-import Icon from '../shared/ui/Icon/Icon'
-
-type ExpandButtonProps = {
-  expandHandler: () => void
-  expanded: boolean
+const icons = {
+  'arrow-down': ArrowDownIcon,
+  checkmark: CheckMarkIcon,
+  chevron: ChevronIcon
 }
 
-// @TODO use theme
-const ArrowButton = styled(IconButton)<{ isFlipped: boolean }>`
-  & svg {
-    ${(props) => (props.isFlipped ? `transform: rotate(0.5turn);` : null)}
-    fill: #585858;
-  }
-`
+function emptyIcon() {
+  return null
+}
 
-export const ExpandButton = ({
-  expandHandler,
-  expanded
-}: ExpandButtonProps) => {
-  return (
-    <ArrowButton isFlipped={expanded} onClick={expandHandler}>
-      <Icon name="arrow-down" />
-    </ArrowButton>
-  )
+export default function findIconByName(name) {
+  if (name && Object.prototype.hasOwnProperty.call(icons, name)) {
+    const component = icons[name]
+    return component
+  } else {
+    return emptyIcon
+  }
 }

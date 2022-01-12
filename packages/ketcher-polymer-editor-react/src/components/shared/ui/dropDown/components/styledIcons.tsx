@@ -15,30 +15,39 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled'
-import { IconButton } from '@mui/material'
 
-import Icon from '../shared/ui/Icon/Icon'
-
-type ExpandButtonProps = {
-  expandHandler: () => void
-  expanded: boolean
-}
+import Icon from 'components/shared/ui/Icon/Icon'
 
 // @TODO use theme
-const ArrowButton = styled(IconButton)<{ isFlipped: boolean }>`
-  & svg {
-    ${(props) => (props.isFlipped ? `transform: rotate(0.5turn);` : null)}
-    fill: #585858;
-  }
+const CheckMarkStyled = styled(Icon)`
+  fill: #343434;
 `
 
-export const ExpandButton = ({
-  expandHandler,
-  expanded
-}: ExpandButtonProps) => {
-  return (
-    <ArrowButton isFlipped={expanded} onClick={expandHandler}>
-      <Icon name="arrow-down" />
-    </ArrowButton>
-  )
+const ChevronStyled = styled(Icon)`
+  user-select: none;
+  width: 16px;
+  height: 1em;
+  display: inline-block;
+  flex-shrink: 0;
+  transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  font-size: 1.5rem;
+  position: absolute;
+  right: 7px;
+  top: calc(50% - 0.5em);
+  pointer-events: none;
+  fill: #5b6077;
+`
+
+const ChevronIcon = ({ className }) => (
+  <ChevronStyled name="chevron" className={className} />
+)
+
+const CheckMarkIcon = ({ isSelected }: { isSelected: boolean }) => {
+  if (!isSelected) {
+    return null
+  }
+
+  return <CheckMarkStyled name="checkmark" />
 }
+
+export { ChevronIcon, CheckMarkIcon }

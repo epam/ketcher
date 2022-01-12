@@ -5,22 +5,22 @@ import MiddleLink from '../../../icons/middleLink.svg'
 import RightLink from '../../../icons/rightLink.svg'
 import { FC, useState } from 'react'
 
-const RAPButton = styled(Button)<{ isActive: boolean }>(
-  ({ theme, isActive }) => ({
-    padding: '3px 12px',
-    backgroundColor: isActive
-      ? theme.color.button.primary.active
-      : theme.color.background.canvas,
-    borderRadius: '8px',
-    lineHeight: '18px',
-    minWidth: '33px',
-    color: isActive ? theme.color.text.light : theme.color.text.dark,
-    ':hover': {
-      backgroundColor: theme.color.button.primary.hover,
-      color: theme.color.text.light
-    }
-  })
-)
+const RAPButton = styled(Button)<{ 'data-isactive': boolean }>((props) => ({
+  padding: '3px 12px',
+  backgroundColor: props['data-isactive']
+    ? props.theme.color.button.primary.active
+    : props.theme.color.background.canvas,
+  borderRadius: '8px',
+  lineHeight: '18px',
+  minWidth: '33px',
+  color: props['data-isactive']
+    ? props.theme.color.text.light
+    : props.theme.color.text.dark,
+  ':hover': {
+    backgroundColor: props.theme.color.button.primary.hover,
+    color: props.theme.color.text.light
+  }
+}))
 
 const SwitcherContainer = styled('div')`
   width: 100%;
@@ -36,10 +36,12 @@ const Container = styled('div')<{ gap: string }>`
 const buttons = ['R', 'A', 'P']
 const svgLinks = [LeftLink, MiddleLink, RightLink].map((Component) =>
   // @ts-ignore
-  styled(Component)<{ isActive: boolean }>(({ theme, isActive }) => ({
+  styled(Component)<{ 'data-isactive': boolean }>((props) => ({
     '& path': {
-      strokeDasharray: isActive ? 'none' : '4,4',
-      stroke: isActive ? theme.color.button.primary.active : '#D1D5E3'
+      strokeDasharray: props['data-isactive'] ? 'none' : '4,4',
+      stroke: props['data-isactive']
+        ? props.theme.color.button.primary.active
+        : '#D1D5E3'
     }
   }))
 )
@@ -48,12 +50,12 @@ export const Switcher: FC = () => {
   const [active, setActive] = useState(0)
   return (
     <SwitcherContainer>
-      <RAPButton onClick={() => setActive(0)} isActive={active === 0}>
+      <RAPButton onClick={() => setActive(0)} data-isactive={active === 0}>
         R(A)P
       </RAPButton>
       <Container gap="11px">
         {svgLinks.map((Component, index) => (
-          <Component key={index} isActive={active === index + 1} />
+          <Component key={index} data-isactive={active === index + 1} />
         ))}
       </Container>
       <Container gap="4px">
@@ -61,7 +63,7 @@ export const Switcher: FC = () => {
           <RAPButton
             key={button}
             onClick={() => setActive(index + 1)}
-            isActive={active === index + 1}
+            data-isactive={active === index + 1}
           >
             {button}
           </RAPButton>

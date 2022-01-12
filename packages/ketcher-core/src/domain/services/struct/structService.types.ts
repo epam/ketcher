@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Struct } from 'domain/entities'
+
 export enum ChemicalMimeType {
   Mol = 'chemical/x-mdl-molfile',
   Rxn = 'chemical/x-mdl-rxnfile',
@@ -27,8 +29,10 @@ export enum ChemicalMimeType {
   KET = 'chemical/x-indigo-ket'
 }
 
+export type StructOrString = string | Struct
+
 export interface WithStruct {
-  struct: string
+  struct: StructOrString
 }
 
 export interface WithFormat {
@@ -39,12 +43,26 @@ export interface WithOutputFormat {
   output_format: ChemicalMimeType
 }
 
+export type Selected = Array<number>
+
 export interface WithSelection {
-  selected?: Array<number>
+  selected?: Selected
 }
 
+export type CheckTypes = Array<
+  | 'radicals'
+  | 'pseudoatoms'
+  | 'stereo'
+  | 'query'
+  | 'overlapping_atoms'
+  | 'overlapping_bonds'
+  | 'rgroups'
+  | 'chiral'
+  | '3d'
+>
+
 export interface CheckData extends WithStruct {
-  types: Array<string>
+  types: CheckTypes
 }
 
 export interface CheckResult {
@@ -78,16 +96,26 @@ export interface CalculateCipData extends WithStruct, WithOutputFormat {}
 
 export interface CalculateCipResult extends WithStruct, WithFormat {}
 
+export type CalculateProps = Array<
+  | 'molecular-weight'
+  | 'most-abundant-mass'
+  | 'monoisotopic-mass'
+  | 'gross'
+  | 'mass-composition'
+>
+
 export interface CalculateData extends WithStruct, WithSelection {
-  properties: Array<string>
+  properties: CalculateProps
 }
 
 export interface CalculateResult {
   [key: string]: string | number | boolean
 }
 
+export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear'
+
 export interface AutomapData extends WithStruct, WithOutputFormat {
-  mode: string
+  mode: AutomapMode
 }
 
 export interface AutomapResult extends WithStruct, WithFormat {}

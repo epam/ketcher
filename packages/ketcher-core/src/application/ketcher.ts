@@ -16,15 +16,62 @@
 
 import {
   FormatterFactory,
-  SupportedFormat,
-  identifyStructFormat
+  identifyStructFormat,
+  SupportedFormat
 } from './formatters'
-import { GenerateImageOptions, StructService } from 'domain/services'
+import {
+  AromatizeResult,
+  AutomapMode,
+  AutomapResult,
+  CalculateCipResult,
+  CalculateProps,
+  CalculateResult,
+  CheckResult,
+  CheckTypes,
+  ChemicalMimeType,
+  CleanResult,
+  ConvertResult,
+  DearomatizeResult,
+  GenerateImageOptions,
+  InfoResult,
+  LayoutResult,
+  OutputFormatType,
+  RecognizeResult,
+  Selected,
+  StructOrString,
+  StructService
+} from 'domain/services'
 
 import { Editor } from './editor'
 import { MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import assert from 'assert'
+
+interface IndigoService {
+  info: () => Promise<InfoResult>
+  calculate: (
+    struct: StructOrString,
+    properties?: CalculateProps,
+    selected?: Selected
+  ) => Promise<CalculateResult>
+  convert: (
+    struct: StructOrString,
+    outputFormat?: ChemicalMimeType
+  ) => Promise<ConvertResult>
+  layout: (struct: StructOrString) => Promise<LayoutResult>
+  clean: (struct: StructOrString, selected?: Selected) => Promise<CleanResult>
+  aromatize: (struct: StructOrString) => Promise<AromatizeResult>
+  dearomatize: (struct: StructOrString) => Promise<DearomatizeResult>
+  calculateCip: (struct: StructOrString) => Promise<CalculateCipResult>
+  automap: (struct: StructOrString, mode: AutomapMode) => Promise<AutomapResult>
+  check: (struct: StructOrString, types?: CheckTypes) => Promise<CheckResult>
+  recognize: (blob: Blob, version: string) => Promise<RecognizeResult>
+  generateImageAsBase64: (
+    data: string,
+    outputFormat?: OutputFormatType,
+    backgroundColor?: string
+  ) => Promise<string>
+}
 
 function parseStruct(structStr: string, structService: StructService) {
   const format = identifyStructFormat(structStr)
@@ -52,10 +99,6 @@ export class Ketcher {
     return this.#editor
   }
 
-  get server(): StructService {
-    return this.#structService
-  }
-
   constructor(
     editor: Editor,
     structService: StructService,
@@ -68,6 +111,60 @@ export class Ketcher {
     this.#editor = editor
     this.#structService = structService
     this.#formatterFactory = formatterFactory
+  }
+
+  get server(): IndigoService {
+    const service = this.#structService
+    const defaultTypes: CheckTypes = [
+      'radicals',
+      'pseudoatoms',
+      'stereo',
+      'query',
+      'overlapping_atoms',
+      'overlapping_bonds',
+      'rgroups',
+      'chiral',
+      '3d'
+    ]
+    const defaultCalcProps: CalculateProps = [
+      'molecular-weight',
+      'most-abundant-mass',
+      'monoisotopic-mass',
+      'gross',
+      'mass-composition'
+    ]
+
+    return {
+      info: () => service.info(),
+      convert: (struct, outputFormat = ChemicalMimeType.KET) =>
+        service.convert({ struct, output_format: outputFormat }),
+      layout: (struct) =>
+        service.layout({ struct, output_format: ChemicalMimeType.KET }),
+      clean: (struct, selected) =>
+        service.clean({
+          struct,
+          output_format: ChemicalMimeType.KET,
+          selected
+        }),
+      aromatize: (struct) =>
+        service.aromatize({ struct, output_format: ChemicalMimeType.KET }),
+      dearomatize: (struct) =>
+        service.dearomatize({ struct, output_format: ChemicalMimeType.KET }),
+      calculateCip: (struct) =>
+        service.calculateCip({ struct, output_format: ChemicalMimeType.KET }),
+      automap: (struct, mode) =>
+        service.automap({ struct, output_format: ChemicalMimeType.KET, mode }),
+      check: (struct, types = defaultTypes) => service.check({ struct, types }),
+      calculate: (struct, properties = defaultCalcProps, selected) =>
+        service.calculate({
+          properties,
+          struct,
+          selected
+        }),
+      recognize: (blob, version) => service.recognize(blob, version),
+      generateImageAsBase64: (data, outputFormat = 'png', backgroundColor) =>
+        service.generateImageAsBase64(data, { outputFormat, backgroundColor })
+    }
   }
 
   getSmiles(isExtended = false): Promise<string> {

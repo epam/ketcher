@@ -1,11 +1,30 @@
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
 import { useState } from 'react'
 import styled from '@emotion/styled'
 
-import { ActionButton } from 'components/shared/ui/actionButton'
-import { FormulaInput } from './formulaInput'
-import { DropDown } from '../shared/ui/dropDown'
+import { DropDown as SelectNotation } from '../shared/ui/dropDown'
+import { NotationInput } from './components/notationInput'
+import { ActionButton as AddButton } from '../shared/ui/actionButton'
+import { CONSTANTS } from './stylingConstants'
 
-const DROPDOWN_VALUES = [
+const { componentWidth, height } = CONSTANTS
+
+const NOTATION_OPTIONS = [
   'HELM Notation',
   'RNA Sequence',
   'Peptide Sequence',
@@ -13,31 +32,33 @@ const DROPDOWN_VALUES = [
 ]
 
 // @TODO Use theme or constants
-const FlexWrapper = styled('div')`
+const AddToCanvasBar = styled('div')`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 24px;
-  width: 670px;
+  height: ${height}px;
+  width: ${componentWidth}px;
   margin: 0 auto;
 `
 
 export const AddToCanvas = () => {
   // @TODO START WITH EMPTY STRING
-  const [inputValue, setInputValue] = useState<string>(
-    'CC(C)(O1)C[C@@H](O)[C@@]1(O2)[C@@H](C)[C@'
-  )
-  const [selection, setSelection] = useState<string>(DROPDOWN_VALUES[2])
+  const [selection, setSelection] = useState<string>(NOTATION_OPTIONS[2])
+  const [inputValue, setInputValue] = useState<string>('')
 
   return (
-    <FlexWrapper>
-      <DropDown
-        options={DROPDOWN_VALUES}
+    <AddToCanvasBar>
+      <SelectNotation
+        options={NOTATION_OPTIONS}
         currentSelection={selection}
         selectionHandler={setSelection}
       />
-      <FormulaInput inputValue={inputValue} inputHandler={setInputValue} />
-      <ActionButton label="Add to Canvas" clickHandler={() => null} />
-    </FlexWrapper>
+      <NotationInput inputValue={inputValue} inputHandler={setInputValue} />
+      <AddButton
+        label="Add to Canvas"
+        clickHandler={() => null}
+        disabled={!inputValue}
+      />
+    </AddToCanvasBar>
   )
 }

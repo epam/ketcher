@@ -26,6 +26,7 @@ const verticalOffset = COMPONENT_HEIGHT / 2 - textWithBorder / 2
 
 // @TODO Change to explicit units, '12px' and so on
 export const CONSTANTS = {
+  fontSize: 14,
   componentWidth: 670,
   inputFieldWidth: 355,
   height: COMPONENT_HEIGHT,

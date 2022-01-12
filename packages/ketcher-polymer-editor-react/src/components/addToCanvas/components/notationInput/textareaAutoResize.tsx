@@ -17,13 +17,14 @@
 import { useCallback, useEffect, useRef } from 'react'
 import styled from '@emotion/styled'
 
-import { CONSTANTS } from './stylingHelpers'
+import { CONSTANTS } from '../../stylingConstants'
+import { css } from '@emotion/react'
+import { scrollbarThin } from 'styles/mixins'
 
-const { lineHeight, inputFieldWidth, inputPadding } = CONSTANTS
+const { lineHeight, inputFieldWidth, inputPadding, fontSize } = CONSTANTS
 
-// @TODO use theme
 const commonStyles = `
-  font-size: 14px;
+  font-size: ${fontSize}px;
   line-height: ${lineHeight}px;
   width: ${inputFieldWidth - inputPadding * 2}px;
   border: none;
@@ -31,18 +32,20 @@ const commonStyles = `
   padding: 0;
 `
 
-const FormulaTextField = styled('textarea')<{
+const VisibleTextInput = styled('textarea')<{
   shouldHideOverflow: boolean
 }>`
   ${commonStyles}
 
-  // when in focus, parent div has border
-  outline: none;
+  ${({ theme }) => scrollbarThin(theme)}
+  outline: none; // when in focus, parent div has blue border
 
   ${({ shouldHideOverflow }) =>
     shouldHideOverflow
-      ? `white-space: nowrap;
-  overflow: hidden;`
+      ? css`
+          white-space: nowrap;
+          overflow: hidden;
+        `
       : null}
 `
 
@@ -61,16 +64,19 @@ const HiddenArea = styled('textarea')`
 `
 
 const Ellipsis = styled('span')<{ shouldDisplay: boolean }>`
-  ${({ shouldDisplay }) =>
+  ${({ shouldDisplay, theme }) =>
     shouldDisplay
-      ? `display: inline-block;
-      position: absolute;
-      right: 0px;
-      line-height: ${lineHeight}px;
-      padding-left: 3px;
-      padding-right: ${inputPadding}px;
-      background-color: white;
-      box-shadow: -3px 0px 5px 2px white;`
+      ? css`
+          display: inline-block;
+          position: absolute;
+          right: 0px;
+          font-size: ${theme.font.size.medium};
+          line-height: ${lineHeight}px;
+          padding-left: 3px;
+          padding-right: ${inputPadding}px;
+          background-color: ${theme.color.background.primary};
+          box-shadow: -3px 0px 5px 2px ${theme.color.background.primary};
+        `
       : `display: none`}
 `
 
@@ -95,7 +101,6 @@ export const TextareaAutoResize = ({
 }: Props) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const hiddenRef = useRef<HTMLTextAreaElement>(null)
-  console.log('Render')
 
   const updateHeight = useCallback(() => {
     const textarea = textareaRef.current
@@ -111,14 +116,19 @@ export const TextareaAutoResize = ({
     const scrollHeight = hiddenTextarea.scrollHeight
     hiddenTextarea.value = ' '
 
-    const newHeight = Math.min(Number(maxRows) * oneLineHeight, scrollHeight)
+    const allowedNumberOfRows = isCollapsed ? 1 : maxRows
+
+    const newHeight = Math.min(
+      Number(allowedNumberOfRows) * oneLineHeight,
+      scrollHeight
+    )
 
     // Informing parent if content needs more than 1 line
     const hasSeveralRows = scrollHeight / oneLineHeight > 1
     setMultiLine(hasSeveralRows)
 
     textarea.style.height = `${newHeight}px`
-  }, [maxRows, inputValue, setMultiLine])
+  }, [maxRows, inputValue, setMultiLine, isCollapsed])
 
   useEffect(() => {
     updateHeight()
@@ -136,7 +146,7 @@ export const TextareaAutoResize = ({
   }
   return (
     <>
-      <FormulaTextField
+      <VisibleTextInput
         ref={textareaRef}
         value={inputValue}
         onChange={onChangeHandler}

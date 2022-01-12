@@ -15,18 +15,16 @@
  ***************************************************************************/
 
 import { useState } from 'react'
-// import { TextareaAutosize } from '@mui/material'
 import styled from '@emotion/styled'
 
-import { TextareaWrapper } from './textareaWrapper'
-import { CONSTANTS } from './stylingHelpers'
+import { InputBox } from './inputBox'
+import { CONSTANTS } from '../../stylingConstants'
 import { ExpandButton } from './expandButton'
 import { TextareaAutoResize } from './textareaAutoResize'
 
 const { inputFieldWidth, inputPadding } = CONSTANTS
 
-// @TODO: grab values from emotion theme when it's ready
-const FormulaWrapper = styled('div')`
+const InputFlexContainer = styled('div')`
   height: 100%;
   width: ${inputFieldWidth + inputPadding * 2}px;
   overflow: visible;
@@ -41,7 +39,7 @@ type FormulaInputProps = {
   inputHandler: (value: string) => void
 }
 
-export const FormulaInput = ({
+export const NotationInput = ({
   inputValue,
   inputHandler
 }: FormulaInputProps) => {
@@ -57,29 +55,27 @@ export const FormulaInput = ({
   }
 
   return (
-    <>
-      <FormulaWrapper>
-        <TextareaWrapper
-          hasInput={Boolean(inputValue)}
-          onClick={inputClickHandler}
-          onBlur={() => setFocused(false)}>
-          <TextareaAutoResize
-            inputValue={inputValue}
-            maxRows={expanded ? 8 : 1}
-            inputHandler={inputHandler}
-            isFocused={focused}
-            isMultiLine={isMultiLine}
-            isCollapsed={!expanded}
-            setMultiLine={setMultiLine}
-          />
-        </TextareaWrapper>
-        {isMultiLine && (
-          <ExpandButton
-            expandHandler={() => setExpanded((prevState) => !prevState)}
-            expanded={expanded}
-          />
-        )}
-      </FormulaWrapper>
-    </>
+    <InputFlexContainer>
+      <InputBox
+        hasInput={Boolean(inputValue)}
+        onClick={inputClickHandler}
+        onBlur={() => setFocused(false)}>
+        <TextareaAutoResize
+          inputValue={inputValue}
+          maxRows={8}
+          inputHandler={inputHandler}
+          isFocused={focused}
+          isMultiLine={isMultiLine}
+          isCollapsed={!expanded}
+          setMultiLine={setMultiLine}
+        />
+      </InputBox>
+      {isMultiLine && (
+        <ExpandButton
+          expandHandler={() => setExpanded((prevState) => !prevState)}
+          expanded={expanded}
+        />
+      )}
+    </InputFlexContainer>
   )
 }

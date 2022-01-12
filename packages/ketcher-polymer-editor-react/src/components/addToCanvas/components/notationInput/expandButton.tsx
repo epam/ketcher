@@ -17,18 +17,19 @@
 import styled from '@emotion/styled'
 import { IconButton } from '@mui/material'
 
-import Icon from '../shared/ui/Icon/Icon'
+import Icon from '../../../shared/ui/Icon/Icon'
 
 type ExpandButtonProps = {
   expandHandler: () => void
   expanded: boolean
 }
 
-// @TODO use theme
-const ArrowButton = styled(IconButton)<{ isFlipped: boolean }>`
+// Using data-* attribute, because mui forwards props via ref directly to <button> element
+const ArrowButton = styled(IconButton)<{ 'data-isflipped': boolean }>`
   & svg {
-    ${(props) => (props.isFlipped ? `transform: rotate(0.5turn);` : null)}
-    fill: #585858;
+    fill: ${({ theme }) => theme.color.icon.active};
+    ${(props) =>
+      props[`data-isflipped`] ? `transform: rotate(0.5turn);` : null};
   }
 `
 
@@ -37,7 +38,7 @@ export const ExpandButton = ({
   expanded
 }: ExpandButtonProps) => {
   return (
-    <ArrowButton isFlipped={expanded} onClick={expandHandler}>
+    <ArrowButton data-isflipped={expanded} onClick={expandHandler}>
       <Icon name="arrow-down" />
     </ArrowButton>
   )

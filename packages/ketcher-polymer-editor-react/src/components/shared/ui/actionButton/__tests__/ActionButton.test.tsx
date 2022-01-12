@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react'
-// import userEvent from '@testing-library/user-event'
 
 import { ActionButton } from '..'
 
@@ -12,9 +11,13 @@ const mockProps = {
 }
 
 describe('ActionButton component', () => {
-  render(<ActionButton {...mockProps} />)
-
-  it('should render button element when label is specified', () => {
+  it('should render button element when props are provided', () => {
+    render(<ActionButton {...mockProps} />)
     expect(screen.getByRole('button')).toBeInTheDocument()
+  })
+
+  it('should render button with specified label', () => {
+    render(<ActionButton {...mockProps} />)
+    expect(screen.getByRole('button')).toHaveTextContent(MOCK_LABEL)
   })
 })

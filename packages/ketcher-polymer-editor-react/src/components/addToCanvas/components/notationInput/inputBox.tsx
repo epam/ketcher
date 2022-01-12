@@ -15,13 +15,13 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled'
+import { css } from '@emotion/react'
 
-import { CONSTANTS } from './stylingHelpers'
+import { CONSTANTS } from '../../stylingConstants'
 
 const { borderThickness, verticalOffset, extraMargin, inputPadding } = CONSTANTS
 
-// @TODO use theme
-export const TextareaWrapper = styled('div')<{ hasInput: boolean }>`
+export const InputBox = styled('div')<{ hasInput: boolean }>`
   top: ${verticalOffset}px;
   position: relative;
   padding-left: ${inputPadding}px;
@@ -29,23 +29,29 @@ export const TextareaWrapper = styled('div')<{ hasInput: boolean }>`
   display: flex;
   justify-content: flex-end;
   flex-direction: column;
-  background-color: white;
+  ${({ theme }) => css`
+    background-color: ${theme.color.background.primary};
+    border: ${borderThickness}px solid ${theme.color.background.primary};
+  `};
   border-radius: 2px;
-  border: ${borderThickness}px solid white;
   z-index: 1;
 
   // If there's input, make text box bigger,
   // otherwise center vertically within parent
   ${(props) =>
     props.hasInput
-      ? `margin-top: -${extraMargin}px;
-margin-bottom: -${extraMargin}px;
-padding-top: ${extraMargin}px;
-padding-bottom: ${extraMargin}px;`
-      : `padding-top: ${verticalOffset}px;
-  margin-top: -${verticalOffset}px;
-  padding-bottom: ${verticalOffset}px;
-  margin-bottom: -${verticalOffset}px;`}
+      ? css`
+          margin-top: -${extraMargin}px;
+          margin-bottom: -${extraMargin}px;
+          padding-top: ${extraMargin}px;
+          padding-bottom: ${extraMargin}px;
+        `
+      : css`
+          padding-top: ${verticalOffset}px;
+          margin-top: -${verticalOffset}px;
+          padding-bottom: ${verticalOffset}px;
+          margin-bottom: -${verticalOffset}px;
+        `}
 
   &:focus-within {
     border-color: #3e7bfa;

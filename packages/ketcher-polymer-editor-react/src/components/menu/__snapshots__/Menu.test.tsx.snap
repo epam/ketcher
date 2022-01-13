@@ -1,0 +1,124 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Menu component should render menu component in a container 1`] = `
+<div>
+  <div
+    class="css-1medrg5"
+  >
+    <div
+      class="css-1nusq1t"
+    >
+      <div
+        class="css-1hfqsen"
+        role="button"
+      >
+        <icon-mock />
+      </div>
+    </div>
+    <icon-mock
+      classname="css-80khr3"
+    />
+    <div
+      class="css-1nusq1t"
+    >
+      <div
+        class="css-1hfqsen"
+        role="button"
+      >
+        <icon-mock />
+      </div>
+    </div>
+    <div
+      class="css-1nusq1t"
+    >
+      <div
+        class="css-1hfqsen"
+        role="button"
+      >
+        <icon-mock />
+      </div>
+      <div
+        class="css-12wx08y"
+      >
+        <div
+          class="css-o014tf"
+          role="button"
+        >
+          <icon-mock />
+          <icon-mock
+            classname="css-1eldwbg"
+            role="button"
+          />
+        </div>
+      </div>
+      <div
+        class="css-12wx08y"
+      >
+        <div
+          class="css-o014tf"
+          role="button"
+        >
+          <icon-mock />
+          <icon-mock
+            classname="css-1eldwbg"
+            role="button"
+          />
+        </div>
+      </div>
+      <div
+        class="css-1hfqsen"
+        role="button"
+      >
+        <icon-mock />
+      </div>
+    </div>
+    <div
+      class="css-1nusq1t"
+    >
+      <div
+        class="css-12wx08y"
+      >
+        <div
+          class="css-o014tf"
+          role="button"
+        >
+          <icon-mock />
+          <icon-mock
+            classname="css-1eldwbg"
+            role="button"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="css-1nusq1t"
+    >
+      <div
+        class="css-1hfqsen"
+        role="button"
+      >
+        <icon-mock />
+      </div>
+    </div>
+    <icon-mock
+      classname="css-80khr3"
+    />
+    <div
+      class="css-1nusq1t"
+    >
+      <div
+        class="css-1hfqsen"
+        role="button"
+      >
+        <icon-mock />
+      </div>
+      <div
+        class="css-1hfqsen"
+        role="button"
+      >
+        <icon-mock />
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -87,6 +87,9 @@ declare module '@mui/material/styles' {
         clicked: string
         disabled: string
       }
+      menu: {
+        selected: string
+      }
     }
     font: {
       size: {

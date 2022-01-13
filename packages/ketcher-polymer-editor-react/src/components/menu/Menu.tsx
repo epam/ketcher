@@ -26,8 +26,24 @@ interface groupItem {
 }
 
 const Group: FC<{ items: groupItem[] }> = ({ items }) => {
+  const GroupContainer = styled('div')`
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    background-color: ${(props) => props.theme.color.background.primary};
+    border-radius: 2px;
+
+    > * {
+      margin-bottom: 8px;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+  `
   return (
-    <div>
+    <GroupContainer>
       {items.map((item) => {
         return (
           <MenuItem
@@ -38,29 +54,21 @@ const Group: FC<{ items: groupItem[] }> = ({ items }) => {
           />
         )
       })}
-    </div>
+    </GroupContainer>
   )
 }
 
-const GroupMenuItems = styled(Group)`
-  width: 32px;
-  border-radius: 2px;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-items: center;
-  margin-bottom: 8px;
-`
-
 const MenuComponent = styled('div')`
   width: 32px;
+  > * {
+    margin-bottom: 8px;
+  }
 `
 
 const Menu = () => {
   return (
     <MenuComponent>
-      <GroupMenuItems
+      <Group
         items={[
           {
             name: 'open'
@@ -68,8 +76,8 @@ const Menu = () => {
         ]}
       />
       <Divider />
-      <GroupMenuItems items={[{ name: 'undo' }]} />
-      <GroupMenuItems
+      <Group items={[{ name: 'undo' }]} />
+      <Group
         items={[
           { name: 'erase' },
           {
@@ -81,7 +89,7 @@ const Menu = () => {
           { name: 'redo' }
         ]}
       />
-      <GroupMenuItems
+      <Group
         items={[
           {
             name: 'bonds',
@@ -89,9 +97,9 @@ const Menu = () => {
           }
         ]}
       />
-      <GroupMenuItems items={[{ name: 'bracket' }]} />
+      <Group items={[{ name: 'bracket' }]} />
       <Divider />
-      <GroupMenuItems items={[{ name: 'settings' }, { name: 'help' }]} />
+      <Group items={[{ name: 'settings' }, { name: 'help' }]} />
     </MenuComponent>
   )
 }

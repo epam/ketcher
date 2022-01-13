@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { MenuItemVariant } from 'components/menu/menu.types'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Icon from 'components/shared/ui/Icon/Icon'
 import { ClickAwayListener } from '@mui/material'
 import { SingleItem } from 'components/menu/menuItem/singleItem/SingleItem'
@@ -33,13 +33,16 @@ const MultiItemContainer = styled('div')`
   position: relative;
 `
 
-const OptionsFlexContainer = styled('div')`
+type OptionsFlexContainerProps = {
+  isVertical?: boolean
+} & React.HTMLAttributes<HTMLDivElement>
+
+const OptionsFlexContainer = styled('div')<OptionsFlexContainerProps>`
   display: flex;
   position: absolute;
-  background-color: white;
   left: 5px;
   border-radius: 2px;
-  flex-direction: ${(props) => (props['data-orientation'] ? 'column' : 'row')};
+  flex-direction: ${(props) => (props.isVertical ? 'column' : 'row')};
 `
 
 const DropDownIcon = styled(Icon)`
@@ -52,18 +55,23 @@ const OptionsItemsCollapse = styled(Collapse)`
   position: relative;
 `
 
-const MultiItemHeader = styled('div')`
+type MultiItemHeaderProps = {
+  isActive: boolean
+} & React.HTMLAttributes<HTMLDivElement>
+
+const MultiItemHeader = styled('div')<MultiItemHeaderProps>`
   display: flex;
   align-items: center;
   position: relative;
-  width: 28px;
-  height: 28px;
-  margin: 4px 0;
+  width: 32px;
+  height: 32px;
   padding: 0;
   justify-content: center;
   border-radius: 2px;
   background-color: ${(props) =>
-    props['data-active'] ? 'rgba(0, 131, 143, 0.4)' : 'white'};
+    props.isActive
+      ? props.theme.color.menu.selected
+      : props.theme.color.background.primary};
 
   :hover {
     transform: scale(1.2);
@@ -88,11 +96,16 @@ const MultiItem = ({
   return (
     <MultiItemContainer>
       <MultiItemHeader
-        data-active={isActiveTool}
+        isActive={isActiveTool}
         onClick={() => onClick(headerMultiTool)}
+        role="button"
       >
         <Icon name={headerMultiTool} />
-        <DropDownIcon name="dropdown" onClick={handleDropDownClick} />
+        <DropDownIcon
+          name="dropdown"
+          onClick={handleDropDownClick}
+          role="button"
+        />
       </MultiItemHeader>
       <OptionsItemsCollapse in={open} timeout="auto" unmountOnExit>
         <ClickAwayListener
@@ -100,7 +113,7 @@ const MultiItem = ({
             if (open) setOpen(false)
           }}
         >
-          <OptionsFlexContainer data-orientation={vertical}>
+          <OptionsFlexContainer isVertical={vertical}>
             {options?.map((name) => (
               <SingleItem
                 key={name}

@@ -24,17 +24,22 @@ interface SingleItemPropType {
   activeTool: MenuItemVariant
 }
 
-const SingleItemContainer = styled('div')`
+type SingleItemContainerProp = {
+  isActive: boolean
+} & React.HTMLAttributes<HTMLDivElement>
+
+const SingleItemContainer = styled('div')<SingleItemContainerProp>`
   display: flex;
   align-items: center;
-  width: 28px;
-  height: 28px;
-  margin: 4px 0;
+  width: 32px;
+  height: 32px;
   padding: 0;
   justify-content: center;
   border-radius: 2px;
   background-color: ${(props) =>
-    props['data-active'] ? 'rgba(0, 131, 143, 0.4)' : 'white'};
+    props.isActive
+      ? props.theme.color.menu.selected
+      : props.theme.color.background.primary};
 
   :hover {
     transform: scale(1.2);
@@ -45,7 +50,7 @@ const SingleItem = ({ name, activeTool, ...props }: SingleItemPropType) => {
   const isActiveTool = activeTool === name
 
   return (
-    <SingleItemContainer data-active={isActiveTool} {...props}>
+    <SingleItemContainer isActive={isActiveTool} {...props} role="button">
       <Icon name={name} />
     </SingleItemContainer>
   )

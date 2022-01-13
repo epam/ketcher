@@ -13,23 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen } from 'test-utils'
 import { MultiItem } from 'components/menu/menuItem/multiItem/MultiItem'
+import { MenuItemVariant } from 'components/menu/menu.types'
+import userEvent from '@testing-library/user-event'
 
-const handleClick = jest.fn()
+const mockClickHandler = jest.fn()
+const MOCK_LABEL: MenuItemVariant = 'select-lasso'
+
+const mockProps = {
+  options: [MOCK_LABEL, MOCK_LABEL, MOCK_LABEL],
+  onClick: mockClickHandler,
+  activeTool: MOCK_LABEL
+}
+
 describe('Test Menu Multi Item component', () => {
-  it('Test click Multi Item event', () => {
-    const { container } = render(
-      <MultiItem
-        options={['select-lasso']}
-        onClick={handleClick}
-        activeTool={'select-lasso'}
-      />
-    )
-    const element = container.querySelector('[data-active]')
-    // @ts-ignore
-    userEvent.click(element)
-    expect(handleClick.mock.calls.length).toEqual(1)
+  it('should render menu icon element when props are provided', () => {
+    render(<MultiItem {...mockProps} />)
+    expect(screen.getAllByRole('button')).toBeTruthy()
+  })
+  it('should call provided callback when menu icon is clicked', () => {
+    render(<MultiItem {...mockProps} />)
+    const button = screen.getAllByRole('button')[0]
+    userEvent.click(button)
+    expect(mockClickHandler).toHaveBeenCalledTimes(1)
   })
 })

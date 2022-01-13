@@ -14,29 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 import { render, screen } from 'test-utils'
-import { SingleItem } from 'components/menu/menuItem/singleItem/SingleItem'
+import { MenuItem } from 'components/menu/menuItem/MenuItem'
 import { MenuItemVariant } from 'components/menu/menu.types'
-import userEvent from '@testing-library/user-event'
 
-const mockClickHandler = jest.fn()
 const MOCK_LABEL: MenuItemVariant = 'select-lasso'
 
-const mockProps = {
+const singleMockProps = {
   key: MOCK_LABEL,
-  name: MOCK_LABEL,
-  onClick: mockClickHandler,
-  activeTool: MOCK_LABEL
+  name: MOCK_LABEL
 }
 
-describe('Test Single Item menu component', () => {
-  it('should render menu icon element when props are provided', () => {
-    render(<SingleItem {...mockProps} />)
-    expect(screen.getByRole('button')).toBeInTheDocument()
+const multiMockProps = {
+  key: MOCK_LABEL,
+  name: MOCK_LABEL,
+  options: [MOCK_LABEL, MOCK_LABEL]
+}
+
+describe('Test Menu Item component', () => {
+  it('should render single item element based on props are provided', () => {
+    render(<MenuItem {...singleMockProps} />)
+    expect(screen.getAllByRole('button').length).toEqual(1)
   })
-  it('should call provided callback when menu icon is clicked', () => {
-    render(<SingleItem {...mockProps} />)
-    const button = screen.getByRole('button')
-    userEvent.click(button)
-    expect(mockClickHandler).toHaveBeenCalledTimes(1)
+  it('should render multi item element based on props are provided', () => {
+    render(<MenuItem {...multiMockProps} />)
+    expect(screen.getAllByRole('button').length).toEqual(2)
   })
 })

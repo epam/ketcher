@@ -54,7 +54,6 @@ const MonomerLibrary = () => {
     {
       caption: 'RNA',
       component: Switcher
-      // props: { list: [{ name: 'R' }, { name: 'N' }, { name: 'A' }] }
     },
     {
       caption: 'CHEM',

@@ -94,21 +94,23 @@ export interface CalculateCipData extends WithStruct, WithOutputFormat {}
 
 export interface CalculateCipResult extends WithStruct, WithFormat {}
 
-export type CalculateProps = Array<
+export type CalculateOptions =
   | 'molecular-weight'
   | 'most-abundant-mass'
   | 'monoisotopic-mass'
   | 'gross'
   | 'mass-composition'
->
+
+export type CalculateProps = Array<CalculateOptions>
 
 export interface CalculateData extends WithStruct, WithSelection {
   properties: CalculateProps
 }
 
-export interface CalculateResult {
-  [key: string]: string | number | boolean
-}
+export type CalculateResult = Record<
+  CalculateOptions,
+  string | number | boolean
+>
 
 export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear'
 

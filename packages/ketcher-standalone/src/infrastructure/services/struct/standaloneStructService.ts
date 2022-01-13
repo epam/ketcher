@@ -18,7 +18,7 @@ import {
   AromatizeCommandData,
   AutomapCommandData,
   CalculateCipCommandData,
-  CalculateCommandData,
+  CalculateCommandData, CalculateOptions,
   CheckCommandData,
   CleanCommandData,
   Command,
@@ -116,8 +116,8 @@ function convertMimeTypeToOutputFormat(
   return format
 }
 
-function mapCalculatedPropertyName(property: string) {
-  let mappedProperty: string | undefined
+function mapCalculatedPropertyName(property: CalculateOptions) {
+  let mappedProperty: undefined | CalculateOptions
   switch (property) {
     case 'gross-formula': {
       mappedProperty = 'gross'
@@ -545,11 +545,13 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const calculatedProperties = JSON.parse(msg.payload!) as KeyValuePair
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           const result: CalculateResult = Object.entries(
             calculatedProperties
-          ).reduce((acc, curr) => {
+          ).reduce((acc, curr ) => {
             const [key, value] = curr
-            const mappedPropertyName = mapCalculatedPropertyName(key)
+            const mappedPropertyName = mapCalculatedPropertyName(key as CalculateOptions)
             if (properties.includes(mappedPropertyName)) {
               acc[mappedPropertyName] = value
             }

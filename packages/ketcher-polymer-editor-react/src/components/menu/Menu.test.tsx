@@ -17,9 +17,7 @@ import { render } from 'test-utils'
 import { Menu } from 'components/menu/Menu'
 
 describe('Menu component', () => {
-  const { container } = render(<Menu />)
-
   it('should render menu component in a container', async () => {
-    expect(container).toMatchSnapshot()
+    expect(render(<Menu />)).toMatchSnapshot()
   })
 })

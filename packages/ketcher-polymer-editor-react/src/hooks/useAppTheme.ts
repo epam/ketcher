@@ -14,29 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-// colors
-@color-background-canvas: #F2F2F2;
-@color-background-white: #FFFFFF;
+import { Theme, useTheme } from '@mui/material'
 
-@color-text-black: #121212;
-@color-text-gray: #BCBCBC;
-@color-text-white: #FFFFFF;
-
-// Tabs
-@color-tab: #F3F3F3;
-@color-tab-active:#005662;
-@color-tab-hover: #00838F;
-
-// Scroll
-@color-scroll: #717171;
-@color-scroll-inactive: #DDDDDD;
-
-// fonts
-@font-size-m: 14px;
-@font-size-xs: 6px;
-
-@font-family-montserrat: 'Montserrat', sans-serif;
-
-@font-weight-300: 300;
-@font-weight-400: 400;
-@font-weight-600: 600;
+export const useAppTheme: () => Theme = () => useTheme()

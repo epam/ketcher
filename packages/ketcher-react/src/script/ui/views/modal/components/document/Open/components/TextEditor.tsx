@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import ClipArea from '../../../../../../component/cliparea/cliparea'
+import classes from '../Open.module.less'
 
 export type TextEditorProps = {
   structStr: string
@@ -25,6 +26,7 @@ export const TextEditor = ({ structStr, inputHandler }: TextEditorProps) => {
   return (
     <>
       <textarea
+        className={classes.textareaEditor}
         value={structStr}
         onChange={(event) => inputHandler(event.target.value)}
       />

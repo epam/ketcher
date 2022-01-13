@@ -17,12 +17,14 @@
 @import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
-@save-container-width-large: 495px;
+@save-container-width-large: 485px;
 @save-container-height-large: 315px;
 @save-container-width-small: 380px;
 @save-container-height-small: 325px;
 
 .save {
+  width: @width-large;
+
   .formContainer {
     display: flex;
     flex-direction: column;
@@ -116,7 +118,7 @@
     margin-bottom: 10px;
 
     .ok {
-      .button_main();
+      .button-main();
 
       border: none;
       margin-right: 2px;

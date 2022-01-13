@@ -37,6 +37,7 @@ interface DialogProps {
   buttons?: Array<string | ReactElement>
   buttonsTop?: Array<ReactElement>
   className: string
+  needMargin?: boolean
 }
 
 interface DialogCallProps {
@@ -56,6 +57,7 @@ const Dialog: FC<Props> = (props) => {
     buttons = ['OK'],
     className,
     buttonsTop,
+    needMargin = true,
     ...rest
   } = props
   const dialogRef = useRef<HTMLDivElement>(null)
@@ -99,7 +101,12 @@ const Dialog: FC<Props> = (props) => {
       onSubmit={(event) => event.preventDefault()}
       onKeyDown={keyDown}
       tabIndex={-1}
-      className={clsx(styles.form, className, params.className)}
+      className={clsx(
+        styles.form,
+        className,
+        needMargin && styles.margin,
+        params.className
+      )}
       {...rest}
     >
       <header>

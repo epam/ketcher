@@ -14,43 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import "../../styles/variables";
-
-.container {
-  height: 100%;
-  width: 100%;
-  position: relative;
-
-  .logo {
-    font-family: @font-family-montserrat;
-    font-size: @font-size-m;
-    font-weight: @font-weight-600;
-    color: @color-text-gray;
-    position: absolute;
-    bottom: 18px;
-    left: 13px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    > span:first-of-type,
-    > span:last-of-type {
-      font-weight: @font-weight-300;
-      font-size: @font-size-xs;
-      text-transform: uppercase;
-    }
-
-    > span:last-of-type {
-      font-weight: @font-weight-400;
-    }
-
-    > span:nth-of-type(2) {
-      color: @color-text-black;
-
-      &::first-letter {
-        color: @color-text-gray;
-      }
-    }
+export const scrollbarThin = (theme) => ({
+  '&::-webkit-scrollbar': {
+    width: '4px',
+    backgroundColor: theme.color.scroll.inactive,
+    borderRadius: '2px',
+    webkitBorderRadius: '2px'
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: theme.color.scroll.regular,
+    borderRadius: '2px',
+    webkitBorderRadius: '2px'
+  },
+  '&::-webkit-scrollbar-thumb:active': {
+    backgroundColor: theme.color.scroll.regular
   }
-}
-
+})

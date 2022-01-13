@@ -2,15 +2,14 @@
 
 .window {
   display: flex;
-  width: 21em;
+  width: @width-small;
   flex-direction: column;
   background: @gray-background-color;
   border-radius: 10px;
-  padding: 5px;
   font-family: @Inter;
 
   & > * {
-    margin: 10px;
+    margin: 10px 15px;
   }
 }
 
@@ -22,13 +21,14 @@
 .header {
   display: flex;
   align-items: center;
-  margin-left: 10px;
+  margin-top: 15px;
   text-transform: uppercase;
 }
 
 .footer {
   display: flex;
   justify-content: flex-end;
+  margin-bottom: 15px;
 }
 
 .buttonOk,

@@ -11,7 +11,10 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|less)$': 'identity-obj-proxy',
     '^components(.*)$': '<rootDir>/src/components/$1',
-    '^state(.*)$': '<rootDir>/src/state/$1'
+    '^state(.*)$': '<rootDir>/src/state/$1',
+    '^styles(.*)$': '<rootDir>/src/styles/$1',
+    '^hooks(.*)$': '<rootDir>/src/hooks/$1',
+    '^test-utils(.*)$': '<rootDir>/src/test-utils/$1'
   },
-  setupFilesAfterEnv: ['<rootDir>/setupTests.ts']
+  setupFilesAfterEnv: ['<rootDir>/src/testsSetup.ts']
 }

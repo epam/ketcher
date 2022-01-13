@@ -25,16 +25,21 @@
 @field-height: 24px;
 
 .settings {
-  width: 522px;
+  width: @width-large;
   height: 357px;
   background-color: @color-background-canvas;
 
-  > header {
-    padding: 10px 16px;
-  }
-
   > header + div {
     height: 270px;
+    margin-right: @margin-left-right;
+  }
+
+  > header {
+    margin: @margin-top-bottom @margin-left-right;
+  }
+
+  > footer {
+    margin: @margin-left-right @margin-left-right @margin-top-bottom @margin-left-right;
   }
 
   > * {
@@ -43,13 +48,6 @@
 
   .warning {
     margin: 0.3em;
-  }
-
-  footer {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    padding: 10px 16px;
   }
 }
 

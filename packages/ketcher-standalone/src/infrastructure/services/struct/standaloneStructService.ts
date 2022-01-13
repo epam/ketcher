@@ -18,7 +18,8 @@ import {
   AromatizeCommandData,
   AutomapCommandData,
   CalculateCipCommandData,
-  CalculateCommandData, CalculateOptions,
+  CalculateCommandData,
+  CalculateOptions,
   CheckCommandData,
   CleanCommandData,
   Command,
@@ -549,9 +550,11 @@ class IndigoService implements StructService {
           // @ts-ignore
           const result: CalculateResult = Object.entries(
             calculatedProperties
-          ).reduce((acc, curr ) => {
+          ).reduce((acc, curr) => {
             const [key, value] = curr
-            const mappedPropertyName = mapCalculatedPropertyName(key as CalculateOptions)
+            const mappedPropertyName = mapCalculatedPropertyName(
+              key as CalculateOptions
+            )
             if (properties.includes(mappedPropertyName)) {
               acc[mappedPropertyName] = value
             }

@@ -1,6 +1,6 @@
 {
   "name": "ketcher-standalone",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -26,7 +26,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.ts",
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c -m true --silent",
@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",
-    "indigo-ketcher": "1.6.0-21",
+    "indigo-ketcher": "1.6.1",
     "ketcher-core": "workspace:*"
   },
   "devDependencies": {

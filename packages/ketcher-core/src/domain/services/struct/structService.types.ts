@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Struct } from 'domain/entities'
-
 export enum ChemicalMimeType {
   Mol = 'chemical/x-mdl-molfile',
   Rxn = 'chemical/x-mdl-rxnfile',
@@ -29,10 +27,8 @@ export enum ChemicalMimeType {
   KET = 'chemical/x-indigo-ket'
 }
 
-export type StructOrString = string | Struct
-
 export interface WithStruct {
-  struct: StructOrString
+  struct: string
 }
 
 export interface WithFormat {
@@ -59,6 +55,8 @@ export type CheckTypes = Array<
   | 'rgroups'
   | 'chiral'
   | '3d'
+  | 'chiral_flag'
+  | 'valence'
 >
 
 export interface CheckData extends WithStruct {

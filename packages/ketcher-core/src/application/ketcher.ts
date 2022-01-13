@@ -38,7 +38,6 @@ import {
   OutputFormatType,
   RecognizeResult,
   Selected,
-  StructOrString,
   StructService
 } from 'domain/services'
 
@@ -47,30 +46,43 @@ import { MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import assert from 'assert'
 
+type StructOrString = {
+  struct: Struct | string
+}
+
 interface IndigoService {
   info: () => Promise<InfoResult>
   calculate: (
-    struct: StructOrString,
-    properties?: CalculateProps,
-    selected?: Selected
+    data: StructOrString & {
+      properties?: CalculateProps
+      selected?: Selected
+    }
   ) => Promise<CalculateResult>
   convert: (
-    struct: StructOrString,
-    outputFormat?: ChemicalMimeType
+    data: StructOrString & {
+      outputFormat?: ChemicalMimeType
+    }
   ) => Promise<ConvertResult>
-  layout: (struct: StructOrString) => Promise<LayoutResult>
-  clean: (struct: StructOrString, selected?: Selected) => Promise<CleanResult>
-  aromatize: (struct: StructOrString) => Promise<AromatizeResult>
-  dearomatize: (struct: StructOrString) => Promise<DearomatizeResult>
-  calculateCip: (struct: StructOrString) => Promise<CalculateCipResult>
-  automap: (struct: StructOrString, mode: AutomapMode) => Promise<AutomapResult>
-  check: (struct: StructOrString, types?: CheckTypes) => Promise<CheckResult>
-  recognize: (blob: Blob, version: string) => Promise<RecognizeResult>
-  generateImageAsBase64: (
-    data: string,
-    outputFormat?: OutputFormatType,
+  layout: (data: StructOrString) => Promise<LayoutResult>
+  clean: (
+    data: StructOrString & { selected?: Selected }
+  ) => Promise<CleanResult>
+  aromatize: (data: StructOrString) => Promise<AromatizeResult>
+  dearomatize: (data: StructOrString) => Promise<DearomatizeResult>
+  calculateCip: (data: StructOrString) => Promise<CalculateCipResult>
+  automap: (
+    data: StructOrString & { mode: AutomapMode }
+  ) => Promise<AutomapResult>
+  check: (data: StructOrString & { types?: CheckTypes }) => Promise<CheckResult>
+  recognize: (data: {
+    blob: Blob
+    version?: string
+  }) => Promise<RecognizeResult>
+  generateImageAsBase64: (data: {
+    data: string
+    outputFormat?: OutputFormatType
     backgroundColor?: string
-  ) => Promise<string>
+  }) => Promise<string>
 }
 
 function parseStruct(structStr: string, structService: StructService) {
@@ -134,35 +146,75 @@ export class Ketcher {
       'mass-composition'
     ]
 
+    const checkStructType = (struct) => {
+      if (typeof struct !== 'string') {
+        let result
+        getStructure('ket', this.#formatterFactory, struct).then((data) => {
+          result = data
+        })
+        return result
+      }
+
+      return struct
+    }
+
     return {
       info: () => service.info(),
-      convert: (struct, outputFormat = ChemicalMimeType.KET) =>
-        service.convert({ struct, output_format: outputFormat }),
-      layout: (struct) =>
-        service.layout({ struct, output_format: ChemicalMimeType.KET }),
-      clean: (struct, selected) =>
+      convert: ({ struct, outputFormat = ChemicalMimeType.KET }) =>
+        service.convert({
+          struct: checkStructType(struct),
+          output_format: outputFormat
+        }),
+      layout: ({ struct }) =>
+        service.layout({
+          struct: checkStructType(struct),
+          output_format: ChemicalMimeType.KET
+        }),
+      clean: ({ struct, selected }) =>
         service.clean({
-          struct,
+          struct: checkStructType(struct),
           output_format: ChemicalMimeType.KET,
           selected
         }),
-      aromatize: (struct) =>
-        service.aromatize({ struct, output_format: ChemicalMimeType.KET }),
-      dearomatize: (struct) =>
-        service.dearomatize({ struct, output_format: ChemicalMimeType.KET }),
-      calculateCip: (struct) =>
-        service.calculateCip({ struct, output_format: ChemicalMimeType.KET }),
-      automap: (struct, mode) =>
-        service.automap({ struct, output_format: ChemicalMimeType.KET, mode }),
-      check: (struct, types = defaultTypes) => service.check({ struct, types }),
-      calculate: (struct, properties = defaultCalcProps, selected) =>
-        service.calculate({
-          properties,
-          struct,
-          selected
+      aromatize: ({ struct }) =>
+        service.aromatize({
+          struct: checkStructType(struct),
+          output_format: ChemicalMimeType.KET
         }),
-      recognize: (blob, version) => service.recognize(blob, version),
-      generateImageAsBase64: (data, outputFormat = 'png', backgroundColor) =>
+      dearomatize: ({ struct }) =>
+        service.dearomatize({
+          struct: checkStructType(struct),
+          output_format: ChemicalMimeType.KET
+        }),
+      calculateCip: ({ struct }) =>
+        service.calculateCip({
+          struct: checkStructType(struct),
+          output_format: ChemicalMimeType.KET
+        }),
+      automap: ({ struct, mode }) =>
+        service.automap({
+          struct: checkStructType(struct),
+          output_format: ChemicalMimeType.KET,
+          mode
+        }),
+
+      check: ({ struct, types = defaultTypes }) =>
+        service.check({ struct: checkStructType(struct), types }),
+
+      calculate: ({ struct, properties = defaultCalcProps, selected }) => {
+        return service.calculate({
+          properties,
+          struct: checkStructType(struct),
+          selected
+        })
+      },
+
+      recognize: ({ blob, version = '' }) => service.recognize(blob, version),
+      generateImageAsBase64: ({
+        data,
+        outputFormat = 'png',
+        backgroundColor
+      }) =>
         service.generateImageAsBase64(data, { outputFormat, backgroundColor })
     }
   }

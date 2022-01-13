@@ -134,6 +134,10 @@ export class Ketcher {
     assert(typeof structStr === 'string')
 
     const struct: Struct = await parseStruct(structStr, this.#structService)
+    struct.initHalfBonds()
+    struct.initNeighbors()
+    struct.setImplicitHydrogen()
+    struct.markFragments()
     this.#editor.struct(struct)
   }
 

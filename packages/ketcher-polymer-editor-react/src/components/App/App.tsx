@@ -20,7 +20,7 @@ import { useAppDispatch, useAppSelector } from 'hooks'
 import { selectEditorIsReady, fetchInitData } from 'state/common'
 import { MonomerLibrary } from 'components/monomerLibrary'
 import styled from '@emotion/styled'
-import { AddToCanvas } from 'components/addToCanvas/addToCanvas'
+import { AddToCanvas } from 'components/addToCanvas'
 
 export const fetchData = () =>
   new Promise((resolve) => {

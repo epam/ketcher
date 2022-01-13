@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render } from 'test-utils'
-import { fireEvent, screen } from '@testing-library/react'
+import { render, screen } from 'test-utils'
+import userEvent from '@testing-library/user-event'
 
 import { ExpandButton } from '../expandButton'
 
@@ -29,7 +29,7 @@ describe('ExpandButton component', () => {
     )
     const button = screen.getByRole('button')
 
-    fireEvent.click(button)
+    userEvent.click(button)
     expect(mockExpandHandler).toHaveBeenCalledTimes(1)
   })
 

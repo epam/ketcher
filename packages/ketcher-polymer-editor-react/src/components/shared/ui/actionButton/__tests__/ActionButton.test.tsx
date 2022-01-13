@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render } from 'test-utils'
-import { screen, fireEvent } from '@testing-library/react'
+import { render, screen } from 'test-utils'
+import userEvent from '@testing-library/user-event'
 
 import { ActionButton } from '..'
 
@@ -46,7 +46,7 @@ describe('ActionButton component', () => {
   it('should call provided callback when button is clicked', () => {
     render(<ActionButton {...mockProps} />)
     const button = screen.getByRole('button')
-    fireEvent.click(button)
+    userEvent.click(button)
     expect(mockClickHandler).toHaveBeenCalledTimes(1)
   })
 })

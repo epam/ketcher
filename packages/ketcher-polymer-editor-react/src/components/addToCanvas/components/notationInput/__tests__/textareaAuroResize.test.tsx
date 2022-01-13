@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render } from 'test-utils'
-import { fireEvent, screen } from '@testing-library/react'
+import { render, screen } from 'test-utils'
+import userEvent from '@testing-library/user-event'
 
 import { TextareaAutoResize } from '../textareaAutoResize'
 
@@ -38,8 +38,10 @@ describe('TextareaAutoResize component', () => {
     )
     const textarea = screen.getByDisplayValue(MOCK_PROPS.inputValue)
 
-    fireEvent.change(textarea, { target: { value: 'Some new input' } })
-    expect(mockInputHandler).toHaveBeenCalledTimes(1)
+    const newInput = 'New'
+
+    userEvent.type(textarea, newInput)
+    expect(mockInputHandler).toHaveBeenCalledTimes(newInput.length)
   })
 
   it('should hide ellipsis if input is not overflowing', () => {

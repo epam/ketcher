@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render } from 'test-utils'
-import { fireEvent, screen } from '@testing-library/react'
+import { render, screen } from 'test-utils'
+import userEvent from '@testing-library/user-event'
 
 import { DropDown } from '../dropDown'
 
@@ -39,7 +39,7 @@ describe('DropDown component', () => {
     render(<DropDown {...mockProps} />)
 
     const dropDownButton = screen.getByRole('button')
-    fireEvent.mouseDown(dropDownButton)
+    userEvent.click(dropDownButton)
 
     expect(await screen.findByText(MOCK_OPTIONS[1])).toBeInTheDocument()
     expect(await screen.findByText(MOCK_OPTIONS[2])).toBeInTheDocument()
@@ -49,10 +49,10 @@ describe('DropDown component', () => {
     render(<DropDown {...mockProps} />)
 
     const dropDownButton = screen.getByRole('button')
-    fireEvent.mouseDown(dropDownButton)
+    userEvent.click(dropDownButton)
 
     const secondOption = await screen.findByText(MOCK_OPTIONS[1])
-    fireEvent.click(secondOption)
+    userEvent.click(secondOption)
     expect(mockSelectionHandler).toHaveBeenCalledWith(MOCK_OPTIONS[1])
   })
 })

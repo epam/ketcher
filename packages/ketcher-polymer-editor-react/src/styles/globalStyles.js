@@ -14,39 +14,42 @@
  * limitations under the License.
  ***************************************************************************/
 
-export default (theme) => ({
-  body: {
-    'font-size': theme.font.size.medium,
-    'font-family': theme.font.family.inter,
-    'font-weight': theme.font.weight.regular,
-    'background-color': theme.color.background.primary,
-    color: theme.color.text.primary,
-    'box-sizing': 'border-box'
-  },
-  h1: {
-    'font-size': 96
-  },
-  h2: {
-    'font-size': 60
-  },
-  h3: {
-    'font-size': 48
-  },
-  h4: {
-    'font-size': 34
-  },
-  h5: {
-    'font-size': 24
-  },
-  h6: {
-    'font-size': 20,
-    'font-weight': theme.font.weight.bold
-  },
-  p: {
-    'font-size': theme.font.size.regular
-  },
-  button: {
-    'text-transform': 'uppercase',
-    'font-weight': 500
-  }
-})
+import { css } from '@emotion/react'
+
+export default (theme) =>
+  css({
+    body: {
+      fontSize: theme.font.size.medium,
+      fontFamily: theme.font.family.inter,
+      fontWeight: theme.font.weight.regular,
+      backgroundColor: theme.color.background.primary,
+      color: theme.color.text.primary,
+      boxSizing: 'border-box'
+    },
+    h1: {
+      fontSize: 96
+    },
+    h2: {
+      fontSize: 60
+    },
+    h3: {
+      fontSize: 48
+    },
+    h4: {
+      fontSize: 34
+    },
+    h5: {
+      fontSize: 24
+    },
+    h6: {
+      fontSize: 20,
+      fontWeight: theme.font.weight.bold
+    },
+    p: {
+      fontSize: theme.font.size.regular
+    },
+    button: {
+      textTransform: 'uppercase',
+      fontWeight: theme.font.weight.bold
+    }
+  })

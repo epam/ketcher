@@ -39,13 +39,11 @@ export interface WithOutputFormat {
   output_format: ChemicalMimeType
 }
 
-export type Selected = Array<number>
-
 export interface WithSelection {
-  selected?: Selected
+  selected?: Array<number>
 }
 
-export type CheckTypes = Array<
+export type CheckTypes =
   | 'radicals'
   | 'pseudoatoms'
   | 'stereo'
@@ -57,10 +55,9 @@ export type CheckTypes = Array<
   | '3d'
   | 'chiral_flag'
   | 'valence'
->
 
 export interface CheckData extends WithStruct {
-  types: CheckTypes
+  types: Array<CheckTypes>
 }
 
 export interface CheckResult {
@@ -94,23 +91,18 @@ export interface CalculateCipData extends WithStruct, WithOutputFormat {}
 
 export interface CalculateCipResult extends WithStruct, WithFormat {}
 
-export type CalculateOptions =
+export type CalculateProps =
   | 'molecular-weight'
   | 'most-abundant-mass'
   | 'monoisotopic-mass'
   | 'gross'
   | 'mass-composition'
 
-export type CalculateProps = Array<CalculateOptions>
-
 export interface CalculateData extends WithStruct, WithSelection {
-  properties: CalculateProps
+  properties: Array<CalculateProps>
 }
 
-export type CalculateResult = Record<
-  CalculateOptions,
-  string | number | boolean
->
+export type CalculateResult = Record<CalculateProps, string | number | boolean>
 
 export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear'
 

@@ -100,7 +100,7 @@ export interface CalculateCipCommandData
     WithStruct,
     WithFormat {}
 
-export type CalculateOptions =
+export type CalculateProps =
   | 'molecular-weight'
   | 'most-abundant-mass'
   | 'monoisotopic-mass'

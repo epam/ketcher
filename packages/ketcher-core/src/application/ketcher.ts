@@ -19,71 +19,13 @@ import {
   identifyStructFormat,
   SupportedFormat
 } from './formatters'
-import {
-  AromatizeResult,
-  AutomapMode,
-  AutomapResult,
-  CalculateCipResult,
-  CalculateProps,
-  CalculateResult,
-  CheckResult,
-  CheckTypes,
-  ChemicalMimeType,
-  CleanResult,
-  ConvertResult,
-  DearomatizeResult,
-  GenerateImageOptions,
-  InfoResult,
-  LayoutResult,
-  OutputFormatType,
-  RecognizeResult,
-  Selected,
-  StructService
-} from 'domain/services'
+import { GenerateImageOptions, StructService } from 'domain/services'
 
 import { Editor } from './editor'
 import { MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import assert from 'assert'
-
-type StructOrString = {
-  struct: Struct | string
-}
-
-interface IndigoService {
-  info: () => Promise<InfoResult>
-  calculate: (
-    data: StructOrString & {
-      properties?: CalculateProps
-      selected?: Selected
-    }
-  ) => Promise<CalculateResult>
-  convert: (
-    data: StructOrString & {
-      outputFormat?: ChemicalMimeType
-    }
-  ) => Promise<ConvertResult>
-  layout: (data: StructOrString) => Promise<LayoutResult>
-  clean: (
-    data: StructOrString & { selected?: Selected }
-  ) => Promise<CleanResult>
-  aromatize: (data: StructOrString) => Promise<AromatizeResult>
-  dearomatize: (data: StructOrString) => Promise<DearomatizeResult>
-  calculateCip: (data: StructOrString) => Promise<CalculateCipResult>
-  automap: (
-    data: StructOrString & { mode: AutomapMode }
-  ) => Promise<AutomapResult>
-  check: (data: StructOrString & { types?: CheckTypes }) => Promise<CheckResult>
-  recognize: (data: {
-    blob: Blob
-    version?: string
-  }) => Promise<RecognizeResult>
-  generateImageAsBase64: (data: {
-    data: string
-    outputFormat?: OutputFormatType
-    backgroundColor?: string
-  }) => Promise<string>
-}
+import { IndigoService } from 'application/indigo'
 
 function parseStruct(structStr: string, structService: StructService) {
   const format = identifyStructFormat(structStr)
@@ -106,6 +48,7 @@ export class Ketcher {
   #structService: StructService
   #formatterFactory: FormatterFactory
   #editor: Editor
+  #indigo: IndigoService
 
   get editor(): Editor {
     return this.#editor
@@ -123,100 +66,11 @@ export class Ketcher {
     this.#editor = editor
     this.#structService = structService
     this.#formatterFactory = formatterFactory
+    this.#indigo = new IndigoService(this.#structService)
   }
 
-  get server(): IndigoService {
-    const service = this.#structService
-    const defaultTypes: CheckTypes = [
-      'radicals',
-      'pseudoatoms',
-      'stereo',
-      'query',
-      'overlapping_atoms',
-      'overlapping_bonds',
-      'rgroups',
-      'chiral',
-      '3d'
-    ]
-    const defaultCalcProps: CalculateProps = [
-      'molecular-weight',
-      'most-abundant-mass',
-      'monoisotopic-mass',
-      'gross',
-      'mass-composition'
-    ]
-
-    const checkStructType = (struct) => {
-      if (typeof struct !== 'string') {
-        let result
-        getStructure('ket', this.#formatterFactory, struct).then((data) => {
-          result = data
-        })
-        return result
-      }
-
-      return struct
-    }
-
-    return {
-      info: () => service.info(),
-      convert: ({ struct, outputFormat = ChemicalMimeType.KET }) =>
-        service.convert({
-          struct: checkStructType(struct),
-          output_format: outputFormat
-        }),
-      layout: ({ struct }) =>
-        service.layout({
-          struct: checkStructType(struct),
-          output_format: ChemicalMimeType.KET
-        }),
-      clean: ({ struct, selected }) =>
-        service.clean({
-          struct: checkStructType(struct),
-          output_format: ChemicalMimeType.KET,
-          selected
-        }),
-      aromatize: ({ struct }) =>
-        service.aromatize({
-          struct: checkStructType(struct),
-          output_format: ChemicalMimeType.KET
-        }),
-      dearomatize: ({ struct }) =>
-        service.dearomatize({
-          struct: checkStructType(struct),
-          output_format: ChemicalMimeType.KET
-        }),
-      calculateCip: ({ struct }) =>
-        service.calculateCip({
-          struct: checkStructType(struct),
-          output_format: ChemicalMimeType.KET
-        }),
-      automap: ({ struct, mode }) =>
-        service.automap({
-          struct: checkStructType(struct),
-          output_format: ChemicalMimeType.KET,
-          mode
-        }),
-
-      check: ({ struct, types = defaultTypes }) =>
-        service.check({ struct: checkStructType(struct), types }),
-
-      calculate: ({ struct, properties = defaultCalcProps, selected }) => {
-        return service.calculate({
-          properties,
-          struct: checkStructType(struct),
-          selected
-        })
-      },
-
-      recognize: ({ blob, version = '' }) => service.recognize(blob, version),
-      generateImageAsBase64: ({
-        data,
-        outputFormat = 'png',
-        backgroundColor
-      }) =>
-        service.generateImageAsBase64(data, { outputFormat, backgroundColor })
-    }
+  get indigo() {
+    return this.#indigo
   }
 
   getSmiles(isExtended = false): Promise<string> {

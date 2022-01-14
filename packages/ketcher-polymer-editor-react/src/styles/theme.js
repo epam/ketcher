@@ -82,9 +82,6 @@ const color = {
     activeMenu: '#00838F',
     clicked: '#FFFFFF',
     disabled: 'rgba(82, 82, 82, 0.4)'
-  },
-  menu: {
-    selected: 'rgba(0, 131, 143, 0.4)'
   }
 }
 

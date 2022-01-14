@@ -38,11 +38,18 @@ const SingleItemContainer = styled('div')<SingleItemContainerProp>`
   border-radius: 2px;
   background-color: ${(props) =>
     props.isActive
-      ? props.theme.color.menu.selected
+      ? props.theme.color.icon.activeMenu
       : props.theme.color.background.primary};
 
   :hover {
     transform: scale(1.2);
+  }
+
+  > svg path {
+    fill: ${(props) =>
+      props.isActive
+        ? props.theme.color.icon.clicked
+        : props.theme.color.icon.activeMenu};
   }
 `
 

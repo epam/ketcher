@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { MenuItem } from './menuItem/MenuItem'
-import { FC } from 'react'
+import { MenuItem } from './menuItem'
 import styled from '@emotion/styled'
-import { Divider } from 'components/menu/menuDivider/Divider'
+import { Divider } from 'components/menu/menuDivider'
 import { MenuItemVariant } from 'components/menu/menu.types'
 
-interface groupItem {
+interface GroupItem {
   name: MenuItemVariant
   options?: MenuItemVariant[]
   vertical?: boolean
 }
 
-const Group: FC<{ items: groupItem[] }> = ({ items }) => {
+interface GroupPropTypes {
+  items: GroupItem[]
+}
+
+const Group = ({ items }: GroupPropTypes) => {
   const GroupContainer = styled('div')`
     display: flex;
     flex-direction: column;
@@ -44,7 +47,7 @@ const Group: FC<{ items: groupItem[] }> = ({ items }) => {
   `
   return (
     <GroupContainer>
-      {items.map((item) => {
+      {items.map((item: GroupItem) => {
         return (
           <MenuItem
             key={item.name}

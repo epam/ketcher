@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useDispatch, useSelector } from 'react-redux'
 import { selectEditorActiveTool, selectTool } from 'state/common'
 import { MenuItemVariant } from 'components/menu/menu.types'
-import { SingleItem } from 'components/menu/menuItem/singleItem/SingleItem'
-import { MultiItem } from 'components/menu/menuItem/multiItem/MultiItem'
+import { SingleItem } from 'components/menu/menuItem/singleItem'
+import { MultiItem } from 'components/menu/menuItem/multiItem'
+import { useAppDispatch, useAppSelector } from 'hooks'
 
 interface MenuItemPropType {
   key: string
@@ -27,8 +27,8 @@ interface MenuItemPropType {
 }
 
 const MenuItem = ({ name, options, vertical }: MenuItemPropType) => {
-  const dispatch = useDispatch()
-  const activeTool = useSelector(selectEditorActiveTool)
+  const dispatch = useAppDispatch()
+  const activeTool = useAppSelector(selectEditorActiveTool)
 
   return options ? (
     <MultiItem

@@ -17,7 +17,7 @@ import { MenuItemVariant } from 'components/menu/menu.types'
 import React, { useState } from 'react'
 import Icon from 'components/shared/ui/Icon/Icon'
 import { ClickAwayListener } from '@mui/material'
-import { SingleItem } from 'components/menu/menuItem/singleItem/SingleItem'
+import { SingleItem } from 'components/menu/menuItem/singleItem'
 import styled from '@emotion/styled'
 import Collapse from '@mui/material/Collapse'
 
@@ -117,7 +117,7 @@ const MultiItem = ({
       <OptionsItemsCollapse in={open} timeout="auto" unmountOnExit>
         <ClickAwayListener
           onClickAway={() => {
-            if (open) setOpen(false)
+            open && setOpen(false)
           }}
         >
           <OptionsFlexContainer isVertical={vertical}>

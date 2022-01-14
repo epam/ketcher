@@ -39,11 +39,7 @@ export const App = (): JSX.Element => {
     width: '100%',
     position: 'relative',
     padding: '14px 11px 0 11px',
-    backgroundColor: theme.color.background.canvas,
-    boxSizing: 'border-box',
-    fontFamily: theme.font.family.inter,
-    fontSize: theme.font.size.regular,
-    fontWeight: theme.font.weight.regular
+    backgroundColor: theme.color.background.canvas
   }))
 
   const Logo = styled.div(({ theme }) => ({
@@ -82,14 +78,16 @@ export const App = (): JSX.Element => {
   }
 
   return (
-    <AppContainer>
-      <MonomerLibrary />
+    <>
+      <AppContainer>
+        <MonomerLibrary />
 
-      <Logo>
-        <span>Polymer Editor</span>
-        <span>Ketcher</span>
-        <span>EPAM</span>
-      </Logo>
-    </AppContainer>
+        <Logo>
+          <span>Polymer Editor</span>
+          <span>Ketcher</span>
+          <span>EPAM</span>
+        </Logo>
+      </AppContainer>
+    </>
   )
 }

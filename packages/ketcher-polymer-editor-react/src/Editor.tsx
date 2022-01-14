@@ -21,6 +21,8 @@ import { Provider } from 'react-redux'
 import { defaultTheme } from 'styles/theme'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import styled from '@emotion/styled'
+import { Global } from '@emotion/react'
+import globalStyles from './styles/globalStyles'
 
 const theme = createTheme(defaultTheme)
 
@@ -41,14 +43,14 @@ function Editor(props: EditorProps) {
     width: '100%',
     position: 'relative',
     minWidth: 640,
-    minHeight: 400,
-    boxSizing: 'border-box'
+    minHeight: 400
   })
 
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <RootContainer ref={rootElRef} className="Ketcher-polymer-editor-root">
+          <Global styles={globalStyles} />
           <App />
         </RootContainer>
       </ThemeProvider>

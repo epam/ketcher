@@ -14,31 +14,39 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-
-interface MonomerItemPropTypes {
-  key: number
-  item: Record<string, string>
-  onClick: () => void
-}
-
-const MonomerItem = (props: MonomerItemPropTypes) => {
-  const { item, onClick } = props
-
-  const Card = styled.div(({ theme }) => ({
-    background: theme.color.text.light,
-    border: `1px solid ${theme.color.text.primary}`,
-    borderRadius: '2px',
-    width: '32px',
-    height: '32px',
-    textAlign: 'center',
-    cursor: 'pointer',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  }))
-
-  return <Card onClick={onClick}>{item.name}</Card>
-}
-
-export { MonomerItem }
+export default (theme) => ({
+  body: {
+    'font-size': theme.font.size.medium,
+    'font-family': theme.font.family.inter,
+    'font-weight': theme.font.weight.regular,
+    'background-color': theme.color.background.primary,
+    color: theme.color.text.primary,
+    'box-sizing': 'border-box'
+  },
+  h1: {
+    'font-size': 96
+  },
+  h2: {
+    'font-size': 60
+  },
+  h3: {
+    'font-size': 48
+  },
+  h4: {
+    'font-size': 34
+  },
+  h5: {
+    'font-size': 24
+  },
+  h6: {
+    'font-size': 20,
+    'font-weight': theme.font.weight.bold
+  },
+  p: {
+    'font-size': theme.font.size.regular
+  },
+  button: {
+    'text-transform': 'uppercase',
+    'font-weight': 500
+  }
+})

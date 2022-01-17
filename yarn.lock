@@ -8225,7 +8225,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-loader@npm:^8.0.0, babel-loader@npm:^8.2.3":
+"babel-loader@npm:^8.0.0":
   version: 8.2.3
   resolution: "babel-loader@npm:8.2.3"
   dependencies:
@@ -17000,6 +17000,11 @@ __metadata:
     "@rollup/plugin-node-resolve": ^10.0.0
     "@rollup/plugin-replace": ^2.3.4
     "@rollup/plugin-strip": ^2.0.0
+    "@storybook/addon-actions": ^6.4.13
+    "@storybook/addon-docs": ^6.4.13
+    "@storybook/addon-essentials": ^6.4.13
+    "@storybook/addon-links": ^6.4.13
+    "@storybook/react": ^6.4.13
     "@svgr/rollup": ^5.4.0
     "@testing-library/jest-dom": ^4.2.4
     "@testing-library/react": ^9.5.0
@@ -17019,6 +17024,7 @@ __metadata:
     eslint-plugin-jsx-a11y: ^6.5.1
     eslint-plugin-react: ^7.27.1
     eslint-plugin-react-hooks: ^4.3.0
+    eslint-plugin-storybook: ^0.5.5
     eslint-plugin-testing-library: ^5.0.1
     identity-obj-proxy: ^3.0.0
     jest: ^27.4.5
@@ -17093,7 +17099,6 @@ __metadata:
     "@babel/preset-react": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.16.3
-    "@mdx-js/react": ^1.6.22
     "@rollup/plugin-babel": ^5.2.1
     "@rollup/plugin-commonjs": ^16.0.0
     "@rollup/plugin-json": ^4.1.0
@@ -17119,7 +17124,6 @@ __metadata:
     "@typescript-eslint/parser": ^5.6.0
     autoprefixer: ^10.2.5
     babel-jest: ^27.4.5
-    babel-loader: ^8.2.3
     clsx: ^1.1.1
     cross-env: ^7.0.3
     current-git-branch: ^1.1.0

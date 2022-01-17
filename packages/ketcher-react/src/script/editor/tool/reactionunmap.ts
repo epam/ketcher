@@ -15,36 +15,41 @@
  ***************************************************************************/
 
 import { Action, fromAtomsAttrs } from 'ketcher-core'
+import Editor from '../Editor'
 
-function ReactionUnmapTool(editor) {
-  if (!(this instanceof ReactionUnmapTool)) return new ReactionUnmapTool(editor)
+class ReactionUnmapTool {
+  editor: Editor
 
-  this.editor = editor
-  this.editor.selection(null)
-}
-ReactionUnmapTool.prototype.mousemove = function (event) {
-  var ci = this.editor.findItem(event, ['atoms'])
-  if (ci && ci.map === 'atoms')
-    this.editor.hover(
-      this.editor.render.ctab.molecule.atoms.get(ci.id).aam ? ci : null
-    )
-  else this.editor.hover(null)
-}
-ReactionUnmapTool.prototype.mouseup = function (event) {
-  var ci = this.editor.findItem(event, ['atoms'])
-  var atoms = this.editor.render.ctab.molecule.atoms
-  if (ci && ci.map === 'atoms' && atoms.get(ci.id).aam) {
-    var action = new Action()
-    var aam = atoms.get(ci.id).aam
-    atoms.forEach((atom, aid) => {
-      if (atom.aam === aam)
-        action.mergeWith(
-          fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 })
-        )
-    })
-    this.editor.update(action)
+  constructor(editor) {
+    this.editor = editor
+    this.editor.selection(null)
   }
-  this.editor.hover(null)
+
+  mousemove = (event) => {
+    const ci = this.editor.findItem(event, ['atoms'])
+    if (ci && ci.map === 'atoms')
+      this.editor.hover(
+        this.editor.render.ctab.molecule.atoms.get(ci.id)?.aam ? ci : null
+      )
+    else this.editor.hover(null)
+  }
+
+  mouseup = (event) => {
+    const ci = this.editor.findItem(event, ['atoms'])
+    const atoms = this.editor.render.ctab.molecule.atoms
+    if (ci && ci.map === 'atoms' && atoms.get(ci.id)?.aam) {
+      const action = new Action()
+      const aam = atoms.get(ci.id)?.aam
+      atoms.forEach((atom, aid) => {
+        if (atom.aam === aam)
+          action.mergeWith(
+            fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 }, null)
+          )
+      })
+      this.editor.update(action)
+    }
+    this.editor.hover(null)
+  }
 }
 
 export default ReactionUnmapTool

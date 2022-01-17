@@ -25,7 +25,7 @@ import {
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
-import Editor from "../Editor";
+import Editor from '../Editor'
 
 class BondTool {
   isTool: boolean
@@ -36,14 +36,14 @@ class BondTool {
 
   constructor(editor, bondProps) {
     this.editor = editor
-    this.atomProps = {label: 'C'}
+    this.atomProps = { label: 'C' }
     this.bondProps = bondProps
     this.isTool = true
     if (editor.selection() || editor.selection().bonds) {
       const action = fromBondsAttrs(
-          editor.render.ctab,
-          editor.selection().bonds,
-          bondProps
+        editor.render.ctab,
+        editor.selection().bonds,
+        bondProps
       )
       editor.update(action)
       editor.selection(null)
@@ -62,43 +62,43 @@ class BondTool {
     const result: Array<number> = []
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
-          functionalGroups,
-          ci.id
+        functionalGroups,
+        ci.id
       )
       if (atomId !== null) atomResult.push(atomId)
     }
     if (ci && functionalGroups.size && ci.map === 'bonds') {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
-          molecule,
-          functionalGroups,
-          ci.id
+        molecule,
+        functionalGroups,
+        ci.id
       )
       if (bondId !== null) bondResult.push(bondId)
     }
     if (atomResult.length > 0) {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-            functionalGroups,
-            id
+          functionalGroups,
+          id
         )
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
       }
-      this.editor.event.removeFG.dispatch({fgIds: result})
+      this.editor.event.removeFG.dispatch({ fgIds: result })
       return
     } else if (bondResult.length > 0) {
       for (const id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
-            molecule,
-            functionalGroups,
-            id
+          molecule,
+          functionalGroups,
+          id
         )
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
       }
-      this.editor.event.removeFG.dispatch({fgIds: result})
+      this.editor.event.removeFG.dispatch({ fgIds: result })
       return
     }
     const rnd = this.editor.render
@@ -109,7 +109,7 @@ class BondTool {
       item: this.editor.findItem(event, ['atoms', 'bonds'])
     }
     if (!this.dragCtx.item)
-        // ci.type == 'Canvas'
+      // ci.type == 'Canvas'
       delete this.dragCtx.item
     return true
   }
@@ -129,7 +129,7 @@ class BondTool {
       if (!event.ctrlKey) angle = utils.fracAngle(angle, null)
 
       const degrees = utils.degrees(angle)
-      this.editor.event.message.dispatch({info: degrees + 'º'})
+      this.editor.event.message.dispatch({ info: degrees + 'º' })
 
       if (!('item' in dragCtx) || dragCtx.item.map === 'atoms') {
         if ('action' in dragCtx) dragCtx.action.perform(rnd.ctab)
@@ -144,11 +144,11 @@ class BondTool {
           endAtom = editor.findItem(event, ['atoms'], dragCtx.item)
           const closestSGroup = editor.findItem(event, ['functionalGroups'])
           if (
-              closestSGroup &&
-              FunctionalGroup.isContractedFunctionalGroup(
-                  closestSGroup.id,
-                  functionalGroups
-              )
+            closestSGroup &&
+            FunctionalGroup.isContractedFunctionalGroup(
+              closestSGroup.id,
+              functionalGroups
+            )
           ) {
             const sGroup = sgroups.get(closestSGroup.id)
             const sGroupAtoms = SGroup.getAtoms(molecule, sGroup?.item)
@@ -158,25 +158,24 @@ class BondTool {
             }
           }
           const fGroupId =
-              endAtom &&
-              FunctionalGroup.findFunctionalGroupByAtom(
-                  functionalGroups,
-                  endAtom.id
-              )
-          const fGroup =
-              typeof fGroupId === 'number' && sgroups.get(fGroupId)
+            endAtom &&
+            FunctionalGroup.findFunctionalGroupByAtom(
+              functionalGroups,
+              endAtom.id
+            )
+          const fGroup = typeof fGroupId === 'number' && sgroups.get(fGroupId)
           const fGroupAtoms =
-              fGroup && SGroup.getAtoms(molecule, fGroup.item) as any
+            fGroup && (SGroup.getAtoms(molecule, fGroup.item) as any)
           if (endAtom && fGroup && endAtom.id !== fGroupAtoms?.[0]) {
-            this.editor.event.removeFG.dispatch({fgIds: [fGroupId]})
+            this.editor.event.removeFG.dispatch({ fgIds: [fGroupId] })
             endAtom = null
           }
           if (endAtom && fGroup && endAtom.id === fGroupAtoms?.[0]) {
             const atomNeighbours = molecule.atomGetNeighbors(endAtom.id)
             atomNeighbours?.forEach((nei) => {
               !fGroupAtoms?.includes(nei.aid) &&
-              !extraNeighbour.includes(nei.aid) &&
-              extraNeighbour.push(nei.aid)
+                !extraNeighbour.includes(nei.aid) &&
+                extraNeighbour.push(nei.aid)
             })
           }
           if (extraNeighbour.length >= 1) {
@@ -190,28 +189,28 @@ class BondTool {
           const atomResult: Array<number> = []
           const result: Array<number> = []
           if (
-              endAtom &&
-              endAtom.map === 'atoms' &&
-              functionalGroups.size &&
-              this.dragCtx
+            endAtom &&
+            endAtom.map === 'atoms' &&
+            functionalGroups.size &&
+            this.dragCtx
           ) {
             const atomId = FunctionalGroup.atomsInFunctionalGroup(
-                functionalGroups,
-                endAtom.id
+              functionalGroups,
+              endAtom.id
             )
             if (atomId !== null) atomResult.push(atomId)
           }
           if (atomResult.length > 0) {
             for (const id of atomResult) {
               const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-                  functionalGroups,
-                  id
+                functionalGroups,
+                id
               )
               fgId !== null && !result.includes(fgId) && result.push(fgId)
             }
           }
           if (result.length > 0) {
-            this.editor.event.removeFG.dispatch({fgIds: result})
+            this.editor.event.removeFG.dispatch({ fgIds: result })
             delete this.dragCtx
             return
           }
@@ -231,18 +230,22 @@ class BondTool {
             // first mousedown event intersect with any atom and
             // rotation only, leght of bond = 1;
             const atom = rnd.ctab.molecule.atoms.get(beginAtom)
-            beginPos = utils.calcNewAtomPos(atom?.pp.get_xy0(), xy1, event.ctrlKey)
+            beginPos = utils.calcNewAtomPos(
+              atom?.pp.get_xy0(),
+              xy1,
+              event.ctrlKey
+            )
           }
         }
         // don't rotate the bond if the distance between the start and end point is too small
         if (dist > 0.3)
           dragCtx.action = fromBondAddition(
-              rnd.ctab,
-              this.bondProps,
-              beginAtom,
-              endAtom,
-              beginPos,
-              endPos
+            rnd.ctab,
+            this.bondProps,
+            beginAtom,
+            endAtom,
+            beginPos,
+            endPos
           )[0]
         else delete dragCtx.action
         this.editor.update(dragCtx.action, true)
@@ -264,29 +267,34 @@ class BondTool {
       } else if (!('item' in dragCtx)) {
         const xy = rnd.page2obj(event)
         const v = new Vec2(1.0 / 2, 0).rotate(
-            this.bondProps.type === Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0
+          this.bondProps.type === Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0
         )
         const bondAddition = fromBondAddition(
-            rnd.ctab,
-            this.bondProps,
-            {label: 'C'},
-            {label: 'C'},
-            Vec2.diff(xy, v),
-            Vec2.sum(xy, v)
+          rnd.ctab,
+          this.bondProps,
+          { label: 'C' },
+          { label: 'C' },
+          Vec2.diff(xy, v),
+          Vec2.sum(xy, v)
         )
 
         this.editor.update(bondAddition[0])
       } else if (dragCtx.item.map === 'atoms') {
         // when does it hapend?
         this.editor.update(
-            fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id, undefined)[0]
+          fromBondAddition(
+            rnd.ctab,
+            this.bondProps,
+            dragCtx.item.id,
+            undefined
+          )[0]
         )
       } else if (dragCtx.item.map === 'bonds') {
         const bondProps = Object.assign({}, this.bondProps)
         const bond = struct.bonds.get(dragCtx.item.id) as Bond
 
         this.editor.update(
-            bondChangingAction(rnd.ctab, dragCtx.item.id, bond, bondProps)
+          bondChangingAction(rnd.ctab, dragCtx.item.id, bond, bondProps)
         )
       }
       delete this.dragCtx

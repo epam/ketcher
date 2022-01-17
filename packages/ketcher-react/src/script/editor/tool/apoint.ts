@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { fromAtomsAttrs, FunctionalGroup } from 'ketcher-core'
-import Editor from "../Editor";
+import Editor from '../Editor'
 
 class APointTool {
   editor: Editor
@@ -46,22 +46,22 @@ class APointTool {
     const result: Array<number> = []
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
-          functionalGroups,
-          ci.id
+        functionalGroups,
+        ci.id
       )
       if (atomId !== null) atomResult.push(atomId)
     }
     if (atomResult.length > 0) {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-            functionalGroups,
-            id
+          functionalGroups,
+          id
         )
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
       }
-      this.editor.event.removeFG.dispatch({fgIds: result})
+      this.editor.event.removeFG.dispatch({ fgIds: result })
       return
     }
 
@@ -73,13 +73,18 @@ class APointTool {
         attpnt: atom?.attpnt
       })
       Promise.resolve(res)
-          .then((newatom) => {
-            if (atom?.attpnt !== newatom.attpnt) {
-              const action = fromAtomsAttrs(editor.render.ctab, ci.id, newatom, null)
-              editor.update(action)
-            }
-          })
-          .catch(() => null) // w/o changes
+        .then((newatom) => {
+          if (atom?.attpnt !== newatom.attpnt) {
+            const action = fromAtomsAttrs(
+              editor.render.ctab,
+              ci.id,
+              newatom,
+              null
+            )
+            editor.update(action)
+          }
+        })
+        .catch(() => null) // w/o changes
       return true
     }
     return true

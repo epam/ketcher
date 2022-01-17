@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Elements, FunctionalGroup } from 'ketcher-core'
-import Editor from "../Editor";
+import Editor from '../Editor'
 
 class AttachTool {
   attach: any
@@ -39,9 +39,10 @@ class AttachTool {
     const ci = this.editor.findItem(event, ['atoms', 'bonds'])
     const struct = rnd.ctab.molecule
     if (
-        ci &&
-        ((ci.map === 'atoms' && Elements.get(struct.atoms.get(ci.id)?.label as string)) ||
-            ci.map === 'bonds')
+      ci &&
+      ((ci.map === 'atoms' &&
+        Elements.get(struct.atoms.get(ci.id)?.label as string)) ||
+        ci.map === 'bonds')
     )
       this.editor.hover(ci)
     else this.editor.hover(null)
@@ -59,50 +60,51 @@ class AttachTool {
     const result: Array<number> = []
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
-          functionalGroups,
-          ci.id
+        functionalGroups,
+        ci.id
       )
       if (atomId !== null) atomResult.push(atomId)
     }
     if (ci && functionalGroups.size && ci.map === 'bonds') {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
-          molecule,
-          functionalGroups,
-          ci.id
+        molecule,
+        functionalGroups,
+        ci.id
       )
       if (bondId !== null) bondResult.push(bondId)
     }
     if (atomResult.length > 0) {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-            functionalGroups,
-            id
+          functionalGroups,
+          id
         )
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
       }
-      this.editor.event.removeFG.dispatch({fgIds: result})
+      this.editor.event.removeFG.dispatch({ fgIds: result })
       return
     } else if (bondResult.length > 0) {
       for (const id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
-            molecule,
-            functionalGroups,
-            id
+          molecule,
+          functionalGroups,
+          id
         )
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
       }
-      this.editor.event.removeFG.dispatch({fgIds: result})
+      this.editor.event.removeFG.dispatch({ fgIds: result })
       return
     }
 
     if (
-        ci &&
-        ((ci.map === 'atoms' && Elements.get(molecule.atoms.get(ci.id)?.label as string)) ||
-            ci.map === 'bonds')
+      ci &&
+      ((ci.map === 'atoms' &&
+        Elements.get(molecule.atoms.get(ci.id)?.label as string)) ||
+        ci.map === 'bonds')
     ) {
       if (ci.map === 'atoms') this.attach.atomid = ci.id
       else this.attach.bondid = ci.id

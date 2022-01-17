@@ -15,55 +15,60 @@
  ***************************************************************************/
 
 import { fromMultipleMove, fromPlusAddition } from 'ketcher-core'
+import Editor from '../Editor'
 
-function ReactionPlusTool(editor) {
-  if (!(this instanceof ReactionPlusTool)) return new ReactionPlusTool(editor)
+class ReactionPlusTool {
+  editor: Editor
+  dragCtx: any
 
-  this.editor = editor
-  this.editor.selection(null)
-}
-
-ReactionPlusTool.prototype.mousedown = function (event) {
-  var rnd = this.editor.render
-  var ci = this.editor.findItem(event, ['rxnPluses'])
-  if (ci && ci.map === 'rxnPluses') {
-    this.editor.hover(null)
-    this.editor.selection({ rxnPluses: [ci.id] })
-    this.dragCtx = { xy0: rnd.page2obj(event) }
-  }
-}
-
-ReactionPlusTool.prototype.mousemove = function (event) {
-  var rnd = this.editor.render
-  if ('dragCtx' in this) {
-    if (this.dragCtx.action) this.dragCtx.action.perform(rnd.ctab)
-    this.dragCtx.action = fromMultipleMove(
-      rnd.ctab,
-      this.editor.selection() || {},
-      rnd.page2obj(event).sub(this.dragCtx.xy0)
-    )
-    this.editor.update(this.dragCtx.action, true)
-  } else {
-    this.editor.hover(this.editor.findItem(event, ['rxnPluses']))
-  }
-}
-
-ReactionPlusTool.prototype.mouseup = function () {
-  if (!this.dragCtx) return true
-
-  if (this.dragCtx.action) {
-    this.editor.update(this.dragCtx.action) // TODO investigate, subsequent undo/redo fails
+  constructor(editor) {
+    this.editor = editor
+    this.editor.selection(null)
   }
 
-  delete this.dragCtx
-  return true
-}
+  mousedown = (event) => {
+    const rnd = this.editor.render
+    const ci = this.editor.findItem(event, ['rxnPluses'])
+    if (ci && ci.map === 'rxnPluses') {
+      this.editor.hover(null)
+      this.editor.selection({ rxnPluses: [ci.id] })
+      this.dragCtx = { xy0: rnd.page2obj(event) }
+    }
+  }
 
-ReactionPlusTool.prototype.click = function (event) {
-  const rnd = this.editor.render
-  const ci = this.editor.findItem(event, ['rxnPluses'])
-  if (!ci) {
-    this.editor.update(fromPlusAddition(rnd.ctab, rnd.page2obj(event)))
+  mousemove = (event) => {
+    const rnd = this.editor.render
+    if ('dragCtx' in this) {
+      if (this.dragCtx.action) this.dragCtx.action.perform(rnd.ctab)
+      this.dragCtx.action = fromMultipleMove(
+        rnd.ctab,
+        this.editor.selection() || {},
+        rnd.page2obj(event).sub(this.dragCtx.xy0)
+      )
+      this.editor.update(this.dragCtx.action, true)
+    } else {
+      // @ts-ignore
+      this.editor.hover(this.editor.findItem(event, ['rxnPluses']))
+    }
+  }
+
+  mouseup = () => {
+    if (!this.dragCtx) return true
+
+    if (this.dragCtx.action) {
+      this.editor.update(this.dragCtx.action) // TODO investigate, subsequent undo/redo fails
+    }
+
+    delete this.dragCtx
+    return true
+  }
+
+  click = (event) => {
+    const rnd = this.editor.render
+    const ci = this.editor.findItem(event, ['rxnPluses'])
+    if (!ci) {
+      this.editor.update(fromPlusAddition(rnd.ctab, rnd.page2obj(event)))
+    }
   }
 }
 

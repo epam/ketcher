@@ -15,69 +15,80 @@
  ***************************************************************************/
 
 import { Elements, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core'
+import Editor from '../Editor'
 
-function ChargeTool(editor, charge) {
-  if (!(this instanceof ChargeTool)) return new ChargeTool(editor, charge)
+class ChargeTool {
+  editor: Editor
+  charge: any
 
-  this.editor = editor
-  this.editor.selection(null)
-  this.charge = charge
-  this.struct = editor.render.ctab
-  this.sgroups = editor.render.ctab.sgroups
-  this.molecule = editor.render.ctab.molecule
-  this.functionalGroups = this.molecule.functionalGroups
-}
-
-ChargeTool.prototype.mousemove = function (event) {
-  var rnd = this.editor.render
-  var ci = this.editor.findItem(event, ['atoms'])
-  var struct = rnd.ctab.molecule
-  if (ci && ci.map === 'atoms' && Elements.get(struct.atoms.get(ci.id)?.label))
-    this.editor.hover(ci)
-  else this.editor.hover(null)
-  return true
-}
-
-ChargeTool.prototype.click = function (event) {
-  var editor = this.editor
-  var rnd = editor.render
-  var struct = rnd.ctab.molecule
-  const ci = editor.findItem(event, ['atoms', 'bonds'])
-  const atomResult = []
-  const result = []
-  if (ci && this.functionalGroups.size && ci.map === 'atoms') {
-    const atomId = FunctionalGroup.atomsInFunctionalGroup(
-      this.functionalGroups,
-      ci.id
-    )
-    if (atomId !== null) atomResult.push(atomId)
+  constructor(editor, charge) {
+    this.editor = editor
+    this.editor.selection(null)
+    this.charge = charge
   }
-  if (atomResult.length > 0) {
-    for (const id of atomResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-        this.functionalGroups,
-        id
+
+  mousemove = (event) => {
+    const struct = this.editor.render.ctab
+    const molecule = struct.molecule
+    const ci = this.editor.findItem(event, ['atoms'])
+    if (
+      ci &&
+      ci.map === 'atoms' &&
+      Elements.get(molecule.atoms.get(ci.id)?.label as number | string)
+    )
+      this.editor.hover(ci)
+    else this.editor.hover(null)
+    return true
+  }
+
+  click = (event) => {
+    const editor = this.editor
+    const struct = this.editor.render.ctab
+    const molecule = struct.molecule
+    const functionalGroups = molecule.functionalGroups
+    const rnd = editor.render
+    const ci = editor.findItem(event, ['atoms', 'bonds'])
+    const atomResult: Array<number> = []
+    const result: Array<number> = []
+    if (ci && functionalGroups.size && ci.map === 'atoms') {
+      const atomId = FunctionalGroup.atomsInFunctionalGroup(
+        functionalGroups,
+        ci.id
       )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
-      }
+      if (atomId !== null) atomResult.push(atomId)
     }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
+    if (atomResult.length > 0) {
+      for (const id of atomResult) {
+        const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+          functionalGroups,
+          id
+        )
+        if (fgId !== null && !result.includes(fgId)) {
+          result.push(fgId)
+        }
+      }
+      this.editor.event.removeFG.dispatch({ fgIds: result })
+      return
+    }
+    if (
+      ci &&
+      ci.map === 'atoms' &&
+      Elements.get(molecule.atoms.get(ci.id)?.label as string | number)
+    ) {
+      this.editor.hover(null)
+      this.editor.update(
+        fromAtomsAttrs(
+          rnd.ctab,
+          ci.id,
+          {
+            charge: molecule.atoms.get(ci.id)?.charge + this.charge
+          },
+          null
+        )
+      )
+    }
+    return true
   }
-  if (
-    ci &&
-    ci.map === 'atoms' &&
-    Elements.get(struct.atoms.get(ci.id)?.label)
-  ) {
-    this.editor.hover(null)
-    this.editor.update(
-      fromAtomsAttrs(rnd.ctab, ci.id, {
-        charge: struct.atoms.get(ci.id).charge + this.charge
-      })
-    )
-  }
-  return true
 }
 
 export default ChargeTool

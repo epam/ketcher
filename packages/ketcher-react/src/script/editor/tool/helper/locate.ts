@@ -17,8 +17,8 @@
 import { FunctionalGroup, Vec2 } from 'ketcher-core'
 
 function getElementsInRectangle(restruct, p0, p1) {
-  const bondList = []
-  const atomList = []
+  const bondList: Array<number> = []
+  const atomList: Array<number> = []
   const sGroups = restruct.sgroups
   const functionalGroups = restruct.molecule.functionalGroups
 
@@ -45,8 +45,9 @@ function getElementsInRectangle(restruct, p0, p1) {
         functionalGroups,
         true
       )
-    )
+    ) {
       bondList.push(bid)
+    }
   })
 
   restruct.atoms.forEach((atom, aid) => {
@@ -67,13 +68,14 @@ function getElementsInRectangle(restruct, p0, p1) {
         true
       ) ||
         aid === sGroup.item.atoms[0])
-    )
+    ) {
       atomList.push(aid)
+    }
   })
 
-  const rxnArrowsList = []
-  const rxnPlusesList = []
-  const simpleObjectsList = []
+  const rxnArrowsList: Array<number> = []
+  const rxnPlusesList: Array<number> = []
+  const simpleObjectsList: Array<number> = []
 
   restruct.rxnArrows.forEach((item, id) => {
     if (
@@ -81,8 +83,9 @@ function getElementsInRectangle(restruct, p0, p1) {
       item.item.center().x < x1 &&
       item.item.center().y > y0 &&
       item.item.center().y < y1
-    )
+    ) {
       rxnArrowsList.push(id)
+    }
   })
 
   restruct.rxnPluses.forEach((item, id) => {
@@ -91,8 +94,9 @@ function getElementsInRectangle(restruct, p0, p1) {
       item.item.pp.x < x1 &&
       item.item.pp.y > y0 &&
       item.item.pp.y < y1
-    )
+    ) {
       rxnPlusesList.push(id)
+    }
   })
 
   restruct.simpleObjects.forEach((item, id) => {
@@ -100,28 +104,32 @@ function getElementsInRectangle(restruct, p0, p1) {
     const referencePointInRectangle = referencePoints.find(
       (point) => point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1
     )
-    if (referencePointInRectangle) simpleObjectsList.push(id)
+    if (referencePointInRectangle) {
+      simpleObjectsList.push(id)
+    }
   })
 
-  const enhancedFlagList = []
+  const enhancedFlagList: Array<number> = []
   restruct.enhancedFlags.forEach((item, id) => {
     if (!item.pp) return
-    if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1)
+    if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1) {
       enhancedFlagList.push(id)
+    }
   })
 
-  const sgroupDataList = []
+  const sgroupDataList: Array<number> = []
   restruct.sgroupData.forEach((item, id) => {
     if (
       item.sgroup.pp.x > x0 &&
       item.sgroup.pp.x < x1 &&
       item.sgroup.pp.y > y0 &&
       item.sgroup.pp.y < y1
-    )
+    ) {
       sgroupDataList.push(id)
+    }
   })
 
-  const textsList = []
+  const textsList: Array<number> = []
   restruct.texts.forEach((item, id) => {
     const referencePoints = item.getReferencePoints()
     const referencePointInRectangle = referencePoints.find((point) => {
@@ -147,13 +155,15 @@ function getElementsInRectangle(restruct, p0, p1) {
 
 function getElementsInPolygon(restruct, rr) {
   // eslint-disable-line max-statements
-  const bondList = []
-  const atomList = []
-  const r = []
+  const bondList: Array<number> = []
+  const atomList: Array<number> = []
+  const r: any = []
   const sGroups = restruct.sgroups
   const functionalGroups = restruct.molecule.functionalGroups
 
-  for (let i = 0; i < rr.length; ++i) r[i] = new Vec2(rr[i].x, rr[i].y)
+  for (let i = 0; i < rr.length; ++i) {
+    r[i] = new Vec2(rr[i].x, rr[i].y)
+  }
 
   restruct.bonds.forEach((bond, bid) => {
     const centre = Vec2.lc2(
@@ -170,8 +180,9 @@ function getElementsInPolygon(restruct, rr) {
         functionalGroups,
         true
       )
-    )
+    ) {
       bondList.push(bid)
+    }
   })
 
   restruct.atoms.forEach((atom, aid) => {
@@ -189,25 +200,30 @@ function getElementsInPolygon(restruct, rr) {
         true
       ) ||
         aid === sGroup.item.atoms[0])
-    )
+    ) {
       atomList.push(aid)
+    }
   })
 
-  const rxnArrowsList = []
-  const rxnPlusesList = []
-  const simpleObjectsList = []
-  const textsList = []
+  const rxnArrowsList: Array<number> = []
+  const rxnPlusesList: Array<number> = []
+  const simpleObjectsList: Array<number> = []
+  const textsList: Array<number> = []
 
   restruct.rxnArrows.forEach((item, id) => {
     const referencePoints = item.getReferencePoints(true)
     const referencePointInPolygon = referencePoints.find((point) =>
       isPointInPolygon(r, point)
     )
-    if (referencePointInPolygon) rxnArrowsList.push(id)
+    if (referencePointInPolygon) {
+      rxnArrowsList.push(id)
+    }
   })
 
   restruct.rxnPluses.forEach((item, id) => {
-    if (isPointInPolygon(r, item.item.pp)) rxnPlusesList.push(id)
+    if (isPointInPolygon(r, item.item.pp)) {
+      rxnPlusesList.push(id)
+    }
   })
 
   restruct.simpleObjects.forEach((item, id) => {
@@ -215,7 +231,9 @@ function getElementsInPolygon(restruct, rr) {
     const referencePointInPolygon = referencePoints.find((point) =>
       isPointInPolygon(r, point)
     )
-    if (referencePointInPolygon) simpleObjectsList.push(id)
+    if (referencePointInPolygon) {
+      simpleObjectsList.push(id)
+    }
   })
 
   restruct.texts.forEach((item, id) => {
@@ -229,14 +247,18 @@ function getElementsInPolygon(restruct, rr) {
     }
   })
 
-  const enhancedFlagList = []
+  const enhancedFlagList: Array<number> = []
   restruct.enhancedFlags.forEach((item, id) => {
-    if (item.pp && isPointInPolygon(r, item.pp)) enhancedFlagList.push(id)
+    if (item.pp && isPointInPolygon(r, item.pp)) {
+      enhancedFlagList.push(id)
+    }
   })
 
-  const sgroupDataList = []
+  const sgroupDataList: Array<number> = []
   restruct.sgroupData.forEach((item, id) => {
-    if (isPointInPolygon(r, item.sgroup.pp)) sgroupDataList.push(id)
+    if (isPointInPolygon(r, item.sgroup.pp)) {
+      sgroupDataList.push(id)
+    }
   })
 
   return {
@@ -255,22 +277,22 @@ function getElementsInPolygon(restruct, rr) {
 // 'Remove unused methods from render' commit
 function isPointInPolygon(r, p) {
   // eslint-disable-line max-statements
-  var d = new Vec2(0, 1)
-  var n = d.rotate(Math.PI / 2)
-  var v0 = Vec2.diff(r[r.length - 1], p)
-  var n0 = Vec2.dot(n, v0)
-  var d0 = Vec2.dot(d, v0)
-  var w0 = null
-  var counter = 0
-  var eps = 1e-5
-  var flag1 = false
-  var flag0 = false
+  const d = new Vec2(0, 1)
+  const n = d.rotate(Math.PI / 2)
+  let v0 = Vec2.diff(r[r.length - 1], p)
+  let n0 = Vec2.dot(n, v0)
+  let d0 = Vec2.dot(d, v0)
+  let w0: Vec2 | null = null
+  let counter = 0
+  const eps = 1e-5
+  let flag1 = false
+  let flag0 = false
 
-  for (var i = 0; i < r.length; ++i) {
-    var v1 = Vec2.diff(r[i], p)
-    var w1 = Vec2.diff(v1, v0)
-    var n1 = Vec2.dot(n, v1)
-    var d1 = Vec2.dot(d, v1)
+  for (let i = 0; i < r.length; ++i) {
+    const v1 = Vec2.diff(r[i], p)
+    const w1 = Vec2.diff(v1, v0)
+    const n1 = Vec2.dot(n, v1)
+    const d1 = Vec2.dot(d, v1)
     flag1 = false
     if (n1 * n0 < 0) {
       if (d1 * d0 > -eps) {
@@ -284,8 +306,13 @@ function isPointInPolygon(r, p) {
         flag1 = true
       }
     }
-    if (flag1 && flag0 && Vec2.dot(w1, n) * Vec2.dot(w0, n) >= 0) flag1 = false
-    if (flag1) counter++
+    // @ts-ignore
+    if (flag1 && flag0 && Vec2.dot(w1, n) * Vec2.dot(w0, n) >= 0) {
+      flag1 = false
+    }
+    if (flag1) {
+      counter++
+    }
     v0 = v1
     n0 = n1
     d0 = d1

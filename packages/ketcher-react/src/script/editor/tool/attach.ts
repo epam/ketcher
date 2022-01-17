@@ -15,106 +15,106 @@
  ***************************************************************************/
 
 import { Elements, FunctionalGroup } from 'ketcher-core'
+import Editor from "../Editor";
 
-function AttachTool(editor, attachPoints) {
-  if (!(this instanceof AttachTool)) return new AttachTool(editor, attachPoints)
+class AttachTool {
+  attach: any
+  editor: Editor
 
-  this.attach = {
-    atomid: attachPoints.atomid || 0,
-    bondid: attachPoints.bondid || 0
-  }
-  this.editor = editor
-  this.struct = editor.render.ctab
-  this.sgroups = editor.render.ctab.sgroups
-  this.molecule = editor.render.ctab.molecule
-  this.functionalGroups = this.molecule.functionalGroups
-
-  this.editor.selection({
-    atoms: [this.attach.atomid],
-    bonds: [this.attach.bondid]
-  })
-}
-
-AttachTool.prototype.mousemove = function (event) {
-  const rnd = this.editor.render
-
-  const ci = this.editor.findItem(event, ['atoms', 'bonds'])
-  const struct = rnd.ctab.molecule
-  if (
-    ci &&
-    ((ci.map === 'atoms' && Elements.get(struct.atoms.get(ci.id)?.label)) ||
-      ci.map === 'bonds')
-  )
-    this.editor.hover(ci)
-  else this.editor.hover(null)
-  return true
-}
-
-AttachTool.prototype.click = function (event) {
-  const editor = this.editor
-  const rnd = editor.render
-  const struct = rnd.ctab.molecule
-  const ci = editor.findItem(event, ['atoms', 'bonds'])
-  const atomResult = []
-  const bondResult = []
-  const result = []
-  if (ci && this.functionalGroups.size && ci.map === 'atoms') {
-    const atomId = FunctionalGroup.atomsInFunctionalGroup(
-      this.functionalGroups,
-      ci.id
-    )
-    if (atomId !== null) atomResult.push(atomId)
-  }
-  if (ci && this.functionalGroups.size && ci.map === 'bonds') {
-    const bondId = FunctionalGroup.bondsInFunctionalGroup(
-      this.molecule,
-      this.functionalGroups,
-      ci.id
-    )
-    if (bondId !== null) bondResult.push(bondId)
-  }
-  if (atomResult.length > 0) {
-    for (const id of atomResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-        this.functionalGroups,
-        id
-      )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
-      }
+  constructor(editor, attachPoints) {
+    this.attach = {
+      atomid: attachPoints.atomid || 0,
+      bondid: attachPoints.bondid || 0
     }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
-  } else if (bondResult.length > 0) {
-    for (const id of bondResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByBond(
-        this.molecule,
-        this.functionalGroups,
-        id
-      )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
-      }
-    }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
-  }
-
-  if (
-    ci &&
-    ((ci.map === 'atoms' && Elements.get(struct.atoms.get(ci.id)?.label)) ||
-      ci.map === 'bonds')
-  ) {
-    if (ci.map === 'atoms') this.attach.atomid = ci.id
-    else this.attach.bondid = ci.id
-
+    this.editor = editor
     this.editor.selection({
       atoms: [this.attach.atomid],
       bonds: [this.attach.bondid]
     })
-    this.editor.event.attachEdit.dispatch(this.attach)
   }
-  return true
+
+  mousemove = (event) => {
+    const rnd = this.editor.render
+
+    const ci = this.editor.findItem(event, ['atoms', 'bonds'])
+    const struct = rnd.ctab.molecule
+    if (
+        ci &&
+        ((ci.map === 'atoms' && Elements.get(struct.atoms.get(ci.id)?.label as string)) ||
+            ci.map === 'bonds')
+    )
+      this.editor.hover(ci)
+    else this.editor.hover(null)
+    return true
+  }
+
+  click = (event) => {
+    const editor = this.editor
+    const rnd = editor.render
+    const molecule = rnd.ctab.molecule
+    const functionalGroups = molecule.functionalGroups
+    const ci = editor.findItem(event, ['atoms', 'bonds'])
+    const atomResult: Array<number> = []
+    const bondResult: Array<number> = []
+    const result: Array<number> = []
+    if (ci && functionalGroups.size && ci.map === 'atoms') {
+      const atomId = FunctionalGroup.atomsInFunctionalGroup(
+          functionalGroups,
+          ci.id
+      )
+      if (atomId !== null) atomResult.push(atomId)
+    }
+    if (ci && functionalGroups.size && ci.map === 'bonds') {
+      const bondId = FunctionalGroup.bondsInFunctionalGroup(
+          molecule,
+          functionalGroups,
+          ci.id
+      )
+      if (bondId !== null) bondResult.push(bondId)
+    }
+    if (atomResult.length > 0) {
+      for (const id of atomResult) {
+        const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+            functionalGroups,
+            id
+        )
+        if (fgId !== null && !result.includes(fgId)) {
+          result.push(fgId)
+        }
+      }
+      this.editor.event.removeFG.dispatch({fgIds: result})
+      return
+    } else if (bondResult.length > 0) {
+      for (const id of bondResult) {
+        const fgId = FunctionalGroup.findFunctionalGroupByBond(
+            molecule,
+            functionalGroups,
+            id
+        )
+        if (fgId !== null && !result.includes(fgId)) {
+          result.push(fgId)
+        }
+      }
+      this.editor.event.removeFG.dispatch({fgIds: result})
+      return
+    }
+
+    if (
+        ci &&
+        ((ci.map === 'atoms' && Elements.get(molecule.atoms.get(ci.id)?.label as string)) ||
+            ci.map === 'bonds')
+    ) {
+      if (ci.map === 'atoms') this.attach.atomid = ci.id
+      else this.attach.bondid = ci.id
+
+      this.editor.selection({
+        atoms: [this.attach.atomid],
+        bonds: [this.attach.bondid]
+      })
+      this.editor.event.attachEdit.dispatch(this.attach)
+    }
+    return true
+  }
 }
 
 export default AttachTool

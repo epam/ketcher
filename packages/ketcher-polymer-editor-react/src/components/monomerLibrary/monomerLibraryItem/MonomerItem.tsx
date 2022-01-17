@@ -28,7 +28,6 @@ const MonomerItem = (props: MonomerItemPropTypes) => {
   const Card = styled.div(({ theme }) => ({
     background: theme.color.text.light,
     border: `1px solid ${theme.color.text.primary}`,
-    boxSizing: 'border-box',
     borderRadius: '2px',
     width: '32px',
     height: '32px',

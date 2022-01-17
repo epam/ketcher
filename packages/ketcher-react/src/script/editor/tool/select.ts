@@ -485,8 +485,8 @@ class SelectTool {
 
     if (ci.map === 'atoms') {
       const action = new Action()
-      var atom = molecule.atoms.get(ci.id)
-      var ra = editor.event.elementEdit.dispatch(atom)
+      const atom = molecule.atoms.get(ci.id)
+      const ra = editor.event.elementEdit.dispatch(atom)
       if (selection?.atoms) {
         const selectionAtoms = selection.atoms
         Promise.resolve(ra)
@@ -522,7 +522,7 @@ class SelectTool {
       ci.map === 'sgroupData'
     ) {
       editor.selection(closestToSel(ci))
-      sgroupDialog(editor, ci.id)
+      sgroupDialog(editor, ci.id, null)
     } else if (ci.map === 'texts') {
       editor.selection(closestToSel(ci))
       const text = molecule.texts.get(ci.id)
@@ -548,7 +548,7 @@ class SelectTool {
     if (this.dragCtx && this.dragCtx.stopTapping) this.dragCtx.stopTapping()
 
     if (this.dragCtx && this.dragCtx.action) {
-      var action = this.dragCtx.action
+      const action = this.dragCtx.action
       this.editor.update(action)
     }
     if (this.#lassoHelper.running())
@@ -559,6 +559,7 @@ class SelectTool {
     this.editor.hover(null)
   }
 }
+
 function closestToSel(ci) {
   const res = {}
   res[ci.map] = [ci.id]

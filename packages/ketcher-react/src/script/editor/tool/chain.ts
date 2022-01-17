@@ -27,198 +27,201 @@ import {
 
 import { atomLongtapEvent } from './atom'
 import utils from '../shared/utils'
+import Editor from '../Editor'
 
-function ChainTool(editor) {
-  if (!(this instanceof ChainTool)) return new ChainTool(editor)
+class ChainTool {
+  editor: Editor
+  dragCtx: any
 
-  this.editor = editor
-  this.editor.selection(null)
-  this.struct = editor.render.ctab
-  this.sgroups = editor.render.ctab.sgroups
-  this.molecule = editor.render.ctab.molecule
-  this.functionalGroups = this.molecule.functionalGroups
-}
-
-ChainTool.prototype.mousedown = function (event) {
-  if (this.dragCtx) return
-  const rnd = this.editor.render
-  const ci = this.editor.findItem(event, ['atoms', 'bonds'])
-  const atomResult = []
-  const bondResult = []
-  const result = []
-  if (ci && this.functionalGroups.size && ci.map === 'atoms') {
-    const atomId = FunctionalGroup.atomsInFunctionalGroup(
-      this.functionalGroups,
-      ci.id
-    )
-    if (atomId !== null) atomResult.push(atomId)
+  constructor(editor) {
+    this.editor = editor
+    this.editor.selection(null)
   }
-  if (ci && this.functionalGroups.size && ci.map === 'bonds') {
-    const bondId = FunctionalGroup.bondsInFunctionalGroup(
-      this.molecule,
-      this.functionalGroups,
-      ci.id
-    )
-    if (bondId !== null) bondResult.push(bondId)
-  }
-  if (atomResult.length > 0) {
-    for (const id of atomResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-        this.functionalGroups,
-        id
+
+  mousedown = (event) => {
+    if (this.dragCtx) return
+    const struct = this.editor.render.ctab
+    const molecule = struct.molecule
+    const functionalGroups = molecule.functionalGroups
+    const rnd = this.editor.render
+    const ci = this.editor.findItem(event, ['atoms', 'bonds'])
+    const atomResult: Array<number> = []
+    const bondResult: Array<number> = []
+    const result: Array<number> = []
+    if (ci && functionalGroups.size && ci.map === 'atoms') {
+      const atomId = FunctionalGroup.atomsInFunctionalGroup(
+        functionalGroups,
+        ci.id
       )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
-      }
+      if (atomId !== null) atomResult.push(atomId)
     }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
-  } else if (bondResult.length > 0) {
-    for (const id of bondResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByBond(
-        this.molecule,
-        this.functionalGroups,
-        id
+    if (ci && functionalGroups.size && ci.map === 'bonds') {
+      const bondId = FunctionalGroup.bondsInFunctionalGroup(
+        molecule,
+        functionalGroups,
+        ci.id
       )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
-      }
+      if (bondId !== null) bondResult.push(bondId)
     }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
+    if (atomResult.length > 0) {
+      for (const id of atomResult) {
+        const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+          functionalGroups,
+          id
+        )
+        if (fgId !== null && !result.includes(fgId)) {
+          result.push(fgId)
+        }
+      }
+      this.editor.event.removeFG.dispatch({ fgIds: result })
+      return
+    } else if (bondResult.length > 0) {
+      for (const id of bondResult) {
+        const fgId = FunctionalGroup.findFunctionalGroupByBond(
+          molecule,
+          functionalGroups,
+          id
+        )
+        if (fgId !== null && !result.includes(fgId)) {
+          result.push(fgId)
+        }
+      }
+      this.editor.event.removeFG.dispatch({ fgIds: result })
+      return
+    }
+
+    this.editor.hover(null)
+    this.dragCtx = {
+      xy0: rnd.page2obj(event),
+      item: ci
+    }
+    if (ci && ci.map === 'atoms') {
+      this.editor.selection({ atoms: [ci.id] }) // for change atom
+      // this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
+      atomLongtapEvent(this, rnd)
+    }
+    if (!this.dragCtx.item)
+      // ci.type == 'Canvas'
+      delete this.dragCtx.item
+    return true
   }
 
-  this.editor.hover(null)
-  this.dragCtx = {
-    xy0: rnd.page2obj(event),
-    item: ci
-  }
-  if (ci && ci.map === 'atoms') {
-    this.editor.selection({ atoms: [ci.id] }) // for change atom
-    // this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
-    atomLongtapEvent(this, rnd)
-  }
-  if (!this.dragCtx.item)
-    // ci.type == 'Canvas'
-    delete this.dragCtx.item
-  return true
-}
+  mousemove = (event) => {
+    const editor = this.editor
+    const restruct = editor.render.ctab
+    const dragCtx = this.dragCtx
 
-ChainTool.prototype.mousemove = function (event) {
-  // eslint-disable-line max-statements
-  const editor = this.editor
-  const restruct = editor.render.ctab
-  const dragCtx = this.dragCtx
+    editor.hover(this.editor.findItem(event, ['atoms', 'bonds']))
+    if (!dragCtx) return true
 
-  editor.hover(this.editor.findItem(event, ['atoms', 'bonds']))
-  if (!dragCtx) return true
+    if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
 
-  if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
+    editor.selection(null)
 
-  editor.selection(null)
+    if (!dragCtx.item || dragCtx.item.map === 'atoms') {
+      if (dragCtx.action) dragCtx.action.perform(restruct)
 
-  if (!dragCtx.item || dragCtx.item.map === 'atoms') {
-    if (dragCtx.action) dragCtx.action.perform(restruct)
+      const atoms = restruct.molecule.atoms
 
-    const atoms = restruct.molecule.atoms
+      const pos0 = dragCtx.item ? atoms.get(dragCtx.item.id)?.pp : dragCtx.xy0
 
-    const pos0 = dragCtx.item ? atoms.get(dragCtx.item.id).pp : dragCtx.xy0
+      const pos1 = editor.render.page2obj(event)
+      const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length())
 
-    const pos1 = editor.render.page2obj(event)
-    const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length())
+      const angle = event.ctrlKey
+        ? utils.calcAngle(pos0, pos1)
+        : utils.fracAngle(pos0, pos1)
 
-    const angle = event.ctrlKey
-      ? utils.calcAngle(pos0, pos1)
-      : utils.fracAngle(pos0, pos1)
+      const [action, newItems] = fromChain(
+        restruct,
+        pos0,
+        angle,
+        sectCount,
+        dragCtx.item ? dragCtx.item.id : null
+      )
 
-    const [action, newItems] = fromChain(
-      restruct,
-      pos0,
-      angle,
-      sectCount,
-      dragCtx.item ? dragCtx.item.id : null
-    )
+      editor.event.message.dispatch({
+        info: sectCount + ' sectors'
+      })
 
-    editor.event.message.dispatch({
-      info: sectCount + ' sectors'
-    })
+      dragCtx.action = action
+      editor.update(dragCtx.action, true)
 
-    dragCtx.action = action
-    editor.update(dragCtx.action, true)
+      dragCtx.mergeItems = getItemsToFuse(editor, newItems)
+      editor.hover(getHoverToFuse(dragCtx.mergeItems))
 
-    dragCtx.mergeItems = getItemsToFuse(editor, newItems)
-    editor.hover(getHoverToFuse(dragCtx.mergeItems))
+      return true
+    }
 
     return true
   }
 
-  return true
-}
-
-ChainTool.prototype.mouseup = function () {
-  let atom
-  const atomResult = []
-  const result = []
-  if (this.dragCtx && this.dragCtx.mergeItems && this.functionalGroups.size) {
-    atom = this.dragCtx.mergeItems.atoms.values().next().value
-  }
-  if (atom) {
-    const atomId = FunctionalGroup.atomsInFunctionalGroup(
-      this.functionalGroups,
-      atom
-    )
-    if (atomId !== null) atomResult.push(atomId)
-  }
-  if (atomResult.length > 0) {
-    for (const id of atomResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-        this.functionalGroups,
-        id
-      )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
-      }
+  mouseup = () => {
+    const struct = this.editor.render.ctab
+    const molecule = struct.molecule
+    const functionalGroups = molecule.functionalGroups
+    let atom
+    const atomResult: Array<number> = []
+    const result: Array<number> = []
+    if (this.dragCtx && this.dragCtx.mergeItems && functionalGroups.size) {
+      atom = this.dragCtx.mergeItems.atoms.values().next().value
     }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
-  }
-  const dragCtx = this.dragCtx
-  if (!dragCtx) return true
-  delete this.dragCtx
+    if (atom) {
+      const atomId = FunctionalGroup.atomsInFunctionalGroup(
+        functionalGroups,
+        atom
+      )
+      if (atomId !== null) atomResult.push(atomId)
+    }
+    if (atomResult.length > 0) {
+      for (const id of atomResult) {
+        const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+          functionalGroups,
+          id
+        )
+        if (fgId !== null && !result.includes(fgId)) {
+          result.push(fgId)
+        }
+      }
+      this.editor.event.removeFG.dispatch({ fgIds: result })
+      return
+    }
+    const dragCtx = this.dragCtx
+    if (!dragCtx) return true
+    delete this.dragCtx
 
-  const editor = this.editor
-  const restruct = editor.render.ctab
-  const struct = restruct.molecule
+    const editor = this.editor
 
-  if (dragCtx.stopTapping) dragCtx.stopTapping()
+    if (dragCtx.stopTapping) dragCtx.stopTapping()
 
-  if (!dragCtx.action && dragCtx.item && dragCtx.item.map === 'bonds') {
-    const bond = struct.bonds.get(dragCtx.item.id)
+    if (!dragCtx.action && dragCtx.item && dragCtx.item.map === 'bonds') {
+      const bond = molecule.bonds.get(dragCtx.item.id) as Bond
 
-    dragCtx.action = bondChangingAction(restruct, dragCtx.item.id, bond, {
-      type: Bond.PATTERN.TYPE.SINGLE,
-      stereo: Bond.PATTERN.STEREO.NONE
+      dragCtx.action = bondChangingAction(struct, dragCtx.item.id, bond, {
+        type: Bond.PATTERN.TYPE.SINGLE,
+        stereo: Bond.PATTERN.STEREO.NONE
+      })
+    } else {
+      dragCtx.action = dragCtx.action
+        ? fromItemsFuse(struct, dragCtx.mergeItems).mergeWith(dragCtx.action)
+        : fromItemsFuse(struct, dragCtx.mergeItems)
+    }
+
+    editor.selection(null)
+    editor.hover(null)
+
+    if (dragCtx.action) editor.update(dragCtx.action)
+
+    editor.event.message.dispatch({
+      info: false
     })
-  } else {
-    dragCtx.action = dragCtx.action
-      ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
-      : fromItemsFuse(restruct, dragCtx.mergeItems)
+
+    return true
   }
 
-  editor.selection(null)
-  editor.hover(null)
+  cancel = this.mouseup
 
-  if (dragCtx.action) editor.update(dragCtx.action)
-
-  editor.event.message.dispatch({
-    info: false
-  })
-
-  return true
+  mouseleave = this.mouseup
 }
-
-ChainTool.prototype.cancel = ChainTool.prototype.mouseup
-
-ChainTool.prototype.mouseleave = ChainTool.prototype.mouseup
 
 export default ChainTool

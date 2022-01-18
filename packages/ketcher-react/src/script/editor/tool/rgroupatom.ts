@@ -20,71 +20,80 @@ import {
   fromAtomsAttrs,
   FunctionalGroup
 } from 'ketcher-core'
+import Editor from '../Editor'
 
-function RGroupAtomTool(editor) {
-  if (!(this instanceof RGroupAtomTool)) {
+class RGroupAtomTool {
+  editor: Editor
+
+  constructor(editor) {
     // TODO: map atoms with labels
     editor.selection(null)
-    return new RGroupAtomTool(editor)
+    this.editor = editor
   }
 
-  this.editor = editor
-  this.struct = editor.render.ctab
-  this.sgroups = editor.render.ctab.sgroups
-  this.functionalGroups = editor.render.ctab.molecule.functionalGroups
-}
-
-RGroupAtomTool.prototype.mousemove = function (event) {
-  const struct = this.editor.render.ctab.molecule
-  const ci = this.editor.findItem(event, ['atoms'])
-  if (ci) {
-    const atom = struct.atoms.get(ci.id)
-    if (atom.attpnt === null) this.editor.hover(ci)
-  } else {
-    this.editor.hover(null)
+  mousemove = (event) => {
+    const struct = this.editor.render.ctab.molecule
+    const ci = this.editor.findItem(event, ['atoms'])
+    if (ci) {
+      const atom = struct.atoms.get(ci.id)
+      if (atom?.attpnt === null) this.editor.hover(ci)
+    } else {
+      this.editor.hover(null)
+    }
   }
-}
 
-RGroupAtomTool.prototype.click = function (event) {
-  const rnd = this.editor.render
-  const ci = this.editor.findItem(event, ['atoms'])
-  const atomResult = []
-  const result = []
-  if (ci && this.functionalGroups && ci.map === 'atoms') {
-    const atomId = FunctionalGroup.atomsInFunctionalGroup(
-      this.functionalGroups,
-      ci.id
-    )
-    if (atomId !== null) atomResult.push(atomId)
-  }
-  if (atomResult.length > 0) {
-    for (const id of atomResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-        this.functionalGroups,
-        id
+  click = (event) => {
+    const struct = this.editor.render.ctab
+    const molecule = struct.molecule
+    const functionalGroups = molecule.functionalGroups
+    const rnd = this.editor.render
+    const ci = this.editor.findItem(event, ['atoms'])
+    const atomResult: Array<number> = []
+    const result: Array<number> = []
+
+    if (ci && functionalGroups && ci.map === 'atoms') {
+      const atomId = FunctionalGroup.atomsInFunctionalGroup(
+        functionalGroups,
+        ci.id
       )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
+
+      if (atomId !== null) {
+        atomResult.push(atomId)
       }
     }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
-  }
 
-  if (!ci) {
-    //  ci.type == 'Canvas'
-    this.editor.hover(null)
-    propsDialog(this.editor, null, rnd.page2obj(event))
-    return true
-  } else if (ci.map === 'atoms') {
-    this.editor.hover(null)
-    const struct = this.editor.render.ctab.molecule
-    const atom = struct.atoms.get(ci.id)
-    if (atom.attpnt !== null) return
-    propsDialog(this.editor, ci.id)
+    if (atomResult.length > 0) {
+      for (const id of atomResult) {
+        const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+          functionalGroups,
+          id
+        )
+
+        if (fgId !== null && !result.includes(fgId)) {
+          result.push(fgId)
+        }
+      }
+      this.editor.event.removeFG.dispatch({ fgIds: result })
+      return
+    }
+
+    if (!ci) {
+      //  ci.type == 'Canvas'
+      this.editor.hover(null)
+      propsDialog(this.editor, null, rnd.page2obj(event))
+      return true
+    } else if (ci.map === 'atoms') {
+      this.editor.hover(null)
+      const struct = this.editor.render.ctab.molecule
+      const atom = struct.atoms.get(ci.id)
+
+      if (atom?.attpnt !== null) return
+
+      propsDialog(this.editor, ci.id, null)
+      return true
+    }
     return true
   }
-  return true
 }
 
 function propsDialog(editor, id, pos) {
@@ -110,9 +119,11 @@ function propsDialog(editor, id, pos) {
         elem.aam = atom.aam // WTF??
         elem.attpnt = atom.attpnt
 
-        if (!elem.rglabel && label !== 'R#') elem.label = label
+        if (!elem.rglabel && label !== 'R#') {
+          elem.label = label
+        }
 
-        editor.update(fromAtomsAttrs(editor.render.ctab, id, elem))
+        editor.update(fromAtomsAttrs(editor.render.ctab, id, elem, false))
       }
     })
     .catch(() => null) // w/o changes

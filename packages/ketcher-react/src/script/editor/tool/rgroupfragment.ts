@@ -21,118 +21,127 @@ import {
   fromUpdateIfThen,
   FunctionalGroup
 } from 'ketcher-core'
+import Editor from '../Editor'
 
-function RGroupFragmentTool(editor) {
-  if (!(this instanceof RGroupFragmentTool)) {
+class RGroupFragmentTool {
+  editor: Editor
+
+  constructor(editor) {
     // TODO: check if it's a fragments already
     editor.selection(null)
-    return new RGroupFragmentTool(editor)
+    this.editor = editor
   }
 
-  this.editor = editor
-  this.struct = editor.render.ctab
-  this.sgroups = editor.render.ctab.sgroups
-  this.molecule = editor.render.ctab.molecule
-  this.functionalGroups = this.molecule.functionalGroups
-}
-
-RGroupFragmentTool.prototype.mousemove = function (event) {
-  this.editor.hover(this.editor.findItem(event, ['frags', 'rgroups']))
-}
-
-RGroupFragmentTool.prototype.click = function (event) {
-  const editor = this.editor
-  const struct = editor.render.ctab.molecule
-  const ci = editor.findItem(event, ['frags', 'rgroups'])
-  const ce = editor.findItem(event, ['atoms', 'bonds'])
-  const atomResult = []
-  const bondResult = []
-  const result = []
-  if (ce && this.functionalGroups && ce.map === 'atoms') {
-    const atomId = FunctionalGroup.atomsInFunctionalGroup(
-      this.functionalGroups,
-      ce.id
-    )
-    if (atomId !== null) atomResult.push(atomId)
+  mousemove = (event) => {
+    this.editor.hover(this.editor.findItem(event, ['frags', 'rgroups']))
   }
-  if (ce && this.functionalGroups && ce.map === 'bonds') {
-    const bondId = FunctionalGroup.bondsInFunctionalGroup(
-      this.molecule,
-      this.functionalGroups,
-      ce.id
-    )
-    if (bondId !== null) bondResult.push(bondId)
-  }
-  if (atomResult.length > 0) {
-    for (const id of atomResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-        this.functionalGroups,
-        id
+
+  click = (event) => {
+    const struct = this.editor.render.ctab
+    const molecule = struct.molecule
+    const functionalGroups = molecule.functionalGroups
+    const editor = this.editor
+    const ci = editor.findItem(event, ['frags', 'rgroups'])
+    const ce = editor.findItem(event, ['atoms', 'bonds'])
+    const atomResult: Array<number> = []
+    const bondResult: Array<number> = []
+    const result: Array<number> = []
+    if (ce && functionalGroups && ce.map === 'atoms') {
+      const atomId = FunctionalGroup.atomsInFunctionalGroup(
+        functionalGroups,
+        ce.id
       )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
+
+      if (atomId !== null) {
+        atomResult.push(atomId)
       }
     }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
-  } else if (bondResult.length > 0) {
-    for (const id of bondResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByBond(
-        this.molecule,
-        this.functionalGroups,
-        id
+
+    if (ce && functionalGroups && ce.map === 'bonds') {
+      const bondId = FunctionalGroup.bondsInFunctionalGroup(
+        molecule,
+        functionalGroups,
+        ce.id
       )
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
+
+      if (bondId !== null) {
+        bondResult.push(bondId)
       }
     }
-    this.editor.event.removeFG.dispatch({ fgIds: result })
-    return
+
+    if (atomResult.length > 0) {
+      for (const id of atomResult) {
+        const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+          functionalGroups,
+          id
+        )
+
+        if (fgId !== null && !result.includes(fgId)) {
+          result.push(fgId)
+        }
+      }
+      this.editor.event.removeFG.dispatch({ fgIds: result })
+      return
+    } else if (bondResult.length > 0) {
+      for (const id of bondResult) {
+        const fgId = FunctionalGroup.findFunctionalGroupByBond(
+          molecule,
+          functionalGroups,
+          id
+        )
+
+        if (fgId !== null && !result.includes(fgId)) {
+          result.push(fgId)
+        }
+      }
+      this.editor.event.removeFG.dispatch({ fgIds: result })
+      return
+    }
+
+    if (!ci) {
+      return true
+    }
+
+    this.editor.hover(null)
+
+    const label =
+      ci.map === 'rgroups'
+        ? ci.id
+        : RGroup.findRGroupByFragment(molecule.rgroups, ci.id)
+
+    const rg = Object.assign(
+      { label },
+      ci.map === 'frags' ? { fragId: ci.id } : molecule.rgroups.get(ci.id)
+    )
+
+    const res = editor.event.rgroupEdit.dispatch(rg)
+
+    Promise.resolve(res)
+      .then((newRg) => {
+        let action
+        if (ci.map !== 'rgroups') {
+          const rgidOld = RGroup.findRGroupByFragment(
+            struct.molecule.rgroups,
+            ci.id
+          )
+
+          action = fromRGroupFragment(struct, newRg.label, ci.id).mergeWith(
+            fromUpdateIfThen(struct, newRg.label, rgidOld)
+          )
+        } else {
+          action = fromRGroupAttrs(struct, ci.id, newRg)
+        }
+
+        editor.update(action)
+      })
+      .catch(() => null) // w/o changes
+
+    return true
   }
 
-  if (!ci) return true
-
-  this.editor.hover(null)
-
-  const label =
-    ci.map === 'rgroups'
-      ? ci.id
-      : RGroup.findRGroupByFragment(struct.rgroups, ci.id)
-
-  const rg = Object.assign(
-    { label },
-    ci.map === 'frags' ? { fragId: ci.id } : struct.rgroups.get(ci.id)
-  )
-
-  const res = editor.event.rgroupEdit.dispatch(rg)
-
-  Promise.resolve(res)
-    .then((newRg) => {
-      const restruct = editor.render.ctab
-
-      let action = null
-      if (ci.map !== 'rgroups') {
-        const rgidOld = RGroup.findRGroupByFragment(
-          restruct.molecule.rgroups,
-          ci.id
-        )
-
-        action = fromRGroupFragment(restruct, newRg.label, ci.id).mergeWith(
-          fromUpdateIfThen(restruct, newRg.label, rgidOld)
-        )
-      } else {
-        action = fromRGroupAttrs(restruct, ci.id, newRg)
-      }
-
-      editor.update(action)
-    })
-    .catch(() => null) // w/o changes
-
-  return true
-}
-
-RGroupFragmentTool.prototype.cancel = function () {
-  this.editor.hover(null)
+  cancel = () => {
+    this.editor.hover(null)
+  }
 }
 
 export default RGroupFragmentTool

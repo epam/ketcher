@@ -4797,7 +4797,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-actions@npm:6.4.13, @storybook/addon-actions@npm:^6.4.13":
+"@storybook/addon-actions@npm:6.4.13":
   version: 6.4.13
   resolution: "@storybook/addon-actions@npm:6.4.13"
   dependencies:
@@ -4888,7 +4888,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-docs@npm:6.4.13, @storybook/addon-docs@npm:^6.4.13":
+"@storybook/addon-docs@npm:6.4.13":
   version: 6.4.13
   resolution: "@storybook/addon-docs@npm:6.4.13"
   dependencies:
@@ -5027,34 +5027,6 @@ __metadata:
     webpack:
       optional: true
   checksum: a3d7e3be930fa878c2b5ec130934f5a88edbaf00aeaf6c8635d28df8790f3fdb8b8350ff09a27375d8103560a29cf9cd9f62f5a63a5b52ebcd72ec45aeed1b48
-  languageName: node
-  linkType: hard
-
-"@storybook/addon-links@npm:^6.4.13":
-  version: 6.4.13
-  resolution: "@storybook/addon-links@npm:6.4.13"
-  dependencies:
-    "@storybook/addons": 6.4.13
-    "@storybook/client-logger": 6.4.13
-    "@storybook/core-events": 6.4.13
-    "@storybook/csf": 0.0.2--canary.87bc651.0
-    "@storybook/router": 6.4.13
-    "@types/qs": ^6.9.5
-    core-js: ^3.8.2
-    global: ^4.4.0
-    prop-types: ^15.7.2
-    qs: ^6.10.0
-    regenerator-runtime: ^0.13.7
-    ts-dedent: ^2.0.0
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0
-    react-dom: ^16.8.0 || ^17.0.0
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-dom:
-      optional: true
-  checksum: 3a07dd44ac0430f30268a7096e1f8e383b5aa765a7809e08b6d30e82cbbaa2cdf37a0e68a23bfb82f793defc017c4b8d36b73161e8656a613ecadf2c95775705
   languageName: node
   linkType: hard
 
@@ -17000,10 +16972,7 @@ __metadata:
     "@rollup/plugin-node-resolve": ^10.0.0
     "@rollup/plugin-replace": ^2.3.4
     "@rollup/plugin-strip": ^2.0.0
-    "@storybook/addon-actions": ^6.4.13
-    "@storybook/addon-docs": ^6.4.13
     "@storybook/addon-essentials": ^6.4.13
-    "@storybook/addon-links": ^6.4.13
     "@storybook/react": ^6.4.13
     "@svgr/rollup": ^5.4.0
     "@testing-library/jest-dom": ^4.2.4
@@ -17105,10 +17074,7 @@ __metadata:
     "@rollup/plugin-node-resolve": ^10.0.0
     "@rollup/plugin-replace": ^2.3.4
     "@rollup/plugin-strip": ^2.0.0
-    "@storybook/addon-actions": ^6.4.13
-    "@storybook/addon-docs": ^6.4.13
     "@storybook/addon-essentials": ^6.4.13
-    "@storybook/addon-links": ^6.4.13
     "@storybook/react": ^6.4.13
     "@svgr/rollup": ^5.4.0
     "@testing-library/jest-dom": ^4.2.4

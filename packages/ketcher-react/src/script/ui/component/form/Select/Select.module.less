@@ -16,6 +16,7 @@
 
 @import '../../../../../style/variables';
 
+// stylelint-disable selector-pseudo-class-no-unknown
 .selectContainer {
   :global(.react-select-container) {
     width: 100%;
@@ -25,20 +26,19 @@
   :global(.react-select__control) {
     box-shadow: none;
     border-radius: 2px;
-    border-color: @color-gray2;
-    color: @color-gray3;
+    color: @color-select-border;
     min-height: 20px;
     height: 100%;
+    border: none;
   }
 
   :global(.react-select__control--menu-is-open) {
     box-shadow: none;
-    border-color: @color-gray2;
     border-radius: 2px 2px 0 0;
   }
 
   :global(.react-select__single-value) {
-    color: @color-gray3;
+    color: @color-select-text;
   }
 
   :global(.react-select__indicator-separator) {
@@ -53,8 +53,6 @@
     margin-top: 0;
     border-radius: 0 0 2px 2px;
     box-shadow: none;
-    border: 1px solid @color-gray2;
-    border-top: none;
   }
 
   :global(.react-select__menu-list) {
@@ -64,7 +62,7 @@
 
   :global(.react-select__option) {
     padding: 3px 8px;
-    color: @color-gray3;
+    color: @color-select-text;
   }
 
   :global(.react-select__option--is-selected) {
@@ -85,13 +83,4 @@
   :global(.react-select__option--is-focused) {
     background-color: #eee;
   }
-
-  :global(.react-select__control--is-focused),
-  :global(.react-select__control:hover) {
-    border-color: @color-gray2;
-  }
-}
-
-.select {
-  height: 100%;
 }

@@ -17,11 +17,21 @@
 .atomProps {
   fieldset {
     margin-top: 1.5em;
-    text-align: right;
 
     label {
       margin: 0.3em 0;
-      display: inline-block;
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+      > input, > div {
+        width: 8em;
+        height: 32px;
+        display: flex;
+        align-items: center;
+      }
     }
 
     > legend {
@@ -33,10 +43,6 @@
     width: 14.5em;
     float: left;
     border: none;
-
-    input {
-      width: 8em;
-    }
   }
 
   .query,

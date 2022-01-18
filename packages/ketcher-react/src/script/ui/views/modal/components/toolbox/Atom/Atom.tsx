@@ -25,6 +25,7 @@ import { Elements } from 'ketcher-core'
 import { atom as atomSchema } from '../../../../../data/schema/struct-schema'
 import { capitalize } from 'lodash/fp'
 import classes from './Atom.module.less'
+import Select from '../../../../../component/form/Select/Select'
 
 interface AtomProps extends BaseProps {
   alias: string
@@ -74,20 +75,20 @@ const Atom: FC<Props> = (props) => {
           <Field name="alias" />
           <ElementNumber label={currentLabel} />
           <Field name="charge" maxLength="5" />
-          <Field name="explicitValence" />
+          <Field name="explicitValence" component={Select} />
           <Field name="isotope" />
-          <Field name="radical" />
+          <Field name="radical" component={Select} />
         </fieldset>
         <fieldset className={classes.query}>
           <legend>Query specific</legend>
-          <Field name="ringBondCount" />
-          <Field name="hCount" />
-          <Field name="substitutionCount" />
+          <Field name="ringBondCount" component={Select} />
+          <Field name="hCount" component={Select} />
+          <Field name="substitutionCount" component={Select} />
           <Field name="unsaturatedAtom" />
         </fieldset>
         <fieldset className={classes.reaction}>
           <legend>Reaction flags</legend>
-          <Field name="invRet" />
+          <Field name="invRet" component={Select} />
           <Field name="exactChangeFlag" />
         </fieldset>
       </Form>

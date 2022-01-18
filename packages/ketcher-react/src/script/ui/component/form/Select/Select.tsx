@@ -74,7 +74,7 @@ const Select = ({
 
   return (
     <ReactSelect
-      className={clsx(styles.select, styles.selectContainer, className)}
+      className={clsx(styles.selectContainer, className)}
       options={options}
       defaultValue={defaultValue}
       value={defaultValue}

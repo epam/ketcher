@@ -33,13 +33,11 @@ import Editor from '../Editor'
 
 class EraserTool {
   editor: Editor
-  isTool: boolean
   maps: Array<string>
   lassoHelper: LassoHelper
 
   constructor(editor, mode) {
     this.editor = editor
-    this.isTool = true
     this.maps = [
       'atoms',
       'bonds',
@@ -60,24 +58,27 @@ class EraserTool {
       )
       editor.update(action)
       editor.selection(null)
-      this.isTool = false
     }
   }
 
-  mousedown = (event) => {
+  mousedown(event) {
     const ci = this.editor.findItem(event, this.maps)
-    if (!ci)
+
+    if (!ci) {
       //  ci.type == 'Canvas'
       this.lassoHelper.begin(event)
+    }
   }
 
-  mousemove = (event) => {
-    if (this.lassoHelper.running())
+  mousemove(event) {
+    if (this.lassoHelper.running()) {
       this.editor.selection(this.lassoHelper.addPoint(event))
-    else this.editor.hover(this.editor.findItem(event, this.maps))
+    } else {
+      this.editor.hover(this.editor.findItem(event, this.maps))
+    }
   }
 
-  mouseup = () => {
+  mouseup() {
     const struct = this.editor.render.ctab
     const sgroups = struct.sgroups
     const molecule = struct.molecule
@@ -146,6 +147,7 @@ class EraserTool {
           bond
         )
         const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b
+
         if (
           bondFromStruct &&
           !FunctionalGroup.isBondInContractedFunctionalGroup(
@@ -213,7 +215,7 @@ class EraserTool {
     }
   }
 
-  click = (event) => {
+  click(event) {
     const rnd = this.editor.render
     const restruct = rnd.ctab
     const struct = this.editor.render.ctab
@@ -350,9 +352,11 @@ class EraserTool {
     this.editor.selection(null)
   }
 
-  mouseleave = this.mouseup
+  mouseleave() {
+    this.mouseup()
+  }
 
-  cancel = () => {
+  cancel() {
     if (this.lassoHelper.running()) {
       this.lassoHelper.end()
     }

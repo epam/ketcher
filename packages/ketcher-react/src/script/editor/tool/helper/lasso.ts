@@ -31,7 +31,7 @@ class LassoHelper {
     this.editor = editor
   }
 
-  getSelection = () => {
+  getSelection() {
     const rnd = this.editor.render
 
     if (this.mode === 0) {
@@ -45,7 +45,7 @@ class LassoHelper {
     throw new Error('Selector mode unknown') // eslint-disable-line no-else-return
   }
 
-  begin = (event) => {
+  begin(event) {
     const rnd = this.editor.render
     this.points = [rnd.page2obj(event)]
     if (this.mode === 1) {
@@ -53,11 +53,11 @@ class LassoHelper {
     }
   }
 
-  running = () => {
+  running() {
     return !!this.points
   }
 
-  addPoint = (event) => {
+  addPoint(event) {
     if (!this.points) {
       return null
     }
@@ -74,7 +74,7 @@ class LassoHelper {
     return this.getSelection()
   }
 
-  update = () => {
+  update() {
     if (this.selection) {
       this.selection.remove()
       this.selection = null
@@ -92,14 +92,14 @@ class LassoHelper {
     }
   }
 
-  end = () => {
+  end() {
     const ret = this.getSelection()
     this.points = null
     this.update()
     return ret
   }
 
-  cancel = () => {
+  cancel() {
     this.points = null
     this.update()
   }

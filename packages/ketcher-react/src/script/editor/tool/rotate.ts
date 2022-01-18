@@ -50,13 +50,13 @@ class RotateTool {
       return
     }
 
-    if (!editor.selection() || !editor.selection().atoms) {
+    if (!editor.selection() || !editor.selection()?.atoms) {
       // otherwise, clear selection
       this.editor.selection(null)
     }
   }
 
-  mousedown = (event) => {
+  mousedown(event) {
     let xy0 = new Vec2()
     const selection = this.editor.selection()
     const rnd = this.editor.render
@@ -126,20 +126,30 @@ class RotateTool {
     return true
   }
 
-  mousemove = (event) => {
-    if (!this.dragCtx) return true
+  mousemove(event) {
+    if (!this.dragCtx) {
+      return true
+    }
 
     const rnd = this.editor.render
     const dragCtx = this.dragCtx
 
     const pos = rnd.page2obj(event)
     let angle = utils.calcAngle(dragCtx.xy0, pos) - dragCtx.angle1
-    if (!event.ctrlKey) angle = utils.fracAngle(angle, null)
+
+    if (!event.ctrlKey) {
+      angle = utils.fracAngle(angle, null)
+    }
 
     const degrees = utils.degrees(angle)
 
-    if ('angle' in dragCtx && dragCtx.angle === degrees) return true
-    if ('action' in dragCtx) dragCtx.action.perform(rnd.ctab)
+    if ('angle' in dragCtx && dragCtx.angle === degrees) {
+      return true
+    }
+
+    if ('action' in dragCtx) {
+      dragCtx.action.perform(rnd.ctab)
+    }
 
     dragCtx.angle = degrees
     dragCtx.action = fromRotate(
@@ -159,8 +169,11 @@ class RotateTool {
     return true
   }
 
-  mouseup = () => {
-    if (!this.dragCtx) return true
+  mouseup() {
+    if (!this.dragCtx) {
+      return true
+    }
+
     const dragCtx = this.dragCtx
     const restruct = this.editor.render.ctab
 
@@ -171,15 +184,24 @@ class RotateTool {
 
     this.editor.update(action)
     this.editor.hover(null)
-    if (dragCtx.mergeItems) this.editor.selection(null)
+
+    if (dragCtx.mergeItems) {
+      this.editor.selection(null)
+    }
+
     this.editor.event.message.dispatch({
       info: false
     })
     return true
   }
 
-  cancel = this.mouseup
-  mouseleave = this.mouseup
+  cancel() {
+    this.mouseup()
+  }
+
+  mouseleave() {
+    this.mouseup()
+  }
 }
 
 export default RotateTool

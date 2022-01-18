@@ -38,7 +38,7 @@ class ChainTool {
     this.editor.selection(null)
   }
 
-  mousedown = (event) => {
+  mousedown(event) {
     if (this.dragCtx) return
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
@@ -48,27 +48,37 @@ class ChainTool {
     const atomResult: Array<number> = []
     const bondResult: Array<number> = []
     const result: Array<number> = []
+
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id
       )
-      if (atomId !== null) atomResult.push(atomId)
+
+      if (atomId !== null) {
+        atomResult.push(atomId)
+      }
     }
+
     if (ci && functionalGroups.size && ci.map === 'bonds') {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
         ci.id
       )
-      if (bondId !== null) bondResult.push(bondId)
+
+      if (bondId !== null) {
+        bondResult.push(bondId)
+      }
     }
+
     if (atomResult.length > 0) {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
           id
         )
+
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
@@ -82,6 +92,7 @@ class ChainTool {
           functionalGroups,
           id
         )
+
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
@@ -95,31 +106,39 @@ class ChainTool {
       xy0: rnd.page2obj(event),
       item: ci
     }
+
     if (ci && ci.map === 'atoms') {
       this.editor.selection({ atoms: [ci.id] }) // for change atom
       // this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
       atomLongtapEvent(this, rnd)
     }
+
     if (!this.dragCtx.item)
       // ci.type == 'Canvas'
       delete this.dragCtx.item
     return true
   }
 
-  mousemove = (event) => {
+  mousemove(event) {
     const editor = this.editor
     const restruct = editor.render.ctab
     const dragCtx = this.dragCtx
 
     editor.hover(this.editor.findItem(event, ['atoms', 'bonds']))
-    if (!dragCtx) return true
+    if (!dragCtx) {
+      return true
+    }
 
-    if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
+    if (dragCtx && dragCtx.stopTapping) {
+      dragCtx.stopTapping()
+    }
 
     editor.selection(null)
 
     if (!dragCtx.item || dragCtx.item.map === 'atoms') {
-      if (dragCtx.action) dragCtx.action.perform(restruct)
+      if (dragCtx.action) {
+        dragCtx.action.perform(restruct)
+      }
 
       const atoms = restruct.molecule.atoms
 
@@ -156,13 +175,14 @@ class ChainTool {
     return true
   }
 
-  mouseup = () => {
+  mouseup() {
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
     let atom
     const atomResult: Array<number> = []
     const result: Array<number> = []
+
     if (this.dragCtx && this.dragCtx.mergeItems && functionalGroups.size) {
       atom = this.dragCtx.mergeItems.atoms.values().next().value
     }
@@ -171,14 +191,19 @@ class ChainTool {
         functionalGroups,
         atom
       )
-      if (atomId !== null) atomResult.push(atomId)
+
+      if (atomId !== null) {
+        atomResult.push(atomId)
+      }
     }
+
     if (atomResult.length > 0) {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
           id
         )
+
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
@@ -187,12 +212,18 @@ class ChainTool {
       return
     }
     const dragCtx = this.dragCtx
-    if (!dragCtx) return true
+
+    if (!dragCtx) {
+      return true
+    }
+
     delete this.dragCtx
 
     const editor = this.editor
 
-    if (dragCtx.stopTapping) dragCtx.stopTapping()
+    if (dragCtx.stopTapping) {
+      dragCtx.stopTapping()
+    }
 
     if (!dragCtx.action && dragCtx.item && dragCtx.item.map === 'bonds') {
       const bond = molecule.bonds.get(dragCtx.item.id) as Bond
@@ -210,7 +241,9 @@ class ChainTool {
     editor.selection(null)
     editor.hover(null)
 
-    if (dragCtx.action) editor.update(dragCtx.action)
+    if (dragCtx.action) {
+      editor.update(dragCtx.action)
+    }
 
     editor.event.message.dispatch({
       info: false
@@ -219,9 +252,13 @@ class ChainTool {
     return true
   }
 
-  cancel = this.mouseup
+  cancel() {
+    this.mouseup()
+  }
 
-  mouseleave = this.mouseup
+  mouseleave() {
+    this.mouseup()
+  }
 }
 
 export default ChainTool

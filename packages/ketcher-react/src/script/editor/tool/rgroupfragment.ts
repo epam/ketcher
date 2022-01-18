@@ -32,11 +32,11 @@ class RGroupFragmentTool {
     this.editor = editor
   }
 
-  mousemove = (event) => {
+  mousemove(event) {
     this.editor.hover(this.editor.findItem(event, ['frags', 'rgroups']))
   }
 
-  click = (event) => {
+  click(event) {
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
@@ -46,6 +46,7 @@ class RGroupFragmentTool {
     const atomResult: Array<number> = []
     const bondResult: Array<number> = []
     const result: Array<number> = []
+
     if (ce && functionalGroups && ce.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
@@ -119,12 +120,12 @@ class RGroupFragmentTool {
     Promise.resolve(res)
       .then((newRg) => {
         let action
+
         if (ci.map !== 'rgroups') {
           const rgidOld = RGroup.findRGroupByFragment(
             struct.molecule.rgroups,
             ci.id
           )
-
           action = fromRGroupFragment(struct, newRg.label, ci.id).mergeWith(
             fromUpdateIfThen(struct, newRg.label, rgidOld)
           )
@@ -139,7 +140,7 @@ class RGroupFragmentTool {
     return true
   }
 
-  cancel = () => {
+  cancel() {
     this.editor.hover(null)
   }
 }

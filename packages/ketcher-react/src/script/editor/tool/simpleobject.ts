@@ -33,12 +33,13 @@ class SimpleObjectTool {
     this.editor.selection(null)
   }
 
-  mousedown = (event) => {
+  mousedown(event) {
     const rnd = this.editor.render
     const p0 = rnd.page2obj(event)
     this.dragCtx = { p0 }
 
     const ci = this.editor.findItem(event, ['simpleObjects'])
+
     if (ci && ci.map === 'simpleObjects') {
       this.editor.hover(null)
       this.editor.selection({ simpleObjects: [ci.id] })
@@ -49,14 +50,19 @@ class SimpleObjectTool {
     }
   }
 
-  mousemove = (event) => {
+  mousemove(event) {
     const rnd = this.editor.render
+
     if (this.dragCtx) {
       const current = rnd.page2obj(event)
       const diff = current.sub(this.dragCtx.p0)
       this.dragCtx.previous = current
+
       if (this.dragCtx.ci) {
-        if (this.dragCtx.action) this.dragCtx.action.perform(rnd.ctab)
+        if (this.dragCtx.action) {
+          this.dragCtx.action.perform(rnd.ctab)
+        }
+
         if (!this.dragCtx.ci.ref) {
           this.dragCtx.action = fromMultipleMove(
             rnd.ctab,
@@ -108,8 +114,10 @@ class SimpleObjectTool {
     }
   }
 
-  mouseup = (event) => {
-    if (!this.dragCtx) return true
+  mouseup(event) {
+    if (!this.dragCtx) {
+      return true
+    }
 
     if (this.dragCtx.action) {
       if (this.dragCtx.isNew) {

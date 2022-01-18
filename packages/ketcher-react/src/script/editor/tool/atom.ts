@@ -33,16 +33,14 @@ import Editor from '../Editor'
 class AtomTool {
   editor: Editor
   atomProps: any
-  isTool: boolean
   dragCtx: any
   #bondProps: { stereo: number; type: number }
 
   constructor(editor, atomProps) {
     this.editor = editor
     this.atomProps = atomProps
-    this.isTool = true
     this.#bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE }
-    if (editor.selection() || editor.selection().atoms) {
+    if (editor.selection() || editor.selection()?.atoms) {
       const action = fromAtomsAttrs(
         editor.render.ctab,
         editor.selection().atoms,
@@ -51,11 +49,10 @@ class AtomTool {
       )
       editor.update(action)
       editor.selection(null)
-      this.isTool = false
     }
   }
 
-  mousedown = (event) => {
+  mousedown(event) {
     const struct = this.editor.render.ctab
     const sgroups = struct.sgroups
     const molecule = struct.molecule
@@ -125,7 +122,7 @@ class AtomTool {
     }
   }
 
-  mousemove = (event) => {
+  mousemove(event) {
     const rnd = this.editor.render
     if (!this.dragCtx || !this.dragCtx.item) {
       this.editor.hover(
@@ -167,7 +164,7 @@ class AtomTool {
     this.editor.update(dragCtx.action, true)
   }
 
-  mouseup = (event) => {
+  mouseup(event) {
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups

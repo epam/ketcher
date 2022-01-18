@@ -33,7 +33,7 @@ class AttachTool {
     })
   }
 
-  mousemove = (event) => {
+  mousemove(event) {
     const rnd = this.editor.render
 
     const ci = this.editor.findItem(event, ['atoms', 'bonds'])
@@ -49,7 +49,7 @@ class AttachTool {
     return true
   }
 
-  click = (event) => {
+  click(event) {
     const editor = this.editor
     const rnd = editor.render
     const molecule = rnd.ctab.molecule
@@ -58,27 +58,37 @@ class AttachTool {
     const atomResult: Array<number> = []
     const bondResult: Array<number> = []
     const result: Array<number> = []
+
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id
       )
-      if (atomId !== null) atomResult.push(atomId)
+
+      if (atomId !== null) {
+        atomResult.push(atomId)
+      }
     }
+
     if (ci && functionalGroups.size && ci.map === 'bonds') {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
         ci.id
       )
-      if (bondId !== null) bondResult.push(bondId)
+
+      if (bondId !== null) {
+        bondResult.push(bondId)
+      }
     }
+
     if (atomResult.length > 0) {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
           id
         )
+
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
@@ -92,6 +102,7 @@ class AttachTool {
           functionalGroups,
           id
         )
+
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
@@ -106,8 +117,9 @@ class AttachTool {
         Elements.get(molecule.atoms.get(ci.id)?.label as string)) ||
         ci.map === 'bonds')
     ) {
-      if (ci.map === 'atoms') this.attach.atomid = ci.id
-      else this.attach.bondid = ci.id
+      if (ci.map === 'atoms') {
+        this.attach.atomid = ci.id
+      } else this.attach.bondid = ci.id
 
       this.editor.selection({
         atoms: [this.attach.atomid],

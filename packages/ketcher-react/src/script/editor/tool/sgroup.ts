@@ -43,20 +43,23 @@ class SGroupTool {
   editor: Editor
   type: any
   lassoHelper: any
-  isTool: boolean
 
   constructor(editor, type) {
     this.editor = editor
     this.type = type
     this.lassoHelper = new LassoHelper(1, editor, null)
-    this.isTool = true
 
-    const selection = editor.selection() || {}
+    this.checkSelection()
+  }
+
+  checkSelection() {
+    const selection = this.editor.selection() || {}
+
     if (selection.atoms && selection.bonds) {
-      const sgroups: Pool<SGroup> = editor.render.ctab.molecule.sgroups
-      const selectedAtoms = editor.selection().atoms
-      const molecule = editor.render.ctab.molecule
-      const struct = editor.render.ctab
+      const selectedAtoms = this.editor.selection()?.atoms
+      const struct = this.editor.render.ctab
+      const molecule = struct.molecule
+      const sgroups: Pool<SGroup> = molecule.sgroups
       const newSelected: { atoms: Array<any>; bonds: Array<any> } = {
         atoms: [],
         bonds: []
@@ -64,7 +67,7 @@ class SGroupTool {
       let actualSgroupId
       let atomsResult: Array<number> = []
       let extraAtoms
-      const functionalGroups = editor.render.ctab.molecule.functionalGroups
+      const functionalGroups = molecule.functionalGroups
       const result: Array<number> = []
 
       const id = sgroups.find((_, sgroup) =>
@@ -77,14 +80,19 @@ class SGroupTool {
             functionalGroups,
             atom
           )
-          if (atomId == null) extraAtoms = true
-          const atomFromStruct = atomId !== null && struct.atoms.get(atomId).a
+
+          if (atomId == null) {
+            extraAtoms = true
+          }
+
+          const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a
 
           if (atomFromStruct) {
             for (const sgId of atomFromStruct.sgs.values()) {
               actualSgroupId = sgId
             }
           }
+
           if (
             atomFromStruct &&
             FunctionalGroup.isAtomInContractedFunctionalGroup(
@@ -106,7 +114,9 @@ class SGroupTool {
               newSelected.bonds.push(...sgroupBonds)
           }
 
-          if (atomFromStruct) atomsResult.push(atomId)
+          if (atomFromStruct) {
+            atomsResult.push(atomId)
+          }
         }
       }
 
@@ -120,26 +130,24 @@ class SGroupTool {
             functionalGroups,
             id
           )
-          if (fgId !== null && !result.includes(fgId)) result.push(fgId)
+
+          if (fgId !== null && !result.includes(fgId)) {
+            result.push(fgId)
+          }
         }
       }
 
       if (result.length) {
-        editor.selection(null)
-        editor.event.removeFG.dispatch({ fgIds: result })
+        this.editor.selection(null)
+        this.editor.event.removeFG.dispatch({ fgIds: result })
         return
       }
 
-      sgroupDialog(editor, id !== undefined ? id : null, type)
-
-      this.isTool = false
-      return
+      sgroupDialog(this.editor, id !== undefined ? id : null, this.type)
     }
-
-    this.editor.selection(null)
   }
 
-  mousedown = (event) => {
+  mousedown(event) {
     const ci = this.editor.findItem(event, searchMaps)
     const struct = this.editor.render.ctab
     const sgroups = struct.sgroups
@@ -236,7 +244,7 @@ class SGroupTool {
     }
   }
 
-  mousemove = (event) => {
+  mousemove(event) {
     if (this.lassoHelper.running(event)) {
       this.editor.selection(this.lassoHelper.addPoint(event))
     } else {
@@ -244,13 +252,13 @@ class SGroupTool {
     }
   }
 
-  mouseleave = (event) => {
+  mouseleave(event) {
     if (this.lassoHelper.running(event)) {
       this.lassoHelper.end(event)
     }
   }
 
-  mouseup = (event) => {
+  mouseup(event) {
     const struct = this.editor.render.ctab
     const sgroups = struct.sgroups
     const molecule = struct.molecule
@@ -437,7 +445,7 @@ class SGroupTool {
       sgroupDialog(this.editor, id, this.type)
   }
 
-  cancel = () => {
+  cancel() {
     if (this.lassoHelper.running()) {
       this.lassoHelper.end()
     }
@@ -517,11 +525,17 @@ export function sgroupDialog(editor, id, defaultType) {
 function getContextBySgroup(restruct, sgAtoms) {
   const struct = restruct.molecule
 
-  if (sgAtoms.length === 1) return SgContexts.Atom
+  if (sgAtoms.length === 1) {
+    return SgContexts.Atom
+  }
 
-  if (manyComponentsSelected(restruct, sgAtoms)) return SgContexts.Multifragment
+  if (manyComponentsSelected(restruct, sgAtoms)) {
+    return SgContexts.Multifragment
+  }
 
-  if (singleComponentSelected(restruct, sgAtoms)) return SgContexts.Fragment
+  if (singleComponentSelected(restruct, sgAtoms)) {
+    return SgContexts.Fragment
+  }
 
   const atomSet = new Pile(sgAtoms)
 
@@ -535,11 +549,15 @@ function getContextBySgroup(restruct, sgAtoms) {
 function getContextBySelection(restruct, selection) {
   const struct = restruct.molecule
 
-  if (selection.atoms && !selection.bonds) return SgContexts.Atom
+  if (selection.atoms && !selection.bonds) {
+    return SgContexts.Atom
+  }
 
   const bonds = selection.bonds.map((bondid) => struct.bonds.get(bondid))
 
-  if (!anyChainedBonds(bonds)) return SgContexts.Bond
+  if (!anyChainedBonds(bonds)) {
+    return SgContexts.Bond
+  }
 
   selection.atoms = selection.atoms || []
 
@@ -548,8 +566,9 @@ function getContextBySelection(restruct, selection) {
     (bond) => atomSet.has(bond.begin) && atomSet.has(bond.end)
   )
 
-  if (singleComponentSelected(restruct, selection.atoms) && allBondsSelected)
+  if (singleComponentSelected(restruct, selection.atoms) && allBondsSelected) {
     return SgContexts.Fragment
+  }
 
   return manyComponentsSelected(restruct, selection.atoms)
     ? SgContexts.Multifragment
@@ -572,8 +591,9 @@ function fromContextType(id, editor, newSg, currSelection) {
 
   result.selection = result.selection || currSelection
 
-  if (id !== null && id !== undefined)
+  if (id !== null && id !== undefined) {
     result.action = result.action.mergeWith(fromSgroupDeletion(restruct, id))
+  }
 
   editor.selection(result.selection)
 
@@ -581,7 +601,9 @@ function fromContextType(id, editor, newSg, currSelection) {
 }
 
 function anyChainedBonds(bonds) {
-  if (bonds.length === 0) return true
+  if (bonds.length === 0) {
+    return true
+  }
 
   for (let i = 0; i < bonds.length; ++i) {
     const fixedBond = bonds[i]

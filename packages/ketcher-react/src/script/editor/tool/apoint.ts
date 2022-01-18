@@ -25,7 +25,7 @@ class APointTool {
     this.editor.selection(null)
   }
 
-  mousemove = (event) => {
+  mousemove(event) {
     const struct = this.editor.render.ctab.molecule
     const ci = this.editor.findItem(event, ['atoms'])
     if (ci) {
@@ -36,7 +36,7 @@ class APointTool {
     }
   }
 
-  click = (event) => {
+  click(event) {
     const editor = this.editor
     const struct = editor.render.ctab
     const molecule = struct.molecule
@@ -44,13 +44,18 @@ class APointTool {
     const ci = editor.findItem(event, ['atoms'])
     const atomResult: Array<number> = []
     const result: Array<number> = []
+
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id
       )
-      if (atomId !== null) atomResult.push(atomId)
+
+      if (atomId !== null) {
+        atomResult.push(atomId)
+      }
     }
+
     if (atomResult.length > 0) {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
@@ -68,7 +73,9 @@ class APointTool {
     if (ci && ci.map === 'atoms') {
       this.editor.hover(null)
       const atom = molecule.atoms.get(ci.id)
+
       if (atom?.label === 'R#' && atom?.rglabel !== null) return
+
       const res = editor.event.elementEdit.dispatch({
         attpnt: atom?.attpnt
       })

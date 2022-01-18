@@ -26,9 +26,10 @@ class ReactionPlusTool {
     this.editor.selection(null)
   }
 
-  mousedown = (event) => {
+  mousedown(event) {
     const rnd = this.editor.render
     const ci = this.editor.findItem(event, ['rxnPluses'])
+
     if (ci && ci.map === 'rxnPluses') {
       this.editor.hover(null)
       this.editor.selection({ rxnPluses: [ci.id] })
@@ -36,10 +37,14 @@ class ReactionPlusTool {
     }
   }
 
-  mousemove = (event) => {
+  mousemove(event) {
     const rnd = this.editor.render
+
     if ('dragCtx' in this) {
-      if (this.dragCtx.action) this.dragCtx.action.perform(rnd.ctab)
+      if (this.dragCtx.action) {
+        this.dragCtx.action.perform(rnd.ctab)
+      }
+
       this.dragCtx.action = fromMultipleMove(
         rnd.ctab,
         this.editor.selection() || {},
@@ -52,8 +57,10 @@ class ReactionPlusTool {
     }
   }
 
-  mouseup = () => {
-    if (!this.dragCtx) return true
+  mouseup() {
+    if (!this.dragCtx) {
+      return true
+    }
 
     if (this.dragCtx.action) {
       this.editor.update(this.dragCtx.action) // TODO investigate, subsequent undo/redo fails
@@ -63,9 +70,10 @@ class ReactionPlusTool {
     return true
   }
 
-  click = (event) => {
+  click(event) {
     const rnd = this.editor.render
     const ci = this.editor.findItem(event, ['rxnPluses'])
+
     if (!ci) {
       this.editor.update(fromPlusAddition(rnd.ctab, rnd.page2obj(event)))
     }

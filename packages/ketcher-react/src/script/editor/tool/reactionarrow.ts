@@ -34,12 +34,13 @@ class ReactionArrowTool {
     this.editor.selection(null)
   }
 
-  mousedown = (event) => {
+  mousedown(event) {
     const rnd = this.editor.render
     const p0 = rnd.page2obj(event)
     this.dragCtx = { p0 }
 
     const ci = this.editor.findItem(event, ['rxnArrows'])
+
     if (ci && ci.map === 'rxnArrows') {
       this.editor.hover(null)
       this.editor.selection({ rxnArrows: [ci.id] })
@@ -50,14 +51,19 @@ class ReactionArrowTool {
     }
   }
 
-  mousemove = (event) => {
+  mousemove(event) {
     const rnd = this.editor.render
+
     if (this.dragCtx) {
       const current = rnd.page2obj(event)
       const diff = current.sub(this.dragCtx.p0)
       this.dragCtx.previous = current
+
       if (this.dragCtx.ci) {
-        if (this.dragCtx.action) this.dragCtx.action.perform(rnd.ctab)
+        if (this.dragCtx.action) {
+          this.dragCtx.action.perform(rnd.ctab)
+        }
+
         if (!this.dragCtx.ci.ref) {
           this.dragCtx.action = fromMultipleMove(
             rnd.ctab,
@@ -106,8 +112,11 @@ class ReactionArrowTool {
     }
   }
 
-  mouseup = () => {
-    if (!this.dragCtx) return true
+  mouseup() {
+    if (!this.dragCtx) {
+      return true
+    }
+
     const rnd = this.editor.render
 
     const p0 = this.dragCtx.p0
@@ -121,16 +130,18 @@ class ReactionArrowTool {
         )
         this.dragCtx.action = fromArrowAddition(rnd.ctab, [p0, p1], this.mode)
       }
+
       this.editor.update(this.dragCtx.action)
     }
     delete this.dragCtx
     return true
   }
 
-  click = (event) => {
+  click(event) {
     const rnd = this.editor.render
     const ci = this.editor.findItem(event, ['rxnArrows'])
     const p0 = rnd.page2obj(event)
+
     if (!ci) {
       const pos = [p0, getDefaultLengthPos(p0, null)]
       this.editor.update(fromArrowAddition(rnd.ctab, pos, this.mode))

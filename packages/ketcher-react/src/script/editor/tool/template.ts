@@ -76,7 +76,7 @@ class TemplateTool {
     }
   }
 
-  mousedown = (event) => {
+  mousedown(event) {
     const closestItem = this.editor.findItem(event, [
       'atoms',
       'bonds',
@@ -199,6 +199,7 @@ class TemplateTool {
         const loopHbs = molecule.loops.get(loop)?.hbs
         loopHbs?.forEach((hb) => {
           const halfBondBegin = molecule.halfBonds.get(hb)?.begin
+
           if (halfBondBegin) {
             const hbbAtom = molecule.atoms.get(halfBondBegin)
 
@@ -211,6 +212,7 @@ class TemplateTool {
       } else {
         frIds.forEach((id) => {
           const atomById = molecule.atoms.get(id)
+
           if (atomById) {
             xy0.add_(atomById.pp) // eslint-disable-line no-underscore-dangle
             count++
@@ -230,8 +232,7 @@ class TemplateTool {
     return true
   }
 
-  mousemove = (event) => {
-    // eslint-disable-line max-statements
+  mousemove(event) {
     const restruct = this.editor.render.ctab
 
     if (!this.dragCtx) {
@@ -250,10 +251,14 @@ class TemplateTool {
       const bond = struct.bonds.get(ci.id)
       let sign = getSign(struct, bond, pos1)
 
-      if (dragCtx.sign1 * this.template.sign > 0) sign = -sign
+      if (dragCtx.sign1 * this.template.sign > 0) {
+        sign = -sign
+      }
 
       if (sign !== dragCtx.sign2 || !dragCtx.action) {
-        if (dragCtx.action) dragCtx.action.perform(restruct) // undo previous action
+        if (dragCtx.action) {
+          dragCtx.action.perform(restruct)
+        } // undo previous action
 
         dragCtx.sign2 = sign
         // @ts-ignore
@@ -283,6 +288,7 @@ class TemplateTool {
       pos0 = dragCtx.xy0
     } else if (ci.map === 'atoms') {
       pos0 = struct.atoms.get(ci.id)?.pp
+
       if (pos0) {
         extraBond = this.mode === 'fg' ? true : Vec2.dist(pos0, pos1) > 1
       }
@@ -290,7 +296,11 @@ class TemplateTool {
 
     // calc angle
     let angle = utils.calcAngle(pos0, pos1)
-    if (!event.ctrlKey) angle = utils.fracAngle(angle, null)
+
+    if (!event.ctrlKey) {
+      angle = utils.fracAngle(angle, null)
+    }
+
     const degrees = utils.degrees(angle)
     this.editor.event.message.dispatch({ info: degrees + 'º' })
 
@@ -302,11 +312,14 @@ class TemplateTool {
       // eslint-disable-next-line no-prototype-builtins
       (!dragCtx.hasOwnProperty('extra_bond') ||
         dragCtx.extra_bond === extraBond)
-    )
+    ) {
       return true
+    }
 
     // undo previous action
-    if (dragCtx.action) dragCtx.action.perform(restruct)
+    if (dragCtx.action) {
+      dragCtx.action.perform(restruct)
+    }
 
     // create new action
     dragCtx.angle = degrees
@@ -343,9 +356,13 @@ class TemplateTool {
     return true
   }
 
-  mouseup = (event) => {
+  mouseup(event) {
     const dragCtx = this.dragCtx
-    if (!dragCtx) return true
+
+    if (!dragCtx) {
+      return true
+    }
+
     delete this.dragCtx
 
     const restruct = this.editor.render.ctab
@@ -461,8 +478,13 @@ class TemplateTool {
     return true
   }
 
-  cancel = this.mouseup
-  mouseleave = this.mouseup
+  cancel(e) {
+    this.mouseup(e)
+  }
+
+  mouseleave(e) {
+    this.mouseup(e)
+  }
 }
 
 function getSign(molecule, bond, v) {

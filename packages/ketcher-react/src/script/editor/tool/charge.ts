@@ -27,7 +27,7 @@ class ChargeTool {
     this.charge = charge
   }
 
-  mousemove = (event) => {
+  mousemove(event) {
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
     const ci = this.editor.findItem(event, ['atoms'])
@@ -35,13 +35,15 @@ class ChargeTool {
       ci &&
       ci.map === 'atoms' &&
       Elements.get(molecule.atoms.get(ci.id)?.label as number | string)
-    )
+    ) {
       this.editor.hover(ci)
-    else this.editor.hover(null)
+    } else {
+      this.editor.hover(null)
+    }
     return true
   }
 
-  click = (event) => {
+  click(event) {
     const editor = this.editor
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
@@ -50,19 +52,25 @@ class ChargeTool {
     const ci = editor.findItem(event, ['atoms', 'bonds'])
     const atomResult: Array<number> = []
     const result: Array<number> = []
+
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id
       )
-      if (atomId !== null) atomResult.push(atomId)
+
+      if (atomId !== null) {
+        atomResult.push(atomId)
+      }
     }
+
     if (atomResult.length > 0) {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
           id
         )
+
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
@@ -70,6 +78,7 @@ class ChargeTool {
       this.editor.event.removeFG.dispatch({ fgIds: result })
       return
     }
+
     if (
       ci &&
       ci.map === 'atoms' &&

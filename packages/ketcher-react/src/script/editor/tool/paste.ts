@@ -49,10 +49,12 @@ class PasteTool {
     this.editor.hover(getHoverToFuse(this.mergeItems), this)
   }
 
-  mousemove = (event) => {
+  mousemove(event) {
     const rnd = this.editor.render
 
-    if (this.action) this.action.perform(rnd.ctab)
+    if (this.action) {
+      this.action.perform(rnd.ctab)
+    }
 
     const [action, pasteItems] = fromPaste(
       rnd.ctab,
@@ -66,13 +68,14 @@ class PasteTool {
     this.editor.hover(getHoverToFuse(this.mergeItems))
   }
 
-  mouseup = () => {
+  mouseup() {
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
     const atomsResult: Array<number> = []
     const bondsResult: Array<number> = []
     const result: Array<number> = []
+
     if (
       this.mergeItems &&
       functionalGroups.size &&
@@ -83,7 +86,10 @@ class PasteTool {
           functionalGroups,
           id
         )
-        if (atomId !== null) atomsResult.push(atomId)
+
+        if (atomId !== null) {
+          atomsResult.push(atomId)
+        }
       }
     }
     if (
@@ -96,15 +102,20 @@ class PasteTool {
           functionalGroups,
           id
         )
-        if (bondId !== null) bondsResult.push(bondId)
+
+        if (bondId !== null) {
+          bondsResult.push(bondId)
+        }
       }
     }
+
     if (atomsResult.length > 0) {
       for (const id of atomsResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
           id
         )
+
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
@@ -118,6 +129,7 @@ class PasteTool {
           functionalGroups,
           id
         )
+
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId)
         }
@@ -143,9 +155,10 @@ class PasteTool {
     }
   }
 
-  cancel = () => {
+  cancel() {
     const rnd = this.editor.render
     this.editor.hover(null)
+
     if (this.action) {
       this.action.perform(rnd.ctab) // revert the action
       delete this.action
@@ -153,7 +166,9 @@ class PasteTool {
     }
   }
 
-  mouseleave = this.cancel
+  mouseleave() {
+    this.cancel()
+  }
 }
 
 export default PasteTool

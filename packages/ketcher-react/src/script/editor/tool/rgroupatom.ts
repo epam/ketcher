@@ -31,9 +31,10 @@ class RGroupAtomTool {
     this.editor = editor
   }
 
-  mousemove = (event) => {
+  mousemove(event) {
     const struct = this.editor.render.ctab.molecule
     const ci = this.editor.findItem(event, ['atoms'])
+
     if (ci) {
       const atom = struct.atoms.get(ci.id)
       if (atom?.attpnt === null) this.editor.hover(ci)
@@ -42,7 +43,7 @@ class RGroupAtomTool {
     }
   }
 
-  click = (event) => {
+  click(event) {
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups

@@ -28,7 +28,6 @@ import utils from '../shared/utils'
 import Editor from '../Editor'
 
 class BondTool {
-  isTool: boolean
   editor: Editor
   atomProps: any
   bondProps: any
@@ -38,8 +37,7 @@ class BondTool {
     this.editor = editor
     this.atomProps = { label: 'C' }
     this.bondProps = bondProps
-    this.isTool = true
-    if (editor.selection() || editor.selection().bonds) {
+    if (editor.selection() || editor.selection()?.bonds) {
       const action = fromBondsAttrs(
         editor.render.ctab,
         editor.selection().bonds,
@@ -47,11 +45,10 @@ class BondTool {
       )
       editor.update(action)
       editor.selection(null)
-      this.isTool = false
     }
   }
 
-  mousedown = (event) => {
+  mousedown(event) {
     if (this.dragCtx) return
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
@@ -114,7 +111,7 @@ class BondTool {
     return true
   }
 
-  mousemove = (event) => {
+  mousemove(event) {
     const struct = this.editor.render.ctab
     const sgroups = struct.sgroups
     const molecule = struct.molecule
@@ -256,8 +253,7 @@ class BondTool {
     return true
   }
 
-  mouseup = (event) => {
-    // eslint-disable-line max-statements
+  mouseup(event) {
     if ('dragCtx' in this) {
       const dragCtx = this.dragCtx
       const rnd = this.editor.render

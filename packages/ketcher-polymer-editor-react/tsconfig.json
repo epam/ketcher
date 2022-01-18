@@ -33,7 +33,7 @@
       "state/*": ["src/state/*"],
       "state": ["src/state"],
       "hooks": ["src/hooks"],
-      "icons": ["src/icons"],
+      "assets/*": ["src/assets/*"],
       "styles/*": ["src/styles/*"],
       "test-utils": ["src/test-utils"]
     },

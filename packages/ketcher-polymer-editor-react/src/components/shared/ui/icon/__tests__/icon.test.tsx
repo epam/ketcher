@@ -14,30 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { render, screen } from '@testing-library/react'
+import { render, screen } from 'test-utils'
 
-import { Icon } from '..'
-
-const StyledIcon = styled(Icon)`
-  stroke: green;
-`
-
-const MockComponent = () => <StyledIcon name="arrowDown" role="img" />
+import { Icon, IconNameType } from '../icon'
 
 describe('Icon component', () => {
-  it('should render SVG when name is provided', () => {
-    render(<MockComponent />)
+  it('should render SVG when valid name is provided', () => {
+    render(<Icon name="arrow-down" />)
     const svg = screen.getByRole('img')
 
-    expect(svg).toBeInTheDocument()
+    expect(svg).toMatchSnapshot()
   })
 
-  it('should allow styling with emotion/styled', () => {
-    render(<MockComponent />)
-    const svg = screen.getByRole('img')
+  it('should return null when invalid icon name is provided', () => {
+    const invalidIconName = 'no-such -icon' as IconNameType
 
-    // Making sure some className was set by Emotion/styled
-    expect(svg).toHaveAttribute('className')
+    render(<Icon name={invalidIconName} />)
+    const svg = screen.queryByRole('img')
+
+    expect(svg).toMatchSnapshot()
+  })
+
+  it('should pass className prop to SVG element', () => {
+    const className = 'my-class-name'
+    render(<Icon name="select-lasso" className={className} />)
+    const svg = screen.queryByRole('img')
+
+    expect(svg).toHaveAttribute('className', className)
   })
 })

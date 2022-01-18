@@ -16,10 +16,7 @@
 
 @import '../../../../../style/variables';
 
-// stylelint-disable selector-pseudo-class-no-unknown
-.select {
-  height: 100%;
-
+.selectContainer {
   :global(.react-select-container) {
     width: 100%;
     height: 100%;
@@ -93,4 +90,8 @@
   :global(.react-select__control:hover) {
     border-color: @color-gray2;
   }
+}
+
+.select {
+  height: 100%;
 }

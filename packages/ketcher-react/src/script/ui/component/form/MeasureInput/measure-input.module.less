@@ -13,8 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import '../../../../../style/variables';
 
-.select {
-  width: 100%;
-  margin-left: 2px;
+.measureInput {
+  display: inline-flex;
+  justify-content: space-between;
+  font-size: 12px;
+  align-items: center;
+  line-height: 20px;
+  margin-bottom: 16px;
+  color: @color-black;
+
+  .select,
+  input {
+    width: 63px !important;
+    margin-left: 2px;
+    height: 24px;
+  }
 }

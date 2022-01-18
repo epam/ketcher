@@ -20,7 +20,7 @@ import Input from '../input'
 import Select from '../Select/Select'
 import styles from './measure-input.module.less'
 
-const MeasureInput = ({ schema, value, onChange, ...rest }) => {
+const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
   const [measure, setMeasure] = useState('px')
   const [cust, setCust] = useState(value || schema.default)
 
@@ -57,29 +57,28 @@ const MeasureInput = ({ schema, value, onChange, ...rest }) => {
     console.log(e)
   }
 
+  const desc = schema || schema.properties[name]
+
   return (
-    <div style={{ display: 'inline-flex' }} {...rest}>
-      <Input
-        schema={schema}
-        step={measure === 'px' || measure === 'pt' ? '1' : '0.001'}
-        style={{ width: '75%' }}
-        value={cust}
-        onChange={handleChange}
-        onFocus={handleFocus}
-        // onBlur={calcValue}
-      />
-      <Select
-        onChange={handleMeasChange}
-        schema={{ enum: ['cm', 'px', 'pt', 'inch'] }}
-        value={measure}
-        className={styles.select}
-      />
-      {/*<Input*/}
-      {/*  schema={{ enum: ['cm', 'px', 'pt', 'inch'] }}*/}
-      {/*  style={{ width: '25%' }}*/}
-      {/*  value={measure}*/}
-      {/*  onChange={handleMeasChange}*/}
-      {/*/>*/}
+    <div className={styles.measureInput} {...rest}>
+      <span>{rest.title || desc.title}</span>
+      <div style={{ display: 'flex' }}>
+        <Input
+          schema={schema}
+          step={measure === 'px' || measure === 'pt' ? '1' : '0.001'}
+          style={{ width: '75%' }}
+          value={cust}
+          onChange={handleChange}
+          onFocus={handleFocus}
+          // onBlur={calcValue}
+        />
+        <Select
+          onChange={handleMeasChange}
+          schema={{ enum: ['cm', 'px', 'pt', 'inch'] }}
+          value={measure}
+          className={styles.select}
+        />
+      </div>
     </div>
   )
 }

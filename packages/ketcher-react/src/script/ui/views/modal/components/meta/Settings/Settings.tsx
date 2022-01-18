@@ -80,8 +80,8 @@ const SettingsDialog = (props: Props) => {
         <Field name="showValenceWarnings" />
         <Field name="atomColoring" />
         <Field name="font" component={SystemFonts} />
-        <Field name="fontsz" component={MeasureInput} />
-        <Field name="fontszsub" component={MeasureInput} />
+        <Field name="fontsz" component={MeasureInput} labelPos={false} />
+        <Field name="fontszsub" component={MeasureInput} labelPos={false} />
       </fieldset>
     )
   }
@@ -122,9 +122,17 @@ const SettingsDialog = (props: Props) => {
     content: (
       <fieldset>
         <Field name="aromaticCircle" />
-        <Field name="doubleBondWidth" component={MeasureInput} />
-        <Field name="bondThickness" component={MeasureInput} />
-        <Field name="stereoBondWidth" component={MeasureInput} />
+        <Field
+          name="doubleBondWidth"
+          component={MeasureInput}
+          labelPos={false}
+        />
+        <Field name="bondThickness" component={MeasureInput} labelPos={false} />
+        <Field
+          name="stereoBondWidth"
+          component={MeasureInput}
+          labelPos={false}
+        />
       </fieldset>
     )
   }

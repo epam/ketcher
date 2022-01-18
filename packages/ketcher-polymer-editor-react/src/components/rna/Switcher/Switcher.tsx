@@ -1,9 +1,8 @@
 import { Button } from '@mui/material'
 import styled from '@emotion/styled'
-import LeftLink from '../../../icons/leftLink.svg'
-import MiddleLink from '../../../icons/middleLink.svg'
-import RightLink from '../../../icons/rightLink.svg'
 import { FC, useState } from 'react'
+import { Icon } from 'components/shared/ui/icon'
+import { IconNameType } from 'components/shared/ui/icon/icon'
 
 const RAPButton = styled(Button)<{ 'data-isactive': boolean }>((props) => ({
   padding: '3px 12px',
@@ -34,17 +33,20 @@ const Container = styled('div')<{ gap: string }>`
 `
 
 const buttons = ['R', 'A', 'P']
-const svgLinks = [LeftLink, MiddleLink, RightLink].map((Component) =>
-  // @ts-ignore
-  styled(Component)<{ 'data-isactive': boolean }>((props) => ({
-    '& path': {
-      strokeDasharray: props['data-isactive'] ? 'none' : '4,4',
-      stroke: props['data-isactive']
-        ? props.theme.color.button.primary.active
-        : '#D1D5E3'
-    }
-  }))
-)
+const svgNames: IconNameType[] = [
+  'rap-left-link',
+  'rap-middle-link',
+  'rap-right-link'
+]
+const LinkIcon = styled(Icon)<{ 'data-isactive': boolean }>((props) => ({
+  fill: 'none',
+  '& path': {
+    strokeDasharray: props['data-isactive'] ? 'none' : '4,4',
+    stroke: props['data-isactive']
+      ? props.theme.color.button.primary.active
+      : '#D1D5E3'
+  }
+}))
 
 export const Switcher: FC = () => {
   const [active, setActive] = useState(0)
@@ -54,8 +56,12 @@ export const Switcher: FC = () => {
         R(A)P
       </RAPButton>
       <Container gap="11px">
-        {svgLinks.map((Component, index) => (
-          <Component key={index} data-isactive={active === index + 1} />
+        {svgNames.map((name, index) => (
+          <LinkIcon
+            key={name}
+            name={name}
+            data-isactive={active === index + 1}
+          />
         ))}
       </Container>
       <Container gap="4px">

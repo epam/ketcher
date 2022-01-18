@@ -1,17 +1,6 @@
-// <reference types="react-scripts" />
-
-declare module '*.less' {
-  const classes: { [className: string]: string }
-  export default classes
-}
-
-declare namespace NodeJS {
-  export interface ProcessEnv {
-    VERSION: string
-    BUILD_DATE: string
-    BUILD_NUMBER: string
-  }
-}
+import '@mui/material/styles'
+import { Theme as MuiTheme } from '@mui/material'
+import '@emotion/react'
 
 declare module '@mui/material/styles' {
   interface Theme {
@@ -25,7 +14,6 @@ declare module '@mui/material/styles' {
         primary: string
         secondary: string
         light: string
-        dark: string
       }
       tab: {
         regular: string
@@ -117,7 +105,6 @@ declare module '@mui/material/styles' {
         primary?: string
         secondary?: string
         light?: string
-        dark?: string
       }
       tab?: {
         regular?: string
@@ -197,13 +184,8 @@ declare module '@mui/material/styles' {
     }
   }
 }
-declare module '*.svg' {
-  import * as React from 'react'
 
-  export const ReactComponent: React.FunctionComponent<
-    React.SVGProps<SVGSVGElement> & { title?: string }
-  >
-
-  const src: ReactComponent
-  export default src
+declare module '@emotion/react' {
+  /* eslint-disable  @typescript-eslint/no-empty-interface */
+  export interface Theme extends MuiTheme {}
 }

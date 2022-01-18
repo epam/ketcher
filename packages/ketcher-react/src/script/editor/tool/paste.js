@@ -33,7 +33,10 @@ function PasteTool(editor, struct) {
   this.functionalGroups = this.molecule.functionalGroups
 
   const rnd = editor.render
-  const point = editor.lastEvent ? rnd.page2obj(editor.lastEvent) : null
+  const { clientHeight, clientWidth } = rnd.clientArea
+  const point = editor.lastEvent
+    ? rnd.page2obj(editor.lastEvent)
+    : rnd.page2obj({ pageX: clientWidth / 2, pageY: clientHeight / 2 })
 
   const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point)
   this.action = action

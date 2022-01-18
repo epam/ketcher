@@ -66,7 +66,6 @@ const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
         <Input
           schema={schema}
           step={measure === 'px' || measure === 'pt' ? '1' : '0.001'}
-          style={{ width: '75%' }}
           value={cust}
           onChange={handleChange}
           onFocus={handleFocus}

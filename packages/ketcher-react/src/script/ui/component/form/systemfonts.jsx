@@ -63,8 +63,8 @@ function SystemFonts(props) {
   const [availableFonts, setAvailableFonts] = useState(null)
   const { value, onChange } = props
   const onChangeCallback = useCallback(
-    (value) => {
-      onChange(value)
+    (e) => {
+      onChange(e.target.value)
     },
     [onChange]
   )

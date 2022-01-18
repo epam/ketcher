@@ -67,7 +67,7 @@ const Select = ({
   useEffect(() => {
     let option
     if (options) {
-      option = options.find(option => option.value === value)
+      option = options.find((option) => option.value === value)
     }
     return setDefaultValue(option)
   }, [options, value])

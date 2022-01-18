@@ -31,14 +31,14 @@ const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
     } // Hack: Set init value (RESET)
   }, [])
 
-  const handleChange = value => {
+  const handleChange = (value) => {
     const convValue = convertValue(value, measure, 'px')
     setCust(value)
     onChange(convValue)
   }
 
-  const handleMeasChange = m => {
-    setCust(prev => {
+  const handleMeasChange = (m) => {
+    setCust((prev) => {
       convertValue(prev, measure, m)
     })
     setMeasure(m)
@@ -53,7 +53,7 @@ const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
     calcValue()
   }, [value, measure, calcValue])
 
-  const handleFocus = e => {
+  const handleFocus = (e) => {
     console.log(e)
   }
 

@@ -17,6 +17,11 @@
 import { ReactElement } from 'react'
 import Select from 'react-select'
 
+export interface Option {
+  value: string
+  label: string
+}
+
 interface Props {
   options: Array<Option>
   searchable?: boolean
@@ -26,11 +31,6 @@ interface Props {
   value?: Option
   disabled?: boolean
   portalTarget?: HTMLElement
-}
-
-export interface Option {
-  value: string
-  label: string
 }
 
 const ReactSelect = ({

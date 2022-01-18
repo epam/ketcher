@@ -4,7 +4,8 @@ module.exports = {
   testEnvironment: 'jsdom',
   transform: {
     '\\.(js|jsx)$': 'babel-jest',
-    '^.+\\.(ts|tsx)$': 'ts-jest'
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '\\.svg$': '<rootDir>/src/testFileTransformer.js'
   },
   moduleNameMapper: {
     '\\.(css|less)$': 'identity-obj-proxy',
@@ -13,8 +14,7 @@ module.exports = {
     '^styles(.*)$': '<rootDir>/src/styles/$1',
     '^hooks(.*)$': '<rootDir>/src/hooks/$1',
     '^icons(.*)$': '<rootDir>/src/icons/$1',
-    '^test-utils(.*)$': '<rootDir>/src/test-utils/$1',
-    '\\.svg$': '<rootDir>/__mocks__/svg.ts'
+    '^test-utils(.*)$': '<rootDir>/src/test-utils/$1'
   },
   setupFilesAfterEnv: ['<rootDir>/src/testsSetup.ts']
 }

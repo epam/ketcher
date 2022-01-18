@@ -10,6 +10,7 @@ reactions. The application operates in two modes - Standalone and Remote:
 
 - Remote version requires Indigo Service as a backend server to perform complex calculations (When the server is not responding you can continue to work in the application although some of the functions will be unavailable).
 
+
 **Ketcher** consists of the following elements:
 
 ![](images/main.png)
@@ -528,6 +529,45 @@ To create a user template:
 - enter a name and define the attachment atom and bond.
 
 
+# Functional Groups
+
+Ketcher allows you to select and use Functional Groups to properly represent your structure on the canvas. 
+Set of functional groups available is predefined and can't be changed right now. 
+
+Explore the list of the Functional Groups available in the Functional Groups menu. Open it using the icon in the bottom toolbar: <br> 
+![](images/FG_Icon.png) <br>
+
+Filter Functional Groups by name: <br>
+![](images/FG_Filter.gif)
+
+To add Functional Group to the canvas and join it to the structure do the following:
+
+1. Select the proper FG in the FG menu and click OK <br> <<img src=images/FG_selection.png width = "400">
+2. Click on the atom FG should connect with on the canvas: bond will be created automatically and FG will be joined to the structure. ![](images/FG_adding.gif)
+
+You can just click on the canvas having the FG selected. To connect it with other structure on the canvas do the following:
+
+1. Select Simple Bond tool in the left Ketcher toolbar
+2. Drag bond **from** the connection atom and drop it **to** the Functional Group on the canvas. 
+
+![](images/FG_bond.gif)
+
+Functional Group on the canvas can be **Expanded** to view it's internal structure. Expanded group can be **Contracted** back to the compact presentation. 
+
+You can also **Remove the Abbreviation** on the group - it will allows you to work with the functional group atoms and bonds as with regular atoms and bonds on the canvas. To Expand, Contract and Remove Abbreviation:
+
+1. Click on the FG with right mouse button: <br> <img src=images/FG_context_menu.png width = "400">
+2. Select the command from the context menu <br>
+
+![](images/FG_Exapand_Contract.gif)
+
+Please, note that a lot of Ketcher tools will be not applicable for the separate atoms and bonds of FG. FG can only be selected as a whole. It can also be deleted, moved, or rotated only as an entire entity. 
+
+Ketcher will let you know if the tool is not applicable for the FG and will suggest to Remove the Abbreviation immediately: <br> <img src=images/FG_warning.png width="450">
+<br> 
+Aromatize & Dearomatize operations will not be applied to the rings that are part of the FG. 
+
+Functional Groups will be considered as **super atoms** when opening and saving .mol files. 
 
 
 # Working with Files

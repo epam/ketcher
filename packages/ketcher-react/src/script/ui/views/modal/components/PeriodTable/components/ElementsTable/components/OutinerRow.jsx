@@ -31,7 +31,7 @@ function OutinerRow({
         <th colSpan="3" className={className}>
           {caption}
         </th>
-        {row.map(element => (
+        {row.map((element) => (
           <td key={element.label}>
             <Atom
               el={element}

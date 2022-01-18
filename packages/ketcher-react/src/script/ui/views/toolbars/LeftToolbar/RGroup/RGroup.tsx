@@ -25,7 +25,7 @@ import { rGroupOptions } from '../leftToolbarOptions'
 interface RGroupProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
   height?: number
 }
-interface RGroupCallProps extends ToolbarGroupItemCallProps {}
+type RGroupCallProps = ToolbarGroupItemCallProps
 
 type Props = RGroupProps & RGroupCallProps
 

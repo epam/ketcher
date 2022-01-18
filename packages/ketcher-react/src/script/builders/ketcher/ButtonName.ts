@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 export type ButtonName =
-  //top
+  // top
   | 'layout'
   | 'clean'
   | 'arom'
@@ -28,12 +28,12 @@ export type ButtonName =
   | 'settings'
   | 'help'
   | 'about'
-  //left
+  // left
   // sgroup group
   | 'sgroup'
   | 'sgroup-data'
   // reaction
-  //plus
+  // plus
   | 'reaction-plus'
   // arrows
   | 'arrows'
@@ -50,7 +50,11 @@ export type ButtonName =
   | 'reaction-arrow-unbalanced-equilibrium-open-half-angle'
   | 'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow'
   | 'reaction-arrow-unbalanced-equilibrium-filled-half-triangle'
-  //mapping
+  | 'reaction-arrow-elliptical-arc-arrow-filled-bow'
+  | 'reaction-arrow-elliptical-arc-arrow-filled-triangle'
+  | 'reaction-arrow-elliptical-arc-arrow-open-angle'
+  | 'reaction-arrow-elliptical-arc-arrow-open-half-angle'
+  // mapping
   | 'reaction-mapping-tools'
   | 'reaction-automap'
   | 'reaction-map'
@@ -67,5 +71,5 @@ export type ButtonName =
   | 'shape-line'
   // text group
   | 'text'
-  //right
+  // right
   | 'enhanced-stereo'

@@ -46,7 +46,7 @@ export class MoveLoop extends BaseOperation {
     //   const scaled = Scale.obj2scaled(d, restruct.render.options)
     //   reloop.visel.translate(scaled)
     // }
-    //this.data.d = d.negated()
+    // this.data.d = d.negated()
 
     const inverseOperation = new MoveLoop(this.#loopId, this.#delta.negated())
 

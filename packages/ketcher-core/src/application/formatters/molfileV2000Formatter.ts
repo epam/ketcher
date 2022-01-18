@@ -19,17 +19,21 @@ import { Struct } from 'domain/entities'
 import { StructFormatter } from './structFormatter.types'
 
 export class MolfileV2000Formatter implements StructFormatter {
-  constructor(private readonly molfileManager: MolSerializer) {}
+  #molSerializer: MolSerializer
+
+  constructor(molSerializer: MolSerializer) {
+    this.#molSerializer = molSerializer
+  }
 
   async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    const stringifiedMolfile = this.molfileManager.serialize(struct)
+    const stringifiedMolfile = this.#molSerializer.serialize(struct)
     return stringifiedMolfile
   }
 
   async getStructureFromStringAsync(
     stringifiedStruct: string
   ): Promise<Struct> {
-    const struct = this.molfileManager.deserialize(stringifiedStruct)
+    const struct = this.#molSerializer.deserialize(stringifiedStruct)
     return struct
   }
 }

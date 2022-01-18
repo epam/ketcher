@@ -67,17 +67,17 @@ export type OperationType =
   | 'TEXT_DELETE'
   | 'TEXT_MOVE'
 
+export interface Operation {
+  readonly type: OperationType
+  readonly priority: number
+  // eslint-disable-next-line no-use-before-define
+  perform: (struct: Struct) => PerformOperationResult
+}
+
 export type PerformOperationResult = {
   entityId: number
   operationType: OperationType
   inverseOperation: Operation
-}
-
-export interface Operation {
-  readonly type: OperationType
-  readonly priority: number
-
-  perform: (struct: Struct) => PerformOperationResult
 }
 
 export type AttrValueType = string | number | boolean | null

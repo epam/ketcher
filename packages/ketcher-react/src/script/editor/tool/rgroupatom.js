@@ -58,7 +58,7 @@ RGroupAtomTool.prototype.click = function (event) {
     if (atomId !== null) atomResult.push(atomId)
   }
   if (atomResult.length > 0) {
-    for (let id of atomResult) {
+    for (const id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
         id
@@ -100,7 +100,7 @@ function propsDialog(editor, id, pos) {
   })
 
   Promise.resolve(res)
-    .then(elem => {
+    .then((elem) => {
       // TODO review: using Atom.attrlist as a source of default property values
       elem = Object.assign({}, Atom.attrlist, elem)
 

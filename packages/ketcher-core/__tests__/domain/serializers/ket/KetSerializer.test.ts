@@ -46,9 +46,13 @@ describe('deserialize (ToStruct)', () => {
   it('correct work with atoms', () => {
     const preparedAtoms = parsedPrepareContent.mol0.atoms
     preparedAtoms.forEach((props, id) => {
+      const locationWithNegativeY = props.location.map((coordinate, index) => {
+        return index === 1 && props.label ? -coordinate : coordinate
+      })
       const relatedAtom = deserData.atoms.get(id)
       const label = props.type === 'rg-label' ? 'R#' : 'C'
-      const vec = new Vec2(...props.location)
+      // const vec = new Vec2(...props.location)
+      const vec = new Vec2(...locationWithNegativeY)
       expect(label).toEqual(relatedAtom!.label)
       expect(vec).toEqual(relatedAtom!.pp)
     })
@@ -107,7 +111,7 @@ describe('deserialize (ToStruct)', () => {
     const spy = jest.spyOn(moleculeToStruct, 'moleculeToStruct')
     ket.deserialize(moleculeKet)
     expect(spy).toBeCalled()
-    //atoms
+    // atoms
     expect(spy.mock.results[0].value.atoms.get(0).label).toEqual('R#')
     expect(spy.mock.results[1].value.atoms.get(2).charge).toEqual(5)
     expect(spy.mock.results[1].value.atoms.get(4).label).toEqual('L#')
@@ -116,12 +120,12 @@ describe('deserialize (ToStruct)', () => {
     ).toBeTruthy()
     expect(spy.mock.results[1].value.atoms.get(4).atomList.ids).toEqual([4, 3])
     expect(spy.mock.results[1].value.atoms.size).toEqual(7)
-    //bonds
+    // bonds
     expect(spy.mock.results[1].value.bonds.size).toEqual(7)
     expect(spy.mock.results[1].value.bonds.get(6).stereo).toBeTruthy()
     expect(spy.mock.results[1].value.bonds.get(0).type).toEqual(1)
     expect(spy.mock.results[1].value.bonds.get(1).type).toEqual(2)
-    //sgroups
+    // sgroups
     ket.deserialize(moleculeSgroupKet)
     expect(spy.mock.results[2].value.sgroups.get(0).type).toEqual('GEN')
     expect(spy.mock.results[3].value.sgroups.get(0).type).toEqual('MUL')
@@ -171,6 +175,9 @@ describe('serialize (ToKet)', () => {
   it('correct work with atoms', () => {
     parsedNewPrepareStruct.mol0.atoms.forEach((atom, id) => {
       const relatedAtom = parsedPrepareContent.mol0.atoms[id]
+      if (relatedAtom.label) {
+        relatedAtom.location[1] = -relatedAtom.location[1]
+      }
       expect(atom).toEqual(relatedAtom)
     })
   })
@@ -181,7 +188,7 @@ describe('serialize (ToKet)', () => {
     })
   })
   it('correct work with simple object', () => {
-    const structSimpleObject = parsedNewPrepareStruct.root.nodes[0]
+    const structSimpleObject = parsedNewPrepareStruct.root.nodes[3]
     const simpleObjectKet = parsedPrepareContent.root.nodes[0]
     expect(structSimpleObject).toEqual(simpleObjectKet)
   })
@@ -191,39 +198,41 @@ describe('serialize (ToKet)', () => {
     expect(structText).toEqual(textKet)
   })
   it('correct work with rxnArrow', () => {
-    const structArrow = parsedNewPrepareStruct.root.nodes[2]
+    const structArrow = parsedNewPrepareStruct.root.nodes[1]
     const arrowKet = parsedPrepareContent.root.nodes[2]
     expect(structArrow).toEqual(arrowKet)
   })
   it('correct work with rxnPlus', () => {
-    const structPlus = parsedNewPrepareStruct.root.nodes[3]
+    const structPlus = parsedNewPrepareStruct.root.nodes[2]
     const plusKet = parsedPrepareContent.root.nodes[3]
     expect(structPlus).toEqual(plusKet)
   })
   it('moleculeToKet', () => {
     const spy = jest.spyOn(moleculeToKet, 'moleculeToKet')
     ket.serialize(moleculeContentStruct)
-    //atoms
+    // atoms
     expect(spy).toBeCalled()
     expect(spy.mock.results[0].value.atoms[0].type).toEqual('rg-label')
     expect(spy.mock.results[1].value.atoms[2].charge).toEqual(5)
     expect(
-      spy.mock.results[1].value.atoms.filter(item => item.type === 'atom-list')
+      spy.mock.results[1].value.atoms.filter(
+        (item) => item.type === 'atom-list'
+      )
     ).toBeTruthy()
     expect(spy.mock.results[1].value.atoms[4].elements).toEqual(['Be', 'Li'])
     expect(spy.mock.results[1].value.atoms.length).toEqual(7)
-    //bonds
+    // bonds
     expect(spy.mock.results[1].value.bonds.length).toEqual(7)
     expect(
-      spy.mock.results[1].value.bonds.filter(bond => bond.stereo).length
+      spy.mock.results[1].value.bonds.filter((bond) => bond.stereo).length
     ).toEqual(1)
     expect(
-      spy.mock.results[1].value.bonds.filter(bond => bond.type === 1).length
+      spy.mock.results[1].value.bonds.filter((bond) => bond.type === 1).length
     ).toEqual(4)
     expect(
-      spy.mock.results[1].value.bonds.filter(bond => bond.type === 2).length
+      spy.mock.results[1].value.bonds.filter((bond) => bond.type === 2).length
     ).toEqual(3)
-    //sgroups
+    // sgroups
     ket.serialize(moleculeSgroupStruct)
     expect(spy.mock.results[2].value.sgroups[0].type).toEqual('GEN')
     expect(spy.mock.results[2].value.sgroups[1].type).toEqual('MUL')
@@ -250,8 +259,8 @@ describe('serialize (ToKet)', () => {
     const spyArrow = jest.spyOn(rxnToKet, 'arrowToKet')
     const spyPlus = jest.spyOn(rxnToKet, 'plusToKet')
     const result = JSON.parse(ket.serialize(prepareStruct))
-    const plus = result.root.nodes.filter(item => item.type === 'plus')
-    const arrow = result.root.nodes.filter(item => item.type === 'arrow')
+    const plus = result.root.nodes.filter((item) => item.type === 'plus')
+    const arrow = result.root.nodes.filter((item) => item.type === 'arrow')
     expect(spyArrow).toBeCalled()
     expect(spyPlus).toBeCalled()
     expect(plus.length).toEqual(1)
@@ -263,36 +272,38 @@ describe('serialize (ToKet)', () => {
     ket.serialize(prepareStruct)
     expect(spy).toBeCalled()
     expect(
-      spy.mock.results[0].value.filter(item => item.type === 'molecule').length
+      spy.mock.results[0].value.filter((item) => item.type === 'molecule')
+        .length
     ).toEqual(1)
     expect(
-      spy.mock.results[0].value.filter(item => item.type === 'molecule')[0]
+      spy.mock.results[0].value.filter((item) => item.type === 'molecule')[0]
         .fragment.atoms.size
     ).toEqual(6)
     expect(
-      spy.mock.results[0].value.filter(item => item.type === 'molecule')[0]
+      spy.mock.results[0].value.filter((item) => item.type === 'molecule')[0]
         .fragment.bonds.size
     ).toEqual(6)
     expect(
-      spy.mock.results[0].value.filter(item => item.type === 'arrow').length
+      spy.mock.results[0].value.filter((item) => item.type === 'arrow').length
     ).toBeTruthy()
     expect(
-      spy.mock.results[0].value.filter(item => item.type === 'arrow')[0].data
+      spy.mock.results[0].value.filter((item) => item.type === 'arrow')[0].data
         .mode
     ).toEqual('open-angle')
     expect(
-      spy.mock.results[0].value.filter(item => item.type === 'plus').length
+      spy.mock.results[0].value.filter((item) => item.type === 'plus').length
     ).toBeTruthy()
     expect(
-      spy.mock.results[0].value.filter(item => item.type === 'simpleObject')
+      spy.mock.results[0].value.filter((item) => item.type === 'simpleObject')
         .length
     ).toBeTruthy()
     expect(
-      spy.mock.results[0].value.filter(item => item.type === 'simpleObject')[0]
-        .data.mode
+      spy.mock.results[0].value.filter(
+        (item) => item.type === 'simpleObject'
+      )[0].data.mode
     ).toEqual('rectangle')
     expect(
-      spy.mock.results[0].value.filter(item => item.type === 'text').length
+      spy.mock.results[0].value.filter((item) => item.type === 'text').length
     ).toBeTruthy()
   })
 })

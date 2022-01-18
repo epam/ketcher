@@ -18,6 +18,7 @@ import { Component } from 'react'
 
 import { omit } from 'lodash/fp'
 import classes from './input.module.less'
+import clsx from 'clsx'
 
 function GenericInput({
   schema,
@@ -32,6 +33,7 @@ function GenericInput({
       value={value}
       onInput={onChange}
       onChange={onChange}
+      className={classes.input}
       {...props}
     />
   )
@@ -52,7 +54,7 @@ function TextArea({ schema, value, onChange, ...rest }) {
   return <textarea value={value} onInput={onChange} {...rest} />
 }
 
-TextArea.val = ev => ev.target.value
+TextArea.val = (ev) => ev.target.value
 
 function CheckBox({ schema, value = '', onChange, ...rest }) {
   return (
@@ -88,7 +90,7 @@ function Select({
       value={value}
       name={name}
       multiple={multiple}
-      className={className}
+      className={clsx(classes.select, className)}
     >
       {enumSchema(schema, (title, val) => (
         <option key={val} value={val}>
@@ -159,14 +161,15 @@ FieldSet.val = function (ev, schema) {
   return input.type === 'radio' ? result[0] : result
 }
 
-function Slider({ value = '', onChange, ...rest }) {
+function Slider({ value, onChange, name, ...rest }) {
   return (
-    <div className={classes.slider}>
+    <div className={classes.slider} key={name}>
       <input
         type="checkbox"
         checked={value}
         onClick={onChange}
         onChange={onChange}
+        name={name}
         {...rest}
       />
       <span />
@@ -210,7 +213,7 @@ function inputCtrl(component, schema, onChange) {
   }
 
   return {
-    onChange: ev => {
+    onChange: (ev) => {
       const val = !component.val ? ev : component.val(ev, schema)
       onChange(val)
     },
@@ -221,7 +224,7 @@ function inputCtrl(component, schema, onChange) {
 function singleSelectCtrl(component, schema, onChange) {
   return {
     selected: (testVal, value) => value === testVal,
-    onSelect: ev => {
+    onSelect: (ev) => {
       const val = !component.val ? ev : component.val(ev, schema)
       if (val !== undefined) onChange(val)
     }

@@ -40,16 +40,20 @@ class ReSimpleObject extends ReObject {
     super('simpleObject')
     this.item = simpleObject
   }
+
   static isSelectable(): boolean {
     return true
   }
+
   calcDistance(p: Vec2, s: any): MinDistanceWithReferencePoint {
     const point: Vec2 = new Vec2(p.x, p.y)
-    let dist: number
-    let distRef: MinDistanceWithReferencePoint
+
+    const distRef: MinDistanceWithReferencePoint =
+      this.getReferencePointDistance(p)
     const item = this.item
     const mode = item.mode
     const pos = item.pos
+    let dist: number
 
     switch (mode) {
       case SimpleObjectMode.ellipse: {
@@ -122,7 +126,6 @@ class ReSimpleObject extends ReObject {
       }
     }
 
-    distRef = this.getReferencePointDistance(p)
     const refPoint: Vec2 | null =
       distRef.minDist <= 8 / s ? distRef.refPoint : null
     // distance is a smallest between dist to figure and it's reference points
@@ -131,9 +134,9 @@ class ReSimpleObject extends ReObject {
   }
 
   getReferencePointDistance(p: Vec2): MinDistanceWithReferencePoint {
-    let dist: any = []
+    const dist: any = []
     const refPoints = this.getReferencePoints()
-    refPoints.forEach(rp => {
+    refPoints.forEach((rp) => {
       dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp })
     })
 
@@ -145,7 +148,8 @@ class ReSimpleObject extends ReObject {
 
     return minDist
   }
-  getReferencePoints(onlyOnObject: boolean = false): Array<Vec2> {
+
+  getReferencePoints(onlyOnObject = false): Array<Vec2> {
     const refPoints: Array<Vec2> = []
     switch (this.item.mode) {
       case SimpleObjectMode.ellipse:
@@ -174,7 +178,7 @@ class ReSimpleObject extends ReObject {
         break
       }
       case SimpleObjectMode.line: {
-        this.item.pos.forEach(i => refPoints.push(new Vec2(i.x, i.y, 0)))
+        this.item.pos.forEach((i) => refPoints.push(new Vec2(i.x, i.y, 0)))
         break
       }
 
@@ -184,6 +188,7 @@ class ReSimpleObject extends ReObject {
     }
     return refPoints
   }
+
   highlightPath(render: Render): Array<StyledPath> {
     const point: Array<Vec2> = []
 
@@ -194,7 +199,7 @@ class ReSimpleObject extends ReObject {
 
     const path: Array<any> = []
 
-    //TODO: It seems that inheritance will be the better approach here
+    // TODO: It seems that inheritance will be the better approach here
     switch (this.item.mode) {
       case SimpleObjectMode.ellipse: {
         const rad = Vec2.diff(point[1], point[0])
@@ -211,7 +216,7 @@ class ReSimpleObject extends ReObject {
         if (
           Math.abs(rx) - scaleFactor / 8 > 0 &&
           Math.abs(ry) - scaleFactor / 8 > 0
-        )
+        ) {
           path.push(
             render.paper.ellipse(
               tfx(point[0].x + rx),
@@ -220,6 +225,7 @@ class ReSimpleObject extends ReObject {
               tfx(Math.abs(ry) - scaleFactor / 8)
             )
           )
+        }
         break
       }
 
@@ -250,7 +256,7 @@ class ReSimpleObject extends ReObject {
             Math.min(point[0].y, point[1].y) -
             scaleFactor / 4 >
             0
-        )
+        ) {
           path.push(
             render.paper.rect(
               tfx(Math.min(point[0].x, point[1].x) + scaleFactor / 8),
@@ -267,14 +273,15 @@ class ReSimpleObject extends ReObject {
               )
             )
           )
+        }
 
         break
       }
       case SimpleObjectMode.line: {
-        //TODO: reuse this code for polyline
+        // TODO: reuse this code for polyline
         const poly: Array<string | number> = []
 
-        let angle = Math.atan(
+        const angle = Math.atan(
           (point[1].y - point[0].y) / (point[1].x - point[0].x)
         )
 
@@ -322,7 +329,7 @@ class ReSimpleObject extends ReObject {
       }
     }
 
-    const enhPaths: Array<StyledPath> = path.map(p => {
+    const enhPaths: Array<StyledPath> = path.map((p) => {
       return { path: p, stylesApplied: false }
     })
 
@@ -330,7 +337,7 @@ class ReSimpleObject extends ReObject {
   }
 
   drawHighlight(render: Render): Array<any> {
-    const paths: Array<any> = this.highlightPath(render).map(enhPath => {
+    const paths: Array<any> = this.highlightPath(render).map((enhPath) => {
       if (!enhPath.stylesApplied) {
         return enhPath.path.attr(render.options.highlightStyle)
       }
@@ -342,19 +349,19 @@ class ReSimpleObject extends ReObject {
   }
 
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any): any {
-    const pos = this.item.pos.map(p => {
+    const pos = this.item.pos.map((p) => {
       return Scale.obj2scaled(p, restruct.render.options) || new Vec2()
     })
 
     const refPoints = this.getReferencePoints()
     const scaleFactor = restruct.render.options.scale
-    var selectionSet = restruct.render.paper.set()
+    const selectionSet = restruct.render.paper.set()
     selectionSet.push(
       generatePath(this.item.mode, paper, pos).attr(
         styles.highlightStyleSimpleObject
       )
     )
-    refPoints.forEach(rp => {
+    refPoints.forEach((rp) => {
       const scaledRP = Scale.obj2scaled(rp, restruct.render.options)
       selectionSet.push(
         restruct.render.paper
@@ -364,15 +371,16 @@ class ReSimpleObject extends ReObject {
     })
     return selectionSet
   }
+
   show(restruct: ReStruct, options: any): void {
     const render = restruct.render
-    const pos = this.item.pos.map(p => {
+    const pos = this.item.pos.map((p) => {
       return Scale.obj2scaled(p, options) || new Vec2()
     })
 
     const path = generatePath(this.item.mode, render.paper, pos, options)
 
-    var offset = options.offset
+    const offset = options.offset
     if (offset != null) path.translateAbs(offset.x, offset.y)
 
     // @ts-ignore
@@ -386,9 +394,9 @@ function calculateDistanceToLine(pos: Array<Vec2>, point: Vec2): number {
       point.x > Math.max(pos[0].x, pos[1].x)) &&
     (point.y < Math.min(pos[0].y, pos[1].y) ||
       point.y > Math.max(pos[0].y, pos[1].y))
-  )
+  ) {
     dist = Math.min(Vec2.dist(pos[0], point), Vec2.dist(pos[1], point))
-  else {
+  } else {
     const a = Vec2.dist(pos[0], pos[1])
     const b = Vec2.dist(pos[0], point)
     const c = Vec2.dist(pos[1], point)

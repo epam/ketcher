@@ -58,6 +58,7 @@ import {
   StructServiceOptions
 } from 'ketcher-core'
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import IndigoWorker from 'web-worker:./indigoWorker'
 
@@ -161,6 +162,7 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = e.data
         if (!msg.hasError) {
           const result: InfoResult = {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             indigoVersion: msg.payload!,
             imagoVersions: [],
             isAvailable: true
@@ -581,9 +583,8 @@ class IndigoService implements StructService {
     })
   }
 
-  // @ts-ignore
-  recognize(blob: Blob, version: string): Promise<RecognizeResult> {
-    return Promise.reject('Not supported in standalone mode')
+  recognize(_blob: Blob, _version: string): Promise<RecognizeResult> {
+    return Promise.reject(new Error('Not supported in standalone mode'))
   }
 
   generateImageAsBase64(

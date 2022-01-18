@@ -25,6 +25,7 @@
   padding: 0;
   overflow: hidden;
 }
+
 .tableContent {
   &:focus {
     outline: none;
@@ -41,6 +42,7 @@
 
   .scrollbar();
 }
+
 .struct {
   position: absolute;
   display: block;
@@ -50,6 +52,7 @@
   height: 98%;
   border: 1px solid @border-color;
   border-radius: 5px;
+
   &:hover {
     background: @form-hover-background;
   }
@@ -59,6 +62,7 @@
   position: relative;
   width: 100px;
   height: 100px;
+
   &::before {
     position: absolute;
     z-index: 10;
@@ -68,16 +72,18 @@
     border-radius: 3px;
     font-size: 10px;
     color: darken(@border-color, 30%);
-    background-color: @light-background-color;
+    background-color: @color-background-primary;
     content: attr(title);
     overflow: hidden;
     width: content-box;
     max-width: 85px;
   }
+
   &.selected .struct {
     background-color: lighten(@form-selected-background, 15%);
   }
 }
+
 .btnContainer {
   display: flex;
   flex-direction: row;
@@ -85,20 +91,23 @@
   right: 0;
   bottom: 0;
   margin: 0 4px 2px 0;
+
   .attachButton {
     .btn();
 
-    margin: 0 0 0 0;
+    margin: 0;
     border-radius: 0;
     border: 1px solid @border-color;
   }
+
   .deleteButton {
-    margin: 0 0 0 0;
+    margin: 0;
     border-radius: 0;
     border: 1px solid @border-color;
   }
 }
+
 div.struct {
   padding: 0; // TODO: tmp hack to fit viewbox
-  background-color: @light-background-color;
+  background-color: @color-background-primary;
 }

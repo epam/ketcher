@@ -15,11 +15,13 @@
  ***************************************************************************/
 
 //Fonts
-@header-font-size: 14px;
-@header-line-height: 17px;
+@font-size-header: 14px;
+@line-height-header: 17px;
 
-@regular-font-size: 12px;
-@regular-line-height: 14px;
+@font-size-regular: 12px;
+@line-height-regular: 14px;
+
+@font-size-small: 8px;
 
 @Inter: Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
 Arial, sans-serif;
@@ -28,36 +30,65 @@ Arial, sans-serif;
 @margin-top-bottom: 10px;
 @margin-left-right: 15px;
 
-//Colors
-@main-font-color: #585858;
-
-@color-gray1: #343434;
 @color-gray: #DDDDDD;
-@color-black: #000000;
-@color-gray2: #585858;
-@color-blue: #f6f9ff;
-@color-white: #ffffff;
-@color-blue2: #3E7BFA;
-@color-gray3: #5B6077;
 
 //using for changing color of SVG for checkboxes and radiobuttons
-@input-color: escape(@color-gray1);
+@color-input: escape(@color-button-primary);
 
-@light-background-color: #fff;
-@gray-background-color: #F3F3F3;;
+@color-background-primary: #FFFFFF;
+@color-background-canvas: #F2F2F2;
+@color-background-secondary: #F8FEFF;
 
 // Buttons
-@primary-button-color: @color-gray1;
-@primary-button-hover-color: @color-black;
-@primary-button-disabled-color: @color-gray;
-@primary-button-text: #fff;
+@color-button-primary: #005662;
+@color-button-primary-hover: #00838F;
+@color-button-primary-clicked: #4FB3BF;
+@color-button-primary-disabled: rgba(0, 131, 143, 0.4);
 
-@secondary-button-color: @color-gray1;
-@secondary-button-hover-color: @color-black;
-@secondary-button-disabled-color: @color-gray;
+@color-button-secondary: #717171;
+@color-button-secondary-hover: #333333;
+@color-button-secondary-disabled: rgba(113, 113, 113, 0.4);
+@color-button-secondary-clicked: #AEAEAE;
 
-// old styles 
+@color-button-atom: #F2F2F2;
+@color-button-atom-hover: #D1D5E3;
+@color-button-atom-clicked: #00838F;
+
+// Text
+@color-text-primary: #333333;
+@color-text-secondary: #585858;
+@color-text-light: #FFFFFF;
+@color-text-legend: #AEAEAE;
+@color-text-black: #000000;
+
+// Icons
+@color-icon-active: #525252;
+
+// Tabs
+@color-tab-active:#005662;
+
+@color-divider: #AEAEAE;
+
+// Scroll
+@color-scroll: #717171;
+@color-scroll-inactive: #DDDDDD;
+
+// Borders
+@color-border-hover: #DDDDDD;
+@color-border-main: #005662;
+
+// Dropdown
+@color-dropdown-hover: #DDDDDD;
+
+//Floating windows size
+@width-large: 520px;
+@width-medium: 440px;
+@width-small: 260px;
+
+// old styles
 @static-path: '.';
+
+@gray-background-color: #F3F3F3;
 
 @main-color: #333;
 @active-color: #1a7090;
@@ -123,14 +154,14 @@ Arial, sans-serif;
 
 // Periodic table coloring
 
-@atom-periodic-diatomic: #e7ff8f;
-@atom-periodic-noble-gas: #c0ffff;
-@atom-periodic-alkali-metal: #ff6666;
-@atom-periodic-alkaline-earth-metal: #ffdead;
-@atom-periodic-metalloid: #cccc99;
-@atom-periodic-polyatomic: #a1ffc3;
-@atom-periodic-post-transition-metal: #cccccc;
-@atom-periodic-transition-metal: #ffc0c0;
-@atom-periodic-lanthanide: #ffbfff;
-@atom-periodic-actinide: #ff99cc;
+@atom-periodic-alkali-metal: #FFA2A5;
+@atom-periodic-alkaline-earth-metal: #FFE0B5;
+@atom-periodic-transition-metal: #FFD2D4;
+@atom-periodic-post-transition-metal: #C5C5C5;
+@atom-periodic-metalloid: #E2E2BE;
+@atom-periodic-other-nonmetal: #E8FF94;
+@atom-periodic-halogen: #FFFEA6;
+@atom-periodic-noble-gas: #C2FFFF;
+@atom-periodic-lanthanide: #F4C8F4;
+@atom-periodic-actinide: #FD98CB;
 @atom-periodic-unknown-properties: #e8e8e8;

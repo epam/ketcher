@@ -29,7 +29,7 @@ export function fromSimpleObjectDeletion(restruct, id) {
 }
 
 export function fromSimpleObjectAddition(restruct, pos, mode, toCircle) {
-  var action = new Action()
+  const action = new Action()
   action.addOp(new SimpleObjectAdd(pos, mode, toCircle))
   return action.perform(restruct)
 }
@@ -42,7 +42,7 @@ export function fromSimpleObjectResizing(
   anchor,
   toCircle
 ) {
-  var action = new Action()
+  const action = new Action()
   action.addOp(new SimpleObjectResize(id, d, current, anchor, false, toCircle))
   return action.perform(restruct)
 }

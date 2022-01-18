@@ -21,12 +21,12 @@ import clsx from 'clsx'
 function AtomInfo({ el, isInfo }) {
   const numberStyle = {
     color: ElementColor[el.label] || 'black',
-    fontSize: '1.2em'
+    fontSize: '12px'
   }
   const elemStyle = {
     color: ElementColor[el.label] || 'black',
     fontWeight: 'bold',
-    fontSize: '2em'
+    fontSize: '18px'
   }
   return (
     <div className={clsx(classes.ket_atom_info, !isInfo && classes.none)}>

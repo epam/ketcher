@@ -34,11 +34,15 @@ import { ServerFormatter } from './serverFormatter'
 import { SmilesFormatter } from './smilesFormatter'
 
 export class FormatterFactory {
-  constructor(private readonly structService: StructService) {}
+  #structService: StructService
+
+  constructor(structService: StructService) {
+    this.#structService = structService
+  }
 
   private separateOptions(
     options?: FormatterFactoryOptions
-  ): [Partial<MolSerializerOptions>, StructServiceOptions | {}] {
+  ): [Partial<MolSerializerOptions>, Partial<StructServiceOptions>] {
     if (!options) {
       return [{}, {}]
     }
@@ -46,7 +50,7 @@ export class FormatterFactory {
     const { reactionRelayout, badHeaderRecover, ...structServiceOptions } =
       options
 
-    let molfileParseOptions: Partial<MolSerializerOptions> = {}
+    const molfileParseOptions: Partial<MolSerializerOptions> = {}
 
     if (typeof reactionRelayout === 'boolean') {
       molfileParseOptions.reactionRelayout = reactionRelayout
@@ -87,8 +91,8 @@ export class FormatterFactory {
 
           // only for ServerFormatter, because 'getStructureFromStringAsync' is delegated to it
 
-          this.structService,
-          new MolSerializer(molSerializerOptions),
+          this.#structService,
+          new KetSerializer(),
           format,
           structServiceOptions
         )
@@ -104,8 +108,8 @@ export class FormatterFactory {
       case 'cdxml':
       default:
         formatter = new ServerFormatter(
-          this.structService,
-          new MolSerializer(molSerializerOptions),
+          this.#structService,
+          new KetSerializer(),
           format,
           structServiceOptions
         )

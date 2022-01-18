@@ -15,13 +15,15 @@
  ***************************************************************************/
 
 export const INDIGO_VERIFICATION = 'INDIGO_VERIFICATION'
+export const ANALYZING_FILE = 'ANALYZING_FILE'
 
 export interface RequestState {
   indigoVerification: boolean
+  isAnalyzingFile: boolean
 }
 
 interface IndigoVerificationAction {
-  type: typeof INDIGO_VERIFICATION
+  type: string
   data: boolean
 }
 

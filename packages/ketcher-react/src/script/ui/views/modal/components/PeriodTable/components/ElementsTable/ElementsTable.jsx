@@ -44,11 +44,20 @@ const ACTINIDE = 'actinide'
 const LANTHANIDE = 'lanthanide'
 const main = rowPartition(
   Elements.filter(
-    item => item && item.type !== ACTINIDE && item.type !== LANTHANIDE
+    (item) =>
+      item &&
+      item.type !== ACTINIDE &&
+      item.type !== LANTHANIDE &&
+      item.number !== 89 &&
+      item.number !== 57
   )
 )
-const lanthanides = Elements.filter(item => item && item.type === LANTHANIDE)
-const actinides = Elements.filter(item => item && item.type === ACTINIDE)
+const lanthanides = Elements.filter(
+  (item) => item && (item.type === LANTHANIDE || item.number === 57)
+)
+const actinides = Elements.filter(
+  (item) => item && (item.type === ACTINIDE || item.number === 89)
+)
 
 function rowPartition(elements) {
   return elements.reduce((result, item) => {
@@ -69,7 +78,7 @@ class ElementsTable extends Component {
     return nextProps.value !== this.props.value
   }
 
-  getAtomClassNames = item => {
+  getAtomClassNames = (item) => {
     const { selected } = this.props
 
     const type = metalPrefix.includes(item.type)
@@ -84,7 +93,7 @@ class ElementsTable extends Component {
       selected(item.label) && atomClassNames.selected
     ]
 
-    return classes.map(className => {
+    return classes.map((className) => {
       return styles[className]
     })
   }
@@ -105,7 +114,7 @@ class ElementsTable extends Component {
             key={index}
             row={row}
             caption={index + 1}
-            refer={element => element === 1 && (index === 5 ? '*' : '**')}
+            refer={(element) => element === 1 && (index === 5 ? '*' : '**')}
             {...callbacks}
           />
         ))}

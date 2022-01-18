@@ -28,6 +28,15 @@ import ReObject from './reobject'
 import ReStruct from './restruct'
 import { Scale } from 'domain/helpers'
 
+interface CustomRawDraftInlineStyleRange
+  extends Omit<RawDraftInlineStyleRange, 'style'> {
+  style:
+    | DraftInlineStyleType
+    | TextCommand.Subscript
+    | TextCommand.Superscript
+    | TextCommand.FontSize
+}
+
 class ReText extends ReObject {
   private item: Text
   paths: Array<Array<any>> = []
@@ -36,6 +45,7 @@ class ReText extends ReObject {
     super('text')
     this.item = text
   }
+
   static isSelectable() {
     return true
   }
@@ -72,7 +82,9 @@ class ReText extends ReObject {
     const leftEdge = firstElOfFirstRow.getBBox().x
 
     const firstRow: Array<any> = paths[0]
-    const topEdge: number = Math.min(...firstRow.map(path => path.getBBox().y))
+    const topEdge: number = Math.min(
+      ...firstRow.map((path) => path.getBBox().y)
+    )
 
     const widestRow: Array<any> = paths.reduce(
       (widestRow, nextRow) =>
@@ -87,7 +99,7 @@ class ReText extends ReObject {
 
     const lastRow: Array<any> = paths[paths.length - 1]
     const bottomEdge: number = Math.max(
-      ...lastRow.map(path => path.getBBox().y + path.getBBox().height)
+      ...lastRow.map((path) => path.getBBox().y + path.getBBox().height)
     )
 
     return {
@@ -120,9 +132,9 @@ class ReText extends ReObject {
     const paper = render.paper
     const paperScale = Scale.obj2scaled(this.item.position, options)
 
-    let shiftY: number = 0
+    let shiftY = 0
     this.paths = []
-    //TODO: create parser in ketcher-core package
+    // TODO: create parser in ketcher-core package
     const rawContentState: RawDraftContentState | null = this.item.content
       ? (JSON.parse(this.item.content) as RawDraftContentState)
       : null
@@ -130,7 +142,7 @@ class ReText extends ReObject {
     rawContentState.blocks.forEach((block: RawDraftContentBlock) => {
       const ranges: Array<[number, number, Record<string, any>]> =
         this.getRanges(block, options)
-      let shiftX: number = 0
+      let shiftX = 0
       const row: Array<any> = []
       ranges.forEach(([start, end, styles]) => {
         block.text = block.text.replace(/[^\S\r\n]/g, '\u00a0')
@@ -176,7 +188,7 @@ class ReText extends ReObject {
   ): Array<[number, number, Record<string, any>]> {
     const ranges: Array<[number, number, Record<string, any>]> = []
 
-    let start: number = 0
+    let start = 0
     let styles: Record<string, any> = this.getStyles(block, start, options)
     for (let i = 1; i < block.text.length; i++) {
       const nextStyles = this.getStyles(block, i, options)
@@ -249,15 +261,6 @@ class ReText extends ReObject {
       {}
     )
   }
-}
-
-interface CustomRawDraftInlineStyleRange
-  extends Omit<RawDraftInlineStyleRange, 'style'> {
-  style:
-    | DraftInlineStyleType
-    | TextCommand.Subscript
-    | TextCommand.Superscript
-    | TextCommand.FontSize
 }
 
 export default ReText

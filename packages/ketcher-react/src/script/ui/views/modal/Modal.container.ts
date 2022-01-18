@@ -28,7 +28,7 @@ const mapStateToProps = (state): StateProps => ({
 })
 
 const mapDispatchToProps = (dispatch: Dispatch): BaseCallProps => ({
-  onOk: _result => {
+  onOk: (_result) => {
     dispatch({ type: 'MODAL_CLOSE' })
   },
   onCancel: () => {
@@ -45,7 +45,7 @@ const mergeProps = (
   return {
     modal: stateProps.modal,
     ...initProps,
-    onOk: result => {
+    onOk: (result) => {
       if (prop && prop.onResult) prop.onResult(result)
       dispatchProps.onOk(result)
     },

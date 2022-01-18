@@ -70,7 +70,7 @@ AtomTool.prototype.mousedown = function (event) {
     const [firstAtom, ...atoms] = sGroupAtoms
     const atomNeighbours = this.struct.molecule.atomGetNeighbors(firstAtom)
     const extraNeighbour = atomNeighbours.some(
-      atom => !sGroupAtoms.includes(atom.aid)
+      (atom) => !sGroupAtoms.includes(atom.aid)
     )
     if (extraNeighbour) {
       action.mergeWith(fromSgroupDeletion(this.struct, ci.id))
@@ -102,7 +102,7 @@ AtomTool.prototype.mousedown = function (event) {
     if (atomId !== null) atomResult.push(atomId)
   }
   if (atomResult.length > 0) {
-    for (let id of atomResult) {
+    for (const id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
         id
@@ -176,7 +176,7 @@ AtomTool.prototype.mouseup = function (event) {
     if (atomId !== null) atomResult.push(atomId)
   }
   if (atomResult.length > 0) {
-    for (let id of atomResult) {
+    for (const id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
         id
@@ -208,24 +208,26 @@ AtomTool.prototype.mouseup = function (event) {
 }
 
 export function atomLongtapEvent(tool, render) {
-  const dragCtx = tool.dragCtx
-  const editor = tool.editor
-
-  const atomid = dragCtx.item && dragCtx.item.id
-
+  const { dragCtx, editor } = tool
+  const atomid = dragCtx.item?.id
+  const fgs = render.ctab.molecule.functionalGroups
   // edit atom or add atom
   const atom =
     atomid !== undefined && atomid !== null
       ? render.ctab.molecule.atoms.get(atomid)
       : new Atom({ label: '' })
-
+  const fgId = FunctionalGroup.findFunctionalGroupByAtom(fgs, atomid)
   // TODO: longtab event
   dragCtx.timeout = setTimeout(() => {
     delete tool.dragCtx
+    if (fgId != null) {
+      editor.event.removeFG.dispatch({ fgIds: [fgId] })
+      return
+    }
     editor.selection(null)
     const res = editor.event.quickEdit.dispatch(atom)
     Promise.resolve(res)
-      .then(newatom => {
+      .then((newatom) => {
         const action = atomid
           ? fromAtomsAttrs(render.ctab, atomid, newatom)
           : fromAtomAddition(render.ctab, dragCtx.xy0, newatom)

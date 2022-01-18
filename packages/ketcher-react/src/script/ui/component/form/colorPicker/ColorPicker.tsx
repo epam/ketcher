@@ -49,14 +49,14 @@ const ColorPicker = (props: Props) => {
   const { onChange, value } = props
 
   const handleChange = useCallback(
-    color => {
+    (color) => {
       onChange(color)
     },
     [onChange]
   )
-  const handleClick = e => {
+  const handleClick = (e) => {
     e.preventDefault()
-    setIsOpen(prev => !prev)
+    setIsOpen((prev) => !prev)
   }
   const handleClose = () => {
     setIsOpen(false)
@@ -65,11 +65,11 @@ const ColorPicker = (props: Props) => {
   const handlePaletteOpen = () => {
     setIsPaletteOpen(true)
   }
-  const handleColorChange = color => {
+  const handleColorChange = (color) => {
     handleChange(color)
   }
 
-  const handleBlur = e => {
+  const handleBlur = (e) => {
     if (!e.currentTarget.contains(e.relatedTarget)) {
       handleClose()
     }
@@ -79,7 +79,7 @@ const ColorPicker = (props: Props) => {
     <div
       className={classes.colorPickerInput}
       data-testid="color-picker-field"
-      onClick={e => e.preventDefault()}
+      onClick={(e) => e.preventDefault()}
     >
       <button
         className={classes.colorPickerPreview}
@@ -107,7 +107,7 @@ const ColorPicker = (props: Props) => {
               autoFocus
               data-testid="color-picker-btn"
             />
-            {presetColors.map(color => (
+            {presetColors.map((color) => (
               <button
                 key={color}
                 onClick={() => handleColorChange(color)}
@@ -120,12 +120,14 @@ const ColorPicker = (props: Props) => {
           {isPaletteOpen && (
             <div className={classes.colorPicker}>
               <HexColorPicker color={value} onChange={handleChange} />
-              <HexColorInput
-                data-testid="color-picker-input"
-                color={value}
-                onChange={handleChange}
-              />
-              <span className={classes.hex}>HEX</span>
+              <div className={classes.colorContainer}>
+                <span className={classes.hex}>HEX</span>
+                <HexColorInput
+                  data-testid="color-picker-input"
+                  color={value}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
           )}
         </div>

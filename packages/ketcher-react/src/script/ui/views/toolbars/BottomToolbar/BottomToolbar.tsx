@@ -38,7 +38,7 @@ interface BottomToolbarProps
   }
 }
 
-interface BottomToolbarCallProps extends ToolbarGroupItemCallProps {}
+type BottomToolbarCallProps = ToolbarGroupItemCallProps
 
 type Props = BottomToolbarProps & BottomToolbarCallProps
 

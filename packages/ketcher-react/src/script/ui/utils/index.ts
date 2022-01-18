@@ -30,7 +30,7 @@ const greekRe = new RegExp(
 )
 
 export function greekify(str: string): string {
-  return str.replace(greekRe, sym => GREEK_SIMBOLS[sym])
+  return str.replace(greekRe, (sym) => GREEK_SIMBOLS[sym])
 }
 
 export function filterLib(lib, filter) {
@@ -63,3 +63,5 @@ export function filterFGLib(lib, filter) {
     }, {})
   )(lib)
 }
+
+export { fileOpener } from './fileOpener'

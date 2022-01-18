@@ -52,12 +52,16 @@ export interface WithSelection {
   selectedAtoms: Array<number>
 }
 
-export interface CheckCommandData extends CommandData, WithStruct {
-  types: Array<string>
+export interface CommandOptions {
+  [key: string]: string | number | boolean | undefined
 }
 
 export interface CommandData {
   options: CommandOptions
+}
+
+export interface CheckCommandData extends CommandData, WithStruct {
+  types: Array<string>
 }
 
 export interface ConvertCommandData
@@ -108,10 +112,6 @@ export interface AutomapCommandData
     WithStruct,
     WithFormat {
   mode: string
-}
-
-export interface CommandOptions {
-  [key: string]: string | number | boolean | undefined
 }
 
 export interface OutputMessage<T> {

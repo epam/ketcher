@@ -14,4 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-export interface Action {}
+export interface Action {
+  perform: () => void
+}

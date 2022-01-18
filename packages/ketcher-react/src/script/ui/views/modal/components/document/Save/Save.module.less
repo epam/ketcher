@@ -17,12 +17,14 @@
 @import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
-@save-container-width-large: 495px;
+@save-container-width-large: 485px;
 @save-container-height-large: 315px;
 @save-container-width-small: 380px;
 @save-container-height-small: 325px;
 
 .save {
+  width: @width-large;
+
   .formContainer {
     display: flex;
     flex-direction: column;
@@ -38,8 +40,12 @@
     margin: 2px;
     padding: 2px 5px;
     overflow: auto;
+
+    .scrollbar_thin();
+
     .warningsContainer {
       display: flex;
+
       .warningsArr {
         color: @error-color;
         margin: 2px;
@@ -48,6 +54,7 @@
         font-size: 12px;
       }
     }
+
     .warning {
       .warning;
     }
@@ -66,11 +73,13 @@
       display: inline-block;
       text-align: left;
       margin: 0 0.3em;
+
       select,
       input {
         height: 25px !important;
         width: 190px;
       }
+
       select {
         width: 145px;
       }
@@ -86,15 +95,16 @@
     white-space: pre;
     cursor: text;
     resize: none;
-    color: @main-font-color;
+    color: @color-text-primary;
     font-size: 12px;
 
-    .scrollbar();
+    .scrollbar_thin();
   }
 
   .saveImageContainer {
     width: @save-container-width-large;
     height: @save-container-height-large;
+
     label {
       margin: 0 0.3em;
     }
@@ -106,21 +116,14 @@
     flex-wrap: nowrap;
     justify-content: flex-end;
     margin-bottom: 10px;
+
     .ok {
-      background: @primary-button-color;
-      color: @primary-button-text;
+      .button-main();
+
       border: none;
       margin-right: 2px;
       margin-left: 10px;
       float: right;
-      &:hover {
-        background: @primary-button-hover-color;
-        color: @primary-button-text;
-      }
-      &:disabled {
-        background: @primary-button-disabled-color;
-        color: @primary-button-text;
-      }
     }
   }
 
@@ -130,13 +133,15 @@
     align-items: center;
     justify-content: center;
     height: 100%;
+
     img {
-      background-color: @light-background-color;
+      background-color: @color-background-primary;
       height: 220px;
       width: 220px;
       padding: 5px;
     }
   }
+
   .previewMessage {
     text-align: center;
     margin: auto;
@@ -149,9 +154,11 @@
     width: @save-container-width-small;
     height: @save-container-height-small;
   }
+
   .warnings {
     height: 50px;
   }
+
   .saveImageContainer {
     width: @save-container-width-small;
     height: @save-container-height-small;

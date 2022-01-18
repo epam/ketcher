@@ -33,20 +33,22 @@ function fromRlabel(rg) {
 
 export function moleculeToKet(struct: Struct): any {
   const body: any = {
-    atoms: Array.from(struct.atoms.values()).map(atom => {
+    atoms: Array.from(struct.atoms.values()).map((atom) => {
       if (atom.label === 'R#') return rglabelToKet(atom)
       if (atom.label === 'L#') return atomListToKet(atom)
       return atomToKet(atom)
     })
   }
 
-  if (struct.bonds.size !== 0)
+  if (struct.bonds.size !== 0) {
     body.bonds = Array.from(struct.bonds.values()).map(bondToKet)
+  }
 
-  if (struct.sgroups.size !== 0)
-    body.sgroups = Array.from(struct.sgroups.values()).map(sGroup =>
+  if (struct.sgroups.size !== 0) {
+    body.sgroups = Array.from(struct.sgroups.values()).map((sGroup) =>
       sgroupToKet(struct, sGroup)
     )
+  }
 
   const fragment = struct.frags.get(0)
   if (fragment) {
@@ -62,7 +64,7 @@ function atomToKet(source) {
   const result = {}
   ifDef(result, 'label', source.label)
   ifDef(result, 'alias', source.alias)
-  ifDef(result, 'location', [source.pp.x, source.pp.y, source.pp.z])
+  ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z])
   ifDef(result, 'charge', source.charge, 0)
   ifDef(result, 'explicitValence', source.explicitValence, -1)
   ifDef(result, 'isotope', source.isotope, 0)
@@ -92,7 +94,7 @@ function rglabelToKet(source) {
   ifDef(result, 'attachmentPoints', source.attpnt, 0)
 
   const refsToRGroups = fromRlabel(source.rglabel).map(
-    rgnumber => `rg-${rgnumber}`
+    (rgnumber) => `rg-${rgnumber}`
   )
   ifDef(result, '$refs', refsToRGroups)
 

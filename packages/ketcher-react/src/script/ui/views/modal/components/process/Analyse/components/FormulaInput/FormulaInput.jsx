@@ -20,7 +20,7 @@ const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g
 const errorRegexp = /error:.*/g
 
 function formulaInputMarkdown(content) {
-  const onKeyDown = e => {
+  const onKeyDown = (e) => {
     if (e.keyCode === 8) {
       e.preventDefault()
       return false
@@ -29,8 +29,8 @@ function formulaInputMarkdown(content) {
   return (
     <div
       className={styles.chem_input}
-      onKeyPress={e => e.preventDefault()}
-      onPaste={e => e.preventDefault()}
+      onKeyPress={(e) => e.preventDefault()}
+      onPaste={(e) => e.preventDefault()}
       onKeyDown={onKeyDown}
       contentEditable={true}
       suppressContentEditableWarning={true}

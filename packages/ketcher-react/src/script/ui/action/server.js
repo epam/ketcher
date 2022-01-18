@@ -25,7 +25,7 @@ const config = {
       thunk: serverTransform('layout')
     },
     disabled: (editor, server, options) => !options.app.server,
-    hidden: options => isHidden(options, 'layout')
+    hidden: (options) => isHidden(options, 'layout')
   },
   clean: {
     shortcut: 'Mod+Shift+l',
@@ -34,7 +34,7 @@ const config = {
       thunk: serverTransform('clean')
     },
     disabled: (editor, server, options) => !options.app.server,
-    hidden: options => isHidden(options, 'clean')
+    hidden: (options) => isHidden(options, 'clean')
   },
   arom: {
     title: 'Aromatize',
@@ -42,7 +42,7 @@ const config = {
       thunk: serverTransform('aromatize')
     },
     disabled: (editor, server, options) => !options.app.server,
-    hidden: options => isHidden(options, 'arom')
+    hidden: (options) => isHidden(options, 'arom')
   },
   dearom: {
     title: 'Dearomatize',
@@ -50,7 +50,7 @@ const config = {
       thunk: serverTransform('dearomatize')
     },
     disabled: (editor, server, options) => !options.app.server,
-    hidden: options => isHidden(options, 'dearom')
+    hidden: (options) => isHidden(options, 'dearom')
   },
   cip: {
     shortcut: 'Mod+p',
@@ -59,35 +59,35 @@ const config = {
       thunk: serverTransform('calculateCip')
     },
     disabled: (editor, server, options) => !options.app.server,
-    hidden: options => isHidden(options, 'cip')
+    hidden: (options) => isHidden(options, 'cip')
   },
   check: {
     title: 'Check Structure',
     action: { dialog: 'check' },
     disabled: (editor, server, options) => !options.app.server,
-    hidden: options => isHidden(options, 'check')
+    hidden: (options) => isHidden(options, 'check')
   },
   analyse: {
     title: 'Calculated Values',
     action: { dialog: 'analyse' },
     disabled: (editor, server, options) => !options.app.server,
-    hidden: options => isHidden(options, 'analyse')
+    hidden: (options) => isHidden(options, 'analyse')
   },
   recognize: {
     title: 'Recognize Molecule',
     action: { dialog: 'recognize' },
     disabled: (editor, server, options) =>
-      //TODO: provide the list of disabled functions as array
+      // TODO: provide the list of disabled functions as array
       !options.app.server ||
       global.ketcher.standalone ||
       !options.app.imagoVersions,
-    hidden: options => isHidden(options, 'recognize')
+    hidden: (options) => isHidden(options, 'recognize')
   },
   miew: {
     title: '3D Viewer',
     action: { dialog: 'miew' },
     disabled: () => !window.Miew,
-    hidden: options => isHidden(options, 'miew')
+    hidden: (options) => isHidden(options, 'miew')
   }
 }
 

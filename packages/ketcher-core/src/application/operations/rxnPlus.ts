@@ -66,7 +66,7 @@ class DeleteRxnPlus extends BaseOperation {
   execute(struct: Struct): PerformOperationResult {
     const rxnPlus = struct.rxnPluses.get(this.#rxnPlusId)!
 
-    //TODO: move to renderer
+    // TODO: move to renderer
     // // notifyRxnPlusRemoved
     // restruct.markItemRemoved()
     // const rxn = restruct.rxnPluses.get(plid)

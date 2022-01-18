@@ -128,8 +128,8 @@ export class SGroup {
 
   // TODO: should be group-specific
   getAttrs(): any {
-    var attrs = {}
-    Object.keys(this.data).forEach(attr => {
+    const attrs = {}
+    Object.keys(this.data).forEach((attr) => {
       attrs[attr] = this.data[attr]
     })
     return attrs
@@ -137,7 +137,7 @@ export class SGroup {
 
   // stub
   setAttr(attr: string, value: any): any {
-    var oldValue = this.data[attr]
+    const oldValue = this.data[attr]
     this.data[attr] = value
     return oldValue
   }
@@ -152,7 +152,40 @@ export class SGroup {
   }
 
   calculatePP(struct: Struct): void {
-    let topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5))
+    let topLeftPoint
+
+    if (this.data.context === 'Atom' || this.data.context === 'Bond') {
+      const contentBoxes: Array<any> = []
+      let contentBB: Box2Abs | null = null
+      const direction = new Vec2(1, 0)
+
+      this.atoms.forEach((aid) => {
+        const atom = struct.atoms.get(aid)
+        const pos = new Vec2(atom!.pp)
+        const ext = new Vec2(0.05 * 3, 0.05 * 3)
+        const bba = new Box2Abs(pos, pos).extend(ext, ext)
+        contentBoxes.push(bba)
+      })
+      contentBoxes.forEach((bba) => {
+        var bbb: Box2Abs | null = null
+        ;[bba.p0.x, bba.p1.x].forEach((x) => {
+          ;[bba.p0.y, bba.p1.y].forEach((y) => {
+            var v = new Vec2(x, y)
+            var p = new Vec2(
+              Vec2.dot(v, direction),
+              Vec2.dot(v, direction.rotateSC(1, 0))
+            )
+            bbb = !bbb ? new Box2Abs(p, p) : bbb!.include(p)
+          })
+        })
+        contentBB = !contentBB ? bbb : Box2Abs.union(contentBB, bbb!)
+      })
+
+      topLeftPoint = contentBB!.p0
+    } else {
+      topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5))
+    }
+
     const sgroups = Array.from(struct.sgroups.values())
     for (let i = 0; i < struct.sgroups.size; ++i) {
       if (!descriptorIntersects(sgroups as [], topLeftPoint)) break
@@ -162,12 +195,16 @@ export class SGroup {
 
     // TODO: the code below is a temporary solution that will be removed after the implementation of the internal format
     // TODO: in schema.json required fields ["context", "FieldValue"] in sgroups type DAT must be returned
-    if (this.data.fieldName === 'INDIGO_CIP_DESC' && this.atoms.length === 1) {
-      const sAtom = this.atoms[0]
-      const sAtomPP = struct.atoms.get(sAtom)?.pp
+    if (this.data.fieldName === 'INDIGO_CIP_DESC') {
+      if (this.atoms.length === 1) {
+        const sAtom = this.atoms[0]
+        const sAtomPP = struct.atoms.get(sAtom)?.pp
 
-      if (sAtomPP) {
-        topLeftPoint = sAtomPP
+        if (sAtomPP) {
+          topLeftPoint = sAtomPP
+        }
+      } else {
+        topLeftPoint = SGroup.getMassCentre(struct, this.atoms)
       }
     }
 
@@ -180,9 +217,9 @@ export class SGroup {
   }
 
   static filterAtoms(atoms: any, map: any) {
-    var newAtoms: Array<any> = []
-    for (var i = 0; i < atoms.length; ++i) {
-      var aid = atoms[i]
+    const newAtoms: Array<any> = []
+    for (let i = 0; i < atoms.length; ++i) {
+      const aid = atoms[i]
       if (typeof map[aid] !== 'number') newAtoms.push(aid)
       else if (map[aid] >= 0) newAtoms.push(map[aid])
       else newAtoms.push(-1)
@@ -191,8 +228,8 @@ export class SGroup {
   }
 
   static removeNegative(atoms: any) {
-    var newAtoms: Array<any> = []
-    for (var j = 0; j < atoms.length; ++j) {
+    const newAtoms: Array<any> = []
+    for (let j = 0; j < atoms.length; ++j) {
       if (atoms[j] >= 0) newAtoms.push(atoms[j])
     }
     return newAtoms
@@ -205,11 +242,11 @@ export class SGroup {
   static clone(sgroup: SGroup, aidMap: Map<number, number>): SGroup {
     const cp = new SGroup(sgroup.type)
 
-    Object.keys(sgroup.data).forEach(field => {
+    Object.keys(sgroup.data).forEach((field) => {
       cp.data[field] = sgroup.data[field]
     })
 
-    cp.atoms = sgroup.atoms.map(elem => aidMap.get(elem))
+    cp.atoms = sgroup.atoms.map((elem) => aidMap.get(elem))
     cp.pp = sgroup.pp
     cp.bracketBox = sgroup.bracketBox
     cp.patoms = null
@@ -224,7 +261,7 @@ export class SGroup {
   }
 
   static removeAtom(sgroup: SGroup, aid: number): void {
-    for (var i = 0; i < sgroup.atoms.length; ++i) {
+    for (let i = 0; i < sgroup.atoms.length; ++i) {
       if (sgroup.atoms[i] === aid) {
         sgroup.atoms.splice(i, 1)
         return
@@ -261,38 +298,38 @@ export class SGroup {
     mol,
     crossBondsPerAtom: { [key: number]: Array<Bond> }
   ): void {
-    var atoms = sGroup.atoms
+    const atoms = sGroup.atoms
     const crossBonds = Object.values(crossBondsPerAtom).flat()
     if (!crossBonds || crossBonds.length !== 2) {
       sGroup.bracketDir = new Vec2(1, 0)
     } else {
-      var p1 = mol.bonds.get(crossBonds[0]).getCenter(mol)
-      var p2 = mol.bonds.get(crossBonds[1]).getCenter(mol)
+      const p1 = mol.bonds.get(crossBonds[0]).getCenter(mol)
+      const p2 = mol.bonds.get(crossBonds[1]).getCenter(mol)
       sGroup.bracketDir = Vec2.diff(p2, p1).normalized()
     }
-    var d = sGroup.bracketDir
+    const d = sGroup.bracketDir
 
-    var braketBox: Box2Abs | null = null
-    var contentBoxes: Array<any> = []
-    atoms.forEach(aid => {
-      var atom = mol.atoms.get(aid)
-      var pos = new Vec2(atom.pp)
-      var ext = new Vec2(0.05 * 3, 0.05 * 3)
-      var bba = new Box2Abs(pos, pos).extend(ext, ext)
+    let braketBox: Box2Abs | null = null
+    const contentBoxes: Array<any> = []
+    atoms.forEach((aid) => {
+      const atom = mol.atoms.get(aid)
+      const pos = new Vec2(atom.pp)
+      const ext = new Vec2(0.05 * 3, 0.05 * 3)
+      const bba = new Box2Abs(pos, pos).extend(ext, ext)
       contentBoxes.push(bba)
     })
-    contentBoxes.forEach(bba => {
-      var bbb: Box2Abs | null = null
-      ;[bba.p0.x, bba.p1.x].forEach(x => {
-        ;[bba.p0.y, bba.p1.y].forEach(y => {
-          var v = new Vec2(x, y)
-          var p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, d.rotateSC(1, 0)))
+    contentBoxes.forEach((bba) => {
+      let bbb: Box2Abs | null = null
+      ;[bba.p0.x, bba.p1.x].forEach((x) => {
+        ;[bba.p0.y, bba.p1.y].forEach((y) => {
+          const v = new Vec2(x, y)
+          const p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, d.rotateSC(1, 0)))
           bbb = !bbb ? new Box2Abs(p, p) : bbb!.include(p)
         })
       })
       braketBox = !braketBox ? bbb : Box2Abs.union(braketBox, bbb!)
     })
-    var vext = new Vec2(0.2, 0.4)
+    const vext = new Vec2(0.2, 0.4)
     if (braketBox) braketBox = (braketBox as Box2Abs).extend(vext, vext)
     sGroup.bracketBox = braketBox
   }
@@ -305,17 +342,17 @@ export class SGroup {
     d,
     n
   ): Array<any> {
-    var brackets: Array<any> = []
+    const brackets: Array<any> = []
     const crossBondsPerAtomValues = Object.values(crossBondsPerAtom)
     const crossBonds = crossBondsPerAtomValues.flat()
     if (crossBonds.length < 2) {
       ;(function () {
         d = d || new Vec2(1, 0)
         n = n || d.rotateSC(1, 0)
-        var bracketWidth = Math.min(0.25, bb.sz().x * 0.3)
-        var cl = Vec2.lc2(d, bb.p0.x, n, 0.5 * (bb.p0.y + bb.p1.y))
-        var cr = Vec2.lc2(d, bb.p1.x, n, 0.5 * (bb.p0.y + bb.p1.y))
-        var bracketHeight = bb.sz().y
+        const bracketWidth = Math.min(0.25, bb.sz().x * 0.3)
+        const cl = Vec2.lc2(d, bb.p0.x, n, 0.5 * (bb.p0.y + bb.p1.y))
+        const cr = Vec2.lc2(d, bb.p1.x, n, 0.5 * (bb.p0.y + bb.p1.y))
+        const bracketHeight = bb.sz().y
 
         brackets.push(
           new SGroupBracketParams(cl, d.negated(), bracketWidth, bracketHeight),
@@ -327,15 +364,15 @@ export class SGroup {
       crossBondsPerAtomValues.length === 2
     ) {
       ;(function () {
-        var b1 = mol.bonds.get(crossBonds[0])
-        var b2 = mol.bonds.get(crossBonds[1])
-        var cl0 = b1.getCenter(mol)
-        var cr0 = b2.getCenter(mol)
-        var dr = Vec2.diff(cr0, cl0).normalized()
-        var dl = dr.negated()
+        const b1 = mol.bonds.get(crossBonds[0])
+        const b2 = mol.bonds.get(crossBonds[1])
+        const cl0 = b1.getCenter(mol)
+        const cr0 = b2.getCenter(mol)
+        const dr = Vec2.diff(cr0, cl0).normalized()
+        const dl = dr.negated()
 
-        var bracketWidth = 0.25
-        var bracketHeight = 1.5
+        const bracketWidth = 0.25
+        const bracketHeight = 1.5
         brackets.push(
           new SGroupBracketParams(
             cl0.addScaled(dl, 0),
@@ -353,10 +390,12 @@ export class SGroup {
       })()
     } else {
       ;(function () {
-        for (var i = 0; i < crossBonds.length; ++i) {
-          var b = mol.bonds.get(crossBonds[i])
-          var c = b.getCenter(mol)
-          var d = atomSet.has(b.begin) ? b.getDir(mol) : b.getDir(mol).negated()
+        for (let i = 0; i < crossBonds.length; ++i) {
+          const b = mol.bonds.get(crossBonds[i])
+          const c = b.getCenter(mol)
+          const d = atomSet.has(b.begin)
+            ? b.getDir(mol)
+            : b.getDir(mol).negated()
           brackets.push(new SGroupBracketParams(c, d, 0.2, 1.0))
         }
       })()
@@ -365,12 +404,12 @@ export class SGroup {
   }
 
   static getObjBBox(atoms, mol): Box2Abs {
-    var a0 = mol.atoms.get(atoms[0]).pp
-    var bb = new Box2Abs(a0, a0)
-    for (var i = 1; i < atoms.length; ++i) {
-      var aid = atoms[i]
-      var atom = mol.atoms.get(aid)
-      var p = atom.pp
+    const a0 = mol.atoms.get(atoms[0]).pp
+    let bb = new Box2Abs(a0, a0)
+    for (let i = 1; i < atoms.length; ++i) {
+      const aid = atoms[i]
+      const atom = mol.atoms.get(aid)
+      const p = atom.pp
       bb = bb.include(p)
     }
     return bb
@@ -378,7 +417,7 @@ export class SGroup {
 
   static getAtoms(mol, sg): Array<any> {
     if (!sg.allAtoms) return sg.atoms
-    var atoms: Array<any> = []
+    const atoms: Array<any> = []
     mol.atoms.forEach((_atom, aid) => {
       atoms.push(aid)
     })
@@ -386,11 +425,12 @@ export class SGroup {
   }
 
   static getBonds(mol, sg): Array<any> {
-    var atoms = SGroup.getAtoms(mol, sg)
-    var bonds: Array<any> = []
+    const atoms = SGroup.getAtoms(mol, sg)
+    const bonds: Array<any> = []
     mol.bonds.forEach((bond, bid) => {
-      if (atoms.indexOf(bond.begin) >= 0 && atoms.indexOf(bond.end) >= 0)
+      if (atoms.indexOf(bond.begin) >= 0 && atoms.indexOf(bond.end) >= 0) {
         bonds.push(bid)
+      }
     })
     return bonds
   }
@@ -399,58 +439,60 @@ export class SGroup {
     sgroup.atoms.sort((a, b) => a - b)
     sgroup.atomSet = new Pile(sgroup.atoms)
     sgroup.parentAtomSet = new Pile(sgroup.atomSet)
-    var inBonds: Array<any> = []
-    var xBonds: Array<any> = []
+    const inBonds: Array<any> = []
+    const xBonds: Array<any> = []
 
     mol.bonds.forEach((bond, bid) => {
       if (
         sgroup.parentAtomSet.has(bond.begin) &&
         sgroup.parentAtomSet.has(bond.end)
-      )
+      ) {
         inBonds.push(bid)
-      else if (
+      } else if (
         sgroup.parentAtomSet.has(bond.begin) ||
         sgroup.parentAtomSet.has(bond.end)
-      )
+      ) {
         xBonds.push(bid)
+      }
     })
 
-    if (xBonds.length !== 0 && xBonds.length !== 2)
+    if (xBonds.length !== 0 && xBonds.length !== 2) {
       throw Error('Unsupported cross-bonds number')
+    }
 
-    var xAtom1 = -1
-    var xAtom2 = -1
-    var crossBond = null
+    let xAtom1 = -1
+    let xAtom2 = -1
+    let crossBond = null
     if (xBonds.length === 2) {
-      var bond1 = mol.bonds.get(xBonds[0])
+      const bond1 = mol.bonds.get(xBonds[0])
       xAtom1 = sgroup.parentAtomSet.has(bond1.begin) ? bond1.begin : bond1.end
 
-      var bond2 = mol.bonds.get(xBonds[1])
+      const bond2 = mol.bonds.get(xBonds[1])
       xAtom2 = sgroup.parentAtomSet.has(bond2.begin) ? bond2.begin : bond2.end
       crossBond = bond2
     }
 
-    var tailAtom = xAtom2
+    let tailAtom = xAtom2
 
-    var newAtoms: Array<any> = []
-    for (var j = 0; j < sgroup.data.mul - 1; j++) {
-      let amap = {}
-      sgroup.atoms.forEach(aid => {
-        var atom = mol.atoms.get(aid)
-        var aid2 = mol.atoms.add(new Atom(atom))
+    const newAtoms: Array<any> = []
+    for (let j = 0; j < sgroup.data.mul - 1; j++) {
+      const amap = {}
+      sgroup.atoms.forEach((aid) => {
+        const atom = mol.atoms.get(aid)
+        const aid2 = mol.atoms.add(new Atom(atom))
         newAtoms.push(aid2)
         sgroup.atomSet.add(aid2)
         amap[aid] = aid2
       })
-      inBonds.forEach(bid => {
-        var bond = mol.bonds.get(bid)
-        var newBond = new Bond(bond)
+      inBonds.forEach((bid) => {
+        const bond = mol.bonds.get(bid)
+        const newBond = new Bond(bond)
         newBond.begin = amap[newBond.begin]
         newBond.end = amap[newBond.end]
         mol.bonds.add(newBond)
       })
       if (crossBond !== null) {
-        var newCrossBond = new Bond(crossBond)
+        const newCrossBond = new Bond(crossBond)
         newCrossBond.begin = tailAtom
         newCrossBond.end = amap[xAtom1]
         mol.bonds.add(newCrossBond)
@@ -458,26 +500,27 @@ export class SGroup {
       }
     }
     if (tailAtom >= 0) {
-      var xBond2 = mol.bonds.get(xBonds[1])
+      const xBond2 = mol.bonds.get(xBonds[1])
       if (xBond2.begin === xAtom2) xBond2.begin = tailAtom
       else xBond2.end = tailAtom
     }
     sgroup.bonds = xBonds
 
-    newAtoms.forEach(aid => {
+    newAtoms.forEach((aid) => {
       mol.sGroupForest
         .getPathToRoot(sgroup.id)
         .reverse()
-        .forEach(sgid => {
+        .forEach((sgid) => {
           mol.atomAddToSGroup(sgid, aid)
         })
     })
   }
 
   static getMassCentre(mol, atoms): Vec2 {
-    var c = new Vec2() // mass centre
-    for (var i = 0; i < atoms.length; ++i)
+    let c = new Vec2() // mass centre
+    for (let i = 0; i < atoms.length; ++i) {
       c = c.addScaled(mol.atoms.get(atoms[i]).pp, 1.0 / atoms.length)
+    }
     return c
   }
 }

@@ -18,37 +18,45 @@
 
 .about {
   width: 25em;
+
   & > a {
     display: block;
     margin: 2em 1em;
   }
+
   var {
     margin-left: 0.5em;
     font-style: normal;
     font-weight: bold;
     display: inline-block;
   }
+
   time {
     font-style: italic;
   }
+
   a {
     color: @active-color;
+
     &:hover {
       color: @hover-color;
     }
   }
 
   @line-height: 1.4em;
+
   dl {
     position: relative;
     margin: 0 1em 1em;
     vertical-align: bottom;
     line-height: @line-height;
   }
+
   dd {
     text-align: right;
     margin-bottom: 0.5em;
   }
+
   dt + dd {
     margin: -@line-height 0 0;
   }

@@ -78,7 +78,7 @@ ReactionArrowTool.prototype.mousemove = function (event) {
           [this.dragCtx.p0, this.dragCtx.p0],
           this.mode
         )
-        //TODO: need to rework  actions/operations logic
+        // TODO: need to rework  actions/operations logic
         const addOperation = action.operations[0]
         const itemId = addOperation.data.id
         this.dragCtx.itemId = itemId
@@ -126,9 +126,8 @@ ReactionArrowTool.prototype.click = function (event) {
   const ci = this.editor.findItem(event, ['rxnArrows'])
   const p0 = rnd.page2obj(event)
   if (!ci) {
-    this.editor.update(
-      fromArrowAddition(rnd.ctab, [p0, getDefaultLengthPos(p0)], this.mode)
-    )
+    const pos = [p0, getDefaultLengthPos(p0)]
+    this.editor.update(fromArrowAddition(rnd.ctab, pos, this.mode))
   }
 }
 
@@ -157,8 +156,8 @@ function getDefaultLengthPos(pos1, pos2) {
 }
 
 function calcAngle(x1, y1, x2, y2) {
-  const x = x1 - x2,
-    y = y1 - y2
+  const x = x1 - x2
+  const y = y1 - y2
   if (!x && !y) {
     return 0
   }

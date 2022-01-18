@@ -47,7 +47,7 @@ export class SGroupForest {
         break
       }
 
-      children.forEach(id => {
+      children.forEach((id) => {
         queue.push(id)
       })
 
@@ -72,16 +72,16 @@ export class SGroupForest {
       )
     })
 
-    const parents = Array.from(this.atomSets.keys()).filter(sgid => {
+    const parents = Array.from(this.atomSets.keys()).filter((sgid) => {
       if (!isSubset.get(sgid)) {
         return false
       }
       const childs = this.children.get(sgid)
-      return childs && childs.findIndex(childId => isSubset.get(childId)) < 0
+      return childs && childs.findIndex((childId) => isSubset.get(childId)) < 0
     })
 
     const children = Array.from(this.atomSets.keys()).filter(
-      id =>
+      (id) =>
         isStrictSuperset.get(id) && !isStrictSuperset.get(this.parent.get(id))
     )
 
@@ -111,12 +111,12 @@ export class SGroupForest {
     }
 
     // TODO: make children Map<int, Pile> instead of Map<int, []>?
-    children.forEach(childId => {
+    children.forEach((childId) => {
       this.resetParentLink(childId, id)
     })
     this.children.set(
       id,
-      children.filter(id => this.parent.get(id))
+      children.filter((id) => this.parent.get(id))
     )
     this.parent.set(id, parent)
     this.children.get(parent)?.push(id)
@@ -147,7 +147,7 @@ export class SGroupForest {
 
     const parentId = this.parent.get(id) as any
     const childs = this.children.get(parentId) as any
-    this.children.get(id)?.forEach(childId => {
+    this.children.get(id)?.forEach((childId) => {
       this.parent.set(childId, parentId)
       this.children.get(parentId)?.push(childId)
     })
@@ -167,13 +167,13 @@ export function checkOverlapping(struct, atoms) {
     return res.union(atom.sgs)
   }, new Pile())
 
-  return Array.from(sgroups).some(sid => {
+  return Array.from(sgroups).some((sid) => {
     const sg = struct.sgroups.get(sid)
     if (sg.type === 'DAT') return false
     const sgAtoms = SGroup.getAtoms(struct, sg)
 
     return sgAtoms.length < atoms.length
-      ? sgAtoms.findIndex(aid => atoms.indexOf(aid) === -1) >= 0
-      : atoms.findIndex(aid => sgAtoms.indexOf(aid) === -1) >= 0
+      ? sgAtoms.findIndex((aid) => atoms.indexOf(aid) === -1) >= 0
+      : atoms.findIndex((aid) => sgAtoms.indexOf(aid) === -1) >= 0
   })
 }

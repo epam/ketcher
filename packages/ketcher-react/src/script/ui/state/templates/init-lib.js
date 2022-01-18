@@ -28,7 +28,7 @@ export function initLib(lib) {
 
 export default function initTmplLib(dispatch, baseUrl, cacheEl) {
   const fileName = 'library.sdf'
-  return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then(res => {
+  return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then((res) => {
     const lib = res.concat(userTmpls())
     dispatch(initLib(lib))
     dispatch(appUpdate({ templates: true }))
@@ -37,12 +37,12 @@ export default function initTmplLib(dispatch, baseUrl, cacheEl) {
 
 const deserializeSdfTemplates = (baseUrl, cacheEl, fileName) => {
   const sdfSerializer = new SdfSerializer()
-  return prefetchStatic(`${baseUrl}/templates/${fileName}`).then(text => {
+  return prefetchStatic(`${baseUrl}/templates/${fileName}`).then((text) => {
     const tmpls = sdfSerializer.deserialize(text)
     const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheEl)
 
-    return prefetch.then(cachedFiles =>
-      tmpls.map(tmpl => {
+    return prefetch.then((cachedFiles) =>
+      tmpls.map((tmpl) => {
         const pr = prefetchSplit(tmpl)
         if (pr.file)
           tmpl.props.prerender =
@@ -59,7 +59,7 @@ function userTmpls() {
   if (!Array.isArray(userLib) || userLib.length === 0) return []
   const molSerializer = new MolSerializer()
   return userLib
-    .map(tmpl => {
+    .map((tmpl) => {
       try {
         if (tmpl.props === '') tmpl.props = {}
         tmpl.props.group = 'User Templates'
@@ -72,11 +72,11 @@ function userTmpls() {
         return null
       }
     })
-    .filter(tmpl => tmpl !== null)
+    .filter((tmpl) => tmpl !== null)
 }
 
 export function prefetchStatic(url) {
-  return fetch(url, { credentials: 'same-origin' }).then(resp => {
+  return fetch(url, { credentials: 'same-origin' }).then((resp) => {
     if (resp.ok) return resp.text()
     throw Error('Could not fetch ' + url)
   })
@@ -101,11 +101,11 @@ function prefetchRender(tmpls, baseUrl, cacheEl) {
     return res
   }, [])
   const fetch = Promise.all(
-    files.map(fn => prefetchStatic(baseUrl + fn).catch(() => null))
+    files.map((fn) => prefetchStatic(baseUrl + fn).catch(() => null))
   )
 
-  return fetch.then(svgs => {
-    svgs.forEach(svgContent => {
+  return fetch.then((svgs) => {
+    svgs.forEach((svgContent) => {
       if (svgContent) cacheEl.innerHTML += svgContent
     })
 

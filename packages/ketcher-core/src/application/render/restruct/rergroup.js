@@ -22,37 +22,41 @@ import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
 
-var BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3)
+const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3)
 class ReRGroup extends ReObject {
-  constructor(/* RGroup*/ rgroup) {
+  constructor(/* RGroup */ rgroup) {
     super('rgroup')
     this.labelBox = null
     this.item = rgroup
   }
+
   static isSelectable() {
     return false
   }
+
   getAtoms(render) {
-    var ret = []
-    this.item.frags.forEach(fid => {
+    let ret = []
+    this.item.frags.forEach((fid) => {
       ret = ret.concat(
         render.ctab.frags.get(fid).fragGetAtoms(render.ctab, fid)
       )
     })
     return ret
   }
+
   getBonds(render) {
-    var ret = []
-    this.item.frags.forEach(fid => {
+    let ret = []
+    this.item.frags.forEach((fid) => {
       ret = ret.concat(
         render.ctab.frags.get(fid).fragGetBonds(render.ctab, fid)
       )
     })
     return ret
   }
+
   calcBBox(render) {
     let ret = null
-    this.item.frags.forEach(fid => {
+    this.item.frags.forEach((fid) => {
       const bbf = render.ctab.frags.get(fid).calcBBox(render.ctab, fid, render)
       if (bbf) ret = ret ? Box2Abs.union(ret, bbf) : bbf
     })
@@ -61,6 +65,7 @@ class ReRGroup extends ReObject {
 
     return ret
   }
+
   // TODO need to review parameter list
   draw(render, options) {
     // eslint-disable-line max-statements
@@ -123,6 +128,7 @@ class ReRGroup extends ReObject {
     )
     return ret
   }
+
   // TODO need to review parameter list
   _draw(render, rgid, attrs) {
     // eslint-disable-line no-underscore-dangle
@@ -137,6 +143,7 @@ class ReRGroup extends ReObject {
       .rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0)
       .attr(attrs)
   }
+
   drawHighlight(render) {
     const rgid = render.ctab.rgroups.keyOf(this)
 
@@ -150,7 +157,7 @@ class ReRGroup extends ReObject {
     const ret = this._draw(
       render,
       rgid,
-      render.options.highlightStyle /* { 'fill' : 'red' }*/
+      render.options.highlightStyle /* { 'fill' : 'red' } */
     ) // eslint-disable-line no-underscore-dangle
     render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
 
@@ -160,11 +167,12 @@ class ReRGroup extends ReObject {
 
     return ret
   }
+
   show(restruct, id, options) {
     const drawing = this.draw(restruct.render, options)
 
-    Object.keys(drawing).forEach(group => {
-      while (drawing[group].length > 0)
+    Object.keys(drawing).forEach((group) => {
+      while (drawing[group].length > 0) {
         restruct.addReObjectPath(
           LayerMap.data,
           this.visel,
@@ -172,6 +180,7 @@ class ReRGroup extends ReObject {
           null,
           true
         )
+      }
     })
     // TODO rgroup selection & highlighting
   }
@@ -179,11 +188,11 @@ class ReRGroup extends ReObject {
 
 function rGroupdrawBrackets(set, render, bb, d) {
   d = Scale.obj2scaled(d || new Vec2(1, 0), render.options)
-  var bracketWidth = Math.min(0.25, bb.sz().x * 0.3)
-  var bracketHeight = bb.p1.y - bb.p0.y
-  var cy = 0.5 * (bb.p1.y + bb.p0.y)
+  const bracketWidth = Math.min(0.25, bb.sz().x * 0.3)
+  const bracketHeight = bb.p1.y - bb.p0.y
+  const cy = 0.5 * (bb.p1.y + bb.p0.y)
 
-  var leftBracket = draw.bracket(
+  const leftBracket = draw.bracket(
     render.paper,
     d.negated(),
     d.negated().rotateSC(1, 0),
@@ -193,7 +202,7 @@ function rGroupdrawBrackets(set, render, bb, d) {
     render.options
   )
 
-  var rightBracket = draw.bracket(
+  const rightBracket = draw.bracket(
     render.paper,
     d,
     d.rotateSC(1, 0),
@@ -215,9 +224,9 @@ function rLogicToString(id, rLogic) {
     rLogic.range.startsWith('=')
 
   let range = null
-  if (rLogic.range.length > 0)
+  if (rLogic.range.length > 0) {
     range = rangeExists ? rLogic.range : '=' + rLogic.range
-  else range = '>0'
+  } else range = '>0'
 
   const restH = rLogic.resth ? ' (RestH)' : ''
   const nextRg = rLogic.ifthen > 0 ? '\nTHEN R' + rLogic.ifthen.toString() : ''

@@ -46,7 +46,7 @@ export class FunctionalGroup {
     const provider = FunctionalGroupsProvider.getInstance()
     const types = provider.getFunctionalGroupsList()
     return (
-      types.some(type => type.name === sgroup.data.name) &&
+      types.some((type) => type.name === sgroup.data.name) &&
       sgroup.type === 'SUP'
     )
   }
@@ -55,7 +55,7 @@ export class FunctionalGroup {
     if (functionalGroups.size === 0) {
       return null
     }
-    for (let fg of functionalGroups.values()) {
+    for (const fg of functionalGroups.values()) {
       if (fg.relatedSGroup.atoms.includes(atom)) return atom
     }
     return null
@@ -69,7 +69,7 @@ export class FunctionalGroup {
     if (functionalGroups.size === 0) {
       return null
     }
-    for (let fg of functionalGroups.values()) {
+    for (const fg of functionalGroups.values()) {
       const bonds = SGroup.getBonds(molecule, fg.relatedSGroup)
       if (bonds.includes(bond)) return bond
     }
@@ -77,7 +77,7 @@ export class FunctionalGroup {
   }
 
   static findFunctionalGroupByAtom(functionalGroups, atom): number | null {
-    for (let fg of functionalGroups.values()) {
+    for (const fg of functionalGroups.values()) {
       if (fg.relatedSGroup.atoms.includes(atom)) return fg.relatedSGroupId
     }
     return null
@@ -88,7 +88,7 @@ export class FunctionalGroup {
     functionalGroups,
     bond
   ): number | null {
-    for (let fg of functionalGroups.values()) {
+    for (const fg of functionalGroups.values()) {
       const bonds = SGroup.getBonds(molecule, fg.relatedSGroup)
       if (bonds.includes(bond)) return fg.relatedSGroupId
     }
@@ -100,7 +100,7 @@ export class FunctionalGroup {
   }
 
   static isFirstAtomInFunctionalGroup(sgroups, aid): boolean {
-    for (let sg of sgroups.values()) {
+    for (const sg of sgroups.values()) {
       if (FunctionalGroup.isFunctionalGroup(sg) && aid === sg.atoms[0]) {
         return true
       }
@@ -108,7 +108,7 @@ export class FunctionalGroup {
     return false
   }
 
-  static isAtomInContractedFinctionalGroup(
+  static isAtomInContractedFunctionalGroup(
     atom,
     sgroups,
     functionalGroups,
@@ -116,7 +116,7 @@ export class FunctionalGroup {
   ): boolean {
     const contractedFunctionalGroups: number[] = []
     if (sgroupsFromReStruct) {
-      sgroups.forEach(sg => {
+      sgroups.forEach((sg) => {
         if (
           FunctionalGroup.isContractedFunctionalGroup(
             sg.item.id,
@@ -127,7 +127,7 @@ export class FunctionalGroup {
         }
       })
     } else {
-      sgroups.forEach(sg => {
+      sgroups.forEach((sg) => {
         if (
           FunctionalGroup.isContractedFunctionalGroup(sg.id, functionalGroups)
         ) {
@@ -135,7 +135,7 @@ export class FunctionalGroup {
         }
       })
     }
-    return contractedFunctionalGroups.some(sg => atom.sgs.has(sg))
+    return contractedFunctionalGroups.some((sg) => atom.sgs.has(sg))
   }
 
   static isBondInContractedFunctionalGroup(
@@ -146,7 +146,7 @@ export class FunctionalGroup {
   ): boolean {
     const contractedFunctionalGroupsAtoms: number[] = []
     if (sgroupsFromReStruct) {
-      sgroups.forEach(sg => {
+      sgroups.forEach((sg) => {
         if (
           FunctionalGroup.isContractedFunctionalGroup(
             sg.item.id,
@@ -157,7 +157,7 @@ export class FunctionalGroup {
         }
       })
     } else {
-      sgroups.forEach(sg => {
+      sgroups.forEach((sg) => {
         if (
           FunctionalGroup.isContractedFunctionalGroup(sg.id, functionalGroups)
         ) {
@@ -174,7 +174,7 @@ export class FunctionalGroup {
   static isContractedFunctionalGroup(sgroupId, functionalGroups): boolean {
     let isFunctionalGroup = false
     let expanded = false
-    functionalGroups.forEach(fg => {
+    functionalGroups.forEach((fg) => {
       if (fg.relatedSGroupId === sgroupId) {
         isFunctionalGroup = true
         expanded = fg.isExpanded

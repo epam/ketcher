@@ -16,16 +16,49 @@
 
 @import '../../../../../../style/mixins.less';
 
-.elements_table {
-  width: 57em;
+.elementsTable {
+  background-color: @color-background-primary;
+  width: @width-large;
+  height: 390px;
+
+  > div {
+    overflow: hidden;
+    margin: 0;
+  }
+
+  > header,
+  > footer {
+    margin: @margin-left-right;
+  }
 
   .tabs {
     outline: none;
-    .tabs_content {
-      height: 31em;
+    border-bottom: 1px solid @color-divider;
+    padding-left: 15px;
+  }
+
+  .tabsContent {
+    height: 31em;
+  }
+
+  .contentGeneral {
+    padding-left: 13px;
+    padding-right: 5px;
+  }
+
+  .periodTable {
+    position: fixed;
+
+    & > * {
+      line-height: normal;
     }
   }
-  .period_table {
+
+  .addAtom {
+    .button-main();
+
+    float: right;
     position: relative;
+    z-index: 10;
   }
 }

@@ -64,7 +64,7 @@ export class MoveAtom extends BaseOperation {
   execute(struct: Struct): PerformOperationResult {
     const atom = struct.atoms.get(this.#atomId)!
     atom.pp.add_(this.#delta)
-    //TODO: move to renderer
+    // TODO: move to renderer
     // const reatom = restruct.atoms.get(aid)
     // if (reatom) {
     //   const scaled = Scale.obj2scaled(d, restruct.render.options)
@@ -106,7 +106,7 @@ class AddAtom extends BaseOperation {
       atomId = this.#atomId!
     }
 
-    //TODO: move to renderer
+    // TODO: move to renderer
     // notifyAtomAdded
     // const atomData = new ReAtom(struct.atoms.get(aid)!)
 
@@ -136,7 +136,7 @@ class DeleteAtom extends BaseOperation {
   execute(struct: Struct): PerformOperationResult {
     const atom = struct.atoms.get(this.#atomId)!
 
-    //TODO: to delete
+    // TODO: to delete
     // const set = restruct.connectedComponents.get(restructedAtom.component)
     // set.delete(aid)
     // if (set.size === 0) {

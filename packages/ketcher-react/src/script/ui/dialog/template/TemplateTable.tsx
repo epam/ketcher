@@ -22,17 +22,9 @@ import classes from './TemplateTable.module.less'
 import { greekify } from '../../utils'
 import { useSelector } from 'react-redux'
 
-interface TemplateTableProps {
-  templates: Array<Template>
-  selected: Template | null
-  onSelect: (tmpl: Template) => void
-  onDelete?: (tmpl: Template) => void
-  onAttach?: (tmpl: Template) => void
-}
-
 export interface Template {
   struct: Struct
-  modifiedStruct?: Struct //TODO: Do something with that, in future it shouldn't be here
+  modifiedStruct?: Struct // TODO: Do something with that, in future it shouldn't be here
   props: {
     atomid: number
     bondid: number
@@ -41,7 +33,15 @@ export interface Template {
   }
 }
 
-const getSettingsSelector = state => state.options.settings
+interface TemplateTableProps {
+  templates: Array<Template>
+  selected: Template | null
+  onSelect: (tmpl: Template) => void
+  onDelete?: (tmpl: Template) => void
+  onAttach?: (tmpl: Template) => void
+}
+
+const getSettingsSelector = (state) => state.options.settings
 
 function tmplName(tmpl: Template, i: number): string {
   return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`
@@ -62,10 +62,10 @@ const RenderTmpl: FC<{
   )
 }
 
-const TemplateTable: FC<TemplateTableProps> = props => {
+const TemplateTable: FC<TemplateTableProps> = (props) => {
   const { templates, selected, onSelect, onDelete, onAttach } = props
   const ITEMS_COUNT = templates ? templates.length : 0
-  const options = useSelector(state => getSettingsSelector(state))
+  const options = useSelector((state) => getSettingsSelector(state))
 
   return !ITEMS_COUNT ? (
     <EmptySearchResult textInfo="No items found" />

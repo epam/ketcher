@@ -47,8 +47,8 @@ class ComboBox extends Component {
   render() {
     const { value, type = 'text', schema } = this.props
     const suggestList = schema.enumNames
-      .filter(item => item !== value)
-      .map(item => (
+      .filter((item) => item !== value)
+      .map((item) => (
         <li key={item} onMouseDown={this.updateInput}>
           {item}
         </li>

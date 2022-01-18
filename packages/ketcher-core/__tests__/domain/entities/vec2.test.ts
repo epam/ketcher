@@ -220,11 +220,6 @@ describe('rotate', () => {
   })
 })
 
-describe('rotateSC', () => {
-  // TODO
-  test('should', () => {})
-})
-
 describe('oxAngle', () => {
   test('should returns the arctangent of x y', () => {
     const v0 = new Vec2(2, 1, 3)

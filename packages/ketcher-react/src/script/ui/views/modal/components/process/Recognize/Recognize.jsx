@@ -83,7 +83,7 @@ function RecognizeDialog(prop) {
           schema={{
             enum: imagoVersions,
             enumNames: range(1, imagoVersions.length + 1).map(
-              i => `Version ${i}`
+              (i) => `Version ${i}`
             )
           }}
           value={version}
@@ -134,7 +134,7 @@ function url(file) {
   return URL ? URL.createObjectURL(file) : 'No preview'
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   imagoVersions: state.options.app.imagoVersions,
   file: state.options.recognize.file,
   structStr: state.options.recognize.structStr,
@@ -142,12 +142,12 @@ const mapStateToProps = state => ({
   version: state.options.recognize.version || state.options.app.imagoVersions[0]
 })
 
-const mapDispatchToProps = dispatch => ({
-  isFragment: v => dispatch(shouldFragment(v)),
-  onImage: file => dispatch(changeImage(file)),
+const mapDispatchToProps = (dispatch) => ({
+  isFragment: (v) => dispatch(shouldFragment(v)),
+  onImage: (file) => dispatch(changeImage(file)),
   onRecognize: (file, ver) => dispatch(recognize(file, ver)),
-  onChangeImago: ver => dispatch(changeVersion(ver)),
-  onOk: res => {
+  onChangeImago: (ver) => dispatch(changeVersion(ver)),
+  onOk: (res) => {
     dispatch(
       load(res.structStr, {
         rescale: true,

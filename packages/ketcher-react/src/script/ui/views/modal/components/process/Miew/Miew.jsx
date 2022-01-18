@@ -44,7 +44,7 @@ const MIEW_TX_TYPES = {
   }
 }
 
-const TXoptions = userOpts => {
+const TXoptions = (userOpts) => {
   const type = userOpts.miewAtomLabel
   if (MIEW_TX_TYPES[type] === null) return null
   return {
@@ -101,11 +101,11 @@ class MiewDialog extends Component {
 
     service
       .getStructureFromStructAsync(struct)
-      .then(res =>
+      .then((res) =>
         this.viewer.load(res, { sourceType: 'immediate', fileType: 'cml' })
       )
       .then(() => this.viewer.setOptions(miewOpts))
-      .catch(ex => console.error(ex.message))
+      .catch((ex) => console.error(ex.message))
   }
 
   exportCML() {
@@ -135,7 +135,7 @@ class MiewDialog extends Component {
       >
         <div className={classes.dialog_body}>
           <div
-            ref={el => {
+            ref={(el) => {
               this.miewContainer = el
             }}
             className={classes.miewContainer}
@@ -147,14 +147,14 @@ class MiewDialog extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   miewOpts: createMiewOptions(pick(MIEW_OPTIONS, state.options.settings)),
   server: state.options.app.server ? state.server : null,
   struct: state.editor.struct()
 })
 
-const mapDispatchToProps = dispatch => ({
-  onExportCML: cmlStruct => {
+const mapDispatchToProps = (dispatch) => ({
+  onExportCML: (cmlStruct) => {
     dispatch(load(cmlStruct))
     // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
     // See PR #731 (https://github.com/epam/ketcher/pull/731)

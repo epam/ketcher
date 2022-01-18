@@ -43,7 +43,7 @@ class AtomAdd extends BaseOperation {
 
     const pp: { label?: string } = {}
     if (atom) {
-      Object.keys(atom).forEach(p => {
+      Object.keys(atom).forEach((p) => {
         pp[p] = atom[p]
       })
     }

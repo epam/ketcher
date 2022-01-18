@@ -153,4 +153,4 @@ export default [
     '  2  3  1  0     0  0\n' +
     '  1  2  1  0     0  0\n' +
     'M  END\n'
-].map(structStr => molSerializer.deserialize(structStr))
+].map((structStr) => molSerializer.deserialize(structStr))

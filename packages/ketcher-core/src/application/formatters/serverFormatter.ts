@@ -24,34 +24,44 @@ import {
 } from 'domain/services'
 import { StructFormatter, SupportedFormat } from './structFormatter.types'
 
-import { MolSerializer } from 'domain/serializers'
+import { KetSerializer } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import { getPropertiesByFormat } from './formatProperties'
 
 export class ServerFormatter implements StructFormatter {
+  #structService: StructService
+  #ketSerializer: KetSerializer
+  #format: SupportedFormat
+  #options?: StructServiceOptions
+
   constructor(
-    private readonly structService: StructService,
-    private readonly molfileManager: MolSerializer,
-    private readonly format: SupportedFormat,
-    private readonly options?: StructServiceOptions
-  ) {}
+    structService: StructService,
+    ketSerializer: KetSerializer,
+    format: SupportedFormat,
+    options?: StructServiceOptions
+  ) {
+    this.#structService = structService
+    this.#ketSerializer = ketSerializer
+    this.#format = format
+    this.#options = options
+  }
 
   async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    const infoResult = await this.structService.info()
+    const infoResult = await this.#structService.info()
     if (!infoResult.isAvailable) {
       throw new Error('Server is not available')
     }
 
-    const formatProperties = getPropertiesByFormat(this.format)
+    const formatProperties = getPropertiesByFormat(this.#format)
 
     try {
-      const stringifiedStruct = this.molfileManager.serialize(struct)
-      const convertResult = await this.structService.convert(
+      const stringifiedStruct = this.#ketSerializer.serialize(struct)
+      const convertResult = await this.#structService.convert(
         {
           struct: stringifiedStruct,
           output_format: formatProperties.mime
         },
-        { ...this.options, ...formatProperties.options }
+        { ...this.#options, ...formatProperties.options }
       )
 
       return convertResult.struct
@@ -70,7 +80,7 @@ export class ServerFormatter implements StructFormatter {
   async getStructureFromStringAsync(
     stringifiedStruct: string
   ): Promise<Struct> {
-    const infoResult = await this.structService.info()
+    const infoResult = await this.#structService.info()
     if (!infoResult.isAvailable) {
       throw new Error('Server is not available')
     }
@@ -87,23 +97,23 @@ export class ServerFormatter implements StructFormatter {
 
     let promise: LayoutPromise | ConvertPromise
 
-    let data: ConvertData | LayoutData = {
+    const data: ConvertData | LayoutData = {
       struct: undefined as any,
-      output_format: getPropertiesByFormat('mol').mime
+      output_format: getPropertiesByFormat('ket').mime
     }
 
-    const withCoords = getPropertiesByFormat(this.format).supportsCoords
+    const withCoords = getPropertiesByFormat(this.#format).supportsCoords
     if (withCoords) {
-      promise = this.structService.convert
+      promise = this.#structService.convert
       data.struct = stringifiedStruct
     } else {
-      promise = this.structService.layout
+      promise = this.#structService.layout
       data.struct = stringifiedStruct.trim()
     }
 
     try {
-      const result = await promise(data, this.options)
-      const parsedStruct = this.molfileManager.deserialize(result.struct)
+      const result = await promise(data, this.#options)
+      const parsedStruct = this.#ketSerializer.deserialize(result.struct)
       if (!withCoords) {
         parsedStruct.rescale()
       }
@@ -114,11 +124,11 @@ export class ServerFormatter implements StructFormatter {
       }
 
       const formatError =
-        this.format === 'smiles'
+        this.#format === 'smiles'
           ? `${getPropertiesByFormat('smilesExt').name} and opening of ${
               getPropertiesByFormat('smiles').name
             }`
-          : getPropertiesByFormat(this.format).name
+          : getPropertiesByFormat(this.#format).name
 
       throw Error(`${formatError} is not supported in standalone mode.`)
     }

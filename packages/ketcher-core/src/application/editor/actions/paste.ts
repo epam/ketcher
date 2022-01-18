@@ -47,11 +47,12 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   }
 
   pstruct.atoms.forEach((atom, aid) => {
-    if (!fridMap.has(atom.fragment))
+    if (!fridMap.has(atom.fragment)) {
       fridMap.set(
         atom.fragment,
         (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd).frid
       )
+    }
 
     const tmpAtom = Object.assign(atom.clone(), {
       fragment: fridMap.get(atom.fragment)
@@ -68,7 +69,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 
   pstruct.frags.forEach((frag, frid) => {
     if (!frag) return
-    frag.stereoAtoms.forEach(aid =>
+    frag.stereoAtoms.forEach((aid) =>
       action.addOp(
         new FragmentAddStereoAtom(fridMap.get(frid), aidMap.get(aid)).perform(
           restruct
@@ -77,7 +78,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
     )
   })
 
-  pstruct.bonds.forEach(bond => {
+  pstruct.bonds.forEach((bond) => {
     const operation = new BondAdd(
       aidMap.get(bond.begin),
       aidMap.get(bond.end),
@@ -88,9 +89,9 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
     pasteItems.bonds.push(operation.data.bid)
   })
 
-  pstruct.sgroups.forEach(sg => {
+  pstruct.sgroups.forEach((sg) => {
     const newsgid = restruct.molecule.sgroups.newId()
-    const sgAtoms = sg.atoms.map(aid => aidMap.get(aid))
+    const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid))
     const sgAction = fromSgroupAddition(
       restruct,
       sg.type,
@@ -101,34 +102,34 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
       sg.type === 'SUP' ? sg.data.expanded : null,
       sg.data.name
     )
-    sgAction.operations.reverse().forEach(oper => {
+    sgAction.operations.reverse().forEach((oper) => {
       action.addOp(oper)
     })
   })
 
-  pstruct.rxnArrows.forEach(rxnArrow => {
+  pstruct.rxnArrows.forEach((rxnArrow) => {
     action.addOp(
       new RxnArrowAdd(
-        rxnArrow.pos.map(p => p.add(offset)),
+        rxnArrow.pos.map((p) => p.add(offset)),
         rxnArrow.mode
       ).perform(restruct)
     )
   })
 
-  pstruct.rxnPluses.forEach(plus => {
+  pstruct.rxnPluses.forEach((plus) => {
     action.addOp(new RxnPlusAdd(plus.pp.add(offset)).perform(restruct))
   })
 
-  pstruct.simpleObjects.forEach(simpleObject => {
+  pstruct.simpleObjects.forEach((simpleObject) => {
     action.addOp(
       new SimpleObjectAdd(
-        simpleObject.pos.map(p => p.add(offset)),
+        simpleObject.pos.map((p) => p.add(offset)),
         simpleObject.mode
       ).perform(restruct)
     )
   })
 
-  pstruct.texts.forEach(text => {
+  pstruct.texts.forEach((text) => {
     action.addOp(
       new TextCreate(text.content, text.position.add(offset)).perform(restruct)
     )
@@ -152,7 +153,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 }
 
 function getStructCenter(struct) {
-  //TODO: Review, function may not work sometimes
+  // TODO: Review, function may not work sometimes
   const onlyOneStructsSgroupId = struct.sgroups.keys().next().value
   if (
     struct.sgroups.size === 1 &&
@@ -166,7 +167,7 @@ function getStructCenter(struct) {
     let xmax = -xmin
     let ymax = -ymin
 
-    struct.atoms.forEach(atom => {
+    struct.atoms.forEach((atom) => {
       xmin = Math.min(xmin, atom.pp.x)
       ymin = Math.min(ymin, atom.pp.y)
       xmax = Math.max(xmax, atom.pp.x)

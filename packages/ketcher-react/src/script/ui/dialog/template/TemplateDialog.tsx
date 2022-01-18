@@ -28,9 +28,8 @@ import { filterLib, greekify } from '../../utils'
 import { Dialog } from '../../views/components'
 import Input from '../../component/form/input'
 import SaveButton from '../../component/view/savebutton'
-import { SdfSerializer } from 'ketcher-core'
+import { SdfSerializer, Struct } from 'ketcher-core'
 import SelectList from '../../component/form/select'
-import { Struct } from 'ketcher-core'
 import classes from './template-lib.module.less'
 import clsx from 'clsx'
 import { connect } from 'react-redux'
@@ -72,7 +71,7 @@ const filterLibSelector = createSelector(
   filterLib
 )
 
-const TemplateDialog: FC<Props> = props => {
+const TemplateDialog: FC<Props> = (props) => {
   const { filter, onFilter, onChangeGroup, mode, ...rest } = props
   const CONTAINER_MIN_WIDTH = 310
   let group = props.group
@@ -131,7 +130,7 @@ const TemplateDialog: FC<Props> = props => {
           <Input
             type="search"
             value={filter}
-            onChange={value => onFilter(value)}
+            onChange={(value) => onFilter(value)}
           />
         </label>
         <div
@@ -147,10 +146,10 @@ const TemplateDialog: FC<Props> = props => {
               component={SelectList}
               splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
               value={group}
-              onChange={g => onChangeGroup(g)}
+              onChange={(g) => onChangeGroup(g)}
               schema={{
                 enum: Object.keys(lib),
-                enumNames: Object.keys(lib).map(g => greekify(g))
+                enumNames: Object.keys(lib).map((g) => greekify(g))
               }}
             />
           )}
@@ -168,16 +167,16 @@ const TemplateDialog: FC<Props> = props => {
 }
 
 export default connect(
-  store => ({ ...omit(['attach'], (store as any).templates) }),
+  (store) => ({ ...omit(['attach'], (store as any).templates) }),
   (dispatch, props) => ({
-    onFilter: filter => dispatch(changeFilter(filter)),
-    onSelect: tmpl => dispatch(selectTmpl(tmpl)),
-    onChangeGroup: group => dispatch(changeGroup(group)),
+    onFilter: (filter) => dispatch(changeFilter(filter)),
+    onSelect: (tmpl) => dispatch(selectTmpl(tmpl)),
+    onChangeGroup: (group) => dispatch(changeGroup(group)),
     // @ts-ignore
-    onAttach: tmpl => dispatch(editTmpl(tmpl)),
+    onAttach: (tmpl) => dispatch(editTmpl(tmpl)),
     // @ts-ignore
-    onDelete: tmpl => dispatch(deleteTmpl(tmpl)),
-    onOk: res => {
+    onDelete: (tmpl) => dispatch(deleteTmpl(tmpl)),
+    onOk: (res) => {
       dispatch(onAction({ tool: 'template', opts: res }))
       ;(props as any).onOk(res)
     }

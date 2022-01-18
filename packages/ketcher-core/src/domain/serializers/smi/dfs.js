@@ -58,10 +58,10 @@ Dfs.SeqElem = function (vIdx, parVertex, parEdge) {
 
 Dfs.prototype.walk = function () {
   // eslint-disable-line max-statements
-  var vStack = []
-  var i, j
-  var cid = 0
-  var component = 0
+  const vStack = []
+  let i, j
+  let cid = 0
+  let component = 0
 
   while (true) {
     // eslint-disable-line no-constant-condition
@@ -69,7 +69,7 @@ Dfs.prototype.walk = function () {
       var selected = -1
 
       while (cid < this.components.length && selected == -1) {
-        selected = this.components[cid].find(aid => {
+        selected = this.components[cid].find((aid) => {
           if (this.vertices[aid].dfs_state === 0) {
             selected = aid
             return true
@@ -83,7 +83,7 @@ Dfs.prototype.walk = function () {
         if (cid == this.nReactants) this.nComponentsInReactants = component
       }
       if (selected < -1) {
-        this.molecule.atoms.find(aid => {
+        this.molecule.atoms.find((aid) => {
           if (this.vertices[aid].dfs_state === 0) {
             selected = aid
             return true
@@ -98,10 +98,10 @@ Dfs.prototype.walk = function () {
       component++
     }
 
-    var vIdx = vStack.pop()
-    var parentVertex = this.vertices[vIdx].parent_vertex
+    const vIdx = vStack.pop()
+    const parentVertex = this.vertices[vIdx].parent_vertex
 
-    var seqElem = new Dfs.SeqElem(
+    let seqElem = new Dfs.SeqElem(
       vIdx,
       parentVertex,
       this.vertices[vIdx].parent_edge
@@ -110,11 +110,11 @@ Dfs.prototype.walk = function () {
 
     this.vertices[vIdx].dfs_state = 2
 
-    var atomD = this.atom_data[vIdx]
+    const atomD = this.atom_data[vIdx]
 
     for (i = 0; i < atomD.neighbours.length; i++) {
-      var neiIdx = atomD.neighbours[i].aid
-      var edgeIdx = atomD.neighbours[i].bid
+      const neiIdx = atomD.neighbours[i].aid
+      const edgeIdx = atomD.neighbours[i].bid
 
       if (neiIdx == parentVertex) continue // eslint-disable-line no-continue
 
@@ -123,8 +123,9 @@ Dfs.prototype.walk = function () {
 
         j = vIdx
 
-        while (j != -1 && this.vertices[j].parent_vertex != neiIdx)
+        while (j != -1 && this.vertices[j].parent_vertex != neiIdx) {
           j = this.vertices[j].parent_vertex
+        }
 
         if (j == -1) throw new Error('cycle unwind error')
 
@@ -137,17 +138,19 @@ Dfs.prototype.walk = function () {
         if (this.vertices[neiIdx].dfs_state == 1) {
           j = vStack.indexOf(neiIdx)
 
-          if (j == -1)
+          if (j == -1) {
             // eslint-disable-line max-depth
             throw new Error('internal: removing vertex from stack')
+          }
 
           vStack.splice(j, 1)
 
-          var parent = this.vertices[neiIdx].parent_vertex
+          const parent = this.vertices[neiIdx].parent_vertex
 
-          if (parent >= 0)
+          if (parent >= 0) {
             // eslint-disable-line max-depth
             this.vertices[parent].branches--
+          }
         }
 
         this.vertices[vIdx].branches++
@@ -173,8 +176,8 @@ Dfs.prototype.numOpeningCycles = function (eIdx) {
 }
 
 Dfs.prototype.toString = function () {
-  var str = ''
-  this.v_seq.forEach(seqElem => {
+  let str = ''
+  this.v_seq.forEach((seqElem) => {
     str += seqElem.idx + ' -> '
   })
   str += '*'

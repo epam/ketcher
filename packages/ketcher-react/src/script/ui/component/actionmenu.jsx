@@ -32,7 +32,7 @@ export function shortcutStr(shortcut) {
   const key = Array.isArray(shortcut) ? shortcut[0] : shortcut
   return key.replace(
     /(\b[a-z]\b$|Mod|Escape|Delete)/g,
-    k => shortcutAliasMap[k] || k.toUpperCase()
+    (k) => shortcutAliasMap[k] || k.toUpperCase()
   )
 }
 
@@ -73,7 +73,7 @@ function ActionButton({
   const disabled =
     status.disabled || (indigoVerification && disableableButtons.includes(name))
 
-  const onClick = event => {
+  const onClick = (event) => {
     if (!status.selected || isMenuOpened(menuRef.current)) {
       onAction(action.action)
       event.stopPropagation()
@@ -106,7 +106,7 @@ function findActiveMenuItem(menuItems, status) {
 }
 
 function isLeaf(menu) {
-  return menu.every(item => typeof item === 'string')
+  return menu.every((item) => typeof item === 'string')
 }
 
 function isOpened(item, opened) {
@@ -160,14 +160,14 @@ function ActionMenu({ name, menu, className, role, ...props }) {
       role={role}
       style={toolMargin(name, menu, props.visibleTools)}
     >
-      {visibleMenu.map(item => (
+      {visibleMenu.map((item) => (
         <li
           key={item.id || item}
           id={item.id || item}
           className={clsx(props.status[item], {
             opened: item.id === props.opened
           })}
-          onClick={ev => openHandle(ev, props.onOpen)}
+          onClick={(ev) => openHandle(ev, props.onOpen)}
         >
           {showMenuOrButton(action, item, props.status[item], props)}
           {item.menu && props.opened && renderActiveMenuItem(item, props)}
@@ -187,7 +187,7 @@ function toolMargin(menuName, menu, visibleTools) {
 
   if (index === -1) {
     let tools = []
-    menu.forEach(item => {
+    menu.forEach((item) => {
       tools = tools.concat(item.menu)
     })
 

@@ -20,7 +20,8 @@ export const storage = {
     'Your changes will be lost after the tab closing. See Help (Note 2).',
   isAvailable() {
     try {
-      return localStorage
+      const storage = global.localStorage
+      return storage
     } catch (ex) {
       return false
     }

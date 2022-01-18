@@ -97,8 +97,9 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
     atom = struct.atoms.get(aid1)
     delta = utils.calcAngle(struct.atoms.get(aid).pp, atom.pp) - template.angle0
   } else {
-    if (angle === null)
+    if (angle === null) {
       angle = utils.calcAngle(atom.pp, atomForNewBond(restruct, aid).pos)
+    }
     delta = angle - template.angle0
   }
 
@@ -135,7 +136,7 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
   })
   mergeSgroups(action, restruct, pasteItems.atoms, aid)
 
-  tmpl.bonds.forEach(bond => {
+  tmpl.bonds.forEach((bond) => {
     const operation = new BondAdd(
       map.get(bond.begin),
       map.get(bond.end),
@@ -146,9 +147,9 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
     pasteItems.bonds.push(operation.data.bid)
   })
 
-  tmpl.sgroups.forEach(sg => {
+  tmpl.sgroups.forEach((sg) => {
     const newsgid = restruct.molecule.sgroups.newId()
-    const sgAtoms = sg.atoms.map(aid => map.get(aid))
+    const sgAtoms = sg.atoms.map((aid) => map.get(aid))
     const sgAction = fromSgroupAddition(
       restruct,
       sg.type,
@@ -159,7 +160,7 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
       sg.type === 'SUP' ? sg.expanded : null,
       sg.data.name
     )
-    sgAction.operations.reverse().forEach(oper => {
+    sgAction.operations.reverse().forEach((oper) => {
       action.addOp(oper)
     })
   })
@@ -189,7 +190,7 @@ export function fromTemplateOnBondAction(
 
   const simpleFusing = (restruct, template, bid) =>
     fromTemplateOnBond(restruct, template, bid, flip) // eslint-disable-line
-  /* aromatic merge (Promise)*/
+  /* aromatic merge (Promise) */
   return fromAromaticTemplateOnBond(
     restruct,
     template,
@@ -261,7 +262,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
   })
   mergeSgroups(action, restruct, pasteItems.atoms, bond.begin)
 
-  tmpl.bonds.forEach(tBond => {
+  tmpl.bonds.forEach((tBond) => {
     const existId = struct.findBondId(
       atomsMap.get(tBond.begin),
       atomsMap.get(tBond.end)

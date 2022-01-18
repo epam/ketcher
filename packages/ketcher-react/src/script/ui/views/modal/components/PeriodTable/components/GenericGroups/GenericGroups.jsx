@@ -21,28 +21,25 @@ import classes from './GenericGroups.module.less'
 function GenericGroups({ selected, onSelect, className, ...props }) {
   return (
     <div summary="Generic Groups" className={classes[className]} {...props}>
-      <div className={classes.col}>
-        <GenGroup
-          gen={Generics}
-          name="atom"
-          selected={selected}
-          onSelect={onSelect}
-        />
-        <GenGroup
-          gen={Generics}
-          name="special"
-          selected={selected}
-          onSelect={onSelect}
-        />
-      </div>
-      <div className={classes.col}>
-        <GenGroup
-          gen={Generics}
-          name="group"
-          selected={selected}
-          onSelect={onSelect}
-        />
-      </div>
+      <GenGroup
+        gen={Generics}
+        name="atom"
+        selected={selected}
+        onSelect={onSelect}
+      />
+      <GenGroup
+        gen={Generics}
+        name="special"
+        selected={selected}
+        onSelect={onSelect}
+      />
+
+      <GenGroup
+        gen={Generics}
+        name="group"
+        selected={selected}
+        onSelect={onSelect}
+      />
     </div>
   )
 }

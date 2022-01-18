@@ -29,29 +29,48 @@ export enum RxnArrowMode {
   UnbalancedEquilibriumFilledHalfBow = 'unbalanced-equilibrium-filled-half-bow',
   UnbalancedEquilibriumOpenHalfAngle = 'unbalanced-equilibrium-open-half-angle',
   UnbalancedEquilibriumLargeFilledHalfBow = 'unbalanced-equilibrium-large-filled-half-bow',
-  UnbalancedEquilibriumFilleHalfTriangle = 'unbalanced-equilibrium-fille-half-triangle'
+  UnbalancedEquilibriumFilledHalfTriangle = 'unbalanced-equilibrium-filled-half-triangle',
+  EllipticalArcFilledBow = 'elliptical-arc-arrow-filled-bow',
+  EllipticalArcFilledTriangle = 'elliptical-arc-arrow-filled-triangle',
+  EllipticalArcOpenAngle = 'elliptical-arc-arrow-open-angle',
+  EllipticalArcOpenHalfAngle = 'elliptical-arc-arrow-open-half-angle'
 }
 
 export interface RxnArrowAttributes {
   mode: RxnArrowMode
   pos?: Array<Point>
+  height?: number
 }
 
 export class RxnArrow {
   mode: RxnArrowMode
   pos: Array<Vec2>
+  height?: number
 
-  constructor(atrributes: RxnArrowAttributes) {
+  static isElliptical(arrow) {
+    return [
+      RxnArrowMode.EllipticalArcFilledBow,
+      RxnArrowMode.EllipticalArcFilledTriangle,
+      RxnArrowMode.EllipticalArcOpenHalfAngle,
+      RxnArrowMode.EllipticalArcOpenAngle
+    ].includes(arrow.mode)
+  }
+
+  constructor(attributes: RxnArrowAttributes) {
     this.pos = []
 
-    if (atrributes.pos) {
-      for (let i = 0; i < atrributes.pos.length; i++) {
-        const currentP = atrributes.pos[i]
-        this.pos[i] = currentP ? new Vec2(atrributes.pos[i]) : new Vec2()
+    if (attributes.pos) {
+      for (let i = 0; i < attributes.pos.length; i++) {
+        const currentP = attributes.pos[i]
+        this.pos[i] = currentP ? new Vec2(attributes.pos[i]) : new Vec2()
       }
     }
+    this.mode = attributes.mode
+    const defaultHeight = 2
 
-    this.mode = atrributes.mode
+    if (RxnArrow.isElliptical(this)) {
+      this.height = attributes.height ?? defaultHeight
+    }
   }
 
   clone() {

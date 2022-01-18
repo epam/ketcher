@@ -115,7 +115,7 @@ export function addAtoms(atomLabel) {
 }
 
 function toolInMenu(action) {
-  const tool = Object.keys(tools).find(toolName =>
+  const tool = Object.keys(tools).find((toolName) =>
     isEqual(action, tools[toolName].action)
   )
 

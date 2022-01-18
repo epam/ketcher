@@ -17,9 +17,8 @@
 import Base from '../base'
 import { OperationType } from '../OperationType'
 import { Scale } from 'domain/helpers'
-import { Vec2 } from 'domain/entities'
+import { RxnArrow, Vec2 } from 'domain/entities'
 import { tfx } from 'utilities'
-
 interface RxnArrowResizeData {
   id: number
   d: any
@@ -27,7 +26,6 @@ interface RxnArrowResizeData {
   anchor: Vec2
   noinvalidate: boolean
 }
-
 export class RxnArrowResize extends Base {
   data: RxnArrowResizeData
 
@@ -49,10 +47,16 @@ export class RxnArrowResize extends Base {
     const current = this.data.current
     const item = struct.rxnArrows.get(id)
     const anchor = this.data.anchor
-
     if (anchor) {
       const previousPos0 = item.pos[0].get_xy0()
       const previousPos1 = item.pos[1].get_xy0()
+      let middlePoint
+      let reItem
+
+      if (RxnArrow.isElliptical(item)) {
+        reItem = restruct.rxnArrows.get(id)
+        ;[, , middlePoint] = reItem.getReferencePoints()
+      }
 
       if (
         tfx(anchor.x) === tfx(item.pos[1].x) &&
@@ -73,7 +77,34 @@ export class RxnArrowResize extends Base {
         item.pos[0].y = anchor.y = current.y
         current.y = previousPos0.y
       }
-    } else item.pos[1].add_(d)
+      if (
+        tfx(anchor.x) === tfx(middlePoint?.x) &&
+        tfx(anchor.y) === tfx(middlePoint?.y)
+      ) {
+        const { angle } = reItem.getArrowParams(
+          item.pos[0].x,
+          item.pos[0].y,
+          item.pos[1].x,
+          item.pos[1].y
+        )
+        const angleInRadians = (angle * Math.PI) / 180
+        const cosAngle = Math.cos(angleInRadians)
+        const sinAngle = Math.sin(angleInRadians)
+
+        const diffX = current.x - anchor.x
+        const diffY = current.y - anchor.y
+
+        const diff = diffY * cosAngle - diffX * sinAngle
+        item.height -= diff
+
+        const [, , newMiddlePoint] = reItem.getReferencePoints()
+
+        anchor.y = newMiddlePoint.y
+        anchor.x = newMiddlePoint.x
+      }
+    } else {
+      item.pos[1].add_(d)
+    }
 
     restruct.rxnArrows
       .get(id)
@@ -81,13 +112,7 @@ export class RxnArrowResize extends Base {
     this.data.d = d.negated()
 
     if (!this.data.noinvalidate) {
-      Base.invalidateItem(
-        restruct,
-        'rxnArrows',
-        // @ts-ignore
-        id,
-        1
-      )
+      Base.invalidateItem(restruct, 'rxnArrows', id, 1)
     }
   }
 

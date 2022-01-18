@@ -17,6 +17,7 @@
 import AboutIcon from './files/about.svg'
 import AnalyseIcon from './files/analyse.svg'
 import AromIcon from './files/arom.svg'
+import ArrowUpwardIcon from './files/arrow-upward.svg'
 import BondAnyIcon from './files/bond-any.svg'
 import BondAromaticIcon from './files/bond-aromatic.svg'
 import BondCrossedIcon from './files/bond-crossed.svg'
@@ -31,6 +32,7 @@ import BondSingleIcon from './files/bond-single.svg'
 import BondTripleIcon from './files/bond-triple.svg'
 import BondUpIcon from './files/bond-up.svg'
 import BondUpdownIcon from './files/bond-updown.svg'
+import CapitalTIcon from './files/capital-t.svg'
 import ChainIcon from './files/chain.svg'
 import ChargeMinusIcon from './files/charge-minus.svg'
 import ChargePlusIcon from './files/charge-plus.svg'
@@ -47,8 +49,10 @@ import DearomIcon from './files/dearom.svg'
 import DropdownIcon from './files/dropdown.svg'
 import EnhancedStereoIcon from './files/enhanced-stereo.svg'
 import EraseIcon from './files/erase.svg'
+import FileThumbnailIcon from './files/file-thumbnail.svg'
 import GenericGroupsIcon from './files/generic-groups.svg'
 import HelpIcon from './files/help.svg'
+import ImageFrameIcon from './files/image-frame.svg'
 import LayoutIcon from './files/layout.svg'
 import LogoIcon from './files/logo.svg'
 import MiewIcon from './files/miew.svg'
@@ -59,6 +63,10 @@ import PasteIcon from './files/paste.svg'
 import PeriodTableIcon from './files/period-table.svg'
 import ReactionArrowBothEndsFilledTriangle from './files/reaction-arrow-both-ends-filled-triangle.svg'
 import ReactionArrowDashedOpenAngle from './files/reaction-arrow-dashed-open-angle.svg'
+import ReactionArrowEllipticalArcArrowFilledBow from './files/reaction-arrow-elliptical-arc-arrow-filled-bow.svg'
+import ReactionArrowEllipticalArcArrowFilledTriangle from './files/reaction-arrow-elliptical-arc-arrow-filled-triangle.svg'
+import ReactionArrowEllipticalArcArrowOpenAngle from './files/reaction-arrow-elliptical-arc-arrow-open-angle.svg'
+import ReactionArrowEllipticalArcArrowOpenHalfAngle from './files/reaction-arrow-elliptical-arc-arrow-open-half-angle.svg'
 import ReactionArrowEquilibriumFilledHalfBow from './files/reaction-arrow-equilibrium-filled-half-bow.svg'
 import ReactionArrowEquilibriumFilledTriangle from './files/reaction-arrow-equilibrium-filled-triangle.svg'
 import ReactionArrowEquilibriumOpenAngle from './files/reaction-arrow-equilibrium-open-angle.svg'
@@ -67,7 +75,7 @@ import ReactionArrowFilledBow from './files/reaction-arrow-filled-bow.svg'
 import ReactionArrowFilledTriangle from './files/reaction-arrow-filled-triangle.svg'
 import ReactionArrowOpenAngleIcon from './files/reaction-arrow-open-angle.svg'
 import ReactionArrowUnbalancedEquilibriumFilledHalfBow from './files/reaction-arrow-unbalanced-equilibrium-filled-half-bow.svg'
-import ReactionArrowUnbalancedEquilibriumFilledHalfTriangle from './files/reaction-arrow-unbalanced-equilibrium-fille-half-triangle.svg'
+import ReactionArrowUnbalancedEquilibriumFilledHalfTriangle from './files/reaction-arrow-unbalanced-equilibrium-filled-half-triangle.svg'
 import ReactionArrowUnbalancedEquilibriumLargeFilledHalfBow from './files/reaction-arrow-unbalanced-equilibrium-large-filled-half-bow.svg'
 import ReactionArrowUnbalancedEquilibriumOpenHalfAngle from './files/reaction-arrow-unbalanced-equilibrium-open-half-angle.svg'
 import ReactionAutomapIcon from './files/reaction-automap.svg'
@@ -111,6 +119,7 @@ import UndoIcon from './files/undo.svg'
 import ZoomInIcon from './files/zoom-in.svg'
 import ZoomOutIcon from './files/zoom-out.svg'
 import FunctionalGroupsIcon from './files/functional-groups.svg'
+import TextSpecialSymbolsIcon from './files/text-special-symbols.svg'
 import Save1Icon from './files/save-1.svg'
 import Open1Icon from './files/open-1.svg'
 import ResetIcon from './files/reset.svg'
@@ -135,6 +144,7 @@ const icons = {
   about: AboutIcon,
   analyse: AnalyseIcon,
   arom: AromIcon,
+  'arrow-upward': ArrowUpwardIcon,
   'bond-any': BondAnyIcon,
   'bond-aromatic': BondAromaticIcon,
   'bond-crossed': BondCrossedIcon,
@@ -149,6 +159,7 @@ const icons = {
   'bond-triple': BondTripleIcon,
   'bond-up': BondUpIcon,
   'bond-updown': BondUpdownIcon,
+  'capital-t': CapitalTIcon,
   chain: ChainIcon,
   'charge-minus': ChargeMinusIcon,
   'charge-plus': ChargePlusIcon,
@@ -166,9 +177,11 @@ const icons = {
   dropdown: DropdownIcon,
   'enhanced-stereo': EnhancedStereoIcon,
   erase: EraseIcon,
+  'file-thumbnail': FileThumbnailIcon,
   'functional-groups': FunctionalGroupsIcon,
   'generic-groups': GenericGroupsIcon,
   help: HelpIcon,
+  'image-frame': ImageFrameIcon,
   layout: LayoutIcon,
   logo: LogoIcon,
   miew: MiewIcon,
@@ -176,6 +189,14 @@ const icons = {
   open: OpenIcon,
   paste: PasteIcon,
   'period-table': PeriodTableIcon,
+  'reaction-arrow-elliptical-arc-arrow-filled-bow':
+    ReactionArrowEllipticalArcArrowFilledBow,
+  'reaction-arrow-elliptical-arc-arrow-filled-triangle':
+    ReactionArrowEllipticalArcArrowFilledTriangle,
+  'reaction-arrow-elliptical-arc-arrow-open-angle':
+    ReactionArrowEllipticalArcArrowOpenAngle,
+  'reaction-arrow-elliptical-arc-arrow-open-half-angle':
+    ReactionArrowEllipticalArcArrowOpenHalfAngle,
   'reaction-arrow-open-angle': ReactionArrowOpenAngleIcon,
   'reaction-arrow-filled-triangle': ReactionArrowFilledTriangle,
   'reaction-arrow-filled-bow': ReactionArrowFilledBow,
@@ -255,7 +276,8 @@ const icons = {
   '3dviewer-white': ThreeDViewerWhiteIcon,
   debugging: DebuggingIcon,
   'debugging-white': DebuggingWhiteIcon,
-  dropdownIndicator: DropdownIndicatorIcon
+  'dropdown-indicator': DropdownIndicatorIcon,
+  'text-special-symbols': TextSpecialSymbolsIcon
 }
 
 function emptyIcon() {

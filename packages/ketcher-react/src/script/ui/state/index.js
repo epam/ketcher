@@ -20,13 +20,13 @@ import optionsReducer, { initOptionsState } from './options'
 import templatesReducer, { initTmplsState } from './templates'
 
 import actionStateReducer from './action'
+import functionalGroupsReducer from './functionalGroups'
 import { logger } from 'redux-logger'
 import modalReducer from './modal'
 import { pick } from 'lodash/fp'
 import requestReducer from './request'
 import thunk from 'redux-thunk'
 import toolbarReducer from './toolbar'
-import functionalGroupsReducer from './functionalGroups'
 
 export { onAction, load }
 
@@ -44,13 +44,11 @@ const shared = combineReducers({
 
 function getRootReducer(setEditor) {
   return function root(state, action) {
-    switch (
-      action.type // eslint-disable-line default-case
-    ) {
+    switch (action.type) {
       case 'INIT':
         setEditor(action.editor)
 
-      case 'UPDATE': // eslint-disable-line no-case-declarations
+      case 'UPDATE':
         const { type, ...data } = action
         if (data) state = { ...state, ...data }
     }
@@ -68,7 +66,7 @@ function getRootReducer(setEditor) {
             ...sh
           }
 
-    //TODO: temporary solution. Need to review work with redux store
+    // TODO: temporary solution. Need to review work with redux store
     global.currentState = finalState
     return finalState
   }

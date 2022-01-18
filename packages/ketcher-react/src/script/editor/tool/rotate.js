@@ -61,21 +61,21 @@ RotateTool.prototype.mousedown = function (event) {
     var rotId = null
     var rotAll = false
 
-    selection.atoms.forEach(aid => {
+    selection.atoms.forEach((aid) => {
       var atom = struct.atoms.get(aid)
 
       xy0.add_(atom.pp) // eslint-disable-line no-underscore-dangle
 
       if (rotAll) return
 
-      atom.neighbors.find(nei => {
+      atom.neighbors.find((nei) => {
         var hb = struct.halfBonds.get(nei)
 
         if (selection.atoms.indexOf(hb.end) === -1) {
           if (hb.loop >= 0) {
             var neiAtom = struct.atoms.get(aid)
             if (
-              !neiAtom.neighbors.find(neiNei => {
+              !neiAtom.neighbors.find((neiNei) => {
                 var neiHb = struct.halfBonds.get(neiNei)
                 return (
                   neiHb.loop >= 0 && selection.atoms.indexOf(neiHb.end) !== -1
@@ -100,7 +100,7 @@ RotateTool.prototype.mousedown = function (event) {
     if (!rotAll && rotId !== null) xy0 = struct.atoms.get(rotId).pp
     else xy0 = xy0.scaled(1 / selection.atoms.length)
   } else if (struct.atoms?.size) {
-    struct.atoms.forEach(atom => {
+    struct.atoms.forEach((atom) => {
       xy0.add_(atom.pp)
     }) // eslint-disable-line no-underscore-dangle, max-len
     // poor man struct center (without sdata, etc)

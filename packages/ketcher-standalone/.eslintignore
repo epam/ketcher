@@ -1,2 +1,2 @@
-dist
-generated
+dist/
+node_modules/

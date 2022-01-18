@@ -16,6 +16,8 @@
 @import 'src/style/variables';
 
 .analyse {
+  width: @width-medium;
+
   li {
     display: flex;
     flex-direction: row;
@@ -31,8 +33,8 @@
     }
 
     input[type='text'] {
-      width: 12em;
-      margin-right: 1em;
+      width: 165px;
+      margin-right: 15px;
     }
 
     .wrapperSelector {
@@ -40,13 +42,13 @@
       flex-direction: column;
 
       select {
-        width: 7em;
+        width: 90px;
         margin: 0;
       }
 
       span {
-        font-size: @regular-font-size;
-        line-height: @regular-line-height;
+        font-size: @font-size-regular;
+        line-height: @line-height-regular;
         padding-bottom: 3px;
         text-align: center;
       }
@@ -58,7 +60,7 @@
       align-items: center;
 
       textarea {
-        width: 20em;
+        width: 270px;
         height: 7em;
         resize: none;
       }
@@ -66,9 +68,11 @@
 
     &:last-child {
       padding-top: 14px;
+
       .wrapperInput {
         align-items: flex-start;
       }
+
       label {
         padding-top: 5px;
       }

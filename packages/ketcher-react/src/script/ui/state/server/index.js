@@ -27,7 +27,7 @@ export function checkServer() {
     const { editor, server } = getState()
 
     server.then(
-      res =>
+      (res) =>
         dispatch(
           appUpdate({
             indigoVersion: res?.indigoVersion,
@@ -35,7 +35,7 @@ export function checkServer() {
             server: res?.isAvailable
           })
         ),
-      e => editor.errorHandler(e)
+      (e) => editor.errorHandler(e)
     )
   }
 }
@@ -46,10 +46,10 @@ export function recognize(file, version) {
     const editor = getState().editor
 
     const process = rec(file, version).then(
-      res => {
+      (res) => {
         dispatch(setStruct(res.struct))
       },
-      e => {
+      (e) => {
         dispatch(setStruct(null))
         editor.errorHandler(e)
       }
@@ -62,17 +62,17 @@ function ketcherCheck(struct, checkParams) {
   const errors = {}
 
   if (checkParams.includes('chiral_flag')) {
-    const isAbs = Array.from(struct.frags.values()).some(fr =>
+    const isAbs = Array.from(struct.frags.values()).some((fr) =>
       fr ? fr.enhancedStereoFlag === 'abs' : false
     )
-    if (isAbs) errors['chiral_flag'] = 'Chiral flag is present on the canvas'
+    if (isAbs) errors.chiral_flag = 'Chiral flag is present on the canvas'
   }
 
   if (checkParams.includes('valence')) {
     let badVal = 0
-    struct.atoms.forEach(atom => atom.badConn && badVal++)
+    struct.atoms.forEach((atom) => atom.badConn && badVal++)
     if (badVal > 0)
-      errors['valence'] = `Structure contains ${badVal} atom${
+      errors.valence = `Structure contains ${badVal} atom${
         badVal !== 1 ? 's' : ''
       } with bad valence`
   }
@@ -89,11 +89,11 @@ export function check(optsTypes) {
     options.data = { types: without(['valence', 'chiral_flag'], optsTypes) }
 
     return serverCall(editor, server, 'check', options)
-      .then(res => {
+      .then((res) => {
         res = Object.assign(res, ketcherErrors) // merge Indigo check with Ketcher check
         dispatch(checkErrors(res))
       })
-      .catch(e => {
+      .catch((e) => {
         editor.errorHandler(e)
       })
   }
@@ -105,7 +105,7 @@ export function automap(res) {
 
 export function analyse() {
   return (dispatch, getState) => {
-    //reset values to initial state
+    // reset values to initial state
     dispatch({
       type: 'ANALYSE_LOADING'
     })
@@ -122,13 +122,13 @@ export function analyse() {
     }
 
     return serverCall(editor, server, 'calculate', serverSettings)
-      .then(values =>
+      .then((values) =>
         dispatch({
           type: 'CHANGE_ANALYSE',
           data: { values }
         })
       )
-      .catch(e => {
+      .catch((e) => {
         editor.errorHandler(e)
       })
   }
@@ -142,7 +142,7 @@ export function serverTransform(method, data, struct) {
     dispatch(indigoVerification(true))
 
     serverCall(state.editor, state.server, method, opts, struct)
-      .then(res => {
+      .then((res) => {
         const loadedStruct = new KetSerializer().deserialize(res.struct)
 
         return dispatch(
@@ -152,7 +152,7 @@ export function serverTransform(method, data, struct) {
           })
         )
       })
-      .catch(e => {
+      .catch((e) => {
         state.editor.errorHandler(e)
       })
       .finally(() => {
@@ -162,7 +162,7 @@ export function serverTransform(method, data, struct) {
   }
 }
 
-//TODO: serverCall function should not be exported
+// TODO: serverCall function should not be exported
 export function serverCall(editor, server, method, options, struct) {
   const selection = editor.selection()
   let selectedAtoms = []
@@ -176,13 +176,7 @@ export function serverCall(editor, server, method, options, struct) {
   if (selection) {
     selectedAtoms = (
       selection.atoms ? selection.atoms : editor.explicitSelected().atoms
-    ).map(aid => aidMap.get(aid))
-
-    if (currentStruct.hasRxnArrow()) {
-      const components = currentStruct.getComponents()
-      const reindexMap = getReindexMap(components)
-      selectedAtoms = selectedAtoms.map(aid => reindexMap.get(aid))
-    }
+    ).map((aid) => aidMap.get(aid))
   }
   const ketSerializer = new KetSerializer()
   return server.then(() =>
@@ -206,18 +200,4 @@ export function serverCall(editor, server, method, options, struct) {
       omit('data', options)
     )
   )
-}
-
-function getReindexMap(components) {
-  const map = [...components.reactants, ...components.products]
-    .reduce((acc, set) => {
-      acc = [...acc, ...set]
-      return acc
-    }, [])
-    .reduce((acc, aid, index) => {
-      acc.set(aid, index)
-      return acc
-    }, new Map())
-
-  return map
 }

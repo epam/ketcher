@@ -17,7 +17,7 @@
 @import '../../../../../../../style/mixins.less';
 
 .check {
-  width: 35em;
+  width: @width-large;
   height: 27em;
 
   .wrapper {
@@ -35,16 +35,17 @@
       fieldset {
         display: flex;
         flex-direction: column;
-        font-size: @regular-font-size;
-        line-height: @regular-line-height;
+        font-size: @font-size-regular;
+        line-height: @line-height-regular;
         border: none;
+        padding-left: 0;
 
         li {
-          margin: 9px 0 0 0;
+          margin: 9px 0 0;
         }
 
         div {
-          margin: 12px 0 0 0;
+          margin: 12px 0 0;
 
           dt {
             font-weight: bold;
@@ -57,13 +58,10 @@
         }
       }
     }
+
     .warnings {
       flex-grow: 3;
       flex-basis: 21em;
-
-      label {
-        padding-left: 3px;
-      }
     }
   }
 }

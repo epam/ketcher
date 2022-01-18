@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 export class Pool<TValue = any> extends Map<number, TValue> {
-  private nextId: number = 0
+  private nextId = 0
 
   add(item: TValue): number {
     const id = this.nextId++

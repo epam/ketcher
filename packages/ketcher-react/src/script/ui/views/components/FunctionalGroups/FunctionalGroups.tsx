@@ -58,7 +58,7 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
   const [filteredLib, setFilteredLib] = useState({})
 
   const templatesLib = useMemo(() => {
-    return lib.map(template => {
+    return lib.map((template) => {
       const struct = template.struct.clone()
       struct.sgroups.delete(0)
       return { ...template, modifiedStruct: struct }
@@ -133,7 +133,7 @@ const FunctionalGroups: FC<FGProps> = ({ onOk, onCancel, className }) => {
           <Input
             type="search"
             value={filter}
-            onChange={value => onFilter(value)}
+            onChange={(value) => onFilter(value)}
           />
         </label>
         <div

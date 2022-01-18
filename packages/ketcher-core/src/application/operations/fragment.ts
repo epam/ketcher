@@ -111,7 +111,7 @@ export class AddStereoAtom extends BaseOperation {
     if (fragment.addStereoAtom(this.#atomId)) {
       fragment.updateStereoFlag(struct)
     }
-    //BaseOperation.invalidateEnhancedFlag(restruct, frid)
+    // BaseOperation.invalidateEnhancedFlag(restruct, frid)
 
     const inverseOperation = new DeleteStereoAtom(
       this.#fragmentId,
@@ -143,7 +143,7 @@ export class DeleteStereoAtom extends BaseOperation {
       fragment.updateStereoFlag(struct)
     }
 
-    //BaseOperation.invalidateEnhancedFlag(restruct, frid)
+    // BaseOperation.invalidateEnhancedFlag(restruct, frid)
     const inverseOperation = new AddStereoAtom(this.#fragmentId, this.#atomId)
 
     return {
@@ -167,7 +167,7 @@ export class UpdateStereoFlag extends BaseOperation {
     const fragment = struct.frags.get(this.#fragmentId)!
     fragment.updateStereoFlag(struct)
 
-    //BaseOperation.invalidateEnhancedFlag(restruct, this.frid)
+    // BaseOperation.invalidateEnhancedFlag(restruct, this.frid)
 
     const inverseOperation = new UpdateStereoFlag(this.#fragmentId)
 
@@ -202,7 +202,7 @@ export class MoveStereoFlag extends BaseOperation {
     const newPosition = Vec2.sum(currentPosition, this.#delta)
     fragment.stereoFlagPosition = newPosition
 
-    //BaseOperation.invalidateItem(restruct, 'enhancedFlags', frid, 1)
+    // BaseOperation.invalidateItem(restruct, 'enhancedFlags', frid, 1)
 
     const inverseOperation = new MoveStereoFlag(
       this.#fragmentId,

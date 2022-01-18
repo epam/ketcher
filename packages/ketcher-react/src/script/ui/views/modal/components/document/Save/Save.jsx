@@ -16,15 +16,15 @@
 
 import * as structFormat from '../../../../../data/convert/structConverter'
 
+import { Component, createRef } from 'react'
 import Form, { Field } from '../../../../../component/form/form/form'
 import {
   FormatterFactory,
+  KetSerializer,
   formatProperties,
   getPropertiesByFormat,
-  getPropertiesByImgFormat,
-  KetSerializer
+  getPropertiesByImgFormat
 } from 'ketcher-core'
-import { Component, createRef } from 'react'
 
 import { Dialog } from '../../../../components'
 import { ErrorsContext } from '../../../../../../../contexts'
@@ -44,7 +44,7 @@ const saveSchema = {
       type: 'string',
       maxLength: 128,
       pattern: /^[^.<>:?"*|/\\][^<>:?"*|/\\]*$/,
-      invalidMessage: res => {
+      invalidMessage: (res) => {
         if (!res) return 'Filename should contain at least one character'
         if (res.length > 128) return 'Filename is too long'
         return "A filename cannot contain characters: \\ / : * ? \" < > | and cannot start with '.'"
@@ -54,7 +54,7 @@ const saveSchema = {
       title: 'File format:',
       enum: Object.keys(formatProperties),
       enumNames: Object.keys(formatProperties).map(
-        format => formatProperties[format].name
+        (format) => formatProperties[format].name
       )
     }
   }
@@ -89,7 +89,7 @@ class SaveDialog extends Component {
       this.saveSchema.properties.format,
       {
         enum: formats,
-        enumNames: formats.map(format => {
+        enumNames: formats.map((format) => {
           const formatProps =
             getPropertiesByFormat(format) || getPropertiesByImgFormat(format)
           return formatProps.name
@@ -102,35 +102,35 @@ class SaveDialog extends Component {
     const { checkOptions } = this.props.checkState
     this.props.onCheck(checkOptions)
     this.changeType(this.isRxn ? 'rxn' : 'mol').then(
-      res => res instanceof Error && this.setState({ disableControls: true })
+      (res) => res instanceof Error && this.setState({ disableControls: true })
     )
   }
 
-  isImageFormat = format => {
+  isImageFormat = (format) => {
     return !!getPropertiesByImgFormat(format)
   }
 
-  showStructWarningMessage = format => {
+  showStructWarningMessage = (format) => {
     const { errors } = this.props.formState
     return format !== 'mol' && Object.keys(errors).length > 0
   }
 
-  changeType = type => {
+  changeType = (type) => {
     const { struct, server, options, formState } = this.props
     const errorHandler = this.context.errorHandler
     if (this.isImageFormat(type)) {
       const ketSerialize = new KetSerializer()
       const structStr = ketSerialize.serialize(struct)
       this.setState({ imageFormat: type, structStr })
-      let options = {}
+      const options = {}
       options.outputFormat = type
 
       return server
         .generateImageAsBase64(structStr, options)
-        .then(base64 => {
+        .then((base64) => {
           this.setState({ imageSrc: base64 })
         })
-        .catch(e => {
+        .catch((e) => {
           errorHandler(e)
           this.props.onResetForm(formState)
           return e
@@ -143,7 +143,7 @@ class SaveDialog extends Component {
       return service
         .getStructureFromStructAsync(struct)
         .then(
-          structStr => {
+          (structStr) => {
             this.setState({ structStr })
             setTimeout(() => {
               if (this.textAreaRef.current) {
@@ -151,7 +151,7 @@ class SaveDialog extends Component {
               }
             }, 10) // TODO: remove hack
           },
-          e => {
+          (e) => {
             errorHandler(e.message)
             this.props.onResetForm(formState)
             return e
@@ -163,7 +163,7 @@ class SaveDialog extends Component {
     }
   }
 
-  getWarnings = format => {
+  getWarnings = (format) => {
     const { struct, moleculeErrors } = this.props
     const warnings = []
     const structWarning =
@@ -208,7 +208,7 @@ class SaveDialog extends Component {
           <Field name="format" onChange={this.changeType} />
         </Form>
         {this.isImageFormat(format) ? (
-          //TODO: remove this conditional after fixing problems with png format on BE side
+          // TODO: remove this conditional after fixing problems with png format on BE side
           format === 'png' ? (
             <div className={classes.previewMessage}>
               Preview is not available for this format
@@ -230,7 +230,7 @@ class SaveDialog extends Component {
         )}
         {warnings.length ? (
           <div className={classes.warnings}>
-            {warnings.map(warning => (
+            {warnings.map((warning) => (
               <div className={classes.warningsContainer}>
                 <div className={classes.warning} />
                 <div className={classes.warningsArr}>{warning}</div>
@@ -316,7 +316,7 @@ class SaveDialog extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   server: state.options.app.server ? state.server : null,
   struct: state.editor.struct(),
   options: state.options.getServerSettings(),
@@ -325,10 +325,10 @@ const mapStateToProps = state => ({
   checkState: state.options.check
 })
 
-const mapDispatchToProps = dispatch => ({
-  onCheck: checkOptions => dispatch(check(checkOptions)),
-  onTmplSave: struct => dispatch(saveUserTmpl(struct)),
-  onResetForm: prevState => dispatch(updateFormState(prevState))
+const mapDispatchToProps = (dispatch) => ({
+  onCheck: (checkOptions) => dispatch(check(checkOptions)),
+  onTmplSave: (struct) => dispatch(saveUserTmpl(struct)),
+  onResetForm: (prevState) => dispatch(updateFormState(prevState))
 })
 
 const Save = connect(mapStateToProps, mapDispatchToProps)(SaveDialog)

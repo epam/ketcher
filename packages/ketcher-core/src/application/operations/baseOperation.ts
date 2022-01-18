@@ -35,7 +35,7 @@ export abstract class BaseOperation implements Operation {
     return this.#type
   }
 
-  constructor(type: OperationType, priority: number = 0) {
+  constructor(type: OperationType, priority = 0) {
     this.#type = type
     this.#priority = priority
   }

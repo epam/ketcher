@@ -36,6 +36,7 @@ import { TextCommand } from 'ketcher-core'
 import classes from './Text.module.less'
 import { connect } from 'react-redux'
 import createStyles from 'draft-js-custom-styles'
+import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton'
 
 const { styles, customStyleFn } = createStyles(['font-size'])
 
@@ -160,7 +161,7 @@ const Text = (props: TextProps) => {
           setEditorState={setEditorState}
           styles={styles}
         />
-        {buttons.map(button => {
+        {buttons.map((button) => {
           return (
             <TextButton
               button={button}
@@ -170,6 +171,11 @@ const Text = (props: TextProps) => {
             />
           )
         })}
+        <SpecialSymbolsButton
+          editorState={editorState}
+          setEditorState={setEditorState}
+          styles={currentStyle}
+        />
       </ul>
       <div className={classes.textEditorInput}>
         <Editor
@@ -184,4 +190,4 @@ const Text = (props: TextProps) => {
   )
 }
 
-export default connect(store => ({ formState: (store as any).modal }))(Text)
+export default connect((store) => ({ formState: (store as any).modal }))(Text)

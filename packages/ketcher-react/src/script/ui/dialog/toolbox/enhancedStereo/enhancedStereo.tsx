@@ -49,7 +49,7 @@ interface EnhancedStereoCallProps {
 
 type Props = EnhancedStereoProps & EnhancedStereoCallProps
 
-const EnhancedStereo: FC<Props> = props => {
+const EnhancedStereo: FC<Props> = (props) => {
   const { struct, formState, init, ...rest } = props
   const { result, valid } = formState
 
@@ -163,26 +163,26 @@ const EnhancedStereo: FC<Props> = props => {
 // TODO: Move the function below to Struct class
 function findStereLabels(struct, aids): Array<string> {
   const stereoIds = aids.filter(
-    aid => struct.atoms.get(aid).stereoLabel !== null
+    (aid) => struct.atoms.get(aid).stereoLabel !== null
   )
-  return stereoIds.map(aid => struct.atoms.get(aid).stereoLabel)
+  return stereoIds.map((aid) => struct.atoms.get(aid).stereoLabel)
 }
 
 function maxOfAnds(stereLabels): number {
-  const numbers = stereLabels.map(label => {
+  const numbers = stereLabels.map((label) => {
     return label.match(/&/) ? +label.match(/\d+/)?.join() : 0
   })
   return Math.max(...numbers)
 }
 
 function maxOfOrs(stereLabels): number {
-  const numbers = stereLabels.map(label => {
+  const numbers = stereLabels.map((label) => {
     return label.match(/or/) ? +label.match(/\d+/)?.join() : 0
   })
   return Math.max(...numbers)
 }
 
-export default connect(state => ({
+export default connect((state) => ({
   formState: (state as any).modal.form || { result: {}, valid: false },
   struct: (state as any).editor.struct()
 }))(EnhancedStereo)

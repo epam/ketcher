@@ -44,9 +44,9 @@ function parseCTab(/* string */ ctabLines) /* Struct */ {
   const version = countsSplit[11].trim()
   ctabLines = ctabLines.slice(1)
   if (version === 'V2000') return v2000.parseCTabV2000(ctabLines, countsSplit)
-  else if (version === 'V3000')
+  else if (version === 'V3000') {
     return v3000.parseCTabV3000(ctabLines, !loadRGroupFragments)
-  else throw new Error('Molfile version unknown: ' + version) // eslint-disable-line no-else-return
+  } else throw new Error('Molfile version unknown: ' + version) // eslint-disable-line no-else-return
 }
 
 /* Parse Rxn */
@@ -56,8 +56,9 @@ function parseRxn(
 ) /* Struct */ {
   /* reader */
   const split = ctabLines[0].trim().split(' ')
-  if (split.length > 1 && split[1] === 'V3000')
+  if (split.length > 1 && split[1] === 'V3000') {
     return v3000.parseRxn3000(ctabLines, shouldReactionRelayout)
+  }
 
   const struct = v2000.parseRxn2000(ctabLines, shouldReactionRelayout)
   struct.name = ctabLines[1].trim()
@@ -78,17 +79,17 @@ function prepareSruForSaving(sgroup, mol) {
   mol.bonds.forEach((bond, bid) => {
     const a1 = mol.atoms.get(bond.begin)
     const a2 = mol.atoms.get(bond.end)
-    /* eslint-disable no-mixed-operators*/
+    /* eslint-disable no-mixed-operators */
     if (
       (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
       (a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
-    )
-      /* eslint-enable no-mixed-operators*/
+    ) {
+      /* eslint-enable no-mixed-operators */
       xBonds.push(bid)
+    }
   }, sgroup)
   if (xBonds.length !== 0 && xBonds.length !== 2) {
     throw {
-      // eslint-disable-line no-throw-literal
       id: sgroup.id,
       'error-type': 'cross-bond-number',
       message: 'Unsupported cross-bonds number'
@@ -104,13 +105,14 @@ function prepareSupForSaving(sgroup, mol) {
   mol.bonds.forEach((bond, bid) => {
     const a1 = mol.atoms.get(bond.begin)
     const a2 = mol.atoms.get(bond.end)
-    /* eslint-disable no-mixed-operators*/
+    /* eslint-disable no-mixed-operators */
     if (
       (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
       (a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
-    )
-      /* eslint-enable no-mixed-operators*/
+    ) {
+      /* eslint-enable no-mixed-operators */
       xBonds.push(bid)
+    }
   }, sgroup)
   sgroup.bonds = xBonds
 }
@@ -178,8 +180,9 @@ function saveSupToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
   let lines = []
   lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap))
   lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap))
-  if (sgroup.data.name && sgroup.data.name !== '')
+  if (sgroup.data.name && sgroup.data.name !== '') {
     lines.push('M  SMT ' + idstr + ' ' + sgroup.data.name)
+  }
   return lines.join('\n')
 }
 
@@ -200,9 +203,10 @@ function saveDatToMolfile(sgroup, mol, sgMap, atomMap) {
     (data.units || '').padEnd(20) +
     (data.query || '').padStart(2)
 
-  if (data.queryOp)
+  if (data.queryOp) {
     // see gitlab #184
     sdtLine += data.queryOp.padEnd(80 - 65)
+  }
 
   lines.push(sdtLine)
   const sddLine =
@@ -227,7 +231,7 @@ function saveDatToMolfile(sgroup, mol, sgMap, atomMap) {
   lines.push(sddLine)
   const val = normalizeNewlines(data.fieldValue).replace(/\n*$/, '')
   const charsPerLine = 69
-  val.split('\n').forEach(chars => {
+  val.split('\n').forEach((chars) => {
     while (chars.length > charsPerLine) {
       lines.push('M  SCD ' + idstr + ' ' + chars.slice(0, charsPerLine))
       chars = chars.slice(charsPerLine)
@@ -254,8 +258,9 @@ function makeAtomBondLines(prefix, idstr, ids, map) {
   for (let i = 0; i < Math.floor((ids.length + 14) / 15); ++i) {
     const rem = Math.min(ids.length - 15 * i, 15) // eslint-disable-line no-mixed-operators
     let salLine = 'M  ' + prefix + ' ' + idstr + ' ' + utils.paddedNum(rem, 2)
-    for (let j = 0; j < rem; ++j)
-      salLine += ' ' + utils.paddedNum(map[ids[i * 15 + j]], 3) // eslint-disable-line no-mixed-operators
+    for (let j = 0; j < rem; ++j) {
+      salLine += ' ' + utils.paddedNum(map[ids[i * 15 + j]], 3)
+    } // eslint-disable-line no-mixed-operators
     lines.push(salLine)
   }
   return lines
@@ -284,8 +289,9 @@ function bracketsToMolfile(mol, sg, idstr) {
     const a1 = bracket.c.addScaled(bracket.n, 0.5 * bracket.h).yComplement()
     let line = 'M  SDI ' + idstr + utils.paddedNum(4, 3)
     const coord = [a0.x, a0.y, a1.x, a1.y]
-    for (let j = 0; j < coord.length; ++j)
+    for (let j = 0; j < coord.length; ++j) {
       line += utils.paddedNum(coord[j], 10, 4)
+    }
     lines.push(line)
   }
   return lines
@@ -300,9 +306,9 @@ function normalizeNewlines(str) {
 }
 
 function partitionLine(
-  /* string*/ str,
-  /* array of int*/ parts,
-  /* bool*/ withspace
+  /* string */ str,
+  /* array of int */ parts,
+  /* bool */ withspace
 ) {
   /* reader */
   const res = []

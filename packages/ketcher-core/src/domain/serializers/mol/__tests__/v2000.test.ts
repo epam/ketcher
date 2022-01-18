@@ -5,9 +5,9 @@ import molParsers from '../v2000'
 import utils from '../utils'
 
 const createCountsLine = (
-  atomsCount: number = 0,
-  bondsCount: number = 0,
-  atomListsCount: number = 0
+  atomsCount = 0,
+  bondsCount = 0,
+  atomListsCount = 0
 ): string[] => {
   const atoms = String(atomsCount).padStart(3, ' ')
   const bonds = String(bondsCount).padStart(3, ' ')
@@ -388,22 +388,6 @@ describe('parseCTabV2000', () => {
       const struct = molParsers.parseCTabV2000(lines, createCountsLine(1))
       expect(struct.atoms.get(0)!.alias).toBe('ACH')
     })
-
-    // TODO: Atom entity only have pseudo getter. See V2000.js for more info
-    // it('should parse pseudo', () => {
-    //   const lines = [
-    //     '   14.0000   -3.0000    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0',
-    //     'A    1',
-    //     "'pseudoText'"
-    //   ]
-    //
-    //   const struct = molParsers.parseCTabV2000(
-    //       lines,
-    //       createCountsLine(1)
-    //   )
-    //
-    //   expect(struct.atoms.get(0)!.pseudo).toBe('pseudoText')
-    // })
 
     it('should parse charge', () => {
       const lines = [

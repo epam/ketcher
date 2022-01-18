@@ -28,14 +28,13 @@ type Mapping = {
 type NumberTuple = [number, number]
 
 export class Molfile {
-  molecule: Struct
+  molecule: Struct | null
   molfile: string | null
   reaction: boolean
   mapping: Mapping
   bondMapping: Mapping
 
   constructor() {
-    // @ts-ignore
     this.molecule = null
     this.molfile = null
 
@@ -59,34 +58,32 @@ export class Molfile {
   }
 
   prepareSGroups(skipErrors: boolean, preserveIndigoDesc?: boolean) {
-    let mol = this.molecule
-    let toRemove: any[] = []
+    const mol = this.molecule
+    const toRemove: any[] = []
     let errors = 0
 
-    this.molecule.sGroupForest
+    this.molecule?.sGroupForest
       .getSGroupsBFS()
       .reverse()
-      .forEach(id => {
-        let sgroup = mol.sgroups.get(id)!
+      .forEach((id) => {
+        const sgroup = mol!.sgroups.get(id)!
         let errorIgnore = false
 
         try {
           common.prepareForSaving[sgroup.type](sgroup, mol)
         } catch (ex: any) {
-          if (!skipErrors || typeof ex.id != 'number') {
+          if (!skipErrors || typeof ex.id !== 'number') {
             throw new Error(`Error: ${ex.message}`)
           }
           errorIgnore = true
         }
-        /* eslint-disable no-mixed-operators*/
+        /* eslint-disable no-mixed-operators */
         if (
           errorIgnore ||
           (!preserveIndigoDesc &&
             /^INDIGO_.+_DESC$/i.test(sgroup.data.fieldName))
         ) {
-          /* eslint-enable no-mixed-operators*/
-          // @ts-ignore
-          errors += errorIgnore
+          errors += +errorIgnore
           toRemove.push(sgroup.id)
         }
       }, this)
@@ -100,7 +97,7 @@ export class Molfile {
     }
 
     for (let i = 0; i < toRemove.length; ++i) {
-      mol.sGroupDelete(toRemove[i])
+      mol?.sGroupDelete(toRemove[i])
     }
   }
 
@@ -129,11 +126,11 @@ export class Molfile {
           'Reactions with r-groups are not supported at the moment'
         )
       }
-      let components = molecule.getComponents()
+      const components = molecule.getComponents()
 
-      let reactants = components.reactants
-      let products = components.products
-      let all = reactants.concat(products)
+      const reactants = components.reactants
+      const products = components.products
+      const all = reactants.concat(products)
       this.molfile =
         '$RXN\n' +
         molecule.name +
@@ -155,7 +152,7 @@ export class Molfile {
       if (norgroups) {
         molecule = molecule.getScaffold()
       } else {
-        let scaffold = new Molfile().getCTab(
+        const scaffold = new Molfile().getCTab(
           molecule.getScaffold(),
           molecule.rgroups
         )
@@ -167,7 +164,7 @@ export class Molfile {
           this.molfile += '$RGP\n'
           this.writePaddedNumber(rgid, 3)
           this.molfile += '\n'
-          rg.frags.forEach(fid => {
+          rg.frags.forEach((fid) => {
             const group = new Molfile().getCTab(molecule.getFragment(fid))
             this.molfile += '$CTAB\n' + group + '$END CTAB\n'
           })
@@ -192,7 +189,7 @@ export class Molfile {
   writeHeader() {
     /* saver */
 
-    let date = new Date()
+    const date = new Date()
 
     this.writeCR() // TODO: write structure name
     this.writeWhiteSpace(2)
@@ -223,7 +220,7 @@ export class Molfile {
     this.molfile += str + '\n'
   }
 
-  writeWhiteSpace(length: number = 0) {
+  writeWhiteSpace(length = 0) {
     /* saver */
     if (arguments.length === 0) {
       length = 1
@@ -240,7 +237,7 @@ export class Molfile {
 
   writePaddedNumber(number: number, width: number) {
     /* saver */
-    let str = (number - 0).toString()
+    const str = (number - 0).toString()
 
     this.writeWhiteSpace(width - str.length)
     this.write(str)
@@ -253,12 +250,12 @@ export class Molfile {
 
   writeCTab2000Header() {
     /* saver */
-    this.writePaddedNumber(this.molecule.atoms.size, 3)
-    this.writePaddedNumber(this.molecule.bonds.size, 3)
+    this.writePaddedNumber(this.molecule!.atoms.size, 3)
+    this.writePaddedNumber(this.molecule!.bonds.size, 3)
 
     this.writePaddedNumber(0, 3)
     this.writePaddedNumber(0, 3)
-    const isAbsFlag = Array.from(this.molecule.frags.values()).some(fr =>
+    const isAbsFlag = Array.from(this.molecule!.frags.values()).some((fr) =>
       fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false
     )
     this.writePaddedNumber(isAbsFlag ? 1 : 0, 3)
@@ -281,18 +278,18 @@ export class Molfile {
       id: number
       value: string
     }[] = []
-    this.molecule.atoms.forEach((atom, id) => {
+    this.molecule!.atoms.forEach((atom, id) => {
       let label = atom.label
       if (atom.atomList != null) {
         label = 'L'
         atomsIds.push(id)
-      } else if (atom['pseudo']) {
-        if (atom['pseudo'].length > 3) {
+      } else if (atom.pseudo) {
+        if (atom.pseudo.length > 3) {
           label = 'A'
-          atomsProps.push({ id, value: `'${atom['pseudo']}'` })
+          atomsProps.push({ id, value: `'${atom.pseudo}'` })
         }
-      } else if (atom['alias']) {
-        atomsProps.push({ id, value: atom['alias'] })
+      } else if (atom.alias) {
+        atomsProps.push({ id, value: atom.alias })
       } else if (
         !Elements.get(atom.label) &&
         ['A', 'Q', 'X', '*', 'R#'].indexOf(atom.label) === -1
@@ -309,7 +306,7 @@ export class Molfile {
 
     this.bondMapping = {}
     i = 1
-    this.molecule.bonds.forEach((bond, id) => {
+    this.molecule!.bonds.forEach((bond, id) => {
       this.bondMapping[id] = i++
       this.writeBond(bond)
     }, this)
@@ -329,7 +326,7 @@ export class Molfile {
     const unsaturatedList: NumberTuple[] = []
     const substcountList: NumberTuple[] = []
 
-    this.molecule.atoms.forEach((atom, id) => {
+    this.molecule!.atoms.forEach((atom, id) => {
       if (atom.charge !== 0) {
         chargeList.push([id, atom.charge])
       }
@@ -364,7 +361,7 @@ export class Molfile {
     if (rgroups) {
       rgroups.forEach((rg, rgid) => {
         if (rg.resth || rg.ifthen > 0 || rg.range.length > 0) {
-          let line =
+          const line =
             '  1 ' +
             utils.paddedNum(rgid, 3) +
             ' ' +
@@ -393,15 +390,15 @@ export class Molfile {
 
     if (atomsIds.length > 0) {
       for (let j = 0; j < atomsIds.length; ++j) {
-        let atomId = atomsIds[j]
-        let atomList = this.molecule.atoms.get(atomId)!.atomList!
+        const atomId = atomsIds[j]
+        const atomList = this.molecule!.atoms.get(atomId)!.atomList!
         this.write('M  ALS')
         this.writePaddedNumber(atomId + 1, 4)
         this.writePaddedNumber(atomList.ids.length, 3)
         this.writeWhiteSpace()
         this.write(atomList.notList ? 'T' : 'F')
 
-        let labelList = atomList.labelList()
+        const labelList = atomList.labelList()
         for (let k = 0; k < labelList.length; ++k) {
           this.writeWhiteSpace()
           this.writePadded(labelList[k], 3)
@@ -413,15 +410,15 @@ export class Molfile {
     const sgmap = {}
     let cnt = 1
     const sgmapback = {}
-    const sgorder = this.molecule.sGroupForest.getSGroupsBFS()
-    sgorder.forEach(id => {
+    const sgorder = this.molecule!.sGroupForest.getSGroupsBFS()
+    sgorder.forEach((id) => {
       sgmapback[cnt] = id
       sgmap[id] = cnt++
     })
     for (let q = 1; q < cnt; ++q) {
       // each group on its own
       const id = sgmapback[q]
-      const sgroup = this.molecule.sgroups.get(id)!
+      const sgroup = this.molecule!.sgroups.get(id)!
       this.write('M  STY')
       this.writePaddedNumber(1, 3)
       this.writeWhiteSpace(1)
@@ -440,7 +437,7 @@ export class Molfile {
       this.writePaddedNumber(q, 3)
       this.writeCR()
 
-      const parentId = this.molecule.sGroupForest.parent.get(id)!
+      const parentId = this.molecule!.sGroupForest.parent.get(id)!
       if (parentId >= 0) {
         this.write('M  SPL')
         this.writePaddedNumber(1, 3)
@@ -488,7 +485,7 @@ export class Molfile {
     // TODO: write M  LOG
 
     const expandedGroups: number[] = []
-    this.molecule.sgroups.forEach(sg => {
+    this.molecule!.sgroups.forEach((sg) => {
       if (sg.data.expanded) expandedGroups.push(sg.id + 1)
     })
 
@@ -598,7 +595,7 @@ export class Molfile {
       this.write(propId)
       this.writePaddedNumber(part.length, 3)
 
-      part.forEach(value => {
+      part.forEach((value) => {
         this.writeWhiteSpace()
         this.writePaddedNumber(this.mapping[value[0]], 3)
         this.writeWhiteSpace()

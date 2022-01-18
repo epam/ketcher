@@ -20,7 +20,7 @@ function FrozenInput({ value }) {
       type="text"
       spellCheck={false}
       value={value}
-      onChange={event => event.preventDefault()}
+      onChange={(event) => event.preventDefault()}
     />
   )
 }

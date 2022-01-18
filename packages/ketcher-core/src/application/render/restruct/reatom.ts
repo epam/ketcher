@@ -72,19 +72,24 @@ class ReAtom extends ReObject {
     this.color = '#000000'
     this.component = -1
   }
+
   static isSelectable(): true {
     return true
   }
+
   getVBoxObj(render: Render): Box2Abs | null {
-    if (this.visel.boundingBox)
+    if (this.visel.boundingBox) {
       return ReObject.prototype.getVBoxObj.call(this, render)
+    }
     return new Box2Abs(this.a.pp, this.a.pp)
   }
+
   drawHighlight(render: Render) {
     const ret = this.makeHighlightPlate(render)
     render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
     return ret
   }
+
   makeHighlightPlate(render: Render) {
     const paper = render.paper
     const options = render.options
@@ -93,37 +98,41 @@ class ReAtom extends ReObject {
     const sgroups = render.ctab.sgroups
     const functionalGroups = render.ctab.molecule.functionalGroups
     if (
-      FunctionalGroup.isAtomInContractedFinctionalGroup(
+      FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
         functionalGroups,
         true
       )
-    )
+    ) {
       return null
+    }
     return paper
       .circle(ps.x, ps.y, options.atomSelectionPlateRadius)
       .attr(options.highlightStyle)
   }
+
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any) {
     const atom = this.a
     const sgroups = restruct.render.ctab.sgroups
     const functionalGroups = restruct.render.ctab.molecule.functionalGroups
     if (
-      FunctionalGroup.isAtomInContractedFinctionalGroup(
+      FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
         functionalGroups,
         true
       )
-    )
+    ) {
       return null
+    }
 
     const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
     return paper
       .circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
       .attr(styles.selectionStyle)
   }
+
   show(restruct: ReStruct, aid: number, options: any): void {
     // eslint-disable-line max-statements
     const atom = restruct.molecule.atoms.get(aid)
@@ -133,7 +142,7 @@ class ReAtom extends ReObject {
     const ps = Scale.obj2scaled(this.a.pp, render.options)
 
     if (
-      FunctionalGroup.isAtomInContractedFinctionalGroup(
+      FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
         functionalGroups,
@@ -142,7 +151,7 @@ class ReAtom extends ReObject {
     ) {
       if (FunctionalGroup.isFirstAtomInFunctionalGroup(sgroups, aid)) {
         let sgroupName
-        for (let sg of sgroups.values()) {
+        for (const sg of sgroups.values()) {
           if (aid === sg.atoms[0]) sgroupName = sg.data.name
         }
         const path = render.paper.text(ps.x, ps.y, sgroupName).attr({
@@ -249,7 +258,7 @@ class ReAtom extends ReObject {
           ps,
           true
         )
-        if (hydroIndex != null)
+        if (hydroIndex != null) {
           restruct.addReObjectPath(
             LayerMap.data,
             this.visel,
@@ -257,6 +266,7 @@ class ReAtom extends ReObject {
             ps,
             true
           )
+        }
       }
 
       if (this.a.charge != 0 && options.showCharge) {
@@ -316,7 +326,7 @@ class ReAtom extends ReObject {
     // we render them together to avoid possible collisions
 
     const fragmentId = Number(restruct.atoms.get(aid)?.a.fragment)
-    //TODO: fragment should not be null
+    // TODO: fragment should not be null
     const fragment = restruct.molecule.frags.get(fragmentId)
 
     const text =
@@ -337,13 +347,13 @@ class ReAtom extends ReObject {
         fill: options.atomColoring && elem ? ElementColor[this.a.label] : '#000'
       })
       if (stereoLabel) {
-        //use dom element to change color of stereo label which is the first element
-        //of just created text
-        //text -> tspan
+        // use dom element to change color of stereo label which is the first element
+        // of just created text
+        // text -> tspan
         const color = getStereoAtomColor(render.options, stereoLabel)
         aamPath.node.childNodes[0].setAttribute('fill', color)
         const opacity = getStereoAtomOpacity(render.options, stereoLabel)
-        aamPath.node.childNodes[0].setAttribute('opacity', opacity)
+        aamPath.node.childNodes[0].setAttribute('fill-opacity', opacity)
       }
       const aamBox = util.relBox(aamPath.getBBox())
       draw.recenterText(aamPath, aamBox)
@@ -351,8 +361,9 @@ class ReAtom extends ReObject {
       let t = 3
       let dir = bisectLargestSector(this, restruct.molecule)
       // estimate the shift to clear the atom label
-      for (let i = 0; i < visel.exts.length; ++i)
+      for (let i = 0; i < visel.exts.length; ++i) {
         t = Math.max(t, util.shiftRayBox(ps, dir, visel.exts[i].translate(ps)))
+      }
       // estimate the shift backwards to account for the size of the aam/query text box itself
       t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox))
       dir = dir.scaled(8 + t)
@@ -407,7 +418,7 @@ function shouldDisplayStereoLabel(
   stereoLabel,
   labelStyle,
   flag: StereoFlag | undefined
-): Boolean {
+): boolean {
   if (!stereoLabel) {
     return false
   }
@@ -421,14 +432,12 @@ function shouldDisplayStereoLabel(
       return true
     // Classic
     case StereLabelStyleType.Classic:
-      return flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or
-        ? true
-        : false
+      return !!(flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or)
     // IUPAC
     case StereLabelStyleType.IUPAC:
-      return flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs
-        ? true
-        : false
+      return !!(
+        flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs
+      )
     default:
       return true
   }
@@ -471,8 +480,9 @@ function isLabelVisible(restruct, options, atom) {
       bond1.b.stereo === Bond.PATTERN.STEREO.NONE &&
       bond2.b.stereo === Bond.PATTERN.STEREO.NONE
 
-    if (sameNotStereo && Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2)
+    if (sameNotStereo && Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2) {
       return true
+    }
   }
 
   return false
@@ -502,7 +512,7 @@ function setHydrogenPos(struct, atom) {
   let nl = 0
   let nr = 0
 
-  atom.a.neighbors.forEach(nei => {
+  atom.a.neighbors.forEach((nei) => {
     const d = struct.halfBonds.get(nei).dir
 
     if (d.x <= 0) {
@@ -531,8 +541,9 @@ function buildLabel(
 
   if (label.text === atom.a.label) {
     const element = Elements.get(label.text)
-    if (options.atomColoring && element)
+    if (options.atomColoring && element) {
       atom.color = ElementColor[label.text] || '#000'
+    }
   }
 
   label.path = paper.text(ps.x, ps.y, label.text).attr({
@@ -545,7 +556,7 @@ function buildLabel(
   label.rbb = util.relBox(label.path.getBBox())
   draw.recenterText(label.path, label.rbb)
 
-  if (atom.a.atomList !== null)
+  if (atom.a.atomList !== null) {
     pathAndRBoxTranslate(
       label.path,
       label.rbb,
@@ -554,6 +565,7 @@ function buildLabel(
         2,
       0
     )
+  }
 
   atom.label = label
   return label
@@ -570,9 +582,10 @@ function getLabelText(atom) {
     let text = ''
 
     for (let rgi = 0; rgi < 32; rgi++) {
-      if (atom.rglabel & (1 << rgi))
+      if (atom.rglabel & (1 << rgi)) {
         // eslint-disable-line max-depth
         text += 'R' + (rgi + 1).toString()
+      }
     }
 
     return text
@@ -594,14 +607,14 @@ function showHydroIndex(atom, render, implh, rightMargin): ElemAttr {
   })
   hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox())
   draw.recenterText(hydroIndex.path, hydroIndex.rbb)
-  /* eslint-disable no-mixed-operators*/
+  /* eslint-disable no-mixed-operators */
   pathAndRBoxTranslate(
     hydroIndex.path,
     hydroIndex.rbb,
     rightMargin + 0.5 * hydroIndex.rbb.width + delta,
     0.2 * atom.label.rbb.height
   )
-  /* eslint-enable no-mixed-operators*/
+  /* eslint-enable no-mixed-operators */
   return hydroIndex
 }
 
@@ -662,14 +675,14 @@ function showIsotope(
   })
   isotope.rbb = util.relBox(isotope.path.getBBox())
   draw.recenterText(isotope.path, isotope.rbb)
-  /* eslint-disable no-mixed-operators*/
+  /* eslint-disable no-mixed-operators */
   pathAndRBoxTranslate(
     isotope.path,
     isotope.rbb,
     leftMargin - 0.5 * isotope.rbb.width - delta,
     -0.3 * atom.label!.rbb.height
   )
-  /* eslint-enable no-mixed-operators*/
+  /* eslint-enable no-mixed-operators */
   return isotope
 }
 
@@ -695,14 +708,14 @@ function showCharge(
   })
   charge.rbb = util.relBox(charge.path.getBBox())
   draw.recenterText(charge.path, charge.rbb)
-  /* eslint-disable no-mixed-operators*/
+  /* eslint-disable no-mixed-operators */
   pathAndRBoxTranslate(
     charge.path,
     charge.rbb,
     rightMargin + 0.5 * charge.rbb.width + delta,
     -0.3 * atom.label!.rbb.height
   )
-  /* eslint-enable no-mixed-operators*/
+  /* eslint-enable no-mixed-operators */
   return charge
 }
 
@@ -733,8 +746,9 @@ function showExplicitValence(
   const delta = 0.5 * options.lineWidth
   const valence: any = {}
   valence.text = mapValence[atom.a.explicitValence]
-  if (!valence.text)
+  if (!valence.text) {
     throw new Error('invalid valence ' + atom.a.explicitValence.toString())
+  }
   valence.text = '(' + valence.text + ')'
   valence.path = render.paper.text(ps.x, ps.y, valence.text).attr({
     font: options.font,
@@ -743,14 +757,14 @@ function showExplicitValence(
   })
   valence.rbb = util.relBox(valence.path.getBBox())
   draw.recenterText(valence.path, valence.rbb)
-  /* eslint-disable no-mixed-operators*/
+  /* eslint-disable no-mixed-operators */
   pathAndRBoxTranslate(
     valence.path,
     valence.rbb,
     rightMargin + 0.5 * valence.rbb.width + delta,
     -0.3 * atom.label!.rbb.height
   )
-  /* eslint-enable no-mixed-operators*/
+  /* eslint-enable no-mixed-operators */
   return valence
 }
 
@@ -891,13 +905,13 @@ function showAttpnt(atom, render, lsb, addReObjectPath) {
       draw.recenterText(attpntPath1, attpntRbb)
 
       const lsbn = lsb.negated()
-      /* eslint-disable no-mixed-operators*/
+      /* eslint-disable no-mixed-operators */
       pos1 = pos1.addScaled(
         lsbn,
         util.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) +
           options.lineWidth / 2
       )
-      /* eslint-enable no-mixed-operators*/
+      /* eslint-enable no-mixed-operators */
       pos0 = shiftBondEnd(atom, pos0, lsb, options.lineWidth)
       const n = lsb.rotateSC(1, 0)
       const arrowLeft = pos1
@@ -959,17 +973,17 @@ function getAamText(atom) {
 function getQueryAttrsText(atom) {
   let queryAttrsText = ''
   if (atom.a.ringBondCount != 0) {
-    if (atom.a.ringBondCount > 0)
+    if (atom.a.ringBondCount > 0) {
       queryAttrsText += 'rb' + atom.a.ringBondCount.toString()
-    else if (atom.a.ringBondCount == -1) queryAttrsText += 'rb0'
+    } else if (atom.a.ringBondCount == -1) queryAttrsText += 'rb0'
     else if (atom.a.ringBondCount == -2) queryAttrsText += 'rb*'
     else throw new Error('Ring bond count invalid')
   }
   if (atom.a.substitutionCount != 0) {
     if (queryAttrsText.length > 0) queryAttrsText += ','
-    if (atom.a.substitutionCount > 0)
+    if (atom.a.substitutionCount > 0) {
       queryAttrsText += 's' + atom.a.substitutionCount.toString()
-    else if (atom.a.substitutionCount == -1) queryAttrsText += 's0'
+    } else if (atom.a.substitutionCount == -1) queryAttrsText += 's0'
     else if (atom.a.substitutionCount == -2) queryAttrsText += 's*'
     else throw new Error('Substitution count invalid')
   }
@@ -993,7 +1007,7 @@ function pathAndRBoxTranslate(path, rbb, x, y) {
 
 function bisectLargestSector(atom: ReAtom, struct: Struct) {
   let angles: Array<number> = []
-  atom.a.neighbors.forEach(hbid => {
+  atom.a.neighbors.forEach((hbid) => {
     const hb = struct.halfBonds.get(hbid)
     hb && angles.push(hb.ang)
   })

@@ -40,14 +40,14 @@ const ZoomList = (props: Props) => {
   const { status = {}, onAction } = props
   const zoom = status.zoom && status.zoom.selected // TMP
 
-  const handleChange = event => {
+  const handleChange = (event) => {
     const parsedValue = parseFloat(event.target.value)
-    onAction(editor => editor.zoom(parsedValue))
+    onAction((editor) => editor.zoom(parsedValue))
   }
 
   return (
     <select value={zoom} onChange={handleChange}>
-      {zoomList.map(value => (
+      {zoomList.map((value) => (
         <option key={value.toString()} value={value}>
           {toPercent(value)}%
         </option>

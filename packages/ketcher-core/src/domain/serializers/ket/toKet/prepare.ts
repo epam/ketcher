@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Pile, Struct, Vec2, SGroup } from 'domain/entities'
+import { Pile, SGroup, Struct, Vec2 } from 'domain/entities'
 
 export function prepareStructForKet(struct: Struct) {
   const ketNodes: any = []
@@ -21,7 +21,7 @@ export function prepareStructForKet(struct: Struct) {
   const rgFrags = new Set() // skip this when writing molecules
   for (const [rgnumber, rgroup] of struct.rgroups.entries()) {
     // RGroups writing
-    rgroup.frags.forEach(frid => rgFrags.add(frid))
+    rgroup.frags.forEach((frid) => rgFrags.add(frid))
 
     const fragsAtoms = Array.from(rgroup.frags.values()).reduce(
       (res, frid) => res.union(struct.getFragmentIds(frid)),
@@ -37,8 +37,8 @@ export function prepareStructForKet(struct: Struct) {
   }
 
   Array.from(struct.frags.keys())
-    .filter(fid => !rgFrags.has(fid))
-    .forEach(fid => {
+    .filter((fid) => !rgFrags.has(fid))
+    .forEach((fid) => {
       const fragAtoms = struct.getFragmentIds(fid)
       ketNodes.push({
         type: 'molecule',
@@ -47,18 +47,19 @@ export function prepareStructForKet(struct: Struct) {
       })
     })
 
-  struct.rxnArrows.forEach(item => {
+  struct.rxnArrows.forEach((item) => {
     ketNodes.push({
       type: 'arrow',
       center: item.pos[0],
       data: {
         mode: item.mode,
-        pos: item.pos
+        pos: item.pos,
+        height: item.height
       }
     })
   })
 
-  struct.rxnPluses.forEach(item => {
+  struct.rxnPluses.forEach((item) => {
     ketNodes.push({
       type: 'plus',
       center: item.pp,
@@ -66,7 +67,7 @@ export function prepareStructForKet(struct: Struct) {
     })
   })
 
-  struct.simpleObjects.forEach(item => {
+  struct.simpleObjects.forEach((item) => {
     ketNodes.push({
       type: 'simpleObject',
       center: item.pos[0],
@@ -77,7 +78,7 @@ export function prepareStructForKet(struct: Struct) {
     })
   })
 
-  struct.texts.forEach(item => {
+  struct.texts.forEach((item) => {
     ketNodes.push({
       type: 'text',
       center: item.position,
@@ -88,11 +89,11 @@ export function prepareStructForKet(struct: Struct) {
     })
   })
 
-  ketNodes.forEach(ketNode => {
+  ketNodes.forEach((ketNode) => {
     if (ketNode.fragment) {
       const sgroups: SGroup[] = Array.from(ketNode.fragment.sgroups.values())
       const filteredSGroups = sgroups.filter((sg: SGroup) =>
-        sg.atoms.every(atom => atom !== undefined)
+        sg.atoms.every((atom) => atom !== undefined)
       )
       const filteredSGroupsMap = new Map()
       filteredSGroups.forEach((sg, index) => {
@@ -102,7 +103,9 @@ export function prepareStructForKet(struct: Struct) {
     }
   })
 
-  return ketNodes.sort((a, b) => a.center.x - b.center.x)
+  // TODO: check if this sorting operation is needed
+  // return ketNodes.sort((a, b) => a.center.x - b.center.x)
+  return ketNodes
 }
 
 function getFragmentCenter(struct, atomSet) {

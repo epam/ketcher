@@ -57,10 +57,10 @@ export function fromAromaticTemplateOnBond(
   return Promise.all([
     events.aromatizeStruct
       .dispatch(beforeMerge.frag)
-      .then(res => molSerialzer.deserialize(res.struct)),
+      .then((res) => molSerialzer.deserialize(res.struct)),
     events.aromatizeStruct
       .dispatch(tmpl)
-      .then(res => molSerialzer.deserialize(res.struct))
+      .then((res) => molSerialzer.deserialize(res.struct))
   ])
     .then(([astruct, atmpl]) => {
       // aromatize restruct fragment
@@ -80,12 +80,13 @@ export function fromAromaticTemplateOnBond(
 
       return events.dearomatizeStruct
         .dispatch(afterMerge.frag)
-        .then(res => molSerialzer.deserialize(res.struct))
+        .then((res) => molSerialzer.deserialize(res.struct))
     })
-    .then(destruct => {
-      destruct.bonds.forEach(bond => {
-        if (bond.type === Bond.PATTERN.TYPE.AROMATIC)
+    .then((destruct) => {
+      destruct.bonds.forEach((bond) => {
+        if (bond.type === Bond.PATTERN.TYPE.AROMATIC) {
           throw Error('Bad dearomatize')
+        }
       })
 
       // dearomatize restruct fragment
@@ -98,7 +99,7 @@ export function fromAromaticTemplateOnBond(
 
       return [action, pasteItems]
     })
-    .catch(err => {
+    .catch((err) => {
       console.info(err.message)
       action.perform(restruct) // revert actions if error
 

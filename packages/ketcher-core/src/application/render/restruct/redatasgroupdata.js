@@ -23,20 +23,24 @@ class ReDataSGroupData extends ReObject {
     super('sgroupData')
     this.sgroup = sgroup
   }
+
   static isSelectable() {
     return true
   }
+
   highlightPath(render) {
-    var box = this.sgroup.dataArea
-    var p0 = Scale.obj2scaled(box.p0, render.options)
-    var sz = Scale.obj2scaled(box.p1, render.options).sub(p0)
+    const box = this.sgroup.dataArea
+    const p0 = Scale.obj2scaled(box.p0, render.options)
+    const sz = Scale.obj2scaled(box.p1, render.options).sub(p0)
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
   }
+
   drawHighlight(render) {
-    var ret = this.highlightPath(render).attr(render.options.highlightStyle)
+    const ret = this.highlightPath(render).attr(render.options.highlightStyle)
     render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
     return ret
   }
+
   makeSelectionPlate(restruct, paper, styles) {
     // TODO [MK] review parameters
     return this.highlightPath(restruct.render).attr(styles.selectionStyle)

@@ -37,7 +37,7 @@ type Data = {
 export function customOnChangeHandler(action, handler) {
   const data: Data[] = []
 
-  action.operations.reverse().forEach(operation => {
+  action.operations.reverse().forEach((operation) => {
     const op = operation._inverted
     switch (op.type) {
       case OperationType.ATOM_ADD:

@@ -20,7 +20,6 @@ import {
   ActionButtonProps
 } from '../ActionButton'
 import { GroupDescriptor, MultiToolVariant } from './variants/variants.types'
-import { useRef } from 'react'
 import { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types'
 import action, { UiAction, UiActionAction } from '../../../../action'
 
@@ -31,6 +30,7 @@ import classes from './ToolbarMultiToolItem.module.less'
 import clsx from 'clsx'
 import { usePortalOpening } from './usePortalOpening'
 import { usePortalStyle } from './usePortalStyle'
+import { useRef } from 'react'
 
 interface ToolbarMultiToolItemProps {
   id: ToolbarItemVariant
@@ -78,7 +78,7 @@ const ToolbarMultiToolItem = (props: Props) => {
   let currentId = id
 
   const selectedTool = options.find(
-    toolbarItem => status[toolbarItem.id]?.selected
+    (toolbarItem) => status[toolbarItem.id]?.selected
   )
   if (selectedTool) {
     currentId = selectedTool.id
@@ -91,16 +91,14 @@ const ToolbarMultiToolItem = (props: Props) => {
   selected = selected || Boolean(currentStatus?.selected)
 
   const allInnerItemsHidden: boolean = options.every(
-    option => status[option.id]?.hidden
+    (option) => status[option.id]?.hidden
   )
 
-  const displayMultiToolItem: boolean = !(
-    allInnerItemsHidden || currentStatus?.hidden
-  )
+  const displayMultiToolItem = !(allInnerItemsHidden || currentStatus?.hidden)
 
   if (!currentStatus && options.length) {
     currentId =
-      options.filter(option => !status[option.id]?.hidden)[0]?.id ||
+      options.filter((option) => !status[option.id]?.hidden)[0]?.id ||
       options[0].id
   }
 

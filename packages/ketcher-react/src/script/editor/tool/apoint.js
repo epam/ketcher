@@ -52,7 +52,7 @@ APointTool.prototype.click = function (event) {
     if (atomId !== null) atomResult.push(atomId)
   }
   if (atomResult.length > 0) {
-    for (let id of atomResult) {
+    for (const id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
         id
@@ -73,7 +73,7 @@ APointTool.prototype.click = function (event) {
       attpnt: atom.attpnt
     })
     Promise.resolve(res)
-      .then(newatom => {
+      .then((newatom) => {
         if (atom.attpnt !== newatom.attpnt) {
           var action = fromAtomsAttrs(editor.render.ctab, ci.id, newatom)
           editor.update(action)

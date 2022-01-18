@@ -45,7 +45,7 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
     function iterate() {
       process().then(
-        val => {
+        (val) => {
           try {
             if (complete(val)) resolve(val)
             else setTimeout(iterate, timeGap)
@@ -53,7 +53,7 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
             reject(e)
           }
         },
-        err => reject(err)
+        (err) => reject(err)
       )
     }
     setTimeout(iterate, startTimeGap || 0)
@@ -88,10 +88,10 @@ function request(
   if (responseHandler) {
     response = responseHandler(response)
   } else {
-    response = response.then(response =>
+    response = response.then((response) =>
       response
         .json()
-        .then(res => (response.ok ? res : Promise.reject(res.error)))
+        .then((res) => (response.ok ? res : Promise.reject(res.error)))
     )
   }
 
@@ -135,12 +135,12 @@ export class RemoteStructService implements StructService {
   async info(): Promise<InfoResult> {
     let indigoVersion: string
     let imagoVersions: Array<string>
-    let isAvailable: boolean = false
+    let isAvailable = false
 
     try {
       const response = await request('GET', this.apiPath + 'info')
-      indigoVersion = response['indigo_version']
-      imagoVersions = response['imago_versions']
+      indigoVersion = response.indigo_version
+      imagoVersions = response.imago_versions
       isAvailable = true
     } catch (e) {
       indigoVersion = ''
@@ -269,7 +269,7 @@ export class RemoteStructService implements StructService {
     )
     const status = request.bind(null, 'GET', this.apiPath + 'imago/uploads/:id')
     return req
-      .then(data =>
+      .then((data) =>
         pollDeferred(
           status.bind(null, { id: data.upload_id }),
           (response: any) => {
@@ -293,17 +293,8 @@ export class RemoteStructService implements StructService {
       'indigo/render',
       this.apiPath,
       this.defaultOptions
-    )({ struct: data }, { 'render-output-format': outputFormat }, response =>
-      response
-        .then(resp => resp.text())
-        //TODO: Indigo does not encode svg to base64. This code should be deleted after fix
-        .then(text => {
-          if (outputFormat === 'svg') {
-            return btoa(text)
-          } else {
-            return text
-          }
-        })
+    )({ struct: data }, { 'render-output-format': outputFormat }, (response) =>
+      response.then((resp) => resp.text())
     )
   }
 }

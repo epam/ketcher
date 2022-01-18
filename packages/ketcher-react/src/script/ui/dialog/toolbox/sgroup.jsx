@@ -46,10 +46,10 @@ function Sgroup({ formState, ...prop }) {
   )
 }
 
-const content = type =>
+const content = (type) =>
   Object.keys(schemes[type].properties)
-    .filter(prop => prop !== 'type')
-    .map(prop => {
+    .filter((prop) => prop !== 'type')
+    .map((prop) => {
       const props = {}
       if (prop === 'name') props.maxLength = 15
       if (prop === 'fieldName') props.maxLength = 30
@@ -59,4 +59,4 @@ const content = type =>
       return <Field name={prop} key={`${type}-${prop}`} {...props} />
     })
 
-export default connect(store => ({ formState: store.modal.form }))(Sgroup)
+export default connect((store) => ({ formState: store.modal.form }))(Sgroup)

@@ -1,0 +1,38 @@
+{
+  "root": false,
+  "env": {
+    "browser": true
+  },
+  "extends": [
+    "plugin:react/jsx-runtime",
+    "plugin:jsx-a11y/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:jest/recommended"
+  ],
+  "rules": {
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "jsx-a11y/label-has-associated-control": "warn",
+    "jsx-a11y/no-static-element-interactions": "warn",
+    "jsx-a11y/no-autofocus": "warn",
+    "jsx-a11y/no-noninteractive-element-interactions": "warn",
+    "jsx-a11y/alt-text": "warn",
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "no-fallthrough": "warn",
+    "no-case-declarations": "warn",
+    "no-prototype-builtins": "warn"
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/__tests__/**/*.[jt]s?(x)",
+        "**/?(*.)+(spec|test).[jt]s?(x)"
+      ],
+      "extends": ["plugin:testing-library/react"],
+      "rules": {
+        "testing-library/no-container": "warn",
+        "testing-library/no-node-access": "warn"
+      }
+    }
+  ]
+}

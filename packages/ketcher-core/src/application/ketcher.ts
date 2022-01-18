@@ -66,7 +66,7 @@ export class Ketcher {
     this.#formatterFactory = formatterFactory
   }
 
-  getSmiles(isExtended: boolean = false): Promise<string> {
+  getSmiles(isExtended = false): Promise<string> {
     const format: SupportedFormat = isExtended ? 'smilesExt' : 'smiles'
     return getStructure(format, this.#formatterFactory, this.editor.struct())
   }
@@ -134,6 +134,10 @@ export class Ketcher {
     assert(typeof structStr === 'string')
 
     const struct: Struct = await parseStruct(structStr, this.#structService)
+    struct.initHalfBonds()
+    struct.initNeighbors()
+    struct.setImplicitHydrogen()
+    struct.markFragments()
     this.#editor.struct(struct)
   }
 

@@ -28,13 +28,12 @@
 }
 
 .modalOverlay .modalWindow {
-  padding: 10px;
   outline: 0;
   position: relative;
   vertical-align: middle;
   display: flex;
   flex-direction: column;
-  max-width: 400px;
+  width: 260px;
   text-align: left;
   background-color: #f3f3f3;
   border-radius: 10px;
@@ -47,13 +46,13 @@
 }
 
 .modalWindow > * {
-  margin: 0 10px;
+  margin: 5px 10px;
   max-height: 65vh;
   color: #585858;
 }
 
 footer .ok {
-  background: #343434;
+  background: #005662;
   width: 40px;
   color: #fff;
   margin-left: 10px;
@@ -65,7 +64,7 @@ footer .ok {
 }
 
 .ok:hover {
-  background: #121212;
+  background: #00838F;
 }
 
 .modalWindow header {

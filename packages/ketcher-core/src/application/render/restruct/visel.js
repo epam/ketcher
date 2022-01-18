@@ -26,6 +26,7 @@ class Visel {
     this.boundingBox = null
     this.exts = []
   }
+
   add(path, bb, ext) {
     this.paths.push(path)
     if (bb) {
@@ -35,29 +36,35 @@ class Visel {
     }
     if (ext) this.exts.push(ext)
   }
+
   clear() {
     this.paths = []
     this.boxes = []
     this.exts = []
     this.boundingBox = null
   }
+
   translate(...args) {
-    if (args.length > 2)
+    if (args.length > 2) {
       // TODO: replace to debug time assert
       throw new Error('One vector or two scalar arguments expected')
+    }
     if (args.length === 1) {
       const vector = args[0]
       this.translate(vector.x, vector.y)
     } else {
       const x = args[0]
       const y = args[1]
-      var delta = new Vec2(x, y)
-      for (var i = 0; i < this.paths.length; ++i)
+      const delta = new Vec2(x, y)
+      for (let i = 0; i < this.paths.length; ++i) {
         this.paths[i].translateAbs(x, y)
-      for (var j = 0; j < this.boxes.length; ++j)
+      }
+      for (let j = 0; j < this.boxes.length; ++j) {
         this.boxes[j] = this.boxes[j].translate(delta)
-      if (this.boundingBox !== null)
+      }
+      if (this.boundingBox !== null) {
         this.boundingBox = this.boundingBox.translate(delta)
+      }
     }
   }
 }

@@ -48,7 +48,7 @@ const commonFonts = [
 ]
 
 function checkInSystem() {
-  const availableFontsPromises = commonFonts.map(fontName => {
+  const availableFontsPromises = commonFonts.map((fontName) => {
     const observer = new FontFaceObserver(fontName)
     return observer.check().then(
       () => fontName,
@@ -63,7 +63,7 @@ function SystemFonts(props) {
   const [availableFonts, setAvailableFonts] = useState(null)
   const { value, onChange } = props
   const onChangeCallback = useCallback(
-    value => {
+    (value) => {
       onChange(value)
     },
     [onChange]
@@ -71,10 +71,10 @@ function SystemFonts(props) {
 
   useEffect(() => {
     let mounted = true
-    checkInSystem().then(results => {
+    checkInSystem().then((results) => {
       const fonts = results
-        .filter(i => i !== null)
-        .map(font => {
+        .filter((i) => i !== null)
+        .map((font) => {
           return { value: `30px ${font}`, label: font }
         })
       if (mounted) {

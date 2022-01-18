@@ -228,7 +228,7 @@ const SettingsDialog = (props: Props) => {
   )
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   server: state.options.app.server ? state.server : null,
   appOpts: state.options.app,
   initState: state.options.settings,
@@ -236,7 +236,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  onOpenFile: newOpts => {
+  onOpenFile: (newOpts) => {
     try {
       dispatch(updateFormState({ result: JSON.parse(newOpts) }))
     } catch (ex) {
@@ -244,7 +244,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     }
   },
   onReset: () => dispatch(setDefaultSettings()),
-  onOk: res => {
+  onOk: (res) => {
     dispatch(saveSettings(res))
     ownProps.onOk(res)
   }

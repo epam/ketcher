@@ -33,7 +33,10 @@ function PasteTool(editor, struct) {
   this.functionalGroups = this.molecule.functionalGroups
 
   const rnd = editor.render
-  const point = editor.lastEvent ? rnd.page2obj(editor.lastEvent) : null
+  const { clientHeight, clientWidth } = rnd.clientArea
+  const point = editor.lastEvent
+    ? rnd.page2obj(editor.lastEvent)
+    : rnd.page2obj({ pageX: clientWidth / 2, pageY: clientHeight / 2 })
 
   const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point)
   this.action = action
@@ -69,7 +72,7 @@ PasteTool.prototype.mouseup = function () {
     this.functionalGroups.size &&
     this.mergeItems.atoms.size
   ) {
-    for (let id of this.mergeItems.atoms.values()) {
+    for (const id of this.mergeItems.atoms.values()) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         this.functionalGroups,
         id
@@ -82,7 +85,7 @@ PasteTool.prototype.mouseup = function () {
     this.functionalGroups.size &&
     this.mergeItems.bonds.size
   ) {
-    for (let id of this.mergeItems.bonds.values()) {
+    for (const id of this.mergeItems.bonds.values()) {
       const bondId = FunctionalGroup.atomsInFunctionalGroup(
         this.functionalGroups,
         id
@@ -91,7 +94,7 @@ PasteTool.prototype.mouseup = function () {
     }
   }
   if (atomsResult.length > 0) {
-    for (let id of atomsResult) {
+    for (const id of atomsResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
         id
@@ -103,7 +106,7 @@ PasteTool.prototype.mouseup = function () {
     this.editor.event.removeFG.dispatch({ fgIds: result })
     return
   } else if (bondsResult.length > 0) {
-    for (let id of bondsResult) {
+    for (const id of bondsResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,
         this.functionalGroups,

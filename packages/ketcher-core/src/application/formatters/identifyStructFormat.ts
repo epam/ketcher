@@ -32,6 +32,10 @@ export function identifyStructFormat(
     return 'rxn'
   }
 
+  if (sanitizedString.indexOf('V3000') !== -1) {
+    return 'molV3000'
+  }
+
   const match = sanitizedString.match(/^(M {2}END|\$END MOL)$/m)
 
   if (match) {

@@ -25,23 +25,26 @@
   padding: 0;
   position: relative;
   background: inherit;
-  background-color: @light-background-color;
+  background-color: @color-background-primary;
 
   &::before,
   &::after {
     display: inline-block;
     vertical-align: middle;
   }
+
   &::after {
     position: absolute;
     left: 0;
   }
+
   &:hover {
     .highlight-scale(@scale:1.25);
     .highlight-shadow(black);
 
     background-image: none;
   }
+
   &:active,
   &[disabled] {
     .highlight-scale(none);

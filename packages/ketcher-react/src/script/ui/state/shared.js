@@ -23,6 +23,8 @@ import {
 } from 'ketcher-core'
 
 import { supportedSGroupTypes } from './constants'
+import { setAnalyzingFile } from './request'
+import tools from '../action/tools'
 
 export function onAction(action) {
   if (action && action.dialog) {
@@ -72,13 +74,15 @@ export function load(struct, options) {
 
     options = options || {}
 
+    dispatch(setAnalyzingFile(true))
+
     return parseStruct(struct, server, options)
       .then(
-        struct => {
+        (struct) => {
           const { fragment } = options
 
           if (
-            struct.sgroups.some(sGroup => !supportedSGroupTypes[sGroup.type])
+            struct.sgroups.some((sGroup) => !supportedSGroupTypes[sGroup.type])
           ) {
             const isConfirmed = window.confirm(
               `Unsupported S-group type found. Would you like to import structure without it?`
@@ -96,7 +100,7 @@ export function load(struct, options) {
           struct.rescale() // TODO: move out parsing?
 
           if (editor.struct().atoms.size) {
-            //NB: reset id
+            // NB: reset id
             const oldStruct = editor.struct().clone()
 
             struct.sgroups.forEach((sg, sgId) => {
@@ -131,22 +135,25 @@ export function load(struct, options) {
 
           struct.markFragments()
 
-          if (struct.isBlank()) {
-            return
-          }
           if (fragment) {
-            dispatch(onAction({ tool: 'paste', opts: struct }))
+            if (struct.isBlank()) {
+              dispatch({ type: 'ACTION', action: tools['select-lasso'].action })
+            } else {
+              dispatch(onAction({ tool: 'paste', opts: struct }))
+            }
           } else {
             editor.struct(struct)
           }
-
+          dispatch(setAnalyzingFile(false))
           dispatch({ type: 'MODAL_CLOSE' })
         },
-        err => {
+        (err) => {
+          dispatch(setAnalyzingFile(false))
           errorHandler(err.message)
         }
       )
-      .catch(err => {
+      .catch((err) => {
+        dispatch(setAnalyzingFile(false))
         errorHandler(err.message)
       })
   }

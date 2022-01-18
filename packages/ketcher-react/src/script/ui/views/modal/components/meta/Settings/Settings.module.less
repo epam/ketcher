@@ -25,17 +25,21 @@
 @field-height: 24px;
 
 .settings {
-  width: 522px;
+  width: @width-large;
   height: 357px;
-  background-color: @color-white;
-
-  > header {
-    color: @color-blue2;
-    padding: 10px 16px;
-  }
+  background-color: @color-background-canvas;
 
   > header + div {
     height: 270px;
+    margin-right: @margin-left-right;
+  }
+
+  > header {
+    margin: @margin-top-bottom @margin-left-right;
+  }
+
+  > footer {
+    margin: @margin-left-right @margin-left-right @margin-top-bottom @margin-left-right;
   }
 
   > * {
@@ -44,13 +48,6 @@
 
   .warning {
     margin: 0.3em;
-  }
-
-  footer {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    padding: 10px 16px;
   }
 }
 
@@ -87,8 +84,23 @@
     align-items: center;
     line-height: 20px;
     margin-bottom: 16px;
-    color: @color-black;
+    color: @color-text-primary;
     height: @field-height;
+
+    select,
+    input {
+      border: 0.5px solid @color-gray2 !important;
+      border-radius: 2px !important;
+      color: @color-gray2;
+      height: inherit !important;
+      margin: 0 !important;
+      line-height: 12px !important;
+      padding: 2px 8px !important;
+    }
+
+    select {
+      margin-left: 2px !important;
+    }
 
     > select,
     > input,
@@ -99,21 +111,6 @@
     > span {
       flex-basis: 50%;
     }
-  }
-
-  select,
-  input {
-    border: 0.5px solid @color-gray2 !important;
-    border-radius: 2px !important;
-    color: @color-gray2;
-    height: inherit !important;
-    margin: 0 !important;
-    line-height: 12px !important;
-    padding: 2px 8px !important;
-  }
-
-  select {
-    margin-left: 2px !important;
   }
 
   .server {

@@ -47,7 +47,7 @@ Smiles.prototype.isBondInRing = function (bid) {
 
 Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
   // eslint-disable-line max-statements
-  var i, j, k
+  let i, j, k
 
   if (!ignoreErrors) this.ignoreErrors = ignoreErrors
 
@@ -66,7 +66,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
   struct.initNeighbors()
   struct.sortNeighbors()
   struct.setImplicitHydrogen()
-  struct.sgroups.forEach(sg => {
+  struct.sgroups.forEach((sg) => {
     if (sg.type === 'MUL') {
       try {
         SGroup.prepareMulForSaving(sg, struct)
@@ -87,17 +87,19 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
   // From the SMILES specification:
   // Please note that only atoms on the following list
   // can be considered aromatic: C, N, O, P, S, As, Se, and * (wildcard).
-  var allowedLowercase = ['B', 'C', 'N', 'O', 'P', 'S', 'Se', 'As']
+  const allowedLowercase = ['B', 'C', 'N', 'O', 'P', 'S', 'Se', 'As']
 
   // Detect atoms that have aromatic bonds and count neighbours
   struct.bonds.forEach((bond, bid) => {
     if (bond.type === Bond.PATTERN.TYPE.AROMATIC) {
       this.atoms[bond.begin].aromatic = true
-      if (allowedLowercase.indexOf(struct.atoms.get(bond.begin).label) !== -1)
+      if (allowedLowercase.indexOf(struct.atoms.get(bond.begin).label) !== -1) {
         this.atoms[bond.begin].lowercase = true
+      }
       this.atoms[bond.end].aromatic = true
-      if (allowedLowercase.indexOf(struct.atoms.get(bond.end).label) !== -1)
+      if (allowedLowercase.indexOf(struct.atoms.get(bond.end).label) !== -1) {
         this.atoms[bond.end].lowercase = true
+      }
     }
     this.atoms[bond.begin].neighbours.push({ aid: bond.end, bid })
     this.atoms[bond.end].neighbours.push({ aid: bond.begin, bid })
@@ -106,14 +108,14 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
   this.inLoop = (function () {
     struct.prepareLoopStructure()
     let bondsInLoops = new Pile()
-    struct.loops.forEach(loop => {
+    struct.loops.forEach((loop) => {
       if (loop.hbs.length <= 6) {
-        const hbids = loop.hbs.map(hbid => struct.halfBonds.get(hbid).bid)
+        const hbids = loop.hbs.map((hbid) => struct.halfBonds.get(hbid).bid)
         bondsInLoops = bondsInLoops.union(new Pile(hbids))
       }
     })
     const inLoop = {}
-    bondsInLoops.forEach(bid => {
+    bondsInLoops.forEach((bid) => {
       inLoop[bid] = 1
     })
     return inLoop
@@ -122,10 +124,10 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
   this.touchedCistransbonds = 0
   this.markCisTrans(struct)
 
-  var components = struct.getComponents()
-  var componentsAll = components.reactants.concat(components.products)
+  const components = struct.getComponents()
+  const componentsAll = components.reactants.concat(components.products)
 
-  var walk = new Dfs(
+  const walk = new Dfs(
     struct,
     this.atoms,
     componentsAll,
@@ -133,7 +135,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
   )
 
   walk.walk()
-  this.atoms.forEach(atom => {
+  this.atoms.forEach((atom) => {
     atom.neighbours = []
   })
 
@@ -145,12 +147,13 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
     var vPrevIdx = seqEl.parent_vertex
 
     if (eIdx >= 0) {
-      var atom = this.atoms[vIdx]
+      const atom = this.atoms[vIdx]
 
       var openingCycles = walk.numOpeningCycles(eIdx)
 
-      for (j = 0; j < openingCycles; j++)
+      for (j = 0; j < openingCycles; j++) {
         this.atoms[vPrevIdx].neighbours.push({ aid: -1, bid: -1 })
+      }
 
       if (walk.edgeClosingCycle(eIdx)) {
         for (k = 0; k < atom.neighbours.length; k++) {
@@ -161,8 +164,9 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
             break
           }
         }
-        if (k === atom.neighbours.length)
+        if (k === atom.neighbours.length) {
           throw new Error('internal: can not put closing bond to its place')
+        }
       } else {
         atom.neighbours.push({ aid: vPrevIdx, bid: eIdx })
         atom.parent = vPrevIdx
@@ -173,7 +177,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
 
   try {
     // detect chiral configurations
-    var stereocenters = new Stereocenters(
+    const stereocenters = new Stereocenters(
       struct,
       function (idx) {
         return this.atoms[idx].neighbours
@@ -187,7 +191,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
       // if (sc.type < MoleculeStereocenters::ATOM_AND)
       //    continue;
 
-      var implicitHIdx = -1
+      let implicitHIdx = -1
 
       if (sc.pyramid[3] == -1) implicitHIdx = 3
       /*
@@ -199,10 +203,10 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
 				}
 				*/
 
-      var pyramidMapping = []
-      var counter = 0
+      const pyramidMapping = []
+      let counter = 0
 
-      var atom = this.atoms[atomIdx]
+      const atom = this.atoms[atomIdx]
 
       if (atom.parent != -1) {
         for (k = 0; k < 4; k++) {
@@ -238,47 +242,49 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
         throw new Error('cannot calculate chirality')
       }
 
-      if (Stereocenters.isPyramidMappingRigid(pyramidMapping))
+      if (Stereocenters.isPyramidMappingRigid(pyramidMapping)) {
         this.atoms[atomIdx].chirality = 1
-      else this.atoms[atomIdx].chirality = 2
+      } else this.atoms[atomIdx].chirality = 2
     })
   } catch (ex) {
-    //TODO: add error handler call
+    // TODO: add error handler call
   }
 
   // write the SMILES itself
 
   // cycle_numbers[i] == -1 means that the number is available
   // cycle_numbers[i] == n means that the number is used by vertex n
-  var cycleNumbers = []
+  const cycleNumbers = []
 
   cycleNumbers.push(0) // never used
 
-  var firstComponent = true
+  let firstComponent = true
 
   for (i = 0; i < walk.v_seq.length; i++) {
     seqEl = walk.v_seq[i]
     vIdx = seqEl.idx
     eIdx = seqEl.parent_edge
     vPrevIdx = seqEl.parent_vertex
-    var writeAtom = true
+    let writeAtom = true
 
     if (vPrevIdx >= 0) {
       if (walk.numBranches(vPrevIdx) > 1) {
         if (
           this.atoms[vPrevIdx].branch_cnt > 0 &&
           this.atoms[vPrevIdx].paren_written
-        )
+        ) {
           this.smiles += ')'
+        }
       }
 
       openingCycles = walk.numOpeningCycles(eIdx)
 
       for (j = 0; j < openingCycles; j++) {
         for (k = 1; k < cycleNumbers.length; k++) {
-          if (cycleNumbers[k] == -1)
+          if (cycleNumbers[k] == -1) {
             // eslint-disable-line max-depth
             break
+          }
         }
         if (k === cycleNumbers.length) cycleNumbers.push(vPrevIdx)
         else cycleNumbers[k] = vPrevIdx
@@ -287,7 +293,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
       }
 
       if (vPrevIdx >= 0) {
-        var branches = walk.numBranches(vPrevIdx)
+        const branches = walk.numBranches(vPrevIdx)
 
         if (branches > 1 && this.atoms[vPrevIdx].branch_cnt < branches - 1) {
           if (walk.edgeClosingCycle(eIdx)) {
@@ -301,25 +307,27 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
 
         this.atoms[vPrevIdx].branch_cnt++
 
-        if (this.atoms[vPrevIdx].branch_cnt > branches)
+        if (this.atoms[vPrevIdx].branch_cnt > branches) {
           throw new Error('unexpected branch')
+        }
       }
 
-      var bond = struct.bonds.get(eIdx)
+      const bond = struct.bonds.get(eIdx)
 
-      var dir = 0
+      let dir = 0
 
-      if (bond.type == Bond.PATTERN.TYPE.SINGLE)
+      if (bond.type == Bond.PATTERN.TYPE.SINGLE) {
         dir = this.calcBondDirection(struct, eIdx, vPrevIdx)
+      }
 
-      if ((dir == 1 && vIdx == bond.end) || (dir == 2 && vIdx == bond.begin))
+      if ((dir == 1 && vIdx == bond.end) || (dir == 2 && vIdx == bond.begin)) {
         this.smiles += '/'
-      else if (
+      } else if (
         (dir == 2 && vIdx == bond.end) ||
         (dir == 1 && vIdx == bond.begin)
-      )
+      ) {
         this.smiles += '\\'
-      else if (bond.type == Bond.PATTERN.TYPE.ANY) {
+      } else if (bond.type == Bond.PATTERN.TYPE.ANY) {
         this.smiles += '~'
       } else if (bond.type == Bond.PATTERN.TYPE.DOUBLE) {
         this.smiles += '='
@@ -336,15 +344,17 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
         (!this.atoms[bond.begin].lowercase ||
           !this.atoms[bond.end].lowercase ||
           !this.isBondInRing(eIdx))
-      )
+      ) {
         this.smiles += ':'
+      }
       // TODO: Check if this : is needed
       else if (
         bond.type == Bond.PATTERN.TYPE.SINGLE &&
         this.atoms[bond.begin].aromatic &&
         this.atoms[bond.end].aromatic
-      )
+      ) {
         this.smiles += '-'
+      }
 
       if (walk.edgeClosingCycle(eIdx)) {
         for (j = 1; j < cycleNumbers.length; j++) {
@@ -408,10 +418,10 @@ Smiles.prototype.writeAtom = function (
   chirality
 ) {
   // eslint-disable-line max-params, max-statements
-  var atom = mol.atoms.get(idx)
-  var needBrackets = false
-  var hydro = -1
-  var aam = 0
+  const atom = mol.atoms.get(idx)
+  let needBrackets = false
+  let hydro = -1
+  let aam = 0
 
   /*
 	if (mol.haveQueryAtoms())
@@ -465,8 +475,9 @@ Smiles.prototype.writeAtom = function (
     atom.label !== 'Br' &&
     atom.label !== 'B' &&
     atom.label !== 'I'
-  )
+  ) {
     needBrackets = true
+  }
 
   if (
     atom.explicitValence >= 0 ||
@@ -477,10 +488,11 @@ Smiles.prototype.writeAtom = function (
       atom.label === 'C' &&
       this.atoms[idx].neighbours.length < 3 &&
       this.atoms[idx].h_count === 0)
-  )
+  ) {
     hydro = this.atoms[idx].h_count
+  }
 
-  var label = atom.label
+  let label = atom.label
   if (atom.atomList && !atom.atomList.notList) {
     label = atom.atomList.label()
     needBrackets = false // atom list label already has brackets
@@ -512,8 +524,9 @@ Smiles.prototype.writeAtom = function (
     // chirality == 2
     else this.smiles += '@@'
 
-    if (atom.implicitH > 1)
+    if (atom.implicitH > 1) {
       throw new Error(atom.implicitH + ' implicit H near stereocenter')
+    }
   }
 
   if (atom.label !== 'H') {
@@ -571,44 +584,46 @@ Smiles.prototype.markCisTrans = function (mol) {
   })
 
   this.cis_trans.each((ct, bid) => {
-    var bond = mol.bonds.get(bid)
+    const bond = mol.bonds.get(bid)
 
     if (ct.parity !== 0 && !this.isBondInRing(bid)) {
-      var neiBeg = this.atoms[bond.begin].neighbours
-      var neiEnd = this.atoms[bond.end].neighbours
-      var aromFailBeg = true
-      var aromFailEnd = true
+      const neiBeg = this.atoms[bond.begin].neighbours
+      const neiEnd = this.atoms[bond.end].neighbours
+      let aromFailBeg = true
+      let aromFailEnd = true
 
-      neiBeg.forEach(nei => {
+      neiBeg.forEach((nei) => {
         if (
           nei.bid !== bid &&
           mol.bonds.get(nei.bid).type === Bond.PATTERN.TYPE.SINGLE
-        )
+        ) {
           aromFailBeg = false
+        }
       })
 
-      neiEnd.forEach(nei => {
+      neiEnd.forEach((nei) => {
         if (
           nei.bid !== bid &&
           mol.bonds.get(nei.bid).type === Bond.PATTERN.TYPE.SINGLE
-        )
+        ) {
           aromFailEnd = false
+        }
       })
 
       if (aromFailBeg || aromFailEnd) return
 
-      neiBeg.forEach(nei => {
+      neiBeg.forEach((nei) => {
         if (nei.bid === bid) return
-        if (mol.bonds.get(nei.bid).begin === bond.begin)
+        if (mol.bonds.get(nei.bid).begin === bond.begin) {
           this.dbonds[nei.bid].ctbond_beg = bid
-        else this.dbonds[nei.bid].ctbond_end = bid
+        } else this.dbonds[nei.bid].ctbond_end = bid
       })
 
-      neiEnd.forEach(nei => {
+      neiEnd.forEach((nei) => {
         if (nei.bid === bid) return
-        if (mol.bonds.get(nei.bid).begin === bond.end)
+        if (mol.bonds.get(nei.bid).begin === bond.end) {
           this.dbonds[nei.bid].ctbond_beg = bid
-        else this.dbonds[nei.bid].ctbond_end = bid
+        } else this.dbonds[nei.bid].ctbond_end = bid
       })
     }
   })
@@ -616,11 +631,11 @@ Smiles.prototype.markCisTrans = function (mol) {
 
 Smiles.prototype.updateSideBonds = function (mol, bondIdx) {
   // eslint-disable-line max-statements
-  var bond = mol.bonds.get(bondIdx)
-  var subst = this.cis_trans.getSubstituents(bondIdx)
-  var parity = this.cis_trans.getParity(bondIdx)
+  const bond = mol.bonds.get(bondIdx)
+  const subst = this.cis_trans.getSubstituents(bondIdx)
+  const parity = this.cis_trans.getParity(bondIdx)
 
-  var sidebonds = [-1, -1, -1, -1]
+  const sidebonds = [-1, -1, -1, -1]
 
   sidebonds[0] = mol.findBondId(subst[0], bond.begin)
   if (subst[1] != -1) sidebonds[1] = mol.findBondId(subst[1], bond.begin)
@@ -628,10 +643,10 @@ Smiles.prototype.updateSideBonds = function (mol, bondIdx) {
   sidebonds[2] = mol.findBondId(subst[2], bond.end)
   if (subst[3] != -1) sidebonds[3] = mol.findBondId(subst[3], bond.end)
 
-  var n1 = 0
-  var n2 = 0
-  var n3 = 0
-  var n4 = 0
+  let n1 = 0
+  let n2 = 0
+  let n3 = 0
+  let n4 = 0
 
   if (this.dbonds[sidebonds[0]].saved != 0) {
     if (
@@ -639,9 +654,9 @@ Smiles.prototype.updateSideBonds = function (mol, bondIdx) {
         mol.bonds.get(sidebonds[0]).begin == bond.begin) ||
       (this.dbonds[sidebonds[0]].saved == 2 &&
         mol.bonds.get(sidebonds[0]).end == bond.begin)
-    )
+    ) {
       n1++
-    else n2++
+    } else n2++
   }
   if (sidebonds[1] != -1 && this.dbonds[sidebonds[1]].saved != 0) {
     if (
@@ -649,9 +664,9 @@ Smiles.prototype.updateSideBonds = function (mol, bondIdx) {
         mol.bonds.get(sidebonds[1]).begin == bond.begin) ||
       (this.dbonds[sidebonds[1]].saved == 1 &&
         mol.bonds.get(sidebonds[1]).end == bond.begin)
-    )
+    ) {
       n1++
-    else n2++
+    } else n2++
   }
   if (this.dbonds[sidebonds[2]].saved != 0) {
     if (
@@ -659,9 +674,9 @@ Smiles.prototype.updateSideBonds = function (mol, bondIdx) {
         mol.bonds.get(sidebonds[2]).begin == bond.end) ||
       (this.dbonds[sidebonds[2]].saved == 2 &&
         mol.bonds.get(sidebonds[2]).end == bond.end)
-    )
+    ) {
       n3++
-    else n4++
+    } else n4++
   }
   if (sidebonds[3] != -1 && this.dbonds[sidebonds[3]].saved != 0) {
     if (
@@ -669,9 +684,9 @@ Smiles.prototype.updateSideBonds = function (mol, bondIdx) {
         mol.bonds.get(sidebonds[3]).begin == bond.end) ||
       (this.dbonds[sidebonds[3]].saved == 1 &&
         mol.bonds.get(sidebonds[3]).end == bond.end)
-    )
+    ) {
       n3++
-    else n4++
+    } else n4++
   }
 
   if (parity == CisTrans.PARITY.CIS) {
@@ -733,13 +748,15 @@ Smiles.prototype.updateSideBonds = function (mol, bondIdx) {
 }
 
 Smiles.prototype.calcBondDirection = function (mol, idx, vprev) {
-  var ntouched
+  let ntouched
 
-  if (this.dbonds[idx].ctbond_beg == -1 && this.dbonds[idx].ctbond_end == -1)
+  if (this.dbonds[idx].ctbond_beg == -1 && this.dbonds[idx].ctbond_end == -1) {
     return 0
+  }
 
-  if (mol.bonds.get(idx).type != Bond.PATTERN.TYPE.SINGLE)
+  if (mol.bonds.get(idx).type != Bond.PATTERN.TYPE.SINGLE) {
     throw new Error('internal: directed bond type ' + mol.bonds.get(idx).type)
+  }
 
   while (true) {
     // eslint-disable-line no-constant-condition
@@ -763,13 +780,13 @@ Smiles.prototype.calcBondDirection = function (mol, idx, vprev) {
 
 Smiles.prototype.writeRadicals = function (mol) {
   // eslint-disable-line max-statements
-  var marked = new Array(this.writtenAtoms.length)
-  var i, j
+  const marked = new Array(this.writtenAtoms.length)
+  let i, j
 
   for (i = 0; i < this.writtenAtoms.length; i++) {
     if (marked[i]) continue // eslint-disable-line no-continue
 
-    var radical = mol.atoms.get(this.writtenAtoms[i]).radical
+    const radical = mol.atoms.get(this.writtenAtoms[i]).radical
 
     if (radical === 0) continue // eslint-disable-line no-continue
 

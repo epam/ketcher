@@ -25,7 +25,7 @@ const elementsArray: Array<Element> = [
     title: 'Hydrogen',
     state: 'gas',
     origin: 'primordial',
-    type: 'diatomic',
+    type: 'other-nonmetal',
     mass: 1.00794
   },
   {
@@ -80,7 +80,7 @@ const elementsArray: Array<Element> = [
     title: 'Carbon',
     state: 'solid',
     origin: 'primordial',
-    type: 'polyatomic',
+    type: 'other-nonmetal',
     mass: 12.011
   },
   {
@@ -91,7 +91,7 @@ const elementsArray: Array<Element> = [
     title: 'Nitrogen',
     state: 'gas',
     origin: 'primordial',
-    type: 'diatomic',
+    type: 'other-nonmetal',
     mass: 14.007
   },
   {
@@ -103,7 +103,7 @@ const elementsArray: Array<Element> = [
     title: 'Oxygen',
     state: 'gas',
     origin: 'primordial',
-    type: 'diatomic',
+    type: 'other-nonmetal',
     mass: 15.999
   },
   {
@@ -115,7 +115,7 @@ const elementsArray: Array<Element> = [
     title: 'Fluorine',
     state: 'gas',
     origin: 'primordial',
-    type: 'diatomic',
+    type: 'halogen',
     mass: 18.9984031636
   },
   {
@@ -181,7 +181,7 @@ const elementsArray: Array<Element> = [
     title: 'Phosphorus',
     state: 'solid',
     origin: 'primordial',
-    type: 'polyatomic',
+    type: 'other-nonmetal',
     mass: 30.9737619985
   },
   {
@@ -193,7 +193,7 @@ const elementsArray: Array<Element> = [
     title: 'Sulfur',
     state: 'solid',
     origin: 'primordial',
-    type: 'polyatomic',
+    type: 'other-nonmetal',
     mass: 32.06
   },
   {
@@ -205,7 +205,7 @@ const elementsArray: Array<Element> = [
     title: 'Chlorine',
     state: 'gas',
     origin: 'primordial',
-    type: 'diatomic',
+    type: 'halogen',
     mass: 35.45
   },
   {
@@ -393,7 +393,7 @@ const elementsArray: Array<Element> = [
     title: 'Selenium',
     state: 'solid',
     origin: 'primordial',
-    type: 'polyatomic',
+    type: 'other-nonmetal',
     mass: 78.9718
   },
   {
@@ -405,7 +405,7 @@ const elementsArray: Array<Element> = [
     title: 'Bromine',
     state: 'liquid',
     origin: 'primordial',
-    type: 'diatomic',
+    type: 'halogen',
     mass: 79.904
   },
   {
@@ -604,7 +604,7 @@ const elementsArray: Array<Element> = [
     title: 'Iodine',
     state: 'solid',
     origin: 'primordial',
-    type: 'diatomic',
+    type: 'halogen',
     mass: 126.904473
   },
   {
@@ -648,7 +648,7 @@ const elementsArray: Array<Element> = [
     title: 'Lanthanum',
     state: 'solid',
     origin: 'primordial',
-    type: 'lanthanide',
+    type: 'transition',
     mass: 138.905477
   },
   {
@@ -945,7 +945,7 @@ const elementsArray: Array<Element> = [
     title: 'Polonium',
     state: 'solid',
     origin: 'decay',
-    type: 'post-transition',
+    type: 'metalloid',
     mass: 209
   },
   {
@@ -956,7 +956,7 @@ const elementsArray: Array<Element> = [
     title: 'Astatine',
     state: 'solid',
     origin: 'decay',
-    type: 'metalloid',
+    type: 'halogen',
     mass: 210
   },
   {
@@ -1000,7 +1000,7 @@ const elementsArray: Array<Element> = [
     title: 'Actinium',
     state: 'solid',
     origin: 'decay',
-    type: 'actinide',
+    type: 'transition',
     mass: 227
   },
   {
@@ -1210,6 +1210,7 @@ const elementsArray: Array<Element> = [
     group: 8,
     title: 'Meitnerium',
     origin: 'synthetic',
+    type: 'transition',
     mass: 278
   },
   {
@@ -1219,6 +1220,7 @@ const elementsArray: Array<Element> = [
     group: 8,
     title: 'Darmstadtium',
     origin: 'synthetic',
+    type: 'transition',
     mass: 281
   },
   {
@@ -1228,6 +1230,7 @@ const elementsArray: Array<Element> = [
     group: 1,
     title: 'Roentgenium',
     origin: 'synthetic',
+    type: 'transition',
     mass: 282
   },
   {
@@ -1247,6 +1250,7 @@ const elementsArray: Array<Element> = [
     group: 3,
     title: 'Nihonium',
     origin: 'synthetic',
+    type: 'post-transition',
     mass: 286
   },
   {
@@ -1266,6 +1270,7 @@ const elementsArray: Array<Element> = [
     group: 5,
     title: 'Moscovium',
     origin: 'synthetic',
+    type: 'post-transition',
     mass: 289
   },
   {
@@ -1275,6 +1280,7 @@ const elementsArray: Array<Element> = [
     group: 6,
     title: 'Livermorium',
     origin: 'synthetic',
+    type: 'post-transition',
     mass: 293
   },
   {
@@ -1284,6 +1290,7 @@ const elementsArray: Array<Element> = [
     group: 7,
     title: 'Tennessine',
     origin: 'synthetic',
+    type: 'halogen',
     mass: 294
   },
   {
@@ -1293,6 +1300,7 @@ const elementsArray: Array<Element> = [
     group: 8,
     title: 'Oganesson',
     origin: 'synthetic',
+    type: 'noble',
     mass: 294
   }
 ]

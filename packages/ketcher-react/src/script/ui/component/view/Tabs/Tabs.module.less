@@ -19,23 +19,30 @@
   width: 100%;
 
   a {
-    padding: 8px 12px;
-    margin-right: 2px;
+    padding: 5px 12px;
     line-height: 14px;
     display: inline-block;
     cursor: pointer;
     text-align: center;
-    background-color: @gray-background-color;
-    border: 1px solid transparent;
-    border-radius: 4px 4px 0 0;
+    background-color: @color-gray;
+    color: @color-text-primary;
+
     &:hover {
-      background-color: @form-selected-background;
+      background-color: @color-button-primary-hover;
+      color: @color-text-light;
     }
   }
 
   .active {
-    border: 1px solid @color-gray;
-    border-bottom-color: transparent;
-    background-color: @light-background-color;
+    color: @color-text-light;
+    background-color: @color-tab-active;
+  }
+
+  :first-child {
+    border-radius: 4px 0 0 0;
+  }
+
+  :last-child {
+    border-radius: 0 4px 0 0;
   }
 }

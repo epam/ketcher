@@ -45,7 +45,8 @@ class KetcherBuilder {
       'smart-layout': true,
       'ignore-stereochemistry-errors': true,
       'mass-skip-error-on-pseudoatoms': false,
-      'gross-formula-add-rsites': true
+      'gross-formula-add-rsites': true,
+      'aromatize-skip-superatoms': true
     })
   }
 
@@ -61,7 +62,7 @@ class KetcherBuilder {
   ): Promise<void> {
     const { structService } = this
 
-    const editor = await new Promise<Editor>(resolve => {
+    const editor = await new Promise<Editor>((resolve) => {
       initApp(
         element,
         staticResourcesUrl,
@@ -81,7 +82,8 @@ class KetcherBuilder {
     this.editor.errorHandler =
       errorHandler && typeof errorHandler === 'function'
         ? errorHandler
-        : () => {}
+        : // eslint-disable-next-line @typescript-eslint/no-empty-function
+          () => {}
     this.formatterFactory = new FormatterFactory(structService!)
   }
 

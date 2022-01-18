@@ -59,11 +59,12 @@ class RxnArrowAdd extends Base {
 
     struct.rxnArrowSetPos(
       itemId,
-      positions.map(p => new Vec2(p))
+      positions.map((p) => new Vec2(p))
     )
 
     Base.invalidateItem(restruct, 'rxnArrows', itemId, 1)
   }
+
   invert(): Base {
     return new RxnArrowDelete(this.data.id!)
   }

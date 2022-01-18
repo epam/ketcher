@@ -48,7 +48,7 @@ function TemplateTool(editor, tmpl) {
   frag.rescale()
 
   const xy0 = new Vec2()
-  frag.atoms.forEach(atom => {
+  frag.atoms.forEach((atom) => {
     xy0.add_(atom.pp) // eslint-disable-line no-underscore-dangle
   })
 
@@ -123,12 +123,12 @@ TemplateTool.prototype.mousedown = function (event) {
     if (bondId !== null) bondResult.push(bondId)
   }
   if (sGroupResult.length > 0) {
-    for (let id of sGroupResult) {
+    for (const id of sGroupResult) {
       if (!result.includes(id)) result.push(id)
     }
   }
   if (atomResult.length > 0) {
-    for (let id of atomResult) {
+    for (const id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         struct.functionalGroups,
         id
@@ -139,7 +139,7 @@ TemplateTool.prototype.mousedown = function (event) {
     }
   }
   if (bondResult.length > 0) {
-    for (let id of bondResult) {
+    for (const id of bondResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,
         struct.functionalGroups,
@@ -188,12 +188,12 @@ TemplateTool.prototype.mousedown = function (event) {
 
     if (loop >= 0) {
       const loopHbs = molecule.loops.get(loop).hbs
-      loopHbs.forEach(hb => {
+      loopHbs.forEach((hb) => {
         xy0.add_(molecule.atoms.get(molecule.halfBonds.get(hb).begin).pp) // eslint-disable-line no-underscore-dangle, max-len
         count++
       })
     } else {
-      frIds.forEach(id => {
+      frIds.forEach((id) => {
         xy0.add_(molecule.atoms.get(id).pp) // eslint-disable-line no-underscore-dangle
         count++
       })
@@ -237,7 +237,7 @@ TemplateTool.prototype.mousemove = function (event) {
       if (dragCtx.action) dragCtx.action.perform(restruct) // undo previous action
 
       dragCtx.sign2 = sign
-      let [action, pasteItems] = fromTemplateOnBondAction(
+      const [action, pasteItems] = fromTemplateOnBondAction(
         restruct,
         this.template,
         ci.id,

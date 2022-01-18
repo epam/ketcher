@@ -38,7 +38,7 @@ class AlignDescriptors extends BaseOperation {
       new Vec2(2.0, -1.0)
     )
 
-    sgroups.forEach(sgroup => {
+    sgroups.forEach((sgroup) => {
       this.history[sgroup.id] = new Vec2(sgroup.pp)
       alignPoint = alignPoint.add(new Vec2(0.0, 0.5))
       sgroup.pp = alignPoint
@@ -64,7 +64,7 @@ class RestoreDescriptorsPosition extends BaseOperation {
     const struct = restruct.molecule
     const sgroups: any[] = Array.from(struct.sgroups.values())
 
-    sgroups.forEach(sgroup => {
+    sgroups.forEach((sgroup) => {
       sgroup.pp = this.history[sgroup.id]
       struct.sgroups.set(sgroup.id, sgroup)
       BaseOperation.invalidateItem(restruct, 'sgroupData', sgroup.id, 1)

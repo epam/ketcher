@@ -103,15 +103,16 @@ export class Bond {
 
     if (attributes.stereo) this.stereo = attributes.stereo
     if (attributes.topology) this.topology = attributes.topology
-    if (attributes.reactingCenterStatus)
+    if (attributes.reactingCenterStatus) {
       this.reactingCenterStatus = attributes.reactingCenterStatus
+    }
 
     this.center = new Vec2()
   }
 
   static getAttrHash(bond: Bond) {
-    let attrs = {}
-    for (let attr in Bond.attrlist) {
+    const attrs = {}
+    for (const attr in Bond.attrlist) {
       if (bond[attr] || attr === 'stereo') {
         attrs[attr] = bond[attr]
       }

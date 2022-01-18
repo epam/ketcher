@@ -36,8 +36,8 @@ class ReBond extends ReObject {
   b: Bond
   doubleBondShift: number
   path: any
-  neihbid1: number = -1
-  neihbid2: number = -1
+  neihbid1 = -1
+  neihbid2 = -1
   boldStereo?: boolean
   rbb?: { x: number; y: number; width: number; height: number }
 
@@ -46,14 +46,17 @@ class ReBond extends ReObject {
     this.b = bond // TODO rename b to item
     this.doubleBondShift = 0
   }
+
   static isSelectable() {
     return true
   }
+
   drawHighlight(render: Render) {
     const ret = this.makeHighlightPlate(render)
     render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
     return ret
   }
+
   makeHighlightPlate(render: Render) {
     const options = render.options
     bondRecalc(this, render.ctab, options)
@@ -67,14 +70,16 @@ class ReBond extends ReObject {
         functionalGroups,
         true
       )
-    )
+    ) {
       return null
+    }
 
     const c = Scale.obj2scaled(this.b.center, options)
     return render.paper
       .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
       .attr(options.highlightStyle)
   }
+
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any) {
     bondRecalc(this, restruct, options)
     const bond = this.b
@@ -87,8 +92,9 @@ class ReBond extends ReObject {
         functionalGroups,
         true
       )
-    )
+    ) {
       return null
+    }
 
     const c = Scale.obj2scaled(this.b.center, options)
     return paper
@@ -110,13 +116,15 @@ class ReBond extends ReObject {
         functionalGroups,
         false
       )
-    )
+    ) {
       return
+    }
 
     const paper = render.paper
     const hb1 =
-        this.b.hb1 !== undefined ? struct.halfBonds.get(this.b.hb1) : null,
-      hb2 = this.b.hb2 !== undefined ? struct.halfBonds.get(this.b.hb2) : null
+      this.b.hb1 !== undefined ? struct.halfBonds.get(this.b.hb1) : null
+    const hb2 =
+      this.b.hb2 !== undefined ? struct.halfBonds.get(this.b.hb2) : null
 
     checkStereoBold(bid, this, restruct)
     bondRecalc(this, restruct, options)
@@ -214,7 +222,7 @@ function findIncomingStereoUpBond(
   includeBoldStereoBond: boolean,
   restruct: ReStruct
 ): number {
-  return atom.neighbors.findIndex(hbid => {
+  return atom.neighbors.findIndex((hbid) => {
     const hb = restruct.molecule.halfBonds.get(hbid)
 
     if (!hb || hb.bid === bid0) return false
@@ -226,11 +234,12 @@ function findIncomingStereoUpBond(
       neibond.b.type === Bond.PATTERN.TYPE.SINGLE &&
       neibond.b.stereo === Bond.PATTERN.STEREO.UP
 
-    if (singleUp)
+    if (singleUp) {
       return (
         neibond.b.end === hb.begin ||
         (neibond.boldStereo && includeBoldStereoBond)
       )
+    }
 
     return !!(
       neibond.b.type === Bond.PATTERN.TYPE.DOUBLE &&
@@ -246,7 +255,7 @@ function findIncomingUpBonds(
   bond: ReBond,
   restruct: ReStruct
 ): void {
-  const halfbonds = [bond.b.begin, bond.b.end].map(aid => {
+  const halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
     const atom = restruct.molecule.atoms.get(aid)
     if (!atom) return -1
     const pos = findIncomingStereoUpBond(atom, bid0, true, restruct)
@@ -260,7 +269,7 @@ function findIncomingUpBonds(
 }
 
 function checkStereoBold(bid0, bond, restruct) {
-  const halfbonds = [bond.b.begin, bond.b.end].map(aid => {
+  const halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
     const atom = restruct.molecule.atoms.get(aid)
     const pos = findIncomingStereoUpBond(atom, bid0, false, restruct)
     return pos < 0 ? -1 : atom.neighbors[pos]
@@ -285,9 +294,9 @@ function getBondPath(
       switch (bond.b.stereo) {
         case Bond.PATTERN.STEREO.UP:
           findIncomingUpBonds(hb1.bid, bond, restruct)
-          if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
+          if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0) {
             path = getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct)
-          else path = getBondSingleUpPath(render, hb1, hb2, bond, struct)
+          } else path = getBondSingleUpPath(render, hb1, hb2, bond, struct)
           break
         case Bond.PATTERN.STEREO.DOWN:
           path = getBondSingleDownPath(render, hb1, hb2, bond, struct)
@@ -313,7 +322,7 @@ function getBondPath(
         bond.boldStereo &&
         bond.neihbid1 >= 0 &&
         bond.neihbid2 >= 0
-      )
+      ) {
         path = getBondDoubleStereoBoldPath(
           render,
           hb1,
@@ -323,12 +332,12 @@ function getBondPath(
           shiftA,
           shiftB
         )
-      else path = getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB)
+      } else path = getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB)
       break
     case Bond.PATTERN.TYPE.TRIPLE:
       path = draw.bondTriple(render.paper, hb1, hb2, render.options)
       break
-    case Bond.PATTERN.TYPE.AROMATIC:
+    case Bond.PATTERN.TYPE.AROMATIC: {
       const inAromaticLoop =
         (hb1.loop >= 0 && struct.loops.get(hb1.loop)?.aromatic) ||
         (hb2.loop >= 0 && struct.loops.get(hb2.loop)?.aromatic)
@@ -336,6 +345,7 @@ function getBondPath(
         ? draw.bondSingle(render.paper, hb1, hb2, render.options)
         : getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB)
       break
+    }
     case Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
       path = getSingleOrDoublePath(render, hb1, hb2)
       break
@@ -369,16 +379,16 @@ function getBondSingleUpPath(
   struct: Struct
 ) {
   // eslint-disable-line max-params
-  const a = hb1.p,
-    b = hb2.p,
-    n = hb1.norm
+  const a = hb1.p
+  const b = hb2.p
+  const n = hb1.norm
   const options = render.options
   const bsp = 0.7 * options.stereoBond
   let b2 = b.addScaled(n, bsp)
   let b3 = b.addScaled(n, -bsp)
   if (bond.neihbid2 >= 0) {
     // if the end is shared with another up-bond heading this way
-    var coords = stereoUpBondGetCoordinates(
+    const coords = stereoUpBondGetCoordinates(
       hb2,
       bond.neihbid2,
       options.stereoBond,
@@ -474,35 +484,39 @@ function getBondDoubleStereoBoldPath(
   shiftB: boolean
 ) {
   // eslint-disable-line max-params
-  const a = hb1.p,
-    b = hb2.p,
-    n = hb1.norm,
-    shift = bond.doubleBondShift
+  const a = hb1.p
+  const b = hb2.p
+  const n = hb1.norm
+  const shift = bond.doubleBondShift
   const bsp = 1.5 * render.options.stereoBond
   let b1 = a.addScaled(n, bsp * shift)
   let b2 = b.addScaled(n, bsp * shift)
   if (shift > 0) {
-    if (shiftA)
+    if (shiftA) {
       b1 = b1.addScaled(
         hb1.dir,
         bsp * getBondLineShift(hb1.rightCos, hb1.rightSin)
       )
-    if (shiftB)
+    }
+    if (shiftB) {
       b2 = b2.addScaled(
         hb1.dir,
         -bsp * getBondLineShift(hb2.leftCos, hb2.leftSin)
       )
+    }
   } else if (shift < 0) {
-    if (shiftA)
+    if (shiftA) {
       b1 = b1.addScaled(
         hb1.dir,
         bsp * getBondLineShift(hb1.leftCos, hb1.leftSin)
       )
-    if (shiftB)
+    }
+    if (shiftB) {
       b2 = b2.addScaled(
         hb1.dir,
         -bsp * getBondLineShift(hb2.rightCos, hb2.rightSin)
       )
+    }
   }
   const sgBondPath = getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct)
   return draw.bondDoubleStereoBold(
@@ -552,8 +566,8 @@ function getBondSingleDownPath(
   bond: ReBond,
   struct: Struct
 ) {
-  const a = hb1.p,
-    b = hb2.p
+  const a = hb1.p
+  const b = hb2.p
   const options = render.options
   let d = b.sub(a)
   const len = d.length() + 0.2
@@ -583,8 +597,8 @@ function getBondSingleEitherPath(
   bond: ReBond,
   struct: Struct
 ) {
-  const a = hb1.p,
-    b = hb2.p
+  const a = hb1.p
+  const b = hb2.p
   const options = render.options
   let d = b.sub(a)
   const len = d.length()
@@ -665,8 +679,8 @@ function getBondDoublePath(
 }
 
 function getSingleOrDoublePath(render: Render, hb1: HalfBond, hb2: HalfBond) {
-  const a = hb1.p,
-    b = hb2.p
+  const a = hb1.p
+  const b = hb2.p
   const options = render.options
 
   let nSect =
@@ -685,18 +699,18 @@ function getBondAromaticPath(
 ) {
   // eslint-disable-line max-params
   const dashdotPattern = [0.125, 0.125, 0.005, 0.125]
-  let mark: number | null = null,
-    dash: number[] | null = null
+  let mark: number | null = null
+  let dash: number[] | null = null
   const options = render.options
   const bondShift = bond.doubleBondShift
 
   if (bond.b.type === Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
     mark = bondShift > 0 ? 1 : 2
-    dash = dashdotPattern.map(v => v * options.scale)
+    dash = dashdotPattern.map((v) => v * options.scale)
   }
   if (bond.b.type === Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
     mark = 3
-    dash = dashdotPattern.map(v => v * options.scale)
+    dash = dashdotPattern.map((v) => v * options.scale)
   }
   const paths = getAromaticBondPaths(
     hb1,
@@ -722,12 +736,12 @@ function getAromaticBondPaths(
   dash: number[] | null
 ) {
   // eslint-disable-line max-params, max-statements
-  const a = hb1.p,
-    b = hb2.p,
-    n = hb1.norm
+  const a = hb1.p
+  const b = hb2.p
+  const n = hb1.norm
   const bsp = bondSpace / 2
-  const s1 = bsp + shift * bsp,
-    s2 = -bsp + shift * bsp
+  const s1 = bsp + shift * bsp
+  const s2 = -bsp + shift * bsp
   let a2 = a.addScaled(n, s1)
   let b2 = b.addScaled(n, s1)
   let a3 = a.addScaled(n, s2)
@@ -769,22 +783,22 @@ function getReactingCenterPath(
   hb2: HalfBond
 ) {
   // eslint-disable-line max-statements
-  const a = hb1.p,
-    b = hb2.p
+  const a = hb1.p
+  const b = hb2.p
   const c = b.add(a).scaled(0.5)
   const d = b.sub(a).normalized()
   const n = d.rotateSC(1, 0)
 
   const p: Array<Vec2> = []
 
-  const lw = render.options.lineWidth,
-    bs = render.options.bondSpace / 2
-  const alongIntRc = lw, // half interval along for CENTER
-    alongIntMadeBroken = 2 * lw, // half interval between along for MADE_OR_BROKEN
-    alongSz = 1.5 * bs, // half size along for CENTER
-    acrossInt = 1.5 * bs, // half interval across for CENTER
-    acrossSz = 3.0 * bs, // half size across for all
-    tiltTan = 0.2 // tangent of the tilt angle
+  const lw = render.options.lineWidth
+  const bs = render.options.bondSpace / 2
+  const alongIntRc = lw // half interval along for CENTER
+  const alongIntMadeBroken = 2 * lw // half interval between along for MADE_OR_BROKEN
+  const alongSz = 1.5 * bs // half size along for CENTER
+  const acrossInt = 1.5 * bs // half interval across for CENTER
+  const acrossSz = 3.0 * bs // half size across for all
+  const tiltTan = 0.2 // tangent of the tilt angle
 
   switch (bond.b.reactingCenterStatus) {
     case Bond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
@@ -862,8 +876,8 @@ function getTopologyMark(
   else if (bond.b.topology === Bond.PATTERN.TOPOLOGY.CHAIN) mark = 'chn'
   else return null
 
-  const a = hb1.p,
-    b = hb2.p
+  const a = hb1.p
+  const b = hb2.p
   const c = b.add(a).scaled(0.5)
   const d = b.sub(a).normalized()
   let n = d.rotateSC(1, 0)
@@ -898,7 +912,6 @@ function getIdsPath(
 /* ----- */
 
 function setDoubleBondShift(bond: ReBond, struct: Struct): void {
-  let loop1, loop2
   const hb1 = bond.b.hb1
   const hb2 = bond.b.hb2
 
@@ -907,8 +920,8 @@ function setDoubleBondShift(bond: ReBond, struct: Struct): void {
     return
   }
 
-  loop1 = struct.halfBonds.get(hb1)?.loop
-  loop2 = struct.halfBonds.get(hb2)?.loop
+  const loop1 = struct.halfBonds.get(hb1)!.loop
+  const loop2 = struct.halfBonds.get(hb2)!.loop
   if (loop1 >= 0 && loop2 >= 0) {
     const d1 = struct.loops.get(loop1)!.dblBonds
     const d2 = struct.loops.get(loop2)!.dblBonds
@@ -929,8 +942,14 @@ function bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
   const atom1 = restruct.atoms.get(bond.b.begin)
   const atom2 = restruct.atoms.get(bond.b.end)
 
-  if (!atom1 || !atom2 || bond.b.hb1 === undefined || bond.b.hb2 === undefined)
+  if (
+    !atom1 ||
+    !atom2 ||
+    bond.b.hb1 === undefined ||
+    bond.b.hb2 === undefined
+  ) {
     return
+  }
 
   const p1 = Scale.obj2scaled(atom1.a.pp, render.options)
   const p2 = Scale.obj2scaled(atom2.a.pp, render.options)
@@ -944,9 +963,9 @@ function bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
   bond.b.center = Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5)
   bond.b.len = Vec2.dist(p1, p2)
   bond.b.sb = options.lineWidth * 5
-  /* eslint-disable no-mixed-operators*/
+  /* eslint-disable no-mixed-operators */
   bond.b.sa = Math.max(bond.b.sb, bond.b.len / 2 - options.lineWidth * 2)
-  /* eslint-enable no-mixed-operators*/
+  /* eslint-enable no-mixed-operators */
   bond.b.angle = (Math.atan2(hb1.dir.y, hb1.dir.x) * 180) / Math.PI
 }
 
@@ -958,8 +977,8 @@ function shiftBondEnd(
 ): Vec2 {
   let t = 0
   const visel = atom.visel
-  for (var k = 0; k < visel.exts.length; ++k) {
-    var box = visel.exts[k].translate(pos0)
+  for (let k = 0; k < visel.exts.length; ++k) {
+    const box = visel.exts[k].translate(pos0)
     t = Math.max(t, util.shiftRayBox(pos0, dir, box))
   }
   if (t > 0) pos0 = pos0.addScaled(dir, t + margin)
@@ -981,8 +1000,9 @@ function selectDoubleBondShift(
 }
 
 function selectDoubleBondShiftChain(struct: Struct, bond: ReBond): number {
-  if ((!bond.b.hb1 && bond.b.hb1 !== 0) || (!bond.b.hb2 && bond.b.hb2 !== 0))
+  if ((!bond.b.hb1 && bond.b.hb1 !== 0) || (!bond.b.hb2 && bond.b.hb2 !== 0)) {
     return 0
+  }
 
   const hb1 = struct.halfBonds.get(bond.b.hb1)
   const hb2 = struct.halfBonds.get(bond.b.hb2)

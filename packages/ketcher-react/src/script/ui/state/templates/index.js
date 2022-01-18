@@ -78,7 +78,7 @@ export function editTmpl(tmpl) {
   return (dispatch, getState) => {
     openDialog(dispatch, 'attach', { tmpl })
       .then(
-        formData => {
+        (formData) => {
           tmpl.struct.name = formData ? formData.name.trim() : tmpl.struct.name
           tmpl.props = formData
             ? Object.assign({}, tmpl.props, formData.attach)
@@ -104,7 +104,7 @@ export function deleteUserTmpl(tmpl) {
 
 export function deleteTmpl(tmpl) {
   return (dispatch, getState) => {
-    const lib = getState().templates.lib.filter(value => value !== tmpl)
+    const lib = getState().templates.lib.filter((value) => value !== tmpl)
     dispatch(deleteUserTmpl(tmpl))
     updateLocalStore(lib)
   }
@@ -132,8 +132,8 @@ export function saveUserTmpl(struct) {
 function updateLocalStore(lib) {
   const molSerializer = new MolSerializer()
   const userLib = lib
-    .filter(item => item.props.group === 'User Templates')
-    .map(item => ({
+    .filter((item) => item.props.group === 'User Templates')
+    .map((item) => ({
       struct: molSerializer.serialize(item.struct),
       props: Object.assign({}, omit(['group'], item.props))
     }))
@@ -171,7 +171,7 @@ function templatesReducer(state = initTmplsState, action) {
 
   if (action.type === 'TMPL_DELETE') {
     const currentState = Object.assign({}, state)
-    const lib = currentState.lib.filter(value => value !== action.data.tmpl)
+    const lib = currentState.lib.filter((value) => value !== action.data.tmpl)
     return { ...currentState, lib: lib }
   }
 

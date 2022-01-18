@@ -30,8 +30,8 @@ Stereocenters.prototype.each = function (func, context) {
 Stereocenters.prototype.buildFromBonds = function (
   /* const int *atom_types, const int *atom_groups, const int *bond_orientations, */ ignoreErrors
 ) {
-  var atoms = this.molecule.atoms
-  var bonds = this.molecule.bonds
+  const atoms = this.molecule.atoms
+  const bonds = this.molecule.bonds
 
   /*
 		this is a set of atoms that are likely to belong to allene structures and
@@ -39,71 +39,76 @@ Stereocenters.prototype.buildFromBonds = function (
 		as allenes cannot be encoded in the SMILES notation
 	*/
 
-  var alleneMask = new Pile()
+  const alleneMask = new Pile()
   atoms.forEach((atom, aid) => {
-    var neiList = this.getNeighbors.call(this.context, aid)
+    const neiList = this.getNeighbors.call(this.context, aid)
     if (neiList.length !== 2) return false
-    var nei1 = neiList[0]
-    var nei2 = neiList[1]
+    const nei1 = neiList[0]
+    const nei2 = neiList[1]
     // check atom labels
     if (
       [aid, nei1.aid, nei2.aid].findIndex(
-        aid => ['C', 'Si'].indexOf(atoms.get(aid).label) < 0,
+        (aid) => ['C', 'Si'].indexOf(atoms.get(aid).label) < 0,
         this
       ) >= 0
-    )
+    ) {
       return false
+    }
 
     // check adjacent bond types
     if (
       [nei1.bid, nei2.bid].findIndex(
-        bid => bonds.get(bid).type !== Bond.PATTERN.TYPE.DOUBLE,
+        (bid) => bonds.get(bid).type !== Bond.PATTERN.TYPE.DOUBLE,
         this
       ) >= 0
-    )
+    ) {
       return false
+    }
 
     // get the other neighbors of the two adjacent atoms except for the central atom
-    var nei1nei = this.getNeighbors
+    const nei1nei = this.getNeighbors
       .call(this.context, nei1.aid)
-      .filter(nei => nei.aid != aid)
-    var nei2nei = this.getNeighbors
+      .filter((nei) => nei.aid != aid)
+    const nei2nei = this.getNeighbors
       .call(this.context, nei2.aid)
-      .filter(nei => nei.aid != aid)
+      .filter((nei) => nei.aid != aid)
     if (
       nei1nei.length < 1 ||
       nei1nei.length > 2 ||
       nei2nei.length < 1 ||
       nei2nei.length > 2
-    )
+    ) {
       return false
+    }
 
     if (
       nei1nei
         .concat(nei2nei)
         .findIndex(
-          nei => bonds.get(nei.bid).type != Bond.PATTERN.TYPE.SINGLE,
+          (nei) => bonds.get(nei.bid).type != Bond.PATTERN.TYPE.SINGLE,
           this
         ) >= 0
-    )
+    ) {
       return false
+    }
 
     if (
       nei1nei
         .concat(nei2nei)
         .findIndex(
-          nei => bonds.get(nei.bid).stereo == Bond.PATTERN.STEREO.EITHER,
+          (nei) => bonds.get(nei.bid).stereo == Bond.PATTERN.STEREO.EITHER,
           this
         ) >= 0
-    )
+    ) {
       return false
+    }
     alleneMask.add(nei1.aid).add(nei2.aid)
     return true
   })
 
-  if (alleneMask.size > 0)
-    //TODO: add error handler call
-    //legacy message: This structure may contain allenes, which cannot be represented in the SMILES notation. Relevant stereo-information will be discarded.
+  if (alleneMask.size > 0) {
+    // TODO: add error handler call
+    // legacy message: This structure may contain allenes, which cannot be represented in the SMILES notation. Relevant stereo-information will be discarded.
 
     atoms.forEach((atom, aid) => {
       if (alleneMask.has(aid)) return
@@ -111,11 +116,11 @@ Stereocenters.prototype.buildFromBonds = function (
       if (atom_types[atom_idx] == 0)
          continue;
          */
-      var neiList = this.getNeighbors.call(this.context, aid)
-      var stereocenter = false
+      const neiList = this.getNeighbors.call(this.context, aid)
+      let stereocenter = false
 
       neiList.find(function (nei) {
-        var bond = this.molecule.bonds.get(nei.bid)
+        const bond = this.molecule.bonds.get(nei.bid)
 
         if (bond.type === Bond.PATTERN.TYPE.SINGLE && bond.begin == aid) {
           if (
@@ -131,15 +136,17 @@ Stereocenters.prototype.buildFromBonds = function (
 
       if (!stereocenter) return
 
-      if (ignoreErrors)
+      if (ignoreErrors) {
         this.buildOneCenter(
-          aid /* , atom_groups[atom_idx], atom_types[atom_idx], bond_orientations*/
+          aid /* , atom_groups[atom_idx], atom_types[atom_idx], bond_orientations */
         )
-      else
+      } else {
         this.buildOneCenter(
-          aid /* , atom_groups[atom_idx], atom_types[atom_idx], bond_orientations*/
+          aid /* , atom_groups[atom_idx], atom_types[atom_idx], bond_orientations */
         )
+      }
     })
+  }
 }
 
 Stereocenters.allowed_stereocenters = [
@@ -159,39 +166,40 @@ Stereocenters.allowed_stereocenters = [
 ]
 
 Stereocenters.prototype.buildOneCenter = function (
-  atomIdx /* , int group, int type, const int *bond_orientations*/
+  atomIdx /* , int group, int type, const int *bond_orientations */
 ) {
   // eslint-disable-line max-statements
-  var atom = this.molecule.atoms.get(atomIdx)
+  const atom = this.molecule.atoms.get(atomIdx)
 
-  var neiList = this.getNeighbors.call(this.context, atomIdx)
-  var degree = neiList.length
-  var implicitDegree = -1
+  const neiList = this.getNeighbors.call(this.context, atomIdx)
+  const degree = neiList.length
+  let implicitDegree = -1
 
-  var stereocenter = {
+  const stereocenter = {
     group: 0, // = group;
     type: 0, // = type;
     pyramid: []
   }
 
-  var edgeIds = []
+  const edgeIds = []
 
-  var lastAtomDir = 0
-  var nDoubleBonds = 0
+  let lastAtomDir = 0
+  let nDoubleBonds = 0
 
   stereocenter.pyramid[0] = -1
   stereocenter.pyramid[1] = -1
   stereocenter.pyramid[2] = -1
   stereocenter.pyramid[3] = -1
 
-  var nPureHydrogens = 0
+  let nPureHydrogens = 0
 
-  if (degree > 4)
+  if (degree > 4) {
     throw new Error('stereocenter with %d bonds are not supported' + degree)
+  }
 
   neiList.forEach((nei, neiIdx) => {
-    var neiAtom = this.molecule.atoms.get(nei.aid)
-    var bond = this.molecule.bonds.get(nei.bid)
+    const neiAtom = this.molecule.atoms.get(nei.aid)
+    const bond = this.molecule.bonds.get(nei.bid)
     edgeIds[neiIdx] = {
       edge_idx: nei.bid,
       nei_idx: nei.aid,
@@ -208,14 +216,14 @@ Stereocenters.prototype.buildOneCenter = function (
 
     if (!edgeIds[neiIdx].vec.normalize()) throw new Error('zero bond length')
 
-    if (bond.type === Bond.PATTERN.TYPE.TRIPLE)
+    if (bond.type === Bond.PATTERN.TYPE.TRIPLE) {
       throw new Error('non-single bonds not allowed near stereocenter')
-    else if (bond.type === Bond.PATTERN.TYPE.AROMATIC)
+    } else if (bond.type === Bond.PATTERN.TYPE.AROMATIC) {
       throw new Error('aromatic bonds not allowed near stereocenter')
-    else if (bond.type === Bond.PATTERN.TYPE.DOUBLE) nDoubleBonds++
+    } else if (bond.type === Bond.PATTERN.TYPE.DOUBLE) nDoubleBonds++
   })
 
-  Stereocenters.allowed_stereocenters.find(as => {
+  Stereocenters.allowed_stereocenters.find((as) => {
     if (
       as.elem === atom.label &&
       as.charge === atom.charge &&
@@ -228,7 +236,7 @@ Stereocenters.prototype.buildOneCenter = function (
     return false
   })
 
-  if (implicitDegree === -1)
+  if (implicitDegree === -1) {
     throw new Error(
       'unknown stereocenter configuration: ' +
         atom.label +
@@ -240,14 +248,17 @@ Stereocenters.prototype.buildOneCenter = function (
         nDoubleBonds +
         ' double)'
     )
+  }
 
-  if (degree === 4 && nPureHydrogens > 1)
+  if (degree === 4 && nPureHydrogens > 1) {
     throw new Error(nPureHydrogens + ' hydrogens near stereocenter')
+  }
 
-  if (degree === 3 && implicitDegree === 4 && nPureHydrogens > 0)
+  if (degree === 3 && implicitDegree === 4 && nPureHydrogens > 0) {
     throw new Error(
       'have hydrogen(s) besides implicit hydrogen near stereocenter'
     )
+  }
 
   if (degree === 4) {
     // sort by neighbor atom index (ascending)
@@ -259,13 +270,13 @@ Stereocenters.prototype.buildOneCenter = function (
     if (edgeIds[1].rank > edgeIds[2].rank) swap(edgeIds, 1, 2)
 
     var main1 = -1
-    var main2 = -1
+    let main2 = -1
     var side1 = -1
     var side2 = -1
     var mainDir = 0
 
     for (var neiIdx = 0; neiIdx < 4; neiIdx++) {
-      var stereo = this.getBondStereo(atomIdx, edgeIds[neiIdx].edge_idx)
+      const stereo = this.getBondStereo(atomIdx, edgeIds[neiIdx].edge_idx)
 
       if (
         stereo === Bond.PATTERN.STEREO.UP ||
@@ -277,10 +288,11 @@ Stereocenters.prototype.buildOneCenter = function (
       }
     }
 
-    if (main1 === -1)
+    if (main1 === -1) {
       throw new Error('none of 4 bonds going from stereocenter is stereobond')
+    }
 
-    var xyz1, xyz2
+    let xyz1, xyz2
 
     // find main2 as opposite to main1
     if (main2 === -1) {
@@ -338,35 +350,45 @@ Stereocenters.prototype.buildOneCenter = function (
       }
     }
 
-    if (main2 == -1)
+    if (main2 == -1) {
       throw new Error('internal error: can not find opposite bond')
+    }
 
     if (
       mainDir == Bond.PATTERN.STEREO.UP &&
       this.getBondStereo(atomIdx, edgeIds[main2].edge_idx) ==
         Bond.PATTERN.STEREO.DOWN
-    )
+    ) {
       throw new Error('stereo types of the opposite bonds mismatch')
+    }
     if (
       mainDir == Bond.PATTERN.STEREO.DOWN &&
       this.getBondStereo(atomIdx, edgeIds[main2].edge_idx) ==
         Bond.PATTERN.STEREO.UP
-    )
+    ) {
       throw new Error('stereo types of the opposite bonds mismatch')
+    }
 
-    if (mainDir == this.getBondStereo(atomIdx, edgeIds[side1].edge_idx))
+    if (mainDir == this.getBondStereo(atomIdx, edgeIds[side1].edge_idx)) {
       throw new Error('stereo types of non-opposite bonds match')
-    if (mainDir == this.getBondStereo(atomIdx, edgeIds[side2].edge_idx))
+    }
+    if (mainDir == this.getBondStereo(atomIdx, edgeIds[side2].edge_idx)) {
       throw new Error('stereo types of non-opposite bonds match')
+    }
 
     if (main1 == 3 || main2 == 3) lastAtomDir = mainDir
-    else
+    else {
       lastAtomDir =
         mainDir == Bond.PATTERN.STEREO.UP
           ? Bond.PATTERN.STEREO.DOWN
           : Bond.PATTERN.STEREO.UP
+    }
 
-    sign = Stereocenters.sign(edgeIds[0].vec, edgeIds[1].vec, edgeIds[2].vec)
+    const sign = Stereocenters.sign(
+      edgeIds[0].vec,
+      edgeIds[1].vec,
+      edgeIds[2].vec
+    )
 
     if (
       (lastAtomDir == Bond.PATTERN.STEREO.UP && sign > 0) ||
@@ -388,12 +410,12 @@ Stereocenters.prototype.buildOneCenter = function (
     if (edgeIds[1].rank > edgeIds[2].rank) swap(edgeIds, 1, 2)
     if (edgeIds[0].rank > edgeIds[1].rank) swap(edgeIds, 0, 1)
 
-    var stereo0 = this.getBondStereo(atomIdx, edgeIds[0].edge_idx)
-    var stereo1 = this.getBondStereo(atomIdx, edgeIds[1].edge_idx)
-    var stereo2 = this.getBondStereo(atomIdx, edgeIds[2].edge_idx)
+    const stereo0 = this.getBondStereo(atomIdx, edgeIds[0].edge_idx)
+    const stereo1 = this.getBondStereo(atomIdx, edgeIds[1].edge_idx)
+    const stereo2 = this.getBondStereo(atomIdx, edgeIds[2].edge_idx)
 
-    var nUp = 0
-    var nDown = 0
+    let nUp = 0
+    let nDown = 0
 
     nUp += stereo0 === Bond.PATTERN.STEREO.UP ? 1 : 0
     nUp += stereo1 === Bond.PATTERN.STEREO.UP ? 1 : 0
@@ -408,10 +430,12 @@ Stereocenters.prototype.buildOneCenter = function (
       if (nUp == 3) throw new Error('all 3 bonds up near stereoatom')
       if (nDown == 3) throw new Error('all 3 bonds down near stereoatom')
 
-      if (nUp == 0 && nDown == 0)
+      if (nUp == 0 && nDown == 0) {
         throw new Error('no up/down bonds near stereoatom -- indefinite case')
-      if (nUp == 1 && nDown == 1)
+      }
+      if (nUp == 1 && nDown == 1) {
         throw new Error('one bond up, one bond down -- indefinite case')
+      }
 
       mainDir = 0
 
@@ -425,7 +449,7 @@ Stereocenters.prototype.buildOneCenter = function (
         side2 = -1
 
         for (neiIdx = 0; neiIdx < 3; neiIdx++) {
-          dir = this.getBondStereo(atomIdx, edgeIds[neiIdx].edge_idx)
+          const dir = this.getBondStereo(atomIdx, edgeIds[neiIdx].edge_idx)
 
           if (
             dir == Bond.PATTERN.STEREO.UP ||
@@ -440,27 +464,30 @@ Stereocenters.prototype.buildOneCenter = function (
           }
         }
 
-        if (main1 == -1)
+        if (main1 == -1) {
           throw new Error('internal error: can not find up or down bond')
+        }
 
-        var xyz = Stereocenters.xyzzy(
+        const xyz = Stereocenters.xyzzy(
           edgeIds[side1].vec,
           edgeIds[side2].vec,
           edgeIds[main1].vec
         )
 
-        if (xyz == 3 || xyz == 4)
+        if (xyz == 3 || xyz == 4) {
           throw new Error('degenerate case for 3 bonds near stereoatom')
+        }
 
         if (xyz == 1) lastAtomDir = mainDir
-        else
+        else {
           lastAtomDir =
             mainDir == Bond.PATTERN.STEREO.UP
               ? Bond.PATTERN.STEREO.DOWN
               : Bond.PATTERN.STEREO.UP
+        }
       }
 
-      var sign = Stereocenters.sign(
+      const sign = Stereocenters.sign(
         edgeIds[0].vec,
         edgeIds[1].vec,
         edgeIds[2].vec
@@ -484,11 +511,11 @@ Stereocenters.prototype.buildOneCenter = function (
       // 3-connected P, N or S; no implicit hydrogens
       var dir
 
-      if (nDown > 0 && nUp > 0)
+      if (nDown > 0 && nUp > 0) {
         throw new Error('one bond up, one bond down -- indefinite case')
-      else if (nDown == 0 && nUp == 0)
+      } else if (nDown == 0 && nUp == 0) {
         throw new Error('no up-down bonds attached to stereocenter')
-      else if (nUp > 0) dir = 1
+      } else if (nUp > 0) dir = 1
       else dir = -1
 
       if (
@@ -498,11 +525,16 @@ Stereocenters.prototype.buildOneCenter = function (
           1 ||
         Stereocenters.xyzzy(edgeIds[2].vec, edgeIds[1].vec, edgeIds[0].vec) ===
           1
-      )
+      ) {
         // all bonds belong to the same half-plane
         dir = -dir
+      }
 
-      sign = Stereocenters.sign(edgeIds[0].vec, edgeIds[1].vec, edgeIds[2].vec)
+      const sign = Stereocenters.sign(
+        edgeIds[0].vec,
+        edgeIds[1].vec,
+        edgeIds[2].vec
+      )
 
       if (sign == dir) {
         stereocenter.pyramid[0] = edgeIds[0].nei_idx
@@ -520,11 +552,12 @@ Stereocenters.prototype.buildOneCenter = function (
 }
 
 Stereocenters.prototype.getBondStereo = function (centerIdx, edgeIdx) {
-  var bond = this.molecule.bonds.get(edgeIdx)
+  const bond = this.molecule.bonds.get(edgeIdx)
 
-  if (centerIdx != bond.begin)
+  if (centerIdx != bond.begin) {
     // TODO: check this
     return 0
+  }
 
   return bond.stereo
 }
@@ -532,17 +565,18 @@ Stereocenters.prototype.getBondStereo = function (centerIdx, edgeIdx) {
 // 1 -- in the smaller angle, 2 -- in the bigger angle,
 // 4 -- in the 'positive' straight angle, 8 -- in the 'negative' straight angle
 Stereocenters.xyzzy = function (v1, v2, u) {
-  var eps = 0.001
+  const eps = 0.001
 
-  var sine1 = Vec2.cross(v1, v2)
-  var cosine1 = Vec2.dot(v1, v2)
+  const sine1 = Vec2.cross(v1, v2)
+  const cosine1 = Vec2.dot(v1, v2)
 
-  var sine2 = Vec2.cross(v1, u)
-  var cosine2 = Vec2.dot(v1, u)
+  const sine2 = Vec2.cross(v1, u)
+  const cosine2 = Vec2.dot(v1, u)
 
   if (Math.abs(sine1) < eps) {
-    if (Math.abs(sine2) < eps)
+    if (Math.abs(sine2) < eps) {
       throw new Error('degenerate case -- bonds overlap')
+    }
 
     return sine2 > 0 ? 4 : 8
   }
@@ -555,8 +589,8 @@ Stereocenters.xyzzy = function (v1, v2, u) {
 }
 
 Stereocenters.sign = function (v1, v2, v3) {
-  var res = (v1.x - v3.x) * (v2.y - v3.y) - (v1.y - v3.y) * (v2.x - v3.x) // eslint-disable-line no-mixed-operators
-  var eps = 0.001
+  const res = (v1.x - v3.x) * (v2.y - v3.y) - (v1.y - v3.y) * (v2.x - v3.x) // eslint-disable-line no-mixed-operators
+  const eps = 0.001
 
   if (res > eps) return 1
   if (res < -eps) return -1
@@ -565,8 +599,8 @@ Stereocenters.sign = function (v1, v2, v3) {
 }
 
 Stereocenters.isPyramidMappingRigid = function (mapping) {
-  var arr = mapping.slice()
-  var rigid = true
+  const arr = mapping.slice()
+  let rigid = true
 
   if (arr[0] > arr[1]) {
     swap(arr, 0, 1)
@@ -597,7 +631,7 @@ Stereocenters.isPyramidMappingRigid = function (mapping) {
 }
 
 function swap(arr, i1, i2) {
-  var tmp = arr[i1]
+  const tmp = arr[i1]
   arr[i1] = arr[i2]
   arr[i2] = tmp
 }

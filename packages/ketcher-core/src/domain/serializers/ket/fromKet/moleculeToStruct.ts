@@ -21,7 +21,7 @@ import { ifDef } from 'utilities'
 
 export function toRlabel(values) {
   let res = 0
-  values.forEach(val => {
+  values.forEach((val) => {
     const rgi = val - 1
     res |= 1 << rgi
   })
@@ -30,19 +30,21 @@ export function toRlabel(values) {
 
 export function moleculeToStruct(ketItem: any): Struct {
   const struct = new Struct()
-  ketItem.atoms.forEach(atom => {
+  ketItem.atoms.forEach((atom) => {
     if (atom.type === 'rg-label') struct.atoms.add(rglabelToStruct(atom))
     if (atom.type === 'atom-list') struct.atoms.add(atomListToStruct(atom))
     if (!atom.type) struct.atoms.add(atomToStruct(atom))
   })
 
-  if (ketItem.bonds)
-    ketItem.bonds.forEach(bond => struct.bonds.add(bondToStruct(bond)))
+  if (ketItem.bonds) {
+    ketItem.bonds.forEach((bond) => struct.bonds.add(bondToStruct(bond)))
+  }
 
-  if (ketItem.sgroups)
-    ketItem.sgroups.forEach(sgroup =>
+  if (ketItem.sgroups) {
+    ketItem.sgroups.forEach((sgroup) =>
       struct.sgroups.add(sgroupToStruct(sgroup))
     )
+  }
 
   struct.initHalfBonds()
   struct.initNeighbors()
@@ -59,7 +61,7 @@ export function atomToStruct(source) {
   ifDef(params, 'alias', source.alias)
   ifDef(params, 'pp', {
     x: source.location[0],
-    y: source.location[1],
+    y: -source.location[1],
     z: source.location[2] || 0.0
   })
   ifDef(params, 'charge', source.charge)
@@ -92,7 +94,7 @@ export function rglabelToStruct(source) {
     z: source.location[2] || 0.0
   })
   ifDef(params, 'attpnt', source.attachmentPoints)
-  const rglabel = toRlabel(source.$refs.map(el => parseInt(el.slice(3))))
+  const rglabel = toRlabel(source.$refs.map((el) => parseInt(el.slice(3))))
   ifDef(params, 'rglabel', rglabel)
   return new Atom(params)
 }
@@ -107,8 +109,8 @@ export function atomListToStruct(source) {
   })
   ifDef(params, 'attpnt', source.attachmentPoints)
   const ids = source.elements
-    .map(el => Elements.get(el)?.number)
-    .filter(id => id)
+    .map((el) => Elements.get(el)?.number)
+    .filter((id) => id)
   ifDef(params, 'atomList', {
     ids,
     notList: source.notList

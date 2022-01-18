@@ -25,7 +25,7 @@ const typeSchema = [
 function TypeChoice({ value, onChange, ...props }) {
   return (
     <fieldset className={classes.fieldset}>
-      {typeSchema.map(type => (
+      {typeSchema.map((type) => (
         <label key={type.title}>
           <input
             type="radio"
@@ -34,6 +34,7 @@ function TypeChoice({ value, onChange, ...props }) {
             onChange={() => onChange(type.value)}
             {...props}
           />
+          <span className={classes.customRadio} />
           {type.title}
         </label>
       ))}

@@ -98,7 +98,7 @@ function AboutDialog(props) {
   )
 }
 
-const mapStateToProps = state => ({ ...state.options.app })
+const mapStateToProps = (state) => ({ ...state.options.app })
 
 const About = connect(mapStateToProps)(AboutDialog)
 

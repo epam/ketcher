@@ -24,34 +24,34 @@ export const zoomList = [
 
 export default {
   zoom: {
-    selected: editor => editor.zoom(),
-    hidden: options => isHidden(options, 'zoom')
+    selected: (editor) => editor.zoom(),
+    hidden: (options) => isHidden(options, 'zoom')
   },
   'zoom-out': {
     shortcut: ['-', '_', 'Shift+-'],
     title: 'Zoom Out',
-    disabled: editor => editor.zoom() <= zoomList[0], // unsave
-    action: editor => {
+    disabled: (editor) => editor.zoom() <= zoomList[0], // unsave
+    action: (editor) => {
       const zoom = editor.zoom()
-      const i = findIndex(z => z >= zoom, zoomList)
+      const i = findIndex((z) => z >= zoom, zoomList)
       editor.zoom(zoomList[zoomList[i] === zoom && i > 0 ? i - 1 : i])
     },
-    hidden: options => isHidden(options, 'zoom-out')
+    hidden: (options) => isHidden(options, 'zoom-out')
   },
   'zoom-in': {
     shortcut: ['+', '=', 'Shift+='],
     title: 'Zoom In',
-    disabled: editor => zoomList[zoomList.length - 1] <= editor.zoom(),
-    action: editor => {
+    disabled: (editor) => zoomList[zoomList.length - 1] <= editor.zoom(),
+    action: (editor) => {
       const zoom = editor.zoom()
-      const i = findLastIndex(z => z <= zoom, zoomList)
+      const i = findLastIndex((z) => z <= zoom, zoomList)
       editor.zoom(
         zoomList[zoomList[i] === zoom && i < zoomList.length - 1 ? i + 1 : i]
       )
     },
-    hidden: options => isHidden(options, 'zoom-in')
+    hidden: (options) => isHidden(options, 'zoom-in')
   },
   'zoom-list': {
-    hidden: options => isHidden(options, 'zoom-list')
+    hidden: (options) => isHidden(options, 'zoom-list')
   }
 }

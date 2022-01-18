@@ -17,12 +17,17 @@
 @import '../../../../../../../style/variables.less';
 
 .rgroupLogic {
-  width: 24.5em;
+  width: @width-small;
+
   label {
     display: flex;
     flex-direction: column;
     line-height: 2em;
-    margin: 1em 0;
+    margin-bottom: 1em;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
 
     &.resth {
       flex-direction: row;

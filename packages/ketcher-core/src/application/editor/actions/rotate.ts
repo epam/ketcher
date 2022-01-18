@@ -53,9 +53,9 @@ export function fromFlip(restruct, selection, dir, center) {
     return acc
   }, {})
 
-  const fidsNumberKeys = Object.keys(fids).map(frag => parseInt(frag, 10))
+  const fidsNumberKeys = Object.keys(fids).map((frag) => parseInt(frag, 10))
 
-  const isFragFound = fidsNumberKeys.find(frag => {
+  const isFragFound = fidsNumberKeys.find((frag) => {
     const allFragmentsOfStructure = struct.getFragmentIds(frag)
     const selectedFragmentsOfStructure = new Pile(fids[frag])
     const res = allFragmentsOfStructure.equals(selectedFragmentsOfStructure)
@@ -66,7 +66,7 @@ export function fromFlip(restruct, selection, dir, center) {
     return action // empty action
   }
 
-  Object.keys(fids).forEach(frag => {
+  Object.keys(fids).forEach((frag) => {
     const fragment = new Pile(fids[frag])
 
     const bbox = struct.getCoordBoundingBox(fragment)
@@ -74,21 +74,21 @@ export function fromFlip(restruct, selection, dir, center) {
       center ||
       new Vec2((bbox.max.x + bbox.min.x) / 2, (bbox.max.y + bbox.min.y) / 2)
 
-    fragment.forEach(aid => {
+    fragment.forEach((aid) => {
       const atom = struct.atoms.get(aid)
       const d = flipItemByCenter(atom, calcCenter, dir)
       action.addOp(new AtomMove(aid, d))
     })
 
     const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment))
-    sgroups.forEach(sg => {
+    sgroups.forEach((sg) => {
       const d = flipItemByCenter(sg, calcCenter, dir)
       action.addOp(new SGroupDataMove(sg.id, d))
     })
   })
 
   if (selection.bonds) {
-    selection.bonds.forEach(bid => {
+    selection.bonds.forEach((bid) => {
       const bond = struct.bonds.get(bid)
 
       if (bond.type !== Bond.PATTERN.TYPE.SINGLE) {
@@ -100,8 +100,9 @@ export function fromFlip(restruct, selection, dir, center) {
         return
       }
 
-      if (bond.stereo === Bond.PATTERN.STEREO.DOWN)
+      if (bond.stereo === Bond.PATTERN.STEREO.DOWN) {
         action.addOp(new BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.UP))
+      }
     })
   }
 
@@ -110,7 +111,7 @@ export function fromFlip(restruct, selection, dir, center) {
 
 function flipItemByCenter(item, center, dir) {
   const d = new Vec2()
-  /* eslint-disable no-mixed-operators*/
+  /* eslint-disable no-mixed-operators */
   if (dir === 'horizontal') {
     d.x =
       center.x > item.pp.x
@@ -123,7 +124,7 @@ function flipItemByCenter(item, center, dir) {
         ? 2 * (center.y - item.pp.y)
         : -2 * (item.pp.y - center.y)
   }
-  /* eslint-enable no-mixed-operators*/
+  /* eslint-enable no-mixed-operators */
   return d
 }
 
@@ -138,7 +139,7 @@ export function fromRotate(restruct, selection, center, angle) {
   }
 
   if (selection.atoms) {
-    selection.atoms.forEach(aid => {
+    selection.atoms.forEach((aid) => {
       const atom = struct.atoms.get(aid)
       action.addOp(new AtomMove(aid, rotateDelta(atom.pp, center, angle)))
     })
@@ -146,7 +147,7 @@ export function fromRotate(restruct, selection, center, angle) {
     if (!selection.sgroupData) {
       const sgroups = getRelSgroupsBySelection(restruct, selection.atoms)
 
-      sgroups.forEach(sg => {
+      sgroups.forEach((sg) => {
         action.addOp(
           new SGroupDataMove(sg.id, rotateDelta(sg.pp, center, angle))
         )
@@ -155,8 +156,8 @@ export function fromRotate(restruct, selection, center, angle) {
   }
 
   if (selection.rxnArrows) {
-    selection.rxnArrows.forEach(aid => {
-      var arrow = struct.rxnArrows.get(aid)
+    selection.rxnArrows.forEach((aid) => {
+      const arrow = struct.rxnArrows.get(aid)
       action.addOp(
         new RxnArrowMove(aid, rotateDelta(arrow.center(), center, angle))
       )
@@ -164,15 +165,15 @@ export function fromRotate(restruct, selection, center, angle) {
   }
 
   if (selection.rxnPluses) {
-    selection.rxnPluses.forEach(pid => {
-      var plus = struct.rxnPluses.get(pid)
+    selection.rxnPluses.forEach((pid) => {
+      const plus = struct.rxnPluses.get(pid)
       action.addOp(new RxnPlusMove(pid, rotateDelta(plus.pp, center, angle)))
     })
   }
 
   if (selection.sgroupData) {
-    selection.sgroupData.forEach(did => {
-      var data = struct.sgroups.get(did)
+    selection.sgroupData.forEach((did) => {
+      const data = struct.sgroups.get(did)
       action.addOp(new SGroupDataMove(did, rotateDelta(data.pp, center, angle)))
     })
   }
@@ -180,7 +181,7 @@ export function fromRotate(restruct, selection, center, angle) {
   const stereoFlags =
     selection.enhancedFlags || Array.from(restruct.enhancedFlags.keys())
   if (stereoFlags) {
-    stereoFlags.forEach(flagId => {
+    stereoFlags.forEach((flagId) => {
       const frId = flagId
       const frag = restruct.molecule.frags.get(frId)
       action.addOp(
@@ -213,14 +214,15 @@ export function fromBondAlign(restruct, bid, dir) {
   // TODO: choose minimal angle
   angle = dir === 'horizontal' ? -angle : Math.PI / 2 - angle
 
-  if (angle === 0 || Math.abs(angle) === Math.PI)
+  if (angle === 0 || Math.abs(angle) === Math.PI) {
     return fromFlip(restruct, { atoms }, dir, center)
+  }
 
   return fromRotate(restruct, { atoms }, center, angle)
 }
 
 function rotateDelta(v, center, angle) {
-  var v1 = v.sub(center)
+  let v1 = v.sub(center)
   v1 = v1.rotate(angle)
   v1.add_(center) // eslint-disable-line no-underscore-dangle
   return v1.sub(v)

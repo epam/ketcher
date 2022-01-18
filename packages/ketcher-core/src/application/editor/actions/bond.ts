@@ -72,9 +72,10 @@ export function fromBondAddition(
     if (typeof end === 'number') mergeFragments = true
   }
 
-  if (frid == null)
+  if (frid == null) {
     frid = (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd)
       .frid
+  }
 
   if (!(typeof begin === 'number')) {
     begin.fragment = frid
@@ -128,8 +129,8 @@ export function fromBondsAttrs(
   const action = new Action()
   const bids = Array.isArray(ids) ? ids : [ids]
 
-  bids.forEach(bid => {
-    Object.keys(Bond.attrlist).forEach(key => {
+  bids.forEach((bid) => {
+    Object.keys(Bond.attrlist).forEach((key) => {
       if (!(key in attrs) && !reset) return
 
       const value = key in attrs ? attrs[key] : Bond.attrGetDefault(key)
@@ -205,7 +206,7 @@ export function fromBondStereoUpdate(
 
   const fragmentStereoBonds: Array<Bond> = []
 
-  struct.bonds.forEach(bond => {
+  struct.bonds.forEach((bond) => {
     if (struct.atoms.get(bond.begin)?.fragment === beginFrId) {
       fragmentStereoBonds.push(bond)
     }
@@ -304,7 +305,7 @@ export function getStereoAtomsMap(
   return stereoAtomsMap
 }
 
-function getStereoParity(stereo: Number): number | null {
+function getStereoParity(stereo: number): number | null {
   let newAtomParity: number | null = null
   switch (stereo) {
     case Bond.PATTERN.STEREO.UP:
@@ -346,9 +347,10 @@ export function bondChangingAction(
     bondProps.type === Bond.PATTERN.TYPE.SINGLE &&
     bond.stereo === Bond.PATTERN.STEREO.NONE &&
     loop
-  )
+  ) {
     // if `Single bond` tool is chosen and bond for change in `plainBondTypes`
     bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length]
+  }
 
   return fromBondsAttrs(restruct, newItemId, bondProps).mergeWith(action)
 }

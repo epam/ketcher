@@ -21,14 +21,14 @@ const debugObj = {
   // original: for dev purposes
   'force-update': {
     shortcut: 'Ctrl+Shift+r',
-    action: editor => {
+    action: (editor) => {
       editor.update(true)
     },
-    hidden: options => isHidden(options, 'force-update')
+    hidden: (options) => isHidden(options, 'force-update')
   },
   'qs-serialize': {
     shortcut: 'Alt+Shift+r',
-    action: editor => {
+    action: (editor) => {
       const molSerializer = new MolSerializer()
       const molStr = molSerializer.serialize(editor.struct())
       const molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+')
@@ -40,7 +40,7 @@ const debugObj = {
         : qs.replace(/mol=[^&$]*/, molQs)
     }
   },
-  hidden: options => isHidden(options, 'qs-serialize')
+  hidden: (options) => isHidden(options, 'qs-serialize')
 }
 
 export default debugObj

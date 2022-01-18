@@ -17,19 +17,12 @@
 @import '../../../../../style/mixins.less';
 
 .ok {
-  background: @primary-button-color;
+  .button-main();
+
   width: 40px;
-  color: @primary-button-text;
   margin-right: 2px;
   margin-left: 10px;
   float: right;
-  border-radius: 2px;
-  &:hover {
-    background: @primary-button-hover-color;
-  }
-  &[disabled] {
-    background: @primary-button-disabled-color;
-  }
 }
 
 .save {
@@ -42,9 +35,11 @@
   color: #000;
   margin-left: auto;
   float: right;
+
   &:hover {
     background: #aaadb9;
   }
+
   &[disabled] {
     border: 1px solid #5b6077;
     background: transparent;
@@ -67,22 +62,27 @@
   overflow-y: auto;
   overflow-x: auto;
   font-family: @Inter;
+  color: @color-text-secondary;
   .transition-zoom;
+
   > * {
-    margin: @margin-top-bottom @margin-left-right;
     max-height: 65vh;
-    color: @main-font-color;
   }
 
   header {
     display: flex;
     align-items: center;
-    font-size: @header-font-size;
-    line-height: @header-line-height;
+    font-size: @font-size-header;
+    line-height: @line-height-header;
     text-transform: uppercase;
     border-radius: 0.7em 0.7em 0 0;
     height: 20px;
     justify-content: space-between;
+    color: @color-text-primary;
+
+    .btnContainer {
+      display: flex;
+    }
 
     .buttonTop {
       background-color: transparent;
@@ -90,6 +90,7 @@
       padding-right: 0;
     }
   }
+
   footer {
     clear: both;
     text-align: right;
@@ -111,24 +112,29 @@
     }
 
     button {
-      background: transparent;
-      border: 1px solid @secondary-button-color;
-      color: @secondary-button-color;
+      .button-secondary();
+
       float: left;
-      &:hover {
-        border-color: @secondary-button-hover-color;
-        color: @secondary-button-hover-color;
-      }
-      &:disabled {
-        border-color: @secondary-button-disabled-color;
-        color: @secondary-button-disabled-color;
-      }
     }
   }
+
   .body {
-    font-size: @regular-font-size;
-    line-height: @regular-line-height;
-    margin-right: 16px;
+    font-size: @font-size-regular;
+    line-height: @line-height-regular;
     .scrollbar_thin();
+  }
+}
+
+.margin {
+  > header {
+    margin: @margin-top-bottom @margin-left-right;
+  }
+
+  > div {
+    margin: 0 @margin-left-right;
+  }
+
+  > footer {
+    margin: @margin-left-right;
   }
 }

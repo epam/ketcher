@@ -31,25 +31,25 @@ export function fromArrowAddition(restruct, pos, mode) {
 }
 
 export function fromArrowResizing(restruct, id, d, current, anchor) {
-  var action = new Action()
+  const action = new Action()
   action.addOp(new RxnArrowResize(id, d, current, anchor, false))
   return action.perform(restruct)
 }
 
 export function fromArrowDeletion(restruct, id) {
-  var action = new Action()
+  const action = new Action()
   action.addOp(new RxnArrowDelete(id))
   return action.perform(restruct)
 }
 
 export function fromPlusAddition(restruct, pos) {
-  var action = new Action()
+  const action = new Action()
   action.addOp(new RxnPlusAdd(pos).perform(restruct))
   return action
 }
 
 export function fromPlusDeletion(restruct, id) {
-  var action = new Action()
+  const action = new Action()
   action.addOp(new RxnPlusDelete(id))
   return action.perform(restruct)
 }

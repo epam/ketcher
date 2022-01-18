@@ -25,7 +25,7 @@ describe('label', () => {
   })
 })
 describe('equals', () => {
-  it.each([false, true])('should return true', notList => {
+  it.each([false, true])('should return true', (notList) => {
     const atomList = new AtomList({ ...params, notList })
     const dataWithReverseIds = { notList, ids: params.ids.sort().reverse() }
     const atomList2 = new AtomList(dataWithReverseIds)

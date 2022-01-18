@@ -22,7 +22,7 @@ function Header() {
   return (
     <tbody>
       <tr>
-        {range(0, PERIODIC_TABLE_COLUMNS).map(index => (
+        {range(0, PERIODIC_TABLE_COLUMNS).map((index) => (
           <th key={index}>{index || ''}</th>
         ))}
       </tr>

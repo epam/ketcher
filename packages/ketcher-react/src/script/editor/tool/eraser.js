@@ -75,14 +75,14 @@ EraserTool.prototype.mousemove = function (event) {
 
 EraserTool.prototype.mouseup = function (event) {
   const selected = this.editor.selection()
-  let newSelected = { atoms: [], bonds: [] }
+  const newSelected = { atoms: [], bonds: [] }
   let actualSgroupId
   const atomsResult = []
   const bondsResult = []
   const preResult = []
 
   if (selected && this.functionalGroups.size && selected.atoms) {
-    for (let atom of selected.atoms) {
+    for (const atom of selected.atoms) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         this.functionalGroups,
         atom
@@ -90,13 +90,13 @@ EraserTool.prototype.mouseup = function (event) {
       const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
 
       if (atomFromStruct) {
-        for (let sgId of atomFromStruct.sgs.values()) {
+        for (const sgId of atomFromStruct.sgs.values()) {
           actualSgroupId = sgId
         }
       }
       if (
         atomFromStruct &&
-        FunctionalGroup.isAtomInContractedFinctionalGroup(
+        FunctionalGroup.isAtomInContractedFunctionalGroup(
           atomFromStruct,
           this.sgroups,
           this.functionalGroups,
@@ -122,7 +122,7 @@ EraserTool.prototype.mouseup = function (event) {
 
       if (
         atomFromStruct &&
-        !FunctionalGroup.isAtomInContractedFinctionalGroup(
+        !FunctionalGroup.isAtomInContractedFunctionalGroup(
           atomFromStruct,
           this.sgroups,
           this.functionalGroups,
@@ -133,7 +133,7 @@ EraserTool.prototype.mouseup = function (event) {
     }
   }
   if (selected && this.functionalGroups.size && selected.bonds) {
-    for (let bond of selected.bonds) {
+    for (const bond of selected.bonds) {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         this.molecule,
         this.functionalGroups,
@@ -153,7 +153,7 @@ EraserTool.prototype.mouseup = function (event) {
     }
   }
   if (atomsResult.length > 0) {
-    for (let id of atomsResult) {
+    for (const id of atomsResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
         id
@@ -162,7 +162,7 @@ EraserTool.prototype.mouseup = function (event) {
     }
   }
   if (bondsResult.length > 0) {
-    for (let id of bondsResult) {
+    for (const id of bondsResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,
         this.functionalGroups,
@@ -174,9 +174,9 @@ EraserTool.prototype.mouseup = function (event) {
   if (preResult.length > 0) {
     const result = []
     const sgroups = this.sgroups
-    preResult.forEach(fgId => {
+    preResult.forEach((fgId) => {
       const sgAtoms = sgroups.get(fgId).item.atoms
-      sgAtoms.forEach(atom => {
+      sgAtoms.forEach((atom) => {
         !atomsResult.includes(atom) &&
           !result.includes(fgId) &&
           result.push(fgId)
@@ -229,7 +229,7 @@ EraserTool.prototype.click = function (event) {
     const atomFromStruct = atomId !== null && this.struct.atoms.get(atomId).a
     if (
       atomFromStruct &&
-      !FunctionalGroup.isAtomInContractedFinctionalGroup(
+      !FunctionalGroup.isAtomInContractedFunctionalGroup(
         atomFromStruct,
         this.sgroups,
         this.functionalGroups,
@@ -256,7 +256,7 @@ EraserTool.prototype.click = function (event) {
       bondResult.push(bondId)
   }
   if (atomResult.length) {
-    for (let id of atomResult) {
+    for (const id of atomResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         this.functionalGroups,
         id
@@ -266,7 +266,7 @@ EraserTool.prototype.click = function (event) {
       }
     }
   } else if (bondResult.length) {
-    for (let id of bondResult) {
+    for (const id of bondResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         this.molecule,
         this.functionalGroups,
@@ -301,7 +301,12 @@ EraserTool.prototype.click = function (event) {
       })
     )
   } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
-    this.editor.update(fromSgroupDeletion(restruct, ci.id))
+    const sGroup = this.sgroups.get(ci.id)
+    if (FunctionalGroup.isFunctionalGroup(sGroup.item)) {
+      this.editor.event.removeFG.dispatch({ fgIds: [ci.id] })
+    } else {
+      this.editor.update(fromSgroupDeletion(restruct, ci.id))
+    }
   } else if (ci.map === 'rxnArrows') {
     this.editor.update(fromArrowDeletion(restruct, ci.id))
   } else if (ci.map === 'rxnPluses') {

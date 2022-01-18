@@ -17,7 +17,7 @@
 import { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types'
 
 function makeItems(ids: ToolbarItemVariant[]): ToolbarItem[] {
-  return ids.map(id => ({ id }))
+  return ids.map((id) => ({ id }))
 }
 
 export { makeItems }

@@ -17,24 +17,23 @@
 @import '../../../../../../../../../../style/mixins.less';
 
 .button {
-  .btn();
-
-  font-size: 1.1em;
-  height: 2em;
-  width: 2.5em;
-  line-height: 1;
+  font-size: @font-size-header;
+  line-height: @line-height-header;
   vertical-align: middle;
-  padding: 0.15em;
-  background: inherit;
+  padding: 3.5px 12px;
+  background: @color-button-atom;
+  border: none;
+  border-radius: 8px;
+  color: @color-text-black;
+  margin-right: 8px;
+
   &:hover {
-    .highlight-scale(@scale:1.25);
-    .highlight-shadow(black);
+    background-color: @color-button-atom-hover;
   }
-  &:active {
-    .highlight-scale(none);
-    .highlight-shadow(none);
-  }
+
+  &:focus,
   &.selected {
-    .highlight-invert;
+    background-color: @color-button-atom-clicked;
+    color: @color-text-light;
   }
 }

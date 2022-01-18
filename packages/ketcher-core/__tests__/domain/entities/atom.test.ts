@@ -12,7 +12,7 @@ describe('radicalElectrons', () => {
 
   it.each([4, 'test', {}, null, undefined])(
     'should return 0 if passed radical is different from 1 to 3 value range',
-    radical => {
+    (radical) => {
       expect(radicalElectrons(radical)).toBe(0)
     }
   )
@@ -442,7 +442,7 @@ describe('Atom', () => {
 
     it.each(['B', 'Al', 'Ga', 'In'])(
       'should return number <= 4 if group = 3 label = %p, charge = -1',
-      label => {
+      (label) => {
         const paramsWithALabel = {
           ...hydrogenParams,
           label,

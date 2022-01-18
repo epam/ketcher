@@ -14,4 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-export interface Renderer {}
+export interface Renderer {
+  renderLine: () => void
+}

@@ -13,36 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+@import "src/style/variables";
 
 .sgroup {
-  min-width: 19em;
+  width: @width-small;
+
   label {
     display: flex;
     flex-direction: column;
     margin-top: 8px;
+
     ul {
       width: inherit;
     }
+
     input[type='text'],
     select {
       margin-left: 0 !important;
       margin-right: 0 !important;
     }
+
     &:hover::after {
       margin: 1px 0 0 3px;
     }
   }
+
   fieldset {
     border: 0;
     padding: 0;
   }
+
   fieldset[class='radio'] {
     display: flex;
     justify-content: space-between;
   }
+
   .data {
     label {
       text-align: left;
+
       fieldset {
         label {
           display: flex;
@@ -50,18 +59,22 @@
           align-items: center;
           margin-left: 4px !important;
         }
+
         span {
           margin-right: 4px !important;
         }
       }
     }
+
     textarea,
     select[name='fieldValue'] {
       display: block;
       overflow: auto;
     }
+
     input[type='text'],
     select[name='fieldName'] {
+      color: inherit;
       width: 100%;
       display: block;
       margin-bottom: 0;

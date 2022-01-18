@@ -42,7 +42,7 @@ interface RightToolbarProps
   freqAtoms: any[]
 }
 
-interface RightToolbarCallProps extends ToolbarGroupItemCallProps {}
+type RightToolbarCallProps = ToolbarGroupItemCallProps
 
 type Props = RightToolbarProps & RightToolbarCallProps
 

@@ -14,17 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
+@import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
 .open {
   label {
     display: block;
     width: 22.5em;
+
     input {
       margin-bottom: 0.1em;
     }
   }
-  textarea {
+
+  .textareaEditor {
+    width: 405px;
     min-width: 32em;
     min-height: 23em;
     overflow: auto;
@@ -34,4 +38,37 @@
 
     .scrollbar();
   }
+}
+
+.dropButton {
+  .button-main();
+
+  border: none;
+  border-radius: 2px;
+  text-align: center;
+  height: 24px;
+}
+
+.dialogButton {
+  border: none;
+  margin-right: 2px;
+  margin-left: 10px;
+  text-align: center;
+  height: 24px;
+  float: right;
+  font-size: 12px;
+  line-height: 14px;
+  padding: 4px 8px;
+}
+
+.primaryButton {
+  .dialogButton();
+  .button-main();
+}
+
+.secondaryButton {
+  .dialogButton();
+  .button-secondary();
+
+  border-radius: 2px;
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
- 
+
 // Workaround less issue:
 // https://github.com/less/less.js/issues/2004
 @import 'variables';
@@ -126,6 +126,13 @@
     fill: white;
     stroke: white;
     stroke-width: 5;
+  }
+  & path {
+    stroke: white;
+  }
+  &::after {
+    color: white;
+    opacity: 1;
   }
 }
 
@@ -315,7 +322,7 @@
   background-image: none;
 
   color: @main-color;
-  background-color: @light-background-color;
+  background-color: @color-background-primary;
   border-color: @border-color;
   border-radius: 2px;
   user-select: none;
@@ -346,6 +353,43 @@
   }
 }
 
+.button-main() {
+  background: @color-button-primary;
+  color: @color-text-light;
+  border-radius: 2px;
+  border: none;
+
+  &:hover {
+    background: @color-button-primary-hover;
+    color: @color-text-light;
+  }
+  &:disabled {
+    background: @color-button-primary-disabled;
+    color: @color-text-light;
+  }
+  &:focus {
+    background: @color-button-primary-clicked;
+  }
+}
+
+.button-secondary() {
+  background: transparent;
+  border: 1px solid @color-button-secondary;
+  color: @color-button-secondary;
+  &:hover {
+    border-color: @color-button-secondary-hover;
+    color: @color-button-secondary-hover;
+  }
+  &:disabled {
+    border-color: @color-button-secondary-disabled;
+    color: @color-button-secondary-disabled;
+  }
+  &:focus {
+    border-color: @color-button-secondary-clicked;
+    color: @color-button-secondary-clicked;
+  }
+}
+
 .warning() {
   color: @error-color;
   &::before {
@@ -356,7 +400,7 @@
 .dialog_body {
   overflow: auto;
 
-  .scrollbar()
+  .scrollbar();
 }
 
 .kbd() {
@@ -378,7 +422,7 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(@main-color, 0.30);
+    background: rgba(@main-color, 0.3);
     -webkit-border-radius: 100px;
   }
 
@@ -399,10 +443,18 @@
 .scrollbar_thin {
   &::-webkit-scrollbar {
     width: 4px;
-    background-color: #e8e8e8;
+    background-color: @color-scroll-inactive;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: @color-gray;
+    background-color: @color-scroll;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb:active {
+    background-color: @color-scroll;
   }
 }

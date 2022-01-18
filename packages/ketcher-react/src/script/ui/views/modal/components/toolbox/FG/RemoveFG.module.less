@@ -2,33 +2,33 @@
 
 .window {
   display: flex;
-  width: 21em;
+  width: @width-small;
   flex-direction: column;
   background: @gray-background-color;
   border-radius: 10px;
-  padding: 5px;
   font-family: @Inter;
 
   & > * {
-    margin: 10px 10px;
+    margin: 10px 15px;
   }
 }
 
 .question {
   text-align: left;
-  color: @main-font-color;
+  color: @color-text-secondary;
 }
 
 .header {
   display: flex;
   align-items: center;
-  margin-left: 10px;
+  margin-top: 15px;
   text-transform: uppercase;
 }
 
 .footer {
   display: flex;
   justify-content: flex-end;
+  margin-bottom: 15px;
 }
 
 .buttonOk,
@@ -40,20 +40,22 @@
 }
 
 .buttonOk {
-  background: @primary-button-color;
-  color: @primary-button-text;
+  background: @color-button-primary;
+  color: @color-text-light;
+
   &:hover {
-    background: @primary-button-hover-color;
+    background: @color-button-primary-hover;
   }
 }
 
 .buttonCancel {
   margin-right: 15px;
   background: transparent;
-  border: 1px solid @secondary-button-color;
-  color: @secondary-button-color;
+  border: 1px solid @color-button-secondary;
+  color: @color-button-secondary;
+
   &:hover {
-    border-color: @secondary-button-hover-color;
-    color: @secondary-button-hover-color;
+    border-color: @color-button-secondary-hover;
+    color: @color-button-secondary-hover;
   }
 }

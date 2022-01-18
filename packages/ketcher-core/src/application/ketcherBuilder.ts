@@ -29,7 +29,8 @@ const DefaultStructServiceOptions = {
   'smart-layout': true,
   'ignore-stereochemistry-errors': true,
   'mass-skip-error-on-pseudoatoms': false,
-  'gross-formula-add-rsites': true
+  'gross-formula-add-rsites': true,
+  'aromatize-skip-superatoms': true
 }
 
 export class KetcherBuilder {

@@ -50,7 +50,7 @@ const functionalGroupsReducer = (
 const initFGroups = (lib: SdfItem[]) => ({ type: 'FG_INIT', payload: { lib } })
 
 export function initFGTemplates(baseUrl: string) {
-  return async dispatch => {
+  return async (dispatch) => {
     const fileName = 'fg.sdf'
     const url = `${baseUrl}/templates/${fileName}`
     const provider = FunctionalGroupsProvider.getInstance()

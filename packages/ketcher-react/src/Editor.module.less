@@ -36,7 +36,7 @@
   position: relative;
   font: @base-size FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
     Arial, sans-serif;
-  background-color: @light-background-color;
+  background-color: @color-background-primary;
   color: @main-color;
   min-width: 640px;
   min-height: 400px;
@@ -54,16 +54,17 @@
     border-radius: 4px;
     display: inline-block;
     vertical-align: middle;
-    background: @light-background-color;
+    background: @color-background-primary;
     line-height: 20 / 14;
     height: 2.4em;
     padding: 0.35em 0.15em 0.35em 0.3em;
     border: none;
     box-sizing: border-box;
+    color: inherit;
 
     &:active,
     &:focus {
-      outline: 1px solid @main-color;
+      outline: 1px solid @color-border-main;
     }
 
     &:hover,
@@ -87,13 +88,14 @@
     border-radius: 4px;
     display: inline-block;
     vertical-align: middle;
-    background: @light-background-color;
+    background: @color-background-primary;
     line-height: 20 / 14;
     height: 32px;
     padding: 0.35em 0.15em 0.35em 0.3em;
     margin: 2px;
     border: none;
     box-sizing: border-box;
+    color: inherit;
 
     &:active,
     &:focus {
@@ -127,9 +129,9 @@
   }
 
   legend {
-    color: darken(@border-color, 25%);
-    padding: 0 0.4em;
-    font-size: 0.9em;
+    color: @color-text-legend;
+    padding: 0;
+    font-size: 12px;
     text-align: left;
   }
 

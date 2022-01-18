@@ -83,7 +83,7 @@ function findClosestText(restruct, cursorPosition) {
       }
     }
 
-    let dist = Math.min(...distances)
+    const dist = Math.min(...distances)
 
     if (dist < SELECTION_DISTANCE_COEFFICIENT && (!ret || dist < minDist)) {
       minDist = dist
@@ -123,7 +123,7 @@ function findClosestAtom(restruct, pos, skip, minDist) {
 
   restruct.atoms.forEach((atom, aid) => {
     if (
-      FunctionalGroup.isAtomInContractedFinctionalGroup(
+      FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom.a,
         sGroups,
         functionalGroups,
@@ -393,7 +393,7 @@ function findClosestSGroup(restruct, pos) {
     const n = d.rotateSC(1, 0)
     const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n))
 
-    sg.areas.forEach(box => {
+    sg.areas.forEach((box) => {
       const inBox =
         box.p0.y < pg.y && box.p1.y > pg.y && box.p0.x < pg.x && box.p1.x > pg.x
       const xDist = Math.min(
@@ -498,11 +498,11 @@ function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
 
   const struct = restruct.molecule
 
-  selected.atoms.forEach(aid => {
+  selected.atoms.forEach((aid) => {
     pos.atoms.set(aid, struct.atoms.get(aid).pp)
   })
 
-  selected.bonds.forEach(bid => {
+  selected.bonds.forEach((bid) => {
     const bond = struct.bonds.get(bid)
     pos.bonds.set(
       bid,
@@ -516,7 +516,7 @@ function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
   })
 
   const result = {}
-  maps.forEach(mp => {
+  maps.forEach((mp) => {
     result[mp] = Array.from(pos[mp].keys()).reduce((res, srcId) => {
       const skip = { map: mp, id: srcId }
       const item = findMaps[mp](restruct, pos[mp].get(srcId), skip, null, scale)

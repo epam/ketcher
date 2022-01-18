@@ -19,8 +19,8 @@ import { MultiToolCallProps, MultiToolProps } from '../variants.types'
 import { ActionButton } from '../../../ActionButton'
 import action from '../../../../../../action'
 
-interface DefaultMultiToolProps extends MultiToolProps {}
-interface DefaultMultiToolCallProps extends MultiToolCallProps {}
+type DefaultMultiToolProps = MultiToolProps
+type DefaultMultiToolCallProps = MultiToolCallProps
 
 type Props = DefaultMultiToolProps & DefaultMultiToolCallProps
 
@@ -30,7 +30,7 @@ const DefaultMultiTool = (props: Props) => {
 
   return (
     <>
-      {options.map(toolbarItem => {
+      {options.map((toolbarItem) => {
         const currentStatus = status[toolbarItem.id]
         return (
           <ActionButton

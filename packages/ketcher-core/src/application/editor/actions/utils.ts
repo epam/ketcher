@@ -36,7 +36,7 @@ export function atomGetPos(restruct, id) {
 }
 
 export function findStereoAtoms(struct, aids) {
-  return aids.filter(aid => struct.atoms.get(aid).stereoLabel !== null)
+  return aids.filter((aid) => struct.atoms.get(aid).stereoLabel !== null)
 }
 
 export function structSelection(struct) {
@@ -67,7 +67,7 @@ export function atomForNewBond(restruct, id, bond?) {
   )
   const prevBondType = restruct.molecule.bonds.get(prevBondId).type
 
-  restruct.molecule.atomGetNeighbors(id).forEach(nei => {
+  restruct.molecule.atomGetNeighbors(id).forEach((nei) => {
     const neiPos = atomGetPos(restruct, nei.aid)
 
     if (Vec2.dist(pos, neiPos) < 0.1) return
@@ -80,10 +80,10 @@ export function atomForNewBond(restruct, id, bond?) {
       Math.atan2(nei1.v.y, nei1.v.x) - Math.atan2(nei2.v.y, nei2.v.x)
   )
 
-  var i
-  var maxI = 0
-  var angle
-  var maxAngle = 0
+  let i
+  let maxI = 0
+  let angle
+  let maxAngle = 0
 
   // TODO: impove layout: tree, ...
 
@@ -115,11 +115,12 @@ export function atomForNewBond(restruct, id, bond?) {
         const neiV = Vec2.diff(pos, neiPos)
         const neiAngle = Math.atan2(neiV.y, neiV.x)
 
-        restruct.molecule.atomGetNeighbors(nei.aid).forEach(neiNei => {
+        restruct.molecule.atomGetNeighbors(nei.aid).forEach((neiNei) => {
           const neiNeiPos = atomGetPos(restruct, neiNei.aid)
 
-          if (neiNei.bid === nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1)
+          if (neiNei.bid === nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1) {
             return
+          }
 
           const vDiff = Vec2.diff(neiNeiPos, neiPos)
           let ang = Math.atan2(vDiff.y, vDiff.x) - neiAngle
@@ -133,8 +134,9 @@ export function atomForNewBond(restruct, id, bond?) {
         if (
           neiNeighbours[0] <= Math.PI * 1.01 &&
           neiNeighbours[neiNeighbours.length - 1] <= 1.01 * Math.PI
-        )
+        ) {
           maxAngle *= -1
+        }
       }
     }
 

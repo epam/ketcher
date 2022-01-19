@@ -17,9 +17,17 @@
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 
-import { CONSTANTS } from '../../stylingConstants'
+// @TODO Maybe we can come up with something smart instead of using these imperative calculations
+// if we will need to reuse component, lineHeight and componentHeight can be taken from theme or calculated in browser after mounting
+const borderThickness = 1
+const extraMargin = 10
+const inputPadding = 10
 
-const { borderThickness, verticalOffset, extraMargin, inputPadding } = CONSTANTS
+// Line height + 2 borders
+const textWithBorderHeight = 16 + borderThickness * 2
+
+// How much we need to move wrapper with textarea from top to vertically center it in a parent div
+const verticalOffset = 24 / 2 - textWithBorderHeight / 2
 
 export const InputBox = styled('div')<{ hasInput: boolean }>`
   top: ${verticalOffset}px;

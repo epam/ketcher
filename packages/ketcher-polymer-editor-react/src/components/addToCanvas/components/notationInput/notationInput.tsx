@@ -18,11 +18,11 @@ import { useState } from 'react'
 import styled from '@emotion/styled'
 
 import { InputBox } from './inputBox'
-import { CONSTANTS } from '../../stylingConstants'
 import { ExpandButton } from './expandButton'
 import { TextareaAutoResize } from './textareaAutoResize'
 
-const { inputFieldWidth, inputPadding } = CONSTANTS
+const inputFieldWidth = 355
+const inputPadding = 10
 
 const InputFlexContainer = styled('div')`
   height: 100%;
@@ -59,8 +59,7 @@ export const NotationInput = ({
       <InputBox
         hasInput={Boolean(inputValue)}
         onClick={inputClickHandler}
-        onBlur={() => setFocused(false)}
-      >
+        onBlur={() => setFocused(false)}>
         <TextareaAutoResize
           inputValue={inputValue}
           maxRows={8}

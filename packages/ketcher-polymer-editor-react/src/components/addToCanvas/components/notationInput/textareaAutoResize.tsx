@@ -16,15 +16,15 @@
 
 import { useCallback, useEffect, useRef } from 'react'
 import styled from '@emotion/styled'
-
-import { CONSTANTS } from '../../stylingConstants'
 import { css } from '@emotion/react'
+
 import { scrollbarThin } from 'styles/mixins'
 
-const { lineHeight, inputFieldWidth, inputPadding, fontSize } = CONSTANTS
+const lineHeight = 16
+const inputFieldWidth = 355
+const inputPadding = 10
 
 const commonStyles = `
-  font-size: ${fontSize}px;
   line-height: ${lineHeight}px;
   width: ${inputFieldWidth - inputPadding * 2}px;
   border: none;

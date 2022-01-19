@@ -20,9 +20,9 @@ import styled from '@emotion/styled'
 import { DropDown as SelectNotation } from '../shared/ui/dropDown'
 import { NotationInput } from './components/notationInput'
 import { ActionButton as AddButton } from '../shared/ui/actionButton'
-import { CONSTANTS } from './stylingConstants'
 
-const { componentWidth, height } = CONSTANTS
+const componentWidth = 670
+const height = 24
 
 const NOTATION_OPTIONS = [
   'HELM Notation',

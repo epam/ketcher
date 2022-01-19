@@ -100,6 +100,14 @@ export interface CalculateCipCommandData
     WithStruct,
     WithFormat {}
 
+export type CalculateProps =
+  | 'molecular-weight'
+  | 'most-abundant-mass'
+  | 'monoisotopic-mass'
+  | 'gross'
+  | 'gross-formula'
+  | 'mass-composition'
+
 export interface CalculateCommandData
   extends CommandData,
     WithStruct,

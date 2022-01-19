@@ -16,8 +16,8 @@
 
 import {
   FormatterFactory,
-  SupportedFormat,
-  identifyStructFormat
+  identifyStructFormat,
+  SupportedFormat
 } from './formatters'
 import { GenerateImageOptions, StructService } from 'domain/services'
 
@@ -25,6 +25,7 @@ import { Editor } from './editor'
 import { MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import assert from 'assert'
+import { Indigo } from 'application/indigo'
 
 function parseStruct(structStr: string, structService: StructService) {
   const format = identifyStructFormat(structStr)
@@ -47,6 +48,7 @@ export class Ketcher {
   #structService: StructService
   #formatterFactory: FormatterFactory
   #editor: Editor
+  #indigo: Indigo
 
   get editor(): Editor {
     return this.#editor
@@ -64,6 +66,11 @@ export class Ketcher {
     this.#editor = editor
     this.#structService = structService
     this.#formatterFactory = formatterFactory
+    this.#indigo = new Indigo(this.#structService)
+  }
+
+  get indigo() {
+    return this.#indigo
   }
 
   getSmiles(isExtended = false): Promise<string> {

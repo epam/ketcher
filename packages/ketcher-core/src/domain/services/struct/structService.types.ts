@@ -43,8 +43,21 @@ export interface WithSelection {
   selected?: Array<number>
 }
 
+export type CheckTypes =
+  | 'radicals'
+  | 'pseudoatoms'
+  | 'stereo'
+  | 'query'
+  | 'overlapping_atoms'
+  | 'overlapping_bonds'
+  | 'rgroups'
+  | 'chiral'
+  | '3d'
+  | 'chiral_flag'
+  | 'valence'
+
 export interface CheckData extends WithStruct {
-  types: Array<string>
+  types: Array<CheckTypes>
 }
 
 export interface CheckResult {
@@ -78,16 +91,23 @@ export interface CalculateCipData extends WithStruct, WithOutputFormat {}
 
 export interface CalculateCipResult extends WithStruct, WithFormat {}
 
+export type CalculateProps =
+  | 'molecular-weight'
+  | 'most-abundant-mass'
+  | 'monoisotopic-mass'
+  | 'gross'
+  | 'mass-composition'
+
 export interface CalculateData extends WithStruct, WithSelection {
-  properties: Array<string>
+  properties: Array<CalculateProps>
 }
 
-export interface CalculateResult {
-  [key: string]: string | number | boolean
-}
+export type CalculateResult = Record<CalculateProps, string | number | boolean>
+
+export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear'
 
 export interface AutomapData extends WithStruct, WithOutputFormat {
-  mode: string
+  mode: AutomapMode
 }
 
 export interface AutomapResult extends WithStruct, WithFormat {}

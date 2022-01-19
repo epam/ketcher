@@ -72,8 +72,6 @@ function CustomTabs(props): ReactElement {
     color: theme.color.text.primary,
     listStyleType: 'none',
     margin: 0,
-    fontFamily: 'inherit',
-    fontWeight: 'inherit',
 
     '&:hover': {
       backgroundColor: theme.color.tab.hover,

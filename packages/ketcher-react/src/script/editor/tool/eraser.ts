@@ -35,6 +35,7 @@ class EraserTool {
   editor: Editor
   maps: Array<string>
   lassoHelper: LassoHelper
+  isNotActiveTool: boolean | undefined
 
   constructor(editor, mode) {
     this.editor = editor
@@ -58,6 +59,7 @@ class EraserTool {
       )
       editor.update(action)
       editor.selection(null)
+      this.isNotActiveTool = true
     }
   }
 

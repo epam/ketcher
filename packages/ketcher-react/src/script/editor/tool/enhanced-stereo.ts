@@ -25,6 +25,7 @@ import Editor from '../Editor'
 class EnhancedStereoTool {
   editor: Editor
   stereoAtoms: Array<number>
+  isNotActiveTool: boolean | undefined
 
   constructor(editor) {
     const selection = editor.selection()
@@ -37,7 +38,10 @@ class EnhancedStereoTool {
         : Array.from(editor.struct().atoms.keys())
     )
 
-    if (this.stereoAtoms.length === 0) return
+    if (this.stereoAtoms.length === 0) {
+      this.isNotActiveTool = true
+      return
+    }
 
     this.changeAtomsStereoAction().then(
       (action) => action && editor.update(action)

@@ -35,6 +35,7 @@ class AtomTool {
   atomProps: any
   dragCtx: any
   #bondProps: { stereo: number; type: number }
+  isNotActiveTool: boolean | undefined
 
   constructor(editor, atomProps) {
     this.editor = editor
@@ -49,6 +50,7 @@ class AtomTool {
       )
       editor.update(action)
       editor.selection(null)
+      this.isNotActiveTool = true
     }
   }
 

@@ -39,7 +39,7 @@ import { Editor } from '../Editor'
 
 class SelectTool {
   #mode: string
-  #lassoHelper: any
+  #lassoHelper: LassoHelper
   editor: Editor
   dragCtx: any
 

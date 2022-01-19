@@ -189,7 +189,7 @@ class Editor implements KetcherEditor {
 
     const tool = new toolMap[name](this, opts)
 
-    if (!tool) {
+    if (!tool || tool.isNotActiveTool) {
       return null
     }
 

@@ -32,6 +32,7 @@ class BondTool {
   atomProps: any
   bondProps: any
   dragCtx: any
+  isNotActiveTool: boolean | undefined
 
   constructor(editor, bondProps) {
     this.editor = editor
@@ -45,6 +46,7 @@ class BondTool {
       )
       editor.update(action)
       editor.selection(null)
+      this.isNotActiveTool = true
     }
   }
 

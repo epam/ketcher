@@ -43,6 +43,7 @@ class SGroupTool {
   editor: Editor
   type: any
   lassoHelper: any
+  isNotActiveTool: boolean | undefined
 
   constructor(editor, type) {
     this.editor = editor
@@ -144,6 +145,7 @@ class SGroupTool {
       }
 
       sgroupDialog(this.editor, id !== undefined ? id : null, this.type)
+      this.isNotActiveTool = true
     }
   }
 

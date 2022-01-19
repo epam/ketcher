@@ -31,6 +31,7 @@ import Editor from '../Editor'
 class RotateTool {
   editor: Editor
   dragCtx: any
+  isNotActiveTool: boolean | undefined
 
   constructor(editor, dir) {
     this.editor = editor
@@ -47,6 +48,7 @@ class RotateTool {
         ? fromFlip(restruct, selection, dir, null)
         : fromBondAlign(restruct, selection.bonds[0], dir)
       editor.update(action)
+      this.isNotActiveTool = true
       return
     }
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import Icon from 'components/shared/ui/Icon/Icon'
+// import Icon from 'components/shared/ui/Icon/Icon'
 import { MenuItemVariant } from 'components/menu/menu.types'
 import styled from '@emotion/styled'
 
@@ -58,7 +58,7 @@ const SingleItem = ({ name, activeTool, ...props }: SingleItemPropType) => {
 
   return (
     <SingleItemContainer isActive={isActiveTool} {...props} role="button">
-      <Icon name={name} />
+      {/* <Icon name={name} /> */}
     </SingleItemContainer>
   )
 }

@@ -1,49 +1,64 @@
 import { fireEvent, screen } from '@testing-library/react'
 import { render } from 'test-utils'
-import { Switcher } from './Switcher'
+import { Switcher } from './'
 
-describe('Test RNA Switcher component', () => {
+describe('RNA Switcher component', () => {
   const rnaHandleClick = jest.fn()
 
-  it('Test buttons are in the DOM', () => {
-    render(<Switcher />)
+  it('should call click event handler on a button when clicked', () => {
+    render(
+      <Switcher
+        selectedMonomers={['R', 'A', 'P']}
+        active={0}
+        handleSetActive={rnaHandleClick}
+      />
+    )
     const buttonR = screen.getByText('R')
-    const buttonA = screen.getByText('A')
-    const buttonP = screen.getByText('P')
-    const buttonRAP = screen.getByText('R(A)P')
-
-    expect(buttonR).toBeInTheDocument()
-    expect(buttonA).toBeInTheDocument()
-    expect(buttonP).toBeInTheDocument()
-    expect(buttonRAP).toBeInTheDocument()
-  })
-  it('Test click event on a button', () => {
-    render(<Switcher />)
-    const buttonR = screen.getByText('R')
-    buttonR.onclick = rnaHandleClick
     fireEvent.click(buttonR)
     expect(rnaHandleClick.mock.calls.length).toEqual(1)
   })
-  it('renders correctly with RAP button selected by default', () => {
-    const view = render(<Switcher />)
+
+  it('should render correctly with RAP button selected by default', () => {
+    const view = render(
+      <Switcher
+        selectedMonomers={['R', 'A', 'P']}
+        active={0}
+        handleSetActive={rnaHandleClick}
+      />
+    )
     expect(view).toMatchSnapshot()
   })
-  it('renders correctly with R button selected', () => {
-    const view = render(<Switcher />)
-    const buttonR = screen.getByText('R')
-    fireEvent.click(buttonR)
+
+  it('should render correctly with R button selected', () => {
+    const view = render(
+      <Switcher
+        selectedMonomers={['R', 'A', 'P']}
+        active={1}
+        handleSetActive={rnaHandleClick}
+      />
+    )
     expect(view).toMatchSnapshot()
   })
-  it('renders correctly with A button selected', () => {
-    const view = render(<Switcher />)
-    const buttonA = screen.getByText('A')
-    fireEvent.click(buttonA)
+
+  it('should render correctly with A button selected', () => {
+    const view = render(
+      <Switcher
+        selectedMonomers={['R', 'A', 'P']}
+        active={2}
+        handleSetActive={rnaHandleClick}
+      />
+    )
     expect(view).toMatchSnapshot()
   })
-  it('renders correctly with P button selected', () => {
-    const view = render(<Switcher />)
-    const buttonP = screen.getByText('P')
-    fireEvent.click(buttonP)
+
+  it('should render correctly with P button selected', () => {
+    const view = render(
+      <Switcher
+        selectedMonomers={['R', 'A', 'P']}
+        active={3}
+        handleSetActive={rnaHandleClick}
+      />
+    )
     expect(view).toMatchSnapshot()
   })
 })

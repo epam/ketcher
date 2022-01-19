@@ -16,7 +16,7 @@
 
 import { MonomerItem } from './monomerLibraryItem/MonomerItem'
 import { Tabs } from 'components/shared/ui/Tabs'
-import { Switcher } from 'components/rna/Switcher/Switcher'
+import { Switcher } from 'components/rna/Switcher'
 import styled from '@emotion/styled'
 
 interface MonomerListPropTypes {
@@ -53,7 +53,12 @@ const MonomerLibrary = () => {
     },
     {
       caption: 'RNA',
-      component: Switcher
+      component: Switcher,
+      props: {
+        selectedMonomers: ['R', 'A', 'P'],
+        active: 0, // replace with parent state when integrate
+        handleSetActive: (index) => console.log(index) // replace with parent callback when integrate
+      }
     },
     {
       caption: 'CHEM',

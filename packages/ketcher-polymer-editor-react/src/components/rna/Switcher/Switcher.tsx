@@ -1,8 +1,14 @@
 import { Button } from '@mui/material'
 import styled from '@emotion/styled'
-import { FC, useState } from 'react'
+// import { useState } from 'react'
 import { Icon } from 'components/shared/ui/icon'
 import { IconNameType } from 'components/shared/ui/icon/icon'
+
+type SwitcherProps = {
+  selectedMonomers: [string, string, string]
+  active: number
+  handleSetActive: (index: number) => void
+}
 
 const RAPButton = styled(Button)<{ 'data-isactive': boolean }>((props) => ({
   padding: '3px 12px',
@@ -31,8 +37,6 @@ const Container = styled('div')<{ gap: string }>`
   display: flex;
   gap: ${({ gap }) => gap};
 `
-
-const buttons = ['R', 'A', 'P']
 const svgNames: IconNameType[] = [
   'rap-left-link',
   'rap-middle-link',
@@ -48,12 +52,20 @@ const LinkIcon = styled(Icon)<{ 'data-isactive': boolean }>((props) => ({
   }
 }))
 
-export const Switcher: FC = () => {
-  const [active, setActive] = useState(0)
+export const Switcher = ({
+  selectedMonomers,
+  active,
+  handleSetActive
+}: SwitcherProps) => {
+  const nucleotide =
+    selectedMonomers[0] + '(' + selectedMonomers[1] + ')' + selectedMonomers[2]
   return (
     <SwitcherContainer>
-      <RAPButton onClick={() => setActive(0)} data-isactive={active === 0}>
-        R(A)P
+      <RAPButton
+        onClick={() => handleSetActive(0)}
+        data-isactive={active === 0}
+      >
+        {nucleotide}
       </RAPButton>
       <Container gap="11px">
         {svgNames.map((name, index) => (
@@ -65,10 +77,10 @@ export const Switcher: FC = () => {
         ))}
       </Container>
       <Container gap="4px">
-        {buttons.map((button, index) => (
+        {selectedMonomers.map((button, index) => (
           <RAPButton
             key={button}
-            onClick={() => setActive(index + 1)}
+            onClick={() => handleSetActive(index + 1)}
             data-isactive={active === index + 1}
           >
             {button}

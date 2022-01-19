@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Test RNA Switcher component renders correctly with A button selected 1`] = `
+exports[`RNA Switcher component should render correctly with A button selected 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body>
@@ -205,7 +205,7 @@ Object {
 }
 `;
 
-exports[`Test RNA Switcher component renders correctly with P button selected 1`] = `
+exports[`RNA Switcher component should render correctly with P button selected 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body>
@@ -410,7 +410,7 @@ Object {
 }
 `;
 
-exports[`Test RNA Switcher component renders correctly with R button selected 1`] = `
+exports[`RNA Switcher component should render correctly with R button selected 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body>
@@ -615,7 +615,7 @@ Object {
 }
 `;
 
-exports[`Test RNA Switcher component renders correctly with RAP button selected by default 1`] = `
+exports[`RNA Switcher component should render correctly with RAP button selected by default 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body>

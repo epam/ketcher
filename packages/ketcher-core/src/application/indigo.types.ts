@@ -14,54 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  AutomapMode,
-  CalculateProps,
-  CalculateResult,
-  CheckResult,
-  CheckTypes,
-  ChemicalMimeType,
-  ConvertResult,
-  InfoResult,
-  OutputFormatType
-} from 'domain/services'
 import { Struct } from 'domain/entities'
 
 export type StructOrString = Struct | string
-
-export interface Indigo {
-  info: () => Promise<InfoResult>
-  calculate: (
-    struct: StructOrString,
-    options?: {
-      properties?: Array<CalculateProps>
-    }
-  ) => Promise<CalculateResult>
-  convert: (
-    struct: StructOrString,
-    options?: {
-      outputFormat?: ChemicalMimeType
-    }
-  ) => Promise<ConvertResult>
-  layout: (struct: StructOrString) => Promise<Struct>
-  clean: (struct: StructOrString) => Promise<Struct>
-  aromatize: (struct: StructOrString) => Promise<Struct>
-  dearomatize: (struct: StructOrString) => Promise<Struct>
-  calculateCip: (struct: StructOrString) => Promise<Struct>
-  automap: (
-    struct: StructOrString,
-    options?: { mode?: AutomapMode }
-  ) => Promise<Struct>
-  check: (
-    struct: StructOrString,
-    options?: { types?: Array<CheckTypes> }
-  ) => Promise<CheckResult>
-  recognize: (blob: Blob, options?: { version?: string }) => Promise<Struct>
-  generateImageAsBase64: (
-    data: string,
-    options?: {
-      outputFormat?: OutputFormatType
-      backgroundColor?: string
-    }
-  ) => Promise<string>
-}

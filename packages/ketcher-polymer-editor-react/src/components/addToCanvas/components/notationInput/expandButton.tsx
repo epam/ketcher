@@ -17,7 +17,7 @@
 import styled from '@emotion/styled'
 import { IconButton } from '@mui/material'
 
-import Icon from 'components/shared/ui/Icon/Icon'
+import { Icon } from 'components/shared/ui/icon'
 
 type ExpandButtonProps = {
   expandHandler: () => void

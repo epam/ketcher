@@ -105,7 +105,30 @@ const font = {
   }
 }
 
+const padding = {
+  leftRight: '15px',
+  topBottom: '15px',
+  canvas: '6px'
+}
+
+const size = {
+  monomerLibrary: {
+    width: '253px'
+  },
+  menu: {
+    width: '32px'
+  },
+  addToCanvas: {
+    height: '24px'
+  },
+  properties: {
+    height: '88px'
+  }
+}
+
 export const defaultTheme = {
   color,
-  font
+  font,
+  padding,
+  size
 }

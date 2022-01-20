@@ -15,11 +15,12 @@
  ***************************************************************************/
 
 import { useEffect } from 'react'
-
+import styled from '@emotion/styled'
 import { useAppDispatch, useAppSelector } from 'hooks'
+
 import { selectEditorIsReady, fetchInitData } from 'state/common'
 import { MonomerLibrary } from 'components/monomerLibrary'
-import styled from '@emotion/styled'
+import { Layout } from 'components/Layout'
 
 export const fetchData = () =>
   new Promise((resolve) => {
@@ -38,7 +39,7 @@ export const App = (): JSX.Element => {
     height: '100%',
     width: '100%',
     position: 'relative',
-    padding: '14px 11px 0 11px',
+    padding: `${theme.padding.topBottom} ${theme.padding.leftRight}`,
     backgroundColor: theme.color.background.canvas
   }))
 
@@ -47,9 +48,6 @@ export const App = (): JSX.Element => {
     fontSize: theme.font.size.medium,
     fontWeight: theme.font.weight.bold,
     color: theme.color.text.secondary,
-    position: 'absolute',
-    bottom: '18px',
-    left: '13px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -73,6 +71,30 @@ export const App = (): JSX.Element => {
     }
   }))
 
+  const TopElementExample = styled.div(({ theme }) => ({
+    height: theme.size.addToCanvas.height,
+    width: '600px',
+    backgroundColor: theme.color.button.primary.clicked
+  }))
+
+  const LeftElementExample = styled.div(({ theme }) => ({
+    height: '400px',
+    width: theme.size.menu.width,
+    backgroundColor: theme.color.button.primary.clicked
+  }))
+
+  const CenterElementExample = styled.div(({ theme }) => ({
+    border: `1px dashed ${theme.color.input.border.regular}`,
+    width: '100%',
+    height: '100%'
+  }))
+
+  const BottomElementExample = styled.div(({ theme }) => ({
+    height: theme.size.properties.height,
+    width: '100%',
+    backgroundColor: theme.color.button.primary.clicked
+  }))
+
   if (!isReady) {
     return <div>App is not ready</div>
   }
@@ -80,13 +102,35 @@ export const App = (): JSX.Element => {
   return (
     <>
       <AppContainer>
-        <MonomerLibrary />
+        <Layout>
+          <Layout.Top>
+            <TopElementExample />
+          </Layout.Top>
 
-        <Logo>
-          <span>Polymer Editor</span>
-          <span>Ketcher</span>
-          <span>EPAM</span>
-        </Logo>
+          <Layout.Right>
+            <MonomerLibrary />
+          </Layout.Right>
+
+          <Layout.Left>
+            <LeftElementExample />
+          </Layout.Left>
+
+          <Layout.Center>
+            <CenterElementExample />
+          </Layout.Center>
+
+          <Layout.Bottom>
+            <BottomElementExample />
+          </Layout.Bottom>
+
+          <Layout.Logo>
+            <Logo>
+              <span>Polymer Editor</span>
+              <span>Ketcher</span>
+              <span>EPAM</span>
+            </Logo>
+          </Layout.Logo>
+        </Layout>
       </AppContainer>
     </>
   )

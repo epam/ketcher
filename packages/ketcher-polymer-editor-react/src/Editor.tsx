@@ -42,7 +42,7 @@ function Editor(props: EditorProps) {
     height: '100%',
     width: '100%',
     position: 'relative',
-    minWidth: 640,
+    minWidth: 1000,
     minHeight: 400
   })
 

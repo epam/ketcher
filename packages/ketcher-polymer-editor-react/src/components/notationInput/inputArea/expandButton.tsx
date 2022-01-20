@@ -14,20 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render } from 'test-utils'
+import { IconButton } from '@mui/material'
+import styled from '@emotion/styled'
 
-import { NotationInput } from '../notationInput'
+import { Icon } from 'components/shared/ui/icon'
 
-const mockInputHandler = jest.fn()
-const MOCK_PROPS = {
-  inputValue: 'Some input here',
-  inputHandler: mockInputHandler
+type ExpandButtonProps = {
+  expandHandler: () => void
+  expanded: boolean
 }
 
-describe('NotationInput component', () => {
-  const { container } = render(<NotationInput {...MOCK_PROPS} />)
+const ArrowIcon = styled(Icon)<{ isFlipped: boolean }>`
+  fill: ${({ theme }) => theme.color.icon.active};
+  ${({ isFlipped }) => isFlipped && 'transform: rotate(0.5turn);'}
+`
+export const ExpandButton = ({
+  expandHandler,
+  expanded
+}: ExpandButtonProps) => {
+  const buttonTitle = `${expanded ? 'Collapse' : 'Expand'} input area`
 
-  it('should render textarea and a hidden textarea in a container', async () => {
-    expect(container).toMatchSnapshot()
-  })
-})
+  return (
+    <IconButton onClick={expandHandler} title={buttonTitle}>
+      <ArrowIcon name="arrow-down" isFlipped={expanded} />
+    </IconButton>
+  )
+}

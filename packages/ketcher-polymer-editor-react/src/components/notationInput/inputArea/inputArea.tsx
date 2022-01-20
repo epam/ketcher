@@ -39,10 +39,7 @@ type FormulaInputProps = {
   inputHandler: (value: string) => void
 }
 
-export const NotationInput = ({
-  inputValue,
-  inputHandler
-}: FormulaInputProps) => {
+export const InputArea = ({ inputValue, inputHandler }: FormulaInputProps) => {
   const [focused, setFocused] = useState(false)
   const [expanded, setExpanded] = useState(false)
   const [isMultiLine, setMultiLine] = useState(false)
@@ -59,7 +56,8 @@ export const NotationInput = ({
       <InputBox
         hasInput={Boolean(inputValue)}
         onClick={inputClickHandler}
-        onBlur={() => setFocused(false)}>
+        onBlur={() => setFocused(false)}
+      >
         <TextareaAutoResize
           inputValue={inputValue}
           maxRows={8}

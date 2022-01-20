@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { CheckMarkIcon, ChevronIcon } from './styledIcons'
+export { InputArea } from './inputArea'

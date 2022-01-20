@@ -14,4 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { AddToCanvas } from './addToCanvas'
+import { render } from 'test-utils'
+
+import { InputArea } from '../inputArea'
+
+const mockInputHandler = jest.fn()
+const MOCK_PROPS = {
+  inputValue: 'Some input here',
+  inputHandler: mockInputHandler
+}
+
+describe('NotationInput component', () => {
+  const { container } = render(<InputArea {...MOCK_PROPS} />)
+
+  it('should render textarea and a hidden textarea in a container', () => {
+    expect(container).toMatchSnapshot()
+  })
+})

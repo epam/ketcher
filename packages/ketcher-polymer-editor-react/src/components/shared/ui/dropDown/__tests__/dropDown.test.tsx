@@ -17,22 +17,26 @@
 import { render, screen } from 'test-utils'
 import userEvent from '@testing-library/user-event'
 
-import { DropDown } from '../dropDown'
+import { DropDown, DropDownProps } from '../dropDown'
 
 const mockSelectionHandler = jest.fn()
-const MOCK_OPTIONS = ['Cat', 'Dog', 'Mantis']
+const MOCK_OPTIONS = [
+  { id: 1, label: 'Cat' },
+  { id: 2, label: 'Dog' },
+  { id: 3, label: 'Mantis' }
+]
 const INITIAL_SELECTION = MOCK_OPTIONS[0]
 
-const mockProps = {
+const mockProps: DropDownProps = {
   options: MOCK_OPTIONS,
-  currentSelection: INITIAL_SELECTION,
+  currentSelection: INITIAL_SELECTION.id,
   selectionHandler: mockSelectionHandler
 }
 
 describe('DropDown component', () => {
   it('should render an element with current selection displayed', () => {
     render(<DropDown {...mockProps} />)
-    expect(screen.getByText(INITIAL_SELECTION)).toBeInTheDocument()
+    expect(screen.getByText(INITIAL_SELECTION.label)).toBeInTheDocument()
   })
 
   it('should render dropdown with all options when clicked', async () => {
@@ -41,18 +45,18 @@ describe('DropDown component', () => {
     const dropDownButton = screen.getByRole('button')
     userEvent.click(dropDownButton)
 
-    expect(await screen.findByText(MOCK_OPTIONS[1])).toBeInTheDocument()
-    expect(await screen.findByText(MOCK_OPTIONS[2])).toBeInTheDocument()
+    expect(await screen.findByText(MOCK_OPTIONS[1].label)).toBeInTheDocument()
+    expect(await screen.findByText(MOCK_OPTIONS[2].label)).toBeInTheDocument()
   })
 
-  it('should call selection handler when option is clicked', async () => {
+  it('should call selection handler with id when label is clicked', async () => {
     render(<DropDown {...mockProps} />)
 
     const dropDownButton = screen.getByRole('button')
     userEvent.click(dropDownButton)
 
-    const secondOption = await screen.findByText(MOCK_OPTIONS[1])
+    const secondOption = await screen.findByText(MOCK_OPTIONS[1].label)
     userEvent.click(secondOption)
-    expect(mockSelectionHandler).toHaveBeenCalledWith(MOCK_OPTIONS[1])
+    expect(mockSelectionHandler).toHaveBeenCalledWith(MOCK_OPTIONS[1].id)
   })
 })

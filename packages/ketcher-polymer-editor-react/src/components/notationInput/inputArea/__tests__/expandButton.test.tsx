@@ -32,16 +32,4 @@ describe('ExpandButton component', () => {
     userEvent.click(button)
     expect(mockExpandHandler).toHaveBeenCalledTimes(1)
   })
-
-  it('should flip svg arrow when expanded', () => {
-    const mockExpandHandler = jest.fn()
-    const mockExpanded = true
-
-    render(
-      <ExpandButton expanded={mockExpanded} expandHandler={mockExpandHandler} />
-    )
-    const button = screen.getByRole('button')
-
-    expect(button).toHaveAttribute('data-isflipped', 'true')
-  })
 })

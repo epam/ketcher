@@ -19,7 +19,7 @@ import { Select, FormControl, MenuItem, ListItemText } from '@mui/material'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 
-import { ChevronIcon, CheckMarkIcon } from './components'
+import { ChevronIcon, CheckMarkIcon } from './styledIcons'
 
 const DropDownSelect = styled(Select)`
   width: 150px;
@@ -68,10 +68,15 @@ const DropDownItem = styled(MenuItem)`
   }
 `
 
-type DropDownProps = {
-  options: Array<string>
-  currentSelection: string
-  selectionHandler: (value: string) => void
+type Option = {
+  id: number
+  label: string
+}
+
+export type DropDownProps = {
+  options: Array<Option>
+  currentSelection: Option['id']
+  selectionHandler: (value: Option['id']) => void
 }
 
 export const DropDown = ({
@@ -80,6 +85,14 @@ export const DropDown = ({
   selectionHandler
 }: DropDownProps) => {
   const [expanded, setExpanded] = useState(false)
+
+  const renderLabelById = (value: unknown) => {
+    const selectedOption = options.filter(
+      (option) => option.id === (value as typeof currentSelection)
+    )[0]
+
+    return <span>{selectedOption.label}</span>
+  }
 
   const handleSelection = (event) => {
     selectionHandler(event.target.value)
@@ -101,7 +114,7 @@ export const DropDown = ({
         open={expanded}
         onOpen={handleExpand}
         onClose={handleCollapse}
-        renderValue={(value) => <span>{value as string}</span>}
+        renderValue={renderLabelById}
         IconComponent={ChevronIcon}
         fullWidth
         MenuProps={{
@@ -110,10 +123,10 @@ export const DropDown = ({
           }
         }}
       >
-        {options.map((item) => (
-          <DropDownItem key={item} value={item}>
-            <ListItemText primary={item} />
-            <CheckMarkIcon isSelected={item === currentSelection} />
+        {options.map((item: Option) => (
+          <DropDownItem key={item.id} value={item.id}>
+            <ListItemText primary={item.label} />
+            <CheckMarkIcon isSelected={item.id === currentSelection} />
           </DropDownItem>
         ))}
       </DropDownSelect>

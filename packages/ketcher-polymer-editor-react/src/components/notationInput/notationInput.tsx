@@ -14,22 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState } from 'react'
 import styled from '@emotion/styled'
 
 import { DropDown as SelectNotation } from '../shared/ui/dropDown'
-import { NotationInput } from './components/notationInput'
+import { InputArea } from './inputArea'
 import { ActionButton as AddButton } from '../shared/ui/actionButton'
 
 const componentWidth = 670
 const height = 24
-
-const NOTATION_OPTIONS = [
-  'HELM Notation',
-  'RNA Sequence',
-  'Peptide Sequence',
-  'Black'
-]
 
 const AddToCanvasBar = styled('div')`
   display: flex;
@@ -40,21 +32,34 @@ const AddToCanvasBar = styled('div')`
   margin: 0 auto;
 `
 
-export const AddToCanvas = () => {
-  const [selection, setSelection] = useState<string>(NOTATION_OPTIONS[2])
-  const [inputValue, setInputValue] = useState<string>('')
+type AddToCanvasProps = {
+  notationOptions: Array<{ id: number; label: string }>
+  selectedNotationId: number
+  selectionHandler: (value: number) => void
+  inputValue: string
+  inputHandler: (value: string) => void
+  addButtonHandler: () => void
+}
 
+export const NotationInput = ({
+  notationOptions,
+  selectedNotationId,
+  selectionHandler,
+  inputValue,
+  inputHandler,
+  addButtonHandler
+}: AddToCanvasProps) => {
   return (
     <AddToCanvasBar>
       <SelectNotation
-        options={NOTATION_OPTIONS}
-        currentSelection={selection}
-        selectionHandler={setSelection}
+        options={notationOptions}
+        currentSelection={selectedNotationId}
+        selectionHandler={selectionHandler}
       />
-      <NotationInput inputValue={inputValue} inputHandler={setInputValue} />
+      <InputArea inputValue={inputValue} inputHandler={inputHandler} />
       <AddButton
         label="Add to Canvas"
-        clickHandler={() => null}
+        clickHandler={addButtonHandler}
         disabled={!inputValue}
       />
     </AddToCanvasBar>

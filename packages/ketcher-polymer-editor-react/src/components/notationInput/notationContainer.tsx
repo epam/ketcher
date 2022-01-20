@@ -20,14 +20,14 @@ import { NotationInput } from '.'
 
 // @TODO don't use this component when business logic is ready
 // This is a component for demonstration of NotationInput with mock data
-export const NotationContainer = () => {
-  const notationOptions = [
-    { id: 1, label: 'HELM Notation' },
-    { id: 2, label: 'RNA Sequence' },
-    { id: 3, label: 'Peptide Sequence' },
-    { id: 4, label: 'Black' }
-  ]
+const notationOptions = [
+  { id: 1, label: 'HELM Notation' },
+  { id: 2, label: 'RNA Sequence' },
+  { id: 3, label: 'Peptide Sequence' },
+  { id: 4, label: 'Black' }
+]
 
+export const NotationContainer = () => {
   const [notationInputValue, setNotationInput] = useState<string>('')
   const [activeNotation, setActiveNotation] = useState(notationOptions[0].id)
 

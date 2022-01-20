@@ -13,14 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-// import Icon from 'components/shared/ui/Icon/Icon'
-// import styled from '@emotion/styled'
 
-const Divider = () => {
-  // const StyledDivider = styled(Icon)`
-  //   margin-bottom: 8px;
-  // `
-  // return <StyledDivider name="divider" />
-}
-
-export { Divider }
+export * from './SubMenu'

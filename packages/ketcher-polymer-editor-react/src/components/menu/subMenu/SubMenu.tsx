@@ -13,21 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { MenuItemVariant } from 'components/menu/menu.types'
 import React, { useState } from 'react'
 import { ClickAwayListener } from '@mui/material'
-import { SingleItem } from 'components/menu/menuItem/singleItem'
 import styled from '@emotion/styled'
 import Collapse from '@mui/material/Collapse'
+import { Icon } from 'components/shared/ui/icon'
 
-interface MultiItemPropType {
-  options: MenuItemVariant[]
-  onClick: (name: MenuItemVariant) => any
-  activeTool: MenuItemVariant
-  vertical?: boolean
-}
-
-const MultiItemContainer = styled('div')`
+const SubMenuContainer = styled('div')`
   display: flex;
   position: relative;
 `
@@ -44,21 +36,21 @@ const OptionsFlexContainer = styled('div')<OptionsFlexContainerProps>`
   flex-direction: ${(props) => (props.isVertical ? 'column' : 'row')};
 `
 
-// const DropDownIcon = styled(Icon)`
-//   position: absolute;
-//   bottom: 0;
-//   right: 0;
-// `
+const DropDownIcon = styled(Icon)`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+`
 
 const OptionsItemsCollapse = styled(Collapse)`
   position: relative;
 `
 
-type MultiItemHeaderProps = {
+type SubMenuHeaderProps = {
   isActive: boolean
 } & React.HTMLAttributes<HTMLDivElement>
 
-const MultiItemHeader = styled('div')<MultiItemHeaderProps>`
+const SubMenuHeader = styled('div')<SubMenuHeaderProps>`
   display: flex;
   align-items: center;
   position: relative;
@@ -84,35 +76,31 @@ const MultiItemHeader = styled('div')<MultiItemHeaderProps>`
   }
 `
 
-const MultiItem = ({
-  options,
-  activeTool,
-  onClick,
-  vertical
-}: MultiItemPropType) => {
+const SubMenu = ({ children, activeItem, onClick, vertical = false }) => {
   const [open, setOpen] = useState(false)
 
-  // const handleDropDownClick = () => {
-  //   setOpen((prev) => !prev)
-  // }
+  const handleDropDownClick = () => {
+    setOpen((prev) => !prev)
+  }
 
-  const headerMultiTool = options.includes(activeTool) ? activeTool : options[0]
-  const isActiveTool = activeTool === headerMultiTool
+  const options = children.map((item) => item.props.children)
+  const header = options.includes(activeItem) ? activeItem : options[0]
+  const isActiveTool = activeItem === header
 
   return (
-    <MultiItemContainer>
-      <MultiItemHeader
+    <SubMenuContainer>
+      <SubMenuHeader
         isActive={isActiveTool}
-        onClick={() => onClick(headerMultiTool)}
+        onClick={() => onClick(header)}
         role="button"
       >
-        {/* <Icon name={headerMultiTool} /> */}
-        {/* <DropDownIcon */}
-        {/*  name="dropdown" */}
-        {/*  onClick={handleDropDownClick} */}
-        {/*  role="button" */}
-        {/* /> */}
-      </MultiItemHeader>
+        <Icon name={header} />
+        <DropDownIcon
+          name="dropdown"
+          // @ts-ignore
+          onClick={handleDropDownClick}
+        />
+      </SubMenuHeader>
       <OptionsItemsCollapse in={open} timeout="auto" unmountOnExit>
         <ClickAwayListener
           onClickAway={() => {
@@ -120,22 +108,12 @@ const MultiItem = ({
           }}
         >
           <OptionsFlexContainer isVertical={vertical}>
-            {options?.map((name) => (
-              <SingleItem
-                key={name}
-                name={name}
-                activeTool={activeTool}
-                onClick={() => {
-                  onClick(name)
-                  setOpen(false)
-                }}
-              />
-            ))}
+            {children}
           </OptionsFlexContainer>
         </ClickAwayListener>
       </OptionsItemsCollapse>
-    </MultiItemContainer>
+    </SubMenuContainer>
   )
 }
 
-export { MultiItem }
+export { SubMenu }

@@ -13,37 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { selectEditorActiveTool, selectTool } from 'state/common'
-import { MenuItemVariant } from 'components/menu/menu.types'
-import { SingleItem } from 'components/menu/menuItem/singleItem'
-import { MultiItem } from 'components/menu/menuItem/multiItem'
-import { useAppDispatch, useAppSelector } from 'hooks'
+import styled from '@emotion/styled'
+import { Icon } from 'components/shared/ui/icon'
 
-interface MenuItemPropType {
-  key: string
-  name: MenuItemVariant
-  options?: MenuItemVariant[]
-  vertical?: boolean
-}
+type MenuItemProp = {
+  isActive: boolean
+} & React.HTMLAttributes<HTMLDivElement>
 
-const MenuItem = ({ name, options, vertical }: MenuItemPropType) => {
-  const dispatch = useAppDispatch()
-  const activeTool = useAppSelector(selectEditorActiveTool)
+const MenuItemContainer = styled('div')<MenuItemProp>`
+  display: flex;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 2px;
+  background-color: ${(props) =>
+    props.isActive
+      ? props.theme.color.icon.activeMenu
+      : props.theme.color.background.primary};
 
-  return options ? (
-    <MultiItem
-      options={options}
-      onClick={(name) => dispatch(selectTool(name))}
-      activeTool={activeTool}
-      vertical={vertical}
-    />
-  ) : (
-    <SingleItem
-      key={name}
-      name={name}
-      onClick={() => dispatch(selectTool(name))}
-      activeTool={activeTool}
-    />
+  :hover {
+    transform: scale(1.2);
+  }
+
+  > svg path {
+    fill: ${(props) =>
+      props.isActive
+        ? props.theme.color.icon.clicked
+        : props.theme.color.icon.activeMenu};
+  }
+`
+
+const MenuItem = ({ children, activeItem, onClick }) => {
+  const isActiveTool = activeItem === children
+
+  return (
+    <MenuItemContainer
+      isActive={isActiveTool}
+      onClick={() => onClick(children)}
+    >
+      <Icon name={children} />
+    </MenuItemContainer>
   )
 }
 

@@ -17,7 +17,12 @@
 import { useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from 'hooks'
-import { selectEditorIsReady, fetchInitData } from 'state/common'
+import {
+  selectEditorIsReady,
+  fetchInitData,
+  selectEditorActiveTool,
+  selectTool
+} from 'state/common'
 import { Menu } from 'components/menu'
 import { MonomerLibrary } from 'components/monomerLibrary'
 import styled from '@emotion/styled'
@@ -30,6 +35,12 @@ export const fetchData = () =>
 export const App = (): JSX.Element => {
   const dispatch = useAppDispatch()
   const isReady = useAppSelector(selectEditorIsReady)
+  const activeTool = useAppSelector(selectEditorActiveTool)
+
+  const menuProps = {
+    activeItem: activeTool,
+    onClick: (tool) => dispatch(selectTool(tool))
+  }
 
   useEffect(() => {
     dispatch(fetchInitData())
@@ -81,7 +92,20 @@ export const App = (): JSX.Element => {
   return (
     <AppContainer>
       <MonomerLibrary />
-      <Menu />
+      <Menu>
+        <Menu.Group>
+          <Menu.Item {...menuProps}>select-lasso</Menu.Item>
+          <Menu.Item {...menuProps}>help</Menu.Item>
+          <Menu.Submenu vertical {...menuProps}>
+            <Menu.Item {...menuProps}>open</Menu.Item>
+            <Menu.Item {...menuProps}>setting</Menu.Item>
+            <Menu.Item {...menuProps}>undo</Menu.Item>
+          </Menu.Submenu>
+        </Menu.Group>
+        <Menu.Group>
+          <Menu.Item {...menuProps}>single-bond</Menu.Item>
+        </Menu.Group>
+      </Menu>
       <Logo>
         <span>Polymer Editor</span>
         <span>Ketcher</span>

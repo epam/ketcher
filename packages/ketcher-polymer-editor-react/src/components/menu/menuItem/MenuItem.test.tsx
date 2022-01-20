@@ -16,27 +16,27 @@
 import { render, screen } from 'test-utils'
 import { MenuItem } from 'components/menu/menuItem/MenuItem'
 import { MenuItemVariant } from 'components/menu/menu.types'
+import userEvent from '@testing-library/user-event'
 
+const mockClickHandler = jest.fn()
 const MOCK_LABEL: MenuItemVariant = 'select-lasso'
 
-const singleMockProps = {
-  key: MOCK_LABEL,
-  name: MOCK_LABEL
-}
-
-const multiMockProps = {
+const mockProps = {
   key: MOCK_LABEL,
   name: MOCK_LABEL,
-  options: [MOCK_LABEL, MOCK_LABEL]
+  onClick: mockClickHandler,
+  activeTool: MOCK_LABEL
 }
 
-describe('Test Menu Item component', () => {
-  it('should render single item element based on props are provided', () => {
-    render(<MenuItem {...singleMockProps} />)
-    expect(screen.getAllByRole('button').length).toEqual(1)
+describe('Test Single Item menu component', () => {
+  it('should render menu icon element when props are provided', () => {
+    render(<MenuItem {...mockProps} />)
+    expect(screen.getByRole('button')).toBeInTheDocument()
   })
-  it('should render multi item element based on props are provided', () => {
-    render(<MenuItem {...multiMockProps} />)
-    expect(screen.getAllByRole('button').length).toEqual(2)
+  it('should call provided callback when menu icon is clicked', () => {
+    render(<MenuItem {...mockProps} />)
+    const button = screen.getByRole('button')
+    userEvent.click(button)
+    expect(mockClickHandler).toHaveBeenCalledTimes(1)
   })
 })

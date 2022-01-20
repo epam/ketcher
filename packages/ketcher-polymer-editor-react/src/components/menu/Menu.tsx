@@ -13,22 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { MenuItem } from './menuItem'
 import styled from '@emotion/styled'
-import { Divider } from 'components/menu/menuDivider'
-import { MenuItemVariant } from 'components/menu/menu.types'
+import React from 'react'
+import { MenuItem } from 'components/menu/menuItem'
+import { SubMenu } from 'components/menu/subMenu'
 
-interface GroupItem {
-  name: MenuItemVariant
-  options?: MenuItemVariant[]
-  vertical?: boolean
-}
-
-interface GroupPropTypes {
-  items: GroupItem[]
-}
-
-const Group = ({ items }: GroupPropTypes) => {
+const Group = ({ children }) => {
   const GroupContainer = styled('div')`
     display: flex;
     flex-direction: column;
@@ -36,6 +26,8 @@ const Group = ({ items }: GroupPropTypes) => {
     align-items: center;
     background-color: ${(props) => props.theme.color.background.primary};
     border-radius: 2px;
+    width: 32px;
+    margin-bottom: 8px;
 
     > * {
       margin-bottom: 8px;
@@ -45,66 +37,34 @@ const Group = ({ items }: GroupPropTypes) => {
       margin-bottom: 0;
     }
   `
-  return (
-    <GroupContainer>
-      {items.map((item: GroupItem) => {
-        return (
-          <MenuItem
-            key={item.name}
-            name={item.name}
-            options={item.options}
-            vertical={item.vertical}
-          />
-        )
-      })}
-    </GroupContainer>
-  )
+
+  return <GroupContainer>{children}</GroupContainer>
 }
 
-const MenuComponent = styled('div')`
-  width: 32px;
-  > * {
-    margin-bottom: 8px;
-  }
-`
+// const Divider = () => {
+//   const Divider = styled('span')`
+//     height: 8px;
+//     width: 32px;
+//     border-top: 1px solid;
+//     border-color: ${(props) => props.theme.color.divider};
+//   `
+//   return <Divider/>
+// }
 
-const Menu = () => {
-  return (
-    <MenuComponent>
-      <Group
-        items={[
-          {
-            name: 'open'
-          }
-        ]}
-      />
-      <Divider />
-      <Group items={[{ name: 'undo' }]} />
-      <Group
-        items={[
-          { name: 'erase' },
-          {
-            name: 'select',
-            options: ['select-lasso', 'select-rectangle', 'select-fragment'],
-            vertical: true
-          },
-          { name: 'shapes', options: ['rectangle', 'ellipse'] },
-          { name: 'redo' }
-        ]}
-      />
-      <Group
-        items={[
-          {
-            name: 'bonds',
-            options: ['single-bond', 'double-bond', 'triple-bond']
-          }
-        ]}
-      />
-      <Group items={[{ name: 'bracket' }]} />
-      <Divider />
-      <Group items={[{ name: 'settings' }, { name: 'help' }]} />
-    </MenuComponent>
-  )
+const Menu = ({ children }) => {
+  const subComponentList = Object.keys(Menu)
+
+  const subComponents = subComponentList.map((key) => {
+    return React.Children.map(children, (child) =>
+      child.type.name === key ? child : null
+    )
+  })
+
+  return <>{subComponents.map((component) => component)} </>
 }
+
+Menu.Group = Group
+Menu.Item = MenuItem
+Menu.Submenu = SubMenu
 
 export { Menu }

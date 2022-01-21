@@ -27,7 +27,7 @@ const MenuContainer = () => {
   }
   return (
     <Menu>
-      <Menu.Group>
+      <Menu.Group divider>
         <Menu.Item name="open" {...menuProps} />
       </Menu.Group>
       <Menu.Group>
@@ -53,7 +53,7 @@ const MenuContainer = () => {
       <Menu.Group>
         <Menu.Item name="single-bond" {...menuProps} />
       </Menu.Group>
-      <Menu.Group>
+      <Menu.Group divider>
         <Menu.Item name="bracket" {...menuProps} />
       </Menu.Group>
       <Menu.Group>

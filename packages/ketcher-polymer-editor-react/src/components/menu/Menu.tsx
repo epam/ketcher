@@ -18,7 +18,7 @@ import React from 'react'
 import { MenuItem } from 'components/menu/menuItem'
 import { SubMenu } from 'components/menu/subMenu'
 
-const Group = ({ children }) => {
+const Group = ({ children, divider = false }) => {
   const GroupContainer = styled('div')`
     display: flex;
     flex-direction: column;
@@ -38,7 +38,23 @@ const Group = ({ children }) => {
     }
   `
 
-  return <GroupContainer>{children}</GroupContainer>
+  const Divider = () => {
+    const Divider = styled('span')`
+      display: block;
+      height: 8px;
+      width: 32px;
+      border-top: 1px solid;
+      border-color: ${(props) => props.theme.color.divider};
+    `
+    return <Divider />
+  }
+
+  return (
+    <>
+      <GroupContainer>{children}</GroupContainer>
+      {divider && <Divider />}
+    </>
+  )
 }
 
 const Menu = ({ children }) => {

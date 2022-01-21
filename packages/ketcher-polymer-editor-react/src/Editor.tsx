@@ -42,8 +42,8 @@ function Editor(props: EditorProps) {
     height: '100%',
     width: '100%',
     position: 'relative',
-    minWidth: 1000,
-    minHeight: 400
+    minWidth: 1024,
+    minHeight: 768
   })
 
   return (

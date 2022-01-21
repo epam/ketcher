@@ -90,7 +90,7 @@ function CustomTabs(props): ReactElement {
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
     overflowY: 'auto',
-    width: '260px',
+    width: '100%',
 
     '& > *': {
       margin: '25px 8px'

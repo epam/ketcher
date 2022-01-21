@@ -51,6 +51,9 @@ export const App = (): JSX.Element => {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    position: 'absolute',
+    bottom: '15px',
+    left: '13px',
 
     '> span:first-of-type, > span:last-of-type': {
       fontWeight: theme.font.weight.light,
@@ -72,14 +75,14 @@ export const App = (): JSX.Element => {
   }))
 
   const TopElementExample = styled.div(({ theme }) => ({
-    height: theme.size.addToCanvas.height,
-    width: '600px',
+    height: '100%',
+    width: '100%',
     backgroundColor: theme.color.button.primary.clicked
   }))
 
   const LeftElementExample = styled.div(({ theme }) => ({
-    height: '400px',
-    width: theme.size.menu.width,
+    height: '100%',
+    width: '100%',
     backgroundColor: theme.color.button.primary.clicked
   }))
 
@@ -90,7 +93,7 @@ export const App = (): JSX.Element => {
   }))
 
   const BottomElementExample = styled.div(({ theme }) => ({
-    height: theme.size.properties.height,
+    height: '100%',
     width: '100%',
     backgroundColor: theme.color.button.primary.clicked
   }))
@@ -115,22 +118,20 @@ export const App = (): JSX.Element => {
             <LeftElementExample />
           </Layout.Left>
 
-          <Layout.Center>
+          <Layout.Main>
             <CenterElementExample />
-          </Layout.Center>
+          </Layout.Main>
 
           <Layout.Bottom>
             <BottomElementExample />
           </Layout.Bottom>
-
-          <Layout.Logo>
-            <Logo>
-              <span>Polymer Editor</span>
-              <span>Ketcher</span>
-              <span>EPAM</span>
-            </Logo>
-          </Layout.Logo>
         </Layout>
+
+        <Logo>
+          <span>Polymer Editor</span>
+          <span>Ketcher</span>
+          <span>EPAM</span>
+        </Logo>
       </AppContainer>
     </>
   )

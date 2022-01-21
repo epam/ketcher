@@ -17,88 +17,132 @@
 import React from 'react'
 import styled from '@emotion/styled'
 
-export const Layout = ({ children }) => {
-  const subcomponentList = Object.keys(Layout)
-  const subcomponents = subcomponentList.map((key) => {
-    return React.Children.map(children, (child) =>
-      child.type.name === key ? child : null
-    )
+interface LayoutProps {
+  children: JSX.Element | Array<JSX.Element>
+}
+
+interface ContainerProps {
+  children: JSX.Element | Array<JSX.Element> | null
+  margin?: string
+}
+
+const Container = ({ children, margin = '6px' }: ContainerProps) => {
+  const StyledContainer = styled.div({
+    margin: margin,
+    width: '100%',
+    height: '100%'
   })
 
-  return <div>{subcomponents.map((subcomponent) => subcomponent)}</div>
+  return <StyledContainer>{children}</StyledContainer>
+}
+
+export const Layout = ({ children }: LayoutProps) => {
+  const subcomponents = {
+    Left: null,
+    Main: null,
+    Right: null,
+    Top: null,
+    Bottom: null
+  }
+  const subcomponentList = Object.keys(Layout)
+  subcomponentList.forEach((key) => {
+    React.Children.forEach(children, (child) => {
+      if (child.type.name === key) {
+        subcomponents[key] = child
+      }
+    })
+  })
+
+  const LayoutContainer = styled.div({
+    display: 'flex',
+    justifyContent: 'space-between'
+  })
+
+  const CenterContainer = styled.div({
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    height: 'calc(100vh - 70px)'
+  })
+
+  return (
+    <LayoutContainer>
+      {subcomponents.Left}
+      <Container margin="0 6px">
+        <CenterContainer>
+          {subcomponents.Top}
+          <Container margin={subcomponents.Bottom ? '6px 0' : '6px 0 0 0'}>
+            {subcomponents.Main}
+          </Container>
+          {subcomponents.Bottom}
+        </CenterContainer>
+      </Container>
+      {subcomponents.Right}
+    </LayoutContainer>
+  )
 }
 
 const Left = (props) => {
-  const LeftContainer = styled.div(({ theme }) => ({
-    position: 'absolute',
-    left: theme.padding.leftRight,
-    top: theme.padding.topBottom
-  }))
+  const LeftContainer = styled.div({
+    width: '32px',
+    minWidth: '32px',
+    height: 'calc(100vh - 70px)'
+  })
 
-  return <LeftContainer>{props.children}</LeftContainer>
+  return (
+    <LeftContainer data-testid="left-container">{props.children}</LeftContainer>
+  )
 }
 Layout.Left = Left
 
-const Right = (props) => {
-  const RightContainer = styled.div(({ theme }) => ({
-    position: 'absolute',
-    right: theme.padding.leftRight,
-    top: theme.padding.topBottom
-  }))
-
-  return <RightContainer>{props.children}</RightContainer>
-}
-Layout.Right = Right
-
 const Top = (props) => {
-  const TopContainer = styled.div(({ theme }) => ({
-    position: 'absolute',
-    top: theme.padding.topBottom,
-    left: '50%',
-    transform: 'translateX(-50%)'
-  }))
+  const TopContainer = styled.div({
+    height: '24px',
+    width: '600px',
+    alignSelf: 'flex-end',
+    marginRight: '10%'
+  })
 
-  return <TopContainer>{props.children}</TopContainer>
+  return (
+    <TopContainer data-testid="top-container">{props.children}</TopContainer>
+  )
 }
 Layout.Top = Top
 
-const Bottom = (props) => {
-  const BottomContainer = styled.div(({ theme }) => ({
-    position: 'absolute',
-    left: theme.padding.leftRight,
-    right: `calc(${theme.padding.leftRight} + ${theme.size.monomerLibrary.width} + ${theme.padding.canvas})`,
-    bottom: theme.padding.topBottom
-  }))
-
-  return <BottomContainer>{props.children}</BottomContainer>
-}
-Layout.Bottom = Bottom
-
-const Center = (props) => {
-  const CenterContainer = styled.div(({ theme }) => ({
-    position: 'absolute',
-    left: `calc(${theme.padding.leftRight} + ${theme.size.menu.width} + ${theme.padding.canvas})`,
-    right: `calc(${theme.padding.leftRight} + ${theme.size.monomerLibrary.width} + ${theme.padding.canvas})`,
-    top: `calc(${theme.padding.topBottom} + ${theme.size.addToCanvas.height} + ${theme.padding.canvas})`,
-    bottom: `calc(${theme.padding.topBottom} + ${theme.size.properties.height} + ${theme.padding.canvas})`
-  }))
+const Right = (props) => {
+  const RightContainer = styled.div({
+    width: '253px',
+    height: `calc(100vh - 15px*2)`
+  })
 
   return (
-    <CenterContainer>
+    <RightContainer data-testid="right-container">
       {props.children}
-      <Bottom />
-    </CenterContainer>
+    </RightContainer>
   )
 }
-Layout.Center = Center
+Layout.Right = Right
 
-const Logo = (props) => {
-  const LogoContainer = styled.div(({ theme }) => ({
-    position: 'absolute',
-    left: theme.padding.leftRight,
-    bottom: `calc(${theme.padding.topBottom} + ${theme.size.properties.height} + ${theme.padding.canvas})`
-  }))
+const Main = (props) => {
+  const MainContainer = styled.div({
+    height: '100%'
+  })
 
-  return <LogoContainer>{props.children}</LogoContainer>
+  return (
+    <MainContainer data-testid="main-container">{props.children}</MainContainer>
+  )
 }
-Layout.Logo = Logo
+Layout.Main = Main
+
+const Bottom = (props) => {
+  const BottomContainer = styled.div({
+    height: '100px'
+  })
+
+  return (
+    <BottomContainer data-testid="bottom-container">
+      {props.children}
+    </BottomContainer>
+  )
+}
+Layout.Bottom = Bottom

@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 import { render } from 'test-utils'
-import { Menu } from 'components/menu'
+import { MenuContainer } from 'components/menu/MenuContainer'
 
 describe('Menu component', () => {
   it('should render menu component in a container', () => {
-    expect(render(<Menu />)).toMatchSnapshot()
+    expect(render(<MenuContainer />)).toMatchSnapshot()
   })
 })

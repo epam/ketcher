@@ -6,244 +6,322 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-9ksv1k"
+        class="css-e2qc4g"
       >
         <div
-          class="css-1r7jtto"
+          class="css-8d2ymx"
+          role="button"
         >
-          <div
-            class="css-8d2ymx"
-            role="button"
-          >
-            <icon-mock />
-          </div>
+          <icon-open.svg
+            fill="#525252"
+            role="img"
+          />
         </div>
-        <icon-mock
-          classname="css-80khr3"
-        />
+      </div>
+      <div
+        class="css-e2qc4g"
+      >
         <div
-          class="css-1r7jtto"
+          class="css-8d2ymx"
+          role="button"
         >
-          <div
-            class="css-8d2ymx"
-            role="button"
-          >
-            <icon-mock />
-          </div>
+          <icon-undo.svg
+            fill="#525252"
+            role="img"
+          />
         </div>
+      </div>
+      <div
+        class="css-e2qc4g"
+      >
         <div
-          class="css-1r7jtto"
+          class="css-8d2ymx"
+          role="button"
         >
-          <div
-            class="css-8d2ymx"
-            role="button"
-          >
-            <icon-mock />
-          </div>
-          <div
-            class="css-12wx08y"
-          >
-            <div
-              class="css-i8jcl2"
-              role="button"
-            >
-              <icon-mock />
-              <icon-mock
-                classname="css-1eldwbg"
-                role="button"
-              />
-            </div>
-          </div>
-          <div
-            class="css-12wx08y"
-          >
-            <div
-              class="css-i8jcl2"
-              role="button"
-            >
-              <icon-mock />
-              <icon-mock
-                classname="css-1eldwbg"
-                role="button"
-              />
-            </div>
-          </div>
-          <div
-            class="css-8d2ymx"
-            role="button"
-          >
-            <icon-mock />
-          </div>
+          <icon-erase.svg
+            fill="#525252"
+            role="img"
+          />
         </div>
         <div
-          class="css-1r7jtto"
+          class="css-12wx08y"
         >
           <div
-            class="css-12wx08y"
+            class="css-i8jcl2"
+            role="button"
           >
+            <icon-select-lasso.svg
+              fill="#525252"
+              role="img"
+            />
             <div
-              class="css-i8jcl2"
+              class="css-1z06dof"
+              data-testid="submenu-btn"
               role="button"
             >
-              <icon-mock />
-              <icon-mock
-                classname="css-1eldwbg"
-                role="button"
+              <icon-dropdown.svg
+                fill="#525252"
+                role="img"
               />
             </div>
           </div>
         </div>
         <div
-          class="css-1r7jtto"
+          class="css-12wx08y"
         >
           <div
-            class="css-8d2ymx"
+            class="css-i8jcl2"
             role="button"
           >
-            <icon-mock />
+            <icon-rectangle.svg
+              fill="#525252"
+              role="img"
+            />
+            <div
+              class="css-1z06dof"
+              data-testid="submenu-btn"
+              role="button"
+            >
+              <icon-dropdown.svg
+                fill="#525252"
+                role="img"
+              />
+            </div>
           </div>
         </div>
-        <icon-mock
-          classname="css-80khr3"
-        />
         <div
-          class="css-1r7jtto"
+          class="css-12wx08y"
         >
           <div
-            class="css-8d2ymx"
+            class="css-i8jcl2"
             role="button"
           >
-            <icon-mock />
-          </div>
-          <div
-            class="css-8d2ymx"
-            role="button"
-          >
-            <icon-mock />
+            <icon-rotate.svg
+              fill="#525252"
+              role="img"
+            />
+            <div
+              class="css-1z06dof"
+              data-testid="submenu-btn"
+              role="button"
+            >
+              <icon-dropdown.svg
+                fill="#525252"
+                role="img"
+              />
+            </div>
           </div>
         </div>
       </div>
+      <div
+        class="css-e2qc4g"
+      >
+        <div
+          class="css-8d2ymx"
+          role="button"
+        >
+          <icon-single-bond.svg
+            fill="#525252"
+            role="img"
+          />
+        </div>
+      </div>
+      <div
+        class="css-e2qc4g"
+      >
+        <div
+          class="css-8d2ymx"
+          role="button"
+        >
+          <icon-bracket.svg
+            fill="#525252"
+            role="img"
+          />
+        </div>
+      </div>
+      <div
+        class="css-e2qc4g"
+      >
+        <div
+          class="css-8d2ymx"
+          role="button"
+        >
+          <icon-settings.svg
+            fill="#525252"
+            role="img"
+          />
+        </div>
+        <div
+          class="css-8d2ymx"
+          role="button"
+        >
+          <icon-help.svg
+            fill="#525252"
+            role="img"
+          />
+        </div>
+      </div>
+       
     </div>
   </body>,
   "container": <div>
     <div
-      class="css-9ksv1k"
+      class="css-e2qc4g"
     >
       <div
-        class="css-1r7jtto"
+        class="css-8d2ymx"
+        role="button"
       >
-        <div
-          class="css-8d2ymx"
-          role="button"
-        >
-          <icon-mock />
-        </div>
+        <icon-open.svg
+          fill="#525252"
+          role="img"
+        />
       </div>
-      <icon-mock
-        classname="css-80khr3"
-      />
+    </div>
+    <div
+      class="css-e2qc4g"
+    >
       <div
-        class="css-1r7jtto"
+        class="css-8d2ymx"
+        role="button"
       >
-        <div
-          class="css-8d2ymx"
-          role="button"
-        >
-          <icon-mock />
-        </div>
+        <icon-undo.svg
+          fill="#525252"
+          role="img"
+        />
       </div>
+    </div>
+    <div
+      class="css-e2qc4g"
+    >
       <div
-        class="css-1r7jtto"
+        class="css-8d2ymx"
+        role="button"
       >
-        <div
-          class="css-8d2ymx"
-          role="button"
-        >
-          <icon-mock />
-        </div>
-        <div
-          class="css-12wx08y"
-        >
-          <div
-            class="css-i8jcl2"
-            role="button"
-          >
-            <icon-mock />
-            <icon-mock
-              classname="css-1eldwbg"
-              role="button"
-            />
-          </div>
-        </div>
-        <div
-          class="css-12wx08y"
-        >
-          <div
-            class="css-i8jcl2"
-            role="button"
-          >
-            <icon-mock />
-            <icon-mock
-              classname="css-1eldwbg"
-              role="button"
-            />
-          </div>
-        </div>
-        <div
-          class="css-8d2ymx"
-          role="button"
-        >
-          <icon-mock />
-        </div>
+        <icon-erase.svg
+          fill="#525252"
+          role="img"
+        />
       </div>
       <div
-        class="css-1r7jtto"
+        class="css-12wx08y"
       >
         <div
-          class="css-12wx08y"
+          class="css-i8jcl2"
+          role="button"
         >
+          <icon-select-lasso.svg
+            fill="#525252"
+            role="img"
+          />
           <div
-            class="css-i8jcl2"
+            class="css-1z06dof"
+            data-testid="submenu-btn"
             role="button"
           >
-            <icon-mock />
-            <icon-mock
-              classname="css-1eldwbg"
-              role="button"
+            <icon-dropdown.svg
+              fill="#525252"
+              role="img"
             />
           </div>
         </div>
       </div>
       <div
-        class="css-1r7jtto"
+        class="css-12wx08y"
       >
         <div
-          class="css-8d2ymx"
+          class="css-i8jcl2"
           role="button"
         >
-          <icon-mock />
+          <icon-rectangle.svg
+            fill="#525252"
+            role="img"
+          />
+          <div
+            class="css-1z06dof"
+            data-testid="submenu-btn"
+            role="button"
+          >
+            <icon-dropdown.svg
+              fill="#525252"
+              role="img"
+            />
+          </div>
         </div>
       </div>
-      <icon-mock
-        classname="css-80khr3"
-      />
       <div
-        class="css-1r7jtto"
+        class="css-12wx08y"
       >
         <div
-          class="css-8d2ymx"
+          class="css-i8jcl2"
           role="button"
         >
-          <icon-mock />
-        </div>
-        <div
-          class="css-8d2ymx"
-          role="button"
-        >
-          <icon-mock />
+          <icon-rotate.svg
+            fill="#525252"
+            role="img"
+          />
+          <div
+            class="css-1z06dof"
+            data-testid="submenu-btn"
+            role="button"
+          >
+            <icon-dropdown.svg
+              fill="#525252"
+              role="img"
+            />
+          </div>
         </div>
       </div>
     </div>
+    <div
+      class="css-e2qc4g"
+    >
+      <div
+        class="css-8d2ymx"
+        role="button"
+      >
+        <icon-single-bond.svg
+          fill="#525252"
+          role="img"
+        />
+      </div>
+    </div>
+    <div
+      class="css-e2qc4g"
+    >
+      <div
+        class="css-8d2ymx"
+        role="button"
+      >
+        <icon-bracket.svg
+          fill="#525252"
+          role="img"
+        />
+      </div>
+    </div>
+    <div
+      class="css-e2qc4g"
+    >
+      <div
+        class="css-8d2ymx"
+        role="button"
+      >
+        <icon-settings.svg
+          fill="#525252"
+          role="img"
+        />
+      </div>
+      <div
+        class="css-8d2ymx"
+        role="button"
+      >
+        <icon-help.svg
+          fill="#525252"
+          role="img"
+        />
+      </div>
+    </div>
+     
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],

@@ -41,16 +41,6 @@ const Group = ({ children }) => {
   return <GroupContainer>{children}</GroupContainer>
 }
 
-// const Divider = () => {
-//   const Divider = styled('span')`
-//     height: 8px;
-//     width: 32px;
-//     border-top: 1px solid;
-//     border-color: ${(props) => props.theme.color.divider};
-//   `
-//   return <Divider/>
-// }
-
 const Menu = ({ children }) => {
   const subComponentList = Object.keys(Menu)
 

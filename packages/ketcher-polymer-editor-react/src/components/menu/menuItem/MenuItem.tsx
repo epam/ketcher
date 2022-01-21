@@ -15,12 +15,13 @@
  ***************************************************************************/
 import styled from '@emotion/styled'
 import { Icon } from 'components/shared/ui/icon'
+import { MenuItemVariant } from 'components/menu/menu.types'
 
-type MenuItemProp = {
+type MenuItemContainerProp = {
   isActive: boolean
 } & React.HTMLAttributes<HTMLDivElement>
 
-const MenuItemContainer = styled('div')<MenuItemProp>`
+const MenuItemContainer = styled('div')<MenuItemContainerProp>`
   display: flex;
   align-items: center;
   width: 32px;
@@ -45,15 +46,22 @@ const MenuItemContainer = styled('div')<MenuItemProp>`
   }
 `
 
-const MenuItem = ({ children, activeItem, onClick }) => {
-  const isActiveTool = activeItem === children
+type MenuItemProp = {
+  name: MenuItemVariant
+  activeItem: MenuItemVariant
+  onClick: (name: MenuItemVariant) => void
+}
+
+const MenuItem = ({ name, activeItem, onClick }: MenuItemProp) => {
+  const isActiveTool = activeItem === name
 
   return (
     <MenuItemContainer
       isActive={isActiveTool}
-      onClick={() => onClick(children)}
+      onClick={() => onClick(name)}
+      role="button"
     >
-      <Icon name={children} />
+      <Icon name={name} />
     </MenuItemContainer>
   )
 }

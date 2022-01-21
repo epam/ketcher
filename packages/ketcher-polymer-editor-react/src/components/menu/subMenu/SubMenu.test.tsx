@@ -13,29 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen } from 'test-utils'
-import { SubMenu } from 'components/menu/subMenu/SubMenu'
+import { render } from 'test-utils'
+import { screen } from '@testing-library/react'
 import { MenuItemVariant } from 'components/menu/menu.types'
+import { Menu } from 'components/menu'
 import userEvent from '@testing-library/user-event'
 
 const mockClickHandler = jest.fn()
-const MOCK_LABEL: MenuItemVariant = 'select-lasso'
-
+const MOCK_NAME: MenuItemVariant = 'select-lasso'
 const mockProps = {
-  options: [MOCK_LABEL, MOCK_LABEL, MOCK_LABEL],
   onClick: mockClickHandler,
-  activeTool: MOCK_LABEL
+  activeItem: MOCK_NAME
 }
 
-describe('Test Menu Multi Item component', () => {
-  it('should render menu icon element when props are provided', () => {
-    render(<SubMenu {...mockProps} />)
-    expect(screen.getAllByRole('button')).toBeTruthy()
+const mockMenuItems = [
+  <Menu.Item name="help" {...mockProps} />,
+  <Menu.Item name="settings" {...mockProps} />,
+  <Menu.Item name="undo" {...mockProps} />
+]
+
+const openSubMenu = () => {
+  const presetDropDownBtn = screen.getByTestId('submenu-btn')
+  userEvent.click(presetDropDownBtn)
+}
+
+const mockSubMenu = () => {
+  return (
+    <Menu.Submenu vertical {...mockProps}>
+      {...mockMenuItems}
+    </Menu.Submenu>
+  )
+}
+
+describe('Test SubMenu component', () => {
+  it('should be rendered without crashing', () => {
+    const { asFragment } = render(mockSubMenu())
+    expect(asFragment).toMatchSnapshot()
   })
-  it('should call provided callback when menu icon is clicked', () => {
-    render(<SubMenu {...mockProps} />)
+  it('should show menu dropdown on click', () => {
+    render(mockSubMenu())
+    openSubMenu()
+    expect(screen.getByTestId('submenu-options')).toBeDefined()
+  })
+  it('should call provided callback when header icon is clicked', () => {
+    render(mockSubMenu())
     const button = screen.getAllByRole('button')[0]
     userEvent.click(button)
-    expect(mockClickHandler).toHaveBeenCalledTimes(1)
+    expect(mockClickHandler).toHaveBeenCalled()
   })
 })

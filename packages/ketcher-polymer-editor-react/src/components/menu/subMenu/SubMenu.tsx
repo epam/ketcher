@@ -18,6 +18,7 @@ import { ClickAwayListener } from '@mui/material'
 import styled from '@emotion/styled'
 import Collapse from '@mui/material/Collapse'
 import { Icon } from 'components/shared/ui/icon'
+import { MenuItemVariant } from 'components/menu/menu.types'
 
 const SubMenuContainer = styled('div')`
   display: flex;
@@ -36,10 +37,22 @@ const OptionsFlexContainer = styled('div')<OptionsFlexContainerProps>`
   flex-direction: ${(props) => (props.isVertical ? 'column' : 'row')};
 `
 
-const DropDownIcon = styled(Icon)`
+type DropDownProps = {
+  isActive: boolean
+} & React.HTMLAttributes<HTMLDivElement>
+
+const DropDown = styled('div')<DropDownProps>`
+  display: flex;
   position: absolute;
   bottom: 0;
   right: 0;
+
+  > svg path {
+    fill: ${(props) =>
+      props.isActive
+        ? props.theme.color.icon.clicked
+        : props.theme.color.icon.activeMenu};
+  }
 `
 
 const OptionsItemsCollapse = styled(Collapse)`
@@ -76,14 +89,26 @@ const SubMenuHeader = styled('div')<SubMenuHeaderProps>`
   }
 `
 
-const SubMenu = ({ children, activeItem, onClick, vertical = false }) => {
+type SubMenuProps = {
+  children: JSX.Element[]
+  activeItem: MenuItemVariant
+  onClick: (name: MenuItemVariant) => void
+  vertical?: boolean
+}
+
+const SubMenu = ({
+  children,
+  activeItem,
+  onClick,
+  vertical = false
+}: SubMenuProps) => {
   const [open, setOpen] = useState(false)
 
   const handleDropDownClick = () => {
     setOpen((prev) => !prev)
   }
 
-  const options = children.map((item) => item.props.children)
+  const options = children.map((item) => item.props.name)
   const header = options.includes(activeItem) ? activeItem : options[0]
   const isActiveTool = activeItem === header
 
@@ -95,11 +120,14 @@ const SubMenu = ({ children, activeItem, onClick, vertical = false }) => {
         role="button"
       >
         <Icon name={header} />
-        <DropDownIcon
-          name="dropdown"
-          // @ts-ignore
+        <DropDown
+          isActive={isActiveTool}
           onClick={handleDropDownClick}
-        />
+          data-testid="submenu-btn"
+          role="button"
+        >
+          <Icon name="dropdown" />
+        </DropDown>
       </SubMenuHeader>
       <OptionsItemsCollapse in={open} timeout="auto" unmountOnExit>
         <ClickAwayListener
@@ -107,7 +135,10 @@ const SubMenu = ({ children, activeItem, onClick, vertical = false }) => {
             open && setOpen(false)
           }}
         >
-          <OptionsFlexContainer isVertical={vertical}>
+          <OptionsFlexContainer
+            isVertical={vertical}
+            data-testid="submenu-options"
+          >
             {children}
           </OptionsFlexContainer>
         </ClickAwayListener>

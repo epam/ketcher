@@ -19,16 +19,19 @@ import { MenuItemVariant } from 'components/menu/menu.types'
 import userEvent from '@testing-library/user-event'
 
 const mockClickHandler = jest.fn()
-const MOCK_LABEL: MenuItemVariant = 'select-lasso'
+const MOCK_NAME: MenuItemVariant = 'select-lasso'
 
 const mockProps = {
-  key: MOCK_LABEL,
-  name: MOCK_LABEL,
+  name: MOCK_NAME,
   onClick: mockClickHandler,
-  activeTool: MOCK_LABEL
+  activeItem: MOCK_NAME
 }
 
-describe('Test Single Item menu component', () => {
+describe('Test MenuItem component', () => {
+  it('should be rendered without crashing', () => {
+    const { asFragment } = render(<MenuItem {...mockProps} />)
+    expect(asFragment).toMatchSnapshot()
+  })
   it('should render menu icon element when props are provided', () => {
     render(<MenuItem {...mockProps} />)
     expect(screen.getByRole('button')).toBeInTheDocument()

@@ -56,8 +56,7 @@ const MonomerLibrary = () => {
       component: Switcher,
       props: {
         selectedMonomers: ['R', 'A', 'P'],
-        active: 0, // replace with parent state when integrate
-        handleSetActive: (index) => console.log(index) // replace with parent callback when integrate
+        setActiveMonomerType: (type: string) => console.log(type) // replace with actual callback when integrate into parent component
       }
     },
     {

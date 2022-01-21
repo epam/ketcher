@@ -1,31 +1,56 @@
 import { Button } from '@mui/material'
 import styled from '@emotion/styled'
-// import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { Icon } from 'components/shared/ui/icon'
 import { IconNameType } from 'components/shared/ui/icon/icon'
 
 type SwitcherProps = {
   selectedMonomers: [string, string, string]
-  active: number
-  handleSetActive: (index: number) => void
+  setActiveMonomerType: (type: string) => void
 }
 
-const RAPButton = styled(Button)<{ 'data-isactive': boolean }>((props) => ({
-  padding: '3px 12px',
-  backgroundColor: props['data-isactive']
-    ? props.theme.color.button.primary.active
-    : props.theme.color.background.canvas,
-  borderRadius: '8px',
-  lineHeight: '18px',
-  minWidth: '33px',
-  color: props['data-isactive']
-    ? props.theme.color.text.light
-    : props.theme.color.text.dark,
-  ':hover': {
-    backgroundColor: props.theme.color.button.primary.hover,
-    color: props.theme.color.text.light
-  }
-}))
+type RAPButtonProps = {
+  isActive: boolean
+  callback: () => void
+  children: ReactNode
+}
+
+enum Monomers {
+  Nucleotide,
+  Nucleobase,
+  Sugar,
+  Phosphate
+}
+
+const svgNames: IconNameType[] = [
+  'rap-left-link',
+  'rap-middle-link',
+  'rap-right-link'
+]
+
+const RAPButton = ({ isActive, children, callback }: RAPButtonProps) => {
+  return (
+    <Button
+      css={({ color }) => ({
+        padding: '3px 12px',
+        backgroundColor: isActive
+          ? color.button.primary.active
+          : color.background.canvas,
+        borderRadius: '8px',
+        lineHeight: '18px',
+        minWidth: '33px',
+        color: isActive ? color.text.light : color.text.dark,
+        ':hover': {
+          backgroundColor: color.button.primary.hover,
+          color: color.text.light
+        }
+      })}
+      onClick={callback}
+    >
+      {children}
+    </Button>
+  )
+}
 
 const SwitcherContainer = styled('div')`
   width: 100%;
@@ -33,60 +58,62 @@ const SwitcherContainer = styled('div')`
   flex-direction: column;
   align-items: center;
 `
-const Container = styled('div')<{ gap: string }>`
+const SvgContainer = styled('div')`
   display: flex;
-  gap: ${({ gap }) => gap};
+  gap: 11px;
 `
-const svgNames: IconNameType[] = [
-  'rap-left-link',
-  'rap-middle-link',
-  'rap-right-link'
-]
-const LinkIcon = styled(Icon)<{ 'data-isactive': boolean }>((props) => ({
+const ButtonContainer = styled('div')`
+  display: flex;
+  gap: 4px;
+`
+const LinkIcon = styled(Icon)<{ isActive: boolean }>(({ isActive, theme }) => ({
   fill: 'none',
   '& path': {
-    strokeDasharray: props['data-isactive'] ? 'none' : '4,4',
-    stroke: props['data-isactive']
-      ? props.theme.color.button.primary.active
-      : '#D1D5E3'
+    strokeDasharray: isActive ? 'none' : '4,4',
+    stroke: isActive ? theme.color.button.primary.active : '#D1D5E3'
   }
 }))
 
 export const Switcher = ({
   selectedMonomers,
-  active,
-  handleSetActive
+  setActiveMonomerType
 }: SwitcherProps) => {
-  const nucleotide =
-    selectedMonomers[0] + '(' + selectedMonomers[1] + ')' + selectedMonomers[2]
+  const [activeIndex, setActiveIndex] = useState(0)
+  const handleClick = (type: string, index: number) => {
+    setActiveMonomerType(type)
+    setActiveIndex(index)
+  }
+  const [nucleobase, sugar, phosphate] = selectedMonomers
+  const nucleotide = `${nucleobase}(${sugar})${phosphate}`
+
   return (
     <SwitcherContainer>
       <RAPButton
-        onClick={() => handleSetActive(0)}
-        data-isactive={active === 0}
+        callback={() => handleClick(Monomers[0], 0)}
+        isActive={activeIndex === 0}
       >
         {nucleotide}
       </RAPButton>
-      <Container gap="11px">
+      <SvgContainer>
         {svgNames.map((name, index) => (
           <LinkIcon
             key={name}
             name={name}
-            data-isactive={active === index + 1}
+            isActive={activeIndex === index + 1}
           />
         ))}
-      </Container>
-      <Container gap="4px">
+      </SvgContainer>
+      <ButtonContainer>
         {selectedMonomers.map((button, index) => (
           <RAPButton
             key={button}
-            onClick={() => handleSetActive(index + 1)}
-            data-isactive={active === index + 1}
+            callback={() => handleClick(Monomers[index + 1], index + 1)}
+            isActive={activeIndex === index + 1}
           >
             {button}
           </RAPButton>
         ))}
-      </Container>
+      </ButtonContainer>
     </SwitcherContainer>
   )
 }

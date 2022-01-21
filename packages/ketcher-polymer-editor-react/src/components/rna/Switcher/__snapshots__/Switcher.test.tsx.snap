@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`RNA Switcher component should render correctly with A button selected 1`] = `
+exports[`RNA Switcher component should render correctly with each button selected 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body>
@@ -9,8 +9,7 @@ Object {
         class="css-13stbb8"
       >
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-          data-isactive="false"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-8sfyq-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -28,7 +27,7 @@ Object {
             role="img"
           />
           <icon-rap-middle-link.svg
-            classname="css-1eyukqs"
+            classname="css-1vr3czz"
             fill="#525252"
             role="img"
           />
@@ -42,8 +41,7 @@ Object {
           class="css-11ydt2g"
         >
           <button
-            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-            data-isactive="false"
+            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -53,8 +51,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-pbd2lr-MuiButtonBase-root-MuiButton-root"
-            data-isactive="true"
+            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -64,8 +61,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-            data-isactive="false"
+            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -83,8 +79,7 @@ Object {
       class="css-13stbb8"
     >
       <button
-        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-        data-isactive="false"
+        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-8sfyq-MuiButtonBase-root-MuiButton-root-RAPButton"
         tabindex="0"
         type="button"
       >
@@ -102,7 +97,7 @@ Object {
           role="img"
         />
         <icon-rap-middle-link.svg
-          classname="css-1eyukqs"
+          classname="css-1vr3czz"
           fill="#525252"
           role="img"
         />
@@ -116,8 +111,7 @@ Object {
         class="css-11ydt2g"
       >
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-          data-isactive="false"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -127,8 +121,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-pbd2lr-MuiButtonBase-root-MuiButton-root"
-          data-isactive="true"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -138,8 +131,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-          data-isactive="false"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -205,7 +197,7 @@ Object {
 }
 `;
 
-exports[`RNA Switcher component should render correctly with P button selected 1`] = `
+exports[`RNA Switcher component should render correctly with each button selected 2`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body>
@@ -214,8 +206,7 @@ Object {
         class="css-13stbb8"
       >
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-          data-isactive="false"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -228,7 +219,7 @@ Object {
           class="css-11l5obs"
         >
           <icon-rap-left-link.svg
-            classname="css-1vr3czz"
+            classname="css-1eyukqs"
             fill="#525252"
             role="img"
           />
@@ -238,7 +229,7 @@ Object {
             role="img"
           />
           <icon-rap-right-link.svg
-            classname="css-1eyukqs"
+            classname="css-1vr3czz"
             fill="#525252"
             role="img"
           />
@@ -247,8 +238,7 @@ Object {
           class="css-11ydt2g"
         >
           <button
-            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-            data-isactive="false"
+            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-8sfyq-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -258,8 +248,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-            data-isactive="false"
+            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -269,8 +258,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-pbd2lr-MuiButtonBase-root-MuiButton-root"
-            data-isactive="true"
+            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -288,8 +276,7 @@ Object {
       class="css-13stbb8"
     >
       <button
-        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-        data-isactive="false"
+        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
         tabindex="0"
         type="button"
       >
@@ -302,7 +289,7 @@ Object {
         class="css-11l5obs"
       >
         <icon-rap-left-link.svg
-          classname="css-1vr3czz"
+          classname="css-1eyukqs"
           fill="#525252"
           role="img"
         />
@@ -312,7 +299,7 @@ Object {
           role="img"
         />
         <icon-rap-right-link.svg
-          classname="css-1eyukqs"
+          classname="css-1vr3czz"
           fill="#525252"
           role="img"
         />
@@ -321,8 +308,7 @@ Object {
         class="css-11ydt2g"
       >
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-          data-isactive="false"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-8sfyq-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -332,8 +318,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-          data-isactive="false"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -343,8 +328,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-pbd2lr-MuiButtonBase-root-MuiButton-root"
-          data-isactive="true"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -410,7 +394,7 @@ Object {
 }
 `;
 
-exports[`RNA Switcher component should render correctly with R button selected 1`] = `
+exports[`RNA Switcher component should render correctly with each button selected 3`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body>
@@ -419,8 +403,7 @@ Object {
         class="css-13stbb8"
       >
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-          data-isactive="false"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -433,12 +416,12 @@ Object {
           class="css-11l5obs"
         >
           <icon-rap-left-link.svg
-            classname="css-1eyukqs"
+            classname="css-1vr3czz"
             fill="#525252"
             role="img"
           />
           <icon-rap-middle-link.svg
-            classname="css-1vr3czz"
+            classname="css-1eyukqs"
             fill="#525252"
             role="img"
           />
@@ -452,8 +435,7 @@ Object {
           class="css-11ydt2g"
         >
           <button
-            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-pbd2lr-MuiButtonBase-root-MuiButton-root"
-            data-isactive="true"
+            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -463,8 +445,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-            data-isactive="false"
+            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-8sfyq-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -474,8 +455,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-            data-isactive="false"
+            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -493,8 +473,7 @@ Object {
       class="css-13stbb8"
     >
       <button
-        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-        data-isactive="false"
+        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
         tabindex="0"
         type="button"
       >
@@ -507,12 +486,12 @@ Object {
         class="css-11l5obs"
       >
         <icon-rap-left-link.svg
-          classname="css-1eyukqs"
+          classname="css-1vr3czz"
           fill="#525252"
           role="img"
         />
         <icon-rap-middle-link.svg
-          classname="css-1vr3czz"
+          classname="css-1eyukqs"
           fill="#525252"
           role="img"
         />
@@ -526,8 +505,7 @@ Object {
         class="css-11ydt2g"
       >
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-pbd2lr-MuiButtonBase-root-MuiButton-root"
-          data-isactive="true"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -537,8 +515,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-          data-isactive="false"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-8sfyq-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -548,8 +525,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-          data-isactive="false"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -615,7 +591,7 @@ Object {
 }
 `;
 
-exports[`RNA Switcher component should render correctly with RAP button selected by default 1`] = `
+exports[`RNA Switcher component should render correctly with each button selected 4`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body>
@@ -624,8 +600,7 @@ Object {
         class="css-13stbb8"
       >
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-pbd2lr-MuiButtonBase-root-MuiButton-root"
-          data-isactive="true"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -648,7 +623,7 @@ Object {
             role="img"
           />
           <icon-rap-right-link.svg
-            classname="css-1vr3czz"
+            classname="css-1eyukqs"
             fill="#525252"
             role="img"
           />
@@ -657,8 +632,7 @@ Object {
           class="css-11ydt2g"
         >
           <button
-            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-            data-isactive="false"
+            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -668,8 +642,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-            data-isactive="false"
+            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -679,8 +652,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-            data-isactive="false"
+            class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-8sfyq-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -698,8 +670,7 @@ Object {
       class="css-13stbb8"
     >
       <button
-        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-pbd2lr-MuiButtonBase-root-MuiButton-root"
-        data-isactive="true"
+        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
         tabindex="0"
         type="button"
       >
@@ -722,7 +693,7 @@ Object {
           role="img"
         />
         <icon-rap-right-link.svg
-          classname="css-1vr3czz"
+          classname="css-1eyukqs"
           fill="#525252"
           role="img"
         />
@@ -731,8 +702,7 @@ Object {
         class="css-11ydt2g"
       >
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-          data-isactive="false"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -742,8 +712,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-          data-isactive="false"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16etv44-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -753,8 +722,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-eypzog-MuiButtonBase-root-MuiButton-root"
-          data-isactive="false"
+          class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-8sfyq-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >

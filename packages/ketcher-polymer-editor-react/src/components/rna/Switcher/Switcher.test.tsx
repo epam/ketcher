@@ -3,62 +3,34 @@ import { render } from 'test-utils'
 import { Switcher } from './'
 
 describe('RNA Switcher component', () => {
-  const rnaHandleClick = jest.fn()
+  const mockSetActiveMonomerType = jest.fn()
+  const buttons = ['R(A)P', 'R', 'A', 'P']
 
-  it('should call click event handler on a button when clicked', () => {
+  it('should call click event handler on each button when clicked', () => {
     render(
       <Switcher
         selectedMonomers={['R', 'A', 'P']}
-        active={0}
-        handleSetActive={rnaHandleClick}
+        setActiveMonomerType={mockSetActiveMonomerType}
       />
     )
-    const buttonR = screen.getByText('R')
-    fireEvent.click(buttonR)
-    expect(rnaHandleClick.mock.calls.length).toEqual(1)
+    buttons.forEach((button, index) => {
+      const buttonR = screen.getByText(button)
+      fireEvent.click(buttonR)
+      expect(mockSetActiveMonomerType.mock.calls.length).toEqual(index + 1)
+    })
   })
 
-  it('should render correctly with RAP button selected by default', () => {
+  it('should render correctly with each button selected', () => {
     const view = render(
       <Switcher
         selectedMonomers={['R', 'A', 'P']}
-        active={0}
-        handleSetActive={rnaHandleClick}
+        setActiveMonomerType={mockSetActiveMonomerType}
       />
     )
-    expect(view).toMatchSnapshot()
-  })
-
-  it('should render correctly with R button selected', () => {
-    const view = render(
-      <Switcher
-        selectedMonomers={['R', 'A', 'P']}
-        active={1}
-        handleSetActive={rnaHandleClick}
-      />
-    )
-    expect(view).toMatchSnapshot()
-  })
-
-  it('should render correctly with A button selected', () => {
-    const view = render(
-      <Switcher
-        selectedMonomers={['R', 'A', 'P']}
-        active={2}
-        handleSetActive={rnaHandleClick}
-      />
-    )
-    expect(view).toMatchSnapshot()
-  })
-
-  it('should render correctly with P button selected', () => {
-    const view = render(
-      <Switcher
-        selectedMonomers={['R', 'A', 'P']}
-        active={3}
-        handleSetActive={rnaHandleClick}
-      />
-    )
-    expect(view).toMatchSnapshot()
+    buttons.forEach((button) => {
+      const buttonR = screen.getByText(button)
+      fireEvent.click(buttonR)
+      expect(view).toMatchSnapshot()
+    })
   })
 })

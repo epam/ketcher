@@ -3,6 +3,7 @@ import styled from '@emotion/styled'
 import { ReactNode, useState } from 'react'
 import { Icon } from 'components/shared/ui/icon'
 import { IconNameType } from 'components/shared/ui/icon/icon'
+import { css, useTheme } from '@emotion/react'
 
 type SwitcherProps = {
   selectedMonomers: [string, string, string]
@@ -29,24 +30,23 @@ const svgNames: IconNameType[] = [
 ]
 
 const RAPButton = ({ isActive, children, callback }: RAPButtonProps) => {
+  const { color } = useTheme()
+  const styles = css`
+    padding: 3px 12px;
+    background-color: ${isActive
+      ? color.button.primary.active
+      : color.background.canvas};
+    border-radius: 8px;
+    line-height: 18px;
+    min-width: 33px;
+    color: ${isActive ? color.text.light : color.text.dark};
+    :hover {
+      background-color: ${color.button.primary.hover};
+      color: ${color.text.light};
+    }
+  `
   return (
-    <Button
-      css={({ color }) => ({
-        padding: '3px 12px',
-        backgroundColor: isActive
-          ? color.button.primary.active
-          : color.background.canvas,
-        borderRadius: '8px',
-        lineHeight: '18px',
-        minWidth: '33px',
-        color: isActive ? color.text.light : color.text.dark,
-        ':hover': {
-          backgroundColor: color.button.primary.hover,
-          color: color.text.light
-        }
-      })}
-      onClick={callback}
-    >
+    <Button css={styles} onClick={callback}>
       {children}
     </Button>
   )

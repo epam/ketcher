@@ -15,9 +15,10 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled'
+import { ReactNode } from 'react'
 
 interface ContainerProps {
-  children: JSX.Element | Array<JSX.Element> | null
+  children: ReactNode | Array<ReactNode>
   margin?: string
 }
 

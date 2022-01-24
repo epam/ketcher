@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from 'hooks'
 
 import { Container } from 'components/shared/ui/Container'
@@ -119,35 +119,27 @@ export const Layout = () => {
 
   return (
     <LayoutContainer>
-      <Layout.Left>
-        <LeftElementExample />
-      </Layout.Left>
+      <LayoutContent>
+        <Layout.Left>
+          <LeftElementExample />
+        </Layout.Left>
 
-      <Layout.Left>
-        <div>hello</div>
-      </Layout.Left>
+        <Layout.Top>
+          <TopElementExample />
+        </Layout.Top>
 
-      <Container margin="0 6px">
-        <CenterContainer>
-          <Layout.Top>
-            <TopElementExample />
-          </Layout.Top>
+        <Layout.Main>
+          <CenterElementExample />
+        </Layout.Main>
 
-          <Container margin="6px 0">
-            <Layout.Main>
-              <CenterElementExample />
-            </Layout.Main>
-          </Container>
+        <Layout.Bottom>
+          <BottomElementExample />
+        </Layout.Bottom>
 
-          <Layout.Bottom>
-            <BottomElementExample />
-          </Layout.Bottom>
-        </CenterContainer>
-      </Container>
-
-      <Layout.Right>
-        <MonomerLibrary />
-      </Layout.Right>
+        <Layout.Right>
+          <MonomerLibrary />
+        </Layout.Right>
+      </LayoutContent>
 
       <Logo>
         <span>Polymer Editor</span>
@@ -155,6 +147,40 @@ export const Layout = () => {
         <span>EPAM</span>
       </Logo>
     </LayoutContainer>
+  )
+}
+
+export const LayoutContent = ({ children }) => {
+  const subcomponents = {
+    Left: null,
+    Main: null,
+    Right: null,
+    Top: null,
+    Bottom: null
+  }
+  const subcomponentList = Object.keys(Layout)
+  subcomponentList.forEach((key) => {
+    React.Children.forEach(children, (child) => {
+      if (child.type.name === key) {
+        subcomponents[key] = child
+      }
+    })
+  })
+
+  return (
+    <>
+      {subcomponents.Left}
+      <Container margin="0 6px">
+        <CenterContainer>
+          {subcomponents.Top}
+          <Container margin={subcomponents.Bottom ? '6px 0' : '6px 0 0 0'}>
+            {subcomponents.Main}
+          </Container>
+          {subcomponents.Bottom}
+        </CenterContainer>
+      </Container>
+      {subcomponents.Right}
+    </>
   )
 }
 

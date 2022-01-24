@@ -14,15 +14,92 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Layout } from 'components/Layout/Layout'
+import { LayoutContent, Layout } from 'components/Layout'
 import { render, screen } from 'test-utils'
 
-describe('Layout', () => {
-  it('should render correctly', () => {
-    const view = render(<Layout />)
+const TopElementMock = () => {
+  return <div>top element</div>
+}
 
-    expect(view).toMatchSnapshot()
+const LeftElementMock = () => {
+  return <div>left element</div>
+}
+
+const MainElementMock = () => {
+  return <div>main element</div>
+}
+
+const RightElementMock = () => {
+  return <div>right element</div>
+}
+
+const BottomElementMock = () => {
+  return <div>bottom element</div>
+}
+
+describe('Layout', () => {
+  it('should render several subcomponents correctly', () => {
+    render(
+      <LayoutContent>
+        <Layout.Top>
+          <TopElementMock />
+        </Layout.Top>
+        <Layout.Left>
+          <LeftElementMock />
+        </Layout.Left>
+        <Layout.Main>
+          <MainElementMock />
+        </Layout.Main>
+      </LayoutContent>
+    )
+
+    const topElement = screen.getByText('top element')
+    const mainElement = screen.getByText('main element')
+    const leftElement = screen.getByText('left element')
+    const bottomElement = screen.queryByTestId('bottom-container')
+    const rightElement = screen.queryByTestId('right-container')
+
+    expect(topElement).toBeVisible()
+    expect(mainElement).toBeVisible()
+    expect(leftElement).toBeVisible()
+    expect(bottomElement).not.toBeInTheDocument()
+    expect(rightElement).not.toBeInTheDocument()
   })
+
+  it('should render all subcomponents correctly', () => {
+    render(
+      <LayoutContent>
+        <Layout.Top>
+          <TopElementMock />
+        </Layout.Top>
+        <Layout.Left>
+          <LeftElementMock />
+        </Layout.Left>
+        <Layout.Main>
+          <MainElementMock />
+        </Layout.Main>
+        <Layout.Right>
+          <RightElementMock />
+        </Layout.Right>
+        <Layout.Bottom>
+          <BottomElementMock />
+        </Layout.Bottom>
+      </LayoutContent>
+    )
+
+    const topElement = screen.getByText('top element')
+    const mainElement = screen.getByText('main element')
+    const leftElement = screen.getByText('left element')
+    const rightElement = screen.getByText('right element')
+    const bottomElement = screen.getByText('bottom element')
+
+    expect(topElement).toBeVisible()
+    expect(mainElement).toBeVisible()
+    expect(leftElement).toBeVisible()
+    expect(bottomElement).toBeVisible()
+    expect(rightElement).toBeVisible()
+  })
+
   it('renders a message and logo', async () => {
     render(<Layout />)
 

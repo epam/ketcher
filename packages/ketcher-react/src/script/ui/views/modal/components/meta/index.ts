@@ -16,5 +16,6 @@
 
 import About from './About'
 import Settings from './Settings'
+import { Confirm } from './Confirm'
 
-export { About, Settings }
+export { About, Settings, Confirm }

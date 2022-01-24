@@ -82,70 +82,72 @@ export function load(struct, options) {
           const { fragment } = options
 
           if (
-            struct.sgroups.some((sGroup) => !supportedSGroupTypes[sGroup.type])
-          ) {
-            const isConfirmed = window.confirm(
-              `Unsupported S-group type found. Would you like to import structure without it?`
-            )
-
-            if (!isConfirmed) {
-              return
-            }
-
-            struct.sgroups = struct.sgroups.filter(
-              (key, sGroup) => supportedSGroupTypes[sGroup.type]
-            )
-          }
-
-          struct.rescale() // TODO: move out parsing?
-
-          if (editor.struct().atoms.size) {
-            // NB: reset id
-            const oldStruct = editor.struct().clone()
-
-            struct.sgroups.forEach((sg, sgId) => {
-              const offset = SGroup.getOffset(oldStruct.sgroups.get(sgId))
-              const atomSet = new Pile(sg.atoms)
-              const crossBonds = SGroup.getCrossBonds(struct, atomSet)
-              SGroup.bracketPos(sg, struct, crossBonds)
-              if (offset) sg.updateOffset(offset)
-            })
-          }
-
-          struct.findConnectedComponents()
-          struct.setImplicitHydrogen()
-
-          const stereAtomsMap = getStereoAtomsMap(
-            struct,
-            Array.from(struct.bonds.values())
+            !struct.sgroups.some((sGroup) => !supportedSGroupTypes[sGroup.type])
           )
+            return editor.event.confirm.dispatch().then(() => {
+              struct.sgroups = struct.sgroups.filter(
+                (key, sGroup) => supportedSGroupTypes[sGroup.type]
+              )
+              struct.rescale() // TODO: move out parsing?
 
-          struct.atoms.forEach((atom, id) => {
-            if (struct.atomGetNeighbors(id).length === 0) {
-              atom.stereoLabel = null
-              atom.stereoParity = 0
-            } else {
-              const stereoProp = stereAtomsMap.get(id)
-              if (stereoProp) {
-                atom.stereoLabel = stereoProp.stereoLabel
-                atom.stereoParity = stereoProp.stereoParity
+              if (editor.struct().atoms.size) {
+                // NB: reset id
+                const oldStruct = editor.struct().clone()
+
+                struct.sgroups.forEach((sg, sgId) => {
+                  const offset = SGroup.getOffset(oldStruct.sgroups.get(sgId))
+                  const atomSet = new Pile(sg.atoms)
+                  const crossBonds = SGroup.getCrossBonds(struct, atomSet)
+                  SGroup.bracketPos(sg, struct, crossBonds)
+                  if (offset) sg.updateOffset(offset)
+                })
               }
-            }
-          })
 
-          struct.markFragments()
+              struct.findConnectedComponents()
+              struct.setImplicitHydrogen()
 
-          if (fragment) {
-            if (struct.isBlank()) {
-              dispatch({ type: 'ACTION', action: tools['select-lasso'].action })
-            } else {
-              dispatch(onAction({ tool: 'paste', opts: struct }))
-            }
-          } else {
-            editor.struct(struct)
-          }
-          dispatch(setAnalyzingFile(false))
-          dispatch({ type: 'MODAL_CLOSE' })
+              const stereAtomsMap = getStereoAtomsMap(
+                struct,
+                Array.from(struct.bonds.values())
+              )
+
+              struct.atoms.forEach((atom, id) => {
+                if (struct.atomGetNeighbors(id).length === 0) {
+                  atom.stereoLabel = null
+                  atom.stereoParity = 0
+                } else {
+                  const stereoProp = stereAtomsMap.get(id)
+                  if (stereoProp) {
+                    atom.stereoLabel = stereoProp.stereoLabel
+                    atom.stereoParity = stereoProp.stereoParity
+                  }
+                }
+              })
+
+              struct.markFragments()
+
+              if (fragment) {
+                if (struct.isBlank()) {
+                  dispatch({
+                    type: 'ACTION',
+                    action: tools['select-lasso'].action
+                  })
+                } else {
+                  dispatch(onAction({ tool: 'paste', opts: struct }))
+                }
+              } else {
+                editor.struct(struct)
+              }
+              dispatch(setAnalyzingFile(false))
+              dispatch({ type: 'MODAL_CLOSE' })
+            })
+          // const isConfirmed = window.confirm(
+          //   `Unsupported S-group type found. Would you like to import structure without it?`
+          // )
+
+          // if (!isConfirmed) {
+          //   return
+          // }
         },
         (err) => {
           dispatch(setAnalyzingFile(false))

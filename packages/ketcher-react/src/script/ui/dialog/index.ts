@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { About, Settings } from '../views/modal/components/meta'
+import { About, Settings, Confirm } from '../views/modal/components/meta'
 import {
   Analyse,
   Check,
@@ -67,5 +67,6 @@ export default {
   sgroup: Sgroup,
   sdata: Sdata,
   text: Text,
-  fGroups: FunctionalGroups
+  fGroups: FunctionalGroups,
+  confirm: Confirm
 } as any

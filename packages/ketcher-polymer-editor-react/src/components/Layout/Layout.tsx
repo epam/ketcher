@@ -16,25 +16,23 @@
 
 import React from 'react'
 import styled from '@emotion/styled'
+import { Container } from 'components/shared/ui/Container'
 
 interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>
 }
 
-interface ContainerProps {
-  children: JSX.Element | Array<JSX.Element> | null
-  margin?: string
-}
+const LayoutContainer = styled.div({
+  display: 'flex',
+  justifyContent: 'space-between'
+})
 
-const Container = ({ children, margin = '6px' }: ContainerProps) => {
-  const StyledContainer = styled.div({
-    margin: margin,
-    width: '100%',
-    height: '100%'
-  })
-
-  return <StyledContainer>{children}</StyledContainer>
-}
+const CenterContainer = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  height: 'calc(100vh - 70px)'
+})
 
 export const Layout = ({ children }: LayoutProps) => {
   const subcomponents = {
@@ -51,18 +49,6 @@ export const Layout = ({ children }: LayoutProps) => {
         subcomponents[key] = child
       }
     })
-  })
-
-  const LayoutContainer = styled.div({
-    display: 'flex',
-    justifyContent: 'space-between'
-  })
-
-  const CenterContainer = styled.div({
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    height: 'calc(100vh - 70px)'
   })
 
   return (
@@ -82,67 +68,57 @@ export const Layout = ({ children }: LayoutProps) => {
   )
 }
 
-const Left = (props) => {
-  const LeftContainer = styled.div({
-    width: '32px',
-    minWidth: '32px',
-    height: 'calc(100vh - 70px)'
-  })
+const LeftContainer = styled.div({
+  width: '32px',
+  minWidth: '32px',
+  height: 'calc(100vh - 70px)'
+})
 
-  return (
-    <LeftContainer data-testid="left-container">{props.children}</LeftContainer>
-  )
-}
+const Left = (props) => (
+  <LeftContainer data-testid="left-container">{props.children}</LeftContainer>
+)
 Layout.Left = Left
 
-const Top = (props) => {
-  const TopContainer = styled.div({
-    height: '24px',
-    width: '600px',
-    alignSelf: 'flex-end',
-    marginRight: '10%'
-  })
+const TopContainer = styled.div({
+  height: '24px',
+  width: '600px',
+  alignSelf: 'flex-end',
+  marginRight: '10%'
+})
 
-  return (
-    <TopContainer data-testid="top-container">{props.children}</TopContainer>
-  )
-}
+const Top = (props) => (
+  <TopContainer data-testid="top-container">{props.children}</TopContainer>
+)
 Layout.Top = Top
 
-const Right = (props) => {
-  const RightContainer = styled.div({
-    width: '253px',
-    height: `calc(100vh - 15px*2)`
-  })
+const RightContainer = styled.div({
+  width: '253px',
+  height: `calc(100vh - 15px*2)`
+})
 
-  return (
-    <RightContainer data-testid="right-container">
-      {props.children}
-    </RightContainer>
-  )
-}
+const Right = (props) => (
+  <RightContainer data-testid="right-container">
+    {props.children}
+  </RightContainer>
+)
 Layout.Right = Right
 
-const Main = (props) => {
-  const MainContainer = styled.div({
-    height: '100%'
-  })
+const MainContainer = styled.div({
+  height: '100%'
+})
 
-  return (
-    <MainContainer data-testid="main-container">{props.children}</MainContainer>
-  )
-}
+const Main = (props) => (
+  <MainContainer data-testid="main-container">{props.children}</MainContainer>
+)
 Layout.Main = Main
 
-const Bottom = (props) => {
-  const BottomContainer = styled.div({
-    height: '100px'
-  })
+const BottomContainer = styled.div({
+  height: '100px'
+})
 
-  return (
-    <BottomContainer data-testid="bottom-container">
-      {props.children}
-    </BottomContainer>
-  )
-}
+const Bottom = (props) => (
+  <BottomContainer data-testid="bottom-container">
+    {props.children}
+  </BottomContainer>
+)
 Layout.Bottom = Bottom

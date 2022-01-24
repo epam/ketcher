@@ -17,6 +17,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import FontFaceObserver from 'font-face-observer'
+import Select from './Select/Select'
 
 const commonFonts = [
   'Arial',
@@ -62,8 +63,8 @@ function SystemFonts(props) {
   const [availableFonts, setAvailableFonts] = useState(null)
   const { value, onChange } = props
   const onChangeCallback = useCallback(
-    (e) => {
-      onChange(e.target.value)
+    (value) => {
+      onChange(value)
     },
     [onChange]
   )
@@ -85,17 +86,12 @@ function SystemFonts(props) {
   }, [])
 
   return (
-    <select
-      disabled={availableFonts == null}
-      value={value}
+    <Select
       onChange={onChangeCallback}
-    >
-      {availableFonts?.map(({ value, label }) => (
-        <option key={value} value={value}>
-          {label}
-        </option>
-      ))}
-    </select>
+      value={value}
+      disabled={availableFonts == null}
+      options={availableFonts}
+    />
   )
 }
 

@@ -63,6 +63,7 @@
     "react-dropzone": "^11.4.2",
     "react-intersection-observer": "^8.32.1",
     "react-redux": "^7.2.1",
+    "react-select": "^5.2.1",
     "react-virtualized": "^9.22.3",
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",

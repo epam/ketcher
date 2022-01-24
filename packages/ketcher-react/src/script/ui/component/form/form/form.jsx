@@ -23,6 +23,7 @@ import { connect } from 'react-redux'
 import jsonschema from 'jsonschema'
 import { updateFormState } from '../../../state/modal/form'
 import { useFormContext } from '../../../../../hooks'
+import Select from '../Select/Select'
 
 class Form extends Component {
   constructor(props) {
@@ -138,7 +139,7 @@ const SelectOneOf = (props) => {
     selectDesc.enumNames.push(schema[item].title || item)
   })
 
-  return <Field name={name} schema={selectDesc} {...prop} />
+  return <Field name={name} schema={selectDesc} {...prop} component={Select} />
 }
 
 //

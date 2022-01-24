@@ -91,25 +91,6 @@ declare module '@mui/material/styles' {
         bold: number
       }
     }
-    padding: {
-      leftRight: string
-      topBottom: string
-      canvas: string
-    }
-    size: {
-      monomerLibrary: {
-        width: string
-      }
-      menu: {
-        width: string
-      }
-      addToCanvas: {
-        height: string
-      }
-      properties: {
-        height: string
-      }
-    }
   }
 
   // allow configuration using `createTheme`
@@ -199,25 +180,6 @@ declare module '@mui/material/styles' {
         light?: number
         regular?: number
         bold?: number
-      }
-    }
-    padding?: {
-      leftRight?: string
-      topBottom?: string
-      canvas?: string
-    }
-    size?: {
-      monomerLibrary?: {
-        width?: string
-      }
-      menu?: {
-        width?: string
-      }
-      addToCanvas?: {
-        height?: string
-      }
-      properties?: {
-        height?: string
       }
     }
   }

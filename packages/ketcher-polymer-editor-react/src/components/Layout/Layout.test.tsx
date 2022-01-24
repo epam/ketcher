@@ -15,88 +15,21 @@
  ***************************************************************************/
 
 import { Layout } from 'components/Layout/Layout'
-import { render, screen } from '@testing-library/react'
-
-const TopElementMock = () => {
-  return <div>top element</div>
-}
-
-const LeftElementMock = () => {
-  return <div>left element</div>
-}
-
-const MainElementMock = () => {
-  return <div>main element</div>
-}
-
-const RightElementMock = () => {
-  return <div>right element</div>
-}
-
-const BottomElementMock = () => {
-  return <div>bottom element</div>
-}
+import { render, screen } from 'test-utils'
 
 describe('Layout', () => {
-  it('should render several subcomponents correctly', () => {
-    render(
-      <Layout>
-        <Layout.Top>
-          <TopElementMock />
-        </Layout.Top>
-        <Layout.Left>
-          <LeftElementMock />
-        </Layout.Left>
-        <Layout.Main>
-          <MainElementMock />
-        </Layout.Main>
-      </Layout>
-    )
+  it('should render correctly', () => {
+    const view = render(<Layout />)
 
-    const topElement = screen.getByText('top element')
-    const mainElement = screen.getByText('main element')
-    const leftElement = screen.getByText('left element')
-    const bottomElement = screen.queryByTestId('bottom-container')
-    const rightElement = screen.queryByTestId('right-container')
-
-    expect(topElement).toBeVisible()
-    expect(mainElement).toBeVisible()
-    expect(leftElement).toBeVisible()
-    expect(bottomElement).not.toBeInTheDocument()
-    expect(rightElement).not.toBeInTheDocument()
+    expect(view).toMatchSnapshot()
   })
+  it('renders a message and logo', async () => {
+    render(<Layout />)
 
-  it('should render all subcomponents correctly', () => {
-    render(
-      <Layout>
-        <Layout.Top>
-          <TopElementMock />
-        </Layout.Top>
-        <Layout.Left>
-          <LeftElementMock />
-        </Layout.Left>
-        <Layout.Main>
-          <MainElementMock />
-        </Layout.Main>
-        <Layout.Right>
-          <RightElementMock />
-        </Layout.Right>
-        <Layout.Bottom>
-          <BottomElementMock />
-        </Layout.Bottom>
-      </Layout>
-    )
+    expect(screen.getByText('App is not ready')).toBeVisible()
 
-    const topElement = screen.getByText('top element')
-    const mainElement = screen.getByText('main element')
-    const leftElement = screen.getByText('left element')
-    const rightElement = screen.getByText('right element')
-    const bottomElement = screen.getByText('bottom element')
-
-    expect(topElement).toBeVisible()
-    expect(mainElement).toBeVisible()
-    expect(leftElement).toBeVisible()
-    expect(bottomElement).toBeVisible()
-    expect(rightElement).toBeVisible()
+    expect(await screen.findByText('Polymer Editor')).toBeVisible()
+    expect(await screen.findByText('Ketcher')).toBeVisible()
+    expect(await screen.findByText('EPAM')).toBeVisible()
   })
 })

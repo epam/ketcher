@@ -16,7 +16,7 @@
 
 import { put, takeEvery, call } from 'redux-saga/effects'
 import { init, initFailure, initSuccess } from 'state/common'
-import { fetchData as fetchDataCall } from 'components/App'
+import { fetchData as fetchDataCall } from 'components/Layout'
 
 const FETCH_DATA = 'editor/fetchData'
 

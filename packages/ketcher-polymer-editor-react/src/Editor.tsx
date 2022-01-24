@@ -14,21 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
-import { App } from 'components/App'
-import { store } from 'state'
 import { Provider } from 'react-redux'
-import { defaultTheme } from 'styles/theme'
+import { useEffect, useRef } from 'react'
+import { Global } from '@emotion/react'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import styled from '@emotion/styled'
-import { Global } from '@emotion/react'
+
+import { store } from 'state'
+import { defaultTheme } from 'styles/theme'
 import globalStyles from './styles/globalStyles'
+import { Layout } from 'components/Layout'
 
 const theme = createTheme(defaultTheme)
 
 interface EditorProps {
   onInit?: () => void
 }
+
+const RootContainer = styled.div({
+  height: '100%',
+  width: '100%',
+  position: 'relative',
+  minWidth: 1024,
+  minHeight: 768
+})
 
 function Editor(props: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
@@ -38,20 +47,12 @@ function Editor(props: EditorProps) {
     onInit?.()
   }, [onInit])
 
-  const RootContainer = styled.div({
-    height: '100%',
-    width: '100%',
-    position: 'relative',
-    minWidth: 1024,
-    minHeight: 768
-  })
-
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <RootContainer ref={rootElRef} className="Ketcher-polymer-editor-root">
           <Global styles={globalStyles} />
-          <App />
+          <Layout />
         </RootContainer>
       </ThemeProvider>
     </Provider>

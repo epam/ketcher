@@ -6,28 +6,322 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="Ketcher-polymer-editor-root css-1a8jakh"
+        class="Ketcher-polymer-editor-root"
       >
         <div
           class="css-1h5652m"
         >
-          <div>
-            App is not ready
+          <div
+            class="css-1ab7mfo"
+            data-testid="left-container"
+          >
+            <div
+              class="css-1y0n30h"
+            />
           </div>
+          <div
+            class="css-123j4ga"
+          >
+            <div
+              class="css-1hddpqy"
+              data-testid="top-container"
+            >
+              <div
+                class="css-1y0n30h"
+              />
+            </div>
+            <div
+              class="css-ka96uw"
+              data-testid="main-container"
+            >
+              <div
+                class="css-11kvpne"
+              />
+            </div>
+            <div
+              class="css-1r4gju7"
+              data-testid="bottom-container"
+            >
+              <div
+                class="css-1y0n30h"
+              />
+            </div>
+          </div>
+          <div
+            class="css-veqhf7"
+            data-testid="right-container"
+          >
+            <div
+              class="css-1ihrwwp"
+            >
+              <div
+                class="MuiTabs-root css-o3c7w6-MuiTabs-root"
+              >
+                <div
+                  class="MuiTabs-scroller MuiTabs-fixed css-jpln7h-MuiTabs-scroller"
+                  style="overflow: hidden; margin-bottom: 0px;"
+                >
+                  <div
+                    class="MuiTabs-flexContainer css-heg063-MuiTabs-flexContainer"
+                    role="tablist"
+                  >
+                    <button
+                      aria-controls="simple-tabpanel-0"
+                      aria-selected="true"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                      id="simple-tab-0"
+                      role="tab"
+                      tabindex="0"
+                      type="button"
+                    >
+                      ✩
+                      <span
+                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                      />
+                    </button>
+                    <button
+                      aria-controls="simple-tabpanel-1"
+                      aria-selected="false"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                      id="simple-tab-1"
+                      role="tab"
+                      tabindex="-1"
+                      type="button"
+                    >
+                      Peptides
+                      <span
+                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                      />
+                    </button>
+                    <button
+                      aria-controls="simple-tabpanel-2"
+                      aria-selected="false"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                      id="simple-tab-2"
+                      role="tab"
+                      tabindex="-1"
+                      type="button"
+                    >
+                      RNA
+                      <span
+                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                      />
+                    </button>
+                    <button
+                      aria-controls="simple-tabpanel-3"
+                      aria-selected="false"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                      id="simple-tab-3"
+                      role="tab"
+                      tabindex="-1"
+                      type="button"
+                    >
+                      CHEM
+                      <span
+                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                      />
+                    </button>
+                  </div>
+                  <span
+                    class="MuiTabs-indicator css-1aquho2-MuiTabs-indicator"
+                    style="left: 0px; width: 0px;"
+                  />
+                </div>
+              </div>
+              <div
+                id="0"
+                role="tabpanel"
+              >
+                <div
+                  class="MuiBox-root css-0"
+                >
+                  <div
+                    class="css-1aal41w"
+                  >
+                    <div
+                      class="css-1rtem4s"
+                    >
+                      S
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-qdi29p"
+        >
+          <span>
+            Polymer Editor
+          </span>
+          <span>
+            Ketcher
+          </span>
+          <span>
+            EPAM
+          </span>
         </div>
       </div>
     </div>
   </body>,
   "container": <div>
     <div
-      class="Ketcher-polymer-editor-root css-1a8jakh"
+      class="Ketcher-polymer-editor-root"
     >
       <div
         class="css-1h5652m"
       >
-        <div>
-          App is not ready
+        <div
+          class="css-1ab7mfo"
+          data-testid="left-container"
+        >
+          <div
+            class="css-1y0n30h"
+          />
         </div>
+        <div
+          class="css-123j4ga"
+        >
+          <div
+            class="css-1hddpqy"
+            data-testid="top-container"
+          >
+            <div
+              class="css-1y0n30h"
+            />
+          </div>
+          <div
+            class="css-ka96uw"
+            data-testid="main-container"
+          >
+            <div
+              class="css-11kvpne"
+            />
+          </div>
+          <div
+            class="css-1r4gju7"
+            data-testid="bottom-container"
+          >
+            <div
+              class="css-1y0n30h"
+            />
+          </div>
+        </div>
+        <div
+          class="css-veqhf7"
+          data-testid="right-container"
+        >
+          <div
+            class="css-1ihrwwp"
+          >
+            <div
+              class="MuiTabs-root css-o3c7w6-MuiTabs-root"
+            >
+              <div
+                class="MuiTabs-scroller MuiTabs-fixed css-jpln7h-MuiTabs-scroller"
+                style="overflow: hidden; margin-bottom: 0px;"
+              >
+                <div
+                  class="MuiTabs-flexContainer css-heg063-MuiTabs-flexContainer"
+                  role="tablist"
+                >
+                  <button
+                    aria-controls="simple-tabpanel-0"
+                    aria-selected="true"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                    id="simple-tab-0"
+                    role="tab"
+                    tabindex="0"
+                    type="button"
+                  >
+                    ✩
+                    <span
+                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                    />
+                  </button>
+                  <button
+                    aria-controls="simple-tabpanel-1"
+                    aria-selected="false"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                    id="simple-tab-1"
+                    role="tab"
+                    tabindex="-1"
+                    type="button"
+                  >
+                    Peptides
+                    <span
+                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                    />
+                  </button>
+                  <button
+                    aria-controls="simple-tabpanel-2"
+                    aria-selected="false"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                    id="simple-tab-2"
+                    role="tab"
+                    tabindex="-1"
+                    type="button"
+                  >
+                    RNA
+                    <span
+                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                    />
+                  </button>
+                  <button
+                    aria-controls="simple-tabpanel-3"
+                    aria-selected="false"
+                    class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                    id="simple-tab-3"
+                    role="tab"
+                    tabindex="-1"
+                    type="button"
+                  >
+                    CHEM
+                    <span
+                      class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                    />
+                  </button>
+                </div>
+                <span
+                  class="MuiTabs-indicator css-1aquho2-MuiTabs-indicator"
+                  style="left: 0px; width: 0px;"
+                />
+              </div>
+            </div>
+            <div
+              id="0"
+              role="tabpanel"
+            >
+              <div
+                class="MuiBox-root css-0"
+              >
+                <div
+                  class="css-1aal41w"
+                >
+                  <div
+                    class="css-1rtem4s"
+                  >
+                    S
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="css-qdi29p"
+      >
+        <span>
+          Polymer Editor
+        </span>
+        <span>
+          Ketcher
+        </span>
+        <span>
+          EPAM
+        </span>
       </div>
     </div>
   </div>,

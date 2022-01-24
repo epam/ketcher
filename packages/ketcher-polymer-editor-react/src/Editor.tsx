@@ -24,6 +24,7 @@ import { store } from 'state'
 import { defaultTheme } from 'styles/theme'
 import globalStyles from './styles/globalStyles'
 import { Layout } from 'components/Layout'
+import { MonomerLibrary } from 'components/monomerLibrary'
 
 const theme = createTheme(defaultTheme)
 
@@ -31,13 +32,60 @@ interface EditorProps {
   onInit?: () => void
 }
 
-const RootContainer = styled.div({
+const Logo = styled.div(({ theme }) => ({
+  fontFamily: theme.font.family.montserrat,
+  fontSize: theme.font.size.medium,
+  fontWeight: theme.font.weight.bold,
+  color: theme.color.text.secondary,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  position: 'absolute',
+  bottom: '15px',
+  left: '13px',
+
+  '> span:first-of-type, > span:last-of-type': {
+    fontWeight: theme.font.weight.light,
+    fontSize: theme.font.size.xsmall,
+    textTransform: 'uppercase'
+  },
+
+  '> span:last-of-type': {
+    fontWeight: theme.font.weight.regular
+  },
+
+  '> span:nth-of-type(2)': {
+    color: theme.color.text.primary,
+
+    '&:first-letter': {
+      color: theme.color.text.secondary
+    }
+  }
+}))
+
+const TopElementExample = styled.div(({ theme }) => ({
   height: '100%',
   width: '100%',
-  position: 'relative',
-  minWidth: 1024,
-  minHeight: 768
-})
+  backgroundColor: theme.color.button.primary.clicked
+}))
+
+const LeftElementExample = styled.div(({ theme }) => ({
+  height: '100%',
+  width: '100%',
+  backgroundColor: theme.color.button.primary.clicked
+}))
+
+const CenterElementExample = styled.div(({ theme }) => ({
+  border: `1px dashed ${theme.color.input.border.regular}`,
+  width: '100%',
+  height: '100%'
+}))
+
+const BottomElementExample = styled.div(({ theme }) => ({
+  height: '100%',
+  width: '100%',
+  backgroundColor: theme.color.button.primary.clicked
+}))
 
 function Editor(props: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
@@ -50,10 +98,37 @@ function Editor(props: EditorProps) {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <RootContainer ref={rootElRef} className="Ketcher-polymer-editor-root">
+        <div ref={rootElRef} className="Ketcher-polymer-editor-root">
           <Global styles={globalStyles} />
-          <Layout />
-        </RootContainer>
+
+          <Layout>
+            <Layout.Left>
+              <LeftElementExample />
+            </Layout.Left>
+
+            <Layout.Top>
+              <TopElementExample />
+            </Layout.Top>
+
+            <Layout.Main>
+              <CenterElementExample />
+            </Layout.Main>
+
+            <Layout.Bottom>
+              <BottomElementExample />
+            </Layout.Bottom>
+
+            <Layout.Right>
+              <MonomerLibrary />
+            </Layout.Right>
+          </Layout>
+
+          <Logo>
+            <span>Polymer Editor</span>
+            <span>Ketcher</span>
+            <span>EPAM</span>
+          </Logo>
+        </div>
       </ThemeProvider>
     </Provider>
   )

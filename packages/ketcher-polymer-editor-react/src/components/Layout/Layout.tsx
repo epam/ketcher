@@ -15,31 +15,16 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled'
-import { useEffect } from 'react'
-import { useAppDispatch, useAppSelector } from 'hooks'
-
-import { Container } from 'components/shared/ui/Container'
-import { MonomerLibrary } from 'components/monomerLibrary'
-import { fetchInitData, selectEditorIsReady } from 'state/common'
+import React, { CSSProperties } from 'react'
 
 interface SubcomponentProps {
   children: JSX.Element
+  styles?: CSSProperties
 }
 
 interface LayoutContentProps {
-  children: {
-    left: JSX.Element
-    main: JSX.Element
-    right: JSX.Element
-    top: JSX.Element
-    bottom?: JSX.Element
-  }
+  children: JSX.Element | Array<JSX.Element>
 }
-
-export const fetchData = () =>
-  new Promise((resolve) => {
-    setTimeout(() => resolve('some data'), 1000)
-  })
 
 const PADDING = '15px'
 
@@ -60,135 +45,33 @@ const CenterContainer = styled.div({
   height: `calc(100vh - 40px - ${PADDING} * 2)`
 })
 
-const TopElementExample = styled.div(({ theme }) => ({
-  height: '100%',
-  width: '100%',
-  backgroundColor: theme.color.button.primary.clicked
-}))
-
-const LeftElementExample = styled.div(({ theme }) => ({
-  height: '100%',
-  width: '100%',
-  backgroundColor: theme.color.button.primary.clicked
-}))
-
-const CenterElementExample = styled.div(({ theme }) => ({
-  border: `1px dashed ${theme.color.input.border.regular}`,
-  width: '100%',
-  height: '100%'
-}))
-
-const BottomElementExample = styled.div(({ theme }) => ({
-  height: '100%',
-  width: '100%',
-  backgroundColor: theme.color.button.primary.clicked
-}))
-
-const Logo = styled.div(({ theme }) => ({
-  fontFamily: theme.font.family.montserrat,
-  fontSize: theme.font.size.medium,
-  fontWeight: theme.font.weight.bold,
-  color: theme.color.text.secondary,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  position: 'absolute',
-  bottom: `${PADDING}`,
-  left: '13px',
-
-  '> span:first-of-type, > span:last-of-type': {
-    fontWeight: theme.font.weight.light,
-    fontSize: theme.font.size.xsmall,
-    textTransform: 'uppercase'
-  },
-
-  '> span:last-of-type': {
-    fontWeight: theme.font.weight.regular
-  },
-
-  '> span:nth-of-type(2)': {
-    color: theme.color.text.primary,
-
-    '&:first-letter': {
-      color: theme.color.text.secondary
-    }
+export const Layout = ({ children }: LayoutContentProps) => {
+  const subcomponents = {
+    Left: null,
+    Main: null,
+    Right: null,
+    Top: null,
+    Bottom: null
   }
-}))
-
-export const Layout = () => {
-  const dispatch = useAppDispatch()
-  const isReady = useAppSelector(selectEditorIsReady)
-
-  useEffect(() => {
-    dispatch(fetchInitData())
-  }, [dispatch])
-
-  if (!isReady) {
-    return (
-      <LayoutContainer>
-        <div>App is not ready</div>
-      </LayoutContainer>
-    )
-  }
+  const subcomponentList = Object.keys(Layout)
+  subcomponentList.forEach((key) => {
+    React.Children.forEach(children, (child) => {
+      if (child.type.name === key) {
+        subcomponents[key] = child
+      }
+    })
+  })
 
   return (
     <LayoutContainer>
-      <LayoutContent>
-        {{
-          left: (
-            <Layout.Left>
-              <LeftElementExample />
-            </Layout.Left>
-          ),
-          top: (
-            <Layout.Top>
-              <TopElementExample />
-            </Layout.Top>
-          ),
-          main: (
-            <Layout.Main>
-              <CenterElementExample />
-            </Layout.Main>
-          ),
-          bottom: (
-            <Layout.Bottom>
-              <BottomElementExample />
-            </Layout.Bottom>
-          ),
-          right: (
-            <Layout.Right>
-              <MonomerLibrary />
-            </Layout.Right>
-          )
-        }}
-      </LayoutContent>
-
-      <Logo>
-        <span>Polymer Editor</span>
-        <span>Ketcher</span>
-        <span>EPAM</span>
-      </Logo>
+      {subcomponents.Left}
+      <CenterContainer>
+        {subcomponents.Top}
+        {subcomponents.Main}
+        {subcomponents.Bottom}
+      </CenterContainer>
+      {subcomponents.Right}
     </LayoutContainer>
-  )
-}
-
-export const LayoutContent = ({
-  children: subcomponents
-}: LayoutContentProps) => {
-  return (
-    <>
-      {subcomponents.left}
-      <Container margin="0 6px">
-        <CenterContainer>
-          {subcomponents.top}
-          <Container margin={subcomponents.bottom ? '6px 0' : '6px 0 0 0'}>
-            {subcomponents.main}
-          </Container>
-          {subcomponents.bottom}
-        </CenterContainer>
-      </Container>
-      {subcomponents.right}
-    </>
   )
 }
 
@@ -198,8 +81,10 @@ const LeftContainer = styled.div({
   height: `calc(100vh - 40px - ${PADDING} * 2)`
 })
 
-const Left = ({ children }: SubcomponentProps) => (
-  <LeftContainer data-testid="left-container">{children}</LeftContainer>
+const Left = ({ children, styles }: SubcomponentProps) => (
+  <LeftContainer data-testid="left-container" style={styles}>
+    {children}
+  </LeftContainer>
 )
 Layout.Left = Left
 
@@ -207,11 +92,13 @@ const TopContainer = styled.div({
   height: '24px',
   width: '600px',
   alignSelf: 'flex-end',
-  marginRight: '10%'
+  margin: '0 10% 0 6px'
 })
 
-const Top = ({ children }: SubcomponentProps) => (
-  <TopContainer data-testid="top-container">{children}</TopContainer>
+const Top = ({ children, styles }: SubcomponentProps) => (
+  <TopContainer data-testid="top-container" style={styles}>
+    {children}
+  </TopContainer>
 )
 Layout.Top = Top
 
@@ -220,25 +107,33 @@ const RightContainer = styled.div({
   height: `calc(100vh - ${PADDING} * 2)`
 })
 
-const Right = ({ children }: SubcomponentProps) => (
-  <RightContainer data-testid="right-container">{children}</RightContainer>
+const Right = ({ children, styles }: SubcomponentProps) => (
+  <RightContainer data-testid="right-container" style={styles}>
+    {children}
+  </RightContainer>
 )
 Layout.Right = Right
 
 const MainContainer = styled.div({
-  height: '100%'
+  height: '100%',
+  margin: '6px 6px 0 6px'
 })
 
-const Main = ({ children }: SubcomponentProps) => (
-  <MainContainer data-testid="main-container">{children}</MainContainer>
+const Main = ({ children, styles }: SubcomponentProps) => (
+  <MainContainer data-testid="main-container" style={styles}>
+    {children}
+  </MainContainer>
 )
 Layout.Main = Main
 
 const BottomContainer = styled.div({
-  height: '100px'
+  height: '100px',
+  margin: '6px 6px 0 6px'
 })
 
-const Bottom = ({ children }: SubcomponentProps) => (
-  <BottomContainer data-testid="bottom-container">{children}</BottomContainer>
+const Bottom = ({ children, styles }: SubcomponentProps) => (
+  <BottomContainer data-testid="bottom-container" style={styles}>
+    {children}
+  </BottomContainer>
 )
 Layout.Bottom = Bottom

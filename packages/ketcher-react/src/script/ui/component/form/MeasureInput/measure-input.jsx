@@ -17,7 +17,7 @@
 import React, { useEffect, useState } from 'react'
 
 import Input from '../input'
-import Select from '../Select/Select'
+import Select from '../Select'
 import styles from './measure-input.module.less'
 
 const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
@@ -53,10 +53,6 @@ const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
     calcValue()
   }, [value, measure, calcValue])
 
-  const handleFocus = (e) => {
-    console.log(e)
-  }
-
   const desc = schema || schema.properties[name]
 
   return (
@@ -68,8 +64,6 @@ const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
           step={measure === 'px' || measure === 'pt' ? '1' : '0.001'}
           value={cust}
           onChange={handleChange}
-          onFocus={handleFocus}
-          // onBlur={calcValue}
         />
         <Select
           onChange={handleMeasChange}

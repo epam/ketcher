@@ -14,31 +14,38 @@
  * limitations under the License.
  ***************************************************************************/
 import { render, screen } from 'test-utils'
-import { MenuItem } from 'components/menu/menuItem/MenuItem'
 import { MenuItemVariant } from 'components/menu/menu.types'
 import userEvent from '@testing-library/user-event'
+import { Menu, MenuContext } from 'components/menu'
 
 const mockClickHandler = jest.fn()
 const MOCK_NAME: MenuItemVariant = 'select-lasso'
 
-const mockProps = {
-  name: MOCK_NAME,
-  onClick: mockClickHandler,
-  activeItem: MOCK_NAME
+const mockValue = {
+  itemClickHandler: mockClickHandler,
+  isActiveItem: (itemKey) => itemKey === MOCK_NAME
+}
+
+const mockMenuItem = () => {
+  return (
+    <MenuContext.Provider value={mockValue}>
+      <Menu.Item itemKey="open" />
+    </MenuContext.Provider>
+  )
 }
 
 describe('Test MenuItem component', () => {
   it('should be rendered without crashing', () => {
-    const { asFragment } = render(<MenuItem {...mockProps} />)
+    const { asFragment } = render(mockMenuItem())
     expect(asFragment).toMatchSnapshot()
   })
   it('should render menu icon element when props are provided', () => {
-    render(<MenuItem {...mockProps} />)
-    expect(screen.getByRole('button')).toBeInTheDocument()
+    render(mockMenuItem())
+    expect(screen.getByRole('menuitem')).toBeInTheDocument()
   })
   it('should call provided callback when menu icon is clicked', () => {
-    render(<MenuItem {...mockProps} />)
-    const button = screen.getByRole('button')
+    render(mockMenuItem())
+    const button = screen.getByRole('menuitem')
     userEvent.click(button)
     expect(mockClickHandler).toHaveBeenCalledTimes(1)
   })

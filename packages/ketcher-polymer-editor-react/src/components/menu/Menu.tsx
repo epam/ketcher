@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled'
-import React from 'react'
+import React, { createContext, useState } from 'react'
 import { MenuItem } from 'components/menu/menuItem'
 import { SubMenu } from 'components/menu/subMenu'
 
@@ -57,7 +57,22 @@ const Group = ({ children, divider = false }) => {
   )
 }
 
-const Menu = ({ children }) => {
+const MenuContext = createContext({
+  isActiveItem: (itemKey) => itemKey === 'select-lasso',
+  itemClickHandler: (itemKey) => console.log(itemKey)
+})
+
+const Menu = ({ children, menuItemChanged }) => {
+  const [activeItem, setActiveItem] = useState('select-lasso')
+
+  const menuContextValue = {
+    isActiveItem: (itemKey) => itemKey === activeItem,
+    itemClickHandler: (itemKey) => {
+      setActiveItem(itemKey)
+      menuItemChanged(itemKey)
+    }
+  }
+
   const subComponentList = Object.keys(Menu)
 
   const subComponents = subComponentList.map((key) => {
@@ -66,11 +81,17 @@ const Menu = ({ children }) => {
     )
   })
 
-  return <>{subComponents.map((component) => component)} </>
+  return (
+    <>
+      <MenuContext.Provider value={menuContextValue}>
+        {subComponents.map((component) => component)}
+      </MenuContext.Provider>
+    </>
+  )
 }
 
 Menu.Group = Group
 Menu.Item = MenuItem
 Menu.Submenu = SubMenu
 
-export { Menu }
+export { Menu, MenuContext }

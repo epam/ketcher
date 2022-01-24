@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { ClickAwayListener } from '@mui/material'
 import styled from '@emotion/styled'
 import Collapse from '@mui/material/Collapse'
 import { Icon } from 'components/shared/ui/icon'
-import { MenuItemVariant } from 'components/menu/menu.types'
+import { MenuItem } from 'components/menu/menuItem'
+import { MenuContext } from 'components/menu'
 
 const SubMenuContainer = styled('div')`
   display: flex;
@@ -43,6 +44,8 @@ type DropDownProps = {
 
 const DropDown = styled('div')<DropDownProps>`
   display: flex;
+  width: 6px;
+  height: 6px;
   position: absolute;
   bottom: 0;
   right: 0;
@@ -59,11 +62,7 @@ const OptionsItemsCollapse = styled(Collapse)`
   position: relative;
 `
 
-type SubMenuHeaderProps = {
-  isActive: boolean
-} & React.HTMLAttributes<HTMLDivElement>
-
-const SubMenuHeader = styled('div')<SubMenuHeaderProps>`
+const SubMenuHeader = styled('div')`
   display: flex;
   align-items: center;
   position: relative;
@@ -72,73 +71,50 @@ const SubMenuHeader = styled('div')<SubMenuHeaderProps>`
   padding: 0;
   justify-content: center;
   border-radius: 2px;
-  background-color: ${(props) =>
-    props.isActive
-      ? props.theme.color.icon.activeMenu
-      : props.theme.color.background.primary};
-
-  :hover {
-    transform: scale(1.2);
-  }
-
-  > svg path {
-    fill: ${(props) =>
-      props.isActive
-        ? props.theme.color.icon.clicked
-        : props.theme.color.icon.activeMenu};
-  }
 `
 
 type SubMenuProps = {
   children: JSX.Element[]
-  activeItem: MenuItemVariant
-  onClick: (name: MenuItemVariant) => void
   vertical?: boolean
 }
 
-const SubMenu = ({
-  children,
-  activeItem,
-  onClick,
-  vertical = false
-}: SubMenuProps) => {
+const SubMenu = ({ children, vertical = false }: SubMenuProps) => {
   const [open, setOpen] = useState(false)
+  const { isActiveItem } = useContext(MenuContext)
 
   const handleDropDownClick = () => {
     setOpen((prev) => !prev)
   }
 
-  const options = children.map((item) => item.props.name)
-  const header = options.includes(activeItem) ? activeItem : options[0]
-  const isActiveTool = activeItem === header
+  const hideCollapse = () => {
+    open && setOpen(false)
+  }
+
+  const options = children.map((item) => item.props.itemKey)
+  const activeOption = options.filter((itemKey) => isActiveItem(itemKey))
+  const header = activeOption.length ? activeOption[0] : options[0]
 
   return (
     <SubMenuContainer>
-      <SubMenuHeader
-        isActive={isActiveTool}
-        onClick={() => onClick(header)}
-        role="button"
-      >
-        <Icon name={header} />
+      <SubMenuHeader>
+        <MenuItem itemKey={header} />
         <DropDown
-          isActive={isActiveTool}
+          isActive={isActiveItem(header)}
           onClick={handleDropDownClick}
-          data-testid="submenu-btn"
+          data-testid="submenu-dropdown"
           role="button"
         >
           <Icon name="dropdown" />
         </DropDown>
       </SubMenuHeader>
-      <OptionsItemsCollapse in={open} timeout="auto" unmountOnExit>
-        <ClickAwayListener
-          onClickAway={() => {
-            open && setOpen(false)
-          }}
-        >
-          <OptionsFlexContainer
-            isVertical={vertical}
-            data-testid="submenu-options"
-          >
+      <OptionsItemsCollapse
+        in={open}
+        timeout="auto"
+        unmountOnExit
+        onClick={hideCollapse}
+      >
+        <ClickAwayListener onClickAway={hideCollapse}>
+          <OptionsFlexContainer isVertical={vertical}>
             {children}
           </OptionsFlexContainer>
         </ClickAwayListener>

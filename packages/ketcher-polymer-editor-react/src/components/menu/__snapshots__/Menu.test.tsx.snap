@@ -8,58 +8,58 @@ Object {
       <div
         class="css-e2qc4g"
       >
-        <div
-          class="css-8d2ymx"
-          role="button"
+        <li
+          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+          role="menuitem"
+          tabindex="-1"
         >
           <icon-open.svg
             fill="#525252"
             role="img"
           />
-        </div>
-      </div>
-      <span
-        class="css-ee9t4r"
-      />
-      <div
-        class="css-e2qc4g"
-      >
-        <div
-          class="css-8d2ymx"
-          role="button"
-        >
-          <icon-undo.svg
-            fill="#525252"
-            role="img"
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
           />
-        </div>
+        </li>
       </div>
       <div
         class="css-e2qc4g"
       >
-        <div
-          class="css-8d2ymx"
-          role="button"
+        <li
+          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+          role="menuitem"
+          tabindex="-1"
         >
           <icon-erase.svg
             fill="#525252"
             role="img"
           />
-        </div>
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </li>
         <div
           class="css-12wx08y"
         >
           <div
-            class="css-i8jcl2"
-            role="button"
+            class="css-5su45f"
           >
-            <icon-select-lasso.svg
-              fill="#525252"
-              role="img"
-            />
+            <li
+              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-d1kvip-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <icon-select-lasso.svg
+                fill="#525252"
+                role="img"
+              />
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </li>
             <div
-              class="css-1z06dof"
-              data-testid="submenu-btn"
+              class="css-x98vg5"
+              data-testid="submenu-dropdown"
               role="button"
             >
               <icon-dropdown.svg
@@ -73,16 +73,24 @@ Object {
           class="css-12wx08y"
         >
           <div
-            class="css-i8jcl2"
-            role="button"
+            class="css-5su45f"
           >
-            <icon-rectangle.svg
-              fill="#525252"
-              role="img"
-            />
+            <li
+              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <icon-rectangle.svg
+                fill="#525252"
+                role="img"
+              />
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </li>
             <div
-              class="css-1z06dof"
-              data-testid="submenu-btn"
+              class="css-clax1l"
+              data-testid="submenu-dropdown"
               role="button"
             >
               <icon-dropdown.svg
@@ -96,16 +104,24 @@ Object {
           class="css-12wx08y"
         >
           <div
-            class="css-i8jcl2"
-            role="button"
+            class="css-5su45f"
           >
-            <icon-rotate.svg
-              fill="#525252"
-              role="img"
-            />
+            <li
+              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <icon-rotate.svg
+                fill="#525252"
+                role="img"
+              />
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </li>
             <div
-              class="css-1z06dof"
-              data-testid="submenu-btn"
+              class="css-clax1l"
+              data-testid="submenu-dropdown"
               role="button"
             >
               <icon-dropdown.svg
@@ -116,116 +132,64 @@ Object {
           </div>
         </div>
       </div>
-      <div
-        class="css-e2qc4g"
-      >
-        <div
-          class="css-8d2ymx"
-          role="button"
-        >
-          <icon-single-bond.svg
-            fill="#525252"
-            role="img"
-          />
-        </div>
-      </div>
-      <div
-        class="css-e2qc4g"
-      >
-        <div
-          class="css-8d2ymx"
-          role="button"
-        >
-          <icon-bracket.svg
-            fill="#525252"
-            role="img"
-          />
-        </div>
-      </div>
-      <span
-        class="css-ee9t4r"
-      />
-      <div
-        class="css-e2qc4g"
-      >
-        <div
-          class="css-8d2ymx"
-          role="button"
-        >
-          <icon-settings.svg
-            fill="#525252"
-            role="img"
-          />
-        </div>
-        <div
-          class="css-8d2ymx"
-          role="button"
-        >
-          <icon-help.svg
-            fill="#525252"
-            role="img"
-          />
-        </div>
-      </div>
-       
     </div>
   </body>,
   "container": <div>
     <div
       class="css-e2qc4g"
     >
-      <div
-        class="css-8d2ymx"
-        role="button"
+      <li
+        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+        role="menuitem"
+        tabindex="-1"
       >
         <icon-open.svg
           fill="#525252"
           role="img"
         />
-      </div>
-    </div>
-    <span
-      class="css-ee9t4r"
-    />
-    <div
-      class="css-e2qc4g"
-    >
-      <div
-        class="css-8d2ymx"
-        role="button"
-      >
-        <icon-undo.svg
-          fill="#525252"
-          role="img"
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
         />
-      </div>
+      </li>
     </div>
     <div
       class="css-e2qc4g"
     >
-      <div
-        class="css-8d2ymx"
-        role="button"
+      <li
+        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+        role="menuitem"
+        tabindex="-1"
       >
         <icon-erase.svg
           fill="#525252"
           role="img"
         />
-      </div>
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </li>
       <div
         class="css-12wx08y"
       >
         <div
-          class="css-i8jcl2"
-          role="button"
+          class="css-5su45f"
         >
-          <icon-select-lasso.svg
-            fill="#525252"
-            role="img"
-          />
+          <li
+            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-d1kvip-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+            role="menuitem"
+            tabindex="-1"
+          >
+            <icon-select-lasso.svg
+              fill="#525252"
+              role="img"
+            />
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </li>
           <div
-            class="css-1z06dof"
-            data-testid="submenu-btn"
+            class="css-x98vg5"
+            data-testid="submenu-dropdown"
             role="button"
           >
             <icon-dropdown.svg
@@ -239,16 +203,24 @@ Object {
         class="css-12wx08y"
       >
         <div
-          class="css-i8jcl2"
-          role="button"
+          class="css-5su45f"
         >
-          <icon-rectangle.svg
-            fill="#525252"
-            role="img"
-          />
+          <li
+            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+            role="menuitem"
+            tabindex="-1"
+          >
+            <icon-rectangle.svg
+              fill="#525252"
+              role="img"
+            />
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </li>
           <div
-            class="css-1z06dof"
-            data-testid="submenu-btn"
+            class="css-clax1l"
+            data-testid="submenu-dropdown"
             role="button"
           >
             <icon-dropdown.svg
@@ -262,16 +234,24 @@ Object {
         class="css-12wx08y"
       >
         <div
-          class="css-i8jcl2"
-          role="button"
+          class="css-5su45f"
         >
-          <icon-rotate.svg
-            fill="#525252"
-            role="img"
-          />
+          <li
+            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+            role="menuitem"
+            tabindex="-1"
+          >
+            <icon-rotate.svg
+              fill="#525252"
+              role="img"
+            />
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </li>
           <div
-            class="css-1z06dof"
-            data-testid="submenu-btn"
+            class="css-clax1l"
+            data-testid="submenu-dropdown"
             role="button"
           >
             <icon-dropdown.svg
@@ -282,58 +262,6 @@ Object {
         </div>
       </div>
     </div>
-    <div
-      class="css-e2qc4g"
-    >
-      <div
-        class="css-8d2ymx"
-        role="button"
-      >
-        <icon-single-bond.svg
-          fill="#525252"
-          role="img"
-        />
-      </div>
-    </div>
-    <div
-      class="css-e2qc4g"
-    >
-      <div
-        class="css-8d2ymx"
-        role="button"
-      >
-        <icon-bracket.svg
-          fill="#525252"
-          role="img"
-        />
-      </div>
-    </div>
-    <span
-      class="css-ee9t4r"
-    />
-    <div
-      class="css-e2qc4g"
-    >
-      <div
-        class="css-8d2ymx"
-        role="button"
-      >
-        <icon-settings.svg
-          fill="#525252"
-          role="img"
-        />
-      </div>
-      <div
-        class="css-8d2ymx"
-        role="button"
-      >
-        <icon-help.svg
-          fill="#525252"
-          role="img"
-        />
-      </div>
-    </div>
-     
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],

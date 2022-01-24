@@ -14,7 +14,36 @@
  * limitations under the License.
  ***************************************************************************/
 import { render } from 'test-utils'
-import { MenuContainer } from 'components/menu/MenuContainer'
+import { Menu } from 'components/menu/Menu'
+
+const menuItemChanged = jest.fn()
+
+const MenuContainer = () => {
+  return (
+    <Menu menuItemChanged={menuItemChanged}>
+      <Menu.Group>
+        <Menu.Item itemKey="open" />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemKey="erase" />
+        <Menu.Submenu vertical>
+          <Menu.Item itemKey="select-lasso" />
+          <Menu.Item itemKey="select-rectangle" />
+          <Menu.Item itemKey="select-fragment" />
+        </Menu.Submenu>
+        <Menu.Submenu>
+          <Menu.Item itemKey="rectangle" />
+          <Menu.Item itemKey="ellipse" />
+        </Menu.Submenu>
+        <Menu.Submenu>
+          <Menu.Item itemKey="rotate" />
+          <Menu.Item itemKey="horizontal-flip" />
+          <Menu.Item itemKey="vertical-flip" />
+        </Menu.Submenu>
+      </Menu.Group>
+    </Menu>
+  )
+}
 
 describe('Menu component', () => {
   it('should render menu component in a container', () => {

@@ -13,56 +13,60 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import styled from '@emotion/styled'
 import { Icon } from 'components/shared/ui/icon'
 import { MenuItemVariant } from 'components/menu/menu.types'
+import { useContext } from 'react'
+import { MenuContext } from 'components/menu'
+import { MenuItem as MuiMenuItem } from '@mui/material'
+import { css, useTheme } from '@emotion/react'
 
-type MenuItemContainerProp = {
-  isActive: boolean
-} & React.HTMLAttributes<HTMLDivElement>
+const CustomMenuItem = ({ isActive, onClick, children }) => {
+  const theme = useTheme()
+  const styles = css`
+    display: flex;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 2px;
+    background-color: ${isActive
+      ? theme.color.icon.activeMenu
+      : theme.color.background.primary};
 
-const MenuItemContainer = styled('div')<MenuItemContainerProp>`
-  display: flex;
-  align-items: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  justify-content: center;
-  border-radius: 2px;
-  background-color: ${(props) =>
-    props.isActive
-      ? props.theme.color.icon.activeMenu
-      : props.theme.color.background.primary};
+    &:hover {
+      background: ${isActive
+        ? theme.color.icon.activeMenu
+        : theme.color.background.primary};
+    }
 
-  :hover {
-    transform: scale(1.2);
-  }
-
-  > svg path {
-    fill: ${(props) =>
-      props.isActive
-        ? props.theme.color.icon.clicked
-        : props.theme.color.icon.activeMenu};
-  }
-`
-
-type MenuItemProp = {
-  name: MenuItemVariant
-  activeItem: MenuItemVariant
-  onClick: (name: MenuItemVariant) => void
+    & > svg path {
+      fill: ${isActive
+        ? theme.color.icon.clicked
+        : theme.color.icon.activeMenu};
+    }
+  `
+  return (
+    <MuiMenuItem css={styles} onClick={onClick}>
+      {children}
+    </MuiMenuItem>
+  )
 }
 
-const MenuItem = ({ name, activeItem, onClick }: MenuItemProp) => {
-  const isActiveTool = activeItem === name
+type MenuItemProp = {
+  itemKey: MenuItemVariant
+}
+
+const MenuItem = ({ itemKey }: MenuItemProp) => {
+  const { isActiveItem, itemClickHandler } = useContext(MenuContext)
 
   return (
-    <MenuItemContainer
-      isActive={isActiveTool}
-      onClick={() => onClick(name)}
-      role="button"
+    <CustomMenuItem
+      isActive={isActiveItem(itemKey)}
+      onClick={() => itemClickHandler(itemKey)}
     >
-      <Icon name={name} />
-    </MenuItemContainer>
+      <Icon name={itemKey} />
+    </CustomMenuItem>
   )
 }
 

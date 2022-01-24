@@ -17,10 +17,10 @@
 import { useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from 'hooks'
-import { selectEditorIsReady, fetchInitData } from 'state/common'
+import { selectEditorIsReady, fetchInitData, selectTool } from 'state/common'
 import { MonomerLibrary } from 'components/monomerLibrary'
 import styled from '@emotion/styled'
-import { MenuContainer } from 'components/menu/MenuContainer'
+import { Menu } from 'components/menu'
 
 export const fetchData = () =>
   new Promise((resolve) => {
@@ -78,10 +78,48 @@ export const App = (): JSX.Element => {
     return <div>App is not ready</div>
   }
 
+  const menuItemChanged = (name) => {
+    dispatch(selectTool(name))
+  }
+
   return (
     <AppContainer>
       <MonomerLibrary />
-      <MenuContainer />
+      <Menu menuItemChanged={menuItemChanged}>
+        <Menu.Group>
+          <Menu.Item itemKey="open" />
+        </Menu.Group>
+        <Menu.Group>
+          <Menu.Item itemKey="undo" />
+        </Menu.Group>
+        <Menu.Group>
+          <Menu.Item itemKey="erase" />
+          <Menu.Submenu vertical>
+            <Menu.Item itemKey="select-lasso" />
+            <Menu.Item itemKey="select-rectangle" />
+            <Menu.Item itemKey="select-fragment" />
+          </Menu.Submenu>
+          <Menu.Submenu>
+            <Menu.Item itemKey="rectangle" />
+            <Menu.Item itemKey="ellipse" />
+          </Menu.Submenu>
+          <Menu.Submenu>
+            <Menu.Item itemKey="rotate" />
+            <Menu.Item itemKey="horizontal-flip" />
+            <Menu.Item itemKey="vertical-flip" />
+          </Menu.Submenu>
+        </Menu.Group>
+        <Menu.Group>
+          <Menu.Item itemKey="single-bond" />
+        </Menu.Group>
+        <Menu.Group divider>
+          <Menu.Item itemKey="bracket" />
+        </Menu.Group>
+        <Menu.Group>
+          <Menu.Item itemKey="settings" />
+          <Menu.Item itemKey="help" />
+        </Menu.Group>
+      </Menu>
       <Logo>
         <span>Polymer Editor</span>
         <span>Ketcher</span>

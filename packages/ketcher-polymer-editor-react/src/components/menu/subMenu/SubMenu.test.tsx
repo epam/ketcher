@@ -15,33 +15,34 @@
  ***************************************************************************/
 import { render } from 'test-utils'
 import { screen } from '@testing-library/react'
-import { MenuItemVariant } from 'components/menu/menu.types'
-import { Menu } from 'components/menu'
+import { Menu, MenuContext } from 'components/menu'
 import userEvent from '@testing-library/user-event'
+import { MenuItemVariant } from 'components/menu/menu.types'
 
 const mockClickHandler = jest.fn()
 const MOCK_NAME: MenuItemVariant = 'select-lasso'
-const mockProps = {
-  onClick: mockClickHandler,
-  activeItem: MOCK_NAME
+
+const mockValue = {
+  itemClickHandler: mockClickHandler,
+  isActiveItem: (itemKey) => itemKey === MOCK_NAME
 }
 
 const mockMenuItems = [
-  <Menu.Item name="help" {...mockProps} />,
-  <Menu.Item name="settings" {...mockProps} />,
-  <Menu.Item name="undo" {...mockProps} />
+  <Menu.Item itemKey="help" />,
+  <Menu.Item itemKey="settings" />,
+  <Menu.Item itemKey="undo" />
 ]
 
 const openSubMenu = () => {
-  const presetDropDownBtn = screen.getByTestId('submenu-btn')
+  const presetDropDownBtn = screen.getByTestId('submenu-dropdown')
   userEvent.click(presetDropDownBtn)
 }
 
 const mockSubMenu = () => {
   return (
-    <Menu.Submenu vertical {...mockProps}>
-      {...mockMenuItems}
-    </Menu.Submenu>
+    <MenuContext.Provider value={mockValue}>
+      <Menu.Submenu vertical>{...mockMenuItems}</Menu.Submenu>
+    </MenuContext.Provider>
   )
 }
 
@@ -53,11 +54,11 @@ describe('Test SubMenu component', () => {
   it('should show menu dropdown on click', () => {
     render(mockSubMenu())
     openSubMenu()
-    expect(screen.getByTestId('submenu-options')).toBeDefined()
+    expect(screen.getAllByRole('menuitem').length).toEqual(4)
   })
   it('should call provided callback when header icon is clicked', () => {
     render(mockSubMenu())
-    const button = screen.getAllByRole('button')[0]
+    const button = screen.getByRole('menuitem')
     userEvent.click(button)
     expect(mockClickHandler).toHaveBeenCalled()
   })

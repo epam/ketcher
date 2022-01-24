@@ -41,49 +41,74 @@ describe('Layout', () => {
   it('should render several subcomponents correctly', () => {
     render(
       <LayoutContent>
-        <Layout.Top>
-          <TopElementMock />
-        </Layout.Top>
-        <Layout.Left>
-          <LeftElementMock />
-        </Layout.Left>
-        <Layout.Main>
-          <MainElementMock />
-        </Layout.Main>
+        {{
+          left: (
+            <Layout.Left>
+              <LeftElementMock />
+            </Layout.Left>
+          ),
+          top: (
+            <Layout.Top>
+              <TopElementMock />
+            </Layout.Top>
+          ),
+          main: (
+            <Layout.Main>
+              <MainElementMock />
+            </Layout.Main>
+          ),
+          right: (
+            <Layout.Right>
+              <RightElementMock />
+            </Layout.Right>
+          )
+        }}
       </LayoutContent>
     )
 
     const topElement = screen.getByText('top element')
     const mainElement = screen.getByText('main element')
     const leftElement = screen.getByText('left element')
+    const rightElement = screen.getByText('right element')
     const bottomElement = screen.queryByTestId('bottom-container')
-    const rightElement = screen.queryByTestId('right-container')
 
     expect(topElement).toBeVisible()
     expect(mainElement).toBeVisible()
     expect(leftElement).toBeVisible()
+    expect(rightElement).toBeVisible()
     expect(bottomElement).not.toBeInTheDocument()
-    expect(rightElement).not.toBeInTheDocument()
   })
 
   it('should render all subcomponents correctly', () => {
     render(
       <LayoutContent>
-        <Layout.Top>
-          <TopElementMock />
-        </Layout.Top>
-        <Layout.Left>
-          <LeftElementMock />
-        </Layout.Left>
-        <Layout.Main>
-          <MainElementMock />
-        </Layout.Main>
-        <Layout.Right>
-          <RightElementMock />
-        </Layout.Right>
-        <Layout.Bottom>
-          <BottomElementMock />
-        </Layout.Bottom>
+        {{
+          left: (
+            <Layout.Left>
+              <LeftElementMock />
+            </Layout.Left>
+          ),
+          top: (
+            <Layout.Top>
+              <TopElementMock />
+            </Layout.Top>
+          ),
+          main: (
+            <Layout.Main>
+              <MainElementMock />
+            </Layout.Main>
+          ),
+          bottom: (
+            <Layout.Bottom>
+              <BottomElementMock />
+            </Layout.Bottom>
+          ),
+          right: (
+            <Layout.Right>
+              <RightElementMock />
+            </Layout.Right>
+          )
+        }}
       </LayoutContent>
     )
 

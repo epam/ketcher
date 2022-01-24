@@ -8,8 +8,12 @@ Object {
       <div
         class="Ketcher-polymer-editor-root css-1a8jakh"
       >
-        <div>
-          App is not ready
+        <div
+          class="css-1h5652m"
+        >
+          <div>
+            App is not ready
+          </div>
         </div>
       </div>
     </div>
@@ -18,8 +22,12 @@ Object {
     <div
       class="Ketcher-polymer-editor-root css-1a8jakh"
     >
-      <div>
-        App is not ready
+      <div
+        class="css-1h5652m"
+      >
+        <div>
+          App is not ready
+        </div>
       </div>
     </div>
   </div>,

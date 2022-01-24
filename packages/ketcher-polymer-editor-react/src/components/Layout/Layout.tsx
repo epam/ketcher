@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from 'hooks'
 
 import { Container } from 'components/shared/ui/Container'
@@ -24,6 +24,16 @@ import { fetchInitData, selectEditorIsReady } from 'state/common'
 
 interface SubcomponentProps {
   children: JSX.Element
+}
+
+interface LayoutContentProps {
+  children: {
+    left: JSX.Element
+    main: JSX.Element
+    right: JSX.Element
+    top: JSX.Element
+    bottom?: JSX.Element
+  }
 }
 
 export const fetchData = () =>
@@ -114,31 +124,43 @@ export const Layout = () => {
   }, [dispatch])
 
   if (!isReady) {
-    return <div>App is not ready</div>
+    return (
+      <LayoutContainer>
+        <div>App is not ready</div>
+      </LayoutContainer>
+    )
   }
 
   return (
     <LayoutContainer>
       <LayoutContent>
-        <Layout.Left>
-          <LeftElementExample />
-        </Layout.Left>
-
-        <Layout.Top>
-          <TopElementExample />
-        </Layout.Top>
-
-        <Layout.Main>
-          <CenterElementExample />
-        </Layout.Main>
-
-        <Layout.Bottom>
-          <BottomElementExample />
-        </Layout.Bottom>
-
-        <Layout.Right>
-          <MonomerLibrary />
-        </Layout.Right>
+        {{
+          left: (
+            <Layout.Left>
+              <LeftElementExample />
+            </Layout.Left>
+          ),
+          top: (
+            <Layout.Top>
+              <TopElementExample />
+            </Layout.Top>
+          ),
+          main: (
+            <Layout.Main>
+              <CenterElementExample />
+            </Layout.Main>
+          ),
+          bottom: (
+            <Layout.Bottom>
+              <BottomElementExample />
+            </Layout.Bottom>
+          ),
+          right: (
+            <Layout.Right>
+              <MonomerLibrary />
+            </Layout.Right>
+          )
+        }}
       </LayoutContent>
 
       <Logo>
@@ -150,36 +172,22 @@ export const Layout = () => {
   )
 }
 
-export const LayoutContent = ({ children }) => {
-  const subcomponents = {
-    Left: null,
-    Main: null,
-    Right: null,
-    Top: null,
-    Bottom: null
-  }
-  const subcomponentList = Object.keys(Layout)
-  subcomponentList.forEach((key) => {
-    React.Children.forEach(children, (child) => {
-      if (child.type.name === key) {
-        subcomponents[key] = child
-      }
-    })
-  })
-
+export const LayoutContent = ({
+  children: subcomponents
+}: LayoutContentProps) => {
   return (
     <>
-      {subcomponents.Left}
+      {subcomponents.left}
       <Container margin="0 6px">
         <CenterContainer>
-          {subcomponents.Top}
-          <Container margin={subcomponents.Bottom ? '6px 0' : '6px 0 0 0'}>
-            {subcomponents.Main}
+          {subcomponents.top}
+          <Container margin={subcomponents.bottom ? '6px 0' : '6px 0 0 0'}>
+            {subcomponents.main}
           </Container>
-          {subcomponents.Bottom}
+          {subcomponents.bottom}
         </CenterContainer>
       </Container>
-      {subcomponents.Right}
+      {subcomponents.right}
     </>
   )
 }

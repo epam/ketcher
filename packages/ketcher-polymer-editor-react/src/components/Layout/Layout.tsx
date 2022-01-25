@@ -90,7 +90,7 @@ Layout.Left = Left
 
 const TopContainer = styled.div({
   height: '24px',
-  width: '600px',
+  width: '670px',
   alignSelf: 'flex-end',
   margin: '0 10% 0 6px'
 })

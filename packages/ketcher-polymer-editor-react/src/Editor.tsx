@@ -25,6 +25,7 @@ import { defaultTheme } from 'styles/theme'
 import globalStyles from './styles/globalStyles'
 import { Layout } from 'components/Layout'
 import { MonomerLibrary } from 'components/monomerLibrary'
+import { NotationContainer } from 'components/notationInput/notationContainer'
 
 const theme = createTheme(defaultTheme)
 
@@ -61,12 +62,6 @@ const Logo = styled.div(({ theme }) => ({
       color: theme.color.text.secondary
     }
   }
-}))
-
-const TopElementExample = styled.div(({ theme }) => ({
-  height: '100%',
-  width: '100%',
-  backgroundColor: theme.color.button.primary.clicked
 }))
 
 const LeftElementExample = styled.div(({ theme }) => ({
@@ -107,7 +102,7 @@ function Editor(props: EditorProps) {
             </Layout.Left>
 
             <Layout.Top>
-              <TopElementExample />
+              <NotationContainer />
             </Layout.Top>
 
             <Layout.Main>

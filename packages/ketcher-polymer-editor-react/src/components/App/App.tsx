@@ -21,6 +21,7 @@ import { selectEditorIsReady, fetchInitData, selectTool } from 'state/common'
 import { MonomerLibrary } from 'components/monomerLibrary'
 import styled from '@emotion/styled'
 import { Menu } from 'components/menu'
+import { NotationContainer } from 'components/notationInput/notationContainer'
 
 export const fetchData = () =>
   new Promise((resolve) => {
@@ -82,8 +83,10 @@ export const App = (): JSX.Element => {
     dispatch(selectTool(name))
   }
 
+  // @TODO fix app layout when key components are ready
   return (
     <AppContainer>
+      <NotationContainer />
       <MonomerLibrary />
       <Menu menuItemChanged={menuItemChanged}>
         <Menu.Group>

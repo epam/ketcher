@@ -19,12 +19,12 @@ import { FormulaInput, FrozenInput } from './components'
 import { Component } from 'react'
 import { Dialog } from '../../../../components'
 import { ErrorsContext } from '../../../../../../../contexts'
-import Input from '../../../../../component/form/input'
 import { analyse } from '../../../../../state/server'
 import { changeRound } from '../../../../../state/options'
 import classes from './Analyse.module.less'
 import { connect } from 'react-redux'
 import { range } from 'lodash/fp'
+import Select from '../../../../../component/form/Select/Select'
 
 function roundOff(value, round) {
   if (typeof value === 'number') return value.toFixed(round)
@@ -102,12 +102,13 @@ class AnalyseDialog extends Component {
               {item.withSelector ? (
                 <div className={classes.wrapperSelector}>
                   <span>Decimal places</span>
-                  <Input
+                  <Select
                     schema={{
                       enum: range(0, 8)
                     }}
                     value={round[item.round]}
                     onChange={(val) => onChangeRound(item.round, val)}
+                    className={classes.select}
                   />
                 </div>
               ) : null}

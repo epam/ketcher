@@ -15,11 +15,12 @@
  ***************************************************************************/
 
 import { useEffect } from 'react'
+import styled from '@emotion/styled'
 
 import { useAppDispatch, useAppSelector } from 'hooks'
 import { selectEditorIsReady, fetchInitData } from 'state/common'
 import { MonomerLibrary } from 'components/monomerLibrary'
-import styled from '@emotion/styled'
+import { NotationContainer } from 'components/notationInput/notationContainer'
 
 export const fetchData = () =>
   new Promise((resolve) => {
@@ -77,17 +78,17 @@ export const App = (): JSX.Element => {
     return <div>App is not ready</div>
   }
 
+  // @TODO fix app layout when key components are ready
   return (
-    <>
-      <AppContainer>
-        <MonomerLibrary />
+    <AppContainer>
+      <NotationContainer />
+      <MonomerLibrary />
 
-        <Logo>
-          <span>Polymer Editor</span>
-          <span>Ketcher</span>
-          <span>EPAM</span>
-        </Logo>
-      </AppContainer>
-    </>
+      <Logo>
+        <span>Polymer Editor</span>
+        <span>Ketcher</span>
+        <span>EPAM</span>
+      </Logo>
+    </AppContainer>
   )
 }

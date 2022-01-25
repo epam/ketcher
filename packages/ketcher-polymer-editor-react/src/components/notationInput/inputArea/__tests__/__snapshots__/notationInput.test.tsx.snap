@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NotationInput component should render textarea and a hidden textarea in a container 1`] = `
+<div>
+  <div
+    class="css-1f5gut4"
+  >
+    <div
+      class="css-j5t9yq"
+    >
+      <textarea
+        class="css-19afjhr"
+        style="height: 0px;"
+      >
+        Some input here
+      </textarea>
+      <span
+        class="css-1yn5le4"
+      >
+        ...
+      </span>
+      <textarea
+        aria-hidden="true"
+        class="css-10fnwst"
+      />
+    </div>
+  </div>
+</div>
+`;

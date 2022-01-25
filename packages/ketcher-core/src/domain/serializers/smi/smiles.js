@@ -320,7 +320,10 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
         dir = this.calcBondDirection(struct, eIdx, vPrevIdx)
       }
 
-      if ((dir === 1 && vIdx === bond.end) || (dir === 2 && vIdx === bond.begin)) {
+      if (
+        (dir === 1 && vIdx === bond.end) ||
+        (dir === 2 && vIdx === bond.begin)
+      ) {
         this.smiles += '/'
       } else if (
         (dir === 2 && vIdx === bond.end) ||
@@ -750,7 +753,10 @@ Smiles.prototype.updateSideBonds = function (mol, bondIdx) {
 Smiles.prototype.calcBondDirection = function (mol, idx, vprev) {
   let ntouched
 
-  if (this.dbonds[idx].ctbond_beg === -1 && this.dbonds[idx].ctbond_end === -1) {
+  if (
+    this.dbonds[idx].ctbond_beg === -1 &&
+    this.dbonds[idx].ctbond_end === -1
+  ) {
     return 0
   }
 

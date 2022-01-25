@@ -883,10 +883,10 @@ function getTopologyMark(
   let n = d.rotateSC(1, 0)
   let fixed = options.lineWidth
   if (bond.doubleBondShift > 0) n = n.scaled(-bond.doubleBondShift)
-  else if (bond.doubleBondShift == 0) fixed += options.bondSpace / 2
+  else if (bond.doubleBondShift === 0) fixed += options.bondSpace / 2
 
   const s = new Vec2(2, 1).scaled(options.bondSpace)
-  if (bond.b.type == Bond.PATTERN.TYPE.TRIPLE) fixed += options.bondSpace
+  if (bond.b.type === Bond.PATTERN.TYPE.TRIPLE) fixed += options.bondSpace
   const p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)))
 
   return draw.topologyMark(render.paper, p, mark, options)
@@ -991,8 +991,8 @@ function selectDoubleBondShift(
   d1: number,
   d2: number
 ): number {
-  if (n1 == 6 && n2 != 6 && (d1 > 1 || d2 == 1)) return -1
-  if (n2 == 6 && n1 != 6 && (d2 > 1 || d1 == 1)) return 1
+  if (n1 === 6 && n2 !== 6 && (d1 > 1 || d2 === 1)) return -1
+  if (n2 === 6 && n1 !== 6 && (d2 > 1 || d1 === 1)) return 1
   if (n2 * d1 > n1 * d2) return -1
   if (n2 * d1 < n1 * d2) return 1
   if (n2 > n1) return -1
@@ -1011,7 +1011,7 @@ function selectDoubleBondShiftChain(struct: Struct, bond: ReBond): number {
   const nRight = (hb2.leftSin > 0.3 ? 1 : 0) + (hb1.rightSin > 0.3 ? 1 : 0)
   if (nLeft > nRight) return -1
   if (nLeft < nRight) return 1
-  if ((hb1.leftSin > 0.3 ? 1 : 0) + (hb1.rightSin > 0.3 ? 1 : 0) == 1) return 1
+  if ((hb1.leftSin > 0.3 ? 1 : 0) + (hb1.rightSin > 0.3 ? 1 : 0) === 1) return 1
   return 0
 }
 

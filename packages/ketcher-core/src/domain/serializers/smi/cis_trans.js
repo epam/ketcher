@@ -174,13 +174,15 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
 
   if (
     substituents[1] !== -1 &&
-    this.samesides(bond.begin, bond.end, substituents[0], substituents[1]) !== -1
+    this.samesides(bond.begin, bond.end, substituents[0], substituents[1]) !==
+      -1
   ) {
     return false
   }
   if (
     substituents[3] !== -1 &&
-    this.samesides(bond.begin, bond.end, substituents[2], substituents[3]) !== -1
+    this.samesides(bond.begin, bond.end, substituents[2], substituents[3]) !==
+      -1
   ) {
     return false
   }

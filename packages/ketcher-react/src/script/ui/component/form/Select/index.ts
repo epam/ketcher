@@ -14,45 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-.atomProps {
-  fieldset {
-    margin-top: 1.5em;
-
-    label {
-      margin: 0.3em 0;
-        display: flex;
-        flex-wrap: nowrap;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-
-      > input, > div {
-        width: 8em;
-        height: 32px;
-        display: flex;
-        align-items: center;
-      }
-    }
-
-    > legend {
-      padding: 0 0.4em;
-    }
-  }
-
-  .main {
-    width: 14.5em;
-    float: left;
-    border: none;
-  }
-
-  .query,
-  .reaction {
-    float: right;
-    clear: right;
-    width: 16em;
-
-    input[type='checkbox'] {
-      margin: 0.6em 0.3em;
-    }
-  }
-}
+export { default } from './Select'

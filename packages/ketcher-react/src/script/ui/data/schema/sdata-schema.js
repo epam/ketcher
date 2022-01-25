@@ -44,21 +44,19 @@ const sData = {
           },
           fieldValue: {
             title: 'Field value',
-            items: {
-              enum: [
-                'abs',
-                '(+)-enantiomer',
-                '(-)-enantiomer',
-                'racemate',
-                'steric',
-                'rel',
-                'R(a)',
-                'S(a)',
-                'R(p)',
-                'S(p)'
-              ]
-            },
-            default: ['abs']
+            enum: [
+              'abs',
+              '(+)-enantiomer',
+              '(-)-enantiomer',
+              'racemate',
+              'steric',
+              'rel',
+              'R(a)',
+              'S(a)',
+              'R(p)',
+              'S(p)'
+            ],
+            default: 'abs'
           },
           radiobuttons: radioButtonsSchema
         },
@@ -145,22 +143,20 @@ const sData = {
           },
           fieldValue: {
             title: 'Field value',
-            items: {
-              enum: [
-                'aerosol',
-                'alloy',
-                'catenane',
-                'complex',
-                'composite',
-                'co-polymer',
-                'emulsion',
-                'host-guest complex',
-                'mixture',
-                'rotaxane',
-                'suspension'
-              ]
-            },
-            default: ['aerosol']
+            enum: [
+              'aerosol',
+              'alloy',
+              'catenane',
+              'complex',
+              'composite',
+              'co-polymer',
+              'emulsion',
+              'host-guest complex',
+              'mixture',
+              'rotaxane',
+              'suspension'
+            ],
+            default: 'aerosol'
           },
           radiobuttons: radioButtonsSchema
         },
@@ -184,21 +180,19 @@ const sData = {
           },
           fieldValue: {
             title: 'Field value',
-            items: {
-              enum: [
-                'erythro',
-                'threo',
-                'alpha',
-                'beta',
-                'endo',
-                'exo',
-                'anti',
-                'syn',
-                'ECL',
-                'STG'
-              ]
-            },
-            default: ['erythro']
+            enum: [
+              'erythro',
+              'threo',
+              'alpha',
+              'beta',
+              'endo',
+              'exo',
+              'anti',
+              'syn',
+              'ECL',
+              'STG'
+            ],
+            default: 'erythro'
           },
           radiobuttons: radioButtonsSchema
         },
@@ -216,10 +210,8 @@ const sData = {
           },
           fieldValue: {
             title: 'Field value',
-            items: {
-              enum: ['Value=4']
-            },
-            default: ['Value=4']
+            enum: ['Value=4'],
+            default: 'Value=4'
           },
           radiobuttons: radioButtonsSchema
         },
@@ -243,31 +235,29 @@ const sData = {
           },
           fieldValue: {
             title: 'Field value',
-            items: {
-              enum: [
-                'RS',
-                'SR',
-                'P-3',
-                'P-3-PI',
-                'SP-4',
-                'SP-4-PI',
-                'T-4',
-                'T-4-PI',
-                'SP-5',
-                'SP-5-PI',
-                'TB-5',
-                'TB-5-PI',
-                'OC-6',
-                'TP-6',
-                'PB-7',
-                'CU-8',
-                'SA-8',
-                'DD-8',
-                'HB-9',
-                'TPS-9'
-              ]
-            },
-            default: ['RS']
+            enum: [
+              'RS',
+              'SR',
+              'P-3',
+              'P-3-PI',
+              'SP-4',
+              'SP-4-PI',
+              'T-4',
+              'T-4-PI',
+              'SP-5',
+              'SP-5-PI',
+              'TB-5',
+              'TB-5-PI',
+              'OC-6',
+              'TP-6',
+              'PB-7',
+              'CU-8',
+              'SA-8',
+              'DD-8',
+              'HB-9',
+              'TPS-9'
+            ],
+            default: 'RS'
           },
           radiobuttons: radioButtonsSchema
         },
@@ -291,10 +281,8 @@ const sData = {
           },
           fieldValue: {
             title: 'Field value',
-            items: {
-              enum: ['cis', 'trans']
-            },
-            default: ['cis']
+            enum: ['cis', 'trans'],
+            default: 'cis'
           },
           radiobuttons: radioButtonsSchema
         },

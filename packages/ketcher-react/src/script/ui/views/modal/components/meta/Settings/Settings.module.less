@@ -77,6 +77,20 @@
     }
   }
 
+  select,
+  input {
+    border-radius: 2px;
+    color: @color-select-border;
+    height: inherit;
+    margin: 0;
+    line-height: 12px;
+    padding: 2px 8px;
+  }
+
+  select {
+    margin-left: 2px;
+  }
+
   label {
     display: flex;
     justify-content: space-between;
@@ -95,20 +109,6 @@
 
     > span {
       flex-basis: 50%;
-    }
-
-    select,
-    input {
-      border-radius: 2px !important;
-      color: @color-text-primary;
-      height: inherit !important;
-      margin: 0 !important;
-      line-height: 12px !important;
-      padding: 2px 8px !important;
-    }
-
-    select {
-      margin-left: 2px !important;
     }
   }
 

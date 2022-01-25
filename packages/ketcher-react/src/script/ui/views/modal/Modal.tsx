@@ -18,6 +18,7 @@ import { useRef } from 'react'
 
 import { BaseCallProps } from './modal.types'
 import classes from './Modal.module.less'
+import selectClasses from '../../component/form/Select/Select.module.less'
 import clsx from 'clsx'
 import mediaSizes from './mediaSizes'
 import modals from '../../dialog'
@@ -48,7 +49,10 @@ function Modal(props: Props) {
     throw new Error(`There is no modal window named ${modal.name}`)
 
   return (
-    <div className={classes.modalOverlay} ref={containerRef}>
+    <div
+      className={clsx(classes.modalOverlay, selectClasses.selectContainer)}
+      ref={containerRef}
+    >
       <Component
         className={clsx({
           [classes.smallScreen]:

@@ -20,6 +20,7 @@ import { Dialog } from '../../views/components'
 import classes from './sgroup.module.less'
 import { connect } from 'react-redux'
 import { sgroupMap as schemes } from '../../data/schema/struct-schema'
+import Select from '../../component/form/Select/Select'
 
 function Sgroup({ formState, ...prop }) {
   const { result, valid } = formState
@@ -55,6 +56,15 @@ const content = (type) =>
       if (prop === 'fieldName') props.maxLength = 30
       if (prop === 'fieldValue') props.type = 'textarea'
       if (prop === 'radiobuttons') props.type = 'radio'
+      if (prop === 'connectivity')
+        return (
+          <Field
+            name={prop}
+            key={`${type}-${prop}`}
+            {...props}
+            component={Select}
+          />
+        )
 
       return <Field name={prop} key={`${type}-${prop}`} {...props} />
     })

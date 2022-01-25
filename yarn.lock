@@ -1444,44 +1444,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.12.1":
-  version: 7.12.1
-  resolution: "@babel/runtime@npm:7.12.1"
-  dependencies:
-    regenerator-runtime: ^0.13.4
-  checksum: fb4b4c8f704a338d3500ff75bfd28a35927444e0c48254d60ce87a9402d7e149e2189e5f55fa3bd2927d4c10fa25fe34c239ae0be68df77af040b01561c5bcc8
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.5.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2":
-  version: 7.16.0
-  resolution: "@babel/runtime@npm:7.16.0"
-  dependencies:
-    regenerator-runtime: ^0.13.4
-  checksum: bfbca3ec52c94de262a3932473bceeead1a088b50194108fa1ff6eda447333f0f7d43fa4e9c5937c6e5d45bf838da8480905d0a227589b257c51f954ea060bac
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.12.0":
-  version: 7.16.7
-  resolution: "@babel/runtime@npm:7.16.7"
-  dependencies:
-    regenerator-runtime: ^0.13.4
-  checksum: 47912f0aaacd1cab2e2552aaf3e6eaffbcaf2d5ac9b07a89a12ac0d42029cb92c070b0d16f825e4277c4a34677c54d8ffe85e1f7c6feb57de58f700eec67ce2f
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.4.4, @babel/runtime@npm:^7.6.3":
-  version: 7.16.5
-  resolution: "@babel/runtime@npm:7.16.5"
-  dependencies:
-    core-js-pure: ^3.20.2
-    regenerator-runtime: ^0.13.4
-  checksum: 3d8fe2f3030c01e8725b9e0985b403463fae2081ca46f16bf257f8e7f32e2ebc37065499941de8678b3ba46145b19db6a7d4c8ac3b675331c7284dd3cdd1dc62
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.4.4, @babel/runtime@npm:^7.5.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.12.0, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.15.4, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.4.4, @babel/runtime@npm:^7.5.1, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2":
   version: 7.16.7
   resolution: "@babel/runtime@npm:7.16.7"
   dependencies:
@@ -1584,7 +1547,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/cache@npm:^11.7.1":
+"@emotion/cache@npm:^11.4.0, @emotion/cache@npm:^11.7.1":
   version: 11.7.1
   resolution: "@emotion/cache@npm:11.7.1"
   dependencies:
@@ -1620,7 +1583,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/react@npm:^11.7.1":
+"@emotion/react@npm:^11.1.1, @emotion/react@npm:^11.7.1":
   version: 11.7.1
   resolution: "@emotion/react@npm:11.7.1"
   dependencies:
@@ -6292,7 +6255,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js-pure@npm:^3.20.2":
+"core-js-pure@npm:^3.19.0":
   version: 3.20.3
   resolution: "core-js-pure@npm:3.20.3"
   checksum: a8ec44390849bcf0502f20e6349fa087944bb88ac83d796d7fd5ace837d242308aae54b247a6a56bec463e5ab9be08dfad48d389673c34e8e31cc0a661a17a95
@@ -16336,18 +16299,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.6.0":
-  version: 15.8.1
-  resolution: "prop-types@npm:15.8.1"
-  dependencies:
-    loose-envify: ^1.4.0
-    object-assign: ^4.1.1
-    react-is: ^16.13.1
-  checksum: c056d3f1c057cb7ff8344c645450e14f088a915d078dcda795041765047fa080d38e5d626560ccaac94a4e16e3aa15f3557c1a9a8d1174530955e992c675e459
-  languageName: node
-  linkType: hard
-
-"prop-types@npm:^15.6.2, prop-types@npm:^15.7.2":
+"prop-types@npm:^15.6.0, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:

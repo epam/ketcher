@@ -23,20 +23,20 @@ import {
 
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker'
 import { Dialog } from '../../../../components'
-import Icon from '../../../../../component/view/icon'
-import MeasureInput from '../../../../../component/form/measure-input'
+import MeasureInput from '../../../../../component/form/MeasureInput/measure-input'
 import OpenButton from '../../../../../component/view/openbutton'
 import SaveButton from '../../../../../component/view/savebutton'
-import SelectCheckbox from '../../../../../component/form/select-checkbox'
-import Sidebar from './components/Sidebar'
 import { StructService } from 'ketcher-core'
 import SystemFonts from '../../../../../component/form/systemfonts'
 import classes from './Settings.module.less'
-import clsx from 'clsx'
 import { connect } from 'react-redux'
 import { saveSettings } from '../../../../../state/options'
 import settingsSchema from '../../../../../data/schema/options-schema'
 import { storage } from '../../../../../storage-ext'
+import Sidebar from './components/Sidebar'
+import Icon from '../../../../../component/view/icon'
+import clsx from 'clsx'
+import Select from '../../../../../component/form/Select/Select'
 
 interface SettingsProps extends BaseProps {
   initState: any
@@ -75,13 +75,13 @@ const SettingsDialog = (props: Props) => {
     label: 'General',
     content: (
       <fieldset className={classes.general}>
-        <Field name="resetToSelect" />
+        <Field name="resetToSelect" component={Select} />
         <Field name="rotationStep" />
         <Field name="showValenceWarnings" />
         <Field name="atomColoring" />
         <Field name="font" component={SystemFonts} />
-        <Field name="fontsz" component={MeasureInput} />
-        <Field name="fontszsub" component={MeasureInput} />
+        <Field name="fontsz" component={MeasureInput} labelPos={false} />
+        <Field name="fontszsub" component={MeasureInput} labelPos={false} />
       </fieldset>
     )
   }
@@ -91,11 +91,11 @@ const SettingsDialog = (props: Props) => {
     content: (
       <fieldset className={classes.stereochemistry}>
         <Field name="showStereoFlags" />
-        <Field name="stereoLabelStyle" />
+        <Field name="stereoLabelStyle" component={Select} />
         <Field name="colorOfAbsoluteCenters" component={ColorPicker} />
         <Field name="colorOfAndCenters" component={ColorPicker} />
         <Field name="colorOfOrCenters" component={ColorPicker} />
-        <Field name="colorStereogenicCenters" />
+        <Field name="colorStereogenicCenters" component={Select} />
         <Field name="autoFadeOfStereoLabels" />
         <Field name="absFlagLabel" />
         <Field name="andFlagLabel" />
@@ -112,7 +112,7 @@ const SettingsDialog = (props: Props) => {
         <Field name="carbonExplicitly" />
         <Field name="showCharge" />
         <Field name="showValence" />
-        <Field name="showHydrogenLabels" component={SelectCheckbox} />
+        <Field name="showHydrogenLabels" component={Select} />
       </fieldset>
     )
   }
@@ -122,9 +122,17 @@ const SettingsDialog = (props: Props) => {
     content: (
       <fieldset>
         <Field name="aromaticCircle" />
-        <Field name="doubleBondWidth" component={MeasureInput} />
-        <Field name="bondThickness" component={MeasureInput} />
-        <Field name="stereoBondWidth" component={MeasureInput} />
+        <Field
+          name="doubleBondWidth"
+          component={MeasureInput}
+          labelPos={false}
+        />
+        <Field name="bondThickness" component={MeasureInput} labelPos={false} />
+        <Field
+          name="stereoBondWidth"
+          component={MeasureInput}
+          labelPos={false}
+        />
       </fieldset>
     )
   }
@@ -145,10 +153,11 @@ const SettingsDialog = (props: Props) => {
     key: '3dviewer',
     label: '3D Viewer',
     content: (
-      <fieldset className={classes.viewer} disabled={!(window as any).Miew}>
-        <Field name="miewMode" />
-        <Field name="miewTheme" />
-        <Field name="miewAtomLabel" />
+      // eslint-disable-next-line dot-notation
+      <fieldset className={classes.viewer} disabled={!window['Miew']}>
+        <Field name="miewMode" component={Select} />
+        <Field name="miewTheme" component={Select} />
+        <Field name="miewAtomLabel" component={Select} />
       </fieldset>
     )
   }
@@ -208,7 +217,6 @@ const SettingsDialog = (props: Props) => {
           <Icon name={'reset'} />
         </button>
       ]}
-      needMargin={false}
     >
       <Form schema={settingsSchema} init={initState} {...formState}>
         <Sidebar tabs={tabs} className={classes.sidebar} />

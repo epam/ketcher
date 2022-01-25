@@ -21,10 +21,10 @@ import {
   sdataSchema
 } from '../../data/schema/sdata-schema'
 
-import ComboBox from '../../component/form/combobox/combobox'
 import { Dialog } from '../../views/components'
 import classes from './sgroup.module.less'
 import { connect } from 'react-redux'
+import Select from '../../component/form/Select/Select'
 
 function SelectInput({ title, name, schema, ...prop }) {
   const inputSelect = Object.keys(schema).reduce(
@@ -43,9 +43,7 @@ function SelectInput({ title, name, schema, ...prop }) {
     }
   )
 
-  return (
-    <Field name={name} schema={inputSelect} component={ComboBox} {...prop} />
-  )
+  return <Field name={name} schema={inputSelect} component={Select} {...prop} />
 }
 
 function SData({
@@ -120,6 +118,13 @@ const content = (schema, context, fieldName, checked) =>
           checked={checked}
           type="radio"
           key={`${context}-${fieldName}-${prop}-radio`}
+        />
+      ) : prop === 'fieldValue' && schema.properties.fieldValue.enum ? (
+        <Field
+          schema={schema.properties.fieldValue}
+          name={prop}
+          key={`${context}-${fieldName}-${prop}-select`}
+          component={Select}
         />
       ) : (
         <Field

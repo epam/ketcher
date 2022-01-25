@@ -26,6 +26,9 @@ import globalStyles from './styles/globalStyles'
 import { Layout } from 'components/Layout'
 import { MonomerLibrary } from 'components/monomerLibrary'
 import { NotationContainer } from 'components/notationInput/notationContainer'
+import { Menu } from 'components/menu'
+import { useAppDispatch } from 'hooks'
+import { selectTool } from 'state/common'
 
 const theme = createTheme(defaultTheme)
 
@@ -64,23 +67,10 @@ const Logo = styled.div(({ theme }) => ({
   }
 }))
 
-const LeftElementExample = styled.div(({ theme }) => ({
-  height: '100%',
-  width: '100%',
-  backgroundColor: theme.color.button.primary.clicked
-}))
-
-const CenterElementExample = styled.div(({ theme }) => ({
-  border: `1px dashed ${theme.color.input.border.regular}`,
+const MainElementExample = styled.div({
   width: '100%',
   height: '100%'
-}))
-
-const BottomElementExample = styled.div(({ theme }) => ({
-  height: '100%',
-  width: '100%',
-  backgroundColor: theme.color.button.primary.clicked
-}))
+})
 
 function Editor(props: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
@@ -98,7 +88,7 @@ function Editor(props: EditorProps) {
 
           <Layout>
             <Layout.Left>
-              <LeftElementExample />
+              <MenuComponent />
             </Layout.Left>
 
             <Layout.Top>
@@ -106,12 +96,8 @@ function Editor(props: EditorProps) {
             </Layout.Top>
 
             <Layout.Main>
-              <CenterElementExample />
+              <MainElementExample />
             </Layout.Main>
-
-            <Layout.Bottom>
-              <BottomElementExample />
-            </Layout.Bottom>
 
             <Layout.Right>
               <MonomerLibrary />
@@ -126,6 +112,52 @@ function Editor(props: EditorProps) {
         </div>
       </ThemeProvider>
     </Provider>
+  )
+}
+
+function MenuComponent() {
+  const dispatch = useAppDispatch()
+
+  const menuItemChanged = (name) => {
+    dispatch(selectTool(name))
+  }
+
+  return (
+    <Menu menuItemChanged={menuItemChanged}>
+      <Menu.Group>
+        <Menu.Item itemKey="open" />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemKey="undo" />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemKey="erase" />
+        <Menu.Submenu vertical>
+          <Menu.Item itemKey="select-lasso" />
+          <Menu.Item itemKey="select-rectangle" />
+          <Menu.Item itemKey="select-fragment" />
+        </Menu.Submenu>
+        <Menu.Submenu>
+          <Menu.Item itemKey="rectangle" />
+          <Menu.Item itemKey="ellipse" />
+        </Menu.Submenu>
+        <Menu.Submenu>
+          <Menu.Item itemKey="rotate" />
+          <Menu.Item itemKey="horizontal-flip" />
+          <Menu.Item itemKey="vertical-flip" />
+        </Menu.Submenu>
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemKey="single-bond" />
+      </Menu.Group>
+      <Menu.Group divider>
+        <Menu.Item itemKey="bracket" />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemKey="settings" />
+        <Menu.Item itemKey="help" />
+      </Menu.Group>
+    </Menu>
   )
 }
 

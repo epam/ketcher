@@ -26,7 +26,7 @@ const Group = ({ children, divider = false }) => {
     align-items: center;
     background-color: ${(props) => props.theme.color.background.primary};
     border-radius: 2px;
-    width: 32px;
+    width: 100%;
     margin-bottom: 8px;
 
     > * {
@@ -42,7 +42,7 @@ const Group = ({ children, divider = false }) => {
     const Divider = styled('span')`
       display: block;
       height: 8px;
-      width: 32px;
+      width: 100%;
       border-top: 1px solid;
       border-color: ${(props) => props.theme.color.divider};
     `

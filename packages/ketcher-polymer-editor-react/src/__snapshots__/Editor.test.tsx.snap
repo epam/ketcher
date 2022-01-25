@@ -6,7 +6,7 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="Ketcher-polymer-editor-root css-111c0jk"
+        class="css-111c0jk"
       >
         <div>
           App is not ready
@@ -16,7 +16,7 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="Ketcher-polymer-editor-root css-111c0jk"
+      class="css-111c0jk"
     >
       <div>
         App is not ready

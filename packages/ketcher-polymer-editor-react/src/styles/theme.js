@@ -80,7 +80,7 @@ const color = {
   icon: {
     hover: '#005662',
     active: '#525252',
-    activeMenu: '#00838F',
+    activeMenu: '#005662',
     clicked: '#FFFFFF',
     disabled: 'rgba(82, 82, 82, 0.4)'
   }

@@ -34,7 +34,7 @@ import SGroupTool from './sgroup'
 import SelectTool from './select'
 import SimpleObjectTool from './simpleobject'
 import TemplateTool from './template'
-import TextToolWrapper from './text'
+import TextTool from './text'
 
 const tools = {
   rgroupatom: RGroupAtomTool,
@@ -57,7 +57,7 @@ const tools = {
   rotate: RotateTool,
   enhancedStereo: EnhancedStereoTool,
   simpleobject: SimpleObjectTool,
-  text: TextToolWrapper
+  text: TextTool
 }
 
 export default tools

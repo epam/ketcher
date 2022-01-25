@@ -22,7 +22,7 @@ interface SubcomponentProps {
   styles?: CSSProperties
 }
 
-interface LayoutContentProps {
+interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>
 }
 
@@ -45,7 +45,7 @@ const CenterContainer = styled.div({
   height: `calc(100vh - 40px - ${PADDING} * 2)`
 })
 
-export const Layout = ({ children }: LayoutContentProps) => {
+export const Layout = ({ children }: LayoutProps) => {
   const subcomponents = {
     Left: null,
     Main: null,

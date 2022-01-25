@@ -83,7 +83,7 @@ export function load(struct, options) {
         (sGroup) => !supportedSGroupTypes[sGroup.type]
       )
 
-      if (!hasUnsupportedGroups) {
+      if (hasUnsupportedGroups) {
         await editor.event.confirm.dispatch()
         parsedStruct.sgroups = parsedStruct.sgroups.filter(
           (key, sGroup) => supportedSGroupTypes[sGroup.type]

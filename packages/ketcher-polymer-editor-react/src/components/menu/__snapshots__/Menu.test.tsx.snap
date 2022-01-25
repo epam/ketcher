@@ -1,0 +1,318 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Menu component should render menu component in a container 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="css-e2qc4g"
+      >
+        <li
+          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+          role="menuitem"
+          tabindex="-1"
+        >
+          <icon-open.svg
+            fill="#525252"
+            role="img"
+          />
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </li>
+      </div>
+      <div
+        class="css-e2qc4g"
+      >
+        <li
+          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+          role="menuitem"
+          tabindex="-1"
+        >
+          <icon-erase.svg
+            fill="#525252"
+            role="img"
+          />
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </li>
+        <div
+          class="css-12wx08y"
+        >
+          <div
+            class="css-5su45f"
+          >
+            <li
+              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-d1kvip-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <icon-select-lasso.svg
+                fill="#525252"
+                role="img"
+              />
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </li>
+            <div
+              class="css-x98vg5"
+              data-testid="submenu-dropdown"
+              role="button"
+            >
+              <icon-dropdown.svg
+                fill="#525252"
+                role="img"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-12wx08y"
+        >
+          <div
+            class="css-5su45f"
+          >
+            <li
+              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <icon-rectangle.svg
+                fill="#525252"
+                role="img"
+              />
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </li>
+            <div
+              class="css-clax1l"
+              data-testid="submenu-dropdown"
+              role="button"
+            >
+              <icon-dropdown.svg
+                fill="#525252"
+                role="img"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-12wx08y"
+        >
+          <div
+            class="css-5su45f"
+          >
+            <li
+              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <icon-rotate.svg
+                fill="#525252"
+                role="img"
+              />
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </li>
+            <div
+              class="css-clax1l"
+              data-testid="submenu-dropdown"
+              role="button"
+            >
+              <icon-dropdown.svg
+                fill="#525252"
+                role="img"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="css-e2qc4g"
+    >
+      <li
+        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+        role="menuitem"
+        tabindex="-1"
+      >
+        <icon-open.svg
+          fill="#525252"
+          role="img"
+        />
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </li>
+    </div>
+    <div
+      class="css-e2qc4g"
+    >
+      <li
+        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+        role="menuitem"
+        tabindex="-1"
+      >
+        <icon-erase.svg
+          fill="#525252"
+          role="img"
+        />
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </li>
+      <div
+        class="css-12wx08y"
+      >
+        <div
+          class="css-5su45f"
+        >
+          <li
+            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-d1kvip-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+            role="menuitem"
+            tabindex="-1"
+          >
+            <icon-select-lasso.svg
+              fill="#525252"
+              role="img"
+            />
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </li>
+          <div
+            class="css-x98vg5"
+            data-testid="submenu-dropdown"
+            role="button"
+          >
+            <icon-dropdown.svg
+              fill="#525252"
+              role="img"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        class="css-12wx08y"
+      >
+        <div
+          class="css-5su45f"
+        >
+          <li
+            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+            role="menuitem"
+            tabindex="-1"
+          >
+            <icon-rectangle.svg
+              fill="#525252"
+              role="img"
+            />
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </li>
+          <div
+            class="css-clax1l"
+            data-testid="submenu-dropdown"
+            role="button"
+          >
+            <icon-dropdown.svg
+              fill="#525252"
+              role="img"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        class="css-12wx08y"
+      >
+        <div
+          class="css-5su45f"
+        >
+          <li
+            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+            role="menuitem"
+            tabindex="-1"
+          >
+            <icon-rotate.svg
+              fill="#525252"
+              role="img"
+            />
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </li>
+          <div
+            class="css-clax1l"
+            data-testid="submenu-dropdown"
+            role="button"
+          >
+            <icon-dropdown.svg
+              fill="#525252"
+              role="img"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

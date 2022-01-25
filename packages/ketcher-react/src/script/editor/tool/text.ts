@@ -129,6 +129,4 @@ function propsDialog(editor: any, id: number | null, position: Vec2) {
     .catch(() => null)
 }
 
-export default function TextToolWrapper(editor) {
-  return new TextTool(editor)
-}
+export default TextTool

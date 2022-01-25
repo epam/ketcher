@@ -49,7 +49,7 @@ function Editor(props: EditorProps) {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <RootContainer ref={rootElRef} className="Ketcher-polymer-editor-root">
+        <RootContainer ref={rootElRef}>
           <Global styles={globalStyles} />
           <App />
         </RootContainer>

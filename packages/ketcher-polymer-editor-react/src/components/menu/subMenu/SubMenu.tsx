@@ -19,7 +19,7 @@ import styled from '@emotion/styled'
 import Collapse from '@mui/material/Collapse'
 import { Icon } from 'components/shared/ui/icon'
 import { MenuItem } from 'components/menu/menuItem'
-import { MenuContext } from 'components/menu'
+import { ContextType, MenuContext } from 'components/menu'
 
 const SubMenuContainer = styled('div')`
   display: flex;
@@ -80,7 +80,7 @@ type SubMenuProps = {
 
 const SubMenu = ({ children, vertical = false }: SubMenuProps) => {
   const [open, setOpen] = useState(false)
-  const { isActiveItem } = useContext(MenuContext)
+  const { isActiveItem } = useContext(MenuContext) as ContextType
 
   const handleDropDownClick = () => {
     setOpen((prev) => !prev)

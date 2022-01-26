@@ -17,6 +17,7 @@ import styled from '@emotion/styled'
 import React, { createContext, useState } from 'react'
 import { MenuItem } from 'components/menu/menuItem'
 import { SubMenu } from 'components/menu/subMenu'
+import { MenuItemVariant } from 'components/menu/menu.types'
 
 const Group = ({ children, divider = false }) => {
   const GroupContainer = styled('div')`
@@ -57,21 +58,32 @@ const Group = ({ children, divider = false }) => {
   )
 }
 
-const MenuContext = createContext({
-  isActiveItem: (itemKey) => itemKey === 'select-lasso',
-  itemClickHandler: (itemKey) => console.log(itemKey)
-})
+export type ContextType = {
+  isActiveItem: (item: MenuItemVariant) => boolean
+  selectItemHandler: (item: MenuItemVariant) => void
+}
 
-const Menu = ({ children, menuItemChanged }) => {
+type MenuProps = {
+  children: JSX.Element[]
+  onItemClick: (itemKey: MenuItemVariant) => void
+  customActiveItem?: MenuItemVariant
+}
+
+const MenuContext = createContext<ContextType | null>(null)
+
+const Menu = ({ children, onItemClick }: MenuProps) => {
   const [activeItem, setActiveItem] = useState('select-lasso')
 
-  const menuContextValue = {
-    isActiveItem: (itemKey) => itemKey === activeItem,
-    itemClickHandler: (itemKey) => {
-      setActiveItem(itemKey)
-      menuItemChanged(itemKey)
-    }
-  }
+  const menuContextValue = React.useMemo<ContextType>(
+    () => ({
+      isActiveItem: (itemKey) => itemKey === activeItem,
+      selectItemHandler: (itemKey) => {
+        setActiveItem(itemKey)
+        onItemClick(itemKey)
+      }
+    }),
+    [activeItem, onItemClick]
+  )
 
   const subComponentList = Object.keys(Menu)
 

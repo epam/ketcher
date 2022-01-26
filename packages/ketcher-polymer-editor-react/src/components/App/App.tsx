@@ -88,7 +88,7 @@ export const App = (): JSX.Element => {
     <AppContainer>
       <NotationContainer />
       <MonomerLibrary />
-      <Menu menuItemChanged={menuItemChanged}>
+      <Menu onItemClick={menuItemChanged}>
         <Menu.Group>
           <Menu.Item itemKey="open" />
         </Menu.Group>

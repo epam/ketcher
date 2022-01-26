@@ -16,11 +16,11 @@
 import { Icon } from 'components/shared/ui/icon'
 import { MenuItemVariant } from 'components/menu/menu.types'
 import { useContext } from 'react'
-import { MenuContext } from 'components/menu'
+import { ContextType, MenuContext } from 'components/menu'
 import { MenuItem as MuiMenuItem } from '@mui/material'
 import { css, useTheme } from '@emotion/react'
 
-const CustomMenuItem = ({ isActive, onClick, children }) => {
+const StyledMenuButton = ({ isActive, onClick, children }) => {
   const theme = useTheme()
   const styles = css`
     display: flex;
@@ -58,15 +58,17 @@ type MenuItemProp = {
 }
 
 const MenuItem = ({ itemKey }: MenuItemProp) => {
-  const { isActiveItem, itemClickHandler } = useContext(MenuContext)
+  const { isActiveItem, selectItemHandler } = useContext(
+    MenuContext
+  ) as ContextType
 
   return (
-    <CustomMenuItem
+    <StyledMenuButton
       isActive={isActiveItem(itemKey)}
-      onClick={() => itemClickHandler(itemKey)}
+      onClick={() => selectItemHandler(itemKey)}
     >
       <Icon name={itemKey} />
-    </CustomMenuItem>
+    </StyledMenuButton>
   )
 }
 

@@ -38,7 +38,8 @@ class ReactionPlusTool {
   }
 
   mousemove(event) {
-    const rnd = this.editor.render
+    const editor = this.editor
+    const rnd = editor.render
 
     if ('dragCtx' in this) {
       if (this.dragCtx.action) {
@@ -50,10 +51,9 @@ class ReactionPlusTool {
         this.editor.selection() || {},
         rnd.page2obj(event).sub(this.dragCtx.xy0)
       )
-      this.editor.update(this.dragCtx.action, true)
+      editor.update(this.dragCtx.action, true)
     } else {
-      // @ts-ignore
-      this.editor.hover(this.editor.findItem(event, ['rxnPluses']))
+      editor.hover(editor.findItem(event, ['rxnPluses']))
     }
   }
 

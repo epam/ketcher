@@ -40,7 +40,7 @@ interface AtomsListCallProps {
 
 type Props = AtomsListProps & AtomsListCallProps
 
-const AtomsList = forwardRef((props: Props, ref) => {
+const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
   const { atoms, active, onAction } = props
   const isAtom = active && active.tool === 'atom'
 
@@ -53,7 +53,6 @@ const AtomsList = forwardRef((props: Props, ref) => {
 
         if (basicAtoms.indexOf(label) === 0) {
           return (
-            // @ts-ignore
             <div key={label} ref={ref}>
               <Atom
                 key={label}

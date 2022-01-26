@@ -25,7 +25,7 @@ import { defaultTheme } from 'styles/theme'
 import globalStyles from './styles/globalStyles'
 import { Layout } from 'components/Layout'
 import { MonomerLibrary } from 'components/monomerLibrary'
-import { NotationContainer } from 'components/notationInput/notationContainer'
+import { NotationInput } from 'components/notationInput'
 import { Menu } from 'components/menu'
 import { useAppDispatch } from 'hooks'
 import { selectTool } from 'state/common'
@@ -92,7 +92,7 @@ function Editor(props: EditorProps) {
             </Layout.Left>
 
             <Layout.Top>
-              <NotationContainer />
+              <NotationInput />
             </Layout.Top>
 
             <Layout.Main>

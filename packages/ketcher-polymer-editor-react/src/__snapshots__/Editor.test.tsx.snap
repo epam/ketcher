@@ -12,7 +12,7 @@ Object {
           class="css-1h5652m"
         >
           <div
-            class="css-1ab7mfo"
+            class="css-1pxfqbf-Left"
             data-testid="left-container"
           >
             <div
@@ -231,7 +231,7 @@ Object {
             class="css-123j4ga"
           >
             <div
-              class="css-1p14fbx"
+              class="css-1p9iy29-Top"
               data-testid="top-container"
             >
               <div
@@ -315,7 +315,7 @@ Object {
               </div>
             </div>
             <div
-              class="css-ka96uw"
+              class="css-yu2o7l-Main"
               data-testid="main-container"
             >
               <div
@@ -324,7 +324,7 @@ Object {
             </div>
           </div>
           <div
-            class="css-veqhf7"
+            class="css-12c981k-Right"
             data-testid="right-container"
           >
             <div
@@ -449,7 +449,7 @@ Object {
         class="css-1h5652m"
       >
         <div
-          class="css-1ab7mfo"
+          class="css-1pxfqbf-Left"
           data-testid="left-container"
         >
           <div
@@ -668,7 +668,7 @@ Object {
           class="css-123j4ga"
         >
           <div
-            class="css-1p14fbx"
+            class="css-1p9iy29-Top"
             data-testid="top-container"
           >
             <div
@@ -752,7 +752,7 @@ Object {
             </div>
           </div>
           <div
-            class="css-ka96uw"
+            class="css-yu2o7l-Main"
             data-testid="main-container"
           >
             <div
@@ -761,7 +761,7 @@ Object {
           </div>
         </div>
         <div
-          class="css-veqhf7"
+          class="css-12c981k-Right"
           data-testid="right-container"
         >
           <div

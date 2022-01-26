@@ -15,11 +15,12 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled'
-import React, { CSSProperties } from 'react'
+import React from 'react'
+import { css } from '@emotion/react'
 
 interface SubcomponentProps {
   children: JSX.Element
-  styles?: CSSProperties
+  margin?: string
 }
 
 interface LayoutProps {
@@ -75,65 +76,79 @@ export const Layout = ({ children }: LayoutProps) => {
   )
 }
 
-const LeftContainer = styled.div({
+const styleLeft = css({
   width: '32px',
   minWidth: '32px',
   height: `calc(100vh - 40px - ${PADDING} * 2)`
 })
 
-const Left = ({ children, styles }: SubcomponentProps) => (
-  <LeftContainer data-testid="left-container" style={styles}>
-    {children}
-  </LeftContainer>
-)
+const Left = ({ children, margin }: SubcomponentProps) => {
+  return (
+    <div
+      data-testid="left-container"
+      css={styleLeft}
+      style={{ margin: margin }}
+    >
+      {children}
+    </div>
+  )
+}
 Layout.Left = Left
 
-const TopContainer = styled.div({
+const styleTop = css({
   height: '24px',
   width: '670px',
   alignSelf: 'flex-end',
   margin: '0 10% 0 6px'
 })
 
-const Top = ({ children, styles }: SubcomponentProps) => (
-  <TopContainer data-testid="top-container" style={styles}>
+const Top = ({ children, margin }: SubcomponentProps) => (
+  <div data-testid="top-container" css={styleTop} style={{ margin: margin }}>
     {children}
-  </TopContainer>
+  </div>
 )
 Layout.Top = Top
 
-const RightContainer = styled.div({
+const styleRight = css({
   width: '253px',
   height: `calc(100vh - ${PADDING} * 2)`
 })
 
-const Right = ({ children, styles }: SubcomponentProps) => (
-  <RightContainer data-testid="right-container" style={styles}>
+const Right = ({ children, margin }: SubcomponentProps) => (
+  <div
+    data-testid="right-container"
+    css={styleRight}
+    style={{ margin: margin }}
+  >
     {children}
-  </RightContainer>
+  </div>
 )
 Layout.Right = Right
 
-const MainContainer = styled.div({
+const styleMain = css({
   height: '100%',
   margin: '6px 6px 0 6px'
 })
 
-const Main = ({ children, styles }: SubcomponentProps) => (
-  <MainContainer data-testid="main-container" style={styles}>
+const Main = ({ children, margin }: SubcomponentProps) => (
+  <div data-testid="main-container" css={styleMain} style={{ margin: margin }}>
     {children}
-  </MainContainer>
+  </div>
 )
 Layout.Main = Main
 
-const BottomContainer = styled.div({
+const styleBottom = css({
   height: '100px',
   margin: '6px 6px 0 6px'
 })
 
-const Bottom = ({ children, styles }: SubcomponentProps) => (
-  <BottomContainer data-testid="bottom-container" style={styles}>
+const Bottom = ({ children, margin }: SubcomponentProps) => (
+  <div
+    data-testid="bottom-container"
+    css={styleBottom}
+    style={{ margin: margin }}
+  >
     {children}
-  </BottomContainer>
+  </div>
 )
 Layout.Bottom = Bottom

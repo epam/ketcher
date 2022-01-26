@@ -56,14 +56,10 @@ describe('Layout', () => {
     const topElement = screen.getByText('top element')
     const mainElement = screen.getByText('main element')
     const leftElement = screen.getByText('left element')
-    const bottomElement = screen.queryByTestId('bottom-container')
-    const rightElement = screen.queryByTestId('right-container')
 
     expect(topElement).toBeVisible()
     expect(mainElement).toBeVisible()
     expect(leftElement).toBeVisible()
-    expect(bottomElement).not.toBeInTheDocument()
-    expect(rightElement).not.toBeInTheDocument()
   })
 
   it('should render all subcomponents correctly', () => {

@@ -82,17 +82,11 @@ const styleLeft = css({
   height: `calc(100vh - 40px - ${PADDING} * 2)`
 })
 
-const Left = ({ children, margin }: SubcomponentProps) => {
-  return (
-    <div
-      data-testid="left-container"
-      css={styleLeft}
-      style={{ margin: margin }}
-    >
-      {children}
-    </div>
-  )
-}
+const Left = ({ children, margin }: SubcomponentProps) => (
+  <div css={styleLeft} style={{ margin: margin }}>
+    {children}
+  </div>
+)
 Layout.Left = Left
 
 const styleTop = css({
@@ -103,7 +97,7 @@ const styleTop = css({
 })
 
 const Top = ({ children, margin }: SubcomponentProps) => (
-  <div data-testid="top-container" css={styleTop} style={{ margin: margin }}>
+  <div css={styleTop} style={{ margin: margin }}>
     {children}
   </div>
 )
@@ -115,11 +109,7 @@ const styleRight = css({
 })
 
 const Right = ({ children, margin }: SubcomponentProps) => (
-  <div
-    data-testid="right-container"
-    css={styleRight}
-    style={{ margin: margin }}
-  >
+  <div css={styleRight} style={{ margin: margin }}>
     {children}
   </div>
 )
@@ -131,7 +121,7 @@ const styleMain = css({
 })
 
 const Main = ({ children, margin }: SubcomponentProps) => (
-  <div data-testid="main-container" css={styleMain} style={{ margin: margin }}>
+  <div css={styleMain} style={{ margin: margin }}>
     {children}
   </div>
 )
@@ -143,11 +133,7 @@ const styleBottom = css({
 })
 
 const Bottom = ({ children, margin }: SubcomponentProps) => (
-  <div
-    data-testid="bottom-container"
-    css={styleBottom}
-    style={{ margin: margin }}
-  >
+  <div css={styleBottom} style={{ margin: margin }}>
     {children}
   </div>
 )

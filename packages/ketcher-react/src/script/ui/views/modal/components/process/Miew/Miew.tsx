@@ -33,7 +33,7 @@ type MiewDialogProps = {
   // onOk: (result: any) => void
 }
 type MiewDialogCallProps = {
-  onExportCML: (cmlStruct: any) => void
+  onExportCML: (cmlStruct: string) => void
 }
 type Props = MiewDialogProps & MiewDialogCallProps
 
@@ -161,7 +161,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  onExportCML: (cmlStruct: string) => {
+  onExportCML: (cmlStruct) => {
     dispatch(load(cmlStruct))
     // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
     // See PR #731 (https://github.com/epam/ketcher/pull/731)

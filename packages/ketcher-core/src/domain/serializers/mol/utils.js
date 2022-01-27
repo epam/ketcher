@@ -158,7 +158,7 @@ function rxnMerge(
   if (SHOULD_RESCALE_MOLECULES) {
     const avgBondLength =
       1 /
-      (bondLengthData.cnt == 0
+      (bondLengthData.cnt === 0
         ? 1
         : bondLengthData.totalLength / bondLengthData.cnt)
     for (j = 0; j < mols.length; ++j) {
@@ -178,13 +178,13 @@ function rxnMerge(
         : j < nReactants + nProducts
         ? FRAGMENT.PRODUCT
         : FRAGMENT.AGENT
-    if (fragmentType == FRAGMENT.REACTANT) {
+    if (fragmentType === FRAGMENT.REACTANT) {
       bbReact.push(bb)
       molReact.push(mol)
-    } else if (fragmentType == FRAGMENT.AGENT) {
+    } else if (fragmentType === FRAGMENT.AGENT) {
       bbAgent.push(bb)
       molAgent.push(mol)
-    } else if (fragmentType == FRAGMENT.PRODUCT) {
+    } else if (fragmentType === FRAGMENT.PRODUCT) {
       bbProd.push(bb)
       molProd.push(mol)
     }
@@ -250,7 +250,7 @@ function rxnMerge(
     ret.rxnPluses.add(new RxnPlus({ pp: new Vec2(x, y) }))
   }
   for (j = 0; j < bbReact.length; ++j) {
-    if (j == 0) {
+    if (j === 0) {
       bbReactAll = {}
       bbReactAll.max = new Vec2(bbReact[j].max)
       bbReactAll.min = new Vec2(bbReact[j].min)
@@ -269,7 +269,7 @@ function rxnMerge(
     ret.rxnPluses.add(new RxnPlus({ pp: new Vec2(x, y) }))
   }
   for (j = 0; j < bbProd.length; ++j) {
-    if (j == 0) {
+    if (j === 0) {
       bbProdAll = {}
       bbProdAll.max = new Vec2(bbProd[j].max)
       bbProdAll.min = new Vec2(bbProd[j].min)

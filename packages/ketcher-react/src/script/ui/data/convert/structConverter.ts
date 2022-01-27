@@ -78,16 +78,14 @@ export function couldBeSaved(
       )
 
     struct = struct.clone() // need this: .getScaffold()
-    // @ts-ignore
-    const isRg = struct.atoms.find((ind, atom) => atom.label === 'R#')
+    const isRg = struct.atoms.find((_ind, atom) => atom.label === 'R#')
     if (isRg !== null)
       warnings.push(
         `In ${formatName} the structure will be saved without R-group members`
       )
 
     const isSg = struct.sgroups.find(
-      // @ts-ignore
-      (ind, sg) =>
+      (_ind, sg) =>
         sg.type !== 'MUL' && !/^INDIGO_.+_DESC$/i.test(sg.data.fieldName)
     )
     if (isSg !== null)
@@ -108,8 +106,7 @@ export function couldBeSaved(
       ] as SupportedFormat[]
     ).includes(format)
   ) {
-    // @ts-ignore
-    const isVal = struct.atoms.find((ind, atom) => atom.explicitValence >= 0)
+    const isVal = struct.atoms.find((_ind, atom) => atom.explicitValence >= 0)
     if (isVal !== null)
       warnings.push(`In ${formatName} valence is not supported`)
   }

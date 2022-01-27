@@ -29,8 +29,8 @@ type MiewDialogProps = {
   miewOpts: any
   server: StructService
   struct: Struct
-  // onCancel: () => void
-  // onOk: (result: any) => void
+  onCancel: () => void
+  onOk: (result: any) => void
 }
 type MiewDialogCallProps = {
   onExportCML: (cmlStruct: string) => void
@@ -110,12 +110,11 @@ class MiewDialog extends Component<Props> {
   }
 
   render() {
-    const { miewOpts, server, struct, ...prop } = this.props
+    const { miewOpts, server, struct, onExportCML, ...prop } = this.props
 
     return (
       <Dialog
         title="Miew"
-        // @ts-ignore
         params={prop}
         buttons={[
           <div key="warning" className={classes.warning}>

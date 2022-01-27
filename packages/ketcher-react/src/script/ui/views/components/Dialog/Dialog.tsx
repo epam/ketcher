@@ -41,7 +41,7 @@ interface DialogProps {
 }
 
 interface DialogCallProps {
-  result: () => any
+  result?: () => any
   valid?: () => boolean
 }
 

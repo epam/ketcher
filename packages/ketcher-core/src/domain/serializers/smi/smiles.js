@@ -193,7 +193,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
 
       let implicitHIdx = -1
 
-      if (sc.pyramid[3] == -1) implicitHIdx = 3
+      if (sc.pyramid[3] === -1) implicitHIdx = 3
       /*
 			else for (j = 0; j < 4; j++)
 				if (ignored_vertices[pyramid[j]])
@@ -208,9 +208,9 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
 
       const atom = this.atoms[atomIdx]
 
-      if (atom.parent != -1) {
+      if (atom.parent !== -1) {
         for (k = 0; k < 4; k++) {
-          if (sc.pyramid[k] == atom.parent) {
+          if (sc.pyramid[k] === atom.parent) {
             pyramidMapping[counter++] = k
             break
           }
@@ -220,10 +220,10 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
       if (implicitHIdx !== -1) pyramidMapping[counter++] = implicitHIdx
 
       for (j = 0; j !== atom.neighbours.length; j++) {
-        if (atom.neighbours[j].aid == atom.parent) continue // eslint-disable-line no-continue
+        if (atom.neighbours[j].aid === atom.parent) continue // eslint-disable-line no-continue
 
         for (k = 0; k < 4; k++) {
-          if (atom.neighbours[j].aid == sc.pyramid[k]) {
+          if (atom.neighbours[j].aid === sc.pyramid[k]) {
             if (counter >= 4) throw new Error('internal: pyramid overflow')
             pyramidMapping[counter++] = k
             break
@@ -281,7 +281,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
 
       for (j = 0; j < openingCycles; j++) {
         for (k = 1; k < cycleNumbers.length; k++) {
-          if (cycleNumbers[k] == -1) {
+          if (cycleNumbers[k] === -1) {
             // eslint-disable-line max-depth
             break
           }
@@ -316,31 +316,34 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
 
       let dir = 0
 
-      if (bond.type == Bond.PATTERN.TYPE.SINGLE) {
+      if (bond.type === Bond.PATTERN.TYPE.SINGLE) {
         dir = this.calcBondDirection(struct, eIdx, vPrevIdx)
       }
 
-      if ((dir == 1 && vIdx == bond.end) || (dir == 2 && vIdx == bond.begin)) {
+      if (
+        (dir === 1 && vIdx === bond.end) ||
+        (dir === 2 && vIdx === bond.begin)
+      ) {
         this.smiles += '/'
       } else if (
-        (dir == 2 && vIdx == bond.end) ||
-        (dir == 1 && vIdx == bond.begin)
+        (dir === 2 && vIdx === bond.end) ||
+        (dir === 1 && vIdx === bond.begin)
       ) {
         this.smiles += '\\'
-      } else if (bond.type == Bond.PATTERN.TYPE.ANY) {
+      } else if (bond.type === Bond.PATTERN.TYPE.ANY) {
         this.smiles += '~'
-      } else if (bond.type == Bond.PATTERN.TYPE.DOUBLE) {
+      } else if (bond.type === Bond.PATTERN.TYPE.DOUBLE) {
         this.smiles += '='
-      } else if (bond.type == Bond.PATTERN.TYPE.TRIPLE) {
+      } else if (bond.type === Bond.PATTERN.TYPE.TRIPLE) {
         this.smiles += '#'
-      } else if (bond.type == Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
+      } else if (bond.type === Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
         this.smiles += '-,:'
-      } else if (bond.type == Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
+      } else if (bond.type === Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
         this.smiles += '=,:'
-      } else if (bond.type == Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE) {
+      } else if (bond.type === Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE) {
         this.smiles += '-,='
       } else if (
-        bond.type == Bond.PATTERN.TYPE.AROMATIC &&
+        bond.type === Bond.PATTERN.TYPE.AROMATIC &&
         (!this.atoms[bond.begin].lowercase ||
           !this.atoms[bond.end].lowercase ||
           !this.isBondInRing(eIdx))
@@ -349,7 +352,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
       }
       // TODO: Check if this : is needed
       else if (
-        bond.type == Bond.PATTERN.TYPE.SINGLE &&
+        bond.type === Bond.PATTERN.TYPE.SINGLE &&
         this.atoms[bond.begin].aromatic &&
         this.atoms[bond.end].aromatic
       ) {
@@ -358,7 +361,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
 
       if (walk.edgeClosingCycle(eIdx)) {
         for (j = 1; j < cycleNumbers.length; j++) {
-          if (cycleNumbers[j] == vIdx) break
+          if (cycleNumbers[j] === vIdx) break
         }
 
         if (j === cycleNumbers.length) throw new Error('cycle number not found')
@@ -638,58 +641,58 @@ Smiles.prototype.updateSideBonds = function (mol, bondIdx) {
   const sidebonds = [-1, -1, -1, -1]
 
   sidebonds[0] = mol.findBondId(subst[0], bond.begin)
-  if (subst[1] != -1) sidebonds[1] = mol.findBondId(subst[1], bond.begin)
+  if (subst[1] !== -1) sidebonds[1] = mol.findBondId(subst[1], bond.begin)
 
   sidebonds[2] = mol.findBondId(subst[2], bond.end)
-  if (subst[3] != -1) sidebonds[3] = mol.findBondId(subst[3], bond.end)
+  if (subst[3] !== -1) sidebonds[3] = mol.findBondId(subst[3], bond.end)
 
   let n1 = 0
   let n2 = 0
   let n3 = 0
   let n4 = 0
 
-  if (this.dbonds[sidebonds[0]].saved != 0) {
+  if (this.dbonds[sidebonds[0]].saved !== 0) {
     if (
-      (this.dbonds[sidebonds[0]].saved == 1 &&
-        mol.bonds.get(sidebonds[0]).begin == bond.begin) ||
-      (this.dbonds[sidebonds[0]].saved == 2 &&
-        mol.bonds.get(sidebonds[0]).end == bond.begin)
+      (this.dbonds[sidebonds[0]].saved === 1 &&
+        mol.bonds.get(sidebonds[0]).begin === bond.begin) ||
+      (this.dbonds[sidebonds[0]].saved === 2 &&
+        mol.bonds.get(sidebonds[0]).end === bond.begin)
     ) {
       n1++
     } else n2++
   }
-  if (sidebonds[1] != -1 && this.dbonds[sidebonds[1]].saved != 0) {
+  if (sidebonds[1] !== -1 && this.dbonds[sidebonds[1]].saved !== 0) {
     if (
-      (this.dbonds[sidebonds[1]].saved == 2 &&
-        mol.bonds.get(sidebonds[1]).begin == bond.begin) ||
-      (this.dbonds[sidebonds[1]].saved == 1 &&
-        mol.bonds.get(sidebonds[1]).end == bond.begin)
+      (this.dbonds[sidebonds[1]].saved === 2 &&
+        mol.bonds.get(sidebonds[1]).begin === bond.begin) ||
+      (this.dbonds[sidebonds[1]].saved === 1 &&
+        mol.bonds.get(sidebonds[1]).end === bond.begin)
     ) {
       n1++
     } else n2++
   }
-  if (this.dbonds[sidebonds[2]].saved != 0) {
+  if (this.dbonds[sidebonds[2]].saved !== 0) {
     if (
-      (this.dbonds[sidebonds[2]].saved == 1 &&
-        mol.bonds.get(sidebonds[2]).begin == bond.end) ||
-      (this.dbonds[sidebonds[2]].saved == 2 &&
-        mol.bonds.get(sidebonds[2]).end == bond.end)
+      (this.dbonds[sidebonds[2]].saved === 1 &&
+        mol.bonds.get(sidebonds[2]).begin === bond.end) ||
+      (this.dbonds[sidebonds[2]].saved === 2 &&
+        mol.bonds.get(sidebonds[2]).end === bond.end)
     ) {
       n3++
     } else n4++
   }
-  if (sidebonds[3] != -1 && this.dbonds[sidebonds[3]].saved != 0) {
+  if (sidebonds[3] !== -1 && this.dbonds[sidebonds[3]].saved !== 0) {
     if (
-      (this.dbonds[sidebonds[3]].saved == 2 &&
-        mol.bonds.get(sidebonds[3]).begin == bond.end) ||
-      (this.dbonds[sidebonds[3]].saved == 1 &&
-        mol.bonds.get(sidebonds[3]).end == bond.end)
+      (this.dbonds[sidebonds[3]].saved === 2 &&
+        mol.bonds.get(sidebonds[3]).begin === bond.end) ||
+      (this.dbonds[sidebonds[3]].saved === 1 &&
+        mol.bonds.get(sidebonds[3]).end === bond.end)
     ) {
       n3++
     } else n4++
   }
 
-  if (parity == CisTrans.PARITY.CIS) {
+  if (parity === CisTrans.PARITY.CIS) {
     n1 += n3
     n2 += n4
   } else {
@@ -703,42 +706,42 @@ Smiles.prototype.updateSideBonds = function (mol, bondIdx) {
 
   if (n1 > 0) {
     this.dbonds[sidebonds[0]].saved =
-      mol.bonds.get(sidebonds[0]).begin == bond.begin ? 1 : 2
-    if (sidebonds[1] != -1) {
+      mol.bonds.get(sidebonds[0]).begin === bond.begin ? 1 : 2
+    if (sidebonds[1] !== -1) {
       this.dbonds[sidebonds[1]].saved =
-        mol.bonds.get(sidebonds[1]).begin == bond.begin ? 2 : 1
+        mol.bonds.get(sidebonds[1]).begin === bond.begin ? 2 : 1
     }
 
     this.dbonds[sidebonds[2]].saved =
-      (mol.bonds.get(sidebonds[2]).begin == bond.end) ==
-      (parity == CisTrans.PARITY.CIS)
+      (mol.bonds.get(sidebonds[2]).begin === bond.end) ===
+      (parity === CisTrans.PARITY.CIS)
         ? 1
         : 2
-    if (sidebonds[3] != -1) {
+    if (sidebonds[3] !== -1) {
       this.dbonds[sidebonds[3]].saved =
-        (mol.bonds.get(sidebonds[3]).begin == bond.end) ==
-        (parity == CisTrans.PARITY.CIS)
+        (mol.bonds.get(sidebonds[3]).begin === bond.end) ===
+        (parity === CisTrans.PARITY.CIS)
           ? 2
           : 1
     }
   }
   if (n2 > 0) {
     this.dbonds[sidebonds[0]].saved =
-      mol.bonds.get(sidebonds[0]).begin == bond.begin ? 2 : 1
-    if (sidebonds[1] != -1) {
+      mol.bonds.get(sidebonds[0]).begin === bond.begin ? 2 : 1
+    if (sidebonds[1] !== -1) {
       this.dbonds[sidebonds[1]].saved =
-        mol.bonds.get(sidebonds[1]).begin == bond.begin ? 1 : 2
+        mol.bonds.get(sidebonds[1]).begin === bond.begin ? 1 : 2
     }
 
     this.dbonds[sidebonds[2]].saved =
-      (mol.bonds.get(sidebonds[2]).begin == bond.end) ==
-      (parity == CisTrans.PARITY.CIS)
+      (mol.bonds.get(sidebonds[2]).begin === bond.end) ===
+      (parity === CisTrans.PARITY.CIS)
         ? 2
         : 1
-    if (sidebonds[3] != -1) {
+    if (sidebonds[3] !== -1) {
       this.dbonds[sidebonds[3]].saved =
-        (mol.bonds.get(sidebonds[3]).begin == bond.end) ==
-        (parity == CisTrans.PARITY.CIS)
+        (mol.bonds.get(sidebonds[3]).begin === bond.end) ===
+        (parity === CisTrans.PARITY.CIS)
           ? 1
           : 2
     }
@@ -750,11 +753,14 @@ Smiles.prototype.updateSideBonds = function (mol, bondIdx) {
 Smiles.prototype.calcBondDirection = function (mol, idx, vprev) {
   let ntouched
 
-  if (this.dbonds[idx].ctbond_beg == -1 && this.dbonds[idx].ctbond_end == -1) {
+  if (
+    this.dbonds[idx].ctbond_beg === -1 &&
+    this.dbonds[idx].ctbond_end === -1
+  ) {
     return 0
   }
 
-  if (mol.bonds.get(idx).type != Bond.PATTERN.TYPE.SINGLE) {
+  if (mol.bonds.get(idx).type !== Bond.PATTERN.TYPE.SINGLE) {
     throw new Error('internal: directed bond type ' + mol.bonds.get(idx).type)
   }
 
@@ -797,8 +803,8 @@ Smiles.prototype.writeRadicals = function (mol) {
       this.comma = true
     }
 
-    if (radical == Atom.PATTERN.RADICAL.SINGLET) this.smiles += '^3:'
-    else if (radical == Atom.PATTERN.RADICAL.DOUPLET) this.smiles += '^1:'
+    if (radical === Atom.PATTERN.RADICAL.SINGLET) this.smiles += '^3:'
+    else if (radical === Atom.PATTERN.RADICAL.DOUPLET) this.smiles += '^1:'
     // RADICAL_TRIPLET
     else this.smiles += '^4:'
 

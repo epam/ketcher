@@ -16,7 +16,7 @@
 
 import { MultiToolCallProps, MultiToolProps } from '../variants.types'
 
-import { ActionButton } from '../../../ActionButton'
+import { ActionButton, ActionButtonProps } from '../../../ActionButton'
 import action from '../../../../../../action'
 import classes from './GroupedMultiTool.module.less'
 
@@ -52,8 +52,7 @@ const GroupedMultiTool = (props: Props) => {
                   key={toolbarItem.id}
                   name={toolbarItem.id}
                   action={action[toolbarItem.id]}
-                  // @ts-ignore
-                  status={currentStatus}
+                  status={currentStatus as ActionButtonProps['status']}
                   selected={!!currentStatus?.selected}
                   disableableButtons={disableableButtons}
                   indigoVerification={indigoVerification}

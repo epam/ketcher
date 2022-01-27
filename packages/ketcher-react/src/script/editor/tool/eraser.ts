@@ -122,9 +122,8 @@ class EraserTool {
             actualSgroupId !== undefined &&
             SGroup.getBonds(molecule, struct.sgroups.get(actualSgroupId)?.item)
           atom === sgroupAtoms[0] &&
-            // @ts-ignore
-            newSelected.atoms.push(...sgroupAtoms) &&
-            newSelected.bonds.push(...sgroupBonds)
+            newSelected.atoms.push(...(sgroupAtoms as Array<any>)) &&
+            newSelected.bonds.push(...(sgroupBonds as Array<any>))
         }
 
         if (

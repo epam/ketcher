@@ -167,11 +167,11 @@ export class SGroup {
         contentBoxes.push(bba)
       })
       contentBoxes.forEach((bba) => {
-        var bbb: Box2Abs | null = null
+        let bbb: Box2Abs | null = null
         ;[bba.p0.x, bba.p1.x].forEach((x) => {
           ;[bba.p0.y, bba.p1.y].forEach((y) => {
-            var v = new Vec2(x, y)
-            var p = new Vec2(
+            const v = new Vec2(x, y)
+            const p = new Vec2(
               Vec2.dot(v, direction),
               Vec2.dot(v, direction.rotateSC(1, 0))
             )

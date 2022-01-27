@@ -649,7 +649,7 @@ function isSelectionEmpty(selection) {
 }
 
 function scaleRPath(path, scaleFactor: number): void {
-  if (path.type == 'set') {
+  if (path.type === 'set') {
     // TODO: rework scaling
     for (let i = 0; i < path.length; ++i) scaleRPath(path[i], scaleFactor)
   } else {

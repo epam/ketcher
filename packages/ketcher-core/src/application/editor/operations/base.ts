@@ -27,6 +27,7 @@ class BaseOperation {
   private _inverted: BaseOperation | undefined
   type: OperationType
   priority: number
+  data: any
 
   constructor(type: OperationType, priority = 0) {
     this.type = type
@@ -50,8 +51,7 @@ class BaseOperation {
     throw new Error('Operation.invert() is not implemented')
   }
 
-  // @ts-ignore
-  isDummy(restruct: ReStruct): boolean {
+  isDummy(_restruct: ReStruct): boolean {
     return false
   }
 

@@ -128,6 +128,7 @@ class StructEditor extends Component {
       indigoVerification,
       onCipChange,
       className,
+      onConfirm,
       ...props
     } = this.props
 

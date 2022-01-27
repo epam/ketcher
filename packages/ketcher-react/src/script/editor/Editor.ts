@@ -121,6 +121,7 @@ class Editor implements KetcherEditor {
     aromatizeStruct: PipelineSubscription
     dearomatizeStruct: PipelineSubscription
     enhancedStereoEdit: PipelineSubscription
+    confirm: PipelineSubscription
   }
 
   lastEvent: any
@@ -157,7 +158,8 @@ class Editor implements KetcherEditor {
       aromatizeStruct: new PipelineSubscription(),
       dearomatizeStruct: new PipelineSubscription(),
       // TODO: correct
-      enhancedStereoEdit: new PipelineSubscription()
+      enhancedStereoEdit: new PipelineSubscription(),
+      confirm: new PipelineSubscription()
     }
 
     domEventSetup(this, clientArea)

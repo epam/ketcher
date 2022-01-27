@@ -261,7 +261,6 @@ class TemplateTool {
         } // undo previous action
 
         dragCtx.sign2 = sign
-        // @ts-ignore
         const [action, pasteItems] = fromTemplateOnBondAction(
           restruct,
           this.template,
@@ -269,7 +268,7 @@ class TemplateTool {
           this.editor.event,
           dragCtx.sign1 * dragCtx.sign2 > 0,
           false
-        )
+        ) as Array<any>
 
         dragCtx.action = action
         this.editor.update(dragCtx.action, true)
@@ -372,20 +371,21 @@ class TemplateTool {
     /* after moving around bond */
     if (dragCtx.action && ci && ci.map === 'bonds' && this.mode !== 'fg') {
       dragCtx.action.perform(restruct) // revert drag action
-      fromTemplateOnBondAction(
+
+      const promise = fromTemplateOnBondAction(
         restruct,
         this.template,
         ci.id,
         this.editor.event,
         dragCtx.sign1 * dragCtx.sign2 > 0,
         true
-      )
-        // @ts-ignore
-        .then(([action, pasteItems]) => {
-          const mergeItems = getItemsToFuse(this.editor, pasteItems)
-          action = fromItemsFuse(restruct, mergeItems).mergeWith(action)
-          this.editor.update(action)
-        })
+      ) as Promise<any>
+
+      promise.then(([action, pasteItems]) => {
+        const mergeItems = getItemsToFuse(this.editor, pasteItems)
+        action = fromItemsFuse(restruct, mergeItems).mergeWith(action)
+        this.editor.update(action)
+      })
       return true
     }
     /* end */
@@ -437,23 +437,22 @@ class TemplateTool {
         )
         dragCtx.action = action
       } else if (ci.map === 'bonds' && this.mode !== 'fg') {
-        fromTemplateOnBondAction(
+        const promise = fromTemplateOnBondAction(
           restruct,
           this.template,
           ci.id,
           this.editor.event,
           dragCtx.sign1 * dragCtx.sign2 > 0,
           true
-        )
-          // @ts-ignore
-          .then(([action, pasteItems]) => {
-            // eslint-disable-line no-shadow
-            if (this.mode !== 'fg') {
-              const mergeItems = getItemsToFuse(this.editor, pasteItems)
-              action = fromItemsFuse(restruct, mergeItems).mergeWith(action)
-              this.editor.update(action)
-            }
-          })
+        ) as Promise<any>
+
+        promise.then(([action, pasteItems]) => {
+          if (this.mode !== 'fg') {
+            const mergeItems = getItemsToFuse(this.editor, pasteItems)
+            action = fromItemsFuse(restruct, mergeItems).mergeWith(action)
+            this.editor.update(action)
+          }
+        })
 
         return true
       }

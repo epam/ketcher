@@ -82,11 +82,11 @@ const Menu = ({ children, menuItemChanged }) => {
   })
 
   return (
-    <>
+    <div>
       <MenuContext.Provider value={menuContextValue}>
         {subComponents.map((component) => component)}
       </MenuContext.Provider>
-    </>
+    </div>
   )
 }
 

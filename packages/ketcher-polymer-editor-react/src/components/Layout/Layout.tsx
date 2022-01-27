@@ -19,58 +19,78 @@ import styled from '@emotion/styled'
 
 interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>
+  bottomEmptySpace?: number
+  windowHeight?: number
 }
 
 const PADDING = '15px'
 
-const LayoutContainer = styled.div(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  height: '100%',
-  width: '100%',
-  position: 'relative',
-  padding: `${PADDING}`,
-  backgroundColor: theme.color.background.canvas
-}))
-
-const CenterContainer = styled.div({
+const Column = styled.div({
+  width: 'fit-content',
   display: 'flex',
   flexDirection: 'column',
-  width: '100%',
-  height: `calc(100vh - 40px - ${PADDING} * 2)`
+  justifyContent: 'space-between'
 })
+
+const Row = styled.div<{ height?: number }>(({ theme, height }) => ({
+  height: `${height}px` || '100vh',
+  width: '100%',
+  position: 'relative',
+  padding: PADDING,
+  backgroundColor: theme.color.background.canvas,
+  display: 'flex',
+  justifyContent: 'space-between'
+}))
 
 const Left = styled.div({
   width: '32px',
   minWidth: '32px',
-  height: `calc(100vh - 40px - ${PADDING} * 2)`
+  height: '100%',
+  marginRight: '6px',
+  display: 'flex',
+  flexDirection: 'column'
 })
 
 const Right = styled.div({
   width: '253px',
-  height: `calc(100vh - ${PADDING} * 2)`
+  height: `100%`,
+  marginLeft: '6px',
+  display: 'flex',
+  flexDirection: 'column'
 })
 
 const Top = styled.div({
   height: '24px',
-  width: '670px',
+  width: '100%',
   alignSelf: 'flex-end',
-  margin: '0 10% 0 6px'
+  paddingRight: '10%',
+  marginBottom: '6px',
+  display: 'flex',
+  justifyContent: 'flex-end'
 })
 
 const Bottom = styled.div({
   height: '100px',
-  margin: '6px 6px 0 6px'
+  marginTop: '6px',
+  display: 'flex',
+  justifyContent: 'center'
 })
 
 const Main = styled.div({
-  height: '100%',
-  margin: '6px 6px 0 6px'
+  height: '100%'
 })
+
+const DummyDiv = styled.div<{ height: number }>(({ height }) => ({
+  height: `calc(${height}px + ${PADDING})`
+}))
 
 type LayoutSection = 'Left' | 'Right' | 'Main' | 'Top' | 'Bottom'
 
-export const Layout = ({ children }: LayoutProps) => {
+export const Layout = ({
+  children,
+  bottomEmptySpace = 0,
+  windowHeight
+}: LayoutProps) => {
   const subcomponents: Record<LayoutSection, JSX.Element | null> = {
     Left: null,
     Main: null,
@@ -93,15 +113,19 @@ export const Layout = ({ children }: LayoutProps) => {
   })
 
   return (
-    <LayoutContainer>
-      {subcomponents.Left}
-      <CenterContainer>
+    <Row height={windowHeight}>
+      <Column>
+        {subcomponents.Left}
+        <DummyDiv height={bottomEmptySpace} />
+      </Column>
+      <Column style={{ width: '100%' }}>
         {subcomponents.Top}
         {subcomponents.Main}
         {subcomponents.Bottom}
-      </CenterContainer>
+        <DummyDiv height={bottomEmptySpace} />
+      </Column>
       {subcomponents.Right}
-    </LayoutContainer>
+    </Row>
   )
 }
 

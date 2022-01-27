@@ -27,8 +27,9 @@ import { Layout } from 'components/Layout'
 import { MonomerLibrary } from 'components/monomerLibrary'
 import { NotationInput } from 'components/notationInput'
 import { Menu } from 'components/menu'
-import { useAppDispatch } from 'hooks'
 import { selectTool } from 'state/common'
+import { useAppDispatch, useResizeObserver } from 'hooks'
+import { Logo } from 'components/Logo'
 
 const theme = createTheme(defaultTheme)
 
@@ -36,45 +37,22 @@ interface EditorProps {
   onInit?: () => void
 }
 
-const Logo = styled.div(({ theme }) => ({
-  fontFamily: theme.font.family.montserrat,
-  fontSize: theme.font.size.medium,
-  fontWeight: theme.font.weight.bold,
-  color: theme.color.text.secondary,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  position: 'absolute',
-  bottom: '15px',
-  left: '13px',
-
-  '> span:first-of-type, > span:last-of-type': {
-    fontWeight: theme.font.weight.light,
-    fontSize: theme.font.size.xsmall,
-    textTransform: 'uppercase'
-  },
-
-  '> span:last-of-type': {
-    fontWeight: theme.font.weight.regular
-  },
-
-  '> span:nth-of-type(2)': {
-    color: theme.color.text.primary,
-
-    '&:first-letter': {
-      color: theme.color.text.secondary
-    }
-  }
-}))
-
 const MainElementExample = styled.div({
+  border: '1px dotted gray',
   width: '100%',
   height: '100%'
 })
 
 function Editor(props: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
+  const logoElRef = useRef<HTMLDivElement>(null)
   const { onInit } = props
+  const { height: logoHeight } = useResizeObserver<HTMLDivElement>({
+    ref: logoElRef
+  })
+  const { height: windowHeight } = useResizeObserver<HTMLDivElement>({
+    ref: rootElRef
+  })
 
   useEffect(() => {
     onInit?.()
@@ -83,10 +61,14 @@ function Editor(props: EditorProps) {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <div ref={rootElRef} className="Ketcher-polymer-editor-root">
+        <div
+          ref={rootElRef}
+          className="Ketcher-polymer-editor-root"
+          style={{ height: '100%' }}
+        >
           <Global styles={globalStyles} />
 
-          <Layout>
+          <Layout bottomEmptySpace={logoHeight} windowHeight={windowHeight}>
             <Layout.Left>
               <MenuComponent />
             </Layout.Left>
@@ -104,11 +86,7 @@ function Editor(props: EditorProps) {
             </Layout.Right>
           </Layout>
 
-          <Logo>
-            <span>Polymer Editor</span>
-            <span>Ketcher</span>
-            <span>EPAM</span>
-          </Logo>
+          <Logo ref={logoElRef} />
         </div>
       </ThemeProvider>
     </Provider>

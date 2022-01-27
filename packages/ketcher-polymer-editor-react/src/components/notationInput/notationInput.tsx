@@ -25,7 +25,7 @@ const AddToCanvasBar = styled('div')`
   align-items: center;
   justify-content: space-between;
   height: 100%;
-  width: 100%;
+  width: 670px;
 `
 
 type AddToCanvasProps = {

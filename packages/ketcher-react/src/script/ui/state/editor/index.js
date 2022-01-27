@@ -190,6 +190,7 @@ export default function initEditor(dispatch, getState) {
     },
     onMouseDown: () => {
       updateAction()
-    }
+    },
+    onConfirm: () => openDialog(dispatch, 'confirm')
   }
 }

@@ -24,6 +24,7 @@ interface Config {
   structServiceProvider: StructServiceProvider
   buttons?: ButtonsConfig
   errorHandler: (message: string) => void
+  settings?: any
 }
 
 async function buildKetcherAsync({
@@ -31,7 +32,8 @@ async function buildKetcherAsync({
   staticResourcesUrl,
   structServiceProvider,
   buttons,
-  errorHandler
+  errorHandler,
+  settings
 }: Config) {
   const builder = new KetcherBuilder()
 
@@ -41,7 +43,8 @@ async function buildKetcherAsync({
     element,
     staticResourcesUrl,
     errorHandler,
-    buttons
+    buttons,
+    settings
   )
 
   return builder.build()

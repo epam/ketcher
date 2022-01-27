@@ -58,7 +58,8 @@ class KetcherBuilder {
     element: HTMLDivElement | null,
     staticResourcesUrl: string,
     errorHandler: (message: string) => void,
-    buttons?: ButtonsConfig
+    buttons?: ButtonsConfig,
+    settings?: any
   ): Promise<void> {
     const { structService } = this
 
@@ -71,7 +72,8 @@ class KetcherBuilder {
           errorHandler: errorHandler || null,
           version: process.env.VERSION || '',
           buildDate: process.env.BUILD_DATE || '',
-          buildNumber: process.env.BUILD_NUMBER || ''
+          buildNumber: process.env.BUILD_NUMBER || '',
+          settings: settings
         },
         structService!,
         resolve

@@ -33,4 +33,5 @@ export interface Editor {
   isDitrty: () => boolean
   setOrigin: () => void
   struct: (struct?: Struct) => Struct
+  options: (value?: any) => any
 }

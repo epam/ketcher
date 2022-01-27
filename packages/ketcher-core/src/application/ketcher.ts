@@ -184,4 +184,8 @@ export class Ketcher {
     const blob = new Blob([byteArray], { type: meta })
     return blob
   }
+
+  getSettings() {
+    return this.#editor.options()
+  }
 }

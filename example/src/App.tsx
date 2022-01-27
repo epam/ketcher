@@ -39,6 +39,48 @@ if (process.env.MODE === 'standalone') {
 const polymerEditor = process.env.ENABLE_POLYMER_EDITOR
 
 const App = () => {
+  const defaultSettings = {
+    resetToSelect: 'paste',
+    rotationStep: 10,
+    showValenceWarnings: true,
+    atomColoring: true,
+    showStereoFlags: true,
+    stereoLabelStyle: 'Iupac',
+    colorOfAbsoluteCenters: '#ff0000',
+    colorOfAndCenters: '#0000cd',
+    colorOfOrCenters: '#228b22',
+    colorStereogenicCenters: 'LabelsOnly',
+    autoFadeOfStereoLabels: true,
+    absFlagLabel: 'ABS (Chiral)',
+    andFlagLabel: 'AND Enantiomer',
+    mixedFlagLabel: 'Mixed',
+    orFlagLabel: 'OR Enantiomer',
+    font: '30px Arial',
+    fontsz: 32,
+    fontszsub: 13,
+    carbonExplicitly: false,
+    showCharge: true,
+    showValence: true,
+    showHydrogenLabels: 'on',
+    aromaticCircle: true,
+    doubleBondWidth: 6,
+    bondThickness: 2,
+    stereoBondWidth: 6,
+    'smart-layout': true,
+    'ignore-stereochemistry-errors': true,
+    'mass-skip-error-on-pseudoatoms': false,
+    'gross-formula-add-rsites': true,
+    'gross-formula-add-isotopes': true,
+    showAtomIds: false,
+    showBondIds: false,
+    showHalfBondIds: false,
+    showLoopIds: false,
+    miewMode: 'LN',
+    miewTheme: 'light',
+    miewAtomLabel: 'bright',
+    init: true
+  }
+
   const hiddenButtonsConfig = getHiddenButtonsConfig()
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -62,6 +104,7 @@ const App = () => {
         onInit={(ketcher: Ketcher) => {
           ;(global as any).ketcher = ketcher
         }}
+        settings={defaultSettings}
       />
       {polymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}
       {hasError && (

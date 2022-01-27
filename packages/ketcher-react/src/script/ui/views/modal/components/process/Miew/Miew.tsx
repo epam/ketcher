@@ -17,13 +17,25 @@
 import { Component } from 'react'
 
 import { Dialog } from '../../../../components'
-import { FormatterFactory } from 'ketcher-core'
+import { FormatterFactory, Struct, StructService } from 'ketcher-core'
 import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema'
 import classes from './Miew.module.less'
 import { connect } from 'react-redux'
 import { load } from '../../../../../state'
 import { pick } from 'lodash/fp'
 import Viewer from 'miew-react'
+
+type MiewDialogProps = {
+  miewOpts: any
+  server: StructService
+  struct: Struct
+  // onCancel: () => void
+  // onOk: (result: any) => void
+}
+type MiewDialogCallProps = {
+  onExportCML: (cmlStruct: any) => void
+}
+type Props = MiewDialogProps & MiewDialogCallProps
 
 /* OPTIONS for MIEW */
 const BACKGROUND_COLOR = {
@@ -86,21 +98,11 @@ function createMiewOptions(userOpts) {
 const CHANGING_WARNING =
   'Stereocenters can be changed after the strong 3D rotation'
 
-class MiewDialog extends Component {
-  // componentDidMount() {
-
-  // const { struct, server, miewOpts } = this.props
-  // const Miew = window.Miew
-
-  // this.viewer = new Miew()
-  // container: this.miewContainer
-
-  // if (this.viewer.init()) this.viewer.run()
-
-  // }
+class MiewDialog extends Component<Props> {
+  miewExportCML: (() => string | null) | undefined
 
   exportCML() {
-    const cmlStruct = this.miewExportCML()
+    const cmlStruct = this.miewExportCML?.()
     if (!cmlStruct) {
       return
     }
@@ -113,6 +115,7 @@ class MiewDialog extends Component {
     return (
       <Dialog
         title="Miew"
+        // @ts-ignore
         params={prop}
         buttons={[
           <div key="warning" className={classes.warning}>
@@ -126,9 +129,6 @@ class MiewDialog extends Component {
       >
         <div className={classes.dialog_body}>
           <div
-            // ref={(el) => {
-            //   this.miewContainer = el
-            // }}
             className={classes.miewContainer}
             style={{ width: '1024px', height: '600px', position: 'relative' }}
           >
@@ -161,7 +161,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  onExportCML: (cmlStruct) => {
+  onExportCML: (cmlStruct: string) => {
     dispatch(load(cmlStruct))
     // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
     // See PR #731 (https://github.com/epam/ketcher/pull/731)

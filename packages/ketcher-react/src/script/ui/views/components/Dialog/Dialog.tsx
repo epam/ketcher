@@ -36,7 +36,7 @@ interface DialogProps {
   params: DialogParams
   buttons?: Array<string | ReactElement>
   buttonsTop?: Array<ReactElement>
-  className: string
+  className?: string
   needMargin?: boolean
 }
 

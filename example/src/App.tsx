@@ -1,4 +1,4 @@
-import 'miew/dist/Miew.min.css'
+import 'miew/dist/miew.min.css'
 import 'ketcher-react/dist/index.css'
 
 import { ButtonsConfig, Editor } from 'ketcher-react'

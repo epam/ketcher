@@ -12274,7 +12274,7 @@ __metadata:
     ketcher-polymer-editor-react: "workspace:*"
     ketcher-react: "workspace:*"
     ketcher-standalone: "workspace:*"
-    miew: ^0.9.0
+    miew: ^0.10.1
     npm-run-all: ^4.1.5
     prettier: ^2.5.1
     react: ^17.0.2
@@ -13333,13 +13333,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"miew@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "miew@npm:0.9.0"
+"miew@npm:^0.10.1":
+  version: 0.10.1
+  resolution: "miew@npm:0.10.1"
   dependencies:
-    lodash: ^4.17.15
-    three: 0.112.1
-  checksum: d8df64a8f140f2a0da53a8db9f55753dcf6696defb302a7576502916ee3fb0fe66c5cde39737378a0b2bcad234679c728a80294c2f29068ed76ac6fa4f4bec00
+    lodash: ^4.17.21
+    three: 0.131.3
+  checksum: 270d2689226d3eedd9812bcdf9768408020f56b94e80782c86010b5b79a2fc938ad38a88f109e01bd41cfa067763906dc7cc65b809bae9944d233b12bc0a206c
   languageName: node
   linkType: hard
 
@@ -19363,10 +19363,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.112.1":
-  version: 0.112.1
-  resolution: "three@npm:0.112.1"
-  checksum: 01e4c84b6262fe06a3ab712eb6d8ce9628a79c6f17b7e39b01ba1f9ff5404abb251507f867595a4b3a1009b3521eb7385b3cbf672f8ec0b9fd95d5a09cb953bc
+"three@npm:0.131.3":
+  version: 0.131.3
+  resolution: "three@npm:0.131.3"
+  checksum: 947308298088de498c61ebbcbc5d9ae2b1acdd876855f4b3bd98214797706b96902d136eab330d8a8ae93c0edb6ac2324442b1c00abccb50bf55f7db98ea60ec
   languageName: node
   linkType: hard
 

@@ -14,6 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
+// @TODO This is temporary just to get type, change !!
+import { Generics } from 'ketcher-core'
+
 import GenSet from './components'
 import classes from './GenGroup.module.less'
 import clsx from 'clsx'
@@ -63,7 +66,15 @@ const viewSchema = {
   'group/cyclic/hetero/aryl': 'hetero aryl'
 }
 
-function GenGroup({ gen, name, path, selected, onSelect }) {
+type GenGroupProps = {
+  gen: typeof Generics
+  name: string
+  path?: string
+  selected: (label: string) => boolean
+  onSelect: (label: string) => void
+}
+
+function GenGroup({ gen, name, path, selected, onSelect }: GenGroupProps) {
   const group = gen[name]
   const pk = path ? `${path}/${name}` : name
   const schema = viewSchema[pk]

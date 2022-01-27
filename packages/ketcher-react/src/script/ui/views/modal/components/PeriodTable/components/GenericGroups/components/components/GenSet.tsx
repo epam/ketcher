@@ -17,9 +17,23 @@
 import classes from './GenSet.module.less'
 import clsx from 'clsx'
 
-function GenSet({ labels, caption = '', selected, onSelect, ...props }) {
+type GenSetProps = {
+  labels: string[]
+  selected: (label: string) => boolean
+  onSelect: (label: string) => void
+  caption?: string
+  className?: string
+}
+
+function GenSet({
+  labels,
+  caption = '',
+  selected,
+  onSelect,
+  className
+}: GenSetProps) {
   return (
-    <fieldset {...props}>
+    <fieldset className={className}>
       {labels.map((label, index) => (
         <button
           key={index}
@@ -29,8 +43,7 @@ function GenSet({ labels, caption = '', selected, onSelect, ...props }) {
               [classes.selected]: selected(label)
             },
             classes.button
-          )}
-        >
+          )}>
           {label}
         </button>
       ))}

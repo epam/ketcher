@@ -18,9 +18,15 @@ import GenGroup from './components'
 import { Generics } from 'ketcher-core'
 import classes from './GenericGroups.module.less'
 
-function GenericGroups({ selected, onSelect, className, ...props }) {
+type GenericGroupsProps = {
+  className: string
+  selected: (label: string) => boolean
+  onSelect: (label: string) => void
+}
+
+function GenericGroups({ selected, onSelect, className }: GenericGroupsProps) {
   return (
-    <div summary="Generic Groups" className={classes[className]} {...props}>
+    <div className={classes[className]}>
       <GenGroup
         gen={Generics}
         name="atom"

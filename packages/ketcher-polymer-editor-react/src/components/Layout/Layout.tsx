@@ -14,14 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
 import React from 'react'
-import { css } from '@emotion/react'
-
-interface SubcomponentProps {
-  children: JSX.Element
-  margin?: string
-}
+import styled from '@emotion/styled'
 
 interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>
@@ -46,21 +40,56 @@ const CenterContainer = styled.div({
   height: `calc(100vh - 40px - ${PADDING} * 2)`
 })
 
+const Left = styled.div({
+  width: '32px',
+  minWidth: '32px',
+  height: `calc(100vh - 40px - ${PADDING} * 2)`
+})
+
+const Right = styled.div({
+  width: '253px',
+  height: `calc(100vh - ${PADDING} * 2)`
+})
+
+const Top = styled.div({
+  height: '24px',
+  width: '670px',
+  alignSelf: 'flex-end',
+  margin: '0 10% 0 6px'
+})
+
+const Bottom = styled.div({
+  height: '100px',
+  margin: '6px 6px 0 6px'
+})
+
+const Main = styled.div({
+  height: '100%',
+  margin: '6px 6px 0 6px'
+})
+
+type LayoutSection = 'Left' | 'Right' | 'Main' | 'Top' | 'Bottom'
+
 export const Layout = ({ children }: LayoutProps) => {
-  const subcomponents = {
+  const subcomponents: Record<LayoutSection, JSX.Element | null> = {
     Left: null,
     Main: null,
     Right: null,
     Top: null,
     Bottom: null
   }
-  const subcomponentList = Object.keys(Layout)
-  subcomponentList.forEach((key) => {
-    React.Children.forEach(children, (child) => {
-      if (child.type.name === key) {
-        subcomponents[key] = child
-      }
-    })
+  React.Children.forEach(children, (child) => {
+    if (child.type === Left) {
+      subcomponents.Left = child
+    } else if (child.type === Right) {
+      subcomponents.Right = child
+    } else if (child.type === Top) {
+      subcomponents.Top = child
+    } else if (child.type === Bottom) {
+      subcomponents.Bottom = child
+    } else if (child.type === Main) {
+      subcomponents.Main = child
+    }
   })
 
   return (
@@ -76,65 +105,8 @@ export const Layout = ({ children }: LayoutProps) => {
   )
 }
 
-const styleLeft = css({
-  width: '32px',
-  minWidth: '32px',
-  height: `calc(100vh - 40px - ${PADDING} * 2)`
-})
-
-const Left = ({ children, margin }: SubcomponentProps) => (
-  <div css={styleLeft} style={{ margin: margin }}>
-    {children}
-  </div>
-)
 Layout.Left = Left
-
-const styleTop = css({
-  height: '24px',
-  width: '670px',
-  alignSelf: 'flex-end',
-  margin: '0 10% 0 6px'
-})
-
-const Top = ({ children, margin }: SubcomponentProps) => (
-  <div css={styleTop} style={{ margin: margin }}>
-    {children}
-  </div>
-)
 Layout.Top = Top
-
-const styleRight = css({
-  width: '253px',
-  height: `calc(100vh - ${PADDING} * 2)`
-})
-
-const Right = ({ children, margin }: SubcomponentProps) => (
-  <div css={styleRight} style={{ margin: margin }}>
-    {children}
-  </div>
-)
 Layout.Right = Right
-
-const styleMain = css({
-  height: '100%',
-  margin: '6px 6px 0 6px'
-})
-
-const Main = ({ children, margin }: SubcomponentProps) => (
-  <div css={styleMain} style={{ margin: margin }}>
-    {children}
-  </div>
-)
 Layout.Main = Main
-
-const styleBottom = css({
-  height: '100px',
-  margin: '6px 6px 0 6px'
-})
-
-const Bottom = ({ children, margin }: SubcomponentProps) => (
-  <div css={styleBottom} style={{ margin: margin }}>
-    {children}
-  </div>
-)
 Layout.Bottom = Bottom

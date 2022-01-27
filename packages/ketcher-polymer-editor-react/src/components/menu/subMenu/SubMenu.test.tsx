@@ -23,7 +23,7 @@ const mockClickHandler = jest.fn()
 const MOCK_NAME: MenuItemVariant = 'select-lasso'
 
 const mockValue = {
-  itemClickHandler: mockClickHandler,
+  selectItemHandler: mockClickHandler,
   isActiveItem: (itemKey) => itemKey === MOCK_NAME
 }
 

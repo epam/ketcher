@@ -20,7 +20,7 @@ const menuItemChanged = jest.fn()
 
 const MenuContainer = () => {
   return (
-    <Menu menuItemChanged={menuItemChanged}>
+    <Menu onItemClick={menuItemChanged}>
       <Menu.Group>
         <Menu.Item itemKey="open" />
       </Menu.Group>

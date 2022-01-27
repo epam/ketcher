@@ -9,7 +9,7 @@ Object {
         class="css-e2qc4g"
       >
         <li
-          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
           role="menuitem"
           tabindex="-1"
         >
@@ -26,7 +26,7 @@ Object {
         class="css-e2qc4g"
       >
         <li
-          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
           role="menuitem"
           tabindex="-1"
         >
@@ -45,7 +45,7 @@ Object {
             class="css-5su45f"
           >
             <li
-              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-d1kvip-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-16srdkh-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
               role="menuitem"
               tabindex="-1"
             >
@@ -76,7 +76,7 @@ Object {
             class="css-5su45f"
           >
             <li
-              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
               role="menuitem"
               tabindex="-1"
             >
@@ -107,7 +107,7 @@ Object {
             class="css-5su45f"
           >
             <li
-              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
               role="menuitem"
               tabindex="-1"
             >
@@ -139,7 +139,7 @@ Object {
       class="css-e2qc4g"
     >
       <li
-        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
         role="menuitem"
         tabindex="-1"
       >
@@ -156,7 +156,7 @@ Object {
       class="css-e2qc4g"
     >
       <li
-        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
         role="menuitem"
         tabindex="-1"
       >
@@ -175,7 +175,7 @@ Object {
           class="css-5su45f"
         >
           <li
-            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-d1kvip-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-16srdkh-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
             role="menuitem"
             tabindex="-1"
           >
@@ -206,7 +206,7 @@ Object {
           class="css-5su45f"
         >
           <li
-            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
             role="menuitem"
             tabindex="-1"
           >
@@ -237,7 +237,7 @@ Object {
           class="css-5su45f"
         >
           <li
-            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
             role="menuitem"
             tabindex="-1"
           >

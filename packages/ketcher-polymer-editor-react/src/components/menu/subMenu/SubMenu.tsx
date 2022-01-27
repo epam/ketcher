@@ -94,6 +94,10 @@ const SubMenu = ({ children, vertical = false }: SubMenuProps) => {
   const activeOption = options.filter((itemKey) => isActiveItem(itemKey))
   const header = activeOption.length ? activeOption[0] : options[0]
 
+  const subComponents = React.Children.map(children, (child) => {
+    return child.type === MenuItem ? child : null
+  })
+
   return (
     <SubMenuContainer>
       <SubMenuHeader>
@@ -115,7 +119,7 @@ const SubMenu = ({ children, vertical = false }: SubMenuProps) => {
       >
         <ClickAwayListener onClickAway={hideCollapse}>
           <OptionsFlexContainer isVertical={vertical}>
-            {children}
+            {subComponents.map((component) => component)}
           </OptionsFlexContainer>
         </ClickAwayListener>
       </OptionsItemsCollapse>

@@ -49,10 +49,15 @@ const Group = ({ children, divider = false }) => {
     `
     return <Divider />
   }
+  const subComponents = React.Children.map(children, (child) => {
+    return child.type === MenuItem || SubMenu ? child : null
+  })
 
   return (
     <>
-      <GroupContainer>{children}</GroupContainer>
+      <GroupContainer>
+        {subComponents.map((component) => component)}
+      </GroupContainer>
       {divider && <Divider />}
     </>
   )
@@ -85,12 +90,8 @@ const Menu = ({ children, onItemClick }: MenuProps) => {
     [activeItem, onItemClick]
   )
 
-  const subComponentList = Object.keys(Menu)
-
-  const subComponents = subComponentList.map((key) => {
-    return React.Children.map(children, (child) =>
-      child.type.name === key ? child : null
-    )
+  const subComponents = React.Children.map(children, (child) => {
+    return child.type === Group ? child : null
   })
 
   return (

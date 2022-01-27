@@ -23,6 +23,7 @@ import classes from './Miew.module.less'
 import { connect } from 'react-redux'
 import { load } from '../../../../../state'
 import { pick } from 'lodash/fp'
+import Viewer from 'miew-react'
 
 /* OPTIONS for MIEW */
 const BACKGROUND_COLOR = {
@@ -86,30 +87,20 @@ const CHANGING_WARNING =
   'Stereocenters can be changed after the strong 3D rotation'
 
 class MiewDialog extends Component {
-  componentDidMount() {
-    const { struct, server, miewOpts } = this.props
-    const Miew = window.Miew
+  // componentDidMount() {
 
-    this.viewer = new Miew({
-      container: this.miewContainer
-    })
+  // const { struct, server, miewOpts } = this.props
+  // const Miew = window.Miew
 
-    if (this.viewer.init()) this.viewer.run()
+  // this.viewer = new Miew()
+  // container: this.miewContainer
 
-    const factory = new FormatterFactory(server)
-    const service = factory.create('cml')
+  // if (this.viewer.init()) this.viewer.run()
 
-    service
-      .getStructureFromStructAsync(struct)
-      .then((res) =>
-        this.viewer.load(res, { sourceType: 'immediate', fileType: 'cml' })
-      )
-      .then(() => this.viewer.setOptions(miewOpts))
-      .catch((ex) => console.error(ex.message))
-  }
+  // }
 
   exportCML() {
-    const cmlStruct = this.viewer.exportCML()
+    const cmlStruct = this.miewExportCML()
     if (!cmlStruct) {
       return
     }
@@ -135,12 +126,28 @@ class MiewDialog extends Component {
       >
         <div className={classes.dialog_body}>
           <div
-            ref={(el) => {
-              this.miewContainer = el
-            }}
+            // ref={(el) => {
+            //   this.miewContainer = el
+            // }}
             className={classes.miewContainer}
             style={{ width: '1024px', height: '600px', position: 'relative' }}
-          />
+          >
+            <Viewer
+              onInit={(miew) => {
+                this.miewExportCML = miew.exportCML.bind(miew)
+                const factory = new FormatterFactory(server)
+                const service = factory.create('cml')
+
+                service
+                  .getStructureFromStructAsync(struct)
+                  .then((res) =>
+                    miew.load(res, { sourceType: 'immediate', fileType: 'cml' })
+                  )
+                  .then(() => miew.setOptions(miewOpts))
+                  .catch((ex) => console.error(ex.message))
+              }}
+            />
+          </div>
         </div>
       </Dialog>
     )

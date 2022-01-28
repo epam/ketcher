@@ -42,7 +42,8 @@ const Group = ({ children, divider = false }) => {
     const Divider = styled('span')`
       display: block;
       height: 8px;
-      width: 100%;
+      width: 50%;
+      margin: 0 auto;
       border-top: 1px solid;
       border-color: ${(props) => props.theme.color.divider};
     `

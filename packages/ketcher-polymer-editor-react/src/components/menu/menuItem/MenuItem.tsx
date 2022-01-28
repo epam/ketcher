@@ -25,11 +25,11 @@ const CustomMenuItem = ({ isActive, onClick, children }) => {
   const styles = css`
     display: flex;
     align-items: center;
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
     padding: 0;
     justify-content: center;
-    border-radius: 2px;
+    border-radius: 3px;
     background-color: ${isActive
       ? theme.color.icon.activeMenu
       : theme.color.background.primary};
@@ -38,6 +38,11 @@ const CustomMenuItem = ({ isActive, onClick, children }) => {
       background: ${isActive
         ? theme.color.icon.activeMenu
         : theme.color.background.primary};
+    }
+
+    & > svg {
+      width: 36px;
+      height: 36px;
     }
 
     & > svg path {

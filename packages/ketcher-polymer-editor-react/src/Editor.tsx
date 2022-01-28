@@ -89,7 +89,7 @@ function MenuComponent() {
 
   return (
     <Menu menuItemChanged={menuItemChanged}>
-      <Menu.Group>
+      <Menu.Group divider>
         <Menu.Item itemKey="open" />
       </Menu.Group>
       <Menu.Group>

@@ -14,92 +14,82 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled'
-import React, { createContext, useState } from 'react'
-import { MenuItem } from 'components/menu/menuItem'
-import { SubMenu } from 'components/menu/subMenu'
-import { MenuItemVariant } from 'components/menu/menu.types'
+import React from 'react'
+import { MenuItem } from './menuItem'
+import { SubMenu } from './subMenu'
+import { IMenuContext, MenuContext } from '../../contexts'
 
-const Group = ({ children, divider = false }) => {
-  const GroupContainer = styled('div')`
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-items: center;
-    background-color: ${(props) => props.theme.color.background.primary};
-    border-radius: 2px;
-    width: 32px;
+const Divider = styled.span`
+  display: block;
+  height: 8px;
+  width: 32px;
+  border-top: 1px solid;
+  border-color: ${({ theme }) => theme.color.divider};
+`
+
+const StyledGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  background-color: ${({ theme }) => theme.color.background.primary};
+  border-radius: 2px;
+  width: 32px;
+  margin-bottom: 8px;
+
+  > * {
     margin-bottom: 8px;
-
-    > * {
-      margin-bottom: 8px;
-    }
-
-    > :last-child {
-      margin-bottom: 0;
-    }
-  `
-
-  const Divider = () => {
-    const Divider = styled('span')`
-      display: block;
-      height: 8px;
-      width: 32px;
-      border-top: 1px solid;
-      border-color: ${(props) => props.theme.color.divider};
-    `
-    return <Divider />
   }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+`
+
+interface GroupProps {
+  children: JSX.Element | JSX.Element[]
+  divider?: boolean
+}
+
+const Group = ({ children, divider = false }: GroupProps) => {
   const subComponents = React.Children.map(children, (child) => {
     return child.type === MenuItem || SubMenu ? child : null
   })
 
   return (
     <>
-      <GroupContainer>
-        {subComponents.map((component) => component)}
-      </GroupContainer>
+      <StyledGroup>{subComponents.map((component) => component)}</StyledGroup>
       {divider && <Divider />}
     </>
   )
 }
 
-export type ContextType = {
-  isActiveItem: (item: MenuItemVariant) => boolean
-  selectItemHandler: (item: MenuItemVariant) => void
-}
-
 type MenuProps = {
   children: JSX.Element[]
-  onItemClick: (itemKey: MenuItemVariant) => void
-  customActiveItem?: MenuItemVariant
+  onItemClick: (itemKey: string) => void
+  activeMenuItem?: string
 }
 
-const MenuContext = createContext<ContextType | null>(null)
-
-const Menu = ({ children, onItemClick }: MenuProps) => {
-  const [activeItem, setActiveItem] = useState('select-lasso')
-
-  const menuContextValue = React.useMemo<ContextType>(
-    () => ({
-      isActiveItem: (itemKey) => itemKey === activeItem,
-      selectItemHandler: (itemKey) => {
-        setActiveItem(itemKey)
+const Menu = ({ children, onItemClick, activeMenuItem }: MenuProps) => {
+  const context = React.useMemo<IMenuContext>(() => {
+    let activeItem = activeMenuItem
+    return {
+      isActive: (itemKey) => activeItem === itemKey,
+      activate: (itemKey) => {
+        activeItem = itemKey
         onItemClick(itemKey)
       }
-    }),
-    [activeItem, onItemClick]
-  )
+    }
+  }, [onItemClick, activeMenuItem])
 
   const subComponents = React.Children.map(children, (child) => {
     return child.type === Group ? child : null
   })
 
   return (
-    <>
-      <MenuContext.Provider value={menuContextValue}>
-        {subComponents.map((component) => component)}
-      </MenuContext.Provider>
-    </>
+    <MenuContext.Provider value={context}>
+      {subComponents.map((component) => component)}
+    </MenuContext.Provider>
   )
 }
 

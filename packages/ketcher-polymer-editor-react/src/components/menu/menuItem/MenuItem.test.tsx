@@ -14,22 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 import { render, screen } from 'test-utils'
-import { MenuItemVariant } from 'components/menu/menu.types'
 import userEvent from '@testing-library/user-event'
 import { Menu, MenuContext } from 'components/menu'
 
 const mockClickHandler = jest.fn()
-const MOCK_NAME: MenuItemVariant = 'select-lasso'
+const MOCK_NAME = 'select-lasso'
 
 const mockValue = {
-  selectItemHandler: mockClickHandler,
-  isActiveItem: (itemKey) => itemKey === MOCK_NAME
+  activate: mockClickHandler,
+  isActive: (itemKey) => itemKey === MOCK_NAME
 }
 
 const mockMenuItem = () => {
   return (
     <MenuContext.Provider value={mockValue}>
-      <Menu.Item itemKey="open" />
+      <Menu.Item itemId="open" />
     </MenuContext.Provider>
   )
 }

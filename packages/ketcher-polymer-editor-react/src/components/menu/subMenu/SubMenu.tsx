@@ -13,36 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { ClickAwayListener } from '@mui/material'
 import styled from '@emotion/styled'
 import Collapse from '@mui/material/Collapse'
 import { Icon } from 'components/shared/ui/icon'
-import { MenuItem } from 'components/menu/menuItem'
-import { ContextType, MenuContext } from 'components/menu'
+import { MenuItem } from '../menuItem'
+import { useMenuContext } from '../../../hooks/useMenuContext'
 
-const SubMenuContainer = styled('div')`
+const RootContainer = styled.div`
   display: flex;
   position: relative;
 `
 
-type OptionsFlexContainerProps = {
+type OptionsContainerProps = {
   isVertical?: boolean
 } & React.HTMLAttributes<HTMLDivElement>
 
-const OptionsFlexContainer = styled('div')<OptionsFlexContainerProps>`
+const OptionsContainer = styled.div<OptionsContainerProps>`
   display: flex;
   position: absolute;
   left: 5px;
   border-radius: 2px;
-  flex-direction: ${(props) => (props.isVertical ? 'column' : 'row')};
+  flex-direction: ${({ isVertical }) => (isVertical ? 'column' : 'row')};
 `
 
 type DropDownProps = {
   isActive: boolean
 } & React.HTMLAttributes<HTMLDivElement>
 
-const DropDown = styled('div')<DropDownProps>`
+const DropDown = styled.div<DropDownProps>`
   display: flex;
   width: 6px;
   height: 6px;
@@ -51,10 +51,8 @@ const DropDown = styled('div')<DropDownProps>`
   right: 0;
 
   > svg path {
-    fill: ${(props) =>
-      props.isActive
-        ? props.theme.color.icon.clicked
-        : props.theme.color.icon.activeMenu};
+    fill: ${({ isActive, theme }) =>
+      isActive ? theme.color.icon.clicked : theme.color.icon.activeMenu};
   }
 `
 
@@ -62,7 +60,7 @@ const OptionsItemsCollapse = styled(Collapse)`
   position: relative;
 `
 
-const SubMenuHeader = styled('div')`
+const VisibleItem = styled.div`
   display: flex;
   align-items: center;
   position: relative;
@@ -80,7 +78,7 @@ type SubMenuProps = {
 
 const SubMenu = ({ children, vertical = false }: SubMenuProps) => {
   const [open, setOpen] = useState(false)
-  const { isActiveItem } = useContext(MenuContext) as ContextType
+  const { isActive } = useMenuContext()
 
   const handleDropDownClick = () => {
     setOpen((prev) => !prev)
@@ -90,27 +88,27 @@ const SubMenu = ({ children, vertical = false }: SubMenuProps) => {
     open && setOpen(false)
   }
 
-  const options = children.map((item) => item.props.itemKey)
-  const activeOption = options.filter((itemKey) => isActiveItem(itemKey))
-  const header = activeOption.length ? activeOption[0] : options[0]
-
   const subComponents = React.Children.map(children, (child) => {
     return child.type === MenuItem ? child : null
   })
 
+  const options = subComponents
+    .map((item) => item.props.itemId)
+    .filter((item) => item)
+  const activeOption = options.filter((itemKey) => isActive(itemKey))
+  const visibleItemId = activeOption.length ? activeOption[0] : options[0]
+
   return (
-    <SubMenuContainer>
-      <SubMenuHeader>
-        <MenuItem itemKey={header} />
+    <RootContainer>
+      <VisibleItem>
+        <MenuItem itemId={visibleItemId} />
         <DropDown
-          isActive={isActiveItem(header)}
+          isActive={isActive(visibleItemId)}
           onClick={handleDropDownClick}
-          data-testid="submenu-dropdown"
-          role="button"
         >
           <Icon name="dropdown" />
         </DropDown>
-      </SubMenuHeader>
+      </VisibleItem>
       <OptionsItemsCollapse
         in={open}
         timeout="auto"
@@ -118,12 +116,12 @@ const SubMenu = ({ children, vertical = false }: SubMenuProps) => {
         onClick={hideCollapse}
       >
         <ClickAwayListener onClickAway={hideCollapse}>
-          <OptionsFlexContainer isVertical={vertical}>
+          <OptionsContainer isVertical={vertical}>
             {subComponents.map((component) => component)}
-          </OptionsFlexContainer>
+          </OptionsContainer>
         </ClickAwayListener>
       </OptionsItemsCollapse>
-    </SubMenuContainer>
+    </RootContainer>
   )
 }
 

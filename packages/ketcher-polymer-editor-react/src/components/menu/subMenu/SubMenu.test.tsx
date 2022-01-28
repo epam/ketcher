@@ -17,26 +17,20 @@ import { render } from 'test-utils'
 import { screen } from '@testing-library/react'
 import { Menu, MenuContext } from 'components/menu'
 import userEvent from '@testing-library/user-event'
-import { MenuItemVariant } from 'components/menu/menu.types'
 
 const mockClickHandler = jest.fn()
-const MOCK_NAME: MenuItemVariant = 'select-lasso'
+const MOCK_NAME = 'select-lasso'
 
 const mockValue = {
-  selectItemHandler: mockClickHandler,
-  isActiveItem: (itemKey) => itemKey === MOCK_NAME
+  activate: mockClickHandler,
+  isActive: (itemKey) => itemKey === MOCK_NAME
 }
 
 const mockMenuItems = [
-  <Menu.Item itemKey="help" />,
-  <Menu.Item itemKey="settings" />,
-  <Menu.Item itemKey="undo" />
+  <Menu.Item itemId="help" />,
+  <Menu.Item itemId="settings" />,
+  <Menu.Item itemId="undo" />
 ]
-
-const openSubMenu = () => {
-  const presetDropDownBtn = screen.getByTestId('submenu-dropdown')
-  userEvent.click(presetDropDownBtn)
-}
 
 const mockSubMenu = () => {
   return (
@@ -50,11 +44,6 @@ describe('Test SubMenu component', () => {
   it('should be rendered without crashing', () => {
     const { asFragment } = render(mockSubMenu())
     expect(asFragment).toMatchSnapshot()
-  })
-  it('should show menu dropdown on click', () => {
-    render(mockSubMenu())
-    openSubMenu()
-    expect(screen.getAllByRole('menuitem').length).toEqual(4)
   })
   it('should call provided callback when header icon is clicked', () => {
     render(mockSubMenu())

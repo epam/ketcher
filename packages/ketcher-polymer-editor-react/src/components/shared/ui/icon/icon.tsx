@@ -20,6 +20,7 @@ import ArrowDownIcon from 'assets/icons/files/arrow-down.svg'
 import BracketIcon from 'assets/icons/files/bracket.svg'
 import CheckMarkIcon from 'assets/icons/files/checkmark.svg'
 import ChevronIcon from 'assets/icons/files/chevron.svg'
+import CloseIcon from 'assets/icons/files/close.svg'
 import CopyIcon from 'assets/icons/files/copy.svg'
 import DividerIcon from 'assets/icons/files/divider.svg'
 import DropDownIcon from 'assets/icons/files/dropdown.svg'
@@ -47,6 +48,7 @@ const iconMap = {
   bracket: BracketIcon,
   checkmark: CheckMarkIcon,
   chevron: ChevronIcon,
+  close: CloseIcon,
   copy: CopyIcon,
   divider: DividerIcon,
   dropdown: DropDownIcon,

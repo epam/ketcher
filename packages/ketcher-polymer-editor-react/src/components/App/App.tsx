@@ -22,6 +22,7 @@ import { MonomerLibrary } from 'components/monomerLibrary'
 import styled from '@emotion/styled'
 import { Menu } from 'components/menu'
 import { NotationContainer } from 'components/notationInput/notationContainer'
+import { MyCustomDialog } from './MyCustomDialog/MyCustomDialog'
 
 export const fetchData = () =>
   new Promise((resolve) => {
@@ -128,6 +129,7 @@ export const App = (): JSX.Element => {
         <span>Ketcher</span>
         <span>EPAM</span>
       </Logo>
+      <MyCustomDialog />
     </AppContainer>
   )
 }

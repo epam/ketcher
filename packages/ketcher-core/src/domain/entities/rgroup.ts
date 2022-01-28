@@ -18,6 +18,7 @@ import { Pile } from './pile'
 import { Pool } from './pool'
 
 export interface RGroupAttributes {
+  index?: number
   ifthen?: number
   resth?: boolean
   range?: string
@@ -27,12 +28,14 @@ export class RGroup {
   resth: boolean
   range: string
   ifthen: number
+  index: number
 
   constructor(atrributes?: RGroupAttributes) {
     this.frags = new Pile<number>()
     this.resth = atrributes?.resth || false
     this.range = atrributes?.range || ''
     this.ifthen = atrributes?.ifthen || 0
+    this.index = atrributes?.index || -1
   }
 
   static findRGroupByFragment(rgroups: Pool<RGroup>, frid: number) {
@@ -43,7 +46,8 @@ export class RGroup {
     return {
       resth: this.resth,
       range: this.range,
-      ifthen: this.ifthen
+      ifthen: this.ifthen,
+      index: this.index
     }
   }
 

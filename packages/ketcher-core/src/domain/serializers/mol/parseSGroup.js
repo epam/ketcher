@@ -293,12 +293,12 @@ function applyDataSGroupInfo(sg, propData) {
 
   const x = parseFloat(split[0])
   const y = parseFloat(split[1])
-  const attached = split[3].trim() == 'A'
-  const absolute = split[4].trim() == 'A'
-  const showUnits = split[5].trim() == 'U'
+  const attached = split[3].trim() === 'A'
+  const absolute = split[4].trim() === 'A'
+  const showUnits = split[5].trim() === 'U'
   let nCharsToDisplay = split[7].trim()
   nCharsToDisplay =
-    nCharsToDisplay == 'ALL' ? -1 : utils.parseDecimalInt(nCharsToDisplay)
+    nCharsToDisplay === 'ALL' ? -1 : utils.parseDecimalInt(nCharsToDisplay)
   const tagChar = split[10].trim()
   const daspPos = utils.parseDecimalInt(split[11].trim())
 

@@ -42,6 +42,7 @@ import Sgroup from './toolbox/sgroup'
 import TemplateAttach from './template/template-attach'
 import TemplatesDialog from './template/TemplateDialog'
 import Text from '../views/modal/components/Text'
+import { Confirm } from '../views/modal/components/Confirm'
 
 export default {
   open: Open,
@@ -67,5 +68,6 @@ export default {
   sgroup: Sgroup,
   sdata: Sdata,
   text: Text,
-  fGroups: FunctionalGroups
+  fGroups: FunctionalGroups,
+  confirm: Confirm
 } as any

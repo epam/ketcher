@@ -144,20 +144,19 @@ function fromDearomatize(restruct, dastruct, bondMap) {
 
 /* UTILS */
 
-// @ts-ignore
-function canBeAromatized(struct) {
-  // TODO correct this checking && move to chem.Struct ??
-  if (struct.loops.size === 0) struct.prepareLoopStructure()
-
-  const hasAromLoop = struct.loops.find((_id, loop) => loop.aromatic)
-  if (struct.loops.size === 0 || hasAromLoop) return false
-
-  const correctDblBonds = struct.loops.find(
-    (_id, loop) => loop.dblBonds === loop.hbs.length / 2
-  )
-
-  return correctDblBonds !== undefined
-}
+// function canBeAromatized(struct) {
+//   // TODO correct this checking && move to chem.Struct ??
+//   if (struct.loops.size === 0) struct.prepareLoopStructure()
+//
+//   const hasAromLoop = struct.loops.find((_id, loop) => loop.aromatic)
+//   if (struct.loops.size === 0 || hasAromLoop) return false
+//
+//   const correctDblBonds = struct.loops.find(
+//     (_id, loop) => loop.dblBonds === loop.hbs.length / 2
+//   )
+//
+//   return correctDblBonds !== undefined
+// }
 
 /**
  * @param struct { Struct }

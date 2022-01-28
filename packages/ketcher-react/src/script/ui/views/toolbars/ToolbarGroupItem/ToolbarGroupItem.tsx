@@ -16,7 +16,7 @@
 
 import action, { UiAction, UiActionAction } from '../../../action'
 
-import { ActionButton } from './ActionButton'
+import { ActionButton, ActionButtonProps } from './ActionButton'
 import { ToolbarItem } from '../toolbar.types'
 import { ToolbarMultiToolItem } from './ToolbarMultiToolItem'
 
@@ -58,8 +58,7 @@ const ToolbarGroupItem = (props: Props) => {
         className={className}
         name={id}
         action={action[id]}
-        // @ts-ignore
-        status={status[id]}
+        status={status[id] as ActionButtonProps['status']}
         selected={!!status[id]?.selected}
         indigoVerification={indigoVerification}
         disableableButtons={disableableButtons}

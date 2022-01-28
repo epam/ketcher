@@ -408,7 +408,8 @@ export class Struct {
     const hb = this.halfBonds.get(hbid)!
     const atom = this.atoms.get(hb.begin)!
 
-    for (var i = 0; i < atom.neighbors.length; ++i) {
+    let i
+    for (i = 0; i < atom.neighbors.length; ++i) {
       if (this.halfBonds.get(atom.neighbors[i])!.ang > hb.ang) break
     }
     atom.neighbors.splice(i, 0, hbid)

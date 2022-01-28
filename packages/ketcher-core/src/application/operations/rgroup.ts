@@ -34,10 +34,8 @@ export class AddRGroup extends BaseOperation {
   execute(struct: Struct): PerformOperationResult {
     assert(
       struct.rgroups.find(
-        // @ts-ignore
         (_key, rgroup) => rgroup.index === this.#rgroupAttributes.index
       ) === null,
-      // @ts-ignore
       `R-group with index ${this.#rgroupAttributes.index} already exists.`
     )
 

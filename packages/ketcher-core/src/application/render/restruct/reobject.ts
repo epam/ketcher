@@ -66,13 +66,11 @@ class ReObject {
     this.highlight = highLight
   }
 
-  // @ts-ignore
-  drawHighlight(render: Render): any {
+  drawHighlight(_render: Render): any {
     throw new Error('ReObject.drawHighlight is not overridden.')
   }
 
-  // @ts-ignore
-  makeSelectionPlate(restruct: ReStruct, paper: any, styles: any): any {
+  makeSelectionPlate(_restruct: ReStruct, _paper: any, _styles: any): any {
     throw new Error('ReObject.makeSelectionPlate is not overridden')
   }
 }

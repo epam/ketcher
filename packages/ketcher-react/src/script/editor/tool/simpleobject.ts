@@ -90,7 +90,6 @@ class SimpleObjectTool {
           )
           // TODO: need to rework  actions/operations logic
           const addOperation = action.operations[0]
-          // @ts-ignore
           this.dragCtx.itemId = addOperation.data.id
           this.dragCtx.action = action
           this.editor.update(this.dragCtx.action, true)

@@ -126,9 +126,8 @@ class MiewDialog extends Component<Props> {
           </button>
         ]}
       >
-        <div className={classes.dialog_body}>
+        <div>
           <div
-            className={classes.miewContainer}
             style={{ width: '1024px', height: '600px', position: 'relative' }}
           >
             <Viewer

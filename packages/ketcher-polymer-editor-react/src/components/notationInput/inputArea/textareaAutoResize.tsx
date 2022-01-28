@@ -21,12 +21,11 @@ import { css } from '@emotion/react'
 import { scrollbarThin } from 'styles/mixins'
 
 const lineHeight = 16
-const inputFieldWidth = 355
 const inputPadding = 10
 
 const commonStyles = `
   line-height: ${lineHeight}px;
-  width: ${inputFieldWidth - inputPadding * 2}px;
+  width: calc(100% - ${inputPadding * 2}px);
   border: none;
   resize: none;
   padding: 0;
@@ -35,7 +34,9 @@ const commonStyles = `
 const VisibleTextInput = styled('textarea')<{
   shouldHideOverflow: boolean
 }>`
-  ${commonStyles}
+  ${commonStyles};
+
+  width: 100%;
 
   ${({ theme }) => scrollbarThin(theme)}
   outline: none; // when in focus, parent div has blue border
@@ -51,7 +52,7 @@ const VisibleTextInput = styled('textarea')<{
 
 // invisible textarea to dynamically calculate height
 const HiddenArea = styled('textarea')`
-  ${commonStyles}
+  ${commonStyles};
 
   // Making invisible, removing from content flow
   visibility: hidden;
@@ -69,13 +70,13 @@ const Ellipsis = styled('span')<{ shouldDisplay: boolean }>`
       ? css`
           display: inline-block;
           position: absolute;
-          right: 0px;
+          right: 0;
           font-size: ${theme.font.size.medium};
           line-height: ${lineHeight}px;
           padding-left: 3px;
           padding-right: ${inputPadding}px;
           background-color: ${theme.color.background.primary};
-          box-shadow: -3px 0px 5px 2px ${theme.color.background.primary};
+          box-shadow: -3px 0 5px 2px ${theme.color.background.primary};
         `
       : `display: none`}
 `

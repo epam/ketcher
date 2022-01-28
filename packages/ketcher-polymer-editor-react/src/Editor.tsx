@@ -39,9 +39,12 @@ interface EditorProps {
 function Editor(props: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
   const { onInit } = props
-  const { height: windowHeight } = useResizeObserver<HTMLDivElement>({
+  const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: rootElRef
   })
+  const size =
+    (((width && width <= 1024) || (height && height <= 768)) && 'small') ||
+    'regular'
 
   useEffect(() => {
     onInit?.()
@@ -57,7 +60,7 @@ function Editor(props: EditorProps) {
         >
           <Global styles={globalStyles} />
 
-          <Layout windowHeight={windowHeight}>
+          <Layout windowSize={size} windowHeight={height}>
             <Layout.Left>
               <MenuComponent />
             </Layout.Left>

@@ -244,87 +244,94 @@ Object {
             style="width: 100%;"
           >
             <div
-              class="css-1mjlykk"
+              class="css-510djb"
             >
               <div
-                class="css-yj186n"
+                class="css-6jl32u"
               >
                 <div
-                  class="MuiFormControl-root css-1nrlq1o-MuiFormControl-root"
+                  class="css-e5j34y"
                 >
                   <div
-                    class="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-ndqum2-MuiInputBase-root-MuiOutlinedInput-root"
+                    class="MuiFormControl-root css-17jrz0e-MuiFormControl-root"
                   >
                     <div
-                      aria-expanded="false"
-                      aria-haspopup="listbox"
-                      class="MuiSelect-select MuiSelect-outlined MuiOutlinedInput-input MuiInputBase-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
-                      role="button"
-                      tabindex="0"
+                      class="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-bg3okh-MuiInputBase-root-MuiOutlinedInput-root"
                     >
-                      <span>
-                        HELM Notation
-                      </span>
-                    </div>
-                    <input
-                      aria-hidden="true"
-                      class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
-                      tabindex="-1"
-                      value="1"
-                    />
-                    <icon-chevron.svg
-                      classname="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
-                      fill="#525252"
-                      role="img"
-                    />
-                    <fieldset
-                      aria-hidden="true"
-                      class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
-                    >
-                      <legend
-                        class="css-nnbavb"
+                      <div
+                        aria-expanded="false"
+                        aria-haspopup="listbox"
+                        class="MuiSelect-select MuiSelect-outlined MuiOutlinedInput-input MuiInputBase-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                        role="button"
+                        tabindex="0"
                       >
-                        <span
-                          class="notranslate"
-                        >
-                          ​
+                        <span>
+                          HELM Notation
                         </span>
-                      </legend>
-                    </fieldset>
+                      </div>
+                      <input
+                        aria-hidden="true"
+                        class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                        tabindex="-1"
+                        value="1"
+                      />
+                      <icon-chevron.svg
+                        classname="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
+                        fill="#525252"
+                        role="img"
+                      />
+                      <fieldset
+                        aria-hidden="true"
+                        class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                      >
+                        <legend
+                          class="css-nnbavb"
+                        >
+                          <span
+                            class="notranslate"
+                          >
+                            ​
+                          </span>
+                        </legend>
+                      </fieldset>
+                    </div>
                   </div>
-                </div>
-                <div
-                  class="css-1f5gut4"
-                >
                   <div
-                    class="css-1il5ut8"
+                    class="css-8bbs6p"
                   >
-                    <textarea
-                      class="css-19afjhr"
-                      style="height: 0px;"
-                    />
-                    <span
-                      class="css-1yn5le4"
+                    <div
+                      class="css-1ni5lab"
                     >
-                      ...
-                    </span>
-                    <textarea
-                      aria-hidden="true"
-                      class="css-10fnwst"
-                    />
+                      <textarea
+                        class="css-14xp4zy"
+                        style="height: 0px;"
+                      />
+                      <span
+                        class="css-1yn5le4"
+                      >
+                        ...
+                      </span>
+                      <textarea
+                        aria-hidden="true"
+                        class="css-667y9k"
+                      />
+                    </div>
                   </div>
+                  <button
+                    class="MuiButtonBase-root Mui-disabled css-gbrtzc-MuiButtonBase-root"
+                    disabled=""
+                    role="button"
+                    tabindex="-1"
+                    title="Add to Canvas"
+                    type="button"
+                  >
+                    Add to Canvas
+                  </button>
                 </div>
-                <button
-                  class="MuiButtonBase-root Mui-disabled css-pck0ik-MuiButtonBase-root"
-                  disabled=""
-                  role="button"
-                  tabindex="-1"
-                  title="Add to Canvas"
-                  type="button"
-                >
-                  Add to Canvas
-                </button>
               </div>
+              <div
+                class="css-1ntteju"
+              />
             </div>
             <div
               class="css-10klw3m"
@@ -691,87 +698,94 @@ Object {
           style="width: 100%;"
         >
           <div
-            class="css-1mjlykk"
+            class="css-510djb"
           >
             <div
-              class="css-yj186n"
+              class="css-6jl32u"
             >
               <div
-                class="MuiFormControl-root css-1nrlq1o-MuiFormControl-root"
+                class="css-e5j34y"
               >
                 <div
-                  class="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-ndqum2-MuiInputBase-root-MuiOutlinedInput-root"
+                  class="MuiFormControl-root css-17jrz0e-MuiFormControl-root"
                 >
                   <div
-                    aria-expanded="false"
-                    aria-haspopup="listbox"
-                    class="MuiSelect-select MuiSelect-outlined MuiOutlinedInput-input MuiInputBase-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
-                    role="button"
-                    tabindex="0"
+                    class="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-bg3okh-MuiInputBase-root-MuiOutlinedInput-root"
                   >
-                    <span>
-                      HELM Notation
-                    </span>
-                  </div>
-                  <input
-                    aria-hidden="true"
-                    class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
-                    tabindex="-1"
-                    value="1"
-                  />
-                  <icon-chevron.svg
-                    classname="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
-                    fill="#525252"
-                    role="img"
-                  />
-                  <fieldset
-                    aria-hidden="true"
-                    class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
-                  >
-                    <legend
-                      class="css-nnbavb"
+                    <div
+                      aria-expanded="false"
+                      aria-haspopup="listbox"
+                      class="MuiSelect-select MuiSelect-outlined MuiOutlinedInput-input MuiInputBase-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                      role="button"
+                      tabindex="0"
                     >
-                      <span
-                        class="notranslate"
-                      >
-                        ​
+                      <span>
+                        HELM Notation
                       </span>
-                    </legend>
-                  </fieldset>
+                    </div>
+                    <input
+                      aria-hidden="true"
+                      class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                      tabindex="-1"
+                      value="1"
+                    />
+                    <icon-chevron.svg
+                      classname="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
+                      fill="#525252"
+                      role="img"
+                    />
+                    <fieldset
+                      aria-hidden="true"
+                      class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                    >
+                      <legend
+                        class="css-nnbavb"
+                      >
+                        <span
+                          class="notranslate"
+                        >
+                          ​
+                        </span>
+                      </legend>
+                    </fieldset>
+                  </div>
                 </div>
-              </div>
-              <div
-                class="css-1f5gut4"
-              >
                 <div
-                  class="css-1il5ut8"
+                  class="css-8bbs6p"
                 >
-                  <textarea
-                    class="css-19afjhr"
-                    style="height: 0px;"
-                  />
-                  <span
-                    class="css-1yn5le4"
+                  <div
+                    class="css-1ni5lab"
                   >
-                    ...
-                  </span>
-                  <textarea
-                    aria-hidden="true"
-                    class="css-10fnwst"
-                  />
+                    <textarea
+                      class="css-14xp4zy"
+                      style="height: 0px;"
+                    />
+                    <span
+                      class="css-1yn5le4"
+                    >
+                      ...
+                    </span>
+                    <textarea
+                      aria-hidden="true"
+                      class="css-667y9k"
+                    />
+                  </div>
                 </div>
+                <button
+                  class="MuiButtonBase-root Mui-disabled css-gbrtzc-MuiButtonBase-root"
+                  disabled=""
+                  role="button"
+                  tabindex="-1"
+                  title="Add to Canvas"
+                  type="button"
+                >
+                  Add to Canvas
+                </button>
               </div>
-              <button
-                class="MuiButtonBase-root Mui-disabled css-pck0ik-MuiButtonBase-root"
-                disabled=""
-                role="button"
-                tabindex="-1"
-                title="Add to Canvas"
-                type="button"
-              >
-                Add to Canvas
-              </button>
             </div>
+            <div
+              class="css-1ntteju"
+            />
           </div>
           <div
             class="css-10klw3m"

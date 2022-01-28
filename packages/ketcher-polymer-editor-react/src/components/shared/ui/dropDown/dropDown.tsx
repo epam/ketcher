@@ -22,7 +22,6 @@ import { css } from '@emotion/react'
 import { ChevronIcon, CheckMarkIcon } from './styledIcons'
 
 const DropDownSelect = styled(Select)`
-  width: 150px;
   height: 24px;
   border: 1px solid #5b6077;
   border-radius: 2px;
@@ -30,8 +29,8 @@ const DropDownSelect = styled(Select)`
     open &&
     css`
       background-color: white;
-      border-bottom-left-radius: 0px;
-      border-bottom-right-radius: 0px;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
     `}
 
   & .MuiSelect-select {
@@ -66,6 +65,12 @@ const DropDownItem = styled(MenuItem)`
   & .MuiTypography-root {
     ${({ theme }) => `font-size: ${theme.font.size.regular}`}
   }
+`
+const StyledFormControl = styled(FormControl)`
+  margin-left: 11px;
+  flex-shrink: 1.5;
+  flex-basis: 150px;
+  min-width: 60px;
 `
 
 type Option = {
@@ -107,7 +112,7 @@ export const DropDown = ({
   }
 
   return (
-    <FormControl>
+    <StyledFormControl>
       <DropDownSelect
         value={currentSelection}
         onChange={handleSelection}
@@ -130,6 +135,6 @@ export const DropDown = ({
           </DropDownItem>
         ))}
       </DropDownSelect>
-    </FormControl>
+    </StyledFormControl>
   )
 }

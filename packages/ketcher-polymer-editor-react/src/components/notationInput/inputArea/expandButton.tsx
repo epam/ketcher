@@ -35,7 +35,11 @@ export const ExpandButton = ({
   const buttonTitle = `${expanded ? 'Collapse' : 'Expand'} input area`
 
   return (
-    <IconButton onClick={expandHandler} title={buttonTitle}>
+    <IconButton
+      onClick={expandHandler}
+      title={buttonTitle}
+      style={{ padding: '8px 4px 8px 5px' }}
+    >
       <ArrowIcon name="arrow-down" isFlipped={expanded} />
     </IconButton>
   )

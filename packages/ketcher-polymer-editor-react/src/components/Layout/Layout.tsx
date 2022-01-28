@@ -20,6 +20,7 @@ import styled from '@emotion/styled'
 interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>
   windowHeight?: number
+  windowSize?: string
 }
 
 const PADDING = '15px'
@@ -32,16 +33,23 @@ const Column = styled.div({
   justifyContent: 'space-between'
 })
 
-const Row = styled.div<{ height?: number }>(({ theme, height }) => ({
-  height: `${height}px` || '100vh',
-  width: '100%',
-  position: 'relative',
-  padding: PADDING,
-  paddingBottom: PADDING_BOTTOM,
-  backgroundColor: theme.color.background.canvas,
+const RowMain = styled.div<{ height?: number; windowSize?: string }>(
+  ({ theme, windowSize, height }) => ({
+    height: `${height}px` || '100vh',
+    width: '100%',
+    position: 'relative',
+    padding: windowSize === 'small' ? '15px 11px' : PADDING,
+    paddingBottom: PADDING_BOTTOM,
+    backgroundColor: theme.color.background.canvas,
+    display: 'flex',
+    justifyContent: 'space-between'
+  })
+)
+
+const Row = styled.div({
   display: 'flex',
-  justifyContent: 'space-between'
-}))
+  height: 'fit-content'
+})
 
 const Left = styled.div({
   width: '48px',
@@ -64,7 +72,6 @@ const Top = styled.div({
   height: '24px',
   width: '100%',
   alignSelf: 'flex-end',
-  paddingRight: '10%',
   marginBottom: '6px',
   display: 'flex',
   justifyContent: 'flex-end'
@@ -78,15 +85,24 @@ const DummyDiv = styled.div({
   height: `calc(40px + ${PADDING_BOTTOM})`
 })
 
-type LayoutSection = 'Left' | 'Right' | 'Main' | 'Top' | 'Bottom'
+const DummyDivInRow = styled.div({
+  flexBasis: '23px',
+  height: '100%',
+  flexShrink: '1'
+})
 
-export const Layout = ({ children, windowHeight }: LayoutProps) => {
+type LayoutSection = 'Left' | 'Right' | 'Main' | 'Top'
+
+export const Layout = ({
+  children,
+  windowSize = 'regular',
+  windowHeight
+}: LayoutProps) => {
   const subcomponents: Record<LayoutSection, JSX.Element | null> = {
     Left: null,
     Main: null,
     Right: null,
-    Top: null,
-    Bottom: null
+    Top: null
   }
   React.Children.forEach(children, (child) => {
     if (child.type === Left) {
@@ -101,18 +117,20 @@ export const Layout = ({ children, windowHeight }: LayoutProps) => {
   })
 
   return (
-    <Row height={windowHeight}>
+    <RowMain windowSize={windowSize} height={windowHeight}>
       <Column>
         {subcomponents.Left}
         <DummyDiv />
       </Column>
       <Column style={{ width: '100%' }}>
-        {subcomponents.Top}
+        <Row>
+          {subcomponents.Top}
+          <DummyDivInRow />
+        </Row>
         {subcomponents.Main}
-        {subcomponents.Bottom}
       </Column>
       <Column>{subcomponents.Right}</Column>
-    </Row>
+    </RowMain>
   )
 }
 

@@ -23,9 +23,8 @@ import { ActionButton as AddButton } from '../shared/ui/actionButton'
 const AddToCanvasBar = styled('div')`
   display: flex;
   align-items: center;
-  justify-content: space-between;
   height: 100%;
-  width: 670px;
+  width: 687px;
 `
 
 type AddToCanvasProps = {

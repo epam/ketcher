@@ -33,10 +33,6 @@ const RightElementMock = () => {
   return <div>right element</div>
 }
 
-const BottomElementMock = () => {
-  return <div>bottom element</div>
-}
-
 describe('Layout', () => {
   it('should render several subcomponents correctly', () => {
     render(
@@ -77,9 +73,6 @@ describe('Layout', () => {
         <Layout.Right>
           <RightElementMock />
         </Layout.Right>
-        <Layout.Bottom>
-          <BottomElementMock />
-        </Layout.Bottom>
       </Layout>
     )
 
@@ -87,12 +80,10 @@ describe('Layout', () => {
     const mainElement = screen.getByText('main element')
     const leftElement = screen.getByText('left element')
     const rightElement = screen.getByText('right element')
-    const bottomElement = screen.getByText('bottom element')
 
     expect(topElement).toBeVisible()
     expect(mainElement).toBeVisible()
     expect(leftElement).toBeVisible()
-    expect(bottomElement).toBeVisible()
     expect(rightElement).toBeVisible()
   })
 })

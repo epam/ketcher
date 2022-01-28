@@ -19,11 +19,11 @@ import styled from '@emotion/styled'
 
 interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>
-  bottomEmptySpace?: number
   windowHeight?: number
 }
 
 const PADDING = '15px'
+const PADDING_BOTTOM = '5px'
 
 const Column = styled.div({
   width: 'fit-content',
@@ -37,14 +37,15 @@ const Row = styled.div<{ height?: number }>(({ theme, height }) => ({
   width: '100%',
   position: 'relative',
   padding: PADDING,
+  paddingBottom: PADDING_BOTTOM,
   backgroundColor: theme.color.background.canvas,
   display: 'flex',
   justifyContent: 'space-between'
 }))
 
 const Left = styled.div({
-  width: '32px',
-  minWidth: '32px',
+  width: '48px',
+  minWidth: '48px',
   height: '100%',
   marginRight: '6px',
   display: 'flex',
@@ -69,28 +70,17 @@ const Top = styled.div({
   justifyContent: 'flex-end'
 })
 
-const Bottom = styled.div({
-  height: '100px',
-  marginTop: '6px',
-  display: 'flex',
-  justifyContent: 'center'
-})
-
 const Main = styled.div({
   height: '100%'
 })
 
-const DummyDiv = styled.div<{ height: number }>(({ height }) => ({
-  height: `calc(${height}px + ${PADDING})`
-}))
+const DummyDiv = styled.div({
+  height: `calc(40px + ${PADDING_BOTTOM})`
+})
 
 type LayoutSection = 'Left' | 'Right' | 'Main' | 'Top' | 'Bottom'
 
-export const Layout = ({
-  children,
-  bottomEmptySpace = 0,
-  windowHeight
-}: LayoutProps) => {
+export const Layout = ({ children, windowHeight }: LayoutProps) => {
   const subcomponents: Record<LayoutSection, JSX.Element | null> = {
     Left: null,
     Main: null,
@@ -105,8 +95,6 @@ export const Layout = ({
       subcomponents.Right = child
     } else if (child.type === Top) {
       subcomponents.Top = child
-    } else if (child.type === Bottom) {
-      subcomponents.Bottom = child
     } else if (child.type === Main) {
       subcomponents.Main = child
     }
@@ -116,15 +104,14 @@ export const Layout = ({
     <Row height={windowHeight}>
       <Column>
         {subcomponents.Left}
-        <DummyDiv height={bottomEmptySpace} />
+        <DummyDiv />
       </Column>
       <Column style={{ width: '100%' }}>
         {subcomponents.Top}
         {subcomponents.Main}
         {subcomponents.Bottom}
-        <DummyDiv height={bottomEmptySpace} />
       </Column>
-      {subcomponents.Right}
+      <Column>{subcomponents.Right}</Column>
     </Row>
   )
 }
@@ -133,4 +120,3 @@ Layout.Left = Left
 Layout.Top = Top
 Layout.Right = Right
 Layout.Main = Main
-Layout.Bottom = Bottom

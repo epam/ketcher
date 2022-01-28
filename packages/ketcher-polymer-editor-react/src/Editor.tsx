@@ -18,7 +18,6 @@ import { Provider } from 'react-redux'
 import { useEffect, useRef } from 'react'
 import { Global } from '@emotion/react'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import styled from '@emotion/styled'
 
 import { store } from 'state'
 import { defaultTheme } from 'styles/theme'
@@ -37,19 +36,9 @@ interface EditorProps {
   onInit?: () => void
 }
 
-const MainElementExample = styled.div({
-  border: '1px dotted gray',
-  width: '100%',
-  height: '100%'
-})
-
 function Editor(props: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
-  const logoElRef = useRef<HTMLDivElement>(null)
   const { onInit } = props
-  const { height: logoHeight } = useResizeObserver<HTMLDivElement>({
-    ref: logoElRef
-  })
   const { height: windowHeight } = useResizeObserver<HTMLDivElement>({
     ref: rootElRef
   })
@@ -68,7 +57,7 @@ function Editor(props: EditorProps) {
         >
           <Global styles={globalStyles} />
 
-          <Layout bottomEmptySpace={logoHeight} windowHeight={windowHeight}>
+          <Layout windowHeight={windowHeight}>
             <Layout.Left>
               <MenuComponent />
             </Layout.Left>
@@ -77,16 +66,14 @@ function Editor(props: EditorProps) {
               <NotationInput />
             </Layout.Top>
 
-            <Layout.Main>
-              <MainElementExample />
-            </Layout.Main>
+            <Layout.Main></Layout.Main>
 
             <Layout.Right>
               <MonomerLibrary />
             </Layout.Right>
           </Layout>
 
-          <Logo ref={logoElRef} />
+          <Logo />
         </div>
       </ThemeProvider>
     </Provider>

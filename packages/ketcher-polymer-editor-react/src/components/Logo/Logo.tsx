@@ -15,8 +15,6 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled'
-import React, { ForwardedRef } from 'react'
-import { css } from '@emotion/react'
 
 const StyledLogo = styled.div(({ theme }) => ({
   fontFamily: theme.font.family.montserrat,
@@ -27,6 +25,9 @@ const StyledLogo = styled.div(({ theme }) => ({
   flexDirection: 'column',
   alignItems: 'center',
   height: 'auto',
+  position: 'absolute',
+  bottom: '15px',
+  left: '13px',
 
   '> span:first-of-type, > span:last-of-type': {
     fontWeight: theme.font.weight.light,
@@ -47,22 +48,12 @@ const StyledLogo = styled.div(({ theme }) => ({
   }
 }))
 
-const logoStyle = css({
-  position: 'absolute',
-  bottom: '15px',
-  left: '13px'
-})
-
-export const Logo = React.forwardRef(
-  (_props, ref: ForwardedRef<HTMLDivElement>) => {
-    return (
-      <div css={logoStyle} ref={ref}>
-        <StyledLogo>
-          <span>Polymer Editor</span>
-          <span>Ketcher</span>
-          <span>EPAM</span>
-        </StyledLogo>
-      </div>
-    )
-  }
-)
+export const Logo = () => {
+  return (
+    <StyledLogo>
+      <span>Polymer Editor</span>
+      <span>Ketcher</span>
+      <span>EPAM</span>
+    </StyledLogo>
+  )
+}

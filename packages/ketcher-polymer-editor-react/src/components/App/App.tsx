@@ -22,7 +22,7 @@ import { MonomerLibrary } from 'components/monomerLibrary'
 import styled from '@emotion/styled'
 import { Menu } from 'components/menu'
 import { NotationContainer } from 'components/notationInput/notationContainer'
-import { MyCustomDialog } from './MyCustomDialog/MyCustomDialog'
+import { MyCustomDialog } from 'components/MyCustomDialog/MyCustomDialog'
 
 export const fetchData = () =>
   new Promise((resolve) => {

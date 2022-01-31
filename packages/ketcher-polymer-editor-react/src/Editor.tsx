@@ -81,39 +81,39 @@ function MenuComponent() {
   }
 
   return (
-    <Menu menuItemChanged={menuItemChanged}>
-      <Menu.Group divider>
-        <Menu.Item itemKey="open" />
+    <Menu onItemClick={menuItemChanged}>
+      <Menu.Group>
+        <Menu.Item itemId="open" />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemKey="undo" />
+        <Menu.Item itemId="undo" />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemKey="erase" />
+        <Menu.Item itemId="erase" />
         <Menu.Submenu vertical>
-          <Menu.Item itemKey="select-lasso" />
-          <Menu.Item itemKey="select-rectangle" />
-          <Menu.Item itemKey="select-fragment" />
+          <Menu.Item itemId="select-lasso" />
+          <Menu.Item itemId="select-rectangle" />
+          <Menu.Item itemId="select-fragment" />
         </Menu.Submenu>
         <Menu.Submenu>
-          <Menu.Item itemKey="rectangle" />
-          <Menu.Item itemKey="ellipse" />
+          <Menu.Item itemId="rectangle" />
+          <Menu.Item itemId="ellipse" />
         </Menu.Submenu>
         <Menu.Submenu>
-          <Menu.Item itemKey="rotate" />
-          <Menu.Item itemKey="horizontal-flip" />
-          <Menu.Item itemKey="vertical-flip" />
+          <Menu.Item itemId="rotate" />
+          <Menu.Item itemId="horizontal-flip" />
+          <Menu.Item itemId="vertical-flip" />
         </Menu.Submenu>
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemKey="single-bond" />
+        <Menu.Item itemId="single-bond" />
       </Menu.Group>
       <Menu.Group divider>
-        <Menu.Item itemKey="bracket" />
+        <Menu.Item itemId="bracket" />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemKey="settings" />
-        <Menu.Item itemKey="help" />
+        <Menu.Item itemId="settings" />
+        <Menu.Item itemId="help" />
       </Menu.Group>
     </Menu>
   )

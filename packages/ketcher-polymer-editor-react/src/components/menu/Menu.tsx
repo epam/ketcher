@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled'
-import React from 'react'
+import React, { useState } from 'react'
 import { MenuItem } from './menuItem'
 import { SubMenu } from './subMenu'
 import { IMenuContext, MenuContext } from '../../contexts'
@@ -47,14 +47,19 @@ const StyledGroup = styled.div`
 `
 
 interface GroupProps {
-  children: JSX.Element | JSX.Element[]
   divider?: boolean
 }
 
-const Group = ({ children, divider = false }: GroupProps) => {
-  const subComponents = React.Children.map(children, (child) => {
-    return child.type === MenuItem || SubMenu ? child : null
-  })
+const Group = ({
+  children,
+  divider = false
+}: React.PropsWithChildren<GroupProps>) => {
+  const subComponents = React.Children.map(
+    children as JSX.Element[],
+    (child) => {
+      return child.type === MenuItem || SubMenu ? child : null
+    }
+  )
 
   return (
     <>
@@ -65,26 +70,34 @@ const Group = ({ children, divider = false }: GroupProps) => {
 }
 
 type MenuProps = {
-  children: JSX.Element[]
   onItemClick: (itemKey: string) => void
   activeMenuItem?: string
 }
 
-const Menu = ({ children, onItemClick, activeMenuItem }: MenuProps) => {
-  const context = React.useMemo<IMenuContext>(() => {
-    let activeItem = activeMenuItem
-    return {
+const Menu = ({
+  children,
+  onItemClick,
+  activeMenuItem
+}: React.PropsWithChildren<MenuProps>) => {
+  const [activeItem, setActiveItem] = useState(activeMenuItem)
+
+  const context = React.useMemo<IMenuContext>(
+    () => ({
       isActive: (itemKey) => activeItem === itemKey,
       activate: (itemKey) => {
-        activeItem = itemKey
+        setActiveItem(itemKey)
         onItemClick(itemKey)
       }
-    }
-  }, [onItemClick, activeMenuItem])
+    }),
+    [activeItem, onItemClick]
+  )
 
-  const subComponents = React.Children.map(children, (child) => {
-    return child.type === Group ? child : null
-  })
+  const subComponents = React.Children.map(
+    children as JSX.Element[],
+    (child) => {
+      return child.type === Group ? child : null
+    }
+  )
 
   return (
     <MenuContext.Provider value={context}>

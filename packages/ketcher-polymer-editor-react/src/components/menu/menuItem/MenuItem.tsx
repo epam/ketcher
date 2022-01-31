@@ -59,7 +59,6 @@ type MenuItemProp = {
 
 const MenuItem = ({ itemId }: MenuItemProp) => {
   const { isActive, activate } = useMenuContext()
-  console.log('menuitem')
 
   const onClickCallback = useCallback(() => {
     activate(itemId)

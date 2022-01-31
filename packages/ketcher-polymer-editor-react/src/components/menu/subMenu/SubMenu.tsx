@@ -72,11 +72,13 @@ const VisibleItem = styled.div`
 `
 
 type SubMenuProps = {
-  children: JSX.Element[]
   vertical?: boolean
 }
 
-const SubMenu = ({ children, vertical = false }: SubMenuProps) => {
+const SubMenu = ({
+  children,
+  vertical = false
+}: React.PropsWithChildren<SubMenuProps>) => {
   const [open, setOpen] = useState(false)
   const { isActive } = useMenuContext()
 
@@ -88,9 +90,12 @@ const SubMenu = ({ children, vertical = false }: SubMenuProps) => {
     open && setOpen(false)
   }
 
-  const subComponents = React.Children.map(children, (child) => {
-    return child.type === MenuItem ? child : null
-  })
+  const subComponents = React.Children.map(
+    children as JSX.Element[],
+    (child) => {
+      return child.type === MenuItem ? child : null
+    }
+  )
 
   const options = subComponents
     .map((item) => item.props.itemId)

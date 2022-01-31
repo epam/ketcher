@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useAppDispatch, useAppSelector } from 'hooks'
 import { selectEditorIsReady, fetchInitData, selectTool } from 'state/common'
@@ -22,7 +22,8 @@ import { MonomerLibrary } from 'components/monomerLibrary'
 import styled from '@emotion/styled'
 import { Menu } from 'components/menu'
 import { NotationContainer } from 'components/notationInput/notationContainer'
-import { MyCustomDialog } from 'components/MyCustomDialog/MyCustomDialog'
+import { DummyDialog } from 'components/dummyDialog/DummyDialog'
+import { ActionButton } from 'components/shared/ui/actionButton'
 
 export const fetchData = () =>
   new Promise((resolve) => {
@@ -32,6 +33,8 @@ export const fetchData = () =>
 export const App = (): JSX.Element => {
   const dispatch = useAppDispatch()
   const isReady = useAppSelector(selectEditorIsReady)
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     dispatch(fetchInitData())
@@ -129,7 +132,14 @@ export const App = (): JSX.Element => {
         <span>Ketcher</span>
         <span>EPAM</span>
       </Logo>
-      <MyCustomDialog />
+
+      <ActionButton
+        label="Show dummy modal dialog"
+        clickHandler={() => {
+          setIsModalOpen(true)
+        }}
+      />
+      <DummyDialog isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
     </AppContainer>
   )
 }

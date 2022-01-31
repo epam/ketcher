@@ -6,7 +6,7 @@ import {
   IconButton,
   useTheme
 } from '@mui/material'
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import { Icon } from 'components/shared/ui/icon'
 import styled from '@emotion/styled'
 
@@ -15,6 +15,8 @@ import { scrollbarThin } from 'styles/mixins'
 interface ModalProps {
   children: JSX.Element | Array<JSX.Element>
   title: string
+  isModalOpen: boolean
+  setIsModalOpen: (isOpen: boolean) => void
 }
 
 const ModalHeader = styled(DialogTitle)(({ theme }) => ({
@@ -44,9 +46,12 @@ const Footer = styled(DialogActions)({
 
 type ModalSubcomponent = 'Content' | 'Footer'
 
-export const Modal = ({ title, children }: ModalProps) => {
-  const [isOpen, setIsOpen] = useState(true)
-
+export const Modal = ({
+  title,
+  isModalOpen,
+  setIsModalOpen,
+  children
+}: ModalProps) => {
   const theme = useTheme()
 
   const paperProps = useMemo(
@@ -82,14 +87,14 @@ export const Modal = ({ title, children }: ModalProps) => {
   })
 
   const handleClose = useCallback(() => {
-    setIsOpen(false)
-  }, [])
+    setIsModalOpen(false)
+  }, [setIsModalOpen])
 
   return (
     <Dialog
       BackdropProps={backdropProps}
       PaperProps={paperProps}
-      open={isOpen}
+      open={isModalOpen}
       maxWidth="md"
       onClose={handleClose}
     >

@@ -139,6 +139,7 @@ import ThreeDViewerWhiteIcon from './files/3d-white.svg'
 import DebuggingIcon from './files/debugging.svg'
 import DebuggingWhiteIcon from './files/debugging-white.svg'
 import DropdownIndicatorIcon from './files/dropdown-indicator.svg'
+import ChevronIcon from './files/chevron.svg'
 
 const icons = {
   about: AboutIcon,
@@ -277,7 +278,8 @@ const icons = {
   debugging: DebuggingIcon,
   'debugging-white': DebuggingWhiteIcon,
   'dropdown-indicator': DropdownIndicatorIcon,
-  'text-special-symbols': TextSpecialSymbolsIcon
+  'text-special-symbols': TextSpecialSymbolsIcon,
+  chevron: ChevronIcon
 }
 
 function emptyIcon() {

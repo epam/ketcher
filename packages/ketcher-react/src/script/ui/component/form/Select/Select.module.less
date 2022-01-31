@@ -18,18 +18,19 @@
 
 // stylelint-disable selector-pseudo-class-no-unknown
 .selectContainer {
-  :global(.react-select-container) {
+  :global(.MuiFormControl-root .MuiSelect-select) {
     width: 100%;
     height: 100%;
-  }
-
-  :global(.react-select__control) {
     box-shadow: none;
     border-radius: 2px;
-    color: @color-select-border;
     min-height: 24px;
-    height: 100%;
     border: none;
+    background-color: @color-background-primary;
+    color: @color-text-primary;
+    font-family: @Inter;
+    font-size: @font-size-regular;
+    padding: 0 8px;
+    cursor: default;
   }
 
   :global(.react-select__control--menu-is-open) {
@@ -41,46 +42,36 @@
     color: @color-select-text;
   }
 
-  :global(.react-select__indicator-separator) {
-    display: none;
-  }
-
   :global(.react-select__dropdown-indicator) {
     padding: 0 8px 0 0;
   }
 
-  :global(.react-select__menu) {
-    margin-top: 0;
+  :global(.react-select__option--is-focused) {
+    background-color: #eee;
+  }
+}
+
+.dropdownList {
+  :global(.MuiPaper-root) {
+    box-shadow: none;
     border-radius: 0 0 2px 2px;
+  }
+
+  :global(.MuiList-root.MuiMenu-list) {
+    background-color: @color-background-primary;
+    padding: 0;
     box-shadow: none;
   }
 
-  :global(.react-select__menu-list) {
-    padding-top: 0;
-    padding-bottom: 0;
+  :global(.MuiMenuItem-root) {
+    color: @color-text-primary;
+    font-family: @Inter;
+    font-size: @font-size-regular;
+    padding: 0 8px;
+    min-height: 24px;
   }
 
-  :global(.react-select__option) {
-    padding: 3px 8px;
-    color: @color-select-text;
-  }
-
-  :global(.react-select__option--is-selected) {
-    background-color: transparent;
-    display: flex;
-    justify-content: space-between;
-
-    &::after {
-      content: '';
-      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMuMzM5OTcgNi44MDM0OUw2LjM5OTk4IDkuODU2ODNMMTIuNjYzNSAzLjU5OTk4TDEzLjYwMzUgNC41Mzk5OEw2LjM5OTk4IDExLjc0MzVMMi4zOTk5OSA3Ljc0MzQ5TDMuMzM5OTcgNi44MDM0OVoiIGZpbGw9IiMzRTdCRkEiLz4KPC9zdmc+Cg==');
-      width: 16px;
-      height: 16px;
-      background-repeat: no-repeat;
-      display: inline-block;
-    }
-  }
-
-  :global(.react-select__option--is-focused) {
-    background-color: #eee;
+  :global(.Mui-selected) {
+    background-color: @color-dropdown-hover;
   }
 }

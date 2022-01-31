@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Modal } from 'components/shared/ui/dialog'
+import { Modal } from 'components/shared/ui/modal'
 import { ActionButton } from 'components/shared/ui/actionButton'
 
 export const DummyDialog = ({ isModalOpen, setIsModalOpen }) => {

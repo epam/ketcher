@@ -20,11 +20,14 @@ interface ModalProps {
 }
 
 const ModalHeader = styled(DialogTitle)(({ theme }) => ({
-  margin: '10px 8px 10px 15px',
+  margin: '12px 11px 12px 16px',
+  padding: 0,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+  fontFamily: `${theme.font.family.inter}`,
   fontSize: `${theme.font.size.medium}`,
+  fontWeight: `${theme.font.weight.regular}`,
   textTransform: 'uppercase'
 }))
 
@@ -33,15 +36,15 @@ const Title = styled.div({
 })
 
 const Content = styled(DialogContent)(({ theme }) => ({
-  margin: '15px',
+  margin: '0 16px 16px',
+  padding: 0,
+
   ...scrollbarThin(theme)
 }))
 
 const Footer = styled(DialogActions)({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'right',
-  margin: '0px 15px 10px'
+  margin: '0 16px 16px',
+  padding: 0
 })
 
 type ModalSubcomponent = 'Content' | 'Footer'
@@ -57,10 +60,12 @@ export const Modal = ({
   const paperProps = useMemo(
     () => ({
       style: {
+        background: theme.color.background.canvas,
+        borderRadius: '8px',
         color: theme.color.text.primary
       }
     }),
-    [theme.color.text.primary]
+    [theme.color.text.primary, theme.color.background.canvas]
   )
 
   const backdropProps = useMemo(

@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Modal } from '../../shared/ui/Modal/Modal'
+import { Modal } from '../../shared/ui/modal/Modal'
 
 export const MyCustomDialog = () => {
   const buttonOkStyles = css`

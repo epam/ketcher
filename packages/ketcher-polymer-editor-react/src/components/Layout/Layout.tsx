@@ -16,33 +16,34 @@
 
 import React from 'react'
 import styled from '@emotion/styled'
+import { css } from '@emotion/react'
 
 interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>
-  windowHeight?: number
   windowSize?: string
 }
 
 const PADDING = '15px'
 const PADDING_BOTTOM = '5px'
 
-const Column = styled.div({
-  width: 'fit-content',
+const Column = styled.div<{ fullWidth?: boolean }>(({ fullWidth }) => ({
+  width: fullWidth ? '100%' : 'fit-content',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between'
-})
+}))
 
-const RowMain = styled.div<{ height?: number; windowSize?: string }>(
-  ({ theme, windowSize, height }) => ({
-    height: `${height}px` || '100vh',
+const RowMain = styled.div<{ windowSize?: string }>(
+  ({ theme, windowSize }) => ({
+    height: '100vh',
     width: '100%',
     position: 'relative',
     padding: windowSize === 'small' ? '15px 11px' : PADDING,
     paddingBottom: PADDING_BOTTOM,
     backgroundColor: theme.color.background.canvas,
     display: 'flex',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    columnGap: '6px'
   })
 )
 
@@ -51,34 +52,28 @@ const Row = styled.div({
   height: 'fit-content'
 })
 
-const Left = styled.div({
-  width: '48px',
-  minWidth: '48px',
+const baseLeftRightStyle = css({
   height: '100%',
-  marginRight: '6px',
+  width: 'fit-content',
   display: 'flex',
   flexDirection: 'column'
 })
 
-const Right = styled.div({
-  width: '253px',
-  height: `100%`,
-  marginLeft: '6px',
-  display: 'flex',
-  flexDirection: 'column'
-})
+const Left = styled.div(baseLeftRightStyle)
+
+const Right = styled.div(baseLeftRightStyle)
 
 const Top = styled.div({
-  height: '24px',
+  height: 'fit-content',
   width: '100%',
-  alignSelf: 'flex-end',
   marginBottom: '6px',
   display: 'flex',
   justifyContent: 'flex-end'
 })
 
 const Main = styled.div({
-  height: '100%'
+  height: '100%',
+  width: '100%'
 })
 
 const DummyDiv = styled.div({
@@ -86,18 +81,14 @@ const DummyDiv = styled.div({
 })
 
 const DummyDivInRow = styled.div({
-  flexBasis: '23px',
+  flexBasis: '40px',
   height: '100%',
   flexShrink: '1'
 })
 
 type LayoutSection = 'Left' | 'Right' | 'Main' | 'Top'
 
-export const Layout = ({
-  children,
-  windowSize = 'regular',
-  windowHeight
-}: LayoutProps) => {
+export const Layout = ({ children, windowSize = 'regular' }: LayoutProps) => {
   const subcomponents: Record<LayoutSection, JSX.Element | null> = {
     Left: null,
     Main: null,
@@ -117,12 +108,12 @@ export const Layout = ({
   })
 
   return (
-    <RowMain windowSize={windowSize} height={windowHeight}>
+    <RowMain windowSize={windowSize}>
       <Column>
         {subcomponents.Left}
         <DummyDiv />
       </Column>
-      <Column style={{ width: '100%' }}>
+      <Column fullWidth>
         <Row>
           {subcomponents.Top}
           <DummyDivInRow />

@@ -26,7 +26,7 @@ const Group = ({ children, divider = false }) => {
     align-items: center;
     background-color: ${(props) => props.theme.color.background.primary};
     border-radius: 2px;
-    width: 100%;
+    width: 32px;
     margin-bottom: 8px;
 
     > * {
@@ -42,8 +42,7 @@ const Group = ({ children, divider = false }) => {
     const Divider = styled('span')`
       display: block;
       height: 8px;
-      width: 50%;
-      margin: 0 auto;
+      width: 32px;
       border-top: 1px solid;
       border-color: ${(props) => props.theme.color.divider};
     `
@@ -83,11 +82,11 @@ const Menu = ({ children, menuItemChanged }) => {
   })
 
   return (
-    <div>
+    <>
       <MenuContext.Provider value={menuContextValue}>
         {subComponents.map((component) => component)}
       </MenuContext.Provider>
-    </div>
+    </>
   )
 }
 

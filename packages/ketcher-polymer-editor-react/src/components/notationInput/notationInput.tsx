@@ -20,11 +20,15 @@ import { DropDown as SelectNotation } from '../shared/ui/dropDown'
 import { InputArea } from './inputArea'
 import { ActionButton as AddButton } from '../shared/ui/actionButton'
 
+const componentWidth = 670
+const height = 24
+
 const AddToCanvasBar = styled('div')`
   display: flex;
   align-items: center;
-  height: 100%;
-  width: 687px;
+  justify-content: space-between;
+  height: ${height}px;
+  width: ${componentWidth}px;
 `
 
 type AddToCanvasProps = {

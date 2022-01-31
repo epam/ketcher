@@ -22,6 +22,7 @@ import { css } from '@emotion/react'
 import { ChevronIcon, CheckMarkIcon } from './styledIcons'
 
 const DropDownSelect = styled(Select)`
+  width: 150px;
   height: 24px;
   border: 1px solid #5b6077;
   border-radius: 2px;
@@ -66,12 +67,6 @@ const DropDownItem = styled(MenuItem)`
     ${({ theme }) => `font-size: ${theme.font.size.regular}`}
   }
 `
-const StyledFormControl = styled(FormControl)`
-  margin-left: 11px;
-  flex-shrink: 1.5;
-  flex-basis: 150px;
-  min-width: 60px;
-`
 
 type Option = {
   id: number
@@ -112,7 +107,7 @@ export const DropDown = ({
   }
 
   return (
-    <StyledFormControl>
+    <FormControl>
       <DropDownSelect
         value={currentSelection}
         onChange={handleSelection}
@@ -135,6 +130,6 @@ export const DropDown = ({
           </DropDownItem>
         ))}
       </DropDownSelect>
-    </StyledFormControl>
+    </FormControl>
   )
 }

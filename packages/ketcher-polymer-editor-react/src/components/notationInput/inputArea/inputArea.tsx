@@ -24,18 +24,14 @@ import { TextareaAutoResize } from './textareaAutoResize'
 const inputFieldWidth = 355
 const inputPadding = 10
 
-const InputFlexContainer = styled('div')<{ hasMarginRight: boolean }>`
+const InputFlexContainer = styled('div')`
   height: 100%;
-  //width: ${inputFieldWidth + inputPadding * 2}px;
+  width: ${inputFieldWidth + inputPadding * 2}px;
   overflow: visible;
   position: relative;
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  margin: 0 16px;
-  margin-right: ${(props) => (props.hasMarginRight ? '17px' : 0)};
-  flex-shrink: 1;
-  flex-basis: 353px;
 `
 
 type FormulaInputProps = {
@@ -56,7 +52,7 @@ export const InputArea = ({ inputValue, inputHandler }: FormulaInputProps) => {
   }
 
   return (
-    <InputFlexContainer hasMarginRight={!isMultiLine}>
+    <InputFlexContainer>
       <InputBox
         hasInput={Boolean(inputValue)}
         onClick={inputClickHandler}

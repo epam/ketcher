@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
 import React, { useContext, useState } from 'react'
 import { ClickAwayListener } from '@mui/material'
 import styled from '@emotion/styled'
@@ -35,7 +34,7 @@ const OptionsFlexContainer = styled('div')<OptionsFlexContainerProps>`
   display: flex;
   position: absolute;
   left: 5px;
-  border-radius: 3px;
+  border-radius: 2px;
   flex-direction: ${(props) => (props.isVertical ? 'column' : 'row')};
 `
 
@@ -45,14 +44,11 @@ type DropDownProps = {
 
 const DropDown = styled('div')<DropDownProps>`
   display: flex;
+  width: 6px;
+  height: 6px;
   position: absolute;
-  bottom: 3px;
-  right: 3px;
-
-  > svg {
-    width: 6px;
-    height: 6px;
-  }
+  bottom: 0;
+  right: 0;
 
   > svg path {
     fill: ${(props) =>
@@ -70,11 +66,11 @@ const SubMenuHeader = styled('div')`
   display: flex;
   align-items: center;
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
   padding: 0;
   justify-content: center;
-  border-radius: 3px;
+  border-radius: 2px;
 `
 
 type SubMenuProps = {

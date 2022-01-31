@@ -27,9 +27,6 @@ const Button = styled(MuiButton)(({ theme }) => ({
   lineHeight: '14px',
   fontSize: '12px',
   textAlign: 'center',
-  margin: '0 11px',
-  flexShrink: 0,
-  flexBasis: '118px',
 
   '&:hover': {
     backgroundColor: theme.color.button.primary.hover

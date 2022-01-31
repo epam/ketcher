@@ -60,7 +60,7 @@ function Editor(props: EditorProps) {
         >
           <Global styles={globalStyles} />
 
-          <Layout windowSize={size} windowHeight={height}>
+          <Layout windowSize={size}>
             <Layout.Left>
               <MenuComponent />
             </Layout.Left>

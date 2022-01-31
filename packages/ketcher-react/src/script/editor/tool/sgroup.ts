@@ -110,9 +110,8 @@ class SGroupTool {
               actualSgroupId !== undefined &&
               SGroup.getBonds(molecule, sgroups.get(actualSgroupId))
             atom === sgroupAtoms[0] &&
-              // @ts-ignore
-              newSelected.atoms.push(...sgroupAtoms) &&
-              newSelected.bonds.push(...sgroupBonds)
+              newSelected.atoms.push(...(sgroupAtoms as Array<any>)) &&
+              newSelected.bonds.push(...(sgroupBonds as Array<any>))
           }
 
           if (atomFromStruct) {
@@ -318,8 +317,8 @@ class SGroupTool {
             actualSgroupId !== undefined &&
             SGroup.getBonds(molecule, struct.sgroups.get(actualSgroupId)?.item)
           atom === sgroupAtoms[0] &&
-            newSelected.atoms.push(...sgroupAtoms) &&
-            newSelected.bonds.push(...sgroupBonds)
+            newSelected.atoms.push(...(sgroupAtoms as Array<any>)) &&
+            newSelected.bonds.push(...(sgroupBonds as Array<any>))
         }
 
         if (atomFromStruct) {

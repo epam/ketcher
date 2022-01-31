@@ -25,7 +25,7 @@ type Data = {
 }
 
 export class RGroupAttr extends BaseOperation {
-  data: Data
+  data: Data | null
   data2: Data | null
 
   constructor(rgroupId?: any, attribute?: any, value?: any) {
@@ -35,38 +35,42 @@ export class RGroupAttr extends BaseOperation {
   }
 
   execute(restruct: ReStruct) {
-    const { rgid, attribute, value } = this.data
+    if (this.data) {
+      const { rgid, attribute, value } = this.data
 
-    const rgp = restruct.molecule.rgroups.get(rgid)!
+      const rgp = restruct.molecule.rgroups.get(rgid)!
 
-    if (!rgp) {
-      return
-    }
-
-    if (!this.data2) {
-      this.data2 = {
-        rgid,
-        attribute,
-        value: rgp[attribute]
+      if (!rgp) {
+        return
       }
+
+      if (!this.data2) {
+        this.data2 = {
+          rgid,
+          attribute,
+          value: rgp[attribute]
+        }
+      }
+
+      rgp[attribute] = value
+
+      BaseOperation.invalidateItem(restruct, 'rgroups', rgid)
     }
-
-    rgp[attribute] = value
-
-    BaseOperation.invalidateItem(restruct, 'rgroups', rgid)
   }
 
   invert() {
     const inverted = new RGroupAttr()
-    // @ts-ignore
     inverted.data = this.data2
     inverted.data2 = this.data
     return inverted
   }
 
   isDummy(restruct: ReStruct) {
-    const { rgid, attribute, value } = this.data
-    const rgroup = restruct.molecule.rgroups.get(rgid)!
-    return rgroup[attribute] === value
+    if (this.data) {
+      const { rgid, attribute, value } = this.data
+      const rgroup = restruct.molecule.rgroups.get(rgid)!
+      return rgroup[attribute] === value
+    }
+    return false
   }
 }

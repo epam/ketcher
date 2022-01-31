@@ -282,7 +282,7 @@ function isPointInPolygon(r, p) {
   let v0 = Vec2.diff(r[r.length - 1], p)
   let n0 = Vec2.dot(n, v0)
   let d0 = Vec2.dot(d, v0)
-  let w0: Vec2 | null = null
+  let w0 = new Vec2(0, 0)
   let counter = 0
   const eps = 1e-5
   let flag1 = false
@@ -306,7 +306,6 @@ function isPointInPolygon(r, p) {
         flag1 = true
       }
     }
-    // @ts-ignore
     if (flag1 && flag0 && Vec2.dot(w1, n) * Vec2.dot(w0, n) >= 0) {
       flag1 = false
     }

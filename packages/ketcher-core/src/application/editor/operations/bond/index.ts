@@ -50,10 +50,14 @@ class BondAdd extends BaseOperation {
     BaseOperation.invalidateAtom(restruct, end, 1)
 
     const pp: {
-      type?: any
-      begin?: any
-      end?: any
-    } = {}
+      type: number
+      begin: number
+      end: number
+    } = {
+      type: 0,
+      begin: 0,
+      end: 0
+    }
 
     if (bond) {
       Object.keys(bond).forEach((p) => {
@@ -65,7 +69,6 @@ class BondAdd extends BaseOperation {
     pp.begin = begin
     pp.end = end
 
-    // @ts-ignore
     const newBond = new Bond(pp)
     if (typeof this.data.bid === 'number') {
       struct.bonds.set(this.data.bid, newBond)

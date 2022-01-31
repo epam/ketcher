@@ -211,12 +211,12 @@ Render.prototype.update = function (force = false, viewSz = null) {
       const sz = cb.sz().floor()
       const delta = this.oldCb.p0.sub(cb.p0).ceil()
       this.oldBb = bb
-      if (!this.sz || sz.x != this.sz.x || sz.y != this.sz.y) {
+      if (!this.sz || sz.x !== this.sz.x || sz.y !== this.sz.y) {
         this.setPaperSize(sz)
       }
 
       this.options.offset = this.options.offset || new Vec2()
-      if (delta.x != 0 || delta.y != 0) {
+      if (delta.x !== 0 || delta.y !== 0) {
         this.setOffset(this.options.offset.add(delta))
         this.ctab.translate(delta)
       }

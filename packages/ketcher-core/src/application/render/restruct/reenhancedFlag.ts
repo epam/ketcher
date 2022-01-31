@@ -48,8 +48,7 @@ class ReEnhancedFlag extends ReObject {
     return ret
   }
 
-  // @ts-ignore
-  makeSelectionPlate(restruct: ReStruct, paper: any, options: any): any {
+  makeSelectionPlate(restruct: ReStruct, _paper: any, options: any): any {
     // TODO: after the enhanced flag stops being displayed, need to remove the reEnhancedflag object from ctab
     if (!this.#path?.attrs) return null
     return this.highlightPath(restruct.render).attr(options.selectionStyle)

@@ -270,15 +270,3 @@ export class ResizeSimpleObject extends BaseOperation {
     }
   }
 }
-
-// TODO: move to simple object tool
-// @ts-ignore
-function makeCircleFromEllipse(position0: Vec2, position1: Vec2): Vec2 {
-  const diff = Vec2.diff(position1, position0)
-  const min = Math.abs(diff.x) < Math.abs(diff.y) ? diff.x : diff.y
-  return new Vec2(
-    position0.x + (diff.x > 0 ? 1 : -1) * Math.abs(min),
-    position0.y + (diff.y > 0 ? 1 : -1) * Math.abs(min),
-    0
-  )
-}

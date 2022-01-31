@@ -41,10 +41,10 @@ function parseAtomLineV3000(line) {
     aam: split[5].trim()
   }
   let label = split[1].trim()
-  if (label.charAt(0) == '"' && label.charAt(label.length - 1) == '"') {
+  if (label.charAt(0) === '"' && label.charAt(label.length - 1) === '"') {
     label = label.substr(1, label.length - 2)
   } // strip qutation marks
-  if (label.charAt(label.length - 1) == ']') {
+  if (label.charAt(label.length - 1) === ']') {
     // assume atom list
     label = label.substr(0, label.length - 1) // remove ']'
     const atomListParams = {}
@@ -54,7 +54,7 @@ function parseAtomLineV3000(line) {
       atomListParams.notList = true
       const [matchedSubstr] = matchNotListInfo
       label = label.substr(matchedSubstr.length) // remove 'NOT [' or 'NOT['
-    } else if (label.charAt(0) != '[') {
+    } else if (label.charAt(0) !== '[') {
       throw new Error("Error: atom list expected, found '" + label + "'")
     } else {
       label = label.substr(1) // remove '['
@@ -72,19 +72,19 @@ function parseAtomLineV3000(line) {
     value = subsplit[1]
     if (key in utils.fmtInfo.v30atomPropMap) {
       let ival = utils.parseDecimalInt(value)
-      if (key == 'VAL') {
-        if (ival == 0) continue // eslint-disable-line no-continue
-        if (ival == -1) ival = 0
+      if (key === 'VAL') {
+        if (ival === 0) continue // eslint-disable-line no-continue
+        if (ival === -1) ival = 0
       }
       params[utils.fmtInfo.v30atomPropMap[key]] = ival
-    } else if (key == 'RGROUPS') {
+    } else if (key === 'RGROUPS') {
       value = value.trim().substr(1, value.length - 2)
       const rgrsplit = value.split(' ').slice(1)
       params.rglabel = 0
       for (let j = 0; j < rgrsplit.length; ++j) {
         params.rglabel |= 1 << (rgrsplit[j] - 1)
       }
-    } else if (key == 'ATTCHPT') {
+    } else if (key === 'ATTCHPT') {
       params.attpnt = value.trim() - 0
     }
   }
@@ -106,21 +106,21 @@ function parseBondLineV3000(line) {
     subsplit = splitonce(split[i], '=')
     key = subsplit[0]
     value = subsplit[1]
-    if (key == 'CFG') {
+    if (key === 'CFG') {
       params.stereo =
         utils.fmtInfo.v30bondStereoMap[utils.parseDecimalInt(value)]
       if (
-        params.type == Bond.PATTERN.TYPE.DOUBLE &&
-        params.stereo == Bond.PATTERN.STEREO.EITHER
+        params.type === Bond.PATTERN.TYPE.DOUBLE &&
+        params.stereo === Bond.PATTERN.STEREO.EITHER
       ) {
         params.stereo = Bond.PATTERN.STEREO.CIS_TRANS
       }
-    } else if (key == 'TOPO') {
+    } else if (key === 'TOPO') {
       params.topology =
         utils.fmtInfo.bondTopologyMap[utils.parseDecimalInt(value)]
-    } else if (key == 'RXCTR') {
+    } else if (key === 'RXCTR') {
       params.reactingCenterStatus = utils.parseDecimalInt(value)
-    } else if (key == 'STBOX') {
+    } else if (key === 'STBOX') {
       params.stereoCare = utils.parseDecimalInt(value)
     }
   }
@@ -130,7 +130,7 @@ function parseBondLineV3000(line) {
 function v3000parseCollection(ctab, ctabLines, shift) {
   /* reader */
   shift++
-  while (ctabLines[shift].trim() != 'M  V30 END COLLECTION') shift++
+  while (ctabLines[shift].trim() !== 'M  V30 END COLLECTION') shift++
   shift++
   return shift
 }
@@ -142,8 +142,8 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
   shift++
   while (shift < ctabLines.length) {
     line = stripV30(ctabLines[shift++]).trim()
-    if (line.trim() == 'END SGROUP') return shift
-    while (line.charAt(line.length - 1) == '-') {
+    if (line.trim() === 'END SGROUP') return shift
+    while (line.charAt(line.length - 1) === '-') {
       line = (
         line.substr(0, line.length - 1) + stripV30(ctabLines[shift++])
       ).trim()
@@ -158,7 +158,7 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
     const props = {}
     for (let i = 3; i < split.length; ++i) {
       const subsplit = splitonce(split[i], '=')
-      if (subsplit.length != 2) {
+      if (subsplit.length !== 2) {
         throw new Error(
           "A record of form AAA=BBB or AAA=(...) expected, got '" +
             split[i] +
@@ -297,21 +297,21 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ {
         const ooo = rlsplit.slice(2).join(' ')
         const logic = {}
         if (iii > 0) logic.ifthen = iii
-        logic.resth = hhh == 1
+        logic.resth = hhh === 1
         logic.range = ooo
         rLogic[id] = logic
         shift++
         continue // eslint-disable-line no-continue
       }
-      if (line != 'M  V30 BEGIN CTAB') throw Error('CTAB V3000 invalid')
+      if (line !== 'M  V30 BEGIN CTAB') throw Error('CTAB V3000 invalid')
       for (var i = 0; i < ctabLines.length; ++i) {
-        if (ctabLines[shift + i].trim() == 'M  V30 END CTAB') break
+        if (ctabLines[shift + i].trim() === 'M  V30 END CTAB') break
       }
       const lines = ctabLines.slice(shift, shift + i + 1)
       const rfrag = parseCTabV3000(lines, true)
       rfrags[id].push(rfrag)
       shift = shift + i + 1
-      if (ctabLines[shift].trim() == 'M  V30 END RGROUP') {
+      if (ctabLines[shift].trim() === 'M  V30 END RGROUP') {
         shift++
         break
       }
@@ -345,7 +345,7 @@ function parseRxn3000(
 
   function findCtabEnd(i) {
     for (let j = i; j < ctabLines.length; ++j) {
-      if (ctabLines[j].trim() == 'M  V30 END CTAB') return j
+      if (ctabLines[j].trim() === 'M  V30 END CTAB') return j
     }
 
     return console.error('CTab format invalid')
@@ -353,7 +353,7 @@ function parseRxn3000(
 
   function findRGroupEnd(i) {
     for (let j = i; j < ctabLines.length; ++j) {
-      if (ctabLines[j].trim() == 'M  V30 END RGROUP') return j
+      if (ctabLines[j].trim() === 'M  V30 END RGROUP') return j
     }
     return console.error('CTab format invalid')
   }
@@ -471,21 +471,21 @@ function splitSGroupDef(line) {
   let quoted = false
   for (let i = 0; i < line.length; ++i) {
     const c = line.charAt(i)
-    if (c == '"') {
+    if (c === '"') {
       quoted = !quoted
     } else if (!quoted) {
-      if (c == '(') {
+      if (c === '(') {
         braceBalance++
-      } else if (c == ')') {
+      } else if (c === ')') {
         braceBalance--
-      } else if (c == ' ' && braceBalance == 0) {
+      } else if (c === ' ' && braceBalance === 0) {
         split.push(line.slice(0, i))
         line = line.slice(i + 1).trim()
         i = 0
       }
     }
   }
-  if (braceBalance != 0) {
+  if (braceBalance !== 0) {
     throw new Error('Brace balance broken. S-group properies invalid!')
   }
   if (line.length > 0) split.push(line.trim())
@@ -514,7 +514,7 @@ function parseBracedNumberList(line, shift) {
 
 function stripV30(line) {
   /* reader */
-  if (line.slice(0, 7) != 'M  V30 ') throw new Error('Prefix invalid')
+  if (line.slice(0, 7) !== 'M  V30 ') throw new Error('Prefix invalid')
   return line.slice(7)
 }
 

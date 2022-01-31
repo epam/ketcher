@@ -25,7 +25,7 @@ type Data = {
 }
 
 export class BondAttr extends BaseOperation {
-  data: Data
+  data: Data | null
   data2: Data | null
 
   constructor(bondId?: any, attribute?: any, value?: any) {
@@ -35,34 +35,38 @@ export class BondAttr extends BaseOperation {
   }
 
   execute(restruct: ReStruct) {
-    const { attribute, bid, value } = this.data
-    const bond = restruct.molecule.bonds.get(bid)!
+    if (this.data) {
+      const { attribute, bid, value } = this.data
+      const bond = restruct.molecule.bonds.get(bid)!
 
-    if (!this.data2) {
-      this.data2 = {
-        bid: bid,
-        attribute: attribute,
-        value: bond[attribute]
+      if (!this.data2) {
+        this.data2 = {
+          bid: bid,
+          attribute: attribute,
+          value: bond[attribute]
+        }
       }
-    }
 
-    bond[attribute] = value
+      bond[attribute] = value
 
-    BaseOperation.invalidateBond(restruct, bid)
-    if (attribute === 'type') {
-      BaseOperation.invalidateLoop(restruct, bid)
+      BaseOperation.invalidateBond(restruct, bid)
+      if (attribute === 'type') {
+        BaseOperation.invalidateLoop(restruct, bid)
+      }
     }
   }
 
   isDummy(restruct: ReStruct) {
-    const { attribute, bid, value } = this.data
-    const bond = restruct.molecule.bonds.get(bid)!
-    return bond[attribute] === value
+    if (this.data) {
+      const { attribute, bid, value } = this.data
+      const bond = restruct.molecule.bonds.get(bid)!
+      return bond[attribute] === value
+    }
+    return false
   }
 
   invert() {
     const inverted = new BondAttr()
-    // @ts-ignore
     inverted.data = this.data2
     inverted.data2 = this.data
     return inverted

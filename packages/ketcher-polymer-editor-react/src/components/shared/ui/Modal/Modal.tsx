@@ -35,10 +35,6 @@ const Content = styled(DialogContent)(({ theme }) => ({
   ...scrollbarThin(theme)
 }))
 
-// const backdrop = styled(Backdrop)(() => ({
-//   background: "url('')"
-// }))
-
 const Footer = styled(DialogActions)({
   display: 'flex',
   alignItems: 'center',
@@ -62,6 +58,16 @@ export const Modal = ({ title, children }: ModalProps) => {
     [theme.color.text.primary]
   )
 
+  const backdropProps = useMemo(
+    () => ({
+      style: {
+        background: theme.color.background.overlay,
+        opacity: 0.4
+      }
+    }),
+    [theme.color.background.overlay]
+  )
+
   const subcomponents: Record<ModalSubcomponent, JSX.Element | null> = {
     Content: null,
     Footer: null
@@ -81,6 +87,7 @@ export const Modal = ({ title, children }: ModalProps) => {
 
   return (
     <Dialog
+      BackdropProps={backdropProps}
       PaperProps={paperProps}
       open={isOpen}
       maxWidth="md"

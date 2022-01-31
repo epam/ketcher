@@ -6,10 +6,10 @@ exports[`NotationInput component should render textarea and a hidden textarea in
     class="css-1f5gut4"
   >
     <div
-      class="css-12d8l4u"
+      class="css-j5t9yq"
     >
       <textarea
-        class="css-14xp4zy"
+        class="css-19afjhr"
         style="height: 0px;"
       >
         Some input here
@@ -21,7 +21,7 @@ exports[`NotationInput component should render textarea and a hidden textarea in
       </span>
       <textarea
         aria-hidden="true"
-        class="css-667y9k"
+        class="css-bxh8x7"
       />
     </div>
   </div>

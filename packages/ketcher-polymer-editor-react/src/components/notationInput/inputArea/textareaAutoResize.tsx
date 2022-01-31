@@ -21,11 +21,12 @@ import { css } from '@emotion/react'
 import { scrollbarThin } from 'styles/mixins'
 
 const lineHeight = 16
+const inputFieldWidth = 355
 const inputPadding = 10
 
 const commonStyles = `
   line-height: ${lineHeight}px;
-  width: calc(100% - ${inputPadding * 2}px);
+  width: ${inputFieldWidth - inputPadding * 2}px;
   border: none;
   resize: none;
   padding: 0;
@@ -34,9 +35,7 @@ const commonStyles = `
 const VisibleTextInput = styled('textarea')<{
   shouldHideOverflow: boolean
 }>`
-  ${commonStyles};
-
-  width: 100%;
+  ${commonStyles}
 
   ${({ theme }) => scrollbarThin(theme)}
   outline: none; // when in focus, parent div has blue border

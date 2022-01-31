@@ -7,10 +7,9 @@ Object {
     <div>
       <div
         class="Ketcher-polymer-editor-root"
-        style="height: 100%;"
       >
         <div
-          class="css-1c6i2ry"
+          class="css-1t581ze"
         >
           <div
             class="css-1vi3qlv"
@@ -234,7 +233,7 @@ Object {
               </div>
             </div>
             <div
-              class="css-9qifra"
+              class="css-u1jr60"
             />
           </div>
           <div
@@ -243,6 +242,9 @@ Object {
             <div
               class="css-510djb"
             >
+              <div
+                class="css-1pnoyrz"
+              />
               <div
                 class="css-u514l3"
               >
@@ -297,10 +299,10 @@ Object {
                     class="css-1f5gut4"
                   >
                     <div
-                      class="css-1ni5lab"
+                      class="css-1il5ut8"
                     >
                       <textarea
-                        class="css-14xp4zy"
+                        class="css-19afjhr"
                         style="height: 0px;"
                       />
                       <span
@@ -310,7 +312,7 @@ Object {
                       </span>
                       <textarea
                         aria-hidden="true"
-                        class="css-667y9k"
+                        class="css-bxh8x7"
                       />
                     </div>
                   </div>
@@ -458,10 +460,9 @@ Object {
   "container": <div>
     <div
       class="Ketcher-polymer-editor-root"
-      style="height: 100%;"
     >
       <div
-        class="css-1c6i2ry"
+        class="css-1t581ze"
       >
         <div
           class="css-1vi3qlv"
@@ -685,7 +686,7 @@ Object {
             </div>
           </div>
           <div
-            class="css-9qifra"
+            class="css-u1jr60"
           />
         </div>
         <div
@@ -694,6 +695,9 @@ Object {
           <div
             class="css-510djb"
           >
+            <div
+              class="css-1pnoyrz"
+            />
             <div
               class="css-u514l3"
             >
@@ -748,10 +752,10 @@ Object {
                   class="css-1f5gut4"
                 >
                   <div
-                    class="css-1ni5lab"
+                    class="css-1il5ut8"
                   >
                     <textarea
-                      class="css-14xp4zy"
+                      class="css-19afjhr"
                       style="height: 0px;"
                     />
                     <span
@@ -761,7 +765,7 @@ Object {
                     </span>
                     <textarea
                       aria-hidden="true"
-                      class="css-667y9k"
+                      class="css-bxh8x7"
                     />
                   </div>
                 </div>

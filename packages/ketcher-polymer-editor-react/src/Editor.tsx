@@ -27,7 +27,7 @@ import { MonomerLibrary } from 'components/monomerLibrary'
 import { NotationInput } from 'components/notationInput'
 import { Menu } from 'components/menu'
 import { selectTool } from 'state/common'
-import { useAppDispatch, useResizeObserver } from 'hooks'
+import { useAppDispatch } from 'hooks'
 import { Logo } from 'components/Logo'
 
 const theme = createTheme(defaultTheme)
@@ -39,12 +39,6 @@ interface EditorProps {
 function Editor(props: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
   const { onInit } = props
-  const { height, width } = useResizeObserver<HTMLDivElement>({
-    ref: rootElRef
-  })
-  const size =
-    (((width && width <= 1024) || (height && height <= 768)) && 'small') ||
-    'regular'
 
   useEffect(() => {
     onInit?.()
@@ -53,14 +47,10 @@ function Editor(props: EditorProps) {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <div
-          ref={rootElRef}
-          className="Ketcher-polymer-editor-root"
-          style={{ height: '100%' }}
-        >
+        <div ref={rootElRef} className="Ketcher-polymer-editor-root">
           <Global styles={globalStyles} />
 
-          <Layout windowSize={size}>
+          <Layout>
             <Layout.Left>
               <MenuComponent />
             </Layout.Left>

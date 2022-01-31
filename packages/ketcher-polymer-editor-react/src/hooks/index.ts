@@ -16,4 +16,3 @@
 
 export * from './useAppTheme'
 export * from './stateHooks'
-export * from './useResizeObserver'

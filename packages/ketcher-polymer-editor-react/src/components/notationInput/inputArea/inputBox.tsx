@@ -37,7 +37,6 @@ export const InputBox = styled('div')<{ hasInput: boolean }>`
   display: flex;
   justify-content: flex-end;
   flex-direction: column;
-  width: 100%;
   ${({ theme }) => css`
     background-color: ${theme.color.background.primary};
     border: ${borderThickness}px solid ${theme.color.background.primary};

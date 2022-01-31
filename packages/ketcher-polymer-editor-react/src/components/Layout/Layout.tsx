@@ -20,11 +20,7 @@ import { css } from '@emotion/react'
 
 interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>
-  windowSize?: string
 }
-
-const PADDING = '15px'
-const PADDING_BOTTOM = '5px'
 
 const Column = styled.div<{ fullWidth?: boolean }>(({ fullWidth }) => ({
   width: fullWidth ? '100%' : 'fit-content',
@@ -33,19 +29,17 @@ const Column = styled.div<{ fullWidth?: boolean }>(({ fullWidth }) => ({
   justifyContent: 'space-between'
 }))
 
-const RowMain = styled.div<{ windowSize?: string }>(
-  ({ theme, windowSize }) => ({
-    height: '100vh',
-    width: '100%',
-    position: 'relative',
-    padding: windowSize === 'small' ? '15px 11px' : PADDING,
-    paddingBottom: PADDING_BOTTOM,
-    backgroundColor: theme.color.background.canvas,
-    display: 'flex',
-    justifyContent: 'space-between',
-    columnGap: '6px'
-  })
-)
+const RowMain = styled.div(({ theme }) => ({
+  height: '100vh',
+  width: '100%',
+  position: 'relative',
+  padding: '16px',
+  paddingBottom: 0,
+  backgroundColor: theme.color.background.canvas,
+  display: 'flex',
+  justifyContent: 'space-between',
+  columnGap: '6px'
+}))
 
 const Row = styled.div({
   display: 'flex',
@@ -77,7 +71,7 @@ const Main = styled.div({
 })
 
 const DummyDiv = styled.div({
-  height: `calc(40px + ${PADDING_BOTTOM})`
+  height: '40px'
 })
 
 const DummyDivInRow = styled.div({
@@ -88,7 +82,7 @@ const DummyDivInRow = styled.div({
 
 type LayoutSection = 'Left' | 'Right' | 'Main' | 'Top'
 
-export const Layout = ({ children, windowSize = 'regular' }: LayoutProps) => {
+export const Layout = ({ children }: LayoutProps) => {
   const subcomponents: Record<LayoutSection, JSX.Element | null> = {
     Left: null,
     Main: null,
@@ -108,13 +102,14 @@ export const Layout = ({ children, windowSize = 'regular' }: LayoutProps) => {
   })
 
   return (
-    <RowMain windowSize={windowSize}>
+    <RowMain>
       <Column>
         {subcomponents.Left}
         <DummyDiv />
       </Column>
       <Column fullWidth>
         <Row>
+          <DummyDivInRow />
           {subcomponents.Top}
           <DummyDivInRow />
         </Row>

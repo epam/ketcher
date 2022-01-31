@@ -49,6 +49,7 @@ export class Ketcher {
   #formatterFactory: FormatterFactory
   #editor: Editor
   #indigo: Indigo
+  customStorage: any
 
   get editor(): Editor {
     return this.#editor
@@ -70,6 +71,7 @@ export class Ketcher {
   }
 
   get indigo() {
+    console.log(this.customStorage)
     return this.#indigo
   }
 
@@ -183,9 +185,5 @@ export class Ketcher {
     const byteArray = new Uint8Array(byteNumbers)
     const blob = new Blob([byteArray], { type: meta })
     return blob
-  }
-
-  getSettings() {
-    return this.#editor.options()
   }
 }

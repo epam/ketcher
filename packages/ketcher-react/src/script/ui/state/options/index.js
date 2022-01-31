@@ -22,6 +22,7 @@ import {
 
 import { pick } from 'lodash/fp'
 import { storage } from '../../storage-ext'
+import { useAppContext } from '../../../../hooks'
 
 export const initOptionsState = {
   app: {
@@ -74,7 +75,9 @@ export function appUpdate(data) {
 
 /* SETTINGS */
 export function saveSettings(newSettings) {
-  storage.setItem('ketcher-opts', newSettings)
+  const ketcher = window.ketcher
+  ketcher.customStorage.set(newSettings)
+  // storage.setItem('ketcher-opts', newSettings)
   return {
     type: 'SAVE_SETTINGS',
     data: newSettings

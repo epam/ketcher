@@ -53,6 +53,7 @@ export class KetcherBuilder {
     }
     const structService: StructService =
       this.#structServiceProvider!.createStructService(mergedServiceOptions)
+    // @ts-ignore
     const ketcher = new Ketcher(
       editor,
       structService,

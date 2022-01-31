@@ -32,12 +32,14 @@ class KetcherBuilder {
   private editor: Editor | null
   private serviceMode: ServiceMode | null
   private formatterFactory: FormatterFactory | null
+  customStorage: any
 
   constructor() {
     this.structService = null
     this.editor = null
     this.serviceMode = null
     this.formatterFactory = null
+    this.customStorage = null
   }
 
   async appendApiAsync(structServiceProvider: StructServiceProvider) {
@@ -58,8 +60,7 @@ class KetcherBuilder {
     element: HTMLDivElement | null,
     staticResourcesUrl: string,
     errorHandler: (message: string) => void,
-    buttons?: ButtonsConfig,
-    settings?: any
+    buttons?: ButtonsConfig
   ): Promise<void> {
     const { structService } = this
 
@@ -72,8 +73,7 @@ class KetcherBuilder {
           errorHandler: errorHandler || null,
           version: process.env.VERSION || '',
           buildDate: process.env.BUILD_DATE || '',
-          buildNumber: process.env.BUILD_NUMBER || '',
-          settings: settings
+          buildNumber: process.env.BUILD_NUMBER || ''
         },
         structService!,
         resolve
@@ -109,6 +109,7 @@ class KetcherBuilder {
       this.structService,
       this.formatterFactory
     )
+    ketcher.customStorage = this.customStorage
     ketcher[this.serviceMode] = true
 
     const params = new URLSearchParams(document.location.search)

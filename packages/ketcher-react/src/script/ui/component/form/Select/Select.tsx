@@ -14,19 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReactElement, useEffect, useState } from 'react'
-import styles from './Select.module.less'
-import clsx from 'clsx'
-
-import MuiSelect, { SelectChangeEvent } from '@mui/material/Select'
-import FormControl from '@mui/material/FormControl'
-import MenuItem from '@mui/material/MenuItem'
-import Icon from '../../view/icon'
-
-interface Option {
-  value: string
-  label: string
-}
+import MuiSelect, { Option } from './shared/Select'
+import { useEffect, useState } from 'react'
 
 interface Props {
   schema?: any
@@ -36,7 +25,6 @@ interface Props {
   singleSelect?: boolean
   disabled?: boolean
   options?: Array<Option>
-  searchable?: boolean
 }
 
 const getOptions = (schema): Array<Option> => {
@@ -50,26 +38,17 @@ const getOptions = (schema): Array<Option> => {
   }, [])
 }
 
-const ChevronIcon = ({ className }) => (
-  <Icon name="chevron" className={clsx(className, styles.chevronIcon)} />
-)
-
 const Select = ({
   schema,
   className,
   value,
   onChange,
-  singleSelect = true,
+  singleSelect,
   disabled,
   options: selectOptions
-}: // ...rest
-Props): ReactElement => {
-  const [defaultValue, setDefaultValue] = useState<any>()
+}: Props) => {
+  const [currentValue, setCurrentValue] = useState<any>()
   const [options, setOptions] = useState<Array<any>>([])
-
-  const handleChange = (event: SelectChangeEvent) => {
-    onChange(event.target.value)
-  }
 
   useEffect(() => {
     if (selectOptions === undefined) {
@@ -83,34 +62,18 @@ Props): ReactElement => {
     if (options) {
       option = options.find((option) => option.value === value)
     }
-    return setDefaultValue(option)
+    return setCurrentValue(option)
   }, [options, value])
 
   return (
-    <FormControl>
-      <MuiSelect
-        className={clsx(styles.selectContainer, className)}
-        value={defaultValue?.value ?? ''}
-        onChange={handleChange}
-        multiple={!singleSelect}
-        disabled={disabled}
-        MenuProps={{ className: styles.dropdownList }}
-        IconComponent={ChevronIcon}
-      >
-        {options &&
-          options.map((option) => {
-            return (
-              <MenuItem
-                value={option.value}
-                key={option.value}
-                disableRipple={true}
-              >
-                {option.label}
-              </MenuItem>
-            )
-          })}
-      </MuiSelect>
-    </FormControl>
+    <MuiSelect
+      onChange={onChange}
+      options={options}
+      value={currentValue?.value ?? ''}
+      singleSelect={singleSelect}
+      disabled={disabled}
+      className={className}
+    />
   )
 }
 

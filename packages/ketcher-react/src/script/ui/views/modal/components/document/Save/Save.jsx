@@ -34,7 +34,7 @@ import classes from './Save.module.less'
 import { connect } from 'react-redux'
 import { saveUserTmpl } from '../../../../../state/templates'
 import { updateFormState } from '../../../../../state/modal/form'
-import Select from '../../../../../component/form/Select/Select'
+import Select from '../../../../../component/form/Select'
 
 const saveSchema = {
   title: 'Save',

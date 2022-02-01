@@ -36,7 +36,7 @@ import { storage } from '../../../../../storage-ext'
 import Sidebar from './components/Sidebar'
 import Icon from '../../../../../component/view/icon'
 import clsx from 'clsx'
-import Select from '../../../../../component/form/Select/Select'
+import Select from '../../../../../component/form/Select'
 
 interface SettingsProps extends BaseProps {
   initState: any

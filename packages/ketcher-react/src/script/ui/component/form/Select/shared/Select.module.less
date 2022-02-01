@@ -14,9 +14,48 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../../../../../style/variables';
+@import '../../../../../../style/variables';
 
 // stylelint-disable selector-pseudo-class-no-unknown
+// stylelint-disable no-descending-specificity
+.dropdownList {
+  :global(.MuiPaper-root) {
+    box-shadow: none;
+    border-radius: 0 0 2px 2px;
+  }
+
+  :global(.MuiMenuItem-root) {
+    color: @color-text-primary;
+    font-family: @Inter;
+    font-size: @font-size-regular;
+    padding: 0 8px;
+    min-height: 24px;
+    cursor: default;
+  }
+
+  :global(.MuiList-root.MuiMenu-list) {
+    background-color: @color-background-primary;
+    padding: 0;
+    box-shadow: none;
+
+    :global(.Mui-selected) {
+      background-color: transparent;
+      display: flex;
+      justify-content: space-between;
+
+      &::after {
+        content: '';
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.33997 6.80349L6.39998 9.85683L12.6635 3.59998L13.6035 4.53998L6.39998 11.7435L2.39999 7.74349L3.33997 6.80349Z' fill='%23005662'/%3E%3C/svg%3E");
+        width: 16px;
+        height: 16px;
+        background-repeat: no-repeat;
+        display: inline-block;
+      }
+    }
+  }
+
+}
+
 .selectContainer {
   :global(.MuiFormControl-root .MuiSelect-select) {
     width: 100%;
@@ -38,45 +77,3 @@
   }
 }
 
-.dropdownList {
-  :global(.MuiPaper-root) {
-    box-shadow: none;
-    border-radius: 0 0 2px 2px;
-  }
-
-  :global(.MuiList-root.MuiMenu-list) {
-    background-color: @color-background-primary;
-    padding: 0;
-    box-shadow: none;
-
-    :global(.Mui-selected) {
-      background-color: @color-dropdown-hover;
-      display: flex;
-      justify-content: space-between;
-
-      &::after {
-        content: '';
-        background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMuMzM5OTcgNi44MDM0OUw2LjM5OTk4IDkuODU2ODNMMTIuNjYzNSAzLjU5OTk4TDEzLjYwMzUgNC41Mzk5OEw2LjM5OTk4IDExLjc0MzVMMi4zOTk5OSA3Ljc0MzQ5TDMuMzM5OTcgNi44MDM0OVoiIGZpbGw9IiMzRTdCRkEiLz4KPC9zdmc+Cg==');
-        width: 16px;
-        height: 16px;
-        background-repeat: no-repeat;
-        display: inline-block;
-      }
-    }
-
-    :global(.react-select__option--is-selected) {
-      background-color: transparent;
-      display: flex;
-      justify-content: space-between;
-
-    }
-  }
-
-  :global(.MuiMenuItem-root) {
-    color: @color-text-primary;
-    font-family: @Inter;
-    font-size: @font-size-regular;
-    padding: 0 8px;
-    min-height: 24px;
-  }
-}

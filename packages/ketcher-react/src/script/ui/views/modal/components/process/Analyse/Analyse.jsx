@@ -24,7 +24,7 @@ import { changeRound } from '../../../../../state/options'
 import classes from './Analyse.module.less'
 import { connect } from 'react-redux'
 import { range } from 'lodash/fp'
-import Select from '../../../../../component/form/Select/Select'
+import Select from '../../../../../component/form/Select'
 
 function roundOff(value, round) {
   if (typeof value === 'number') return value.toFixed(round)

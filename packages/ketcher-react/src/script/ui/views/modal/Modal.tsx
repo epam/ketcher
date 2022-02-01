@@ -18,7 +18,7 @@ import { useRef } from 'react'
 
 import { BaseCallProps } from './modal.types'
 import classes from './Modal.module.less'
-import selectClasses from '../../component/form/Select/Select.module.less'
+import selectClasses from '../../component/form/Select/shared/Select.module.less'
 import clsx from 'clsx'
 import mediaSizes from './mediaSizes'
 import modals from '../../dialog'

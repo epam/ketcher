@@ -105,11 +105,11 @@ const MiewDialog = ({
   onExportCML,
   ...prop
 }: Props) => {
-  const miewExportCML = useRef<() => string | null>()
+  const miewRef = useRef<MiewAsType>()
 
   const onMiewInit = useCallback(
     (miew: MiewAsType) => {
-      miewExportCML.current = miew.exportCML.bind(miew)
+      miewRef.current = miew
       const factory = new FormatterFactory(server)
       const service = factory.create('cml')
 
@@ -125,12 +125,12 @@ const MiewDialog = ({
   )
 
   const exportCML = useCallback(() => {
-    const cmlStruct = miewExportCML.current?.()
+    const cmlStruct = miewRef.current?.exportCML()
     if (!cmlStruct) {
       return
     }
     onExportCML(cmlStruct)
-  }, [onExportCML, miewExportCML])
+  }, [onExportCML, miewRef])
 
   return (
     <Dialog

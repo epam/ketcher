@@ -6,7 +6,7 @@ import {
   IconButton,
   useTheme
 } from '@mui/material'
-import React, { useMemo, useCallback } from 'react'
+import React, { useMemo } from 'react'
 import { Icon } from 'components/shared/ui/icon'
 import styled from '@emotion/styled'
 
@@ -16,10 +16,10 @@ interface ModalProps {
   children: JSX.Element | Array<JSX.Element>
   title: string
   isModalOpen: boolean
-  setIsModalOpen: (isOpen: boolean) => void
+  onCloseHandler: () => void
 }
 
-const ModalHeader = styled(DialogTitle)(({ theme }) => ({
+const Header = styled(DialogTitle)(({ theme }) => ({
   margin: '12px 11px 12px 16px',
   padding: 0,
   display: 'flex',
@@ -52,7 +52,7 @@ type ModalSubcomponent = 'Content' | 'Footer'
 export const Modal = ({
   title,
   isModalOpen,
-  setIsModalOpen,
+  onCloseHandler,
   children
 }: ModalProps) => {
   const theme = useTheme()
@@ -60,6 +60,7 @@ export const Modal = ({
   const paperProps = useMemo(
     () => ({
       style: {
+        minWidth: '20vw',
         background: theme.color.background.canvas,
         borderRadius: '8px',
         color: theme.color.text.primary
@@ -91,24 +92,20 @@ export const Modal = ({
     }
   })
 
-  const handleClose = useCallback(() => {
-    setIsModalOpen(false)
-  }, [setIsModalOpen])
-
   return (
     <Dialog
       BackdropProps={backdropProps}
       PaperProps={paperProps}
       open={isModalOpen}
       maxWidth="md"
-      onClose={handleClose}
+      onClose={onCloseHandler}
     >
-      <ModalHeader>
+      <Header>
         <Title>{title}</Title>
-        <IconButton title={'Close window'} onClick={handleClose}>
+        <IconButton title={'Close window'} onClick={onCloseHandler}>
           <Icon name={'close'} />
         </IconButton>
-      </ModalHeader>
+      </Header>
 
       {subcomponents.Content}
 

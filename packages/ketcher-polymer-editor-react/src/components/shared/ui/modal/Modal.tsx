@@ -16,7 +16,8 @@ interface ModalProps {
   children: JSX.Element | Array<JSX.Element>
   title: string
   isModalOpen: boolean
-  onCloseHandler: () => void
+  showCloseButton?: boolean
+  onCloseHandler?: () => void
 }
 
 const Header = styled(DialogTitle)(({ theme }) => ({
@@ -52,6 +53,7 @@ type ModalSubcomponent = 'Content' | 'Footer'
 export const Modal = ({
   title,
   isModalOpen,
+  showCloseButton = true,
   onCloseHandler,
   children
 }: ModalProps) => {
@@ -99,12 +101,15 @@ export const Modal = ({
       open={isModalOpen}
       maxWidth="md"
       onClose={onCloseHandler}
+      disableEscapeKeyDown={!showCloseButton}
     >
       <Header>
         <Title>{title}</Title>
-        <IconButton title={'Close window'} onClick={onCloseHandler}>
-          <Icon name={'close'} />
-        </IconButton>
+        {showCloseButton && (
+          <IconButton title={'Close window'} onClick={onCloseHandler}>
+            <Icon name={'close'} />
+          </IconButton>
+        )}
       </Header>
 
       {subcomponents.Content}

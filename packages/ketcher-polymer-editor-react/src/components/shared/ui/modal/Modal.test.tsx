@@ -51,4 +51,14 @@ describe('Modal component', () => {
 
     expect(mockOnCloseHandler).toHaveBeenCalledTimes(1)
   })
+
+  it('should not render close icon if showCloseButton prop set to false', () => {
+    render(
+      <Modal title="title" isModalOpen={true} showCloseButton={false}>
+        <Modal.Content>Content</Modal.Content>
+      </Modal>
+    )
+
+    expect(screen.queryByTitle('Close window')).not.toBeInTheDocument()
+  })
 })

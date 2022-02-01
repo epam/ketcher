@@ -16,6 +16,11 @@
 
 @import './src/style/variables';
 
+.fieldFlexWrapper {
+  display: flex;
+  margin-top: 5px;
+}
+
 .fieldset {
   border: none;
 
@@ -23,53 +28,27 @@
     display: inline-block;
     padding-right: 0;
     padding-bottom: 0;
+    padding-left: 6px;
   }
 
   > legend {
-    margin-bottom: 8px;
-    margin-left: 2px;
+    margin-bottom: 5px;
     width: 100%;
-
-    & + fieldset {
-      margin-left: 2px;
-    }
   }
 
-  .subgroup,
-  .any,
-  .metal,
-  .halogen,
-  .no-carbon,
-  .atom fieldset,
-  .carbo fieldset,
-  .hetero fieldset {
+  .subgroup {
     position: relative;
     border: 0;
     padding: 0 0 17px;
+    margin-right: 16px;
 
     legend {
       font-size: 0.8em;
+      color: @color-text-secondary;
       bottom: 0.1em;
-      left: 0;
-      right: 0;
-      margin: 0 auto;
+      width: 100%;
+      text-align: center;
       position: absolute;
     }
   }
-
-  &.carbo {
-    clear: both;
-    margin-right: 0.4em;
-  }
 }
-
-// .acyclic,
-// .cyclic {
-//   padding-left: 40px;
-//   width: calc(100% - 40px);
-
-//   > .fieldset {
-//     padding-left: 40px;
-//     width: calc(100% - 40px);
-//   }
-// }

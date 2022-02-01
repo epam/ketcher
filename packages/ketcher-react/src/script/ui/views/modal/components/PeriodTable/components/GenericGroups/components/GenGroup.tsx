@@ -20,11 +20,6 @@ import styles from './GenGroup.module.less'
 
 import type { GenericsType } from '../GenericTypes'
 
-const groupStyles = {
-  display: 'flex'
-}
-console.log(groupStyles)
-
 type GenProps = {
   groups: GenericsType
   selected: (label: string) => boolean
@@ -50,7 +45,7 @@ const GenGroup = ({
         const isLastSibling = index + 1 >= keys.length
 
         return (
-          <div style={groupStyles} key={index}>
+          <div className={styles.fieldFlexWrapper} key={index}>
             {isNested && <BoxWithLines isLastSibling={isLastSibling} />}
             <fieldset className={styles.fieldset}>
               <legend key={index}>{targetGroup.title}</legend>

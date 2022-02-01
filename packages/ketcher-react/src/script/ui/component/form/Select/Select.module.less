@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../../../../../../style/variables';
+@import '../../../../../style/variables';
 
 // stylelint-disable selector-pseudo-class-no-unknown
 // stylelint-disable no-descending-specificity
@@ -53,11 +53,10 @@
       }
     }
   }
-
 }
 
 .selectContainer {
-  :global(.MuiFormControl-root .MuiSelect-select) {
+  :global(.MuiOutlinedInput-root .MuiSelect-select) {
     width: 100%;
     height: 100%;
     box-shadow: none;
@@ -70,10 +69,15 @@
     font-size: @font-size-regular;
     padding: 0 8px;
     cursor: default;
+    box-sizing: border-box;
   }
 
-  :global(.MuiFocused .MuiSelect-select) {
+  :global(.Mui-focused .MuiSelect-select) {
     border-radius: 2px 2px 0 0;
+  }
+
+  :global(.MuiOutlinedInput-notchedOutline) {
+    border: none;
   }
 }
 

@@ -37,6 +37,7 @@ import Sidebar from './components/Sidebar'
 import Icon from '../../../../../component/view/icon'
 import clsx from 'clsx'
 import Select from '../../../../../component/form/Select'
+import { getSelectOptionsFromSchema } from '../../../../../utils'
 
 interface SettingsProps extends BaseProps {
   initState: any
@@ -59,6 +60,8 @@ interface SettingsCallProps extends BaseCallProps {
 
 type Props = SettingsProps & SettingsCallProps
 
+const settingsProps = settingsSchema.properties
+
 const SettingsDialog = (props: Props) => {
   const {
     initState,
@@ -75,7 +78,11 @@ const SettingsDialog = (props: Props) => {
     label: 'General',
     content: (
       <fieldset className={classes.general}>
-        <Field name="resetToSelect" component={Select} />
+        <Field
+          name="resetToSelect"
+          component={Select}
+          options={getSelectOptionsFromSchema(settingsProps?.resetToSelect)}
+        />
         <Field name="rotationStep" />
         <Field name="showValenceWarnings" />
         <Field name="atomColoring" />
@@ -91,11 +98,21 @@ const SettingsDialog = (props: Props) => {
     content: (
       <fieldset className={classes.stereochemistry}>
         <Field name="showStereoFlags" />
-        <Field name="stereoLabelStyle" component={Select} />
+        <Field
+          name="stereoLabelStyle"
+          component={Select}
+          options={getSelectOptionsFromSchema(settingsProps?.stereoLabelStyle)}
+        />
         <Field name="colorOfAbsoluteCenters" component={ColorPicker} />
         <Field name="colorOfAndCenters" component={ColorPicker} />
         <Field name="colorOfOrCenters" component={ColorPicker} />
-        <Field name="colorStereogenicCenters" component={Select} />
+        <Field
+          name="colorStereogenicCenters"
+          component={Select}
+          options={getSelectOptionsFromSchema(
+            settingsProps?.colorStereogenicCenters
+          )}
+        />
         <Field name="autoFadeOfStereoLabels" />
         <Field name="absFlagLabel" />
         <Field name="andFlagLabel" />
@@ -112,7 +129,13 @@ const SettingsDialog = (props: Props) => {
         <Field name="carbonExplicitly" />
         <Field name="showCharge" />
         <Field name="showValence" />
-        <Field name="showHydrogenLabels" component={Select} />
+        <Field
+          name="showHydrogenLabels"
+          component={Select}
+          options={getSelectOptionsFromSchema(
+            settingsProps?.showHydrogenLabels
+          )}
+        />
       </fieldset>
     )
   }
@@ -155,9 +178,21 @@ const SettingsDialog = (props: Props) => {
     content: (
       // eslint-disable-next-line dot-notation
       <fieldset className={classes.viewer} disabled={!window['Miew']}>
-        <Field name="miewMode" component={Select} />
-        <Field name="miewTheme" component={Select} />
-        <Field name="miewAtomLabel" component={Select} />
+        <Field
+          name="miewMode"
+          component={Select}
+          options={getSelectOptionsFromSchema(settingsProps?.miewMode)}
+        />
+        <Field
+          name="miewTheme"
+          component={Select}
+          options={getSelectOptionsFromSchema(settingsProps?.miewTheme)}
+        />
+        <Field
+          name="miewAtomLabel"
+          component={Select}
+          options={getSelectOptionsFromSchema(settingsProps?.miewAtomLabel)}
+        />
       </fieldset>
     )
   }

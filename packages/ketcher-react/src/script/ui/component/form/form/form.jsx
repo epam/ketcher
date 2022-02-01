@@ -24,6 +24,7 @@ import jsonschema from 'jsonschema'
 import { updateFormState } from '../../../state/modal/form'
 import { useFormContext } from '../../../../../hooks'
 import Select from '../Select'
+import { getSelectOptionsFromSchema } from '../../../utils'
 
 class Form extends Component {
   constructor(props) {
@@ -139,7 +140,14 @@ const SelectOneOf = (props) => {
     selectDesc.enumNames.push(schema[item].title || item)
   })
 
-  return <Field name={name} schema={selectDesc} {...prop} component={Select} />
+  return (
+    <Field
+      name={name}
+      options={getSelectOptionsFromSchema(selectDesc)}
+      {...prop}
+      component={Select}
+    />
+  )
 }
 
 //

@@ -14,48 +14,41 @@
  * limitations under the License.
  ***************************************************************************/
 
-import MuiSelect, { Option } from './shared/Select'
+import MuiSelect, { SelectChangeEvent } from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
 import { useEffect, useState } from 'react'
+import clsx from 'clsx'
+import styles from './Select.module.less'
+
+import Icon from '../../view/icon'
+
+export interface Option {
+  value: string
+  label: string
+}
 
 interface Props {
-  schema?: any
+  options: Array<Option>
+  onChange: (value: string) => void
   className?: string
   value?: string
-  onChange: (any) => void
-  singleSelect?: boolean
+  multiple?: boolean
   disabled?: boolean
-  options?: Array<Option>
 }
 
-const getOptions = (schema): Array<Option> => {
-  return schema.enum.reduce((options, value, index) => {
-    options.push({
-      value,
-      label: schema?.enumNames?.[index] || value
-    })
-
-    return options
-  }, [])
-}
+const ChevronIcon = ({ className }) => (
+  <Icon name="chevron" className={clsx(className, styles.chevronIcon)} />
+)
 
 const Select = ({
-  schema,
   className,
   value,
   onChange,
-  singleSelect,
+  multiple = false,
   disabled,
-  options: selectOptions
+  options
 }: Props) => {
-  const [currentValue, setCurrentValue] = useState<any>()
-  const [options, setOptions] = useState<Array<any>>([])
-
-  useEffect(() => {
-    if (selectOptions === undefined) {
-      return setOptions(getOptions(schema))
-    }
-    setOptions(selectOptions)
-  }, [schema, selectOptions])
+  const [currentValue, setCurrentValue] = useState<Option>()
 
   useEffect(() => {
     let option
@@ -65,15 +58,33 @@ const Select = ({
     return setCurrentValue(option)
   }, [options, value])
 
+  const handleChange = (event: SelectChangeEvent) => {
+    onChange(event.target.value)
+  }
+
   return (
     <MuiSelect
-      onChange={onChange}
-      options={options}
+      className={clsx(styles.selectContainer, className)}
       value={currentValue?.value ?? ''}
-      singleSelect={singleSelect}
+      onChange={handleChange}
+      multiple={multiple}
       disabled={disabled}
-      className={className}
-    />
+      MenuProps={{ className: styles.dropdownList }}
+      IconComponent={ChevronIcon}
+    >
+      {options &&
+        options.map((option) => {
+          return (
+            <MenuItem
+              value={option.value}
+              key={option.value}
+              disableRipple={true}
+            >
+              {option.label}
+            </MenuItem>
+          )
+        })}
+    </MuiSelect>
   )
 }
 

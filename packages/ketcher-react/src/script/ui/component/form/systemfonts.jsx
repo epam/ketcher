@@ -89,7 +89,7 @@ function SystemFonts(props) {
     <Select
       onChange={onChangeCallback}
       value={value}
-      disabled={availableFonts == null}
+      disabled={availableFonts === null}
       options={availableFonts}
     />
   )

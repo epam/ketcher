@@ -19,7 +19,7 @@ import initTmplLib, { initLib } from './init-lib'
 import { MolSerializer } from 'ketcher-core'
 import { omit } from 'lodash/fp'
 import { openDialog } from '../modal'
-import { storage } from '../../storage-ext'
+// import { storage } from '../../storage-ext'
 
 export { initTmplLib }
 
@@ -131,14 +131,14 @@ export function saveUserTmpl(struct) {
 
 function updateLocalStore(lib) {
   const molSerializer = new MolSerializer()
+  const { storage } = window.ketcher
   const userLib = lib
     .filter((item) => item.props.group === 'User Templates')
     .map((item) => ({
       struct: molSerializer.serialize(item.struct),
       props: Object.assign({}, omit(['group'], item.props))
     }))
-
-  storage.setItem('ketcher-tmpls', userLib)
+  storage.set(userLib, 'ketcher-tmpls')
 }
 
 /* REDUCER */

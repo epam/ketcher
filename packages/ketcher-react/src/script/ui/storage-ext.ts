@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
+import { StorageProvider } from 'ketcher-core/src/domain/services/storage'
 /* local storage */
-export const storage = {
+export const storage: StorageProvider = {
   warningMessage:
     'Your changes will be lost after the tab closing. See Help (Note 2).',
   isAvailable() {
@@ -26,24 +26,28 @@ export const storage = {
       return false
     }
   },
-  getItem(key) {
-    let item = null
+  get(key) {
+    let item: any
+    let parsedItem: any
     try {
-      item = JSON.parse(localStorage.getItem(key))
-    } catch (ex) {
+      item = localStorage.getItem(key)
+      parsedItem = item && JSON.parse(item)
+    } catch (ex: any) {
       console.info('LocalStorage:', ex.name)
     }
-    return item
+    return parsedItem
+    // return Promise.resolve(parsedItem)
   },
-  setItem(key, data) {
-    let isSet = null
+  set(data, key) {
+    let isSet: boolean
     try {
       localStorage.setItem(key, JSON.stringify(data))
       isSet = true
-    } catch (ex) {
+    } catch (ex: any) {
       console.info('LocalStorage:', ex.name)
       isSet = false
     }
     return isSet
+    // return Promise.resolve(isSet)
   }
 }

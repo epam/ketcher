@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 export interface StorageProvider {
-  set: (newSettings: Record<string, any>) => Promise<any>
-  get: () => Promise<any>
+  set: (data: Record<string, any>, key?: any) => any // replace with promise
+  get: (key?: any) => any // replace with promise
+  isAvailable?: () => any
+  warningMessage?: string
 }

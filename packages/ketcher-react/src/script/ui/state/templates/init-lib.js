@@ -17,7 +17,7 @@
 import { MolSerializer, SdfSerializer } from 'ketcher-core'
 
 import { appUpdate } from '../options'
-import { storage } from '../../storage-ext'
+// import { storage } from '../../storage-ext'
 
 export function initLib(lib) {
   return {
@@ -55,7 +55,8 @@ const deserializeSdfTemplates = (baseUrl, cacheEl, fileName) => {
 }
 
 function userTmpls() {
-  const userLib = storage.getItem('ketcher-tmpls')
+  const { storage } = window.ketcher
+  const userLib = storage.get('ketcher-tmpls')
   if (!Array.isArray(userLib) || userLib.length === 0) return []
   const molSerializer = new MolSerializer()
   return userLib

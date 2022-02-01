@@ -57,10 +57,11 @@ export const initOptionsState = {
     fragment: false,
     version: null
   },
-  settings: Object.assign(
-    getDefaultOptions(),
-    validation(storage.getItem('ketcher-opts'))
-  ),
+  settings: getDefaultOptions(),
+  // Object.assign(
+  // validation(window.ketcher.storage.get('ketcher-opts'))
+  // validation(storage.get('ketcher-opts'))
+  // )
   getServerSettings() {
     return pick(SERVER_OPTIONS, this.settings)
   }
@@ -75,8 +76,8 @@ export function appUpdate(data) {
 
 /* SETTINGS */
 export function saveSettings(newSettings) {
-  const ketcher = window.ketcher
-  ketcher.storage.set(newSettings).then(console.log)
+  const { storage } = window.ketcher
+  storage.set(newSettings, 'ketcher-opts')
   // storage.setItem('ketcher-opts', newSettings)
   return {
     type: 'SAVE_SETTINGS',

@@ -27,6 +27,7 @@ import { pick } from 'lodash/fp'
 import requestReducer from './request'
 import thunk from 'redux-thunk'
 import toolbarReducer from './toolbar'
+import { validation } from '../data/schema/options-schema'
 
 export { onAction, load }
 
@@ -73,17 +74,22 @@ function getRootReducer(setEditor) {
 }
 
 export default function (options, server, setEditor) {
-  const { buttons = {}, ...restOptions } = options
+  const { buttons = {}, storage, ...restOptions } = options
 
   // TODO: redux localStorage here
   const initState = {
     actionState: null,
     editor: null,
     modal: null,
-    options: Object.assign(initOptionsState, {
+    options: {
+      ...initOptionsState,
+      settings: {
+        ...initOptionsState.settings,
+        ...validation(storage.get('ketcher-opts'))
+      },
       app: restOptions,
       buttons
-    }),
+    },
     server: server || Promise.reject(new Error('Standalone mode!')),
     templates: initTmplsState
   }

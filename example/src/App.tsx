@@ -63,20 +63,23 @@ const App = () => {
           ;(global as any).ketcher = ketcher
         }}
         storage={{
-          set: (settings) => {
-            return new Promise((resolve) => {
-              setTimeout(() => {
-                ;(window as any).settings = settings
-                resolve((window as any).settings)
-              }, 1000)
-            })
+          set: (data, key) => {
+            ;(window as any)[key] = data
+            // return new Promise((resolve) => {
+            //   setTimeout(() => {
+            //     ;(window as any)[key] = data
+            //     resolve((window as any).settings)
+            //   }, 1000)
+            // })
           },
-          get: () =>
-            new Promise((resolve) => {
-              setTimeout(() => {
-                resolve((window as any).settings)
-              }, 1000)
-            })
+          get: (key) => (window as any)[key],
+          // new Promise((resolve) => {
+          //   setTimeout(() => {
+          //     resolve((window as any).settings)
+          //   }, 1000)
+          // })
+          isAvailable: () => true,
+          warningMessage: 'Hello from custom storage'
         }}
       />
       {polymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}

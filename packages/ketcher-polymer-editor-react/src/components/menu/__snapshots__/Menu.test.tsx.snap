@@ -6,10 +6,10 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-e2qc4g"
+        class="css-10qeqvw"
       >
         <li
-          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
           role="menuitem"
           tabindex="-1"
         >
@@ -23,10 +23,10 @@ Object {
         </li>
       </div>
       <div
-        class="css-e2qc4g"
+        class="css-10qeqvw"
       >
         <li
-          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
           role="menuitem"
           tabindex="-1"
         >
@@ -45,7 +45,7 @@ Object {
             class="css-5su45f"
           >
             <li
-              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-d1kvip-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
               role="menuitem"
               tabindex="-1"
             >
@@ -58,9 +58,7 @@ Object {
               />
             </li>
             <div
-              class="css-x98vg5"
-              data-testid="submenu-dropdown"
-              role="button"
+              class="css-clax1l"
             >
               <icon-dropdown.svg
                 fill="#525252"
@@ -76,7 +74,7 @@ Object {
             class="css-5su45f"
           >
             <li
-              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
               role="menuitem"
               tabindex="-1"
             >
@@ -90,8 +88,6 @@ Object {
             </li>
             <div
               class="css-clax1l"
-              data-testid="submenu-dropdown"
-              role="button"
             >
               <icon-dropdown.svg
                 fill="#525252"
@@ -107,7 +103,7 @@ Object {
             class="css-5su45f"
           >
             <li
-              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
               role="menuitem"
               tabindex="-1"
             >
@@ -121,8 +117,6 @@ Object {
             </li>
             <div
               class="css-clax1l"
-              data-testid="submenu-dropdown"
-              role="button"
             >
               <icon-dropdown.svg
                 fill="#525252"
@@ -136,10 +130,10 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="css-e2qc4g"
+      class="css-10qeqvw"
     >
       <li
-        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
         role="menuitem"
         tabindex="-1"
       >
@@ -153,10 +147,10 @@ Object {
       </li>
     </div>
     <div
-      class="css-e2qc4g"
+      class="css-10qeqvw"
     >
       <li
-        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
         role="menuitem"
         tabindex="-1"
       >
@@ -175,7 +169,7 @@ Object {
           class="css-5su45f"
         >
           <li
-            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-d1kvip-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
             role="menuitem"
             tabindex="-1"
           >
@@ -188,9 +182,7 @@ Object {
             />
           </li>
           <div
-            class="css-x98vg5"
-            data-testid="submenu-dropdown"
-            role="button"
+            class="css-clax1l"
           >
             <icon-dropdown.svg
               fill="#525252"
@@ -206,7 +198,7 @@ Object {
           class="css-5su45f"
         >
           <li
-            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
             role="menuitem"
             tabindex="-1"
           >
@@ -220,8 +212,6 @@ Object {
           </li>
           <div
             class="css-clax1l"
-            data-testid="submenu-dropdown"
-            role="button"
           >
             <icon-dropdown.svg
               fill="#525252"
@@ -237,7 +227,7 @@ Object {
           class="css-5su45f"
         >
           <li
-            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-1pgmnef-MuiButtonBase-root-MuiMenuItem-root-CustomMenuItem"
+            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
             role="menuitem"
             tabindex="-1"
           >
@@ -251,8 +241,6 @@ Object {
           </li>
           <div
             class="css-clax1l"
-            data-testid="submenu-dropdown"
-            role="button"
           >
             <icon-dropdown.svg
               fill="#525252"

@@ -26,6 +26,9 @@ export default (theme) =>
       color: theme.color.text.primary,
       boxSizing: 'border-box'
     },
+    div: {
+      boxSizing: 'border-box'
+    },
     h1: {
       fontSize: 96
     },

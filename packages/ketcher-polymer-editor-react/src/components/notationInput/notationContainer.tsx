@@ -16,7 +16,7 @@
 
 import { useState } from 'react'
 
-import { NotationInput } from '.'
+import { NotationInput } from './notationInput'
 
 // @TODO don't use this component when business logic is ready
 // This is a component for demonstration of NotationInput with mock data

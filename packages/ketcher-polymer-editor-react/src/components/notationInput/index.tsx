@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { NotationInput } from './notationInput'
+export { NotationContainer as NotationInput } from './notationContainer'

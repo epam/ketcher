@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 import { Icon } from 'components/shared/ui/icon'
-import { MenuItemVariant } from 'components/menu/menu.types'
-import { useContext } from 'react'
-import { MenuContext } from 'components/menu'
 import { MenuItem as MuiMenuItem } from '@mui/material'
-import { css, useTheme } from '@emotion/react'
+import { css } from '@emotion/react'
+import { useMenuContext } from '../../../hooks/useMenuContext'
+import { useAppTheme } from 'hooks'
+import { useCallback } from 'react'
 
-const CustomMenuItem = ({ isActive, onClick, children }) => {
-  const theme = useTheme()
+const StyledMenuButton = ({ isActive, onClick, children }) => {
+  const theme = useAppTheme()
   const styles = css`
     display: flex;
     align-items: center;
@@ -54,19 +54,20 @@ const CustomMenuItem = ({ isActive, onClick, children }) => {
 }
 
 type MenuItemProp = {
-  itemKey: MenuItemVariant
+  itemId: string
 }
 
-const MenuItem = ({ itemKey }: MenuItemProp) => {
-  const { isActiveItem, itemClickHandler } = useContext(MenuContext)
+const MenuItem = ({ itemId }: MenuItemProp) => {
+  const { isActive, activate } = useMenuContext()
+
+  const onClickCallback = useCallback(() => {
+    activate(itemId)
+  }, [activate, itemId])
 
   return (
-    <CustomMenuItem
-      isActive={isActiveItem(itemKey)}
-      onClick={() => itemClickHandler(itemKey)}
-    >
-      <Icon name={itemKey} />
-    </CustomMenuItem>
+    <StyledMenuButton isActive={isActive(itemId)} onClick={onClickCallback}>
+      <Icon name={itemId} />
+    </StyledMenuButton>
   )
 }
 

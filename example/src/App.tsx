@@ -1,4 +1,3 @@
-import 'miew/dist/Miew.min.css'
 import 'ketcher-react/dist/index.css'
 
 import { ButtonsConfig, Editor } from 'ketcher-react'
@@ -8,7 +7,6 @@ import { Editor as PolymerEditor } from 'ketcher-polymer-editor-react'
 import { ErrorModal } from './ErrorModal'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import Miew from 'miew'
 import { PolymerToggler } from './PolymerToggler'
 import { useState } from 'react'
 
@@ -24,8 +22,6 @@ const getHiddenButtonsConfig = (): ButtonsConfig => {
     return acc
   }, {})
 }
-
-;(global as any).Miew = Miew
 
 let structServiceProvider: any = new RemoteStructServiceProvider(
   process.env.API_PATH || process.env.REACT_APP_API_PATH!

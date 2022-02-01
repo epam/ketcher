@@ -16,7 +16,7 @@
 
 import { Generics } from 'ketcher-core'
 
-import GenGroup from './components'
+import { GenGroup } from './GenGroup'
 import classes from './GenericGroups.module.less'
 
 type GenericGroupsProps = {

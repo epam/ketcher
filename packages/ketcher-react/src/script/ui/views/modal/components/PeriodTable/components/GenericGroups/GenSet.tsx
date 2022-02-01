@@ -17,7 +17,7 @@
 import clsx from 'clsx'
 
 import classes from './GenSet.module.less'
-import type { ItemSet } from '../../GenericTypes'
+import type { ItemSet } from './GenericTypes'
 
 type GenSetProps = {
   labels: ItemSet[]
@@ -58,4 +58,4 @@ function GenSet({ labels, selected, onSelect, className }: GenSetProps) {
   )
 }
 
-export default GenSet
+export { GenSet }

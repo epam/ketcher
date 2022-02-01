@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BoxWithLines } from './components/BoxWithLines'
-import GenSet from './components'
+import { BoxWithLines } from './BoxWithLines'
+import { GenSet } from './GenSet'
 import styles from './GenGroup.module.less'
 
-import type { GenericsType } from '../GenericTypes'
+import type { GenericsType } from './GenericTypes'
 
 type GenProps = {
   groups: GenericsType
@@ -73,4 +73,4 @@ const GenGroup = ({
   )
 }
 
-export default GenGroup
+export { GenGroup }

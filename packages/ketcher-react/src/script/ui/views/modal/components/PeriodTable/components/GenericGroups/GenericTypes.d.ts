@@ -14,23 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Generics } from 'ketcher-core'
-
-import GenGroup from './components'
-import classes from './GenericGroups.module.less'
-
-type GenericGroupsProps = {
-  className: string
-  selected: (label: string) => boolean
-  onSelect: (label: string) => void
+export type Item = {
+  label: string
+  description?: string
 }
 
-function GenericGroups({ selected, onSelect, className }: GenericGroupsProps) {
-  return (
-    <div className={classes[className]}>
-      <GenGroup groups={Generics} selected={selected} onSelect={onSelect} />
-    </div>
-  )
+export type ItemSet = {
+  items: Item[]
+  displayName?: string
 }
 
-export default GenericGroups
+export type GenGroup = {
+  itemSets: ItemSet[]
+  title: string
+}
+
+export type GenericsType = {
+  [index: string]: GenGroup & { subGroups?: GenericsType }
+}

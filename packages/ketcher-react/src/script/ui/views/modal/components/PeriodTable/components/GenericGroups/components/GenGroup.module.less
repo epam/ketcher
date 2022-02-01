@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import "./src/style/variables";
+@import './src/style/variables';
 
 .fieldset {
   border: none;
@@ -29,15 +29,6 @@
     margin-bottom: 8px;
     margin-left: 2px;
     width: 100%;
-
-    &::after {
-      content: '';
-      display: block;
-      border: 1px solid @color-divider;
-      width: 100%;
-      margin-top: 7px;
-      margin-left: -2px;
-    }
 
     & + fieldset {
       margin-left: 2px;
@@ -70,17 +61,15 @@
     clear: both;
     margin-right: 0.4em;
   }
-
 }
 
-.acyclic,
-.cyclic {
-  padding-left: 40px;
-  width: calc(100% - 40px);
+// .acyclic,
+// .cyclic {
+//   padding-left: 40px;
+//   width: calc(100% - 40px);
 
-  > .fieldset {
-    padding-left: 40px;
-    width: calc(100% - 40px);
-  }
-}
-
+//   > .fieldset {
+//     padding-left: 40px;
+//     width: calc(100% - 40px);
+//   }
+// }

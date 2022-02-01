@@ -14,70 +14,168 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const Generics = {
-  atom: {
-    any: {
-      labels: ['A', 'AH']
-    },
-    'no-carbon': {
-      labels: ['Q', 'QH']
-    },
-    metal: {
-      labels: ['M', 'MH']
-    },
-    halogen: {
-      labels: ['X', 'XH']
-    }
+export type Item = {
+  label: string
+  description?: string
+}
+
+export type ItemSet = {
+  items: Item[]
+  displayName?: string
+}
+
+export type GenGroup = {
+  itemSets: ItemSet[]
+  title: string
+}
+
+export type GenericsType = {
+  [index: string]: GenGroup & { subGroups?: GenericsType }
+}
+
+export const Generics: GenericsType = {
+  'atoms-gen': {
+    title: 'Atom Generics',
+    itemSets: [
+      { displayName: 'any atom', items: [{ label: 'A' }, { label: 'AH' }] },
+      {
+        displayName: 'except C or H',
+        items: [{ label: 'Q' }, { label: 'QH' }]
+      },
+      { displayName: 'any metal', items: [{ label: 'M' }, { label: 'MH' }] },
+      { displayName: 'any halogen', items: [{ label: 'X' }, { label: 'XH' }] }
+    ]
   },
-  group: {
-    labels: ['G', 'GH', 'G*', 'GH*'],
-    acyclic: {
-      labels: ['ACY', 'ACH'],
-      carbo: {
-        labels: ['ABC', 'ABH'],
-        alkynyl: {
-          labels: ['AYL', 'AYH']
-        },
-        alkyl: {
-          labels: ['ALK', 'ALH']
-        },
-        alkenyl: {
-          labels: ['AEL', 'AEH']
+  'special-nodes': {
+    title: 'Special Nodes',
+    itemSets: [
+      {
+        items: [
+          { label: 'H+' },
+          { label: 'D' },
+          { label: 'T' },
+          { label: 'T' },
+          { label: 'R' },
+          { label: 'Pol' }
+        ]
+      }
+    ]
+  },
+
+  'group-gen': {
+    title: 'Group Generics',
+    itemSets: [
+      {
+        items: [
+          {
+            label: 'G'
+          },
+          {
+            label: 'GH'
+          }
+        ]
+      },
+      {
+        items: [
+          {
+            label: 'G*'
+          },
+          {
+            label: 'GH*'
+          }
+        ]
+      }
+    ],
+    subGroups: {
+      'group-acyclic': {
+        title: 'Acyclic',
+        itemSets: [{ items: [{ label: 'ACY' }, { label: 'ACH' }] }],
+        subGroups: {
+          'acyclic-carbo': {
+            title: 'Acyclic Carbo',
+            itemSets: [
+              { items: [{ label: 'ABC' }, { label: 'ABH' }] },
+              {
+                displayName: 'alkynyl',
+                items: [{ label: 'AYL' }, { label: 'AYH' }]
+              },
+              {
+                displayName: 'alkyl',
+                items: [{ label: 'ALK' }, { label: 'ALH' }]
+              },
+              {
+                displayName: 'alkenyl',
+                items: [{ label: 'AEL' }, { label: 'AEH' }]
+              }
+            ]
+          },
+          'acyclic-hetero': {
+            title: 'Acyclic Hetero',
+            itemSets: [
+              { items: [{ label: 'AHC' }, { label: 'AHH' }] },
+              { items: [{ label: 'AOX' }, { label: 'AOH' }] }
+            ]
+          }
         }
       },
-      hetero: {
-        labels: ['AHC', 'AHH'],
-        alkoxy: {
-          labels: ['AOX', 'AOH']
+      'group-cyclic': {
+        title: 'Cyclic',
+        itemSets: [
+          { items: [{ label: 'CYC' }, { label: 'CYH' }] },
+          {
+            displayName: 'no carbon',
+            items: [{ label: 'CXX' }, { label: 'CXH' }]
+          }
+        ],
+        subGroups: {
+          'cyclic-carbo': {
+            title: 'Cyclic Carbo',
+            itemSets: [
+              { items: [{ label: 'CBC' }, { label: 'CBH' }] },
+              {
+                displayName: 'atyl',
+                items: [{ label: 'ARY' }, { label: 'ARH' }]
+              },
+              {
+                displayName: 'cycloalkyl',
+                items: [{ label: 'CAL' }, { label: 'CAH' }]
+              },
+              {
+                displayName: 'cycloalkenyl',
+                items: [{ label: 'CEL' }, { label: 'CEH' }]
+              }
+            ]
+          },
+          'cyclic-hetero': {
+            title: 'Cyclic Hetero',
+            itemSets: [
+              { items: [{ label: 'CHC' }, { label: 'CHH' }] },
+              {
+                displayName: 'hetero aryl',
+                items: [{ label: 'HAR' }, { label: 'HAH' }]
+              }
+            ]
+          }
         }
       }
-    },
-    cyclic: {
-      labels: ['CYC', 'CYH'],
-      'no-carbon': {
-        labels: ['CXX', 'CXH']
-      },
-      carbo: {
-        labels: ['CBC', 'CBH'],
-        aryl: {
-          labels: ['ARY', 'ARH']
-        },
-        cycloalkyl: {
-          labels: ['CAL', 'CAH']
-        },
-        cycloalkenyl: {
-          labels: ['CEL', 'CEH']
-        }
-      },
-      hetero: {
-        labels: ['CHC', 'CHH'],
-        aryl: {
-          labels: ['HAR', 'HAH']
-        }
-      }
     }
   },
-  special: {
-    labels: ['H+', 'D', 'T', 'R', 'Pol']
+  'group-gene': {
+    itemSets: [
+      {
+        items: [
+          {
+            label: 'G'
+          },
+          {
+            label: 'GH'
+          },
+          {
+            label: 'aw'
+          }
+        ]
+      }
+    ],
+    title: 'Some other group'
   }
-} as const
+}

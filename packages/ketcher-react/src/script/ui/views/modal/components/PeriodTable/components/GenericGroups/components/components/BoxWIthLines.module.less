@@ -14,23 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Generics } from 'ketcher-core'
+@import 'src/style/variables';
 
-import GenGroup from './components'
-import classes from './GenericGroups.module.less'
+.nodeLines {
+  padding-left: 20px;
+  width: 20px;
+  display: flex;
+  flex-direction: column;
 
-type GenericGroupsProps = {
-  className: string
-  selected: (label: string) => boolean
-  onSelect: (label: string) => void
+  .upperLines {
+    margin-top: -10px;
+    padding-top: 10px;
+    height: 40px;
+    border-left: 1px solid @color-divider;
+    border-bottom: 1px solid @color-divider;
+  }
+
+  .lowerLine {
+    height: calc(100% - 40px);
+    border-left: 1px solid @color-divider;
+  }
 }
-
-function GenericGroups({ selected, onSelect, className }: GenericGroupsProps) {
-  return (
-    <div className={classes[className]}>
-      <GenGroup groups={Generics} selected={selected} onSelect={onSelect} />
-    </div>
-  )
-}
-
-export default GenericGroups

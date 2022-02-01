@@ -14,41 +14,47 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from './GenSet.module.less'
 import clsx from 'clsx'
 
+import classes from './GenSet.module.less'
+import type { ItemSet } from '../../GenericTypes'
+
 type GenSetProps = {
-  labels: string[]
+  labels: ItemSet[]
   selected: (label: string) => boolean
   onSelect: (label: string) => void
-  caption?: string
   className?: string
 }
 
-function GenSet({
-  labels,
-  caption = '',
-  selected,
-  onSelect,
-  className
-}: GenSetProps) {
+function GenSet({ labels, selected, onSelect, className }: GenSetProps) {
   return (
-    <fieldset className={className}>
-      {labels.map((label, index) => (
-        <button
-          key={index}
-          onClick={() => onSelect(label)}
-          className={clsx(
-            {
-              [classes.selected]: selected(label)
-            },
-            classes.button
-          )}>
-          {label}
-        </button>
-      ))}
-      {caption ? <legend>{caption}</legend> : null}
-    </fieldset>
+    <>
+      {labels.map((item, index) => {
+        const buttons = item.items
+        const caption = item.displayName
+
+        return (
+          <fieldset className={className} key={index}>
+            {buttons.map((button, index) => (
+              <button
+                key={index}
+                onClick={() => onSelect(button.label)}
+                title={button.description || button.label}
+                className={clsx(
+                  {
+                    [classes.selected]: selected(button.label)
+                  },
+                  classes.button
+                )}
+              >
+                {button.label}
+              </button>
+            ))}
+            {caption ? <legend>{caption}</legend> : null}
+          </fieldset>
+        )
+      })}
+    </>
   )
 }
 

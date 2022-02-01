@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Provider } from 'react-redux'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Global } from '@emotion/react'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 
@@ -29,6 +29,8 @@ import { Menu } from 'components/menu'
 import { selectTool } from 'state/common'
 import { useAppDispatch } from 'hooks'
 import { Logo } from 'components/Logo'
+import { ActionButton } from 'components/shared/ui/actionButton'
+import { DummyDialog } from 'components/dummyDialog/DummyDialog'
 
 const theme = createTheme(defaultTheme)
 
@@ -39,6 +41,8 @@ interface EditorProps {
 function Editor(props: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
   const { onInit } = props
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     onInit?.()
@@ -67,6 +71,19 @@ function Editor(props: EditorProps) {
           </Layout>
 
           <Logo />
+
+          <div style={{ position: 'absolute', bottom: 5, right: 0 }}>
+            <ActionButton
+              label="Show dummy modal dialog"
+              clickHandler={() => {
+                setIsModalOpen(true)
+              }}
+            />
+            <DummyDialog
+              isModalOpen={isModalOpen}
+              setIsModalOpen={setIsModalOpen}
+            />
+          </div>
         </div>
       </ThemeProvider>
     </Provider>

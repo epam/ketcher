@@ -62,10 +62,21 @@ const App = () => {
         onInit={(ketcher: Ketcher) => {
           ;(global as any).ketcher = ketcher
         }}
-        customStorage={{
+        storage={{
           set: (settings) => {
-            ;(window as any).settings = settings
-          }
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                ;(window as any).settings = settings
+                resolve((window as any).settings)
+              }, 1000)
+            })
+          },
+          get: () =>
+            new Promise((resolve) => {
+              setTimeout(() => {
+                resolve((window as any).settings)
+              }, 1000)
+            })
         }}
       />
       {polymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}

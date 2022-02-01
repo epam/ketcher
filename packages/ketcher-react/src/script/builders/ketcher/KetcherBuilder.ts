@@ -26,20 +26,21 @@ import { ButtonsConfig } from './ButtonsConfig'
 import { Editor } from '../../editor'
 import createApi from '../../api'
 import { initApp } from '../../ui'
+import { StorageProvider } from 'ketcher-core/src/domain/services/storage'
 
 class KetcherBuilder {
   private structService: StructService | null
   private editor: Editor | null
   private serviceMode: ServiceMode | null
   private formatterFactory: FormatterFactory | null
-  customStorage: any
+  storage: any
 
   constructor() {
     this.structService = null
     this.editor = null
     this.serviceMode = null
     this.formatterFactory = null
-    this.customStorage = null
+    this.storage = null
   }
 
   async appendApiAsync(structServiceProvider: StructServiceProvider) {
@@ -54,6 +55,10 @@ class KetcherBuilder {
 
   appendServiceMode(mode: ServiceMode) {
     this.serviceMode = mode
+  }
+
+  appendStorage(storage: StorageProvider | undefined) {
+    this.storage = storage
   }
 
   async appendUiAsync(
@@ -107,9 +112,9 @@ class KetcherBuilder {
     const ketcher = new Ketcher(
       this.editor!,
       this.structService,
-      this.formatterFactory
+      this.formatterFactory,
+      this.storage
     )
-    ketcher.customStorage = this.customStorage
     ketcher[this.serviceMode] = true
 
     const params = new URLSearchParams(document.location.search)

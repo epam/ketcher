@@ -16,5 +16,5 @@
 
 export interface StorageProvider {
   set: (newSettings: Record<string, any>) => Promise<any>
-  get: () => Record<string, any>
+  get: () => Promise<any>
 }

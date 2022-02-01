@@ -76,7 +76,7 @@ export function appUpdate(data) {
 /* SETTINGS */
 export function saveSettings(newSettings) {
   const ketcher = window.ketcher
-  ketcher.customStorage.set(newSettings)
+  ketcher.storage.set(newSettings).then(console.log)
   // storage.setItem('ketcher-opts', newSettings)
   return {
     type: 'SAVE_SETTINGS',

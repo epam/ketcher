@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { ButtonsConfig, KetcherBuilder } from './builders'
-import { storage as localStorage } from '../script/ui/storage-ext'
+// import { storage as defaultStorage } from '../script/ui/storage-ext'
 
 import { StructServiceProvider } from 'ketcher-core'
 import { StorageProvider } from 'ketcher-core/src/domain/services/storage'
@@ -26,7 +26,7 @@ interface Config {
   structServiceProvider: StructServiceProvider
   buttons?: ButtonsConfig
   errorHandler: (message: string) => void
-  customStorage?: StorageProvider
+  storage?: StorageProvider
 }
 
 async function buildKetcherAsync({
@@ -35,10 +35,9 @@ async function buildKetcherAsync({
   structServiceProvider,
   buttons,
   errorHandler,
-  customStorage
+  storage
 }: Config) {
   const builder = new KetcherBuilder()
-
   await builder.appendApiAsync(structServiceProvider)
   builder.appendServiceMode(structServiceProvider.mode)
   await builder.appendUiAsync(
@@ -47,7 +46,8 @@ async function buildKetcherAsync({
     errorHandler,
     buttons
   )
-  builder.customStorage = customStorage || localStorage
+  // builder.appendStorage(storage || defaultStorage)
+  builder.appendStorage(storage)
 
   return builder.build()
 }

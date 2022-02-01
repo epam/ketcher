@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import { render, screen } from 'test-utils'
-import { Modal } from '.'
 import userEvent from '@testing-library/user-event'
+import { Modal } from '.'
 
 const mockOnCloseHandler = jest.fn()
 
@@ -29,6 +29,10 @@ const mockModal = () => {
 }
 
 describe('Modal component', () => {
+  it('should render correctly', () => {
+    expect(render(mockModal())).toMatchSnapshot()
+  })
+
   it('should render with passed title', () => {
     render(mockModal())
     expect(screen.getByText('title')).toBeInTheDocument()

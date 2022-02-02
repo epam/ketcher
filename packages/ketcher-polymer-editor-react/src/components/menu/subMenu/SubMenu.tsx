@@ -52,7 +52,9 @@ const DropDown = styled.div<DropDownProps>`
 
   > svg path {
     fill: ${({ isActive, theme }) =>
-      isActive ? theme.color.icon.clicked : theme.color.icon.activeMenu};
+      isActive
+        ? theme.ketcher.color.icon.clicked
+        : theme.ketcher.color.icon.activeMenu};
   }
 `
 

@@ -18,7 +18,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 
-import { scrollbarThin } from 'styles/mixins'
+import { scrollbarThin } from 'theming/mixins'
 
 const lineHeight = 16
 const inputFieldWidth = 355
@@ -70,12 +70,12 @@ const Ellipsis = styled('span')<{ shouldDisplay: boolean }>`
           display: inline-block;
           position: absolute;
           right: 0;
-          font-size: ${theme.font.size.medium};
+          font-size: ${theme.ketcher.font.size.medium};
           line-height: ${lineHeight}px;
           padding-left: 3px;
           padding-right: ${inputPadding}px;
-          background-color: ${theme.color.background.primary};
-          box-shadow: -3px 0 5px 2px ${theme.color.background.primary};
+          background-color: ${theme.ketcher.color.background.primary};
+          box-shadow: -3px 0 5px 2px ${theme.ketcher.color.background.primary};
         `
       : `display: none`}
 `

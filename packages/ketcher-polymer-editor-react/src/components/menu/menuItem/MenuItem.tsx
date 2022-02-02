@@ -15,13 +15,12 @@
  ***************************************************************************/
 import { Icon } from 'components/shared/ui/icon'
 import { MenuItem as MuiMenuItem } from '@mui/material'
-import { css } from '@emotion/react'
+import { css, useTheme } from '@emotion/react'
 import { useMenuContext } from '../../../hooks/useMenuContext'
-import { useAppTheme } from 'hooks'
 import { useCallback } from 'react'
 
 const StyledMenuButton = ({ isActive, onClick, children }) => {
-  const theme = useAppTheme()
+  const theme = useTheme()
   const styles = css`
     display: flex;
     align-items: center;
@@ -31,19 +30,19 @@ const StyledMenuButton = ({ isActive, onClick, children }) => {
     justify-content: center;
     border-radius: 2px;
     background-color: ${isActive
-      ? theme.color.icon.activeMenu
-      : theme.color.background.primary};
+      ? theme.ketcher.color.icon.activeMenu
+      : theme.ketcher.color.background.primary};
 
     &:hover {
       background: ${isActive
-        ? theme.color.icon.activeMenu
-        : theme.color.background.primary};
+        ? theme.ketcher.color.icon.activeMenu
+        : theme.ketcher.color.background.primary};
     }
 
     & > svg path {
       fill: ${isActive
-        ? theme.color.icon.clicked
-        : theme.color.icon.activeMenu};
+        ? theme.ketcher.color.icon.clicked
+        : theme.ketcher.color.icon.activeMenu};
     }
   `
   return (

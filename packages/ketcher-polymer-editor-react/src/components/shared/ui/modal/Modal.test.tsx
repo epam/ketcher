@@ -22,7 +22,7 @@ const mockOnCloseHandler = jest.fn()
 
 const mockModal = () => {
   return (
-    <Modal title="title" isModalOpen={true} onCloseHandler={mockOnCloseHandler}>
+    <Modal title="title" isOpen={true} onClose={mockOnCloseHandler}>
       <Modal.Content>Content</Modal.Content>
     </Modal>
   )
@@ -54,7 +54,7 @@ describe('Modal component', () => {
 
   it('should not render close icon if showCloseButton prop set to false', () => {
     render(
-      <Modal title="title" isModalOpen={true} showCloseButton={false}>
+      <Modal title="title" isOpen={true} showCloseButton={false}>
         <Modal.Content>Content</Modal.Content>
       </Modal>
     )

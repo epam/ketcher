@@ -3,21 +3,16 @@ import { Modal } from 'components/shared/ui/modal'
 import { ActionButton } from 'components/shared/ui/actionButton'
 
 export const DummyDialog = ({ isModalOpen, setIsModalOpen }) => {
-  const onCloseHandler = useCallback(() => {
+  const onCloseCallback = useCallback(() => {
     setIsModalOpen(false)
   }, [setIsModalOpen])
 
-  const onOkHandler = useCallback(() => {
-    console.log('OK')
+  const onOkCallback = useCallback(() => {
     setIsModalOpen(false)
   }, [setIsModalOpen])
 
   return (
-    <Modal
-      title="Warning!"
-      isModalOpen={isModalOpen}
-      onCloseHandler={onCloseHandler}
-    >
+    <Modal title="Warning!" isOpen={isModalOpen} onClose={onCloseCallback}>
       <Modal.Content>
         <div>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin at
@@ -57,8 +52,8 @@ export const DummyDialog = ({ isModalOpen, setIsModalOpen }) => {
         </div>
       </Modal.Content>
       <Modal.Footer>
-        <ActionButton label="OK" clickHandler={onOkHandler} />
-        <ActionButton label="Cancel" clickHandler={onCloseHandler} />
+        <ActionButton label="OK" clickHandler={onOkCallback} />
+        <ActionButton label="Cancel" clickHandler={onCloseCallback} />
       </Modal.Footer>
     </Modal>
   )

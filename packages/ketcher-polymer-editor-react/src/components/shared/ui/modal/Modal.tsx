@@ -3,21 +3,20 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
-  useTheme
+  IconButton
 } from '@mui/material'
 import React, { useMemo } from 'react'
-import { Icon } from 'components/shared/ui/icon'
+import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
-
+import { Icon } from 'components/shared/ui/icon'
 import { scrollbarThin } from 'styles/mixins'
 
 interface ModalProps {
   children: JSX.Element | Array<JSX.Element>
   title: string
-  isModalOpen: boolean
+  isOpen: boolean
   showCloseButton?: boolean
-  onCloseHandler?: () => void
+  onClose?: () => void
 }
 
 const Header = styled(DialogTitle)(({ theme }) => ({
@@ -51,11 +50,11 @@ const Footer = styled(DialogActions)({
 type ModalSubcomponent = 'Content' | 'Footer'
 
 export const Modal = ({
+  children,
   title,
-  isModalOpen,
+  isOpen,
   showCloseButton = true,
-  onCloseHandler,
-  children
+  onClose
 }: ModalProps) => {
   const theme = useTheme()
 
@@ -98,15 +97,15 @@ export const Modal = ({
     <Dialog
       BackdropProps={backdropProps}
       PaperProps={paperProps}
-      open={isModalOpen}
+      open={isOpen}
       maxWidth="md"
-      onClose={onCloseHandler}
+      onClose={onClose}
       disableEscapeKeyDown={!showCloseButton}
     >
       <Header>
         <Title>{title}</Title>
         {showCloseButton && (
-          <IconButton title={'Close window'} onClick={onCloseHandler}>
+          <IconButton title={'Close window'} onClick={onClose}>
             <Icon name={'close'} />
           </IconButton>
         )}

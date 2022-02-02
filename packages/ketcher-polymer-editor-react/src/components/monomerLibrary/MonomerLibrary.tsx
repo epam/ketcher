@@ -13,74 +13,141 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import { MonomerItem } from './monomerLibraryItem/MonomerItem'
+import { MonomerItemType } from './monomerLibraryItem/MonomerItem'
 import { Tabs } from 'components/shared/ui/Tabs'
-import { Switcher } from 'components/rna/Switcher'
 import styled from '@emotion/styled'
+import { MonomerSection as rnaMonomerSection } from 'components/rna/MonomerSection'
+import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup'
 
-interface MonomerListPropTypes {
-  list: Array<Record<string, string>>
+export type Group = {
+  groupItems: Array<MonomerItemType>
+  groupTitle?: string
+}
+
+interface MonomerListProps {
+  list: Array<Group>
+  onItemClick: (item) => void
 }
 
 const monomerItemHandleClick = () => {
   console.log('callback for monomer item')
 }
 
-const MonomerLibrary = () => {
-  const MonomerList = (props: MonomerListPropTypes) => {
-    return props.list.map((monomer, key) => {
-      return (
-        <MonomerItem
-          key={key}
-          item={monomer}
-          onClick={monomerItemHandleClick}
-        />
-      )
-    })
-  }
+const MonomerList = ({ list, onItemClick }: MonomerListProps) => {
+  return (
+    <>
+      {list.map(({ groupTitle, groupItems }, key) => {
+        return (
+          <MonomerGroup
+            key={key}
+            title={groupTitle}
+            items={groupItems}
+            onItemClick={onItemClick}
+          />
+        )
+      })}
+    </>
+  )
+}
 
+const MonomerLibrary = () => {
   const tabs = [
     {
       caption: '✩',
-      component: MonomerList,
-      props: { list: [{ name: 'S' }] }
+      component: () => <></>
     },
     {
       caption: 'Peptides',
       component: MonomerList,
-      props: { list: [{ name: 'P' }] }
+      props: {
+        list: [
+          {
+            groupItems: [
+              { label: 'P' },
+              { label: 'vfvv' },
+              { label: 'qswsx' },
+              { label: 'Mesk' }
+            ]
+          }
+        ],
+        onItemClick: monomerItemHandleClick
+      }
     },
     {
       caption: 'RNA',
-      component: Switcher,
+      component: rnaMonomerSection,
       props: {
-        selectedMonomers: ['R', 'A', 'P'],
-        setActiveMonomerType: (type: string) => console.log(type) // replace with actual callback when integrate into parent component
+        rnaMonomers: {
+          Nucleotide: [
+            {
+              groupItems: [
+                { label: 'A', name: 'RAP' },
+                { label: 'C', name: 'RCP' },
+                { label: 'G', name: 'RGP' },
+                { label: 'T', name: 'RTP' },
+                { label: 'U', name: 'RUP' }
+              ],
+              groupTitle: 'Nucleotides'
+            }
+          ],
+          Nucleobase: [
+            {
+              groupItems: [
+                { label: 'A' },
+                { label: '2ldg' },
+                { label: '4skmc' },
+                { label: '7jds' },
+                { label: 'dc' }
+              ],
+              groupTitle: 'A'
+            },
+            {
+              groupItems: [
+                { label: 'C' },
+                { label: '5dvd' },
+                { label: '9dkvj' },
+                { label: 'sd6' },
+                { label: 'dsa' }
+              ],
+              groupTitle: 'C'
+            }
+          ],
+          Sugar: [
+            {
+              groupItems: [
+                { label: 'R' },
+                { label: 'm' },
+                { label: 'd' },
+                { label: 'ar' },
+                { label: 'Ld' }
+              ]
+            }
+          ],
+          Phosphate: [
+            {
+              groupItems: [
+                { label: 'p' },
+                { label: '36dcd' },
+                { label: 'bnn' },
+                { label: 'bp' },
+                { label: 'me' }
+              ]
+            }
+          ]
+        },
+        onItemClick: monomerItemHandleClick
       }
     },
     {
       caption: 'CHEM',
-      component: MonomerList,
-      props: {
-        list: [
-          { name: 'C' },
-          { name: 'H' },
-          { name: 'E' },
-          { name: 'M' },
-          { name: 'C' },
-          { name: 'H' },
-          { name: 'E' },
-          { name: 'M' }
-        ]
-      }
+      component: () => <></>
     }
   ]
 
   const MonomerLibraryContainer = styled.div(({ theme }) => ({
     position: 'absolute',
     right: '0',
-    width: 'fit-content',
+    width: '255px',
     height: '700px',
     backgroundColor: theme.color.background.primary
   }))
@@ -92,4 +159,4 @@ const MonomerLibrary = () => {
   )
 }
 
-export { MonomerLibrary }
+export { MonomerLibrary, MonomerList }

@@ -15,6 +15,7 @@ declare module '@mui/material/styles' {
         secondary: string
         light: string
         dark: string
+        black: string
       }
       tab: {
         regular: string
@@ -43,6 +44,7 @@ declare module '@mui/material/styles' {
           secondary: string
           disabled: string
         }
+        reset: string
       }
       dropdown: {
         primary: string
@@ -74,6 +76,10 @@ declare module '@mui/material/styles' {
         clicked: string
         disabled: string
       }
+      monomer: {
+        default: string
+        adenosine: string
+      }
     }
     font: {
       size: {
@@ -85,6 +91,7 @@ declare module '@mui/material/styles' {
       family: {
         montserrat: string
         inter: string
+        roboto: string
       }
       weight: {
         light: number

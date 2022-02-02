@@ -24,7 +24,8 @@ const color = {
     primary: '#121212',
     secondary: '#BCBCBC',
     light: '#FFFFFF',
-    dark: '#000000'
+    dark: '#5B6077',
+    black: '#000000'
   },
   tab: {
     regular: '#F3F3F3',
@@ -52,7 +53,8 @@ const color = {
       primary: '#FFFFFF',
       secondary: '#005662',
       disabled: '#7A7A7A'
-    }
+    },
+    reset: '#FF2727'
   },
   dropdown: {
     primary: '#333333',
@@ -83,6 +85,10 @@ const color = {
     activeMenu: '#005662',
     clicked: '#FFFFFF',
     disabled: 'rgba(82, 82, 82, 0.4)'
+  },
+  monomer: {
+    default: '#C8C8C8',
+    adenosine: '#A0A0FF'
   }
 }
 
@@ -97,7 +103,8 @@ const font = {
     montserrat: 'Montserrat, sans-serif',
     inter:
       "Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',\n" +
-      'Arial, sans-serif'
+      'Arial, sans-serif',
+    roboto: 'Roboto, Arial, sans-serif'
   },
   weight: {
     light: 300,

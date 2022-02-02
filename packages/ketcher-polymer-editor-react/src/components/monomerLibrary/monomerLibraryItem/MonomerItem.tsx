@@ -13,32 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
 import styled from '@emotion/styled'
+import React from 'react'
 
-interface MonomerItemPropTypes {
-  key: number
-  item: Record<string, string>
+export type MonomerItemType = {
+  label: string
+  name?: string
+  colorScheme?: string
+}
+
+interface MonomerItemProps {
+  item: MonomerItemType
   onClick: () => void
 }
 
-const MonomerItem = (props: MonomerItemPropTypes) => {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  colorScheme?: string
+}
+
+const Card = styled.div<CardProps>`
+  background: ${({ colorScheme, theme }) =>
+    colorScheme
+      ? theme.color.monomer[colorScheme]
+      : theme.color.monomer.default};
+  border-radius: 2px;
+  width: 48px;
+  height: 48px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: ${({ theme }) => theme.font.size.small};
+`
+
+const MonomerItem = (props: MonomerItemProps) => {
   const { item, onClick } = props
 
-  const Card = styled.div(({ theme }) => ({
-    background: theme.color.text.light,
-    border: `1px solid ${theme.color.text.primary}`,
-    borderRadius: '2px',
-    width: '32px',
-    height: '32px',
-    textAlign: 'center',
-    cursor: 'pointer',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  }))
-
-  return <Card onClick={onClick}>{item.name}</Card>
+  return (
+    <Card onClick={onClick} colorScheme={item.colorScheme}>
+      {item.label}
+    </Card>
+  )
 }
 
 export { MonomerItem }

@@ -6,7 +6,7 @@ import { IconNameType } from 'components/shared/ui/icon/icon'
 import { css, useTheme } from '@emotion/react'
 
 type SwitcherProps = {
-  selectedMonomers: [string, string, string]
+  selectedMonomers: string[]
   setActiveMonomerType: (type: string) => void
 }
 
@@ -18,8 +18,8 @@ type RAPButtonProps = {
 
 enum Monomers {
   Nucleotide,
-  Nucleobase,
   Sugar,
+  Nucleobase,
   Phosphate
 }
 
@@ -39,7 +39,7 @@ const RAPButton = ({ isActive, children, callback }: RAPButtonProps) => {
     border-radius: 8px;
     line-height: 18px;
     min-width: 33px;
-    color: ${isActive ? color.text.light : color.text.dark};
+    color: ${isActive ? color.text.light : color.text.black};
     :hover {
       background-color: ${color.button.primary.hover};
       color: ${color.text.light};
@@ -57,6 +57,7 @@ const SwitcherContainer = styled('div')`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 8px 0;
 `
 const SvgContainer = styled('div')`
   display: flex;

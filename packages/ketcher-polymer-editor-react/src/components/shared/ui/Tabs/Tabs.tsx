@@ -90,11 +90,7 @@ function CustomTabs(props): ReactElement {
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
     overflowY: 'auto',
-    width: '260px',
-
-    '& > *': {
-      margin: '25px 8px'
-    },
+    width: '100%',
 
     ...scrollbarThin(theme)
   }))

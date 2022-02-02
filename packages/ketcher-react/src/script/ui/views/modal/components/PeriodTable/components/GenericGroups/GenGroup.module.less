@@ -18,16 +18,18 @@
 
 .fieldFlexWrapper {
   display: flex;
-  margin-top: 5px;
+  margin-top: 18px;
 }
 
 .fieldset {
   border: none;
   padding-left: 0;
   padding-right: 0;
+  padding-bottom: 0;
 
   fieldset {
     display: inline-block;
+    vertical-align: text-top;
     padding-right: 0;
     padding-bottom: 0;
     padding-left: 6px;
@@ -41,8 +43,9 @@
   .subgroup {
     position: relative;
     border: 0;
-    padding: 0 0 17px;
+    padding: 0 0 0;
     margin-right: 16px;
+    margin-bottom: 2px;
 
     legend {
       font-size: 0.8em;
@@ -50,7 +53,6 @@
       bottom: 0.1em;
       width: 100%;
       text-align: center;
-      position: absolute;
     }
   }
 }

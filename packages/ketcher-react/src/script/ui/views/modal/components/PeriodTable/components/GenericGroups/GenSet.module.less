@@ -26,6 +26,7 @@
   border-radius: 8px;
   color: @color-text-black;
   margin-right: 4px;
+  box-shadow: 0 0 0 4px @color-background-primary; // This is a hack to prevent lines from crossing button
 
   &:hover {
     background-color: @color-button-atom-hover;
@@ -36,4 +37,8 @@
     background-color: @color-button-atom-clicked;
     color: @color-text-light;
   }
+}
+
+.legendBox {
+  position: relative;
 }

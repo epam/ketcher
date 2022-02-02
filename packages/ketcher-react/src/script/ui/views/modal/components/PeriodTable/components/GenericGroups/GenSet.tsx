@@ -50,7 +50,9 @@ function GenSet({ labels, selected, onSelect, className }: GenSetProps) {
                 {button.label}
               </button>
             ))}
-            {caption ? <legend>{caption}</legend> : null}
+            <div className={classes.legendBox}>
+              {caption ? <legend>{caption}</legend> : null}
+            </div>
           </fieldset>
         )
       })}

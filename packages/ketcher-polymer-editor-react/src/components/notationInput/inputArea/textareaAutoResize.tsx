@@ -51,7 +51,7 @@ const VisibleTextInput = styled('textarea')<{
 
 // invisible textarea to dynamically calculate height
 const HiddenArea = styled('textarea')`
-  ${commonStyles}
+  ${commonStyles};
 
   // Making invisible, removing from content flow
   visibility: hidden;
@@ -69,13 +69,13 @@ const Ellipsis = styled('span')<{ shouldDisplay: boolean }>`
       ? css`
           display: inline-block;
           position: absolute;
-          right: 0px;
+          right: 0;
           font-size: ${theme.font.size.medium};
           line-height: ${lineHeight}px;
           padding-left: 3px;
           padding-right: ${inputPadding}px;
           background-color: ${theme.color.background.primary};
-          box-shadow: -3px 0px 5px 2px ${theme.color.background.primary};
+          box-shadow: -3px 0 5px 2px ${theme.color.background.primary};
         `
       : `display: none`}
 `

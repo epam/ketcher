@@ -145,10 +145,8 @@ const MonomerLibrary = () => {
   ]
 
   const MonomerLibraryContainer = styled.div(({ theme }) => ({
-    position: 'absolute',
-    right: '0',
-    width: '255px',
-    height: '700px',
+    width: '253px',
+    height: '100%',
     backgroundColor: theme.color.background.primary
   }))
 

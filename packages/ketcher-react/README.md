@@ -61,17 +61,20 @@ You can find the instruction for service installation
 
 ### 3D Viewer
 
-Ketcher uses Miew for viewing and editing data in 3D.
-For use of this functionality you should add the link to miew by your own:
+Ketcher uses Miew-React for viewing and editing data in 3D.
+Miew-React package default exports Viewer component which
+initializes and renders a Miew instance inside of it
 
 ```js
 ...
-import Miew from 'miew'
-import 'miew/dist/Miew.min.css'
+import Viewer from 'miew-react'
+
+const MyComponent = () => {
+  return <Viewer />
+}
 ...
-;(global as any).Miew = Miew
 ...
 ```
 
-You can find the latest version of viewer [here](https://github.com/epam/miew).
-The last checked version - [0.9.0](https://github.com/epam/miew/releases/tag/v0.9.0).
+You can find the latest version of Miew-React [here](https://github.com/epam/miew/tree/master/packages/miew-react).
+The last checked version - [1.0.0](https://www.npmjs.com/package/miew-react).

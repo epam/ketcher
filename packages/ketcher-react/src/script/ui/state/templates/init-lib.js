@@ -17,7 +17,6 @@
 import { MolSerializer, SdfSerializer } from 'ketcher-core'
 
 import { appUpdate } from '../options'
-// import { storage } from '../../storage-ext'
 
 export function initLib(lib) {
   return {

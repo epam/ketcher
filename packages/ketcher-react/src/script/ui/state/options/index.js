@@ -21,7 +21,6 @@ import {
 } from '../../data/schema/options-schema'
 
 import { pick } from 'lodash/fp'
-import { storage } from '../../storage-ext'
 import { useAppContext } from '../../../../hooks'
 
 export const initOptionsState = {
@@ -58,10 +57,6 @@ export const initOptionsState = {
     version: null
   },
   settings: getDefaultOptions(),
-  // Object.assign(
-  // validation(window.ketcher.storage.get('ketcher-opts'))
-  // validation(storage.get('ketcher-opts'))
-  // )
   getServerSettings() {
     return pick(SERVER_OPTIONS, this.settings)
   }
@@ -76,12 +71,17 @@ export function appUpdate(data) {
 
 /* SETTINGS */
 export function saveSettings(newSettings) {
-  const { storage } = window.ketcher
-  storage.set(newSettings, 'ketcher-opts')
-  // storage.setItem('ketcher-opts', newSettings)
-  return {
-    type: 'SAVE_SETTINGS',
-    data: newSettings
+  return (dispatch) => {
+    const { storage } = window.ketcher
+    storage
+      .set(newSettings, 'ketcher-opts')
+      .then(() =>
+        dispatch({
+          type: 'SAVE_SETTINGS',
+          data: newSettings
+        })
+      )
+      .catch(() => null)
   }
 }
 

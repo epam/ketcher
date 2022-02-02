@@ -19,7 +19,6 @@ import initTmplLib, { initLib } from './init-lib'
 import { MolSerializer } from 'ketcher-core'
 import { omit } from 'lodash/fp'
 import { openDialog } from '../modal'
-// import { storage } from '../../storage-ext'
 
 export { initTmplLib }
 
@@ -75,21 +74,32 @@ export function setTmplName(name) {
 }
 
 export function editTmpl(tmpl) {
-  return (dispatch, getState) => {
-    openDialog(dispatch, 'attach', { tmpl })
-      .then(
-        (formData) => {
-          tmpl.struct.name = formData ? formData.name.trim() : tmpl.struct.name
-          tmpl.props = formData
-            ? Object.assign({}, tmpl.props, formData.attach)
-            : tmpl.props
+  return async (dispatch, getState) => {
+    try {
+      const formData = await openDialog(dispatch, 'attach', { tmpl })
+      if (tmpl.props.group === 'User Templates') {
+        await updateStorage(getState().templates.lib)
+      }
+      tmpl.struct.name = formData ? formData.name.trim() : tmpl.struct.name
+      tmpl.props = formData
+        ? Object.assign({}, tmpl.props, formData.attach)
+        : tmpl.props
+      await openDialog(dispatch, 'templates')
+    } catch {}
+    // openDialog(dispatch, 'attach', { tmpl })
+    //   .then(
+    //     (formData) => {
+    //       tmpl.struct.name = formData ? formData.name.trim() : tmpl.struct.name
+    //       tmpl.props = formData
+    //         ? Object.assign({}, tmpl.props, formData.attach)
+    //         : tmpl.props
 
-          if (tmpl.props.group === 'User Templates')
-            updateLocalStore(getState().templates.lib)
-        },
-        () => null
-      )
-      .then(() => openDialog(dispatch, 'templates').catch(() => null))
+    //       if (tmpl.props.group === 'User Templates')
+    //         updateStorage(getState().templates.lib)
+    //     },
+    //     () => null
+    //   )
+    //   .then(() => openDialog(dispatch, 'templates').catch(() => null))
   }
 }
 
@@ -105,8 +115,9 @@ export function deleteUserTmpl(tmpl) {
 export function deleteTmpl(tmpl) {
   return (dispatch, getState) => {
     const lib = getState().templates.lib.filter((value) => value !== tmpl)
-    dispatch(deleteUserTmpl(tmpl))
-    updateLocalStore(lib)
+    updateStorage(lib)
+      .then(() => dispatch(deleteUserTmpl(tmpl)))
+      .catch(() => null)
   }
 }
 
@@ -115,21 +126,29 @@ export function saveUserTmpl(struct) {
   // TODO: structStr can be not in mol format => structformat.toString ...
   const tmpl = { struct: struct.clone(), props: {} }
 
-  return (dispatch, getState) => {
-    openDialog(dispatch, 'attach', { tmpl })
-      .then(({ name, attach }) => {
-        tmpl.struct.name = name.trim()
-        tmpl.props = { ...attach, group: 'User Templates' }
+  return async (dispatch, getState) => {
+    try {
+      const { name, attach } = await openDialog(dispatch, 'attach', { tmpl })
 
-        const lib = getState().templates.lib.concat(tmpl)
-        dispatch(initLib(lib))
-        updateLocalStore(lib)
-      })
-      .catch(() => null)
+      tmpl.struct.name = name.trim()
+      tmpl.props = { ...attach, group: 'User Templates' }
+      const lib = getState().templates.lib.concat(tmpl)
+      await updateStorage(lib)
+      dispatch(initLib(lib))
+    } catch {}
+    // openDialog(dispatch, 'attach', { tmpl })
+    //   .then(({ name, attach }) => {
+    //     tmpl.struct.name = name.trim()
+    //     tmpl.props = { ...attach, group: 'User Templates' }
+
+    //     const lib = getState().templates.lib.concat(tmpl)
+    //     updateStorage(lib).then(() => dispatch(initLib(lib)))
+    //   })
+    //   .catch(() => null)
   }
 }
 
-function updateLocalStore(lib) {
+function updateStorage(lib) {
   const molSerializer = new MolSerializer()
   const { storage } = window.ketcher
   const userLib = lib
@@ -138,7 +157,7 @@ function updateLocalStore(lib) {
       struct: molSerializer.serialize(item.struct),
       props: Object.assign({}, omit(['group'], item.props))
     }))
-  storage.set(userLib, 'ketcher-tmpls')
+  return storage.set(userLib, 'ketcher-tmpls')
 }
 
 /* REDUCER */

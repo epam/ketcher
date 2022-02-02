@@ -64,13 +64,13 @@ const App = () => {
         }}
         storage={{
           set: (data, key) => {
-            ;(window as any)[key] = data
-            // return new Promise((resolve) => {
-            //   setTimeout(() => {
-            //     ;(window as any)[key] = data
-            //     resolve((window as any).settings)
-            //   }, 1000)
-            // })
+            // ;(window as any)[key] = data
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                ;(window as any)[key] = data
+                resolve((window as any).settings)
+              }, 1000)
+            })
           },
           get: (key) => (window as any)[key]
           // new Promise((resolve) => {

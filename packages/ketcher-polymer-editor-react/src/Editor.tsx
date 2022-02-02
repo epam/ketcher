@@ -29,7 +29,7 @@ import { Menu } from 'components/menu'
 import { selectTool } from 'state/common'
 import { useAppDispatch } from 'hooks'
 import { Logo } from 'components/Logo'
-import { ActionButton } from 'components/shared/ui/actionButton'
+import { ActionButton } from 'components/shared/actionButton'
 import { DummyDialog } from 'components/dummyDialog/DummyDialog'
 
 const theme = createTheme(defaultTheme)

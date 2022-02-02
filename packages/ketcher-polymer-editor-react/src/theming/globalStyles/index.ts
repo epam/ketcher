@@ -14,6 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Theme, useTheme } from '@mui/material'
-
-export const useAppTheme: () => Theme = () => useTheme()
+export * from './getGlobalStyles'

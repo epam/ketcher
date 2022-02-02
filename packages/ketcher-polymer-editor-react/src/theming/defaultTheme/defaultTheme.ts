@@ -14,6 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ThemeOptions as MuiThemeOptions } from '@mui/material/styles'
+import { EditorTheme } from '.'
+
 const color = {
   background: {
     canvas: '#F2F2F2',
@@ -106,7 +109,18 @@ const font = {
   }
 }
 
-export const defaultTheme = {
+export const muiOverrides: MuiThemeOptions = {
+  // // add overrides here if necessary. For example
+  // components: {
+  //   MuiButtonBase: {
+  //     defaultProps: {
+  //       disableRipple: true
+  //     }
+  //   }
+  // }
+}
+
+export const defaultTheme: EditorTheme = {
   color,
   font
 }

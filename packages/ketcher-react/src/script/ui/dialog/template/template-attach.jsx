@@ -20,7 +20,6 @@ import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
 
 import classes from './template-lib.module.less'
 import { connect } from 'react-redux'
-// import { storage } from '../../storage-ext'
 import Form, { Field } from '../../component/form/form/form'
 import { attachSchema } from '../../data/schema/struct-schema'
 
@@ -66,7 +65,6 @@ class Attach extends Component {
     const options = Object.assign(EDITOR_STYLES, this.props.globalSettings, {
       scale: getScale(struct)
     })
-    const { storage } = window.ketcher
 
     return (
       <Dialog
@@ -98,9 +96,6 @@ class Attach extends Component {
             toolOpts={{ atomid, bondid }}
             options={options}
           />
-          {!storage.isAvailable() ? (
-            <div className={classes.warning}>{storage.warningMessage}</div>
-          ) : null}
         </Form>
       </Dialog>
     )

@@ -16,16 +16,6 @@
 import { StorageProvider } from 'ketcher-core/src/domain/services/storage'
 /* local storage */
 export const storage: StorageProvider = {
-  warningMessage:
-    'Your changes will be lost after the tab closing. See Help (Note 2).',
-  isAvailable() {
-    try {
-      const storage = global.localStorage
-      return storage
-    } catch (ex) {
-      return false
-    }
-  },
   get(key) {
     let item: any
     let parsedItem: any

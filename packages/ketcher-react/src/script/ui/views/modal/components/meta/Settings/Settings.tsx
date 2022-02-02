@@ -32,7 +32,6 @@ import classes from './Settings.module.less'
 import { connect } from 'react-redux'
 import { saveSettings } from '../../../../../state/options'
 import settingsSchema from '../../../../../data/schema/options-schema'
-// import { storage } from '../../../../../storage-ext'
 import Sidebar from './components/Sidebar'
 import Icon from '../../../../../component/view/icon'
 import clsx from 'clsx'
@@ -183,7 +182,6 @@ const SettingsDialog = (props: Props) => {
     threeDViewerTab,
     debuggingTab
   ]
-  const storage = (window as any).ketcher.storage
 
   return (
     <Dialog
@@ -221,9 +219,6 @@ const SettingsDialog = (props: Props) => {
     >
       <Form schema={settingsSchema} init={initState} {...formState}>
         <Sidebar tabs={tabs} className={classes.sidebar} />
-        {!storage.isAvailable() ? (
-          <div className={classes.warning}>{storage.warningMessage}</div> // can't see the warning, fix styles?
-        ) : null}
       </Form>
     </Dialog>
   )

@@ -72,14 +72,12 @@ const App = () => {
             //   }, 1000)
             // })
           },
-          get: (key) => (window as any)[key],
+          get: (key) => (window as any)[key]
           // new Promise((resolve) => {
           //   setTimeout(() => {
           //     resolve((window as any).settings)
           //   }, 1000)
           // })
-          isAvailable: () => true,
-          warningMessage: 'Hello from custom storage'
         }}
       />
       {polymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}

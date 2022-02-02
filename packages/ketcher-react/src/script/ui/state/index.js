@@ -87,8 +87,7 @@ export default function (options, server, setEditor) {
         ...initOptionsState.settings,
         ...validation(storage.get('ketcher-opts'))
       },
-      app: restOptions,
-      buttons
+      app: { restOptions, buttons }
     },
     server: server || Promise.reject(new Error('Standalone mode!')),
     templates: initTmplsState

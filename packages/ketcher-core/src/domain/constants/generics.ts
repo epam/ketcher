@@ -58,7 +58,7 @@ export const Generics: GenericsType = {
         displayName: 'any metal',
         items: [
           { label: 'M', description: 'Any metal' },
-          { label: 'MH', description: '	Any metal or hydrogen' }
+          { label: 'MH', description: 'Any metal or hydrogen' }
         ]
       },
       {
@@ -169,7 +169,7 @@ export const Generics: GenericsType = {
               {
                 items: [
                   { label: 'AOX', description: 'Alkoxy' },
-                  { label: 'AOH', description: '	Alkoxy or hydrogen' }
+                  { label: 'AOH', description: 'Alkoxy or hydrogen' }
                 ]
               }
             ]
@@ -208,7 +208,7 @@ export const Generics: GenericsType = {
                   { label: 'CBC', description: 'Carbocyclic derivatives' },
                   {
                     label: 'CBH',
-                    description: '	Carbocyclic derivatives or hydrogen'
+                    description: 'Carbocyclic derivatives or hydrogen'
                   }
                 ]
               },

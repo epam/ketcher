@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { escapeRegExp, filter as _filter, flow, reduce } from 'lodash/fp'
-import { Option } from '../component/form/Select/shared/Select'
+import { Option } from '../component/form/Select'
 
 const GREEK_SIMBOLS = {
   Alpha: 'A',

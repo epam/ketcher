@@ -16,9 +16,13 @@
 
 import { put, takeEvery, call } from 'redux-saga/effects'
 import { init, initFailure, initSuccess } from 'state/common'
-import { fetchData as fetchDataCall } from 'components/App'
 
 const FETCH_DATA = 'editor/fetchData'
+
+const fetchDataCall = () =>
+  new Promise((resolve) => {
+    setTimeout(() => resolve('some data'), 1000)
+  })
 
 function* fetchData() {
   yield put(init())

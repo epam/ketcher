@@ -23,21 +23,29 @@
 }
 
 .miewContainer {
-  .atom-info {
+  width: 1024px;
+  height: 600px;
+  position: relative;
+  // stylelint-disable-next-line selector-pseudo-class-no-unknown
+  :global(.mode-message) {
     position: absolute;
     top: 10px;
     right: 10px;
     border-radius: 4px;
     color: silver;
-    background-color: rgb(64 64 64 / 75%);
+    background-color: rgba(64, 64, 64, 0.75);
     display: flex;
-    align-items: left;
+    align-items: flex-start;
     justify-content: left;
     opacity: 0;
-
-    p {
-      margin: 10px;
-      text-align: left;
-    }
+  }
+  // stylelint-disable-next-line selector-pseudo-class-no-unknown
+  :global(.atom-info) {
+    margin: 10px;
+    text-align: left;
+  }
+  // stylelint-disable-next-line selector-pseudo-class-no-unknown
+  :global(.overlay) {
+    pointer-events: none;
   }
 }

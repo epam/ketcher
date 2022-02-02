@@ -177,7 +177,7 @@ const SettingsDialog = (props: Props) => {
     label: '3D Viewer',
     content: (
       // eslint-disable-next-line dot-notation
-      <fieldset className={classes.viewer} disabled={!window['Miew']}>
+      <fieldset className={classes.viewer}>
         <Field
           name="miewMode"
           component={Select}

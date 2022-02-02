@@ -29,7 +29,6 @@ const AddToCanvasBar = styled('div')`
   justify-content: space-between;
   height: ${height}px;
   width: ${componentWidth}px;
-  margin: 0 auto;
 `
 
 type AddToCanvasProps = {

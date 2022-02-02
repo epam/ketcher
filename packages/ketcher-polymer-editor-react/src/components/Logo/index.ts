@@ -14,19 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from '@testing-library/react'
-import { Editor } from './Editor'
-
-describe('Editor', () => {
-  it('should be rendered correctly', () => {
-    expect(render(<Editor />)).toMatchSnapshot()
-  })
-
-  it('renders the logo', () => {
-    render(<Editor />)
-
-    expect(screen.getByText('Polymer Editor')).toBeVisible()
-    expect(screen.getByText('Ketcher')).toBeVisible()
-    expect(screen.getByText('EPAM')).toBeVisible()
-  })
-})
+export * from './Logo'

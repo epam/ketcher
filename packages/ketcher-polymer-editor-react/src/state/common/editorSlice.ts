@@ -16,7 +16,6 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from 'state'
-import { MenuItemVariant } from 'components/menu/menu.types'
 
 interface EditorState {
   isReady: boolean | null
@@ -41,7 +40,7 @@ export const editorSlice: any = createSlice({
     initFailure: (state) => {
       state.isReady = false
     },
-    selectTool: (state, action: PayloadAction<MenuItemVariant>) => {
+    selectTool: (state, action: PayloadAction<string>) => {
       state.activeTool = action.payload
     }
   }

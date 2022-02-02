@@ -14,15 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component } from 'react'
-
 import { Dialog } from '../../../../components'
-import { FormatterFactory } from 'ketcher-core'
+import { FormatterFactory, Struct, StructService } from 'ketcher-core'
 import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema'
 import classes from './Miew.module.less'
 import { connect } from 'react-redux'
 import { load } from '../../../../../state'
 import { pick } from 'lodash/fp'
+import Viewer from 'miew-react'
+import { Miew as MiewAsType } from 'miew'
+import { useCallback, useRef } from 'react'
+
+type MiewDialogProps = {
+  miewOpts: any
+  server: StructService
+  struct: Struct
+  onCancel: () => void
+  onOk: (result: any) => void
+}
+type MiewDialogCallProps = {
+  onExportCML: (cmlStruct: string) => void
+}
+type Props = MiewDialogProps & MiewDialogCallProps
 
 /* OPTIONS for MIEW */
 const BACKGROUND_COLOR = {
@@ -85,66 +98,61 @@ function createMiewOptions(userOpts) {
 const CHANGING_WARNING =
   'Stereocenters can be changed after the strong 3D rotation'
 
-class MiewDialog extends Component {
-  componentDidMount() {
-    const { struct, server, miewOpts } = this.props
-    const Miew = window.Miew
+const MiewDialog = ({
+  miewOpts,
+  server,
+  struct,
+  onExportCML,
+  ...prop
+}: Props) => {
+  const miewRef = useRef<MiewAsType>()
 
-    this.viewer = new Miew({
-      container: this.miewContainer
-    })
+  const onMiewInit = useCallback(
+    (miew: MiewAsType) => {
+      miewRef.current = miew
+      const factory = new FormatterFactory(server)
+      const service = factory.create('cml')
 
-    if (this.viewer.init()) this.viewer.run()
+      service
+        .getStructureFromStructAsync(struct)
+        .then((res) =>
+          miew.load(res, { sourceType: 'immediate', fileType: 'cml' })
+        )
+        .then(() => miew.setOptions(miewOpts))
+        .catch((ex) => console.error(ex.message))
+    },
+    [miewOpts, server, struct]
+  )
 
-    const factory = new FormatterFactory(server)
-    const service = factory.create('cml')
-
-    service
-      .getStructureFromStructAsync(struct)
-      .then((res) =>
-        this.viewer.load(res, { sourceType: 'immediate', fileType: 'cml' })
-      )
-      .then(() => this.viewer.setOptions(miewOpts))
-      .catch((ex) => console.error(ex.message))
-  }
-
-  exportCML() {
-    const cmlStruct = this.viewer.exportCML()
+  const exportCML = useCallback(() => {
+    const cmlStruct = miewRef.current?.exportCML()
     if (!cmlStruct) {
       return
     }
-    this.props.onExportCML(cmlStruct)
-  }
+    onExportCML(cmlStruct)
+  }, [onExportCML, miewRef])
 
-  render() {
-    const { miewOpts, server, struct, ...prop } = this.props
-
-    return (
-      <Dialog
-        title="Miew"
-        params={prop}
-        buttons={[
-          <div key="warning" className={classes.warning}>
-            {CHANGING_WARNING}
-          </div>,
-          'Close',
-          <button key="apply" onClick={() => this.exportCML()}>
-            Apply
-          </button>
-        ]}
-      >
-        <div className={classes.dialog_body}>
-          <div
-            ref={(el) => {
-              this.miewContainer = el
-            }}
-            className={classes.miewContainer}
-            style={{ width: '1024px', height: '600px', position: 'relative' }}
-          />
+  return (
+    <Dialog
+      title="Miew"
+      params={prop}
+      buttons={[
+        <div key="warning" className={classes.warning}>
+          {CHANGING_WARNING}
+        </div>,
+        'Close',
+        <button key="apply" onClick={exportCML}>
+          Apply
+        </button>
+      ]}
+    >
+      <div>
+        <div className={classes.miewContainer}>
+          <Viewer onInit={onMiewInit} />
         </div>
-      </Dialog>
-    )
-  }
+      </div>
+    </Dialog>
+  )
 }
 
 const mapStateToProps = (state) => ({

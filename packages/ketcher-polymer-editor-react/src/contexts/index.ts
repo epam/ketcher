@@ -14,17 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from 'test-utils'
-import { App } from 'components/App'
+import MenuContext, { IMenuContext } from './menuContext'
 
-describe('App', () => {
-  it('renders a message', async () => {
-    render(<App />)
-
-    expect(screen.getByText('App is not ready')).toBeVisible()
-
-    expect(await screen.findByText('Polymer Editor')).toBeVisible()
-    expect(await screen.findByText('Ketcher')).toBeVisible()
-    expect(await screen.findByText('EPAM')).toBeVisible()
-  })
-})
+export { MenuContext }
+export type { IMenuContext }

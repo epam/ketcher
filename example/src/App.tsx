@@ -62,23 +62,24 @@ const App = () => {
         onInit={(ketcher: Ketcher) => {
           ;(global as any).ketcher = ketcher
         }}
-        storage={{
-          set: (data, key) => {
-            // ;(window as any)[key] = data
-            return new Promise((resolve) => {
-              setTimeout(() => {
-                ;(window as any)[key] = data
-                resolve((window as any).settings)
-              }, 1000)
-            })
-          },
-          get: (key) => (window as any)[key]
-          // new Promise((resolve) => {
-          //   setTimeout(() => {
-          //     resolve((window as any).settings)
-          //   }, 1000)
-          // })
-        }}
+        // storage={{
+        //   set: (data, key) => {
+        //     return new Promise((resolve) => {
+        //       setTimeout(() => {
+        //         ;(window as any)[key] = data
+        //         resolve(true)
+        //       }, 2000)
+        //     })
+        //   },
+        //   get: (key) => {
+        //     return new Promise((resolve) => {
+        //       setTimeout(() => {
+        //         console.log(key)
+        //         resolve({ fontsz: 32 })
+        //       }, 2000)
+        //     })
+        //   }
+        // }}
       />
       {polymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}
       {hasError && (

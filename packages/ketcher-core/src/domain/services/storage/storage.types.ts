@@ -14,7 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+type RecordOrArrayOfRecords =
+  | Record<string, unknown>
+  | Record<string, unknown>[]
 export interface StorageProvider {
-  set: (data: Record<string, any>, key?: any) => any // replace with promise
-  get: (key?: any) => any // replace with promise
+  set: (data: RecordOrArrayOfRecords, key: string) => Promise<any>
+  get: (key: string) => Promise<RecordOrArrayOfRecords>
 }

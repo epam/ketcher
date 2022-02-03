@@ -25,13 +25,13 @@ export function initLib(lib) {
   }
 }
 
-export default function initTmplLib(dispatch, baseUrl, cacheEl) {
+export default async function initTmplLib(dispatch, baseUrl, cacheEl) {
   const fileName = 'library.sdf'
-  return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then((res) => {
-    const lib = res.concat(userTmpls())
-    dispatch(initLib(lib))
-    dispatch(appUpdate({ templates: true }))
-  })
+  const res = await deserializeSdfTemplates(baseUrl, cacheEl, fileName)
+  const userTemplates = await userTmpls()
+  const lib = res.concat(userTemplates)
+  dispatch(initLib(lib))
+  dispatch(appUpdate({ templates: true }))
 }
 
 const deserializeSdfTemplates = (baseUrl, cacheEl, fileName) => {
@@ -53,9 +53,9 @@ const deserializeSdfTemplates = (baseUrl, cacheEl, fileName) => {
   })
 }
 
-function userTmpls() {
+async function userTmpls() {
   const { storage } = window.ketcher
-  const userLib = storage.get('ketcher-tmpls')
+  const userLib = await storage.get('ketcher-tmpls')
   if (!Array.isArray(userLib) || userLib.length === 0) return []
   const molSerializer = new MolSerializer()
   return userLib

@@ -84,6 +84,22 @@ export function saveSettings(newSettings) {
       .catch(() => null)
   }
 }
+export function fetchSettings(storage) {
+  return (dispatch, getState) => {
+    const settings = getState().options.settings
+    storage
+      .get('ketcher-opts')
+      .then(validation)
+      .then((res) => {
+        res &&
+          dispatch({
+            type: 'SAVE_SETTINGS',
+            data: { ...settings, ...res }
+          })
+      })
+      .catch(() => null)
+  }
+}
 
 /* ANALYZE */
 export function changeRound(roundName, value) {

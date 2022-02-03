@@ -23,6 +23,7 @@ import ReactDOM from 'react-dom'
 import createStore from '../state'
 import { initKeydownListener } from '../state/hotkeys'
 import { initResize } from '../state/toolbar'
+import { fetchSettings } from '../state/options'
 
 function initApp(
   element: HTMLDivElement | null,
@@ -32,6 +33,8 @@ function initApp(
   setEditor: (editor: any) => void
 ) {
   const store = createStore(options, server, setEditor)
+  const { storage } = options
+  store.dispatch(fetchSettings(storage))
   store.dispatch(initKeydownListener(element))
   store.dispatch(initResize())
 

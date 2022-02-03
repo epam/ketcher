@@ -86,20 +86,6 @@ export function editTmpl(tmpl) {
         : tmpl.props
       await openDialog(dispatch, 'templates')
     } catch {}
-    // openDialog(dispatch, 'attach', { tmpl })
-    //   .then(
-    //     (formData) => {
-    //       tmpl.struct.name = formData ? formData.name.trim() : tmpl.struct.name
-    //       tmpl.props = formData
-    //         ? Object.assign({}, tmpl.props, formData.attach)
-    //         : tmpl.props
-
-    //       if (tmpl.props.group === 'User Templates')
-    //         updateStorage(getState().templates.lib)
-    //     },
-    //     () => null
-    //   )
-    //   .then(() => openDialog(dispatch, 'templates').catch(() => null))
   }
 }
 
@@ -136,15 +122,6 @@ export function saveUserTmpl(struct) {
       await updateStorage(lib)
       dispatch(initLib(lib))
     } catch {}
-    // openDialog(dispatch, 'attach', { tmpl })
-    //   .then(({ name, attach }) => {
-    //     tmpl.struct.name = name.trim()
-    //     tmpl.props = { ...attach, group: 'User Templates' }
-
-    //     const lib = getState().templates.lib.concat(tmpl)
-    //     updateStorage(lib).then(() => dispatch(initLib(lib)))
-    //   })
-    //   .catch(() => null)
   }
 }
 

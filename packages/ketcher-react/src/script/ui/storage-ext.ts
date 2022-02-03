@@ -22,22 +22,19 @@ export const storage: StorageProvider = {
     try {
       item = localStorage.getItem(key)
       parsedItem = item && JSON.parse(item)
+      return Promise.resolve(parsedItem)
     } catch (ex: any) {
       console.info('LocalStorage:', ex.name)
+      return Promise.reject(new Error())
     }
-    return parsedItem
-    // return Promise.resolve(parsedItem)
   },
   set(data, key) {
-    let isSet: boolean
     try {
       localStorage.setItem(key, JSON.stringify(data))
-      isSet = true
+      return Promise.resolve()
     } catch (ex: any) {
       console.info('LocalStorage:', ex.name)
-      isSet = false
+      return Promise.reject(new Error())
     }
-    return isSet
-    // return Promise.resolve(isSet)
   }
 }

@@ -27,7 +27,6 @@ import { pick } from 'lodash/fp'
 import requestReducer from './request'
 import thunk from 'redux-thunk'
 import toolbarReducer from './toolbar'
-import { validation } from '../data/schema/options-schema'
 
 export { onAction, load }
 
@@ -83,10 +82,6 @@ export default function (options, server, setEditor) {
     modal: null,
     options: {
       ...initOptionsState,
-      settings: {
-        ...initOptionsState.settings,
-        ...validation(storage.get('ketcher-opts'))
-      },
       app: { restOptions, buttons }
     },
     server: server || Promise.reject(new Error('Standalone mode!')),

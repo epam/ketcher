@@ -110,28 +110,28 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
   // it must be [C,N,Si]=[C,N,Si] bond
   const bond = this.molecule.bonds.get(bondIdx)
 
-  if (bond.type != Bond.PATTERN.TYPE.DOUBLE) return false
+  if (bond.type !== Bond.PATTERN.TYPE.DOUBLE) return false
 
   const label1 = this.molecule.atoms.get(bond.begin).label
   const label2 = this.molecule.atoms.get(bond.end).label
 
-  if (label1 != 'C' && label1 != 'N' && label1 != 'Si' && label1 != 'Ge') {
+  if (label1 !== 'C' && label1 !== 'N' && label1 !== 'Si' && label1 !== 'Ge') {
     return false
   }
-  if (label2 != 'C' && label2 != 'N' && label2 != 'Si' && label2 != 'Ge') {
+  if (label2 !== 'C' && label2 !== 'N' && label2 !== 'Si' && label2 !== 'Ge') {
     return false
   }
 
   // the atoms should have 1 or 2 single bonds
   // (apart from the double bond under consideration)
   const neiBegin = this.getNeighbors.call(this.context, bond.begin)
-  const neiЕnd = this.getNeighbors.call(this.context, bond.end)
+  const neiEnd = this.getNeighbors.call(this.context, bond.end)
 
   if (
     neiBegin.length < 2 ||
     neiBegin.length > 3 ||
-    neiЕnd.length < 2 ||
-    neiЕnd.length > 3
+    neiEnd.length < 2 ||
+    neiEnd.length > 3
   ) {
     return false
   }
@@ -147,40 +147,42 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
   for (i = 0; i < neiBegin.length; i++) {
     nei = neiBegin[i]
 
-    if (nei.bid == bondIdx) continue // eslint-disable-line no-continue
+    if (nei.bid === bondIdx) continue // eslint-disable-line no-continue
 
-    if (this.molecule.bonds.get(nei.bid).type != Bond.PATTERN.TYPE.SINGLE) {
+    if (this.molecule.bonds.get(nei.bid).type !== Bond.PATTERN.TYPE.SINGLE) {
       return false
     }
 
-    if (substituents[0] == -1) substituents[0] = nei.aid
-    // (substituents[1] == -1)
+    if (substituents[0] === -1) substituents[0] = nei.aid
+    // (substituents[1] === -1)
     else substituents[1] = nei.aid
   }
 
-  for (i = 0; i < neiЕnd.length; i++) {
-    nei = neiЕnd[i]
+  for (i = 0; i < neiEnd.length; i++) {
+    nei = neiEnd[i]
 
-    if (nei.bid == bondIdx) continue // eslint-disable-line no-continue
+    if (nei.bid === bondIdx) continue // eslint-disable-line no-continue
 
-    if (this.molecule.bonds.get(nei.bid).type != Bond.PATTERN.TYPE.SINGLE) {
+    if (this.molecule.bonds.get(nei.bid).type !== Bond.PATTERN.TYPE.SINGLE) {
       return false
     }
 
-    if (substituents[2] == -1) substituents[2] = nei.aid
+    if (substituents[2] === -1) substituents[2] = nei.aid
     // (substituents[3] == -1)
     else substituents[3] = nei.aid
   }
 
   if (
-    substituents[1] != -1 &&
-    this.samesides(bond.begin, bond.end, substituents[0], substituents[1]) != -1
+    substituents[1] !== -1 &&
+    this.samesides(bond.begin, bond.end, substituents[0], substituents[1]) !==
+      -1
   ) {
     return false
   }
   if (
-    substituents[3] != -1 &&
-    this.samesides(bond.begin, bond.end, substituents[2], substituents[3]) != -1
+    substituents[3] !== -1 &&
+    this.samesides(bond.begin, bond.end, substituents[2], substituents[3]) !==
+      -1
   ) {
     return false
   }

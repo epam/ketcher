@@ -13,5 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import React from 'react'
 
-export * from './App'
+export interface IMenuContext {
+  isActive: (item: string) => boolean
+  activate: (item: string) => void
+}
+
+const MenuContext = React.createContext<IMenuContext>({} as IMenuContext)
+
+export default MenuContext

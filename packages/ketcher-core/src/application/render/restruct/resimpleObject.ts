@@ -383,7 +383,6 @@ class ReSimpleObject extends ReObject {
     const offset = options.offset
     if (offset != null) path.translateAbs(offset.x, offset.y)
 
-    // @ts-ignore
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())))
   }
 }

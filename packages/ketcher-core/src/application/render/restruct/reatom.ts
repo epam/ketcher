@@ -214,7 +214,7 @@ class ReAtom extends ReObject {
         )
       }
 
-      if (this.a.radical != 0) {
+      if (this.a.radical !== 0) {
         const radical = showRadical(this, render)
         restruct.addReObjectPath(
           LayerMap.data,
@@ -224,7 +224,7 @@ class ReAtom extends ReObject {
           true
         )
       }
-      if (this.a.isotope != 0) {
+      if (this.a.isotope !== 0) {
         const isotope = showIsotope(this, render, leftMargin)
         leftMargin -= isotope.rbb.width + delta
         restruct.addReObjectPath(
@@ -269,7 +269,7 @@ class ReAtom extends ReObject {
         }
       }
 
-      if (this.a.charge != 0 && options.showCharge) {
+      if (this.a.charge !== 0 && options.showCharge) {
         const charge = showCharge(this, render, rightMargin)
         rightMargin += charge.rbb.width + delta
         restruct.addReObjectPath(
@@ -892,7 +892,7 @@ function showAttpnt(atom, render, lsb, addReObjectPath) {
     if (atom.a.attpnt & (1 << i)) {
       if (attpntText.length > 0) attpntText += ' '
       attpntText += asterisk
-      for (j = 0; j < (i == 0 ? 0 : i + 1); ++j) attpntText += "'"
+      for (j = 0; j < (i === 0 ? 0 : i + 1); ++j) attpntText += "'"
       let pos0 = new Vec2(ps)
       let pos1 = ps.addScaled(lsb, 0.7 * options.scale)
 
@@ -958,13 +958,13 @@ function getAamText(atom) {
   if (atom.a.aam > 0) aamText += atom.a.aam
   if (atom.a.invRet > 0) {
     if (aamText.length > 0) aamText += ','
-    if (atom.a.invRet == 1) aamText += 'Inv'
-    else if (atom.a.invRet == 2) aamText += 'Ret'
+    if (atom.a.invRet === 1) aamText += 'Inv'
+    else if (atom.a.invRet === 2) aamText += 'Ret'
     else throw new Error('Invalid value for the invert/retain flag')
   }
   if (atom.a.exactChangeFlag > 0) {
     if (aamText.length > 0) aamText += ','
-    if (atom.a.exactChangeFlag == 1) aamText += 'ext'
+    if (atom.a.exactChangeFlag === 1) aamText += 'ext'
     else throw new Error('Invalid value for the exact change flag')
   }
   return aamText
@@ -972,24 +972,24 @@ function getAamText(atom) {
 
 function getQueryAttrsText(atom) {
   let queryAttrsText = ''
-  if (atom.a.ringBondCount != 0) {
+  if (atom.a.ringBondCount !== 0) {
     if (atom.a.ringBondCount > 0) {
       queryAttrsText += 'rb' + atom.a.ringBondCount.toString()
-    } else if (atom.a.ringBondCount == -1) queryAttrsText += 'rb0'
-    else if (atom.a.ringBondCount == -2) queryAttrsText += 'rb*'
+    } else if (atom.a.ringBondCount === -1) queryAttrsText += 'rb0'
+    else if (atom.a.ringBondCount === -2) queryAttrsText += 'rb*'
     else throw new Error('Ring bond count invalid')
   }
-  if (atom.a.substitutionCount != 0) {
+  if (atom.a.substitutionCount !== 0) {
     if (queryAttrsText.length > 0) queryAttrsText += ','
     if (atom.a.substitutionCount > 0) {
       queryAttrsText += 's' + atom.a.substitutionCount.toString()
-    } else if (atom.a.substitutionCount == -1) queryAttrsText += 's0'
-    else if (atom.a.substitutionCount == -2) queryAttrsText += 's*'
+    } else if (atom.a.substitutionCount === -1) queryAttrsText += 's0'
+    else if (atom.a.substitutionCount === -2) queryAttrsText += 's*'
     else throw new Error('Substitution count invalid')
   }
   if (atom.a.unsaturatedAtom > 0) {
     if (queryAttrsText.length > 0) queryAttrsText += ','
-    if (atom.a.unsaturatedAtom == 1) queryAttrsText += 'u'
+    if (atom.a.unsaturatedAtom === 1) queryAttrsText += 'u'
     else throw new Error('Unsaturated atom invalid value')
   }
   if (atom.a.hCount > 0) {

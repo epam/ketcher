@@ -66,9 +66,9 @@ Dfs.prototype.walk = function () {
   while (true) {
     // eslint-disable-line no-constant-condition
     if (vStack.length < 1) {
-      var selected = -1
+      let selected = -1
 
-      while (cid < this.components.length && selected == -1) {
+      while (cid < this.components.length && selected === -1) {
         selected = this.components[cid].find((aid) => {
           if (this.vertices[aid].dfs_state === 0) {
             selected = aid
@@ -80,7 +80,7 @@ Dfs.prototype.walk = function () {
           selected = -1
           cid++
         }
-        if (cid == this.nReactants) this.nComponentsInReactants = component
+        if (cid === this.nReactants) this.nComponentsInReactants = component
       }
       if (selected < -1) {
         this.molecule.atoms.find((aid) => {
@@ -91,7 +91,7 @@ Dfs.prototype.walk = function () {
           return false
         })
       }
-      if (selected == -1) break
+      if (selected === -1) break
       this.vertices[selected].parent_vertex = -1
       this.vertices[selected].parent_edge = -1
       vStack.push(selected)
@@ -116,18 +116,18 @@ Dfs.prototype.walk = function () {
       const neiIdx = atomD.neighbours[i].aid
       const edgeIdx = atomD.neighbours[i].bid
 
-      if (neiIdx == parentVertex) continue // eslint-disable-line no-continue
+      if (neiIdx === parentVertex) continue // eslint-disable-line no-continue
 
-      if (this.vertices[neiIdx].dfs_state == 2) {
+      if (this.vertices[neiIdx].dfs_state === 2) {
         this.edges[edgeIdx].closing_cycle = 1
 
         j = vIdx
 
-        while (j != -1 && this.vertices[j].parent_vertex != neiIdx) {
+        while (j !== -1 && this.vertices[j].parent_vertex !== neiIdx) {
           j = this.vertices[j].parent_vertex
         }
 
-        if (j == -1) throw new Error('cycle unwind error')
+        if (j === -1) throw new Error('cycle unwind error')
 
         this.edges[this.vertices[j].parent_edge].opening_cycles++
         this.vertices[vIdx].branches++
@@ -135,10 +135,10 @@ Dfs.prototype.walk = function () {
         seqElem = new Dfs.SeqElem(neiIdx, vIdx, edgeIdx)
         this.v_seq.push(seqElem)
       } else {
-        if (this.vertices[neiIdx].dfs_state == 1) {
+        if (this.vertices[neiIdx].dfs_state === 1) {
           j = vStack.indexOf(neiIdx)
 
-          if (j == -1) {
+          if (j === -1) {
             // eslint-disable-line max-depth
             throw new Error('internal: removing vertex from stack')
           }

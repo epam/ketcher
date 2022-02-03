@@ -14,21 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-type MenuItemVariant =
-  | 'open'
-  | 'select-lasso'
-  | 'select-rectangle'
-  | 'select-fragment'
-  | 'rectangle'
-  | 'ellipse'
-  | 'help'
-  | 'settings'
-  | 'undo'
-  | 'single-bond'
-  | 'erase'
-  | 'rotate'
-  | 'horizontal-flip'
-  | 'vertical-flip'
-  | 'bracket'
+import MenuContext from '../contexts/menuContext'
+import React from 'react'
 
-export type { MenuItemVariant }
+export const useMenuContext = () => React.useContext(MenuContext)

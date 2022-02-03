@@ -41,7 +41,7 @@ class AtomAdd extends BaseOperation {
 
     const struct = restruct.molecule
 
-    const pp: { label?: string } = {}
+    const pp: { label: string } = { label: '' }
     if (atom) {
       Object.keys(atom).forEach((p) => {
         pp[p] = atom[p]
@@ -50,10 +50,8 @@ class AtomAdd extends BaseOperation {
 
     pp.label = pp.label || 'C'
     if (typeof this.data.aid !== 'number') {
-      // @ts-ignore
       this.data.aid = struct.atoms.add(new Atom(pp))
     } else {
-      // @ts-ignore
       struct.atoms.set(this.data.aid, new Atom(pp))
     }
 

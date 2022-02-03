@@ -25,7 +25,7 @@ type Data = {
 }
 
 export class AtomAttr extends BaseOperation {
-  data: Data
+  data: Data | null
   data2: Data | null
 
   constructor(atomId?: any, attribute?: any, value?: any) {
@@ -35,24 +35,25 @@ export class AtomAttr extends BaseOperation {
   }
 
   execute(restruct: ReStruct) {
-    const { aid, attribute, value } = this.data
+    if (this.data) {
+      const { aid, attribute, value } = this.data
 
-    const atom = restruct.molecule.atoms.get(aid)!
-    if (!this.data2) {
-      this.data2 = {
-        aid,
-        attribute,
-        value: atom[attribute]
+      const atom = restruct.molecule.atoms.get(aid)!
+      if (!this.data2) {
+        this.data2 = {
+          aid,
+          attribute,
+          value: atom[attribute]
+        }
       }
-    }
 
-    atom[attribute] = value
-    BaseOperation.invalidateAtom(restruct, aid)
+      atom[attribute] = value
+      BaseOperation.invalidateAtom(restruct, aid)
+    }
   }
 
   invert() {
     const inverted = new AtomAttr()
-    // @ts-ignore
     inverted.data = this.data2
     inverted.data2 = this.data
     return inverted
@@ -60,8 +61,8 @@ export class AtomAttr extends BaseOperation {
 
   isDummy(restruct: ReStruct) {
     return (
-      restruct.molecule.atoms.get(this.data.aid)![this.data.attribute] ===
-      this.data.value
+      restruct.molecule.atoms.get(this.data?.aid)![this.data?.attribute] ===
+      this.data?.value
     )
   }
 }

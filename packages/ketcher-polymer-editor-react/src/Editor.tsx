@@ -14,15 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
-import { App } from 'components/App'
-import { store } from 'state'
 import { Provider } from 'react-redux'
-import { defaultTheme } from 'styles/theme'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import styled from '@emotion/styled'
+import { useEffect, useRef } from 'react'
 import { Global } from '@emotion/react'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+
+import { store } from 'state'
+import { defaultTheme } from 'styles/theme'
 import globalStyles from './styles/globalStyles'
+import { Layout } from 'components/Layout'
+import { MonomerLibrary } from 'components/monomerLibrary'
+import { NotationInput } from 'components/notationInput'
+import { Menu } from 'components/menu'
+import { selectTool } from 'state/common'
+import { useAppDispatch } from 'hooks'
+import { Logo } from 'components/Logo'
 
 const theme = createTheme(defaultTheme)
 
@@ -38,23 +44,78 @@ function Editor(props: EditorProps) {
     onInit?.()
   }, [onInit])
 
-  const RootContainer = styled.div({
-    height: '100%',
-    width: '100%',
-    position: 'relative',
-    minWidth: 640,
-    minHeight: 400
-  })
-
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <RootContainer ref={rootElRef}>
+        <div ref={rootElRef} className="Ketcher-polymer-editor-root">
           <Global styles={globalStyles} />
-          <App />
-        </RootContainer>
+
+          <Layout>
+            <Layout.Left>
+              <MenuComponent />
+            </Layout.Left>
+
+            <Layout.Top>
+              <NotationInput />
+            </Layout.Top>
+
+            <Layout.Main></Layout.Main>
+
+            <Layout.Right>
+              <MonomerLibrary />
+            </Layout.Right>
+          </Layout>
+
+          <Logo />
+        </div>
       </ThemeProvider>
     </Provider>
+  )
+}
+
+function MenuComponent() {
+  const dispatch = useAppDispatch()
+
+  const menuItemChanged = (name) => {
+    dispatch(selectTool(name))
+  }
+
+  return (
+    <Menu onItemClick={menuItemChanged}>
+      <Menu.Group>
+        <Menu.Item itemId="open" />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemId="undo" />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemId="erase" />
+        <Menu.Submenu vertical>
+          <Menu.Item itemId="select-lasso" />
+          <Menu.Item itemId="select-rectangle" />
+          <Menu.Item itemId="select-fragment" />
+        </Menu.Submenu>
+        <Menu.Submenu>
+          <Menu.Item itemId="rectangle" />
+          <Menu.Item itemId="ellipse" />
+        </Menu.Submenu>
+        <Menu.Submenu>
+          <Menu.Item itemId="rotate" />
+          <Menu.Item itemId="horizontal-flip" />
+          <Menu.Item itemId="vertical-flip" />
+        </Menu.Submenu>
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemId="single-bond" />
+      </Menu.Group>
+      <Menu.Group divider>
+        <Menu.Item itemId="bracket" />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemId="settings" />
+        <Menu.Item itemId="help" />
+      </Menu.Group>
+    </Menu>
   )
 }
 

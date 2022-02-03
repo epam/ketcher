@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, RefCallback } from 'react'
+import { Dispatch, FC, RefCallback } from 'react'
 import TemplateTable, { Template } from './TemplateTable'
 import {
   changeFilter,
@@ -168,13 +168,11 @@ const TemplateDialog: FC<Props> = (props) => {
 
 export default connect(
   (store) => ({ ...omit(['attach'], (store as any).templates) }),
-  (dispatch, props) => ({
+  (dispatch: Dispatch<any>, props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
     onSelect: (tmpl) => dispatch(selectTmpl(tmpl)),
     onChangeGroup: (group) => dispatch(changeGroup(group)),
-    // @ts-ignore
     onAttach: (tmpl) => dispatch(editTmpl(tmpl)),
-    // @ts-ignore
     onDelete: (tmpl) => dispatch(deleteTmpl(tmpl)),
     onOk: (res) => {
       dispatch(onAction({ tool: 'template', opts: res }))

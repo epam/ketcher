@@ -86,7 +86,6 @@ const config = {
   miew: {
     title: '3D Viewer',
     action: { dialog: 'miew' },
-    disabled: () => !window.Miew,
     hidden: (options) => isHidden(options, 'miew')
   }
 }

@@ -257,13 +257,7 @@ export class SimpleObjectResize extends Base {
       .visel.translate(Scale.obj2scaled(d, restruct.render.options))
     this.data.d = d.negated()
     if (!this.data.noinvalidate) {
-      Base.invalidateItem(
-        restruct,
-        'simpleObjects',
-        // @ts-ignore
-        id,
-        1
-      )
+      Base.invalidateItem(restruct, 'simpleObjects', id, 1)
     }
   }
 

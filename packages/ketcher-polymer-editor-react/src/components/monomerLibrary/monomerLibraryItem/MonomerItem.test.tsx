@@ -11,7 +11,6 @@ describe('Test Monomer Item component', () => {
     )
 
     const div = screen.getByText('L')
-    // @ts-ignore
     userEvent.click(div)
 
     expect(monomerItemHandleClick.mock.calls.length).toEqual(1)

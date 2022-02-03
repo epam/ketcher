@@ -44,7 +44,8 @@ class ReactionMapTool {
   }
 
   mousemove(event) {
-    const rnd = this.editor.render
+    const editor = this.editor
+    const rnd = editor.render
 
     if ('dragCtx' in this) {
       const ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item)
@@ -55,21 +56,20 @@ class ReactionMapTool {
         ci.map === 'atoms' &&
         isValidMap(this.rcs, this.dragCtx.item.id, ci.id)
       ) {
-        this.editor.hover(ci)
+        editor.hover(ci)
         this.updateLine(
           atoms.get(this.dragCtx.item.id)?.pp,
           atoms.get(ci.id)?.pp
         )
       } else {
-        this.editor.hover(null)
+        editor.hover(null)
         this.updateLine(
           atoms.get(this.dragCtx.item.id)?.pp,
           rnd.page2obj(event)
         )
       }
     } else {
-      // @ts-ignore
-      this.editor.hover(this.editor.findItem(event, ['atoms']))
+      editor.hover(editor.findItem(event, ['atoms']))
     }
   }
 

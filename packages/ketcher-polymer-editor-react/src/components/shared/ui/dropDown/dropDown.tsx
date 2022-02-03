@@ -30,8 +30,8 @@ const DropDownSelect = styled(Select)`
     open &&
     css`
       background-color: white;
-      border-bottom-left-radius: 0px;
-      border-bottom-right-radius: 0px;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
     `}
 
   & .MuiSelect-select {

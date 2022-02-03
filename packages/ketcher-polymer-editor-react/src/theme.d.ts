@@ -9,6 +9,7 @@ declare module '@mui/material/styles' {
         canvas: string
         primary: string
         secondary: string
+        overlay: string
       }
       text: {
         primary: string

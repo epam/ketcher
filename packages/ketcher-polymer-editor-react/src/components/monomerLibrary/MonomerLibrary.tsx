@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { MonomerItem } from './monomerLibraryItem/MonomerItem'
-import { Tabs } from 'components/shared/ui/Tabs'
+import { Tabs } from 'components/shared/Tabs'
 import { Switcher } from 'components/rna/Switcher'
 import styled from '@emotion/styled'
 

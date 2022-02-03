@@ -17,7 +17,7 @@ import React, { useState } from 'react'
 import { ClickAwayListener } from '@mui/material'
 import styled from '@emotion/styled'
 import Collapse from '@mui/material/Collapse'
-import { Icon } from 'components/shared/ui/icon'
+import { Icon } from 'components/shared/icon'
 import { MenuItem } from '../menuItem'
 import { useMenuContext } from '../../../hooks/useMenuContext'
 

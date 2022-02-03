@@ -53,6 +53,7 @@ export class KetcherBuilder {
     }
     const structService: StructService =
       this.#structServiceProvider!.createStructService(mergedServiceOptions)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const ketcher = new Ketcher(
       editor,

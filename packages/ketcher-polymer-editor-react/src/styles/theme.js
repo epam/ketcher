@@ -87,8 +87,7 @@ const color = {
     disabled: 'rgba(82, 82, 82, 0.4)'
   },
   monomer: {
-    default: '#C8C8C8',
-    adenosine: '#A0A0FF'
+    default: '#C8C8C8'
   }
 }
 

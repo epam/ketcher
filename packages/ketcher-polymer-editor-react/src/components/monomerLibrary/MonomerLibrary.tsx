@@ -128,7 +128,7 @@ const MonomerLibrary = () => {
           Nucleobase: [
             {
               groupItems: [
-                { label: 'A' },
+                { label: 'A', colorScheme: '#A0A0FF' },
                 { label: '2ldg' },
                 { label: '4skmc' },
                 { label: '7jds' },

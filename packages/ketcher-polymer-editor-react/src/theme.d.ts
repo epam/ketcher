@@ -78,7 +78,6 @@ declare module '@mui/material/styles' {
       }
       monomer: {
         default: string
-        adenosine: string
       }
     }
     font: {

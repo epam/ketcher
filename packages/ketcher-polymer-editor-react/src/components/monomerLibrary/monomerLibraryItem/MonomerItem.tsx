@@ -33,9 +33,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const Card = styled.div<CardProps>`
   background: ${({ colorScheme, theme }) =>
-    colorScheme
-      ? theme.color.monomer[colorScheme]
-      : theme.color.monomer.default};
+    colorScheme || theme.color.monomer.default};
   border-radius: 2px;
   width: 48px;
   height: 48px;

@@ -77,13 +77,13 @@ export function editTmpl(tmpl) {
   return async (dispatch, getState) => {
     try {
       const formData = await openDialog(dispatch, 'attach', { tmpl })
-      if (tmpl.props.group === 'User Templates') {
-        await updateStorage(getState().templates.lib)
-      }
       tmpl.struct.name = formData ? formData.name.trim() : tmpl.struct.name
       tmpl.props = formData
         ? Object.assign({}, tmpl.props, formData.attach)
         : tmpl.props
+      if (tmpl.props.group === 'User Templates') {
+        await updateStorage(getState().templates.lib)
+      }
       await openDialog(dispatch, 'templates')
     } catch {}
   }

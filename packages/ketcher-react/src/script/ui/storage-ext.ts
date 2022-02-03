@@ -17,14 +17,12 @@ import { StorageProvider } from 'ketcher-core/src/domain/services/storage'
 /* local storage */
 export const storage: StorageProvider = {
   get(key) {
-    let item: any
-    let parsedItem: any
     try {
-      item = localStorage.getItem(key)
-      parsedItem = item && JSON.parse(item)
+      const item = localStorage.getItem(key)
+      const parsedItem = item && JSON.parse(item)
       return Promise.resolve(parsedItem)
-    } catch (ex: any) {
-      console.info('LocalStorage:', ex.name)
+    } catch (err: any) {
+      console.info('LocalStorage:', err.name)
       return Promise.reject(new Error())
     }
   },
@@ -32,8 +30,8 @@ export const storage: StorageProvider = {
     try {
       localStorage.setItem(key, JSON.stringify(data))
       return Promise.resolve()
-    } catch (ex: any) {
-      console.info('LocalStorage:', ex.name)
+    } catch (err: any) {
+      console.info('LocalStorage:', err.name)
       return Promise.reject(new Error())
     }
   }

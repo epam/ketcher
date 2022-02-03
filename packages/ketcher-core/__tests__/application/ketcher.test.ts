@@ -4,15 +4,24 @@ import { FormatterFactory } from 'application/formatters'
 import { Ketcher } from 'application/ketcher'
 import { StructService } from 'domain/services'
 import { mock } from 'jest-mock-extended'
+import { FunctionalGroupsProvider } from 'domain/helpers'
 
 describe('contructor()', () => {
   it('should throw exception when editor is null', () => {
     const editor: Editor = null as unknown as Editor
     const structService: StructService = mock<StructService>()
     const formatterFactory: FormatterFactory = mock<FormatterFactory>()
+    const functionalGroupsProvider: FunctionalGroupsProvider =
+      mock<FunctionalGroupsProvider>()
 
     expect(
-      () => new Ketcher(editor, structService, formatterFactory)
+      () =>
+        new Ketcher(
+          editor,
+          structService,
+          formatterFactory,
+          functionalGroupsProvider
+        )
     ).toThrowError(AssertionError)
   })
 
@@ -20,9 +29,17 @@ describe('contructor()', () => {
     const editor: Editor = mock<Editor>()
     const structService: StructService = null as unknown as StructService
     const formatterFactory: FormatterFactory = mock<FormatterFactory>()
+    const functionalGroupsProvider: FunctionalGroupsProvider =
+      mock<FunctionalGroupsProvider>()
 
     expect(
-      () => new Ketcher(editor, structService, formatterFactory)
+      () =>
+        new Ketcher(
+          editor,
+          structService,
+          formatterFactory,
+          functionalGroupsProvider
+        )
     ).toThrowError(AssertionError)
   })
 
@@ -31,9 +48,17 @@ describe('contructor()', () => {
     const structService: StructService = mock<StructService>()
     const formatterFactory: FormatterFactory =
       null as unknown as FormatterFactory
+    const functionalGroupsProvider: FunctionalGroupsProvider =
+      mock<FunctionalGroupsProvider>()
 
     expect(
-      () => new Ketcher(editor, structService, formatterFactory)
+      () =>
+        new Ketcher(
+          editor,
+          structService,
+          formatterFactory,
+          functionalGroupsProvider
+        )
     ).toThrowError(AssertionError)
   })
 })

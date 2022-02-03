@@ -15,19 +15,30 @@
  ***************************************************************************/
 import { Struct } from '../entities'
 
-export class FunctionalGroupsProvider {
+export interface FunctionalGroupsProvider {
+  // getFunctionalGroupsList: () => Array<FunctionalGroup>
+  getFunctionalGroupsList: () => Array<Struct> // TODO change to Promise
+  // isFunctionalGroup: () => Promise<boolean>
+}
+
+export class HttpFunctionalGroupsProvider implements FunctionalGroupsProvider {
   // eslint-disable-next-line no-use-before-define
-  private static instance: FunctionalGroupsProvider
+  private static instance: HttpFunctionalGroupsProvider
   functionalGroupsList: Struct[]
-  constructor() {
+  url: string
+
+  constructor(url) {
     this.functionalGroupsList = []
+    this.url = url
   }
 
-  public static getInstance(): FunctionalGroupsProvider {
-    if (!FunctionalGroupsProvider.instance) {
-      FunctionalGroupsProvider.instance = new FunctionalGroupsProvider()
+  public static getInstance(url?): HttpFunctionalGroupsProvider {
+    if (!HttpFunctionalGroupsProvider.instance) {
+      HttpFunctionalGroupsProvider.instance = new HttpFunctionalGroupsProvider(
+        url
+      )
     }
-    return FunctionalGroupsProvider.instance
+    return HttpFunctionalGroupsProvider.instance
   }
 
   public getFunctionalGroupsList() {
@@ -38,3 +49,6 @@ export class FunctionalGroupsProvider {
     this.functionalGroupsList = list
   }
 }
+
+export const defaultFunctionalGroupProvider =
+  HttpFunctionalGroupsProvider.getInstance(`./templates/fg.sdf`)

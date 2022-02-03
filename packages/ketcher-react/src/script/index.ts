@@ -16,7 +16,11 @@
 
 import { ButtonsConfig, KetcherBuilder } from './builders'
 
-import { StructServiceProvider } from 'ketcher-core'
+import {
+  defaultFunctionalGroupProvider,
+  FunctionalGroupsProvider,
+  StructServiceProvider
+} from 'ketcher-core'
 
 interface Config {
   element: HTMLDivElement | null
@@ -24,6 +28,7 @@ interface Config {
   structServiceProvider: StructServiceProvider
   buttons?: ButtonsConfig
   errorHandler: (message: string) => void
+  functionalGroupsProvider?: FunctionalGroupsProvider | undefined
 }
 
 async function buildKetcherAsync({
@@ -31,7 +36,8 @@ async function buildKetcherAsync({
   staticResourcesUrl,
   structServiceProvider,
   buttons,
-  errorHandler
+  errorHandler,
+  functionalGroupsProvider = defaultFunctionalGroupProvider
 }: Config) {
   const builder = new KetcherBuilder()
 
@@ -43,6 +49,7 @@ async function buildKetcherAsync({
     errorHandler,
     buttons
   )
+  builder.appendFunctionalGroupsProvider(functionalGroupsProvider)
 
   return builder.build()
 }

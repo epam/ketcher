@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { FunctionalGroupsProvider } from '../helpers'
+import { HttpFunctionalGroupsProvider } from '../helpers'
 import { SGroup } from './sgroup'
 import assert from 'assert'
 
@@ -43,7 +43,7 @@ export class FunctionalGroup {
   }
 
   static isFunctionalGroup(sgroup): boolean {
-    const provider = FunctionalGroupsProvider.getInstance()
+    const provider = HttpFunctionalGroupsProvider.getInstance()
     const types = provider.getFunctionalGroupsList()
     return (
       types.some((type) => type.name === sgroup.data.name) &&

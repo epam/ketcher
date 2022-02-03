@@ -16,6 +16,7 @@
 
 import {
   FormatterFactory,
+  FunctionalGroupsProvider,
   Ketcher,
   ServiceMode,
   StructService,
@@ -32,12 +33,14 @@ class KetcherBuilder {
   private editor: Editor | null
   private serviceMode: ServiceMode | null
   private formatterFactory: FormatterFactory | null
+  private functionalGroupsProvider: FunctionalGroupsProvider | null
 
   constructor() {
     this.structService = null
     this.editor = null
     this.serviceMode = null
     this.formatterFactory = null
+    this.functionalGroupsProvider = null
   }
 
   async appendApiAsync(structServiceProvider: StructServiceProvider) {
@@ -52,6 +55,12 @@ class KetcherBuilder {
 
   appendServiceMode(mode: ServiceMode) {
     this.serviceMode = mode
+  }
+
+  appendFunctionalGroupsProvider(
+    functionalGroupsProvider: FunctionalGroupsProvider
+  ) {
+    this.functionalGroupsProvider = functionalGroupsProvider
   }
 
   async appendUiAsync(
@@ -102,10 +111,17 @@ class KetcherBuilder {
       )
     }
 
+    if (!this.functionalGroupsProvider) {
+      throw new Error(
+        'You should append FunctionalGroupsProvider before building'
+      )
+    }
+
     const ketcher = new Ketcher(
       this.editor!,
       this.structService,
-      this.formatterFactory
+      this.formatterFactory,
+      this.functionalGroupsProvider
     )
     ketcher[this.serviceMode] = true
 

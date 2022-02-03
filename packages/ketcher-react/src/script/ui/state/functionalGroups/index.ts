@@ -17,7 +17,7 @@
 import { AnyAction } from 'redux'
 import { appUpdate } from '../options'
 import {
-  FunctionalGroupsProvider,
+  HttpFunctionalGroupsProvider,
   SdfItem,
   SdfSerializer,
   Struct
@@ -53,7 +53,7 @@ export function initFGTemplates(baseUrl: string) {
   return async (dispatch) => {
     const fileName = 'fg.sdf'
     const url = `${baseUrl}/templates/${fileName}`
-    const provider = FunctionalGroupsProvider.getInstance()
+    const provider = HttpFunctionalGroupsProvider.getInstance()
     const sdfSerializer = new SdfSerializer()
     const text = await prefetchStatic(url)
     const templates = sdfSerializer.deserialize(text)

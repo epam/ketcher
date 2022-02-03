@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { escapeRegExp, filter as _filter, flow, reduce } from 'lodash/fp'
+import { Option } from '../component/form/Select'
 
 const GREEK_SIMBOLS = {
   Alpha: 'A',
@@ -65,3 +66,14 @@ export function filterFGLib(lib, filter) {
 }
 
 export { fileOpener } from './fileOpener'
+
+export const getSelectOptionsFromSchema = (schema): Array<Option> => {
+  return schema.enum.reduce((options, value, index) => {
+    options.push({
+      value,
+      label: schema?.enumNames?.[index] || value
+    })
+
+    return options
+  }, [])
+}

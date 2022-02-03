@@ -20,7 +20,8 @@ import { Dialog } from '../../views/components'
 import classes from './sgroup.module.less'
 import { connect } from 'react-redux'
 import { sgroupMap as schemes } from '../../data/schema/struct-schema'
-import Select from '../../component/form/Select/Select'
+import Select from '../../component/form/Select'
+import { getSelectOptionsFromSchema } from '../../utils'
 
 function Sgroup({ formState, ...prop }) {
   const { result, valid } = formState
@@ -63,6 +64,7 @@ const content = (type) =>
             key={`${type}-${prop}`}
             {...props}
             component={Select}
+            options={getSelectOptionsFromSchema(schemes[type].properties[prop])}
           />
         )
 

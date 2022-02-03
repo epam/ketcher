@@ -6,7 +6,7 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-13stbb8"
+        class="css-1m326po"
       >
         <button
           class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-1ii4wrn-MuiButtonBase-root-MuiButton-root-RAPButton"
@@ -72,11 +72,21 @@ Object {
           </button>
         </div>
       </div>
+      <button
+        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16bl4la-MuiButtonBase-root-MuiButton-root"
+        tabindex="0"
+        type="button"
+      >
+        Reset
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
     </div>
   </body>,
   "container": <div>
     <div
-      class="css-13stbb8"
+      class="css-1m326po"
     >
       <button
         class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-1ii4wrn-MuiButtonBase-root-MuiButton-root-RAPButton"
@@ -142,6 +152,16 @@ Object {
         </button>
       </div>
     </div>
+    <button
+      class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16bl4la-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
+    >
+      Reset
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
@@ -203,7 +223,7 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-13stbb8"
+        class="css-1m326po"
       >
         <button
           class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
@@ -269,11 +289,21 @@ Object {
           </button>
         </div>
       </div>
+      <button
+        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16bl4la-MuiButtonBase-root-MuiButton-root"
+        tabindex="0"
+        type="button"
+      >
+        Reset
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
     </div>
   </body>,
   "container": <div>
     <div
-      class="css-13stbb8"
+      class="css-1m326po"
     >
       <button
         class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
@@ -339,6 +369,16 @@ Object {
         </button>
       </div>
     </div>
+    <button
+      class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16bl4la-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
+    >
+      Reset
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
@@ -400,7 +440,7 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-13stbb8"
+        class="css-1m326po"
       >
         <button
           class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
@@ -466,11 +506,21 @@ Object {
           </button>
         </div>
       </div>
+      <button
+        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16bl4la-MuiButtonBase-root-MuiButton-root"
+        tabindex="0"
+        type="button"
+      >
+        Reset
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
     </div>
   </body>,
   "container": <div>
     <div
-      class="css-13stbb8"
+      class="css-1m326po"
     >
       <button
         class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
@@ -536,6 +586,16 @@ Object {
         </button>
       </div>
     </div>
+    <button
+      class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16bl4la-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
+    >
+      Reset
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
@@ -597,7 +657,7 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-13stbb8"
+        class="css-1m326po"
       >
         <button
           class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
@@ -663,11 +723,21 @@ Object {
           </button>
         </div>
       </div>
+      <button
+        class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16bl4la-MuiButtonBase-root-MuiButton-root"
+        tabindex="0"
+        type="button"
+      >
+        Reset
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
     </div>
   </body>,
   "container": <div>
     <div
-      class="css-13stbb8"
+      class="css-1m326po"
     >
       <button
         class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
@@ -733,6 +803,16 @@ Object {
         </button>
       </div>
     </div>
+    <button
+      class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-16bl4la-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
+    >
+      Reset
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],

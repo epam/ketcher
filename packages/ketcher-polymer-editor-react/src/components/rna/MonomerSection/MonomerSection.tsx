@@ -15,31 +15,7 @@
  ***************************************************************************/
 import { Switcher } from 'components/rna/Switcher'
 import { useState } from 'react'
-import Button from '@mui/material/Button'
-import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem/MonomerItem'
-import { css } from '@emotion/react'
-import { useTheme } from '@mui/material'
 import { Group, MonomerList } from 'components/monomerLibrary'
-
-const ResetButton = ({ onClick }) => {
-  const theme = useTheme()
-  const styles = css`
-    margin-left: auto;
-    height: 15px;
-    color: ${theme.color.button.reset};
-    font-size: ${theme.font.size.regular};
-    min-width: 30px;
-    text-transform: none;
-    :hover {
-      background-color: unset;
-    }
-  `
-  return (
-    <Button variant="text" css={styles} onClick={onClick}>
-      Reset
-    </Button>
-  )
-}
 
 type selectedMonomersType = {
   Sugar: string
@@ -47,10 +23,8 @@ type selectedMonomersType = {
   Phosphate: string
 }
 
-type splitNucleotideType = (nucleotide: MonomerItemType) => selectedMonomersType
-
 interface MonomerSectionProps {
-  onItemClick: () => void
+  selectItem: (item) => void
   rnaMonomers: {
     Nucleotide: Array<Group>
     Nucleobase: Array<Group>
@@ -59,57 +33,46 @@ interface MonomerSectionProps {
   }
 }
 
-const MonomerSection = ({ onItemClick, rnaMonomers }: MonomerSectionProps) => {
-  const splitNucleotide: splitNucleotideType = (nucleotide) => {
-    // TODO: replace function implementation after setup data contract
-    const itemMonomers = nucleotide.name?.split('') || []
-    return Object.keys(selectedMonomers).reduce((acc, currentValue, index) => {
-      acc[currentValue] = itemMonomers[index]
-      return acc
-    }, {} as selectedMonomersType)
+const MonomerSection = ({ selectItem, rnaMonomers }: MonomerSectionProps) => {
+  const getInitialMonomers = () => {
+    return rnaMonomers.Nucleotide[0].groupItems[0]
+      .monomers as selectedMonomersType
   }
 
-  const [selectedMonomers, setSelectedMonomers] =
-    useState<selectedMonomersType>({
-      Sugar: 'R',
-      Nucleobase: 'A',
-      Phosphate: 'P'
-    })
-  const [activeMonomerType, setActiveMonomerType] = useState('Nucleotide')
-
-  const onReset = () => {
-    setActiveMonomerType('Nucleotide')
-    setSelectedMonomers({
-      Sugar: 'R',
-      Nucleobase: 'A',
-      Phosphate: 'P'
-    })
+  const setType = (type) => {
+    if (type === 'reset') {
+      setActiveMonomerType('Nucleotide')
+      setSelectedMonomers(getInitialMonomers())
+    } else {
+      setActiveMonomerType(type)
+    }
   }
 
   const selectMonomer = (item) => {
-    let updateValue = {}
     if (activeMonomerType === 'Nucleotide') {
-      updateValue = splitNucleotide(item)
-      setSelectedMonomers(updateValue as selectedMonomersType)
+      setSelectedMonomers(item.monomers)
+      selectItem(selectedMonomers)
     } else {
-      updateValue[activeMonomerType] = item.label
       setSelectedMonomers((prevState) => {
         return {
           ...prevState,
-          ...updateValue
+          [activeMonomerType]: item.label
         }
       })
+      selectItem(selectedMonomers[activeMonomerType])
     }
-    onItemClick()
   }
+
+  const [selectedMonomers, setSelectedMonomers] =
+    useState<selectedMonomersType>(getInitialMonomers())
+  const [activeMonomerType, setActiveMonomerType] = useState('Nucleotide')
 
   return (
     <>
       <Switcher
         selectedMonomers={Object.values(selectedMonomers)}
-        setActiveMonomerType={setActiveMonomerType}
+        setActiveMonomerType={setType}
       />
-      <ResetButton onClick={onReset} />
       <MonomerList
         list={rnaMonomers[activeMonomerType]}
         onItemClick={selectMonomer}

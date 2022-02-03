@@ -81,11 +81,46 @@ const MonomerLibrary = () => {
           Nucleotide: [
             {
               groupItems: [
-                { label: 'A', name: 'RAP' },
-                { label: 'C', name: 'RCP' },
-                { label: 'G', name: 'RGP' },
-                { label: 'T', name: 'RTP' },
-                { label: 'U', name: 'RUP' }
+                {
+                  label: 'A',
+                  monomers: {
+                    Sugar: 'R',
+                    Nucleobase: 'A',
+                    Phosphate: 'P'
+                  }
+                },
+                {
+                  label: 'C',
+                  monomers: {
+                    Sugar: 'R',
+                    Nucleobase: 'C',
+                    Phosphate: 'P'
+                  }
+                },
+                {
+                  label: 'G',
+                  monomers: {
+                    Sugar: 'R',
+                    Nucleobase: 'G',
+                    Phosphate: 'P'
+                  }
+                },
+                {
+                  label: 'T',
+                  monomers: {
+                    Sugar: 'R',
+                    Nucleobase: 'T',
+                    Phosphate: 'P'
+                  }
+                },
+                {
+                  label: 'U',
+                  monomers: {
+                    Sugar: 'R',
+                    Nucleobase: 'U',
+                    Phosphate: 'P'
+                  }
+                }
               ],
               groupTitle: 'Nucleotides'
             }
@@ -135,7 +170,7 @@ const MonomerLibrary = () => {
             }
           ]
         },
-        onItemClick: monomerItemHandleClick
+        selectItem: (item) => console.log(item)
       }
     },
     {

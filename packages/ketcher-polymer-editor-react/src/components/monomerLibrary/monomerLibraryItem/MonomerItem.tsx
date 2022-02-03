@@ -18,8 +18,8 @@ import React from 'react'
 
 export type MonomerItemType = {
   label: string
-  name?: string
   colorScheme?: string
+  monomers?: object
 }
 
 interface MonomerItemProps {

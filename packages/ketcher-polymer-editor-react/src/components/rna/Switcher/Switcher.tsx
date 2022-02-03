@@ -75,6 +75,18 @@ const LinkIcon = styled(Icon)<{ isActive: boolean }>(({ isActive, theme }) => ({
   }
 }))
 
+const ResetButton = styled(Button)`
+  margin-left: auto;
+  height: 15px;
+  color: ${({ theme }) => theme.color.button.reset};
+  font-size: ${({ theme }) => theme.font.size.regular};
+  min-width: 30px;
+  text-transform: none;
+  :hover {
+    background-color: unset;
+  }
+`
+
 export const Switcher = ({
   selectedMonomers,
   setActiveMonomerType
@@ -87,34 +99,44 @@ export const Switcher = ({
   const [nucleobase, sugar, phosphate] = selectedMonomers
   const nucleotide = `${nucleobase}(${sugar})${phosphate}`
 
+  const onReset = () => {
+    setActiveMonomerType('reset')
+    setActiveIndex(0)
+  }
+
   return (
-    <SwitcherContainer>
-      <RAPButton
-        callback={() => handleClick(Monomers[0], 0)}
-        isActive={activeIndex === 0}
-      >
-        {nucleotide}
-      </RAPButton>
-      <SvgContainer>
-        {svgNames.map((name, index) => (
-          <LinkIcon
-            key={name}
-            name={name}
-            isActive={activeIndex === index + 1}
-          />
-        ))}
-      </SvgContainer>
-      <ButtonContainer>
-        {selectedMonomers.map((button, index) => (
-          <RAPButton
-            key={button}
-            callback={() => handleClick(Monomers[index + 1], index + 1)}
-            isActive={activeIndex === index + 1}
-          >
-            {button}
-          </RAPButton>
-        ))}
-      </ButtonContainer>
-    </SwitcherContainer>
+    <>
+      <SwitcherContainer>
+        <RAPButton
+          callback={() => handleClick(Monomers[0], 0)}
+          isActive={activeIndex === 0}
+        >
+          {nucleotide}
+        </RAPButton>
+        <SvgContainer>
+          {svgNames.map((name, index) => (
+            <LinkIcon
+              key={name}
+              name={name}
+              isActive={activeIndex === index + 1}
+            />
+          ))}
+        </SvgContainer>
+        <ButtonContainer>
+          {selectedMonomers.map((button, index) => (
+            <RAPButton
+              key={button}
+              callback={() => handleClick(Monomers[index + 1], index + 1)}
+              isActive={activeIndex === index + 1}
+            >
+              {button}
+            </RAPButton>
+          ))}
+        </ButtonContainer>
+      </SwitcherContainer>
+      <ResetButton variant="text" onClick={onReset}>
+        Reset
+      </ResetButton>
+    </>
   )
 }

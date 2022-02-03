@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { MonomerItem, MonomerItemType } from '../monomerLibraryItem/MonomerItem'
+import { MonomerItem, MonomerItemType } from '../monomerLibraryItem'
 import styled from '@emotion/styled'
 
 interface MonomerGroupProps {

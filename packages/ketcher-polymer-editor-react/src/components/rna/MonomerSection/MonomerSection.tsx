@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { Switcher } from 'components/rna/Switcher'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Group, MonomerList } from 'components/monomerLibrary'
 
 type selectedMonomersType = {
@@ -25,7 +25,7 @@ type selectedMonomersType = {
 
 interface MonomerSectionProps {
   selectItem: (item) => void
-  rnaMonomers: {
+  items: {
     Nucleotide: Array<Group>
     Nucleobase: Array<Group>
     Sugar: Array<Group>
@@ -33,13 +33,12 @@ interface MonomerSectionProps {
   }
 }
 
-const MonomerSection = ({ selectItem, rnaMonomers }: MonomerSectionProps) => {
+const MonomerSection = ({ selectItem, items }: MonomerSectionProps) => {
   const getInitialMonomers = () => {
-    return rnaMonomers.Nucleotide[0].groupItems[0]
-      .monomers as selectedMonomersType
+    return items.Nucleotide[0].groupItems[0].monomers as selectedMonomersType
   }
 
-  const setType = (type) => {
+  const selectMonomerType = (type) => {
     if (type === 'reset') {
       setActiveMonomerType('Nucleotide')
       setSelectedMonomers(getInitialMonomers())
@@ -51,7 +50,6 @@ const MonomerSection = ({ selectItem, rnaMonomers }: MonomerSectionProps) => {
   const selectMonomer = (item) => {
     if (activeMonomerType === 'Nucleotide') {
       setSelectedMonomers(item.monomers)
-      selectItem(selectedMonomers)
     } else {
       setSelectedMonomers((prevState) => {
         return {
@@ -59,25 +57,31 @@ const MonomerSection = ({ selectItem, rnaMonomers }: MonomerSectionProps) => {
           [activeMonomerType]: item.label
         }
       })
-      selectItem(selectedMonomers[activeMonomerType])
     }
   }
 
   const [selectedMonomers, setSelectedMonomers] =
     useState<selectedMonomersType>(getInitialMonomers())
   const [activeMonomerType, setActiveMonomerType] = useState('Nucleotide')
+  useEffect(() => {
+    const matchMonomerByType =
+      activeMonomerType === 'Nucleotide'
+        ? selectedMonomers
+        : selectedMonomers[activeMonomerType]
+    selectItem(matchMonomerByType)
+  }, [selectItem, activeMonomerType, selectedMonomers])
 
   return (
     <>
       <Switcher
         selectedMonomers={Object.values(selectedMonomers)}
-        setActiveMonomerType={setType}
+        setActiveMonomerType={selectMonomerType}
       />
       <MonomerList
-        list={rnaMonomers[activeMonomerType]}
+        list={items[activeMonomerType]}
         onItemClick={selectMonomer}
       />
     </>
   )
 }
-export { MonomerSection }
+export { MonomerSection as RnaMonomerSection }

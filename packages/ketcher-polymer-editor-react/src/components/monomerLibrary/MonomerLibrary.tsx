@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { MonomerItemType } from './monomerLibraryItem/MonomerItem'
+import { MonomerItemType } from './monomerLibraryItem'
 import { Tabs } from 'components/shared/ui/Tabs'
 import styled from '@emotion/styled'
-import { MonomerSection as rnaMonomerSection } from 'components/rna/MonomerSection'
-import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup'
+import { RnaMonomerSection } from 'components/rna/MonomerSection'
+import { MonomerGroup } from './monomerLibraryGroup'
 
 export type Group = {
   groupItems: Array<MonomerItemType>
@@ -75,9 +75,9 @@ const MonomerLibrary = () => {
     },
     {
       caption: 'RNA',
-      component: rnaMonomerSection,
+      component: RnaMonomerSection,
       props: {
-        rnaMonomers: {
+        items: {
           Nucleotide: [
             {
               groupItems: [

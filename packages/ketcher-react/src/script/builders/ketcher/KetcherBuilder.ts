@@ -19,21 +19,21 @@ import {
   Ketcher,
   ServiceMode,
   StructService,
-  StructServiceProvider
+  StructServiceProvider,
+  StorageProvider
 } from 'ketcher-core'
 
 import { ButtonsConfig } from './ButtonsConfig'
 import { Editor } from '../../editor'
 import createApi from '../../api'
 import { initApp } from '../../ui'
-import { StorageProvider } from 'ketcher-core/src/domain/services/storage'
 
 class KetcherBuilder {
   private structService: StructService | null
   private editor: Editor | null
   private serviceMode: ServiceMode | null
   private formatterFactory: FormatterFactory | null
-  storage: StorageProvider | undefined
+  private storage: StorageProvider | undefined
 
   constructor() {
     this.structService = null
@@ -57,8 +57,12 @@ class KetcherBuilder {
     this.serviceMode = mode
   }
 
-  appendStorage(storage: StorageProvider | undefined) {
+  appendStorage(storage: StorageProvider) {
     this.storage = storage
+  }
+
+  getStorage() {
+    return this.storage
   }
 
   async appendUiAsync(
@@ -109,6 +113,9 @@ class KetcherBuilder {
       throw new Error(
         'You should append StructureServiceFactory before building'
       )
+    }
+    if (!this.storage) {
+      throw new Error('You should append storage before building')
     }
 
     const ketcher = new Ketcher(

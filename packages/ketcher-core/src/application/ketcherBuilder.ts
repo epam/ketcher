@@ -59,6 +59,7 @@ export class KetcherBuilder {
       editor,
       structService,
       new FormatterFactory(structService)
+      // add storage later
     )
     ketcher[this.#structServiceProvider.mode] = true
 

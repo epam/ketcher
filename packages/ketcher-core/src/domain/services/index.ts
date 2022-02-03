@@ -16,3 +16,4 @@
 
 export * from './struct'
 export * from './renderer'
+export * from './storage'

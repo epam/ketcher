@@ -21,7 +21,6 @@ import {
 } from '../../data/schema/options-schema'
 
 import { pick } from 'lodash/fp'
-import { useAppContext } from '../../../../hooks'
 
 export const initOptionsState = {
   app: {

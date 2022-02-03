@@ -4,15 +4,16 @@ import { FormatterFactory } from 'application/formatters'
 import { Ketcher } from 'application/ketcher'
 import { StructService } from 'domain/services'
 import { mock } from 'jest-mock-extended'
+import { StorageProvider } from 'domain/services/storage'
 
 describe('contructor()', () => {
   it('should throw exception when editor is null', () => {
     const editor: Editor = null as unknown as Editor
     const structService: StructService = mock<StructService>()
     const formatterFactory: FormatterFactory = mock<FormatterFactory>()
-
+    const storage = mock<StorageProvider>()
     expect(
-      () => new Ketcher(editor, structService, formatterFactory)
+      () => new Ketcher(editor, structService, formatterFactory, storage)
     ).toThrowError(AssertionError)
   })
 
@@ -20,9 +21,10 @@ describe('contructor()', () => {
     const editor: Editor = mock<Editor>()
     const structService: StructService = null as unknown as StructService
     const formatterFactory: FormatterFactory = mock<FormatterFactory>()
+    const storage = mock<StorageProvider>()
 
     expect(
-      () => new Ketcher(editor, structService, formatterFactory)
+      () => new Ketcher(editor, structService, formatterFactory, storage)
     ).toThrowError(AssertionError)
   })
 
@@ -31,9 +33,10 @@ describe('contructor()', () => {
     const structService: StructService = mock<StructService>()
     const formatterFactory: FormatterFactory =
       null as unknown as FormatterFactory
+    const storage = mock<StorageProvider>()
 
     expect(
-      () => new Ketcher(editor, structService, formatterFactory)
+      () => new Ketcher(editor, structService, formatterFactory, storage)
     ).toThrowError(AssertionError)
   })
 })

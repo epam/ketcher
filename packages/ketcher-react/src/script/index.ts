@@ -17,8 +17,7 @@
 import { ButtonsConfig, KetcherBuilder } from './builders'
 import { storage as defaultStorage } from '../script/ui/storage-ext'
 
-import { StructServiceProvider } from 'ketcher-core'
-import { StorageProvider } from 'ketcher-core/src/domain/services/storage'
+import { StructServiceProvider, StorageProvider } from 'ketcher-core'
 
 interface Config {
   element: HTMLDivElement | null
@@ -46,7 +45,7 @@ async function buildKetcherAsync({
     staticResourcesUrl,
     errorHandler,
     buttons,
-    builder.storage
+    builder.getStorage()
   )
 
   return builder.build()

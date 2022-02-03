@@ -16,13 +16,7 @@
 
 import { AnyAction } from 'redux'
 import { appUpdate } from '../options'
-import {
-  HttpFunctionalGroupsProvider,
-  SdfItem,
-  SdfSerializer,
-  Struct
-} from 'ketcher-core'
-import { prefetchStatic } from '../templates/init-lib'
+import {HttpFunctionalGroupsProvider, SdfItem} from 'ketcher-core'
 
 interface FGState {
   lib: []
@@ -49,19 +43,13 @@ const functionalGroupsReducer = (
 
 const initFGroups = (lib: SdfItem[]) => ({ type: 'FG_INIT', payload: { lib } })
 
-export function initFGTemplates(baseUrl: string) {
+export function initFGTemplates() {
   return async (dispatch) => {
-    const fileName = 'fg.sdf'
-    const url = `${baseUrl}/templates/${fileName}`
     const provider = HttpFunctionalGroupsProvider.getInstance()
-    const sdfSerializer = new SdfSerializer()
-    const text = await prefetchStatic(url)
-    const templates = sdfSerializer.deserialize(text)
-    const functionalGroups = templates.reduce(
-      (acc: Struct[], { struct }) => [...acc, struct],
-      []
-    )
-    provider.setFunctionalGroupsList(functionalGroups)
+
+    await provider.setFunctionalGroupsList()
+    const templates = provider.getTemplates()
+
     dispatch(initFGroups(templates))
     dispatch(appUpdate({ functionalGroups: true }))
   }

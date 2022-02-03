@@ -67,7 +67,7 @@ function parseRxn(
 
 /* Prepare For Saving */
 const prepareForSaving = {
-  MUL: SGroup.prepareMulForSaving,
+  MUL: SGroup?.prepareMulForSaving,
   SRU: prepareSruForSaving,
   SUP: prepareSupForSaving,
   DAT: prepareDatForSaving,

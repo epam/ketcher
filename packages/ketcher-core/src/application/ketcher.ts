@@ -26,7 +26,7 @@ import { MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import assert from 'assert'
 import { Indigo } from 'application/indigo'
-import { FunctionalGroupsProvider } from 'domain/helpers'
+import { DefaultFunctionalGroupsProvider } from 'domain/helpers'
 
 function parseStruct(structStr: string, structService: StructService) {
   const format = identifyStructFormat(structStr)
@@ -50,7 +50,7 @@ export class Ketcher {
   #formatterFactory: FormatterFactory
   #editor: Editor
   #indigo: Indigo
-  #functionalGroupsProvider: FunctionalGroupsProvider
+  #functionalGroupsProvider: DefaultFunctionalGroupsProvider
 
   get editor(): Editor {
     return this.#editor
@@ -60,7 +60,7 @@ export class Ketcher {
     editor: Editor,
     structService: StructService,
     formatterFactory: FormatterFactory,
-    functionalGroupsProvider: FunctionalGroupsProvider
+    functionalGroupsProvider: DefaultFunctionalGroupsProvider
   ) {
     assert(editor != null)
     assert(structService != null)

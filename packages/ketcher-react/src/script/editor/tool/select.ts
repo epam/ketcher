@@ -27,7 +27,8 @@ import {
   getItemsToFuse,
   FunctionalGroup,
   fromSimpleObjectResizing,
-  fromArrowResizing, HttpFunctionalGroupsProvider
+  fromArrowResizing,
+  DefaultFunctionalGroupsProvider
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -518,7 +519,9 @@ class SelectTool {
       }
     } else if (
       (ci.map === 'sgroups' &&
-        !HttpFunctionalGroupsProvider.isFunctionalGroup(molecule.sgroups.get(ci.id))) ||
+        !DefaultFunctionalGroupsProvider.getInstance().isFunctionalGroup(
+          molecule.sgroups.get(ci.id) as SGroup
+        )) ||
       ci.map === 'sgroupData'
     ) {
       editor.selection(closestToSel(ci))

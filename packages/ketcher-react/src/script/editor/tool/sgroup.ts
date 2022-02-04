@@ -23,7 +23,8 @@ import {
   fromSgroupDeletion,
   FunctionalGroup,
   SGroup,
-  Pool, HttpFunctionalGroupsProvider
+  Pool,
+  DefaultFunctionalGroupsProvider
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -201,8 +202,10 @@ class SGroupTool {
 
     if (ci && functionalGroups.size && ci.map === 'functionalGroups') {
       const sgroup = sgroups.get(ci.id)
+      const defaultFunctionalGroupsProvider =
+        DefaultFunctionalGroupsProvider.getInstance()
 
-      if (HttpFunctionalGroupsProvider.isFunctionalGroup(sgroup?.item)) {
+      if (defaultFunctionalGroupsProvider.isFunctionalGroup(sgroup?.item)) {
         this.editor.event.removeFG.dispatch({ fgIds: [ci.id] })
         return
       }

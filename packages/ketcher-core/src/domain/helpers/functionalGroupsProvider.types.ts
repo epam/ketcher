@@ -14,8 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './scale'
-export * from './stereoValidator'
-export * from './functionalGroupsProvider'
-export * from './defaultFunctionalGroupsProvider'
-export * from './functionalGroupsProvider.types'
+import { SGroup, Struct } from 'domain/entities'
+import { SdfItem } from 'domain/serializers'
+
+export interface FunctionalGroupsProvider {
+  // getFunctionalGroupsList: () => Array<FunctionalGroup>
+  getFunctionalGroupsList: () => Promise<Array<Struct>>
+  isFunctionalGroup: (sgroup: SGroup) => boolean // TODO change to Promise
+  getFunctionalGroupsTemplates: () => Promise<Array<SdfItem>> // TODO maybe remove this
+}

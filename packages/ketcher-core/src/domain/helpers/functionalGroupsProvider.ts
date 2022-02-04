@@ -15,12 +15,7 @@
  ***************************************************************************/
 import { SGroup, Struct } from '../entities'
 import { SdfItem, SdfSerializer } from 'domain/serializers/sdf'
-
-export interface FunctionalGroupsProvider {
-  // getFunctionalGroupsList: () => Array<FunctionalGroup>
-  getFunctionalGroupsList: () => Promise<Array<Struct>>
-  isFunctionalGroup: (sgroup: SGroup) => boolean // TODO change to Promise
-}
+import { FunctionalGroupsProvider } from 'domain/helpers/functionalGroupsProvider.types'
 
 export function prefetchStatic(url) {
   return fetch(url, { credentials: 'same-origin' }).then((resp) => {
@@ -30,67 +25,49 @@ export function prefetchStatic(url) {
 }
 
 export class HttpFunctionalGroupsProvider implements FunctionalGroupsProvider {
-  // eslint-disable-next-line no-use-before-define
-  private static instance: HttpFunctionalGroupsProvider
-  #functionalGroupsList: Array<Struct>
   #url: string
   #sdfSerializer: SdfSerializer
-  #templates: Array<SdfItem>
+  #templates: Array<SdfItem> | undefined
+  #functionalGroupsList: Array<Struct> | undefined
 
   constructor(url) {
-    this.#functionalGroupsList = []
     this.#url = url
     this.#sdfSerializer = new SdfSerializer()
-    this.#templates = []
+    this.#templates = undefined
+    this.#functionalGroupsList = undefined
   }
 
-  public static getInstance(url?): HttpFunctionalGroupsProvider {
-    if (!HttpFunctionalGroupsProvider.instance) {
-      HttpFunctionalGroupsProvider.instance = new HttpFunctionalGroupsProvider(
-        url
-      )
+  public async getFunctionalGroupsTemplates() {
+    if (!this.#templates) {
+      const text = await prefetchStatic(this.#url)
+      this.#templates = this.#sdfSerializer.deserialize(text)
     }
-    return HttpFunctionalGroupsProvider.instance
-  }
 
-  public get functionalGroupsList() {
-    return this.#functionalGroupsList
-  }
-
-  public get functionalGroupsTemplates() {
     return this.#templates
   }
 
-  public async getFunctionalGroupsTemplates(): Promise<Array<SdfItem>> {
-    const text = await prefetchStatic(this.#url)
-    return this.#sdfSerializer.deserialize(text)
-  }
-
   public async getFunctionalGroupsList(): Promise<Array<Struct>> {
-    const list = this.#templates.reduce(
-      (acc: Struct[], { struct }) => [...acc, struct],
-      []
-    )
-    return list
-  }
+    if (!this.#functionalGroupsList) {
+      const templates = await this.getFunctionalGroupsTemplates()
 
-  public async setFunctionalGroupsList() {
-    this.#templates = await this.getFunctionalGroupsTemplates()
-    this.#functionalGroupsList = await this.getFunctionalGroupsList()
+      const list = templates.reduce(
+          (acc: Struct[], { struct }) => [...acc, struct],
+          []
+      )
+      this.#functionalGroupsList = list
+    }
+
+    return this.#functionalGroupsList
   }
 
   public isFunctionalGroup(sgroup: SGroup): boolean {
-    const types = this.#functionalGroupsList
-    return (
-      types.some((type) => type.name === sgroup.data.name) &&
-      sgroup.type === 'SUP'
-    )
-  }
+    if (this.#functionalGroupsList) {
+      return (
+          this.#functionalGroupsList.some((type) => type.name === sgroup.data.name) &&
+          sgroup.type === 'SUP'
+      )
+    }
 
-  public static isFunctionalGroup(sgroup: SGroup): boolean {
-    return this.instance.isFunctionalGroup(sgroup)
+    return false
   }
 }
-
-export const defaultFunctionalGroupProvider =
-  HttpFunctionalGroupsProvider.getInstance(`./templates/fg.sdf`)

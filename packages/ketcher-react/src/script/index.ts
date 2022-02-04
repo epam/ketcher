@@ -17,8 +17,9 @@
 import { ButtonsConfig, KetcherBuilder } from './builders'
 
 import {
-  defaultFunctionalGroupProvider,
+  createDefaultFunctionalGroupsProvider,
   FunctionalGroupsProvider,
+  HttpFunctionalGroupsProvider,
   StructServiceProvider
 } from 'ketcher-core'
 
@@ -37,9 +38,13 @@ async function buildKetcherAsync({
   structServiceProvider,
   buttons,
   errorHandler,
-  functionalGroupsProvider = defaultFunctionalGroupProvider
+  functionalGroupsProvider
 }: Config) {
   const builder = new KetcherBuilder()
+  const fgprovider =
+    functionalGroupsProvider ||
+    new HttpFunctionalGroupsProvider('./templates/fg.sdf')
+  const defaultFgProvider = createDefaultFunctionalGroupsProvider(fgprovider)
 
   await builder.appendApiAsync(structServiceProvider)
   builder.appendServiceMode(structServiceProvider.mode)
@@ -49,7 +54,7 @@ async function buildKetcherAsync({
     errorHandler,
     buttons
   )
-  builder.appendFunctionalGroupsProvider(functionalGroupsProvider)
+  builder.appendFunctionalGroupsProvider(defaultFgProvider)
 
   return builder.build()
 }

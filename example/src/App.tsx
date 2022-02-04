@@ -2,7 +2,6 @@ import 'ketcher-react/dist/index.css'
 
 import { ButtonsConfig, Editor } from 'ketcher-react'
 import {
-    defaultFunctionalGroupProvider,
     Ketcher,
     RemoteStructServiceProvider
 } from 'ketcher-core'
@@ -59,7 +58,6 @@ const App = () => {
         buttons={hiddenButtonsConfig}
         staticResourcesUrl={process.env.PUBLIC_URL!}
         structServiceProvider={structServiceProvider}
-        functionalGroupsProvider={defaultFunctionalGroupProvider}
         onInit={(ketcher: Ketcher) => {
           ;(global as any).ketcher = ketcher
         }}

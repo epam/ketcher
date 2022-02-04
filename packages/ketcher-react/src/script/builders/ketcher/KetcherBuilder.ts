@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import {
+  DefaultFunctionalGroupsProvider,
   FormatterFactory,
-  FunctionalGroupsProvider,
   Ketcher,
   ServiceMode,
   StructService,
@@ -33,7 +33,7 @@ class KetcherBuilder {
   private editor: Editor | null
   private serviceMode: ServiceMode | null
   private formatterFactory: FormatterFactory | null
-  private functionalGroupsProvider: FunctionalGroupsProvider | null
+  private functionalGroupsProvider: DefaultFunctionalGroupsProvider | null
 
   constructor() {
     this.structService = null
@@ -58,7 +58,7 @@ class KetcherBuilder {
   }
 
   appendFunctionalGroupsProvider(
-    functionalGroupsProvider: FunctionalGroupsProvider
+    functionalGroupsProvider: DefaultFunctionalGroupsProvider
   ) {
     this.functionalGroupsProvider = functionalGroupsProvider
   }

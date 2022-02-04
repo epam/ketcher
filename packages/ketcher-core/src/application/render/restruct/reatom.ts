@@ -164,6 +164,7 @@ class ReAtom extends ReObject {
     }
 
     this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this)
+    console.log(this.hydrogenOnTheLeft)
     this.showLabel = isLabelVisible(restruct, render.options, this)
     this.color = 'black' // reset colour
 
@@ -185,19 +186,22 @@ class ReAtom extends ReObject {
       implh = Math.floor(this.a.implicitH)
       isHydrogen = label.text === 'H'
       restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true)
-      if (options.showAtomIds) {
-        index = {}
-        index.text = aid.toString()
-        index.path = render.paper.text(ps.x, ps.y, index.text).attr({
-          font: options.font,
-          'font-size': options.fontszsub,
-          fill: '#070'
-        })
-        index.rbb = util.relBox(index.path.getBBox())
-        draw.recenterText(index.path, index.rbb)
-        restruct.addReObjectPath(LayerMap.indices, this.visel, index.path, ps)
-      }
       this.setHighlight(this.highlight, render)
+    }
+    if (options.showAtomIds) {
+      index = {}
+      index.text = aid.toString()
+      const idPos = this.showLabel
+        ? Vec2.lc(ps, 1, new Vec2({ x: 1, y: -3, z: 0 }), 6)
+        : Vec2.lc(ps, 1, new Vec2({ x: 1.2, y: -1.2, z: 0 }), 6)
+      index.path = render.paper.text(idPos.x, idPos.y, index.text).attr({
+        font: options.font,
+        'font-size': options.fontszsub,
+        fill: '#070'
+      })
+      index.rbb = util.relBox(index.path.getBBox())
+      draw.recenterText(index.path, index.rbb)
+      restruct.addReObjectPath(LayerMap.indices, this.visel, index.path, ps)
     }
 
     if (this.showLabel && !this.a.pseudo) {

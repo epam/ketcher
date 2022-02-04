@@ -17,96 +17,97 @@
 import { ThemeOptions as MuiThemeOptions } from '@mui/material/styles'
 import { EditorTheme } from '.'
 
-const color = {
-  background: {
-    canvas: '#F2F2F2',
-    primary: '#FFFFFF',
-    secondary: '#F8FEFF',
-    overlay: '#005662'
-  },
-  text: {
-    primary: '#121212',
-    secondary: '#BCBCBC',
-    light: '#FFFFFF',
-    dark: '#000000'
-  },
-  tab: {
-    regular: '#F3F3F3',
-    active: '#005662',
-    hover: '#00838F'
-  },
-  scroll: {
-    regular: '#717171',
-    inactive: '#DDDDDD'
-  },
-  button: {
-    primary: {
-      active: '#005662',
-      hover: '#00838F',
-      clicked: '#4FB3BF',
-      disabled: 'rgba(0, 131, 143, 0.4)'
-    },
-    secondary: {
-      active: '#717171',
-      hover: '#333333',
-      clicked: '#AEAEAE',
-      disabled: 'rgba(113, 113, 113, 0.4)'
+export const defaultTheme: EditorTheme = {
+  color: {
+    background: {
+      canvas: '#F2F2F2',
+      primary: '#FFFFFF',
+      secondary: '#F8FEFF',
+      overlay: '#005662'
     },
     text: {
-      primary: '#FFFFFF',
-      secondary: '#005662',
+      primary: '#121212',
+      secondary: '#BCBCBC',
+      light: '#FFFFFF',
+      dark: '#000000'
+    },
+    tab: {
+      regular: '#F3F3F3',
+      active: '#005662',
+      hover: '#00838F'
+    },
+    scroll: {
+      regular: '#717171',
+      inactive: '#DDDDDD'
+    },
+    button: {
+      primary: {
+        active: '#005662',
+        hover: '#00838F',
+        clicked: '#4FB3BF',
+        disabled: 'rgba(0, 131, 143, 0.4)'
+      },
+      secondary: {
+        active: '#717171',
+        hover: '#333333',
+        clicked: '#AEAEAE',
+        disabled: 'rgba(113, 113, 113, 0.4)'
+      },
+      text: {
+        primary: '#FFFFFF',
+        secondary: '#005662',
+        disabled: '#7A7A7A'
+      }
+    },
+    dropdown: {
+      primary: '#333333',
+      secondary: '#FFFFFF',
+      hover: '#DDDDDD',
       disabled: '#7A7A7A'
+    },
+    tooltip: {
+      background: '#FFFFFF',
+      text: '#333333'
+    },
+    link: {
+      active: '#00838F',
+      hover: '#005662'
+    },
+    divider: '#AEAEAE',
+    error: '#FF4A4A',
+    input: {
+      border: {
+        regular: '#005662',
+        active: '#FFFFFF',
+        hover: '#DDDDDD'
+      }
+    },
+    icon: {
+      hover: '#005662',
+      active: '#525252',
+      activeMenu: '#005662',
+      clicked: '#FFFFFF',
+      disabled: 'rgba(82, 82, 82, 0.4)'
     }
   },
-  dropdown: {
-    primary: '#333333',
-    secondary: '#FFFFFF',
-    hover: '#DDDDDD',
-    disabled: '#7A7A7A'
-  },
-  tooltip: {
-    background: '#FFFFFF',
-    text: '#333333'
-  },
-  link: {
-    active: '#00838F',
-    hover: '#005662'
-  },
-  divider: '#AEAEAE',
-  error: '#FF4A4A',
-  input: {
-    border: {
-      regular: '#005662',
-      active: '#FFFFFF',
-      hover: '#DDDDDD'
+  font: {
+    size: {
+      small: '10px',
+      regular: '12px',
+      medium: '14px',
+      xsmall: '6px'
+    },
+    family: {
+      montserrat: 'Montserrat, sans-serif',
+      inter:
+        "Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',\n" +
+        'Arial, sans-serif'
+    },
+    weight: {
+      light: 300,
+      regular: 400,
+      bold: 600
     }
-  },
-  icon: {
-    hover: '#005662',
-    active: '#525252',
-    activeMenu: '#005662',
-    clicked: '#FFFFFF',
-    disabled: 'rgba(82, 82, 82, 0.4)'
-  }
-}
-
-const font = {
-  size: {
-    small: '10px',
-    regular: '12px',
-    medium: '14px',
-    xsmall: '6px'
-  },
-  family: {
-    montserrat: 'Montserrat, sans-serif',
-    inter:
-      "Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',\n" +
-      'Arial, sans-serif'
-  },
-  weight: {
-    light: 300,
-    regular: 400,
-    bold: 600
   }
 }
 
@@ -119,9 +120,4 @@ export const muiOverrides: MuiThemeOptions = {
   //     }
   //   }
   // }
-}
-
-export const defaultTheme: EditorTheme = {
-  color,
-  font
 }

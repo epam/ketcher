@@ -50,11 +50,10 @@ export class HttpFunctionalGroupsProvider implements FunctionalGroupsProvider {
     if (!this.#functionalGroupsList) {
       const templates = await this.getFunctionalGroupsTemplates()
 
-      const list = templates.reduce(
-          (acc: Struct[], { struct }) => [...acc, struct],
-          []
+      this.#functionalGroupsList = templates.reduce(
+        (acc: Struct[], { struct }) => [...acc, struct],
+        []
       )
-      this.#functionalGroupsList = list
     }
 
     return this.#functionalGroupsList
@@ -63,8 +62,9 @@ export class HttpFunctionalGroupsProvider implements FunctionalGroupsProvider {
   public isFunctionalGroup(sgroup: SGroup): boolean {
     if (this.#functionalGroupsList) {
       return (
-          this.#functionalGroupsList.some((type) => type.name === sgroup.data.name) &&
-          sgroup.type === 'SUP'
+        this.#functionalGroupsList.some(
+          (type) => type.name === sgroup.data.name
+        ) && sgroup.type === 'SUP'
       )
     }
 

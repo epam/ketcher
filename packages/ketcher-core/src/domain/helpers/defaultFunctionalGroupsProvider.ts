@@ -30,6 +30,9 @@ export class DefaultFunctionalGroupsProvider {
     this.#provider = provider
     this.#functionalGroupsList = []
     this.#templates = []
+    ;(async () => {
+      await this.initFunctionalGroups()
+    })()
   }
 
   public get functionalGroupsList() {
@@ -57,7 +60,6 @@ export class DefaultFunctionalGroupsProvider {
 
   public async initFunctionalGroups() {
     this.#templates = await this.#provider.getFunctionalGroupsTemplates()
-
     this.#functionalGroupsList = await this.#provider.getFunctionalGroupsList()
   }
 }
@@ -68,6 +70,3 @@ export const createDefaultFunctionalGroupsProvider = (
   DefaultFunctionalGroupsProvider.createInstance(provider)
   return DefaultFunctionalGroupsProvider.getInstance()
 }
-
-export const defaultFunctionalGroupsProvider =
-  DefaultFunctionalGroupsProvider.getInstance()

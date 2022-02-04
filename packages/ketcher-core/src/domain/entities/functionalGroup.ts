@@ -42,15 +42,6 @@ export class FunctionalGroup {
     return this.#sgroup
   }
 
-  static isFunctionalGroup(sgroup): boolean {
-    const provider = HttpFunctionalGroupsProvider.getInstance()
-    const types = provider.getFunctionalGroupsList()
-    return (
-      types.some((type) => type.name === sgroup.data.name) &&
-      sgroup.type === 'SUP'
-    )
-  }
-
   static atomsInFunctionalGroup(functionalGroups, atom): number | null {
     if (functionalGroups.size === 0) {
       return null
@@ -101,7 +92,7 @@ export class FunctionalGroup {
 
   static isFirstAtomInFunctionalGroup(sgroups, aid): boolean {
     for (const sg of sgroups.values()) {
-      if (FunctionalGroup.isFunctionalGroup(sg) && aid === sg.atoms[0]) {
+      if (HttpFunctionalGroupsProvider.isFunctionalGroup(sg) && aid === sg.atoms[0]) {
         return true
       }
     }

@@ -19,6 +19,7 @@ import { ReSGroup, ReStruct } from '../../../render'
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
+import {HttpFunctionalGroupsProvider} from "domain/helpers";
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -71,7 +72,7 @@ class SGroupCreate extends BaseOperation {
     }
 
     restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)))
-    if (FunctionalGroup.isFunctionalGroup(sgroup)) {
+    if (HttpFunctionalGroupsProvider.isFunctionalGroup(sgroup)) {
       restruct.molecule.functionalGroups.add(new FunctionalGroup(sgroup))
     }
     this.data.sgid = sgid
@@ -111,7 +112,7 @@ class SGroupDelete extends BaseOperation {
       throw new Error('S-Group not empty!')
     }
 
-    if (FunctionalGroup.isFunctionalGroup(sgroup.item)) {
+    if (HttpFunctionalGroupsProvider.isFunctionalGroup(sgroup.item)) {
       let relatedFGroupId
       this.data.name = sgroup.item.data.name
       this.data.expanded = sgroup.item.expanded

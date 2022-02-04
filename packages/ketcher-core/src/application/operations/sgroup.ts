@@ -72,7 +72,7 @@ class AddSGroup extends BaseOperation {
     // TODO: move to renderer
     // restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)))
     // if (
-    //   FunctionalGroup.isFunctionalGroup(
+    //   HttpFunctionalGroupsProvider.isFunctionalGroup(
     //     FunctionalGroupsProvider.getInstance().getFunctionalGroupsList(),
     //     sgroup
     //   )

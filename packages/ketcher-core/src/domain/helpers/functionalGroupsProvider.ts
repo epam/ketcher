@@ -18,7 +18,7 @@ import { SdfItem, SdfSerializer } from 'domain/serializers/sdf'
 
 export interface FunctionalGroupsProvider {
   // getFunctionalGroupsList: () => Array<FunctionalGroup>
-  getFunctionalGroupsList: () => Array<Struct> | Array<SdfItem> // TODO change to Promise
+  getFunctionalGroupsList: () => Array<Struct> // TODO change to Promise
   // isFunctionalGroup: () => Promise<boolean>
 }
 
@@ -72,6 +72,14 @@ export class HttpFunctionalGroupsProvider implements FunctionalGroupsProvider {
 
   public getTemplates() {
     return this.#templates
+  }
+
+  public static isFunctionalGroup(sgroup): boolean {
+    const types = this.instance.getFunctionalGroupsList()
+    return (
+        types.some((type) => type.name === sgroup.data.name) &&
+        sgroup.type === 'SUP'
+    )
   }
 }
 

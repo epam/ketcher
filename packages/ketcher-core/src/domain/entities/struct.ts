@@ -33,6 +33,7 @@ import { SGroupForest } from './sgroupForest'
 import { SimpleObject } from './simpleObject'
 import { Text } from './text'
 import { Vec2 } from './vec2'
+import {HttpFunctionalGroupsProvider} from "domain/helpers";
 
 export type Neighbor = {
   aid: number
@@ -1042,7 +1043,7 @@ export class Struct {
 
   bindSGroupsToFunctionalGroups() {
     this.sgroups.forEach((sgroup) => {
-      if (FunctionalGroup.isFunctionalGroup(sgroup)) {
+      if (HttpFunctionalGroupsProvider.isFunctionalGroup(sgroup)) {
         this.functionalGroups.add(new FunctionalGroup(sgroup))
       }
     })

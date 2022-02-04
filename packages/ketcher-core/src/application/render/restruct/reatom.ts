@@ -164,7 +164,6 @@ class ReAtom extends ReObject {
     }
 
     this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this)
-    console.log(this.hydrogenOnTheLeft)
     this.showLabel = isLabelVisible(restruct, render.options, this)
     this.color = 'black' // reset colour
 
@@ -191,9 +190,12 @@ class ReAtom extends ReObject {
     if (options.showAtomIds) {
       index = {}
       index.text = aid.toString()
-      const idPos = this.showLabel
-        ? Vec2.lc(ps, 1, new Vec2({ x: 1, y: -3, z: 0 }), 6)
-        : Vec2.lc(ps, 1, new Vec2({ x: 1.2, y: -1.2, z: 0 }), 6)
+      let idPos = this.hydrogenOnTheLeft
+        ? Vec2.lc(ps, 1, new Vec2({ x: -2, y: 0, z: 0 }), 6)
+        : Vec2.lc(ps, 1, new Vec2({ x: 2, y: 0, z: 0 }), 6)
+      if (this.showLabel) {
+        idPos = Vec2.lc(idPos, 1, new Vec2({ x: 1, y: -3, z: 0 }), 6)
+      }
       index.path = render.paper.text(idPos.x, idPos.y, index.text).attr({
         font: options.font,
         'font-size': options.fontszsub,

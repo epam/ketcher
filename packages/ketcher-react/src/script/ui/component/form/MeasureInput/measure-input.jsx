@@ -19,6 +19,11 @@ import React, { useEffect, useState } from 'react'
 import Input from '../input'
 import Select from '../Select'
 import styles from './measure-input.module.less'
+import { getSelectOptionsFromSchema } from '../../../utils'
+
+const selectOptions = getSelectOptionsFromSchema({
+  enum: ['cm', 'px', 'pt', 'inch']
+})
 
 const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
   const [measure, setMeasure] = useState('px')
@@ -67,7 +72,7 @@ const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
         />
         <Select
           onChange={handleMeasChange}
-          schema={{ enum: ['cm', 'px', 'pt', 'inch'] }}
+          options={selectOptions}
           value={measure}
           className={styles.select}
         />

@@ -15,6 +15,7 @@
  ***************************************************************************/
 @import 'src/style/variables';
 
+// stylelint-disable selector-pseudo-class-no-unknown
 .analyse {
   width: @width-medium;
 
@@ -54,7 +55,10 @@
       }
 
       .select {
-        height: 32px;
+        :global(.MuiSelect-select) {
+          height: 32px;
+          line-height: 32px;
+        }
       }
     }
 

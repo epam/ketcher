@@ -3,11 +3,11 @@ import { render } from '@testing-library/react'
 import Select from './Select'
 
 const mockProps = {
-  schema: {
-    title: 'Mock Title',
-    enum: ['options1', 'options2', 'options3'],
-    default: 'options1'
-  },
+  options: [
+    { value: 'option1', label: 'option1' },
+    { value: 'option2', label: 'option2' },
+    { value: 'option3', label: 'option3' }
+  ],
   onChange: jest.fn()
 }
 

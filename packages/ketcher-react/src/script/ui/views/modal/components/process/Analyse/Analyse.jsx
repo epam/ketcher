@@ -24,12 +24,15 @@ import { changeRound } from '../../../../../state/options'
 import classes from './Analyse.module.less'
 import { connect } from 'react-redux'
 import { range } from 'lodash/fp'
-import Select from '../../../../../component/form/Select/Select'
+import Select from '../../../../../component/form/Select'
+import { getSelectOptionsFromSchema } from '../../../../../utils'
 
 function roundOff(value, round) {
   if (typeof value === 'number') return value.toFixed(round)
   return value.replace(/[0-9]*\.[0-9]+/g, (str) => (+str).toFixed(round))
 }
+
+const selectOptions = getSelectOptionsFromSchema({ enum: range(0, 8) })
 
 class AnalyseDialog extends Component {
   static contextType = ErrorsContext
@@ -103,9 +106,7 @@ class AnalyseDialog extends Component {
                 <div className={classes.wrapperSelector}>
                   <span>Decimal places</span>
                   <Select
-                    schema={{
-                      enum: range(0, 8)
-                    }}
+                    options={selectOptions}
                     value={round[item.round]}
                     onChange={(val) => onChangeRound(item.round, val)}
                     className={classes.select}

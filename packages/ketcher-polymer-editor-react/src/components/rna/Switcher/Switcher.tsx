@@ -1,8 +1,8 @@
 import { Button } from '@mui/material'
 import styled from '@emotion/styled'
 import { ReactNode, useState } from 'react'
-import { Icon } from 'components/shared/ui/icon'
-import { IconNameType } from 'components/shared/ui/icon/icon'
+import { Icon } from 'components/shared/icon'
+import { IconNameType } from 'components/shared/icon/icon'
 import { css, useTheme } from '@emotion/react'
 
 type SwitcherProps = {

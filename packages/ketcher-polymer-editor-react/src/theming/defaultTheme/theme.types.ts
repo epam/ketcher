@@ -24,6 +24,7 @@ export type EditorTheme = {
       canvas: string
       primary: string
       secondary: string
+      overlay: string
     }
     text: {
       primary: string

@@ -19,6 +19,7 @@ import { ThemeType } from 'theming/defaultTheme'
 export const scrollbarThin = ({ ketcher: theme }: ThemeType) => ({
   '&::-webkit-scrollbar': {
     width: '4px',
+    height: '4px',
     backgroundColor: theme.color.scroll.inactive,
     borderRadius: '2px',
     webkitBorderRadius: '2px'

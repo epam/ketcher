@@ -21,7 +21,8 @@ const color = {
   background: {
     canvas: '#F2F2F2',
     primary: '#FFFFFF',
-    secondary: '#F8FEFF'
+    secondary: '#F8FEFF',
+    overlay: '#005662'
   },
   text: {
     primary: '#121212',

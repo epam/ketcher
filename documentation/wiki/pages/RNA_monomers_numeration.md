@@ -1,0 +1,13 @@
+The numbering order described below, and the black digits represented in the pictures are used to describe the connections between polymers and to describe the sequence in the notation HELM in the string representation.
+
+When RNA is graphically displayed on a canvas in HELM notation, the RNA molecule is numbered by nucleobases from the left to the right (see example in rule.1 green digits)
+
+| Rule                                                         | Example                                                      |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 1.  The **repeating unit** in RNA is not a single monomer, but three connected together: <br>*sugar* (R in example) and *phosphate* (P in example) linkers are  of ‘backbone’ monomer type, <br/>*nucleobase* (C,G,U in  example) is a ‘branch’ monomer type | ![RNA_example_1](https://github.com/epam/ketcher/blob/master/documentation/wiki/HELM_RNA_numeration_1.png) |
+| 2.  The longest chain of ‘backbone’ monomer type is selected and <br/>numbered from  left to right | ![RNA_example_3](https://github.com/epam/ketcher/blob/master/documentation/wiki/HELM_RNA_numeration_3.png) |
+| 3.First  the monomers are numbered within one repetitive unit, <br/>then the numbering  continues within the following unit according<br/> to rules below: |                                                              |
+| 3.1  If the chain starts with sugar, then the sequence is:<br/>  ·     Sugar is 1, <br/>  ·     Nucleobase is 2, <br/>  ·     Phosphate is 3, <br/>  ·     Monomer of next repeating unit is 4. | ![RNA_example_2](https://github.com/epam/ketcher/blob/master/documentation/wiki/HELM_RNA_numeration_2.png) |
+| 3.2  If the chain starts with sugar without nucleobase, then <br/>the sequence is: <br/> ·     Sugar is 1,<br/> ·     Phosphate is 2, <br/> ·     Monomer of next repeating unit is 3. | ![RNA_example_4](https://github.com/epam/ketcher/blob/master/documentation/wiki/HELM_RNA_numeration_4.png) |
+| 3.3  If the chain starts with phosphate, then the sequence is:<br/>  ·     Phosphate is 1,<br/>  ·     Monomer of next repeating unit is 2 (it doesn’t  matter is <br/>next monomer sugar or phosphate). | ![RNA_example_5](https://github.com/epam/ketcher/blob/master/documentation/wiki/HELM_RNA_numeration_5.png) |
+| 4.  If the chain contains a cycle, the longest chain is selected and<br/> numbered.Sugar or phosphate monomers that are not in the chain represent a separate polymer. | ![RNA_example_6](https://github.com/epam/ketcher/blob/master/documentation/wiki/HELM_RNA_numeration_6.png) |

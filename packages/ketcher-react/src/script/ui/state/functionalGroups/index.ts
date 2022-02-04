@@ -48,7 +48,7 @@ export function initFGTemplates() {
     const provider = HttpFunctionalGroupsProvider.getInstance()
 
     await provider.setFunctionalGroupsList()
-    const templates = provider.getTemplates()
+    const templates = provider.functionalGroupsTemplates
 
     dispatch(initFGroups(templates))
     dispatch(appUpdate({ functionalGroups: true }))

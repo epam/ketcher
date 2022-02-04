@@ -92,7 +92,10 @@ export class FunctionalGroup {
 
   static isFirstAtomInFunctionalGroup(sgroups, aid): boolean {
     for (const sg of sgroups.values()) {
-      if (HttpFunctionalGroupsProvider.isFunctionalGroup(sg) && aid === sg.atoms[0]) {
+      if (
+        HttpFunctionalGroupsProvider.isFunctionalGroup(sg) &&
+        aid === sg.atoms[0]
+      ) {
         return true
       }
     }

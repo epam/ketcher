@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Struct } from '../entities'
+import { SGroup, Struct } from '../entities'
 import { SdfItem, SdfSerializer } from 'domain/serializers/sdf'
 
 export interface FunctionalGroupsProvider {
   // getFunctionalGroupsList: () => Array<FunctionalGroup>
-  getFunctionalGroupsList: () => Array<Struct> // TODO change to Promise
-  // isFunctionalGroup: () => Promise<boolean>
+  getFunctionalGroupsList: () => Promise<Array<Struct>>
+  isFunctionalGroup: (sgroup: SGroup) => boolean // TODO change to Promise
 }
 
 export function prefetchStatic(url) {
@@ -53,33 +53,42 @@ export class HttpFunctionalGroupsProvider implements FunctionalGroupsProvider {
     return HttpFunctionalGroupsProvider.instance
   }
 
-  public getFunctionalGroupsList() {
+  public get functionalGroupsList() {
     return this.#functionalGroupsList
   }
 
-  public async setFunctionalGroupsList() {
-    const text = await prefetchStatic(this.#url)
-    const templates = this.#sdfSerializer.deserialize(text)
-
-    this.#templates = templates
-
-    const list = templates.reduce(
-      (acc: Struct[], { struct }) => [...acc, struct],
-      []
-    )
-    this.#functionalGroupsList = list
-  }
-
-  public getTemplates() {
+  public get functionalGroupsTemplates() {
     return this.#templates
   }
 
-  public static isFunctionalGroup(sgroup): boolean {
-    const types = this.instance.getFunctionalGroupsList()
-    return (
-        types.some((type) => type.name === sgroup.data.name) &&
-        sgroup.type === 'SUP'
+  public async getFunctionalGroupsTemplates(): Promise<Array<SdfItem>> {
+    const text = await prefetchStatic(this.#url)
+    return this.#sdfSerializer.deserialize(text)
+  }
+
+  public async getFunctionalGroupsList(): Promise<Array<Struct>> {
+    const list = this.#templates.reduce(
+      (acc: Struct[], { struct }) => [...acc, struct],
+      []
     )
+    return list
+  }
+
+  public async setFunctionalGroupsList() {
+    this.#templates = await this.getFunctionalGroupsTemplates()
+    this.#functionalGroupsList = await this.getFunctionalGroupsList()
+  }
+
+  public isFunctionalGroup(sgroup: SGroup): boolean {
+    const types = this.#functionalGroupsList
+    return (
+      types.some((type) => type.name === sgroup.data.name) &&
+      sgroup.type === 'SUP'
+    )
+  }
+
+  public static isFunctionalGroup(sgroup: SGroup): boolean {
+    return this.instance.isFunctionalGroup(sgroup)
   }
 }
 

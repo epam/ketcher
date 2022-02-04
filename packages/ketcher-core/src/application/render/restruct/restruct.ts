@@ -39,7 +39,7 @@ import ReText from './retext'
 import { Render } from '../raphaelRender'
 import Visel from './visel'
 import util from '../util'
-import {HttpFunctionalGroupsProvider} from "domain/helpers";
+import { HttpFunctionalGroupsProvider } from 'domain/helpers'
 
 class ReStruct {
   public static maps = {

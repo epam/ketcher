@@ -19,7 +19,7 @@ import { ReSGroup, ReStruct } from '../../../render'
 
 import { BaseOperation } from '../base'
 import { OperationType } from '../OperationType'
-import {HttpFunctionalGroupsProvider} from "domain/helpers";
+import { HttpFunctionalGroupsProvider } from 'domain/helpers'
 
 // todo: separate classes: now here is circular dependency in `invert` method
 

@@ -46,9 +46,8 @@ const initFGroups = (lib: SdfItem[]) => ({ type: 'FG_INIT', payload: { lib } })
 export function initFGTemplates() {
   return async (dispatch) => {
     const provider = DefaultFunctionalGroupsProvider.getInstance()
-    const templates = provider.functionalGroupsTemplates
 
-    dispatch(initFGroups(templates))
+    dispatch(initFGroups(provider.functionalGroupsTemplates))
     dispatch(appUpdate({ functionalGroups: true }))
   }
 }

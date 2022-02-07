@@ -44,7 +44,9 @@ async function buildKetcherAsync({
   const fgprovider =
     functionalGroupsProvider ||
     new HttpFunctionalGroupsProvider('./templates/fg.sdf')
-  const defaultFgProvider = createDefaultFunctionalGroupsProvider(fgprovider)
+  const defaultFgProvider = await createDefaultFunctionalGroupsProvider(
+    fgprovider
+  )
 
   await builder.appendApiAsync(structServiceProvider)
   builder.appendServiceMode(structServiceProvider.mode)

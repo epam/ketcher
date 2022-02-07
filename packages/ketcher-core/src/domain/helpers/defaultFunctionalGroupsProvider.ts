@@ -30,9 +30,6 @@ export class DefaultFunctionalGroupsProvider {
     this.#provider = provider
     this.#functionalGroupsList = []
     this.#templates = []
-    ;(async () => {
-      await this.initFunctionalGroups()
-    })()
   }
 
   public get functionalGroupsList() {
@@ -64,9 +61,11 @@ export class DefaultFunctionalGroupsProvider {
   }
 }
 
-export const createDefaultFunctionalGroupsProvider = (
+export const createDefaultFunctionalGroupsProvider = async (
   provider
-): DefaultFunctionalGroupsProvider => {
-  DefaultFunctionalGroupsProvider.createInstance(provider)
+): Promise<DefaultFunctionalGroupsProvider> => {
+  await DefaultFunctionalGroupsProvider.createInstance(
+    provider
+  ).initFunctionalGroups()
   return DefaultFunctionalGroupsProvider.getInstance()
 }

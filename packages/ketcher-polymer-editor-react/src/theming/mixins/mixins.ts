@@ -14,31 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
+import { ThemeType } from 'theming/defaultTheme'
 
-interface MonomerItemPropTypes {
-  key: number
-  item: Record<string, string>
-  onClick: () => void
-}
-
-const MonomerItem = (props: MonomerItemPropTypes) => {
-  const { item, onClick } = props
-
-  const Card = styled.div(({ theme }) => ({
-    background: theme.ketcher.color.text.light,
-    border: `1px solid ${theme.ketcher.color.text.primary}`,
+export const scrollbarThin = ({ ketcher: theme }: ThemeType) => ({
+  '&::-webkit-scrollbar': {
+    width: '4px',
+    height: '4px',
+    backgroundColor: theme.color.scroll.inactive,
     borderRadius: '2px',
-    width: '32px',
-    height: '32px',
-    textAlign: 'center',
-    cursor: 'pointer',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  }))
-
-  return <Card onClick={onClick}>{item.name}</Card>
-}
-
-export { MonomerItem }
+    webkitBorderRadius: '2px'
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: theme.color.scroll.regular,
+    borderRadius: '2px',
+    webkitBorderRadius: '2px'
+  },
+  '&::-webkit-scrollbar-thumb:active': {
+    backgroundColor: theme.color.scroll.regular
+  }
+})

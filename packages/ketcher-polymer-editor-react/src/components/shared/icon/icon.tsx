@@ -87,7 +87,7 @@ const Icon = ({ name, className }: IconPropsType) => {
     return null
   }
 
-  const fallbackColor = theme.color.icon.active
+  const fallbackColor = theme.ketcher.color.icon.active
 
   return <Component className={className} fill={fallbackColor} role="img" />
 }

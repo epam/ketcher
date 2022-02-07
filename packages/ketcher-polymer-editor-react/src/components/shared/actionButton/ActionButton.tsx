@@ -18,8 +18,8 @@ import MuiButton, { ButtonBaseProps } from '@mui/material/ButtonBase'
 import styled from '@emotion/styled'
 
 const Button = styled(MuiButton)(({ theme }) => ({
-  backgroundColor: theme.color.button.primary.active,
-  color: theme.color.text.light,
+  backgroundColor: theme.ketcher.color.button.primary.active,
+  color: theme.ketcher.color.text.light,
   padding: '5px 16px',
   border: 'none',
   borderRadius: '2px',
@@ -29,11 +29,11 @@ const Button = styled(MuiButton)(({ theme }) => ({
   textAlign: 'center',
 
   '&:hover': {
-    backgroundColor: theme.color.button.primary.hover
+    backgroundColor: theme.ketcher.color.button.primary.hover
   },
 
   '&:disabled': {
-    background: theme.color.button.primary.disabled,
+    background: theme.ketcher.color.button.primary.disabled,
     opacity: 0.4
   }
 }))

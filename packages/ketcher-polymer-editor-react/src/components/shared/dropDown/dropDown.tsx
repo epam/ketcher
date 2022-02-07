@@ -40,7 +40,7 @@ const DropDownSelect = styled(Select)`
   }
 
   & span {
-    ${({ theme }) => `font-size: ${theme.font.size.regular}`}
+    ${({ theme }) => `font-size: ${theme.ketcher.font.size.regular}`}
   }
 
   & .MuiOutlinedInput-notchedOutline {
@@ -64,7 +64,7 @@ const DropDownItem = styled(MenuItem)`
   padding: 0 8px 0 8px;
   height: 24px;
   & .MuiTypography-root {
-    ${({ theme }) => `font-size: ${theme.font.size.regular}`}
+    ${({ theme }) => `font-size: ${theme.ketcher.font.size.regular}`}
   }
 `
 

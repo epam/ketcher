@@ -17,10 +17,10 @@
 import styled from '@emotion/styled'
 
 const StyledLogo = styled.div(({ theme }) => ({
-  fontFamily: theme.font.family.montserrat,
-  fontSize: theme.font.size.medium,
-  fontWeight: theme.font.weight.bold,
-  color: theme.color.text.secondary,
+  fontFamily: theme.ketcher.font.family.montserrat,
+  fontSize: theme.ketcher.font.size.medium,
+  fontWeight: theme.ketcher.font.weight.bold,
+  color: theme.ketcher.color.text.secondary,
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -30,20 +30,20 @@ const StyledLogo = styled.div(({ theme }) => ({
   left: '13px',
 
   '> span:first-of-type, > span:last-of-type': {
-    fontWeight: theme.font.weight.light,
-    fontSize: theme.font.size.xsmall,
+    fontWeight: theme.ketcher.font.weight.light,
+    fontSize: theme.ketcher.font.size.xsmall,
     textTransform: 'uppercase'
   },
 
   '> span:last-of-type': {
-    fontWeight: theme.font.weight.regular
+    fontWeight: theme.ketcher.font.weight.regular
   },
 
   '> span:nth-of-type(2)': {
-    color: theme.color.text.primary,
+    color: theme.ketcher.color.text.primary,
 
     '&:first-letter': {
-      color: theme.color.text.secondary
+      color: theme.ketcher.color.text.secondary
     }
   }
 }))

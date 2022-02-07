@@ -1,15 +1,18 @@
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { defaultTheme } from 'styles/theme'
-import React, { ReactElement } from 'react'
-import { configureAppStore, RootState } from 'state'
+import { createTheme } from '@mui/material/styles'
 import {
   render as rtlRender,
   RenderOptions,
   RenderResult
 } from '@testing-library/react'
+import React, { ReactElement } from 'react'
 import { Provider } from 'react-redux'
+import { ThemeProvider } from '@emotion/react'
+import { merge } from 'lodash'
 
-const theme = createTheme(defaultTheme)
+import { configureAppStore, RootState } from 'state'
+import { defaultTheme } from 'theming/defaultTheme'
+
+const muiTheme = createTheme()
 
 interface CustomRenderOptions {
   preloadedState?: RootState
@@ -23,7 +26,7 @@ function render(
   const Wrapper: React.FC = ({ children }) => {
     const store = configureAppStore(preloadedState)
     return (
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={merge(muiTheme, { ketcher: defaultTheme })}>
         <Provider store={store}>{children}</Provider>
       </ThemeProvider>
     )

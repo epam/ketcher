@@ -38,8 +38,8 @@ export const InputBox = styled('div')<{ hasInput: boolean }>`
   justify-content: flex-end;
   flex-direction: column;
   ${({ theme }) => css`
-    background-color: ${theme.color.background.primary};
-    border: ${borderThickness}px solid ${theme.color.background.primary};
+    background-color: ${theme.ketcher.color.background.primary};
+    border: ${borderThickness}px solid ${theme.ketcher.color.background.primary};
   `};
   border-radius: 2px;
   z-index: 1;

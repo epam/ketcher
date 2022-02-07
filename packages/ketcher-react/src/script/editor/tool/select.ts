@@ -28,7 +28,7 @@ import {
   FunctionalGroup,
   fromSimpleObjectResizing,
   fromArrowResizing,
-  DefaultFunctionalGroupsProvider
+  functionalGroupsProvider
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -519,7 +519,7 @@ class SelectTool {
       }
     } else if (
       (ci.map === 'sgroups' &&
-        !DefaultFunctionalGroupsProvider.getInstance().isFunctionalGroup(
+        !functionalGroupsProvider.isFunctionalGroup(
           molecule.sgroups.get(ci.id) as SGroup
         )) ||
       ci.map === 'sgroupData'

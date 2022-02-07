@@ -39,7 +39,7 @@ import ReText from './retext'
 import { Render } from '../raphaelRender'
 import Visel from './visel'
 import util from '../util'
-import { DefaultFunctionalGroupsProvider } from 'domain/helpers'
+import { functionalGroupsProvider } from 'domain/helpers'
 
 class ReStruct {
   public static maps = {
@@ -134,9 +134,7 @@ class ReStruct {
       if (item.type === 'DAT' && !item.data.attached) {
         this.sgroupData.set(id, new ReDataSGroupData(item))
       } // [MK] sort of a hack, we use the SGroup id for the data field id
-      if (
-        DefaultFunctionalGroupsProvider.getInstance().isFunctionalGroup(item)
-      ) {
+      if (functionalGroupsProvider.isFunctionalGroup(item)) {
         this.molecule.functionalGroups.set(id, new FunctionalGroup(item))
       }
     })

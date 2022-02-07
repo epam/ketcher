@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { DefaultFunctionalGroupsProvider } from '../helpers'
+import { functionalGroupsProvider } from '../helpers'
 import { SGroup } from './sgroup'
 import assert from 'assert'
 
@@ -91,12 +91,9 @@ export class FunctionalGroup {
   }
 
   static isFirstAtomInFunctionalGroup(sgroups, aid): boolean {
-    const defaultFunctionalGroupsProvider =
-      DefaultFunctionalGroupsProvider.getInstance()
-
     for (const sg of sgroups.values()) {
       if (
-        defaultFunctionalGroupsProvider.isFunctionalGroup(sg) &&
+        functionalGroupsProvider.isFunctionalGroup(sg) &&
         aid === sg.atoms[0]
       ) {
         return true

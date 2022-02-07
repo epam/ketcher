@@ -16,7 +16,7 @@
 
 import { AnyAction } from 'redux'
 import { appUpdate } from '../options'
-import { DefaultFunctionalGroupsProvider, SdfItem } from 'ketcher-core'
+import { functionalGroupsProvider, SdfItem } from 'ketcher-core'
 
 interface FGState {
   lib: []
@@ -45,9 +45,7 @@ const initFGroups = (lib: SdfItem[]) => ({ type: 'FG_INIT', payload: { lib } })
 
 export function initFGTemplates() {
   return async (dispatch) => {
-    const provider = DefaultFunctionalGroupsProvider.getInstance()
-
-    dispatch(initFGroups(provider.functionalGroupsTemplates))
+    dispatch(initFGroups(functionalGroupsProvider.functionalGroupsTemplates))
     dispatch(appUpdate({ functionalGroups: true }))
   }
 }

@@ -5,7 +5,7 @@ import {
   setExpandSGroup,
   fromSgroupDeletion,
   Action,
-  DefaultFunctionalGroupsProvider
+  functionalGroupsProvider
 } from 'ketcher-core'
 import { useAppContext } from '../../../../hooks'
 import clsx from 'clsx'
@@ -54,8 +54,6 @@ const FGContextMenu = () => {
     setTargetItems([])
     const selectedItems = [] as Array<any>
     let fgId
-    const defaultFunctionalGroupsProvider =
-      DefaultFunctionalGroupsProvider.getInstance()
 
     const ci = editor.findItem(
       {
@@ -93,7 +91,7 @@ const FGContextMenu = () => {
           break
         case 'sgroups':
           const sgroup = struct.sgroups.get(ci.id)
-          if (defaultFunctionalGroupsProvider.isFunctionalGroup(sgroup)) {
+          if (functionalGroupsProvider.isFunctionalGroup(sgroup)) {
             struct.functionalGroups.forEach((fg) => {
               fg.relatedSGroupId === sgroup?.id &&
                 !selectedItems.includes(fg) &&
@@ -103,7 +101,7 @@ const FGContextMenu = () => {
           break
         case 'functionalGroups':
           const fgroup = struct.sgroups.get(ci.id)
-          if (defaultFunctionalGroupsProvider.isFunctionalGroup(fgroup)) {
+          if (functionalGroupsProvider.isFunctionalGroup(fgroup)) {
             struct.functionalGroups.forEach((fg) => {
               fg.relatedSGroupId === fgroup?.id &&
                 !selectedItems.includes(fg) &&

@@ -24,7 +24,7 @@ import { Editor } from 'application/editor'
 import { FormatterFactory } from 'application/formatters'
 import { Ketcher } from './ketcher'
 import assert from 'assert'
-import { DefaultFunctionalGroupsProvider } from 'domain/helpers'
+import { functionalGroupsProvider } from 'domain/helpers'
 
 const DefaultStructServiceOptions = {
   'smart-layout': true,
@@ -47,8 +47,7 @@ export class KetcherBuilder {
   build(editor: Editor, serviceOptions?: StructServiceOptions): Ketcher {
     assert(editor != null)
     assert(this.#structServiceProvider != null)
-    const defaultFunctionalGroupsProvider =
-      DefaultFunctionalGroupsProvider.getInstance()
+    const defaultFunctionalGroupsProvider = functionalGroupsProvider
 
     const mergedServiceOptions: StructServiceOptions = {
       ...DefaultStructServiceOptions,

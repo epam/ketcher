@@ -17,11 +17,9 @@
 import { FunctionalGroupsProvider } from 'domain/helpers/functionalGroupsProvider.types'
 import { SdfItem } from 'domain/serializers'
 import { SGroup, Struct } from 'domain/entities'
+import { HttpFunctionalGroupsProvider } from 'domain/helpers/functionalGroupsProvider'
 
 export class DefaultFunctionalGroupsProvider {
-  // eslint-disable-next-line no-use-before-define
-  private static instance: DefaultFunctionalGroupsProvider
-
   #provider: FunctionalGroupsProvider
   #functionalGroupsList: Array<Struct>
   #templates: Array<SdfItem>
@@ -44,28 +42,20 @@ export class DefaultFunctionalGroupsProvider {
     return this.#provider.isFunctionalGroup(sgroup)
   }
 
-  public static createInstance(provider): DefaultFunctionalGroupsProvider {
-    if (!this.instance) {
-      this.instance = new DefaultFunctionalGroupsProvider(provider)
-    }
-    return this.instance
-  }
-
-  public static getInstance(): DefaultFunctionalGroupsProvider {
-    return this.instance
-  }
-
   public async initFunctionalGroups() {
     this.#templates = await this.#provider.getFunctionalGroupsTemplates()
     this.#functionalGroupsList = await this.#provider.getFunctionalGroupsList()
   }
 }
 
-export const createDefaultFunctionalGroupsProvider = async (
-  provider
+export let functionalGroupsProvider: DefaultFunctionalGroupsProvider
+
+export const initFunctionalGroupsProvider = async (
+  provider: FunctionalGroupsProvider
 ): Promise<DefaultFunctionalGroupsProvider> => {
-  await DefaultFunctionalGroupsProvider.createInstance(
-    provider
-  ).initFunctionalGroups()
-  return DefaultFunctionalGroupsProvider.getInstance()
+  functionalGroupsProvider = new DefaultFunctionalGroupsProvider(
+    provider || HttpFunctionalGroupsProvider
+  )
+  await functionalGroupsProvider.initFunctionalGroups()
+  return functionalGroupsProvider
 }

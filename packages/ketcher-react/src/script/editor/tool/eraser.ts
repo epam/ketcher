@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import {
-  DefaultFunctionalGroupsProvider,
   fromArrowDeletion,
   fromFragmentDeletion,
   fromOneAtomDeletion,
@@ -25,6 +24,7 @@ import {
   fromSimpleObjectDeletion,
   fromTextDeletion,
   FunctionalGroup,
+  functionalGroupsProvider,
   SGroup
 } from 'ketcher-core'
 
@@ -228,8 +228,6 @@ class EraserTool {
     const atomResult: Array<number> = []
     const bondResult: Array<number> = []
     const result: Array<number> = []
-    const defaultFunctionalGroupsProvider =
-      DefaultFunctionalGroupsProvider.getInstance()
 
     if (
       ci &&
@@ -239,7 +237,7 @@ class EraserTool {
     ) {
       const sGroup = sgroups.get(ci.id)
 
-      if (defaultFunctionalGroupsProvider.isFunctionalGroup(sGroup?.item)) {
+      if (functionalGroupsProvider.isFunctionalGroup(sGroup?.item)) {
         result.push(ci.id)
       }
     } else if (ci && functionalGroups && ci.map === 'atoms') {
@@ -333,7 +331,7 @@ class EraserTool {
     } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
       const sGroup = sgroups.get(ci.id)
 
-      if (defaultFunctionalGroupsProvider.isFunctionalGroup(sGroup?.item)) {
+      if (functionalGroupsProvider.isFunctionalGroup(sGroup?.item)) {
         this.editor.event.removeFG.dispatch({ fgIds: [ci.id] })
       } else {
         this.editor.update(fromSgroupDeletion(restruct, ci.id))

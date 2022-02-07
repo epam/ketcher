@@ -14,25 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
-
-interface AppHiddenCallProps {
-  onInitTmpls: (cacheEl) => void
-}
-
-type Props = AppHiddenCallProps
-// todo: come up with better name
-const AppHidden = (props: Props) => {
-  const { onInitTmpls } = props
-
-  const ref = useRef(null)
-
-  useEffect(() => {
-    onInitTmpls(ref.current)
-  }, [])
-
-  return <div style={{ display: 'none' }} ref={ref} />
-}
-
-export type { AppHiddenCallProps }
-export { AppHidden }
+export * from './httpTemplatesProvider'
+export * from './templatesProvider.types'
+export * from './defaultTemplatesProvider'

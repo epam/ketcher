@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import { FC, RefCallback, useEffect, useMemo, useState } from 'react'
-import { SdfItem, SdfSerializer, Struct } from 'ketcher-core'
-import TemplateTable, { Template } from '../../../dialog/template/TemplateTable'
+import { SdfItem, SdfSerializer, Struct, Template } from 'ketcher-core'
+import TemplateTable from '../../../dialog/template/TemplateTable'
 import {
   functionalGroupsSelector,
   modeSelector

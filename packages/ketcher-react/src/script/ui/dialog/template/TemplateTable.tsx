@@ -16,22 +16,11 @@
 
 import EmptySearchResult from './EmptySearchResult'
 import { FC } from 'react'
-import { Struct } from 'ketcher-core'
+import { Template } from 'ketcher-core'
 import StructRender from '../../component/structrender'
 import classes from './TemplateTable.module.less'
 import { greekify } from '../../utils'
 import { useSelector } from 'react-redux'
-
-export interface Template {
-  struct: Struct
-  modifiedStruct?: Struct // TODO: Do something with that, in future it shouldn't be here
-  props: {
-    atomid: number
-    bondid: number
-    group: string
-    prerender?: string
-  }
-}
 
 interface TemplateTableProps {
   templates: Array<Template>

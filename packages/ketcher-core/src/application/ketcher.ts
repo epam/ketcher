@@ -26,7 +26,10 @@ import { MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import assert from 'assert'
 import { Indigo } from 'application/indigo'
-import { DefaultFunctionalGroupsProvider } from 'domain/helpers'
+import {
+  DefaultFunctionalGroupsProvider,
+  DefaultTemplatesProvider
+} from 'domain/helpers'
 
 function parseStruct(structStr: string, structService: StructService) {
   const format = identifyStructFormat(structStr)
@@ -51,6 +54,7 @@ export class Ketcher {
   #editor: Editor
   #indigo: Indigo
   #functionalGroupsProvider: DefaultFunctionalGroupsProvider
+  #templatesProvider: DefaultTemplatesProvider
 
   get editor(): Editor {
     return this.#editor
@@ -60,18 +64,21 @@ export class Ketcher {
     editor: Editor,
     structService: StructService,
     formatterFactory: FormatterFactory,
-    functionalGroupsProvider: DefaultFunctionalGroupsProvider
+    functionalGroupsProvider: DefaultFunctionalGroupsProvider,
+    templatesProvider: DefaultTemplatesProvider
   ) {
     assert(editor != null)
     assert(structService != null)
     assert(formatterFactory != null)
     assert(functionalGroupsProvider != null)
+    assert(templatesProvider != null)
 
     this.#editor = editor
     this.#structService = structService
     this.#formatterFactory = formatterFactory
     this.#indigo = new Indigo(this.#structService)
     this.#functionalGroupsProvider = functionalGroupsProvider
+    this.#templatesProvider = templatesProvider
   }
 
   get indigo() {
@@ -80,6 +87,10 @@ export class Ketcher {
 
   get functionalGroupsProvider() {
     return this.#functionalGroupsProvider
+  }
+
+  get templatesProvider() {
+    return this.#templatesProvider
   }
 
   getSmiles(isExtended = false): Promise<string> {

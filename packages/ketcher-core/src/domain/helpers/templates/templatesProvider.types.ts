@@ -14,25 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
+import { Struct } from 'domain/entities'
 
-interface AppHiddenCallProps {
-  onInitTmpls: (cacheEl) => void
+export interface Template {
+  struct: Struct
+  modifiedStruct?: Struct
+  props: {
+    atomid: number
+    bondid: number
+    group: string
+    prerender?: string
+  }
 }
 
-type Props = AppHiddenCallProps
-// todo: come up with better name
-const AppHidden = (props: Props) => {
-  const { onInitTmpls } = props
-
-  const ref = useRef(null)
-
-  useEffect(() => {
-    onInitTmpls(ref.current)
-  }, [])
-
-  return <div style={{ display: 'none' }} ref={ref} />
+export interface TemplatesProvider {
+  getTemplatesList: (cache) => Promise<Array<Template>>
 }
-
-export type { AppHiddenCallProps }
-export { AppHidden }

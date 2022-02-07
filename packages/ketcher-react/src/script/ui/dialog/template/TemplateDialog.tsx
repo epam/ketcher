@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Dispatch, FC, RefCallback } from 'react'
-import TemplateTable, { Template } from './TemplateTable'
+import TemplateTable from './TemplateTable'
 import {
   changeFilter,
   changeGroup,
@@ -28,7 +28,7 @@ import { filterLib, greekify } from '../../utils'
 import { Dialog } from '../../views/components'
 import Input from '../../component/form/input'
 import SaveButton from '../../component/view/savebutton'
-import { SdfSerializer, Struct } from 'ketcher-core'
+import { SdfSerializer, Struct, Template } from 'ketcher-core'
 import SelectList from '../../component/form/select-list'
 import classes from './template-lib.module.less'
 import clsx from 'clsx'

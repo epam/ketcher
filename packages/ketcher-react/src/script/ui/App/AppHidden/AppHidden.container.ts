@@ -21,8 +21,8 @@ import { connect } from 'react-redux'
 import { initTmplLib } from '../../state/templates'
 
 const mapDispatchToProps = (dispatch: Dispatch): AppHiddenCallProps => ({
-  onInitTmpls: (cacheEl, url) => {
-    initTmplLib(dispatch, url, cacheEl)
+  onInitTmpls: (cacheEl) => {
+    initTmplLib(dispatch, cacheEl)
   }
 })
 

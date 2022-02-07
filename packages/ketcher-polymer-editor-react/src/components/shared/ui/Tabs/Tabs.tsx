@@ -16,15 +16,16 @@
 
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useEffect, useRef, useState } from 'react'
 import Box from '@mui/material/Box'
 import styled from '@emotion/styled'
-import { scrollbarThin } from 'styles/mixins'
+import 'overlayscrollbars/css/OverlayScrollbars.css'
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 
 function TabPanel({ children, value, index, ...other }) {
   return (
     <div role="tabpanel" hidden={value !== index} id={index} {...other}>
-      {value === index && <Box>{children}</Box>}
+      {value === index && <Box height={'100%'}>{children}</Box>}
     </div>
   )
 }
@@ -42,6 +43,12 @@ function CustomTabs(props): ReactElement {
   const tabPanel = tabs[tabIndex]
   const Component = tabPanel?.component
   const componentProps = tabPanel?.props
+  const ref = useRef<OverlayScrollbarsComponent>(null)
+
+  useEffect(() => {
+    const instance = ref?.current?.osInstance()
+    console.log(instance)
+  }, [])
 
   const handleChange = (_event, newTabIndex) => {
     setTabIndex(newTabIndex)
@@ -84,7 +91,7 @@ function CustomTabs(props): ReactElement {
     }
   }))
 
-  const TabPanelContent = styled.div(({ theme }) => ({
+  const TabPanelContent = styled.div({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -94,10 +101,8 @@ function CustomTabs(props): ReactElement {
 
     '& > *': {
       margin: '25px 8px'
-    },
-
-    ...scrollbarThin(theme)
-  }))
+    }
+  })
 
   return (
     <>
@@ -111,10 +116,24 @@ function CustomTabs(props): ReactElement {
         ))}
       </StyledTabs>
       {tabPanel && (
-        <TabPanel value={tabIndex} index={tabIndex}>
-          <TabPanelContent>
-            <Component {...componentProps} />
-          </TabPanelContent>
+        <TabPanel
+          value={tabIndex}
+          index={tabIndex}
+          style={{ height: 'calc(100% - 25px)' }}
+        >
+          <OverlayScrollbarsComponent
+            style={{ height: '100%' }}
+            ref={ref}
+            options={{
+              scrollbars: {
+                autoHide: 'never'
+              }
+            }}
+          >
+            <TabPanelContent>
+              <Component {...componentProps} />
+            </TabPanelContent>
+          </OverlayScrollbarsComponent>
         </TabPanel>
       )}
     </>

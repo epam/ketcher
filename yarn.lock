@@ -3210,6 +3210,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/overlayscrollbars@npm:^1.12.1":
+  version: 1.12.1
+  resolution: "@types/overlayscrollbars@npm:1.12.1"
+  checksum: 4d539db07ad5a268d6eb8f3af84f64126dd2e99831895f0a7a82839dae6d7405dbb7dacecc0ecd6f6aef403f6c5ae946f9d65dd1fa8fa44f0cb9926f01032f3c
+  languageName: node
+  linkType: hard
+
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
@@ -12236,6 +12243,7 @@ __metadata:
     "@types/jest": ^27.0.3
     "@types/lodash": ^4.14.178
     "@types/node": ^16.11.12
+    "@types/overlayscrollbars": ^1.12.1
     "@types/react": ^17.0.37
     "@types/react-dom": ^17.0.11
     "@types/testing-library__jest-dom": ^5.14.2
@@ -12254,6 +12262,8 @@ __metadata:
     less: ^3.12.2
     lodash: ^4.17.21
     npm-run-all: ^4.1.5
+    overlayscrollbars: ^1.13.1
+    overlayscrollbars-react: ^0.2.3
     postcss: ^8.2.10
     prettier: ^2.5.1
     react-redux: ^7.2.1
@@ -14338,6 +14348,23 @@ __metadata:
   version: 0.3.0
   resolution: "os-browserify@npm:0.3.0"
   checksum: 16e37ba3c0e6a4c63443c7b55799ce4066d59104143cb637ecb9fce586d5da319cdca786ba1c867abbe3890d2cbf37953f2d51eea85e20dd6c4570d6c54bfebf
+  languageName: node
+  linkType: hard
+
+"overlayscrollbars-react@npm:^0.2.3":
+  version: 0.2.3
+  resolution: "overlayscrollbars-react@npm:0.2.3"
+  peerDependencies:
+    overlayscrollbars: ^1.10.0
+    react: ^16.4.0 || ^17.0.0
+  checksum: 9da38d94f26ae196d454975e4a921ab0cce971f5cc3561ce077b541cd3ecac21c1ca9d0c0fe0d5a9f9a4790445d0265b95338af80849adffd234dc0ecd2b94a8
+  languageName: node
+  linkType: hard
+
+"overlayscrollbars@npm:^1.13.1":
+  version: 1.13.1
+  resolution: "overlayscrollbars@npm:1.13.1"
+  checksum: 6f3be25b60dd9c2adcb6bd42d51f1ac72a1538247dfa991f5238602fc941ede0ec1fb0f04d4e1367d85ac2e95bdb27d81e05c7e3bfdff585c48a5cd611af9271
   languageName: node
   linkType: hard
 

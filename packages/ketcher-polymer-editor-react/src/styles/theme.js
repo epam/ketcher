@@ -25,8 +25,7 @@ const color = {
     primary: '#121212',
     secondary: '#BCBCBC',
     light: '#FFFFFF',
-    dark: '#5B6077',
-    black: '#000000'
+    dark: '#000000'
   },
   tab: {
     regular: '#F3F3F3',
@@ -54,8 +53,7 @@ const color = {
       primary: '#FFFFFF',
       secondary: '#005662',
       disabled: '#7A7A7A'
-    },
-    reset: '#FF2727'
+    }
   },
   dropdown: {
     primary: '#333333',
@@ -71,7 +69,7 @@ const color = {
     active: '#00838F',
     hover: '#005662'
   },
-  divider: '#AEAEAE',
+  divider: '#5B6077',
   error: '#FF4A4A',
   input: {
     border: {

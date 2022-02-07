@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { MonomerItemType } from './monomerLibraryItem'
-import { Tabs } from 'components/shared/ui/Tabs'
+import { Tabs } from 'components/shared/Tabs'
 import styled from '@emotion/styled'
 import { RnaMonomerSection } from 'components/rna/MonomerSection'
 import { MonomerGroup } from './monomerLibraryGroup'

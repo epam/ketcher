@@ -41,7 +41,7 @@ const Divider = styled.div`
   height: 5px;
   width: 10px;
   border-bottom: 1px solid;
-  border-color: ${({ theme }) => theme.color.text.dark};
+  border-color: ${({ theme }) => theme.color.divider};
 `
 
 const GroupTitle = styled.div`
@@ -53,7 +53,7 @@ const GroupTitle = styled.div`
   justify-content: flex-start;
   font-size: ${({ theme }) => theme.font.size.small};
   font-family: ${({ theme }) => theme.font.family.roboto};
-  color: ${({ theme }) => theme.color.text.dark};
+  color: ${({ theme }) => theme.color.divider};
   margin: 4px 4px 0;
 `
 

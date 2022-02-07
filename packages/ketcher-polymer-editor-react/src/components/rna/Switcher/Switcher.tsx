@@ -39,7 +39,7 @@ const RAPButton = ({ isActive, children, callback }: RAPButtonProps) => {
     border-radius: 8px;
     line-height: 18px;
     min-width: 33px;
-    color: ${isActive ? color.text.light : color.text.black};
+    color: ${isActive ? color.text.light : color.text.dark};
     :hover {
       background-color: ${color.button.primary.hover};
       color: ${color.text.light};
@@ -78,7 +78,7 @@ const LinkIcon = styled(Icon)<{ isActive: boolean }>(({ isActive, theme }) => ({
 const ResetButton = styled(Button)`
   margin-left: auto;
   height: 15px;
-  color: ${({ theme }) => theme.color.button.reset};
+  color: #ff2727;
   font-size: ${({ theme }) => theme.font.size.regular};
   min-width: 30px;
   text-transform: none;

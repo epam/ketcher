@@ -16,7 +16,6 @@ declare module '@mui/material/styles' {
         secondary: string
         light: string
         dark: string
-        black: string
       }
       tab: {
         regular: string
@@ -45,7 +44,6 @@ declare module '@mui/material/styles' {
           secondary: string
           disabled: string
         }
-        reset: string
       }
       dropdown: {
         primary: string

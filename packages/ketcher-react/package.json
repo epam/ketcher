@@ -62,6 +62,7 @@
     "lodash": "^4.17.21",
     "miew-react": "^1.0.0",
     "normalize.css": "^8.0.1",
+    "overlayscrollbars-react": "^0.2.3",
     "react-colorful": "^5.4.0",
     "react-contextmenu": "^2.14.0",
     "react-dropzone": "^11.4.2",

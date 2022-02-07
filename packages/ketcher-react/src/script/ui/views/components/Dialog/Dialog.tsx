@@ -21,6 +21,7 @@ import { FC, ReactElement, useLayoutEffect, useRef } from 'react'
 import Icon from '../../../component/view/icon'
 import clsx from 'clsx'
 import styles from './Dialog.module.less'
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 
 interface DialogParamsCallProps {
   onCancel: () => void
@@ -118,7 +119,9 @@ const Dialog: FC<Props> = (props) => {
           </button>
         </div>
       </header>
-      <div className={clsx(styles.dialog_body, styles.body)}>{children}</div>
+      <OverlayScrollbarsComponent>
+        <div className={clsx(styles.body)}>{children}</div>
+      </OverlayScrollbarsComponent>
 
       {buttons.length > 0 && (
         <footer>

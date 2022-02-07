@@ -17,29 +17,32 @@
 import GenGroup from './components'
 import { Generics } from 'ketcher-core'
 import classes from './GenericGroups.module.less'
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 
 function GenericGroups({ selected, onSelect, className, ...props }) {
   return (
     <div summary="Generic Groups" className={classes[className]} {...props}>
-      <GenGroup
-        gen={Generics}
-        name="atom"
-        selected={selected}
-        onSelect={onSelect}
-      />
-      <GenGroup
-        gen={Generics}
-        name="special"
-        selected={selected}
-        onSelect={onSelect}
-      />
+      <OverlayScrollbarsComponent>
+        <GenGroup
+          gen={Generics}
+          name="atom"
+          selected={selected}
+          onSelect={onSelect}
+        />
+        <GenGroup
+          gen={Generics}
+          name="special"
+          selected={selected}
+          onSelect={onSelect}
+        />
 
-      <GenGroup
-        gen={Generics}
-        name="group"
-        selected={selected}
-        onSelect={onSelect}
-      />
+        <GenGroup
+          gen={Generics}
+          name="group"
+          selected={selected}
+          onSelect={onSelect}
+        />
+      </OverlayScrollbarsComponent>
     </div>
   )
 }

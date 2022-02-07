@@ -15,10 +15,17 @@
  ***************************************************************************/
 
 import { SGroup, Struct } from 'domain/entities'
-import { SdfItem } from 'domain/serializers'
+
+export type FunctionalGroupType = {
+  struct: Struct
+  props: {
+    atomid: number
+    group: string
+  }
+}
 
 export interface FunctionalGroupsProvider {
   getFunctionalGroupsList: () => Promise<Array<Struct>>
   isFunctionalGroup: (sgroup: SGroup) => boolean // TODO change to Promise
-  getFunctionalGroupsTemplates: () => Promise<Array<SdfItem>> // TODO maybe remove this
+  getFunctionalGroupsTemplates: () => Promise<Array<FunctionalGroupType>> // TODO maybe remove this
 }

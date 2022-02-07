@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { SGroup, Struct } from '../entities'
-import { SdfItem, SdfSerializer } from 'domain/serializers/sdf'
-import { FunctionalGroupsProvider } from 'domain/helpers/functionalGroupsProvider.types'
+import { SGroup, Struct } from '../../entities'
+import { SdfSerializer } from 'domain/serializers/sdf'
+import { FunctionalGroupType, FunctionalGroupsProvider } from 'domain/helpers'
 
 export function prefetchStatic(url) {
   return fetch(url, { credentials: 'same-origin' }).then((resp) => {
@@ -27,7 +27,7 @@ export function prefetchStatic(url) {
 export class HttpFunctionalGroupsProvider implements FunctionalGroupsProvider {
   #url: string
   #sdfSerializer: SdfSerializer
-  #templates: Array<SdfItem> | undefined
+  #templates: Array<FunctionalGroupType> | undefined
   #functionalGroupsList: Array<Struct> | undefined
 
   constructor(url) {
@@ -37,10 +37,14 @@ export class HttpFunctionalGroupsProvider implements FunctionalGroupsProvider {
     this.#functionalGroupsList = undefined
   }
 
-  public async getFunctionalGroupsTemplates() {
+  public async getFunctionalGroupsTemplates(): Promise<
+    Array<FunctionalGroupType>
+  > {
     if (!this.#templates) {
       const text = await prefetchStatic(this.#url)
-      this.#templates = this.#sdfSerializer.deserialize(text)
+      this.#templates = this.#sdfSerializer.deserialize(
+        text
+      ) as Array<FunctionalGroupType>
     }
 
     return this.#templates

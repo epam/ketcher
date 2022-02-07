@@ -16,6 +16,5 @@
 
 export * from './scale'
 export * from './stereoValidator'
-export * from './functionalGroupsProvider'
-export * from './defaultFunctionalGroupsProvider'
-export * from './functionalGroupsProvider.types'
+export * from './functionalGroups'
+export * from './templates'

@@ -14,15 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FunctionalGroupsProvider } from 'domain/helpers/functionalGroupsProvider.types'
-import { SdfItem } from 'domain/serializers'
+import {
+  FunctionalGroupType,
+  FunctionalGroupsProvider,
+  HttpFunctionalGroupsProvider
+} from 'domain/helpers'
 import { SGroup, Struct } from 'domain/entities'
-import { HttpFunctionalGroupsProvider } from 'domain/helpers/functionalGroupsProvider'
 
 export class DefaultFunctionalGroupsProvider {
   #provider: FunctionalGroupsProvider
   #functionalGroupsList: Array<Struct>
-  #templates: Array<SdfItem>
+  #templates: Array<FunctionalGroupType>
 
   constructor(provider) {
     this.#provider = provider
@@ -38,11 +40,11 @@ export class DefaultFunctionalGroupsProvider {
     return this.#templates
   }
 
-  public isFunctionalGroup(sgroup: SGroup) {
+  public isFunctionalGroup(sgroup: SGroup): boolean {
     return this.#provider.isFunctionalGroup(sgroup)
   }
 
-  public async initFunctionalGroups() {
+  public async initFunctionalGroups(): Promise<void> {
     this.#templates = await this.#provider.getFunctionalGroupsTemplates()
     this.#functionalGroupsList = await this.#provider.getFunctionalGroupsList()
   }

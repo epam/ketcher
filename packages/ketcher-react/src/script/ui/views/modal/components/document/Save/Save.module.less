@@ -22,6 +22,8 @@
 @save-container-width-small: 380px;
 @save-container-height-small: 325px;
 
+// stylelint-disable selector-pseudo-class-no-unknown
+// stylelint-disable no-descending-specificity
 .save {
   width: @width-large;
 
@@ -76,15 +78,17 @@
     & > label {
       display: inline-block;
       text-align: left;
-      margin: 0 0.3em;
 
-      select,
       input {
         height: 25px !important;
         width: 190px;
       }
 
-      select {
+      > span {
+        margin-right: 8px;
+      }
+
+      :global(.MuiOutlinedInput-root .MuiSelect-select) {
         width: 145px;
       }
     }
@@ -108,10 +112,6 @@
   .saveImageContainer {
     width: @save-container-width-large;
     height: @save-container-height-large;
-
-    label {
-      margin: 0 0.3em;
-    }
   }
 
   footer {
@@ -152,7 +152,6 @@
   }
 }
 
-// stylelint-disable-next-line selector-pseudo-class-no-unknown
 :global(.smallEditor) {
   .formContainer {
     width: @save-container-width-small;

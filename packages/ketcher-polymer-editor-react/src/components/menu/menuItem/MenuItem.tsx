@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Icon } from 'components/shared/ui/icon'
+import { Icon } from 'components/shared/icon'
 import { MenuItem as MuiMenuItem } from '@mui/material'
 import { css } from '@emotion/react'
 import { useMenuContext } from '../../../hooks/useMenuContext'

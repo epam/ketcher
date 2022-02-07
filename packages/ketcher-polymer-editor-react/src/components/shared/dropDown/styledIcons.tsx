@@ -16,7 +16,7 @@
 
 import styled from '@emotion/styled'
 
-import { Icon } from 'components/shared/ui/icon'
+import { Icon } from 'components/shared/icon'
 
 const CheckMarkStyled = styled(Icon)`
   fill: #343434;

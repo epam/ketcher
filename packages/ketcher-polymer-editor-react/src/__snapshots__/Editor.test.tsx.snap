@@ -293,7 +293,7 @@ Object {
                       class="css-1il5ut8"
                     >
                       <textarea
-                        class="css-19afjhr"
+                        class="css-248371"
                         style="height: 0px;"
                       />
                       <span
@@ -438,6 +438,22 @@ Object {
           <span>
             EPAM
           </span>
+        </div>
+        <div
+          style="position: absolute; bottom: 5px; right: 0px;"
+        >
+          <button
+            class="MuiButtonBase-root css-pck0ik-MuiButtonBase-root"
+            role="button"
+            tabindex="0"
+            title="Show dummy modal dialog"
+            type="button"
+          >
+            Show dummy modal dialog
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
         </div>
       </div>
     </div>
@@ -731,7 +747,7 @@ Object {
                     class="css-1il5ut8"
                   >
                     <textarea
-                      class="css-19afjhr"
+                      class="css-248371"
                       style="height: 0px;"
                     />
                     <span
@@ -876,6 +892,22 @@ Object {
         <span>
           EPAM
         </span>
+      </div>
+      <div
+        style="position: absolute; bottom: 5px; right: 0px;"
+      >
+        <button
+          class="MuiButtonBase-root css-pck0ik-MuiButtonBase-root"
+          role="button"
+          tabindex="0"
+          title="Show dummy modal dialog"
+          type="button"
+        >
+          Show dummy modal dialog
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
       </div>
     </div>
   </div>,

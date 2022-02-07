@@ -14,75 +14,77 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ReactSelect, { Option } from './ReactSelect/ReactSelect'
-import { ReactElement, useEffect, useState } from 'react'
-import styles from './Select.module.less'
+import MuiSelect, { SelectChangeEvent } from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import { useEffect, useState } from 'react'
 import clsx from 'clsx'
+import styles from './Select.module.less'
+
+import Icon from '../../view/icon'
+
+export interface Option {
+  value: string
+  label: string
+}
 
 interface Props {
-  schema?: any
+  options: Array<Option>
+  onChange: (value: string) => void
   className?: string
   value?: string
-  onChange: (any) => void
-  singleSelect?: boolean
+  multiple?: boolean
   disabled?: boolean
-  options?: Array<Option>
-  searchable?: boolean
 }
 
-const getOptions = (schema): Array<Option> => {
-  return schema.enum.reduce((options, value, index) => {
-    options.push({
-      value,
-      label: schema?.enumNames?.[index] || value
-    })
-
-    return options
-  }, [])
-}
+const ChevronIcon = ({ className }) => (
+  <Icon name="chevron" className={clsx(className, styles.chevronIcon)} />
+)
 
 const Select = ({
-  schema,
   className,
   value,
   onChange,
-  singleSelect = true,
+  multiple = false,
   disabled,
-  options: selectOptions,
-  ...rest
-}: Props): ReactElement => {
-  const [defaultValue, setDefaultValue] = useState()
-  const [options, setOptions] = useState<Array<any>>([])
-  const modal = document.querySelector(
-    '.Modal-module_modalOverlay__119Xk'
-  ) as HTMLElement
-
-  useEffect(() => {
-    if (selectOptions === undefined) {
-      return setOptions(getOptions(schema))
-    }
-    setOptions(selectOptions)
-  }, [schema, selectOptions])
+  options
+}: Props) => {
+  const [currentValue, setCurrentValue] = useState<Option>()
 
   useEffect(() => {
     let option
     if (options) {
       option = options.find((option) => option.value === value)
     }
-    return setDefaultValue(option)
+    return setCurrentValue(option)
   }, [options, value])
 
+  const handleChange = (event: SelectChangeEvent) => {
+    onChange(event.target.value)
+  }
+
   return (
-    <ReactSelect
+    <MuiSelect
       className={clsx(styles.selectContainer, className)}
-      options={options}
-      defaultValue={defaultValue}
-      value={defaultValue}
-      onChange={onChange}
+      value={currentValue?.value ?? ''}
+      onChange={handleChange}
+      multiple={multiple}
       disabled={disabled}
-      portalTarget={modal}
-      {...rest}
-    />
+      MenuProps={{ className: styles.dropdownList }}
+      IconComponent={ChevronIcon}
+    >
+      {options &&
+        options.map((option) => {
+          return (
+            <MenuItem
+              value={option.value}
+              key={option.value}
+              disableRipple={true}
+            >
+              {option.label}
+            </MenuItem>
+          )
+        })}
+    </MuiSelect>
   )
 }
 

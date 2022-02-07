@@ -25,7 +25,8 @@ import { Elements } from 'ketcher-core'
 import { atom as atomSchema } from '../../../../../data/schema/struct-schema'
 import { capitalize } from 'lodash/fp'
 import classes from './Atom.module.less'
-import Select from '../../../../../component/form/Select/Select'
+import Select from '../../../../../component/form/Select'
+import { getSelectOptionsFromSchema } from '../../../../../utils'
 
 interface AtomProps extends BaseProps {
   alias: string
@@ -44,6 +45,8 @@ interface AtomProps extends BaseProps {
 }
 
 type Props = AtomProps & BaseCallProps
+
+const atomProps = atomSchema.properties
 
 const Atom: FC<Props> = (props) => {
   const { formState, stereoParity, ...rest } = props
@@ -75,20 +78,44 @@ const Atom: FC<Props> = (props) => {
           <Field name="alias" />
           <ElementNumber label={currentLabel} />
           <Field name="charge" maxLength="5" />
-          <Field name="explicitValence" component={Select} />
+          <Field
+            name="explicitValence"
+            component={Select}
+            options={getSelectOptionsFromSchema(atomProps.explicitValence)}
+          />
           <Field name="isotope" />
-          <Field name="radical" component={Select} />
+          <Field
+            name="radical"
+            component={Select}
+            options={getSelectOptionsFromSchema(atomProps.radical)}
+          />
         </fieldset>
         <fieldset className={classes.query}>
           <legend>Query specific</legend>
-          <Field name="ringBondCount" component={Select} />
-          <Field name="hCount" component={Select} />
-          <Field name="substitutionCount" component={Select} />
+          <Field
+            name="ringBondCount"
+            component={Select}
+            options={getSelectOptionsFromSchema(atomProps.ringBondCount)}
+          />
+          <Field
+            name="hCount"
+            component={Select}
+            options={getSelectOptionsFromSchema(atomProps.hCount)}
+          />
+          <Field
+            name="substitutionCount"
+            component={Select}
+            options={getSelectOptionsFromSchema(atomProps.substitutionCount)}
+          />
           <Field name="unsaturatedAtom" />
         </fieldset>
         <fieldset className={classes.reaction}>
           <legend>Reaction flags</legend>
-          <Field name="invRet" component={Select} />
+          <Field
+            name="invRet"
+            component={Select}
+            options={getSelectOptionsFromSchema(atomProps.invRet)}
+          />
           <Field name="exactChangeFlag" />
         </fieldset>
       </Form>

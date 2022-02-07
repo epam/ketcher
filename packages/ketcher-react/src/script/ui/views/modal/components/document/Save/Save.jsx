@@ -34,7 +34,8 @@ import classes from './Save.module.less'
 import { connect } from 'react-redux'
 import { saveUserTmpl } from '../../../../../state/templates'
 import { updateFormState } from '../../../../../state/modal/form'
-import Select from '../../../../../component/form/Select/Select'
+import Select from '../../../../../component/form/Select'
+import { getSelectOptionsFromSchema } from '../../../../../utils'
 
 const saveSchema = {
   title: 'Save',
@@ -206,7 +207,14 @@ class SaveDialog extends Component {
           {...formState}
         >
           <Field name="filename" />
-          <Field name="format" onChange={this.changeType} component={Select} />
+          <Field
+            name="format"
+            onChange={this.changeType}
+            options={getSelectOptionsFromSchema(
+              this.saveSchema.properties.format
+            )}
+            component={Select}
+          />
         </Form>
         {this.isImageFormat(format) ? (
           // TODO: remove this conditional after fixing problems with png format on BE side

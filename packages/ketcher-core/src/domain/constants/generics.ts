@@ -14,18 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-export type Item = {
+export type GenItem = {
   label: string
   description?: string
 }
 
-export type ItemSet = {
-  items: Item[]
+export type GenItemSet = {
+  items: GenItem[]
   displayName?: string
 }
 
 export type GenGroup = {
-  itemSets: ItemSet[]
+  itemSets: GenItemSet[]
   title: string
 }
 

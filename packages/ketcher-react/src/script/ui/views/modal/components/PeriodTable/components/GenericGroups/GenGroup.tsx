@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
+import type { GenericsType } from 'ketcher-core'
+
 import { BoxWithLines } from './BoxWithLines'
 import { GenSet } from './GenSet'
 import styles from './GenGroup.module.less'
-
-import type { GenericsType } from './GenericTypes'
 
 type GenProps = {
   groups: GenericsType

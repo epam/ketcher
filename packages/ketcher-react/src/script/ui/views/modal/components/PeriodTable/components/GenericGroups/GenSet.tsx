@@ -15,12 +15,12 @@
  ***************************************************************************/
 
 import clsx from 'clsx'
+import type { GenItemSet } from 'ketcher-core'
 
 import classes from './GenSet.module.less'
-import type { ItemSet } from './GenericTypes'
 
 type GenSetProps = {
-  labels: ItemSet[]
+  labels: GenItemSet[]
   selected: (label: string) => boolean
   onSelect: (label: string) => void
   className?: string

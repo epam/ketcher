@@ -1,8 +1,8 @@
 import { Button } from '@mui/material'
 import styled from '@emotion/styled'
 import { ReactNode, useState } from 'react'
-import { Icon } from 'components/shared/ui/icon'
-import { IconNameType } from 'components/shared/ui/icon/icon'
+import { Icon } from 'components/shared/icon'
+import { IconNameType } from 'components/shared/icon/icon'
 import { css, useTheme } from '@emotion/react'
 
 type SwitcherProps = {
@@ -30,7 +30,9 @@ const svgNames: IconNameType[] = [
 ]
 
 const RAPButton = ({ isActive, children, callback }: RAPButtonProps) => {
-  const { color } = useTheme()
+  const {
+    ketcher: { color }
+  } = useTheme()
   const styles = css`
     padding: 3px 12px;
     background-color: ${isActive
@@ -70,7 +72,7 @@ const LinkIcon = styled(Icon)<{ isActive: boolean }>(({ isActive, theme }) => ({
   fill: 'none',
   '& path': {
     strokeDasharray: isActive ? 'none' : '4,4',
-    stroke: isActive ? theme.color.button.primary.active : '#D1D5E3'
+    stroke: isActive ? theme.ketcher.color.button.primary.active : '#D1D5E3'
   }
 }))
 

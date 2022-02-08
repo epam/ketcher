@@ -72,22 +72,22 @@ function CustomTabs(props): ReactElement {
     height: 1,
     width: 65,
     padding: 0,
-    fontSize: theme.font.size.small,
+    fontSize: theme.ketcher.font.size.small,
     cursor: 'pointer',
     textAlign: 'center',
-    backgroundColor: theme.color.tab.regular,
-    color: theme.color.text.primary,
+    backgroundColor: theme.ketcher.color.tab.regular,
+    color: theme.ketcher.color.text.primary,
     listStyleType: 'none',
     margin: 0,
 
     '&:hover': {
-      backgroundColor: theme.color.tab.hover,
-      color: theme.color.text.light
+      backgroundColor: theme.ketcher.color.tab.hover,
+      color: theme.ketcher.color.text.light
     },
 
     '&.Mui-selected': {
-      color: theme.color.text.light,
-      backgroundColor: theme.color.tab.active
+      color: theme.ketcher.color.text.light,
+      backgroundColor: theme.ketcher.color.tab.active
     }
   }))
 

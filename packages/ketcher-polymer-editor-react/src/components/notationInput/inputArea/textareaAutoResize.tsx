@@ -71,12 +71,12 @@ const Ellipsis = styled('span')<{ shouldDisplay: boolean }>`
           display: inline-block;
           position: absolute;
           right: 0;
-          font-size: ${theme.font.size.medium};
+          font-size: ${theme.ketcher.font.size.medium};
           line-height: ${lineHeight}px;
           padding-left: 3px;
           padding-right: ${inputPadding}px;
-          background-color: ${theme.color.background.primary};
-          box-shadow: -3px 0 5px 2px ${theme.color.background.primary};
+          background-color: ${theme.ketcher.color.background.primary};
+          box-shadow: -3px 0 5px 2px ${theme.ketcher.color.background.primary};
         `
       : `display: none`}
 `

@@ -16,9 +16,9 @@
 
 import styled from '@emotion/styled'
 
-import { DropDown as SelectNotation } from '../shared/ui/dropDown'
+import { DropDown as SelectNotation } from '../shared/dropDown'
 import { InputArea } from './inputArea'
-import { ActionButton as AddButton } from '../shared/ui/actionButton'
+import { ActionButton as AddButton } from '../shared/actionButton'
 
 const componentWidth = 670
 const height = 24

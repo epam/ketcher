@@ -21,6 +21,7 @@ import StructRender from '../../component/structrender'
 import classes from './TemplateTable.module.less'
 import { greekify } from '../../utils'
 import { useSelector } from 'react-redux'
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 
 export interface Template {
   struct: Struct
@@ -71,50 +72,60 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     <EmptySearchResult textInfo="No items found" />
   ) : (
     <div className={classes.table}>
-      <div className={classes.tableContent}>
-        {templates.map((tmpl, i) => {
-          return (
-            <div
-              className={
-                tmpl === selected
-                  ? `${classes.td} ${classes.selected}`
-                  : classes.td
-              }
-              title={greekify(tmplName(tmpl, i))}
-              key={
-                tmpl.struct.name !== selected?.struct.name
-                  ? `${tmpl.struct.name}_${i}`
-                  : `${tmpl.struct.name}_${i}_selected`
-              }
-            >
-              <RenderTmpl
-                tmpl={tmpl}
-                options={options}
-                className={classes.struct}
-                onClick={() => onSelect(tmpl)}
-              />
-              <div className={classes.btnContainer}>
-                {tmpl.props.group === 'User Templates' && (
-                  <button
-                    className={classes.deleteButton}
-                    onClick={() => onDelete!(tmpl)}
-                  >
-                    Delete
-                  </button>
-                )}
-                {tmpl.props.group !== 'Functional Groups' && (
-                  <button
-                    className={classes.attachButton}
-                    onClick={() => onAttach!(tmpl)}
-                  >
-                    Edit
-                  </button>
-                )}
+      <OverlayScrollbarsComponent
+        options={{
+          overflowBehavior: {
+            x: 'hidden',
+            y: 'scroll'
+          }
+        }}
+        className={classes.tableContentWrapper}
+      >
+        <div className={classes.tableContent}>
+          {templates.map((tmpl, i) => {
+            return (
+              <div
+                className={
+                  tmpl === selected
+                    ? `${classes.td} ${classes.selected}`
+                    : classes.td
+                }
+                title={greekify(tmplName(tmpl, i))}
+                key={
+                  tmpl.struct.name !== selected?.struct.name
+                    ? `${tmpl.struct.name}_${i}`
+                    : `${tmpl.struct.name}_${i}_selected`
+                }
+              >
+                <RenderTmpl
+                  tmpl={tmpl}
+                  options={options}
+                  className={classes.struct}
+                  onClick={() => onSelect(tmpl)}
+                />
+                <div className={classes.btnContainer}>
+                  {tmpl.props.group === 'User Templates' && (
+                    <button
+                      className={classes.deleteButton}
+                      onClick={() => onDelete!(tmpl)}
+                    >
+                      Delete
+                    </button>
+                  )}
+                  {tmpl.props.group !== 'Functional Groups' && (
+                    <button
+                      className={classes.attachButton}
+                      onClick={() => onAttach!(tmpl)}
+                    >
+                      Edit
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          )
-        })}
-      </div>
+            )
+          })}
+        </div>
+      </OverlayScrollbarsComponent>
     </div>
   )
 }

@@ -26,21 +26,23 @@
   overflow: hidden;
 }
 
+.tableContentWrapper {
+  width: 100%;
+  height: 312px;
+  padding-right: 20px;
+}
+
 .tableContent {
   &:focus {
     outline: none;
   }
 
-  height: 312px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   grid-gap: 24px;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  height: 100%;
   width: 100%;
   margin: 10px 15px;
-
-  .scrollbar();
 }
 
 .struct {

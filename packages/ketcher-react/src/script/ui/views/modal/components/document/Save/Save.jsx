@@ -36,6 +36,7 @@ import { saveUserTmpl } from '../../../../../state/templates'
 import { updateFormState } from '../../../../../state/modal/form'
 import Select from '../../../../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 
 const saveSchema = {
   title: 'Save',
@@ -197,57 +198,59 @@ class SaveDialog extends Component {
     const isCleanStruct = this.props.struct.isBlank()
 
     return (
-      <div className={classes.formContainer}>
-        <Form
-          schema={this.saveSchema}
-          init={{
-            filename,
-            format: this.isRxn ? 'rxn' : 'mol'
-          }}
-          {...formState}
-        >
-          <Field name="filename" />
-          <Field
-            name="format"
-            onChange={this.changeType}
-            options={getSelectOptionsFromSchema(
-              this.saveSchema.properties.format
-            )}
-            component={Select}
-          />
-        </Form>
-        {this.isImageFormat(format) ? (
-          // TODO: remove this conditional after fixing problems with png format on BE side
-          format === 'png' ? (
-            <div className={classes.previewMessage}>
-              Preview is not available for this format
-            </div>
-          ) : (
-            <div className={classes.imageContainer}>
-              {!isCleanStruct && (
-                <img src={`data:image/svg+xml;base64,${imageSrc}`} />
+      <OverlayScrollbarsComponent>
+        <div className={classes.formContainer}>
+          <Form
+            schema={this.saveSchema}
+            init={{
+              filename,
+              format: this.isRxn ? 'rxn' : 'mol'
+            }}
+            {...formState}
+          >
+            <Field name="filename" />
+            <Field
+              name="format"
+              onChange={this.changeType}
+              options={getSelectOptionsFromSchema(
+                this.saveSchema.properties.format
               )}
-            </div>
-          )
-        ) : (
-          <textarea
-            value={structStr}
-            className={classes.previewArea}
-            readOnly
-            ref={this.textAreaRef}
-          />
-        )}
-        {warnings.length ? (
-          <div className={classes.warnings}>
-            {warnings.map((warning) => (
-              <div className={classes.warningsContainer}>
-                <div className={classes.warning} />
-                <div className={classes.warningsArr}>{warning}</div>
+              component={Select}
+            />
+          </Form>
+          {this.isImageFormat(format) ? (
+            // TODO: remove this conditional after fixing problems with png format on BE side
+            format === 'png' ? (
+              <div className={classes.previewMessage}>
+                Preview is not available for this format
               </div>
-            ))}
-          </div>
-        ) : null}
-      </div>
+            ) : (
+              <div className={classes.imageContainer}>
+                {!isCleanStruct && (
+                  <img src={`data:image/svg+xml;base64,${imageSrc}`} />
+                )}
+              </div>
+            )
+          ) : (
+            <textarea
+              value={structStr}
+              className={classes.previewArea}
+              readOnly
+              ref={this.textAreaRef}
+            />
+          )}
+          {warnings.length ? (
+            <div className={classes.warnings}>
+              {warnings.map((warning) => (
+                <div className={classes.warningsContainer}>
+                  <div className={classes.warning} />
+                  <div className={classes.warningsArr}>{warning}</div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </OverlayScrollbarsComponent>
     )
   }
 

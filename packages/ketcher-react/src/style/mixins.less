@@ -399,8 +399,10 @@
 
 .dialog_body {
   overflow: auto;
+}
 
-  .scrollbar();
+.os-host {
+  height: 100%;
 }
 
 .kbd() {
@@ -410,51 +412,51 @@
 }
 
 .scrollbar {
-  &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-    background-color: rgba(@main-color, 0);
-    -webkit-border-radius: 100px;
-  }
+  // &::-webkit-scrollbar {
+  //   width: 8px;
+  //   height: 8px;
+  //   background-color: rgba(@main-color, 0);
+  //   -webkit-border-radius: 100px;
+  // }
 
-  &::-webkit-scrollbar:hover {
-    background-color: rgba(@main-color, 0.09);
-  }
+  // &::-webkit-scrollbar:hover {
+  //   background-color: rgba(@main-color, 0.09);
+  // }
 
-  &::-webkit-scrollbar-thumb {
-    background: rgba(@main-color, 0.3);
-    -webkit-border-radius: 100px;
-  }
+  // &::-webkit-scrollbar-thumb {
+  //   background: rgba(@main-color, 0.3);
+  //   -webkit-border-radius: 100px;
+  // }
 
-  &::-webkit-scrollbar-thumb:active {
-    background: rgba(@main-color, 0.61);
-    -webkit-border-radius: 100px;
-  }
+  // &::-webkit-scrollbar-thumb:active {
+  //   background: rgba(@main-color, 0.61);
+  //   -webkit-border-radius: 100px;
+  // }
 
-  &::-webkit-scrollbar-thumb:vertical {
-    min-height: 10px;
-  }
+  // &::-webkit-scrollbar-thumb:vertical {
+  //   min-height: 10px;
+  // }
 
-  &::-webkit-scrollbar-thumb:horizontal {
-    min-width: 10px;
-  }
+  // &::-webkit-scrollbar-thumb:horizontal {
+  //   min-width: 10px;
+  // }
 }
 
 .scrollbar_thin {
-  &::-webkit-scrollbar {
-    width: 4px;
-    background-color: @color-scroll-inactive;
-    border-radius: 2px;
-    -webkit-border-radius: 2px;
-  }
+  // &::-webkit-scrollbar {
+  //   width: 4px;
+  //   background-color: @color-scroll-inactive;
+  //   border-radius: 2px;
+  //   -webkit-border-radius: 2px;
+  // }
 
-  &::-webkit-scrollbar-thumb {
-    background-color: @color-scroll;
-    border-radius: 2px;
-    -webkit-border-radius: 2px;
-  }
+  // &::-webkit-scrollbar-thumb {
+  //   background-color: @color-scroll;
+  //   border-radius: 2px;
+  //   -webkit-border-radius: 2px;
+  // }
 
-  &::-webkit-scrollbar-thumb:active {
-    background-color: @color-scroll;
-  }
+  // &::-webkit-scrollbar-thumb:active {
+  //   background-color: @color-scroll;
+  // }
 }

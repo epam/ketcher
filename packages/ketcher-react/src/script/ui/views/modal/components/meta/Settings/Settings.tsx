@@ -38,6 +38,7 @@ import Icon from '../../../../../component/view/icon'
 import clsx from 'clsx'
 import Select from '../../../../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 
 interface SettingsProps extends BaseProps {
   initState: any
@@ -253,13 +254,15 @@ const SettingsDialog = (props: Props) => {
         </button>
       ]}
     >
-      <Form schema={settingsSchema} init={initState} {...formState}>
-        <Sidebar tabs={tabs} className={classes.sidebar} />
+      <OverlayScrollbarsComponent>
+        <Form schema={settingsSchema} init={initState} {...formState}>
+          <Sidebar tabs={tabs} className={classes.sidebar} />
 
-        {!storage.isAvailable() ? (
-          <div className={classes.warning}>{storage.warningMessage}</div>
-        ) : null}
-      </Form>
+          {!storage.isAvailable() ? (
+            <div className={classes.warning}>{storage.warningMessage}</div>
+          ) : null}
+        </Form>
+      </OverlayScrollbarsComponent>
     </Dialog>
   )
 }

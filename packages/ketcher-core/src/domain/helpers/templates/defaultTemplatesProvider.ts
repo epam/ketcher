@@ -14,18 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Template, TemplatesProvider } from 'domain/helpers'
+import { prefetchSplit, Template, TemplatesProvider } from 'domain/helpers'
 import { MolSerializer } from 'domain/serializers'
 
 export class DefaultTemplatesProvider {
   #provider: TemplatesProvider
   #templates: Array<Template>
   #storage: any
+  #svgs: Array<string | null>
 
   constructor(provider, storage) {
     this.#provider = provider
     this.#templates = []
     this.#storage = storage
+    this.#svgs = []
   }
 
   get templates() {
@@ -33,14 +35,22 @@ export class DefaultTemplatesProvider {
   }
 
   public async initTemplatesProvider(cacheElem) {
-    const templates = await this.#provider.getTemplatesList(cacheElem)
-    const userTemplates = this.userTmpls() as Array<Template>
+    let templates = await this.#provider.getTemplatesList()
+    const svgs =
+      this.#provider.getPrerenderSvgs &&
+      (await this.#provider.getPrerenderSvgs())
+    if (svgs) {
+      this.#svgs = svgs
+    }
+    templates = this.mapTemplatesPrerender(templates, cacheElem)
+    const userTemplates = this.userTemplates() as Array<Template>
+
     this.#templates = userTemplates
       ? templates.concat(userTemplates)
       : templates
   }
 
-  private userTmpls() {
+  private userTemplates() {
     const userLib = this.#storage.getItem('ketcher-tmpls')
     if (!Array.isArray(userLib) || userLib.length === 0) return []
     const molSerializer = new MolSerializer()
@@ -59,6 +69,28 @@ export class DefaultTemplatesProvider {
         }
       })
       .filter((tmpl) => tmpl !== null)
+  }
+
+  private mapTemplatesPrerender(templates, cacheEl): Array<Template> {
+    const cachedFiles: Array<string> = this.getSvgFiles(cacheEl)
+
+    return templates.map((tmpl) => {
+      const pr = prefetchSplit(tmpl)
+      if (pr.file) {
+        tmpl.props.prerender =
+          cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : ''
+      }
+
+      return tmpl
+    })
+  }
+
+  private getSvgFiles(cacheEl): Array<string> | [] {
+    return this.#svgs.map((svgContent) => {
+      if (svgContent) cacheEl.innerHTML += svgContent
+
+      return this.#svgs?.filter((_file, i) => !!this.#svgs[i])
+    }) as Array<string> | []
   }
 }
 

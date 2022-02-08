@@ -28,5 +28,6 @@ export interface Template {
 }
 
 export interface TemplatesProvider {
-  getTemplatesList: (cache) => Promise<Array<Template>>
+  getTemplatesList: () => Promise<Array<Template>>
+  getPrerenderSvgs?: () => Promise<Array<string | null> | undefined>
 }

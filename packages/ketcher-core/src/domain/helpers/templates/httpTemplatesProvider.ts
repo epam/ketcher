@@ -14,10 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { prefetchStatic, Template } from 'domain/helpers'
+import { prefetchStatic, Template, TemplatesProvider } from 'domain/helpers'
 import { SdfSerializer } from 'domain/serializers'
 
-export class HttpTemplatesProvider {
+export const prefetchSplit = (tmpl): { file: string; id: string } => {
+  const pr = tmpl.props.prerender
+  const res = pr && pr.split('#', 2)
+
+  return {
+    file: pr && res[0],
+    id: pr && res[1]
+  }
+}
+
+export class HttpTemplatesProvider implements TemplatesProvider {
   #templates: Array<Template> | undefined
   #url: string
   #sdfSerializer: SdfSerializer
@@ -30,59 +40,32 @@ export class HttpTemplatesProvider {
     this.#sdfSerializer = new SdfSerializer()
   }
 
-  public async getTemplatesList(cacheElem): Promise<Array<Template>> {
+  public async getTemplatesList(): Promise<Array<Template>> {
     if (!this.#templates) {
       const text = await prefetchStatic(this.#url)
-      this.#templates = await this.deserializeSdfTemplates(text, cacheElem)
+      this.#templates = this.#sdfSerializer.deserialize(text) as Array<Template>
     }
 
     return this.#templates
   }
 
-  private deserializeSdfTemplates(text, cacheEl): Promise<Array<Template>> {
-    const templates = this.#sdfSerializer.deserialize(text) as Array<Template>
-    const prefetch = this.prefetchRender(templates, this.#baseUrl, cacheEl)
+  public async getPrerenderSvgs(): Promise<Array<string | null> | undefined> {
+    if (this.#templates) {
+      const svgsFiles = this.#templates?.reduce((res, tmpl) => {
+        const file = prefetchSplit(tmpl).file
 
-    return prefetch.then((cachedFiles) =>
-      templates.map((tmpl) => {
-        const pr = this.prefetchSplit(tmpl)
-        if (pr.file)
-          tmpl.props.prerender =
-            cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : ''
+        if (file && res.indexOf(file) === -1) res.push(file)
 
-        return tmpl
-      })
-    )
-  }
+        return res
+      }, [] as Array<string>)
 
-  private prefetchSplit(tmpl) {
-    const pr = tmpl.props.prerender
-    const res = pr && pr.split('#', 2)
-
-    return {
-      file: pr && res[0],
-      id: pr && res[1]
+      return Promise.all(
+        svgsFiles.map((fn) =>
+          prefetchStatic(this.#baseUrl + fn).catch(() => null)
+        )
+      )
     }
-  }
 
-  private prefetchRender(tmpls, baseUrl, cacheEl) {
-    const files = tmpls.reduce((res, tmpl) => {
-      const file = this.prefetchSplit(tmpl).file
-
-      if (file && res.indexOf(file) === -1) res.push(file)
-
-      return res
-    }, [])
-    const fetch = Promise.all(
-      files.map((fn) => prefetchStatic(baseUrl + fn).catch(() => null))
-    )
-
-    return fetch.then((svgs) => {
-      svgs.forEach((svgContent) => {
-        if (svgContent) cacheEl.innerHTML += svgContent
-      })
-
-      return files.filter((_file, i) => !!svgs[i])
-    })
+    return undefined
   }
 }

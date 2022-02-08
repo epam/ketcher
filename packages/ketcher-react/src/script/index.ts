@@ -33,8 +33,8 @@ interface Config {
   structServiceProvider: StructServiceProvider
   buttons?: ButtonsConfig
   errorHandler: (message: string) => void
-  functionalGroupsProvider?: FunctionalGroupsProvider | undefined
-  templatesProvider?: TemplatesProvider | undefined
+  functionalGroupsProvider?: FunctionalGroupsProvider
+  templatesProvider?: TemplatesProvider
 }
 
 async function buildKetcherAsync({
@@ -49,12 +49,15 @@ async function buildKetcherAsync({
   const builder = new KetcherBuilder()
   const fgprovider =
     functionalGroupsProvider ||
-    new HttpFunctionalGroupsProvider('./templates/fg.sdf')
+    new HttpFunctionalGroupsProvider(`${staticResourcesUrl}templates/fg.sdf`)
   const defaultFgProvider = await initFunctionalGroupsProvider(fgprovider)
 
   const tmpltsProvider =
     templatesProvider ||
-    new HttpTemplatesProvider('./templates/library.sdf', './templates/')
+    new HttpTemplatesProvider(
+      `${staticResourcesUrl}templates/library.sdf`,
+      `${staticResourcesUrl}templates/`
+    )
   const defaultTemplatesProvider = initDefaultTemplatesProvider(
     tmpltsProvider,
     storage

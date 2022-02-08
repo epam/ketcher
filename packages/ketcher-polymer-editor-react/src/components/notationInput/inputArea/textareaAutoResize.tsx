@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
-
-import { scrollbarThin } from 'styles/mixins'
+import 'overlayscrollbars/css/OverlayScrollbars.css'
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 
 const lineHeight = 16
 const inputFieldWidth = 355
@@ -30,6 +30,9 @@ const commonStyles = `
   border: none;
   resize: none;
   padding: 0;
+  padding-right: 10px;
+  overflow: hidden;
+  height: inherit;
 `
 
 const VisibleTextInput = styled('textarea')<{
@@ -37,7 +40,6 @@ const VisibleTextInput = styled('textarea')<{
 }>`
   ${commonStyles}
 
-  ${({ theme }) => scrollbarThin(theme)}
   outline: none; // when in focus, parent div has blue border
 
   ${({ shouldHideOverflow }) =>
@@ -56,7 +58,6 @@ const HiddenArea = styled('textarea')`
   // Making invisible, removing from content flow
   visibility: hidden;
   position: absolute;
-  overflow: hidden;
   height: 0;
   top: 0;
   left: 0;
@@ -97,10 +98,12 @@ export const TextareaAutoResize = ({
   isMultiLine,
   isCollapsed,
   setMultiLine,
-  maxRows = 8
+  maxRows
 }: Props) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const hiddenRef = useRef<HTMLTextAreaElement>(null)
+  const [newHeight, setNewHeight] = useState(lineHeight)
+  const [oneLineHeight, setOneLineHeight] = useState(lineHeight)
 
   const updateHeight = useCallback(() => {
     const textarea = textareaRef.current
@@ -109,26 +112,23 @@ export const TextareaAutoResize = ({
     if (!textarea || !hiddenTextarea) {
       return
     }
+
     hiddenTextarea.value = ' '
     const oneLineHeight = hiddenTextarea.scrollHeight
+    setOneLineHeight(oneLineHeight)
 
     hiddenTextarea.value = inputValue
     const scrollHeight = hiddenTextarea.scrollHeight
     hiddenTextarea.value = ' '
 
-    const allowedNumberOfRows = isCollapsed ? 1 : maxRows
+    const newHeight = isCollapsed ? oneLineHeight : scrollHeight
 
-    const newHeight = Math.min(
-      Number(allowedNumberOfRows) * oneLineHeight,
-      scrollHeight
-    )
+    setNewHeight(newHeight)
 
     // Informing parent if content needs more than 1 line
     const hasSeveralRows = scrollHeight / oneLineHeight > 1
     setMultiLine(hasSeveralRows)
-
-    textarea.style.height = `${newHeight}px`
-  }, [maxRows, inputValue, setMultiLine, isCollapsed])
+  }, [inputValue, setMultiLine, isCollapsed])
 
   useEffect(() => {
     updateHeight()
@@ -146,12 +146,22 @@ export const TextareaAutoResize = ({
   }
   return (
     <>
-      <VisibleTextInput
-        ref={textareaRef}
-        value={inputValue}
-        onChange={onChangeHandler}
-        shouldHideOverflow={isMultiLine && isCollapsed}
-      />
+      <OverlayScrollbarsComponent>
+        <div
+          style={{
+            height: `${newHeight}px`,
+            maxHeight: `${maxRows * oneLineHeight}px`
+          }}
+        >
+          <VisibleTextInput
+            ref={textareaRef}
+            value={inputValue}
+            onChange={onChangeHandler}
+            shouldHideOverflow={isMultiLine && isCollapsed}
+          />
+        </div>
+      </OverlayScrollbarsComponent>
+
       <Ellipsis shouldDisplay={isMultiLine && isCollapsed}>...</Ellipsis>
       <HiddenArea aria-hidden="true" ref={hiddenRef} />
     </>

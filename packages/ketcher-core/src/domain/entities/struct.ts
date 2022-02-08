@@ -1043,7 +1043,7 @@ export class Struct {
 
   bindSGroupsToFunctionalGroups() {
     this.sgroups.forEach((sgroup) => {
-      if (functionalGroupsProvider.isFunctionalGroup(sgroup)) {
+      if (functionalGroupsProvider?.isFunctionalGroup(sgroup)) {
         this.functionalGroups.add(new FunctionalGroup(sgroup))
       }
     })

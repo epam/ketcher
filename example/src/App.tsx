@@ -1,10 +1,7 @@
 import 'ketcher-react/dist/index.css'
 
 import { ButtonsConfig, Editor } from 'ketcher-react'
-import {
-    Ketcher,
-    RemoteStructServiceProvider
-} from 'ketcher-core'
+import { Ketcher, RemoteStructServiceProvider } from 'ketcher-core'
 import { Editor as PolymerEditor } from 'ketcher-polymer-editor-react'
 
 import { ErrorModal } from './ErrorModal'

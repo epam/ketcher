@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { SGroup, Struct } from '../../entities'
+import { SGroup } from '../../entities'
 import { SdfSerializer } from 'domain/serializers/sdf'
 import { FunctionalGroupType, FunctionalGroupsProvider } from 'domain/helpers'
 
-export function prefetchStatic(url) {
-  return fetch(url, { credentials: 'same-origin' }).then((resp) => {
+export function prefetch(url) {
+  return fetch(url).then((resp) => {
     if (resp.ok) return resp.text()
     throw Error('Could not fetch ' + url)
   })
@@ -27,37 +27,20 @@ export function prefetchStatic(url) {
 export class HttpFunctionalGroupsProvider implements FunctionalGroupsProvider {
   #url: string
   #sdfSerializer: SdfSerializer
-  #templates: Array<FunctionalGroupType> | undefined
-  #functionalGroupsList: Array<Struct> | undefined
+  #functionalGroupsList: Array<FunctionalGroupType> | undefined
 
   constructor(url) {
     this.#url = url
     this.#sdfSerializer = new SdfSerializer()
-    this.#templates = undefined
     this.#functionalGroupsList = undefined
   }
 
-  public async getFunctionalGroupsTemplates(): Promise<
-    Array<FunctionalGroupType>
-  > {
-    if (!this.#templates) {
-      const text = await prefetchStatic(this.#url)
-      this.#templates = this.#sdfSerializer.deserialize(
+  public async getFunctionalGroups(): Promise<Array<FunctionalGroupType>> {
+    if (!this.#functionalGroupsList) {
+      const text = await prefetch(this.#url)
+      this.#functionalGroupsList = this.#sdfSerializer.deserialize(
         text
       ) as Array<FunctionalGroupType>
-    }
-
-    return this.#templates
-  }
-
-  public async getFunctionalGroupsList(): Promise<Array<Struct>> {
-    if (!this.#functionalGroupsList) {
-      const templates = await this.getFunctionalGroupsTemplates()
-
-      this.#functionalGroupsList = templates.reduce(
-        (acc: Struct[], { struct }) => [...acc, struct],
-        []
-      )
     }
 
     return this.#functionalGroupsList
@@ -67,7 +50,7 @@ export class HttpFunctionalGroupsProvider implements FunctionalGroupsProvider {
     if (this.#functionalGroupsList) {
       return (
         this.#functionalGroupsList.some(
-          (type) => type.name === sgroup.data.name
+          (type) => type.struct.name === sgroup.data.name
         ) && sgroup.type === 'SUP'
       )
     }

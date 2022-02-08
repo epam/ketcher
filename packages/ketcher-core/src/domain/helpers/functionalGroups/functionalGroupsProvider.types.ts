@@ -25,7 +25,6 @@ export type FunctionalGroupType = {
 }
 
 export interface FunctionalGroupsProvider {
-  getFunctionalGroupsList: () => Promise<Array<Struct>>
+  getFunctionalGroups: () => Promise<Array<FunctionalGroupType>>
   isFunctionalGroup: (sgroup: SGroup) => boolean // TODO change to Promise
-  getFunctionalGroupsTemplates: () => Promise<Array<FunctionalGroupType>> // TODO maybe remove this
 }

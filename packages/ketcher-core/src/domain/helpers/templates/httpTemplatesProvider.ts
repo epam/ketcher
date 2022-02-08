@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { prefetchStatic, Template, TemplatesProvider } from 'domain/helpers'
+import { prefetch, Template, TemplatesProvider } from 'domain/helpers'
 import { SdfSerializer } from 'domain/serializers'
 
 export const prefetchSplit = (tmpl): { file: string; id: string } => {
@@ -42,7 +42,7 @@ export class HttpTemplatesProvider implements TemplatesProvider {
 
   public async getTemplatesList(): Promise<Array<Template>> {
     if (!this.#templates) {
-      const text = await prefetchStatic(this.#url)
+      const text = await prefetch(this.#url)
       this.#templates = this.#sdfSerializer.deserialize(text) as Array<Template>
     }
 
@@ -60,9 +60,7 @@ export class HttpTemplatesProvider implements TemplatesProvider {
       }, [] as Array<string>)
 
       return Promise.all(
-        svgsFiles.map((fn) =>
-          prefetchStatic(this.#baseUrl + fn).catch(() => null)
-        )
+        svgsFiles.map((fn) => prefetch(this.#baseUrl + fn).catch(() => null))
       )
     }
 

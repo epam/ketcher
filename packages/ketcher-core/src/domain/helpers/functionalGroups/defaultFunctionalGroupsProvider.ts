@@ -19,25 +19,19 @@ import {
   FunctionalGroupsProvider,
   HttpFunctionalGroupsProvider
 } from 'domain/helpers'
-import { SGroup, Struct } from 'domain/entities'
+import { SGroup } from 'domain/entities'
 
 export class DefaultFunctionalGroupsProvider {
   #provider: FunctionalGroupsProvider
-  #functionalGroupsList: Array<Struct>
-  #templates: Array<FunctionalGroupType>
+  #functionalGroupsList: Array<FunctionalGroupType>
 
   constructor(provider) {
     this.#provider = provider
     this.#functionalGroupsList = []
-    this.#templates = []
   }
 
-  public get functionalGroupsList() {
+  public get functionalGroups() {
     return this.#functionalGroupsList
-  }
-
-  public get functionalGroupsTemplates() {
-    return this.#templates
   }
 
   public isFunctionalGroup(sgroup: SGroup): boolean {
@@ -45,8 +39,7 @@ export class DefaultFunctionalGroupsProvider {
   }
 
   public async initFunctionalGroups(): Promise<void> {
-    this.#templates = await this.#provider.getFunctionalGroupsTemplates()
-    this.#functionalGroupsList = await this.#provider.getFunctionalGroupsList()
+    this.#functionalGroupsList = await this.#provider.getFunctionalGroups()
   }
 }
 

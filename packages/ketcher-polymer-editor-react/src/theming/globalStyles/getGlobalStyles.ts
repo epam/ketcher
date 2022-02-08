@@ -16,17 +16,16 @@
 
 import { css } from '@emotion/react'
 
-export default (theme) =>
+import { ThemeType } from '../defaultTheme'
+
+export const getGlobalStyles = (theme: ThemeType) =>
   css({
     body: {
-      fontSize: theme.font.size.medium,
-      fontFamily: theme.font.family.inter,
-      fontWeight: theme.font.weight.regular,
-      backgroundColor: theme.color.background.primary,
-      color: theme.color.text.primary,
-      boxSizing: 'border-box'
-    },
-    div: {
+      fontSize: theme.ketcher.font.size.medium,
+      fontFamily: theme.ketcher.font.family.inter,
+      fontWeight: theme.ketcher.font.weight.regular,
+      backgroundColor: theme.ketcher.color.background.primary,
+      color: theme.ketcher.color.text.primary,
       boxSizing: 'border-box'
     },
     h1: {
@@ -46,13 +45,13 @@ export default (theme) =>
     },
     h6: {
       fontSize: 20,
-      fontWeight: theme.font.weight.bold
+      fontWeight: theme.ketcher.font.weight.bold
     },
     p: {
-      fontSize: theme.font.size.regular
+      fontSize: theme.ketcher.font.size.regular
     },
     button: {
       textTransform: 'uppercase',
-      fontWeight: theme.font.weight.bold
+      fontWeight: theme.ketcher.font.weight.bold
     }
   })

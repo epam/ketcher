@@ -17,7 +17,7 @@ import React, { useState } from 'react'
 import { ClickAwayListener } from '@mui/material'
 import styled from '@emotion/styled'
 import Collapse from '@mui/material/Collapse'
-import { Icon } from 'components/shared/ui/icon'
+import { Icon } from 'components/shared/icon'
 import { MenuItem } from '../menuItem'
 import { useMenuContext } from '../../../hooks/useMenuContext'
 
@@ -52,7 +52,9 @@ const DropDown = styled.div<DropDownProps>`
 
   > svg path {
     fill: ${({ isActive, theme }) =>
-      isActive ? theme.color.icon.clicked : theme.color.icon.activeMenu};
+      isActive
+        ? theme.ketcher.color.icon.clicked
+        : theme.ketcher.color.icon.activeMenu};
   }
 `
 

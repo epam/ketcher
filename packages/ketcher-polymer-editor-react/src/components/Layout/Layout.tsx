@@ -35,7 +35,7 @@ const RowMain = styled.div(({ theme }) => ({
   position: 'relative',
   padding: '16px',
   paddingBottom: 0,
-  backgroundColor: theme.color.background.canvas,
+  backgroundColor: theme.ketcher.color.background.canvas,
   display: 'flex',
   justifyContent: 'space-between',
   columnGap: '6px'

@@ -17,7 +17,7 @@
 import { IconButton } from '@mui/material'
 import styled from '@emotion/styled'
 
-import { Icon } from 'components/shared/ui/icon'
+import { Icon } from 'components/shared/icon'
 
 type ExpandButtonProps = {
   expandHandler: () => void
@@ -25,7 +25,7 @@ type ExpandButtonProps = {
 }
 
 const ArrowIcon = styled(Icon)<{ isFlipped: boolean }>`
-  fill: ${({ theme }) => theme.color.icon.active};
+  fill: ${({ theme }) => theme.ketcher.color.icon.active};
   ${({ isFlipped }) => isFlipped && 'transform: rotate(0.5turn);'}
 `
 export const ExpandButton = ({

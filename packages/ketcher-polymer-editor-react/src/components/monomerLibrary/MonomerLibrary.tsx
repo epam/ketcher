@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { MonomerItem } from './monomerLibraryItem/MonomerItem'
-import { Tabs } from 'components/shared/ui/Tabs'
+import { Tabs } from 'components/shared/Tabs'
 import { Switcher } from 'components/rna/Switcher'
 import styled from '@emotion/styled'
 
@@ -80,7 +80,7 @@ const MonomerLibrary = () => {
   const MonomerLibraryContainer = styled.div(({ theme }) => ({
     width: '253px',
     height: '100%',
-    backgroundColor: theme.color.background.primary
+    backgroundColor: theme.ketcher.color.background.primary
   }))
 
   return (

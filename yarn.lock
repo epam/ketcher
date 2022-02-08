@@ -12368,6 +12368,7 @@ __metadata:
     miew-react: ^1.0.0
     normalize.css: ^8.0.1
     npm-run-all: ^4.1.5
+    overlayscrollbars-react: ^0.2.3
     postcss: ^8.2.10
     prettier: ^2.5.1
     react-colorful: ^5.4.0
@@ -14338,6 +14339,16 @@ __metadata:
   version: 0.3.0
   resolution: "os-browserify@npm:0.3.0"
   checksum: 16e37ba3c0e6a4c63443c7b55799ce4066d59104143cb637ecb9fce586d5da319cdca786ba1c867abbe3890d2cbf37953f2d51eea85e20dd6c4570d6c54bfebf
+  languageName: node
+  linkType: hard
+
+"overlayscrollbars-react@npm:^0.2.3":
+  version: 0.2.3
+  resolution: "overlayscrollbars-react@npm:0.2.3"
+  peerDependencies:
+    overlayscrollbars: ^1.10.0
+    react: ^16.4.0 || ^17.0.0
+  checksum: 9da38d94f26ae196d454975e4a921ab0cce971f5cc3561ce077b541cd3ecac21c1ca9d0c0fe0d5a9f9a4790445d0265b95338af80849adffd234dc0ecd2b94a8
   languageName: node
   linkType: hard
 

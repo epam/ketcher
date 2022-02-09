@@ -124,11 +124,14 @@ function CustomTabs(props): ReactElement {
           <OverlayScrollbarsComponent
             style={{ height: '100%' }}
             ref={ref}
-            options={{
-              scrollbars: {
-                autoHide: 'never'
+            options={
+              {
+                // className: 'os-theme-none'
+                // scrollbars: {
+                //   autoHide: 'never'
+                // }
               }
-            }}
+            }
           >
             <TabPanelContent>
               <Component {...componentProps} />

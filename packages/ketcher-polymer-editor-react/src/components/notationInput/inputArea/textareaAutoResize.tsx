@@ -146,7 +146,16 @@ export const TextareaAutoResize = ({
   }
   return (
     <>
-      <OverlayScrollbarsComponent>
+      <OverlayScrollbarsComponent
+        options={
+          {
+            // className: 'os-theme-none'
+            // scrollbars: {
+            //   autoHide: 'never'
+            // }
+          }
+        }
+      >
         <div
           style={{
             height: `${newHeight}px`,

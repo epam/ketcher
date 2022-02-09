@@ -71,7 +71,6 @@ function Editor({ onInit, theme }: EditorProps) {
         <Global styles={getGlobalStyles} />
 
         <div ref={rootElRef} className="Ketcher-polymer-editor-root">
-
           <Layout>
             <Layout.Left>
               <MenuComponent />

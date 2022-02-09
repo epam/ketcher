@@ -43,7 +43,9 @@ export const modalSlice: any = createSlice({
 
 export const { openModal, closeModal } = modalSlice.actions
 
-export const selectModalName = (state: RootState): string | null => state.modal.name
-export const selectModalIsOpen = (state: RootState): boolean => state.modal.isOpen
+export const selectModalName = (state: RootState): string | null =>
+  state.modal.name
+export const selectModalIsOpen = (state: RootState): boolean =>
+  state.modal.isOpen
 
 export const modalReducer = modalSlice.reducer

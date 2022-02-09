@@ -17,9 +17,9 @@
 import styled from '@emotion/styled'
 
 export type TextEditorProps = {
-    structStr: string
-    inputHandler?: (str: string) => void
-    readonly?: boolean
+  structStr: string
+  inputHandler?: (str: string) => void
+  readonly?: boolean
 }
 
 const StyledTextarea = styled.textarea`
@@ -33,10 +33,10 @@ const StyledTextarea = styled.textarea`
 `
 
 export const TextField = ({ structStr, inputHandler }: TextEditorProps) => {
-    return (
-        <StyledTextarea
-            value={structStr}
-            onChange={inputHandler && ((event) => inputHandler(event.target.value))}
-        />
-    )
+  return (
+    <StyledTextarea
+      value={structStr}
+      onChange={inputHandler && ((event) => inputHandler(event.target.value))}
+    />
+  )
 }

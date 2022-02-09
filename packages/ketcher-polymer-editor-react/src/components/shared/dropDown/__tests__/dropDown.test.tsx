@@ -21,9 +21,9 @@ import { DropDown, DropDownProps } from '../dropDown'
 
 const mockSelectionHandler = jest.fn()
 const MOCK_OPTIONS = [
-  { id: 1, label: 'Cat' },
-  { id: 2, label: 'Dog' },
-  { id: 3, label: 'Mantis' }
+  { id: '1', label: 'Cat' },
+  { id: '2', label: 'Dog' },
+  { id: '3', label: 'Mantis' }
 ]
 const INITIAL_SELECTION = MOCK_OPTIONS[0]
 

@@ -77,12 +77,16 @@ export type DropDownProps = {
   options: Array<Option>
   currentSelection: Option['id']
   selectionHandler: (value: Option['id']) => void
+  className?: string
+  customStylesForExpanded?: CSSProperties
 }
 
 export const DropDown = ({
   options,
   currentSelection,
-  selectionHandler
+  selectionHandler,
+  className,
+  customStylesForExpanded = {}
 }: DropDownProps) => {
   const [expanded, setExpanded] = useState(false)
 
@@ -107,7 +111,7 @@ export const DropDown = ({
   }
 
   return (
-    <FormControl>
+    <FormControl className={className}>
       <DropDownSelect
         value={currentSelection}
         onChange={handleSelection}
@@ -119,7 +123,10 @@ export const DropDown = ({
         fullWidth
         MenuProps={{
           PaperProps: {
-            style: stylesForExpanded
+            style: { ...stylesForExpanded, ...customStylesForExpanded }
+          },
+          MenuListProps: {
+            style: { padding: '0' }
           }
         }}
       >

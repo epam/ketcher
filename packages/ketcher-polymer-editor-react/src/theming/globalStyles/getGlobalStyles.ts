@@ -29,7 +29,7 @@ export const getGlobalStyles = (theme: ThemeType) =>
       boxSizing: 'border-box'
     },
     div: {
-        boxSizing: 'border-box'
+      boxSizing: 'border-box'
     },
     h1: {
       fontSize: 96

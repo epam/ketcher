@@ -68,8 +68,8 @@ const DropDownItem = styled(MenuItem)`
   }
 `
 
-type Option = {
-  id: number
+export type Option = {
+  id: string
   label: string
 }
 

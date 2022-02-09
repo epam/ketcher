@@ -14,8 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {Save} from "components/modal/save";
+import styled from '@emotion/styled'
 
-export const modalComponentList = {
-  save: Save
+export type TextEditorProps = {
+    structStr: string
+    inputHandler?: (str: string) => void
+    readonly?: boolean
+}
+
+const StyledTextarea = styled.textarea`
+  width: 100%;
+  min-width: 32em;
+  min-height: 23em;
+  overflow: auto;
+  white-space: pre;
+  resize: none;
+  box-sizing: border-box;
+`
+
+export const TextField = ({ structStr, inputHandler }: TextEditorProps) => {
+    return (
+        <StyledTextarea
+            value={structStr}
+            onChange={inputHandler && ((event) => inputHandler(event.target.value))}
+        />
+    )
 }

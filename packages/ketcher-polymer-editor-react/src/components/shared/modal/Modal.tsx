@@ -16,7 +16,7 @@ interface ModalProps {
   title: string
   isOpen: boolean
   showCloseButton?: boolean
-  onClose?: () => void
+  onClose: () => void
 }
 
 const Header = styled(DialogTitle)(({ theme }) => ({

@@ -14,8 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {Save} from "components/modal/save";
-
-export const modalComponentList = {
-  save: Save
-}
+export * from './Save'

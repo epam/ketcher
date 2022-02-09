@@ -68,8 +68,9 @@ function Editor({ onInit, theme }: EditorProps) {
   return (
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
+        <Global styles={getGlobalStyles} />
+
         <div ref={rootElRef} className="Ketcher-polymer-editor-root">
-          <Global styles={getGlobalStyles} />
 
           <Layout>
             <Layout.Left>
@@ -109,7 +110,10 @@ function MenuComponent() {
   return (
     <Menu onItemClick={menuItemChanged}>
       <Menu.Group>
-        <Menu.Item itemId="open" />
+        <Menu.Submenu>
+          <Menu.Item itemId="open" />
+          <Menu.Item itemId="save" />
+        </Menu.Submenu>
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="undo" />

@@ -14,32 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import GenGroup from './components'
 import { Generics } from 'ketcher-core'
+
+import { GenGroup } from './GenGroup'
 import classes from './GenericGroups.module.less'
 
-function GenericGroups({ selected, onSelect, className, ...props }) {
-  return (
-    <div summary="Generic Groups" className={classes[className]} {...props}>
-      <GenGroup
-        gen={Generics}
-        name="atom"
-        selected={selected}
-        onSelect={onSelect}
-      />
-      <GenGroup
-        gen={Generics}
-        name="special"
-        selected={selected}
-        onSelect={onSelect}
-      />
+type GenericGroupsProps = {
+  selected: (label: string) => boolean
+  onSelect: (label: string) => void
+}
 
-      <GenGroup
-        gen={Generics}
-        name="group"
-        selected={selected}
-        onSelect={onSelect}
-      />
+function GenericGroups({ selected, onSelect }: GenericGroupsProps) {
+  return (
+    <div className={classes.genericGroups}>
+      <GenGroup groups={Generics} selected={selected} onSelect={onSelect} />
     </div>
   )
 }

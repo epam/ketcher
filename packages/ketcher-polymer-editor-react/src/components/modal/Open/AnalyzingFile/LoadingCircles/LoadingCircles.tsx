@@ -28,7 +28,7 @@ const LoadContainer = styled.div`
     display: inline-block;
     width: 8px;
     height: 8px;
-    border: 2px solid ${({ theme }) => theme.color.spinner};
+    border: 2px solid ${({ theme }) => theme.ketcher.color.spinner};
     border-radius: 100%;
     box-sizing: border-box;
 

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
 import { Icon } from 'components/shared/icon'
 import { LoadingCircles } from './LoadingCircles'
 import styled from '@emotion/styled'

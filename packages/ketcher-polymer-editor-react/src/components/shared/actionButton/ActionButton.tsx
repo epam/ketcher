@@ -18,8 +18,8 @@ import MuiButton, { ButtonBaseProps } from '@mui/material/ButtonBase'
 import styled from '@emotion/styled'
 
 const PrimaryButton = styled(MuiButton)(({ theme }) => ({
-  backgroundColor: theme.color.button.primary.active,
-  color: theme.color.text.light,
+  backgroundColor: theme.ketcher.color.button.primary.active,
+  color: theme.ketcher.color.text.light,
   padding: '5px 8px',
   border: 'none',
   borderRadius: '2px',
@@ -27,7 +27,7 @@ const PrimaryButton = styled(MuiButton)(({ theme }) => ({
   lineHeight: '14px',
   fontSize: '12px',
   textAlign: 'center',
-  fontWeight: theme.font.weight.regular,
+  fontWeight: theme.ketcher.font.weight.regular,
 
   '&:hover': {
     backgroundColor: theme.ketcher.color.button.primary.hover
@@ -42,28 +42,28 @@ const PrimaryButton = styled(MuiButton)(({ theme }) => ({
 const SecondaryButton = styled(MuiButton)(({ theme }) => ({
   backgroundColor: 'transparent',
   padding: '5px 8px',
-  border: `1px solid ${theme.color.button.secondary.active}`,
-  color: theme.color.button.secondary.active,
+  border: `1px solid ${theme.ketcher.color.button.secondary.active}`,
+  color: theme.ketcher.color.button.secondary.active,
   borderRadius: '2px',
   textTransform: 'none',
   lineHeight: '14px',
   fontSize: '12px',
   textAlign: 'center',
-  fontWeight: theme.font.weight.regular,
+  fontWeight: theme.ketcher.font.weight.regular,
 
   '&:hover': {
-    border: `1px solid ${theme.color.button.secondary.hover}`,
-    color: theme.color.button.secondary.hover
+    border: `1px solid ${theme.ketcher.color.button.secondary.hover}`,
+    color: theme.ketcher.color.button.secondary.hover
   },
 
   '&:disabled': {
-    border: `1px solid ${theme.color.button.secondary.disabled}`,
-    color: theme.color.button.secondary.disabled
+    border: `1px solid ${theme.ketcher.color.button.secondary.disabled}`,
+    color: theme.ketcher.color.button.secondary.disabled
   },
 
   '&:clicked': {
-    border: `1px solid ${theme.color.button.secondary.clicked}`,
-    color: theme.color.button.secondary.clicked
+    border: `1px solid ${theme.ketcher.color.button.secondary.clicked}`,
+    color: theme.ketcher.color.button.secondary.clicked
   }
 }))
 

@@ -308,7 +308,7 @@ Object {
                     </div>
                   </div>
                   <button
-                    class="MuiButtonBase-root Mui-disabled css-pck0ik-MuiButtonBase-root"
+                    class="MuiButtonBase-root Mui-disabled css-mjez8w-MuiButtonBase-root"
                     disabled=""
                     role="button"
                     tabindex="-1"
@@ -444,22 +444,6 @@ Object {
           <span>
             EPAM
           </span>
-        </div>
-        <div
-          style="position: absolute; bottom: 5px; right: 0px;"
-        >
-          <button
-            class="MuiButtonBase-root css-pck0ik-MuiButtonBase-root"
-            role="button"
-            tabindex="0"
-            title="Show dummy modal dialog"
-            type="button"
-          >
-            Show dummy modal dialog
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
-          </button>
         </div>
       </div>
     </div>
@@ -768,7 +752,7 @@ Object {
                   </div>
                 </div>
                 <button
-                  class="MuiButtonBase-root Mui-disabled css-pck0ik-MuiButtonBase-root"
+                  class="MuiButtonBase-root Mui-disabled css-mjez8w-MuiButtonBase-root"
                   disabled=""
                   role="button"
                   tabindex="-1"
@@ -904,22 +888,6 @@ Object {
         <span>
           EPAM
         </span>
-      </div>
-      <div
-        style="position: absolute; bottom: 5px; right: 0px;"
-      >
-        <button
-          class="MuiButtonBase-root css-pck0ik-MuiButtonBase-root"
-          role="button"
-          tabindex="0"
-          title="Show dummy modal dialog"
-          type="button"
-        >
-          Show dummy modal dialog
-          <span
-            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-          />
-        </button>
       </div>
     </div>
   </div>,

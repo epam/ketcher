@@ -13,30 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { AnalyzingFile } from './AnalyzingFile'
+import { AnalyzingFile, AnalyzingFileProps } from '../AnalyzingFile'
+import { OpenOptions, OpenOptionsProps } from '../OpenOptions'
+import { TextEditor, TextEditorProps } from '../TextEditor'
 
-import { OpenOptions } from './OpenOptions'
-import { TextEditor } from './TextEditor'
+type ViewStates = {
+  openOptions: string
+  textEditor: string
+}
 
-// type ViewStates = {
-//   idle: string
-//   textEditor: string
-// }
+type SwitchProps = {
+  currentState: string
+  states: ViewStates
+  isAnalyzingFile: boolean
+} & OpenOptionsProps &
+  TextEditorProps &
+  AnalyzingFileProps
 
-// type SwitchProps = {
-//   currentState: string
-//   states: ViewStates
-//   isAnalyzingFile: boolean
-// } & OpenOptionsProps &
-//   TextEditorProps &
-//   AnalyzingFileProps
-
-export const ViewSwitcher = (props) => {
+export const ViewSwitcher = (props: SwitchProps) => {
   if (props.isAnalyzingFile) {
     return <AnalyzingFile fileName={props.fileName} />
   } else {
     switch (props.currentState) {
-      case props.states.idle:
+      case props.states.openOptions:
         return <OpenOptions {...props} />
       case props.states.textEditor:
         return <TextEditor {...props} />

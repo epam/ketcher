@@ -17,21 +17,22 @@ import { Modal } from 'components/shared/modal'
 import { useCallback, useEffect, useState } from 'react'
 import { ViewSwitcher } from './ViewSwitcher'
 import { ActionButton } from 'components/shared/actionButton'
-import * as console from 'console'
-import { fileOpener } from 'components/modal/Open/fileOpener'
+import { fileOpener } from './fileOpener'
 
 const MODAL_STATES = {
-  idle: 'idle',
+  openOptions: 'openOptions',
   textEditor: 'textEditor'
 }
 
-const errorHandler = (error) => {
-  console.log(error)
-}
-
-const Open = ({ isModalOpen, onClose, isAnalyzingFile, onOk }) => {
+const Open = ({
+  isModalOpen,
+  onClose,
+  isAnalyzingFile,
+  onOk,
+  errorHandler
+}) => {
   const onCloseCallback = useCallback(() => {
-    setCurrentState(MODAL_STATES.idle)
+    setCurrentState(MODAL_STATES.openOptions)
     setStructStr('')
     onClose()
   }, [onClose])
@@ -39,7 +40,7 @@ const Open = ({ isModalOpen, onClose, isAnalyzingFile, onOk }) => {
   const [structStr, setStructStr] = useState<string>('')
   const [fileName, setFileName] = useState<string>('')
   const [opener, setOpener] = useState<any>()
-  const [currentState, setCurrentState] = useState(MODAL_STATES.idle)
+  const [currentState, setCurrentState] = useState(MODAL_STATES.openOptions)
 
   useEffect(() => {
     fileOpener().then((chosenOpener) => {

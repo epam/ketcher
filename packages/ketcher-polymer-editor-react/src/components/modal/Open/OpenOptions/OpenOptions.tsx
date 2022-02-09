@@ -16,8 +16,8 @@
 import { FC } from 'react'
 import { Icon } from 'components/shared/icon'
 import styled from '@emotion/styled'
-import { FileDrop } from 'components/modal/Open/FileDrop'
-import { DropButton } from 'components/modal/Open/DropButton'
+import { FileDrop } from './FileDrop'
+import { ActionButton } from 'components/shared/actionButton'
 
 const ICON_NAMES = {
   PASTE: 'capital-t',
@@ -28,7 +28,6 @@ export type OpenOptionsProps = {
   selectClipboard: () => void
   errorHandler: (err: string) => void
   fileLoadHandler: (files: File[]) => void
-  isRecognizeDisabled: boolean
 }
 
 const RootContainer = styled.div`
@@ -54,11 +53,10 @@ const DropContainer = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   box-sizing: border-box;
   position: relative;
-  padding: 15px 6px;
 
   & > p {
     margin-top: 6px;
@@ -66,7 +64,7 @@ const DropContainer = styled.div`
   }
 
   svg {
-    fill: ${({ theme }) => theme.color.button.primary.active};
+    fill: ${({ theme }) => theme.ketcher.color.button.primary.active};
   }
 `
 
@@ -78,7 +76,7 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
   return (
     <RootContainer>
       <DropContainer>
-        <DropButton
+        <ActionButton
           clickHandler={selectClipboard}
           label="Paste from Clipboard"
         />

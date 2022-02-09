@@ -15,8 +15,9 @@
  ***************************************************************************/
 import { useDropzone, DropzoneOptions } from 'react-dropzone'
 import { Icon } from 'components/shared/icon'
-import { DropButton } from 'components/modal/Open/DropButton'
 import React, { useMemo } from 'react'
+import { ActionButton } from 'components/shared/actionButton'
+import styled from '@emotion/styled'
 
 type FileDropProps = {
   buttonLabel: string
@@ -32,12 +33,27 @@ const baseStyle = {
   display: 'flex',
   alignItems: 'center',
   flexDirection: 'column',
-  justifyContent: 'space-between'
+  justifyContent: 'space-around'
 }
 
 const activeStyle = {
   backgroundColor: '#F8FEFFFF'
 }
+
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+
+  & > span {
+    padding-top: 5px;
+    font-size: ${({ theme }) => theme.ketcher.font.size.small};
+  }
+  & > svg {
+    margin-bottom: 8px;
+  }
+`
 
 const FileDrop = ({
   buttonLabel,
@@ -65,12 +81,14 @@ const FileDrop = ({
   return (
     <div {...getRootProps({ style })}>
       <input {...getInputProps()} />
-      <DropButton
-        label={buttonLabel}
-        clickHandler={open}
-        disabled={disabled}
-        caption={textLabel}
-      />
+      <ButtonContainer>
+        <ActionButton
+          label={buttonLabel}
+          clickHandler={open}
+          disabled={disabled}
+        />
+        {textLabel && <span>{textLabel}</span>}
+      </ButtonContainer>
       {disabled ? <p>{disabledText}</p> : <Icon name={iconName} />}
     </div>
   )

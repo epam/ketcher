@@ -13,4 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-export * from './OpenContainer'
+import { Open } from './Open'
+
+const OpenContainer = ({ isModalOpen, onClose }) => {
+  const onOk = ({ struct, fragment }) => {
+    if (fragment) {
+      console.log('add fragment')
+    }
+    console.log(struct)
+  }
+
+  return (
+    <Open
+      isModalOpen={isModalOpen}
+      onClose={onClose}
+      isAnalyzingFile={false}
+      errorHandler={(error) => console.log(error)}
+      onOk={onOk}
+    />
+  )
+}
+
+export { OpenContainer }

@@ -13,40 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ActionButton } from 'components/shared/actionButton'
 import styled from '@emotion/styled'
 
-type Props = {
-  label: string
-  clickHandler: () => void
-  disabled?: boolean
-  caption?: string
+export type TextEditorProps = {
+  structStr: string
+  inputHandler: (str: string) => void
 }
 
-const StyledActionButton = styled(ActionButton)`
-  border-radius: 2px;
-  text-align: center;
-  width: 100%;
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  padding: 5px 8px;
+const StyledTextarea = styled.textarea`
+  width: 405px;
+  min-width: 32em;
+  min-height: 23em;
+  overflow: auto;
+  white-space: pre;
+  resize: both;
 `
 
-const ButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  & > span {
-    padding-top: 5px;
-    font-size: ${({ theme }) => theme.font.size.small};
-  }
-`
-
-export const DropButton = ({ label, clickHandler, caption }: Props) => {
+export const TextEditor = ({ structStr, inputHandler }: TextEditorProps) => {
   return (
-    <ButtonContainer>
-      <StyledActionButton label={label} clickHandler={clickHandler} />
-      {caption && <span>{caption}</span>}
-    </ButtonContainer>
+    <StyledTextarea
+      value={structStr}
+      onChange={(event) => inputHandler(event.target.value)}
+    />
   )
 }

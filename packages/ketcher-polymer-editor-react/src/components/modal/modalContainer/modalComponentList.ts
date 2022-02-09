@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Open } from 'components/modal/Open'
+import { OpenContainer as Open } from 'components/modal/Open'
 
 export const modalComponentList = {
   open: Open

@@ -23,20 +23,21 @@ interface Props {
   label?: string
 }
 
-const Label = styled.label({
-  marginRight: '8px'
-})
+const Label = styled.label(({ theme }) => ({
+  marginRight: '8px',
+  color: theme.ketcher.color.text.secondary
+}))
 
 const Input = styled.input(({ theme }) => ({
   height: '24px',
   padding: '4px 8px',
-  boxSizing: 'border-box',
   border: 'none',
   borderRadius: '2px',
   backgroundColor: theme.ketcher.color.input.background.rested,
-  color: theme.ketcher.color.input.text.rested,
+  color: theme.ketcher.color.text.primary,
   outline: 'transparent',
   width: '164px',
+  letterSpacing: 'normal',
 
   '&:active, &:focus': {
     color: theme.ketcher.color.input.text.active

@@ -26,8 +26,8 @@ export const defaultTheme: EditorTheme = {
       overlay: '#005662'
     },
     text: {
-      primary: '#121212',
-      secondary: '#BCBCBC',
+      primary: '#333333',
+      secondary: '#585858',
       light: '#FFFFFF',
       dark: '#000000',
       error: '#FF4A4A'

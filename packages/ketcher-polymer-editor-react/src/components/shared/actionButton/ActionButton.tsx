@@ -46,6 +46,7 @@ type ActionButtonProps = {
 export const ActionButton = ({
   label,
   clickHandler,
+  children,
   ...rest
 }: ActionButtonProps) => {
   return (
@@ -55,7 +56,7 @@ export const ActionButton = ({
       role="button"
       {...rest}
     >
-      {label}
+      {children || label}
     </Button>
   )
 }

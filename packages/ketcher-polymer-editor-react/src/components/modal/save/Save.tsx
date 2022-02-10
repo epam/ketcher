@@ -25,6 +25,7 @@ import { InputField } from 'components/shared/inputField'
 import { SaveButton } from 'components/modal/save/saveButton'
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats'
 import { ActionButton } from 'components/shared/actionButton'
+import { Icon } from 'components/shared/icon'
 
 interface Props {
   onClose: () => void
@@ -48,14 +49,17 @@ const Row = styled.div({
   marginBottom: '16px'
 })
 
-const Label = styled.label({
-  marginRight: '8px'
-})
+const Label = styled.label(({ theme }) => ({
+  marginRight: '8px',
+  color: theme.ketcher.color.text.secondary
+}))
 
 const StyledDropdown = styled(DropDown)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
     border: 'none',
-    backgroundColor: theme.ketcher.color.background.primary
+    backgroundColor: theme.ketcher.color.background.primary,
+    color: theme.ketcher.color.text.primary,
+    fontFamily: theme.ketcher.font.family.inter
   }
 }))
 
@@ -147,7 +151,13 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
   useEffect(() => {
     console.log('Getting and setting struct here...') // get / convert struct and errors
     setStruct(structExample[currentFileFormat])
-    setErrors('some error')
+
+    if (currentFileFormat === 'mol') {
+      // just an example
+      setErrors('some error')
+    } else {
+      setErrors('')
+    }
   }, [currentFileFormat])
 
   return (
@@ -179,7 +189,10 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
 
       <Modal.Footer>
         {errors && (
-          <ErrorsButton label="Errors" clickHandler={handleErrorsClick} />
+          <ErrorsButton label="Errors" clickHandler={handleErrorsClick}>
+            <Icon name="error" />
+            Errors
+          </ErrorsButton>
         )}
 
         <SaveButton

@@ -25,6 +25,7 @@ type Props = {
   filename: string
   type: ChemicalMimeType
   onSave: () => void
+  disabled?: boolean
 }
 
 export const SaveButton = ({
@@ -33,7 +34,7 @@ export const SaveButton = ({
   filename,
   type,
   onSave,
-  ...rest
+  disabled = false
 }: Props) => {
   const handleSave = () => {
     const blob = new Blob([data], { type })
@@ -47,7 +48,7 @@ export const SaveButton = ({
       label={label}
       clickHandler={handleSave}
       type="submit"
-      {...rest}
+      disabled={disabled}
     />
   )
 }

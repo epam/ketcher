@@ -29,7 +29,8 @@ export const defaultTheme: EditorTheme = {
       primary: '#121212',
       secondary: '#BCBCBC',
       light: '#FFFFFF',
-      dark: '#000000'
+      dark: '#000000',
+      error: '#FF4A4A'
     },
     tab: {
       regular: '#F3F3F3',

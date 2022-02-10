@@ -31,6 +31,7 @@ export type EditorTheme = {
       secondary: string
       light: string
       dark: string
+      error: string
     }
     tab: {
       regular: string

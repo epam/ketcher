@@ -366,7 +366,7 @@ Object {
                       <button
                         aria-controls="simple-tabpanel-0"
                         aria-selected="true"
-                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-30eg2o-MuiButtonBase-root-MuiTab-root"
                         id="simple-tab-0"
                         role="tab"
                         tabindex="0"
@@ -380,7 +380,7 @@ Object {
                       <button
                         aria-controls="simple-tabpanel-1"
                         aria-selected="false"
-                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-30eg2o-MuiButtonBase-root-MuiTab-root"
                         id="simple-tab-1"
                         role="tab"
                         tabindex="-1"
@@ -394,7 +394,7 @@ Object {
                       <button
                         aria-controls="simple-tabpanel-2"
                         aria-selected="false"
-                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-30eg2o-MuiButtonBase-root-MuiTab-root"
                         id="simple-tab-2"
                         role="tab"
                         tabindex="-1"
@@ -408,7 +408,7 @@ Object {
                       <button
                         aria-controls="simple-tabpanel-3"
                         aria-selected="false"
-                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-30eg2o-MuiButtonBase-root-MuiTab-root"
                         id="simple-tab-3"
                         role="tab"
                         tabindex="-1"
@@ -437,7 +437,7 @@ Object {
                       class="css-1vxs7bq"
                     >
                       <div
-                        class="css-1rtem4s"
+                        class="css-f1kmmx"
                       >
                         S
                       </div>
@@ -449,7 +449,7 @@ Object {
           </div>
         </div>
         <div
-          class="css-1nqpwei"
+          class="css-1040i3o"
         >
           <span>
             Polymer Editor
@@ -826,7 +826,7 @@ Object {
                     <button
                       aria-controls="simple-tabpanel-0"
                       aria-selected="true"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-30eg2o-MuiButtonBase-root-MuiTab-root"
                       id="simple-tab-0"
                       role="tab"
                       tabindex="0"
@@ -840,7 +840,7 @@ Object {
                     <button
                       aria-controls="simple-tabpanel-1"
                       aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-30eg2o-MuiButtonBase-root-MuiTab-root"
                       id="simple-tab-1"
                       role="tab"
                       tabindex="-1"
@@ -854,7 +854,7 @@ Object {
                     <button
                       aria-controls="simple-tabpanel-2"
                       aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-30eg2o-MuiButtonBase-root-MuiTab-root"
                       id="simple-tab-2"
                       role="tab"
                       tabindex="-1"
@@ -868,7 +868,7 @@ Object {
                     <button
                       aria-controls="simple-tabpanel-3"
                       aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-fnre8f-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-30eg2o-MuiButtonBase-root-MuiTab-root"
                       id="simple-tab-3"
                       role="tab"
                       tabindex="-1"
@@ -897,7 +897,7 @@ Object {
                     class="css-1vxs7bq"
                   >
                     <div
-                      class="css-1rtem4s"
+                      class="css-f1kmmx"
                     >
                       S
                     </div>
@@ -909,7 +909,7 @@ Object {
         </div>
       </div>
       <div
-        class="css-1nqpwei"
+        class="css-1040i3o"
       >
         <span>
           Polymer Editor

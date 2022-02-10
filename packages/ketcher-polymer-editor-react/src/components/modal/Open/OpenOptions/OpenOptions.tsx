@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { FC } from 'react'
 import { Icon } from 'components/shared/icon'
 import styled from '@emotion/styled'
 import { FileDrop } from './FileDrop'
@@ -68,11 +67,11 @@ const DropContainer = styled.div`
   }
 `
 
-export const OpenOptions: FC<OpenOptionsProps> = ({
+const OpenOptions = ({
   selectClipboard,
   fileLoadHandler,
   errorHandler
-}) => {
+}: OpenOptionsProps) => {
   return (
     <RootContainer>
       <DropContainer>
@@ -94,3 +93,5 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
     </RootContainer>
   )
 }
+
+export { OpenOptions }

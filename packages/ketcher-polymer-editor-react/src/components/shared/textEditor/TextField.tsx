@@ -30,12 +30,26 @@ const StyledTextarea = styled.textarea`
   white-space: pre;
   resize: none;
   box-sizing: border-box;
+  outline: transparent;
+  border: none;
+  padding: 8px;
+  color: ${({ theme }) => theme.ketcher.color.input.text.rested};
+  font-size: ${({ theme }) => theme.ketcher.font.size.regular};
+
+  &:hover {
+    cursor: ${(props) => props.readOnly && 'not-allowed'};
+  }
 `
 
-export const TextField = ({ structStr, inputHandler }: TextEditorProps) => {
+export const TextField = ({
+  structStr,
+  inputHandler,
+  readonly = false
+}: TextEditorProps) => {
   return (
     <StyledTextarea
       value={structStr}
+      readOnly={readonly}
       onChange={inputHandler && ((event) => inputHandler(event.target.value))}
     />
   )

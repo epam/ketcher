@@ -20,6 +20,9 @@ import { Option } from 'components/shared/dropDown/dropDown'
 import { useState } from 'react'
 import styled from '@emotion/styled'
 import { TextField } from 'components/shared/textEditor'
+import { InputField } from 'components/shared/inputField'
+import { SaveButton } from 'components/modal/save/saveButton'
+import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats'
 
 interface Props {
   onClose: () => void
@@ -47,13 +50,6 @@ const Label = styled.label({
   marginRight: '8px'
 })
 
-const Input = styled.input({
-  height: '24px',
-  padding: '0',
-  border: 'none',
-  borderRadius: '2px'
-})
-
 const StyledDropdown = styled(DropDown)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
     border: 'none',
@@ -70,7 +66,8 @@ export const Save = ({
   isModalOpen,
   struct = 'kjzhfjkshdfjkahkdf'
 }: Props): JSX.Element => {
-  const [currentFileFormat, setCurrentFileFormat] = useState('mol')
+  const [currentFileFormat, setCurrentFileFormat] =
+    useState<SupportedFormats>('mol')
   const [currentFileName, setCurrentFileName] = useState('ketcher')
 
   const handleSelectChange = (value) => {
@@ -81,22 +78,25 @@ export const Save = ({
     setCurrentFileName(value)
   }
 
+  const handleSave = () => {
+    console.log('Saved', struct)
+  }
+
   return (
     <Modal title="save structure" isOpen={isModalOpen} onClose={onClose}>
       <Modal.Content style={{ width: '494px' }}>
-        <Form>
+        <Form onSubmit={handleSave} id="save">
           <Row>
             <div>
-              <Label htmlFor="filename">File name:</Label>
-              <Input
-                type="text"
-                id="filename"
+              <InputField
                 value={currentFileName}
+                id="filename"
                 onChange={handleInputChange}
+                label="File name:"
               />
             </div>
-            <div>
-              <Label htmlFor="fileformat">File name:</Label>
+            <div style={{ lineHeight: '24px' }}>
+              <Label htmlFor="fileformat">File format:</Label>
               <StyledDropdown
                 options={options}
                 currentSelection={currentFileFormat}
@@ -108,6 +108,18 @@ export const Save = ({
           <TextField structStr={struct} readonly />
         </Form>
       </Modal.Content>
+      <Modal.Footer>
+        <SaveButton
+          label="Save as file"
+          data={struct}
+          type={getPropertiesByFormat(currentFileFormat).mime}
+          onSave={handleSave}
+          filename={
+            currentFileName +
+            getPropertiesByFormat(currentFileFormat).extensions[0]
+          }
+        />
+      </Modal.Footer>
     </Modal>
   )
 }

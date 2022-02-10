@@ -76,10 +76,22 @@ export const defaultTheme: EditorTheme = {
     divider: '#AEAEAE',
     error: '#FF4A4A',
     input: {
+      text: {
+        rested: '#585858',
+        active: '#333333',
+        inactive: '#585858',
+        error: '#FF4A4A'
+      },
+      background: {
+        rested: '#FFFFFF',
+        hover: '#DDDDDD',
+        inactive: '#DDDDDD'
+      },
       border: {
         regular: '#005662',
         active: '#FFFFFF',
-        hover: '#DDDDDD'
+        hover: '#DDDDDD',
+        error: '#FF4A4A'
       }
     },
     icon: {

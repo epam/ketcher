@@ -77,10 +77,22 @@ export type EditorTheme = {
     divider: string
     error: string
     input: {
+      text: {
+        rested: string
+        active: string
+        inactive: string
+        error: string
+      }
+      background: {
+        rested: string
+        hover: string
+        inactive: string
+      }
       border: {
         regular: string
         active: string
         hover: string
+        error: string
       }
     }
     icon: {

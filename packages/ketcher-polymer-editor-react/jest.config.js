@@ -11,7 +11,7 @@ module.exports = {
     '\\.(css|less)$': 'identity-obj-proxy',
     '^components(.*)$': '<rootDir>/src/components/$1',
     '^state(.*)$': '<rootDir>/src/state/$1',
-    '^styles(.*)$': '<rootDir>/src/styles/$1',
+    '^theming(.*)$': '<rootDir>/src/theming/$1',
     '^hooks(.*)$': '<rootDir>/src/hooks/$1',
     '^assets(.*)$': '<rootDir>/src/assets/$1',
     '^test-utils(.*)$': '<rootDir>/src/test-utils/$1'

@@ -143,7 +143,6 @@ class Table extends Component {
         caption: 'Extended',
         component: GenericGroups,
         props: {
-          className: 'generic-groups',
           selected: this.selected,
           onSelect: this.onSelect
         }

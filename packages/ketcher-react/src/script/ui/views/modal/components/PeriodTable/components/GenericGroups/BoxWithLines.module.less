@@ -14,20 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const scrollbarThin = (theme) => ({
-  '&::-webkit-scrollbar': {
-    width: '4px',
-    height: '4px',
-    backgroundColor: theme.color.scroll.inactive,
-    borderRadius: '2px',
-    webkitBorderRadius: '2px'
-  },
-  '&::-webkit-scrollbar-thumb': {
-    backgroundColor: theme.color.scroll.regular,
-    borderRadius: '2px',
-    webkitBorderRadius: '2px'
-  },
-  '&::-webkit-scrollbar-thumb:active': {
-    backgroundColor: theme.color.scroll.regular
+@import 'src/style/variables';
+
+.nodeLines {
+  padding-left: 16.5px;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 20px;
+
+  .upperLines {
+    margin-top: -30px;
+    padding-top: 30px;
+    height: 36px;
+    border-left: 1px solid @color-divider;
+    border-bottom: 1px solid @color-divider;
   }
-})
+
+  .lowerLine {
+    height: calc(100% - 40px);
+    border-left: 1px solid @color-divider;
+    margin-bottom: -10px;
+    padding-bottom: 10px;
+  }
+}

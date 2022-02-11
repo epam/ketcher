@@ -24,7 +24,7 @@ const Divider = styled.span`
   height: 8px;
   width: 32px;
   border-top: 1px solid;
-  border-color: ${({ theme }) => theme.color.divider};
+  border-color: ${({ theme }) => theme.ketcher.color.divider};
 `
 
 const StyledGroup = styled.div`
@@ -32,7 +32,7 @@ const StyledGroup = styled.div`
   flex-direction: column;
   flex-wrap: nowrap;
   align-items: center;
-  background-color: ${({ theme }) => theme.color.background.primary};
+  background-color: ${({ theme }) => theme.ketcher.color.background.primary};
   border-radius: 2px;
   width: 32px;
   margin-bottom: 8px;

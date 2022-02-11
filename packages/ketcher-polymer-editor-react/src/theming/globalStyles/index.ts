@@ -14,26 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../../../../../../../../../../style/mixins.less';
-
-.button {
-  font-size: @font-size-header;
-  line-height: @line-height-header;
-  vertical-align: middle;
-  padding: 3.5px 12px;
-  background: @color-button-atom;
-  border: none;
-  border-radius: 8px;
-  color: @color-text-black;
-  margin-right: 8px;
-
-  &:hover {
-    background-color: @color-button-atom-hover;
-  }
-
-  &:focus,
-  &.selected {
-    background-color: @color-button-atom-clicked;
-    color: @color-text-light;
-  }
-}
+export * from './getGlobalStyles'

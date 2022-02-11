@@ -9,7 +9,7 @@ import React, { useMemo } from 'react'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Icon } from 'components/shared/icon'
-import { scrollbarThin } from 'styles/mixins'
+import { scrollbarThin } from 'theming/mixins'
 
 interface ModalProps {
   children: JSX.Element | Array<JSX.Element>
@@ -25,9 +25,9 @@ const Header = styled(DialogTitle)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  fontFamily: `${theme.font.family.inter}`,
-  fontSize: `${theme.font.size.medium}`,
-  fontWeight: `${theme.font.weight.regular}`,
+  fontFamily: `${theme.ketcher.font.family.inter}`,
+  fontSize: `${theme.ketcher.font.size.medium}`,
+  fontWeight: `${theme.ketcher.font.weight.regular}`,
   textTransform: 'uppercase'
 }))
 
@@ -62,22 +62,22 @@ export const Modal = ({
     () => ({
       style: {
         minWidth: '20vw',
-        background: theme.color.background.canvas,
+        background: theme.ketcher.color.background.canvas,
         borderRadius: '8px',
-        color: theme.color.text.primary
+        color: theme.ketcher.color.text.primary
       }
     }),
-    [theme.color.text.primary, theme.color.background.canvas]
+    [theme.ketcher.color.text.primary, theme.ketcher.color.background.canvas]
   )
 
   const backdropProps = useMemo(
     () => ({
       style: {
-        background: theme.color.background.overlay,
+        background: theme.ketcher.color.background.overlay,
         opacity: 0.4
       }
     }),
-    [theme.color.background.overlay]
+    [theme.ketcher.color.background.overlay]
   )
 
   const subcomponents: Record<ModalSubcomponent, JSX.Element | null> = {

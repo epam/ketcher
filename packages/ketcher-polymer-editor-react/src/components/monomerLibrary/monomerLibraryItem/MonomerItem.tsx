@@ -48,6 +48,19 @@ const Card = styled.div<CardProps>`
 const MonomerItem = (props: MonomerItemProps) => {
   const { item, onClick } = props
 
+  const Card = styled.div(({ theme }) => ({
+    background: theme.ketcher.color.text.light,
+    border: `1px solid ${theme.ketcher.color.text.primary}`,
+    borderRadius: '2px',
+    width: '32px',
+    height: '32px',
+    textAlign: 'center',
+    cursor: 'pointer',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }))
+
   return (
     <Card onClick={onClick} colorScheme={item.colorScheme}>
       {item.label}

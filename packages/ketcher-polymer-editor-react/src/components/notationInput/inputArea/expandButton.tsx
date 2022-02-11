@@ -25,7 +25,7 @@ type ExpandButtonProps = {
 }
 
 const ArrowIcon = styled(Icon)<{ isFlipped: boolean }>`
-  fill: ${({ theme }) => theme.color.icon.active};
+  fill: ${({ theme }) => theme.ketcher.color.icon.active};
   ${({ isFlipped }) => isFlipped && 'transform: rotate(0.5turn);'}
 `
 export const ExpandButton = ({

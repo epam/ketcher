@@ -14,34 +14,31 @@
  * limitations under the License.
  ***************************************************************************/
 
-import GenGroup from './components'
-import { Generics } from 'ketcher-core'
-import classes from './GenericGroups.module.less'
+@import 'src/style/mixins.less';
 
-function GenericGroups({ selected, onSelect, className, ...props }) {
-  return (
-    <div summary="Generic Groups" className={classes[className]} {...props}>
-      <GenGroup
-        gen={Generics}
-        name="atom"
-        selected={selected}
-        onSelect={onSelect}
-      />
-      <GenGroup
-        gen={Generics}
-        name="special"
-        selected={selected}
-        onSelect={onSelect}
-      />
+.button {
+  font-size: @font-size-header;
+  line-height: @line-height-header;
+  vertical-align: middle;
+  padding: 3.5px 12px;
+  background: @color-button-atom;
+  border: none;
+  border-radius: 8px;
+  color: @color-text-black;
+  margin-right: 4px;
+  box-shadow: 0 0 0 4px @color-background-primary; // This is a hack to prevent lines from crossing button
 
-      <GenGroup
-        gen={Generics}
-        name="group"
-        selected={selected}
-        onSelect={onSelect}
-      />
-    </div>
-  )
+  &:hover {
+    background-color: @color-button-atom-hover;
+  }
+
+  &:focus,
+  &.selected {
+    background-color: @color-button-atom-clicked;
+    color: @color-text-light;
+  }
 }
 
-export default GenericGroups
+.legendBox {
+  position: relative;
+}

@@ -14,4 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './GenGroup'
+import { ThemeType } from 'theming/defaultTheme'
+
+export const scrollbarThin = ({ ketcher: theme }: ThemeType) => ({
+  '&::-webkit-scrollbar': {
+    width: '4px',
+    height: '4px',
+    backgroundColor: theme.color.scroll.inactive,
+    borderRadius: '2px',
+    webkitBorderRadius: '2px'
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: theme.color.scroll.regular,
+    borderRadius: '2px',
+    webkitBorderRadius: '2px'
+  },
+  '&::-webkit-scrollbar-thumb:active': {
+    backgroundColor: theme.color.scroll.regular
+  }
+})

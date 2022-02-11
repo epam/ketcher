@@ -14,29 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from './GenSet.module.less'
-import clsx from 'clsx'
+import styles from './BoxWithLines.module.less'
 
-function GenSet({ labels, caption = '', selected, onSelect, ...props }) {
+export const BoxWithLines = ({ isLastSibling }) => {
   return (
-    <fieldset {...props}>
-      {labels.map((label, index) => (
-        <button
-          key={index}
-          onClick={() => onSelect(label)}
-          className={clsx(
-            {
-              [classes.selected]: selected(label)
-            },
-            classes.button
-          )}
-        >
-          {label}
-        </button>
-      ))}
-      {caption ? <legend>{caption}</legend> : null}
-    </fieldset>
+    <div className={styles.nodeLines}>
+      <div className={styles.upperLines} />
+      {!isLastSibling && <div className={styles.lowerLine} />}
+    </div>
   )
 }
-
-export default GenSet

@@ -182,7 +182,7 @@ const MonomerLibrary = () => {
   const MonomerLibraryContainer = styled.div(({ theme }) => ({
     width: '253px',
     height: '100%',
-    backgroundColor: theme.color.background.primary
+    backgroundColor: theme.ketcher.color.background.primary
   }))
 
   return (

@@ -30,7 +30,9 @@ const svgNames: IconNameType[] = [
 ]
 
 const RAPButton = ({ isActive, children, callback }: RAPButtonProps) => {
-  const { color } = useTheme()
+  const {
+    ketcher: { color }
+  } = useTheme()
   const styles = css`
     padding: 3px 12px;
     background-color: ${isActive
@@ -71,7 +73,7 @@ const LinkIcon = styled(Icon)<{ isActive: boolean }>(({ isActive, theme }) => ({
   fill: 'none',
   '& path': {
     strokeDasharray: isActive ? 'none' : '4,4',
-    stroke: isActive ? theme.color.button.primary.active : '#D1D5E3'
+    stroke: isActive ? theme.ketcher.color.button.primary.active : '#D1D5E3'
   }
 }))
 

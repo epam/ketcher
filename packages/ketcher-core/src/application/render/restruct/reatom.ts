@@ -359,6 +359,22 @@ class ReAtom extends ReObject {
       pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y)
       restruct.addReObjectPath(LayerMap.data, this.visel, aamPath, ps, true)
     }
+
+    const highlights = restruct.molecule.highlights
+    highlights.forEach((highlight) => {
+      const isHighlighted = highlight.atoms?.includes(aid)
+
+      if (isHighlighted) {
+        const style = { fill: highlight.color, stroke: 'none' }
+
+        const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
+        const path = render.paper
+          .circle(ps.x, ps.y, options.atomSelectionPlateRadius * 0.8)
+          .attr(style)
+
+        restruct.addReObjectPath(LayerMap.highlighting, this.visel, path)
+      }
+    })
   }
 }
 

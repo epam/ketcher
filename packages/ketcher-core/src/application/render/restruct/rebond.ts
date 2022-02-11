@@ -205,7 +205,50 @@ class ReBond extends ReObject {
       )
       restruct.addReObjectPath(LayerMap.indices, this.visel, ipath)
     }
+    const highlights = restruct.molecule.highlights
+    highlights.forEach((highlight) => {
+      const isHighlighted = highlight.bonds?.includes(bid)
+
+      const highlightColor = highlight.color
+
+      // console.log(this.path.clone())
+
+      if (isHighlighted) {
+        const style = {
+          fill: highlightColor,
+          stroke: highlightColor,
+          'stroke-width': options.lineattr['stroke-width'] * 7,
+          'stroke-linecap': 'round'
+        }
+
+        const c = Scale.obj2scaled(this.b.center, restruct.render.options)
+
+        const highlightPath = getHighlightPath(restruct, hb1, hb2)
+        highlightPath.attr(style)
+
+        restruct.addReObjectPath(
+          LayerMap.highlighting,
+          this.visel,
+          highlightPath,
+          c,
+          true
+        )
+      }
+    })
   }
+}
+
+function getHighlightPath(restruct: ReStruct, hb1: HalfBond, hb2: HalfBond) {
+  const beginning = { x: hb1.p.x, y: hb1.p.y }
+  const end = { x: hb2.p.x, y: hb2.p.y }
+
+  const paper = restruct.render.paper
+
+  const pathString = `M${beginning.x},${beginning.y} L${end.x},${end.y}`
+
+  const path = paper.path(pathString)
+
+  return path
 }
 
 function findIncomingStereoUpBond(

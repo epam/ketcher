@@ -62,5 +62,6 @@ export const OperationType = Object.freeze({
   TEXT_DELETE: 'Delete text',
   TEXT_MOVE: 'Move text',
   ADD_HIGHLIGHT: 'Highlight',
+  UPDATE_HIGHLIGHT: 'Update highlight',
   REMOVE_HIGHLIGHT: 'Remove highlight'
 })

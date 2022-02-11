@@ -16,19 +16,45 @@
 
 import { ReStruct } from '../../render'
 
-import { HighlightAdd, HighlightDelete } from '../operations/highlight'
+import {
+  HighlightAdd,
+  HighlightDelete,
+  HighlightUpdate
+} from '../operations/highlight'
 
 import { Action } from './action'
 
-export function fromHighlightAddition(
+export function fromHighlightCreate(
   restruct: ReStruct,
   color: string,
-  atoms?: number[],
-  bonds?: number[]
+  atoms: number[],
+  bonds: number[]
 ): Action {
   const action = new Action()
 
   action.addOp(new HighlightAdd(atoms, bonds, color))
+
+  return action.perform(restruct)
+}
+
+export function fromHighlightUpdate(
+  highlightId: number,
+  restruct: ReStruct,
+  atoms: number[],
+  bonds: number[],
+  color: string
+): Action {
+  const action = new Action()
+
+  const highlights = restruct.molecule.highlights
+
+  const selectedHighlight = highlights.get(highlightId)
+  if (!selectedHighlight) {
+    return action
+  }
+
+  const updateOperation = new HighlightUpdate(highlightId, atoms, bonds, color)
+  action.addOp(updateOperation)
 
   return action.perform(restruct)
 }

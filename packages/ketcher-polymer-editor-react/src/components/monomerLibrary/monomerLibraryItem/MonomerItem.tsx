@@ -33,7 +33,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const Card = styled.div<CardProps>`
   background: ${({ colorScheme, theme }) =>
-    colorScheme || theme.color.monomer.default};
+    colorScheme || theme.ketcher.color.monomer.default};
   border-radius: 2px;
   width: 48px;
   height: 48px;
@@ -42,24 +42,11 @@ const Card = styled.div<CardProps>`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: ${({ theme }) => theme.font.size.small};
+  font-size: ${({ theme }) => theme.ketcher.font.size.small};
 `
 
 const MonomerItem = (props: MonomerItemProps) => {
   const { item, onClick } = props
-
-  const Card = styled.div(({ theme }) => ({
-    background: theme.ketcher.color.text.light,
-    border: `1px solid ${theme.ketcher.color.text.primary}`,
-    borderRadius: '2px',
-    width: '32px',
-    height: '32px',
-    textAlign: 'center',
-    cursor: 'pointer',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  }))
 
   return (
     <Card onClick={onClick} colorScheme={item.colorScheme}>

@@ -41,7 +41,7 @@ const Divider = styled.div`
   height: 5px;
   width: 10px;
   border-bottom: 1px solid;
-  border-color: ${({ theme }) => theme.color.divider};
+  border-color: ${({ theme }) => theme.ketcher.color.divider};
 `
 
 const GroupTitle = styled.div`
@@ -51,9 +51,9 @@ const GroupTitle = styled.div`
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: flex-start;
-  font-size: ${({ theme }) => theme.font.size.small};
-  font-family: ${({ theme }) => theme.font.family.roboto};
-  color: ${({ theme }) => theme.color.divider};
+  font-size: ${({ theme }) => theme.ketcher.font.size.small};
+  font-family: ${({ theme }) => theme.ketcher.font.family.roboto};
+  color: ${({ theme }) => theme.ketcher.color.divider};
   margin: 4px 4px 0;
 `
 

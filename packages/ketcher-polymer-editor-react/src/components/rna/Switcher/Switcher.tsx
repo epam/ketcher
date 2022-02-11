@@ -81,7 +81,7 @@ const ResetButton = styled(Button)`
   margin-left: auto;
   height: 15px;
   color: #ff2727;
-  font-size: ${({ theme }) => theme.font.size.regular};
+  font-size: ${({ theme }) => theme.ketcher.font.size.regular};
   min-width: 30px;
   text-transform: none;
   :hover {

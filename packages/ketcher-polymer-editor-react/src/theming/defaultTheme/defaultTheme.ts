@@ -88,6 +88,9 @@ export const defaultTheme: EditorTheme = {
       activeMenu: '#005662',
       clicked: '#FFFFFF',
       disabled: 'rgba(82, 82, 82, 0.4)'
+    },
+    monomer: {
+      default: '#C8C8C8'
     }
   },
   font: {
@@ -101,7 +104,9 @@ export const defaultTheme: EditorTheme = {
       montserrat: 'Montserrat, sans-serif',
       inter:
         "Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',\n" +
-        'Arial, sans-serif'
+        'Arial, sans-serif',
+      roboto:
+        'Roboto, FreeSans, Arimo, Droid Sans, Helvetica, Helvetica Neue, Arial, sans-serif'
     },
     weight: {
       light: 300,

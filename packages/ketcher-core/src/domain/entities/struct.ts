@@ -33,6 +33,7 @@ import { SGroupForest } from './sgroupForest'
 import { SimpleObject } from './simpleObject'
 import { Text } from './text'
 import { Vec2 } from './vec2'
+import { Highlight } from './highlight'
 
 export type Neighbor = {
   aid: number
@@ -63,6 +64,7 @@ export class Struct {
   simpleObjects: Pool<SimpleObject>
   texts: Pool<Text>
   functionalGroups: Pool<FunctionalGroup>
+  highlights: Pool<Highlight>
 
   constructor() {
     this.atoms = new Pool<Atom>()
@@ -80,6 +82,7 @@ export class Struct {
     this.simpleObjects = new Pool<SimpleObject>()
     this.texts = new Pool<Text>()
     this.functionalGroups = new Pool<FunctionalGroup>()
+    this.highlights = new Pool<Highlight>()
   }
 
   hasRxnProps(): boolean {

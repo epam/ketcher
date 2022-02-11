@@ -34,6 +34,7 @@ import closest from './shared/closest'
 import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
+import { Highlighter } from './highlighter'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -81,9 +82,9 @@ function selectStereoFlagsIfNecessary(
 
   let stereoFlags: number[] = []
 
-  Object.keys(atomsOfFragments).forEach(fragId => {
+  Object.keys(atomsOfFragments).forEach((fragId) => {
     let shouldSelSFlag: boolean = true
-    atomsOfFragments[fragId].forEach(atomId => {
+    atomsOfFragments[fragId].forEach((atomId) => {
       if (!expAtoms.includes(atomId)) shouldSelSFlag = false
     })
     shouldSelSFlag && stereoFlags.push(Number(fragId))
@@ -106,6 +107,7 @@ class Editor implements KetcherEditor {
   historyStack: any
   historyPtr: any
   errorHandler: ((message: string) => void) | null
+  highlight: Highlighter
   event: {
     message: Subscription
     elementEdit: PipelineSubscription
@@ -140,6 +142,7 @@ class Editor implements KetcherEditor {
     this.historyStack = []
     this.historyPtr = 0
     this.errorHandler = null
+    this.highlight = new Highlighter(this)
 
     this.event = {
       message: new Subscription(),
@@ -280,7 +283,7 @@ class Editor implements KetcherEditor {
     if (ci) {
       let res: Selection = {}
 
-      Object.keys(ci).forEach(key => {
+      Object.keys(ci).forEach((key) => {
         if (ci[key].length > 0)
           // TODO: deep merge
           res[key] = ci[key].slice()
@@ -316,60 +319,11 @@ class Editor implements KetcherEditor {
       'ci' in tool &&
       (!ci || tool.ci.map !== ci.map || tool.ci.id !== ci.id)
     ) {
-      this.highlight(tool.ci, false)
+      setHover(tool.ci, false, this.render)
       delete tool.ci
     }
 
-    if (ci && this.highlight(ci, true)) tool.ci = ci
-  }
-
-  highlight(ci: any, visible: any) {
-    if (highlightTargets.indexOf(ci.map) === -1) {
-      return false
-    }
-
-    const render = this.render
-    let item: any = null
-
-    if (ci.map === 'merge') {
-      Object.keys(ci.items).forEach(mp => {
-        ci.items[mp].forEach(dstId => {
-          item = render.ctab[mp].get(dstId)!
-
-          if (item) {
-            item.setHighlight(visible, render)
-          }
-        })
-      })
-
-      return true
-    }
-
-    if (ci.map === 'functionalGroups') ci.map = 'sgroups' // TODO: Refactor object
-
-    item = (render.ctab[ci.map] as Map<any, any>).get(ci.id)
-    if (!item) {
-      return true // TODO: fix, attempt to highlight a deleted item
-    }
-
-    if (
-      (ci.map === 'sgroups' && item.item.type === 'DAT') ||
-      ci.map === 'sgroupData'
-    ) {
-      // set highlight for both the group and the data item
-      const item1 = render.ctab.sgroups.get(ci.id)
-      if (item1) {
-        item1.setHighlight(visible, render)
-      }
-
-      const item2 = render.ctab.sgroupData.get(ci.id)
-      if (item2) {
-        item2.setHighlight(visible, render)
-      }
-    } else {
-      item.setHighlight(visible, render)
-    }
-    return true
+    if (ci && setHover(ci, true, this.render)) tool.ci = ci
   }
 
   update(action: Action | true, ignoreHistory?) {
@@ -448,7 +402,7 @@ class Editor implements KetcherEditor {
 
     switch (eventName) {
       case 'change':
-        const subscribeFuncWrapper = action =>
+        const subscribeFuncWrapper = (action) =>
           customOnChangeHandler(action, handler)
         subscriber.handler = subscribeFuncWrapper
         this.event[eventName].add(subscribeFuncWrapper)
@@ -487,7 +441,7 @@ class Editor implements KetcherEditor {
 
     // "auto-select" the atoms for the bonds in selection
     if (res.bonds) {
-      res.bonds.forEach(bid => {
+      res.bonds.forEach((bid) => {
         const bond = struct.bonds.get(bid)!
         res.atoms = res.atoms || []
         if (res.atoms.indexOf(bond.begin) < 0) {
@@ -568,12 +522,12 @@ function domEventSetup(editor: Editor, clientArea) {
     'mousemove',
     'mouseup',
     'mouseleave'
-  ].forEach(eventName => {
+  ].forEach((eventName) => {
     editor.event[eventName] = new DOMSubscription()
     const subs = editor.event[eventName]
     clientArea.addEventListener(eventName, subs.dispatch.bind(subs))
 
-    subs.add(event => {
+    subs.add((event) => {
       if (eventName !== 'mouseup' && eventName !== 'mouseleave') {
         // to complete drag actions
         if (
@@ -611,3 +565,51 @@ function getStructCenter(ReStruct, selection?) {
 
 export { Editor }
 export default Editor
+
+function setHover(ci: any, visible: any, render: any) {
+  if (highlightTargets.indexOf(ci.map) === -1) {
+    return false
+  }
+
+  let item: any = null
+
+  if (ci.map === 'merge') {
+    Object.keys(ci.items).forEach((mp) => {
+      ci.items[mp].forEach((dstId) => {
+        item = render.ctab[mp].get(dstId)!
+
+        if (item) {
+          item.setHighlight(visible, render)
+        }
+      })
+    })
+
+    return true
+  }
+
+  if (ci.map === 'functionalGroups') ci.map = 'sgroups' // TODO: Refactor object
+
+  item = (render.ctab[ci.map] as Map<any, any>).get(ci.id)
+  if (!item) {
+    return true // TODO: fix, attempt to highlight a deleted item
+  }
+
+  if (
+    (ci.map === 'sgroups' && item.item.type === 'DAT') ||
+    ci.map === 'sgroupData'
+  ) {
+    // set highlight for both the group and the data item
+    const item1 = render.ctab.sgroups.get(ci.id)
+    if (item1) {
+      item1.setHighlight(visible, render)
+    }
+
+    const item2 = render.ctab.sgroupData.get(ci.id)
+    if (item2) {
+      item2.setHighlight(visible, render)
+    }
+  } else {
+    item.setHighlight(visible, render)
+  }
+  return true
+}

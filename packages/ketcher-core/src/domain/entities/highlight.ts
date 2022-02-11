@@ -14,23 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './atom'
-export * from './atomList'
-export * from './bond'
-export * from './fragment'
-export * from './functionalGroup'
-export * from './halfBond'
-export * from './loop'
-export * from './rgroup'
-export * from './rxnArrow'
-export * from './rxnPlus'
-export * from './sgroup'
-export * from './sgroupForest'
-export * from './simpleObject'
-export * from './struct'
-export * from './text'
-export * from './pile'
-export * from './vec2'
-export * from './box2Abs'
-export * from './pool'
-export * from './highlight'
+export interface HighlightAttributes {
+  atoms?: Array<number>
+  bonds?: Array<number>
+  color: string
+}
+
+export class Highlight {
+  atoms?: Array<number>
+  bonds?: Array<number>
+  color: string
+
+  constructor(attributes: HighlightAttributes) {
+    const { atoms, bonds, color } = attributes
+    this.color = color
+    if (atoms) {
+      this.atoms = atoms
+    }
+
+    if (bonds) {
+      this.bonds = bonds
+    }
+  }
+}

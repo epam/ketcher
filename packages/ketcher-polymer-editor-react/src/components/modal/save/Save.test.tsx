@@ -20,23 +20,30 @@ import userEvent from '@testing-library/user-event'
 
 const mockOnClose = jest.fn()
 
+const mockProps = {
+  onClose: mockOnClose,
+  isModalOpen: true
+}
+
 describe('Save modal', () => {
   it('renders correctly', () => {
-    const view = render(<Save onClose={mockOnClose} isModalOpen={true} />)
+    const view = render(<Save {...mockProps} />)
 
     const filenameInput = screen.getByRole('textbox', {
       name: 'File name:'
     })
-    const fileFormat = screen.getByRole('button', { name: 'MDL Molfile V3000' })
+    const fileFormatInput = screen.getByRole('button', {
+      name: 'MDL Molfile V3000'
+    })
 
     expect(view).toMatchSnapshot()
     expect(filenameInput).toBeVisible()
     expect(filenameInput).toHaveValue('ketcher')
-    expect(fileFormat).toBeVisible()
+    expect(fileFormatInput).toBeVisible()
   })
 
   it('renders dropdown options correctly', () => {
-    render(<Save onClose={mockOnClose} isModalOpen={true} />)
+    render(<Save {...mockProps} />)
 
     const fileFormat = screen.getByRole('button', { name: 'MDL Molfile V3000' })
 
@@ -48,5 +55,18 @@ describe('Save modal', () => {
     expect(fileFormatDropdown).toBeVisible()
     expect(option1).toBeVisible()
     expect(option2).toBeVisible()
+  })
+
+  it('renders buttons correctly', () => {
+    render(<Save {...mockProps} />)
+
+    const saveButton = screen.getByRole('button', { name: 'Save as file' })
+    const filenameInput = screen.getByRole('textbox', {
+      name: 'File name:'
+    })
+
+    userEvent.clear(filenameInput)
+
+    expect(saveButton).toBeDisabled()
   })
 })

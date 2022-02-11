@@ -51,6 +51,12 @@ function Editor(props: EditorProps) {
     }).then((ketcher: Ketcher) => {
       if (typeof onInit === 'function') {
         onInit(ketcher)
+        window.parent.postMessage(
+          {
+            message: 'ketcher is ready'
+          },
+          '*'
+        )
       }
     })
     // TODO: provide the list of dependencies after implementing unsubscribe function

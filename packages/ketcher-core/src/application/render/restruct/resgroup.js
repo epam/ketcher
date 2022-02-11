@@ -122,7 +122,8 @@ class ReSGroup extends ReObject {
       return paper.rect(startX, startY, size, size).attr(options.selectionStyle)
     }
   }
-  drawHighlight(render) {
+
+  drawHover(render) {
     // eslint-disable-line max-statements
     var options = render.options
     var paper = render.paper
@@ -138,11 +139,11 @@ class ReSGroup extends ReObject {
       )
     ) {
       const { startX, startY, size } = getHighlighPathInfo(sGroupItem, options)
-      sGroupItem.highlighting = paper
+      sGroupItem.hovering = paper
         .rect(startX, startY, size, size)
-        .attr(options.highlightStyle)
+        .attr(options.hoverStyle)
     } else {
-      sGroupItem.highlighting = paper
+      sGroupItem.hovering = paper
         .path(
           'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
           tfx(a0.x),
@@ -154,17 +155,17 @@ class ReSGroup extends ReObject {
           tfx(b0.x),
           tfx(b0.y)
         )
-        .attr(options.highlightStyle)
+        .attr(options.hoverStyle)
     }
-    set.push(sGroupItem.highlighting)
+    set.push(sGroupItem.hovering)
 
-    SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach(aid => {
-      set.push(render.ctab.atoms.get(aid).makeHighlightPlate(render))
+    SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach((aid) => {
+      set.push(render.ctab.atoms.get(aid).makeHoverPlate(render))
     }, this)
-    SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach(bid => {
-      set.push(render.ctab.bonds.get(bid).makeHighlightPlate(render))
+    SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach((bid) => {
+      set.push(render.ctab.bonds.get(bid).makeHoverPlate(render))
     }, this)
-    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, set)
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, set)
   }
   show(restruct) {
     var render = restruct.render
@@ -173,7 +174,7 @@ class ReSGroup extends ReObject {
       var remol = render.ctab
       var path = this.draw(remol, sgroup)
       restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true)
-      this.setHighlight(this.highlight, render) // TODO: fix this
+      this.setHover(this.hover, render) // TODO: fix this
     }
   }
 }
@@ -302,7 +303,7 @@ function drawAttachedDat(restruct, sgroup) {
   const paper = render.paper
   const set = paper.set()
 
-  SGroup.getAtoms(restruct, sgroup).forEach(aid => {
+  SGroup.getAtoms(restruct, sgroup).forEach((aid) => {
     const atom = restruct.atoms.get(aid)
     const p = Scale.obj2scaled(atom.a.pp, options)
     const bb = atom.visel.boundingBox
@@ -388,7 +389,7 @@ function getBracketParameters(
       var dt = dr.rotateSC(1, 0)
       var db = dt.negated()
 
-      mol.sGroupForest.children.get(id).forEach(sgid => {
+      mol.sGroupForest.children.get(id).forEach((sgid) => {
         var bba = render.ctab.sgroups.get(sgid).visel.boundingBox
         bba = bba
           .translate((render.options.offset || new Vec2()).negated())
@@ -447,9 +448,9 @@ function getHighlighPathInfo(sgroup, options) {
   let startY = (a1.y + a0.y) / 2 - size / 2
   if (sgroup.firstSgroupAtom) {
     const shift = new Vec2(size / 2, size / 2, 0)
-    const highlightPp = Vec2.diff(sgroup.firstSgroupAtom.pp.scaled(40), shift)
-    startX = highlightPp.x
-    startY = highlightPp.y
+    const hoverPp = Vec2.diff(sgroup.firstSgroupAtom.pp.scaled(40), shift)
+    startX = hoverPp.x
+    startY = hoverPp.y
   }
   return {
     a0,

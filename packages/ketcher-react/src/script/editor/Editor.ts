@@ -579,7 +579,7 @@ function setHover(ci: any, visible: any, render: any) {
         item = render.ctab[mp].get(dstId)!
 
         if (item) {
-          item.setHighlight(visible, render)
+          item.setHover(visible, render)
         }
       })
     })
@@ -601,15 +601,15 @@ function setHover(ci: any, visible: any, render: any) {
     // set highlight for both the group and the data item
     const item1 = render.ctab.sgroups.get(ci.id)
     if (item1) {
-      item1.setHighlight(visible, render)
+      item1.setHover(visible, render)
     }
 
     const item2 = render.ctab.sgroupData.get(ci.id)
     if (item2) {
-      item2.setHighlight(visible, render)
+      item2.setHover(visible, render)
     }
   } else {
-    item.setHighlight(visible, render)
+    item.setHover(visible, render)
   }
   return true
 }

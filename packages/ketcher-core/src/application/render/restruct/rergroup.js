@@ -34,7 +34,7 @@ class ReRGroup extends ReObject {
   }
   getAtoms(render) {
     var ret = []
-    this.item.frags.forEach(fid => {
+    this.item.frags.forEach((fid) => {
       ret = ret.concat(
         render.ctab.frags.get(fid).fragGetAtoms(render.ctab, fid)
       )
@@ -43,7 +43,7 @@ class ReRGroup extends ReObject {
   }
   getBonds(render) {
     var ret = []
-    this.item.frags.forEach(fid => {
+    this.item.frags.forEach((fid) => {
       ret = ret.concat(
         render.ctab.frags.get(fid).fragGetBonds(render.ctab, fid)
       )
@@ -52,7 +52,7 @@ class ReRGroup extends ReObject {
   }
   calcBBox(render) {
     let ret = null
-    this.item.frags.forEach(fid => {
+    this.item.frags.forEach((fid) => {
       const bbf = render.ctab.frags.get(fid).calcBBox(render.ctab, fid, render)
       if (bbf) ret = ret ? Box2Abs.union(ret, bbf) : bbf
     })
@@ -137,7 +137,8 @@ class ReRGroup extends ReObject {
       .rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0)
       .attr(attrs)
   }
-  drawHighlight(render) {
+
+  drawHover(render) {
     const rgid = render.ctab.rgroups.keyOf(this)
 
     if (!rgid) {
@@ -150,12 +151,12 @@ class ReRGroup extends ReObject {
     const ret = this._draw(
       render,
       rgid,
-      render.options.highlightStyle /* { 'fill' : 'red' }*/
+      render.options.hoverStyle /* { 'fill' : 'red' } */
     ) // eslint-disable-line no-underscore-dangle
-    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
 
     this.item.frags.forEach((fnum, fid) => {
-      render.ctab.frags.get(fid).drawHighlight(render)
+      render.ctab.frags.get(fid).drawHover(render)
     })
 
     return ret
@@ -163,7 +164,7 @@ class ReRGroup extends ReObject {
   show(restruct, id, options) {
     const drawing = this.draw(restruct.render, options)
 
-    Object.keys(drawing).forEach(group => {
+    Object.keys(drawing).forEach((group) => {
       while (drawing[group].length > 0)
         restruct.addReObjectPath(
           LayerMap.data,

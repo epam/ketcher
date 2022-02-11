@@ -17,7 +17,7 @@
 export enum LayerMap {
   background = 'background',
   selectionPlate = 'selectionPlate',
-  highlighting = 'highlighting',
+  hovering = 'hovering',
   warnings = 'warnings',
   data = 'data',
   indices = 'indices'

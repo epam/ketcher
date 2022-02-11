@@ -84,15 +84,15 @@ class ReRxnArrow extends ReObject {
     return minDist
   }
 
-  highlightPath(render: Render) {
+  hoverPath(render: Render) {
     const path = this.generatePath(render, render.options, 'selection')
 
     return render.paper.path(path)
   }
 
-  drawHighlight(render: Render) {
-    const ret = this.highlightPath(render).attr(render.options.highlightStyle)
-    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
+  drawHover(render: Render) {
+    const ret = this.hoverPath(render).attr(render.options.hoverStyle)
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
     return ret
   }
 

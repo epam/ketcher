@@ -49,12 +49,14 @@ class ReBond extends ReObject {
   static isSelectable() {
     return true
   }
-  drawHighlight(render: Render) {
-    const ret = this.makeHighlightPlate(render)
-    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
+
+  drawHover(render: Render) {
+    const ret = this.makeHoverPlate(render)
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
     return ret
   }
-  makeHighlightPlate(render: Render) {
+
+  makeHoverPlate(render: Render) {
     const options = render.options
     bondRecalc(this, render.ctab, options)
     const bond = this.b
@@ -73,7 +75,7 @@ class ReBond extends ReObject {
     const c = Scale.obj2scaled(this.b.center, options)
     return render.paper
       .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
-      .attr(options.highlightStyle)
+      .attr(options.hoverStyle)
   }
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any) {
     bondRecalc(this, restruct, options)
@@ -149,7 +151,7 @@ class ReBond extends ReObject {
         true
       )
     }
-    this.setHighlight(this.highlight, render)
+    this.setHover(this.hover, render)
 
     let ipath = null
     const bondIdxOff = options.subFontSize * 0.6
@@ -227,7 +229,7 @@ class ReBond extends ReObject {
         highlightPath.attr(style)
 
         restruct.addReObjectPath(
-          LayerMap.highlighting,
+          LayerMap.hovering,
           this.visel,
           highlightPath,
           c,
@@ -257,7 +259,7 @@ function findIncomingStereoUpBond(
   includeBoldStereoBond: boolean,
   restruct: ReStruct
 ): number {
-  return atom.neighbors.findIndex(hbid => {
+  return atom.neighbors.findIndex((hbid) => {
     const hb = restruct.molecule.halfBonds.get(hbid)
 
     if (!hb || hb.bid === bid0) return false
@@ -289,7 +291,7 @@ function findIncomingUpBonds(
   bond: ReBond,
   restruct: ReStruct
 ): void {
-  const halfbonds = [bond.b.begin, bond.b.end].map(aid => {
+  const halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
     const atom = restruct.molecule.atoms.get(aid)
     if (!atom) return -1
     const pos = findIncomingStereoUpBond(atom, bid0, true, restruct)
@@ -303,7 +305,7 @@ function findIncomingUpBonds(
 }
 
 function checkStereoBold(bid0, bond, restruct) {
-  const halfbonds = [bond.b.begin, bond.b.end].map(aid => {
+  const halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
     const atom = restruct.molecule.atoms.get(aid)
     const pos = findIncomingStereoUpBond(atom, bid0, false, restruct)
     return pos < 0 ? -1 : atom.neighbors[pos]
@@ -735,11 +737,11 @@ function getBondAromaticPath(
 
   if (bond.b.type === Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
     mark = bondShift > 0 ? 1 : 2
-    dash = dashdotPattern.map(v => v * options.scale)
+    dash = dashdotPattern.map((v) => v * options.scale)
   }
   if (bond.b.type === Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
     mark = 3
-    dash = dashdotPattern.map(v => v * options.scale)
+    dash = dashdotPattern.map((v) => v * options.scale)
   }
   const paths = getAromaticBondPaths(
     hb1,

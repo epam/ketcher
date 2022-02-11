@@ -19,6 +19,14 @@ import { ViewSwitcher } from './ViewSwitcher'
 import { ActionButton } from 'components/shared/actionButton'
 import { fileOpener } from './fileOpener'
 
+interface Props {
+  onClose: () => void
+  isModalOpen: boolean
+  isAnalyzingFile: boolean
+  onOk: ({ struct: string, fragment: boolean }) => void
+  errorHandler: (error: string) => void
+}
+
 const MODAL_STATES = {
   openOptions: 'openOptions',
   textEditor: 'textEditor'
@@ -30,7 +38,7 @@ const Open = ({
   isAnalyzingFile,
   onOk,
   errorHandler
-}) => {
+}: Props) => {
   const onCloseCallback = useCallback(() => {
     setCurrentState(MODAL_STATES.openOptions)
     setStructStr('')

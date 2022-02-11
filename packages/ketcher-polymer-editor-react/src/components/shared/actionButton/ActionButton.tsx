@@ -16,56 +16,60 @@
 
 import MuiButton, { ButtonBaseProps } from '@mui/material/ButtonBase'
 import styled from '@emotion/styled'
+import { css } from '@emotion/react'
 
-const PrimaryButton = styled(MuiButton)(({ theme }) => ({
-  backgroundColor: theme.ketcher.color.button.primary.active,
-  color: theme.ketcher.color.text.light,
+const baseButtonStyle = css({
   padding: '5px 8px',
-  border: 'none',
   borderRadius: '2px',
   textTransform: 'none',
   lineHeight: '14px',
   fontSize: '12px',
-  textAlign: 'center',
-  fontWeight: theme.ketcher.font.weight.regular,
+  textAlign: 'center'
+})
 
-  '&:hover': {
-    backgroundColor: theme.ketcher.color.button.primary.hover
-  },
+const PrimaryButton = styled(MuiButton)(
+  ({ theme }) => ({
+    backgroundColor: theme.ketcher.color.button.primary.active,
+    color: theme.ketcher.color.text.light,
+    border: 'none',
+    fontWeight: theme.ketcher.font.weight.regular,
 
-  '&:disabled': {
-    background: theme.ketcher.color.button.primary.disabled,
-    opacity: 0.4
-  }
-}))
+    '&:hover': {
+      backgroundColor: theme.ketcher.color.button.primary.hover
+    },
 
-const SecondaryButton = styled(MuiButton)(({ theme }) => ({
-  backgroundColor: 'transparent',
-  padding: '5px 8px',
-  border: `1px solid ${theme.ketcher.color.button.secondary.active}`,
-  color: theme.ketcher.color.button.secondary.active,
-  borderRadius: '2px',
-  textTransform: 'none',
-  lineHeight: '14px',
-  fontSize: '12px',
-  textAlign: 'center',
-  fontWeight: theme.ketcher.font.weight.regular,
+    '&:disabled': {
+      background: theme.ketcher.color.button.primary.disabled,
+      opacity: 0.4
+    }
+  }),
+  baseButtonStyle
+)
 
-  '&:hover': {
-    border: `1px solid ${theme.ketcher.color.button.secondary.hover}`,
-    color: theme.ketcher.color.button.secondary.hover
-  },
+const SecondaryButton = styled(MuiButton)(
+  ({ theme }) => ({
+    backgroundColor: 'transparent',
+    border: `1px solid ${theme.ketcher.color.button.secondary.active}`,
+    color: theme.ketcher.color.button.secondary.active,
+    fontWeight: theme.ketcher.font.weight.regular,
 
-  '&:disabled': {
-    border: `1px solid ${theme.ketcher.color.button.secondary.disabled}`,
-    color: theme.ketcher.color.button.secondary.disabled
-  },
+    '&:hover': {
+      border: `1px solid ${theme.ketcher.color.button.secondary.hover}`,
+      color: theme.ketcher.color.button.secondary.hover
+    },
 
-  '&:clicked': {
-    border: `1px solid ${theme.ketcher.color.button.secondary.clicked}`,
-    color: theme.ketcher.color.button.secondary.clicked
-  }
-}))
+    '&:disabled': {
+      border: `1px solid ${theme.ketcher.color.button.secondary.disabled}`,
+      color: theme.ketcher.color.button.secondary.disabled
+    },
+
+    '&:clicked': {
+      border: `1px solid ${theme.ketcher.color.button.secondary.clicked}`,
+      color: theme.ketcher.color.button.secondary.clicked
+    }
+  }),
+  baseButtonStyle
+)
 
 type ActionButtonProps = {
   label: string

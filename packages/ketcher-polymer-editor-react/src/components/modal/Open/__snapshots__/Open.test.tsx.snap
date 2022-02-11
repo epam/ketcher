@@ -68,7 +68,7 @@ Object {
                 class="css-2jv7sj"
               >
                 <button
-                  class="MuiButtonBase-root css-mjez8w-MuiButtonBase-root"
+                  class="MuiButtonBase-root css-1u2dyik-MuiButtonBase-root"
                   role="button"
                   tabindex="0"
                   title="Paste from Clipboard"
@@ -101,7 +101,7 @@ Object {
                     class="css-1gnig72"
                   >
                     <button
-                      class="MuiButtonBase-root css-mjez8w-MuiButtonBase-root"
+                      class="MuiButtonBase-root css-1u2dyik-MuiButtonBase-root"
                       role="button"
                       tabindex="0"
                       title="Open from file"

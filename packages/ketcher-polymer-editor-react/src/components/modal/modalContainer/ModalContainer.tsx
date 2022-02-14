@@ -16,7 +16,7 @@
 import { closeModal, selectModalIsOpen, selectModalName } from 'state/modal'
 import { useAppDispatch, useAppSelector } from 'hooks'
 import { useCallback } from 'react'
-import { modalComponentList } from 'components/modal/modalContainer/modalComponentList'
+import { modalComponentList } from './modalComponentList'
 
 export const ModalContainer = () => {
   const isOpen = useAppSelector(selectModalIsOpen)

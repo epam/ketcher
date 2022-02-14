@@ -20,10 +20,7 @@ import userEvent from '@testing-library/user-event'
 
 const mockProps = {
   isModalOpen: true,
-  onClose: jest.fn(),
-  isAnalyzingFile: false,
-  errorHandler: jest.fn(),
-  onOk: jest.fn()
+  onClose: jest.fn()
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -50,6 +47,6 @@ describe('Open component', () => {
       name: 'Open as New Project'
     })
     userEvent.click(newProjectButton)
-    expect(mockProps.onOk).toHaveBeenCalled()
+    expect(mockProps.onClose).toHaveBeenCalled()
   })
 })

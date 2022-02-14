@@ -19,12 +19,9 @@ import { ViewSwitcher } from './ViewSwitcher'
 import { ActionButton } from 'components/shared/actionButton'
 import { fileOpener } from './fileOpener'
 
-interface Props {
+export interface Props {
   onClose: () => void
   isModalOpen: boolean
-  isAnalyzingFile: boolean
-  onOk: ({ struct: string, fragment: boolean }) => void
-  errorHandler: (error: string) => void
 }
 
 const MODAL_STATES = {
@@ -32,13 +29,17 @@ const MODAL_STATES = {
   textEditor: 'textEditor'
 }
 
-const Open = ({
-  isModalOpen,
-  onClose,
-  isAnalyzingFile,
-  onOk,
-  errorHandler
-}: Props) => {
+// TODO: replace after the implementation of the function for processing the structure from the file
+const onOk = ({ struct, fragment }) => {
+  if (fragment) {
+    console.log('add fragment')
+  }
+  console.log(struct)
+}
+const isAnalyzingFile = false
+const errorHandler = (error) => console.log(error)
+
+const Open = ({ isModalOpen, onClose }: Props) => {
   const onCloseCallback = useCallback(() => {
     setCurrentState(MODAL_STATES.openOptions)
     setStructStr('')

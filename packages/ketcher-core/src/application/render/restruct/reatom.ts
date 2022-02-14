@@ -189,7 +189,7 @@ class ReAtom extends ReObject {
       if (this.showLabel) {
         idPos = Vec2.lc(idPos, 1, new Vec2({ x: 1, y: -3, z: 0 }), 6)
       }
-      this.setHover(this.highlight, render)
+      this.setHover(this.hover, render)
     }
 
     if (this.showLabel && !this.a.pseudo) {
@@ -361,21 +361,29 @@ class ReAtom extends ReObject {
       restruct.addReObjectPath(LayerMap.data, this.visel, aamPath, ps, true)
     }
 
+    // Checking whether atom is highlighted and what's the last color
     const highlights = restruct.molecule.highlights
+    let isHighlighted = false
+    let highlightColor = ''
     highlights.forEach((highlight) => {
-      const isHighlighted = highlight.atoms?.includes(aid)
-
-      if (isHighlighted) {
-        const style = { fill: highlight.color, stroke: 'none' }
-
-        const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
-        const path = render.paper
-          .circle(ps.x, ps.y, options.atomSelectionPlateRadius * 0.8)
-          .attr(style)
-
-        restruct.addReObjectPath(LayerMap.hovering, this.visel, path)
+      const hasCurrentHighlight = highlight.atoms?.includes(aid)
+      isHighlighted = isHighlighted || hasCurrentHighlight
+      if (hasCurrentHighlight) {
+        highlightColor = highlight.color
       }
     })
+
+    // Drawing highlight
+    if (isHighlighted) {
+      const style = { fill: highlightColor, stroke: 'none' }
+
+      const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
+      const path = render.paper
+        .circle(ps.x, ps.y, options.atomSelectionPlateRadius * 0.8)
+        .attr(style)
+
+      restruct.addReObjectPath(LayerMap.hovering, this.visel, path)
+    }
   }
 }
 

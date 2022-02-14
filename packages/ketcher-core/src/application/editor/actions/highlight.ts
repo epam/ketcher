@@ -24,16 +24,23 @@ import {
 
 import { Action } from './action'
 
+type HighlightType = {
+  atoms: number[]
+  bonds: number[]
+  color: string
+}
+
 export function fromHighlightCreate(
   restruct: ReStruct,
-  color: string,
-  atoms: number[],
-  bonds: number[]
+  highlights: HighlightType[]
 ): Action {
   const action = new Action()
 
-  action.addOp(new HighlightAdd(atoms, bonds, color))
+  highlights.forEach((highlight) => {
+    const { atoms, bonds, color } = highlight
 
+    action.addOp(new HighlightAdd(atoms, bonds, color))
+  })
   return action.perform(restruct)
 }
 

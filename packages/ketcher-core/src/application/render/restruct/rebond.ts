@@ -207,36 +207,41 @@ class ReBond extends ReObject {
       )
       restruct.addReObjectPath(LayerMap.indices, this.visel, ipath)
     }
+
+    // Checking whether bond is highlighted and what is the last color
     const highlights = restruct.molecule.highlights
+    let isHighlighted = false
+    let highlightColor = ''
     highlights.forEach((highlight) => {
-      const isHighlighted = highlight.bonds?.includes(bid)
-
-      const highlightColor = highlight.color
-
-      // console.log(this.path.clone())
-
-      if (isHighlighted) {
-        const style = {
-          fill: highlightColor,
-          stroke: highlightColor,
-          'stroke-width': options.lineattr['stroke-width'] * 7,
-          'stroke-linecap': 'round'
-        }
-
-        const c = Scale.obj2scaled(this.b.center, restruct.render.options)
-
-        const highlightPath = getHighlightPath(restruct, hb1, hb2)
-        highlightPath.attr(style)
-
-        restruct.addReObjectPath(
-          LayerMap.hovering,
-          this.visel,
-          highlightPath,
-          c,
-          true
-        )
+      const hasCurrentHighlight = highlight.bonds?.includes(bid)
+      isHighlighted = isHighlighted || hasCurrentHighlight
+      if (hasCurrentHighlight) {
+        highlightColor = highlight.color
       }
     })
+
+    // Drawing highlight
+    if (isHighlighted) {
+      const style = {
+        fill: highlightColor,
+        stroke: highlightColor,
+        'stroke-width': options.lineattr['stroke-width'] * 7,
+        'stroke-linecap': 'round'
+      }
+
+      const c = Scale.obj2scaled(this.b.center, restruct.render.options)
+
+      const highlightPath = getHighlightPath(restruct, hb1, hb2)
+      highlightPath.attr(style)
+
+      restruct.addReObjectPath(
+        LayerMap.hovering,
+        this.visel,
+        highlightPath,
+        c,
+        true
+      )
+    }
   }
 }
 

@@ -70,13 +70,15 @@ class Attach extends Component {
         className={classes.attach}
         result={this.onResult}
         valid={() => this.props.formState.valid && name}
-        params={prop}>
+        params={prop}
+      >
         <Form
           schema={attachSchema}
           customValid={{
             name: name => this.checkUniqueName(name)
           }}
-          {...this.props.formState}>
+          {...this.props.formState}
+        >
           <Field
             name="name"
             value={name}

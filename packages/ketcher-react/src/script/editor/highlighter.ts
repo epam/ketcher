@@ -26,6 +26,12 @@ import type { Struct } from 'ketcher-core'
 
 import type { Editor } from './Editor'
 
+type HighlightAttributes = {
+  atoms: number[]
+  bonds: number[]
+  color: string
+}
+
 export class Highlighter {
   editor: Editor
 
@@ -38,41 +44,36 @@ export class Highlighter {
     return Array.from(highlightsMap)
   }
 
-  create({
-    // how could it return an id?
-    atoms,
-    bonds,
-    color
-  }: {
-    atoms?: number[]
-    bonds?: number[]
-    color: string
-  }): void {
-    if (typeof color !== 'string') {
-      return
-    }
+  create(...args: HighlightAttributes[]) {
+    const createdHighlights: HighlightAttributes[] = []
 
-    if (!atoms && !bonds) {
-      return
-    }
+    args.forEach((arg) => {
+      const { atoms, bonds, color } = arg
+      if (typeof color !== 'string') {
+        return
+      }
 
-    const restruct = this.editor.render.ctab
+      if (!atoms && !bonds) {
+        return
+      }
 
-    const { validAtoms, validBonds } = getValidInputOnly(
-      restruct.molecule,
-      atoms,
-      bonds
-    )
+      const restruct = this.editor.render.ctab
 
-    if (validAtoms.length === 0 && validBonds.length === 0) {
-      return
-    }
+      const { validAtoms, validBonds } = getValidInputOnly(
+        restruct.molecule,
+        atoms,
+        bonds
+      )
 
+      if (validAtoms.length === 0 && validBonds.length === 0) {
+        return
+      }
+
+      createdHighlights.push({ atoms: validAtoms, bonds: validBonds, color })
+    })
     const action = fromHighlightCreate(
       this.editor.render.ctab,
-      color,
-      validAtoms,
-      validBonds
+      createdHighlights
     )
     this.editor.update(action)
   }

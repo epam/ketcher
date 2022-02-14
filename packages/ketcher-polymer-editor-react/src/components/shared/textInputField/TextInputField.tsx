@@ -48,7 +48,13 @@ const Input = styled.input(({ theme }) => ({
   }
 }))
 
-export const InputField = ({ value, id, onChange, label, ...rest }: Props) => {
+export const TextInputField = ({
+  value,
+  id,
+  onChange,
+  label,
+  ...rest
+}: Props) => {
   const handleChange = (event) => {
     onChange(event.target.value)
   }

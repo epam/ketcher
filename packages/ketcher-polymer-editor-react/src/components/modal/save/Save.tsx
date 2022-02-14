@@ -21,7 +21,7 @@ import { Modal } from 'components/shared/modal'
 import { DropDown } from 'components/shared/dropDown'
 import { Option } from 'components/shared/dropDown/dropDown'
 import { TextField } from 'components/shared/textEditor'
-import { InputField } from 'components/shared/inputField'
+import { TextInputField } from 'components/shared/textInputField'
 import { SaveButton } from 'components/modal/save/saveButton'
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats'
 import { ActionButton } from 'components/shared/actionButton'
@@ -166,7 +166,7 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
         <Form onSubmit={handleSave} id="save">
           <Row>
             <div>
-              <InputField
+              <TextInputField
                 value={currentFileName}
                 id="filename"
                 onChange={handleInputChange}

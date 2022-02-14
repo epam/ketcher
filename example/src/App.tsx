@@ -57,6 +57,12 @@ const App = () => {
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {
           ;(global as any).ketcher = ketcher
+          window.parent.postMessage(
+            {
+              eventType: 'init'
+            },
+            '*'
+          )
         }}
       />
       {polymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { render, screen } from 'test-utils'
-import { RnaMonomerSection } from './MonomerSection'
+import { RnaMonomerSection } from './RnaMonomerSection'
 import { fireEvent } from '@testing-library/react'
 
 describe('RNA Monomer Section', () => {

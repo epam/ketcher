@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled'
-import React from 'react'
 
 export type MonomerItemType = {
   label: string
@@ -27,11 +26,7 @@ interface MonomerItemProps {
   onClick: () => void
 }
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  colorScheme?: string
-}
-
-const Card = styled.div<CardProps>`
+const Card = styled.div<{ colorScheme?: string }>`
   background: ${({ colorScheme, theme }) =>
     colorScheme || theme.ketcher.color.monomer.default};
   border-radius: 2px;

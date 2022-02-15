@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { Switcher } from 'components/rna/Switcher'
 import { useEffect, useState } from 'react'
-import { Group, MonomerList } from 'components/monomerLibrary'
+import { Group, MonomerList } from '../../monomerLibrary/monomerLibraryList'
 
 type selectedMonomersType = {
   Sugar: string
@@ -33,15 +33,26 @@ interface MonomerSectionProps {
   }
 }
 
-const MonomerSection = ({ selectItem, items }: MonomerSectionProps) => {
-  const getInitialMonomers = () => {
-    return items.Nucleotide[0].groupItems[0].monomers as selectedMonomersType
-  }
+const getInitialMonomers = (items) => {
+  return items.Nucleotide[0].groupItems[0].monomers as selectedMonomersType
+}
+
+const RnaMonomerSection = ({ selectItem, items }: MonomerSectionProps) => {
+  const [selectedMonomers, setSelectedMonomers] =
+    useState<selectedMonomersType>(getInitialMonomers(items))
+  const [activeMonomerType, setActiveMonomerType] = useState('Nucleotide')
+  useEffect(() => {
+    const matchMonomerByType =
+      activeMonomerType === 'Nucleotide'
+        ? selectedMonomers
+        : selectedMonomers[activeMonomerType]
+    selectItem(matchMonomerByType)
+  }, [selectItem, activeMonomerType, selectedMonomers])
 
   const selectMonomerType = (type) => {
     if (type === 'reset') {
       setActiveMonomerType('Nucleotide')
-      setSelectedMonomers(getInitialMonomers())
+      setSelectedMonomers(getInitialMonomers(items))
     } else {
       setActiveMonomerType(type)
     }
@@ -60,17 +71,6 @@ const MonomerSection = ({ selectItem, items }: MonomerSectionProps) => {
     }
   }
 
-  const [selectedMonomers, setSelectedMonomers] =
-    useState<selectedMonomersType>(getInitialMonomers())
-  const [activeMonomerType, setActiveMonomerType] = useState('Nucleotide')
-  useEffect(() => {
-    const matchMonomerByType =
-      activeMonomerType === 'Nucleotide'
-        ? selectedMonomers
-        : selectedMonomers[activeMonomerType]
-    selectItem(matchMonomerByType)
-  }, [selectItem, activeMonomerType, selectedMonomers])
-
   return (
     <>
       <Switcher
@@ -84,4 +84,4 @@ const MonomerSection = ({ selectItem, items }: MonomerSectionProps) => {
     </>
   )
 }
-export { MonomerSection as RnaMonomerSection }
+export { RnaMonomerSection }

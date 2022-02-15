@@ -14,51 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../../../../../../style/mixins.less';
+import { Generics } from 'ketcher-core'
 
-.elementsTable {
-  background-color: @color-background-primary;
-  width: @width-large;
-  height: 390px;
+import { GenGroup } from './GenGroup'
+import classes from './GenericGroups.module.less'
 
-  > div {
-    overflow: hidden;
-    margin: 0;
-  }
-
-  > header,
-  > footer {
-    margin: @margin-left-right;
-  }
-
-  .tabs {
-    outline: none;
-    border-bottom: 1px solid @color-divider;
-    padding-left: 15px;
-  }
-
-  .tabsContent {
-    height: 31em;
-  }
-
-  .contentGeneral {
-    padding-left: 15px;
-    padding-right: 5px;
-  }
-
-  .periodTable {
-    position: fixed;
-
-    & > * {
-      line-height: normal;
-    }
-  }
-
-  .addAtom {
-    .button-main();
-
-    float: right;
-    position: relative;
-    z-index: 10;
-  }
+type GenericGroupsProps = {
+  selected: (label: string) => boolean
+  onSelect: (label: string) => void
 }
+
+function GenericGroups({ selected, onSelect }: GenericGroupsProps) {
+  return (
+    <div className={classes.genericGroups}>
+      <GenGroup groups={Generics} selected={selected} onSelect={onSelect} />
+    </div>
+  )
+}
+
+export default GenericGroups

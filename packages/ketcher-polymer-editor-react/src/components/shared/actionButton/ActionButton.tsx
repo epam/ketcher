@@ -80,6 +80,7 @@ type ActionButtonProps = {
 export const ActionButton = ({
   label,
   clickHandler,
+  children,
   styleType,
   ...rest
 }: ActionButtonProps) => {
@@ -90,7 +91,7 @@ export const ActionButton = ({
       role="button"
       {...rest}
     >
-      {label}
+      {children || label}
     </SecondaryButton>
   ) : (
     <PrimaryButton
@@ -99,7 +100,7 @@ export const ActionButton = ({
       role="button"
       {...rest}
     >
-      {label}
+      {children || label}
     </PrimaryButton>
   )
 }

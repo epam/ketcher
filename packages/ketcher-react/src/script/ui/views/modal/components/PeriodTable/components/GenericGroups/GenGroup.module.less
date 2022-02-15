@@ -14,73 +14,45 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import "./src/style/variables";
+@import 'src/style/variables';
+
+.fieldFlexWrapper {
+  display: flex;
+  margin-top: 18px;
+}
 
 .fieldset {
   border: none;
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 0;
 
   fieldset {
     display: inline-block;
+    vertical-align: text-top;
     padding-right: 0;
     padding-bottom: 0;
+    padding-left: 6px;
   }
 
   > legend {
-    margin-bottom: 8px;
-    margin-left: 2px;
+    margin-bottom: 5px;
     width: 100%;
-
-    &::after {
-      content: '';
-      display: block;
-      border: 1px solid @color-divider;
-      width: 100%;
-      margin-top: 7px;
-      margin-left: -2px;
-    }
-
-    & + fieldset {
-      margin-left: 2px;
-    }
   }
 
-  .subgroup,
-  .any,
-  .metal,
-  .halogen,
-  .no-carbon,
-  .atom fieldset,
-  .carbo fieldset,
-  .hetero fieldset {
+  .subgroup {
     position: relative;
     border: 0;
-    padding: 0 0 17px;
+    padding: 0 0 0;
+    margin-right: 16px;
+    margin-bottom: 2px;
 
     legend {
       font-size: 0.8em;
+      color: @color-text-secondary;
       bottom: 0.1em;
-      left: 0;
-      right: 0;
-      margin: 0 auto;
-      position: absolute;
+      width: 100%;
+      text-align: center;
     }
   }
-
-  &.carbo {
-    clear: both;
-    margin-right: 0.4em;
-  }
-
 }
-
-.acyclic,
-.cyclic {
-  padding-left: 40px;
-  width: calc(100% - 40px);
-
-  > .fieldset {
-    padding-left: 40px;
-    width: calc(100% - 40px);
-  }
-}
-

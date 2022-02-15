@@ -1,0 +1,276 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Save modal renders correctly 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body
+    style="padding-right: 1024px; overflow: hidden;"
+  >
+    <div
+      aria-hidden="true"
+    />
+    <div
+      class="MuiModal-root MuiDialog-root css-1hqci05-MuiModal-root-MuiDialog-root"
+      role="presentation"
+    >
+      <div
+        aria-hidden="true"
+        class="MuiBackdrop-root css-yiavyu-MuiBackdrop-root-MuiDialog-backdrop"
+        style="opacity: 0.4; background: rgb(0, 86, 98); webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
+      />
+      <div
+        data-test="sentinelStart"
+        tabindex="0"
+      />
+      <div
+        class="MuiDialog-container MuiDialog-scrollPaper css-hz1bth-MuiDialog-container"
+        role="presentation"
+        style="opacity: 1; webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
+        tabindex="-1"
+      >
+        <div
+          aria-labelledby="mui-1"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthMd css-12rl710-MuiPaper-root-MuiDialog-paper"
+          role="dialog"
+          style="min-width: 20vw; background: rgb(242, 242, 242); border-radius: 8px; color: rgb(51, 51, 51);"
+        >
+          <h2
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-1x5ms5d-MuiTypography-root-MuiDialogTitle-root"
+            id="mui-1"
+          >
+            <div
+              class="css-lvyu5j"
+            >
+              save structure
+            </div>
+            <button
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+              tabindex="0"
+              title="Close window"
+              type="button"
+            >
+              <icon-close.svg
+                fill="#525252"
+                role="img"
+              />
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+          </h2>
+          <div
+            class="MuiDialogContent-root css-19mk2hi-MuiDialogContent-root"
+          >
+            <form
+              class="css-1g4yje1"
+              id="save"
+            >
+              <div
+                class="css-1abudc7"
+              >
+                <div>
+                  <label
+                    class="css-14c8znx"
+                    for="filename"
+                  >
+                    File name:
+                  </label>
+                  <input
+                    class="css-yab8h5"
+                    id="filename"
+                    type="text"
+                    value="ketcher"
+                  />
+                </div>
+                <div
+                  style="line-height: 24px;"
+                >
+                  <label
+                    class="css-14c8znx"
+                    for="fileformat"
+                  >
+                    File format:
+                  </label>
+                  <div
+                    class="MuiFormControl-root css-dk6fk8-MuiFormControl-root"
+                  >
+                    <div
+                      class="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-ndqum2-MuiInputBase-root-MuiOutlinedInput-root"
+                    >
+                      <div
+                        aria-expanded="false"
+                        aria-haspopup="listbox"
+                        class="MuiSelect-select MuiSelect-outlined MuiOutlinedInput-input MuiInputBase-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <span>
+                          MDL Molfile V3000
+                        </span>
+                      </div>
+                      <input
+                        aria-hidden="true"
+                        class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                        tabindex="-1"
+                        value="mol"
+                      />
+                      <icon-chevron.svg
+                        classname="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
+                        fill="#525252"
+                        role="img"
+                      />
+                      <fieldset
+                        aria-hidden="true"
+                        class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                      >
+                        <legend
+                          class="css-nnbavb"
+                        >
+                          <span
+                            class="notranslate"
+                          >
+                            ​
+                          </span>
+                        </legend>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <textarea
+                class="css-6en6at"
+                readonly=""
+              >
+                
+    -INDIGO-02102212382D
+  
+    0  0  0  0  0  0  0  0  0  0  0 V3000
+  M  V30 BEGIN CTAB
+  M  V30 COUNTS 11 10 0 0 0
+  M  V30 BEGIN ATOM
+  M  V30 1 C 2.75 -5.225 0.0 0
+  M  V30 2 C 3.61603 -5.725 0.0 0
+  M  V30 3 C 4.48205 -5.225 0.0 0
+  M  V30 4 C 5.34808 -5.725 0.0 0
+  M  V30 5 C 6.2141 -5.225 0.0 0
+  M  V30 6 C 7.08013 -5.725 0.0 0
+  M  V30 7 C 7.94615 -5.225 0.0 0
+  M  V30 8 C 8.81218 -5.725 0.0 0
+  M  V30 9 C 9.6782 -5.225 0.0 0
+  M  V30 10 C 10.5442 -5.725 0.0 0
+  M  V30 11 C 11.4103 -5.225 0.0 0
+  M  V30 END ATOM
+  M  V30 BEGIN BOND
+  M  V30 1 1 1 2
+  M  V30 2 1 2 3
+  M  V30 3 1 3 4
+  M  V30 4 1 4 5
+  M  V30 5 1 5 6
+  M  V30 6 1 6 7
+  M  V30 7 1 7 8
+  M  V30 8 1 8 9
+  M  V30 9 1 9 10
+  M  V30 10 1 10 11
+  M  V30 END BOND
+  M  V30 END CTAB
+  M  END
+  
+              </textarea>
+            </form>
+          </div>
+          <div
+            class="MuiDialogActions-root MuiDialogActions-spacing css-1codpvf-MuiDialogActions-root"
+          >
+            <button
+              class="MuiButtonBase-root css-1grmx02-MuiButtonBase-root"
+              role="button"
+              tabindex="0"
+              title="Errors"
+              type="button"
+            >
+              <icon-error.svg
+                fill="#525252"
+                role="img"
+              />
+              Errors
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+            <button
+              class="MuiButtonBase-root css-pck0ik-MuiButtonBase-root"
+              role="button"
+              tabindex="0"
+              title="Save as file"
+              type="submit"
+            >
+              Save as file
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        data-test="sentinelEnd"
+        tabindex="0"
+      />
+    </div>
+  </body>,
+  "container": <div
+    aria-hidden="true"
+  />,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

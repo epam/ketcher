@@ -14,4 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './GenGroup'
+export * from './formatProperties'
+export * from './supportedFormatProperties'

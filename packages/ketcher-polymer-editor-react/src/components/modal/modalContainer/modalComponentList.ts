@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 import { Open } from 'components/modal/Open'
+import { Save } from 'components/modal/save'
 
-export const modalComponentList = {
-  open: Open
+export const modalComponentList: Record<string, any> = {
+  open: Open,
+  save: Save
 }

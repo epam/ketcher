@@ -31,6 +31,7 @@ export type EditorTheme = {
       secondary: string
       light: string
       dark: string
+      error: string
     }
     tab: {
       regular: string
@@ -78,10 +79,22 @@ export type EditorTheme = {
     spinner: string
     error: string
     input: {
+      text: {
+        default: string
+        active: string
+        disabled: string
+        error: string
+      }
+      background: {
+        default: string
+        hover: string
+        disabled: string
+      }
       border: {
         regular: string
         active: string
         hover: string
+        error: string
       }
     }
     icon: {

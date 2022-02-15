@@ -14,34 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-import GenGroup from './components'
-import { Generics } from 'ketcher-core'
-import classes from './GenericGroups.module.less'
+import {
+  ChemicalMimeType,
+  SupportedFormatProperties
+} from './supportedFormatProperties'
 
-function GenericGroups({ selected, onSelect, className, ...props }) {
-  return (
-    <div summary="Generic Groups" className={classes[className]} {...props}>
-      <GenGroup
-        gen={Generics}
-        name="atom"
-        selected={selected}
-        onSelect={onSelect}
-      />
-      <GenGroup
-        gen={Generics}
-        name="special"
-        selected={selected}
-        onSelect={onSelect}
-      />
+export type SupportedFormats = 'mol' | 'helm'
 
-      <GenGroup
-        gen={Generics}
-        name="group"
-        selected={selected}
-        onSelect={onSelect}
-      />
-    </div>
-  )
+type FormatProperties = {
+  [key in SupportedFormats]: SupportedFormatProperties
 }
 
-export default GenericGroups
+const formatProperties: FormatProperties = {
+  mol: new SupportedFormatProperties(
+    'MDL Molfile V3000',
+    ChemicalMimeType.Mol,
+    ['.mol'],
+    true,
+    { 'molfile-saving-mode': '3000' }
+  ),
+  helm: new SupportedFormatProperties('HELM', ChemicalMimeType.Helm, ['.helm'])
+}
+
+export const getPropertiesByFormat = (format: SupportedFormats) => {
+  return formatProperties[format]
+}

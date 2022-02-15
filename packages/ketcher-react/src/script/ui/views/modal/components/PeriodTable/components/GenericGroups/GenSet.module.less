@@ -14,51 +14,31 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../../../../../../style/mixins.less';
+@import 'src/style/mixins.less';
 
-.elementsTable {
-  background-color: @color-background-primary;
-  width: @width-large;
-  height: 390px;
+.button {
+  font-size: @font-size-header;
+  line-height: @line-height-header;
+  vertical-align: middle;
+  padding: 3.5px 12px;
+  background: @color-button-atom;
+  border: none;
+  border-radius: 8px;
+  color: @color-text-black;
+  margin-right: 4px;
+  box-shadow: 0 0 0 4px @color-background-primary; // This is a hack to prevent lines from crossing button
 
-  > div {
-    overflow: hidden;
-    margin: 0;
+  &:hover {
+    background-color: @color-button-atom-hover;
   }
 
-  > header,
-  > footer {
-    margin: @margin-left-right;
+  &:focus,
+  &.selected {
+    background-color: @color-button-atom-clicked;
+    color: @color-text-light;
   }
+}
 
-  .tabs {
-    outline: none;
-    border-bottom: 1px solid @color-divider;
-    padding-left: 15px;
-  }
-
-  .tabsContent {
-    height: 31em;
-  }
-
-  .contentGeneral {
-    padding-left: 15px;
-    padding-right: 5px;
-  }
-
-  .periodTable {
-    position: fixed;
-
-    & > * {
-      line-height: normal;
-    }
-  }
-
-  .addAtom {
-    .button-main();
-
-    float: right;
-    position: relative;
-    z-index: 10;
-  }
+.legendBox {
+  position: relative;
 }

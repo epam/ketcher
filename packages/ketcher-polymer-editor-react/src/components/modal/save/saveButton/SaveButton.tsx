@@ -14,51 +14,41 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../../../../../../style/mixins.less';
+import { saveAs } from 'file-saver'
 
-.elementsTable {
-  background-color: @color-background-primary;
-  width: @width-large;
-  height: 390px;
+import { ActionButton } from 'components/shared/actionButton'
+import { ChemicalMimeType } from 'helpers/formats'
 
-  > div {
-    overflow: hidden;
-    margin: 0;
+type Props = {
+  label: string
+  data: string
+  filename: string
+  type: ChemicalMimeType
+  onSave: () => void
+  disabled?: boolean
+}
+
+export const SaveButton = ({
+  label,
+  data,
+  filename,
+  type,
+  onSave,
+  disabled = false
+}: Props) => {
+  const handleSave = () => {
+    const blob = new Blob([data], { type })
+    saveAs(blob, filename)
+    console.log('saved')
+    onSave()
   }
 
-  > header,
-  > footer {
-    margin: @margin-left-right;
-  }
-
-  .tabs {
-    outline: none;
-    border-bottom: 1px solid @color-divider;
-    padding-left: 15px;
-  }
-
-  .tabsContent {
-    height: 31em;
-  }
-
-  .contentGeneral {
-    padding-left: 15px;
-    padding-right: 5px;
-  }
-
-  .periodTable {
-    position: fixed;
-
-    & > * {
-      line-height: normal;
-    }
-  }
-
-  .addAtom {
-    .button-main();
-
-    float: right;
-    position: relative;
-    z-index: 10;
-  }
+  return (
+    <ActionButton
+      label={label}
+      clickHandler={handleSave}
+      type="submit"
+      disabled={disabled}
+    />
+  )
 }

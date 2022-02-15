@@ -26,10 +26,11 @@ export const defaultTheme: EditorTheme = {
       overlay: '#005662'
     },
     text: {
-      primary: '#121212',
-      secondary: '#BCBCBC',
+      primary: '#333333',
+      secondary: '#585858',
       light: '#FFFFFF',
-      dark: '#000000'
+      dark: '#000000',
+      error: '#FF4A4A'
     },
     tab: {
       regular: '#F3F3F3',
@@ -77,10 +78,22 @@ export const defaultTheme: EditorTheme = {
     spinner: '#005662',
     error: '#FF4A4A',
     input: {
+      text: {
+        default: '#585858',
+        active: '#333333',
+        disabled: '#585858',
+        error: '#FF4A4A'
+      },
+      background: {
+        default: '#FFFFFF',
+        hover: '#DDDDDD',
+        disabled: '#DDDDDD'
+      },
       border: {
         regular: '#005662',
         active: '#FFFFFF',
-        hover: '#DDDDDD'
+        hover: '#DDDDDD',
+        error: '#FF4A4A'
       }
     },
     icon: {

@@ -14,29 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from './GenSet.module.less'
-import clsx from 'clsx'
-
-function GenSet({ labels, caption = '', selected, onSelect, ...props }) {
-  return (
-    <fieldset {...props}>
-      {labels.map((label, index) => (
-        <button
-          key={index}
-          onClick={() => onSelect(label)}
-          className={clsx(
-            {
-              [classes.selected]: selected(label)
-            },
-            classes.button
-          )}
-        >
-          {label}
-        </button>
-      ))}
-      {caption ? <legend>{caption}</legend> : null}
-    </fieldset>
-  )
+export enum ChemicalMimeType {
+  Mol = 'chemical/x-mdl-molfile',
+  Helm = 'chemical/x-helm'
 }
 
-export default GenSet
+export class SupportedFormatProperties {
+  name: string
+  mime: ChemicalMimeType
+  extensions: string[]
+  supportsCoords?: boolean
+  options?: any
+
+  constructor(
+    name: string,
+    mime: ChemicalMimeType,
+    extensions: string[],
+    supportsCoords?: boolean,
+    options?: any
+  ) {
+    this.name = name
+    this.mime = mime
+    this.extensions = extensions
+    this.supportsCoords = supportsCoords || false
+    this.options = options || {}
+  }
+}

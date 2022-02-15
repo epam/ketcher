@@ -14,51 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../../../../../../style/mixins.less';
+@import 'src/style/variables';
 
-.elementsTable {
-  background-color: @color-background-primary;
-  width: @width-large;
-  height: 390px;
+.nodeLines {
+  padding-left: 16.5px;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 20px;
 
-  > div {
-    overflow: hidden;
-    margin: 0;
-  }
-
-  > header,
-  > footer {
-    margin: @margin-left-right;
-  }
-
-  .tabs {
-    outline: none;
+  .upperLines {
+    margin-top: -30px;
+    padding-top: 30px;
+    height: 36px;
+    border-left: 1px solid @color-divider;
     border-bottom: 1px solid @color-divider;
-    padding-left: 15px;
   }
 
-  .tabsContent {
-    height: 31em;
-  }
-
-  .contentGeneral {
-    padding-left: 15px;
-    padding-right: 5px;
-  }
-
-  .periodTable {
-    position: fixed;
-
-    & > * {
-      line-height: normal;
-    }
-  }
-
-  .addAtom {
-    .button-main();
-
-    float: right;
-    position: relative;
-    z-index: 10;
+  .lowerLine {
+    height: calc(100% - 40px);
+    border-left: 1px solid @color-divider;
+    margin-bottom: -10px;
+    padding-bottom: 10px;
   }
 }

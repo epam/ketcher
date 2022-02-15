@@ -79,15 +79,15 @@ export type EditorTheme = {
     error: string
     input: {
       text: {
-        rested: string
+        default: string
         active: string
-        inactive: string
+        disabled: string
         error: string
       }
       background: {
-        rested: string
+        default: string
         hover: string
-        inactive: string
+        disabled: string
       }
       border: {
         regular: string

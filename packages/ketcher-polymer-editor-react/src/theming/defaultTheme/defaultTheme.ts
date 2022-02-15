@@ -78,15 +78,15 @@ export const defaultTheme: EditorTheme = {
     error: '#FF4A4A',
     input: {
       text: {
-        rested: '#585858',
+        default: '#585858',
         active: '#333333',
-        inactive: '#585858',
+        disabled: '#585858',
         error: '#FF4A4A'
       },
       background: {
-        rested: '#FFFFFF',
+        default: '#FFFFFF',
         hover: '#DDDDDD',
-        inactive: '#DDDDDD'
+        disabled: '#DDDDDD'
       },
       border: {
         regular: '#005662',

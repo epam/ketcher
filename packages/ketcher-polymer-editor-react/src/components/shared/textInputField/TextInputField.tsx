@@ -33,7 +33,7 @@ const Input = styled.input(({ theme }) => ({
   padding: '4px 8px',
   border: 'none',
   borderRadius: '2px',
-  backgroundColor: theme.ketcher.color.input.background.rested,
+  backgroundColor: theme.ketcher.color.input.background.default,
   color: theme.ketcher.color.text.primary,
   outline: 'transparent',
   width: '164px',

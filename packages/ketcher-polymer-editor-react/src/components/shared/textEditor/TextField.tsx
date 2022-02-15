@@ -35,7 +35,7 @@ const StyledTextarea = styled.textarea`
   outline: transparent;
   border: none;
   padding: 8px;
-  color: ${({ theme }) => theme.ketcher.color.input.text.rested};
+  color: ${({ theme }) => theme.ketcher.color.input.text.default};
   font-size: ${({ theme }) => theme.ketcher.font.size.regular};
 
   ${({ theme }) => scrollbarThin(theme)};

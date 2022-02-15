@@ -32,9 +32,9 @@ const AddToCanvasBar = styled('div')`
 `
 
 type AddToCanvasProps = {
-  notationOptions: Array<{ id: number; label: string }>
-  selectedNotationId: number
-  selectionHandler: (value: number) => void
+  notationOptions: Array<{ id: string; label: string }>
+  selectedNotationId: string
+  selectionHandler: (value: string) => void
   inputValue: string
   inputHandler: (value: string) => void
   addButtonHandler: () => void

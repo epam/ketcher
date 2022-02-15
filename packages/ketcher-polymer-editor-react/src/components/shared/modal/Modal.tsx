@@ -16,7 +16,8 @@ interface ModalProps {
   title: string
   isOpen: boolean
   showCloseButton?: boolean
-  onClose?: () => void
+  onClose: () => void
+  className?: string
 }
 
 const Header = styled(DialogTitle)(({ theme }) => ({
@@ -54,7 +55,8 @@ export const Modal = ({
   title,
   isOpen,
   showCloseButton = true,
-  onClose
+  onClose,
+  className
 }: ModalProps) => {
   const theme = useTheme()
 
@@ -101,6 +103,7 @@ export const Modal = ({
       maxWidth="md"
       onClose={onClose}
       disableEscapeKeyDown={!showCloseButton}
+      className={className}
     >
       <Header>
         <Title>{title}</Title>

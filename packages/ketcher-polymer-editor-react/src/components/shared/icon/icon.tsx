@@ -42,6 +42,8 @@ import StarIcon from 'assets/icons/files/star.svg'
 import SingleBondIcon from 'assets/icons/files/single-bond.svg'
 import VerticalFlipIcon from 'assets/icons/files/vertical-flip.svg'
 import UndoIcon from 'assets/icons/files/undo.svg'
+import SaveIcon from 'assets/icons/files/save.svg'
+import ErrorIcon from 'assets/icons/files/error.svg'
 
 const iconMap = {
   'arrow-down': ArrowDownIcon,
@@ -69,7 +71,9 @@ const iconMap = {
   star: StarIcon,
   'single-bond': SingleBondIcon,
   'vertical-flip': VerticalFlipIcon,
-  undo: UndoIcon
+  undo: UndoIcon,
+  save: SaveIcon,
+  error: ErrorIcon
 }
 
 type IconNameType = keyof typeof iconMap

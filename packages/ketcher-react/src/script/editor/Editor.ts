@@ -107,7 +107,7 @@ class Editor implements KetcherEditor {
   historyStack: any
   historyPtr: any
   errorHandler: ((message: string) => void) | null
-  highlight: Highlighter
+  highlights: Highlighter
   event: {
     message: Subscription
     elementEdit: PipelineSubscription
@@ -142,7 +142,7 @@ class Editor implements KetcherEditor {
     this.historyStack = []
     this.historyPtr = 0
     this.errorHandler = null
-    this.highlight = new Highlighter(this)
+    this.highlights = new Highlighter(this)
 
     this.event = {
       message: new Subscription(),

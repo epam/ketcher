@@ -14,14 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { union } from 'lodash'
-
-import {
-  fromHighlightCreate,
-  fromHighlightClear,
-  fromHighlightDelete,
-  fromHighlightUpdate
-} from 'ketcher-core'
+import { fromHighlightCreate, fromHighlightClear } from 'ketcher-core'
 import type { Struct } from 'ketcher-core'
 
 import type { Editor } from './Editor'
@@ -41,7 +34,11 @@ export class Highlighter {
 
   getAll() {
     const highlightsMap = this.editor.render.ctab.molecule.highlights
-    return Array.from(highlightsMap)
+    const highlightsArray = [...highlightsMap].map(([id, highlight]) => ({
+      id,
+      highlight
+    }))
+    return highlightsArray
   }
 
   create(...args: HighlightAttributes[]) {
@@ -78,6 +75,13 @@ export class Highlighter {
     this.editor.update(action)
   }
 
+  clear() {
+    const action = fromHighlightClear(this.editor.render.ctab)
+    this.editor.update(action)
+  }
+
+  /*
+  // Update by ID
   update(
     id: number,
     {
@@ -119,6 +123,7 @@ export class Highlighter {
     this.editor.update(action)
   }
 
+  // Add items to highlight by id
   append(
     id: number,
     {
@@ -166,6 +171,7 @@ export class Highlighter {
     }
   }
 
+  // Delete by ID
   delete(id: number) {
     if (typeof id !== 'number') {
       return
@@ -174,11 +180,7 @@ export class Highlighter {
     const action = fromHighlightDelete(this.editor.render.ctab, id)
     this.editor.update(action)
   }
-
-  clear() {
-    const action = fromHighlightClear(this.editor.render.ctab)
-    this.editor.update(action)
-  }
+  */
 }
 
 type ValidInput = {

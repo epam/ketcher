@@ -16,11 +16,7 @@
 
 import { ReStruct } from '../../render'
 
-import {
-  HighlightAdd,
-  HighlightDelete,
-  HighlightUpdate
-} from '../operations/highlight'
+import { HighlightAdd, HighlightDelete } from '../operations/highlight'
 
 import { Action } from './action'
 
@@ -44,6 +40,20 @@ export function fromHighlightCreate(
   return action.perform(restruct)
 }
 
+export function fromHighlightClear(restruct: ReStruct): Action {
+  const action = new Action()
+
+  const highlights = restruct.molecule.highlights
+
+  highlights.forEach((_, key) => {
+    action.addOp(new HighlightDelete(key))
+  })
+
+  return action.perform(restruct)
+}
+
+/*
+// Update highlight by placing new one on the given id
 export function fromHighlightUpdate(
   highlightId: number,
   restruct: ReStruct,
@@ -65,7 +75,10 @@ export function fromHighlightUpdate(
 
   return action.perform(restruct)
 }
+*/
 
+/*
+// Delete single highlight by id
 export function fromHighlightDelete(
   restruct: ReStruct,
   highlightId: number
@@ -80,15 +93,4 @@ export function fromHighlightDelete(
   }
   return action
 }
-
-export function fromHighlightClear(restruct: ReStruct): Action {
-  const action = new Action()
-
-  const highlights = restruct.molecule.highlights
-
-  highlights.forEach((_, key) => {
-    action.addOp(new HighlightDelete(key))
-  })
-
-  return action.perform(restruct)
-}
+*/

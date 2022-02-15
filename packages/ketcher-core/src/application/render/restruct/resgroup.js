@@ -159,10 +159,10 @@ class ReSGroup extends ReObject {
     }
     set.push(sGroupItem.hovering)
 
-    SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach((aid) => {
+    SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach(aid => {
       set.push(render.ctab.atoms.get(aid).makeHoverPlate(render))
     }, this)
-    SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach((bid) => {
+    SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach(bid => {
       set.push(render.ctab.bonds.get(bid).makeHoverPlate(render))
     }, this)
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, set)
@@ -303,7 +303,7 @@ function drawAttachedDat(restruct, sgroup) {
   const paper = render.paper
   const set = paper.set()
 
-  SGroup.getAtoms(restruct, sgroup).forEach((aid) => {
+  SGroup.getAtoms(restruct, sgroup).forEach(aid => {
     const atom = restruct.atoms.get(aid)
     const p = Scale.obj2scaled(atom.a.pp, options)
     const bb = atom.visel.boundingBox
@@ -389,7 +389,7 @@ function getBracketParameters(
       var dt = dr.rotateSC(1, 0)
       var db = dt.negated()
 
-      mol.sGroupForest.children.get(id).forEach((sgid) => {
+      mol.sGroupForest.children.get(id).forEach(sgid => {
         var bba = render.ctab.sgroups.get(sgid).visel.boundingBox
         bba = bba
           .translate((render.options.offset || new Vec2()).negated())

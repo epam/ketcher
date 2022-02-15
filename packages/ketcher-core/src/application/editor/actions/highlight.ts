@@ -32,7 +32,7 @@ export function fromHighlightCreate(
 ): Action {
   const action = new Action()
 
-  highlights.forEach((highlight) => {
+  highlights.forEach(highlight => {
     const { atoms, bonds, color } = highlight
 
     action.addOp(new HighlightAdd(atoms, bonds, color))

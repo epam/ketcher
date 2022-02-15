@@ -29,11 +29,11 @@ class ReFrag extends ReObject {
   }
   fragGetAtoms(restruct, fid) {
     return Array.from(restruct.atoms.keys()).filter(
-      (aid) => restruct.atoms.get(aid).a.fragment === fid
+      aid => restruct.atoms.get(aid).a.fragment === fid
     )
   }
   fragGetBonds(restruct, fid) {
-    return Array.from(restruct.bonds.keys()).filter((bid) => {
+    return Array.from(restruct.bonds.keys()).filter(bid => {
       const bond = restruct.bonds.get(bid).b
 
       const firstFrag = restruct.atoms.get(bond.begin).a.fragment
@@ -45,7 +45,7 @@ class ReFrag extends ReObject {
   calcBBox(restruct, fid, render) {
     // TODO need to review parameter list
     var ret
-    restruct.atoms.forEach((atom) => {
+    restruct.atoms.forEach(atom => {
       if (atom.a.fragment !== fid) return
 
       // TODO ReObject.calcBBox to be used instead
@@ -101,11 +101,11 @@ class ReFrag extends ReObject {
 
     fid = parseInt(fid, 10)
 
-    render.ctab.atoms.forEach((atom) => {
+    render.ctab.atoms.forEach(atom => {
       if (atom.a.fragment === fid) atom.setHover(hover, render)
     })
 
-    render.ctab.bonds.forEach((bond) => {
+    render.ctab.bonds.forEach(bond => {
       if (render.ctab.atoms.get(bond.b.begin).a.fragment === fid) {
         bond.setHover(hover, render)
       }

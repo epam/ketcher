@@ -207,7 +207,7 @@ function notifyChanged(restruct: ReStruct, atoms?: number[], bonds?: number[]) {
   const reBonds = restruct.bonds
 
   if (atoms) {
-    atoms.forEach((atomId) => {
+    atoms.forEach(atomId => {
       if (typeof reAtoms.get(atomId) !== 'undefined') {
         restruct.markAtom(atomId, 1)
       }
@@ -215,7 +215,7 @@ function notifyChanged(restruct: ReStruct, atoms?: number[], bonds?: number[]) {
   }
 
   if (bonds) {
-    bonds.forEach((bondId) => {
+    bonds.forEach(bondId => {
       if (typeof reBonds.get(bondId) !== 'undefined') {
         restruct.markBond(bondId, 1)
       }

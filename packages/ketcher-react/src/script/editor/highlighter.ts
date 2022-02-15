@@ -44,7 +44,7 @@ export class Highlighter {
   create(...args: HighlightAttributes[]) {
     const createdHighlights: HighlightAttributes[] = []
 
-    args.forEach((arg) => {
+    args.forEach(arg => {
       const { atoms, bonds, color } = arg
       if (typeof color !== 'string') {
         return
@@ -201,12 +201,12 @@ function getValidInputOnly(struct: Struct, atoms, bonds): ValidInput {
 
   // Filter out atom ids that are not in struct
   if (atoms.length > 0) {
-    atoms = atoms.filter((aid) => structAtoms.has(aid))
+    atoms = atoms.filter(aid => structAtoms.has(aid))
   }
 
   // Filter out bond ids that are not in struct
   if (bonds.length > 0) {
-    bonds = bonds.filter((bid) => structBonds.has(bid))
+    bonds = bonds.filter(bid => structBonds.has(bid))
   }
 
   return {

@@ -365,7 +365,7 @@ class ReAtom extends ReObject {
     const highlights = restruct.molecule.highlights
     let isHighlighted = false
     let highlightColor = ''
-    highlights.forEach((highlight) => {
+    highlights.forEach(highlight => {
       const hasCurrentHighlight = highlight.atoms?.includes(aid)
       isHighlighted = isHighlighted || hasCurrentHighlight
       if (hasCurrentHighlight) {
@@ -527,7 +527,7 @@ function setHydrogenPos(struct, atom) {
   let nl = 0
   let nr = 0
 
-  atom.a.neighbors.forEach((nei) => {
+  atom.a.neighbors.forEach(nei => {
     const d = struct.halfBonds.get(nei).dir
 
     if (d.x <= 0) {
@@ -1018,7 +1018,7 @@ function pathAndRBoxTranslate(path, rbb, x, y) {
 
 function bisectLargestSector(atom: ReAtom, struct: Struct) {
   let angles: Array<number> = []
-  atom.a.neighbors.forEach((hbid) => {
+  atom.a.neighbors.forEach(hbid => {
     const hb = struct.halfBonds.get(hbid)
     hb && angles.push(hb.ang)
   })

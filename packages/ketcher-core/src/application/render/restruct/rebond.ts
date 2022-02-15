@@ -212,7 +212,7 @@ class ReBond extends ReObject {
     const highlights = restruct.molecule.highlights
     let isHighlighted = false
     let highlightColor = ''
-    highlights.forEach((highlight) => {
+    highlights.forEach(highlight => {
       const hasCurrentHighlight = highlight.bonds?.includes(bid)
       isHighlighted = isHighlighted || hasCurrentHighlight
       if (hasCurrentHighlight) {
@@ -264,7 +264,7 @@ function findIncomingStereoUpBond(
   includeBoldStereoBond: boolean,
   restruct: ReStruct
 ): number {
-  return atom.neighbors.findIndex((hbid) => {
+  return atom.neighbors.findIndex(hbid => {
     const hb = restruct.molecule.halfBonds.get(hbid)
 
     if (!hb || hb.bid === bid0) return false
@@ -296,7 +296,7 @@ function findIncomingUpBonds(
   bond: ReBond,
   restruct: ReStruct
 ): void {
-  const halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
+  const halfbonds = [bond.b.begin, bond.b.end].map(aid => {
     const atom = restruct.molecule.atoms.get(aid)
     if (!atom) return -1
     const pos = findIncomingStereoUpBond(atom, bid0, true, restruct)
@@ -310,7 +310,7 @@ function findIncomingUpBonds(
 }
 
 function checkStereoBold(bid0, bond, restruct) {
-  const halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
+  const halfbonds = [bond.b.begin, bond.b.end].map(aid => {
     const atom = restruct.molecule.atoms.get(aid)
     const pos = findIncomingStereoUpBond(atom, bid0, false, restruct)
     return pos < 0 ? -1 : atom.neighbors[pos]
@@ -742,11 +742,11 @@ function getBondAromaticPath(
 
   if (bond.b.type === Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
     mark = bondShift > 0 ? 1 : 2
-    dash = dashdotPattern.map((v) => v * options.scale)
+    dash = dashdotPattern.map(v => v * options.scale)
   }
   if (bond.b.type === Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
     mark = 3
-    dash = dashdotPattern.map((v) => v * options.scale)
+    dash = dashdotPattern.map(v => v * options.scale)
   }
   const paths = getAromaticBondPaths(
     hb1,

@@ -34,7 +34,7 @@ class ReRGroup extends ReObject {
   }
   getAtoms(render) {
     var ret = []
-    this.item.frags.forEach((fid) => {
+    this.item.frags.forEach(fid => {
       ret = ret.concat(
         render.ctab.frags.get(fid).fragGetAtoms(render.ctab, fid)
       )
@@ -43,7 +43,7 @@ class ReRGroup extends ReObject {
   }
   getBonds(render) {
     var ret = []
-    this.item.frags.forEach((fid) => {
+    this.item.frags.forEach(fid => {
       ret = ret.concat(
         render.ctab.frags.get(fid).fragGetBonds(render.ctab, fid)
       )
@@ -52,7 +52,7 @@ class ReRGroup extends ReObject {
   }
   calcBBox(render) {
     let ret = null
-    this.item.frags.forEach((fid) => {
+    this.item.frags.forEach(fid => {
       const bbf = render.ctab.frags.get(fid).calcBBox(render.ctab, fid, render)
       if (bbf) ret = ret ? Box2Abs.union(ret, bbf) : bbf
     })
@@ -164,7 +164,7 @@ class ReRGroup extends ReObject {
   show(restruct, id, options) {
     const drawing = this.draw(restruct.render, options)
 
-    Object.keys(drawing).forEach((group) => {
+    Object.keys(drawing).forEach(group => {
       while (drawing[group].length > 0)
         restruct.addReObjectPath(
           LayerMap.data,

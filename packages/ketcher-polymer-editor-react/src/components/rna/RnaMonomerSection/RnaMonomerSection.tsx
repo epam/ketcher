@@ -23,7 +23,7 @@ type selectedMonomersType = {
   Phosphate: string
 }
 
-interface MonomerSectionProps {
+export interface MonomerSectionProps {
   selectItem: (item) => void
   items: {
     Nucleotide: Array<Group>

@@ -6,7 +6,7 @@ export type Group = {
   groupTitle?: string
 }
 
-interface MonomerListProps {
+export interface MonomerListProps {
   list: Array<Group>
   onItemClick: (item) => void
 }

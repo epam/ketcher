@@ -1,13 +1,7 @@
 import { RnaMonomerSection } from 'components/rna/RnaMonomerSection'
 import { MonomerList } from './monomerLibraryList'
 
-type TabContent = {
-  caption: string
-  component: React.FC<any>
-  props?: any
-}
-
-export const tabsContent: TabContent[] = [
+export const tabsContent = [
   {
     caption: '✩',
     component: () => <></>

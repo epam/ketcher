@@ -23,6 +23,7 @@ export type TextEditorProps = {
   inputHandler?: (str: string) => void
   readonly?: boolean
   selectOnInit?: boolean
+  className?: string
 }
 
 const StyledTextarea = styled.textarea`
@@ -49,7 +50,8 @@ export const TextField = ({
   struct,
   inputHandler,
   readonly = false,
-  selectOnInit = false
+  selectOnInit = false,
+  className
 }: TextEditorProps) => {
   const textArea = useRef<HTMLTextAreaElement>(null)
 
@@ -65,6 +67,7 @@ export const TextField = ({
       readOnly={readonly}
       onChange={inputHandler && ((event) => inputHandler(event.target.value))}
       ref={textArea}
+      className={className}
     />
   )
 }

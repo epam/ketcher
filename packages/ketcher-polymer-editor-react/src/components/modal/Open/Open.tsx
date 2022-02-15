@@ -116,7 +116,7 @@ const Open = ({ isModalOpen, onClose }: Props) => {
           selectClipboard={() => setCurrentState(MODAL_STATES.textEditor)}
           fileLoadHandler={onFileLoad}
           errorHandler={errorHandler}
-          structStr={structStr}
+          struct={structStr}
           inputHandler={setStructStr}
         />
       </Modal.Content>

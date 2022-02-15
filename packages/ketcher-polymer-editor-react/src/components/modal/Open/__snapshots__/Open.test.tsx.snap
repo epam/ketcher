@@ -32,7 +32,7 @@ Object {
           aria-labelledby="mui-1"
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthMd css-12rl710-MuiPaper-root-MuiDialog-paper"
           role="dialog"
-          style="min-width: 20vw; background: rgb(242, 242, 242); border-radius: 8px; color: rgb(18, 18, 18);"
+          style="min-width: 20vw; background: rgb(242, 242, 242); border-radius: 8px; color: rgb(51, 51, 51);"
         >
           <h2
             class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-1x5ms5d-MuiTypography-root-MuiDialogTitle-root"

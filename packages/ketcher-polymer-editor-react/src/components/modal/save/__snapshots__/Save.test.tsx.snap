@@ -182,7 +182,7 @@ Object {
             class="MuiDialogActions-root MuiDialogActions-spacing css-1codpvf-MuiDialogActions-root"
           >
             <button
-              class="MuiButtonBase-root css-1grmx02-MuiButtonBase-root"
+              class="MuiButtonBase-root css-1uk7g1a-MuiButtonBase-root"
               role="button"
               tabindex="0"
               title="Errors"
@@ -198,7 +198,7 @@ Object {
               />
             </button>
             <button
-              class="MuiButtonBase-root css-pck0ik-MuiButtonBase-root"
+              class="MuiButtonBase-root css-1u2dyik-MuiButtonBase-root"
               role="button"
               tabindex="0"
               title="Save as file"

@@ -32,8 +32,8 @@ import { Layout } from 'components/Layout'
 import { MonomerLibrary } from 'components/monomerLibrary'
 import { NotationInput } from 'components/notationInput'
 import { Menu } from 'components/menu'
-import { selectTool } from 'state/common'
-import { useAppDispatch } from 'hooks'
+import { selectEditorActiveTool, selectTool } from 'state/common'
+import { useAppDispatch, useAppSelector } from 'hooks'
 import { Logo } from 'components/Logo'
 import { openModal } from 'state/modal'
 import {
@@ -98,16 +98,18 @@ function Editor({ onInit, theme }: EditorProps) {
 
 function MenuComponent() {
   const dispatch = useAppDispatch()
+  const activeTool = useAppSelector(selectEditorActiveTool)
 
   const menuItemChanged = (name) => {
-    dispatch(selectTool(name))
     if (modalComponentList[name]) {
       dispatch(openModal(name))
+    } else {
+      dispatch(selectTool(name))
     }
   }
 
   return (
-    <Menu onItemClick={menuItemChanged}>
+    <Menu onItemClick={menuItemChanged} activeMenuItem={activeTool}>
       <Menu.Group>
         <Menu.Submenu>
           <Menu.Item itemId="open" />

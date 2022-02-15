@@ -15,7 +15,8 @@
  ***************************************************************************/
 import { AnalyzingFile, AnalyzingFileProps } from '../AnalyzingFile'
 import { OpenOptions, OpenOptionsProps } from '../OpenOptions'
-import { TextEditor, TextEditorProps } from '../TextEditor'
+import { TextEditorProps, TextField } from '../../../shared/textEditor'
+import styled from '@emotion/styled'
 
 type ViewStates = {
   openOptions: string
@@ -30,6 +31,11 @@ type SwitchProps = {
   TextEditorProps &
   AnalyzingFileProps
 
+const StyledTextField = styled(TextField)`
+  width: 405px;
+  height: 320px;
+`
+
 export const ViewSwitcher = (props: SwitchProps) => {
   if (props.isAnalyzingFile) {
     return <AnalyzingFile fileName={props.fileName} />
@@ -38,7 +44,7 @@ export const ViewSwitcher = (props: SwitchProps) => {
       case props.states.openOptions:
         return <OpenOptions {...props} />
       case props.states.textEditor:
-        return <TextEditor {...props} />
+        return <StyledTextField {...props} />
       default:
         return null
     }

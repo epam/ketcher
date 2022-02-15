@@ -34,6 +34,7 @@ import closest from './shared/closest'
 import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
+import { Highlighter } from './highlighter'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -106,6 +107,7 @@ class Editor implements KetcherEditor {
   historyStack: any
   historyPtr: any
   errorHandler: ((message: string) => void) | null
+  highlights: Highlighter
   event: {
     message: Subscription
     elementEdit: PipelineSubscription
@@ -140,6 +142,7 @@ class Editor implements KetcherEditor {
     this.historyStack = []
     this.historyPtr = 0
     this.errorHandler = null
+    this.highlights = new Highlighter(this)
 
     this.event = {
       message: new Subscription(),
@@ -316,60 +319,11 @@ class Editor implements KetcherEditor {
       'ci' in tool &&
       (!ci || tool.ci.map !== ci.map || tool.ci.id !== ci.id)
     ) {
-      this.highlight(tool.ci, false)
+      setHover(tool.ci, false, this.render)
       delete tool.ci
     }
 
-    if (ci && this.highlight(ci, true)) tool.ci = ci
-  }
-
-  highlight(ci: any, visible: any) {
-    if (highlightTargets.indexOf(ci.map) === -1) {
-      return false
-    }
-
-    const render = this.render
-    let item: any = null
-
-    if (ci.map === 'merge') {
-      Object.keys(ci.items).forEach(mp => {
-        ci.items[mp].forEach(dstId => {
-          item = render.ctab[mp].get(dstId)!
-
-          if (item) {
-            item.setHighlight(visible, render)
-          }
-        })
-      })
-
-      return true
-    }
-
-    if (ci.map === 'functionalGroups') ci.map = 'sgroups' // TODO: Refactor object
-
-    item = (render.ctab[ci.map] as Map<any, any>).get(ci.id)
-    if (!item) {
-      return true // TODO: fix, attempt to highlight a deleted item
-    }
-
-    if (
-      (ci.map === 'sgroups' && item.item.type === 'DAT') ||
-      ci.map === 'sgroupData'
-    ) {
-      // set highlight for both the group and the data item
-      const item1 = render.ctab.sgroups.get(ci.id)
-      if (item1) {
-        item1.setHighlight(visible, render)
-      }
-
-      const item2 = render.ctab.sgroupData.get(ci.id)
-      if (item2) {
-        item2.setHighlight(visible, render)
-      }
-    } else {
-      item.setHighlight(visible, render)
-    }
-    return true
+    if (ci && setHover(ci, true, this.render)) tool.ci = ci
   }
 
   update(action: Action | true, ignoreHistory?) {
@@ -611,3 +565,51 @@ function getStructCenter(ReStruct, selection?) {
 
 export { Editor }
 export default Editor
+
+function setHover(ci: any, visible: any, render: any) {
+  if (highlightTargets.indexOf(ci.map) === -1) {
+    return false
+  }
+
+  let item: any = null
+
+  if (ci.map === 'merge') {
+    Object.keys(ci.items).forEach(mp => {
+      ci.items[mp].forEach(dstId => {
+        item = render.ctab[mp].get(dstId)!
+
+        if (item) {
+          item.setHover(visible, render)
+        }
+      })
+    })
+
+    return true
+  }
+
+  if (ci.map === 'functionalGroups') ci.map = 'sgroups' // TODO: Refactor object
+
+  item = (render.ctab[ci.map] as Map<any, any>).get(ci.id)
+  if (!item) {
+    return true // TODO: fix, attempt to highlight a deleted item
+  }
+
+  if (
+    (ci.map === 'sgroups' && item.item.type === 'DAT') ||
+    ci.map === 'sgroupData'
+  ) {
+    // set highlight for both the group and the data item
+    const item1 = render.ctab.sgroups.get(ci.id)
+    if (item1) {
+      item1.setHover(visible, render)
+    }
+
+    const item2 = render.ctab.sgroupData.get(ci.id)
+    if (item2) {
+      item2.setHover(visible, render)
+    }
+  } else {
+    item.setHover(visible, render)
+  }
+  return true
+}

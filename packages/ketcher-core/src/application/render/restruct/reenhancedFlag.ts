@@ -32,24 +32,26 @@ class ReEnhancedFlag extends ReObject {
   static isSelectable() {
     return true
   }
-  highlightPath(render: Render): any {
-    var box = Box2Abs.fromRelBox(this.#path.getBBox())
-    var sz = box.p1.sub(box.p0)
-    var p0 = box.p0.sub(render.options.offset)
+
+  hoverPath(render: Render): any {
+    const box = Box2Abs.fromRelBox(this.#path.getBBox())
+    const sz = box.p1.sub(box.p0)
+    const p0 = box.p0.sub(render.options.offset)
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
   }
-  drawHighlight(render: Render): any {
+
+  drawHover(render: Render): any {
     // TODO: after the enhanced flag stops being displayed, need to remove the reEnhancedflag object from ctab
     if (!this.#path?.attrs) return null
-    var ret = this.highlightPath(render).attr(render.options.highlightStyle)
-    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
+    const ret = this.hoverPath(render).attr(render.options.hoverStyle)
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
     return ret
   }
   // @ts-ignore
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any): any {
     // TODO: after the enhanced flag stops being displayed, need to remove the reEnhancedflag object from ctab
     if (!this.#path?.attrs) return null
-    return this.highlightPath(restruct.render).attr(options.selectionStyle)
+    return this.hoverPath(restruct.render).attr(options.selectionStyle)
   }
 
   show(restruct: ReStruct, fragmentId: number, options: any): void {

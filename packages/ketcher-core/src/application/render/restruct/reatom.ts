@@ -80,12 +80,14 @@ class ReAtom extends ReObject {
       return ReObject.prototype.getVBoxObj.call(this, render)
     return new Box2Abs(this.a.pp, this.a.pp)
   }
-  drawHighlight(render: Render) {
-    const ret = this.makeHighlightPlate(render)
-    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
+
+  drawHover(render: Render) {
+    const ret = this.makeHoverPlate(render)
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
     return ret
   }
-  makeHighlightPlate(render: Render) {
+
+  makeHoverPlate(render: Render) {
     const paper = render.paper
     const options = render.options
     const ps = Scale.obj2scaled(this.a.pp, options)
@@ -103,7 +105,7 @@ class ReAtom extends ReObject {
       return null
     return paper
       .circle(ps.x, ps.y, options.atomSelectionPlateRadius)
-      .attr(options.highlightStyle)
+      .attr(options.hoverStyle)
   }
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any) {
     const atom = this.a
@@ -176,19 +178,18 @@ class ReAtom extends ReObject {
       implh = Math.floor(this.a.implicitH)
       isHydrogen = label.text === 'H'
       restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true)
-      if (options.showAtomIds) {
-        index = {}
-        index.text = aid.toString()
-        index.path = render.paper.text(ps.x, ps.y, index.text).attr({
-          font: options.font,
-          'font-size': options.fontszsub,
-          fill: '#070'
-        })
-        index.rbb = util.relBox(index.path.getBBox())
-        draw.recenterText(index.path, index.rbb)
-        restruct.addReObjectPath(LayerMap.indices, this.visel, index.path, ps)
+      this.setHover(this.hover, render)
+    }
+    if (options.showAtomIds) {
+      index = {}
+      index.text = aid.toString()
+      let idPos = this.hydrogenOnTheLeft
+        ? Vec2.lc(ps, 1, new Vec2({ x: -2, y: 0, z: 0 }), 6)
+        : Vec2.lc(ps, 1, new Vec2({ x: 2, y: 0, z: 0 }), 6)
+      if (this.showLabel) {
+        idPos = Vec2.lc(idPos, 1, new Vec2({ x: 1, y: -3, z: 0 }), 6)
       }
-      this.setHighlight(this.highlight, render)
+      this.setHover(this.hover, render)
     }
 
     if (this.showLabel && !this.a.pseudo) {
@@ -358,6 +359,30 @@ class ReAtom extends ReObject {
       dir = dir.scaled(8 + t)
       pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y)
       restruct.addReObjectPath(LayerMap.data, this.visel, aamPath, ps, true)
+    }
+
+    // Checking whether atom is highlighted and what's the last color
+    const highlights = restruct.molecule.highlights
+    let isHighlighted = false
+    let highlightColor = ''
+    highlights.forEach(highlight => {
+      const hasCurrentHighlight = highlight.atoms?.includes(aid)
+      isHighlighted = isHighlighted || hasCurrentHighlight
+      if (hasCurrentHighlight) {
+        highlightColor = highlight.color
+      }
+    })
+
+    // Drawing highlight
+    if (isHighlighted) {
+      const style = { fill: highlightColor, stroke: 'none' }
+
+      const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
+      const path = render.paper
+        .circle(ps.x, ps.y, options.atomSelectionPlateRadius * 0.8)
+        .attr(style)
+
+      restruct.addReObjectPath(LayerMap.hovering, this.visel, path)
     }
   }
 }

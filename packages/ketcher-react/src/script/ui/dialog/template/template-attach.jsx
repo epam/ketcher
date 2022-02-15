@@ -26,8 +26,8 @@ import { attachSchema } from '../../data/schema/struct-schema'
 
 const EDITOR_STYLES = {
   selectionStyle: { fill: '#47b3ec', stroke: 'none' },
-  highlightStyle: { stroke: '#1a7090', 'stroke-width': 1.2 },
-  highlightStyleSimpleObject: { 'stroke-opacity': 0.3 }
+  hoverStyle: { stroke: '#1a7090', 'stroke-width': 1.2 },
+  hoverStyleSimpleObject: { 'stroke-opacity': 0.3 }
 }
 
 class Attach extends Component {

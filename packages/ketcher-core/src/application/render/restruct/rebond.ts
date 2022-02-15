@@ -49,12 +49,14 @@ class ReBond extends ReObject {
   static isSelectable() {
     return true
   }
-  drawHighlight(render: Render) {
-    const ret = this.makeHighlightPlate(render)
-    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
+
+  drawHover(render: Render) {
+    const ret = this.makeHoverPlate(render)
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
     return ret
   }
-  makeHighlightPlate(render: Render) {
+
+  makeHoverPlate(render: Render) {
     const options = render.options
     bondRecalc(this, render.ctab, options)
     const bond = this.b
@@ -73,7 +75,7 @@ class ReBond extends ReObject {
     const c = Scale.obj2scaled(this.b.center, options)
     return render.paper
       .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
-      .attr(options.highlightStyle)
+      .attr(options.hoverStyle)
   }
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any) {
     bondRecalc(this, restruct, options)
@@ -149,7 +151,7 @@ class ReBond extends ReObject {
         true
       )
     }
-    this.setHighlight(this.highlight, render)
+    this.setHover(this.hover, render)
 
     let ipath = null
     const bondIdxOff = options.subFontSize * 0.6
@@ -205,7 +207,55 @@ class ReBond extends ReObject {
       )
       restruct.addReObjectPath(LayerMap.indices, this.visel, ipath)
     }
+
+    // Checking whether bond is highlighted and what is the last color
+    const highlights = restruct.molecule.highlights
+    let isHighlighted = false
+    let highlightColor = ''
+    highlights.forEach(highlight => {
+      const hasCurrentHighlight = highlight.bonds?.includes(bid)
+      isHighlighted = isHighlighted || hasCurrentHighlight
+      if (hasCurrentHighlight) {
+        highlightColor = highlight.color
+      }
+    })
+
+    // Drawing highlight
+    if (isHighlighted) {
+      const style = {
+        fill: highlightColor,
+        stroke: highlightColor,
+        'stroke-width': options.lineattr['stroke-width'] * 7,
+        'stroke-linecap': 'round'
+      }
+
+      const c = Scale.obj2scaled(this.b.center, restruct.render.options)
+
+      const highlightPath = getHighlightPath(restruct, hb1, hb2)
+      highlightPath.attr(style)
+
+      restruct.addReObjectPath(
+        LayerMap.hovering,
+        this.visel,
+        highlightPath,
+        c,
+        true
+      )
+    }
   }
+}
+
+function getHighlightPath(restruct: ReStruct, hb1: HalfBond, hb2: HalfBond) {
+  const beginning = { x: hb1.p.x, y: hb1.p.y }
+  const end = { x: hb2.p.x, y: hb2.p.y }
+
+  const paper = restruct.render.paper
+
+  const pathString = `M${beginning.x},${beginning.y} L${end.x},${end.y}`
+
+  const path = paper.path(pathString)
+
+  return path
 }
 
 function findIncomingStereoUpBond(

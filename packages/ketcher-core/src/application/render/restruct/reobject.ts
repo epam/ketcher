@@ -22,9 +22,9 @@ import Visel from './visel'
 
 class ReObject {
   public visel: Visel
-  public highlight: boolean = false
-  public highlighting: any = null
-  public selected: boolean = false
+  public hover = false
+  public hovering: any = null
+  public selected = false
   public selectionPlate: any = null
 
   constructor(viselType: string) {
@@ -39,35 +39,34 @@ class ReObject {
     return vbox.transform(Scale.scaled2obj, render.options)
   }
 
-  setHighlight(highLight: boolean, render: Render): void {
+  setHover(hover: boolean, render: Render): void {
     // TODO render should be field
-    if (highLight) {
-      let noredraw = 'highlighting' in this && this.highlighting !== null // && !this.highlighting.removed;
+    if (hover) {
+      let noredraw = 'hovering' in this && this.hovering !== null // && !this.highlighting.removed;
       if (noredraw) {
-        if (this.highlighting.type === 'set') {
-          if (!this.highlighting[0]) return
-          noredraw = !this.highlighting[0].removed
+        if (this.hovering.type === 'set') {
+          if (!this.hovering[0]) return
+          noredraw = !this.hovering[0].removed
         } else {
-          noredraw = !this.highlighting.removed
+          noredraw = !this.hovering.removed
         }
       }
       if (noredraw) {
-        this.highlighting.show()
+        this.hovering.show()
       } else {
         render.paper.setStart()
-        this.drawHighlight(render)
-        this.highlighting = render.paper.setFinish()
+        this.drawHover(render)
+        this.hovering = render.paper.setFinish()
       }
-    } else if (this.highlighting) {
-      this.highlighting.hide()
+    } else if (this.hovering) {
+      this.hovering.hide()
     }
 
-    this.highlight = highLight
+    this.hover = hover
   }
 
-  // @ts-ignore
-  drawHighlight(render: Render): any {
-    throw new Error('ReObject.drawHighlight is not overridden.')
+  drawHover(_render: Render): any {
+    throw new Error('ReObject.drawHover is not overridden.')
   }
 
   // @ts-ignore

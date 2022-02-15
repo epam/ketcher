@@ -14,13 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import './src/style/mixins.less';
+@import 'src/style/mixins.less';
 
-.generic-groups {
+.genericGroups {
   overflow-y: scroll;
   height: 250px;
   margin-top: 9px;
   padding: 0 5px 0 0;
+
+  &:first-child {
+    margin-top: 0;
+  }
 
   & > fieldset {
     margin: 1em;
@@ -28,5 +32,5 @@
     padding: 0;
   }
 
-  .scrollbar_thin()
+  .scrollbar_thin();
 }

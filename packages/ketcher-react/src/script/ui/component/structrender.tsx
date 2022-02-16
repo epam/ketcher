@@ -14,15 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component, createRef } from 'react'
+import { Component, ComponentType, createRef } from 'react'
 import { MolSerializer, Render, Struct } from 'ketcher-core'
 
-function renderStruct(el, struct, options = {}) {
+function renderStruct(
+  el: HTMLElement | null,
+  struct: Struct | null,
+  options = {}
+) {
   if (el) {
-    if (struct?.prerender) {
-      // Should it sit here?
-      el.innerHTML = struct.prerender
-    } else if (struct) {
+    if (struct) {
       console.info('render!', el.clientWidth, el.clientWidth)
       struct.initHalfBonds()
       struct.initNeighbors()
@@ -40,7 +41,14 @@ function renderStruct(el, struct, options = {}) {
   }
 }
 
-class StructRender extends Component {
+interface StructRenderProps {
+  struct: Struct
+  options: any
+  Tag?: string | ComponentType<any>
+}
+
+class StructRender extends Component<StructRenderProps> {
+  tagRef: React.RefObject<HTMLElement>
   constructor(props) {
     super(props)
     this.tagRef = createRef()
@@ -53,7 +61,7 @@ class StructRender extends Component {
   componentDidMount() {
     const el = this.tagRef.current
     const { struct, options } = this.props
-    let parsedStruct
+    let parsedStruct: Struct | null
     if (!(struct instanceof Struct)) {
       try {
         const molSerialzer = new MolSerializer()

@@ -6,7 +6,7 @@ import { IconNameType } from 'components/shared/icon/icon'
 import { css, useTheme } from '@emotion/react'
 
 type SwitcherProps = {
-  selectedMonomers: [string, string, string]
+  selectedMonomers: string[]
   setActiveMonomerType: (type: string) => void
 }
 
@@ -18,8 +18,8 @@ type RAPButtonProps = {
 
 enum Monomers {
   Nucleotide,
-  Nucleobase,
   Sugar,
+  Nucleobase,
   Phosphate
 }
 
@@ -59,6 +59,7 @@ const SwitcherContainer = styled('div')`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 8px 0;
 `
 const SvgContainer = styled('div')`
   display: flex;
@@ -76,6 +77,18 @@ const LinkIcon = styled(Icon)<{ isActive: boolean }>(({ isActive, theme }) => ({
   }
 }))
 
+const ResetButton = styled(Button)`
+  margin-left: auto;
+  height: 15px;
+  color: #ff2727;
+  font-size: ${({ theme }) => theme.ketcher.font.size.regular};
+  min-width: 30px;
+  text-transform: none;
+  :hover {
+    background-color: unset;
+  }
+`
+
 export const Switcher = ({
   selectedMonomers,
   setActiveMonomerType
@@ -88,34 +101,44 @@ export const Switcher = ({
   const [nucleobase, sugar, phosphate] = selectedMonomers
   const nucleotide = `${nucleobase}(${sugar})${phosphate}`
 
+  const onReset = () => {
+    setActiveMonomerType('reset')
+    setActiveIndex(0)
+  }
+
   return (
-    <SwitcherContainer>
-      <RAPButton
-        callback={() => handleClick(Monomers[0], 0)}
-        isActive={activeIndex === 0}
-      >
-        {nucleotide}
-      </RAPButton>
-      <SvgContainer>
-        {svgNames.map((name, index) => (
-          <LinkIcon
-            key={name}
-            name={name}
-            isActive={activeIndex === index + 1}
-          />
-        ))}
-      </SvgContainer>
-      <ButtonContainer>
-        {selectedMonomers.map((button, index) => (
-          <RAPButton
-            key={button}
-            callback={() => handleClick(Monomers[index + 1], index + 1)}
-            isActive={activeIndex === index + 1}
-          >
-            {button}
-          </RAPButton>
-        ))}
-      </ButtonContainer>
-    </SwitcherContainer>
+    <>
+      <SwitcherContainer>
+        <RAPButton
+          callback={() => handleClick(Monomers[0], 0)}
+          isActive={activeIndex === 0}
+        >
+          {nucleotide}
+        </RAPButton>
+        <SvgContainer>
+          {svgNames.map((name, index) => (
+            <LinkIcon
+              key={name}
+              name={name}
+              isActive={activeIndex === index + 1}
+            />
+          ))}
+        </SvgContainer>
+        <ButtonContainer>
+          {selectedMonomers.map((button, index) => (
+            <RAPButton
+              key={button}
+              callback={() => handleClick(Monomers[index + 1], index + 1)}
+              isActive={activeIndex === index + 1}
+            >
+              {button}
+            </RAPButton>
+          ))}
+        </ButtonContainer>
+      </SwitcherContainer>
+      <ResetButton variant="text" onClick={onReset}>
+        Reset
+      </ResetButton>
+    </>
   )
 }

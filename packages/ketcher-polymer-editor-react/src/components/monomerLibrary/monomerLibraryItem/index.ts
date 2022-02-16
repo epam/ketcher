@@ -13,22 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Tabs } from 'components/shared/Tabs'
-import styled from '@emotion/styled'
-import { tabsContent } from 'components/monomerLibrary/tabsContent'
-
-const MonomerLibraryContainer = styled.div(({ theme }) => ({
-  width: '253px',
-  height: '100%',
-  backgroundColor: theme.ketcher.color.background.primary
-}))
-
-const MonomerLibrary = () => {
-  return (
-    <MonomerLibraryContainer>
-      <Tabs tabs={tabsContent} />
-    </MonomerLibraryContainer>
-  )
-}
-
-export { MonomerLibrary }
+export * from './MonomerItem'

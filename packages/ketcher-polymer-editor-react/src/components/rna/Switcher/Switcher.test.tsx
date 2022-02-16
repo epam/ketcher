@@ -33,4 +33,19 @@ describe('RNA Switcher component', () => {
       expect(view).toMatchSnapshot()
     })
   })
+
+  it('should reset to initial state when reset button clicked', () => {
+    render(
+      <Switcher
+        selectedMonomers={['R', 'A', 'P']}
+        setActiveMonomerType={mockSetActiveMonomerType}
+      />
+    )
+    const sugarBtn = screen.getByText(buttons[1])
+    fireEvent.click(sugarBtn)
+    const resetBtn = screen.getByText('Reset')
+    fireEvent.click(resetBtn)
+    const nucleotideBtn = screen.getByText(buttons[0])
+    expect(nucleotideBtn).toHaveStyle(`background-color: #005662`)
+  })
 })

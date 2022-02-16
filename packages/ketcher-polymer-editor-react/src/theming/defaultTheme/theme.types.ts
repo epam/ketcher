@@ -103,6 +103,9 @@ export type EditorTheme = {
       clicked: string
       disabled: string
     }
+    monomer: {
+      default: string
+    }
   }
   font: {
     size: {
@@ -114,6 +117,7 @@ export type EditorTheme = {
     family: {
       montserrat: string
       inter: string
+      roboto: string
     }
     weight: {
       light: number

@@ -27,6 +27,7 @@ function renderStruct(el, struct, options = {}) {
       struct.initHalfBonds()
       struct.initNeighbors()
       struct.setImplicitHydrogen()
+      struct.markFragments()
       const rnd = new Render(el, {
         autoScale: true,
         ...options

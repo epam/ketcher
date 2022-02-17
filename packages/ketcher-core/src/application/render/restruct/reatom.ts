@@ -178,16 +178,18 @@ class ReAtom extends ReObject {
       implh = Math.floor(this.a.implicitH)
       isHydrogen = label.text === 'H'
       restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true)
-      this.setHover(this.hover, render)
-    }
-    if (options.showAtomIds) {
-      index = {}
-      index.text = aid.toString()
-      let idPos = this.hydrogenOnTheLeft
-        ? Vec2.lc(ps, 1, new Vec2({ x: -2, y: 0, z: 0 }), 6)
-        : Vec2.lc(ps, 1, new Vec2({ x: 2, y: 0, z: 0 }), 6)
-      if (this.showLabel) {
-        idPos = Vec2.lc(idPos, 1, new Vec2({ x: 1, y: -3, z: 0 }), 6)
+
+      if (options.showAtomIds) {
+        index = {}
+        index.text = aid.toString()
+        index.path = render.paper.text(ps.x, ps.y, index.text).attr({
+          font: options.font,
+          'font-size': options.fontszsub,
+          fill: '#070'
+        })
+        index.rbb = util.relBox(index.path.getBBox())
+        draw.recenterText(index.path, index.rbb)
+        restruct.addReObjectPath(LayerMap.indices, this.visel, index.path, ps)
       }
       this.setHover(this.hover, render)
     }

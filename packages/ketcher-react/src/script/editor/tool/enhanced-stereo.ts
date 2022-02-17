@@ -46,6 +46,7 @@ class EnhancedStereoTool {
     this.changeAtomsStereoAction().then(
       (action) => action && editor.update(action)
     )
+    this.isNotActiveTool = true
   }
 
   changeAtomsStereoAction() {

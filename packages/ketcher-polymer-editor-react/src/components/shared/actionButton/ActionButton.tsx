@@ -16,47 +16,91 @@
 
 import MuiButton, { ButtonBaseProps } from '@mui/material/ButtonBase'
 import styled from '@emotion/styled'
+import { css } from '@emotion/react'
 
-const Button = styled(MuiButton)(({ theme }) => ({
-  backgroundColor: theme.ketcher.color.button.primary.active,
-  color: theme.ketcher.color.text.light,
-  padding: '5px 16px',
-  border: 'none',
+const baseButtonStyle = css({
+  padding: '5px 8px',
   borderRadius: '2px',
   textTransform: 'none',
   lineHeight: '14px',
   fontSize: '12px',
-  textAlign: 'center',
+  textAlign: 'center'
+})
 
-  '&:hover': {
-    backgroundColor: theme.ketcher.color.button.primary.hover
-  },
+const PrimaryButton = styled(MuiButton)(
+  ({ theme }) => ({
+    backgroundColor: theme.ketcher.color.button.primary.active,
+    color: theme.ketcher.color.text.light,
+    border: 'none',
+    fontWeight: theme.ketcher.font.weight.regular,
 
-  '&:disabled': {
-    background: theme.ketcher.color.button.primary.disabled,
-    opacity: 0.4
-  }
-}))
+    '&:hover': {
+      backgroundColor: theme.ketcher.color.button.primary.hover
+    },
+
+    '&:disabled': {
+      background: theme.ketcher.color.button.primary.disabled,
+      opacity: 0.4
+    }
+  }),
+  baseButtonStyle
+)
+
+const SecondaryButton = styled(MuiButton)(
+  ({ theme }) => ({
+    backgroundColor: 'transparent',
+    border: `1px solid ${theme.ketcher.color.button.secondary.active}`,
+    color: theme.ketcher.color.button.secondary.active,
+    fontWeight: theme.ketcher.font.weight.regular,
+
+    '&:hover': {
+      border: `1px solid ${theme.ketcher.color.button.secondary.hover}`,
+      color: theme.ketcher.color.button.secondary.hover
+    },
+
+    '&:disabled': {
+      border: `1px solid ${theme.ketcher.color.button.secondary.disabled}`,
+      color: theme.ketcher.color.button.secondary.disabled
+    },
+
+    '&:clicked': {
+      border: `1px solid ${theme.ketcher.color.button.secondary.clicked}`,
+      color: theme.ketcher.color.button.secondary.clicked
+    }
+  }),
+  baseButtonStyle
+)
 
 type ActionButtonProps = {
   label: string
   clickHandler: () => void
+  styleType?: string
 } & ButtonBaseProps
 
 export const ActionButton = ({
   label,
   clickHandler,
   children,
+  styleType,
   ...rest
 }: ActionButtonProps) => {
-  return (
-    <Button
+  return styleType === 'secondary' ? (
+    <SecondaryButton
       onClick={clickHandler}
       title={rest.title || label}
       role="button"
       {...rest}
     >
       {children || label}
-    </Button>
+    </SecondaryButton>
+  ) : (
+    <PrimaryButton
+      onClick={clickHandler}
+      title={rest.title || label}
+      role="button"
+      {...rest}
+    >
+      {children || label}
+    </PrimaryButton>
   )
 }

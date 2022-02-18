@@ -13,25 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { closeModal, selectModalIsOpen, selectModalName } from 'state/modal'
-import { useAppDispatch, useAppSelector } from 'hooks'
-import { useCallback } from 'react'
-import { modalComponentList } from './modalComponentList'
+import { AnalyzingFile } from './AnalyzingFile'
+import { render, screen } from 'test-utils'
 
-export const ModalContainer = () => {
-  const isOpen = useAppSelector(selectModalIsOpen)
-  const modalName = useAppSelector(selectModalName)
-  const dispatch = useAppDispatch()
+const mockFileName = 'MockFileName'
 
-  const handleClose = useCallback(() => {
-    dispatch(closeModal())
-  }, [dispatch])
+describe('AnalyzingFile component', () => {
+  it('should render correctly', () => {
+    expect(render(<AnalyzingFile />)).toMatchSnapshot()
+  })
 
-  if (!modalName) return null
+  it('should render correctly with passed filename prop', () => {
+    render(<AnalyzingFile fileName={mockFileName} />)
 
-  const Component = modalComponentList[modalName]
-
-  if (!Component) throw new Error(`There is no modal window named ${modalName}`)
-
-  return <Component onClose={handleClose} isModalOpen={isOpen} />
-}
+    expect(screen.getByText(mockFileName)).toBeInTheDocument()
+    expect(screen.getByRole('img')).toBeInTheDocument()
+  })
+})

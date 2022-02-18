@@ -13,25 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { closeModal, selectModalIsOpen, selectModalName } from 'state/modal'
-import { useAppDispatch, useAppSelector } from 'hooks'
-import { useCallback } from 'react'
-import { modalComponentList } from './modalComponentList'
+import { LoadingCircles } from './LoadingCircles'
+import { render } from 'test-utils'
 
-export const ModalContainer = () => {
-  const isOpen = useAppSelector(selectModalIsOpen)
-  const modalName = useAppSelector(selectModalName)
-  const dispatch = useAppDispatch()
-
-  const handleClose = useCallback(() => {
-    dispatch(closeModal())
-  }, [dispatch])
-
-  if (!modalName) return null
-
-  const Component = modalComponentList[modalName]
-
-  if (!Component) throw new Error(`There is no modal window named ${modalName}`)
-
-  return <Component onClose={handleClose} isModalOpen={isOpen} />
-}
+describe('LoadingCircles component', () => {
+  it('should render correctly', () => {
+    expect(render(<LoadingCircles />)).toMatchSnapshot()
+  })
+})

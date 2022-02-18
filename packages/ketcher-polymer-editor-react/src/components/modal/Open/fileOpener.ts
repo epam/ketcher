@@ -13,25 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { closeModal, selectModalIsOpen, selectModalName } from 'state/modal'
-import { useAppDispatch, useAppSelector } from 'hooks'
-import { useCallback } from 'react'
-import { modalComponentList } from './modalComponentList'
 
-export const ModalContainer = () => {
-  const isOpen = useAppSelector(selectModalIsOpen)
-  const modalName = useAppSelector(selectModalName)
-  const dispatch = useAppDispatch()
+export function fileOpener() {
+  return new Promise((resolve, reject) => {
+    if (global.FileReader) {
+      resolve(throughFileReader)
+    } else {
+      reject(new Error('Your browser does not support opening files locally'))
+    }
+  })
+}
 
-  const handleClose = useCallback(() => {
-    dispatch(closeModal())
-  }, [dispatch])
+function throughFileReader(file) {
+  return new Promise((resolve, reject) => {
+    const rd = new FileReader()
 
-  if (!modalName) return null
+    rd.onload = () => {
+      const content = rd.result
+      if (file.msClose) file.msClose()
+      resolve(content)
+    }
 
-  const Component = modalComponentList[modalName]
+    rd.onerror = (event) => {
+      reject(event)
+    }
 
-  if (!Component) throw new Error(`There is no modal window named ${modalName}`)
-
-  return <Component onClose={handleClose} isModalOpen={isOpen} />
+    rd.readAsText(file, 'UTF-8')
+  })
 }

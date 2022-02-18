@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled'
-import React, { useState } from 'react'
+import React from 'react'
 import { MenuItem } from './menuItem'
 import { SubMenu } from './subMenu'
 import { IMenuContext, MenuContext } from '../../contexts'
@@ -79,17 +79,14 @@ const Menu = ({
   onItemClick,
   activeMenuItem
 }: React.PropsWithChildren<MenuProps>) => {
-  const [activeItem, setActiveItem] = useState(activeMenuItem)
-
   const context = React.useMemo<IMenuContext>(
     () => ({
-      isActive: (itemKey) => activeItem === itemKey,
+      isActive: (itemKey) => activeMenuItem === itemKey,
       activate: (itemKey) => {
-        setActiveItem(itemKey)
         onItemClick(itemKey)
       }
     }),
-    [activeItem, onItemClick]
+    [activeMenuItem, onItemClick]
   )
 
   const subComponents = React.Children.map(

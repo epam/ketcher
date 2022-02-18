@@ -76,6 +76,7 @@ export type EditorTheme = {
       hover: string
     }
     divider: string
+    spinner: string
     error: string
     input: {
       text: {

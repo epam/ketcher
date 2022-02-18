@@ -75,6 +75,7 @@ export const defaultTheme: EditorTheme = {
       hover: '#005662'
     },
     divider: '#AEAEAE',
+    spinner: '#005662',
     error: '#FF4A4A',
     input: {
       text: {

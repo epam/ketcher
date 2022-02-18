@@ -20,7 +20,7 @@ import { ThemeType } from '../defaultTheme'
 
 export const getGlobalStyles = (theme: ThemeType) =>
   css({
-    '*': {
+    '*, ::before, ::after': {
       boxSizing: 'border-box'
     },
     body: {
@@ -56,20 +56,5 @@ export const getGlobalStyles = (theme: ThemeType) =>
     button: {
       textTransform: 'uppercase',
       fontWeight: theme.ketcher.font.weight.bold
-    },
-    '.os-scrollbar': {
-      width: '4px !important',
-      padding: '0 !important',
-      backgroundColor: theme.ketcher.color.scroll.inactive,
-      borderRadius: '2px !important',
-      webkitBorderRadius: '2px !important'
-    },
-    '.os-scrollbar-handle': {
-      backgroundColor: `${theme.ketcher.color.scroll.regular} !important`,
-      borderRadius: '2px !important',
-      webkitBorderRadius: '2px !important',
-      ':active': {
-        backgroundColor: `${theme.ketcher.color.scroll.regular} !important`
-      }
     }
   })

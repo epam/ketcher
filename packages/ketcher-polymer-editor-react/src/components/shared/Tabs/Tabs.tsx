@@ -16,15 +16,20 @@
 
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
-import { ReactElement, useEffect, useRef, useState } from 'react'
+import { ReactElement, useState } from 'react'
 import Box from '@mui/material/Box'
 import styled from '@emotion/styled'
-import 'overlayscrollbars/css/OverlayScrollbars.css'
-import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
+import { Scrollable } from '../Scrollable'
 
 function TabPanel({ children, value, index, ...other }) {
   return (
-    <div role="tabpanel" hidden={value !== index} id={index} {...other}>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={index}
+      style={{ height: 'calc(100% - 25px)' }}
+      {...other}
+    >
       {value === index && <Box height={'100%'}>{children}</Box>}
     </div>
   )
@@ -43,12 +48,6 @@ function CustomTabs(props): ReactElement {
   const tabPanel = tabs[tabIndex]
   const Component = tabPanel?.component
   const componentProps = tabPanel?.props
-  const ref = useRef<OverlayScrollbarsComponent>(null)
-
-  useEffect(() => {
-    const instance = ref?.current?.osInstance()
-    console.log(instance)
-  }, [])
 
   const handleChange = (_event, newTabIndex) => {
     setTabIndex(newTabIndex)
@@ -116,27 +115,12 @@ function CustomTabs(props): ReactElement {
         ))}
       </StyledTabs>
       {tabPanel && (
-        <TabPanel
-          value={tabIndex}
-          index={tabIndex}
-          style={{ height: 'calc(100% - 25px)' }}
-        >
-          <OverlayScrollbarsComponent
-            style={{ height: '100%' }}
-            ref={ref}
-            options={
-              {
-                // className: 'os-theme-none'
-                // scrollbars: {
-                //   autoHide: 'never'
-                // }
-              }
-            }
-          >
+        <TabPanel value={tabIndex} index={tabIndex}>
+          <Scrollable>
             <TabPanelContent>
               <Component {...componentProps} />
             </TabPanelContent>
-          </OverlayScrollbarsComponent>
+          </Scrollable>
         </TabPanel>
       )}
     </>

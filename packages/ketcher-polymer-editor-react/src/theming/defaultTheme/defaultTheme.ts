@@ -37,8 +37,8 @@ export const defaultTheme: EditorTheme = {
       hover: '#00838F'
     },
     scroll: {
-      regular: '#717171',
-      inactive: '#DDDDDD'
+      regular: '#8F93AD',
+      inactive: '#CFD2E1'
     },
     button: {
       primary: {

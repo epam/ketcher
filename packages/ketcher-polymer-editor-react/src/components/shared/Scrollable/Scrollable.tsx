@@ -10,13 +10,6 @@ interface ScrollableProps {
 
 const StyledOverlayScrollbars = styled(OverlayScrollbarsComponent)(
   ({ theme }) => ({
-    height: '100%',
-    // width: '100%',
-    // maxHeight: 'inherit',
-    // height: 'inherit',
-    // '& .os-content': {
-    // height: '100% !important'
-    // },
     '& > .os-scrollbar': {
       margin: '5px',
       width: '4px',
@@ -43,17 +36,13 @@ export const Scrollable = ({
   children,
   overflowX = 'scroll',
   overflowY = 'scroll'
-}: // ,
-// overflowY = 'scroll'
-ScrollableProps) => {
+}: ScrollableProps) => {
   return (
     <StyledOverlayScrollbars
-      // className="os-host-flexbox"
       options={{
         scrollbars: {
           clickScrolling: true
         },
-        // sizeAutoCapable: false,
         overflowBehavior: {
           x: overflowX,
           y: overflowY

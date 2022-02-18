@@ -92,10 +92,7 @@ function CustomTabs(props): ReactElement {
     overflowY: 'auto',
     width: '100%',
 
-    ...scrollbarThin(theme),
-    '& > *': {
-      margin: '25px 8px'
-    }
+    ...scrollbarThin(theme)
   }))
 
   return (

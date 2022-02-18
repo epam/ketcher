@@ -97,7 +97,6 @@ export const Modal = ({
 
   return (
     <Dialog
-      // style={{ width: '100%', height: '100%' }}
       BackdropProps={backdropProps}
       PaperProps={paperProps}
       open={isOpen}

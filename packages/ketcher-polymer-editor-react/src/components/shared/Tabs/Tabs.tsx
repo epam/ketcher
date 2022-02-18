@@ -19,18 +19,12 @@ import Tab from '@mui/material/Tab'
 import { ReactElement, useState } from 'react'
 import Box from '@mui/material/Box'
 import styled from '@emotion/styled'
-import { Scrollable } from '../Scrollable'
+import { scrollbarThin } from 'theming/mixins'
 
 function TabPanel({ children, value, index, ...other }) {
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={index}
-      style={{ height: 'calc(100% - 25px)' }}
-      {...other}
-    >
-      {value === index && <Box height={'100%'}>{children}</Box>}
+    <div role="tabpanel" hidden={value !== index} id={index} {...other}>
+      {value === index && <Box>{children}</Box>}
     </div>
   )
 }
@@ -90,7 +84,7 @@ function CustomTabs(props): ReactElement {
     }
   }))
 
-  const TabPanelContent = styled.div({
+  const TabPanelContent = styled.div(({ theme }) => ({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -98,10 +92,11 @@ function CustomTabs(props): ReactElement {
     overflowY: 'auto',
     width: '100%',
 
+    ...scrollbarThin(theme),
     '& > *': {
       margin: '25px 8px'
     }
-  })
+  }))
 
   return (
     <>
@@ -116,11 +111,9 @@ function CustomTabs(props): ReactElement {
       </StyledTabs>
       {tabPanel && (
         <TabPanel value={tabIndex} index={tabIndex}>
-          <Scrollable>
-            <TabPanelContent>
-              <Component {...componentProps} />
-            </TabPanelContent>
-          </Scrollable>
+          <TabPanelContent>
+            <Component {...componentProps} />
+          </TabPanelContent>
         </TabPanel>
       )}
     </>

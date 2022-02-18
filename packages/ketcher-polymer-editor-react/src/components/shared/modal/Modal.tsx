@@ -9,7 +9,7 @@ import React, { useMemo } from 'react'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Icon } from 'components/shared/icon'
-// import { Scrollable } from 'components/shared/Scrollable'
+import { scrollbarThin } from 'theming/mixins'
 
 interface ModalProps {
   children: JSX.Element | Array<JSX.Element>
@@ -36,16 +36,12 @@ const Title = styled.div({
   marginRight: '10px'
 })
 
-const Content = styled(DialogContent)({
+const Content = styled(DialogContent)(({ theme }) => ({
   margin: '0 16px 16px',
   padding: 0,
-  // width: '100%'
-  height: '100%',
-  // flex: 'none'
-  overflow: 'hidden'
 
-  // ...scrollbarThin(theme)
-})
+  ...scrollbarThin(theme)
+}))
 
 const Footer = styled(DialogActions)({
   margin: '0 16px 16px',
@@ -71,9 +67,6 @@ export const Modal = ({
         background: theme.ketcher.color.background.canvas,
         borderRadius: '8px',
         color: theme.ketcher.color.text.primary
-        // width: '100%',
-        // height: '100%',
-        // overflow: 'hidden'
       }
     }),
     [theme.ketcher.color.text.primary, theme.ketcher.color.background.canvas]

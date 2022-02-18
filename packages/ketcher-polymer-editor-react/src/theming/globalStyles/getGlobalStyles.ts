@@ -20,9 +20,6 @@ import { ThemeType } from '../defaultTheme'
 
 export const getGlobalStyles = (theme: ThemeType) =>
   css({
-    '*, ::before, ::after': {
-      boxSizing: 'border-box'
-    },
     body: {
       fontSize: theme.ketcher.font.size.medium,
       fontFamily: theme.ketcher.font.family.inter,

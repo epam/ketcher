@@ -15,23 +15,24 @@
  ***************************************************************************/
 
 import { ThemeType } from 'theming/defaultTheme'
+import { css } from '@emotion/react'
 
-export const scrollbarThin = ({ ketcher: theme }: ThemeType) => ({
-  'scrollbar-width': 'thin',
-  'scrollbar-color': `${theme.color.scroll.regular} ${theme.color.scroll.inactive}`,
-  '&::-webkit-scrollbar': {
-    width: '4px',
-    height: '4px',
-    backgroundColor: theme.color.scroll.inactive,
-    borderRadius: '2px',
-    webkitBorderRadius: '2px'
-  },
-  '&::-webkit-scrollbar-thumb': {
-    backgroundColor: theme.color.scroll.regular,
-    borderRadius: '2px',
-    webkitBorderRadius: '2px'
-  },
-  '&::-webkit-scrollbar-thumb:active': {
-    backgroundColor: theme.color.scroll.regular
+export const scrollbarThin = ({ ketcher: theme }: ThemeType) => css`
+  scrollbar-width: thin;
+  scrollbar-color: ${theme.color.scroll.regular} ${theme.color.scroll.inactive};
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+    background-color: ${theme.color.scroll.inactive};
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
   }
-})
+  &::-webkit-scrollbar-thumb {
+    background-color: ${theme.color.scroll.regular};
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+  }
+  &::-webkit-scrollbar-thumb:active {
+    background-color: ${theme.color.scroll.regular};
+  }
+`

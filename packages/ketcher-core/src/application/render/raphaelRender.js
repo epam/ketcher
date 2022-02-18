@@ -73,22 +73,13 @@ Render.prototype.scrollPos = function () {
   return new Vec2(this.clientArea.scrollLeft, this.clientArea.scrollTop)
 }
 
-function cumulativeOffset(el) {
-  let curtop = 0
-  let curleft = 0
-  if (el.parentNode) {
-    do {
-      curtop += el.offsetTop || 0
-      curleft += el.offsetLeft || 0
-      el = el.offsetParent
-    } while (el)
-  }
-  return { left: curleft, top: curtop }
-}
+Render.prototype.page2obj = function (event) {
+  const clientArea = this.clientArea
 
-Render.prototype.page2obj = function (pagePos) {
-  const offset = cumulativeOffset(this.clientArea)
-  const pp = new Vec2(pagePos.pageX - offset.left, pagePos.pageY - offset.top)
+  const { top: offsetTop, left: offsetLeft } =
+    clientArea.getBoundingClientRect()
+
+  const pp = new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop)
   return this.view2obj(pp)
 }
 

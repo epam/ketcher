@@ -18,13 +18,15 @@ import { configureStore, Store } from '@reduxjs/toolkit'
 import { editorReducer } from 'state/common'
 import createSagaMiddleware from 'redux-saga'
 import { rootSaga } from 'state/rootSaga'
+import { modalReducer } from 'state/modal'
 
 export function configureAppStore(preloadedState = {}) {
   const sagaMiddleware = createSagaMiddleware()
 
   const store: Store = configureStore({
     reducer: {
-      editor: editorReducer
+      editor: editorReducer,
+      modal: modalReducer
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

@@ -31,6 +31,15 @@ export const getGlobalStyles = (theme: ThemeType) =>
       color: theme.ketcher.color.text.primary,
       boxSizing: 'border-box'
     },
+    div: {
+      boxSizing: 'border-box'
+    },
+    input: {
+      fontFamily: theme.ketcher.font.family.inter,
+      fontWeight: theme.ketcher.font.weight.regular,
+      fontSize: theme.ketcher.font.size.regular,
+      boxSizing: 'border-box'
+    },
     h1: {
       fontSize: 96
     },

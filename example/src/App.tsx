@@ -52,7 +52,16 @@ const App = () => {
         }}
       />
       {hasError && (
-        <ErrorModal message={errorMessage} close={() => setHasError(false)} />
+        <ErrorModal
+          message={errorMessage}
+          close={() => {
+            setHasError(false)
+
+            // Focus on editor after modal is closed
+            const cliparea: HTMLElement = document.querySelector('.cliparea')!
+            cliparea?.focus()
+          }}
+        />
       )}
     </>
   )

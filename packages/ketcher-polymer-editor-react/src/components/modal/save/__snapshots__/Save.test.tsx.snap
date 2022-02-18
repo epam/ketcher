@@ -59,7 +59,7 @@ Object {
             </button>
           </h2>
           <div
-            class="MuiDialogContent-root css-7lfmne-MuiDialogContent-root"
+            class="MuiDialogContent-root css-1n1tez8-MuiDialogContent-root"
           >
             <form
               class="css-1g4yje1"
@@ -138,7 +138,7 @@ Object {
                 </div>
               </div>
               <textarea
-                class="css-1i17ygj"
+                class="css-17sxpbp"
                 readonly=""
               >
                 

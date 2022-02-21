@@ -26,10 +26,11 @@ export const defaultTheme: EditorTheme = {
       overlay: '#005662'
     },
     text: {
-      primary: '#121212',
-      secondary: '#BCBCBC',
+      primary: '#333333',
+      secondary: '#585858',
       light: '#FFFFFF',
-      dark: '#000000'
+      dark: '#000000',
+      error: '#FF4A4A'
     },
     tab: {
       regular: '#F3F3F3',
@@ -74,12 +75,25 @@ export const defaultTheme: EditorTheme = {
       hover: '#005662'
     },
     divider: '#AEAEAE',
+    spinner: '#005662',
     error: '#FF4A4A',
     input: {
+      text: {
+        default: '#585858',
+        active: '#333333',
+        disabled: '#585858',
+        error: '#FF4A4A'
+      },
+      background: {
+        default: '#FFFFFF',
+        hover: '#DDDDDD',
+        disabled: '#DDDDDD'
+      },
       border: {
         regular: '#005662',
         active: '#FFFFFF',
-        hover: '#DDDDDD'
+        hover: '#DDDDDD',
+        error: '#FF4A4A'
       }
     },
     icon: {
@@ -88,6 +102,9 @@ export const defaultTheme: EditorTheme = {
       activeMenu: '#005662',
       clicked: '#FFFFFF',
       disabled: 'rgba(82, 82, 82, 0.4)'
+    },
+    monomer: {
+      default: '#C8C8C8'
     }
   },
   font: {
@@ -101,7 +118,9 @@ export const defaultTheme: EditorTheme = {
       montserrat: 'Montserrat, sans-serif',
       inter:
         "Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',\n" +
-        'Arial, sans-serif'
+        'Arial, sans-serif',
+      roboto:
+        'Roboto, FreeSans, Arimo, Droid Sans, Helvetica, Helvetica Neue, Arial, sans-serif'
     },
     weight: {
       light: 300,

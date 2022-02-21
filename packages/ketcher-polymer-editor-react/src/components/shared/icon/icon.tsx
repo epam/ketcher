@@ -17,7 +17,9 @@
 import { useTheme } from '@emotion/react'
 
 import ArrowDownIcon from 'assets/icons/files/arrow-down.svg'
+import ArrowUpIcon from 'assets/icons/files/arrow-upward.svg'
 import BracketIcon from 'assets/icons/files/bracket.svg'
+import CapitalTIcon from 'assets/icons/files/capital-t.svg'
 import CheckMarkIcon from 'assets/icons/files/checkmark.svg'
 import ChevronIcon from 'assets/icons/files/chevron.svg'
 import CloseIcon from 'assets/icons/files/close.svg'
@@ -26,6 +28,7 @@ import DividerIcon from 'assets/icons/files/divider.svg'
 import DropDownIcon from 'assets/icons/files/dropdown.svg'
 import EraseIcon from 'assets/icons/files/erase.svg'
 import EllipseIcon from 'assets/icons/files/ellipse.svg'
+import FileIcon from 'assets/icons/files/file-thumbnail.svg'
 import HelpIcon from 'assets/icons/files/help.svg'
 import HorizontalFlipIcon from 'assets/icons/files/horizontal-flip.svg'
 import OpenIcon from 'assets/icons/files/open.svg'
@@ -42,10 +45,14 @@ import StarIcon from 'assets/icons/files/star.svg'
 import SingleBondIcon from 'assets/icons/files/single-bond.svg'
 import VerticalFlipIcon from 'assets/icons/files/vertical-flip.svg'
 import UndoIcon from 'assets/icons/files/undo.svg'
+import SaveIcon from 'assets/icons/files/save.svg'
+import ErrorIcon from 'assets/icons/files/error.svg'
 
 const iconMap = {
   'arrow-down': ArrowDownIcon,
+  'arrow-up': ArrowUpIcon,
   bracket: BracketIcon,
+  'capital-t': CapitalTIcon,
   checkmark: CheckMarkIcon,
   chevron: ChevronIcon,
   close: CloseIcon,
@@ -54,6 +61,7 @@ const iconMap = {
   dropdown: DropDownIcon,
   erase: EraseIcon,
   ellipse: EllipseIcon,
+  'file-thumbnail': FileIcon,
   help: HelpIcon,
   'horizontal-flip': HorizontalFlipIcon,
   open: OpenIcon,
@@ -69,7 +77,9 @@ const iconMap = {
   star: StarIcon,
   'single-bond': SingleBondIcon,
   'vertical-flip': VerticalFlipIcon,
-  undo: UndoIcon
+  undo: UndoIcon,
+  save: SaveIcon,
+  error: ErrorIcon
 }
 
 type IconNameType = keyof typeof iconMap

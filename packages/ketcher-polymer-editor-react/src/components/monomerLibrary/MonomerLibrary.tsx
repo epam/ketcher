@@ -13,79 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import { MonomerItem } from './monomerLibraryItem/MonomerItem'
 import { Tabs } from 'components/shared/Tabs'
-import { Switcher } from 'components/rna/Switcher'
 import styled from '@emotion/styled'
+import { tabsContent } from 'components/monomerLibrary/tabsContent'
 
-interface MonomerListPropTypes {
-  list: Array<Record<string, string>>
-}
-
-const monomerItemHandleClick = () => {
-  console.log('callback for monomer item')
-}
+const MonomerLibraryContainer = styled.div(({ theme }) => ({
+  width: '253px',
+  height: '100%',
+  backgroundColor: theme.ketcher.color.background.primary
+}))
 
 const MonomerLibrary = () => {
-  const MonomerList = (props: MonomerListPropTypes) => {
-    return props.list.map((monomer, key) => {
-      return (
-        <MonomerItem
-          key={key}
-          item={monomer}
-          onClick={monomerItemHandleClick}
-        />
-      )
-    })
-  }
-
-  const tabs = [
-    {
-      caption: '✩',
-      component: MonomerList,
-      props: { list: [{ name: 'S' }] }
-    },
-    {
-      caption: 'Peptides',
-      component: MonomerList,
-      props: { list: [{ name: 'P' }] }
-    },
-    {
-      caption: 'RNA',
-      component: Switcher,
-      props: {
-        selectedMonomers: ['R', 'A', 'P'],
-        setActiveMonomerType: (type: string) => console.log(type) // replace with actual callback when integrate into parent component
-      }
-    },
-    {
-      caption: 'CHEM',
-      component: MonomerList,
-      props: {
-        list: [
-          { name: 'C' },
-          { name: 'H' },
-          { name: 'E' },
-          { name: 'M' },
-          { name: 'C' },
-          { name: 'H' },
-          { name: 'E' },
-          { name: 'M' }
-        ]
-      }
-    }
-  ]
-
-  const MonomerLibraryContainer = styled.div(({ theme }) => ({
-    width: '253px',
-    height: '100%',
-    backgroundColor: theme.ketcher.color.background.primary
-  }))
-
   return (
     <MonomerLibraryContainer>
-      <Tabs tabs={tabs} />
+      <Tabs tabs={tabsContent} />
     </MonomerLibraryContainer>
   )
 }

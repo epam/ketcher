@@ -54,7 +54,12 @@ describe('Modal component', () => {
 
   it('should not render close icon if showCloseButton prop set to false', () => {
     render(
-      <Modal title="title" isOpen={true} showCloseButton={false}>
+      <Modal
+        title="title"
+        isOpen={true}
+        showCloseButton={false}
+        onClose={mockOnCloseHandler}
+      >
         <Modal.Content>Content</Modal.Content>
       </Modal>
     )

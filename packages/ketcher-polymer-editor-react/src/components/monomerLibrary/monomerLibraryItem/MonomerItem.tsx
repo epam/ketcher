@@ -13,32 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
 import styled from '@emotion/styled'
 
-interface MonomerItemPropTypes {
-  key: number
-  item: Record<string, string>
+export type MonomerItemType = {
+  label: string
+  colorScheme?: string
+  monomers?: object
+}
+
+interface MonomerItemProps {
+  item: MonomerItemType
   onClick: () => void
 }
 
-const MonomerItem = (props: MonomerItemPropTypes) => {
+const Card = styled.div<{ colorScheme?: string }>`
+  background: ${({ colorScheme, theme }) =>
+    colorScheme || theme.ketcher.color.monomer.default};
+  border-radius: 2px;
+  width: 48px;
+  height: 48px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: ${({ theme }) => theme.ketcher.font.size.small};
+`
+
+const MonomerItem = (props: MonomerItemProps) => {
   const { item, onClick } = props
 
-  const Card = styled.div(({ theme }) => ({
-    background: theme.ketcher.color.text.light,
-    border: `1px solid ${theme.ketcher.color.text.primary}`,
-    borderRadius: '2px',
-    width: '32px',
-    height: '32px',
-    textAlign: 'center',
-    cursor: 'pointer',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  }))
-
-  return <Card onClick={onClick}>{item.name}</Card>
+  return (
+    <Card onClick={onClick} colorScheme={item.colorScheme}>
+      {item.label}
+    </Card>
+  )
 }
 
 export { MonomerItem }

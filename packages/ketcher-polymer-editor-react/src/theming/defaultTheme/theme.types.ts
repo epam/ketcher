@@ -31,6 +31,7 @@ export type EditorTheme = {
       secondary: string
       light: string
       dark: string
+      error: string
     }
     tab: {
       regular: string
@@ -75,12 +76,25 @@ export type EditorTheme = {
       hover: string
     }
     divider: string
+    spinner: string
     error: string
     input: {
+      text: {
+        default: string
+        active: string
+        disabled: string
+        error: string
+      }
+      background: {
+        default: string
+        hover: string
+        disabled: string
+      }
       border: {
         regular: string
         active: string
         hover: string
+        error: string
       }
     }
     icon: {
@@ -89,6 +103,9 @@ export type EditorTheme = {
       activeMenu: string
       clicked: string
       disabled: string
+    }
+    monomer: {
+      default: string
     }
   }
   font: {
@@ -101,6 +118,7 @@ export type EditorTheme = {
     family: {
       montserrat: string
       inter: string
+      roboto: string
     }
     weight: {
       light: number

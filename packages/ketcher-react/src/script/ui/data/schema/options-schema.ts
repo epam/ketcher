@@ -356,12 +356,12 @@ export function validation(settings): Record<string, string> | null {
   const validate = ajv.compile(optionsSchema)
   validate(settings)
   const errors = validate.errors || []
-  const propsErrors = errors.map((el) => el.instancePath.slice(1))
+  const errorsProps = errors.map((el) => el.instancePath.slice(1))
 
   return Object.keys(settings).reduce((res, prop) => {
     if (!optionsSchema.properties) return res
 
-    if (optionsSchema.properties[prop] && propsErrors.indexOf(prop) === -1)
+    if (optionsSchema.properties[prop] && errorsProps.indexOf(prop) === -1)
       res[prop] = settings[prop]
 
     return res

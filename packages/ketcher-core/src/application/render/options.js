@@ -74,7 +74,7 @@ function defaultOptions(opt) {
       fill: '#7f7',
       stroke: 'none'
     },
-    highlightStyle: {
+    hoverStyle: {
       stroke: '#0c0',
       'stroke-width': (0.6 * scaleFactor) / 20
     },
@@ -86,7 +86,7 @@ function defaultOptions(opt) {
       stroke: 'gray',
       'stroke-width': '1px'
     },
-    highlightStyleSimpleObject: {
+    hoverStyleSimpleObject: {
       stroke: '#0c0',
       'stroke-width': scaleFactor / 4,
       'stroke-linecap': 'round',

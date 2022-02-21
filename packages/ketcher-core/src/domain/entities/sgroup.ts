@@ -62,8 +62,8 @@ export class SGroup {
   bracketBox: any
   bracketDir: Vec2
   areas: any
-  highlight: boolean
-  highlighting: any
+  hover: boolean
+  hovering: any
   selected: boolean
   selectionPlate: any
   atoms: any
@@ -85,8 +85,8 @@ export class SGroup {
     this.bracketDir = new Vec2(1, 0)
     this.areas = []
 
-    this.highlight = false
-    this.highlighting = null
+    this.hover = false
+    this.hovering = null
     this.selected = false
     this.selectionPlate = null
 

@@ -14,25 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-export enum LayerMap {
-  background = 'background',
-  selectionPlate = 'selectionPlate',
-  hovering = 'hovering',
-  warnings = 'warnings',
-  data = 'data',
-  indices = 'indices'
+export interface HighlightAttributes {
+  atoms: Array<number>
+  bonds: Array<number>
+  color: string
 }
 
-export enum StereoColoringType {
-  LabelsOnly = 'LabelsOnly',
-  BondsOnly = 'BondsOnly',
-  LabelsAndBonds = 'LabelsAndBonds',
-  Off = 'Off'
-}
+export class Highlight {
+  atoms: Array<number>
+  bonds: Array<number>
+  color: string
 
-export enum StereLabelStyleType {
-  IUPAC = 'Iupac',
-  Classic = 'Classic',
-  On = 'On',
-  Off = 'Off'
+  constructor(attributes: HighlightAttributes) {
+    const { atoms, bonds, color } = attributes
+    this.color = color
+    this.atoms = atoms
+    this.bonds = bonds
+  }
 }

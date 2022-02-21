@@ -84,13 +84,13 @@ class ReAtom extends ReObject {
     return new Box2Abs(this.a.pp, this.a.pp)
   }
 
-  drawHighlight(render: Render) {
-    const ret = this.makeHighlightPlate(render)
-    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
+  drawHover(render: Render) {
+    const ret = this.makeHoverPlate(render)
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
     return ret
   }
 
-  makeHighlightPlate(render: Render) {
+  makeHoverPlate(render: Render) {
     const paper = render.paper
     const options = render.options
     const ps = Scale.obj2scaled(this.a.pp, options)
@@ -109,7 +109,7 @@ class ReAtom extends ReObject {
     }
     return paper
       .circle(ps.x, ps.y, options.atomSelectionPlateRadius)
-      .attr(options.highlightStyle)
+      .attr(options.hoverStyle)
   }
 
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any) {
@@ -185,7 +185,6 @@ class ReAtom extends ReObject {
       implh = Math.floor(this.a.implicitH)
       isHydrogen = label.text === 'H'
       restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true)
-      this.setHighlight(this.highlight, render)
     }
     if (options.showAtomIds) {
       index = {}
@@ -205,6 +204,7 @@ class ReAtom extends ReObject {
       draw.recenterText(index.path, index.rbb)
       restruct.addReObjectPath(LayerMap.indices, this.visel, index.path, ps)
     }
+    this.setHover(this.hover, render)
 
     if (this.showLabel && !this.a.pseudo) {
       let hydroIndex: any = null
@@ -375,6 +375,30 @@ class ReAtom extends ReObject {
       dir = dir.scaled(8 + t)
       pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y)
       restruct.addReObjectPath(LayerMap.data, this.visel, aamPath, ps, true)
+    }
+
+    // Checking whether atom is highlighted and what's the last color
+    const highlights = restruct.molecule.highlights
+    let isHighlighted = false
+    let highlightColor = ''
+    highlights.forEach((highlight) => {
+      const hasCurrentHighlight = highlight.atoms?.includes(aid)
+      isHighlighted = isHighlighted || hasCurrentHighlight
+      if (hasCurrentHighlight) {
+        highlightColor = highlight.color
+      }
+    })
+
+    // Drawing highlight
+    if (isHighlighted) {
+      const style = { fill: highlightColor, stroke: 'none' }
+
+      const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
+      const path = render.paper
+        .circle(ps.x, ps.y, options.atomSelectionPlateRadius * 0.8)
+        .attr(style)
+
+      restruct.addReObjectPath(LayerMap.hovering, this.visel, path)
     }
   }
 }

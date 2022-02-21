@@ -69,7 +69,7 @@ class ReText extends ReObject {
     return refPoints
   }
 
-  highlightPath(render: any): any {
+  hoverPath(render: any): any {
     const { p0, p1 } = this.getRelBox(this.paths)
     const topLeft = p0.sub(render.options.offset)
     const { x: width, y: height } = p1.sub(p0)
@@ -115,16 +115,16 @@ class ReText extends ReObject {
     }, 0)
   }
 
-  drawHighlight(render: any): any {
+  drawHover(render: any): any {
     if (!this.paths.length) return null
-    const ret = this.highlightPath(render).attr(render.options.highlightStyle)
-    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
+    const ret = this.hoverPath(render).attr(render.options.hoverStyle)
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
     return ret
   }
 
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any): any {
     if (!this.paths.length || !paper) return null
-    return this.highlightPath(restruct.render).attr(options.selectionStyle)
+    return this.hoverPath(restruct.render).attr(options.selectionStyle)
   }
 
   show(restruct: ReStruct, _id: number, options: any): void {

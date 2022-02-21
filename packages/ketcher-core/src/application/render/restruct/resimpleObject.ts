@@ -189,7 +189,7 @@ class ReSimpleObject extends ReObject {
     return refPoints
   }
 
-  highlightPath(render: Render): Array<StyledPath> {
+  hoverPath(render: Render): Array<StyledPath> {
     const point: Array<Vec2> = []
 
     this.item.pos.forEach((p, index) => {
@@ -336,15 +336,15 @@ class ReSimpleObject extends ReObject {
     return enhPaths
   }
 
-  drawHighlight(render: Render): Array<any> {
-    const paths: Array<any> = this.highlightPath(render).map((enhPath) => {
+  drawHover(render: Render): Array<any> {
+    const paths: Array<any> = this.hoverPath(render).map((enhPath) => {
       if (!enhPath.stylesApplied) {
-        return enhPath.path.attr(render.options.highlightStyle)
+        return enhPath.path.attr(render.options.hoverStyle)
       }
       return enhPath.path
     })
 
-    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, paths)
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, paths)
     return paths
   }
 
@@ -358,7 +358,7 @@ class ReSimpleObject extends ReObject {
     const selectionSet = restruct.render.paper.set()
     selectionSet.push(
       generatePath(this.item.mode, paper, pos).attr(
-        styles.highlightStyleSimpleObject
+        styles.hoverStyleSimpleObject
       )
     )
     refPoints.forEach((rp) => {

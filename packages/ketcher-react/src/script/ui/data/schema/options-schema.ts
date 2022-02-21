@@ -15,9 +15,12 @@
  ***************************************************************************/
 
 import { StereLabelStyleType, StereoColoringType } from 'ketcher-core'
-import jsonschema, { Schema } from 'jsonschema'
+import Ajv, { SchemaObject } from 'ajv'
 
-type ExtendedSchema = Schema & { enumNames?: Array<string>; default?: any }
+type ExtendedSchema = SchemaObject & {
+  enumNames?: Array<string>
+  default?: any
+}
 
 const editor: {
   resetToSelect: ExtendedSchema
@@ -66,17 +69,20 @@ const render: {
 } = {
   showValenceWarnings: {
     title: 'Show valence warnings',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: true
   },
   atomColoring: {
     title: 'Atom coloring',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: true
   },
   showStereoFlags: {
     title: 'Show the Stereo flags',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: true
   },
   stereoLabelStyle: {
@@ -118,27 +124,28 @@ const render: {
   },
   autoFadeOfStereoLabels: {
     title: 'Auto fade And/Or center labels',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: true
   },
   absFlagLabel: {
     title: 'Text of Absolute flag',
-    type: 'String',
+    type: 'string',
     default: 'ABS (Chiral)'
   },
   andFlagLabel: {
     title: 'Text of AND flag',
-    type: 'String',
+    type: 'string',
     default: 'AND Enantiomer'
   },
   mixedFlagLabel: {
     title: 'Text of Mixed flag',
-    type: 'String',
+    type: 'string',
     default: 'Mixed'
   },
   orFlagLabel: {
     title: 'Text of OR flag',
-    type: 'String',
+    type: 'string',
     default: 'OR Enantiomer'
   },
   font: {
@@ -163,17 +170,20 @@ const render: {
   // Atom
   carbonExplicitly: {
     title: 'Display carbon explicitly',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: false
   },
   showCharge: {
     title: 'Display charge',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: true
   },
   showValence: {
     title: 'Display valence',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: true
   },
   showHydrogenLabels: {
@@ -184,7 +194,8 @@ const render: {
   // Bonds
   aromaticCircle: {
     title: 'Aromatic Bonds as circle',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: true
   },
   doubleBondWidth: {
@@ -219,27 +230,32 @@ const server: {
 } = {
   'smart-layout': {
     title: 'Smart-layout',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: true
   },
   'ignore-stereochemistry-errors': {
     title: 'Ignore stereochemistry errors',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: true
   },
   'mass-skip-error-on-pseudoatoms': {
     title: 'Ignore pseudoatoms at mass',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: false
   },
   'gross-formula-add-rsites': {
     title: 'Add Rsites at mass calculation',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: true
   },
   'gross-formula-add-isotopes': {
     title: 'Add Isotopes at mass calculation',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: true
   }
 }
@@ -254,22 +270,26 @@ const debug: {
 } = {
   showAtomIds: {
     title: 'Show atom Ids',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: false
   },
   showBondIds: {
     title: 'Show bonds Ids',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: false
   },
   showHalfBondIds: {
     title: 'Show half bonds Ids',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: false
   },
   showLoopIds: {
     title: 'Show loop Ids',
-    type: 'slider',
+    type: 'boolean',
+    description: 'slider',
     default: false
   }
 }
@@ -328,14 +348,20 @@ export function getDefaultOptions(): Record<string, any> {
 export function validation(settings): Record<string, string> | null {
   if (typeof settings !== 'object' || settings === null) return null
 
-  const v = new jsonschema.Validator()
-  const { errors } = v.validate(settings, optionsSchema)
-  const errProps = errors.map((err) => err.property.split('.')[1])
+  const ajv = new Ajv({
+    allErrors: true,
+    keywords: [{ keyword: 'enumNames', schemaType: 'array' }]
+  })
+
+  const validate = ajv.compile(optionsSchema)
+  validate(settings)
+  const errors = validate.errors || []
+  const propsErrors = errors.map((el) => el.instancePath.slice(1))
 
   return Object.keys(settings).reduce((res, prop) => {
     if (!optionsSchema.properties) return res
 
-    if (optionsSchema.properties[prop] && errProps.indexOf(prop) === -1)
+    if (optionsSchema.properties[prop] && propsErrors.indexOf(prop) === -1)
       res[prop] = settings[prop]
 
     return res

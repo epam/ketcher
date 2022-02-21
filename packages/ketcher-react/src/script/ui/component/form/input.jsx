@@ -263,7 +263,7 @@ function ctrlMap(component, { schema, multiple, onChange }) {
 }
 
 function componentMap({ schema, type, multiple }) {
-  if (schema?.type === 'slider') {
+  if (schema?.type === 'boolean' && schema?.description === 'slider') {
     return Slider
   }
 

@@ -128,7 +128,8 @@ function atomValid(label) {
 }
 
 function chargeValid(charge) {
-  const result = atomSchema.properties.charge.pattern.exec(charge)
+  const regex = new RegExp(atomSchema.properties.charge.pattern)
+  const result = regex.exec(charge)
   return result && (result[1] === '' || result[3] === '')
 }
 

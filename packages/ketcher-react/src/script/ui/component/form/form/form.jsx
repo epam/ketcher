@@ -20,7 +20,7 @@ import Input from '../input'
 import classes from './form.module.less'
 import clsx from 'clsx'
 import { connect } from 'react-redux'
-import jsonschema from 'jsonschema'
+import Ajv from 'ajv'
 import { updateFormState } from '../../../state/modal/form'
 import { useFormContext } from '../../../../../hooks'
 import Select from '../Select'
@@ -153,27 +153,33 @@ const SelectOneOf = (props) => {
 //
 
 function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
-  const validator = new jsonschema.Validator()
+  const ajv = new Ajv({ allErrors: true, verbose: true, strictSchema: false })
 
   if (customValid) {
     schema = Object.assign({}, schema) // copy
     schema.properties = Object.keys(customValid).reduce((res, prop) => {
-      validator.customFormats[prop] = customValid[prop]
+      ajv.addFormat(customValid[prop].name, customValid[prop])
       res[prop] = { format: prop, ...res[prop] }
       return res
     }, schema.properties)
   }
 
+  const validate = ajv.compile(schema)
+
   return {
     key: schema.key || '',
-    serialize: (inst) =>
-      validator.validate(inst, schema, {
-        rewrite: serializeRewrite.bind(null, serialize)
-      }),
-    deserialize: (inst) =>
-      validator.validate(inst, schema, {
-        rewrite: deserializeRewrite.bind(null, deserialize)
-      })
+    serialize: (inst) => {
+      validate(inst)
+      return {
+        instance: serializeRewrite(serialize, inst, schema),
+        valid: validate(inst),
+        errors: validate.errors || []
+      }
+    },
+    deserialize: (inst) => {
+      validate(inst)
+      return deserializeRewrite(deserialize, inst)
+    }
   }
 }
 
@@ -195,10 +201,10 @@ function deserializeRewrite(deserializeMap, instance) {
 }
 
 function getInvalidMessage(item) {
-  if (!item.schema.invalidMessage) return item.message
-  return typeof item.schema.invalidMessage === 'function'
-    ? item.schema.invalidMessage(item.instance)
-    : item.schema.invalidMessage
+  if (!item.parentSchema.invalidMessage) return item.message
+  return typeof item.parentSchema.invalidMessage === 'function'
+    ? item.parentSchema.invalidMessage(item.data)
+    : item.parentSchema.invalidMessage
 }
 
 function getErrorsObj(errors) {
@@ -206,7 +212,7 @@ function getErrorsObj(errors) {
   let field
 
   errors.forEach((item) => {
-    field = item.property.split('.')[1]
+    field = item.instancePath.slice(1)
     if (!errs[field]) errs[field] = getInvalidMessage(item)
   })
 

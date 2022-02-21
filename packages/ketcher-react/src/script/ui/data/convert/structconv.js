@@ -90,7 +90,7 @@ function fromAtom(satom) {
 function toAtom(atom) {
   // TODO merge this to Atom.attrlist?
   //      see ratomtool
-  const chargeRegexp = atomSchema.properties.charge.pattern
+  const chargeRegexp = new RegExp(atomSchema.properties.charge.pattern)
   const pch = chargeRegexp.exec(atom.charge)
   const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : atom.charge
 

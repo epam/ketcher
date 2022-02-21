@@ -39,8 +39,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.16.3",
+    "ajv": "^8.10.0",
     "assert": "^2.0.0",
-    "jsonschema": "^1.4.0",
     "lodash": "^4.17.21",
     "raphael": "^2.3.0",
     "svgpath": "^2.3.1"

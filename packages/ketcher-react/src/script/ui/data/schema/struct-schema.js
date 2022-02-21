@@ -20,7 +20,7 @@ import { range } from 'lodash/fp'
 export const atom = {
   title: 'Atom',
   type: 'object',
-  required: 'label',
+  required: ['label'],
   properties: {
     label: {
       title: 'Label',
@@ -36,7 +36,7 @@ export const atom = {
     charge: {
       title: 'Charge',
       type: 'string',
-      pattern: /^([+-]?)(\d{1,3}|1000)([+-]?)$/,
+      pattern: '^([+-]?)([0-9]{1,3}|1000)([+-]?)$',
       maxLength: 5,
       default: '0',
       invalidMessage: 'Invalid charge value'
@@ -247,7 +247,7 @@ const sgroup = {
           title: 'Polymer label',
           type: 'string',
           default: 'n',
-          pattern: /^[a-zA-Z]$/,
+          pattern: '^[a-zA-Z]$',
           invalidMessage: 'SRU subscript should consist of a single letter'
         },
         connectivity: {

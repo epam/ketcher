@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Validator } from 'jsonschema'
+import Ajv from 'ajv'
 import schema from './schema.json'
 
 export function validate(ket: any): boolean {
-  const validator = new Validator()
-  const result = validator.validate(ket, schema)
-  return result.valid
+  const ajv = new Ajv()
+  const validate = ajv.compile(schema)
+  return validate(ket)
 }

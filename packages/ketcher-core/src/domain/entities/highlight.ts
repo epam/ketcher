@@ -14,25 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ThemeType } from 'theming/defaultTheme'
-import { css } from '@emotion/react'
+export interface HighlightAttributes {
+  atoms: Array<number>
+  bonds: Array<number>
+  color: string
+}
 
-export const scrollbarThin = ({ ketcher: theme }: ThemeType) => css`
-  scrollbar-width: thin;
-  scrollbar-color: ${theme.color.scroll.regular} ${theme.color.scroll.inactive};
-  &::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-    background-color: ${theme.color.scroll.inactive};
-    border-radius: 2px;
-    -webkit-border-radius: 2px;
+export class Highlight {
+  atoms: Array<number>
+  bonds: Array<number>
+  color: string
+
+  constructor(attributes: HighlightAttributes) {
+    const { atoms, bonds, color } = attributes
+    this.color = color
+    this.atoms = atoms
+    this.bonds = bonds
   }
-  &::-webkit-scrollbar-thumb {
-    background-color: ${theme.color.scroll.regular};
-    border-radius: 2px;
-    -webkit-border-radius: 2px;
-  }
-  &::-webkit-scrollbar-thumb:active {
-    background-color: ${theme.color.scroll.regular};
-  }
-`
+}

@@ -389,7 +389,7 @@ class ReStruct {
     // TODO: when to update sgroup?
     this.sgroups.forEach((sgroup) => {
       this.clearVisel(sgroup.visel)
-      sgroup.highlighting = null
+      sgroup.hovering = null
       sgroup.selectionPlate = null
     })
 

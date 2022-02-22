@@ -144,7 +144,7 @@ class ReRGroup extends ReObject {
       .attr(attrs)
   }
 
-  drawHighlight(render) {
+  drawHover(render) {
     const rgid = render.ctab.rgroups.keyOf(this)
 
     if (!rgid) {
@@ -157,12 +157,12 @@ class ReRGroup extends ReObject {
     const ret = this._draw(
       render,
       rgid,
-      render.options.highlightStyle /* { 'fill' : 'red' } */
+      render.options.hoverStyle /* { 'fill' : 'red' } */
     ) // eslint-disable-line no-underscore-dangle
-    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
 
     this.item.frags.forEach((fnum, fid) => {
-      render.ctab.frags.get(fid).drawHighlight(render)
+      render.ctab.frags.get(fid).drawHover(render)
     })
 
     return ret

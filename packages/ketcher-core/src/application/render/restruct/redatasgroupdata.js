@@ -28,22 +28,22 @@ class ReDataSGroupData extends ReObject {
     return true
   }
 
-  highlightPath(render) {
+  hoverPath(render) {
     const box = this.sgroup.dataArea
     const p0 = Scale.obj2scaled(box.p0, render.options)
     const sz = Scale.obj2scaled(box.p1, render.options).sub(p0)
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
   }
 
-  drawHighlight(render) {
-    const ret = this.highlightPath(render).attr(render.options.highlightStyle)
-    render.ctab.addReObjectPath(LayerMap.highlighting, this.visel, ret)
+  drawHover(render) {
+    const ret = this.hoverPath(render).attr(render.options.hoverStyle)
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
     return ret
   }
 
   makeSelectionPlate(restruct, paper, styles) {
     // TODO [MK] review parameters
-    return this.highlightPath(restruct.render).attr(styles.selectionStyle)
+    return this.hoverPath(restruct.render).attr(styles.selectionStyle)
   }
 }
 

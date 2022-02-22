@@ -91,12 +91,12 @@ class ReFrag extends ReObject {
     return null // this._draw(render, fid, { 'stroke' : 'lightgray' }); // [RB] for debugging only
   }
 
-  drawHighlight(render) {
+  drawHover(render) {
     // eslint-disable-line no-unused-vars
     // Do nothing. This method shouldn't actually be called.
   }
 
-  setHighlight(highLight, render) {
+  setHover(hover, render) {
     let fid = render.ctab.frags.keyOf(this)
 
     if (!fid && fid !== 0) {
@@ -107,12 +107,12 @@ class ReFrag extends ReObject {
     fid = parseInt(fid, 10)
 
     render.ctab.atoms.forEach((atom) => {
-      if (atom.a.fragment === fid) atom.setHighlight(highLight, render)
+      if (atom.a.fragment === fid) atom.setHover(hover, render)
     })
 
     render.ctab.bonds.forEach((bond) => {
       if (render.ctab.atoms.get(bond.b.begin).a.fragment === fid) {
-        bond.setHighlight(highLight, render)
+        bond.setHover(hover, render)
       }
     })
   }

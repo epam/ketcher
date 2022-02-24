@@ -75,12 +75,12 @@ export class KetSerializer implements Serializer<Struct> {
     if (!validate(ket)) {
       throw new Error('Cannot deserialize input JSON.')
     }
-    resultingStruct.name = ket.header ? ket.header.moleculeName : null
     const nodes = ket.root.nodes
     Object.keys(nodes).forEach((i) => {
       if (nodes[i].type) parseNode(nodes[i], resultingStruct)
       else if (nodes[i].$ref) parseNode(ket[nodes[i].$ref], resultingStruct)
     })
+    resultingStruct.name = ket.header ? ket.header.moleculeName : null
 
     return resultingStruct
   }

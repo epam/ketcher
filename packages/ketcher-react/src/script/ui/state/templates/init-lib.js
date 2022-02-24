@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializer, SdfSerializer } from 'ketcher-core'
+import { KetSerializer, SdfSerializer } from 'ketcher-core'
 
 import { appUpdate } from '../options'
 import { storage } from '../../storage-ext'
@@ -57,7 +57,7 @@ const deserializeSdfTemplates = (baseUrl, cacheEl, fileName) => {
 function userTmpls() {
   const userLib = storage.getItem('ketcher-tmpls')
   if (!Array.isArray(userLib) || userLib.length === 0) return []
-  const molSerializer = new MolSerializer()
+  const ketSerializer = new KetSerializer()
   return userLib
     .map((tmpl) => {
       try {
@@ -65,7 +65,7 @@ function userTmpls() {
         tmpl.props.group = 'User Templates'
 
         return {
-          struct: molSerializer.deserialize(tmpl.struct),
+          struct: ketSerializer.deserialize(tmpl.struct),
           props: tmpl.props
         }
       } catch (ex) {

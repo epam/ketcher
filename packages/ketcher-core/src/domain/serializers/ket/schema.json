@@ -48,21 +48,10 @@
     },
     "^mol\\d+": {
       "$ref": "#/definitions/molecule"
-    },
-    "^header$": {
-      "$ref": "#/definitions/header"
     }
   },
   "additionalProperties": false,
   "definitions": {
-    "header": {
-      "type": "object",
-      "properties": {
-        "moleculeName": {
-          "type": "string"
-        }
-      }
-    },
     "rsite": {
       "type": "object",
       "required": ["type", "location"],
@@ -209,10 +198,10 @@
           "type": "array",
           "minItems": 2,
           "maxItems": 2,
+          "uniqueItems": true,
           "items": {
             "type": "integer",
-            "minimum": 0,
-            "uniqueItems": true
+            "minimum": 0
           }
         },
         "stereo": {
@@ -350,10 +339,10 @@
               },
               "items": {
                 "type": "array",
+                "uniqueItems": true,
                 "items": {
                   "type": "integer",
-                  "minimum": 0,
-                  "uniqueItems": true
+                  "minimum": 0
                 }
               }
             }
@@ -368,10 +357,10 @@
               },
               "items": {
                 "type": "array",
+                "uniqueItems": true,
                 "items": {
                   "type": "integer",
-                  "minimum": 0,
-                  "uniqueItems": true
+                  "minimum": 0
                 }
               }
             }
@@ -383,6 +372,7 @@
       "type": "array",
       "items": {
         "required": ["atoms", "type"],
+        "type": "object",
         "properties": {
           "atoms": {
             "type": "array",

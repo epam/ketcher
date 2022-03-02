@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
- @import '../../../../../../../style/variables.less';
- @import '../../../../../../../style/mixins.less';
- 
+@import '../../../../../../../style/variables.less';
+@import '../../../../../../../style/mixins.less';
+
 @save-container-width-large: 482px;
 @save-container-height-large: 315px;
 @save-container-width-small: 380px;
@@ -81,89 +81,88 @@
 
       input {
         height: 25px !important;
-       }
- 
-       > span {
-         margin-right: 8px;
-       }
- 
-       :global(.MuiOutlinedInput-root .MuiSelect-select) {
-         width: 145px;
-       }
-     }
-   }
- 
-   .previewArea {
-     font-family: @Consolas; // same font for all browsers
-     display: block;
-     min-height: 225px;
-     min-width: 325px;
-     overflow: auto;
-     white-space: pre;
-     cursor: text;
-     resize: none;
-     color: @color-text-primary;
-     font-size: 12px;
- 
-     .scrollbar_thin();
-   }
- 
-   .saveImageContainer {
-     width: @save-container-width-large;
-     height: @save-container-height-large;
-   }
- 
-   footer {
-     display: flex;
-     flex-direction: row;
-     flex-wrap: nowrap;
-     justify-content: flex-end;
-     margin-bottom: 10px;
- 
-     .ok {
-       .button-main();
- 
-       border: none;
-       margin-right: 2px;
-       margin-left: 10px;
-       float: right;
-     }
-   }
- 
-   .imageContainer {
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     justify-content: center;
-     height: 100%;
- 
-     img {
-       background-color: @color-background-primary;
-       height: 220px;
-       width: 220px;
-       padding: 5px;
-     }
-   }
- 
-   .previewMessage {
-     text-align: center;
-     margin: auto;
-   }
- }
- 
- :global(.smallEditor) {
-   .formContainer {
-     width: @save-container-width-small;
-     height: @save-container-height-small;
-   }
- 
-   .warnings {
-     height: 50px;
-   }
- 
-   .saveImageContainer {
-     width: @save-container-width-small;
-     height: @save-container-height-small;
-   }
- }
-  
+      }
+
+      > span {
+        margin-right: 8px;
+      }
+
+      :global(.MuiOutlinedInput-root .MuiSelect-select) {
+        width: 145px;
+      }
+    }
+  }
+
+  .previewArea {
+    font-family: @Consolas; // same font for all browsers
+    display: block;
+    min-height: 225px;
+    min-width: 325px;
+    overflow: auto;
+    white-space: pre;
+    cursor: text;
+    resize: none;
+    color: @color-text-primary;
+    font-size: 12px;
+
+    .scrollbar_thin();
+  }
+
+  .saveImageContainer {
+    width: @save-container-width-large;
+    height: @save-container-height-large;
+  }
+
+  footer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+
+    .ok {
+      .button-main();
+
+      border: none;
+      margin-right: 2px;
+      margin-left: 10px;
+      float: right;
+    }
+  }
+
+  .imageContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    img {
+      background-color: @color-background-primary;
+      height: 220px;
+      width: 220px;
+      padding: 5px;
+    }
+  }
+
+  .previewMessage {
+    text-align: center;
+    margin: auto;
+  }
+}
+
+:global(.smallEditor) {
+  .formContainer {
+    width: @save-container-width-small;
+    height: @save-container-height-small;
+  }
+
+  .warnings {
+    height: 50px;
+  }
+
+  .saveImageContainer {
+    width: @save-container-width-small;
+    height: @save-container-height-small;
+  }
+}

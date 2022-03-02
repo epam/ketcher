@@ -48,10 +48,21 @@
     },
     "^mol\\d+": {
       "$ref": "#/definitions/molecule"
+    },
+    "^header$": {
+      "$ref": "#/definitions/header"
     }
   },
   "additionalProperties": false,
   "definitions": {
+    "header": {
+      "type": "object",
+      "properties": {
+        "moleculeName": {
+          "type": "string"
+        }
+      }
+    },
     "rsite": {
       "type": "object",
       "required": ["type", "location"],

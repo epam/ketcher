@@ -36,6 +36,11 @@ function modalReducer(state = null, action) {
   const { type, data } = action
 
   if (type === 'UPDATE_FORM') {
+    // Don't update if modal has already been closed
+    if (!state) {
+      return null
+    }
+
     const formState = formReducer(state.form, action, state.name)
     return { ...state, form: formState }
   }

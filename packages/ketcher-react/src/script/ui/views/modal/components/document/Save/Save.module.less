@@ -40,7 +40,7 @@
 
   .warnings {
     max-height: 50px;
-    height: fit-content;
+    flex-shrink: 0;
     border: none;
     border-radius: 4px;
     margin: 2px 0;
@@ -51,7 +51,7 @@
 
     .warningsContainer {
       display: flex;
-
+      
       .warningsArr {
         color: @error-color;
         margin: 2px;
@@ -94,7 +94,6 @@
   }
 
   .previewArea {
-    font-family: @Monospace;
     display: block;
     min-height: 225px;
     min-width: 325px;

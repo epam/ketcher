@@ -37,6 +37,8 @@ function modalReducer(state = null, action) {
 
   if (type === 'UPDATE_FORM') {
     // Don't update if modal has already been closed
+    // TODO: refactor actions and server functions in /src/script/ui/state/server/index.js to
+    // not send 'UPDATE_FORM' action to a closed modal in the first place
     if (!state) {
       return null
     }

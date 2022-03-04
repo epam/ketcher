@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen } from 'test-utils'
+
+import { render, screen, fireEvent } from '@testing-library/react'
+
 import { MonomerGroup } from './MonomerGroup'
-import { fireEvent } from '@testing-library/react'
 
 describe('Monomer Group', () => {
   const mockGroupProps = {
@@ -32,10 +33,12 @@ describe('Monomer Group', () => {
 
   it('should render correct without title prop', () => {
     const view = render(
-      <MonomerGroup
-        items={mockGroupProps.groupItems}
-        onItemClick={onItemClick}
-      />
+      withThemeProvider(
+        <MonomerGroup
+          items={mockGroupProps.groupItems}
+          onItemClick={onItemClick}
+        />
+      )
     )
 
     mockGroupProps.groupItems.forEach((item) => {
@@ -47,11 +50,13 @@ describe('Monomer Group', () => {
   })
   it('should render correct with title prop', () => {
     const view = render(
-      <MonomerGroup
-        items={mockGroupProps.groupItems}
-        title={mockGroupProps.groupTitle}
-        onItemClick={onItemClick}
-      />
+      withThemeProvider(
+        <MonomerGroup
+          items={mockGroupProps.groupItems}
+          title={mockGroupProps.groupTitle}
+          onItemClick={onItemClick}
+        />
+      )
     )
 
     const title = screen.getByText(mockGroupProps.groupTitle)
@@ -61,11 +66,13 @@ describe('Monomer Group', () => {
   })
   it('callback for monomer item should be called for group items', () => {
     render(
-      <MonomerGroup
-        items={mockGroupProps.groupItems}
-        title={mockGroupProps.groupTitle}
-        onItemClick={onItemClick}
-      />
+      withThemeProvider(
+        <MonomerGroup
+          items={mockGroupProps.groupItems}
+          title={mockGroupProps.groupTitle}
+          onItemClick={onItemClick}
+        />
+      )
     )
     const item = screen.getByText('Ld')
     fireEvent.click(item)

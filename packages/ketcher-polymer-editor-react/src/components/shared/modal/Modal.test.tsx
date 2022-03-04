@@ -14,8 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from 'test-utils'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+
 import { Modal } from '.'
 
 const mockOnCloseHandler = jest.fn()
@@ -30,21 +31,21 @@ const mockModal = () => {
 
 describe('Modal component', () => {
   it('should render correctly', () => {
-    expect(render(mockModal())).toMatchSnapshot()
+    expect(render(withThemeProvider(mockModal()))).toMatchSnapshot()
   })
 
   it('should render with passed title', () => {
-    render(mockModal())
+    render(withThemeProvider(mockModal()))
     expect(screen.getByText('title')).toBeInTheDocument()
   })
 
   it('should render with passed content', () => {
-    render(mockModal())
+    render(withThemeProvider(mockModal()))
     expect(screen.getByText('Content')).toBeInTheDocument()
   })
 
   it('should call close handler when close icon clicked', () => {
-    render(mockModal())
+    render(withThemeProvider(mockModal()))
 
     const closeIcon = screen.getByTitle('Close window')
     userEvent.click(closeIcon)
@@ -54,14 +55,16 @@ describe('Modal component', () => {
 
   it('should not render close icon if showCloseButton prop set to false', () => {
     render(
-      <Modal
-        title="title"
-        isOpen={true}
-        showCloseButton={false}
-        onClose={mockOnCloseHandler}
-      >
-        <Modal.Content>Content</Modal.Content>
-      </Modal>
+      withThemeProvider(
+        <Modal
+          title="title"
+          isOpen={true}
+          showCloseButton={false}
+          onClose={mockOnCloseHandler}
+        >
+          <Modal.Content>Content</Modal.Content>
+        </Modal>
+      )
     )
 
     expect(screen.queryByTitle('Close window')).not.toBeInTheDocument()

@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen } from 'test-utils'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { RnaMonomerSection } from './RnaMonomerSection'
-import { fireEvent } from '@testing-library/react'
 
 describe('RNA Monomer Section', () => {
   const rnaMonomersMock = {
@@ -66,7 +65,12 @@ describe('RNA Monomer Section', () => {
 
   it('should correct render with initial values', () => {
     render(
-      <RnaMonomerSection items={rnaMonomersMock} selectItem={selectItemMock} />
+      withThemeProvider(
+        <RnaMonomerSection
+          items={rnaMonomersMock}
+          selectItem={selectItemMock}
+        />
+      )
     )
     const switcherButtons = screen.getAllByRole('button')
     const tabTitle = screen.getByText('Nucleotides')
@@ -79,7 +83,12 @@ describe('RNA Monomer Section', () => {
 
   it('should pass correct initial monomers to switcher', () => {
     render(
-      <RnaMonomerSection items={rnaMonomersMock} selectItem={selectItemMock} />
+      withThemeProvider(
+        <RnaMonomerSection
+          items={rnaMonomersMock}
+          selectItem={selectItemMock}
+        />
+      )
     )
     const switcherButton = screen.getByText('R(A)P')
     expect(switcherButton).toBeInTheDocument()
@@ -87,7 +96,12 @@ describe('RNA Monomer Section', () => {
 
   it('should render correct tab when each switcher button selected', () => {
     render(
-      <RnaMonomerSection items={rnaMonomersMock} selectItem={selectItemMock} />
+      withThemeProvider(
+        <RnaMonomerSection
+          items={rnaMonomersMock}
+          selectItem={selectItemMock}
+        />
+      )
     )
 
     const sugarButton = screen.getByText('R')
@@ -108,7 +122,12 @@ describe('RNA Monomer Section', () => {
 
   it('should pass correct arg to callback function after changing type', () => {
     render(
-      <RnaMonomerSection items={rnaMonomersMock} selectItem={selectItemMock} />
+      withThemeProvider(
+        <RnaMonomerSection
+          items={rnaMonomersMock}
+          selectItem={selectItemMock}
+        />
+      )
     )
 
     expect(selectItemMock).toHaveBeenCalledWith({
@@ -125,7 +144,12 @@ describe('RNA Monomer Section', () => {
 
   it('should pass correct arg to callback function after changing monomer', () => {
     render(
-      <RnaMonomerSection items={rnaMonomersMock} selectItem={selectItemMock} />
+      withThemeProvider(
+        <RnaMonomerSection
+          items={rnaMonomersMock}
+          selectItem={selectItemMock}
+        />
+      )
     )
 
     // nucleotides

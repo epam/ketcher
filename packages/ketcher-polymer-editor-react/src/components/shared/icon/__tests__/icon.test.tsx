@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from 'test-utils'
+import { render, screen } from '@testing-library/react'
 
 import { Icon, IconNameType } from '../icon'
 
 describe('Icon component', () => {
   it('should render SVG when valid name is provided', () => {
-    render(<Icon name="arrow-down" />)
+    render(withThemeProvider(<Icon name="arrow-down" />))
     const svg = screen.getByRole('img')
 
     expect(svg).toMatchSnapshot()
@@ -29,7 +29,7 @@ describe('Icon component', () => {
   it('should return null when invalid icon name is provided', () => {
     const invalidIconName = 'no-such -icon' as IconNameType
 
-    render(<Icon name={invalidIconName} />)
+    render(withThemeProvider(<Icon name={invalidIconName} />))
     const svg = screen.queryByRole('img')
 
     expect(svg).toMatchSnapshot()
@@ -37,7 +37,9 @@ describe('Icon component', () => {
 
   it('should pass className prop to SVG element', () => {
     const className = 'my-class-name'
-    render(<Icon name="select-lasso" className={className} />)
+    render(
+      withThemeProvider(<Icon name="select-lasso" className={className} />)
+    )
     const svg = screen.queryByRole('img')
 
     expect(svg).toHaveAttribute('className', className)

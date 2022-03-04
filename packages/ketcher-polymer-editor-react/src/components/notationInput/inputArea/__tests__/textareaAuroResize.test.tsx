@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from 'test-utils'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { TextareaAutoResize } from '../textareaAutoResize'
@@ -34,7 +34,9 @@ describe('TextareaAutoResize component', () => {
     const mockInputHandler = jest.fn()
 
     render(
-      <TextareaAutoResize {...MOCK_PROPS} inputHandler={mockInputHandler} />
+      withThemeProvider(
+        <TextareaAutoResize {...MOCK_PROPS} inputHandler={mockInputHandler} />
+      )
     )
     const textarea = screen.getByDisplayValue(MOCK_PROPS.inputValue)
 
@@ -45,7 +47,7 @@ describe('TextareaAutoResize component', () => {
   })
 
   it('should hide ellipsis if input is not overflowing', () => {
-    render(<TextareaAutoResize {...MOCK_PROPS} />)
+    render(withThemeProvider(<TextareaAutoResize {...MOCK_PROPS} />))
     const ellipsis = screen.getByText('...')
 
     expect(ellipsis).toHaveStyle('display: none')

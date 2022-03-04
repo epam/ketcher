@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from 'test-utils'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { DropDown, DropDownProps } from '../dropDown'
@@ -35,12 +35,12 @@ const mockProps: DropDownProps = {
 
 describe('DropDown component', () => {
   it('should render an element with current selection displayed', () => {
-    render(<DropDown {...mockProps} />)
+    render(withThemeProvider(<DropDown {...mockProps} />))
     expect(screen.getByText(INITIAL_SELECTION.label)).toBeInTheDocument()
   })
 
   it('should render dropdown with all options when clicked', async () => {
-    render(<DropDown {...mockProps} />)
+    render(withThemeProvider(<DropDown {...mockProps} />))
 
     const dropDownButton = screen.getByRole('button')
     userEvent.click(dropDownButton)
@@ -50,7 +50,7 @@ describe('DropDown component', () => {
   })
 
   it('should call selection handler with id when label is clicked', async () => {
-    render(<DropDown {...mockProps} />)
+    render(withThemeProvider(<DropDown {...mockProps} />))
 
     const dropDownButton = screen.getByRole('button')
     userEvent.click(dropDownButton)

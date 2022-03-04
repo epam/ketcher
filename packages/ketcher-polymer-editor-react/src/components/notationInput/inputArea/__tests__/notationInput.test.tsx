@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render } from 'test-utils'
+import { render } from '@testing-library/react'
 
 import { InputArea } from '../inputArea'
 
@@ -25,7 +25,7 @@ const MOCK_PROPS = {
 }
 
 describe('NotationInput component', () => {
-  const { container } = render(<InputArea {...MOCK_PROPS} />)
+  const { container } = render(withThemeProvider(<InputArea {...MOCK_PROPS} />))
 
   it('should render textarea and a hidden textarea in a container', () => {
     expect(container).toMatchSnapshot()

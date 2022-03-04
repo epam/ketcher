@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from 'test-utils'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { ActionButton } from '..'
@@ -29,22 +29,22 @@ const mockProps = {
 
 describe('ActionButton component', () => {
   it('should render button element when props are provided', () => {
-    render(<ActionButton {...mockProps} />)
+    render(withThemeProvider(<ActionButton {...mockProps} />))
     expect(screen.getByRole('button')).toBeInTheDocument()
   })
 
   it('should render button with specified label', () => {
-    render(<ActionButton {...mockProps} />)
+    render(withThemeProvider(<ActionButton {...mockProps} />))
     expect(screen.getByRole('button')).toHaveTextContent(MOCK_LABEL)
   })
 
   it('should be disabled when disabled prop is true', () => {
-    render(<ActionButton disabled={true} {...mockProps} />)
+    render(withThemeProvider(<ActionButton disabled={true} {...mockProps} />))
     expect(screen.getByRole('button')).toBeDisabled()
   })
 
   it('should call provided callback when button is clicked', () => {
-    render(<ActionButton {...mockProps} />)
+    render(withThemeProvider(<ActionButton {...mockProps} />))
     const button = screen.getByRole('button')
     userEvent.click(button)
     expect(mockClickHandler).toHaveBeenCalledTimes(1)

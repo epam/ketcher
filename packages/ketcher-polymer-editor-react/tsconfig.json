@@ -35,7 +35,6 @@
       "hooks": ["src/hooks"],
       "assets/*": ["src/assets/*"],
       "theming/*": ["src/theming/*"],
-      "test-utils": ["src/test-utils"],
       "helpers": ["src/helpers"],
       "helpers/*": ["src/helpers/*"]
     },

@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 import { LoadingCircles } from './LoadingCircles'
-import { render } from 'test-utils'
+import { render } from '@testing-library/react'
 
 describe('LoadingCircles component', () => {
   it('should render correctly', () => {
-    expect(render(<LoadingCircles />)).toMatchSnapshot()
+    expect(render(withThemeProvider(<LoadingCircles />))).toMatchSnapshot()
   })
 })

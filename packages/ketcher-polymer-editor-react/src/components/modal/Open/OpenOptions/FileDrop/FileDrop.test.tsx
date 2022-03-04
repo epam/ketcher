@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { FileDrop } from './FileDrop'
@@ -69,11 +69,17 @@ describe('FileDrop component', () => {
       'input[type=file]'
     ) as HTMLInputElement
 
-    await userEvent.upload(input, mockFile)
+    userEvent.upload(input, mockFile)
 
-    expect(input.files && input.files[0]).toBe(mockFile)
-    expect(input.files && input.files.item(0)).toBe(mockFile)
-    expect(input.files && input.files).toHaveLength(1)
+    await waitFor(() => {
+      expect(input.files && input.files[0]).toBe(mockFile)
+    })
+    await waitFor(() => {
+      expect(input.files && input.files.item(0)).toBe(mockFile)
+    })
+    await waitFor(() => {
+      expect(input.files && input.files).toHaveLength(1)
+    })
   })
 
   it('accepted file callback should be called after file is uploaded', async () => {
@@ -82,8 +88,10 @@ describe('FileDrop component', () => {
       'input[type=file]'
     ) as HTMLInputElement
 
-    await userEvent.upload(input, mockFile)
+    userEvent.upload(input, mockFile)
 
-    expect(mockProps.onDropAccepted).toBeCalled()
+    await waitFor(() => {
+      expect(mockProps.onDropAccepted).toBeCalled()
+    })
   })
 })

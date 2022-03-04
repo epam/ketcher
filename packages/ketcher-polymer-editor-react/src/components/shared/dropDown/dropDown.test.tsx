@@ -17,7 +17,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { DropDown, DropDownProps } from '../dropDown'
+import { DropDown, DropDownProps } from './dropDown'
 
 const mockSelectionHandler = jest.fn()
 const MOCK_OPTIONS = [

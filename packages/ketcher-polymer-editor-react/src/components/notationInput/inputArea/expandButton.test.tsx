@@ -14,20 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
-import { InputArea } from '../inputArea'
+import { ExpandButton } from './expandButton'
 
-const mockInputHandler = jest.fn()
-const MOCK_PROPS = {
-  inputValue: 'Some input here',
-  inputHandler: mockInputHandler
-}
+describe('ExpandButton component', () => {
+  it('should call expand handler when clicked', () => {
+    const mockExpandHandler = jest.fn()
+    const mockExpanded = false
 
-describe('NotationInput component', () => {
-  const { container } = render(withThemeProvider(<InputArea {...MOCK_PROPS} />))
+    render(
+      withThemeProvider(
+        <ExpandButton
+          expanded={mockExpanded}
+          expandHandler={mockExpandHandler}
+        />
+      )
+    )
+    const button = screen.getByRole('button')
 
-  it('should render textarea and a hidden textarea in a container', () => {
-    expect(container).toMatchSnapshot()
+    userEvent.click(button)
+    expect(mockExpandHandler).toHaveBeenCalledTimes(1)
   })
 })

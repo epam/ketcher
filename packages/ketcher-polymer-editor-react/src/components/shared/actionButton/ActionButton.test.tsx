@@ -17,7 +17,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { ActionButton } from '..'
+import { ActionButton } from '.'
 
 const mockClickHandler = jest.fn()
 const MOCK_LABEL = 'Click Me!'

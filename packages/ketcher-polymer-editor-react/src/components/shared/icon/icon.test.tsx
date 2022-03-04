@@ -16,7 +16,7 @@
 
 import { render, screen } from '@testing-library/react'
 
-import { Icon, IconNameType } from '../icon'
+import { Icon, IconNameType } from './icon'
 
 describe('Icon component', () => {
   it('should render SVG when valid name is provided', () => {

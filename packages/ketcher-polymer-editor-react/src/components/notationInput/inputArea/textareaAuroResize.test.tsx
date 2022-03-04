@@ -17,7 +17,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { TextareaAutoResize } from '../textareaAutoResize'
+import { TextareaAutoResize } from './textareaAutoResize'
 
 const MOCK_PROPS = {
   inputValue: 'Initial value',

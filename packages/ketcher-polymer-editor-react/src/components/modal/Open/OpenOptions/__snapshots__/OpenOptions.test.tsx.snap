@@ -32,6 +32,7 @@ Object {
           class="css-2jv7sj"
         >
           <div
+            role="button"
             style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-around;"
             tabindex="0"
           >
@@ -97,6 +98,7 @@ Object {
         class="css-2jv7sj"
       >
         <div
+          role="button"
           style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-around;"
           tabindex="0"
         >

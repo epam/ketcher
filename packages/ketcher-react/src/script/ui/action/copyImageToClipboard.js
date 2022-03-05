@@ -26,7 +26,7 @@ async function copyImageToClipboard() {
 
   try {
     const factory = new FormatterFactory(server)
-    const service = factory.create('mol', options)
+    const service = factory.create('ket', options)
     const structStr = await service.getStructureFromStructAsync(struct)
     const ketcher = new Ketcher(editor, server, {}, factory)
     const image = await ketcher.generateImage(structStr, {

@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { OpenOptions } from './OpenOptions'
-import { render, screen } from 'test-utils'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+
+import { OpenOptions } from './OpenOptions'
 
 const mockProps = {
   selectClipboard: jest.fn(),
@@ -25,10 +26,12 @@ const mockProps = {
 
 describe('OpenOptions component', () => {
   it('should render correctly', () => {
-    expect(render(<OpenOptions {...mockProps} />)).toMatchSnapshot()
+    expect(
+      render(withThemeProvider(<OpenOptions {...mockProps} />))
+    ).toMatchSnapshot()
   })
   it('should render correctly with passed props', () => {
-    render(<OpenOptions {...mockProps} />)
+    render(withThemeProvider(<OpenOptions {...mockProps} />))
 
     expect(
       screen.getByRole('button', { name: 'Paste from Clipboard' })
@@ -39,7 +42,7 @@ describe('OpenOptions component', () => {
     expect(screen.getAllByRole('img').length).toEqual(2)
   })
   it('callback for Paste from Clipboard button should be called after click', () => {
-    render(<OpenOptions {...mockProps} />)
+    render(withThemeProvider(<OpenOptions {...mockProps} />))
     const button = screen.getByRole('button', { name: 'Paste from Clipboard' })
 
     userEvent.click(button)

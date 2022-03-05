@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen } from 'test-utils'
-import { FileDrop } from './FileDrop'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+
+import { FileDrop } from './FileDrop'
 
 const mockProps = {
   buttonLabel: 'Open from file',
@@ -35,11 +36,13 @@ const mockFile = new File(['ketcher mol file'], 'ketcher.mol', {
 
 describe('FileDrop component', () => {
   it('should render correctly', () => {
-    expect(render(<FileDrop {...mockProps} />)).toMatchSnapshot()
+    expect(
+      render(withThemeProvider(<FileDrop {...mockProps} />))
+    ).toMatchSnapshot()
   })
 
   it('should render correctly with required props', () => {
-    render(<FileDrop {...mockProps} />)
+    render(withThemeProvider(<FileDrop {...mockProps} />))
 
     expect(
       screen.getByRole('button', { name: mockProps.buttonLabel })
@@ -49,7 +52,9 @@ describe('FileDrop component', () => {
   })
 
   it('should render correctly with optional props', () => {
-    render(<FileDrop {...mockProps} {...mockOptionalProps} />)
+    render(
+      withThemeProvider(<FileDrop {...mockProps} {...mockOptionalProps} />)
+    )
 
     expect(
       screen.getByRole('button', { name: mockProps.buttonLabel })
@@ -59,26 +64,34 @@ describe('FileDrop component', () => {
   })
 
   it('should upload file', async () => {
-    const { container } = render(<FileDrop {...mockProps} />)
+    const { container } = render(withThemeProvider(<FileDrop {...mockProps} />))
     const input = container.querySelector(
       'input[type=file]'
     ) as HTMLInputElement
 
-    await userEvent.upload(input, mockFile)
+    userEvent.upload(input, mockFile)
 
-    expect(input.files && input.files[0]).toBe(mockFile)
-    expect(input.files && input.files.item(0)).toBe(mockFile)
-    expect(input.files && input.files).toHaveLength(1)
+    await waitFor(() => {
+      expect(input.files && input.files[0]).toBe(mockFile)
+    })
+    await waitFor(() => {
+      expect(input.files && input.files.item(0)).toBe(mockFile)
+    })
+    await waitFor(() => {
+      expect(input.files && input.files).toHaveLength(1)
+    })
   })
 
   it('accepted file callback should be called after file is uploaded', async () => {
-    const { container } = render(<FileDrop {...mockProps} />)
+    const { container } = render(withThemeProvider(<FileDrop {...mockProps} />))
     const input = container.querySelector(
       'input[type=file]'
     ) as HTMLInputElement
 
-    await userEvent.upload(input, mockFile)
+    userEvent.upload(input, mockFile)
 
-    expect(mockProps.onDropAccepted).toBeCalled()
+    await waitFor(() => {
+      expect(mockProps.onDropAccepted).toBeCalled()
+    })
   })
 })

@@ -14,8 +14,7 @@ module.exports = {
     '^theming(.*)$': '<rootDir>/src/theming/$1',
     '^hooks(.*)$': '<rootDir>/src/hooks/$1',
     '^assets(.*)$': '<rootDir>/src/assets/$1',
-    '^test-utils(.*)$': '<rootDir>/src/test-utils/$1',
     '^helpers(.*)$': '<rootDir>/src/helpers/$1'
   },
-  setupFilesAfterEnv: ['<rootDir>/src/testsSetup.ts']
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.tsx']
 }

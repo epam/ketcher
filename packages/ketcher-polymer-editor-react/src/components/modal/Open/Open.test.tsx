@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen } from 'test-utils'
-import { Open } from './Open'
+
 import React from 'react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+
+import { Open } from './Open'
 
 const mockProps = {
   isModalOpen: true,
@@ -28,11 +30,11 @@ jest.spyOn(React, 'useEffect').mockImplementation(() => {})
 
 describe('Open component', () => {
   it('should render correctly', () => {
-    expect(render(<Open {...mockProps} />)).toMatchSnapshot()
+    expect(render(withThemeProvider(<Open {...mockProps} />))).toMatchSnapshot()
   })
   it('paste from clipboard', () => {
     const mockTypedText = 'more typed text'
-    render(<Open {...mockProps} />)
+    render(withThemeProvider(<Open {...mockProps} />))
     const clipboardButton = screen.getByRole('button', {
       name: 'Paste from Clipboard'
     })

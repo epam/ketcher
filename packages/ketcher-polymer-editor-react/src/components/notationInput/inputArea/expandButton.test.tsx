@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from 'test-utils'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { ExpandButton } from '../expandButton'
+import { ExpandButton } from './expandButton'
 
 describe('ExpandButton component', () => {
   it('should call expand handler when clicked', () => {
@@ -25,7 +25,12 @@ describe('ExpandButton component', () => {
     const mockExpanded = false
 
     render(
-      <ExpandButton expanded={mockExpanded} expandHandler={mockExpandHandler} />
+      withThemeProvider(
+        <ExpandButton
+          expanded={mockExpanded}
+          expandHandler={mockExpandHandler}
+        />
+      )
     )
     const button = screen.getByRole('button')
 

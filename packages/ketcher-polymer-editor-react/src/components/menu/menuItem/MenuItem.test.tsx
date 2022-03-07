@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen } from 'test-utils'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Menu, MenuContext } from 'components/menu'
 
@@ -26,7 +26,7 @@ const mockValue = {
 }
 
 const mockMenuItem = () => {
-  return (
+  return withThemeProvider(
     <MenuContext.Provider value={mockValue}>
       <Menu.Item itemId="open" />
     </MenuContext.Provider>

@@ -443,6 +443,7 @@
 .scrollbar_thin {
   &::-webkit-scrollbar {
     width: 4px;
+    height: 4px;
     background-color: @color-scroll-inactive;
     border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -457,4 +458,6 @@
   &::-webkit-scrollbar-thumb:active {
     background-color: @color-scroll;
   }
+
+  scrollbar-width: thin; // mozilla
 }

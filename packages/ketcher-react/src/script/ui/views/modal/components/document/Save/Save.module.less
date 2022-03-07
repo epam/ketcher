@@ -17,7 +17,7 @@
 @import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
-@save-container-width-large: 485px;
+@save-container-width-large: 482px;
 @save-container-height-large: 315px;
 @save-container-width-small: 380px;
 @save-container-height-small: 325px;
@@ -40,18 +40,17 @@
 
   .warnings {
     max-height: 50px;
-    height: fit-content;
-    border: none;
-    border-radius: 4px;
-    margin: 2px;
+    flex-shrink: 0;
+    margin: 2px 0;
     padding: 2px 5px;
     overflow: auto;
+    box-sizing: border-box;
 
     .scrollbar_thin();
 
     .warningsContainer {
       display: flex;
-
+      
       .warningsArr {
         color: @error-color;
         margin: 2px;
@@ -81,7 +80,6 @@
 
       input {
         height: 25px !important;
-        width: 190px;
       }
 
       > span {

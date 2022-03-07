@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render } from 'test-utils'
-import { screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { Menu, MenuContext } from 'components/menu'
 import userEvent from '@testing-library/user-event'
 
@@ -42,11 +41,11 @@ const mockSubMenu = () => {
 
 describe('Test SubMenu component', () => {
   it('should be rendered without crashing', () => {
-    const { asFragment } = render(mockSubMenu())
+    const { asFragment } = render(withThemeProvider(mockSubMenu()))
     expect(asFragment).toMatchSnapshot()
   })
   it('should call provided callback when header icon is clicked', () => {
-    render(mockSubMenu())
+    render(withThemeProvider(mockSubMenu()))
     const button = screen.getByRole('menuitem')
     userEvent.click(button)
     expect(mockClickHandler).toHaveBeenCalled()

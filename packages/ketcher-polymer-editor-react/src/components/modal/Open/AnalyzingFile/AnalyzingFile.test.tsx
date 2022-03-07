@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { render, screen } from '@testing-library/react'
+
 import { AnalyzingFile } from './AnalyzingFile'
-import { render, screen } from 'test-utils'
 
 const mockFileName = 'MockFileName'
 
 describe('AnalyzingFile component', () => {
   it('should render correctly', () => {
-    expect(render(<AnalyzingFile />)).toMatchSnapshot()
+    expect(render(withThemeProvider(<AnalyzingFile />))).toMatchSnapshot()
   })
 
   it('should render correctly with passed filename prop', () => {
-    render(<AnalyzingFile fileName={mockFileName} />)
+    render(withThemeProvider(<AnalyzingFile fileName={mockFileName} />))
 
     expect(screen.getByText(mockFileName)).toBeInTheDocument()
     expect(screen.getByRole('img')).toBeInTheDocument()

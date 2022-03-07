@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Layout } from 'components/Layout'
-import { render, screen } from 'test-utils'
+import { render, screen } from '@testing-library/react'
 
 const TopElementMock = () => {
   return <div>top element</div>
@@ -36,17 +36,19 @@ const RightElementMock = () => {
 describe('Layout', () => {
   it('should render several subcomponents correctly', () => {
     render(
-      <Layout>
-        <Layout.Top>
-          <TopElementMock />
-        </Layout.Top>
-        <Layout.Left>
-          <LeftElementMock />
-        </Layout.Left>
-        <Layout.Main>
-          <MainElementMock />
-        </Layout.Main>
-      </Layout>
+      withThemeProvider(
+        <Layout>
+          <Layout.Top>
+            <TopElementMock />
+          </Layout.Top>
+          <Layout.Left>
+            <LeftElementMock />
+          </Layout.Left>
+          <Layout.Main>
+            <MainElementMock />
+          </Layout.Main>
+        </Layout>
+      )
     )
 
     const topElement = screen.getByText('top element')
@@ -60,20 +62,22 @@ describe('Layout', () => {
 
   it('should render all subcomponents correctly', () => {
     render(
-      <Layout>
-        <Layout.Top>
-          <TopElementMock />
-        </Layout.Top>
-        <Layout.Left>
-          <LeftElementMock />
-        </Layout.Left>
-        <Layout.Main>
-          <MainElementMock />
-        </Layout.Main>
-        <Layout.Right>
-          <RightElementMock />
-        </Layout.Right>
-      </Layout>
+      withThemeProvider(
+        <Layout>
+          <Layout.Top>
+            <TopElementMock />
+          </Layout.Top>
+          <Layout.Left>
+            <LeftElementMock />
+          </Layout.Left>
+          <Layout.Main>
+            <MainElementMock />
+          </Layout.Main>
+          <Layout.Right>
+            <RightElementMock />
+          </Layout.Right>
+        </Layout>
+      )
     )
 
     const topElement = screen.getByText('top element')

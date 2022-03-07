@@ -241,8 +241,8 @@ const sgroup = {
     },
     {
       key: 'SRU',
-      type: 'object',
       title: 'SRU polymer',
+      type: 'object',
       properties: {
         type: { enum: ['SRU'] },
         subscript: {

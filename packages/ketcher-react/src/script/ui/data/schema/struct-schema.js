@@ -217,6 +217,7 @@ const sgroup = {
     {
       key: 'GEN',
       title: 'Generic',
+      type: 'object',
       properties: {
         type: { enum: ['GEN'] }
       }

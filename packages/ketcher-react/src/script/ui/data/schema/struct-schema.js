@@ -125,7 +125,9 @@ export const labelEdit = {
     label: {
       title: 'Atom',
       default: '',
-      invalidMessage: 'Wrong atom symbol'
+      invalidMessage: 'Wrong atom symbol',
+      type: 'string'
+
     }
   }
 }

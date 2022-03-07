@@ -241,6 +241,7 @@ const sgroup = {
     },
     {
       key: 'SRU',
+      type: 'object',
       title: 'SRU polymer',
       properties: {
         type: { enum: ['SRU'] },
@@ -263,6 +264,7 @@ const sgroup = {
     {
       key: 'SUP',
       title: 'Superatom',
+      type: 'object',
       properties: {
         type: { enum: ['SUP'] },
         name: {

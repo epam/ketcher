@@ -63,7 +63,12 @@ const Dialog: FC<Props> = (props) => {
   const dialogRef = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
-    ;(dialogRef.current as any).focus()
+    if ((dialogRef.current?.children[0] as any).innerText === 'LABEL EDIT'){
+      (dialogRef.current?.children[1] as any).focus()
+    }
+    else {
+      (dialogRef.current as any).focus()
+    }
     return () => {
       ;(
         dialogRef.current

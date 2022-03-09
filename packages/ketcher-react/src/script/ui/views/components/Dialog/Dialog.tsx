@@ -63,7 +63,7 @@ const Dialog: FC<Props> = (props) => {
   const dialogRef = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
-    const focusСandidate = dialogRef.current?.querySelector("input");
+    const focusСandidate = dialogRef.current?.querySelector('input')
     if (focusСandidate) {
       focusСandidate.focus()
     } else {

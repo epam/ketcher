@@ -455,6 +455,23 @@ Object {
             EPAM
           </span>
         </div>
+        <div
+          class="css-1b8kr7z"
+        >
+          <li
+            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+            role="menuitem"
+            tabindex="-1"
+          >
+            <icon-fullscreen.svg
+              fill="#525252"
+              role="img"
+            />
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </li>
+        </div>
       </div>
     </div>
   </body>,
@@ -908,6 +925,23 @@ Object {
         <span>
           EPAM
         </span>
+      </div>
+      <div
+        class="css-1b8kr7z"
+      >
+        <li
+          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+          role="menuitem"
+          tabindex="-1"
+        >
+          <icon-fullscreen.svg
+            fill="#525252"
+            role="img"
+          />
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </li>
       </div>
     </div>
   </div>,

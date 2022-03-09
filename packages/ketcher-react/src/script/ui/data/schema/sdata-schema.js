@@ -35,6 +35,7 @@ const sData = {
       {
         key: 'FRG_STR',
         title: 'MDLBG_FRAGMENT_STEREO',
+        type: 'object',
         properties: {
           type: { enum: ['DAT'] },
           fieldName: {
@@ -65,6 +66,7 @@ const sData = {
       {
         key: 'FRG_COEFF',
         title: 'MDLBG_FRAGMENT_COEFFICIENT',
+        type: 'object',
         properties: {
           type: { enum: ['DAT'] },
           fieldName: {
@@ -86,6 +88,7 @@ const sData = {
       {
         key: 'FRG_CHRG',
         title: 'MDLBG_FRAGMENT_CHARGE',
+        type: 'object',
         properties: {
           type: { enum: ['DAT'] },
           fieldName: {
@@ -134,6 +137,7 @@ const sData = {
       {
         key: 'MLT_FRG',
         title: 'KETCHER_MULTIPLE_FRAGMENT',
+        type: 'object',
         properties: {
           type: { enum: ['DAT'] },
           fieldName: {
@@ -171,6 +175,7 @@ const sData = {
       {
         key: 'SB_STR',
         title: 'MDLBG_STEREO_KEY',
+        type: 'object',
         properties: {
           type: { enum: ['DAT'] },
           fieldName: {
@@ -201,6 +206,7 @@ const sData = {
       {
         key: 'SB_BND',
         title: 'MDLBG_BOND_KEY',
+        type: 'object',
         properties: {
           type: { enum: ['DAT'] },
           fieldName: {
@@ -226,6 +232,7 @@ const sData = {
       {
         key: 'AT_STR',
         title: 'MDLBG_STEREO_KEY',
+        type: 'object',
         properties: {
           type: { enum: ['DAT'] },
           fieldName: {
@@ -272,6 +279,7 @@ const sData = {
       {
         key: 'GRP_STR',
         title: 'MDLBG_STEREO_KEY',
+        type: 'object',
         properties: {
           type: { enum: ['DAT'] },
           fieldName: {

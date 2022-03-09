@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import isHidden from './isHidden'
+import { Icon } from 'components/shared/icon'
+import { StyledMenuButton } from 'components/menu/menuItem'
+import styled from '@emotion/styled'
 
 interface DocumentWithFullscreen extends Document {
   mozFullScreenElement?: Element
@@ -66,17 +68,26 @@ const isFullScreen = (document: DocumentWithFullscreen) => {
 
 const toggleFullscreen = () => {
   const fullscreenElement: ElementWithFullscreen =
-    document.querySelector('.Ketcher-root') || document.documentElement
+    document.querySelector('.Ketcher-polymer-editor-root') ||
+    document.documentElement
   const fullscreenDocument = document as DocumentWithFullscreen
   isFullScreen(fullscreenDocument)
     ? exitFullscreen(fullscreenDocument)
     : requestFullscreen(fullscreenElement)
 }
 
-export default {
-  fullscreen: {
-    title: 'Fullscreen mode',
-    action: () => toggleFullscreen(),
-    hidden: (options) => isHidden(options, 'fullscreen')
-  }
+const StyledButtonContainer = styled.div`
+  position: absolute;
+  right: 47px;
+  bottom: 12px;
+`
+
+export const FullscreenButton = () => {
+  return (
+    <StyledButtonContainer>
+      <StyledMenuButton onClick={toggleFullscreen} isActive={false}>
+        <Icon name="fullscreen" />
+      </StyledMenuButton>
+    </StyledButtonContainer>
+  )
 }

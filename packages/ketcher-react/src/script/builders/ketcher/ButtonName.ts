@@ -73,3 +73,5 @@ export type ButtonName =
   | 'text'
   // right
   | 'enhanced-stereo'
+  // fullscreen
+  | 'fullscreen'

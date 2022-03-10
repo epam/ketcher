@@ -33,5 +33,8 @@ If applicable, add screenshots to help explain your problem.
  - Browser [e.g. stock browser, safari]
  - Version [e.g. 22]
 
+**Ketcher version** [e.g. v2.4.2-115-gcf0c1394]. 
+To determine it, hover over the header of the Ketcher tab in a browser. 
+
 **Additional context**
 Add any other context about the problem here.

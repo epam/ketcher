@@ -29,6 +29,7 @@ import { makeItems } from '../ToolbarGroupItem/utils'
 import { mediaSizes } from '../mediaSizes'
 import { useResizeObserver } from '../../../../../hooks'
 import { HelpLink } from './HelpLink/HelpLink'
+import { ZoomSlider } from './ZoomSlider'
 
 const Group: FC<{ className?: string }> = ({ children, className }) => (
   <div className={clsx(classes.group, className)}>{children}</div>
@@ -61,8 +62,13 @@ const TopToolbar = (props: Props) => {
     className?: string
     vertical?: boolean
   }
+
+  // @TODO Refactor, this probably causes performance issues
   const Item = ({ id, options, className, vertical }: ItemProps) =>
     ToolbarGroupItem({ id, options, className, vertical, status, ...rest })
+
+  // @TODO Fix types. This is a hack because of invalid type of status prop (it is state.actionState)
+  const zoom = status.zoom?.selected as unknown as number | undefined
 
   return (
     <div
@@ -70,8 +76,7 @@ const TopToolbar = (props: Props) => {
       className={clsx(classes.root, className, {
         [classes.hideSeparators]:
           width && width < mediaSizes.topSeparatorsShowingWidth
-      })}
-    >
+      })}>
       <Group>
         <Item id="clear" />
         <Item id="open" />
@@ -89,8 +94,9 @@ const TopToolbar = (props: Props) => {
       <Group>
         {width && width >= mediaSizes.zoomShowingWidth ? (
           <>
-            <Item id="zoom-in" />
             <Item id="zoom-out" />
+            <ZoomSlider zoom={zoom || 1} onAction={rest.onAction} />
+            <Item id="zoom-in" />
           </>
         ) : null}
         {isZoomListHidden && (

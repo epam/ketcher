@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { render, screen } from '@testing-library/react'
-import { Editor } from './Editor'
+import { Editor, ButtonsOptions } from './Editor'
 
 describe('Editor', () => {
   it('should be rendered correctly', () => {
@@ -29,4 +29,44 @@ describe('Editor', () => {
     expect(screen.getByText('Ketcher')).toBeVisible()
     expect(screen.getByText('EPAM')).toBeVisible()
   })
+})
+
+const hideFullscreenConfig = {
+  [ButtonsOptions.FULLSCREEN]: {
+    hidden: true
+  }
+}
+
+const hideMenuItemsConfig = {
+  [ButtonsOptions.OPEN]: {
+    hidden: true
+  },
+  [ButtonsOptions.HELP]: {
+    hidden: true
+  }
+}
+
+const notHideConfig = {
+  [ButtonsOptions.BRACKET]: {
+    hidden: false
+  }
+}
+
+const emptyConfig = {}
+
+describe('Buttons config', () => {
+  it.each`
+    buttonConfig
+    ${hideFullscreenConfig}
+    ${hideMenuItemsConfig}
+    ${notHideConfig}
+    ${emptyConfig}
+  `(
+    `should show buttons according to buttons config, test config: $buttonConfig`,
+    ({ buttonConfig }) => {
+      expect(
+        render(<Editor buttons={buttonConfig} />).container
+      ).toMatchSnapshot()
+    }
+  )
 })

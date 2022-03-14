@@ -68,54 +68,35 @@ enum ButtonsOptions {
   FULLSCREEN = 'fullscreen'
 }
 
-const defaultButtons = [
-  ButtonsOptions.OPEN,
-  ButtonsOptions.SAVE,
-  ButtonsOptions.UNDO,
-  ButtonsOptions.ERASE,
-  ButtonsOptions.SELECT_LASSO,
-  ButtonsOptions.SELECT_RECTANGLE,
-  ButtonsOptions.SELECT_FRAGMENT,
-  ButtonsOptions.RECTANGLE,
-  ButtonsOptions.ELLIPSE,
-  ButtonsOptions.ROTATE,
-  ButtonsOptions.HORIZONTAL_FLIP,
-  ButtonsOptions.VERTICAL_FLIP,
-  ButtonsOptions.SINGLE_BOND,
-  ButtonsOptions.BRACKET,
-  ButtonsOptions.SETTINGS,
-  ButtonsOptions.HELP,
-  ButtonsOptions.FULLSCREEN
-]
+type ButtonsConfig = {
+  [key in ButtonsOptions]?: {
+    hidden?: boolean
+  }
+}
 
 interface EditorProps {
   onInit?: () => void
   theme?: DeepPartial<EditorTheme>
-  buttons?: ButtonsOptions[]
+  buttons?: ButtonsConfig
 }
 
-const getButton = (
-  buttonName: ButtonsOptions,
-  userButtons: ButtonsOptions[]
-) => {
-  return userButtons.includes(buttonName) && <Menu.Item itemId={buttonName} />
-}
+const getButton = (buttonName: ButtonsOptions, buttonsConfig: ButtonsConfig) =>
+  !buttonsConfig[buttonName]?.hidden && <Menu.Item itemId={buttonName} />
 
 const getSubMenu = (
   defaultGroupButtons: ButtonsOptions[],
-  userButtons: ButtonsOptions[],
+  buttonsConfig: ButtonsConfig,
   isVertical = false
 ) => {
-  if (!userButtons.length) return
   const buttons = defaultGroupButtons
-    .filter((button) => userButtons.includes(button))
-    .map((button, id) => <Menu.Item itemId={button} key={id} />)
+    .filter((buttonName) => !buttonsConfig[buttonName]?.hidden)
+    .map((buttonName, id) => <Menu.Item itemId={buttonName} key={id} />)
   if (!buttons.length) return
   if (buttons.length === 1) return buttons
   return <Menu.Submenu vertical={isVertical}>{buttons}</Menu.Submenu>
 }
 
-function Editor({ onInit, theme, buttons = defaultButtons }: EditorProps) {
+function Editor({ onInit, theme, buttons = {} }: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
 
   const editorTheme: EditorTheme = theme
@@ -136,7 +117,7 @@ function Editor({ onInit, theme, buttons = defaultButtons }: EditorProps) {
         <div ref={rootElRef} className="Ketcher-polymer-editor-root">
           <Layout>
             <Layout.Left>
-              <MenuComponent buttons={...buttons} />
+              <MenuComponent buttons={buttons} />
             </Layout.Left>
 
             <Layout.Top>
@@ -151,7 +132,7 @@ function Editor({ onInit, theme, buttons = defaultButtons }: EditorProps) {
           </Layout>
 
           <Logo />
-          {buttons.includes(ButtonsOptions.FULLSCREEN) && <FullscreenButton />}
+          {!buttons[ButtonsOptions.FULLSCREEN]?.hidden && <FullscreenButton />}
 
           <ModalContainer />
         </div>

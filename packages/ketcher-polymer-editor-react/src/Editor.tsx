@@ -48,12 +48,74 @@ type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>
 }
 
+enum ButtonsOptions {
+  OPEN = 'open',
+  SAVE = 'save',
+  UNDO = 'undo',
+  ERASE = 'erase',
+  SELECT_LASSO = 'select-lasso',
+  SELECT_RECTANGLE = 'select-rectangle',
+  SELECT_FRAGMENT = 'select-fragment',
+  RECTANGLE = 'rectangle',
+  ELLIPSE = 'ellipse',
+  ROTATE = 'rotate',
+  HORIZONTAL_FLIP = 'horizontal-flip',
+  VERTICAL_FLIP = 'vertical-flip',
+  SINGLE_BOND = 'single-bond',
+  BRACKET = 'bracket',
+  SETTINGS = 'settings',
+  HELP = 'help',
+  FULLSCREEN = 'fullscreen'
+}
+
+const defaultButtons = [
+  ButtonsOptions.OPEN,
+  ButtonsOptions.SAVE,
+  ButtonsOptions.UNDO,
+  ButtonsOptions.ERASE,
+  ButtonsOptions.SELECT_LASSO,
+  ButtonsOptions.SELECT_RECTANGLE,
+  ButtonsOptions.SELECT_FRAGMENT,
+  ButtonsOptions.RECTANGLE,
+  ButtonsOptions.ELLIPSE,
+  ButtonsOptions.ROTATE,
+  ButtonsOptions.HORIZONTAL_FLIP,
+  ButtonsOptions.VERTICAL_FLIP,
+  ButtonsOptions.SINGLE_BOND,
+  ButtonsOptions.BRACKET,
+  ButtonsOptions.SETTINGS,
+  ButtonsOptions.HELP,
+  ButtonsOptions.FULLSCREEN
+]
+
 interface EditorProps {
   onInit?: () => void
   theme?: DeepPartial<EditorTheme>
+  buttons?: ButtonsOptions[]
 }
 
-function Editor({ onInit, theme }: EditorProps) {
+const getButton = (
+  buttonName: ButtonsOptions,
+  userButtons: ButtonsOptions[]
+) => {
+  return userButtons.includes(buttonName) && <Menu.Item itemId={buttonName} />
+}
+
+const getSubMenu = (
+  defaultGroupButtons: ButtonsOptions[],
+  userButtons: ButtonsOptions[],
+  isVertical = false
+) => {
+  if (!userButtons.length) return
+  const buttons = defaultGroupButtons
+    .filter((button) => userButtons.includes(button))
+    .map((button, id) => <Menu.Item itemId={button} key={id} />)
+  if (!buttons.length) return
+  if (buttons.length === 1) return buttons
+  return <Menu.Submenu vertical={isVertical}>{buttons}</Menu.Submenu>
+}
+
+function Editor({ onInit, theme, buttons = defaultButtons }: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
 
   const editorTheme: EditorTheme = theme
@@ -74,7 +136,7 @@ function Editor({ onInit, theme }: EditorProps) {
         <div ref={rootElRef} className="Ketcher-polymer-editor-root">
           <Layout>
             <Layout.Left>
-              <MenuComponent />
+              <MenuComponent buttons={...buttons} />
             </Layout.Left>
 
             <Layout.Top>
@@ -89,7 +151,7 @@ function Editor({ onInit, theme }: EditorProps) {
           </Layout>
 
           <Logo />
-          <FullscreenButton />
+          {buttons.includes(ButtonsOptions.FULLSCREEN) && <FullscreenButton />}
 
           <ModalContainer />
         </div>
@@ -98,7 +160,7 @@ function Editor({ onInit, theme }: EditorProps) {
   )
 }
 
-function MenuComponent() {
+function MenuComponent({ buttons }) {
   const dispatch = useAppDispatch()
   const activeTool = useAppSelector(selectEditorActiveTool)
 
@@ -113,43 +175,43 @@ function MenuComponent() {
   return (
     <Menu onItemClick={menuItemChanged} activeMenuItem={activeTool}>
       <Menu.Group>
-        <Menu.Submenu>
-          <Menu.Item itemId="open" />
-          <Menu.Item itemId="save" />
-        </Menu.Submenu>
+        {getSubMenu([ButtonsOptions.OPEN, ButtonsOptions.SAVE], buttons)}
       </Menu.Group>
+      <Menu.Group>{getSubMenu([ButtonsOptions.UNDO], buttons)}</Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="undo" />
+        {getButton(ButtonsOptions.ERASE, buttons)}
+        {getSubMenu(
+          [
+            ButtonsOptions.SELECT_LASSO,
+            ButtonsOptions.SELECT_RECTANGLE,
+            ButtonsOptions.SELECT_FRAGMENT
+          ],
+          buttons,
+          true
+        )}
+        {getSubMenu(
+          [ButtonsOptions.RECTANGLE, ButtonsOptions.ELLIPSE],
+          buttons
+        )}
+        {getSubMenu(
+          [
+            ButtonsOptions.ROTATE,
+            ButtonsOptions.HORIZONTAL_FLIP,
+            ButtonsOptions.VERTICAL_FLIP
+          ],
+          buttons
+        )}
       </Menu.Group>
-      <Menu.Group>
-        <Menu.Item itemId="erase" />
-        <Menu.Submenu vertical>
-          <Menu.Item itemId="select-lasso" />
-          <Menu.Item itemId="select-rectangle" />
-          <Menu.Item itemId="select-fragment" />
-        </Menu.Submenu>
-        <Menu.Submenu>
-          <Menu.Item itemId="rectangle" />
-          <Menu.Item itemId="ellipse" />
-        </Menu.Submenu>
-        <Menu.Submenu>
-          <Menu.Item itemId="rotate" />
-          <Menu.Item itemId="horizontal-flip" />
-          <Menu.Item itemId="vertical-flip" />
-        </Menu.Submenu>
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item itemId="single-bond" />
-      </Menu.Group>
+      <Menu.Group>{getButton(ButtonsOptions.SINGLE_BOND, buttons)}</Menu.Group>
       <Menu.Group divider>
-        <Menu.Item itemId="bracket" />
+        {getButton(ButtonsOptions.BRACKET, buttons)}
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="settings" />
-        <Menu.Item itemId="help" />
+        {getButton(ButtonsOptions.SETTINGS, buttons)}
+        {getButton(ButtonsOptions.HELP, buttons)}
       </Menu.Group>
     </Menu>
   )
 }
 
-export { Editor }
+export { Editor, ButtonsOptions }

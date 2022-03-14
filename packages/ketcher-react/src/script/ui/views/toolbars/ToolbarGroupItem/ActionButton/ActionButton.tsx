@@ -52,6 +52,8 @@ const ActionButton = (props: Props) => {
     onAction
   } = props
 
+  console.log(props)
+
   if (status.hidden) {
     return null
   }

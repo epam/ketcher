@@ -57,13 +57,15 @@ const Group = ({
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
-      return child.type === MenuItem || SubMenu ? child : null
+      return child?.type === MenuItem || SubMenu ? child : null
     }
   )
 
   return (
     <>
-      <StyledGroup>{subComponents.map((component) => component)}</StyledGroup>
+      {subComponents && (
+        <StyledGroup>{subComponents.map((component) => component)}</StyledGroup>
+      )}
       {divider && <Divider />}
     </>
   )
@@ -92,7 +94,7 @@ const Menu = ({
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
-      return child.type === Group ? child : null
+      return child?.type === Group ? child : null
     }
   )
 

@@ -81,12 +81,12 @@ class Portal extends Component<Props> {
   }
 
   private addElementInDOM() {
-    document.querySelector('body')?.appendChild(this.element)
+    document.querySelector('.Ketcher-root')?.appendChild(this.element)
     this.isElementInDom = true
   }
 
   private removeElementFromDOM() {
-    document.querySelector('body')?.removeChild(this.element)
+    document.querySelector('.Ketcher-root')?.removeChild(this.element)
     this.isElementInDom = false
   }
 

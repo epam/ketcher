@@ -41,6 +41,11 @@
   fieldset {
     border: 0;
     padding: 0;
+
+    // stylelint-disable selector-pseudo-class-no-unknown
+    :global(.MuiSelect-select) {
+      max-width: 230px;
+    }
   }
 
   fieldset[class='radio'] {

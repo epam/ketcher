@@ -14,29 +14,40 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Icon from '../../../../component/view/icon'
-import { shortcutStr } from '../../shortcutStr'
-import classes from './HelpLink.module.less'
+import { Divider } from './Divider'
+import { IconButton } from './IconButton'
 
-const HelpLink = ({ status }) => {
-  if (status?.hidden) {
-    return null
-  }
-  const shortcut = shortcutStr(['?', '&', 'Shift+/'])
-  const helpLink = process.env.HELP_LINK
-
-  return (
-    <a
-      target="_blank"
-      className={classes.button}
-      title={`Help (${shortcut})`}
-      href={`https://github.com/epam/ketcher/blob/${helpLink}/documentation/help.md#ketcher-overview`}
-      rel="noreferrer"
-    >
-      <Icon name="help" />
-      <kbd>{shortcut}</kbd>
-    </a>
-  )
+interface UndoRedoProps {
+  disabledButtons: string[]
+  shortcuts: { [key in string]: string }
+  onUndo: () => void
+  onRedo: () => void
 }
 
-export { HelpLink }
+export const UndoRedo = ({
+  onUndo,
+  onRedo,
+  disabledButtons,
+  shortcuts
+}: UndoRedoProps) => {
+  return (
+    <>
+      <Divider />
+      <IconButton
+        title="Undo"
+        onClick={onUndo}
+        iconName="undo"
+        disabled={disabledButtons.includes('undo')}
+        shortcut={shortcuts.undo}
+      />
+      <IconButton
+        title="Redo"
+        onClick={onRedo}
+        iconName="redo"
+        disabled={disabledButtons.includes('redo')}
+        shortcut={shortcuts.redo}
+      />
+      <Divider />
+    </>
+  )
+}

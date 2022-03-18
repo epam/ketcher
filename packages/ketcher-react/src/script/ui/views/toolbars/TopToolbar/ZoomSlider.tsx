@@ -14,15 +14,41 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styles from './ZoomSlider.module.less'
+import { Slider as UnstyledSlider } from '@mui/material'
+import styled from '@emotion/styled'
+
 import { ScaleTransformer } from './ScaleTransformer'
+import { zoomList } from '../../../action/zoom'
 
 interface SliderProps {
   zoom: number
-  onAction: (arg) => void
+  setZoom: (arg) => void
 }
 
-// MIN must stay 0, because it's assumed in calculations below
+const Slider = styled(UnstyledSlider)`
+  width: 100px;
+  z-index: 1;
+
+  & .MuiSlider-rail {
+    background: #9ea8b3;
+    border: none;
+  }
+
+  & .MuiSlider-thumb {
+    background-color: #167782;
+    border-radius: 50%;
+    height: 12px;
+    width: 12px;
+    border: 2px solid white;
+    filter: drop-shadow(0 1px 6px rgba(103, 104, 132, 0.5));
+  }
+
+  & .MuiSlider-mark {
+    display: none;
+  }
+`
+
+// MIN must stay 0, because it's assumed in ScaleTransformer calculations
 const INPUT_SCALE = {
   MIN: 0,
   MAX: 100
@@ -30,23 +56,33 @@ const INPUT_SCALE = {
 
 const scaleTransformer = new ScaleTransformer(INPUT_SCALE.MAX)
 
-export const ZoomSlider = ({ zoom, onAction }: SliderProps) => {
+const sliderMarks = zoomList.map((zoomValue) => {
+  const sliderValueMark = scaleTransformer.getSliderValue(zoomValue)
+  return {
+    value: sliderValueMark
+  }
+})
+
+export const ZoomSlider = ({ zoom, setZoom }: SliderProps) => {
   const handleChange = (event) => {
     const parsedValue = parseFloat(event.target.value)
     const zoomValue = scaleTransformer.getZoomValue(parsedValue)
 
-    onAction((editor) => editor.zoom(zoomValue))
+    if (zoom !== zoomValue) {
+      setZoom(zoomValue)
+    }
   }
 
   return (
-    <input
-      type="range"
+    <Slider
+      track={false}
       min={INPUT_SCALE.MIN}
       max={INPUT_SCALE.MAX}
-      step="1"
+      step={null}
       value={scaleTransformer.getSliderValue(zoom)}
       onChange={handleChange}
-      className={styles.slider}
+      marks={sliderMarks}
+      valueLabelDisplay="off"
     />
   )
 }

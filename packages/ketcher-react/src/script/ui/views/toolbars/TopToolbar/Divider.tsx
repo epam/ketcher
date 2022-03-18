@@ -14,12 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-const mediaSizes = {
-  topSeparatorsShowingWidth: 1080,
-  bondCollapsableHeight: 770,
-  rGroupCollapsableHeight: 1000,
-  shapeCollapsableHeight: 1000,
-  transformCollapsableHeight: 870
-}
+import styled from '@emotion/styled'
 
-export { mediaSizes }
+const VerticalDivider = styled('hr')`
+  margin: 0px 3px;
+  flex-shrink: 0;
+  height: 45%;
+  align-self: center;
+  border-width: 0px thin 0px 0px;
+  border-style: solid;
+  border-color: #b4b9d6; // TODO: use variable
+`
+
+export const Divider = () => <VerticalDivider />

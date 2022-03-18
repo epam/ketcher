@@ -14,22 +14,33 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../toolbar';
+import { IconButton } from './IconButton'
 
-.root {
-  .toolbar();
-  .horizontal-toolbar();
+interface FileControlsProps {
+  onFileOpen: () => void
+  onSave: () => void
+  shortcuts: { [key in string]: string }
 }
 
-.recognize {
-  border-right: none !important;
-}
-
-.meta {
-  flex-grow: 1;
-  justify-content: flex-end;
-}
-
-.hideSeparators {
-  .hide-group-separator(right);
+export const FileControls = ({
+  onFileOpen,
+  onSave,
+  shortcuts
+}: FileControlsProps) => {
+  return (
+    <>
+      <IconButton
+        title="Open..."
+        onClick={onFileOpen}
+        iconName="open"
+        shortcut={shortcuts.open}
+      />
+      <IconButton
+        title="Save as..."
+        onClick={onSave}
+        iconName="save"
+        shortcut={shortcuts.save}
+      />
+    </>
+  )
 }

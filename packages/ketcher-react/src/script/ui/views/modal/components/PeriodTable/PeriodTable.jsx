@@ -75,7 +75,7 @@ class Table extends Component {
       : value.includes(label)
   }
 
-  onSelect = (label) => {
+  onAtomSelect = (label) => {
     const { type, value } = this.state
     this.setState({
       value: type === 'atom' || type === 'gen' ? label : xor([label], value)
@@ -111,7 +111,7 @@ class Table extends Component {
           value={value}
           currentEvents={this.currentEvents}
           selected={this.selected}
-          onSelect={this.onSelect}
+          onAtomSelect={this.onAtomSelect}
         />
         <TypeChoice value={type} onChange={this.changeType} />
       </div>
@@ -144,7 +144,7 @@ class Table extends Component {
         component: GenericGroups,
         props: {
           selected: this.selected,
-          onSelect: this.onSelect
+          onAtomSelect: this.onAtomSelect
         }
       }
     ]

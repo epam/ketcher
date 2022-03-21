@@ -17,47 +17,55 @@
 @import '../../../../../../../style/variables.less';
 
 .about {
-  width: 25em;
+  width: @width-medium-new;
+  color: @color-text-primary;
+  font-weight: @font-weight-medium;
 
-  & > a {
-    display: block;
-    margin: 2em 1em;
+  a { // TODO: standard, after redesign, move to global styles
+    color: @color-primary;
   }
 
-  var {
-    margin-left: 0.5em;
-    font-style: normal;
-    font-weight: bold;
-    display: inline-block;
-  }
+  .body {
+    background-color: @color-primary-light;
+    border-radius: 6px;
+    padding: 8px 12px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
 
-  time {
-    font-style: italic;
-  }
+    .versionName {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
 
-  a {
-    color: @active-color;
-
-    &:hover {
-      color: @hover-color;
+    .links {
+      text-align: right;
     }
   }
 
-  @line-height: 1.4em;
+  .headerContent {
+    display: flex;
+    justify-content: space-between;
 
-  dl {
-    position: relative;
-    margin: 0 1em 1em;
-    vertical-align: bottom;
-    line-height: @line-height;
+    a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: @color-text-primary;
+    }
+
+    .title {
+      font-size: 20px;
+      line-height: 22px;   
+    }
   }
 
   dd {
-    text-align: right;
-    margin-bottom: 0.5em;
+    margin: 0;
+    margin-bottom: 0.2em;
   }
 
-  dt + dd {
-    margin: -@line-height 0 0;
+  dt {
+    margin-top: 8px;
   }
 }

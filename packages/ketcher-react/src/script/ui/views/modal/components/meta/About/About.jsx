@@ -19,81 +19,100 @@ import Logo from './logo.svg'
 import classes from './About.module.less'
 import { connect } from 'react-redux'
 
-function AboutDialog(props) {
-  const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info
-
+function HeaderContent() {
   return (
-    <Dialog
-      title="About"
-      className={classes.about}
-      params={props}
-      buttons={['Close']}
-    >
+    <div className={classes.headerContent}>
       <a
         href="http://lifescience.opensource.epam.com/ketcher/"
         target="_blank"
         rel="noopener noreferrer"
       >
         <Logo />
+        <span className={classes.title}>Ketcher</span>
       </a>
-      <dl>
-        <dt>
-          <a
-            href="http://lifescience.opensource.epam.com/ketcher/help.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Ketcher
-          </a>
-        </dt>
-        <dd>
-          version
-          <var>{props.version}</var>
-        </dd>
-        <dd>
-          build at <time>{props.buildDate}</time>
-        </dd>
-        {props.indigoVersion ? (
-          <div>
+    </div>
+  )
+}
+
+function AboutDialog(props) {
+  const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info
+
+  return (
+    <Dialog
+      className={classes.about}
+      params={props}
+      buttons={['Close']}
+      headerContent={<HeaderContent />}
+    >
+      <p>About</p>
+      <div className={classes.body}>
+        <div className={classes.verionsInfo}>
+          <dl className={classes.ketcherVersionInfo}>
+            <dd>
+              <span className={classes.versionName}>
+                Version {props.version}
+              </span>
+            </dd>
+            <dd>
+              Build at <time>{props.buildDate.replace('T', '; ')}</time>
+            </dd>
             <dt>
               <a
-                href="http://lifescience.opensource.epam.com/indigo/"
+                href="http://lifescience.opensource.epam.com/ketcher/help.html"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Indigo Toolkit
+                {' '}
+                Ketcher
               </a>
             </dt>
-            <dd>
-              version
-              <var>{indigoInfo[0]}</var>
-            </dd>
-            <dd>
-              build #<var>{indigoInfo[1]}</var>
-            </dd>
-          </div>
-        ) : (
-          <dd>standalone</dd>
-        )}
-        <dt>
-          <a
-            href="http://lifescience.opensource.epam.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            EPAM Life Sciences
-          </a>
-        </dt>
-        <dd>
-          <a
-            href="http://lifescience.opensource.epam.com/ketcher/#feedback"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Feedback
-          </a>
-        </dd>
-      </dl>
+          </dl>
+          {props.indigoVersion ? (
+            <div className={classes.indigoVersionInfo}>
+              <dl className={classes.indigoVersionInfo}>
+                <dd>
+                  <span className={classes.versionName}>
+                    Version {indigoInfo[0]}
+                  </span>
+                </dd>
+                <dd>Build #{indigoInfo[1]}</dd>
+                <dt>
+                  <a
+                    href="http://lifescience.opensource.epam.com/indigo/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {' '}
+                    Indigo Toolkit
+                  </a>
+                </dt>
+              </dl>
+            </div>
+          ) : (
+            <p>Standalone</p>
+          )}
+        </div>
+        <div className={classes.links}>
+          <dt>
+            <a
+              href="http://lifescience.opensource.epam.com/ketcher/#feedback"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Feedback
+            </a>
+          </dt>
+          <dt>
+            <a
+              href="http://lifescience.opensource.epam.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Epam Life Sciencies
+            </a>
+          </dt>
+        </div>
+      </div>
     </Dialog>
   )
 }

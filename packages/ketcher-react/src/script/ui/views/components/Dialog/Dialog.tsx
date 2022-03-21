@@ -38,6 +38,7 @@ interface DialogProps {
   buttonsTop?: Array<ReactElement>
   className?: string
   needMargin?: boolean
+  headerContent?: ReactElement
 }
 
 interface DialogCallProps {
@@ -55,6 +56,7 @@ const Dialog: FC<Props> = (props) => {
     result = () => null,
     valid = () => !!result(),
     buttons = ['OK'],
+    headerContent,
     className,
     buttonsTop,
     needMargin = true,
@@ -115,7 +117,7 @@ const Dialog: FC<Props> = (props) => {
       {...rest}
     >
       <header>
-        {title}
+        {headerContent || <span className={styles.title}>{title}</span>}
         <div className={styles.btnContainer}>
           {buttonsTop && buttonsTop.map((button) => button)}
           <button className={styles.buttonTop} onClick={() => exit('Cancel')}>

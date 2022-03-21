@@ -19,6 +19,12 @@
 .root {
   .toolbar();
   .vertical-toolbar();
+  position: relative;
+  top: 0;
+  right: 60px;
+  margin-top: 20px;
+  margin-right: 20px;
+  z-index: 10;
 
   button {
     font-size: 19px;
@@ -28,4 +34,44 @@
 .buttons {
   overflow: hidden;
   scroll-behavior: smooth;
+  background-color: @color-background-primary;
+  border-radius: 5px;
+  .toolbarButton:last-child {
+    border: none;
+  }
+}
+
+.toolbarButton {
+  border-bottom: 1px solid @border-color;
+}
+
+.title {
+  display: none;
+}
+
+@media (min-width: @common-screen-large) {
+  .root {
+    flex-direction: row;
+    position: absolute;
+    right: 40px;
+    .horizontal-toolbar();
+    .toolbarButton {
+      border-bottom: none;
+      border-right: 1px solid @border-color;
+      border-top: 1px solid @border-color;
+    }
+    .toolbarButton:last-child { 
+      border-bottom: none;
+      border-right: none;
+      border-top: 1px solid @border-color;
+    }
+    .title {
+      display: flex;
+      align-items: center;
+      padding: 13px 16px;
+      span {
+        margin-left: 10px;
+      }
+    }
+  }
 }

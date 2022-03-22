@@ -110,6 +110,7 @@ const sData = {
       {
         key: 'FRG_RAD',
         title: 'MDLBG_FRAGMENT_RADICALS',
+        type: 'object',
         properties: {
           type: { enum: ['DAT'] },
           fieldName: {
@@ -302,6 +303,7 @@ const sData = {
 
 export const sdataCustomSchema = {
   key: 'Custom',
+  type: 'object',
   properties: {
     type: { enum: ['DAT'] },
     context: {

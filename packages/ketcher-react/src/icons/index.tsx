@@ -52,6 +52,7 @@ import EraseIcon from './files/erase.svg'
 import FileThumbnailIcon from './files/file-thumbnail.svg'
 import GenericGroupsIcon from './files/generic-groups.svg'
 import HelpIcon from './files/help.svg'
+import HistoryIcon from './files/history.svg'
 import ImageFrameIcon from './files/image-frame.svg'
 import LayoutIcon from './files/layout.svg'
 import LogoIcon from './files/logo.svg'
@@ -182,6 +183,7 @@ const icons = {
   'functional-groups': FunctionalGroupsIcon,
   'generic-groups': GenericGroupsIcon,
   help: HelpIcon,
+  history: HistoryIcon,
   'image-frame': ImageFrameIcon,
   layout: LayoutIcon,
   logo: LogoIcon,

@@ -18,46 +18,21 @@ import { Icon } from 'components/shared/icon'
 import { StyledMenuButton } from 'components/menu/menuItem'
 import styled from '@emotion/styled'
 
-interface DocumentWithFullscreen extends Document {
-  mozFullScreenElement?: Element
-  msFullscreenElement?: Element
-  webkitFullscreenElement?: Element
-  msExitFullscreen?: () => void
-  mozCancelFullScreen?: () => void
-  webkitExitFullscreen?: () => void
+const requestFullscreen = (element: HTMLElement) => {
+  ;(element.requestFullscreen && element.requestFullscreen()) ||
+    (element.msRequestFullscreen && element.msRequestFullscreen()) ||
+    (element.mozRequestFullScreen && element.mozRequestFullScreen()) ||
+    (element.webkitRequestFullscreen && element.webkitRequestFullscreen())
 }
 
-interface ElementWithFullscreen extends HTMLElement {
-  msRequestFullscreen?: () => void
-  mozRequestFullScreen?: () => void
-  webkitRequestFullscreen?: () => void
+const exitFullscreen = () => {
+  ;(document.exitFullscreen && document.exitFullscreen()) ||
+    (document.msExitFullscreen && document.msExitFullscreen()) ||
+    (document.mozCancelFullScreen && document.mozCancelFullScreen()) ||
+    (document.webkitExitFullscreen && document.webkitExitFullscreen())
 }
 
-const requestFullscreen = (element: ElementWithFullscreen) => {
-  if (element.requestFullscreen) {
-    element.requestFullscreen()
-  } else if (element.msRequestFullscreen) {
-    element.msRequestFullscreen()
-  } else if (element.mozRequestFullScreen) {
-    element.mozRequestFullScreen()
-  } else if (element.webkitRequestFullscreen) {
-    element.webkitRequestFullscreen()
-  }
-}
-
-const exitFullscreen = (document: DocumentWithFullscreen) => {
-  if (document.exitFullscreen) {
-    document.exitFullscreen()
-  } else if (document.msExitFullscreen) {
-    document.msExitFullscreen()
-  } else if (document.mozCancelFullScreen) {
-    document.mozCancelFullScreen()
-  } else if (document.webkitExitFullscreen) {
-    document.webkitExitFullscreen()
-  }
-}
-
-const isFullScreen = (document: DocumentWithFullscreen) => {
+const isFullScreen = () => {
   return !!(
     document.fullscreenElement ||
     document.mozFullScreenElement ||
@@ -67,27 +42,25 @@ const isFullScreen = (document: DocumentWithFullscreen) => {
 }
 
 const toggleFullscreen = () => {
-  const fullscreenElement: ElementWithFullscreen =
+  // TODO: add selector / ref prop when will be shared component
+  const fullscreenElement: HTMLElement =
     document.querySelector('.Ketcher-polymer-editor-root') ||
     document.documentElement
-  const fullscreenDocument = document as DocumentWithFullscreen
-  isFullScreen(fullscreenDocument)
-    ? exitFullscreen(fullscreenDocument)
-    : requestFullscreen(fullscreenElement)
+  isFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement)
 }
 
-const StyledButtonContainer = styled.div`
+const ButtonContainer = styled.div`
   position: absolute;
   right: 47px;
   bottom: 12px;
 `
 
-export const FullscreenButton = () => {
+export const FullscreenButton = ({ className = '' }) => {
   return (
-    <StyledButtonContainer>
+    <ButtonContainer className={className}>
       <StyledMenuButton onClick={toggleFullscreen} isActive={false}>
         <Icon name="fullscreen" />
       </StyledMenuButton>
-    </StyledButtonContainer>
+    </ButtonContainer>
   )
 }

@@ -16,46 +16,21 @@
 
 import isHidden from './isHidden'
 
-interface DocumentWithFullscreen extends Document {
-  mozFullScreenElement?: Element
-  msFullscreenElement?: Element
-  webkitFullscreenElement?: Element
-  msExitFullscreen?: () => void
-  mozCancelFullScreen?: () => void
-  webkitExitFullscreen?: () => void
+const requestFullscreen = (element: HTMLElement) => {
+  ;(element.requestFullscreen && element.requestFullscreen()) ||
+    (element.msRequestFullscreen && element.msRequestFullscreen()) ||
+    (element.mozRequestFullScreen && element.mozRequestFullScreen()) ||
+    (element.webkitRequestFullscreen && element.webkitRequestFullscreen())
 }
 
-interface ElementWithFullscreen extends HTMLElement {
-  msRequestFullscreen?: () => void
-  mozRequestFullScreen?: () => void
-  webkitRequestFullscreen?: () => void
+const exitFullscreen = () => {
+  ;(document.exitFullscreen && document.exitFullscreen()) ||
+    (document.msExitFullscreen && document.msExitFullscreen()) ||
+    (document.mozCancelFullScreen && document.mozCancelFullScreen()) ||
+    (document.webkitExitFullscreen && document.webkitExitFullscreen())
 }
 
-const requestFullscreen = (element: ElementWithFullscreen) => {
-  if (element.requestFullscreen) {
-    element.requestFullscreen()
-  } else if (element.msRequestFullscreen) {
-    element.msRequestFullscreen()
-  } else if (element.mozRequestFullScreen) {
-    element.mozRequestFullScreen()
-  } else if (element.webkitRequestFullscreen) {
-    element.webkitRequestFullscreen()
-  }
-}
-
-const exitFullscreen = (document: DocumentWithFullscreen) => {
-  if (document.exitFullscreen) {
-    document.exitFullscreen()
-  } else if (document.msExitFullscreen) {
-    document.msExitFullscreen()
-  } else if (document.mozCancelFullScreen) {
-    document.mozCancelFullScreen()
-  } else if (document.webkitExitFullscreen) {
-    document.webkitExitFullscreen()
-  }
-}
-
-const isFullScreen = (document: DocumentWithFullscreen) => {
+const isFullScreen = () => {
   return !!(
     document.fullscreenElement ||
     document.mozFullScreenElement ||
@@ -65,12 +40,9 @@ const isFullScreen = (document: DocumentWithFullscreen) => {
 }
 
 const toggleFullscreen = () => {
-  const fullscreenElement: ElementWithFullscreen =
+  const fullscreenElement: HTMLElement =
     document.querySelector('.Ketcher-root') || document.documentElement
-  const fullscreenDocument = document as DocumentWithFullscreen
-  isFullScreen(fullscreenDocument)
-    ? exitFullscreen(fullscreenDocument)
-    : requestFullscreen(fullscreenElement)
+  isFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement)
 }
 
 export default {

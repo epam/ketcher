@@ -23,3 +23,18 @@ declare module '*.svg' {
   const src: ReactComponent
   export default src
 }
+
+interface Document {
+  mozFullScreenElement?: Element
+  msFullscreenElement?: Element
+  webkitFullscreenElement?: Element
+  msExitFullscreen?: () => void
+  mozCancelFullScreen?: () => void
+  webkitExitFullscreen?: () => void
+}
+
+interface HTMLElement {
+  msRequestFullscreen?: () => void
+  mozRequestFullScreen?: () => void
+  webkitRequestFullscreen?: () => void
+}

@@ -49,23 +49,23 @@ type DeepPartial<T> = {
 }
 
 enum ButtonsOptions {
-  OPEN = 'open',
-  SAVE = 'save',
-  UNDO = 'undo',
-  ERASE = 'erase',
-  SELECT_LASSO = 'select-lasso',
-  SELECT_RECTANGLE = 'select-rectangle',
-  SELECT_FRAGMENT = 'select-fragment',
-  RECTANGLE = 'rectangle',
-  ELLIPSE = 'ellipse',
-  ROTATE = 'rotate',
-  HORIZONTAL_FLIP = 'horizontal-flip',
-  VERTICAL_FLIP = 'vertical-flip',
-  SINGLE_BOND = 'single-bond',
-  BRACKET = 'bracket',
-  SETTINGS = 'settings',
-  HELP = 'help',
-  FULLSCREEN = 'fullscreen'
+  Open = 'open',
+  Save = 'save',
+  Undo = 'undo',
+  Erase = 'erase',
+  SelectLasso = 'select-lasso',
+  SelectRectangle = 'select-rectangle',
+  SelectFragment = 'select-fragment',
+  Rectangle = 'rectangle',
+  Ellipse = 'ellipse',
+  Rotate = 'rotate',
+  HorizontalFlip = 'horizontal-flip',
+  VerticalFlip = 'vertical-flip',
+  SingleBond = 'single-bond',
+  Bracket = 'bracket',
+  Settings = 'settings',
+  Help = 'help',
+  Fullscreen = 'fullscreen'
 }
 
 type ButtonsConfig = {
@@ -80,20 +80,22 @@ interface EditorProps {
   buttons?: ButtonsConfig
 }
 
-const getButton = (buttonName: ButtonsOptions, buttonsConfig: ButtonsConfig) =>
-  !buttonsConfig[buttonName]?.hidden && <Menu.Item itemId={buttonName} />
+const renderMenuItem = (
+  buttonName: ButtonsOptions,
+  buttonsConfig: ButtonsConfig
+) => !buttonsConfig[buttonName]?.hidden && <Menu.Item itemId={buttonName} />
 
-const getSubMenu = (
-  defaultGroupButtons: ButtonsOptions[],
+const renderSubmenu = (
+  defaultSubmenuItems: ButtonsOptions[],
   buttonsConfig: ButtonsConfig,
   isVertical = false
 ) => {
-  const buttons = defaultGroupButtons
+  const menuItemsToRender = defaultSubmenuItems
     .filter((buttonName) => !buttonsConfig[buttonName]?.hidden)
     .map((buttonName, id) => <Menu.Item itemId={buttonName} key={id} />)
-  if (!buttons.length) return
-  if (buttons.length === 1) return buttons
-  return <Menu.Submenu vertical={isVertical}>{buttons}</Menu.Submenu>
+  if (!menuItemsToRender.length) return
+  if (menuItemsToRender.length === 1) return menuItemsToRender
+  return <Menu.Submenu vertical={isVertical}>{menuItemsToRender}</Menu.Submenu>
 }
 
 function Editor({ onInit, theme, buttons = {} }: EditorProps) {
@@ -132,7 +134,7 @@ function Editor({ onInit, theme, buttons = {} }: EditorProps) {
           </Layout>
 
           <Logo />
-          {!buttons[ButtonsOptions.FULLSCREEN]?.hidden && <FullscreenButton />}
+          {!buttons[ButtonsOptions.Fullscreen]?.hidden && <FullscreenButton />}
 
           <ModalContainer />
         </div>
@@ -156,40 +158,42 @@ function MenuComponent({ buttons }) {
   return (
     <Menu onItemClick={menuItemChanged} activeMenuItem={activeTool}>
       <Menu.Group>
-        {getSubMenu([ButtonsOptions.OPEN, ButtonsOptions.SAVE], buttons)}
+        {renderSubmenu([ButtonsOptions.Open, ButtonsOptions.Save], buttons)}
       </Menu.Group>
-      <Menu.Group>{getSubMenu([ButtonsOptions.UNDO], buttons)}</Menu.Group>
+      <Menu.Group>{renderSubmenu([ButtonsOptions.Undo], buttons)}</Menu.Group>
       <Menu.Group>
-        {getButton(ButtonsOptions.ERASE, buttons)}
-        {getSubMenu(
+        {renderMenuItem(ButtonsOptions.Erase, buttons)}
+        {renderSubmenu(
           [
-            ButtonsOptions.SELECT_LASSO,
-            ButtonsOptions.SELECT_RECTANGLE,
-            ButtonsOptions.SELECT_FRAGMENT
+            ButtonsOptions.SelectLasso,
+            ButtonsOptions.SelectRectangle,
+            ButtonsOptions.SelectFragment
           ],
           buttons,
           true
         )}
-        {getSubMenu(
-          [ButtonsOptions.RECTANGLE, ButtonsOptions.ELLIPSE],
+        {renderSubmenu(
+          [ButtonsOptions.Rectangle, ButtonsOptions.Ellipse],
           buttons
         )}
-        {getSubMenu(
+        {renderSubmenu(
           [
-            ButtonsOptions.ROTATE,
-            ButtonsOptions.HORIZONTAL_FLIP,
-            ButtonsOptions.VERTICAL_FLIP
+            ButtonsOptions.Rotate,
+            ButtonsOptions.HorizontalFlip,
+            ButtonsOptions.VerticalFlip
           ],
           buttons
         )}
       </Menu.Group>
-      <Menu.Group>{getButton(ButtonsOptions.SINGLE_BOND, buttons)}</Menu.Group>
+      <Menu.Group>
+        {renderMenuItem(ButtonsOptions.SingleBond, buttons)}
+      </Menu.Group>
       <Menu.Group divider>
-        {getButton(ButtonsOptions.BRACKET, buttons)}
+        {renderMenuItem(ButtonsOptions.Bracket, buttons)}
       </Menu.Group>
       <Menu.Group>
-        {getButton(ButtonsOptions.SETTINGS, buttons)}
-        {getButton(ButtonsOptions.HELP, buttons)}
+        {renderMenuItem(ButtonsOptions.Settings, buttons)}
+        {renderMenuItem(ButtonsOptions.Help, buttons)}
       </Menu.Group>
     </Menu>
   )

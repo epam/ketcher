@@ -2,10 +2,7 @@ import 'ketcher-react/dist/index.css'
 
 import { ButtonsConfig, Editor } from 'ketcher-react'
 import { Ketcher, RemoteStructServiceProvider } from 'ketcher-core'
-import {
-  Editor as PolymerEditor,
-  ButtonsOptions
-} from 'ketcher-polymer-editor-react'
+import { Editor as PolymerEditor } from 'ketcher-polymer-editor-react'
 
 import { ErrorModal } from './ErrorModal'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -45,9 +42,7 @@ const App = () => {
 
   return showPolymerEditor ? (
     <>
-      <PolymerEditor
-        buttons={{ [ButtonsOptions.FULLSCREEN]: { hidden: true } }}
-      />
+      <PolymerEditor buttons={hiddenButtonsConfig} />
       <PolymerToggler toggle={setShowPolymerEditor} />
     </>
   ) : (

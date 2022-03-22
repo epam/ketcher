@@ -14,15 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dialog, StructEditor } from '../../views/components'
-import { Component } from 'react'
-import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
-
-import classes from './template-lib.module.less'
+import { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
+import type { Struct } from 'ketcher-core'
+
+import { Dialog, StructEditor } from '../../views/components'
+import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
 import { storage } from '../../storage-ext'
 import Form, { Field } from '../../component/form/form/form'
 import { attachSchema } from '../../data/schema/struct-schema'
+import classes from './template-lib.module.less'
 
 const EDITOR_STYLES = {
   selectionStyle: { fill: '#47b3ec', stroke: 'none' },
@@ -30,84 +31,93 @@ const EDITOR_STYLES = {
   hoverStyleSimpleObject: { 'stroke-opacity': 0.3 }
 }
 
-class Attach extends Component {
-  constructor({ onInit, ...props }) {
-    super()
-    this.tmpl = initTmpl(props.tmpl)
-    onInit(this.tmpl.struct.name, this.tmpl.props)
-    this.onResult = this.onResult.bind(this)
+type Template = {
+  struct: Struct
+  props: {
+    atomid: number
+    bondid: number
+  }
+}
+
+const Attach = (props) => {
+  const [tmpl, setTmpl] = useState<Template | null>(null)
+  const { name, onNameEdit, onAttachEdit, ...prop } = props
+
+  useEffect(() => {
+    const tmpl = initTmpl(props.tmpl)
+    setTmpl(tmpl)
+    props.onInit(tmpl.struct.name, tmpl.props)
+  }, [])
+
+  if (!tmpl) {
+    return null
   }
 
-  onResult() {
-    const { name, atomid, bondid } = this.props
+  const struct = tmpl.struct
+  const { atomid, bondid } =
+    struct.atoms.get(props.atomid) && struct.bonds.get(props.bondid)
+      ? props
+      : tmpl.props
+  const options = Object.assign(EDITOR_STYLES, props.globalSettings, {
+    scale: getScale(struct)
+  })
+
+  const onResult = () => {
+    const { name, atomid, bondid } = props
     return name &&
-      (name !== this.tmpl.struct.name ||
-        atomid !== this.tmpl.props.atomid ||
-        bondid !== this.tmpl.props.bondid) &&
+      (name !== tmpl.struct.name ||
+        atomid !== tmpl.props.atomid ||
+        bondid !== tmpl.props.bondid) &&
       name.trim().length
       ? { name, attach: { atomid, bondid } }
       : null
   }
 
-  checkUniqueName(name) {
-    return !this.props.templateLib.some(
+  const checkUniqueName = (name) => {
+    return !props.templateLib.some(
       (tmpl) =>
         tmpl.struct.name === name && tmpl.props.group === 'User Templates'
     )
   }
 
-  render() {
-    const { name, onNameEdit, onAttachEdit, ...prop } = this.props
-    const struct = this.tmpl.struct
-    const { atomid, bondid } =
-      struct.atoms.get(this.props.atomid) && struct.bonds.get(this.props.bondid)
-        ? this.props
-        : this.tmpl.props
-    const options = Object.assign(EDITOR_STYLES, this.props.globalSettings, {
-      scale: getScale(struct)
-    })
-
-    return (
-      <Dialog
-        title="Template Edit"
-        className={classes.attach}
-        result={this.onResult}
-        valid={() => this.props.formState.valid && name}
-        params={prop}
-      >
-        <Form
-          schema={attachSchema}
-          customValid={{
-            name: (name) => this.checkUniqueName(name)
-          }}
-          {...this.props.formState}
-        >
-          <Field
-            name="name"
-            value={name}
-            onChange={onNameEdit}
-            placeholder="template"
-          />
-          <label>Choose attachment atom and bond:</label>
-          <StructEditor
-            className={classes.editor}
-            struct={struct}
-            onAttachEdit={onAttachEdit}
-            tool="attach"
-            toolOpts={{ atomid, bondid }}
-            options={options}
-          />
-          {!storage.isAvailable() ? (
-            <div className={classes.warning}>{storage.warningMessage}</div>
-          ) : null}
-        </Form>
-      </Dialog>
-    )
-  }
+  return (
+    <Dialog
+      title="Template Edit"
+      className={classes.attach}
+      result={onResult}
+      valid={() => props.formState.valid && name}
+      params={prop}>
+      <Form
+        schema={attachSchema}
+        customValid={{
+          name: (name) => checkUniqueName(name)
+        }}
+        {...props.formState}>
+        <Field
+          name="name"
+          value={name}
+          onChange={onNameEdit}
+          placeholder="template"
+        />
+        <label>Choose attachment atom and bond:</label>
+        <StructEditor
+          className={classes.editor}
+          struct={struct}
+          onAttachEdit={onAttachEdit}
+          tool="attach"
+          toolOpts={{ atomid, bondid }}
+          options={options}
+        />
+        {!storage.isAvailable() ? (
+          <div className={classes.warning}>{storage.warningMessage}</div>
+        ) : null}
+      </Form>
+    </Dialog>
+  )
 }
 
 export default connect(
-  (store) => ({
+  (store: any) => ({
     ...store.templates.attach,
     templateLib: store.templates.lib,
     formState: store.modal.form,

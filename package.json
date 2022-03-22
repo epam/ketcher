@@ -2,7 +2,8 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "example"
+    "example",
+    "demo"
   ],
   "scripts": {
     "postinstall": "husky install",
@@ -12,7 +13,8 @@
     "test": "yarn workspaces foreach -v run test",
     "serve:remote": "cd example && yarn serve:remote",
     "serve:standalone": "cd example && yarn serve:standalone",
-    "serve": "run-p 'serve:*'"
+    "serve": "run-p 'serve:remote' 'serve:standalone'",
+    "serve:demo": "cd demo && yarn run serve"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.6.0",

@@ -26,13 +26,15 @@ function usePortalStyle([ref, isOpen]: HookParams): [CSSProperties] {
       return
     }
 
-    const rect = ref.current.getBoundingClientRect()
-    // if content is bigger than page height and user scrolled document, we should correct portal position
-    const scrollOffset = document.scrollingElement?.scrollTop || 0
-    const top = rect.top + scrollOffset
+    const editorRect = document
+      .querySelector('.Ketcher-root')
+      ?.getBoundingClientRect() || { top: 0, left: 0 }
+    const menuItemRect = ref.current.getBoundingClientRect()
 
+    const top = menuItemRect.top - editorRect.top
     const spaceBetween = 4
-    const left = rect.left + rect.width + spaceBetween
+    const left =
+      menuItemRect.left - editorRect.left + menuItemRect.width + spaceBetween
 
     setPortalStyle({ top: `${top}px`, left: `${left}px` })
   }, [ref, isOpen])

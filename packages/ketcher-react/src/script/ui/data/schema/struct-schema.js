@@ -125,7 +125,8 @@ export const labelEdit = {
     label: {
       title: 'Atom',
       default: '',
-      invalidMessage: 'Wrong atom symbol'
+      invalidMessage: 'Wrong atom symbol',
+      type: 'string'
     }
   }
 }
@@ -217,6 +218,7 @@ const sgroup = {
     {
       key: 'GEN',
       title: 'Generic',
+      type: 'object',
       properties: {
         type: { enum: ['GEN'] }
       }
@@ -241,6 +243,7 @@ const sgroup = {
     {
       key: 'SRU',
       title: 'SRU polymer',
+      type: 'object',
       properties: {
         type: { enum: ['SRU'] },
         subscript: {
@@ -262,6 +265,7 @@ const sgroup = {
     {
       key: 'SUP',
       title: 'Superatom',
+      type: 'object',
       properties: {
         type: { enum: ['SUP'] },
         name: {

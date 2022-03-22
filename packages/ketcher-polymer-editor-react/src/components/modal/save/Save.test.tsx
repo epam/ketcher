@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from 'test-utils'
+import { render, screen } from '@testing-library/react'
 import { Save } from 'components/modal/save'
 import userEvent from '@testing-library/user-event'
 
@@ -27,7 +27,7 @@ const mockProps = {
 
 describe('Save modal', () => {
   it('renders correctly', () => {
-    const view = render(<Save {...mockProps} />)
+    const view = render(withThemeProvider(<Save {...mockProps} />))
 
     const filenameInput = screen.getByRole('textbox', {
       name: 'File name:'
@@ -43,7 +43,7 @@ describe('Save modal', () => {
   })
 
   it('renders dropdown options correctly', () => {
-    render(<Save {...mockProps} />)
+    render(withThemeProvider(<Save {...mockProps} />))
 
     const fileFormat = screen.getByRole('button', { name: 'MDL Molfile V3000' })
 
@@ -58,7 +58,7 @@ describe('Save modal', () => {
   })
 
   it('renders buttons correctly', () => {
-    render(<Save {...mockProps} />)
+    render(withThemeProvider(<Save {...mockProps} />))
 
     const saveButton = screen.getByRole('button', { name: 'Save as file' })
     const filenameInput = screen.getByRole('textbox', {

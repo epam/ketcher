@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render } from 'test-utils'
+import { render } from '@testing-library/react'
 import { Menu } from 'components/menu/Menu'
 
 const menuItemChanged = jest.fn()
@@ -47,6 +47,6 @@ const MenuContainer = () => {
 
 describe('Menu component', () => {
   it('should render menu component in a container', () => {
-    expect(render(<MenuContainer />)).toMatchSnapshot()
+    expect(render(withThemeProvider(<MenuContainer />))).toMatchSnapshot()
   })
 })

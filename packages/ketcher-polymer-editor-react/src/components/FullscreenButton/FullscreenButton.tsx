@@ -55,9 +55,9 @@ const ButtonContainer = styled.div`
   bottom: 12px;
 `
 
-export const FullscreenButton = ({ className = '' }) => {
+export const FullscreenButton = (props) => {
   return (
-    <ButtonContainer className={className}>
+    <ButtonContainer className={props.className}>
       <StyledMenuButton onClick={toggleFullscreen} isActive={false}>
         <Icon name="fullscreen" />
       </StyledMenuButton>

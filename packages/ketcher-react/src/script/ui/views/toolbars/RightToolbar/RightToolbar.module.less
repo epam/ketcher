@@ -19,6 +19,7 @@
 .root {
   .toolbar();
   .vertical-toolbar();
+
   position: relative;
   top: 0;
   right: 60px;
@@ -36,6 +37,7 @@
   scroll-behavior: smooth;
   background-color: @color-background-primary;
   border-radius: 5px;
+
   .toolbarButton:last-child {
     border: none;
   }
@@ -53,22 +55,26 @@
   .root {
     flex-direction: row;
     position: absolute;
-    right: 40px;
+    right: 0;
     .horizontal-toolbar();
+
     .toolbarButton {
       border-bottom: none;
       border-right: 1px solid @border-color;
       border-top: 1px solid @border-color;
     }
+
     .toolbarButton:last-child { 
       border-bottom: none;
       border-right: none;
       border-top: 1px solid @border-color;
     }
+
     .title {
       display: flex;
       align-items: center;
       padding: 13px 16px;
+
       span {
         margin-left: 10px;
       }

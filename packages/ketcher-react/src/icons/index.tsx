@@ -47,7 +47,7 @@ import CopyMolIcon from './files/copy-mol.svg'
 import CutIcon from './files/cut.svg'
 import DearomIcon from './files/dearom.svg'
 import DropdownIcon from './files/dropdown.svg'
-import Elements from './files/elements.svg'
+import ElementsIcon from './files/elements.svg'
 import EnhancedStereoIcon from './files/enhanced-stereo.svg'
 import EraseIcon from './files/erase.svg'
 import FileThumbnailIcon from './files/file-thumbnail.svg'
@@ -177,7 +177,7 @@ const icons = {
   cut: CutIcon,
   dearom: DearomIcon,
   dropdown: DropdownIcon,
-  elements: Elements,
+  elements: ElementsIcon,
   'enhanced-stereo': EnhancedStereoIcon,
   erase: EraseIcon,
   'file-thumbnail': FileThumbnailIcon,

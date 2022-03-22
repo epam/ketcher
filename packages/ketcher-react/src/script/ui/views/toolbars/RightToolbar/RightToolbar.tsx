@@ -85,12 +85,14 @@ const RightToolbar = (props: Props) => {
           </div>
         </Group>
       </div>
-      {startInView || (<ArrowScroll
-        startInView={startInView}
-        endInView={endInView}
-        scrollUp={scrollUp}
-        scrollDown={scrollDown}
-      />)}
+      {startInView || (
+        <ArrowScroll
+          startInView={startInView}
+          endInView={endInView}
+          scrollUp={scrollUp}
+          scrollDown={scrollDown}
+        />
+      )}
     </div>
   )
 }

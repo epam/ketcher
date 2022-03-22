@@ -96,12 +96,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onCheck: () => dispatchAction('check'),
     onAnalyse: () => dispatchAction('analyse'),
     onMiew: () => dispatchAction('miew'),
-    onAction: (action) => dispatch(onAction(action)),
-    onOpen: (menuName, isSelected) =>
-      dispatch({
-        type: 'OPENED',
-        data: { menuName, isSelected }
-      })
+    onAbout: () => dispatchAction('about')
   }
 }
 

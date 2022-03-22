@@ -24,6 +24,7 @@ interface SystemControlsProps {
   hiddenButtons: string[]
   className?: string
   onSettingsOpen: () => void
+  onAboutOpen: () => void
   onHistoryClick: () => void
 }
 
@@ -38,6 +39,7 @@ export const SystemControls = ({
   disabledButtons,
   hiddenButtons,
   onSettingsOpen,
+  onAboutOpen,
   onHistoryClick,
   className
 }: SystemControlsProps) => {
@@ -58,6 +60,15 @@ export const SystemControls = ({
         isHidden={hiddenButtons.includes('settings')}
       />
       <HelpLink isHidden={hiddenButtons.includes('help')} />
+
+      {/* @TODO Temporary About button, when design is ready, reimplement */}
+      <IconButton
+        title="About"
+        onClick={onAboutOpen}
+        iconName="about"
+        disabled={disabledButtons.includes('about')}
+        isHidden={hiddenButtons.includes('about')}
+      />
     </ControlsPanel>
   )
 }

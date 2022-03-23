@@ -32,6 +32,7 @@ export type SupportedFormat =
   | 'smilesExt'
   | 'smarts'
   | 'inChI'
+  | 'inChIKey'
   | 'inChIAuxInfo'
   | 'cml'
   | 'ket'

@@ -35,6 +35,7 @@ export enum SupportedFormat {
   Smarts = 'smarts',
   CML = 'cml',
   InChI = 'inchi',
+  InChIKey = 'inchi-key',
   InChIAuxInfo = 'inchi-aux',
   Ket = 'ket',
   CDXML = 'cdxml'

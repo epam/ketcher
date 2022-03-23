@@ -101,6 +101,7 @@ export class FormatterFactory {
       case 'cml':
       case 'inChIAuxInfo':
       case 'inChI':
+      case 'inChIKey':
       case 'molV3000':
       case 'rxnV3000':
       case 'smilesExt':

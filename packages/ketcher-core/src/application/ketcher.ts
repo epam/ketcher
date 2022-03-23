@@ -133,6 +133,13 @@ export class Ketcher {
     )
   }
 
+  getInchiKey(): Promise<string> {
+    return getStructure('inChIKey',
+      this.#formatterFactory,
+      this.#editor.struct()
+    )
+  }
+
   containsReaction(): boolean {
     return this.editor.struct().hasRxnArrow()
   }

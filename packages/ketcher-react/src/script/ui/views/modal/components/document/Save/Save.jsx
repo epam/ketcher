@@ -80,6 +80,7 @@ class SaveDialog extends Component {
         'smilesExt',
         'smarts',
         'inChI',
+        'inChIKey',
         'inChIAuxInfo',
         'cml',
         'svg',

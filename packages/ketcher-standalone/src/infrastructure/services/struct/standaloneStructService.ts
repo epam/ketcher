@@ -93,6 +93,10 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.InChI
       break
     }
+    case ChemicalMimeType.InChIKey: {
+      format = SupportedFormat.InChIKey
+      break
+    }
     case ChemicalMimeType.InChIAuxInfo: {
       format = SupportedFormat.InChIAuxInfo
       break

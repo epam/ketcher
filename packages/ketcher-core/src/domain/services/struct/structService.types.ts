@@ -21,6 +21,7 @@ export enum ChemicalMimeType {
   ExtendedSmiles = 'chemical/x-chemaxon-cxsmiles',
   DaylightSmarts = 'chemical/x-daylight-smarts',
   InChI = 'chemical/x-inchi',
+  InChIKey = 'chemical/x-inchi-key',
   InChIAuxInfo = 'chemical/x-inchi-aux',
   CDXML = 'chemical/x-cdxml',
   CML = 'chemical/x-cml',

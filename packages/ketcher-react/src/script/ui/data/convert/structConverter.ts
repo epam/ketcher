@@ -69,7 +69,7 @@ export function couldBeSaved(
 
   if (
     (
-      ['inChI', 'inChIAuxInfo', 'smiles', 'smilesExt'] as SupportedFormat[]
+      ['inChI', 'inChIKey', 'inChIAuxInfo', 'smiles', 'smilesExt'] as SupportedFormat[]
     ).includes(format)
   ) {
     if (struct.rgroups.size !== 0)
@@ -101,6 +101,7 @@ export function couldBeSaved(
         'smilesExt',
         'smarts',
         'inChI',
+        'inChIKey',
         'inChIAuxInfo',
         'cml'
       ] as SupportedFormat[]
@@ -127,7 +128,7 @@ export function couldBeSaved(
 
   if (
     (
-      ['inChI', 'inChIAuxInfo', 'smiles', 'smilesExt'] as SupportedFormat[]
+      ['inChI', 'inChIKey', 'inChIAuxInfo', 'smiles', 'smilesExt'] as SupportedFormat[]
     ).includes(format)
   ) {
     if (struct.functionalGroups.size !== 0)

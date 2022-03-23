@@ -67,6 +67,9 @@ const formatProperties: FormatPropertiesMap = {
   inChI: new SupportedFormatProperties('InChI', ChemicalMimeType.InChI, [
     '.inchi'
   ]),
+  inChIKey: new SupportedFormatProperties('InChIKey', ChemicalMimeType.InChIKey, [
+    '.inchikey'
+  ]),
   inChIAuxInfo: new SupportedFormatProperties(
     'InChI AuxInfo',
     ChemicalMimeType.InChIAuxInfo,

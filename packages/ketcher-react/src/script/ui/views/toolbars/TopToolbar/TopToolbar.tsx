@@ -183,7 +183,7 @@ export const TopToolbar = ({
       />
       <SystemControls
         onHistoryClick={() => {
-          console.log('History button clicked')
+          console.log('History button clicked') // @TODO Implement handler when History log is ready
         }}
         onSettingsOpen={onSettingsOpen}
         onAboutOpen={onAbout}

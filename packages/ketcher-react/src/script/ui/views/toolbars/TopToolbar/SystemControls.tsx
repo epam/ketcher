@@ -40,18 +40,18 @@ export const SystemControls = ({
   hiddenButtons,
   onSettingsOpen,
   onAboutOpen,
-  onHistoryClick,
   className
 }: SystemControlsProps) => {
   return (
     <ControlsPanel className={className}>
-      <IconButton
+      {/* Uncomment upon History log implementation */}
+      {/* <IconButton
         title="History"
         onClick={onHistoryClick}
         iconName="history"
         disabled={disabledButtons.includes('history')}
         isHidden={hiddenButtons.includes('history')}
-      />
+      /> */}
       <IconButton
         title="Settings"
         onClick={onSettingsOpen}

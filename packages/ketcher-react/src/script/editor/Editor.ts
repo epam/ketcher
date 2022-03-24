@@ -129,6 +129,7 @@ class Editor implements KetcherEditor {
   lastEvent: any
 
   constructor(clientArea, options) {
+    console.log(options.scale)
     this.render = new Render(
       clientArea,
       Object.assign(

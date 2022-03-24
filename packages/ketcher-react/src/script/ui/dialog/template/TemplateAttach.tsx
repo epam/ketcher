@@ -16,6 +16,8 @@
 
 import { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
+import { Button } from '@mui/material'
+import styled from '@emotion/styled'
 import type { Struct } from 'ketcher-core'
 
 import { Dialog, StructEditor } from '../../views/components'
@@ -23,47 +25,176 @@ import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
 import { storage } from '../../storage-ext'
 import Form, { Field } from '../../component/form/form/form'
 import { attachSchema } from '../../data/schema/struct-schema'
-import classes from './template-lib.module.less'
+import type { Template } from './TemplateTable'
+import type { BaseProps } from '../../../ui/views/modal/modal.types'
 
 const EDITOR_STYLES = {
-  selectionStyle: { fill: '#47b3ec', stroke: 'none' },
+  selectionStyle: {
+    fill: '#167782',
+    'fill-opacity': '0.28',
+    stroke: '#167782'
+  },
   hoverStyle: { stroke: '#1a7090', 'stroke-width': 1.2 },
   hoverStyleSimpleObject: { 'stroke-opacity': 0.3 }
 }
 
-type Template = {
-  struct: Struct
-  props: {
-    atomid: number
-    bondid: number
-  }
+type AttachPoints = {
+  atomid: number
+  bondid: number
 }
 
-const Attach = (props) => {
-  const [tmpl, setTmpl] = useState<Template | null>(null)
-  const { name, onNameEdit, onAttachEdit, ...prop } = props
+type ProcessedTemplate = {
+  struct: Struct
+  props: AttachPoints
+}
+
+interface AttachProps extends BaseProps {
+  name: string
+  onNameEdit: (name: string) => void
+  onAttachEdit: (arg: string) => void
+  onInit: (name: string, attach: AttachPoints) => void
+  tmpl: Template
+  globalSettings: any
+  atomid: number
+  bondid: number
+  templateLib: Template[]
+  onOk: (res) => void
+  onCancel: () => void
+}
+
+const TemplateEditDialog = styled(Dialog)`
+  background-color: #ffff;
+
+  // Overriding margins set in Dialog.module.less
+  & > div {
+    margin: 0;
+  }
+
+  & header {
+    text-transform: none;
+    border-bottom: 1px solid #e1e5ea;
+    margin: 0;
+    padding: 12px;
+  }
+
+  & form {
+    display: flex;
+  }
+
+  & input {
+    display: block;
+    width: 100%;
+    // !Important is used to override more specific styles set in Editor
+    // Should be removed when Form.jsx component is refactored
+    box-sizing: border-box !important;
+    padding: 4px 8px !important;
+    border: 1px solid #cad3dd !important;
+    border-radius: 4px !important;
+    line-height: 12px !important;
+    box-shadow: none !important;
+    font-size: 10px;
+
+    &:hover {
+      border-color: #43b5c0;
+    }
+  }
+`
+
+const Editor = styled(StructEditor)`
+  border: 1px solid #b4b9d6;
+  background-color: #ffff;
+  border-radius: 5px;
+  position: relative;
+  max-height: 220px;
+  max-width: 220px;
+  overflow: auto;
+`
+
+const Warning = styled('div')`
+  padding: 0 5px;
+`
+
+const LeftColumn = styled('div')`
+  width: 50%;
+  padding: 12px;
+  background-color: #eff2f5;
+`
+
+const RightColumn = styled('div')`
+  width: 50%;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+`
+
+const NameInput = styled(Field)`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 7px;
+
+  & span {
+    display: block;
+    width: 100%;
+  }
+`
+
+const AttachmentOutput = styled('span')`
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 8px;
+  border: 1px solid #cad3dd;
+  border-radius: 4px;
+  line-height: 12px;
+  font-size: 10px;
+  background-color: #eff2f5;
+`
+
+const SaveButton = styled(Button)`
+  width: fit-content;
+  padding: 5px 8px;
+  text-transform: none;
+  font-size: 12px;
+  line-height: 14px;
+  align-self: flex-end;
+  justify-self: flex-end;
+  margin-top: auto;
+  background-color: #167782;
+  box-shadow: none;
+
+  &:hover {
+    background-color: #43b5c0;
+    box-shadow: none;
+  }
+`
+
+const Attach = ({
+  name,
+  onNameEdit,
+  onAttachEdit,
+  onInit,
+  tmpl,
+  globalSettings,
+  atomid,
+  bondid,
+  templateLib,
+  formState,
+  onOk,
+  onCancel
+}: AttachProps) => {
+  const [template, setTmpl] = useState<ProcessedTemplate | null>(null)
 
   useEffect(() => {
-    const tmpl = initTmpl(props.tmpl)
-    setTmpl(tmpl)
-    props.onInit(tmpl.struct.name, tmpl.props)
+    const template = initTmpl(tmpl)
+    setTmpl(template)
+    onInit(template.struct.name, template.props)
   }, [])
 
   if (!tmpl) {
     return null
   }
 
-  const struct = tmpl.struct
-  const { atomid, bondid } =
-    struct.atoms.get(props.atomid) && struct.bonds.get(props.bondid)
-      ? props
-      : tmpl.props
-  const options = Object.assign(EDITOR_STYLES, props.globalSettings, {
-    scale: getScale(struct)
-  })
-
   const onResult = () => {
-    const { name, atomid, bondid } = props
     return name &&
       (name !== tmpl.struct.name ||
         atomid !== tmpl.props.atomid ||
@@ -74,45 +205,73 @@ const Attach = (props) => {
   }
 
   const checkUniqueName = (name) => {
-    return !props.templateLib.some(
+    return !templateLib.some(
       (tmpl) =>
         tmpl.struct.name === name && tmpl.props.group === 'User Templates'
     )
   }
 
+  const struct = tmpl.struct
+
+  const options = Object.assign(EDITOR_STYLES, globalSettings, {
+    scale: getScale(struct)
+  })
+
+  // @TODO Needs rethinking why this check has to be done
+  const atomIdAdjusted = struct.atoms.get(atomid)
+    ? atomid
+    : template?.props.atomid
+  const bondIdAdjusted = struct.bonds.get(bondid)
+    ? bondid
+    : template?.props.bondid
+
   return (
-    <Dialog
-      title="Template Edit"
-      className={classes.attach}
+    <TemplateEditDialog
+      title="Template edit"
       result={onResult}
-      valid={() => props.formState.valid && name}
-      params={prop}>
+      valid={() => formState.valid && Boolean(name)}
+      buttons={[]}
+      params={{ onOk, onCancel }}
+    >
       <Form
         schema={attachSchema}
         customValid={{
           name: (name) => checkUniqueName(name)
         }}
-        {...props.formState}>
-        <Field
-          name="name"
-          value={name}
-          onChange={onNameEdit}
-          placeholder="template"
-        />
-        <label>Choose attachment atom and bond:</label>
-        <StructEditor
-          className={classes.editor}
-          struct={struct}
-          onAttachEdit={onAttachEdit}
-          tool="attach"
-          toolOpts={{ atomid, bondid }}
-          options={options}
-        />
-        {!storage.isAvailable() ? (
-          <div className={classes.warning}>{storage.warningMessage}</div>
-        ) : null}
+        {...formState}
+      >
+        <LeftColumn>
+          <Editor
+            className="editor"
+            struct={struct}
+            onAttachEdit={onAttachEdit}
+            tool="attach"
+            toolOpts={{ atomid: atomIdAdjusted, bondid: bondIdAdjusted }}
+            options={options}
+            showAttachmentPoints={false}
+          />
+          {!storage.isAvailable() ? (
+            <Warning className="warning">{storage.warningMessage}</Warning>
+          ) : null}
+        </LeftColumn>
+        <RightColumn>
+          <NameInput
+            name="name"
+            value={name}
+            onChange={onNameEdit}
+            placeholder="template"
+          />
+          <span>Choose attachment atom and bond</span>
+          <AttachmentOutput>
+            Atom ID: <strong>{atomid}</strong> Bond ID:{' '}
+            <strong>{bondid}</strong>
+          </AttachmentOutput>
+          <SaveButton variant="contained" onClick={() => onOk(onResult())}>
+            Save changes
+          </SaveButton>
+        </RightColumn>
       </Form>
-    </Dialog>
+    </TemplateEditDialog>
   )
 }
 
@@ -173,7 +332,7 @@ function structNormalization(struct) {
   return normStruct
 }
 
-function getScale(struct) {
+function getScale(struct: Struct) {
   const cbb = struct.getCoordBoundingBox()
   const VIEW_SIZE = 220
   let scale = VIEW_SIZE / Math.max(cbb.max.y - cbb.min.y, cbb.max.x - cbb.min.x)

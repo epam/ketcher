@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { Button } from '@mui/material'
 import styled from '@emotion/styled'
@@ -62,6 +62,7 @@ interface AttachProps extends BaseProps {
   onCancel: () => void
 }
 
+// @TODO When theming is implemented, use theme wherever possible
 const TemplateEditDialog = styled(Dialog)`
   background-color: #ffff;
 
@@ -80,24 +81,6 @@ const TemplateEditDialog = styled(Dialog)`
   & form {
     display: flex;
   }
-
-  & input {
-    display: block;
-    width: 100%;
-    // !Important is used to override more specific styles set in Editor
-    // Should be removed when Form.jsx component is refactored
-    box-sizing: border-box !important;
-    padding: 4px 8px !important;
-    border: 1px solid #cad3dd !important;
-    border-radius: 4px !important;
-    line-height: 12px !important;
-    box-shadow: none !important;
-    font-size: 10px;
-
-    &:hover {
-      border-color: #43b5c0;
-    }
-  }
 `
 
 const Editor = styled(StructEditor)`
@@ -105,8 +88,8 @@ const Editor = styled(StructEditor)`
   background-color: #ffff;
   border-radius: 5px;
   position: relative;
-  max-height: 220px;
-  max-width: 220px;
+  height: 205px;
+  width: 248px;
   overflow: auto;
 `
 
@@ -115,13 +98,13 @@ const Warning = styled('div')`
 `
 
 const LeftColumn = styled('div')`
-  width: 50%;
-  padding: 12px;
+  width: 60%;
+  padding: 7px 4px;
   background-color: #eff2f5;
 `
 
 const RightColumn = styled('div')`
-  width: 50%;
+  width: 40%;
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -131,6 +114,26 @@ const NameInput = styled(Field)`
   display: flex;
   flex-direction: column;
   margin-bottom: 7px;
+
+  & > input[type='text'] {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px 8px;
+    border: 1px solid #cad3dd;
+    border-radius: 4px;
+    line-height: 12px;
+    font-size: 10px;
+
+    &:hover {
+      border-color: #43b5c0;
+    }
+
+    &:hover,
+    :focus {
+      box-shadow: none;
+    }
+  }
 
   & span {
     display: block;
@@ -150,20 +153,41 @@ const AttachmentOutput = styled('span')`
   background-color: #eff2f5;
 `
 
-const SaveButton = styled(Button)`
-  width: fit-content;
-  padding: 5px 8px;
-  text-transform: none;
-  font-size: 12px;
-  line-height: 14px;
-  align-self: flex-end;
-  justify-self: flex-end;
+const Buttons = styled('div')`
+  display: flex;
+  flex-direction: row;
   margin-top: auto;
+  justify-content: flex-end;
+  gap: 8px;
+`
+
+const buttonCommonStyles: CSSProperties = {
+  width: 'fit-content',
+  padding: '5px 8px',
+  textTransform: 'none',
+  fontSize: '12px',
+  lineHeight: '14px',
+  boxShadow: 'none'
+}
+
+const SaveButton = styled(Button)`
+  ${{ ...buttonCommonStyles }}
   background-color: #167782;
-  box-shadow: none;
 
   &:hover {
     background-color: #43b5c0;
+    box-shadow: none;
+  }
+`
+
+const CancelButton = styled(Button)`
+  ${{ ...buttonCommonStyles }}
+  border-color: #585858;
+  color: #585858;
+
+  &:hover {
+    border-color: #333333;
+    color: #333333;
     box-shadow: none;
   }
 `
@@ -242,7 +266,6 @@ const Attach = ({
       >
         <LeftColumn>
           <Editor
-            className="editor"
             struct={struct}
             onAttachEdit={onAttachEdit}
             tool="attach"
@@ -251,7 +274,7 @@ const Attach = ({
             showAttachmentPoints={false}
           />
           {!storage.isAvailable() ? (
-            <Warning className="warning">{storage.warningMessage}</Warning>
+            <Warning>{storage.warningMessage}</Warning>
           ) : null}
         </LeftColumn>
         <RightColumn>
@@ -261,14 +284,19 @@ const Attach = ({
             onChange={onNameEdit}
             placeholder="template"
           />
-          <span>Choose attachment atom and bond</span>
+          <span>Selected attachment points</span>
           <AttachmentOutput>
             Atom ID: <strong>{atomid}</strong> Bond ID:{' '}
             <strong>{bondid}</strong>
           </AttachmentOutput>
-          <SaveButton variant="contained" onClick={() => onOk(onResult())}>
-            Save changes
-          </SaveButton>
+          <Buttons>
+            <CancelButton variant="outlined" onClick={onCancel}>
+              Cancel
+            </CancelButton>
+            <SaveButton variant="contained" onClick={() => onOk(onResult())}>
+              Apply
+            </SaveButton>
+          </Buttons>
         </RightColumn>
       </Form>
     </TemplateEditDialog>
@@ -334,7 +362,7 @@ function structNormalization(struct) {
 
 function getScale(struct: Struct) {
   const cbb = struct.getCoordBoundingBox()
-  const VIEW_SIZE = 220
+  const VIEW_SIZE = 150 // magic number
   let scale = VIEW_SIZE / Math.max(cbb.max.y - cbb.min.y, cbb.max.x - cbb.min.x)
 
   if (scale < 35) scale = 35

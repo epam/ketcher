@@ -17,6 +17,7 @@
 type TopGroup = 'document' | 'edit' | 'zoom' | 'process' | 'meta'
 
 type LeftGroup =
+  | 'hand'
   | 'select'
   | 'bond'
   | 'charge'
@@ -63,6 +64,7 @@ type TopToolbarItemVariant =
 
 type LeftToolbarItemVariant =
   // select group
+  | 'hand'
   | 'select'
   | 'select-lasso'
   | 'select-rectangle'

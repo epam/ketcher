@@ -33,6 +33,7 @@ import BondTripleIcon from './files/bond-triple.svg'
 import BondUpIcon from './files/bond-up.svg'
 import BondUpdownIcon from './files/bond-updown.svg'
 import CapitalTIcon from './files/capital-t.svg'
+import CircleIconCursor from './files/circle.svg'
 import ChainIcon from './files/chain.svg'
 import ChargeMinusIcon from './files/charge-minus.svg'
 import ChargePlusIcon from './files/charge-plus.svg'
@@ -51,6 +52,8 @@ import EnhancedStereoIcon from './files/enhanced-stereo.svg'
 import EraseIcon from './files/erase.svg'
 import FileThumbnailIcon from './files/file-thumbnail.svg'
 import GenericGroupsIcon from './files/generic-groups.svg'
+import HandIcon from './files/hand.svg'
+import CompressedHandIcon from './files/compressed-hand.svg'
 import HelpIcon from './files/help.svg'
 import ImageFrameIcon from './files/image-frame.svg'
 import LayoutIcon from './files/layout.svg'
@@ -167,6 +170,7 @@ const icons = {
   check: CheckIcon,
   'chiral-flag': ChiralFlagIcon,
   cip: CipIcon,
+  cursor: CircleIconCursor,
   clean: CleanIcon,
   copies: CopyIcon,
   copy: CopyIcon,
@@ -181,6 +185,8 @@ const icons = {
   'file-thumbnail': FileThumbnailIcon,
   'functional-groups': FunctionalGroupsIcon,
   'generic-groups': GenericGroupsIcon,
+  hand: HandIcon,
+  compressedhand: CompressedHandIcon,
   help: HelpIcon,
   'image-frame': ImageFrameIcon,
   layout: LayoutIcon,

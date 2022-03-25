@@ -123,7 +123,8 @@ class Editor implements KetcherEditor {
     aromatizeStruct: PipelineSubscription
     dearomatizeStruct: PipelineSubscription
     enhancedStereoEdit: PipelineSubscription
-    confirm: PipelineSubscription
+    confirm: PipelineSubscription,
+    cursor: Subscription
   }
 
   lastEvent: any
@@ -162,7 +163,8 @@ class Editor implements KetcherEditor {
       dearomatizeStruct: new PipelineSubscription(),
       // TODO: correct
       enhancedStereoEdit: new PipelineSubscription(),
-      confirm: new PipelineSubscription()
+      confirm: new PipelineSubscription(),
+      cursor: new PipelineSubscription()
     }
 
     domEventSetup(this, clientArea)
@@ -518,7 +520,8 @@ function domEventSetup(editor: Editor, clientArea) {
     'mousedown',
     'mousemove',
     'mouseup',
-    'mouseleave'
+    'mouseleave',
+    'mouseover'
   ].forEach((eventName) => {
     editor.event[eventName] = new DOMSubscription()
     const subs = editor.event[eventName]

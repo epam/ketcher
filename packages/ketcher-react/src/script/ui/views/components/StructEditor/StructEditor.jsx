@@ -65,15 +65,17 @@ class StructEditor extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      enableCursor: false,
+      enableCursor: false
     }
     this.editorRef = createRef()
     this.logRef = createRef()
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.props.indigoVerification !== nextProps.indigoVerification || 
+    return (
+      this.props.indigoVerification !== nextProps.indigoVerification ||
       nextState.enableCursor !== this.state.enableCursor
+    )
   }
 
   UNSAFE_componentWillReceiveProps(props) {
@@ -103,37 +105,37 @@ class StructEditor extends Component {
     })
 
     this.editor.event.cursor.add((csr) => {
-      switch (csr.status){
-        case 'enable' :
+      switch (csr.status) {
+        case 'enable':
           this.editorRef.current.classList.add(classes.enableCursor)
           if (!this.state.enableCursor) {
             this.setState({
-              enableCursor: true,
+              enableCursor: true
             })
           }
           break
-        case 'move': 
+        case 'move':
           this.editorRef.current.classList.add(classes.enableCursor)
           this.setState({
-            enableCursor: true,
+            enableCursor: true
           })
           break
-        case 'disable' :
+        case 'disable':
           this.editorRef.current.classList.remove(classes.enableCursor)
           this.setState({
-            enableCursor: false,
+            enableCursor: false
           })
           break
         case 'leave':
           this.editorRef.current.classList.remove(classes.enableCursor)
           this.setState({
-            enableCursor: false,
+            enableCursor: false
           })
           break
         case 'mouseover':
           this.editorRef.current.classList.add(classes.enableCursor)
           this.setState({
-            enableCursor: true,
+            enableCursor: true
           })
           break
         default:
@@ -198,7 +200,9 @@ class StructEditor extends Component {
           >
             {/* svg here */}
           </div>
-          {this.state.enableCursor && <Cursor icon={handIcon} pressedIcon={compressedHancIcon} />}
+          {this.state.enableCursor && (
+            <Cursor icon={handIcon} pressedIcon={compressedHancIcon} />
+          )}
           <div className={classes.measureLog} ref={this.logRef} />
           {indigoVerification && (
             <div className={classes.spinnerOverlay}>

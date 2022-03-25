@@ -24,7 +24,7 @@ const toolActions = {
   hand: {
     title: 'Hand tool',
     shortcut: 'Mod+h',
-    action: {tool: 'hand'}
+    action: { tool: 'hand' }
   },
   'select-lasso': {
     title: 'Lasso Selection',

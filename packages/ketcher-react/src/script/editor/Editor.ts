@@ -123,7 +123,7 @@ class Editor implements KetcherEditor {
     aromatizeStruct: PipelineSubscription
     dearomatizeStruct: PipelineSubscription
     enhancedStereoEdit: PipelineSubscription
-    confirm: PipelineSubscription,
+    confirm: PipelineSubscription
     cursor: Subscription
   }
 

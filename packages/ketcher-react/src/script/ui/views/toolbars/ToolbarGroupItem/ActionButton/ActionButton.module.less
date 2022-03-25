@@ -17,6 +17,14 @@
 @import '../../../../../../style/variables';
 @import '../../../../../../style/mixins';
 
+.selected {
+  background: #005662 !important;
+
+  & path {
+    fill:  #FFF !important;
+  }
+}
+
 .button {
   .btn();
 
@@ -26,6 +34,11 @@
   position: relative;
   background: inherit;
   background-color: @color-background-primary;
+  cursor: pointer;
+
+  & path {
+    fill: #005662;
+  }
 
   &::before,
   &::after {
@@ -39,11 +52,13 @@
   }
 
   &:hover {
-    .highlight-scale(@scale:1.25);
-    .highlight-shadow(black);
+    & path {
+      fill: #00838F;
+    }
 
     background-image: none;
   }
+
 
   &:active,
   &[disabled] {
@@ -54,9 +69,6 @@
   .button-size(large);
 }
 
-.selected {
-  .highlight-invert();
-}
 
 .button-size(@dim) {
   .set-size(@dim);
@@ -74,9 +86,4 @@
     height: @icon-size;
     fill: currentColor;
   }
-}
-
-// stylelint-disable-next-line selector-pseudo-class-no-unknown
-:global(.smallEditor) .button {
-  .button-size(small);
 }

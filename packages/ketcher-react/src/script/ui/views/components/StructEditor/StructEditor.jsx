@@ -23,6 +23,9 @@ import { LoadingCircles } from '../Spinner/LoadingCircles'
 import classes from './StructEditor.module.less'
 import clsx from 'clsx'
 import { upperFirst } from 'lodash/fp'
+import handIcon from '../../../../../icons/files/hand.svg'
+import compressedHancIcon from '../../../../../icons/files/compressed-hand.svg'
+import Cursor from '../Cursor'
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -61,12 +64,18 @@ function removeEditorHandlers(editor, props) {
 class StructEditor extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      enableCursor: false
+    }
     this.editorRef = createRef()
     this.logRef = createRef()
   }
 
-  shouldComponentUpdate(nextProps) {
-    return this.props.indigoVerification !== nextProps.indigoVerification
+  shouldComponentUpdate(nextProps, nextState) {
+    return (
+      this.props.indigoVerification !== nextProps.indigoVerification ||
+      nextState.enableCursor !== this.state.enableCursor
+    )
   }
 
   UNSAFE_componentWillReceiveProps(props) {

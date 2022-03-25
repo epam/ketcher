@@ -21,6 +21,11 @@ import isHidden from './isHidden'
 import { toBondType } from '../data/convert/structconv'
 
 const toolActions = {
+  hand: {
+    title: 'Hand tool',
+    shortcut: 'Mod+h',
+    action: { tool: 'hand' }
+  },
   'select-lasso': {
     title: 'Lasso Selection',
     shortcut: 'Escape',

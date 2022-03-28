@@ -25,6 +25,16 @@ interface SystemControlsProps {
   className?: string
   onSettingsOpen: () => void
   onHistoryClick: () => void
+  onFullscreen: () => void
+}
+
+const getIfFullScreen = () => {
+  return !!(
+    document.fullscreenElement ||
+    document.mozFullScreenElement ||
+    document.webkitFullscreenElement ||
+    document.msFullscreenElement
+  )
 }
 
 const ControlsPanel = styled('div')`
@@ -39,6 +49,7 @@ export const SystemControls = ({
   hiddenButtons,
   onSettingsOpen,
   onHistoryClick,
+  onFullscreen,
   className
 }: SystemControlsProps) => {
   return (
@@ -58,6 +69,13 @@ export const SystemControls = ({
         isHidden={hiddenButtons.includes('settings')}
       />
       <HelpLink isHidden={hiddenButtons.includes('help')} />
+      <IconButton
+        title="Fullscreen mode"
+        onClick={onFullscreen}
+        iconName={getIfFullScreen() ? 'fullscreen-exit' : 'fullscreen-enter'}
+        disabled={disabledButtons.includes('fullscreen')}
+        isHidden={hiddenButtons.includes('fullscreen')}
+      />
     </ControlsPanel>
   )
 }

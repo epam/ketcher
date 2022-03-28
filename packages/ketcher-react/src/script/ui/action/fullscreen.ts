@@ -30,7 +30,7 @@ const exitFullscreen = () => {
     (document.webkitExitFullscreen && document.webkitExitFullscreen())
 }
 
-const isFullScreen = () => {
+const getIfFullScreen = () => {
   return !!(
     document.fullscreenElement ||
     document.mozFullScreenElement ||
@@ -42,7 +42,7 @@ const isFullScreen = () => {
 const toggleFullscreen = () => {
   const fullscreenElement: HTMLElement =
     document.querySelector('.Ketcher-root') || document.documentElement
-  isFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement)
+  getIfFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement)
 }
 
 export default {

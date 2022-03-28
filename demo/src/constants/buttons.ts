@@ -13,6 +13,8 @@ export const allButtons = [
   'settings',
   'help',
   'about',
+  'fullscreen-enter',
+  'fullscreen-exit',
   // left
   // sgroup group
   'sgroup',
@@ -118,7 +120,8 @@ export const buttonLabelMap = {
   'shape-rectangle': 'Shape Rectangle',
   'shape-line': 'Shape Line',
   text: 'Add Text Tool',
-  'enhanced-stereo': 'Stereochemistry'
+  'enhanced-stereo': 'Stereochemistry',
+  fullscreen: 'Full screen mode'
 }
 
 // Keys of buttons we initially hide in our demo app

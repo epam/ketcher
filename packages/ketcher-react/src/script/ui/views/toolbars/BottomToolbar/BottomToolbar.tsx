@@ -63,9 +63,6 @@ const BottomToolbar = (props: Props) => {
           <ToolbarGroupItem id="functional-groups" {...rest} />
         </Group>
       </div>
-      <Group className={classes.fullscreen}>
-        <ToolbarGroupItem id="fullscreen" {...rest} />
-      </Group>
     </>
   )
 }

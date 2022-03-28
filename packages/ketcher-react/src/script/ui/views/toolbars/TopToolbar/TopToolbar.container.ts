@@ -101,7 +101,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       dispatch({
         type: 'OPENED',
         data: { menuName, isSelected }
-      })
+      }),
+    onFullscreen: () => dispatchAction('fullscreen')
   }
 }
 

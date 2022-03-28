@@ -141,7 +141,8 @@ import DebuggingIcon from './files/debugging.svg'
 import DebuggingWhiteIcon from './files/debugging-white.svg'
 import DropdownIndicatorIcon from './files/dropdown-indicator.svg'
 import ChevronIcon from './files/chevron.svg'
-import FullscreenIcon from './files/fullscreen.svg'
+import FullscreenEnterIcon from './files/fullscreen-enter.svg'
+import FullscreenExitIcon from './files/fullscreen-exit.svg'
 
 const icons = {
   about: AboutIcon,
@@ -181,7 +182,8 @@ const icons = {
   'enhanced-stereo': EnhancedStereoIcon,
   erase: EraseIcon,
   'file-thumbnail': FileThumbnailIcon,
-  fullscreen: FullscreenIcon,
+  'fullscreen-enter': FullscreenEnterIcon,
+  'fullscreen-exit': FullscreenExitIcon,
   'functional-groups': FunctionalGroupsIcon,
   'generic-groups': GenericGroupsIcon,
   help: HelpIcon,

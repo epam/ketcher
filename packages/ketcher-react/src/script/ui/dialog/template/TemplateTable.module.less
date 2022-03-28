@@ -19,8 +19,6 @@
 
 .tableContent {
   display: grid;
-  // grid-gap: 30px 10px;
-  // grid-template-columns: repeat(5, 93px);
   grid-gap: 30px 10px;
   grid-template-columns: repeat(4, 100px);
   padding-bottom: 20px;
@@ -30,7 +28,7 @@
   box-sizing: border-box;
   width: 98%;
   height: 98%;
-  border: 1px solid #B4B9D6; // TODO: new color
+  border: 1px solid @color-grey-5;
   border-radius: 5px;
 
   &:hover {
@@ -73,7 +71,7 @@
     width: 12px;
     height: 12px;
     border: none;
-    color: #167782; // TODO: should be from variables
+    color: @color-primary;
     background-color: transparent;
     cursor: pointer;
   }

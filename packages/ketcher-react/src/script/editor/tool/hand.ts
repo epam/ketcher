@@ -15,6 +15,8 @@
  ***************************************************************************/
 import { Vec2 } from 'ketcher-core'
 import Editor from '../Editor'
+import {Box2Abs} from 'ketcher-core'
+import {Scale} from 'ketcher-core'
 
 class HandTool {
   editor: Editor
@@ -41,75 +43,42 @@ class HandTool {
     this.endPos = rnd.page2obj(event)
     const diff = Vec2.diff(this.begPos, this.endPos)
     const d = new Vec2(-diff.x, -diff.y)
-    rnd.ctab.translate(d)
-    rnd.options.offset = rnd.options.offset.add(d)
+    if (diff.x <= 0 && diff.y <= 0){
+        rnd.ctab.translate(d)
+        rnd.options.offset = rnd.options.offset.add(d)
+        const viewSz = new Vec2(
+            rnd.clientArea.clientWidth || 100,
+            rnd.clientArea.clientHeight || 100
+        )
+        const sf = rnd.options.scale
+        const bb = rnd!.ctab!.getVBoxObj({})!.transform(Scale.obj2scaled, rnd.options).translate(rnd.options.offset || new Vec2())
+        if (!rnd.options.autoScale) {
+            const ext = Vec2.UNIT.scaled(sf)
+            const eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb
+            const vb = new Box2Abs(
+                rnd.scrollPos(),
+                viewSz.scaled(1 / rnd.options.zoom).sub(Vec2.UNIT.scaled(20))
+            )
+            const cb = Box2Abs.union(vb, eb)
+            if (!rnd.oldCb) rnd.oldCb = new Box2Abs()
 
-    if (diff.x >= 0) {
-      if (
-        rnd.clientArea.scrollLeft >=
-        rnd.clientArea.scrollWidth - rnd.clientArea.clientWidth
-      ) {
-        rnd.setPaperSize(rnd.sz.add(new Vec2(diff.x, 0)))
-      }
-      const awidth = rnd.clientArea.clientWidth
-      const swidth = rnd.clientArea.scrollWidth
-      const dscroll = (diff.x * swidth) / awidth
-      rnd.clientArea.scrollLeft += dscroll
+            const sz = cb.sz().floor()
+            rnd.oldBb = bb
+            if (!rnd.sz || sz.x !== rnd.sz.x || sz.y !== rnd.sz.y) {
+                rnd.setPaperSize(sz)
+                const awidth = rnd.sz.x
+                const swidth = rnd.clientArea.scrollWidth
+                const dscroll = diff.x * swidth / awidth
+                rnd.clientArea.scrollLeft += dscroll
+            }
+            if (cb.p0.x !== 0 && cb.p0.y!== 0){
+                rnd.ctab.translate(d)
+                rnd.options.offset = rnd.options.offset.add(d)
+            }
+            rnd.options.offset = rnd.options.offset || new Vec2()
+    
+        }
     }
-    if (diff.x < 0) {
-      const awidth = rnd.clientArea.clientWidth
-      const swidth = rnd.clientArea.scrollWidth
-      const dscroll = (diff.x * swidth) / awidth
-      rnd.clientArea.scrollLeft += dscroll
-    }
-    if (diff.y >= 0) {
-      const awidth = rnd.clientArea.clientHeight
-      const swidth = rnd.clientArea.scrollHeight
-      const dscroll = (diff.y * swidth) / awidth
-      rnd.clientArea.scrollTop += dscroll
-    }
-    if (diff.x < 0) {
-      const awidth = rnd.clientArea.clientHeight
-      const swidth = rnd.clientArea.scrollHeight
-      const dscroll = (diff.y * swidth) / awidth
-      rnd.clientArea.scrollTop -= dscroll
-    }
-    // if (diff.x >= 0){
-    //     rnd.setPaperSize(rnd.sz.add(new Vec2(diff.x, 0)))
-    //     const awidth = rnd.clientArea.clientWidth
-    //     const swidth = rnd.clientArea.scrollWidth
-    //     const dscroll = diff.x * swidth / awidth
-    //     rnd.clientArea.scrollLeft += dscroll
-    // }
-    // else {
-    //     const d = new Vec2(-diff.x, 0).scaled(
-    //         1 / rnd.options.zoom
-    //     )
-    //     rnd.ctab.translate(d)
-    //     rnd.setOffset(rnd.options.offset.add(d))
-    //     const awidth = rnd.clientArea.clientWidth
-    //     const swidth = rnd.clientArea.scrollWidth
-    //     const dscroll = diff.x * swidth / awidth
-    //     rnd.clientArea.scrollLeft += dscroll
-    // }
-    // if (diff.y >= 0){
-    //     rnd.setPaperSize(rnd.sz.add(new Vec2(0, diff.y)))
-    //     const awidth = rnd.clientArea.clientHeight
-    //     const swidth = rnd.clientArea.scrollHeight
-    //     const dscroll = diff.y * swidth / awidth
-    //     rnd.clientArea.scrollTop += dscroll
-    // }
-    // else {
-    //     const d = new Vec2(0, -diff.y).scaled(
-    //         1 / rnd.options.zoom
-    //     )
-    //     rnd.ctab.translate(d)
-    //     rnd.setOffset(rnd.options.offset.add(d))
-    //     const awidth = rnd.clientArea.clientHeight
-    //     const swidth = rnd.clientArea.scrollHeight
-    //     const dscroll = diff.y * swidth / awidth
-    //     rnd.clientArea.scrollTop += dscroll
-    // }
   }
 
   mouseup(event) {
@@ -117,9 +86,11 @@ class HandTool {
     const rnd = this.editor.render
     this.endPos = rnd.page2obj(event)
     const diff = Vec2.diff(this.begPos, this.endPos)
+    // const d = new Vec2(-diff.x, -diff.y)
+    console.log(diff)
     this.begPos = null
     this.endPos = null
-    if (diff.x < 0 && rnd.clientArea.scrollLeft === 0) rnd.update(false)
+    rnd.update(false)
   }
 
   mouseover() {

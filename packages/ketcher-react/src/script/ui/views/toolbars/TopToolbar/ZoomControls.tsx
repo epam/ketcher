@@ -14,16 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useRef, CSSProperties } from 'react'
+import { useState, useRef, CSSProperties, useCallback } from 'react'
 import styled from '@emotion/styled'
-import { Button, Popover } from '@mui/material'
+import { Button, Popover as Dropdown } from '@mui/material'
 
 import { ZoomInputField } from './ZoomInputField'
 import Icon from 'src/script/ui/component/view/icon'
 
 interface ZoomProps {
   zoom: number
-  setZoom: (arg) => void
+  setZoom: (arg: number) => void
   onZoomIn: VoidFunction
   onZoomOut: VoidFunction
   disabledButtons: string[]
@@ -74,7 +74,7 @@ const ShortcutLabel = styled('span')`
   color: #cad3dd;
 `
 
-const paperStyles: CSSProperties = {
+const dropdownStyles: CSSProperties = {
   padding: '8px',
   width: '135px',
   border: 'none',
@@ -96,10 +96,10 @@ export const ZoomControls = ({
   const [isClosing, setClosing] = useState<boolean>(false)
   const buttonRef = useRef(null)
 
-  const collapseHandler = () => {
+  const collapseHandler = useCallback(() => {
     setIsExpanded(false)
     setClosing(false)
-  }
+  }, [setIsExpanded, setClosing])
 
   const onClose = () => {
     setClosing(true)
@@ -120,7 +120,7 @@ export const ZoomControls = ({
         <Icon name="chevron" />
       </DropDownButton>
 
-      <Popover
+      <Dropdown
         open={isExpanded}
         onClose={onClose}
         anchorEl={buttonRef.current}
@@ -128,7 +128,7 @@ export const ZoomControls = ({
           vertical: 'bottom',
           horizontal: 'right'
         }}
-        PaperProps={{ style: paperStyles }}
+        PaperProps={{ style: dropdownStyles }}
       >
         <DropDownContent>
           <ZoomInputField
@@ -157,25 +157,7 @@ export const ZoomControls = ({
             <span>Zoom 100%</span>
           </ZoomControlButton>
         </DropDownContent>
-      </Popover>
+      </Dropdown>
     </ElementAndDropdown>
-    // <ControlsBox>
-    //   <IconButton
-    //     title="Zoom Out"
-    //     onClick={onZoomOut}
-    //     iconName="zoom-out"
-    //     disabled={disabledButtons.includes('zoom-out')}
-    //     shortcut={shortcuts['zoom-out']}
-    //   />
-    //   <ZoomSlider zoom={zoom} setZoom={setZoom} />
-    //   <IconButton
-    //     title="Zoom In"
-    //     onClick={onZoomIn}
-    //     iconName="zoom-in"
-    //     disabled={disabledButtons.includes('zoom-in')}
-    //     shortcut={shortcuts['zoom-out']}
-    //   />
-    //   <ZoomList zoom={zoom} setZoom={setZoom} />
-    // </ControlsBox>
   )
 }

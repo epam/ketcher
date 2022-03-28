@@ -14,7 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useEffect, memo, FocusEvent, KeyboardEvent } from 'react'
+import {
+  useState,
+  useEffect,
+  FocusEvent,
+  KeyboardEvent,
+  useCallback
+} from 'react'
 import styled from '@emotion/styled'
 
 import { zoomList } from 'src/script/ui/action/zoom'
@@ -71,58 +77,61 @@ interface ZoomInputProps {
   collapseHandler: () => void
 }
 
-export const ZoomInputField = memo(
-  ({ zoom, setZoom, isClosing, collapseHandler }: ZoomInputProps) => {
-    const [inputValue, setInputValue] = useState<string>('')
+export const ZoomInputField = ({
+  zoom,
+  setZoom,
+  isClosing,
+  collapseHandler
+}: ZoomInputProps) => {
+  const [inputValue, setInputValue] = useState<string>('')
 
-    useEffect(() => {
-      const zoomString = getZoomString(zoom)
-      setInputValue(zoomString)
-    }, [])
-
-    useEffect(() => {
-      if (isClosing) {
-        const zoomNumber = getPercentNumber(inputValue)
-        if (zoomNumber !== zoom) {
-          setZoomFromInputString(inputValue)
-        }
-        collapseHandler()
-      }
-    }, [isClosing])
-
-    const setZoomFromInputString = (input: string) => {
-      let zoomNumber = getPercentNumber(input)
-      if (isNaN(zoomNumber)) {
-        const currentZoom = getZoomString(zoom)
-        setInputValue(currentZoom)
-        return
-      }
-      zoomNumber = getAllowedZoom(zoomNumber)
-      setZoom(zoomNumber)
+  const setZoomFromInputString = useCallback(() => {
+    let zoomNumber = getPercentNumber(inputValue)
+    if (isNaN(zoomNumber)) {
+      const currentZoom = getZoomString(zoom)
+      setInputValue(currentZoom)
+      return
     }
+    zoomNumber = getAllowedZoom(zoomNumber)
+    setZoom(zoomNumber)
+  }, [inputValue, setZoom, zoom])
 
-    const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === 'Enter') {
-        setZoomFromInputString(inputValue)
+  useEffect(() => {
+    const zoomString = getZoomString(zoom)
+    setInputValue(zoomString)
+  }, [])
+
+  useEffect(() => {
+    if (isClosing) {
+      const zoomNumber = getPercentNumber(inputValue)
+      if (zoomNumber !== zoom) {
+        setZoomFromInputString()
       }
+      collapseHandler()
     }
+  }, [isClosing, collapseHandler, setZoomFromInputString, inputValue, zoom])
 
-    const inputChangeHandler = (event) => {
-      const userValue = event.target.value
-      if (percentValidInput.test(userValue)) {
-        setInputValue(userValue)
-      }
+  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      setZoomFromInputString()
     }
-
-    return (
-      <ZoomInput
-        pattern="^\d{1,3}%?$"
-        onFocus={onFocusHandler}
-        placeholder={getZoomString(zoom)}
-        onChange={inputChangeHandler}
-        value={inputValue}
-        onKeyDown={onKeyDown}
-      />
-    )
   }
-)
+
+  const inputChangeHandler = (event) => {
+    const userValue = event.target.value
+    if (percentValidInput.test(userValue)) {
+      setInputValue(userValue)
+    }
+  }
+
+  return (
+    <ZoomInput
+      pattern="^\d{1,3}%?$"
+      onFocus={onFocusHandler}
+      placeholder={getZoomString(zoom)}
+      onChange={inputChangeHandler}
+      value={inputValue}
+      onKeyDown={onKeyDown}
+    />
+  )
+}

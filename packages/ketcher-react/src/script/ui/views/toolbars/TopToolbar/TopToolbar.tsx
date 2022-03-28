@@ -25,6 +25,7 @@ import { ZoomControls } from './ZoomControls'
 import { SystemControls } from './SystemControls'
 import { IconButton } from './IconButton'
 import { ExternalFuncControls } from './ExternalFuncControls'
+import { Divider } from './Divider'
 
 type VoidFunction = () => void
 
@@ -173,14 +174,6 @@ export const TopToolbar = ({
         indigoVerification={indigoVerification}
         isCollapsed={width < collapseLimit}
       />
-      <ZoomControls
-        zoom={currentZoom || 1}
-        onZoomIn={onZoomIn}
-        onZoomOut={onZoomOut}
-        setZoom={setZoom}
-        shortcuts={shortcuts}
-        disabledButtons={disabledButtons}
-      />
       <SystemControls
         onHistoryClick={() => {
           console.log('History button clicked') // @TODO Implement handler when History log is ready
@@ -189,6 +182,15 @@ export const TopToolbar = ({
         onAboutOpen={onAbout}
         disabledButtons={disabledButtons}
         hiddenButtons={hiddenButtons}
+      />
+      <Divider />
+      <ZoomControls
+        zoom={currentZoom || 1}
+        onZoomIn={onZoomIn}
+        onZoomOut={onZoomOut}
+        setZoom={setZoom}
+        shortcuts={shortcuts}
+        disabledButtons={disabledButtons}
       />
     </ControlsPanel>
   )

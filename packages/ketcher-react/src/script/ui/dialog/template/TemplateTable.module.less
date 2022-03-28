@@ -17,40 +17,20 @@
 @import '../../../../style/mixins';
 @import '../../../../style/variables';
 
-.table {
-  display: flex;
-  flex-wrap: wrap;
-  width: 555px;
-  min-width: 100px;
-  padding: 0;
-  overflow: hidden;
-}
-
 .tableContent {
-  &:focus {
-    outline: none;
-  }
-
-  height: 312px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  grid-gap: 24px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  width: 100%;
-  margin: 10px 15px;
-
-  .scrollbar();
+  // grid-gap: 30px 10px;
+  // grid-template-columns: repeat(5, 93px);
+  grid-gap: 30px 10px;
+  grid-template-columns: repeat(4, 100px);
+  padding-bottom: 20px;
 }
 
 .struct {
-  position: absolute;
-  display: block;
   box-sizing: border-box;
-  padding: 1em;
   width: 98%;
   height: 98%;
-  border: 1px solid @border-color;
+  border: 1px solid #B4B9D6; // TODO: new color
   border-radius: 5px;
 
   &:hover {
@@ -60,23 +40,16 @@
 
 .td {
   position: relative;
-  width: 100px;
+  height: 93px;
   height: 100px;
 
-  &::before {
+  &::after {
     position: absolute;
-    z-index: 10;
-    left: 0.3em;
-    top: 0;
-    padding: 0 4px;
-    border-radius: 3px;
-    font-size: 10px;
-    color: darken(@border-color, 30%);
-    background-color: @color-background-primary;
+    top: 100%;
+    color: @color-text-primary;
     content: attr(title);
     overflow: hidden;
-    width: content-box;
-    max-width: 85px;
+    max-width: 100%;
   }
 
   &.selected .struct {
@@ -88,8 +61,8 @@
   display: flex;
   flex-direction: row;
   position: absolute;
-  right: 0;
-  bottom: 0;
+  right: 8px;
+  bottom: 8px;
   margin: 0 4px 2px 0;
 
   .attachButton {
@@ -97,7 +70,12 @@
 
     margin: 0;
     border-radius: 0;
-    border: 1px solid @border-color;
+    width: 12px;
+    height: 12px;
+    border: none;
+    color: #167782; // TODO: should be from variables
+    background-color: transparent;
+    cursor: pointer;
   }
 
   .deleteButton {

@@ -28,6 +28,7 @@ export type ButtonName =
   | 'settings'
   | 'help'
   | 'about'
+  | 'fullscreen'
   // left
   // sgroup group
   | 'sgroup'
@@ -73,5 +74,3 @@ export type ButtonName =
   | 'text'
   // right
   | 'enhanced-stereo'
-  // fixed
-  | 'fullscreen'

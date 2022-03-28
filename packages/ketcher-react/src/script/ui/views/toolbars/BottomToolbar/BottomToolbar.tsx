@@ -47,23 +47,21 @@ const BottomToolbar = (props: Props) => {
   const { active, disableableButtons, indigoVerification, onAction } = rest
 
   return (
-    <>
-      <div className={clsx(classes.root, className)}>
-        <Group>
-          <TemplatesList
-            active={active}
-            indigoVerification={indigoVerification}
-            disableableButtons={disableableButtons}
-            onAction={onAction}
-          />
-        </Group>
+    <div className={clsx(classes.root, className)}>
+      <Group>
+        <TemplatesList
+          active={active}
+          indigoVerification={indigoVerification}
+          disableableButtons={disableableButtons}
+          onAction={onAction}
+        />
+      </Group>
 
-        <Group>
-          <ToolbarGroupItem id="template-lib" {...rest} />
-          <ToolbarGroupItem id="functional-groups" {...rest} />
-        </Group>
-      </div>
-    </>
+      <Group>
+        <ToolbarGroupItem id="template-lib" {...rest} />
+        <ToolbarGroupItem id="functional-groups" {...rest} />
+      </Group>
+    </div>
   )
 }
 

@@ -13,8 +13,7 @@ export const allButtons = [
   'settings',
   'help',
   'about',
-  'fullscreen-enter',
-  'fullscreen-exit',
+  'fullscreen',
   // left
   // sgroup group
   'sgroup',

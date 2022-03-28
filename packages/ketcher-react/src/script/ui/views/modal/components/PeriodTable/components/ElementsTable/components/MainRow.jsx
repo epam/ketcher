@@ -21,7 +21,7 @@ function MainRow({
   row,
   caption,
   refer,
-  onSelect,
+  onAtomSelect,
   currentEvents,
   atomClassNames,
   className
@@ -36,7 +36,7 @@ function MainRow({
               <Atom
                 el={element}
                 className={clsx(...atomClassNames(element))}
-                onClick={() => onSelect(element.label)}
+                onClick={() => onAtomSelect(element.label)}
                 {...currentEvents(element)}
               />
             </td>

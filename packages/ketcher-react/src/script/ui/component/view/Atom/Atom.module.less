@@ -14,37 +14,46 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Atom from '../../../../../../../component/view/Atom'
-import clsx from 'clsx'
+ @import '../../../../../style/variables';
+ 
+ .atom {
+  display: block;
+  text-align: center;
+  vertical-align: middle;
+  width: 32px;
+  height: 32px;
+  margin: 2px 4px;
+  padding: 0;
+  color: @main-color;
+  background-color: @color-background-primary;
+  border: 1px solid black;
+  position: relative;
+  cursor: pointer;
+ 
+   &:not(.selected):hover {
+     color: @color-button-primary;
+     border-color: @color-button-primary;
+   }
+ 
+   &:not(.selected):active {
+    background-color: @color-button-primary;
+    color: white;
+   }
 
-function OutinerRow({
-  row,
-  caption,
-  onAtomSelect,
-  currentEvents,
-  atomClassNames,
-  className
-}) {
-  return (
-    <tbody>
-      <tr>
-        <th colSpan="3" className={className}>
-          {caption}
-        </th>
-        {row.map((element) => (
-          <td key={element.label}>
-            <Atom
-              el={element}
-              className={clsx(...atomClassNames(element))}
-              onClick={() => onAtomSelect(element.label)}
-              {...currentEvents(element)}
-            />
-          </td>
-        ))}
-        <td />
-      </tr>
-    </tbody>
-  )
-}
+   &[disabled] {
+    background-image: none;
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: .5;
+   }
+ 
+ }
+ 
+ .selected {
+    background-color: @color-button-primary;
+    color: white;
+ }
 
-export default OutinerRow
+ 
+
+ 

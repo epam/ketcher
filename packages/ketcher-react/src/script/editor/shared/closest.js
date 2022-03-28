@@ -240,12 +240,14 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
   return null
 }
 
-function findClosestEnhancedFlag(restruct, pos) {
+function findClosestEnhancedFlag(restruct, pos, skip, _minDist, options) {
   let minDist
   let ret = null
   restruct.enhancedFlags.forEach((item, id) => {
     const fragment = restruct.molecule.frags.get(id)
-    if (!fragment) return
+
+    if (!fragment || !fragment.enhancedStereoFlag || !options.showStereoFlags)
+      return
 
     const p = fragment.stereoFlagPosition
       ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)

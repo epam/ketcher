@@ -24,6 +24,7 @@ interface SystemControlsProps {
   hiddenButtons: string[]
   className?: string
   onSettingsOpen: () => void
+  onAboutOpen: () => void
   onHistoryClick: () => void
   onFullscreen: () => void
 }
@@ -48,19 +49,21 @@ export const SystemControls = ({
   disabledButtons,
   hiddenButtons,
   onSettingsOpen,
-  onHistoryClick,
+  // onHistoryClick,
   onFullscreen,
+  onAboutOpen,
   className
 }: SystemControlsProps) => {
   return (
     <ControlsPanel className={className}>
-      <IconButton
+      {/* Uncomment upon History log implementation */}
+      {/* <IconButton
         title="History"
         onClick={onHistoryClick}
         iconName="history"
         disabled={disabledButtons.includes('history')}
         isHidden={hiddenButtons.includes('history')}
-      />
+      /> */}
       <IconButton
         title="Settings"
         onClick={onSettingsOpen}
@@ -69,6 +72,14 @@ export const SystemControls = ({
         isHidden={hiddenButtons.includes('settings')}
       />
       <HelpLink isHidden={hiddenButtons.includes('help')} />
+      {/* @TODO Temporary About button, when design is ready, reimplement */}
+      <IconButton
+        title="About"
+        onClick={onAboutOpen}
+        iconName="about"
+        disabled={disabledButtons.includes('about')}
+        isHidden={hiddenButtons.includes('about')}
+      />
       <IconButton
         title="Fullscreen mode"
         onClick={onFullscreen}

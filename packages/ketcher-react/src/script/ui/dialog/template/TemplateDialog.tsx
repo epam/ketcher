@@ -18,6 +18,7 @@ import { Dispatch, FC, useState, useEffect } from 'react'
 import TemplateTable, { Template } from './TemplateTable'
 import {
   changeFilter,
+  changeGroup,
   deleteTmpl,
   editTmpl,
   selectTmpl
@@ -77,6 +78,7 @@ interface TemplateLibProps {
 interface TemplateLibCallProps {
   onAttach: (tmpl: Template) => void
   onCancel: () => void
+  onChangeGroup: (group: string) => void
   onDelete: (tmpl: Template) => void
   onFilter: (filter: string) => void
   onOk: (res: any) => void
@@ -104,10 +106,13 @@ const filterLibSelector = createSelector(
   filterLib
 )
 
+const FUNCTIONAL_GROUPS = 'Functional Groups'
+
 const TemplateDialog: FC<Props> = (props) => {
   const {
     filter,
     onFilter,
+    onChangeGroup,
     mode,
     functionalGroups,
     lib: templateLib,
@@ -117,13 +122,13 @@ const TemplateDialog: FC<Props> = (props) => {
   const [tab, setTab] = useState(TemplateTabs.TemplateLibrary)
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([])
   const [filteredFG, setFilteredFG] = useState(
-    functionalGroups['Functional Groups']
+    functionalGroups[FUNCTIONAL_GROUPS]
   )
 
-  const filteredTempaleLib = filterLibSelector(props)
+  const filteredTemplateLib = filterLibSelector(props)
 
   useEffect(() => {
-    setFilteredFG(filterFGLib(functionalGroups, filter)['Functional Groups'])
+    setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS])
   }, [functionalGroups, filter])
 
   const handleTabChange = (_, tab) => {
@@ -159,6 +164,7 @@ const TemplateDialog: FC<Props> = (props) => {
       : sdfSerializer.serialize(functionalGroups)
 
   const select = (tmpl: Template): void => {
+    onChangeGroup(tmpl.props.group)
     if (tmpl === props.selected) props.onOk(result())
     else props.onSelect(tmpl)
   }
@@ -208,13 +214,16 @@ const TemplateDialog: FC<Props> = (props) => {
       <div className={classes.tabsContent}>
         <TabPanel value={tab} index={TemplateTabs.TemplateLibrary}>
           <div className={classes.templatesTab}>
-            {Object.keys(filteredTempaleLib).length ? (
-              Object.keys(filteredTempaleLib).map((groupName) => {
+            {Object.keys(filteredTemplateLib).length ? (
+              Object.keys(filteredTemplateLib).map((groupName) => {
+                const shouldGroupBeRended =
+                  groupName === props.group ||
+                  expandedAccordions.includes(groupName)
                 return (
                   <Accordion
                     key={groupName}
                     onChange={handleAccordionChange(groupName)}
-                    expanded={expandedAccordions.includes(groupName)}
+                    expanded={shouldGroupBeRended}
                   >
                     <AccordionSummary
                       className={classes.accordionSummary}
@@ -224,13 +233,13 @@ const TemplateDialog: FC<Props> = (props) => {
                         name="elements-group"
                         className={classes.groupIcon}
                       />
-                      {`${groupName} (${filteredTempaleLib[groupName].length})`}
+                      {`${groupName} (${filteredTemplateLib[groupName].length})`}
                     </AccordionSummary>
                     <AccordionDetails>
                       <TemplateTable
                         templates={
-                          expandedAccordions.includes(groupName)
-                            ? filteredTempaleLib[groupName]
+                          shouldGroupBeRended
+                            ? filteredTemplateLib[groupName]
                             : []
                         }
                         onSelect={select}
@@ -243,24 +252,26 @@ const TemplateDialog: FC<Props> = (props) => {
                 )
               })
             ) : (
-              <div className={classes.searchResultContainer}>
+              <div className={classes.emptyResultContainer}>
                 <EmptySearchResult textInfo="No items found" />
               </div>
             )}
           </div>
         </TabPanel>
         <TabPanel value={tab} index={TemplateTabs.FunctionalGroupLibrary}>
-          <div className={classes.searchResultContainer}>
-            {filteredFG?.length ? (
+          {filteredFG?.length ? (
+            <div className={classes.FGSearchContainer}>
               <TemplateTable
                 templates={filteredFG}
                 onSelect={select}
                 selected={props.selected}
               />
-            ) : (
+            </div>
+          ) : (
+            <div className={classes.emptyResultContainer}>
               <EmptySearchResult textInfo="No items found" />
-            )}
-          </div>
+            </div>
+          )}
         </TabPanel>
       </div>
     </Dialog>
@@ -279,6 +290,7 @@ export default connect(
   (dispatch: Dispatch<any>, props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
     onSelect: (tmpl) => dispatch(selectTmpl(tmpl)),
+    onChangeGroup: (group) => dispatch(changeGroup(group)),
     onAttach: (tmpl) => dispatch(editTmpl(tmpl)),
     onDelete: (tmpl) => dispatch(deleteTmpl(tmpl)),
     onOk: (res) => {

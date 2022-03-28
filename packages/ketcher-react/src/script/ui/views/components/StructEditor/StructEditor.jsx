@@ -82,7 +82,7 @@ class StructEditor extends Component {
 
     this.editor.event.message.add((msg) => {
       const el = this.logRef.current
-      if (msg.info) {
+      if (msg.info && this.props.showAttachmentPoints) {
         try {
           const parsedInfo = JSON.parse(msg.info)
           el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`
@@ -129,6 +129,7 @@ class StructEditor extends Component {
       onCipChange,
       className,
       onConfirm,
+      showAttachmentPoints = true,
       ...props
     } = this.props
 
@@ -152,7 +153,9 @@ class StructEditor extends Component {
           >
             {/* svg here */}
           </div>
+
           <div className={classes.measureLog} ref={this.logRef} />
+
           {indigoVerification && (
             <div className={classes.spinnerOverlay}>
               <Spinner />

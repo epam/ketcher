@@ -58,6 +58,7 @@ export interface PanelProps {
   onCheck: VoidFunction
   onAnalyse: VoidFunction
   onMiew: VoidFunction
+  onAbout: VoidFunction
 }
 
 const collapseLimit = 900
@@ -123,7 +124,8 @@ export const TopToolbar = ({
   onCalculate,
   onCheck,
   onAnalyse,
-  onMiew
+  onMiew,
+  onAbout
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>()
 
@@ -181,9 +183,10 @@ export const TopToolbar = ({
       />
       <SystemControls
         onHistoryClick={() => {
-          console.log('History button clicked')
+          console.log('History button clicked') // @TODO Implement handler when History log is ready
         }}
         onSettingsOpen={onSettingsOpen}
+        onAboutOpen={onAbout}
         disabledButtons={disabledButtons}
         hiddenButtons={hiddenButtons}
       />

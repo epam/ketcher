@@ -99,8 +99,8 @@ class ElementsTable extends Component {
   }
 
   render() {
-    const { currentEvents, onAtomSelect } = this.props
-    const callbacks = { currentEvents, onAtomSelect }
+    const { currentEvents, onSelect } = this.props
+    const callbacks = { currentEvents, onSelect }
     return (
       <table
         className={styles.table}

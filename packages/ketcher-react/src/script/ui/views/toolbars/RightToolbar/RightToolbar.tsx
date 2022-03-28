@@ -20,7 +20,7 @@ import {
   ToolbarGroupItemCallProps,
   ToolbarGroupItemProps
 } from '../ToolbarGroupItem'
-import Icon from '../../../component/view/icon'
+
 import { ArrowScroll } from '../ArrowScroll'
 import { AtomsList } from './AtomsList'
 import { basicAtoms } from '../../../action/atoms'
@@ -65,10 +65,6 @@ const RightToolbar = (props: Props) => {
   return (
     <div className={clsx(classes.root, className)}>
       <div className={classes.buttons} ref={scrollRef}>
-        <div className={classes.title}>
-          <Icon name={'elements'} />
-          <span>Elements</span>
-        </div>
         <Group>
           <AtomsList
             ref={startRef}
@@ -77,20 +73,25 @@ const RightToolbar = (props: Props) => {
             onAction={onAction}
           />
           <AtomsList atoms={freqAtoms} active={active} onAction={onAction} />
-          <div className={classes.toolbarButton} ref={sizeRef}>
+        </Group>
+
+        <Group>
+          <div ref={sizeRef}>
             <ToolbarGroupItem id="period-table" {...rest} />
           </div>
-          <div className={classes.toolbarButton} ref={endRef}>
-            <ToolbarGroupItem id="enhanced-stereo" {...rest} />
-          </div>
         </Group>
+        <div ref={endRef}>
+          <Group>
+            <ToolbarGroupItem id="enhanced-stereo" {...rest} />
+          </Group>
+        </div>
       </div>
-      {startInView || (<ArrowScroll
+      <ArrowScroll
         startInView={startInView}
         endInView={endInView}
         scrollUp={scrollUp}
         scrollDown={scrollDown}
-      />)}
+      />
     </div>
   )
 }

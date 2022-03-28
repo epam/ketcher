@@ -14,16 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from '../../../views/toolbars/ToolbarGroupItem/ActionButton/ActionButton.module.less'
-import clsx from 'clsx'
-
-function Atom({ el, shortcut, selected, ...props}) {
+function Atom({ el, shortcut, className, ...props }) {
   return (
     <button
       title={shortcut ? `${el.title} (${shortcut})` : el.title}
-      className={clsx(classes.button, {
-        [classes.selected]: selected
-      })}
+      className={className}
       value={el.number}
       {...props}
     >

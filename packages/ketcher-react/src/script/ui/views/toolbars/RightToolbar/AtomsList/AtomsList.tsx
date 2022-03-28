@@ -19,7 +19,8 @@ import { atomCuts, basicAtoms } from '../../../../action/atoms'
 import Atom from '../../../../component/view/Atom'
 import { Elements } from 'ketcher-core'
 import { UiActionAction } from '../../../../action'
-import classes from '../RightToolbar.module.less'
+import classes from '../../ToolbarGroupItem/ActionButton/ActionButton.module.less'
+import clsx from 'clsx'
 import { shortcutStr } from '../../shortcutStr'
 import { forwardRef } from 'react'
 
@@ -28,7 +29,7 @@ interface AtomsListProps {
   active?: {
     tool?: string
     opts: {
-      label: string
+      label: any
     }
   }
 }
@@ -49,17 +50,34 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
         const element = Elements.get(label)
         const shortcut =
           basicAtoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null
-        return (
-          <div key={label} ref={ref} className={classes.toolbarButton}>
-            <Atom
-              key={label}
-              el={element}
-              shortcut={shortcut}
-              selected={isAtom && active && active.opts.label === label}
-              onClick={() => onAction({ tool: 'atom', opts: { label } })}
 
+        if (basicAtoms.indexOf(label) === 0) {
+          return (
+            <div key={label} ref={ref}>
+              <Atom
+                key={label}
+                el={element}
+                shortcut={shortcut}
+                className={clsx(classes.button, {
+                  [classes.selected]:
+                    isAtom && active && active.opts.label === label
+                })}
+                onClick={() => onAction({ tool: 'atom', opts: { label } })}
               />
-          </div>
+            </div>
+          )
+        }
+        return (
+          <Atom
+            key={label}
+            el={element}
+            shortcut={shortcut}
+            className={clsx(classes.button, {
+              [classes.selected]:
+                isAtom && active && active.opts.label === label
+            })}
+            onClick={() => onAction({ tool: 'atom', opts: { label } })}
+          />
         )
       })}
     </>

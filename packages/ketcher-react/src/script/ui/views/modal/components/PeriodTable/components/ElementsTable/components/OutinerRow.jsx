@@ -20,7 +20,7 @@ import clsx from 'clsx'
 function OutinerRow({
   row,
   caption,
-  onAtomSelect,
+  onSelect,
   currentEvents,
   atomClassNames,
   className
@@ -36,7 +36,7 @@ function OutinerRow({
             <Atom
               el={element}
               className={clsx(...atomClassNames(element))}
-              onClick={() => onAtomSelect(element.label)}
+              onClick={() => onSelect(element.label)}
               {...currentEvents(element)}
             />
           </td>

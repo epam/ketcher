@@ -120,7 +120,9 @@ const TemplateDialog: FC<Props> = (props) => {
   } = props
 
   const [tab, setTab] = useState(TemplateTabs.TemplateLibrary)
-  const [expandedAccordions, setExpandedAccordions] = useState<string[]>([])
+  const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
+    props.group
+  ])
   const [filteredFG, setFilteredFG] = useState(
     functionalGroups[FUNCTIONAL_GROUPS]
   )
@@ -217,7 +219,6 @@ const TemplateDialog: FC<Props> = (props) => {
             {Object.keys(filteredTemplateLib).length ? (
               Object.keys(filteredTemplateLib).map((groupName) => {
                 const shouldGroupBeRended =
-                  groupName === props.group ||
                   expandedAccordions.includes(groupName)
                 return (
                   <Accordion
@@ -227,7 +228,9 @@ const TemplateDialog: FC<Props> = (props) => {
                   >
                     <AccordionSummary
                       className={classes.accordionSummary}
-                      expandIcon={<Icon name="chevron" />}
+                      expandIcon={
+                        <Icon className={classes.expandIcon} name="chevron" />
+                      }
                     >
                       <Icon
                         name="elements-group"

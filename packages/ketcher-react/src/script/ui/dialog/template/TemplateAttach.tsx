@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CSSProperties, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { Button } from '@mui/material'
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import type { Struct } from 'ketcher-core'
 
@@ -27,16 +28,6 @@ import Form, { Field } from '../../component/form/form/form'
 import { attachSchema } from '../../data/schema/struct-schema'
 import type { Template } from './TemplateTable'
 import type { BaseProps } from '../../../ui/views/modal/modal.types'
-
-const EDITOR_STYLES = {
-  selectionStyle: {
-    fill: '#167782',
-    'fill-opacity': '0.28',
-    stroke: '#167782'
-  },
-  hoverStyle: { stroke: '#1a7090', 'stroke-width': 1.2 },
-  hoverStyleSimpleObject: { 'stroke-opacity': 0.3 }
-}
 
 type AttachPoints = {
   atomid: number
@@ -83,14 +74,20 @@ const TemplateEditDialog = styled(Dialog)`
   }
 `
 
-const Editor = styled(StructEditor)`
+const Editor = styled('div')`
   border: 1px solid #b4b9d6;
   background-color: #ffff;
   border-radius: 5px;
   position: relative;
   height: 205px;
   width: 248px;
-  overflow: auto;
+  overflow: hidden;
+
+  & .structEditor {
+    height: 100%;
+    width: 100%;
+    border: none;
+  }
 `
 
 const Warning = styled('div')`
@@ -161,17 +158,17 @@ const Buttons = styled('div')`
   gap: 8px;
 `
 
-const buttonCommonStyles: CSSProperties = {
-  width: 'fit-content',
-  padding: '5px 8px',
-  textTransform: 'none',
-  fontSize: '12px',
-  lineHeight: '14px',
-  boxShadow: 'none'
-}
+const buttonCommonStyles = css`
+  width: fit-content;
+  padding: 5px 8px;
+  text-transform: none;
+  font-size: 12px;
+  line-height: 14px;
+  box-shadow: none;
+`
 
 const SaveButton = styled(Button)`
-  ${{ ...buttonCommonStyles }}
+  ${buttonCommonStyles}
   background-color: #167782;
 
   &:hover {
@@ -181,7 +178,7 @@ const SaveButton = styled(Button)`
 `
 
 const CancelButton = styled(Button)`
-  ${{ ...buttonCommonStyles }}
+  ${buttonCommonStyles}
   border-color: #585858;
   color: #585858;
 
@@ -191,6 +188,16 @@ const CancelButton = styled(Button)`
     box-shadow: none;
   }
 `
+
+const editorStyles = {
+  selectionStyle: {
+    fill: '#167782',
+    'fill-opacity': '0.28',
+    stroke: '#167782'
+  },
+  hoverStyle: { stroke: '#1a7090', 'stroke-width': 1.2 },
+  hoverStyleSimpleObject: { 'stroke-opacity': 0.3 }
+}
 
 const Attach = ({
   name,
@@ -237,7 +244,7 @@ const Attach = ({
 
   const struct = tmpl.struct
 
-  const options = Object.assign(EDITOR_STYLES, globalSettings, {
+  const options = Object.assign(editorStyles, globalSettings, {
     scale: getScale(struct)
   })
 
@@ -265,14 +272,17 @@ const Attach = ({
         {...formState}
       >
         <LeftColumn>
-          <Editor
-            struct={struct}
-            onAttachEdit={onAttachEdit}
-            tool="attach"
-            toolOpts={{ atomid: atomIdAdjusted, bondid: bondIdAdjusted }}
-            options={options}
-            showAttachmentPoints={false}
-          />
+          <Editor>
+            <StructEditor
+              className="structEditor"
+              struct={struct}
+              onAttachEdit={onAttachEdit}
+              tool="attach"
+              toolOpts={{ atomid: atomIdAdjusted, bondid: bondIdAdjusted }}
+              options={options}
+              showAttachmentPoints={false}
+            />
+          </Editor>
           {!storage.isAvailable() ? (
             <Warning>{storage.warningMessage}</Warning>
           ) : null}

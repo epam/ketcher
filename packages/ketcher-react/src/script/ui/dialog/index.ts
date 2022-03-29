@@ -32,7 +32,6 @@ import {
 import { Open, Save } from '../views/modal/components/document'
 
 import EnhancedStereo from './toolbox/enhancedStereo/enhancedStereo'
-import { FunctionalGroups } from '../views/components/FunctionalGroups'
 import LabelEdit from './toolbox/labeledit'
 import PeriodTable from '../views/modal/components/PeriodTable'
 import { RemoveFG } from '../views/modal/components/toolbox/FG/RemoveFG'
@@ -68,6 +67,5 @@ export default {
   sgroup: Sgroup,
   sdata: Sdata,
   text: Text,
-  fGroups: FunctionalGroups,
   confirm: Confirm
 } as any

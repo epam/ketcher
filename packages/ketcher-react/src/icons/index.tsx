@@ -48,6 +48,8 @@ import CutIcon from './files/cut.svg'
 import DearomIcon from './files/dearom.svg'
 import DropdownIcon from './files/dropdown.svg'
 import EnhancedStereoIcon from './files/enhanced-stereo.svg'
+import EditIcon from './files/edit.svg'
+import ElementsGroupIcon from './files/elements-group.svg'
 import EraseIcon from './files/erase.svg'
 import FileThumbnailIcon from './files/file-thumbnail.svg'
 import GenericGroupsIcon from './files/generic-groups.svg'
@@ -89,6 +91,7 @@ import RgroupAttpointsIcon from './files/rgroup-attpoints.svg'
 import RgroupFragmentIcon from './files/rgroup-fragment.svg'
 import RgroupLabelIcon from './files/rgroup-label.svg'
 import SaveIcon from './files/save.svg'
+import SearchIcon from './files/search.svg'
 import SelectFragmentIcon from './files/select-fragment.svg'
 import SelectLassoIcon from './files/select-lasso.svg'
 import SelectRectangleIcon from './files/select-rectangle.svg'
@@ -119,7 +122,6 @@ import TransfromFlipVIcon from './files/transform-flip-v.svg'
 import UndoIcon from './files/undo.svg'
 import ZoomInIcon from './files/zoom-in.svg'
 import ZoomOutIcon from './files/zoom-out.svg'
-import FunctionalGroupsIcon from './files/functional-groups.svg'
 import TextSpecialSymbolsIcon from './files/text-special-symbols.svg'
 import Save1Icon from './files/save-1.svg'
 import Open1Icon from './files/open-1.svg'
@@ -180,11 +182,12 @@ const icons = {
   dearom: DearomIcon,
   dropdown: DropdownIcon,
   'enhanced-stereo': EnhancedStereoIcon,
+  edit: EditIcon,
+  'elements-group': ElementsGroupIcon,
   erase: EraseIcon,
   'file-thumbnail': FileThumbnailIcon,
   'fullscreen-enter': FullscreenEnterIcon,
   'fullscreen-exit': FullscreenExitIcon,
-  'functional-groups': FunctionalGroupsIcon,
   'generic-groups': GenericGroupsIcon,
   help: HelpIcon,
   history: HistoryIcon,
@@ -234,6 +237,7 @@ const icons = {
   'rgroup-fragment': RgroupFragmentIcon,
   'rgroup-label': RgroupLabelIcon,
   save: SaveIcon,
+  search: SearchIcon,
   'select-fragment': SelectFragmentIcon,
   'select-lasso': SelectLassoIcon,
   'select-rectangle': SelectRectangleIcon,

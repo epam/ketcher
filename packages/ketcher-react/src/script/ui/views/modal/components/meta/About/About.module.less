@@ -17,16 +17,14 @@
 @import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
+.dialog_body {
+  background-color: #fff;
+}
+
 .about {
   width: @width-medium-new;
   color: @color-text-primary;
   font-weight: @font-weight-medium;
-  // height: 300px;
-
-  // overriding dialog module styles
-div[class^='Dialog-module_form'] {
-  background-color: #fff;
-}
 
 & > footer {
   border-top: 1px solid #E1E5EA;
@@ -44,7 +42,6 @@ div[class^='Dialog-module_form'] {
   }
 
   .body {
-    // background-color: @color-primary-light;
     height: 174px;
     border-radius: 6px;
     padding: 8px 64px;

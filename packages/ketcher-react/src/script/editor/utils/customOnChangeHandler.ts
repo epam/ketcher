@@ -16,14 +16,18 @@
 
 import { OperationType } from 'ketcher-core'
 
+type Position = {
+  x: number
+  y: number
+}
+
+type ArrowPosition = [Position, Position]
+
 type Data = {
   operation: any
   id?: number
   label?: string
-  position?: {
-    x: number
-    y: number
-  }
+  position?: Position | ArrowPosition
   attribute?: any
   from?: any
   to?: any
@@ -121,11 +125,12 @@ export function customOnChangeHandler(action, handler) {
       case OperationType.RXN_ARROW_DELETE:
         data.push({
           operation: op.type,
-          id: op.data.arid,
-          position: {
-            x: +op.data.pos.x.toFixed(2),
-            y: +op.data.pos.y.toFixed(2)
-          }
+          id: op.data.id,
+          mode: op.data.mode,
+          position: op.data.pos.map((pos) => ({
+            x: +pos.x.toFixed(2),
+            y: +pos.y.toFixed(2)
+          }))
         })
         break
 

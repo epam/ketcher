@@ -14,4 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './ZoomList'
+import { zoomList } from '../../../action/zoom'
+
+function toPercent(value: number): string {
+  const percentLimit = 100
+  return (value * percentLimit).toFixed()
+}
+
+interface ZoomListProps {
+  zoom: number
+  setZoom: (zoom: number) => void
+}
+
+const ZoomList = ({ zoom, setZoom }: ZoomListProps) => {
+  const handleChange = (event) => {
+    const parsedValue = parseFloat(event.target.value)
+    setZoom(parsedValue)
+  }
+
+  return (
+    <select value={zoom} onChange={handleChange}>
+      {zoomList.map((value) => (
+        <option key={value.toString()} value={value}>
+          {toPercent(value)}%
+        </option>
+      ))}
+    </select>
+  )
+}
+
+export type { ZoomListProps }
+export { ZoomList }

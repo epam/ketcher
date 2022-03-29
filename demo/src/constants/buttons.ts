@@ -13,6 +13,7 @@ export const allButtons = [
   'settings',
   'help',
   'about',
+  'fullscreen',
   // left
   // sgroup group
   'sgroup',
@@ -57,7 +58,7 @@ export const allButtons = [
   // text group
   'text',
   // right
-  'enhanced-stereo',
+  'enhanced-stereo'
 ]
 
 // A map of keys to labels for a dropdown
@@ -119,6 +120,7 @@ export const buttonLabelMap = {
   'shape-line': 'Shape Line',
   text: 'Add Text Tool',
   'enhanced-stereo': 'Stereochemistry',
+  fullscreen: 'Full screen mode'
 }
 
 // Keys of buttons we initially hide in our demo app
@@ -131,5 +133,5 @@ export const initiallyHidden = [
   'cip',
   'check',
   'analyse',
-  'recognize',
+  'recognize'
 ]

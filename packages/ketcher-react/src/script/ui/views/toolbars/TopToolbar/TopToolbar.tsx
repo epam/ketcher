@@ -14,117 +14,187 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC } from 'react'
-import {
-  ToolbarGroupItem,
-  ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps
-} from '../ToolbarGroupItem'
-import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
+import styled from '@emotion/styled'
 
-import { ZoomList } from './ZoomList'
-import classes from './TopToolbar.module.less'
-import clsx from 'clsx'
-import { makeItems } from '../ToolbarGroupItem/utils'
-import { mediaSizes } from '../mediaSizes'
-import { useResizeObserver } from '../../../../../hooks'
-import { HelpLink } from './HelpLink/HelpLink'
+import { useResizeObserver } from 'src/hooks'
+import { FileControls } from './FileControls'
+import { ClipboardControls } from './ClipboardControls'
+import { UndoRedo } from './UndoRedo'
+import { ZoomControls } from './ZoomControls'
 
-const Group: FC<{ className?: string }> = ({ children, className }) => (
-  <div className={clsx(classes.group, className)}>{children}</div>
-)
+import { SystemControls } from './SystemControls'
+import { IconButton } from './IconButton'
+import { ExternalFuncControls } from './ExternalFuncControls'
+import { Divider } from './Divider'
 
-const copyOptions: ToolbarItem[] = makeItems([
-  'copy',
-  'copy-mol',
-  'copy-ket',
-  'copy-image'
-])
+type VoidFunction = () => void
 
-interface TopToolbarProps
-  extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
-  className?: string
+export interface PanelProps {
+  className: string
+  disabledButtons: string[]
+  indigoVerification: boolean
+  hiddenButtons: string[]
+  shortcuts: { [key in string]: string }
+  onClear: VoidFunction
+  onFileOpen: VoidFunction
+  onSave: VoidFunction
+  onUndo: VoidFunction
+  onRedo: VoidFunction
+  onCopy: VoidFunction
+  onCopyMol: VoidFunction
+  onCopyKet: VoidFunction
+  onCopyImage: VoidFunction
+  onCut: VoidFunction
+  onPaste: VoidFunction
+  currentZoom: number | undefined
+  onZoom: (zoom: number) => void
+  onZoomIn: VoidFunction
+  onZoomOut: VoidFunction
+  onSettingsOpen: VoidFunction
+  onLayout: VoidFunction
+  onClean: VoidFunction
+  onAromatize: VoidFunction
+  onDearomatize: VoidFunction
+  onCalculate: VoidFunction
+  onCheck: VoidFunction
+  onAnalyse: VoidFunction
+  onMiew: VoidFunction
+  onFullscreen: VoidFunction
+  onAbout: VoidFunction
 }
 
-type TopToolbarCallProps = ToolbarGroupItemCallProps
+const collapseLimit = 900
 
-type Props = TopToolbarProps & TopToolbarCallProps
+const ControlsPanel = styled('div')`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0px;
+  height: 36px;
 
-const TopToolbar = (props: Props) => {
-  const { className, status, ...rest } = props
-  const { ref, width } = useResizeObserver<HTMLDivElement>()
-  const isZoomListHidden = !status['zoom-list']?.hidden
-
-  type ItemProps = {
-    id: ToolbarItemVariant
-    options?: ToolbarItem[]
-    className?: string
-    vertical?: boolean
+  .group {
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
   }
-  const Item = ({ id, options, className, vertical }: ItemProps) =>
-    ToolbarGroupItem({ id, options, className, vertical, status, ...rest })
+
+  & * {
+    box-sizing: border-box;
+  }
+
+  @media only screen and (min-width: 1024px) {
+    height: 40px;
+    gap: 4px;
+
+    .group {
+      gap: 4px;
+    }
+  }
+
+  @media only screen and (min-width: 1920px) {
+    height: 64px;
+    gap: 12px;
+  }
+`
+
+export const TopToolbar = ({
+  className,
+  disabledButtons,
+  indigoVerification,
+  hiddenButtons,
+  shortcuts,
+  onClear,
+  onFileOpen,
+  onSave,
+  onUndo,
+  onRedo,
+  onCopy,
+  onCopyMol,
+  onCopyKet,
+  onCopyImage,
+  onCut,
+  onPaste,
+  currentZoom,
+  onZoom,
+  onZoomIn,
+  onZoomOut,
+  onSettingsOpen,
+  onLayout,
+  onClean,
+  onAromatize,
+  onDearomatize,
+  onCalculate,
+  onCheck,
+  onAnalyse,
+  onMiew,
+  onFullscreen,
+  onAbout
+}: PanelProps) => {
+  const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>()
 
   return (
-    <div
-      ref={ref}
-      className={clsx(classes.root, className, {
-        [classes.hideSeparators]:
-          width && width < mediaSizes.topSeparatorsShowingWidth
-      })}
-    >
-      <Group>
-        <Item id="clear" />
-        <Item id="open" />
-        <Item id="save" />
-      </Group>
-
-      <Group>
-        <Item id="undo" />
-        <Item id="redo" />
-        <Item id="cut" />
-        <Item id="copies" options={copyOptions} vertical={true} />
-        <Item id="paste" />
-      </Group>
-
-      <Group>
-        {width && width >= mediaSizes.zoomShowingWidth ? (
-          <>
-            <Item id="zoom-in" />
-            <Item id="zoom-out" />
-          </>
-        ) : null}
-        {isZoomListHidden && (
-          <ZoomList status={status} onAction={rest.onAction} />
-        )}
-      </Group>
-
-      <Group>
-        <Item id="layout" />
-        <Item id="clean" />
-        <Item id="arom" />
-        <Item id="dearom" />
-        <Item id="cip" />
-        <Item id="check" />
-        <Item id="analyse" />
-      </Group>
-
-      <Group className={classes.recognize}>
-        <Item id="recognize" />
-        <Item id="miew" />
-      </Group>
-
-      <Group className={classes.meta}>
-        <Item id="settings" />
-        {width && width >= mediaSizes.infoShowingWidth ? (
-          <>
-            <HelpLink status={status.help} />
-            <Item id="about" />
-          </>
-        ) : null}
-      </Group>
-    </div>
+    <ControlsPanel className={className} ref={resizeRef}>
+      <IconButton
+        title="Clear Canvas"
+        onClick={onClear}
+        iconName="clear"
+        shortcut={shortcuts.clear}
+      />
+      <FileControls
+        onFileOpen={onFileOpen}
+        onSave={onSave}
+        shortcuts={shortcuts}
+      />
+      <ClipboardControls
+        onCopy={onCopy}
+        onCopyMol={onCopyMol}
+        onCopyKet={onCopyKet}
+        onCopyImage={onCopyImage}
+        onPaste={onPaste}
+        onCut={onCut}
+        shortcuts={shortcuts}
+        disabledButtons={disabledButtons}
+      />
+      <UndoRedo
+        onUndo={onUndo}
+        onRedo={onRedo}
+        disabledButtons={disabledButtons}
+        shortcuts={shortcuts}
+      />
+      <ExternalFuncControls
+        onLayout={onLayout}
+        onClean={onClean}
+        onAromatize={onAromatize}
+        onDearomatize={onDearomatize}
+        onCalculate={onCalculate}
+        onCheck={onCheck}
+        onAnalyse={onAnalyse}
+        onMiew={onMiew}
+        disabledButtons={disabledButtons}
+        hiddenButtons={hiddenButtons}
+        shortcuts={shortcuts}
+        indigoVerification={indigoVerification}
+        isCollapsed={width < collapseLimit}
+      />
+      <SystemControls
+        onHistoryClick={() => {
+          console.log('History button clicked') // @TODO Implement handler when History log is ready
+        }}
+        onSettingsOpen={onSettingsOpen}
+        onFullscreen={onFullscreen}
+        onAboutOpen={onAbout}
+        disabledButtons={disabledButtons}
+        hiddenButtons={hiddenButtons}
+      />
+      <Divider />
+      <ZoomControls
+        zoom={currentZoom || 1}
+        onZoomIn={onZoomIn}
+        onZoomOut={onZoomOut}
+        onZoom={onZoom}
+        shortcuts={shortcuts}
+        disabledButtons={disabledButtons}
+      />
+    </ControlsPanel>
   )
 }
-
-export type { TopToolbarProps, TopToolbarCallProps }
-export { TopToolbar }

@@ -47,7 +47,7 @@ const KetcherAPI = (ketcherInstance) => {
 
       return {
         lastHighlightID,
-        lastHighlight,
+        lastHighlight
       }
     },
 
@@ -58,6 +58,6 @@ const KetcherAPI = (ketcherInstance) => {
     getAllHighlights: function () {
       const highlights = ketcherInstance.editor.highlights.getAll()
       return highlights
-    },
+    }
   }
 }

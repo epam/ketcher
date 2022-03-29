@@ -317,12 +317,12 @@ export const textSchema = {
 }
 
 export const attachSchema = {
-  title: 'Template Edit',
+  title: 'Template edit',
   type: 'object',
   required: ['name'],
   properties: {
     name: {
-      title: 'Template name',
+      title: 'Molecule name',
       type: 'string',
       minLength: 1,
       maxLength: 128,

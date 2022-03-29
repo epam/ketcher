@@ -14,29 +14,98 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { TopToolbar, TopToolbarCallProps, TopToolbarProps } from './TopToolbar'
+import { TopToolbar } from './TopToolbar'
 
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
 import { onAction } from '../../../state'
+import action from 'src/script/ui/action/index.js'
+import { shortcutStr } from '../shortcutStr'
 
-type StateProps = Omit<TopToolbarProps, 'className'>
+const shortcuts = Object.keys(action).reduce((acc, key) => {
+  if (action[key]?.shortcut) {
+    const shortcut = action[key].shortcut
+    const processedShortcut = shortcutStr(shortcut)
+    acc[key] = processedShortcut
+  }
+  return acc
+}, {})
 
-const mapStateToProps = (state: any): StateProps => ({
-  status: state.actionState || {},
-  opened: state.toolbar.opened,
-  indigoVerification: state.requestsStatuses.indigoVerification,
-  disableableButtons: ['layout', 'clean', 'arom', 'dearom', 'cip']
-})
+const mapStateToProps = (state: any) => {
+  const actionState = state.actionState || {}
 
-const mapDispatchToProps = (dispatch: Dispatch): TopToolbarCallProps => ({
-  onAction: (action) => dispatch(onAction(action)),
-  onOpen: (menuName, isSelected) =>
-    dispatch({
-      type: 'OPENED',
-      data: { menuName, isSelected }
-    })
-})
+  const disabledButtons = Object.keys(actionState).reduce(
+    (acc: string[], item) => {
+      if (actionState[item]?.disabled) {
+        acc.push(item)
+      }
+      return acc
+    },
+    []
+  )
+
+  const hiddenButtons = Object.keys(actionState).reduce(
+    (acc: string[], item) => {
+      if (actionState[item]?.hidden) {
+        acc.push(item)
+      }
+      return acc
+    },
+    []
+  )
+
+  return {
+    currentZoom: Math.round(state.actionState?.zoom?.selected * 100),
+    disabledButtons,
+    hiddenButtons,
+    shortcuts,
+    status: state.actionState || {},
+    opened: state.toolbar.opened,
+    indigoVerification: state.requestsStatuses.indigoVerification,
+    disableableButtons: ['layout', 'clean', 'arom', 'dearom', 'cip']
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  const dispatchAction = (actionName) => {
+    dispatch(onAction(action[actionName].action))
+  }
+
+  return {
+    onClear: () => dispatchAction('clear'),
+    onFileOpen: () => dispatchAction('open'),
+    onSave: () => dispatchAction('save'),
+    onUndo: () => dispatchAction('undo'),
+    onRedo: () => dispatchAction('redo'),
+    onCopy: () => dispatchAction('copy'),
+    onCopyMol: () => dispatchAction('copy-mol'),
+    onCopyKet: () => dispatchAction('copy-ket'),
+    onCopyImage: () => dispatchAction('copy-image'),
+    onCut: () => dispatchAction('cut'),
+    onPaste: () => dispatchAction('paste'),
+    onZoomIn: () => dispatchAction('zoom-in'),
+    onZoomOut: () => dispatchAction('zoom-out'),
+    onZoom: (zoomValue: number) =>
+      dispatch(onAction((editor) => editor.zoom(zoomValue / 100))),
+    onSettingsOpen: () => dispatchAction('settings'),
+    onLayout: () => dispatchAction('layout'),
+    onClean: () => dispatchAction('clean'),
+    onAromatize: () => dispatchAction('arom'),
+    onDearomatize: () => dispatchAction('dearom'),
+    onCalculate: () => dispatchAction('cip'),
+    onCheck: () => dispatchAction('check'),
+    onAnalyse: () => dispatchAction('analyse'),
+    onMiew: () => dispatchAction('miew'),
+    onAction: (action) => dispatch(onAction(action)),
+    onOpen: (menuName, isSelected) =>
+      dispatch({
+        type: 'OPENED',
+        data: { menuName, isSelected }
+      }),
+    onFullscreen: () => dispatchAction('fullscreen'),
+    onAbout: () => dispatchAction('about')
+  }
+}
 
 const TopToolbarContainer = connect(
   mapStateToProps,

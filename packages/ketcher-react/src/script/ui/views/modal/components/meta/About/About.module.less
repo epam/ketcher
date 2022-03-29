@@ -26,16 +26,16 @@
   color: @color-text-primary;
   font-weight: @font-weight-medium;
 
-& > footer {
-  border-top: 1px solid #E1E5EA;
-  margin: 0;
-  padding: 15px;
-}
-
-& > div[class^='Dialog-module_dialog_body'] {
-  display: flex;
-  flex-direction: column;
-}
+  & > footer {
+    border-top: 1px solid #E1E5EA;
+    margin: 0;
+    padding: 15px;
+  }
+  
+  & > div[class^='Dialog-module_dialog_body'] {
+    display: flex;
+    flex-direction: column;
+  }
 
   a { // TODO: standard, after redesign, move to global styles
     color: @color-primary;
@@ -44,7 +44,7 @@
   .body {
     height: 174px;
     border-radius: 6px;
-    padding: 8px 64px;
+    padding: 2px 72px;
     overflow-y: auto;
     overflow-x: hidden;
     margin-right: 3px;
@@ -61,6 +61,16 @@
 
     .links {
       text-align: right;
+    }
+
+    .infoLinks{
+      margin-top: 5px;  
+    }
+
+    .indigoVersion {
+      margin-top: 20px;
+      display: flex;
+      gap: 2px; 
     }
   }
 
@@ -93,7 +103,7 @@
   }
 
   dt {
-    margin-top: 8px;
+    margin-top: 3px;
   }
 
   .okButton {

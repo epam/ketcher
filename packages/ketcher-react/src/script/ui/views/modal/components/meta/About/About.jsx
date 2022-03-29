@@ -48,7 +48,7 @@ function AboutDialog(props) {
           <dl className={classes.ketcherVersionInfo}>
             <dt>
               <a
-                href="http://lifescience.opensource.epam.com/ketcher/#feedback"
+                href={props.helpLink}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -58,37 +58,37 @@ function AboutDialog(props) {
             <dd>
               Build at <time>{props.date}</time>
             </dd>
-            <dt>
-              <a
-                href="http://lifescience.opensource.epam.com/ketcher/#feedback"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Feedback
-              </a>
-            </dt>
-            <dt>
-              <a
-                href="http://lifescience.opensource.epam.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Epam Life Sciencies
-              </a>
-            </dt>
-            <br />
-            <div className={classes.firstline}>
+            <div className={classes.infoLinks}>
               <dt>
                 <a
-                  href="http://lifescience.opensource.epam.com/indigo/"
+                  href={props.feedbackLink}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {' '}
-                  Indigo Toolkit
+                  Feedback
                 </a>
               </dt>
-              {true && <dd className={classes.indigoFirstLine}></dd>}
+              <dt>
+                <a
+                  href={props.lifeScienciesLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Epam Life Sciencies
+                </a>
+              </dt>
+            </div>
+            <br />
+            <div class={classes.indigoVersion}>
+              <a
+                href="http://lifescience.opensource.epam.com/indigo/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {' '}
+                Indigo Toolkit
+              </a>
+              {props.indigoMachine && <div>{props.indigoMachine}</div>}
             </div>
             <div>
               {props.indigoVersion ? (
@@ -109,7 +109,11 @@ function AboutDialog(props) {
 
 const mapStateToProps = (state) => ({
   date: state.options.app.buildDate.replace('T', '; '),
-  indigoVersion: state.options.app.indigoVersion
+  indigoVersion: state.options.app.indigoVersion,
+  indigoMachine: state.options.app.indigoMachine,
+  feedbackLink: "http://lifescience.opensource.epam.com/ketcher/#feedback",
+  helpLink: "http://lifescience.opensource.epam.com/ketcher/help.html",
+  lifeScienciesLink: "http://lifescience.opensource.epam.com/",
 })
 
 const mapDispatchToProps = (dispatch) => ({

@@ -15,11 +15,29 @@
  ***************************************************************************/
 
 @import '../../../../../../../style/variables.less';
+@import '../../../../../../../style/mixins.less';
 
 .about {
   width: @width-medium-new;
   color: @color-text-primary;
   font-weight: @font-weight-medium;
+  // height: 300px;
+
+  // overriding dialog module styles
+div[class^='Dialog-module_form'] {
+  background-color: #fff;
+}
+
+& > footer {
+  border-top: 1px solid #E1E5EA;
+  margin: 0;
+  padding: 15px;
+}
+
+& > div[class^='Dialog-module_dialog_body'] {
+  display: flex;
+  flex-direction: column;
+}
 
   a { // TODO: standard, after redesign, move to global styles
     color: @color-primary;
@@ -27,13 +45,19 @@
 
   .body {
     // background-color: @color-primary-light;
+    height: 174px;
     border-radius: 6px;
     padding: 8px 64px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-right: 3px;
+    .scrollbar_thin();
 
     .versionName {
       font-weight: 600;
       margin-bottom: 2px;
     }
+
     .firstline{
       display: inline-block;
     }
@@ -82,14 +106,13 @@
     align-items: center;
     padding: 4px 8px;
     float: right;
-
     width: 90px;
     height: 24px;
-    left: calc(50% - 90px/2 + 81.5px);
+    left: calc(50% - 90px / 2 + 81.5px);
     top: 393px;
 
     /* (NEW) Color/Primary/Graphite */
-    border: 1px solid #333333;
+    border: 1px solid @color-text-primary;
     box-sizing: border-box;
     border-radius: 4px;
   }

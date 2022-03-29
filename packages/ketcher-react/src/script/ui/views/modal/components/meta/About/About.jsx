@@ -20,7 +20,6 @@ import classes from './About.module.less'
 import { connect } from 'react-redux'
 import { Fragment } from 'react'
 
-
 function AboutDialog(props) {
   const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info
 
@@ -29,11 +28,7 @@ function AboutDialog(props) {
       className={classes.about}
       params={props}
       buttons={[
-        <button
-          onClick={props.onOk}
-          className={classes.okButton}
-          key='ok'
-        >
+        <button onClick={props.onOk} className={classes.okButton} key="ok">
           Ok
         </button>
       ]}
@@ -52,13 +47,13 @@ function AboutDialog(props) {
         <div className={classes.verionsInfo}>
           <dl className={classes.ketcherVersionInfo}>
             <dt>
-                <a
-                  href="http://lifescience.opensource.epam.com/ketcher/#feedback"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Version {props.version}
-                </a>
+              <a
+                href="http://lifescience.opensource.epam.com/ketcher/#feedback"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Version {props.version}
+              </a>
             </dt>
             <dd>
               Build at <time>{props.date}</time>
@@ -81,31 +76,29 @@ function AboutDialog(props) {
                 Epam Life Sciencies
               </a>
             </dt>
-            <br/>
+            <br />
             <div className={classes.firstline}>
-            <dt>
-              <a
-                href="http://lifescience.opensource.epam.com/indigo/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {' '}
-                Indigo Toolkit
-              </a>
-            </dt>
-            {true && <dd className={classes.indigoFirstLine}></dd>}
+              <dt>
+                <a
+                  href="http://lifescience.opensource.epam.com/indigo/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {' '}
+                  Indigo Toolkit
+                </a>
+              </dt>
+              {true && <dd className={classes.indigoFirstLine}></dd>}
             </div>
             <div>
-            {props.indigoVersion ? (
-              <Fragment>
-                <dd >
-                      Version {indigoInfo[0]}
-                </dd>
-                {indigoInfo[1] && <dd>Build {indigoInfo[1]}</dd>}
-              </Fragment>
-            ) : (
-              <p>Standalone</p>
-            )}
+              {props.indigoVersion ? (
+                <Fragment>
+                  <dd>Version {indigoInfo[0]}</dd>
+                  {indigoInfo[1] && <dd>Build {indigoInfo[1]}</dd>}
+                </Fragment>
+              ) : (
+                <p>Standalone</p>
+              )}
             </div>
           </dl>
         </div>
@@ -116,12 +109,12 @@ function AboutDialog(props) {
 
 const mapStateToProps = (state) => ({
   date: state.options.app.buildDate.replace('T', '; '),
-  indigoVersion: state.options.app.indigoVersion,
+  indigoVersion: state.options.app.indigoVersion
 })
 
 const mapDispatchToProps = (dispatch) => ({
-    onOk: (_result) => {
-      dispatch({ type: 'MODAL_CLOSE' })
+  onOk: (_result) => {
+    dispatch({ type: 'MODAL_CLOSE' })
   }
 })
 

@@ -77,7 +77,8 @@ const HelpLink = ({ isHidden }: { isHidden: boolean }) => {
       target="_blank"
       title={`Help (${shortcut})`}
       href={`https://github.com/epam/ketcher/blob/${helpLink}/documentation/help.md#ketcher-overview`}
-      rel="noreferrer">
+      rel="noreferrer"
+    >
       <Icon name="help" />
     </Link>
   )

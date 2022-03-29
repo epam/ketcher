@@ -71,6 +71,7 @@ const ControlsPanel = styled('div')`
   align-items: center;
   gap: 0px;
   height: 36px;
+  padding: 0px 8px;
 
   .group {
     display: flex;

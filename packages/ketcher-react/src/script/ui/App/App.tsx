@@ -22,6 +22,7 @@ import {
 } from '../views/toolbars'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
+import { createTheme, ThemeProvider } from '@mui/material'
 import AppClipArea from '../views/AppClipArea'
 import { AppHiddenContainer } from './AppHidden'
 import AppModalContainer from '../views/modal'
@@ -33,6 +34,16 @@ import { useSettingsContext } from '../../../hooks'
 interface AppCallProps {
   checkServer: () => void
 }
+
+const muiTheme = createTheme({
+  components: {
+    MuiButtonBase: {
+      defaultProps: {
+        disableRipple: true
+      }
+    }
+  }
+})
 
 type Props = AppCallProps
 
@@ -47,18 +58,20 @@ const App = (props: Props) => {
   }, [])
 
   return (
-    <div className={classes.app}>
-      <AppHiddenContainer />
-      <Editor className={classes.canvas} />
+    <ThemeProvider theme={muiTheme}>
+      <div className={classes.app}>
+        <AppHiddenContainer />
+        <Editor className={classes.canvas} />
 
-      <TopToolbarContainer className={classes.top} />
-      <LeftToolbarContainer className={classes.left} />
-      <BottomToolbarContainer className={classes.bottom} />
-      <RightToolbarContainer className={classes.right} />
+        <TopToolbarContainer className={classes.top} />
+        <LeftToolbarContainer className={classes.left} />
+        <BottomToolbarContainer className={classes.bottom} />
+        <RightToolbarContainer className={classes.right} />
 
-      <AppClipArea />
-      <AppModalContainer />
-    </div>
+        <AppClipArea />
+        <AppModalContainer />
+      </div>
+    </ThemeProvider>
   )
 }
 

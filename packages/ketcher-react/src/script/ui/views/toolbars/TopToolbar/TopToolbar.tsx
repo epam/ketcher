@@ -58,6 +58,7 @@ export interface PanelProps {
   onCheck: VoidFunction
   onAnalyse: VoidFunction
   onMiew: VoidFunction
+  onFullscreen: VoidFunction
   onAbout: VoidFunction
 }
 
@@ -125,6 +126,7 @@ export const TopToolbar = ({
   onCheck,
   onAnalyse,
   onMiew,
+  onFullscreen,
   onAbout
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>()
@@ -186,6 +188,7 @@ export const TopToolbar = ({
           console.log('History button clicked') // @TODO Implement handler when History log is ready
         }}
         onSettingsOpen={onSettingsOpen}
+        onFullscreen={onFullscreen}
         onAboutOpen={onAbout}
         disabledButtons={disabledButtons}
         hiddenButtons={hiddenButtons}

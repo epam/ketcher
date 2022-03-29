@@ -25,6 +25,7 @@ import templates from './templates'
 import tools from './tools'
 import zoom from './zoom'
 import functionalGroups from './functionalGroups'
+import fullscreen from './fullscreen'
 
 export * from './action.types'
 
@@ -197,7 +198,8 @@ const config = {
   ...atoms,
   ...zoom,
   ...templates,
-  ...functionalGroups
+  ...functionalGroups,
+  ...fullscreen
 }
 
 function hasSelection(editor) {

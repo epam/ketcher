@@ -28,6 +28,7 @@ export type ButtonName =
   | 'settings'
   | 'help'
   | 'about'
+  | 'fullscreen'
   // left
   // sgroup group
   | 'sgroup'

@@ -40,6 +40,7 @@ import {
   modalComponentList,
   ModalContainer
 } from 'components/modal/modalContainer'
+import { FullscreenButton } from 'components/FullscreenButton'
 
 const muiTheme = createTheme(muiOverrides)
 
@@ -88,6 +89,7 @@ function Editor({ onInit, theme }: EditorProps) {
           </Layout>
 
           <Logo />
+          <FullscreenButton />
 
           <ModalContainer />
         </div>

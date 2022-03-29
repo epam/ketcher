@@ -24,6 +24,21 @@ declare module '*.svg' {
   export default src
 }
 
+interface Document {
+  mozFullScreenElement?: Element
+  msFullscreenElement?: Element
+  webkitFullscreenElement?: Element
+  msExitFullscreen?: () => void
+  mozCancelFullScreen?: () => void
+  webkitExitFullscreen?: () => void
+}
+
+interface HTMLElement {
+  msRequestFullscreen?: () => void
+  mozRequestFullScreen?: () => void
+  webkitRequestFullscreen?: () => void
+}
+
 // Functions available in Jest testing environment, declared in setupTests.tsx
 
 /**

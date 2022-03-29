@@ -15,49 +15,113 @@
  ***************************************************************************/
 
 @import '../../../../../../../style/variables.less';
+@import '../../../../../../../style/mixins.less';
+
+.dialog_body {
+  background-color: #fff;
+}
 
 .about {
-  width: 25em;
+  width: @width-medium-new;
+  color: @color-text-primary;
+  font-weight: @font-weight-medium;
 
-  & > a {
-    display: block;
-    margin: 2em 1em;
+  & > footer {
+    border-top: 1px solid #e1e5ea;
+    margin: 0;
+    padding: 15px;
   }
 
-  var {
-    margin-left: 0.5em;
-    font-style: normal;
-    font-weight: bold;
-    display: inline-block;
-  }
-
-  time {
-    font-style: italic;
+  & > div[class^='Dialog-module_dialog_body'] {
+    display: flex;
+    flex-direction: column;
   }
 
   a {
-    color: @active-color;
+    // TODO: standard, after redesign, move to global styles
+    color: @color-primary;
+  }
 
-    &:hover {
-      color: @hover-color;
+  .body {
+    height: 174px;
+    border-radius: 6px;
+    padding: 2px 72px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-right: 3px;
+    .scrollbar_thin();
+
+    .versionName {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .firstline {
+      display: inline-block;
+    }
+
+    .links {
+      text-align: right;
+    }
+
+    .infoLinks {
+      margin-top: 5px;
+    }
+
+    .indigoVersion {
+      margin-top: 20px;
+      display: flex;
+      gap: 2px;
     }
   }
 
-  @line-height: 1.4em;
+  .headerContent {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 40px;
 
-  dl {
-    position: relative;
-    margin: 0 1em 1em;
-    vertical-align: bottom;
-    line-height: @line-height;
+    a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: @color-text-primary;
+    }
+
+    .title {
+      font-size: 20px;
+      line-height: 22px;
+    }
+  }
+
+  .indigoFirstLine {
+    display: inline-block;
   }
 
   dd {
-    text-align: right;
-    margin-bottom: 0.5em;
+    margin: 0;
+    margin-bottom: 0.2em;
   }
 
-  dt + dd {
-    margin: -@line-height 0 0;
+  dt {
+    margin-top: 3px;
+  }
+
+  .okButton {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 8px;
+    float: right;
+    width: 90px;
+    height: 24px;
+    left: calc(50% - 90px / 2 + 81.5px);
+    top: 393px;
+
+    /* (NEW) Color/Primary/Graphite */
+    border: 1px solid @color-text-primary;
+    box-sizing: border-box;
+    border-radius: 4px;
   }
 }

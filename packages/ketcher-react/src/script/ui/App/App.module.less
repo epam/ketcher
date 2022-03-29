@@ -20,9 +20,9 @@
   position: relative;
   display: grid;
   grid-template-areas:
-    '. toolbar-top .'
+    'toolbar-top toolbar-top toolbar-top'
     'toolbar-left canvas toolbar-right'
-    'toolbar-left toolbar-bottom toolbar-right';
+    'toolbar-bottom toolbar-bottom toolbar-bottom';
   grid-template-columns: minmax(40px, max-content) 1fr minmax(40px, max-content);
   grid-template-rows: auto 1fr auto;
 }
@@ -33,6 +33,7 @@
 
 .top {
   grid-area: toolbar-top;
+  background-color: #eff2f5;
 }
 
 .left {
@@ -45,6 +46,7 @@
 
 .bottom {
   grid-area: toolbar-bottom;
+  background-color: #eff2f5;
 }
 
 // stylelint-disable-next-line selector-pseudo-class-no-unknown

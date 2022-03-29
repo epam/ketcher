@@ -21,7 +21,7 @@
   background: #005662 !important;
 
   & path {
-    fill:  #FFF !important;
+    fill: #fff !important;
   }
 }
 
@@ -33,12 +33,7 @@
   padding: 0;
   position: relative;
   background: inherit;
-  background-color: @color-background-primary;
   cursor: pointer;
-
-  & path {
-    fill: #005662;
-  }
 
   &::before,
   &::after {
@@ -53,12 +48,11 @@
 
   &:hover {
     & path {
-      fill: #00838F;
+      fill: #00838f;
     }
 
     background-image: none;
   }
-
 
   &:active,
   &[disabled] {
@@ -68,7 +62,6 @@
 
   .button-size(large);
 }
-
 
 .button-size(@dim) {
   .set-size(@dim);

@@ -25,7 +25,6 @@ const Button = styled(MuiButton)`
   border: 0;
   position: relative;
   background: inherit;
-  background-color: #ffffff;
 
   flex-shrink: 0;
 

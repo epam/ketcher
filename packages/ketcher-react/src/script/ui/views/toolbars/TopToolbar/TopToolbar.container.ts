@@ -55,7 +55,7 @@ const mapStateToProps = (state: any) => {
   )
 
   return {
-    currentZoom: state.actionState?.zoom?.selected,
+    currentZoom: Math.round(state.actionState?.zoom?.selected * 100),
     disabledButtons,
     hiddenButtons,
     shortcuts,
@@ -85,8 +85,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onPaste: () => dispatchAction('paste'),
     onZoomIn: () => dispatchAction('zoom-in'),
     onZoomOut: () => dispatchAction('zoom-out'),
-    setZoom: (zoomValue) =>
-      dispatch(onAction((editor) => editor.zoom(zoomValue))),
+    onZoom: (zoomValue: number) =>
+      dispatch(onAction((editor) => editor.zoom(zoomValue / 100))),
     onSettingsOpen: () => dispatchAction('settings'),
     onLayout: () => dispatchAction('layout'),
     onClean: () => dispatchAction('clean'),
@@ -96,6 +96,13 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onCheck: () => dispatchAction('check'),
     onAnalyse: () => dispatchAction('analyse'),
     onMiew: () => dispatchAction('miew'),
+    onAction: (action) => dispatch(onAction(action)),
+    onOpen: (menuName, isSelected) =>
+      dispatch({
+        type: 'OPENED',
+        data: { menuName, isSelected }
+      }),
+    onFullscreen: () => dispatchAction('fullscreen'),
     onAbout: () => dispatchAction('about')
   }
 }

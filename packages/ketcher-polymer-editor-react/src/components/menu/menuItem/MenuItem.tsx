@@ -70,4 +70,4 @@ const MenuItem = ({ itemId }: MenuItemProp) => {
   )
 }
 
-export { MenuItem }
+export { MenuItem, StyledMenuButton }

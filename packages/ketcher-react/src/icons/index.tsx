@@ -143,6 +143,8 @@ import DebuggingIcon from './files/debugging.svg'
 import DebuggingWhiteIcon from './files/debugging-white.svg'
 import DropdownIndicatorIcon from './files/dropdown-indicator.svg'
 import ChevronIcon from './files/chevron.svg'
+import FullscreenEnterIcon from './files/fullscreen-enter.svg'
+import FullscreenExitIcon from './files/fullscreen-exit.svg'
 
 const icons = {
   about: AboutIcon,
@@ -184,6 +186,8 @@ const icons = {
   'elements-group': ElementsGroupIcon,
   erase: EraseIcon,
   'file-thumbnail': FileThumbnailIcon,
+  'fullscreen-enter': FullscreenEnterIcon,
+  'fullscreen-exit': FullscreenExitIcon,
   'generic-groups': GenericGroupsIcon,
   help: HelpIcon,
   history: HistoryIcon,

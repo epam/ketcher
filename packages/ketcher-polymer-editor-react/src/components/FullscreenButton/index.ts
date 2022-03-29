@@ -14,22 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from './Atom.module.less'
-import clsx from 'clsx'
-
-function Atom({ el, shortcut, selected, ...props }) {
-  return (
-    <button
-      title={shortcut ? `${el.title} (${shortcut})` : el.title}
-      className={clsx(classes.atom, {
-        [classes.selected]: selected
-      })}
-      value={el.number}
-      {...props}
-    >
-      <span>{el.label}</span>
-    </button>
-  )
-}
-
-export default Atom
+export * from './FullscreenButton'

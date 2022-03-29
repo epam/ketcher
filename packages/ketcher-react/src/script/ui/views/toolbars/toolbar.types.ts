@@ -144,6 +144,7 @@ type BottomToolbarItemVariant =
   | 'template-common'
   | 'template-lib'
   | 'enhanced-stereo'
+  | 'fullscreen'
 
 type RightToolbarItemVariant = 'atom' | 'freq-atoms' | 'period-table'
 

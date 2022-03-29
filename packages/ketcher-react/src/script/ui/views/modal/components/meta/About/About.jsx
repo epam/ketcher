@@ -111,9 +111,9 @@ const mapStateToProps = (state) => ({
   date: state.options.app.buildDate.replace('T', '; '),
   indigoVersion: state.options.app.indigoVersion,
   indigoMachine: state.options.app.indigoMachine,
-  feedbackLink: "http://lifescience.opensource.epam.com/ketcher/#feedback",
-  helpLink: "http://lifescience.opensource.epam.com/ketcher/help.html",
-  lifeScienciesLink: "http://lifescience.opensource.epam.com/",
+  feedbackLink: 'http://lifescience.opensource.epam.com/ketcher/#feedback',
+  helpLink: 'http://lifescience.opensource.epam.com/ketcher/help.html',
+  lifeScienciesLink: 'http://lifescience.opensource.epam.com/'
 })
 
 const mapDispatchToProps = (dispatch) => ({

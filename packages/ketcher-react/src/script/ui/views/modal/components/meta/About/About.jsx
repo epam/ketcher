@@ -18,21 +18,8 @@ import { Dialog } from '../../../../components'
 import Logo from './logo.svg'
 import classes from './About.module.less'
 import { connect } from 'react-redux'
+import { Fragment } from 'react'
 
-function HeaderContent() {
-  return (
-    <div className={classes.headerContent}>
-      <a
-        href="http://lifescience.opensource.epam.com/ketcher/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <Logo />
-        <span className={classes.title}>Ketcher</span>
-      </a>
-    </div>
-  )
-}
 
 function AboutDialog(props) {
   const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info
@@ -41,84 +28,103 @@ function AboutDialog(props) {
     <Dialog
       className={classes.about}
       params={props}
-      buttons={['Close']}
-      headerContent={<HeaderContent />}
+      buttons={[
+        <button
+          onClick={props.onOk}
+          className={classes.okButton}
+          key='ok'
+        >
+          Ok
+        </button>
+      ]}
     >
-      <p>About</p>
+      <div className={classes.headerContent}>
+        <a
+          href="http://lifescience.opensource.epam.com/ketcher/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Logo />
+          <span className={classes.title}>Ketcher</span>
+        </a>
+      </div>
       <div className={classes.body}>
         <div className={classes.verionsInfo}>
           <dl className={classes.ketcherVersionInfo}>
+            <dt>
+                <a
+                  href="http://lifescience.opensource.epam.com/ketcher/#feedback"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Version {props.version}
+                </a>
+            </dt>
             <dd>
-              <span className={classes.versionName}>
-                Version {props.version}
-              </span>
-            </dd>
-            <dd>
-              Build at <time>{props.buildDate.replace('T', '; ')}</time>
+              Build at <time>{props.date}</time>
             </dd>
             <dt>
               <a
-                href="http://lifescience.opensource.epam.com/ketcher/help.html"
+                href="http://lifescience.opensource.epam.com/ketcher/#feedback"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Feedback
+              </a>
+            </dt>
+            <dt>
+              <a
+                href="http://lifescience.opensource.epam.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Epam Life Sciencies
+              </a>
+            </dt>
+            <br/>
+            <div className={classes.firstline}>
+            <dt>
+              <a
+                href="http://lifescience.opensource.epam.com/indigo/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 {' '}
-                Ketcher
+                Indigo Toolkit
               </a>
             </dt>
-          </dl>
-          {props.indigoVersion ? (
-            <div className={classes.indigoVersionInfo}>
-              <dl className={classes.indigoVersionInfo}>
-                <dd>
-                  <span className={classes.versionName}>
-                    Version {indigoInfo[0]}
-                  </span>
-                </dd>
-                <dd>Build #{indigoInfo[1]}</dd>
-                <dt>
-                  <a
-                    href="http://lifescience.opensource.epam.com/indigo/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {' '}
-                    Indigo Toolkit
-                  </a>
-                </dt>
-              </dl>
+            {true && <dd className={classes.indigoFirstLine}></dd>}
             </div>
-          ) : (
-            <p>Standalone</p>
-          )}
-        </div>
-        <div className={classes.links}>
-          <dt>
-            <a
-              href="http://lifescience.opensource.epam.com/ketcher/#feedback"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Feedback
-            </a>
-          </dt>
-          <dt>
-            <a
-              href="http://lifescience.opensource.epam.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Epam Life Sciencies
-            </a>
-          </dt>
+            <div>
+            {props.indigoVersion ? (
+              <Fragment>
+                <dd >
+                      Version {indigoInfo[0]}
+                </dd>
+                {indigoInfo[1] && <dd>Build {indigoInfo[1]}</dd>}
+              </Fragment>
+            ) : (
+              <p>Standalone</p>
+            )}
+            </div>
+          </dl>
         </div>
       </div>
     </Dialog>
   )
 }
 
-const mapStateToProps = (state) => ({ ...state.options.app })
+const mapStateToProps = (state) => ({
+  date: state.options.app.buildDate.replace('T', '; '),
+  indigoVersion: state.options.app.indigoVersion,
+})
 
-const About = connect(mapStateToProps)(AboutDialog)
+const mapDispatchToProps = (dispatch) => ({
+    onOk: (_result) => {
+      dispatch({ type: 'MODAL_CLOSE' })
+  }
+})
+
+const About = connect(mapStateToProps, mapDispatchToProps)(AboutDialog)
 
 export default About

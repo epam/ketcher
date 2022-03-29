@@ -26,15 +26,16 @@
   }
 
   .body {
-    background-color: @color-primary-light;
+    // background-color: @color-primary-light;
     border-radius: 6px;
-    padding: 8px 12px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    padding: 8px 64px;
 
     .versionName {
       font-weight: 600;
       margin-bottom: 2px;
+    }
+    .firstline{
+      display: inline-block;
     }
 
     .links {
@@ -45,6 +46,7 @@
   .headerContent {
     display: flex;
     justify-content: space-between;
+    padding: 0 40px;
 
     a {
       display: flex;
@@ -60,6 +62,10 @@
     }
   }
 
+  .indigoFirstLine {
+    display: inline-block;
+  }
+
   dd {
     margin: 0;
     margin-bottom: 0.2em;
@@ -67,5 +73,24 @@
 
   dt {
     margin-top: 8px;
+  }
+
+  .okButton {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 8px;
+    float: right;
+
+    width: 90px;
+    height: 24px;
+    left: calc(50% - 90px/2 + 81.5px);
+    top: 393px;
+
+    /* (NEW) Color/Primary/Graphite */
+    border: 1px solid #333333;
+    box-sizing: border-box;
+    border-radius: 4px;
   }
 }

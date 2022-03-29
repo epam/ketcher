@@ -114,7 +114,7 @@ const mapStateToProps = (state) => ({
   feedbackLink: 'http://lifescience.opensource.epam.com/ketcher/#feedback',
   helpLink: 'http://lifescience.opensource.epam.com/ketcher/help.html',
   lifeScienciesLink: 'http://lifescience.opensource.epam.com/',
-  version: state.options.app.version,
+  version: state.options.app.version
 })
 
 const mapDispatchToProps = (dispatch) => ({

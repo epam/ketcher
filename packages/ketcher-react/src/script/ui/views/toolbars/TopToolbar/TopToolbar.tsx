@@ -47,7 +47,7 @@ export interface PanelProps {
   onCut: VoidFunction
   onPaste: VoidFunction
   currentZoom: number | undefined
-  setZoom: (arg: number) => void
+  onZoom: (zoom: number) => void
   onZoomIn: VoidFunction
   onZoomOut: VoidFunction
   onSettingsOpen: VoidFunction
@@ -114,7 +114,7 @@ export const TopToolbar = ({
   onCut,
   onPaste,
   currentZoom,
-  setZoom,
+  onZoom,
   onZoomIn,
   onZoomOut,
   onSettingsOpen,
@@ -188,7 +188,7 @@ export const TopToolbar = ({
         zoom={currentZoom || 1}
         onZoomIn={onZoomIn}
         onZoomOut={onZoomOut}
-        setZoom={setZoom}
+        onZoom={onZoom}
         shortcuts={shortcuts}
         disabledButtons={disabledButtons}
       />

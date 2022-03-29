@@ -33,7 +33,7 @@ export default {
     disabled: (editor) => editor.zoom() <= zoomList[0], // unsave
     action: (editor) => {
       const zoom = editor.zoom()
-      const i = findIndex((z) => z >= zoom, zoomList)
+      const i = findLastIndex((z) => z <= zoom, zoomList)
       editor.zoom(zoomList[zoomList[i] === zoom && i > 0 ? i - 1 : i])
     },
     hidden: (options) => isHidden(options, 'zoom-out')
@@ -44,7 +44,7 @@ export default {
     disabled: (editor) => zoomList[zoomList.length - 1] <= editor.zoom(),
     action: (editor) => {
       const zoom = editor.zoom()
-      const i = findLastIndex((z) => z <= zoom, zoomList)
+      const i = findIndex((z) => z >= zoom, zoomList)
       editor.zoom(
         zoomList[zoomList[i] === zoom && i < zoomList.length - 1 ? i + 1 : i]
       )

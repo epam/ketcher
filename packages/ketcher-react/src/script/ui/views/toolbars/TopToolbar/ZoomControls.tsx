@@ -14,21 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useRef, CSSProperties, useCallback } from 'react'
+import { useState, useEffect, useRef, CSSProperties } from 'react'
 import styled from '@emotion/styled'
 import { Button, Popover as Dropdown } from '@mui/material'
 
-import { ZoomInputField } from './ZoomInputField'
+import { ZoomInput } from './ZoomInput'
 import Icon from 'src/script/ui/component/view/icon'
-
-interface ZoomProps {
-  zoom: number
-  setZoom: (arg: number) => void
-  onZoomIn: VoidFunction
-  onZoomOut: VoidFunction
-  disabledButtons: string[]
-  shortcuts: { [key in string]: string }
-}
+import { zoomList } from 'src/script/ui/action/zoom'
 
 const ElementAndDropdown = styled('div')`
   position: relative;
@@ -79,30 +71,58 @@ const dropdownStyles: CSSProperties = {
   width: '135px',
   border: 'none',
   borderRadius: '0px 0px 4px 4px',
-  boxShadow:
-    '0px 100px 80px rgba(160, 165, 174, 0.07), 0px 41.7776px 33.4221px rgba(160, 165, 174, 0.0503198), 0px 22.3363px 17.869px rgba(160, 165, 174, 0.0417275), 0px 12.5216px 10.0172px rgba(160, 165, 174, 0.035), 0px 6.6501px 5.32008px rgba(160, 165, 174, 0.0282725), 0px 2.76726px 2.21381px rgba(160, 165, 174, 0.0196802)',
+  boxShadow: '0px 30px 48px -17px rgba(160,165,174,0.3)',
   boxSizing: 'border-box'
+}
+
+const getAllowedZoom = (value: number): number => {
+  const minAllowed = Math.min(...zoomList) * 100
+  const maxAllowed = Math.max(...zoomList) * 100
+
+  if (value < minAllowed) {
+    return minAllowed
+  }
+  if (value > maxAllowed) {
+    return maxAllowed
+  }
+  return value
+}
+
+interface ZoomProps {
+  zoom: number
+  onZoom: (arg: number) => void
+  onZoomIn: VoidFunction
+  onZoomOut: VoidFunction
+  disabledButtons: string[]
+  shortcuts: { [key in string]: string }
 }
 
 export const ZoomControls = ({
   zoom,
-  setZoom,
+  onZoom,
   onZoomIn,
   onZoomOut,
   disabledButtons,
   shortcuts
 }: ZoomProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
-  const [isClosing, setClosing] = useState<boolean>(false)
-  const buttonRef = useRef(null)
+  const [inputValue, setInputValue] = useState<number>(0)
 
-  const collapseHandler = useCallback(() => {
-    setIsExpanded(false)
-    setClosing(false)
-  }, [setIsExpanded, setClosing])
+  const anchorRef = useRef(null)
+
+  useEffect(() => {
+    setInputValue(zoom)
+  }, [zoom])
+
+  const onZoomSubmit = (input: number) => {
+    onZoom(getAllowedZoom(input))
+  }
 
   const onClose = () => {
-    setClosing(true)
+    if (inputValue !== zoom) {
+      onZoomSubmit(inputValue)
+    }
+    setIsExpanded(false)
   }
 
   const onExpand = () => {
@@ -110,32 +130,31 @@ export const ZoomControls = ({
   }
 
   const resetZoom = () => {
-    setZoom(1)
+    onZoom(100)
   }
 
   return (
     <ElementAndDropdown>
-      <DropDownButton onClick={onExpand} ref={buttonRef}>
-        <ZoomLabel>{zoom * 100}%</ZoomLabel>
+      <DropDownButton onClick={onExpand} ref={anchorRef}>
+        <ZoomLabel>{Math.round(zoom)}%</ZoomLabel>
         <Icon name="chevron" />
       </DropDownButton>
 
       <Dropdown
         open={isExpanded}
         onClose={onClose}
-        anchorEl={buttonRef.current}
+        anchorEl={anchorRef.current}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'right'
+          horizontal: 'left'
         }}
         PaperProps={{ style: dropdownStyles }}
       >
         <DropDownContent>
-          <ZoomInputField
-            zoom={zoom}
-            setZoom={setZoom}
-            isClosing={isClosing}
-            collapseHandler={collapseHandler}
+          <ZoomInput
+            zoomInput={inputValue}
+            setZoomInput={setInputValue}
+            onZoomSubmit={onZoomSubmit}
           />
           <ZoomControlButton
             title="Zoom Out"

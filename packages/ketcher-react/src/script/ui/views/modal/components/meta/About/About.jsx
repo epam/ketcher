@@ -113,7 +113,8 @@ const mapStateToProps = (state) => ({
   indigoMachine: state.options.app.indigoMachine,
   feedbackLink: 'http://lifescience.opensource.epam.com/ketcher/#feedback',
   helpLink: 'http://lifescience.opensource.epam.com/ketcher/help.html',
-  lifeScienciesLink: 'http://lifescience.opensource.epam.com/'
+  lifeScienciesLink: 'http://lifescience.opensource.epam.com/',
+  version: state.options.app.version
 })
 
 const mapDispatchToProps = (dispatch) => ({

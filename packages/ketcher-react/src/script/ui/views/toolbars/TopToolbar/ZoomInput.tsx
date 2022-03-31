@@ -42,34 +42,55 @@ const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {
   el.select()
 }
 
-interface ZoomInputProps {
-  onZoomSubmit: (zoom: number) => void
-  zoomInput: number
+const updateInputAndFocus = (zoom: number, inputElement: HTMLInputElement) => {
+  inputElement.value = `${zoom}%`
+  inputElement.focus()
+  inputElement.select()
 }
 
-export const ZoomInput = ({ onZoomSubmit, zoomInput }: ZoomInputProps) => {
+const getParsedZoomNumber = (zoomInput: string | undefined): number => {
+  const zoomNumber = parseInt(zoomInput || '')
+  if (isNaN(zoomNumber)) {
+    return 0
+  }
+  return zoomNumber
+}
+
+interface ZoomInputProps {
+  onZoomSubmit: (zoom: number) => void
+  currentZoom: number
+}
+
+export const ZoomInput = ({ onZoomSubmit, currentZoom }: ZoomInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const inputField = inputRef.current
     if (inputField) {
-      inputRef.current.value = `${zoomInput}%`
+      updateInputAndFocus(currentZoom, inputField)
     }
+  }, [currentZoom])
 
+  useEffect(() => {
+    const inputField = inputRef.current
     return () => {
-      const zoomValue = parseInt(inputField?.value || '')
-      if (zoomValue !== zoomInput) {
+      const zoomValue = getParsedZoomNumber(inputField?.value)
+      if (zoomValue && zoomValue !== currentZoom) {
         onZoomSubmit(zoomValue)
       }
     }
-  }, [zoomInput, onZoomSubmit])
+  }, [])
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     event.nativeEvent.stopImmediatePropagation()
     if (event.key === 'Enter') {
-      if (inputRef.current?.value) {
-        const zoomValue = parseInt(inputRef.current.value)
-        onZoomSubmit(zoomValue)
+      if (inputRef.current) {
+        const zoomValue = getParsedZoomNumber(inputRef.current.value)
+        if (zoomValue) {
+          onZoomSubmit(zoomValue)
+        } else {
+          updateInputAndFocus(currentZoom, inputRef.current)
+        }
       }
     }
   }
@@ -78,7 +99,6 @@ export const ZoomInput = ({ onZoomSubmit, zoomInput }: ZoomInputProps) => {
     <StyledInput
       ref={inputRef}
       onFocus={onFocusHandler}
-      defaultValue={`${zoomInput}%`}
       onKeyDownCapture={onKeyDown}
     />
   )

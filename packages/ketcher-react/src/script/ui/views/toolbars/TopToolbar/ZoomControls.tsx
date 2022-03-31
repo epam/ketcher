@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useRef, CSSProperties } from 'react'
+import { useState, useRef, CSSProperties, useCallback } from 'react'
 import styled from '@emotion/styled'
 import { Button, Popover as Dropdown } from '@mui/material'
 
@@ -75,7 +75,7 @@ const dropdownStyles: CSSProperties = {
   boxSizing: 'border-box'
 }
 
-const getAllowedZoom = (value: number): number => {
+const getZoomValue = (value: number): number => {
   const minAllowed = Math.min(...zoomList) * 100
   const maxAllowed = Math.max(...zoomList) * 100
 
@@ -108,11 +108,13 @@ export const ZoomControls = ({
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
 
   const anchorRef = useRef(null)
-  const onZoomSubmit = (input: number) => {
-    if (!isNaN(input)) {
-      onZoom(getAllowedZoom(input))
-    }
-  }
+
+  const onZoomSubmit = useCallback(
+    (input: number) => {
+      onZoom(getZoomValue(input))
+    },
+    [onZoom]
+  )
 
   const onClose = () => {
     setIsExpanded(false)
@@ -145,7 +147,7 @@ export const ZoomControls = ({
         PaperProps={{ style: dropdownStyles }}
       >
         <DropDownContent>
-          <ZoomInput zoomInput={zoom} onZoomSubmit={onZoomSubmit} />
+          <ZoomInput currentZoom={zoom} onZoomSubmit={onZoomSubmit} />
           <ZoomControlButton
             title="Zoom Out"
             onClick={onZoomOut}

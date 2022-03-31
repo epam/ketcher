@@ -16,19 +16,42 @@
 
 import classes from './Atom.module.less'
 import clsx from 'clsx'
+import { ElementColor } from 'ketcher-core'
+import styled from '@emotion/styled'
+import α from 'color-alpha'
 
 function Atom({ el, shortcut, selected, ...props }) {
+const atomColor = ElementColor[el.label] || '#000';
+const AtomButton = styled('button')`
+  color: ${atomColor};
+  border-color: ${atomColor};
+  &:hover {
+    background-color: ${α(atomColor, .2)};
+  }
+  &:active {
+    background-color: ${α(atomColor, .8)};
+  }
+  &.selected {
+    color: #fff;
+    background-color: ${α(atomColor, .8)};
+  
+    &:hover {
+      background-color: ${atomColor};
+    }
+  }
+`
+  
   return (
-    <button
+    <AtomButton
       title={shortcut ? `${el.title} (${shortcut})` : el.title}
       className={clsx(classes.atom, {
-        [classes.selected]: selected
+        'selected': selected
       })}
       value={el.number}
       {...props}
     >
       <span>{el.label}</span>
-    </button>
+    </AtomButton>
   )
 }
 

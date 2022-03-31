@@ -26,12 +26,11 @@
   position: absolute;
   right: 0;
   bottom: 0;
+  fill: @main-color;
 }
 
-.root {
-  &:hover > .icon {
-    fill: @main-color;
-  }
+.iconSelected {
+  fill: @color-background-primary;
 }
 
 .portal {
@@ -39,11 +38,21 @@
   z-index: 20;
   white-space: nowrap;
   word-break: keep-all;
-  padding: 2px;
   background: @color-background-primary;
   border: 1px solid @border-color;
   border-radius: 5px;
   box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+
+  // TODO: move to action button styles, when all buttons will have same style
+  & > button {
+    width: 28px;
+    height: 28px;
+
+    & > svg {
+      top: 1px;
+      left: 1px;
+    }
+  }
 
   kbd {
     .kbd();

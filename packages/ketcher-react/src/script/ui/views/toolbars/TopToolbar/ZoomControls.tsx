@@ -20,7 +20,6 @@ import { Button, Popover as Dropdown } from '@mui/material'
 
 import { ZoomInput } from './ZoomInput'
 import Icon from 'src/script/ui/component/view/icon'
-import { zoomList } from 'src/script/ui/action/zoom'
 
 const ElementAndDropdown = styled('div')`
   position: relative;
@@ -75,19 +74,6 @@ const dropdownStyles: CSSProperties = {
   boxSizing: 'border-box'
 }
 
-const getZoomValue = (value: number): number => {
-  const minAllowed = Math.min(...zoomList) * 100
-  const maxAllowed = Math.max(...zoomList) * 100
-
-  if (value < minAllowed) {
-    return minAllowed
-  }
-  if (value > maxAllowed) {
-    return maxAllowed
-  }
-  return value
-}
-
 interface ZoomProps {
   zoom: number
   onZoom: (arg: number) => void
@@ -111,7 +97,7 @@ export const ZoomControls = ({
 
   const onZoomSubmit = useCallback(
     (input: number) => {
-      onZoom(getZoomValue(input))
+      onZoom(input)
     },
     [onZoom]
   )

@@ -17,6 +17,8 @@
 import { useRef, FocusEvent, KeyboardEvent, useEffect } from 'react'
 import styled from '@emotion/styled'
 
+import { zoomList } from 'src/script/ui/action/zoom'
+
 const StyledInput = styled('input')`
   border: 1px solid #cad3dd;
   border-radius: 4px;
@@ -42,18 +44,48 @@ const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {
   el.select()
 }
 
-const updateInputAndFocus = (zoom: number, inputElement: HTMLInputElement) => {
+const updateInput = (zoom: number, inputElement: HTMLInputElement) => {
   inputElement.value = `${zoom}%`
+}
+
+const setFocus = (inputElement: HTMLInputElement | null) => {
+  if (!inputElement) return
   inputElement.focus()
   inputElement.select()
 }
 
-const getParsedZoomNumber = (zoomInput: string | undefined): number => {
+const getParsedInputNumber = (zoomInput: string | undefined): number => {
   const zoomNumber = parseInt(zoomInput || '')
   if (isNaN(zoomNumber)) {
     return 0
   }
   return zoomNumber
+}
+
+const getValidZoom = (zoom: number): number => {
+  const minAllowed = Math.min(...zoomList) * 100
+  const maxAllowed = Math.max(...zoomList) * 100
+
+  if (zoom < minAllowed) {
+    return minAllowed
+  }
+  if (zoom > maxAllowed) {
+    return maxAllowed
+  }
+  return zoom
+}
+
+const getValidZoomFromInput = (
+  inputZoom: string | undefined,
+  currentZoom: number
+) => {
+  const parsedInput = getParsedInputNumber(inputZoom)
+
+  if (parsedInput === 0) {
+    return currentZoom
+  }
+  const zoomValue = getValidZoom(parsedInput)
+  return zoomValue
 }
 
 interface ZoomInputProps {
@@ -65,32 +97,40 @@ export const ZoomInput = ({ onZoomSubmit, currentZoom }: ZoomInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    const inputField = inputRef.current
-    if (inputField) {
-      updateInputAndFocus(currentZoom, inputField)
+    const inputEl = inputRef.current
+    const parsedInput = getParsedInputNumber(inputRef.current?.value)
+    console.log(parsedInput, currentZoom)
+    if (inputEl && parsedInput !== currentZoom) {
+      updateInput(currentZoom, inputEl)
     }
-  }, [currentZoom])
-
-  useEffect(() => {
-    const inputField = inputRef.current
     return () => {
-      const zoomValue = getParsedZoomNumber(inputField?.value)
-      if (zoomValue && zoomValue !== currentZoom) {
-        onZoomSubmit(zoomValue)
+      const parsedInput = getParsedInputNumber(inputEl?.value)
+      if (parsedInput && parsedInput !== currentZoom) {
+        const zoomToSet = getValidZoomFromInput(inputEl?.value, currentZoom)
+        onZoomSubmit(zoomToSet)
       }
     }
+  }, [currentZoom, onZoomSubmit])
+
+  useEffect(() => {
+    const inputEl = inputRef.current
+    setFocus(inputEl)
   }, [])
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     event.nativeEvent.stopImmediatePropagation()
+    const inputEl = inputRef.current
     if (event.key === 'Enter') {
-      if (inputRef.current) {
-        const zoomValue = getParsedZoomNumber(inputRef.current.value)
-        if (zoomValue) {
-          onZoomSubmit(zoomValue)
+      if (inputEl) {
+        const parsedInput = getParsedInputNumber(inputEl.value)
+        if (parsedInput !== 0) {
+          const zoomToSet = getValidZoomFromInput(inputEl.value, currentZoom)
+          updateInput(zoomToSet, inputEl)
+          onZoomSubmit(zoomToSet)
         } else {
-          updateInputAndFocus(currentZoom, inputRef.current)
+          updateInput(currentZoom, inputEl)
         }
+        setFocus(inputEl)
       }
     }
   }

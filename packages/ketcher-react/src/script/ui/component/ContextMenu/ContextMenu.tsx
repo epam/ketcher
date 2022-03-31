@@ -56,8 +56,8 @@ const FGContextMenu = () => {
 
     const ci = editor.findItem(
       {
-        pageX: e.detail.position.x,
-        pageY: e.detail.position.y
+        clientX: e.detail.position.x,
+        clientY: e.detail.position.y
       },
       ['sgroups', 'functionalGroups', 'atoms', 'bonds']
     )

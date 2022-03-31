@@ -128,7 +128,15 @@ const ToolbarMultiToolItem = (props: Props) => {
         status={currentStatus as ActionButtonProps['status']}
         selected={selected}
       />
-      <Icon className={classes.icon} name="dropdown" onClick={onOpenOptions} />
+      {!isOpen && (
+        <Icon
+          className={`${classes.icon} ${
+            currentStatus?.selected && classes.iconSelected
+          }`}
+          name="dropdown"
+          onClick={onOpenOptions}
+        />
+      )}
 
       {isOpen ? (
         <Portal

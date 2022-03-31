@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useEffect, useRef, CSSProperties } from 'react'
+import { useState, useRef, CSSProperties } from 'react'
 import styled from '@emotion/styled'
 import { Button, Popover as Dropdown } from '@mui/material'
 
@@ -106,22 +106,15 @@ export const ZoomControls = ({
   shortcuts
 }: ZoomProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
-  const [inputValue, setInputValue] = useState<number>(0)
 
   const anchorRef = useRef(null)
-
-  useEffect(() => {
-    setInputValue(zoom)
-  }, [zoom])
-
   const onZoomSubmit = (input: number) => {
-    onZoom(getAllowedZoom(input))
+    if (!isNaN(input)) {
+      onZoom(getAllowedZoom(input))
+    }
   }
 
   const onClose = () => {
-    if (inputValue !== zoom) {
-      onZoomSubmit(inputValue)
-    }
     setIsExpanded(false)
   }
 
@@ -152,11 +145,7 @@ export const ZoomControls = ({
         PaperProps={{ style: dropdownStyles }}
       >
         <DropDownContent>
-          <ZoomInput
-            zoomInput={inputValue}
-            setZoomInput={setInputValue}
-            onZoomSubmit={onZoomSubmit}
-          />
+          <ZoomInput zoomInput={zoom} onZoomSubmit={onZoomSubmit} />
           <ZoomControlButton
             title="Zoom Out"
             onClick={onZoomOut}

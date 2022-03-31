@@ -14,23 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChangeEvent, FocusEvent, KeyboardEvent } from 'react'
-import { Input, InputAdornment } from '@mui/material'
+import { useRef, FocusEvent, KeyboardEvent, useEffect } from 'react'
 import styled from '@emotion/styled'
 
-const threeNumbersInput = /^\d{0,3}$/
-
-const StyledInput = styled(Input)`
+const StyledInput = styled('input')`
   border: 1px solid #cad3dd;
   border-radius: 4px;
-
-  & .MuiInput-input {
-    padding: 3px 8px;
-    color: #585858;
-    font-size: 14px;
-    line-height: 16px;
-    caret-color: #43b5c0;
-  }
+  padding: 3px 8px;
+  color: #585858;
+  font-size: 14px;
+  line-height: 16px;
+  caret-color: #43b5c0;
 
   &:hover {
     border-color: #43b5c0;
@@ -42,10 +36,6 @@ const StyledInput = styled(Input)`
   }
 `
 
-const Adornment = styled(InputAdornment)`
-  padding-right: 8px;
-`
-
 const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {
   const el = event.target
   el.focus()
@@ -55,35 +45,41 @@ const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {
 interface ZoomInputProps {
   onZoomSubmit: (zoom: number) => void
   zoomInput: number
-  setZoomInput: (zoomString: number) => void
 }
 
-export const ZoomInput = ({
-  onZoomSubmit,
-  zoomInput,
-  setZoomInput
-}: ZoomInputProps) => {
-  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      onZoomSubmit(zoomInput)
-    }
-  }
+export const ZoomInput = ({ onZoomSubmit, zoomInput }: ZoomInputProps) => {
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  const inputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    const userValue = event.target.value
-    if (threeNumbersInput.test(userValue)) {
-      const parsedZoom = parseInt(userValue)
-      setZoomInput(isNaN(parsedZoom) ? 0 : parsedZoom)
+  useEffect(() => {
+    const inputField = inputRef.current
+    if (inputField) {
+      inputRef.current.value = `${zoomInput}%`
+    }
+
+    return () => {
+      const zoomValue = parseInt(inputField?.value || '')
+      if (zoomValue !== zoomInput) {
+        onZoomSubmit(zoomValue)
+      }
+    }
+  }, [zoomInput, onZoomSubmit])
+
+  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    event.nativeEvent.stopImmediatePropagation()
+    if (event.key === 'Enter') {
+      if (inputRef.current?.value) {
+        const zoomValue = parseInt(inputRef.current.value)
+        onZoomSubmit(zoomValue)
+      }
     }
   }
 
   return (
     <StyledInput
+      ref={inputRef}
       onFocus={onFocusHandler}
-      endAdornment={<Adornment position="end">%</Adornment>}
-      onChange={inputChangeHandler}
-      value={zoomInput}
-      onKeyDown={onKeyDown}
+      defaultValue={`${zoomInput}%`}
+      onKeyDownCapture={onKeyDown}
     />
   )
 }

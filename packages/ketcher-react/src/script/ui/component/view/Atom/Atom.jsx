@@ -17,18 +17,21 @@
 import classes from './Atom.module.less'
 import clsx from 'clsx'
 import { ElementColor } from 'ketcher-core'
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import α from 'color-alpha'
 
-function Atom({ el, shortcut, selected, ...props }) {
-  const atomColor = ElementColor[el.label] || '#000'
-  const AtomButton = styled('button')`
+const atomStyle = (withBorder, element) => {
+  if(!withBorder) return '';
+  const atomColor = element && element.label ? ElementColor[element.label] : '#000';
+  return css`
     color: ${atomColor};
-    border-color: ${atomColor};
+    border: 1px solid ${atomColor};
     &:hover {
       background-color: ${α(atomColor, 0.2)};
     }
     &:active {
+      color: #fff;
       background-color: ${α(atomColor, 0.8)};
     }
     &.selected {
@@ -39,8 +42,11 @@ function Atom({ el, shortcut, selected, ...props }) {
         background-color: ${atomColor};
       }
     }
-  `
+  `;
+}
+const AtomButton = styled('button')(atomStyle(true, null));
 
+function Atom({ el, shortcut, selected, withBorder = false, ...props }) {
   return (
     <AtomButton
       title={shortcut ? `${el.title} (${shortcut})` : el.title}

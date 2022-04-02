@@ -22,8 +22,9 @@ import styled from '@emotion/styled'
 import α from 'color-alpha'
 
 const atomStyle = (props) => {
-  if(!props.withBorder) return '';
-  const atomColor = props.el && props.el.label ? ElementColor[props.el.label] : '#000';
+  if (!props.withBorder) return ''
+  const atomColor =
+    props.el && props.el.label ? ElementColor[props.el.label] : '#000'
   return css`
     color: ${atomColor};
     border: 1px solid ${atomColor};
@@ -42,10 +43,12 @@ const atomStyle = (props) => {
         background-color: ${atomColor};
       }
     }
-  `;
+  `
 }
 
-const AtomButton = styled('button')`${atomStyle}`;
+const AtomButton = styled('button')`
+  ${atomStyle}
+`
 
 function Atom({ el, shortcut, selected, withBorder = false, ...props }) {
   return (

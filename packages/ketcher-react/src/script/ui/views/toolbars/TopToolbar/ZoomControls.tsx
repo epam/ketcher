@@ -19,7 +19,8 @@ import styled from '@emotion/styled'
 import { Button, Popover } from '@mui/material'
 
 import Icon from 'src/script/ui/component/view/icon'
-import { ZoomInput } from './ZoomInput'
+import { zoomList } from 'src/script/ui/action/zoom'
+import { ZoomInput, updateInputString } from './ZoomInput'
 
 const ElementAndDropdown = styled('div')`
   position: relative;
@@ -76,8 +77,33 @@ const ShortcutLabel = styled('span')`
   color: #cad3dd;
 `
 
+const getIntegerFromString = (zoomInput: string | undefined): number => {
+  const zoomNumber = parseInt(zoomInput || '')
+  if (isNaN(zoomNumber)) {
+    return 0
+  }
+  return zoomNumber
+}
+
+const getValidZoom = (zoom: number, currentZoom: number): number => {
+  if (zoom === 0) {
+    return currentZoom
+  }
+
+  const minAllowed = Math.min(...zoomList) * 100
+  const maxAllowed = Math.max(...zoomList) * 100
+
+  if (zoom < minAllowed) {
+    return minAllowed
+  }
+  if (zoom > maxAllowed) {
+    return maxAllowed
+  }
+  return zoom
+}
+
 interface ZoomProps {
-  zoom: number
+  currentZoom: number
   onZoom: (arg: number) => void
   onZoomIn: VoidFunction
   onZoomOut: VoidFunction
@@ -86,7 +112,7 @@ interface ZoomProps {
 }
 
 export const ZoomControls = ({
-  zoom,
+  currentZoom,
   onZoom,
   onZoomIn,
   onZoomOut,
@@ -94,16 +120,28 @@ export const ZoomControls = ({
   shortcuts
 }: ZoomProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
-  const anchorRef = useRef(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  const onZoomSubmit = useCallback(
-    (input: number) => {
-      onZoom(input)
-    },
-    [onZoom]
-  )
+  const onZoomSubmit = useCallback(() => {
+    const inputEl = inputRef.current
+    if (!inputEl) {
+      return
+    }
+    const userInput = getIntegerFromString(inputEl.value)
+    if (userInput && userInput !== currentZoom) {
+      const zoomToSet = getValidZoom(userInput, currentZoom)
+      updateInputString(zoomToSet, inputEl)
+      onZoom(zoomToSet)
+    } else {
+      updateInputString(currentZoom, inputEl)
+    }
+  }, [onZoom, currentZoom])
 
-  const onClose = () => {
+  const onClose = (_, reason) => {
+    if (reason === 'backdropClick') {
+      onZoomSubmit()
+    }
     setIsExpanded(false)
   }
 
@@ -116,34 +154,42 @@ export const ZoomControls = ({
   }
 
   return (
-    <ElementAndDropdown ref={anchorRef}>
+    <ElementAndDropdown ref={containerRef}>
       <DropDownButton onClick={onExpand}>
-        <ZoomLabel>{Math.round(zoom)}%</ZoomLabel>
+        <ZoomLabel>{Math.round(currentZoom)}%</ZoomLabel>
         <Icon name="chevron" />
       </DropDownButton>
 
       <Dropdown
         open={isExpanded}
         onClose={onClose}
-        anchorEl={anchorRef.current}
-        container={anchorRef.current}
+        anchorEl={containerRef.current}
+        container={containerRef.current}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left'
-        }}>
+        }}
+      >
         <DropDownContent>
-          <ZoomInput currentZoom={zoom} onZoom={onZoomSubmit} />
+          <ZoomInput
+            onZoomSubmit={onZoomSubmit}
+            inputRef={inputRef}
+            currentZoom={currentZoom}
+            shortcuts={shortcuts}
+          />
           <ZoomControlButton
             title="Zoom Out"
             onClick={onZoomOut}
-            disabled={disabledButtons.includes('zoom-out')}>
+            disabled={disabledButtons.includes('zoom-out')}
+          >
             <span>Zoom out</span>
             <ShortcutLabel>{shortcuts['zoom-out']}</ShortcutLabel>
           </ZoomControlButton>
           <ZoomControlButton
             title="Zoom In"
             onClick={onZoomIn}
-            disabled={disabledButtons.includes('zoom-in')}>
+            disabled={disabledButtons.includes('zoom-in')}
+          >
             <span>Zoom in</span>
             <ShortcutLabel>{shortcuts['zoom-in']}</ShortcutLabel>
           </ZoomControlButton>

@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useRef, CSSProperties, useCallback } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import styled from '@emotion/styled'
-import { Button, Popover as Dropdown } from '@mui/material'
+import { Button, Popover } from '@mui/material'
 
-import { ZoomInput } from './ZoomInput'
 import Icon from 'src/script/ui/component/view/icon'
+import { ZoomInput } from './ZoomInput'
 
 const ElementAndDropdown = styled('div')`
   position: relative;
@@ -40,6 +40,17 @@ const DropDownButton = styled(Button)`
 
 const ZoomLabel = styled('span')`
   width: 35px;
+`
+
+const Dropdown = styled(Popover)`
+  & .MuiPopover-paper {
+    padding: 8px;
+    width: 135px;
+    border: none;
+    border-radius: 0px 0px 4px 4px;
+    box-shadow: 0px 30px 48px -17px rgba(160, 165, 174, 0.3);
+    box-sizing: border-box;
+  }
 `
 
 const DropDownContent = styled('div')`
@@ -65,15 +76,6 @@ const ShortcutLabel = styled('span')`
   color: #cad3dd;
 `
 
-const dropdownStyles: CSSProperties = {
-  padding: '8px',
-  width: '135px',
-  border: 'none',
-  borderRadius: '0px 0px 4px 4px',
-  boxShadow: '0px 30px 48px -17px rgba(160,165,174,0.3)',
-  boxSizing: 'border-box'
-}
-
 interface ZoomProps {
   zoom: number
   onZoom: (arg: number) => void
@@ -92,7 +94,6 @@ export const ZoomControls = ({
   shortcuts
 }: ZoomProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
-
   const anchorRef = useRef(null)
 
   const onZoomSubmit = useCallback(
@@ -115,8 +116,8 @@ export const ZoomControls = ({
   }
 
   return (
-    <ElementAndDropdown>
-      <DropDownButton onClick={onExpand} ref={anchorRef}>
+    <ElementAndDropdown ref={anchorRef}>
+      <DropDownButton onClick={onExpand}>
         <ZoomLabel>{Math.round(zoom)}%</ZoomLabel>
         <Icon name="chevron" />
       </DropDownButton>
@@ -125,28 +126,24 @@ export const ZoomControls = ({
         open={isExpanded}
         onClose={onClose}
         anchorEl={anchorRef.current}
-        container={document.querySelector('.Ketcher-root')}
+        container={anchorRef.current}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left'
-        }}
-        PaperProps={{ style: dropdownStyles }}
-      >
+        }}>
         <DropDownContent>
-          <ZoomInput currentZoom={zoom} onZoomSubmit={onZoomSubmit} />
+          <ZoomInput currentZoom={zoom} onZoom={onZoomSubmit} />
           <ZoomControlButton
             title="Zoom Out"
             onClick={onZoomOut}
-            disabled={disabledButtons.includes('zoom-out')}
-          >
+            disabled={disabledButtons.includes('zoom-out')}>
             <span>Zoom out</span>
             <ShortcutLabel>{shortcuts['zoom-out']}</ShortcutLabel>
           </ZoomControlButton>
           <ZoomControlButton
             title="Zoom In"
             onClick={onZoomIn}
-            disabled={disabledButtons.includes('zoom-in')}
-          >
+            disabled={disabledButtons.includes('zoom-in')}>
             <span>Zoom in</span>
             <ShortcutLabel>{shortcuts['zoom-in']}</ShortcutLabel>
           </ZoomControlButton>

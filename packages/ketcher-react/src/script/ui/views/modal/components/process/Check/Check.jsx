@@ -193,8 +193,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  onCheck: (opts) => dispatch(check(opts)).catch(ownProps.onCancel), // TODO: move catch from here to component
-  // onCheck: (opts) => dispatch(check(opts)), // TODO: move catch from here to component
+  onCheck: (opts) => dispatch(check(opts)).catch(ownProps.onCancel),
   onApply: (res) => {
     dispatch(checkOpts(res))
     ownProps.onOk(res)

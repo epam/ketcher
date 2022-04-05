@@ -189,7 +189,7 @@ export const TopToolbar = ({
       />
       <Divider />
       <ZoomControls
-        zoom={currentZoom || 1}
+        currentZoom={currentZoom || 1}
         onZoomIn={onZoomIn}
         onZoomOut={onZoomOut}
         onZoom={onZoom}

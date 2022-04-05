@@ -14,12 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useRef, CSSProperties, useCallback } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import styled from '@emotion/styled'
-import { Button, Popover as Dropdown } from '@mui/material'
+import { Button, Popover } from '@mui/material'
 
-import { ZoomInput } from './ZoomInput'
 import Icon from 'src/script/ui/component/view/icon'
+import { zoomList } from 'src/script/ui/action/zoom'
+import { ZoomInput, updateInputString } from './ZoomInput'
 
 const ElementAndDropdown = styled('div')`
   position: relative;
@@ -40,6 +41,17 @@ const DropDownButton = styled(Button)`
 
 const ZoomLabel = styled('span')`
   width: 35px;
+`
+
+const Dropdown = styled(Popover)`
+  & .MuiPopover-paper {
+    padding: 8px;
+    width: 135px;
+    border: none;
+    border-radius: 0px 0px 4px 4px;
+    box-shadow: 0px 30px 48px -17px rgba(160, 165, 174, 0.3);
+    box-sizing: border-box;
+  }
 `
 
 const DropDownContent = styled('div')`
@@ -65,17 +77,33 @@ const ShortcutLabel = styled('span')`
   color: #cad3dd;
 `
 
-const dropdownStyles: CSSProperties = {
-  padding: '8px',
-  width: '135px',
-  border: 'none',
-  borderRadius: '0px 0px 4px 4px',
-  boxShadow: '0px 30px 48px -17px rgba(160,165,174,0.3)',
-  boxSizing: 'border-box'
+const getIntegerFromString = (zoomInput: string | undefined): number => {
+  const zoomNumber = parseInt(zoomInput || '')
+  if (isNaN(zoomNumber)) {
+    return 0
+  }
+  return zoomNumber
+}
+
+const getValidZoom = (zoom: number, currentZoom: number): number => {
+  if (zoom === 0) {
+    return currentZoom
+  }
+
+  const minAllowed = Math.min(...zoomList) * 100
+  const maxAllowed = Math.max(...zoomList) * 100
+
+  if (zoom < minAllowed) {
+    return minAllowed
+  }
+  if (zoom > maxAllowed) {
+    return maxAllowed
+  }
+  return zoom
 }
 
 interface ZoomProps {
-  zoom: number
+  currentZoom: number
   onZoom: (arg: number) => void
   onZoomIn: VoidFunction
   onZoomOut: VoidFunction
@@ -84,7 +112,7 @@ interface ZoomProps {
 }
 
 export const ZoomControls = ({
-  zoom,
+  currentZoom,
   onZoom,
   onZoomIn,
   onZoomOut,
@@ -92,17 +120,28 @@ export const ZoomControls = ({
   shortcuts
 }: ZoomProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  const anchorRef = useRef(null)
+  const onZoomSubmit = useCallback(() => {
+    const inputEl = inputRef.current
+    if (!inputEl) {
+      return
+    }
+    const userInput = getIntegerFromString(inputEl.value)
+    if (userInput && userInput !== currentZoom) {
+      const zoomToSet = getValidZoom(userInput, currentZoom)
+      updateInputString(zoomToSet, inputEl)
+      onZoom(zoomToSet)
+    } else {
+      updateInputString(currentZoom, inputEl)
+    }
+  }, [onZoom, currentZoom])
 
-  const onZoomSubmit = useCallback(
-    (input: number) => {
-      onZoom(input)
-    },
-    [onZoom]
-  )
-
-  const onClose = () => {
+  const onClose = (_, reason) => {
+    if (reason === 'backdropClick') {
+      onZoomSubmit()
+    }
     setIsExpanded(false)
   }
 
@@ -115,25 +154,29 @@ export const ZoomControls = ({
   }
 
   return (
-    <ElementAndDropdown>
-      <DropDownButton onClick={onExpand} ref={anchorRef}>
-        <ZoomLabel>{Math.round(zoom)}%</ZoomLabel>
+    <ElementAndDropdown ref={containerRef}>
+      <DropDownButton onClick={onExpand}>
+        <ZoomLabel>{Math.round(currentZoom)}%</ZoomLabel>
         <Icon name="chevron" />
       </DropDownButton>
 
       <Dropdown
         open={isExpanded}
         onClose={onClose}
-        anchorEl={anchorRef.current}
-        container={document.querySelector('.Ketcher-root')}
+        anchorEl={containerRef.current}
+        container={containerRef.current}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left'
         }}
-        PaperProps={{ style: dropdownStyles }}
       >
         <DropDownContent>
-          <ZoomInput currentZoom={zoom} onZoomSubmit={onZoomSubmit} />
+          <ZoomInput
+            onZoomSubmit={onZoomSubmit}
+            inputRef={inputRef}
+            currentZoom={currentZoom}
+            shortcuts={shortcuts}
+          />
           <ZoomControlButton
             title="Zoom Out"
             onClick={onZoomOut}

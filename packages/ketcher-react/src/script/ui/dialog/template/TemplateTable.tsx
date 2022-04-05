@@ -39,6 +39,7 @@ interface TemplateTableProps {
   onSelect: (tmpl: Template) => void
   onDelete?: (tmpl: Template) => void
   onAttach?: (tmpl: Template) => void
+  onDoubleClick: (tmpl: Template) => void
 }
 
 const getSettingsSelector = (state) => state.options.settings
@@ -52,6 +53,7 @@ const RenderTmpl: FC<{
   options: any
   className: string
   onClick: () => void
+  onDoubleClick: () => void
 }> = ({ tmpl, options, ...props }) => {
   return (
     <StructRender
@@ -63,7 +65,7 @@ const RenderTmpl: FC<{
 }
 
 const TemplateTable: FC<TemplateTableProps> = (props) => {
-  const { templates, selected, onSelect, onDelete, onAttach } = props
+  const { templates, selected, onSelect, onDelete, onAttach, onDoubleClick } = props
   const options = useSelector((state) => getSettingsSelector(state))
 
   return (
@@ -88,6 +90,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
               options={options}
               className={classes.struct}
               onClick={() => onSelect(tmpl)}
+              onDoubleClick={() => onDoubleClick(tmpl)}
             />
             <div className={classes.btnContainer}>
               {tmpl.props.group === 'User Templates' && (

@@ -82,6 +82,14 @@ class Table extends Component {
     })
   }
 
+  onDoubleClick = () => {
+    const result = this.result()
+    const type = this.state.type
+    if (result && type === 'atom') {
+      this.props.onOk(this.result())
+    }
+  }
+
   result = () => {
     const { type, value } = this.state
     if (!value || !value.length) {
@@ -112,6 +120,7 @@ class Table extends Component {
           currentEvents={this.currentEvents}
           selected={this.selected}
           onAtomSelect={this.onAtomSelect}
+          onDoubleClick={this.onDoubleClick}
         />
         <TypeChoice value={type} onChange={this.changeType} />
       </div>

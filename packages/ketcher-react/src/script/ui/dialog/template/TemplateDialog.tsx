@@ -167,8 +167,11 @@ const TemplateDialog: FC<Props> = (props) => {
 
   const select = (tmpl: Template): void => {
     onChangeGroup(tmpl.props.group)
+    props.onSelect(tmpl)
+  }
+
+  const doubleClickHandler = (tmpl: Template): void => {
     if (tmpl === props.selected) props.onOk(result())
-    else props.onSelect(tmpl)
   }
 
   return (
@@ -246,6 +249,7 @@ const TemplateDialog: FC<Props> = (props) => {
                             : []
                         }
                         onSelect={select}
+                        onDoubleClick={doubleClickHandler}
                         selected={props.selected}
                         onDelete={props.onDelete}
                         onAttach={props.onAttach}
@@ -265,6 +269,7 @@ const TemplateDialog: FC<Props> = (props) => {
           {filteredFG?.length ? (
             <div className={classes.FGSearchContainer}>
               <TemplateTable
+                onDoubleClick={doubleClickHandler}
                 templates={filteredFG}
                 onSelect={select}
                 selected={props.selected}

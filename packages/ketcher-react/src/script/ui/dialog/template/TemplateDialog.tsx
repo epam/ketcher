@@ -165,13 +165,13 @@ const TemplateDialog: FC<Props> = (props) => {
       ? sdfSerializer.serialize(templateLib)
       : sdfSerializer.serialize(functionalGroups)
 
-  const select = (tmpl: Template): void => {
+  const select = (
+    tmpl: Template,
+    activateEmmidiatly: boolean = false
+  ): void => {
     onChangeGroup(tmpl.props.group)
-    props.onSelect(tmpl)
-  }
-
-  const doubleClickHandler = (tmpl: Template): void => {
-    if (tmpl === props.selected) props.onOk(result())
+    if (activateEmmidiatly) props.onOk(result())
+    else props.onSelect(tmpl)
   }
 
   return (
@@ -248,8 +248,8 @@ const TemplateDialog: FC<Props> = (props) => {
                             ? filteredTemplateLib[groupName]
                             : []
                         }
-                        onSelect={select}
-                        onDoubleClick={doubleClickHandler}
+                        onSelect={(templ) => select(templ)}
+                        onDoubleClick={(templ) => select(templ, true)}
                         selected={props.selected}
                         onDelete={props.onDelete}
                         onAttach={props.onAttach}
@@ -269,9 +269,9 @@ const TemplateDialog: FC<Props> = (props) => {
           {filteredFG?.length ? (
             <div className={classes.FGSearchContainer}>
               <TemplateTable
-                onDoubleClick={doubleClickHandler}
+                onDoubleClick={(templ) => select(templ, true)}
                 templates={filteredFG}
-                onSelect={select}
+                onSelect={(templ) => select(templ)}
                 selected={props.selected}
               />
             </div>

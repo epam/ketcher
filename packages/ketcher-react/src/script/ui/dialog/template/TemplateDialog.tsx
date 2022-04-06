@@ -167,7 +167,7 @@ const TemplateDialog: FC<Props> = (props) => {
 
   const select = (
     tmpl: Template,
-    activateEmmidiatly: boolean = false
+    activateEmmidiatly = false
   ): void => {
     onChangeGroup(tmpl.props.group)
     if (activateEmmidiatly) props.onOk(result())

@@ -75,11 +75,19 @@ class Table extends Component {
       : value.includes(label)
   }
 
-  onAtomSelect = (label) => {
-    const { type, value } = this.state
-    this.setState({
-      value: type === 'atom' || type === 'gen' ? label : xor([label], value)
-    })
+  onAtomSelect = (label, activateEmmidiatly = false) => {
+    if (activateEmmidiatly) {
+      const result = this.result()
+      const { type } = this.state
+      if (result && type === 'atom') {
+        this.props.onOk(this.result())
+      }
+    } else {
+      const { type, value } = this.state
+      this.setState({
+        value: type === 'atom' || type === 'gen' ? label : xor([label], value)
+      })
+    }
   }
 
   result = () => {
@@ -111,7 +119,8 @@ class Table extends Component {
           value={value}
           currentEvents={this.currentEvents}
           selected={this.selected}
-          onAtomSelect={this.onAtomSelect}
+          onAtomSelect={(label) => this.onAtomSelect(label)}
+          onDoubleClick={(label) => this.onAtomSelect(label, true)}
         />
         <TypeChoice value={type} onChange={this.changeType} />
       </div>

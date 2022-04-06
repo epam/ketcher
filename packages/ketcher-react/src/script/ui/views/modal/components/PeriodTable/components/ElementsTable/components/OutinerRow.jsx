@@ -21,6 +21,7 @@ function OutinerRow({
   row,
   caption,
   onAtomSelect,
+  onDoubleClick,
   currentEvents,
   atomClassNames,
   className
@@ -37,6 +38,7 @@ function OutinerRow({
               el={element}
               className={clsx(...atomClassNames(element))}
               onClick={() => onAtomSelect(element.label)}
+              onDoubleClick={() => onDoubleClick()}
               {...currentEvents(element)}
             />
           </td>

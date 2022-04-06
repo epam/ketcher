@@ -65,7 +65,8 @@ const RenderTmpl: FC<{
 }
 
 const TemplateTable: FC<TemplateTableProps> = (props) => {
-  const { templates, selected, onSelect, onDelete, onAttach, onDoubleClick } = props
+  const { templates, selected, onSelect, onDelete, onAttach, onDoubleClick } =
+    props
   const options = useSelector((state) => getSettingsSelector(state))
 
   return (

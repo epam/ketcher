@@ -22,7 +22,6 @@ import { UiActionAction } from '../../../../action'
 import { shortcutStr } from '../../shortcutStr'
 import { forwardRef } from 'react'
 import styled from '@emotion/styled'
-import { css } from '@emotion/react'
 import α from 'color-alpha'
 
 interface AtomsListProps {
@@ -41,36 +40,32 @@ interface AtomsListCallProps {
 
 type Props = AtomsListProps & AtomsListCallProps
 
-const atomListStyle = (props) => {
+const StyledAtomList = styled.div((props: any) => {
   const atomColor = props?.children?.key
     ? ElementColor[props.children.key]
     : '#000'
-  return css`
-    & > button {
-      color: ${atomColor};
-      border: 1px solid ${atomColor};
-      &:hover {
-        background-color: ${α(atomColor, 0.2)};
-      }
-      &:active {
-        color: #fff;
-        background-color: ${α(atomColor, 0.8)};
-      }
-      &.selected {
-        color: #fff;
-        background-color: ${α(atomColor, 0.8)};
-
-        &:hover {
-          background-color: ${atomColor};
-        }
-      }
-    }
-  `
-}
-
-const StyledAtomList = styled.div`
-  ${atomListStyle}
-`
+  return `
+     ${Atom} > button {
+       color: ${atomColor};
+       border: 1px solid ${atomColor};
+       &:hover {
+         background-color: ${α(atomColor, 0.2)};
+       }
+       &:active {
+         color: #fff;
+         background-color: ${α(atomColor, 0.8)};
+       }
+       &.selected {
+         color: #fff;
+         background-color: ${α(atomColor, 0.8)};
+  
+         &:hover {
+           background-color: ${atomColor};
+         }
+       }
+     }
+   `
+})
 
 const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
   const { atoms, active, onAction } = props

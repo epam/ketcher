@@ -165,9 +165,9 @@ const TemplateDialog: FC<Props> = (props) => {
       ? sdfSerializer.serialize(templateLib)
       : sdfSerializer.serialize(functionalGroups)
 
-  const select = (tmpl: Template, activateEmmidiatly = false): void => {
+  const select = (tmpl: Template, activateImmediatly = false): void => {
     onChangeGroup(tmpl.props.group)
-    if (activateEmmidiatly) props.onOk(result())
+    if (activateImmediatly) props.onOk(result())
     else props.onSelect(tmpl)
   }
 

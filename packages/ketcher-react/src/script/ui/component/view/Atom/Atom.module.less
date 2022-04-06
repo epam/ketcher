@@ -15,30 +15,20 @@
  ***************************************************************************/
 
  @import '../../../../../style/variables';
+ @import '../../../../../style/mixins';
+
  
  .atom {
-  display: block;
-  text-align: center;
-  vertical-align: middle;
+  .btn();
+
+  position: relative;
   width: 32px;
   height: 32px;
   margin: 2px 4px;
   padding: 0;
-  color: @main-color;
-  background-color: @color-background-primary;
-  border: 1px solid black;
-  position: relative;
+  border-radius: 0;
+  background-color: transparent;
   cursor: pointer;
- 
-   &:not(.selected):hover {
-     color: @color-button-primary;
-     border-color: @color-button-primary;
-   }
- 
-   &:not(.selected):active {
-    background-color: @color-button-primary;
-    color: white;
-   }
 
    &[disabled] {
     background-image: none;
@@ -46,14 +36,7 @@
     cursor: not-allowed;
     opacity: .5;
    }
- 
- }
- 
- .selected {
-    background-color: @color-button-primary;
-    color: white;
- }
 
- 
+ }
 
  

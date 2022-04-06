@@ -20,6 +20,13 @@
   .toolbar();
   .vertical-toolbar();
 
+  // TODO: change group style, if will decide to get rid of delimiter everywhere
+  .group:not(:last-of-type) {
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
   button {
     font-size: 19px;
   }
@@ -28,4 +35,5 @@
 .buttons {
   overflow: hidden;
   scroll-behavior: smooth;
+  margin-top: 7px;
 }

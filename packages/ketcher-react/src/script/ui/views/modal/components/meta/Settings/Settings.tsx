@@ -38,7 +38,7 @@ import Icon from '../../../../../component/view/icon'
 import clsx from 'clsx'
 import Select from '../../../../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface SettingsProps extends BaseProps {
   initState: any
@@ -76,22 +76,16 @@ const SettingsDialog = (props: Props) => {
 
   const [hasChanges, setHasChanges] = useState(false)
 
-  let changes = {}
-
-  const onChangeForm = (name: string, value: string | number | boolean) => {
-    changes[name] = value
-    if (initState[name] === value) {
-      delete changes[name]
+  useEffect(() => {
+    let isStateChanged = false
+    for (const key in initState) {
+      if (initState[key] !== formState.result[key]) {
+        isStateChanged = true
+        break
+      }
     }
-    const changedFields = Object.keys(changes)
-    setHasChanges(Boolean(changedFields.length))
-  }
-
-  const onResetForm = () => {
-    onReset()
-    changes = {}
-    setHasChanges(false)
-  }
+    setHasChanges(isStateChanged)
+  }, [initState, formState.result])
 
   const generalTab = {
     key: 'general',
@@ -266,7 +260,7 @@ const SettingsDialog = (props: Props) => {
         </SaveButton>,
         <button
           key="settings-button"
-          onClick={onResetForm}
+          onClick={onReset}
           className={classes.button}
           disabled={!hasChanges}
         >
@@ -274,12 +268,7 @@ const SettingsDialog = (props: Props) => {
         </button>
       ]}
     >
-      <Form
-        onChange={onChangeForm}
-        schema={settingsSchema}
-        init={initState}
-        {...formState}
-      >
+      <Form schema={settingsSchema} init={initState} {...formState}>
         <Sidebar tabs={tabs} className={classes.sidebar} />
 
         {!storage.isAvailable() ? (

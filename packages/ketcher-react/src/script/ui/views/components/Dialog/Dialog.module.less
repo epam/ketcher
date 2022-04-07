@@ -75,16 +75,19 @@
     font-size: @font-size-header;
     line-height: @line-height-header;
     border-radius: 0.7em 0.7em 0 0;
-    justify-content: space-between;
     color: @color-text-primary;
 
     .btnContainer {
+      margin-left: 6px;
+      flex-grow: 1;
       display: flex;
+      align-items: baseline;
     }
 
     .buttonTop {
       background-color: transparent;
       border: none;
+      margin-left: auto;
       padding-right: 0;
     }
   }

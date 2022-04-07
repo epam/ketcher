@@ -67,6 +67,7 @@ class Form extends Component {
       onChange: (val) => {
         const newState = Object.assign({}, this.props.result, { [name]: val })
         this.updateState(newState)
+        this.props.onChange(name, val)
         if (onChange) onChange(val)
       }
     }

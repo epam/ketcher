@@ -63,7 +63,7 @@ export interface PanelProps {
   onAbout: VoidFunction
 }
 
-const collapseLimit = 900
+const collapseLimit = 650
 
 const ControlsPanel = styled('div')`
   display: flex;

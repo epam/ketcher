@@ -33,14 +33,14 @@ Using the _Tool palette_, you can
 - draw special structures (see the following sections);
 
 - select the entire molecule or its fragment in one of the following
-  ways (click on the button![](images/select.png)  to see the list of available options):
+  ways (click on the button![](images/2_lasso_icon.png)  to see the list of available options):
 
-  ![](images/expanded.png) 
+  ![](images/3_lasso_menu.png) 
 
-To select one atom or bond, click Lasso (1) or Rectangle Selection tool (2),
+To select **one atom or bond**, click Lasso (1) or Rectangle Selection tool (2),
 and then click the atom or bond.
 
-To select the entire structure:
+To select the **entire structure**:
 
 - Select the Fragment Selection tool (3) and then click the object.
 
@@ -49,7 +49,7 @@ To select the entire structure:
 
 - `Ctrl-click` with the Lasso or Rectangle Selection tool.
 
-To select multiple atoms, bonds, structures, or other objects, do one
+To select **multiple atoms, bonds, structures, or other objects**, do one
 of the following:
 
 - `Shift-click` with the Lasso or Rectangle Selection tool selects
@@ -64,7 +64,7 @@ selects several structures.
 
 You can use the buttons of the _Main_ toolbar:
 
-![](images/toolbar.png 'Tolbar') 
+![](images/4_main_toolbar.png 'Main Toolbar') 
 
 - **Clear Canvas** (1) button to start drawing a new molecule; this
   command clears the drawing area;
@@ -73,19 +73,20 @@ You can use the buttons of the _Main_ toolbar:
   from a molecular file or save it to a supported molecular file
   format;
 
-- **Undo** / **Redo** (4), **Cut** (5), **Copy** (6), **Paste** (7),
-  **Zoom In** / **Out** (8), and **Scaling** (9) buttons to perform
+-  **Copy** with additional abilties to **Copy As** (4), **Paste** (5), **Cut** (6) buttons to perform
   the corresponding actions;
-
-- **Layout** button (10) to change the position of the structure to
-  work with it with the most convenience;
-
-- **Clean Up** button (11) to improve the appearance of the
-  structure by assigning them uniform bond lengths and angles.
-
-- **Aromatize** / **Dearomatize** buttons (12) to mark aromatic
+  
+- **Undo** (7) / **Redo** (8) to manage the last actions taken on the canvas; 
+ 
+- **Aromatize** (9) / **Dearomatize** (10) buttons to mark aromatic
   structures (to convert a structure to the Aromatic or Kekule
   presentation);
+  
+- **Layout** button (11) to change the position of the structure to
+  work with it with the most convenience;
+
+- **Clean Up** button (12) to improve the appearance of the
+  structure by assigning them uniform bond lengths and angles.
 
 - **Calculate CIP** button (13) to determine R/S and E/Z
   configurations;
@@ -100,22 +101,22 @@ You can use the buttons of the _Main_ toolbar:
 
   ![](images/analyse.png 'Calculated Values') 
 
-- **Recognize Molecule** button (16) to recognize a structure in the
-  image file and load it to the canvas (not available in Standalone Mode);
-
-- **3D Viewer** button (17) to open the structure in the
+- **3D Viewer** button (16) to open the structure in the
   three-dimensional Viewer;
 
-- **Settings** button (18) to make some settings for molecular
+- **Settings** button (17) to make some settings for molecular
   files:
 
   ![](images/settings.png) 
 
-- **Help** button (19) to view Help;
+- **Help** button (18) to view Help;
 
-- **About** button (20) to display version and copyright information
+- **About** button (19) to display version and copyright information
   of the program.
   
+- **Fullscreen mode** button (20) allows to initiate displaying Ketcher window in the fullscreen mode.
+  
+- **Zoom panel** (21) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (22) to set the view manually, **Zoom in** (23) / **Zoom out** (24) to scale the view gradually, **Zoom 100%**  (25) to enable the default zoom setting. 
   
 
 # 3D Viewer

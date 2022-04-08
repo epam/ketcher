@@ -76,12 +76,13 @@
     line-height: @line-height-header;
     border-radius: 0.7em 0.7em 0 0;
     color: @color-text-primary;
+    height: 12px;
 
     .btnContainer {
       margin-left: 6px;
       flex-grow: 1;
       display: flex;
-      align-items: baseline;
+      align-items: flex-end;
     }
 
     .buttonTop {
@@ -89,6 +90,13 @@
       border: none;
       margin-left: auto;
       padding-right: 0;
+      align-self: center;
+
+      .closeButton {
+        height: 16px;
+        width: 16px;
+      }
+      
     }
   }
 

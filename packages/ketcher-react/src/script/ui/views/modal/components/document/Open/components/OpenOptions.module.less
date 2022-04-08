@@ -21,47 +21,64 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 20px;
-  width: 490px;
+  margin-bottom: 6px;
+  width: 430px;
+  padding: @margin-top-bottom;
+  box-sizing: border-box;
 }
 
 .dropContainer {
-  width: 152px;
-  height: 112px;
-  border: 1px solid @color-divider; //@TODO Change to variable
-  border-radius: 4px;
-  flex: 1;
+  width: 128px;
+  height: 134px;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
-  padding-top: @margin-top-bottom;
   align-items: center;
+  justify-content: space-between;
   box-sizing: border-box;
   position: relative;
+  -moz-box-shadow: 0 4px 12px #6768842E;
+  -webkit-box-shadow: 0 4px 12px #6768842E;
+  box-shadow: 0 4px 12px #6768842E;
 
-  &:first-child {
-    margin-right: @margin-left-right;
+  div {
+    margin: 0;
+    padding: 0;
   }
 
-  &:last-child {
-    margin-left: @margin-left-right;
-  }
-
-  & > p {
-    margin-top: 6px;
-    color: @color-text-secondary;
+  p {
+    margin: 0;
     text-align: center;
+    font-family: @Inter;
+    line-height: 12.1px;
+    font-size: 10px;
   }
 
-  .dropIconWrapper {
-    position: absolute;
-    bottom: 13px;
-    height: 30px;
+  .buttonLabelWrapper {
+    height: 24px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+  }
+  .buttonLabel {
+    color: @color-text-secondary;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
 
-    svg {
-      fill: @color-button-primary;
-    }
+  .textLabelWrapper {
+    height: 12px;
+  }
+
+  .textLabel {
+    color: @color-text-primary;
+    opacity: 50%;
+    font-weight: 400;
+  }
+
+  .dropIconWrapper {
+    height: 40px;
   }
 }

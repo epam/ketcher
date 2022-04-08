@@ -18,6 +18,19 @@
 @import '../../../../../../../style/mixins.less';
 
 .open {
+  -moz-box-shadow: 0 5px 20px #67688440;
+  -webkit-box-shadow: 0 5px 20px #67688440;
+  box-shadow: 0 5px 20px #67688440;
+  background-color: @color-background-primary;
+
+  > header {
+    margin: 0;
+    padding: @margin-top-bottom;
+    border-bottom: 1px solid #E1E5EA;
+  }
+  > div {
+    margin: 0;
+  }
   label {
     display: block;
     width: 22.5em;
@@ -38,15 +51,6 @@
 
     .scrollbar();
   }
-}
-
-.dropButton {
-  .button-main();
-
-  border: none;
-  border-radius: 2px;
-  text-align: center;
-  height: 24px;
 }
 
 .dialogButton {

@@ -18,12 +18,11 @@ import { FC } from 'react'
 
 import Icon from 'src/script/ui/component/view/icon'
 import styles from './OpenOptions.module.less'
-import { DropButton } from './DropButton'
 import { FileDrop } from './FileDrop'
 
 const ICON_NAMES = {
-  PASTE: 'capital-t',
-  FILE: 'arrow-upward',
+  PASTE: 'paste1',
+  FILE: 'upload',
   IMAGE: 'image-frame'
 }
 
@@ -44,13 +43,15 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
 }) => {
   return (
     <div className={styles.optionsContainer}>
-      <div className={styles.dropContainer}>
-        <DropButton
-          clickHandler={selectClipboard}
-          label="Paste from Clipboard"
-        />
+      <div onClick={selectClipboard} className={styles.dropContainer}>
         <div className={styles.dropIconWrapper}>
           <Icon name={ICON_NAMES.PASTE} />
+        </div>
+        <div className={styles.textLabelWrapper}>
+          {/* <p className={styles.textLabel}>or press Ctrl + V</p> */}
+        </div>
+        <div className={styles.buttonLabelWrapper}>
+          <p className={styles.buttonLabel}>Paste from clipboard</p>
         </div>
       </div>
 

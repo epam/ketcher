@@ -45,7 +45,8 @@ function GenSet({ labels, selected, onAtomSelect, className }: GenSetProps) {
                     [classes.selected]: selected(button.label)
                   },
                   classes.button
-                )}>
+                )}
+              >
                 {button.label}
               </button>
             ))}

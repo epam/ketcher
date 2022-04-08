@@ -117,7 +117,10 @@ You can use the buttons of the _Main_ toolbar:
 - **Fullscreen mode** button (20) allows to initiate displaying Ketcher window in the fullscreen mode.
   
 - **Zoom panel** (21) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (22) to set the view manually, **Zoom in** (23) / **Zoom out** (24) to scale the view gradually, **Zoom 100%**  (25) to enable the default zoom setting. 
-  
+
+
+   ![](images/4.1_zoom_panel.png)
+   
 
 # 3D Viewer
 

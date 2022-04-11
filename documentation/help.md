@@ -150,14 +150,14 @@ To draw/edit atoms you can:
   area;
 
 - if the desired atom is absent in the toolbar, click on
-  the ![](images/periodic-table.png) button to invoke the Periodic Table and
+  the ![](images/9_pt_icon.png) button to invoke the Periodic Table and
   click on the desired atom (available options: _Single_ – selection
   of a single atom, _List_ – choose an atom from the list of selected
   options (To allow one atom from a list of atoms of your choice at
   that position), _Not List_ - exclude any atom on your list at that
   position).
 
-  ![](images/periodic-dialog.png 'Periodic Table') 
+  ![](images/10_pt_window.png 'Periodic Table') 
 
 - add an atom to the existing molecule by selecting an atom in the
   _Atoms_ toolbar, clicking on an atom in the molecule, and dragging
@@ -178,7 +178,7 @@ To draw/edit atoms you can:
   Charge Minus tool and clicking consecutively on an atom to
   increase/decrease its charge:
 
-  ![](images/charge.png 'Ions') 
+  ![](images/12_charge_icons.png 'Ions') 
 
 - change an atom or its properties by double-clicking on the atom to
   invoke the Atom Properties dialog (the dialog also provides atom
@@ -189,7 +189,7 @@ To draw/edit atoms you can:
 - click on the Periodic Table button, open the Extended tab and
   select a corresponding Generic group or Special Node:
 
-  ![](images/periodic-dialog-ext.png 'Generic Groups') 
+  ![](images/14_ext_table.png 'Generic Groups') 
 
 
 

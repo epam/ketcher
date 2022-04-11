@@ -197,19 +197,13 @@ To draw/edit atoms you can:
 
 To draw/edit bonds you can:
 
-- Click an arrow on the Bond tool ![](images/bond.png) in the Tool palette
+- Click an arrow on the Bond tool ![](images/15_bond_icon.png) in the Tool palette
   to open the drop-down list with the following bond types:
 
   ![](images/bonds.png) 
 
   
-  
-  For the full screen format, the Bond tool from the Tool palette
-  splits into four: Single Bond, Single Up Bond, Any
-  Bond and Dative Bond, which include the corresponding bond types:
-
-  ![](images/bond-types.png) 
-  
+    
 - select a bond type from the drop down list and click inside the
   drawing area; a bond of the selected type will be drawn;
 
@@ -222,7 +216,7 @@ To draw/edit bonds you can:
 
 - change the bond type by clicking on it;
 
-- use the Chain Tool ![](images/chain.png) to draw consecutive single
+- use the Chain Tool ![](images/18_chain_tool_icon.png) to draw consecutive single
   bonds;
 
 - change a bond or its properties by double-clicking on the bond to

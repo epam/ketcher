@@ -28,6 +28,7 @@ import {
   ConvertCommandData,
   DearomatizeCommandData,
   GenerateImageCommandData,
+  GenerateInchIKeyCommandData,
   InputMessage,
   LayoutCommandData,
   OutputMessage
@@ -203,6 +204,15 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
 
     case Command.Info: {
       handle((indigo) => indigo.version())
+      break
+    }
+
+    case Command.GenerateInchIKey: {
+      const data: GenerateInchIKeyCommandData =
+        message.data as GenerateInchIKeyCommandData
+      handle((indigo, indigoOptions) =>
+        indigo.convert(data.struct, 'inchi-key', indigoOptions)
+      )
       break
     }
 

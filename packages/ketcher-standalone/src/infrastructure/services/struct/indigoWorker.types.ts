@@ -14,18 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-export enum Command {
-  Info = 'info',
-  Convert = 'convert',
-  Layout = 'layout',
-  Clean = 'clean',
-  Aromatize = 'aromatize',
-  Dearomatize = 'dearomatize',
-  CalculateCip = 'calculateCip',
-  Automap = 'automap',
-  Check = 'check',
-  Calculate = 'calculate',
-  GenerateImageAsBase64 = 'generateImageAsBase64'
+export const enum Command {
+  Info,
+  Convert,
+  Layout,
+  Clean,
+  Aromatize,
+  Dearomatize,
+  CalculateCip,
+  Automap,
+  Check,
+  Calculate,
+  GenerateImageAsBase64,
+  GenerateInchIKey
 }
 
 export enum SupportedFormat {
@@ -57,7 +58,7 @@ export interface CommandOptions {
 }
 
 export interface CommandData {
-  options: CommandOptions
+  options?: CommandOptions
 }
 
 export interface CheckCommandData extends CommandData, WithStruct {
@@ -68,6 +69,8 @@ export interface ConvertCommandData
   extends CommandData,
     WithStruct,
     WithFormat {}
+
+export interface GenerateInchIKeyCommandData extends CommandData, WithStruct {}
 
 export interface GenerateImageCommandData extends CommandData, WithStruct {
   outputFormat: 'png' | 'svg'

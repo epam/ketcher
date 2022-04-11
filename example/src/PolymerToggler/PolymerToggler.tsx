@@ -15,7 +15,8 @@
  ***************************************************************************/
 
 import './PolymerToggler.css'
-interface PolymerTogglerProps {
+
+export interface PolymerTogglerProps {
   toggle: (isEnabled: boolean) => void
 }
 

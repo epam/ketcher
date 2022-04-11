@@ -430,10 +430,10 @@ To draw/edit reactions you can:
 
 # Drawing graphical objects
 
-To draw graphical objects click the arrow on the *Shape Ellipse* tool ![](images/shape-ellipse.png)  in the Tools palette
+To draw graphical objects click the arrow on the *Shape Ellipse* tool ![](images/39_objects_icon.png)  in the Tools palette
 to open the drop-down list with the following tools:
 
-![](images/simple-objects.png) 
+![](images/40_objects_menu.png) 
 
  *Shape Ellipse* (1), *Shape Rectangle* (2), and *Shape Line* (3). 
 
@@ -441,7 +441,8 @@ to open the drop-down list with the following tools:
 
 # Creating text objects on the canvas
 
-To add text to the canvas click the *Add text* tool ![](images\add-text.png) in the Tools palette and click the canvas to open the Text editor window:
+To add text to the canvas click the *Add text* tool ![](images/41_text_icon.png) 
+in the Tools palette and click the canvas to open the Text editor window:
 
 ![](images/text-editor.png) 
 

@@ -380,15 +380,10 @@ type of selected elements:
 
 # Changing Structure Display
 
-Use the _Rotate_ tool ![](images/transform.png) to change the structure
+Use the _Rotate_ tool ![](images/32_rotate_icon.png) to change the structure
 display:
 
-![](images/transform-types.png) 
-
-For the full screen format, the _Rotate_ tool is split into
-separate buttons:
-
-![](images/rotate.png) 
+![](images/33_rotate_menu.png) 
 
 _Rotate Tool_ (1)
 
@@ -418,23 +413,18 @@ This tool flips the objects horizontally or vertically.
 To draw/edit reactions you can:
 
 - draw reagents and products as described above;
-- use options of the _Reaction Arrow Tool_ ![](images/reaction.png) to draw an
-  arrow and pluses in the reaction equation and map same atoms in
-  reagents and products.
+- use options of the _Reaction Arrow Tool_ ![](images/34_reacarrow_icon.png) to draw an
+  arrow. Select the arrow needed from the list ![](images/35_reacarrows_menu.png)
+- draw pluses in the reaction equation using the _Reaction Plus Tool_ ![](images/38_reactplus_icon.png)
+- map same atoms in reagents and products with the _Reaction Mapping Tools_ ![](images/36_reactmap_icon.png). Explore the available reaction mapping tools below:
 
-  ![](images/reaction-types.png) 
+  ![](images/37_reactmap_menu.png) 
 
-1 – Reaction Arrow Tool
+1 – Reaction Auto-Mapping Tool
 
-2 – Reaction Arrow Equilibrium Tool
+2 – Reaction Mapping Tool
 
-3 – Reaction Plus Tool
-
-4 – Reaction Auto-Mapping Tool
-
-5 – Reaction Mapping Tool
-
-6 – Reaction Unmapping Tool
+3 – Reaction Unmapping Tool
 
 
 

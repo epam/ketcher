@@ -157,7 +157,7 @@ To draw/edit atoms you can:
   that position), _Not List_ - exclude any atom on your list at that
   position).
 
-  ![](images/10_pt_window.png 'Periodic Table') 
+  <img src=images/10_pt_window.png width = "600" title = "Periodic Table">
 
 - add an atom to the existing molecule by selecting an atom in the
   _Atoms_ toolbar, clicking on an atom in the molecule, and dragging
@@ -189,7 +189,7 @@ To draw/edit atoms you can:
 - click on the Periodic Table button, open the Extended tab and
   select a corresponding Generic group or Special Node:
 
-  ![](images/14_ext_table.png 'Generic Groups') 
+  <img src=images/14_ext_table.png  width = "600" title = "Generic Groups"> 
 
 
 
@@ -501,8 +501,7 @@ atom or bond preset in the program.
 **Note** : User is able to define the attachment atom and bond by clicking
 the Edit button for template structure in the Template Library.
 
-The _Custom Templates_ button ![](images/template-lib.png)invokes the scrolling
-list of templates available in the program; both built-in and created
+The _Custom Templates_ button ![](images/43.1_templates_icon.png) allows to view the list of templates available; both built-in and created
 by user:
 
 ![](images/template-dialog.png) 
@@ -513,9 +512,13 @@ To create a user template:
 
 - click the Save as button.
 
-- click the Save to Templates button.
+- click the Save to Templates button. _Template edit_ form will be displayed 
 
-- enter a name and define the attachment atom and bond.
+<img src=images/44.1_template_edit.png width = "400">
+
+- enter a name and define the attachment atom and bond by clicking on the structure preview.  Click on Apply button to save the template. 
+
+Saved template will be available in User Templates tab in the list of templates. 
 
 
 # Functional Groups
@@ -572,7 +575,7 @@ supported molecular file format. The _Open Structure_ dialog enables
 one to either browse for a file or manually input, e.g.
 the Molfile ctable for the molecule to be imported:
 
-![](images/open.png) 
+![](images/45_open_text.png) 
 
 The _Save Structure_ dialog enables one to save the molecular file:
 
@@ -600,9 +603,9 @@ In the *Stereochemistry tab* in *Settings* you can:
 - select the color of Absolute/AND/OR stereogenic centers
 - choose one of the four color display modes
 
-![](images/label-display.png) 
+![](images/49_sett_stereo.png) 
 
-![](images/color-stereo.png) 
+![](images/50_sett_stereo.png) 
 
  
 

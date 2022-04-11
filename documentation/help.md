@@ -233,10 +233,10 @@ To draw/edit bonds you can:
 
 # Drawing R-Groups
 
-Use the _R-Group_ toolbox ![](images/rgroup.png) to draw R-groups in Markush
+Use the _R-Group_ toolbox ![](images/20_rtools_icon.png) to draw R-groups in Markush
 structures:
 
-![](images/rgroup-types.png) 
+![](images/21_rtools_menu.png) 
 
 Selecting the _R-Group_ _Label_ Tool (1) and clicking on an atom in the
 structure invokes the dialog to select the R-Group label for a current
@@ -324,7 +324,7 @@ the R-Group logic:
 
 # Marking S-Groups
 
-To mark S-Groups, use the _S-Group tool_ ![](images/sgroup.png) and the
+To mark S-Groups, use the _S-Group tool_ ![](images/29_sgroup_icon.png) and the
 following dialog that appears after selecting a fragment with this
 tool:
 
@@ -360,7 +360,7 @@ saves/reads them into/from files.
 
 # Data S-Groups
 
-The _Data S-Groups Tool_ ![](images/sdata.png) is a separate tool for
+The _Data S-Groups Tool_ ![](images/31_datasgroup_icon.png) is a separate tool for
 comfortable use with the accustomed set of descriptors (like Attached
 Data in **Marvin** Editor).
 

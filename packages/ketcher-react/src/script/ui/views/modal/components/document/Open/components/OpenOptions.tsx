@@ -21,8 +21,8 @@ import styles from './OpenOptions.module.less'
 import { FileDrop } from './FileDrop'
 
 const ICON_NAMES = {
-  PASTE: 'paste1',
-  FILE: 'upload',
+  PASTE: 'open-window-paste-icon',
+  FILE: 'open-window-upload-icon',
   IMAGE: 'image-frame'
 }
 

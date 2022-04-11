@@ -63,8 +63,8 @@ import ClearIcon from './files/clear.svg'
 import NotFoundIcon from './files/not-found.svg'
 import OpenIcon from './files/open.svg'
 import PasteIcon from './files/paste.svg'
-import PasteIcon1 from './files/paste1.svg'
-import UploadIcon from './files/upload.svg'
+import OpenWindowPasteIcon from './files/open-window-paste-icon.svg'
+import OpenWindowUploadIcon from './files/open-window-upload-icon.svg'
 import PeriodTableIcon from './files/period-table.svg'
 import ReactionArrowBothEndsFilledTriangle from './files/reaction-arrow-both-ends-filled-triangle.svg'
 import ReactionArrowDashedOpenAngle from './files/reaction-arrow-dashed-open-angle.svg'
@@ -292,8 +292,8 @@ const icons = {
   'dropdown-indicator': DropdownIndicatorIcon,
   'text-special-symbols': TextSpecialSymbolsIcon,
   chevron: ChevronIcon,
-  paste1: PasteIcon1,
-  upload: UploadIcon
+  'open-window-paste-icon': OpenWindowPasteIcon,
+  'open-window-upload-icon': OpenWindowUploadIcon
 }
 
 function emptyIcon() {

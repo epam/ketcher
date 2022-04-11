@@ -16,16 +16,16 @@
 
 import {
   FormatterFactory,
-  identifyStructFormat,
-  SupportedFormat
+  SupportedFormat,
+  identifyStructFormat
 } from './formatters'
 import { GenerateImageOptions, StructService } from 'domain/services'
 
 import { Editor } from './editor'
+import { Indigo } from 'application/indigo'
 import { MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import assert from 'assert'
-import { Indigo } from 'application/indigo'
 
 function parseStruct(structStr: string, structService: StructService) {
   const format = identifyStructFormat(structStr)
@@ -131,6 +131,16 @@ export class Ketcher {
       this.#formatterFactory,
       this.#editor.struct()
     )
+  }
+
+  async generateInchIKey(): Promise<string> {
+    const struct: string = await getStructure(
+      'ket',
+      this.#formatterFactory,
+      this.#editor.struct()
+    )
+
+    return this.#structService.generateInchIKey(struct)
   }
 
   containsReaction(): boolean {

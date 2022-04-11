@@ -132,6 +132,21 @@ export class RemoteStructService implements StructService {
     this.defaultOptions = defaultOptions
   }
 
+  generateInchIKey(struct: string): Promise<string> {
+    return indigoCall(
+      'POST',
+      'indigo/convert',
+      this.apiPath,
+      this.defaultOptions
+    )(
+      {
+        struct,
+        output_format: 'inchi-key'
+      },
+      {}
+    )
+  }
+
   async info(): Promise<InfoResult> {
     let indigoVersion: string
     let imagoVersions: Array<string>

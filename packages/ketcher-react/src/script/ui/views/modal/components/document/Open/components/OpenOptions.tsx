@@ -66,7 +66,7 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
       <FileDrop
         accept="image/*"
         disabled={isRecognizeDisabled}
-        disabledText="Ketcher supports image recognition only in Remote mode"
+        disabledText="Image Recognition service is not available"
         onDropAccepted={imageLoadHandler}
         onDropRejected={() =>
           errorHandler(

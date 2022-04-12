@@ -39,6 +39,9 @@ interface DialogProps {
   className?: string
   needMargin?: boolean
   headerContent?: ReactElement
+  buttonsNameMap?: {
+    [key in string]: string
+  }
 }
 
 interface DialogCallProps {
@@ -47,10 +50,6 @@ interface DialogCallProps {
 }
 
 type Props = DialogProps & DialogCallProps
-
-const buttonsNameMap = {
-  'Add to canvas': 'OK'
-}
 
 const Dialog: FC<Props> = (props) => {
   const {
@@ -62,6 +61,7 @@ const Dialog: FC<Props> = (props) => {
     buttons = ['OK'],
     headerContent,
     className,
+    buttonsNameMap,
     buttonsTop,
     needMargin = true,
     ...rest
@@ -144,11 +144,13 @@ const Dialog: FC<Props> = (props) => {
                   isButtonOk(button) ? styles.ok : styles.cancel,
                   button === 'Save' && styles.save
                 )}
-                value={button}
-                disabled={isButtonOk(button) && !valid()}
-                onClick={() =>
-                  exit(buttonsNameMap[button] ? buttonsNameMap[button] : button)
+                value={
+                  buttonsNameMap && buttonsNameMap[button]
+                    ? buttonsNameMap[button]
+                    : button
                 }
+                disabled={isButtonOk(button) && !valid()}
+                onClick={() => exit(button)}
               />
             )
           )}

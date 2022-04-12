@@ -91,10 +91,12 @@ You can use the buttons of the _Main_ toolbar:
 - **Calculate CIP** button (13) to determine R/S and E/Z
   configurations;
 
-- **Check Structure** button (14) to check the following properties
-  of the structure:
+- **Check Structure** button (14) to check the following properties  of the structure. 
+  Check will be conducted immediately when the operation is selected. 
+  You can check only the Settings you are interested in and check structure again with new settings by clicking on Check button. 
+  Apply button will save the Settings checked and they will be applied for the file saving. 
 
-  ![](images/check.png 'Structure Ckeck') 
+  <img src=images/5_structurecheck.png title = "Structure Ckeck" width = "450"> 
 
 - **Calculated Values** button (15) to display some properties of
   the structure:
@@ -575,7 +577,8 @@ supported molecular file format. The _Open Structure_ dialog enables
 one to either browse for a file or manually input, e.g.
 the Molfile ctable for the molecule to be imported:
 
-![](images/45_open_text.png) 
+<img src = images/45_open_text.png width = "500"> 
+
 
 The _Save Structure_ dialog enables one to save the molecular file:
 
@@ -603,10 +606,9 @@ In the *Stereochemistry tab* in *Settings* you can:
 - select the color of Absolute/AND/OR stereogenic centers
 - choose one of the four color display modes
 
-![](images/49_sett_stereo.png) 
+<img src=images/49_sett_stereo.png width = "450"> 
 
-![](images/50_sett_stereo.png) 
-
+<img src=images/50_sett_stereo.png width = "450"> 
  
 
 # Hotkeys

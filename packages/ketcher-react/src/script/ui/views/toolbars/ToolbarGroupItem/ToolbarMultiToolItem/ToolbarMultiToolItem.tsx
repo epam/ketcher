@@ -108,7 +108,7 @@ const ToolbarMultiToolItem = (props: Props) => {
   > = {
     disableableButtons,
     indigoVerification,
-    onAction
+    onAction: selected ? () => onOpenOptions() : onAction
   }
 
   const onOpenOptions = () => {

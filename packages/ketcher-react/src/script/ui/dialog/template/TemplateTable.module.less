@@ -19,71 +19,104 @@
 
 .tableContent {
   display: grid;
-  grid-gap: 30px 8px;
+  grid-gap: 0 8px;
   grid-template-columns: repeat(4, 100px);
-  padding-bottom: 20px;
+}
+
+.structTitle {
+  padding: 0 7px;
+  text-align: center;
+  margin: 6px 0 12px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  max-width: 100px;
+  max-height: 30px;
+}
+
+.twoRowsTitleTable {
+  grid-auto-rows: 147px;
+}
+
+.oneRowTitleTable {
+  grid-auto-rows: 134px;
+  
+  .structTitle {
+    max-height: 16px;
+  }
 }
 
 .struct {
   box-sizing: border-box;
-  width: 98%;
-  height: 98%;
+  width: 100px;
+  height: 100px;
   border: 1px solid @color-grey-5;
   border-radius: 5px;
+  background-color: @color-background-primary;
 
   &:hover {
     background: @form-hover-background;
   }
+
+  & svg {
+    width: 100px;
+    height: 100px;
+    left: -2px;
+    top: -1px;
+  }
+}
+
+.selectedTitle {
+  background-color: fade(@color-background-primary, 70%);
 }
 
 .td {
   position: relative;
-  height: 93px;
-  height: 100px;
-
-  &::after {
-    position: absolute;
-    top: 100%;
-    color: @color-text-primary;
-    content: attr(title);
-    overflow: hidden;
-    max-width: 100%;
-  }
 
   &.selected .struct {
-    background-color: lighten(@form-selected-background, 15%);
+    background-color: fade(@color-primary, 5%);
+    border: 2px solid @color-primary;
   }
 }
 
-.btnContainer {
-  display: flex;
-  flex-direction: row;
-  position: absolute;
-  right: 8px;
-  bottom: 8px;
-  margin: 0 4px 2px 0;
-
-  .attachButton {
+  .button {
     .btn();
 
     margin: 0;
     border-radius: 0;
-    width: 12px;
-    height: 12px;
+    width: 18px;
+    height: 18px;
     border: none;
-    color: @color-primary;
+    color: #636363;
     background-color: transparent;
     cursor: pointer;
+    padding: 0;
+
+    & > svg {
+      width: inherit;
+      height: inherit;
+    }
+
+    &:hover, &:active {
+      & path {
+        fill: @color-button-primary-hover;
+      }
+    }
   }
 
   .deleteButton {
-    margin: 0;
-    border-radius: 0;
-    border: 1px solid @border-color;
+    position: absolute;
+    top: 5px;
+    right: 5px;
   }
-}
 
-div.struct {
+  .editButton {
+    position: absolute;
+    top: 78px;
+    right: 5px;
+  }
+
+div.structure {
   padding: 0; // TODO: tmp hack to fit viewbox
   background-color: @color-background-primary;
 }

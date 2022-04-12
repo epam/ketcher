@@ -14,27 +14,49 @@
  * limitations under the License.
  ***************************************************************************/
 @import "src/style/variables";
+@import "src/style/mixins";
 
 .sgroup {
   width: @width-small;
+  border-radius: 6px;
+  background-color: @color-background-primary;
+
+  header {
+    border-bottom: 1px solid @color-grey-3;
+    margin: 0;
+    padding: 0 12px;
+    height: 36px;
+    font-weight: 500;
+  }
+
+  & > div[class^='Dialog-module_dialog_body'], footer {
+    margin: 0;
+    padding: 12px;
+  }
 
   label {
     display: flex;
     flex-direction: column;
-    margin-top: 8px;
+    margin-bottom: 12px;
 
     ul {
       width: inherit;
     }
 
-    input[type='text'],
-    select {
-      margin-left: 0 !important;
-      margin-right: 0 !important;
-    }
-
     &:hover::after {
       margin: 1px 0 0 3px;
+    }
+
+    :global(.MuiOutlinedInput-root), input[type='text'] {
+      max-width: 230px;
+      height: 24px;
+      overflow: hidden;
+      padding: 4px 8px;
+      margin-top: 4px;
+      border: 1px solid @border-color;
+      :global(.MuiSelect-select) {
+        padding: 0;
+      }
     }
   }
 
@@ -42,20 +64,21 @@
     border: 0;
     padding: 0;
 
-    // stylelint-disable selector-pseudo-class-no-unknown
-    :global(.MuiSelect-select) {
-      max-width: 230px;
+    & > label:last-child {
+      margin-bottom: 0;
     }
   }
 
   fieldset[class='radio'] {
     display: flex;
     justify-content: space-between;
+    margin-top: 12px;
   }
 
-  .data {
+  form {
     label {
       text-align: left;
+      font-size: 12px;
 
       fieldset {
         label {

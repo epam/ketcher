@@ -81,7 +81,7 @@ const Dialog: FC<Props> = (props) => {
   }, [])
 
   const isButtonOk = (button) => {
-    return button === 'OK' || button === 'Save'
+    return button === 'OK' || button === 'Save' || button === 'Apply'
   }
 
   const exit = (mode) => {

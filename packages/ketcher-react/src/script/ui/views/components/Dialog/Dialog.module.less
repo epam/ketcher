@@ -16,35 +16,9 @@
 
 @import '../../../../../style/mixins.less';
 
-.ok {
-  .button-main();
-
-  width: 40px;
-  margin-right: 2px;
-  margin-left: 10px;
-  float: right;
-}
 
 .save {
   width: auto;
-}
-
-.cancel {
-  margin-right: 2px;
-  background: #d1d5e3;
-  color: #000;
-  margin-left: auto;
-  float: right;
-
-  &:hover {
-    background: #aaadb9;
-  }
-
-  &[disabled] {
-    border: 1px solid #5b6077;
-    background: transparent;
-    opacity: 0.4;
-  }
 }
 
 .form {
@@ -108,8 +82,44 @@
     button,
     .ok,
     .cancel {
-      border: none;
-      height: 26px;
+      float: right;
+      height: 24px;
+      font-size: @font-size-regular;
+      line-height: @line-height-regular;
+      border-radius: 4px;
+      padding: 5px 10px;
+    }
+
+    .ok {
+      color: @color-text-light;
+      background-color: @color-primary;
+      border: 1px solid transparent;
+      margin-left: 8px;
+
+      &:hover, &:active {
+        background-color: @color-button-primary-clicked;
+      }
+
+      &:disabled {
+        color: @color-button-secondary-hover;
+        background-color: @color-grey-3;
+      }
+    }
+
+    .cancel {
+      color: @color-text-secondary;
+      border: 1px solid @color-text-secondary;
+      background-color: @color-background-primary;
+
+      &:hover, &:active {
+        color: @color-button-secondary-hover;
+        border: 1px solid @color-button-secondary-hover;
+      }
+
+      &:disabled {
+        color: fade(@color-text-secondary, 70%);
+        border: 1px solid fade(@color-text-secondary, 70%);
+      }
     }
 
     button {

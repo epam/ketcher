@@ -18,6 +18,19 @@
 @import '../../../../../../../style/mixins.less';
 
 .open {
+  box-shadow: 0 5px 20px @color-open-window-shadow;
+  background-color: @color-background-primary;
+
+  > header {
+    margin: 0;
+    padding: @padding-modal;
+    border-bottom: 1px solid #E1E5EA;
+  }
+
+  > div {
+    margin: 0;
+  }
+  
   label {
     display: block;
     width: 22.5em;
@@ -38,15 +51,6 @@
 
     .scrollbar();
   }
-}
-
-.dropButton {
-  .button-main();
-
-  border: none;
-  border-radius: 2px;
-  text-align: center;
-  height: 24px;
 }
 
 .dialogButton {

@@ -23,13 +23,13 @@ import styles from './GenGroup.module.less'
 type GenProps = {
   groups: GenericsType
   selected: (label: string) => boolean
-  onSelect: (label: string) => void
+  onAtomSelect: (label: string) => void
   isNested?: boolean
 }
 
 const GenGroup = ({
   groups,
-  onSelect,
+  onAtomSelect,
   selected,
   isNested = false
 }: GenProps) => {
@@ -53,7 +53,7 @@ const GenGroup = ({
                 <GenSet
                   labels={targetGroup.itemSets}
                   selected={selected}
-                  onSelect={onSelect}
+                  onAtomSelect={onAtomSelect}
                   className={styles.subgroup}
                 />
               )}
@@ -61,7 +61,7 @@ const GenGroup = ({
                 <GenGroup
                   groups={targetGroup.subGroups}
                   selected={selected}
-                  onSelect={onSelect}
+                  onAtomSelect={onAtomSelect}
                   isNested={true}
                 />
               )}

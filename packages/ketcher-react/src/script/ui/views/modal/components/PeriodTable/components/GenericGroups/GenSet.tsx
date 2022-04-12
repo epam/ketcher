@@ -22,11 +22,11 @@ import classes from './GenSet.module.less'
 type GenSetProps = {
   labels: GenItemSet[]
   selected: (label: string) => boolean
-  onSelect: (label: string) => void
+  onAtomSelect: (label: string) => void
   className?: string
 }
 
-function GenSet({ labels, selected, onSelect, className }: GenSetProps) {
+function GenSet({ labels, selected, onAtomSelect, className }: GenSetProps) {
   return (
     <>
       {labels.map((item, index) => {
@@ -38,7 +38,7 @@ function GenSet({ labels, selected, onSelect, className }: GenSetProps) {
             {buttons.map((button, index) => (
               <button
                 key={index}
-                onClick={() => onSelect(button.label)}
+                onClick={() => onAtomSelect(button.label)}
                 title={button.description || button.label}
                 className={clsx(
                   {

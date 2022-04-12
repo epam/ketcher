@@ -172,9 +172,9 @@ const TemplateDialog: FC<Props> = (props) => {
       ? sdfSerializer.serialize(templateLib)
       : sdfSerializer.serialize(functionalGroups)
 
-  const select = (tmpl: Template): void => {
+  const select = (tmpl: Template, activateImmediately = false): void => {
     onChangeGroup(tmpl.props.group)
-    if (tmpl === props.selected) props.onOk(result())
+    if (activateImmediately) props.onOk(result())
     else props.onSelect(tmpl)
   }
 
@@ -254,7 +254,8 @@ const TemplateDialog: FC<Props> = (props) => {
                             ? filteredTemplateLib[groupName]
                             : []
                         }
-                        onSelect={select}
+                        onSelect={(templ) => select(templ)}
+                        onDoubleClick={(templ) => select(templ, true)}
                         selected={props.selected}
                         onDelete={props.onDelete}
                         onAttach={props.onAttach}
@@ -275,8 +276,9 @@ const TemplateDialog: FC<Props> = (props) => {
             <div className={classes.resultsContainer}>
               <TemplateTable
                 titleRows={1}
+                onDoubleClick={(templ) => select(templ, true)}
                 templates={filteredFG}
-                onSelect={select}
+                onSelect={(templ) => select(templ)}
                 selected={props.selected}
               />
             </div>

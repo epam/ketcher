@@ -27,6 +27,7 @@ import {
   ConvertCommandData,
   DearomatizeCommandData,
   GenerateImageCommandData,
+  GenerateInchIKeyCommandData,
   InputMessage,
   LayoutCommandData,
   OutputMessage,
@@ -152,6 +153,29 @@ class IndigoService implements StructService {
 
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions
+  }
+
+  async generateInchIKey(struct: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const worker: Worker = new IndigoWorker()
+
+      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
+        worker.terminate()
+        const msg: OutputMessage<string> = e.data
+        if (!msg.hasError) {
+          resolve(msg.payload || '')
+        } else {
+          reject(msg.error)
+        }
+      }
+
+      const inputMessage: InputMessage<GenerateInchIKeyCommandData> = {
+        type: Command.GenerateInchIKey,
+        data: { struct }
+      }
+
+      worker.postMessage(inputMessage)
+    })
   }
 
   info(): Promise<InfoResult> {

@@ -38,6 +38,7 @@ import Icon from '../../../../../component/view/icon'
 import clsx from 'clsx'
 import Select from '../../../../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
+import { useEffect, useState } from 'react'
 
 interface SettingsProps extends BaseProps {
   initState: any
@@ -72,6 +73,19 @@ const SettingsDialog = (props: Props) => {
     appOpts,
     ...prop
   } = props
+
+  const [hasChanges, setHasChanges] = useState(false)
+
+  useEffect(() => {
+    let isStateChanged = false
+    for (const key in initState) {
+      if (initState[key] !== formState.result[key]) {
+        isStateChanged = true
+        break
+      }
+    }
+    setHasChanges(isStateChanged)
+  }, [initState, formState.result])
 
   const generalTab = {
     key: 'general',
@@ -248,6 +262,7 @@ const SettingsDialog = (props: Props) => {
           key="settings-button"
           onClick={onReset}
           className={classes.button}
+          disabled={!hasChanges}
         >
           <Icon name={'reset'} />
         </button>

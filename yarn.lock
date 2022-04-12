@@ -5607,6 +5607,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"color-alpha@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "color-alpha@npm:1.1.3"
+  dependencies:
+    color-parse: ^1.4.1
+  checksum: 7c47fa16e1ceffd567731439e4c84f7c971767eb522fa3ba74be1f5a4f22b204962b02a969ce32c40b0f2358b63ec44ddf1115f29264d07369c6103c0fed97e7
+  languageName: node
+  linkType: hard
+
 "color-convert@npm:^1.9.0":
   version: 1.9.3
   resolution: "color-convert@npm:1.9.3"
@@ -5632,10 +5641,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-name@npm:^1.1.4, color-name@npm:~1.1.4":
+"color-name@npm:^1.0.0, color-name@npm:^1.1.4, color-name@npm:~1.1.4":
   version: 1.1.4
   resolution: "color-name@npm:1.1.4"
   checksum: b0445859521eb4021cd0fb0cc1a75cecf67fceecae89b63f62b201cca8d345baf8b952c966862a9d9a2632987d4f6581f0ec8d957dfacece86f0a7919316f610
+  languageName: node
+  linkType: hard
+
+"color-parse@npm:^1.4.1":
+  version: 1.4.2
+  resolution: "color-parse@npm:1.4.2"
+  dependencies:
+    color-name: ^1.0.0
+  checksum: 3ed5916f873e55637c4c3ccf663de64d125c5a445ec081e08f596c625fb8cee32b9c9fc9437073e88d8565cc7ce542d35bef3a0d16bd922839e0c436c3f6f11a
   languageName: node
   linkType: hard
 
@@ -9167,10 +9185,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"indigo-ketcher@npm:1.6.1":
-  version: 1.6.1
-  resolution: "indigo-ketcher@npm:1.6.1"
-  checksum: 9bd53af5c05b5400e6b3aa2192c87c5e6f56a4dc3e80fab8d565fcf7ebf32717eb03fd61d96a7320a638d470b2fd254b85d93333346658bf4c56b52d6fb20a35
+"indigo-ketcher@npm:1.6.2-0":
+  version: 1.6.2-0
+  resolution: "indigo-ketcher@npm:1.6.2-0"
+  checksum: 71ac66de70480c9c98b989d55f8f69b1a3b1997d7530a2a1bd0612dcdd27f420868cbc73716d63292763eaf9f9e6f58dc2bcce79898e00e2e5285bf2ef9e7192
   languageName: node
   linkType: hard
 
@@ -11342,7 +11360,7 @@ __metadata:
     cross-env: ^7.0.3
     eslint: ^8.4.1
     eslint-plugin-jest: ^25.3.0
-    indigo-ketcher: 1.6.1
+    indigo-ketcher: 1.6.2-0
     jest: 26.6.0
     ketcher-core: "workspace:*"
     npm-run-all: ^4.1.5
@@ -15672,6 +15690,7 @@ __metadata:
   dependencies:
     "@typescript-eslint/eslint-plugin": ^5.6.0
     "@typescript-eslint/parser": ^5.6.0
+    color-alpha: ^1.1.3
     eslint-config-prettier: ^8.3.0
     eslint-config-standard: ^16.0.3
     eslint-plugin-import: ^2.25.3

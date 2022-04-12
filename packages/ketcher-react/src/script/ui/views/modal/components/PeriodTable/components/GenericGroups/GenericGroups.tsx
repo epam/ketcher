@@ -21,13 +21,17 @@ import classes from './GenericGroups.module.less'
 
 type GenericGroupsProps = {
   selected: (label: string) => boolean
-  onSelect: (label: string) => void
+  onAtomSelect: (label: string) => void
 }
 
-function GenericGroups({ selected, onSelect }: GenericGroupsProps) {
+function GenericGroups({ selected, onAtomSelect }: GenericGroupsProps) {
   return (
     <div className={classes.genericGroups}>
-      <GenGroup groups={Generics} selected={selected} onSelect={onSelect} />
+      <GenGroup
+        groups={Generics}
+        selected={selected}
+        onAtomSelect={onAtomSelect}
+      />
     </div>
   )
 }

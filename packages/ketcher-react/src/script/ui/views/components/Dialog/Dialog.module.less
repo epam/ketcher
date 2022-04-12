@@ -75,21 +75,28 @@
     font-size: @font-size-header;
     line-height: @line-height-header;
     border-radius: 0.7em 0.7em 0 0;
-    justify-content: space-between;
     color: @color-text-primary;
-
-    .title {
-      text-transform: uppercase;
-    }
+    height: 12px;
 
     .btnContainer {
+      margin-left: 6px;
+      flex-grow: 1;
       display: flex;
+      align-items: flex-end;
     }
 
     .buttonTop {
       background-color: transparent;
       border: none;
+      margin-left: auto;
       padding-right: 0;
+      align-self: center;
+
+      .closeButton {
+        height: 16px;
+        width: 16px;
+      }
+      
     }
   }
 

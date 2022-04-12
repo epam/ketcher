@@ -22,7 +22,7 @@ module.exports = override(
     new webpack.EnvironmentPlugin({
       MODE: process.env.MODE,
       API_PATH: process.env.REACT_APP_API_PATH,
-      ENABLE_POLYMER_EDITOR: process.env.ENABLE_POLYMER_EDITOR
+      ENABLE_POLYMER_EDITOR: process.env.ENABLE_POLYMER_EDITOR ?? false
     })
   ),
   addWebpackPlugin(

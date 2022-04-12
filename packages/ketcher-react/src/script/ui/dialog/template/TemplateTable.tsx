@@ -40,6 +40,7 @@ interface TemplateTableProps {
   onDelete?: (tmpl: Template) => void
   onAttach?: (tmpl: Template) => void
   titleRows?: 1 | 2
+  onDoubleClick: (tmpl: Template) => void
 }
 
 const getSettingsSelector = (state) => state.options.settings
@@ -53,6 +54,7 @@ const RenderTmpl: FC<{
   options: any
   className: string
   onClick: () => void
+  onDoubleClick: () => void
 }> = ({ tmpl, options, ...props }) => {
   return (
     <StructRender
@@ -70,6 +72,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     onSelect,
     onDelete,
     onAttach,
+    onDoubleClick,
     titleRows = 2
   } = props
   const options = useSelector((state) => getSettingsSelector(state))
@@ -100,6 +103,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
               options={options}
               className={classes.struct}
               onClick={() => onSelect(tmpl)}
+              onDoubleClick={() => onDoubleClick(tmpl)}
             />
             <div
               className={`${classes.structTitle} ${

@@ -27,6 +27,7 @@ import {
 } from 'ketcher-core'
 
 import { Dialog } from '../../../../components'
+import Tabs from 'src/script/ui/component/view/Tabs'
 import { ErrorsContext } from '../../../../../../../contexts'
 import SaveButton from '../../../../../component/view/savebutton'
 import { check } from '../../../../../state/server'
@@ -69,7 +70,8 @@ class SaveDialog extends Component {
     this.state = {
       disableControls: true,
       imageFormat: 'svg',
-      tabIndex: 0
+      tabIndex: 0,
+      tabType: 'preview'
     }
     this.isRxn = this.props.struct.hasRxnArrow()
     this.textAreaRef = createRef()
@@ -165,6 +167,10 @@ class SaveDialog extends Component {
     }
   }
 
+  changeTabType = (type) => {
+    console.log(type)
+  }
+
   getWarnings = (format) => {
     const { struct, moleculeErrors } = this.props
     const warnings = []
@@ -188,13 +194,27 @@ class SaveDialog extends Component {
     return warnings
   }
 
-  renderSaveFile = () => {
+  renderForm = () => {
     const formState = Object.assign({}, this.props.formState)
-    delete formState.moleculeErrors
     const { filename, format } = formState.result
     const warnings = this.getWarnings(format)
-    const { structStr, imageSrc } = this.state
-    const isCleanStruct = this.props.struct.isBlank()
+    const tabs = warnings.length === 0 ?
+      [
+{
+        caption: 'Preview',
+        component: this.renderSaveFile
+      }
+    ] :
+      [
+      {
+        caption: 'Preview',
+        component: this.renderSaveFile
+      },
+      {
+        caption:  'Warnings',
+        component: this.renderWarnings
+      }
+    ]
 
     return (
       <div className={classes.formContainer}>
@@ -204,8 +224,7 @@ class SaveDialog extends Component {
             filename,
             format: this.isRxn ? 'rxn' : 'mol'
           }}
-          {...formState}
-        >
+          {...formState}>
           <Field name="filename" />
           <Field
             name="format"
@@ -216,39 +235,62 @@ class SaveDialog extends Component {
             component={Select}
           />
         </Form>
-        {this.isImageFormat(format) ? (
-          // TODO: remove this conditional after fixing problems with png format on BE side
-          format === 'png' ? (
-            <div className={classes.previewMessage}>
-              Preview is not available for this format
-            </div>
-          ) : (
-            <div className={classes.imageContainer}>
-              {!isCleanStruct && (
-                <img src={`data:image/svg+xml;base64,${imageSrc}`} />
-              )}
-            </div>
-          )
-        ) : (
-          <textarea
-            value={structStr}
-            className={classes.previewArea}
-            readOnly
-            ref={this.textAreaRef}
-          />
-        )}
-        {warnings.length ? (
-          <div className={classes.warnings}>
-            {warnings.map((warning) => (
-              <div className={classes.warningsContainer}>
-                <div className={classes.warning} />
-                <div className={classes.warningsArr}>{warning}</div>
-              </div>
-            ))}
-          </div>
-        ) : null}
+        <Tabs
+          className={classes.tabs}
+          captions={tabs}
+          tabIndex={this.state.tabType !== 'preview' ? 1 : 0}
+          changeTab={this.changeTabType}
+          tabs={tabs}
+
+        />
       </div>
     )
+  }
+
+  renderSaveFile = () => {
+    const formState = Object.assign({}, this.props.formState)
+    delete formState.moleculeErrors
+    const { filename, format } = formState.result
+    const { structStr, imageSrc } = this.state
+    const isCleanStruct = this.props.struct.isBlank()
+    return this.isImageFormat(format) ? (
+      // TODO: remove this conditional after fixing problems with png format on BE side
+      format === 'png' ? (
+        <div className={classes.previewMessage}>
+          Preview is not available for this format
+        </div>
+      ) : (
+        <div className={classes.imageContainer}>
+          {!isCleanStruct && (
+            <img src={`data:image/svg+xml;base64,${imageSrc}`} />
+          )}
+        </div>
+      )
+    ) : (
+      <textarea
+        value={structStr}
+        className={classes.previewArea}
+        readOnly
+        ref={this.textAreaRef}
+      />
+    )
+  }
+
+  renderWarnings = () => {
+    const formState = Object.assign({}, this.props.formState)
+    const { filename, format } = formState.result
+    const warnings = this.getWarnings(format)
+
+    return warnings.length ? (
+      <div className={classes.warnings}>
+        {warnings.map((warning) => (
+          <div className={classes.warningsContainer}>
+            <div className={classes.warning} />
+            <div className={classes.warningsArr}>{warning}</div>
+          </div>
+        ))}
+      </div>
+    ) : null
   }
 
   getButtons = () => {
@@ -263,11 +305,21 @@ class SaveDialog extends Component {
         key="save-tmpl"
         className={classes.saveTmpl}
         disabled={disableControls || isCleanStruct || !isMoleculeContain}
-        onClick={() => this.props.onTmplSave(this.props.struct)}
-      >
+        onClick={() => this.props.onTmplSave(this.props.struct)}>
         Save to Templates
       </button>
     ]
+
+    buttons.push(
+      <button
+        key="cancel"
+        mode='onCancel'
+        className={classes.cancel}
+        onClick={() => this.props.onOk({})}
+        type="button">
+        Cancel
+      </button>
+    )
 
     if (this.isImageFormat(format)) {
       buttons.push(
@@ -285,9 +337,8 @@ class SaveDialog extends Component {
             isCleanStruct ||
             !this.props.server
           }
-          className={classes.ok}
-        >
-          Save To File
+          className={classes.ok}>
+          Save
         </SaveButton>
       )
     } else {
@@ -301,13 +352,11 @@ class SaveDialog extends Component {
           server={this.props.server}
           onSave={this.props.onOk}
           disabled={disableControls || !formState.valid || isCleanStruct}
-          className={classes.ok}
-        >
-          Save To File
+          className={classes.ok}>
+          Save
         </SaveButton>
       )
     }
-
     return buttons
   }
 
@@ -318,8 +367,8 @@ class SaveDialog extends Component {
         className={classes.save}
         params={this.props}
         buttons={this.getButtons()}
-      >
-        {this.renderSaveFile()}
+        needMargin={false}>
+        {this.renderForm()}
       </Dialog>
     )
   }

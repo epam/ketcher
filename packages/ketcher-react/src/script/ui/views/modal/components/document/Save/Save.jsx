@@ -198,23 +198,24 @@ class SaveDialog extends Component {
     const formState = Object.assign({}, this.props.formState)
     const { filename, format } = formState.result
     const warnings = this.getWarnings(format)
-    const tabs = warnings.length === 0 ?
-      [
-{
-        caption: 'Preview',
-        component: this.renderSaveFile
-      }
-    ] :
-      [
-      {
-        caption: 'Preview',
-        component: this.renderSaveFile
-      },
-      {
-        caption:  'Warnings',
-        component: this.renderWarnings
-      }
-    ]
+    const tabs =
+      warnings.length === 0
+        ? [
+            {
+              caption: 'Preview',
+              component: this.renderSaveFile
+            }
+          ]
+        : [
+            {
+              caption: 'Preview',
+              component: this.renderSaveFile
+            },
+            {
+              caption: 'Warnings',
+              component: this.renderWarnings
+            }
+          ]
 
     return (
       <div className={classes.formContainer}>
@@ -224,7 +225,8 @@ class SaveDialog extends Component {
             filename,
             format: this.isRxn ? 'rxn' : 'mol'
           }}
-          {...formState}>
+          {...formState}
+        >
           <Field name="filename" />
           <Field
             name="format"
@@ -241,7 +243,6 @@ class SaveDialog extends Component {
           tabIndex={this.state.tabType !== 'preview' ? 1 : 0}
           changeTab={this.changeTabType}
           tabs={tabs}
-
         />
       </div>
     )
@@ -305,7 +306,8 @@ class SaveDialog extends Component {
         key="save-tmpl"
         className={classes.saveTmpl}
         disabled={disableControls || isCleanStruct || !isMoleculeContain}
-        onClick={() => this.props.onTmplSave(this.props.struct)}>
+        onClick={() => this.props.onTmplSave(this.props.struct)}
+      >
         Save to Templates
       </button>
     ]
@@ -313,10 +315,11 @@ class SaveDialog extends Component {
     buttons.push(
       <button
         key="cancel"
-        mode='onCancel'
+        mode="onCancel"
         className={classes.cancel}
         onClick={() => this.props.onOk({})}
-        type="button">
+        type="button"
+      >
         Cancel
       </button>
     )
@@ -337,7 +340,8 @@ class SaveDialog extends Component {
             isCleanStruct ||
             !this.props.server
           }
-          className={classes.ok}>
+          className={classes.ok}
+        >
           Save
         </SaveButton>
       )
@@ -352,7 +356,8 @@ class SaveDialog extends Component {
           server={this.props.server}
           onSave={this.props.onOk}
           disabled={disableControls || !formState.valid || isCleanStruct}
-          className={classes.ok}>
+          className={classes.ok}
+        >
           Save
         </SaveButton>
       )
@@ -367,7 +372,8 @@ class SaveDialog extends Component {
         className={classes.save}
         params={this.props}
         buttons={this.getButtons()}
-        needMargin={false}>
+        needMargin={false}
+      >
         {this.renderForm()}
       </Dialog>
     )

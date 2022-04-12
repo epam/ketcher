@@ -32,7 +32,7 @@ export interface DialogParams extends DialogParamsCallProps {
 }
 
 interface DialogProps {
-  title: string
+  title?: string
   params: DialogParams
   buttons?: Array<string | ReactElement>
   buttonsTop?: Array<ReactElement>
@@ -47,6 +47,10 @@ interface DialogCallProps {
 }
 
 type Props = DialogProps & DialogCallProps
+
+const buttonsNameMap = {
+  'Add to canvas': 'OK'
+}
 
 const Dialog: FC<Props> = (props) => {
   const {
@@ -142,7 +146,9 @@ const Dialog: FC<Props> = (props) => {
                 )}
                 value={button}
                 disabled={isButtonOk(button) && !valid()}
-                onClick={() => exit(button)}
+                onClick={() =>
+                  exit(buttonsNameMap[button] ? buttonsNameMap[button] : button)
+                }
               />
             )
           )}

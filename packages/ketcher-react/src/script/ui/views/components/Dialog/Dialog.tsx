@@ -121,7 +121,7 @@ const Dialog: FC<Props> = (props) => {
         <div className={styles.btnContainer}>
           {buttonsTop && buttonsTop.map((button) => button)}
           <button className={styles.buttonTop} onClick={() => exit('Cancel')}>
-            <Icon name={'close'} />
+            <Icon name={'close'} className={styles.closeButton} />
           </button>
         </div>
       </header>

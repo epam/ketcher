@@ -18,12 +18,11 @@ import { FC } from 'react'
 
 import Icon from 'src/script/ui/component/view/icon'
 import styles from './OpenOptions.module.less'
-import { DropButton } from './DropButton'
 import { FileDrop } from './FileDrop'
 
 const ICON_NAMES = {
-  PASTE: 'capital-t',
-  FILE: 'arrow-upward',
+  PASTE: 'open-window-paste-icon',
+  FILE: 'open-window-upload-icon',
   IMAGE: 'image-frame'
 }
 
@@ -44,13 +43,15 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
 }) => {
   return (
     <div className={styles.optionsContainer}>
-      <div className={styles.dropContainer}>
-        <DropButton
-          clickHandler={selectClipboard}
-          label="Paste from Clipboard"
-        />
+      <div onClick={selectClipboard} className={styles.dropContainer}>
         <div className={styles.dropIconWrapper}>
           <Icon name={ICON_NAMES.PASTE} />
+        </div>
+        <div className={styles.textLabelWrapper}>
+          {/* <p className={styles.textLabel}>or press Ctrl + V</p> */}
+        </div>
+        <div className={styles.buttonLabelWrapper}>
+          <p className={styles.buttonLabel}>Paste from clipboard</p>
         </div>
       </div>
 
@@ -65,7 +66,7 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
       <FileDrop
         accept="image/*"
         disabled={isRecognizeDisabled}
-        disabledText="Ketcher supports image recognition only in Remote mode"
+        disabledText="Image Recognition service is not available"
         onDropAccepted={imageLoadHandler}
         onDropRejected={() =>
           errorHandler(

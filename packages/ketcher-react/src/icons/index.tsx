@@ -46,6 +46,7 @@ import CopyKetIcon from './files/copy-ket.svg'
 import CopyMolIcon from './files/copy-mol.svg'
 import CutIcon from './files/cut.svg'
 import DearomIcon from './files/dearom.svg'
+import DeleteIcon from './files/delete.svg'
 import DropdownIcon from './files/dropdown.svg'
 import EnhancedStereoIcon from './files/enhanced-stereo.svg'
 import EditIcon from './files/edit.svg'
@@ -63,6 +64,8 @@ import ClearIcon from './files/clear.svg'
 import NotFoundIcon from './files/not-found.svg'
 import OpenIcon from './files/open.svg'
 import PasteIcon from './files/paste.svg'
+import OpenWindowPasteIcon from './files/open-window-paste-icon.svg'
+import OpenWindowUploadIcon from './files/open-window-upload-icon.svg'
 import PeriodTableIcon from './files/period-table.svg'
 import ReactionArrowBothEndsFilledTriangle from './files/reaction-arrow-both-ends-filled-triangle.svg'
 import ReactionArrowDashedOpenAngle from './files/reaction-arrow-dashed-open-angle.svg'
@@ -110,6 +113,7 @@ import Template4Icon from './files/template-4.svg'
 import Template5Icon from './files/template-5.svg'
 import Template6Icon from './files/template-6.svg'
 import Template7Icon from './files/template-7.svg'
+import TemplateDialogIcon from './files/template-dialog.svg'
 import TemplateLibIcon from './files/template-lib.svg'
 import TextBold from './files/text-bold.svg'
 import TextIcon from './files/text.svg'
@@ -180,6 +184,7 @@ const icons = {
   'copy-ket': CopyKetIcon,
   cut: CutIcon,
   dearom: DearomIcon,
+  delete: DeleteIcon,
   dropdown: DropdownIcon,
   'enhanced-stereo': EnhancedStereoIcon,
   edit: EditIcon,
@@ -252,6 +257,7 @@ const icons = {
   'template-5': Template5Icon,
   'template-6': Template6Icon,
   'template-7': Template7Icon,
+  'template-dialog': TemplateDialogIcon,
   'template-lib': TemplateLibIcon,
   text: TextIcon,
   'text-bold': TextBold,
@@ -289,7 +295,9 @@ const icons = {
   'debugging-white': DebuggingWhiteIcon,
   'dropdown-indicator': DropdownIndicatorIcon,
   'text-special-symbols': TextSpecialSymbolsIcon,
-  chevron: ChevronIcon
+  chevron: ChevronIcon,
+  'open-window-paste-icon': OpenWindowPasteIcon,
+  'open-window-upload-icon': OpenWindowUploadIcon
 }
 
 function emptyIcon() {

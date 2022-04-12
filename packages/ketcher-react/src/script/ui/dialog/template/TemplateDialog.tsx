@@ -198,8 +198,9 @@ const TemplateDialog: FC<Props> = (props) => {
             ? 'Save template library to SDF'
             : 'Save functional groups to SDF'}
         </SaveButton>,
-        'Add to canvas'
+        'OK'
       ]}
+      buttonsNameMap={{ OK: 'Add to canvas' }}
     >
       <div className={classes.inputContainer}>
         <Input

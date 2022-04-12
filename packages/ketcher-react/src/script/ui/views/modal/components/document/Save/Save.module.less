@@ -17,43 +17,50 @@
 @import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
-@save-container-width-large: 482px;
-@save-container-height-large: 315px;
+@save-container-width-large: 430px;
+@save-container-height-large: 316px;
 @save-container-width-small: 380px;
 @save-container-height-small: 325px;
 
 // stylelint-disable selector-pseudo-class-no-unknown
 // stylelint-disable no-descending-specificity
 .save {
-  width: @width-large;
+  width: @save-container-width-large;
+  background-color: @color-background-primary;
 
   .formContainer {
     display: flex;
     flex-direction: column;
     width: @save-container-width-large;
     height: @save-container-height-large;
+    border-top: 1px solid @color-grey-3;
 
     .save {
       height: 32px;
+    }
+
+    .tabs {
+      outline: none;
+      padding-left: 12px;
     }
   }
 
   .warnings {
     max-height: 50px;
     flex-shrink: 0;
-    margin: 2px 0;
+    min-height: 232px;
     padding: 2px 5px;
     overflow: auto;
     box-sizing: border-box;
+    background-color: @color-primary-light;
 
     .scrollbar_thin();
 
     .warningsContainer {
       display: flex;
-      
+
       .warningsArr {
-        color: @error-color;
-        margin: 2px;
+        color: @color-text-primary;
         white-space: pre-line;
         word-break: break-word;
         font-size: 12px;
@@ -68,41 +75,47 @@
   form {
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;
     justify-content: space-between;
     align-content: center;
     margin-bottom: 10px;
     font-size: 12px;
+    margin: 12px;
 
     & > label {
-      display: inline-block;
+      display: flex;
+      flex-direction: column;
+      // flex-grow: 1;
+      width: calc(1 / 2 * 100% - 6px);
       text-align: left;
 
       input {
         height: 25px !important;
+        border: 1px solid @color-grey-4 !important;
       }
 
       > span {
         margin-right: 8px;
       }
 
-      :global(.MuiOutlinedInput-root .MuiSelect-select) {
-        width: 145px;
+      div {
+        border: 1px solid @color-grey-4;
       }
     }
   }
 
   .previewArea {
     display: block;
-    min-height: 225px;
-    min-width: 325px;
+    min-height: 232px;
+    min-width: 430px;
     height: 100%;
     overflow: auto;
     white-space: pre;
     cursor: text;
     resize: none;
     color: @color-text-primary;
+    background-color: @color-primary-light;
     font-size: 12px;
+    border-radius: 0;
 
     .scrollbar_thin();
   }
@@ -117,51 +130,69 @@
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: flex-end;
-    margin-bottom: 10px;
+    margin: 12px;
 
     .ok {
       .button-main();
 
       border: none;
-      margin-right: 2px;
       margin-left: 10px;
       float: right;
+      padding-left: 12px;
+      padding-right: 12px;
+      background-color: @color-primary-green;
+    }
+
+    .cancel {
+      background: @color-background-primary;
+      color: @color-grey-6;
+      margin-left: auto;
+      float: right;
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+
+    .saveTmpl {
+      background: @color-background-primary;
+      color: @color-grey-6;
+      margin: 0;
+      float: left;
+    }
+
+    .imageContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+
+      img {
+        background-color: @color-background-primary;
+        height: 220px;
+        width: 220px;
+        padding: 5px;
+      }
+    }
+
+    .previewMessage {
+      text-align: center;
+      margin: auto;
     }
   }
 
-  .imageContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-
-    img {
-      background-color: @color-background-primary;
-      height: 220px;
-      width: 220px;
-      padding: 5px;
+  :global(.smallEditor) {
+    .formContainer {
+      width: @save-container-width-small;
+      height: @save-container-height-small;
     }
-  }
 
-  .previewMessage {
-    text-align: center;
-    margin: auto;
-  }
-}
+    .warnings {
+      height: 50px;
+    }
 
-:global(.smallEditor) {
-  .formContainer {
-    width: @save-container-width-small;
-    height: @save-container-height-small;
-  }
-
-  .warnings {
-    height: 50px;
-  }
-
-  .saveImageContainer {
-    width: @save-container-width-small;
-    height: @save-container-height-small;
+    .saveImageContainer {
+      width: @save-container-width-small;
+      height: @save-container-height-small;
+    }
   }
 }

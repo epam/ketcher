@@ -102,7 +102,7 @@ function SData({
         {...formState}
       >
         <fieldset className={classes.data}>
-          <SelectOneOf title="Context" name="context" schema={sdataSchema} /> 
+          <SelectOneOf title="Context" name="context" schema={sdataSchema} />
           <SelectInput
             title="Field name"
             name="fieldName"

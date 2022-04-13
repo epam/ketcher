@@ -17,6 +17,9 @@
 @import '../../../../style/mixins';
 @import '../../../../style/variables';
 
+@shadow-color: #DEE1E4;
+@scroll-color: #A5AFB9;
+
 .warning {
   color: @error-color;
 
@@ -25,20 +28,59 @@
   }
 }
 
+.dialogHeader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 3px;
+
+  & > svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .dialog_body {
   background-color: @color-background-primary;
   color: @color-text-primary;
+  width: 452px;
 
   & > header, footer {
-    margin: 10px 0;
-    padding: 0 15px;
+    margin: 0;
   }
 
-  & > div[class^='Dialog-module_dialog_body'] {
+  & > header {
+    padding: 12px 12px;
+
+    button {
+      & > svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+
+  & > div {
     display: flex;
     flex-direction: column;
-    margin: 10px 0;
+    margin: 0;
     overflow: hidden;
+  }
+
+  & > footer {
+    box-shadow: 0 -6px 6px 0 @shadow-color;
+    z-index: 10;
+    padding: 16px 12px 12px;
+
+    & > input {
+      .button-main();
+      
+      width: auto;
+    }
+
+    & > button, input {
+      border-radius: 6px;
+    }
   }
 
   .inputContainer {
@@ -46,26 +88,27 @@
 
     input[type='search'] {
       width: 424px;
-      padding-left: 30px;
+      padding-left: 35px;
       background-color: @color-primary-light;
-      margin: 0 15px 20px 15px;
+      margin: 12px 14px 16px 14px;
+      height: 28px;
+
+      &::placeholder {
+        font-weight: 400;
+        opacity: 90%;
+      }
     }
 
     .searchIcon { 
-      width: 18px;
-      height: 18px;
+      width: 28px;
+      height: 28px;
       position: absolute;
-      top: 6px;
-      left: 20px;
+      top: 12px;
+      left: 14px;
       color: @color-primary;
     }
   }
 
-  .tabPanel {
-    width: 448px;
-    box-sizing: border-box;
-  }
-  
   .accordionSummary {
     flex-direction: row-reverse;
     font-size: 14px;
@@ -85,16 +128,31 @@
     background-color: @color-primary-light;
     overflow-y: auto;
     overflow-x: hidden;
-    margin-right: 3px;
-    .scrollbar_thin();
-  }
-  
-  .searchResultContainer {
-    padding: 8px 16px;
+    
+    ::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+    
+    &::-webkit-scrollbar {
+      background-color: @color-primary-light;
+      width: 6px;
+      height: 6px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background-color: fade(@scroll-color, 85%);
+      border-radius: 10px;
+      -webkit-border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb:active,
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: @scroll-color;
+    }
   }
 
-  .FGSearchContainer {
-    padding: 8px 16px;
+  .resultsContainer {
+    padding: 12px 14px 4px;
     background-color: @color-primary-light;
   }
 
@@ -105,11 +163,18 @@
 
   :global(.MuiTabs-flexContainer) {
     background-color: @color-primary-light;
+    padding-left: 14px;
+  }
+
+  :global(.MuiAccordionSummary-content) {
+    align-items: end;
   }
 
   :global(.MuiAccordionDetails-root) {
     background-color: @color-primary-light;
+    box-shadow: inset 0 -2px 8px 0 @shadow-color;
     width: 424px;
+    padding: 12px 14px 4px;
   }
 
   :global(.MuiPaper-root.MuiAccordion-root) {
@@ -118,33 +183,61 @@
   
   :global(.MuiPaper-root.MuiAccordion-root::before),
   :global(.MuiPaper-root.MuiAccordion-root.Mui-expanded::before) {
-    background-color: @color-grey-5;
+    opacity: 0;
+  }
+
+  :global(.MuiPaper-root) {
+    &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 1px;
     width: 424px;
     margin: 0 auto;
+    background-color: @color-grey-5;
     opacity: 1;
+    }
+  }
+
+  :global(.MuiPaper-root.Mui-expanded) {
+    &::after {
+      opacity: 0;
+    }
+  }
+
+  :global(.MuiButtonBase-root.MuiTab-root),
+  :global(.MuiTabs-root) {
+    min-height: 32px;
+    height: 32px;
+  }
+
+  .tabs {
+    box-shadow: 0 6px 6px 0 @shadow-color;
+    z-index: 10;  
   }
 
   :global(.MuiButtonBase-root.MuiTab-root) {
     text-transform: none;
-    color: @color-text-black;
+    color: fade(@color-text-black, 70%);
+    padding: 12px 10px 8px;
+    line-height: 12px;
   }
 
   :global(.MuiTab-root.Mui-selected) {
     font-weight: 600;
+    color: @color-text-black;
   }
 
   :global(.MuiPaper-root.MuiAccordion-root.Mui-expanded) {
     margin: 0;
   }
 
-  :global(.MuiButtonBase-root.MuiTab-root.Mui-selected) {
-    color: @color-text-black;
-  }
-
   :global(.MuiButtonBase-root.MuiAccordionSummary-root.Mui-expanded),
   :global(.MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters) {
-    min-height: 43px;
-    height: 43px;
+    min-height: 40px;
+    height: 40px;
     padding-left: 12px;
   }
 }

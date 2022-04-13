@@ -92,7 +92,8 @@ function SData({
       className={classes.sgroup}
       result={() => result}
       valid={() => valid}
-      buttons={['Apply', 'Cancel']}
+      buttons={['OK', 'Cancel']}
+      buttonsNameMap={{ OK: 'Apply' }}
       params={prop}
     >
       <Form

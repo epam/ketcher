@@ -17,8 +17,22 @@
 @import '../../../../../style/mixins.less';
 
 
-.save {
-  width: auto;
+.ok {
+  color: @color-text-light;
+  background-color: @color-primary-green;
+  border: 1px solid transparent;
+  margin-left: 8px;
+  .button-main();
+
+  &:hover,
+  &:active {
+    background-color: @color-button-primary-clicked;
+  }
+
+  &:disabled {
+    color: @color-button-secondary-hover;
+    background-color: @color-grey-3;
+  }
 }
 
 .form {
@@ -30,7 +44,7 @@
   max-width: 80%;
   max-height: 80%;
   text-align: left;
-  background-color: @gray-background-color;
+  background-color: @color-background-primary;
   border-radius: 8px;
   background-clip: padding-box;
   overflow-y: auto;
@@ -48,13 +62,14 @@
     align-items: center;
     font-size: @font-size-header;
     line-height: @line-height-header;
-    border-radius: 0.7em 0.7em 0 0;
+    border-radius: 6px 6px 0 0;
     color: @color-text-primary;
-    height: 12px;
+    margin: 12px;
+    border-bottom: 1 px solid @color-grey-3;
 
     .btnContainer {
-      margin-left: 6px;
       flex-grow: 1;
+      flex-direction: row;
       display: flex;
       align-items: flex-end;
     }
@@ -70,7 +85,6 @@
         height: 16px;
         width: 16px;
       }
-      
     }
   }
 
@@ -93,7 +107,7 @@
       float: right;
       height: 24px;
       font-size: @font-size-regular;
-      line-height: @line-height-regular;
+      line-height: @line-height-header;
       border-radius: 4px;
       padding: 5px 10px;
     }

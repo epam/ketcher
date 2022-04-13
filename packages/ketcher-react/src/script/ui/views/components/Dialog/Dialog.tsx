@@ -32,13 +32,16 @@ export interface DialogParams extends DialogParamsCallProps {
 }
 
 interface DialogProps {
-  title: string
+  title?: string
   params: DialogParams
   buttons?: Array<string | ReactElement>
   buttonsTop?: Array<ReactElement>
   className?: string
   needMargin?: boolean
   headerContent?: ReactElement
+  buttonsNameMap?: {
+    [key in string]: string
+  }
 }
 
 interface DialogCallProps {
@@ -58,6 +61,7 @@ const Dialog: FC<Props> = (props) => {
     buttons = ['OK'],
     headerContent,
     className,
+    buttonsNameMap,
     buttonsTop,
     needMargin = true,
     ...rest
@@ -81,7 +85,7 @@ const Dialog: FC<Props> = (props) => {
   }, [])
 
   const isButtonOk = (button) => {
-    return button === 'OK' || button === 'Save' || button === 'Apply'
+    return button === 'OK' || button === 'Save'
   }
 
   const exit = (mode) => {
@@ -140,7 +144,11 @@ const Dialog: FC<Props> = (props) => {
                   isButtonOk(button) ? styles.ok : styles.cancel,
                   button === 'Save' && styles.save
                 )}
-                value={button}
+                value={
+                  buttonsNameMap && buttonsNameMap[button]
+                    ? buttonsNameMap[button]
+                    : button
+                }
                 disabled={isButtonOk(button) && !valid()}
                 onClick={() => exit(button)}
               />

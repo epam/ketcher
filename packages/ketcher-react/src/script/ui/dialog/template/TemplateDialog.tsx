@@ -108,6 +108,13 @@ const filterLibSelector = createSelector(
 
 const FUNCTIONAL_GROUPS = 'Functional Groups'
 
+const HeaderContent = () => (
+  <div className={classes.dialogHeader}>
+    <Icon name="template-dialog" />
+    <span>Templates</span>
+  </div>
+)
+
 const TemplateDialog: FC<Props> = (props) => {
   const {
     filter,
@@ -173,7 +180,7 @@ const TemplateDialog: FC<Props> = (props) => {
 
   return (
     <Dialog
-      title="Templates"
+      headerContent={<HeaderContent />}
       className={`${classes.dialog_body}`}
       params={omit(['group'], rest)}
       result={() => result()}
@@ -193,6 +200,7 @@ const TemplateDialog: FC<Props> = (props) => {
         </SaveButton>,
         'OK'
       ]}
+      buttonsNameMap={{ OK: 'Add to canvas' }}
     >
       <div className={classes.inputContainer}>
         <Input
@@ -200,10 +208,11 @@ const TemplateDialog: FC<Props> = (props) => {
           type="search"
           value={filter}
           onChange={(value) => onFilter(value)}
+          placeholder="Search by elements..."
         />
         <Icon name="search" className={classes.searchIcon} />
       </div>
-      <Tabs value={tab} onChange={handleTabChange}>
+      <Tabs value={tab} onChange={handleTabChange} className={classes.tabs}>
         <Tab
           label="Template Library"
           {...a11yProps(TemplateTabs.TemplateLibrary)}
@@ -215,13 +224,14 @@ const TemplateDialog: FC<Props> = (props) => {
       </Tabs>
       <div className={classes.tabsContent}>
         <TabPanel value={tab} index={TemplateTabs.TemplateLibrary}>
-          <div className={classes.templatesTab}>
+          <div>
             {Object.keys(filteredTemplateLib).length ? (
               Object.keys(filteredTemplateLib).map((groupName) => {
                 const shouldGroupBeRended =
                   expandedAccordions.includes(groupName)
                 return (
                   <Accordion
+                    square={true}
                     key={groupName}
                     onChange={handleAccordionChange(groupName)}
                     expanded={shouldGroupBeRended}
@@ -256,7 +266,7 @@ const TemplateDialog: FC<Props> = (props) => {
                 )
               })
             ) : (
-              <div className={classes.emptyResultContainer}>
+              <div className={classes.resultsContainer}>
                 <EmptySearchResult textInfo="No items found" />
               </div>
             )}
@@ -264,8 +274,9 @@ const TemplateDialog: FC<Props> = (props) => {
         </TabPanel>
         <TabPanel value={tab} index={TemplateTabs.FunctionalGroupLibrary}>
           {filteredFG?.length ? (
-            <div className={classes.FGSearchContainer}>
+            <div className={classes.resultsContainer}>
               <TemplateTable
+                titleRows={1}
                 onDoubleClick={(templ) => select(templ, true)}
                 templates={filteredFG}
                 onSelect={(templ) => select(templ)}
@@ -273,7 +284,7 @@ const TemplateDialog: FC<Props> = (props) => {
               />
             </div>
           ) : (
-            <div className={classes.emptyResultContainer}>
+            <div className={classes.resultsContainer}>
               <EmptySearchResult textInfo="No items found" />
             </div>
           )}

@@ -210,7 +210,7 @@ class Attach extends Component {
 
     return (
       <TemplateEditDialog
-        title="Template Edit"
+        title="Template edit"
         result={this.onResult}
         valid={() => this.props.formState.valid && name}
         params={prop}

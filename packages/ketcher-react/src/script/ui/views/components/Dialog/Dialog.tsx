@@ -38,6 +38,7 @@ interface DialogProps {
   buttonsTop?: Array<ReactElement>
   className?: string
   needMargin?: boolean
+  withDivider?: boolean
   headerContent?: ReactElement
   buttonsNameMap?: {
     [key in string]: string
@@ -64,6 +65,7 @@ const Dialog: FC<Props> = (props) => {
     buttonsNameMap,
     buttonsTop,
     needMargin = true,
+    withDivider = false,
     ...rest
   } = props
   const dialogRef = useRef<HTMLDivElement>(null)
@@ -116,6 +118,7 @@ const Dialog: FC<Props> = (props) => {
         styles.form,
         className,
         needMargin && styles.margin,
+        withDivider && styles.withDivider,
         params.className
       )}
       {...rest}

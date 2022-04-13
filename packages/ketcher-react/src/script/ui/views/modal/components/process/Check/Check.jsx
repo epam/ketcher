@@ -107,6 +107,7 @@ function CheckDialog(props) {
       className={style.dialog_body}
       params={{ ...restProps, onCancel }}
       buttons={[]}
+      withDivider
     >
       <Form
         schema={checkSchema}

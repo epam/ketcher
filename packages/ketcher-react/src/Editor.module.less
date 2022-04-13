@@ -99,11 +99,11 @@
     &:active,
     &:focus {
       outline: 0;
+      caret-color: @color-primary-green;
     }
 
-    &:hover,
-    &:focus {
-      .highlight-shadow(black);
+    &:hover {
+      border: 1.5px solid @color-input-hover;
     }
 
     &[disabled],
@@ -114,6 +114,7 @@
   }
 
   select {
+    padding: 0 8px;
     background: transparent;
     background-repeat: no-repeat;
     background-image: url("data:image/svg+xml,%3Csvg width='10' height='7' viewBox='0 0 10 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.00105 6.07702L0.261719 1.33769L1.20439 0.39502L5.00105 4.19169L8.79705 0.39502L9.74038 1.33769L5.00105 6.07702Z' fill='%23231F20'/%3E%3C/svg%3E%0A");

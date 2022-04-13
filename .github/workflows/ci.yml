@@ -44,7 +44,7 @@ jobs:
         run: yarn install
 
       - name: Run audit
-        run: npx audit-ci --critical --skip-dev
+        run: yarn npm audit --all --severity critical
 
       - name: Run build
         run: npx cross-env CI=false yarn build

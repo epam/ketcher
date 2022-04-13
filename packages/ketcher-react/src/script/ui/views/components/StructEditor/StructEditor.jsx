@@ -153,9 +153,7 @@ class StructEditor extends Component {
           >
             {/* svg here */}
           </div>
-
           <div className={classes.measureLog} ref={this.logRef} />
-
           {indigoVerification && (
             <div className={classes.spinnerOverlay}>
               <Spinner />

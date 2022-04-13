@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ElementColor, Elements } from 'ketcher-core'
 import { atomCuts, basicAtoms } from '../../../../action/atoms'
 
 import Atom from '../../../../component/view/Atom'
-import { Elements, ElementColor } from 'ketcher-core'
 import { UiActionAction } from '../../../../action'
-import { shortcutStr } from '../../shortcutStr'
 import { forwardRef } from 'react'
+import { shortcutStr } from '../../shortcutStr'
 import styled from '@emotion/styled'
 import α from 'color-alpha'
 
@@ -45,7 +45,7 @@ const StyledAtomList = styled.div((props: any) => {
     ? ElementColor[props.children.key]
     : '#000'
   return `
-     ${Atom} > button {
+    ${Atom} > button {
        color: ${atomColor};
        border: 1px solid ${atomColor};
        &:hover {

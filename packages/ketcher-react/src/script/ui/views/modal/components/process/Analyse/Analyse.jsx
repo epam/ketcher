@@ -83,6 +83,7 @@ class AnalyseDialog extends Component {
                 {item.key === 'gross' ? (
                   <FormulaInput
                     value={values && !loading ? values[item.key] : ''}
+                    contentEditable={false}
                   />
                 ) : item.key === 'mass-composition' ? (
                   <textarea

@@ -19,7 +19,8 @@ import styles from './FormulaInput.module.less'
 const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g
 const errorRegexp = /error:.*/g
 
-function formulaInputMarkdown(content) {
+function formulaInputMarkdown(contentData) {
+  const { content, contentEditable } = contentData
   const onKeyDown = (e) => {
     if (e.keyCode === 8) {
       e.preventDefault()
@@ -32,7 +33,7 @@ function formulaInputMarkdown(content) {
       onKeyPress={(e) => e.preventDefault()}
       onPaste={(e) => e.preventDefault()}
       onKeyDown={onKeyDown}
-      contentEditable={true}
+      contentEditable={contentEditable}
       suppressContentEditableWarning={true}
     >
       {content}
@@ -40,7 +41,7 @@ function formulaInputMarkdown(content) {
   )
 }
 
-function FormulaInput({ value }) {
+function FormulaInput({ value, contentEditable }) {
   if (errorRegexp.test(value)) return formulaInputMarkdown(value)
 
   const content = []
@@ -59,7 +60,7 @@ function FormulaInput({ value }) {
   if (pos === 0) content.push(value)
   else content.push(value.substring(pos, value.length))
 
-  return formulaInputMarkdown(content)
+  return formulaInputMarkdown({ content, contentEditable })
 }
 
 export default FormulaInput

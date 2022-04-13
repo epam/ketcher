@@ -16,21 +16,6 @@
 
 @import '../../../../../style/mixins.less';
 
-.save {
-  width: auto;
-}
-
-button,
-.ok,
-.cancel {
-  float: right;
-  height: 24px;
-  font-size: @font-size-regular;
-  line-height: @line-height-regular;
-  border-radius: 4px;
-  padding-left: 12px;
-  padding-right: 12px;
-}
 
 .ok {
   color: @color-text-light;
@@ -50,27 +35,13 @@ button,
   }
 }
 
-.cancel {
-  color: @color-text-secondary;
-  border: 1px solid @color-text-secondary;
-  background-color: @color-background-primary;
-
-  &:hover,
-  &:active {
-    color: @color-button-secondary-hover;
-    border: 1px solid @color-button-secondary-hover;
+.withDivider {
+  header {
+    border-bottom: 1px solid @color-grey-3;
+    margin: 0 !important;
+    padding: 0 @padding-modal;
+    height: 36px;
   }
-
-  &:disabled {
-    color: fade(@color-text-secondary, 70%);
-    border: 1px solid fade(@color-text-secondary, 70%);
-  }
-}
-
-button {
-  .button-secondary();
-
-  float: left;
 }
 
 .form {
@@ -102,8 +73,7 @@ button {
     line-height: @line-height-header;
     border-radius: 6px 6px 0 0;
     color: @color-text-primary;
-    margin: 12px;
-    border-bottom: 1 px solid @color-grey-3;
+    font-weight: 500;
 
     .btnContainer {
       flex-grow: 1;
@@ -137,6 +107,55 @@ button {
       .btn();
 
       margin-left: 3px;
+    }
+
+    button,
+    .ok,
+    .cancel {
+      float: right;
+      height: 24px;
+      font-size: @font-size-regular;
+      line-height: @line-height-header;
+      border-radius: 4px;
+      padding: 5px 10px;
+    }
+
+    .ok {
+      color: @color-text-light;
+      background-color: @color-primary;
+      border: 1px solid transparent;
+      margin-left: 8px;
+
+      &:hover, &:active {
+        background-color: @color-button-primary-clicked;
+      }
+
+      &:disabled {
+        color: @color-button-secondary-hover;
+        background-color: @color-grey-3;
+      }
+    }
+
+    .cancel {
+      color: @color-text-secondary;
+      border: 1px solid @color-text-secondary;
+      background-color: @color-background-primary;
+
+      &:hover, &:active {
+        color: @color-button-secondary-hover;
+        border: 1px solid @color-button-secondary-hover;
+      }
+
+      &:disabled {
+        color: fade(@color-text-secondary, 70%);
+        border: 1px solid fade(@color-text-secondary, 70%);
+      }
+    }
+
+    button {
+      .button-secondary();
+
+      float: left;
     }
   }
 

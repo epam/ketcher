@@ -14,48 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
-import { Button } from '@mui/material'
-import { css } from '@emotion/react'
-import styled from '@emotion/styled'
-import type { Struct } from 'ketcher-core'
-
 import { Dialog, StructEditor } from '../../views/components'
+import { Component } from 'react'
 import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
+
+import { connect } from 'react-redux'
 import { storage } from '../../storage-ext'
 import Form, { Field } from '../../component/form/form/form'
 import { attachSchema } from '../../data/schema/struct-schema'
-import type { Template } from './TemplateTable'
-import type { BaseProps } from '../../../ui/views/modal/modal.types'
-
-type AttachPoints = {
-  atomid: number
-  bondid: number
-}
-
-type ProcessedTemplate = {
-  struct: Struct
-  props: AttachPoints
-}
-
-interface AttachProps extends BaseProps {
-  name: string
-  onNameEdit: (name: string) => void
-  onAttachEdit: (arg: string) => void
-  onInit: (name: string, attach: AttachPoints) => void
-  tmpl: Template
-  globalSettings: any
-  atomid: number
-  bondid: number
-  templateLib: Template[]
-  onOk: (res) => void
-  onCancel: () => void
-}
+import styled from '@emotion/styled'
+import { css } from '@emotion/react'
+import { Button } from '@mui/material'
 
 // @TODO When theming is implemented, use theme wherever possible
 const TemplateEditDialog = styled(Dialog)`
-  background-color: #ffff;
+  background-color: #fff;
 
   // Overriding margins set in Dialog.module.less
   & > div {
@@ -79,8 +52,8 @@ const Editor = styled('div')`
   background-color: #ffff;
   border-radius: 5px;
   position: relative;
-  height: 205px;
-  width: 248px;
+  height: 300px;
+  width: 330px;
   overflow: hidden;
 
   & .structEditor {
@@ -95,7 +68,6 @@ const Warning = styled('div')`
 `
 
 const LeftColumn = styled('div')`
-  width: 60%;
   padding: 7px 4px;
   background-color: #eff2f5;
 `
@@ -199,122 +171,106 @@ const editorStyles = {
   hoverStyleSimpleObject: { 'stroke-opacity': 0.3 }
 }
 
-const Attach = ({
-  name,
-  onNameEdit,
-  onAttachEdit,
-  onInit,
-  tmpl,
-  globalSettings,
-  atomid,
-  bondid,
-  templateLib,
-  formState,
-  onOk,
-  onCancel
-}: AttachProps) => {
-  const [template, setTmpl] = useState<ProcessedTemplate | null>(null)
-
-  useEffect(() => {
-    const template = initTmpl(tmpl)
-    setTmpl(template)
-    onInit(template.struct.name, template.props)
-  }, [])
-
-  if (!tmpl) {
-    return null
+class Attach extends Component {
+  constructor({ onInit, ...props }) {
+    super()
+    this.tmpl = initTmpl(props.tmpl)
+    onInit(this.tmpl.struct.name, this.tmpl.props)
+    this.onResult = this.onResult.bind(this)
   }
 
-  const onResult = () => {
+  onResult() {
+    const { name, atomid, bondid } = this.props
     return name &&
-      (name !== tmpl.struct.name ||
-        atomid !== tmpl.props.atomid ||
-        bondid !== tmpl.props.bondid) &&
+      (name !== this.tmpl.struct.name ||
+        atomid !== this.tmpl.props.atomid ||
+        bondid !== this.tmpl.props.bondid) &&
       name.trim().length
       ? { name, attach: { atomid, bondid } }
       : null
   }
 
-  const checkUniqueName = (name) => {
-    return !templateLib.some(
+  checkUniqueName(name) {
+    return !this.props.templateLib.some(
       (tmpl) =>
         tmpl.struct.name === name && tmpl.props.group === 'User Templates'
     )
   }
 
-  const struct = tmpl.struct
+  render() {
+    const { name, onNameEdit, onAttachEdit, ...prop } = this.props
+    const struct = this.tmpl.struct
+    const { atomid, bondid } =
+      struct.atoms.get(this.props.atomid) && struct.bonds.get(this.props.bondid)
+        ? this.props
+        : this.tmpl.props
+    const options = Object.assign(editorStyles, this.props.globalSettings, {
+      scale: getScale(struct)
+    })
 
-  const options = Object.assign(editorStyles, globalSettings, {
-    scale: getScale(struct)
-  })
-
-  // @TODO Needs rethinking why this check has to be done
-  const atomIdAdjusted = struct.atoms.get(atomid)
-    ? atomid
-    : template?.props.atomid
-  const bondIdAdjusted = struct.bonds.get(bondid)
-    ? bondid
-    : template?.props.bondid
-
-  return (
-    <TemplateEditDialog
-      title="Template edit"
-      result={onResult}
-      valid={() => formState.valid && Boolean(name)}
-      buttons={[]}
-      params={{ onOk, onCancel }}
-    >
-      <Form
-        schema={attachSchema}
-        customValid={{
-          name: (name) => checkUniqueName(name)
-        }}
-        {...formState}
+    return (
+      <TemplateEditDialog
+        title="Template edit"
+        result={this.onResult}
+        valid={() => this.props.formState.valid && name}
+        params={prop}
+        buttons={[]}
       >
-        <LeftColumn>
-          <Editor>
-            <StructEditor
-              className="structEditor"
-              struct={struct}
-              onAttachEdit={onAttachEdit}
-              tool="attach"
-              toolOpts={{ atomid: atomIdAdjusted, bondid: bondIdAdjusted }}
-              options={options}
-              showAttachmentPoints={false}
+        <Form
+          schema={attachSchema}
+          customValid={{
+            name: (name) => this.checkUniqueName(name)
+          }}
+          {...this.props.formState}
+        >
+          <LeftColumn>
+            <Editor>
+              <StructEditor
+                className="structEditor"
+                struct={struct}
+                onAttachEdit={onAttachEdit}
+                tool="attach"
+                toolOpts={{ atomid, bondid }}
+                options={options}
+                showAttachmentPoints={false}
+              />
+            </Editor>
+            {!storage.isAvailable() ? (
+              <Warning>{storage.warningMessage}</Warning>
+            ) : null}
+          </LeftColumn>
+          <RightColumn>
+            <NameInput
+              name="name"
+              value={name}
+              onChange={this.props.onNameEdit}
+              placeholder="template"
             />
-          </Editor>
-          {!storage.isAvailable() ? (
-            <Warning>{storage.warningMessage}</Warning>
-          ) : null}
-        </LeftColumn>
-        <RightColumn>
-          <NameInput
-            name="name"
-            value={name}
-            onChange={onNameEdit}
-            placeholder="template"
-          />
-          <span>Selected attachment points</span>
-          <AttachmentOutput>
-            Atom ID: <strong>{atomid}</strong> Bond ID:{' '}
-            <strong>{bondid}</strong>
-          </AttachmentOutput>
-          <Buttons>
-            <CancelButton variant="outlined" onClick={onCancel}>
-              Cancel
-            </CancelButton>
-            <SaveButton variant="contained" onClick={() => onOk(onResult())}>
-              Apply
-            </SaveButton>
-          </Buttons>
-        </RightColumn>
-      </Form>
-    </TemplateEditDialog>
-  )
+            <span>Selected attachment points</span>
+            <AttachmentOutput>
+              Atom ID: <strong>{atomid}</strong> Bond ID:{' '}
+              <strong>{bondid}</strong>
+            </AttachmentOutput>
+            <Buttons>
+              <CancelButton variant="outlined" onClick={this.props.onCancel}>
+                Cancel
+              </CancelButton>
+              <SaveButton
+                variant="contained"
+                onClick={() => this.props.onOk(this.onResult())}
+              >
+                Apply
+              </SaveButton>
+            </Buttons>
+          </RightColumn>
+        </Form>
+      </TemplateEditDialog>
+    )
+  }
 }
 
 export default connect(
-  (store: any) => ({
+  (store) => ({
     ...store.templates.attach,
     templateLib: store.templates.lib,
     formState: store.modal.form,
@@ -370,12 +326,12 @@ function structNormalization(struct) {
   return normStruct
 }
 
-function getScale(struct: Struct) {
+function getScale(struct) {
   const cbb = struct.getCoordBoundingBox()
-  const VIEW_SIZE = 150 // magic number
-  let scale = VIEW_SIZE / Math.max(cbb.max.y - cbb.min.y, cbb.max.x - cbb.min.x)
-
-  if (scale < 35) scale = 35
-  if (scale > 50) scale = 50
-  return scale
+  const VIEW_SIZE = 220
+  const scale =
+    VIEW_SIZE / Math.max(cbb.max.y - cbb.min.y, cbb.max.x - cbb.min.x)
+  if (scale < 35) return 35
+  if (scale > 50) return 50
+  return 40
 }

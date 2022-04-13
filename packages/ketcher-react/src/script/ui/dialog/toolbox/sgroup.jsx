@@ -34,6 +34,8 @@ function Sgroup({ formState, ...prop }) {
       className={classes.sgroup}
       result={() => result}
       valid={() => valid}
+      buttons={['OK', 'Cancel']}
+      buttonsNameMap={{ OK: 'Apply' }}
       params={prop}
     >
       <Form schema={schemes[type]} init={prop} {...formState}>

@@ -15,21 +15,30 @@
  ***************************************************************************/
 
 @import '../../../../../../../style/variables.less';
+@import '../../../../../../../style/mixins';
 
 .rgroupLogic {
   width: @width-small;
 
+  > div {
+    margin-top: @margin-top-bottom;
+  }
+ 
   label {
     display: flex;
     flex-direction: column;
-    line-height: 2em;
-    margin-bottom: 1em;
+    line-height: 14px;
+    margin-bottom: @margin-top-bottom;
+    font-size: 12px;
+    color: @color-text-secondary;
 
-    &:last-of-type {
-      margin-bottom: 0;
+    select,
+    input {
+      margin: 4px 0 0 0;
     }
 
     &.resth {
+      margin-bottom: @margin-top-bottom * 2;
       flex-direction: row;
     }
   }

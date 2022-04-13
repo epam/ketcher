@@ -128,6 +128,7 @@ const Open: FC<Props> = (props) => {
       params={rest}
       result={() => null}
       buttons={getButtons()}
+      withDivider
     >
       <ViewSwitcher
         isAnalyzingFile={isAnalyzingFile}

@@ -35,6 +35,15 @@
   }
 }
 
+.withDivider {
+  header {
+    border-bottom: 1px solid @color-grey-3;
+    margin: 0 !important;
+    padding: 0 @padding-modal;
+    height: 36px;
+  }
+}
+
 .form {
   outline: 0;
   position: relative;
@@ -64,8 +73,7 @@
     line-height: @line-height-header;
     border-radius: 6px 6px 0 0;
     color: @color-text-primary;
-    margin: 12px;
-    border-bottom: 1 px solid @color-grey-3;
+    font-weight: 500;
 
     .btnContainer {
       flex-grow: 1;

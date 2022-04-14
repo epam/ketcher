@@ -32,7 +32,11 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding-left: 3px;
+  padding-left: 2px;
+
+  & > span {
+    line-height: 16px;
+  }
 
   & > svg {
     width: 18px;
@@ -45,26 +49,15 @@
   color: @color-text-primary;
   width: 452px;
 
-  & > header, footer {
-    margin: 0;
-  }
-
-  & > header {
-    padding: 12px 12px;
-
-    button {
-      & > svg {
-        width: 18px;
-        height: 18px;
-      }
-    }
-  }
-
   & > div {
     display: flex;
     flex-direction: column;
     margin: 0;
     overflow: hidden;
+  }
+
+  & > header, footer {
+    margin: 0;
   }
 
   & > footer {
@@ -83,6 +76,18 @@
     }
   }
 
+  & > header {
+    padding: 11px 12px;
+
+    & > div {
+      button {
+        width: 16px;
+        height: 16px;
+        padding: 0;
+      }
+    }
+  }
+
   .inputContainer {
     position: relative;
 
@@ -90,7 +95,7 @@
       width: 424px;
       padding-left: 35px;
       background-color: @color-primary-light;
-      margin: 12px 14px 16px 14px;
+      margin: 0 14px 16px 14px;
       height: 28px;
 
       &::placeholder {
@@ -103,7 +108,7 @@
       width: 28px;
       height: 28px;
       position: absolute;
-      top: 12px;
+      top: 0;
       left: 14px;
       color: @color-primary;
     }

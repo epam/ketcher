@@ -114,16 +114,12 @@ const Dialog: FC<Props> = (props) => {
       onSubmit={(event) => event.preventDefault()}
       onKeyDown={keyDown}
       tabIndex={-1}
-      className={clsx(
-        styles.form,
-        className,
-        needMargin && styles.margin,
-        withDivider && styles.withDivider,
-        params.className
-      )}
+      className={clsx(styles.dialog, className, params.className)}
       {...rest}
     >
-      <header>
+      <header
+        className={clsx(styles.header, withDivider && styles.withDivider)}
+      >
         {headerContent || <span>{title}</span>}
         <div className={styles.btnContainer}>
           {buttonsTop && buttonsTop.map((button) => button)}
@@ -132,10 +128,12 @@ const Dialog: FC<Props> = (props) => {
           </button>
         </div>
       </header>
-      <div className={clsx(styles.dialog_body, styles.body)}>{children}</div>
+      <div className={clsx(styles.body, needMargin && styles.withMargin)}>
+        {children}
+      </div>
 
       {buttons.length > 0 && (
-        <footer>
+        <footer className={styles.footer}>
           {buttons.map((button) =>
             typeof button !== 'string' ? (
               button

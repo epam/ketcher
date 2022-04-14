@@ -30,7 +30,7 @@ function RGroup({ disabledIds, values, formState, type, ...props }) {
       params={props}
       result={() => formState.result}
       buttonsNameMap={{ OK: 'Apply' }}
-      buttons={['OK', 'Cancel']}
+      buttons={['Cancel', 'OK']}
       withDivider
     >
       <Form schema={rgroupSchema} init={{ values }} {...formState}>

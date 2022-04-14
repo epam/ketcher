@@ -56,8 +56,6 @@
   background-color: @color-background-primary;
   border-radius: 8px;
   background-clip: padding-box;
-  overflow-y: auto;
-  overflow-x: auto;
   font-family: @Inter;
   color: @color-text-secondary;
   .transition-zoom;
@@ -162,6 +160,7 @@
   .body {
     font-size: @font-size-regular;
     line-height: @line-height-regular;
+    overflow: hidden;
     .scrollbar_thin();
   }
 }

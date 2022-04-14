@@ -39,7 +39,7 @@ const Bond = (props: Props) => {
       valid={() => formState.valid}
       params={rest}
       buttonsNameMap={{ OK: 'Apply' }}
-      buttons={['OK', 'Cancel']}
+      buttons={['Cancel', 'OK']}
       withDivider
     >
       <Form schema={bondSchema} init={rest} {...formState}>

@@ -16,6 +16,7 @@
 
 import { BaseCallProps, BaseProps } from '../../../modal.types'
 import Form, { Field } from '../../../../../component/form/form/form'
+
 import { Dialog } from '../../../../components'
 import { attachmentPoints as attachmentPointsSchema } from '../../../../../data/schema/struct-schema'
 import classes from './Attach.module.less'
@@ -37,7 +38,7 @@ const AttachPoints = (props: Props) => {
       valid={() => formState.valid}
       params={rest}
       buttonsNameMap={{ OK: 'Apply' }}
-      buttons={['OK', 'Cancel']}
+      buttons={['Cancel', 'OK']}
       withDivider
     >
       <Form schema={attachmentPointsSchema} init={rest} {...formState}>

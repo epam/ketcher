@@ -32,6 +32,13 @@ class Tabs extends Component {
     if (this.props.changeTab) this.props.changeTab(index)
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.tabIndex !== this.state.tabIndex) {
+      this.setState({ tabIndex: this.props.tabIndex })
+      console.log(this.props)
+    }
+  }
+
   render() {
     const { tabs, contentClassName, className, tabIndex } = this.props
     const tabPanel = tabs[this.state.tabIndex]

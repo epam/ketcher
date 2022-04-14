@@ -33,7 +33,6 @@
     flex-direction: column;
     width: @save-container-width-large;
     height: @save-container-height-large;
-    border-top: 1px solid @color-grey-3;
 
     .save {
       height: 32px;
@@ -113,7 +112,9 @@
     color: @color-text-primary;
     background-color: @color-primary-light;
     font-size: 12px;
-    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    border: none;
 
     .scrollbar_thin();
 
@@ -122,6 +123,7 @@
     &:focus {
       outline: none;
       box-shadow: none;
+      border: none;
     }
   }
 

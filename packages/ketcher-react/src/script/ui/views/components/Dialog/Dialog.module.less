@@ -16,7 +16,6 @@
 
 @import '../../../../../style/mixins.less';
 
-
 .ok {
   color: @color-text-light;
   background-color: @color-primary-green;
@@ -72,6 +71,7 @@
     border-radius: 6px 6px 0 0;
     color: @color-text-primary;
     font-weight: 500;
+    padding: 12px;
 
     .btnContainer {
       flex-grow: 1;
@@ -124,7 +124,8 @@
       border: 1px solid transparent;
       margin-left: 8px;
 
-      &:hover, &:active {
+      &:hover,
+      &:active {
         background-color: @color-button-primary-clicked;
       }
 
@@ -139,7 +140,8 @@
       border: 1px solid @color-text-secondary;
       background-color: @color-background-primary;
 
-      &:hover, &:active {
+      &:hover,
+      &:active {
         color: @color-button-secondary-hover;
         border: 1px solid @color-button-secondary-hover;
       }

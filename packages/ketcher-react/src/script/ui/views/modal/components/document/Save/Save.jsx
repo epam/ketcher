@@ -37,6 +37,7 @@ import { saveUserTmpl } from '../../../../../state/templates'
 import { updateFormState } from '../../../../../state/modal/form'
 import Select from '../../../../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
+import { LoadingCircles } from '../Open/components/LoadingCircles.tsx'
 
 const saveSchema = {
   title: 'Save',
@@ -71,7 +72,7 @@ class SaveDialog extends Component {
       disableControls: true,
       imageFormat: 'svg',
       tabIndex: 0,
-      tabType: 'preview'
+      isImageReady: false
     }
     this.isRxn = this.props.struct.hasRxnArrow()
     this.textAreaRef = createRef()
@@ -125,14 +126,19 @@ class SaveDialog extends Component {
     if (this.isImageFormat(type)) {
       const ketSerialize = new KetSerializer()
       const structStr = ketSerialize.serialize(struct)
-      this.setState({ imageFormat: type, structStr })
+      this.setState({
+        tabIndex: 0,
+        imageFormat: type,
+        structStr,
+        isImageReady: false
+      })
       const options = {}
       options.outputFormat = type
 
       return server
         .generateImageAsBase64(structStr, options)
         .then((base64) => {
-          this.setState({ imageSrc: base64 })
+          this.setState({ tabIndex: 0, imageSrc: base64, isImageReady: true })
         })
         .catch((e) => {
           errorHandler(e)
@@ -140,7 +146,7 @@ class SaveDialog extends Component {
           return e
         })
     } else {
-      this.setState({ disableControls: true })
+      this.setState({ disableControls: true, isImageReady: false })
       const factory = new FormatterFactory(server)
       const service = factory.create(type, options)
 
@@ -148,7 +154,7 @@ class SaveDialog extends Component {
         .getStructureFromStructAsync(struct)
         .then(
           (structStr) => {
-            this.setState({ structStr })
+            this.setState({ tabIndex: 0, structStr, isImageReady: false })
             setTimeout(() => {
               if (this.textAreaRef.current) {
                 this.textAreaRef.current.select()
@@ -162,13 +168,13 @@ class SaveDialog extends Component {
           }
         )
         .finally(() => {
-          this.setState({ disableControls: false })
+          this.setState({ tabIndex: 0, disableControls: false })
         })
     }
   }
 
-  changeTabType = (type) => {
-    console.log(type)
+  changeTab = (index) => {
+    this.setState({ tabIndex: index })
   }
 
   getWarnings = (format) => {
@@ -203,17 +209,20 @@ class SaveDialog extends Component {
         ? [
             {
               caption: 'Preview',
-              component: this.renderSaveFile
+              component: this.renderSaveFile,
+              tabIndex: 0
             }
           ]
         : [
             {
               caption: 'Preview',
-              component: this.renderSaveFile
+              component: this.renderSaveFile,
+              tabIndex: 0
             },
             {
               caption: 'Warnings',
-              component: this.renderWarnings
+              component: this.renderWarnings,
+              tabIndex: 1
             }
           ]
 
@@ -240,8 +249,8 @@ class SaveDialog extends Component {
         <Tabs
           className={classes.tabs}
           captions={tabs}
-          tabIndex={this.state.tabType !== 'preview' ? 1 : 0}
-          changeTab={this.changeTabType}
+          tabIndex={this.state.tabIndex}
+          changeTab={this.changeTab}
           tabs={tabs}
         />
       </div>
@@ -252,19 +261,18 @@ class SaveDialog extends Component {
     const formState = Object.assign({}, this.props.formState)
     delete formState.moleculeErrors
     const { filename, format } = formState.result
-    const { structStr, imageSrc } = this.state
+    const { structStr, imageSrc, isImageReady } = this.state
     const isCleanStruct = this.props.struct.isBlank()
     return this.isImageFormat(format) ? (
-      // TODO: remove this conditional after fixing problems with png format on BE side
-      format === 'png' ? (
-        <div className={classes.previewMessage}>
-          Preview is not available for this format
-        </div>
-      ) : (
+      isImageReady || isCleanStruct ? (
         <div className={classes.imageContainer}>
           {!isCleanStruct && (
-            <img src={`data:image/svg+xml;base64,${imageSrc}`} />
+            <img src={`data:image/${format}+xml;base64,${imageSrc}`} />
           )}
+        </div>
+      ) : (
+        <div className={classes.loadingCirclesContainer}>
+          <LoadingCircles />
         </div>
       )
     ) : (
@@ -287,7 +295,7 @@ class SaveDialog extends Component {
         {warnings.map((warning) => (
           <div className={classes.warningsContainer}>
             <div className={classes.warning} />
-            <div className={classes.warningsArr}>{warning}</div>
+            <span className={classes.warningsArr}>{warning}</span>
           </div>
         ))}
       </div>
@@ -332,7 +340,7 @@ class SaveDialog extends Component {
           filename={filename}
           outputFormat={imageFormat}
           key="save-image-button"
-          type="image/svg+xml"
+          type={`image/${format}+xml`}
           onSave={this.props.onOk}
           disabled={
             disableControls ||

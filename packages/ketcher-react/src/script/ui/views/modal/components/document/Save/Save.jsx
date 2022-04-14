@@ -72,7 +72,7 @@ class SaveDialog extends Component {
       disableControls: true,
       imageFormat: 'svg',
       tabIndex: 0,
-      isImageReady: false
+      isLoading: true
     }
     this.isRxn = this.props.struct.hasRxnArrow()
     this.textAreaRef = createRef()
@@ -127,10 +127,11 @@ class SaveDialog extends Component {
       const ketSerialize = new KetSerializer()
       const structStr = ketSerialize.serialize(struct)
       this.setState({
+        disableControls: true,
         tabIndex: 0,
         imageFormat: type,
         structStr,
-        isImageReady: false
+        isLoading: true
       })
       const options = {}
       options.outputFormat = type
@@ -138,7 +139,12 @@ class SaveDialog extends Component {
       return server
         .generateImageAsBase64(structStr, options)
         .then((base64) => {
-          this.setState({ tabIndex: 0, imageSrc: base64, isImageReady: true })
+          this.setState({
+            disableControls: false,
+            tabIndex: 0,
+            imageSrc: base64,
+            isLoading: false
+          })
         })
         .catch((e) => {
           errorHandler(e)
@@ -146,7 +152,7 @@ class SaveDialog extends Component {
           return e
         })
     } else {
-      this.setState({ disableControls: true, isImageReady: false })
+      this.setState({ disableControls: true, isLoading: true })
       const factory = new FormatterFactory(server)
       const service = factory.create(type, options)
 
@@ -154,7 +160,10 @@ class SaveDialog extends Component {
         .getStructureFromStructAsync(struct)
         .then(
           (structStr) => {
-            this.setState({ tabIndex: 0, structStr, isImageReady: false })
+            this.setState({
+              tabIndex: 0,
+              structStr
+            })
             setTimeout(() => {
               if (this.textAreaRef.current) {
                 this.textAreaRef.current.select()
@@ -168,7 +177,11 @@ class SaveDialog extends Component {
           }
         )
         .finally(() => {
-          this.setState({ tabIndex: 0, disableControls: false })
+          this.setState({
+            disableControls: false,
+            tabIndex: 0,
+            isLoading: false
+          })
         })
     }
   }
@@ -234,8 +247,7 @@ class SaveDialog extends Component {
             filename,
             format: this.isRxn ? 'rxn' : 'mol'
           }}
-          {...formState}
-        >
+          {...formState}>
           <Field name="filename" />
           <Field
             name="format"
@@ -261,20 +273,18 @@ class SaveDialog extends Component {
     const formState = Object.assign({}, this.props.formState)
     delete formState.moleculeErrors
     const { filename, format } = formState.result
-    const { structStr, imageSrc, isImageReady } = this.state
+    const { structStr, imageSrc, isLoading } = this.state
     const isCleanStruct = this.props.struct.isBlank()
-    return this.isImageFormat(format) ? (
-      isImageReady || isCleanStruct ? (
-        <div className={classes.imageContainer}>
-          {!isCleanStruct && (
-            <img src={`data:image/${format}+xml;base64,${imageSrc}`} />
-          )}
-        </div>
-      ) : (
-        <div className={classes.loadingCirclesContainer}>
-          <LoadingCircles />
-        </div>
-      )
+    return isLoading ? (
+      <div className={classes.loadingCirclesContainer}>
+        <LoadingCircles />
+      </div>
+    ) : this.isImageFormat(format) ? (
+      <div className={classes.imageContainer}>
+        {!isCleanStruct && (
+          <img src={`data:image/${format}+xml;base64,${imageSrc}`} />
+        )}
+      </div>
     ) : (
       <textarea
         value={structStr}
@@ -314,8 +324,7 @@ class SaveDialog extends Component {
         key="save-tmpl"
         className={classes.saveTmpl}
         disabled={disableControls || isCleanStruct || !isMoleculeContain}
-        onClick={() => this.props.onTmplSave(this.props.struct)}
-      >
+        onClick={() => this.props.onTmplSave(this.props.struct)}>
         Save to Templates
       </button>
     ]
@@ -326,8 +335,7 @@ class SaveDialog extends Component {
         mode="onCancel"
         className={classes.cancel}
         onClick={() => this.props.onOk({})}
-        type="button"
-      >
+        type="button">
         Cancel
       </button>
     )
@@ -348,8 +356,7 @@ class SaveDialog extends Component {
             isCleanStruct ||
             !this.props.server
           }
-          className={classes.ok}
-        >
+          className={classes.ok}>
           Save
         </SaveButton>
       )
@@ -364,8 +371,7 @@ class SaveDialog extends Component {
           server={this.props.server}
           onSave={this.props.onOk}
           disabled={disableControls || !formState.valid || isCleanStruct}
-          className={classes.ok}
-        >
+          className={classes.ok}>
           Save
         </SaveButton>
       )
@@ -381,7 +387,7 @@ class SaveDialog extends Component {
         params={this.props}
         buttons={this.getButtons()}
         needMargin={false}
-      >
+        withDivider={true}>
         {this.renderForm()}
       </Dialog>
     )

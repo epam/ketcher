@@ -247,7 +247,8 @@ class SaveDialog extends Component {
             filename,
             format: this.isRxn ? 'rxn' : 'mol'
           }}
-          {...formState}>
+          {...formState}
+        >
           <Field name="filename" />
           <Field
             name="format"
@@ -324,7 +325,8 @@ class SaveDialog extends Component {
         key="save-tmpl"
         className={classes.saveTmpl}
         disabled={disableControls || isCleanStruct || !isMoleculeContain}
-        onClick={() => this.props.onTmplSave(this.props.struct)}>
+        onClick={() => this.props.onTmplSave(this.props.struct)}
+      >
         Save to Templates
       </button>
     ]
@@ -335,7 +337,8 @@ class SaveDialog extends Component {
         mode="onCancel"
         className={classes.cancel}
         onClick={() => this.props.onOk({})}
-        type="button">
+        type="button"
+      >
         Cancel
       </button>
     )
@@ -356,7 +359,8 @@ class SaveDialog extends Component {
             isCleanStruct ||
             !this.props.server
           }
-          className={classes.ok}>
+          className={classes.ok}
+        >
           Save
         </SaveButton>
       )
@@ -371,7 +375,8 @@ class SaveDialog extends Component {
           server={this.props.server}
           onSave={this.props.onOk}
           disabled={disableControls || !formState.valid || isCleanStruct}
-          className={classes.ok}>
+          className={classes.ok}
+        >
           Save
         </SaveButton>
       )
@@ -387,7 +392,8 @@ class SaveDialog extends Component {
         params={this.props}
         buttons={this.getButtons()}
         needMargin={false}
-        withDivider={true}>
+        withDivider={true}
+      >
         {this.renderForm()}
       </Dialog>
     )

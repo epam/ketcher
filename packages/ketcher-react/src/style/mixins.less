@@ -410,54 +410,24 @@
 }
 
 .scrollbar {
-  &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-    background-color: rgba(@main-color, 0);
-    -webkit-border-radius: 100px;
-  }
-
-  &::-webkit-scrollbar:hover {
-    background-color: rgba(@main-color, 0.09);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(@main-color, 0.3);
-    -webkit-border-radius: 100px;
-  }
-
-  &::-webkit-scrollbar-thumb:active {
-    background: rgba(@main-color, 0.61);
-    -webkit-border-radius: 100px;
-  }
-
-  &::-webkit-scrollbar-thumb:vertical {
-    min-height: 10px;
-  }
-
-  &::-webkit-scrollbar-thumb:horizontal {
-    min-width: 10px;
-  }
-}
-
-.scrollbar_thin {
-  &::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
+  ::-webkit-scrollbar-track {
     background-color: transparent;
-    border-radius: 2px;
-    -webkit-border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar {
+    background-color: @color-primary-light;
+    width: 6px;
+    height: 6px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: @color-scroll;
-    border-radius: 2px;
-    -webkit-border-radius: 2px;
+    background-color: fade(@color-scroll, 85%);
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
   }
 
-  &::-webkit-scrollbar-thumb:active {
+  &::-webkit-scrollbar-thumb:active,
+  &::-webkit-scrollbar-thumb:hover {
     background-color: @color-scroll;
   }
-
-  scrollbar-width: thin; // mozilla
 }

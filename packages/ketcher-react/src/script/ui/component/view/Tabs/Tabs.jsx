@@ -33,9 +33,8 @@ class Tabs extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.tabIndex !== this.state.tabIndex) {
+    if (this.props.tabIndex !== prevProps.tabIndex) {
       this.setState({ tabIndex: this.props.tabIndex })
-      console.log(this.props)
     }
   }
 

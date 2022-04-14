@@ -224,7 +224,7 @@ To draw/edit bonds you can:
 - change a bond or its properties by double-clicking on the bond to
   invoke the Bond Properties dialog:
 
-  ![](images/bond-dialog.png 'Bond Properties') 
+<img src = images/19_bond_prop.png width = "300" title = "Bond Properties"/>
 
 - clicking on the drawn stereo and dative bonds change their direction.
 
@@ -244,7 +244,7 @@ Selecting the _R-Group_ _Label_ Tool (1) and clicking on an atom in the
 structure invokes the dialog to select the R-Group label for a current
 atom position in the structure:
 
-![](images/rgroup-dialog.png) 
+<img src = images/22_rtool.png width = "300"/> 
 
 Selecting the R-Group label and clicking **OK** converts the structure
 into a Markush structure with the selected R-Group label:
@@ -268,7 +268,7 @@ To create a set of R-Group members:
    the R-Group dialog; in this dialog select the label of the
    R-Group to assign the fragment to.
 
-3. Click on **OK** to convert the structure into an R-Group member.
+3. Click on **Apply** to convert the structure into an R-Group member.
 
 An R-Group attachment point is the atom in an R-Group member fragment
 that attaches the fragment to the initial Markush structure.
@@ -280,11 +280,11 @@ of them as primary and the other as secondary. You can select between
 either the primary or secondary attachment point using the dialog that
 appears after clicking on the atom:
 
-![](images/attpoints-dialog.png) 
+<img src = images/25_attach_point.png width = "300"/>  
 
 If there are two attachment points on an R-Group member, there must be
 two corresponding attachments (bonds) to the R-Group atom that has the
-same R-Group label. Clicking on **OK** in the above dialog creates the
+same R-Group label. Clicking on **Apply** in the above dialog creates the
 attachment point.
 
 Schematically, the entire process of the R-Group member creation can
@@ -307,7 +307,7 @@ the R-Group logic:
    appear, then click inside the fragment. The following dialog
    appears:
 
-   ![](images/rlogic-dialog.png) 
+   <img src = images/28_r_logic.png width = "300"/>  
 
 3. Specify **Occurrence** to define how many of an R-Group
    occurs. If an R-Group atom appears several times in the initial
@@ -330,7 +330,7 @@ To mark S-Groups, use the _S-Group tool_ ![](images/29_sgroup_icon.png) and the
 following dialog that appears after selecting a fragment with this
 tool:
 
-![](images/sgroup-dialog.png 'S-Group Dialog') 
+  <img src = images/30_sgroup.png width = "300"/>   
 
 Available S-Group types:
 
@@ -370,7 +370,7 @@ You can attach data to an atom, a fragment, a multifragment, a single bond, or a
 group. The defined set of _Names_ and _Values_ is introduced for each
 type of selected elements:
 
-![](images/sdata-dialog.png) 
+ <img src = images/31_1_datasgroup.png width = "300"/>
 
 - Select the appropriate S-Group Field Name.
 

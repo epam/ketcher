@@ -13,7 +13,7 @@ reactions. The application operates in two modes - Standalone and Remote:
 
 **Ketcher** consists of the following elements:
 
-![](images/main.png)
+![](images/1_overview.png)
 
 **Note** : Depending on the screen size, some tools on the _Tool
 palette_ can be displayed in expanded or collapsed forms.

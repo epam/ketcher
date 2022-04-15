@@ -21,13 +21,15 @@
   display: flex;
   white-space: nowrap;
 
-  form {
+  & div > form {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
     padding-top: 12px;
+  }
 
+  .labelEditInputField {
     label {
       text-align: center;
     }
@@ -35,30 +37,6 @@
     input {
       margin-left: 8px;
       min-width: 140px;
-    }
-  }
-
-  footer {
-    padding: 16px 12px 12px;
-
-    .okButton {
-      width: 82px;
-      height: 24px;
-      color: @color-text-light;
-      background-color: @color-primary;
-      border-radius: 4px;
-      border: 1px solid transparent;
-
-      &:hover,
-      &:active {
-        background-color: @color-button-primary-clicked;
-        border: 1px solid transparent;
-      }
-
-      &:disabled {
-        color: @color-button-secondary-hover;
-        background-color: @color-grey-3;
-      }
     }
   }
 }

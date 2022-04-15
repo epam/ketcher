@@ -202,9 +202,21 @@ To draw/edit bonds you can:
 - Click an arrow on the Bond tool ![](images/15_bond_icon.png) in the Tool palette
   to open the drop-down list with the following bond types:
 
-  ![](images/bonds.png) 
-
-  
+  ![](images/bond1.png) <br>
+  ![](images/bond2.png) <br>
+  ![](images/bond3.png) <br> <br>
+  ![](images/bond4.png) <br>
+  ![](images/bond5.png) <br>
+  ![](images/bond6.png) <br>
+  ![](images/bond7.png) <br> 
+  ![](images/bond8.png) <br> <br>
+  ![](images/bond9.png) <br>
+  ![](images/bond91.png) <br> <br>
+  ![](images/bond92.png) <br>
+  ![](images/bond93.png) <br>
+  ![](images/bond94.png) <br>
+  ![](images/bond95.png) <br>
+ 
     
 - select a bond type from the drop down list and click inside the
   drawing area; a bond of the selected type will be drawn;

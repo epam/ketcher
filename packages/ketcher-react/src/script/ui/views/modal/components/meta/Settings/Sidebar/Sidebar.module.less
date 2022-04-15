@@ -14,21 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../../../../../../../../../style/variables';
-
-@sidebar-width: 33.3%;
+@import 'src/style/variables';
+@import 'src/style/mixins';
 
 .sidebar {
   display: flex;
-  width: 100%;
 
   .tabs {
     background-color: @color-background-primary;
-    position: fixed;
-    bottom: 0;
-    top: 40px;
-    left: 0;
-    width: @sidebar-width;
+    flex: 0 0 33%;
     color: @color-text-primary;
 
     .tab {
@@ -49,7 +43,7 @@
       margin-right: 8px;
     }
 
-    .tab_active {
+    .active {
       background-color: @color-tab-active;
       color: @color-text-light;
     }
@@ -61,8 +55,9 @@
 
   .content {
     background-color: inherit;
-    margin-left: @sidebar-width;
+    flex:1;
     max-height: 260px;
-    width: 100%;
+
+    .scrollbar();
   }
 }

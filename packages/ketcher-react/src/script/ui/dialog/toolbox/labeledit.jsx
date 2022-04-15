@@ -70,17 +70,6 @@ function LabelEdit(props) {
   const { formState, onOk, ...prop } = props
   const { result, valid } = formState
 
-  const getButton = () => {
-    return [
-      <button
-        className={styles.okButton}
-        disabled={!valid}
-        onClick={() => onOk(result)}
-      >
-        Apply
-      </button>
-    ]
-  }
   return (
     <Dialog
       title="Label Edit"
@@ -88,7 +77,8 @@ function LabelEdit(props) {
       withDivider={true}
       result={() => deserialize(result.label)}
       className={styles.labelEdit}
-      buttons={getButton()}
+      buttons={['OK']}
+      buttonsNameMap={{ OK: 'Apply' }}
       params={prop}
     >
       <Form
@@ -97,7 +87,13 @@ function LabelEdit(props) {
         init={init}
         {...formState}
       >
-        <Field name="label" maxLength="20" size="10" autoFocus />
+        <Field
+          name="label"
+          maxLength="20"
+          size="10"
+          autoFocus
+          className={styles.labelEditInputField}
+        />
       </Form>
     </Dialog>
   )

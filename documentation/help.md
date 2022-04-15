@@ -577,14 +577,25 @@ either manually or from files:
 
 You can use the *Open…* and *Save As…* buttons of the _Main_
 toolbar to import a molecule from a molecular file or save it to a
-supported molecular file format. The _Open Structure_ dialog enables
+supported molecular file format. 
+
+The **_Open Structure_** dialog enables
 one to either browse for a file or manually input, e.g.
 the Molfile ctable for the molecule to be imported:
 
+<img src = images/45_1_openmenu.png width = "500"/>
+
+The text editor form is initiated for the text from the Clipboard and when the file is selected for opening. It allows to immediately edit the text representation before opening the structure:
+
 <img src = images/45_open_text.png width = "500"> 
 
+Ketcher suggests 2 ways for structure to be opened:
 
-The _Save Structure_ dialog enables one to save the molecular file:
+_Open as New Project_ will clear the canvas and position new structure on it. 
+_Add to Canvas_ will save the structure in the clipboard. Click on the canvas to place it. 
+
+
+The **_Save Structure_** dialog enables one to save the molecular file:
 
 ![](images/save.png) 
 

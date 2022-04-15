@@ -18,11 +18,18 @@
 @import '../../../../../../../style/variables.less';
 
 .recognize {
-  & > div {
-    margin: 0;
+  .footerContent {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    div {
+      display: flex;
+      gap: 8px;
+    }
   }
 
-  .change_version {
+  .imagoVersion {
     display: flex;
     flex-direction: column;
     grid-column-start: 2;
@@ -30,8 +37,14 @@
   }
 
   .openButton {
-    display: flex; 
+    .button-secondary();
+    
+    display: flex;
     align-items: center;
+
+    & > input {
+      display: none;
+    }
 
     & > svg {
       width: 16px;
@@ -102,27 +115,11 @@
     }
   }
 
-  .dialogButton {
-    margin-right: 2px;
-    margin-left: 10px;
-    text-align: center;
-    height: 24px;
-    float: right;
-    font-size: 12px;
-    line-height: 14px;
-    padding: 4px 8px;
-    border-radius: 6px;
-  }
-
   .primaryButton {
-    .button-main();
-    .dialogButton();
-    
-    background-color: @color-primary-green;
+    .button-primary();
   }
   
   .secondaryButton {
-    .dialogButton();
     .button-secondary();
   }
   

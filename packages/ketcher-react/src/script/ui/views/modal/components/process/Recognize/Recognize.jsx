@@ -38,6 +38,39 @@ function isImage(file) {
   return file?.type?.includes('image')
 }
 
+function FooterContent({ onImage, structStr, openHandler, copyHandler }) {
+  return (
+    <div className={classes.footerContent}>
+      <OpenButton
+        key="choose"
+        onLoad={onImage}
+        type="image/*"
+        className={classes.openButton}
+      >
+        <Icon name="open" />
+        <span>Change image</span>
+      </OpenButton>
+      <div>
+        <DialogActionButton
+          key="openButton"
+          disabled={!structStr}
+          clickHandler={openHandler}
+          styles={classes.secondaryButton}
+          label="Open as new Project"
+        />
+        <DialogActionButton
+          key="copyButton"
+          disabled={!structStr}
+          clickHandler={copyHandler}
+          styles={classes.primaryButton}
+          label="Add to Canvas"
+          title="Structure will be loaded as fragment and added to Clipboard"
+        />
+      </div>
+    </div>
+  )
+}
+
 function RecognizeDialog(prop) {
   const {
     file,
@@ -80,35 +113,19 @@ function RecognizeDialog(prop) {
       params={{ ...props, onOk }}
       result={() => result(structStr, fragment)}
       withDivider={true}
-      buttons={[
-        <OpenButton
-          key="choose"
-          onLoad={onImage}
-          type="image/*"
-          className={classes.openButton}
-        >
-          <Icon name="open" />
-          <span>Change image</span>
-        </OpenButton>,
-        <DialogActionButton
-          key="copyButton"
-          disabled={!structStr}
-          clickHandler={copyHandler}
-          styles={classes.primaryButton}
-          label="Add to Canvas"
-          title="Structure will be loaded as fragment and added to Clipboard"
-        />,
-        <DialogActionButton
-          key="openButton"
-          disabled={!structStr}
-          clickHandler={openHandler}
-          styles={classes.secondaryButton}
-          label="Open as new Project"
+      needMargin={false}
+      footerContent={
+        <FooterContent
+          onImage={onImage}
+          openHandler={openHandler}
+          structStr={structStr}
+          copyHandler={copyHandler}
         />
-      ]}
+      }
+      buttons={[]}
     >
       <div className={classes.topBody}>
-        <label className={classes.change_version}>
+        <label className={classes.imagoVersion}>
           Imago version
           <Input
             schema={{

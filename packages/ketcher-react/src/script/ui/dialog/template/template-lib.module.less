@@ -51,40 +51,12 @@
   & > div {
     display: flex;
     flex-direction: column;
-    margin: 0;
     overflow: hidden;
-  }
-
-  & > header, footer {
-    margin: 0;
   }
 
   & > footer {
     box-shadow: 0 -6px 6px 0 @shadow-color;
     z-index: 10;
-    padding: 16px 12px 12px;
-
-    & > input {
-      .button-main();
-      
-      width: auto;
-    }
-
-    & > button, input {
-      border-radius: 6px;
-    }
-  }
-
-  & > header {
-    padding: 11px 12px;
-
-    & > div {
-      button {
-        width: 16px;
-        height: 16px;
-        padding: 0;
-      }
-    }
   }
 
   .inputContainer {
@@ -139,6 +111,10 @@
   .resultsContainer {
     padding: 12px 14px 4px;
     background-color: @color-primary-light;
+  }
+
+  .saveButton {
+    .button-secondary();
   }
 
   /* stylelint-disable selector-pseudo-class-no-unknown, no-descending-specificity */

@@ -31,12 +31,12 @@ import { useCallback, useState } from 'react'
 import { Dialog } from '../../../components'
 import { DialogParams } from '../../../components/Dialog/Dialog'
 import { FontControl } from './FontControl'
+import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton'
 import { TextButton } from './TextButton'
 import { TextCommand } from 'ketcher-core'
 import classes from './Text.module.less'
 import { connect } from 'react-redux'
 import createStyles from 'draft-js-custom-styles'
-import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton'
 
 const { styles, customStyleFn } = createStyles(['font-size'])
 
@@ -150,10 +150,11 @@ const Text = (props: TextProps) => {
   return (
     <Dialog
       className="textEditor"
-      title="Text editor"
+      title="Text Editor"
       params={props}
       result={result}
       valid={() => formState.form.valid}
+      withDivider
     >
       <ul className={classes.controlPanel}>
         <FontControl

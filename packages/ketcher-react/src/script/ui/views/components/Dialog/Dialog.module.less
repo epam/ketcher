@@ -16,35 +16,7 @@
 
 @import '../../../../../style/mixins.less';
 
-
-.ok {
-  color: @color-text-light;
-  background-color: @color-primary-green;
-  border: 1px solid transparent;
-  margin-left: 8px;
-  .button-main();
-
-  &:hover,
-  &:active {
-    background-color: @color-button-primary-clicked;
-  }
-
-  &:disabled {
-    color: @color-button-secondary-hover;
-    background-color: @color-grey-3;
-  }
-}
-
-.withDivider {
-  header {
-    border-bottom: 1px solid @color-grey-3;
-    margin: 0 !important;
-    padding: 0 @padding-modal;
-    height: 36px;
-  }
-}
-
-.form {
+.dialog {
   outline: 0;
   position: relative;
   vertical-align: middle;
@@ -56,126 +28,71 @@
   background-color: @color-background-primary;
   border-radius: 8px;
   background-clip: padding-box;
-  overflow-y: auto;
-  overflow-x: auto;
   font-family: @Inter;
   color: @color-text-secondary;
   .transition-zoom;
+}
 
-  > * {
-    max-height: 65vh;
-  }
+.header {
+  display: flex;
+  align-items: center;
+  font-size: @font-size-header;
+  line-height: @line-height-header;
+  border-radius: 6px 6px 0 0;
+  color: @color-text-primary;
+  font-weight: 500;
+  padding: 12px;
 
-  header {
+  .btnContainer {
+    flex-grow: 1;
+    flex-direction: row;
     display: flex;
-    align-items: center;
-    font-size: @font-size-header;
-    line-height: @line-height-header;
-    border-radius: 6px 6px 0 0;
-    color: @color-text-primary;
-    font-weight: 500;
-
-    .btnContainer {
-      flex-grow: 1;
-      flex-direction: row;
-      display: flex;
-      align-items: flex-end;
-    }
-
-    .buttonTop {
-      background-color: transparent;
-      border: none;
-      margin-left: auto;
-      padding-right: 0;
-      align-self: center;
-
-      .closeButton {
-        height: 16px;
-        width: 16px;
-      }
-    }
+    align-items: flex-end;
   }
 
-  footer {
-    clear: both;
-    text-align: right;
-    max-height: 40px;
+  .buttonTop {
+    background-color: transparent;
+    border: none;
+    margin-left: auto;
+    padding-right: 0;
+    align-self: center;
 
-    button,
-    input[type='submit'],
-    input[type='reset'] {
-      .btn();
-
-      margin-left: 3px;
+    .closeButton {
+      height: 16px;
+      width: 16px;
     }
-
-    button,
-    .ok,
-    .cancel {
-      float: right;
-      height: 24px;
-      font-size: @font-size-regular;
-      line-height: @line-height-header;
-      border-radius: 4px;
-      padding: 5px 10px;
-    }
-
-    .ok {
-      color: @color-text-light;
-      background-color: @color-primary;
-      border: 1px solid transparent;
-      margin-left: 8px;
-
-      &:hover, &:active {
-        background-color: @color-button-primary-clicked;
-      }
-
-      &:disabled {
-        color: @color-button-secondary-hover;
-        background-color: @color-grey-3;
-      }
-    }
-
-    .cancel {
-      color: @color-text-secondary;
-      border: 1px solid @color-text-secondary;
-      background-color: @color-background-primary;
-
-      &:hover, &:active {
-        color: @color-button-secondary-hover;
-        border: 1px solid @color-button-secondary-hover;
-      }
-
-      &:disabled {
-        color: fade(@color-text-secondary, 70%);
-        border: 1px solid fade(@color-text-secondary, 70%);
-      }
-    }
-
-    button {
-      .button-secondary();
-
-      float: left;
-    }
-  }
-
-  .body {
-    font-size: @font-size-regular;
-    line-height: @line-height-regular;
-    .scrollbar_thin();
   }
 }
 
-.margin {
-  > header {
-    margin: @margin-top-bottom @margin-left-right;
-  }
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 12px;
+  gap: 12px;
+    
+    .ok {
+      .button-primary();
+    }
 
-  > div {
-    margin: 0 @margin-left-right;
-  }
+    .cancel {
+      .button-secondary();
+    }
+}
 
-  > footer {
-    margin: @margin-left-right;
-  }
+.withDivider {
+  border-bottom: 1px solid @color-grey-3;
+  margin: 0;
+  padding: 0 @padding-modal;
+  height: 36px;
+}
+
+.body {
+  font-size: @font-size-regular;
+  line-height: @line-height-regular;
+  overflow: auto;
+  .scrollbar();
+}
+
+.withMargin {
+  margin: 0 @margin-left-right;
 }

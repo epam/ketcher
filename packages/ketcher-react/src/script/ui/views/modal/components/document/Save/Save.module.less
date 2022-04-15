@@ -33,7 +33,6 @@
     flex-direction: column;
     width: @save-container-width-large;
     height: @save-container-height-large;
-    border-top: 1px solid @color-grey-3;
 
     .save {
       height: 32px;
@@ -54,7 +53,7 @@
     box-sizing: border-box;
     background-color: @color-primary-light;
 
-    .scrollbar_thin();
+    .scrollbar();
 
     .warningsContainer {
       display: flex;
@@ -113,14 +112,45 @@
     color: @color-text-primary;
     background-color: @color-primary-light;
     font-size: 12px;
-    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    border: none;
 
-    .scrollbar_thin();
+    .scrollbar();
+
+    &:hover,
+    &:active,
+    &:focus {
+      outline: none;
+      box-shadow: none;
+      border: none;
+    }
   }
 
-  .saveImageContainer {
-    width: @save-container-width-large;
-    height: @save-container-height-large;
+  .loadingCirclesContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    margin-top: 20%;
+  }
+
+  .imageContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+
+    img {
+      background-color: @color-background-primary;
+      height: 220px;
+      width: 220px;
+      padding: 5px;
+    }
   }
 
   footer {
@@ -155,21 +185,6 @@
       color: @color-grey-6;
       margin: 0;
       float: left;
-    }
-
-    .imageContainer {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-
-      img {
-        background-color: @color-background-primary;
-        height: 220px;
-        width: 220px;
-        padding: 5px;
-      }
     }
 
     .previewMessage {

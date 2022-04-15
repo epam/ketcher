@@ -33,6 +33,7 @@
     flex-direction: column;
     width: @save-container-width-large;
     height: @save-container-height-large;
+    overflow: hidden;
 
     .save {
       height: 32px;
@@ -42,14 +43,20 @@
       outline: none;
       padding-left: 12px;
     }
+
+    .tabs[tabindex='0'] {
+      a:nth-child(2) {
+        color: @error-color;
+      }
+    }
   }
 
   .warnings {
     max-height: 50px;
     flex-shrink: 0;
-    min-height: 232px;
-    padding: 2px 5px;
-    overflow: auto;
+    min-height: 220px;
+    padding: 12px;
+    overflow-x: auto;
     box-sizing: border-box;
     background-color: @color-primary-light;
 
@@ -57,17 +64,15 @@
 
     .warningsContainer {
       display: flex;
+      padding-bottom: 12px;
 
       .warningsArr {
         color: @color-text-primary;
         white-space: pre-line;
         word-break: break-word;
         font-size: 12px;
+        line-height: 14px;
       }
-    }
-
-    .warning {
-      .warning;
     }
   }
 
@@ -100,12 +105,16 @@
     }
   }
 
+  .previewBackground {
+    background-color: @color-primary-light;
+  }
+
   .previewArea {
     display: block;
-    min-height: 232px;
-    min-width: 430px;
+    min-height: 220px;
+    min-width: 428px;
     height: 100%;
-    overflow: auto;
+    overflow-x: auto;
     white-space: pre;
     cursor: text;
     resize: none;
@@ -115,6 +124,7 @@
     outline: none;
     box-shadow: none;
     border: none;
+    border-radius: 0;
 
     .scrollbar();
 
@@ -142,49 +152,68 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    width: 100%;
+    height: 220px;
+    width: 428px;
+    border-top: 1px solid @color-grey-3;
+    border-bottom: 1px solid @color-grey-3;
 
     img {
       background-color: @color-background-primary;
-      height: 220px;
-      width: 220px;
-      padding: 5px;
+      height: 219px;
+      width: 219px;
     }
   }
 
   footer {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-end;
-    margin: 12px;
+    .ok,
+    .cancel {
+      width: 82px;
+      height: 24px;
+    }
 
     .ok {
       .button-main();
 
-      border: none;
-      margin-left: 10px;
-      float: right;
-      padding-left: 12px;
-      padding-right: 12px;
+      color: @color-text-light;
       background-color: @color-primary;
+      border-radius: 4px;
+      border: 1px solid transparent;
+
+      &:hover,
+      &:active {
+        background-color: @color-button-primary-clicked;
+      }
+
+      &:disabled {
+        color: @color-button-secondary-hover;
+        background-color: @color-grey-3;
+      }
     }
 
-    .cancel {
-      background: @color-background-primary;
-      color: @color-grey-6;
-      margin-left: auto;
-      float: right;
-      padding-left: 12px;
-      padding-right: 12px;
+    .cancel,
+    .saveTmpl {
+      border-radius: 4px;
+      color: @color-text-secondary;
+      border: 1px solid @color-text-secondary;
+      background-color: @color-background-primary;
+
+      &:hover,
+      &:active {
+        color: @color-button-secondary-hover;
+        border: 1px solid @color-button-secondary-hover;
+      }
+
+      &:disabled {
+        color: fade(@color-text-secondary, 70%);
+        border: 1px solid fade(@color-text-secondary, 70%);
+      }
     }
 
     .saveTmpl {
-      background: @color-background-primary;
+      word-wrap: normal;
       color: @color-grey-6;
-      margin: 0;
-      float: left;
+      margin-right: auto;
+      padding: 2px 8px;
     }
 
     .previewMessage {

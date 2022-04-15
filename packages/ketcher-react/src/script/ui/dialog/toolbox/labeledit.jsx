@@ -21,6 +21,7 @@ import { Elements } from 'ketcher-core'
 import { capitalize } from 'lodash/fp'
 import { connect } from 'react-redux'
 import { labelEdit as labelEditSchema } from '../../data/schema/struct-schema'
+import styles from './labelEdit.module.less'
 
 function serialize(lc) {
   const charge = Math.abs(lc.charge)
@@ -66,14 +67,28 @@ function deserialize(value) {
 
 function LabelEdit(props) {
   const init = { label: props.letter || serialize(props) }
-  const { formState, ...prop } = props
+  const { formState, onOk, ...prop } = props
   const { result, valid } = formState
+
+  const getButton = () => {
+    return [
+      <button
+        className={styles.okButton}
+        disabled={!valid}
+        onClick={() => onOk(result)}
+      >
+        Apply
+      </button>
+    ]
+  }
   return (
     <Dialog
       title="Label Edit"
-      className="labeledit"
       valid={() => valid}
+      withDivider={true}
       result={() => deserialize(result.label)}
+      className={styles.labelEdit}
+      buttons={getButton()}
       params={prop}
     >
       <Form

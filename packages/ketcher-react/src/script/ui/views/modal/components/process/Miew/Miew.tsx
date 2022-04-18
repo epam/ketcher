@@ -144,7 +144,7 @@ const MiewDialog = ({
       needMargin={false}
       params={prop}
       buttons={[
-        'Close',
+        'Cancel',
         <button key="apply" onClick={exportCML} className={classes.applyButton}>
           Apply
         </button>

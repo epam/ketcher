@@ -389,7 +389,6 @@ class SaveDialog extends Component {
     return (
       <Dialog
         title="Save Structure"
-        className={classes.save}
         params={this.props}
         buttons={this.getButtons()}
         needMargin={false}

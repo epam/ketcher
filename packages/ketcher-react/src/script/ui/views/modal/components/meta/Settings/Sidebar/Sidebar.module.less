@@ -19,6 +19,7 @@
 
 .sidebar {
   display: flex;
+  height: 290px;
 
   .tabs {
     background-color: @color-background-primary;
@@ -29,7 +30,7 @@
       cursor: default;
       display: flex;
       font-size: 14px;
-      line-height: 17px;
+      line-height: 18px;
       border-bottom: 1px solid @color-divider;
 
       &:last-of-type {
@@ -55,8 +56,8 @@
 
   .content {
     background-color: inherit;
-    flex:1;
-    max-height: 260px;
+    flex: 1;
+    overflow: auto;
 
     .scrollbar();
   }

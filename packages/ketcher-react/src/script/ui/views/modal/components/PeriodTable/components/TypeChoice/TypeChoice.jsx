@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import classes from './TypeChoice.module.less'
+import { GenericInput } from 'src/script/ui/component/form/input'
 
 const typeSchema = [
   { title: 'Single', value: 'atom' },
@@ -27,14 +28,13 @@ function TypeChoice({ value, onChange, ...props }) {
     <fieldset className={classes.fieldset}>
       {typeSchema.map((type) => (
         <label key={type.title}>
-          <input
+          <GenericInput
             type="radio"
             value={type.value}
             checked={type.value === value}
             onChange={() => onChange(type.value)}
             {...props}
           />
-          <span className={classes.customRadio} />
           {type.title}
         </label>
       ))}

@@ -10,7 +10,7 @@
     opacity: 0;
   }
 
-  input[type='checkbox'] + .customCheckbox {
+  input[type='checkbox'] + .checkbox {
     display: inline-block;
     width: 16px;
     height: 16px;
@@ -21,15 +21,15 @@
     background-size: 100%;
   }
 
-  input[type='checkbox']:hover + .customCheckbox {
+  input[type='checkbox']:hover + .checkbox {
     background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.75' y='0.75' width='14.5' height='14.5' rx='3.25' fill='white' stroke='%2343B5C0' stroke-width='1.5'/%3E%3C/svg%3E%0A");
   }
 
-  input[type='checkbox']:checked + .customCheckbox {
+  input[type='checkbox']:checked + .checkbox {
     background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='16' height='16' rx='4' fill='%23167782'/%3E%3Cpath d='M6.33711 11.8079L2.42578 7.63124L3.39911 6.71991L6.36845 9.89124L12.6171 3.64258L13.5598 4.58524L6.33711 11.8079Z' fill='white'/%3E%3C/svg%3E%0A");
   }
 
-  input[type='radio'] + .customRadio {
+  input[type='radio'] + .radioButton {
     display: inline-block;
     width: 16px;
     height: 16px;
@@ -40,15 +40,15 @@
     background-size: 100%;
   }
 
-  input[type='radio']:checked + .customRadio {
+  input[type='radio']:checked + .radioButton {
     background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='@{color-input}' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input}' stroke-width='2'/%3E%3Ccircle cx='8' cy='8' r='4' fill='@{color-input}'/%3E%3C/svg%3E%0A");
   }
 
-  input[type='radio']:disabled + .customRadio {
+  input[type='radio']:disabled + .radioButton {
     background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-disabled}' stroke-width='2' /%3E%3C/svg%3E%0A");
   }
 
-  input[type='radio']:checked:disabled + .customRadio {
+  input[type='radio']:checked:disabled + .radioButton {
     background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='@{color-input-disabled}' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-disabled}' stroke-width='2'/%3E%3Ccircle cx='8' cy='8' r='4' fill='@{color-input-disabled}'/%3E%3C/svg%3E%0A");
   }
 

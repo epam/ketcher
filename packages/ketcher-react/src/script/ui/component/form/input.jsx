@@ -37,8 +37,8 @@ export function GenericInput({
         className={classes.input}
         {...props}
       />
-      {type === 'checkbox' && <span className={classes.customCheckbox} />}
-      {type === 'radio' && <span className={classes.customRadio} />}
+      {type === 'checkbox' && <span className={classes.checkbox} />}
+      {type === 'radio' && <span className={classes.radioButton} />}
     </>
   )
 }
@@ -70,7 +70,7 @@ function CheckBox({ schema, value = '', onChange, ...rest }) {
         onChange={onChange}
         {...rest}
       />
-      <span className={classes.customCheckbox} />
+      <span className={classes.checkbox} />
     </div>
   )
 }
@@ -138,8 +138,8 @@ function FieldSet({
               value={typeof val !== 'object' && val}
               {...rest}
             />
-            {type === 'checkbox' && <span className={classes.customCheckbox} />}
-            {type === 'radio' && <span className={classes.customRadio} />}
+            {type === 'checkbox' && <span className={classes.checkbox} />}
+            {type === 'radio' && <span className={classes.radioButton} />}
             {title}
           </label>
         </li>

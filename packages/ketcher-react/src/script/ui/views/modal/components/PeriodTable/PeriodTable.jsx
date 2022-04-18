@@ -20,9 +20,9 @@ import {
   GenericGroups,
   TypeChoice
 } from './components'
-import { Component } from 'react'
 import { fromElement, toElement } from '../../../../data/convert/structconv'
 
+import { Component } from 'react'
 import { Dialog } from '../../../components'
 import { Elements } from 'ketcher-core'
 import Tabs from '../../../../component/view/Tabs'
@@ -127,19 +127,6 @@ class Table extends Component {
     )
   }
 
-  getButton = () => {
-    const result = this.result()
-    return [
-      <button
-        className={classes.addAtom}
-        disabled={!result}
-        onClick={() => this.props.onOk(result)}
-      >
-        Add
-      </button>
-    ]
-  }
-
   render() {
     const { type, value } = this.state
     const tabs = [
@@ -164,7 +151,8 @@ class Table extends Component {
         className={classes.elementsTable}
         params={this.props}
         result={this.result}
-        buttons={this.getButton()}
+        buttons={['OK']}
+        buttonsNameMap={{ OK: 'Add' }}
         needMargin={false}
       >
         <Tabs

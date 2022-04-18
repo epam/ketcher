@@ -22,9 +22,9 @@ import {
 } from '../../data/schema/sdata-schema'
 
 import { Dialog } from '../../views/components'
+import Select from '../../component/form/Select'
 import classes from './sgroup.module.less'
 import { connect } from 'react-redux'
-import Select from '../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../utils'
 
 function SelectInput({ title, name, schema, ...prop }) {
@@ -92,7 +92,7 @@ function SData({
       className={classes.sgroup}
       result={() => result}
       valid={() => valid}
-      buttons={['OK', 'Cancel']}
+      buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: 'Apply' }}
       params={prop}
     >

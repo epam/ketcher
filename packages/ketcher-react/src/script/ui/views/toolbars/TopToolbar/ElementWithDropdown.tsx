@@ -45,12 +45,38 @@ const DropDownButton = styled(IconButton)`
   padding: 0;
   right: 0;
   bottom: 0;
+
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background-color: initial;
+    color: #333;
+    pointer-events: auto;
+  }
 `
 
 const DropDownArrow = styled(Icon)`
   display: block;
   width: 7px;
   height: 7px;
+  margin: 1px;
+
+  &:hover {
+    fill: #005662;
+    transform: none;
+    box-shadow: none;
+    transition: none;
+    background: none;
+  }
+
+  &svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  &svg path {
+    fill: inherit;
+  }
 `
 
 interface ElementWithDropdownProps {
@@ -75,8 +101,11 @@ export const ElementWithDropdown = ({
   return (
     <ElementAndDropdown>
       {topElement}
-      <DropDownButton onClick={expand}>
-        <DropDownArrow name="dropdown" />
+      <DropDownButton
+        onClick={expand}
+        className={`expanded ${topElement.props.disabled ? 'disabled' : ''}`}
+      >
+        {!isExpanded && <DropDownArrow name="dropdown" />}
       </DropDownButton>
       <Collapse in={isExpanded} timeout="auto" onClick={collapse} unmountOnExit>
         <ClickAwayListener onClickAway={collapse}>

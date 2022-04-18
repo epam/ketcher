@@ -115,6 +115,25 @@ const HeaderContent = () => (
   </div>
 )
 
+const FooterContent = ({ data, tab }) => (
+  <div style={{ flexGrow: 1 }}>
+    <SaveButton
+      key="save-to-SDF"
+      data={data}
+      className={classes.saveButton}
+      filename={
+        tab === TemplateTabs.TemplateLibrary
+          ? 'ketcher-tmpls.sdf'
+          : 'ketcher-fg-tmpls.sdf'
+      }
+    >
+      {tab === TemplateTabs.TemplateLibrary
+        ? 'Save template library to SDF'
+        : 'Save functional groups to SDF'}
+    </SaveButton>
+  </div>
+)
+
 const TemplateDialog: FC<Props> = (props) => {
   const {
     filter,
@@ -181,26 +200,13 @@ const TemplateDialog: FC<Props> = (props) => {
   return (
     <Dialog
       headerContent={<HeaderContent />}
+      footerContent={<FooterContent tab={tab} data={data} />}
       className={`${classes.dialog_body}`}
       params={omit(['group'], rest)}
       result={() => result()}
-      buttons={[
-        <SaveButton
-          key="save-to-SDF"
-          data={data}
-          filename={
-            tab === TemplateTabs.TemplateLibrary
-              ? 'ketcher-tmpls.sdf'
-              : 'ketcher-fg-tmpls.sdf'
-          }
-        >
-          {tab === TemplateTabs.TemplateLibrary
-            ? 'Save template library to SDF'
-            : 'Save functional groups to SDF'}
-        </SaveButton>,
-        'OK'
-      ]}
+      buttons={['OK']}
       buttonsNameMap={{ OK: 'Add to canvas' }}
+      needMargin={false}
     >
       <div className={classes.inputContainer}>
         <Input

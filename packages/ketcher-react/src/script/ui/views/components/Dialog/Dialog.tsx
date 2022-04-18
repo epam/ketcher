@@ -40,6 +40,7 @@ interface DialogProps {
   needMargin?: boolean
   withDivider?: boolean
   headerContent?: ReactElement
+  footerContent?: ReactElement
   buttonsNameMap?: {
     [key in string]: string
   }
@@ -61,6 +62,7 @@ const Dialog: FC<Props> = (props) => {
     valid = () => !!result(),
     buttons = ['OK'],
     headerContent,
+    footerContent,
     className,
     buttonsNameMap,
     buttonsTop,
@@ -114,16 +116,12 @@ const Dialog: FC<Props> = (props) => {
       onSubmit={(event) => event.preventDefault()}
       onKeyDown={keyDown}
       tabIndex={-1}
-      className={clsx(
-        styles.form,
-        className,
-        needMargin && styles.margin,
-        withDivider && styles.withDivider,
-        params.className
-      )}
+      className={clsx(styles.dialog, className, params.className)}
       {...rest}
     >
-      <header>
+      <header
+        className={clsx(styles.header, withDivider && styles.withDivider)}
+      >
         {headerContent || <span>{title}</span>}
         <div className={styles.btnContainer}>
           {buttonsTop && buttonsTop.map((button) => button)}
@@ -132,31 +130,35 @@ const Dialog: FC<Props> = (props) => {
           </button>
         </div>
       </header>
-      <div className={clsx(styles.dialog_body, styles.body)}>{children}</div>
+      <div className={clsx(styles.body, needMargin && styles.withMargin)}>
+        {children}
+      </div>
 
-      {buttons.length > 0 && (
-        <footer>
-          {buttons.map((button) =>
-            typeof button !== 'string' ? (
-              button
-            ) : (
-              <input
-                key={button}
-                type="button"
-                className={clsx(
-                  isButtonOk(button) ? styles.ok : styles.cancel,
-                  button === 'Save' && styles.save
-                )}
-                value={
-                  buttonsNameMap && buttonsNameMap[button]
-                    ? buttonsNameMap[button]
-                    : button
-                }
-                disabled={isButtonOk(button) && !valid()}
-                onClick={() => exit(button)}
-              />
-            )
-          )}
+      {(footerContent || buttons.length > 0) && (
+        <footer className={styles.footer}>
+          {footerContent}
+          {buttons.length > 0 &&
+            buttons.map((button) =>
+              typeof button !== 'string' ? (
+                button
+              ) : (
+                <input
+                  key={button}
+                  type="button"
+                  className={clsx(
+                    isButtonOk(button) ? styles.ok : styles.cancel,
+                    button === 'Save' && styles.save
+                  )}
+                  value={
+                    buttonsNameMap && buttonsNameMap[button]
+                      ? buttonsNameMap[button]
+                      : button
+                  }
+                  disabled={isButtonOk(button) && !valid()}
+                  onClick={() => exit(button)}
+                />
+              )
+            )}
         </footer>
       )}
     </div>

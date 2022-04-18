@@ -20,25 +20,24 @@ import {
   setDefaultSettings,
   updateFormState
 } from '../../../../../state/modal/form'
+import { useEffect, useState } from 'react'
 
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker'
 import { Dialog } from '../../../../components'
+import Icon from '../../../../../component/view/icon'
 import MeasureInput from '../../../../../component/form/MeasureInput/measure-input'
 import OpenButton from '../../../../../component/view/openbutton'
 import SaveButton from '../../../../../component/view/savebutton'
+import Select from '../../../../../component/form/Select'
+import Sidebar from './Sidebar'
 import { StructService } from 'ketcher-core'
 import SystemFonts from '../../../../../component/form/systemfonts'
 import classes from './Settings.module.less'
+import clsx from 'clsx'
 import { connect } from 'react-redux'
+import { getSelectOptionsFromSchema } from '../../../../../utils'
 import { saveSettings } from '../../../../../state/options'
 import settingsSchema from '../../../../../data/schema/options-schema'
-import { storage } from '../../../../../storage-ext'
-import Sidebar from './components/Sidebar'
-import Icon from '../../../../../component/view/icon'
-import clsx from 'clsx'
-import Select from '../../../../../component/form/Select'
-import { getSelectOptionsFromSchema } from '../../../../../utils'
-import { useEffect, useState } from 'react'
 
 interface SettingsProps extends BaseProps {
   initState: any
@@ -241,6 +240,8 @@ const SettingsDialog = (props: Props) => {
       valid={() => formState.valid}
       params={prop}
       buttons={['Save']}
+      withDivider
+      needMargin={false}
       buttonsTop={[
         <OpenButton
           key="settings"
@@ -270,10 +271,6 @@ const SettingsDialog = (props: Props) => {
     >
       <Form schema={settingsSchema} init={initState} {...formState}>
         <Sidebar tabs={tabs} className={classes.sidebar} />
-
-        {!storage.isAvailable() ? (
-          <div className={classes.warning}>{storage.warningMessage}</div>
-        ) : null}
       </Form>
     </Dialog>
   )

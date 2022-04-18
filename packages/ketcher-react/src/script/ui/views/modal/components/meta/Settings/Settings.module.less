@@ -16,45 +16,17 @@
 
 @import '../../../../../../../style/variables.less';
 
-@fieldset-inputs-number: 4;
-@server-inputs-number: 5;
-@viewer-inputs-number: 3;
-@general-inputs-number: 7;
-@stereochemistry-inputs-number: 11;
-
-@field-height: 24px;
-
 .settings {
   width: @width-large;
-  height: 357px;
-  background-color: @color-background-canvas;
-
-  > header + div {
-    height: 270px;
-    margin-right: @margin-left-right;
-  }
-
-  > header {
-    margin: @margin-top-bottom @margin-left-right;
-  }
-
-  > footer {
-    margin: @margin-left-right @margin-left-right @margin-top-bottom @margin-left-right;
-  }
-
-  > * {
-    margin: 0;
-  }
-
-  .warning {
-    margin: 0.3em;
-  }
 }
 
 .button {
   background-color: transparent;
   border: none;
   color: @color-icon-active;
+  margin: 0 8px 0 0;
+  padding: 0;
+  height: 14px;
 
   &:hover {
     color: @color-icon-hover;
@@ -66,6 +38,8 @@
 }
 
 .buttonOpen {
+  margin-left: 12px;
+
   > input {
     display: none;
   }
@@ -77,7 +51,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    padding: 2px 28px 0;
+    padding: 8px 28px 0;
   }
 
   ul {
@@ -88,7 +62,7 @@
 
   select,
   input {
-    border-radius: 2px;
+    border-radius: 4px;
     color: @color-select-border;
     height: inherit;
     margin: 0;
@@ -108,12 +82,12 @@
     line-height: 20px;
     margin-bottom: 16px;
     color: @color-text-primary;
-    height: @field-height;
+    height: 24px;
 
     > select,
     > input,
     > div {
-      width: 127px;
+      width: 128px;
     }
 
     > span {

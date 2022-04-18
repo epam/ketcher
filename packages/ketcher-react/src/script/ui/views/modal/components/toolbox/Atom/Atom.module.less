@@ -15,51 +15,98 @@
  ***************************************************************************/
 
 // stylelint-disable selector-pseudo-class-no-unknown
+@import '../../../../../../../style/variables.less';
+@import '../../../../../../../style/mixins.less';
+
 .atomProps {
-  fieldset {
-    margin-top: 1.5em;
+  width: @width-x-small;
+  display: flex;
+  justify-content: space-between;
 
-    label {
-      margin: 0.3em 0;
-        display: flex;
-        flex-wrap: nowrap;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
+  :global(.MuiOutlinedInput-root), input[type='text'] {
+    margin-top: 4px;
+  }
+  
+  > header {
+    flex-shrink: 0;
+  }
 
-      > input {
-        width: 8em;
-        height: 32px;
-        display: flex;
-        align-items: center;
-      }
-    }
+  > div {
+    margin: 0;
+    background-color: @color-primary-light;
+    overflow: hidden;
+    flex-grow: 1;
+  }
 
-    > legend {
-      padding: 0 0.4em;
-    }
-
-    :global(.MuiOutlinedInput-root .MuiSelect-select) {
-      width: 8em;
-      height: 32px;
-      line-height: 32px;
+  > footer {
+    input {
+      min-width: 68px !important;
     }
   }
 
-  .main {
-    width: 14.5em;
-    float: left;
-    border: none;
+  :global(.MuiAccordionDetails-root) {
+    padding: @padding-modal;
+    background-color: @color-primary-light;
   }
 
-  .query,
-  .reaction {
-    float: right;
-    clear: right;
-    width: 16em;
+  :global(.MuiPaper-root.MuiAccordion-root) {
+    box-shadow: none;
+    margin: 0;
+  }
 
-    input[type='checkbox'] {
-      margin: 0.6em 0.3em;
+  :global(.MuiPaper-root.MuiAccordion-root::before) {
+    opacity: 0;
+  }
+
+  :global(.MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters) {
+  margin: 0;
+  padding: 0 @padding-modal;
+  flex-direction: row;
+  font-size: 12px;
+  line-height: 14px;
+  min-height: 26px;
+  height: 26px;
+  color: @color-text-primary;
+  font-weight: 400;
+  border-bottom: 1px solid @color-grey-3; 
+  }
+  
+  :global(.MuiButtonBase-root.MuiAccordionSummary-root.Mui-expanded) {
+    border-bottom: none;
+  }
+
+
+  :global(.MuiPaper-root.MuiAccordion-root.Mui-expanded::before) {
+    opacity: 0;
+  }
+}
+
+.expandIcon {
+  width: 20px;
+}
+
+.accordionDetails {
+  height: 206px;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: @margin-top-bottom;
+    color: @color-text-secondary;
+  
+    &.checkbox {
+      margin-bottom: @margin-top-bottom * 2;
+      flex-direction: row;
     }
   }
+}
+
+.propertiesRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+   > label {
+     width: 94px;
+   }
 }

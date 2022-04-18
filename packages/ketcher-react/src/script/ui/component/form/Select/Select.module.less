@@ -20,8 +20,8 @@
 // stylelint-disable no-descending-specificity
 .dropdownList {
   :global(.MuiPaper-root) {
-    border-radius: 4px;
-    box-shadow: 0 6px 10px rgba(103, 104, 132, 0.15);
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 6px 10px @color-select-box-shadow;
   }
 
   :global(.MuiMenuItem-root) {
@@ -29,8 +29,14 @@
     font-family: @Inter;
     font-size: @font-size-regular;
     padding: 0 8px;
-    min-height: 24px;
+    min-height: 28px;
     cursor: default;
+
+    &:hover {
+      padding-left: 6px;
+      border-left: 2px solid #167782;
+      background-color: @color-select-background;
+    }
   }
 
   :global(.MuiList-root.MuiMenu-list) {
@@ -39,17 +45,10 @@
     box-shadow: none;
 
     :global(.Mui-selected) {
-      background-color: transparent;
-      display: flex;
-      justify-content: space-between;
+      background-color: @color-background-primary;
 
-      &::after {
-        content: '';
-        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.33997 6.80349L6.39998 9.85683L12.6635 3.59998L13.6035 4.53998L6.39998 11.7435L2.39999 7.74349L3.33997 6.80349Z' fill='%23005662'/%3E%3C/svg%3E");
-        width: 16px;
-        height: 16px;
-        background-repeat: no-repeat;
-        display: inline-block;
+      &:hover {
+        background-color: @color-select-background;
       }
     }
   }
@@ -58,11 +57,11 @@
 .selectContainer {
   :global(.MuiOutlinedInput-root .MuiSelect-select) {
     width: 100%;
-    height: 100%;
+    height: 24px;
     box-shadow: none;
     border-radius: 4px;
     min-height: 24px;
-    border: 1px solid @border-color;
+    border: 1px solid @color-border-input;
     background-color: @color-background-primary;
     color: @color-text-primary;
     font-family: @Inter;
@@ -70,6 +69,14 @@
     padding: 0 8px;
     cursor: default;
     box-sizing: border-box;
+
+    &:hover {
+      border: 1.5px solid @color-input-hover;
+    }
+  }
+
+  :global(.Mui-focused .MuiSelect-select) {
+    border-color: @color-primary;
   }
 
   :global(.MuiOutlinedInput-notchedOutline) {

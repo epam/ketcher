@@ -27,6 +27,10 @@ import { capitalize } from 'lodash/fp'
 import classes from './Atom.module.less'
 import Select from '../../../../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
+import Accordion from '@mui/material/Accordion'
+import AccordionSummary from '@mui/material/AccordionSummary'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import Icon from '../../../../../component/view/icon'
 
 interface AtomProps extends BaseProps {
   alias: string
@@ -51,49 +55,49 @@ const atomProps = atomSchema.properties
 const Atom: FC<Props> = (props) => {
   const { formState, stereoParity, ...rest } = props
   const [currentLabel, setCurrentLabel] = useState<string>(rest.label)
+  const [expandedAccordion, setExpandedAccordion] = useState<string>('General')
+
+  const handleAccordionChange = (accordion) => () =>
+    setExpandedAccordion(accordion)
 
   const onLabelChangeCallback = useCallback((newValue) => {
     setCurrentLabel(newValue)
   }, [])
 
-  return (
-    <Dialog
-      title="Atom Properties"
-      className={classes.atomProps}
-      result={() => formState.result}
-      valid={() => formState.valid}
-      buttons={['Cancel', 'OK']}
-      buttonsNameMap={{ OK: 'Apply' }}
-      params={rest}
-    >
-      <Form
-        schema={atomSchema}
-        customValid={{
-          label: (label) => atomValid(label),
-          charge: (charge) => chargeValid(charge)
-        }}
-        init={rest}
-        {...formState}
-      >
-        <fieldset className={classes.main}>
-          <Field name="label" onChange={onLabelChangeCallback} autoFocus />
+  const itemGroups = [
+    {
+      groupName: 'General',
+      component: (
+        <>
+          <div className={classes.propertiesRow}>
+            <Field name="label" onChange={onLabelChangeCallback} autoFocus />
+            <ElementNumber label={currentLabel} />
+          </div>
           <Field name="alias" />
-          <ElementNumber label={currentLabel} />
-          <Field name="charge" maxLength="5" />
-          <Field
-            name="explicitValence"
-            component={Select}
-            options={getSelectOptionsFromSchema(atomProps.explicitValence)}
-          />
-          <Field name="isotope" />
-          <Field
-            name="radical"
-            component={Select}
-            options={getSelectOptionsFromSchema(atomProps.radical)}
-          />
-        </fieldset>
-        <fieldset className={classes.query}>
-          <legend>Query specific</legend>
+          <div className={classes.propertiesRow}>
+            <Field name="charge" maxLength="5" />
+            <Field name="isotope" />
+          </div>
+          <div className={classes.propertiesRow}>
+            <Field
+              name="explicitValence"
+              component={Select}
+              options={getSelectOptionsFromSchema(atomProps.explicitValence)}
+            />
+
+            <Field
+              name="radical"
+              component={Select}
+              options={getSelectOptionsFromSchema(atomProps.radical)}
+            />
+          </div>
+        </>
+      )
+    },
+    {
+      groupName: 'Query specific',
+      component: (
+        <>
           <Field
             name="ringBondCount"
             component={Select}
@@ -109,17 +113,80 @@ const Atom: FC<Props> = (props) => {
             component={Select}
             options={getSelectOptionsFromSchema(atomProps.substitutionCount)}
           />
-          <Field name="unsaturatedAtom" />
-        </fieldset>
-        <fieldset className={classes.reaction}>
-          <legend>Reaction flags</legend>
+          <Field
+            name="unsaturatedAtom"
+            labelPos="after"
+            className={classes.checkbox}
+          />
+        </>
+      )
+    },
+    {
+      groupName: 'Reaction flags',
+      component: (
+        <>
           <Field
             name="invRet"
             component={Select}
             options={getSelectOptionsFromSchema(atomProps.invRet)}
           />
-          <Field name="exactChangeFlag" />
-        </fieldset>
+          <Field
+            name="exactChangeFlag"
+            labelPos="after"
+            className={classes.checkbox}
+          />
+        </>
+      )
+    }
+  ]
+
+  return (
+    <Dialog
+      title="Atom Properties"
+      className={classes.atomProps}
+      result={() => formState.result}
+      valid={() => formState.valid}
+      params={rest}
+      buttonsNameMap={{ OK: 'Apply' }}
+      buttons={['Cancel', 'OK']}
+      withDivider
+    >
+      <Form
+        schema={atomSchema}
+        customValid={{
+          label: (label) => atomValid(label),
+          charge: (charge) => chargeValid(charge)
+        }}
+        init={rest}
+        {...formState}
+      >
+        {itemGroups.map(({ groupName, component }) => {
+          const shouldGroupBeRended = expandedAccordion === groupName
+          return (
+            <Accordion
+              square={true}
+              key={groupName}
+              onChange={handleAccordionChange(groupName)}
+              expanded={shouldGroupBeRended}
+              classes={{
+                root: classes.accordion,
+                expanded: classes.expandedAccordion
+              }}
+            >
+              <AccordionSummary
+                className={classes.accordionSummary}
+                expandIcon={
+                  <Icon className={classes.expandIcon} name="chevron" />
+                }
+              >
+                {groupName}
+              </AccordionSummary>
+              <AccordionDetails className={classes.accordionDetails}>
+                {component}
+              </AccordionDetails>
+            </Accordion>
+          )
+        })}
       </Form>
     </Dialog>
   )

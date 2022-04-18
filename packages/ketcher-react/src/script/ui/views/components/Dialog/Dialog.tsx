@@ -40,6 +40,7 @@ interface DialogProps {
   needMargin?: boolean
   withDivider?: boolean
   headerContent?: ReactElement
+  footerContent?: ReactElement
   buttonsNameMap?: {
     [key in string]: string
   }
@@ -61,6 +62,7 @@ const Dialog: FC<Props> = (props) => {
     valid = () => !!result(),
     buttons = ['OK'],
     headerContent,
+    footerContent,
     className,
     buttonsNameMap,
     buttonsTop,
@@ -132,29 +134,31 @@ const Dialog: FC<Props> = (props) => {
         {children}
       </div>
 
-      {buttons.length > 0 && (
+      {(footerContent || buttons.length > 0) && (
         <footer className={styles.footer}>
-          {buttons.map((button) =>
-            typeof button !== 'string' ? (
-              button
-            ) : (
-              <input
-                key={button}
-                type="button"
-                className={clsx(
-                  isButtonOk(button) ? styles.ok : styles.cancel,
-                  button === 'Save' && styles.save
-                )}
-                value={
-                  buttonsNameMap && buttonsNameMap[button]
-                    ? buttonsNameMap[button]
-                    : button
-                }
-                disabled={isButtonOk(button) && !valid()}
-                onClick={() => exit(button)}
-              />
-            )
-          )}
+          {footerContent}
+          {buttons.length > 0 &&
+            buttons.map((button) =>
+              typeof button !== 'string' ? (
+                button
+              ) : (
+                <input
+                  key={button}
+                  type="button"
+                  className={clsx(
+                    isButtonOk(button) ? styles.ok : styles.cancel,
+                    button === 'Save' && styles.save
+                  )}
+                  value={
+                    buttonsNameMap && buttonsNameMap[button]
+                      ? buttonsNameMap[button]
+                      : button
+                  }
+                  disabled={isButtonOk(button) && !valid()}
+                  onClick={() => exit(button)}
+                />
+              )
+            )}
         </footer>
       )}
     </div>

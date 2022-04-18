@@ -15,6 +15,7 @@
  ***************************************************************************/
 import { BaseCallProps, BaseProps } from '../../../modal.types'
 import Form, { Field } from '../../../../../component/form/form/form'
+
 import { Dialog } from '../../../../components'
 import IfThenSelect from './components'
 import classes from './RgroupLogic.module.less'
@@ -42,7 +43,7 @@ const RgroupLogic = (props: Props) => {
       valid={() => formState.valid}
       params={rest}
       buttonsNameMap={{ OK: 'Apply' }}
-      buttons={['OK', 'Cancel']}
+      buttons={['Cancel', 'OK']}
       withDivider
     >
       <Form

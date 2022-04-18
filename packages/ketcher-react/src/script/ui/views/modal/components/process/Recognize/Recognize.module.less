@@ -14,40 +14,119 @@
  * limitations under the License.
  ***************************************************************************/
 
+@import '../../../../../../../style/mixins.less';
+@import '../../../../../../../style/variables.less';
+
 .recognize {
-  .change_version {
-    display: block;
-    text-align: right;
+  .footerContent {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    div {
+      display: flex;
+      gap: 8px;
+    }
+  }
+
+  .imagoVersion {
+    display: flex;
+    flex-direction: column;
+    grid-column-start: 2;
+    grid-column-end: 3;
+  }
+
+  .openButton {
+    .button-secondary();
+    
+    display: flex;
+    align-items: center;
+
+    & > input {
+      display: none;
+    }
+
+    & > svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .imagesContainer {
+    background-color: @color-primary-light;
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .topBody {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 12px;
+    grid-row-gap: 24px;
+    padding: 0 12px;
+    margin: 8px 0 4px;
+    font-size: 10px;
+    line-height: 12px;
+
+    & > label {
+      & > select {
+        font-size: inherit;
+      }
+    }
   }
 
   .output,
   .picture {
-    height: 25em;
-    width: 21em;
-    display: table-cell;
-    vertical-align: middle;
     text-align: center;
+    background-color: @color-background-primary;
+    border: 1px solid #D9DCEA;
+    border-radius: 6px;
+    width: 232px;
+    height: 192px;
+    overflow: hidden;
+    box-sizing: border-box;
   }
 
+  .picture {
+    position: relative;
+    color: @color-button-secondary;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .filename {
+    top: 8px;
+    left: 8px;
+    position: absolute;
+  }
+
+  .messageContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    background-color: @color-primary-light;
+
+    & > p {
+      margin: 12px;
+    }
+  }
+
+  .primaryButton {
+    .button-primary();
+  }
+  
+  .secondaryButton {
+    .button-secondary();
+  }
+  
   img,
   .struct {
-    overflow: hidden;
     position: relative;
     max-height: 100%;
-    max-width: 21em;
-  }
-
-  label {
-    display: block;
-  }
-
-  .open_filename {
-    display: inline-block;
-    float: left;
-    padding: 6px;
-    max-width: 200px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: 100%;
   }
 }

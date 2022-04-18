@@ -127,9 +127,9 @@ You can use the buttons of the _Main_ toolbar:
 # 3D Viewer
 
 The structure appears in a modal window after clicking on the **3D
-Viewer** button:
+Viewer** button ![](images/8_1_miew_icon.png '3D Viewer Icon') on the top panel:
 
-![](images/miew.png '3D Viewer') 
+<img src=images/8_miew.png  width = "600" title = "3D Viewer"> 
 
 You can perform the following actions:
 
@@ -137,7 +137,7 @@ You can perform the following actions:
 
 - Zoom In/Out the structure;
 
-Ketcher Settings allow to change the appearance of the structure and background coloring.
+Ketcher Settings allow to change the appearance of the structure and background coloring on the 3D Viewer tab.
 
 "Lines" drawing method, "Bright" atom name coloring
 method and "Light" background coloring are default.
@@ -174,7 +174,7 @@ To draw/edit atoms you can:
 - change an atom by clicking on an existing atom with the
   _Selection_ tool and starting to enter text after that; type another atom symbol in the text box:
   
-  ![](images/inline-edit.png 'Change Atom') 
+  ![](images/11_label_edit.png 'Change Atom') 
   
 - change the charge of an atom by selecting the Charge Plus or
   Charge Minus tool and clicking consecutively on an atom to
@@ -609,11 +609,15 @@ _Add to Canvas_ will save the structure in the clipboard. Click on the canvas to
 
 The **_Save Structure_** dialog enables one to save the molecular file:
 
-![](images/save.png) 
+<img src = images/46_save_text.png width = "500"/> 
 
-You can save a structure as image (in Standalone mode and in Remote mode when the server is available) . Although when you save a file to one of the image formats you lose the chemical information in the file. You can not open files in these formats in Ketcher. Supported graphics file formats are: *Portable Network Graphics (.png)* and *Scalable Vector Graphics (.svg)*.
+Select the format needed in the _File Format_ drop down. 
+<br> Check out the _Warnings_ tab if it's represented. It provides the list of chemical information that can't be saved properly to the format selected. 
+<br> <br>
+You can save _a structure as image_ (in Standalone mode and in Remote mode when the server is available) by selectinig the _SVG Document_ or _PNG Image_ format. 
+Please, note that saving structure to the image formats will results in chemical information loss in the file. You will not be able to open files in these formats in Ketcher. Supported graphics file formats are: *Portable Network Graphics (.png)* and *Scalable Vector Graphics (.svg)*.
 
-![](images/save-image.png) 
+<img src =  images/47_save_image.png width = "500"/> 
 
 
 

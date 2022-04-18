@@ -18,7 +18,7 @@
 @import '../../../../../../../style/mixins.less';
 
 @save-container-width-large: 430px;
-@save-container-height-large: 316px;
+@save-container-height-large: 310px;
 @save-container-width-small: 380px;
 @save-container-height-small: 325px;
 
@@ -54,7 +54,7 @@
   .warnings {
     max-height: 50px;
     flex-shrink: 0;
-    min-height: 220px;
+    min-height: 224px;
     padding: 12px;
     overflow-x: auto;
     box-sizing: border-box;
@@ -111,7 +111,7 @@
 
   .previewArea {
     display: block;
-    min-height: 220px;
+    min-height: 224px;
     min-width: 428px;
     height: 100%;
     overflow-x: auto;
@@ -159,8 +159,8 @@
 
     img {
       background-color: @color-background-primary;
-      height: 219px;
-      width: 219px;
+      height: 220px;
+      width: 220px;
     }
   }
 
@@ -172,46 +172,16 @@
     }
 
     .ok {
-      .button-main();
-
-      color: @color-text-light;
-      background-color: @color-primary;
-      border-radius: 4px;
-      border: 1px solid transparent;
-
-      &:hover,
-      &:active {
-        background-color: @color-button-primary-clicked;
-      }
-
-      &:disabled {
-        color: @color-button-secondary-hover;
-        background-color: @color-grey-3;
-      }
+      .button-primary();
     }
 
     .cancel,
     .saveTmpl {
-      border-radius: 4px;
-      color: @color-text-secondary;
-      border: 1px solid @color-text-secondary;
-      background-color: @color-background-primary;
-
-      &:hover,
-      &:active {
-        color: @color-button-secondary-hover;
-        border: 1px solid @color-button-secondary-hover;
-      }
-
-      &:disabled {
-        color: fade(@color-text-secondary, 70%);
-        border: 1px solid fade(@color-text-secondary, 70%);
-      }
+      .button-secondary();
     }
 
     .saveTmpl {
       word-wrap: normal;
-      color: @color-grey-6;
       margin-right: auto;
       padding: 2px 8px;
     }

@@ -17,64 +17,14 @@
 @import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
-@save-container-width-large: 430px;
-@save-container-height-large: 310px;
-@save-container-width-small: 380px;
-@save-container-height-small: 325px;
-
 // stylelint-disable selector-pseudo-class-no-unknown
 // stylelint-disable no-descending-specificity
-.save {
-  width: @save-container-width-large;
-  background-color: @color-background-primary;
-
-  .formContainer {
-    display: flex;
-    flex-direction: column;
-    width: @save-container-width-large;
-    height: @save-container-height-large;
-    overflow: hidden;
-
-    .save {
-      height: 32px;
-    }
-
-    .tabs {
-      outline: none;
-      padding-left: 12px;
-    }
-
-    .tabs[tabindex='0'] {
-      a:nth-child(2) {
-        color: @error-color;
-      }
-    }
-  }
-
-  .warnings {
-    max-height: 50px;
-    flex-shrink: 0;
-    min-height: 224px;
-    padding: 12px;
-    overflow-x: auto;
-    box-sizing: border-box;
-    background-color: @color-primary-light;
-
-    .scrollbar();
-
-    .warningsContainer {
-      display: flex;
-      padding-bottom: 12px;
-
-      .warningsArr {
-        color: @color-text-primary;
-        white-space: pre-line;
-        word-break: break-word;
-        font-size: 12px;
-        line-height: 14px;
-      }
-    }
-  }
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  width: 430px;
+  height: 310px;
+  overflow: hidden;
 
   form {
     display: flex;
@@ -98,17 +48,49 @@
       > span {
         margin-right: 8px;
       }
-
-      div {
-        border: 1px solid @color-grey-4;
-      }
     }
   }
 
+  .tabs {
+    outline: none;
+    padding-left: 12px;
+  
+    &[tabindex='0'] {
+      a:nth-child(2) {
+        color: @error-color;
+      }
+    }
+  }
+  
+  .warnings {
+    max-height: 50px;
+    flex-shrink: 0;
+    min-height: 224px;
+    padding: 12px;
+    overflow-x: auto;
+    box-sizing: border-box;
+    background-color: @color-primary-light;
+  
+    .scrollbar();
+  
+    .warningsContainer {
+      display: flex;
+      padding-bottom: 12px;
+  
+      .warningsArr {
+        color: @color-text-primary;
+        white-space: pre-line;
+        word-break: break-word;
+        font-size: 12px;
+        line-height: 14px;
+      }
+    }
+  }
+  
   .previewBackground {
     background-color: @color-primary-light;
   }
-
+  
   .previewArea {
     display: block;
     min-height: 224px;
@@ -125,9 +107,9 @@
     box-shadow: none;
     border: none;
     border-radius: 0;
-
+  
     .scrollbar();
-
+  
     &:hover,
     &:active,
     &:focus {
@@ -136,7 +118,7 @@
       border: none;
     }
   }
-
+  
   .loadingCirclesContainer {
     display: flex;
     flex-direction: column;
@@ -146,7 +128,7 @@
     width: 100%;
     margin-top: 20%;
   }
-
+  
   .imageContainer {
     display: flex;
     flex-direction: column;
@@ -156,7 +138,7 @@
     width: 428px;
     border-top: 1px solid @color-grey-3;
     border-bottom: 1px solid @color-grey-3;
-
+  
     img {
       background-color: @color-background-primary;
       height: 220px;
@@ -164,47 +146,23 @@
     }
   }
 
-  footer {
-    .ok,
-    .cancel {
-      width: 82px;
-      height: 24px;
-    }
-
-    .ok {
-      .button-primary();
-    }
-
-    .cancel,
-    .saveTmpl {
-      .button-secondary();
-    }
-
-    .saveTmpl {
-      word-wrap: normal;
-      margin-right: auto;
-      padding: 2px 8px;
-    }
-
-    .previewMessage {
-      text-align: center;
-      margin: auto;
-    }
+  .previewMessage {
+    text-align: center;
+    margin: auto;
   }
+}
 
-  :global(.smallEditor) {
-    .formContainer {
-      width: @save-container-width-small;
-      height: @save-container-height-small;
-    }
+.ok {
+  .button-primary();
+}
 
-    .warnings {
-      height: 50px;
-    }
+.cancel,
+.saveTmpl {
+  .button-secondary();
+}
 
-    .saveImageContainer {
-      width: @save-container-width-small;
-      height: @save-container-height-small;
-    }
-  }
+.saveTmpl {
+  word-wrap: normal;
+  margin-right: auto;
+  padding: 2px 8px;
 }

@@ -65,6 +65,8 @@ const EnhancedStereo: FC<Props> = (props) => {
     title: 'Enhanced Stereo',
     type: 'object',
     properties: {
+      // need schema change for custom radio inputs styles
+      // type: { enum: ['ABS'] },
       type: {
         type: 'string'
       },

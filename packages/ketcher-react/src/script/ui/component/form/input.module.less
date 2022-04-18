@@ -1,6 +1,5 @@
 @import '../../../../style/variables';
 
-.fieldSetItem {
   .fieldSetLabel {
     position: relative;
   }
@@ -52,7 +51,6 @@
   input[type='radio']:checked:disabled + .customRadio {
     background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='@{color-input-disabled}' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-disabled}' stroke-width='2'/%3E%3Ccircle cx='8' cy='8' r='4' fill='@{color-input-disabled}'/%3E%3C/svg%3E%0A");
   }
-}
 
 .slider.slider {
   position: relative;
@@ -110,4 +108,8 @@
 .select,
 .input {
   color: inherit;
+}
+
+.select {
+  min-width: 40px;
 }

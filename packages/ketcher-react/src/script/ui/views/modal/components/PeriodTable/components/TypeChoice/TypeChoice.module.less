@@ -17,30 +17,12 @@
 
 .fieldset {
   margin-top: 10px !important;
+  margin-left: 12px !important;
+  gap: 8px;
+  display: flex;
 
   table + & {
     border: 0;
     padding: 0.5em;
-  }
-
-  input[type='radio'] {
-    position: absolute;
-    opacity: 0;
-  }
-
-  input[type='radio'] + .customRadio {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    margin-left: 10px;
-    margin-right: 3px;
-    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input}' stroke-width='2'/%3E%3C/svg%3E%0A");
-    background-repeat: no-repeat;
-    background-size: 100%;
-  }
-
-  input[type='radio']:checked + .customRadio {
-    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input}' stroke-width='2'/%3E%3Ccircle cx='8' cy='8' r='4' fill='@{color-input}'/%3E%3C/svg%3E%0A");
   }
 }

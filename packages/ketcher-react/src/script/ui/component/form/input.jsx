@@ -20,7 +20,7 @@ import { omit } from 'lodash/fp'
 import classes from './input.module.less'
 import clsx from 'clsx'
 
-function GenericInput({
+export function GenericInput({
   schema,
   value = '',
   onChange,
@@ -28,14 +28,18 @@ function GenericInput({
   ...props
 }) {
   return (
-    <input
-      type={type}
-      value={value}
-      onInput={onChange}
-      onChange={onChange}
-      className={classes.input}
-      {...props}
-    />
+    <>
+      <input
+        type={type}
+        value={value}
+        onInput={onChange}
+        onChange={onChange}
+        className={classes.input}
+        {...props}
+      />
+      {type === 'checkbox' && <span className={classes.customCheckbox} />}
+      {type === 'radio' && <span className={classes.customRadio} />}
+    </>
   )
 }
 

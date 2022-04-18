@@ -67,7 +67,7 @@ function deserialize(value) {
 
 function LabelEdit(props) {
   const init = { label: props.letter || serialize(props) }
-  const { formState, onOk, ...prop } = props
+  const { formState, ...prop } = props
   const { result, valid } = formState
 
   return (

@@ -287,12 +287,14 @@ class SaveDialog extends Component {
         )}
       </div>
     ) : (
-      <textarea
-        value={structStr}
-        className={classes.previewArea}
-        readOnly
-        ref={this.textAreaRef}
-      />
+      <div className={classes.previewBackground}>
+        <textarea
+          value={structStr}
+          className={classes.previewArea}
+          readOnly
+          ref={this.textAreaRef}
+        />
+      </div>
     )
   }
 
@@ -305,7 +307,6 @@ class SaveDialog extends Component {
       <div className={classes.warnings}>
         {warnings.map((warning) => (
           <div className={classes.warningsContainer}>
-            <div className={classes.warning} />
             <span className={classes.warningsArr}>{warning}</span>
           </div>
         ))}

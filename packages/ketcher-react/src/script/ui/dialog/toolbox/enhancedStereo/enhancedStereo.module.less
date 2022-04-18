@@ -17,7 +17,18 @@
 .enhancedStereo {
   width: 330px;
 
-  .stereoLabelItem {
+
+  fieldset {
+    border: none;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      margin-top: 12px;
+    }
+  }
+
+  .stereoLabelItem label{
     display: flex;
     align-items: center;
     min-height: 2.4em;
@@ -28,4 +39,5 @@
     margin-right: 5px;
     margin-left: 5px;
   }
+
 }

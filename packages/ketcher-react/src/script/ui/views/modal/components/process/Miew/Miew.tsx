@@ -31,6 +31,7 @@ type MiewDialogProps = {
   struct: Struct
   onCancel: () => void
   onOk: (result: any) => void
+  miewTheme: 'dark' | 'light'
 }
 type MiewDialogCallProps = {
   onExportCML: (cmlStruct: string) => void
@@ -98,11 +99,16 @@ function createMiewOptions(userOpts) {
 const CHANGING_WARNING =
   'Stereocenters can be changed after the strong 3D rotation'
 
+const FooterContent = () => (
+  <div className={classes.warning}>{CHANGING_WARNING}</div>
+)
+
 const MiewDialog = ({
   miewOpts,
   server,
   struct,
   onExportCML,
+  miewTheme = 'light',
   ...prop
 }: Props) => {
   const miewRef = useRef<MiewAsType>()
@@ -135,19 +141,23 @@ const MiewDialog = ({
   return (
     <Dialog
       title="Miew"
+      needMargin={false}
       params={prop}
       buttons={[
-        <div key="warning" className={classes.warning}>
-          {CHANGING_WARNING}
-        </div>,
         'Close',
-        <button key="apply" onClick={exportCML}>
+        <button key="apply" onClick={exportCML} className={classes.applyButton}>
           Apply
         </button>
       ]}
+      footerContent={<FooterContent />}
+      className={classes.miewDialog}
     >
       <div>
-        <div className={classes.miewContainer}>
+        <div
+          className={`${classes.miewContainer} ${
+            miewTheme === 'dark' ? classes.miewDarkTheme : ''
+          }`}
+        >
           <Viewer onInit={onMiewInit} />
         </div>
       </div>
@@ -158,7 +168,8 @@ const MiewDialog = ({
 const mapStateToProps = (state) => ({
   miewOpts: createMiewOptions(pick(MIEW_OPTIONS, state.options.settings)),
   server: state.options.app.server ? state.server : null,
-  struct: state.editor.struct()
+  struct: state.editor.struct(),
+  miewTheme: state.options.settings.miewTheme
 })
 
 const mapDispatchToProps = (dispatch) => ({

@@ -13,40 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-@import 'src/style/variables';
 
-.tabs {
-  width: 100%;
+@import '../../../../style/mixins.less';
+@import '../../../../style/variables.less';
 
-  a {
-    padding: 5px 12px;
-    line-height: 14px;
-    display: inline-block;
-    cursor: pointer;
-    text-align: center;
-    background-color: @color-gray;
-    color: @color-text-primary;
+.labelEdit {
+  display: flex;
+  white-space: nowrap;
 
-    &:hover {
-      background-color: @color-button-primary-hover;
-      color: @color-text-light;
+  & div > form {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding-top: 12px;
+  }
+
+  .labelEditInputField {
+    label {
+      text-align: center;
     }
-  }
 
-  .active {
-    color: @color-text-light;
-    background-color: @color-tab-active;
-  }
-
-  :first-child {
-    border-radius: 4px 0 0 0;
-  }
-
-  :last-child {
-    border-radius: 0 4px 0 0;
-  }
-
-  :only-child {
-    border-radius: 4px 4px 0 0;
+    input {
+      margin-left: 8px;
+      min-width: 140px;
+    }
   }
 }

@@ -17,14 +17,22 @@
 @import '../../../../../../../style/mixins';
 
 .warning {
-  display: inline-block;
-  float: left;
+  width: 100%;
   line-height: 2em;
 }
 
+.applyButton {
+  .button-primary();
+}
+
+.miewDialog {
+  max-width: 60vw;
+}
+
 .miewContainer {
-  width: 1024px;
-  height: 600px;
+  width: 60vw;
+  height: 60vh;
+  overflow: hidden;
   position: relative;
   // stylelint-disable-next-line selector-pseudo-class-no-unknown
   :global(.mode-message) {
@@ -41,11 +49,20 @@
   }
   // stylelint-disable-next-line selector-pseudo-class-no-unknown
   :global(.atom-info) {
-    margin: 10px;
-    text-align: left;
+    margin: 12px;
+    position: absolute;
+    top: 0;
+    color: @color-text-primary;
   }
   // stylelint-disable-next-line selector-pseudo-class-no-unknown
   :global(.overlay) {
     pointer-events: none;
+  }
+}
+
+.miewDarkTheme {
+  // stylelint-disable-next-line selector-pseudo-class-no-unknown
+  :global(.atom-info) {
+    color: @color-grey-4;
   }
 }

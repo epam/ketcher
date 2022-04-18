@@ -126,6 +126,7 @@ const content = (schema, context, fieldName, checked) =>
         <Field
           name={prop}
           checked={checked}
+          labelPos={false}
           type="radio"
           key={`${context}-${fieldName}-${prop}-radio`}
         />

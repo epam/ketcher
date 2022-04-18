@@ -45,7 +45,8 @@
       border: 1px solid @border-color;
 
       :global(.MuiSelect-select) {
-        padding: 0;
+        padding-right: 12px;
+        padding-left: 0;
       }
     }
   }
@@ -62,7 +63,11 @@
   fieldset[class='radio'] {
     display: flex;
     justify-content: space-between;
-    margin-top: 12px;
+
+    label {
+      flex-direction: row;
+      margin-top: 12px;
+    }
   }
 
   form {
@@ -86,6 +91,8 @@
 
     textarea,
     select[name='fieldValue'] {
+      max-width: 230px;
+      min-height: 24px;
       display: block;
       overflow: auto;
     }

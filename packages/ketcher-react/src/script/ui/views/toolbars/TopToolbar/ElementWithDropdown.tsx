@@ -97,7 +97,7 @@ export const ElementWithDropdown = ({
   const expand = () => {
     setIsExpanded(true)
   }
-  console.log(topElement.props.disabled)
+
   return (
     <ElementAndDropdown>
       {topElement}

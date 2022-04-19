@@ -18,8 +18,6 @@ import { BaseCallProps, BaseProps } from '../../../modal.types'
 import Form, { Field } from '../../../../../component/form/form/form'
 import { Dialog } from '../../../../components'
 import classes from './Automap.module.less'
-import Select from '../../../../../component/form/Select/Select'
-import { getSelectOptionsFromSchema } from '../../../../../utils'
 
 type Props = BaseProps & BaseCallProps
 
@@ -46,16 +44,9 @@ const Automap = (props: Props) => {
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}
-      withDivider={true}
-      buttons={['Cancel', 'OK']}
     >
       <Form schema={automapSchema} {...formState}>
-        <Field
-          name="mode"
-          options={getSelectOptionsFromSchema(automapSchema.properties.mode)}
-          {...props}
-          component={Select}
-        />
+        <Field name="mode" />
       </Form>
     </Dialog>
   )

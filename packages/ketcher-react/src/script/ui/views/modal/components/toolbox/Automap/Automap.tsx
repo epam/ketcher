@@ -46,8 +46,9 @@ const Automap = (props: Props) => {
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}
-      withDivider={true}
+      withDivider
       buttons={['Cancel', 'OK']}
+      buttonsNameMap={{ OK: 'Apply' }}
     >
       <Form schema={automapSchema} {...formState}>
         <Field

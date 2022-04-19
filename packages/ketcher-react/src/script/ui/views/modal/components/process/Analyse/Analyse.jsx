@@ -48,7 +48,11 @@ class AnalyseDialog extends Component {
       <Dialog
         title="Calculated Values"
         className={classes.analyse}
-        buttons={[]}
+        withDivider={true}
+        needMargin={true}
+        valid={() => true}
+        buttons={['OK']}
+        buttonsNameMap={{ OK: 'Close' }}
         params={props}
       >
         <ul>
@@ -77,8 +81,8 @@ class AnalyseDialog extends Component {
               withSelector: false
             }
           ].map((item) => (
-            <li key={item.key}>
-              <div className={classes.wrapperInput}>
+            <li key={item.key} className={classes.contentWrapper}>
+              <div className={classes.inputWrapper}>
                 <label>{item.name}:</label>
                 {item.key === 'gross' ? (
                   <FormulaInput
@@ -104,7 +108,7 @@ class AnalyseDialog extends Component {
                 )}
               </div>
               {item.withSelector ? (
-                <div className={classes.wrapperSelector}>
+                <div className={classes.selectWrapper}>
                   <span>Decimal places</span>
                   <Select
                     options={selectOptions}

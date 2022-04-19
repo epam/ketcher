@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.17.9",
-    "indigo-ketcher": "1.6.3-0",
+    "indigo-ketcher": "1.6.4-0",
     "ketcher-core": "workspace:*"
   },
   "devDependencies": {

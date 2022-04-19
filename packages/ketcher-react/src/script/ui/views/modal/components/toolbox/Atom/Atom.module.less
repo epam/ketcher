@@ -18,10 +18,14 @@
 @import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
+@shadow-color: #DEE1E4;
+
 .atomProps {
   width: @width-x-small;
+  height: 398px;
   display: flex;
   justify-content: space-between;
+  overflow: hidden;
 
   :global(.MuiOutlinedInput-root), input[type='text'] {
     margin-top: 4px;
@@ -29,64 +33,81 @@
   
   > header {
     flex-shrink: 0;
+    box-shadow: 0 6px 6px 0 @shadow-color;
+    z-index: 10; 
   }
 
   > div {
     margin: 0;
     background-color: @color-primary-light;
-    overflow: hidden;
     flex-grow: 1;
+
+    input[type='checkbox'] {
+      top: 0;
+    }
   }
 
   > footer {
+    box-shadow: 0 -6px 6px 0 @shadow-color;
+
     input {
       min-width: 68px !important;
     }
   }
+}
 
-  :global(.MuiAccordionDetails-root) {
-    padding: @padding-modal;
-    background-color: @color-primary-light;
-  }
-
-  :global(.MuiPaper-root.MuiAccordion-root) {
-    box-shadow: none;
-    margin: 0;
-  }
-
-  :global(.MuiPaper-root.MuiAccordion-root::before) {
-    opacity: 0;
-  }
-
-  :global(.MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters) {
-  margin: 0;
-  padding: 0 @padding-modal;
-  flex-direction: row;
-  font-size: 12px;
-  line-height: 14px;
-  min-height: 26px;
-  height: 26px;
-  color: @color-text-primary;
-  font-weight: 400;
-  border-bottom: 1px solid @color-grey-3; 
-  }
+.accordionWrapper {
+  overflow-y: auto;
+  overflow-x: hidden;
   
-  :global(.MuiButtonBase-root.MuiAccordionSummary-root.Mui-expanded) {
-    border-bottom: none;
-  }
-
-
-  :global(.MuiPaper-root.MuiAccordion-root.Mui-expanded::before) {
-    opacity: 0;
-  }
+  .scrollbar();
 }
 
 .expandIcon {
   width: 20px;
+  transform: rotate(180deg);
+  transition: transform 300ms ease-in-out;
 }
 
-.accordionDetails {
-  height: 206px;
+.turnedIcon{
+  transform: rotate(0deg);
+}
+
+.accordionSummaryWrapper {
+  margin: 0;
+  padding-left: @padding-modal;
+  border-bottom: 1px solid @color-grey-3; 
+  background-color: @color-background-primary;
+}
+
+.accordionSummary {
+  width: @width-x-small - @margin-left-right * 2;
+  height: 26px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  line-height: 14px;
+  color: @color-text-primary;
+  font-weight: 400;
+}
+
+.accordionDetailsWrapper {
+  max-height: 1000px;
+  transition: max-height 300ms ease-in-out;
+  overflow: hidden;
+  width: @width-x-small - @margin-left-right * 2;
+  margin-left: @margin-left-right;
+}
+
+.hiddenAccordion{
+  max-height: 0;
+}
+
+.accordionDetails{
+  margin-top: @margin-left-right;
 
   label {
     display: flex;
@@ -95,6 +116,7 @@
     color: @color-text-secondary;
   
     &.checkbox {
+      height: 16px;
       margin-bottom: @margin-top-bottom * 2;
       flex-direction: row;
     }

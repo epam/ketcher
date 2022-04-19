@@ -27,10 +27,8 @@ import { capitalize } from 'lodash/fp'
 import classes from './Atom.module.less'
 import Select from '../../../../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
-import Accordion from '@mui/material/Accordion'
-import AccordionSummary from '@mui/material/AccordionSummary'
-import AccordionDetails from '@mui/material/AccordionDetails'
 import Icon from '../../../../../component/view/icon'
+import clsx from 'clsx'
 
 interface AtomProps extends BaseProps {
   alias: string
@@ -55,10 +53,20 @@ const atomProps = atomSchema.properties
 const Atom: FC<Props> = (props) => {
   const { formState, stereoParity, ...rest } = props
   const [currentLabel, setCurrentLabel] = useState<string>(rest.label)
-  const [expandedAccordion, setExpandedAccordion] = useState<string>('General')
+  const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
+    'General'
+  ])
 
-  const handleAccordionChange = (accordion) => () =>
-    setExpandedAccordion(accordion)
+  const handleAccordionChange = (accordion) => () => {
+    const isExpand = !expandedAccordions.includes(accordion)
+    setExpandedAccordions(
+      isExpand
+        ? [...expandedAccordions, accordion]
+        : [...expandedAccordions].filter(
+            (expandedAccordion) => expandedAccordion !== accordion
+          )
+    )
+  }
 
   const onLabelChangeCallback = useCallback((newValue) => {
     setCurrentLabel(newValue)
@@ -160,33 +168,38 @@ const Atom: FC<Props> = (props) => {
         init={rest}
         {...formState}
       >
-        {itemGroups.map(({ groupName, component }) => {
-          const shouldGroupBeRended = expandedAccordion === groupName
-          return (
-            <Accordion
-              square={true}
-              key={groupName}
-              onChange={handleAccordionChange(groupName)}
-              expanded={shouldGroupBeRended}
-              classes={{
-                root: classes.accordion,
-                expanded: classes.expandedAccordion
-              }}
-            >
-              <AccordionSummary
-                className={classes.accordionSummary}
-                expandIcon={
-                  <Icon className={classes.expandIcon} name="chevron" />
-                }
-              >
-                {groupName}
-              </AccordionSummary>
-              <AccordionDetails className={classes.accordionDetails}>
-                {component}
-              </AccordionDetails>
-            </Accordion>
-          )
-        })}
+        <div className={classes.accordionWrapper}>
+          {itemGroups.map(({ groupName, component }) => {
+            const shouldGroupBeRended = expandedAccordions.includes(groupName)
+            return (
+              <div key={groupName}>
+                <div
+                  onClick={handleAccordionChange(groupName)}
+                  className={classes.accordionSummaryWrapper}
+                >
+                  <div className={classes.accordionSummary}>
+                    <span>{groupName}</span>
+                    <Icon
+                      className={clsx({
+                        [classes.expandIcon]: true,
+                        [classes.turnedIcon]: !shouldGroupBeRended
+                      })}
+                      name="chevron"
+                    />
+                  </div>
+                </div>
+                <div
+                  className={clsx({
+                    [classes.accordionDetailsWrapper]: true,
+                    [classes.hiddenAccordion]: !shouldGroupBeRended
+                  })}
+                >
+                  <div className={classes.accordionDetails}>{component}</div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </Form>
     </Dialog>
   )

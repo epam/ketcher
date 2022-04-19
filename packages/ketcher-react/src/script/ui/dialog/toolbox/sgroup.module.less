@@ -19,9 +19,6 @@
 // stylelint-disable no-descending-specificity
 .sgroup {
   width: @width-small;
-  border-radius: 6px;
-  background-color: @color-background-primary;
-
 
   label {
     display: flex;
@@ -34,19 +31,6 @@
 
     &:hover::after {
       margin: 1px 0 0 3px;
-    }
-
-    :global(.MuiOutlinedInput-root), input[type='text'] {
-      max-width: 230px;
-      height: 24px;
-      overflow: hidden;
-      padding: 4px 8px;
-      margin-top: 4px;
-      border: 1px solid @border-color;
-
-      :global(.MuiSelect-select) {
-        padding: 0;
-      }
     }
   }
 

@@ -62,6 +62,8 @@ const Atom: FC<Props> = (props) => {
       className={classes.atomProps}
       result={() => formState.result}
       valid={() => formState.valid}
+      buttons={['Cancel', 'OK']}
+      buttonsNameMap={{ OK: 'Apply' }}
       params={rest}
     >
       <Form

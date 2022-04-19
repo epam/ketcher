@@ -172,7 +172,6 @@ function CheckDialog(props) {
                 : style.buttonPrimary
             }
             onClick={handleCheck}
-            // disabled={!isStuctureChecking || !result.checkOptions.length}
             disabled={!isStuctureChecking}
           >
             Check

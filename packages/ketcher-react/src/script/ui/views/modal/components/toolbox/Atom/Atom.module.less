@@ -15,51 +15,120 @@
  ***************************************************************************/
 
 // stylelint-disable selector-pseudo-class-no-unknown
+@import '../../../../../../../style/variables.less';
+@import '../../../../../../../style/mixins.less';
+
+@shadow-color: #DEE1E4;
+
 .atomProps {
-  fieldset {
-    margin-top: 1.5em;
+  width: @width-x-small;
+  height: 398px;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
 
-    label {
-      margin: 0.3em 0;
-        display: flex;
-        flex-wrap: nowrap;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-
-      > input {
-        width: 8em;
-        height: 32px;
-        display: flex;
-        align-items: center;
-      }
-    }
-
-    > legend {
-      padding: 0 0.4em;
-    }
-
-    :global(.MuiOutlinedInput-root .MuiSelect-select) {
-      width: 8em;
-      height: 32px;
-      line-height: 32px;
-    }
+  :global(.MuiOutlinedInput-root), input[type='text'] {
+    margin-top: 4px;
+  }
+  
+  > header {
+    flex-shrink: 0;
+    box-shadow: 0 6px 6px 0 @shadow-color;
+    z-index: 10; 
   }
 
-  .main {
-    width: 14.5em;
-    float: left;
-    border: none;
-  }
-
-  .query,
-  .reaction {
-    float: right;
-    clear: right;
-    width: 16em;
+  > div {
+    margin: 0;
+    background-color: @color-primary-light;
+    flex-grow: 1;
 
     input[type='checkbox'] {
-      margin: 0.6em 0.3em;
+      top: 0;
     }
   }
+
+  > footer {
+    box-shadow: 0 -6px 6px 0 @shadow-color;
+
+    input {
+      min-width: 68px !important;
+    }
+  }
+}
+
+.accordionWrapper {
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  .scrollbar();
+}
+
+.expandIcon {
+  width: 20px;
+  transform: rotate(180deg);
+  transition: transform 300ms ease-in-out;
+}
+
+.turnedIcon{
+  transform: rotate(0deg);
+}
+
+.accordionSummaryWrapper {
+  margin: 0;
+  padding-left: @padding-modal;
+  border-bottom: 1px solid @color-grey-3; 
+  background-color: @color-background-primary;
+}
+
+.accordionSummary {
+  width: @width-x-small - @margin-left-right * 2;
+  height: 26px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  line-height: 14px;
+  color: @color-text-primary;
+  font-weight: 400;
+}
+
+.accordionDetailsWrapper {
+  max-height: 1000px;
+  transition: max-height 300ms ease-in-out;
+  overflow: hidden;
+  width: @width-x-small - @margin-left-right * 2;
+  margin-left: @margin-left-right;
+}
+
+.hiddenAccordion{
+  max-height: 0;
+}
+
+.accordionDetails{
+  margin-top: @margin-left-right;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: @margin-top-bottom;
+    color: @color-text-secondary;
+  
+    &.checkbox {
+      height: 16px;
+      margin-bottom: @margin-top-bottom * 2;
+      flex-direction: row;
+    }
+  }
+}
+
+.propertiesRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+   > label {
+     width: 94px;
+   }
 }

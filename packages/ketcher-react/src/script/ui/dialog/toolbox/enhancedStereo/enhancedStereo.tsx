@@ -84,7 +84,9 @@ const EnhancedStereo: FC<Props> = (props) => {
       params={rest}
       result={() => result}
       valid={() => valid}
+      withDivider
       buttons={['Cancel', 'OK']}
+      buttonsNameMap={{ OK: 'Apply' }}
     >
       <Form schema={enhancedStereoSchema} init={init} {...formState}>
         <fieldset>

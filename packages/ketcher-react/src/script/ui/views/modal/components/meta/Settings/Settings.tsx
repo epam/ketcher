@@ -239,7 +239,7 @@ const SettingsDialog = (props: Props) => {
       result={() => formState.result}
       valid={() => formState.valid}
       params={prop}
-      buttons={['Save']}
+      buttons={['Cancel', 'Save']}
       withDivider
       needMargin={false}
       buttonsTop={[

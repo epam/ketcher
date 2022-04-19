@@ -154,6 +154,8 @@ const Text = (props: TextProps) => {
       params={props}
       result={result}
       valid={() => formState.form.valid}
+      buttonsNameMap={{ OK: 'Apply' }}
+      buttons={['Cancel', 'OK']}
       withDivider
     >
       <ul className={classes.controlPanel}>

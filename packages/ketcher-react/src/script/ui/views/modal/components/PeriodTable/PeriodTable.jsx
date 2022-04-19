@@ -151,7 +151,7 @@ class Table extends Component {
         className={classes.elementsTable}
         params={this.props}
         result={this.result}
-        buttons={['OK']}
+        buttons={['Cancel', 'OK']}
         buttonsNameMap={{ OK: 'Add' }}
         needMargin={false}
       >

@@ -91,6 +91,7 @@ class AnalyseDialog extends Component {
                   />
                 ) : item.key === 'mass-composition' ? (
                   <textarea
+                    readOnly
                     value={
                       values && !loading
                         ? roundOff(values[item.key], round[item.round])

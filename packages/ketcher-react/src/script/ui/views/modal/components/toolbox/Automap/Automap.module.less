@@ -17,14 +17,15 @@
 @import '../../../../../../../style/variables.less';
 
 .automap {
-  width: 22em;
+  width: @width-small;
 
   label {
-    line-height: @input-height;
+    line-height: @line-height-regular;
+    font-size: @font-size-regular;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     margin: 12px 0;
-    gap: 12px;
+    gap: 4px;
 
     & > div {
       flex-grow: 1;

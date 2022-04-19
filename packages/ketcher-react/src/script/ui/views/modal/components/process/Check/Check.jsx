@@ -144,7 +144,13 @@ function CheckDialog(props) {
               }
             >
               {isStuctureChecking ? (
-                <div className={style.warningsContainer}>
+                <div
+                  className={
+                    Object.keys(moleculeErrors).length
+                      ? style.warningsContainer
+                      : style.centeredContainer
+                  }
+                >
                   <ErrorsCheck
                     moleculeErrors={moleculeErrors}
                     checkSchema={checkSchema}
@@ -166,6 +172,7 @@ function CheckDialog(props) {
                 : style.buttonPrimary
             }
             onClick={handleCheck}
+            // disabled={!isStuctureChecking || !result.checkOptions.length}
             disabled={!isStuctureChecking}
           >
             Check

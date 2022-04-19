@@ -37,16 +37,7 @@
     }
 
     :global(.MuiOutlinedInput-root), input[type='text'] {
-      max-width: 230px;
-      height: 24px;
-      overflow: hidden;
-      padding: 4px 8px;
       margin-top: 4px;
-      border: 1px solid @border-color;
-
-      :global(.MuiSelect-select) {
-        padding: 0;
-      }
     }
   }
 
@@ -54,23 +45,27 @@
     border: 0;
     padding: 0;
 
-    & > label:last-child {
-      margin-bottom: 0;
-    }
   }
 
   fieldset[class='radio'] {
     display: flex;
     justify-content: space-between;
     margin-top: 12px;
+    height: 16px;
   }
 
   form {
+    margin-top: 12px;
+    
     label {
       text-align: left;
       font-size: 12px;
 
       fieldset {
+        & > * {
+          flex-grow: 1;
+        }
+        
         label {
           display: flex;
           flex-direction: row;
@@ -96,6 +91,12 @@
       width: 100%;
       display: block;
       margin-bottom: 0;
+      margin-top: 4px;
+    }
+
+    textarea {
+      margin-top: 4px;
+      max-width: 234px;
     }
   }
 }

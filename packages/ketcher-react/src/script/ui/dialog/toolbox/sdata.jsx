@@ -94,6 +94,7 @@ function SData({
       valid={() => valid}
       buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: 'Apply' }}
+      withDivider={true}
       params={prop}
     >
       <Form

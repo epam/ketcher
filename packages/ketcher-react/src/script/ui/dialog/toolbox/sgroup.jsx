@@ -36,6 +36,7 @@ function Sgroup({ formState, ...prop }) {
       valid={() => valid}
       buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: 'Apply' }}
+      withDivider={true}
       params={prop}
     >
       <Form schema={schemes[type]} init={prop} {...formState}>

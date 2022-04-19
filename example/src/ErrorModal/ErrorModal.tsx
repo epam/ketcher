@@ -22,18 +22,18 @@ interface ErrorModalProps {
 
 const ErrorModal = ({ message, close }: ErrorModalProps): JSX.Element => {
   return (
-    <div className={'modalOverlay'}>
-      <div className={'modalWindow'}>
-        <header>Error message</header>
-        <div className={'modalBody'}>{message}</div>
+    <div className="modalOverlay">
+      <div className="modalWindow">
+        <header>Error Message</header>
+        <div className="modalBody">{message}</div>
         <footer>
           <button
-            className={'ok'}
+            className="ok"
             onClick={() => {
               close()
             }}
           >
-            OK
+            Close
           </button>
         </footer>
       </div>

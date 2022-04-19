@@ -144,6 +144,7 @@ const SelectOneOf = (props) => {
     <Field
       name={name}
       options={getSelectOptionsFromSchema(selectDesc)}
+      title={title}
       {...prop}
       component={Select}
     />

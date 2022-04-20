@@ -149,24 +149,18 @@ const Text = (props: TextProps) => {
 
   return (
     <Dialog
-      className="textEditor"
+      className={classes.textEditor}
       title="Text Editor"
       params={props}
       result={result}
       valid={() => formState.form.valid}
       buttonsNameMap={{ OK: 'Apply' }}
       buttons={['Cancel', 'OK']}
-      withDivider
-    >
-      <ul className={classes.controlPanel}>
-        <FontControl
-          editorState={editorState}
-          setEditorState={setEditorState}
-          styles={styles}
-        />
+      withDivider>
+      <div className={classes.controlPanel}>
         {buttons.map((button) => {
           return (
-            <TextButton
+            <TextButton // стили текста
               button={button}
               key={button.name}
               active={currentStyle.has(button.command)}
@@ -174,21 +168,25 @@ const Text = (props: TextProps) => {
             />
           )
         })}
-        <SpecialSymbolsButton
+        <SpecialSymbolsButton // специальные символы
           editorState={editorState}
           setEditorState={setEditorState}
           styles={currentStyle}
         />
-      </ul>
-      <div className={classes.textEditorInput}>
-        <Editor
-          keyBindingFn={keyBindingFn}
+        <FontControl // размер шрифта
           editorState={editorState}
-          onChange={onContentChange}
-          customStyleMap={customStyleMap}
-          customStyleFn={customStyleFn}
+          setEditorState={setEditorState}
+          styles={styles}
         />
       </div>
+      <span>Text:</span>
+      <Editor
+        keyBindingFn={keyBindingFn}
+        editorState={editorState}
+        onChange={onContentChange}
+        customStyleMap={customStyleMap}
+        customStyleFn={customStyleFn}
+      />
     </Dialog>
   )
 }

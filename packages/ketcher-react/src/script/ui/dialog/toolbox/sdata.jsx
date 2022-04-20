@@ -129,6 +129,7 @@ const content = (schema, context, fieldName, checked) =>
           checked={checked}
           type="radio"
           key={`${context}-${fieldName}-${prop}-radio`}
+          labelPos={false}
         />
       ) : prop === 'fieldValue' && schema.properties.fieldValue.enum ? (
         <Field

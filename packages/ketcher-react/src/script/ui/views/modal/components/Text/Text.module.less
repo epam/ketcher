@@ -17,40 +17,34 @@
 @import '../../../../../../style/mixins.less';
 
 .textEditor {
-  > div {
-    overflow: hidden;
+  // > div {
+  //   overflow: hidden;
+  // }
+
+  .content {
+    display: flex;
+    flex-direction: column;
   }
-}
 
-.contentWrapper {
-  display: flex;
-  flex-direction: column;
-  overflow: visible;
-}
-
-.controlPanel {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12px !important;
-}
-.textEditorInput {
-  resize: none;
-  word-wrap: break-word;
-  line-height: normal;
-  margin-top: 6px;
-
-  > span {
-    font-size: 12px;
-    line-height: 14px;
-    color: @color-text-secondary;
+  .controlPanel {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px !important;
   }
-}
-.editorWrapper {
-  border: 1px solid @color-grey-4;
-  border-radius: 4px;
-  min-height: 209px;
-  box-sizing: border-box;
-  margin-top: 4px;
+  .textEditorInput {
+    resize: none;
+    word-wrap: break-word;
+    line-height: normal;
+    margin-top: 6px;
+  }
+
+  :global(.DraftEditor-root) {
+    border: 1px solid @color-grey-4;
+    border-radius: 4px;
+    min-height: 210px;
+    box-sizing: border-box;
+    margin-top: 4px;
+  }
 }

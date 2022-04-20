@@ -47,7 +47,7 @@ interface TextProps extends DialogParams {
   position?: string
 }
 
-const buttons: Array<{ command: TextCommand; name: string }> = [
+const specialButtons: Array<{ command: TextCommand; name: string }> = [
   {
     command: TextCommand.Bold,
     name: 'text-bold'
@@ -149,7 +149,6 @@ const Text = (props: TextProps) => {
 
   return (
     <Dialog
-      className="textEditor"
       title="Text Editor"
       params={props}
       result={result}
@@ -157,37 +156,44 @@ const Text = (props: TextProps) => {
       buttonsNameMap={{ OK: 'Apply' }}
       buttons={['Cancel', 'OK']}
       withDivider
-    >
-      <ul className={classes.controlPanel}>
-        <FontControl
-          editorState={editorState}
-          setEditorState={setEditorState}
-          styles={styles}
-        />
-        {buttons.map((button) => {
-          return (
-            <TextButton
-              button={button}
-              key={button.name}
-              active={currentStyle.has(button.command)}
-              toggleStyle={toggleStyle}
+      needMargin>
+      <div className={classes.contentWrapper}>
+        <ul className={classes.controlPanel}>
+          {specialButtons.map((button) => {
+            return (
+              <TextButton // кнопки стиля текста
+                button={button}
+                key={button.name}
+                active={currentStyle.has(button.command)}
+                toggleStyle={toggleStyle}
+              />
+            )
+          })}
+
+          <SpecialSymbolsButton // специальные символы раскрывашка
+            editorState={editorState}
+            setEditorState={setEditorState}
+            styles={currentStyle}
+          />
+
+          <FontControl // размер шрифта
+            editorState={editorState}
+            setEditorState={setEditorState}
+            styles={styles}
+          />
+        </ul>
+        <div className={classes.textEditorInput}>
+          <span>Text:</span>
+          <div className={classes.editorWrapper}>
+            <Editor
+              keyBindingFn={keyBindingFn}
+              editorState={editorState}
+              onChange={onContentChange}
+              customStyleMap={customStyleMap}
+              customStyleFn={customStyleFn}
             />
-          )
-        })}
-        <SpecialSymbolsButton
-          editorState={editorState}
-          setEditorState={setEditorState}
-          styles={currentStyle}
-        />
-      </ul>
-      <div className={classes.textEditorInput}>
-        <Editor
-          keyBindingFn={keyBindingFn}
-          editorState={editorState}
-          onChange={onContentChange}
-          customStyleMap={customStyleMap}
-          customStyleFn={customStyleFn}
-        />
+          </div>
+        </div>
       </div>
     </Dialog>
   )

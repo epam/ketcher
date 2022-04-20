@@ -158,8 +158,8 @@ const Text = (props: TextProps) => {
       buttons={['Cancel', 'OK']}
       withDivider
       needMargin>
-      <div className={classes.contentWrapper}>
-        <ul className={classes.controlPanel}>
+      <div className={classes.content}>
+        <div className={classes.controlPanel}>
           {specialButtons.map((button) => {
             return (
               <TextButton // кнопки стиля текста
@@ -182,19 +182,15 @@ const Text = (props: TextProps) => {
             setEditorState={setEditorState}
             styles={styles}
           />
-        </ul>
-        <div className={classes.textEditorInput}>
-          <span>Text:</span>
-          <div className={classes.editorWrapper}>
-            <Editor
-              keyBindingFn={keyBindingFn}
-              editorState={editorState}
-              onChange={onContentChange}
-              customStyleMap={customStyleMap}
-              customStyleFn={customStyleFn}
-            />
-          </div>
         </div>
+        <span>Text:</span>
+        <Editor
+          keyBindingFn={keyBindingFn}
+          editorState={editorState}
+          onChange={onContentChange}
+          customStyleMap={customStyleMap}
+          customStyleFn={customStyleFn}
+        />
       </div>
     </Dialog>
   )

@@ -17,7 +17,8 @@
 @import '../../../../../../../style/variables';
 @import '../../../../../../../style/mixins';
 
-.textButton {
+.textButton,
+.activeTextButton {
   .btn();
 
   border: 0;
@@ -26,7 +27,9 @@
   cursor: pointer;
   margin: 4px;
   .button-size(large);
+}
 
+.textButton {
   & > svg {
     fill: #666;
     transition: 0.2s;
@@ -38,6 +41,20 @@
     & > svg {
       fill: #000;
     }
+  }
+}
+
+.activeTextButton {
+  background-color: @color-primary-green;
+  border-radius: 4px;
+
+  & > svg {
+    fill: @color-background-primary;
+    transition: 0.2s;
+  }
+
+  &:hover {
+    background-color: @color-button-primary-clicked;
   }
 }
 

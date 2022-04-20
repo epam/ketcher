@@ -38,25 +38,24 @@
 
     :global(.MuiOutlinedInput-root), input[type='text'] {
       margin-top: 4px;
+      max-width: 236px;
     }
   }
 
   fieldset {
     border: 0;
     padding: 0;
-
   }
 
   fieldset[class='radio'] {
     display: flex;
     justify-content: space-between;
-    margin-top: 12px;
     height: 16px;
   }
 
   form {
     margin-top: 12px;
-    
+
     label {
       text-align: left;
       font-size: 12px;
@@ -76,6 +75,12 @@
         span {
           margin-right: 4px !important;
         }
+      }
+    }
+
+    & fieldset {
+      & > label:last-child {
+        padding-top: 12px;
       }
     }
 

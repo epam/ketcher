@@ -150,6 +150,7 @@ const Text = (props: TextProps) => {
   return (
     <Dialog
       title="Text Editor"
+      className={classes.textEditor}
       params={props}
       result={result}
       valid={() => formState.form.valid}

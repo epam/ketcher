@@ -16,9 +16,10 @@
 @import '../../../../../../style/variables.less';
 @import '../../../../../../style/mixins.less';
 
-.body {
-  overflow: visible;
-  background-color: red;
+.textEditor {
+  > div {
+    overflow: hidden;
+  }
 }
 
 .contentWrapper {
@@ -34,23 +35,22 @@
   align-items: center;
   margin-top: 12px !important;
 }
-
-.editorWrapper {
-  border: 1px solid @color-grey-4;
-  border-radius: 4px;
-  height: 209px;
-  box-sizing: border-box;
-}
-
 .textEditorInput {
-  width: 316px;
   resize: none;
   word-wrap: break-word;
   line-height: normal;
-}
+  margin-top: 6px;
 
-& div.DraftEditor-root {
+  > span {
+    font-size: 12px;
+    line-height: 14px;
+    color: @color-text-secondary;
+  }
+}
+.editorWrapper {
   border: 1px solid @color-grey-4;
   border-radius: 4px;
-  background-color: red;
+  min-height: 209px;
+  box-sizing: border-box;
+  margin-top: 4px;
 }

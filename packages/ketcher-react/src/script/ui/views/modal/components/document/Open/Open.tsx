@@ -98,14 +98,14 @@ const Open: FC<Props> = (props) => {
           key="openButton"
           disabled={!structStr}
           clickHandler={openHandler}
-          styles={classes.primaryButton}
+          styles={classes.openButton}
           label="Open as New Project"
         />,
         <DialogActionButton
           key="copyButton"
           disabled={!structStr}
           clickHandler={copyHandler}
-          styles={classes.secondaryButton}
+          styles={classes.copyButton}
           label="Add to Canvas"
           title="Structure will be loaded as fragment and added to Clipboard"
         />

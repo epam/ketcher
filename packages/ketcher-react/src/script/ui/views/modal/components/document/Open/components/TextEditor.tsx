@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ClipArea from '../../../../../../component/cliparea/cliparea'
 import classes from '../Open.module.less'
 
 export type TextEditorProps = {
@@ -29,10 +28,6 @@ export const TextEditor = ({ structStr, inputHandler }: TextEditorProps) => {
         className={classes.textareaEditor}
         value={structStr}
         onChange={(event) => inputHandler(event.target.value)}
-      />
-      <ClipArea
-        focused={() => true}
-        onCopy={() => ({ 'text/plain': structStr })}
       />
     </>
   )

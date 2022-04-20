@@ -35,38 +35,30 @@
   }
 
   .textareaEditor {
-    width: 405px;
+    padding: 12px;
+    width: 560px;
     min-width: 32em;
     min-height: 23em;
     overflow: auto;
     white-space: pre;
-    //make it resizable
+    border: none;
+    border-bottom: 1px solid @color-grey-3;
+    border-radius: 0;
     resize: both;
-
     .scrollbar();
+
+    &:hover {
+      border: none;
+      border-bottom: 1px solid @color-grey-3;
+      border-radius: 0;
+    }
   }
 }
 
-.dialogButton {
-  border: none;
-  margin-right: 2px;
-  margin-left: 10px;
-  text-align: center;
-  height: 24px;
-  float: right;
-  font-size: 12px;
-  line-height: 14px;
-  padding: 4px 8px;
-}
-
-.primaryButton {
-  .dialogButton();
-  .button-main();
-}
-
-.secondaryButton {
-  .dialogButton();
+.openButton {
   .button-secondary();
+}
 
-  border-radius: 2px;
+.copyButton {
+  .button-primary();
 }

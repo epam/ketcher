@@ -32,11 +32,21 @@
   }
 
   &.isActive {
-    background-color: @color-gray;
+    background-color: @color-primary-green;
     border-radius: 4px;
 
     & > svg {
-      fill: @main-color;
+      fill: @color-background-primary;
+      transition: 0.2s;
+    }
+
+    &:hover {
+      background-color: @color-button-primary-clicked;
+
+      & > svg {
+        fill: @color-background-primary;
+        transition: 0.2s;
+      }
     }
   }
 

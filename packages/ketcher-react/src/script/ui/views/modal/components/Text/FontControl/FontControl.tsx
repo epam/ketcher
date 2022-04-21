@@ -40,7 +40,7 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
   }, [currentStyle])
 
   const MIN_FONT_SIZE = 4
-  const MAX_FONT_SIZE = 144
+  const MAX_FONT_SIZE = 60
   const fontSizes = range(MIN_FONT_SIZE, MAX_FONT_SIZE + 1)
 
   const fontSizeOptions = useMemo(
@@ -49,8 +49,7 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
         <div
           key={fontSize}
           className={classes.fontSizeOption}
-          onMouseDown={(e) => setFontSize(e, `${fontSize}px`)}
-        >
+          onMouseDown={(e) => setFontSize(e, `${fontSize}px`)}>
           {fontSize}
         </div>
       )),
@@ -64,9 +63,8 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
         onMouseDown={(e) => {
           e.preventDefault()
           setIsShowingFontSizeMenu(!isShowingFontSizeMenu)
-        }}
-      >
-        {currentFontSize}
+        }}>
+        {parseFloat(currentFontSize)}
       </button>
       {isShowingFontSizeMenu ? (
         <div className={classes.fontSizeMenu}>{fontSizeOptions}</div>

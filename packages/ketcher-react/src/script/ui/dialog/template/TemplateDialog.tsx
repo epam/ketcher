@@ -161,6 +161,7 @@ const TemplateDialog: FC<Props> = (props) => {
 
   const handleTabChange = (_, tab) => {
     setTab(tab)
+    props.onSelect(null)
   }
 
   const handleAccordionChange = (accordion) => (_, isExpanded) => {

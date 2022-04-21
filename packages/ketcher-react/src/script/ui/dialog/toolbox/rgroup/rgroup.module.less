@@ -29,9 +29,9 @@
   ul {
     display: grid;
     grid-template-columns: repeat(5, 41px);
-    grid-template-rows: repeat(7, 29px);
+    grid-template-rows: repeat(3, 29px 33px) 29px;
     grid-column-gap: 8px;
-    grid-row-gap: 12px;
+    grid-row-gap: 8px;
     overflow: hidden;
   }
 
@@ -41,7 +41,7 @@
     border: none;
     font-size: 14px;
     width: 100%;
-    height: 100%;
+    height: 29px;
     padding: 6px 4px;
     background: @color-background-primary;
     color: @color-text-secondary;

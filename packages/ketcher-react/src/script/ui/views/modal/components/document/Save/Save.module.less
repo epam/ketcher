@@ -42,9 +42,13 @@
         width: calc(1 / 2 * 100% - 6px);
         text-align: left;
 
+        // TODO: check and update global styles for text inputs
         input {
-          height: 25px !important;
           border: 1px solid @color-grey-4 !important;
+
+          &:hover {
+            border: 1px solid @color-input-hover !important;
+          }
         }
 
         > span {
@@ -94,6 +98,7 @@
     }
     
     .previewArea {
+      padding: 12px;
       display: block;
       min-height: 224px;
       min-width: 428px;
@@ -138,7 +143,6 @@
       align-items: center;
       justify-content: center;
       height: 220px;
-      width: 428px;
       border-top: 1px solid @color-grey-3;
       border-bottom: 1px solid @color-grey-3;
     

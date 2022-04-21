@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 // stylelint-disable selector-pseudo-class-no-unknown
+// stylelint-disable no-descending-specificity
 @import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
@@ -33,7 +34,7 @@
   
   > header {
     flex-shrink: 0;
-    box-shadow: 0 6px 6px 0 @shadow-color;
+    box-shadow: 0 2px 4px 0 @shadow-color;
     z-index: 10; 
   }
 
@@ -45,10 +46,14 @@
     input[type='checkbox'] {
       top: 0;
     }
+
+    label {
+      margin-bottom: 8px;
+    }
   }
 
   > footer {
-    box-shadow: 0 -6px 6px 0 @shadow-color;
+    box-shadow: 0 -2px 4px 0 @shadow-color;
 
     input {
       min-width: 68px !important;
@@ -108,6 +113,8 @@
 
 .accordionDetails{
   margin-top: @margin-left-right;
+  color: @color-text-primary;
+  padding-bottom: 8px;
 
   label {
     display: flex;
@@ -117,7 +124,6 @@
   
     &.checkbox {
       height: 16px;
-      margin-bottom: @margin-top-bottom * 2;
       flex-direction: row;
     }
   }

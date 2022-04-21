@@ -37,6 +37,12 @@ const StyledInput = styled('input')`
     border-color: #43b5c0;
   }
 
+  &:active,
+  &:focus {
+    border-color: #167782;
+    outline: none;
+  }
+
   &::after,
   &::before {
     display: none;

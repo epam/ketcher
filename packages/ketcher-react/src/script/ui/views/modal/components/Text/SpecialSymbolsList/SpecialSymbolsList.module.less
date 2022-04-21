@@ -1,25 +1,28 @@
+@import '../../../../../../../style/variables.less';
+
 .window {
   position: absolute;
-  width: 113px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  background-color: white;
+  right: 2px;
+  width: 160px;
+  background-color: @color-background-primary;
   z-index: 10;
-  height: 200px;
-  overflow: auto;
+  overflow: visible;
   border-radius: 10px;
+  padding: 8px;
+  box-shadow: -2px 2px 6px 0 @color-grey-4;
 }
 
 .button {
-  width: 30px;
-  height: 30px;
+  width: 16px;
+  height: 16px;
   border: none;
-  margin: 1px;
+  margin: 2px;
   background-color: transparent;
 
   &:hover {
-    color: white;
-    background-color: #343434;
+    color: @color-primary-green;
   }
 }

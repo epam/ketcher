@@ -13,21 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-@import 'src/style/variables';
+@import '../../../../../../style/variables.less';
+@import '../../../../../../style/mixins.less';
 
-.textEditorInput {
-  height: 200px;
-  width: 400px;
-  resize: none;
-  padding: 0 10px;
-  box-sizing: border-box;
-  word-wrap: break-word;
-  line-height: normal;
-}
-
-.controlPanel {
+.textEditor {
   display: flex;
-  align-items: center;
-  margin: 5px 10px 15px;
-  border-bottom: 1px solid @border-color;
+  flex-direction: column;
+  width: 340px;
+
+  .controlPanel {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    margin: 12px 0;
+    height: 28px;
+
+    > span {
+      margin-right: 4px;
+      white-space: nowrap;
+    }
+  }
+  // stylelint-disable-next-line selector-pseudo-class-no-unknown
+  :global(.DraftEditor-root) {
+    height: 182px;
+    padding: 12px;
+    word-wrap: break-word;
+    line-height: normal;
+    border: 1px solid @color-grey-4;
+    border-radius: 4px;
+    margin-top: 4px;
+    overflow: auto;
+
+    .scrollbar();
+  }
 }

@@ -25,7 +25,6 @@
   padding: 0;
   position: relative;
   cursor: pointer;
-  margin: 4px;
   .button-size(large);
 }
 
@@ -56,6 +55,15 @@
   &:hover {
     background-color: @color-button-primary-clicked;
   }
+}
+.activeTextButton::after {
+  content: '';
+  position: absolute;
+  border: 2px solid transparent;
+  border-right: 2px solid @color-background-primary;
+  border-bottom: 2px solid @color-background-primary;
+  top: 23px;
+  left: 23px;
 }
 
 .button-size(@dim) {

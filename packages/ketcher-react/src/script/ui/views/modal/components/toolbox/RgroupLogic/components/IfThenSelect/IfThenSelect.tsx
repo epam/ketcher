@@ -18,6 +18,8 @@ import { Field } from '../../../../../../../component/form/form/form'
 import { RgroupLogicProps } from '../../RgroupLogic'
 import classes from './IfThenSelect.module.less'
 import { useFormContext } from '../../../../../../../../../hooks'
+import Select from '../../../../../../../component/form/Select'
+import { getSelectOptionsFromSchema } from '../../../../../../../utils'
 
 type Props = Pick<RgroupLogicProps, 'label' | 'rgroupLabels' | 'name'>
 
@@ -37,7 +39,15 @@ const IfThenSelect = (props: Props) => {
     }
   })
 
-  return <Field schema={desc} className={classes.field} {...props} />
+  return (
+    <Field
+      schema={desc}
+      className={classes.field}
+      {...props}
+      component={Select}
+      options={getSelectOptionsFromSchema(desc)}
+    />
+  )
 }
 
 export default IfThenSelect

@@ -53,8 +53,6 @@ const RenderTmpl: FC<{
   tmpl: Template
   options: any
   className: string
-  onClick: () => void
-  onDoubleClick: () => void
 }> = ({ tmpl, options, ...props }) => {
   return (
     <StructRender
@@ -97,13 +95,13 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 ? `${tmpl.struct.name}_${i}`
                 : `${tmpl.struct.name}_${i}_selected`
             }
+            onClick={() => onSelect(tmpl)}
+            onDoubleClick={() => onDoubleClick(tmpl)}
           >
             <RenderTmpl
               tmpl={tmpl}
               options={options}
               className={classes.struct}
-              onClick={() => onSelect(tmpl)}
-              onDoubleClick={() => onDoubleClick(tmpl)}
             />
             <div
               className={`${classes.structTitle} ${

@@ -458,7 +458,7 @@ to open the drop-down list with the following tools:
 To add text to the canvas click the *Add text* tool ![](images/41_text_icon.png) 
 in the Tools palette and click the canvas to open the Text editor window:
 
-![](images/text-editor.png) 
+<img  src = images/421_texttool.png width = "300"/> 
 
 - To enter text, type in the Text editor field.
 - To edit text, double click the text object on the canvas.

@@ -31,6 +31,7 @@ import classes from './PeriodTable.module.less'
 import { connect } from 'react-redux'
 import { onAction } from '../../../../state'
 import { xor } from 'lodash/fp'
+import Icon from '../../../../component/view/icon'
 
 class Table extends Component {
   constructor(props) {
@@ -67,6 +68,13 @@ class Table extends Component {
     const type = event === 0 ? 'atom' : 'gen'
     this.changeType(type)
   }
+
+  headerContent = () => (
+    <div className={classes.dialogHeader}>
+      <Icon name="period-table" />
+      <span>Periodic Table</span>
+    </div>
+  )
 
   selected = (label) => {
     const { type, value } = this.state
@@ -144,10 +152,11 @@ class Table extends Component {
         }
       }
     ]
+    const HeaderContent = this.headerContent
 
     return (
       <Dialog
-        title="Periodic table"
+        headerContent={<HeaderContent />}
         className={classes.elementsTable}
         params={this.props}
         result={this.result}

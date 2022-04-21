@@ -44,6 +44,7 @@ interface DialogProps {
   buttonsNameMap?: {
     [key in string]: string
   }
+  focusable?: boolean
 }
 
 interface DialogCallProps {
@@ -68,25 +69,16 @@ const Dialog: FC<Props> = (props) => {
     buttonsTop,
     needMargin = true,
     withDivider = false,
+    focusable = true,
     ...rest
   } = props
   const dialogRef = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
-    const focusСandidate = dialogRef.current?.querySelector('input')
-    if (focusСandidate) {
-      focusСandidate.focus()
-    } else {
-      ;(dialogRef.current as any).focus()
+    if (focusable) {
+      ;(dialogRef.current as HTMLElement).focus()
     }
-    return () => {
-      ;(
-        dialogRef.current
-          ?.closest('.Ketcher-root')
-          ?.getElementsByClassName('cliparea')[0] as any
-      ).focus()
-    }
-  }, [])
+  }, [focusable])
 
   const isButtonOk = (button) => {
     return button === 'OK' || button === 'Save'

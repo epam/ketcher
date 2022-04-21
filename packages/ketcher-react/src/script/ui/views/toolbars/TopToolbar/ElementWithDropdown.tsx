@@ -35,7 +35,7 @@ const DropDownContent = styled('div')`
   word-break: keep-all;
   padding: 2px;
   background: white; // TODO use variable
-  border: 1px solid gray; // TODO use variable
+  border: 1px solid #cad3dd; // TODO use variable
   border-radius: 5px;
   box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
 `

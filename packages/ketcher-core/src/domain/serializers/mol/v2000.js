@@ -64,7 +64,7 @@ function parseAtomLine(atomLine) {
     invRet: utils.parseDecimalInt(atomSplit[15]),
 
     // reaction query
-    exactChangeFlag: utils.parseDecimalInt(atomSplit[16]) !== 0
+    exactChangeFlag: utils.parseDecimalInt(atomSplit[16])
   }
   return new Atom(params)
 }

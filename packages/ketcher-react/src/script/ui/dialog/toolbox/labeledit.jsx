@@ -79,6 +79,7 @@ function LabelEdit(props) {
       className={styles.labelEdit}
       buttons={['OK']}
       buttonsNameMap={{ OK: 'Apply' }}
+      focusable={false}
       params={prop}
     >
       <Form

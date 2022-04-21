@@ -64,9 +64,10 @@
     display: inline-block;
     vertical-align: middle;
     background: @color-background-primary;
-    line-height: 20 / 14;
+    line-height: @line-height-input;
+    font-size: @font-size-input;
     height: 2.4em;
-    padding: 0.35em 0.15em 0.35em 0.3em;
+    padding: 6px 6px 6px 35px;
     border: none;
     box-sizing: border-box;
     color: inherit;
@@ -98,12 +99,13 @@
     display: inline-block;
     vertical-align: middle;
     background: @color-background-primary;
-    line-height: 16px;
+    font-size: @font-size-input;
+    line-height: @line-height-input;
     height: 24px;
     padding: 4px 8px;
     border: 1px solid @color-border-input;
     box-sizing: border-box;
-    color: inherit;
+    color: @color-text-primary;
 
     &:active,
     &:focus {

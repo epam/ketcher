@@ -194,7 +194,7 @@ describe('parseCTabV2000', () => {
         '   14.1234  -23.5678   10.9876 S   0  0  0  0  0  0  0  0  0  0  0  1'
       ]
       const struct = molParsers.parseCTabV2000(atomLine, createCountsLine(1))
-      expect(struct.atoms.get(0)!.exactChangeFlag).toBe(true)
+      expect(struct.atoms.get(0)!.exactChangeFlag).toBe(1)
     })
   })
 
@@ -581,7 +581,7 @@ describe('parseCTabV2000', () => {
   it('should apply props to atoms and bonds', () => {
     const struct = molParsers.parseCTabV2000(basicCtabLines, basicCountsSplit)
     expect(struct.bonds.get(4)!.stereo).toBe(4)
-    expect(struct.atoms.get(5)!.exactChangeFlag).toBe(true)
+    expect(struct.atoms.get(5)!.exactChangeFlag).toBe(1)
     expect(struct.atoms.get(6)!.charge).toBe(-3)
   })
 

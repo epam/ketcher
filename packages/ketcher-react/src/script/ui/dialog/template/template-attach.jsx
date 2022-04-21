@@ -91,8 +91,8 @@ const NameInput = styled(Field)`
     padding: 4px 8px;
     border: 1px solid #cad3dd;
     border-radius: 4px;
-    line-height: 12px;
-    font-size: 10px;
+    line-height: 16px;
+    font-size: 14px;
 
     &:hover {
       border-color: #43b5c0;
@@ -117,8 +117,8 @@ const AttachmentOutput = styled('span')`
   padding: 4px 8px;
   border: 1px solid #cad3dd;
   border-radius: 4px;
-  line-height: 12px;
-  font-size: 10px;
+  line-height: 16px;
+  font-size: 14px;
   background-color: #eff2f5;
 `
 

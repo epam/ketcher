@@ -101,7 +101,7 @@ You can use the buttons of the _Main_ toolbar:
 - **Calculated Values** button (15) to display some properties of
   the structure:
 
-  ![](images/analyse.png 'Calculated Values') 
+  <img src=images/6_calc_values.png title = "Calculated Values" width = "350"> 
 
 - **3D Viewer** button (16) to open the structure in the
   three-dimensional Viewer;
@@ -109,7 +109,7 @@ You can use the buttons of the _Main_ toolbar:
 - **Settings** button (17) to make some settings for molecular
   files:
 
-  ![](images/settings.png) 
+  <img src=images/7_settings.png title = "Settings" width = "450">  
 
 - **Help** button (18) to view Help;
 
@@ -129,7 +129,7 @@ You can use the buttons of the _Main_ toolbar:
 The structure appears in a modal window after clicking on the **3D
 Viewer** button ![](images/8_1_miew_icon.png '3D Viewer Icon') on the top panel:
 
-<img src=images/8_miew.png  width = "600" title = "3D Viewer"> 
+<img src=images/8_miew1.png  width = "600" title = "3D Viewer"> 
 
 You can perform the following actions:
 
@@ -174,7 +174,7 @@ To draw/edit atoms you can:
 - change an atom by clicking on an existing atom with the
   _Selection_ tool and starting to enter text after that; type another atom symbol in the text box:
   
-  ![](images/11_label_edit.png 'Change Atom') 
+  <img src = images/11_label_edit.png width = "250" title = "Change Atom" /> 
   
 - change the charge of an atom by selecting the Charge Plus or
   Charge Minus tool and clicking consecutively on an atom to
@@ -186,7 +186,7 @@ To draw/edit atoms you can:
   invoke the Atom Properties dialog (the dialog also provides atom
   query features):
 
-  ![](images/atom-dialog.png 'Atom Properties') 
+  ![](images/13_atom_prop.png 'Atom Properties') 
 
 - click on the Periodic Table button, open the Extended tab and
   select a corresponding Generic group or Special Node:
@@ -573,7 +573,7 @@ You can also **Remove the Abbreviation** on the group - it will allows you to wo
 
 Please, note that a lot of Ketcher tools will be not applicable for the separate atoms and bonds of FG. FG can only be selected as a whole. It can also be deleted, moved, or rotated only as an entire entity. 
 
-Ketcher will let you know if the tool is not applicable for the FG and will suggest to Remove the Abbreviation immediately: <br> <img src=images/FG_warning.png width="450">
+Ketcher will let you know if the tool is not applicable for the FG and will suggest to Remove the Abbreviation immediately: <br> <img src=images/FG_remove_abb.png width="250">
 <br> 
 Aromatize & Dearomatize operations will not be applied to the rings that are part of the FG. 
 
@@ -599,7 +599,7 @@ the Molfile ctable for the molecule to be imported:
 
 The text editor form is initiated for the text from the Clipboard and when the file is selected for opening. It allows to immediately edit the text representation before opening the structure:
 
-<img src = images/45_open_text.png width = "500"> 
+<img src = images/45_open_text_new.png width = "500"> 
 
 Ketcher suggests 2 ways for structure to be opened:
 

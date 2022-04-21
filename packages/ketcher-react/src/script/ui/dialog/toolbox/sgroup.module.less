@@ -38,6 +38,7 @@
 
     :global(.MuiOutlinedInput-root), input[type='text'] {
       margin-top: 4px;
+      max-width: 236px;
     }
   }
 
@@ -50,8 +51,13 @@
   fieldset[class='radio'] {
     display: flex;
     justify-content: space-between;
-    margin-top: 12px;
-    height: 16px;
+    margin-top: 24px;
+    width: 100%;
+
+    & label {
+      display: flex;
+      flex-direction: row;
+    }
   }
 
   form {
@@ -61,11 +67,7 @@
       text-align: left;
       font-size: 12px;
 
-      fieldset {
-        & > * {
-          flex-grow: 1;
-        }
-        
+      fieldset { 
         label {
           display: flex;
           flex-direction: row;

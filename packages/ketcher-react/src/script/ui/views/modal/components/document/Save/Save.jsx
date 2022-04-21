@@ -164,11 +164,6 @@ class SaveDialog extends Component {
               tabIndex: 0,
               structStr
             })
-            setTimeout(() => {
-              if (this.textAreaRef.current) {
-                this.textAreaRef.current.select()
-              }
-            }, 10) // TODO: remove hack
           },
           (e) => {
             errorHandler(e.message)

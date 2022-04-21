@@ -101,7 +101,7 @@ You can use the buttons of the _Main_ toolbar:
 - **Calculated Values** button (15) to display some properties of
   the structure:
 
-  <img src=images/6_calc_values.png title = "Calculated Values" width = "350"> 
+  <img src=images/6_calc_values.png title = "Calculated Values" width = "300"> 
 
 - **3D Viewer** button (16) to open the structure in the
   three-dimensional Viewer;
@@ -186,7 +186,7 @@ To draw/edit atoms you can:
   invoke the Atom Properties dialog (the dialog also provides atom
   query features):
 
-  ![](images/13_atom_prop.png 'Atom Properties') 
+  <img src = images/13_atom_prop.png width = "300" title = "Atom Properties"/> 
 
 - click on the Periodic Table button, open the Extended tab and
   select a corresponding Generic group or Special Node:
@@ -623,9 +623,9 @@ Please, note that saving structure to the image formats will results in chemical
 
 # Stereochemistry
 
-When the structure with the correct tetrahedral stereochemistry is created on the canvas you can open the ‘Enhanced Stereochemistry’ window by clicking the *Stereochemistry* button ![](images/stereo-button.png) and assign stereo marks:
+When the structure with the correct tetrahedral stereochemistry is created on the canvas you can open the ‘Enhanced Stereochemistry’ window by clicking the *Stereochemistry* button ![](images/481_ster_icon.png) and assign stereo marks:
 
- ![](images/enhanced-stereo.png)
+ <img src = images/48_enhstereo.png width = "250"/>
 
 
 

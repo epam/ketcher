@@ -49,7 +49,8 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
         <div
           key={fontSize}
           className={classes.fontSizeOption}
-          onMouseDown={(e) => setFontSize(e, `${fontSize}px`)}>
+          onMouseDown={(e) => setFontSize(e, `${fontSize}px`)}
+        >
           {fontSize}
         </div>
       )),
@@ -63,7 +64,8 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
         onMouseDown={(e) => {
           e.preventDefault()
           setIsShowingFontSizeMenu(!isShowingFontSizeMenu)
-        }}>
+        }}
+      >
         {parseFloat(currentFontSize)}
       </button>
       {isShowingFontSizeMenu ? (

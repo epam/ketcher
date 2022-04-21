@@ -31,6 +31,14 @@
     transition: 0.2s;
   }
 
+  &:hover {
+    background-image: none;
+
+    & > svg {
+      fill: @main-color;
+    }
+  }
+
   &.isActive {
     background-color: @color-primary-green;
     border-radius: 4px;
@@ -47,14 +55,6 @@
         fill: @color-background-primary;
         transition: 0.2s;
       }
-    }
-  }
-
-  &:hover {
-    background-image: none;
-
-    & > svg {
-      fill: @main-color;
     }
   }
 }

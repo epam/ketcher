@@ -28,6 +28,20 @@
   .button-size(large);
 }
 
+.activeTextButton {
+  background-color: @color-primary-green;
+  border-radius: 4px;
+
+  & > svg {
+    fill: @color-background-primary;
+    transition: 0.2s;
+  }
+
+  &:hover {
+    background-color: @color-button-primary-clicked;
+  }
+}
+
 .textButton {
   & > svg {
     fill: #666;
@@ -43,19 +57,6 @@
   }
 }
 
-.activeTextButton {
-  background-color: @color-primary-green;
-  border-radius: 4px;
-
-  & > svg {
-    fill: @color-background-primary;
-    transition: 0.2s;
-  }
-
-  &:hover {
-    background-color: @color-button-primary-clicked;
-  }
-}
 .activeTextButton::after {
   content: '';
   position: absolute;

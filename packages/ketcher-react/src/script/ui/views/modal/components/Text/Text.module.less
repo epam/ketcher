@@ -20,7 +20,6 @@
   display: flex;
   flex-direction: column;
   width: 340px;
-  // height: 367px;
 
   .controlPanel {
     display: flex;
@@ -30,12 +29,16 @@
     justify-content: space-between;
     margin: 12px 0;
     height: 28px;
+
+    > span {
+      margin-right: 4px;
+      white-space: nowrap;
+    }
   }
 
   :global(.DraftEditor-root) {
-    height: 208px;
+    height: 198px;
     padding: 4px 12px;
-    box-sizing: border-box;
     word-wrap: break-word;
     line-height: normal;
     border: 1px solid @color-grey-4;

@@ -173,6 +173,7 @@ const Text = (props: TextProps) => {
           setEditorState={setEditorState}
           styles={currentStyle}
         />
+        <span>Font Size</span>
         <FontControl // размер шрифта
           editorState={editorState}
           setEditorState={setEditorState}

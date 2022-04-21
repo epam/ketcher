@@ -24,7 +24,6 @@
   padding: 0;
   position: relative;
   cursor: pointer;
-  margin: 4px;
   .button-size(large);
 
   & > svg {
@@ -32,20 +31,30 @@
     transition: 0.2s;
   }
 
-  &.isActive {
-    background-color: @color-gray;
-    border-radius: 2px;
+  &:hover {
+    background-image: none;
 
     & > svg {
       fill: @main-color;
     }
   }
 
-  &:hover {
-    background-image: none;
+  &.isActive {
+    background-color: @color-primary-green;
+    border-radius: 4px;
 
     & > svg {
-      fill: @main-color;
+      fill: @color-background-primary;
+      transition: 0.2s;
+    }
+
+    &:hover {
+      background-color: @color-button-primary-clicked;
+
+      & > svg {
+        fill: @color-background-primary;
+        transition: 0.2s;
+      }
     }
   }
 }

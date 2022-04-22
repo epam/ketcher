@@ -48,6 +48,6 @@ export interface Editor {
   redo: () => void
   clear: () => void
   options: (value?: any) => any
-  zoom: (value: any) => any
+  zoom: (value?: any) => any
   structSelected: () => Struct
 }

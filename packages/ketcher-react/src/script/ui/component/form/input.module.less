@@ -35,9 +35,13 @@
     height: 16px;
     vertical-align: middle;
     margin-right: 8px;
-    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-checked}' stroke-width='2'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-default}' stroke-width='2'/%3E%3C/svg%3E%0A");
     background-repeat: no-repeat;
     background-size: 100%;
+  }
+
+  input[type='radio']:hover + .radioButton {
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-hover-svg}' stroke-width='2'/%3E%3C/svg%3E%0A");
   }
 
   input[type='radio']:checked + .radioButton {
@@ -45,11 +49,11 @@
   }
 
   input[type='radio']:disabled + .radioButton {
-    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-disabled}' stroke-width='2' /%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-default}' stroke-width='2' /%3E%3C/svg%3E%0A");
   }
 
   input[type='radio']:checked:disabled + .radioButton {
-    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='@{color-input-disabled}' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-disabled}' stroke-width='2'/%3E%3Ccircle cx='8' cy='8' r='4' fill='@{color-input-disabled}'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='@{color-input-default}' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-default}' stroke-width='2'/%3E%3Ccircle cx='8' cy='8' r='4' fill='@{color-input-default}'/%3E%3C/svg%3E%0A");
   }
 
 .slider.slider {

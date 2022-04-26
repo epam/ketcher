@@ -16,9 +16,7 @@
 
 @import '../../../../../../../style/variables.less';
 
-.settings {
-  width: @width-large;
-}
+@shadow-color: #DEE1E4;
 
 .button {
   background-color: transparent;
@@ -27,6 +25,10 @@
   margin: 0 8px 0 0;
   padding: 0;
   height: 14px;
+
+  input[type='file'] {
+    display: none;
+  }
 
   &:hover {
     color: @color-icon-hover;
@@ -38,20 +40,15 @@
 }
 
 .buttonOpen {
-  margin-left: 12px;
-
-  > input {
-    display: none;
-  }
+  margin-left: @margin-left-right;
 }
 
-.sidebar {
+.accordion {
   fieldset {
     border: none;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    padding: 8px 28px 0;
+    padding: 0;
   }
 
   ul {
@@ -60,54 +57,64 @@
     }
   }
 
-  select,
-  input {
-    border-radius: 4px;
-    color: @color-select-border;
-    height: inherit;
-    margin: 0;
-    line-height: 12px;
-    padding: 2px 8px;
-  }
-
-  select {
-    margin-left: 2px;
-  }
-
   label {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     font-size: 12px;
     align-items: center;
-    line-height: 20px;
-    margin-bottom: 16px;
+    line-height: 14px;
+    margin-bottom: 12px;
     color: @color-text-primary;
     height: 24px;
+
+    input[type='checkbox'] {
+      top: 0;
+    }
 
     > select,
     > input,
     > div {
-      width: 128px;
+      width: 120px;
+      margin-right: auto;
     }
 
     > span {
-      flex-basis: 50%;
+      width: 168px;
+      margin-right: @margin-left-right;
+    }
+  }
+}
+
+.settings {
+  width: @width-settings;
+  height: 70vh;
+  overflow: hidden;
+
+  fieldset[disabled] {
+    label > span {
+      opacity: 0.3;
+    }
+
+    label > div {
+      opacity: 0.6;
     }
   }
 
-  .server {
-    label {
-      > span {
-        flex-basis: 70%;
-      }
-    }
-  }
+   > header{
+      flex-shrink: 0;
+       box-shadow: 0 2px 4px 0 @shadow-color;
+       z-index: 10; 
+   }
 
-  .stereochemistry {
-    label {
-      > span {
-        flex-basis: 55%;
-      }
-    }
-  }
+   > footer {
+        box-shadow: 0 -2px 4px 0 @shadow-color;
+
+        input:first-of-type {
+          min-width: 56px !important;
+        }
+
+        input:last-of-type {
+          min-width: 70px !important;
+        }
+   }
 }

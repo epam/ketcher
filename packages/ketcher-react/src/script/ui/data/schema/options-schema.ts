@@ -86,7 +86,7 @@ const render: {
     default: true
   },
   stereoLabelStyle: {
-    title: 'Label display at stereogenic centers',
+    title: 'Label display at\u00A0stereogenic\u00A0centers',
     enum: [
       StereLabelStyleType.IUPAC,
       StereLabelStyleType.Classic,
@@ -97,17 +97,17 @@ const render: {
     default: StereLabelStyleType.IUPAC
   },
   colorOfAbsoluteCenters: {
-    title: ' Color of Absolute Center',
+    title: ' Absolute Center color',
     type: 'string',
     default: '#ff0000'
   },
   colorOfAndCenters: {
-    title: 'Color of AND Centers',
+    title: 'AND Centers color',
     type: 'string',
     default: '#0000cd'
   },
   colorOfOrCenters: {
-    title: 'Color of OR Centers',
+    title: 'OR Centers color',
     type: 'string',
     default: '#228b22'
   },
@@ -253,7 +253,7 @@ const server: {
     default: true
   },
   'gross-formula-add-isotopes': {
-    title: 'Add Isotopes at mass calculation',
+    title: 'Add Isotopes at\u00A0mass\u00A0calculation',
     type: 'boolean',
     description: 'slider',
     default: true

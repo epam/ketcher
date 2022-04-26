@@ -71,10 +71,7 @@ export const getSelectOptionsFromSchema = (schema): Array<Option> => {
   return schema.enum.reduce((options, value, index) => {
     options.push({
       value,
-      label:
-        schema?.enumNames?.[index] !== undefined
-          ? schema?.enumNames?.[index]
-          : value
+      label: schema?.enumNames?.[index] ?? value
     })
 
     return options

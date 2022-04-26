@@ -149,8 +149,102 @@ import DropdownIndicatorIcon from './files/dropdown-indicator.svg'
 import ChevronIcon from './files/chevron.svg'
 import FullscreenEnterIcon from './files/fullscreen-enter.svg'
 import FullscreenExitIcon from './files/fullscreen-exit.svg'
+import α from './files/α.svg'
+import β from './files/β.svg'
+import γ from './files/γ.svg'
+import δ from './files/δ.svg'
+import ε from './files/ε.svg'
+import ζ from './files/ζ.svg'
+import η from './files/η.svg'
+import θ from './files/θ.svg'
+import ι from './files/ι.svg'
+import κ from './files/κ.svg'
+import λ from './files/λ.svg'
+import μ from './files/μ.svg'
+import ν from './files/ν.svg'
+import ξ from './files/ξ.svg'
+import ο from './files/ο.svg'
+import π from './files/π.svg'
+import ρ from './files/ρ.svg'
+import σ from './files/σ.svg'
+import τ from './files/τ.svg'
+import υ from './files/υ.svg'
+import φ from './files/φ.svg'
+import χ from './files/χ.svg'
+import ψ from './files/ψ.svg'
+import ω from './files/ω.svg'
+import degreeCelseus from './files/degree-celseus.svg'
+import degreeFahreinheit from './files/degree-fahreinheit.svg'
+import Å from './files/Å.svg'
+import degree from './files/°.svg'
+import PlanckDiracConstant from './files/ħ.svg'
+import plusMinus from './files/±.svg'
+import Promille from './files/promille.svg'
+import RootSymbol from './files/√.svg'
+import LeftArrow from './files/←.svg'
+import RightArrow from './files/→.svg'
+import LeftArrowCrossedOut from './files/left-arrow-crossed-out.svg'
+import RightArrowCrossedOut from './files/right-arrow-crossed-out.svg'
+import LeftAndRightArrow from './files/↔.svg'
+import CapitalPi from './files/∏.svg'
+import SumSymbol from './files/∑.svg'
+import infinity from './files/∞.svg'
+import partialDerivative from './files/∂.svg'
+import delta from './files/∆.svg'
+import integral from './files/∫.svg'
+import equal from './files/≈.svg'
+import notEqual from './files/≠.svg'
+import lessOrEqual from './files/≤.svg'
+import moreOrEqual from './files/≥.svg'
 
 const icons = {
+  α: α,
+  β: β,
+  γ: γ,
+  δ: δ,
+  ε: ε,
+  ζ: ζ,
+  η: η,
+  θ: θ,
+  ι: ι,
+  κ: κ,
+  λ: λ,
+  μ: μ,
+  ν: ν,
+  ξ: ξ,
+  ο: ο,
+  π: π,
+  ρ: ρ,
+  σ: σ,
+  τ: τ,
+  υ: υ,
+  φ: φ,
+  χ: χ,
+  ψ: ψ,
+  ω: ω,
+  Å: Å,
+  '°': degree,
+  ħ: PlanckDiracConstant,
+  '±': plusMinus,
+  '‰': Promille,
+  '√': RootSymbol,
+  '←': LeftArrow,
+  '→': RightArrow,
+  '←/': LeftArrowCrossedOut,
+  '/→': RightArrowCrossedOut,
+  '↔': LeftAndRightArrow,
+  '∏': CapitalPi,
+  '∑': SumSymbol,
+  '∞': infinity,
+  '∂': partialDerivative,
+  '∆': delta,
+  '∫': integral,
+  '≈': equal,
+  '=/': notEqual,
+  '≤': lessOrEqual,
+  '≥': moreOrEqual,
+  '℉': degreeFahreinheit,
+  '℃': degreeCelseus,
   about: AboutIcon,
   analyse: AnalyseIcon,
   arom: AromIcon,

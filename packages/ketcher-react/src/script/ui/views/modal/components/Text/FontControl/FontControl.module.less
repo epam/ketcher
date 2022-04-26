@@ -58,11 +58,16 @@
 }
 
 .fontBtn::after {
-  content: '';
+  content: ' ';
   position: absolute;
-  right: 20px;
-  top: 60px;
+  display: block;
+  background-size: contain;
+  width: 20px;
+  height: 20px;
+  right: 18px;
+  top: 54px;
   z-index: 10;
-  border: 6px solid transparent;
-  border-top: 6px solid @color-text-primary;
+  background-image: data-uri(
+    '../../../../../../../icons/files/dropdown-indicator.svg'
+  );
 }

@@ -57,12 +57,12 @@ const buttons: Array<{ command: TextCommand; name: string }> = [
     name: 'text-italic'
   },
   {
-    command: TextCommand.Subscript,
-    name: 'text-subscript'
-  },
-  {
     command: TextCommand.Superscript,
     name: 'text-superscript'
+  },
+  {
+    command: TextCommand.Subscript,
+    name: 'text-subscript'
   }
 ]
 
@@ -156,8 +156,7 @@ const Text = (props: TextProps) => {
       valid={() => formState.form.valid}
       buttonsNameMap={{ OK: 'Apply' }}
       buttons={['Cancel', 'OK']}
-      withDivider
-    >
+      withDivider>
       <div className={classes.controlPanel}>
         {buttons.map((button) => {
           return (

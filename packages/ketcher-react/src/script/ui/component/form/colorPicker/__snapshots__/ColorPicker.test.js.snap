@@ -3,14 +3,21 @@
 exports[`should be rendered correctly should be rendered without crashing 1`] = `
 <DocumentFragment>
   <div
-    class="colorPickerInput"
+    class="colorPickerWrapper"
     data-testid="color-picker-field"
   >
-    <button
-      class="colorPickerPreview"
-      data-testid="color-picker-preview"
-      style="background-color: rgb(0, 0, 0);"
-    />
+    <div
+      class="colorPickerInput"
+    >
+      <div
+        class="colorPickerPreview"
+        data-testid="color-picker-preview"
+        style="background-color: rgb(0, 0, 0);"
+      />
+      <icon-chevron.svg
+        classname="expandIcon turnedIcon"
+      />
+    </div>
   </div>
 </DocumentFragment>
 `;

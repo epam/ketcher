@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import classes from './SpecialSymbolsList.module.less'
+import Icon from 'src/script/ui/component/view/icon'
 
 const SpecialSymbolsList = ({ select }) => {
   const symbols = [
@@ -52,10 +53,9 @@ const SpecialSymbolsList = ({ select }) => {
     '√',
     '←',
     '→',
-    '↚',
-    '↛',
+    '←/',
+    '/→',
     '↔',
-    '⇌',
     '∏',
     '∑',
     '∞',
@@ -63,7 +63,7 @@ const SpecialSymbolsList = ({ select }) => {
     '∆',
     '∫',
     '≈',
-    '≠',
+    '=/',
     '≤',
     '≥'
   ]
@@ -77,9 +77,9 @@ const SpecialSymbolsList = ({ select }) => {
             value={symbol}
             onMouseDown={(event) => {
               select(event, symbol)
-            }}
-          >
-            {symbol}
+            }}>
+            <Icon name={symbol} />
+            {/* {symbol} */}
           </button>
         )
       })}

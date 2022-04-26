@@ -175,8 +175,8 @@ import ψ from './files/ψ.svg'
 import ω from './files/ω.svg'
 import degreeCelseus from './files/degree-celseus.svg'
 import degreeFahreinheit from './files/degree-fahreinheit.svg'
-import Å from './files/Å.svg'
-import degree from './files/°.svg'
+import angstrom from './files/angstrom.svg'
+import DegreeSymbol from './files/degree-symbol.svg'
 import PlanckDiracConstant from './files/ħ.svg'
 import plusMinus from './files/±.svg'
 import Promille from './files/promille.svg'
@@ -222,8 +222,8 @@ const icons = {
   χ: χ,
   ψ: ψ,
   ω: ω,
-  Å: Å,
-  '°': degree,
+  Å: angstrom,
+  '°': DegreeSymbol,
   ħ: PlanckDiracConstant,
   '±': plusMinus,
   '‰': Promille,

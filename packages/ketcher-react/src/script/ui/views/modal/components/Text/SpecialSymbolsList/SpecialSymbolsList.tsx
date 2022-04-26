@@ -80,7 +80,6 @@ const SpecialSymbolsList = ({ select }) => {
             }}
           >
             <Icon name={symbol} />
-            {/* {symbol} */}
           </button>
         )
       })}

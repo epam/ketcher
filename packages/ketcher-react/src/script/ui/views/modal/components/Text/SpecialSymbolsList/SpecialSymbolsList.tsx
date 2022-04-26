@@ -77,7 +77,8 @@ const SpecialSymbolsList = ({ select }) => {
             value={symbol}
             onMouseDown={(event) => {
               select(event, symbol)
-            }}>
+            }}
+          >
             <Icon name={symbol} />
             {/* {symbol} */}
           </button>

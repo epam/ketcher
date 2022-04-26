@@ -13,58 +13,92 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-@import 'src/style/variables';
 
-.accordion_tab {
-  margin-top: 2px;
+@import '../../../../../../../../style/variables.less';
+@import '../../../../../../../../style/mixins.less';
 
-  & > a:first-child {
-    z-index: 3;
-    padding: 6px 0;
-    display: block;
-    cursor: pointer;
-    text-align: center;
-    background-color: @gray-background-color;
-    border: 1px solid @border-color;
-    transition: border-radius 0.1s linear;
-    border-radius: 6px 6px 0 0;
-    border-bottom: 0;
-    transition-delay: 0s;
+.accordionWrapper {
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: @color-primary-light;
+  .scrollbar();
+}
 
-    &::before {
-      content: '−';
-      margin-left: 30px;
-      float: left;
-    }
+.expandIcon {
+  width: 16px;
+  margin-right: @margin-left-right;
+  transform: rotate(180deg);
+  transition: transform 300ms ease-in-out;
+}
 
-    &:hover {
-      background-color: @form-selected-background;
-    }
+.turnedIcon{
+  transform: rotate(0deg);
+}
+
+.accordionSummaryWrapper {
+  margin: 0;
+  padding-left: @padding-modal;
+  border-bottom: 1px solid @color-grey-3; 
+  background-color: @color-background-primary;
+}
+
+.accordionSummary {
+  width: @width-settings - @margin-left-right * 2;
+  height: 42px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 12px;
+  line-height: 14px;
+  color: @color-text-primary;
+  font-weight: 400;
+
+}
+
+.accordionDetailsWrapper {
+  max-height: 1000px;
+  transition: max-height 300ms ease-in-out;
+  overflow: hidden;
+  width: @width-settings - @margin-left-right * 2;
+  margin-left: @margin-left-right;
+}
+
+.hiddenAccordion{
+  max-height: 0;
+}
+
+.accordionDetails{
+  margin-top: @margin-left-right;
+  color: @color-text-primary;
+  padding-bottom: 4px;
+}
+
+.groupIcon {
+  height: 15px;
+  width: 15px;
+}
+
+.groupLabel {
+  height: 15px;
+  display: flex;
+  align-items: center;
+
+  > span {
+    margin-left: 6px;
+    height: 12px;
   }
+}
 
-  & > *:nth-child(2) {
-    // child content
-    overflow: hidden;
-    transition-property: height, padding; // need "height" in child comp. for working transition
-    transition-duration: 0.5s;
-    transition-timing-function: linear;
-  }
-
-  &.hidden {
-    & > a:first-child {
-      border-radius: 6px;
-      transition-delay: 0.4s;
-
-      &::before {
-        content: '+';
-      }
-    }
-
-    & > *:nth-child(2) {
-      // hidden element
-      height: 0;
-      padding: 0;
-      border: 0;
-    }
-  }
+.changeMarker{
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='5' cy='5' r='5' fill='%23167782'/%3E%3C/svg%3E%0A");
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  vertical-align: middle;
+  margin-right: 1px;
+  margin-left: auto;
+  background-repeat: no-repeat;
+  background-size: 100%;
 }

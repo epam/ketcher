@@ -173,29 +173,29 @@ import φ from './files/φ.svg'
 import χ from './files/χ.svg'
 import ψ from './files/ψ.svg'
 import ω from './files/ω.svg'
-import degreeCelseus from './files/degree-celseus.svg'
-import degreeFahreinheit from './files/degree-fahreinheit.svg'
-import angstrom from './files/angstrom.svg'
+import DegreeCelseus from './files/degree-celseus.svg'
+import DegreeFahreinheit from './files/degree-fahreinheit.svg'
+import Angstrom from './files/angstrom.svg'
 import DegreeSymbol from './files/degree-symbol.svg'
-import PlanckDiracConstant from './files/ħ.svg'
-import plusMinus from './files/±.svg'
+import PlanckDiracConstant from './files/planck-dirac-constant.svg'
+import PlusMinus from './files/plus-minus.svg'
 import Promille from './files/promille.svg'
-import RootSymbol from './files/√.svg'
-import LeftArrow from './files/←.svg'
-import RightArrow from './files/→.svg'
+import RootSymbol from './files/root-symbol.svg'
+import LeftArrow from './files/left-arrow.svg'
+import RightArrow from './files/right-arrow.svg'
 import LeftArrowCrossedOut from './files/left-arrow-crossed-out.svg'
 import RightArrowCrossedOut from './files/right-arrow-crossed-out.svg'
-import LeftAndRightArrow from './files/↔.svg'
-import CapitalPi from './files/∏.svg'
-import SumSymbol from './files/∑.svg'
-import infinity from './files/∞.svg'
-import partialDerivative from './files/∂.svg'
-import delta from './files/∆.svg'
-import integral from './files/∫.svg'
-import equal from './files/≈.svg'
-import notEqual from './files/≠.svg'
-import lessOrEqual from './files/≤.svg'
-import moreOrEqual from './files/≥.svg'
+import LeftAndRightArrow from './files/left-and-right-arrow.svg'
+import CapitalPi from './files/capital-pi.svg'
+import SumSymbol from './files/sum-symbol.svg'
+import Infinity from './files/infinity-sign.svg'
+import PartialDerivative from './files/partial-derivative.svg'
+import Delta from './files/delta-sign.svg'
+import Integral from './files/integral.svg'
+import ApproximatelyEqual from './files/approximately-equal.svg'
+import NotEqual from './files/not-equal.svg'
+import LessOrEqual from './files/less-or-equal.svg'
+import MoreOrEqual from './files/more-or-equal.svg'
 
 const icons = {
   α: α,
@@ -222,10 +222,10 @@ const icons = {
   χ: χ,
   ψ: ψ,
   ω: ω,
-  Å: angstrom,
+  Å: Angstrom,
   '°': DegreeSymbol,
   ħ: PlanckDiracConstant,
-  '±': plusMinus,
+  '±': PlusMinus,
   '‰': Promille,
   '√': RootSymbol,
   '←': LeftArrow,
@@ -235,16 +235,16 @@ const icons = {
   '↔': LeftAndRightArrow,
   '∏': CapitalPi,
   '∑': SumSymbol,
-  '∞': infinity,
-  '∂': partialDerivative,
-  '∆': delta,
-  '∫': integral,
-  '≈': equal,
-  '=/': notEqual,
-  '≤': lessOrEqual,
-  '≥': moreOrEqual,
-  '℉': degreeFahreinheit,
-  '℃': degreeCelseus,
+  '∞': Infinity,
+  '∂': PartialDerivative,
+  '∆': Delta,
+  '∫': Integral,
+  '≈': ApproximatelyEqual,
+  '=/': NotEqual,
+  '≤': LessOrEqual,
+  '≥': MoreOrEqual,
+  '℉': DegreeFahreinheit,
+  '℃': DegreeCelseus,
   about: AboutIcon,
   analyse: AnalyseIcon,
   arom: AromIcon,

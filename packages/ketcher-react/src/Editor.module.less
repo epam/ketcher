@@ -68,18 +68,17 @@
     font-size: @font-size-input;
     height: 2.4em;
     padding: 6px 6px 6px 35px;
-    border: none;
+    border: 1px solid transparent;
     box-sizing: border-box;
     color: inherit;
 
     &:active,
     &:focus {
-      outline: 1px solid @color-border-main;
+      outline: 0;
     }
 
-    &:hover,
-    &:focus {
-      .highlight-shadow(black);
+    &:hover {
+      border: 1px solid @color-input-hover;
     }
 
     &[disabled],
@@ -114,7 +113,7 @@
     }
 
     &:hover {
-      border: 1.5px solid @color-input-hover;
+      border: 1px solid @color-input-hover;
     }
 
     &[disabled],

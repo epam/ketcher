@@ -71,16 +71,18 @@ function GenericGroups({ selected, onAtomSelect }: GenericGroupsProps) {
           )}
           <div className={classes.subgroupContainer}>
             <VerticalBoxWithLines />
-            {renderGenGroupComponent(
-              groupNames.acyclicCarbo,
-              selected,
-              onAtomSelect
-            )}
-            {renderGenGroupComponent(
-              groupNames.acyclicHetero,
-              selected,
-              onAtomSelect
-            )}
+            <div>
+              {renderGenGroupComponent(
+                groupNames.acyclicCarbo,
+                selected,
+                onAtomSelect
+              )}
+              {renderGenGroupComponent(
+                groupNames.acyclicHetero,
+                selected,
+                onAtomSelect
+              )}
+            </div>
           </div>
         </div>
         <div>

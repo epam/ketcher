@@ -149,8 +149,102 @@ import DropdownIndicatorIcon from './files/dropdown-indicator.svg'
 import ChevronIcon from './files/chevron.svg'
 import FullscreenEnterIcon from './files/fullscreen-enter.svg'
 import FullscreenExitIcon from './files/fullscreen-exit.svg'
+import α from './files/α.svg'
+import β from './files/β.svg'
+import γ from './files/γ.svg'
+import δ from './files/δ.svg'
+import ε from './files/ε.svg'
+import ζ from './files/ζ.svg'
+import η from './files/η.svg'
+import θ from './files/θ.svg'
+import ι from './files/ι.svg'
+import κ from './files/κ.svg'
+import λ from './files/λ.svg'
+import μ from './files/μ.svg'
+import ν from './files/ν.svg'
+import ξ from './files/ξ.svg'
+import ο from './files/ο.svg'
+import π from './files/π.svg'
+import ρ from './files/ρ.svg'
+import σ from './files/σ.svg'
+import τ from './files/τ.svg'
+import υ from './files/υ.svg'
+import φ from './files/φ.svg'
+import χ from './files/χ.svg'
+import ψ from './files/ψ.svg'
+import ω from './files/ω.svg'
+import DegreeCelseusIcon from './files/degree-celseus.svg'
+import DegreeFahreinheitIcon from './files/degree-fahreinheit.svg'
+import AngstromIcon from './files/angstrom.svg'
+import DegreeIcon from './files/degree-symbol.svg'
+import PlanckDiracConstantIcon from './files/planck-dirac-constant.svg'
+import PlusMinusIcon from './files/plus-minus.svg'
+import PromilleIcon from './files/promille.svg'
+import RootIcon from './files/root-symbol.svg'
+import LeftArrowIcon from './files/left-arrow.svg'
+import RightArrowIcon from './files/right-arrow.svg'
+import LeftArrowCrossedOutIcon from './files/left-arrow-crossed-out.svg'
+import RightArrowCrossedOutIcon from './files/right-arrow-crossed-out.svg'
+import LeftAndRightArrowIcon from './files/left-and-right-arrow.svg'
+import CapitalPiIcon from './files/capital-pi.svg'
+import SumIcon from './files/sum-symbol.svg'
+import InfinityIcon from './files/infinity-sign.svg'
+import PartialDerivativeIcon from './files/partial-derivative.svg'
+import DeltaIcon from './files/delta-sign.svg'
+import IntegralIcon from './files/integral.svg'
+import ApproximatelyEqualIcon from './files/approximately-equal.svg'
+import NotEqualIcon from './files/not-equal.svg'
+import LessOrEqualIcon from './files/less-or-equal.svg'
+import MoreOrEqualIcon from './files/more-or-equal.svg'
 
 const icons = {
+  α: α,
+  β: β,
+  γ: γ,
+  δ: δ,
+  ε: ε,
+  ζ: ζ,
+  η: η,
+  θ: θ,
+  ι: ι,
+  κ: κ,
+  λ: λ,
+  μ: μ,
+  ν: ν,
+  ξ: ξ,
+  ο: ο,
+  π: π,
+  ρ: ρ,
+  σ: σ,
+  τ: τ,
+  υ: υ,
+  φ: φ,
+  χ: χ,
+  ψ: ψ,
+  ω: ω,
+  Å: AngstromIcon,
+  '°': DegreeIcon,
+  ħ: PlanckDiracConstantIcon,
+  '±': PlusMinusIcon,
+  '‰': PromilleIcon,
+  '√': RootIcon,
+  '←': LeftArrowIcon,
+  '→': RightArrowIcon,
+  '←/': LeftArrowCrossedOutIcon,
+  '/→': RightArrowCrossedOutIcon,
+  '↔': LeftAndRightArrowIcon,
+  '∏': CapitalPiIcon,
+  '∑': SumIcon,
+  '∞': InfinityIcon,
+  '∂': PartialDerivativeIcon,
+  '∆': DeltaIcon,
+  '∫': IntegralIcon,
+  '≈': ApproximatelyEqualIcon,
+  '=/': NotEqualIcon,
+  '≤': LessOrEqualIcon,
+  '≥': MoreOrEqualIcon,
+  '℉': DegreeFahreinheitIcon,
+  '℃': DegreeCelseusIcon,
   about: AboutIcon,
   analyse: AnalyseIcon,
   arom: AromIcon,

@@ -100,7 +100,7 @@ function GenericGroups({ selected, onAtomSelect }: GenericGroupsProps) {
                 onAtomSelect
               )}
               {renderGenGroupComponent(
-                groupNames.acyclicHetero,
+                groupNames.cyclicHetero,
                 selected,
                 onAtomSelect
               )}

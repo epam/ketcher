@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2022 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styles from './BoxWithLines.module.less'
+export { default } from './GenericGroups'
 
-export const BoxWithLines = ({ isLastSibling }) => {
-  return (
-    <div className={styles.nodeLines}>
-      <div className={styles.upperLines} />
-      {!isLastSibling && <div className={styles.lowerLine} />}
-    </div>
-  )
+export enum groupNames {
+  atomsGen = 'atoms-gen',
+  specialNodes = 'special-nodes',
+  groupGen = 'group-gen',
+  groupAcyclic = 'group-acyclic',
+  acyclicCarbo = 'acyclic-carbo',
+  acyclicHetero = 'acyclic-hetero',
+  groupCyclic = 'group-cyclic',
+  cyclicHetero = 'cyclic-hetero',
+  cyclicCarbo = 'cyclic-carbo'
 }

@@ -52,6 +52,7 @@ import EnhancedStereoIcon from './files/enhanced-stereo.svg'
 import EditIcon from './files/edit.svg'
 import ElementsGroupIcon from './files/elements-group.svg'
 import EraseIcon from './files/erase.svg'
+import ExtendedTableIcon from './files/extended-table.svg'
 import FileThumbnailIcon from './files/file-thumbnail.svg'
 import GenericGroupsIcon from './files/generic-groups.svg'
 import HelpIcon from './files/help.svg'
@@ -189,6 +190,7 @@ const icons = {
   'enhanced-stereo': EnhancedStereoIcon,
   edit: EditIcon,
   'elements-group': ElementsGroupIcon,
+  'extended-table': ExtendedTableIcon,
   erase: EraseIcon,
   'file-thumbnail': FileThumbnailIcon,
   'fullscreen-enter': FullscreenEnterIcon,

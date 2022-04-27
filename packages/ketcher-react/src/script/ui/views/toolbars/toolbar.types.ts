@@ -146,7 +146,11 @@ type BottomToolbarItemVariant =
   | 'enhanced-stereo'
   | 'fullscreen'
 
-type RightToolbarItemVariant = 'atom' | 'freq-atoms' | 'period-table'
+type RightToolbarItemVariant =
+  | 'atom'
+  | 'freq-atoms'
+  | 'period-table'
+  | 'extended-table'
 
 type ToolbarItemVariant =
   | TopToolbarItemVariant

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2022 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Generics } from 'ketcher-core'
-
-import { GenGroup } from './GenGroup'
-import classes from './GenericGroups.module.less'
-
-type GenericGroupsProps = {
-  selected: (label: string) => boolean
-  onAtomSelect: (label: string) => void
-}
-
-function GenericGroups({ selected, onAtomSelect }: GenericGroupsProps) {
-  return (
-    <div className={classes.genericGroups}>
-      <GenGroup
-        groups={Generics}
-        selected={selected}
-        onAtomSelect={onAtomSelect}
-      />
-    </div>
-  )
-}
-
-export default GenericGroups
+export { default } from './ExtendedTable'

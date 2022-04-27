@@ -70,9 +70,16 @@
     padding: 0 8px;
     cursor: default;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+
+    :global(.MuiSelect-nativeInput) {
+      border: none;
+      padding: 0;
+    }
 
     &:hover {
-      border: 1.5px solid @color-input-hover;
+      border: 1px solid @color-input-hover;
     }
   }
 

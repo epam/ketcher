@@ -14,92 +14,67 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { Component, ReactNode } from 'react'
-
+import React, { useState } from 'react'
 import classes from './Accordion.module.less'
 import clsx from 'clsx'
-import { xor } from 'lodash/fp'
+import Icon from '../../../../../../component/view/icon'
 
-interface AccordionProps {
-  className: string
-  multiple: boolean
-  active: Array<number>
-}
+const Sidebar = ({ tabs, className, changedGroups }): React.ReactElement => {
+  const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
+    'General'
+  ])
 
-interface AccordionState {
-  active: Array<number>
-}
-
-interface GroupProps {
-  caption: string
-  children: ReactNode
-}
-
-interface ExtendedGroupProps extends GroupProps {
-  isActive: (index: Array<number>) => boolean
-  onActive: (index: Array<number>) => void
-  index: Array<number>
-}
-
-class Accordion extends Component<AccordionProps, AccordionState> {
-  constructor(props: AccordionProps) {
-    super(props)
-    this.state = {
-      active: props.active || []
-    }
-  }
-
-  onActive(index: number): void {
-    const { multiple = true } = this.props
-
-    if (!multiple) this.setState({ active: [index] })
-    else
-      this.setState((prevState) => ({ active: xor(prevState.active, [index]) }))
-  }
-
-  groupIsActive(index: number): boolean {
-    return this.state.active.includes(index)
-  }
-
-  static Group(props: GroupProps) {
-    const { caption, isActive, onActive, index, children } =
-      props as ExtendedGroupProps
-
-    return (
-      <li
-        className={clsx(classes.accordion_tab, {
-          [classes.hidden]: !isActive(index)
-        })}
-      >
-        <a // eslint-disable-line
-          onClick={() => onActive(index)}
-        >
-          {caption}
-        </a>
-        {children}
-      </li>
+  const handleAccordionChange = (accordion) => () => {
+    const isExpand = !expandedAccordions.includes(accordion)
+    setExpandedAccordions(
+      isExpand
+        ? [...expandedAccordions, accordion]
+        : [...expandedAccordions].filter(
+            (expandedAccordion) => expandedAccordion !== accordion
+          )
     )
   }
 
-  render() {
-    const { children, ...props } = this.props
-    const childrenWithProps = React.Children.map(
-      this.props.children,
-      (child, index) => {
-        // checking isValidElement is the safe way and avoids a typescript error too
-        const props = {
-          isActive: this.groupIsActive.bind(this),
-          onActive: this.onActive.bind(this),
-          index
-        }
-        if (React.isValidElement(child)) {
-          return React.cloneElement(child, props)
-        }
-        return child
-      }
-    )
-    return <ul {...props}>{childrenWithProps}</ul>
-  }
+  return (
+    <div className={clsx(classes.accordionWrapper, className)}>
+      {tabs.map(({ label, content, key }) => {
+        const shouldGroupBeRended = expandedAccordions.includes(label)
+        return (
+          <div key={key}>
+            <div
+              onClick={handleAccordionChange(label)}
+              className={classes.accordionSummaryWrapper}
+            >
+              <div className={classes.accordionSummary}>
+                <Icon
+                  className={clsx({
+                    [classes.expandIcon]: true,
+                    [classes.turnedIcon]: !shouldGroupBeRended
+                  })}
+                  name="chevron"
+                />
+                <div className={classes.groupLabel}>
+                  <Icon name="elements-group" className={classes.groupIcon} />
+                  <span>{label}</span>
+                </div>
+                {changedGroups.has(label) && (
+                  <span className={classes.changeMarker}></span>
+                )}
+              </div>
+            </div>
+            <div
+              className={clsx({
+                [classes.accordionDetailsWrapper]: true,
+                [classes.hiddenAccordion]: !shouldGroupBeRended
+              })}
+            >
+              <div className={classes.accordionDetails}>{content}</div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
 }
 
-export default Accordion
+export default Sidebar

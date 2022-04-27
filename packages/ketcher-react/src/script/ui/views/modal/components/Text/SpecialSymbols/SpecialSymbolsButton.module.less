@@ -23,6 +23,7 @@
 
   border: 0;
   padding: 0;
+  margin: 0 !important;
   position: relative;
   cursor: pointer;
   .button-size(large);
@@ -38,13 +39,13 @@
   }
 
   &:hover {
-    background-color: @color-button-primary-clicked;
+    background-color: @color-spec-button-primary-hover;
   }
 }
 
 .textButton {
   & > svg {
-    fill: #666;
+    fill: @main-color;
     transition: 0.2s;
   }
 
@@ -52,7 +53,7 @@
     background-image: none;
 
     & > svg {
-      fill: #000;
+      fill: @color-button-primary-hover;
     }
   }
 }
@@ -63,21 +64,21 @@
   border: 2px solid transparent;
   border-right: 2px solid @color-background-primary;
   border-bottom: 2px solid @color-background-primary;
-  top: 23px;
-  left: 23px;
+  top: 21px;
+  left: 21px;
 }
 
 .button-size(@dim) {
   .set-size(@dim);
 
-  width: @button-size;
-  height: @button-size;
+  width: 28px;
+  height: 28px;
   margin: @button-grow;
 
   & > svg {
     position: absolute;
-    top: 0.1em;
-    left: 0.1em;
+    top: 1px;
+    left: 1px;
     font-size: @icon-size;
     width: @icon-size;
     height: @icon-size;

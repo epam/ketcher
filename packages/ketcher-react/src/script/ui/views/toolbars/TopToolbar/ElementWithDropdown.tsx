@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useState } from 'react'
+import { connect } from 'react-redux'
 import { ClickAwayListener, Collapse, IconButton } from '@mui/material'
 import styled from '@emotion/styled'
 
@@ -82,11 +83,13 @@ const DropDownArrow = styled(Icon)`
 interface ElementWithDropdownProps {
   topElement: JSX.Element
   dropDownElements: JSX.Element | JSX.Element[]
+  onToolOpen: () => void
 }
 
-export const ElementWithDropdown = ({
+const MenuItemWithDropdown = ({
   topElement,
-  dropDownElements
+  dropDownElements,
+  onToolOpen
 }: ElementWithDropdownProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
 
@@ -95,6 +98,7 @@ export const ElementWithDropdown = ({
   }
 
   const expand = () => {
+    onToolOpen()
     setIsExpanded(true)
   }
 
@@ -115,3 +119,17 @@ export const ElementWithDropdown = ({
     </ElementAndDropdown>
   )
 }
+
+// TODO: refactor, workaround to fix top toolbar dropdowns and left toolbar dropdowns overlapping
+const mapDispatchToProps = (dispatch) => ({
+  onToolOpen: () =>
+    dispatch({
+      type: 'OPENED',
+      data: { menuName: null, isSelected: null }
+    })
+})
+
+export const ElementWithDropdown = connect(
+  null,
+  mapDispatchToProps
+)(MenuItemWithDropdown)

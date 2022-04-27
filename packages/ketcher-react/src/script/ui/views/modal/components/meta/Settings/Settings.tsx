@@ -29,7 +29,7 @@ import MeasureInput from '../../../../../component/form/MeasureInput/measure-inp
 import OpenButton from '../../../../../component/view/openbutton'
 import SaveButton from '../../../../../component/view/savebutton'
 import Select from '../../../../../component/form/Select'
-import Sidebar from './Sidebar'
+import Accordion from './Accordion'
 import { StructService } from 'ketcher-core'
 import SystemFonts from '../../../../../component/form/systemfonts'
 import classes from './Settings.module.less'
@@ -38,6 +38,7 @@ import { connect } from 'react-redux'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
 import { saveSettings } from '../../../../../state/options'
 import settingsSchema from '../../../../../data/schema/options-schema'
+import fieldGroups from './fieldGroups'
 
 interface SettingsProps extends BaseProps {
   initState: any
@@ -73,24 +74,25 @@ const SettingsDialog = (props: Props) => {
     ...prop
   } = props
 
-  const [hasChanges, setHasChanges] = useState(false)
+  const [changedGroups, setChangedGroups] = useState(new Set())
 
   useEffect(() => {
-    let isStateChanged = false
+    const changed = new Set<string>()
+
     for (const key in initState) {
       if (initState[key] !== formState.result[key]) {
-        isStateChanged = true
-        break
+        const group = fieldGroups[key]
+        changed.add(group)
       }
     }
-    setHasChanges(isStateChanged)
+    setChangedGroups(changed)
   }, [initState, formState.result])
 
   const generalTab = {
     key: 'general',
     label: 'General',
     content: (
-      <fieldset className={classes.general}>
+      <fieldset>
         <Field
           name="resetToSelect"
           component={Select}
@@ -109,7 +111,7 @@ const SettingsDialog = (props: Props) => {
     key: 'stereo',
     label: 'Stereochemistry',
     content: (
-      <fieldset className={classes.stereochemistry}>
+      <fieldset>
         <Field name="showStereoFlags" />
         <Field
           name="stereoLabelStyle"
@@ -176,7 +178,7 @@ const SettingsDialog = (props: Props) => {
     key: 'server',
     label: 'Server',
     content: (
-      <fieldset className={classes.server} disabled={!appOpts.server}>
+      <fieldset disabled={!appOpts.server}>
         <Field name="smart-layout" />
         <Field name="ignore-stereochemistry-errors" />
         <Field name="mass-skip-error-on-pseudoatoms" />
@@ -211,7 +213,7 @@ const SettingsDialog = (props: Props) => {
   }
   const debuggingTab = {
     key: 'debugging',
-    label: 'Options for debugging',
+    label: 'Options for Debugging',
     content: (
       <fieldset>
         <Field name="showAtomIds" />
@@ -239,7 +241,8 @@ const SettingsDialog = (props: Props) => {
       result={() => formState.result}
       valid={() => formState.valid}
       params={prop}
-      buttons={['Cancel', 'Save']}
+      buttonsNameMap={{ OK: 'Apply' }}
+      buttons={['Cancel', 'OK']}
       withDivider
       needMargin={false}
       buttonsTop={[
@@ -263,14 +266,18 @@ const SettingsDialog = (props: Props) => {
           key="settings-button"
           onClick={onReset}
           className={classes.button}
-          disabled={!hasChanges}
+          disabled={changedGroups.size === 0}
         >
           <Icon name={'reset'} />
         </button>
       ]}
     >
       <Form schema={settingsSchema} init={initState} {...formState}>
-        <Sidebar tabs={tabs} className={classes.sidebar} />
+        <Accordion
+          tabs={tabs}
+          className={classes.accordion}
+          changedGroups={changedGroups}
+        />
       </Form>
     </Dialog>
   )

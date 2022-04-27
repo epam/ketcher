@@ -35,9 +35,13 @@
     height: 16px;
     vertical-align: middle;
     margin-right: 8px;
-    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-checked}' stroke-width='2'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-default}' stroke-width='2'/%3E%3C/svg%3E%0A");
     background-repeat: no-repeat;
     background-size: 100%;
+  }
+
+  input[type='radio']:hover + .radioButton {
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-hover-svg}' stroke-width='2'/%3E%3C/svg%3E%0A");
   }
 
   input[type='radio']:checked + .radioButton {
@@ -45,18 +49,18 @@
   }
 
   input[type='radio']:disabled + .radioButton {
-    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-disabled}' stroke-width='2' /%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-default}' stroke-width='2' /%3E%3C/svg%3E%0A");
   }
 
   input[type='radio']:checked:disabled + .radioButton {
-    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='@{color-input-disabled}' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-disabled}' stroke-width='2'/%3E%3Ccircle cx='8' cy='8' r='4' fill='@{color-input-disabled}'/%3E%3C/svg%3E%0A");
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='@{color-input-default}' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='7' stroke='@{color-input-default}' stroke-width='2'/%3E%3Ccircle cx='8' cy='8' r='4' fill='@{color-input-default}'/%3E%3C/svg%3E%0A");
   }
 
 .slider.slider {
   position: relative;
   display: inline-block;
-  width: 26px;
-  height: 14px;
+  width: 38px;
+  height: 20px;
 
   input {
     opacity: 0;
@@ -70,38 +74,35 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: @color-button-secondary-disabled;
+    background-color: @color-slider-body-background;
     -webkit-transition: 0.4s;
     transition: background 0.4s;
-    border-radius: 34px;
+    border-radius: 12px;
+    border: 1px solid @border-color;
   }
 
   span::before {
     position: absolute;
     content: '';
-    height: 10px;
-    width: 10px;
+    height: 16px;
+    width: 16px;
     border-radius: 50%;
-    left: 2px;
-    bottom: 2px;
-    background-color: @color-button-primary;
+    left: 1px;
+    bottom: 1px;
+    background-color: @color-slider-background;
     -webkit-transition: 0.4s;
     transition: transform 0.4s ease-in 0s;
   }
 
   input:checked + span {
-    background-color: @color-button-primary-hover;
-  }
-
-  input:focus + span {
-    box-shadow: 0 0 1px @color-border-hover;
+    background-color: @color-primary;
   }
 
   input:checked + span::before {
     background-color: @color-background-primary;
-    -webkit-transform: translateX(12px);
-    -ms-transform: translateX(12px);
-    transform: translateX(12px);
+    -webkit-transform: translateX(18px);
+    -ms-transform: translateX(18px);
+    transform: translateX(18px);
   }
 }
 

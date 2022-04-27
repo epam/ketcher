@@ -57,12 +57,12 @@ const buttons: Array<{ command: TextCommand; name: string }> = [
     name: 'text-italic'
   },
   {
-    command: TextCommand.Subscript,
-    name: 'text-subscript'
-  },
-  {
     command: TextCommand.Superscript,
     name: 'text-superscript'
+  },
+  {
+    command: TextCommand.Subscript,
+    name: 'text-subscript'
   }
 ]
 
@@ -161,7 +161,7 @@ const Text = (props: TextProps) => {
       <div className={classes.controlPanel}>
         {buttons.map((button) => {
           return (
-            <TextButton // стили текста
+            <TextButton
               button={button}
               key={button.name}
               active={currentStyle.has(button.command)}
@@ -169,13 +169,13 @@ const Text = (props: TextProps) => {
             />
           )
         })}
-        <SpecialSymbolsButton // специальные символы
+        <SpecialSymbolsButton
           editorState={editorState}
           setEditorState={setEditorState}
           styles={currentStyle}
         />
         <span>Font Size</span>
-        <FontControl // размер шрифта
+        <FontControl
           editorState={editorState}
           setEditorState={setEditorState}
           styles={styles}

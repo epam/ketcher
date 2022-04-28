@@ -16,7 +16,7 @@
 
 import AtomInfo from './AtomInfo'
 import ElementsTable from './ElementsTable'
-import GenericGroups from './GenericGroups'
+import GenericGroups from '../../ExtendedTable/components/GenericGroups'
 import TypeChoice from './TypeChoice'
 
 export { ElementsTable, AtomInfo, TypeChoice, GenericGroups }

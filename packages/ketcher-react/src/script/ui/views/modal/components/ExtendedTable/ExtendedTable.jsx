@@ -59,13 +59,7 @@ const Table = (props) => {
 
 function mapSelectionToProps(editor) {
   const selection = editor.selection()
-
-  if (
-    selection &&
-    Object.keys(selection).length === 1 &&
-    selection.atoms &&
-    Object.keys(selection.atoms).length === 1
-  ) {
+  if (selection?.atoms?.length === 1) {
     const struct = editor.struct()
     const atom = struct.atoms.get(selection.atoms[0])
     return { ...fromElement(atom) }

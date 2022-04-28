@@ -153,14 +153,14 @@ const Text = (props: TextProps) => {
   }
 
   const refEditor = useRef() as MutableRefObject<Editor>
-  const setFocusInEditor = refEditor.current
-    ? refEditor.current.focus
-    : () => console.log('refEditor not found')
+  const setFocusInEditor = useCallback(() => {
+    refEditor.current.focus()
+  }, [refEditor])
 
   // set focut on component mount
   useEffect(() => {
     setFocusInEditor()
-  })
+  }, [setFocusInEditor])
 
   return (
     <Dialog

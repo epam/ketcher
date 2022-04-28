@@ -43,9 +43,6 @@
     background-color: @color-primary-light;
     flex-grow: 1;
 
-    input[type='checkbox'] {
-      top: 0;
-    }
 
     label {
       margin-bottom: 8px;
@@ -112,6 +109,7 @@
 }
 
 .accordionDetails{
+  position: relative;
   margin-top: @margin-left-right;
   color: @color-text-primary;
   padding-bottom: 8px;
@@ -123,6 +121,7 @@
     color: @color-text-secondary;
   
     &.checkbox {
+      margin-top: 12px;
       height: 16px;
       flex-direction: row;
       width: max-content;

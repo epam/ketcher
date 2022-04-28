@@ -26,7 +26,13 @@ import {
   convertToRaw,
   getDefaultKeyBinding
 } from 'draft-js'
-import { useCallback, useState } from 'react'
+import {
+  useCallback,
+  useState,
+  useRef,
+  MutableRefObject,
+  useEffect
+} from 'react'
 
 import { Dialog } from '../../../components'
 import { DialogParams } from '../../../components/Dialog/Dialog'
@@ -136,16 +142,25 @@ const Text = (props: TextProps) => {
     SUBSCRIPT: {
       verticalAlign: 'sub',
       transform: 'scale(0.7)',
-      display: 'inline-block',
       transformOrigin: 'left'
     },
     SUPERSCRIPT: {
       verticalAlign: 'super',
       transform: 'scale(0.7)',
-      display: 'inline-block',
-      transformOrigin: 'left'
+      transformOrigin: 'left',
+      lineHeight: 0
     }
   }
+
+  const refEditor = useRef() as MutableRefObject<Editor>
+  const setFocusInEditor = useCallback(() => {
+    refEditor.current.focus()
+  }, [refEditor])
+
+  // set focut on component mount
+  useEffect(() => {
+    setFocusInEditor()
+  }, [setFocusInEditor])
 
   return (
     <Dialog
@@ -158,7 +173,7 @@ const Text = (props: TextProps) => {
       buttons={['Cancel', 'OK']}
       withDivider
     >
-      <div className={classes.controlPanel}>
+      <div className={classes.controlPanel} onClick={setFocusInEditor}>
         {buttons.map((button) => {
           return (
             <TextButton
@@ -188,6 +203,7 @@ const Text = (props: TextProps) => {
         onChange={onContentChange}
         customStyleMap={customStyleMap}
         customStyleFn={customStyleFn}
+        ref={refEditor}
       />
     </Dialog>
   )

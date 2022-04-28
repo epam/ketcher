@@ -19,7 +19,7 @@ import classes from './Accordion.module.less'
 import clsx from 'clsx'
 import Icon from '../../../../../../component/view/icon'
 
-const Sidebar = ({ tabs, className, changedGroups }): React.ReactElement => {
+const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     'General'
   ])
@@ -77,4 +77,4 @@ const Sidebar = ({ tabs, className, changedGroups }): React.ReactElement => {
   )
 }
 
-export default Sidebar
+export default Accordion

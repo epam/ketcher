@@ -176,7 +176,7 @@ const Text = (props: TextProps) => {
       <div className={classes.controlPanel} onClick={setFocusInEditor}>
         {buttons.map((button) => {
           return (
-            <TextButton // стили текста
+            <TextButton
               button={button}
               key={button.name}
               active={currentStyle.has(button.command)}
@@ -184,13 +184,13 @@ const Text = (props: TextProps) => {
             />
           )
         })}
-        <SpecialSymbolsButton // специальные символы
+        <SpecialSymbolsButton
           editorState={editorState}
           setEditorState={setEditorState}
           styles={currentStyle}
         />
         <span>Font Size</span>
-        <FontControl // размер шрифта
+        <FontControl
           editorState={editorState}
           setEditorState={setEditorState}
           styles={styles}

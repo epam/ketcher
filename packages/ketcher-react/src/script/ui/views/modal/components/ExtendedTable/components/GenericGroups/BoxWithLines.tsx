@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2022 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,31 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import 'src/style/mixins.less';
+import styles from './BoxWithLines.module.less'
 
-.button {
-  font-size: @font-size-header;
-  line-height: @line-height-header;
-  vertical-align: middle;
-  padding: 3.5px 12px;
-  background: @color-button-atom;
-  border: none;
-  border-radius: 8px;
-  color: @color-text-black;
-  margin-right: 4px;
-  box-shadow: 0 0 0 4px @color-background-primary; // This is a hack to prevent lines from crossing button
-
-  &:hover {
-    background-color: @color-button-atom-hover;
-  }
-
-  &:focus,
-  &.selected {
-    background-color: @color-button-atom-clicked;
-    color: @color-text-light;
-  }
+export const HorizontalBoxWithLines = () => {
+  return (
+    <div className={styles.horizintalNodeLines}>
+      <div className={styles.upperLines} />
+      <div className={styles.lowerLine} />
+    </div>
+  )
 }
 
-.legendBox {
-  position: relative;
+export const VerticalBoxWithLines = () => {
+  return (
+    <div className={styles.verticalNodeLines}>
+      <div className={styles.upperLines} />
+      <div className={styles.lowerLine} />
+    </div>
+  )
 }

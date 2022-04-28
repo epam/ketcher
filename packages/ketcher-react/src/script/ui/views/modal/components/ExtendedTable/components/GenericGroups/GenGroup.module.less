@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2022 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,41 +18,38 @@
 
 .fieldFlexWrapper {
   display: flex;
-  margin-top: 18px;
+  margin-top: 12px;
+}
+
+.buttonContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+
+.genButtonContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px 12px;
+}
+
+.subGroup {
+  padding: 0;
+  position: relative;
+  border: none;
+}
+
+.legendMain {
+  color: @color-text-primary !important;
+  font-weight: bold !important;
+}
+
+.legend {
+  color: fade(@color-text-primary, 80%) !important;
+  font-weight: bold !important;
 }
 
 .fieldset {
   border: none;
-  padding-left: 0;
-  padding-right: 0;
-  padding-bottom: 0;
-
-  fieldset {
-    display: inline-block;
-    vertical-align: text-top;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-left: 6px;
-  }
-
-  > legend {
-    margin-bottom: 5px;
-    width: 100%;
-  }
-
-  .subgroup {
-    position: relative;
-    border: 0;
-    padding: 0 0 0;
-    margin-right: 16px;
-    margin-bottom: 2px;
-
-    legend {
-      font-size: 0.8em;
-      color: @color-text-secondary;
-      bottom: 0.1em;
-      width: 100%;
-      text-align: center;
-    }
-  }
+  padding: 4px 0 0;
 }

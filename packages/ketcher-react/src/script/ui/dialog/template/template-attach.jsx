@@ -23,6 +23,7 @@ import { storage } from '../../storage-ext'
 import Form, { Field } from '../../component/form/form/form'
 import { attachSchema } from '../../data/schema/struct-schema'
 import styled from '@emotion/styled'
+import classes from './template-lib.module.less'
 import { css } from '@emotion/react'
 import { Button } from '@mui/material'
 
@@ -255,12 +256,13 @@ class Attach extends Component {
               <strong>{bondid}</strong>
             </AttachmentOutput>
             <Buttons>
-              <CancelButton variant="outlined" onClick={this.props.onCancel}>
+              <CancelButton variant="outlined" onClick={this.props.onCancel} className={classes.button}>
                 Cancel
               </CancelButton>
               <SaveButton
                 variant="contained"
                 onClick={() => this.props.onOk(this.onResult())}
+                 className={classes.button}
               >
                 Apply
               </SaveButton>

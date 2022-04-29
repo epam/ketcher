@@ -40,7 +40,7 @@
 
   &:hover {
     & path {
-      fill: #00838f;
+      fill: @color-primary-hover;
     }
 
     background-image: none;
@@ -55,8 +55,8 @@
   .button-size(large);
 }
 
-.button.selected {
-  background: #005662;
+.button.selected, .button:active {
+  background: @color-primary-active;
 
   & path {
     fill: #fff;

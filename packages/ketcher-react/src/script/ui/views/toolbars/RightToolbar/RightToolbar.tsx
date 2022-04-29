@@ -73,12 +73,12 @@ const RightToolbar = (props: Props) => {
             onAction={onAction}
           />
           <AtomsList atoms={freqAtoms} active={active} onAction={onAction} />
+          <ToolbarGroupItem id="period-table" {...rest} />
         </Group>
 
         <Group>
           <div ref={sizeRef}>
             <ToolbarGroupItem id="any-atom" {...rest} />
-            <ToolbarGroupItem id="period-table" {...rest} />
             <ToolbarGroupItem id="extended-table" {...rest} />
           </div>
         </Group>

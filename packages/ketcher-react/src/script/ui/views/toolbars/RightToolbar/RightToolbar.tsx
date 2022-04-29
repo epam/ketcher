@@ -77,6 +77,7 @@ const RightToolbar = (props: Props) => {
 
         <Group>
           <div ref={sizeRef}>
+            <ToolbarGroupItem id="any-atom" {...rest} />
             <ToolbarGroupItem id="period-table" {...rest} />
             <ToolbarGroupItem id="extended-table" {...rest} />
           </div>

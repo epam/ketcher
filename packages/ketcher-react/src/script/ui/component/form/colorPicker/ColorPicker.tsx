@@ -55,14 +55,27 @@ const ColorPicker = (props: Props) => {
     },
     [onChange]
   )
-  const handleClick = (e) => {
-    e.preventDefault()
-    setIsOpen((prev) => !prev)
-  }
-  const handleClose = () => {
-    setIsOpen(false)
-    setIsPaletteOpen(false)
-  }
+
+  const throttle = useCallback((func, limit) => {
+    let inThrottle
+    return (e) => {
+      if (!inThrottle) {
+        func(e)
+        inThrottle = true
+        setTimeout(() => (inThrottle = false), limit)
+      }
+    }
+  }, [])
+
+  const handleClick = useCallback(
+    throttle((e) => {
+      e.preventDefault()
+      setIsOpen((prev) => !prev)
+      setIsPaletteOpen(false)
+    }, 200),
+    []
+  )
+
   const handlePaletteOpen = () => {
     setIsPaletteOpen(true)
   }
@@ -72,7 +85,7 @@ const ColorPicker = (props: Props) => {
 
   const handleBlur = (e) => {
     if (!e.currentTarget.contains(e.relatedTarget)) {
-      handleClose()
+      handleClick(e)
     }
   }
 

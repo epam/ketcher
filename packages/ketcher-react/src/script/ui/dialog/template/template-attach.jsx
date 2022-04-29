@@ -68,7 +68,8 @@ const Warning = styled('div')`
 `
 
 const LeftColumn = styled('div')`
-  padding: 7px 4px;
+  padding: 12px;
+  border-radius: 0 0 0 8px;
   background-color: #eff2f5;
 `
 
@@ -93,6 +94,7 @@ const NameInput = styled(Field)`
     border-radius: 4px;
     line-height: 16px;
     font-size: 14px;
+    margin-top: 2px;
 
     &:hover {
       border-color: #43b5c0;
@@ -120,6 +122,7 @@ const AttachmentOutput = styled('span')`
   line-height: 16px;
   font-size: 14px;
   background-color: #eff2f5;
+  margin-top: 2px;
 `
 
 const Buttons = styled('div')`

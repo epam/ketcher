@@ -158,6 +158,11 @@ const config = {
     action: { dialog: 'period-table' },
     hidden: (options) => isHidden(options, 'period-table')
   },
+  'extended-table': {
+    title: 'Extended Table',
+    action: { dialog: 'extended-table' },
+    hidden: (options) => isHidden(options, 'extended-table')
+  },
   'select-all': {
     title: 'Select All',
     shortcut: 'Mod+a',

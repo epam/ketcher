@@ -34,6 +34,7 @@ import { Open, Save } from '../views/modal/components/document'
 import EnhancedStereo from './toolbox/enhancedStereo/enhancedStereo'
 import LabelEdit from './toolbox/labeledit'
 import PeriodTable from '../views/modal/components/PeriodTable'
+import ExtendedTable from '../views/modal/components/ExtendedTable'
 import { RemoveFG } from '../views/modal/components/toolbox/FG/RemoveFG'
 import Rgroup from './toolbox/rgroup/rgroup'
 import Sdata from './toolbox/sdata'
@@ -48,6 +49,7 @@ export default {
   analyse: Analyse,
   recognize: Recognize,
   'period-table': PeriodTable,
+  'extended-table': ExtendedTable,
   rgroup: Rgroup,
   attach: TemplateAttach,
   templates: TemplatesDialog,

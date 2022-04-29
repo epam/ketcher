@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2022 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,15 @@
 @import 'src/style/mixins.less';
 
 .genericGroups {
-  overflow-y: scroll;
-  height: 250px;
+  overflow-y: auto;
+  .scrollbar();
+  
+  &::-webkit-scrollbar {
+    background-color: transparent;
+  }
+  
   margin-top: 9px;
-  padding: 0 5px 0 0;
+  padding: 0 12px 12px;
 
   &:first-child {
     margin-top: 0;
@@ -33,4 +38,16 @@
   }
 
   .scrollbar();
+
+  .topGroupsContainer,
+  .groupGenerics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 20px;
+  }
+
+  .subgroupContainer {
+    display: grid;
+    grid-template-columns: 6px 1fr;
+  }
 }

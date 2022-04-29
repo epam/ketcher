@@ -15,14 +15,17 @@
  ***************************************************************************/
 
 @import '../../../../../style/variables';
+@import '../../../../../style/mixins.less';
 
 // stylelint-disable selector-pseudo-class-no-unknown
 // stylelint-disable no-descending-specificity
 .dropdownList {
   :global(.MuiPaper-root) {
+    max-height: 200px;
     border-radius: 0 0 4px 4px;
     box-shadow: 0 6px 10px @color-select-box-shadow;
     color: @color-text-primary;
+    .scrollbar();
   }
 
   :global(.MuiMenuItem-root) {
@@ -68,10 +71,10 @@
     font-family: @Inter;
     font-size: @font-size-input;
     padding: 0 8px;
+    padding-right: 24px !important;
     cursor: default;
     box-sizing: border-box;
-    display: flex;
-    align-items: center;
+    line-height: 22px;
 
     :global(.MuiSelect-nativeInput) {
       border: none;

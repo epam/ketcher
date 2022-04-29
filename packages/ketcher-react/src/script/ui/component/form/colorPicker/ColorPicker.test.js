@@ -36,12 +36,18 @@ describe('should toggle color picker dialog', () => {
     expect(container.getElementsByClassName('react-colorful')[0]).toBeDefined()
   })
 
-  it('should hide color picker dialog on click outside picker', () => {
+  it('should hide color picker dialog on click outside picker', async () => {
     const { container } = render(<ColorPicker />)
     openPreset()
     openPalette()
     const overlay = screen.getByTestId('color-picker-field')
-    userEvent.click(overlay)
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        userEvent.click(overlay)
+        resolve()
+      }, 300)
+    })
+
     expect(
       container.getElementsByClassName('react-colorful')[0]
     ).toBeUndefined()

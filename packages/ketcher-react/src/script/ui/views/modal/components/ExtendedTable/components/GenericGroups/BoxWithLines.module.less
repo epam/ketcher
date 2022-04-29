@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2022 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,48 @@
 
 @import 'src/style/variables';
 
-.nodeLines {
-  padding-left: 16.5px;
+.horizintalNodeLines {
+  padding-left: 14px;
   display: flex;
   flex-direction: column;
   flex: 0 0 20px;
+  margin-top: 2px;
+  width: calc(50% + 6px);
 
   .upperLines {
-    margin-top: -30px;
-    padding-top: 30px;
-    height: 36px;
-    border-left: 1px solid @color-divider;
-    border-bottom: 1px solid @color-divider;
+    height: 5px;
+    border-left: 1px solid @color-grey-4;
+    border-bottom: 1px solid @color-grey-4;
   }
 
   .lowerLine {
-    height: calc(100% - 40px);
-    border-left: 1px solid @color-divider;
+    height: 4px;
+    border-left: 1px solid @color-grey-4;
+    border-right: 1px solid @color-grey-4;
     margin-bottom: -10px;
-    padding-bottom: 10px;
+    padding-bottom: 2px;
+  }
+}
+
+.verticalNodeLines {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 20px;
+  margin-top: 4px;
+  margin-right: 1px;
+  width: 5px;
+
+  .upperLines {
+    height: 14px;
+    border-left: 1px solid @color-grey-4;
+    border-bottom: 1px solid @color-grey-4;
+  }
+
+  .lowerLine {
+    height: 96px;
+    border-left: 1px solid @color-grey-4;
+    margin-bottom: -16px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid @color-grey-4;
   }
 }

@@ -23,7 +23,7 @@ import {
   editTmpl,
   selectTmpl
 } from '../../state/templates'
-import { filterLib, filterFGLib } from '../../utils'
+import { filterLib, filterFGLib, greekify } from '../../utils'
 import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
@@ -40,7 +40,6 @@ import { omit } from 'lodash/fp'
 import { onAction } from '../../state'
 import { functionalGroupsSelector } from '../../state/functionalGroups/selectors'
 import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult'
-import { greekify } from '../../utils'
 
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'

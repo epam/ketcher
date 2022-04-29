@@ -40,6 +40,7 @@ import { omit } from 'lodash/fp'
 import { onAction } from '../../state'
 import { functionalGroupsSelector } from '../../state/functionalGroups/selectors'
 import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult'
+import { greekify } from '../../utils'
 
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
@@ -253,7 +254,9 @@ const TemplateDialog: FC<Props> = (props) => {
                         name="elements-group"
                         className={classes.groupIcon}
                       />
-                      {`${groupName} (${filteredTemplateLib[groupName].length})`}
+                      {`${greekify(groupName)} (${
+                        filteredTemplateLib[groupName].length
+                      })`}
                     </AccordionSummary>
                     <AccordionDetails>
                       <TemplateTable

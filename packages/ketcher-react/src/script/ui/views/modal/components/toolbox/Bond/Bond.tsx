@@ -46,9 +46,21 @@ const Bond = (props: Props) => {
       withDivider
     >
       <Form schema={bondSchema} init={rest} {...formState}>
-        <Field name="type" component={Select} options={getSelectOptionsFromSchema(bondProps.type)}/>
-        <Field name="topology" component={Select} options={getSelectOptionsFromSchema(bondProps.topology)} />
-        <Field name="center" component={Select} options={getSelectOptionsFromSchema(bondProps.center)} />
+        <Field
+          name="type"
+          component={Select}
+          options={getSelectOptionsFromSchema(bondProps.type)}
+        />
+        <Field
+          name="topology"
+          component={Select}
+          options={getSelectOptionsFromSchema(bondProps.topology)}
+        />
+        <Field
+          name="center"
+          component={Select}
+          options={getSelectOptionsFromSchema(bondProps.center)}
+        />
       </Form>
     </Dialog>
   )

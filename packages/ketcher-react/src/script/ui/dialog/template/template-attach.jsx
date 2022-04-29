@@ -256,13 +256,17 @@ class Attach extends Component {
               <strong>{bondid}</strong>
             </AttachmentOutput>
             <Buttons>
-              <CancelButton variant="outlined" onClick={this.props.onCancel} className={classes.button}>
+              <CancelButton
+                variant="outlined"
+                onClick={this.props.onCancel}
+                className={classes.button}
+              >
                 Cancel
               </CancelButton>
               <SaveButton
                 variant="contained"
                 onClick={() => this.props.onOk(this.onResult())}
-                 className={classes.button}
+                className={classes.button}
               >
                 Apply
               </SaveButton>

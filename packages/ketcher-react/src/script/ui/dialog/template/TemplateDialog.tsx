@@ -23,7 +23,7 @@ import {
   editTmpl,
   selectTmpl
 } from '../../state/templates'
-import { filterLib, filterFGLib } from '../../utils'
+import { filterLib, filterFGLib, greekify } from '../../utils'
 import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
@@ -253,7 +253,9 @@ const TemplateDialog: FC<Props> = (props) => {
                         name="elements-group"
                         className={classes.groupIcon}
                       />
-                      {`${groupName} (${filteredTemplateLib[groupName].length})`}
+                      {`${greekify(groupName)} (${
+                        filteredTemplateLib[groupName].length
+                      })`}
                     </AccordionSummary>
                     <AccordionDetails>
                       <TemplateTable

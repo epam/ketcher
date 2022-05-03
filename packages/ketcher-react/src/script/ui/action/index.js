@@ -197,6 +197,18 @@ const config = {
     },
     hidden: (options) => isHidden(options, 'select-descriptors')
   },
+  'any-atom': {
+    title: 'Any atom',
+    action: {
+      tool: 'atom',
+      opts: {
+        label: 'A',
+        pseudo: 'A',
+        type: 'gen'
+      }
+    },
+    hidden: (options) => isHidden(options, 'any-atom')
+  },
   ...server,
   ...debug,
   ...tools,

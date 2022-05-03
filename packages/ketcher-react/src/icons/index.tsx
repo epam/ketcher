@@ -197,6 +197,7 @@ import ApproximatelyEqualIcon from './files/approximately-equal.svg'
 import NotEqualIcon from './files/not-equal.svg'
 import LessOrEqualIcon from './files/less-or-equal.svg'
 import MoreOrEqualIcon from './files/more-or-equal.svg'
+import AnyAtomIcon from './files/any-atom.svg'
 
 const icons = {
   α: α,
@@ -248,6 +249,7 @@ const icons = {
   '℃': DegreeCelseusIcon,
   about: AboutIcon,
   analyse: AnalyseIcon,
+  'any-atom': AnyAtomIcon,
   arom: AromIcon,
   'arrow-upward': ArrowUpwardIcon,
   'bond-any': BondAnyIcon,

@@ -151,6 +151,7 @@ type RightToolbarItemVariant =
   | 'freq-atoms'
   | 'period-table'
   | 'extended-table'
+  | 'any-atom'
 
 type ToolbarItemVariant =
   | TopToolbarItemVariant

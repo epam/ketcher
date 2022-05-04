@@ -57,22 +57,12 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: fade(@color-small-scroll, 85%);
       border-radius: 2px;
       -webkit-border-radius: 2px;
     }
 
-    &::-webkit-scrollbar-thumb:active,
-    &::-webkit-scrollbar-thumb:hover {
-      background-color: @color-small-scroll;
-    }
-
     :global(.Mui-selected) {
       background-color: @color-background-primary;
-
-      &:hover {
-        background-color: @color-select-background;
-      }
     }
   }
 }

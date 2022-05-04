@@ -84,7 +84,7 @@ const RightColumn = styled('div')`
 const NameInput = styled(Field)`
   display: flex;
   flex-direction: column;
-  margin-bottom: 7px;
+  margin-bottom: 12px;
 
   & > input[type='text'] {
     display: block;
@@ -116,11 +116,12 @@ const NameInput = styled(Field)`
 const AttachmentOutput = styled('span')`
   display: block;
   width: 100%;
+  height: 24px;
   box-sizing: border-box;
   padding: 4px 8px;
   border: 1px solid #cad3dd;
   border-radius: 4px;
-  line-height: 16px;
+  line-height: 14px;
   font-size: 14px;
   background-color: #eff2f5;
   margin-top: 2px;

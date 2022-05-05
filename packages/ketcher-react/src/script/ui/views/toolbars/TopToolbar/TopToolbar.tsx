@@ -61,6 +61,7 @@ export interface PanelProps {
   onMiew: VoidFunction
   onFullscreen: VoidFunction
   onAbout: VoidFunction
+  onHelp: VoidFunction
 }
 
 const collapseLimit = 650
@@ -129,7 +130,8 @@ export const TopToolbar = ({
   onAnalyse,
   onMiew,
   onFullscreen,
-  onAbout
+  onAbout,
+  onHelp
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>()
 
@@ -183,6 +185,7 @@ export const TopToolbar = ({
         }}
         onSettingsOpen={onSettingsOpen}
         onFullscreen={onFullscreen}
+        onHelp={onHelp}
         onAboutOpen={onAbout}
         disabledButtons={disabledButtons}
         hiddenButtons={hiddenButtons}

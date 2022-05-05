@@ -150,6 +150,11 @@ const SaveButton = styled(Button)`
     background-color: #43b5c0;
     box-shadow: none;
   }
+
+  &:disabled {
+    background-color: #e1e5ea;
+    color: #333333;
+  }
 `
 
 const CancelButton = styled(Button)`
@@ -261,6 +266,7 @@ class Attach extends Component {
               <SaveButton
                 variant="contained"
                 onClick={() => this.props.onOk(this.onResult())}
+                disabled={!name}
               >
                 Apply
               </SaveButton>

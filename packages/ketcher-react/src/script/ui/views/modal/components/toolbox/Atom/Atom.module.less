@@ -20,10 +20,11 @@
 @import '../../../../../../../style/mixins.less';
 
 @shadow-color: #DEE1E4;
+@padding-container: 11.5px;
 
 .atomProps {
   width: @width-x-small;
-  height: 398px;
+  height: 386px;
   display: flex;
   justify-content: space-between;
   overflow: hidden;
@@ -42,12 +43,7 @@
     margin: 0;
     background-color: @color-primary-light;
     flex-grow: 1;
-
-
-    label {
-      margin-bottom: 8px;
     }
-  }
 
   > footer {
     box-shadow: 0 -2px 4px 0 @shadow-color;
@@ -77,13 +73,13 @@
 
 .accordionSummaryWrapper {
   margin: 0;
-  padding-left: @padding-modal;
+  padding-left: @padding-container;
   border-bottom: 1px solid @color-grey-3; 
   background-color: @color-background-primary;
 }
 
 .accordionSummary {
-  width: @width-x-small - @margin-left-right * 2;
+  width: @width-x-small - @padding-container * 2;
   height: 26px;
   overflow: hidden;
   display: flex;
@@ -116,26 +112,37 @@
 
   label {
     display: flex;
-    flex-direction: column;
-    margin-bottom: @margin-top-bottom;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
     color: @color-text-secondary;
+
+    >:last-child {
+      width: 137px;
+      margin: 0 !important;
+    }
   
     &.checkbox {
-      margin-top: 12px;
+      margin-top: 8px;
       height: 16px;
       flex-direction: row;
-      width: max-content;
+      justify-content: space-between;
       align-items: center;
     }
   }
 }
 
-.propertiesRow {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+.reactionFlags,
+.querySpecific {
+  label {
+    >:last-child {
+      width: 77px;
+    }
+  }
+}
 
-   > label {
-     width: 94px;
-   }
+.reactionFlags {
+  padding-bottom: 20px;
 }

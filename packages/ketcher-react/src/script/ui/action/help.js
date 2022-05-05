@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2022 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
- @import '../../../../../../../style/variables.less';
+import isHidden from './isHidden'
 
-.bond {
-  width: @width-small;
+const openHelpLink = () =>
+  window
+    .open(
+      `https://github.com/epam/ketcher/blob/${process.env.HELP_LINK}/documentation/help.md#ketcher-overview`
+    )
+    ?.focus()
 
-  > div {
-    margin-top: @margin-top-bottom;
-  }
-
-  label {
-    display: flex;
-    flex-direction: column;
-    line-height: 14px;
-    margin-bottom: @margin-top-bottom;
-    font-size: 12px;
-    color: @color-text-secondary;
-
-    & > span {
-      margin-bottom: 4px
-    }
+export default {
+  help: {
+    shortcut: ['?', '&', 'Shift+/'],
+    action: () => openHelpLink(),
+    hidden: (options) => isHidden(options, 'help')
   }
 }

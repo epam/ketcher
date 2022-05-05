@@ -35,7 +35,7 @@ const Button = styled(MuiButton)`
   width: 28px;
 
   &:hover {
-    color: #005662;
+    color: #006775;
     transform: none;
     box-shadow: none;
     transition: none;
@@ -43,8 +43,11 @@ const Button = styled(MuiButton)`
   }
 
   &:active {
-    background-color: #005662;
+    background-color: #006775;
     color: white;
+    &:hover {
+      background-color: #188794;
+    }
   }
 
   & svg {

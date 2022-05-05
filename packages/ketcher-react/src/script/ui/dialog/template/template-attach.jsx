@@ -23,6 +23,7 @@ import { storage } from '../../storage-ext'
 import Form, { Field } from '../../component/form/form/form'
 import { attachSchema } from '../../data/schema/struct-schema'
 import styled from '@emotion/styled'
+import classes from './template-lib.module.less'
 import { css } from '@emotion/react'
 import { Button } from '@mui/material'
 
@@ -83,7 +84,7 @@ const RightColumn = styled('div')`
 const NameInput = styled(Field)`
   display: flex;
   flex-direction: column;
-  margin-bottom: 7px;
+  margin-bottom: 12px;
 
   & > input[type='text'] {
     display: block;
@@ -115,11 +116,12 @@ const NameInput = styled(Field)`
 const AttachmentOutput = styled('span')`
   display: block;
   width: 100%;
+  height: 24px;
   box-sizing: border-box;
   padding: 4px 8px;
   border: 1px solid #cad3dd;
   border-radius: 4px;
-  line-height: 16px;
+  line-height: 14px;
   font-size: 14px;
   background-color: #eff2f5;
   margin-top: 2px;
@@ -149,6 +151,11 @@ const SaveButton = styled(Button)`
   &:hover {
     background-color: #43b5c0;
     box-shadow: none;
+  }
+
+  &:disabled {
+    background-color: #e1e5ea;
+    color: #333333;
   }
 `
 
@@ -255,12 +262,18 @@ class Attach extends Component {
               <strong>{bondid}</strong>
             </AttachmentOutput>
             <Buttons>
-              <CancelButton variant="outlined" onClick={this.props.onCancel}>
+              <CancelButton
+                variant="outlined"
+                onClick={this.props.onCancel}
+                className={classes.button}
+              >
                 Cancel
               </CancelButton>
               <SaveButton
                 variant="contained"
                 onClick={() => this.props.onOk(this.onResult())}
+                className={classes.button}
+                disabled={!name}
               >
                 Apply
               </SaveButton>

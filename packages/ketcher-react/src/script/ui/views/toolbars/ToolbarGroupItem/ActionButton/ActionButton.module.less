@@ -17,18 +17,6 @@
 @import '../../../../../../style/variables';
 @import '../../../../../../style/mixins';
 
-.selected {
-  background: #005662 !important;
-
-  & path {
-    fill: #fff !important;
-  }
-
-  & span {
-    color: #fff;
-  }
-}
-
 .button {
   .btn();
 
@@ -52,7 +40,7 @@
 
   &:hover {
     & path {
-      fill: #00838f;
+      fill: @color-primary-hover;
     }
 
     background-image: none;
@@ -65,6 +53,22 @@
   }
 
   .button-size(large);
+}
+
+.button.selected, .button:active {
+  background: @color-primary-active;
+
+  & path {
+    fill: #fff;
+  }
+
+  & span {
+    color: #fff;
+  }
+
+  &:hover {
+    background-color: @color-spec-button-primary-hover;
+  }
 }
 
 .button-size(@dim) {

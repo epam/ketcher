@@ -15,8 +15,7 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled'
-
-import { HelpLink } from './HelpLink'
+import { shortcutStr } from '../shortcutStr'
 import { IconButton } from './IconButton'
 
 interface SystemControlsProps {
@@ -27,6 +26,7 @@ interface SystemControlsProps {
   onAboutOpen: () => void
   onHistoryClick: () => void
   onFullscreen: () => void
+  onHelp: () => void
 }
 
 const getIfFullScreen = () => {
@@ -51,6 +51,7 @@ export const SystemControls = ({
   onSettingsOpen,
   // onHistoryClick,
   onFullscreen,
+  onHelp,
   onAboutOpen,
   className
 }: SystemControlsProps) => {
@@ -71,7 +72,13 @@ export const SystemControls = ({
         disabled={disabledButtons.includes('settings')}
         isHidden={hiddenButtons.includes('settings')}
       />
-      <HelpLink isHidden={hiddenButtons.includes('help')} />
+      <IconButton
+        title={`Help (${shortcutStr(['?', '&', 'Shift+/'])})`}
+        onClick={onHelp}
+        iconName="help"
+        disabled={disabledButtons.includes('help')}
+        isHidden={hiddenButtons.includes('help')}
+      />
       {/* @TODO Temporary About button, when design is ready, reimplement */}
       <IconButton
         title="About"

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2022 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,47 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../toolbar';
+import isHidden from './isHidden'
 
-.root {
-  .toolbar();
-  .vertical-toolbar();
+const openHelpLink = () =>
+  window
+    .open(
+      `https://github.com/epam/ketcher/blob/${process.env.HELP_LINK}/documentation/help.md#ketcher-overview`
+    )
+    ?.focus()
 
-  margin-right: 4px;
-  margin-top: 8px;
-  width: 32px;
-
-  // TODO: change group style, if will decide to get rid of delimiter everywhere
-  .group:not(:last-of-type) {
-    margin-bottom: 0;
-    border-bottom: none;
-    padding-bottom: 0;
-
-    &.atomsList {
-      margin-top: 2px;
-      margin-bottom: 8px;
-    }
-  }
-}
-
-.buttons {
-  width: 100%;
-  overflow: hidden;
-  scroll-behavior: smooth;
-
-  button {
-    font-size: 14px;
-    font-weight: 600;
-    width: 28px;
-    height: 28px;
-    margin: 2px;
-
-    svg {
-      top: 1px;
-      bottom: 2px;
-      left: 1px;
-      right: 2px;
-
-    }
+export default {
+  help: {
+    shortcut: ['?', '&', 'Shift+/'],
+    action: () => openHelpLink(),
+    hidden: (options) => isHidden(options, 'help')
   }
 }

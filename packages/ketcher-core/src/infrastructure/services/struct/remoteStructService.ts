@@ -141,7 +141,7 @@ export class RemoteStructService implements StructService {
     )(
       {
         struct,
-        output_format: 'inchi-key'
+        output_format: 'chemical/x-inchi'
       },
       {}
     )

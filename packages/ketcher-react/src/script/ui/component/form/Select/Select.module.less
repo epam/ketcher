@@ -21,11 +21,9 @@
 // stylelint-disable no-descending-specificity
 .dropdownList {
   :global(.MuiPaper-root) {
-    max-height: 200px;
     border-radius: 0 0 4px 4px;
     box-shadow: 0 6px 10px @color-select-box-shadow;
     color: @color-text-primary;
-    .scrollbar();
   }
 
   :global(.MuiMenuItem-root) {
@@ -44,16 +42,27 @@
   }
 
   :global(.MuiList-root.MuiMenu-list) {
+    display: inline-block;
+    width: 100%;
     background-color: @color-background-primary;
     padding: 0;
     box-shadow: none;
+    overflow: auto;
+    max-height: 200px;
+    .scrollbar();
+  
+    &::-webkit-scrollbar {
+      background-color: @color-background-primary;
+      width: 4px; 
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 2px;
+      -webkit-border-radius: 2px;
+    }
 
     :global(.Mui-selected) {
       background-color: @color-background-primary;
-
-      &:hover {
-        background-color: @color-select-background;
-      }
     }
   }
 }

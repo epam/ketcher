@@ -24,6 +24,7 @@ import server from './server'
 import templates from './templates'
 import tools from './tools'
 import zoom from './zoom'
+import help from './help'
 import functionalGroups from './functionalGroups'
 import fullscreen from './fullscreen'
 
@@ -138,9 +139,6 @@ const config = {
     action: { dialog: 'settings' },
     hidden: (options) => isHidden(options, 'settings')
   },
-  help: {
-    hidden: (options) => isHidden(options, 'help')
-  },
   about: {
     title: 'About',
     action: { dialog: 'about' },
@@ -197,6 +195,18 @@ const config = {
     },
     hidden: (options) => isHidden(options, 'select-descriptors')
   },
+  'any-atom': {
+    title: 'Any atom',
+    action: {
+      tool: 'atom',
+      opts: {
+        label: 'A',
+        pseudo: 'A',
+        type: 'gen'
+      }
+    },
+    hidden: (options) => isHidden(options, 'any-atom')
+  },
   ...server,
   ...debug,
   ...tools,
@@ -204,7 +214,8 @@ const config = {
   ...zoom,
   ...templates,
   ...functionalGroups,
-  ...fullscreen
+  ...fullscreen,
+  ...help
 }
 
 function hasSelection(editor) {

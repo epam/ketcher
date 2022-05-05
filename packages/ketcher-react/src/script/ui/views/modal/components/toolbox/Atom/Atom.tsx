@@ -76,36 +76,33 @@ const Atom: FC<Props> = (props) => {
     {
       groupName: 'General',
       component: (
-        <>
-          <div className={classes.propertiesRow}>
-            <Field name="label" onChange={onLabelChangeCallback} autoFocus />
-            <ElementNumber label={currentLabel} />
-          </div>
-          <Field name="alias" />
-          <div className={classes.propertiesRow}>
-            <Field name="charge" maxLength="5" />
-            <Field name="isotope" />
-          </div>
-          <div className={classes.propertiesRow}>
-            <Field
-              name="explicitValence"
-              component={Select}
-              options={getSelectOptionsFromSchema(atomProps.explicitValence)}
-            />
+        <div>
+          <Field name="label" onChange={onLabelChangeCallback} autoFocus />
+          <ElementNumber label={currentLabel} />
 
-            <Field
-              name="radical"
-              component={Select}
-              options={getSelectOptionsFromSchema(atomProps.radical)}
-            />
-          </div>
-        </>
+          <Field name="alias" />
+
+          <Field name="charge" maxLength="5" />
+          <Field name="isotope" />
+
+          <Field
+            name="explicitValence"
+            component={Select}
+            options={getSelectOptionsFromSchema(atomProps.explicitValence)}
+          />
+
+          <Field
+            name="radical"
+            component={Select}
+            options={getSelectOptionsFromSchema(atomProps.radical)}
+          />
+        </div>
       )
     },
     {
       groupName: 'Query specific',
       component: (
-        <>
+        <div className={classes.querySpecific}>
           <Field
             name="ringBondCount"
             component={Select}
@@ -123,16 +120,16 @@ const Atom: FC<Props> = (props) => {
           />
           <Field
             name="unsaturatedAtom"
-            labelPos="after"
+            labelPos="before"
             className={classes.checkbox}
           />
-        </>
+        </div>
       )
     },
     {
       groupName: 'Reaction flags',
       component: (
-        <>
+        <div className={classes.reactionFlags}>
           <Field
             name="invRet"
             component={Select}
@@ -140,10 +137,10 @@ const Atom: FC<Props> = (props) => {
           />
           <Field
             name="exactChangeFlag"
-            labelPos="after"
+            labelPos="before"
             className={classes.checkbox}
           />
-        </>
+        </div>
       )
     }
   ]

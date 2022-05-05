@@ -103,6 +103,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
         data: { menuName, isSelected }
       }),
     onFullscreen: () => dispatchAction('fullscreen'),
+    onHelp: () => dispatchAction('help'),
     onAbout: () => dispatchAction('about')
   }
 }

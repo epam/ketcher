@@ -79,7 +79,7 @@ const sData = {
             type: 'string',
             default: '',
             minLength: 1,
-            invalidMessage: 'Please, specify field name'
+            invalidMessage: 'Please, specify field value'
           },
           radiobuttons: radioButtonsSchema
         },
@@ -101,7 +101,7 @@ const sData = {
             type: 'string',
             default: '',
             minLength: 1,
-            invalidMessage: 'Please, specify field name'
+            invalidMessage: 'Please, specify field value'
           },
           radiobuttons: radioButtonsSchema
         },
@@ -123,7 +123,7 @@ const sData = {
             type: 'string',
             default: '',
             minLength: 1,
-            invalidMessage: 'Please, specify field name'
+            invalidMessage: 'Please, specify field value'
           },
           radiobuttons: radioButtonsSchema
         },

@@ -34,7 +34,7 @@ import Input from '../../component/form/input'
 import SaveButton from '../../component/view/savebutton'
 import { SdfSerializer, Struct } from 'ketcher-core'
 import classes from './template-lib.module.less'
-import { connect } from 'react-redux'
+import { connect, useSelector, RootStateOrAny } from 'react-redux'
 import { createSelector } from 'reselect'
 import { omit } from 'lodash/fp'
 import { onAction } from '../../state'
@@ -145,7 +145,10 @@ const TemplateDialog: FC<Props> = (props) => {
     ...rest
   } = props
 
-  const [tab, setTab] = useState(TemplateTabs.TemplateLibrary)
+  const initialTab = useSelector(
+    (state: RootStateOrAny) => state.modal?.prop?.tab
+  )
+  const [tab, setTab] = useState(initialTab ?? TemplateTabs.TemplateLibrary)
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     props.group
   ])

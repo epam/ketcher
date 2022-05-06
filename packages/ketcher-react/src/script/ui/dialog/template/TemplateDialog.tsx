@@ -34,7 +34,7 @@ import Input from '../../component/form/input'
 import SaveButton from '../../component/view/savebutton'
 import { SdfSerializer, Struct } from 'ketcher-core'
 import classes from './template-lib.module.less'
-import { connect, useSelector, RootStateOrAny } from 'react-redux'
+import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { omit } from 'lodash/fp'
 import { onAction } from '../../state'
@@ -73,6 +73,7 @@ interface TemplateLibProps {
   lib: Array<Template>
   selected: Template
   mode: string
+  initialTab: number
 }
 
 interface TemplateLibCallProps {
@@ -140,14 +141,12 @@ const TemplateDialog: FC<Props> = (props) => {
     onFilter,
     onChangeGroup,
     mode,
+    initialTab,
     functionalGroups,
     lib: templateLib,
     ...rest
   } = props
 
-  const initialTab = useSelector(
-    (state: RootStateOrAny) => state.modal?.prop?.tab
-  )
   const [tab, setTab] = useState(initialTab ?? TemplateTabs.TemplateLibrary)
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     props.group
@@ -309,6 +308,7 @@ const TemplateDialog: FC<Props> = (props) => {
 export default connect(
   (store) => ({
     ...omit(['attach'], (store as any).templates),
+    initialTab: (store as any).modal?.prop?.tab,
     functionalGroups: functionalGroupsSelector(store).map((template) => {
       const struct = template.struct.clone()
       struct.sgroups.delete(0)

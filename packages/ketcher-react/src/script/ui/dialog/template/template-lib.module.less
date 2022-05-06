@@ -17,8 +17,6 @@
 @import '../../../../style/mixins';
 @import '../../../../style/variables';
 
-@shadow-color: #DEE1E4;
-
 .warning {
   color: @error-color;
 
@@ -59,7 +57,7 @@
   }
 
   & > footer {
-    box-shadow: 0 -6px 6px 0 @shadow-color;
+    box-shadow: 0 -6px 6px 0 @color-accordion-shadow;
     z-index: 10;
 
     & > input {
@@ -141,7 +139,7 @@
 
   :global(.MuiAccordionDetails-root) {
     background-color: @color-primary-light;
-    box-shadow: inset 0 -2px 8px 0 @shadow-color;
+    box-shadow: inset 0 -2px 8px 0 @color-accordion-shadow;
     width: 424px;
     padding: 12px 14px 4px;
   }
@@ -183,7 +181,7 @@
   }
 
   .tabs {
-    box-shadow: 0 6px 6px 0 @shadow-color;
+    box-shadow: 0 6px 6px 0 @color-accordion-shadow;
     z-index: 10;  
   }
 

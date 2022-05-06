@@ -76,6 +76,8 @@ const LeftColumn = styled('div')`
 
 const RightColumn = styled('div')`
   width: 40%;
+  min-width: 200px;
+  box-sizing: border-box;
   padding: 12px;
   display: flex;
   flex-direction: column;

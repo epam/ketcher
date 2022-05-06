@@ -73,6 +73,7 @@ interface TemplateLibProps {
   lib: Array<Template>
   selected: Template
   mode: string
+  initialTab: number
 }
 
 interface TemplateLibCallProps {
@@ -140,12 +141,13 @@ const TemplateDialog: FC<Props> = (props) => {
     onFilter,
     onChangeGroup,
     mode,
+    initialTab,
     functionalGroups,
     lib: templateLib,
     ...rest
   } = props
 
-  const [tab, setTab] = useState(TemplateTabs.TemplateLibrary)
+  const [tab, setTab] = useState(initialTab ?? TemplateTabs.TemplateLibrary)
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     props.group
   ])
@@ -306,6 +308,7 @@ const TemplateDialog: FC<Props> = (props) => {
 export default connect(
   (store) => ({
     ...omit(['attach'], (store as any).templates),
+    initialTab: (store as any).modal?.prop?.tab,
     functionalGroups: functionalGroupsSelector(store).map((template) => {
       const struct = template.struct.clone()
       struct.sgroups.delete(0)

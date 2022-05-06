@@ -19,7 +19,6 @@
 @import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
-@shadow-color: #DEE1E4;
 @padding-container: 11.5px;
 
 .atomProps {
@@ -35,7 +34,7 @@
   
   > header {
     flex-shrink: 0;
-    box-shadow: 0 2px 4px 0 @shadow-color;
+    box-shadow: 0 2px 4px 0 @color-accordion-shadow;
     z-index: 10; 
   }
 
@@ -46,7 +45,8 @@
     }
 
   > footer {
-    box-shadow: 0 -2px 4px 0 @shadow-color;
+    box-shadow: 0 -2px 4px 0 @color-accordion-shadow;
+    z-index: 10;
   }
 }
 

@@ -80,8 +80,7 @@ const Dialog: FC<Props> = (props) => {
     }
 
     return () => {
-      ;// eslint-disable-next-line react-hooks/exhaustive-deps
-      (
+      ;(
         dialogRef.current
           ?.closest('.Ketcher-root')
           ?.getElementsByClassName('cliparea')[0] as HTMLElement

@@ -38,14 +38,9 @@ class Table extends Component {
       current: Elements.get(2),
       isInfo: false
     }
-    this.firstType = true
   }
 
   changeType = (type) => {
-    if (this.firstType) {
-      this.firstType = false
-      return
-    }
     const prevChoice =
       this.state.type === 'list' || this.state.type === 'not-list'
     const currentChoice = type === 'list' || type === 'not-list'

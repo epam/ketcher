@@ -26,7 +26,10 @@
   & > div {
     margin: 0;
     overflow: auto;
-    border-radius: 0 0 8px 8px;
+  }
+
+  & > footer {
+    border-radius: inherit;
   }
 
   form {
@@ -36,7 +39,8 @@
   .buttons {
     display: flex;
     justify-content: space-between;
-    padding: 16px 12px 12px;
+    // padding: 16px 12px 12px;
+    width: 100%;
       
       .buttonSecondary {
         .button-secondary();
@@ -48,7 +52,7 @@
 
     & > .buttonsRight {
       display: flex;
-      gap: 10px;
+      gap: 8px;
     }
   }
 

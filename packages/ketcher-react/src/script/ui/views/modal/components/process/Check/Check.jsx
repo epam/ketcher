@@ -75,6 +75,44 @@ const getFormattedDateString = (date) => {
   )}`
 }
 
+const FooterContent = ({
+  handleCheck,
+  handleApply,
+  onCancel,
+  isStuctureChecking,
+  isCheckedWithNewSettings
+}) => {
+  return (
+    <div className={style.buttons}>
+      <div>
+        <button
+          className={
+            isCheckedWithNewSettings
+              ? style.buttonSecondary
+              : style.buttonPrimary
+          }
+          onClick={handleCheck}
+          disabled={!isStuctureChecking}
+        >
+          Check
+        </button>
+      </div>
+      <div className={style.buttonsRight}>
+        <button className={style.buttonSecondary} onClick={onCancel}>
+          Cancel
+        </button>
+        <button
+          className={style.buttonPrimary}
+          onClick={handleApply}
+          disabled={!isStuctureChecking}
+        >
+          Apply
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function CheckDialog(props) {
   const { formState, checkState, onCheck, onApply, onCancel, ...restProps } =
     props
@@ -107,6 +145,15 @@ function CheckDialog(props) {
       className={style.dialog_body}
       params={{ ...restProps, onCancel }}
       buttons={[]}
+      footerContent={
+        <FooterContent
+          handleCheck={handleCheck}
+          handleApply={handleApply}
+          onCancel={onCancel}
+          isStuctureChecking={isStuctureChecking}
+          isCheckedWithNewSettings={isCheckedWithNewSettings}
+        />
+      }
       withDivider
     >
       <Form
@@ -163,33 +210,6 @@ function CheckDialog(props) {
           </div>
         </div>
       </Form>
-      <div className={style.buttons}>
-        <div>
-          <button
-            className={
-              isCheckedWithNewSettings
-                ? style.buttonSecondary
-                : style.buttonPrimary
-            }
-            onClick={handleCheck}
-            disabled={!isStuctureChecking}
-          >
-            Check
-          </button>
-        </div>
-        <div className={style.buttonsRight}>
-          <button className={style.buttonSecondary} onClick={onCancel}>
-            Cancel
-          </button>
-          <button
-            className={style.buttonPrimary}
-            onClick={handleApply}
-            disabled={!isStuctureChecking}
-          >
-            Apply
-          </button>
-        </div>
-      </div>
     </Dialog>
   )
 }

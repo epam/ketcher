@@ -108,23 +108,6 @@ class Table extends Component {
     }
   }
 
-  periodicTable = (value) => {
-    const { type, current, isInfo } = this.state
-    return (
-      <div className={classes.periodTable}>
-        <AtomInfo el={current} isInfo={isInfo} />
-        <ElementsTable
-          value={value}
-          currentEvents={this.currentEvents}
-          selected={this.selected}
-          onAtomSelect={(label) => this.onAtomSelect(label)}
-          onDoubleClick={(label) => this.onAtomSelect(label, true)}
-        />
-        <TypeChoice value={type} onChange={this.changeType} />
-      </div>
-    )
-  }
-
   render() {
     const { type, value } = this.state
     const HeaderContent = this.headerContent

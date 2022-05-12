@@ -79,6 +79,7 @@ const HeaderContent = ({
     <div className={classes.headerContent}>
       <span className={classes.title}> Settings</span>
       <OpenButton
+        title="Open from File"
         key="settings"
         server={server}
         onLoad={onOpenFile}
@@ -87,6 +88,7 @@ const HeaderContent = ({
         <Icon name="open-1" />
       </OpenButton>
       <SaveButton
+        title="Save to File"
         key="ketcher-settings"
         data={JSON.stringify(formState.result)}
         filename="ketcher-settings"
@@ -95,6 +97,7 @@ const HeaderContent = ({
         <Icon name="save-1" />
       </SaveButton>
       <button
+        title="Reset"
         key="settings-button"
         onClick={onReset}
         className={classes.button}

@@ -202,10 +202,14 @@ class Attach extends Component {
       : null
   }
 
-  checkUniqueName(name) {
-    return !this.props.templateLib.some(
-      (tmpl) =>
-        tmpl.struct.name === name && tmpl.props.group === 'User Templates'
+  checkIsValidName(name) {
+    return (
+      !!name &&
+      !this.props.templateLib.some(
+        (tmpl) =>
+          tmpl.struct.name === name && tmpl.props.group === 'User Templates'
+      ) &&
+      name.length <= 128
     )
   }
 
@@ -231,7 +235,7 @@ class Attach extends Component {
         <Form
           schema={attachSchema}
           customValid={{
-            name: (name) => this.checkUniqueName(name)
+            name: (name) => this.checkIsValidName(name)
           }}
           {...this.props.formState}
         >
@@ -275,7 +279,7 @@ class Attach extends Component {
                 variant="contained"
                 onClick={() => this.props.onOk(this.onResult())}
                 className={classes.button}
-                disabled={!name}
+                disabled={!this.checkIsValidName(name)}
               >
                 Apply
               </SaveButton>

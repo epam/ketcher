@@ -154,7 +154,7 @@ class SelectTool {
 
     if (!ci) {
       //  ci.type == 'Canvas'
-      this.editor.selection(null)
+      if (!event.shiftKey) this.editor.selection(null)
       delete this.dragCtx.item
       if (!this.#lassoHelper.fragment) this.#lassoHelper.begin(event)
       return true
@@ -188,10 +188,10 @@ class SelectTool {
       if (isSelected(selection, ci)) return true
     }
 
-    if (!event.shiftKey) {
-      this.editor.selection(isSelected(selection, ci) ? selection : sel)
-    } else {
+    if (event.shiftKey) {
       this.editor.selection(selMerge(sel, selection, true))
+    } else {
+      this.editor.selection(isSelected(selection, ci) ? selection : sel)
     }
     return true
   }

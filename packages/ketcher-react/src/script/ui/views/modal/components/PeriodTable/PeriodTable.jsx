@@ -38,14 +38,9 @@ class Table extends Component {
       current: Elements.get(2),
       isInfo: false
     }
-    this.firstType = true
   }
 
   changeType = (type) => {
-    if (this.firstType) {
-      this.firstType = false
-      return
-    }
     const prevChoice =
       this.state.type === 'list' || this.state.type === 'not-list'
     const currentChoice = type === 'list' || type === 'not-list'
@@ -106,23 +101,6 @@ class Table extends Component {
       onMouseEnter: () => this.setState({ current: element, isInfo: true }),
       onMouseLeave: () => this.setState({ isInfo: false })
     }
-  }
-
-  periodicTable = (value) => {
-    const { type, current, isInfo } = this.state
-    return (
-      <div className={classes.periodTable}>
-        <AtomInfo el={current} isInfo={isInfo} />
-        <ElementsTable
-          value={value}
-          currentEvents={this.currentEvents}
-          selected={this.selected}
-          onAtomSelect={(label) => this.onAtomSelect(label)}
-          onDoubleClick={(label) => this.onAtomSelect(label, true)}
-        />
-        <TypeChoice value={type} onChange={this.changeType} />
-      </div>
-    )
   }
 
   render() {

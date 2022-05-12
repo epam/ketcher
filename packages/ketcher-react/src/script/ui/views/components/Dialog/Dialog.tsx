@@ -35,7 +35,6 @@ interface DialogProps {
   title?: string
   params: DialogParams
   buttons?: Array<string | ReactElement>
-  buttonsTop?: Array<ReactElement>
   className?: string
   needMargin?: boolean
   withDivider?: boolean
@@ -66,7 +65,6 @@ const Dialog: FC<Props> = (props) => {
     footerContent,
     className,
     buttonsNameMap,
-    buttonsTop,
     needMargin = true,
     withDivider = false,
     focusable = true,
@@ -116,7 +114,6 @@ const Dialog: FC<Props> = (props) => {
       >
         {headerContent || <span>{title}</span>}
         <div className={styles.btnContainer}>
-          {buttonsTop && buttonsTop.map((button) => button)}
           <button className={styles.buttonTop} onClick={() => exit('Cancel')}>
             <Icon name={'close'} className={styles.closeButton} />
           </button>

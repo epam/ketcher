@@ -78,6 +78,14 @@ const Dialog: FC<Props> = (props) => {
     if (focusable) {
       ;(dialogRef.current as HTMLElement).focus()
     }
+
+    return () => {
+      ;(
+        dialogRef.current
+          ?.closest('.Ketcher-root')
+          ?.getElementsByClassName('cliparea')[0] as HTMLElement
+      ).focus()
+    }
   }, [focusable])
 
   const isButtonOk = (button) => {

@@ -33,12 +33,14 @@ import Accordion from './Accordion'
 import { StructService } from 'ketcher-core'
 import SystemFonts from '../../../../../component/form/systemfonts'
 import classes from './Settings.module.less'
-import clsx from 'clsx'
 import { connect } from 'react-redux'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
 import { saveSettings } from '../../../../../state/options'
-import settingsSchema from '../../../../../data/schema/options-schema'
+import settingsSchema, {
+  getDefaultOptions
+} from '../../../../../data/schema/options-schema'
 import fieldGroups from './fieldGroups'
+import { isEqual } from 'lodash'
 
 interface SettingsProps extends BaseProps {
   initState: any
@@ -57,6 +59,54 @@ interface SettingsProps extends BaseProps {
 interface SettingsCallProps extends BaseCallProps {
   onOpenFile: (any) => void
   onReset: () => void
+}
+
+const defaultSettings = getDefaultOptions()
+
+const HeaderContent = ({
+  server,
+  onOpenFile,
+  onReset,
+  formState,
+  initState
+}) => {
+  const getIsResetDisabled = () => {
+    if (formState.result.init) return isEqual(defaultSettings, initState)
+    else return isEqual(defaultSettings, formState.result)
+  }
+
+  return (
+    <div className={classes.headerContent}>
+      <span className={classes.title}> Settings</span>
+      <OpenButton
+        title="Open from File"
+        key="settings"
+        server={server}
+        onLoad={onOpenFile}
+        className={classes.button}
+      >
+        <Icon name="open-1" />
+      </OpenButton>
+      <SaveButton
+        title="Save to File"
+        key="ketcher-settings"
+        data={JSON.stringify(formState.result)}
+        filename="ketcher-settings"
+        className={classes.button}
+      >
+        <Icon name="save-1" />
+      </SaveButton>
+      <button
+        title="Reset"
+        key="settings-button"
+        onClick={onReset}
+        className={classes.button}
+        disabled={getIsResetDisabled()}
+      >
+        <Icon name="reset" />
+      </button>
+    </div>
+  )
 }
 
 type Props = SettingsProps & SettingsCallProps
@@ -236,7 +286,6 @@ const SettingsDialog = (props: Props) => {
 
   return (
     <Dialog
-      title="Settings"
       className={classes.settings}
       result={() => formState.result}
       valid={() => formState.valid}
@@ -245,35 +294,15 @@ const SettingsDialog = (props: Props) => {
       buttons={['Cancel', 'OK']}
       withDivider
       needMargin={false}
-      buttonsTop={[
-        <OpenButton
-          title="Open From File"
-          key="settings"
+      headerContent={
+        <HeaderContent
           server={server}
-          onLoad={onOpenFile}
-          className={clsx(classes.button, classes.buttonOpen)}
-        >
-          <Icon name={'open-1'} />
-        </OpenButton>,
-        <SaveButton
-          title="Save to File"
-          key="ketcher-settings"
-          data={JSON.stringify(formState.result)}
-          filename="ketcher-settings"
-          className={classes.button}
-        >
-          <Icon name={'save-1'} />
-        </SaveButton>,
-        <button
-          title="Reset"
-          key="settings-button"
-          onClick={onReset}
-          className={classes.button}
-          disabled={changedGroups.size === 0}
-        >
-          <Icon name={'reset'} />
-        </button>
-      ]}
+          onOpenFile={onOpenFile}
+          onReset={onReset}
+          formState={formState}
+          initState={initState}
+        />
+      }
     >
       <Form schema={settingsSchema} init={initState} {...formState}>
         <Accordion

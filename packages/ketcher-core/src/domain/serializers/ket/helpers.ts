@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2022 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RxnArrow, RxnPlus, Struct } from 'domain/entities'
-import { getNodeWithInvertedYCoord } from '../helpers'
+import { cloneDeepWith, cloneDeep } from 'lodash'
 
-export function rxnToStruct(ketItem: any, struct: Struct): Struct {
-  if (ketItem.type === 'arrow') {
-    struct.rxnArrows.add(new RxnArrow(getNodeWithInvertedYCoord(ketItem.data)))
-  } else {
-    struct.rxnPluses.add(
-      new RxnPlus({
-        pp: {
-          x: ketItem.location[0],
-          y: -ketItem.location[1],
-          z: ketItem.location[2]
-        }
-      })
-    )
+const customizer = (value: any) => {
+  if (typeof value === 'object' && value.y) {
+    const clonedValue = cloneDeep(value)
+    clonedValue.y = -clonedValue.y
+    return clonedValue
   }
-  return struct
 }
+
+export const getNodeWithInvertedYCoord = (node: object) =>
+  cloneDeepWith(node, customizer)

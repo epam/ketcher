@@ -31,11 +31,6 @@ import { Button } from '@mui/material'
 const TemplateEditDialog = styled(Dialog)`
   background-color: #fff;
 
-  // Overriding margins set in Dialog.module.less
-  & > div {
-    margin: 0;
-  }
-
   & header {
     text-transform: none;
     border-bottom: 1px solid #e1e5ea;
@@ -45,6 +40,11 @@ const TemplateEditDialog = styled(Dialog)`
 
   & form {
     display: flex;
+
+    & label::after {
+      top: 92px;
+      margin-right: 12px;
+    }
   }
 `
 
@@ -92,7 +92,7 @@ const NameInput = styled(Field)`
     display: block;
     width: 100%;
     box-sizing: border-box;
-    padding: 4px 8px;
+    padding: 4px 16px 4px 8px;
     border: 1px solid #cad3dd;
     border-radius: 4px;
     line-height: 16px;
@@ -231,6 +231,7 @@ class Attach extends Component {
         valid={() => this.props.formState.valid && name}
         params={prop}
         buttons={[]}
+        needMargin={false}
       >
         <Form
           schema={attachSchema}

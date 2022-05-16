@@ -13,7 +13,7 @@ reactions. The application operates in two modes - Standalone and Remote:
 
 **Ketcher** consists of the following elements:
 
-![](images/1_overview.png)
+![](images/1_overviewn.png)
 
 **Note** : Depending on the screen size, some tools on the _Tool
 palette_ can be displayed in expanded or collapsed forms.
@@ -64,7 +64,7 @@ selects several structures.
 
 You can use the buttons of the _Main_ toolbar:
 
-![](images/4_main_toolbar.png 'Main Toolbar') 
+![](images/4_main_toolbarn.png 'Main Toolbar') 
 
 - **Clear Canvas** (1) button to start drawing a new molecule; this
   command clears the drawing area;
@@ -102,23 +102,25 @@ You can use the buttons of the _Main_ toolbar:
   the structure:
 
   <img src=images/6_calc_values.png title = "Calculated Values" width = "300"> 
+  
+- **Stereochemistry** button (16) to assign and display enhanced stereochemistry properties of the structure
 
-- **3D Viewer** button (16) to open the structure in the
+- **3D Viewer** button (17) to open the structure in the
   three-dimensional Viewer;
 
-- **Settings** button (17) to make some settings for molecular
+- **Settings** button (18) to make some settings for molecular
   files:
 
   <img src=images/7_settingsn.png title = "Settings" width = "400">  
 
-- **Help** button (18) to view Help;
+- **Help** button (19) to view Help;
 
-- **About** button (19) to display version and copyright information
+- **About** button (20) to display version and copyright information
   of the program.
   
-- **Fullscreen mode** button (20) allows to initiate displaying Ketcher window in the fullscreen mode.
+- **Fullscreen mode** button (21) allows to initiate displaying Ketcher window in the fullscreen mode.
   
-- **Zoom panel** (21) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (22) to set the view manually, **Zoom in** (23) / **Zoom out** (24) to scale the view gradually, **Zoom 100%**  (25) to enable the default zoom setting. 
+- **Zoom panel** (22) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (23) to set the view manually, **Zoom in** (24) / **Zoom out** (25) to scale the view gradually, **Zoom 100%**  (26) to enable the default zoom setting. 
 
 
    <img src = images/4.1_zoom_panel.png width = "200"/>

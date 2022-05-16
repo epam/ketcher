@@ -123,7 +123,7 @@ You can use the buttons of the _Main_ toolbar:
 - **Zoom panel** (22) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (23) to set the view manually, **Zoom in** (24) / **Zoom out** (25) to scale the view gradually, **Zoom 100%**  (26) to enable the default zoom setting. 
 
 
-   <img src = images/4.1_zoom_panel.png width = "200"/>
+   <img src = images/4.1_zoom_paneln.png width = "200"/>
    
 
 # 3D Viewer

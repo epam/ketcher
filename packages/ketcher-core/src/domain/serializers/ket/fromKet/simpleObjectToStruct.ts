@@ -15,11 +15,12 @@
  ***************************************************************************/
 
 import { SimpleObject, SimpleObjectMode, Struct, Vec2 } from 'domain/entities'
+import { getNodeWithInvertedYCoord } from '../helpers'
 
 export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
   const object =
     ketItem.data.mode === 'circle' ? circleToEllipse(ketItem) : ketItem.data
-  struct.simpleObjects.add(new SimpleObject(object))
+  struct.simpleObjects.add(new SimpleObject(getNodeWithInvertedYCoord(object)))
   return struct
 }
 

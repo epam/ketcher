@@ -16,29 +16,33 @@
 
 @import '../../../../../../../style/variables.less';
 
-.button {
-  background-color: transparent;
-  border: none;
-  color: @color-icon-active;
-  margin: 0 8px 0 0;
-  padding: 0;
-  height: 14px;
+.headerContent {
+  display: flex;
+  gap: 8px;
 
-  input[type='file'] {
-    display: none;
+  .title {
+    padding-right: 4px;
   }
 
-  &:hover {
-    color: @color-icon-hover;
-  }
+  .button {
+    background-color: transparent;
+    border: none;
+    color: @color-icon-active;
+    padding: 0;
+    font-size: 0;
   
-  &:disabled {
-    color: @color-icon-disabled;
+    input[type='file'] {
+      display: none;
+    }
+  
+    &:hover {
+      color: @color-icon-hover;
+    }
+    
+    &:disabled {
+      color: @color-icon-disabled;
+    }
   }
-}
-
-.buttonOpen {
-  margin-left: @margin-left-right;
 }
 
 .accordion {

@@ -14,10 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { getNodeWithInvertedYCoord } from '../helpers'
+
 export function arrowToKet(arrowNode) {
   return {
     type: 'arrow',
-    data: arrowNode.data
+    data: getNodeWithInvertedYCoord(arrowNode.data)
   }
 }
 
@@ -25,7 +27,7 @@ export function plusToKet(plusNode) {
   const coord = plusNode.center
   return {
     type: 'plus',
-    location: [coord.x, coord.y, coord.z],
+    location: [coord.x, -coord.y, coord.z],
     prop: plusNode.data
   }
 }

@@ -13,6 +13,8 @@ import {
   Text
 } from 'domain/entities'
 
+import { getNodeWithInvertedYCoord } from 'domain/serializers/ket/helpers'
+
 const structs = {
   prepareContent: {
     atoms: [
@@ -1452,17 +1454,19 @@ const initStruct = (structName) => {
         break
       case 'rxnArrows':
         structData.rxnArrows.forEach((props) =>
-          struct.rxnArrows.add(new RxnArrow(props))
+          struct.rxnArrows.add(new RxnArrow(getNodeWithInvertedYCoord(props)))
         )
         break
       case 'rxnPluses':
         structData.rxnPluses.forEach((props) =>
-          struct.rxnPluses.add(new RxnPlus(props))
+          struct.rxnPluses.add(new RxnPlus(getNodeWithInvertedYCoord(props)))
         )
         break
       case 'simpleObjects':
         structData.simpleObjects.forEach((props) =>
-          struct.simpleObjects.add(new SimpleObject(props))
+          struct.simpleObjects.add(
+            new SimpleObject(getNodeWithInvertedYCoord(props))
+          )
         )
         break
       case 'sgroups':
@@ -1478,7 +1482,9 @@ const initStruct = (structName) => {
         })
         break
       case 'texts':
-        structData.texts.forEach((props) => struct.texts.add(new Text(props)))
+        structData.texts.forEach((props) =>
+          struct.texts.add(new Text(getNodeWithInvertedYCoord(props)))
+        )
         break
     }
   })

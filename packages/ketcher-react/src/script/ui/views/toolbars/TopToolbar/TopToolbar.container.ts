@@ -62,7 +62,14 @@ const mapStateToProps = (state: any) => {
     status: state.actionState || {},
     opened: state.toolbar.opened,
     indigoVerification: state.requestsStatuses.indigoVerification,
-    disableableButtons: ['layout', 'clean', 'arom', 'dearom', 'cip']
+    disableableButtons: [
+      'layout',
+      'clean',
+      'arom',
+      'dearom',
+      'cip',
+      'enhanced-stereo'
+    ]
   }
 }
 
@@ -95,6 +102,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onCalculate: () => dispatchAction('cip'),
     onCheck: () => dispatchAction('check'),
     onAnalyse: () => dispatchAction('analyse'),
+    onStereo: () => dispatchAction('enhanced-stereo'),
     onMiew: () => dispatchAction('miew'),
     onAction: (action) => dispatch(onAction(action)),
     onOpen: (menuName, isSelected) =>

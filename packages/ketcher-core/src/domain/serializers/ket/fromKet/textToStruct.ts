@@ -15,9 +15,10 @@
  ***************************************************************************/
 
 import { Struct, Text } from 'domain/entities'
+import { getNodeWithInvertedYCoord } from '../helpers'
 
 export function textToStruct(ketItem: any, struct: Struct) {
-  const object = ketItem.data
+  const object = getNodeWithInvertedYCoord(ketItem.data)
   struct.texts.add(new Text(object))
 
   return struct

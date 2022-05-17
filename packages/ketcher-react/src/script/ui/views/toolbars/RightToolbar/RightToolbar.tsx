@@ -82,11 +82,7 @@ const RightToolbar = (props: Props) => {
             <ToolbarGroupItem id="extended-table" {...rest} />
           </div>
         </Group>
-        <div ref={endRef}>
-          <Group>
-            <ToolbarGroupItem id="enhanced-stereo" {...rest} />
-          </Group>
-        </div>
+        <div ref={endRef}></div>
       </div>
       <ArrowScroll
         startInView={startInView}

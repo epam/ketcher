@@ -299,7 +299,9 @@ export class SGroup {
     crossBondsPerAtom: { [key: number]: Array<Bond> }
   ): void {
     const atoms = sGroup.atoms
-    const crossBonds = Object.values(crossBondsPerAtom).flat()
+    const crossBonds = crossBondsPerAtom
+      ? Object.values(crossBondsPerAtom).flat()
+      : null
     if (!crossBonds || crossBonds.length !== 2) {
       sGroup.bracketDir = new Vec2(1, 0)
     } else {

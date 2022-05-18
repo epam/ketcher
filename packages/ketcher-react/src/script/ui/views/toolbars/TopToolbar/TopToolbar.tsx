@@ -142,11 +142,13 @@ export const TopToolbar = ({
         onClick={onClear}
         iconName="clear"
         shortcut={shortcuts.clear}
+        isHidden={hiddenButtons.includes('clear')}
       />
       <FileControls
         onFileOpen={onFileOpen}
         onSave={onSave}
         shortcuts={shortcuts}
+        hiddenButtons={hiddenButtons}
       />
       <ClipboardControls
         onCopy={onCopy}
@@ -157,11 +159,13 @@ export const TopToolbar = ({
         onCut={onCut}
         shortcuts={shortcuts}
         disabledButtons={disabledButtons}
+        hiddenButtons={hiddenButtons}
       />
       <UndoRedo
         onUndo={onUndo}
         onRedo={onRedo}
         disabledButtons={disabledButtons}
+        hiddenButtons={hiddenButtons}
         shortcuts={shortcuts}
       />
       <ExternalFuncControls
@@ -198,6 +202,7 @@ export const TopToolbar = ({
         onZoom={onZoom}
         shortcuts={shortcuts}
         disabledButtons={disabledButtons}
+        hiddenButtons={hiddenButtons}
       />
     </ControlsPanel>
   )

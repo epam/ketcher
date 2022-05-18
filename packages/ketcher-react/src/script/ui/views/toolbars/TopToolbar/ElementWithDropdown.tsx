@@ -81,8 +81,8 @@ const DropDownArrow = styled(Icon)`
 `
 
 interface ElementWithDropdownProps {
-  topElement: JSX.Element
-  dropDownElements: JSX.Element | JSX.Element[]
+  topElement?: JSX.Element
+  dropDownElements: JSX.Element[]
   onToolOpen: () => void
 }
 
@@ -104,13 +104,16 @@ const MenuItemWithDropdown = ({
 
   return (
     <ElementAndDropdown>
-      {topElement}
-      <DropDownButton
-        onClick={expand}
-        className={`expanded ${topElement.props.disabled ? 'disabled' : ''}`}
-      >
-        {!isExpanded && <DropDownArrow name="dropdown" />}
-      </DropDownButton>
+      {topElement && topElement}
+      {dropDownElements.filter((element) => !element.props.isHidden).length !==
+        0 && (
+        <DropDownButton
+          onClick={expand}
+          className={`expanded ${topElement?.props.disabled ? 'disabled' : ''}`}
+        >
+          {!isExpanded && <DropDownArrow name="dropdown" />}
+        </DropDownButton>
+      )}
       <Collapse in={isExpanded} timeout="auto" onClick={collapse} unmountOnExit>
         <ClickAwayListener onClickAway={collapse}>
           <DropDownContent>{dropDownElements}</DropDownContent>

@@ -108,6 +108,7 @@ interface ZoomProps {
   onZoomIn: VoidFunction
   onZoomOut: VoidFunction
   disabledButtons: string[]
+  hiddenButtons: string[]
   shortcuts: { [key in string]: string }
 }
 
@@ -117,6 +118,7 @@ export const ZoomControls = ({
   onZoomIn,
   onZoomOut,
   disabledButtons,
+  hiddenButtons,
   shortcuts
 }: ZoomProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
@@ -177,22 +179,26 @@ export const ZoomControls = ({
             currentZoom={currentZoom}
             shortcuts={shortcuts}
           />
-          <ZoomControlButton
-            title="Zoom Out"
-            onClick={onZoomOut}
-            disabled={disabledButtons.includes('zoom-out')}
-          >
-            <span>Zoom out</span>
-            <ShortcutLabel>{shortcuts['zoom-out']}</ShortcutLabel>
-          </ZoomControlButton>
-          <ZoomControlButton
-            title="Zoom In"
-            onClick={onZoomIn}
-            disabled={disabledButtons.includes('zoom-in')}
-          >
-            <span>Zoom in</span>
-            <ShortcutLabel>{shortcuts['zoom-in']}</ShortcutLabel>
-          </ZoomControlButton>
+          {!hiddenButtons.includes('zoom-out') && (
+            <ZoomControlButton
+              title="Zoom Out"
+              onClick={onZoomOut}
+              disabled={disabledButtons.includes('zoom-out')}
+            >
+              <span>Zoom out</span>
+              <ShortcutLabel>{shortcuts['zoom-out']}</ShortcutLabel>
+            </ZoomControlButton>
+          )}
+          {!hiddenButtons.includes('zoom-in') && (
+            <ZoomControlButton
+              title="Zoom In"
+              onClick={onZoomIn}
+              disabled={disabledButtons.includes('zoom-in')}
+            >
+              <span>Zoom in</span>
+              <ShortcutLabel>{shortcuts['zoom-in']}</ShortcutLabel>
+            </ZoomControlButton>
+          )}
           <ZoomControlButton onClick={resetZoom}>
             <span>Zoom 100%</span>
           </ZoomControlButton>

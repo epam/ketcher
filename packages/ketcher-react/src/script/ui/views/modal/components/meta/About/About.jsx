@@ -34,11 +34,7 @@ function AboutDialog(props) {
       ]}
     >
       <div className={classes.headerContent}>
-        <a
-          href="http://lifescience.opensource.epam.com/ketcher/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href={props.overviewLink} target="_blank" rel="noopener noreferrer">
           <Logo />
           <span className={classes.title}>Ketcher</span>
         </a>
@@ -48,7 +44,7 @@ function AboutDialog(props) {
           <dl className={classes.ketcherVersionInfo}>
             <dt>
               <a
-                href={props.helpLink}
+                href={props.overviewLink}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -112,7 +108,7 @@ const mapStateToProps = (state) => ({
   indigoVersion: state.options.app.indigoVersion,
   indigoMachine: state.options.app.indigoMachine,
   feedbackLink: 'http://lifescience.opensource.epam.com/ketcher/#feedback',
-  helpLink: 'http://lifescience.opensource.epam.com/ketcher/help.html',
+  overviewLink: 'https://lifescience.opensource.epam.com/ketcher/index.html',
   lifeScienciesLink: 'http://lifescience.opensource.epam.com/',
   version: state.options.app.version
 })

@@ -14,9 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { cloneElement } from 'react'
 import { ElementWithDropdown } from './ElementWithDropdown'
-
 import { IconButton } from './IconButton'
 
 interface ExternalFuncProps {
@@ -52,92 +50,77 @@ export const ExternalFuncControls = ({
   hiddenButtons,
   shortcuts
 }: ExternalFuncProps) => {
-  const buttons = [
-    <IconButton
-      title="Aromatize"
-      onClick={onAromatize}
-      iconName="arom"
-      shortcut={shortcuts.arom}
-      disabled={indigoVerification || disabledButtons.includes('arom')}
-      isHidden={hiddenButtons.includes('arom')}
-    />,
-    <IconButton
-      title="Dearomatize"
-      onClick={onDearomatize}
-      iconName="dearom"
-      shortcut={shortcuts.dearom}
-      disabled={indigoVerification || disabledButtons.includes('dearom')}
-      isHidden={hiddenButtons.includes('dearom')}
-    />,
-    <IconButton
-      title="Layout"
-      onClick={onLayout}
-      iconName="layout"
-      shortcut={shortcuts.layout}
-      disabled={indigoVerification || disabledButtons.includes('layout')}
-      isHidden={hiddenButtons.includes('layout')}
-    />,
-    <IconButton
-      title="Clean Up"
-      onClick={onClean}
-      iconName="clean"
-      shortcut={shortcuts.clean}
-      disabled={indigoVerification || disabledButtons.includes('clean')}
-      isHidden={hiddenButtons.includes('clean')}
-    />,
-    <IconButton
-      title="Calculate CIP"
-      onClick={onCalculate}
-      iconName="cip"
-      shortcut={shortcuts.cip}
-      disabled={indigoVerification || disabledButtons.includes('cip')}
-      isHidden={hiddenButtons.includes('cip')}
-    />,
-    <IconButton
-      title="Check Structure"
-      onClick={onCheck}
-      iconName="check"
-      shortcut={shortcuts.check}
-      disabled={indigoVerification || disabledButtons.includes('check')}
-      isHidden={hiddenButtons.includes('check')}
-    />,
-    <IconButton
-      title="Calculated Values"
-      onClick={onAnalyse}
-      iconName="analyse"
-      shortcut={shortcuts.analyse}
-      disabled={indigoVerification || disabledButtons.includes('analyse')}
-      isHidden={hiddenButtons.includes('analyse')}
-    />,
-    <IconButton
-      title="Stereochemistry"
-      onClick={onStereo}
-      iconName="enhanced-stereo"
-      shortcut={shortcuts['enhanced-stereo']}
-      disabled={
-        indigoVerification || disabledButtons.includes('enhanced-stereo')
-      }
-      isHidden={hiddenButtons.includes('enhanced-stereo')}
-    />,
-    <IconButton
-      title="3D Viewer"
-      onClick={onMiew}
-      iconName="miew"
-      shortcut={shortcuts.miew}
-      disabled={indigoVerification || disabledButtons.includes('miew')}
-      isHidden={hiddenButtons.includes('miew')}
-    />
+  const externalFuncButtons = [
+    {
+      name: 'arom',
+      title: 'Aromatize',
+      handler: onAromatize
+    },
+    {
+      name: 'dearom',
+      title: 'Dearomatize',
+      handler: onDearomatize
+    },
+    {
+      name: 'layout',
+      title: 'Layout',
+      handler: onLayout
+    },
+    {
+      name: 'clean',
+      title: 'Clean Up',
+      handler: onClean
+    },
+    {
+      name: 'cip',
+      title: 'Calculate CIP',
+      handler: onCalculate
+    },
+    {
+      name: 'check',
+      title: 'Check Structure',
+      handler: onCheck
+    },
+    {
+      name: 'analyse',
+      title: 'Calculated Values',
+      handler: onAnalyse
+    },
+    {
+      name: 'enhanced-stereo',
+      title: 'Stereochemistry',
+      handler: onStereo
+    },
+    {
+      name: 'miew',
+      title: '3D Viewer',
+      handler: onMiew
+    }
   ]
 
-  const firstButton = buttons.find((button) => !button.props.isHidden)
-  const collapsibleElements = buttons
-    .filter((button) => button !== firstButton)
-    .map((button) => cloneElement(button, { key: button.props.title }))
+  const getButtonElement = (button) => (
+    <IconButton
+      title={button.title}
+      onClick={button.handler}
+      iconName={button.name}
+      shortcut={shortcuts[button.name]}
+      disabled={indigoVerification || disabledButtons.includes(button.name)}
+      isHidden={hiddenButtons.includes(button.name)}
+    />
+  )
+
+  const firstButtonObj = externalFuncButtons.find(
+    (button) => !hiddenButtons.includes(button.name)
+  )
+
+  const collapsibleElements = externalFuncButtons
+    .filter((button) => button !== firstButtonObj)
+    .map((button) => getButtonElement(button))
 
   if (isCollapsed) {
     return (
       <ElementWithDropdown
-        topElement={firstButton}
+        topElement={getButtonElement(firstButtonObj)}
         dropDownElements={collapsibleElements}
       />
     )
@@ -145,7 +128,7 @@ export const ExternalFuncControls = ({
 
   return (
     <>
-      {firstButton && firstButton}
+      {firstButtonObj && getButtonElement(firstButtonObj)}
       {<>{collapsibleElements}</>}
     </>
   )

@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { cloneElement } from 'react'
 import { IconButton } from './IconButton'
 import { ElementWithDropdown } from './ElementWithDropdown'
 
@@ -42,50 +41,51 @@ export const ClipboardControls = ({
   hiddenButtons
 }: ClipboardControlsProps) => {
   const copyButtons = [
-    <IconButton
-      title="Copy"
-      onClick={onCopy}
-      iconName="copy"
-      shortcut={shortcuts.copy}
-      disabled={disabledButtons.includes('copy')}
-      isHidden={hiddenButtons.includes('copy')}
-    />,
-    <IconButton
-      title="Copy as MOL"
-      onClick={onCopyMol}
-      iconName="copy-mol"
-      shortcut={shortcuts['copy-mol']}
-      disabled={disabledButtons.includes('copy-mol')}
-      isHidden={hiddenButtons.includes('copy-mol')}
-    />,
-    <IconButton
-      title="Copy as KET"
-      onClick={onCopyKet}
-      iconName="copy-ket"
-      shortcut={shortcuts['copy-ket']}
-      disabled={disabledButtons.includes('copy-ket')}
-      isHidden={hiddenButtons.includes('copy-ket')}
-    />,
-    <IconButton
-      title="Copy Image"
-      onClick={onCopyImage}
-      iconName="copy-image"
-      shortcut={shortcuts['copy-image']}
-      disabled={disabledButtons.includes('copy-image')}
-      isHidden={hiddenButtons.includes('copy-image')}
-    />
+    {
+      name: 'copy',
+      title: 'Copy',
+      handler: onCopy
+    },
+    {
+      name: 'copy-mol',
+      title: 'Copy as MOL',
+      handler: onCopyMol
+    },
+    {
+      name: 'copy-ket',
+      title: 'Copy as KET',
+      handler: onCopyKet
+    },
+    {
+      name: 'copy-image',
+      title: 'Copy Image',
+      handler: onCopyImage
+    }
   ]
 
-  const firstCopyButton = copyButtons.find((button) => !button.props.isHidden)
+  const getButtonElement = (button) => (
+    <IconButton
+      title={button.title}
+      onClick={button.handler}
+      iconName={button.name}
+      shortcut={shortcuts[button.name]}
+      disabled={disabledButtons.includes(button.name)}
+      isHidden={hiddenButtons.includes(button.name)}
+    />
+  )
+
+  const firstButtonObj = copyButtons.find(
+    (button) => !hiddenButtons.includes(button.name)
+  )
   const collapsibleElements = copyButtons
-    .filter((button) => button !== firstCopyButton)
-    .map((button) => cloneElement(button, { key: button.props.title }))
+    .filter((button) => button !== firstButtonObj)
+    .map((button) => getButtonElement(button))
 
   return (
     <>
       {!hiddenButtons.includes('copies') && (
         <ElementWithDropdown
-          topElement={firstCopyButton}
+          topElement={getButtonElement(firstButtonObj)}
           dropDownElements={collapsibleElements}
         />
       )}

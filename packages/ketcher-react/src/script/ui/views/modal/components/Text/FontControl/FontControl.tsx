@@ -40,7 +40,7 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
   }, [currentStyle])
 
   const MIN_FONT_SIZE = 4
-  const MAX_FONT_SIZE = 60
+  const MAX_FONT_SIZE = 144
   const fontSizes = range(MIN_FONT_SIZE, MAX_FONT_SIZE + 1)
 
   const fontSizeOptions = useMemo(

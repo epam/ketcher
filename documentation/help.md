@@ -13,7 +13,7 @@ reactions. The application operates in two modes - Standalone and Remote:
 
 **Ketcher** consists of the following elements:
 
-![](images/1_overview.png)
+![](images/1_overviewn.png)
 
 **Note** : Depending on the screen size, some tools on the _Tool
 palette_ can be displayed in expanded or collapsed forms.
@@ -64,7 +64,7 @@ selects several structures.
 
 You can use the buttons of the _Main_ toolbar:
 
-![](images/4_main_toolbar.png 'Main Toolbar') 
+![](images/4_main_toolbarn.png 'Main Toolbar') 
 
 - **Clear Canvas** (1) button to start drawing a new molecule; this
   command clears the drawing area;
@@ -102,26 +102,28 @@ You can use the buttons of the _Main_ toolbar:
   the structure:
 
   <img src=images/6_calc_values.png title = "Calculated Values" width = "300"> 
+  
+- **Stereochemistry** button (16) to assign and display enhanced stereochemistry properties of the structure
 
-- **3D Viewer** button (16) to open the structure in the
+- **3D Viewer** button (17) to open the structure in the
   three-dimensional Viewer;
 
-- **Settings** button (17) to make some settings for molecular
+- **Settings** button (18) to make some settings for molecular
   files:
 
-  <img src=images/7_settings.png title = "Settings" width = "450">  
+  <img src=images/7_settingsn.png title = "Settings" width = "400">  
 
-- **Help** button (18) to view Help;
+- **Help** button (19) to view Help;
 
-- **About** button (19) to display version and copyright information
+- **About** button (20) to display version and copyright information
   of the program.
   
-- **Fullscreen mode** button (20) allows to initiate displaying Ketcher window in the fullscreen mode.
+- **Fullscreen mode** button (21) allows to initiate displaying Ketcher window in the fullscreen mode.
   
-- **Zoom panel** (21) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (22) to set the view manually, **Zoom in** (23) / **Zoom out** (24) to scale the view gradually, **Zoom 100%**  (25) to enable the default zoom setting. 
+- **Zoom panel** (22) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (23) to set the view manually, **Zoom in** (24) / **Zoom out** (25) to scale the view gradually, **Zoom 100%**  (26) to enable the default zoom setting. 
 
 
-   <img src = images/4.1_zoom_panel.png width = "200"/>
+   <img src = images/4.1_zoom_paneln.png width = "200"/>
    
 
 # 3D Viewer
@@ -152,14 +154,14 @@ To draw/edit atoms you can:
   area;
 
 - if the desired atom is absent in the toolbar, click on
-  the ![](images/9_pt_icon.png) button to invoke the Periodic Table and
+  the ![](images/9_pt_iconn.png) button to invoke the Periodic Table and
   click on the desired atom (available options: _Single_ – selection
   of a single atom, _List_ – choose an atom from the list of selected
   options (To allow one atom from a list of atoms of your choice at
   that position), _Not List_ - exclude any atom on your list at that
   position).
 
-  <img src=images/10_pt_window.png width = "600" title = "Periodic Table">
+  <img src=images/10_pt_windown.png width = "600" title = "Periodic Table">
 
 - add an atom to the existing molecule by selecting an atom in the
   _Atoms_ toolbar, clicking on an atom in the molecule, and dragging
@@ -186,12 +188,12 @@ To draw/edit atoms you can:
   invoke the Atom Properties dialog (the dialog also provides atom
   query features):
 
-  <img src = images/13_atom_prop.png width = "300" title = "Atom Properties"/> 
+  <img src = images/13_atom_propn.png width = "300" title = "Atom Properties"/> 
 
-- click on the Periodic Table button, open the Extended tab and
+- click on the ![](images/14.1_ET_Icon.png) button to use the Extended table and
   select a corresponding Generic group or Special Node:
 
-  <img src=images/14_ext_table.png  width = "600" title = "Generic Groups"> 
+  <img src=images/14_ext_tablen.png  width = "500" title = "Generic Groups"> 
 
 
 
@@ -472,7 +474,7 @@ You can add templates (rings or other predefined structures) to the
 structure using the _Templates_ toolbar together with the _Custom
 Templates_ button located at the bottom:
 
-![](images/43_templates_toolbar.png) 
+![](images/43_templates_toolbarn.png) 
 
 To add a ring to the molecule, select a ring from the toolbar and
 click inside the drawing area, or click on an atom or a bond in the
@@ -515,7 +517,7 @@ atom or bond preset in the program.
 **Note** : User is able to define the attachment atom and bond by clicking
 the Edit button for template structure in the Template Library.
 
-The _Custom Templates_ button ![](images/43.1_templates_icon.png) allows to view the list of templates available; both built-in and created
+The _Custom Templates_ button ![](images/43.1_templates_iconn.png) allows to view the list of templates available; both built-in and created
 by user:
 
 <img src = images/43.2_templatelib.png width = "350"/> 
@@ -541,7 +543,7 @@ Ketcher allows you to select and use Functional Groups to properly represent you
 Set of functional groups available is predefined and can't be changed right now. 
 
 Explore the list of the Functional Groups available in the Templates library. Open it using the icon in the bottom toolbar: <br> 
-![](images/43.1_templates_icon.png) <br>
+![](images/43.1_templates_iconn.png) <br>
 Navigate to the Functional Groups tab to explore the FGs available:
 
 <img src = images/FG_tab.png width = "250"/> 
@@ -637,9 +639,9 @@ In the *Stereochemistry tab* in *Settings* you can:
 - select the color of Absolute/AND/OR stereogenic centers
 - choose one of the four color display modes
 
-<img src=images/49_sett_stereo.png width = "450"> 
+<img src=images/49_sett_stereon.png width = "450"> 
 
-<img src=images/50_sett_stereo.png width = "450"> 
+<img src=images/50_sett_stereon.png width = "450"> 
  
 
 # Hotkeys

@@ -28,6 +28,7 @@ interface ExternalFuncProps {
   onCalculate: () => void
   onCheck: () => void
   onAnalyse: () => void
+  onStereo: () => void
   onMiew: () => void
   disabledButtons: string[]
   hiddenButtons: string[]
@@ -44,6 +45,7 @@ export const ExternalFuncControls = ({
   onCalculate,
   onCheck,
   onAnalyse,
+  onStereo,
   onMiew,
   disabledButtons,
   indigoVerification,
@@ -106,6 +108,16 @@ export const ExternalFuncControls = ({
       shortcut={shortcuts.analyse}
       disabled={indigoVerification || disabledButtons.includes('analyse')}
       isHidden={hiddenButtons.includes('analyse')}
+    />,
+    <IconButton
+      title="Stereochemistry"
+      onClick={onStereo}
+      iconName="enhanced-stereo"
+      shortcut={shortcuts['enhanced-stereo']}
+      disabled={
+        indigoVerification || disabledButtons.includes('enhanced-stereo')
+      }
+      isHidden={hiddenButtons.includes('enhanced-stereo')}
     />,
     <IconButton
       title="3D Viewer"

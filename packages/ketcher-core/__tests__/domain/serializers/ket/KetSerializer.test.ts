@@ -47,7 +47,7 @@ describe('deserialize (ToStruct)', () => {
     const preparedAtoms = parsedPrepareContent.mol0.atoms
     preparedAtoms.forEach((props, id) => {
       const locationWithNegativeY = props.location.map((coordinate, index) => {
-        return index === 1 && props.label ? -coordinate : coordinate
+        return index === 1 ? -coordinate : coordinate
       })
       const relatedAtom = deserData.atoms.get(id)
       const label = props.type === 'rg-label' ? 'R#' : 'C'
@@ -175,9 +175,7 @@ describe('serialize (ToKet)', () => {
   it('correct work with atoms', () => {
     parsedNewPrepareStruct.mol0.atoms.forEach((atom, id) => {
       const relatedAtom = parsedPrepareContent.mol0.atoms[id]
-      if (relatedAtom.label) {
-        relatedAtom.location[1] = -relatedAtom.location[1]
-      }
+      relatedAtom.location[1] = -relatedAtom.location[1]
       expect(atom).toEqual(relatedAtom)
     })
   })

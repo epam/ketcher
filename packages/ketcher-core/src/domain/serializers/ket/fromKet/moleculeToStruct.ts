@@ -90,7 +90,7 @@ export function rglabelToStruct(source) {
   params.label = 'R#'
   ifDef(params, 'pp', {
     x: source.location[0],
-    y: source.location[1],
+    y: -source.location[1],
     z: source.location[2] || 0.0
   })
   ifDef(params, 'attpnt', source.attachmentPoints)
@@ -104,7 +104,7 @@ export function atomListToStruct(source) {
   params.label = 'L#'
   ifDef(params, 'pp', {
     x: source.location[0],
-    y: source.location[1],
+    y: -source.location[1],
     z: source.location[2] || 0.0
   })
   ifDef(params, 'attpnt', source.attachmentPoints)

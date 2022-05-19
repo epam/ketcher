@@ -20,12 +20,14 @@ interface FileControlsProps {
   onFileOpen: () => void
   onSave: () => void
   shortcuts: { [key in string]: string }
+  hiddenButtons: string[]
 }
 
 export const FileControls = ({
   onFileOpen,
   onSave,
-  shortcuts
+  shortcuts,
+  hiddenButtons
 }: FileControlsProps) => {
   return (
     <>
@@ -34,12 +36,14 @@ export const FileControls = ({
         onClick={onFileOpen}
         iconName="open"
         shortcut={shortcuts.open}
+        isHidden={hiddenButtons.includes('open')}
       />
       <IconButton
         title="Save as..."
         onClick={onSave}
         iconName="save"
         shortcut={shortcuts.save}
+        isHidden={hiddenButtons.includes('save')}
       />
     </>
   )

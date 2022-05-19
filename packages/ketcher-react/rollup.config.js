@@ -1,6 +1,6 @@
 import autoprefixer from 'autoprefixer'
 import babel from '@rollup/plugin-babel'
-import branchName from 'current-git-branch'
+import { execSync } from 'child_process'
 import cleanup from 'rollup-plugin-cleanup'
 import commonjs from '@rollup/plugin-commonjs'
 import copy from 'rollup-plugin-copy'
@@ -26,11 +26,13 @@ const extensions = ['.js', '.jsx', '.ts', '.tsx']
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION
 const includePattern = 'src/**/*'
 
-const initLink = (branchName) => {
-  if (branchName && branchName.substring(0, 7) === 'release') {
-    return branchName
+const getTagName = () => {
+  try {
+    return execSync('git describe --tags --abbrev=0', { encoding: 'utf8' })
+  } catch (error) {
+    console.error(error)
+    return 'master'
   }
-  return 'master'
 }
 
 const config = {
@@ -78,7 +80,7 @@ const config = {
         ),
         // TODO: add logic to init BUILD_NUMBER
         'process.env.BUILD_NUMBER': JSON.stringify(undefined),
-        'process.env.HELP_LINK': JSON.stringify(initLink(branchName()))
+        'process.env.HELP_LINK': JSON.stringify(getTagName())
       }
     }),
     json(),

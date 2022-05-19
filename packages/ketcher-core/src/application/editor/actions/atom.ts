@@ -91,7 +91,7 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
       'label' in attrs &&
       attrs.label !== null &&
       attrs.label !== 'L#' &&
-      !attrs.atomList
+      !('atomList' in attrs)
     ) {
       action.addOp(new AtomAttr(aid, 'atomList', null).perform(restruct))
     }

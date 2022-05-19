@@ -90,7 +90,7 @@ function rglabelToKet(source) {
   const result = {
     type: 'rg-label'
   }
-  ifDef(result, 'location', [source.pp.x, source.pp.y, source.pp.z])
+  ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z])
   ifDef(result, 'attachmentPoints', source.attpnt, 0)
 
   const refsToRGroups = fromRlabel(source.rglabel).map(
@@ -105,7 +105,7 @@ function atomListToKet(source) {
   const result = {
     type: 'atom-list'
   }
-  ifDef(result, 'location', [source.pp.x, source.pp.y, source.pp.z])
+  ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z])
   ifDef(result, 'attachmentPoints', source.attpnt, 0)
   ifDef(result, 'elements', source.atomList.labelList())
   ifDef(result, 'notList', source.atomList.notList, false)

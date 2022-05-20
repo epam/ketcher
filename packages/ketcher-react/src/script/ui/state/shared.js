@@ -134,9 +134,7 @@ export function load(struct, options) {
             action: tools['select-lasso'].action
           })
         } else {
-          dispatch(
-            onAction({ tool: 'paste', opts: editor.struct(parsedStruct) })
-          )
+          dispatch(onAction({ tool: 'paste', opts: parsedStruct }))
         }
       } else {
         editor.struct(parsedStruct)

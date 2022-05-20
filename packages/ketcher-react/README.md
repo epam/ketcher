@@ -32,7 +32,10 @@ yarn add ketcher-react
 import { RemoteStructServiceProvider } from 'ketcher-core'
 
 const structServiceProvider = new RemoteStructServiceProvider(
-  process.env.REACT_APP_API_PATH!
+  process.env.REACT_APP_API_PATH!,
+  {
+    'custom header': 'value' // optionally you can add custom headers object 
+  }
 )
 
 const MyComponent = () => {

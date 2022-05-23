@@ -118,7 +118,7 @@ function indigoCall(
       JSON.stringify(body),
       {
         'Content-Type': 'application/json',
-        customHeaders
+        ...customHeaders
       },
       responseHandler
     )

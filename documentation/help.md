@@ -480,7 +480,7 @@ To add a ring to the molecule, select a ring from the toolbar and
 click inside the drawing area, or click on an atom or a bond in the
 molecule.
 
-Rules of using templates:
+Rules of using templates: 
 
 - Selecting a template and clicking on an atom in the existing
   structure adds the template to the structure connected with a single

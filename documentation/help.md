@@ -154,7 +154,7 @@ To draw/edit atoms you can:
   area;
 
 - if the desired atom is absent in the toolbar, click on
-  the ![](images/9_pt_iconn.png) button to invoke the Periodic Table and
+  the ![](images/9_pt_icon.png) button to invoke the Periodic Table and
   click on the desired atom (available options: _Single_ – selection
   of a single atom, _List_ – choose an atom from the list of selected
   options (To allow one atom from a list of atoms of your choice at
@@ -190,7 +190,7 @@ To draw/edit atoms you can:
 
   <img src = images/13_atom_propn.png width = "300" title = "Atom Properties"/> 
 
-- click on the ![](images/14.1_ET_Icon.png) button to use the Extended table and
+- click on the ![](images/14.png) button to use the Extended table and
   select a corresponding Generic group or Special Node:
 
   <img src=images/14_ext_tablen.png  width = "500" title = "Generic Groups"> 

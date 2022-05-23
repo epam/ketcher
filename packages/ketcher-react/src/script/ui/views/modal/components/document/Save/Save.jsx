@@ -37,7 +37,7 @@ import { saveUserTmpl } from '../../../../../state/templates'
 import { updateFormState } from '../../../../../state/modal/form'
 import Select from '../../../../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
-import { LoadingCircles } from '../Open/components/LoadingCircles.tsx'
+import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
 
 const saveSchema = {
   title: 'Save',

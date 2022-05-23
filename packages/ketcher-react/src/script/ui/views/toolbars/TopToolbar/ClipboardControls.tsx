@@ -71,6 +71,7 @@ export const ClipboardControls = ({
       shortcut={shortcuts[button.name]}
       disabled={disabledButtons.includes(button.name)}
       isHidden={hiddenButtons.includes(button.name)}
+      key={button.name}
     />
   )
 

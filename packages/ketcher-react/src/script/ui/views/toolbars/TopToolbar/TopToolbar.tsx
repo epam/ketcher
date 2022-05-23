@@ -198,15 +198,17 @@ export const TopToolbar = ({
         hiddenButtons={hiddenButtons}
       />
       <Divider />
-      <ZoomControls
-        currentZoom={currentZoom || 1}
-        onZoomIn={onZoomIn}
-        onZoomOut={onZoomOut}
-        onZoom={onZoom}
-        shortcuts={shortcuts}
-        disabledButtons={disabledButtons}
-        hiddenButtons={hiddenButtons}
-      />
+      {!hiddenButtons.includes('zoom-list') && (
+        <ZoomControls
+          currentZoom={currentZoom || 1}
+          onZoomIn={onZoomIn}
+          onZoomOut={onZoomOut}
+          onZoom={onZoom}
+          shortcuts={shortcuts}
+          disabledButtons={disabledButtons}
+          hiddenButtons={hiddenButtons}
+        />
+      )}
     </ControlsPanel>
   )
 }

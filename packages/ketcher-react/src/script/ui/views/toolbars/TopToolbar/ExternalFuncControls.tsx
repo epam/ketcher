@@ -106,6 +106,7 @@ export const ExternalFuncControls = ({
       shortcut={shortcuts[button.name]}
       disabled={indigoVerification || disabledButtons.includes(button.name)}
       isHidden={hiddenButtons.includes(button.name)}
+      key={button.name}
     />
   )
 

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Dialog from './Dialog'
-import Spinner from './Spinner'
+import { LoadingCircles } from './Spinner'
 import StructEditor from './StructEditor'
 
-export { Dialog, StructEditor, Spinner }
+export { Dialog, StructEditor, LoadingCircles }

@@ -102,7 +102,8 @@ function indigoCall(
   method: string,
   url: string,
   baseUrl: string,
-  defaultOptions: any
+  defaultOptions: any,
+  customHeaders?: Record<string, string>
 ) {
   return function (
     data,
@@ -116,7 +117,8 @@ function indigoCall(
       baseUrl + url,
       JSON.stringify(body),
       {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...customHeaders
       },
       responseHandler
     )
@@ -126,10 +128,16 @@ function indigoCall(
 export class RemoteStructService implements StructService {
   private readonly apiPath: string
   private readonly defaultOptions: StructServiceOptions
+  private readonly customHeaders?: Record<string, string>
 
-  constructor(apiPath: string, defaultOptions: StructServiceOptions) {
+  constructor(
+    apiPath: string,
+    defaultOptions: StructServiceOptions,
+    customHeaders?: Record<string, string>
+  ) {
     this.apiPath = apiPath
     this.defaultOptions = defaultOptions
+    this.customHeaders = customHeaders
   }
 
   generateInchIKey(struct: string): Promise<string> {
@@ -137,7 +145,8 @@ export class RemoteStructService implements StructService {
       'POST',
       'indigo/convert',
       this.apiPath,
-      this.defaultOptions
+      this.defaultOptions,
+      this.customHeaders
     )(
       {
         struct,
@@ -178,7 +187,8 @@ export class RemoteStructService implements StructService {
       'POST',
       'indigo/convert',
       this.apiPath,
-      this.defaultOptions
+      this.defaultOptions,
+      this.customHeaders
     )(data, options)
   }
 
@@ -190,7 +200,8 @@ export class RemoteStructService implements StructService {
       'POST',
       'indigo/layout',
       this.apiPath,
-      this.defaultOptions
+      this.defaultOptions,
+      this.customHeaders
     )(data, options)
   }
 
@@ -199,7 +210,8 @@ export class RemoteStructService implements StructService {
       'POST',
       'indigo/clean',
       this.apiPath,
-      this.defaultOptions
+      this.defaultOptions,
+      this.customHeaders
     )(data, options)
   }
 
@@ -211,7 +223,8 @@ export class RemoteStructService implements StructService {
       'POST',
       'indigo/aromatize',
       this.apiPath,
-      this.defaultOptions
+      this.defaultOptions,
+      this.customHeaders
     )(data, options)
   }
 
@@ -223,7 +236,8 @@ export class RemoteStructService implements StructService {
       'POST',
       'indigo/dearomatize',
       this.apiPath,
-      this.defaultOptions
+      this.defaultOptions,
+      this.customHeaders
     )(data, options)
   }
 
@@ -235,7 +249,8 @@ export class RemoteStructService implements StructService {
       'POST',
       'indigo/calculate_cip',
       this.apiPath,
-      this.defaultOptions
+      this.defaultOptions,
+      this.customHeaders
     )(data, options)
   }
 
@@ -247,7 +262,8 @@ export class RemoteStructService implements StructService {
       'POST',
       'indigo/automap',
       this.apiPath,
-      this.defaultOptions
+      this.defaultOptions,
+      this.customHeaders
     )(data, options)
   }
 
@@ -256,7 +272,8 @@ export class RemoteStructService implements StructService {
       'POST',
       'indigo/check',
       this.apiPath,
-      this.defaultOptions
+      this.defaultOptions,
+      this.customHeaders
     )(data, options)
   }
 
@@ -268,7 +285,8 @@ export class RemoteStructService implements StructService {
       'POST',
       'indigo/calculate',
       this.apiPath,
-      this.defaultOptions
+      this.defaultOptions,
+      this.customHeaders
     )(data, options)
   }
 
@@ -307,7 +325,8 @@ export class RemoteStructService implements StructService {
       'POST',
       'indigo/render',
       this.apiPath,
-      this.defaultOptions
+      this.defaultOptions,
+      this.customHeaders
     )({ struct: data }, { 'render-output-format': outputFormat }, (response) =>
       response.then((resp) => resp.text())
     )

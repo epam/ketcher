@@ -26,9 +26,11 @@ import { RemoteStructService } from './remoteStructService'
 export class RemoteStructServiceProvider implements StructServiceProvider {
   private readonly apiPath: string
   mode: ServiceMode = 'remote'
+  customHeaders?: Record<string, string>
 
-  constructor(apiPath: string) {
+  constructor(apiPath: string, customHeaders?: Record<string, string>) {
     let currentApiPath = apiPath
+    this.customHeaders = customHeaders
     const params = new URLSearchParams(document.location.search)
     if (params.has('api_path')) {
       currentApiPath = params.get('api_path')!
@@ -40,6 +42,6 @@ export class RemoteStructServiceProvider implements StructServiceProvider {
   }
 
   createStructService(options: StructServiceOptions): StructService {
-    return new RemoteStructService(this.apiPath, options)
+    return new RemoteStructService(this.apiPath, options, this.customHeaders)
   }
 }

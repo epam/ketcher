@@ -267,7 +267,7 @@ into a Markush structure with the selected R-Group label:
 
 **Note** : You can choose several R-Group labels simultaneously:
 
-![](images/rgroup-example2.png)  
+![](images/rgroup-example2.png)   
 
 Particular chemical fragments that may be substituted for a given
 R-Group form a set of R-Group members. R-Group members can be any

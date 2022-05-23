@@ -24,7 +24,7 @@ import {
 import { Dialog } from '../../../../components'
 import Input from '../../../../../component/form/input'
 import OpenButton from '../../../../../component/view/openbutton'
-import { LoadingCircles } from 'src/script/ui/views/modal/components/document/Open/components/LoadingCircles'
+import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
 import StructRender from '../../../../../component/structrender'
 import classes from './Recognize.module.less'
 import { connect } from 'react-redux'

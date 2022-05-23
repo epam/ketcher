@@ -23,7 +23,8 @@ import {
   RxnArrowAdd,
   RxnPlusAdd,
   SimpleObjectAdd,
-  TextCreate
+  TextCreate,
+  CalcImplicitH
 } from '../operations'
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup'
 
@@ -87,6 +88,10 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
     action.addOp(operation)
 
     pasteItems.bonds.push(operation.data.bid)
+  })
+
+  pasteItems.atoms.forEach((aid) => {
+    action.addOp(new CalcImplicitH([aid]).perform(restruct))
   })
 
   pstruct.sgroups.forEach((sg) => {

@@ -517,7 +517,7 @@ atom or bond preset in the program.
 **Note** : User is able to define the attachment atom and bond by clicking
 the Edit button for template structure in the Template Library.
 
-The _Custom Templates_ button ![](images/43.1_templates_iconn.png) allows to view the list of templates available; both built-in and created
+The _Custom Templates_ button ![](images/43.png) allows to view the list of templates available; both built-in and created
 by user:
 
 <img src = images/43.2_templatelib.png width = "350"/> 
@@ -530,7 +530,7 @@ To create a user template:
 
 - click the Save to Templates button. _Template edit_ form will be displayed 
 
-<img src=images/44.1_template_edit.png width = "400">
+<img src=images/44.png width = "400">
 
 - enter a name and define the attachment atom and bond by clicking on the structure preview.  Click on Apply button to save the template. 
 
@@ -543,7 +543,7 @@ Ketcher allows you to select and use Functional Groups to properly represent you
 Set of functional groups available is predefined and can't be changed right now. 
 
 Explore the list of the Functional Groups available in the Templates library. Open it using the icon in the bottom toolbar: <br> 
-![](images/43.1_templates_iconn.png) <br>
+![](images/43.png) <br>
 Navigate to the Functional Groups tab to explore the FGs available:
 
 <img src = images/FG_tab.png width = "250"/> 

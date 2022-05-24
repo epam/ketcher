@@ -204,7 +204,8 @@ To draw/edit bonds you can:
 - Click an arrow on the Bond tool ![](images/15_bond_icon.png) in the Tool palette
   to open the drop-down list with the following bond types:
 
-  ![](images/bond1.png) <br>
+
+  <img src = images/bond1.png width = "69"/>  <br>
   ![](images/bond2.png) <br>
   ![](images/bond3.png) <br> <br>
   ![](images/bond4.png) <br>

@@ -96,12 +96,12 @@ You can use the buttons of the _Main_ toolbar:
   You can check only the Settings you are interested in and check structure again with new settings by clicking on Check button. 
   Apply button will save the Settings checked and they will be applied for the file saving. 
 
-  <img src=images/5_structurecheck.png title = "Structure Ckeck" width = "450"> 
+    ![](images/5_structurecheck.png)
 
 - **Calculated Values** button (15) to display some properties of
   the structure:
 
-  <img src=images/6_calc_values.png title = "Calculated Values" width = "300"> 
+  ![](images/6_calc_values.png 'Calculated Values') 
   
 - **Stereochemistry** button (16) to assign and display enhanced stereochemistry properties of the structure
 
@@ -111,7 +111,7 @@ You can use the buttons of the _Main_ toolbar:
 - **Settings** button (18) to make some settings for molecular
   files:
 
-  <img src=images/7_settingsn.png title = "Settings" width = "400">  
+  ![](images/7_settingsn.png 'Settings')  
 
 - **Help** button (19) to view Help;
 
@@ -123,7 +123,7 @@ You can use the buttons of the _Main_ toolbar:
 - **Zoom panel** (22) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (23) to set the view manually, **Zoom in** (24) / **Zoom out** (25) to scale the view gradually, **Zoom 100%**  (26) to enable the default zoom setting. 
 
 
-   <img src = images/4.png width = "200"/>  
+ ![](images/4.png)  
    
 
 # 3D Viewer
@@ -131,7 +131,7 @@ You can use the buttons of the _Main_ toolbar:
 The structure appears in a modal window after clicking on the **3D
 Viewer** button ![](images/8_1_miew_icon.png '3D Viewer Icon') on the top panel:
 
-<img src=images/8_miew1.png  width = "600" title = "3D Viewer"> 
+![](images/8_miew1.png  '3D Viewer')
 
 You can perform the following actions:
 
@@ -161,7 +161,7 @@ To draw/edit atoms you can:
   that position), _Not List_ - exclude any atom on your list at that
   position).
 
-  <img src=images/10_pt_windown.png width = "600" title = "Periodic Table">
+  ![](images/10_pt_windown.png 'Periodic Table')
 
 - add an atom to the existing molecule by selecting an atom in the
   _Atoms_ toolbar, clicking on an atom in the molecule, and dragging
@@ -176,7 +176,7 @@ To draw/edit atoms you can:
 - change an atom by clicking on an existing atom with the
   _Selection_ tool and starting to enter text after that; type another atom symbol in the text box:
   
-  <img src = images/11_label_edit.png width = "250" title = "Change Atom" /> 
+  ![](images/11_label_edit.png 'Change Atom')
   
 - change the charge of an atom by selecting the Charge Plus or
   Charge Minus tool and clicking consecutively on an atom to
@@ -188,12 +188,12 @@ To draw/edit atoms you can:
   invoke the Atom Properties dialog (the dialog also provides atom
   query features):
 
-  <img src = images/13_atom_propn.png width = "300" title = "Atom Properties"/> 
+  ![](images/13_atom_propn.png 'Atom Properties')
 
 - click on the ![](images/14.png) button to use the Extended table and
   select a corresponding Generic group or Special Node:
 
-  <img src=images/14_ext_tablen.png  width = "500" title = "Generic Groups"> 
+  ![](images/14_ext_tablen.png  'Generic Groups')
 
 
 
@@ -238,7 +238,7 @@ To draw/edit bonds you can:
 - change a bond or its properties by double-clicking on the bond to
   invoke the Bond Properties dialog:
 
-<img src = images/19_bond_prop.png width = "300" title = "Bond Properties"/>
+<img src = images/19_bond_prop.png width = "250" title="Bond Properties"/>
 
 - clicking on the drawn stereo and dative bonds change their direction.
 
@@ -258,7 +258,7 @@ Selecting the _R-Group_ _Label_ Tool (1) and clicking on an atom in the
 structure invokes the dialog to select the R-Group label for a current
 atom position in the structure:
 
-<img src = images/22_rtool.png width = "300"/> 
+![](images/22_rtool.png)
 
 Selecting the R-Group label and clicking **OK** converts the structure
 into a Markush structure with the selected R-Group label:
@@ -294,7 +294,7 @@ of them as primary and the other as secondary. You can select between
 either the primary or secondary attachment point using the dialog that
 appears after clicking on the atom:
 
-<img src = images/25_attach_point.png width = "300"/>  
+![](images/25_attach_point.png)
 
 If there are two attachment points on an R-Group member, there must be
 two corresponding attachments (bonds) to the R-Group atom that has the
@@ -321,7 +321,7 @@ the R-Group logic:
    appear, then click inside the fragment. The following dialog
    appears:
 
-   <img src = images/28_r_logic.png width = "300"/>  
+   ![](images/28_r_logic.png) 
 
 3. Specify **Occurrence** to define how many of an R-Group
    occurs. If an R-Group atom appears several times in the initial
@@ -344,7 +344,7 @@ To mark S-Groups, use the _S-Group tool_ ![](images/29_sgroup_icon.png) and the
 following dialog that appears after selecting a fragment with this
 tool:
 
-  <img src = images/30_sgroup.png width = "300"/>   
+  ![](images/30_sgroup.png)  
 
 Available S-Group types:
 
@@ -384,7 +384,7 @@ You can attach data to an atom, a fragment, a multifragment, a single bond, or a
 group. The defined set of _Names_ and _Values_ is introduced for each
 type of selected elements:
 
- <img src = images/31_1_datasgroup.png width = "300"/>
+ ![](images/31_1_datasgroup.png)
 
 - Select the appropriate S-Group Field Name.
 
@@ -460,7 +460,7 @@ to open the drop-down list with the following tools:
 To add text to the canvas click the *Add text* tool ![](images/41_text_icon.png) 
 in the Tools palette and click the canvas to open the Text editor window:
 
-<img  src = images/421_texttool.png width = "300"/> 
+(images/421_texttool.png)
 
 - To enter text, type in the Text editor field.
 - To edit text, double click the text object on the canvas.
@@ -520,7 +520,7 @@ the Edit button for template structure in the Template Library.
 The _Custom Templates_ button ![](images/43.png) allows to view the list of templates available; both built-in and created
 by user:
 
-<img src = images/43.2_templatelib.png width = "350"/> 
+(images/43.2_templatelib.png) 
 
 To create a user template:
 
@@ -530,7 +530,7 @@ To create a user template:
 
 - click the Save to Templates button. _Template edit_ form will be displayed 
 
-<img src=images/44.png width = "400">
+![](images/44.png)
 
 - enter a name and define the attachment atom and bond by clicking on the structure preview.  Click on Apply button to save the template. 
 
@@ -546,7 +546,7 @@ Explore the list of the Functional Groups available in the Templates library. Op
 ![](images/43.png) <br>
 Navigate to the Functional Groups tab to explore the FGs available:
 
-<img src = images/FG_tab.png width = "250"/> 
+![](images/FG_tab.png)
 
 Filter Functional Groups by name: <br>
 <img src = images/FG_search.gif width = "400"/>  <br>
@@ -575,7 +575,8 @@ You can also **Remove the Abbreviation** on the group - it will allows you to wo
 
 Please, note that a lot of Ketcher tools will be not applicable for the separate atoms and bonds of FG. FG can only be selected as a whole. It can also be deleted, moved, or rotated only as an entire entity. 
 
-Ketcher will let you know if the tool is not applicable for the FG and will suggest to Remove the Abbreviation immediately: <br> <img src=images/FG_remove_abb.png width="250">
+Ketcher will let you know if the tool is not applicable for the FG and will suggest to Remove the Abbreviation immediately: <br> 
+![](images/FG_remove_abb.png)
 <br> 
 Aromatize & Dearomatize operations will not be applied to the rings that are part of the FG. 
 
@@ -597,11 +598,11 @@ The **_Open Structure_** dialog enables
 one to either browse for a file or manually input, e.g.
 the Molfile ctable for the molecule to be imported:
 
-<img src = images/45_1_openmenu.png width = "500"/>
+![](images/45_1_openmenu.png)
 
 The text editor form is initiated for the text from the Clipboard and when the file is selected for opening. It allows to immediately edit the text representation before opening the structure:
 
-<img src = images/45_open_text_new.png width = "500"> 
+![](images/45_open_text_new.png)
 
 Ketcher suggests 2 ways for structure to be opened:
 
@@ -611,7 +612,7 @@ _Add to Canvas_ will save the structure in the clipboard. Click on the canvas to
 
 The **_Save Structure_** dialog enables one to save the molecular file:
 
-<img src = images/46_save_text.png width = "500"/> 
+![](images/46_save_text.png) 
 
 Select the format needed in the _File Format_ drop down. 
 <br> Check out the _Warnings_ tab if it's represented. It provides the list of chemical information that can't be saved properly to the format selected. 
@@ -619,7 +620,7 @@ Select the format needed in the _File Format_ drop down.
 You can save _a structure as image_ (in Standalone mode and in Remote mode when the server is available) by selectinig the _SVG Document_ or _PNG Image_ format. 
 Please, note that saving structure to the image formats will results in chemical information loss in the file. You will not be able to open files in these formats in Ketcher. Supported graphics file formats are: *Portable Network Graphics (.png)* and *Scalable Vector Graphics (.svg)*.
 
-<img src =  images/47_save_image.png width = "500"/> 
+![](images/47_save_image.png) 
 
 
 
@@ -627,7 +628,7 @@ Please, note that saving structure to the image formats will results in chemical
 
 When the structure with the correct tetrahedral stereochemistry is created on the canvas you can open the ‘Enhanced Stereochemistry’ window by clicking the *Stereochemistry* button ![](images/481_ster_icon.png) and assign stereo marks:
 
- <img src = images/48_enhstereo.png width = "250"/>
+ ![](images/48_enhstereo.png)
 
 
 
@@ -639,9 +640,9 @@ In the *Stereochemistry tab* in *Settings* you can:
 - select the color of Absolute/AND/OR stereogenic centers
 - choose one of the four color display modes
 
-<img src=images/49_sett_stereon.png width = "450"> 
+![](images/49_sett_stereon.png) 
 
-<img src=images/50_sett_stereon.png width = "450"> 
+![](images/50_sett_stereon.png)
  
 
 # Hotkeys

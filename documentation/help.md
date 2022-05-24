@@ -431,12 +431,13 @@ This tool flips the objects horizontally or vertically.
 To draw/edit reactions you can:
 
 - draw reagents and products as described above;
-- use options of the _Reaction Arrow Tool_ ![](images/34_reacarrow_icon.png) to draw an
-  arrow. Select the arrow needed from the list ![](images/35_reacarrows_menu.png)
-- draw pluses in the reaction equation using the _Reaction Plus Tool_ ![](images/38_reactplus_icon.png)
-- map same atoms in reagents and products with the _Reaction Mapping Tools_ ![](images/36_reactmap_icon.png). Explore the available reaction mapping tools below:
+- use options of the _Reaction Arrow Tool_ <img src = images/34_reacarrow_icon.png width = "42" /> to draw an
+  arrow. Select the arrow needed from the list <img src = images/35_reacarrows_menu.png height = "42" />
+- draw pluses in the reaction equation using the _Reaction Plus Tool_ <img src = images/38_reactplus_icon.png width = "42" />
+- map same atoms in reagents and products with the _Reaction Mapping Tools_ <img src = images/36_reactmap_icon.png width = "42" />. Explore the available reaction mapping tools below:
 
-  ![](images/37_reactmap_menu.png) 
+
+<img src = images/37_reactmap_menu.png width = "130" />.
 
 1 – Reaction Auto-Mapping Tool
 
@@ -448,10 +449,10 @@ To draw/edit reactions you can:
 
 # Drawing graphical objects
 
-To draw graphical objects click the arrow on the *Shape Ellipse* tool ![](images/39_objects_icon.png)  in the Tools palette
+To draw graphical objects click the arrow on the *Shape Ellipse* tool <img src = images/39_objects_icon.png width = "42" />  in the Tools palette
 to open the drop-down list with the following tools:
 
-![](images/40_objects_menu.png) 
+<img src = images/40_objects_menu.png width = "130" />.
 
  *Shape Ellipse* (1), *Shape Rectangle* (2), and *Shape Line* (3). 
 
@@ -459,10 +460,10 @@ to open the drop-down list with the following tools:
 
 # Creating text objects on the canvas
 
-To add text to the canvas click the *Add text* tool ![](images/41_text_icon.png) 
+To add text to the canvas click the *Add text* tool <img src = images/41_text_icon.png width = "42" />
 in the Tools palette and click the canvas to open the Text editor window:
 
-(images/421_texttool.png)
+<img src = images/421_texttool.png width = "320" />
 
 - To enter text, type in the Text editor field.
 - To edit text, double click the text object on the canvas.

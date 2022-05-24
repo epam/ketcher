@@ -12,8 +12,8 @@ reactions. The application operates in two modes - Standalone and Remote:
 
 
 **Ketcher** consists of the following elements:
+<img src = images/1_overviewn.png width = "100%"/>
 
-![](images/1_overviewn.png)
 
 **Note** : Depending on the screen size, some tools on the _Tool
 palette_ can be displayed in expanded or collapsed forms.
@@ -33,9 +33,9 @@ Using the _Tool palette_, you can
 - draw special structures (see the following sections);
 
 - select the entire molecule or its fragment in one of the following
-  ways (click on the button![](images/2_lasso_icon.png)  to see the list of available options):
+  ways (click on the button align=center <img src = images/2_lasso_icon.png height = "36" /> to see the list of available options):
 
-  ![](images/3_lasso_menu.png) 
+  <img src = images/3_lasso_menu.png height = "60" /> 
 
 To select **one atom or bond**, click Lasso (1) or Rectangle Selection tool (2),
 and then click the atom or bond.
@@ -96,7 +96,7 @@ You can use the buttons of the _Main_ toolbar:
   You can check only the Settings you are interested in and check structure again with new settings by clicking on Check button. 
   Apply button will save the Settings checked and they will be applied for the file saving. 
 
-    ![](images/5_structurecheck.png)
+    <img src = images/5_structurecheck.png width = "450" />
 
 - **Calculated Values** button (15) to display some properties of
   the structure:
@@ -201,24 +201,25 @@ To draw/edit atoms you can:
 
 To draw/edit bonds you can:
 
-- Click an arrow on the Bond tool ![](images/15_bond_icon.png) in the Tool palette
+- Click an arrow on the Bond tool <img src = images/15_bond_icon.png height = "36"/> in the Tool palette
   to open the drop-down list with the following bond types:
 
+  <img src = images/bond1.png height = "28"/>  <br>
+  <img src = images/bond2.png height = "28"/>  <br>
+  <img src = images/bond3.png height = "28"/>  <br>
+  <img src = images/bond4.png height = "28"/>  <br>
+  <img src = images/bond5.png height = "28"/>  <br>
+  <img src = images/bond6.png height = "28"/>  <br>
+  <img src = images/bond7.png height = "28"/>  <br>
+  <img src = images/bond8.png height = "28"/>  <br>
+  <img src = images/bond9.png height = "28"/>  <br>
+  <img src = images/bond91.png height = "28"/>  <br>
+  <img src = images/bond92.png height = "28"/>  <br>
+  <img src = images/bond93.png height = "28"/>  <br>
+  <img src = images/bond94.png height = "28"/>  <br>
+  <img src = images/bond95.png height = "28"/>  <br>
 
-  <img src = images/bond1.png width = "69"/>  <br>
-  ![](images/bond2.png) <br>
-  ![](images/bond3.png) <br> <br>
-  ![](images/bond4.png) <br>
-  ![](images/bond5.png) <br>
-  ![](images/bond6.png) <br>
-  ![](images/bond7.png) <br> 
-  ![](images/bond8.png) <br> <br>
-  ![](images/bond9.png) <br>
-  ![](images/bond91.png) <br> <br>
-  ![](images/bond92.png) <br>
-  ![](images/bond93.png) <br>
-  ![](images/bond94.png) <br>
-  ![](images/bond95.png) <br>
+  
  
     
 - select a bond type from the drop down list and click inside the

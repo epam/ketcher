@@ -101,7 +101,7 @@ You can use the buttons of the _Main_ toolbar:
 - **Calculated Values** button (15) to display some properties of
   the structure:
 
-  ![](images/6_calc_values.png 'Calculated Values') 
+  <img src = images/6_calc_values.png width = "280" />
   
 - **Stereochemistry** button (16) to assign and display enhanced stereochemistry properties of the structure
 
@@ -111,7 +111,7 @@ You can use the buttons of the _Main_ toolbar:
 - **Settings** button (18) to make some settings for molecular
   files:
 
-  ![](images/7_settingsn.png 'Settings')  
+  <img src = images/7_settingsn.png width = "360" />
 
 - **Help** button (19) to view Help;
 
@@ -123,15 +123,15 @@ You can use the buttons of the _Main_ toolbar:
 - **Zoom panel** (22) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (23) to set the view manually, **Zoom in** (24) / **Zoom out** (25) to scale the view gradually, **Zoom 100%**  (26) to enable the default zoom setting. 
 
 
- ![](images/4.png)  
+ <img src = images/4.png width = "180" />
    
 
 # 3D Viewer
 
 The structure appears in a modal window after clicking on the **3D
-Viewer** button ![](images/8_1_miew_icon.png '3D Viewer Icon') on the top panel:
+Viewer** button <img src = images/8_1_miew_icon.png height = "36" /> on the top panel:
 
-![](images/8_miew1.png  '3D Viewer')
+<img src = images/8_miew1.png width = "800" />
 
 You can perform the following actions:
 
@@ -161,7 +161,7 @@ To draw/edit atoms you can:
   that position), _Not List_ - exclude any atom on your list at that
   position).
 
-  ![](images/10_pt_windown.png 'Periodic Table')
+  <img src = images/10_pt_windown.png width = "600" />
 
 - add an atom to the existing molecule by selecting an atom in the
   _Atoms_ toolbar, clicking on an atom in the molecule, and dragging
@@ -176,24 +176,24 @@ To draw/edit atoms you can:
 - change an atom by clicking on an existing atom with the
   _Selection_ tool and starting to enter text after that; type another atom symbol in the text box:
   
-  ![](images/11_label_edit.png 'Change Atom')
+  <img src = images/11_label_edit.png width = "240" />
   
 - change the charge of an atom by selecting the Charge Plus or
   Charge Minus tool and clicking consecutively on an atom to
   increase/decrease its charge:
 
-  ![](images/12_charge_icons.png 'Ions') 
+  <img src = images/12_charge_icons.png width = "42" /> 
 
 - change an atom or its properties by double-clicking on the atom to
   invoke the Atom Properties dialog (the dialog also provides atom
   query features):
 
-  ![](images/13_atom_propn.png 'Atom Properties')
+  <img src = images/13_atom_propn.png width = "240" /> 
 
-- click on the ![](images/14.png) button to use the Extended table and
+- click on the <img src = images/14.png width = "42" /> button to use the Extended table and
   select a corresponding Generic group or Special Node:
 
-  ![](images/14_ext_tablen.png  'Generic Groups')
+  <img src = images/14_ext_tablen.png width = "440" />
 
 
 
@@ -234,13 +234,13 @@ To draw/edit bonds you can:
 
 - change the bond type by clicking on it;
 
-- use the Chain Tool ![](images/18_chain_tool_icon.png) to draw consecutive single
+- use the Chain Tool <img src = images/18_chain_tool_icon.png width = "42" title="Bond Properties"/> to draw consecutive single
   bonds;
 
 - change a bond or its properties by double-clicking on the bond to
   invoke the Bond Properties dialog:
 
-<img src = images/19_bond_prop.png width = "250" title="Bond Properties"/>
+<img src = images/19_bond_prop.png width = "300" title="Bond Properties"/>
 
 - clicking on the drawn stereo and dative bonds change their direction.
 
@@ -251,16 +251,16 @@ To draw/edit bonds you can:
 
 # Drawing R-Groups
 
-Use the _R-Group_ toolbox ![](images/20_rtools_icon.png) to draw R-groups in Markush
+Use the _R-Group_ toolbox <img src = images/20_rtools_icon.png width = "42" /> to draw R-groups in Markush
 structures:
 
-![](images/21_rtools_menu.png) 
+<img src = images/21_rtools_menu.png width = "142" /> 
 
 Selecting the _R-Group_ _Label_ Tool (1) and clicking on an atom in the
 structure invokes the dialog to select the R-Group label for a current
 atom position in the structure:
 
-![](images/22_rtool.png)
+<img src = images/22_rtool.png width = "300" />
 
 Selecting the R-Group label and clicking **OK** converts the structure
 into a Markush structure with the selected R-Group label:
@@ -296,7 +296,7 @@ of them as primary and the other as secondary. You can select between
 either the primary or secondary attachment point using the dialog that
 appears after clicking on the atom:
 
-![](images/25_attach_point.png)
+<img src = images/25_attach_point.png width = "300" />
 
 If there are two attachment points on an R-Group member, there must be
 two corresponding attachments (bonds) to the R-Group atom that has the
@@ -323,7 +323,7 @@ the R-Group logic:
    appear, then click inside the fragment. The following dialog
    appears:
 
-   ![](images/28_r_logic.png) 
+   <img src = images/28_r_logic.png width = "300" />
 
 3. Specify **Occurrence** to define how many of an R-Group
    occurs. If an R-Group atom appears several times in the initial
@@ -342,11 +342,11 @@ the R-Group logic:
 
 # Marking S-Groups
 
-To mark S-Groups, use the _S-Group tool_ ![](images/29_sgroup_icon.png) and the
+To mark S-Groups, use the _S-Group tool_ <img src = images/29_sgroup_icon.png width = "42" /> and the
 following dialog that appears after selecting a fragment with this
 tool:
 
-  ![](images/30_sgroup.png)  
+   <img src = images/30_sgroup.png width = "300" />
 
 Available S-Group types:
 
@@ -378,7 +378,7 @@ saves/reads them into/from files.
 
 # Data S-Groups
 
-The _Data S-Groups Tool_ ![](images/31_datasgroup_icon.png) is a separate tool for
+The _Data S-Groups Tool_ <img src = images/31_datasgroup_icon.png width = "42" /> is a separate tool for
 comfortable use with the accustomed set of descriptors (like Attached
 Data in **Marvin** Editor).
 
@@ -386,7 +386,7 @@ You can attach data to an atom, a fragment, a multifragment, a single bond, or a
 group. The defined set of _Names_ and _Values_ is introduced for each
 type of selected elements:
 
- ![](images/31_1_datasgroup.png)
+ <img src = images/31_1_datasgroup.png width = "320" />
 
 - Select the appropriate S-Group Field Name.
 
@@ -398,10 +398,10 @@ type of selected elements:
 
 # Changing Structure Display
 
-Use the _Rotate_ tool ![](images/32_rotate_icon.png) to change the structure
+Use the _Rotate_ tool <img src = images/32_rotate_icon.png width = "42" /> to change the structure
 display:
 
-![](images/33_rotate_menu.png) 
+<img src = images/33_rotate_menu.png width = "130" />
 
 _Rotate Tool_ (1)
 

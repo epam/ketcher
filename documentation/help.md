@@ -477,7 +477,8 @@ You can add templates (rings or other predefined structures) to the
 structure using the _Templates_ toolbar together with the _Custom
 Templates_ button located at the bottom:
 
-![](images/43_templates_toolbarn.png) 
+<img src = images/43_templates_toolbarn.png align = left width = "360" /> 
+<br/>
 
 To add a ring to the molecule, select a ring from the toolbar and
 click inside the drawing area, or click on an atom or a bond in the
@@ -520,10 +521,10 @@ atom or bond preset in the program.
 **Note** : User is able to define the attachment atom and bond by clicking
 the Edit button for template structure in the Template Library.
 
-The _Custom Templates_ button ![](images/43.png) allows to view the list of templates available; both built-in and created
+The _Custom Templates_ button <img src = images/43.png width = "42" /> allows to view the list of templates available; both built-in and created
 by user:
 
-(images/43.2_templatelib.png) 
+<img src = images/43-1.png  width = "520" />
 
 To create a user template:
 
@@ -533,7 +534,7 @@ To create a user template:
 
 - click the Save to Templates button. _Template edit_ form will be displayed 
 
-![](images/44.png)
+<img src = images/44.png  width = "440" />
 
 - enter a name and define the attachment atom and bond by clicking on the structure preview.  Click on Apply button to save the template. 
 
@@ -546,7 +547,7 @@ Ketcher allows you to select and use Functional Groups to properly represent you
 Set of functional groups available is predefined and can't be changed right now. 
 
 Explore the list of the Functional Groups available in the Templates library. Open it using the icon in the bottom toolbar: <br> 
-![](images/43.png) <br>
+<img src = images/43.png width = "42" /> <br>
 Navigate to the Functional Groups tab to explore the FGs available:
 
 ![](images/FG_tab.png)
@@ -579,7 +580,7 @@ You can also **Remove the Abbreviation** on the group - it will allows you to wo
 Please, note that a lot of Ketcher tools will be not applicable for the separate atoms and bonds of FG. FG can only be selected as a whole. It can also be deleted, moved, or rotated only as an entire entity. 
 
 Ketcher will let you know if the tool is not applicable for the FG and will suggest to Remove the Abbreviation immediately: <br> 
-![](images/FG_remove_abb.png)
+<img src=images/FG_remove_abb.png width = "300"/>
 <br> 
 Aromatize & Dearomatize operations will not be applied to the rings that are part of the FG. 
 
@@ -601,11 +602,11 @@ The **_Open Structure_** dialog enables
 one to either browse for a file or manually input, e.g.
 the Molfile ctable for the molecule to be imported:
 
-![](images/45_1_openmenu.png)
+<img src=images/45_1_openmenu.png width = "480"/>
 
 The text editor form is initiated for the text from the Clipboard and when the file is selected for opening. It allows to immediately edit the text representation before opening the structure:
 
-![](images/45_open_text_new.png)
+<img src=images/45_open_text_new.png width = "600"/>
 
 Ketcher suggests 2 ways for structure to be opened:
 
@@ -615,7 +616,7 @@ _Add to Canvas_ will save the structure in the clipboard. Click on the canvas to
 
 The **_Save Structure_** dialog enables one to save the molecular file:
 
-![](images/46_save_text.png) 
+<img src=images/46_save_text.png width = "560"/>
 
 Select the format needed in the _File Format_ drop down. 
 <br> Check out the _Warnings_ tab if it's represented. It provides the list of chemical information that can't be saved properly to the format selected. 
@@ -623,15 +624,15 @@ Select the format needed in the _File Format_ drop down.
 You can save _a structure as image_ (in Standalone mode and in Remote mode when the server is available) by selectinig the _SVG Document_ or _PNG Image_ format. 
 Please, note that saving structure to the image formats will results in chemical information loss in the file. You will not be able to open files in these formats in Ketcher. Supported graphics file formats are: *Portable Network Graphics (.png)* and *Scalable Vector Graphics (.svg)*.
 
-![](images/47_save_image.png) 
+<img src=images/47_save_image.png width = "560"/>
 
 
 
 # Stereochemistry
 
-When the structure with the correct tetrahedral stereochemistry is created on the canvas you can open the ‘Enhanced Stereochemistry’ window by clicking the *Stereochemistry* button ![](images/481_ster_icon.png) and assign stereo marks:
+When the structure with the correct tetrahedral stereochemistry is created on the canvas you can open the ‘Enhanced Stereochemistry’ window by clicking the *Stereochemistry* button <img src=images/481_ster_icon.png width = "42"/> and assign stereo marks:
 
- ![](images/48_enhstereo.png)
+ <img src=images/48_enhstereo.png width = "330"/>
 
 
 
@@ -643,9 +644,11 @@ In the *Stereochemistry tab* in *Settings* you can:
 - select the color of Absolute/AND/OR stereogenic centers
 - choose one of the four color display modes
 
-![](images/49_sett_stereon.png) 
+<img src=images/49_sett_stereon.png width = "440"/>
 
-![](images/50_sett_stereon.png)
+<img src=images/50_sett_stereon.png width = "440"/>
+
+
  
 
 # Hotkeys

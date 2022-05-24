@@ -477,7 +477,7 @@ You can add templates (rings or other predefined structures) to the
 structure using the _Templates_ toolbar together with the _Custom
 Templates_ button located at the bottom:
 
-<img src = images/43_templates_toolbarn.png align = left width = "360" /> 
+<img src = images/43_templates_toolbarn.png align = left width = "360" /> <br/>
 <br/>
 
 To add a ring to the molecule, select a ring from the toolbar and

@@ -14,45 +14,65 @@
  * limitations under the License.
  ***************************************************************************/
 @import "src/style/variables";
-
+@import "src/style/mixins";
+// stylelint-disable selector-pseudo-class-no-unknown
+// stylelint-disable no-descending-specificity
 .sgroup {
   width: @width-small;
+  border-radius: 6px;
+  background-color: @color-background-primary;
+
 
   label {
     display: flex;
     flex-direction: column;
-    margin-top: 8px;
+    margin-bottom: 12px;
 
     ul {
       width: inherit;
     }
 
-    input[type='text'],
-    select {
-      margin-left: 0 !important;
-      margin-right: 0 !important;
+    &:hover::after {
+      margin-right: 24px;
+      transform: translateY(42px);
     }
 
-    &:hover::after {
-      margin: 1px 0 0 3px;
+    & > span {
+      margin-bottom: 4px;
+    }
+
+    :global(.MuiOutlinedInput-root), input[type='text'] {
+      max-width: 236px;
     }
   }
 
   fieldset {
     border: 0;
     padding: 0;
+
   }
 
   fieldset[class='radio'] {
     display: flex;
     justify-content: space-between;
+    margin-top: 24px;
+    width: 100%;
+
+    & label {
+      display: flex;
+      flex-direction: row;
+      line-height: 16px;
+    }
   }
 
-  .data {
+  form {
+    margin: 12px 12px 0;
+    
     label {
       text-align: left;
+      font-size: 12px;
 
-      fieldset {
+      fieldset { 
         label {
           display: flex;
           flex-direction: row;
@@ -74,10 +94,26 @@
 
     input[type='text'],
     select[name='fieldName'] {
-      color: inherit;
+      color: @color-text-primary;
       width: 100%;
       display: block;
       margin-bottom: 0;
+    }
+
+    textarea {
+      margin-top: 4px;
+      resize: vertical;
+      max-height: 240px;
+      min-height: 56px;
+
+      .scrollbar();
+
+      &::-webkit-scrollbar {
+        background-color: @color-background-primary;
+        width: 4px;
+        border-radius: 2px;
+        -webkit-border-radius: 2px;
+      }
     }
   }
 }

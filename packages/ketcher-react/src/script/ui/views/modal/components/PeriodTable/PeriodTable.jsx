@@ -14,15 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  AtomInfo,
-  ElementsTable,
-  GenericGroups,
-  TypeChoice
-} from './components'
-import { Component } from 'react'
+import { AtomInfo, ElementsTable, TypeChoice } from './components'
 import { fromElement, toElement } from '../../../../data/convert/structconv'
 
+import { Component } from 'react'
 import { Dialog } from '../../../components'
 import { Elements } from 'ketcher-core'
 import Tabs from '../../../../component/view/Tabs'
@@ -31,6 +26,7 @@ import classes from './PeriodTable.module.less'
 import { connect } from 'react-redux'
 import { onAction } from '../../../../state'
 import { xor } from 'lodash/fp'
+import Icon from '../../../../component/view/icon'
 
 class Table extends Component {
   constructor(props) {
@@ -42,14 +38,9 @@ class Table extends Component {
       current: Elements.get(2),
       isInfo: false
     }
-    this.firstType = true
   }
 
   changeType = (type) => {
-    if (this.firstType) {
-      this.firstType = false
-      return
-    }
     const prevChoice =
       this.state.type === 'list' || this.state.type === 'not-list'
     const currentChoice = type === 'list' || type === 'not-list'
@@ -63,10 +54,12 @@ class Table extends Component {
     }
   }
 
-  changeTabType = (event) => {
-    const type = event === 0 ? 'atom' : 'gen'
-    this.changeType(type)
-  }
+  headerContent = () => (
+    <div className={classes.dialogHeader}>
+      <Icon name="period-table" />
+      <span>Periodic Table</span>
+    </div>
+  )
 
   selected = (label) => {
     const { type, value } = this.state
@@ -75,11 +68,19 @@ class Table extends Component {
       : value.includes(label)
   }
 
-  onSelect = (label) => {
-    const { type, value } = this.state
-    this.setState({
-      value: type === 'atom' || type === 'gen' ? label : xor([label], value)
-    })
+  onAtomSelect = (label, activateImmidiatly = false) => {
+    if (activateImmidiatly) {
+      const result = this.result()
+      const { type } = this.state
+      if (result && type === 'atom') {
+        this.props.onOk(this.result())
+      }
+    } else {
+      const { type, value } = this.state
+      this.setState({
+        value: type === 'atom' || type === 'gen' ? label : xor([label], value)
+      })
+    }
   }
 
   result = () => {
@@ -102,72 +103,33 @@ class Table extends Component {
     }
   }
 
-  periodicTable = (value) => {
-    const { type, current, isInfo } = this.state
-    return (
-      <div className={classes.periodTable}>
-        <AtomInfo el={current} isInfo={isInfo} />
-        <ElementsTable
-          value={value}
-          currentEvents={this.currentEvents}
-          selected={this.selected}
-          onSelect={this.onSelect}
-        />
-        <TypeChoice value={type} onChange={this.changeType} />
-      </div>
-    )
-  }
-
-  getButton = () => {
-    const result = this.result()
-    return [
-      <button
-        className={classes.addAtom}
-        disabled={!result}
-        onClick={() => this.props.onOk(result)}
-      >
-        Add
-      </button>
-    ]
-  }
-
   render() {
     const { type, value } = this.state
-    const tabs = [
-      {
-        caption: 'Table',
-        component: this.periodicTable,
-        props: { value }
-      },
-      {
-        caption: 'Extended',
-        component: GenericGroups,
-        props: {
-          selected: this.selected,
-          onSelect: this.onSelect
-        }
-      }
-    ]
+    const HeaderContent = this.headerContent
 
     return (
       <Dialog
-        title="Periodic table"
+        headerContent={<HeaderContent />}
         className={classes.elementsTable}
         params={this.props}
         result={this.result}
-        buttons={this.getButton()}
+        buttons={['Cancel', 'OK']}
+        buttonsNameMap={{ OK: 'Add' }}
         needMargin={false}
+        footerContent={
+          <TypeChoice value={this.state.type} onChange={this.changeType} />
+        }
       >
-        <Tabs
-          className={classes.tabs}
-          contentClassName={
-            type !== 'gen' ? classes.tabsContent : classes.contentGeneral
-          }
-          captions={tabs}
-          tabIndex={type !== 'gen' ? 0 : 1}
-          changeTab={this.changeTabType}
-          tabs={tabs}
-        />
+        <div className={classes.periodTable}>
+          <AtomInfo el={this.state.current} isInfo={this.state.isInfo} />
+          <ElementsTable
+            value={value}
+            currentEvents={this.currentEvents}
+            selected={this.selected}
+            onAtomSelect={(label) => this.onAtomSelect(label)}
+            onDoubleClick={(label) => this.onAtomSelect(label, true)}
+          />
+        </div>
       </Dialog>
     )
   }

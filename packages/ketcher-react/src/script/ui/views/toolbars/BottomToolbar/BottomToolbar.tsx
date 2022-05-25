@@ -59,7 +59,6 @@ const BottomToolbar = (props: Props) => {
 
       <Group>
         <ToolbarGroupItem id="template-lib" {...rest} />
-        <ToolbarGroupItem id="functional-groups" {...rest} />
       </Group>
     </div>
   )

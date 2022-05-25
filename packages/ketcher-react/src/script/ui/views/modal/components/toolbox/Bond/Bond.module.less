@@ -14,13 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
+ @import '../../../../../../../style/variables.less';
+
 .bond {
-  label {
-    text-align: right;
-    display: block;
+  width: @width-small;
+
+  > div {
+    margin-top: @margin-top-bottom;
   }
 
-  select {
-    width: 12em;
+  label {
+    display: flex;
+    flex-direction: column;
+    line-height: 14px;
+    margin-bottom: @margin-top-bottom;
+    font-size: 12px;
+    color: @color-text-secondary;
+
+    & > span {
+      margin-bottom: 4px
+    }
   }
 }

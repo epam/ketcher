@@ -41,12 +41,17 @@
     flex-direction: row;
   }
 
-  .group-separator(right);
+  .group:not(:last-of-type) {
+    margin-right: 4px;
+    border-right: 1px solid #ccc;
+    padding-right: 5px;
+  }
 }
 
 .vertical-toolbar() {
   overflow: hidden;
   flex-direction: column;
+  align-items: center;
   -ms-overflow-style: none;
 
   .group {
@@ -61,7 +66,7 @@
 .group-separator(@placement) {
   .group:not(:last-of-type) {
     margin-@{placement}: 4px;
-    border-@{placement}: 1px solid @border-color;
+    border-@{placement}: 1px solid #eff2f5;
     padding-@{placement}: 5px;
   }
 }

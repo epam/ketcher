@@ -16,125 +16,85 @@
 
 @import '../../../../../style/mixins.less';
 
-.ok {
-  .button-main();
-
-  width: 40px;
-  margin-right: 2px;
-  margin-left: 10px;
-  float: right;
-}
-
-.save {
-  width: auto;
-}
-
-.cancel {
-  margin-right: 2px;
-  background: #d1d5e3;
-  color: #000;
-  margin-left: auto;
-  float: right;
-
-  &:hover {
-    background: #aaadb9;
-  }
-
-  &[disabled] {
-    border: 1px solid #5b6077;
-    background: transparent;
-    opacity: 0.4;
-  }
-}
-
-.form {
+.dialog {
   outline: 0;
   position: relative;
   vertical-align: middle;
   display: flex;
   flex-direction: column;
-  max-width: 80%;
-  max-height: 80%;
   text-align: left;
-  background-color: @gray-background-color;
+  background-color: @color-background-primary;
   border-radius: 8px;
   background-clip: padding-box;
-  overflow-y: auto;
-  overflow-x: auto;
   font-family: @Inter;
   color: @color-text-secondary;
   .transition-zoom;
+}
 
-  > * {
-    max-height: 65vh;
-  }
+.header {
+  box-sizing: content-box;
+  display: flex;
+  align-items: center;
+  font-size: @font-size-header;
+  line-height: @line-height-header;
+  border-radius: 6px 6px 0 0;
+  color: @color-text-primary;
+  font-weight: 500;
+  padding: 12px;
 
-  header {
+  .btnContainer {
+    flex-grow: 1;
+    flex-direction: row;
     display: flex;
-    align-items: center;
-    font-size: @font-size-header;
-    line-height: @line-height-header;
-    text-transform: uppercase;
-    border-radius: 0.7em 0.7em 0 0;
-    height: 20px;
-    justify-content: space-between;
-    color: @color-text-primary;
-
-    .btnContainer {
-      display: flex;
-    }
-
-    .buttonTop {
-      background-color: transparent;
-      border: none;
-      padding-right: 0;
-    }
+    align-items: flex-end;
   }
 
-  footer {
-    clear: both;
-    text-align: right;
-    max-height: 40px;
+  .buttonTop {
+    background-color: transparent;
+    border: none;
+    margin-left: auto;
+    padding: 0;
+    align-self: center;
+    height: 16px;
+    width: 16px;
 
-    button,
-    input[type='submit'],
-    input[type='reset'] {
-      .btn();
-
-      margin-left: 3px;
+    .closeButton {
+      height: 100%;
+      width: 100%;
     }
-
-    button,
-    .ok,
-    .cancel {
-      border: none;
-      height: 26px;
-    }
-
-    button {
-      .button-secondary();
-
-      float: left;
-    }
-  }
-
-  .body {
-    font-size: @font-size-regular;
-    line-height: @line-height-regular;
-    .scrollbar_thin();
   }
 }
 
-.margin {
-  > header {
-    margin: @margin-top-bottom @margin-left-right;
-  }
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 12px 12px;
+  gap: 8px;
+    
+    .ok {
+      .button-primary();
+    }
 
-  > div {
-    margin: 0 @margin-left-right;
-  }
+    .cancel {
+      .button-secondary();
+    }
+}
 
-  > footer {
-    margin: @margin-left-right;
-  }
+.withDivider {
+  border-bottom: 1px solid @color-grey-3;
+  margin: 0;
+  padding: 0 @padding-modal;
+  height: 36px;
+}
+
+.body {
+  font-size: @font-size-regular;
+  line-height: @line-height-regular;
+  overflow: auto;
+  height: 100%;
+  .scrollbar();
+}
+
+.withMargin {
+  margin: 0 @margin-left-right;
 }

@@ -275,6 +275,7 @@ function showValue(paper, pos, sg, options) {
 }
 
 function drawGroupDat(restruct, sgroup) {
+  SGroup.bracketPos(sgroup, restruct.molecule)
   sgroup.areas = sgroup.bracketBox ? [sgroup.bracketBox] : []
 
   if (sgroup.pp === null) sgroup.calculatePP(restruct.molecule)

@@ -24,7 +24,9 @@ import server from './server'
 import templates from './templates'
 import tools from './tools'
 import zoom from './zoom'
+import help from './help'
 import functionalGroups from './functionalGroups'
+import fullscreen from './fullscreen'
 
 export * from './action.types'
 
@@ -137,9 +139,6 @@ const config = {
     action: { dialog: 'settings' },
     hidden: (options) => isHidden(options, 'settings')
   },
-  help: {
-    hidden: (options) => isHidden(options, 'help')
-  },
   about: {
     title: 'About',
     action: { dialog: 'about' },
@@ -156,6 +155,11 @@ const config = {
     title: 'Periodic Table',
     action: { dialog: 'period-table' },
     hidden: (options) => isHidden(options, 'period-table')
+  },
+  'extended-table': {
+    title: 'Extended Table',
+    action: { dialog: 'extended-table' },
+    hidden: (options) => isHidden(options, 'extended-table')
   },
   'select-all': {
     title: 'Select All',
@@ -191,13 +195,27 @@ const config = {
     },
     hidden: (options) => isHidden(options, 'select-descriptors')
   },
+  'any-atom': {
+    title: 'Any atom',
+    action: {
+      tool: 'atom',
+      opts: {
+        label: 'A',
+        pseudo: 'A',
+        type: 'gen'
+      }
+    },
+    hidden: (options) => isHidden(options, 'any-atom')
+  },
   ...server,
   ...debug,
   ...tools,
   ...atoms,
   ...zoom,
   ...templates,
-  ...functionalGroups
+  ...functionalGroups,
+  ...fullscreen,
+  ...help
 }
 
 function hasSelection(editor) {

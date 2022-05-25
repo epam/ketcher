@@ -40,6 +40,33 @@ const MODAL_STATES = {
   imageRec: 'imageRec'
 }
 
+const FooterContent = ({ structStr, openHandler, copyHandler, onCancel }) => {
+  return (
+    <div className={classes.footerContent}>
+      <button onClick={onCancel} className={classes.cancelButton}>
+        Cancel
+      </button>
+      <div className={classes.buttonsContainer}>
+        <DialogActionButton
+          key="openButton"
+          disabled={!structStr}
+          clickHandler={openHandler}
+          styles={classes.openButton}
+          label="Open as New Project"
+        />
+        <DialogActionButton
+          key="copyButton"
+          disabled={!structStr}
+          clickHandler={copyHandler}
+          styles={classes.copyButton}
+          label="Add to Canvas"
+          title="Structure will be loaded as fragment and added to Clipboard"
+        />
+      </div>
+    </div>
+  )
+}
+
 const Open: FC<Props> = (props) => {
   const {
     server,
@@ -91,29 +118,8 @@ const Open: FC<Props> = (props) => {
     onOk({ structStr, fragment: false })
   }
 
-  const getButtons = () => {
-    if (currentState === MODAL_STATES.textEditor && !isAnalyzingFile) {
-      return [
-        <DialogActionButton
-          key="openButton"
-          disabled={!structStr}
-          clickHandler={openHandler}
-          styles={classes.primaryButton}
-          label="Open as New Project"
-        />,
-        <DialogActionButton
-          key="copyButton"
-          disabled={!structStr}
-          clickHandler={copyHandler}
-          styles={classes.secondaryButton}
-          label="Add to Canvas"
-          title="Structure will be loaded as fragment and added to Clipboard"
-        />
-      ]
-    } else {
-      return []
-    }
-  }
+  const withFooterContent =
+    currentState === MODAL_STATES.textEditor && !isAnalyzingFile
 
   // @TODO after refactoring of Recognize modal
   // add Recognize rendering logic into ViewSwitcher component here
@@ -127,7 +133,18 @@ const Open: FC<Props> = (props) => {
       className={classes.open}
       params={rest}
       result={() => null}
-      buttons={getButtons()}
+      footerContent={
+        withFooterContent ? (
+          <FooterContent
+            structStr={structStr}
+            openHandler={openHandler}
+            copyHandler={copyHandler}
+            onCancel={rest.onCancel}
+          />
+        ) : undefined
+      }
+      buttons={[]}
+      withDivider
     >
       <ViewSwitcher
         isAnalyzingFile={isAnalyzingFile}

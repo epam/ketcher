@@ -20,10 +20,10 @@
   position: relative;
   display: grid;
   grid-template-areas:
-    '. toolbar-top .'
+    'toolbar-top toolbar-top toolbar-top'
     'toolbar-left canvas toolbar-right'
-    'toolbar-left toolbar-bottom toolbar-right';
-  grid-template-columns: minmax(40px, max-content) 1fr minmax(40px, max-content);
+    'toolbar-bottom toolbar-bottom toolbar-bottom';
+  grid-template-columns: minmax(36px, max-content) 1fr minmax(36px, max-content);
   grid-template-rows: auto 1fr auto;
 }
 
@@ -33,6 +33,7 @@
 
 .top {
   grid-area: toolbar-top;
+  background-color: #eff2f5;
 }
 
 .left {
@@ -45,9 +46,10 @@
 
 .bottom {
   grid-area: toolbar-bottom;
+  background-color: #eff2f5;
 }
 
 // stylelint-disable-next-line selector-pseudo-class-no-unknown
 :global(.smallEditor) .app {
-  grid-template-columns: minmax(32px, max-content) 1fr minmax(32px, max-content);
+  grid-template-columns: minmax(35px, max-content) 1fr minmax(35px, max-content);
 }

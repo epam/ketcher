@@ -17,97 +17,107 @@
 @import '../../../../style/mixins';
 @import '../../../../style/variables';
 
-.table {
-  display: flex;
-  flex-wrap: wrap;
-  width: 555px;
-  min-width: 100px;
-  padding: 0;
-  overflow: hidden;
+.tableContent {
+  display: grid;
+  grid-gap: 0 8px;
+  grid-template-columns: repeat(4, 100px);
 }
 
-.tableContent {
-  &:focus {
-    outline: none;
+.structTitle {
+  padding: 0 7px;
+  text-align: center;
+  margin: 6px 0 12px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  max-width: 100px;
+  max-height: 30px;
+}
+
+.twoRowsTitleTable {
+  grid-auto-rows: 147px;
+}
+
+.oneRowTitleTable {
+  grid-auto-rows: 134px;
+  
+  .structTitle {
+    max-height: 16px;
   }
-
-  height: 312px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  grid-gap: 24px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  width: 100%;
-  margin: 10px 15px;
-
-  .scrollbar();
 }
 
 .struct {
-  position: absolute;
-  display: block;
   box-sizing: border-box;
-  padding: 1em;
-  width: 98%;
-  height: 98%;
-  border: 1px solid @border-color;
+  width: 100px;
+  height: 100px;
+  border: 1px solid @color-grey-5;
   border-radius: 5px;
+  background-color: @color-background-primary;
 
   &:hover {
     background: @form-hover-background;
   }
+
+  & svg {
+    width: 100px;
+    height: 100px;
+    left: -2px;
+    top: -1px;
+  }
+}
+
+.selectedTitle {
+  background-color: fade(@color-background-primary, 70%);
 }
 
 .td {
   position: relative;
-  width: 100px;
-  height: 100px;
-
-  &::before {
-    position: absolute;
-    z-index: 10;
-    left: 0.3em;
-    top: 0;
-    padding: 0 4px;
-    border-radius: 3px;
-    font-size: 10px;
-    color: darken(@border-color, 30%);
-    background-color: @color-background-primary;
-    content: attr(title);
-    overflow: hidden;
-    width: content-box;
-    max-width: 85px;
-  }
+  cursor: default;
 
   &.selected .struct {
-    background-color: lighten(@form-selected-background, 15%);
+    background-color: fade(@color-primary, 5%);
+    border: 2px solid @color-primary;
   }
 }
 
-.btnContainer {
-  display: flex;
-  flex-direction: row;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  margin: 0 4px 2px 0;
-
-  .attachButton {
+  .button {
     .btn();
 
     margin: 0;
     border-radius: 0;
-    border: 1px solid @border-color;
+    width: 18px;
+    height: 18px;
+    border: none;
+    color: #636363;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 0;
+
+    & > svg {
+      width: inherit;
+      height: inherit;
+    }
+
+    &:hover, &:active {
+      & path {
+        fill: @color-button-primary-hover;
+      }
+    }
   }
 
   .deleteButton {
-    margin: 0;
-    border-radius: 0;
-    border: 1px solid @border-color;
+    position: absolute;
+    top: 5px;
+    right: 5px;
   }
-}
 
-div.struct {
+  .editButton {
+    position: absolute;
+    top: 78px;
+    right: 5px;
+  }
+
+div.structure {
   padding: 0; // TODO: tmp hack to fit viewbox
   background-color: @color-background-primary;
 }

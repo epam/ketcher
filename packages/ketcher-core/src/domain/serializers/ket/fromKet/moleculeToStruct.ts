@@ -76,12 +76,12 @@ export function atomToStruct(source) {
   // query
   ifDef(params, 'ringBondCount', source.ringBondCount)
   ifDef(params, 'substitutionCount', source.substitutionCount)
-  ifDef(params, 'unsaturatedAtom', source.unsaturatedAtom)
+  ifDef(params, 'unsaturatedAtom', +source.unsaturatedAtom)
   ifDef(params, 'hCount', source.hCount)
   // reaction
   ifDef(params, 'aam', source.mapping)
   ifDef(params, 'invRet', source.invRet)
-  ifDef(params, 'exactChangeFlag', !!source.exactChangeFlag)
+  ifDef(params, 'exactChangeFlag', +source.exactChangeFlag)
   return new Atom(params)
 }
 
@@ -90,7 +90,7 @@ export function rglabelToStruct(source) {
   params.label = 'R#'
   ifDef(params, 'pp', {
     x: source.location[0],
-    y: source.location[1],
+    y: -source.location[1],
     z: source.location[2] || 0.0
   })
   ifDef(params, 'attpnt', source.attachmentPoints)
@@ -104,7 +104,7 @@ export function atomListToStruct(source) {
   params.label = 'L#'
   ifDef(params, 'pp', {
     x: source.location[0],
-    y: source.location[1],
+    y: -source.location[1],
     z: source.location[2] || 0.0
   })
   ifDef(params, 'attpnt', source.attachmentPoints)

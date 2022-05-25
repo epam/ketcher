@@ -49,7 +49,7 @@ const TextArea = styled('textarea')`
 
 export const OutputArea = ({
   outputValue,
-  setOutputValue,
+  setOutputValue
 }: {
   outputValue: string
   setOutputValue: (string) => void

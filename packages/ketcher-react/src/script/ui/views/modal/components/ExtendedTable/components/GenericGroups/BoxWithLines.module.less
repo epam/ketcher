@@ -1,0 +1,63 @@
+/****************************************************************************
+ * Copyright 2022 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
+@import 'src/style/variables';
+
+.horizintalNodeLines {
+  padding-left: 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 20px;
+  margin-top: 2px;
+  width: calc(50% + 6px);
+
+  .upperLines {
+    height: 5px;
+    border-left: 1px solid @color-grey-4;
+    border-bottom: 1px solid @color-grey-4;
+  }
+
+  .lowerLine {
+    height: 4px;
+    border-left: 1px solid @color-grey-4;
+    border-right: 1px solid @color-grey-4;
+    margin-bottom: -10px;
+    padding-bottom: 2px;
+  }
+}
+
+.verticalNodeLines {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 20px;
+  margin-top: 4px;
+  margin-right: 1px;
+  width: 5px;
+
+  .upperLines {
+    height: 14px;
+    border-left: 1px solid @color-grey-4;
+    border-bottom: 1px solid @color-grey-4;
+  }
+
+  .lowerLine {
+    height: 96px;
+    border-left: 1px solid @color-grey-4;
+    margin-bottom: -16px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid @color-grey-4;
+  }
+}

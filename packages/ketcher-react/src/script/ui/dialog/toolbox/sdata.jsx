@@ -22,9 +22,9 @@ import {
 } from '../../data/schema/sdata-schema'
 
 import { Dialog } from '../../views/components'
+import Select from '../../component/form/Select'
 import classes from './sgroup.module.less'
 import { connect } from 'react-redux'
-import Select from '../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../utils'
 
 function SelectInput({ title, name, schema, ...prop }) {
@@ -92,6 +92,10 @@ function SData({
       className={classes.sgroup}
       result={() => result}
       valid={() => valid}
+      buttons={['Cancel', 'OK']}
+      buttonsNameMap={{ OK: 'Apply' }}
+      withDivider={true}
+      needMargin={false}
       params={prop}
     >
       <Form
@@ -100,13 +104,13 @@ function SData({
         init={init}
         {...formState}
       >
-        <fieldset className={classes.data}>
+        <fieldset>
+          <SelectOneOf title="Context" name="context" schema={sdataSchema} />
           <SelectInput
             title="Field name"
             name="fieldName"
             schema={sdataSchema[result.context]}
           />
-          <SelectOneOf title="Context" name="context" schema={sdataSchema} />
           {content(formSchema, result.context, result.fieldName, radiobuttons)}
         </fieldset>
       </Form>
@@ -126,6 +130,7 @@ const content = (schema, context, fieldName, checked) =>
           checked={checked}
           type="radio"
           key={`${context}-${fieldName}-${prop}-radio`}
+          labelPos={false}
         />
       ) : prop === 'fieldValue' && schema.properties.fieldValue.enum ? (
         <Field

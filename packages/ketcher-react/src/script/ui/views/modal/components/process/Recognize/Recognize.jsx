@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   changeImage,
   changeVersion,
@@ -24,21 +24,63 @@ import {
 import { Dialog } from '../../../../components'
 import Input from '../../../../../component/form/input'
 import OpenButton from '../../../../../component/view/openbutton'
-import Spin from '../../../../../component/view/spin'
+import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
 import StructRender from '../../../../../component/structrender'
 import classes from './Recognize.module.less'
 import { connect } from 'react-redux'
 import { load } from '../../../../../state'
 import { range } from 'lodash/fp'
 import { recognize } from '../../../../../state/server'
+import { DialogActionButton } from 'src/script/ui/views/modal/components/document/Open/components/DialogActionButton'
+import Icon from 'src/script/ui/component/view/icon'
 
 function isImage(file) {
   return file?.type?.includes('image')
 }
 
+function FooterContent({ onImage, structStr, openHandler, copyHandler }) {
+  return (
+    <div className={classes.footerContent}>
+      <OpenButton
+        key="choose"
+        onLoad={onImage}
+        type="image/*"
+        className={classes.openButton}
+      >
+        <Icon name="open" />
+        <span>Change image</span>
+      </OpenButton>
+      <div>
+        <DialogActionButton
+          key="openButton"
+          disabled={!structStr}
+          clickHandler={openHandler}
+          styles={classes.secondaryButton}
+          label="Open as new Project"
+        />
+        <DialogActionButton
+          key="copyButton"
+          disabled={!structStr}
+          clickHandler={copyHandler}
+          styles={classes.primaryButton}
+          label="Add to Canvas"
+          title="Structure will be loaded as fragment and added to Clipboard"
+        />
+      </div>
+    </div>
+  )
+}
+
 function RecognizeDialog(prop) {
-  const { file, structStr, fragment, version, imagoVersions, ...partProps } =
-    prop
+  const {
+    file,
+    structStr,
+    fragment,
+    version,
+    imagoVersions,
+    onOk,
+    ...partProps
+  } = prop
   const { onRecognize, isFragment, onImage, onChangeImago, ...props } =
     partProps
   const [canPreviewImage, setCanPreviewImage] = useState(true)
@@ -47,83 +89,97 @@ function RecognizeDialog(prop) {
       ? { structStr, fragment }
       : null
 
+  useEffect(() => {
+    onRecognize(file, version)
+  }, [file, version])
+
   const clearFile = useCallback(() => {
     onImage(null)
     return true
   }, [onImage])
 
+  const copyHandler = () => {
+    onOk({ structStr, fragment: true })
+  }
+
+  const openHandler = () => {
+    onOk({ structStr, fragment: false })
+  }
+
   return (
     <Dialog
-      title="Import From Image"
+      title="Import Structure from Image"
       className={classes.recognize}
-      params={props}
+      params={{ ...props, onOk }}
       result={() => result(structStr, fragment)}
-      buttons={[
-        <OpenButton key="choose" onLoad={onImage} type="image/*">
-          Choose file…
-        </OpenButton>,
-        <span key="open-file" className={classes.open_filename}>
-          {file ? file.name : null}
-        </span>,
-        file && (
-          <button
-            key="recognize"
-            onClick={() => onRecognize(file, version)}
-            disabled={structStr && typeof structStr !== 'string'}
-          >
-            Recognize
-          </button>
-        ),
-        'OK'
-      ]}
-    >
-      <label className={classes.change_version}>
-        Imago version:
-        <Input
-          schema={{
-            enum: imagoVersions,
-            enumNames: range(1, imagoVersions.length + 1).map(
-              (i) => `Version ${i}`
-            )
-          }}
-          value={version}
-          onChange={onChangeImago}
+      withDivider={true}
+      needMargin={false}
+      footerContent={
+        <FooterContent
+          onImage={onImage}
+          openHandler={openHandler}
+          structStr={structStr}
+          copyHandler={copyHandler}
         />
-      </label>
-      <div className={classes.picture}>
-        {file && isImage(file) && canPreviewImage && (
-          <img
-            alt=""
-            id="pic"
-            src={url(file) || ''}
-            onError={() => {
-              setCanPreviewImage(false)
+      }
+      buttons={[]}
+    >
+      <div className={classes.topBody}>
+        <label className={classes.imagoVersion}>
+          Imago version
+          <Input
+            schema={{
+              enum: imagoVersions,
+              enumNames: range(1, imagoVersions.length + 1).map(
+                (i) => `Version ${i}`
+              )
             }}
+            value={version}
+            onChange={onChangeImago}
           />
-        )}
-        {file && isImage(file) && !canPreviewImage && (
-          <div>
-            Preview of '{file.type}' MIME type does not supported by current
-            browser
-          </div>
-        )}
-        {(!file || (!isImage(file) && clearFile())) && (
-          <div>Please choose image</div>
-        )}
+        </label>
+        <span>Original image</span>
+        <span>Recognized structure preview</span>
       </div>
-      <div className={classes.output}>
-        {structStr &&
-          // in Edge 38: instanceof Promise always `false`
-          (structStr instanceof Promise || typeof structStr !== 'string' ? (
-            <Spin />
-          ) : (
-            <StructRender className={classes.struct} struct={structStr} />
-          ))}
+      <div className={classes.imagesContainer}>
+        <div className={classes.picture}>
+          {file && isImage(file) && canPreviewImage && (
+            <img
+              alt=""
+              id="pic"
+              src={url(file) || ''}
+              onError={() => {
+                setCanPreviewImage(false)
+              }}
+            />
+          )}
+          <span className={classes.filename}> {file ? file.name : null} </span>
+          {file && isImage(file) && !canPreviewImage && (
+            <div className={classes.messageContainer}>
+              <p>
+                Preview of '{file.type}' MIME type is not supported by current
+                browser
+              </p>
+            </div>
+          )}
+          {(!file || (!isImage(file) && clearFile())) && (
+            <div className={classes.messageContainer}>
+              <p>Please choose image</p>
+            </div>
+          )}
+        </div>
+        <div className={classes.output}>
+          {structStr &&
+            // in Edge 38: instanceof Promise always `false`
+            (structStr instanceof Promise || typeof structStr !== 'string' ? (
+              <div className={classes.messageContainer}>
+                <LoadingCircles />
+              </div>
+            ) : (
+              <StructRender className={classes.struct} struct={structStr} />
+            ))}
+        </div>
       </div>
-      <label>
-        <Input type="checkbox" value={fragment} onChange={isFragment} />
-        Load as a fragment
-      </label>
     </Dialog>
   )
 }
@@ -139,7 +195,7 @@ const mapStateToProps = (state) => ({
   file: state.options.recognize.file,
   structStr: state.options.recognize.structStr,
   fragment: state.options.recognize.fragment,
-  version: state.options.recognize.version || state.options.app.imagoVersions[0]
+  version: state.options.recognize.version || state.options.app.imagoVersions[1]
 })
 
 const mapDispatchToProps = (dispatch) => ({

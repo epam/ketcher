@@ -19,31 +19,56 @@
 .fontSizeMenu {
   display: inline-block;
   position: absolute;
-  top: 3px;
+  top: 74px;
+  right: 12px;
   background: @color-background-primary;
-  box-shadow: 0 0 2px;
-  max-height: 150px;
+  max-height: 155px;
   overflow-y: scroll;
   z-index: 10;
   padding: 4px;
   font-size: 16px;
   border-radius: 4px;
-  scrollbar-width: none;
-}
+  width: 58px;
+  border: 1px solid @color-grey-4;
 
-.fontSizeMenu::-webkit-scrollbar {
-  display: none;
+  .scrollbar();
 }
 
 .fontSizeOption {
   padding: 4px;
+  font-size: 14px;
+  line-height: 16px;
 }
 
 .fontSizeOption:hover {
   background: @gray-background-color;
+  border-radius: 4px;
   cursor: pointer;
 }
 
 .fontBtn {
-  .btn();
+  width: 68px;
+  height: 24px;
+  background-color: @color-background-primary;
+  border: 1px solid @color-grey-4;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: left;
+}
+
+.fontBtn::after {
+  content: ' ';
+  position: relative;
+  display: block;
+  background-size: contain;
+  width: 22px;
+  height: 22px;
+  bottom: 20px;
+  left: 18px;
+  margin: auto;
+  z-index: 10;
+  background-image: data-uri(
+    '../../../../../../../icons/files/dropdown-indicator.svg'
+  );
 }

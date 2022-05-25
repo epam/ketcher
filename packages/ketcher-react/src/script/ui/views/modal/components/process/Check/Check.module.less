@@ -16,21 +16,63 @@
 
 @import '../../../../../../../style/mixins.less';
 
-.check {
-  width: @width-large;
-  height: 27em;
+.dialog_body {
+  width: 444px;
+
+  & > * {
+    background-color: @color-background-primary;
+  }
+
+  & > div {
+    margin: 0;
+    overflow: auto;
+  }
+
+  & > footer {
+    border-radius: inherit;
+  }
+
+  form {
+    padding-top: 10px;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+      
+      .buttonSecondary {
+        .button-secondary();
+      }
+
+      .buttonPrimary {
+        .button-primary();
+      }
+
+    & > .buttonsRight {
+      display: flex;
+      gap: 8px;
+    }
+  }
 
   .wrapper {
     display: flex;
     flex-direction: row;
-    column-gap: 20px;
+    column-gap: 15px;
+
+    .checkInfo {
+      flex-grow: 1;
+    }
+
+    .settings {
+      margin-left: 12px;
+    }
 
     .settings,
-    .warnings {
-      height: 100%;
-      flex-grow: 2;
-      flex-basis: 14em;
-      min-width: 150px;
+    .warnings,
+    .centeredContainer {
+      min-width: 130px;
+      color: @color-text-primary;
 
       fieldset {
         display: flex;
@@ -38,17 +80,23 @@
         font-size: @font-size-regular;
         line-height: @line-height-regular;
         border: none;
-        padding-left: 0;
+        padding: 0;
 
         li {
           margin: 9px 0 0;
+
+          label {
+            display: flex;
+            align-items: center;
+          }
         }
 
         div {
-          margin: 12px 0 0;
+          margin: 7px 3px 17px 12px ;
 
           dt {
             font-weight: bold;
+            margin-bottom: 4px;
           }
 
           dd {
@@ -60,8 +108,28 @@
     }
 
     .warnings {
-      flex-grow: 3;
-      flex-basis: 21em;
+      background-color: @color-grey-3;
+      width: 100%;
     }
+
+    .warningsContainer {
+      overflow-y: auto;
+      .scrollbar();
+    
+      height: 287px;
+    }
+
+    .centeredContainer {
+      background-color: @color-grey-3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 287px;
+      width: 100%;
+    }
+  }
+
+  .checkBoxesDisabled {
+    opacity: 0.5;
   }
 }

@@ -18,14 +18,167 @@ import { Dialog, StructEditor } from '../../views/components'
 import { Component } from 'react'
 import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
 
-import classes from './template-lib.module.less'
 import { connect } from 'react-redux'
 import { storage } from '../../storage-ext'
 import Form, { Field } from '../../component/form/form/form'
 import { attachSchema } from '../../data/schema/struct-schema'
+import styled from '@emotion/styled'
+import classes from './template-lib.module.less'
+import { css } from '@emotion/react'
+import { Button } from '@mui/material'
 
-const EDITOR_STYLES = {
-  selectionStyle: { fill: '#47b3ec', stroke: 'none' },
+// @TODO When theming is implemented, use theme wherever possible
+const TemplateEditDialog = styled(Dialog)`
+  background-color: #fff;
+
+  & header {
+    text-transform: none;
+    border-bottom: 1px solid #e1e5ea;
+    margin: 0;
+    padding: 12px;
+  }
+
+  & form {
+    display: flex;
+
+    & label::after {
+      top: 92px;
+      margin-right: 12px;
+    }
+  }
+`
+
+const Editor = styled('div')`
+  border: 1px solid #b4b9d6;
+  background-color: #ffff;
+  border-radius: 5px;
+  position: relative;
+  height: 300px;
+  width: 330px;
+  overflow: hidden;
+
+  & .structEditor {
+    height: 100%;
+    width: 100%;
+    border: none;
+  }
+`
+
+const Warning = styled('div')`
+  padding: 0 5px;
+`
+
+const LeftColumn = styled('div')`
+  padding: 12px;
+  border-radius: 0 0 0 8px;
+  background-color: #eff2f5;
+`
+
+const RightColumn = styled('div')`
+  width: 40%;
+  min-width: 200px;
+  box-sizing: border-box;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+`
+
+const NameInput = styled(Field)`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+
+  & > input[type='text'] {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px 16px 4px 8px;
+    border: 1px solid #cad3dd;
+    border-radius: 4px;
+    line-height: 16px;
+    font-size: 14px;
+    margin-top: 2px;
+
+    &:hover {
+      border-color: #43b5c0;
+    }
+
+    &:hover,
+    :focus {
+      box-shadow: none;
+    }
+  }
+
+  & span {
+    display: block;
+    width: 100%;
+  }
+`
+
+const AttachmentOutput = styled('span')`
+  display: block;
+  width: 100%;
+  height: 24px;
+  box-sizing: border-box;
+  padding: 4px 8px;
+  border: 1px solid #cad3dd;
+  border-radius: 4px;
+  line-height: 14px;
+  font-size: 14px;
+  background-color: #eff2f5;
+  margin-top: 2px;
+`
+
+const Buttons = styled('div')`
+  display: flex;
+  flex-direction: row;
+  margin-top: auto;
+  justify-content: flex-end;
+  gap: 8px;
+`
+
+const buttonCommonStyles = css`
+  width: fit-content;
+  padding: 5px 8px;
+  text-transform: none;
+  font-size: 12px;
+  line-height: 14px;
+  box-shadow: none;
+`
+
+const SaveButton = styled(Button)`
+  ${buttonCommonStyles}
+  background-color: #167782;
+
+  &:hover {
+    background-color: #43b5c0;
+    box-shadow: none;
+  }
+
+  &:disabled {
+    background-color: #e1e5ea;
+    color: #333333;
+  }
+`
+
+const CancelButton = styled(Button)`
+  ${buttonCommonStyles}
+  border-color: #585858;
+  color: #585858;
+
+  &:hover {
+    border-color: #333333;
+    color: #333333;
+    box-shadow: none;
+  }
+`
+
+const editorStyles = {
+  selectionStyle: {
+    fill: '#167782',
+    'fill-opacity': '0.28',
+    stroke: '#167782'
+  },
   hoverStyle: { stroke: '#1a7090', 'stroke-width': 1.2 },
   hoverStyleSimpleObject: { 'stroke-opacity': 0.3 }
 }
@@ -49,10 +202,14 @@ class Attach extends Component {
       : null
   }
 
-  checkUniqueName(name) {
-    return !this.props.templateLib.some(
-      (tmpl) =>
-        tmpl.struct.name === name && tmpl.props.group === 'User Templates'
+  checkIsValidName(name) {
+    return (
+      !!name &&
+      !this.props.templateLib.some(
+        (tmpl) =>
+          tmpl.struct.name === name && tmpl.props.group === 'User Templates'
+      ) &&
+      name.length <= 128
     )
   }
 
@@ -63,45 +220,74 @@ class Attach extends Component {
       struct.atoms.get(this.props.atomid) && struct.bonds.get(this.props.bondid)
         ? this.props
         : this.tmpl.props
-    const options = Object.assign(EDITOR_STYLES, this.props.globalSettings, {
+    const options = Object.assign(editorStyles, this.props.globalSettings, {
       scale: getScale(struct)
     })
 
     return (
-      <Dialog
-        title="Template Edit"
-        className={classes.attach}
+      <TemplateEditDialog
+        title="Template edit"
         result={this.onResult}
         valid={() => this.props.formState.valid && name}
         params={prop}
+        buttons={[]}
+        needMargin={false}
       >
         <Form
           schema={attachSchema}
           customValid={{
-            name: (name) => this.checkUniqueName(name)
+            name: (name) => this.checkIsValidName(name)
           }}
           {...this.props.formState}
         >
-          <Field
-            name="name"
-            value={name}
-            onChange={onNameEdit}
-            placeholder="template"
-          />
-          <label>Choose attachment atom and bond:</label>
-          <StructEditor
-            className={classes.editor}
-            struct={struct}
-            onAttachEdit={onAttachEdit}
-            tool="attach"
-            toolOpts={{ atomid, bondid }}
-            options={options}
-          />
-          {!storage.isAvailable() ? (
-            <div className={classes.warning}>{storage.warningMessage}</div>
-          ) : null}
+          <LeftColumn>
+            <Editor>
+              <StructEditor
+                className="structEditor"
+                struct={struct}
+                onAttachEdit={onAttachEdit}
+                tool="attach"
+                toolOpts={{ atomid, bondid }}
+                options={options}
+                showAttachmentPoints={false}
+              />
+            </Editor>
+            {!storage.isAvailable() ? (
+              <Warning>{storage.warningMessage}</Warning>
+            ) : null}
+          </LeftColumn>
+          <RightColumn>
+            <NameInput
+              name="name"
+              value={name}
+              onChange={this.props.onNameEdit}
+              placeholder="template"
+            />
+            <span>Selected attachment points</span>
+            <AttachmentOutput>
+              Atom ID: <strong>{atomid}</strong> Bond ID:{' '}
+              <strong>{bondid}</strong>
+            </AttachmentOutput>
+            <Buttons>
+              <CancelButton
+                variant="outlined"
+                onClick={this.props.onCancel}
+                className={classes.button}
+              >
+                Cancel
+              </CancelButton>
+              <SaveButton
+                variant="contained"
+                onClick={() => this.props.onOk(this.onResult())}
+                className={classes.button}
+                disabled={!this.checkIsValidName(name)}
+              >
+                Apply
+              </SaveButton>
+            </Buttons>
+          </RightColumn>
         </Form>
-      </Dialog>
+      </TemplateEditDialog>
     )
   }
 }
@@ -166,9 +352,9 @@ function structNormalization(struct) {
 function getScale(struct) {
   const cbb = struct.getCoordBoundingBox()
   const VIEW_SIZE = 220
-  let scale = VIEW_SIZE / Math.max(cbb.max.y - cbb.min.y, cbb.max.x - cbb.min.x)
-
-  if (scale < 35) scale = 35
-  if (scale > 50) scale = 50
-  return scale
+  const scale =
+    VIEW_SIZE / Math.max(cbb.max.y - cbb.min.y, cbb.max.x - cbb.min.x)
+  if (scale < 35) return 35
+  if (scale > 50) return 50
+  return 40
 }

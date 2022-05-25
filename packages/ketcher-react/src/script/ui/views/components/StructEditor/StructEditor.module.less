@@ -37,8 +37,6 @@
 }
 
 .canvas {
-  border: @border-color 1px solid;
-  border-radius: 5px;
   overflow: hidden;
   position: relative;
 
@@ -112,6 +110,10 @@
     cursor: none;
   }
   .scrollbar();
+
+  &::-webkit-scrollbar {
+    background-color: @color-background-primary;
+  }
 }
 // stylelint-disable-next-line selector-pseudo-class-no-unknown
 :global(.smallEditor) .canvas {

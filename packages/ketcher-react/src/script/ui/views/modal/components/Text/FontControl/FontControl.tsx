@@ -66,7 +66,7 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
           setIsShowingFontSizeMenu(!isShowingFontSizeMenu)
         }}
       >
-        {currentFontSize}
+        {parseFloat(currentFontSize)}
       </button>
       {isShowingFontSizeMenu ? (
         <div className={classes.fontSizeMenu}>{fontSizeOptions}</div>

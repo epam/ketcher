@@ -41,6 +41,15 @@
   min-width: 640px;
   min-height: 400px;
 
+  select {
+    padding: 0 8px !important;
+    background: transparent !important;
+    background-repeat: no-repeat !important;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='7' viewBox='0 0 10 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.00105 6.07702L0.261719 1.33769L1.20439 0.39502L5.00105 4.19169L8.79705 0.39502L9.74038 1.33769L5.00105 6.07702Z' fill='%23231F20'/%3E%3C/svg%3E%0A") !important;
+    background-position: calc(100% - 11px) center !important;
+    appearance: none !important;
+  }
+
   li,
   ul,
   menu {
@@ -55,21 +64,21 @@
     display: inline-block;
     vertical-align: middle;
     background: @color-background-primary;
-    line-height: 20 / 14;
+    line-height: @line-height-input;
+    font-size: @font-size-input;
     height: 2.4em;
-    padding: 0.35em 0.15em 0.35em 0.3em;
-    border: none;
+    padding: 6px 6px 6px 35px;
+    border: 1px solid transparent;
     box-sizing: border-box;
     color: inherit;
 
     &:active,
     &:focus {
-      outline: 1px solid @color-border-main;
+      outline: 0;
     }
 
-    &:hover,
-    &:focus {
-      .highlight-shadow(black);
+    &:hover {
+      border: 1px solid @color-input-hover;
     }
 
     &[disabled],
@@ -89,27 +98,32 @@
     display: inline-block;
     vertical-align: middle;
     background: @color-background-primary;
-    line-height: 20 / 14;
-    min-height: 24px;
-    padding: 0.35em 0.15em 0.35em 0.3em;
-    border: none;
+    font-family: @Inter;
+    font-size: @font-size-input;
+    line-height: @line-height-input;
+    height: 24px;
+    padding: 3px 7px;
+    border: 1px solid @color-border-input;
     box-sizing: border-box;
-    color: inherit;
+    color: @color-text-primary;
 
     &:active,
     &:focus {
       outline: 0;
+      caret-color: @color-primary-green;
     }
 
-    &:hover,
-    &:focus {
-      .highlight-shadow(black);
+    &:hover {
+      border: 1px solid @color-input-hover;
     }
 
     &[disabled],
     &[readonly],
     fieldset[disabled] & {
       cursor: not-allowed;
+      border: 1px solid @color-border-input;
+      background-color: #E1E5EA;
+      color: #585858;
     }
   }
 

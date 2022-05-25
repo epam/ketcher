@@ -18,14 +18,19 @@
 @import '../../../../../style/mixins.less';
 
 .rgroup {
-  width: @width-medium;
+  width: @width-small;
+
+  > div {
+    margin: 0;
+    padding: 12px 11px;
+    background-color: @color-primary-light;
+  }
 
   ul {
-    padding: 0.5em;
     display: grid;
-    grid-template-columns: repeat(8, 41px);
-    grid-template-rows: repeat(4, 29px);
-    grid-column-gap: 12px;
+    grid-template-columns: repeat(5, 41px);
+    grid-template-rows: repeat(3, 29px 33px) 29px;
+    grid-column-gap: 8px;
     grid-row-gap: 8px;
     overflow: hidden;
   }
@@ -34,23 +39,26 @@
     .btn();
 
     border: none;
-    font-size: 1.3em;
+    font-size: 14px;
     width: 100%;
-    height: 100%;
-    line-height: 1;
-    padding: 0.15em;
+    height: 29px;
+    padding: 6px 4px;
     background: @color-background-primary;
-    color: @color-text-primary;
-    font-weight: 400;
+    color: @color-text-secondary;
+    font-weight: 700;
 
     &::first-letter {
-      font-weight: 700;
+      font-weight: 400;
     }
 
-    &:hover,
+    &:hover {
+      color: @color-icon-hover;
+    }
+
     &:active,
     &.selected {
-      background: @color-dropdown-hover;
+      color: @color-text-light;
+      background: @color-primary;
     }
   }
 }

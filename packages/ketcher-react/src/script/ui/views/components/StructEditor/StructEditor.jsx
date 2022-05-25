@@ -19,7 +19,7 @@ import { ContextMenuTrigger, hideMenu } from 'react-contextmenu'
 
 import Editor from '../../../../editor'
 import { FGContextMenu } from '../../../component/ContextMenu/ContextMenu'
-import Spinner from '../Spinner'
+import { LoadingCircles } from '../Spinner/LoadingCircles'
 import classes from './StructEditor.module.less'
 import clsx from 'clsx'
 import { upperFirst } from 'lodash/fp'
@@ -91,7 +91,7 @@ class StructEditor extends Component {
 
     this.editor.event.message.add((msg) => {
       const el = this.logRef.current
-      if (msg.info) {
+      if (msg.info && this.props.showAttachmentPoints) {
         try {
           const parsedInfo = JSON.parse(msg.info)
           el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`
@@ -177,6 +177,7 @@ class StructEditor extends Component {
       onCipChange,
       className,
       onConfirm,
+      showAttachmentPoints = true,
       ...props
     } = this.props
 
@@ -206,7 +207,7 @@ class StructEditor extends Component {
           <div className={classes.measureLog} ref={this.logRef} />
           {indigoVerification && (
             <div className={classes.spinnerOverlay}>
-              <Spinner />
+              <LoadingCircles />
             </div>
           )}
         </ContextMenuTrigger>

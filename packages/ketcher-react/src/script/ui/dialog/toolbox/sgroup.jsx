@@ -17,11 +17,11 @@
 import Form, { Field, SelectOneOf } from '../../component/form/form/form'
 
 import { Dialog } from '../../views/components'
+import Select from '../../component/form/Select'
 import classes from './sgroup.module.less'
 import { connect } from 'react-redux'
-import { sgroupMap as schemes } from '../../data/schema/struct-schema'
-import Select from '../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../utils'
+import { sgroupMap as schemes } from '../../data/schema/struct-schema'
 
 function Sgroup({ formState, ...prop }) {
   const { result, valid } = formState
@@ -34,6 +34,9 @@ function Sgroup({ formState, ...prop }) {
       className={classes.sgroup}
       result={() => result}
       valid={() => valid}
+      buttons={['Cancel', 'OK']}
+      buttonsNameMap={{ OK: 'Apply' }}
+      withDivider={true}
       params={prop}
     >
       <Form schema={schemes[type]} init={prop} {...formState}>

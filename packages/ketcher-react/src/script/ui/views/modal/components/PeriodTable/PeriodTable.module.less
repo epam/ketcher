@@ -15,25 +15,45 @@
  ***************************************************************************/
 
 @import '../../../../../../style/mixins.less';
+@import '../../../../../../style/variables.less';
 
 .elementsTable {
   background-color: @color-background-primary;
   width: @width-large;
-  height: 390px;
+  height: 368px;
 
   > div {
     overflow: hidden;
     margin: 0;
+    padding-top: 12px;
+    padding-left: 8px;
   }
 
-  > header,
-  > footer {
-    margin: @margin-left-right;
+  > header {
+    border-bottom: 1px solid @color-grey-3;
+  }
+
+  .dialogHeader {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding-left: 2px;
+    font-style: normal;
+    font-weight: 500;
+
+    & > span {
+      line-height: 16px;
+    }
+
+    & > svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 
   .tabs {
     outline: none;
-    border-bottom: 1px solid @color-divider;
+    border-bottom: 1px solid @color-grey-3;
     padding-left: 15px;
   }
 
@@ -43,7 +63,6 @@
 
   .contentGeneral {
     padding-left: 15px;
-    padding-right: 5px;
   }
 
   .periodTable {
@@ -57,6 +76,7 @@
   .addAtom {
     .button-main();
 
+    border-radius: 6px;
     float: right;
     position: relative;
     z-index: 10;

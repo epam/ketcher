@@ -47,6 +47,7 @@ import VerticalFlipIcon from 'assets/icons/files/vertical-flip.svg'
 import UndoIcon from 'assets/icons/files/undo.svg'
 import SaveIcon from 'assets/icons/files/save.svg'
 import ErrorIcon from 'assets/icons/files/error.svg'
+import FullscreenIcon from 'assets/icons/files/fullscreen.svg'
 
 const iconMap = {
   'arrow-down': ArrowDownIcon,
@@ -62,6 +63,7 @@ const iconMap = {
   erase: EraseIcon,
   ellipse: EllipseIcon,
   'file-thumbnail': FileIcon,
+  fullscreen: FullscreenIcon,
   help: HelpIcon,
   'horizontal-flip': HorizontalFlipIcon,
   open: OpenIcon,

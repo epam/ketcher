@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import EmptySearchResult from './EmptySearchResult'
 import { FC } from 'react'
 import { Struct } from 'ketcher-core'
 import StructRender from '../../component/structrender'
 import classes from './TemplateTable.module.less'
 import { greekify } from '../../utils'
 import { useSelector } from 'react-redux'
+import Icon from 'src/script/ui/component/view/icon'
 
 export interface Template {
   struct: Struct
@@ -39,6 +39,8 @@ interface TemplateTableProps {
   onSelect: (tmpl: Template) => void
   onDelete?: (tmpl: Template) => void
   onAttach?: (tmpl: Template) => void
+  titleRows?: 1 | 2
+  onDoubleClick: (tmpl: Template) => void
 }
 
 const getSettingsSelector = (state) => state.options.settings
@@ -51,7 +53,6 @@ const RenderTmpl: FC<{
   tmpl: Template
   options: any
   className: string
-  onClick: () => void
 }> = ({ tmpl, options, ...props }) => {
   return (
     <StructRender
@@ -63,58 +64,71 @@ const RenderTmpl: FC<{
 }
 
 const TemplateTable: FC<TemplateTableProps> = (props) => {
-  const { templates, selected, onSelect, onDelete, onAttach } = props
-  const ITEMS_COUNT = templates ? templates.length : 0
+  const {
+    templates,
+    selected,
+    onSelect,
+    onDelete,
+    onAttach,
+    onDoubleClick,
+    titleRows = 2
+  } = props
   const options = useSelector((state) => getSettingsSelector(state))
 
-  return !ITEMS_COUNT ? (
-    <EmptySearchResult textInfo="No items found" />
-  ) : (
-    <div className={classes.table}>
-      <div className={classes.tableContent}>
-        {templates.map((tmpl, i) => {
-          return (
+  return (
+    <div
+      className={`${classes.tableContent} ${
+        titleRows === 1 ? classes.oneRowTitleTable : classes.twoRowsTitleTable
+      }`}
+    >
+      {templates.map((tmpl, i) => {
+        return (
+          <div
+            className={
+              tmpl.struct !== selected?.struct
+                ? classes.td
+                : `${classes.td} ${classes.selected}`
+            }
+            title={greekify(tmplName(tmpl, i))}
+            key={
+              tmpl.struct.name !== selected?.struct.name
+                ? `${tmpl.struct.name}_${i}`
+                : `${tmpl.struct.name}_${i}_selected`
+            }
+            onClick={() => onSelect(tmpl)}
+            onDoubleClick={() => onDoubleClick(tmpl)}
+          >
+            <RenderTmpl
+              tmpl={tmpl}
+              options={options}
+              className={classes.struct}
+            />
             <div
-              className={
-                tmpl === selected
-                  ? `${classes.td} ${classes.selected}`
-                  : classes.td
-              }
-              title={greekify(tmplName(tmpl, i))}
-              key={
-                tmpl.struct.name !== selected?.struct.name
-                  ? `${tmpl.struct.name}_${i}`
-                  : `${tmpl.struct.name}_${i}_selected`
-              }
+              className={`${classes.structTitle} ${
+                selected?.struct === tmpl.struct ? classes.selectedTitle : ''
+              }`}
             >
-              <RenderTmpl
-                tmpl={tmpl}
-                options={options}
-                className={classes.struct}
-                onClick={() => onSelect(tmpl)}
-              />
-              <div className={classes.btnContainer}>
-                {tmpl.props.group === 'User Templates' && (
-                  <button
-                    className={classes.deleteButton}
-                    onClick={() => onDelete!(tmpl)}
-                  >
-                    Delete
-                  </button>
-                )}
-                {tmpl.props.group !== 'Functional Groups' && (
-                  <button
-                    className={classes.attachButton}
-                    onClick={() => onAttach!(tmpl)}
-                  >
-                    Edit
-                  </button>
-                )}
-              </div>
+              {greekify(tmplName(tmpl, i))}
             </div>
-          )
-        })}
-      </div>
+            {tmpl.props.group === 'User Templates' && (
+              <button
+                className={`${classes.button} ${classes.deleteButton}`}
+                onClick={() => onDelete!(tmpl)}
+              >
+                <Icon name="delete" />
+              </button>
+            )}
+            {tmpl.props.group !== 'Functional Groups' && (
+              <button
+                className={`${classes.button} ${classes.editButton}`}
+                onClick={() => onAttach!(tmpl)}
+              >
+                <Icon name="edit" />
+              </button>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }

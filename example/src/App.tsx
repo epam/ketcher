@@ -1,12 +1,13 @@
 import 'ketcher-react/dist/index.css'
 
 import { ButtonsConfig, Editor } from 'ketcher-react'
-import { Ketcher, RemoteStructServiceProvider } from 'ketcher-core'
-import { Editor as PolymerEditor } from 'ketcher-polymer-editor-react'
+import {
+  Ketcher,
+  RemoteStructServiceProvider,
+  StructServiceProvider
+} from 'ketcher-core'
 
 import { ErrorModal } from './ErrorModal'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { PolymerToggler } from './PolymerToggler'
 import { useState } from 'react'
 
@@ -23,16 +24,27 @@ const getHiddenButtonsConfig = (): ButtonsConfig => {
   }, {})
 }
 
-let structServiceProvider: any = new RemoteStructServiceProvider(
-  process.env.API_PATH || process.env.REACT_APP_API_PATH!
-)
+let structServiceProvider: StructServiceProvider =
+  new RemoteStructServiceProvider(
+    process.env.API_PATH || process.env.REACT_APP_API_PATH!
+  )
 if (process.env.MODE === 'standalone') {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { StandaloneStructServiceProvider } = require('ketcher-standalone')
-  structServiceProvider = new StandaloneStructServiceProvider()
+  structServiceProvider =
+    new StandaloneStructServiceProvider() as StructServiceProvider
 }
 
-const polymerEditor = process.env.ENABLE_POLYMER_EDITOR
+const enablePolymerEditor = process.env.ENABLE_POLYMER_EDITOR === 'true'
+
+type PolymerType = () => JSX.Element | null
+
+let PolymerEditor: PolymerType = () => null
+if (enablePolymerEditor) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { Editor } = require('ketcher-polymer-editor-react')
+  PolymerEditor = Editor as PolymerType
+}
 
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig()
@@ -65,7 +77,7 @@ const App = () => {
           )
         }}
       />
-      {polymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}
+      {enablePolymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}
       {hasError && (
         <ErrorModal
           message={errorMessage}

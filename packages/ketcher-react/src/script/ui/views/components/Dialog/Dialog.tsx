@@ -32,12 +32,18 @@ export interface DialogParams extends DialogParamsCallProps {
 }
 
 interface DialogProps {
-  title: string
+  title?: string
   params: DialogParams
   buttons?: Array<string | ReactElement>
-  buttonsTop?: Array<ReactElement>
   className?: string
   needMargin?: boolean
+  withDivider?: boolean
+  headerContent?: ReactElement
+  footerContent?: ReactElement
+  buttonsNameMap?: {
+    [key in string]: string
+  }
+  focusable?: boolean
 }
 
 interface DialogCallProps {
@@ -55,23 +61,30 @@ const Dialog: FC<Props> = (props) => {
     result = () => null,
     valid = () => !!result(),
     buttons = ['OK'],
+    headerContent,
+    footerContent,
     className,
-    buttonsTop,
+    buttonsNameMap,
     needMargin = true,
+    withDivider = false,
+    focusable = true,
     ...rest
   } = props
   const dialogRef = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
-    ;(dialogRef.current as any).focus()
+    if (focusable) {
+      ;(dialogRef.current as HTMLElement).focus()
+    }
+
     return () => {
       ;(
         dialogRef.current
           ?.closest('.Ketcher-root')
-          ?.getElementsByClassName('cliparea')[0] as any
+          ?.getElementsByClassName('cliparea')[0] as HTMLElement
       ).focus()
     }
-  }, [])
+  }, [focusable])
 
   const isButtonOk = (button) => {
     return button === 'OK' || button === 'Save'
@@ -101,44 +114,48 @@ const Dialog: FC<Props> = (props) => {
       onSubmit={(event) => event.preventDefault()}
       onKeyDown={keyDown}
       tabIndex={-1}
-      className={clsx(
-        styles.form,
-        className,
-        needMargin && styles.margin,
-        params.className
-      )}
+      className={clsx(styles.dialog, className, params.className)}
       {...rest}
     >
-      <header>
-        {title}
+      <header
+        className={clsx(styles.header, withDivider && styles.withDivider)}
+      >
+        {headerContent || <span>{title}</span>}
         <div className={styles.btnContainer}>
-          {buttonsTop && buttonsTop.map((button) => button)}
           <button className={styles.buttonTop} onClick={() => exit('Cancel')}>
-            <Icon name={'close'} />
+            <Icon name={'close'} className={styles.closeButton} />
           </button>
         </div>
       </header>
-      <div className={clsx(styles.dialog_body, styles.body)}>{children}</div>
+      <div className={clsx(styles.body, needMargin && styles.withMargin)}>
+        {children}
+      </div>
 
-      {buttons.length > 0 && (
-        <footer>
-          {buttons.map((button) =>
-            typeof button !== 'string' ? (
-              button
-            ) : (
-              <input
-                key={button}
-                type="button"
-                className={clsx(
-                  isButtonOk(button) ? styles.ok : styles.cancel,
-                  button === 'Save' && styles.save
-                )}
-                value={button}
-                disabled={isButtonOk(button) && !valid()}
-                onClick={() => exit(button)}
-              />
-            )
-          )}
+      {(footerContent || buttons.length > 0) && (
+        <footer className={styles.footer}>
+          {footerContent}
+          {buttons.length > 0 &&
+            buttons.map((button) =>
+              typeof button !== 'string' ? (
+                button
+              ) : (
+                <input
+                  key={button}
+                  type="button"
+                  className={clsx(
+                    isButtonOk(button) ? styles.ok : styles.cancel,
+                    button === 'Save' && styles.save
+                  )}
+                  value={
+                    buttonsNameMap && buttonsNameMap[button]
+                      ? buttonsNameMap[button]
+                      : button
+                  }
+                  disabled={isButtonOk(button) && !valid()}
+                  onClick={() => exit(button)}
+                />
+              )
+            )}
         </footer>
       )}
     </div>

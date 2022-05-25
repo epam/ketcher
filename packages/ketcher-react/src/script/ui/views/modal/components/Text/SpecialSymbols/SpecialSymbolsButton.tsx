@@ -63,7 +63,9 @@ const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
           e.preventDefault()
           setShowSpecialSymbols(!showSpecialSymbols)
         }}
-        className={classes.textButton}
+        className={
+          showSpecialSymbols ? classes.activeTextButton : classes.textButton
+        }
       >
         <Icon name="text-special-symbols" />
       </button>

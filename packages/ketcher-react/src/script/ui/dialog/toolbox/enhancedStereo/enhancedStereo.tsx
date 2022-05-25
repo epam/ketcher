@@ -84,11 +84,13 @@ const EnhancedStereo: FC<Props> = (props) => {
       params={rest}
       result={() => result}
       valid={() => valid}
-      buttons={['OK']}
+      withDivider
+      buttons={['Cancel', 'OK']}
+      buttonsNameMap={{ OK: 'Apply' }}
     >
       <Form schema={enhancedStereoSchema} init={init} {...formState}>
         <fieldset>
-          <label className={classes.stereoLabelItem}>
+          <label>
             <Field
               name="type"
               labelPos={false}
@@ -99,7 +101,7 @@ const EnhancedStereo: FC<Props> = (props) => {
             ABS
           </label>
           {maxAnd !== 0 && (
-            <label className={classes.stereoLabelItem}>
+            <label>
               <Field
                 name="type"
                 labelPos={false}
@@ -118,7 +120,7 @@ const EnhancedStereo: FC<Props> = (props) => {
             </label>
           )}
           {maxOr !== 0 && (
-            <label className={classes.stereoLabelItem}>
+            <label>
               <Field
                 name="type"
                 labelPos={false}
@@ -136,7 +138,7 @@ const EnhancedStereo: FC<Props> = (props) => {
               Group
             </label>
           )}
-          <label className={classes.stereoLabelItem}>
+          <label>
             <Field
               name="type"
               labelPos={false}
@@ -145,7 +147,7 @@ const EnhancedStereo: FC<Props> = (props) => {
             />
             Create new AND Group
           </label>
-          <label className={classes.stereoLabelItem}>
+          <label>
             <Field
               name="type"
               labelPos={false}

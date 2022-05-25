@@ -26,17 +26,23 @@ import {
   convertToRaw,
   getDefaultKeyBinding
 } from 'draft-js'
-import { useCallback, useState } from 'react'
+import {
+  useCallback,
+  useState,
+  useRef,
+  MutableRefObject,
+  useEffect
+} from 'react'
 
 import { Dialog } from '../../../components'
 import { DialogParams } from '../../../components/Dialog/Dialog'
 import { FontControl } from './FontControl'
+import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton'
 import { TextButton } from './TextButton'
 import { TextCommand } from 'ketcher-core'
 import classes from './Text.module.less'
 import { connect } from 'react-redux'
 import createStyles from 'draft-js-custom-styles'
-import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton'
 
 const { styles, customStyleFn } = createStyles(['font-size'])
 
@@ -57,12 +63,12 @@ const buttons: Array<{ command: TextCommand; name: string }> = [
     name: 'text-italic'
   },
   {
-    command: TextCommand.Subscript,
-    name: 'text-subscript'
-  },
-  {
     command: TextCommand.Superscript,
     name: 'text-superscript'
+  },
+  {
+    command: TextCommand.Subscript,
+    name: 'text-subscript'
   }
 ]
 
@@ -136,31 +142,38 @@ const Text = (props: TextProps) => {
     SUBSCRIPT: {
       verticalAlign: 'sub',
       transform: 'scale(0.7)',
-      display: 'inline-block',
       transformOrigin: 'left'
     },
     SUPERSCRIPT: {
       verticalAlign: 'super',
       transform: 'scale(0.7)',
-      display: 'inline-block',
-      transformOrigin: 'left'
+      transformOrigin: 'left',
+      lineHeight: 0
     }
   }
 
+  const refEditor = useRef() as MutableRefObject<Editor>
+  const setFocusInEditor = useCallback(() => {
+    refEditor.current.focus()
+  }, [refEditor])
+
+  // set focut on component mount
+  useEffect(() => {
+    setFocusInEditor()
+  }, [setFocusInEditor])
+
   return (
     <Dialog
-      className="textEditor"
-      title="Text editor"
+      className={classes.textEditor}
+      title="Text Editor"
       params={props}
       result={result}
       valid={() => formState.form.valid}
+      buttonsNameMap={{ OK: 'Apply' }}
+      buttons={['Cancel', 'OK']}
+      withDivider
     >
-      <ul className={classes.controlPanel}>
-        <FontControl
-          editorState={editorState}
-          setEditorState={setEditorState}
-          styles={styles}
-        />
+      <div className={classes.controlPanel} onClick={setFocusInEditor}>
         {buttons.map((button) => {
           return (
             <TextButton
@@ -176,16 +189,22 @@ const Text = (props: TextProps) => {
           setEditorState={setEditorState}
           styles={currentStyle}
         />
-      </ul>
-      <div className={classes.textEditorInput}>
-        <Editor
-          keyBindingFn={keyBindingFn}
+        <span>Font Size</span>
+        <FontControl
           editorState={editorState}
-          onChange={onContentChange}
-          customStyleMap={customStyleMap}
-          customStyleFn={customStyleFn}
+          setEditorState={setEditorState}
+          styles={styles}
         />
       </div>
+      <span>Text:</span>
+      <Editor
+        keyBindingFn={keyBindingFn}
+        editorState={editorState}
+        onChange={onContentChange}
+        customStyleMap={customStyleMap}
+        customStyleFn={customStyleFn}
+        ref={refEditor}
+      />
     </Dialog>
   )
 }

@@ -14,10 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-.enhancedStereo {
-  width: 330px;
+ @import '../../../../../style/variables.less';
 
-  .stereoLabelItem {
+.enhancedStereo {
+  width: @width-small;
+
+
+  fieldset {
+    border: none;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      margin-top: 12px;
+    }
+  }
+
+  .stereoLabelItem label{
     display: flex;
     align-items: center;
     min-height: 2.4em;
@@ -28,4 +41,5 @@
     margin-right: 5px;
     margin-left: 5px;
   }
+
 }

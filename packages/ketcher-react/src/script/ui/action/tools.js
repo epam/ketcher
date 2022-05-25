@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RxnArrowMode, SimpleObjectMode } from 'ketcher-core'
+import { RxnArrowMode, SimpleObjectMode, findStereoAtoms } from 'ketcher-core'
 
 import { bond as bondSchema } from '../data/schema/struct-schema'
 import isHidden from './isHidden'
@@ -58,6 +58,11 @@ const toolActions = {
     shortcut: 'Alt+e',
     title: 'Stereochemistry',
     action: { tool: 'enhancedStereo' },
+    disabled: (editor) =>
+      findStereoAtoms(
+        editor?.struct(),
+        Array.from(editor?.struct().atoms.keys())
+      ).length === 0,
     hidden: (options) => isHidden(options, 'enhanced-stereo')
   },
   'charge-plus': {

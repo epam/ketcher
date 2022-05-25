@@ -14,22 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ElementColor, Elements } from 'ketcher-core'
 import { atomCuts, basicAtoms } from '../../../../action/atoms'
 
 import Atom from '../../../../component/view/Atom'
-import { Elements } from 'ketcher-core'
 import { UiActionAction } from '../../../../action'
-import classes from '../../ToolbarGroupItem/ActionButton/ActionButton.module.less'
-import clsx from 'clsx'
-import { shortcutStr } from '../../shortcutStr'
 import { forwardRef } from 'react'
+import { shortcutStr } from '../../shortcutStr'
+import styled from '@emotion/styled'
+import α from 'color-alpha'
 
 interface AtomsListProps {
   atoms: string[]
   active?: {
     tool?: string
     opts: {
-      label: any
+      label: string
     }
   }
 }
@@ -39,6 +39,33 @@ interface AtomsListCallProps {
 }
 
 type Props = AtomsListProps & AtomsListCallProps
+
+const StyledAtomList = styled.div((props: any) => {
+  const atomColor = props?.children?.key
+    ? ElementColor[props.children.key]
+    : '#000'
+  return `
+    ${Atom} > button {
+       color: ${atomColor};
+       border: 1px solid ${atomColor};
+       &:hover {
+         background-color: ${α(atomColor, 0.2)};
+       }
+       &:active {
+         color: #fff;
+         background-color: ${α(atomColor, 0.8)};
+       }
+       &.selected {
+         color: #fff;
+         background-color: ${α(atomColor, 0.8)};
+  
+         &:hover {
+           background-color: ${atomColor};
+         }
+       }
+     }
+   `
+})
 
 const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
   const { atoms, active, onAction } = props
@@ -50,34 +77,16 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
         const element = Elements.get(label)
         const shortcut =
           basicAtoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null
-
-        if (basicAtoms.indexOf(label) === 0) {
-          return (
-            <div key={label} ref={ref}>
-              <Atom
-                key={label}
-                el={element}
-                shortcut={shortcut}
-                className={clsx(classes.button, {
-                  [classes.selected]:
-                    isAtom && active && active.opts.label === label
-                })}
-                onClick={() => onAction({ tool: 'atom', opts: { label } })}
-              />
-            </div>
-          )
-        }
         return (
-          <Atom
-            key={label}
-            el={element}
-            shortcut={shortcut}
-            className={clsx(classes.button, {
-              [classes.selected]:
-                isAtom && active && active.opts.label === label
-            })}
-            onClick={() => onAction({ tool: 'atom', opts: { label } })}
-          />
+          <StyledAtomList key={label} ref={ref}>
+            <Atom
+              key={label}
+              el={element}
+              shortcut={shortcut}
+              selected={isAtom && active && active.opts.label === label}
+              onClick={() => onAction({ tool: 'atom', opts: { label } })}
+            />
+          </StyledAtomList>
         )
       })}
     </>

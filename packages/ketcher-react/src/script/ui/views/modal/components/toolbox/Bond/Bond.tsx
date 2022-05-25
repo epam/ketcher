@@ -18,6 +18,8 @@ import { BaseCallProps, BaseProps } from '../../../modal.types'
 import Form, { Field } from '../../../../../component/form/form/form'
 
 import { Dialog } from '../../../../components'
+import Select from '../../../../../component/form/Select'
+import { getSelectOptionsFromSchema } from '../../../../../utils'
 import { bond as bondSchema } from '../../../../../data/schema/struct-schema'
 import classes from './Bond.module.less'
 
@@ -31,6 +33,7 @@ type Props = BondProps & BaseCallProps
 
 const Bond = (props: Props) => {
   const { formState, ...rest } = props
+  const bondProps = bondSchema.properties
   return (
     <Dialog
       title="Bond Properties"
@@ -38,11 +41,26 @@ const Bond = (props: Props) => {
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}
+      buttonsNameMap={{ OK: 'Apply' }}
+      buttons={['Cancel', 'OK']}
+      withDivider
     >
       <Form schema={bondSchema} init={rest} {...formState}>
-        <Field name="type" />
-        <Field name="topology" />
-        <Field name="center" />
+        <Field
+          name="type"
+          component={Select}
+          options={getSelectOptionsFromSchema(bondProps.type)}
+        />
+        <Field
+          name="topology"
+          component={Select}
+          options={getSelectOptionsFromSchema(bondProps.topology)}
+        />
+        <Field
+          name="center"
+          component={Select}
+          options={getSelectOptionsFromSchema(bondProps.center)}
+        />
       </Form>
     </Dialog>
   )

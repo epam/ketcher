@@ -1,2 +1,1 @@
-import { PolymerToggler } from './PolymerToggler'
-export { PolymerToggler }
+export * from './PolymerToggler'

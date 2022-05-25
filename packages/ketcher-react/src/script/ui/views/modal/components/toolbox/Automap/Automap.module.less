@@ -17,11 +17,18 @@
 @import '../../../../../../../style/variables.less';
 
 .automap {
-  width: 22em;
+  width: @width-small;
 
   label {
-    display: block;
-    text-align: left;
-    line-height: @input-height;
+    line-height: @line-height-regular;
+    font-size: @font-size-regular;
+    display: flex;
+    flex-direction: column;
+    margin: 12px 0;
+    gap: 4px;
+
+    & > div {
+      flex-grow: 1;
+    }
   }
 }

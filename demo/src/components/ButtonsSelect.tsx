@@ -5,7 +5,7 @@ import {
   MenuItem,
   ListItemText,
   Checkbox,
-  SelectChangeEvent,
+  SelectChangeEvent
 } from '@mui/material'
 
 import { PanelButton as Button } from './shared/Buttons'
@@ -25,7 +25,7 @@ type ButtonSelectProps = {
 
 export const ButtonsSelect = ({
   hiddenButtons,
-  setHiddenButtons,
+  setHiddenButtons
 }: ButtonSelectProps) => {
   const handleChange = useCallback(
     (event: SelectChangeEvent<string[]>) => {

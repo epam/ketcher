@@ -16,59 +16,41 @@
 
 @import '../../../../../../../style/variables.less';
 
-@fieldset-inputs-number: 4;
-@server-inputs-number: 5;
-@viewer-inputs-number: 3;
-@general-inputs-number: 7;
-@stereochemistry-inputs-number: 11;
+.headerContent {
+  display: flex;
+  gap: 8px;
 
-@field-height: 24px;
-
-.settings {
-  width: @width-large;
-  height: 357px;
-  background-color: @color-background-canvas;
-
-  > header + div {
-    height: 270px;
-    margin-right: @margin-left-right;
+  .title {
+    padding-right: 4px;
   }
 
-  > header {
-    margin: @margin-top-bottom @margin-left-right;
-  }
-
-  > footer {
-    margin: @margin-left-right @margin-left-right @margin-top-bottom @margin-left-right;
-  }
-
-  > * {
-    margin: 0;
-  }
-
-  .warning {
-    margin: 0.3em;
+  .button {
+    background-color: transparent;
+    border: none;
+    color: @color-icon-active;
+    padding: 0;
+    font-size: 0;
+  
+    input[type='file'] {
+      display: none;
+    }
+  
+    &:hover {
+      color: @color-icon-hover;
+    }
+    
+    &:disabled {
+      color: @color-icon-disabled;
+    }
   }
 }
 
-.button {
-  background-color: transparent;
-  border: none;
-}
-
-.buttonOpen {
-  > input {
-    display: none;
-  }
-}
-
-.sidebar {
+.accordion {
   fieldset {
     border: none;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    padding: 2px 28px 0;
+    padding: 0;
   }
 
   ul {
@@ -77,54 +59,61 @@
     }
   }
 
-  select,
-  input {
-    border-radius: 2px;
-    color: @color-select-border;
-    height: inherit;
-    margin: 0;
-    line-height: 12px;
-    padding: 2px 8px;
-  }
-
-  select {
-    margin-left: 2px;
-  }
-
   label {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     font-size: 12px;
     align-items: center;
-    line-height: 20px;
-    margin-bottom: 16px;
+    line-height: 14px;
+    margin-bottom: 12px;
     color: @color-text-primary;
-    height: @field-height;
+    height: 24px;
+
+    input[type='checkbox'] {
+      top: 0;
+    }
 
     > select,
     > input,
     > div {
-      width: 127px;
+      width: 120px;
+      margin-right: auto;
     }
 
     > span {
-      flex-basis: 50%;
+      width: 168px;
+      margin-right: @margin-left-right;
+    }
+  }
+}
+
+.settings {
+  width: @width-settings;
+  height: 70vh;
+  overflow: hidden;
+
+  fieldset[disabled] {
+    label > span {
+      opacity: 0.3;
+    }
+
+    label > div {
+      opacity: 0.6;
     }
   }
 
-  .server {
-    label {
-      > span {
-        flex-basis: 70%;
-      }
-    }
+  label:hover::after {
+    transform: translate(180px, 21px);
   }
 
-  .stereochemistry {
-    label {
-      > span {
-        flex-basis: 55%;
-      }
-    }
-  }
+   > header{
+      flex-shrink: 0;
+      box-shadow: 0 2px 4px 0 @color-accordion-shadow;
+      z-index: 10; 
+   }
+
+   > footer {
+      box-shadow: 0 -2px 4px 0 @color-accordion-shadow;
+      z-index: 10;
+   }
 }

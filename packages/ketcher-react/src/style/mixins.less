@@ -125,7 +125,7 @@
   & > svg {
     fill: white;
     stroke: white;
-    stroke-width: 5;
+    // stroke-width: 5;
   }
   & path {
     stroke: white;
@@ -336,7 +336,7 @@
   fieldset[disabled] & {
     background-image: none;
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.4;
     box-shadow: none;
   }
 
@@ -372,22 +372,49 @@
   }
 }
 
+.button-common-styles {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  outline: none;
+  min-width: 70px;
+  line-height: 14px;
+  height: 24px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.button-primary() {
+  .button-common-styles();
+    color: @color-text-light;
+    background-color: @color-primary;
+    border: 1px solid transparent;
+
+    &:hover, &:active {
+      background-color: @color-button-primary-clicked;
+    }
+
+    &:disabled {
+      color: @color-button-secondary-hover;
+      background-color: @color-grey-3;
+    }
+}
+
 .button-secondary() {
-  background: transparent;
-  border: 1px solid @color-button-secondary;
-  color: @color-button-secondary;
-  &:hover {
-    border-color: @color-button-secondary-hover;
-    color: @color-button-secondary-hover;
-  }
-  &:disabled {
-    border-color: @color-button-secondary-disabled;
-    color: @color-button-secondary-disabled;
-  }
-  &:focus {
-    border-color: @color-button-secondary-clicked;
-    color: @color-button-secondary-clicked;
-  }
+  .button-common-styles();
+    color: @color-text-secondary;
+    border: 1px solid @color-text-secondary;
+    background-color: @color-background-primary;
+
+    &:hover, &:active {
+      color: @color-button-secondary-hover;
+      border: 1px solid @color-button-secondary-hover;
+    }
+
+    &:disabled {
+      color: fade(@color-text-secondary, 70%);
+      border: 1px solid fade(@color-text-secondary, 70%);
+    }
 }
 
 .warning() {
@@ -397,12 +424,6 @@
   }
 }
 
-.dialog_body {
-  overflow: auto;
-
-  .scrollbar();
-}
-
 .kbd() {
   display: none;
   font: 0.8em monospace;
@@ -410,54 +431,26 @@
 }
 
 .scrollbar {
-  &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-    background-color: rgba(@main-color, 0);
-    -webkit-border-radius: 100px;
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
   }
 
-  &::-webkit-scrollbar:hover {
-    background-color: rgba(@main-color, 0.09);
+  &::-webkit-scrollbar {
+    background-color: @color-primary-light;
+    width: 6px;
+    height: 6px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(@main-color, 0.3);
-    -webkit-border-radius: 100px;
+    background-color: fade(@color-scroll, 85%);
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
   }
 
-  &::-webkit-scrollbar-thumb:active {
-    background: rgba(@main-color, 0.61);
-    -webkit-border-radius: 100px;
-  }
-
-  &::-webkit-scrollbar-thumb:vertical {
-    min-height: 10px;
-  }
-
-  &::-webkit-scrollbar-thumb:horizontal {
-    min-width: 10px;
-  }
-}
-
-.scrollbar_thin {
-  &::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-    background-color: @color-scroll-inactive;
-    border-radius: 2px;
-    -webkit-border-radius: 2px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: @color-scroll;
-    border-radius: 2px;
-    -webkit-border-radius: 2px;
-  }
-
-  &::-webkit-scrollbar-thumb:active {
+  &::-webkit-scrollbar-thumb:active,
+  &::-webkit-scrollbar-thumb:hover {
     background-color: @color-scroll;
   }
 
-  scrollbar-width: thin; // mozilla
+  scrollbar-width: thin;
 }

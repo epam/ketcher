@@ -25,86 +25,186 @@
   }
 }
 
-.templateLib {
-  & > div {
-    display: flex;
+.dialogHeader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 2px;
+
+  & > span {
+    line-height: 16px;
   }
 
-  label {
-    text-align: center;
-    line-height: 2.6em;
-    display: flex;
-    margin-bottom: 1em;
-
-    input[type='search'] {
-      width: 100%;
-      margin-left: 4px;
-    }
-  }
-
-  .tableGroupWrap {
-    display: flex;
-    height: calc(100% - 3.6em - 4px);
-  }
-
-  .groups {
-    .input();
-
-    height: 100%;
-    min-height: 200px;
-    width: 11em;
-    overflow: auto;
-    flex-shrink: 0;
-
-    li {
-      display: block;
-      padding: 0 2px 1px;
-      cursor: default;
-
-      &:hover {
-        background-color: @form-hover-background;
-      }
-
-      &.selected {
-        color: white;
-        background-color: @form-selected-background;
-      }
-
-      &.split {
-        margin-top: 2px;
-        padding-top: 2px;
-        border-top: 1px @border-color solid;
-      }
-    }
-  }
-
-  .singleColLayout {
-    flex-wrap: wrap;
-
-    .td {
-      flex-grow: 1;
-      max-width: 230px;
-    }
+  & > svg {
+    width: 18px;
+    height: 18px;
   }
 }
 
-.attach {
-  label {
-    display: block;
-    padding: 0 5px;
-    font-size: 16px;
+.button {
+  min-width: 70px !important;
+}
+
+.dialog_body {
+  background-color: @color-background-primary;
+  color: @color-text-primary;
+  width: 452px;
+
+  & > div {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
-  .warning {
-    padding: 0 5px;
+  & > footer {
+    box-shadow: 0 -6px 6px 0 @color-accordion-shadow;
+    z-index: 10;
+
+    & > input {
+      min-width: 110px !important;
+    }
   }
 
-  .editor {
-    border: 1px solid @border-color;
-    border-radius: 5px;
+  .inputContainer {
     position: relative;
-    height: 25em;
-    max-width: 30em;
-    overflow: auto;
+
+    input[type='search'] {
+      width: 424px;
+      padding-left: 35px;
+      background-color: @color-primary-light;
+      margin: 0 14px 16px 14px;
+      height: 28px;
+
+      &::placeholder {
+        font-weight: 400;
+        opacity: 90%;
+      }
+    }
+
+    .searchIcon { 
+      width: 28px;
+      height: 28px;
+      position: absolute;
+      top: 0;
+      left: 14px;
+      color: @color-primary;
+    }
+  }
+
+  .accordionSummary {
+    flex-direction: row-reverse;
+    font-size: 14px;
+  }
+  
+  .groupIcon {
+    margin-left: 15px;
+    margin-right: 8px;
+  }
+
+  .expandIcon {
+    width: 20px;
+  }
+  
+  .tabsContent {
+    height: 50vh;
+    background-color: @color-primary-light;
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    .scrollbar();
+  }
+
+  .resultsContainer {
+    padding: 12px 14px 4px;
+    background-color: @color-primary-light;
+  }
+
+  .saveButton {
+    .button-secondary();
+  }
+
+  /* stylelint-disable selector-pseudo-class-no-unknown, no-descending-specificity */
+  :global(.MuiTabs-indicator) {
+    background-color: @color-primary;
+  }
+
+  :global(.MuiTabs-flexContainer) {
+    background-color: @color-primary-light;
+    padding-left: 14px;
+  }
+
+  :global(.MuiAccordionSummary-content) {
+    align-items: end;
+  }
+
+  :global(.MuiAccordionDetails-root) {
+    background-color: @color-primary-light;
+    box-shadow: inset 0 -2px 8px 0 @color-accordion-shadow;
+    width: 424px;
+    padding: 12px 14px 4px;
+  }
+
+  :global(.MuiPaper-root.MuiAccordion-root) {
+    box-shadow: none;
+  }
+  
+  :global(.MuiPaper-root.MuiAccordion-root::before),
+  :global(.MuiPaper-root.MuiAccordion-root.Mui-expanded::before) {
+    opacity: 0;
+  }
+
+  :global(.MuiPaper-root) {
+    &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 1px;
+    width: 424px;
+    margin: 0 auto;
+    background-color: @color-grey-5;
+    opacity: 1;
+    }
+  }
+
+  :global(.MuiPaper-root.Mui-expanded) {
+    &::after {
+      opacity: 0;
+    }
+  }
+
+  :global(.MuiButtonBase-root.MuiTab-root),
+  :global(.MuiTabs-root) {
+    min-height: 32px;
+    height: 32px;
+  }
+
+  .tabs {
+    box-shadow: 0 6px 6px 0 @color-accordion-shadow;
+    z-index: 10;  
+  }
+
+  :global(.MuiButtonBase-root.MuiTab-root) {
+    text-transform: none;
+    color: fade(@color-text-black, 70%);
+    padding: 12px 10px 8px;
+    line-height: 12px;
+  }
+
+  :global(.MuiTab-root.Mui-selected) {
+    font-weight: 600;
+    color: @color-text-black;
+  }
+
+  :global(.MuiPaper-root.MuiAccordion-root.Mui-expanded) {
+    margin: 0;
+  }
+
+  :global(.MuiButtonBase-root.MuiAccordionSummary-root.Mui-expanded),
+  :global(.MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters) {
+    min-height: 40px;
+    height: 40px;
+    padding-left: 12px;
   }
 }

@@ -19,6 +19,7 @@ import { useCallback, useState } from 'react'
 import { HexColorPicker, HexColorInput } from 'react-colorful'
 import classes from './ColorPicker.module.less'
 import clsx from 'clsx'
+import Icon from '../../../component/view/icon'
 
 interface ColorPickerProps {
   value: string
@@ -54,14 +55,27 @@ const ColorPicker = (props: Props) => {
     },
     [onChange]
   )
-  const handleClick = (e) => {
-    e.preventDefault()
-    setIsOpen((prev) => !prev)
-  }
-  const handleClose = () => {
-    setIsOpen(false)
-    setIsPaletteOpen(false)
-  }
+
+  const throttle = useCallback((func, limit) => {
+    let inThrottle
+    return (e) => {
+      if (!inThrottle) {
+        func(e)
+        inThrottle = true
+        setTimeout(() => (inThrottle = false), limit)
+      }
+    }
+  }, [])
+
+  const handleClick = useCallback(
+    throttle((e) => {
+      e.preventDefault()
+      setIsOpen((prev) => !prev)
+      setIsPaletteOpen(false)
+    }, 200),
+    []
+  )
+
   const handlePaletteOpen = () => {
     setIsPaletteOpen(true)
   }
@@ -71,23 +85,37 @@ const ColorPicker = (props: Props) => {
 
   const handleBlur = (e) => {
     if (!e.currentTarget.contains(e.relatedTarget)) {
-      handleClose()
+      handleClick(e)
     }
   }
 
   return (
     <div
-      className={classes.colorPickerInput}
+      className={classes.colorPickerWrapper}
       data-testid="color-picker-field"
       onClick={(e) => e.preventDefault()}
     >
-      <button
-        className={classes.colorPickerPreview}
-        data-testid="color-picker-preview"
-        style={{ backgroundColor: value }}
+      <div
+        className={clsx({
+          [classes.colorPickerInput]: true,
+          [classes.selectedInput]: isOpen
+        })}
         onClick={handleClick}
-      />
+      >
+        <div
+          className={classes.colorPickerPreview}
+          data-testid="color-picker-preview"
+          style={{ backgroundColor: value }}
+        />
 
+        <Icon
+          className={clsx({
+            [classes.expandIcon]: true,
+            [classes.turnedIcon]: !isOpen
+          })}
+          name="chevron"
+        />
+      </div>
       {isOpen && (
         <div
           className={clsx(

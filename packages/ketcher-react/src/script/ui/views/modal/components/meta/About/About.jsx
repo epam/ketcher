@@ -18,88 +18,107 @@ import { Dialog } from '../../../../components'
 import Logo from './logo.svg'
 import classes from './About.module.less'
 import { connect } from 'react-redux'
+import { Fragment } from 'react'
 
 function AboutDialog(props) {
   const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info
 
   return (
     <Dialog
-      title="About"
-      className={classes.about}
+      className={`${classes.about} ${classes.dialog_body}`}
       params={props}
-      buttons={['Close']}
+      buttons={[
+        <button onClick={props.onOk} className={classes.okButton} key="ok">
+          Ok
+        </button>
+      ]}
     >
-      <a
-        href="http://lifescience.opensource.epam.com/ketcher/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <Logo />
-      </a>
-      <dl>
-        <dt>
-          <a
-            href="http://lifescience.opensource.epam.com/ketcher/help.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Ketcher
-          </a>
-        </dt>
-        <dd>
-          version
-          <var>{props.version}</var>
-        </dd>
-        <dd>
-          build at <time>{props.buildDate}</time>
-        </dd>
-        {props.indigoVersion ? (
-          <div>
+      <div className={classes.headerContent}>
+        <a href={props.overviewLink} target="_blank" rel="noopener noreferrer">
+          <Logo />
+          <span className={classes.title}>Ketcher</span>
+        </a>
+      </div>
+      <div className={classes.body}>
+        <div className={classes.verionsInfo}>
+          <dl className={classes.ketcherVersionInfo}>
             <dt>
+              <a
+                href={props.overviewLink}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Version {props.version}
+              </a>
+            </dt>
+            <dd>
+              Build at <time>{props.date}</time>
+            </dd>
+            <div className={classes.infoLinks}>
+              <dt>
+                <a
+                  href={props.feedbackLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Feedback
+                </a>
+              </dt>
+              <dt>
+                <a
+                  href={props.lifeScienciesLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Epam Life Sciencies
+                </a>
+              </dt>
+            </div>
+            <br />
+            <div class={classes.indigoVersion}>
               <a
                 href="http://lifescience.opensource.epam.com/indigo/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
+                {' '}
                 Indigo Toolkit
               </a>
-            </dt>
-            <dd>
-              version
-              <var>{indigoInfo[0]}</var>
-            </dd>
-            <dd>
-              build #<var>{indigoInfo[1]}</var>
-            </dd>
-          </div>
-        ) : (
-          <dd>standalone</dd>
-        )}
-        <dt>
-          <a
-            href="http://lifescience.opensource.epam.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            EPAM Life Sciences
-          </a>
-        </dt>
-        <dd>
-          <a
-            href="http://lifescience.opensource.epam.com/ketcher/#feedback"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Feedback
-          </a>
-        </dd>
-      </dl>
+              {props.indigoMachine && <div>{props.indigoMachine}</div>}
+            </div>
+            <div>
+              {props.indigoVersion ? (
+                <Fragment>
+                  <dd>Version {indigoInfo[0]}</dd>
+                  {indigoInfo[1] && <dd>Build {indigoInfo[1]}</dd>}
+                </Fragment>
+              ) : (
+                <p>Standalone</p>
+              )}
+            </div>
+          </dl>
+        </div>
+      </div>
     </Dialog>
   )
 }
 
-const mapStateToProps = (state) => ({ ...state.options.app })
+const mapStateToProps = (state) => ({
+  date: state.options.app.buildDate.replace('T', '; '),
+  indigoVersion: state.options.app.indigoVersion,
+  indigoMachine: state.options.app.indigoMachine,
+  feedbackLink: 'http://lifescience.opensource.epam.com/ketcher/#feedback',
+  overviewLink: 'https://lifescience.opensource.epam.com/ketcher/index.html',
+  lifeScienciesLink: 'http://lifescience.opensource.epam.com/',
+  version: state.options.app.version
+})
 
-const About = connect(mapStateToProps)(AboutDialog)
+const mapDispatchToProps = (dispatch) => ({
+  onOk: (_result) => {
+    dispatch({ type: 'MODAL_CLOSE' })
+  }
+})
+
+const About = connect(mapStateToProps, mapDispatchToProps)(AboutDialog)
 
 export default About

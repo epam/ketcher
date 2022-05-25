@@ -45,10 +45,10 @@
     "react-dom": "^17.0.2"
   },
   "dependencies": {
-    "@babel/runtime": "^7.16.3",
+    "@babel/runtime": "^7.17.9",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@mui/material": "^5.3.1",
+    "@mui/material": "^5.2.4",
     "ajv": "^8.10.0",
     "clsx": "^1.1.1",
     "draft-js": "^0.11.7",
@@ -82,10 +82,10 @@
     "whatwg-fetch": "^3.4.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.0",
-    "@babel/preset-env": "^7.16.4",
-    "@babel/preset-react": "^7.16.0",
-    "@babel/preset-typescript": "^7.16.0",
+    "@babel/core": "^7.17.9",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
+    "@babel/preset-typescript": "^7.16.7",
     "@rollup/plugin-babel": "^5.2.1",
     "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-json": "^4.1.0",
@@ -107,7 +107,6 @@
     "autoprefixer": "^10.2.5",
     "babel-jest": "^27.4.5",
     "cross-env": "^7.0.3",
-    "current-git-branch": "^1.1.0",
     "eslint": "^8.4.1",
     "eslint-plugin-jest": "^25.3.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",

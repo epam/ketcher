@@ -19,7 +19,6 @@ import { useDropzone, DropzoneOptions } from 'react-dropzone'
 
 import parentStyles from './OpenOptions.module.less'
 import styles from './FileDrop.module.less'
-import { DropButton } from './DropButton'
 import Icon from 'src/script/ui/component/view/icon'
 
 type FileDropProps = {
@@ -40,7 +39,6 @@ const FileDrop = ({
 }: FileDropProps) => {
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     multiple: false,
-    noClick: true,
     disabled,
     ...rest
   })
@@ -48,26 +46,32 @@ const FileDrop = ({
   const getClassesString = useMemo((): string => {
     const classes = [
       parentStyles.dropContainer,
-      isDragActive ? styles.isHovered : null
+      isDragActive ? styles.isHovered : null,
+      disabled ? styles.isDisabled : null
     ]
     return classes.join(' ')
   }, [isDragActive])
 
   return (
     <div
+      onKeyDown={open}
       {...getRootProps({
         className: getClassesString
       })}
     >
       <input {...getInputProps()} />
-      <DropButton label={buttonLabel} clickHandler={open} disabled={disabled} />
+      <div className={parentStyles.dropIconWrapper}>
+        <Icon name={iconName} />
+      </div>
       {disabled ? (
-        <p>{disabledText}</p>
+        <p className={parentStyles.textLabel}>{disabledText}</p>
       ) : (
         <>
-          <p>{textLabel}</p>
-          <div className={parentStyles.dropIconWrapper}>
-            <Icon name={iconName} />
+          <div className={parentStyles.textLabelWrapper}>
+            <p className={parentStyles.textLabel}>{textLabel}</p>
+          </div>
+          <div className={parentStyles.buttonLabelWrapper}>
+            <p className={parentStyles.buttonLabel}>{buttonLabel}</p>
           </div>
         </>
       )}

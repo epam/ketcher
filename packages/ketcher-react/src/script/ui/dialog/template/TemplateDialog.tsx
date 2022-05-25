@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dispatch, FC, RefCallback } from 'react'
+import { Dispatch, FC, useState, useEffect } from 'react'
 import TemplateTable, { Template } from './TemplateTable'
 import {
   changeFilter,
@@ -23,20 +23,49 @@ import {
   editTmpl,
   selectTmpl
 } from '../../state/templates'
-import { filterLib, greekify } from '../../utils'
+import { filterLib, filterFGLib, greekify } from '../../utils'
+import Accordion from '@mui/material/Accordion'
+import AccordionSummary from '@mui/material/AccordionSummary'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import Icon from '../../component/view/icon'
 
 import { Dialog } from '../../views/components'
 import Input from '../../component/form/input'
 import SaveButton from '../../component/view/savebutton'
 import { SdfSerializer, Struct } from 'ketcher-core'
-import SelectList from '../../component/form/select-list'
 import classes from './template-lib.module.less'
-import clsx from 'clsx'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { omit } from 'lodash/fp'
 import { onAction } from '../../state'
-import { useResizeObserver } from '../../../../hooks'
+import { functionalGroupsSelector } from '../../state/functionalGroups/selectors'
+import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult'
+
+import Tabs from '@mui/material/Tabs'
+import Tab from '@mui/material/Tab'
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props
+  return (
+    <div
+      className={classes.tabPanel}
+      component="div"
+      role="tabpanel"
+      id={`scrollable-auto-tabpanel-${index}`}
+      aria-labelledby={`scrollable-auto-tab-${index}`}
+      {...other}
+    >
+      {value === index && children}
+    </div>
+  )
+}
+
+function a11yProps(index) {
+  return {
+    id: `scrollable-auto-tab-${index}`,
+    'aria-controls': `scrollable-auto-tabpanel-${index}`
+  }
+}
 
 interface TemplateLibProps {
   filter: string
@@ -44,6 +73,7 @@ interface TemplateLibProps {
   lib: Array<Template>
   selected: Template
   mode: string
+  initialTab: number
 }
 
 interface TemplateLibCallProps {
@@ -54,9 +84,15 @@ interface TemplateLibCallProps {
   onFilter: (filter: string) => void
   onOk: (res: any) => void
   onSelect: (res: any) => void
+  functionalGroups: (Template & { modifiedStruct: Struct })[]
 }
 
 type Props = TemplateLibProps & TemplateLibCallProps
+
+enum TemplateTabs {
+  TemplateLibrary = 0,
+  FunctionalGroupLibrary = 1
+}
 
 export interface Result {
   struct: Struct
@@ -71,19 +107,74 @@ const filterLibSelector = createSelector(
   filterLib
 )
 
+const FUNCTIONAL_GROUPS = 'Functional Groups'
+
+const HeaderContent = () => (
+  <div className={classes.dialogHeader}>
+    <Icon name="template-dialog" />
+    <span>Templates</span>
+  </div>
+)
+
+const FooterContent = ({ data, tab }) => (
+  <div style={{ flexGrow: 1 }}>
+    <SaveButton
+      key="save-to-SDF"
+      data={data}
+      className={classes.saveButton}
+      filename={
+        tab === TemplateTabs.TemplateLibrary
+          ? 'ketcher-tmpls.sdf'
+          : 'ketcher-fg-tmpls.sdf'
+      }
+    >
+      {tab === TemplateTabs.TemplateLibrary
+        ? 'Save template library to SDF'
+        : 'Save functional groups to SDF'}
+    </SaveButton>
+  </div>
+)
+
 const TemplateDialog: FC<Props> = (props) => {
-  const { filter, onFilter, onChangeGroup, mode, ...rest } = props
-  const CONTAINER_MIN_WIDTH = 310
-  let group = props.group
-  const lib = filterLibSelector(props)
-  group = lib[group] ? group : Object.keys(lib)[0]
   const {
-    ref,
-    width
-  }: {
-    ref: RefCallback<HTMLDivElement>
-    width: number | undefined
-  } = useResizeObserver<HTMLDivElement>()
+    filter,
+    onFilter,
+    onChangeGroup,
+    mode,
+    initialTab,
+    functionalGroups,
+    lib: templateLib,
+    ...rest
+  } = props
+
+  const [tab, setTab] = useState(initialTab ?? TemplateTabs.TemplateLibrary)
+  const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
+    props.group
+  ])
+  const [filteredFG, setFilteredFG] = useState(
+    functionalGroups[FUNCTIONAL_GROUPS]
+  )
+
+  const filteredTemplateLib = filterLibSelector(props)
+
+  useEffect(() => {
+    setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS])
+  }, [functionalGroups, filter])
+
+  const handleTabChange = (_, tab) => {
+    setTab(tab)
+    props.onSelect(null)
+  }
+
+  const handleAccordionChange = (accordion) => (_, isExpanded) => {
+    setExpandedAccordions(
+      isExpanded
+        ? [...expandedAccordions, accordion]
+        : [...expandedAccordions].filter(
+            (expandedAccordion) => expandedAccordion !== accordion
+          )
+    )
+  }
 
   const result = (): Result | null => {
     const tmpl = props.selected
@@ -98,76 +189,132 @@ const TemplateDialog: FC<Props> = (props) => {
   }
 
   const sdfSerializer = new SdfSerializer()
-  const data = sdfSerializer.serialize(props.lib)
+  const data =
+    tab === TemplateTabs.TemplateLibrary
+      ? sdfSerializer.serialize(templateLib)
+      : sdfSerializer.serialize(functionalGroups)
 
-  const select = (tmpl: Template): void => {
-    if (tmpl === props.selected) props.onOk(result())
+  const select = (tmpl: Template, activateImmediately = false): void => {
+    onChangeGroup(tmpl.props.group)
+    if (activateImmediately) props.onOk(result())
     else props.onSelect(tmpl)
   }
 
   return (
     <Dialog
-      title="Template Library"
-      className={classes.templateLib}
+      headerContent={<HeaderContent />}
+      footerContent={<FooterContent tab={tab} data={data} />}
+      className={`${classes.dialog_body}`}
       params={omit(['group'], rest)}
       result={() => result()}
-      buttons={[
-        group && (
-          <SaveButton
-            key="save-to-SDF"
-            data={data}
-            filename="ketcher-tmpls.sdf"
-          >
-            Save To SDF…
-          </SaveButton>
-        ),
-        'OK'
-      ]}
+      buttons={['OK']}
+      buttonsNameMap={{ OK: 'Add to canvas' }}
+      needMargin={false}
     >
-      <div className={classes.dialog_body}>
-        <label>
-          Filter:
-          <Input
-            type="search"
-            value={filter}
-            onChange={(value) => onFilter(value)}
-          />
-        </label>
-        <div
-          className={clsx(classes.tableGroupWrap, {
-            [classes.singleColLayout]: width && width < CONTAINER_MIN_WIDTH
-          })}
-          ref={ref}
-        >
-          {group && (
-            <Input
-              className={classes.groups}
-              classes={classes}
-              component={SelectList}
-              splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
-              value={group}
-              onChange={(g) => onChangeGroup(g)}
-              schema={{
-                enum: Object.keys(lib),
-                enumNames: Object.keys(lib).map((g) => greekify(g))
-              }}
-            />
+      <div className={classes.inputContainer}>
+        <Input
+          className={classes.input}
+          type="search"
+          value={filter}
+          onChange={(value) => onFilter(value)}
+          placeholder="Search by elements..."
+        />
+        <Icon name="search" className={classes.searchIcon} />
+      </div>
+      <Tabs value={tab} onChange={handleTabChange} className={classes.tabs}>
+        <Tab
+          label="Template Library"
+          {...a11yProps(TemplateTabs.TemplateLibrary)}
+        />
+        <Tab
+          label="Functional Groups"
+          {...a11yProps(TemplateTabs.FunctionalGroupLibrary)}
+        />
+      </Tabs>
+      <div className={classes.tabsContent}>
+        <TabPanel value={tab} index={TemplateTabs.TemplateLibrary}>
+          <div>
+            {Object.keys(filteredTemplateLib).length ? (
+              Object.keys(filteredTemplateLib).map((groupName) => {
+                const shouldGroupBeRended =
+                  expandedAccordions.includes(groupName)
+                return (
+                  <Accordion
+                    square={true}
+                    key={groupName}
+                    onChange={handleAccordionChange(groupName)}
+                    expanded={shouldGroupBeRended}
+                  >
+                    <AccordionSummary
+                      className={classes.accordionSummary}
+                      expandIcon={
+                        <Icon className={classes.expandIcon} name="chevron" />
+                      }
+                    >
+                      <Icon
+                        name="elements-group"
+                        className={classes.groupIcon}
+                      />
+                      {`${greekify(groupName)} (${
+                        filteredTemplateLib[groupName].length
+                      })`}
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <TemplateTable
+                        templates={
+                          shouldGroupBeRended
+                            ? filteredTemplateLib[groupName]
+                            : []
+                        }
+                        onSelect={(templ) => select(templ)}
+                        onDoubleClick={(templ) => select(templ, true)}
+                        selected={props.selected}
+                        onDelete={props.onDelete}
+                        onAttach={props.onAttach}
+                      />
+                    </AccordionDetails>
+                  </Accordion>
+                )
+              })
+            ) : (
+              <div className={classes.resultsContainer}>
+                <EmptySearchResult textInfo="No items found" />
+              </div>
+            )}
+          </div>
+        </TabPanel>
+        <TabPanel value={tab} index={TemplateTabs.FunctionalGroupLibrary}>
+          {filteredFG?.length ? (
+            <div className={classes.resultsContainer}>
+              <TemplateTable
+                titleRows={1}
+                onDoubleClick={(templ) => select(templ, true)}
+                templates={filteredFG}
+                onSelect={(templ) => select(templ)}
+                selected={props.selected}
+              />
+            </div>
+          ) : (
+            <div className={classes.resultsContainer}>
+              <EmptySearchResult textInfo="No items found" />
+            </div>
           )}
-          <TemplateTable
-            templates={lib[group]}
-            onSelect={select}
-            selected={props.selected}
-            onDelete={props.onDelete}
-            onAttach={props.onAttach}
-          />
-        </div>
+        </TabPanel>
       </div>
     </Dialog>
   )
 }
 
 export default connect(
-  (store) => ({ ...omit(['attach'], (store as any).templates) }),
+  (store) => ({
+    ...omit(['attach'], (store as any).templates),
+    initialTab: (store as any).modal?.prop?.tab,
+    functionalGroups: functionalGroupsSelector(store).map((template) => {
+      const struct = template.struct.clone()
+      struct.sgroups.delete(0)
+      return { ...template, modifiedStruct: struct }
+    })
+  }),
   (dispatch: Dispatch<any>, props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
     onSelect: (tmpl) => dispatch(selectTmpl(tmpl)),

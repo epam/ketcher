@@ -19,6 +19,18 @@
 .root {
   .toolbar();
   .vertical-toolbar();
+
+  width: 32px;
+  margin-top: 8px;
+  margin-left: 4px;
+
+  // TODO: change group style, if will decide to get rid of delimiter everywhere
+  .group:not(:last-of-type) {
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
 }
 
 .buttons {
@@ -26,13 +38,27 @@
   scroll-behavior: smooth;
 }
 
-.listener {
-  display: flex;
-  margin-bottom: 4px;
-  border-bottom: 1px solid @border-color;
-  padding-bottom: 5px;
-}
-
 .borderOff {
   border-bottom: none !important;
+}
+
+.groupItem {
+  margin: 2px;
+
+  // TODO: move to action button styles, when all buttons will have same style
+  svg {
+    right: 2px;
+    bottom: 2px;
+  }
+
+  button {
+    margin: 2px;
+    width: 28px;
+    height: 28px;
+
+    & > svg {
+      top: 1px;
+      left: 1px;
+    }
+  }
 }

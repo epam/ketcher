@@ -29,7 +29,7 @@ const ElementNumber = (props: Props) => {
 
   return (
     <label>
-      Number:
+      <span>Number</span>
       <input type="text" readOnly value={value} />
     </label>
   )

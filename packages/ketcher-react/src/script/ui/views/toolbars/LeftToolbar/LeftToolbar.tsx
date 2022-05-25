@@ -123,13 +123,14 @@ const LeftToolbar = (props: Props) => {
           <Group
             items={[
               { id: 'hand' },
-              { id: 'select', options: selectOptions }, 
+              { id: 'select', options: selectOptions },
               { id: 'erase' }
             ]}
           />
         </div>
 
         <Group
+          className={classes.groupItem}
           items={[
             {
               id: 'bonds',
@@ -144,9 +145,13 @@ const LeftToolbar = (props: Props) => {
           ]}
         />
 
-        <Group items={[{ id: 'charge-plus' }, { id: 'charge-minus' }]} />
+        <Group
+          className={classes.groupItem}
+          items={[{ id: 'charge-plus' }, { id: 'charge-minus' }]}
+        />
 
         <Group
+          className={classes.groupItem}
           items={[
             {
               id: 'transforms',
@@ -155,9 +160,13 @@ const LeftToolbar = (props: Props) => {
           ]}
         />
 
-        <Group items={[{ id: 'sgroup' }, { id: 'sgroup-data' }]} />
+        <Group
+          className={classes.groupItem}
+          items={[{ id: 'sgroup' }, { id: 'sgroup-data' }]}
+        />
 
         <Group
+          className={classes.groupItem}
           items={[
             { id: 'reaction-plus' },
             { id: 'arrows', options: arrowsOptions },
@@ -168,13 +177,19 @@ const LeftToolbar = (props: Props) => {
           ]}
         />
         <div className={classes.listener} ref={sizeRef}>
-          <Group items={[{ id: 'rgroup', options: rGroupOptions }]} />
+          <Group
+            className={classes.groupItem}
+            items={[{ id: 'rgroup', options: rGroupOptions }]}
+          />
         </div>
 
-        <Group items={[{ id: 'shapes', options: shapeOptions }]} />
+        <Group
+          className={classes.groupItem}
+          items={[{ id: 'shapes', options: shapeOptions }]}
+        />
 
         <div ref={endRef}>
-          <Group items={[{ id: 'text' }]} />
+          <Group className={classes.groupItem} items={[{ id: 'text' }]} />
         </div>
       </div>
       <ArrowScroll

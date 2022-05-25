@@ -20,24 +20,27 @@ import {
   setDefaultSettings,
   updateFormState
 } from '../../../../../state/modal/form'
+import { useEffect, useState } from 'react'
 
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker'
 import { Dialog } from '../../../../components'
+import Icon from '../../../../../component/view/icon'
 import MeasureInput from '../../../../../component/form/MeasureInput/measure-input'
 import OpenButton from '../../../../../component/view/openbutton'
 import SaveButton from '../../../../../component/view/savebutton'
+import Select from '../../../../../component/form/Select'
+import Accordion from './Accordion'
 import { StructService } from 'ketcher-core'
 import SystemFonts from '../../../../../component/form/systemfonts'
 import classes from './Settings.module.less'
 import { connect } from 'react-redux'
-import { saveSettings } from '../../../../../state/options'
-import settingsSchema from '../../../../../data/schema/options-schema'
-import { storage } from '../../../../../storage-ext'
-import Sidebar from './components/Sidebar'
-import Icon from '../../../../../component/view/icon'
-import clsx from 'clsx'
-import Select from '../../../../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
+import { saveSettings } from '../../../../../state/options'
+import settingsSchema, {
+  getDefaultOptions
+} from '../../../../../data/schema/options-schema'
+import fieldGroups from './fieldGroups'
+import { isEqual } from 'lodash'
 
 interface SettingsProps extends BaseProps {
   initState: any
@@ -58,6 +61,54 @@ interface SettingsCallProps extends BaseCallProps {
   onReset: () => void
 }
 
+const defaultSettings = getDefaultOptions()
+
+const HeaderContent = ({
+  server,
+  onOpenFile,
+  onReset,
+  formState,
+  initState
+}) => {
+  const getIsResetDisabled = () => {
+    if (formState.result.init) return isEqual(defaultSettings, initState)
+    else return isEqual(defaultSettings, formState.result)
+  }
+
+  return (
+    <div className={classes.headerContent}>
+      <span className={classes.title}> Settings</span>
+      <OpenButton
+        title="Open from File"
+        key="settings"
+        server={server}
+        onLoad={onOpenFile}
+        className={classes.button}
+      >
+        <Icon name="open-1" />
+      </OpenButton>
+      <SaveButton
+        title="Save to File"
+        key="ketcher-settings"
+        data={JSON.stringify(formState.result)}
+        filename="ketcher-settings"
+        className={classes.button}
+      >
+        <Icon name="save-1" />
+      </SaveButton>
+      <button
+        title="Reset"
+        key="settings-button"
+        onClick={onReset}
+        className={classes.button}
+        disabled={getIsResetDisabled()}
+      >
+        <Icon name="reset" />
+      </button>
+    </div>
+  )
+}
+
 type Props = SettingsProps & SettingsCallProps
 
 const settingsProps = settingsSchema.properties
@@ -73,11 +124,25 @@ const SettingsDialog = (props: Props) => {
     ...prop
   } = props
 
+  const [changedGroups, setChangedGroups] = useState(new Set())
+
+  useEffect(() => {
+    const changed = new Set<string>()
+
+    for (const key in initState) {
+      if (initState[key] !== formState.result[key]) {
+        const group = fieldGroups[key]
+        changed.add(group)
+      }
+    }
+    setChangedGroups(changed)
+  }, [initState, formState.result])
+
   const generalTab = {
     key: 'general',
     label: 'General',
     content: (
-      <fieldset className={classes.general}>
+      <fieldset>
         <Field
           name="resetToSelect"
           component={Select}
@@ -96,7 +161,7 @@ const SettingsDialog = (props: Props) => {
     key: 'stereo',
     label: 'Stereochemistry',
     content: (
-      <fieldset className={classes.stereochemistry}>
+      <fieldset>
         <Field name="showStereoFlags" />
         <Field
           name="stereoLabelStyle"
@@ -163,7 +228,7 @@ const SettingsDialog = (props: Props) => {
     key: 'server',
     label: 'Server',
     content: (
-      <fieldset className={classes.server} disabled={!appOpts.server}>
+      <fieldset disabled={!appOpts.server}>
         <Field name="smart-layout" />
         <Field name="ignore-stereochemistry-errors" />
         <Field name="mass-skip-error-on-pseudoatoms" />
@@ -198,7 +263,7 @@ const SettingsDialog = (props: Props) => {
   }
   const debuggingTab = {
     key: 'debugging',
-    label: 'Options for debugging',
+    label: 'Options for Debugging',
     content: (
       <fieldset>
         <Field name="showAtomIds" />
@@ -221,44 +286,30 @@ const SettingsDialog = (props: Props) => {
 
   return (
     <Dialog
-      title="Settings"
       className={classes.settings}
       result={() => formState.result}
       valid={() => formState.valid}
       params={prop}
-      buttons={['Save']}
-      buttonsTop={[
-        <OpenButton
-          key="settings"
+      buttonsNameMap={{ OK: 'Apply' }}
+      buttons={['Cancel', 'OK']}
+      withDivider
+      needMargin={false}
+      headerContent={
+        <HeaderContent
           server={server}
-          onLoad={onOpenFile}
-          className={clsx(classes.button, classes.buttonOpen)}
-        >
-          <Icon name={'open-1'} />
-        </OpenButton>,
-        <SaveButton
-          key="ketcher-settings"
-          data={JSON.stringify(formState.result)}
-          filename="ketcher-settings"
-          className={classes.button}
-        >
-          <Icon name={'save-1'} />
-        </SaveButton>,
-        <button
-          key="settings-button"
-          onClick={onReset}
-          className={classes.button}
-        >
-          <Icon name={'reset'} />
-        </button>
-      ]}
+          onOpenFile={onOpenFile}
+          onReset={onReset}
+          formState={formState}
+          initState={initState}
+        />
+      }
     >
       <Form schema={settingsSchema} init={initState} {...formState}>
-        <Sidebar tabs={tabs} className={classes.sidebar} />
-
-        {!storage.isAvailable() ? (
-          <div className={classes.warning}>{storage.warningMessage}</div>
-        ) : null}
+        <Accordion
+          tabs={tabs}
+          className={classes.accordion}
+          changedGroups={changedGroups}
+        />
       </Form>
     </Dialog>
   )

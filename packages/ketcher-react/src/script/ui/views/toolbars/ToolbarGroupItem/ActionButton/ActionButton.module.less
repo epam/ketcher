@@ -25,7 +25,7 @@
   padding: 0;
   position: relative;
   background: inherit;
-  background-color: @color-background-primary;
+  cursor: pointer;
 
   &::before,
   &::after {
@@ -39,8 +39,9 @@
   }
 
   &:hover {
-    .highlight-scale(@scale:1.25);
-    .highlight-shadow(black);
+    & path {
+      fill: @color-primary-hover;
+    }
 
     background-image: none;
   }
@@ -54,8 +55,20 @@
   .button-size(large);
 }
 
-.selected {
-  .highlight-invert();
+.button.selected, .button:active {
+  background: @color-primary-active;
+
+  & path {
+    fill: #fff;
+  }
+
+  & span {
+    color: #fff;
+  }
+
+  &:hover {
+    background-color: @color-spec-button-primary-hover;
+  }
 }
 
 .button-size(@dim) {
@@ -74,9 +87,4 @@
     height: @icon-size;
     fill: currentColor;
   }
-}
-
-// stylelint-disable-next-line selector-pseudo-class-no-unknown
-:global(.smallEditor) .button {
-  .button-size(small);
 }

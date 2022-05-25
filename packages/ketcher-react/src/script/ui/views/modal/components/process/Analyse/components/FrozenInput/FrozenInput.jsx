@@ -20,6 +20,7 @@ function FrozenInput({ value }) {
       type="text"
       spellCheck={false}
       value={value}
+      readOnly
       onChange={(event) => event.preventDefault()}
     />
   )

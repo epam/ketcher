@@ -15,14 +15,14 @@
  ***************************************************************************/
 
 import Form, { Field } from '../../../../../component/form/form/form'
-
 import { Dialog } from '../../../../components'
 import ErrorsCheck from './components'
 import { check } from '../../../../../state/server'
 import { checkOpts } from '../../../../../state/options'
 import { connect } from 'react-redux'
 import style from './Check.module.less'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
 
 const checkSchema = {
   title: 'Check',
@@ -64,20 +64,97 @@ const checkSchema = {
   }
 }
 
+const getFormattedDateString = (date) => {
+  const getFixedString = (num) => (num + '').padStart(2, 0)
+  return `${getFixedString(date.getHours())}:${getFixedString(
+    date.getMinutes()
+  )}:${getFixedString(date.getSeconds())}  ${getFixedString(
+    date.getDate()
+  )}.${getFixedString(date.getMonth() + 1)}.${getFixedString(
+    date.getFullYear()
+  )}`
+}
+
+const FooterContent = ({
+  handleCheck,
+  handleApply,
+  onCancel,
+  isStuctureChecking,
+  isCheckedWithNewSettings
+}) => {
+  return (
+    <div className={style.buttons}>
+      <div>
+        <button
+          className={
+            isCheckedWithNewSettings
+              ? style.buttonSecondary
+              : style.buttonPrimary
+          }
+          onClick={handleCheck}
+          disabled={!isStuctureChecking}
+        >
+          Check
+        </button>
+      </div>
+      <div className={style.buttonsRight}>
+        <button className={style.buttonSecondary} onClick={onCancel}>
+          Cancel
+        </button>
+        <button
+          className={style.buttonPrimary}
+          onClick={handleApply}
+          disabled={!isStuctureChecking}
+        >
+          Apply
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function CheckDialog(props) {
-  const { formState, checkState, onCheck, ...prop } = props
+  const { formState, checkState, onCheck, onApply, onCancel, ...restProps } =
+    props
   const { result = checkState, moleculeErrors } = formState
+  const [isStuctureChecking, setIsStructureChecking] = useState(false)
+  const [lastCheckDate, setLastCheckDate] = useState(null)
+  const [isCheckedWithNewSettings, setIsCheckedWithNewSettings] =
+    useState(false)
+
+  const handleApply = () => onApply(result)
+
+  const handleCheck = () => {
+    setIsStructureChecking(false)
+    onCheck(result.checkOptions).then(() => {
+      setIsStructureChecking(true)
+      setLastCheckDate(new Date())
+      setIsCheckedWithNewSettings(true)
+    })
+  }
+
+  const handleSettingsChange = () => setIsCheckedWithNewSettings(false)
 
   useEffect(() => {
-    onCheck(result.checkOptions)
+    handleCheck()
   }, [])
 
   return (
     <Dialog
       title="Structure Check"
-      className={style.check}
-      params={prop}
+      className={style.dialog_body}
+      params={{ ...restProps, onCancel }}
       buttons={[]}
+      footerContent={
+        <FooterContent
+          handleCheck={handleCheck}
+          handleApply={handleApply}
+          onCancel={onCancel}
+          isStuctureChecking={isStuctureChecking}
+          isCheckedWithNewSettings={isCheckedWithNewSettings}
+        />
+      }
+      withDivider
     >
       <Form
         schema={checkSchema}
@@ -88,19 +165,48 @@ function CheckDialog(props) {
         <div className={style.wrapper}>
           <div className={style.settings}>
             <label>Settings</label>
-            <Field
-              name="checkOptions"
-              labelPos={false}
-              multiple
-              type="checkbox"
-              onChange={onCheck}
-            />
+            <div
+              className={!isStuctureChecking ? style.checkBoxesDisabled : ''}
+            >
+              <Field
+                name="checkOptions"
+                labelPos={false}
+                multiple
+                type="checkbox"
+                disabled={!isStuctureChecking}
+                onChange={handleSettingsChange}
+              />
+            </div>
           </div>
-          <div className={style.warnings}>
-            <ErrorsCheck
-              moleculeErrors={moleculeErrors}
-              checkSchema={checkSchema}
-            />
+          <div className={style.checkInfo}>
+            <span>
+              Last check:{' '}
+              {lastCheckDate && getFormattedDateString(lastCheckDate)}
+            </span>
+            <div
+              className={
+                !Object.keys(moleculeErrors).length || !isStuctureChecking
+                  ? style.centeredContainer
+                  : style.warnings
+              }
+            >
+              {isStuctureChecking ? (
+                <div
+                  className={
+                    Object.keys(moleculeErrors).length
+                      ? style.warningsContainer
+                      : style.centeredContainer
+                  }
+                >
+                  <ErrorsCheck
+                    moleculeErrors={moleculeErrors}
+                    checkSchema={checkSchema}
+                  />
+                </div>
+              ) : (
+                <LoadingCircles />
+              )}
+            </div>
           </div>
         </div>
       </Form>
@@ -115,7 +221,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   onCheck: (opts) => dispatch(check(opts)).catch(ownProps.onCancel),
-  onOk: (res) => {
+  onApply: (res) => {
     dispatch(checkOpts(res))
     ownProps.onOk(res)
   }

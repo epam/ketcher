@@ -79,7 +79,7 @@ const sData = {
             type: 'string',
             default: '',
             minLength: 1,
-            invalidMessage: 'Please, specify field name'
+            invalidMessage: 'Please, specify field value'
           },
           radiobuttons: radioButtonsSchema
         },
@@ -101,7 +101,7 @@ const sData = {
             type: 'string',
             default: '',
             minLength: 1,
-            invalidMessage: 'Please, specify field name'
+            invalidMessage: 'Please, specify field value'
           },
           radiobuttons: radioButtonsSchema
         },
@@ -110,6 +110,7 @@ const sData = {
       {
         key: 'FRG_RAD',
         title: 'MDLBG_FRAGMENT_RADICALS',
+        type: 'object',
         properties: {
           type: { enum: ['DAT'] },
           fieldName: {
@@ -122,7 +123,7 @@ const sData = {
             type: 'string',
             default: '',
             minLength: 1,
-            invalidMessage: 'Please, specify field name'
+            invalidMessage: 'Please, specify field value'
           },
           radiobuttons: radioButtonsSchema
         },
@@ -302,6 +303,7 @@ const sData = {
 
 export const sdataCustomSchema = {
   key: 'Custom',
+  type: 'object',
   properties: {
     type: { enum: ['DAT'] },
     context: {

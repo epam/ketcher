@@ -49,8 +49,8 @@ type Props = RightToolbarProps & RightToolbarCallProps
 const RightToolbar = (props: Props) => {
   const { className, ...rest } = props
   const { active, onAction, freqAtoms } = rest
-  const [startRef, startInView] = useInView({ threshold: 0.9 })
-  const [endRef, endInView] = useInView({ threshold: 0.9 })
+  const [startRef, startInView] = useInView({ threshold: 0.8 })
+  const [endRef, endInView] = useInView({ threshold: 0.8 })
   const sizeRef = useRef() as MutableRefObject<HTMLDivElement>
   const scrollRef = useRef() as MutableRefObject<HTMLDivElement>
 
@@ -65,7 +65,7 @@ const RightToolbar = (props: Props) => {
   return (
     <div className={clsx(classes.root, className)}>
       <div className={classes.buttons} ref={scrollRef}>
-        <Group>
+        <Group className={classes.atomsList}>
           <AtomsList
             ref={startRef}
             atoms={basicAtoms}
@@ -73,18 +73,16 @@ const RightToolbar = (props: Props) => {
             onAction={onAction}
           />
           <AtomsList atoms={freqAtoms} active={active} onAction={onAction} />
+          <ToolbarGroupItem id="period-table" {...rest} />
         </Group>
 
         <Group>
           <div ref={sizeRef}>
-            <ToolbarGroupItem id="period-table" {...rest} />
+            <ToolbarGroupItem id="any-atom" {...rest} />
+            <ToolbarGroupItem id="extended-table" {...rest} />
           </div>
         </Group>
-        <div ref={endRef}>
-          <Group>
-            <ToolbarGroupItem id="enhanced-stereo" {...rest} />
-          </Group>
-        </div>
+        <div ref={endRef}></div>
       </div>
       <ArrowScroll
         startInView={startInView}

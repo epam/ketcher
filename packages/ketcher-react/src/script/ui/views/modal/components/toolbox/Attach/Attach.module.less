@@ -19,6 +19,10 @@
 .attachPoints {
   width: @width-small;
 
+  > div {
+    margin-top: @margin-top-bottom;
+  }
+
   form {
     width: 17em;
     display: flex;
@@ -26,7 +30,7 @@
     align-items: flex-start;
 
     label {
-      margin: @input-height / 5 0;
+      margin-bottom: @margin-top-bottom;
       color: @color-text-secondary;
       display: flex;
       flex-direction: row-reverse;

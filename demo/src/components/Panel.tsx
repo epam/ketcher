@@ -30,7 +30,7 @@ interface Props {
 export const Panel = ({
   printToTerminal,
   hiddenButtons,
-  buttonsHideHandler,
+  buttonsHideHandler
 }: Props) => {
   const exportHandler = () => {
     KetcherFunctions.exportCtab().then((str) => {

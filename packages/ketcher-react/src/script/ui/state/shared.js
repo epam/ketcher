@@ -30,7 +30,7 @@ export function onAction(action) {
   if (action && action.dialog) {
     return {
       type: 'MODAL_OPEN',
-      data: { name: action.dialog }
+      data: { name: action.dialog, prop: action.prop }
     }
   }
   if (action && action.thunk) {

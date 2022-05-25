@@ -22,7 +22,7 @@ import { checkOpts } from '../../../../../state/options'
 import { connect } from 'react-redux'
 import style from './Check.module.less'
 import { useEffect, useState } from 'react'
-import { LoadingCircles } from 'src/script/ui/views/modal/components/document/Open/components/LoadingCircles'
+import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
 
 const checkSchema = {
   title: 'Check',

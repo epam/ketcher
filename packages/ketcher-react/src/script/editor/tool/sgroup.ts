@@ -470,7 +470,7 @@ export function sgroupDialog(editor, id, defaultType) {
   let attrs
   if (sg) {
     attrs = sg.getAttrs()
-    attrs.context = getContextBySgroup(restruct, sg.atoms)
+    if (!attrs.context) attrs.context = getContextBySgroup(restruct, sg.atoms)
   } else {
     attrs = {
       context: getContextBySelection(restruct, selection)

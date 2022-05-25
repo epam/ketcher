@@ -19,6 +19,7 @@ import { IconButton } from './IconButton'
 
 interface UndoRedoProps {
   disabledButtons: string[]
+  hiddenButtons: string[]
   shortcuts: { [key in string]: string }
   onUndo: () => void
   onRedo: () => void
@@ -28,6 +29,7 @@ export const UndoRedo = ({
   onUndo,
   onRedo,
   disabledButtons,
+  hiddenButtons,
   shortcuts
 }: UndoRedoProps) => {
   return (
@@ -38,6 +40,7 @@ export const UndoRedo = ({
         onClick={onUndo}
         iconName="undo"
         disabled={disabledButtons.includes('undo')}
+        isHidden={hiddenButtons.includes('undo')}
         shortcut={shortcuts.undo}
       />
       <IconButton
@@ -45,6 +48,7 @@ export const UndoRedo = ({
         onClick={onRedo}
         iconName="redo"
         disabled={disabledButtons.includes('redo')}
+        isHidden={hiddenButtons.includes('redo')}
         shortcut={shortcuts.redo}
       />
       <Divider />

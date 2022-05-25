@@ -25,6 +25,7 @@ interface ClipboardControlsProps {
   onPaste: () => void
   onCut: () => void
   disabledButtons: string[]
+  hiddenButtons: string[]
   shortcuts: { [key in string]: string }
 }
 
@@ -36,52 +37,66 @@ export const ClipboardControls = ({
   onPaste,
   onCut,
   shortcuts,
-  disabledButtons
+  disabledButtons,
+  hiddenButtons
 }: ClipboardControlsProps) => {
+  const copyButtons = [
+    {
+      name: 'copy',
+      title: 'Copy',
+      handler: onCopy
+    },
+    {
+      name: 'copy-mol',
+      title: 'Copy as MOL',
+      handler: onCopyMol
+    },
+    {
+      name: 'copy-ket',
+      title: 'Copy as KET',
+      handler: onCopyKet
+    },
+    {
+      name: 'copy-image',
+      title: 'Copy Image',
+      handler: onCopyImage
+    }
+  ]
+
+  const getButtonElement = (button) => (
+    <IconButton
+      title={button.title}
+      onClick={button.handler}
+      iconName={button.name}
+      shortcut={shortcuts[button.name]}
+      disabled={disabledButtons.includes(button.name)}
+      isHidden={hiddenButtons.includes(button.name)}
+      key={button.name}
+    />
+  )
+
+  const firstButtonObj = copyButtons.find(
+    (button) => !hiddenButtons.includes(button.name)
+  )
+  const collapsibleElements = copyButtons
+    .filter((button) => button !== firstButtonObj)
+    .map((button) => getButtonElement(button))
+
   return (
     <>
-      <ElementWithDropdown
-        topElement={
-          <IconButton
-            title="Copy"
-            onClick={onCopy}
-            iconName="copy"
-            shortcut={shortcuts.copy}
-            disabled={disabledButtons.includes('copy')}
-          />
-        }
-        dropDownElements={
-          <>
-            <IconButton
-              title="Copy as MOL"
-              onClick={onCopyMol}
-              iconName="copy-mol"
-              shortcut={shortcuts['copy-mol']}
-              disabled={disabledButtons.includes('copy-mol')}
-            />
-            <IconButton
-              title="Copy as KET"
-              onClick={onCopyKet}
-              iconName="copy-ket"
-              shortcut={shortcuts['copy-ket']}
-              disabled={disabledButtons.includes('copy-ket')}
-            />
-            <IconButton
-              title="Copy Image"
-              onClick={onCopyImage}
-              iconName="copy-image"
-              shortcut={shortcuts['copy-image']}
-              disabled={disabledButtons.includes('copy-image')}
-            />
-          </>
-        }
-      />
+      {!hiddenButtons.includes('copies') && (
+        <ElementWithDropdown
+          topElement={getButtonElement(firstButtonObj)}
+          dropDownElements={collapsibleElements}
+        />
+      )}
       <IconButton
         title="Paste"
         onClick={onPaste}
         iconName="paste"
         shortcut={shortcuts.paste}
         disabled={disabledButtons.includes('paste')}
+        isHidden={hiddenButtons.includes('paste')}
       />
       <IconButton
         title="Cut"
@@ -89,6 +104,7 @@ export const ClipboardControls = ({
         iconName="cut"
         shortcut={shortcuts.cut}
         disabled={disabledButtons.includes('cut')}
+        isHidden={hiddenButtons.includes('cut')}
       />
     </>
   )

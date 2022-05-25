@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Component } from 'react'
+import { ErrorTooltip } from './errorTooltip'
 import { FormContext } from '../../../../../contexts'
 import Input from '../input'
 import classes from './form.module.less'
@@ -113,7 +114,7 @@ function Field(props) {
     <Input name={name} schema={desc} {...fieldOpts} {...rest} />
   )
 
-  if (labelPos === false) return formField
+  if (labelPos === false) return <div>{formField}</div>
   return (
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}
@@ -121,7 +122,13 @@ function Field(props) {
       title={rest.title || desc.title}
       labelPos={labelPos}
     >
-      {formField}
+      {dataError ? (
+        <ErrorTooltip title={dataError} placement="right" arrow open>
+          <span>{formField}</span>
+        </ErrorTooltip>
+      ) : (
+        formField
+      )}
     </Label>
   )
 }

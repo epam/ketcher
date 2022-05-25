@@ -33,7 +33,7 @@ Using the _Tool palette_, you can
 - draw special structures (see the following sections);
 
 - select the entire molecule or its fragment in one of the following
-  ways (click on the button align=center <img src = images/2_lasso_icon.png height = "36" /> to see the list of available options):
+  ways (click on the button align=center <img src = images/2_lasso_icon.png width = "42" /> to see the list of available options):
 
   <img src = images/3_lasso_menu.png height = "60" /> 
 
@@ -129,7 +129,7 @@ You can use the buttons of the _Main_ toolbar:
 # 3D Viewer
 
 The structure appears in a modal window after clicking on the **3D
-Viewer** button <img src = images/8_1_miew_icon.png height = "36" /> on the top panel:
+Viewer** button <img src = images/8_1_miew_icon.png width = "42" /> on the top panel:
 
 <img src = images/8_miew1.png width = "800" />
 
@@ -201,7 +201,7 @@ To draw/edit atoms you can:
 
 To draw/edit bonds you can:
 
-- Click an arrow on the Bond tool <img src = images/15_bond_icon.png height = "36"/> in the Tool palette
+- Click an arrow on the Bond tool <img src = images/15_bond_icon.png width = "42"/> in the Tool palette
   to open the drop-down list with the following bond types:
 
   <img src = images/bond1.png height = "28"/>  <br>

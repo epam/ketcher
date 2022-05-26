@@ -14,12 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styles from './LoadingCircles.module.less'
+ import { DialogActionButton } from 'src/script/ui/views/modal/components/document/Open/components/DialogActionButton'
+ import styles from './LoadingCircles.module.less'
 
-export const LoadingCircles = () => (
+export interface Props {
+  onClose: () => void
+  actionTimeout: boolean
+}
+export const LoadingCircles = ({ actionTimeout, onClose }: Props) => (
   <div className={styles.container}>
-    <span />
-    <span />
-    <span />
+    <div className={styles.loader}>
+      <span />
+      <span />
+      <span />
+    </div>
+    {actionTimeout && <DialogActionButton
+      key="cancelButton"
+      clickHandler={onClose}
+      disabled={false}
+      styles={styles.button}
+      label="Cancel"
+      title="Action will be canceled"
+      />
+    }
   </div>
 )

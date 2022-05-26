@@ -26,6 +26,7 @@ import { connect } from 'react-redux'
 import { range } from 'lodash/fp'
 import Select from '../../../../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
+import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
 
 function roundOff(value, round) {
   if (typeof value === 'number') return value.toFixed(round)
@@ -42,7 +43,7 @@ class AnalyseDialog extends Component {
   }
 
   render() {
-    const { values, round, loading, onAnalyse, onChangeRound, ...props } =
+    let { values, round, loading, onAnalyse, onChangeRound, ...props } =
       this.props
     return (
       <Dialog
@@ -55,73 +56,77 @@ class AnalyseDialog extends Component {
         buttonsNameMap={{ OK: 'Close' }}
         params={props}
       >
-        <ul>
-          {[
-            {
-              name: 'Chemical Formula',
-              key: 'gross',
-              withSelector: false
-            },
-            {
-              name: 'Molecular Weight',
-              key: 'molecular-weight',
-              round: 'roundWeight',
-              withSelector: true
-            },
-            {
-              name: 'Exact Mass',
-              key: 'monoisotopic-mass',
-              round: 'roundMass',
-              withSelector: true
-            },
-            {
-              name: 'Elemental Analysis',
-              key: 'mass-composition',
-              round: 'roundElAnalysis',
-              withSelector: false
-            }
-          ].map((item) => (
-            <li key={item.key} className={classes.contentWrapper}>
-              <div className={classes.inputWrapper}>
-                <label>{item.name}:</label>
-                {item.key === 'gross' ? (
-                  <FormulaInput
-                    value={values && !loading ? values[item.key] : ''}
-                    contentEditable={false}
-                  />
-                ) : item.key === 'mass-composition' ? (
-                  <textarea
-                    readOnly
-                    value={
-                      values && !loading
-                        ? roundOff(values[item.key], round[item.round])
-                        : 0
-                    }
-                  />
-                ) : (
-                  <FrozenInput
-                    value={
-                      values && !loading
-                        ? roundOff(values[item.key], round[item.round])
-                        : 0
-                    }
-                  />
-                )}
-              </div>
-              {item.withSelector ? (
-                <div className={classes.selectWrapper}>
-                  <span>Decimal places</span>
-                  <Select
-                    options={selectOptions}
-                    value={round[item.round]}
-                    onChange={(val) => onChangeRound(item.round, val)}
-                    className={classes.select}
-                  />
+        <div className={classes.centeredContainer}>
+        {!loading ? (<ul>
+            {[
+              {
+                name: 'Chemical Formula',
+                key: 'gross',
+                withSelector: false
+              },
+              {
+                name: 'Molecular Weight',
+                key: 'molecular-weight',
+                round: 'roundWeight',
+                withSelector: true
+              },
+              {
+                name: 'Exact Mass',
+                key: 'monoisotopic-mass',
+                round: 'roundMass',
+                withSelector: true
+              },
+              {
+                name: 'Elemental Analysis',
+                key: 'mass-composition',
+                round: 'roundElAnalysis',
+                withSelector: false
+              }
+            ].map((item) => (
+              <li key={item.key} className={classes.contentWrapper}>
+                <div className={classes.inputWrapper}>
+                  <label>{item.name}:</label>
+                  {item.key === 'gross' ? (
+                    <FormulaInput
+                      value={values && !loading ? values[item.key] : ''}
+                      contentEditable={false}
+                    />
+                  ) : item.key === 'mass-composition' ? (
+                    <textarea
+                      readOnly
+                      value={
+                        values && !loading
+                          ? roundOff(values[item.key], round[item.round])
+                          : 0
+                      }
+                    />
+                  ) : (
+                    <FrozenInput
+                      value={
+                        values && !loading
+                          ? roundOff(values[item.key], round[item.round])
+                          : 0
+                      }
+                    />
+                  )}
                 </div>
-              ) : null}
-            </li>
-          ))}
-        </ul>
+                {item.withSelector ? (
+                  <div className={classes.selectWrapper}>
+                    <span>Decimal places</span>
+                    <Select
+                      options={selectOptions}
+                      value={round[item.round]}
+                      onChange={(val) => onChangeRound(item.round, val)}
+                      className={classes.select}
+                    />
+                  </div>
+                ) : null}
+              </li>
+            ))}
+          </ul>) : (
+            <LoadingCircles actionTimeout={true} onClose={()=>loading=true}/>
+        )}
+        </div>
       </Dialog>
     )
   }

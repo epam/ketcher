@@ -108,7 +108,15 @@ class StructEditor extends Component {
       switch (csr.status) {
         case 'enable':
           this.editorRef.current.classList.add(classes.enableCursor)
-          if (!this.state.enableCursor) {
+          const { left, top, right, bottom } =
+            this.editorRef.current.getBoundingClientRect()
+          const { clientX, clientY } = csr.cursorPosition
+          const handShouldBeShown =
+            clientX >= left &&
+            clientX <= right &&
+            clientY >= top &&
+            clientX <= bottom
+          if (!this.state.enableCursor && handShouldBeShown) {
             this.setState({
               enableCursor: true
             })
@@ -201,9 +209,11 @@ class StructEditor extends Component {
           >
             {/* svg here */}
           </div>
-          {this.state.enableCursor && (
-            <Cursor icon={handIcon} pressedIcon={compressedHancIcon} />
-          )}
+          <Cursor
+            Icon={handIcon}
+            PressedIcon={compressedHancIcon}
+            enableHandTool={this.state.enableCursor}
+          />
           <div className={classes.measureLog} ref={this.logRef} />
           {indigoVerification && (
             <div className={classes.spinnerOverlay}>

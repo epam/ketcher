@@ -1,13 +1,11 @@
-import React from 'react'
 import { useState, useEffect } from 'react'
 
-const Cursor = (props) => {
+const Cursor = ({ Icon, PressedIcon, enableHandTool }) => {
   const [position, setPosition] = useState({
-    clientX: 0,
-    clientY: 0
+    clientX: 50,
+    clientY: 50
   })
-  const Icon = props.icon
-  const PressedIcon = props.pressedIcon
+
   const [mousedown, setMouseDown] = useState(false)
 
   const updatePosition = (event) => {
@@ -46,6 +44,9 @@ const Cursor = (props) => {
       document.removeEventListener('mouseenter', updatePosition)
     }
   }, [])
+
+  if (!enableHandTool) return null
+
   return (
     <div
       style={{
@@ -55,8 +56,7 @@ const Cursor = (props) => {
         left: 0,
         right: 0,
         zIndex: 9999,
-        pointerEvents: 'none',
-        visibility: props.enable
+        pointerEvents: 'none'
       }}
     >
       {mousedown ? (
@@ -79,4 +79,5 @@ const Cursor = (props) => {
     </div>
   )
 }
+
 export default Cursor

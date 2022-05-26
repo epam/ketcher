@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Vec2 } from 'ketcher-core'
+import { Vec2, Box2Abs, Scale } from 'ketcher-core'
 import Editor from '../Editor'
-import { Box2Abs } from 'ketcher-core'
-import { Scale } from 'ketcher-core'
 
 class HandTool {
   editor: Editor
@@ -25,7 +23,14 @@ class HandTool {
 
   constructor(editor) {
     this.editor = editor
-    this.editor.event.cursor.dispatch({ status: 'enable' })
+    const { clientX, clientY } = this.editor.lastEvent || {
+      clientX: 0,
+      clientY: 0
+    }
+    this.editor.event.cursor.dispatch({
+      status: 'enable',
+      cursorPosition: { clientX, clientY }
+    })
   }
 
   mousedown(event) {

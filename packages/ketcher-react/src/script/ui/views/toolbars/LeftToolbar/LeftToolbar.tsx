@@ -121,6 +121,7 @@ const LeftToolbar = (props: Props) => {
       <div className={classes.buttons} ref={scrollRef}>
         <div className={classes.listener} ref={startRef}>
           <Group
+            className={classes.groupItem}
             items={[
               { id: 'hand' },
               { id: 'select', options: selectOptions },

@@ -33,7 +33,6 @@ import BondTripleIcon from './files/bond-triple.svg'
 import BondUpIcon from './files/bond-up.svg'
 import BondUpdownIcon from './files/bond-updown.svg'
 import CapitalTIcon from './files/capital-t.svg'
-import CircleIconCursor from './files/circle.svg'
 import ChainIcon from './files/chain.svg'
 import ChargeMinusIcon from './files/charge-minus.svg'
 import ChargePlusIcon from './files/charge-plus.svg'
@@ -276,7 +275,6 @@ const icons = {
   check: CheckIcon,
   'chiral-flag': ChiralFlagIcon,
   cip: CipIcon,
-  cursor: CircleIconCursor,
   clean: CleanIcon,
   copies: CopyIcon,
   copy: CopyIcon,

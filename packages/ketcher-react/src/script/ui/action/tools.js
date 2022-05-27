@@ -24,7 +24,8 @@ const toolActions = {
   hand: {
     title: 'Hand tool',
     shortcut: 'Mod+h',
-    action: { tool: 'hand' }
+    action: { tool: 'hand' },
+    hidden: (options) => isHidden(options, 'hand')
   },
   'select-lasso': {
     title: 'Lasso Selection',

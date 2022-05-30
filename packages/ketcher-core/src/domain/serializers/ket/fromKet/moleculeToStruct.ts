@@ -76,12 +76,12 @@ export function atomToStruct(source) {
   // query
   ifDef(params, 'ringBondCount', source.ringBondCount)
   ifDef(params, 'substitutionCount', source.substitutionCount)
-  ifDef(params, 'unsaturatedAtom', +source.unsaturatedAtom)
+  ifDef(params, 'unsaturatedAtom', Number(Boolean(source.unsaturatedAtom)))
   ifDef(params, 'hCount', source.hCount)
   // reaction
   ifDef(params, 'aam', source.mapping)
   ifDef(params, 'invRet', source.invRet)
-  ifDef(params, 'exactChangeFlag', +source.exactChangeFlag)
+  ifDef(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)))
   return new Atom(params)
 }
 

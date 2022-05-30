@@ -47,11 +47,19 @@ export function identifyStructFormat(
       return 'mol'
     }
   }
+
   if (
     sanitizedString[0] === '<' &&
     sanitizedString.indexOf('<molecule') !== -1
   ) {
     return 'cml'
+  }
+
+  if (
+    sanitizedString.replace(/\s+/g, '') ===
+    btoa(atob(sanitizedString.replace(/\s+/g, '')))
+  ) {
+    return 'cdx'
   }
 
   if (sanitizedString.slice(0, 5) === 'InChI') {
@@ -66,6 +74,6 @@ export function identifyStructFormat(
   if (sanitizedString.indexOf('<CDXML') !== -1) {
     return 'cdxml'
   }
-  // Molfile by default as Indigo does
-  return 'mol'
+
+  return 'cdx'
 }

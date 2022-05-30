@@ -56,6 +56,12 @@ function parseStruct(struct, server, options) {
     const { rescale, fragment, ...formatterOptions } = options
 
     const format = identifyStructFormat(struct)
+    if (format === 'cdx') {
+      const structToBase64 = window.btoa(
+        unescape(encodeURIComponent(struct.trim()))
+      )
+      struct = `base64::${structToBase64}`
+    }
     const factory = new FormatterFactory(server)
 
     const service = factory.create(format, formatterOptions)

@@ -35,6 +35,7 @@ export type SupportedFormat =
   | 'inChIAuxInfo'
   | 'cml'
   | 'ket'
+  | 'cdx'
   | 'cdxml'
 
 export type FormatterFactoryOptions = Partial<

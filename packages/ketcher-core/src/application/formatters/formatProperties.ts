@@ -86,6 +86,12 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.CDXML,
     ['.cdxml'],
     true
+  ),
+  cdx: new SupportedFormatProperties(
+    'CDX',
+    ChemicalMimeType.CDX,
+    ['.cdx'],
+    true
   )
 }
 

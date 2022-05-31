@@ -22,6 +22,7 @@ import ChainTool from './chain'
 import ChargeTool from './charge'
 import EnhancedStereoTool from './enhanced-stereo'
 import EraserTool from './eraser'
+import HandTool from './hand'
 import PasteTool from './paste'
 import RGroupAtomTool from './rgroupatom'
 import RGroupFragmentTool from './rgroupfragment'
@@ -37,6 +38,7 @@ import TemplateTool from './template'
 import TextTool from './text'
 
 const tools = {
+  hand: HandTool,
   rgroupatom: RGroupAtomTool,
   select: SelectTool,
   sgroup: SGroupTool,

@@ -122,7 +122,11 @@ const LeftToolbar = (props: Props) => {
         <div className={classes.listener} ref={startRef}>
           <Group
             className={classes.groupItem}
-            items={[{ id: 'select', options: selectOptions }, { id: 'erase' }]}
+            items={[
+              { id: 'hand' },
+              { id: 'select', options: selectOptions },
+              { id: 'erase' }
+            ]}
           />
         </div>
 

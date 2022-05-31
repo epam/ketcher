@@ -93,7 +93,7 @@
   transition: max-height 300ms ease-in-out;
   overflow: hidden;
   width: @width-x-small - @margin-left-right * 2;
-  margin-left: @margin-left-right;
+  padding: 0 12px;
 }
 
 .hiddenAccordion{
@@ -115,11 +115,8 @@
     margin-bottom: 4px;
     color: @color-text-secondary;
 
-    &:hover::after {
-      transform: translate(59px, 21px);
-    }
-
-    >:last-child {
+    >:last-child > *,
+    > input {
       width: 137px;
       margin: 0 !important;
     }
@@ -136,10 +133,8 @@
 
 .reactionFlags,
 .querySpecific {
-  label {
-    >:last-child {
-      width: 77px;
-    }
+  label > :last-child > * {
+    width: 77px;
   }
 }
 

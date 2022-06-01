@@ -73,14 +73,13 @@
       top: 0;
     }
 
-    > select,
-    > input,
-    > div {
+    span > div,
+    select, input {
       width: 120px;
       margin-right: auto;
     }
 
-    > span {
+    > :first-child {
       width: 168px;
       margin-right: @margin-left-right;
     }
@@ -100,10 +99,6 @@
     label > div {
       opacity: 0.6;
     }
-  }
-
-  label:hover::after {
-    transform: translate(180px, 21px);
   }
 
    > header{

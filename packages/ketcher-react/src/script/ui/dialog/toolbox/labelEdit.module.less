@@ -21,16 +21,17 @@
   display: flex;
   white-space: nowrap;
 
+  & > div {
+    overflow: hidden;
+    padding: 0 12px;
+  }
+
   & div > form {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
     padding-top: 12px;
-  }
-
-  & label:hover::after {
-    transform: translateX(36px);
   }
 
   .labelEditInputField {

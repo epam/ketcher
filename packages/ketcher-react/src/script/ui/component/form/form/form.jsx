@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component } from 'react'
+import { Component, useState, useCallback } from 'react'
+import { ErrorPopover } from './errorPopover'
 import { FormContext } from '../../../../../contexts'
 import Input from '../input'
 import classes from './form.module.less'
@@ -103,6 +104,13 @@ function Label({ labelPos, title, children, ...props }) {
 
 function Field(props) {
   const { name, onChange, component, labelPos, className, ...rest } = props
+  const [anchorEl, setAnchorEl] = useState(null)
+  const handlePopoverOpen = useCallback((event) => {
+    setAnchorEl(event.currentTarget)
+  }, [])
+  const handlePopoverClose = useCallback(() => {
+    setAnchorEl(null)
+  }, [])
   const { schema, stateStore } = useFormContext()
   const desc = rest.schema || schema.properties[name]
   const { dataError, ...fieldOpts } = stateStore.field(name, onChange)
@@ -113,7 +121,7 @@ function Field(props) {
     <Input name={name} schema={desc} {...fieldOpts} {...rest} />
   )
 
-  if (labelPos === false) return formField
+  if (labelPos === false) return <div>{formField}</div>
   return (
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}
@@ -121,7 +129,21 @@ function Field(props) {
       title={rest.title || desc.title}
       labelPos={labelPos}
     >
-      {formField}
+      <span
+        className={classes.inputWrapper}
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+      >
+        {formField}
+      </span>
+      {dataError && anchorEl && (
+        <ErrorPopover
+          anchorEl={anchorEl}
+          open={!!anchorEl}
+          error={dataError}
+          onClose={handlePopoverClose}
+        />
+      )}
     </Label>
   )
 }

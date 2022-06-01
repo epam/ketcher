@@ -48,6 +48,12 @@ function arrayAddIfMissing(array, item) {
   return true
 }
 
+/**
+ * Class, describing structure on canvas.
+ *
+ * @exports Struct
+ * @class
+ */
 export class Struct {
   atoms: Pool<Atom>
   bonds: Pool<Bond>
@@ -85,6 +91,11 @@ export class Struct {
     this.highlights = new Pool<Highlight>()
   }
 
+  /**
+   * Returns
+   * @protected
+   * @returns {bollean}
+   */
   hasRxnProps(): boolean {
     return !!(
       this.atoms.find((_aid, atom) => atom.hasRxnProps()) ||
@@ -92,18 +103,36 @@ export class Struct {
     )
   }
 
+  /**
+   * Returns information on whether struct contains an rxn arrow.
+   * @public
+   * @returns { boolean } true if contains.
+   */
   hasRxnArrow(): boolean {
     return this.rxnArrows.size === 1
   }
 
+  /**
+   *  Returns information on whether struct contains rxn pluses.
+   *
+   * @returns {boolean} true if contains.
+   */
   hasRxnPluses(): boolean {
     return this.rxnPluses.size > 0
   }
 
+  /**
+   * Returns information on whether struct contains an rxn arrow or rxn pluses.
+   * @returns {boolean} true if contains.
+   */
   isRxn(): boolean {
     return this.hasRxnArrow() || this.hasRxnPluses()
   }
 
+  /**
+   * Returns information on whether struct contains any objects as atoms, rnx arrows, rnx pluses, simple objects or text.
+   * @returns {boolean} true if contains any of these objects.
+   */
   isBlank(): boolean {
     return (
       this.atoms.size === 0 &&

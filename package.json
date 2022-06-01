@@ -15,7 +15,8 @@
     "serve:remote": "cd example && yarn serve:remote",
     "serve:standalone": "cd example && yarn serve:standalone",
     "serve": "run-p 'serve:remote' 'serve:standalone'",
-    "serve:demo": "cd demo && yarn run serve"
+    "serve:demo": "cd demo && yarn run serve",
+    "build:doc": "jsdoc2md --no-cache -f ./packages/ketcher-core/src/**/*.ts -c ./jsdoc2md.json > ./documentation/api.md"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.6.0",
@@ -28,6 +29,8 @@
     "eslint-plugin-promise": "^5.2.0",
     "eslint-plugin-workspaces": "^0.7.0",
     "husky": "^7.0.4",
+    "jsdoc-babel": "^0.5.0",
+    "jsdoc-to-markdown": "^7.1.1",
     "lint-staged": "^12.1.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",

@@ -33,6 +33,11 @@ const DefaultStructServiceOptions = {
   'aromatize-skip-superatoms': true
 }
 
+/**
+ * Builder class.
+ * @exports KetcherBuilder
+ * @constructor
+ */
 export class KetcherBuilder {
   #structServiceProvider?: StructServiceProvider
 
@@ -43,6 +48,12 @@ export class KetcherBuilder {
     return this
   }
 
+  /**
+   * Configure and build Ketcher instance.
+   * @param {Editor} editor - editor instance.
+   * @param {StructServiceOptions=} serviceOptions - struct service options.
+   * @returns {Ketcher} ketcher instance.
+   */
   build(editor: Editor, serviceOptions?: StructServiceOptions): Ketcher {
     assert(editor != null)
     assert(this.#structServiceProvider != null)

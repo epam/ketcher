@@ -1,0 +1,14 @@
+{
+  "source": {
+    "includePattern": ".+\\.ts(doc|x)?$",
+    "excludePattern": ".+\\.(test|spec).ts"
+  },
+  "plugins": ["plugins/markdown", "node_modules/jsdoc-babel"],
+  "babel": {
+    "extensions": ["ts", "tsx"],
+    "ignore": ["**/*.(test|spec).ts"],
+    "babelrc": false,
+    "presets": ["@babel/preset-env", "@babel/preset-typescript"],
+    "plugins": ["@babel/plugin-transform-runtime"]
+  }
+}

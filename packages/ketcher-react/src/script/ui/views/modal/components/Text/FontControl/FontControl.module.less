@@ -16,11 +16,24 @@
 
 @import '../../../../../../../style/mixins.less';
 
+.fontControl {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+
+  > span {
+    margin-right: 4px;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+}
+
 .fontSizeMenu {
   display: inline-block;
   position: absolute;
-  top: 74px;
-  right: 12px;
+  top: 95%;
+  right: 4%;
   background: @color-background-primary;
   max-height: 155px;
   overflow-y: scroll;

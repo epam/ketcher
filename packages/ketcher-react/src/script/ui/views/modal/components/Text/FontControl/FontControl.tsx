@@ -58,7 +58,8 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
   )
 
   return (
-    <div>
+    <div className={classes.fontControl}>
+      <span>Font Size</span>
       <button
         className={classes.fontBtn}
         onMouseDown={(e) => {

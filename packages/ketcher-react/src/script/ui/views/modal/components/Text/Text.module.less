@@ -16,37 +16,22 @@
 @import '../../../../../../style/variables.less';
 @import '../../../../../../style/mixins.less';
 
-.textEditor {
+.controlPanel {
   display: flex;
-  flex-direction: column;
-  width: 340px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 12px;
+  background-color: @color-background-primary;
+  border-radius: 4px;
+  box-shadow: 4px 4px 6px 1px @color-accordion-shadow;
+}
 
-  .controlPanel {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: space-between;
-    margin: 12px 0;
-    height: 28px;
-
-    > span {
-      margin-right: 4px;
-      margin-left: 34px;
-      white-space: nowrap;
-    }
-  }
-  // stylelint-disable-next-line selector-pseudo-class-no-unknown
-  :global(.DraftEditor-root) {
-    height: 182px;
-    padding: 12px;
-    word-wrap: break-word;
-    line-height: normal;
-    border: 1px solid @color-grey-4;
-    border-radius: 4px;
-    margin-top: 4px;
-    overflow: auto;
-
-    .scrollbar();
-  }
+// stylelint-disable-next-line selector-pseudo-class-no-unknown
+:global(.DraftEditor-root) {
+  min-height: 50px;
+  padding: 8px 0;
+  overflow: auto;
+  background-color: transparent;
 }

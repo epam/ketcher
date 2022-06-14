@@ -45,7 +45,7 @@ function throughFileReader(file) {
     const rd = new FileReader() // eslint-disable-line no-undef
 
     rd.onload = () => {
-      const content = checkToCDX ? rd.result.slice(37) : rd.result
+      const content = rd.result
       if (file.msClose) file.msClose()
       resolve(content)
     }

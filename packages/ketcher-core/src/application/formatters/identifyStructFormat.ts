@@ -56,8 +56,8 @@ export function identifyStructFormat(
   }
 
   if (
-    sanitizedString.replace(/\s+/g, '') ===
-    btoa(atob(sanitizedString.replace(/\s+/g, '')))
+    sanitizedString.includes('data:application/octet-stream;base64') ||
+    sanitizedString === btoa(atob(sanitizedString))
   ) {
     return 'cdx'
   }

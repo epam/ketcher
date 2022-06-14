@@ -57,10 +57,7 @@ function parseStruct(struct, server, options) {
 
     const format = identifyStructFormat(struct)
     if (format === 'cdx') {
-      const structToBase64 = window.btoa(
-        unescape(encodeURIComponent(struct.trim()))
-      )
-      struct = `base64::${structToBase64}`
+      struct = `base64::${struct}`
     }
     const factory = new FormatterFactory(server)
 

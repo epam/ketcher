@@ -39,11 +39,15 @@ class AnalyseDialog extends Component {
   static contextType = ErrorsContext
 
   componentDidMount() {
-    this.props.onAnalyse()
+    this.props.onAnalyse();
+  }
+
+  onCloseAction = () => {
+    this.props.onCancel();
   }
 
   render() {
-    let { values, round, loading, onAnalyse, onChangeRound, ...props } =
+    const { values, round, loading, onAnalyse, onChangeRound, ...props } =
       this.props
     return (
       <Dialog
@@ -57,7 +61,7 @@ class AnalyseDialog extends Component {
         params={props}
       >
         <div className={classes.centeredContainer}>
-        {!loading ? (<ul>
+        {!loading && values ? (<ul>
             {[
               {
                 name: 'Chemical Formula',
@@ -124,7 +128,7 @@ class AnalyseDialog extends Component {
               </li>
             ))}
           </ul>) : (
-            <LoadingCircles actionTimeout={true} onClose={()=>loading=true}/>
+            <LoadingCircles actionHasTimeout={loading} onCancel={this.onCloseAction}/>
         )}
         </div>
       </Dialog>

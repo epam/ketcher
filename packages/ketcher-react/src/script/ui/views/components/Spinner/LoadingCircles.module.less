@@ -14,15 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 @import 'src/style/variables.less';
+@import 'src/style/mixins';
+
 
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 20px;
 
-  button {
+  .buttonContainer {
+    text-align: center;
+    .error {
+      margin-bottom: 10px;
+    }
 
+    input[type=button] {
+      .button-primary();
+    }
   }
   .loader {
     display: flex;
@@ -31,6 +40,8 @@
     align-items: flex-start;
     width: 40px;
     height: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     & span {
       display: inline-block;
       width: 8px;

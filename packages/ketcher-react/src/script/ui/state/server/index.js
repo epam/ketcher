@@ -80,15 +80,15 @@ function ketcherCheck(struct, checkParams) {
   return errors
 }
 
-export function check(optsTypes) {
+export function check(optsTypes, signal) {
   return (dispatch, getState) => {
     const { editor, server } = getState()
     const ketcherErrors = ketcherCheck(editor.struct(), optsTypes)
 
     const options = getState().options.getServerSettings()
     options.data = { types: without(['valence', 'chiral_flag'], optsTypes) }
-
-    return serverCall(editor, server, 'check', options)
+    console.log('check', signal)
+    return serverCall(editor, server, 'check', options, editor.struct(), signal)
       .then((res) => {
         res = Object.assign(res, ketcherErrors) // merge Indigo check with Ketcher check
         dispatch(checkErrors(res))
@@ -163,7 +163,7 @@ export function serverTransform(method, data, struct) {
 }
 
 // TODO: serverCall function should not be exported
-export function serverCall(editor, server, method, options, struct) {
+export function serverCall(editor, server, method, options, struct, signal) {
   const selection = editor.selection()
   let selectedAtoms = []
   const aidMap = new Map()
@@ -179,25 +179,38 @@ export function serverCall(editor, server, method, options, struct) {
     ).map((aid) => aidMap.get(aid))
   }
   const ketSerializer = new KetSerializer()
-  return server.then(() =>
-    server[method](
-      Object.assign(
-        {
-          struct: ketSerializer.serialize(currentStruct)
-        },
-        method !== 'calculate' && method !== 'check'
-          ? {
-              output_format: ChemicalMimeType.KET
-            }
-          : null,
-        selectedAtoms && selectedAtoms.length > 0
-          ? {
-              selected: selectedAtoms
-            }
-          : null,
-        options.data
-      ),
-      omit('data', options)
-    )
-  )
+  return new Promise((resolve, reject) => {
+    server.then(() => {    
+      server[method](
+        Object.assign(
+          {
+            struct: ketSerializer.serialize(currentStruct)
+          },
+          method !== 'calculate' && method !== 'check'
+            ? {
+                output_format: ChemicalMimeType.KET
+              }
+            : null,
+          selectedAtoms && selectedAtoms.length > 0
+            ? {
+                selected: selectedAtoms
+              }
+            : null,
+          options.data
+        ),
+        omit('data', options)
+      )
+        resolve();
+    })
+    if (signal.aborted) {
+      return Promise.reject(new DOMException('Aborted', 'AbortError'));
+    }
+    if(signal) {
+      console.log(signal, 'serverCall', {signal})
+      // const constrollerSignal = {signal};
+      signal.addEventListener('abort', () => {
+        reject(new Error('Connection issue'));
+      })
+    }
+  })
 }

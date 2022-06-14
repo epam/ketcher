@@ -121,22 +121,40 @@ function CheckDialog(props) {
   const [lastCheckDate, setLastCheckDate] = useState(null)
   const [isCheckedWithNewSettings, setIsCheckedWithNewSettings] =
     useState(false)
+  const [state, setState] = useState({});
+
 
   const handleApply = () => onApply(result)
 
+  const controller = new AbortController();
+  const signal = controller.signal;
+
   const handleCheck = () => {
-    setIsStructureChecking(false)
-    onCheck(result.checkOptions).then(() => {
-      setIsStructureChecking(true)
-      setLastCheckDate(new Date())
-      setIsCheckedWithNewSettings(true)
-    })
+      setIsStructureChecking(false)
+      onCheck(result.checkOptions, signal).then(() => {
+        setIsStructureChecking(true)
+        setLastCheckDate(new Date())
+        setIsCheckedWithNewSettings(true)
+      })
+      console.log(signal, 'handleCheck', {signal})
+  }
+
+  const onCancelAction = () => {
+    console.log('onCancelAction')
+    // onCancel();
+    setIsStructureChecking(true)
+    setIsCheckedWithNewSettings(true);
+    controller.abort();
   }
 
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false)
 
   useEffect(() => {
-    handleCheck()
+    handleCheck();
+    // clean state to prevent memory leak when dialog closed
+    return () => {
+      setState({}); 
+    };
   }, [])
 
   return (
@@ -204,7 +222,7 @@ function CheckDialog(props) {
                   />
                 </div>
               ) : (
-                <LoadingCircles />
+                <LoadingCircles actionHasTimeout={!isCheckedWithNewSettings} onCancel={onCancelAction}/>
               )}
             </div>
           </div>
@@ -220,7 +238,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  onCheck: (opts) => dispatch(check(opts)).catch(ownProps.onCancel),
+  onCheck: (opts, signal) => dispatch(check(opts, signal)).catch(ownProps.onCancel),
   onApply: (res) => {
     dispatch(checkOpts(res))
     ownProps.onOk(res)

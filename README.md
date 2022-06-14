@@ -17,7 +17,6 @@ Ketcher is an open-source web-based chemical structure editor incorporating high
 - 🛠️ Settings support (Rendering, Displaying, Debugging)
 - :camera: Use of SVG to achieve best quality in-browser chemical structure rendering
 
-
 ### Editor builtin tools:
 
 - Atom Tool, Bond Tool, and Template Tool to draw and edit structures
@@ -27,34 +26,17 @@ Ketcher is an open-source web-based chemical structure editor incorporating high
 - MW and Structure Parameters Calculate Tool
 - Select, modify, and erase connected and unconnected atoms and bonds using Selection Tool, or using Shift key
 - Advanced Structure Clean up Tool (+ stereochemistry checking and structure layout)
-- Simple Structure Clean up Tool (checks bonds length, angles and spatial arrangement of atoms) 
+- Simple Structure Clean up Tool (checks bonds length, angles and spatial arrangement of atoms)
 - Easy to use R-Group and S-Group tools (Generic, Multiple group, SRU polymer, peratom, Data S-Group)
 - Reaction Tool (reaction generating, manual and automatic atom-to-atom mapping)
 - Flip/Rotate Tool
 
-
 ## Installation and usage
 
-At this moment Ketcher library is delivered as a [react component library](https://www.npmjs.com/package/ketcher-react) and [zip archive](https://lifescience.opensource.epam.com/download/ketcher.html)
+At this moment Ketcher can be embedded into your application in two ways:
 
-```
-npm install ketcher-standalone
-```
-
-```tsx
-import { StandaloneStructServiceProvider } from 'ketcher-standalone'
-
-const structServiceProvider = new StandaloneStructServiceProvider()
-
-const MyComponent = () => {
-  return (
-    <Editor
-      staticResourcesUrl={process.env.PUBLIC_URL}
-      structServiceProvider={structServiceProvider}
-    />
-  )
-```
-
+- as a [react component library](https://www.npmjs.com/package/ketcher-react)
+- as ready-to-run application (to find desired version please look at Assets block of [releases](https://github.com/epam/ketcher/releases)). The application can be injected as IFrame or a separate page.
 
 ## FAQ
 
@@ -67,16 +49,13 @@ Look at the following [link](packages/ketcher-react/README.md) for details.
 You can find the instruction for service installation
 [here](http://lifescience.opensource.epam.com/indigo/service/index.html).
 
-
 ## Packages
 
-| Project | Status | Description |
-|---------|--------|-------------|
-| [ketcher-core](https://github.com/epam/ketcher/tree/master/packages/ketcher-core)          | [![npm version](https://badge.fury.io/js/ketcher-core.svg)](https://www.npmjs.com/package/ketcher-core) | Core functionality: domain, shared services, functions and interface declarations |
-| [ketcher-standalone](https://github.com/epam/ketcher/tree/master/packages/ketcher-standalone) | [![npm version](https://badge.fury.io/js/ketcher-standalone.svg)](https://www.npmjs.com/package/ketcher-standalone) | Contains only the functionality necessary to start Ketcher in standalone mode |
-| [ketcher-react](https://github.com/epam/ketcher/tree/master/packages/ketcher-react)          | [![npm version](https://badge.fury.io/js/ketcher-react.svg)](https://www.npmjs.com/package/ketcher-react) | Package contains only the functionality necessary to define components.  |
-
-
+| Project                                                                                       | Status                                                                                                              | Description                                                                       |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| [ketcher-core](https://github.com/epam/ketcher/tree/master/packages/ketcher-core)             | [![npm version](https://badge.fury.io/js/ketcher-core.svg)](https://www.npmjs.com/package/ketcher-core)             | Core functionality: domain, shared services, functions and interface declarations |
+| [ketcher-standalone](https://github.com/epam/ketcher/tree/master/packages/ketcher-standalone) | [![npm version](https://badge.fury.io/js/ketcher-standalone.svg)](https://www.npmjs.com/package/ketcher-standalone) | Contains only the functionality necessary to start Ketcher in standalone mode     |
+| [ketcher-react](https://github.com/epam/ketcher/tree/master/packages/ketcher-react)           | [![npm version](https://badge.fury.io/js/ketcher-react.svg)](https://www.npmjs.com/package/ketcher-react)           | Package contains only the functionality necessary to define components.           |
 
 ## 3D Viewer
 
@@ -85,11 +64,9 @@ Ketcher uses Miew-React for viewing and editing data in 3D.
 You can find the latest version of Miew-React [here](https://github.com/epam/miew/tree/master/packages/miew-react).
 The last checked version - [1.0.0](https://www.npmjs.com/package/miew-react).
 
-
 ## Contribution
 
 See [Contributing Guide](./DEVNOTES.md).
-
 
 ## License
 
@@ -98,4 +75,3 @@ See [Contributing Guide](./DEVNOTES.md).
 Please read [LICENSE](LICENSE) and [NOTICE](NOTICE) for details.
 
 Copyright (c) 2021 [EPAM Systems, Inc.](https://www.epam.com/)
-

@@ -55,6 +55,8 @@ import EraseIcon from './files/erase.svg'
 import ExtendedTableIcon from './files/extended-table.svg'
 import FileThumbnailIcon from './files/file-thumbnail.svg'
 import GenericGroupsIcon from './files/generic-groups.svg'
+import HandIcon from './files/hand.svg'
+import CompressedHandIcon from './files/compressed-hand.svg'
 import HelpIcon from './files/help.svg'
 import HistoryIcon from './files/history.svg'
 import ImageFrameIcon from './files/image-frame.svg'
@@ -292,6 +294,8 @@ const icons = {
   'fullscreen-enter': FullscreenEnterIcon,
   'fullscreen-exit': FullscreenExitIcon,
   'generic-groups': GenericGroupsIcon,
+  hand: HandIcon,
+  compressedhand: CompressedHandIcon,
   help: HelpIcon,
   history: HistoryIcon,
   'image-frame': ImageFrameIcon,

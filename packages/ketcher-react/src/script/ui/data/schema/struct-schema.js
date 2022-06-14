@@ -233,9 +233,7 @@ const sgroup = {
           title: 'Repeat count',
           type: 'integer',
           default: 1,
-          minimum: 1,
-          maximum: 1000,
-          invalidMessage: 'Value out of range: must be between 1 and 1000'
+          minimum: 1
         }
       },
       required: ['mul']

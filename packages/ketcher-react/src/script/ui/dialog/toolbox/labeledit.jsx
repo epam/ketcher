@@ -75,9 +75,10 @@ function LabelEdit(props) {
       title="Label Edit"
       valid={() => valid}
       withDivider={true}
+      needMargin={false}
       result={() => deserialize(result.label)}
       className={styles.labelEdit}
-      buttons={['OK']}
+      buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: 'Apply' }}
       focusable={false}
       params={prop}

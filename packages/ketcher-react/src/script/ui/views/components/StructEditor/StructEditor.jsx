@@ -23,6 +23,9 @@ import { LoadingCircles } from '../Spinner/LoadingCircles'
 import classes from './StructEditor.module.less'
 import clsx from 'clsx'
 import { upperFirst } from 'lodash/fp'
+import handIcon from '../../../../../icons/files/hand.svg'
+import compressedHancIcon from '../../../../../icons/files/compressed-hand.svg'
+import Cursor from '../Cursor'
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -61,12 +64,18 @@ function removeEditorHandlers(editor, props) {
 class StructEditor extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      enableCursor: false
+    }
     this.editorRef = createRef()
     this.logRef = createRef()
   }
 
-  shouldComponentUpdate(nextProps) {
-    return this.props.indigoVerification !== nextProps.indigoVerification
+  shouldComponentUpdate(nextProps, nextState) {
+    return (
+      this.props.indigoVerification !== nextProps.indigoVerification ||
+      nextState.enableCursor !== this.state.enableCursor
+    )
   }
 
   UNSAFE_componentWillReceiveProps(props) {
@@ -92,6 +101,53 @@ class StructEditor extends Component {
         el.classList.add(classes.visible)
       } else {
         el.classList.remove(classes.visible)
+      }
+    })
+
+    this.editor.event.cursor.add((csr) => {
+      switch (csr.status) {
+        case 'enable':
+          this.editorRef.current.classList.add(classes.enableCursor)
+          const { left, top, right, bottom } =
+            this.editorRef.current.getBoundingClientRect()
+          const { clientX, clientY } = csr.cursorPosition
+          const handShouldBeShown =
+            clientX >= left &&
+            clientX <= right &&
+            clientY >= top &&
+            clientX <= bottom
+          if (!this.state.enableCursor && handShouldBeShown) {
+            this.setState({
+              enableCursor: true
+            })
+          }
+          break
+        case 'move':
+          this.editorRef.current.classList.add(classes.enableCursor)
+          this.setState({
+            enableCursor: true
+          })
+          break
+        case 'disable':
+          this.editorRef.current.classList.remove(classes.enableCursor)
+          this.setState({
+            enableCursor: false
+          })
+          break
+        case 'leave':
+          this.editorRef.current.classList.remove(classes.enableCursor)
+          this.setState({
+            enableCursor: false
+          })
+          break
+        case 'mouseover':
+          this.editorRef.current.classList.add(classes.enableCursor)
+          this.setState({
+            enableCursor: true
+          })
+          break
+        default:
+          break
       }
     })
 
@@ -153,6 +209,11 @@ class StructEditor extends Component {
           >
             {/* svg here */}
           </div>
+          <Cursor
+            Icon={handIcon}
+            PressedIcon={compressedHancIcon}
+            enableHandTool={this.state.enableCursor}
+          />
           <div className={classes.measureLog} ref={this.logRef} />
           {indigoVerification && (
             <div className={classes.spinnerOverlay}>

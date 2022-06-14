@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "ketcher-polymer-editor-react",
   "version": "1.0.0",
   "description": "Web-based molecule sketcher",

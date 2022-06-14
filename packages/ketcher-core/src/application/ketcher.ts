@@ -164,6 +164,10 @@ export class Ketcher {
     throw Error('not implemented yet')
   }
 
+  recognize(image: Blob, version?: string): Promise<Struct> {
+    return this.#indigo.recognize(image, { version: version })
+  }
+
   async generateImage(
     data: string,
     options: GenerateImageOptions = { outputFormat: 'png' }

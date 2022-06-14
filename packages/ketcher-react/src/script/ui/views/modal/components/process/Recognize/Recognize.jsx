@@ -173,7 +173,7 @@ function RecognizeDialog(prop) {
             // in Edge 38: instanceof Promise always `false`
             (structStr instanceof Promise || typeof structStr !== 'string' ? (
               <div className={classes.messageContainer}>
-                <LoadingCircles onCancel={props.onCancel}/>
+                <LoadingCircles onCancel={props.onCancel} />
               </div>
             ) : (
               <StructRender className={classes.struct} struct={structStr} />

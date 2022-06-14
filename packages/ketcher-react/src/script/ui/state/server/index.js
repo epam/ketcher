@@ -180,7 +180,7 @@ export function serverCall(editor, server, method, options, struct, signal) {
   }
   const ketSerializer = new KetSerializer()
   return new Promise((resolve, reject) => {
-    server.then(() => {    
+    server.then(() => {
       server[method](
         Object.assign(
           {
@@ -200,16 +200,16 @@ export function serverCall(editor, server, method, options, struct, signal) {
         ),
         omit('data', options)
       )
-        resolve();
+      resolve()
     })
     if (signal.aborted) {
-      return Promise.reject(new DOMException('Aborted', 'AbortError'));
+      return Promise.reject(new DOMException('Aborted', 'AbortError'))
     }
-    if(signal) {
-      console.log(signal, 'serverCall', {signal})
+    if (signal) {
+      console.log(signal, 'serverCall', { signal })
       // const constrollerSignal = {signal};
       signal.addEventListener('abort', () => {
-        reject(new Error('Connection issue'));
+        reject(new Error('Connection issue'))
       })
     }
   })

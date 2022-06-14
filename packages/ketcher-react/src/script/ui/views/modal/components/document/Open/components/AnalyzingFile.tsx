@@ -32,6 +32,6 @@ export const AnalyzingFile = ({ fileName }: AnalyzingFileProps) => (
         <p>{fileName}</p>
       </div>
     )}
-    <LoadingCircles actionHasTimeout={!fileName}/>
+    <LoadingCircles actionHasTimeout={!fileName} />
   </div>
 )

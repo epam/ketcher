@@ -16,12 +16,12 @@
 
 import type { GenGroup as GenGroupType } from 'ketcher-core'
 import { GenSet } from './GenSet'
-import styles from './GenGroup.module.less'
 import { isGenericGroup } from '../../helpers'
+import styles from './GenGroup.module.less'
 
 type GenProps = {
   selected: (label: string) => boolean
-  onAtomSelect: (label: string) => void
+  onAtomSelect: (label: string, activateImmediately: boolean) => void
   group: GenGroupType
 }
 

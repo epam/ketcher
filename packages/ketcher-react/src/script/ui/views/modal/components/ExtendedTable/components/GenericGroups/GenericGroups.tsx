@@ -14,15 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Generics } from 'ketcher-core'
-import { GenGroup } from './GenGroup'
-import classes from './GenericGroups.module.less'
 import { HorizontalBoxWithLines, VerticalBoxWithLines } from './BoxWithLines'
+
+import { GenGroup } from './GenGroup'
+import { Generics } from 'ketcher-core'
+import classes from './GenericGroups.module.less'
 import { groupNames } from './'
 
 type GenericGroupsProps = {
   selected: (label: string) => boolean
-  onAtomSelect: (label: string) => void
+  onAtomSelect: (label: string, activateImmediately: boolean) => void
 }
 
 const getGenericsGroupsMap = (tree) => {

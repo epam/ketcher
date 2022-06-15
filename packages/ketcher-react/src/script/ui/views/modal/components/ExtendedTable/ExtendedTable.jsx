@@ -35,8 +35,12 @@ const Table = (props) => {
     return { type: 'gen', label: value, pseudo: value }
   }
 
-  const onAtomSelect = (label) => {
+  const onAtomSelect = (label, activateImmediately = false) => {
     setValue(label)
+
+    if (activateImmediately) {
+      props.onOk(result())
+    }
   }
 
   return (

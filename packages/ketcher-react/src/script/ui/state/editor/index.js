@@ -73,7 +73,11 @@ export default function initEditor(dispatch, getState) {
           ap: res
         }))
       } else if (elem.type === 'list' || elem.type === 'not-list') {
-        dlg = openDialog(dispatch, 'period-table', elem)
+        dlg = openDialog(
+          dispatch,
+          !elem.pseudo ? 'period-table' : 'extended-table',
+          { ...elem, pseudo: elem.pseudo }
+        )
       } else if (elem.type === 'rlabel') {
         const rgroups = getState().editor.struct().rgroups
         const params = {
@@ -93,7 +97,11 @@ export default function initEditor(dispatch, getState) {
           type: 'rlabel'
         }))
       } else {
-        dlg = openDialog(dispatch, 'period-table', elem)
+        dlg = openDialog(
+          dispatch,
+          !elem.pseudo ? 'period-table' : 'extended-table',
+          { ...elem, pseudo: elem.pseudo }
+        )
       }
       return dlg.then(toElement)
     },

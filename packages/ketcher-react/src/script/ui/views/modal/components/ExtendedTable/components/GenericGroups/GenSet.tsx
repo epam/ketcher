@@ -14,16 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import clsx from 'clsx'
 import type { GenItemSet } from 'ketcher-core'
-import { isGenericGroup } from '../../helpers'
-
 import classes from './GenSet.module.less'
+import clsx from 'clsx'
+import { isGenericGroup } from '../../helpers'
 
 type GenSetProps = {
   labels: GenItemSet[]
   selected: (label: string) => boolean
-  onAtomSelect: (label: string) => void
+  onAtomSelect: (label: string, activateImmediately: boolean) => void
   className?: string
   group: string
 }
@@ -48,7 +47,8 @@ function GenSet({
               {buttons.map((button, index) => (
                 <button
                   key={index}
-                  onClick={() => onAtomSelect(button.label)}
+                  onClick={() => onAtomSelect(button.label, false)}
+                  onDoubleClick={() => onAtomSelect(button.label, true)}
                   title={button.description || button.label}
                   className={clsx(
                     {

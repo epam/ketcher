@@ -23,7 +23,7 @@ import { onAction } from '../../../../state'
 import { toElement, fromElement } from '../../../../data/convert/structconv'
 
 const Table = (props) => {
-  const [value, setValue] = useState(null)
+  const [value, setValue] = useState(props.label)
 
   const selected = (label) => value === label
 

@@ -76,7 +76,7 @@ export default function initEditor(dispatch, getState) {
         dlg = openDialog(
           dispatch,
           !elem.pseudo ? 'period-table' : 'extended-table',
-          elem
+          { ...elem, pseudo: elem.pseudo }
         )
       } else if (elem.type === 'rlabel') {
         const rgroups = getState().editor.struct().rgroups
@@ -100,7 +100,7 @@ export default function initEditor(dispatch, getState) {
         dlg = openDialog(
           dispatch,
           !elem.pseudo ? 'period-table' : 'extended-table',
-          elem
+          { ...elem, pseudo: elem.pseudo }
         )
       }
       return dlg.then(toElement)

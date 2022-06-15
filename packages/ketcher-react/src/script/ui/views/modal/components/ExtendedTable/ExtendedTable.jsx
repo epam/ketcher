@@ -14,16 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { fromElement, toElement } from '../../../../data/convert/structconv'
+
 import { Dialog } from '../../../components'
 import GenericGroups from './components/GenericGroups'
 import classes from './ExtendedTable.module.less'
-import { useState } from 'react'
 import { connect } from 'react-redux'
 import { onAction } from '../../../../state'
-import { toElement, fromElement } from '../../../../data/convert/structconv'
+import { useState } from 'react'
 
 const Table = (props) => {
-  const [value, setValue] = useState(props.label)
+  const [value, setValue] = useState(props.pseudo ? props.label : null)
 
   const selected = (label) => value === label
 

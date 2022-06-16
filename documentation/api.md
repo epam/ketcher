@@ -1,16 +1,342 @@
 ## Classes
 
 <dl>
-<dt><a href="#Struct">Struct</a></dt>
-<dd><p>Class, describing structure on canvas.</p></dd>
-<dt><a href="#Editor">Editor</a></dt>
-<dd><p>Class, describing editor state and options.</p></dd>
+<dt><a href="#Ketcher">Ketcher</a></dt>
+<dd></dd>
 <dt><a href="#KetcherBuilder">KetcherBuilder</a></dt>
 <dd></dd>
+<dt><a href="#Editor">Editor</a></dt>
+<dd><p>Class, describing editor state and options.</p></dd>
+<dt><a href="#Struct">Struct</a></dt>
+<dd><p>Class, describing structure on canvas.</p></dd>
 <dt><a href="#Indigo">Indigo</a></dt>
 <dd></dd>
 </dl>
 
+<a name="Ketcher"></a>
+
+## Ketcher
+**Kind**: global class  
+
+* [Ketcher](#Ketcher)
+    * [new _structService()](#new_Ketcher_new)
+    * [.indigo](#Ketcher+indigo) ⇒ [<code>Indigo</code>](#Indigo)
+    * [.getSmiles([isExtended])](#Ketcher+getSmiles) ⇒ <code>Promise.&lt;string&gt;</code>
+    * [.getMolfile([molfileFormat])](#Ketcher+getMolfile) ⇒ <code>Promise.&lt;string&gt;</code>
+    * [.getRxn([molfileFormat])](#Ketcher+getRxn) ⇒ <code>Promise.&lt;string&gt;</code>
+    * [.getKet()](#Ketcher+getKet) ⇒ <code>Promise.&lt;string&gt;</code>
+    * [.getSmarts()](#Ketcher+getSmarts) ⇒ <code>Promise.&lt;string&gt;</code>
+    * [.getCml()](#Ketcher+getCml) ⇒ <code>Promise.&lt;string&gt;</code>
+    * [.getInchi([withAuxInfo])](#Ketcher+getInchi) ⇒ <code>Promise.&lt;string&gt;</code>
+    * [.generateInchIKey()](#Ketcher+generateInchIKey) ⇒ <code>Promise.&lt;string&gt;</code>
+    * [.containsReaction()](#Ketcher+containsReaction) ⇒ <code>boolean</code>
+    * [.setMolecule(structStr)](#Ketcher+setMolecule) ⇒ <code>void</code>
+    * [.generateImage(data, [options])](#Ketcher+generateImage) ⇒ <code>Promise.&lt;Blob&gt;</code>
+
+<a name="new_Ketcher_new"></a>
+
+### new \_structService()
+<p>The main class</p>
+
+<a name="Ketcher+indigo"></a>
+
+### ketcher.indigo ⇒ [<code>Indigo</code>](#Indigo)
+<p>Returns indigo object</p>
+
+**Kind**: instance property of [<code>Ketcher</code>](#Ketcher)  
+**Returns**: [<code>Indigo</code>](#Indigo) - <p>indigo object</p>  
+**Access**: public  
+<a name="Ketcher+getSmiles"></a>
+
+### ketcher.getSmiles([isExtended]) ⇒ <code>Promise.&lt;string&gt;</code>
+<p>Returns stucture in SMILES</p>
+
+**Kind**: instance method of [<code>Ketcher</code>](#Ketcher)  
+**Returns**: <code>Promise.&lt;string&gt;</code> - <p>promise resolving into structure in SMILES format</p>  
+**Access**: public  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [isExtended] | <code>boolean</code> | <code>false</code> | <p>true, if smilesExt should be used</p> |
+
+<a name="Ketcher+getMolfile"></a>
+
+### ketcher.getMolfile([molfileFormat]) ⇒ <code>Promise.&lt;string&gt;</code>
+<p>Returns stucture in MOL</p>
+
+**Kind**: instance method of [<code>Ketcher</code>](#Ketcher)  
+**Returns**: <code>Promise.&lt;string&gt;</code> - <p>promise resolving into structure in MOL format</p>  
+**Access**: public  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [molfileFormat] | <code>MolfileFormat</code> | <code>&#x27;v2000&#x27;</code> | <p>MOL format</p> |
+
+<a name="Ketcher+getRxn"></a>
+
+### ketcher.getRxn([molfileFormat]) ⇒ <code>Promise.&lt;string&gt;</code>
+<p>Returns stucture in RXN</p>
+
+**Kind**: instance method of [<code>Ketcher</code>](#Ketcher)  
+**Returns**: <code>Promise.&lt;string&gt;</code> - <p>promise resolving into structure in RXN format</p>  
+**Access**: public  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [molfileFormat] | <code>MolfileFormat</code> | <code>&#x27;v2000&#x27;</code> | <p>MOL format</p> |
+
+<a name="Ketcher+getKet"></a>
+
+### ketcher.getKet() ⇒ <code>Promise.&lt;string&gt;</code>
+<p>Returns stucture in Ket</p>
+
+**Kind**: instance method of [<code>Ketcher</code>](#Ketcher)  
+**Returns**: <code>Promise.&lt;string&gt;</code> - <p>promise resolving into structure in Ket format</p>  
+**Access**: public  
+<a name="Ketcher+getSmarts"></a>
+
+### ketcher.getSmarts() ⇒ <code>Promise.&lt;string&gt;</code>
+<p>Returns stucture in SMARTS</p>
+
+**Kind**: instance method of [<code>Ketcher</code>](#Ketcher)  
+**Returns**: <code>Promise.&lt;string&gt;</code> - <p>promise resolving into structure in SMARTS format</p>  
+**Access**: public  
+<a name="Ketcher+getCml"></a>
+
+### ketcher.getCml() ⇒ <code>Promise.&lt;string&gt;</code>
+<p>Returns stucture in CML</p>
+
+**Kind**: instance method of [<code>Ketcher</code>](#Ketcher)  
+**Returns**: <code>Promise.&lt;string&gt;</code> - <p>promise resolving into structure in CML format</p>  
+**Access**: public  
+<a name="Ketcher+getInchi"></a>
+
+### ketcher.getInchi([withAuxInfo]) ⇒ <code>Promise.&lt;string&gt;</code>
+<p>Returns stucture in inChI</p>
+
+**Kind**: instance method of [<code>Ketcher</code>](#Ketcher)  
+**Returns**: <code>Promise.&lt;string&gt;</code> - <p>promise resolving into structure in inChI format</p>  
+**Access**: public  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [withAuxInfo] | <code>boolean</code> | <code>false</code> | <p>true, if inChIAuxInfo should be used</p> |
+
+<a name="Ketcher+generateInchIKey"></a>
+
+### ketcher.generateInchIKey() ⇒ <code>Promise.&lt;string&gt;</code>
+<p>Returns InChI key</p>
+
+**Kind**: instance method of [<code>Ketcher</code>](#Ketcher)  
+**Returns**: <code>Promise.&lt;string&gt;</code> - <p>promise resolving into InChI key</p>  
+**Access**: public  
+<a name="Ketcher+containsReaction"></a>
+
+### ketcher.containsReaction() ⇒ <code>boolean</code>
+<p>Returns informatiom on whether struct contains rxn arrow</p>
+
+**Kind**: instance method of [<code>Ketcher</code>](#Ketcher)  
+**Returns**: <code>boolean</code> - <p>true, if contains</p>  
+**Access**: public  
+<a name="Ketcher+setMolecule"></a>
+
+### ketcher.setMolecule(structStr) ⇒ <code>void</code>
+<p>Sets provided molecule to canvas</p>
+
+**Kind**: instance method of [<code>Ketcher</code>](#Ketcher)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| structStr | [<code>Struct</code>](#Struct) | <p>struct to be set in editor</p> |
+
+<a name="Ketcher+generateImage"></a>
+
+### ketcher.generateImage(data, [options]) ⇒ <code>Promise.&lt;Blob&gt;</code>
+<p>Generates ...........</p>
+
+**Kind**: instance method of [<code>Ketcher</code>](#Ketcher)  
+**Returns**: <code>Promise.&lt;Blob&gt;</code> - <p>...........</p>  
+**Access**: public  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| data | <code>string</code> |  | <p>image data</p> |
+| [options] | <code>GenerateImageOptions</code> | <code>{ outputFormat: &#x27;png&#x27; }</code> | <p>options ...........</p> |
+
+<a name="KetcherBuilder"></a>
+
+## KetcherBuilder
+**Kind**: global class  
+
+* [KetcherBuilder](#KetcherBuilder)
+    * [new _structServiceProvider()](#new_KetcherBuilder_new)
+    * [.build(editor, [serviceOptions])](#KetcherBuilder+build) ⇒ [<code>Ketcher</code>](#Ketcher)
+
+<a name="new_KetcherBuilder_new"></a>
+
+### new \_structServiceProvider()
+<p>Builder class.</p>
+
+<a name="KetcherBuilder+build"></a>
+
+### ketcherBuilder.build(editor, [serviceOptions]) ⇒ [<code>Ketcher</code>](#Ketcher)
+<p>Configure and build Ketcher instance.</p>
+
+**Kind**: instance method of [<code>KetcherBuilder</code>](#KetcherBuilder)  
+**Returns**: [<code>Ketcher</code>](#Ketcher) - <p>ketcher instance.</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| editor | [<code>Editor</code>](#Editor) | <p>editor instance.</p> |
+| [serviceOptions] | <code>StructServiceOptions</code> | <p>struct service options.</p> |
+
+<a name="Editor"></a>
+
+## Editor
+<p>Class, describing editor state and options.</p>
+
+**Kind**: global class  
+
+* [Editor](#Editor)
+    * [.isDitrty()](#Editor+isDitrty) ⇒ <code>boolean</code>
+    * [.setOrigin()](#Editor+setOrigin) ⇒ <code>void</code>
+    * [.clear()](#Editor+clear) ⇒ <code>void</code>
+    * [.struct([value])](#Editor+struct) ⇒ [<code>Struct</code>](#Struct)
+    * [.options([value])](#Editor+options) ⇒ <code>object</code>
+    * [.zoom([value])](#Editor+zoom) ⇒ <code>object</code>
+    * [.selection([ci])](#Editor+selection) ⇒
+    * [.undo()](#Editor+undo) ⇒ <code>void</code>
+    * [.redo()](#Editor+redo) ⇒ <code>void</code>
+    * [.subscribe(eventName, handler)](#Editor+subscribe) ⇒ <code>object</code>
+    * [.unsubscribe(eventName, subscriber)](#Editor+unsubscribe) ⇒ <code>void</code>
+    * [.structSelected()](#Editor+structSelected) ⇒ [<code>Struct</code>](#Struct)
+
+<a name="Editor+isDitrty"></a>
+
+### editor.isDitrty() ⇒ <code>boolean</code>
+<p>..........................</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Returns**: <code>boolean</code> - <p>true if .......................</p>  
+**Access**: public  
+<a name="Editor+setOrigin"></a>
+
+### editor.setOrigin() ⇒ <code>void</code>
+<p>..........................</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Access**: public  
+<a name="Editor+clear"></a>
+
+### editor.clear() ⇒ <code>void</code>
+<p>Clears canvas</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Access**: public  
+<a name="Editor+struct"></a>
+
+### editor.struct([value]) ⇒ [<code>Struct</code>](#Struct)
+<p>Returns struct and updates stuct on canvas</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Returns**: [<code>Struct</code>](#Struct) - <ul>
+<li>struct rendered on canvas</li>
+</ul>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | [<code>Struct</code>](#Struct) | <p>struct to be rendered on canvas</p> |
+
+<a name="Editor+options"></a>
+
+### editor.options([value]) ⇒ <code>object</code>
+<p>Returns editor options</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Returns**: <code>object</code> - <p>editor options .......... type?</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>any</code> | <p>...............................</p> |
+
+<a name="Editor+zoom"></a>
+
+### editor.zoom([value]) ⇒ <code>object</code>
+<p>Sets / gets zoom value</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Returns**: <code>object</code> - <p>current zoom value</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>number</code> | <p>zoom value to be set</p> |
+
+<a name="Editor+selection"></a>
+
+### editor.selection([ci]) ⇒
+<p>.................................</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Returns**: <p>.................................</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [ci] | <code>any</code> | <p>.................................</p> |
+
+<a name="Editor+undo"></a>
+
+### editor.undo() ⇒ <code>void</code>
+<p>Cancels the last action in editor, updates history stack and view</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Access**: public  
+<a name="Editor+redo"></a>
+
+### editor.redo() ⇒ <code>void</code>
+<p>Reperforms the last canceled action, updates history stack and view</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Access**: public  
+<a name="Editor+subscribe"></a>
+
+### editor.subscribe(eventName, handler) ⇒ <code>object</code>
+<p>Creates a subscribtion to provided event</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Returns**: <code>object</code> - <p>subcriber ....................................</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| eventName | <code>any</code> | <p>event name ................. type -?</p> |
+| handler | <code>any</code> | <p>event handler ............... type - ?</p> |
+
+<a name="Editor+unsubscribe"></a>
+
+### editor.unsubscribe(eventName, subscriber) ⇒ <code>void</code>
+<p>Removes a subscribtion to provided event</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| eventName | <code>any</code> | <p>event name ................. type -?</p> |
+| subscriber | <code>any</code> | <p>subscriber object</p> |
+
+<a name="Editor+structSelected"></a>
+
+### editor.structSelected() ⇒ [<code>Struct</code>](#Struct)
+<p>Returns selected struct</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Returns**: [<code>Struct</code>](#Struct) - <p>selected struct</p>  
+**Access**: public  
 <a name="Struct"></a>
 
 ## Struct
@@ -695,179 +1021,6 @@
 
 **Kind**: instance method of [<code>Struct</code>](#Struct)  
 **Access**: public  
-<a name="Editor"></a>
-
-## Editor
-<p>Class, describing editor state and options.</p>
-
-**Kind**: global class  
-
-* [Editor](#Editor)
-    * [.isDitrty()](#Editor+isDitrty) ⇒ <code>bollean</code>
-    * [.setOrigin()](#Editor+setOrigin) ⇒ <code>void</code>
-    * [.clear()](#Editor+clear) ⇒ <code>void</code>
-    * [.struct([value])](#Editor+struct) ⇒ [<code>Struct</code>](#Struct)
-    * [.options([value])](#Editor+options) ⇒ <code>object</code>
-    * [.zoom([value])](#Editor+zoom) ⇒ <code>object</code>
-    * [.selection([ci])](#Editor+selection) ⇒
-    * [.undo()](#Editor+undo) ⇒ <code>void</code>
-    * [.redo()](#Editor+redo) ⇒ <code>void</code>
-    * [.subscribe(eventName, handler)](#Editor+subscribe) ⇒ <code>object</code>
-    * [.unsubscribe(eventName, subscriber)](#Editor+unsubscribe) ⇒ <code>void</code>
-    * [.structSelected()](#Editor+structSelected) ⇒ [<code>Struct</code>](#Struct)
-
-<a name="Editor+isDitrty"></a>
-
-### editor.isDitrty() ⇒ <code>bollean</code>
-<p>..........................</p>
-
-**Kind**: instance method of [<code>Editor</code>](#Editor)  
-**Returns**: <code>bollean</code> - <p>true if .......................</p>  
-**Access**: public  
-<a name="Editor+setOrigin"></a>
-
-### editor.setOrigin() ⇒ <code>void</code>
-<p>..........................</p>
-
-**Kind**: instance method of [<code>Editor</code>](#Editor)  
-**Access**: public  
-<a name="Editor+clear"></a>
-
-### editor.clear() ⇒ <code>void</code>
-<p>Clears canvas</p>
-
-**Kind**: instance method of [<code>Editor</code>](#Editor)  
-**Access**: public  
-<a name="Editor+struct"></a>
-
-### editor.struct([value]) ⇒ [<code>Struct</code>](#Struct)
-<p>Returns struct and updates stuct on canvas</p>
-
-**Kind**: instance method of [<code>Editor</code>](#Editor)  
-**Returns**: [<code>Struct</code>](#Struct) - <ul>
-<li>struct rendered on canvas</li>
-</ul>  
-**Access**: public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| [value] | [<code>Struct</code>](#Struct) | <p>struct to be rendered on canvas</p> |
-
-<a name="Editor+options"></a>
-
-### editor.options([value]) ⇒ <code>object</code>
-<p>Returns editor options</p>
-
-**Kind**: instance method of [<code>Editor</code>](#Editor)  
-**Returns**: <code>object</code> - <p>editor options .......... type?</p>  
-**Access**: public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| [value] | <code>any</code> | <p>...............................</p> |
-
-<a name="Editor+zoom"></a>
-
-### editor.zoom([value]) ⇒ <code>object</code>
-<p>Sets / gets zoom value</p>
-
-**Kind**: instance method of [<code>Editor</code>](#Editor)  
-**Returns**: <code>object</code> - <p>current zoom value</p>  
-**Access**: public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| [value] | <code>number</code> | <p>zoom value to be set</p> |
-
-<a name="Editor+selection"></a>
-
-### editor.selection([ci]) ⇒
-<p>.................................</p>
-
-**Kind**: instance method of [<code>Editor</code>](#Editor)  
-**Returns**: <p>.................................</p>  
-**Access**: public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| [ci] | <code>any</code> | <p>.................................</p> |
-
-<a name="Editor+undo"></a>
-
-### editor.undo() ⇒ <code>void</code>
-<p>Cancels the last action in editor, updates history stack and view</p>
-
-**Kind**: instance method of [<code>Editor</code>](#Editor)  
-**Access**: public  
-<a name="Editor+redo"></a>
-
-### editor.redo() ⇒ <code>void</code>
-<p>Reperforms the last canceled action, updates history stack and view</p>
-
-**Kind**: instance method of [<code>Editor</code>](#Editor)  
-**Access**: public  
-<a name="Editor+subscribe"></a>
-
-### editor.subscribe(eventName, handler) ⇒ <code>object</code>
-<p>Creates a subscribtion to provided event</p>
-
-**Kind**: instance method of [<code>Editor</code>](#Editor)  
-**Returns**: <code>object</code> - <p>subcriber ....................................</p>  
-**Access**: public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| eventName | <code>any</code> | <p>event name ................. type -?</p> |
-| handler | <code>any</code> | <p>event handler ............... type - ?</p> |
-
-<a name="Editor+unsubscribe"></a>
-
-### editor.unsubscribe(eventName, subscriber) ⇒ <code>void</code>
-<p>Removes a subscribtion to provided event</p>
-
-**Kind**: instance method of [<code>Editor</code>](#Editor)  
-**Access**: public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| eventName | <code>any</code> | <p>event name ................. type -?</p> |
-| subscriber | <code>any</code> | <p>subscriber object</p> |
-
-<a name="Editor+structSelected"></a>
-
-### editor.structSelected() ⇒ [<code>Struct</code>](#Struct)
-<p>Returns selected struct</p>
-
-**Kind**: instance method of [<code>Editor</code>](#Editor)  
-**Returns**: [<code>Struct</code>](#Struct) - <p>selected struct</p>  
-**Access**: public  
-<a name="KetcherBuilder"></a>
-
-## KetcherBuilder
-**Kind**: global class  
-
-* [KetcherBuilder](#KetcherBuilder)
-    * [new _structServiceProvider()](#new_KetcherBuilder_new)
-    * [.build(editor, [serviceOptions])](#KetcherBuilder+build) ⇒ <code>Ketcher</code>
-
-<a name="new_KetcherBuilder_new"></a>
-
-### new \_structServiceProvider()
-<p>Builder class.</p>
-
-<a name="KetcherBuilder+build"></a>
-
-### ketcherBuilder.build(editor, [serviceOptions]) ⇒ <code>Ketcher</code>
-<p>Configure and build Ketcher instance.</p>
-
-**Kind**: instance method of [<code>KetcherBuilder</code>](#KetcherBuilder)  
-**Returns**: <code>Ketcher</code> - <p>ketcher instance.</p>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| editor | [<code>Editor</code>](#Editor) | <p>editor instance.</p> |
-| [serviceOptions] | <code>StructServiceOptions</code> | <p>struct service options.</p> |
-
 <a name="Indigo"></a>
 
 ## Indigo

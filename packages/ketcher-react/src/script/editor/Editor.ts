@@ -178,14 +178,11 @@ class Editor implements KetcherEditor {
   /**
    * ..........................
    * @public
-   * @returns {bollean} true if .......................
+   * @returns {boolean} true if .......................
    */
   isDitrty(): boolean {
     const position = this.historyPtr
     const length = this.historyStack.length
-    console.log('position', position)
-    console.log('lenght', length)
-    console.log('origin', this.#origin)
     if (!length || !this.#origin) {
       return false
     }

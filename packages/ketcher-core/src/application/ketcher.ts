@@ -44,6 +44,12 @@ function getStructure(
   return formatter.getStructureFromStructAsync(struct)
 }
 
+/**
+ * The main class
+ *
+ * @exports Ketcher
+ * @class
+ */
 export class Ketcher {
   #structService: StructService
   #formatterFactory: FormatterFactory
@@ -69,15 +75,33 @@ export class Ketcher {
     this.#indigo = new Indigo(this.#structService)
   }
 
+  /**
+   * Returns indigo object
+   * @public
+   * @returns { Indigo } indigo object
+   */
   get indigo() {
     return this.#indigo
   }
 
+  /**
+   * Returns stucture in SMILES
+   * @public
+   * @param {boolean} [isExtended = false] - true, if smilesExt should be used
+   * @returns {Promise<string>} promise resolving into structure in SMILES format
+   */
   getSmiles(isExtended = false): Promise<string> {
     const format: SupportedFormat = isExtended ? 'smilesExt' : 'smiles'
     return getStructure(format, this.#formatterFactory, this.editor.struct())
   }
 
+  /**
+   * Returns stucture in MOL
+   * @public
+   * @async
+   * @param {MolfileFormat} [molfileFormat = 'v2000'] - MOL format
+   * @returns {Promise<string>} promise resolving into structure in MOL format
+   */
   async getMolfile(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
     if (this.containsReaction()) {
       throw Error(
@@ -96,6 +120,13 @@ export class Ketcher {
     return molfile
   }
 
+  /**
+   * Returns stucture in RXN
+   * @public
+   * @async
+   * @param {MolfileFormat} [molfileFormat = 'v2000'] - MOL format
+   * @returns {Promise<string>} promise resolving into structure in RXN format
+   */
   async getRxn(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
     if (!this.containsReaction()) {
       throw Error(
@@ -113,18 +144,39 @@ export class Ketcher {
     return rxnfile
   }
 
+  /**
+   * Returns stucture in Ket
+   * @public
+   * @returns {Promise<string>} promise resolving into structure in Ket format
+   */
   getKet(): Promise<string> {
     return getStructure('ket', this.#formatterFactory, this.#editor.struct())
   }
 
+  /**
+   * Returns stucture in SMARTS
+   * @public
+   * @returns {Promise<string>} promise resolving into structure in SMARTS format
+   */
   getSmarts(): Promise<string> {
     return getStructure('smarts', this.#formatterFactory, this.#editor.struct())
   }
 
+  /**
+   * Returns stucture in CML
+   * @public
+   * @returns {Promise<string>} promise resolving into structure in CML format
+   */
   getCml(): Promise<string> {
     return getStructure('cml', this.#formatterFactory, this.#editor.struct())
   }
 
+  /**
+   * Returns stucture in inChI
+   * @public
+   * @param {boolean} [withAuxInfo = false] - true, if inChIAuxInfo should be used
+   * @returns {Promise<string>} promise resolving into structure in inChI format
+   */
   getInchi(withAuxInfo = false): Promise<string> {
     return getStructure(
       withAuxInfo ? 'inChIAuxInfo' : 'inChI',
@@ -133,6 +185,11 @@ export class Ketcher {
     )
   }
 
+  /**
+   * Returns InChI key
+   * @public
+   * @returns {Promise<string>} promise resolving into InChI key
+   */
   async generateInchIKey(): Promise<string> {
     const struct: string = await getStructure(
       'ket',
@@ -143,10 +200,22 @@ export class Ketcher {
     return this.#structService.generateInchIKey(struct)
   }
 
+  /**
+   * Returns informatiom on whether struct contains rxn arrow
+   * @public
+   * @returns {boolean} true, if contains
+   */
   containsReaction(): boolean {
     return this.editor.struct().hasRxnArrow()
   }
 
+  /**
+   * Sets provided molecule to canvas
+   * @public
+   * @async
+   * @param {Struct} structStr - struct to be set in editor
+   * @returns {void}
+   */
   async setMolecule(structStr: string): Promise<void> {
     assert(typeof structStr === 'string')
 
@@ -164,6 +233,14 @@ export class Ketcher {
     throw Error('not implemented yet')
   }
 
+  /**
+   * Generates ...........
+   * @public
+   * @async
+   * @param {string} data - image data
+   * @param {GenerateImageOptions} [options = { outputFormat: 'png' }] - options ...........
+   * @returns {Promise<Blob>} ...........
+   */
   async generateImage(
     data: string,
     options: GenerateImageOptions = { outputFormat: 'png' }

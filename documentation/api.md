@@ -3,8 +3,10 @@
 <dl>
 <dt><a href="#KetcherBuilder">KetcherBuilder</a></dt>
 <dd></dd>
-<dt><a href="#Struct">Struct</a></dt>
+<dt><a href="#SGroupForest">SGroupForest</a></dt>
 <dd></dd>
+<dt><a href="#Struct">Struct</a></dt>
+<dd><p>Class, describing structure on canvas.</p></dd>
 </dl>
 
 ## Functions
@@ -40,20 +42,99 @@ Returns the shift magnitude to avoid it</p></dd>
 
 ## KetcherBuilder
 **Kind**: global class  
+
+* [KetcherBuilder](#KetcherBuilder)
+    * [new _structServiceProvider()](#new_KetcherBuilder_new)
+    * [.build(editor, [serviceOptions])](#KetcherBuilder+build) ⇒ <code>Ketcher</code>
+
 <a name="new_KetcherBuilder_new"></a>
 
 ### new \_structServiceProvider()
 <p>Builder class.</p>
 
+<a name="KetcherBuilder+build"></a>
+
+### ketcherBuilder.build(editor, [serviceOptions]) ⇒ <code>Ketcher</code>
+<p>Configure and build Ketcher instance.</p>
+
+**Kind**: instance method of [<code>KetcherBuilder</code>](#KetcherBuilder)  
+**Returns**: <code>Ketcher</code> - <p>ketcher instance.</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| editor | <code>Editor</code> | <p>editor instance.</p> |
+| [serviceOptions] | <code>StructServiceOptions</code> | <p>struct service options.</p> |
+
+<a name="SGroupForest"></a>
+
+## SGroupForest
+**Kind**: global class  
+
+* [SGroupForest](#SGroupForest)
+    * [new SGroupForest()](#new_SGroupForest_new)
+    * [.getSGroupsBFS()](#SGroupForest+getSGroupsBFS)
+
+<a name="new_SGroupForest_new"></a>
+
+### new SGroupForest()
+<p>node id -&gt; list of child ids</p>
+
+<a name="SGroupForest+getSGroupsBFS"></a>
+
+### sGroupForest.getSGroupsBFS()
+<p>returns an array or s-group ids in the order of breadth-first search</p>
+
+**Kind**: instance method of [<code>SGroupForest</code>](#SGroupForest)  
 <a name="Struct"></a>
 
 ## Struct
-**Kind**: global class  
-<a name="new_Struct_new"></a>
-
-### new Struct()
 <p>Class, describing structure on canvas.</p>
 
+**Kind**: global class  
+
+* [Struct](#Struct)
+    * [.hasRxnProps()](#Struct+hasRxnProps) ⇒ <code>bollean</code>
+    * [.hasRxnArrow()](#Struct+hasRxnArrow) ⇒ <code>boolean</code>
+    * [.hasRxnPluses()](#Struct+hasRxnPluses) ⇒ <code>boolean</code>
+    * [.isRxn()](#Struct+isRxn) ⇒ <code>boolean</code>
+    * [.isBlank()](#Struct+isBlank) ⇒ <code>boolean</code>
+
+<a name="Struct+hasRxnProps"></a>
+
+### struct.hasRxnProps() ⇒ <code>bollean</code>
+<p>Returns</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: protected  
+<a name="Struct+hasRxnArrow"></a>
+
+### struct.hasRxnArrow() ⇒ <code>boolean</code>
+<p>Returns information on whether struct contains an rxn arrow.</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>boolean</code> - <p>true if contains.</p>  
+**Access**: public  
+<a name="Struct+hasRxnPluses"></a>
+
+### struct.hasRxnPluses() ⇒ <code>boolean</code>
+<p>Returns information on whether struct contains rxn pluses.</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>boolean</code> - <p>true if contains.</p>  
+<a name="Struct+isRxn"></a>
+
+### struct.isRxn() ⇒ <code>boolean</code>
+<p>Returns information on whether struct contains an rxn arrow or rxn pluses.</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>boolean</code> - <p>true if contains.</p>  
+<a name="Struct+isBlank"></a>
+
+### struct.isBlank() ⇒ <code>boolean</code>
+<p>Returns information on whether struct contains any objects as atoms, rnx arrows, rnx pluses, simple objects or text.</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>boolean</code> - <p>true if contains any of these objects.</p>  
 <a name="fromAromaticTemplateOnBond"></a>
 
 ## fromAromaticTemplateOnBond(restruct, events, bid, template, simpleFusing) ⇒ <code>Promise</code>

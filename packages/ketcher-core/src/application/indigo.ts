@@ -83,6 +83,12 @@ function convertStructToString(
   return struct
 }
 
+/**
+ * Class, performing 'server' (indigo) functions
+ *
+ * @exports Indigo
+ * @class
+ */
 export class Indigo {
   #structService: StructService
   #ketSerializer: KetSerializer
@@ -92,10 +98,22 @@ export class Indigo {
     this.#ketSerializer = new KetSerializer()
   }
 
+  /**
+   * Returns information about indigo service
+   * @public
+   * @returns {Promise<InfoResult>} promise, which fulfills into object with indigo information
+   */
   info(): Promise<InfoResult> {
     return this.#structService.info()
   }
 
+  /**
+   * Returns converted structure
+   * @public
+   * @param {Struct} struct - structure
+   * @param {ConvertOptions} [options] object with output format
+   * @returns {Promise<ConvertResult>} promise, resolving into an object with structure and format
+   */
   convert(
     struct: StructOrString,
     options?: ConvertOptions
@@ -108,6 +126,12 @@ export class Indigo {
     })
   }
 
+  /**
+   * Returns a structure with normalized layout
+   * @public
+   * @param {StructOrString} struct - structure
+   * @returns {Promise<Struct>} promise, resolving into normalized struct
+   */
   layout(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .layout({
@@ -117,6 +141,12 @@ export class Indigo {
       .then((data) => this.#ketSerializer.deserialize(data.struct))
   }
 
+  /**
+   * Returns a structure with normalized bond lengths and angles
+   * @public
+   * @param {StructOrString} struct - initial structure
+   * @returns {Promise<Struct>} promise, resolving into normalized struct
+   */
   clean(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .clean({
@@ -126,6 +156,12 @@ export class Indigo {
       .then((data) => this.#ketSerializer.deserialize(data.struct))
   }
 
+  /**
+   * Returns aromatized structure
+   * @public
+   * @param {StructOrString} struct - initial structure
+   * @returns {Promise<Struct>} promise, resolving into atomatized struct
+   */
   aromatize(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .aromatize({
@@ -135,6 +171,12 @@ export class Indigo {
       .then((data) => this.#ketSerializer.deserialize(data.struct))
   }
 
+  /**
+   * Returns dearomatized structure
+   * @public
+   * @param {StructOrString} struct - initial structure
+   * @returns {Promise<Struct>} promise, resolving into dearomatized structure
+   */
   dearomatize(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .dearomatize({
@@ -144,6 +186,12 @@ export class Indigo {
       .then((data) => this.#ketSerializer.deserialize(data.struct))
   }
 
+  /**
+   * Returns a structure ..........................
+   * @public
+   * @param {StructOrString} struct - initial structure
+   * @returns {Promise<Struct>} promise, resolving into .............................
+   */
   calculateCip(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .calculateCip({
@@ -153,6 +201,13 @@ export class Indigo {
       .then((data) => this.#ketSerializer.deserialize(data.struct))
   }
 
+  /**
+   * Returns a structure ..........................
+   * @public
+   * @param {StructOrString} struct - initial structure
+   * @param {AutomapOptions} [options] - object with automap mode
+   * @returns {Promise<Struct>} promise, resolving into .............................
+   */
   automap(struct: StructOrString, options?: AutomapOptions): Promise<Struct> {
     const mode = options?.mode || 'discard'
 
@@ -165,6 +220,13 @@ export class Indigo {
       .then((data) => this.#ketSerializer.deserialize(data.struct))
   }
 
+  /**
+   * Returns a structure ..........................
+   * @public
+   * @param {StructOrString} struct - initial structure
+   * @param {CheckOptions} [options] - object with check types
+   * @returns {Promise<Struct>} promise, resolving into .............................
+   */
   check(struct: StructOrString, options?: CheckOptions): Promise<CheckResult> {
     const types = options?.types || defaultTypes
 
@@ -174,6 +236,13 @@ export class Indigo {
     })
   }
 
+  /**
+   * Returns calculated values of molecule
+   * @public
+   * @param {StructOrString} struct - structure
+   * @param {CalculateOptions} [options] - object with properties
+   * @returns {Promise<CalculateResult>} promise, resolving into object with molecule calculated values
+   */
   calculate(
     struct: StructOrString,
     options?: CalculateOptions
@@ -186,6 +255,13 @@ export class Indigo {
     })
   }
 
+  /**
+   * Returns struct ..........................
+   * @public
+   * @param {Blob} image - image
+   * @param {RecognizeOptions} [options] - object with imago versions
+   * @returns {Promise<CalculateResult>} promise, resolving into .............................
+   */
   recognize(image: Blob, options?: RecognizeOptions): Promise<Struct> {
     const version = options?.version || ''
 
@@ -194,6 +270,13 @@ export class Indigo {
       .then((data) => this.#ketSerializer.deserialize(data.struct))
   }
 
+  /**
+   * Returns base 64 string generated from struct
+   * @public
+   * @param {StructOrString} struct - struct
+   * @param {GenerateImageOptions} [options] - object with imago versions
+   * @returns {Promise<string>} promise, resolving into base64 string
+   */
   generateImageAsBase64(
     struct: StructOrString,
     options?: GenerateImageOptions

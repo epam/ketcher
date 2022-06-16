@@ -99,6 +99,13 @@ interface Selection {
   rxnPluses?: Array<number>
   rxnArrows?: Array<number>
 }
+
+/**
+ * Class, describing editor state and options.
+ *
+ * @exports Editor
+ * @class
+ */
 class Editor implements KetcherEditor {
   #origin?: any
   render: Render
@@ -168,15 +175,28 @@ class Editor implements KetcherEditor {
     domEventSetup(this, clientArea)
   }
 
+  /**
+   * ..........................
+   * @public
+   * @returns {bollean} true if .......................
+   */
   isDitrty(): boolean {
     const position = this.historyPtr
     const length = this.historyStack.length
+    console.log('position', position)
+    console.log('lenght', length)
+    console.log('origin', this.#origin)
     if (!length || !this.#origin) {
       return false
     }
     return !isEqual(this.historyStack[position - 1], this.#origin)
   }
 
+  /**
+   * ..........................
+   * @public
+   * @returns {void}
+   */
   setOrigin(): void {
     const position = this.historyPtr
     this.#origin = position ? this.historyStack[position - 1] : null
@@ -203,10 +223,21 @@ class Editor implements KetcherEditor {
     /* eslint-enable no-underscore-dangle */
   }
 
+  /**
+   * Clears canvas
+   * @public
+   * @returns {void}
+   */
   clear() {
     this.struct(undefined)
   }
 
+  /**
+   * Returns struct and updates stuct on canvas
+   * @public
+   * @param {Struct} [value] - struct to be rendered on canvas
+   * @returns {Struct} - struct rendered on canvas
+   */
   struct(value?: Struct): Struct {
     if (arguments.length === 0) {
       return this.render.ctab.molecule
@@ -222,6 +253,12 @@ class Editor implements KetcherEditor {
     return this.render.ctab.molecule
   }
 
+  /**
+   * Returns editor options
+   * @public
+   * @param {any} [value] - ...............................
+   * @returns {object} editor options .......... type?
+   */
   options(value?: any) {
     if (arguments.length === 0) {
       return this.render.options
@@ -241,7 +278,13 @@ class Editor implements KetcherEditor {
     return this.render.options
   }
 
-  zoom(value?: any) {
+  /**
+   * Sets / gets zoom value
+   * @public
+   * @param {number} [value] - zoom value to be set
+   * @returns {object} current zoom value
+   */
+  zoom(value?: number) {
     if (arguments.length === 0) {
       return this.render.options.zoom
     }
@@ -256,6 +299,12 @@ class Editor implements KetcherEditor {
     return this.render.options.zoom
   }
 
+  /**
+   * .................................
+   * @public
+   * @param {any} [ci] .................................
+   * @returns .................................
+   */
   selection(ci?: any) {
     if (arguments.length === 0) {
       return this._selection // eslint-disable-line
@@ -346,6 +395,11 @@ class Editor implements KetcherEditor {
     }
   }
 
+  /**
+   * Cancels the last action in editor, updates history stack and view
+   * @public
+   * @returns {void}
+   */
   undo() {
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty')
@@ -370,6 +424,11 @@ class Editor implements KetcherEditor {
     this.render.update()
   }
 
+  /**
+   * Reperforms the last canceled action, updates history stack and view
+   * @public
+   * @returns {void}
+   */
   redo() {
     if (this.historyPtr === this.historyStack.length) {
       throw new Error('Redo stack is empty')
@@ -392,6 +451,13 @@ class Editor implements KetcherEditor {
     this.render.update()
   }
 
+  /**
+   * Creates a subscribtion to provided event
+   * @public
+   * @param {any} eventName - event name ................. type -?
+   * @param {any} handler - event handler ............... type - ?
+   * @returns {object} subcriber ....................................
+   */
   subscribe(eventName: any, handler: any) {
     const subscriber = {
       handler: handler
@@ -412,6 +478,13 @@ class Editor implements KetcherEditor {
     return subscriber
   }
 
+  /**
+   * Removes a subscribtion to provided event
+   * @public
+   * @param {any} eventName - event name ................. type -?
+   * @param {any} subscriber - subscriber object
+   * @returns {void}
+   */
   unsubscribe(eventName: any, subscriber: any) {
     // Only for event type - subscription
     this.event[eventName].remove(subscriber.handler)
@@ -468,6 +541,11 @@ class Editor implements KetcherEditor {
     return res
   }
 
+  /**
+   * Returns selected struct
+   * @public
+   * @returns {Struct} selected struct
+   */
   structSelected() {
     const struct = this.render.ctab.molecule
     const selection = this.explicitSelected()

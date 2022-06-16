@@ -1,43 +1,846 @@
 ## Classes
 
 <dl>
-<dt><a href="#KetcherBuilder">KetcherBuilder</a></dt>
-<dd></dd>
-<dt><a href="#SGroupForest">SGroupForest</a></dt>
-<dd></dd>
 <dt><a href="#Struct">Struct</a></dt>
 <dd><p>Class, describing structure on canvas.</p></dd>
-</dl>
-
-## Functions
-
-<dl>
-<dt><a href="#fromAromaticTemplateOnBond">fromAromaticTemplateOnBond(restruct, events, bid, template, simpleFusing)</a> ⇒ <code>Promise</code></dt>
+<dt><a href="#Editor">Editor</a></dt>
+<dd><p>Class, describing editor state and options.</p></dd>
+<dt><a href="#KetcherBuilder">KetcherBuilder</a></dt>
 <dd></dd>
-<dt><a href="#fromDearomatize">fromDearomatize(restruct, dastruct, bondMap)</a> ⇒ <code>Action</code></dt>
-<dd></dd>
-<dt><a href="#getFragmentWithBondMap">getFragmentWithBondMap(struct, frid)</a> ⇒ <code>Object</code></dt>
-<dd></dd>
-<dt><a href="#fromAtomsAttrs">fromAtomsAttrs(restruct, ids, attrs, reset)</a></dt>
-<dd></dd>
-<dt><a href="#fromAtomMerge">fromAtomMerge(restruct, srcId, dstId)</a> ⇒ <code>Action</code></dt>
-<dd></dd>
-<dt><a href="#closestToMerge">closestToMerge(struct, closestMap)</a> ⇒ <code>Object</code></dt>
-<dd></dd>
-<dt><a href="#processAtom">processAtom(restruct, aid, frid, newfrid)</a> ⇒ <code>Action</code></dt>
-<dd></dd>
-<dt><a href="#fromFragmentSplit">fromFragmentSplit(restruct, frid, rgForRemove)</a> ⇒ <code>Action</code></dt>
-<dd></dd>
-<dt><a href="#isSelectionSvgObjectExists">isSelectionSvgObjectExists(item)</a> ⇒ <code>boolean</code></dt>
-<dd><p>SelectionPlate could be an item then value would be in it
-or it could be a set of items then removed value need to be check on at least one of items in set</p></dd>
-<dt><a href="#shiftRayBox">shiftRayBox(p, d, bb)</a></dt>
-<dd><p>Finds intersection of a ray and a box and
-Returns the shift magnitude to avoid it</p></dd>
-<dt><del><a href="#circleToEllipse">circleToEllipse(ketItem)</a></del></dt>
+<dt><a href="#Indigo">Indigo</a></dt>
 <dd></dd>
 </dl>
 
+<a name="Struct"></a>
+
+## Struct
+<p>Class, describing structure on canvas.</p>
+
+**Kind**: global class  
+
+* [Struct](#Struct)
+    * [.hasRxnProps()](#Struct+hasRxnProps) ⇒ <code>bollean</code>
+    * [.hasRxnArrow()](#Struct+hasRxnArrow) ⇒ <code>boolean</code>
+    * [.hasRxnPluses()](#Struct+hasRxnPluses) ⇒ <code>boolean</code>
+    * [.isRxn()](#Struct+isRxn) ⇒ <code>boolean</code>
+    * [.isBlank()](#Struct+isBlank) ⇒ <code>boolean</code>
+    * [.clone([atomSet], [bondSet], [dropRxnSymbols], [aidMap], [simpleObjectsSet], [textsSet])](#Struct+clone) ⇒ [<code>Struct</code>](#Struct)
+    * [.getScaffold()](#Struct+getScaffold) ⇒ [<code>Struct</code>](#Struct)
+    * [.getFragmentIds(fid)](#Struct+getFragmentIds) ⇒ <code>Pile.&lt;number&gt;</code>
+    * [.getFragment(fid)](#Struct+getFragment) ⇒ [<code>Struct</code>](#Struct)
+    * [.mergeInto(cp, [atomSet], [bondSet], [dropRxnSymbols], [keepAllRGroups], [aidMap], [simpleObjectsSet], [textsSet])](#Struct+mergeInto) ⇒ [<code>Struct</code>](#Struct)
+    * [.atomAddToSGroup(sgid, aid)](#Struct+atomAddToSGroup) ⇒ <code>void</code>
+    * [.findBondId(begin, end)](#Struct+findBondId) ⇒ <code>number</code>
+    * [.initNeighbors()](#Struct+initNeighbors) ⇒ <code>void</code>
+    * [.bondInitHalfBonds(bid, [bond])](#Struct+bondInitHalfBonds) ⇒ <code>void</code>
+    * [.halfBondUpdate(hbid)](#Struct+halfBondUpdate) ⇒ <code>void</code>
+    * [.initHalfBonds()](#Struct+initHalfBonds) ⇒ <code>void</code>
+    * [.setHbNext(hbid, next)](#Struct+setHbNext) ⇒ <code>void</code>
+    * [.atomAddNeighbor(hbid)](#Struct+atomAddNeighbor) ⇒ <code>void</code>
+    * [.atomSortNeighbors(aid)](#Struct+atomSortNeighbors) ⇒ <code>void</code>
+    * [.sortNeighbors(list)](#Struct+sortNeighbors) ⇒ <code>void</code>
+    * [.atomUpdateHalfBonds(aid)](#Struct+atomUpdateHalfBonds) ⇒ <code>void</code>
+    * [.updateHalfBonds(list)](#Struct+updateHalfBonds) ⇒ <code>void</code>
+    * [.sGroupsRecalcCrossBonds()](#Struct+sGroupsRecalcCrossBonds) ⇒ <code>void</code>
+    * [.sGroupDelete(sgid)](#Struct+sGroupDelete) ⇒ <code>void</code>
+    * [.atomSetPos(id, pp)](#Struct+atomSetPos) ⇒ <code>void</code>
+    * [.rxnPlusSetPos(id, pp)](#Struct+rxnPlusSetPos) ⇒ <code>void</code>
+    * [.rxnArrowSetPos(id, pos)](#Struct+rxnArrowSetPos) ⇒ <code>void</code>
+    * [.simpleObjectSetPos(id, pos)](#Struct+simpleObjectSetPos) ⇒ <code>void</code>
+    * [.textSetPosition(id, pos)](#Struct+textSetPosition) ⇒ <code>void</code>
+    * [.getCoordBoundingBox([atomSet])](#Struct+getCoordBoundingBox) ⇒ <code>any</code>
+    * [.getCoordBoundingBoxObj()](#Struct+getCoordBoundingBoxObj) ⇒ <code>any</code>
+    * [.getBondLengthData()](#Struct+getBondLengthData) ⇒ <code>object</code>
+    * [.getAvgBondLength()](#Struct+getAvgBondLength) ⇒ <code>number</code>
+    * [.getAvgClosestAtomDistance()](#Struct+getAvgClosestAtomDistance) ⇒ <code>number</code>
+    * [.checkBondExists(begin, end)](#Struct+checkBondExists) ⇒ <code>boolean</code>
+    * [.findConnectedComponent(firstaid)](#Struct+findConnectedComponent) ⇒ <code>Pile.&lt;number&gt;</code>
+    * [.findConnectedComponents([discardExistingFragments])](#Struct+findConnectedComponents) ⇒ <code>Array.&lt;any&gt;</code>
+    * [.markFragment(idSet)](#Struct+markFragment) ⇒ <code>void</code>
+    * [.markFragments(idSet)](#Struct+markFragments) ⇒ <code>void</code>
+    * [.scale(scale)](#Struct+scale) ⇒ <code>void</code>
+    * [.rescale(scale)](#Struct+rescale) ⇒ <code>void</code>
+    * [.loopHasSelfIntersections(hbs)](#Struct+loopHasSelfIntersections) ⇒ <code>boolean</code>
+    * [.partitionLoop(loop)](#Struct+partitionLoop) ⇒ <code>any</code>
+    * [.halfBondAngle(hbid1, hbid2)](#Struct+halfBondAngle) ⇒ <code>number</code>
+    * [.loopIsConvex(loop)](#Struct+loopIsConvex) ⇒ <code>boolean</code>
+    * [.loopIsInner(loop)](#Struct+loopIsInner) ⇒ <code>boolean</code>
+    * [.findLoops()](#Struct+findLoops) ⇒ <code>object</code>
+    * [.calcImplicitHydrogen(aid)](#Struct+calcImplicitHydrogen) ⇒ <code>void</code>
+    * [.setImplicitHydrogen([list])](#Struct+setImplicitHydrogen) ⇒ <code>void</code>
+    * [.atomGetNeighbors([aid])](#Struct+atomGetNeighbors) ⇒ <code>Array.&lt;Neighbor&gt;</code> \| <code>undefined</code>
+    * [.getComponents()](#Struct+getComponents) ⇒ <code>any</code>
+    * [.defineRxnFragmentTypeForAtomset(atomset, arrowpos)](#Struct+defineRxnFragmentTypeForAtomset) ⇒ <code>1</code> \| <code>2</code>
+    * [.getBondFragment(bid)](#Struct+getBondFragment) ⇒ <code>any</code>
+    * [.bindSGroupsToFunctionalGroups()](#Struct+bindSGroupsToFunctionalGroups) ⇒ <code>void</code>
+
+<a name="Struct+hasRxnProps"></a>
+
+### struct.hasRxnProps() ⇒ <code>bollean</code>
+<p>Returns information on whether atoms or bonds contains an rxn properties</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>bollean</code> - <p>true if contains</p>  
+**Access**: public  
+<a name="Struct+hasRxnArrow"></a>
+
+### struct.hasRxnArrow() ⇒ <code>boolean</code>
+<p>Returns information on whether struct contains an rxn arrow</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>boolean</code> - <p>true if contains</p>  
+**Access**: public  
+<a name="Struct+hasRxnPluses"></a>
+
+### struct.hasRxnPluses() ⇒ <code>boolean</code>
+<p>Returns information on whether struct contains rxn pluses</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>boolean</code> - <p>true if contains</p>  
+**Access**: public  
+<a name="Struct+isRxn"></a>
+
+### struct.isRxn() ⇒ <code>boolean</code>
+<p>Returns information on whether struct contains an rxn arrow or rxn pluses</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>boolean</code> - <p>true if contains</p>  
+**Access**: public  
+<a name="Struct+isBlank"></a>
+
+### struct.isBlank() ⇒ <code>boolean</code>
+<p>Returns information on whether struct contains any objects as atoms, rnx arrows, rnx pluses, simple objects or text</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>boolean</code> - <p>true if contains any of these objects</p>  
+**Access**: public  
+<a name="Struct+clone"></a>
+
+### struct.clone([atomSet], [bondSet], [dropRxnSymbols], [aidMap], [simpleObjectsSet], [textsSet]) ⇒ [<code>Struct</code>](#Struct)
+<p>Returns cloned struct merged with provided parameters</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: [<code>Struct</code>](#Struct) - <p>cloned struct</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [atomSet] | <code>Pile.&lt;number&gt;</code> \| <code>null</code> | <p>set of atoms</p> |
+| [bondSet] | <code>Pile.&lt;number&gt;</code> \| <code>null</code> | <p>set of bonds</p> |
+| [dropRxnSymbols] | <code>boolean</code> |  |
+| [aidMap] | <code>Map.&lt;number, number&gt;</code> \| <code>null</code> | <p>atom IDs</p> |
+| [simpleObjectsSet] | <code>Pile.&lt;number&gt;</code> \| <code>null</code> | <p>set of simple objects</p> |
+| [textsSet] | <code>Pile.&lt;number&gt;</code> \| <code>null</code> | <p>set of text objects</p> |
+
+<a name="Struct+getScaffold"></a>
+
+### struct.getScaffold() ⇒ [<code>Struct</code>](#Struct)
+<p>Returns cloned struct ................................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: [<code>Struct</code>](#Struct) - <p>cloned struct</p>  
+**Access**: public  
+<a name="Struct+getFragmentIds"></a>
+
+### struct.getFragmentIds(fid) ⇒ <code>Pile.&lt;number&gt;</code>
+<p>Returns set of atoms with provided fragment ID</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>Pile.&lt;number&gt;</code> - <p>set of atoms</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| fid | <code>number</code> | <p>fragment ID</p> |
+
+<a name="Struct+getFragment"></a>
+
+### struct.getFragment(fid) ⇒ [<code>Struct</code>](#Struct)
+<p>Returns fragment struct with provided fragment ID</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: [<code>Struct</code>](#Struct) - <p>fragment struct</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| fid | <code>number</code> | <p>fragment ID</p> |
+
+<a name="Struct+mergeInto"></a>
+
+### struct.mergeInto(cp, [atomSet], [bondSet], [dropRxnSymbols], [keepAllRGroups], [aidMap], [simpleObjectsSet], [textsSet]) ⇒ [<code>Struct</code>](#Struct)
+<p>Returns struct merged into provided struct according to other parameters</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: [<code>Struct</code>](#Struct) - <p>merged struct</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cp | [<code>Struct</code>](#Struct) | <p>struct</p> |
+| [atomSet] | <code>Pile.&lt;number&gt;</code> \| <code>null</code> | <p>set of atoms</p> |
+| [bondSet] | <code>Pile.&lt;number&gt;</code> \| <code>null</code> | <p>set of bonds</p> |
+| [dropRxnSymbols] | <code>boolean</code> | <p>flag, which sets if rxn arrows and pluses should be cloned</p> |
+| [keepAllRGroups] | <code>boolean</code> | <p>.......................</p> |
+| [aidMap] | <code>Map.&lt;number, number&gt;</code> \| <code>null</code> | <p>atom IDs</p> |
+| [simpleObjectsSet] | <code>Pile.&lt;number&gt;</code> \| <code>null</code> | <p>set of simple objects</p> |
+| [textsSet] | <code>Pile.&lt;number&gt;</code> \| <code>null</code> | <p>set of text objects</p> |
+
+<a name="Struct+atomAddToSGroup"></a>
+
+### struct.atomAddToSGroup(sgid, aid) ⇒ <code>void</code>
+<p>Adds atom to the S-Group</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| sgid | <code>any</code> | <p>S-Group ID</p> |
+| aid | <code>any</code> | <p>atom ID</p> |
+
+<a name="Struct+findBondId"></a>
+
+### struct.findBondId(begin, end) ⇒ <code>number</code>
+<p>Returns bond ID</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>number</code> - <p>bond ID</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| begin | <code>number</code> | <p>bond begin</p> |
+| end | <code>number</code> | <p>bond end</p> |
+
+<a name="Struct+initNeighbors"></a>
+
+### struct.initNeighbors() ⇒ <code>void</code>
+<p>Sets neighbors for atoms</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+<a name="Struct+bondInitHalfBonds"></a>
+
+### struct.bondInitHalfBonds(bid, [bond]) ⇒ <code>void</code>
+<p>Initializes half bonds for provided bond</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| bid | <code>number</code> | <p>bond ID</p> |
+| [bond] | <code>Bond</code> | <p>bond</p> |
+
+<a name="Struct+halfBondUpdate"></a>
+
+### struct.halfBondUpdate(hbid) ⇒ <code>void</code>
+<p>Updates provided half bond</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| hbid | <code>number</code> | <p>half bond ID</p> |
+
+<a name="Struct+initHalfBonds"></a>
+
+### struct.initHalfBonds() ⇒ <code>void</code>
+<p>Initializes half bond for all bonds</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+<a name="Struct+setHbNext"></a>
+
+### struct.setHbNext(hbid, next) ⇒ <code>void</code>
+<p>...............................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| hbid | <code>number</code> | <p>half bond ID</p> |
+| next | <code>any</code> |  |
+
+<a name="Struct+atomAddNeighbor"></a>
+
+### struct.atomAddNeighbor(hbid) ⇒ <code>void</code>
+<p>............................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| hbid | <code>number</code> | <p>half bond ID</p> |
+
+<a name="Struct+atomSortNeighbors"></a>
+
+### struct.atomSortNeighbors(aid) ⇒ <code>void</code>
+<p>Sorts atom neighbors ............................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| aid | <code>number</code> | <p>half bond ID</p> |
+
+<a name="Struct+sortNeighbors"></a>
+
+### struct.sortNeighbors(list) ⇒ <code>void</code>
+<p>............................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| list | <code>any</code> | <p>............................</p> |
+
+<a name="Struct+atomUpdateHalfBonds"></a>
+
+### struct.atomUpdateHalfBonds(aid) ⇒ <code>void</code>
+<p>Updates half bonds for provided atom</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| aid | <code>number</code> | <p>atom ID</p> |
+
+<a name="Struct+updateHalfBonds"></a>
+
+### struct.updateHalfBonds(list) ⇒ <code>void</code>
+<p>Updates half bonds for provided atom</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| list | <code>any</code> | <p>..................</p> |
+
+<a name="Struct+sGroupsRecalcCrossBonds"></a>
+
+### struct.sGroupsRecalcCrossBonds() ⇒ <code>void</code>
+<p>.................................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+<a name="Struct+sGroupDelete"></a>
+
+### struct.sGroupDelete(sgid) ⇒ <code>void</code>
+<p>Deletes specified S-Group</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| sgid | <code>number</code> | <p>S-Group ID</p> |
+
+<a name="Struct+atomSetPos"></a>
+
+### struct.atomSetPos(id, pp) ⇒ <code>void</code>
+<p>Sets position for specified atom</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>number</code> | <p>atom ID</p> |
+| pp | <code>Vec2</code> | <p>position</p> |
+
+<a name="Struct+rxnPlusSetPos"></a>
+
+### struct.rxnPlusSetPos(id, pp) ⇒ <code>void</code>
+<p>Sets position for specified rxn pluse</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>number</code> | <p>rxn pluse ID</p> |
+| pp | <code>Vec2</code> | <p>position</p> |
+
+<a name="Struct+rxnArrowSetPos"></a>
+
+### struct.rxnArrowSetPos(id, pos) ⇒ <code>void</code>
+<p>Sets position for specified rxn arrow</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>number</code> | <p>rxn arrow ID</p> |
+| pos | <code>Array.&lt;Vec2&gt;</code> | <p>position</p> |
+
+<a name="Struct+simpleObjectSetPos"></a>
+
+### struct.simpleObjectSetPos(id, pos) ⇒ <code>void</code>
+<p>Sets position for specified simple object</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>number</code> | <p>simple object ID</p> |
+| pos | <code>Array.&lt;Vec2&gt;</code> | <p>position</p> |
+
+<a name="Struct+textSetPosition"></a>
+
+### struct.textSetPosition(id, pos) ⇒ <code>void</code>
+<p>Sets position for specified text item</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>number</code> | <p>text id</p> |
+| pos | <code>Vec2</code> | <p>position</p> |
+
+<a name="Struct+getCoordBoundingBox"></a>
+
+### struct.getCoordBoundingBox([atomSet]) ⇒ <code>any</code>
+<p>Returns bounding box (min and max coordinates) for specified atoms set</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>any</code> - <p>boundingBox - object with min and max coordinates</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [atomSet] | <code>Pile.&lt;number&gt;</code> | <p>set of atoms</p> |
+
+<a name="Struct+getCoordBoundingBoxObj"></a>
+
+### struct.getCoordBoundingBoxObj() ⇒ <code>any</code>
+<p>Returns bounding box (min and max coordinates)</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>any</code> - <p>boundingBox - object with min and max coordinates</p>  
+**Access**: public  
+<a name="Struct+getBondLengthData"></a>
+
+### struct.getBondLengthData() ⇒ <code>object</code>
+<p>Returns total bonds length</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>object</code> - <p>object with number or bonds and their total length</p>  
+**Access**: public  
+<a name="Struct+getAvgBondLength"></a>
+
+### struct.getAvgBondLength() ⇒ <code>number</code>
+<p>Returns average bond length</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>number</code> - <p>average bond length</p>  
+**Access**: public  
+<a name="Struct+getAvgClosestAtomDistance"></a>
+
+### struct.getAvgClosestAtomDistance() ⇒ <code>number</code>
+<p>Returns ..................................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>number</code> - <p>..................................</p>  
+**Access**: public  
+<a name="Struct+checkBondExists"></a>
+
+### struct.checkBondExists(begin, end) ⇒ <code>boolean</code>
+<p>Returns information on whether specified bond exists</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>boolean</code> - <p>true if exists</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| begin | <code>number</code> | <p>begin of bond</p> |
+| end | <code>number</code> | <p>begin of bond</p> |
+
+<a name="Struct+findConnectedComponent"></a>
+
+### struct.findConnectedComponent(firstaid) ⇒ <code>Pile.&lt;number&gt;</code>
+<p>............................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>Pile.&lt;number&gt;</code> - <p>........................</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| firstaid | <code>number</code> | <p>first atom id</p> |
+
+<a name="Struct+findConnectedComponents"></a>
+
+### struct.findConnectedComponents([discardExistingFragments]) ⇒ <code>Array.&lt;any&gt;</code>
+<p>............................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>Array.&lt;any&gt;</code> - <p>........................</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [discardExistingFragments] | <code>boolean</code> | <p>first atom id</p> |
+
+<a name="Struct+markFragment"></a>
+
+### struct.markFragment(idSet) ⇒ <code>void</code>
+<p>............................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| idSet | <code>Pile.&lt;number&gt;</code> | <p>....................</p> |
+
+<a name="Struct+markFragments"></a>
+
+### struct.markFragments(idSet) ⇒ <code>void</code>
+<p>............................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| idSet | <code>Pile.&lt;number&gt;</code> | <p>....................</p> |
+
+<a name="Struct+scale"></a>
+
+### struct.scale(scale) ⇒ <code>void</code>
+<p>.........................................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| scale | <code>number</code> | <p>scale value</p> |
+
+<a name="Struct+rescale"></a>
+
+### struct.rescale(scale) ⇒ <code>void</code>
+<p>.........................................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| scale | <code>number</code> | <p>scale value</p> |
+
+<a name="Struct+loopHasSelfIntersections"></a>
+
+### struct.loopHasSelfIntersections(hbs) ⇒ <code>boolean</code>
+<p>Returns ................................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>boolean</code> - <p>................................</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| hbs | <code>Array.&lt;number&gt;</code> | <p>half bonds set - ????</p> |
+
+<a name="Struct+partitionLoop"></a>
+
+### struct.partitionLoop(loop) ⇒ <code>any</code>
+<p>.........................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>any</code> - <p>.......................</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| loop | <code>any</code> | <p>......................</p> |
+
+<a name="Struct+halfBondAngle"></a>
+
+### struct.halfBondAngle(hbid1, hbid2) ⇒ <code>number</code>
+<p>Returns an angle of half bonds ................................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>number</code> - <p>angle in π radian</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| hbid1 | <code>number</code> | <p>first half bond id</p> |
+| hbid2 | <code>number</code> | <p>second half bond id</p> |
+
+<a name="Struct+loopIsConvex"></a>
+
+### struct.loopIsConvex(loop) ⇒ <code>boolean</code>
+<p>Returns information on whether ................................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>boolean</code> - <p>................................</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| loop | <code>Array.&lt;any&gt;</code> | <p>................................</p> |
+
+<a name="Struct+loopIsInner"></a>
+
+### struct.loopIsInner(loop) ⇒ <code>boolean</code>
+<p>Returns information on whether ................................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>boolean</code> - <p>................................</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| loop | <code>Array.&lt;any&gt;</code> | <p>................................</p> |
+
+<a name="Struct+findLoops"></a>
+
+### struct.findLoops() ⇒ <code>object</code>
+<p>Returns information on whether ................................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>object</code> - <p>................................</p>  
+**Access**: public  
+<a name="Struct+calcImplicitHydrogen"></a>
+
+### struct.calcImplicitHydrogen(aid) ⇒ <code>void</code>
+<p>Calculates implicit hydrogen</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| aid | <code>number</code> | <p>atom ID</p> |
+
+<a name="Struct+setImplicitHydrogen"></a>
+
+### struct.setImplicitHydrogen([list]) ⇒ <code>void</code>
+<p>Sets implicit hydrogen</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [list] | <code>Array.&lt;number&gt;</code> | <p>................</p> |
+
+<a name="Struct+atomGetNeighbors"></a>
+
+### struct.atomGetNeighbors([aid]) ⇒ <code>Array.&lt;Neighbor&gt;</code> \| <code>undefined</code>
+<p>Returns array of neighbors for specified atom</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>Array.&lt;Neighbor&gt;</code> \| <code>undefined</code> - <p>array of neighbors for specified atom</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [aid] | <code>number</code> | <p>atom ID</p> |
+
+<a name="Struct+getComponents"></a>
+
+### struct.getComponents() ⇒ <code>any</code>
+<p>.......................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>any</code> - <p>.......................</p>  
+**Access**: public  
+<a name="Struct+defineRxnFragmentTypeForAtomset"></a>
+
+### struct.defineRxnFragmentTypeForAtomset(atomset, arrowpos) ⇒ <code>1</code> \| <code>2</code>
+<p>.......................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>1</code> \| <code>2</code> - <p>.......................</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| atomset | <code>Pile.&lt;number&gt;</code> | <p>set of atoms</p> |
+| arrowpos | <code>number</code> | <p>....................</p> |
+
+<a name="Struct+getBondFragment"></a>
+
+### struct.getBondFragment(bid) ⇒ <code>any</code>
+<p>Returns information on weather bond contains a fragment</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Returns**: <code>any</code> - <p>..........................</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| bid | <code>number</code> | <p>bond ID</p> |
+
+<a name="Struct+bindSGroupsToFunctionalGroups"></a>
+
+### struct.bindSGroupsToFunctionalGroups() ⇒ <code>void</code>
+<p>.......................</p>
+
+**Kind**: instance method of [<code>Struct</code>](#Struct)  
+**Access**: public  
+<a name="Editor"></a>
+
+## Editor
+<p>Class, describing editor state and options.</p>
+
+**Kind**: global class  
+
+* [Editor](#Editor)
+    * [.isDitrty()](#Editor+isDitrty) ⇒ <code>bollean</code>
+    * [.setOrigin()](#Editor+setOrigin) ⇒ <code>void</code>
+    * [.clear()](#Editor+clear) ⇒ <code>void</code>
+    * [.struct([value])](#Editor+struct) ⇒ [<code>Struct</code>](#Struct)
+    * [.options([value])](#Editor+options) ⇒ <code>object</code>
+    * [.zoom([value])](#Editor+zoom) ⇒ <code>object</code>
+    * [.selection([ci])](#Editor+selection) ⇒
+    * [.undo()](#Editor+undo) ⇒ <code>void</code>
+    * [.redo()](#Editor+redo) ⇒ <code>void</code>
+    * [.subscribe(eventName, handler)](#Editor+subscribe) ⇒ <code>object</code>
+    * [.unsubscribe(eventName, subscriber)](#Editor+unsubscribe) ⇒ <code>void</code>
+    * [.structSelected()](#Editor+structSelected) ⇒ [<code>Struct</code>](#Struct)
+
+<a name="Editor+isDitrty"></a>
+
+### editor.isDitrty() ⇒ <code>bollean</code>
+<p>..........................</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Returns**: <code>bollean</code> - <p>true if .......................</p>  
+**Access**: public  
+<a name="Editor+setOrigin"></a>
+
+### editor.setOrigin() ⇒ <code>void</code>
+<p>..........................</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Access**: public  
+<a name="Editor+clear"></a>
+
+### editor.clear() ⇒ <code>void</code>
+<p>Clears canvas</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Access**: public  
+<a name="Editor+struct"></a>
+
+### editor.struct([value]) ⇒ [<code>Struct</code>](#Struct)
+<p>Returns struct and updates stuct on canvas</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Returns**: [<code>Struct</code>](#Struct) - <ul>
+<li>struct rendered on canvas</li>
+</ul>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | [<code>Struct</code>](#Struct) | <p>struct to be rendered on canvas</p> |
+
+<a name="Editor+options"></a>
+
+### editor.options([value]) ⇒ <code>object</code>
+<p>Returns editor options</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Returns**: <code>object</code> - <p>editor options .......... type?</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>any</code> | <p>...............................</p> |
+
+<a name="Editor+zoom"></a>
+
+### editor.zoom([value]) ⇒ <code>object</code>
+<p>Sets / gets zoom value</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Returns**: <code>object</code> - <p>current zoom value</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [value] | <code>number</code> | <p>zoom value to be set</p> |
+
+<a name="Editor+selection"></a>
+
+### editor.selection([ci]) ⇒
+<p>.................................</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Returns**: <p>.................................</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [ci] | <code>any</code> | <p>.................................</p> |
+
+<a name="Editor+undo"></a>
+
+### editor.undo() ⇒ <code>void</code>
+<p>Cancels the last action in editor, updates history stack and view</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Access**: public  
+<a name="Editor+redo"></a>
+
+### editor.redo() ⇒ <code>void</code>
+<p>Reperforms the last canceled action, updates history stack and view</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Access**: public  
+<a name="Editor+subscribe"></a>
+
+### editor.subscribe(eventName, handler) ⇒ <code>object</code>
+<p>Creates a subscribtion to provided event</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Returns**: <code>object</code> - <p>subcriber ....................................</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| eventName | <code>any</code> | <p>event name ................. type -?</p> |
+| handler | <code>any</code> | <p>event handler ............... type - ?</p> |
+
+<a name="Editor+unsubscribe"></a>
+
+### editor.unsubscribe(eventName, subscriber) ⇒ <code>void</code>
+<p>Removes a subscribtion to provided event</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| eventName | <code>any</code> | <p>event name ................. type -?</p> |
+| subscriber | <code>any</code> | <p>subscriber object</p> |
+
+<a name="Editor+structSelected"></a>
+
+### editor.structSelected() ⇒ [<code>Struct</code>](#Struct)
+<p>Returns selected struct</p>
+
+**Kind**: instance method of [<code>Editor</code>](#Editor)  
+**Returns**: [<code>Struct</code>](#Struct) - <p>selected struct</p>  
+**Access**: public  
 <a name="KetcherBuilder"></a>
 
 ## KetcherBuilder
@@ -62,203 +865,188 @@ Returns the shift magnitude to avoid it</p></dd>
 
 | Param | Type | Description |
 | --- | --- | --- |
-| editor | <code>Editor</code> | <p>editor instance.</p> |
+| editor | [<code>Editor</code>](#Editor) | <p>editor instance.</p> |
 | [serviceOptions] | <code>StructServiceOptions</code> | <p>struct service options.</p> |
 
-<a name="SGroupForest"></a>
+<a name="Indigo"></a>
 
-## SGroupForest
+## Indigo
 **Kind**: global class  
 
-* [SGroupForest](#SGroupForest)
-    * [new SGroupForest()](#new_SGroupForest_new)
-    * [.getSGroupsBFS()](#SGroupForest+getSGroupsBFS)
+* [Indigo](#Indigo)
+    * [new _structService()](#new_Indigo_new)
+    * [.info()](#Indigo+info) ⇒ <code>Promise.&lt;InfoResult&gt;</code>
+    * [.convert(struct, [options])](#Indigo+convert) ⇒ <code>Promise.&lt;ConvertResult&gt;</code>
+    * [.layout(struct)](#Indigo+layout) ⇒ [<code>Promise.&lt;Struct&gt;</code>](#Struct)
+    * [.clean(struct)](#Indigo+clean) ⇒ [<code>Promise.&lt;Struct&gt;</code>](#Struct)
+    * [.aromatize(struct)](#Indigo+aromatize) ⇒ [<code>Promise.&lt;Struct&gt;</code>](#Struct)
+    * [.dearomatize(struct)](#Indigo+dearomatize) ⇒ [<code>Promise.&lt;Struct&gt;</code>](#Struct)
+    * [.calculateCip(struct)](#Indigo+calculateCip) ⇒ [<code>Promise.&lt;Struct&gt;</code>](#Struct)
+    * [.automap(struct, [options])](#Indigo+automap) ⇒ [<code>Promise.&lt;Struct&gt;</code>](#Struct)
+    * [.check(struct, [options])](#Indigo+check) ⇒ [<code>Promise.&lt;Struct&gt;</code>](#Struct)
+    * [.calculate(struct, [options])](#Indigo+calculate) ⇒ <code>Promise.&lt;CalculateResult&gt;</code>
+    * [.recognize(image, [options])](#Indigo+recognize) ⇒ <code>Promise.&lt;CalculateResult&gt;</code>
+    * [.generateImageAsBase64(struct, [options])](#Indigo+generateImageAsBase64) ⇒ <code>Promise.&lt;string&gt;</code>
 
-<a name="new_SGroupForest_new"></a>
+<a name="new_Indigo_new"></a>
 
-### new SGroupForest()
-<p>node id -&gt; list of child ids</p>
+### new \_structService()
+<p>Class, performing 'server' (indigo) functions</p>
 
-<a name="SGroupForest+getSGroupsBFS"></a>
+<a name="Indigo+info"></a>
 
-### sGroupForest.getSGroupsBFS()
-<p>returns an array or s-group ids in the order of breadth-first search</p>
+### indigo.info() ⇒ <code>Promise.&lt;InfoResult&gt;</code>
+<p>Returns information about indigo service</p>
 
-**Kind**: instance method of [<code>SGroupForest</code>](#SGroupForest)  
-<a name="Struct"></a>
-
-## Struct
-<p>Class, describing structure on canvas.</p>
-
-**Kind**: global class  
-
-* [Struct](#Struct)
-    * [.hasRxnProps()](#Struct+hasRxnProps) ⇒ <code>bollean</code>
-    * [.hasRxnArrow()](#Struct+hasRxnArrow) ⇒ <code>boolean</code>
-    * [.hasRxnPluses()](#Struct+hasRxnPluses) ⇒ <code>boolean</code>
-    * [.isRxn()](#Struct+isRxn) ⇒ <code>boolean</code>
-    * [.isBlank()](#Struct+isBlank) ⇒ <code>boolean</code>
-
-<a name="Struct+hasRxnProps"></a>
-
-### struct.hasRxnProps() ⇒ <code>bollean</code>
-<p>Returns</p>
-
-**Kind**: instance method of [<code>Struct</code>](#Struct)  
-**Access**: protected  
-<a name="Struct+hasRxnArrow"></a>
-
-### struct.hasRxnArrow() ⇒ <code>boolean</code>
-<p>Returns information on whether struct contains an rxn arrow.</p>
-
-**Kind**: instance method of [<code>Struct</code>](#Struct)  
-**Returns**: <code>boolean</code> - <p>true if contains.</p>  
+**Kind**: instance method of [<code>Indigo</code>](#Indigo)  
+**Returns**: <code>Promise.&lt;InfoResult&gt;</code> - <p>promise, which fulfills into object with indigo information</p>  
 **Access**: public  
-<a name="Struct+hasRxnPluses"></a>
+<a name="Indigo+convert"></a>
 
-### struct.hasRxnPluses() ⇒ <code>boolean</code>
-<p>Returns information on whether struct contains rxn pluses.</p>
+### indigo.convert(struct, [options]) ⇒ <code>Promise.&lt;ConvertResult&gt;</code>
+<p>Returns converted structure</p>
 
-**Kind**: instance method of [<code>Struct</code>](#Struct)  
-**Returns**: <code>boolean</code> - <p>true if contains.</p>  
-<a name="Struct+isRxn"></a>
+**Kind**: instance method of [<code>Indigo</code>](#Indigo)  
+**Returns**: <code>Promise.&lt;ConvertResult&gt;</code> - <p>promise, resolving into an object with structure and format</p>  
+**Access**: public  
 
-### struct.isRxn() ⇒ <code>boolean</code>
-<p>Returns information on whether struct contains an rxn arrow or rxn pluses.</p>
+| Param | Type | Description |
+| --- | --- | --- |
+| struct | [<code>Struct</code>](#Struct) | <p>structure</p> |
+| [options] | <code>ConvertOptions</code> | <p>object with output format</p> |
 
-**Kind**: instance method of [<code>Struct</code>](#Struct)  
-**Returns**: <code>boolean</code> - <p>true if contains.</p>  
-<a name="Struct+isBlank"></a>
+<a name="Indigo+layout"></a>
 
-### struct.isBlank() ⇒ <code>boolean</code>
-<p>Returns information on whether struct contains any objects as atoms, rnx arrows, rnx pluses, simple objects or text.</p>
+### indigo.layout(struct) ⇒ [<code>Promise.&lt;Struct&gt;</code>](#Struct)
+<p>Returns a structure with normalized layout</p>
 
-**Kind**: instance method of [<code>Struct</code>](#Struct)  
-**Returns**: <code>boolean</code> - <p>true if contains any of these objects.</p>  
-<a name="fromAromaticTemplateOnBond"></a>
+**Kind**: instance method of [<code>Indigo</code>](#Indigo)  
+**Returns**: [<code>Promise.&lt;Struct&gt;</code>](#Struct) - <p>promise, resolving into normalized struct</p>  
+**Access**: public  
 
-## fromAromaticTemplateOnBond(restruct, events, bid, template, simpleFusing) ⇒ <code>Promise</code>
-**Kind**: global function  
+| Param | Type | Description |
+| --- | --- | --- |
+| struct | <code>StructOrString</code> | <p>structure</p> |
 
-| Param | Type |
-| --- | --- |
-| restruct | <code>ReStruct</code> | 
-| events | <code>Array.&lt;PipelineSubscription&gt;</code> | 
-| bid | <code>number</code> | 
-| template | <code>Object</code> | 
-| simpleFusing | <code>function</code> | 
+<a name="Indigo+clean"></a>
 
-<a name="fromDearomatize"></a>
+### indigo.clean(struct) ⇒ [<code>Promise.&lt;Struct&gt;</code>](#Struct)
+<p>Returns a structure with normalized bond lengths and angles</p>
 
-## fromDearomatize(restruct, dastruct, bondMap) ⇒ <code>Action</code>
-**Kind**: global function  
+**Kind**: instance method of [<code>Indigo</code>](#Indigo)  
+**Returns**: [<code>Promise.&lt;Struct&gt;</code>](#Struct) - <p>promise, resolving into normalized struct</p>  
+**Access**: public  
 
-| Param | Type |
-| --- | --- |
-| restruct | <code>ReStruct</code> | 
-| dastruct | <code>ReStruct</code> | 
-| bondMap | <code>Map.&lt;number, number&gt;</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| struct | <code>StructOrString</code> | <p>initial structure</p> |
 
-<a name="getFragmentWithBondMap"></a>
+<a name="Indigo+aromatize"></a>
 
-## getFragmentWithBondMap(struct, frid) ⇒ <code>Object</code>
-**Kind**: global function  
+### indigo.aromatize(struct) ⇒ [<code>Promise.&lt;Struct&gt;</code>](#Struct)
+<p>Returns aromatized structure</p>
 
-| Param | Type |
-| --- | --- |
-| struct | [<code>Struct</code>](#Struct) | 
-| frid | <code>number</code> | 
+**Kind**: instance method of [<code>Indigo</code>](#Indigo)  
+**Returns**: [<code>Promise.&lt;Struct&gt;</code>](#Struct) - <p>promise, resolving into atomatized struct</p>  
+**Access**: public  
 
-<a name="fromAtomsAttrs"></a>
+| Param | Type | Description |
+| --- | --- | --- |
+| struct | <code>StructOrString</code> | <p>initial structure</p> |
 
-## fromAtomsAttrs(restruct, ids, attrs, reset)
-**Kind**: global function  
+<a name="Indigo+dearomatize"></a>
 
-| Param | Type |
-| --- | --- |
-| restruct | <code>ReStruct</code> | 
-| ids | <code>Array.&lt;number&gt;</code> \| <code>number</code> | 
-| attrs | <code>object</code> | 
-| reset | <code>boolean</code> | 
+### indigo.dearomatize(struct) ⇒ [<code>Promise.&lt;Struct&gt;</code>](#Struct)
+<p>Returns dearomatized structure</p>
 
-<a name="fromAtomMerge"></a>
+**Kind**: instance method of [<code>Indigo</code>](#Indigo)  
+**Returns**: [<code>Promise.&lt;Struct&gt;</code>](#Struct) - <p>promise, resolving into dearomatized structure</p>  
+**Access**: public  
 
-## fromAtomMerge(restruct, srcId, dstId) ⇒ <code>Action</code>
-**Kind**: global function  
+| Param | Type | Description |
+| --- | --- | --- |
+| struct | <code>StructOrString</code> | <p>initial structure</p> |
 
-| Param | Type |
-| --- | --- |
-| restruct | <code>ReStruct</code> | 
-| srcId | <code>number</code> | 
-| dstId | <code>number</code> | 
+<a name="Indigo+calculateCip"></a>
 
-<a name="closestToMerge"></a>
+### indigo.calculateCip(struct) ⇒ [<code>Promise.&lt;Struct&gt;</code>](#Struct)
+<p>Returns a structure ..........................</p>
 
-## closestToMerge(struct, closestMap) ⇒ <code>Object</code>
-**Kind**: global function  
+**Kind**: instance method of [<code>Indigo</code>](#Indigo)  
+**Returns**: [<code>Promise.&lt;Struct&gt;</code>](#Struct) - <p>promise, resolving into .............................</p>  
+**Access**: public  
 
-| Param | Type |
-| --- | --- |
-| struct |  | 
-| closestMap | <code>Object</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| struct | <code>StructOrString</code> | <p>initial structure</p> |
 
-<a name="processAtom"></a>
+<a name="Indigo+automap"></a>
 
-## processAtom(restruct, aid, frid, newfrid) ⇒ <code>Action</code>
-**Kind**: global function  
+### indigo.automap(struct, [options]) ⇒ [<code>Promise.&lt;Struct&gt;</code>](#Struct)
+<p>Returns a structure ..........................</p>
 
-| Param | Type |
-| --- | --- |
-| restruct | <code>ReStruct</code> | 
-| aid | <code>number</code> | 
-| frid | <code>number</code> | 
-| newfrid | <code>number</code> | 
+**Kind**: instance method of [<code>Indigo</code>](#Indigo)  
+**Returns**: [<code>Promise.&lt;Struct&gt;</code>](#Struct) - <p>promise, resolving into .............................</p>  
+**Access**: public  
 
-<a name="fromFragmentSplit"></a>
+| Param | Type | Description |
+| --- | --- | --- |
+| struct | <code>StructOrString</code> | <p>initial structure</p> |
+| [options] | <code>AutomapOptions</code> | <p>object with automap mode</p> |
 
-## fromFragmentSplit(restruct, frid, rgForRemove) ⇒ <code>Action</code>
-**Kind**: global function  
+<a name="Indigo+check"></a>
 
-| Param | Type |
-| --- | --- |
-| restruct | <code>ReStruct</code> | 
-| frid | <code>number</code> | 
-| rgForRemove |  | 
+### indigo.check(struct, [options]) ⇒ [<code>Promise.&lt;Struct&gt;</code>](#Struct)
+<p>Returns a structure ..........................</p>
 
-<a name="isSelectionSvgObjectExists"></a>
+**Kind**: instance method of [<code>Indigo</code>](#Indigo)  
+**Returns**: [<code>Promise.&lt;Struct&gt;</code>](#Struct) - <p>promise, resolving into .............................</p>  
+**Access**: public  
 
-## isSelectionSvgObjectExists(item) ⇒ <code>boolean</code>
-<p>SelectionPlate could be an item then value would be in it
-or it could be a set of items then removed value need to be check on at least one of items in set</p>
+| Param | Type | Description |
+| --- | --- | --- |
+| struct | <code>StructOrString</code> | <p>initial structure</p> |
+| [options] | <code>CheckOptions</code> | <p>object with check types</p> |
 
-**Kind**: global function  
+<a name="Indigo+calculate"></a>
 
-| Param |
-| --- |
-| item | 
+### indigo.calculate(struct, [options]) ⇒ <code>Promise.&lt;CalculateResult&gt;</code>
+<p>Returns calculated values of molecule</p>
 
-<a name="shiftRayBox"></a>
+**Kind**: instance method of [<code>Indigo</code>](#Indigo)  
+**Returns**: <code>Promise.&lt;CalculateResult&gt;</code> - <p>promise, resolving into object with molecule calculated values</p>  
+**Access**: public  
 
-## shiftRayBox(p, d, bb)
-<p>Finds intersection of a ray and a box and
-Returns the shift magnitude to avoid it</p>
+| Param | Type | Description |
+| --- | --- | --- |
+| struct | <code>StructOrString</code> | <p>structure</p> |
+| [options] | <code>CalculateOptions</code> | <p>object with properties</p> |
 
-**Kind**: global function  
+<a name="Indigo+recognize"></a>
 
-| Param | Type |
-| --- | --- |
-| p | <code>Vec2</code> | 
-| d | <code>Vec2</code> | 
-| bb | <code>Box2Abs</code> | 
+### indigo.recognize(image, [options]) ⇒ <code>Promise.&lt;CalculateResult&gt;</code>
+<p>Returns struct ..........................</p>
 
-<a name="circleToEllipse"></a>
+**Kind**: instance method of [<code>Indigo</code>](#Indigo)  
+**Returns**: <code>Promise.&lt;CalculateResult&gt;</code> - <p>promise, resolving into .............................</p>  
+**Access**: public  
 
-## ~~circleToEllipse(ketItem)~~
-***Deprecated***
+| Param | Type | Description |
+| --- | --- | --- |
+| image | <code>Blob</code> | <p>image</p> |
+| [options] | <code>RecognizeOptions</code> | <p>object with imago versions</p> |
 
-**Kind**: global function  
+<a name="Indigo+generateImageAsBase64"></a>
 
-| Param |
-| --- |
-| ketItem | 
+### indigo.generateImageAsBase64(struct, [options]) ⇒ <code>Promise.&lt;string&gt;</code>
+<p>Returns base 64 string generated from struct</p>
+
+**Kind**: instance method of [<code>Indigo</code>](#Indigo)  
+**Returns**: <code>Promise.&lt;string&gt;</code> - <p>promise, resolving into base64 string</p>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| struct | <code>StructOrString</code> | <p>struct</p> |
+| [options] | <code>GenerateImageOptions</code> | <p>object with imago versions</p> |
 

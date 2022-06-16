@@ -35,6 +35,7 @@ const DefaultStructServiceOptions = {
 
 /**
  * Builder class.
+ *
  * @exports KetcherBuilder
  * @constructor
  */
@@ -51,7 +52,7 @@ export class KetcherBuilder {
   /**
    * Configure and build Ketcher instance.
    * @param {Editor} editor - editor instance.
-   * @param {StructServiceOptions=} serviceOptions - struct service options.
+   * @param {StructServiceOptions} [serviceOptions] - struct service options.
    * @returns {Ketcher} ketcher instance.
    */
   build(editor: Editor, serviceOptions?: StructServiceOptions): Ketcher {

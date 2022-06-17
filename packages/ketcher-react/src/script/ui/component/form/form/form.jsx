@@ -14,18 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component, useState, useCallback } from 'react'
+import { Component, useCallback, useState } from 'react'
+
+import Ajv from 'ajv'
 import { ErrorPopover } from './errorPopover'
 import { FormContext } from '../../../../../contexts'
 import Input from '../input'
+import Select from '../Select'
 import classes from './form.module.less'
 import clsx from 'clsx'
 import { connect } from 'react-redux'
-import Ajv from 'ajv'
+import { getSelectOptionsFromSchema } from '../../../utils'
 import { updateFormState } from '../../../state/modal/form'
 import { useFormContext } from '../../../../../hooks'
-import Select from '../Select'
-import { getSelectOptionsFromSchema } from '../../../utils'
 
 class Form extends Component {
   constructor(props) {
@@ -121,7 +122,7 @@ function Field(props) {
     <Input name={name} schema={desc} {...fieldOpts} {...rest} />
   )
 
-  if (labelPos === false) return <div>{formField}</div>
+  if (labelPos === false) return formField
   return (
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}

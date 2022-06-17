@@ -1,6 +1,6 @@
 {
   "readme": "none",
-  "plugin": "none",
+  "plugin": "typedoc-plugin-markdown",
   "entryPoints": ["src/index.ts"],
   "githubPages": false,
   "exclude": [

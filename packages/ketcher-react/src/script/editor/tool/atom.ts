@@ -18,17 +18,17 @@ import {
   Action,
   Atom,
   Bond,
+  FunctionalGroup,
+  SGroup,
   fromAtomAddition,
   fromAtomsAttrs,
   fromBondAddition,
   fromFragmentDeletion,
-  fromSgroupDeletion,
-  FunctionalGroup,
-  SGroup
+  fromSgroupDeletion
 } from 'ketcher-core'
 
-import utils from '../shared/utils'
 import Editor from '../Editor'
+import utils from '../shared/utils'
 
 class AtomTool {
   editor: Editor
@@ -41,15 +41,18 @@ class AtomTool {
     this.editor = editor
     this.atomProps = atomProps
     this.#bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE }
-    if (editor.selection() || editor.selection()?.atoms) {
-      const action = fromAtomsAttrs(
-        editor.render.ctab,
-        editor.selection().atoms,
-        atomProps,
-        true
-      )
-      editor.update(action)
-      editor.selection(null)
+    if (editor.selection()) {
+      if (editor.selection()?.atoms) {
+        const action = fromAtomsAttrs(
+          editor.render.ctab,
+          editor.selection().atoms,
+          atomProps,
+          true
+        )
+        editor.update(action)
+        editor.selection(null)
+      }
+
       this.isNotActiveTool = true
     }
   }

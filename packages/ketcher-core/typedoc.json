@@ -1,0 +1,12 @@
+{
+  "readme": "none",
+  "plugin": "none",
+  "entryPoints": ["src/index.ts"],
+  "githubPages": false,
+  "exclude": [
+    "**/utilities/**/*",
+    "**/editor/**/operations/**/*",
+    "**/editor/**/actions/**/*"
+  ],
+  "out": "docs"
+}

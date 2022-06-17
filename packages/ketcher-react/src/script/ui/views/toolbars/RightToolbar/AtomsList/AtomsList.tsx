@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { ElementColor, Elements } from 'ketcher-core'
-import { atomCuts, basicAtoms } from '../../../../action/atoms'
+import { atomCuts } from '../../../../action/atoms'
 
 import Atom from '../../../../component/view/Atom'
 import { UiActionAction } from '../../../../action'
@@ -40,14 +40,13 @@ interface AtomsListCallProps {
 
 type Props = AtomsListProps & AtomsListCallProps
 
-const StyledAtomList = styled.div((props: any) => {
-  const atomColor = props?.children?.key
-    ? ElementColor[props.children.key]
-    : '#000'
+const StyledAtom = styled(Atom)((props: any) => {
+  const atomColor = props?.el?.label ? ElementColor[props.el.label] : '#000'
   return `
-    ${Atom} > button {
        color: ${atomColor};
        border: 1px solid ${atomColor};
+       background-color: transparent;
+       cursor: pointer;
        &:hover {
          background-color: ${α(atomColor, 0.2)};
        }
@@ -58,12 +57,10 @@ const StyledAtomList = styled.div((props: any) => {
        &.selected {
          color: #fff;
          background-color: ${α(atomColor, 0.8)};
-  
          &:hover {
            background-color: ${atomColor};
          }
        }
-     }
    `
 })
 
@@ -72,24 +69,22 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
   const isAtom = active && active.tool === 'atom'
 
   return (
-    <>
+    <div ref={ref}>
       {atoms.map((label) => {
         const element = Elements.get(label)
         const shortcut =
-          basicAtoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null
+          atoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null
         return (
-          <StyledAtomList key={label} ref={ref}>
-            <Atom
-              key={label}
-              el={element}
-              shortcut={shortcut}
-              selected={isAtom && active && active.opts.label === label}
-              onClick={() => onAction({ tool: 'atom', opts: { label } })}
-            />
-          </StyledAtomList>
+          <StyledAtom
+            key={label}
+            el={element}
+            shortcut={shortcut}
+            selected={isAtom && active && active.opts.label === label}
+            onClick={() => onAction({ tool: 'atom', opts: { label } })}
+          />
         )
       })}
-    </>
+    </div>
   )
 })
 

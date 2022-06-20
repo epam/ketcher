@@ -20,21 +20,20 @@ import { fromElement, toElement } from '../../../../data/convert/structconv'
 import { Component } from 'react'
 import { Dialog } from '../../../components'
 import { Elements } from 'ketcher-core'
+import Icon from '../../../../component/view/icon'
 import Tabs from '../../../../component/view/Tabs'
 import { addAtoms } from '../../../../state/toolbar'
 import classes from './PeriodTable.module.less'
 import { connect } from 'react-redux'
 import { onAction } from '../../../../state'
 import { xor } from 'lodash/fp'
-import Icon from '../../../../component/view/icon'
 
 class Table extends Component {
   constructor(props) {
     super(props)
-    const genType = !this.props.pseudo ? null : 'gen'
     this.state = {
-      type: props.type || genType || 'atom',
-      value: props.values || props.label || null,
+      type: props.type || 'atom',
+      value: props.values || (!props.pseudo ? props.label : null) || null,
       current: Elements.get(2),
       isInfo: false
     }
@@ -68,8 +67,8 @@ class Table extends Component {
       : value.includes(label)
   }
 
-  onAtomSelect = (label, activateImmidiatly = false) => {
-    if (activateImmidiatly) {
+  onAtomSelect = (label, activateImmediately = false) => {
+    if (activateImmediately) {
       const result = this.result()
       const { type } = this.state
       if (result && type === 'atom') {

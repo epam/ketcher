@@ -55,10 +55,9 @@ export function identifyStructFormat(
     return 'cml'
   }
 
-  if (
-    sanitizedString.includes('data:application/octet-stream;base64') ||
-    sanitizedString === btoa(atob(sanitizedString))
-  ) {
+  const clearStr = sanitizedString.replace(/\s/g, '')
+
+  if (/^[a-zA-Z0-9+/]*={0,2}$/.test(clearStr) && clearStr.length % 4 === 0) {
     return 'cdx'
   }
 
@@ -66,7 +65,10 @@ export function identifyStructFormat(
     return 'inChI'
   }
 
-  if (sanitizedString.indexOf('\n') === -1) {
+  if (
+    sanitizedString.indexOf('\n') === -1 &&
+    sanitizedString === sanitizedString.toUpperCase()
+  ) {
     // TODO: smiles regexp
     return 'smiles'
   }

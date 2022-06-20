@@ -45,7 +45,7 @@ function throughFileReader(file) {
     const rd = new FileReader() // eslint-disable-line no-undef
 
     rd.onload = () => {
-      const content = rd.result
+      const content = checkToCDX ? rd.result.slice(37) : rd.result
       if (file.msClose) file.msClose()
       resolve(content)
     }
@@ -53,7 +53,6 @@ function throughFileReader(file) {
     rd.onerror = (event) => {
       reject(event)
     }
-
     checkToCDX ? rd.readAsDataURL(file) : rd.readAsText(file, 'UTF-8')
   })
 }

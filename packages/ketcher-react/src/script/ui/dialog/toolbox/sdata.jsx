@@ -95,7 +95,6 @@ function SData({
       buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: 'Apply' }}
       withDivider={true}
-      needMargin={false}
       params={prop}
     >
       <Form

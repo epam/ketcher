@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-@import "src/style/variables";
-@import "src/style/mixins";
+@import 'src/style/variables';
+@import 'src/style/mixins';
 // stylelint-disable selector-pseudo-class-no-unknown
 // stylelint-disable no-descending-specificity
 .sgroup {
   width: @width-small;
   border-radius: 6px;
   background-color: @color-background-primary;
-
 
   label {
     display: flex;
@@ -32,7 +31,8 @@
       width: inherit;
     }
 
-    :global(.MuiOutlinedInput-root), input[type='text'] {
+    :global(.MuiOutlinedInput-root),
+    input[type='text'] {
       max-width: 236px;
       margin-top: 4px;
     }
@@ -57,8 +57,8 @@
   }
 
   form {
-    margin: 12px 12px 4px;
-    
+    margin: 12px 0 4px;
+
     label {
       text-align: left;
       font-size: 12px;
@@ -67,7 +67,7 @@
         width: 100%;
       }
 
-      fieldset { 
+      fieldset {
         label {
           display: flex;
           flex-direction: row;

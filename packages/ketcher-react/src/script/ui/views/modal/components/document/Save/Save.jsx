@@ -82,12 +82,15 @@ class SaveDialog extends Component {
         this.isRxn ? 'rxnV3000' : 'molV3000',
         'smilesExt',
         'smarts',
+        'cml',
+        '<----firstDivider--->', // for dividers in select list
         'inChI',
         'inChIAuxInfo',
-        'cml',
+        '<----secondDivider--->', // for dividers in select list
         'svg',
         'png'
       )
+    // TODO: pass the necessary divider not like list element
 
     this.saveSchema = saveSchema
     this.saveSchema.properties.format = Object.assign(
@@ -97,7 +100,7 @@ class SaveDialog extends Component {
         enumNames: formats.map((format) => {
           const formatProps =
             getPropertiesByFormat(format) || getPropertiesByImgFormat(format)
-          return formatProps.name
+          return formatProps?.name
         })
       }
     )

@@ -82,6 +82,13 @@ class StructEditor extends Component {
     setupEditor(this.editor, props, this.props)
   }
 
+  onCancelAction = () => {
+    const state = global.currentState
+    const controller = state.controller
+    controller.abort('Connnection failed')
+    state.controller = new AbortController()
+  }
+
   componentDidMount() {
     this.editor = new Editor(this.editorRef.current, {
       ...this.props.options
@@ -217,7 +224,10 @@ class StructEditor extends Component {
           <div className={classes.measureLog} ref={this.logRef} />
           {indigoVerification && (
             <div className={classes.spinnerOverlay}>
-              <LoadingCircles actionHasTimeout={indigoVerification} />
+              <LoadingCircles
+                actionHasTimeout={indigoVerification}
+                onCancel={this.onCancelAction}
+              />
             </div>
           )}
         </ContextMenuTrigger>

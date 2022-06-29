@@ -36,13 +36,23 @@ function roundOff(value, round) {
 const selectOptions = getSelectOptionsFromSchema({ enum: range(0, 8) })
 
 class AnalyseDialog extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      abortController: null
+    }
+  }
+
   static contextType = ErrorsContext
 
   componentDidMount() {
-    this.props.onAnalyse()
+    const newAbortController = new AbortController()
+    this.props.onAnalyse({ signal: newAbortController.signal })
+    this.setState({ abortController: newAbortController })
   }
 
-  onCloseAction = () => {
+  onCancelAction = () => {
+    this.state.abortController.abort('Connnection failed')
     this.props.onCancel()
   }
 
@@ -132,7 +142,7 @@ class AnalyseDialog extends Component {
           ) : (
             <LoadingCircles
               actionHasTimeout={loading}
-              onCancel={this.onCloseAction}
+              onCancel={this.onCancelAction}
             />
           )}
         </div>
@@ -152,7 +162,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  onAnalyse: () => dispatch(analyse()),
+  onAnalyse: (params) => dispatch(analyse(params)),
   onChangeRound: (roundName, val) => dispatch(changeRound(roundName, val))
 })
 

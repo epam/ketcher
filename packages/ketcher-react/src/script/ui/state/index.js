@@ -38,6 +38,7 @@ const shared = combineReducers({
   editor: (store = null) => store,
   options: optionsReducer,
   templates: templatesReducer,
+  controller: (store = null) => store,
   functionalGroups: functionalGroupsReducer,
   requestsStatuses: requestReducer
 })
@@ -74,7 +75,7 @@ function getRootReducer(setEditor) {
 
 export default function (options, server, setEditor) {
   const { buttons = {}, ...restOptions } = options
-
+  const newAbortController = new AbortController()
   // TODO: redux localStorage here
   const initState = {
     actionState: null,
@@ -82,7 +83,8 @@ export default function (options, server, setEditor) {
     modal: null,
     options: Object.assign(initOptionsState, { app: restOptions, buttons }),
     server: server || Promise.reject(new Error('Standalone mode!')),
-    templates: initTmplsState
+    templates: initTmplsState,
+    controller: newAbortController
   }
 
   const middleware = [thunk]

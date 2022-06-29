@@ -20,7 +20,7 @@ import styles from './LoadingCircles.module.less'
 
 interface Props {
   actionHasTimeout?: boolean
-  onCancel?: any
+  onCancel: () => void
 }
 export const LoadingCircles = ({ actionHasTimeout, onCancel }: Props) => {
   const [loadingTimeout, setLoadingTimeout] = useState(actionHasTimeout)

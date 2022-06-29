@@ -51,11 +51,11 @@ export interface PanelProps {
   onZoomIn: VoidFunction
   onZoomOut: VoidFunction
   onSettingsOpen: VoidFunction
-  onLayout: VoidFunction
-  onClean: VoidFunction
-  onAromatize: VoidFunction
-  onDearomatize: VoidFunction
-  onCalculate: VoidFunction
+  onLayout: (params: object) => void
+  onClean: (params: object) => void
+  onAromatize: (params: object) => void
+  onDearomatize: (params: object) => void
+  onCalculate: (params: object) => void
   onCheck: VoidFunction
   onAnalyse: VoidFunction
   onStereo: VoidFunction
@@ -136,6 +136,8 @@ export const TopToolbar = ({
   onHelp
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>()
+  const state = global.currentState
+  const controller = state.controller
 
   return (
     <ControlsPanel className={className} ref={resizeRef}>
@@ -171,11 +173,11 @@ export const TopToolbar = ({
         shortcuts={shortcuts}
       />
       <ExternalFuncControls
-        onLayout={onLayout}
-        onClean={onClean}
-        onAromatize={onAromatize}
-        onDearomatize={onDearomatize}
-        onCalculate={onCalculate}
+        onLayout={() => onLayout(controller)}
+        onClean={() => onClean(controller)}
+        onAromatize={() => onAromatize(controller)}
+        onDearomatize={() => onDearomatize(controller)}
+        onCalculate={() => onCalculate(controller)}
         onCheck={onCheck}
         onAnalyse={onAnalyse}
         onStereo={onStereo}

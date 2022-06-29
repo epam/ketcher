@@ -122,28 +122,27 @@ function CheckDialog(props) {
   const [isCheckedWithNewSettings, setIsCheckedWithNewSettings] =
     useState(false)
   const [state, setState] = useState({})
+  const [abortController, setAbortController] = useState(null)
 
   const handleApply = () => onApply(result)
 
-  const controller = new AbortController()
-  const signal = controller.signal
-
   const handleCheck = () => {
+    const newAbortController = new AbortController()
     setIsStructureChecking(false)
-    onCheck(result.checkOptions, signal).then(() => {
-      setIsStructureChecking(true)
-      setLastCheckDate(new Date())
-      setIsCheckedWithNewSettings(true)
-    })
-    console.log(signal, 'handleCheck', { signal })
+    onCheck(result.checkOptions, { signal: newAbortController.signal }).then(
+      () => {
+        setIsStructureChecking(true)
+        setLastCheckDate(new Date())
+        setIsCheckedWithNewSettings(true)
+      }
+    )
+    setAbortController(newAbortController)
   }
 
   const onCancelAction = () => {
-    console.log('onCancelAction')
-    // onCancel();
+    abortController.abort('Connnection failed')
     setIsStructureChecking(true)
     setIsCheckedWithNewSettings(true)
-    controller.abort()
   }
 
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false)
@@ -240,8 +239,8 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  onCheck: (opts, signal) =>
-    dispatch(check(opts, signal)).catch(ownProps.onCancel),
+  onCheck: (opts, params) =>
+    dispatch(check(opts, params)).catch(ownProps.onCancel),
   onApply: (res) => {
     dispatch(checkOpts(res))
     ownProps.onOk(res)

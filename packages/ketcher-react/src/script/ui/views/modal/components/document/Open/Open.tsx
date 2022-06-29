@@ -158,6 +158,7 @@ const Open: FC<Props> = (props) => {
         isRecognizeDisabled={isRecognizeDisabled}
         structStr={structStr}
         inputHandler={setStructStr}
+        onCancel={rest.onCancel}
       />
     </Dialog>
   )

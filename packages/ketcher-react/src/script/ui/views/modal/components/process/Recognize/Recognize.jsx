@@ -88,9 +88,12 @@ function RecognizeDialog(prop) {
     structStr && !(structStr instanceof Promise)
       ? { structStr, fragment }
       : null
+  const [abortController, setAbortController] = useState(null)
 
   useEffect(() => {
-    onRecognize(file, version)
+    const newAbortController = new AbortController()
+    onRecognize(file, version, { signal: newAbortController.signal })
+    setAbortController(newAbortController)
   }, [file, version])
 
   const clearFile = useCallback(() => {
@@ -104,6 +107,11 @@ function RecognizeDialog(prop) {
 
   const openHandler = () => {
     onOk({ structStr, fragment: false })
+  }
+
+  const onCancelAction = () => {
+    this.state.abortController.abort('Connnection failed')
+    this.props.onCancel()
   }
 
   return (
@@ -173,7 +181,10 @@ function RecognizeDialog(prop) {
             // in Edge 38: instanceof Promise always `false`
             (structStr instanceof Promise || typeof structStr !== 'string' ? (
               <div className={classes.messageContainer}>
-                <LoadingCircles onCancel={props.onCancel} />
+                <LoadingCircles
+                  actionHasTimeout={structStr instanceof Promise}
+                  onCancel={this.onCancelAction}
+                />
               </div>
             ) : (
               <StructRender className={classes.struct} struct={structStr} />
@@ -201,7 +212,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   isFragment: (v) => dispatch(shouldFragment(v)),
   onImage: (file) => dispatch(changeImage(file)),
-  onRecognize: (file, ver) => dispatch(recognize(file, ver)),
+  onRecognize: (file, ver, params) => dispatch(recognize(file, ver, params)),
   onChangeImago: (ver) => dispatch(changeVersion(ver)),
   onOk: (res) => {
     dispatch(

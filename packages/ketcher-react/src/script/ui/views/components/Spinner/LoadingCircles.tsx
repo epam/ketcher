@@ -28,7 +28,7 @@ export const LoadingCircles = ({ actionHasTimeout, onCancel }: Props) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!loadingTimeout) setLoadingTimeout(true)
-    }, 1000)
+    }, 10000)
 
     return () => clearTimeout(timer)
   }, [loadingTimeout])

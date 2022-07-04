@@ -36,7 +36,7 @@ class ClipArea extends Component {
           el === event.target ||
           (!isActiveElement(event.target) && this.props.focused())
         )
-          autofocus(el)
+        autoselect(el)
       },
       mousedown: (event) => {
         if (event.shiftKey && !isActiveElement(event.target))
@@ -104,9 +104,8 @@ function isActiveElement(el) {
   return ['INPUT', 'SELECT', 'TEXTAREA', 'OPTION', 'LABEL'].includes(el.tagName)
 }
 
-function autofocus(cliparea) {
+function autoselect(cliparea) {
   cliparea.value = ' '
-  cliparea.focus()
   cliparea.select()
 }
 

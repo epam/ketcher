@@ -24,7 +24,6 @@ import { ZoomControls } from './ZoomControls'
 
 import { SystemControls } from './SystemControls'
 import { IconButton } from './IconButton'
-import { ExternalFuncControls } from './ExternalFuncControls'
 import { Divider } from './Divider'
 
 type VoidFunction = () => void
@@ -65,8 +64,6 @@ export interface PanelProps {
   onHelp: VoidFunction
 }
 
-const collapseLimit = 650
-
 const ControlsPanel = styled('div')`
   display: flex;
   flex-direction: row;
@@ -103,7 +100,6 @@ const ControlsPanel = styled('div')`
 export const TopToolbar = ({
   className,
   disabledButtons,
-  indigoVerification,
   hiddenButtons,
   shortcuts,
   onClear,
@@ -122,20 +118,11 @@ export const TopToolbar = ({
   onZoomIn,
   onZoomOut,
   onSettingsOpen,
-  onLayout,
-  onClean,
-  onAromatize,
-  onDearomatize,
-  onCalculate,
-  onCheck,
-  onAnalyse,
-  onStereo,
-  onMiew,
   onFullscreen,
   onAbout,
   onHelp
 }: PanelProps) => {
-  const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>()
+  const { ref: resizeRef} = useResizeObserver<HTMLDivElement>()
 
   return (
     <ControlsPanel className={className} ref={resizeRef}>
@@ -169,22 +156,6 @@ export const TopToolbar = ({
         disabledButtons={disabledButtons}
         hiddenButtons={hiddenButtons}
         shortcuts={shortcuts}
-      />
-      <ExternalFuncControls
-        onLayout={onLayout}
-        onClean={onClean}
-        onAromatize={onAromatize}
-        onDearomatize={onDearomatize}
-        onCalculate={onCalculate}
-        onCheck={onCheck}
-        onAnalyse={onAnalyse}
-        onStereo={onStereo}
-        onMiew={onMiew}
-        disabledButtons={disabledButtons}
-        hiddenButtons={hiddenButtons}
-        shortcuts={shortcuts}
-        indigoVerification={indigoVerification}
-        isCollapsed={width < collapseLimit}
       />
       <SystemControls
         onHistoryClick={() => {

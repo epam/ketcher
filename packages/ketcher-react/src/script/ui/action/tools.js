@@ -117,27 +117,27 @@ const toolActions = {
   'reaction-arrow-open-angle': {
     title: 'Arrow Open Angle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.OpenAngle },
-    hidden: (options) => isHidden(options, 'reaction-arrow-open-angle')
+    hidden: (options) => true
   },
   'reaction-arrow-filled-triangle': {
     title: 'Arrow Filled Triangle',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.FilledTriangle },
-    hidden: (options) => isHidden(options, 'reaction-arrow-filled-triangle')
+    hidden: (options) => true
   },
   'reaction-arrow-filled-bow': {
     title: 'Arrow Filled Bow Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.FilledBow },
-    hidden: (options) => isHidden(options, 'reaction-arrow-filled-bow')
+    hidden: (options) => true
   },
   'reaction-arrow-dashed-open-angle': {
     title: 'Arrow Dashed Open Angle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.DashedOpenAngle },
-    hidden: (options) => isHidden(options, 'reaction-arrow-dashed-open-angle')
+    hidden: (options) => true
   },
   'reaction-arrow-failed': {
     title: 'Failed Arrow Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.Failed },
-    hidden: (options) => isHidden(options, 'reaction-arrow-failed')
+    hidden: (options) => true
   },
   'reaction-arrow-both-ends-filled-triangle': {
     title: 'Arrow Both Ends Filled Triangle Tool',
@@ -145,8 +145,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.BothEndsFilledTriangle
     },
-    hidden: (options) =>
-      isHidden(options, 'reaction-arrow-both-ends-filled-triangle')
+    hidden: (options) => true
   },
   'reaction-arrow-equilibrium-filled-half-bow': {
     title: 'Arrow Equilibrium Filled Half Bow Tool',
@@ -154,8 +153,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EquilibriumFilledHalfBow
     },
-    hidden: (options) =>
-      isHidden(options, 'reaction-arrow-equilibrium-filled-half-bow')
+    hidden: (options) => true
   },
   'reaction-arrow-equilibrium-filled-triangle': {
     title: 'Arrow Equilibrium Filled Triangle Tool',
@@ -163,8 +161,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EquilibriumFilledTriangle
     },
-    hidden: (options) =>
-      isHidden(options, 'reaction-arrow-equilibrium-filled-triangle')
+    hidden: (options) => true
   },
   'reaction-arrow-equilibrium-open-angle': {
     title: 'Arrow Equilibrium Open Angle Tool',
@@ -178,8 +175,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.UnbalancedEquilibriumFilledHalfBow
     },
-    hidden: (options) =>
-      isHidden(options, 'reaction-arrow-unbalanced-equilibrium-filled-half-bow')
+    hidden: (options) => true
   },
   'reaction-arrow-unbalanced-equilibrium-open-half-angle': {
     title: 'Arrow Unbalanced Equilibrium Open Half Angle Tool',
@@ -187,8 +183,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.UnbalancedEquilibriumOpenHalfAngle
     },
-    hidden: (options) =>
-      isHidden(options, 'reaction-arrow-unbalanced-equilibrium-open-half-angle')
+    hidden: (options) => true
   },
   'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow': {
     title: 'Arrow Unbalanced Equilibrium Large Filled Half Bow Tool',
@@ -196,11 +191,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.UnbalancedEquilibriumLargeFilledHalfBow
     },
-    hidden: (options) =>
-      isHidden(
-        options,
-        'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow'
-      )
+    hidden: (options) => true
   },
   'reaction-arrow-unbalanced-equilibrium-filled-half-triangle': {
     title: 'Arrow Unbalanced Equilibrium Filled Half Triangle Tool',
@@ -208,11 +199,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.UnbalancedEquilibriumFilledHalfTriangle
     },
-    hidden: (options) =>
-      isHidden(
-        options,
-        'reaction-arrow-unbalanced-equilibrium-filled-half-triangle'
-      )
+    hidden: (options) => true
   },
   'reaction-arrow-elliptical-arc-arrow-filled-bow': {
     title: 'Arrow Elliptical Arc Filled Bow Tool',
@@ -220,8 +207,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EllipticalArcFilledBow
     },
-    hidden: (options) =>
-      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-filled-bow')
+    hidden: (options) => true
   },
   'reaction-arrow-elliptical-arc-arrow-filled-triangle': {
     title: 'Arrow Elliptical Arc Filled Triangle Tool',
@@ -229,8 +215,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EllipticalArcFilledTriangle
     },
-    hidden: (options) =>
-      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-filled-triangle')
+    hidden: (options) => true
   },
   'reaction-arrow-elliptical-arc-arrow-open-angle': {
     title: 'Arrow Elliptical Arc Open Angle Tool',
@@ -238,8 +223,7 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EllipticalArcOpenAngle
     },
-    hidden: (options) =>
-      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-open-angle')
+    hidden: (options) => true
   },
   'reaction-arrow-elliptical-arc-arrow-open-half-angle': {
     title: 'Arrow Elliptical Arc Open Half Angle Tool',
@@ -247,26 +231,25 @@ const toolActions = {
       tool: 'reactionarrow',
       opts: RxnArrowMode.EllipticalArcOpenHalfAngle
     },
-    hidden: (options) =>
-      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-open-half-angle')
+    hidden: (options) => true
   },
   'reaction-plus': {
     title: 'Reaction Plus Tool',
     action: { tool: 'reactionplus' },
-    hidden: (options) => isHidden(options, 'reaction-plus')
+    hidden: (options) => true
   },
   'reaction-mapping-tools': {
-    hidden: (options) => isHidden(options, 'reaction-mapping-tools')
+    hidden: (options) => true
   },
   'reaction-map': {
     title: 'Reaction Mapping Tool',
     action: { tool: 'reactionmap' },
-    hidden: (options) => isHidden(options, 'reaction-map')
+    hidden: (options) => true
   },
   'reaction-unmap': {
     title: 'Reaction Unmapping Tool',
     action: { tool: 'reactionunmap' },
-    hidden: (options) => isHidden(options, 'reaction-unmap')
+    hidden: (options) => true
   },
   rgroup: {
     hidden: (options) => isHidden(options, 'rgroup')
@@ -295,22 +278,22 @@ const toolActions = {
   'shape-ellipse': {
     title: 'Shape Ellipse',
     action: { tool: 'simpleobject', opts: SimpleObjectMode.ellipse },
-    hidden: (options) => isHidden(options, 'shape-ellipse')
+    hidden: (options) => true
   },
   'shape-rectangle': {
     title: 'Shape Rectangle',
     action: { tool: 'simpleobject', opts: SimpleObjectMode.rectangle },
-    hidden: (options) => isHidden(options, 'shape-rectangle')
+    hidden: (options) => true
   },
   'shape-line': {
     title: 'Shape Line',
     action: { tool: 'simpleobject', opts: SimpleObjectMode.line },
-    hidden: (options) => isHidden(options, 'shape-line')
+    hidden: (options) => true
   },
   text: {
     title: 'Add text',
     action: { tool: 'text' },
-    hidden: (options) => isHidden(options, 'text')
+    hidden: (options) => true
   },
   bonds: {
     hidden: (options) => isHidden(options, 'bonds')

@@ -376,7 +376,10 @@ export class Struct {
     const startCoords = this.atoms.get(halfBond.begin)!.pp
     const endCoords = this.atoms.get(halfBond.end)!.pp
     const coordsDifference = Vec2.diff(endCoords, startCoords).normalized()
-    halfBond.dir = Vec2.dist(endCoords, startCoords) > 1e-4 ? coordsDifference : new Vec2(1, 0)
+    halfBond.dir =
+      Vec2.dist(endCoords, startCoords) > 1e-4
+        ? coordsDifference
+        : new Vec2(1, 0)
     halfBond.norm = halfBond.dir.turnLeft()
     halfBond.ang = halfBond.dir.oxAngle()
     if (halfBond.loop < 0) halfBond.loop = -1

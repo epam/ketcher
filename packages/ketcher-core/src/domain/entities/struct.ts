@@ -371,15 +371,15 @@ export class Struct {
     hb2.contra = bond.hb1
   }
 
-  halfBondUpdate(hbid: number) {
-    const hb = this.halfBonds.get(hbid)!
-    const p1 = this.atoms.get(hb.begin)!.pp
-    const p2 = this.atoms.get(hb.end)!.pp
-    const d = Vec2.diff(p2, p1).normalized()
-    hb.dir = Vec2.dist(p2, p1) > 1e-4 ? d : new Vec2(1, 0)
-    hb.norm = hb.dir.turnLeft()
-    hb.ang = hb.dir.oxAngle()
-    if (hb.loop < 0) hb.loop = -1
+  halfBondUpdate(halfBondId: number) {
+    const halfBond = this.halfBonds.get(halfBondId)!
+    const startCoords = this.atoms.get(halfBond.begin)!.pp
+    const endCoords = this.atoms.get(halfBond.end)!.pp
+    const coordsDifference = Vec2.diff(endCoords, startCoords).normalized()
+    halfBond.dir = Vec2.dist(endCoords, startCoords) > 1e-4 ? coordsDifference : new Vec2(1, 0)
+    halfBond.norm = halfBond.dir.turnLeft()
+    halfBond.ang = halfBond.dir.oxAngle()
+    if (halfBond.loop < 0) halfBond.loop = -1
   }
 
   initHalfBonds() {
@@ -450,8 +450,8 @@ export class Struct {
     }
   }
 
-  atomUpdateHalfBonds(aid) {
-    this.atoms.get(aid)!.neighbors.forEach((hbid) => {
+  atomUpdateHalfBonds(atomId: number) {
+    this.atoms.get(atomId)!.neighbors.forEach((hbid) => {
       this.halfBondUpdate(hbid)
       this.halfBondUpdate(this.halfBonds.get(hbid)!.contra)
     })
@@ -459,12 +459,12 @@ export class Struct {
 
   updateHalfBonds(list) {
     if (!list) {
-      this.atoms.forEach((_atom, aid) => {
-        this.atomUpdateHalfBonds(aid)
+      this.atoms.forEach((_atom, atomId) => {
+        this.atomUpdateHalfBonds(atomId)
       })
     } else {
-      list.forEach((aid) => {
-        this.atomUpdateHalfBonds(aid)
+      list.forEach((atomId) => {
+        this.atomUpdateHalfBonds(atomId)
       })
     }
   }

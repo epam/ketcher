@@ -277,7 +277,8 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
 
       pasteItems.bonds.push(operation.data.bid)
     } else {
-      action.mergeWith(fromBondsAttrs(restruct, existId, tmplBond, true))
+      const commonBond = bond.type > tmplBond.type ? bond : tmplBond;
+      action.mergeWith(fromBondsAttrs(restruct, existId, commonBond, true))
     }
   })
 

@@ -569,7 +569,9 @@ class ReStruct {
 
     this.bondsChanged.forEach((_value, bid) => {
       const bond = this.bonds.get(bid)
-      if (bond) bond.show(this, bid, options)
+      if (bond) {
+        bond.show(this, bid, options)
+      }
     })
   }
 

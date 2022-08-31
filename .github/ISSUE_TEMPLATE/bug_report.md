@@ -2,8 +2,8 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: bug
-assignees: AndreiMazol
+labels: bug, feature request
+assignees: evgeniiFrolov1
 
 ---
 

@@ -61,11 +61,13 @@ export function atomForNewBond(restruct, id, bond?) {
   // eslint-disable-line max-statements
   const neighbours: Array<any> = []
   const pos = atomGetPos(restruct, id)
-  const prevBondId = restruct.molecule.findBondId(
-    id,
-    restruct.molecule.atomGetNeighbors(id)[0].aid
-  )
-  const prevBondType = restruct.molecule.bonds.get(prevBondId).type
+  const atomNeighbors = restruct.molecule.atomGetNeighbors(id)
+   const prevBondId = atomNeighbors.length
+    ? restruct.molecule.findBondId(id, atomNeighbors[0].aid)
+    : null
+  const prevBondType = prevBondId
+    ? restruct.molecule.bonds.get(prevBondId).type
+    : null
 
   restruct.molecule.atomGetNeighbors(id).forEach((nei) => {
     const neiPos = atomGetPos(restruct, nei.aid)

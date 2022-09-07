@@ -23,7 +23,7 @@ import { UndoRedo } from './UndoRedo'
 import { ZoomControls } from './ZoomControls'
 
 import { SystemControls } from './SystemControls'
-import { IconButton } from './IconButton'
+import { IconButton, Button } from './IconButton'
 import { ExternalFuncControls } from './ExternalFuncControls'
 import { Divider } from './Divider'
 
@@ -65,15 +65,20 @@ export interface PanelProps {
   onHelp: VoidFunction
 }
 
-const collapseLimit = 650
+interface ControlsPanelProps {
+  width: number
+}
 
-const ControlsPanel = styled('div')`
+const collapseLimit = 650
+const panelPadding = 8
+
+const ControlsPanel = styled('div')<ControlsPanelProps>`
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 0px;
   height: 36px;
-  padding: 0px 8px;
+  padding: 0px ${panelPadding}px;
 
   .group {
     display: flex;
@@ -85,18 +90,43 @@ const ControlsPanel = styled('div')`
     box-sizing: border-box;
   }
 
-  @media only screen and (min-width: 1024px) {
-    height: 40px;
-    gap: 4px;
-
-    .group {
-      gap: 4px;
+  ${(props) => {
+    let ResponsiveStyles = {}
+    if (props.width >= 1920 - 2 * panelPadding) {
+      ResponsiveStyles = {
+        height: 64,
+        gap: 12
+      }
+    } else if (props.width >= 1024 - 2 * panelPadding) {
+      ResponsiveStyles = {
+        height: 40,
+        gap: 4,
+        '.group': {
+          gap: 4
+        }
+      }
     }
-  }
+    return ResponsiveStyles
+  }};
 
-  @media only screen and (min-width: 1920px) {
-    height: 64px;
-    gap: 12px;
+  ${Button} {
+    ${(props) => {
+      let ResponsiveStyles = {}
+      if (props.width >= 1920 - 2 * panelPadding) {
+        ResponsiveStyles = {
+          height: 40,
+          width: 40,
+          padding: 5
+        }
+      } else if (props.width >= 1024 - 2 * panelPadding) {
+        ResponsiveStyles = {
+          height: 32,
+          width: 32,
+          padding: 4
+        }
+      }
+      return ResponsiveStyles
+    }};
   }
 `
 
@@ -138,7 +168,7 @@ export const TopToolbar = ({
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>()
 
   return (
-    <ControlsPanel className={className} ref={resizeRef}>
+    <ControlsPanel className={className} ref={resizeRef} width={width}>
       <IconButton
         title="Clear Canvas"
         onClick={onClear}

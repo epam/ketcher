@@ -19,7 +19,7 @@ import styled from '@emotion/styled'
 
 import Icon from 'src/script/ui/component/view/icon'
 
-const Button = styled(MuiButton)`
+export const Button = styled(MuiButton)`
   display: block;
   color: #333;
   border: 0;
@@ -61,18 +61,6 @@ const Button = styled(MuiButton)`
     background-color: initial;
     color: #333;
     pointer-events: auto;
-  }
-
-  @media only screen and (min-width: 1024px) {
-    height: 32px;
-    width: 32px;
-    padding: 4px;
-  }
-
-  @media only screen and (min-width: 1920px) {
-    height: 40px;
-    width: 40px;
-    padding: 5px;
   }
 `
 

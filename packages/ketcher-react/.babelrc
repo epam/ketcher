@@ -4,5 +4,5 @@
     ["@babel/react", { "runtime": "automatic" }],
     "@babel/typescript"
   ],
-  "plugins": ["@babel/plugin-transform-runtime"]
+  "plugins": ["@emotion", "@babel/plugin-transform-runtime"]
 }

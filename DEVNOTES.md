@@ -55,6 +55,7 @@ After that component library and application should be started separately.
 
 ```sh
 cd packages/ketcher-react
+yarn install
 yarn start
 ```
 
@@ -62,6 +63,7 @@ yarn start
 
 ```sh
 cd packages/ketcher-standalone
+yarn install
 yarn start
 ```
 
@@ -69,6 +71,7 @@ yarn start
 
 ```sh
 cd packages/ketcher-core
+yarn install
 yarn start
 ```
 

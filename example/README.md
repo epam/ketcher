@@ -2,4 +2,5 @@ This example was bootstrapped with [Create React App](https://github.com/faceboo
 
 It is linked to the @ketcher/react package in the parent directory for development purposes.
 
-You can run `yarn install` and then `yarn start` to test your package.
+To run application for development purposes, please check insructions:
+[DEVNOTES.md](https://github.com/epam/ketcher/blob/master/DEVNOTES.md)

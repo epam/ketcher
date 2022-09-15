@@ -34,7 +34,6 @@ import {
   useEffect
 } from 'react'
 
-import { Dialog } from '../../../components'
 import { DialogParams } from '../../../components/Dialog/Dialog'
 import { FontControl } from './FontControl'
 import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton'
@@ -43,6 +42,7 @@ import { TextCommand } from 'ketcher-core'
 import classes from './Text.module.less'
 import { connect } from 'react-redux'
 import createStyles from 'draft-js-custom-styles'
+import styled from '@emotion/styled'
 
 const { styles, customStyleFn } = createStyles(['font-size'])
 
@@ -50,7 +50,7 @@ interface TextProps extends DialogParams {
   formState: any
   id?: any
   content: string
-  position?: string
+  position?: any
 }
 
 const buttons: Array<{ command: TextCommand; name: string }> = [
@@ -73,10 +73,12 @@ const buttons: Array<{ command: TextCommand; name: string }> = [
 ]
 
 const Text = (props: TextProps) => {
-  const { formState, position, id } = props
+  const { position, id, onOk } = props
   const rawContentState: RawDraftContentState | null = props.content
     ? (JSON.parse(props.content) as RawDraftContentState)
     : null
+  const [x, setX] = useState()
+  const [y, setY] = useState()
   const [editorState, setEditorState] = useState<EditorState>(
     EditorState.moveFocusToEnd(
       EditorState.createWithContent(
@@ -157,22 +159,31 @@ const Text = (props: TextProps) => {
     refEditor.current.focus()
   }, [refEditor])
 
-  // set focut on component mount
+  // set focus on component mount
   useEffect(() => {
     setFocusInEditor()
   }, [setFocusInEditor])
 
+  const useMousePos = (event) => {
+    useEffect(() => {
+      setX(event?.clientX)
+      setY(event?.clientY)
+    }, [])
+  }
+
+  console.log('>>>>>>>>>>>>>>>>>>>>', useMousePos(event))
+
+  const TextEditor = styled('div')`
+    display: flex;
+    flex-direction: column;
+    width: 322px;
+    position: absolute;
+    top: ${y}px;
+    left: ${x}px;
+  `
+
   return (
-    <Dialog
-      className={classes.textEditor}
-      title="Text Editor"
-      params={props}
-      result={result}
-      valid={() => formState.form.valid}
-      buttonsNameMap={{ OK: 'Apply' }}
-      buttons={['Cancel', 'OK']}
-      withDivider
-    >
+    <TextEditor onBlur={() => onOk(result())}>
       <div className={classes.controlPanel} onClick={setFocusInEditor}>
         {buttons.map((button) => {
           return (
@@ -189,14 +200,12 @@ const Text = (props: TextProps) => {
           setEditorState={setEditorState}
           styles={currentStyle}
         />
-        <span>Font Size</span>
         <FontControl
           editorState={editorState}
           setEditorState={setEditorState}
           styles={styles}
         />
       </div>
-      <span>Text:</span>
       <Editor
         keyBindingFn={keyBindingFn}
         editorState={editorState}
@@ -205,7 +214,7 @@ const Text = (props: TextProps) => {
         customStyleFn={customStyleFn}
         ref={refEditor}
       />
-    </Dialog>
+    </TextEditor>
   )
 }
 

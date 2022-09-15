@@ -104,10 +104,10 @@ export class ServerFormatter implements StructFormatter {
 
     const withCoords = getPropertiesByFormat(this.#format).supportsCoords
     if (withCoords) {
-      promise = this.#structService.convert
+      promise = this.#structService.convert.bind(this.#structService)
       data.struct = stringifiedStruct
     } else {
-      promise = this.#structService.layout
+      promise = this.#structService.layout.bind(this.#structService)
       data.struct = stringifiedStruct.trim()
     }
 

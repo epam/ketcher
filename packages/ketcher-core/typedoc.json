@@ -1,0 +1,12 @@
+{
+  "readme": "none",
+  "plugin": "typedoc-plugin-markdown",
+  "entryPoints": ["src/index.ts"],
+  "githubPages": false,
+  "exclude": [
+    "**/utilities/**/*",
+    "**/editor/**/operations/**/*",
+    "**/editor/**/actions/**/*"
+  ],
+  "out": "docs"
+}

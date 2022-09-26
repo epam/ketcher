@@ -120,8 +120,10 @@ class SaveDialog extends Component {
     return format !== 'mol' && Object.keys(errors).length > 0
   }
 
+
   changeType = (type) => {
     const { struct, server, options, formState } = this.props
+
     const errorHandler = this.context.errorHandler
     if (this.isImageFormat(type)) {
       const ketSerialize = new KetSerializer()
@@ -278,7 +280,7 @@ class SaveDialog extends Component {
     ) : this.isImageFormat(format) ? (
       <div className={classes.imageContainer}>
         {!isCleanStruct && (
-          <img src={`data:image/${format}+xml;base64,${imageSrc}`} />
+          <img src={`data:image/${format}+xml;base64,${imageSrc}`} alt={`${format} preview`} />
         )}
       </div>
     ) : (

@@ -35,21 +35,23 @@ export class TextCreate extends BaseOperation {
   }
 
   execute(restruct: ReStruct): void {
-    const struct = restruct.molecule
     const item = new Text(this.data)
 
+    // console.log(900000, 'execute', this.data)
+
     if (this.data.id == null) {
-      const index = struct.texts.add(item)
+      const index = restruct.molecule.texts.add(item)
       this.data.id = index
     } else {
-      struct.texts.set(this.data.id!, item)
+      restruct.molecule.texts.set(this.data.id!, item)
     }
 
     const itemId = this.data.id!
 
     restruct.texts.set(itemId, new ReText(item))
 
-    struct.textSetPosition(itemId, new Vec2(this.data.position))
+    // restruct.molecule.textSetPosition(itemId, new Vec2(this.data.position))
+    restruct.molecule.textSetPosition(itemId, new Vec2(this.data.position))
     BaseOperation.invalidateItem(restruct, 'texts', itemId, 1)
   }
 

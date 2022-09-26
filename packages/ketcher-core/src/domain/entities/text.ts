@@ -27,19 +27,28 @@ export enum TextCommand {
 
 export interface TextAttributes {
   // TODO: add Interface for content type
-  content?: string
-  position?: Vec2
+  content: string
+  position: Vec2
+  pos: Array<Vec2> | []
 }
 
 export class Text {
   content: string
   position: Vec2
+  pos: Array<Vec2> | []
 
   constructor(attributes?: TextAttributes) {
+    this.pos = attributes?.pos || []
     this.content = attributes?.content || ''
     this.position = attributes?.position
       ? new Vec2(attributes.position)
       : new Vec2()
+  }
+
+  setPos(coords: Array<Vec2> | null): void {
+    if (coords && coords.length) {
+      this.pos = coords
+    }
   }
 
   clone(): Text {

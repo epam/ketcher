@@ -24,7 +24,7 @@ import classes from './StructEditor.module.less'
 import clsx from 'clsx'
 import { upperFirst } from 'lodash/fp'
 import handIcon from '../../../../../icons/files/hand.svg'
-import compressedHancIcon from '../../../../../icons/files/compressed-hand.svg'
+import compressedHandIcon from '../../../../../icons/files/compressed-hand.svg'
 import Cursor from '../Cursor'
 
 // TODO: need to update component after making refactoring of store
@@ -43,12 +43,17 @@ function setupEditor(editor, props, oldProps = {}) {
   if (oldProps.options && options !== oldProps.options) editor.options(options)
 
   Object.keys(editor.event).forEach((name) => {
+    // console.log('event name', name);
     const eventName = `on${upperFirst(name)}`
 
     if (props[eventName] !== oldProps[eventName]) {
-      if (oldProps[eventName]) editor.event[name].remove(oldProps[eventName])
+      if (oldProps[eventName]) {
+        editor.event[name].remove(oldProps[eventName])
+      }
 
-      if (props[eventName]) editor.event[name].add(props[eventName])
+      if (props[eventName]) {
+        editor.event[name].add(props[eventName])
+      }
     }
   })
 }
@@ -211,7 +216,7 @@ class StructEditor extends Component {
           </div>
           <Cursor
             Icon={handIcon}
-            PressedIcon={compressedHancIcon}
+            PressedIcon={compressedHandIcon}
             enableHandTool={this.state.enableCursor}
           />
           <div className={classes.measureLog} ref={this.logRef} />

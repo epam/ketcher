@@ -717,11 +717,7 @@ export const preparedKet = `{
                     "type": "text",
                     "data": {
                         "content": "{\\"blocks\\":[{\\"key\\":\\"932pu\\",\\"text\\":\\"Test\\",\\"type\\":\\"unstyled\\",\\"depth\\":0,\\"inlineStyleRanges\\":[{\\"offset\\":0,\\"length\\":4,\\"style\\":\\"CUSTOM_FONT_SIZE_20px\\"},{\\"offset\\":0,\\"length\\":4,\\"style\\":\\"BOLD\\"}],\\"entityRanges\\":[],\\"data\\":{}}],\\"entityMap\\":{}}",
-                        "position": {
-                            "x": 11.575000000000001,
-                            "y": -6.125000000000001,
-                            "z": 0
-                        }
+                        "pos": []
                     }
                 }
             ]

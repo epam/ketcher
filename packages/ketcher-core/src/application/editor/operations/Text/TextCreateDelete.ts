@@ -23,21 +23,20 @@ import { OperationType } from '../OperationType'
 interface TextCreateData {
   id?: number
   content: string
-  position: Vec2
+  pos: Array<Vec2> | []
+  // position: Vec2
 }
 
 export class TextCreate extends BaseOperation {
   data: TextCreateData
 
-  constructor(content: string, position: Vec2, id?: number) {
+  constructor(content: string, pos: Array<Vec2>, id?: number) {
     super(OperationType.TEXT_CREATE)
-    this.data = { content: content, position, id }
+    this.data = { content: content, pos, id }
   }
 
   execute(restruct: ReStruct): void {
     const item = new Text(this.data)
-
-    // console.log(900000, 'execute', this.data)
 
     if (this.data.id == null) {
       const index = restruct.molecule.texts.add(item)
@@ -50,7 +49,6 @@ export class TextCreate extends BaseOperation {
 
     restruct.texts.set(itemId, new ReText(item))
 
-    // restruct.molecule.textSetPosition(itemId, new Vec2(this.data.position))
     restruct.molecule.textSetPosition(itemId, new Vec2(this.data.position))
     BaseOperation.invalidateItem(restruct, 'texts', itemId, 1)
   }

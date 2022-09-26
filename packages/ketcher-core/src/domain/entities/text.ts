@@ -28,13 +28,13 @@ export enum TextCommand {
 export interface TextAttributes {
   // TODO: add Interface for content type
   content: string
-  position: Vec2
+  position?: Vec2
   pos: Array<Vec2> | []
 }
 
 export class Text {
   content: string
-  position: Vec2
+  position?: Vec2
   pos: Array<Vec2> | []
 
   constructor(attributes?: TextAttributes) {

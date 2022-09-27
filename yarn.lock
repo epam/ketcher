@@ -6651,6 +6651,9 @@ __metadata:
     serve: ^13.0.2
     typescript: ^4.5.5
     web-vitals: ^2.1.4
+  peerDependencies:
+    immutable: ^3.x
+    prop-types: ^15.0.0
   languageName: unknown
   linkType: soft
 
@@ -11334,6 +11337,9 @@ __metadata:
     stylelint: 13.13.1
     typescript: ^4.5.2
     webpack-bundle-analyzer: ^3.9.0
+  peerDependencies:
+    immutable: ^3.x
+    prop-types: ^15.0.0
   languageName: unknown
   linkType: soft
 
@@ -11424,6 +11430,8 @@ __metadata:
     w3c-keyname: ^2.2.4
     whatwg-fetch: ^3.4.1
   peerDependencies:
+    immutable: ^3.x
+    prop-types: ^15.0.0
     react: ^17.0.2
     react-dom: ^17.0.2
   languageName: unknown
@@ -15800,6 +15808,9 @@ __metadata:
     stylelint: 13.13.1
     stylelint-config-prettier: ^9.0.3
     stylelint-config-standard: 22.0.0
+  peerDependencies:
+    immutable: ^3.x
+    prop-types: ^15.0.0
   languageName: unknown
   linkType: soft
 

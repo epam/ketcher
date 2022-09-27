@@ -64,6 +64,10 @@
     "typescript": "^4.5.2",
     "webpack-bundle-analyzer": "^3.9.0"
   },
+  "peerDependencies": {
+    "immutable": "^3.x",
+    "prop-types": "^15.0.0"
+  },
   "browserslist": {
     "production": [
       ">0.2%",

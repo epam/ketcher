@@ -36,6 +36,10 @@
     "stylelint-config-prettier": "^9.0.3",
     "stylelint-config-standard": "22.0.0"
   },
+  "peerDependencies": {
+    "immutable": "^3.x",
+    "prop-types": "^15.0.0"
+  },
   "resolutions": {
     "react-error-overlay": "6.0.9"
   },

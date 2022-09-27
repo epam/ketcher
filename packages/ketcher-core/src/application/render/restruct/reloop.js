@@ -80,10 +80,10 @@ class ReLoop extends ReObject {
       })
     } else {
       let pathStr = ''
-      for (k = 0; k < loop.hbs.length; ++k) {
-        hba = molecule.halfBonds.get(loop.hbs[k])
-        hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length])
-        angle = Math.atan2(
+      for (let k = 0; k < loop.hbs.length; ++k) {
+        const hba = molecule.halfBonds.get(loop.hbs[k])
+        const hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length])
+        const angle = Math.atan2(
           Vec2.cross(hba.dir, hbb.dir),
           Vec2.dot(hba.dir, hbb.dir)
         )

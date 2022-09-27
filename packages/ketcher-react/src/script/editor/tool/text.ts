@@ -86,7 +86,7 @@ class TextTool {
     this.editor.hover(null)
 
     if (!closestItem) {
-      propsDialog(this.editor, null, render.page2obj(event))
+      propsDialog(this.editor, null, render.page2obj(event), closestItem.pos)
     }
 
     return true
@@ -97,14 +97,24 @@ class TextTool {
     this.editor.hover(null)
 
     if (closestItem.map === 'texts') {
-      propsDialog(this.editor, closestItem.id, closestItem.position)
+      propsDialog(
+        this.editor,
+        closestItem.id,
+        closestItem.position,
+        closestItem.pos
+      )
     }
 
     return true
   }
 }
 
-function propsDialog(editor: any, id: number | null, position: Vec2) {
+function propsDialog(
+  editor: any,
+  id: number | null,
+  pos: Array<Vec2> | [],
+  position: Vec2
+) {
   const struct = editor.render.ctab.molecule
   const text: Text | null = id || id === 0 ? struct.texts.get(id) : null
   const origilContent = text ? text.content : ''
@@ -113,13 +123,16 @@ function propsDialog(editor: any, id: number | null, position: Vec2) {
     content: origilContent,
     id,
     position,
+    pos,
     type: 'text'
   })
 
   res
     .then(({ content }: Result) => {
       if (!id && id !== 0 && content) {
-        editor.update(fromTextCreation(editor.render.ctab, content, position))
+        editor.update(
+          fromTextCreation(editor.render.ctab, content, position, pos)
+        )
       } else if (!content) {
         editor.update(fromTextDeletion(editor.render.ctab, id!))
       } else if (content !== origilContent) {

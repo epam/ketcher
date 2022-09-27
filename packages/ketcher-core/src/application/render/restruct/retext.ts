@@ -56,14 +56,14 @@ class ReText extends ReObject {
 
     const { p0, p1 } = this.getRelBox(this.paths)
 
-    const p = this.item.position
+    const p = this.item.position!
     const w = Math.abs(Vec2.diff(p0, p1).x) / 40
     const h = Math.abs(Vec2.diff(p0, p1).y) / 40
 
     const refPoints: Array<Vec2> = []
 
     refPoints.push(
-      this.item.position,
+      this.item.position!,
       new Vec2(p.x, p.y + h),
       new Vec2(p.x + w, p.y + h),
       new Vec2(p.x + w, p.y)
@@ -134,7 +134,7 @@ class ReText extends ReObject {
   show(restruct: ReStruct, _id: number, options: any): void {
     const render = restruct.render
     const paper = render.paper
-    const paperScale = Scale.obj2scaled(this.item.position, options)
+    const paperScale = Scale.obj2scaled(this.item.position!, options)
 
     let shiftY = 0
     this.paths = []

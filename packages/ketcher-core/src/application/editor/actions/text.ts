@@ -23,10 +23,11 @@ import { Vec2 } from 'domain/entities'
 export function fromTextCreation(
   restruct: ReStruct,
   content: string,
-  position: Vec2
+  position: Vec2,
+  pos: Array<Vec2> | []
 ) {
   const action = new Action()
-  action.addOp(new TextCreate(content, position))
+  action.addOp(new TextCreate(content, position, pos))
   return action.perform(restruct)
 }
 

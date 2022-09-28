@@ -94,8 +94,8 @@ const Text = (props: TextProps) => {
     }
   }
 
-  const keyBindingFn = (e: React.KeyboardEvent): string | null => {
-    if (e.key === 'Enter') {
+  const keyBindingFn = (e: any): string | null => {
+    if (e.keyCode === 13) {
       e.stopPropagation()
     }
 

@@ -38,6 +38,8 @@ interface CustomRawDraftInlineStyleRange
     | TextCommand.FontSize
 }
 
+const SCALE = 40 // from ketcher-core
+
 class ReText extends ReObject {
   private item: Text
   paths: Array<Array<RaphaelBaseElement>> = []
@@ -51,22 +53,22 @@ class ReText extends ReObject {
     return true
   }
 
-  getReferencePoints(): Array<Vec2> | null {
-    if (!this.paths.length) return null
+  getReferencePoints(): Array<Vec2> {
+    if (!this.paths.length) return []
 
     const { p0, p1 } = this.getRelBox(this.paths)
 
-    const p = this.item.position!
-    const w = Math.abs(Vec2.diff(p0, p1).x) / 40
-    const h = Math.abs(Vec2.diff(p0, p1).y) / 40
+    const p = this.item.position
+    const width = Math.abs(Vec2.diff(p0, p1).x) / SCALE
+    const height = Math.abs(Vec2.diff(p0, p1).y) / SCALE
 
     const refPoints: Array<Vec2> = []
 
     refPoints.push(
-      this.item.position!,
-      new Vec2(p.x, p.y + h),
-      new Vec2(p.x + w, p.y + h),
-      new Vec2(p.x + w, p.y)
+      this.item.position,
+      new Vec2(p.x, p.y + height),
+      new Vec2(p.x + width, p.y + height),
+      new Vec2(p.x + width, p.y)
     )
 
     return refPoints

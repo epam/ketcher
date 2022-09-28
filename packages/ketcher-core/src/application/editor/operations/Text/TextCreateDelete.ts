@@ -23,7 +23,7 @@ import { OperationType } from '../OperationType'
 interface TextCreateData {
   id?: number
   content: string
-  pos: Array<Vec2> | []
+  pos: Array<Vec2>
   position: Vec2
 }
 

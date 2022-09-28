@@ -94,8 +94,8 @@ const Text = (props: TextProps) => {
     }
   }
 
-  const keyBindingFn = (e: any): string | null => {
-    if (e.keyCode === 13) {
+  const keyBindingFn = (e: React.KeyboardEvent): string | null => {
+    if (e.key === 'Enter') {
       e.stopPropagation()
     }
 
@@ -171,8 +171,7 @@ const Text = (props: TextProps) => {
       valid={() => formState.form.valid}
       buttonsNameMap={{ OK: 'Apply' }}
       buttons={['Cancel', 'OK']}
-      withDivider
-    >
+      withDivider>
       <div className={classes.controlPanel} onClick={setFocusInEditor}>
         {buttons.map((button) => {
           return (

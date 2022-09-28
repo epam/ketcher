@@ -347,12 +347,34 @@ export const textKet = `{
                 {
                     "type": "text",
                     "data": {
-                        "content": "{\\"blocks\\":[{\\"key\\":\\"5vn7d\\",\\"text\\":\\"Text Test\\",\\"type\\":\\"unstyled\\",\\"depth\\":0,\\"inlineStyleRanges\\":[{\\"offset\\":0,\\"length\\":4,\\"style\\":\\"CUSTOM_FONT_SIZE_20px\\"},{\\"offset\\":5,\\"length\\":4,\\"style\\":\\"BOLD\\"}],\\"entityRanges\\":[],\\"data\\":{}}],\\"entityMap\\":{}}",
+                        "content": "{\\"blocks\\":[{\\"key\\":\\"dikr0\\",\\"text\\":\\"Test text\\",\\"type\\":\\"unstyled\\",\\"depth\\":0,\\"inlineStyleRanges\\":[],\\"entityRanges\\":[],\\"data\\":{}}],\\"entityMap\\":{}}",
                         "position": {
-                            "x": 4.325,
-                            "y": 0.325,
+                            "x": 6.1250433921813965,
+                            "y": -9.850043392181398,
                             "z": 0
-                        }
+                          },
+                          "pos": [
+                            {
+                              "x": 6.1250433921813965,
+                              "y": -9.850043392181398,
+                              "z": 0
+                            },
+                            {
+                              "x": 6.1250433921813965,
+                              "y": -10.211157727241517,
+                              "z": 0
+                            },
+                            {
+                              "x": 7.334906673431396,
+                              "y": -10.211157727241517,
+                              "z": 0
+                            },
+                            {
+                              "x": 7.334906673431396,
+                              "y": -9.850043392181398,
+                              "z": 0
+                            }
+                          ]  
                     }
                 }
             ]
@@ -716,8 +738,34 @@ export const preparedKet = `{
                 {
                     "type": "text",
                     "data": {
-                        "content": "{\\"blocks\\":[{\\"key\\":\\"932pu\\",\\"text\\":\\"Test\\",\\"type\\":\\"unstyled\\",\\"depth\\":0,\\"inlineStyleRanges\\":[{\\"offset\\":0,\\"length\\":4,\\"style\\":\\"CUSTOM_FONT_SIZE_20px\\"},{\\"offset\\":0,\\"length\\":4,\\"style\\":\\"BOLD\\"}],\\"entityRanges\\":[],\\"data\\":{}}],\\"entityMap\\":{}}",
-                        "pos": []
+                        "content": "{\\"blocks\\":[{\\"key\\":\\"dikr0\\",\\"text\\":\\"Test text\\",\\"type\\":\\"unstyled\\",\\"depth\\":0,\\"inlineStyleRanges\\":[],\\"entityRanges\\":[],\\"data\\":{}}],\\"entityMap\\":{}}",
+                        "position": {
+                            "x": 6.1250433921813965,
+                            "y": -9.850043392181398,
+                            "z": 0
+                          },
+                          "pos": [
+                            {
+                              "x": 6.1250433921813965,
+                              "y": -9.850043392181398,
+                              "z": 0
+                            },
+                            {
+                              "x": 6.1250433921813965,
+                              "y": -10.211157727241517,
+                              "z": 0
+                            },
+                            {
+                              "x": 7.334906673431396,
+                              "y": -10.211157727241517,
+                              "z": 0
+                            },
+                            {
+                              "x": 7.334906673431396,
+                              "y": -9.850043392181398,
+                              "z": 0
+                            }
+                          ]  
                     }
                 }
             ]

@@ -86,7 +86,7 @@ class TextTool {
     this.editor.hover(null)
 
     if (!closestItem) {
-      propsDialog(this.editor, null, render.page2obj(event), closestItem.pos)
+      propsDialog(this.editor, null, render.page2obj(event), [])
     }
 
     return true
@@ -112,8 +112,8 @@ class TextTool {
 function propsDialog(
   editor: any,
   id: number | null,
-  pos: Array<Vec2> | [],
-  position: Vec2
+  position: Vec2,
+  pos: Array<Vec2>
 ) {
   const struct = editor.render.ctab.molecule
   const text: Text | null = id || id === 0 ? struct.texts.get(id) : null

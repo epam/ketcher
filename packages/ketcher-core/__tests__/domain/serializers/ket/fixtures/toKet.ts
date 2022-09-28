@@ -460,7 +460,34 @@ const structs = {
     texts: [
       {
         content:
-          '{"blocks":[{"key":"932pu","text":"Test","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":4,"style":"CUSTOM_FONT_SIZE_20px"},{"offset":0,"length":4,"style":"BOLD"}],"entityRanges":[],"data":{}}],"entityMap":{}}'
+          '{"blocks":[{"key":"dikr0","text":"Test text","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',
+        position: {
+          x: 6.1250433921813965,
+          y: -9.850043392181398,
+          z: 0
+        },
+        pos: [
+          {
+            x: 6.1250433921813965,
+            y: -9.850043392181398,
+            z: 0
+          },
+          {
+            x: 6.1250433921813965,
+            y: -10.211157727241517,
+            z: 0
+          },
+          {
+            x: 7.334906673431396,
+            y: -10.211157727241517,
+            z: 0
+          },
+          {
+            x: 7.334906673431396,
+            y: -9.850043392181398,
+            z: 0
+          }
+        ]
       }
     ]
   },

@@ -84,7 +84,7 @@ export function prepareStructForKet(struct: Struct) {
       center: item.position,
       data: {
         content: item.content,
-        // position: item.position,
+        position: item.position,
         pos: item.pos
       }
     })
@@ -106,7 +106,6 @@ export function prepareStructForKet(struct: Struct) {
 
   // TODO: check if this sorting operation is needed
   // return ketNodes.sort((a, b) => a.center.x - b.center.x)
-  // console.log(555555, ketNodes)
   return ketNodes
 }
 

@@ -51,7 +51,7 @@ yarn install
 
 After that component library and application should be started separately.
 
-#### Build kecther-react package
+#### Build ketcher-react package
 
 ```sh
 cd packages/ketcher-react

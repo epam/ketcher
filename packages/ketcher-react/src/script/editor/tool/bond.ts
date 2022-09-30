@@ -29,7 +29,7 @@ import Editor from '../Editor'
 
 class BondTool {
   editor: Editor
-  atomProps: any
+  atomProps: { label: string }
   bondProps: any
   dragCtx: any
   isNotActiveTool: boolean | undefined

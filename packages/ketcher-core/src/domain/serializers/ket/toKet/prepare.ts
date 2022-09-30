@@ -84,7 +84,8 @@ export function prepareStructForKet(struct: Struct) {
       center: item.position,
       data: {
         content: item.content,
-        position: item.position
+        position: item.position,
+        pos: item.pos
       }
     })
   })

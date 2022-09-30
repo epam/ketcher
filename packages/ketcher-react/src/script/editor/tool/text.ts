@@ -39,13 +39,13 @@ class TextTool {
 
   mousedown(event) {
     const render = this.editor.render
-    const ci = this.editor.findItem(event, ['texts'])
+    const closestItem = this.editor.findItem(event, ['texts'])
 
     this.editor.selection(null)
 
-    if (ci && ci.map === 'texts') {
+    if (closestItem && closestItem.map === 'texts') {
       this.editor.hover(null)
-      this.editor.selection({ texts: [ci.id] })
+      this.editor.selection({ texts: [closestItem.id] })
       this.dragCtx = {
         xy0: render.page2obj(event),
         action: new Action()
@@ -82,29 +82,39 @@ class TextTool {
 
   click(event) {
     const render = this.editor.render
-    const ci = this.editor.findItem(event, ['texts'])
+    const closestItem = this.editor.findItem(event, ['texts'])
     this.editor.hover(null)
 
-    if (!ci) {
-      propsDialog(this.editor, null, render.page2obj(event))
+    if (!closestItem) {
+      propsDialog(this.editor, null, render.page2obj(event), [])
     }
 
     return true
   }
 
   dblclick(event) {
-    const ci = this.editor.findItem(event, ['texts'])
+    const closestItem = this.editor.findItem(event, ['texts'])
     this.editor.hover(null)
 
-    if (ci.map === 'texts') {
-      propsDialog(this.editor, ci.id, ci.position)
+    if (closestItem.map === 'texts') {
+      propsDialog(
+        this.editor,
+        closestItem.id,
+        closestItem.position,
+        closestItem.pos
+      )
     }
 
     return true
   }
 }
 
-function propsDialog(editor: any, id: number | null, position: Vec2) {
+function propsDialog(
+  editor: any,
+  id: number | null,
+  position: Vec2,
+  pos: Array<Vec2>
+) {
   const struct = editor.render.ctab.molecule
   const text: Text | null = id || id === 0 ? struct.texts.get(id) : null
   const origilContent = text ? text.content : ''
@@ -113,13 +123,16 @@ function propsDialog(editor: any, id: number | null, position: Vec2) {
     content: origilContent,
     id,
     position,
+    pos,
     type: 'text'
   })
 
   res
     .then(({ content }: Result) => {
       if (!id && id !== 0 && content) {
-        editor.update(fromTextCreation(editor.render.ctab, content, position))
+        editor.update(
+          fromTextCreation(editor.render.ctab, content, position, pos)
+        )
       } else if (!content) {
         editor.update(fromTextDeletion(editor.render.ctab, id!))
       } else if (content !== origilContent) {

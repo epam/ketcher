@@ -93,7 +93,7 @@ export class Struct {
   }
 
   hasRxnArrow(): boolean {
-    return this.rxnArrows.size === 1
+    return this.rxnArrows.size >= 1
   }
 
   hasRxnPluses(): boolean {

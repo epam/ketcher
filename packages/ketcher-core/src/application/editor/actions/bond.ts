@@ -47,7 +47,7 @@ import utils from '../shared/utils'
 
 export function fromBondAddition(
   restruct: ReStruct,
-  bond: any,
+  bond: { type: number; stereo: number },
   begin: any,
   end: any,
   pos?: Vec2,

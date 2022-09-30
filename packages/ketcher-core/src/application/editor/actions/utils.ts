@@ -59,13 +59,16 @@ export function structSelection(struct) {
 // Get new atom id/label and pos for bond being added to existing atom
 export function atomForNewBond(restruct, id, bond?) {
   // eslint-disable-line max-statements
-  const neighbours: Array<any> = []
+  const neighbours: Array<{ id: number; v: Vec2 }> = []
   const pos = atomGetPos(restruct, id)
+  const atomNeighbours = restruct.molecule.atomGetNeighbors(id)
+
   const prevBondId = restruct.molecule.findBondId(
     id,
-    restruct.molecule.atomGetNeighbors(id)[0].aid
+    atomNeighbours.length ? atomNeighbours[0]?.aid : undefined
   )
-  const prevBondType = restruct.molecule.bonds.get(prevBondId).type
+  const mbond = restruct.molecule.bonds.get(prevBondId)
+  const prevBondType = mbond ? mbond.type : bond ? bond.type : 1
 
   restruct.molecule.atomGetNeighbors(id).forEach((nei) => {
     const neiPos = atomGetPos(restruct, nei.aid)

@@ -1,6 +1,6 @@
 import 'ketcher-react/dist/index.css'
 
-import { ButtonsConfig, Editor } from 'ketcher-react'
+import {  Editor } from 'ketcher-react'
 import {
   Ketcher,
   RemoteStructServiceProvider,
@@ -11,18 +11,28 @@ import { ErrorModal } from './ErrorModal'
 import { PolymerToggler } from './PolymerToggler'
 import { useState } from 'react'
 
-const getHiddenButtonsConfig = (): ButtonsConfig => {
-  const searchParams = new URLSearchParams(window.location.search)
-  const hiddenButtons = searchParams.get('hiddenControls')
+// const getHiddenButtonsConfig = (): ButtonsConfig => {
+//   const searchParams = new URLSearchParams(window.location.search)
+//   const hiddenButtons = searchParams.get('hiddenControls')
+//
+//   if (!hiddenButtons) return {}
+//
+//   return hiddenButtons.split(',').reduce((acc, button) => {
+//     if (button) acc[button] = { hidden: true }
+//
+//     return acc
+//   }, {})
+// }
 
-  if (!hiddenButtons) return {}
+// const hiddenButtonsConfig = "reaction-unmap,reaction-arrow-open-angle,reaction-arrow-filled-triangle,reaction-arrow-filled-bow,reaction-arrow-dashed-open-angle,reaction-arrow-failed,reaction-arrow-both-ends-filled-triangle,reaction-arrow-equilibrium-filled-half-bow,reaction-arrow-equilibrium-filled-triangle,reaction-arrow-equilibrium-open-angle,reaction-arrow-unbalanced-equilibrium-filled-half-bow,reaction-arrow-unbalanced-equilibrium-open-half-angle,reaction-arrow-unbalanced-equilibrium-large-filled-half-bow,reaction-arrow-unbalanced-equilibrium-filled-half-triangle,reaction-arrow-elliptical-arc-arrow-filled-bow,reaction-arrow-elliptical-arc-arrow-filled-triangle,reaction-arrow-elliptical-arc-arrow-open-angle,reaction-arrow-elliptical-arc-arrow-open-half-angle,reaction-plus,reaction-map".split(",").reduce((acc, c)=>{
+//   acc[c] = { hidden: true };
+//   return acc;
+// }, {});
 
-  return hiddenButtons.split(',').reduce((acc, button) => {
-    if (button) acc[button] = { hidden: true }
-
-    return acc
-  }, {})
-}
+const hiddenButtonsConfig = "arrows,reaction-plus,reaction-mapping-tools".split(",").reduce((acc, c)=>{
+    acc[c] = { hidden: true };
+    return acc;
+}, {});
 
 let structServiceProvider: StructServiceProvider =
   new RemoteStructServiceProvider(
@@ -47,7 +57,7 @@ if (enablePolymerEditor) {
 }
 
 const App = () => {
-  const hiddenButtonsConfig = getHiddenButtonsConfig()
+ // const hiddenButtonsConfig = getHiddenButtonsConfig()
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [showPolymerEditor, setShowPolymerEditor] = useState(false)

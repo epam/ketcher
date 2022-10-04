@@ -22,7 +22,6 @@
 
 ### Methods
 
-- [addFragment](Ketcher.md#addfragment)
 - [containsReaction](Ketcher.md#containsreaction)
 - [generateImage](Ketcher.md#generateimage)
 - [generateInchIKey](Ketcher.md#generateinchikey)
@@ -44,11 +43,11 @@
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `editor` | [`Editor`](../interfaces/Editor.md) |
-| `structService` | [`StructService`](../interfaces/StructService.md) |
-| `formatterFactory` | [`FormatterFactory`](FormatterFactory.md) |
+| Name               | Type                                              |
+| :----------------- | :------------------------------------------------ |
+| `editor`           | [`Editor`](../interfaces/Editor.md)               |
+| `structService`    | [`StructService`](../interfaces/StructService.md) |
+| `formatterFactory` | [`FormatterFactory`](FormatterFactory.md)         |
 
 #### Defined in
 
@@ -64,7 +63,7 @@
 
 [packages/ketcher-core/src/application/ketcher.ts:50](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L50)
 
-___
+---
 
 ### #formatterFactory
 
@@ -74,7 +73,7 @@ ___
 
 [packages/ketcher-core/src/application/ketcher.ts:49](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L49)
 
-___
+---
 
 ### #indigo
 
@@ -84,7 +83,7 @@ ___
 
 [packages/ketcher-core/src/application/ketcher.ts:51](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L51)
 
-___
+---
 
 ### #structService
 
@@ -108,7 +107,7 @@ ___
 
 [packages/ketcher-core/src/application/ketcher.ts:53](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L53)
 
-___
+---
 
 ### indigo
 
@@ -124,26 +123,6 @@ ___
 
 ## Methods
 
-### addFragment
-
-▸ **addFragment**(`fragment`): `Promise`<`void`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `fragment` | `string` |
-
-#### Returns
-
-`Promise`<`void`\>
-
-#### Defined in
-
-[packages/ketcher-core/src/application/ketcher.ts:161](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L161)
-
-___
-
 ### containsReaction
 
 ▸ **containsReaction**(): `boolean`
@@ -156,7 +135,7 @@ ___
 
 [packages/ketcher-core/src/application/ketcher.ts:146](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L146)
 
-___
+---
 
 ### generateImage
 
@@ -164,9 +143,9 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `data` | `string` |
+| Name      | Type                                                            |
+| :-------- | :-------------------------------------------------------------- |
+| `data`    | `string`                                                        |
 | `options` | [`GenerateImageOptions`](../interfaces/GenerateImageOptions.md) |
 
 #### Returns
@@ -177,7 +156,7 @@ ___
 
 [packages/ketcher-core/src/application/ketcher.ts:171](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L171)
 
-___
+---
 
 ### generateInchIKey
 
@@ -191,7 +170,7 @@ ___
 
 [packages/ketcher-core/src/application/ketcher.ts:136](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L136)
 
-___
+---
 
 ### getCml
 
@@ -205,7 +184,7 @@ ___
 
 [packages/ketcher-core/src/application/ketcher.ts:124](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L124)
 
-___
+---
 
 ### getInchi
 
@@ -213,9 +192,9 @@ ___
 
 #### Parameters
 
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `withAuxInfo` | `boolean` | `false` |
+| Name          | Type      | Default value |
+| :------------ | :-------- | :------------ |
+| `withAuxInfo` | `boolean` | `false`       |
 
 #### Returns
 
@@ -225,7 +204,7 @@ ___
 
 [packages/ketcher-core/src/application/ketcher.ts:128](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L128)
 
-___
+---
 
 ### getKet
 
@@ -239,7 +218,7 @@ ___
 
 [packages/ketcher-core/src/application/ketcher.ts:116](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L116)
 
-___
+---
 
 ### getMolfile
 
@@ -247,9 +226,9 @@ ___
 
 #### Parameters
 
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `molfileFormat` | [`MolfileFormat`](../README.md#molfileformat) | `'v2000'` |
+| Name            | Type                                          | Default value |
+| :-------------- | :-------------------------------------------- | :------------ |
+| `molfileFormat` | [`MolfileFormat`](../README.md#molfileformat) | `'v2000'`     |
 
 #### Returns
 
@@ -259,7 +238,7 @@ ___
 
 [packages/ketcher-core/src/application/ketcher.ts:81](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L81)
 
-___
+---
 
 ### getRxn
 
@@ -267,9 +246,9 @@ ___
 
 #### Parameters
 
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `molfileFormat` | [`MolfileFormat`](../README.md#molfileformat) | `'v2000'` |
+| Name            | Type                                          | Default value |
+| :-------------- | :-------------------------------------------- | :------------ |
+| `molfileFormat` | [`MolfileFormat`](../README.md#molfileformat) | `'v2000'`     |
 
 #### Returns
 
@@ -279,7 +258,7 @@ ___
 
 [packages/ketcher-core/src/application/ketcher.ts:99](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L99)
 
-___
+---
 
 ### getSmarts
 
@@ -293,7 +272,7 @@ ___
 
 [packages/ketcher-core/src/application/ketcher.ts:120](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L120)
 
-___
+---
 
 ### getSmiles
 
@@ -301,9 +280,9 @@ ___
 
 #### Parameters
 
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `isExtended` | `boolean` | `false` |
+| Name         | Type      | Default value |
+| :----------- | :-------- | :------------ |
+| `isExtended` | `boolean` | `false`       |
 
 #### Returns
 
@@ -313,7 +292,7 @@ ___
 
 [packages/ketcher-core/src/application/ketcher.ts:76](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L76)
 
-___
+---
 
 ### recognize
 
@@ -321,9 +300,9 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `image` | `Blob` |
+| Name       | Type     |
+| :--------- | :------- |
+| `image`    | `Blob`   |
 | `version?` | `string` |
 
 #### Returns
@@ -334,7 +313,7 @@ ___
 
 [packages/ketcher-core/src/application/ketcher.ts:167](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L167)
 
-___
+---
 
 ### setMolecule
 
@@ -342,8 +321,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name        | Type     |
+| :---------- | :------- |
 | `structStr` | `string` |
 
 #### Returns

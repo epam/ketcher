@@ -158,12 +158,6 @@ export class Ketcher {
     this.#editor.struct(struct)
   }
 
-  async addFragment(fragment: string): Promise<void> {
-    assert(typeof fragment === 'string')
-
-    throw Error('not implemented yet')
-  }
-
   recognize(image: Blob, version?: string): Promise<Struct> {
     return this.#indigo.recognize(image, { version: version })
   }

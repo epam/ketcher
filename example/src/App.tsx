@@ -29,10 +29,25 @@ import { useState } from 'react'
 //   return acc;
 // }, {});
 
-const hiddenButtonsConfig = "arrows,reaction-plus,reaction-mapping-tools".split(",").reduce((acc, c)=>{
-    acc[c] = { hidden: true };
-    return acc;
+
+const hiddenButtonsConfig = ["arrows", "reaction-plus", "reaction-mapping-tools", "text"]
+    .reduce((config, toolName) => {
+        config[toolName] = { hidden: true };
+        return config;
 }, {});
+
+// hiddenButtonsConfig
+// {
+//     arrows:  { hidden: true },
+//     reaction-plus: { hidden: true },
+//     reaction-mapping-tools: { hidden: true }
+// }
+
+
+// <Editor
+//     ... some props
+//     buttons={hiddenButtonsConfig}
+// />
 
 let structServiceProvider: StructServiceProvider =
   new RemoteStructServiceProvider(

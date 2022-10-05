@@ -11333,7 +11333,6 @@ __metadata:
     source-map-loader: ^3.0.1
     stylelint: 13.13.1
     typescript: ^4.5.2
-    utf8: ^3.0.0
     webpack-bundle-analyzer: ^3.9.0
   languageName: unknown
   linkType: soft

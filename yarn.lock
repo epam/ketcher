@@ -11226,6 +11226,7 @@ __metadata:
     typedoc: ^0.22.17
     typedoc-plugin-markdown: ^3.12.1
     typescript: ^4.5.2
+    utf8: ^3.0.0
   languageName: unknown
   linkType: soft
 
@@ -15800,7 +15801,6 @@ __metadata:
     stylelint: 13.13.1
     stylelint-config-prettier: ^9.0.3
     stylelint-config-standard: 22.0.0
-    utf8: ^3.0.0
   languageName: unknown
   linkType: soft
 

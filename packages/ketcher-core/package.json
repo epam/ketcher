@@ -44,7 +44,8 @@
     "assert": "^2.0.0",
     "lodash": "^4.17.21",
     "raphael": "^2.3.0",
-    "svgpath": "^2.3.1"
+    "svgpath": "^2.3.1",
+    "utf8": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",

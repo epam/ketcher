@@ -22,4 +22,3 @@ export function textToKet(textNode) {
     data: getNodeWithInvertedYCoord(utf8Converter(textNode.data, 'encode'))
   }
 }
-

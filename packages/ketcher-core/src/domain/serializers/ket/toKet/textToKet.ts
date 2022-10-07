@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 import { getNodeWithInvertedYCoord } from '../helpers'
+import { utf8Converter } from '../utf8Converter'
 
 export function textToKet(textNode) {
   return {
     type: 'text',
-    data: getNodeWithInvertedYCoord(textNode.data)
+    data: getNodeWithInvertedYCoord(utf8Converter(textNode.data, 'encode'))
   }
 }

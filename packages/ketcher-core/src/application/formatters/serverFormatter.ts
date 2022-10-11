@@ -47,10 +47,6 @@ export class ServerFormatter implements StructFormatter {
   }
 
   async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    // const infoResult = await this.#structService.info()
-    // if (!infoResult.isAvailable) {
-    //   throw new Error('Server is not available')
-    // }
     const formatProperties = getPropertiesByFormat(this.#format)
 
     try {
@@ -79,10 +75,6 @@ export class ServerFormatter implements StructFormatter {
   async getStructureFromStringAsync(
     stringifiedStruct: string
   ): Promise<Struct> {
-    // const infoResult = await this.#structService.info()
-    // if (!infoResult.isAvailable) {
-    //   throw new Error('Server is not available')
-    // }
     type ConvertPromise = (
       data: ConvertData,
       options?: StructServiceOptions

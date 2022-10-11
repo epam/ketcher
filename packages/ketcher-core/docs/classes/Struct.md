@@ -38,7 +38,7 @@
 - [bindSGroupsToFunctionalGroups](Struct.md#bindsgroupstofunctionalgroups)
 - [bondInitHalfBonds](Struct.md#bondinithalfbonds)
 - [calcConn](Struct.md#calcconn)
-- [calcImplicitHydrogen](Struct.md#calcimplicithydrogen)
+- [CalcImplicitHydrogenydrogen](Struct.md#CalcImplicitHydrogenydrogen)
 - [checkBondExists](Struct.md#checkbondexists)
 - [clone](Struct.md#clone)
 - [defineRxnFragmentTypeForAtomset](Struct.md#definerxnfragmenttypeforatomset)
@@ -107,7 +107,7 @@
 
 [packages/ketcher-core/src/domain/entities/struct.ts:52](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L52)
 
-___
+---
 
 ### bonds
 
@@ -117,17 +117,17 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:53](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L53)
 
-___
+---
 
 ### frags
 
-• **frags**: [`Pool`](Pool.md)<``null`` \| [`Fragment`](Fragment.md)\>
+• **frags**: [`Pool`](Pool.md)<`null` \| [`Fragment`](Fragment.md)\>
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/entities/struct.ts:60](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L60)
 
-___
+---
 
 ### functionalGroups
 
@@ -137,7 +137,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:66](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L66)
 
-___
+---
 
 ### halfBonds
 
@@ -147,7 +147,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:55](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L55)
 
-___
+---
 
 ### highlights
 
@@ -157,7 +157,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:67](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L67)
 
-___
+---
 
 ### isReaction
 
@@ -167,7 +167,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:57](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L57)
 
-___
+---
 
 ### loops
 
@@ -177,7 +177,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:56](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L56)
 
-___
+---
 
 ### name
 
@@ -187,7 +187,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:62](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L62)
 
-___
+---
 
 ### rgroups
 
@@ -197,7 +197,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:61](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L61)
 
-___
+---
 
 ### rxnArrows
 
@@ -207,7 +207,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:58](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L58)
 
-___
+---
 
 ### rxnPluses
 
@@ -217,7 +217,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:59](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L59)
 
-___
+---
 
 ### sGroupForest
 
@@ -227,7 +227,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:63](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L63)
 
-___
+---
 
 ### sgroups
 
@@ -237,7 +237,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:54](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L54)
 
-___
+---
 
 ### simpleObjects
 
@@ -247,7 +247,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:64](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L64)
 
-___
+---
 
 ### texts
 
@@ -265,8 +265,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name   | Type  |
+| :----- | :---- |
 | `hbid` | `any` |
 
 #### Returns
@@ -277,7 +277,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:410](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L410)
 
-___
+---
 
 ### atomAddToSGroup
 
@@ -285,10 +285,10 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name   | Type  |
+| :----- | :---- |
 | `sgid` | `any` |
-| `aid` | `any` |
+| `aid`  | `any` |
 
 #### Returns
 
@@ -298,7 +298,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:306](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L306)
 
-___
+---
 
 ### atomGetNeighbors
 
@@ -306,8 +306,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name  | Type     |
+| :---- | :------- |
 | `aid` | `number` |
 
 #### Returns
@@ -318,7 +318,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:967](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L967)
 
-___
+---
 
 ### atomSetPos
 
@@ -326,9 +326,9 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `id` | `number` |
+| Name | Type              |
+| :--- | :---------------- |
+| `id` | `number`          |
 | `pp` | [`Vec2`](Vec2.md) |
 
 #### Returns
@@ -339,7 +339,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:509](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L509)
 
-___
+---
 
 ### atomSortNeighbors
 
@@ -347,8 +347,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name  | Type  |
+| :---- | :---- |
 | `aid` | `any` |
 
 #### Returns
@@ -359,7 +359,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:428](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L428)
 
-___
+---
 
 ### atomUpdateHalfBonds
 
@@ -367,8 +367,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name  | Type  |
+| :---- | :---- |
 | `aid` | `any` |
 
 #### Returns
@@ -379,7 +379,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:453](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L453)
 
-___
+---
 
 ### bindSGroupsToFunctionalGroups
 
@@ -393,7 +393,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:1046](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L1046)
 
-___
+---
 
 ### bondInitHalfBonds
 
@@ -401,9 +401,9 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `bid` | `any` |
+| Name    | Type              |
+| :------ | :---------------- |
+| `bid`   | `any`             |
 | `bond?` | [`Bond`](Bond.md) |
 
 #### Returns
@@ -414,7 +414,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:362](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L362)
 
-___
+---
 
 ### calcConn
 
@@ -422,8 +422,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name   | Type  |
+| :----- | :---- |
 | `atom` | `any` |
 
 #### Returns
@@ -434,16 +434,16 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:312](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L312)
 
-___
+---
 
-### calcImplicitHydrogen
+### CalcImplicitHydrogenydrogen
 
-▸ **calcImplicitHydrogen**(`aid`): `void`
+▸ **CalcImplicitHydrogenydrogen**(`aid`): `void`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name  | Type     |
+| :---- | :------- |
 | `aid` | `number` |
 
 #### Returns
@@ -454,7 +454,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:899](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L899)
 
-___
+---
 
 ### checkBondExists
 
@@ -462,10 +462,10 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name    | Type     |
+| :------ | :------- |
 | `begin` | `number` |
-| `end` | `number` |
+| `end`   | `number` |
 
 #### Returns
 
@@ -475,7 +475,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:649](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L649)
 
-___
+---
 
 ### clone
 
@@ -483,14 +483,14 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `atomSet?` | ``null`` \| [`Pile`](Pile.md)<`number`\> |
-| `bondSet?` | ``null`` \| [`Pile`](Pile.md)<`number`\> |
-| `dropRxnSymbols?` | `boolean` |
-| `aidMap?` | ``null`` \| `Map`<`number`, `number`\> |
-| `simpleObjectsSet?` | ``null`` \| [`Pile`](Pile.md)<`number`\> |
-| `textsSet?` | ``null`` \| [`Pile`](Pile.md)<`number`\> |
+| Name                | Type                                   |
+| :------------------ | :------------------------------------- |
+| `atomSet?`          | `null` \| [`Pile`](Pile.md)<`number`\> |
+| `bondSet?`          | `null` \| [`Pile`](Pile.md)<`number`\> |
+| `dropRxnSymbols?`   | `boolean`                              |
+| `aidMap?`           | `null` \| `Map`<`number`, `number`\>   |
+| `simpleObjectsSet?` | `null` \| [`Pile`](Pile.md)<`number`\> |
+| `textsSet?`         | `null` \| [`Pile`](Pile.md)<`number`\> |
 
 #### Returns
 
@@ -500,49 +500,49 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:117](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L117)
 
-___
+---
 
 ### defineRxnFragmentTypeForAtomset
 
-▸ **defineRxnFragmentTypeForAtomset**(`atomset`, `arrowpos`): ``1`` \| ``2``
+▸ **defineRxnFragmentTypeForAtomset**(`atomset`, `arrowpos`): `1` \| `2`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `atomset` | [`Pile`](Pile.md)<`number`\> |
-| `arrowpos` | `number` |
+| Name       | Type                         |
+| :--------- | :--------------------------- |
+| `atomset`  | [`Pile`](Pile.md)<`number`\> |
+| `arrowpos` | `number`                     |
 
 #### Returns
 
-``1`` \| ``2``
+`1` \| `2`
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/entities/struct.ts:1035](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L1035)
 
-___
+---
 
 ### findBondId
 
-▸ **findBondId**(`begin`, `end`): ``null`` \| `number`
+▸ **findBondId**(`begin`, `end`): `null` \| `number`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name    | Type  |
+| :------ | :---- |
 | `begin` | `any` |
-| `end` | `any` |
+| `end`   | `any` |
 
 #### Returns
 
-``null`` \| `number`
+`null` \| `number`
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/entities/struct.ts:341](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L341)
 
-___
+---
 
 ### findConnectedComponent
 
@@ -550,8 +550,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name       | Type     |
+| :--------- | :------- |
 | `firstaid` | `number` |
 
 #### Returns
@@ -562,7 +562,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:659](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L659)
 
-___
+---
 
 ### findConnectedComponents
 
@@ -570,8 +570,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name                        | Type      |
+| :-------------------------- | :-------- |
 | `discardExistingFragments?` | `boolean` |
 
 #### Returns
@@ -582,7 +582,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:675](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L675)
 
-___
+---
 
 ### findLoops
 
@@ -592,16 +592,16 @@ ___
 
 `Object`
 
-| Name | Type |
-| :------ | :------ |
+| Name          | Type       |
+| :------------ | :--------- |
 | `bondsToMark` | `number`[] |
-| `newLoops` | `any`[] |
+| `newLoops`    | `any`[]    |
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/entities/struct.ts:834](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L834)
 
-___
+---
 
 ### getAvgBondLength
 
@@ -615,7 +615,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:621](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L621)
 
-___
+---
 
 ### getAvgClosestAtomDistance
 
@@ -629,7 +629,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:626](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L626)
 
-___
+---
 
 ### getBondFragment
 
@@ -637,8 +637,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name  | Type     |
+| :---- | :------- |
 | `bid` | `number` |
 
 #### Returns
@@ -649,7 +649,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:1041](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L1041)
 
-___
+---
 
 ### getBondLengthData
 
@@ -659,16 +659,16 @@ ___
 
 `Object`
 
-| Name | Type |
-| :------ | :------ |
-| `cnt` | `number` |
+| Name          | Type     |
+| :------------ | :------- |
+| `cnt`         | `number` |
 | `totalLength` | `number` |
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/entities/struct.ts:608](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L608)
 
-___
+---
 
 ### getComponents
 
@@ -678,16 +678,16 @@ ___
 
 `Object`
 
-| Name | Type |
-| :------ | :------ |
-| `products` | `any`[] |
+| Name        | Type    |
+| :---------- | :------ |
+| `products`  | `any`[] |
 | `reactants` | `any`[] |
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/entities/struct.ts:977](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L977)
 
-___
+---
 
 ### getCoordBoundingBox
 
@@ -695,8 +695,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name       | Type                         |
+| :--------- | :--------------------------- |
 | `atomSet?` | [`Pile`](Pile.md)<`number`\> |
 
 #### Returns
@@ -707,7 +707,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:539](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L539)
 
-___
+---
 
 ### getCoordBoundingBoxObj
 
@@ -721,7 +721,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:588](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L588)
 
-___
+---
 
 ### getFragment
 
@@ -729,8 +729,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name  | Type     |
+| :---- | :------- |
 | `fid` | `number` |
 
 #### Returns
@@ -741,7 +741,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:164](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L164)
 
-___
+---
 
 ### getFragmentIds
 
@@ -749,8 +749,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name  | Type     |
+| :---- | :------- |
 | `fid` | `number` |
 
 #### Returns
@@ -761,7 +761,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:154](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L154)
 
-___
+---
 
 ### getScaffold
 
@@ -775,7 +775,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:137](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L137)
 
-___
+---
 
 ### halfBondAngle
 
@@ -783,8 +783,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name    | Type     |
+| :------ | :------- |
 | `hbid1` | `number` |
 | `hbid2` | `number` |
 
@@ -796,7 +796,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:808](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L808)
 
-___
+---
 
 ### halfBondSetAngle
 
@@ -804,8 +804,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name   | Type  |
+| :----- | :---- |
 | `hbid` | `any` |
 | `left` | `any` |
 
@@ -817,7 +817,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:396](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L396)
 
-___
+---
 
 ### halfBondUpdate
 
@@ -825,8 +825,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name   | Type     |
+| :----- | :------- |
 | `hbid` | `number` |
 
 #### Returns
@@ -837,7 +837,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:374](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L374)
 
-___
+---
 
 ### hasRxnArrow
 
@@ -851,7 +851,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:95](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L95)
 
-___
+---
 
 ### hasRxnPluses
 
@@ -865,7 +865,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:99](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L99)
 
-___
+---
 
 ### hasRxnProps
 
@@ -879,7 +879,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:88](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L88)
 
-___
+---
 
 ### initHalfBonds
 
@@ -893,7 +893,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:385](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L385)
 
-___
+---
 
 ### initNeighbors
 
@@ -907,7 +907,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:349](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L349)
 
-___
+---
 
 ### isBlank
 
@@ -921,7 +921,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:107](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L107)
 
-___
+---
 
 ### isRxn
 
@@ -935,7 +935,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:103](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L103)
 
-___
+---
 
 ### loopHasSelfIntersections
 
@@ -943,8 +943,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name  | Type       |
+| :---- | :--------- |
 | `hbs` | `number`[] |
 
 #### Returns
@@ -955,7 +955,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:754](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L754)
 
-___
+---
 
 ### loopIsConvex
 
@@ -963,8 +963,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name   | Type    |
+| :----- | :------ |
 | `loop` | `any`[] |
 
 #### Returns
@@ -975,7 +975,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:814](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L814)
 
-___
+---
 
 ### loopIsInner
 
@@ -983,8 +983,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name   | Type    |
+| :----- | :------ |
 | `loop` | `any`[] |
 
 #### Returns
@@ -995,7 +995,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:823](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L823)
 
-___
+---
 
 ### markFragment
 
@@ -1003,8 +1003,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name    | Type                         |
+| :------ | :--------------------------- |
 | `idSet` | [`Pile`](Pile.md)<`number`\> |
 
 #### Returns
@@ -1015,7 +1015,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:702](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L702)
 
-___
+---
 
 ### markFragments
 
@@ -1029,7 +1029,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:713](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L713)
 
-___
+---
 
 ### mergeInto
 
@@ -1037,16 +1037,16 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `cp` | [`Struct`](Struct.md) |
-| `atomSet?` | ``null`` \| [`Pile`](Pile.md)<`number`\> |
-| `bondSet?` | ``null`` \| [`Pile`](Pile.md)<`number`\> |
-| `dropRxnSymbols?` | `boolean` |
-| `keepAllRGroups?` | `boolean` |
-| `aidMap?` | ``null`` \| `Map`<`number`, `number`\> |
-| `simpleObjectsSet?` | ``null`` \| [`Pile`](Pile.md)<`number`\> |
-| `textsSet?` | ``null`` \| [`Pile`](Pile.md)<`number`\> |
+| Name                | Type                                   |
+| :------------------ | :------------------------------------- |
+| `cp`                | [`Struct`](Struct.md)                  |
+| `atomSet?`          | `null` \| [`Pile`](Pile.md)<`number`\> |
+| `bondSet?`          | `null` \| [`Pile`](Pile.md)<`number`\> |
+| `dropRxnSymbols?`   | `boolean`                              |
+| `keepAllRGroups?`   | `boolean`                              |
+| `aidMap?`           | `null` \| `Map`<`number`, `number`\>   |
+| `simpleObjectsSet?` | `null` \| [`Pile`](Pile.md)<`number`\> |
+| `textsSet?`         | `null` \| [`Pile`](Pile.md)<`number`\> |
 
 #### Returns
 
@@ -1056,7 +1056,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:168](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L168)
 
-___
+---
 
 ### partitionLoop
 
@@ -1064,8 +1064,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name   | Type  |
+| :----- | :---- |
 | `loop` | `any` |
 
 #### Returns
@@ -1076,7 +1076,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:777](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L777)
 
-___
+---
 
 ### prepareLoopStructure
 
@@ -1090,7 +1090,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:298](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L298)
 
-___
+---
 
 ### rescale
 
@@ -1104,7 +1104,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:740](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L740)
 
-___
+---
 
 ### rxnArrowSetPos
 
@@ -1112,9 +1112,9 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `id` | `number` |
+| Name  | Type                |
+| :---- | :------------------ |
+| `id`  | `number`            |
 | `pos` | [`Vec2`](Vec2.md)[] |
 
 #### Returns
@@ -1125,7 +1125,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:519](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L519)
 
-___
+---
 
 ### rxnPlusSetPos
 
@@ -1133,9 +1133,9 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `id` | `number` |
+| Name | Type              |
+| :--- | :---------------- |
+| `id` | `number`          |
 | `pp` | [`Vec2`](Vec2.md) |
 
 #### Returns
@@ -1146,7 +1146,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:514](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L514)
 
-___
+---
 
 ### sGroupDelete
 
@@ -1154,8 +1154,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name   | Type     |
+| :----- | :------- |
 | `sgid` | `number` |
 
 #### Returns
@@ -1166,7 +1166,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:500](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L500)
 
-___
+---
 
 ### sGroupsRecalcCrossBonds
 
@@ -1180,7 +1180,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:472](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L472)
 
-___
+---
 
 ### scale
 
@@ -1188,8 +1188,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name    | Type     |
+| :------ | :------- |
 | `scale` | `number` |
 
 #### Returns
@@ -1200,7 +1200,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:720](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L720)
 
-___
+---
 
 ### setHbNext
 
@@ -1208,8 +1208,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name   | Type  |
+| :----- | :---- |
 | `hbid` | `any` |
 | `next` | `any` |
 
@@ -1221,7 +1221,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:392](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L392)
 
-___
+---
 
 ### setImplicitHydrogen
 
@@ -1229,8 +1229,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name    | Type       |
+| :------ | :--------- |
 | `list?` | `number`[] |
 
 #### Returns
@@ -1241,7 +1241,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:947](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L947)
 
-___
+---
 
 ### simpleObjectSetPos
 
@@ -1249,9 +1249,9 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `id` | `number` |
+| Name  | Type                |
+| :---- | :------------------ |
+| `id`  | `number`            |
 | `pos` | [`Vec2`](Vec2.md)[] |
 
 #### Returns
@@ -1262,7 +1262,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:526](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L526)
 
-___
+---
 
 ### sortNeighbors
 
@@ -1270,8 +1270,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name   | Type  |
+| :----- | :---- |
 | `list` | `any` |
 
 #### Returns
@@ -1282,7 +1282,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:441](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L441)
 
-___
+---
 
 ### textSetPosition
 
@@ -1290,9 +1290,9 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `id` | `number` |
+| Name       | Type              |
+| :--------- | :---------------- |
+| `id`       | `number`          |
 | `position` | [`Vec2`](Vec2.md) |
 
 #### Returns
@@ -1303,7 +1303,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:531](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L531)
 
-___
+---
 
 ### updateHalfBonds
 
@@ -1311,8 +1311,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name   | Type  |
+| :----- | :---- |
 | `list` | `any` |
 
 #### Returns

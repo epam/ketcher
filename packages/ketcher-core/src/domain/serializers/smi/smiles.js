@@ -141,15 +141,15 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
 
   // fill up neighbor lists for the stereocenters calculation
   for (i = 0; i < walk.v_seq.length; i++) {
-    var seqEl = walk.v_seq[i]
-    var vIdx = seqEl.idx
-    var eIdx = seqEl.parent_edge
-    var vPrevIdx = seqEl.parent_vertex
+    const seqEl = walk.v_seq[i]
+    const vIdx = seqEl.idx
+    const eIdx = seqEl.parent_edge
+    const vPrevIdx = seqEl.parent_vertex
 
     if (eIdx >= 0) {
       const atom = this.atoms[vIdx]
 
-      var openingCycles = walk.numOpeningCycles(eIdx)
+      const openingCycles = walk.numOpeningCycles(eIdx)
 
       for (j = 0; j < openingCycles; j++) {
         this.atoms[vPrevIdx].neighbours.push({ aid: -1, bid: -1 })

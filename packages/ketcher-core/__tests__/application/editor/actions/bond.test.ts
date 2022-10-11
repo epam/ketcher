@@ -22,11 +22,11 @@ describe('Bond Addition', () => {
     fromBondAddition(restruct as any, singleBond as any, 5, 1)
     expect(spy).toHaveBeenCalled()
   })
-  it('should contain operation CalcImplicitH', () => {
-    const CalcImplicitH = action.operations.find(
+  it('should contain operation CalcImplicitHydrogen', () => {
+    const CalcImplicitHydrogen = action.operations.find(
       (operation) => operation.type === 'Calculate implicit hydrogen'
     )
-    expect(CalcImplicitH).toBeDefined()
+    expect(CalcImplicitHydrogen).toBeDefined()
   })
   it('should contain operation Add fragment stereo flag', () => {
     const addFragment = action.operations.find(

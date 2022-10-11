@@ -28,7 +28,7 @@ import {
   BondAdd,
   BondAttr,
   BondDelete,
-  CalcImplicitH,
+  CalcImplicitHydrogen,
   FragmentAdd,
   FragmentStereoFlag
 } from '../operations'
@@ -104,7 +104,9 @@ export function fromBondAddition(
   const bnd = struct.bonds.get(bid)
 
   if (bnd) {
-    action.addOp(new CalcImplicitH([bnd.begin, bnd.end]).perform(restruct))
+    action.addOp(
+      new CalcImplicitHydrogen([bnd.begin, bnd.end]).perform(restruct)
+    )
     action.mergeWith(fromBondStereoUpdate(restruct, bnd))
   }
 
@@ -140,7 +142,7 @@ export function fromBondsAttrs(
         const bond = struct.bonds.get(bid)
         if (bond) {
           action.addOp(
-            new CalcImplicitH([bond.begin, bond.end]).perform(restruct)
+            new CalcImplicitHydrogen([bond.begin, bond.end]).perform(restruct)
           )
           action.mergeWith(fromBondStereoUpdate(restruct, bond))
         }

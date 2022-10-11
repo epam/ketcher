@@ -269,13 +269,13 @@ Stereocenters.prototype.buildOneCenter = function (
     if (edgeIds[0].rank > edgeIds[1].rank) swap(edgeIds, 0, 1)
     if (edgeIds[1].rank > edgeIds[2].rank) swap(edgeIds, 1, 2)
 
-    var main1 = -1
+    let main1 = -1
     let main2 = -1
-    var side1 = -1
-    var side2 = -1
-    var mainDir = 0
+    let side1 = -1
+    let side2 = -1
+    let mainDir = 0
 
-    for (var neiIdx = 0; neiIdx < 4; neiIdx++) {
+    for (let neiIdx = 0; neiIdx < 4; neiIdx++) {
       const stereo = this.getBondStereo(atomIdx, edgeIds[neiIdx].edge_idx)
 
       if (
@@ -509,7 +509,7 @@ Stereocenters.prototype.buildOneCenter = function (
       stereocenter.pyramid[3] = -1
     } else {
       // 3-connected P, N or S; no implicit hydrogens
-      var dir
+      let dir
 
       if (nDown > 0 && nUp > 0) {
         throw new Error('one bond up, one bond down -- indefinite case')

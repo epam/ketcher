@@ -27,6 +27,19 @@ import { MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import assert from 'assert'
 
+async function prepareStructToRender(
+  structStr: string,
+  structService: StructService
+): Promise<Struct> {
+  const struct: Struct = await parseStruct(structStr, structService)
+  struct.initHalfBonds()
+  struct.initNeighbors()
+  struct.setImplicitHydrogen()
+  struct.markFragments()
+
+  return struct
+}
+
 function parseStruct(structStr: string, structService: StructService) {
   const format = identifyStructFormat(structStr)
   const factory = new FormatterFactory(structService)
@@ -150,18 +163,23 @@ export class Ketcher {
   async setMolecule(structStr: string): Promise<void> {
     assert(typeof structStr === 'string')
 
-    const struct: Struct = await parseStruct(structStr, this.#structService)
-    struct.initHalfBonds()
-    struct.initNeighbors()
-    struct.setImplicitHydrogen()
-    struct.markFragments()
+    const struct: Struct = await prepareStructToRender(
+      structStr,
+      this.#structService
+    )
+
     this.#editor.struct(struct)
   }
 
-  async addFragment(fragment: string): Promise<void> {
-    assert(typeof fragment === 'string')
+  async addFragment(structStr: string): Promise<void> {
+    assert(typeof structStr === 'string')
 
-    throw Error('not implemented yet')
+    const struct: Struct = await prepareStructToRender(
+      structStr,
+      this.#structService
+    )
+
+    this.#editor.structToAddFragment(struct)
   }
 
   recognize(image: Blob, version?: string): Promise<Struct> {

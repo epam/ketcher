@@ -438,7 +438,7 @@ function parseRxn2000(
     while (n < ctabLines.length && ctabLines[n].substr(0, 4) !== '$MOL') n++
 
     const lines = ctabLines.slice(0, n)
-    var struct
+    let struct
     if (lines[0].search('\\$MDL') === 0) {
       struct = parseRg2000(lines)
     } else {

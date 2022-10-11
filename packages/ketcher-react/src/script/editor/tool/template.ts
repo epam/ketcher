@@ -22,7 +22,8 @@ import {
   fromTemplateOnCanvas,
   getHoverToFuse,
   getItemsToFuse,
-  FunctionalGroup
+  FunctionalGroup,
+  Struct
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -31,7 +32,15 @@ import Editor from '../Editor'
 class TemplateTool {
   editor: Editor
   mode: any
-  template: any
+  template: {
+    aid: number
+    angle0?: number
+    bid: number
+    molecule?: Struct
+    sign: number
+    xy0?: Vec2
+  }
+
   findItems: Array<string>
   dragCtx: any
 
@@ -42,7 +51,8 @@ class TemplateTool {
 
     this.template = {
       aid: parseInt(tmpl.aid) || 0,
-      bid: parseInt(tmpl.bid) || 0
+      bid: parseInt(tmpl.bid) || 0,
+      sign: 0
     }
 
     const frag = tmpl.struct
@@ -83,7 +93,7 @@ class TemplateTool {
       'sgroups',
       'functionalGroups'
     ])
-    const struct = this.editor.struct()
+    const struct = this.editor.struct() // => render.ctab.molecule
     const atomResult: Array<number> = []
     const bondResult: Array<number> = []
     const sGroupResult: Array<number> = []
@@ -329,7 +339,7 @@ class TemplateTool {
       // ci.type == 'Canvas'
       ;[action, pasteItems] = fromTemplateOnCanvas(
         restruct,
-        this.template,
+        this.template.molecule,
         pos0,
         angle
       )
@@ -366,6 +376,7 @@ class TemplateTool {
 
     const restruct = this.editor.render.ctab
     const struct = restruct.molecule
+
     const ci = dragCtx.item
 
     /* after moving around bond */
@@ -395,10 +406,9 @@ class TemplateTool {
 
     if (!dragCtx.action) {
       if (!ci) {
-        //  ci.type == 'Canvas'
         ;[action, pasteItems] = fromTemplateOnCanvas(
           restruct,
-          this.template,
+          this.template.molecule,
           dragCtx.xy0,
           0
         )

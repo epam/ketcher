@@ -22,7 +22,7 @@ import {
   BondAdd,
   BondAttr,
   BondDelete,
-  CalcImplicitH,
+  CalcImplicitHydrogen,
   FragmentAdd,
   FragmentAddStereoAtom,
   FragmentDelete,
@@ -47,7 +47,7 @@ export function fromAtomAddition(restruct, pos, atom) {
   const aid = (
     action.addOp(new AtomAdd(atom, pos).perform(restruct)) as AtomAdd
   ).data.aid
-  action.addOp(new CalcImplicitH([aid]).perform(restruct))
+  action.addOp(new CalcImplicitHydrogen([aid]).perform(restruct))
 
   return action
 }
@@ -96,7 +96,7 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
       action.addOp(new AtomAttr(aid, 'atomList', null).perform(restruct))
     }
 
-    action.addOp(new CalcImplicitH([aid]).perform(restruct))
+    action.addOp(new CalcImplicitHydrogen([aid]).perform(restruct))
 
     const atomNeighbors = restruct.molecule.atomGetNeighbors(aid)
     const bond = restruct.molecule.bonds.get(atomNeighbors[0]?.bid)
@@ -211,7 +211,7 @@ export function fromAtomMerge(restruct, srcId, dstId) {
   if (sgChanged) removeSgroupIfNeeded(action, restruct, [srcId])
 
   action.addOp(new AtomDelete(srcId))
-  action.addOp(new CalcImplicitH([dstId]))
+  action.addOp(new CalcImplicitHydrogen([dstId]))
   const dstAtomNeighbors = restruct.molecule.atomGetNeighbors(dstId)
   const bond = restruct.molecule.bonds.get(
     dstAtomNeighbors[0]?.bid || atomNeighbors[0]?.bid

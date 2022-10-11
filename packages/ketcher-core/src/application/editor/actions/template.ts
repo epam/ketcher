@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Atom, Vec2 } from 'domain/entities'
-import { AtomAdd, BondAdd, CalcImplicitH } from '../operations'
+import { AtomAdd, BondAdd, CalcImplicitHydrogen } from '../operations'
 import { atomForNewBond, atomGetAttr } from './utils'
 import { fromAtomsAttrs, mergeSgroups } from './atom'
 import { fromBondAddition, fromBondStereoUpdate, fromBondsAttrs } from './bond'
@@ -27,15 +27,10 @@ import { fromPaste } from './paste'
 import utils from '../shared/utils'
 import { fromSgroupAddition } from './sgroup'
 
-export function fromTemplateOnCanvas(restruct, template, pos, angle) {
-  const [action, pasteItems] = fromPaste(
-    restruct,
-    template.molecule,
-    pos,
-    angle
-  )
+export function fromTemplateOnCanvas(restruct, molecule, pos, angle) {
+  const [action, pasteItems] = fromPaste(restruct, molecule, pos, angle)
 
-  action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct))
+  action.addOp(new CalcImplicitHydrogen(pasteItems.atoms).perform(restruct))
 
   return [action, pasteItems]
 }
@@ -167,7 +162,7 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
 
   action.operations.reverse()
 
-  action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct))
+  action.addOp(new CalcImplicitHydrogen(pasteItems.atoms).perform(restruct))
   action.mergeWith(
     fromBondStereoUpdate(
       restruct,
@@ -284,9 +279,11 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
 
   if (pasteItems.atoms.length) {
     action.addOp(
-      new CalcImplicitH([bond.begin, bond.end, ...pasteItems.atoms]).perform(
-        restruct
-      )
+      new CalcImplicitHydrogen([
+        bond.begin,
+        bond.end,
+        ...pasteItems.atoms
+      ]).perform(restruct)
     )
   }
 

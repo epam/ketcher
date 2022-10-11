@@ -24,7 +24,7 @@ import {
   RxnPlusAdd,
   SimpleObjectAdd,
   TextCreate,
-  CalcImplicitH
+  CalcImplicitHydrogen
 } from '../operations'
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup'
 
@@ -91,7 +91,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   })
 
   pasteItems.atoms.forEach((aid) => {
-    action.addOp(new CalcImplicitH([aid]).perform(restruct))
+    action.addOp(new CalcImplicitHydrogen([aid]).perform(restruct))
   })
 
   pstruct.sgroups.forEach((sg) => {

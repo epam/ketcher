@@ -172,7 +172,7 @@ function rxnMerge(
     const bb = mol.getCoordBoundingBoxObj()
     if (!bb) continue // eslint-disable-line no-continue
 
-    var fragmentType =
+    const fragmentType =
       j < nReactants
         ? FRAGMENT.REACTANT // eslint-disable-line no-nested-ternary
         : j < nReactants + nProducts

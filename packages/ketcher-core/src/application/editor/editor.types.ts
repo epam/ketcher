@@ -41,6 +41,7 @@ export interface Editor {
   isDitrty: () => boolean
   setOrigin: () => void
   struct: (struct?: Struct) => Struct
+  structToAddFragment: (struct: Struct) => Struct
   subscribe: (eventName: string, handler: (data?: any) => any) => any
   unsubscribe: (eventName: string, subscriber: any) => void
   selection: (arg?: Selection | 'all' | null) => Selection | null

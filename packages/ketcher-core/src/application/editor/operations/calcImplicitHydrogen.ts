@@ -18,7 +18,7 @@ import { BaseOperation } from './base'
 import { OperationType } from './OperationType'
 import { ReStruct } from '../../render'
 
-export class CalcImplicitH extends BaseOperation {
+export class CalcImplicitHydrogen extends BaseOperation {
   atomIds: Array<number>
 
   constructor(aids: Array<number>) {
@@ -33,6 +33,6 @@ export class CalcImplicitH extends BaseOperation {
   }
 
   invert() {
-    return new CalcImplicitH(this.atomIds)
+    return new CalcImplicitHydrogen(this.atomIds)
   }
 }

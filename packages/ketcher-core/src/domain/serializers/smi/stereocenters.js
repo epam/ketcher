@@ -437,18 +437,18 @@ Stereocenters.prototype.buildOneCenter = function (
         throw new Error('one bond up, one bond down -- indefinite case')
       }
 
-      mainDir = 0
+      let mainDir = 0
 
       if (nUp === 2) {
         lastAtomDir = Bond.PATTERN.STEREO.DOWN
       } else if (nDown === 2) {
         lastAtomDir = Bond.PATTERN.STEREO.UP
       } else {
-        main1 = -1
-        side1 = -1
-        side2 = -1
+        let main1 = -1
+        let side1 = -1
+        let side2 = -1
 
-        for (neiIdx = 0; neiIdx < 3; neiIdx++) {
+        for (let neiIdx = 0; neiIdx < 3; neiIdx++) {
           const dir = this.getBondStereo(atomIdx, edgeIds[neiIdx].edge_idx)
 
           if (

@@ -261,10 +261,10 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
   let firstComponent = true
 
   for (i = 0; i < walk.v_seq.length; i++) {
-    seqEl = walk.v_seq[i]
-    vIdx = seqEl.idx
-    eIdx = seqEl.parent_edge
-    vPrevIdx = seqEl.parent_vertex
+    const seqEl = walk.v_seq[i]
+    const vIdx = seqEl.idx
+    const eIdx = seqEl.parent_edge
+    const vPrevIdx = seqEl.parent_vertex
     let writeAtom = true
 
     if (vPrevIdx >= 0) {
@@ -277,7 +277,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
         }
       }
 
-      openingCycles = walk.numOpeningCycles(eIdx)
+      const openingCycles = walk.numOpeningCycles(eIdx)
 
       for (j = 0; j < openingCycles; j++) {
         for (k = 1; k < cycleNumbers.length; k++) {

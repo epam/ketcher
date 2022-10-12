@@ -99,6 +99,7 @@ interface Selection {
   rxnPluses?: Array<number>
   rxnArrows?: Array<number>
 }
+
 class Editor implements KetcherEditor {
   #origin?: any
   render: Render
@@ -146,6 +147,8 @@ class Editor implements KetcherEditor {
     this.historyPtr = 0
     this.errorHandler = null
     this.highlights = new Highlighter(this)
+    this.renderAndRecoordinateStruct =
+      this.renderAndRecoordinateStruct.bind(this)
 
     this.event = {
       message: new Subscription(),
@@ -209,6 +212,15 @@ class Editor implements KetcherEditor {
     this.struct(undefined)
   }
 
+  renderAndRecoordinateStruct(struct: Struct) {
+    const action = fromNewCanvas(this.render.ctab, struct)
+    this.update(action)
+
+    const structCenter = getStructCenter(this.render.ctab)
+    recoordinate(this, structCenter)
+    return this.render.ctab.molecule
+  }
+
   struct(value?: Struct): Struct {
     if (arguments.length === 0) {
       return this.render.ctab.molecule
@@ -216,12 +228,15 @@ class Editor implements KetcherEditor {
 
     this.selection(null)
     const struct = value || new Struct()
-    const action = fromNewCanvas(this.render.ctab, struct)
-    this.update(action)
 
-    const structCenter = getStructCenter(this.render.ctab)
-    recoordinate(this, structCenter)
-    return this.render.ctab.molecule
+    return this.renderAndRecoordinateStruct(struct)
+  }
+
+  // this is used by API addFragment method
+  structToAddFragment(value: Struct): Struct {
+    const superStruct = value.mergeInto(this.render.ctab.molecule)
+
+    return this.renderAndRecoordinateStruct(superStruct)
   }
 
   options(value?: any) {

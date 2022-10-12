@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from './vec2'
+import { Vec2, Point } from './vec2'
 
 // TODO: move to infrastructure
 export enum TextCommand {
@@ -28,8 +28,16 @@ export enum TextCommand {
 export interface TextAttributes {
   // TODO: add Interface for content type
   content: string
-  position: Vec2
-  pos: Array<Vec2>
+  position: Point
+  pos: Array<Point>
+}
+
+function preparePositions(positions) {
+  if (!positions || positions === []) {
+    return [new Vec2(), new Vec2(), new Vec2(), new Vec2()]
+  }
+
+  return positions.map((position) => new Vec2(position))
 }
 
 export class Text {
@@ -38,7 +46,7 @@ export class Text {
   pos: Array<Vec2>
 
   constructor(attributes?: TextAttributes) {
-    this.pos = attributes?.pos || []
+    this.pos = preparePositions(attributes?.pos)
     this.content = attributes?.content || ''
     this.position = attributes?.position
       ? new Vec2(attributes.position)

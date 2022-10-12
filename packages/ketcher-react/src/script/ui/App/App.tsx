@@ -29,7 +29,9 @@ import AppModalContainer from '../views/modal'
 import Editor from '../views/Editor'
 import classes from './App.module.less'
 import { initFGTemplates } from '../state/functionalGroups'
-import { useSettingsContext } from '../../../hooks'
+import { useSettingsContext} from '../../../hooks'
+import {Ketcher} from "ketcher-core";
+import {indigoVerification} from "../state/request";
 
 interface AppCallProps {
   checkServer: () => void
@@ -45,16 +47,70 @@ const muiTheme = createTheme({
   }
 })
 
-type Props = AppCallProps
+type Props = AppCallProps & {ketcher: Ketcher}
 
 const App = (props: Props) => {
   const dispatch = useDispatch()
   const { checkServer } = props
   const { staticResourcesUrl } = useSettingsContext()
 
+  // @ts-ignore
+   console.log("APP ketcher",props.ketcher, window.ketcher)
+  // @ts-ignore
+  console.log("APP eventBus", window.ketcherEventBus)
+  //
+
+  const loadingHandler = () => {
+    console.log("LOADING")
+    dispatch(indigoVerification(true))
+
+  }
+  const successHandler = () => {
+    console.log("SUCCESS")
+    dispatch(indigoVerification(false))
+  }
+
+  const subscribe = (ketcher) => {
+    ketcher.eventBus.addListener("LOADING", loadingHandler)
+    ketcher.eventBus.addListener("SUCCESS", successHandler)
+  }
+
+  const unsubscribe = (ketcher) => {
+    ketcher.eventBus.removeListener("LOADING", loadingHandler)
+    ketcher.eventBus.removeListener("SUCCESS", successHandler)
+  }
+
+  const subscribeOnInit = () => {
+    // @ts-ignore
+    console.log("APP ketcher", window.ketcher)
+    // @ts-ignore
+    subscribe(window.ketcher)
+  }
+
+ const unsubscribeOnUnMount = () => {
+   // @ts-ignore
+   console.log("APP ketcher", window.ketcher)
+   // @ts-ignore
+   unsubscribe(window.ketcher)
+  }
+
+
+
   useEffect(() => {
     checkServer()
     dispatch(initFGTemplates(staticResourcesUrl))
+
+    // @ts-ignore
+    console.log("APP eventBus effect", window.ketcherEventBus)
+    // @ts-ignore
+    window.ketcherEventBus.addListener("ketcher-init", subscribeOnInit)
+    // @ts-ignore
+    return () => {
+      unsubscribeOnUnMount()
+      // @ts-ignore
+      window.ketcherEventBus.removeListener("ketcher-init", subscribeOnInit)
+
+    }
   }, [])
 
   return (

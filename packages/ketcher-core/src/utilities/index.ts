@@ -16,3 +16,4 @@
 
 export * from './ifDef'
 export * from './tfx'
+export * from './EventEmiter'

@@ -51,6 +51,7 @@ export default function initEditor(dispatch, getState) {
   return {
     onInit: (editor) => {
       dispatch({ type: 'INIT', editor })
+
     },
     onChange: (action) => {
       if (action === undefined) sleep(0).then(() => dispatch(resetToSelect))

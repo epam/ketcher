@@ -94,6 +94,10 @@ class StructEditor extends Component {
     setupEditor(this.editor, this.props)
     if (this.props.onInit) this.props.onInit(this.editor)
 
+    console.log("(window as any).ketcher as Ketcher", window.ketcher)
+
+
+
     this.editor.event.message.add((msg) => {
       const el = this.logRef.current
       if (msg.info && this.props.showAttachmentPoints) {

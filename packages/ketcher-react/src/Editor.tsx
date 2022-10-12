@@ -24,7 +24,7 @@ import './index.less'
 import init, { Config } from './script'
 import { useEffect, useRef } from 'react'
 
-import { Ketcher } from 'ketcher-core'
+import {EventEmitter, Ketcher} from 'ketcher-core'
 import classes from './Editor.module.less'
 import clsx from 'clsx'
 import { useResizeObserver } from './hooks'
@@ -44,13 +44,22 @@ function Editor(props: EditorProps) {
   const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: rootElRef
   })
+
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    window.ketcherEventBus = new EventEmitter()
     init({
       ...props,
       element: rootElRef.current
     }).then((ketcher: Ketcher) => {
       if (typeof onInit === 'function') {
         onInit(ketcher)
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        window.ketcherEventBus.emit("ketcher-init");
+
       }
     })
     // TODO: provide the list of dependencies after implementing unsubscribe function

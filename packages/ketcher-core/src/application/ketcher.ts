@@ -26,6 +26,7 @@ import { Indigo } from 'application/indigo'
 import { MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import assert from 'assert'
+import {EventEmitter} from "../utilities/EventEmiter";
 
 function parseStruct(structStr: string, structService: StructService) {
   const format = identifyStructFormat(structStr)
@@ -49,9 +50,14 @@ export class Ketcher {
   #formatterFactory: FormatterFactory
   #editor: Editor
   #indigo: Indigo
+  #eventBus: EventEmitter
 
   get editor(): Editor {
     return this.#editor
+  }
+
+  get eventBus (): EventEmitter {
+    return this.#eventBus
   }
 
   constructor(
@@ -67,6 +73,7 @@ export class Ketcher {
     this.#structService = structService
     this.#formatterFactory = formatterFactory
     this.#indigo = new Indigo(this.#structService)
+    this.#eventBus = new EventEmitter();
   }
 
   get indigo() {
@@ -149,13 +156,15 @@ export class Ketcher {
 
   async setMolecule(structStr: string): Promise<void> {
     assert(typeof structStr === 'string')
-
+    this.#eventBus.emit("LOADING")
     const struct: Struct = await parseStruct(structStr, this.#structService)
+
     struct.initHalfBonds()
     struct.initNeighbors()
     struct.setImplicitHydrogen()
     struct.markFragments()
     this.#editor.struct(struct)
+    this.#eventBus.emit("SUCCESS")
   }
 
   async addFragment(fragment: string): Promise<void> {

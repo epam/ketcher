@@ -29,7 +29,7 @@ import AppModalContainer from '../views/modal'
 import Editor from '../views/Editor'
 import classes from './App.module.less'
 import { initFGTemplates } from '../state/functionalGroups'
-import { useSettingsContext } from '../../../hooks'
+import { useSettingsContext, useSubscriptionOnEvents } from '../../../hooks'
 
 interface AppCallProps {
   checkServer: () => void
@@ -51,6 +51,8 @@ const App = (props: Props) => {
   const dispatch = useDispatch()
   const { checkServer } = props
   const { staticResourcesUrl } = useSettingsContext()
+
+  useSubscriptionOnEvents()
 
   useEffect(() => {
     checkServer()

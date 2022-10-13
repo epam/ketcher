@@ -34,7 +34,7 @@ export function GenericInput({
         value={value}
         onInput={onChange}
         onChange={onChange}
-        className={classes.input}
+        className={clsx(classes.input, classes.genericInput)}
         {...props}
       />
       {type === 'checkbox' && <span className={classes.checkbox} />}
@@ -68,6 +68,7 @@ function CheckBox({ schema, value = '', onChange, ...rest }) {
         checked={value}
         onClick={onChange}
         onChange={onChange}
+        className={classes.input}
         {...rest}
       />
       <span className={classes.checkbox} />
@@ -94,8 +95,7 @@ function Select({
       value={value}
       name={name}
       multiple={multiple}
-      className={clsx(classes.select, className)}
-    >
+      className={clsx(classes.select, className)}>
       {enumSchema(schema, (title, val) => (
         <option key={val} value={val}>
           {title}
@@ -136,6 +136,7 @@ function FieldSet({
                 type === 'radio' ? selected(val, checked) : selected(val, value)
               }
               value={typeof val !== 'object' && val}
+              className={classes.input}
               {...rest}
             />
             {type === 'checkbox' && <span className={classes.checkbox} />}

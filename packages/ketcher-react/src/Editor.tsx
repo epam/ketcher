@@ -28,6 +28,7 @@ import { Ketcher } from 'ketcher-core'
 import classes from './Editor.module.less'
 import clsx from 'clsx'
 import { useResizeObserver } from './hooks'
+import {KETCHER_INIT_EVENT_NAME} from "./constants";
 
 const mediaSizes = {
   smallWidth: 1040,
@@ -44,6 +45,9 @@ function Editor(props: EditorProps) {
   const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: rootElRef
   })
+
+  const ketcherInitEvent = new Event(KETCHER_INIT_EVENT_NAME)
+
   useEffect(() => {
     init({
       ...props,
@@ -51,6 +55,7 @@ function Editor(props: EditorProps) {
     }).then((ketcher: Ketcher) => {
       if (typeof onInit === 'function') {
         onInit(ketcher)
+        window.dispatchEvent(ketcherInitEvent)
       }
     })
     // TODO: provide the list of dependencies after implementing unsubscribe function

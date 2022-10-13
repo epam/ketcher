@@ -14,6 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './ifDef'
-export * from './tfx'
-export * from './runAsyncAction'
+import EventEmitter from "events";
+
+export enum KetcherAsyncEvents {
+    LOADING = "LOADING",
+    SUCCESS = "SUCCESS",
+    FAILURE = "FAILURE"
+}
+
+export const runAsyncAction = async <T = any> (action: () => Promise<T>, eventEmitter: EventEmitter): Promise<T | undefined> => {
+    eventEmitter.emit(KetcherAsyncEvents.LOADING)
+    try {
+        const res = await action();
+        eventEmitter.emit(KetcherAsyncEvents.SUCCESS)
+        return res
+    } catch {
+        eventEmitter.emit(KetcherAsyncEvents.FAILURE)
+        return undefined
+    }
+
+}

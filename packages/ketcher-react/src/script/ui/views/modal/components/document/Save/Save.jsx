@@ -86,7 +86,8 @@ class SaveDialog extends Component {
         'inChIAuxInfo',
         'cml',
         'svg',
-        'png'
+        'png',
+        'cdxml'
       )
 
     this.saveSchema = saveSchema

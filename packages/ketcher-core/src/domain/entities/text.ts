@@ -32,8 +32,8 @@ export interface TextAttributes {
   pos: Array<Point>
 }
 
-function preparePositions(positions) {
-  if (!positions || positions === []) {
+function preparePositions(positions?: Array<Point>) {
+  if (!positions || !positions.length) {
     return [new Vec2(), new Vec2(), new Vec2(), new Vec2()]
   }
 

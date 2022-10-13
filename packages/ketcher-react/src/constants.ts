@@ -14,6 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './ifDef'
-export * from './tfx'
-export * from './runAsyncAction'
+export const KETCHER_INIT_EVENT_NAME = 'ketcher-init'

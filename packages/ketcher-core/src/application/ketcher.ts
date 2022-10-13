@@ -26,6 +26,8 @@ import { Indigo } from 'application/indigo'
 import { MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import assert from 'assert'
+import { EventEmitter } from 'events'
+import { runAsyncAction } from 'utilities'
 
 async function prepareStructToRender(
   structStr: string,
@@ -62,9 +64,14 @@ export class Ketcher {
   #formatterFactory: FormatterFactory
   #editor: Editor
   #indigo: Indigo
+  #eventBus: EventEmitter
 
   get editor(): Editor {
     return this.#editor
+  }
+
+  get eventBus(): EventEmitter {
+    return this.#eventBus
   }
 
   constructor(
@@ -80,6 +87,7 @@ export class Ketcher {
     this.#structService = structService
     this.#formatterFactory = formatterFactory
     this.#indigo = new Indigo(this.#structService)
+    this.#eventBus = new EventEmitter()
   }
 
   get indigo() {
@@ -161,25 +169,29 @@ export class Ketcher {
   }
 
   async setMolecule(structStr: string): Promise<void> {
-    assert(typeof structStr === 'string')
+    runAsyncAction<void>(async () => {
+      assert(typeof structStr === 'string')
 
-    const struct: Struct = await prepareStructToRender(
-      structStr,
-      this.#structService
-    )
+      const struct: Struct = await prepareStructToRender(
+        structStr,
+        this.#structService
+      )
 
-    this.#editor.struct(struct)
+      this.#editor.struct(struct)
+    }, this.eventBus)
   }
 
   async addFragment(structStr: string): Promise<void> {
-    assert(typeof structStr === 'string')
+    runAsyncAction<void>(async () => {
+      assert(typeof structStr === 'string')
 
-    const struct: Struct = await prepareStructToRender(
-      structStr,
-      this.#structService
-    )
+      const struct: Struct = await prepareStructToRender(
+        structStr,
+        this.#structService
+      )
 
-    this.#editor.structToAddFragment(struct)
+      this.#editor.structToAddFragment(struct)
+    }, this.eventBus)
   }
 
   recognize(image: Blob, version?: string): Promise<Struct> {

@@ -149,6 +149,7 @@ class Editor implements KetcherEditor {
     this.highlights = new Highlighter(this)
     this.renderAndRecoordinateStruct =
       this.renderAndRecoordinateStruct.bind(this)
+    this.setOptions = this.setOptions.bind(this)
 
     this.event = {
       message: new Subscription(),
@@ -237,6 +238,10 @@ class Editor implements KetcherEditor {
     const superStruct = value.mergeInto(this.render.ctab.molecule)
 
     return this.renderAndRecoordinateStruct(superStruct)
+  }
+
+  setOptions(opts: string) {
+    return this.render.updateOptions(opts)
   }
 
   options(value?: any) {

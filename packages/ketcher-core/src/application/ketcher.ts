@@ -94,6 +94,14 @@ export class Ketcher {
     return this.#indigo
   }
 
+  get settings() {
+    return JSON.stringify(this.#editor.options())
+  }
+
+  setSettings(settings: string) {
+    return this.#editor.setOptions(settings)
+  }
+
   getSmiles(isExtended = false): Promise<string> {
     const format: SupportedFormat = isExtended ? 'smilesExt' : 'smiles'
     return getStructure(format, this.#formatterFactory, this.editor.struct())

@@ -9,7 +9,7 @@ import {
 
 import { ErrorModal } from './ErrorModal'
 import { PolymerToggler } from './PolymerToggler'
-import { useState } from 'react'
+import {useEffect, useState} from 'react'
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search)
@@ -45,12 +45,27 @@ if (enablePolymerEditor) {
   const { Editor } = require('ketcher-polymer-editor-react')
   PolymerEditor = Editor as PolymerType
 }
+async function fetchAndInstantiate() {
+  const response = await fetch("./example.wasm");
+  console.log("featch test1", response)
 
+  const buffer = await response.arrayBuffer();
+  console.log("response test", buffer)
+  const obj = await WebAssembly.instantiate(buffer);
+  console.log("test", obj);  // "3"
+}
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig()
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [showPolymerEditor, setShowPolymerEditor] = useState(false)
+  useEffect(() => {
+     const f = async () => {
+       await fetchAndInstantiate()
+     }
+
+     f()
+  }, [])
 
   return showPolymerEditor ? (
     <>

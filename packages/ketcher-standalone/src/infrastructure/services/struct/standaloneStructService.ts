@@ -63,6 +63,7 @@ import {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import IndigoWorker from 'web-worker:./indigoWorker'
+import EventEmitter from "events";
 
 interface KeyValuePair {
   [key: string]: number | string | boolean | object
@@ -150,9 +151,29 @@ function mapWarningGroup(property: string) {
 
 class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions
+  private readonly worker: IndigoWorker
+  private readonly EE: EventEmitter = new EventEmitter()
 
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions
+    this.worker = new IndigoWorker()
+    this.worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
+      const message: OutputMessage<string> = e.data
+      switch (message.type) {
+        case Command.Info:
+          console.log("emit action info");
+          this.EE.emit("info", {data: message})
+          break
+        case Command.Convert:
+          console.log("emit action Convert");
+          this.EE.emit("convert", {data: message})
+          break
+        case Command.Layout:
+          console.log("emit action Layout");
+          this.EE.emit("layout", {data: message})
+          break
+      }
+    }
   }
 
   async generateInchIKey(struct: string): Promise<string> {
@@ -180,11 +201,9 @@ class IndigoService implements StructService {
 
   info(): Promise<InfoResult> {
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        console.log("info action", data)
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: InfoResult = {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -198,7 +217,10 @@ class IndigoService implements StructService {
         }
       }
 
-      worker.postMessage({ type: Command.Info })
+      this.EE.removeListener("info", action)
+      this.EE.addListener("info", action)
+
+      this.worker.postMessage({ type: Command.Info })
     })
   }
 
@@ -210,11 +232,9 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(output_format)
 
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        console.log("convert action", data)
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: ConvertResult = {
             struct: msg.payload!,
@@ -242,7 +262,10 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      worker.postMessage(inputMessage)
+      this.EE.removeListener("convert", action)
+      this.EE.addListener("convert", action)
+
+      this.worker.postMessage(inputMessage)
     })
   }
 
@@ -254,11 +277,9 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(output_format)
 
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        console.log("layout action", data)
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: LayoutResult = {
             struct: msg.payload!,
@@ -286,7 +307,9 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      worker.postMessage(inputMessage)
+      this.EE.removeListener("layout", action)
+      this.EE.addListener("layout", action)
+      this.worker.postMessage(inputMessage)
     })
   }
 

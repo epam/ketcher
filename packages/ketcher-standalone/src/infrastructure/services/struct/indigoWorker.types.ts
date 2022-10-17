@@ -126,6 +126,7 @@ export interface AutomapCommandData
 }
 
 export interface OutputMessage<T> {
+  type?: Command,
   hasError?: boolean
   payload?: T
   error?: string

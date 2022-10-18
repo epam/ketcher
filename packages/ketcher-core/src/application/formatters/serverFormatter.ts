@@ -28,6 +28,16 @@ import { KetSerializer } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import { getPropertiesByFormat } from './formatProperties'
 
+type ConvertPromise = (
+  data: ConvertData,
+  options?: StructServiceOptions
+) => Promise<ConvertResult>
+
+type LayoutPromise = (
+  data: LayoutData,
+  options?: StructServiceOptions
+) => Promise<LayoutResult>
+
 export class ServerFormatter implements StructFormatter {
   #structService: StructService
   #ketSerializer: KetSerializer
@@ -75,16 +85,6 @@ export class ServerFormatter implements StructFormatter {
   async getStructureFromStringAsync(
     stringifiedStruct: string
   ): Promise<Struct> {
-    type ConvertPromise = (
-      data: ConvertData,
-      options?: StructServiceOptions
-    ) => Promise<ConvertResult>
-
-    type LayoutPromise = (
-      data: LayoutData,
-      options?: StructServiceOptions
-    ) => Promise<LayoutResult>
-
     let promise: LayoutPromise | ConvertPromise
 
     const data: ConvertData | LayoutData = {
@@ -103,6 +103,7 @@ export class ServerFormatter implements StructFormatter {
 
     try {
       const result = await promise(data, this.#options)
+
       const parsedStruct = this.#ketSerializer.deserialize(result.struct)
       if (!withCoords) {
         parsedStruct.rescale()

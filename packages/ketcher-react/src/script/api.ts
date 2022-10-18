@@ -23,7 +23,7 @@ import {
 
 type Api = StructService & Promise<InfoResult>
 
-// todo: remove
+// todo: remove - ?? should we? it's in use
 function createApi(
   structServiceProvider: StructServiceProvider,
   defaultOptions: StructServiceOptions

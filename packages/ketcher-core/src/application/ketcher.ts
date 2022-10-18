@@ -31,9 +31,14 @@ import { runAsyncAction } from 'utilities'
 
 async function prepareStructToRender(
   structStr: string,
-  structService: StructService
+  structService: StructService,
+  ketcherInstance: Ketcher
 ): Promise<Struct> {
-  const struct: Struct = await parseStruct(structStr, structService)
+  const struct: Struct = await parseStruct(
+    structStr,
+    structService,
+    ketcherInstance
+  )
   struct.initHalfBonds()
   struct.initNeighbors()
   struct.setImplicitHydrogen()
@@ -42,11 +47,17 @@ async function prepareStructToRender(
   return struct
 }
 
-function parseStruct(structStr: string, structService: StructService) {
+function parseStruct(
+  structStr: string,
+  structService: StructService,
+  ketcherInstance: Ketcher
+) {
   const format = identifyStructFormat(structStr)
   const factory = new FormatterFactory(structService)
+  const options = JSON.parse(ketcherInstance.settings)
 
-  const service = factory.create(format)
+  // const service = factory.create(format, { 'dearomatize-on-load': true })
+  const service = factory.create(format, options)
   return service.getStructureFromStringAsync(structStr)
 }
 
@@ -94,8 +105,15 @@ export class Ketcher {
     return this.#indigo
   }
 
+  // TEMP.: getting only dearomatize-on-load setting
   get settings() {
-    return JSON.stringify(this.#editor.options())
+    const options = this.#editor.options()
+    if ('dearomatize-on-load' in options) {
+      return JSON.stringify({
+        'dearomatize-on-load': options['dearomatize-on-load']
+      })
+    }
+    throw new Error('dearomatize-on-load option is not provided!')
   }
 
   setSettings(settings: string) {
@@ -182,7 +200,8 @@ export class Ketcher {
 
       const struct: Struct = await prepareStructToRender(
         structStr,
-        this.#structService
+        this.#structService,
+        this
       )
 
       this.#editor.struct(struct)
@@ -195,7 +214,8 @@ export class Ketcher {
 
       const struct: Struct = await prepareStructToRender(
         structStr,
-        this.#structService
+        this.#structService,
+        this
       )
 
       this.#editor.structToAddFragment(struct)

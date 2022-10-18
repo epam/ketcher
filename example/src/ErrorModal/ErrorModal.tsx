@@ -31,7 +31,8 @@ const ErrorModal = ({ message, close }: ErrorModalProps): JSX.Element => {
             className={styles.ok}
             onClick={() => {
               close()
-            }}>
+            }}
+          >
             Close
           </button>
         </footer>

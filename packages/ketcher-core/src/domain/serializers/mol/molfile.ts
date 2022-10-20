@@ -260,7 +260,10 @@ export class Molfile {
     )
     this.writePaddedNumber(isAbsFlag ? 1 : 0, 3)
     this.writePaddedNumber(0, 3)
-    this.writeWhiteSpace(12)
+    this.writePaddedNumber(0, 3)
+    this.writePaddedNumber(0, 3)
+    this.writePaddedNumber(0, 3)
+    this.writePaddedNumber(0, 3)
     this.writePaddedNumber(999, 3)
     this.writeCR(' V2000')
   }

@@ -45,12 +45,15 @@ interface IndigoOptions {
 type handlerType = (indigo: any, indigoOptions: IndigoOptions) => string
 
 function handle(handler: handlerType, options?: CommandOptions) {
+  console.log('data options ', options && options['dearomatize-on-load'])
+
   module.then((indigo) => {
     const indigoOptions = new indigo.MapStringString()
     setOptions(indigoOptions, options || {})
     let msg: OutputMessage<string>
     try {
       const payload = handler(indigo, indigoOptions)
+      console.log('indigoOptions ', indigoOptions)
       msg = {
         payload,
         hasError: false

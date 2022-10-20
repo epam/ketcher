@@ -54,9 +54,8 @@ function parseStruct(
 ) {
   const format = identifyStructFormat(structStr)
   const factory = new FormatterFactory(structService)
-  const options = JSON.parse(ketcherInstance.settings)
+  const options = ketcherInstance.settings
 
-  // const service = factory.create(format, { 'dearomatize-on-load': true })
   const service = factory.create(format, options)
   return service.getStructureFromStringAsync(structStr)
 }
@@ -109,15 +108,25 @@ export class Ketcher {
   get settings() {
     const options = this.#editor.options()
     if ('dearomatize-on-load' in options) {
-      return JSON.stringify({
-        'dearomatize-on-load': options['dearomatize-on-load']
-      })
+      return {
+        'general.dearomatize-on-load': options['dearomatize-on-load']
+      }
     }
     throw new Error('dearomatize-on-load option is not provided!')
   }
 
-  setSettings(settings: string) {
-    return this.#editor.setOptions(settings)
+  // TODO: create optoions type
+  setSettings(settings: Record<string, string>) {
+    if (!settings) {
+      throw new Error('Please provide settings')
+    }
+
+    // eslint-disable-next-line prefer-const
+    let options = {}
+    if ('general.dearomatize-on-load' in settings) {
+      options['dearomatize-on-load'] = settings['general.dearomatize-on-load']
+    }
+    return this.#editor.setOptions(JSON.stringify(options))
   }
 
   getSmiles(isExtended = false): Promise<string> {

@@ -109,7 +109,6 @@ export class Ketcher {
   // TEMP.: getting only dearomatize-on-load setting
   get settings() {
     const options = this.#editor.options()
-    console.log(options)
 
     if ('dearomatize-on-load' in options) {
       return {

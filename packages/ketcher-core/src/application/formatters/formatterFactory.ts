@@ -22,13 +22,11 @@ import {
 import {
   KetSerializer,
   MolSerializer,
-  MolSerializerOptions,
-  SmiSerializer
+  MolSerializerOptions
 } from 'domain/serializers'
 import { StructService, StructServiceOptions } from 'domain/services'
 import { KetFormatter } from './ketFormatter'
 import { RxnFormatter } from './rxnFormatter'
-import { SmilesFormatter } from './smilesFormatter'
 import { ServerFormatter } from './serverFormatter'
 import { MolfileV2000Formatter } from './molfileV2000Formatter'
 
@@ -78,19 +76,6 @@ export class FormatterFactory {
         formatter = new RxnFormatter(new MolSerializer(molSerializerOptions))
         break
 
-      case 'smiles':
-        formatter = new SmilesFormatter(
-          new SmiSerializer(),
-
-          // only for ServerFormatter, because 'getStructureFromStringAsync' is delegated to it
-
-          this.#structService,
-          new KetSerializer(),
-          format,
-          structServiceOptions
-        )
-        break
-
       case 'mol':
         formatter = new MolfileV2000Formatter(
           new MolSerializer(molSerializerOptions)
@@ -101,6 +86,7 @@ export class FormatterFactory {
       case 'inChIAuxInfo':
       case 'inChI':
       case 'molV3000':
+      case 'smiles':
       case 'rxnV3000':
       case 'smilesExt':
       case 'smarts':

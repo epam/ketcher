@@ -54,9 +54,11 @@ function parseStruct(
 ) {
   const format = identifyStructFormat(structStr)
   const factory = new FormatterFactory(structService)
-  const options = ketcherInstance.settings
+  const options = ketcherInstance.editor.options()
 
-  const service = factory.create(format, options)
+  const service = factory.create(format, {
+    'dearomatize-on-load': options['dearomatize-on-load']
+  })
   return service.getStructureFromStringAsync(structStr)
 }
 
@@ -107,6 +109,8 @@ export class Ketcher {
   // TEMP.: getting only dearomatize-on-load setting
   get settings() {
     const options = this.#editor.options()
+    console.log(options)
+
     if ('dearomatize-on-load' in options) {
       return {
         'general.dearomatize-on-load': options['dearomatize-on-load']

@@ -23,6 +23,7 @@
 ### Methods
 
 - [addFragment](Ketcher.md#addfragment)
+- [layout](Ketcher.md#layout)
 - [containsReaction](Ketcher.md#containsreaction)
 - [generateImage](Ketcher.md#generateimage)
 - [generateInchIKey](Ketcher.md#generateinchikey)
@@ -138,9 +139,17 @@ ___
 
 `Promise`<`void`\>
 
+### layout
+
+▸ **layout**(): `Promise`<`void`\>
+
+#### Returns
+
+`Promise`<`void`\>
+
 #### Defined in
 
-[packages/ketcher-core/src/application/ketcher.ts:161](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L161)
+[packages/ketcher-core/src/application/ketcher.ts:198](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L198)
 
 ___
 

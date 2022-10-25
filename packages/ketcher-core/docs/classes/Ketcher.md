@@ -139,6 +139,12 @@ ___
 
 `Promise`<`void`\>
 
+#### Defined in
+
+[packages/ketcher-core/src/application/ketcher.ts:161](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/ketcher.ts#L161)
+
+___
+
 ### layout
 
 ▸ **layout**(): `Promise`<`void`\>

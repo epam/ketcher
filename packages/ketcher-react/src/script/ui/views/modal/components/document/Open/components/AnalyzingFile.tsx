@@ -20,18 +20,29 @@ import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
 
 export type AnalyzingFileProps = {
   fileName?: string
+  onCancel: () => void
 }
 
 const ICON_NAME = 'file-thumbnail'
 
-export const AnalyzingFile = ({ fileName }: AnalyzingFileProps) => (
-  <div className={styles.analyzingFileWrapper}>
-    {fileName && (
-      <div className={styles.fileBox}>
-        <Icon name={ICON_NAME} />
-        <p>{fileName}</p>
-      </div>
-    )}
-    <LoadingCircles />
-  </div>
-)
+export const AnalyzingFile = ({ fileName, onCancel }: AnalyzingFileProps) => {
+  const onCancelAction = () => {
+    const state = global.currentState
+    const controller = state.controller
+    controller.abort('Connnection failed')
+    state.controller = new AbortController()
+    onCancel()
+  }
+
+  return (
+    <div className={styles.analyzingFileWrapper}>
+      {fileName && (
+        <div className={styles.fileBox}>
+          <Icon name={ICON_NAME} />
+          <p>{fileName}</p>
+        </div>
+      )}
+      <LoadingCircles actionHasTimeout={!fileName} onCancel={onCancelAction} />
+    </div>
+  )
+}

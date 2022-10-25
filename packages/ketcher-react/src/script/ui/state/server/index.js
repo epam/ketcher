@@ -40,12 +40,12 @@ export function checkServer() {
   }
 }
 
-export function recognize(file, version) {
+export function recognize(file, version, params) {
   return (dispatch, getState) => {
     const rec = getState().server.recognize
     const editor = getState().editor
 
-    const process = rec(file, version).then(
+    const process = rec(file, version, params?.signal).then(
       (res) => {
         dispatch(setStruct(res.struct))
       },
@@ -80,15 +80,21 @@ function ketcherCheck(struct, checkParams) {
   return errors
 }
 
-export function check(optsTypes) {
+export function check(optsTypes, params) {
   return (dispatch, getState) => {
     const { editor, server } = getState()
     const ketcherErrors = ketcherCheck(editor.struct(), optsTypes)
-
     const options = getState().options.getServerSettings()
     options.data = { types: without(['valence', 'chiral_flag'], optsTypes) }
 
-    return serverCall(editor, server, 'check', options)
+    return serverCall(
+      editor,
+      server,
+      'check',
+      options,
+      editor.struct(),
+      params?.signal
+    )
       .then((res) => {
         res = Object.assign(res, ketcherErrors) // merge Indigo check with Ketcher check
         dispatch(checkErrors(res))
@@ -103,7 +109,7 @@ export function automap(res) {
   return serverTransform('automap', res)
 }
 
-export function analyse() {
+export function analyse(params) {
   return (dispatch, getState) => {
     // reset values to initial state
     dispatch({
@@ -121,7 +127,14 @@ export function analyse() {
       ]
     }
 
-    return serverCall(editor, server, 'calculate', serverSettings)
+    return serverCall(
+      editor,
+      server,
+      'calculate',
+      serverSettings,
+      null,
+      params?.signal
+    )
       .then((values) =>
         dispatch({
           type: 'CHANGE_ANALYSE',
@@ -135,13 +148,13 @@ export function analyse() {
 }
 
 export function serverTransform(method, data, struct) {
-  return (dispatch, getState) => {
+  return (dispatch, getState, abortSignal) => {
     const state = getState()
     const opts = state.options.getServerSettings()
     opts.data = data
     dispatch(indigoVerification(true))
 
-    serverCall(state.editor, state.server, method, opts, struct)
+    serverCall(state.editor, state.server, method, opts, struct, abortSignal)
       .then((res) => {
         const loadedStruct = new KetSerializer().deserialize(res.struct)
 
@@ -163,7 +176,14 @@ export function serverTransform(method, data, struct) {
 }
 
 // TODO: serverCall function should not be exported
-export function serverCall(editor, server, method, options, struct) {
+export function serverCall(
+  editor,
+  server,
+  method,
+  options,
+  struct,
+  abortSignal
+) {
   const selection = editor.selection()
   let selectedAtoms = []
   const aidMap = new Map()
@@ -197,7 +217,8 @@ export function serverCall(editor, server, method, options, struct) {
           : null,
         options.data
       ),
-      omit('data', options)
+      omit('data', options),
+      abortSignal
     )
   )
 }

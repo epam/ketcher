@@ -25,8 +25,9 @@ import {
 import { supportedSGroupTypes } from './constants'
 import { setAnalyzingFile } from './request'
 import tools from '../action/tools'
+import _ from 'lodash'
 
-export function onAction(action) {
+export function onAction(action, abortSignal) {
   if (action && action.dialog) {
     return {
       type: 'MODAL_OPEN',
@@ -34,7 +35,9 @@ export function onAction(action) {
     }
   }
   if (action && action.thunk) {
-    return action.thunk
+    if (abortSignal) {
+      return _.bind(action.thunk, this, _, _, abortSignal)
+    } else return action.thunk
   }
 
   return {

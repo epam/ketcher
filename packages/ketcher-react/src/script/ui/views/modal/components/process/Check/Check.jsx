@@ -121,22 +121,38 @@ function CheckDialog(props) {
   const [lastCheckDate, setLastCheckDate] = useState(null)
   const [isCheckedWithNewSettings, setIsCheckedWithNewSettings] =
     useState(false)
+  const [state, setState] = useState({})
+  const [abortController, setAbortController] = useState(null)
 
   const handleApply = () => onApply(result)
 
   const handleCheck = () => {
+    const newAbortController = new AbortController()
     setIsStructureChecking(false)
-    onCheck(result.checkOptions).then(() => {
-      setIsStructureChecking(true)
-      setLastCheckDate(new Date())
-      setIsCheckedWithNewSettings(true)
-    })
+    onCheck(result.checkOptions, { signal: newAbortController.signal }).then(
+      () => {
+        setIsStructureChecking(true)
+        setLastCheckDate(new Date())
+        setIsCheckedWithNewSettings(true)
+      }
+    )
+    setAbortController(newAbortController)
+  }
+
+  const onCancelAction = () => {
+    abortController.abort('Connnection failed')
+    setIsStructureChecking(true)
+    setIsCheckedWithNewSettings(true)
   }
 
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false)
 
   useEffect(() => {
     handleCheck()
+    // clean state to prevent memory leak when dialog closed
+    return () => {
+      setState({})
+    }
   }, [])
 
   return (
@@ -204,7 +220,10 @@ function CheckDialog(props) {
                   />
                 </div>
               ) : (
-                <LoadingCircles />
+                <LoadingCircles
+                  actionHasTimeout={!isCheckedWithNewSettings}
+                  onCancel={onCancelAction}
+                />
               )}
             </div>
           </div>
@@ -220,7 +239,8 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  onCheck: (opts) => dispatch(check(opts)).catch(ownProps.onCancel),
+  onCheck: (opts, params) =>
+    dispatch(check(opts, params)).catch(ownProps.onCancel),
   onApply: (res) => {
     dispatch(checkOpts(res))
     ownProps.onOk(res)

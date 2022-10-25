@@ -30,13 +30,14 @@ type SwitchProps = {
   currentState: string
   states: ViewStates
   isAnalyzingFile: boolean
+  onCancel: () => void
 } & OpenOptionsProps &
   TextEditorProps &
   AnalyzingFileProps
 
 export const ViewSwitcher: FC<SwitchProps> = (props: SwitchProps) => {
   if (props.isAnalyzingFile) {
-    return <AnalyzingFile fileName={props.fileName} />
+    return <AnalyzingFile fileName={props.fileName} onCancel={props.onCancel} />
   } else {
     switch (props.currentState) {
       case props.states.idle:

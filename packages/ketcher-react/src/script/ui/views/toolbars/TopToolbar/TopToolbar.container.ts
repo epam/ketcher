@@ -74,8 +74,8 @@ const mapStateToProps = (state: any) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
-  const dispatchAction = (actionName) => {
-    dispatch(onAction(action[actionName].action))
+  const dispatchAction = (actionName, params?) => {
+    dispatch(onAction(action[actionName].action, params?.signal))
   }
 
   return {
@@ -95,11 +95,11 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onZoom: (zoomValue: number) =>
       dispatch(onAction((editor) => editor.zoom(zoomValue / 100))),
     onSettingsOpen: () => dispatchAction('settings'),
-    onLayout: () => dispatchAction('layout'),
-    onClean: () => dispatchAction('clean'),
-    onAromatize: () => dispatchAction('arom'),
-    onDearomatize: () => dispatchAction('dearom'),
-    onCalculate: () => dispatchAction('cip'),
+    onLayout: (params) => dispatchAction('layout', params),
+    onClean: (params) => dispatchAction('clean', params),
+    onAromatize: (params) => dispatchAction('arom', params),
+    onDearomatize: (params) => dispatchAction('dearom', params),
+    onCalculate: (params) => dispatchAction('cip', params),
     onCheck: () => dispatchAction('check'),
     onAnalyse: () => dispatchAction('analyse'),
     onStereo: () => dispatchAction('enhanced-stereo'),

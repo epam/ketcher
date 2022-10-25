@@ -14,37 +14,58 @@
  * limitations under the License.
  ***************************************************************************/
 @import 'src/style/variables.less';
+@import 'src/style/mixins';
+
 
 .container {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 40px;
-  height: 12px;
-  margin-top: 10px;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
 
-  & span {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border: 2px solid @color-border-main;
-    border-radius: 100%;
-    box-sizing: border-box;
+  .buttonContainer {
+    text-align: center;
 
-    &:nth-child(1) {
-      animation: bounce 1s ease-in-out infinite;
+    .error {
+      margin-bottom: 10px;
     }
 
-    &:nth-child(2) {
-      animation: bounce 1s ease-in-out 0.33s infinite;
-    }
-
-    &:nth-child(3) {
-      animation: bounce 1s ease-in-out 0.66s infinite;
+    input[type=button] {
+      .button-primary();
     }
   }
 
+  .loader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 40px;
+    height: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    & span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border: 2px solid @color-border-main;
+      border-radius: 100%;
+      box-sizing: border-box;
+
+      &:nth-child(1) {
+        animation: bounce 1s ease-in-out infinite;
+      }
+
+      &:nth-child(2) {
+        animation: bounce 1s ease-in-out 0.33s infinite;
+      }
+
+      &:nth-child(3) {
+        animation: bounce 1s ease-in-out 0.66s infinite;
+      }
+    }
+  }
   @keyframes bounce {
     0%,
     75%,

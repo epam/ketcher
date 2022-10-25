@@ -72,7 +72,8 @@ class SaveDialog extends Component {
       disableControls: true,
       imageFormat: 'svg',
       tabIndex: 0,
-      isLoading: true
+      isLoading: true,
+      abortController: null
     }
     this.isRxn = this.props.struct.hasRxnArrow()
     this.textAreaRef = createRef()
@@ -106,10 +107,27 @@ class SaveDialog extends Component {
 
   componentDidMount() {
     const { checkOptions } = this.props.checkState
-    this.props.onCheck(checkOptions)
+    const newAbortController = new AbortController()
+    this.setState({ isLoading: true })
+    this.props
+      .onCheck(checkOptions, { signal: newAbortController.signal })
+      .finally(() => {
+        this.setState({ isLoading: false })
+      })
+
     this.changeType(this.isRxn ? 'rxn' : 'mol').then(
       (res) => res instanceof Error && this.setState({ disableControls: true })
     )
+    this.setState({ abortController: newAbortController })
+  }
+
+  componentWillUnmount() {
+    this.setState({})
+  }
+
+  onCancelAction = () => {
+    this.state.abortController.abort('Connnection failed')
+    this.props.onCancel()
   }
 
   isImageFormat = (format) => {
@@ -176,8 +194,7 @@ class SaveDialog extends Component {
         .finally(() => {
           this.setState({
             disableControls: false,
-            tabIndex: 0,
-            isLoading: false
+            tabIndex: 0
           })
         })
     }
@@ -275,7 +292,10 @@ class SaveDialog extends Component {
     const isCleanStruct = this.props.struct.isBlank()
     return isLoading ? (
       <div className={classes.loadingCirclesContainer}>
-        <LoadingCircles />
+        <LoadingCircles
+          actionHasTimeout={isLoading}
+          onCancel={this.onCancelAction}
+        />
       </div>
     ) : this.isImageFormat(format) ? (
       <div className={classes.imageContainer}>
@@ -411,7 +431,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  onCheck: (checkOptions) => dispatch(check(checkOptions)),
+  onCheck: (checkOptions, params) => dispatch(check(checkOptions, params)),
   onTmplSave: (struct) => dispatch(saveUserTmpl(struct)),
   onResetForm: (prevState) => dispatch(updateFormState(prevState))
 })

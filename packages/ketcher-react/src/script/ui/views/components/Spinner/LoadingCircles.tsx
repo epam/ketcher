@@ -14,12 +14,45 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useState, useEffect } from 'react'
+import { DialogActionButton } from 'src/script/ui/views/modal/components/document/Open/components/DialogActionButton'
 import styles from './LoadingCircles.module.less'
 
-export const LoadingCircles = () => (
-  <div className={styles.container}>
-    <span />
-    <span />
-    <span />
-  </div>
-)
+interface Props {
+  actionHasTimeout?: boolean
+  onCancel: () => void
+}
+export const LoadingCircles = ({ actionHasTimeout, onCancel }: Props) => {
+  const [loadingTimeout, setLoadingTimeout] = useState(actionHasTimeout)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!loadingTimeout) setLoadingTimeout(true)
+    }, 10000)
+
+    return () => clearTimeout(timer)
+  }, [loadingTimeout])
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.loader}>
+        <span />
+        <span />
+        <span />
+      </div>
+      {loadingTimeout && (
+        <div className={styles.buttonContainer}>
+          <div className={styles.error}>Connection error</div>
+          <DialogActionButton
+            key="cancelButton"
+            clickHandler={onCancel}
+            disabled={false}
+            styles={styles.button}
+            label="Cancel"
+            title="Action will be canceled"
+          />
+        </div>
+      )}
+    </div>
+  )
+}

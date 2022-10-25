@@ -134,7 +134,8 @@ export interface StructService {
   info: () => Promise<InfoResult>
   convert: (
     data: ConvertData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
+    abortSignal?: AbortSignal
   ) => Promise<ConvertResult>
   layout: (
     data: LayoutData,

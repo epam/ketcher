@@ -69,7 +69,8 @@ function request(
   url: string,
   data?: any,
   headers?: any,
-  responseHandler?: (promise: Promise<any>) => Promise<any>
+  responseHandler?: (promise: Promise<any>) => Promise<any>,
+  abortSignal?: AbortSignal
 ) {
   let requestUrl = url
   if (data && method === 'GET') requestUrl = parametrizeUrl(url, data)
@@ -82,7 +83,8 @@ function request(
       headers
     ),
     body: method !== 'GET' ? data : undefined,
-    credentials: 'same-origin'
+    credentials: 'same-origin',
+    signal: abortSignal
   })
 
   if (responseHandler) {
@@ -103,7 +105,8 @@ function indigoCall(
   url: string,
   baseUrl: string,
   defaultOptions: any,
-  customHeaders?: Record<string, string>
+  customHeaders?: Record<string, string>,
+  abortSignal?: AbortSignal
 ) {
   return function (
     data,
@@ -120,7 +123,8 @@ function indigoCall(
         'Content-Type': 'application/json',
         ...customHeaders
       },
-      responseHandler
+      responseHandler,
+      abortSignal
     )
   }
 }
@@ -181,76 +185,91 @@ export class RemoteStructService implements StructService {
 
   convert(
     data: ConvertData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
+    abortSignal?: AbortSignal
   ): Promise<ConvertResult> {
     return indigoCall(
       'POST',
       'indigo/convert',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
+      abortSignal
     )(data, options)
   }
 
   layout(
     data: LayoutData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
+    abortSignal?: AbortSignal
   ): Promise<LayoutResult> {
     return indigoCall(
       'POST',
       'indigo/layout',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
+      abortSignal
     )(data, options)
   }
 
-  clean(data: CleanData, options?: StructServiceOptions): Promise<CleanResult> {
+  clean(
+    data: CleanData,
+    options?: StructServiceOptions,
+    abortSignal?: AbortSignal
+  ): Promise<CleanResult> {
     return indigoCall(
       'POST',
       'indigo/clean',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
+      abortSignal
     )(data, options)
   }
 
   aromatize(
     data: AromatizeData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
+    abortSignal?: AbortSignal
   ): Promise<AromatizeResult> {
     return indigoCall(
       'POST',
       'indigo/aromatize',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
+      abortSignal
     )(data, options)
   }
 
   dearomatize(
     data: DearomatizeData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
+    abortSignal?: AbortSignal
   ): Promise<DearomatizeResult> {
     return indigoCall(
       'POST',
       'indigo/dearomatize',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
+      abortSignal
     )(data, options)
   }
 
   calculateCip(
     data: CalculateCipData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
+    abortSignal?: AbortSignal
   ): Promise<CalculateCipResult> {
     return indigoCall(
       'POST',
       'indigo/calculate_cip',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
+      abortSignal
     )(data, options)
   }
 
@@ -267,30 +286,41 @@ export class RemoteStructService implements StructService {
     )(data, options)
   }
 
-  check(data: CheckData, options?: StructServiceOptions): Promise<CheckResult> {
+  check(
+    data: CheckData,
+    options?: StructServiceOptions,
+    abortSignal?: AbortSignal
+  ): Promise<CheckResult> {
     return indigoCall(
       'POST',
       'indigo/check',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
+      abortSignal
     )(data, options)
   }
 
   calculate(
     data: CalculateData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
+    abortSignal?: AbortSignal
   ): Promise<CalculateResult> {
     return indigoCall(
       'POST',
       'indigo/calculate',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
+      abortSignal
     )(data, options)
   }
 
-  recognize(blob: Blob, version: string): Promise<RecognizeResult> {
+  recognize(
+    blob: Blob,
+    version: string,
+    abortSignal?: AbortSignal
+  ): Promise<RecognizeResult> {
     const parVersion = version ? `?version=${version}` : ''
     const req = request(
       'POST',
@@ -298,7 +328,9 @@ export class RemoteStructService implements StructService {
       blob,
       {
         'Content-Type': blob.type || 'application/octet-stream'
-      }
+      },
+      undefined,
+      abortSignal
     )
     const status = request.bind(null, 'GET', this.apiPath + 'imago/uploads/:id')
     return req

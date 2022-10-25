@@ -195,9 +195,11 @@ export class Ketcher {
   }
 
   async layout(): Promise<void> {
-    const struct = await this.#indigo.layout(this.#editor.struct())
-    const ketSerializer = new KetSerializer()
-    this.setMolecule(ketSerializer.serialize(struct))
+    runAsyncAction<void>(async () => {
+      const struct = await this.#indigo.layout(this.#editor.struct())
+      const ketSerializer = new KetSerializer()
+      this.setMolecule(ketSerializer.serialize(struct))
+    }, this.eventBus)
   }
 
   recognize(image: Blob, version?: string): Promise<Struct> {

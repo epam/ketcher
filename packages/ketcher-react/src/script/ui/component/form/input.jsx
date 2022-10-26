@@ -96,7 +96,7 @@ function Select({
       name={name}
       multiple={multiple}
       className={clsx(classes.select, className)}
-    >
+      >
       {enumSchema(schema, (title, val) => (
         <option key={val} value={val}>
           {title}
@@ -127,7 +127,7 @@ function FieldSet({
   ...rest
 }) {
   return (
-    <fieldset onClick={onSelect} className="radio">
+    <fieldset onClick={onSelect}>
       {enumSchema(schema, (title, val) => (
         <li key={title} className={classes.fieldSetItem}>
           <label className={classes.fieldSetLabel}>

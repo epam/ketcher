@@ -79,6 +79,9 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
             key={label}
             el={element}
             shortcut={shortcut}
+            className={
+              isAtom && active && active.opts.label === label ? 'selected' : ''
+            }
             selected={isAtom && active && active.opts.label === label}
             onClick={() => onAction({ tool: 'atom', opts: { label } })}
           />

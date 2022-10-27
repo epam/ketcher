@@ -16,11 +16,10 @@
 
 import { Struct, Text } from 'domain/entities'
 import { getNodeWithInvertedYCoord } from '../helpers'
-import { utf8Converter } from '../utf8Converter'
 
 export function textToStruct(ketItem: any, struct: Struct) {
   const object = getNodeWithInvertedYCoord(ketItem.data)
-  struct.texts.add(new Text(utf8Converter(object, 'decode')))
+  struct.texts.add(new Text(object))
 
   return struct
 }

@@ -23,7 +23,7 @@ import { GenerateImageOptions, StructService } from 'domain/services'
 
 import { Editor } from './editor'
 import { Indigo } from 'application/indigo'
-import { MolfileFormat } from 'domain/serializers'
+import { KetSerializer, MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import assert from 'assert'
 import { EventEmitter } from 'events'
@@ -231,6 +231,14 @@ export class Ketcher {
       )
 
       this.#editor.structToAddFragment(struct)
+    }, this.eventBus)
+  }
+
+  async layout(): Promise<void> {
+    runAsyncAction<void>(async () => {
+      const struct = await this.#indigo.layout(this.#editor.struct())
+      const ketSerializer = new KetSerializer()
+      this.setMolecule(ketSerializer.serialize(struct))
     }, this.eventBus)
   }
 

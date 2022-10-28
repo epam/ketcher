@@ -1,7 +1,6 @@
 import 'ketcher-react/dist/index.css'
 
 import { ButtonsConfig, Editor } from 'ketcher-react'
-
 import {
   Ketcher,
   RemoteStructServiceProvider,
@@ -11,18 +10,6 @@ import {
 import { ErrorModal } from './ErrorModal'
 import { PolymerToggler } from './PolymerToggler'
 import {useEffect, useState} from 'react'
-
-export const fetchWasm = async (
-    path: string,
-    abortSignal: AbortSignal
-): Promise<Response> => {
-  const response = await globalThis.fetch(path, { signal: abortSignal });
-  if (!response.ok) {
-    throw new Error(`Failed to fetch resource ${path}.`);
-  }
-  console.log("ok")
-  return response;
-};
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search)
@@ -58,36 +45,23 @@ if (enablePolymerEditor) {
   const { Editor } = require('ketcher-polymer-editor-react')
   PolymerEditor = Editor as PolymerType
 }
-// async function fetchAndInstantiate() {
-//   const response = await fetch("./example.wasm");
-//   console.log("featch test1", response)
-//
-//   const buffer = await response.arrayBuffer();
-//   console.log("response test", buffer)
-//   const obj = await WebAssembly.instantiate(buffer);
-//   console.log("test", obj);  // "3"
-// }
+async function fetchAndInstantiate() {
+  const response = await fetch("./example.wasm");
+  console.log("featch test1", response)
+
+  const buffer = await response.arrayBuffer();
+  console.log("response test", buffer)
+  const obj = await WebAssembly.instantiate(buffer);
+  console.log("test", obj);  // "3"
+}
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig()
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [showPolymerEditor, setShowPolymerEditor] = useState(false)
-    // @ts-ignore
-    import('./factorial.wasm').then(({ _Z4facti: AsyncFactorial }) => {
-        console.log('---- Async Wasm Module');
-        console.log(AsyncFactorial); // [native code]
-        console.log(AsyncFactorial(1));
-        console.log(AsyncFactorial(2));
-        console.log(AsyncFactorial(3));
-    });
-
-    // const { loaded, instance, error } = useAsBind("./indigo-ketcher.wasm");
-  // console.log("test",{ loaded, instance, error })
   useEffect(() => {
-    const abortController = new AbortController();
      const f = async () => {
-      const resp = await fetchWasm('./indigo-ketcher.wasm', abortController.signal)
-       console.log({resp})
+       await fetchAndInstantiate()
      }
 
      f()
@@ -136,4 +110,3 @@ const App = () => {
 }
 
 export default App
-

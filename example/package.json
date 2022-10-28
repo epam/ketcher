@@ -30,6 +30,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "as-bind": "^0.8.2",
     "ketcher-core": "workspace:*",
     "ketcher-polymer-editor-react": "workspace:*",
     "ketcher-react": "workspace:*",

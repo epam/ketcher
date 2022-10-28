@@ -138,6 +138,7 @@ export function serverTransform(method, data, struct) {
   return (dispatch, getState) => {
     const state = getState()
     const opts = state.options.getServerSettings()
+
     opts.data = data
     dispatch(indigoVerification(true))
 

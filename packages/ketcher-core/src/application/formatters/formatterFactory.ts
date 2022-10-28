@@ -28,6 +28,7 @@ import { StructService, StructServiceOptions } from 'domain/services'
 import { KetFormatter } from './ketFormatter'
 import { RxnFormatter } from './rxnFormatter'
 import { ServerFormatter } from './serverFormatter'
+import { MolfileV2000Formatter } from './molfileV2000Formatter'
 
 export class FormatterFactory {
   #structService: StructService
@@ -75,13 +76,18 @@ export class FormatterFactory {
         formatter = new RxnFormatter(new MolSerializer(molSerializerOptions))
         break
 
+      case 'mol':
+        formatter = new MolfileV2000Formatter(
+          new MolSerializer(molSerializerOptions)
+        )
+        break
+
       case 'cml':
       case 'inChIAuxInfo':
       case 'inChI':
-      case 'mol':
       case 'molV3000':
-      case 'rxnV3000':
       case 'smiles':
+      case 'rxnV3000':
       case 'smilesExt':
       case 'smarts':
       case 'cdxml':

@@ -36,6 +36,19 @@ export function Render(clientArea, opt) {
   this.options = defaultOptions(this.userOpts)
 }
 
+Render.prototype.updateOptions = function (opts) {
+  try {
+    const passedOptions = JSON.parse(opts)
+    if (passedOptions && typeof passedOptions === 'object') {
+      this.options = { ...this.options, ...passedOptions }
+      return this.options
+    }
+  } catch (e) {
+    console.log('Not a valid settings object')
+  }
+  return false
+}
+
 Render.prototype.selectionPolygon = function (r) {
   return draw.selectionPolygon(this.paper, r, this.options)
 }

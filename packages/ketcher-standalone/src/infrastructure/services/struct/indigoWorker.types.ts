@@ -29,6 +29,20 @@ export const enum Command {
   GenerateInchIKey
 }
 
+export type WorkerEvent = 
+  | 'info'
+  | 'convert'
+  | 'layout'
+  | 'clean'
+  | 'aromatize'
+  | 'dearomatize'
+  | 'calculateCip'
+  | 'automap'
+  | 'check'
+  | 'calculate'
+  | 'generateImageAsBase64'
+  | 'generateInchIKey'
+
 export enum SupportedFormat {
   Rxn = 'rxnfile',
   Mol = 'molfile',

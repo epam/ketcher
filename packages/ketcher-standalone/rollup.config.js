@@ -8,7 +8,6 @@ import resolve from '@rollup/plugin-node-resolve'
 import strip from '@rollup/plugin-strip'
 import typescript from 'rollup-plugin-typescript2'
 import webWorkerLoader from 'rollup-plugin-web-worker-loader'
-import { wasm } from '@rollup/plugin-wasm';
 import { license } from '../../license.ts'
 
 const mode = {
@@ -38,11 +37,6 @@ const config = {
   ],
   external: ['ketcher-core', /@babel\/runtime/],
   plugins: [
-    wasm({
-      maxFileSize: 0,
-      publicPath: "test",
-      targetEnv: "browser",
-    }),
     del({
       targets: 'dist/*',
       runOnce: true

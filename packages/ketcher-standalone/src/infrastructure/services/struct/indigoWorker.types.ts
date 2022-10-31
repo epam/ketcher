@@ -29,7 +29,7 @@ export const enum Command {
   GenerateInchIKey
 }
 
-export type WorkerEvent = 
+export type WorkerEvent =
   | 'info'
   | 'convert'
   | 'layout'
@@ -140,7 +140,7 @@ export interface AutomapCommandData
 }
 
 export interface OutputMessage<T> {
-  type?: Command,
+  type?: Command
   hasError?: boolean
   payload?: T
   error?: string

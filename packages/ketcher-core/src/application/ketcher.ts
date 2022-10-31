@@ -23,7 +23,7 @@ import { GenerateImageOptions, StructService } from 'domain/services'
 
 import { Editor } from './editor'
 import { Indigo } from 'application/indigo'
-import { MolfileFormat } from 'domain/serializers'
+import { KetSerializer, MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import assert from 'assert'
 import { EventEmitter } from 'events'
@@ -31,9 +31,14 @@ import { runAsyncAction } from 'utilities'
 
 async function prepareStructToRender(
   structStr: string,
-  structService: StructService
+  structService: StructService,
+  ketcherInstance: Ketcher
 ): Promise<Struct> {
-  const struct: Struct = await parseStruct(structStr, structService)
+  const struct: Struct = await parseStruct(
+    structStr,
+    structService,
+    ketcherInstance
+  )
   struct.initHalfBonds()
   struct.initNeighbors()
   struct.setImplicitHydrogen()
@@ -42,11 +47,18 @@ async function prepareStructToRender(
   return struct
 }
 
-function parseStruct(structStr: string, structService: StructService) {
+function parseStruct(
+  structStr: string,
+  structService: StructService,
+  ketcherInstance: Ketcher
+) {
   const format = identifyStructFormat(structStr)
   const factory = new FormatterFactory(structService)
+  const options = ketcherInstance.editor.options()
 
-  const service = factory.create(format)
+  const service = factory.create(format, {
+    'dearomatize-on-load': options['dearomatize-on-load']
+  })
   return service.getStructureFromStringAsync(structStr)
 }
 
@@ -92,6 +104,32 @@ export class Ketcher {
 
   get indigo() {
     return this.#indigo
+  }
+
+  // TEMP.: getting only dearomatize-on-load setting
+  get settings() {
+    const options = this.#editor.options()
+
+    if ('dearomatize-on-load' in options) {
+      return {
+        'general.dearomatize-on-load': options['dearomatize-on-load']
+      }
+    }
+    throw new Error('dearomatize-on-load option is not provided!')
+  }
+
+  // TODO: create optoions type
+  setSettings(settings: Record<string, string>) {
+    if (!settings) {
+      throw new Error('Please provide settings')
+    }
+
+    // eslint-disable-next-line prefer-const
+    let options = {}
+    if ('general.dearomatize-on-load' in settings) {
+      options['dearomatize-on-load'] = settings['general.dearomatize-on-load']
+    }
+    return this.#editor.setOptions(JSON.stringify(options))
   }
 
   getSmiles(isExtended = false): Promise<string> {
@@ -174,7 +212,8 @@ export class Ketcher {
 
       const struct: Struct = await prepareStructToRender(
         structStr,
-        this.#structService
+        this.#structService,
+        this
       )
 
       this.#editor.struct(struct)
@@ -187,10 +226,19 @@ export class Ketcher {
 
       const struct: Struct = await prepareStructToRender(
         structStr,
-        this.#structService
+        this.#structService,
+        this
       )
 
       this.#editor.structToAddFragment(struct)
+    }, this.eventBus)
+  }
+
+  async layout(): Promise<void> {
+    runAsyncAction<void>(async () => {
+      const struct = await this.#indigo.layout(this.#editor.struct())
+      const ketSerializer = new KetSerializer()
+      this.setMolecule(ketSerializer.serialize(struct))
     }, this.eventBus)
   }
 

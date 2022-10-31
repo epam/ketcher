@@ -64,7 +64,7 @@ import {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import IndigoWorker from 'web-worker:./indigoWorker'
-import EventEmitter from "events";
+import EventEmitter from 'events'
 
 interface KeyValuePair {
   [key: string]: number | string | boolean | object
@@ -164,7 +164,7 @@ const messageTypeToEventMapping: {
   [Command.Check]: 'check',
   [Command.Calculate]: 'calculate',
   [Command.GenerateImageAsBase64]: 'generateImageAsBase64',
-  [Command.GenerateInchIKey]: 'generateInchIKey',
+  [Command.GenerateInchIKey]: 'generateInchIKey'
 }
 
 class IndigoService implements StructService {
@@ -178,9 +178,9 @@ class IndigoService implements StructService {
     this.worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
       const message: OutputMessage<string> = e.data
       if (message.type !== undefined) {
-        const event = messageTypeToEventMapping[message.type];
-        console.log(`emitted event ${event}`);
-        this.EE.emit(event, { data: message });
+        const event = messageTypeToEventMapping[message.type]
+        console.log(`emitted event ${event}`)
+        this.EE.emit(event, { data: message })
       }
     }
   }
@@ -201,8 +201,8 @@ class IndigoService implements StructService {
         data: { struct }
       }
 
-      this.EE.removeListener("generateInchIKey", action)
-      this.EE.addListener("generateInchIKey", action)
+      this.EE.removeListener('generateInchIKey', action)
+      this.EE.addListener('generateInchIKey', action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -211,7 +211,7 @@ class IndigoService implements StructService {
   info(): Promise<InfoResult> {
     return new Promise((resolve, reject) => {
       const action = ({ data }) => {
-        console.log("info action", data)
+        console.log('info action', data)
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: InfoResult = {
@@ -226,8 +226,8 @@ class IndigoService implements StructService {
         }
       }
 
-      this.EE.removeListener("info", action)
-      this.EE.addListener("info", action)
+      this.EE.removeListener('info', action)
+      this.EE.addListener('info', action)
 
       this.worker.postMessage({ type: Command.Info })
     })
@@ -242,7 +242,7 @@ class IndigoService implements StructService {
 
     return new Promise((resolve, reject) => {
       const action = ({ data }) => {
-        console.log("convert action", data)
+        console.log('convert action', data)
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: ConvertResult = {
@@ -271,8 +271,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener("convert", action)
-      this.EE.addListener("convert", action)
+      this.EE.removeListener('convert', action)
+      this.EE.addListener('convert', action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -287,7 +287,7 @@ class IndigoService implements StructService {
 
     return new Promise((resolve, reject) => {
       const action = ({ data }) => {
-        console.log("layout action", data)
+        console.log('layout action', data)
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: LayoutResult = {
@@ -316,9 +316,9 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener("layout", action)
-      this.EE.addListener("layout", action)
-      
+      this.EE.removeListener('layout', action)
+      this.EE.addListener('layout', action)
+
       this.worker.postMessage(inputMessage)
     })
   }
@@ -358,8 +358,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener("clean", action)
-      this.EE.addListener("clean", action)
+      this.EE.removeListener('clean', action)
+      this.EE.addListener('clean', action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -402,9 +402,9 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener("aromatize", action)
-      this.EE.addListener("aromatize", action)
-      
+      this.EE.removeListener('aromatize', action)
+      this.EE.addListener('aromatize', action)
+
       this.worker.postMessage(inputMessage)
     })
   }
@@ -446,8 +446,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener("dearomatize", action)
-      this.EE.addListener("dearomatize", action)
+      this.EE.removeListener('dearomatize', action)
+      this.EE.addListener('dearomatize', action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -490,8 +490,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener("calculateCip", action)
-      this.EE.addListener("calculateCip", action)
+      this.EE.removeListener('calculateCip', action)
+      this.EE.addListener('calculateCip', action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -535,8 +535,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener("automap", action)
-      this.EE.addListener("automap", action)
+      this.EE.removeListener('automap', action)
+      this.EE.addListener('automap', action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -583,8 +583,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener("check", action)
-      this.EE.addListener("check", action)
+      this.EE.removeListener('check', action)
+      this.EE.addListener('check', action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -636,8 +636,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener("calculate", action)
-      this.EE.addListener("calculate", action)
+      this.EE.removeListener('calculate', action)
+      this.EE.addListener('calculate', action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -679,8 +679,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener("generateImageAsBase64", action)
-      this.EE.addListener("generateImageAsBase64", action)
+      this.EE.removeListener('generateImageAsBase64', action)
+      this.EE.addListener('generateImageAsBase64', action)
 
       this.worker.postMessage(inputMessage)
     })

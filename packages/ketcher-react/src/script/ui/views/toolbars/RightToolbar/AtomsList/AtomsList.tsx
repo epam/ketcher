@@ -74,12 +74,14 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
         const element = Elements.get(label)
         const shortcut =
           atoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null
+        const isSelected = isAtom && active && active.opts.label === label
         return (
           <StyledAtom
             key={label}
             el={element}
             shortcut={shortcut}
-            selected={isAtom && active && active.opts.label === label}
+            className={isSelected ? 'selected' : ''}
+            selected={isSelected}
             onClick={() => onAction({ tool: 'atom', opts: { label } })}
           />
         )

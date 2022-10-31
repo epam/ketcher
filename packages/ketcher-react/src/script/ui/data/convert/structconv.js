@@ -97,8 +97,8 @@ function toAtom(atom) {
   const conv = Object.assign({}, atom, {
     label: capitalize(atom.label),
     alias: atom.alias || null,
-    exactChangeFlag: +atom.exactChangeFlag,
-    unsaturatedAtom: +atom.unsaturatedAtom
+    exactChangeFlag: +(atom.exactChangeFlag ?? false),
+    unsaturatedAtom: +(atom.unsaturatedAtom ?? false)
   })
   if (charge !== undefined) conv.charge = charge
   return conv

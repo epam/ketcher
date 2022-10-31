@@ -73,6 +73,10 @@ export function load(struct, options) {
     const errorHandler = editor.errorHandler
 
     options = options || {}
+    options = {
+      ...options,
+      'dearomatize-on-load': editor.options()['dearomatize-on-load']
+    }
 
     dispatch(setAnalyzingFile(true))
 

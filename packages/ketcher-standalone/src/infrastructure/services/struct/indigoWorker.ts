@@ -38,14 +38,17 @@ import {
 // @ts-ignore
 import indigoModuleFn from 'indigo-ketcher'
 
-
 interface IndigoOptions {
   set: (key: string, value: string) => void
 }
 
 type handlerType = (indigo: any, indigoOptions: IndigoOptions) => string
 
-function handle(handler: handlerType, options?: CommandOptions, messageType?: Command) {
+function handle(
+  handler: handlerType,
+  options?: CommandOptions,
+  messageType?: Command
+) {
   module.then((indigo) => {
     const indigoOptions = new indigo.MapStringString()
     setOptions(indigoOptions, options || {})
@@ -94,7 +97,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           'render-output-format': data.outputFormat,
           'render-background-color': data.backgroundColor
         },
-        Command.GenerateImageAsBase64,
+        Command.GenerateImageAsBase64
       )
       break
     }
@@ -151,15 +154,17 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
 
     case Command.Calculate: {
       const data: CalculateCommandData = message.data as CalculateCommandData
-      handle((indigo, indigoOptions) => {
-        const selectedAtoms = new indigo.VectorInt()
-        data.selectedAtoms.forEach((atomId) => selectedAtoms.push_back(atomId))
-        return indigo.calculate(
-          data.struct,
-          indigoOptions,
-          selectedAtoms
-        )
-      }, data.options, Command.Calculate)
+      handle(
+        (indigo, indigoOptions) => {
+          const selectedAtoms = new indigo.VectorInt()
+          data.selectedAtoms.forEach((atomId) =>
+            selectedAtoms.push_back(atomId)
+          )
+          return indigo.calculate(data.struct, indigoOptions, selectedAtoms)
+        },
+        data.options,
+        Command.Calculate
+      )
       break
     }
 
@@ -168,7 +173,8 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       handle(
         (indigo, indigoOptions) =>
           indigo.automap(data.struct, data.mode, data.format, indigoOptions),
-        data.options, Command.Automap
+        data.options,
+        Command.Automap
       )
       break
     }
@@ -178,23 +184,30 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       handle(
         (indigo, indigoOptions) =>
           indigo.aromatize(data.struct, data.format, indigoOptions),
-        data.options, Command.Aromatize
+        data.options,
+        Command.Aromatize
       )
       break
     }
 
     case Command.Clean: {
       const data: CleanCommandData = message.data as CleanCommandData
-      handle((indigo, indigoOptions) => {
-        const selectedAtoms = new indigo.VectorInt()
-        data.selectedAtoms.forEach((atomId) => selectedAtoms.push_back(atomId))
-        return  indigo.clean2d(
-          data.struct,
-          data.format,
-          indigoOptions,
-          selectedAtoms
-        )
-      }, data.options, Command.Clean)
+      handle(
+        (indigo, indigoOptions) => {
+          const selectedAtoms = new indigo.VectorInt()
+          data.selectedAtoms.forEach((atomId) =>
+            selectedAtoms.push_back(atomId)
+          )
+          return indigo.clean2d(
+            data.struct,
+            data.format,
+            indigoOptions,
+            selectedAtoms
+          )
+        },
+        data.options,
+        Command.Clean
+      )
       break
     }
 
@@ -203,7 +216,8 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       handle(
         (indigo, indigoOptions) =>
           indigo.convert(data.struct, data.format, indigoOptions),
-        data.options, Command.Convert
+        data.options,
+        Command.Convert
       )
       break
     }
@@ -216,8 +230,11 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
     case Command.GenerateInchIKey: {
       const data: GenerateInchIKeyCommandData =
         message.data as GenerateInchIKeyCommandData
-      handle((indigo, indigoOptions) =>
-        indigo.convert(data.struct, 'inchi-key', indigoOptions), undefined, Command.GenerateInchIKey
+      handle(
+        (indigo, indigoOptions) =>
+          indigo.convert(data.struct, 'inchi-key', indigoOptions),
+        undefined,
+        Command.GenerateInchIKey
       )
       break
     }

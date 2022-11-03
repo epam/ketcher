@@ -153,18 +153,18 @@ function mapWarningGroup(property: string) {
 const messageTypeToEventMapping: {
   [key in Command]: WorkerEvent
 } = {
-  [Command.Info]: 'info',
-  [Command.Convert]: 'convert',
-  [Command.Layout]: 'layout',
-  [Command.Clean]: 'clean',
-  [Command.Aromatize]: 'aromatize',
-  [Command.Dearomatize]: 'dearomatize',
-  [Command.CalculateCip]: 'calculateCip',
-  [Command.Automap]: 'automap',
-  [Command.Check]: 'check',
-  [Command.Calculate]: 'calculate',
-  [Command.GenerateImageAsBase64]: 'generateImageAsBase64',
-  [Command.GenerateInchIKey]: 'generateInchIKey'
+  [Command.Info]: WorkerEvent.Info,
+  [Command.Convert]: WorkerEvent.Convert,
+  [Command.Layout]: WorkerEvent.Layout,
+  [Command.Clean]: WorkerEvent.Clean,
+  [Command.Aromatize]: WorkerEvent.Aromatize,
+  [Command.Dearomatize]: WorkerEvent.Dearomatize,
+  [Command.CalculateCip]: WorkerEvent.CalculateCip,
+  [Command.Automap]: WorkerEvent.Automap,
+  [Command.Check]: WorkerEvent.Check,
+  [Command.Calculate]: WorkerEvent.Calculate,
+  [Command.GenerateImageAsBase64]: WorkerEvent.GenerateImageAsBase64,
+  [Command.GenerateInchIKey]: WorkerEvent.GenerateInchIKey
 }
 
 class IndigoService implements StructService {
@@ -179,7 +179,6 @@ class IndigoService implements StructService {
       const message: OutputMessage<string> = e.data
       if (message.type !== undefined) {
         const event = messageTypeToEventMapping[message.type]
-        console.log(`emitted event ${event}`)
         this.EE.emit(event, { data: message })
       }
     }
@@ -201,8 +200,8 @@ class IndigoService implements StructService {
         data: { struct }
       }
 
-      this.EE.removeListener('generateInchIKey', action)
-      this.EE.addListener('generateInchIKey', action)
+      this.EE.removeListener(WorkerEvent.GenerateInchIKey, action)
+      this.EE.addListener(WorkerEvent.GenerateInchIKey, action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -226,8 +225,8 @@ class IndigoService implements StructService {
         }
       }
 
-      this.EE.removeListener('info', action)
-      this.EE.addListener('info', action)
+      this.EE.removeListener(WorkerEvent.Info, action)
+      this.EE.addListener(WorkerEvent.Info, action)
 
       this.worker.postMessage({ type: Command.Info })
     })
@@ -271,8 +270,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener('convert', action)
-      this.EE.addListener('convert', action)
+      this.EE.removeListener(WorkerEvent.Convert, action)
+      this.EE.addListener(WorkerEvent.Convert, action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -316,8 +315,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener('layout', action)
-      this.EE.addListener('layout', action)
+      this.EE.removeListener(WorkerEvent.Layout, action)
+      this.EE.addListener(WorkerEvent.Layout, action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -358,8 +357,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener('clean', action)
-      this.EE.addListener('clean', action)
+      this.EE.removeListener(WorkerEvent.Clean, action)
+      this.EE.addListener(WorkerEvent.Clean, action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -402,8 +401,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener('aromatize', action)
-      this.EE.addListener('aromatize', action)
+      this.EE.removeListener(WorkerEvent.Aromatize, action)
+      this.EE.addListener(WorkerEvent.Aromatize, action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -446,8 +445,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener('dearomatize', action)
-      this.EE.addListener('dearomatize', action)
+      this.EE.removeListener(WorkerEvent.Dearomatize, action)
+      this.EE.addListener(WorkerEvent.Dearomatize, action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -490,8 +489,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener('calculateCip', action)
-      this.EE.addListener('calculateCip', action)
+      this.EE.removeListener(WorkerEvent.CalculateCip, action)
+      this.EE.addListener(WorkerEvent.CalculateCip, action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -535,8 +534,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener('automap', action)
-      this.EE.addListener('automap', action)
+      this.EE.removeListener(WorkerEvent.Automap, action)
+      this.EE.addListener(WorkerEvent.Automap, action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -583,8 +582,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener('check', action)
-      this.EE.addListener('check', action)
+      this.EE.removeListener(WorkerEvent.Check, action)
+      this.EE.addListener(WorkerEvent.Check, action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -636,8 +635,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener('calculate', action)
-      this.EE.addListener('calculate', action)
+      this.EE.removeListener(WorkerEvent.Calculate, action)
+      this.EE.addListener(WorkerEvent.Calculate, action)
 
       this.worker.postMessage(inputMessage)
     })
@@ -679,8 +678,8 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      this.EE.removeListener('generateImageAsBase64', action)
-      this.EE.addListener('generateImageAsBase64', action)
+      this.EE.removeListener(WorkerEvent.GenerateImageAsBase64, action)
+      this.EE.addListener(WorkerEvent.GenerateImageAsBase64, action)
 
       this.worker.postMessage(inputMessage)
     })

@@ -29,19 +29,20 @@ export const enum Command {
   GenerateInchIKey
 }
 
-export type WorkerEvent =
-  | 'info'
-  | 'convert'
-  | 'layout'
-  | 'clean'
-  | 'aromatize'
-  | 'dearomatize'
-  | 'calculateCip'
-  | 'automap'
-  | 'check'
-  | 'calculate'
-  | 'generateImageAsBase64'
-  | 'generateInchIKey'
+export const enum WorkerEvent {
+  Info = 'info',
+  Convert = 'convert',
+  Layout = 'layout',
+  Clean = 'clean',
+  Aromatize = 'aromatize',
+  Dearomatize = 'dearomatize',
+  CalculateCip = 'calculateCip',
+  Automap = 'automap',
+  Check = 'check',
+  Calculate = 'calculate',
+  GenerateImageAsBase64 = 'generateImageAsBase64',
+  GenerateInchIKey = 'generateInchIKey'
+}
 
 export enum SupportedFormat {
   Rxn = 'rxnfile',

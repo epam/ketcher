@@ -57,6 +57,7 @@ const App = (props: Props) => {
   useEffect(() => {
     checkServer()
     dispatch(initFGTemplates(staticResourcesUrl))
+    window.scrollTo(0, 0)
   }, [])
 
   return (

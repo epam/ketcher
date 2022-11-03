@@ -49,7 +49,15 @@ The latest version of Ketcher is based on yarn workspaces. So before starting de
 yarn install
 ```
 
-After that component library and application should be started separately.
+After that component library and application should be started separately. First should be started ketcher-core package.
+
+#### Build ketcher-core package
+
+```sh
+cd packages/ketcher-core
+yarn install
+yarn start
+```
 
 #### Build ketcher-react package
 
@@ -63,14 +71,6 @@ yarn start
 
 ```sh
 cd packages/ketcher-standalone
-yarn install
-yarn start
-```
-
-#### Build ketcher-core package
-
-```sh
-cd packages/ketcher-core
 yarn install
 yarn start
 ```

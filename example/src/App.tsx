@@ -75,6 +75,8 @@ const App = () => {
             },
             '*'
           )
+          // @ts-ignore
+          ketcher.setSettings({"general.dearomatize-on-load": true})
         }}
       />
       {enablePolymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}

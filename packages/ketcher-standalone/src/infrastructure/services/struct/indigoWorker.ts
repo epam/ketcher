@@ -44,7 +44,11 @@ interface IndigoOptions {
 
 type handlerType = (indigo: any, indigoOptions: IndigoOptions) => string
 
-function handle(handler: handlerType, options?: CommandOptions) {
+function handle(
+  handler: handlerType,
+  options?: CommandOptions,
+  messageType?: Command
+) {
   module.then((indigo) => {
     const indigoOptions = new indigo.MapStringString()
     setOptions(indigoOptions, options || {})
@@ -52,11 +56,13 @@ function handle(handler: handlerType, options?: CommandOptions) {
     try {
       const payload = handler(indigo, indigoOptions)
       msg = {
+        type: messageType,
         payload,
         hasError: false
       }
     } catch (error: any) {
       msg = {
+        type: messageType,
         hasError: true,
         error: error
       }
@@ -91,7 +97,8 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           'render-output-format': data.outputFormat,
           'render-background-color': data.backgroundColor,
           'render-coloring': true
-        }
+        },
+        Command.GenerateImageAsBase64
       )
       break
     }
@@ -101,7 +108,8 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       handle(
         (indigo, indigoOptions) =>
           indigo.layout(data.struct, data.format, indigoOptions),
-        data.options
+        data.options,
+        Command.Layout
       )
       break
     }
@@ -112,7 +120,8 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       handle(
         (indigo, indigoOptions) =>
           indigo.dearomatize(data.struct, data.format, indigoOptions),
-        data.options
+        data.options,
+        Command.Dearomatize
       )
       break
     }
@@ -126,7 +135,8 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
             data.types?.length ? data.types.join(';') : '',
             indigoOptions
           ),
-        data.options
+        data.options,
+        Command.Check
       )
       break
     }
@@ -137,23 +147,25 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       handle(
         (indigo, indigoOptions) =>
           indigo.calculateCip(data.struct, data.format, indigoOptions),
-        data.options
+        data.options,
+        Command.CalculateCip
       )
       break
     }
 
     case Command.Calculate: {
       const data: CalculateCommandData = message.data as CalculateCommandData
-      handle((indigo, indigoOptions) => {
-        const selectedAtoms = new indigo.VectorInt()
-        data.selectedAtoms.forEach((atomId) => selectedAtoms.push_back(atomId))
-        const result = indigo.calculate(
-          data.struct,
-          indigoOptions,
-          selectedAtoms
-        )
-        return result
-      }, data.options)
+      handle(
+        (indigo, indigoOptions) => {
+          const selectedAtoms = new indigo.VectorInt()
+          data.selectedAtoms.forEach((atomId) =>
+            selectedAtoms.push_back(atomId)
+          )
+          return indigo.calculate(data.struct, indigoOptions, selectedAtoms)
+        },
+        data.options,
+        Command.Calculate
+      )
       break
     }
 
@@ -162,7 +174,8 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       handle(
         (indigo, indigoOptions) =>
           indigo.automap(data.struct, data.mode, data.format, indigoOptions),
-        data.options
+        data.options,
+        Command.Automap
       )
       break
     }
@@ -172,24 +185,30 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       handle(
         (indigo, indigoOptions) =>
           indigo.aromatize(data.struct, data.format, indigoOptions),
-        data.options
+        data.options,
+        Command.Aromatize
       )
       break
     }
 
     case Command.Clean: {
       const data: CleanCommandData = message.data as CleanCommandData
-      handle((indigo, indigoOptions) => {
-        const selectedAtoms = new indigo.VectorInt()
-        data.selectedAtoms.forEach((atomId) => selectedAtoms.push_back(atomId))
-        const updatedStruct = indigo.clean2d(
-          data.struct,
-          data.format,
-          indigoOptions,
-          selectedAtoms
-        )
-        return updatedStruct
-      }, data.options)
+      handle(
+        (indigo, indigoOptions) => {
+          const selectedAtoms = new indigo.VectorInt()
+          data.selectedAtoms.forEach((atomId) =>
+            selectedAtoms.push_back(atomId)
+          )
+          return indigo.clean2d(
+            data.struct,
+            data.format,
+            indigoOptions,
+            selectedAtoms
+          )
+        },
+        data.options,
+        Command.Clean
+      )
       break
     }
 
@@ -198,21 +217,25 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       handle(
         (indigo, indigoOptions) =>
           indigo.convert(data.struct, data.format, indigoOptions),
-        data.options
+        data.options,
+        Command.Convert
       )
       break
     }
 
     case Command.Info: {
-      handle((indigo) => indigo.version())
+      handle((indigo) => indigo.version(), undefined, Command.Info)
       break
     }
 
     case Command.GenerateInchIKey: {
       const data: GenerateInchIKeyCommandData =
         message.data as GenerateInchIKeyCommandData
-      handle((indigo, indigoOptions) =>
-        indigo.convert(data.struct, 'inchi-key', indigoOptions)
+      handle(
+        (indigo, indigoOptions) =>
+          indigo.convert(data.struct, 'inchi-key', indigoOptions),
+        undefined,
+        Command.GenerateInchIKey
       )
       break
     }

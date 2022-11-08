@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import './ErrorModal.css'
+import styles from './ErrorModal.module.css'
 
 interface ErrorModalProps {
   message: string
@@ -22,13 +22,13 @@ interface ErrorModalProps {
 
 const ErrorModal = ({ message, close }: ErrorModalProps): JSX.Element => {
   return (
-    <div className="modalOverlay">
-      <div className="modalWindow">
+    <div className={styles.modalOverlay}>
+      <div className={styles.modalWindow}>
         <header>Error Message</header>
-        <div className="modalBody">{message}</div>
+        <div className={styles.modalBody}>{message}</div>
         <footer>
           <button
-            className="ok"
+            className={styles.ok}
             onClick={() => {
               close()
             }}

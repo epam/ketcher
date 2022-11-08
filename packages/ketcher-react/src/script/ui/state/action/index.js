@@ -63,7 +63,7 @@ export default function (state = null, { type, action, ...params }) {
   let activeTool
   switch (type) {
     case 'INIT':
-      action = actions['select-lasso'].action
+      action = actions['select-rectangle'].action
     case 'ACTION':
       activeTool = execute(state && state.activeTool, {
         ...params,

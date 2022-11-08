@@ -135,7 +135,7 @@ export function load(struct, options) {
         if (parsedStruct.isBlank()) {
           dispatch({
             type: 'ACTION',
-            action: tools['select-lasso'].action
+            action: tools['select-rectangle'].action
           })
         } else {
           dispatch(onAction({ tool: 'paste', opts: parsedStruct }))

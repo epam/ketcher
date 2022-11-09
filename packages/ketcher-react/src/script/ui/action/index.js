@@ -38,7 +38,7 @@ const config = {
       thunk: (dispatch, getState) => {
         const editor = getState().editor
         if (!editor.struct().isBlank()) editor.struct(null)
-        dispatch({ type: 'ACTION', action: tools['select-lasso'].action })
+        dispatch({ type: 'ACTION', action: tools['select-rectangle'].action })
       }
     },
     hidden: (options) => isHidden(options, 'clear')

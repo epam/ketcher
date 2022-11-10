@@ -24,7 +24,7 @@ const initial = {
   currentAtom: 0,
   opened: null,
   visibleTools: {
-    select: 'select-lasso'
+    select: 'select-rectangle'
   }
 }
 const MAX_ATOMS = 7

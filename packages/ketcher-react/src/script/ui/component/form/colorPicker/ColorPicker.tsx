@@ -92,7 +92,7 @@ const ColorPicker = (props: Props) => {
   return (
     <div
       className={classes.colorPickerWrapper}
-      data-testid="color-picker-field"
+      data-testid={isOpen ? 'color-picker-field-open' : 'color-picker-field'}
       onClick={(e) => e.preventDefault()}
     >
       <div
@@ -146,7 +146,7 @@ const ColorPicker = (props: Props) => {
           </div>
 
           {isPaletteOpen && (
-            <div className={classes.colorPicker}>
+            <div className={classes.colorPicker} data-testid="color-palette">
               <HexColorPicker color={value} onChange={handleChange} />
               <div className={classes.colorContainer}>
                 <span className={classes.hex}>HEX</span>

@@ -1,5 +1,4 @@
-import { ContextMenu, MenuItem } from 'react-contextmenu'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   FunctionalGroup,
   setExpandSGroup,
@@ -7,10 +6,18 @@ import {
   Action
 } from 'ketcher-core'
 import { useAppContext } from '../../../../hooks'
-import clsx from 'clsx'
 import classes from './ContextMenu.module.less'
+import { Divider, Menu, MenuItem } from '@mui/material'
 
-const FGContextMenu = () => {
+interface IContextMenuProps {
+  contextMenu: {
+    mouseX: number
+    mouseY: number
+  } | null
+  handleClose: () => void
+}
+
+const FGContextMenu = ({ contextMenu, handleClose }: IContextMenuProps) => {
   const { getKetcherInstance } = useAppContext()
 
   const handleExpand = () => {
@@ -45,7 +52,13 @@ const FGContextMenu = () => {
   const [showSGroupMenu, setShowSGroupMenu] = useState(false)
   const [targetItems, setTargetItems] = useState([] as Array<any>)
 
-  function showMenu(e) {
+  useEffect(() => {
+    if (contextMenu) {
+      showMenu(contextMenu)
+    }
+  }, [contextMenu])
+
+  function showMenu(coordinates) {
     const editor = getKetcherInstance().editor as any
     const struct = editor.struct()
     const selection = editor.selection()
@@ -56,8 +69,8 @@ const FGContextMenu = () => {
 
     const ci = editor.findItem(
       {
-        clientX: e.detail.position.x,
-        clientY: e.detail.position.y
+        clientX: coordinates.mouseX,
+        clientY: coordinates.mouseY
       },
       ['sgroups', 'functionalGroups', 'atoms', 'bonds']
     )
@@ -132,22 +145,28 @@ const FGContextMenu = () => {
   }
 
   return (
-    <ContextMenu
-      id="contextmenu"
-      onShow={(e) => showMenu(e)}
-      className={clsx({
-        [classes.isHidden]: !showSGroupMenu
-      })}
+    <Menu
+      open={showSGroupMenu && !!contextMenu}
+      onClose={handleClose}
+      anchorReference="anchorPosition"
+      anchorPosition={
+        contextMenu !== null
+          ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+          : undefined
+      }
+      MenuListProps={{ className: classes.contextMenu }}
     >
-      <MenuItem onClick={handleExpand}>
+      <MenuItem onClick={handleExpand} className={classes.contextMenu_item}>
         {targetItems.length && targetItems[0].isExpanded
           ? 'Contract '
           : 'Expand '}
         Abbreviation
       </MenuItem>
-      <MenuItem divider />
-      <MenuItem onClick={handleRemove}>Remove Abbreviation</MenuItem>
-    </ContextMenu>
+      <Divider className={classes.contextMenu_divider} component="li" />
+      <MenuItem onClick={handleRemove} className={classes.contextMenu_item}>
+        Remove Abbreviation
+      </MenuItem>
+    </Menu>
   )
 }
 

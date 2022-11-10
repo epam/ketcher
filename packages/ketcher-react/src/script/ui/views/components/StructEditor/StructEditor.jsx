@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { Component, createRef } from 'react'
-import { ContextMenuTrigger, hideMenu } from 'react-contextmenu'
 
 import Editor from '../../../../editor'
 import { FGContextMenu } from '../../../component/ContextMenu/ContextMenu'
@@ -43,7 +42,6 @@ function setupEditor(editor, props, oldProps = {}) {
   if (oldProps.options && options !== oldProps.options) editor.options(options)
 
   Object.keys(editor.event).forEach((name) => {
-    // console.log('event name', name);
     const eventName = `on${upperFirst(name)}`
 
     if (props[eventName] !== oldProps[eventName]) {
@@ -70,16 +68,20 @@ class StructEditor extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      enableCursor: false
+      enableCursor: false,
+      contextMenu: null
     }
     this.editorRef = createRef()
     this.logRef = createRef()
+    this.handleContextMenu = this.handleContextMenu.bind(this)
+    this.handleClose = this.handleClose.bind(this)
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.props.indigoVerification !== nextProps.indigoVerification ||
-      nextState.enableCursor !== this.state.enableCursor
+      nextState.enableCursor !== this.state.enableCursor ||
+      nextState.contextMenu !== this.state.contextMenu
     )
   }
 
@@ -165,6 +167,24 @@ class StructEditor extends Component {
     removeEditorHandlers(this.editor, this.props)
   }
 
+  handleContextMenu(event) {
+    event.preventDefault()
+    this.setState({
+      ...this.state,
+      contextMenu: {
+        mouseX: event.clientX,
+        mouseY: event.clientY
+      }
+    })
+  }
+
+  handleClose(event) {
+    this.setState({
+      ...this.state,
+      contextMenu: null
+    })
+  }
+
   render() {
     const {
       Tag = 'div',
@@ -197,36 +217,27 @@ class StructEditor extends Component {
     return (
       <Tag
         className={clsx(classes.canvas, className)}
-        onMouseDown={(event) => event.preventDefault()}
+        onContextMenu={this.handleContextMenu}
         {...props}
       >
-        <ContextMenuTrigger
-          id="contextmenu"
-          attributes={{
-            onClick: hideMenu
-          }}
-          holdToDisplay={-1}
-        >
-          <div
-            ref={this.editorRef}
-            className={clsx(classes.intermediateCanvas)}
-            onMouseDown={(event) => event.preventDefault()}
-          >
-            {/* svg here */}
+        <div ref={this.editorRef} className={clsx(classes.intermediateCanvas)}>
+          {/* svg here */}
+        </div>
+        <Cursor
+          Icon={handIcon}
+          PressedIcon={compressedHandIcon}
+          enableHandTool={this.state.enableCursor}
+        />
+        <div className={classes.measureLog} ref={this.logRef} />
+        {indigoVerification && (
+          <div className={classes.spinnerOverlay}>
+            <LoadingCircles />
           </div>
-          <Cursor
-            Icon={handIcon}
-            PressedIcon={compressedHandIcon}
-            enableHandTool={this.state.enableCursor}
-          />
-          <div className={classes.measureLog} ref={this.logRef} />
-          {indigoVerification && (
-            <div className={classes.spinnerOverlay}>
-              <LoadingCircles />
-            </div>
-          )}
-        </ContextMenuTrigger>
-        <FGContextMenu />
+        )}
+        <FGContextMenu
+          contextMenu={this.state.contextMenu}
+          handleClose={this.handleClose}
+        />
       </Tag>
     )
   }

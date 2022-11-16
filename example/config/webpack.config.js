@@ -8,7 +8,8 @@ const webpack = require('webpack')
 const HtmlReplaceWebpackPlugin = require('html-replace-webpack-plugin')
 const GitRevisionPlugin = require('git-revision-webpack-plugin')
 
-const gitRevisionPlugin = new GitRevisionPlugin({ lightweightTags: true })
+const gitRevisionPlugin = new GitRevisionPlugin()
+const applicationVersion = gitRevisionPlugin.version().split('-')[0]
 
 module.exports = override(
   addBundleVisualizer({}, true),
@@ -29,7 +30,7 @@ module.exports = override(
     new HtmlReplaceWebpackPlugin([
       {
         pattern: '@@version',
-        replacement: gitRevisionPlugin.version()
+        replacement: applicationVersion
       }
     ])
   )

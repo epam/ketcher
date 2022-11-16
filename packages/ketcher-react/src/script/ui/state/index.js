@@ -86,8 +86,12 @@ export default function (options, server, setEditor) {
   }
 
   const middleware = [thunk]
-
-  if (process.env.NODE_ENV !== 'production') middleware.push(logger)
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    process.env.KETCHER_ENABLE_REDUX_LOGGER === 'true'
+  ) {
+    middleware.push(logger)
+  }
 
   const rootReducer = getRootReducer(setEditor)
   return createStore(rootReducer, initState, applyMiddleware(...middleware))

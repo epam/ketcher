@@ -53,8 +53,7 @@ function TabPanel(props) {
       role="tabpanel"
       id={`scrollable-auto-tabpanel-${index}`}
       aria-labelledby={`scrollable-auto-tab-${index}`}
-      {...other}
-    >
+      {...other}>
       {value === index && children}
     </div>
   )
@@ -126,8 +125,7 @@ const FooterContent = ({ data, tab }) => (
         tab === TemplateTabs.TemplateLibrary
           ? 'ketcher-tmpls.sdf'
           : 'ketcher-fg-tmpls.sdf'
-      }
-    >
+      }>
       {tab === TemplateTabs.TemplateLibrary
         ? 'Save template library to SDF'
         : 'Save functional groups to SDF'}
@@ -209,8 +207,7 @@ const TemplateDialog: FC<Props> = (props) => {
       result={() => result()}
       buttons={['OK']}
       buttonsNameMap={{ OK: 'Add to canvas' }}
-      needMargin={false}
-    >
+      needMargin={false}>
       <div className={classes.inputContainer}>
         <Input
           className={classes.input}
@@ -218,6 +215,7 @@ const TemplateDialog: FC<Props> = (props) => {
           value={filter}
           onChange={(value) => onFilter(value)}
           placeholder="Search by elements..."
+          inFocus={true}
         />
         <Icon name="search" className={classes.searchIcon} />
       </div>
@@ -243,14 +241,12 @@ const TemplateDialog: FC<Props> = (props) => {
                     square={true}
                     key={groupName}
                     onChange={handleAccordionChange(groupName)}
-                    expanded={shouldGroupBeRended}
-                  >
+                    expanded={shouldGroupBeRended}>
                     <AccordionSummary
                       className={classes.accordionSummary}
                       expandIcon={
                         <Icon className={classes.expandIcon} name="chevron" />
-                      }
-                    >
+                      }>
                       <Icon
                         name="elements-group"
                         className={classes.groupIcon}

@@ -14,27 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component, createRef } from 'react'
+import { Component, useRef, useEffect } from 'react'
 
 import { omit } from 'lodash/fp'
 import classes from './input.module.less'
 import clsx from 'clsx'
-
-const inputRef = createRef() // works with errors
 
 export function GenericInput({
   schema,
   value = '',
   onChange,
   type = 'text',
-  inFocus = false,
+  isFocus = false,
   ...props
 }) {
-  function isInputFocused(isFocus, ref) {
-    if (!ref.current || !isFocus) return false
-    ref.current.focus()
-    return true
-  }
+  const inputRef = useRef(null)
+  useEffect(() => {
+    if (inputRef.current && isFocus) inputRef.current.focus()
+  }, [inputRef, isFocus])
 
   return (
     <>
@@ -45,8 +42,6 @@ export function GenericInput({
         onChange={onChange}
         className={clsx(classes.input, classes.genericInput)}
         ref={inputRef}
-        // eslint-disable-next-line jsx-a11y/no-autofocus
-        autoFocus={isInputFocused(inFocus, inputRef)}
         {...props}
       />
       {type === 'checkbox' && <span className={classes.checkbox} />}

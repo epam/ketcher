@@ -215,7 +215,7 @@ const TemplateDialog: FC<Props> = (props) => {
           value={filter}
           onChange={(value) => onFilter(value)}
           placeholder="Search by elements..."
-          inFocus={true}
+          isFocus={true}
         />
         <Icon name="search" className={classes.searchIcon} />
       </div>

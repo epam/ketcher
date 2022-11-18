@@ -25,13 +25,13 @@ export function GenericInput({
   value = '',
   onChange,
   type = 'text',
-  isFocus = false,
+  isFocused = false,
   ...props
 }) {
   const inputRef = useRef(null)
   useEffect(() => {
-    if (inputRef.current && isFocus) inputRef.current.focus()
-  }, [inputRef, isFocus])
+    if (inputRef.current && isFocused) inputRef.current.focus()
+  }, [inputRef, isFocused])
 
   return (
     <>
@@ -102,8 +102,7 @@ function Select({
       value={value}
       name={name}
       multiple={multiple}
-      className={clsx(classes.select, className)}
-    >
+      className={clsx(classes.select, className)}>
       {enumSchema(schema, (title, val) => (
         <option key={val} value={val}>
           {title}

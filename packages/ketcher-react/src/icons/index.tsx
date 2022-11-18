@@ -124,8 +124,8 @@ import TextItalic from './files/text-italic.svg'
 import TextSubscript from './files/text-subscript.svg'
 import TextSuperscript from './files/text-superscript.svg'
 import TransformRotateIcon from './files/transform-rotate.svg'
-import TransfromFlipHIcon from './files/transform-flip-h.svg'
-import TransfromFlipVIcon from './files/transform-flip-v.svg'
+import TransformFlipHIcon from './files/transform-flip-h.svg'
+import TransformFlipVIcon from './files/transform-flip-v.svg'
 import UndoIcon from './files/undo.svg'
 import ZoomInIcon from './files/zoom-in.svg'
 import ZoomOutIcon from './files/zoom-out.svg'
@@ -366,8 +366,8 @@ const icons = {
   'text-italic': TextItalic,
   'text-subscript': TextSubscript,
   'text-superscript': TextSuperscript,
-  'transform-flip-h': TransfromFlipHIcon,
-  'transform-flip-v': TransfromFlipVIcon,
+  'transform-flip-h': TransformFlipHIcon,
+  'transform-flip-v': TransformFlipVIcon,
   'transform-rotate': TransformRotateIcon,
   undo: UndoIcon,
   'zoom-in': ZoomInIcon,

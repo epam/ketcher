@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const basicAtoms = ['H', 'C', 'N', 'O', 'S', 'P', 'F', 'Cl', 'Br', 'I']
+export const basicAtoms = ['H', 'C', 'N', 'O', 'S', 'P', 'F', 'Cl', 'Br'];
 
 export const atomCuts = {
   H: 'h',
@@ -27,7 +27,16 @@ export const atomCuts = {
   Cl: 'Shift+c',
   Br: 'Shift+b',
   I: 'i',
-  A: 'a'
+  A: 'a',
+  Q: 'q',
+  R: 'r',
+  K: 'k',
+  Me: 'm',
+  Si: 'Shift+s',
+  Na: 'Shift+n',
+  X: 'x',
+  D: 'd',
+  B: 'b'
 }
 
 export default Object.keys(atomCuts).reduce((res, label) => {

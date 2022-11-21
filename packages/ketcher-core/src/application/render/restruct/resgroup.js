@@ -48,8 +48,12 @@ class ReSGroup extends ReObject {
     if (
       FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
     ) {
-      sgroup.firstSgroupAtom = remol.molecule.atoms.get(sgroup.atoms[0])
-      sgroup.functionalGroup = true
+      sgroup.atoms.forEach((aid) => {
+        if (FunctionalGroup.isAttachmentPointAtom(aid, remol.molecule)) {
+          sgroup.firstSgroupAtom = remol.molecule.atoms.get(aid)
+          sgroup.functionalGroup = true
+        }
+      })
     } else {
       switch (sgroup.type) {
         case 'MUL':

@@ -15,6 +15,7 @@
  ***************************************************************************/
 import { FunctionalGroupsProvider } from '../helpers'
 import { SGroup } from './sgroup'
+import { Struct } from './struct'
 import assert from 'assert'
 
 export class FunctionalGroup {
@@ -97,6 +98,44 @@ export class FunctionalGroup {
 
   static clone(functionalGroup: FunctionalGroup): FunctionalGroup {
     return new FunctionalGroup(functionalGroup.#sgroup)
+  }
+
+  /**
+   * This function determines, if an atom is used for attachment to other structure.
+   * For example, having sgroup CF3, which looks like
+   *              F
+   *              |
+   *            F-C-F
+   *              |
+   *         other struct
+   * C – is an attachment point
+   */
+  static isAttachmentPointAtom(atomId: number, molecule: Struct): boolean {
+    const { sgroups, bonds } = molecule
+    const isAtomInSameFunctionalGroup = (otherAtomId, sgroup) =>
+      sgroup.atoms.includes(otherAtomId)
+    for (const sgroup of sgroups.values()) {
+      const isFunctionalGroup = FunctionalGroup.isFunctionalGroup(sgroup)
+      const isSGroupFound = sgroup.atoms.includes(atomId)
+      if (!isFunctionalGroup || !isSGroupFound) {
+        continue
+      }
+      for (const bond of bonds.values()) {
+        const isBondBeginInSGroupAndBondEndOutside =
+          bond.begin === atomId &&
+          !isAtomInSameFunctionalGroup(bond.end, sgroup)
+        const isBondEndInSGroupAndBondBeginOutside =
+          bond.end === atomId &&
+          !isAtomInSameFunctionalGroup(bond.begin, sgroup)
+        const isAttachmentBond =
+          isBondBeginInSGroupAndBondEndOutside ||
+          isBondEndInSGroupAndBondBeginOutside
+        if (isAttachmentBond) {
+          return true
+        }
+      }
+    }
+    return false
   }
 
   static isFirstAtomInFunctionalGroup(sgroups, aid): boolean {

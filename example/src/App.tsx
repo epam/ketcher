@@ -1,6 +1,6 @@
 import 'ketcher-react/dist/index.css'
 
-import { ButtonsConfig, Editor } from 'ketcher-react'
+import { ButtonsConfig, RootElementWithKetcherInitialized } from 'ketcher-react'
 import {
   Ketcher,
   RemoteStructServiceProvider,
@@ -59,7 +59,7 @@ const App = () => {
     </>
   ) : (
     <>
-      <Editor
+      <RootElementWithKetcherInitialized
         errorHandler={(message: string) => {
           setHasError(true)
           setErrorMessage(message.toString())

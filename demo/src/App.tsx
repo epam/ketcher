@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import { ThemeProvider, createTheme } from '@mui/material'
 import { useCallback, useState } from 'react'
-import { ButtonsConfig, Editor } from 'ketcher-react'
+import { ButtonsConfig, RootElementWithKetcherInitialized } from 'ketcher-react'
 import { Ketcher } from 'ketcher-core'
 import { StandaloneStructServiceProvider } from 'ketcher-standalone'
 import 'ketcher-react/dist/index.css'
@@ -81,7 +81,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <GridWrapper>
         <KetcherBox>
-          <Editor
+          <RootElementWithKetcherInitialized
             key={editorKey}
             staticResourcesUrl={process.env.PUBLIC_URL}
             buttons={getHiddenButtonsConfig(hiddenButtons)}

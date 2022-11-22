@@ -14,6 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Editor'
+export * from './RootElementWithKetcherInitialized'
 export * from './script'
 export * from './constants'

@@ -25,7 +25,7 @@ import init, { Config } from './script'
 import { useEffect, useRef } from 'react'
 
 import { Ketcher } from 'ketcher-core'
-import classes from './Editor.module.less'
+import classes from './RootElementWithKetcherInitialized.module.less'
 import clsx from 'clsx'
 import { useResizeObserver } from './hooks'
 import { KETCHER_INIT_EVENT_NAME } from './constants'
@@ -35,11 +35,11 @@ const mediaSizes = {
   smallHeight: 600
 }
 
-interface EditorProps extends Omit<Config, 'element'> {
+interface RootElementProps extends Omit<Config, 'element'> {
   onInit?: (ketcher: Ketcher) => void
 }
 
-function Editor(props: EditorProps) {
+function RootElementWithKetcherInitialized(props: RootElementProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
   const { onInit } = props
   const { height, width } = useResizeObserver<HTMLDivElement>({
@@ -73,4 +73,4 @@ function Editor(props: EditorProps) {
   )
 }
 
-export { Editor }
+export { RootElementWithKetcherInitialized }

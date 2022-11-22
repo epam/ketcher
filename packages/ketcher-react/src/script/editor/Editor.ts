@@ -414,15 +414,16 @@ class Editor implements KetcherEditor {
     this.render.update()
   }
 
-  subscribe(eventName: any, handler: any) {
+  subscribe(eventName: string, handler: any) {
     const subscriber = {
       handler: handler
     }
 
+    const subscribeFuncWrapper = (action) =>
+      customOnChangeHandler(action, handler)
+
     switch (eventName) {
       case 'change':
-        const subscribeFuncWrapper = (action) =>
-          customOnChangeHandler(action, handler)
         subscriber.handler = subscribeFuncWrapper
         this.event[eventName].add(subscribeFuncWrapper)
         break

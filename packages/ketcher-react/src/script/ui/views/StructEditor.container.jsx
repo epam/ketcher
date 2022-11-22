@@ -18,7 +18,7 @@ import { StructEditor } from './components'
 import { connect } from 'react-redux'
 import initEditor from '../state/editor'
 
-const Editor = connect(
+const StructEditorContainer = connect(
   (state) => ({
     options: state.options.settings,
     indigoVerification: state.requestsStatuses.indigoVerification
@@ -26,4 +26,4 @@ const Editor = connect(
   (dispatch) => dispatch(initEditor)
 )(StructEditor)
 
-export default Editor
+export { StructEditorContainer }

@@ -21,7 +21,8 @@ import 'url-search-params-polyfill'
 import 'whatwg-fetch'
 import './index.less'
 
-import init, { Config } from './script'
+import { buildKetcherAsync } from './script'
+import type { Config } from './script'
 import { useEffect, useRef } from 'react'
 
 import { Ketcher } from 'ketcher-core'
@@ -49,11 +50,11 @@ function RootElementWithKetcherInitialized(props: RootElementProps) {
   const ketcherInitEvent = new Event(KETCHER_INIT_EVENT_NAME)
 
   useEffect(() => {
-    init({
+    buildKetcherAsync({
       ...props,
       element: rootElRef.current
-    }).then((ketcher: Ketcher) => {
-      if (typeof onInit === 'function') {
+    }).then((ketcher: Ketcher | undefined) => {
+      if (typeof onInit === 'function' && ketcher) {
         onInit(ketcher)
         window.dispatchEvent(ketcherInitEvent)
       }

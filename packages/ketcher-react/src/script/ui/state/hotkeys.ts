@@ -14,7 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import * as clipArea from '../component/cliparea/cliparea'
+import {
+  actions as clipboardActions,
+  exec
+} from '../component/cliparea/cliparea'
 
 import {
   KetSerializer,
@@ -24,10 +27,12 @@ import {
 } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction } from './shared'
+import { Editor } from '../../editor'
 
 import actions from '../action'
 import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
+import { isIE } from 'react-device-detect'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -49,7 +54,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
   const key = keyNorm(event)
   const atomsSelected = editor.selection() && editor.selection().atoms
 
-  let group = null
+  let group
 
   if (key && key.length === 1 && atomsSelected && key.match(/\w/)) {
     openDialog(dispatch, 'labelEdit', { letter: key })
@@ -67,13 +72,13 @@ function keyHandle(dispatch, state, hotKeys, event) {
       event.preventDefault()
       return
     }
-    if (clipArea.actions.indexOf(actName) === -1) {
+    if (clipboardActions.indexOf(actName) === -1) {
       const newAction = actions[actName].action
       dispatch(onAction(newAction))
       event.preventDefault()
-    } else if (window.clipboardData) {
+    } else if (isIE) {
       // IE support
-      clipArea.exec(event)
+      exec(event)
     }
   }
 }
@@ -115,8 +120,52 @@ function checkGroupOnTool(group, actionTool) {
 
 const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/
 
+function clipData(editor: Editor) {
+  const res = {}
+  const struct = editor.structSelected()
+  // const errorHandler = editor.errorHandler
+
+  if (struct.isBlank()) {
+    return null
+  }
+  const simpleObjectOrText = Boolean(
+    struct.simpleObjects.size || struct.texts.size
+  )
+  if (simpleObjectOrText && isIE) {
+    const message =
+      'The structure you are trying to copy contains Simple object or/and Text object.' +
+      'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button'
+    // CHECK:' errorHandler could be null - is it implemented?
+    // errorHandler(message)
+    // return null
+    throw new Error(message)
+  }
+  const molSerializer = new MolSerializer()
+  try {
+    const serializer = new KetSerializer()
+    const ket = serializer.serialize(struct)
+    res[ChemicalMimeType.KET] = ket
+
+    // TODO: check this!! => #1764
+    const type = struct.isReaction ? ChemicalMimeType.Mol : ChemicalMimeType.Rxn
+    console.log(555, struct.isReaction)
+    const data = molSerializer.serialize(struct)
+    res['text/plain'] = data
+    res[type] = data
+
+    // res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
+    return res
+  } catch (e: any) {
+    // CHECK: 'errorHandler could be null - is it implemented?
+    // errorHandler(e.message)
+    throw new Error(e.message)
+  }
+
+  // return null
+}
+
 /* ClipArea */
-export function initClipboard(dispatch, getState) {
+export function initClipboard(dispatch, _getState) {
   const formats = Object.keys(formatProperties).map(
     (format) => formatProperties[format].mime
   )
@@ -158,40 +207,4 @@ export function initClipboard(dispatch, getState) {
         loadStruct(structStr, { fragment: true })
     }
   }
-}
-
-function clipData(editor) {
-  const res = {}
-  const struct = editor.structSelected()
-  const errorHandler = editor.errorHandler
-
-  if (struct.isBlank()) return null
-  const simpleObjectOrText = Boolean(
-    struct.simpleObjects.size || struct.texts.size
-  )
-  if (simpleObjectOrText && window.clipboardData) {
-    errorHandler(
-      'The structure you are trying to copy contains Simple object or/and Text object.' +
-        'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button'
-    )
-    return null
-  }
-  const molSerializer = new MolSerializer()
-  try {
-    const serializer = new KetSerializer()
-    const ket = serializer.serialize(struct)
-    res[ChemicalMimeType.KET] = ket
-
-    const type = struct.isReaction ? ChemicalMimeType.Mol : ChemicalMimeType.Rxn
-    const data = molSerializer.serialize(struct)
-    res['text/plain'] = data
-    res[type] = data
-
-    // res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
-    return res
-  } catch (ex) {
-    errorHandler(ex.message)
-  }
-
-  return null
 }

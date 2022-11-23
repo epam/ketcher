@@ -25,18 +25,18 @@ export const atomCuts = {
   P: 'p',
   F: 'f',
   Cl: 'Shift+c',
-  Br: 'Shift+b',
+  Br: 'b',
   I: 'i',
   A: 'a',
   Q: 'q',
   R: 'r',
   K: 'k',
-  Me: 'm',
+  M: 'm',
   Si: 'Shift+s',
   Na: 'Shift+n',
   X: 'x',
   D: 'd',
-  B: 'b'
+  B: 'Shift+b'
 }
 
 export default Object.keys(atomCuts).reduce((res, label) => {

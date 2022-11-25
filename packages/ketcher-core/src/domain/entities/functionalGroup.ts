@@ -100,6 +100,20 @@ export class FunctionalGroup {
     return new FunctionalGroup(functionalGroup.#sgroup)
   }
 
+  // Checks, if S-Group is standalone or attached to some other structure
+  static isAttachedSGroup(sgroup, molecule) {
+    const { bonds } = molecule
+    const isAttachmentBond = ({ begin, end }) =>
+      (sgroup.atoms.includes(begin) && !sgroup.atoms.includes(end)) ||
+      (sgroup.atoms.includes(end) && !sgroup.atoms.includes(begin))
+    for (const bond of bonds.values()) {
+      if (isAttachmentBond(bond)) {
+        return true
+      }
+    }
+    return false
+  }
+
   /**
    * This function determines, if an atom is used for attachment to other structure.
    * For example, having sgroup CF3, which looks like
@@ -133,6 +147,11 @@ export class FunctionalGroup {
         if (isAttachmentBond) {
           return true
         }
+      }
+      // if atom in S-Group, which is not attached to any structure, then
+      // atoms[0] is considered as attachment point
+      if (!this.isAttachedSGroup(sgroup, molecule)) {
+        return sgroup.atoms[0] === atomId
       }
     }
     return false

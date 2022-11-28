@@ -24,6 +24,7 @@ export interface StructFormatter {
 }
 
 export type SupportedFormat =
+  | 'molAuto'
   | 'rxn'
   | 'rxnV3000'
   | 'mol'

@@ -29,6 +29,22 @@ import assert from 'assert'
 import { EventEmitter } from 'events'
 import { runAsyncAction } from 'utilities'
 
+const Format = {
+  mol: 'mol',
+  molV3000: 'molV3000',
+  molAuto: 'molAuto',
+  rxn: 'rxn',
+  rxnV3000: 'rxnV3000',
+  smiles: 'smiles',
+  smilesExt: 'smilesExt',
+  smarts: 'smarts',
+  inChI: 'inChI',
+  inChIAuxInfo: 'inChIAuxInfo',
+  cml: 'cml',
+  ket: 'ket',
+  cdxml: 'cdxml'
+}
+
 async function prepareStructToRender(
   structStr: string,
   structService: StructService,
@@ -63,7 +79,7 @@ function parseStruct(
 }
 
 function getStructure(
-  structureFormat: SupportedFormat = 'rxn',
+  structureFormat = Format.rxn as SupportedFormat,
   formatterFactory: FormatterFactory,
   struct: Struct
 ): Promise<string> {
@@ -133,21 +149,27 @@ export class Ketcher {
   }
 
   getSmiles(isExtended = false): Promise<string> {
-    const format: SupportedFormat = isExtended ? 'smilesExt' : 'smiles'
-    return getStructure(format, this.#formatterFactory, this.editor.struct())
+    const format = isExtended ? Format.smilesExt : Format.smiles
+    return getStructure(
+      format as SupportedFormat,
+      this.#formatterFactory,
+      this.editor.struct()
+    )
   }
 
-  async getMolfile(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+  async getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
     if (this.containsReaction()) {
       throw Error(
         'The structure cannot be saved as *.MOL due to reaction arrrows.'
       )
     }
 
-    const format: SupportedFormat =
-      molfileFormat === 'v3000' ? 'molV3000' : 'mol'
+    const formatPassed =
+      molfileFormat === 'v3000' ? Format.molV3000 : Format.mol
+    const format = molfileFormat ? formatPassed : Format.molAuto
+
     const molfile = await getStructure(
-      format,
+      format as SupportedFormat,
       this.#formatterFactory,
       this.#editor.struct()
     )
@@ -161,10 +183,9 @@ export class Ketcher {
         'The structure cannot be saved as *.RXN: there is no reaction arrows.'
       )
     }
-    const format: SupportedFormat =
-      molfileFormat === 'v3000' ? 'rxnV3000' : 'rxn'
+    const format = molfileFormat === 'v3000' ? Format.rxnV3000 : Format.rxn
     const rxnfile = await getStructure(
-      format,
+      format as SupportedFormat,
       this.#formatterFactory,
       this.#editor.struct()
     )
@@ -173,20 +194,34 @@ export class Ketcher {
   }
 
   getKet(): Promise<string> {
-    return getStructure('ket', this.#formatterFactory, this.#editor.struct())
+    return getStructure(
+      Format.ket as SupportedFormat,
+      this.#formatterFactory,
+      this.#editor.struct()
+    )
   }
 
   getSmarts(): Promise<string> {
-    return getStructure('smarts', this.#formatterFactory, this.#editor.struct())
+    return getStructure(
+      Format.smarts as SupportedFormat,
+      this.#formatterFactory,
+      this.#editor.struct()
+    )
   }
 
   getCml(): Promise<string> {
-    return getStructure('cml', this.#formatterFactory, this.#editor.struct())
+    return getStructure(
+      Format.cml as SupportedFormat,
+      this.#formatterFactory,
+      this.#editor.struct()
+    )
   }
 
   getInchi(withAuxInfo = false): Promise<string> {
     return getStructure(
-      withAuxInfo ? 'inChIAuxInfo' : 'inChI',
+      withAuxInfo
+        ? (Format.inChIAuxInfo as SupportedFormat)
+        : (Format.inChI as SupportedFormat),
       this.#formatterFactory,
       this.#editor.struct()
     )
@@ -194,7 +229,7 @@ export class Ketcher {
 
   async generateInchIKey(): Promise<string> {
     const struct: string = await getStructure(
-      'ket',
+      Format.ket as SupportedFormat,
       this.#formatterFactory,
       this.#editor.struct()
     )

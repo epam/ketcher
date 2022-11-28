@@ -15,7 +15,13 @@
  ***************************************************************************/
 
 import { Dialog } from '../../../../components'
-import { FormatterFactory, Struct, StructService } from 'ketcher-core'
+import {
+  FormatterFactory,
+  Struct,
+  StructService,
+  SupportedFormat
+} from 'ketcher-core'
+// import type { SupportedFormat } from 'ketcher-core'
 import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema'
 import classes from './Miew.module.less'
 import { connect } from 'react-redux'
@@ -117,7 +123,7 @@ const MiewDialog = ({
     (miew: MiewAsType) => {
       miewRef.current = miew
       const factory = new FormatterFactory(server)
-      const service = factory.create('cml')
+      const service = factory.create('cml' as SupportedFormat)
 
       service
         .getStructureFromStructAsync(struct)
@@ -150,14 +156,12 @@ const MiewDialog = ({
         </button>
       ]}
       footerContent={<FooterContent />}
-      className={classes.miewDialog}
-    >
+      className={classes.miewDialog}>
       <div>
         <div
           className={`${classes.miewContainer} ${
             miewTheme === 'dark' ? classes.miewDarkTheme : ''
-          }`}
-        >
+          }`}>
           <Viewer onInit={onMiewInit} />
         </div>
       </div>

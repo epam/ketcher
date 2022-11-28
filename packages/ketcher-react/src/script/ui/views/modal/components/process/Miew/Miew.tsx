@@ -21,7 +21,6 @@ import {
   StructService,
   SupportedFormat
 } from 'ketcher-core'
-// import type { SupportedFormat } from 'ketcher-core'
 import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema'
 import classes from './Miew.module.less'
 import { connect } from 'react-redux'
@@ -156,12 +155,14 @@ const MiewDialog = ({
         </button>
       ]}
       footerContent={<FooterContent />}
-      className={classes.miewDialog}>
+      className={classes.miewDialog}
+    >
       <div>
         <div
           className={`${classes.miewContainer} ${
             miewTheme === 'dark' ? classes.miewDarkTheme : ''
-          }`}>
+          }`}
+        >
           <Viewer onInit={onMiewInit} />
         </div>
       </div>

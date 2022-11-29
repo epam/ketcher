@@ -20,7 +20,8 @@ import {
   KetSerializer,
   MolSerializer,
   formatProperties,
-  ChemicalMimeType
+  ChemicalMimeType,
+  fromAtomsAttrs
 } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction } from './shared'
@@ -42,7 +43,8 @@ export function initKeydownListener(element) {
 function keyHandle(dispatch, state, hotKeys, event) {
   if (state.modal) return
 
-  const editor = state.editor
+  const { editor } = state
+  const { render } = editor
   const actionState = state.actionState
   const actionTool = actionState.activeTool
 
@@ -69,13 +71,32 @@ function keyHandle(dispatch, state, hotKeys, event) {
     }
     if (clipArea.actions.indexOf(actName) === -1) {
       const newAction = actions[actName].action
-      dispatch(onAction(newAction))
+      const hoverItemId = getHoveredAtomId(render.ctab.atoms)
+      const isHoveringOverAtom = hoverItemId !== null
+      if (isHoveringOverAtom) {
+        // check if atom is currently hovered over
+        // in this case we do not want to activate the corresponding tool
+        // and just insert the atom directly
+        const atomProps = { ...newAction.opts }
+        const updatedAtoms = fromAtomsAttrs(render.ctab, hoverItemId, atomProps, true)
+        editor.update(updatedAtoms)
+      } else {
+        dispatch(onAction(newAction))
+      }
+
       event.preventDefault()
     } else if (window.clipboardData) {
       // IE support
       clipArea.exec(event)
     }
   }
+}
+
+function getHoveredAtomId(atoms) {
+  for (let [id, atom] of atoms.entries()) {
+    if (atom.hover) return id
+  }
+  return null
 }
 
 function setHotKey(key, actName, hotKeys) {
@@ -172,7 +193,7 @@ function clipData(editor) {
   if (simpleObjectOrText && window.clipboardData) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
-        'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button'
+      'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button'
     )
     return null
   }

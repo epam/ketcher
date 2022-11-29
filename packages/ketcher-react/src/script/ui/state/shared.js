@@ -28,14 +28,17 @@ import tools from '../action/tools'
 
 export function onAction(action) {
   if (action && action.dialog) {
+    console.log(action)
     return {
       type: 'MODAL_OPEN',
       data: { name: action.dialog, prop: action.prop }
     }
   }
   if (action && action.thunk) {
+    console.log(action)
     return action.thunk
   }
+  console.log(action)
 
   return {
     type: 'ACTION',

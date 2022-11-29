@@ -35,18 +35,25 @@ class PasteTool {
     this.editor.selection(null)
     this.struct = struct
 
+    console.log('0', this.editor)
     const rnd = this.editor.render
     const { clientHeight, clientWidth } = rnd.clientArea
     const point = this.editor.lastEvent
       ? rnd.page2obj(this.editor.lastEvent)
       : rnd.page2obj({ pageX: clientWidth / 2, pageY: clientHeight / 2 })
 
+    console.log('1', this.editor)
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point)
     this.action = action
+
+    // eslint-disable-next-line spaced-comment
+    //? Анна: эта функция отрисовывает группу
     this.editor.update(this.action, true)
 
+    console.log('2', this.editor)
     this.mergeItems = getItemsToFuse(this.editor, pasteItems)
     this.editor.hover(getHoverToFuse(this.mergeItems), this)
+    console.log('3', this.editor)
   }
 
   mousemove(event) {
@@ -55,13 +62,16 @@ class PasteTool {
     if (this.action) {
       this.action.perform(rnd.ctab)
     }
-
+    console.log(this.action)
     const [action, pasteItems] = fromPaste(
       rnd.ctab,
       this.struct,
       rnd.page2obj(event)
     )
+
     this.action = action
+    // eslint-disable-next-line spaced-comment
+    //? Анна: эта функция дублирует отрисовку
     this.editor.update(this.action, true)
 
     this.mergeItems = getItemsToFuse(this.editor, pasteItems)

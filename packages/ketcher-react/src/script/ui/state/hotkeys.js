@@ -78,7 +78,12 @@ function keyHandle(dispatch, state, hotKeys, event) {
         // in this case we do not want to activate the corresponding tool
         // and just insert the atom directly
         const atomProps = { ...newAction.opts }
-        const updatedAtoms = fromAtomsAttrs(render.ctab, hoverItemId, atomProps, true)
+        const updatedAtoms = fromAtomsAttrs(
+          render.ctab,
+          hoverItemId,
+          atomProps,
+          true
+        )
         editor.update(updatedAtoms)
       } else {
         dispatch(onAction(newAction))
@@ -193,7 +198,7 @@ function clipData(editor) {
   if (simpleObjectOrText && window.clipboardData) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
-      'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button'
+        'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button'
     )
     return null
   }

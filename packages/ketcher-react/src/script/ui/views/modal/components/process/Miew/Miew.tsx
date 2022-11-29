@@ -155,12 +155,14 @@ const MiewDialog = ({
         </button>
       ]}
       footerContent={<FooterContent />}
-      className={classes.miewDialog}>
+      className={classes.miewDialog}
+    >
       <div>
         <div
           className={`${classes.miewContainer} ${
             miewTheme === 'dark' ? classes.miewDarkTheme : ''
-          }`}>
+          }`}
+        >
           <Viewer onInit={onMiewInit} />
         </div>
       </div>

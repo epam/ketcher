@@ -13,8 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+ import { Struct } from '../entities'
 
-export * from './scale'
-export * from './stereoValidator'
-export * from './functionalGroupsProvider'
-export * from './saltsAndSolventsProvider'
+ export class SaltsAndSolventsProvider {
+   // eslint-disable-next-line no-use-before-define
+   private static instance: SaltsAndSolventsProvider
+   saltsAndSolventsList: Struct[]
+   constructor() {
+     this.saltsAndSolventsList = []
+   }
+ 
+   public static getInstance(): SaltsAndSolventsProvider {
+     if (!SaltsAndSolventsProvider.instance) {
+        SaltsAndSolventsProvider.instance = new SaltsAndSolventsProvider()
+     }
+     return SaltsAndSolventsProvider.instance
+   }
+ 
+   public getSaltsAndSolventsList() {
+     return this.saltsAndSolventsList
+   }
+ 
+   public setSaltsAndSolventsList(list: Struct[]): void {
+     this.saltsAndSolventsList = list
+   }
+ }
+ 

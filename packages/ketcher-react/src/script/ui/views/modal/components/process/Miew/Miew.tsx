@@ -122,7 +122,7 @@ const MiewDialog = ({
     (miew: MiewAsType) => {
       miewRef.current = miew
       const factory = new FormatterFactory(server)
-      const service = factory.create('cml' as SupportedFormat)
+      const service = factory.create(SupportedFormat.cml)
 
       service
         .getStructureFromStructAsync(struct)
@@ -155,14 +155,12 @@ const MiewDialog = ({
         </button>
       ]}
       footerContent={<FooterContent />}
-      className={classes.miewDialog}
-    >
+      className={classes.miewDialog}>
       <div>
         <div
           className={`${classes.miewContainer} ${
             miewTheme === 'dark' ? classes.miewDarkTheme : ''
-          }`}
-        >
+          }`}>
           <Viewer onInit={onMiewInit} />
         </div>
       </div>

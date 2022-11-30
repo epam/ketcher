@@ -38,8 +38,6 @@ const mapStateToProps = (state): StateProps => ({
 
 const mapDispatchToProps = (dispatch): DispatchProps => ({
   onOk: (result) => {
-    // console.log(result)
-
     if (result.fragment) exec('copy')
     dispatch(
       load(result.structStr, {

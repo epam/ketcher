@@ -24,7 +24,6 @@ import { ComponentType } from 'react'
 import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
 import { onAction } from '../../../state'
-// import { exec } from '../../../component/cliparea/cliparea'
 
 type StateProps = Omit<RightToolbarProps, 'className'>
 type OwnProps = Pick<RightToolbarProps, 'className'>
@@ -40,14 +39,11 @@ const mapStateToProps = (state): StateProps => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): RightToolbarCallProps => ({
   onAction: (action) => dispatch(onAction(action)),
-  onOpen: (menuName, isSelected) => {
-    // console.log('onOpen', window.ClipboardEvent)
-    // exec('copy')
+  onOpen: (menuName, isSelected) =>
     dispatch({
       type: 'OPENED',
       data: { menuName, isSelected }
     })
-  }
 })
 
 const RightToolbarContainer: ComponentType<OwnProps> = connect(

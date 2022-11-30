@@ -38,10 +38,8 @@ import { fromBondStereoUpdate } from './bond'
 import { without } from 'lodash/fp'
 
 export function fromAtomAddition(restruct, pos, atom) {
-  console.log('fromAtomAddition', restruct, pos, atom)
   atom = Object.assign({}, atom)
   const action = new Action()
-  console.log('action1', action)
   atom.fragment = (
     action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd
   ).frid
@@ -50,9 +48,6 @@ export function fromAtomAddition(restruct, pos, atom) {
     action.addOp(new AtomAdd(atom, pos).perform(restruct)) as AtomAdd
   ).data.aid
   action.addOp(new CalcImplicitH([aid]).perform(restruct))
-  // atom.fragment = 1
-  console.log('atom again', action.addOp(new FragmentAdd()))
-  console.log('action2', action)
 
   return action
 }
@@ -64,7 +59,6 @@ export function fromAtomAddition(restruct, pos, atom) {
  * @param reset { boolean? }
  */
 export function fromAtomsAttrs(restruct, ids, attrs, reset) {
-  console.log('fromAtomsAttrs')
   const action = new Action()
   const aids = Array.isArray(ids) ? ids : [ids]
 

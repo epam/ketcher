@@ -25,7 +25,6 @@ import {
   fromBondAddition,
   fromFragmentDeletion,
   fromSgroupDeletion
-  // getHoverToFuse
 } from 'ketcher-core'
 
 import Editor from '../Editor'
@@ -42,30 +41,21 @@ class AtomTool {
     this.editor = editor
     this.atomProps = atomProps
     this.#bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE }
-    // const rnd = this.editor.render
+    if (editor.selection()) {
+      if (editor.selection()?.atoms) {
+        const action = fromAtomsAttrs(
+          editor.render.ctab,
+          editor.selection().atoms,
+          atomProps,
+          true
+        )
+        editor.update(action)
+        editor.selection(null)
+      }
 
-    // console.log('atom', atom)
-    // const some = editor?.selection()
-    // console.log('editorSelection', some)
-
-    // if (editor.selection()) {
-    console.log('editor.selection()', editor.selection())
-
-    // if (editor.selection()?.atoms) {
-
-    // const action = fromAtomsAttrs(
-    //   editor.render.ctab,
-    //   editor.selection()?.atoms,
-    //   atomProps,
-    //   true
-    // )
-    // editor.update(action)
-    // editor.selection(null)
+      this.isNotActiveTool = true
+    }
   }
-
-  // this.isNotActiveTool = true
-  // }
-  // }
 
   mousedown(event) {
     const struct = this.editor.render.ctab
@@ -75,7 +65,6 @@ class AtomTool {
     this.editor.hover(null)
     this.editor.selection(null)
     const ci = this.editor.findItem(event, ['atoms', 'functionalGroups'])
-    console.log('rnd.page2obj from Down', this.editor.render.page2obj(event))
     if (
       ci &&
       ci.map === 'functionalGroups' &&
@@ -133,64 +122,24 @@ class AtomTool {
     if (!ci) {
       // ci.type == 'Canvas'
       this.dragCtx = {}
-      // console.log('dragCtx from Down', this.dragCtx)
     } else if (ci.map === 'atoms') {
       this.dragCtx = { item: ci }
     }
   }
 
   mousemove(event) {
-    // console.log('move', event)
-
     const rnd = this.editor.render
-    // console.log('rnd.page2obj from Move', rnd.page2obj(event))
-    // console.log('move rnd', rnd)
-
     if (!this.dragCtx || !this.dragCtx.item) {
-      // const ci = this.editor.findItem(event, ['atoms', 'bonds'])
-      // this.dragCtx = { item: ci }
-      // const dragCtx = this.dragCtx
-
-      // rnd.page2obj(event)
-
-      // if (this.action) {
-      //   this.action.perform(rnd.ctab)
-      // }
-
-      // const [action, pasteItems] = fromPaste(
-      //   rnd.ctab,
-      //   this.struct,
-      //   rnd.page2obj(event)
-      // )
-
-      // dragCtx.action = action
-      // this.editor.update(this.action, true)
-      // const atom =
-      //   dragCtx.action ||
-      //   (dragCtx.item
-      //     ? fromAtomsAttrs(rnd.ctab, dragCtx.item.id, this.atomProps, true)
-      //     : fromAtomAddition(rnd.ctab, rnd.page2obj(event), this.atomProps))
-
-      // this.mergeItems = getItemsToFuse(this.editor, pasteItems)
-      // this.editor.hover(getHoverToFuse(atom))
-
-      // this.editor.update(
-      //   dragCtx.action ||
-      //     (dragCtx.item
-      //       ? fromAtomsAttrs(rnd.ctab, dragCtx.item.id, this.atomProps, true)
-      //       : fromAtomAddition(rnd.ctab, rnd.page2obj(event), this.atomProps))
-      // )
-
       this.editor.hover(
         this.editor.findItem(event, ['atoms', 'functionalGroups'])
       )
+      return
     }
 
     const dragCtx = this.dragCtx
     const ci = this.editor.findItem(event, ['atoms'])
 
     if (ci && ci.map === 'atoms' && ci.id === dragCtx.item.id) {
-      console.log('move 2')
       // fromAtomsAttrs
       this.editor.hover(this.editor.findItem(event, ['atoms']))
       return
@@ -199,11 +148,7 @@ class AtomTool {
     // fromAtomAddition
     const atom = rnd.ctab.molecule.atoms.get(dragCtx.item.id)
     let angle = utils.calcAngle(atom?.pp, rnd.page2obj(event))
-    if (!event.ctrlKey) {
-      console.log('move 3')
-
-      angle = utils.fracAngle(angle, null)
-    }
+    if (!event.ctrlKey) angle = utils.fracAngle(angle, null)
     const degrees = utils.degrees(angle)
     this.editor.event.message.dispatch({ info: degrees + 'º' })
     const newAtomPos = utils.calcNewAtomPos(
@@ -211,11 +156,7 @@ class AtomTool {
       rnd.page2obj(event),
       event.ctrlKey
     )
-    if (dragCtx.action) {
-      console.log('move 4')
-
-      dragCtx.action.perform(rnd.ctab)
-    }
+    if (dragCtx.action) dragCtx.action.perform(rnd.ctab)
 
     dragCtx.action = fromBondAddition(
       rnd.ctab,
@@ -225,30 +166,17 @@ class AtomTool {
       newAtomPos,
       newAtomPos
     )[0]
-    // this.editor.update(dragCtx.action, true)
-    console.log(dragCtx.action)
-    this.editor.update(
-      dragCtx.action ||
-        (dragCtx.item
-          ? fromAtomsAttrs(rnd.ctab, dragCtx.item.id, this.atomProps, true)
-          : fromAtomAddition(rnd.ctab, rnd.page2obj(event), this.atomProps))
-    )
+    this.editor.update(dragCtx.action, true)
   }
 
   mouseup(event) {
-    console.log('rnd.page2obj from Up', this.editor.render.page2obj(event))
-
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
     const ci = this.editor.findItem(event, ['atoms', 'bonds'])
-    console.log('ci from Up', ci)
-
     const atomResult: Array<number> = []
     const result: Array<number> = []
     if (ci && functionalGroups && ci.map === 'atoms') {
-      console.log('1st')
-
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id
@@ -256,7 +184,6 @@ class AtomTool {
       if (atomId !== null) atomResult.push(atomId)
     }
     if (atomResult.length > 0) {
-      console.log('2nd')
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
@@ -271,11 +198,8 @@ class AtomTool {
     }
 
     if (this.dragCtx) {
-      console.log('3th')
       const dragCtx = this.dragCtx
       const rnd = this.editor.render
-      console.log('up rnd', rnd)
-      console.log('dragCtx from Up', this.dragCtx)
 
       this.editor.update(
         dragCtx.action ||

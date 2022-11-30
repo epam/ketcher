@@ -284,7 +284,6 @@ class Editor implements KetcherEditor {
     }
 
     let ReStruct = this.render.ctab
-    console.log(ReStruct)
 
     this._selection = null // eslint-disable-line
     if (ci === 'all') {
@@ -334,20 +333,16 @@ class Editor implements KetcherEditor {
 
   hover(ci: any, newTool?: any) {
     const tool = newTool || this._tool // eslint-disable-line
-    // console.log('toll from hover', tool)
+
     if (
       'ci' in tool &&
       (!ci || tool.ci.map !== ci.map || tool.ci.id !== ci.id)
     ) {
-      // console.log('from hover')
       setHover(tool.ci, false, this.render)
       delete tool.ci
     }
 
-    if (ci && setHover(ci, true, this.render)) {
-      console.log('from 2nd if')
-      tool.ci = ci
-    }
+    if (ci && setHover(ci, true, this.render)) tool.ci = ci
   }
 
   update(action: Action | true, ignoreHistory?) {

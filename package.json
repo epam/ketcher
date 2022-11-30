@@ -8,6 +8,7 @@
   "scripts": {
     "postinstall": "husky install",
     "precommit": "lint-staged --allow-empty && yarn workspaces foreach -pv run prettier:write",
+    "prepush": "yarn workspaces foreach -pv run test:eslint",
     "build": "yarn workspaces foreach -ptvR --from ketcher-react-app run build",
     "build:demo": "yarn workspaces foreach -ptvR --from demo run build",
     "test": "yarn workspaces foreach -v run test",

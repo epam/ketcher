@@ -98,7 +98,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
 }
 
 function getHoveredAtomId(atoms) {
-  for (let [id, atom] of atoms.entries()) {
+  for (const [id, atom] of atoms.entries()) {
     if (atom.hover) return id
   }
   return null

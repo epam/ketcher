@@ -14,12 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-declare global {
-  interface Window {
-    clipboardData: any
-  }
-}
-
 import * as clipArea from '../component/cliparea/cliparea'
 
 import {
@@ -36,6 +30,12 @@ import { load, onAction } from './shared'
 import actions from '../action'
 import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
+
+declare global {
+  interface Window {
+    clipboardData: any
+  }
+}
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {

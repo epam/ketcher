@@ -28,6 +28,7 @@ import { load, onAction } from './shared'
 import actions from '../action'
 import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
+import { isIE } from 'react-device-detect'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -49,7 +50,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
   const key = keyNorm(event)
   const atomsSelected = editor.selection() && editor.selection().atoms
 
-  let group = null
+  let group
 
   if (key && key.length === 1 && atomsSelected && key.match(/\w/)) {
     openDialog(dispatch, 'labelEdit', { letter: key })
@@ -71,7 +72,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
       const newAction = actions[actName].action
       dispatch(onAction(newAction))
       event.preventDefault()
-    } else if (window.clipboardData) {
+    } else if (isIE) {
       // IE support
       clipArea.exec(event)
     }
@@ -116,7 +117,7 @@ function checkGroupOnTool(group, actionTool) {
 const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/
 
 /* ClipArea */
-export function initClipboard(dispatch, getState) {
+export function initClipboard(dispatch, _getState) {
   const formats = Object.keys(formatProperties).map(
     (format) => formatProperties[format].mime
   )
@@ -169,7 +170,7 @@ function clipData(editor) {
   const simpleObjectOrText = Boolean(
     struct.simpleObjects.size || struct.texts.size
   )
-  if (simpleObjectOrText && window.clipboardData) {
+  if (simpleObjectOrText && isIE) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
         'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button'
@@ -189,8 +190,8 @@ function clipData(editor) {
 
     // res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
     return res
-  } catch (ex) {
-    errorHandler(ex.message)
+  } catch (e: any) {
+    errorHandler(e.message)
   }
 
   return null

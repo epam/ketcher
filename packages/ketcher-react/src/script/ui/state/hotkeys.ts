@@ -14,6 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
+declare global {
+  interface Window {
+    clipboardData: any
+  }
+}
+
 import * as clipArea from '../component/cliparea/cliparea'
 
 import {
@@ -21,7 +27,8 @@ import {
   MolSerializer,
   formatProperties,
   ChemicalMimeType,
-  fromAtomsAttrs
+  fromAtomsAttrs,
+  ReAtom
 } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction } from './shared'
@@ -51,7 +58,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
   const key = keyNorm(event)
   const atomsSelected = editor.selection() && editor.selection().atoms
 
-  let group = null
+  let group: any = null
 
   if (key && key.length === 1 && atomsSelected && key.match(/\w/)) {
     openDialog(dispatch, 'labelEdit', { letter: key })
@@ -62,7 +69,8 @@ function keyHandle(dispatch, state, hotKeys, event) {
     event.preventDefault()
   } else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
     let index = checkGroupOnTool(group, actionTool) // index currentTool in group || -1
-    index = (index + 1) % group.length
+    const groupLength = group !== null ? group.length : 1
+    index = (index + 1) % groupLength
 
     const actName = group[index]
     if (actionState[actName] && actionState[actName].disabled === true) {
@@ -97,7 +105,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
   }
 }
 
-function getHoveredAtomId(atoms) {
+function getHoveredAtomId(atoms: Map<number, ReAtom>): number | null {
   for (const [id, atom] of atoms.entries()) {
     if (atom.hover) return id
   }
@@ -142,7 +150,7 @@ function checkGroupOnTool(group, actionTool) {
 const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/
 
 /* ClipArea */
-export function initClipboard(dispatch, getState) {
+export function initClipboard(dispatch) {
   const formats = Object.keys(formatProperties).map(
     (format) => formatProperties[format].mime
   )
@@ -215,7 +223,7 @@ function clipData(editor) {
 
     // res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
     return res
-  } catch (ex) {
+  } catch (ex: any) {
     errorHandler(ex.message)
   }
 

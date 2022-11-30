@@ -133,7 +133,7 @@ class AtomTool {
     if (!ci) {
       // ci.type == 'Canvas'
       this.dragCtx = {}
-      console.log('dragCtx from Down', this.dragCtx)
+      // console.log('dragCtx from Down', this.dragCtx)
     } else if (ci.map === 'atoms') {
       this.dragCtx = { item: ci }
     }

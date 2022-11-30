@@ -14,6 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
+let iconSingleton = null;
+function getIcon (render) {
+  if (!iconSingleton) {
+    iconSingleton = render.paper.text(0, 0, 'hello').attr({
+      'font-weight': 700,
+      'font-size': 14,
+      opacity: 0.5
+    })
+  }
+  return iconSingleton
+}
+
 import {
   Action,
   Atom,
@@ -36,11 +48,14 @@ class AtomTool {
   dragCtx: any
   #bondProps: { stereo: number; type: number }
   isNotActiveTool: boolean | undefined
+  hoverIcon: any
 
   constructor(editor, atomProps) {
     this.editor = editor
     this.atomProps = atomProps
     this.#bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE }
+    this.hoverIcon = getIcon(editor.render)
+    this.hoverIcon.attr('text', atomProps.label)
     if (editor.selection()) {
       if (editor.selection()?.atoms) {
         const action = fromAtomsAttrs(
@@ -129,7 +144,10 @@ class AtomTool {
 
   mousemove(event) {
     const rnd = this.editor.render
+    const { layerX, layerY } = event
+
     if (!this.dragCtx || !this.dragCtx.item) {
+      this.hoverIcon.attr({ x: layerX - 3, y: layerY - 2 })
       this.editor.hover(
         this.editor.findItem(event, ['atoms', 'functionalGroups'])
       )

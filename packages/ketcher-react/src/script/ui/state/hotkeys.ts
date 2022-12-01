@@ -73,7 +73,6 @@ function keyHandle(dispatch, state, hotKeys, event) {
       dispatch(onAction(newAction))
       event.preventDefault()
     } else if (isIE) {
-      // IE support
       clipArea.exec(event)
     }
   }

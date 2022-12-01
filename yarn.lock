@@ -11395,6 +11395,7 @@ __metadata:
     prettier: ^2.5.1
     react-colorful: ^5.4.0
     react-contextmenu: ^2.14.0
+    react-device-detect: ^2.2.2
     react-dropzone: ^11.7.1
     react-intersection-observer: ^8.32.1
     react-redux: ^7.2.1
@@ -15818,7 +15819,6 @@ __metadata:
     npm-run-all: ^4.1.5
     prettier: 2.8.0
     prettier-config-standard: ^4.0.0
-    react-device-detect: ^2.2.2
     stylelint: 13.13.1
     stylelint-config-prettier: ^9.0.3
     stylelint-config-standard: 22.0.0

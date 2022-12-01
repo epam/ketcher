@@ -75,7 +75,7 @@ interface TemplateLibProps {
   selected: Template
   mode: string
   initialTab: number,
-  saltsAndSolvents: Template[]
+  saltsAndSolvents: (Template & { modifiedStruct: Struct })[]
 }
 
 interface TemplateLibCallProps {
@@ -341,16 +341,19 @@ const TemplateDialog: FC<Props> = (props) => {
   )
 }
 
+// For now, totally have no idea, what it does
+const removeSgroup = (template) => {
+  const struct = template.struct.clone()
+  struct.sgroups.delete(0)
+  return { ...template, modifiedStruct: struct }
+}
+
 export default connect(
   (store) => ({
     ...omit(['attach'], (store as any).templates),
     initialTab: (store as any).modal?.prop?.tab,
-    functionalGroups: functionalGroupsSelector(store).map((template) => {
-      const struct = template.struct.clone()
-      struct.sgroups.delete(0)
-      return { ...template, modifiedStruct: struct }
-    }),
-    saltsAndSolvents: saltsAndSolventsSelector(store)
+    functionalGroups: functionalGroupsSelector(store).map(removeSgroup),
+    saltsAndSolvents: saltsAndSolventsSelector(store).map(removeSgroup)
   }),
   (dispatch: Dispatch<any>, props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),

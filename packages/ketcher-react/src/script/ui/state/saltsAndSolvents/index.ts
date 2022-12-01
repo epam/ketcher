@@ -18,6 +18,7 @@
  import { appUpdate } from '../options'
  import {
    SaltsAndSolventsProvider,
+   FunctionalGroupsProvider,
    SdfItem,
    SdfSerializer,
    Struct
@@ -31,7 +32,7 @@
  
  const initialState: SaltsAndSolventsState = {
    lib: [],
-   mode: 'saltsAndSolvents'
+   mode: 'fg'
  }
  
  const saltsAndSolventsReducer = (
@@ -53,7 +54,8 @@
    return async (dispatch) => {
      const fileName = 'salts-and-solvents.sdf'
      const url = `${baseUrl}/templates/${fileName}`
-     const provider = SaltsAndSolventsProvider.getInstance()
+     const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance()
+     const functionalGroupsProvider = FunctionalGroupsProvider.getInstance()
      const sdfSerializer = new SdfSerializer()
      const text = await prefetchStatic(url)
      const templates = sdfSerializer.deserialize(text)
@@ -61,7 +63,8 @@
        (acc: Struct[], { struct }) => [...acc, struct],
        []
      )
-     provider.setSaltsAndSolventsList(saltsAndSolvents)
+     saltsAndSolventsProvider.setSaltsAndSolventsList(saltsAndSolvents)
+     functionalGroupsProvider.addToFunctionalGroupsList(saltsAndSolvents)
      dispatch(initSaltsAndSolvents(templates))
      dispatch(appUpdate({ saltsAndSolvents: true }))
    }

@@ -22,7 +22,8 @@ import {
   fromTemplateOnCanvas,
   getHoverToFuse,
   getItemsToFuse,
-  FunctionalGroup
+  FunctionalGroup,
+  SGroup,
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -393,8 +394,21 @@ class TemplateTool {
     let action
     let pasteItems = null
 
+    if (SGroup.isSaltOrSolvent(this.template.molecule)) {
+      [action] = fromTemplateOnCanvas(
+        restruct,
+        this.template,
+        dragCtx.xy0,
+        0
+      )
+      this.editor.update(action)
+      this.editor.selection(null)
+      this.editor.hover(null)
+      return
+    }
+
     if (!dragCtx.action) {
-      if (!ci) {
+      if (!ci || SGroup.isSaltOrSolvent(this.template)) {
         //  ci.type == 'Canvas'
         ;[action, pasteItems] = fromTemplateOnCanvas(
           restruct,
@@ -460,16 +474,18 @@ class TemplateTool {
 
     this.editor.selection(null)
 
-    if (!dragCtx.mergeItems && pasteItems && this.mode !== 'fg')
+    if (!dragCtx.mergeItems && pasteItems && this.mode !== 'fg') {
       dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
+    }
     dragCtx.action = dragCtx.action
       ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
       : fromItemsFuse(restruct, dragCtx.mergeItems)
 
     this.editor.hover(null)
     const completeAction = dragCtx.action
-    if (completeAction && !completeAction.isDummy())
+    if (completeAction && !completeAction.isDummy()) {
       this.editor.update(completeAction)
+    }
     this.editor.event.message.dispatch({
       info: false
     })

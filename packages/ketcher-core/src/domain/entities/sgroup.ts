@@ -19,6 +19,7 @@ import { Bond } from './bond'
 import { Box2Abs } from './box2Abs'
 import { Pile } from './pile'
 import { Struct } from './struct'
+import { SaltsAndSolventsProvider } from '../helpers'
 import { Vec2 } from './vec2'
 
 export class SGroupBracketParams {
@@ -214,6 +215,12 @@ export class SGroup {
   static getOffset(sgroup: SGroup): null | Vec2 {
     if (!sgroup?.pp) return null
     return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1)
+  }
+
+  static isSaltOrSolvent(molecule: Struct): boolean {
+    const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance();
+    const saltsAndSolvents = saltsAndSolventsProvider.getSaltsAndSolventsList();
+    return saltsAndSolvents.some(({ name }) => name === molecule.name)
   }
 
   static filterAtoms(atoms: any, map: any) {

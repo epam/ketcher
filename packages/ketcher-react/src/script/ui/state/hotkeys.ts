@@ -30,12 +30,7 @@ import { load, onAction } from './shared'
 import actions from '../action'
 import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
-
-declare global {
-  interface Window {
-    clipboardData: any
-  }
-}
+import { isIE } from 'react-device-detect'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -98,8 +93,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
       }
 
       event.preventDefault()
-    } else if (window.clipboardData) {
-      // IE support
+    } else if (isIE) {
       clipArea.exec(event)
     }
   }
@@ -203,7 +197,7 @@ function clipData(editor) {
   const simpleObjectOrText = Boolean(
     struct.simpleObjects.size || struct.texts.size
   )
-  if (simpleObjectOrText && window.clipboardData) {
+  if (simpleObjectOrText && isIE) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
         'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button'
@@ -223,8 +217,8 @@ function clipData(editor) {
 
     // res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
     return res
-  } catch (ex: any) {
-    errorHandler(ex.message)
+  } catch (e: any) {
+    errorHandler(e.message)
   }
 
   return null

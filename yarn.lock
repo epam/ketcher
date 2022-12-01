@@ -9108,12 +9108,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"husky@npm:^7.0.4":
-  version: 7.0.4
-  resolution: "husky@npm:7.0.4"
+"husky@npm:^8.0.2":
+  version: 8.0.2
+  resolution: "husky@npm:8.0.2"
   bin:
     husky: lib/bin.js
-  checksum: c6ec4af63da2c9522da8674a20ad9b48362cc92704896cc8a58c6a2a39d797feb2b806f93fbd83a6d653fbdceb2c3b6e0b602c6b2e8565206ffc2882ef7db9e9
+  checksum: e101656fcb56163d610488f186448c78b132626aa427094489d886ce9374955a90274912b0f3a34af3326eaa74977883b032e5f701d7aaf4554daa5a7931be43
   languageName: node
   linkType: hard
 
@@ -11395,6 +11395,7 @@ __metadata:
     prettier: ^2.5.1
     react-colorful: ^5.4.0
     react-contextmenu: ^2.14.0
+    react-device-detect: ^2.2.2
     react-dropzone: ^11.7.1
     react-intersection-observer: ^8.32.1
     react-redux: ^7.2.1
@@ -14469,6 +14470,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier@npm:2.8.0":
+  version: 2.8.0
+  resolution: "prettier@npm:2.8.0"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 72004ce0cc9bb097daf3e3833f62495768724392c1d5b178dd47372337616e9e50ecbb0804f236596223f7b5eb1bbe69cefc8957dca21112c5777e77ef73a564
+  languageName: node
+  linkType: hard
+
 "prettier@npm:^2.5.1":
   version: 2.6.0
   resolution: "prettier@npm:2.6.0"
@@ -14865,6 +14875,18 @@ __metadata:
     strip-ansi: ^6.0.1
     text-table: ^0.2.0
   checksum: 2c6917e47f03d9595044770b0f883a61c6b660fcaa97b8ba459a1d57c9cca9aa374cd51296b22d461ff5e432105dbe6f04732dab128e52729c79239e1c23ab56
+  languageName: node
+  linkType: hard
+
+"react-device-detect@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "react-device-detect@npm:2.2.2"
+  dependencies:
+    ua-parser-js: ^1.0.2
+  peerDependencies:
+    react: ">= 0.14.0"
+    react-dom: ">= 0.14.0"
+  checksum: d9245cf5a1c1e565e88523ed6be580497d1f6a972fb100a81092943bb7e44afdcdbae0d67bebe7424c4ba5b27a5d13df7894d122307f070fc26062704f7ec788
   languageName: node
   linkType: hard
 
@@ -15792,10 +15814,10 @@ __metadata:
     eslint-plugin-node: ^11.1.0
     eslint-plugin-promise: ^5.2.0
     eslint-plugin-workspaces: ^0.7.0
-    husky: ^7.0.4
+    husky: ^8.0.2
     lint-staged: ^12.1.2
     npm-run-all: ^4.1.5
-    prettier: ^2.5.1
+    prettier: 2.8.0
     prettier-config-standard: ^4.0.0
     stylelint: 13.13.1
     stylelint-config-prettier: ^9.0.3
@@ -17745,6 +17767,13 @@ __metadata:
   version: 0.7.31
   resolution: "ua-parser-js@npm:0.7.31"
   checksum: e2f8324a83d1715601576af85b2b6c03890699aaa7272950fc77ea925c70c5e4f75060ae147dc92124e49f7f0e3d6dd2b0a91e7f40d267e92df8894be967ba8b
+  languageName: node
+  linkType: hard
+
+"ua-parser-js@npm:^1.0.2":
+  version: 1.0.32
+  resolution: "ua-parser-js@npm:1.0.32"
+  checksum: 79a80efd9c21511fdafc042ab748e0e93c8cdb0e8925bf6d48ad7dbb08e808c60fcecd49e679670def44ef428c005aa1810810f6773e7d8135a7817338080813
   languageName: node
   linkType: hard
 

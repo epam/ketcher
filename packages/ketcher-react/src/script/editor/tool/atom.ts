@@ -24,7 +24,8 @@ import {
   fromAtomsAttrs,
   fromBondAddition,
   fromFragmentDeletion,
-  fromSgroupDeletion
+  fromSgroupDeletion,
+  ElementColor
 } from 'ketcher-core'
 
 import Editor from '../Editor'
@@ -41,6 +42,15 @@ class AtomTool {
     this.editor = editor
     this.atomProps = atomProps
     this.#bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE }
+
+    this.editor.hoverIcon
+      .show()
+      .attr([
+        { text: `${atomProps.label}` },
+        { fill: `${ElementColor[atomProps.label]}` }
+      ])
+    this.editor.hoverIcon.id = 'atomHoverIcon'
+
     if (editor.selection()) {
       if (editor.selection()?.atoms) {
         const action = fromAtomsAttrs(
@@ -129,7 +139,11 @@ class AtomTool {
 
   mousemove(event) {
     const rnd = this.editor.render
+    const { layerX, layerY } = event
+
     if (!this.dragCtx || !this.dragCtx.item) {
+      // magic numbers to adjust the position of the icon relative to the mouse pointer
+      this.editor.hoverIcon.attr({ x: layerX - 9, y: layerY - 7 })
       this.editor.hover(
         this.editor.findItem(event, ['atoms', 'functionalGroups'])
       )

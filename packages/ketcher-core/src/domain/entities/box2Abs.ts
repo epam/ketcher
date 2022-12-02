@@ -48,7 +48,7 @@ export class Box2Abs {
   }
 
   toString(): string {
-    return this.p0.toString() + ' ' + this.p1.toString()
+    return `${this.p0.toString()} ${this.p1.toString()}`
   }
 
   clone(): Box2Abs {

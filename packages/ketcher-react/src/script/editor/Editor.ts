@@ -16,9 +16,12 @@
 
 import {
   Action,
+  Atom,
   Editor as KetcherEditor,
   Pile,
+  Pool,
   Render,
+  ReStruct,
   Struct,
   Vec2,
   fromDescriptorsAlign,
@@ -39,38 +42,38 @@ import { Highlighter } from './highlighter'
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
 
-const structObjects = [
-  'atoms',
-  'bonds',
-  'frags',
-  'sgroups',
-  'sgroupData',
-  'rgroups',
-  'rxnArrows',
-  'rxnPluses',
-  'enhancedFlags',
-  'simpleObjects',
-  'texts'
-]
+enum StructObject {
+  atoms = 'atoms',
+  bonds = 'bonds',
+  frags = 'frags',
+  sgroups = 'sgroups',
+  sgroupData = 'sgroupData',
+  rgroups = 'rgroups',
+  rxnArrows = 'rxnArrows',
+  rxnPluses = 'rxnPluses',
+  enhancedFlags = 'enhancedFlags',
+  simpleObjects = 'simpleObjects',
+  texts = 'texts'
+}
 
-const highlightTargets = [
-  'atoms',
-  'bonds',
-  'rxnArrows',
-  'rxnPluses',
-  'functionalGroups',
-  'frags',
-  'merge',
-  'rgroups',
-  'sgroups',
-  'sgroupData',
-  'enhancedFlags',
-  'simpleObjects',
-  'texts'
-]
+enum HighlightTarget {
+  atoms = 'atoms',
+  bonds = 'bonds',
+  rxnArrows = 'rxnArrows',
+  rxnPluses = 'rxnPluses',
+  functionalGroups = 'functionalGroups',
+  frags = 'frags',
+  merge = 'merge',
+  rgroups = 'rgroups',
+  sgroups = 'sgroups',
+  sgroupData = 'sgroupData',
+  enhancedFlags = 'enhancedFlags',
+  simpleObjects = 'simpleObjects',
+  texts = 'texts'
+}
 
 function selectStereoFlagsIfNecessary(
-  atoms: any,
+  atoms: Pool<Atom>,
   expAtoms: number[]
 ): number[] {
   const atomsOfFragments = {}
@@ -188,7 +191,7 @@ class Editor implements KetcherEditor {
     this.#origin = position ? this.historyStack[position - 1] : null
   }
 
-  tool(name?: any, opts?: any) {
+  tool(name?: string, opts?: any) {
     /* eslint-disable no-underscore-dangle */
     if (arguments.length === 0) {
       return this._tool
@@ -218,7 +221,15 @@ class Editor implements KetcherEditor {
     this.update(action)
 
     const structCenter = getStructCenter(this.render.ctab)
+    // const { clientHeight, clientWidth } = this.render.clientArea
+    // console.log(111, clientHeight, clientWidth) =>  690 667
+    // console.log(structCenter) => Vec2{x: 54.40229606628418, y: 53.573699951171875, z: 0}
     recoordinate(this, structCenter)
+    console.log(
+      888,
+      this.render.clientArea.scrollLeft,
+      this.render.clientArea.scrollTop
+    )
     return this.render.ctab.molecule
   }
 
@@ -263,7 +274,7 @@ class Editor implements KetcherEditor {
     return this.render.options
   }
 
-  zoom(value?: any) {
+  zoom(value?: number) {
     if (arguments.length === 0) {
       return this.render.options.zoom
     }
@@ -288,7 +299,7 @@ class Editor implements KetcherEditor {
     this._selection = null // eslint-disable-line
     if (ci === 'all') {
       // TODO: better way will be this.struct()
-      ci = structObjects.reduce((res, key) => {
+      ci = Object.values(StructObject).reduce((res, key) => {
         res[key] = Array.from(ReStruct[key].keys())
         return res
       }, {})
@@ -414,15 +425,15 @@ class Editor implements KetcherEditor {
     this.render.update()
   }
 
-  subscribe(eventName: any, handler: any) {
+  subscribe(eventName: string, handler: any) {
     const subscriber = {
       handler: handler
     }
 
+    const subscribeFuncWrapper = (action) =>
+      customOnChangeHandler(action, handler)
     switch (eventName) {
       case 'change':
-        const subscribeFuncWrapper = (action) =>
-          customOnChangeHandler(action, handler)
         subscriber.handler = subscribeFuncWrapper
         this.event[eventName].add(subscribeFuncWrapper)
         break
@@ -434,12 +445,12 @@ class Editor implements KetcherEditor {
     return subscriber
   }
 
-  unsubscribe(eventName: any, subscriber: any) {
+  unsubscribe(eventName: string, subscriber: any) {
     // Only for event type - subscription
     this.event[eventName].remove(subscriber.handler)
   }
 
-  findItem(event: any, maps: any, skip: any = null) {
+  findItem(event: Event, maps: any, skip: any = null) {
     const pos = new Vec2(this.render.page2obj(event))
 
     return closest.item(this.render.ctab, pos, maps, skip, this.render.options)
@@ -451,7 +462,7 @@ class Editor implements KetcherEditor {
 
   explicitSelected() {
     const selection = this.selection() || {}
-    const res = structObjects.reduce((acc, key) => {
+    const res = Object.values(StructObject).reduce((acc, key) => {
       acc[key] = selection[key] ? selection[key].slice() : []
       return acc
     }, {} as any)
@@ -461,14 +472,14 @@ class Editor implements KetcherEditor {
     // "auto-select" the atoms for the bonds in selection
     if (res.bonds) {
       res.bonds.forEach((bid) => {
-        const bond = struct.bonds.get(bid)!
+        const bond = struct.bonds.get(bid)
         res.atoms = res.atoms || []
-        if (res.atoms.indexOf(bond.begin) < 0) {
-          res.atoms.push(bond.begin)
+        if (res.atoms.indexOf(bond?.begin) < 0) {
+          res.atoms.push(bond?.begin)
         }
 
-        if (res.atoms.indexOf(bond.end) < 0) {
-          res.atoms.push(bond.end)
+        if (res.atoms.indexOf(bond?.end) < 0) {
+          res.atoms.push(bond?.end)
         }
       })
     }
@@ -526,13 +537,14 @@ class Editor implements KetcherEditor {
   }
 }
 
-function isMouseRight(event) {
-  return (
-    (event.which && event.which === 3) || (event.button && event.button === 2)
-  )
+export { Editor }
+export default Editor
+
+function isMouseRight(event: MouseEvent) {
+  return event.button && event.button === 2
 }
 
-function domEventSetup(editor: Editor, clientArea) {
+function domEventSetup(editor: Editor, clientArea: HTMLElement) {
   // TODO: addEventListener('resize', ...);
   ;[
     'click',
@@ -575,19 +587,21 @@ function recoordinate(editor: Editor, rp /* , vp */) {
   // vp is the point where the reference point should now be (in view coordinates)
   //    or the center if not set
   console.assert(rp, 'Reference point not specified')
-  editor.render.setScrollOffset(0, 0)
+  // editor.render.setScrollOffset(0, 0)
+  editor.render.setScrollOffset(rp.x, rp.y)
+  // console.log(
+  // editor.render.clientArea.scrollLeft,
+  // editor.render.clientArea.scrollTop
+  // )
 }
 
-function getStructCenter(ReStruct, selection?) {
-  const bb = ReStruct.getVBoxObj(selection || {})
-  return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5)
+function getStructCenter(reStruct: ReStruct, selection?) {
+  const bb = reStruct.getVBoxObj(selection || {})
+  return bb && Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5)
 }
 
-export { Editor }
-export default Editor
-
-function setHover(ci: any, visible: any, render: any) {
-  if (highlightTargets.indexOf(ci.map) === -1) {
+function setHover(ci: any, visible: boolean, render: Render) {
+  if (Object.values(HighlightTarget).indexOf(ci.map) === -1) {
     return false
   }
 
@@ -596,7 +610,7 @@ function setHover(ci: any, visible: any, render: any) {
   if (ci.map === 'merge') {
     Object.keys(ci.items).forEach((mp) => {
       ci.items[mp].forEach((dstId) => {
-        item = render.ctab[mp].get(dstId)!
+        item = render.ctab[mp].get(dstId)
 
         if (item) {
           item.setHover(visible, render)
@@ -607,7 +621,9 @@ function setHover(ci: any, visible: any, render: any) {
     return true
   }
 
-  if (ci.map === 'functionalGroups') ci.map = 'sgroups' // TODO: Refactor object
+  if (ci.map === HighlightTarget.functionalGroups) {
+    ci.map = HighlightTarget.sgroups // TODO: Refactor object
+  }
 
   item = (render.ctab[ci.map] as Map<any, any>).get(ci.id)
   if (!item) {
@@ -615,8 +631,8 @@ function setHover(ci: any, visible: any, render: any) {
   }
 
   if (
-    (ci.map === 'sgroups' && item.item.type === 'DAT') ||
-    ci.map === 'sgroupData'
+    (ci.map === HighlightTarget.sgroups && item.item.type === 'DAT') ||
+    ci.map === HighlightTarget.sgroupData
   ) {
     // set highlight for both the group and the data item
     const item1 = render.ctab.sgroups.get(ci.id)

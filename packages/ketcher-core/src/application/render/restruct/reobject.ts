@@ -56,8 +56,8 @@ class ReObject {
         this.hovering.show()
       } else {
         render.paper.setStart()
-        this.drawHover(render)
         this.hovering = render.paper.setFinish()
+        this.drawHover(render)
       }
     } else if (this.hovering) {
       this.hovering.hide()

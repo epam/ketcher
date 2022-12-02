@@ -39,6 +39,7 @@ async function prepareStructToRender(
     structService,
     ketcherInstance
   )
+  console.log(666, struct)
   struct.initHalfBonds()
   struct.initNeighbors()
   struct.setImplicitHydrogen()

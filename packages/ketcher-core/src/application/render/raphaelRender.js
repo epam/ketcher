@@ -97,6 +97,7 @@ Render.prototype.page2obj = function (event) {
 }
 
 Render.prototype.setPaperSize = function (sz) {
+  console.log(999, 'zoom', this.options.zoom)
   this.sz = sz
   this.paper.setSize(sz.x * this.options.zoom, sz.y * this.options.zoom)
   this.setViewBox(this.options.zoom)
@@ -151,8 +152,10 @@ Render.prototype.setScrollOffset = function (x, y) {
       this.setOffset(this.options.offset.add(d))
     }
   }
+  console.log(111, x, y)
   clientArea.scrollLeft = x
   clientArea.scrollTop = y
+  console.log(111, clientArea.scrollLeft, clientArea.scrollTop)
   // TODO: store drag position in scaled systems
   // scrollLeft = clientArea.scrollLeft;
   // scrollTop = clientArea.scrollTop;

@@ -88,7 +88,7 @@ export class ServerFormatter implements StructFormatter {
     let promise: LayoutPromise | ConvertPromise
 
     const data: ConvertData | LayoutData = {
-      struct: undefined as any,
+      struct: '',
       output_format: getPropertiesByFormat(SupportedFormat.ket).mime
     }
 

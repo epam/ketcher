@@ -20,7 +20,9 @@ import {
   KetSerializer,
   MolSerializer,
   formatProperties,
-  ChemicalMimeType
+  ChemicalMimeType,
+  fromAtomsAttrs,
+  ReAtom
 } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction } from './shared'
@@ -28,6 +30,7 @@ import { load, onAction } from './shared'
 import actions from '../action'
 import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
+import { isIE } from 'react-device-detect'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -42,14 +45,15 @@ export function initKeydownListener(element) {
 function keyHandle(dispatch, state, hotKeys, event) {
   if (state.modal) return
 
-  const editor = state.editor
+  const { editor } = state
+  const { render } = editor
   const actionState = state.actionState
   const actionTool = actionState.activeTool
 
   const key = keyNorm(event)
   const atomsSelected = editor.selection() && editor.selection().atoms
 
-  let group = null
+  let group: any = null
 
   if (key && key.length === 1 && atomsSelected && key.match(/\w/)) {
     openDialog(dispatch, 'labelEdit', { letter: key })
@@ -60,7 +64,8 @@ function keyHandle(dispatch, state, hotKeys, event) {
     event.preventDefault()
   } else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
     let index = checkGroupOnTool(group, actionTool) // index currentTool in group || -1
-    index = (index + 1) % group.length
+    const groupLength = group !== null ? group.length : 1
+    index = (index + 1) % groupLength
 
     const actName = group[index]
     if (actionState[actName] && actionState[actName].disabled === true) {
@@ -69,13 +74,36 @@ function keyHandle(dispatch, state, hotKeys, event) {
     }
     if (clipArea.actions.indexOf(actName) === -1) {
       const newAction = actions[actName].action
-      dispatch(onAction(newAction))
+      const hoverItemId = getHoveredAtomId(render.ctab.atoms)
+      const isHoveringOverAtom = hoverItemId !== null
+      if (isHoveringOverAtom) {
+        // check if atom is currently hovered over
+        // in this case we do not want to activate the corresponding tool
+        // and just insert the atom directly
+        const atomProps = { ...newAction.opts }
+        const updatedAtoms = fromAtomsAttrs(
+          render.ctab,
+          hoverItemId,
+          atomProps,
+          true
+        )
+        editor.update(updatedAtoms)
+      } else {
+        dispatch(onAction(newAction))
+      }
+
       event.preventDefault()
-    } else if (window.clipboardData) {
-      // IE support
+    } else if (isIE) {
       clipArea.exec(event)
     }
   }
+}
+
+function getHoveredAtomId(atoms: Map<number, ReAtom>): number | null {
+  for (const [id, atom] of atoms.entries()) {
+    if (atom.hover) return id
+  }
+  return null
 }
 
 function setHotKey(key, actName, hotKeys) {
@@ -116,7 +144,7 @@ function checkGroupOnTool(group, actionTool) {
 const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/
 
 /* ClipArea */
-export function initClipboard(dispatch, getState) {
+export function initClipboard(dispatch) {
   const formats = Object.keys(formatProperties).map(
     (format) => formatProperties[format].mime
   )
@@ -169,7 +197,7 @@ function clipData(editor) {
   const simpleObjectOrText = Boolean(
     struct.simpleObjects.size || struct.texts.size
   )
-  if (simpleObjectOrText && window.clipboardData) {
+  if (simpleObjectOrText && isIE) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
         'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button'
@@ -189,8 +217,8 @@ function clipData(editor) {
 
     // res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
     return res
-  } catch (ex) {
-    errorHandler(ex.message)
+  } catch (e: any) {
+    errorHandler(e.message)
   }
 
   return null

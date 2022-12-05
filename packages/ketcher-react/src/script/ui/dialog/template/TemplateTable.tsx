@@ -24,7 +24,6 @@ import Icon from 'src/script/ui/component/view/icon'
 
 export interface Template {
   struct: Struct
-  modifiedStruct?: Struct // TODO: Do something with that, in future it shouldn't be here
   props: {
     atomid: number
     bondid: number
@@ -70,7 +69,7 @@ const RenderTmpl: FC<{
 }> = ({ tmpl, options, ...props }) => {
   return (
     <StructRender
-      struct={tmpl.modifiedStruct || tmpl.struct}
+      struct={tmpl.struct}
       options={{ ...options, autoScaleMargin: 15 }}
       {...props}
     />

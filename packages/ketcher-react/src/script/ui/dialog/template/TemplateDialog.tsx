@@ -75,7 +75,7 @@ interface TemplateLibProps {
   selected: Template
   mode: string
   initialTab: number
-  saltsAndSolvents: (Template & { modifiedStruct: Struct })[]
+  saltsAndSolvents: Template[]
 }
 
 interface TemplateLibCallProps {
@@ -86,7 +86,7 @@ interface TemplateLibCallProps {
   onFilter: (filter: string) => void
   onOk: (res: any) => void
   onSelect: (res: any) => void
-  functionalGroups: (Template & { modifiedStruct: Struct })[]
+  functionalGroups: Template[]
 }
 
 type Props = TemplateLibProps & TemplateLibCallProps
@@ -357,23 +357,12 @@ const TemplateDialog: FC<Props> = (props) => {
   )
 }
 
-/*
-  Think, this is a kind of workaround for some logic.
-  Without it only names of structures are rendered in dialog
-  instead of chemical structure.
-*/
-const removeSgroup = (template) => {
-  const struct = template.struct.clone()
-  struct.sgroups.delete(0)
-  return { ...template, modifiedStruct: struct }
-}
-
 export default connect(
   (store) => ({
     ...omit(['attach'], (store as any).templates),
     initialTab: (store as any).modal?.prop?.tab,
-    functionalGroups: functionalGroupsSelector(store).map(removeSgroup),
-    saltsAndSolvents: saltsAndSolventsSelector(store).map(removeSgroup)
+    functionalGroups: functionalGroupsSelector(store),
+    saltsAndSolvents: saltsAndSolventsSelector(store)
   }),
   (dispatch: Dispatch<any>, props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),

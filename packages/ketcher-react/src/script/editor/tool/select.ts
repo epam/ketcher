@@ -571,7 +571,7 @@ class SelectTool {
   }
 
   selectElementsOnCanvas(
-    elements: { atoms: any[]; bonds: any[] },
+    elements: { atoms: number[]; bonds: number[] },
     editor: Editor,
     event
   ) {

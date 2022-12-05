@@ -30,6 +30,8 @@ export interface Template {
     bondid: number
     group: string
     prerender?: string
+    abbreviation: string 
+    name: string
   }
 }
 
@@ -44,8 +46,20 @@ interface TemplateTableProps {
 }
 
 const getSettingsSelector = (state) => state.options.settings
+const isSaltOrSolventTemplate = (template) => template.props.group === 'Salts and Solvents'
+const isFunctionalGroupTemplate = (template) => template.props.group === 'Functional Groups'
+
+function getTemplateTitle(template: Template, index: number): string {
+  if (isSaltOrSolventTemplate(template)) {
+    return template.props.name
+  }
+  return template.struct.name || `${template.props.group} template ${index + 1}`
+}
 
 function tmplName(tmpl: Template, i: number): string {
+  if (isSaltOrSolventTemplate(tmpl)) {
+    return tmpl.props.abbreviation
+  }
   return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`
 }
 
@@ -89,7 +103,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 ? classes.td
                 : `${classes.td} ${classes.selected}`
             }
-            title={greekify(tmplName(tmpl, i))}
+            title={greekify(getTemplateTitle(tmpl, i))}
             key={
               tmpl.struct.name !== selected?.struct.name
                 ? `${tmpl.struct.name}_${i}`
@@ -118,8 +132,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 <Icon name="delete" />
               </button>
             )}
-            {tmpl.props.group !== 'Functional Groups' &&
-              tmpl.props.group !== 'Salts and Solvents' && (
+            {!isFunctionalGroupTemplate(tmpl) && !isSaltOrSolventTemplate(tmpl) && (
                 <button
                   className={`${classes.button} ${classes.editButton}`}
                   onClick={() => onAttach!(tmpl)}

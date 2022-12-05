@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start:standalone": "cross-env MODE=standalone ENABLE_POLYMER_EDITOR=false KETCHER_ENABLE_REDUX_LOGGER=true react-app-rewired start",
+    "start:standalone": "cross-env MODE=standalone ENABLE_POLYMER_EDITOR=false react-app-rewired start",
     "start:remote": "cross-env MODE=remote ENABLE_POLYMER_EDITOR=false react-app-rewired start",
     "clean:build": "shx rm -rf build",
     "delete:dist": "shx rm -rf dist/$MODE",

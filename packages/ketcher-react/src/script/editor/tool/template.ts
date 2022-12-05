@@ -397,7 +397,7 @@ class TemplateTool {
     let pasteItems = null
 
     if (SGroup.isSaltOrSolvent(this.template.molecule.name)) {
-      preventSaltAndSolventsMerge(restruct, this.template, dragCtx, this.editor)
+      addSaltsAndSolventsOnCanvasWithoutMerge(restruct, this.template, dragCtx, this.editor)
       return true
     }
 
@@ -500,7 +500,7 @@ class TemplateTool {
  * Salts and Solvents are kind of special structures:
  * they can not be merged with other structures and are always standalone
  */
-function preventSaltAndSolventsMerge(
+function addSaltsAndSolventsOnCanvasWithoutMerge(
   restruct: ReStruct,
   template: Struct,
   dragCtx,

@@ -357,7 +357,11 @@ const TemplateDialog: FC<Props> = (props) => {
   )
 }
 
-// For now, totally have no idea, what it does
+/*
+  Think, this is a kind of workaround for some logic.
+  Without it only names of structures are rendered in dialog
+  instead of chemical structure.
+*/
 const removeSgroup = (template) => {
   const struct = template.struct.clone()
   struct.sgroups.delete(0)

@@ -74,7 +74,7 @@ interface TemplateLibProps {
   lib: Array<Template>
   selected: Template
   mode: string
-  initialTab: number,
+  initialTab: number
   saltsAndSolvents: (Template & { modifiedStruct: Struct })[]
 }
 
@@ -120,24 +120,34 @@ const HeaderContent = () => (
   </div>
 )
 
-const FooterContent = ({ data, tab }) => (
-  <div style={{ flexGrow: 1 }}>
-    <SaveButton
-      key="save-to-SDF"
-      data={data}
-      className={classes.saveButton}
-      filename={
-        tab === TemplateTabs.TemplateLibrary
-          ? 'ketcher-tmpls.sdf'
-          : 'ketcher-fg-tmpls.sdf'
-      }
-    >
-      {tab === TemplateTabs.TemplateLibrary
-        ? 'Save template library to SDF'
-        : 'Save functional groups to SDF'}
-    </SaveButton>
-  </div>
-)
+const FooterContent = ({ data, tab }) => {
+  const tabMapping = {
+    [TemplateTabs.TemplateLibrary]: {
+      fileName: 'ketcher-tmpls.sdf',
+      buttonCaption: 'Save template library to SDF'
+    },
+    [TemplateTabs.FunctionalGroupLibrary]: {
+      fileName: 'ketcher-fg-tmpls.sdf',
+      buttonCaption: 'Save functional groups to SDF'
+    },
+    [TemplateTabs.SaltsAndSolvents]: null
+  }
+  if (!tabMapping[tab]) {
+    return null
+  }
+  return (
+    <div style={{ flexGrow: 1 }}>
+      <SaveButton
+        key="save-to-SDF"
+        data={data}
+        className={classes.saveButton}
+        filename={tabMapping[tab].fileName}
+      >
+        {tabMapping[tab].buttonCaption}
+      </SaveButton>
+    </div>
+  )
+}
 
 const TemplateDialog: FC<Props> = (props) => {
   const {
@@ -170,7 +180,9 @@ const TemplateDialog: FC<Props> = (props) => {
   }, [functionalGroups, filter])
 
   useEffect(() => {
-    setFilteredSaltsAndSolvents(filterFGLib(saltsAndSolvents, filter)[SALTS_AND_SOLVENTS])
+    setFilteredSaltsAndSolvents(
+      filterFGLib(saltsAndSolvents, filter)[SALTS_AND_SOLVENTS]
+    )
   }, [saltsAndSolvents, filter])
 
   const handleTabChange = (_, tab) => {
@@ -204,7 +216,7 @@ const TemplateDialog: FC<Props> = (props) => {
   const serializerMapper = {
     [TemplateTabs.TemplateLibrary]: templateLib,
     [TemplateTabs.FunctionalGroupLibrary]: functionalGroups,
-    [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents,
+    [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents
   }
   const data = sdfSerializer.serialize(serializerMapper[tab])
 
@@ -214,15 +226,19 @@ const TemplateDialog: FC<Props> = (props) => {
     else props.onSelect(tmpl)
   }
 
+  const footerContent =
+    tab === TemplateTabs.SaltsAndSolvents ? null : (
+      <FooterContent tab={tab} data={data} />
+    )
+
   return (
     <Dialog
       headerContent={<HeaderContent />}
-      footerContent={<FooterContent tab={tab} data={data} />}
+      footerContent={footerContent}
       className={`${classes.dialog_body}`}
       params={omit(['group'], rest)}
       result={() => result()}
-      buttons={['OK']}
-      buttonsNameMap={{ OK: 'Add to canvas' }}
+      buttons={[]}
       needMargin={false}
     >
       <div className={classes.inputContainer}>

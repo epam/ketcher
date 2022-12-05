@@ -28,7 +28,7 @@ export const initOptionsState = {
     server: false,
     templates: false,
     functionalGroups: false,
-    saltsAndSolvents: false,
+    saltsAndSolvents: false
   },
   analyse: {
     values: null,

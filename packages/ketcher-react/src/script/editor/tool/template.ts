@@ -24,6 +24,8 @@ import {
   getItemsToFuse,
   FunctionalGroup,
   SGroup,
+  ReStruct,
+  Struct
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -394,21 +396,13 @@ class TemplateTool {
     let action
     let pasteItems = null
 
-    if (SGroup.isSaltOrSolvent(this.template.molecule)) {
-      [action] = fromTemplateOnCanvas(
-        restruct,
-        this.template,
-        dragCtx.xy0,
-        0
-      )
-      this.editor.update(action)
-      this.editor.selection(null)
-      this.editor.hover(null)
-      return
+    if (SGroup.isSaltOrSolvent(this.template.molecule.name)) {
+      preventSaltAndSolventsMerge(restruct, this.template, dragCtx, this.editor)
+      return true
     }
 
     if (!dragCtx.action) {
-      if (!ci || SGroup.isSaltOrSolvent(this.template)) {
+      if (!ci) {
         //  ci.type == 'Canvas'
         ;[action, pasteItems] = fromTemplateOnCanvas(
           restruct,
@@ -500,6 +494,25 @@ class TemplateTool {
   mouseleave(e) {
     this.mouseup(e)
   }
+}
+
+/**
+ * Salts and Solvents are kind of special structures:
+ * they can not be merged with other structures and are always standalone
+ */
+function preventSaltAndSolventsMerge(
+  restruct: ReStruct,
+  template: Struct,
+  dragCtx,
+  editor: Editor
+) {
+  const [action] = fromTemplateOnCanvas(restruct, template, dragCtx.xy0, 0)
+  editor.update(action)
+  editor.selection(null)
+  editor.hover(null)
+  editor.event.message.dispatch({
+    info: false
+  })
 }
 
 function getSign(molecule, bond, v) {

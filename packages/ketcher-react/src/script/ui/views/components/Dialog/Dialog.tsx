@@ -39,7 +39,7 @@ interface DialogProps {
   needMargin?: boolean
   withDivider?: boolean
   headerContent?: ReactElement
-  footerContent?: ReactElement
+  footerContent?: ReactElement | null
   buttonsNameMap?: {
     [key in string]: string
   }

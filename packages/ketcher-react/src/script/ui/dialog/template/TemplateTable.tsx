@@ -118,14 +118,15 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 <Icon name="delete" />
               </button>
             )}
-            {(tmpl.props.group !== 'Functional Groups' && tmpl.props.group !== 'Salts and Solvents') && (
-              <button
-                className={`${classes.button} ${classes.editButton}`}
-                onClick={() => onAttach!(tmpl)}
-              >
-                <Icon name="edit" />
-              </button>
-            )}
+            {tmpl.props.group !== 'Functional Groups' &&
+              tmpl.props.group !== 'Salts and Solvents' && (
+                <button
+                  className={`${classes.button} ${classes.editButton}`}
+                  onClick={() => onAttach!(tmpl)}
+                >
+                  <Icon name="edit" />
+                </button>
+              )}
           </div>
         )
       })}

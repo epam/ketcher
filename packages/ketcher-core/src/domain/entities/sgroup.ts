@@ -217,10 +217,10 @@ export class SGroup {
     return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1)
   }
 
-  static isSaltOrSolvent(molecule: Struct): boolean {
-    const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance();
-    const saltsAndSolvents = saltsAndSolventsProvider.getSaltsAndSolventsList();
-    return saltsAndSolvents.some(({ name }) => name === molecule.name)
+  static isSaltOrSolvent(moleculeName: string): boolean {
+    const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance()
+    const saltsAndSolvents = saltsAndSolventsProvider.getSaltsAndSolventsList()
+    return saltsAndSolvents.some(({ name }) => name === moleculeName)
   }
 
   static filterAtoms(atoms: any, map: any) {

@@ -27,7 +27,8 @@ import {
   getItemsToFuse,
   FunctionalGroup,
   fromSimpleObjectResizing,
-  fromArrowResizing
+  fromArrowResizing,
+  ReStruct
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -373,6 +374,16 @@ class SelectTool {
 
     if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
 
+    const possibleSaltOrSolvent = struct.sgroups.get(actualSgroupId)
+    if (SGroup.isSaltOrSolvent(possibleSaltOrSolvent?.item.data.name)) {
+      preventSaltAndSolventsMerge(struct, dragCtx, editor)
+      delete this.dragCtx
+      if (this.#lassoHelper.running()) {
+        this.selectElementsOnCanvas(newSelected, editor, event)
+      }
+      return true
+    }
+
     if (dragCtx && dragCtx.item) {
       dragCtx.action = dragCtx.action
         ? fromItemsFuse(struct, dragCtx.mergeItems).mergeWith(dragCtx.action)
@@ -558,6 +569,20 @@ class SelectTool {
 
     this.editor.hover(null)
   }
+
+  selectElementsOnCanvas(
+    elements: { atoms: any[]; bonds: any[] },
+    editor: Editor,
+    event
+  ) {
+    const sel =
+      elements.atoms.length > 0
+        ? selMerge(this.#lassoHelper.end(), elements, false)
+        : this.#lassoHelper.end()
+    editor.selection(
+      !event.shiftKey ? sel : selMerge(sel, editor.selection(), false)
+    )
+  }
 }
 
 function closestToSel(ci) {
@@ -589,6 +614,26 @@ function uniqArray(dest, add, reversible: boolean) {
     else if (!dest.includes(item)) dest.push(item)
     return dest
   }, [])
+}
+
+/**
+ * Salts and Solvents are kind of special structures:
+ * they can not be merged with other structures and are always standalone
+ */
+function preventSaltAndSolventsMerge(
+  struct: ReStruct,
+  dragCtx,
+  editor: Editor
+) {
+  const action = dragCtx.action
+    ? fromItemsFuse(struct, null).mergeWith(dragCtx.action)
+    : fromItemsFuse(struct, null)
+  editor.hover(null)
+  editor.selection(null)
+  editor.update(action)
+  editor.event.message.dispatch({
+    info: false
+  })
 }
 
 export default SelectTool

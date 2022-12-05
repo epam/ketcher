@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
- export const saltsAndSolventsSelector = (state) => {
-    console.log('selector called ', state);
-    return state.saltsAndSolvents.lib
- }
- 
+export const saltsAndSolventsSelector = (state) => {
+  console.log('selector called ', state)
+  return state.saltsAndSolvents.lib
+}

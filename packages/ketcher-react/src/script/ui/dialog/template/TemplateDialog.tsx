@@ -121,30 +121,32 @@ const HeaderContent = () => (
 )
 
 const FooterContent = ({ data, tab }) => {
-  const tabMapping = {
-    [TemplateTabs.TemplateLibrary]: {
-      fileName: 'ketcher-tmpls.sdf',
-      buttonCaption: 'Save template library to SDF'
-    },
-    [TemplateTabs.FunctionalGroupLibrary]: {
-      fileName: 'ketcher-fg-tmpls.sdf',
-      buttonCaption: 'Save functional groups to SDF'
-    },
-    [TemplateTabs.SaltsAndSolvents]: null
-  }
-  if (!tabMapping[tab]) {
-    return null
+  const clickToAddToCanvas = <span>Click to add to canvas</span>
+  if (tab === TemplateTabs.SaltsAndSolvents) {
+    return clickToAddToCanvas
   }
   return (
-    <div style={{ flexGrow: 1 }}>
+    <div
+      style={{
+        flexGrow: 1,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}
+    >
       <SaveButton
         key="save-to-SDF"
         data={data}
         className={classes.saveButton}
-        filename={tabMapping[tab].fileName}
+        filename={
+          tab === TemplateTabs.TemplateLibrary
+            ? 'ketcher-tmpls.sdf'
+            : 'ketcher-fg-tmpls.sdf'
+        }
       >
-        {tabMapping[tab].buttonCaption}
+        Save to SDF
       </SaveButton>
+      {clickToAddToCanvas}
     </div>
   )
 }
@@ -226,15 +228,10 @@ const TemplateDialog: FC<Props> = (props) => {
     else props.onSelect(tmpl)
   }
 
-  const footerContent =
-    tab === TemplateTabs.SaltsAndSolvents ? null : (
-      <FooterContent tab={tab} data={data} />
-    )
-
   return (
     <Dialog
       headerContent={<HeaderContent />}
-      footerContent={footerContent}
+      footerContent={<FooterContent tab={tab} data={data} />}
       className={`${classes.dialog_body}`}
       params={omit(['group'], rest)}
       result={() => result()}

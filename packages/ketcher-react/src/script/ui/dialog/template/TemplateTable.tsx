@@ -29,7 +29,7 @@ export interface Template {
     bondid: number
     group: string
     prerender?: string
-    abbreviation: string 
+    abbreviation: string
     name: string
   }
 }
@@ -45,8 +45,10 @@ interface TemplateTableProps {
 }
 
 const getSettingsSelector = (state) => state.options.settings
-const isSaltOrSolventTemplate = (template) => template.props.group === 'Salts and Solvents'
-const isFunctionalGroupTemplate = (template) => template.props.group === 'Functional Groups'
+const isSaltOrSolventTemplate = (template) =>
+  template.props.group === 'Salts and Solvents'
+const isFunctionalGroupTemplate = (template) =>
+  template.props.group === 'Functional Groups'
 
 function getTemplateTitle(template: Template, index: number): string {
   if (isSaltOrSolventTemplate(template)) {
@@ -131,7 +133,8 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 <Icon name="delete" />
               </button>
             )}
-            {!isFunctionalGroupTemplate(tmpl) && !isSaltOrSolventTemplate(tmpl) && (
+            {!isFunctionalGroupTemplate(tmpl) &&
+              !isSaltOrSolventTemplate(tmpl) && (
                 <button
                   className={`${classes.button} ${classes.editButton}`}
                   onClick={() => onAttach!(tmpl)}

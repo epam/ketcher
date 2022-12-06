@@ -375,7 +375,10 @@ class SelectTool {
     if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
 
     const possibleSaltOrSolvent = struct.sgroups.get(actualSgroupId)
-    if (SGroup.isSaltOrSolvent(possibleSaltOrSolvent?.item.data.name)) {
+    if (
+      SGroup.isSaltOrSolvent(possibleSaltOrSolvent?.item.data.name) &&
+      dragCtx
+    ) {
       preventSaltAndSolventsMerge(struct, dragCtx, editor)
       delete this.dragCtx
       if (this.#lassoHelper.running()) {
@@ -616,10 +619,6 @@ function uniqArray(dest, add, reversible: boolean) {
   }, [])
 }
 
-/**
- * Salts and Solvents are kind of special structures:
- * they can not be merged with other structures and are always standalone
- */
 function preventSaltAndSolventsMerge(
   struct: ReStruct,
   dragCtx,
@@ -629,7 +628,9 @@ function preventSaltAndSolventsMerge(
     ? fromItemsFuse(struct, null).mergeWith(dragCtx.action)
     : fromItemsFuse(struct, null)
   editor.hover(null)
-  editor.selection(null)
+  if (dragCtx.mergeItems) {
+    editor.selection(null)
+  }
   editor.update(action)
   editor.event.message.dispatch({
     info: false

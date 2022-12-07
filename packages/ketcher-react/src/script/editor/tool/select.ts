@@ -28,7 +28,8 @@ import {
   FunctionalGroup,
   fromSimpleObjectResizing,
   fromArrowResizing,
-  ReStruct
+  ReStruct,
+  ReSGroup
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -375,8 +376,12 @@ class SelectTool {
     if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
 
     const possibleSaltOrSolvent = struct.sgroups.get(actualSgroupId)
+    const isDraggingSaltOrSolventOnStructure = SGroup.isSaltOrSolvent(
+      possibleSaltOrSolvent?.item.data.name
+    )
     if (
-      SGroup.isSaltOrSolvent(possibleSaltOrSolvent?.item.data.name) &&
+      (isDraggingSaltOrSolventOnStructure ||
+        this.isDraggingStructureOnSaltOrSolvent(dragCtx, struct.sgroups)) &&
       dragCtx
     ) {
       preventSaltAndSolventsMerge(struct, dragCtx, editor)
@@ -399,13 +404,7 @@ class SelectTool {
       delete this.dragCtx
     } else if (this.#lassoHelper.running()) {
       // TODO it catches more events than needed, to be re-factored
-      const sel =
-        newSelected.atoms.length > 0
-          ? selMerge(this.#lassoHelper.end(), newSelected, false)
-          : this.#lassoHelper.end()
-      editor.selection(
-        !event.shiftKey ? sel : selMerge(sel, editor.selection(), false)
-      )
+      this.selectElementsOnCanvas(newSelected, editor, event)
     } else if (this.#lassoHelper.fragment) {
       if (!event.shiftKey) editor.selection(null)
     }
@@ -585,6 +584,25 @@ class SelectTool {
     editor.selection(
       !event.shiftKey ? sel : selMerge(sel, editor.selection(), false)
     )
+  }
+
+  isDraggingStructureOnSaltOrSolvent(dragCtx, sgroups: Map<number, ReSGroup>) {
+    let isDraggingOnSaltOrSolventAtom
+    let isDraggingOnSaltOrSolventBond
+    if (dragCtx?.mergeItems) {
+      const mergeAtoms = Array.from(dragCtx.mergeItems.atoms.values())
+      const mergeBonds = Array.from(dragCtx.mergeItems.bonds.values())
+      const sgroupsOnCanvas = Array.from(sgroups.values()).map(
+        ({ item }) => item
+      )
+      isDraggingOnSaltOrSolventAtom = mergeAtoms.some((atomId) =>
+        SGroup.isAtomInSaltOrSolvent(atomId as number, sgroupsOnCanvas)
+      )
+      isDraggingOnSaltOrSolventBond = mergeBonds.some((bondId) =>
+        SGroup.isBondInSaltOrSolvent(bondId as number, sgroupsOnCanvas)
+      )
+    }
+    return isDraggingOnSaltOrSolventAtom || isDraggingOnSaltOrSolventBond
   }
 }
 

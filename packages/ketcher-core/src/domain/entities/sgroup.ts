@@ -223,6 +223,30 @@ export class SGroup {
     return saltsAndSolvents.some(({ name }) => name === moleculeName)
   }
 
+  static isAtomInSaltOrSolvent(
+    atomId: number,
+    sgroupsOnCanvas: SGroup[]
+  ): boolean {
+    const onlySaltsOrSolvents = sgroupsOnCanvas.filter((sgroup) =>
+      this.isSaltOrSolvent(sgroup.data.name)
+    )
+    return onlySaltsOrSolvents.some(({ atoms }) =>
+      atoms.some((atomIdInSaltOrSolvent) => atomIdInSaltOrSolvent === atomId)
+    )
+  }
+
+  static isBondInSaltOrSolvent(
+    bondId: number,
+    sgroupsOnCanvas: SGroup[]
+  ): boolean {
+    const onlySaltsOrSolvents = sgroupsOnCanvas.filter((sgroup) =>
+      this.isSaltOrSolvent(sgroup.data.name)
+    )
+    return onlySaltsOrSolvents.some(({ bonds }) =>
+      bonds.some((bondIdInSaltOrSolvent) => bondIdInSaltOrSolvent === bondId)
+    )
+  }
+
   static filterAtoms(atoms: any, map: any) {
     const newAtoms: Array<any> = []
     for (let i = 0; i < atoms.length; ++i) {

@@ -63,7 +63,7 @@ function parseStruct(
 }
 
 function getStructure(
-  structureFormat: SupportedFormat = 'rxn',
+  structureFormat = SupportedFormat.rxn,
   formatterFactory: FormatterFactory,
   struct: Struct
 ): Promise<string> {
@@ -133,19 +133,23 @@ export class Ketcher {
   }
 
   getSmiles(isExtended = false): Promise<string> {
-    const format: SupportedFormat = isExtended ? 'smilesExt' : 'smiles'
+    const format = isExtended
+      ? SupportedFormat.smilesExt
+      : SupportedFormat.smiles
     return getStructure(format, this.#formatterFactory, this.editor.struct())
   }
 
-  async getMolfile(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+  async getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
     if (this.containsReaction()) {
       throw Error(
         'The structure cannot be saved as *.MOL due to reaction arrrows.'
       )
     }
 
-    const format: SupportedFormat =
-      molfileFormat === 'v3000' ? 'molV3000' : 'mol'
+    const formatPassed =
+      molfileFormat === 'v3000' ? SupportedFormat.molV3000 : SupportedFormat.mol
+    const format = molfileFormat ? formatPassed : SupportedFormat.molAuto
+
     const molfile = await getStructure(
       format,
       this.#formatterFactory,
@@ -161,8 +165,8 @@ export class Ketcher {
         'The structure cannot be saved as *.RXN: there is no reaction arrows.'
       )
     }
-    const format: SupportedFormat =
-      molfileFormat === 'v3000' ? 'rxnV3000' : 'rxn'
+    const format =
+      molfileFormat === 'v3000' ? SupportedFormat.rxnV3000 : SupportedFormat.rxn
     const rxnfile = await getStructure(
       format,
       this.#formatterFactory,
@@ -173,20 +177,32 @@ export class Ketcher {
   }
 
   getKet(): Promise<string> {
-    return getStructure('ket', this.#formatterFactory, this.#editor.struct())
+    return getStructure(
+      SupportedFormat.ket,
+      this.#formatterFactory,
+      this.#editor.struct()
+    )
   }
 
   getSmarts(): Promise<string> {
-    return getStructure('smarts', this.#formatterFactory, this.#editor.struct())
+    return getStructure(
+      SupportedFormat.smarts,
+      this.#formatterFactory,
+      this.#editor.struct()
+    )
   }
 
   getCml(): Promise<string> {
-    return getStructure('cml', this.#formatterFactory, this.#editor.struct())
+    return getStructure(
+      SupportedFormat.cml,
+      this.#formatterFactory,
+      this.#editor.struct()
+    )
   }
 
   getInchi(withAuxInfo = false): Promise<string> {
     return getStructure(
-      withAuxInfo ? 'inChIAuxInfo' : 'inChI',
+      withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,
       this.#formatterFactory,
       this.#editor.struct()
     )
@@ -194,7 +210,7 @@ export class Ketcher {
 
   async generateInchIKey(): Promise<string> {
     const struct: string = await getStructure(
-      'ket',
+      SupportedFormat.ket,
       this.#formatterFactory,
       this.#editor.struct()
     )

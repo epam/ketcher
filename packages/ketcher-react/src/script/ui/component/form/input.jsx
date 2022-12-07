@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component } from 'react'
+import { Component, useRef, useEffect } from 'react'
 
 import { omit } from 'lodash/fp'
 import classes from './input.module.less'
@@ -25,8 +25,14 @@ export function GenericInput({
   value = '',
   onChange,
   type = 'text',
+  isFocused = false,
   ...props
 }) {
+  const inputRef = useRef(null)
+  useEffect(() => {
+    if (inputRef.current && isFocused) inputRef.current.focus()
+  }, [inputRef, isFocused])
+
   return (
     <>
       <input
@@ -35,6 +41,7 @@ export function GenericInput({
         onInput={onChange}
         onChange={onChange}
         className={clsx(classes.input, classes.genericInput)}
+        ref={inputRef}
         {...props}
       />
       {type === 'checkbox' && <span className={classes.checkbox} />}

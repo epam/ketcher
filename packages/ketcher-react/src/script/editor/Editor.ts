@@ -29,13 +29,14 @@ import {
   PipelineSubscription,
   Subscription
 } from 'subscription'
+import { RaphaelElement } from 'raphael'
 
 import closest from './shared/closest'
 import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 import { Highlighter } from './highlighter'
-import { EDITOR_HOVER_ICON_PARAMS } from '../../constants'
+// import { EDITOR_HOVER_ICON_PARAMS } from '../../constants'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -110,7 +111,7 @@ class Editor implements KetcherEditor {
   historyPtr: any
   errorHandler: ((message: string) => void) | null
   highlights: Highlighter
-  hoverIcon: any
+  hoverIcon: RaphaelElement /* VMLTextElement */
   event: {
     message: Subscription
     elementEdit: PipelineSubscription
@@ -155,7 +156,8 @@ class Editor implements KetcherEditor {
 
     this.hoverIcon = this.render.paper
       .text(0, 0, '')
-      .attr(EDITOR_HOVER_ICON_PARAMS.atomHoverIcon)
+      .attr('font-size', 14)
+      .attr('opacity', 0.8)
 
     this.event = {
       message: new Subscription(),
@@ -206,9 +208,9 @@ class Editor implements KetcherEditor {
 
     const tool = new toolMap[name](this, opts)
 
-    // hide icon if not AtomToll chosen
-    if (name !== 'atom') {
-      this.render.paper.getById('atomHoverIcon')?.hide()
+    const isAtomToolChosen = name === 'atom'
+    if (!isAtomToolChosen) {
+      this.hoverIcon.hide()
     }
 
     if (!tool || tool.isNotActiveTool) {

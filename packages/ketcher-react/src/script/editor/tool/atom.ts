@@ -45,11 +45,8 @@ class AtomTool {
 
     this.editor.hoverIcon
       .show()
-      .attr([
-        { text: `${atomProps.label}` },
-        { fill: `${ElementColor[atomProps.label]}` }
-      ])
-    this.editor.hoverIcon.id = 'atomHoverIcon'
+      .attr('text', `${atomProps.label}`)
+      .attr('fill', `${ElementColor[atomProps.label]}`)
 
     if (editor.selection()) {
       if (editor.selection()?.atoms) {
@@ -142,8 +139,12 @@ class AtomTool {
     const { layerX, layerY } = event
 
     if (!this.dragCtx || !this.dragCtx.item) {
-      // magic numbers to adjust the position of the icon relative to the mouse pointer
-      this.editor.hoverIcon.attr({ x: layerX - 9, y: layerY - 7 })
+      const { height, width } = this.editor.hoverIcon.getBBox()
+
+      this.editor.hoverIcon.attr({
+        x: layerX - width / 2,
+        y: layerY - height / 2
+      })
       this.editor.hover(
         this.editor.findItem(event, ['atoms', 'functionalGroups'])
       )

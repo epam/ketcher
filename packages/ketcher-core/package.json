@@ -59,6 +59,7 @@
     "@rollup/plugin-strip": "^2.0.0",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.12",
+    "@types/raphael": "^2.3.3",
     "@zerollup/ts-transform-paths": "^1.7.18",
     "babel-jest": "26.6.0",
     "cross-env": "^7.0.3",

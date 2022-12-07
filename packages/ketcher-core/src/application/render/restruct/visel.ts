@@ -17,9 +17,16 @@
 // Visel is a shorthand for VISual ELement
 // It corresponds to a visualization (i.e. set of paths) of an atom or a bond.
 import { Box2Abs, Vec2 } from 'domain/entities'
+import { RaphaelBaseElement } from 'raphael'
 
 class Visel {
-  constructor(type) {
+  public type: string | null // example - 'enhancedFlag'
+  private paths: Array<RaphaelBaseElement>
+  private boxes: Box2Abs[]
+  public boundingBox: Box2Abs | null
+  public exts: Box2Abs[]
+
+  constructor(type: string) {
     this.type = type
     this.paths = []
     this.boxes = []
@@ -27,7 +34,7 @@ class Visel {
     this.exts = []
   }
 
-  add(path, bb, ext) {
+  add(path: RaphaelBaseElement, bb: Box2Abs | null, ext?: Box2Abs) {
     this.paths.push(path)
     if (bb) {
       this.boxes.push(bb)
@@ -44,27 +51,34 @@ class Visel {
     this.boundingBox = null
   }
 
-  translate(...args) {
+  translate(...args: [Vec2] | [number, number]) {
+    // NOTE: Do we need 'two scalar arguments' option? only Vec2 are being passed everywhere
     if (args.length > 2) {
       // TODO: replace to debug time assert
       throw new Error('One vector or two scalar arguments expected')
     }
+
+    let x: number
+    let y: number
+
     if (args.length === 1) {
-      const vector = args[0]
-      this.translate(vector.x, vector.y)
-    } else {
-      const x = args[0]
-      const y = args[1]
-      const delta = new Vec2(x, y)
-      for (let i = 0; i < this.paths.length; ++i) {
-        this.paths[i].translateAbs(x, y)
-      }
-      for (let j = 0; j < this.boxes.length; ++j) {
-        this.boxes[j] = this.boxes[j].translate(delta)
-      }
-      if (this.boundingBox !== null) {
-        this.boundingBox = this.boundingBox.translate(delta)
-      }
+      const vector = args[0] as Vec2
+      x = vector.x
+      y = vector.y
+    }
+
+    x = args[0] as number
+    y = args[1] as number
+
+    const delta = new Vec2(x, y)
+    for (let i = 0; i < this.paths.length; ++i) {
+      this.paths[i].translateAbs(x, y)
+    }
+    for (let j = 0; j < this.boxes.length; ++j) {
+      this.boxes[j] = this.boxes[j].translate(delta)
+    }
+    if (this.boundingBox !== null) {
+      this.boundingBox = this.boundingBox.translate(delta)
     }
   }
 }

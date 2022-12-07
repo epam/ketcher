@@ -39,6 +39,7 @@ import ReText from './retext'
 import { Render } from '../raphaelRender'
 import Visel from './visel'
 import util from '../util'
+import { RaphaelBaseElement } from 'raphael'
 
 class ReStruct {
   public static maps = {
@@ -83,7 +84,7 @@ class ReStruct {
   private enhancedFlagsChanged: Map<number, ReEnhancedFlag> = new Map()
   private bondsChanged: Map<number, ReEnhancedFlag> = new Map()
   private textsChanged: Map<number, ReText> = new Map()
-  constructor(molecule, render: Render) {
+  constructor(molecule: Struct, render: Render) {
     // eslint-disable-line max-statements
     this.render = render
     this.molecule = molecule || new Struct()
@@ -243,7 +244,7 @@ class ReStruct {
   addReObjectPath(
     group: LayerMap,
     visel: Visel,
-    path,
+    path: RaphaelBaseElement,
     pos: Vec2 | null = null,
     visible = false
   ): void {
@@ -255,7 +256,7 @@ class ReStruct {
     paths.forEach((path) => {
       const offset = this.render.options.offset
       let bb = visible ? Box2Abs.fromRelBox(util.relBox(path.getBBox())) : null
-      const ext = pos && bb ? bb.translate(pos.negated()) : null
+      const ext = pos && bb ? bb.translate(pos.negated()) : undefined
       if (offset !== null) {
         path.translateAbs(offset.x, offset.y)
         bb = bb ? bb.translate(offset) : null
@@ -296,9 +297,10 @@ class ReStruct {
   }
 
   clearVisel(visel: Visel): void {
-    visel.paths.forEach((path) => {
-      path.remove()
-    })
+    // TODO: do we need this? visel.clear() contains this.paths = []
+    // visel.paths.forEach((path) => {
+    // path.remove()
+    // })
     visel.clear()
   }
 
@@ -308,7 +310,7 @@ class ReStruct {
     })
   }
 
-  getVBoxObj(selection): Box2Abs | null {
+  getVBoxObj(selection?): Box2Abs | null {
     selection = selection || {}
 
     if (isSelectionEmpty(selection)) {
@@ -331,8 +333,8 @@ class ReStruct {
     return vbox
   }
 
-  translate(d): void {
-    this.eachItem((item) => item.visel.translate(d))
+  translate(diff: Vec2): void {
+    this.eachItem((item) => item.visel.translate(diff))
   }
 
   scale(s: number): void {
@@ -575,7 +577,7 @@ class ReStruct {
     })
   }
 
-  setSelection(selection) {
+  setSelection(selection?) {
     const redraw = arguments.length === 0 // render.update only
     const atoms: { selected: boolean; sgroup: number }[] = []
 

@@ -133,7 +133,7 @@ class Editor implements KetcherEditor {
 
   lastEvent: any
 
-  constructor(clientArea, options) {
+  constructor(clientArea: HTMLElement, options) {
     this.render = new Render(
       clientArea,
       Object.assign(

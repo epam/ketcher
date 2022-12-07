@@ -97,7 +97,6 @@ Render.prototype.page2obj = function (event) {
 }
 
 Render.prototype.setPaperSize = function (sz) {
-  console.log(999, 'zoom', this.options.zoom)
   this.sz = sz
   this.paper.setSize(sz.x * this.options.zoom, sz.y * this.options.zoom)
   this.setViewBox(this.options.zoom)
@@ -182,6 +181,7 @@ Render.prototype.setViewBox = function (z) {
 
 Render.prototype.setMolecule = function (ctab) {
   this.paper.clear()
+  console.log(111, ctab)
   this.ctab = new ReStruct(ctab, this)
   this.options.offset = new Vec2()
   this.update(false)

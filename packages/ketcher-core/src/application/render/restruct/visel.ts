@@ -53,7 +53,7 @@ class Visel {
     this.boundingBox = null
   }
 
-  translate(...args: Vec2[] | number[]) {
+  translate(...args: [Vec2] | [number, number]) {
     // NOTE: Do we need 'two scalar arguments' option? only Vec2 are being passed everywhere
     if (args.length > 2) {
       // TODO: replace to debug time assert

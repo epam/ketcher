@@ -15,17 +15,18 @@
  ***************************************************************************/
 
 import { AlignDescriptors, CanvasLoad } from '../operations'
-
+import { ReStruct } from '../../render'
+import { Struct } from 'domain/entities'
 import { Action } from './action'
 
-export function fromNewCanvas(restruct, struct) {
+export function fromNewCanvas(restruct: ReStruct, struct: Struct) {
   const action = new Action()
 
   action.addOp(new CanvasLoad(struct))
   return action.perform(restruct)
 }
 
-export function fromDescriptorsAlign(restruct) {
+export function fromDescriptorsAlign(restruct: ReStruct) {
   const action = new Action()
   action.addOp(new AlignDescriptors())
   return action.perform(restruct)

@@ -3545,6 +3545,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/raphael@npm:^2.3.3":
+  version: 2.3.3
+  resolution: "@types/raphael@npm:2.3.3"
+  checksum: f1914983d672a9b8495ce97c7417e382465f21ce330419328265c66a69e5a31ae5de353d342a7c12842c8ec81c61e5499eefd91f1caf534eb54ce0ea3911674c
+  languageName: node
+  linkType: hard
+
 "@types/react-dom@npm:*, @types/react-dom@npm:^17.0.11":
   version: 17.0.13
   resolution: "@types/react-dom@npm:17.0.13"
@@ -11200,6 +11207,7 @@ __metadata:
     "@rollup/plugin-strip": ^2.0.0
     "@types/jest": ^27.0.3
     "@types/node": ^16.11.12
+    "@types/raphael": ^2.3.3
     "@zerollup/ts-transform-paths": ^1.7.18
     ajv: ^8.10.0
     assert: ^2.0.0
@@ -11363,6 +11371,7 @@ __metadata:
     "@types/jest": ^27.0.3
     "@types/lodash": ^4.14.178
     "@types/node": ^16.11.12
+    "@types/raphael": ^2.3.3
     "@types/react": ^17.0.37
     "@types/react-dom": ^17.0.11
     "@typescript-eslint/eslint-plugin": ^5.6.0

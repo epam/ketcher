@@ -152,7 +152,6 @@ class Render {
   }
 
   setOffset(newoffset: Vec2) {
-    // console.log('setOffset')
     const delta = new Vec2(
       newoffset.x - this.options.offset.x,
       newoffset.y - this.options.offset.y
@@ -163,27 +162,9 @@ class Render {
   }
 
   setScrollOffset(x: number, y: number) {
-    // console.log(666, 'Before: this.sz', this.sz)
-    // console.log(666, 'Before: this.options.offset', this.options.offset)
-    // console.log(
-    // 666,
-    // 'Before: clientArea.scroll',
-    // this.clientArea.scrollLeft,
-    // this.clientArea.scrollTop
-    // )
-    // console.log(666, 'Before: this.scrollPos', this.scrollPos())
-    // console.log(
-    // 666,
-    // 'Before: clientArea',
-    // this.clientArea.clientWidth,
-    // this.clientArea.clientHeight
-    // )
-
     const clientArea = this.clientArea
     const cx = clientArea.clientWidth
     const cy = clientArea.clientHeight
-    // const cx = clientArea.clientWidth / this.options.scale
-    // const cy = clientArea.clientHeight / this.options.scale
     const extend = calcExtend(
       this.sz.scaled(this.options.zoom),
       x,
@@ -192,49 +173,19 @@ class Render {
       cy + y
     ).scaled(1 / this.options.zoom)
 
-    // const extend = calcExtend(
-    // this.options.scale,
-    // this.sz.scaled(this.options.zoom),
-    // x,
-    // y,
-    // cx + x,
-    // cy + y
-    // ).scaled(1 / this.options.zoom)
-    // console.log(888, 'e', extend)
-
     if (extend.x > 0 || extend.y > 0) {
-      // console.log('extend!')
       this.setPaperSize(this.sz.add(extend))
       const d = new Vec2(x < 0 ? -x : 0, y < 0 ? -y : 0).scaled(
         1 / this.options.zoom
       )
-      // console.log(2222, 'd: ', d)
       if (d.x > 0 || d.y > 0) {
         this.ctab.translate(d)
         this.setOffset(this.options.offset.add(d))
       }
     }
 
-    // clientArea.scrollLeft = x * this.options.scale
-    // clientArea.scrollTop = y * this.options.scale
-    clientArea.scrollLeft = x
-    clientArea.scrollTop = y
-
-    // console.log(777, 'After: this.sz', this.sz)
-    // console.log(777, 'After: this.options.offset', this.options.offset)
-    // console.log(
-    // 777,
-    // 'After: clientArea.scroll',
-    // this.clientArea.scrollLeft,
-    // this.clientArea.scrollTop
-    // )
-    // console.log(777, 'After: this.scrollPos', this.scrollPos())
-
-    // TODO: store drag position in scaled systems
-    // scrollLeft = clientArea.scrollLeft;
-    // scrollTop = clientArea.scrollTop;
-
-    this.update(false)
+    clientArea.scrollLeft = x * this.options.scale
+    clientArea.scrollTop = y * this.options.scale
   }
 
   setZoom(zoom: number) {

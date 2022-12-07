@@ -16,9 +16,12 @@
 
 import {
   Action,
+  Atom,
   Editor as KetcherEditor,
   Pile,
+  Pool,
   Render,
+  ReStruct,
   Struct,
   Vec2,
   fromDescriptorsAlign,
@@ -70,7 +73,7 @@ const highlightTargets = [
 ]
 
 function selectStereoFlagsIfNecessary(
-  atoms: any,
+  atoms: Pool<Atom>,
   expAtoms: number[]
 ): number[] {
   const atomsOfFragments = {}
@@ -130,7 +133,7 @@ class Editor implements KetcherEditor {
 
   lastEvent: any
 
-  constructor(clientArea, options) {
+  constructor(clientArea: HTMLElement, options) {
     this.render = new Render(
       clientArea,
       Object.assign(
@@ -188,7 +191,7 @@ class Editor implements KetcherEditor {
     this.#origin = position ? this.historyStack[position - 1] : null
   }
 
-  tool(name?: any, opts?: any) {
+  tool(name?: string, opts?: any) {
     /* eslint-disable no-underscore-dangle */
     if (arguments.length === 0) {
       return this._tool
@@ -570,17 +573,21 @@ function domEventSetup(editor: Editor, clientArea) {
   })
 }
 
-function recoordinate(editor: Editor, rp /* , vp */) {
+function recoordinate(editor: Editor, rp: Vec2 | null /* , vp */) {
   // rp is a point in scaled coordinates, which will be positioned
   // vp is the point where the reference point should now be (in view coordinates)
   //    or the center if not set
   console.assert(rp, 'Reference point not specified')
-  editor.render.setScrollOffset(0, 0)
+  if (rp) {
+    editor.render.setScrollOffset(rp.x, rp.y)
+  } else {
+    editor.render.setScrollOffset(0, 0)
+  }
 }
 
-function getStructCenter(ReStruct, selection?) {
+function getStructCenter(ReStruct: ReStruct, selection?) {
   const bb = ReStruct.getVBoxObj(selection || {})
-  return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5)
+  return bb ? Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5) : null
 }
 
 export { Editor }

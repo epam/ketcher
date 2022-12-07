@@ -39,7 +39,10 @@ class PasteTool {
     const { clientHeight, clientWidth } = rnd.clientArea
     const point = this.editor.lastEvent
       ? rnd.page2obj(this.editor.lastEvent)
-      : rnd.page2obj({ pageX: clientWidth / 2, pageY: clientHeight / 2 })
+      : rnd.page2obj({
+          clientX: clientWidth / 2,
+          clientY: clientHeight / 2
+        } as MouseEvent)
 
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point)
     this.action = action

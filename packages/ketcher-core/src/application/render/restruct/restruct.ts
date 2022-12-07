@@ -310,7 +310,7 @@ class ReStruct {
     })
   }
 
-  getVBoxObj(selection): Box2Abs | null {
+  getVBoxObj(selection?): Box2Abs | null {
     selection = selection || {}
 
     if (isSelectionEmpty(selection)) {
@@ -333,8 +333,8 @@ class ReStruct {
     return vbox
   }
 
-  translate(targetCoords: Vec2): void {
-    this.eachItem((item) => item.visel.translate(targetCoords))
+  translate(diff: Vec2): void {
+    this.eachItem((item) => item.visel.translate(diff))
   }
 
   scale(s: number): void {
@@ -421,10 +421,14 @@ class ReStruct {
 
     this.verifyLoops()
     const updLoops = force || this.structChanged
-    if (updLoops) this.updateLoops()
+    if (updLoops) {
+      this.updateLoops()
+    }
     this.showLabels()
     this.showBonds()
-    if (updLoops) this.showLoops()
+    if (updLoops) {
+      this.showLoops()
+    }
     this.showReactionSymbols()
     this.showSGroups()
 
@@ -577,7 +581,7 @@ class ReStruct {
     })
   }
 
-  setSelection(selection) {
+  setSelection(selection?) {
     const redraw = arguments.length === 0 // render.update only
     const atoms: { selected: boolean; sgroup: number }[] = []
 

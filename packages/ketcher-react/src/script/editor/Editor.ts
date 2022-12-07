@@ -225,11 +225,24 @@ class Editor implements KetcherEditor {
     // console.log(111, clientHeight, clientWidth) =>  690 667
     // console.log(structCenter) => Vec2{x: 54.40229606628418, y: 53.573699951171875, z: 0}
     recoordinate(this, structCenter)
+
     console.log(
       888,
+      'after recoordinate, clientArea.scroll',
       this.render.clientArea.scrollLeft,
       this.render.clientArea.scrollTop
     )
+    console.log(
+      888,
+      'after recoordinate, render.scrollPos',
+      this.render.scrollPos()
+    )
+    console.log(
+      888,
+      'after recoordinate, render.options.offset',
+      this.render.options.offset
+    )
+
     return this.render.ctab.molecule
   }
 
@@ -279,7 +292,9 @@ class Editor implements KetcherEditor {
       return this.render.options.zoom
     }
 
-    this.render.setZoom(value)
+    if (value) {
+      this.render.setZoom(value)
+    }
 
     const selection = this.selection()
     const structCenter = getStructCenter(this.render.ctab, selection)
@@ -450,7 +465,7 @@ class Editor implements KetcherEditor {
     this.event[eventName].remove(subscriber.handler)
   }
 
-  findItem(event: Event, maps: any, skip: any = null) {
+  findItem(event: MouseEvent, maps: any, skip: any = null) {
     const pos = new Vec2(this.render.page2obj(event))
 
     return closest.item(this.render.ctab, pos, maps, skip, this.render.options)
@@ -589,10 +604,6 @@ function recoordinate(editor: Editor, rp /* , vp */) {
   console.assert(rp, 'Reference point not specified')
   // editor.render.setScrollOffset(0, 0)
   editor.render.setScrollOffset(rp.x, rp.y)
-  // console.log(
-  // editor.render.clientArea.scrollLeft,
-  // editor.render.clientArea.scrollTop
-  // )
 }
 
 function getStructCenter(reStruct: ReStruct, selection?) {
@@ -601,6 +612,7 @@ function getStructCenter(reStruct: ReStruct, selection?) {
 }
 
 function setHover(ci: any, visible: boolean, render: Render) {
+  // console.log(999999, Object.values(HighlightTarget), ci.map)
   if (Object.values(HighlightTarget).indexOf(ci.map) === -1) {
     return false
   }
@@ -608,6 +620,7 @@ function setHover(ci: any, visible: boolean, render: Render) {
   let item: any = null
 
   if (ci.map === 'merge') {
+    console.log('hover merge')
     Object.keys(ci.items).forEach((mp) => {
       ci.items[mp].forEach((dstId) => {
         item = render.ctab[mp].get(dstId)
@@ -622,11 +635,13 @@ function setHover(ci: any, visible: boolean, render: Render) {
   }
 
   if (ci.map === HighlightTarget.functionalGroups) {
+    console.log('hover functionalGroups')
     ci.map = HighlightTarget.sgroups // TODO: Refactor object
   }
 
   item = (render.ctab[ci.map] as Map<any, any>).get(ci.id)
   if (!item) {
+    console.log('hover !item')
     return true // TODO: fix, attempt to highlight a deleted item
   }
 
@@ -634,6 +649,7 @@ function setHover(ci: any, visible: boolean, render: Render) {
     (ci.map === HighlightTarget.sgroups && item.item.type === 'DAT') ||
     ci.map === HighlightTarget.sgroupData
   ) {
+    console.log('hover sgroups')
     // set highlight for both the group and the data item
     const item1 = render.ctab.sgroups.get(ci.id)
     if (item1) {
@@ -642,9 +658,11 @@ function setHover(ci: any, visible: boolean, render: Render) {
 
     const item2 = render.ctab.sgroupData.get(ci.id)
     if (item2) {
+      console.log('hover item2')
       item2.setHover(visible, render)
     }
   } else {
+    console.log('hover else')
     item.setHover(visible, render)
   }
   return true

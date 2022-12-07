@@ -163,7 +163,6 @@ export class Vec2 {
   }
 
   normalize(): boolean {
-    console.log(111, 'normalize')
     const l = this.length()
 
     if (l < 0.000001) return false

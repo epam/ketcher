@@ -15,10 +15,3 @@
  ***************************************************************************/
 
 export const KETCHER_INIT_EVENT_NAME = 'ketcher-init'
-export const EDITOR_HOVER_ICON_PARAMS = {
-  atomHoverIcon: {
-    'font-weight': 700,
-    'font-size': 14,
-    opacity: 0.5
-  }
-}

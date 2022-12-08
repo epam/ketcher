@@ -29,7 +29,6 @@ import {
   PipelineSubscription,
   Subscription
 } from 'subscription'
-import { RaphaelElement } from 'raphael'
 
 import closest from './shared/closest'
 import { customOnChangeHandler } from './utils'
@@ -40,6 +39,7 @@ import { Highlighter } from './highlighter'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
+const HOVER_ICON_OPACITY = 0.7
 
 const structObjects = [
   'atoms',
@@ -111,7 +111,7 @@ class Editor implements KetcherEditor {
   historyPtr: any
   errorHandler: ((message: string) => void) | null
   highlights: Highlighter
-  hoverIcon: RaphaelElement /* VMLTextElement */
+  hoverIcon: any
   event: {
     message: Subscription
     elementEdit: PipelineSubscription
@@ -157,7 +157,7 @@ class Editor implements KetcherEditor {
     this.hoverIcon = this.render.paper
       .text(0, 0, '')
       .attr('font-size', options.fontsz)
-      .attr('opacity', 0.7)
+      .attr('opacity', HOVER_ICON_OPACITY)
 
     this.event = {
       message: new Subscription(),

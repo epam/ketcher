@@ -5665,6 +5665,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"clsx@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "clsx@npm:1.2.1"
+  checksum: 30befca8019b2eb7dbad38cff6266cf543091dae2825c856a62a8ccf2c3ab9c2907c4d12b288b73101196767f66812365400a227581484a05f968b0307cfaf12
+  languageName: node
+  linkType: hard
+
 "co@npm:^4.6.0":
   version: 4.6.0
   resolution: "co@npm:4.6.0"
@@ -11394,6 +11401,7 @@ __metadata:
     postcss: ^8.2.10
     prettier: ^2.5.1
     react-colorful: ^5.4.0
+    react-contexify: ^6.0.0
     react-contextmenu: ^2.14.0
     react-dropzone: ^11.7.1
     react-intersection-observer: ^8.32.1
@@ -14819,6 +14827,18 @@ __metadata:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
   checksum: e60811781716e57f0990379eff20d6f22d4d35b9e858c47ecf857c1dc1c1a2274c924ded7248bad5f1e2fbf2aab06e59b12852910c8dee5e6850f8e4df293670
+  languageName: node
+  linkType: hard
+
+"react-contexify@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "react-contexify@npm:6.0.0"
+  dependencies:
+    clsx: ^1.2.1
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: 242cfc88521b8847650d36ca6485f654101c472aeb910c97e166ff718a9b1df8def9b6e6e1a83c5566836b2a0d73d74ff29d5ee4dd097c88766190b2550c39f3
   languageName: node
   linkType: hard
 

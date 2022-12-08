@@ -297,10 +297,9 @@ class ReStruct {
   }
 
   clearVisel(visel: Visel): void {
-    // TODO: do we need this? visel.clear() contains this.paths = []
-    // visel.paths.forEach((path) => {
-    // path.remove()
-    // })
+    visel.paths.forEach((path) => {
+      path.remove()
+    })
     visel.clear()
   }
 

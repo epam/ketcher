@@ -21,7 +21,7 @@ import { RaphaelBaseElement } from 'raphael'
 
 class Visel {
   public type: string | null // example - 'enhancedFlag'
-  private paths: Array<RaphaelBaseElement>
+  public paths: Array<RaphaelBaseElement>
   private boxes: Box2Abs[]
   public boundingBox: Box2Abs | null
   public exts: Box2Abs[]

@@ -22,7 +22,10 @@ import {
   fromTemplateOnCanvas,
   getHoverToFuse,
   getItemsToFuse,
-  FunctionalGroup
+  FunctionalGroup,
+  SGroup,
+  ReStruct,
+  Struct
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -393,6 +396,16 @@ class TemplateTool {
     let action
     let pasteItems = null
 
+    if (SGroup.isSaltOrSolvent(this.template.molecule.name)) {
+      addSaltsAndSolventsOnCanvasWithoutMerge(
+        restruct,
+        this.template,
+        dragCtx,
+        this.editor
+      )
+      return true
+    }
+
     if (!dragCtx.action) {
       if (!ci) {
         //  ci.type == 'Canvas'
@@ -460,16 +473,18 @@ class TemplateTool {
 
     this.editor.selection(null)
 
-    if (!dragCtx.mergeItems && pasteItems && this.mode !== 'fg')
+    if (!dragCtx.mergeItems && pasteItems && this.mode !== 'fg') {
       dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
+    }
     dragCtx.action = dragCtx.action
       ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
       : fromItemsFuse(restruct, dragCtx.mergeItems)
 
     this.editor.hover(null)
     const completeAction = dragCtx.action
-    if (completeAction && !completeAction.isDummy())
+    if (completeAction && !completeAction.isDummy()) {
       this.editor.update(completeAction)
+    }
     this.editor.event.message.dispatch({
       info: false
     })
@@ -484,6 +499,21 @@ class TemplateTool {
   mouseleave(e) {
     this.mouseup(e)
   }
+}
+
+function addSaltsAndSolventsOnCanvasWithoutMerge(
+  restruct: ReStruct,
+  template: Struct,
+  dragCtx,
+  editor: Editor
+) {
+  const [action] = fromTemplateOnCanvas(restruct, template, dragCtx.xy0, 0)
+  editor.update(action)
+  editor.selection(null)
+  editor.hover(null)
+  editor.event.message.dispatch({
+    info: false
+  })
 }
 
 function getSign(molecule, bond, v) {

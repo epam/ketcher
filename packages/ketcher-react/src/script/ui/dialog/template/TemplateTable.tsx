@@ -24,12 +24,13 @@ import Icon from 'src/script/ui/component/view/icon'
 
 export interface Template {
   struct: Struct
-  modifiedStruct?: Struct // TODO: Do something with that, in future it shouldn't be here
   props: {
     atomid: number
     bondid: number
     group: string
     prerender?: string
+    abbreviation: string
+    name: string
   }
 }
 
@@ -43,8 +44,22 @@ interface TemplateTableProps {
 }
 
 const getSettingsSelector = (state) => state.options.settings
+const isSaltOrSolventTemplate = (template) =>
+  template.props.group === 'Salts and Solvents'
+const isFunctionalGroupTemplate = (template) =>
+  template.props.group === 'Functional Groups'
+
+function getTemplateTitle(template: Template, index: number): string {
+  if (isSaltOrSolventTemplate(template)) {
+    return template.props.name
+  }
+  return template.struct.name || `${template.props.group} template ${index + 1}`
+}
 
 function tmplName(tmpl: Template, i: number): string {
+  if (isSaltOrSolventTemplate(tmpl)) {
+    return tmpl.props.abbreviation
+  }
   return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`
 }
 
@@ -55,7 +70,7 @@ const RenderTmpl: FC<{
 }> = ({ tmpl, options, ...props }) => {
   return (
     <StructRender
-      struct={tmpl.modifiedStruct || tmpl.struct}
+      struct={tmpl.struct}
       options={{ ...options, autoScaleMargin: 15 }}
       {...props}
     />
@@ -87,7 +102,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 ? classes.td
                 : `${classes.td} ${classes.selected}`
             }
-            title={greekify(tmplName(tmpl, i))}
+            title={greekify(getTemplateTitle(tmpl, i))}
             key={
               tmpl.struct.name !== selected?.struct.name
                 ? `${tmpl.struct.name}_${i}`
@@ -115,14 +130,15 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 <Icon name="delete" />
               </button>
             )}
-            {tmpl.props.group !== 'Functional Groups' && (
-              <button
-                className={`${classes.button} ${classes.editButton}`}
-                onClick={() => onAttach!(tmpl)}
-              >
-                <Icon name="edit" />
-              </button>
-            )}
+            {!isFunctionalGroupTemplate(tmpl) &&
+              !isSaltOrSolventTemplate(tmpl) && (
+                <button
+                  className={`${classes.button} ${classes.editButton}`}
+                  onClick={() => onAttach!(tmpl)}
+                >
+                  <Icon name="edit" />
+                </button>
+              )}
           </div>
         )
       })}

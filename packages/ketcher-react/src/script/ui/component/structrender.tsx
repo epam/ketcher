@@ -17,27 +17,36 @@
 import { Component, ComponentType, createRef } from 'react'
 import { MolSerializer, Render, Struct } from 'ketcher-core'
 
+/**
+ * for S-Groups we want to show expanded structure
+ * without brackets
+ */
+function prepareStruct(struct: Struct) {
+  if (struct.sgroups.size > 0) {
+    const newStruct = struct.clone()
+    newStruct.sgroups.delete(0)
+    return newStruct
+  }
+  return struct
+}
+
 function renderStruct(
   el: HTMLElement | null,
   struct: Struct | null,
   options = {}
 ) {
-  if (el) {
-    if (struct) {
-      console.info('render!', el.clientWidth, el.clientWidth)
-      struct.initHalfBonds()
-      struct.initNeighbors()
-      struct.setImplicitHydrogen()
-      struct.markFragments()
-      const rnd = new Render(el, {
-        autoScale: true,
-        ...options
-      })
-      rnd.setMolecule(struct)
-      rnd.update()
-      // console.info('render!');//, el.innerHTML);
-      // struct.prerender = el.innerHTML;
-    }
+  if (el && struct) {
+    const preparedStruct = prepareStruct(struct)
+    preparedStruct.initHalfBonds()
+    preparedStruct.initNeighbors()
+    preparedStruct.setImplicitHydrogen()
+    preparedStruct.markFragments()
+    const rnd = new Render(el, {
+      autoScale: true,
+      ...options
+    })
+    rnd.setMolecule(preparedStruct)
+    rnd.update()
   }
 }
 

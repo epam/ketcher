@@ -156,8 +156,8 @@ class Editor implements KetcherEditor {
 
     this.hoverIcon = this.render.paper
       .text(0, 0, '')
-      .attr('font-size', 14)
-      .attr('opacity', 0.8)
+      .attr('font-size', options.fontsz)
+      .attr('opacity', 0.7)
 
     this.event = {
       message: new Subscription(),

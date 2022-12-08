@@ -293,12 +293,12 @@ export default connect(
       return { ...template, modifiedStruct: struct }
     })
   }),
-  (dispatch: Dispatch<any>, props) => ({
+  (dispatch: Dispatch<any>, props: Props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
     onSelect: (tmpl) => {
       dispatch(selectTmpl(tmpl))
       dispatch(onAction({ tool: 'template', opts: tmpl }))
-      ;(props as any).onOk(tmpl)
+      props.onOk(tmpl)
     },
     onChangeGroup: (group) => dispatch(changeGroup(group)),
     onAttach: (tmpl) => dispatch(editTmpl(tmpl)),

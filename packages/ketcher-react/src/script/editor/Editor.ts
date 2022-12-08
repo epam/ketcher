@@ -35,7 +35,6 @@ import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 import { Highlighter } from './highlighter'
-// import { EDITOR_HOVER_ICON_PARAMS } from '../../constants'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options

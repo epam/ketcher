@@ -94,13 +94,6 @@ enum TemplateTabs {
   FunctionalGroupLibrary = 1
 }
 
-export interface Result {
-  struct: Struct
-  aid: number | null
-  bid: number | null
-  mode: string
-}
-
 const filterLibSelector = createSelector(
   (props: Props) => props.lib,
   (props: Props) => props.filter,

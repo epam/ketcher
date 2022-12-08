@@ -15,7 +15,10 @@
  ***************************************************************************/
 
 import { Component, createRef } from 'react'
-import { ContextMenuTrigger, hideMenu } from 'react-contextmenu'
+import {
+  ContextMenuTrigger as FunctionalGroupTrigger,
+  hideMenu
+} from 'react-contextmenu'
 
 import Editor from '../../../../editor'
 import { FGContextMenu } from '../../../component/ContextMenu/ContextMenu'
@@ -26,6 +29,7 @@ import { upperFirst } from 'lodash/fp'
 import handIcon from '../../../../../icons/files/hand.svg'
 import compressedHandIcon from '../../../../../icons/files/compressed-hand.svg'
 import Cursor from '../Cursor'
+import { ContextMenu, ContextMenuTrigger } from '../ContextMenu'
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -200,33 +204,36 @@ class StructEditor extends Component {
         onMouseDown={(event) => event.preventDefault()}
         {...props}
       >
-        <ContextMenuTrigger
+        <FunctionalGroupTrigger
           id="contextmenu"
           attributes={{
             onClick: hideMenu
           }}
           holdToDisplay={-1}
         >
-          <div
-            ref={this.editorRef}
-            className={clsx(classes.intermediateCanvas)}
-            onMouseDown={(event) => event.preventDefault()}
-          >
-            {/* svg here */}
-          </div>
-          <Cursor
-            Icon={handIcon}
-            PressedIcon={compressedHandIcon}
-            enableHandTool={this.state.enableCursor}
-          />
-          <div className={classes.measureLog} ref={this.logRef} />
-          {indigoVerification && (
-            <div className={classes.spinnerOverlay}>
-              <LoadingCircles />
+          <ContextMenuTrigger>
+            <div
+              ref={this.editorRef}
+              className={clsx(classes.intermediateCanvas)}
+              onMouseDown={(event) => event.preventDefault()}
+            >
+              {/* svg here */}
             </div>
-          )}
-        </ContextMenuTrigger>
+            <Cursor
+              Icon={handIcon}
+              PressedIcon={compressedHandIcon}
+              enableHandTool={this.state.enableCursor}
+            />
+            <div className={classes.measureLog} ref={this.logRef} />
+            {indigoVerification && (
+              <div className={classes.spinnerOverlay}>
+                <LoadingCircles />
+              </div>
+            )}
+          </ContextMenuTrigger>
+        </FunctionalGroupTrigger>
         <FGContextMenu />
+        <ContextMenu />
       </Tag>
     )
   }

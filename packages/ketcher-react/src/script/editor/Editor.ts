@@ -38,6 +38,7 @@ import { Highlighter } from './highlighter'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
+const HOVER_ICON_OPACITY = 0.7
 
 const structObjects = [
   'atoms',
@@ -109,6 +110,7 @@ class Editor implements KetcherEditor {
   historyPtr: any
   errorHandler: ((message: string) => void) | null
   highlights: Highlighter
+  hoverIcon: any
   event: {
     message: Subscription
     elementEdit: PipelineSubscription
@@ -150,6 +152,11 @@ class Editor implements KetcherEditor {
     this.renderAndRecoordinateStruct =
       this.renderAndRecoordinateStruct.bind(this)
     this.setOptions = this.setOptions.bind(this)
+
+    this.hoverIcon = this.render.paper
+      .text(0, 0, '')
+      .attr('font-size', options.fontsz)
+      .attr('opacity', HOVER_ICON_OPACITY)
 
     this.event = {
       message: new Subscription(),
@@ -199,6 +206,11 @@ class Editor implements KetcherEditor {
     }
 
     const tool = new toolMap[name](this, opts)
+
+    const isAtomToolChosen = name === 'atom'
+    if (!isAtomToolChosen) {
+      this.hoverIcon.hide()
+    }
 
     if (!tool || tool.isNotActiveTool) {
       return null

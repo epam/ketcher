@@ -40,7 +40,6 @@ interface TemplateTableProps {
   onDelete?: (tmpl: Template) => void
   onAttach?: (tmpl: Template) => void
   titleRows?: 1 | 2
-  onDoubleClick: (tmpl: Template) => void
 }
 
 const getSettingsSelector = (state) => state.options.settings
@@ -70,7 +69,6 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     onSelect,
     onDelete,
     onAttach,
-    onDoubleClick,
     titleRows = 2
   } = props
   const options = useSelector((state) => getSettingsSelector(state))
@@ -96,7 +94,6 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 : `${tmpl.struct.name}_${i}_selected`
             }
             onClick={() => onSelect(tmpl)}
-            onDoubleClick={() => onDoubleClick(tmpl)}
           >
             <RenderTmpl
               tmpl={tmpl}

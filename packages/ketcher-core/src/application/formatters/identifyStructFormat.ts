@@ -24,16 +24,16 @@ export function identifyStructFormat(
 
   try {
     if (JSON.parse(sanitizedString)) {
-      return 'ket'
+      return SupportedFormat.ket
     }
   } catch (er) {} // eslint-disable-line
 
   if (sanitizedString.indexOf('$RXN') !== -1) {
-    return 'rxn'
+    return SupportedFormat.rxn
   }
 
   if (sanitizedString.indexOf('V3000') !== -1) {
-    return 'molV3000'
+    return SupportedFormat.molV3000
   }
 
   const match = sanitizedString.match(/^(M {2}END|\$END MOL)$/m)
@@ -44,28 +44,28 @@ export function identifyStructFormat(
       end === sanitizedString.length ||
       sanitizedString.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) !== -1
     ) {
-      return 'mol'
+      return SupportedFormat.mol
     }
   }
   if (
     sanitizedString[0] === '<' &&
     sanitizedString.indexOf('<molecule') !== -1
   ) {
-    return 'cml'
+    return SupportedFormat.cml
   }
 
   if (sanitizedString.slice(0, 5) === 'InChI') {
-    return 'inChI'
+    return SupportedFormat.inChI
   }
 
   if (sanitizedString.indexOf('\n') === -1) {
     // TODO: smiles regexp
-    return 'smiles'
+    return SupportedFormat.smiles
   }
 
   if (sanitizedString.indexOf('<CDXML') !== -1) {
-    return 'cdxml'
+    return SupportedFormat.cdxml
   }
   // Molfile by default as Indigo does
-  return 'mol'
+  return SupportedFormat.mol
 }

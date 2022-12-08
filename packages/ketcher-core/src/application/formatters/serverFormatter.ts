@@ -89,7 +89,7 @@ export class ServerFormatter implements StructFormatter {
 
     const data: ConvertData | LayoutData = {
       struct: undefined as any,
-      output_format: getPropertiesByFormat('ket').mime
+      output_format: getPropertiesByFormat(SupportedFormat.ket).mime
     }
 
     const withCoords = getPropertiesByFormat(this.#format).supportsCoords
@@ -115,8 +115,10 @@ export class ServerFormatter implements StructFormatter {
 
       const formatError =
         this.#format === 'smiles'
-          ? `${getPropertiesByFormat('smilesExt').name} and opening of ${
-              getPropertiesByFormat('smiles').name
+          ? `${
+              getPropertiesByFormat(SupportedFormat.smilesExt).name
+            } and opening of ${
+              getPropertiesByFormat(SupportedFormat.smiles).name
             }`
           : getPropertiesByFormat(this.#format).name
 

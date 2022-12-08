@@ -32,7 +32,7 @@ import Icon from '../../component/view/icon'
 import { Dialog } from '../../views/components'
 import Input from '../../component/form/input'
 import SaveButton from '../../component/view/savebutton'
-import { SdfSerializer, Struct } from 'ketcher-core'
+import { SdfSerializer } from 'ketcher-core'
 import classes from './template-lib.module.less'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
@@ -95,13 +95,6 @@ enum TemplateTabs {
   TemplateLibrary = 0,
   FunctionalGroupLibrary = 1,
   SaltsAndSolvents = 2
-}
-
-export interface Result {
-  struct: Struct
-  aid: number | null
-  bid: number | null
-  mode: string
 }
 
 const filterLibSelector = createSelector(
@@ -202,18 +195,6 @@ const TemplateDialog: FC<Props> = (props) => {
     )
   }
 
-  const result = (): Result | null => {
-    const tmpl = props.selected
-    return tmpl
-      ? {
-          struct: tmpl.struct,
-          aid: parseInt(String(tmpl.props.atomid)) || null,
-          bid: parseInt(String(tmpl.props.bondid)) || null,
-          mode: mode
-        }
-      : null
-  }
-
   const sdfSerializer = new SdfSerializer()
   const serializerMapper = {
     [TemplateTabs.TemplateLibrary]: templateLib,
@@ -222,10 +203,9 @@ const TemplateDialog: FC<Props> = (props) => {
   }
   const data = sdfSerializer.serialize(serializerMapper[tab])
 
-  const select = (tmpl: Template, activateImmediately = false): void => {
+  const select = (tmpl: Template): void => {
     onChangeGroup(tmpl.props.group)
-    if (activateImmediately) props.onOk(result())
-    else props.onSelect(tmpl)
+    props.onSelect(tmpl)
   }
 
   return (
@@ -234,7 +214,6 @@ const TemplateDialog: FC<Props> = (props) => {
       footerContent={<FooterContent tab={tab} data={data} />}
       className={`${classes.dialog_body}`}
       params={omit(['group'], rest)}
-      result={() => result()}
       buttons={[]}
       needMargin={false}
     >
@@ -299,7 +278,6 @@ const TemplateDialog: FC<Props> = (props) => {
                             : []
                         }
                         onSelect={(templ) => select(templ)}
-                        onDoubleClick={(templ) => select(templ, true)}
                         selected={props.selected}
                         onDelete={props.onDelete}
                         onAttach={props.onAttach}
@@ -320,7 +298,6 @@ const TemplateDialog: FC<Props> = (props) => {
             <div className={classes.resultsContainer}>
               <TemplateTable
                 titleRows={1}
-                onDoubleClick={(templ) => select(templ, true)}
                 templates={filteredFG}
                 onSelect={(templ) => select(templ)}
                 selected={props.selected}
@@ -337,7 +314,6 @@ const TemplateDialog: FC<Props> = (props) => {
             <div className={classes.resultsContainer}>
               <TemplateTable
                 titleRows={1}
-                onDoubleClick={(templ) => select(templ, true)}
                 templates={filteredSaltsAndSolvents}
                 onSelect={(templ) => select(templ)}
                 selected={props.selected}
@@ -361,15 +337,15 @@ export default connect(
     functionalGroups: functionalGroupsSelector(store),
     saltsAndSolvents: saltsAndSolventsSelector(store)
   }),
-  (dispatch: Dispatch<any>, props) => ({
+  (dispatch: Dispatch<any>, props: Props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
-    onSelect: (tmpl) => dispatch(selectTmpl(tmpl)),
+    onSelect: (tmpl) => {
+      dispatch(selectTmpl(tmpl))
+      dispatch(onAction({ tool: 'template', opts: tmpl }))
+      props.onOk(tmpl)
+    },
     onChangeGroup: (group) => dispatch(changeGroup(group)),
     onAttach: (tmpl) => dispatch(editTmpl(tmpl)),
-    onDelete: (tmpl) => dispatch(deleteTmpl(tmpl)),
-    onOk: (res) => {
-      dispatch(onAction({ tool: 'template', opts: res }))
-      ;(props as any).onOk(res)
-    }
+    onDelete: (tmpl) => dispatch(deleteTmpl(tmpl))
   })
 )(TemplateDialog)

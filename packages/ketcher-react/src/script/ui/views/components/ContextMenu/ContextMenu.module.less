@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* stylelint-disable selector-pseudo-class-no-unknown */
 @import 'src/style/variables';
 @import 'src/style/mixins';
 
@@ -27,7 +28,6 @@
   --contexify-activeRightSlot-color: @color-text-secondary;
   --contexify-arrow-color: @color-grey-5;
   --contexify-activeArrow-color: @color-grey-5;
-
   --contexify-menu-shadow: 0 2px 5px 0 rgba(@main-color, 0.54);
   --contexify-zIndex: 666;
   --contexify-menu-minWidth: 180px;
@@ -35,20 +35,20 @@
   --contexify-menu-radius: 4px;
   --contexify-menu-negatePadding: var(--contexify-menu-padding);
   --contexify-itemContent-padding: 3px 20px;
-  --contexify-activeItem-radius: 0px;
+  --contexify-activeItem-radius: 0;
 
   line-height: 1.5;
-
-  .subMenu {
-    :global(.contexify_rightSlot) {
-      margin-right: -5px;
-    }
-  }
 
   .icon {
     width: 20px;
     height: 20px;
     margin: 0 10px 0 -10px;
+  }
+
+  :global(.contexify_submenu) {
+    max-height: 300px;
+    overflow: auto;
+    .scrollbar();
   }
 
   :global(.contexify_item):not(:last-child) {
@@ -60,9 +60,9 @@
     }
   }
 
-  :global(.contexify_submenu) {
-    max-height: 300px;
-    overflow: auto;
-    .scrollbar();
+  .subMenu {
+    :global(.contexify_rightSlot) {
+      margin-right: -5px;
+    }
   }
 }

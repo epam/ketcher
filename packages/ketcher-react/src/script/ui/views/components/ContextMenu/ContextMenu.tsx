@@ -173,7 +173,7 @@ const ContextMenu: React.FC = () => {
       </Submenu>
 
       <Item hidden={isBatchOpHidden} onClick={handleBatchDelete}>
-        Delete selected bonds(s)
+        Delete selected bond(s)
       </Item>
     </Menu>
   )

@@ -110,7 +110,7 @@ const BondBatchOperations: React.FC = (props) => {
         {bondTools.map((name) => (
           <Item id={name} onClick={handleBatchTypeChange} key={name}>
             <Icon name={name} className={styles.icon} />
-            <span>{tools[name].title}</span>
+            <span>{tools[name].title.slice(0, -5)}</span>
           </Item>
         ))}
       </Submenu>

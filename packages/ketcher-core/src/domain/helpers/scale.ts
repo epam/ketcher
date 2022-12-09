@@ -20,15 +20,15 @@ export interface ScaleOptions {
   scale: number
 }
 
-function scaled2obj(v: Vec2, options: ScaleOptions): Vec2 {
+function reduceBy(v: Vec2, options: ScaleOptions): Vec2 {
   return v.scaled(1 / options.scale)
 }
 
-function obj2scaled(v: Vec2, options: ScaleOptions): Vec2 {
+function increaseBy(v: Vec2, options: ScaleOptions): Vec2 {
   return v.scaled(options.scale)
 }
 
 export const Scale = {
-  scaled2obj,
-  obj2scaled
+  reduceBy,
+  increaseBy
 }

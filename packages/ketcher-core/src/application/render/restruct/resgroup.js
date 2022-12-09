@@ -218,9 +218,9 @@ function SGroupdrawBrackets(
     const bracket = brackets[i]
     const path = draw.bracket(
       render.paper,
-      Scale.obj2scaled(bracket.d, render.options),
-      Scale.obj2scaled(bracket.n, render.options),
-      Scale.obj2scaled(bracket.c, render.options),
+      Scale.increaseBy(bracket.d, render.options),
+      Scale.increaseBy(bracket.n, render.options),
+      Scale.increaseBy(bracket.c, render.options),
       bracket.w,
       bracket.h,
       render.options
@@ -236,7 +236,7 @@ function SGroupdrawBrackets(
   }
   const bracketR = brackets[ir]
   function renderIndex(text, shift) {
-    const indexPos = Scale.obj2scaled(
+    const indexPos = Scale.increaseBy(
       bracketR.c.addScaled(bracketR.n, shift * bracketR.h),
       render.options
     )
@@ -303,7 +303,7 @@ function drawAbsoluteDat(restruct, sgroup) {
   set.push(name)
 
   const sbox = Box2Abs.fromRelBox(util.relBox(name.getBBox()))
-  sgroup.dataArea = sbox.transform(Scale.scaled2obj, render.options)
+  sgroup.dataArea = sbox.transform(Scale.reduceBy, render.options)
 
   if (!restruct.sgroupData.has(sgroup.id)) {
     restruct.sgroupData.set(sgroup.id, new ReDataSGroupData(sgroup))
@@ -320,7 +320,7 @@ function drawAttachedDat(restruct, sgroup) {
 
   SGroup.getAtoms(restruct, sgroup).forEach((aid) => {
     const atom = restruct.atoms.get(aid)
-    const p = Scale.obj2scaled(atom.a.pp, options)
+    const p = Scale.increaseBy(atom.a.pp, options)
     const bb = atom.visel.boundingBox
 
     if (bb !== null) p.x = Math.max(p.x, bb.p1.x)
@@ -334,7 +334,7 @@ function drawAttachedDat(restruct, sgroup) {
     set.push(nameI)
 
     let sboxI = Box2Abs.fromRelBox(util.relBox(nameI.getBBox()))
-    sboxI = sboxI.transform(Scale.scaled2obj, render.options)
+    sboxI = sboxI.transform(Scale.reduceBy, render.options)
     sgroup.areas.push(sboxI)
   })
 
@@ -408,7 +408,7 @@ function getBracketParameters(
         let bba = render.ctab.sgroups.get(sgid).visel.boundingBox
         bba = bba
           .translate((render.options.offset || new Vec2()).negated())
-          .transform(Scale.scaled2obj, render.options)
+          .transform(Scale.reduceBy, render.options)
         tl = Math.max(tl, util.shiftRayBox(cl0, dl, bba))
         tr = Math.max(tr, util.shiftRayBox(cr0, dr, bba))
         tt = Math.max(tt, util.shiftRayBox(cc, dt, bba))
@@ -448,7 +448,7 @@ function getBracketParameters(
 }
 
 function getHighlighPathInfo(sgroup, options) {
-  let bracketBox = sgroup.bracketBox.transform(Scale.obj2scaled, options)
+  let bracketBox = sgroup.bracketBox.transform(Scale.increaseBy, options)
   const lineWidth = options.lineWidth
   const vext = new Vec2(lineWidth * 4, lineWidth * 6)
   bracketBox = bracketBox.extend(vext, vext)

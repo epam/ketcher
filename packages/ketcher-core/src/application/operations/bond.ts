@@ -142,7 +142,7 @@ export class MoveBond extends BaseOperation {
   execute(_struct: Struct): PerformOperationResult {
     // TODO: move to renderer
     // const bond = restruct.bonds.get(bid)
-    // const scaled = Scale.obj2scaled(d, restruct.render.options)
+    // const scaled = Scale.increaseBy(d, restruct.render.options)
     // bond.visel.translate(scaled)
 
     const inverseOperation = new MoveBond(this.#bondId, this.#delta.negated())

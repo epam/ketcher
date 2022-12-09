@@ -93,7 +93,7 @@ class ReAtom extends ReObject {
   makeHoverPlate(render: Render) {
     const paper = render.paper
     const options = render.options
-    const ps = Scale.obj2scaled(this.a.pp, options)
+    const ps = Scale.increaseBy(this.a.pp, options)
     const atom = this.a
     const sgroups = render.ctab.sgroups
     const functionalGroups = render.ctab.molecule.functionalGroups
@@ -127,7 +127,7 @@ class ReAtom extends ReObject {
       return null
     }
 
-    const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
+    const ps = Scale.increaseBy(this.a.pp, restruct.render.options)
     return paper
       .circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
       .attr(styles.selectionStyle)
@@ -139,7 +139,7 @@ class ReAtom extends ReObject {
     const sgroups = restruct.molecule.sgroups
     const functionalGroups = restruct.molecule.functionalGroups
     const render = restruct.render
-    const ps = Scale.obj2scaled(this.a.pp, render.options)
+    const ps = Scale.increaseBy(this.a.pp, render.options)
 
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
@@ -393,7 +393,7 @@ class ReAtom extends ReObject {
     if (isHighlighted) {
       const style = { fill: highlightColor, stroke: 'none' }
 
-      const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
+      const ps = Scale.increaseBy(this.a.pp, restruct.render.options)
       const path = render.paper
         .circle(ps.x, ps.y, options.atomSelectionPlateRadius * 0.8)
         .attr(style)
@@ -625,7 +625,7 @@ function getLabelText(atom) {
 }
 
 function showHydroIndex(atom, render, implh, rightMargin): ElemAttr {
-  const ps = Scale.obj2scaled(atom.a.pp, render.options)
+  const ps = Scale.increaseBy(atom.a.pp, render.options)
   const options = render.options
   const delta = 0.5 * options.lineWidth
   const hydroIndex: any = {}
@@ -649,7 +649,7 @@ function showHydroIndex(atom, render, implh, rightMargin): ElemAttr {
 }
 
 function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
-  const ps: Vec2 = Scale.obj2scaled(atom.a.pp, render.options)
+  const ps: Vec2 = Scale.increaseBy(atom.a.pp, render.options)
   const options = render.options
   const paper: any = render.paper
   const radical: any = {}
@@ -693,7 +693,7 @@ function showIsotope(
   render: Render,
   leftMargin: number
 ): ElemAttr {
-  const ps = Scale.obj2scaled(atom.a.pp, render.options)
+  const ps = Scale.increaseBy(atom.a.pp, render.options)
   const options = render.options
   const delta = 0.5 * options.lineWidth
   const isotope: any = {}
@@ -721,7 +721,7 @@ function showCharge(
   render: Render,
   rightMargin: number
 ): ElemAttr {
-  const ps = Scale.obj2scaled(atom.a.pp, render.options)
+  const ps = Scale.increaseBy(atom.a.pp, render.options)
   const options = render.options
   const delta = 0.5 * options.lineWidth
   const charge: any = {}
@@ -771,7 +771,7 @@ function showExplicitValence(
     13: 'XIII',
     14: 'XIV'
   }
-  const ps = Scale.obj2scaled(atom.a.pp, render.options)
+  const ps = Scale.increaseBy(atom.a.pp, render.options)
   const options = render.options
   const delta = 0.5 * options.lineWidth
   const valence: any = {}
@@ -817,7 +817,7 @@ function showHydrogen(
   // eslint-disable-line max-statements
   let hydroIndex: any = data.hydroIndex
   const hydrogenLeft = atom.hydrogenOnTheLeft
-  const ps = Scale.obj2scaled(atom.a.pp, render.options)
+  const ps = Scale.increaseBy(atom.a.pp, render.options)
   const options = render.options
   const delta = 0.5 * options.lineWidth
   const hydrogen = data.hydrogen
@@ -891,7 +891,7 @@ function showWarning(
   leftMargin,
   rightMargin
 ): { rbb: DOMRect; path: any } {
-  const ps = Scale.obj2scaled(atom.a.pp, render.options)
+  const ps = Scale.increaseBy(atom.a.pp, render.options)
   const delta = 0.5 * render.options.lineWidth
   const tfx = util.tfx
   const warning: any = {}
@@ -913,7 +913,7 @@ function showWarning(
 function showAttpnt(atom, render, lsb, addReObjectPath) {
   // eslint-disable-line max-statements
   const asterisk = '∗'
-  const ps = Scale.obj2scaled(atom.a.pp, render.options)
+  const ps = Scale.increaseBy(atom.a.pp, render.options)
   const options = render.options
   const tfx = util.tfx
   let i, j

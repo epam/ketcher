@@ -42,7 +42,7 @@ export class TextMove extends BaseOperation {
     item?.position?.add_(difference)
     restruct.texts
       .get(id)
-      ?.visel.translate(Scale.obj2scaled(difference, restruct.render.options))
+      ?.visel.translate(Scale.increaseBy(difference, restruct.render.options))
 
     this.data.d = difference.negated()
 

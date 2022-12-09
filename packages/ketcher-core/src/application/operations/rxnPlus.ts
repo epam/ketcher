@@ -103,7 +103,7 @@ export class MoveRxnPlus extends BaseOperation {
 
     // TODO: move to renderer
     // const rxn = restruct.rxnPluses.get(id)!
-    // const scaled = Scale.obj2scaled(d, restruct.render.options)
+    // const scaled = Scale.increaseBy(d, restruct.render.options)
     // rxn.visel.translate(scaled)
 
     const inverseOperation = new MoveRxnPlus(

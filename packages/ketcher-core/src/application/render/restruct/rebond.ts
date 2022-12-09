@@ -74,7 +74,7 @@ class ReBond extends ReObject {
       return null
     }
 
-    const c = Scale.obj2scaled(this.b.center, options)
+    const c = Scale.increaseBy(this.b.center, options)
     return render.paper
       .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
       .attr(options.hoverStyle)
@@ -96,7 +96,7 @@ class ReBond extends ReObject {
       return null
     }
 
-    const c = Scale.obj2scaled(this.b.center, options)
+    const c = Scale.increaseBy(this.b.center, options)
     return paper
       .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
       .attr(options.selectionStyle)
@@ -235,7 +235,7 @@ class ReBond extends ReObject {
         'stroke-linecap': 'round'
       }
 
-      const c = Scale.obj2scaled(this.b.center, restruct.render.options)
+      const c = Scale.increaseBy(this.b.center, restruct.render.options)
 
       const highlightPath = getHighlightPath(restruct, hb1, hb2)
       highlightPath.attr(style)
@@ -999,8 +999,8 @@ function bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
     return
   }
 
-  const p1 = Scale.obj2scaled(atom1.a.pp, render.options)
-  const p2 = Scale.obj2scaled(atom2.a.pp, render.options)
+  const p1 = Scale.increaseBy(atom1.a.pp, render.options)
+  const p2 = Scale.increaseBy(atom2.a.pp, render.options)
   const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1)
   const hb2 = restruct.molecule.halfBonds.get(bond.b.hb2)
 

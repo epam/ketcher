@@ -193,7 +193,7 @@ class ReSimpleObject extends ReObject {
     const point: Array<Vec2> = []
 
     this.item.pos.forEach((p, index) => {
-      point[index] = Scale.obj2scaled(p, render.options)
+      point[index] = Scale.increaseBy(p, render.options)
     })
     const scaleFactor = render.options.scale
 
@@ -350,7 +350,7 @@ class ReSimpleObject extends ReObject {
 
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any): any {
     const pos = this.item.pos.map((p) => {
-      return Scale.obj2scaled(p, restruct.render.options) || new Vec2()
+      return Scale.increaseBy(p, restruct.render.options) || new Vec2()
     })
 
     const refPoints = this.getReferencePoints()
@@ -362,7 +362,7 @@ class ReSimpleObject extends ReObject {
       )
     )
     refPoints.forEach((rp) => {
-      const scaledRP = Scale.obj2scaled(rp, restruct.render.options)
+      const scaledRP = Scale.increaseBy(rp, restruct.render.options)
       selectionSet.push(
         restruct.render.paper
           .circle(scaledRP.x, scaledRP.y, scaleFactor / 8)
@@ -375,7 +375,7 @@ class ReSimpleObject extends ReObject {
   show(restruct: ReStruct, options: any): void {
     const render = restruct.render
     const pos = this.item.pos.map((p) => {
-      return Scale.obj2scaled(p, options) || new Vec2()
+      return Scale.increaseBy(p, options) || new Vec2()
     })
 
     const path = generatePath(this.item.mode, render.paper, pos, options)

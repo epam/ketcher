@@ -68,11 +68,11 @@ Render.prototype.view2obj = function (p, isRelative) {
     scroll = scroll.scaled(1 / this.options.zoom)
   }
   p = isRelative ? p : p.add(scroll).sub(this.options.offset)
-  return Scale.scaled2obj(p, this.options)
+  return Scale.reduceBy(p, this.options)
 }
 
 Render.prototype.obj2view = function (v, isRelative) {
-  let p = Scale.obj2scaled(v, this.options)
+  let p = Scale.increaseBy(v, this.options)
   p = isRelative
     ? p
     : p
@@ -199,7 +199,7 @@ Render.prototype.update = function (force = false, viewSz = null) {
     const sf = this.options.scale
     const bb = this.ctab
       .getVBoxObj()
-      .transform(Scale.obj2scaled, this.options)
+      .transform(Scale.increaseBy, this.options)
       .translate(this.options.offset || new Vec2())
 
     if (!this.options.autoScale) {

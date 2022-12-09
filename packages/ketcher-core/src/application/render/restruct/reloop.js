@@ -45,7 +45,7 @@ class ReLoop extends ReObject {
     loop.hbs.forEach((hbid) => {
       const hb = molecule.halfBonds.get(hbid)
       const bond = restruct.bonds.get(hb.bid)
-      const apos = Scale.obj2scaled(restruct.atoms.get(hb.begin).a.pp, options)
+      const apos = Scale.increaseBy(restruct.atoms.get(hb.begin).a.pp, options)
       if (bond.b.type !== Bond.PATTERN.TYPE.AROMATIC) loop.aromatic = false
       this.centre.add_(apos) // eslint-disable-line no-underscore-dangle
     })
@@ -64,8 +64,8 @@ class ReLoop extends ReObject {
     this.radius = -1
     loop.hbs.forEach((hbid) => {
       const hb = molecule.halfBonds.get(hbid)
-      const apos = Scale.obj2scaled(restruct.atoms.get(hb.begin).a.pp, options)
-      const bpos = Scale.obj2scaled(restruct.atoms.get(hb.end).a.pp, options)
+      const apos = Scale.increaseBy(restruct.atoms.get(hb.begin).a.pp, options)
+      const bpos = Scale.increaseBy(restruct.atoms.get(hb.end).a.pp, options)
       const n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized()
       const dist = Vec2.dot(Vec2.diff(apos, this.centre), n)
       this.radius = this.radius < 0 ? dist : Math.min(this.radius, dist)
@@ -89,7 +89,7 @@ class ReLoop extends ReObject {
         )
         const halfAngle = (Math.PI - angle) / 2
         const dir = hbb.dir.rotate(halfAngle)
-        const pi = Scale.obj2scaled(restruct.atoms.get(hbb.begin).a.pp, options)
+        const pi = Scale.increaseBy(restruct.atoms.get(hbb.begin).a.pp, options)
         let sin = Math.sin(halfAngle)
         const minSin = 0.1
         if (Math.abs(sin) < minSin) sin = (sin * minSin) / Math.abs(sin)

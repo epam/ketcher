@@ -67,7 +67,7 @@ export class MoveAtom extends BaseOperation {
     // TODO: move to renderer
     // const reatom = restruct.atoms.get(aid)
     // if (reatom) {
-    //   const scaled = Scale.obj2scaled(d, restruct.render.options)
+    //   const scaled = Scale.increaseBy(d, restruct.render.options)
     //   reatom.visel.translate(scaled)
     // }
 

@@ -105,7 +105,7 @@ export class MoveText extends BaseOperation {
     // TODO: move to renderer
     // restruct.texts
     //   .get(id)
-    //   ?.visel.translate(Scale.obj2scaled(difference, restruct.render.options))
+    //   ?.visel.translate(Scale.increaseBy(difference, restruct.render.options))
 
     const inverseOperation = new MoveText(this.#textId, this.#delta.negated())
 

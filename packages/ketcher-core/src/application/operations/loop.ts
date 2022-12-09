@@ -43,7 +43,7 @@ export class MoveLoop extends BaseOperation {
     // const reloop = restruct.reloops.get(id)
 
     // if (reloop && reloop.visel) {
-    //   const scaled = Scale.obj2scaled(d, restruct.render.options)
+    //   const scaled = Scale.increaseBy(d, restruct.render.options)
     //   reloop.visel.translate(scaled)
     // }
     // this.data.d = d.negated()

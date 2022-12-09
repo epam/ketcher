@@ -83,7 +83,7 @@ class LassoHelper {
     if (this.points && this.points.length > 1) {
       const rnd = this.editor.render
       const dp = this.points.map((p) =>
-        Scale.obj2scaled(p, rnd.options).add(rnd.options.offset)
+        Scale.increaseBy(p, rnd.options).add(rnd.options.offset)
       )
       this.selection =
         this.mode === 0

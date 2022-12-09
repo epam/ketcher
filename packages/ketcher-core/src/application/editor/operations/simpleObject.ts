@@ -138,7 +138,7 @@ export class SimpleObjectMove extends Base {
     item.pos.forEach((p) => p.add_(d))
     restruct.simpleObjects
       .get(id)
-      .visel.translate(Scale.obj2scaled(d, restruct.render.options))
+      .visel.translate(Scale.increaseBy(d, restruct.render.options))
     this.data.d = d.negated()
     if (!this.data.noinvalidate) {
       Base.invalidateItem(restruct, 'simpleObjects', id, 1)
@@ -254,7 +254,7 @@ export class SimpleObjectResize extends Base {
 
     restruct.simpleObjects
       .get(id)
-      .visel.translate(Scale.obj2scaled(d, restruct.render.options))
+      .visel.translate(Scale.increaseBy(d, restruct.render.options))
     this.data.d = d.negated()
     if (!this.data.noinvalidate) {
       Base.invalidateItem(restruct, 'simpleObjects', id, 1)

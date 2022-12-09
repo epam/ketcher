@@ -32,7 +32,7 @@ class ReRxnPlus extends ReObject {
   }
 
   hoverPath(render) {
-    const p = Scale.obj2scaled(this.item.pp, render.options)
+    const p = Scale.increaseBy(this.item.pp, render.options)
     const s = render.options.scale
     /* eslint-disable no-mixed-operators */
     return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8)
@@ -52,7 +52,7 @@ class ReRxnPlus extends ReObject {
 
   show(restruct, id, options) {
     const render = restruct.render
-    const centre = Scale.obj2scaled(this.item.pp, options)
+    const centre = Scale.increaseBy(this.item.pp, options)
     const path = draw.plus(render.paper, centre, options)
     const offset = options.offset
     if (offset != null) path.translateAbs(offset.x, offset.y)

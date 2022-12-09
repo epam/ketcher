@@ -82,8 +82,8 @@ class ReactionMapTool {
     if (p1 && p2) {
       const rnd = this.editor.render
       this.line = rnd.selectionLine(
-        Scale.obj2scaled(p1, rnd.options).add(rnd.options.offset),
-        Scale.obj2scaled(p2, rnd.options).add(rnd.options.offset)
+        Scale.increaseBy(p1, rnd.options).add(rnd.options.offset),
+        Scale.increaseBy(p2, rnd.options).add(rnd.options.offset)
       )
     }
   }

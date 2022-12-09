@@ -62,7 +62,7 @@ class ReFrag extends ReObject {
         if (!render) render = global._ui_editor.render // eslint-disable-line
         bba = bba
           .translate((render.options.offset || new Vec2()).negated())
-          .transform(Scale.scaled2obj, render.options)
+          .transform(Scale.reduceBy, render.options)
       }
       ret = ret ? Box2Abs.union(ret, bba) : bba
     })
@@ -76,8 +76,8 @@ class ReFrag extends ReObject {
     const bb = this.calcBBox(render.ctab, fid, render)
 
     if (bb) {
-      const p0 = Scale.obj2scaled(new Vec2(bb.p0.x, bb.p0.y), render.options)
-      const p1 = Scale.obj2scaled(new Vec2(bb.p1.x, bb.p1.y), render.options)
+      const p0 = Scale.increaseBy(new Vec2(bb.p0.x, bb.p0.y), render.options)
+      const p1 = Scale.increaseBy(new Vec2(bb.p1.x, bb.p1.y), render.options)
       return render.paper
         .rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0)
         .attr(attrs)

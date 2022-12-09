@@ -137,7 +137,7 @@ class ReRxnArrow extends ReObject {
     )
 
     refPoints.forEach((rp) => {
-      const scaledRP = Scale.obj2scaled(rp, restruct.render.options)
+      const scaledRP = Scale.increaseBy(rp, restruct.render.options)
       selectionSet.push(
         restruct.render.paper
           .circle(scaledRP.x, scaledRP.y, scaleFactor / 8)
@@ -152,7 +152,7 @@ class ReRxnArrow extends ReObject {
     const item = this.item
     const height = RxnArrow.isElliptical(item) && item.height! * options.scale
     const pos = item.pos.map((p) => {
-      return Scale.obj2scaled(p, options) || new Vec2()
+      return Scale.increaseBy(p, options) || new Vec2()
     })
     const { length, angle } = this.getArrowParams(
       pos[0].x,

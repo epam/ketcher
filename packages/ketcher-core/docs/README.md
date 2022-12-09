@@ -157,23 +157,23 @@ ketcher-core
 
 ### AutomapMode
 
-Ƭ **AutomapMode**: ``"discard"`` \| ``"keep"`` \| ``"alter"`` \| ``"clear"``
+Ƭ **AutomapMode**: `"discard"` \| `"keep"` \| `"alter"` \| `"clear"`
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/services/struct/structService.types.ts:107](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/services/struct/structService.types.ts#L107)
 
-___
+---
 
 ### CalculateProps
 
-Ƭ **CalculateProps**: ``"molecular-weight"`` \| ``"most-abundant-mass"`` \| ``"monoisotopic-mass"`` \| ``"gross"`` \| ``"mass-composition"``
+Ƭ **CalculateProps**: `"molecular-weight"` \| `"most-abundant-mass"` \| `"monoisotopic-mass"` \| `"gross"` \| `"mass-composition"`
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/services/struct/structService.types.ts:94](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/services/struct/structService.types.ts#L94)
 
-___
+---
 
 ### CalculateResult
 
@@ -183,21 +183,21 @@ ___
 
 [packages/ketcher-core/src/domain/services/struct/structService.types.ts:105](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/services/struct/structService.types.ts#L105)
 
-___
+---
 
 ### CheckTypes
 
-Ƭ **CheckTypes**: ``"radicals"`` \| ``"pseudoatoms"`` \| ``"stereo"`` \| ``"query"`` \| ``"overlapping_atoms"`` \| ``"overlapping_bonds"`` \| ``"rgroups"`` \| ``"chiral"`` \| ``"3d"`` \| ``"chiral_flag"`` \| ``"valence"``
+Ƭ **CheckTypes**: `"radicals"` \| `"pseudoatoms"` \| `"stereo"` \| `"query"` \| `"overlapping_atoms"` \| `"overlapping_bonds"` \| `"rgroups"` \| `"chiral"` \| `"3d"` \| `"chiral_flag"` \| `"valence"`
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/services/struct/structService.types.ts:46](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/services/struct/structService.types.ts#L46)
 
-___
+---
 
 ### ElementLabel
 
-Ƭ **ElementLabel**: ``"H"`` \| ``"He"`` \| ``"Li"`` \| ``"Be"`` \| ``"B"`` \| ``"C"`` \| ``"N"`` \| ``"O"`` \| ``"F"`` \| ``"Ne"`` \| ``"Na"`` \| ``"Mg"`` \| ``"Al"`` \| ``"Si"`` \| ``"P"`` \| ``"S"`` \| ``"Cl"`` \| ``"Ar"`` \| ``"K"`` \| ``"Ca"`` \| ``"Sc"`` \| ``"Ti"`` \| ``"V"`` \| ``"Cr"`` \| ``"Mn"`` \| ``"Fe"`` \| ``"Co"`` \| ``"Ni"`` \| ``"Cu"`` \| ``"Zn"`` \| ``"Ga"`` \| ``"Ge"`` \| ``"As"`` \| ``"Se"`` \| ``"Br"`` \| ``"Kr"`` \| ``"Rb"`` \| ``"Sr"`` \| ``"Y"`` \| ``"Zr"`` \| ``"Nb"`` \| ``"Mo"`` \| ``"Tc"`` \| ``"Ru"`` \| ``"Rh"`` \| ``"Pd"`` \| ``"Ag"`` \| ``"Cd"`` \| ``"In"`` \| ``"Sn"`` \| ``"Sb"`` \| ``"Te"`` \| ``"I"`` \| ``"Xe"`` \| ``"Cs"`` \| ``"Ba"`` \| ``"La"`` \| ``"Ce"`` \| ``"Pr"`` \| ``"Nd"`` \| ``"Pm"`` \| ``"Sm"`` \| ``"Eu"`` \| ``"Gd"`` \| ``"Tb"`` \| ``"Dy"`` \| ``"Ho"`` \| ``"Er"`` \| ``"Tm"`` \| ``"Yb"`` \| ``"Lu"`` \| ``"Hf"`` \| ``"Ta"`` \| ``"W"`` \| ``"Re"`` \| ``"Os"`` \| ``"Ir"`` \| ``"Pt"`` \| ``"Au"`` \| ``"Hg"`` \| ``"Tl"`` \| ``"Pb"`` \| ``"Bi"`` \| ``"Po"`` \| ``"At"`` \| ``"Rn"`` \| ``"Fr"`` \| ``"Ra"`` \| ``"Ac"`` \| ``"Th"`` \| ``"Pa"`` \| ``"U"`` \| ``"Np"`` \| ``"Pu"`` \| ``"Am"`` \| ``"Cm"`` \| ``"Bk"`` \| ``"Cf"`` \| ``"Es"`` \| ``"Fm"`` \| ``"Md"`` \| ``"No"`` \| ``"Lr"`` \| ``"Rf"`` \| ``"Db"`` \| ``"Sg"`` \| ``"Bh"`` \| ``"Hs"`` \| ``"Mt"`` \| ``"Ds"`` \| ``"Rg"`` \| ``"Cn"`` \| ``"Nh"`` \| ``"Fl"`` \| ``"Mc"`` \| ``"Lv"`` \| ``"Ts"`` \| ``"Og"``
+Ƭ **ElementLabel**: `"H"` \| `"He"` \| `"Li"` \| `"Be"` \| `"B"` \| `"C"` \| `"N"` \| `"O"` \| `"F"` \| `"Ne"` \| `"Na"` \| `"Mg"` \| `"Al"` \| `"Si"` \| `"P"` \| `"S"` \| `"Cl"` \| `"Ar"` \| `"K"` \| `"Ca"` \| `"Sc"` \| `"Ti"` \| `"V"` \| `"Cr"` \| `"Mn"` \| `"Fe"` \| `"Co"` \| `"Ni"` \| `"Cu"` \| `"Zn"` \| `"Ga"` \| `"Ge"` \| `"As"` \| `"Se"` \| `"Br"` \| `"Kr"` \| `"Rb"` \| `"Sr"` \| `"Y"` \| `"Zr"` \| `"Nb"` \| `"Mo"` \| `"Tc"` \| `"Ru"` \| `"Rh"` \| `"Pd"` \| `"Ag"` \| `"Cd"` \| `"In"` \| `"Sn"` \| `"Sb"` \| `"Te"` \| `"I"` \| `"Xe"` \| `"Cs"` \| `"Ba"` \| `"La"` \| `"Ce"` \| `"Pr"` \| `"Nd"` \| `"Pm"` \| `"Sm"` \| `"Eu"` \| `"Gd"` \| `"Tb"` \| `"Dy"` \| `"Ho"` \| `"Er"` \| `"Tm"` \| `"Yb"` \| `"Lu"` \| `"Hf"` \| `"Ta"` \| `"W"` \| `"Re"` \| `"Os"` \| `"Ir"` \| `"Pt"` \| `"Au"` \| `"Hg"` \| `"Tl"` \| `"Pb"` \| `"Bi"` \| `"Po"` \| `"At"` \| `"Rn"` \| `"Fr"` \| `"Ra"` \| `"Ac"` \| `"Th"` \| `"Pa"` \| `"U"` \| `"Np"` \| `"Pu"` \| `"Am"` \| `"Cm"` \| `"Bk"` \| `"Cf"` \| `"Es"` \| `"Fm"` \| `"Md"` \| `"No"` \| `"Lr"` \| `"Rf"` \| `"Db"` \| `"Sg"` \| `"Bh"` \| `"Hs"` \| `"Mt"` \| `"Ds"` \| `"Rg"` \| `"Cn"` \| `"Nh"` \| `"Fl"` \| `"Mc"` \| `"Lv"` \| `"Ts"` \| `"Og"`
 
 Copyright 2021 EPAM Systems
 
@@ -205,7 +205,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -217,7 +217,7 @@ limitations under the License.
 
 [packages/ketcher-core/src/domain/constants/element.types.ts:17](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/constants/element.types.ts#L17)
 
-___
+---
 
 ### FormatterFactoryOptions
 
@@ -227,7 +227,7 @@ ___
 
 [packages/ketcher-core/src/application/formatters/structFormatter.types.ts:40](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/formatters/structFormatter.types.ts#L40)
 
-___
+---
 
 ### GenGroup
 
@@ -235,16 +235,16 @@ ___
 
 #### Type declaration
 
-| Name | Type |
-| :------ | :------ |
+| Name       | Type                                   |
+| :--------- | :------------------------------------- |
 | `itemSets` | [`GenItemSet`](README.md#genitemset)[] |
-| `title` | `string` |
+| `title`    | `string`                               |
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/constants/generics.ts:27](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/constants/generics.ts#L27)
 
-___
+---
 
 ### GenItem
 
@@ -256,7 +256,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -266,16 +266,16 @@ limitations under the License.
 
 #### Type declaration
 
-| Name | Type |
-| :------ | :------ |
+| Name           | Type     |
+| :------------- | :------- |
 | `description?` | `string` |
-| `label` | `string` |
+| `label`        | `string` |
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/constants/generics.ts:17](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/constants/generics.ts#L17)
 
-___
+---
 
 ### GenItemSet
 
@@ -283,16 +283,16 @@ ___
 
 #### Type declaration
 
-| Name | Type |
-| :------ | :------ |
-| `displayName?` | `string` |
-| `items` | [`GenItem`](README.md#genitem)[] |
+| Name           | Type                             |
+| :------------- | :------------------------------- |
+| `displayName?` | `string`                         |
+| `items`        | [`GenItem`](README.md#genitem)[] |
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/constants/generics.ts:22](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/constants/generics.ts#L22)
 
-___
+---
 
 ### GenericsType
 
@@ -300,33 +300,33 @@ ___
 
 #### Index signature
 
-▪ [index: `string`]: [`GenGroup`](README.md#gengroup) & { `subGroups?`: [`GenericsType`](README.md#genericstype)  }
+▪ [index: `string`]: [`GenGroup`](README.md#gengroup) & { `subGroups?`: [`GenericsType`](README.md#genericstype) }
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/constants/generics.ts:32](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/constants/generics.ts#L32)
 
-___
+---
 
 ### Group
 
-Ƭ **Group**: ``1`` \| ``2`` \| ``3`` \| ``4`` \| ``5`` \| ``6`` \| ``7`` \| ``8``
+Ƭ **Group**: `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7` \| `8`
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/constants/element.types.ts:138](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/constants/element.types.ts#L138)
 
-___
+---
 
 ### MolfileFormat
 
-Ƭ **MolfileFormat**: ``"v2000"`` \| ``"v3000"``
+Ƭ **MolfileFormat**: `"v2000"` \| `"v3000"`
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/serializers/mol/mol.types.ts:25](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/serializers/mol/mol.types.ts#L25)
 
-___
+---
 
 ### Neighbor
 
@@ -334,8 +334,8 @@ ___
 
 #### Type declaration
 
-| Name | Type |
-| :------ | :------ |
+| Name  | Type     |
+| :---- | :------- |
 | `aid` | `number` |
 | `bid` | `number` |
 
@@ -343,41 +343,41 @@ ___
 
 [packages/ketcher-core/src/domain/entities/struct.ts:38](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L38)
 
-___
+---
 
 ### OutputFormatType
 
-Ƭ **OutputFormatType**: ``"png"`` \| ``"svg"``
+Ƭ **OutputFormatType**: `"png"` \| `"svg"`
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/services/struct/structService.types.ts:127](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/services/struct/structService.types.ts#L127)
 
-___
+---
 
 ### Period
 
-Ƭ **Period**: ``1`` \| ``2`` \| ``3`` \| ``4`` \| ``5`` \| ``6`` \| ``7``
+Ƭ **Period**: `1` \| `2` \| `3` \| `4` \| `5` \| `6` \| `7`
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/constants/element.types.ts:137](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/constants/element.types.ts#L137)
 
-___
+---
 
 ### ServiceMode
 
-Ƭ **ServiceMode**: ``"standalone"`` \| ``"remote"``
+Ƭ **ServiceMode**: `"standalone"` \| `"remote"`
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/services/struct/structServiceProvider.types.ts:19](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/services/struct/structServiceProvider.types.ts#L19)
 
-___
+---
 
 ### SupportedFormat
 
-Ƭ **SupportedFormat**: ``"rxn"`` \| ``"rxnV3000"`` \| ``"mol"`` \| ``"molV3000"`` \| ``"smiles"`` \| ``"smilesExt"`` \| ``"smarts"`` \| ``"inChI"`` \| ``"inChIAuxInfo"`` \| ``"cml"`` \| ``"ket"`` \| ``"cdxml"``
+Ƭ **SupportedFormat**: `"rxn"` \| `"rxnV3000"` \| `"mol"` \| `"molV3000"` \| `"smiles"` \| `"smilesExt"` \| `"smarts"` \| `"inChI"` \| `"inChIAuxInfo"` \| `"cml"` \| `"ket"` \| `"cdxml"`
 
 #### Defined in
 
@@ -393,7 +393,7 @@ ___
 
 [packages/ketcher-core/src/domain/constants/elementColor.ts:23](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/constants/elementColor.ts#L23)
 
-___
+---
 
 ### Elements
 
@@ -401,16 +401,16 @@ ___
 
 #### Type declaration
 
-| Name | Type |
-| :------ | :------ |
+| Name     | Type                                                                                                                |
+| :------- | :------------------------------------------------------------------------------------------------------------------ |
 | `filter` | (`predicate`: (`element`: [`Element`](interfaces/Element.md)) => `boolean`) => [`Element`](interfaces/Element.md)[] |
-| `get` | (`key`: `string` \| `number`) => `undefined` \| [`Element`](interfaces/Element.md) |
+| `get`    | (`key`: `string` \| `number`) => `undefined` \| [`Element`](interfaces/Element.md)                                  |
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/constants/elements.ts:1314](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/constants/elements.ts#L1314)
 
-___
+---
 
 ### Generics
 
@@ -420,7 +420,7 @@ ___
 
 [packages/ketcher-core/src/domain/constants/generics.ts:36](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/constants/generics.ts#L36)
 
-___
+---
 
 ### Scale
 
@@ -428,16 +428,16 @@ ___
 
 #### Type declaration
 
-| Name | Type |
-| :------ | :------ |
-| `obj2scaled` | (`v`: [`Vec2`](classes/Vec2.md), `options`: [`ScaleOptions`](interfaces/ScaleOptions.md)) => [`Vec2`](classes/Vec2.md) |
-| `scaled2obj` | (`v`: [`Vec2`](classes/Vec2.md), `options`: [`ScaleOptions`](interfaces/ScaleOptions.md)) => [`Vec2`](classes/Vec2.md) |
+| Name         | Type                                                                                                                   |
+| :----------- | :--------------------------------------------------------------------------------------------------------------------- |
+| `increaseBy` | (`v`: [`Vec2`](classes/Vec2.md), `options`: [`ScaleOptions`](interfaces/ScaleOptions.md)) => [`Vec2`](classes/Vec2.md) |
+| `reduceBy`   | (`v`: [`Vec2`](classes/Vec2.md), `options`: [`ScaleOptions`](interfaces/ScaleOptions.md)) => [`Vec2`](classes/Vec2.md) |
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/helpers/scale.ts:31](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/helpers/scale.ts#L31)
 
-___
+---
 
 ### SgContexts
 
@@ -449,7 +449,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -459,19 +459,19 @@ limitations under the License.
 
 #### Type declaration
 
-| Name | Type |
-| :------ | :------ |
-| `Atom` | `string` |
-| `Bond` | `string` |
-| `Fragment` | `string` |
-| `Group` | `string` |
+| Name            | Type     |
+| :-------------- | :------- |
+| `Atom`          | `string` |
+| `Bond`          | `string` |
+| `Fragment`      | `string` |
+| `Group`         | `string` |
 | `Multifragment` | `string` |
 
 #### Defined in
 
 [packages/ketcher-core/src/application/editor/shared/constants.js:17](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/editor/shared/constants.js#L17)
 
-___
+---
 
 ### StereoValidator
 
@@ -479,15 +479,15 @@ ___
 
 #### Type declaration
 
-| Name | Type |
-| :------ | :------ |
+| Name                    | Type                                                                                                                                                                                                                        |
+| :---------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `isCorrectStereoCenter` | (`bond`: [`Bond`](classes/Bond.md), `beginNeighs`: `undefined` \| [`Neighbor`](README.md#neighbor)[], `endNeighs`: `undefined` \| [`Neighbor`](README.md#neighbor)[], `struct`: [`Struct`](classes/Struct.md)) => `boolean` |
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/helpers/stereoValidator.ts:62](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/helpers/stereoValidator.ts#L62)
 
-___
+---
 
 ### formatProperties
 
@@ -505,10 +505,10 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name     | Type  |
+| :------- | :---- |
 | `struct` | `any` |
-| `atoms` | `any` |
+| `atoms`  | `any` |
 
 #### Returns
 
@@ -518,7 +518,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroupForest.ts:164](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroupForest.ts#L164)
 
-___
+---
 
 ### fracAngle
 
@@ -526,9 +526,9 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `angle` | `any` |
+| Name     | Type  |
+| :------- | :---- |
+| `angle`  | `any` |
 | `angle2` | `any` |
 
 #### Returns
@@ -539,7 +539,7 @@ ___
 
 [packages/ketcher-core/src/application/editor/index.ts:20](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/editor/index.ts#L20)
 
-___
+---
 
 ### getPropertiesByFormat
 
@@ -547,8 +547,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name     | Type                                           |
+| :------- | :--------------------------------------------- |
 | `format` | [`SupportedFormat`](README.md#supportedformat) |
 
 #### Returns
@@ -559,7 +559,7 @@ ___
 
 [packages/ketcher-core/src/application/formatters/formatProperties.ts:101](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/formatters/formatProperties.ts#L101)
 
-___
+---
 
 ### getPropertiesByImgFormat
 
@@ -567,8 +567,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name     | Type  |
+| :------- | :---- |
 | `format` | `any` |
 
 #### Returns
@@ -579,7 +579,7 @@ ___
 
 [packages/ketcher-core/src/application/formatters/formatProperties.ts:97](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/formatters/formatProperties.ts#L97)
 
-___
+---
 
 ### identifyStructFormat
 
@@ -587,8 +587,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name                | Type     |
+| :------------------ | :------- |
 | `stringifiedStruct` | `string` |
 
 #### Returns
@@ -599,21 +599,21 @@ ___
 
 [packages/ketcher-core/src/application/formatters/identifyStructFormat.ts:19](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/formatters/identifyStructFormat.ts#L19)
 
-___
+---
 
 ### radicalElectrons
 
-▸ **radicalElectrons**(`radical`): ``1`` \| ``2`` \| ``0``
+▸ **radicalElectrons**(`radical`): `1` \| `2` \| `0`
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name      | Type  |
+| :-------- | :---- |
 | `radical` | `any` |
 
 #### Returns
 
-``1`` \| ``2`` \| ``0``
+`1` \| `2` \| `0`
 
 #### Defined in
 

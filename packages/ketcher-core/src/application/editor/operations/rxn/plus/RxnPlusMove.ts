@@ -38,7 +38,7 @@ export class RxnPlusMove extends BaseOperation {
     struct.rxnPluses.get(id)!.pp.add_(d) // eslint-disable-line no-underscore-dangle
 
     const rxn = restruct.rxnPluses.get(id)!
-    const scaled = Scale.obj2scaled(d, restruct.render.options)
+    const scaled = Scale.increaseBy(d, restruct.render.options)
     rxn.visel.translate(scaled)
 
     this.data.d = d.negated()

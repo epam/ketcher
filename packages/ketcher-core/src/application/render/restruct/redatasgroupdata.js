@@ -30,8 +30,8 @@ class ReDataSGroupData extends ReObject {
 
   hoverPath(render) {
     const box = this.sgroup.dataArea
-    const p0 = Scale.obj2scaled(box.p0, render.options)
-    const sz = Scale.obj2scaled(box.p1, render.options).sub(p0)
+    const p0 = Scale.increaseBy(box.p0, render.options)
+    const sz = Scale.increaseBy(box.p1, render.options).sub(p0)
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
   }
 

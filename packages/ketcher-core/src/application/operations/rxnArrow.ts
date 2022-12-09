@@ -111,7 +111,7 @@ export class MoveRxnArrow extends BaseOperation {
     // TODO: move to renderer
     // restruct.rxnArrows
     //   .get(id)
-    //   .visel.translate(Scale.obj2scaled(d, restruct.render.options))
+    //   .visel.translate(Scale.increaseBy(d, restruct.render.options))
     // this.data.d = d.negated()
     // if (!this.data.noinvalidate) {
     //   Base.invalidateItem(restruct, 'rxnArrows', id, 1)
@@ -175,7 +175,7 @@ export class ResizeRxnArrow extends BaseOperation {
     // TODO: move to renderer
     // restruct.rxnArrows
     //   .get(id)
-    //   .visel.translate(Scale.obj2scaled(d, restruct.render.options))
+    //   .visel.translate(Scale.increaseBy(d, restruct.render.options))
     // this.data.d = d.negated()
 
     // if (!this.data.noinvalidate) {

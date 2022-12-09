@@ -30,6 +30,7 @@ import type {
 import styles from '../ContextMenu.module.less'
 
 const bondTools = Object.keys(tools).filter((key) => key.startsWith('bond-'))
+const noOperation = () => null
 
 const BondSingleOperations: React.FC = (props) => {
   const { getKetcherInstance } = useAppContext()
@@ -46,7 +47,7 @@ const BondSingleOperations: React.FC = (props) => {
         const newBond = await editor.event.bondEdit.dispatch(bond)
         editor.update(fromBondsAttrs(editor.render.ctab, bondId, newBond))
       } catch (error) {
-        console.error(error)
+        noOperation()
       }
     },
     [getKetcherInstance]

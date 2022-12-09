@@ -308,7 +308,7 @@ class ReStruct {
     })
   }
 
-  getVBoxObj(selection): Box2Abs | null {
+  getVBoxObj(selection?): Box2Abs | null {
     selection = selection || {}
 
     if (isSelectionEmpty(selection)) {
@@ -575,7 +575,7 @@ class ReStruct {
     })
   }
 
-  setSelection(selection) {
+  setSelection(selection?) {
     const redraw = arguments.length === 0 // render.update only
     const atoms: { selected: boolean; sgroup: number }[] = []
 

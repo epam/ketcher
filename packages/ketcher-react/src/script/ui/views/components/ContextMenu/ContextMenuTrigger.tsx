@@ -19,7 +19,8 @@ import { useCallback } from 'react'
 import { useContextMenu } from 'react-contexify'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
-import { ContextMenuItemProps, CONTEXT_MENU_ID } from './ContextMenu'
+import { CONTEXT_MENU_ID } from './ContextMenu'
+import type { ContextMenuItemProps } from './contextMenu.types'
 
 const ContextMenuTrigger: React.FC = ({ children }) => {
   const { getKetcherInstance } = useAppContext()
@@ -27,20 +28,28 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
     id: CONTEXT_MENU_ID
   })
 
-  const handleDisplay = useCallback(
-    (event) => {
+  /**
+   * Resolve conflicts with the existing functional-group context menu
+   * Note: the following scenarios are compatible with the existing logic process,
+   *       but maybe will change after refactoring the functional-group context menu.
+   *
+   * Scenario 1
+   * Given: an expanded functional group
+   * When: the user right-clicks a bond in the f-group
+   * Then: only the functional-group context menu shows
+   *
+   * Scenario 2
+   * Given: the user has selected a bunch of things including functional groups
+   * When: the user right-clicks a selected or non-selected bond
+   * Then: only the functional-group context menu shows
+   *
+   * More details: https://github.com/epam/ketcher/pull/1896
+   */
+  const hasConflictWithFunctionalGroupMenu = useCallback(
+    (ci: any) => {
       const editor = getKetcherInstance().editor as Editor
-      const ci = editor.findItem(event, ['bonds'])
-
-      if (!ci) {
-        hideAll()
-        return
-      }
-
-      // Resolve conflict with existing functional group context menu
-      // (Need refactor after refactoring functional group context menu @Yulei)
-      // Resolving begins
       const struct = editor.struct()
+
       const functionalGroupId = FunctionalGroup.findFunctionalGroupByBond(
         struct,
         struct.functionalGroups,
@@ -51,11 +60,11 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
       )
 
       if (functionalGroupId !== null && hasRelatedSGroup) {
-        hideAll()
-        return
+        return true
       }
 
       const selection = editor.selection()
+
       if (selection && selection.atoms) {
         const hasSelectedFunctionalGroup = selection.atoms.some((atomId) => {
           const functionalGroupId = FunctionalGroup.findFunctionalGroupByAtom(
@@ -67,10 +76,30 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
           )
           return functionalGroupId !== null && hasRelatedSGroupId
         })
-        if (hasSelectedFunctionalGroup) return
+        if (hasSelectedFunctionalGroup) return true
       }
-      // Resolving ends
 
+      return false
+    },
+    [getKetcherInstance]
+  )
+
+  const handleDisplay = useCallback<React.MouseEventHandler<HTMLDivElement>>(
+    (event) => {
+      const editor = getKetcherInstance().editor as Editor
+      const ci = editor.findItem(event, ['bonds'])
+
+      if (!ci) {
+        hideAll()
+        return
+      }
+
+      if (hasConflictWithFunctionalGroupMenu(ci)) {
+        hideAll()
+        return
+      }
+
+      const selection = editor.selection()
       const isRightClickingSelection: number | undefined = selection?.[
         ci.map
       ]?.findIndex((selectedItemId) => selectedItemId === ci.id)
@@ -98,7 +127,7 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
         })
       }
     },
-    [getKetcherInstance, hideAll, show]
+    [getKetcherInstance, hasConflictWithFunctionalGroupMenu, hideAll, show]
   )
 
   return (

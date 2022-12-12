@@ -52,6 +52,12 @@ export class FunctionalGroup {
     )
   }
 
+  static getFunctionalGroupByName(searchName: string): Struct | null {
+    const provider = FunctionalGroupsProvider.getInstance()
+    const types = provider.getFunctionalGroupsList()
+    return types.find((fnGroup) => fnGroup.name === searchName) || null
+  }
+
   static atomsInFunctionalGroup(functionalGroups, atom): number | null {
     if (functionalGroups.size === 0) {
       return null

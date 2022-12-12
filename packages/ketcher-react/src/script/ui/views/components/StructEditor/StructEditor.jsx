@@ -27,6 +27,8 @@ import handIcon from '../../../../../icons/files/hand.svg'
 import compressedHandIcon from '../../../../../icons/files/compressed-hand.svg'
 import Cursor from '../Cursor'
 
+import InfoPanel from './InfoPanel'
+
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
   const { struct, tool, toolOpts, options } = props
@@ -70,7 +72,9 @@ class StructEditor extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      enableCursor: false
+      enableCursor: false,
+      clientX: 0,
+      clientY: 0
     }
     this.editorRef = createRef()
     this.logRef = createRef()
@@ -130,7 +134,9 @@ class StructEditor extends Component {
         case 'move':
           this.editorRef.current.classList.add(classes.enableCursor)
           this.setState({
-            enableCursor: true
+            enableCursor: true,
+            clientX,
+            clientY
           })
           break
         case 'disable':
@@ -190,6 +196,7 @@ class StructEditor extends Component {
       onCipChange,
       className,
       onConfirm,
+      onShowInfo,
       showAttachmentPoints = true,
       ...props
     } = this.props
@@ -226,6 +233,7 @@ class StructEditor extends Component {
             </div>
           )}
         </ContextMenuTrigger>
+        <InfoPanel {...this.state} {...this.props} />
         <FGContextMenu />
       </Tag>
     )

@@ -33,7 +33,7 @@ function prepareStruct(struct: Struct) {
 function renderStruct(
   el: HTMLElement | null,
   struct: Struct | null,
-  options = {}
+  options: any = {}
 ) {
   if (el && struct) {
     const preparedStruct = prepareStruct(struct)
@@ -46,13 +46,14 @@ function renderStruct(
       ...options
     })
     rnd.setMolecule(preparedStruct)
-    rnd.update()
+    rnd.update(true, options.viewSz)
   }
 }
 
 interface StructRenderProps {
   struct: Struct
   options: any
+  id?: any
   Tag?: string | ComponentType<any>
 }
 
@@ -63,11 +64,11 @@ class StructRender extends Component<StructRenderProps> {
     this.tagRef = createRef()
   }
 
-  shouldComponentUpdate() {
-    return false
+  shouldComponentUpdate(previousProps) {
+    return this.props.id && this.props.id !== previousProps.id
   }
 
-  componentDidMount() {
+  update() {
     const el = this.tagRef.current
     const { struct, options } = this.props
     let parsedStruct: Struct | null
@@ -83,7 +84,18 @@ class StructRender extends Component<StructRenderProps> {
     } else {
       parsedStruct = struct
     }
+    el?.childNodes.forEach((node) => {
+      node.remove()
+    })
     renderStruct(el, parsedStruct, options)
+  }
+
+  componentDidMount() {
+    this.update()
+  }
+
+  componentDidUpdate() {
+    this.update()
   }
 
   render() {

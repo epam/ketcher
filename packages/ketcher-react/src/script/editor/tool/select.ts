@@ -305,7 +305,7 @@ class SelectTool {
             'texts'
           ]
 
-    editor.hover(editor.findItem(event, maps, null))
+    editor.hover(editor.findItem(event, maps, null), null, event)
 
     return true
   }

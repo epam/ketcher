@@ -1,5 +1,6 @@
 import { ContextMenu, MenuItem } from 'react-contextmenu'
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import {
   FunctionalGroup,
   setExpandSGroup,
@@ -9,9 +10,11 @@ import {
 import { useAppContext } from '../../../../hooks'
 import clsx from 'clsx'
 import classes from './ContextMenu.module.less'
+import { highlightFG } from '../../state/functionalGroups'
 
 const FGContextMenu = () => {
   const { getKetcherInstance } = useAppContext()
+  const dispatch = useDispatch()
 
   const handleExpand = () => {
     const editor = getKetcherInstance().editor as any
@@ -27,6 +30,7 @@ const FGContextMenu = () => {
     editor.update(action)
     setShowSGroupMenu(false)
     setTargetItems([])
+    highlightFG(dispatch, { group: null, id: null })
   }
 
   const handleRemove = function () {

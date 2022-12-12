@@ -196,12 +196,9 @@ class Render {
         this.setOffset(this.options.offset.add(d))
       }
     }
-    clientArea.scrollLeft = x
-    clientArea.scrollTop = y
-    // TODO: store drag position in scaled systems
-    // scrollLeft = clientArea.scrollLeft;
-    // scrollTop = clientArea.scrollTop;
-    this.update(false)
+
+    clientArea.scrollLeft = x * this.options.scale
+    clientArea.scrollTop = y * this.options.scale
   }
 
   update(force = false, viewSz: Vec2 | null = null) {

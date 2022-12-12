@@ -576,7 +576,6 @@ class ReStruct {
   }
 
   setSelection(selection?) {
-    const redraw = arguments.length === 0 // render.update only
     const atoms: { selected: boolean; sgroup: number }[] = []
 
     Object.keys(ReStruct.maps).forEach((map) => {
@@ -605,9 +604,11 @@ class ReStruct {
             )
             item.selected = sGroupAtoms.length > 0 && sGroupAtoms[0].selected
           }
-          const selected = redraw
-            ? item.selected
-            : selection && selection[map] && selection[map].indexOf(id) > -1
+
+          const selected =
+            selection && selection[map]
+              ? selection[map].indexOf(id) > -1
+              : item.selected
 
           this.showItemSelection(item, selected)
         })

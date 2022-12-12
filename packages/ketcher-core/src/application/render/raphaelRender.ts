@@ -22,6 +22,7 @@ import { Scale } from 'domain/helpers'
 import defaultOptions from './options'
 import draw from './draw'
 import { RaphaelPaper } from 'raphael'
+// TODO: add types for options
 // import { RenderOptions } from './render.types'
 
 function calcExtend(
@@ -35,8 +36,13 @@ function calcExtend(
   let ex = x0 < 0 ? -x0 : 0
   let ey = y0 < 0 ? -y0 : 0
 
-  if (scaledSz.x < x1) ex += x1 - scaledSz.x
-  if (scaledSz.y < y1) ey += y1 - scaledSz.y
+  if (scaledSz.x < x1) {
+    ex += x1 - scaledSz.x
+  }
+  if (scaledSz.y < y1) {
+    ey += y1 - scaledSz.y
+  }
+
   return new Vec2(ex, ey)
 }
 
@@ -113,7 +119,11 @@ class Render {
       : p
           .add(this.options.offset)
           .sub(this.getScrollPos().scaled(1 / this.options.zoom))
-    if (!this.useOldZoom) p = p.scaled(this.options.zoom)
+
+    if (!this.useOldZoom) {
+      p = p.scaled(this.options.zoom)
+    }
+
     return p
   }
 
@@ -123,6 +133,7 @@ class Render {
       clientArea.getBoundingClientRect()
 
     const pp = new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop)
+
     return this.view2obj(pp)
   }
 

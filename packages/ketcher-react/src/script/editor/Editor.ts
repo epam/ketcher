@@ -22,7 +22,8 @@ import {
   Struct,
   Vec2,
   fromDescriptorsAlign,
-  fromNewCanvas
+  fromNewCanvas,
+  FunctionalGroup
 } from 'ketcher-core'
 import {
   DOMSubscription,
@@ -30,7 +31,6 @@ import {
   Subscription
 } from 'subscription'
 
-import { FunctionalGroup } from 'ketcher-core'
 import closest from './shared/closest'
 import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'

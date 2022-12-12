@@ -23,14 +23,14 @@ import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
 import tools from 'src/script/ui/action/tools'
 import Icon from 'src/script/ui/component/view/icon'
+import styles from '../ContextMenu.module.less'
 import type {
   ContextMenuItemData,
   ContextMenuItemProps
 } from '../contextMenu.types'
-import styles from '../ContextMenu.module.less'
+import { formatTitle, getBondNames, noOperation } from './utils'
 
-const bondTools = Object.keys(tools).filter((key) => key.startsWith('bond-'))
-const noOperation = () => null
+const bondNames = getBondNames(tools)
 
 const BondBatchOperations: React.FC = (props) => {
   const { getKetcherInstance } = useAppContext()
@@ -107,10 +107,10 @@ const BondBatchOperations: React.FC = (props) => {
         className={styles.subMenu}
         {...props}
       >
-        {bondTools.map((name) => (
+        {bondNames.map((name) => (
           <Item id={name} onClick={handleBatchTypeChange} key={name}>
             <Icon name={name} className={styles.icon} />
-            <span>{tools[name].title.slice(0, -5)}</span>
+            <span>{formatTitle(tools[name].title)}</span>
           </Item>
         ))}
       </Submenu>

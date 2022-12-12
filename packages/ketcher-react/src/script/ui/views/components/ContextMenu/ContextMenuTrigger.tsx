@@ -65,7 +65,7 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
 
       const selection = editor.selection()
 
-      if (selection && selection.atoms) {
+      if (selection?.atoms) {
         const hasSelectedFunctionalGroup = selection.atoms.some((atomId) => {
           const functionalGroupId = FunctionalGroup.findFunctionalGroupByAtom(
             struct.functionalGroups,
@@ -76,7 +76,9 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
           )
           return functionalGroupId !== null && hasRelatedSGroupId
         })
-        if (hasSelectedFunctionalGroup) return true
+        if (hasSelectedFunctionalGroup) {
+          return true
+        }
       }
 
       return false

@@ -149,7 +149,7 @@ class SGroupTool {
   }
 
   mousedown(event) {
-    const ci = this.editor.findItem(event, searchMaps)
+    const closestItem = this.editor.findItem(event, searchMaps)
     const struct = this.editor.render.ctab
     const sgroups = struct.sgroups
     const molecule = struct.molecule
@@ -158,10 +158,10 @@ class SGroupTool {
     const bondResult: Array<number> = []
     const result: Array<number> = []
 
-    if (ci && functionalGroups.size && ci.map === 'atoms') {
+    if (closestItem && functionalGroups.size && closestItem.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ci.id
+        closestItem.id
       )
       const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a
 
@@ -178,11 +178,11 @@ class SGroupTool {
       }
     }
 
-    if (ci && functionalGroups.size && ci.map === 'bonds') {
+    if (closestItem && functionalGroups.size && closestItem.map === 'bonds') {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
-        ci.id
+        closestItem.id
       )
       const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b
 
@@ -199,11 +199,15 @@ class SGroupTool {
       }
     }
 
-    if (ci && functionalGroups.size && ci.map === 'functionalGroups') {
-      const sgroup = sgroups.get(ci.id)
+    if (
+      closestItem &&
+      functionalGroups.size &&
+      closestItem.map === 'functionalGroups'
+    ) {
+      const sgroup = sgroups.get(closestItem.id)
 
       if (FunctionalGroup.isFunctionalGroup(sgroup?.item)) {
-        this.editor.event.removeFG.dispatch({ fgIds: [ci.id] })
+        this.editor.event.removeFG.dispatch({ fgIds: [closestItem.id] })
         return
       }
     }
@@ -239,8 +243,7 @@ class SGroupTool {
       return
     }
 
-    if (!ci) {
-      //  ci.type == 'Canvas'
+    if (!closestItem) {
       this.lassoHelper.begin(event)
     }
   }
@@ -264,7 +267,7 @@ class SGroupTool {
     const sgroups = struct.sgroups
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
-    const ci = this.editor.findItem(event, searchMaps)
+    const closestItem = this.editor.findItem(event, searchMaps)
     const selected = this.editor.selection()
     const newSelected: Record<string, Array<any>> = { atoms: [], bonds: [] }
     let actualSgroupId
@@ -275,10 +278,13 @@ class SGroupTool {
     const result: Array<number> = []
 
     if (
-      ci &&
-      ci.map === 'functionalGroups' &&
+      closestItem &&
+      closestItem.map === 'functionalGroups' &&
       functionalGroups.size &&
-      FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
+      FunctionalGroup.isContractedFunctionalGroup(
+        closestItem.id,
+        functionalGroups
+      )
     )
       return
 
@@ -423,19 +429,22 @@ class SGroupTool {
           : this.lassoHelper.end(event)
       this.editor.selection(selection)
     } else {
-      if (!ci)
-        // ci.type == 'Canvas'
+      if (!closestItem)
+        // closestItem.type == 'Canvas'
         return
       this.editor.hover(null)
 
-      if (ci.map === 'atoms') {
+      if (closestItem.map === 'atoms') {
         // if we click the SGroup tool on a single atom or bond, make a group out of those
-        selection = { atoms: [ci.id] }
-      } else if (ci.map === 'bonds') {
-        const bond = this.editor.render.ctab.bonds.get(ci.id)
+        selection = { atoms: [closestItem.id] }
+      } else if (closestItem.map === 'bonds') {
+        const bond = this.editor.render.ctab.bonds.get(closestItem.id)
         selection = { atoms: [bond?.b.begin, bond?.b.end] }
-      } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
-        id = ci.id
+      } else if (
+        closestItem.map === 'sgroups' ||
+        closestItem.map === 'sgroupData'
+      ) {
+        id = closestItem.id
       } else {
         return
       }

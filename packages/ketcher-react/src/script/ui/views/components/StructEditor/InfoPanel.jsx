@@ -104,7 +104,7 @@ const InfoPanel = (props) => {
       restruct.render.options.atomSelectionPlateRadius
     const padding = atomSelectionPlateRadius
     var pos2 = baba?.sgroups?.get(groupId)?.firstSgroupAtom?.pp
-    let panelPosition = pos2
+    const panelPosition = pos2
       ? Scale.obj2scaled(pos2, restruct.render.options)
       : { x: 0, y: 0 }
     rX = panelPosition.x - width / 2 - 10

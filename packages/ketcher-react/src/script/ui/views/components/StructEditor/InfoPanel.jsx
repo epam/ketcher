@@ -34,7 +34,6 @@ const HOVER_DELAY = 400
 
 const allSGroupsSelector = (store) => {
   const result = [...store.functionalGroups.lib, ...store.saltsAndSolvents.lib]
-  console.log('result', result)
   return result
 }
 
@@ -60,7 +59,6 @@ const InfoPanel = (props) => {
   let timer = -1
 
   const pos = baba?.sgroups.get(groupId)?.areas[0].p1
-  if (pos) console.log(Scale.obj2scaled(pos, restruct.render.options))
 
   let gr = null
 
@@ -81,19 +79,15 @@ const InfoPanel = (props) => {
   }, [id])
 
   useEffect(() => {
-    console.log('44ooo', molecule)
     childRef?.current?.forceUpdate()
   }, [molecule])
 
-  console.log('restruct.render.options')
-  console.log(restruct?.render?.options)
   let width = 0
   let height = 0
   let rX = 0
   let rY = 0
   if (baba) {
     const vbox = restruct.sgroups?.get(groupId)?.item?.areas[0]
-    console.log('vbox2: ', vbox)
     if (vbox) {
       const start = Scale.obj2scaled(vbox.p0, restruct.render.options)
       const end = Scale.obj2scaled(vbox.p1, restruct.render.options)

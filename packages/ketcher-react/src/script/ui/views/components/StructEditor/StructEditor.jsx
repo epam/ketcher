@@ -138,7 +138,6 @@ class StructEditor extends Component {
             clientX,
             clientY
           })
-          console.log('XXX')
           break
         case 'disable':
           this.editorRef.current.classList.remove(classes.enableCursor)

@@ -23,8 +23,8 @@ import defaultOptions from './options'
 import draw from './draw'
 
 export function Render(clientArea, opt) {
-  let renderWidth = clientArea.clientWidth - 10
-  let renderHeight = clientArea.clientHeight - 10
+  let renderWidth = opt.width || clientArea.clientWidth - 10
+  let renderHeight = opt.height || clientArea.clientHeight - 10
   renderWidth = renderWidth > 0 ? renderWidth : 0
   renderHeight = renderHeight > 0 ? renderHeight : 0
 
@@ -229,13 +229,12 @@ Render.prototype.update = function (force = false, viewSz = null) {
       const marg = this.options.autoScaleMargin
       const mv = new Vec2(marg, marg)
       const csz = viewSz
-      if (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1) {
+      if (marg && (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)) {
         throw new Error('View box too small for the given margin')
       }
-      let rescale = Math.max(
-        sz1.x / (csz.x - 2 * marg),
-        sz1.y / (csz.y - 2 * marg)
-      )
+      let rescale =
+        this.options.rescaleAmount ||
+        Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg))
       if (this.options.maxBondLength / rescale > 1.0) rescale = 1.0
       const sz2 = sz1.add(mv.scaled(2 * rescale))
       /* eslint-disable no-mixed-operators */

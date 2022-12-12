@@ -30,6 +30,7 @@ import {
   Subscription
 } from 'subscription'
 
+import { FunctionalGroup } from 'ketcher-core'
 import closest from './shared/closest'
 import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'
@@ -127,6 +128,7 @@ class Editor implements KetcherEditor {
     dearomatizeStruct: PipelineSubscription
     enhancedStereoEdit: PipelineSubscription
     confirm: PipelineSubscription
+    showInfo: PipelineSubscription
     cursor: Subscription
   }
 
@@ -175,7 +177,8 @@ class Editor implements KetcherEditor {
       // TODO: correct
       enhancedStereoEdit: new PipelineSubscription(),
       confirm: new PipelineSubscription(),
-      cursor: new PipelineSubscription()
+      cursor: new PipelineSubscription(),
+      showInfo: new PipelineSubscription()
     }
 
     domEventSetup(this, clientArea)
@@ -207,9 +210,9 @@ class Editor implements KetcherEditor {
 
     const tool = new toolMap[name](this, opts)
 
-    const isAtomToolChosen = name === 'atom'
-    if (!isAtomToolChosen) {
-      this.hoverIcon.hide()
+    // hide icon if not AtomToll chosen
+    if (name !== 'atom') {
+      this.render.paper.getById('atomHoverIcon')?.hide()
     }
 
     if (!tool || tool.isNotActiveTool) {
@@ -343,8 +346,10 @@ class Editor implements KetcherEditor {
     return this._selection // eslint-disable-line
   }
 
-  hover(ci: any, newTool?: any) {
+  hover(ci: any, newTool?: any, event?: PointerEvent) {
     const tool = newTool || this._tool // eslint-disable-line
+
+    let highlight: any = false
 
     if (
       'ci' in tool &&
@@ -355,6 +360,31 @@ class Editor implements KetcherEditor {
     }
 
     if (ci && setHover(ci, true, this.render)) tool.ci = ci
+
+    if (!event) return
+
+    const myCi = this.findItem(event, ['sgroups', 'functionalGroups'])
+    if (myCi) {
+      if (myCi.map === 'sgroups' || myCi.map === 'functionalGroups') {
+        const sGroup = this.struct()?.sgroups.get(myCi.id)
+        if (sGroup && !sGroup.data.expanded) {
+          const groupName = sGroup.data.name
+          const groupStruct =
+            FunctionalGroup.getFunctionalGroupByName(groupName)
+          highlight = {
+            group: groupStruct,
+            x: event.clientX,
+            y: event.clientY,
+            groupId: myCi.id
+          }
+        }
+      }
+    }
+    if (highlight) {
+      this.event.showInfo.dispatch(highlight)
+    } else {
+      this.event.showInfo.dispatch(null)
+    }
   }
 
   update(action: Action | true, ignoreHistory?) {

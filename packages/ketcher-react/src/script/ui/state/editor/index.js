@@ -29,6 +29,7 @@ import { Elements } from 'ketcher-core'
 import acts from '../../action'
 import { debounce } from 'lodash/fp'
 import { openDialog } from '../modal'
+import { highlightFG } from '../functionalGroups'
 import { serverCall } from '../server'
 
 export default function initEditor(dispatch, getState) {
@@ -155,7 +156,10 @@ export default function initEditor(dispatch, getState) {
     },
     onSgroupEdit: (sgroup) =>
       sleep(0) // huck to open dialog after dispatch sgroup tool action
-        .then(() => openDialog(dispatch, 'sgroup', fromSgroup(sgroup)))
+        .then(() => {
+          console.log('onSgroupEdit')
+          openDialog(dispatch, 'sgroup', fromSgroup(sgroup))
+        })
         .then(toSgroup),
     onRemoveFG: (result) =>
       sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
@@ -199,6 +203,14 @@ export default function initEditor(dispatch, getState) {
     onMouseDown: () => {
       updateAction()
     },
-    onConfirm: () => openDialog(dispatch, 'confirm')
+    onConfirm: () => openDialog(dispatch, 'confirm'),
+    onShowInfo: (pl) => {
+      if (pl) {
+        const { group, groupId, x, y } = pl
+        highlightFG(dispatch, { group, id: group?.name, x, y, groupId })
+      } else {
+        highlightFG(dispatch, { group: null, id: null })
+      }
+    }
   }
 }

@@ -738,6 +738,15 @@ export class Struct {
     this.sgroups.forEach((item) => {
       item.pp = item.pp ? item.pp.scaled(scale) : null
     })
+
+    this.texts.forEach((item) => {
+      // Scale text only for reactions - i.e file contains reaction arrows
+      const isReactionStruct = this.rxnArrows.size
+      if (isReactionStruct) {
+        item.pos = item.pos.map((p) => p.scaled(scale))
+        item.position = item.position.scaled(scale)
+      }
+    })
   }
 
   rescale() {

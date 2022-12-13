@@ -56,8 +56,8 @@ class SelectTool {
   }
 
   mousedown(event) {
-    const rnd = this.editor.render
-    const ctab = rnd.ctab
+    const render = this.editor.render
+    const ctab = render.ctab
     const molecule = ctab.molecule
     const functionalGroups = molecule.functionalGroups
     const selectedSgroups: any[] = []
@@ -147,11 +147,11 @@ class SelectTool {
 
     this.dragCtx = {
       item: ci,
-      xy0: rnd.page2obj(event)
+      xy0: render.page2obj(event)
     }
 
     if (!ci || ci.map === 'atoms') {
-      atomLongtapEvent(this, rnd)
+      atomLongtapEvent(this, render)
     }
 
     if (!ci) {
@@ -183,8 +183,8 @@ class SelectTool {
     } else if (ci.map === 'rgroups') {
       const rgroup = ctab.rgroups.get(ci.id)
       sel = {
-        atoms: rgroup.getAtoms(rnd),
-        bonds: rgroup.getBonds(rnd)
+        atoms: rgroup.getAtoms(render),
+        bonds: rgroup.getBonds(render)
       }
     } else if (ci.map === 'sgroupData') {
       if (isSelected(selection, ci)) return true
@@ -200,7 +200,7 @@ class SelectTool {
 
   mousemove(event) {
     const editor = this.editor
-    const rnd = editor.render
+    const render = editor.render
     const restruct = editor.render.ctab
     const dragCtx = this.dragCtx
     if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
@@ -214,17 +214,17 @@ class SelectTool {
         !selection.bonds
       if (shouldDisplayDegree) {
         // moving selected objects
-        const pos = rnd.page2obj(event)
+        const pos = render.page2obj(event)
         const angle = utils.calcAngle(dragCtx.xy0, pos)
         const degrees = utils.degrees(angle)
         this.editor.event.message.dispatch({ info: degrees + 'º' })
       }
       if (dragCtx.item.map === 'simpleObjects' && dragCtx.item.ref) {
-        if (dragCtx?.action) dragCtx.action.perform(rnd.ctab)
-        const current = rnd.page2obj(event)
+        if (dragCtx?.action) dragCtx.action.perform(render.ctab)
+        const current = render.page2obj(event)
         const diff = current.sub(this.dragCtx.xy0)
         dragCtx.action = fromSimpleObjectResizing(
-          rnd.ctab,
+          render.ctab,
           dragCtx.item.id,
           diff,
           current,
@@ -235,12 +235,12 @@ class SelectTool {
         return true
       }
       if (dragCtx.item.map === 'rxnArrows' && dragCtx.item.ref) {
-        if (dragCtx?.action) dragCtx.action.perform(rnd.ctab)
-        const current = rnd.page2obj(event)
+        if (dragCtx?.action) dragCtx.action.perform(render.ctab)
+        const current = render.page2obj(event)
         const diff = current.sub(dragCtx.xy0)
         dragCtx.previous = current
         dragCtx.action = fromArrowResizing(
-          rnd.ctab,
+          render.ctab,
           dragCtx.item.id,
           diff,
           current,
@@ -419,7 +419,7 @@ class SelectTool {
     const struct = editor.render.ctab
     const { molecule, sgroups } = struct
     const functionalGroups = molecule.functionalGroups
-    const rnd = editor.render
+    const render = editor.render
     const ci = editor.findItem(
       event,
       ['atoms', 'bonds', 'sgroups', 'functionalGroups', 'sgroupData', 'texts'],
@@ -514,7 +514,7 @@ class SelectTool {
           .catch(() => null)
       }
     } else if (ci.map === 'bonds') {
-      const bond = rnd.ctab.bonds.get(ci.id)?.b
+      const bond = render.ctab.bonds.get(ci.id)?.b
       const rb = editor.event.bondEdit.dispatch(bond)
 
       if (selection?.bonds) {

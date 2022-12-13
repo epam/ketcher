@@ -30,12 +30,22 @@ function prepareStruct(struct: Struct) {
   return struct
 }
 
+/**
+ * Is used to improve search and opening tab performance in Template Dialog
+ * Rendering a lot of structures causes great delay
+ */
+const renderCache = new Map()
+
 function renderStruct(
   el: HTMLElement | null,
   struct: Struct | null,
   options: any = {}
 ) {
   if (el && struct) {
+    if (renderCache.has(struct.name)) {
+      el.innerHTML = renderCache.get(struct.name)
+      return
+    }
     const preparedStruct = prepareStruct(struct)
     preparedStruct.initHalfBonds()
     preparedStruct.initNeighbors()
@@ -47,6 +57,7 @@ function renderStruct(
     })
     rnd.setMolecule(preparedStruct)
     rnd.update(true, options.viewSz)
+    renderCache.set(struct.name, rnd.clientArea.innerHTML)
   }
 }
 
@@ -65,7 +76,7 @@ class StructRender extends Component<StructRenderProps> {
   }
 
   shouldComponentUpdate(previousProps) {
-    return this.props.id && this.props.id !== previousProps.id
+    return Boolean(this.props.id && this.props.id !== previousProps.id)
   }
 
   update() {

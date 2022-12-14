@@ -239,7 +239,11 @@ class TemplateTool {
     const restruct = this.editor.render.ctab
 
     if (!this.dragCtx) {
-      this.editor.hover(this.editor.findItem(event, this.findItems))
+      this.editor.hover(
+        this.editor.findItem(event, this.findItems),
+        null,
+        event
+      )
       return true
     }
 

@@ -41,7 +41,7 @@ export function changeGroup(group) {
 export function changeFilter(filter) {
   return {
     type: 'TMPL_CHANGE_FILTER',
-    data: { filter: filter.trim(), selected: null } // TODO: change this
+    data: { filter, selected: null }
   }
 }
 

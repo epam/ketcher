@@ -364,19 +364,19 @@ class Editor implements KetcherEditor {
     if (!event) return
 
     const checkFunctionGroupTypes = ['sgroups', 'functionalGroups']
-    const myCi = this.findItem(event, checkFunctionGroupTypes)
-    if (myCi) {
-      if (checkFunctionGroupTypes.includes(myCi.map)) {
-        const sGroup = this.struct()?.sgroups.get(myCi.id)
-        if (sGroup && !sGroup.data.expanded) {
-          const groupName = sGroup.data.name
-          const groupStruct =
-            FunctionalGroup.getFunctionalGroupByName(groupName)
-          infoPanelData = {
-            groupStruct,
-            event,
-            sGroup
-          }
+    const closestCollapsibleStructures = this.findItem(
+      event,
+      checkFunctionGroupTypes
+    )
+    if (closestCollapsibleStructures) {
+      const sGroup = this.struct()?.sgroups.get(closestCollapsibleStructures.id)
+      if (sGroup && !sGroup.data.expanded) {
+        const groupName = sGroup.data.name
+        const groupStruct = FunctionalGroup.getFunctionalGroupByName(groupName)
+        infoPanelData = {
+          groupStruct,
+          event,
+          sGroup
         }
       }
     }

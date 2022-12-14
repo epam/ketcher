@@ -37,36 +37,39 @@ function getPanelPosition(
   let height = 0
   let x = 0
   let y = 0
-  // calculate width and height
-  const groupBoundingBox = sGroup.areas[0]
-  const start = Scale.obj2scaled(groupBoundingBox.p0, render.options)
-  const end = Scale.obj2scaled(groupBoundingBox.p1, render.options)
-  width = end.x - start.x
-  height = end.y - start.y
-  // calculate initial position
-  const firstAtomPosition = sGroup.firstSgroupAtom?.pp
-  const panelPosition = Scale.obj2scaled(firstAtomPosition, render.options)
-  x = panelPosition.x - width / 2 - HOVER_PANEL_PADDING
-  y = panelPosition.y + HOVER_PANEL_PADDING
-  // adjust position to keep inside viewport
-  const viewportRightLimit = render?.clientArea?.clientWidth - width / 2
-  const viewportLeftLimit = HOVER_PANEL_PADDING * 2 + width / 2
-  const viewportBottomLimit = render?.clientArea?.clientHeight - height
-  if (clientX > viewportRightLimit) {
-    x = panelPosition.x - width - HOVER_PANEL_PADDING
-  } else if (clientX < viewportLeftLimit) {
-    x = panelPosition.x - HOVER_PANEL_PADDING
+
+  if (sGroup) {
+    // calculate width and height
+    const groupBoundingBox = sGroup.areas[0]
+    const start = Scale.obj2scaled(groupBoundingBox.p0, render.options)
+    const end = Scale.obj2scaled(groupBoundingBox.p1, render.options)
+    width = end.x - start.x
+    height = end.y - start.y
+    // calculate initial position
+    const firstAtomPosition = sGroup.firstSgroupAtom?.pp
+    const panelPosition = Scale.obj2scaled(firstAtomPosition, render.options)
+    x = panelPosition.x - width / 2 - HOVER_PANEL_PADDING
+    y = panelPosition.y + HOVER_PANEL_PADDING
+    // adjust position to keep inside viewport
+    const viewportRightLimit = render?.clientArea?.clientWidth - width / 2
+    const viewportLeftLimit = HOVER_PANEL_PADDING * 2 + width / 2
+    const viewportBottomLimit = render?.clientArea?.clientHeight - height
+    if (clientX > viewportRightLimit) {
+      x = panelPosition.x - width - HOVER_PANEL_PADDING
+    } else if (clientX < viewportLeftLimit) {
+      x = panelPosition.x - HOVER_PANEL_PADDING
+    }
+    if (clientY > viewportBottomLimit) {
+      y = panelPosition.y - height - HOVER_PANEL_PADDING * 3
+    }
+    // adjust position to current scroll offset
+    const scrollOffsetX =
+      render?.options.offset?.x - render?.clientArea?.scrollLeft
+    const scrollOffsetY =
+      render?.options?.offset?.y - render?.clientArea?.scrollTop
+    x += scrollOffsetX
+    y += scrollOffsetY
   }
-  if (clientY > viewportBottomLimit) {
-    y = panelPosition.y - height - HOVER_PANEL_PADDING * 3
-  }
-  // adjust position to current scroll offset
-  const scrollOffsetX =
-    render?.options.offset?.x - render?.clientArea?.scrollLeft
-  const scrollOffsetY =
-    render?.options?.offset?.y - render?.clientArea?.scrollTop
-  x += scrollOffsetX
-  y += scrollOffsetY
 
   return [new Vec2(x, y), new Vec2(width, height)]
 }
@@ -105,17 +108,10 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
     return () => clearTimeout(timer)
   }, [groupName])
 
-  let width = 0
-  let height = 0
-  let x = 0
-  let y = 0
-  if (sGroup) {
-    const [position, size] = getPanelPosition(clientX, clientY, render, sGroup)
-    x = position.x
-    y = position.y
-    width = size.x
-    height = size.y
-  }
+  const [position, size] = getPanelPosition(clientX, clientY, render, sGroup)
+  const { x, y } = position
+  const width = size.x
+  const height = size.y
 
   return (
     molecule && (

@@ -47,19 +47,19 @@ To select the **entire structure**:
 - Select the Lasso or Rectangle Selection tool, and then drag the
   mouse to select the object.
 
-- `Ctrl-click` with the Lasso or Rectangle Selection tool.
+-`Ctrl-click`with the Lasso or Rectangle Selection tool.
 
 To select **multiple atoms, bonds, structures, or other objects**, do one
 of the following:
 
-- `Shift-click` with the Lasso or Rectangle Selection tool selects
+-`Shift-click`with the Lasso or Rectangle Selection tool selects
   some (connected or not) atoms/bonds.
 
 - With the Lasso or Rectangle Selection tool click and drag the
   mouse around the atoms, bonds, or structures that you want to
   select.
 
-**Note** : `Ctrl+Shift-click each structure` with the Lasso or Rectangle Selection tool
+**Note** :`Ctrl+Shift-click each structure`with the Lasso or Rectangle Selection tool
 selects several structures.
 
 You can use the buttons of the _Main_ toolbar:
@@ -659,123 +659,123 @@ cursor over a toolbar button. If a hotkey is available for the button,
 it will appear in brackets after the description of the button.
 
 **General**
-| ` Shortcut ` || Action | Description |
-| ` --- ` || --- | --- |
-| ` Mod+Delete ` || Clear Canvas | - |
-| ` Mod+o ` || Open… | - |
-| ` Mod+s ` || Save As… | - |
-| ` Mod+z ` || Undo | - |
-| ` Mod+Shift+z, Mod+y ` || Redo | - |
-| ` Mod+x ` || Cut | - |
-| ` Mod+c ` || Copy | - |
-| ` Mod+Shift+f ` || Copy Image | - |
-| ` Mod+m ` || Copy as MOL | - |
-| ` Mod+Shift+k ` || Copy as KET | - |
-| ` Mod+v ` || Paste | - |
-| ` Mod+a ` || Select All | - |
-| ` Mod+Shift+a ` || Deselect All | - |
-| ` Mod+d ` || Select descriptors | - |
+| Shortcut| Action | Description |
+| ---| --- | --- |
+| `Mod+Delete`| Clear Canvas | - |
+| `Mod+o`| Open… | - |
+| `Mod+s`| Save As… | - |
+| `Mod+z`| Undo | - |
+| `Mod+Shift+z, Mod+y`| Redo | - |
+| `Mod+x`| Cut | - |
+| `Mod+c`| Copy | - |
+| `Mod+Shift+f`| Copy Image | - |
+| `Mod+m`| Copy as MOL | - |
+| `Mod+Shift+k`| Copy as KET | - |
+| `Mod+v`| Paste | - |
+| `Mod+a`| Select All | - |
+| `Mod+Shift+a`| Deselect All | - |
+| `Mod+d`| Select descriptors | - |
 
 
 **Server**
-| ` Shortcut ` || Action | Description |
-| ` --- ` || --- | --- |
-| ` Mod+l ` || Layout | - |
-| ` Mod+Shift+l ` || Clean Up | - |
-| ` Mod+p ` || Calculate CIP | - |
+| Shortcut| Action | Description |
+| ---| --- | --- |
+| `Mod+l`| Layout | - |
+| `Mod+Shift+l`| Clean Up | - |
+| `Mod+p`| Calculate CIP | - |
 
 
 **Debug**
-| ` Shortcut ` || Action | Description |
-| ` --- ` || --- | --- |
-| ` Ctrl+Shift+r ` || force-update | - |
-| ` Alt+Shift+r ` || qs-serialize | - |
+| Shortcut| Action | Description |
+| ---| --- | --- |
+| `Ctrl+Shift+r`| force-update | - |
+| `Alt+Shift+r`| qs-serialize | - |
 
 
 **Tools**
-| ` Shortcut ` || Action | Description |
-| ` --- ` || --- | --- |
-| ` Mod+h ` || Hand tool | - |
-| ` Escape ` || Lasso Selection | - |
-| ` Escape ` || Rectangle Selection | - |
-| ` Escape ` || Fragment Selection | - |
-| ` Delete, Backspace ` || Erase | - |
-| ` Alt+e ` || Stereochemistry | - |
-| ` 5 ` || Charge Plus | - |
-| ` 5 ` || Charge Minus | - |
-| ` Alt+r ` || Rotate Tool | - |
-| ` Alt+h ` || Horizontal Flip | - |
-| ` Alt+v ` || Vertical Flip | - |
-| ` Mod+g ` || S-Group | - |
-| ` Mod+g ` || Data S-Group | - |
-| ` Mod+r ` || R-Group Label Tool | - |
-| ` Mod+Shift+r, Mod+r ` || R-Group Fragment Tool | - |
-| ` Mod+r ` || Attachment Point Tool | - |
-| ` 1 ` || Single Bond | - |
-| ` 1 ` || Single Up Bond | - |
-| ` 1 ` || Single Down Bond | - |
-| ` 1 ` || Single Up/Down Bond | - |
-| ` 2 ` || Double Bond | - |
-| ` 2 ` || Double Cis/Trans Bond | - |
-| ` 3 ` || Triple Bond | - |
-| ` 4 ` || Aromatic Bond | - |
-| ` 0 ` || Any Bond | - |
+| Shortcut| Action | Description |
+| ---| --- | --- |
+| `Mod+h`| Hand tool | - |
+| `Escape`| Lasso Selection | - |
+| `Escape`| Rectangle Selection | - |
+| `Escape`| Fragment Selection | - |
+| `Delete, Backspace`| Erase | - |
+| `Alt+e`| Stereochemistry | - |
+| `5`| Charge Plus | - |
+| `5`| Charge Minus | - |
+| `Alt+r`| Rotate Tool | - |
+| `Alt+h`| Horizontal Flip | - |
+| `Alt+v`| Vertical Flip | - |
+| `Mod+g`| S-Group | - |
+| `Mod+g`| Data S-Group | - |
+| `Mod+r`| R-Group Label Tool | - |
+| `Mod+Shift+r, Mod+r`| R-Group Fragment Tool | - |
+| `Mod+r`| Attachment Point Tool | - |
+| `1`| Single Bond | - |
+| `1`| Single Up Bond | - |
+| `1`| Single Down Bond | - |
+| `1`| Single Up/Down Bond | - |
+| `2`| Double Bond | - |
+| `2`| Double Cis/Trans Bond | - |
+| `3`| Triple Bond | - |
+| `4`| Aromatic Bond | - |
+| `0`| Any Bond | - |
 
 
 **Atoms**
-| ` Shortcut ` || Action | Description |
-| ` --- ` || --- | --- |
-| ` h ` || Atom H | - |
-| ` c ` || Atom C | - |
-| ` n ` || Atom N | - |
-| ` o ` || Atom O | - |
-| ` s ` || Atom S | - |
-| ` p ` || Atom P | - |
-| ` f ` || Atom F | - |
-| ` Shift+c ` || Atom Cl | - |
-| ` b ` || Atom Br | - |
-| ` i ` || Atom I | - |
-| ` a ` || Any atom | - |
-| ` q ` || Any heteroatom | - |
-| ` r ` || Pseudoatom | - |
-| ` k ` || Atom K | - |
-| ` m ` || Any metal | - |
-| ` Shift+s ` || Atom Si | - |
-| ` Shift+n ` || Atom Na | - |
-| ` x ` || Any halogen | - |
-| ` d ` || Deuterium | - |
-| ` Shift+b ` || Atom B | - |
+| Shortcut| Action | Description |
+| ---| --- | --- |
+| `h`| Atom H | - |
+| `c`| Atom C | - |
+| `n`| Atom N | - |
+| `o`| Atom O | - |
+| `s`| Atom S | - |
+| `p`| Atom P | - |
+| `f`| Atom F | - |
+| `Shift+c`| Atom Cl | - |
+| `b`| Atom Br | - |
+| `i`| Atom I | - |
+| `a`| Any atom | - |
+| `q`| Any heteroatom | - |
+| `r`| Pseudoatom | - |
+| `k`| Atom K | - |
+| `m`| Any metal | - |
+| `Shift+s`| Atom Si | - |
+| `Shift+n`| Atom Na | - |
+| `x`| Any halogen | - |
+| `d`| Deuterium | - |
+| `Shift+b`| Atom B | - |
 
 
 **Zoom**
-| ` Shortcut ` || Action | Description |
-| ` --- ` || --- | --- |
-| ` -, _, Shift+- ` || Zoom Out | - |
-| ` +, =, Shift+= ` || Zoom In | - |
+| Shortcut| Action | Description |
+| ---| --- | --- |
+| `-, _, Shift+-`| Zoom Out | - |
+| `+, =, Shift+=`| Zoom In | - |
 
 
 **Templates**
-| ` Shortcut ` || Action | Description |
-| ` --- ` || --- | --- |
-| ` Shift+t ` || Custom Templates | - |
+| Shortcut| Action | Description |
+| ---| --- | --- |
+| `Shift+t`| Custom Templates | - |
 
 
 **FunctionalGroups**
-| ` Shortcut ` || Action | Description |
-| ` --- ` || --- | --- |
-| ` Shift+f ` || Functional Groups | - |
+| Shortcut| Action | Description |
+| ---| --- | --- |
+| `Shift+f`| Functional Groups | - |
 
 
 **Fullscreen**
-| ` Shortcut ` || Action | Description |
-| ` --- ` || --- | --- |
+| Shortcut| Action | Description |
+| ---| --- | --- |
 
 
 **Help**
-| ` Shortcut ` || Action | Description |
-| ` --- ` || --- | --- |
-| ` ?, &, Shift+/ ` || help | - |
+| Shortcut| Action | Description |
+| ---| --- | --- |
+| `?, &, Shift+/`| help | - |
 
-**Note** : Please, use `Ctrl+V` to paste the selected object in
+**Note** : Please, use`Ctrl+V`to paste the selected object in
 Google Chrome and Mozilla Firefox browsers.
 

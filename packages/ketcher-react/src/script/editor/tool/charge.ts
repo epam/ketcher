@@ -38,7 +38,7 @@ class ChargeTool {
     ) {
       this.editor.hover(ci)
     } else {
-      this.editor.hover(null)
+      this.editor.hover(null, null, event)
     }
     return true
   }

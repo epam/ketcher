@@ -251,7 +251,11 @@ class BondTool {
         return true
       }
     }
-    this.editor.hover(this.editor.findItem(event, ['atoms', 'bonds']))
+    this.editor.hover(
+      this.editor.findItem(event, ['atoms', 'bonds']),
+      null,
+      event
+    )
     return true
   }
 

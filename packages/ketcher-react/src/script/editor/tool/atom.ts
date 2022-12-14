@@ -154,7 +154,9 @@ class AtomTool {
         y: layerY - height / 2
       })
       this.editor.hover(
-        this.editor.findItem(event, ['atoms', 'functionalGroups'])
+        this.editor.findItem(event, ['atoms', 'functionalGroups']),
+        null,
+        event
       )
       return
     }

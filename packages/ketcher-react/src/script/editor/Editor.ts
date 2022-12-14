@@ -612,12 +612,16 @@ function domEventSetup(editor: Editor, clientArea) {
   })
 }
 
-function recoordinate(editor: Editor, rp /* , vp */) {
+function recoordinate(editor: Editor, rp?: Vec2 /* , vp */) {
   // rp is a point in scaled coordinates, which will be positioned
   // vp is the point where the reference point should now be (in view coordinates)
   //    or the center if not set
   console.assert(rp, 'Reference point not specified')
-  editor.render.setScrollOffset(0, 0)
+  if (rp) {
+    editor.render.setScrollOffset(rp.x, rp.y)
+  } else {
+    editor.render.setScrollOffset(0, 0)
+  }
 }
 
 function getStructCenter(ReStruct, selection?) {

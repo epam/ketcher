@@ -47,7 +47,9 @@ function getPanelPosition(
     height = end.y - start.y
     // calculate initial position
     const firstAtomPosition = sGroup.firstSgroupAtom?.pp
-    const panelPosition = Scale.obj2scaled(firstAtomPosition, render.options)
+    const panelPosition = Scale.obj2scaled(firstAtomPosition, {
+      scale: render.options.scale * render.options.zoom
+    })
     x = panelPosition.x - width / 2 - HOVER_PANEL_PADDING
     y = panelPosition.y + HOVER_PANEL_PADDING
     // adjust position to keep inside viewport

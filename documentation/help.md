@@ -35,7 +35,7 @@ Using the _Tool palette_, you can
 - select the entire molecule or its fragment in one of the following
   ways (click on the button align=center <img src = images/2_lasso_icon.png width = "42" /> to see the list of available options):
 
-  <img src = images/3_lasso_menu.png height = "60" /> 
+  <img src = images/3_lasso_menu.png height = "60" />
 
 To select **one atom or bond**, click Lasso (1) or Rectangle Selection tool (2),
 and then click the atom or bond.
@@ -64,7 +64,7 @@ selects several structures.
 
 You can use the buttons of the _Main_ toolbar:
 
-![](images/4_main_toolbarn.png 'Main Toolbar') 
+![](images/4_main_toolbarn.png 'Main Toolbar')
 
 - **Clear Canvas** (1) button to start drawing a new molecule; this
   command clears the drawing area;
@@ -75,13 +75,13 @@ You can use the buttons of the _Main_ toolbar:
 
 -  **Copy** with additional abilties to **Copy As** (4), **Paste** (5), **Cut** (6) buttons to perform
   the corresponding actions;
-  
-- **Undo** (7) / **Redo** (8) to manage the last actions taken on the canvas; 
- 
+
+- **Undo** (7) / **Redo** (8) to manage the last actions taken on the canvas;
+
 - **Aromatize** (9) / **Dearomatize** (10) buttons to mark aromatic
   structures (to convert a structure to the Aromatic or Kekule
   presentation);
-  
+
 - **Layout** button (11) to change the position of the structure to
   work with it with the most convenience;
 
@@ -91,10 +91,10 @@ You can use the buttons of the _Main_ toolbar:
 - **Calculate CIP** button (13) to determine R/S and E/Z
   configurations;
 
-- **Check Structure** button (14) to check the following properties  of the structure. 
-  Check will be conducted immediately when the operation is selected. 
-  You can check only the Settings you are interested in and check structure again with new settings by clicking on Check button. 
-  Apply button will save the Settings checked and they will be applied for the file saving. 
+- **Check Structure** button (14) to check the following properties  of the structure.
+  Check will be conducted immediately when the operation is selected.
+  You can check only the Settings you are interested in and check structure again with new settings by clicking on Check button.
+  Apply button will save the Settings checked and they will be applied for the file saving.
 
     <img src = images/5_structurecheck.png width = "450" />
 
@@ -102,7 +102,7 @@ You can use the buttons of the _Main_ toolbar:
   the structure:
 
   <img src = images/6_calc_values.png width = "280" />
-  
+
 - **Stereochemistry** button (16) to assign and display enhanced stereochemistry properties of the structure
 
 - **3D Viewer** button (17) to open the structure in the
@@ -117,14 +117,14 @@ You can use the buttons of the _Main_ toolbar:
 
 - **About** button (20) to display version and copyright information
   of the program.
-  
+
 - **Fullscreen mode** button (21) allows to initiate displaying Ketcher window in the fullscreen mode.
-  
-- **Zoom panel** (22) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (23) to set the view manually, **Zoom in** (24) / **Zoom out** (25) to scale the view gradually, **Zoom 100%**  (26) to enable the default zoom setting. 
+
+- **Zoom panel** (22) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (23) to set the view manually, **Zoom in** (24) / **Zoom out** (25) to scale the view gradually, **Zoom 100%**  (26) to enable the default zoom setting.
 
 
  <img src = images/4.png width = "180" />
-   
+
 
 # 3D Viewer
 
@@ -175,20 +175,20 @@ To draw/edit atoms you can:
 
 - change an atom by clicking on an existing atom with the
   _Selection_ tool and starting to enter text after that; type another atom symbol in the text box:
-  
+
   <img src = images/11_label_edit.png width = "240" />
-  
+
 - change the charge of an atom by selecting the Charge Plus or
   Charge Minus tool and clicking consecutively on an atom to
   increase/decrease its charge:
 
-  <img src = images/12_charge_icons.png width = "42" /> 
+  <img src = images/12_charge_icons.png width = "42" />
 
 - change an atom or its properties by double-clicking on the atom to
   invoke the Atom Properties dialog (the dialog also provides atom
   query features):
 
-  <img src = images/13_atom_propn.png width = "240" /> 
+  <img src = images/13_atom_propn.png width = "240" />
 
 - click on the <img src = images/14.png width = "42" /> button to use the Extended table and
   select a corresponding Generic group or Special Node:
@@ -219,9 +219,9 @@ To draw/edit bonds you can:
   <img src = images/bond94.png height = "28"/>  <br>
   <img src = images/bond95.png height = "28"/>  <br>
 
-  
- 
-    
+
+
+
 - select a bond type from the drop down list and click inside the
   drawing area; a bond of the selected type will be drawn;
 
@@ -254,7 +254,7 @@ To draw/edit bonds you can:
 Use the _R-Group_ toolbox <img src = images/20_rtools_icon.png width = "42" /> to draw R-groups in Markush
 structures:
 
-<img src = images/21_rtools_menu.png width = "142" /> 
+<img src = images/21_rtools_menu.png width = "142" />
 
 Selecting the _R-Group_ _Label_ Tool (1) and clicking on an atom in the
 structure invokes the dialog to select the R-Group label for a current
@@ -265,11 +265,11 @@ atom position in the structure:
 Selecting the R-Group label and clicking **OK** converts the structure
 into a Markush structure with the selected R-Group label:
 
-![](images/rgroup-example1.png) 
+![](images/rgroup-example1.png)
 
 **Note** : You can choose several R-Group labels simultaneously:
 
-![](images/rgroup-example2.png)   
+![](images/rgroup-example2.png)
 
 Particular chemical fragments that may be substituted for a given
 R-Group form a set of R-Group members. R-Group members can be any
@@ -306,9 +306,9 @@ attachment point.
 Schematically, the entire process of the R-Group member creation can
 be presented as:
 
-![](images/rgroup-example3.png) 
+![](images/rgroup-example3.png)
 
-![](images/rgroup-example4.png) 
+![](images/rgroup-example4.png)
 
 
 
@@ -454,7 +454,7 @@ to open the drop-down list with the following tools:
 
 <img src = images/40_objects_menu.png width = "130" />.
 
- *Shape Ellipse* (1), *Shape Rectangle* (2), and *Shape Line* (3). 
+ *Shape Ellipse* (1), *Shape Rectangle* (2), and *Shape Line* (3).
 
 
 
@@ -484,19 +484,19 @@ To add a ring to the molecule, select a ring from the toolbar and
 click inside the drawing area, or click on an atom or a bond in the
 molecule.
 
-Rules of using templates: 
+Rules of using templates:
 
 - Selecting a template and clicking on an atom in the existing
   structure adds the template to the structure connected with a single
   bond:
 
-  ![](images/template-example1.png) 
+  ![](images/template-example1.png)
 
 - Selecting a template and dragging the cursor from an atom in the
   existing structure adds the template directly to this atom resulting
   in the fused structure:
 
-  ![](images/template-example2.png) 
+  ![](images/template-example2.png)
 
 - Dragging the cursor from an atom in the existing structure results
   in the single bond attachment if the cursor is dragged to more than
@@ -504,7 +504,7 @@ Rules of using templates:
 - Selecting a template and clicking on a bond in the existing
   structure created a bond-to-bond fused structure:
 
-  ![](images/template-example3.png)  
+  ![](images/template-example3.png)
 
 - The bond in the initial structure is replaced with the bond in the
   template.
@@ -532,21 +532,21 @@ To create a user template:
 
 - click the Save as button.
 
-- click the Save to Templates button. _Template edit_ form will be displayed 
+- click the Save to Templates button. _Template edit_ form will be displayed
 
 <img src = images/44.png  width = "440" />
 
-- enter a name and define the attachment atom and bond by clicking on the structure preview.  Click on Apply button to save the template. 
+- enter a name and define the attachment atom and bond by clicking on the structure preview.  Click on Apply button to save the template.
 
-Saved template will be available in User Templates tab in the list of templates. 
+Saved template will be available in User Templates tab in the list of templates.
 
 
 # Functional Groups
 
-Ketcher allows you to select and use Functional Groups to properly represent your structure on the canvas. 
-Set of functional groups available is predefined and can't be changed right now. 
+Ketcher allows you to select and use Functional Groups to properly represent your structure on the canvas.
+Set of functional groups available is predefined and can't be changed right now.
 
-Explore the list of the Functional Groups available in the Templates library. Open it using the icon in the bottom toolbar: <br> 
+Explore the list of the Functional Groups available in the Templates library. Open it using the icon in the bottom toolbar: <br>
 <img src = images/43.png width = "42" /> <br>
 Navigate to the Functional Groups tab to explore the FGs available:
 
@@ -564,11 +564,11 @@ To add Functional Group to the canvas and join it to the structure do the follow
 You can just click on the canvas having the FG selected. To connect it with other structure on the canvas do the following:
 
 1. Select Simple Bond tool in the left Ketcher toolbar
-2. Drag bond **from** the connection atom and drop it **to** the Functional Group on the canvas. 
+2. Drag bond **from** the connection atom and drop it **to** the Functional Group on the canvas.
 
 <img src = images/FG_chain.gif width = "400"/>
 
-Functional Group on the canvas can be **Expanded** to view it's internal structure. Expanded group can be **Contracted** back to the compact presentation. 
+Functional Group on the canvas can be **Expanded** to view it's internal structure. Expanded group can be **Contracted** back to the compact presentation.
 
 You can also **Remove the Abbreviation** on the group - it will allows you to work with the functional group atoms and bonds as with regular atoms and bonds on the canvas. To Expand, Contract and Remove Abbreviation:
 
@@ -577,14 +577,14 @@ You can also **Remove the Abbreviation** on the group - it will allows you to wo
 
 <img src=images/FG_contract.gif width = "400"/>
 
-Please, note that a lot of Ketcher tools will be not applicable for the separate atoms and bonds of FG. FG can only be selected as a whole. It can also be deleted, moved, or rotated only as an entire entity. 
+Please, note that a lot of Ketcher tools will be not applicable for the separate atoms and bonds of FG. FG can only be selected as a whole. It can also be deleted, moved, or rotated only as an entire entity.
 
-Ketcher will let you know if the tool is not applicable for the FG and will suggest to Remove the Abbreviation immediately: <br> 
+Ketcher will let you know if the tool is not applicable for the FG and will suggest to Remove the Abbreviation immediately: <br>
 <img src=images/FG_remove_abb.png width = "300"/>
-<br> 
-Aromatize & Dearomatize operations will not be applied to the rings that are part of the FG. 
+<br>
+Aromatize & Dearomatize operations will not be applied to the rings that are part of the FG.
 
-Functional Groups will be considered as **super atoms** when opening and saving .mol files. 
+Functional Groups will be considered as **super atoms** when opening and saving .mol files.
 
 
 # Working with Files
@@ -592,11 +592,11 @@ Functional Groups will be considered as **super atoms** when opening and saving 
 Ketcher supports the following molecular formats that can be entered
 either manually or from files:
 
-![](images/formats-table.png) 
+![](images/formats-table.png)
 
 You can use the *Open…* and *Save As…* buttons of the _Main_
 toolbar to import a molecule from a molecular file or save it to a
-supported molecular file format. 
+supported molecular file format.
 
 The **_Open Structure_** dialog enables
 one to either browse for a file or manually input, e.g.
@@ -610,18 +610,18 @@ The text editor form is initiated for the text from the Clipboard and when the f
 
 Ketcher suggests 2 ways for structure to be opened:
 
-_Open as New Project_ will clear the canvas and position new structure on it. 
-_Add to Canvas_ will save the structure in the clipboard. Click on the canvas to place it. 
+_Open as New Project_ will clear the canvas and position new structure on it.
+_Add to Canvas_ will save the structure in the clipboard. Click on the canvas to place it.
 
 
 The **_Save Structure_** dialog enables one to save the molecular file:
 
 <img src=images/46_save_text.png width = "560"/>
 
-Select the format needed in the _File Format_ drop down. 
-<br> Check out the _Warnings_ tab if it's represented. It provides the list of chemical information that can't be saved properly to the format selected. 
+Select the format needed in the _File Format_ drop down.
+<br> Check out the _Warnings_ tab if it's represented. It provides the list of chemical information that can't be saved properly to the format selected.
 <br> <br>
-You can save _a structure as image_ (in Standalone mode and in Remote mode when the server is available) by selectinig the _SVG Document_ or _PNG Image_ format. 
+You can save _a structure as image_ (in Standalone mode and in Remote mode when the server is available) by selectinig the _SVG Document_ or _PNG Image_ format.
 Please, note that saving structure to the image formats will results in chemical information loss in the file. You will not be able to open files in these formats in Ketcher. Supported graphics file formats are: *Portable Network Graphics (.png)* and *Scalable Vector Graphics (.svg)*.
 
 <img src=images/47_save_image.png width = "560"/>
@@ -638,7 +638,7 @@ When the structure with the correct tetrahedral stereochemistry is created on th
 
 In the *Stereochemistry tab* in *Settings* you can:
 
-- enable/disable display of the Stereo flags 
+- enable/disable display of the Stereo flags
 - set the text of the Absolute/AND/OR/Mixed flags
 - change the style of the Label display at stereogenic centers
 - select the color of Absolute/AND/OR stereogenic centers
@@ -649,7 +649,7 @@ In the *Stereochemistry tab* in *Settings* you can:
 <img src=images/50_sett_stereon.png width = "440"/>
 
 
- 
+
 
 # Hotkeys
 
@@ -658,52 +658,131 @@ features/commands of the Editor. To display the hotkeys just place the
 cursor over a toolbar button. If a hotkey is available for the button,
 it will appear in brackets after the description of the button.
 
-| Key            | Action                                                                                                     |
-| -------------- | ---------------------------------------------------------------------------------------------------------- |
-| `Esc`          | Switching between the Lasso/Rectangle/Fragment Selection tools                                             |
-| `Del`          | Delete the selected objects                                                                                |
-| `0`            | Draw Any bond.                                                                                             |
-| `1`            | Single / Single Up / Single Down / Single Up/Down bond. Consecutive pressing switches between these types. |
-| `2`            | Double / Double Cis/Trans bond                                                                             |
-| `3`            | Draw a triple bond.                                                                                        |
-| `4`            | Draw an aromatic bond.                                                                                     |
-| `5`            | Charge Plus/Charge Minus                                                                                   |
-| `A`            | Draw any atom                                                                                              |
-| `H`            | Draw a hydrogen                                                                                            |
-| `C`            | Draw a carbon                                                                                              |
-| `N`            | Draw a nitrogen                                                                                            |
-| `O`            | Draw an oxygen                                                                                             |
-| `S`            | Draw a sulfur                                                                                              |
-| `F`            | Draw a fluorine                                                                                            |
-| `P`            | Draw a phosphorus                                                                                          |
-| `I`            | Draw an iodine                                                                                             |
-| `T`            | Basic templates. Consecutive pressing switches between different templates                                 |
-| `Shift+t`      | Open template library                                                                                      |
-| `Shift+f`      | Open functional groups library                                                                             |
-| `Alt+r`        | Rotate tool                                                                                                |
-| `Alt+v`        | Flip vertically                                                                                            |
-| `Alt+h`        | Flip horizontally                                                                                          |
-| `Ctrl+g`       | S-Group tool / Data S-Group tool                                                                           |
-| `Ctrl+d`       | Align and select all S-Group data                                                                          |
-| `Ctrl+r`       | Switching between the R-Group Label Tool/R-Group Fragment Tool/Attachment Point Tool                       |
-| `Ctrl+Shift+r` | R-Group Fragment Tool                                                                                      |
-| `Ctrl+Del`     | Clear canvas                                                                                               |
-| `Ctrl+o`       | Open                                                                                                       |
-| `Ctrl+s`       | Save As                                                                                                    |
-| `Ctrl+z`       | Undo                                                                                                       |
-| `Ctrl+Shift+z` | Redo                                                                                                       |
-| `Ctrl+x`       | Cut selected objects                                                                                       |
-| `Ctrl+c`       | Copy selected objects (not available for Simple objects and Text objects in IE)                            |
-| `Ctrl+m`       | Copy selected objects as Mol (not available for Simple objects and Text objects)                           |
-| `Ctrl+Shift+k` | Copy selected objects as Ket                                                                               |
-| `Ctrl+Shift+f` | Copy selected objects as Image                                                                             |
-| `Ctrl+v`       | Paste selected objects                                                                                     |
-| `+`            | Zoom In                                                                                                    |
-| `-`            | Zoom Out                                                                                                   |
-| `Ctrl+l`       | Layout                                                                                                     |
-| `Ctrl+Shift+l` | Clean Up                                                                                                   |
-| `Ctrl+p`       | Calculate CIP                                                                                              |
-| `?`            | Help                                                                                                       |
+**General**
+| Shortcut | Action | Description |
+| --- | --- | --- |
+| Mod+Delete | Clear Canvas | - |
+| Mod+o | Open… | - |
+| Mod+s | Save As… | - |
+| Mod+z | Undo | - |
+| Mod+Shift+z, Mod+y | Redo | - |
+| Mod+x | Cut | - |
+| Mod+c | Copy | - |
+| Mod+Shift+f | Copy Image | - |
+| Mod+m | Copy as MOL | - |
+| Mod+Shift+k | Copy as KET | - |
+| Mod+v | Paste | - |
+| Mod+a | Select All | - |
+| Mod+Shift+a | Deselect All | - |
+| Mod+d | Select descriptors | - |
+
+
+**Server**
+| Shortcut | Action | Description |
+| --- | --- | --- |
+| Mod+l | Layout | - |
+| Mod+Shift+l | Clean Up | - |
+| Mod+p | Calculate CIP | - |
+
+
+**Debug**
+| Shortcut | Action | Description |
+| --- | --- | --- |
+| Ctrl+Shift+r | force-update | - |
+| Alt+Shift+r | qs-serialize | - |
+
+
+**Tools**
+| Shortcut | Action | Description |
+| --- | --- | --- |
+| Mod+h | Hand tool | - |
+| Escape | Lasso Selection | - |
+| Escape | Rectangle Selection | - |
+| Escape | Fragment Selection | - |
+| Delete, Backspace | Erase | - |
+| Alt+e | Stereochemistry | - |
+| 5 | Charge Plus | - |
+| 5 | Charge Minus | - |
+| Alt+r | Rotate Tool | - |
+| Alt+h | Horizontal Flip | - |
+| Alt+v | Vertical Flip | - |
+| Mod+g | S-Group | - |
+| Mod+g | Data S-Group | - |
+| Mod+r | R-Group Label Tool | - |
+| Mod+Shift+r, Mod+r | R-Group Fragment Tool | - |
+| Mod+r | Attachment Point Tool | - |
+| 1 | Single Bond | - |
+| 1 | Single Up Bond | - |
+| 1 | Single Down Bond | - |
+| 1 | Single Up/Down Bond | - |
+| 2 | Double Bond | - |
+| 2 | Double Cis/Trans Bond | - |
+| 3 | Triple Bond | - |
+| 4 | Aromatic Bond | - |
+| 0 | Any Bond | - |
+
+
+**Atoms**
+| Shortcut | Action | Description |
+| --- | --- | --- |
+| h | Atom H | - |
+| c | Atom C | - |
+| n | Atom N | - |
+| o | Atom O | - |
+| s | Atom S | - |
+| p | Atom P | - |
+| f | Atom F | - |
+| Shift+c | Atom Cl | - |
+| b | Atom Br | - |
+| i | Atom I | - |
+| a | Atom A | - |
+| q | Atom Q | - |
+| r | Atom R | - |
+| k | Atom K | - |
+| m | Atom M | - |
+| Shift+s | Atom Si | - |
+| Shift+n | Atom Na | - |
+| x | Atom X | - |
+| d | Atom D | - |
+| Shift+b | Atom B | - |
+
+
+**Zoom**
+| Shortcut | Action | Description |
+| --- | --- | --- |
+| -, _, Shift+- | Zoom Out | - |
+| +, =, Shift+= | Zoom In | - |
+
+
+**Templates**
+| Shortcut | Action | Description |
+| --- | --- | --- |
+| Shift+t | Custom Templates | - |
+| t | Benzene | - |
+| t | Cyclopentadiene | - |
+| t | Cyclohexane | - |
+| t | Cyclopentane | - |
+| t | Cyclopropane | - |
+| t | Cyclobutane | - |
+| t | Cycloheptane | - |
+| t | Cyclooctane | - |
+
+
+**FunctionalGroups**
+| Shortcut | Action | Description |
+| --- | --- | --- |
+| Shift+f | Functional Groups | - |
+
+
+**Fullscreen**
+| Shortcut | Action | Description |
+| --- | --- | --- |
+
+
+**Help**
+| Shortcut | Action | Description |
+| --- | --- | --- |
+| ?, &, Shift+/ | help | - |
 
 **Note** : Please, use `Ctrl+V` to paste the selected object in
 Google Chrome and Mozilla Firefox browsers.

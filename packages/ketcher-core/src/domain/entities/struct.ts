@@ -60,6 +60,7 @@ export class Struct {
   frags: Pool<Fragment | null>
   rgroups: Pool<RGroup>
   name: string
+  abbreviation?: string
   sGroupForest: SGroupForest
   simpleObjects: Pool<SimpleObject>
   texts: Pool<Text>
@@ -78,6 +79,7 @@ export class Struct {
     this.frags = new Pool<Fragment>()
     this.rgroups = new Pool<RGroup>()
     this.name = ''
+    this.abbreviation = ''
     this.sGroupForest = new SGroupForest()
     this.simpleObjects = new Pool<SimpleObject>()
     this.texts = new Pool<Text>()

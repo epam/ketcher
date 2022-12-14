@@ -220,7 +220,10 @@ export class SGroup {
   static isSaltOrSolvent(moleculeName: string): boolean {
     const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance()
     const saltsAndSolvents = saltsAndSolventsProvider.getSaltsAndSolventsList()
-    return saltsAndSolvents.some(({ name }) => name === moleculeName)
+    return saltsAndSolvents.some(
+      ({ name, abbreviation }) =>
+        name === moleculeName || moleculeName === abbreviation
+    )
   }
 
   static isAtomInSaltOrSolvent(

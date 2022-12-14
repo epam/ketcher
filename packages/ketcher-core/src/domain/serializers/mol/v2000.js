@@ -136,17 +136,20 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
   while (shift < end) {
     const line = ctabLines[shift]
     if (line.charAt(0) === 'A') {
-      let propValue = ctabLines[++shift]
+      const propValue = ctabLines[++shift]
       // TODO: Atom entity only have pseudo getter. Check during refactoring
       // this type of pseudo labeling is not used in current BIOVIA products. See ctab documentation 2020
       // https://discover.3ds.com/sites/default/files/2020-08/biovia_ctfileformats_2020.pdf (page 47)
       const isPseudo = /'.+'/.test(propValue)
-      if (isPseudo && !props.get('pseudo')) props.set('pseudo', new Pool())
-      if (!isPseudo && !props.get('alias')) props.set('alias', new Pool())
-      if (isPseudo) propValue = propValue.replace(/'/g, '')
+      if (isPseudo && !props.get('pseudo')) {
+        props.set('pseudo', new Pool())
+      }
+      if (!isPseudo && !props.get('alias')) {
+        props.set('alias', new Pool())
+      }
       props
         .get(isPseudo ? 'pseudo' : 'alias')
-        .set(utils.parseDecimalInt(line.slice(3, 6)) - 1, propValue)
+        .set(utils.parseDecimalInt(line.slice(3)) - 1, propValue)
     } else if (line.charAt(0) === 'M') {
       const type = line.slice(3, 6)
       let propertyData = line.slice(6)

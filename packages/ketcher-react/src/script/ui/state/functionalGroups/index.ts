@@ -26,11 +26,13 @@ import { prefetchStatic } from '../templates/init-lib'
 
 interface FGState {
   lib: []
+  functionalGroupInfo: any
   mode: string
 }
 
 const initialState: FGState = {
   lib: [],
+  functionalGroupInfo: null,
   mode: 'fg'
 }
 
@@ -42,12 +44,23 @@ const functionalGroupsReducer = (
     case 'FG_INIT':
       return { ...state, ...payload }
 
+    case 'FG_HIGHLIGHT':
+      return { ...state, functionalGroupInfo: payload }
+
     default:
       return state
   }
 }
 
 const initFGroups = (lib: SdfItem[]) => ({ type: 'FG_INIT', payload: { lib } })
+const highlightFGroup = (group: any) => ({
+  type: 'FG_HIGHLIGHT',
+  payload: group
+})
+
+export function highlightFG(dispatch, group: any) {
+  dispatch(highlightFGroup(group))
+}
 
 export function initFGTemplates(baseUrl: string) {
   return async (dispatch) => {

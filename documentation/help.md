@@ -735,15 +735,15 @@ it will appear in brackets after the description of the button.
 | Shift+c | Atom Cl | - |
 | b | Atom Br | - |
 | i | Atom I | - |
-| a | Atom A | - |
-| q | Atom Q | - |
-| r | Atom R | - |
+| a | Any atom | - |
+| q | Any heteroatom | - |
+| r | Pseudoatom | - |
 | k | Atom K | - |
-| m | Atom M | - |
+| m | Any metal | - |
 | Shift+s | Atom Si | - |
 | Shift+n | Atom Na | - |
-| x | Atom X | - |
-| d | Atom D | - |
+| x | Any halogen | - |
+| d | Deuterium | - |
 | Shift+b | Atom B | - |
 
 
@@ -758,14 +758,6 @@ it will appear in brackets after the description of the button.
 | Shortcut | Action | Description |
 | --- | --- | --- |
 | Shift+t | Custom Templates | - |
-| t | Benzene | - |
-| t | Cyclopentadiene | - |
-| t | Cyclohexane | - |
-| t | Cyclopentane | - |
-| t | Cyclopropane | - |
-| t | Cyclobutane | - |
-| t | Cycloheptane | - |
-| t | Cyclooctane | - |
 
 
 **FunctionalGroups**

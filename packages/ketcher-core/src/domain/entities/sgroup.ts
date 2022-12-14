@@ -77,6 +77,7 @@ export class SGroup {
   neiAtoms: any
   pp: Vec2 | null
   data: any
+  firstSgroupAtom: any
 
   constructor(type: string) {
     this.type = type

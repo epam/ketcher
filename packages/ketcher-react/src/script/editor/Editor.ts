@@ -210,9 +210,9 @@ class Editor implements KetcherEditor {
 
     const tool = new toolMap[name](this, opts)
 
-    // hide icon if not AtomToll chosen
-    if (name !== 'atom') {
-      this.render.paper.getById('atomHoverIcon')?.hide()
+    const isAtomToolChosen = name === 'atom'
+    if (!isAtomToolChosen) {
+      this.hoverIcon.hide()
     }
 
     if (!tool || tool.isNotActiveTool) {
@@ -349,7 +349,7 @@ class Editor implements KetcherEditor {
   hover(ci: any, newTool?: any, event?: PointerEvent) {
     const tool = newTool || this._tool // eslint-disable-line
 
-    let highlight: any = false
+    let infoPanelData: any = null
 
     if (
       'ci' in tool &&
@@ -363,25 +363,25 @@ class Editor implements KetcherEditor {
 
     if (!event) return
 
-    const myCi = this.findItem(event, ['sgroups', 'functionalGroups'])
+    const checkFunctionGroupTypes = ['sgroups', 'functionalGroups']
+    const myCi = this.findItem(event, checkFunctionGroupTypes)
     if (myCi) {
-      if (myCi.map === 'sgroups' || myCi.map === 'functionalGroups') {
+      if (checkFunctionGroupTypes.includes(myCi.map)) {
         const sGroup = this.struct()?.sgroups.get(myCi.id)
         if (sGroup && !sGroup.data.expanded) {
           const groupName = sGroup.data.name
           const groupStruct =
             FunctionalGroup.getFunctionalGroupByName(groupName)
-          highlight = {
-            group: groupStruct,
-            x: event.clientX,
-            y: event.clientY,
-            groupId: myCi.id
+          infoPanelData = {
+            groupStruct,
+            event,
+            sGroup
           }
         }
       }
     }
-    if (highlight) {
-      this.event.showInfo.dispatch(highlight)
+    if (infoPanelData) {
+      this.event.showInfo.dispatch(infoPanelData)
     } else {
       this.event.showInfo.dispatch(null)
     }

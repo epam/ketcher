@@ -45,7 +45,6 @@ function setupEditor(editor, props, oldProps = {}) {
   if (oldProps.options && options !== oldProps.options) editor.options(options)
 
   Object.keys(editor.event).forEach((name) => {
-    // console.log('event name', name);
     const eventName = `on${upperFirst(name)}`
 
     if (props[eventName] !== oldProps[eventName]) {

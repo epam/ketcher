@@ -45,17 +45,19 @@ export class FunctionalGroup {
 
   static isFunctionalGroup(sgroup): boolean {
     const provider = FunctionalGroupsProvider.getInstance()
-    const types = provider.getFunctionalGroupsList()
+    const functionalGroups = provider.getFunctionalGroupsList()
     return (
-      types.some((type) => type.name === sgroup.data.name) &&
+      functionalGroups.some((type) => type.name === sgroup.data.name) &&
       sgroup.type === 'SUP'
     )
   }
 
   static getFunctionalGroupByName(searchName: string): Struct | null {
     const provider = FunctionalGroupsProvider.getInstance()
-    const types = provider.getFunctionalGroupsList()
-    return types.find((fnGroup) => fnGroup.name === searchName) || null
+    const functionalGroups = provider.getFunctionalGroupsList()
+    return (
+      functionalGroups.find((fnGroup) => fnGroup.name === searchName) || null
+    )
   }
 
   static atomsInFunctionalGroup(functionalGroups, atom): number | null {

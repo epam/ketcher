@@ -226,21 +226,27 @@ Render.prototype.update = function (force = false, viewSz = null) {
       }
     } else {
       const sz1 = bb.sz()
-      const marg = this.options.autoScaleMargin
-      const mv = new Vec2(marg, marg)
+      const { autoScaleMargin, rescaleAmount, maxBondLength } = this.options
+      const mv = new Vec2(autoScaleMargin, autoScaleMargin)
       const csz = viewSz
-      if (marg && (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)) {
+      if (
+        autoScaleMargin &&
+        (csz.x < 2 * autoScaleMargin + 1 || csz.y < 2 * autoScaleMargin + 1)
+      ) {
         throw new Error('View box too small for the given margin')
       }
       let rescale =
-        this.options.rescaleAmount ||
-        Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg))
-      if (this.options.maxBondLength / rescale > 1.0) rescale = 1.0
+        rescaleAmount ||
+        Math.max(
+          sz1.x / (csz.x - 2 * autoScaleMargin),
+          sz1.y / (csz.y - 2 * autoScaleMargin)
+        )
+      if (maxBondLength / rescale > 1.0) rescale = 1.0
       const sz2 = sz1.add(mv.scaled(2 * rescale))
       /* eslint-disable no-mixed-operators */
       this.paper.setViewBox(
-        bb.pos().x - marg * rescale - (csz.x * rescale - sz2.x) / 2,
-        bb.pos().y - marg * rescale - (csz.y * rescale - sz2.y) / 2,
+        bb.pos().x - autoScaleMargin * rescale - (csz.x * rescale - sz2.x) / 2,
+        bb.pos().y - autoScaleMargin * rescale - (csz.y * rescale - sz2.y) / 2,
         csz.x * rescale,
         csz.y * rescale
       )

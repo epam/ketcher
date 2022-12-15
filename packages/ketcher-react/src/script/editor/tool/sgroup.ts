@@ -154,7 +154,6 @@ class SGroupTool {
   }
 
   mousedown(event) {
-    debugger
     const closestItem = this.editor.findItem(event, searchMaps)
     const struct = this.editor.render.ctab
     const sgroups = struct.sgroups

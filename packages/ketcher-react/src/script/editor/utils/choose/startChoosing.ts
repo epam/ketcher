@@ -3,10 +3,10 @@ import { atomLongtapEvent } from '../../tool/atom'
 import { selMerge } from '../../tool/select'
 import { closestToSel } from './chooseUtils/closestToSel'
 
-interface DragCtx {
-  item?: any
-  xy0?: any
-}
+// interface DragCtx {
+//   item?: any
+//   xy0?: any
+// }
 
 function isSelected(selection, item) {
   return selection?.[item.map]?.includes(item.id)
@@ -14,7 +14,7 @@ function isSelected(selection, item) {
 
 export function startChoosing(self, event, editor, lassoHelper) {
   console.log('startChoosing')
-  const dragCtx: DragCtx = {}
+  self.dragCtx = {}
 
   const render = editor.render
   const ctab = render.ctab
@@ -107,8 +107,8 @@ export function startChoosing(self, event, editor, lassoHelper) {
     editor.selection(newSelected)
   }
 
-  dragCtx.item = ci
-  dragCtx.xy0 = render.page2obj(event)
+  self.dragCtx.item = ci
+  self.dragCtx.xy0 = render.page2obj(event)
 
   if (!ci || ci.map === 'atoms') {
     atomLongtapEvent(self, render)
@@ -117,7 +117,7 @@ export function startChoosing(self, event, editor, lassoHelper) {
   if (!ci) {
     //  ci.type == 'Canvas'
     if (!event.shiftKey) editor.selection(null)
-    delete dragCtx.item
+    delete self.dragCtx.item
     if (!lassoHelper.fragment) lassoHelper.begin(event)
     return true
   }

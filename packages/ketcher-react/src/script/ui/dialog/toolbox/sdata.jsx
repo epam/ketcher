@@ -14,45 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field, SelectOneOf } from '../../component/form/form/form'
+import Form, { Field } from '../../component/form/form/form'
 import {
   getSdataDefault,
-  sdataCustomSchema,
-  sdataSchema
+  sdataCustomSchema
 } from '../../data/schema/sdata-schema'
+import { getSelectOptionsFromSchema } from '../../utils'
 
 import { Dialog } from '../../views/components'
 import Select from '../../component/form/Select'
 import classes from './sgroup.module.less'
 import { connect } from 'react-redux'
-import { getSelectOptionsFromSchema } from '../../utils'
-
-function SelectInput({ title, name, schema, ...prop }) {
-  const inputSelect = Object.keys(schema).reduce(
-    (acc, item) => {
-      acc.enum.push(item)
-      acc.enumNames.push(schema[item].title || item)
-      return acc
-    },
-    {
-      title,
-      type: 'string',
-      default: '',
-      minLength: 1,
-      enum: [],
-      enumNames: []
-    }
-  )
-
-  return (
-    <Field
-      name={name}
-      options={getSelectOptionsFromSchema(inputSelect)}
-      component={Select}
-      {...prop}
-    />
-  )
-}
 
 function SData({
   context,
@@ -65,17 +37,16 @@ function SData({
 }) {
   const { result, valid } = formState
 
+  const formSchema = sdataCustomSchema
+
   const init = {
-    context,
-    fieldName: fieldName || getSdataDefault(context),
+    context: context || getSdataDefault(formSchema, 'context'),
+    fieldName: fieldName || getSdataDefault(formSchema, 'fieldName'),
     type,
-    radiobuttons
+    radiobuttons: radiobuttons || getSdataDefault(formSchema, 'radiobuttons')
   }
 
-  init.fieldValue = fieldValue || getSdataDefault(context, init.fieldName)
-
-  const formSchema =
-    sdataSchema[result.context][result.fieldName] || sdataCustomSchema
+  init.fieldValue = fieldValue || getSdataDefault(formSchema, 'fieldValue')
 
   const serialize = {
     context: result.context.trim(),
@@ -105,26 +76,32 @@ function SData({
         {...formState}
       >
         <fieldset>
-          <SelectOneOf title="Context" name="context" schema={sdataSchema} />
-          <SelectInput
-            title="Field name"
-            name="fieldName"
-            schema={sdataSchema[result.context]}
+          <Field
+            name="context"
+            options={getSelectOptionsFromSchema(formSchema.properties.context)}
+            component={Select}
           />
-          {content(formSchema, result.context, result.fieldName, radiobuttons)}
+          <Field name="fieldName" placeholder="Enter name" />
+          {content(
+            formSchema,
+            result.context,
+            result.fieldName,
+            result.fieldValue,
+            radiobuttons
+          )}
         </fieldset>
       </Form>
     </Dialog>
   )
 }
 
-const content = (schema, context, fieldName, checked) =>
+const content = (schema, context, fieldName, fieldValue, checked) =>
   Object.keys(schema.properties)
     .filter(
       (prop) => prop !== 'type' && prop !== 'context' && prop !== 'fieldName'
     )
-    .map((prop) =>
-      prop === 'radiobuttons' ? (
+    .map((prop) => {
+      return prop === 'radiobuttons' ? (
         <Field
           name={prop}
           checked={checked}
@@ -132,12 +109,11 @@ const content = (schema, context, fieldName, checked) =>
           key={`${context}-${fieldName}-${prop}-radio`}
           labelPos={false}
         />
-      ) : prop === 'fieldValue' && schema.properties.fieldValue.enum ? (
+      ) : prop === 'fieldValue' ? (
         <Field
-          options={getSelectOptionsFromSchema(schema.properties.fieldValue)}
           name={prop}
           key={`${context}-${fieldName}-${prop}-select`}
-          component={Select}
+          placeholder="Enter value"
         />
       ) : (
         <Field
@@ -146,6 +122,6 @@ const content = (schema, context, fieldName, checked) =>
           key={`${context}-${fieldName}-${prop}-select`}
         />
       )
-    )
+    })
 
 export default connect((store) => ({ formState: store.modal.form }))(SData)

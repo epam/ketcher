@@ -261,7 +261,7 @@ class Render {
         if (!boundingBox) {
           return
         }
-        const sz1 = bb.sz()
+        const sz1 = boundingBox.sz()
         const { autoScaleMargin, rescaleAmount, maxBondLength } = this.options
         const mv = new Vec2(autoScaleMargin, autoScaleMargin)
         const csz = viewSz
@@ -281,10 +281,10 @@ class Render {
         const sz2 = sz1.add(mv.scaled(2 * rescale))
         /* eslint-disable no-mixed-operators */
         this.paper.setViewBox(
-          bb.pos().x -
+          boundingBox.pos().x -
             autoScaleMargin * rescale -
             (csz.x * rescale - sz2.x) / 2,
-          bb.pos().y -
+          boundingBox.pos().y -
             autoScaleMargin * rescale -
             (csz.y * rescale - sz2.y) / 2,
           csz.x * rescale,

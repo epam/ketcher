@@ -9,12 +9,10 @@ interface DragCtx {
 }
 
 function isSelected(selection, item) {
-  return (
-    selection && selection[item.map] && selection[item.map].includes(item.id)
-  )
+  return selection?.[item.map]?.includes(item.id)
 }
 
-export function startChoosing(event, self, editor, lassoHelper) {
+export function startChoosing(self, event, editor, lassoHelper) {
   console.log('startChoosing')
   const dragCtx: DragCtx = {}
 
@@ -95,6 +93,7 @@ export function startChoosing(event, self, editor, lassoHelper) {
   }
 
   if (selectedSgroups.length) {
+    console.log(' if (selectedSgroups.length)')
     for (const sgId of selectedSgroups) {
       const sgroup = ctab.sgroups.get(sgId)
       if (sgroup) {
@@ -104,6 +103,7 @@ export function startChoosing(event, self, editor, lassoHelper) {
           newSelected.bonds.push(...sgroupBonds)
       }
     }
+    console.log('newSelected', newSelected)
     editor.selection(newSelected)
   }
 

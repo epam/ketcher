@@ -30,8 +30,10 @@ import LassoHelper from './helper/lasso'
 import { isEqual } from 'lodash/fp'
 import { selMerge } from './select'
 import Editor from '../Editor'
-import { extendChoosing, startChoosing } from '../utils/choose/choose'
-import { chooseItems } from '../utils/choose/chooseUtils/chooseItems'
+// import { extendChoosing } from '../utils/choose/choose'
+// import { chooseItems } from '../utils/choose/chooseUtils/chooseItems'
+import { finishChoosing } from '../utils/choose/finishChoosing'
+import { startChoosing } from '../utils/choose/startChoosing'
 
 const searchMaps = [
   'atoms',
@@ -55,7 +57,7 @@ class SGroupTool {
     this.checkSelection()
   }
 
-  //todo rename to checkChosenItems
+  // todo rename to checkChosenItems
   checkSelection() {
     const selection = this.editor.selection() || {}
 
@@ -152,6 +154,7 @@ class SGroupTool {
   }
 
   mousedown(event) {
+    debugger
     const closestItem = this.editor.findItem(event, searchMaps)
     const struct = this.editor.render.ctab
     const sgroups = struct.sgroups
@@ -160,6 +163,8 @@ class SGroupTool {
     const atomResult: Array<number> = []
     const bondResult: Array<number> = []
     const result: Array<number> = []
+
+    startChoosing(this, event, this.editor, this.lassoHelper)
 
     if (closestItem && functionalGroups.size && closestItem.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
@@ -249,8 +254,6 @@ class SGroupTool {
     if (!closestItem) {
       this.lassoHelper.begin(event)
     }
-
-    startChoosing()
   }
 
   mousemove(event) {
@@ -260,7 +263,7 @@ class SGroupTool {
       this.editor.hover(this.editor.findItem(event, searchMaps))
     }
 
-    extendChoosing()
+    // extendChoosing()
   }
 
   mouseleave(event) {
@@ -284,7 +287,7 @@ class SGroupTool {
     let extraBonds
     const result: Array<number> = []
 
-    startChoosing()
+    finishChoosing(event, this.editor, this.lassoHelper)
 
     if (
       closestItem &&
@@ -474,17 +477,19 @@ class SGroupTool {
 
 export function sgroupDialog(editor, id, defaultType) {
   const restruct = editor.render.ctab
+  console.log('editor', editor)
+
   const struct = restruct.molecule
-  // const selection = editor.selection() || {}
-  const selection = chooseItems()
+  const selection = editor.selection() || {}
+  // const selection = chooseItems()
   const sg = id !== null ? struct.sgroups.get(id) : null
   const type = sg ? sg.type : defaultType
   const eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit'
 
-  if (!selection.atoms && !selection.bonds && !sg) {
-    console.info('There are no chosen Items AND sgroup')
-    return
-  }
+  // if (!selection.atoms && !selection.bonds && !sg) {
+  //   console.info('There are no chosen Items AND sgroup')
+  //   return
+  // }
 
   let attrs
   if (sg) {

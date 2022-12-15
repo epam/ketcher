@@ -658,7 +658,7 @@ features/commands of the Editor. To display the hotkeys just place the
 cursor over a toolbar button. If a hotkey is available for the button,
 it will appear in brackets after the description of the button.
 
-*NOTE: `Mod` key is <Command> on OSX and <Ctrl> on PC systems*
+*NOTE: `Mod` key is < Command > on OSX and < Ctrl > on PC systems*
 
 **General**
 | Shortcut| Action |

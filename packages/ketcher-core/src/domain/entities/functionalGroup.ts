@@ -45,21 +45,25 @@ export class FunctionalGroup {
 
   static isFunctionalGroup(sgroup): boolean {
     const provider = FunctionalGroupsProvider.getInstance()
-    const types = provider.getFunctionalGroupsList()
+    const functionalGroups = provider.getFunctionalGroupsList()
     const {
       data: { name },
       type
     } = sgroup
     return (
       type === 'SUP' &&
-      (types.some((type) => type.name === name) || SGroup.isSaltOrSolvent(name))
+      (functionalGroups.some((type) => type.name === name) ||
+        SGroup.isSaltOrSolvent(name))
     )
   }
 
   static getFunctionalGroupByName(searchName: string): Struct | null {
     const provider = FunctionalGroupsProvider.getInstance()
-    const types = provider.getFunctionalGroupsList()
-    return types.find((fnGroup) => fnGroup.name === searchName) || null
+    const functionalGroups = provider.getFunctionalGroupsList()
+    const foundGroup = functionalGroups.find(({ name, abbreviation }) => {
+      return name === searchName || abbreviation === searchName
+    })
+    return foundGroup || null
   }
 
   static atomsInFunctionalGroup(functionalGroups, atom): number | null {

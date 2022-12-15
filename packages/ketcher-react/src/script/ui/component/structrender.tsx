@@ -42,8 +42,10 @@ function renderStruct(
   options: any = {}
 ) {
   if (el && struct) {
-    if (renderCache.has(struct.name)) {
-      el.innerHTML = renderCache.get(struct.name)
+    const { cachePrefix = '' } = options
+    const cacheKey = `${cachePrefix}${struct.name}`
+    if (renderCache.has(cacheKey)) {
+      el.innerHTML = renderCache.get(cacheKey)
       return
     }
     const preparedStruct = prepareStruct(struct)
@@ -57,7 +59,7 @@ function renderStruct(
     })
     rnd.setMolecule(preparedStruct)
     rnd.update(true, options.viewSz)
-    renderCache.set(struct.name, rnd.clientArea.innerHTML)
+    renderCache.set(cacheKey, rnd.clientArea.innerHTML)
   }
 }
 

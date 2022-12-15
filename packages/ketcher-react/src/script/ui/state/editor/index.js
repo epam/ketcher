@@ -156,10 +156,7 @@ export default function initEditor(dispatch, getState) {
     },
     onSgroupEdit: (sgroup) =>
       sleep(0) // huck to open dialog after dispatch sgroup tool action
-        .then(() => {
-          console.log('onSgroupEdit')
-          openDialog(dispatch, 'sgroup', fromSgroup(sgroup))
-        })
+        .then(() => openDialog(dispatch, 'sgroup', fromSgroup(sgroup)))
         .then(toSgroup),
     onRemoveFG: (result) =>
       sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
@@ -204,12 +201,12 @@ export default function initEditor(dispatch, getState) {
       updateAction()
     },
     onConfirm: () => openDialog(dispatch, 'confirm'),
-    onShowInfo: (pl) => {
-      if (pl) {
-        const { group, groupId, x, y } = pl
-        highlightFG(dispatch, { group, id: group?.name, x, y, groupId })
+    onShowInfo: (payload) => {
+      if (payload) {
+        const { groupStruct, event, sGroup } = payload
+        highlightFG(dispatch, { groupStruct, event, sGroup })
       } else {
-        highlightFG(dispatch, { group: null, id: null })
+        highlightFG(dispatch, { groupStruct: null, event: null, sGroup: null })
       }
     }
   }

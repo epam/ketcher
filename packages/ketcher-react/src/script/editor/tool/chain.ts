@@ -124,7 +124,7 @@ class ChainTool {
     const restruct = editor.render.ctab
     const dragCtx = this.dragCtx
 
-    editor.hover(this.editor.findItem(event, ['atoms', 'bonds']))
+    editor.hover(this.editor.findItem(event, ['atoms', 'bonds']), null, event)
     if (!dragCtx) {
       return true
     }

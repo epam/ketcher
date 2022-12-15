@@ -55,13 +55,10 @@ export class FunctionalGroup {
   static getFunctionalGroupByName(searchName: string): Struct | null {
     const provider = FunctionalGroupsProvider.getInstance()
     const functionalGroups = provider.getFunctionalGroupsList()
-    return (
-      functionalGroups.find((fnGroup) => {
-        return (
-          fnGroup.name === searchName || fnGroup.abbreviation === searchName
-        )
-      }) || null
-    )
+    const foundGroup = functionalGroups.find(({ name, abbreviation }) => {
+      return name === searchName || abbreviation === searchName
+    })
+    return foundGroup || null
   }
 
   static atomsInFunctionalGroup(functionalGroups, atom): number | null {

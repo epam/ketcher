@@ -700,8 +700,7 @@ it will appear in brackets after the description of the button.
 | `Escape` | Rotate between: Lasso Selection, Rectangle Selection, Fragment Selection |
 | `Delete, Backspace` | Erase |
 | `Alt+e` | Stereochemistry |
-| `5` | Charge Plus |
-| `5` | Charge Minus |
+| `5` | Rotate between: Charge Plus, Charge Minus |
 | `Alt+r` | Rotate Tool |
 | `Alt+h` | Horizontal Flip |
 | `Alt+v` | Vertical Flip |

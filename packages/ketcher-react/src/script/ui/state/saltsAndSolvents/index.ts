@@ -64,7 +64,8 @@ export function initSaltsAndSolventsTemplates(baseUrl: string) {
     const templates = sdfSerializer.deserialize(text)
     const saltsAndSolvents = templates.reduce(
       (acc: Struct[], { struct, props }) => {
-        acc.push({ ...struct, abbreviation: props.abbreviation } as Struct)
+        struct.abbreviation = String(props.abbreviation)
+        acc.push(struct)
         return acc
       },
       []

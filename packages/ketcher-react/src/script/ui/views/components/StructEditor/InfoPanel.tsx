@@ -29,7 +29,7 @@ const HOVER_PANEL_PADDING = 20
 
 function getSGroupFirstAtom(sGroup: SGroup, render: Render): Vec2 {
   const { firstSgroupAtom } = sGroup
-  if (firstSgroupAtom) return firstSgroupAtom
+  if (firstSgroupAtom) return firstSgroupAtom.pp
   const [firstAtomId] = sGroup.atoms
   return render.ctab.atoms?.get(firstAtomId)?.a.pp || new Vec2(0, 0)
 }

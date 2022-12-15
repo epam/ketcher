@@ -56,7 +56,11 @@ export class FunctionalGroup {
     const provider = FunctionalGroupsProvider.getInstance()
     const functionalGroups = provider.getFunctionalGroupsList()
     return (
-      functionalGroups.find((fnGroup) => fnGroup.name === searchName) || null
+      functionalGroups.find((fnGroup) => {
+        return (
+          fnGroup.name === searchName || fnGroup.abbreviation === searchName
+        )
+      }) || null
     )
   }
 

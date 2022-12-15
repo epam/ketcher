@@ -23,20 +23,22 @@ export interface StructFormatter {
   getStructureFromStringAsync: (stringifiedStruct: string) => Promise<Struct>
 }
 
-export type SupportedFormat =
-  | 'rxn'
-  | 'rxnV3000'
-  | 'mol'
-  | 'molV3000'
-  | 'smiles'
-  | 'smilesExt'
-  | 'smarts'
-  | 'inChI'
-  | 'inChIAuxInfo'
-  | 'cml'
-  | 'ket'
-  | 'cdx'
-  | 'cdxml'
+export enum SupportedFormat {
+  mol = 'mol',
+  molV3000 = 'molV3000',
+  molAuto = 'molAuto',
+  rxn = 'rxn',
+  rxnV3000 = 'rxnV3000',
+  smiles = 'smiles',
+  smilesExt = 'smilesExt',
+  smarts = 'smarts',
+  inChI = 'inChI',
+  inChIAuxInfo = 'inChIAuxInfo',
+  cml = 'cml',
+  ket = 'ket',
+  cdxml = 'cdxml',
+  cdx = 'cdx'
+}
 
 export type FormatterFactoryOptions = Partial<
   MolSerializerOptions & StructServiceOptions

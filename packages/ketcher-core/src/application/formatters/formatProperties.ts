@@ -23,6 +23,14 @@ type FormatPropertiesMap = {
 }
 
 const formatProperties: FormatPropertiesMap = {
+  molAuto: new SupportedFormatProperties(
+    // TODO: is it a valid name?
+    'MDL Molfile Auto Format detect',
+    ChemicalMimeType.Mol,
+    ['.mol'],
+    true,
+    { 'molfile-saving-mode': 'auto' }
+  ),
   mol: new SupportedFormatProperties(
     'MDL Molfile V2000',
     ChemicalMimeType.Mol,
@@ -88,7 +96,7 @@ const formatProperties: FormatPropertiesMap = {
     true
   ),
   cdx: new SupportedFormatProperties(
-    'CDX',
+    'Base64 CDX',
     ChemicalMimeType.CDX,
     ['.cdx'],
     true

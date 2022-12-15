@@ -27,10 +27,11 @@ class APointTool {
 
   mousemove(event) {
     const struct = this.editor.render.ctab.molecule
-    const ci = this.editor.findItem(event, ['atoms'])
-    if (ci) {
-      const atom = struct.atoms.get(ci.id)
-      if (atom?.label !== 'R#' && atom?.rglabel === null) this.editor.hover(ci)
+    const closestItem = this.editor.findItem(event, ['atoms'])
+    if (closestItem) {
+      const atom = struct.atoms.get(closestItem.id)
+      if (atom?.label !== 'R#' && atom?.rglabel === null)
+        this.editor.hover(closestItem)
     } else {
       this.editor.hover(null)
     }

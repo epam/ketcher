@@ -24,8 +24,10 @@ import classes from './StructEditor.module.less'
 import clsx from 'clsx'
 import { upperFirst } from 'lodash/fp'
 import handIcon from '../../../../../icons/files/hand.svg'
-import compressedHancIcon from '../../../../../icons/files/compressed-hand.svg'
+import compressedHandIcon from '../../../../../icons/files/compressed-hand.svg'
 import Cursor from '../Cursor'
+
+import InfoPanel from './InfoPanel'
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -46,9 +48,13 @@ function setupEditor(editor, props, oldProps = {}) {
     const eventName = `on${upperFirst(name)}`
 
     if (props[eventName] !== oldProps[eventName]) {
-      if (oldProps[eventName]) editor.event[name].remove(oldProps[eventName])
+      if (oldProps[eventName]) {
+        editor.event[name].remove(oldProps[eventName])
+      }
 
-      if (props[eventName]) editor.event[name].add(props[eventName])
+      if (props[eventName]) {
+        editor.event[name].add(props[eventName])
+      }
     }
   })
 }
@@ -65,7 +71,9 @@ class StructEditor extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      enableCursor: false
+      enableCursor: false,
+      clientX: 0,
+      clientY: 0
     }
     this.editorRef = createRef()
     this.logRef = createRef()
@@ -125,7 +133,9 @@ class StructEditor extends Component {
         case 'move':
           this.editorRef.current.classList.add(classes.enableCursor)
           this.setState({
-            enableCursor: true
+            enableCursor: true,
+            clientX,
+            clientY
           })
           break
         case 'disable':
@@ -185,6 +195,7 @@ class StructEditor extends Component {
       onCipChange,
       className,
       onConfirm,
+      onShowInfo,
       showAttachmentPoints = true,
       ...props
     } = this.props
@@ -211,7 +222,7 @@ class StructEditor extends Component {
           </div>
           <Cursor
             Icon={handIcon}
-            PressedIcon={compressedHancIcon}
+            PressedIcon={compressedHandIcon}
             enableHandTool={this.state.enableCursor}
           />
           <div className={classes.measureLog} ref={this.logRef} />
@@ -221,6 +232,7 @@ class StructEditor extends Component {
             </div>
           )}
         </ContextMenuTrigger>
+        <InfoPanel {...this.state} {...this.props} />
         <FGContextMenu />
       </Tag>
     )

@@ -24,6 +24,7 @@ import {
   CleanCommandData,
   Command,
   CommandOptions,
+  WorkerEvent,
   ConvertCommandData,
   DearomatizeCommandData,
   GenerateImageCommandData,
@@ -63,6 +64,7 @@ import {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import IndigoWorker from 'web-worker:./indigoWorker'
+import EventEmitter from 'events'
 
 interface KeyValuePair {
   [key: string]: number | string | boolean | object
@@ -152,20 +154,44 @@ function mapWarningGroup(property: string) {
   return mappedProperty
 }
 
+const messageTypeToEventMapping: {
+  [key in Command]: WorkerEvent
+} = {
+  [Command.Info]: WorkerEvent.Info,
+  [Command.Convert]: WorkerEvent.Convert,
+  [Command.Layout]: WorkerEvent.Layout,
+  [Command.Clean]: WorkerEvent.Clean,
+  [Command.Aromatize]: WorkerEvent.Aromatize,
+  [Command.Dearomatize]: WorkerEvent.Dearomatize,
+  [Command.CalculateCip]: WorkerEvent.CalculateCip,
+  [Command.Automap]: WorkerEvent.Automap,
+  [Command.Check]: WorkerEvent.Check,
+  [Command.Calculate]: WorkerEvent.Calculate,
+  [Command.GenerateImageAsBase64]: WorkerEvent.GenerateImageAsBase64,
+  [Command.GenerateInchIKey]: WorkerEvent.GenerateInchIKey
+}
+
 class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions
+  private readonly worker: IndigoWorker
+  private readonly EE: EventEmitter = new EventEmitter()
 
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions
+    this.worker = new IndigoWorker()
+    this.worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
+      const message: OutputMessage<string> = e.data
+      if (message.type !== undefined) {
+        const event = messageTypeToEventMapping[message.type]
+        this.EE.emit(event, { data: message })
+      }
+    }
   }
 
   async generateInchIKey(struct: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           resolve(msg.payload || '')
         } else {
@@ -178,17 +204,18 @@ class IndigoService implements StructService {
         data: { struct }
       }
 
-      worker.postMessage(inputMessage)
+      this.EE.removeListener(WorkerEvent.GenerateInchIKey, action)
+      this.EE.addListener(WorkerEvent.GenerateInchIKey, action)
+
+      this.worker.postMessage(inputMessage)
     })
   }
 
   info(): Promise<InfoResult> {
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        console.log('info action', data)
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: InfoResult = {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -202,7 +229,10 @@ class IndigoService implements StructService {
         }
       }
 
-      worker.postMessage({ type: Command.Info })
+      this.EE.removeListener(WorkerEvent.Info, action)
+      this.EE.addListener(WorkerEvent.Info, action)
+
+      this.worker.postMessage({ type: Command.Info })
     })
   }
 
@@ -214,11 +244,9 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(output_format)
 
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        console.log('convert action', data)
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: ConvertResult = {
             struct: msg.payload!,
@@ -246,7 +274,10 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      worker.postMessage(inputMessage)
+      this.EE.removeListener(WorkerEvent.Convert, action)
+      this.EE.addListener(WorkerEvent.Convert, action)
+
+      this.worker.postMessage(inputMessage)
     })
   }
 
@@ -258,11 +289,9 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(output_format)
 
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        console.log('layout action', data)
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: LayoutResult = {
             struct: msg.payload!,
@@ -290,7 +319,10 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      worker.postMessage(inputMessage)
+      this.EE.removeListener(WorkerEvent.Layout, action)
+      this.EE.addListener(WorkerEvent.Layout, action)
+
+      this.worker.postMessage(inputMessage)
     })
   }
 
@@ -299,11 +331,8 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(output_format)
 
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: CleanResult = {
             struct: msg.payload!,
@@ -332,7 +361,10 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      worker.postMessage(inputMessage)
+      this.EE.removeListener(WorkerEvent.Clean, action)
+      this.EE.addListener(WorkerEvent.Clean, action)
+
+      this.worker.postMessage(inputMessage)
     })
   }
 
@@ -344,11 +376,8 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(output_format)
 
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: AromatizeResult = {
             struct: msg.payload!,
@@ -376,7 +405,10 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      worker.postMessage(inputMessage)
+      this.EE.removeListener(WorkerEvent.Aromatize, action)
+      this.EE.addListener(WorkerEvent.Aromatize, action)
+
+      this.worker.postMessage(inputMessage)
     })
   }
 
@@ -388,11 +420,8 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(output_format)
 
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: AromatizeResult = {
             struct: msg.payload!,
@@ -420,7 +449,10 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      worker.postMessage(inputMessage)
+      this.EE.removeListener(WorkerEvent.Dearomatize, action)
+      this.EE.addListener(WorkerEvent.Dearomatize, action)
+
+      this.worker.postMessage(inputMessage)
     })
   }
 
@@ -432,11 +464,8 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(output_format)
 
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: CalculateCipResult = {
             struct: msg.payload!,
@@ -464,7 +493,10 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      worker.postMessage(inputMessage)
+      this.EE.removeListener(WorkerEvent.CalculateCip, action)
+      this.EE.addListener(WorkerEvent.CalculateCip, action)
+
+      this.worker.postMessage(inputMessage)
     })
   }
 
@@ -476,11 +508,8 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(output_format)
 
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: AutomapResult = {
             struct: msg.payload!,
@@ -509,7 +538,10 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      worker.postMessage(inputMessage)
+      this.EE.removeListener(WorkerEvent.Automap, action)
+      this.EE.addListener(WorkerEvent.Automap, action)
+
+      this.worker.postMessage(inputMessage)
     })
   }
 
@@ -517,11 +549,8 @@ class IndigoService implements StructService {
     const { types, struct } = data
 
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const warnings = JSON.parse(msg.payload!) as KeyValuePair
 
@@ -557,7 +586,10 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      worker.postMessage(inputMessage)
+      this.EE.removeListener(WorkerEvent.Check, action)
+      this.EE.addListener(WorkerEvent.Check, action)
+
+      this.worker.postMessage(inputMessage)
     })
   }
 
@@ -567,11 +599,8 @@ class IndigoService implements StructService {
   ): Promise<CalculateResult> {
     const { properties, struct, selected } = data
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const calculatedProperties: CalculateResult = JSON.parse(msg.payload!)
           const result: CalculateResult = Object.entries(
@@ -610,7 +639,10 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      worker.postMessage(inputMessage)
+      this.EE.removeListener(WorkerEvent.Calculate, action)
+      this.EE.addListener(WorkerEvent.Calculate, action)
+
+      this.worker.postMessage(inputMessage)
     })
   }
 
@@ -624,11 +656,8 @@ class IndigoService implements StructService {
   ): Promise<string> {
     const { outputFormat, backgroundColor, ...restOptions } = options
     return new Promise((resolve, reject) => {
-      const worker: Worker = new IndigoWorker()
-
-      worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
-        worker.terminate()
-        const msg: OutputMessage<string> = e.data
+      const action = ({ data }) => {
+        const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           resolve(msg.payload!)
         } else {
@@ -653,7 +682,10 @@ class IndigoService implements StructService {
         data: commandData
       }
 
-      worker.postMessage(inputMessage)
+      this.EE.removeListener(WorkerEvent.GenerateImageAsBase64, action)
+      this.EE.addListener(WorkerEvent.GenerateImageAsBase64, action)
+
+      this.worker.postMessage(inputMessage)
     })
   }
 }

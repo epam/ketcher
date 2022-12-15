@@ -633,20 +633,25 @@
         },
         "data": {
           "type": "object",
-          "required": ["content", "position"],
+          "required": ["content"],
           "properties": {
             "content": {
               "type": "string"
             },
-            "position": {
-              "type": "object",
-              "required": ["x", "y"],
-              "properties": {
-                "x": {
-                  "type": "number"
-                },
-                "y": {
-                  "type": "number"
+            "pos": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "number"
+                  },
+                  "y": {
+                    "type": "number"
+                  },
+                  "z": {
+                    "type": "number"
+                  }
                 }
               }
             }

@@ -29,7 +29,8 @@ import AppModalContainer from '../views/modal'
 import Editor from '../views/Editor'
 import classes from './App.module.less'
 import { initFGTemplates } from '../state/functionalGroups'
-import { useSettingsContext } from '../../../hooks'
+import { initSaltsAndSolventsTemplates } from '../state/saltsAndSolvents'
+import { useSettingsContext, useSubscriptionOnEvents } from '../../../hooks'
 
 interface AppCallProps {
   checkServer: () => void
@@ -52,9 +53,13 @@ const App = (props: Props) => {
   const { checkServer } = props
   const { staticResourcesUrl } = useSettingsContext()
 
+  useSubscriptionOnEvents()
+
   useEffect(() => {
     checkServer()
     dispatch(initFGTemplates(staticResourcesUrl))
+    dispatch(initSaltsAndSolventsTemplates(staticResourcesUrl))
+    window.scrollTo(0, 0)
   }, [])
 
   return (

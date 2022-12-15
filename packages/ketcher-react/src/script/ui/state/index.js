@@ -21,6 +21,7 @@ import templatesReducer, { initTmplsState } from './templates'
 
 import actionStateReducer from './action'
 import functionalGroupsReducer from './functionalGroups'
+import saltsAndSolventsReducer from './saltsAndSolvents'
 import { logger } from 'redux-logger'
 import modalReducer from './modal'
 import { pick } from 'lodash/fp'
@@ -39,6 +40,7 @@ const shared = combineReducers({
   options: optionsReducer,
   templates: templatesReducer,
   functionalGroups: functionalGroupsReducer,
+  saltsAndSolvents: saltsAndSolventsReducer,
   requestsStatuses: requestReducer
 })
 
@@ -86,8 +88,12 @@ export default function (options, server, setEditor) {
   }
 
   const middleware = [thunk]
-
-  if (process.env.NODE_ENV !== 'production') middleware.push(logger)
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    process.env.KETCHER_ENABLE_REDUX_LOGGER === 'true'
+  ) {
+    middleware.push(logger)
+  }
 
   const rootReducer = getRootReducer(setEditor)
   return createStore(rootReducer, initState, applyMiddleware(...middleware))

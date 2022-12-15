@@ -24,16 +24,16 @@ export function identifyStructFormat(
 
   try {
     if (JSON.parse(sanitizedString)) {
-      return 'ket'
+      return SupportedFormat.ket
     }
   } catch (er) {} // eslint-disable-line
 
   if (sanitizedString.indexOf('$RXN') !== -1) {
-    return 'rxn'
+    return SupportedFormat.rxn
   }
 
   if (sanitizedString.indexOf('V3000') !== -1) {
-    return 'molV3000'
+    return SupportedFormat.molV3000
   }
 
   const match = sanitizedString.match(/^(M {2}END|\$END MOL)$/m)
@@ -44,7 +44,7 @@ export function identifyStructFormat(
       end === sanitizedString.length ||
       sanitizedString.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) !== -1
     ) {
-      return 'mol'
+      return SupportedFormat.mol
     }
   }
 
@@ -52,17 +52,21 @@ export function identifyStructFormat(
     sanitizedString[0] === '<' &&
     sanitizedString.indexOf('<molecule') !== -1
   ) {
-    return 'cml'
+    return SupportedFormat.cml
   }
 
   const clearStr = sanitizedString.replace(/\s/g, '')
-
-  if (/^[a-zA-Z0-9+/]*={0,2}$/.test(clearStr) && clearStr.length % 4 === 0) {
-    return 'cdx'
+  const anyLetterAnyDigitContainsSlashesEndsWithEqualSign =
+    /^[a-zA-Z0-9+/]*={0,2}$/
+  if (
+    anyLetterAnyDigitContainsSlashesEndsWithEqualSign.test(clearStr) &&
+    clearStr.length % 4 === 0
+  ) {
+    return SupportedFormat.cdx
   }
 
   if (sanitizedString.slice(0, 5) === 'InChI') {
-    return 'inChI'
+    return SupportedFormat.inChI
   }
 
   if (
@@ -70,12 +74,12 @@ export function identifyStructFormat(
     sanitizedString === sanitizedString.toUpperCase()
   ) {
     // TODO: smiles regexp
-    return 'smiles'
+    return SupportedFormat.smiles
   }
 
   if (sanitizedString.indexOf('<CDXML') !== -1) {
-    return 'cdxml'
+    return SupportedFormat.cdxml
   }
-
-  return 'cdx'
+  // Molfile by default as Indigo does
+  return SupportedFormat.mol
 }

@@ -19,6 +19,7 @@ import { Bond } from './bond'
 import { Box2Abs } from './box2Abs'
 import { Pile } from './pile'
 import { Struct } from './struct'
+import { SaltsAndSolventsProvider } from '../helpers'
 import { Vec2 } from './vec2'
 
 export class SGroupBracketParams {
@@ -76,6 +77,7 @@ export class SGroup {
   neiAtoms: any
   pp: Vec2 | null
   data: any
+  firstSgroupAtom: any
 
   constructor(type: string) {
     this.type = type
@@ -214,6 +216,39 @@ export class SGroup {
   static getOffset(sgroup: SGroup): null | Vec2 {
     if (!sgroup?.pp) return null
     return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1)
+  }
+
+  static isSaltOrSolvent(moleculeName: string): boolean {
+    const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance()
+    const saltsAndSolvents = saltsAndSolventsProvider.getSaltsAndSolventsList()
+    return saltsAndSolvents.some(
+      ({ name, abbreviation }) =>
+        name === moleculeName || moleculeName === abbreviation
+    )
+  }
+
+  static isAtomInSaltOrSolvent(
+    atomId: number,
+    sgroupsOnCanvas: SGroup[]
+  ): boolean {
+    const onlySaltsOrSolvents = sgroupsOnCanvas.filter((sgroup) =>
+      this.isSaltOrSolvent(sgroup.data.name)
+    )
+    return onlySaltsOrSolvents.some(({ atoms }) =>
+      atoms.some((atomIdInSaltOrSolvent) => atomIdInSaltOrSolvent === atomId)
+    )
+  }
+
+  static isBondInSaltOrSolvent(
+    bondId: number,
+    sgroupsOnCanvas: SGroup[]
+  ): boolean {
+    const onlySaltsOrSolvents = sgroupsOnCanvas.filter((sgroup) =>
+      this.isSaltOrSolvent(sgroup.data.name)
+    )
+    return onlySaltsOrSolvents.some(({ bonds }) =>
+      bonds.some((bondIdInSaltOrSolvent) => bondIdInSaltOrSolvent === bondId)
+    )
   }
 
   static filterAtoms(atoms: any, map: any) {

@@ -227,7 +227,14 @@ const server: {
   'mass-skip-error-on-pseudoatoms': ExtendedSchema
   'gross-formula-add-rsites': ExtendedSchema
   'gross-formula-add-isotopes': ExtendedSchema
+  'dearomatize-on-load': ExtendedSchema
 } = {
+  'dearomatize-on-load': {
+    title: 'dearomatize-on-load',
+    type: 'boolean',
+    description: 'slider',
+    default: false
+  },
   'smart-layout': {
     title: 'Smart-layout',
     type: 'boolean',
@@ -340,7 +347,7 @@ export function getDefaultOptions(): Record<string, any> {
   if (!optionsSchema.properties) return {}
 
   return Object.keys(optionsSchema.properties).reduce((res, prop) => {
-    res[prop] = (optionsSchema.properties![prop] as ExtendedSchema).default
+    res[prop] = (optionsSchema.properties[prop] as ExtendedSchema).default
     return res
   }, {})
 }

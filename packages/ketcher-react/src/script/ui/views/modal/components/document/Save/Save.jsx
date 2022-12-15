@@ -86,7 +86,9 @@ class SaveDialog extends Component {
         'inChIAuxInfo',
         'cml',
         'svg',
-        'png'
+        'png',
+        'cdxml'
+        // 'cdx' TO DO: Uncomment, when export will be ready on Indigo side
       )
 
     this.saveSchema = saveSchema
@@ -122,6 +124,7 @@ class SaveDialog extends Component {
 
   changeType = (type) => {
     const { struct, server, options, formState } = this.props
+
     const errorHandler = this.context.errorHandler
     if (this.isImageFormat(type)) {
       const ketSerialize = new KetSerializer()
@@ -278,7 +281,10 @@ class SaveDialog extends Component {
     ) : this.isImageFormat(format) ? (
       <div className={classes.imageContainer}>
         {!isCleanStruct && (
-          <img src={`data:image/${format}+xml;base64,${imageSrc}`} />
+          <img
+            src={`data:image/${format}+xml;base64,${imageSrc}`}
+            alt={`${format} preview`}
+          />
         )}
       </div>
     ) : (

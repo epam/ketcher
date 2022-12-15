@@ -29,6 +29,21 @@ export const enum Command {
   GenerateInchIKey
 }
 
+export const enum WorkerEvent {
+  Info = 'info',
+  Convert = 'convert',
+  Layout = 'layout',
+  Clean = 'clean',
+  Aromatize = 'aromatize',
+  Dearomatize = 'dearomatize',
+  CalculateCip = 'calculateCip',
+  Automap = 'automap',
+  Check = 'check',
+  Calculate = 'calculate',
+  GenerateImageAsBase64 = 'generateImageAsBase64',
+  GenerateInchIKey = 'generateInchIKey'
+}
+
 export enum SupportedFormat {
   Rxn = 'rxnfile',
   Mol = 'molfile',
@@ -127,6 +142,7 @@ export interface AutomapCommandData
 }
 
 export interface OutputMessage<T> {
+  type?: Command
   hasError?: boolean
   payload?: T
   error?: string

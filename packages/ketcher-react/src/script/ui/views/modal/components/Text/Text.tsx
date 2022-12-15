@@ -26,7 +26,7 @@ import {
   convertToRaw,
   getDefaultKeyBinding
 } from 'draft-js'
-import {
+import React, {
   useCallback,
   useState,
   useRef,
@@ -94,8 +94,8 @@ const Text = (props: TextProps) => {
     }
   }
 
-  const keyBindingFn = (e: any): string | null => {
-    if (e.keyCode === 13) {
+  const keyBindingFn = (e: React.KeyboardEvent): string | null => {
+    if (e.key === 'Enter') {
       e.stopPropagation()
     }
 

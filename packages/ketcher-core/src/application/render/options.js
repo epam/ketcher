@@ -26,6 +26,7 @@ function defaultOptions(opt) {
   const subFontSize = Math.ceil(0.7 * labelFontSize)
 
   const defaultOptions = {
+    'dearomatize-on-load': false,
     // flags for debugging
     showAtomIds: false,
     showBondIds: false,

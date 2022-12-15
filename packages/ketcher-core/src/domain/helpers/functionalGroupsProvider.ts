@@ -37,4 +37,8 @@ export class FunctionalGroupsProvider {
   public setFunctionalGroupsList(list: Struct[]): void {
     this.functionalGroupsList = list
   }
+
+  public addToFunctionalGroupsList(list: Struct[]): void {
+    this.functionalGroupsList = [...this.functionalGroupsList, ...list]
+  }
 }

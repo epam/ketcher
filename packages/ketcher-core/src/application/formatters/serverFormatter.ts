@@ -28,6 +28,16 @@ import { KetSerializer } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import { getPropertiesByFormat } from './formatProperties'
 
+type ConvertPromise = (
+  data: ConvertData,
+  options?: StructServiceOptions
+) => Promise<ConvertResult>
+
+type LayoutPromise = (
+  data: LayoutData,
+  options?: StructServiceOptions
+) => Promise<LayoutResult>
+
 export class ServerFormatter implements StructFormatter {
   #structService: StructService
   #ketSerializer: KetSerializer
@@ -47,11 +57,6 @@ export class ServerFormatter implements StructFormatter {
   }
 
   async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    const infoResult = await this.#structService.info()
-    if (!infoResult.isAvailable) {
-      throw new Error('Server is not available')
-    }
-
     const formatProperties = getPropertiesByFormat(this.#format)
 
     try {
@@ -80,26 +85,11 @@ export class ServerFormatter implements StructFormatter {
   async getStructureFromStringAsync(
     stringifiedStruct: string
   ): Promise<Struct> {
-    const infoResult = await this.#structService.info()
-    if (!infoResult.isAvailable) {
-      throw new Error('Server is not available')
-    }
-
-    type ConvertPromise = (
-      data: ConvertData,
-      options?: StructServiceOptions
-    ) => Promise<ConvertResult>
-
-    type LayoutPromise = (
-      data: LayoutData,
-      options?: StructServiceOptions
-    ) => Promise<LayoutResult>
-
     let promise: LayoutPromise | ConvertPromise
 
     const data: ConvertData | LayoutData = {
       struct: undefined as any,
-      output_format: getPropertiesByFormat('ket').mime
+      output_format: getPropertiesByFormat(SupportedFormat.ket).mime
     }
 
     const withCoords = getPropertiesByFormat(this.#format).supportsCoords
@@ -125,8 +115,10 @@ export class ServerFormatter implements StructFormatter {
 
       const formatError =
         this.#format === 'smiles'
-          ? `${getPropertiesByFormat('smilesExt').name} and opening of ${
-              getPropertiesByFormat('smiles').name
+          ? `${
+              getPropertiesByFormat(SupportedFormat.smilesExt).name
+            } and opening of ${
+              getPropertiesByFormat(SupportedFormat.smiles).name
             }`
           : getPropertiesByFormat(this.#format).name
 

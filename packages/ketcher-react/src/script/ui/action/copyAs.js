@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetSerializer, MolSerializer } from 'ketcher-core'
+import { KetSerializer, MolSerializer, SupportedFormat } from 'ketcher-core'
 
 export default function copyAs(type) {
   const state = global.currentState

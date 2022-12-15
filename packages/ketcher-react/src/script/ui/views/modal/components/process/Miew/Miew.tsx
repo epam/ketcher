@@ -15,7 +15,12 @@
  ***************************************************************************/
 
 import { Dialog } from '../../../../components'
-import { FormatterFactory, Struct, StructService } from 'ketcher-core'
+import {
+  FormatterFactory,
+  Struct,
+  StructService,
+  SupportedFormat
+} from 'ketcher-core'
 import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema'
 import classes from './Miew.module.less'
 import { connect } from 'react-redux'
@@ -117,7 +122,7 @@ const MiewDialog = ({
     (miew: MiewAsType) => {
       miewRef.current = miew
       const factory = new FormatterFactory(server)
-      const service = factory.create('cml')
+      const service = factory.create(SupportedFormat.cml)
 
       service
         .getStructureFromStructAsync(struct)

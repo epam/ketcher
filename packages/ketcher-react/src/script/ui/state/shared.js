@@ -76,6 +76,10 @@ export function load(struct, options) {
     const errorHandler = editor.errorHandler
 
     options = options || {}
+    options = {
+      ...options,
+      'dearomatize-on-load': editor.options()['dearomatize-on-load']
+    }
 
     dispatch(setAnalyzingFile(true))
 
@@ -134,7 +138,7 @@ export function load(struct, options) {
         if (parsedStruct.isBlank()) {
           dispatch({
             type: 'ACTION',
-            action: tools['select-lasso'].action
+            action: tools['select-rectangle'].action
           })
         } else {
           dispatch(onAction({ tool: 'paste', opts: parsedStruct }))

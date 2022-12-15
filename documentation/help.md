@@ -658,7 +658,7 @@ features/commands of the Editor. To display the hotkeys just place the
 cursor over a toolbar button. If a hotkey is available for the button,
 it will appear in brackets after the description of the button.
 
-*NOTE: `Mod` key is < Command > on OSX and < Ctrl > on PC systems*
+*NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems*
 
 **General**
 | Shortcut| Action |
@@ -705,11 +705,9 @@ it will appear in brackets after the description of the button.
 | `Alt+r` | Rotate Tool |
 | `Alt+h` | Horizontal Flip |
 | `Alt+v` | Vertical Flip |
-| `Mod+g` | S-Group |
-| `Mod+g` | Data S-Group |
-| `Mod+r` | R-Group Label Tool |
+| `Mod+g` | Rotate between: S-Group, Data S-Group |
+| `Mod+r` | Rotate between: R-Group Label Tool, Attachment Point Tool |
 | `Mod+Shift+r, Mod+r` | R-Group Fragment Tool |
-| `Mod+r` | Attachment Point Tool |
 | `1` | Rotate between: Single Bond, Single Up Bond, Single Down Bond, Single Up/Down Bond |
 | `2` | Rotate between: Double Bond, Double Cis/Trans Bond |
 | `3` | Triple Bond |
@@ -727,19 +725,19 @@ it will appear in brackets after the description of the button.
 | `s` | Atom S |
 | `p` | Atom P |
 | `f` | Atom F |
-| `Shift+c` | Atom Cl |
 | `b` | Atom Br |
 | `i` | Atom I |
-| `a` | Any atom |
-| `q` | Any heteroatom |
-| `r` | Pseudoatom |
 | `k` | Atom K |
-| `m` | Any metal |
+| `Shift+c` | Atom Cl |
 | `Shift+s` | Atom Si |
 | `Shift+n` | Atom Na |
-| `x` | Any halogen |
-| `d` | Deuterium |
 | `Shift+b` | Atom B |
+| `r` | Pseudoatom |
+| `d` | Deuterium |
+| `a` | Any atom |
+| `q` | Any heteroatom |
+| `m` | Any metal |
+| `x` | Any halogen |
 
 
 **Zoom**
@@ -765,7 +763,7 @@ it will appear in brackets after the description of the button.
 **Help**
 | Shortcut| Action |
 | --- | --- |
-| `?, &, Shift+/` | help |
+| `?, &, Shift+/` | Help |
 
 **Note** : Please, use`Ctrl+V`to paste the selected object in
 Google Chrome and Mozilla Firefox browsers.

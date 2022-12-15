@@ -237,7 +237,7 @@ class BondTool {
           }
         }
         // don't rotate the bond if the distance between the start and end point is too small
-        if (dist > 0.3)
+        if (dist > 0.3) {
           dragCtx.action = fromBondAddition(
             rnd.ctab,
             this.bondProps,
@@ -246,7 +246,9 @@ class BondTool {
             beginPos,
             endPos
           )[0]
-        else delete dragCtx.action
+        } else {
+          delete dragCtx.action
+        }
         this.editor.update(dragCtx.action, true)
         return true
       }

@@ -63,7 +63,10 @@ export function initSaltsAndSolventsTemplates(baseUrl: string) {
     const text = await prefetchStatic(url)
     const templates = sdfSerializer.deserialize(text)
     const saltsAndSolvents = templates.reduce(
-      (acc: Struct[], { struct }) => [...acc, struct],
+      (acc: Struct[], { struct, props }) => {
+        acc.push({ ...struct, abbreviation: props.abbreviation } as Struct)
+        return acc
+      },
       []
     )
     saltsAndSolventsProvider.setSaltsAndSolventsList(saltsAndSolvents)

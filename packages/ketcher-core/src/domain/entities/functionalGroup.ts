@@ -46,9 +46,14 @@ export class FunctionalGroup {
   static isFunctionalGroup(sgroup): boolean {
     const provider = FunctionalGroupsProvider.getInstance()
     const functionalGroups = provider.getFunctionalGroupsList()
+    const {
+      data: { name },
+      type
+    } = sgroup
     return (
-      functionalGroups.some((type) => type.name === sgroup.data.name) &&
-      sgroup.type === 'SUP'
+      type === 'SUP' &&
+      (functionalGroups.some((type) => type.name === name) ||
+        SGroup.isSaltOrSolvent(name))
     )
   }
 

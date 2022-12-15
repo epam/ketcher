@@ -32,7 +32,10 @@ export class CanvasLoad extends BaseOperation {
   execute(restruct: ReStruct) {
     const oldStruct = restruct.molecule
     restruct.clearVisels() // TODO: What is it?
-    restruct.render.setMolecule(this.data.struct)
+    if (this.data.struct) {
+      restruct.render.setMolecule(this.data.struct)
+    }
+
     this.data.struct = oldStruct
   }
 

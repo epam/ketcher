@@ -2,6 +2,7 @@ import { FunctionalGroup, SGroup } from 'ketcher-core'
 import { atomLongtapEvent } from '../../tool/atom'
 import { selMerge } from '../../tool/select'
 import { closestToSel } from './chooseUtils/closestToSel'
+import { chooseItems } from './chooseUtils/chooseItems'
 
 // interface DragCtx {
 //   item?: any
@@ -104,7 +105,8 @@ export function startChoosing(tool, event, editor, lassoHelper) {
       }
     }
     console.log('newChosen', newChosen)
-    editor.selection(newChosen)
+    // editor.selection(newChosen)
+    chooseItems(newChosen)
   }
 
   tool.dragCtx.item = ci

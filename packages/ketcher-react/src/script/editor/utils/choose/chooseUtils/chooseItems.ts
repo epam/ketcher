@@ -1,13 +1,4 @@
-import { Render } from 'ketcher-core'
-
-interface ChoosenItems {
-  atoms?: Array<number>
-  bonds?: Array<number>
-  enhancedFlags?: Array<number>
-  rxnPluses?: Array<number>
-  rxnArrows?: Array<number>
-  sgroupData?: Array<number>
-}
+import { selectStereoFlags } from '../../selectStereoFlags'
 
 const structObjects = [
   'atoms',
@@ -23,63 +14,63 @@ const structObjects = [
   'texts'
 ]
 
-// export function returnChosenItem() {
-//   console.log('TODO: return chosen item')
-// }
-
-function chooseAllItems(items, reStruct): ChoosenItems {
-  return items.reduce((result, key) => {
-    result[key] = Array.from(reStruct[key].keys())
-    return result
-  }, {})
+interface Selection {
+  atoms?: Array<number>
+  bonds?: Array<number>
+  enhancedFlags?: Array<number>
+  rxnPluses?: Array<number>
+  rxnArrows?: Array<number>
 }
 
-function chooseSGroupData(reStruct): ChoosenItems {
-  return { sgroupData: Array.from(reStruct.sgroupData.keys()) }
-}
-
-function chooseClosestItem(items, reStruct): ChoosenItems {
-  const result: Selection = {}
-  let selection: Selection = {}
-
-  Object.keys(items).forEach((key) => {
-    if (items[key].length > 0)
-      // TODO: deep merge
-      result[key] = items[key].slice()
-  })
-
-  if (Object.keys(result).length !== 0) {
-    selection = result // eslint-disable-line
-  }
-  const stereoFlags = selectStereoFlagsIfNecessary(
-    reStruct().atoms,
-    explicitSelected().atoms
-  )
-  if (stereoFlags.length !== 0) {
-    selection && selection.enhancedFlags
-      ? (selection.enhancedFlags = Array.from(
-          new Set([...selection.enhancedFlags, ...stereoFlags])
-        ))
-      : (result.enhancedFlags = stereoFlags)
+export function chooseItems(tool, ci?: any) {
+  if (arguments.length === 0) {
+    return tool._selection // eslint-disable-line
   }
 
-  return result
-}
+  let ReStruct = tool.render.ctab
 
-export function chooseItems(closestItems: any, struct: any): ChoosenItems {
-  // todo:     this._selection = null // eslint-disable-line
-
-  if (closestItems === 'all') {
-    return chooseAllItems(structObjects, struct)
+  tool._selection = null // eslint-disable-line
+  if (ci === 'all') {
+    // TODO: better way will be tool.struct()
+    ci = structObjects.reduce((res, key) => {
+      res[key] = Array.from(ReStruct[key].keys())
+      return res
+    }, {})
   }
 
-  if (closestItems === 'descriptors') {
-    return chooseSGroupData(struct)
+  if (ci === 'descriptors') {
+    ReStruct = tool.render.ctab
+    ci = { sgroupData: Array.from(ReStruct.sgroupData.keys()) }
   }
 
-  if (closestItems) {
-    return chooseClosestItem()
+  if (ci) {
+    const res: Selection = {}
+
+    Object.keys(ci).forEach((key) => {
+      if (ci[key].length > 0)
+        // TODO: deep merge
+        res[key] = ci[key].slice()
+    })
+
+    if (Object.keys(res).length !== 0) {
+      tool._selection = res // eslint-disable-line
+    }
+    const stereoFlags = selectStereoFlags(
+      tool.struct().atoms,
+      tool.explicitSelected().atoms
+    )
+    if (stereoFlags.length !== 0) {
+      tool._selection && tool._selection.enhancedFlags
+        ? (tool._selection.enhancedFlags = Array.from(
+            new Set([...tool._selection.enhancedFlags, ...stereoFlags])
+          ))
+        : (res.enhancedFlags = stereoFlags)
+    }
   }
 
-  return {}
+  tool.render.ctab.setSelection(tool._selection) // eslint-disable-line
+  tool.event.selectionChange.dispatch(tool._selection) // eslint-disable-line
+
+  tool.render.update()
+  return tool._selection // eslint-disable-line
 }

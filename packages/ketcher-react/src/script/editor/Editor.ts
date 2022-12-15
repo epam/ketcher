@@ -36,6 +36,7 @@ import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 import { Highlighter } from './highlighter'
+import { selectStereoFlags } from './utils/selectStereoFlags'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -71,28 +72,28 @@ const highlightTargets = [
   'texts'
 ]
 
-function selectStereoFlagsIfNecessary(
-  atoms: any,
-  expAtoms: number[]
-): number[] {
-  const atomsOfFragments = {}
-  atoms.forEach((atom, atomId) => {
-    atomsOfFragments[atom.fragment]
-      ? atomsOfFragments[atom.fragment].push(atomId)
-      : (atomsOfFragments[atom.fragment] = [atomId])
-  })
-
-  const stereoFlags: number[] = []
-
-  Object.keys(atomsOfFragments).forEach((fragId) => {
-    let shouldSelSFlag = true
-    atomsOfFragments[fragId].forEach((atomId) => {
-      if (!expAtoms.includes(atomId)) shouldSelSFlag = false
-    })
-    shouldSelSFlag && stereoFlags.push(Number(fragId))
-  })
-  return stereoFlags
-}
+// function selectStereoFlagsIfNecessary(
+//   atoms: any,
+//   expAtoms: number[]
+// ): number[] {
+//   const atomsOfFragments = {}
+//   atoms.forEach((atom, atomId) => {
+//     atomsOfFragments[atom.fragment]
+//       ? atomsOfFragments[atom.fragment].push(atomId)
+//       : (atomsOfFragments[atom.fragment] = [atomId])
+//   })
+//
+//   const stereoFlags: number[] = []
+//
+//   Object.keys(atomsOfFragments).forEach((fragId) => {
+//     let shouldSelSFlag = true
+//     atomsOfFragments[fragId].forEach((atomId) => {
+//       if (!expAtoms.includes(atomId)) shouldSelSFlag = false
+//     })
+//     shouldSelSFlag && stereoFlags.push(Number(fragId))
+//   })
+//   return stereoFlags
+// }
 
 interface Selection {
   atoms?: Array<number>
@@ -326,7 +327,7 @@ class Editor implements KetcherEditor {
       if (Object.keys(res).length !== 0) {
         this._selection = res // eslint-disable-line
       }
-      const stereoFlags = selectStereoFlagsIfNecessary(
+      const stereoFlags = selectStereoFlags(
         this.struct().atoms,
         this.explicitSelected().atoms
       )

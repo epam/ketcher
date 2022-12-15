@@ -657,124 +657,115 @@ You can use keyboard hotkeys (including Numeric keypad) for some
 features/commands of the Editor. To display the hotkeys just place the
 cursor over a toolbar button. If a hotkey is available for the button,
 it will appear in brackets after the description of the button.
+*NOTE: `Mod` key is <Command> on OSX and <Ctrl> on PC systems*
 
 **General**
-| Shortcut| Action | Description |
-| ---| --- | --- |
-| `Mod+Delete`| Clear Canvas | - |
-| `Mod+o`| Open… | - |
-| `Mod+s`| Save As… | - |
-| `Mod+z`| Undo | - |
-| `Mod+Shift+z, Mod+y`| Redo | - |
-| `Mod+x`| Cut | - |
-| `Mod+c`| Copy | - |
-| `Mod+Shift+f`| Copy Image | - |
-| `Mod+m`| Copy as MOL | - |
-| `Mod+Shift+k`| Copy as KET | - |
-| `Mod+v`| Paste | - |
-| `Mod+a`| Select All | - |
-| `Mod+Shift+a`| Deselect All | - |
-| `Mod+d`| Select descriptors | - |
+| Shortcut| Action |
+| --- | --- |
+| `Mod+Delete`| Clear Canvas |
+| `Mod+o`| Open… |
+| `Mod+s`| Save As… |
+| `Mod+z`| Undo |
+| `Mod+Shift+z, Mod+y`| Redo |
+| `Mod+x`| Cut |
+| `Mod+c`| Copy |
+| `Mod+Shift+f`| Copy Image |
+| `Mod+m`| Copy as MOL |
+| `Mod+Shift+k`| Copy as KET |
+| `Mod+v`| Paste |
+| `Mod+a`| Select All |
+| `Mod+Shift+a`| Deselect All |
+| `Mod+d`| Select descriptors |
 
 
 **Server**
 | Shortcut| Action | Description |
-| ---| --- | --- |
-| `Mod+l`| Layout | - |
-| `Mod+Shift+l`| Clean Up | - |
-| `Mod+p`| Calculate CIP | - |
+| --- | --- |
+| `Mod+l`| Layout |
+| `Mod+Shift+l`| Clean Up |
+| `Mod+p`| Calculate CIP |
 
 
 **Debug**
 | Shortcut| Action | Description |
-| ---| --- | --- |
-| `Ctrl+Shift+r`| force-update | - |
-| `Alt+Shift+r`| qs-serialize | - |
+| --- | --- |
+| `Ctrl+Shift+r`| force-update |
+| `Alt+Shift+r`| qs-serialize |
 
 
 **Tools**
 | Shortcut| Action | Description |
-| ---| --- | --- |
-| `Mod+h`| Hand tool | - |
-| `Escape`| Lasso Selection | - |
-| `Escape`| Rectangle Selection | - |
-| `Escape`| Fragment Selection | - |
-| `Delete, Backspace`| Erase | - |
-| `Alt+e`| Stereochemistry | - |
-| `5`| Charge Plus | - |
-| `5`| Charge Minus | - |
-| `Alt+r`| Rotate Tool | - |
-| `Alt+h`| Horizontal Flip | - |
-| `Alt+v`| Vertical Flip | - |
-| `Mod+g`| S-Group | - |
-| `Mod+g`| Data S-Group | - |
-| `Mod+r`| R-Group Label Tool | - |
-| `Mod+Shift+r, Mod+r`| R-Group Fragment Tool | - |
-| `Mod+r`| Attachment Point Tool | - |
-| `1`| Single Bond | - |
-| `1`| Single Up Bond | - |
-| `1`| Single Down Bond | - |
-| `1`| Single Up/Down Bond | - |
-| `2`| Double Bond | - |
-| `2`| Double Cis/Trans Bond | - |
-| `3`| Triple Bond | - |
-| `4`| Aromatic Bond | - |
-| `0`| Any Bond | - |
+| --- | --- |
+| `Mod+h`| Hand tool |
+| `Escape`| Rotate between: Lasso Selection, Rectangle Selection, Fragment Selection |
+| `Delete, Backspace`| Erase |
+| `Alt+e`| Stereochemistry |
+| `5`| Charge Plus |
+| `5`| Charge Minus |
+| `Alt+r`| Rotate Tool |
+| `Alt+h`| Horizontal Flip |
+| `Alt+v`| Vertical Flip |
+| `Mod+g`| S-Group |
+| `Mod+g`| Data S-Group |
+| `Mod+r`| R-Group Label Tool |
+| `Mod+Shift+r, Mod+r`| R-Group Fragment Tool |
+| `Mod+r`| Attachment Point Tool |
+| `1`| Rotate between: Single Bond, Single Up Bond, Single Down Bond, Single Up/Down Bond |
+| `2`| Rotate between: Double Bond, Double Cis/Trans Bond |
+| `3`| Triple Bond |
+| `4`| Aromatic Bond |
+| `0`| Any Bond |
 
 
 **Atoms**
 | Shortcut| Action | Description |
-| ---| --- | --- |
-| `h`| Atom H | - |
-| `c`| Atom C | - |
-| `n`| Atom N | - |
-| `o`| Atom O | - |
-| `s`| Atom S | - |
-| `p`| Atom P | - |
-| `f`| Atom F | - |
-| `Shift+c`| Atom Cl | - |
-| `b`| Atom Br | - |
-| `i`| Atom I | - |
-| `a`| Any atom | - |
-| `q`| Any heteroatom | - |
-| `r`| Pseudoatom | - |
-| `k`| Atom K | - |
-| `m`| Any metal | - |
-| `Shift+s`| Atom Si | - |
-| `Shift+n`| Atom Na | - |
-| `x`| Any halogen | - |
-| `d`| Deuterium | - |
-| `Shift+b`| Atom B | - |
+| --- | --- |
+| `h`| Atom H |
+| `c`| Atom C |
+| `n`| Atom N |
+| `o`| Atom O |
+| `s`| Atom S |
+| `p`| Atom P |
+| `f`| Atom F |
+| `Shift+c`| Atom Cl |
+| `b`| Atom Br |
+| `i`| Atom I |
+| `a`| Any atom |
+| `q`| Any heteroatom |
+| `r`| Pseudoatom |
+| `k`| Atom K |
+| `m`| Any metal |
+| `Shift+s`| Atom Si |
+| `Shift+n`| Atom Na |
+| `x`| Any halogen |
+| `d`| Deuterium |
+| `Shift+b`| Atom B |
 
 
 **Zoom**
 | Shortcut| Action | Description |
-| ---| --- | --- |
-| `-, _, Shift+-`| Zoom Out | - |
-| `+, =, Shift+=`| Zoom In | - |
+| --- | --- |
+| `-, _, Shift+-`| Zoom Out |
+| `+, =, Shift+=`| Zoom In |
 
 
 **Templates**
 | Shortcut| Action | Description |
-| ---| --- | --- |
-| `Shift+t`| Custom Templates | - |
+| --- | --- |
+| `Shift+t`| Custom Templates |
+| `t` | Rotate between: Benzene, Cyclopentadiene, Cyclohexane, Cyclopentane, Cyclopropane, Cyclobutane, Cycloheptane, Cyclooctane |
 
 
 **FunctionalGroups**
 | Shortcut| Action | Description |
-| ---| --- | --- |
-| `Shift+f`| Functional Groups | - |
-
-
-**Fullscreen**
-| Shortcut| Action | Description |
-| ---| --- | --- |
+| --- | --- |
+| `Shift+f`| Functional Groups |
 
 
 **Help**
 | Shortcut| Action | Description |
-| ---| --- | --- |
-| `?, &, Shift+/`| help | - |
+| --- | --- |
+| `?, &, Shift+/`| help |
 
 **Note** : Please, use`Ctrl+V`to paste the selected object in
 Google Chrome and Mozilla Firefox browsers.

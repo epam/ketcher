@@ -8,20 +8,20 @@ import { closestToSel } from './chooseUtils/closestToSel'
 //   xy0?: any
 // }
 
-function isSelected(selection, item) {
-  return selection?.[item.map]?.includes(item.id)
+function isElementChosen(chosenElements, item) {
+  return chosenElements?.[item.map]?.includes(item.id)
 }
 
-export function startChoosing(self, event, editor, lassoHelper) {
+export function startChoosing(tool, event, editor, lassoHelper) {
   console.log('startChoosing')
-  self.dragCtx = {}
+  tool.dragCtx = {}
 
   const render = editor.render
   const ctab = render.ctab
   const molecule = ctab.molecule
   const functionalGroups = molecule.functionalGroups
-  const selectedSgroups: any[] = []
-  const newSelected = { atoms: [] as any[], bonds: [] as any[] }
+  const chosenSgroups: any[] = []
+  const newChosen = { atoms: [] as any[], bonds: [] as any[] }
   let actualSgroupId
 
   editor.hover(null) // TODO review hovering for touch devicess
@@ -73,9 +73,9 @@ export function startChoosing(self, event, editor, lassoHelper) {
     if (
       atomFromStruct &&
       actualSgroupId !== undefined &&
-      !selectedSgroups.includes(actualSgroupId)
+      !chosenSgroups.includes(actualSgroupId)
     )
-      selectedSgroups.push(actualSgroupId)
+      chosenSgroups.push(actualSgroupId)
   }
   if (ci && ci.map === 'bonds' && functionalGroups.size) {
     const bondId = FunctionalGroup.bondsInFunctionalGroup(
@@ -88,36 +88,36 @@ export function startChoosing(self, event, editor, lassoHelper) {
       functionalGroups,
       bondId
     )
-    if (sGroupId !== null && !selectedSgroups.includes(sGroupId))
-      selectedSgroups.push(sGroupId)
+    if (sGroupId !== null && !chosenSgroups.includes(sGroupId))
+      chosenSgroups.push(sGroupId)
   }
 
-  if (selectedSgroups.length) {
-    console.log(' if (selectedSgroups.length)')
-    for (const sgId of selectedSgroups) {
+  if (chosenSgroups.length) {
+    console.log(' if (chosenSgroups.length)')
+    for (const sgId of chosenSgroups) {
       const sgroup = ctab.sgroups.get(sgId)
       if (sgroup) {
         const sgroupAtoms = SGroup.getAtoms(molecule, sgroup.item)
         const sgroupBonds = SGroup.getBonds(molecule, sgroup.item)
-        newSelected.atoms.push(...sgroupAtoms) &&
-          newSelected.bonds.push(...sgroupBonds)
+        newChosen.atoms.push(...sgroupAtoms) &&
+          newChosen.bonds.push(...sgroupBonds)
       }
     }
-    console.log('newSelected', newSelected)
-    editor.selection(newSelected)
+    console.log('newChosen', newChosen)
+    editor.selection(newChosen)
   }
 
-  self.dragCtx.item = ci
-  self.dragCtx.xy0 = render.page2obj(event)
+  tool.dragCtx.item = ci
+  tool.dragCtx.xy0 = render.page2obj(event)
 
   if (!ci || ci.map === 'atoms') {
-    atomLongtapEvent(self, render)
+    atomLongtapEvent(tool, render)
   }
 
   if (!ci) {
     //  ci.type == 'Canvas'
     if (!event.shiftKey) editor.selection(null)
-    delete self.dragCtx.item
+    delete tool.dragCtx.item
     if (!lassoHelper.fragment) lassoHelper.begin(event)
     return true
   }
@@ -147,13 +147,13 @@ export function startChoosing(self, event, editor, lassoHelper) {
       bonds: rgroup.getBonds(render)
     }
   } else if (ci.map === 'sgroupData') {
-    if (isSelected(selection, ci)) return true
+    if (isElementChosen(selection, ci)) return true
   }
 
   if (event.shiftKey) {
     editor.selection(selMerge(sel, selection, true))
   } else {
-    editor.selection(isSelected(selection, ci) ? selection : sel)
+    editor.selection(isElementChosen(selection, ci) ? selection : sel)
   }
   return true
 }

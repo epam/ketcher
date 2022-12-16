@@ -75,7 +75,7 @@ function SData({
         init={init}
         {...formState}
       >
-        <fieldset>
+        <fieldset className="sdata">
           <Field
             name="context"
             options={getSelectOptionsFromSchema(formSchema.properties.context)}

@@ -72,7 +72,7 @@ interface TemplateLibProps {
   filter: string
   group: string
   lib: Array<Template>
-  selected: Template
+  selected: Template | null
   mode: string
   initialTab: number
   saltsAndSolvents: Template[]
@@ -330,6 +330,14 @@ const TemplateDialog: FC<Props> = (props) => {
   )
 }
 
+const selectTemplate = (template, props, dispatch) => {
+  dispatch(selectTmpl(null))
+  if (!template) return
+  dispatch(selectTmpl(template))
+  dispatch(onAction({ tool: 'template', opts: template }))
+  props.onOk(template)
+}
+
 export default connect(
   (store) => ({
     ...omit(['attach'], (store as any).templates),
@@ -339,11 +347,7 @@ export default connect(
   }),
   (dispatch: Dispatch<any>, props: Props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
-    onSelect: (tmpl) => {
-      dispatch(selectTmpl(tmpl))
-      dispatch(onAction({ tool: 'template', opts: tmpl }))
-      props.onOk(tmpl)
-    },
+    onSelect: (tmpl) => selectTemplate(tmpl, props, dispatch),
     onChangeGroup: (group) => dispatch(changeGroup(group)),
     onAttach: (tmpl) => dispatch(editTmpl(tmpl)),
     onDelete: (tmpl) => dispatch(deleteTmpl(tmpl))

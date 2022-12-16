@@ -14,12 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { getSdataDefault, sdataSchema } from '../../data/schema/sdata-schema'
+import {
+  getSdataDefault,
+  sdataSchema,
+  sdataCustomSchema
+} from '../../data/schema/sdata-schema'
 
-export const initSdata = () => {
-  const context = getSdataDefault()
-  const fieldName = getSdataDefault(context)
-  const fieldValue = getSdataDefault(context, fieldName)
+export const initSdata = (schema) => {
+  const isCustomShema = schema.key === 'Custom'
+
+  const context = isCustomShema
+    ? getSdataDefault(sdataCustomSchema, 'context')
+    : getSdataDefault(sdataSchema)
+  const fieldName = isCustomShema
+    ? getSdataDefault(sdataCustomSchema, 'fieldName')
+    : getSdataDefault(sdataSchema, context)
+  const fieldValue = isCustomShema
+    ? getSdataDefault(sdataCustomSchema, 'fieldValue')
+    : getSdataDefault(sdataSchema, context, fieldName)
   const radiobuttons = 'Absolute'
 
   return {
@@ -78,11 +90,11 @@ const correctErrors = (state, payload) => {
 const onContextChange = (state, payload) => {
   const { context, fieldValue } = payload
 
-  const fieldName = getSdataDefault(context)
+  const fieldName = getSdataDefault(sdataCustomSchema, 'fieldName')
 
   let fValue = fieldValue
   if (fValue === state.result.fieldValue)
-    fValue = getSdataDefault(context, fieldName)
+    fValue = getSdataDefault(sdataCustomSchema, 'fieldValue')
 
   return {
     result: {
@@ -102,7 +114,7 @@ const onFieldNameChange = (state, payload) => {
   let fieldValue = payload.fieldValue
 
   if (sdataSchema[context][fieldName])
-    fieldValue = getSdataDefault(context, fieldName)
+    fieldValue = getSdataDefault(sdataSchema, context, fieldName)
 
   if (
     fieldValue === state.result.fieldValue &&

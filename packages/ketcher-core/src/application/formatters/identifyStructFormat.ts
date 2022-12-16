@@ -47,6 +47,7 @@ export function identifyStructFormat(
       return SupportedFormat.mol
     }
   }
+
   if (
     sanitizedString[0] === '<' &&
     sanitizedString.indexOf('<molecule') !== -1
@@ -54,11 +55,24 @@ export function identifyStructFormat(
     return SupportedFormat.cml
   }
 
+  const clearStr = sanitizedString.replace(/\s/g, '')
+  const anyLetterAnyDigitContainsSlashesEndsWithEqualSign =
+    /^[a-zA-Z0-9+/]*={0,2}$/
+  if (
+    anyLetterAnyDigitContainsSlashesEndsWithEqualSign.test(clearStr) &&
+    clearStr.length % 4 === 0
+  ) {
+    return SupportedFormat.cdx
+  }
+
   if (sanitizedString.slice(0, 5) === 'InChI') {
     return SupportedFormat.inChI
   }
 
-  if (sanitizedString.indexOf('\n') === -1) {
+  if (
+    sanitizedString.indexOf('\n') === -1 &&
+    sanitizedString === sanitizedString.toUpperCase()
+  ) {
     // TODO: smiles regexp
     return SupportedFormat.smiles
   }

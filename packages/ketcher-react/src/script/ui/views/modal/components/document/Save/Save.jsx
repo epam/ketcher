@@ -88,6 +88,7 @@ class SaveDialog extends Component {
         'svg',
         'png',
         'cdxml'
+        // 'cdx' TO DO: Uncomment, when export will be ready on Indigo side
       )
 
     this.saveSchema = saveSchema

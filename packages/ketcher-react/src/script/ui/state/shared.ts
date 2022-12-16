@@ -20,7 +20,8 @@ import {
   SGroup,
   getStereoAtomsMap,
   identifyStructFormat,
-  Struct
+  Struct,
+  SupportedFormat
 } from 'ketcher-core'
 
 import { supportedSGroupTypes } from './constants'
@@ -51,12 +52,19 @@ export function loadStruct(struct) {
   }
 }
 
-function parseStruct(struct: Struct, server, options?): Promise<Struct> {
+function parseStruct(
+  struct: string | Struct,
+  server,
+  options?
+): Promise<Struct> {
   if (typeof struct === 'string') {
     options = options || {}
     const { rescale, fragment, ...formatterOptions } = options
 
     const format = identifyStructFormat(struct)
+    if (format === SupportedFormat.cdx) {
+      struct = `base64::${struct.replace(/\s/g, '')}`
+    }
     const factory = new FormatterFactory(server)
 
     const service = factory.create(format, formatterOptions)

@@ -94,6 +94,12 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.CDXML,
     ['.cdxml'],
     true
+  ),
+  cdx: new SupportedFormatProperties(
+    'Base64 CDX',
+    ChemicalMimeType.CDX,
+    ['.cdx'],
+    true
   )
 }
 

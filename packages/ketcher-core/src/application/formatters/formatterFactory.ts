@@ -91,6 +91,7 @@ export class FormatterFactory {
       case SupportedFormat.smilesExt:
       case SupportedFormat.smarts:
       case SupportedFormat.cdxml:
+      case SupportedFormat.cdx:
       default:
         formatter = new ServerFormatter(
           this.#structService,

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dispatch, FC, useState, useEffect } from 'react'
+import { Dispatch, FC, useState, useEffect, useCallback, useRef } from 'react'
 import TemplateTable, { Template } from './TemplateTable'
 import {
   changeFilter,
@@ -158,6 +158,8 @@ const TemplateDialog: FC<Props> = (props) => {
   } = props
 
   const [tab, setTab] = useState(initialTab ?? TemplateTabs.TemplateLibrary)
+  const [isFirstRender, setIsFirstRender] = useState(true)
+  const timerId = useRef<null | ReturnType<typeof setTimeout>>(null)
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     props.group
   ])
@@ -174,10 +176,36 @@ const TemplateDialog: FC<Props> = (props) => {
     setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS])
   }, [functionalGroups, filter])
 
+  const addToSaSWithBatches = useCallback((fullFilteredArray) => {
+    const batchSize = 16
+    setFilteredSaltsAndSolvents((filteredSaltsAndSolvents) => [
+      ...(filteredSaltsAndSolvents ?? []),
+      ...fullFilteredArray.splice(0, batchSize)
+    ])
+    if (fullFilteredArray.length > 0) {
+      timerId.current = setTimeout(
+        () => addToSaSWithBatches(fullFilteredArray),
+        300
+      )
+    }
+  }, [])
+
   useEffect(() => {
-    setFilteredSaltsAndSolvents(
-      filterFGLib(saltsAndSolvents, filter)[SALTS_AND_SOLVENTS]
-    )
+    const filteredSaS = filterFGLib(saltsAndSolvents, '')[SALTS_AND_SOLVENTS]
+    addToSaSWithBatches(filteredSaS)
+  }, [saltsAndSolvents, addToSaSWithBatches])
+
+  useEffect(() => {
+    if (isFirstRender) {
+      setIsFirstRender(false)
+      return
+    }
+    // @ts-ignore
+    clearTimeout(timerId.current)
+    const filteredSaS = filterFGLib(saltsAndSolvents, filter)[
+      SALTS_AND_SOLVENTS
+    ]
+    setFilteredSaltsAndSolvents(filteredSaS)
   }, [saltsAndSolvents, filter])
 
   const handleTabChange = (_, tab) => {

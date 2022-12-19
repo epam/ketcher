@@ -68,7 +68,7 @@ class TextTool {
       )
       this.editor.update(this.dragCtx.action, true)
     } else {
-      this.editor.hover(this.editor.findItem(event, ['texts']))
+      this.editor.hover(this.editor.findItem(event, ['texts']), null, event)
     }
   }
 

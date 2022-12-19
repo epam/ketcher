@@ -34,13 +34,14 @@ export function greekify(str: string): string {
   return str.replace(greekRe, (sym) => GREEK_SIMBOLS[sym])
 }
 
-export function filterLib(lib, filter) {
+export function filterLib(lib, filter: string) {
   console.warn('Filter', filter)
-  const re = new RegExp(escapeRegExp(greekify(filter)), 'i')
+  const trimmedFilter = filter.trim()
+  const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i')
   return flow(
     _filter(
       (item: any) =>
-        !filter ||
+        !trimmedFilter ||
         re.test(greekify(item.struct.name)) ||
         re.test(greekify(item.props.group))
     ),
@@ -54,9 +55,18 @@ export function filterLib(lib, filter) {
 
 export function filterFGLib(lib, filter) {
   console.warn('Filter', filter)
-  const re = new RegExp(escapeRegExp(greekify(filter)), 'i')
+  const trimmedFilter = filter.trim()
+  const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i')
+  const searchFunction = (item) => {
+    const fields = [
+      item.struct.name,
+      item.props.abbreviation,
+      item.props.name
+    ].filter(Boolean)
+    return fields.some((field) => re.test(greekify(field)))
+  }
   return flow(
-    _filter((item: any) => !filter || re.test(greekify(item.struct.name))),
+    _filter((item: any) => !trimmedFilter || searchFunction(item)),
     reduce((res, item) => {
       if (!res[item.props.group]) res[item.props.group] = [item]
       else res[item.props.group].push(item)

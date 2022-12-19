@@ -60,6 +60,7 @@ export class Struct {
   frags: Pool<Fragment | null>
   rgroups: Pool<RGroup>
   name: string
+  abbreviation?: string
   sGroupForest: SGroupForest
   simpleObjects: Pool<SimpleObject>
   texts: Pool<Text>
@@ -78,6 +79,7 @@ export class Struct {
     this.frags = new Pool<Fragment>()
     this.rgroups = new Pool<RGroup>()
     this.name = ''
+    this.abbreviation = ''
     this.sGroupForest = new SGroupForest()
     this.simpleObjects = new Pool<SimpleObject>()
     this.texts = new Pool<Text>()
@@ -737,6 +739,15 @@ export class Struct {
 
     this.sgroups.forEach((item) => {
       item.pp = item.pp ? item.pp.scaled(scale) : null
+    })
+
+    this.texts.forEach((item) => {
+      // Scale text only for reactions - i.e file contains reaction arrows
+      const isReactionStruct = this.rxnArrows.size
+      if (isReactionStruct) {
+        item.pos = item.pos.map((p) => p.scaled(scale))
+        item.position = item.position.scaled(scale)
+      }
     })
   }
 

@@ -31,6 +31,8 @@ import compressedHandIcon from '../../../../../icons/files/compressed-hand.svg'
 import Cursor from '../Cursor'
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu'
 
+import InfoPanel from './InfoPanel'
+
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
   const { struct, tool, toolOpts, options } = props
@@ -47,7 +49,6 @@ function setupEditor(editor, props, oldProps = {}) {
   if (oldProps.options && options !== oldProps.options) editor.options(options)
 
   Object.keys(editor.event).forEach((name) => {
-    // console.log('event name', name);
     const eventName = `on${upperFirst(name)}`
 
     if (props[eventName] !== oldProps[eventName]) {
@@ -74,7 +75,9 @@ class StructEditor extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      enableCursor: false
+      enableCursor: false,
+      clientX: 0,
+      clientY: 0
     }
     this.editorRef = createRef()
     this.logRef = createRef()
@@ -134,7 +137,9 @@ class StructEditor extends Component {
         case 'move':
           this.editorRef.current.classList.add(classes.enableCursor)
           this.setState({
-            enableCursor: true
+            enableCursor: true,
+            clientX,
+            clientY
           })
           break
         case 'disable':
@@ -194,6 +199,7 @@ class StructEditor extends Component {
       onCipChange,
       className,
       onConfirm,
+      onShowInfo,
       showAttachmentPoints = true,
       ...props
     } = this.props
@@ -232,6 +238,7 @@ class StructEditor extends Component {
             )}
           </ContextMenuTrigger>
         </FunctionalGroupTrigger>
+        <InfoPanel {...this.state} {...this.props} />
         <FGContextMenu />
         <ContextMenu />
       </Tag>

@@ -32,13 +32,14 @@ import Icon from '../../component/view/icon'
 import { Dialog } from '../../views/components'
 import Input from '../../component/form/input'
 import SaveButton from '../../component/view/savebutton'
-import { SdfSerializer, Struct } from 'ketcher-core'
+import { SdfSerializer } from 'ketcher-core'
 import classes from './template-lib.module.less'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { omit } from 'lodash/fp'
 import { onAction } from '../../state'
 import { functionalGroupsSelector } from '../../state/functionalGroups/selectors'
+import { saltsAndSolventsSelector } from '../../state/saltsAndSolvents/selectors'
 import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult'
 
 import Tabs from '@mui/material/Tabs'
@@ -71,9 +72,10 @@ interface TemplateLibProps {
   filter: string
   group: string
   lib: Array<Template>
-  selected: Template
+  selected: Template | null
   mode: string
   initialTab: number
+  saltsAndSolvents: Template[]
 }
 
 interface TemplateLibCallProps {
@@ -84,21 +86,15 @@ interface TemplateLibCallProps {
   onFilter: (filter: string) => void
   onOk: (res: any) => void
   onSelect: (res: any) => void
-  functionalGroups: (Template & { modifiedStruct: Struct })[]
+  functionalGroups: Template[]
 }
 
 type Props = TemplateLibProps & TemplateLibCallProps
 
 enum TemplateTabs {
   TemplateLibrary = 0,
-  FunctionalGroupLibrary = 1
-}
-
-export interface Result {
-  struct: Struct
-  aid: number | null
-  bid: number | null
-  mode: string
+  FunctionalGroupLibrary = 1,
+  SaltsAndSolvents = 2
 }
 
 const filterLibSelector = createSelector(
@@ -108,6 +104,7 @@ const filterLibSelector = createSelector(
 )
 
 const FUNCTIONAL_GROUPS = 'Functional Groups'
+const SALTS_AND_SOLVENTS = 'Salts and Solvents'
 
 const HeaderContent = () => (
   <div className={classes.dialogHeader}>
@@ -116,24 +113,36 @@ const HeaderContent = () => (
   </div>
 )
 
-const FooterContent = ({ data, tab }) => (
-  <div style={{ flexGrow: 1 }}>
-    <SaveButton
-      key="save-to-SDF"
-      data={data}
-      className={classes.saveButton}
-      filename={
-        tab === TemplateTabs.TemplateLibrary
-          ? 'ketcher-tmpls.sdf'
-          : 'ketcher-fg-tmpls.sdf'
-      }
+const FooterContent = ({ data, tab }) => {
+  const clickToAddToCanvas = <span>Click to add to canvas</span>
+  if (tab === TemplateTabs.SaltsAndSolvents) {
+    return clickToAddToCanvas
+  }
+  return (
+    <div
+      style={{
+        flexGrow: 1,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}
     >
-      {tab === TemplateTabs.TemplateLibrary
-        ? 'Save template library to SDF'
-        : 'Save functional groups to SDF'}
-    </SaveButton>
-  </div>
-)
+      <SaveButton
+        key="save-to-SDF"
+        data={data}
+        className={classes.saveButton}
+        filename={
+          tab === TemplateTabs.TemplateLibrary
+            ? 'ketcher-tmpls.sdf'
+            : 'ketcher-fg-tmpls.sdf'
+        }
+      >
+        Save to SDF
+      </SaveButton>
+      {clickToAddToCanvas}
+    </div>
+  )
+}
 
 const TemplateDialog: FC<Props> = (props) => {
   const {
@@ -144,6 +153,7 @@ const TemplateDialog: FC<Props> = (props) => {
     initialTab,
     functionalGroups,
     lib: templateLib,
+    saltsAndSolvents,
     ...rest
   } = props
 
@@ -154,12 +164,21 @@ const TemplateDialog: FC<Props> = (props) => {
   const [filteredFG, setFilteredFG] = useState(
     functionalGroups[FUNCTIONAL_GROUPS]
   )
+  const [filteredSaltsAndSolvents, setFilteredSaltsAndSolvents] = useState(
+    saltsAndSolvents[SALTS_AND_SOLVENTS]
+  )
 
   const filteredTemplateLib = filterLibSelector(props)
 
   useEffect(() => {
     setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS])
   }, [functionalGroups, filter])
+
+  useEffect(() => {
+    setFilteredSaltsAndSolvents(
+      filterFGLib(saltsAndSolvents, filter)[SALTS_AND_SOLVENTS]
+    )
+  }, [saltsAndSolvents, filter])
 
   const handleTabChange = (_, tab) => {
     setTab(tab)
@@ -176,28 +195,17 @@ const TemplateDialog: FC<Props> = (props) => {
     )
   }
 
-  const result = (): Result | null => {
-    const tmpl = props.selected
-    return tmpl
-      ? {
-          struct: tmpl.struct,
-          aid: parseInt(String(tmpl.props.atomid)) || null,
-          bid: parseInt(String(tmpl.props.bondid)) || null,
-          mode: mode
-        }
-      : null
-  }
-
   const sdfSerializer = new SdfSerializer()
-  const data =
-    tab === TemplateTabs.TemplateLibrary
-      ? sdfSerializer.serialize(templateLib)
-      : sdfSerializer.serialize(functionalGroups)
+  const serializerMapper = {
+    [TemplateTabs.TemplateLibrary]: templateLib,
+    [TemplateTabs.FunctionalGroupLibrary]: functionalGroups,
+    [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents
+  }
+  const data = sdfSerializer.serialize(serializerMapper[tab])
 
-  const select = (tmpl: Template, activateImmediately = false): void => {
+  const select = (tmpl: Template): void => {
     onChangeGroup(tmpl.props.group)
-    if (activateImmediately) props.onOk(result())
-    else props.onSelect(tmpl)
+    props.onSelect(tmpl)
   }
 
   return (
@@ -206,9 +214,7 @@ const TemplateDialog: FC<Props> = (props) => {
       footerContent={<FooterContent tab={tab} data={data} />}
       className={`${classes.dialog_body}`}
       params={omit(['group'], rest)}
-      result={() => result()}
-      buttons={['OK']}
-      buttonsNameMap={{ OK: 'Add to canvas' }}
+      buttons={[]}
       needMargin={false}
     >
       <div className={classes.inputContainer}>
@@ -230,6 +236,10 @@ const TemplateDialog: FC<Props> = (props) => {
         <Tab
           label="Functional Groups"
           {...a11yProps(TemplateTabs.FunctionalGroupLibrary)}
+        />
+        <Tab
+          label="Salts and Solvents"
+          {...a11yProps(TemplateTabs.SaltsAndSolvents)}
         />
       </Tabs>
       <div className={classes.tabsContent}>
@@ -268,7 +278,6 @@ const TemplateDialog: FC<Props> = (props) => {
                             : []
                         }
                         onSelect={(templ) => select(templ)}
-                        onDoubleClick={(templ) => select(templ, true)}
                         selected={props.selected}
                         onDelete={props.onDelete}
                         onAttach={props.onAttach}
@@ -289,8 +298,23 @@ const TemplateDialog: FC<Props> = (props) => {
             <div className={classes.resultsContainer}>
               <TemplateTable
                 titleRows={1}
-                onDoubleClick={(templ) => select(templ, true)}
                 templates={filteredFG}
+                onSelect={(templ) => select(templ)}
+                selected={props.selected}
+              />
+            </div>
+          ) : (
+            <div className={classes.resultsContainer}>
+              <EmptySearchResult textInfo="No items found" />
+            </div>
+          )}
+        </TabPanel>
+        <TabPanel value={tab} index={TemplateTabs.SaltsAndSolvents}>
+          {filteredSaltsAndSolvents?.length ? (
+            <div className={classes.resultsContainer}>
+              <TemplateTable
+                titleRows={1}
+                templates={filteredSaltsAndSolvents}
                 onSelect={(templ) => select(templ)}
                 selected={props.selected}
               />
@@ -306,25 +330,26 @@ const TemplateDialog: FC<Props> = (props) => {
   )
 }
 
+const selectTemplate = (template, props, dispatch) => {
+  dispatch(selectTmpl(null))
+  if (!template) return
+  dispatch(selectTmpl(template))
+  dispatch(onAction({ tool: 'template', opts: template }))
+  props.onOk(template)
+}
+
 export default connect(
   (store) => ({
     ...omit(['attach'], (store as any).templates),
     initialTab: (store as any).modal?.prop?.tab,
-    functionalGroups: functionalGroupsSelector(store).map((template) => {
-      const struct = template.struct.clone()
-      struct.sgroups.delete(0)
-      return { ...template, modifiedStruct: struct }
-    })
+    functionalGroups: functionalGroupsSelector(store),
+    saltsAndSolvents: saltsAndSolventsSelector(store)
   }),
-  (dispatch: Dispatch<any>, props) => ({
+  (dispatch: Dispatch<any>, props: Props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
-    onSelect: (tmpl) => dispatch(selectTmpl(tmpl)),
+    onSelect: (tmpl) => selectTemplate(tmpl, props, dispatch),
     onChangeGroup: (group) => dispatch(changeGroup(group)),
     onAttach: (tmpl) => dispatch(editTmpl(tmpl)),
-    onDelete: (tmpl) => dispatch(deleteTmpl(tmpl)),
-    onOk: (res) => {
-      dispatch(onAction({ tool: 'template', opts: res }))
-      ;(props as any).onOk(res)
-    }
+    onDelete: (tmpl) => dispatch(deleteTmpl(tmpl))
   })
 )(TemplateDialog)

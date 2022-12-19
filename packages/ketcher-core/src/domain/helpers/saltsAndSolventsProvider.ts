@@ -15,30 +15,26 @@
  ***************************************************************************/
 import { Struct } from '../entities'
 
-export class FunctionalGroupsProvider {
+export class SaltsAndSolventsProvider {
   // eslint-disable-next-line no-use-before-define
-  private static instance: FunctionalGroupsProvider
-  functionalGroupsList: Struct[]
+  private static instance: SaltsAndSolventsProvider
+  saltsAndSolventsList: Struct[]
   constructor() {
-    this.functionalGroupsList = []
+    this.saltsAndSolventsList = []
   }
 
-  public static getInstance(): FunctionalGroupsProvider {
-    if (!FunctionalGroupsProvider.instance) {
-      FunctionalGroupsProvider.instance = new FunctionalGroupsProvider()
+  public static getInstance(): SaltsAndSolventsProvider {
+    if (!SaltsAndSolventsProvider.instance) {
+      SaltsAndSolventsProvider.instance = new SaltsAndSolventsProvider()
     }
-    return FunctionalGroupsProvider.instance
+    return SaltsAndSolventsProvider.instance
   }
 
-  public getFunctionalGroupsList() {
-    return this.functionalGroupsList
+  public getSaltsAndSolventsList() {
+    return this.saltsAndSolventsList
   }
 
-  public setFunctionalGroupsList(list: Struct[]): void {
-    this.functionalGroupsList = list
-  }
-
-  public addToFunctionalGroupsList(list: Struct[]): void {
-    this.functionalGroupsList = [...this.functionalGroupsList, ...list]
+  public setSaltsAndSolventsList(list: Struct[]): void {
+    this.saltsAndSolventsList = list
   }
 }

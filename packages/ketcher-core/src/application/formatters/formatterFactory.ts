@@ -68,29 +68,30 @@ export class FormatterFactory {
 
     let formatter: StructFormatter
     switch (format) {
-      case 'ket':
+      case SupportedFormat.ket:
         formatter = new KetFormatter(new KetSerializer())
         break
 
-      case 'rxn':
+      case SupportedFormat.rxn:
         formatter = new RxnFormatter(new MolSerializer(molSerializerOptions))
         break
 
-      case 'mol':
+      case SupportedFormat.mol:
         formatter = new MolfileV2000Formatter(
           new MolSerializer(molSerializerOptions)
         )
         break
 
-      case 'cml':
-      case 'inChIAuxInfo':
-      case 'inChI':
-      case 'molV3000':
-      case 'smiles':
-      case 'rxnV3000':
-      case 'smilesExt':
-      case 'smarts':
-      case 'cdxml':
+      case SupportedFormat.cml:
+      case SupportedFormat.inChIAuxInfo:
+      case SupportedFormat.inChI:
+      case SupportedFormat.molV3000:
+      case SupportedFormat.smiles:
+      case SupportedFormat.rxnV3000:
+      case SupportedFormat.smilesExt:
+      case SupportedFormat.smarts:
+      case SupportedFormat.cdxml:
+      case SupportedFormat.cdx:
       default:
         formatter = new ServerFormatter(
           this.#structService,

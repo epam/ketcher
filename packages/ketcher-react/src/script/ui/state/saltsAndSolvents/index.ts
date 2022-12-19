@@ -17,6 +17,7 @@
 import { AnyAction } from 'redux'
 import { appUpdate } from '../options'
 import {
+  SaltsAndSolventsProvider,
   FunctionalGroupsProvider,
   SdfItem,
   SdfSerializer,
@@ -24,60 +25,56 @@ import {
 } from 'ketcher-core'
 import { prefetchStatic } from '../templates/init-lib'
 
-interface FGState {
+interface SaltsAndSolventsState {
   lib: []
-  functionalGroupInfo: any
   mode: string
 }
 
-const initialState: FGState = {
+const initialState: SaltsAndSolventsState = {
   lib: [],
-  functionalGroupInfo: null,
   mode: 'fg'
 }
 
-const functionalGroupsReducer = (
+const saltsAndSolventsReducer = (
   state = initialState,
   { type, payload }: AnyAction
 ) => {
   switch (type) {
-    case 'FG_INIT':
+    case 'SALTS_AND_SOLVENTS_INIT':
       return { ...state, ...payload }
-
-    case 'FG_HIGHLIGHT':
-      return { ...state, functionalGroupInfo: payload }
 
     default:
       return state
   }
 }
 
-const initFGroups = (lib: SdfItem[]) => ({ type: 'FG_INIT', payload: { lib } })
-const highlightFGroup = (group: any) => ({
-  type: 'FG_HIGHLIGHT',
-  payload: group
+const initSaltsAndSolvents = (lib: SdfItem[]) => ({
+  type: 'SALTS_AND_SOLVENTS_INIT',
+  payload: { lib }
 })
 
-export function highlightFG(dispatch, group: any) {
-  dispatch(highlightFGroup(group))
-}
-
-export function initFGTemplates(baseUrl: string) {
+export function initSaltsAndSolventsTemplates(baseUrl: string) {
   return async (dispatch) => {
-    const fileName = 'fg.sdf'
+    const fileName = 'salts-and-solvents.sdf'
     const url = `${baseUrl}/templates/${fileName}`
-    const provider = FunctionalGroupsProvider.getInstance()
+    const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance()
+    const functionalGroupsProvider = FunctionalGroupsProvider.getInstance()
     const sdfSerializer = new SdfSerializer()
     const text = await prefetchStatic(url)
     const templates = sdfSerializer.deserialize(text)
-    const functionalGroups = templates.reduce(
-      (acc: Struct[], { struct }) => [...acc, struct],
+    const saltsAndSolvents = templates.reduce(
+      (acc: Struct[], { struct, props }) => {
+        struct.abbreviation = String(props.abbreviation)
+        acc.push(struct)
+        return acc
+      },
       []
     )
-    provider.setFunctionalGroupsList(functionalGroups)
-    dispatch(initFGroups(templates))
-    dispatch(appUpdate({ functionalGroups: true }))
+    saltsAndSolventsProvider.setSaltsAndSolventsList(saltsAndSolvents)
+    functionalGroupsProvider.addToFunctionalGroupsList(saltsAndSolvents)
+    dispatch(initSaltsAndSolvents(templates))
+    dispatch(appUpdate({ saltsAndSolvents: true }))
   }
 }
 
-export default functionalGroupsReducer
+export default saltsAndSolventsReducer

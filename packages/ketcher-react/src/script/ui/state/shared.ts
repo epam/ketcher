@@ -19,7 +19,9 @@ import {
   Pile,
   SGroup,
   getStereoAtomsMap,
-  identifyStructFormat
+  identifyStructFormat,
+  Struct,
+  SupportedFormat
 } from 'ketcher-core'
 
 import { supportedSGroupTypes } from './constants'
@@ -44,18 +46,25 @@ export function onAction(action) {
 }
 
 export function loadStruct(struct) {
-  return (dispatch, getState) => {
+  return (_dispatch, getState) => {
     const editor = getState().editor
     editor.struct(struct)
   }
 }
 
-function parseStruct(struct, server, options) {
+function parseStruct(
+  struct: string | Struct,
+  server,
+  options?
+): Promise<Struct> {
   if (typeof struct === 'string') {
     options = options || {}
     const { rescale, fragment, ...formatterOptions } = options
 
     const format = identifyStructFormat(struct)
+    if (format === SupportedFormat.cdx) {
+      struct = `base64::${struct.replace(/\s/g, '')}`
+    }
     const factory = new FormatterFactory(server)
 
     const service = factory.create(format, formatterOptions)
@@ -65,7 +74,7 @@ function parseStruct(struct, server, options) {
   }
 }
 
-export function load(struct, options) {
+export function load(struct: Struct, options?) {
   return async (dispatch, getState) => {
     const state = getState()
     const editor = state.editor
@@ -90,7 +99,7 @@ export function load(struct, options) {
       if (hasUnsupportedGroups) {
         await editor.event.confirm.dispatch()
         parsedStruct.sgroups = parsedStruct.sgroups.filter(
-          (key, sGroup) => supportedSGroupTypes[sGroup.type]
+          (_key, sGroup) => supportedSGroupTypes[sGroup.type]
         )
       }
 
@@ -117,7 +126,7 @@ export function load(struct, options) {
       )
 
       parsedStruct.atoms.forEach((atom, id) => {
-        if (parsedStruct.atomGetNeighbors(id).length === 0) {
+        if (parsedStruct?.atomGetNeighbors(id)?.length === 0) {
           atom.stereoLabel = null
           atom.stereoParity = 0
         } else {
@@ -145,7 +154,7 @@ export function load(struct, options) {
       }
       dispatch(setAnalyzingFile(false))
       dispatch({ type: 'MODAL_CLOSE' })
-    } catch (err) {
+    } catch (err: any) {
       dispatch(setAnalyzingFile(false))
       err && errorHandler(err.message)
     }

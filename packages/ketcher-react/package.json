@@ -1,6 +1,6 @@
 {
   "name": "ketcher-react",
-  "version": "2.6.1",
+  "version": "2.6.4",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -64,6 +64,7 @@
     "react-colorful": "^5.4.0",
     "react-contexify": "^6.0.0",
     "react-contextmenu": "^2.14.0",
+    "react-device-detect": "^2.2.2",
     "react-dropzone": "^11.7.1",
     "react-intersection-observer": "^8.32.1",
     "react-redux": "^7.2.1",

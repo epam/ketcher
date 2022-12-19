@@ -20,7 +20,7 @@ import styles from './ContextMenu.module.less'
 import BondBatchOperations from './items/BondBatchOperations'
 import BondSingleOperations from './items/BondSingleOperations'
 
-export const CONTEXT_MENU_ID = 'KeTcHeR-CoNtExT-MeNu'
+export const CONTEXT_MENU_ID = 'ketcherBondContextMenu'
 
 const ContextMenu: React.FC = () => {
   return (

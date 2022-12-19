@@ -54,7 +54,7 @@ const initSaltsAndSolvents = (lib: SdfItem[]) => ({
   payload: { lib }
 })
 
-// This prerender adds part of structures to cache
+// This prerender adds part of structures to cache to speed up loading of Salts and Solvents tab
 const prerenderPartOfStructures = (saltsAndSolvents: Struct[], settings) => {
   const part = saltsAndSolvents.slice(0, 50)
   part.forEach((struct) => {

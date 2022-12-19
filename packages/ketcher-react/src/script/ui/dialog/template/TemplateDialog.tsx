@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dispatch, FC, useState, useEffect, useCallback, useRef } from 'react'
+import { Dispatch, FC, useState, useEffect } from 'react'
 import TemplateTable, { Template } from './TemplateTable'
 import {
   changeFilter,
@@ -44,6 +44,7 @@ import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult'
 
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
+import useSaltsAndSolvents from './useSaltsAndSolvets'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props
@@ -104,7 +105,6 @@ const filterLibSelector = createSelector(
 )
 
 const FUNCTIONAL_GROUPS = 'Functional Groups'
-const SALTS_AND_SOLVENTS = 'Salts and Solvents'
 
 const HeaderContent = () => (
   <div className={classes.dialogHeader}>
@@ -158,16 +158,12 @@ const TemplateDialog: FC<Props> = (props) => {
   } = props
 
   const [tab, setTab] = useState(initialTab ?? TemplateTabs.TemplateLibrary)
-  const [isFirstRender, setIsFirstRender] = useState(true)
-  const timerId = useRef<null | ReturnType<typeof setTimeout>>(null)
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     props.group
   ])
+  const filteredSaltsAndSolvents = useSaltsAndSolvents(saltsAndSolvents, filter)
   const [filteredFG, setFilteredFG] = useState(
     functionalGroups[FUNCTIONAL_GROUPS]
-  )
-  const [filteredSaltsAndSolvents, setFilteredSaltsAndSolvents] = useState(
-    saltsAndSolvents[SALTS_AND_SOLVENTS]
   )
 
   const filteredTemplateLib = filterLibSelector(props)
@@ -175,38 +171,6 @@ const TemplateDialog: FC<Props> = (props) => {
   useEffect(() => {
     setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS])
   }, [functionalGroups, filter])
-
-  const addToSaSWithBatches = useCallback((fullFilteredArray) => {
-    const batchSize = 16
-    setFilteredSaltsAndSolvents((filteredSaltsAndSolvents) => [
-      ...(filteredSaltsAndSolvents ?? []),
-      ...fullFilteredArray.splice(0, batchSize)
-    ])
-    if (fullFilteredArray.length > 0) {
-      timerId.current = setTimeout(
-        () => addToSaSWithBatches(fullFilteredArray),
-        300
-      )
-    }
-  }, [])
-
-  useEffect(() => {
-    const filteredSaS = filterFGLib(saltsAndSolvents, '')[SALTS_AND_SOLVENTS]
-    addToSaSWithBatches(filteredSaS)
-  }, [saltsAndSolvents, addToSaSWithBatches])
-
-  useEffect(() => {
-    if (isFirstRender) {
-      setIsFirstRender(false)
-      return
-    }
-    // @ts-ignore
-    clearTimeout(timerId.current)
-    const filteredSaS = filterFGLib(saltsAndSolvents, filter)[
-      SALTS_AND_SOLVENTS
-    ]
-    setFilteredSaltsAndSolvents(filteredSaS)
-  }, [saltsAndSolvents, filter])
 
   const handleTabChange = (_, tab) => {
     setTab(tab)

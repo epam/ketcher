@@ -21,7 +21,7 @@ import {
   MolSerializer,
   formatProperties,
   ChemicalMimeType,
-  // fromAtomsAttrs,
+  fromAtomsAttrs,
   ReAtom
 } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
@@ -76,7 +76,22 @@ function keyHandle(dispatch, state, hotKeys, event) {
       const newAction = actions[actName].action
       const hoverItemId = getHoveredAtomId(render.ctab.atoms)
       const isHoveringOverAtom = hoverItemId !== null
-      dispatch(onAction({ ...newAction, isHoveringOverAtom }))
+      if (isHoveringOverAtom) {
+        // check if atom is currently hovered over
+        // in this case we do not want to activate the corresponding tool
+        // and just insert the atom directly
+        const atomProps = { ...newAction.opts }
+        const updatedAtoms = fromAtomsAttrs(
+          render.ctab,
+          hoverItemId,
+          atomProps,
+          true
+        )
+        editor.update(updatedAtoms)
+      } else {
+        dispatch(onAction(newAction))
+      }
+
       event.preventDefault()
     } else if (isIE) {
       clipArea.exec(event)

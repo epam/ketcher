@@ -13,9 +13,9 @@ function isElementChosen(chosenElements, item) {
   return chosenElements?.[item.map]?.includes(item.id)
 }
 
-export function startChoosing(tool, event, editor, lassoHelper) {
+export function startChoosing(self, event, editor, lassoHelper) {
   console.log('startChoosing')
-  tool.dragCtx = {}
+  self.dragCtx = {}
 
   const render = editor.render
   const ctab = render.ctab
@@ -106,20 +106,20 @@ export function startChoosing(tool, event, editor, lassoHelper) {
     }
     console.log('newChosen', newChosen)
     // editor.selection(newChosen)
-    chooseItems(newChosen)
+    chooseItems(self, newChosen)
   }
 
-  tool.dragCtx.item = ci
-  tool.dragCtx.xy0 = render.page2obj(event)
+  self.dragCtx.item = ci
+  self.dragCtx.xy0 = render.page2obj(event)
 
   if (!ci || ci.map === 'atoms') {
-    atomLongtapEvent(tool, render)
+    atomLongtapEvent(self, render)
   }
 
   if (!ci) {
     //  ci.type == 'Canvas'
     if (!event.shiftKey) editor.selection(null)
-    delete tool.dragCtx.item
+    delete self.dragCtx.item
     if (!lassoHelper.fragment) lassoHelper.begin(event)
     return true
   }

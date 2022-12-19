@@ -22,16 +22,24 @@ interface Selection {
   rxnArrows?: Array<number>
 }
 
-export function chooseItems(tool, ci?: any) {
+interface Self {
+  event: { selectionChange: any }
+  render: { ctab: any; update: () => void }
+  _selection: any
+  struct(): { atoms: any }
+  explicitSelected(): { atoms: any }
+}
+
+export function chooseItems(self: Self, ci?: any) {
   if (arguments.length === 0) {
-    return tool._selection // eslint-disable-line
+    return self._selection // eslint-disable-line
   }
 
-  let ReStruct = tool.render.ctab
+  let ReStruct = self.render.ctab
 
-  tool._selection = null // eslint-disable-line
+  self._selection = null // eslint-disable-line
   if (ci === 'all') {
-    // TODO: better way will be tool.struct()
+    // TODO: better way will be self.struct()
     ci = structObjects.reduce((res, key) => {
       res[key] = Array.from(ReStruct[key].keys())
       return res
@@ -39,7 +47,7 @@ export function chooseItems(tool, ci?: any) {
   }
 
   if (ci === 'descriptors') {
-    ReStruct = tool.render.ctab
+    ReStruct = self.render.ctab
     ci = { sgroupData: Array.from(ReStruct.sgroupData.keys()) }
   }
 
@@ -53,24 +61,24 @@ export function chooseItems(tool, ci?: any) {
     })
 
     if (Object.keys(res).length !== 0) {
-      tool._selection = res // eslint-disable-line
+      self._selection = res // eslint-disable-line
     }
     const stereoFlags = selectStereoFlags(
-      tool.struct().atoms,
-      tool.explicitSelected().atoms
+      self.struct().atoms,
+      self.explicitSelected().atoms
     )
     if (stereoFlags.length !== 0) {
-      tool._selection && tool._selection.enhancedFlags
-        ? (tool._selection.enhancedFlags = Array.from(
-            new Set([...tool._selection.enhancedFlags, ...stereoFlags])
+      self._selection && self._selection.enhancedFlags
+        ? (self._selection.enhancedFlags = Array.from(
+            new Set([...self._selection.enhancedFlags, ...stereoFlags])
           ))
         : (res.enhancedFlags = stereoFlags)
     }
   }
 
-  tool.render.ctab.setSelection(tool._selection) // eslint-disable-line
-  tool.event.selectionChange.dispatch(tool._selection) // eslint-disable-line
+  self.render.ctab.setSelection(self._selection) // eslint-disable-line
+  self.event.selectionChange.dispatch(self._selection) // eslint-disable-line
 
-  tool.render.update()
-  return tool._selection // eslint-disable-line
+  self.render.update()
+  return self._selection // eslint-disable-line
 }

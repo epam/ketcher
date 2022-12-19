@@ -46,14 +46,14 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
    * More details: https://github.com/epam/ketcher/pull/1896
    */
   const hasConflictWithFunctionalGroupMenu = useCallback(
-    (ci: any) => {
+    (closestItem: any) => {
       const editor = getKetcherInstance().editor as Editor
       const struct = editor.struct()
 
       const functionalGroupId = FunctionalGroup.findFunctionalGroupByBond(
         struct,
         struct.functionalGroups,
-        ci.id
+        closestItem.id
       )
       const hasRelatedSGroup = struct.functionalGroups.some(
         (item) => item.relatedSGroupId === functionalGroupId
@@ -89,22 +89,22 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
   const handleDisplay = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (event) => {
       const editor = getKetcherInstance().editor as Editor
-      const ci = editor.findItem(event, ['bonds'])
+      const closestItem = editor.findItem(event, ['bonds'])
 
-      if (!ci) {
+      if (!closestItem) {
         hideAll()
         return
       }
 
-      if (hasConflictWithFunctionalGroupMenu(ci)) {
+      if (hasConflictWithFunctionalGroupMenu(closestItem)) {
         hideAll()
         return
       }
 
       const selection = editor.selection()
       const isRightClickingSelection: number | undefined = selection?.[
-        ci.map
-      ]?.findIndex((selectedItemId) => selectedItemId === ci.id)
+        closestItem.map
+      ]?.findIndex((selectedItemId) => selectedItemId === closestItem.id)
 
       if (
         isRightClickingSelection !== undefined &&
@@ -115,17 +115,17 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
           event,
           props: {
             selected: true,
-            ci
+            closestItem
           }
         })
-      } else if (ci.map === 'bonds') {
+      } else if (closestItem.map === 'bonds') {
         // Show menu items for single update
         if (selection) {
           editor.render.ctab.setSelection(null)
         }
         show({
           event,
-          props: { selected: false, ci }
+          props: { selected: false, closestItem }
         })
       }
     },

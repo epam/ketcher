@@ -40,7 +40,7 @@ const BondSingleOperations: React.FC = (props) => {
       props
     }: ItemParams<ContextMenuItemProps, ContextMenuItemData>) => {
       const editor = getKetcherInstance().editor as Editor
-      const bondId = props?.ci.id
+      const bondId = props?.closestItem.id
       const bond = editor.render.ctab.bonds.get(bondId)?.b
 
       try {
@@ -58,7 +58,7 @@ const BondSingleOperations: React.FC = (props) => {
       props
     }: ItemParams<ContextMenuItemProps, ContextMenuItemData>) => {
       const editor = getKetcherInstance().editor as Editor
-      const bondId = props?.ci.id
+      const bondId = props?.closestItem.id
 
       editor.update(fromOneBondDeletion(editor.render.ctab, bondId))
     },
@@ -68,7 +68,7 @@ const BondSingleOperations: React.FC = (props) => {
   const handleTypeChange = useCallback(
     ({ id, props }: ItemParams<ContextMenuItemProps, ContextMenuItemData>) => {
       const editor = getKetcherInstance().editor as Editor
-      const bondId = props?.ci.id
+      const bondId = props?.closestItem.id
       const bondProps = tools[id].action.opts
 
       editor.update(fromBondsAttrs(editor.render.ctab, bondId, bondProps))

@@ -28,6 +28,7 @@ import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction } from './shared'
 
 import actions from '../action'
+import tools from '../action/tools'
 import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
@@ -71,6 +72,14 @@ function keyHandle(dispatch, state, hotKeys, event) {
     if (actionState[actName] && actionState[actName].disabled === true) {
       event.preventDefault()
       return
+    }
+    // Removing from what should be saved - structure, which was added to paste tool,
+    // but not yet rendered on canvas
+    if (actionTool.tool === 'paste' && event.code === 'KeyS' && event.metaKey) {
+      dispatch({
+        type: 'ACTION',
+        action: tools['select-rectangle'].action
+      })
     }
     if (clipArea.actions.indexOf(actName) === -1) {
       const newAction = actions[actName].action

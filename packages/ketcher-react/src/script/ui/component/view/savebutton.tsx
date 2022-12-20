@@ -32,6 +32,11 @@ type Props = {
   title?: string
 }
 
+type FileSaverReturnType = Promise<
+  (data: Blob | string, fn, type: string | undefined) => void | never
+>
+
+type SaverType = Awaited<FileSaverReturnType>
 type SaveButtonProps = PropsWithChildren<Props>
 
 const SaveButton = (props: SaveButtonProps) => {
@@ -65,7 +70,7 @@ const SaveButton = (props: SaveButtonProps) => {
   const saveFile = () => {
     if (data) {
       try {
-        fileSaver(server).then((saver: any) => {
+        fileSaver(server).then((saver: SaverType) => {
           saver(data, filename, type)
           onSave()
         })
@@ -107,7 +112,7 @@ const SaveButton = (props: SaveButtonProps) => {
   )
 }
 
-const fileSaver = (server) => {
+const fileSaver = (server): FileSaverReturnType => {
   return new Promise((resolve, reject) => {
     if (global.Blob && saveAs) {
       resolve((data, fn, type) => {

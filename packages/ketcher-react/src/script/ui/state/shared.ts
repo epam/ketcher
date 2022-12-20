@@ -63,7 +63,7 @@ function parseStruct(
 
     const format = identifyStructFormat(struct)
     if (format === SupportedFormat.cdx) {
-      struct = `base64::${struct.replace(/\s/g, '')}`
+      struct = struct.replace(/\s/g, '')
     }
     const factory = new FormatterFactory(server)
 

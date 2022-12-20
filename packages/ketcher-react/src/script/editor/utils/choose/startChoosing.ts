@@ -1,5 +1,5 @@
 import { FunctionalGroup, SGroup } from 'ketcher-core'
-import { atomLongtapEvent } from '../../tool/atom'
+// import { atomLongtapEvent } from '../../tool/atom'
 import { selMerge } from '../../tool/select'
 import { closestToSel } from './chooseUtils/closestToSel'
 import { chooseItems } from './chooseUtils/chooseItems'
@@ -112,9 +112,10 @@ export function startChoosing(self, event, editor, lassoHelper) {
   self.dragCtx.item = ci
   self.dragCtx.xy0 = render.page2obj(event)
 
-  if (!ci || ci.map === 'atoms') {
-    atomLongtapEvent(self, render)
-  }
+  // if (!ci || ci.map === 'atoms') {
+  //   console.log("if (!ci || ci.map === 'atoms')", 'ci:', ci)
+  //   atomLongtapEvent(self, render)
+  // }
 
   if (!ci) {
     //  ci.type == 'Canvas'

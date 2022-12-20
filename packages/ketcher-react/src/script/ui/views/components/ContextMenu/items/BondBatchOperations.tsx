@@ -45,16 +45,12 @@ const BondBatchOperations: React.FC = (props) => {
 
       try {
         const newBond = await editor.event.bondEdit.dispatch(bond)
-        const action = new Action()
         const selectedBonds = editor.selection()?.bonds
 
-        selectedBonds?.forEach((selectedBondId) => {
-          action.mergeWith(
-            fromBondsAttrs(editor.render.ctab, selectedBondId, newBond)
+        selectedBonds &&
+          editor.update(
+            fromBondsAttrs(editor.render.ctab, selectedBonds, newBond)
           )
-        })
-
-        editor.update(action)
       } catch (error) {
         noOperation()
       }
@@ -77,15 +73,13 @@ const BondBatchOperations: React.FC = (props) => {
   const handleBatchTypeChange = useCallback(
     ({ id }: ItemParams<ContextMenuItemProps, ContextMenuItemData>) => {
       const editor = getKetcherInstance().editor as Editor
-      const action = new Action()
       const selectedBonds = editor.selection()?.bonds
       const bondProps = tools[id].action.opts
 
-      selectedBonds?.forEach((bondId) => {
-        action.mergeWith(fromBondsAttrs(editor.render.ctab, bondId, bondProps))
-      })
-
-      editor.update(action)
+      selectedBonds &&
+        editor.update(
+          fromBondsAttrs(editor.render.ctab, selectedBonds, bondProps)
+        )
     },
     [getKetcherInstance]
   )

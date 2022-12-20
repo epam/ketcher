@@ -75,8 +75,6 @@ export function filterFGLib(lib, filter) {
   )(lib)
 }
 
-export { fileOpener } from './fileOpener'
-
 export const getSelectOptionsFromSchema = (schema): Array<Option> => {
   return schema.enum.reduce((options, value, index) => {
     options.push({
@@ -87,3 +85,6 @@ export const getSelectOptionsFromSchema = (schema): Array<Option> => {
     return options
   }, [])
 }
+
+export { RenderStruct } from './renderStruct'
+export { fileOpener } from './fileOpener'

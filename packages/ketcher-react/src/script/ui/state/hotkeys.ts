@@ -21,7 +21,6 @@ import {
   MolSerializer,
   formatProperties,
   ChemicalMimeType,
-  fromAtomsAttrs,
   ReAtom
 } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
@@ -31,6 +30,7 @@ import actions from '../action'
 import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
+import { handleHotkeyOverAtom } from './handleHotkeysOverAtom'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -74,20 +74,13 @@ function keyHandle(dispatch, state, hotKeys, event) {
     }
     if (clipArea.actions.indexOf(actName) === -1) {
       const newAction = actions[actName].action
-      const hoverItemId = getHoveredAtomId(render.ctab.atoms)
-      const isHoveringOverAtom = hoverItemId !== null
+      const hoveredItemId = getHoveredAtomId(render.ctab.atoms)
+      const isHoveringOverAtom = hoveredItemId !== null
       if (isHoveringOverAtom) {
         // check if atom is currently hovered over
         // in this case we do not want to activate the corresponding tool
         // and just insert the atom directly
-        const atomProps = { ...newAction.opts }
-        const updatedAtoms = fromAtomsAttrs(
-          render.ctab,
-          hoverItemId,
-          atomProps,
-          true
-        )
-        editor.update(updatedAtoms)
+        handleHotkeyOverAtom(hoveredItemId, newAction, render, editor)
       } else {
         dispatch(onAction(newAction))
       }

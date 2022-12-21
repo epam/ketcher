@@ -107,6 +107,7 @@ class Editor implements KetcherEditor {
   #origin?: any
   render: Render
   _selection: Selection | null
+  _chosenElements: Selection | null
   _tool: any
   historyStack: any
   historyPtr: any
@@ -125,6 +126,7 @@ class Editor implements KetcherEditor {
     removeFG: PipelineSubscription
     change: Subscription
     selectionChange: PipelineSubscription
+    chosenElementsChange: PipelineSubscription
     aromatizeStruct: PipelineSubscription
     dearomatizeStruct: PipelineSubscription
     enhancedStereoEdit: PipelineSubscription
@@ -147,6 +149,7 @@ class Editor implements KetcherEditor {
     )
 
     this._selection = null // eslint-disable-line
+    this._chosenElements = null
     this._tool = null // eslint-disable-line
     this.historyStack = []
     this.historyPtr = 0
@@ -173,6 +176,7 @@ class Editor implements KetcherEditor {
       removeFG: new PipelineSubscription(),
       change: new Subscription(),
       selectionChange: new PipelineSubscription(),
+      chosenElementsChange: new PipelineSubscription(),
       aromatizeStruct: new PipelineSubscription(),
       dearomatizeStruct: new PipelineSubscription(),
       // TODO: correct
@@ -342,6 +346,7 @@ class Editor implements KetcherEditor {
 
     this.render.ctab.setSelection(this._selection) // eslint-disable-line
     this.event.selectionChange.dispatch(this._selection) // eslint-disable-line
+    this.event.chosenElementsChange.dispatch(this._chosenElements) // eslint-disable-line
 
     this.render.update()
     return this._selection // eslint-disable-line

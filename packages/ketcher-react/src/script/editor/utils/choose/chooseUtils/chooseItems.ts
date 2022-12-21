@@ -23,9 +23,13 @@ interface Selection {
 }
 
 export interface Self {
-  event: { selectionChange: any }
+  event: {
+    chosenElementsChange: any
+    selectionChange: any
+  }
   render: { ctab: any; update: () => void }
   _selection: any
+  _chosenElements: any
   struct(): { atoms: any }
   explicitSelected(): { atoms: any }
 }
@@ -78,6 +82,8 @@ export function chooseItems(self: Self, ci?: any) {
 
   self.render.ctab.setSelection(self._selection) // eslint-disable-line
   self.event.selectionChange.dispatch(self._selection) // eslint-disable-line
+  self.event.chosenElementsChange.dispatch(self._chosenElements)
+  console.log('self.event.chosenElementsChange.dispatch(self._selection)')
 
   self.render.update()
   return self._selection // eslint-disable-line

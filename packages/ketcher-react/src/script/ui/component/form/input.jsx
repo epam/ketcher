@@ -26,12 +26,15 @@ export function GenericInput({
   onChange,
   type = 'text',
   isFocused = false,
+  searchFocusBack = false,
   ...props
 }) {
   const inputRef = useRef(null)
   useEffect(() => {
-    if (inputRef.current && isFocused) inputRef.current.focus()
-  }, [inputRef, isFocused])
+    if (inputRef.current && isFocused) {
+      inputRef.current.focus()
+    }
+  }, [inputRef, isFocused, searchFocusBack])
 
   return (
     <>
@@ -306,6 +309,7 @@ function shallowCompare(a, b) {
 export default class Input extends Component {
   shouldComponentUpdate({ children, onChange, style, ...nextProps }) {
     const oldProps = omit(this.props, ['children', 'onChange', 'style'])
+
     return shallowCompare(oldProps, nextProps)
   }
 

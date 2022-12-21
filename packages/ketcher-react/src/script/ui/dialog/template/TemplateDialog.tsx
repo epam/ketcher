@@ -157,6 +157,10 @@ const TemplateDialog: FC<Props> = (props) => {
     ...rest
   } = props
 
+  // For search input in custom templates dialog - to set focus back to input
+  // after tab change
+  const [searchFocusBack, setSearchFocusBack] = useState(false)
+
   const [tab, setTab] = useState(initialTab ?? TemplateTabs.TemplateLibrary)
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     props.group
@@ -182,6 +186,7 @@ const TemplateDialog: FC<Props> = (props) => {
 
   const handleTabChange = (_, tab) => {
     setTab(tab)
+    setSearchFocusBack((prevState) => !prevState)
     props.onSelect(null)
   }
 
@@ -225,6 +230,7 @@ const TemplateDialog: FC<Props> = (props) => {
           onChange={(value) => onFilter(value)}
           placeholder="Search by elements..."
           isFocused={true}
+          searchFocusBack={searchFocusBack}
         />
         <Icon name="search" className={classes.searchIcon} />
       </div>

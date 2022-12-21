@@ -22,7 +22,7 @@ interface Selection {
   rxnArrows?: Array<number>
 }
 
-interface Self {
+export interface Self {
   event: { selectionChange: any }
   render: { ctab: any; update: () => void }
   _selection: any
@@ -30,11 +30,11 @@ interface Self {
   explicitSelected(): { atoms: any }
 }
 
-export function chooseItems(self: Self, ci?: any) {
-  if (arguments.length === 0) {
-    return self._selection // eslint-disable-line
-  }
+export function getChosenItems(self: Self) {
+  return self._selection // eslint-disable-line
+}
 
+export function chooseItems(self: Self, ci?: any) {
   let ReStruct = self.render.ctab
 
   self._selection = null // eslint-disable-line

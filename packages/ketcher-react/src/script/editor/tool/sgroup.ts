@@ -30,10 +30,9 @@ import LassoHelper from './helper/lasso'
 import { isEqual } from 'lodash/fp'
 import { selMerge } from './select'
 import Editor from '../Editor'
-// import { extendChoosing } from '../utils/choose/choose'
-// import { chooseItems } from '../utils/choose/chooseUtils/chooseItems'
 import { finishChoosing } from '../utils/choose/finishChoosing'
 import { startChoosing } from '../utils/choose/startChoosing'
+import { getChosenItems } from '../utils/choose/chooseUtils/chooseItems'
 
 const searchMaps = [
   'atoms',
@@ -273,11 +272,11 @@ class SGroupTool {
 
   mouseup(event) {
     const struct = this.editor.render.ctab
+    const selected = getChosenItems(this.editor)
     const sgroups = struct.sgroups
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
     const closestItem = this.editor.findItem(event, searchMaps)
-    const selected = this.editor.selection()
     const newSelected: Record<string, Array<any>> = { atoms: [], bonds: [] }
     let actualSgroupId
     let atomsResult: Array<number> | null = []
@@ -476,11 +475,9 @@ class SGroupTool {
 
 export function sgroupDialog(editor, id, defaultType) {
   const restruct = editor.render.ctab
-  console.log('editor', editor)
 
   const struct = restruct.molecule
-  const selection = editor.selection() || {}
-  // const selection = chooseItems()
+  const selection = getChosenItems(editor)
   const sg = id !== null ? struct.sgroups.get(id) : null
   const type = sg ? sg.type : defaultType
   const eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit'
@@ -570,7 +567,10 @@ function getContextBySgroup(restruct, sgAtoms) {
   return anyChainedBonds(sgBonds) ? SgContexts.Group : SgContexts.Bond
 }
 
-function getContextBySelection(restruct, selection) {
+function getContextBySelection(
+  restruct: { molecule: any },
+  selection: { atoms: Iterable<any> | null | undefined; bonds: any[] }
+) {
   const struct = restruct.molecule
 
   if (selection.atoms && !selection.bonds) {

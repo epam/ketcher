@@ -30,9 +30,8 @@ export default function useSaltsAndSolvents(
   }, [])
 
   useEffect(() => {
-    const filteredSaS = filterFGLib(saltsAndSolvents, filter)[
-      SALTS_AND_SOLVENTS
-    ]
+    const filteredSaS =
+      filterFGLib(saltsAndSolvents, filter)[SALTS_AND_SOLVENTS] ?? []
     addToSaSWithBatches(filteredSaS)
   }, [saltsAndSolvents, addToSaSWithBatches])
 

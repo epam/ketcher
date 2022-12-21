@@ -44,6 +44,7 @@ import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult'
 
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
+import useSaltsAndSolvents from './useSaltsAndSolvets'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props
@@ -104,7 +105,6 @@ const filterLibSelector = createSelector(
 )
 
 const FUNCTIONAL_GROUPS = 'Functional Groups'
-const SALTS_AND_SOLVENTS = 'Salts and Solvents'
 
 const HeaderContent = () => (
   <div className={classes.dialogHeader}>
@@ -161,11 +161,9 @@ const TemplateDialog: FC<Props> = (props) => {
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     props.group
   ])
+  const filteredSaltsAndSolvents = useSaltsAndSolvents(saltsAndSolvents, filter)
   const [filteredFG, setFilteredFG] = useState(
     functionalGroups[FUNCTIONAL_GROUPS]
-  )
-  const [filteredSaltsAndSolvents, setFilteredSaltsAndSolvents] = useState(
-    saltsAndSolvents[SALTS_AND_SOLVENTS]
   )
 
   const filteredTemplateLib = filterLibSelector(props)
@@ -173,12 +171,6 @@ const TemplateDialog: FC<Props> = (props) => {
   useEffect(() => {
     setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS])
   }, [functionalGroups, filter])
-
-  useEffect(() => {
-    setFilteredSaltsAndSolvents(
-      filterFGLib(saltsAndSolvents, filter)[SALTS_AND_SOLVENTS]
-    )
-  }, [saltsAndSolvents, filter])
 
   const handleTabChange = (_, tab) => {
     setTab(tab)

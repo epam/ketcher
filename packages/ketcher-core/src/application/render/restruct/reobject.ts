@@ -25,6 +25,7 @@ class ReObject {
   public hover = false
   public hovering: any = null
   public selected = false
+  public chosen = false
   public selectionPlate: any = null
 
   constructor(viselType: string) {

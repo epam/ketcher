@@ -37,6 +37,7 @@ import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 import { Highlighter } from './highlighter'
 import { selectStereoFlags } from './utils/selectStereoFlags'
+import { chooseItems } from './utils/choose/chooseUtils/chooseItems'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -248,6 +249,7 @@ class Editor implements KetcherEditor {
     }
 
     this.selection(null)
+    chooseItems(this, null)
     const struct = value || new Struct()
 
     return this.renderAndRecoordinateStruct(struct)
@@ -346,7 +348,6 @@ class Editor implements KetcherEditor {
 
     this.render.ctab.setSelection(this._selection) // eslint-disable-line
     this.event.selectionChange.dispatch(this._selection) // eslint-disable-line
-    this.event.chosenElementsChange.dispatch(this._chosenElements) // eslint-disable-line
 
     this.render.update()
     return this._selection // eslint-disable-line
@@ -425,6 +426,7 @@ class Editor implements KetcherEditor {
     }
 
     this.selection(null)
+    chooseItems(this, null)
 
     if (this._tool instanceof toolMap.paste) {
       this.event.change.dispatch()
@@ -450,6 +452,7 @@ class Editor implements KetcherEditor {
     }
 
     this.selection(null)
+    chooseItems(this, null)
     if (this._tool instanceof toolMap.paste) {
       this.event.change.dispatch()
       return
@@ -499,6 +502,7 @@ class Editor implements KetcherEditor {
 
   explicitSelected() {
     const selection = this.selection() || {}
+    // todo chose?
     const res = structObjects.reduce((acc, key) => {
       acc[key] = selection[key] ? selection[key].slice() : []
       return acc

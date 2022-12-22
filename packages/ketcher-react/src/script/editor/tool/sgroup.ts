@@ -30,7 +30,6 @@ import LassoHelper from './helper/lasso'
 import { isEqual } from 'lodash/fp'
 import { selMerge } from './select'
 import Editor from '../Editor'
-import { finishChoosing } from '../utils/choose/finishChoosing'
 import { startChoosing } from '../utils/choose/startChoosing'
 import { getChosenItems } from '../utils/choose/chooseUtils/chooseItems'
 
@@ -284,8 +283,6 @@ class SGroupTool {
     let bondsResult: Array<number> | null = []
     let extraBonds
     const result: Array<number> = []
-
-    finishChoosing(event, this.editor, this.lassoHelper)
 
     if (
       closestItem &&

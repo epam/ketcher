@@ -42,6 +42,7 @@ export function chooseItems(self: Self, ci?: any) {
   let ReStruct = self.render.ctab
 
   self._selection = null // eslint-disable-line
+  self._chosenElements = null
   if (ci === 'all') {
     // TODO: better way will be self.struct()
     ci = structObjects.reduce((res, key) => {
@@ -66,6 +67,7 @@ export function chooseItems(self: Self, ci?: any) {
 
     if (Object.keys(res).length !== 0) {
       self._selection = res // eslint-disable-line
+      self._chosenElements = res
     }
     const stereoFlags = selectStereoFlags(
       self.struct().atoms,
@@ -77,14 +79,20 @@ export function chooseItems(self: Self, ci?: any) {
             new Set([...self._selection.enhancedFlags, ...stereoFlags])
           ))
         : (res.enhancedFlags = stereoFlags)
+
+      self._chosenElements && self._chosenElements.enhancedFlags
+        ? (self._chosenElements.enhancedFlags = Array.from(
+            new Set([...self._chosenElements.enhancedFlags, ...stereoFlags])
+          ))
+        : (res.enhancedFlags = stereoFlags)
     }
   }
 
   self.render.ctab.setSelection(self._selection) // eslint-disable-line
+  self.render.ctab.setChosenItems(self._chosenElements) // eslint-disable-line
   self.event.selectionChange.dispatch(self._selection) // eslint-disable-line
   self.event.chosenElementsChange.dispatch(self._chosenElements)
-  console.log('self.event.chosenElementsChange.dispatch(self._selection)')
 
   self.render.update()
-  return self._selection // eslint-disable-line
+  return self._chosenElements // eslint-disable-line
 }

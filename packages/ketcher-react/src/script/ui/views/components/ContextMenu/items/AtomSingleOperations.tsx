@@ -17,8 +17,7 @@
 import {
   findStereoAtoms,
   fromAtomsAttrs,
-  fromOneAtomDeletion,
-  fromStereoFlagUpdate
+  fromOneAtomDeletion
 } from 'ketcher-core'
 import { useCallback } from 'react'
 import type { ItemParams, PredicateParams } from 'react-contexify'
@@ -26,6 +25,7 @@ import { Item } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
+import EnhancedStereoTool from 'src/script/editor/tool/enhanced-stereo'
 import type {
   ContextMenuItemData,
   ContextMenuItemProps
@@ -59,34 +59,20 @@ const AtomSingleOperations: React.FC = (props) => {
     async ({
       props
     }: ItemParams<ContextMenuItemProps, ContextMenuItemData>) => {
+      if (!props) {
+        return
+      }
+
       const editor = getKetcherInstance().editor as Editor
-      const stereoAtomId = props?.closestItem.id
-      const stereoAtom = editor.struct().atoms.get(stereoAtomId)
-      const stereoLabel = stereoAtom?.stereoLabel
+      const stereoAtomId: number = props.closestItem.id
 
       try {
-        const newStereoLabel = await editor.event.enhancedStereoEdit.dispatch({
-          stereoLabel
-        })
+        const action = await EnhancedStereoTool.changeAtomsStereoAction(
+          editor,
+          [stereoAtomId]
+        )
 
-        // If clicking `Cancel` or `Close` on the dialog
-        if (!newStereoLabel) {
-          return
-        }
-
-        const reStruct = editor.render.ctab
-        const action = fromAtomsAttrs(
-          reStruct,
-          stereoAtomId,
-          {
-            stereoLabel: newStereoLabel
-          },
-          false
-        ).mergeWith(fromStereoFlagUpdate(reStruct, stereoAtom?.fragment))
-
-        // Atom attr change should be the last action
-        action.operations.reverse()
-        editor.update(action)
+        action && editor.update(action)
       } catch (error) {
         noOperation()
       }

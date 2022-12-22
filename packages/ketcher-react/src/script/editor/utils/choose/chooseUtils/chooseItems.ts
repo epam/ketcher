@@ -1,45 +1,38 @@
-interface Selection {
+interface Items {
   atoms?: Array<number>
   bonds?: Array<number>
-  enhancedFlags?: Array<number>
-  rxnPluses?: Array<number>
-  rxnArrows?: Array<number>
 }
 
 export interface Editor {
   event: {
-    chosenElementsChange: any
+    chosenItemsChange: any
   }
   render: { ctab: any; update: () => void }
-  _chosenElements: any
-  struct(): { atoms: any }
-  explicitSelected(): { atoms: any }
+  _chosenItems: any
 }
 
 export function getChosenItems(editor: Editor) {
-  return editor._chosenElements
+  return editor._chosenItems
 }
 
 export function chooseItems(editor: Editor, ci?: any) {
-  editor._chosenElements = null
+  editor._chosenItems = null
 
   if (ci) {
-    const res: Selection = {}
+    const items: Items = {}
 
     Object.keys(ci).forEach((key) => {
-      if (ci[key].length > 0)
-        // TODO: deep merge
-        res[key] = ci[key].slice()
+      if (ci[key].length > 0) items[key] = ci[key].slice()
     })
 
-    if (Object.keys(res).length !== 0) {
-      editor._chosenElements = res
+    if (Object.keys(items).length !== 0) {
+      editor._chosenItems = items
     }
   }
 
-  editor.render.ctab.setChosenItems(editor._chosenElements)
-  editor.event.chosenElementsChange.dispatch(editor._chosenElements)
+  editor.render.ctab.setChosenItems(editor._chosenItems)
+  editor.event.chosenItemsChange.dispatch(editor._chosenItems)
 
   editor.render.update()
-  return editor._chosenElements
+  return editor._chosenItems
 }

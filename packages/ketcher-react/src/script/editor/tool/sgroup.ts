@@ -161,7 +161,7 @@ class SGroupTool {
     const bondResult: Array<number> = []
     const result: Array<number> = []
 
-    startChoosing(this, event, this.editor, this.lassoHelper)
+    startChoosing(event, this.editor, this.lassoHelper)
 
     if (closestItem && functionalGroups.size && closestItem.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(

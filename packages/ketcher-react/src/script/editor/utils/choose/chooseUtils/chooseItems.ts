@@ -1,19 +1,3 @@
-import { selectStereoFlags } from '../../selectStereoFlags'
-
-const structObjects = [
-  'atoms',
-  'bonds',
-  'frags',
-  'sgroups',
-  'sgroupData',
-  'rgroups',
-  'rxnArrows',
-  'rxnPluses',
-  'enhancedFlags',
-  'simpleObjects',
-  'texts'
-]
-
 interface Selection {
   atoms?: Array<number>
   bonds?: Array<number>
@@ -22,7 +6,7 @@ interface Selection {
   rxnArrows?: Array<number>
 }
 
-export interface Self {
+export interface Editor {
   event: {
     chosenElementsChange: any
   }
@@ -32,26 +16,12 @@ export interface Self {
   explicitSelected(): { atoms: any }
 }
 
-export function getChosenItems(self: Self) {
-  return self._chosenElements // eslint-disable-line
+export function getChosenItems(editor: Editor) {
+  return editor._chosenElements
 }
 
-export function chooseItems(self: Self, ci?: any) {
-  let ReStruct = self.render.ctab
-
-  self._chosenElements = null
-  if (ci === 'all') {
-    // TODO: better way will be self.struct()
-    ci = structObjects.reduce((res, key) => {
-      res[key] = Array.from(ReStruct[key].keys())
-      return res
-    }, {})
-  }
-
-  if (ci === 'descriptors') {
-    ReStruct = self.render.ctab
-    ci = { sgroupData: Array.from(ReStruct.sgroupData.keys()) }
-  }
+export function chooseItems(editor: Editor, ci?: any) {
+  editor._chosenElements = null
 
   if (ci) {
     const res: Selection = {}
@@ -63,24 +33,13 @@ export function chooseItems(self: Self, ci?: any) {
     })
 
     if (Object.keys(res).length !== 0) {
-      self._chosenElements = res
-    }
-    const stereoFlags = selectStereoFlags(
-      self.struct().atoms,
-      self.explicitSelected().atoms
-    )
-    if (stereoFlags.length !== 0) {
-      self._chosenElements && self._chosenElements.enhancedFlags
-        ? (self._chosenElements.enhancedFlags = Array.from(
-            new Set([...self._chosenElements.enhancedFlags, ...stereoFlags])
-          ))
-        : (res.enhancedFlags = stereoFlags)
+      editor._chosenElements = res
     }
   }
 
-  self.render.ctab.setChosenItems(self._chosenElements) // eslint-disable-line
-  self.event.chosenElementsChange.dispatch(self._chosenElements)
+  editor.render.ctab.setChosenItems(editor._chosenElements)
+  editor.event.chosenElementsChange.dispatch(editor._chosenElements)
 
-  self.render.update()
-  return self._chosenElements // eslint-disable-line
+  editor.render.update()
+  return editor._chosenElements
 }

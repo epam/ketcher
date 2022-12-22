@@ -24,10 +24,7 @@ import Editor from 'src/script/editor'
 import tools from 'src/script/ui/action/tools'
 import Icon from 'src/script/ui/component/view/icon'
 import styles from '../ContextMenu.module.less'
-import type {
-  ContextMenuItemData,
-  ContextMenuItemProps
-} from '../contextMenu.types'
+import type { ItemData, ContextMenuShowProps } from '../contextMenu.types'
 import { formatTitle, getBondNames, noOperation } from './utils'
 
 const bondNames = getBondNames(tools)
@@ -36,9 +33,7 @@ const BondSingleOperations: React.FC = (props) => {
   const { getKetcherInstance } = useAppContext()
 
   const handleEdit = useCallback(
-    async ({
-      props
-    }: ItemParams<ContextMenuItemProps, ContextMenuItemData>) => {
+    async ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
       const bondId = props?.closestItem.id
       const bond = editor.render.ctab.bonds.get(bondId)?.b
@@ -54,7 +49,7 @@ const BondSingleOperations: React.FC = (props) => {
   )
 
   const handleDelete = useCallback(
-    ({ props }: ItemParams<ContextMenuItemProps, ContextMenuItemData>) => {
+    ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
       const bondId = props?.closestItem.id
 
@@ -64,7 +59,7 @@ const BondSingleOperations: React.FC = (props) => {
   )
 
   const handleTypeChange = useCallback(
-    ({ id, props }: ItemParams<ContextMenuItemProps, ContextMenuItemData>) => {
+    ({ id, props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
       const bondId = props?.closestItem.id
       const bondProps = tools[id].action.opts
@@ -75,22 +70,22 @@ const BondSingleOperations: React.FC = (props) => {
   )
 
   const isHidden = useCallback(
-    ({ props }: PredicateParams<ContextMenuItemProps, ContextMenuItemData>) =>
+    ({ props }: PredicateParams<ContextMenuShowProps, ItemData>) =>
       props?.selected || props?.closestItem.map === 'atoms',
     []
   )
 
   return (
     <>
-      <Item hidden={isHidden} onClick={handleEdit} {...props}>
+      <Item {...props} hidden={isHidden} onClick={handleEdit}>
         Edit
       </Item>
 
       <Submenu
+        {...props}
         label="Bond type"
         hidden={isHidden}
         className={styles.subMenu}
-        {...props}
       >
         {bondNames.map((name) => (
           <Item id={name} onClick={handleTypeChange} key={name}>
@@ -100,7 +95,7 @@ const BondSingleOperations: React.FC = (props) => {
         ))}
       </Submenu>
 
-      <Item hidden={isHidden} onClick={handleDelete} {...props}>
+      <Item {...props} hidden={isHidden} onClick={handleDelete}>
         Delete
       </Item>
     </>

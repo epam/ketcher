@@ -20,11 +20,11 @@ import { useContextMenu } from 'react-contexify'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
 import { CONTEXT_MENU_ID } from './ContextMenu'
-import type { ContextMenuItemProps } from './contextMenu.types'
+import type { ContextMenuShowProps } from './contextMenu.types'
 
 const ContextMenuTrigger: React.FC = ({ children }) => {
   const { getKetcherInstance } = useAppContext()
-  const { show, hideAll } = useContextMenu<ContextMenuItemProps>({
+  const { show, hideAll } = useContextMenu<ContextMenuShowProps>({
     id: CONTEXT_MENU_ID
   })
 

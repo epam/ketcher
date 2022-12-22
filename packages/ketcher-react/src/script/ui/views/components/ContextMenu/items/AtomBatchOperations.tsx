@@ -29,16 +29,47 @@ import Editor from 'src/script/editor'
 import EnhancedStereoTool from 'src/script/editor/tool/enhanced-stereo'
 import { toElement } from 'src/script/ui/data/convert/structconv'
 import type {
-  ContextMenuItemData,
-  ContextMenuItemProps
+  ItemData,
+  ContextMenuShowProps,
+  CustomItemProps
 } from '../contextMenu.types'
 import { noOperation } from './utils'
 
-const AtomBatchOperations: React.FC = (props) => {
-  const { getKetcherInstance } = useAppContext()
-  const stereoAtomIdsRef = useRef<number[] | undefined>()
+const isHidden = ({ props }: PredicateParams<ContextMenuShowProps, ItemData>) =>
+  !props?.selected
 
-  const handleBatchEdit = useCallback(async () => {
+const useDisabled = () => {
+  const { getKetcherInstance } = useAppContext()
+
+  const isDisabled = useCallback(
+    ({
+      props,
+      triggerEvent
+    }: PredicateParams<ContextMenuShowProps, ItemData>) => {
+      if (isHidden({ props, triggerEvent })) {
+        return true
+      }
+
+      const editor = getKetcherInstance().editor as Editor
+      const selectedAtomIds = editor.selection()?.atoms
+
+      if (Array.isArray(selectedAtomIds) && selectedAtomIds.length !== 0) {
+        return false
+      }
+
+      return true
+    },
+    [getKetcherInstance]
+  )
+
+  return isDisabled
+}
+
+export const AtomBatchEdit: React.FC<CustomItemProps> = (props) => {
+  const { getKetcherInstance } = useAppContext()
+  const isDisabled = useDisabled()
+
+  const handleClick = useCallback(async () => {
     const editor = getKetcherInstance().editor as Editor
     const defaultAtom = toElement({
       label: 'C',
@@ -65,7 +96,24 @@ const AtomBatchOperations: React.FC = (props) => {
     }
   }, [getKetcherInstance])
 
-  const handleStereoBatchEdit = useCallback(async () => {
+  return (
+    <Item
+      {...props}
+      hidden={isHidden}
+      disabled={isDisabled}
+      onClick={handleClick}
+    >
+      Edit selected atom(s)
+    </Item>
+  )
+}
+
+export const AtomStereoBatchEdit: React.FC<CustomItemProps> = (props) => {
+  const { getKetcherInstance } = useAppContext()
+  const isDisabled = useDisabled()
+  const stereoAtomIdsRef = useRef<number[] | undefined>()
+
+  const handleClick = useCallback(async () => {
     if (!stereoAtomIdsRef.current) {
       return
     }
@@ -84,50 +132,11 @@ const AtomBatchOperations: React.FC = (props) => {
     }
   }, [getKetcherInstance])
 
-  const handleBatchDelete = useCallback(() => {
-    const editor = getKetcherInstance().editor as Editor
-    const action = new Action()
-    const selectedAtomIds = editor.selection()?.atoms
-
-    selectedAtomIds?.forEach((atomId) => {
-      action.mergeWith(fromOneAtomDeletion(editor.render.ctab, atomId))
-    })
-
-    editor.update(action)
-  }, [getKetcherInstance])
-
-  const isHidden = useCallback(
-    ({ props }: PredicateParams<ContextMenuItemProps, ContextMenuItemData>) =>
-      !props?.selected,
-    []
-  )
-
-  const isDisabled = useCallback(
-    ({
-      props,
-      triggerEvent
-    }: PredicateParams<ContextMenuItemProps, ContextMenuItemData>) => {
-      if (isHidden({ props, triggerEvent })) {
-        return true
-      }
-
-      const editor = getKetcherInstance().editor as Editor
-      const selectedAtomIds = editor.selection()?.atoms
-
-      if (Array.isArray(selectedAtomIds) && selectedAtomIds.length !== 0) {
-        return false
-      }
-
-      return true
-    },
-    [getKetcherInstance, isHidden]
-  )
-
   const isStereoDisabled = useCallback(
     ({
       props,
       triggerEvent
-    }: PredicateParams<ContextMenuItemProps, ContextMenuItemData>) => {
+    }: PredicateParams<ContextMenuShowProps, ItemData>) => {
       if (isDisabled({ props, triggerEvent })) {
         return true
       }
@@ -150,35 +159,41 @@ const AtomBatchOperations: React.FC = (props) => {
   )
 
   return (
-    <>
-      <Item
-        hidden={isHidden}
-        disabled={isDisabled}
-        onClick={handleBatchEdit}
-        {...props}
-      >
-        Edit selected atom(s)
-      </Item>
-
-      <Item
-        hidden={isHidden}
-        disabled={isStereoDisabled}
-        onClick={handleStereoBatchEdit}
-        {...props}
-      >
-        Enhanced stereochemistry
-      </Item>
-
-      <Item
-        hidden={isHidden}
-        disabled={isDisabled}
-        onClick={handleBatchDelete}
-        {...props}
-      >
-        Delete selected atom(s)
-      </Item>
-    </>
+    <Item
+      {...props}
+      hidden={isHidden}
+      disabled={isStereoDisabled}
+      onClick={handleClick}
+    >
+      Enhanced stereochemistry
+    </Item>
   )
 }
 
-export default AtomBatchOperations
+export const AtomBatchDelete: React.FC<CustomItemProps> = (props) => {
+  const { getKetcherInstance } = useAppContext()
+  const isDisabled = useDisabled()
+
+  const handleClick = useCallback(() => {
+    const editor = getKetcherInstance().editor as Editor
+    const action = new Action()
+    const selectedAtomIds = editor.selection()?.atoms
+
+    selectedAtomIds?.forEach((atomId) => {
+      action.mergeWith(fromOneAtomDeletion(editor.render.ctab, atomId))
+    })
+
+    editor.update(action)
+  }, [getKetcherInstance])
+
+  return (
+    <Item
+      {...props}
+      hidden={isHidden}
+      disabled={isDisabled}
+      onClick={handleClick}
+    >
+      Delete selected atom(s)
+    </Item>
+  )
+}

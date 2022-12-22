@@ -26,19 +26,14 @@ import 'react-contexify/ReactContexify.css'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
 import EnhancedStereoTool from 'src/script/editor/tool/enhanced-stereo'
-import type {
-  ContextMenuItemData,
-  ContextMenuItemProps
-} from '../contextMenu.types'
+import type { ItemData, ContextMenuShowProps } from '../contextMenu.types'
 import { noOperation } from './utils'
 
 const AtomSingleOperations: React.FC = (props) => {
   const { getKetcherInstance } = useAppContext()
 
   const handleEdit = useCallback(
-    async ({
-      props
-    }: ItemParams<ContextMenuItemProps, ContextMenuItemData>) => {
+    async ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
       const atomId = props?.closestItem.id
       const atom = editor.render.ctab.atoms.get(atomId)?.a
@@ -56,9 +51,7 @@ const AtomSingleOperations: React.FC = (props) => {
   )
 
   const handleStereoEdit = useCallback(
-    async ({
-      props
-    }: ItemParams<ContextMenuItemProps, ContextMenuItemData>) => {
+    async ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       if (!props) {
         return
       }
@@ -81,7 +74,7 @@ const AtomSingleOperations: React.FC = (props) => {
   )
 
   const handleDelete = useCallback(
-    ({ props }: ItemParams<ContextMenuItemProps, ContextMenuItemData>) => {
+    ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
       const atomId = props?.closestItem.id
       editor.update(fromOneAtomDeletion(editor.render.ctab, atomId))
@@ -90,7 +83,7 @@ const AtomSingleOperations: React.FC = (props) => {
   )
 
   const isHidden = useCallback(
-    ({ props }: PredicateParams<ContextMenuItemProps, ContextMenuItemData>) =>
+    ({ props }: PredicateParams<ContextMenuShowProps, ItemData>) =>
       props?.selected || props?.closestItem.map === 'bonds',
     []
   )
@@ -99,7 +92,7 @@ const AtomSingleOperations: React.FC = (props) => {
     ({
       props,
       triggerEvent
-    }: PredicateParams<ContextMenuItemProps, ContextMenuItemData>) => {
+    }: PredicateParams<ContextMenuShowProps, ItemData>) => {
       if (!props || isHidden({ props, triggerEvent })) {
         return true
       }
@@ -121,20 +114,20 @@ const AtomSingleOperations: React.FC = (props) => {
 
   return (
     <>
-      <Item hidden={isHidden} onClick={handleEdit} {...props}>
+      <Item {...props} hidden={isHidden} onClick={handleEdit}>
         Edit
       </Item>
 
       <Item
+        {...props}
         hidden={isHidden}
         disabled={isStereoDisabled}
         onClick={handleStereoEdit}
-        {...props}
       >
         Enhanced stereochemistry
       </Item>
 
-      <Item hidden={isHidden} onClick={handleDelete} {...props}>
+      <Item {...props} hidden={isHidden} onClick={handleDelete}>
         Delete
       </Item>
     </>

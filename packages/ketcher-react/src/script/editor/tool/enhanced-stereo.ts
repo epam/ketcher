@@ -43,22 +43,23 @@ class EnhancedStereoTool {
       return
     }
 
-    this.changeAtomsStereoAction().then(
-      (action) => action && editor.update(action)
-    )
+    EnhancedStereoTool.changeAtomsStereoAction(
+      this.editor,
+      this.stereoAtoms
+    ).then((action) => action && editor.update(action))
   }
 
-  changeAtomsStereoAction() {
-    const struct = this.editor.struct()
-    const restruct = this.editor.render.ctab
-    const stereoLabels = this.stereoAtoms.map((stereoAtom) => {
+  static changeAtomsStereoAction(editor: Editor, stereoAtoms: Array<number>) {
+    const struct = editor.struct()
+    const restruct = editor.render.ctab
+    const stereoLabels = stereoAtoms.map((stereoAtom) => {
       const atom = struct.atoms.get(stereoAtom)
       return atom && atom.stereoLabel
     })
     const hasAnotherLabel = stereoLabels.some(
       (stereoLabel) => stereoLabel !== stereoLabels[0]
     )
-    const res = this.editor.event.enhancedStereoEdit.dispatch({
+    const res = editor.event.enhancedStereoEdit.dispatch({
       stereoLabel: hasAnotherLabel ? null : stereoLabels[0]
     })
 
@@ -67,7 +68,7 @@ class EnhancedStereoTool {
         return null
       }
 
-      const action = this.stereoAtoms.reduce(
+      const action = stereoAtoms.reduce(
         (acc, stereoAtom) => {
           return acc.mergeWith(
             fromStereoFlagUpdate(
@@ -78,7 +79,7 @@ class EnhancedStereoTool {
         },
         fromAtomsAttrs(
           restruct,
-          this.stereoAtoms,
+          stereoAtoms,
           {
             stereoLabel
           },

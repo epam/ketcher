@@ -23,6 +23,7 @@ import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
 import tools from 'src/script/ui/action/tools'
 import Icon from 'src/script/ui/component/view/icon'
+import { toBondType } from 'src/script/ui/data/convert/structconv'
 import styles from '../ContextMenu.module.less'
 import type {
   ContextMenuItemData,
@@ -35,28 +36,22 @@ const bondNames = getBondNames(tools)
 const BondBatchOperations: React.FC = (props) => {
   const { getKetcherInstance } = useAppContext()
 
-  const handleBatchEdit = useCallback(
-    async ({
-      props
-    }: ItemParams<ContextMenuItemProps, ContextMenuItemData>) => {
-      const editor = getKetcherInstance().editor as Editor
-      const bondId = props?.closestItem.id
-      const bond = editor.render.ctab.bonds.get(bondId)?.b
+  const handleBatchEdit = useCallback(async () => {
+    const editor = getKetcherInstance().editor as Editor
+    const defaultBond = toBondType('single')
 
-      try {
-        const newBond = await editor.event.bondEdit.dispatch(bond)
-        const selectedBonds = editor.selection()?.bonds
+    try {
+      const newBond = await editor.event.bondEdit.dispatch(defaultBond)
+      const selectedBonds = editor.selection()?.bonds
 
-        selectedBonds &&
-          editor.update(
-            fromBondsAttrs(editor.render.ctab, selectedBonds, newBond)
-          )
-      } catch (error) {
-        noOperation()
-      }
-    },
-    [getKetcherInstance]
-  )
+      selectedBonds &&
+        editor.update(
+          fromBondsAttrs(editor.render.ctab, selectedBonds, newBond)
+        )
+    } catch (error) {
+      noOperation()
+    }
+  }, [getKetcherInstance])
 
   const handleBatchDelete = useCallback(() => {
     const editor = getKetcherInstance().editor as Editor
@@ -84,20 +79,48 @@ const BondBatchOperations: React.FC = (props) => {
     [getKetcherInstance]
   )
 
-  const isHidden = ({
-    props
-  }: PredicateParams<ContextMenuItemProps, ContextMenuItemData>) =>
-    !props?.selected
+  const isHidden = useCallback(
+    ({ props }: PredicateParams<ContextMenuItemProps, ContextMenuItemData>) =>
+      !props?.selected,
+    []
+  )
+
+  const isDisabled = useCallback(
+    ({
+      props,
+      triggerEvent
+    }: PredicateParams<ContextMenuItemProps, ContextMenuItemData>) => {
+      if (isHidden({ props, triggerEvent })) {
+        return true
+      }
+
+      const editor = getKetcherInstance().editor as Editor
+      const selectedBondIds = editor.selection()?.bonds
+
+      if (Array.isArray(selectedBondIds) && selectedBondIds.length !== 0) {
+        return false
+      }
+
+      return true
+    },
+    [getKetcherInstance, isHidden]
+  )
 
   return (
     <>
-      <Item hidden={isHidden} onClick={handleBatchEdit} {...props}>
+      <Item
+        hidden={isHidden}
+        disabled={isDisabled}
+        onClick={handleBatchEdit}
+        {...props}
+      >
         Edit selected bond(s)
       </Item>
 
       <Submenu
         label="Bond type"
         hidden={isHidden}
+        disabled={isDisabled}
         className={styles.subMenu}
         {...props}
       >
@@ -109,7 +132,12 @@ const BondBatchOperations: React.FC = (props) => {
         ))}
       </Submenu>
 
-      <Item hidden={isHidden} onClick={handleBatchDelete} {...props}>
+      <Item
+        hidden={isHidden}
+        disabled={isDisabled}
+        onClick={handleBatchDelete}
+        {...props}
+      >
         Delete selected bond(s)
       </Item>
     </>

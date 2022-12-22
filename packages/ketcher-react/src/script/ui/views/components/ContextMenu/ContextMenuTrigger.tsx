@@ -89,7 +89,7 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
   const handleDisplay = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (event) => {
       const editor = getKetcherInstance().editor as Editor
-      const closestItem = editor.findItem(event, ['bonds'])
+      const closestItem = editor.findItem(event, null)
 
       if (!closestItem) {
         hideAll()
@@ -118,7 +118,7 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
             closestItem
           }
         })
-      } else if (closestItem.map === 'bonds') {
+      } else if (closestItem.map === 'bonds' || closestItem.map === 'atoms') {
         // Show menu items for single update
         if (selection) {
           editor.render.ctab.setSelection(null)

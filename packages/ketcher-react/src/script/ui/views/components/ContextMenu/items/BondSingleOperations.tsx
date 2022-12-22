@@ -54,9 +54,7 @@ const BondSingleOperations: React.FC = (props) => {
   )
 
   const handleDelete = useCallback(
-    async ({
-      props
-    }: ItemParams<ContextMenuItemProps, ContextMenuItemData>) => {
+    ({ props }: ItemParams<ContextMenuItemProps, ContextMenuItemData>) => {
       const editor = getKetcherInstance().editor as Editor
       const bondId = props?.closestItem.id
 
@@ -76,10 +74,11 @@ const BondSingleOperations: React.FC = (props) => {
     [getKetcherInstance]
   )
 
-  const isHidden = ({
-    props
-  }: PredicateParams<ContextMenuItemProps, ContextMenuItemData>) =>
-    !!props?.selected
+  const isHidden = useCallback(
+    ({ props }: PredicateParams<ContextMenuItemProps, ContextMenuItemData>) =>
+      props?.selected || props?.closestItem.map === 'atoms',
+    []
+  )
 
   return (
     <>

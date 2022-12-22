@@ -25,23 +25,20 @@ interface Selection {
 export interface Self {
   event: {
     chosenElementsChange: any
-    selectionChange: any
   }
   render: { ctab: any; update: () => void }
-  _selection: any
   _chosenElements: any
   struct(): { atoms: any }
   explicitSelected(): { atoms: any }
 }
 
 export function getChosenItems(self: Self) {
-  return self._selection // eslint-disable-line
+  return self._chosenElements // eslint-disable-line
 }
 
 export function chooseItems(self: Self, ci?: any) {
   let ReStruct = self.render.ctab
 
-  self._selection = null // eslint-disable-line
   self._chosenElements = null
   if (ci === 'all') {
     // TODO: better way will be self.struct()
@@ -66,7 +63,6 @@ export function chooseItems(self: Self, ci?: any) {
     })
 
     if (Object.keys(res).length !== 0) {
-      self._selection = res // eslint-disable-line
       self._chosenElements = res
     }
     const stereoFlags = selectStereoFlags(
@@ -74,12 +70,6 @@ export function chooseItems(self: Self, ci?: any) {
       self.explicitSelected().atoms
     )
     if (stereoFlags.length !== 0) {
-      self._selection && self._selection.enhancedFlags
-        ? (self._selection.enhancedFlags = Array.from(
-            new Set([...self._selection.enhancedFlags, ...stereoFlags])
-          ))
-        : (res.enhancedFlags = stereoFlags)
-
       self._chosenElements && self._chosenElements.enhancedFlags
         ? (self._chosenElements.enhancedFlags = Array.from(
             new Set([...self._chosenElements.enhancedFlags, ...stereoFlags])
@@ -88,9 +78,7 @@ export function chooseItems(self: Self, ci?: any) {
     }
   }
 
-  self.render.ctab.setSelection(self._selection) // eslint-disable-line
   self.render.ctab.setChosenItems(self._chosenElements) // eslint-disable-line
-  self.event.selectionChange.dispatch(self._selection) // eslint-disable-line
   self.event.chosenElementsChange.dispatch(self._chosenElements)
 
   self.render.update()

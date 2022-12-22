@@ -51,7 +51,6 @@ export function startChoosing(self, event, editor, lassoHelper) {
   const sel = closestToSel(ci)
   const selection = editor.selection()
 
-  editor.selection(isElementChosen(selection, ci) ? selection : sel)
   chooseItems(editor, isElementChosen(selection, ci) ? selection : sel)
 
   return true

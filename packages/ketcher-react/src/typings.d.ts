@@ -5,6 +5,11 @@ declare module '*.less' {
   export default classes
 }
 
+declare module '*.sdf' {
+  const content: string
+  export default content
+}
+
 declare namespace NodeJS {
   export interface ProcessEnv {
     VERSION: string

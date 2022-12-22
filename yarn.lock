@@ -11414,6 +11414,7 @@ __metadata:
     rollup-plugin-delete: ^2.0.0
     rollup-plugin-peer-deps-external: ^2.2.4
     rollup-plugin-postcss: ^4.0.2
+    rollup-plugin-string: ^3.0.0
     rollup-plugin-typescript2: ^0.31.1
     rollup-plugin-visualizer: ^5.5.2
     stylelint: 13.13.1
@@ -15722,6 +15723,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rollup-plugin-string@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "rollup-plugin-string@npm:3.0.0"
+  dependencies:
+    rollup-pluginutils: ^2.4.1
+  checksum: f46b4088f2534b94ea638aedae819cd8bc67803a88a2ed8e10598bc463f7765278c21dc51b00013b8f9c9ff8478a4747b51e802d633c2be31de14fbb5bd36d07
+  languageName: node
+  linkType: hard
+
 "rollup-plugin-terser@npm:^7.0.0":
   version: 7.0.2
   resolution: "rollup-plugin-terser@npm:7.0.2"
@@ -15778,7 +15788,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-pluginutils@npm:^2.8.1, rollup-pluginutils@npm:^2.8.2":
+"rollup-pluginutils@npm:^2.4.1, rollup-pluginutils@npm:^2.8.1, rollup-pluginutils@npm:^2.8.2":
   version: 2.8.2
   resolution: "rollup-pluginutils@npm:2.8.2"
   dependencies:

@@ -23,8 +23,8 @@ import {
   SdfSerializer,
   Struct
 } from 'ketcher-core'
-import { prefetchStatic } from '../templates/init-lib'
 import { RenderStruct } from '../../utils'
+import templatesRawData from '../../../../templates/salts-and-solvents.sdf'
 
 interface SaltsAndSolventsState {
   lib: []
@@ -68,16 +68,13 @@ const prerenderPartOfStructures = (saltsAndSolvents: Struct[], settings) => {
   })
 }
 
-export function initSaltsAndSolventsTemplates(baseUrl: string) {
+export function initSaltsAndSolventsTemplates() {
   return async (dispatch, getState) => {
-    const fileName = 'salts-and-solvents.sdf'
     const { settings } = getState().options
-    const url = `${baseUrl}/templates/${fileName}`
     const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance()
     const functionalGroupsProvider = FunctionalGroupsProvider.getInstance()
     const sdfSerializer = new SdfSerializer()
-    const text = await prefetchStatic(url)
-    const templates = sdfSerializer.deserialize(text)
+    const templates = sdfSerializer.deserialize(templatesRawData)
     const saltsAndSolvents = templates.reduce(
       (acc: Struct[], { struct, props }) => {
         struct.abbreviation = String(props.abbreviation)

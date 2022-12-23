@@ -331,6 +331,7 @@ class Editor implements KetcherEditor {
       if (Object.keys(res).length !== 0) {
         this._selection = res // eslint-disable-line
       }
+      //todo do we need  stereoFlags?
       const stereoFlags = selectStereoFlags(
         this.struct().atoms,
         this.explicitSelected().atoms

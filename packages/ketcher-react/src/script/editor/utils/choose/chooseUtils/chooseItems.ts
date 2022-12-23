@@ -8,7 +8,7 @@ export interface Editor {
     chosenItemsChange: any
   }
   render: { ctab: any; update: () => void }
-  _chosenItems: any
+  _chosenItems?: any
 }
 
 export function getChosenItems(editor: Editor) {

@@ -37,7 +37,6 @@ import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 import { Highlighter } from './highlighter'
 import { selectStereoFlags } from './utils/selectStereoFlags'
-import { chooseItems } from './utils/choose/chooseUtils/chooseItems'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -108,7 +107,8 @@ class Editor implements KetcherEditor {
   #origin?: any
   render: Render
   _selection: Selection | null
-  _chosenElements: Selection | null
+  // _chosenElements: Selection | null
+  _chosenItems: Selection | null
   _tool: any
   historyStack: any
   historyPtr: any
@@ -127,7 +127,7 @@ class Editor implements KetcherEditor {
     removeFG: PipelineSubscription
     change: Subscription
     selectionChange: PipelineSubscription
-    chosenElementsChange: PipelineSubscription
+    chosenItemsChange: PipelineSubscription
     aromatizeStruct: PipelineSubscription
     dearomatizeStruct: PipelineSubscription
     enhancedStereoEdit: PipelineSubscription
@@ -150,7 +150,7 @@ class Editor implements KetcherEditor {
     )
 
     this._selection = null // eslint-disable-line
-    this._chosenElements = null
+    this._chosenItems = null
     this._tool = null // eslint-disable-line
     this.historyStack = []
     this.historyPtr = 0
@@ -177,7 +177,7 @@ class Editor implements KetcherEditor {
       removeFG: new PipelineSubscription(),
       change: new Subscription(),
       selectionChange: new PipelineSubscription(),
-      chosenElementsChange: new PipelineSubscription(),
+      chosenItemsChange: new PipelineSubscription(),
       aromatizeStruct: new PipelineSubscription(),
       dearomatizeStruct: new PipelineSubscription(),
       // TODO: correct
@@ -249,7 +249,6 @@ class Editor implements KetcherEditor {
     }
 
     this.selection(null)
-    chooseItems(this, null)
     const struct = value || new Struct()
 
     return this.renderAndRecoordinateStruct(struct)
@@ -426,7 +425,6 @@ class Editor implements KetcherEditor {
     }
 
     this.selection(null)
-    chooseItems(this, null)
 
     if (this._tool instanceof toolMap.paste) {
       this.event.change.dispatch()
@@ -452,7 +450,6 @@ class Editor implements KetcherEditor {
     }
 
     this.selection(null)
-    chooseItems(this, null)
     if (this._tool instanceof toolMap.paste) {
       this.event.change.dispatch()
       return

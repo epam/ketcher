@@ -15,9 +15,14 @@ export function handleHotkeyOverAtom(hoveredItemId, newAction, render, editor) {
   }
   if (newAction.tool === 'eraser') {
     handleEraserTool(hoveredItemId, newAction, render, editor)
+    return
   }
   if (newAction.tool === 'select') {
     handleSelectionTool(hoveredItemId, newAction, render, editor)
+    return
+  }
+  if (newAction.tool === 'charge') {
+    handleChargeTool(hoveredItemId, newAction, render, editor)
   }
 }
 
@@ -48,6 +53,21 @@ function handleEraserTool(hoveredItemId, _, render, editor) {
 
 function handleSelectionTool(hoveredItemId, _, __, editor) {
   editor.selection({
-    atoms: hoveredItemId
+    atoms: [hoveredItemId]
   })
+}
+
+function handleChargeTool(hoveredItemId, newAction, render, editor) {
+  const existingAtom = render.ctab.atoms.get(hoveredItemId)?.a
+  if (existingAtom) {
+    const updatedAtom = fromAtomsAttrs(
+      render.ctab,
+      hoveredItemId,
+      {
+        charge: existingAtom.charge + newAction.opts.charge
+      },
+      null
+    )
+    editor.update(updatedAtom)
+  }
 }

@@ -32,6 +32,7 @@ import { selMerge } from './select'
 import Editor from '../Editor'
 import { startChoosing } from '../utils/choose/startChoosing'
 import { getChosenItems } from '../utils/choose/chooseUtils/chooseItems'
+import { finishChoosing } from '../utils/choose/finishChoosing'
 
 const searchMaps = [
   'atoms',
@@ -161,7 +162,7 @@ class SGroupTool {
     const bondResult: Array<number> = []
     const result: Array<number> = []
 
-    startChoosing(event, this.editor, this.lassoHelper)
+    startChoosing(event, this.editor, this.lassoHelper, this)
 
     if (closestItem && functionalGroups.size && closestItem.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
@@ -283,6 +284,8 @@ class SGroupTool {
     let bondsResult: Array<number> | null = []
     let extraBonds
     const result: Array<number> = []
+
+    finishChoosing(event, this.editor, this.lassoHelper)
 
     if (
       closestItem &&
@@ -474,7 +477,8 @@ export function sgroupDialog(editor, id, defaultType) {
   const restruct = editor.render.ctab
 
   const struct = restruct.molecule
-  const selection = getChosenItems(editor)
+  // const selection = getChosenItems(editor)
+  const selection = editor.selection()
   const sg = id !== null ? struct.sgroups.get(id) : null
   const type = sg ? sg.type : defaultType
   const eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit'

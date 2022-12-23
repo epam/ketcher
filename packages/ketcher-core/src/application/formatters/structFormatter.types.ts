@@ -37,7 +37,8 @@ export enum SupportedFormat {
   cml = 'cml',
   ket = 'ket',
   cdxml = 'cdxml',
-  cdx = 'cdx'
+  cdx = 'cdx',
+  unknown = 'unknown'
 }
 
 export type FormatterFactoryOptions = Partial<

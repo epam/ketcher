@@ -1,7 +1,7 @@
 import { closestToSel } from './chooseUtils/closestToSel'
 // import { chooseItems } from './chooseUtils/chooseItems'
 import { FunctionalGroup, SGroup } from 'ketcher-core'
-import { atomLongtapEvent } from '../../tool/atom'
+// import { atomLongtapEvent } from '../../tool/atom'
 import { selMerge } from '../../tool/select'
 // import LassoHelper from "../../tool/helper/lasso";
 
@@ -111,7 +111,7 @@ export function startChoosing(event, editor, lassoHelper, self) {
   }
 
   if (!ci || ci.map === 'atoms') {
-    atomLongtapEvent(self, render)
+    console.log('atomLongtapEvent(self, render)')
   }
 
   if (!ci) {

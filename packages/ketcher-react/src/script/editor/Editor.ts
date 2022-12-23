@@ -107,7 +107,6 @@ class Editor implements KetcherEditor {
   #origin?: any
   render: Render
   _selection: Selection | null
-  // _chosenElements: Selection | null
   _chosenItems: Selection | null
   _tool: any
   historyStack: any

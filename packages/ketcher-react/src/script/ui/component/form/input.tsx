@@ -24,11 +24,11 @@ type Props = {
   children?: React.ReactNode
   className?: string
   type: string
-  value: any
+  value: number | string | boolean
   onChange: (val: any) => void
   placeholder?: string
   isFocused?: boolean
-  innerRef?: any
+  innerRef?: React.Ref<any>
   schema?: any
   multiple?: boolean
 }
@@ -42,8 +42,6 @@ export function GenericInput({
   isFocused = false,
   ...props
 }) {
-  console.log('innerRef', innerRef)
-
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -338,7 +336,13 @@ class Input extends PureComponent<
   Props & { innerRef: React.Ref<HTMLInputElement> }
 > {
   component: any
-  ctrl: any
+  ctrl: {
+    type?: string
+    onChange?: (val: any) => void
+    onSelect?: (ev, values) => void
+    selected?: (testVal: any, value: any) => boolean
+    multiple?: boolean
+  }
 
   constructor(props: Props & { innerRef: React.Ref<HTMLInputElement> }) {
     super(props)

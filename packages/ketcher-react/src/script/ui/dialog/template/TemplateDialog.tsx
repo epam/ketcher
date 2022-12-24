@@ -174,9 +174,12 @@ const TemplateDialog: FC<Props> = (props) => {
     setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS])
   }, [functionalGroups, filter])
 
+  useEffect(() => {
+    searchInputRef.current?.focus()
+  }, [tab])
+
   const handleTabChange = (_, tab) => {
     setTab(tab)
-    searchInputRef.current?.focus()
     props.onSelect(null)
   }
 

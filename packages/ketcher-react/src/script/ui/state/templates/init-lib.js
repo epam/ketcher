@@ -18,6 +18,7 @@ import { KetSerializer, SdfSerializer } from 'ketcher-core'
 
 import { appUpdate } from '../options'
 import { storage } from '../../storage-ext'
+import templatesRawData from '../../../../templates/library.sdf'
 
 export function initLib(lib) {
   return {
@@ -37,21 +38,19 @@ export default function initTmplLib(dispatch, baseUrl, cacheEl) {
 
 const deserializeSdfTemplates = (baseUrl, cacheEl, fileName) => {
   const sdfSerializer = new SdfSerializer()
-  return prefetchStatic(`${baseUrl}/templates/${fileName}`).then((text) => {
-    const tmpls = sdfSerializer.deserialize(text)
-    const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheEl)
+  const tmpls = sdfSerializer.deserialize(templatesRawData)
+  const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheEl)
 
-    return prefetch.then((cachedFiles) =>
-      tmpls.map((tmpl) => {
-        const pr = prefetchSplit(tmpl)
-        if (pr.file)
-          tmpl.props.prerender =
-            cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : ''
+  return prefetch.then((cachedFiles) =>
+    tmpls.map((tmpl) => {
+      const pr = prefetchSplit(tmpl)
+      if (pr.file)
+        tmpl.props.prerender =
+          cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : ''
 
-        return tmpl
-      })
-    )
-  })
+      return tmpl
+    })
+  )
 }
 
 function userTmpls() {

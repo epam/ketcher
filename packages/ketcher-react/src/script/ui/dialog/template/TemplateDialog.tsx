@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dispatch, FC, useState, useEffect } from 'react'
+import { Dispatch, FC, useState, useEffect, useRef } from 'react'
 import TemplateTable, { Template } from './TemplateTable'
 import {
   changeFilter,
@@ -157,9 +157,7 @@ const TemplateDialog: FC<Props> = (props) => {
     ...rest
   } = props
 
-  // For search input in custom templates dialog - to set focus back to input
-  // after tab change
-  const [searchFocusBack, setSearchFocusBack] = useState(false)
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   const [tab, setTab] = useState(initialTab ?? TemplateTabs.TemplateLibrary)
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
@@ -178,7 +176,7 @@ const TemplateDialog: FC<Props> = (props) => {
 
   const handleTabChange = (_, tab) => {
     setTab(tab)
-    setSearchFocusBack((prevState) => !prevState)
+    searchInputRef.current?.focus()
     props.onSelect(null)
   }
 
@@ -216,13 +214,13 @@ const TemplateDialog: FC<Props> = (props) => {
     >
       <div className={classes.inputContainer}>
         <Input
+          ref={searchInputRef}
           className={classes.input}
           type="search"
           value={filter}
           onChange={(value) => onFilter(value)}
           placeholder="Search by elements..."
           isFocused={true}
-          searchFocusBack={searchFocusBack}
         />
         <Icon name="search" className={classes.searchIcon} />
       </div>

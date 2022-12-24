@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { PureComponent, ComponentType, useRef, useEffect } from 'react'
+import React, { PureComponent, ComponentType, useRef, useEffect } from 'react'
 
 import classes from './input.module.less'
 import clsx from 'clsx'
@@ -28,27 +28,35 @@ type Props = {
   onChange: (val: any) => void
   placeholder?: string
   isFocused?: boolean
-  searchFocusBack?: boolean
   innerRef?: any
   schema?: any
-  multiple?: any
+  multiple?: boolean
 }
 
 export function GenericInput({
   schema,
   value = '',
   onChange,
+  innerRef,
   type = 'text',
   isFocused = false,
-  searchFocusBack = false,
   ...props
 }) {
+  console.log('innerRef', innerRef)
+
   const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (inputRef.current) {
+      innerRef.current = inputRef.current
+    }
+  }, [innerRef])
+
   useEffect(() => {
     if (inputRef.current && isFocused) {
       inputRef.current.focus()
     }
-  }, [inputRef, isFocused, searchFocusBack])
+  }, [inputRef, isFocused])
 
   return (
     <>
@@ -325,11 +333,14 @@ function componentMap(props: Props) {
   return type === 'radio' ? FieldSet : Select
 }
 
-export default class Input extends PureComponent<Props> {
+// export default
+class Input extends PureComponent<
+  Props & { innerRef: React.Ref<HTMLInputElement> }
+> {
   component: any
   ctrl: any
 
-  constructor(props: Props) {
+  constructor(props: Props & { innerRef: React.Ref<HTMLInputElement> }) {
     super(props)
     this.component = props.component || componentMap(props)
     this.ctrl = ctrlMap(this.component, props)
@@ -339,6 +350,20 @@ export default class Input extends PureComponent<Props> {
     const { children, onChange, ...restProps } = this.props
     const Component = this.component
 
-    return <Component {...this.ctrl} {...restProps} />
+    const ComponentWithRef = React.forwardRef((props, ref) => (
+      <Component {...props} innerRef={ref} />
+    ))
+
+    return (
+      <ComponentWithRef
+        ref={this.props.innerRef}
+        {...this.ctrl}
+        {...restProps}
+      />
+    )
   }
 }
+
+export default React.forwardRef((props: Props, ref) => (
+  <Input innerRef={ref} {...props} />
+))

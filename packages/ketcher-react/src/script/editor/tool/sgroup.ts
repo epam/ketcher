@@ -162,7 +162,7 @@ class SGroupTool {
 
     startSelecting(event, this.editor, this.lassoHelper, this)
 
-    if (closestItem && functionalGroups.size && closestItem.map === 'atoms') {
+    if (closestItem?.map === 'atoms' && functionalGroups.size) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         closestItem.id
@@ -182,7 +182,7 @@ class SGroupTool {
       }
     }
 
-    if (closestItem && functionalGroups.size && closestItem.map === 'bonds') {
+    if (closestItem?.map === 'bonds' && functionalGroups.size) {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
@@ -203,11 +203,7 @@ class SGroupTool {
       }
     }
 
-    if (
-      closestItem &&
-      functionalGroups.size &&
-      closestItem.map === 'functionalGroups'
-    ) {
+    if (closestItem?.map === 'functionalGroups' && functionalGroups.size) {
       const sgroup = sgroups.get(closestItem.id)
 
       if (FunctionalGroup.isFunctionalGroup(sgroup?.item)) {
@@ -437,7 +433,7 @@ class SGroupTool {
       this.editor.selection(selection)
     } else {
       if (!closestItem)
-        // closestItem.type == 'Canvas'
+        // when closestItem.type == 'Canvas'
         return
       this.editor.hover(null)
 

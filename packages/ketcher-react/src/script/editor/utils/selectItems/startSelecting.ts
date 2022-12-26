@@ -107,7 +107,7 @@ export function startSelecting(event, editor, lassoHelper, self) {
   }
 
   if (!closestItem) {
-    //  closestItem.type == 'Canvas'
+    //  when closestItem.type == 'Canvas'
     if (!event.shiftKey) self.editor.selection(null)
     delete self.dragCtx.item
     if (!self.lassoHelper.fragment) self.lassoHelper.begin(event)

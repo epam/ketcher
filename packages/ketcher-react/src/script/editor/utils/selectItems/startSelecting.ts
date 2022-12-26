@@ -1,11 +1,5 @@
-import { closestToSel } from './chooseUtils/closestToSel'
-// import { chooseItems } from './chooseUtils/chooseItems'
 import { FunctionalGroup, SGroup } from 'ketcher-core'
-// import { atomLongtapEvent } from '../../tool/atom'
 import { selMerge } from '../../tool/select'
-import { chooseItems } from './chooseUtils/chooseItems'
-// import { chooseItems } from './chooseUtils/chooseItems'
-// import LassoHelper from "../../tool/helper/lasso";
 
 function isSelected(selection, item) {
   return (
@@ -13,13 +7,13 @@ function isSelected(selection, item) {
   )
 }
 
-export function startChoosing(event, editor, lassoHelper, self) {
-  // const lassoHelper = new LassoHelper(
-  //     this.#mode === 'lasso' ? 0 : 1,
-  //     editor,
-  //     this.#mode === 'fragment'
-  // )
+function closestToSel(ci) {
+  const res = {}
+  res[ci.map] = [ci.id]
+  return res
+}
 
+export function startSelecting(event, editor, lassoHelper, self) {
   const render = editor.render
   const ctab = render.ctab
   const molecule = ctab.molecule
@@ -59,9 +53,6 @@ export function startChoosing(event, editor, lassoHelper, self) {
         ],
     null
   )
-
-  // const sel = closestToSel(ci)
-  // chooseItems(editor, sel)
 
   if (ci && ci.map === 'atoms' && functionalGroups.size) {
     const atomId = FunctionalGroup.atomsInFunctionalGroup(
@@ -107,8 +98,6 @@ export function startChoosing(event, editor, lassoHelper, self) {
           newSelected.bonds.push(...sgroupBonds)
       }
     }
-    // const sel = closestToSel(ci)
-    chooseItems(editor, newSelected)
     editor.selection(newSelected)
   }
 
@@ -158,11 +147,8 @@ export function startChoosing(event, editor, lassoHelper, self) {
   }
 
   if (event.shiftKey) {
-    // const sel = closestToSel(ci)
-    chooseItems(editor, isSelected(selection, ci) ? selection : sel)
     self.editor.selection(selMerge(sel, selection, true))
   } else {
-    chooseItems(editor, selMerge(sel, selection, true))
     self.editor.selection(isSelected(selection, ci) ? selection : sel)
   }
   return true

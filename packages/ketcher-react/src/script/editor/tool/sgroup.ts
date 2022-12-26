@@ -30,9 +30,8 @@ import LassoHelper from './helper/lasso'
 import { isEqual } from 'lodash/fp'
 import { selMerge } from './select'
 import Editor from '../Editor'
-import { startChoosing } from '../utils/choose/startChoosing'
-import { getChosenItems } from '../utils/choose/chooseUtils/chooseItems'
-import { finishChoosing } from '../utils/choose/finishChoosing'
+import { startSelecting } from '../utils/selectItems/startSelecting'
+import { finishSelecting } from '../utils/selectItems/finishSelecting'
 
 const searchMaps = [
   'atoms',
@@ -162,7 +161,7 @@ class SGroupTool {
     const bondResult: Array<number> = []
     const result: Array<number> = []
 
-    startChoosing(event, this.editor, this.lassoHelper, this)
+    startSelecting(event, this.editor, this.lassoHelper, this)
 
     if (closestItem && functionalGroups.size && closestItem.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
@@ -272,7 +271,7 @@ class SGroupTool {
 
   mouseup(event) {
     const struct = this.editor.render.ctab
-    const selected = getChosenItems(this.editor)
+    const selected = this.editor.selection()
     const sgroups = struct.sgroups
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
@@ -285,7 +284,7 @@ class SGroupTool {
     let extraBonds
     const result: Array<number> = []
 
-    finishChoosing(event, this.editor, this.lassoHelper)
+    finishSelecting(event, this.editor, this.lassoHelper)
 
     if (
       closestItem &&

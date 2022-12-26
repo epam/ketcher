@@ -193,6 +193,7 @@ class SelectTool {
     if (event.shiftKey) {
       this.editor.selection(selMerge(sel, selection, true))
     } else {
+      this.editor.selection(null)
       this.editor.selection(isSelected(selection, ci) ? selection : sel)
     }
     return true

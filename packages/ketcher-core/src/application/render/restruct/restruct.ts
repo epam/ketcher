@@ -605,9 +605,13 @@ class ReStruct {
             item.selected = sGroupAtoms.length > 0 && sGroupAtoms[0].selected
           }
 
-          const selected = selection?.[map]
+          let selected = selection?.[map]
             ? selection[map].indexOf(id) > -1
             : item.selected
+
+          if (selection === null) {
+            selected = false
+          }
 
           this.showItemSelection(item, selected)
         })

@@ -619,41 +619,6 @@ class ReStruct {
     })
   }
 
-  setChosenItems(chosenElements?) {
-    console.log('chosenElements', chosenElements)
-    const atoms: { chosen: boolean; sgroup: number }[] = []
-
-    Object.keys(ReStruct.maps).forEach((map) => {
-      const [mapValues] = this[map].values() // hack to include ReSGroup, figure out better solution
-      if (ReStruct.maps[map].isSelectable() || mapValues instanceof ReSGroup) {
-        this[map].forEach((item) => {
-          if (item instanceof ReAtom) {
-            let sgroup
-            for (const sgId of item.a.sgs.values()) {
-              sgroup = sgId
-            }
-            atoms.push({
-              chosen: item.chosen,
-              sgroup: sgroup
-            })
-          }
-          if (
-            item instanceof ReSGroup &&
-            FunctionalGroup.isContractedFunctionalGroup(
-              item.item.id,
-              this.molecule.functionalGroups
-            )
-          ) {
-            const sGroupAtoms = atoms.filter(
-              (atom) => atom.sgroup === item.item.id
-            )
-            item.chosen = sGroupAtoms.length > 0 && sGroupAtoms[0].chosen
-          }
-        })
-      }
-    })
-  }
-
   showItemSelection(item, selected) {
     const exists = isSelectionSvgObjectExists(item)
     // TODO: simplify me, who sets `removed`?

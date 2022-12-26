@@ -197,7 +197,6 @@ Render.prototype.update = function (force = false, viewSz = null) {
 
   const changes = this.ctab.update(force)
   this.ctab.setSelection() // [MK] redraw the selection bits where necessary
-  this.ctab.setChosenItems()
   if (changes) {
     const sf = this.options.scale
     const bb = this.ctab

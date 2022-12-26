@@ -7,9 +7,9 @@ function isSelected(selection, item) {
   )
 }
 
-function closestToSel(ci) {
+function closestToSel(closestItem) {
   const res = {}
-  res[ci.map] = [ci.id]
+  res[closestItem.map] = [closestItem.id]
   return res
 }
 
@@ -23,7 +23,7 @@ export function startSelecting(event, editor, lassoHelper, self) {
   let actualSgroupId
 
   const selectFragment = lassoHelper.fragment || event.ctrlKey
-  const ci = editor.findItem(
+  const closestItem = editor.findItem(
     event,
     selectFragment
       ? [
@@ -54,12 +54,12 @@ export function startSelecting(event, editor, lassoHelper, self) {
     null
   )
 
-  if (ci && ci.map === 'atoms' && functionalGroups.size) {
+  if (closestItem && closestItem.map === 'atoms' && functionalGroups.size) {
     const atomId = FunctionalGroup.atomsInFunctionalGroup(
       functionalGroups,
-      ci.id
+      closestItem.id
     )
-    const atomFromStruct = atomId !== null && ctab.atoms.get(ci.id)?.a
+    const atomFromStruct = atomId !== null && ctab.atoms.get(closestItem.id)?.a
 
     if (atomFromStruct) {
       for (const sgId of atomFromStruct.sgs.values()) {
@@ -73,11 +73,11 @@ export function startSelecting(event, editor, lassoHelper, self) {
     )
       selectedSgroups.push(actualSgroupId)
   }
-  if (ci && ci.map === 'bonds' && functionalGroups.size) {
+  if (closestItem && closestItem.map === 'bonds' && functionalGroups.size) {
     const bondId = FunctionalGroup.bondsInFunctionalGroup(
       molecule,
       functionalGroups,
-      ci.id
+      closestItem.id
     )
     const sGroupId = FunctionalGroup.findFunctionalGroupByBond(
       molecule,
@@ -102,33 +102,29 @@ export function startSelecting(event, editor, lassoHelper, self) {
   }
 
   self.dragCtx = {
-    item: ci,
+    item: closestItem,
     xy0: render.page2obj(event)
   }
 
-  if (!ci || ci.map === 'atoms') {
-    console.log('atomLongtapEvent(self, render)')
-  }
-
-  if (!ci) {
-    //  ci.type == 'Canvas'
+  if (!closestItem) {
+    //  closestItem.type == 'Canvas'
     if (!event.shiftKey) self.editor.selection(null)
     delete self.dragCtx.item
     if (!self.lassoHelper.fragment) self.lassoHelper.begin(event)
     return true
   }
 
-  let sel = closestToSel(ci)
-  const sgroups = ctab.sgroups.get(ci.id)
+  let sel = closestToSel(closestItem)
+  const sgroups = ctab.sgroups.get(closestItem.id)
   const selection = self.editor.selection()
-  if (ci.map === 'frags') {
-    const frag = ctab.frags.get(ci.id)
+  if (closestItem.map === 'frags') {
+    const frag = ctab.frags.get(closestItem.id)
     sel = {
-      atoms: frag.fragGetAtoms(ctab, ci.id),
-      bonds: frag.fragGetBonds(ctab, ci.id)
+      atoms: frag.fragGetAtoms(ctab, closestItem.id),
+      bonds: frag.fragGetBonds(ctab, closestItem.id)
     }
   } else if (
-    (ci.map === 'sgroups' || ci.map === 'functionalGroups') &&
+    (closestItem.map === 'sgroups' || closestItem.map === 'functionalGroups') &&
     sgroups
   ) {
     const sgroup = sgroups.item
@@ -136,20 +132,20 @@ export function startSelecting(event, editor, lassoHelper, self) {
       atoms: SGroup.getAtoms(molecule, sgroup),
       bonds: SGroup.getBonds(molecule, sgroup)
     }
-  } else if (ci.map === 'rgroups') {
-    const rgroup = ctab.rgroups.get(ci.id)
+  } else if (closestItem.map === 'rgroups') {
+    const rgroup = ctab.rgroups.get(closestItem.id)
     sel = {
       atoms: rgroup.getAtoms(render),
       bonds: rgroup.getBonds(render)
     }
-  } else if (ci.map === 'sgroupData') {
-    if (isSelected(selection, ci)) return true
+  } else if (closestItem.map === 'sgroupData') {
+    if (isSelected(selection, closestItem)) return true
   }
 
   if (event.shiftKey) {
     self.editor.selection(selMerge(sel, selection, true))
   } else {
-    self.editor.selection(isSelected(selection, ci) ? selection : sel)
+    self.editor.selection(isSelected(selection, closestItem) ? selection : sel)
   }
   return true
 }

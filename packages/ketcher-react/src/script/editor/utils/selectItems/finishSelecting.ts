@@ -21,7 +21,6 @@ export function finishSelecting(event, editor, lassoHelper) {
   let actualSgroupId
 
   if (selected && functionalGroups.size && selected.atoms) {
-    console.log('if (selected && functionalGroups.size && selected.atoms)')
     for (const atom of selected.atoms) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
@@ -44,7 +43,6 @@ export function finishSelecting(event, editor, lassoHelper) {
   }
 
   if (selected && functionalGroups.size && selected.bonds) {
-    console.log('if (selected && functionalGroups.size && selected.bonds)')
     for (const atom of selected.bonds) {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
@@ -62,7 +60,6 @@ export function finishSelecting(event, editor, lassoHelper) {
   }
 
   if (selectedSgroups.length) {
-    console.log('if (selectedSgroups.length)')
     for (const sgId of selectedSgroups) {
       const sgroup = struct.sgroups.get(sgId)
       if (sgroup) {
@@ -75,12 +72,10 @@ export function finishSelecting(event, editor, lassoHelper) {
   }
 
   if (dragCtx && dragCtx.stopTapping) {
-    console.log('if (dragCtx && dragCtx.stopTapping)')
     dragCtx.stopTapping()
   }
 
   if (dragCtx && dragCtx.item) {
-    console.log('if (dragCtx && dragCtx.item)')
     dragCtx.action = dragCtx.action
       ? fromItemsFuse(struct, dragCtx.mergeItems).mergeWith(dragCtx.action)
       : fromItemsFuse(struct, dragCtx.mergeItems)
@@ -100,9 +95,7 @@ export function finishSelecting(event, editor, lassoHelper) {
       !event.shiftKey ? sel : selMerge(sel, editor.selection(), false)
     )
   } else if (lassoHelper.fragment) {
-    console.log('else if (lassoHelper.fragment)')
     if (!event.shiftKey) {
-      console.log('if (!event.shiftKey)')
       editor.selection(null)
     }
   }

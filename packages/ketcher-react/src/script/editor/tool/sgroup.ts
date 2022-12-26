@@ -55,7 +55,6 @@ class SGroupTool {
     this.checkSelection()
   }
 
-  // todo rename to checkChosenItems
   checkSelection() {
     const selection = this.editor.selection() || {}
 
@@ -259,8 +258,6 @@ class SGroupTool {
     } else {
       this.editor.hover(this.editor.findItem(event, searchMaps))
     }
-
-    // extendChoosing()
   }
 
   mouseleave(event) {
@@ -271,11 +268,11 @@ class SGroupTool {
 
   mouseup(event) {
     const struct = this.editor.render.ctab
-    const selected = this.editor.selection()
     const sgroups = struct.sgroups
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
     const closestItem = this.editor.findItem(event, searchMaps)
+    const selected = this.editor.selection()
     const newSelected: Record<string, Array<any>> = { atoms: [], bonds: [] }
     let actualSgroupId
     let atomsResult: Array<number> | null = []
@@ -474,18 +471,11 @@ class SGroupTool {
 
 export function sgroupDialog(editor, id, defaultType) {
   const restruct = editor.render.ctab
-
   const struct = restruct.molecule
-  // const selection = getChosenItems(editor)
-  const selection = editor.selection()
+  const selection = editor.selection() || {}
   const sg = id !== null ? struct.sgroups.get(id) : null
   const type = sg ? sg.type : defaultType
   const eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit'
-
-  // if (!selection.atoms && !selection.bonds && !sg) {
-  //   console.info('There are no chosen Items AND sgroup')
-  //   return
-  // }
 
   let attrs
   if (sg) {

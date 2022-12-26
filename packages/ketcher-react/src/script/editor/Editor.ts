@@ -36,7 +36,6 @@ import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 import { Highlighter } from './highlighter'
-import { selectStereoFlags } from './utils/selectStereoFlags'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -72,28 +71,28 @@ const highlightTargets = [
   'texts'
 ]
 
-// function selectStereoFlagsIfNecessary(
-//   atoms: any,
-//   expAtoms: number[]
-// ): number[] {
-//   const atomsOfFragments = {}
-//   atoms.forEach((atom, atomId) => {
-//     atomsOfFragments[atom.fragment]
-//       ? atomsOfFragments[atom.fragment].push(atomId)
-//       : (atomsOfFragments[atom.fragment] = [atomId])
-//   })
-//
-//   const stereoFlags: number[] = []
-//
-//   Object.keys(atomsOfFragments).forEach((fragId) => {
-//     let shouldSelSFlag = true
-//     atomsOfFragments[fragId].forEach((atomId) => {
-//       if (!expAtoms.includes(atomId)) shouldSelSFlag = false
-//     })
-//     shouldSelSFlag && stereoFlags.push(Number(fragId))
-//   })
-//   return stereoFlags
-// }
+function selectStereoFlagsIfNecessary(
+  atoms: any,
+  expAtoms: number[]
+): number[] {
+  const atomsOfFragments = {}
+  atoms.forEach((atom, atomId) => {
+    atomsOfFragments[atom.fragment]
+      ? atomsOfFragments[atom.fragment].push(atomId)
+      : (atomsOfFragments[atom.fragment] = [atomId])
+  })
+
+  const stereoFlags: number[] = []
+
+  Object.keys(atomsOfFragments).forEach((fragId) => {
+    let shouldSelSFlag = true
+    atomsOfFragments[fragId].forEach((atomId) => {
+      if (!expAtoms.includes(atomId)) shouldSelSFlag = false
+    })
+    shouldSelSFlag && stereoFlags.push(Number(fragId))
+  })
+  return stereoFlags
+}
 
 interface Selection {
   atoms?: Array<number>
@@ -107,7 +106,6 @@ class Editor implements KetcherEditor {
   #origin?: any
   render: Render
   _selection: Selection | null
-  _chosenItems: Selection | null
   _tool: any
   historyStack: any
   historyPtr: any
@@ -126,7 +124,6 @@ class Editor implements KetcherEditor {
     removeFG: PipelineSubscription
     change: Subscription
     selectionChange: PipelineSubscription
-    chosenItemsChange: PipelineSubscription
     aromatizeStruct: PipelineSubscription
     dearomatizeStruct: PipelineSubscription
     enhancedStereoEdit: PipelineSubscription
@@ -149,7 +146,6 @@ class Editor implements KetcherEditor {
     )
 
     this._selection = null // eslint-disable-line
-    this._chosenItems = null
     this._tool = null // eslint-disable-line
     this.historyStack = []
     this.historyPtr = 0
@@ -176,7 +172,6 @@ class Editor implements KetcherEditor {
       removeFG: new PipelineSubscription(),
       change: new Subscription(),
       selectionChange: new PipelineSubscription(),
-      chosenItemsChange: new PipelineSubscription(),
       aromatizeStruct: new PipelineSubscription(),
       dearomatizeStruct: new PipelineSubscription(),
       // TODO: correct
@@ -215,9 +210,9 @@ class Editor implements KetcherEditor {
 
     const tool = new toolMap[name](this, opts)
 
-    const isAtomToolChosen = name === 'atom'
-    if (!isAtomToolChosen) {
-      this.hoverIcon.hide()
+    // hide icon if not AtomToll chosen
+    if (name !== 'atom') {
+      this.render.paper.getById('atomHoverIcon')?.hide()
     }
 
     if (!tool || tool.isNotActiveTool) {
@@ -331,8 +326,7 @@ class Editor implements KetcherEditor {
       if (Object.keys(res).length !== 0) {
         this._selection = res // eslint-disable-line
       }
-      //todo do we need  stereoFlags?
-      const stereoFlags = selectStereoFlags(
+      const stereoFlags = selectStereoFlagsIfNecessary(
         this.struct().atoms,
         this.explicitSelected().atoms
       )
@@ -355,7 +349,7 @@ class Editor implements KetcherEditor {
   hover(ci: any, newTool?: any, event?: PointerEvent) {
     const tool = newTool || this._tool // eslint-disable-line
 
-    let infoPanelData: any = null
+    let highlight: any = false
 
     if (
       'ci' in tool &&
@@ -369,25 +363,25 @@ class Editor implements KetcherEditor {
 
     if (!event) return
 
-    const checkFunctionGroupTypes = ['sgroups', 'functionalGroups']
-    const closestCollapsibleStructures = this.findItem(
-      event,
-      checkFunctionGroupTypes
-    )
-    if (closestCollapsibleStructures) {
-      const sGroup = this.struct()?.sgroups.get(closestCollapsibleStructures.id)
-      if (sGroup && !sGroup.data.expanded) {
-        const groupName = sGroup.data.name
-        const groupStruct = FunctionalGroup.getFunctionalGroupByName(groupName)
-        infoPanelData = {
-          groupStruct,
-          event,
-          sGroup
+    const myCi = this.findItem(event, ['sgroups', 'functionalGroups'])
+    if (myCi) {
+      if (myCi.map === 'sgroups' || myCi.map === 'functionalGroups') {
+        const sGroup = this.struct()?.sgroups.get(myCi.id)
+        if (sGroup && !sGroup.data.expanded) {
+          const groupName = sGroup.data.name
+          const groupStruct =
+            FunctionalGroup.getFunctionalGroupByName(groupName)
+          highlight = {
+            group: groupStruct,
+            x: event.clientX,
+            y: event.clientY,
+            groupId: myCi.id
+          }
         }
       }
     }
-    if (infoPanelData) {
-      this.event.showInfo.dispatch(infoPanelData)
+    if (highlight) {
+      this.event.showInfo.dispatch(highlight)
     } else {
       this.event.showInfo.dispatch(null)
     }
@@ -499,7 +493,6 @@ class Editor implements KetcherEditor {
 
   explicitSelected() {
     const selection = this.selection() || {}
-    // todo chose?
     const res = structObjects.reduce((acc, key) => {
       acc[key] = selection[key] ? selection[key].slice() : []
       return acc

@@ -9,7 +9,7 @@ interface DragCtx {
   stopTapping?: () => void
 }
 
-export function finishChoosing(event, editor, lassoHelper) {
+export function finishSelecting(event, editor, lassoHelper) {
   console.log('finishChoosing')
 
   let dragCtx: DragCtx | null = {}

@@ -32,8 +32,8 @@ import { selMerge } from './select'
 import Editor from '../Editor'
 // import { extendChoosing } from '../utils/choose/choose'
 // import { chooseItems } from '../utils/choose/chooseUtils/chooseItems'
-import { finishChoosing } from '../utils/choose/finishChoosing'
-import { startChoosing } from '../utils/choose/startChoosing'
+import { finishSelecting } from '../utils/selectItems/finishSelecting'
+import { startSelecting } from '../utils/selectItems/startSelecting'
 
 const searchMaps = [
   'atoms',
@@ -163,7 +163,7 @@ class SGroupTool {
     const bondResult: Array<number> = []
     const result: Array<number> = []
 
-    startChoosing(this, event, this.editor, this.lassoHelper)
+    startSelecting(this, event, this.editor, this.lassoHelper)
 
     if (closestItem && functionalGroups.size && closestItem.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
@@ -286,7 +286,7 @@ class SGroupTool {
     let extraBonds
     const result: Array<number> = []
 
-    finishChoosing(event, this.editor, this.lassoHelper)
+    finishSelecting(event, this.editor, this.lassoHelper)
 
     if (
       closestItem &&

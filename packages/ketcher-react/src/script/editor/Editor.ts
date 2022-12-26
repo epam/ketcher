@@ -606,6 +606,10 @@ function domEventSetup(editor: Editor, clientArea) {
       editor.lastEvent = event
       if (EditorTool && eventName in EditorTool) {
         EditorTool[eventName](event)
+        return true
+      }
+      if (eventName === 'mouseup') {
+        editor.selection(null)
       }
       return true
     }, -1)

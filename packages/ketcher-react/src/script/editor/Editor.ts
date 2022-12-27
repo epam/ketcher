@@ -23,7 +23,12 @@ import {
   Vec2,
   fromDescriptorsAlign,
   fromNewCanvas,
-  FunctionalGroup
+  FunctionalGroup,
+  Pool,
+  Atom,
+  Bond,
+  RxnPlus,
+  RxnArrow
 } from 'ketcher-core'
 import {
   DOMSubscription,
@@ -94,12 +99,23 @@ function selectStereoFlagsIfNecessary(
   return stereoFlags
 }
 
-interface Selection {
+export interface Selection {
   atoms?: Array<number>
   bonds?: Array<number>
   enhancedFlags?: Array<number>
   rxnPluses?: Array<number>
   rxnArrows?: Array<number>
+}
+
+interface Molecule {
+  atoms: Pool<Atom>
+  bonds: Pool<Bond>
+  rxnPluses: Pool<RxnPlus>
+  rxnArrows: Pool<RxnArrow>
+}
+
+export interface ReStruct {
+  molecule: Molecule
 }
 
 class Editor implements KetcherEditor {

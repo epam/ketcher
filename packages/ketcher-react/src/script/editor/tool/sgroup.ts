@@ -29,7 +29,7 @@ import {
 import LassoHelper from './helper/lasso'
 import { isEqual } from 'lodash/fp'
 import { selMerge } from './select'
-import Editor from '../Editor'
+import Editor, { ReStruct, Selection } from '../Editor'
 import { startSelecting } from '../utils/selectItems/startSelecting'
 import { finishSelecting } from '../utils/selectItems/finishSelecting'
 
@@ -554,18 +554,14 @@ function getContextBySgroup(restruct, sgAtoms) {
   return anyChainedBonds(sgBonds) ? SgContexts.Group : SgContexts.Bond
 }
 
-function getContextBySelection(
-  restruct: { molecule: any },
-  selection: { atoms: Iterable<any> | null | undefined; bonds: any[] }
-) {
+function getContextBySelection(restruct: ReStruct, selection: Selection) {
   const struct = restruct.molecule
 
   if (selection.atoms && !selection.bonds) {
     return SgContexts.Atom
   }
 
-  const bonds = selection.bonds.map((bondid) => struct.bonds.get(bondid))
-
+  const bonds = selection.bonds?.map((bondid) => struct.bonds.get(bondid))
   if (!anyChainedBonds(bonds)) {
     return SgContexts.Bond
   }
@@ -573,9 +569,12 @@ function getContextBySelection(
   selection.atoms = selection.atoms || []
 
   const atomSet = new Pile(selection.atoms)
-  const allBondsSelected = bonds.every(
-    (bond) => atomSet.has(bond.begin) && atomSet.has(bond.end)
-  )
+  const allBondsSelected = bonds?.every((bond) => {
+    if (bond) {
+      return atomSet.has(bond.begin) && atomSet.has(bond.end)
+    }
+    return true
+  })
 
   if (singleComponentSelected(restruct, selection.atoms) && allBondsSelected) {
     return SgContexts.Fragment

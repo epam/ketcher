@@ -80,7 +80,13 @@ function keyHandle(dispatch, state, hotKeys, event) {
         // check if atom is currently hovered over
         // in this case we do not want to activate the corresponding tool
         // and just insert the atom directly
-        handleHotkeyOverAtom(hoveredItemId, newAction, render, editor)
+        handleHotkeyOverAtom({
+          hoveredItemId,
+          newAction,
+          render,
+          editor,
+          dispatch
+        })
       } else {
         dispatch(onAction(newAction))
       }

@@ -1,32 +1,63 @@
 import {
+  fromAtomAddition,
   fromAtomsAttrs,
   fromBondAddition,
-  fromOneAtomDeletion
+  fromOneAtomDeletion,
+  Atom
 } from 'ketcher-core'
+import Tools from '../../editor/tool'
+import { onAction } from './shared'
 
-export function handleHotkeyOverAtom(hoveredItemId, newAction, render, editor) {
-  if (newAction.tool === 'atom') {
-    handleAtomTool(hoveredItemId, newAction, render, editor)
-    return
+type hotkeyOverAtomHandler = {
+  hoveredItemId: number
+  newAction: {
+    tool: string
+    opts?: any
   }
-  if (newAction.tool === 'bond') {
-    handleBondTool(hoveredItemId, newAction, render, editor)
-    return
+  render: any
+  editor: any
+}
+
+export function handleHotkeyOverAtom({
+  hoveredItemId,
+  newAction,
+  render,
+  editor,
+  dispatch
+}) {
+  const toolsMapping = {
+    atom: () => handleAtomTool({ hoveredItemId, newAction, render, editor }),
+    bond: () => handleBondTool({ hoveredItemId, newAction, render, editor }),
+    eraser: () =>
+      handleEraserTool({ hoveredItemId, newAction, render, editor }),
+    select: () =>
+      handleSelectionTool({ hoveredItemId, newAction, render, editor }),
+    charge: () =>
+      handleChargeTool({ hoveredItemId, newAction, render, editor }),
+    rgroupatom: () =>
+      handleRGroupAtomTool({ hoveredItemId, newAction, render, editor }),
+    sgroup: () => {
+      Tools.sgroup.sgroupDialog(editor, hoveredItemId, null)
+    },
+    hand: () =>
+      dispatch(
+        onAction({
+          tool: 'hand'
+        })
+      )
   }
-  if (newAction.tool === 'eraser') {
-    handleEraserTool(hoveredItemId, newAction, render, editor)
-    return
-  }
-  if (newAction.tool === 'select') {
-    handleSelectionTool(hoveredItemId, newAction, render, editor)
-    return
-  }
-  if (newAction.tool === 'charge') {
-    handleChargeTool(hoveredItemId, newAction, render, editor)
+  const toolHandler = toolsMapping[newAction.tool]
+  if (toolHandler) {
+    toolHandler()
   }
 }
 
-function handleAtomTool(hoveredItemId, newAction, render, editor) {
+function handleAtomTool({
+  hoveredItemId,
+  newAction,
+  render,
+  editor
+}: hotkeyOverAtomHandler) {
   const atomProps = { ...newAction.opts }
   const updatedAtoms = fromAtomsAttrs(
     render.ctab,
@@ -37,7 +68,12 @@ function handleAtomTool(hoveredItemId, newAction, render, editor) {
   editor.update(updatedAtoms)
 }
 
-function handleBondTool(hoveredItemId, newAction, render, editor) {
+function handleBondTool({
+  hoveredItemId,
+  newAction,
+  render,
+  editor
+}: hotkeyOverAtomHandler) {
   const newBond = fromBondAddition(
     render.ctab,
     newAction.opts,
@@ -47,27 +83,74 @@ function handleBondTool(hoveredItemId, newAction, render, editor) {
   editor.update(newBond)
 }
 
-function handleEraserTool(hoveredItemId, _, render, editor) {
+function handleEraserTool({
+  hoveredItemId,
+  render,
+  editor
+}: hotkeyOverAtomHandler) {
   editor.update(fromOneAtomDeletion(render.ctab, hoveredItemId))
 }
 
-function handleSelectionTool(hoveredItemId, _, __, editor) {
+function handleSelectionTool({ hoveredItemId, editor }: hotkeyOverAtomHandler) {
   editor.selection({
     atoms: [hoveredItemId]
   })
 }
 
-function handleChargeTool(hoveredItemId, newAction, render, editor) {
+function handleChargeTool({
+  hoveredItemId,
+  newAction,
+  render,
+  editor
+}: hotkeyOverAtomHandler) {
   const existingAtom = render.ctab.atoms.get(hoveredItemId)?.a
   if (existingAtom) {
     const updatedAtom = fromAtomsAttrs(
       render.ctab,
       hoveredItemId,
       {
-        charge: existingAtom.charge + newAction.opts.charge
+        charge: existingAtom.charge + newAction.opts
       },
       null
     )
     editor.update(updatedAtom)
   }
+}
+
+function handleRGroupAtomTool({
+  hoveredItemId,
+  render,
+  editor
+}: hotkeyOverAtomHandler) {
+  const struct = render.ctab.molecule
+  const atom =
+    hoveredItemId || hoveredItemId === 0
+      ? struct.atoms.get(hoveredItemId)
+      : null
+  const rglabel = atom ? atom.rglabel : 0
+  const label = atom ? atom.label : 'R#'
+
+  const dispatchResult = editor.event.elementEdit.dispatch({
+    label: 'R#',
+    rglabel,
+    fragId: atom ? atom.fragment : null
+  })
+
+  Promise.resolve(dispatchResult)
+    .then((element) => {
+      element = Object.assign({}, Atom.attrlist, element)
+
+      if (!hoveredItemId && hoveredItemId !== 0 && element.rglabel) {
+        editor.update(fromAtomAddition(editor.render.ctab, null, element))
+      } else if (rglabel !== element.rglabel) {
+        if (!element.rglabel && label !== 'R#') {
+          element.label = label
+        }
+
+        editor.update(
+          fromAtomsAttrs(editor.render.ctab, hoveredItemId, element, false)
+        )
+      }
+    })
+    .catch(() => null) // w/o changes
 }

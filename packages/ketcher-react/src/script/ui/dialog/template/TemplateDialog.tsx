@@ -325,9 +325,15 @@ const TemplateDialog: FC<Props> = (props) => {
 const selectTemplate = (template, props, dispatch) => {
   dispatch(selectTmpl(null))
   if (!template) return
+  dispatch(changeFilter(''))
   dispatch(selectTmpl(template))
   dispatch(onAction({ tool: 'template', opts: template }))
   props.onOk(template)
+}
+
+const exit = (props, dispatch) => {
+  dispatch(changeFilter(''))
+  props.onCancel()
 }
 
 export default connect(
@@ -342,6 +348,7 @@ export default connect(
     onSelect: (tmpl) => selectTemplate(tmpl, props, dispatch),
     onChangeGroup: (group) => dispatch(changeGroup(group)),
     onAttach: (tmpl) => dispatch(editTmpl(tmpl)),
+    onCancel: () => exit(props, dispatch),
     onDelete: (tmpl) => dispatch(deleteTmpl(tmpl))
   })
 )(TemplateDialog)

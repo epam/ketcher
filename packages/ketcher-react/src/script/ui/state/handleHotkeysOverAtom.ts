@@ -3,6 +3,8 @@ import {
   fromAtomsAttrs,
   fromBondAddition,
   fromOneAtomDeletion,
+  FunctionalGroup,
+  SGroup,
   Atom
 } from 'ketcher-core'
 import Tools from '../../editor/tool'
@@ -18,7 +20,7 @@ type hotkeyOverAtomHandler = {
   editor: any
 }
 
-export function handleHotkeyOverAtom({
+export async function handleHotkeyOverAtom({
   hoveredItemId,
   newAction,
   render,
@@ -47,7 +49,18 @@ export function handleHotkeyOverAtom({
       )
   }
   const toolHandler = toolsMapping[newAction.tool]
+  const isChangeStructureTool =
+    newAction.tool !== 'hand' || newAction.tool !== 'select'
   if (toolHandler) {
+    const isFunctionalGroupChange = await isChangingFunctionalGroup({
+      hoveredItemId,
+      render,
+      editor,
+      newAction
+    })
+    if (!isFunctionalGroupChange && isChangeStructureTool) {
+      return
+    }
     toolHandler()
   }
 }
@@ -117,7 +130,7 @@ function handleChargeTool({
   }
 }
 
-function handleRGroupAtomTool({
+async function handleRGroupAtomTool({
   hoveredItemId,
   render,
   editor
@@ -130,27 +143,72 @@ function handleRGroupAtomTool({
   const rglabel = atom ? atom.rglabel : 0
   const label = atom ? atom.label : 'R#'
 
-  const dispatchResult = editor.event.elementEdit.dispatch({
-    label: 'R#',
-    rglabel,
-    fragId: atom ? atom.fragment : null
-  })
-
-  Promise.resolve(dispatchResult)
-    .then((element) => {
-      element = Object.assign({}, Atom.attrlist, element)
-
-      if (!hoveredItemId && hoveredItemId !== 0 && element.rglabel) {
-        editor.update(fromAtomAddition(editor.render.ctab, null, element))
-      } else if (rglabel !== element.rglabel) {
-        if (!element.rglabel && label !== 'R#') {
-          element.label = label
-        }
-
-        editor.update(
-          fromAtomsAttrs(editor.render.ctab, hoveredItemId, element, false)
-        )
-      }
+  try {
+    let element = await editor.event.elementEdit.dispatch({
+      label: 'R#',
+      rglabel,
+      fragId: atom ? atom.fragment : null
     })
-    .catch(() => null) // w/o changes
+    element = Object.assign({}, Atom.attrlist, element)
+
+    if (!hoveredItemId && hoveredItemId !== 0 && element.rglabel) {
+      editor.update(fromAtomAddition(editor.render.ctab, null, element))
+    } else if (rglabel !== element.rglabel) {
+      if (!element.rglabel && label !== 'R#') {
+        element.label = label
+      }
+
+      editor.update(
+        fromAtomsAttrs(editor.render.ctab, hoveredItemId, element, false)
+      )
+    }
+  } catch (error) {} // w/o changes
+}
+
+async function isChangingFunctionalGroup({
+  hoveredItemId,
+  render,
+  editor
+}: hotkeyOverAtomHandler) {
+  const atomResult: number[] = []
+  const result: number[] = []
+  const atom = render.ctab.atoms.get(hoveredItemId)?.a
+  const molecule = render.ctab.molecule
+  const functionalGroups = molecule.functionalGroups
+  const sgroupsOnCanvas = Array.from(molecule.sgroups.values())
+  if (atom && functionalGroups) {
+    const atomId = FunctionalGroup.atomsInFunctionalGroup(
+      functionalGroups,
+      hoveredItemId
+    )
+
+    if (atomId !== null) {
+      atomResult.push(atomId)
+    }
+  }
+
+  const isFunctionalGroup = atomResult.length > 0
+
+  if (isFunctionalGroup) {
+    if (
+      SGroup.isAtomInSaltOrSolvent(
+        hoveredItemId as number,
+        sgroupsOnCanvas as SGroup[]
+      )
+    ) {
+      return false
+    }
+    for (const id of atomResult) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        functionalGroups,
+        id
+      )
+
+      if (fgId !== null && !result.includes(fgId)) {
+        result.push(fgId)
+      }
+    }
+    return await editor.event.removeFG.dispatch({ fgIds: result })
+  }
+  return true
 }

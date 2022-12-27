@@ -143,11 +143,7 @@ class SGroupTool {
         return
       }
 
-      SGroupTool.sgroupDialog(
-        this.editor,
-        id !== undefined ? id : null,
-        this.type
-      )
+      SGroupTool.sgroupDialog(this.editor, id ?? null, this.type)
       this.isNotActiveTool = true
     }
   }

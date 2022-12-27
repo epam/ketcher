@@ -1,6 +1,6 @@
 {
   "name": "ketcher-standalone",
-  "version": "2.6.4",
+  "version": "2.7.0-rc.7",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.17.9",
-    "indigo-ketcher": "1.8.3",
+    "indigo-ketcher": "1.9.0-rc.1",
     "ketcher-core": "workspace:*"
   },
   "devDependencies": {

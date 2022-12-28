@@ -21,7 +21,8 @@ import {
   changeGroup,
   deleteTmpl,
   editTmpl,
-  selectTmpl
+  selectTmpl,
+  changeTab
 } from '../../state/templates'
 import { filterLib, filterFGLib, greekify } from '../../utils'
 import Accordion from '@mui/material/Accordion'
@@ -75,7 +76,7 @@ interface TemplateLibProps {
   lib: Array<Template>
   selected: Template | null
   mode: string
-  initialTab: number
+  tab: number
   saltsAndSolvents: Template[]
 }
 
@@ -87,6 +88,7 @@ interface TemplateLibCallProps {
   onFilter: (filter: string) => void
   onOk: (res: any) => void
   onSelect: (res: any) => void
+  onTab: (tab: number) => void
   functionalGroups: Template[]
 }
 
@@ -148,16 +150,16 @@ const TemplateDialog: FC<Props> = (props) => {
   const {
     filter,
     onFilter,
+    onTab,
     onChangeGroup,
     mode,
-    initialTab,
+    tab,
     functionalGroups,
     lib: templateLib,
     saltsAndSolvents,
     ...rest
   } = props
 
-  const [tab, setTab] = useState(initialTab ?? TemplateTabs.TemplateLibrary)
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     props.group
   ])
@@ -172,10 +174,13 @@ const TemplateDialog: FC<Props> = (props) => {
     setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS])
   }, [functionalGroups, filter])
 
-  const handleTabChange = (_, tab) => {
-    setTab(tab)
+  useEffect(() => {
+    setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS])
+  }, [functionalGroups, filter])
+
+  useEffect(() => {
     props.onSelect(null)
-  }
+  }, [props])
 
   const handleAccordionChange = (accordion) => (_, isExpanded) => {
     setExpandedAccordions(
@@ -220,7 +225,11 @@ const TemplateDialog: FC<Props> = (props) => {
         />
         <Icon name="search" className={classes.searchIcon} />
       </div>
-      <Tabs value={tab} onChange={handleTabChange} className={classes.tabs}>
+      <Tabs
+        value={tab}
+        onChange={(_, value) => onTab(value)}
+        className={classes.tabs}
+      >
         <Tab
           label="Template Library"
           {...a11yProps(TemplateTabs.TemplateLibrary)}
@@ -339,12 +348,13 @@ const exit = (props, dispatch) => {
 export default connect(
   (store) => ({
     ...omit(['attach'], (store as any).templates),
-    initialTab: (store as any).modal?.prop?.tab,
+    initialTab: (store as any).modal?.prop?.tab || TemplateTabs.TemplateLibrary,
     functionalGroups: functionalGroupsSelector(store),
     saltsAndSolvents: saltsAndSolventsSelector(store)
   }),
   (dispatch: Dispatch<any>, props: Props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
+    onTab: (tab) => dispatch(changeTab(tab)),
     onSelect: (tmpl) => selectTemplate(tmpl, props, dispatch),
     onChangeGroup: (group) => dispatch(changeGroup(group)),
     onAttach: (tmpl) => dispatch(editTmpl(tmpl)),

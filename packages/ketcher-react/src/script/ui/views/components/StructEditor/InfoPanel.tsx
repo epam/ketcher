@@ -133,7 +133,6 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
       >
         <StructRender
           struct={molecule}
-          {...props}
           id={groupName}
           ref={childRef}
           options={{

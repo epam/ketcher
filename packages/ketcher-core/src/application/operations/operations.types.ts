@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct } from 'application/render'
 import { Struct } from 'domain/entities'
 
 export type OperationType =
@@ -70,8 +71,13 @@ export type OperationType =
 export interface Operation {
   readonly type: OperationType
   readonly priority: number
+  readonly _inverted: OperationType | undefined
+  data: any
   // eslint-disable-next-line no-use-before-define
   perform: (struct: Struct) => PerformOperationResult
+  invert(): Operation
+  isDummy(_restruct: ReStruct): boolean
+  execute(_restruct: ReStruct): void
 }
 
 export type PerformOperationResult = {

@@ -23,7 +23,7 @@ import { toBondType } from '../data/convert/structconv'
 const toolActions = {
   hand: {
     title: 'Hand tool',
-    shortcut: 'Mod+h',
+    shortcut: 'Mod+Alt+h',
     action: { tool: 'hand' },
     hidden: (options) => isHidden(options, 'hand')
   },

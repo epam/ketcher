@@ -200,6 +200,8 @@ class StructEditor extends Component {
       ...props
     } = this.props
 
+    const { clientX = 0, clientY = 0 } = this.state
+
     return (
       <Tag
         className={clsx(classes.canvas, className)}
@@ -232,7 +234,13 @@ class StructEditor extends Component {
             </div>
           )}
         </ContextMenuTrigger>
-        <InfoPanel {...this.state} {...this.props} />
+        <InfoPanel
+          clientX={clientX}
+          clientY={clientY}
+          render={this.props.render}
+          groupStruct={this.props.groupStruct}
+          sGroup={this.props.sGroup}
+        />
         <FGContextMenu />
       </Tag>
     )

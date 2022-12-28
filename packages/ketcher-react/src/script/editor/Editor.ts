@@ -387,7 +387,7 @@ class Editor implements KetcherEditor {
     }
   }
 
-  update(action: Action | true, ignoreHistory?) {
+  update(action: Action | true, ignoreHistory?: boolean) {
     if (action === true) {
       this.render.update(true) // force
     } else {

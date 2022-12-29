@@ -157,6 +157,7 @@ const TemplateDialog: FC<Props> = (props) => {
     functionalGroups,
     lib: templateLib,
     saltsAndSolvents,
+    onSelect,
     ...rest
   } = props
 
@@ -177,15 +178,9 @@ const TemplateDialog: FC<Props> = (props) => {
   }, [functionalGroups, filter])
 
   useEffect(() => {
-    setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS])
-  }, [functionalGroups, filter])
-
-  useEffect(() => {
-    console.log('oops!')
-
     searchInputRef.current?.focus()
-    props.onSelect(null)
-  }, [tab])
+    onSelect(null)
+  }, [tab, onSelect])
 
   const handleAccordionChange = (accordion) => (_, isExpanded) => {
     setExpandedAccordions(

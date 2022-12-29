@@ -42,6 +42,16 @@ export function initKeydownListener(element) {
   }
 }
 
+function removeNotRenderedStruct(actionTool, event, dispatch) {
+  const { code, metaKey } = event
+  if (actionTool.tool === 'paste' && code === 'KeyS' && metaKey) {
+    dispatch({
+      type: 'ACTION',
+      action: tools['select-rectangle'].action
+    })
+  }
+}
+
 /* HotKeys */
 function keyHandle(dispatch, state, hotKeys, event) {
   if (state.modal) return
@@ -75,12 +85,8 @@ function keyHandle(dispatch, state, hotKeys, event) {
     }
     // Removing from what should be saved - structure, which was added to paste tool,
     // but not yet rendered on canvas
-    if (actionTool.tool === 'paste' && event.code === 'KeyS' && event.metaKey) {
-      dispatch({
-        type: 'ACTION',
-        action: tools['select-rectangle'].action
-      })
-    }
+    removeNotRenderedStruct(actionTool, event, dispatch)
+
     if (clipArea.actions.indexOf(actName) === -1) {
       const newAction = actions[actName].action
       const hoverItemId = getHoveredAtomId(render.ctab.atoms)

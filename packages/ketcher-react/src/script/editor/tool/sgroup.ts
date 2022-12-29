@@ -245,7 +245,6 @@ class SGroupTool {
     }
 
     if (!closestItem) {
-      //  when closestItem.type is 'Canvas'
       this.lassoHelper.begin(event)
     }
   }

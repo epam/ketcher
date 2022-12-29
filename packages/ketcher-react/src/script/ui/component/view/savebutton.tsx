@@ -102,10 +102,6 @@ const SaveButton = (props: SaveButtonProps) => {
       onClick={(event) => {
         save(event)
       }}
-      // TODO: remove this, if it doesn't fire errors - hardly we need all these props
-      // on usual button, at least 'type' doesn't fit - for button it should be button, submit or reset
-      // - in props it's different
-      // {...props}
     >
       {props.children}
     </button>

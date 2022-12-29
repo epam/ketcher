@@ -175,10 +175,6 @@ const TemplateDialog: FC<Props> = (props) => {
   }, [functionalGroups, filter])
 
   useEffect(() => {
-    setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS])
-  }, [functionalGroups, filter])
-
-  useEffect(() => {
     props.onSelect(null)
   }, [tab])
 

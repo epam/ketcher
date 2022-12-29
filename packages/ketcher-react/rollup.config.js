@@ -16,6 +16,7 @@ import strip from '@rollup/plugin-strip'
 import svgr from '@svgr/rollup'
 import typescript from 'rollup-plugin-typescript2'
 import { license } from '../../license.ts'
+import { string } from 'rollup-plugin-string'
 
 const mode = {
   PRODUCTION: 'production',
@@ -98,7 +99,10 @@ const config = {
       comments: 'none',
       include: includePattern
     }),
-    ...(isProduction ? [strip({ include: includePattern })] : [])
+    ...(isProduction ? [strip({ include: includePattern })] : []),
+    string({
+      include: '**/*.sdf'
+    })
   ]
 }
 

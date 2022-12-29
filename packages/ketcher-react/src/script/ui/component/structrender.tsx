@@ -15,54 +15,8 @@
  ***************************************************************************/
 
 import { Component, ComponentType, createRef } from 'react'
-import { MolSerializer, Render, Struct } from 'ketcher-core'
-
-/**
- * for S-Groups we want to show expanded structure
- * without brackets
- */
-function prepareStruct(struct: Struct) {
-  if (struct.sgroups.size > 0) {
-    const newStruct = struct.clone()
-    newStruct.sgroups.delete(0)
-    return newStruct
-  }
-  return struct
-}
-
-/**
- * Is used to improve search and opening tab performance in Template Dialog
- * Rendering a lot of structures causes great delay
- */
-const renderCache = new Map()
-
-function renderStruct(
-  el: HTMLElement | null,
-  struct: Struct | null,
-  options: any = {}
-) {
-  if (el && struct) {
-    const { cachePrefix = '' } = options
-    const cacheKey = `${cachePrefix}${struct.name}`
-    if (renderCache.has(cacheKey)) {
-      el.innerHTML = renderCache.get(cacheKey)
-      return
-    }
-    const preparedStruct = prepareStruct(struct)
-    preparedStruct.initHalfBonds()
-    preparedStruct.initNeighbors()
-    preparedStruct.setImplicitHydrogen()
-    preparedStruct.markFragments()
-    const rnd = new Render(el, {
-      autoScale: true,
-      ...options
-    })
-    rnd.setMolecule(preparedStruct)
-    rnd.update(true, options.viewSz)
-    renderCache.set(cacheKey, rnd.clientArea.innerHTML)
-  }
-}
-
+import { MolSerializer, Struct } from 'ketcher-core'
+import { RenderStruct } from '../utils'
 interface StructRenderProps {
   struct: Struct
   options: any
@@ -100,7 +54,7 @@ class StructRender extends Component<StructRenderProps> {
     el?.childNodes.forEach((node) => {
       node.remove()
     })
-    renderStruct(el, parsedStruct, options)
+    RenderStruct.render(el, parsedStruct, options)
   }
 
   componentDidMount() {

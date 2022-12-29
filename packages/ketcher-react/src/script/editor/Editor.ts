@@ -387,7 +387,7 @@ class Editor implements KetcherEditor {
     }
   }
 
-  update(action: Action | true, ignoreHistory?) {
+  update(action: Action | true, ignoreHistory?: boolean) {
     if (action === true) {
       this.render.update(true) // force
     } else {
@@ -606,6 +606,10 @@ function domEventSetup(editor: Editor, clientArea) {
       editor.lastEvent = event
       if (EditorTool && eventName in EditorTool) {
         EditorTool[eventName](event)
+        return true
+      }
+      if (eventName === 'mouseup') {
+        editor.selection(null)
       }
       return true
     }, -1)

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dispatch, FC, useState, useEffect } from 'react'
+import { Dispatch, FC, useState, useEffect, useRef } from 'react'
 import TemplateTable, { Template } from './TemplateTable'
 import {
   changeFilter,
@@ -160,6 +160,8 @@ const TemplateDialog: FC<Props> = (props) => {
     ...rest
   } = props
 
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     props.group
   ])
@@ -179,6 +181,9 @@ const TemplateDialog: FC<Props> = (props) => {
   }, [functionalGroups, filter])
 
   useEffect(() => {
+    console.log('oops!')
+
+    searchInputRef.current?.focus()
     props.onSelect(null)
   }, [tab])
 
@@ -216,6 +221,7 @@ const TemplateDialog: FC<Props> = (props) => {
     >
       <div className={classes.inputContainer}>
         <Input
+          ref={searchInputRef}
           className={classes.input}
           type="search"
           value={filter}

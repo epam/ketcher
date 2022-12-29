@@ -1,5 +1,5 @@
 import { Action, fromItemsFuse, FunctionalGroup, SGroup } from 'ketcher-core'
-import { selMerge } from '../../tool/select'
+// import { selMerge } from '../../tool/select'
 
 interface DragCtx {
   item?: any
@@ -9,7 +9,7 @@ interface DragCtx {
   stopTapping?: () => void
 }
 
-export function finishSelecting(event, editor, lassoHelper) {
+export function finishSelecting(editor) {
   let dragCtx: DragCtx | null = {}
 
   const selected = editor.selection()
@@ -85,19 +85,6 @@ export function finishSelecting(event, editor, lassoHelper) {
     if (dragCtx.action.operations.length !== 0) editor.update(dragCtx.action)
 
     dragCtx = null
-  } else if (lassoHelper.running()) {
-    // TODO it catches more events than needed, to be re-factored
-    const sel =
-      newSelected.atoms.length > 0
-        ? selMerge(lassoHelper.end(), newSelected, false)
-        : lassoHelper.end()
-    editor.selection(
-      !event.shiftKey ? sel : selMerge(sel, editor.selection(), false)
-    )
-  } else if (lassoHelper.fragment) {
-    if (!event.shiftKey) {
-      editor.selection(null)
-    }
   }
   editor.event.message.dispatch({
     info: false

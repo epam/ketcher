@@ -13,8 +13,8 @@ function closestToSel(closestItem) {
   return res
 }
 
-export function startSelecting(event, editor, lassoHelper, self) {
-  const render = editor.render
+export function startSelecting(event, self) {
+  const render = self.editor.render
   const ctab = render.ctab
   const molecule = ctab.molecule
   const functionalGroups = molecule.functionalGroups
@@ -22,35 +22,22 @@ export function startSelecting(event, editor, lassoHelper, self) {
   const newSelected = { atoms: [] as any[], bonds: [] as any[] }
   let actualSgroupId
 
-  const selectFragment = lassoHelper.fragment || event.ctrlKey
-  const closestItem = editor.findItem(
+  const closestItem = self.editor.findItem(
     event,
-    selectFragment
-      ? [
-          'frags',
-          'sgroups',
-          'functionalGroups',
-          'sgroupData',
-          'rgroups',
-          'rxnArrows',
-          'rxnPluses',
-          'enhancedFlags',
-          'simpleObjects',
-          'texts'
-        ]
-      : [
-          'atoms',
-          'bonds',
-          'sgroups',
-          'functionalGroups',
-          'sgroupData',
-          'rgroups',
-          'rxnArrows',
-          'rxnPluses',
-          'enhancedFlags',
-          'simpleObjects',
-          'texts'
-        ],
+
+    [
+      'atoms',
+      'bonds',
+      'sgroups',
+      'functionalGroups',
+      'sgroupData',
+      'rgroups',
+      'rxnArrows',
+      'rxnPluses',
+      'enhancedFlags',
+      'simpleObjects',
+      'texts'
+    ],
     null
   )
 
@@ -73,7 +60,7 @@ export function startSelecting(event, editor, lassoHelper, self) {
     )
       selectedSgroups.push(actualSgroupId)
   }
-  if (closestItem && closestItem.map === 'bonds' && functionalGroups.size) {
+  if (closestItem?.map === 'bonds' && functionalGroups.size) {
     const bondId = FunctionalGroup.bondsInFunctionalGroup(
       molecule,
       functionalGroups,
@@ -84,7 +71,7 @@ export function startSelecting(event, editor, lassoHelper, self) {
       functionalGroups,
       bondId
     )
-    if (sGroupId !== null && !selectedSgroups.includes(sGroupId))
+    if (sGroupId ?? !selectedSgroups.includes(sGroupId))
       selectedSgroups.push(sGroupId)
   }
 
@@ -98,7 +85,7 @@ export function startSelecting(event, editor, lassoHelper, self) {
           newSelected.bonds.push(...sgroupBonds)
       }
     }
-    editor.selection(newSelected)
+    self.editor.selection(newSelected)
   }
 
   self.dragCtx = {
@@ -110,7 +97,6 @@ export function startSelecting(event, editor, lassoHelper, self) {
     //  when closestItem.type == 'Canvas'
     if (!event.shiftKey) self.editor.selection(null)
     delete self.dragCtx.item
-    if (!self.lassoHelper.fragment) self.lassoHelper.begin(event)
     return true
   }
 

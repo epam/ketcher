@@ -160,7 +160,7 @@ class SGroupTool {
     const bondResult: Array<number> = []
     const result: Array<number> = []
 
-    startSelecting(event, this.editor, this.lassoHelper, this)
+    startSelecting(event, this)
 
     if (closestItem?.map === 'atoms' && functionalGroups.size) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
@@ -278,7 +278,7 @@ class SGroupTool {
     let extraBonds
     const result: Array<number> = []
 
-    finishSelecting(event, this.editor, this.lassoHelper)
+    finishSelecting(this.editor)
 
     if (
       closestItem &&
@@ -291,7 +291,7 @@ class SGroupTool {
     )
       return
 
-    if (selected && functionalGroups.size && selected.atoms) {
+    if (selected?.atoms && functionalGroups.size) {
       for (const atom of selected.atoms) {
         const atomId = FunctionalGroup.atomsInFunctionalGroup(
           functionalGroups,
@@ -336,7 +336,7 @@ class SGroupTool {
       }
     }
 
-    if (selected && functionalGroups.size && selected.bonds) {
+    if (selected?.bonds && functionalGroups.size) {
       for (const bond of selected.bonds) {
         const bondId = FunctionalGroup.bondsInFunctionalGroup(
           molecule,

@@ -104,9 +104,9 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   const [molecule, setMolecule] = useState<Struct | null>(null)
   const childRef = useRef(null)
   const groupName = sGroup?.data?.name
-  let timer: ReturnType<typeof setTimeout>
 
   useEffect(() => {
+    let timer
     if (groupStruct) {
       timer = setTimeout(() => {
         setMolecule(groupStruct.clone())
@@ -115,7 +115,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
       setMolecule(null)
     }
     return () => clearTimeout(timer)
-  }, [groupName])
+  }, [groupName, groupStruct])
 
   const [position, size] = getPanelPosition(clientX, clientY, render, sGroup)
   const { x, y } = position

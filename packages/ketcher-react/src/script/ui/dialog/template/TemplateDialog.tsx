@@ -88,7 +88,7 @@ interface TemplateLibCallProps {
   onFilter: (filter: string) => void
   onOk: (res: any) => void
   onSelect: (res: any) => void
-  onTab: (tab: number) => void
+  onTabChange: (tab: number) => void
   functionalGroups: Template[]
 }
 
@@ -150,7 +150,7 @@ const TemplateDialog: FC<Props> = (props) => {
   const {
     filter,
     onFilter,
-    onTab,
+    onTabChange,
     onChangeGroup,
     mode,
     tab,
@@ -180,7 +180,7 @@ const TemplateDialog: FC<Props> = (props) => {
 
   useEffect(() => {
     props.onSelect(null)
-  }, [props])
+  }, [tab])
 
   const handleAccordionChange = (accordion) => (_, isExpanded) => {
     setExpandedAccordions(
@@ -227,7 +227,7 @@ const TemplateDialog: FC<Props> = (props) => {
       </div>
       <Tabs
         value={tab}
-        onChange={(_, value) => onTab(value)}
+        onChange={(_, value) => onTabChange(value)}
         className={classes.tabs}
       >
         <Tab
@@ -340,7 +340,7 @@ const selectTemplate = (template, props, dispatch) => {
   props.onOk(template)
 }
 
-const exit = (props, dispatch) => {
+const onModalClose = (props, dispatch) => {
   dispatch(changeFilter(''))
   props.onCancel()
 }
@@ -354,11 +354,11 @@ export default connect(
   }),
   (dispatch: Dispatch<any>, props: Props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
-    onTab: (tab) => dispatch(changeTab(tab)),
+    onTabChange: (tab) => dispatch(changeTab(tab)),
     onSelect: (tmpl) => selectTemplate(tmpl, props, dispatch),
     onChangeGroup: (group) => dispatch(changeGroup(group)),
     onAttach: (tmpl) => dispatch(editTmpl(tmpl)),
-    onCancel: () => exit(props, dispatch),
+    onCancel: () => onModalClose(props, dispatch),
     onDelete: (tmpl) => dispatch(deleteTmpl(tmpl))
   })
 )(TemplateDialog)

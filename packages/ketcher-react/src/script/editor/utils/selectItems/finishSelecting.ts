@@ -1,5 +1,4 @@
 import { Action, fromItemsFuse, FunctionalGroup, SGroup } from 'ketcher-core'
-// import { selMerge } from '../../tool/select'
 
 interface DragCtx {
   item?: any

@@ -146,7 +146,7 @@ class SGroupTool {
         return
       }
 
-      sgroupDialog(this.editor, id !== undefined ? id : null, this.type)
+      SGroupTool.sgroupDialog(this.editor, id ?? null, this.type)
       this.isNotActiveTool = true
     }
   }
@@ -455,7 +455,7 @@ class SGroupTool {
 
     // TODO: handle click on an existing group?
     if (id !== null || (selection && selection.atoms))
-      sgroupDialog(this.editor, id, this.type)
+      SGroupTool.sgroupDialog(this.editor, id, this.type)
   }
 
   cancel() {
@@ -464,70 +464,70 @@ class SGroupTool {
     }
     this.editor.selection(null)
   }
-}
 
-export function sgroupDialog(editor, id, defaultType) {
-  const restruct = editor.render.ctab
-  const struct = restruct.molecule
-  const selection = editor.selection() || {}
-  const sg = id !== null ? struct.sgroups.get(id) : null
-  const type = sg ? sg.type : defaultType
-  const eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit'
+  static sgroupDialog(editor, id, defaultType) {
+    const restruct = editor.render.ctab
+    const struct = restruct.molecule
+    const selection = editor.selection() || {}
+    const sg = id !== null ? struct.sgroups.get(id) : null
+    const type = sg ? sg.type : defaultType
+    const eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit'
 
-  let attrs
-  if (sg) {
-    attrs = sg.getAttrs()
-    if (!attrs.context) attrs.context = getContextBySgroup(restruct, sg.atoms)
-  } else {
-    attrs = {
-      context: getContextBySelection(restruct, selection)
-    }
-  }
-
-  const res = editor.event[eventName].dispatch({
-    type,
-    attrs
-  })
-
-  Promise.resolve(res)
-    .then((newSg) => {
-      // TODO: check before signal
-      if (
-        newSg.type !== 'DAT' && // when data s-group separates
-        checkOverlapping(struct, selection.atoms || [])
-      ) {
-        editor.event.message.dispatch({
-          error: 'Partial S-group overlapping is not allowed.'
-        })
-      } else {
-        if (
-          !sg &&
-          newSg.type !== 'DAT' &&
-          (!selection.atoms || selection.atoms.length === 0)
-        )
-          return
-
-        const isDataSg = sg && sg.getAttrs().context === newSg.attrs.context
-
-        if (isDataSg) {
-          const action = fromSeveralSgroupAddition(
-            restruct,
-            newSg.type,
-            sg.atoms,
-            newSg.attrs
-          ).mergeWith(fromSgroupDeletion(restruct, id))
-
-          editor.update(action)
-          editor.selection(selection)
-          return
-        }
-
-        const result = fromContextType(id, editor, newSg, selection)
-        editor.update(result.action)
-        editor.selection(null)
+    let attrs
+    if (sg) {
+      attrs = sg.getAttrs()
+      if (!attrs.context) attrs.context = getContextBySgroup(restruct, sg.atoms)
+    } else {
+      attrs = {
+        context: getContextBySelection(restruct, selection)
       }
+    }
+
+    const res = editor.event[eventName].dispatch({
+      type,
+      attrs
     })
-    .catch(() => null)
+
+    Promise.resolve(res)
+      .then((newSg) => {
+        // TODO: check before signal
+        if (
+          newSg.type !== 'DAT' && // when data s-group separates
+          checkOverlapping(struct, selection.atoms || [])
+        ) {
+          editor.event.message.dispatch({
+            error: 'Partial S-group overlapping is not allowed.'
+          })
+        } else {
+          if (
+            !sg &&
+            newSg.type !== 'DAT' &&
+            (!selection.atoms || selection.atoms.length === 0)
+          )
+            return
+
+          const isDataSg = sg && sg.getAttrs().context === newSg.attrs.context
+
+          if (isDataSg) {
+            const action = fromSeveralSgroupAddition(
+              restruct,
+              newSg.type,
+              sg.atoms,
+              newSg.attrs
+            ).mergeWith(fromSgroupDeletion(restruct, id))
+
+            editor.update(action)
+            editor.selection(selection)
+            return
+          }
+
+          const result = fromContextType(id, editor, newSg, selection)
+          editor.update(result.action)
+          editor.selection(null)
+        }
+      })
+      .catch(() => null)
+  }
 }
 
 function getContextBySgroup(restruct, sgAtoms) {

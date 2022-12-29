@@ -23,12 +23,7 @@ import {
   Vec2,
   fromDescriptorsAlign,
   fromNewCanvas,
-  FunctionalGroup,
-  Pool,
-  Atom,
-  Bond,
-  RxnPlus,
-  RxnArrow
+  FunctionalGroup
 } from 'ketcher-core'
 import {
   DOMSubscription,
@@ -41,6 +36,7 @@ import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 import { Highlighter } from './highlighter'
+import { Selection } from './EditorInterfaces'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -97,25 +93,6 @@ function selectStereoFlagsIfNecessary(
     shouldSelSFlag && stereoFlags.push(Number(fragId))
   })
   return stereoFlags
-}
-
-export interface Selection {
-  atoms?: Array<number>
-  bonds?: Array<number>
-  enhancedFlags?: Array<number>
-  rxnPluses?: Array<number>
-  rxnArrows?: Array<number>
-}
-
-interface Molecule {
-  atoms: Pool<Atom>
-  bonds: Pool<Bond>
-  rxnPluses: Pool<RxnPlus>
-  rxnArrows: Pool<RxnArrow>
-}
-
-export interface ReStruct {
-  molecule: Molecule
 }
 
 class Editor implements KetcherEditor {

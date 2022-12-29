@@ -29,9 +29,10 @@ import {
 import LassoHelper from './helper/lasso'
 import { isEqual } from 'lodash/fp'
 import { selMerge } from './select'
-import Editor, { ReStruct, Selection } from '../Editor'
+import Editor from '../Editor'
 import { startSelecting } from '../utils/selectItems/startSelecting'
 import { finishSelecting } from '../utils/selectItems/finishSelecting'
+import { ReStruct, Selection } from '../EditorInterfaces'
 
 const searchMaps = [
   'atoms',

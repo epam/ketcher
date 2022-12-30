@@ -33,6 +33,8 @@ import Editor from '../Editor'
 import { startSelecting } from '../utils/selectItems/startSelecting'
 import { finishSelecting } from '../utils/selectItems/finishSelecting'
 import { ReStruct, Selection } from '../EditorInterfaces'
+import { continueSelecting } from '../utils/selectItems/continueSelecting'
+import { cancelSelecting } from '../utils/selectItems/cancelSelecting'
 
 const searchMaps = [
   'atoms',
@@ -161,7 +163,7 @@ class SGroupTool {
     const bondResult: Array<number> = []
     const result: Array<number> = []
 
-    startSelecting(event, this)
+    startSelecting(event, this, this.lassoHelper)
 
     if (closestItem?.map === 'atoms' && functionalGroups.size) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
@@ -226,7 +228,6 @@ class SGroupTool {
       }
 
       this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
     } else if (bondResult.length > 0) {
       for (const id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
@@ -241,26 +242,16 @@ class SGroupTool {
       }
 
       this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
-    }
-
-    if (!closestItem) {
-      this.lassoHelper.begin(event)
     }
   }
 
   mousemove(event) {
-    if (this.lassoHelper.running(event)) {
-      this.editor.selection(this.lassoHelper.addPoint(event))
-    } else {
-      this.editor.hover(this.editor.findItem(event, searchMaps))
-    }
+    continueSelecting(event, this, this.lassoHelper)
+    this.editor.hover(this.editor.findItem(event, searchMaps))
   }
 
-  mouseleave(event) {
-    if (this.lassoHelper.running(event)) {
-      this.lassoHelper.end(event)
-    }
+  mouseleave() {
+    cancelSelecting(this, this.lassoHelper)
   }
 
   mouseup(event) {
@@ -278,7 +269,7 @@ class SGroupTool {
     let extraBonds
     const result: Array<number> = []
 
-    finishSelecting(this.editor)
+    finishSelecting(event, this, this.lassoHelper)
 
     if (
       closestItem &&
@@ -416,7 +407,6 @@ class SGroupTool {
 
     if (result.length === 1) {
       this.editor.selection(null)
-      this.lassoHelper.cancel()
       this.editor.event.removeFG.dispatch({ fgIds: result })
       return
     }
@@ -424,7 +414,7 @@ class SGroupTool {
     let id = null // id of an existing group, if we're editing one
     let selection: any = null // atoms to include in a newly created group
 
-    if (this.lassoHelper.running(event)) {
+    if (this.lassoHelper?.running()) {
       // TODO it catches more events than needed, to be re-factored
       selection =
         newSelected.atoms.length > 0
@@ -432,9 +422,7 @@ class SGroupTool {
           : this.lassoHelper.end(event)
       this.editor.selection(selection)
     } else {
-      if (!closestItem)
-        // when closestItem.type == 'Canvas'
-        return
+      if (!closestItem) return
       this.editor.hover(null)
 
       if (closestItem.map === 'atoms') {
@@ -459,9 +447,6 @@ class SGroupTool {
   }
 
   cancel() {
-    if (this.lassoHelper.running()) {
-      this.lassoHelper.end()
-    }
     this.editor.selection(null)
   }
 
@@ -472,6 +457,11 @@ class SGroupTool {
     const sg = id !== null ? struct.sgroups.get(id) : null
     const type = sg ? sg.type : defaultType
     const eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit'
+
+    if (!selection.atoms && !selection.bonds && !sg) {
+      console.info('There is no selection or sgroup')
+      return
+    }
 
     let attrs
     if (sg) {
@@ -611,6 +601,10 @@ function fromContextType(id, editor, newSg, currSelection) {
 }
 
 function anyChainedBonds(bonds) {
+  if (!bonds) {
+    return false
+  }
+
   if (bonds.length === 0) {
     return true
   }

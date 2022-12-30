@@ -1,5 +1,6 @@
 import { FunctionalGroup, SGroup } from 'ketcher-core'
 import { selMerge } from '../../tool/select'
+import { atomLongtapEvent } from '../../tool/atom'
 
 function isSelected(selection, item) {
   return (
@@ -13,7 +14,7 @@ function closestToSel(closestItem) {
   return res
 }
 
-export function startSelecting(event, self) {
+export function startSelecting(event, self, lassoHelper?) {
   const render = self.editor.render
   const ctab = render.ctab
   const molecule = ctab.molecule
@@ -22,26 +23,41 @@ export function startSelecting(event, self) {
   const newSelected = { atoms: [] as any[], bonds: [] as any[] }
   let actualSgroupId
 
+  self.editor.hover(null) // TODO review hovering for touch devicess
+
+  const selectFragment = lassoHelper?.fragment || event.ctrlKey
   const closestItem = self.editor.findItem(
     event,
-
-    [
-      'atoms',
-      'bonds',
-      'sgroups',
-      'functionalGroups',
-      'sgroupData',
-      'rgroups',
-      'rxnArrows',
-      'rxnPluses',
-      'enhancedFlags',
-      'simpleObjects',
-      'texts'
-    ],
+    selectFragment
+      ? [
+          'frags',
+          'sgroups',
+          'functionalGroups',
+          'sgroupData',
+          'rgroups',
+          'rxnArrows',
+          'rxnPluses',
+          'enhancedFlags',
+          'simpleObjects',
+          'texts'
+        ]
+      : [
+          'atoms',
+          'bonds',
+          'sgroups',
+          'functionalGroups',
+          'sgroupData',
+          'rgroups',
+          'rxnArrows',
+          'rxnPluses',
+          'enhancedFlags',
+          'simpleObjects',
+          'texts'
+        ],
     null
   )
 
-  if (closestItem && closestItem.map === 'atoms' && functionalGroups.size) {
+  if (closestItem?.map === 'atoms' && functionalGroups.size) {
     const atomId = FunctionalGroup.atomsInFunctionalGroup(
       functionalGroups,
       closestItem.id
@@ -71,7 +87,7 @@ export function startSelecting(event, self) {
       functionalGroups,
       bondId
     )
-    if (sGroupId ?? !selectedSgroups.includes(sGroupId))
+    if (sGroupId !== null && !selectedSgroups.includes(sGroupId))
       selectedSgroups.push(sGroupId)
   }
 
@@ -93,10 +109,14 @@ export function startSelecting(event, self) {
     xy0: render.page2obj(event)
   }
 
+  if (!closestItem || closestItem.map === 'atoms') {
+    atomLongtapEvent(self, render)
+  }
+
   if (!closestItem) {
-    //  when closestItem.type == 'Canvas'
     if (!event.shiftKey) self.editor.selection(null)
     delete self.dragCtx.item
+    if (lassoHelper && !lassoHelper.fragment) lassoHelper.begin(event)
     return true
   }
 
@@ -131,6 +151,7 @@ export function startSelecting(event, self) {
   if (event.shiftKey) {
     self.editor.selection(selMerge(sel, selection, true))
   } else {
+    self.editor.selection(null)
     self.editor.selection(isSelected(selection, closestItem) ? selection : sel)
   }
   return true

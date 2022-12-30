@@ -1,16 +1,10 @@
-import { Action, fromItemsFuse, FunctionalGroup, SGroup } from 'ketcher-core'
+import { fromItemsFuse, FunctionalGroup, SGroup } from 'ketcher-core'
+import { selectElementsOnCanvas } from './selectElementsOnCanvas'
+import { isDraggingStructureOnSaltOrSolvent } from './isDraggingStructureOnSaltOrSolvent'
+import { preventSaltAndSolventsMerge } from './preventSaltAndSolventsMerge'
 
-interface DragCtx {
-  item?: any
-  xy0?: any
-  mergeItems?: () => void
-  action?: Action
-  stopTapping?: () => void
-}
-
-export function finishSelecting(editor) {
-  let dragCtx: DragCtx | null = {}
-
+export function finishSelecting(event, self, lassoHelper?) {
+  const editor = self.editor
   const selected = editor.selection()
   const struct = editor.render.ctab
   const molecule = struct.molecule
@@ -19,7 +13,7 @@ export function finishSelecting(editor) {
   const newSelected = { atoms: [] as any[], bonds: [] as any[] }
   let actualSgroupId
 
-  if (selected && functionalGroups.size && selected.atoms) {
+  if (functionalGroups.size && selected?.atoms) {
     for (const atom of selected.atoms) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
@@ -41,7 +35,7 @@ export function finishSelecting(editor) {
     }
   }
 
-  if (selected && functionalGroups.size && selected.bonds) {
+  if (functionalGroups.size && selected?.bonds) {
     for (const atom of selected.bonds) {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
@@ -70,11 +64,28 @@ export function finishSelecting(editor) {
     }
   }
 
-  if (dragCtx && dragCtx.stopTapping) {
-    dragCtx.stopTapping()
+  const dragCtx = self.dragCtx
+
+  if (dragCtx?.stopTapping) dragCtx.stopTapping()
+
+  const possibleSaltOrSolvent = struct.sgroups.get(actualSgroupId)
+  const isDraggingSaltOrSolventOnStructure = SGroup.isSaltOrSolvent(
+    possibleSaltOrSolvent?.item.data.name
+  )
+  if (
+    (isDraggingSaltOrSolventOnStructure ||
+      isDraggingStructureOnSaltOrSolvent(dragCtx, struct.sgroups)) &&
+    dragCtx
+  ) {
+    preventSaltAndSolventsMerge(struct, dragCtx, editor)
+    delete self.dragCtx
+    if (lassoHelper?.running()) {
+      selectElementsOnCanvas(newSelected, editor, event, lassoHelper)
+    }
+    return true
   }
 
-  if (dragCtx && dragCtx.item) {
+  if (dragCtx?.item) {
     dragCtx.action = dragCtx.action
       ? fromItemsFuse(struct, dragCtx.mergeItems).mergeWith(dragCtx.action)
       : fromItemsFuse(struct, dragCtx.mergeItems)
@@ -83,7 +94,12 @@ export function finishSelecting(editor) {
     if (dragCtx.mergeItems) editor.selection(null)
     if (dragCtx.action.operations.length !== 0) editor.update(dragCtx.action)
 
-    dragCtx = null
+    delete self.dragCtx
+  } else if (lassoHelper?.running()) {
+    // TODO it catches more events than needed, to be re-factored
+    selectElementsOnCanvas(newSelected, editor, event, lassoHelper)
+  } else if (lassoHelper?.fragment) {
+    if (!event.shiftKey) editor.selection(null)
   }
   editor.event.message.dispatch({
     info: false

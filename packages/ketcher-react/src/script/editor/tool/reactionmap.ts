@@ -51,11 +51,7 @@ class ReactionMapTool {
       const ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item)
       const atoms = rnd.ctab.molecule.atoms
 
-      if (
-        ci &&
-        ci.map === 'atoms' &&
-        isValidMap(this.rcs, this.dragCtx.item.id, ci.id)
-      ) {
+      if (ci && ci.map === 'atoms') {
         editor.hover(ci)
         this.updateLine(
           atoms.get(this.dragCtx.item.id)?.pp,
@@ -91,13 +87,9 @@ class ReactionMapTool {
   mouseup(event) {
     if ('dragCtx' in this) {
       const rnd = this.editor.render
-      const ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item)
+      const ci = this.editor.findItem(event, ['atoms'])
 
-      if (
-        ci &&
-        ci.map === 'atoms' &&
-        isValidMap(this.rcs, this.dragCtx.item.id, ci.id)
-      ) {
+      if (ci && ci.map === 'atoms') {
         const action = new Action()
         const atoms = rnd.ctab.molecule.atoms
         const atom1 = atoms.get(this.dragCtx.item.id)
@@ -148,30 +140,6 @@ class ReactionMapTool {
     }
     this.editor.hover(null)
   }
-}
-
-function isValidMap(rcs, aid1, aid2) {
-  let t1
-  let t2
-  for (let ri = 0; (!t1 || !t2) && ri < rcs.reactants.length; ri++) {
-    const ro = Array.from(rcs.reactants[ri])
-    if (!t1 && ro.indexOf(aid1) >= 0) {
-      t1 = 'r'
-    }
-    if (!t2 && ro.indexOf(aid2) >= 0) {
-      t2 = 'r'
-    }
-  }
-  for (let pi = 0; (!t1 || !t2) && pi < rcs.products.length; pi++) {
-    const po = Array.from(rcs.products[pi])
-    if (!t1 && po.indexOf(aid1) >= 0) {
-      t1 = 'p'
-    }
-    if (!t2 && po.indexOf(aid2) >= 0) {
-      t2 = 'p'
-    }
-  }
-  return t1 && t2 && t1 !== t2
 }
 
 export default ReactionMapTool

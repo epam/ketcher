@@ -197,7 +197,7 @@ FieldSet.val = function (ev, schema) {
   const inputCollection = fieldset?.querySelectorAll('input')
   let result
 
-  if (inputCollection && inputCollection.length) {
+  if (inputCollection?.length) {
     result = Array.from(inputCollection).reduce(
       (res, inp: HTMLInputElement, i) =>
         !inp.checked ? res : [enumSchema(schema, i), ...res],

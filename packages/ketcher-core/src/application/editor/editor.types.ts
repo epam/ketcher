@@ -52,4 +52,5 @@ export interface Editor {
   setOptions: (opts: string) => any
   zoom: (value?: any) => any
   structSelected: () => Struct
+  // update: (action: Action | true, ignoreHistory?: boolean) => void
 }

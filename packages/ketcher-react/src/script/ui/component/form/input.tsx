@@ -45,7 +45,7 @@ export function GenericInput({
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (inputRef.current) {
+    if (innerRef?.current && inputRef.current) {
       innerRef.current = inputRef.current
     }
   }, [innerRef])

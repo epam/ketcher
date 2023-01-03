@@ -35,7 +35,6 @@ export function greekify(str: string): string {
 }
 
 export function filterLib(lib, filter: string) {
-  console.warn('Filter', filter)
   const trimmedFilter = filter.trim()
   const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i')
   return flow(
@@ -54,7 +53,6 @@ export function filterLib(lib, filter: string) {
 }
 
 export function filterFGLib(lib, filter) {
-  console.warn('Filter', filter)
   const trimmedFilter = filter.trim()
   const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i')
   const searchFunction = (item) => {

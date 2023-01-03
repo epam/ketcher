@@ -57,11 +57,16 @@
   }
 
   & > footer {
+    min-height: 24px;
     box-shadow: 0 -6px 6px 0 @color-accordion-shadow;
     z-index: 10;
 
     & > input {
       min-width: 110px !important;
+    }
+
+    & > span {
+      line-height: 24px;
     }
   }
 
@@ -81,7 +86,7 @@
       }
     }
 
-    .searchIcon { 
+    .searchIcon {
       width: 28px;
       height: 28px;
       position: absolute;
@@ -95,7 +100,7 @@
     flex-direction: row-reverse;
     font-size: 14px;
   }
-  
+
   .groupIcon {
     margin-left: 15px;
     margin-right: 8px;
@@ -104,13 +109,13 @@
   .expandIcon {
     width: 20px;
   }
-  
+
   .tabsContent {
     height: 50vh;
     background-color: @color-primary-light;
     overflow-y: auto;
     overflow-x: hidden;
-    
+
     .scrollbar();
   }
 
@@ -147,7 +152,7 @@
   :global(.MuiPaper-root.MuiAccordion-root) {
     box-shadow: none;
   }
-  
+
   :global(.MuiPaper-root.MuiAccordion-root::before),
   :global(.MuiPaper-root.MuiAccordion-root.Mui-expanded::before) {
     opacity: 0;
@@ -155,16 +160,16 @@
 
   :global(.MuiPaper-root) {
     &:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    height: 1px;
-    width: 424px;
-    margin: 0 auto;
-    background-color: @color-grey-5;
-    opacity: 1;
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      height: 1px;
+      width: 424px;
+      margin: 0 auto;
+      background-color: @color-grey-5;
+      opacity: 1;
     }
   }
 
@@ -182,7 +187,7 @@
 
   .tabs {
     box-shadow: 0 6px 6px 0 @color-accordion-shadow;
-    z-index: 10;  
+    z-index: 10;
   }
 
   :global(.MuiButtonBase-root.MuiTab-root) {

@@ -60,9 +60,14 @@ export class FunctionalGroup {
   static getFunctionalGroupByName(searchName: string): Struct | null {
     const provider = FunctionalGroupsProvider.getInstance()
     const functionalGroups = provider.getFunctionalGroupsList()
-    const foundGroup = functionalGroups.find(({ name, abbreviation }) => {
-      return name === searchName || abbreviation === searchName
-    })
+
+    let foundGroup
+    if (searchName) {
+      foundGroup = functionalGroups.find(({ name, abbreviation }) => {
+        return name === searchName || abbreviation === searchName
+      })
+    }
+
     return foundGroup || null
   }
 

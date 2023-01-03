@@ -284,7 +284,7 @@ class BondTool {
 
         this.editor.update(bondAddition[0])
       } else if (dragCtx.item.map === 'atoms') {
-        // when does it hapend?
+        // click on atom
         this.editor.update(
           fromBondAddition(
             rnd.ctab,

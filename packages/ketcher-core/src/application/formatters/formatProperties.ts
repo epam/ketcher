@@ -100,6 +100,12 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.CDX,
     ['.cdx'],
     true
+  ),
+  unknown: new SupportedFormatProperties(
+    'Unknown',
+    ChemicalMimeType.UNKNOWN,
+    ['.'],
+    true
   )
 }
 

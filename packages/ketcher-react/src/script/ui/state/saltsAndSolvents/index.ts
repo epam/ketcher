@@ -23,7 +23,8 @@ import {
   SdfSerializer,
   Struct
 } from 'ketcher-core'
-import { prefetchStatic } from '../templates/init-lib'
+import { RenderStruct } from '../../utils'
+import templatesRawData from '../../../../templates/salts-and-solvents.sdf'
 
 interface SaltsAndSolventsState {
   lib: []
@@ -53,15 +54,27 @@ const initSaltsAndSolvents = (lib: SdfItem[]) => ({
   payload: { lib }
 })
 
-export function initSaltsAndSolventsTemplates(baseUrl: string) {
-  return async (dispatch) => {
-    const fileName = 'salts-and-solvents.sdf'
-    const url = `${baseUrl}/templates/${fileName}`
+// This prerender adds part of structures to cache to speed up loading of Salts and Solvents tab
+const prerenderPartOfStructures = (saltsAndSolvents: Struct[], settings) => {
+  const part = saltsAndSolvents.slice(0, 50)
+  part.forEach((struct) => {
+    const div = document.createElement('div')
+    div.style.width = '100px'
+    div.style.height = '100px'
+    div.style.display = 'none'
+    document.body.appendChild(div)
+    RenderStruct.render(div, struct, { ...settings, autoScaleMargin: 15 })
+    div.remove()
+  })
+}
+
+export function initSaltsAndSolventsTemplates() {
+  return async (dispatch, getState) => {
+    const { settings } = getState().options
     const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance()
     const functionalGroupsProvider = FunctionalGroupsProvider.getInstance()
     const sdfSerializer = new SdfSerializer()
-    const text = await prefetchStatic(url)
-    const templates = sdfSerializer.deserialize(text)
+    const templates = sdfSerializer.deserialize(templatesRawData)
     const saltsAndSolvents = templates.reduce(
       (acc: Struct[], { struct, props }) => {
         struct.abbreviation = String(props.abbreviation)
@@ -70,6 +83,7 @@ export function initSaltsAndSolventsTemplates(baseUrl: string) {
       },
       []
     )
+    prerenderPartOfStructures(saltsAndSolvents, settings)
     saltsAndSolventsProvider.setSaltsAndSolventsList(saltsAndSolvents)
     functionalGroupsProvider.addToFunctionalGroupsList(saltsAndSolvents)
     dispatch(initSaltsAndSolvents(templates))

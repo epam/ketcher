@@ -32,6 +32,10 @@ export function identifyStructFormat(
     return SupportedFormat.rxn
   }
 
+  if (sanitizedString.indexOf('V2000') !== -1) {
+    return SupportedFormat.mol
+  }
+
   if (sanitizedString.indexOf('V3000') !== -1) {
     return SupportedFormat.molV3000
   }
@@ -55,12 +59,16 @@ export function identifyStructFormat(
     return SupportedFormat.cml
   }
 
-  const clearStr = sanitizedString.replace(/\s/g, '')
-  const anyLetterAnyDigitContainsSlashesEndsWithEqualSign =
-    /^[a-zA-Z0-9+/]*={0,2}$/
+  const clearStr = sanitizedString
+    .replace(/\s/g, '')
+    .replace(/(\\r)|(\\n)/g, '')
+  const isBase64String =
+    /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/
+  const cdxHeader = 'VjCD0100'
   if (
-    anyLetterAnyDigitContainsSlashesEndsWithEqualSign.test(clearStr) &&
-    clearStr.length % 4 === 0
+    clearStr.length % 4 === 0 &&
+    isBase64String.test(clearStr) &&
+    window.atob(clearStr).startsWith(cdxHeader)
   ) {
     return SupportedFormat.cdx
   }
@@ -69,10 +77,7 @@ export function identifyStructFormat(
     return SupportedFormat.inChI
   }
 
-  if (
-    sanitizedString.indexOf('\n') === -1 &&
-    sanitizedString === sanitizedString.toUpperCase()
-  ) {
+  if (sanitizedString.indexOf('\n') === -1) {
     // TODO: smiles regexp
     return SupportedFormat.smiles
   }
@@ -80,6 +85,6 @@ export function identifyStructFormat(
   if (sanitizedString.indexOf('<CDXML') !== -1) {
     return SupportedFormat.cdxml
   }
-  // Molfile by default as Indigo does
-  return SupportedFormat.mol
+
+  return SupportedFormat.unknown
 }

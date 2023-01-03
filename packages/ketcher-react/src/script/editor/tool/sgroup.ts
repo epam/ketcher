@@ -30,11 +30,13 @@ import LassoHelper from './helper/lasso'
 import { isEqual } from 'lodash/fp'
 import { selMerge } from './select'
 import Editor from '../Editor'
-import { startSelecting } from '../utils/selectItems/startSelecting'
-import { finishSelecting } from '../utils/selectItems/finishSelecting'
 import { ReStruct, Selection } from '../EditorInterfaces'
-import { continueSelecting } from '../utils/selectItems/continueSelecting'
-import { cancelSelecting } from '../utils/selectItems/cancelSelecting'
+import {
+  cancelSelecting,
+  continueSelecting,
+  finishSelecting,
+  startSelecting
+} from '../utils/selectItems'
 
 const searchMaps = [
   'atoms',

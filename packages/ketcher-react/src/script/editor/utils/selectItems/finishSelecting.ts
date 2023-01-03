@@ -1,7 +1,9 @@
 import { fromItemsFuse, FunctionalGroup, SGroup } from 'ketcher-core'
-import { selectElementsOnCanvas } from './selectElementsOnCanvas'
-import { isDraggingStructureOnSaltOrSolvent } from './isDraggingStructureOnSaltOrSolvent'
-import { preventSaltAndSolventsMerge } from './preventSaltAndSolventsMerge'
+import {
+  isDraggingStructureOnSaltOrSolvent,
+  preventSaltAndSolventsMerge,
+  selectElementsOnCanvas
+} from '.'
 
 export function finishSelecting(event, self, lassoHelper?) {
   const editor = self.editor

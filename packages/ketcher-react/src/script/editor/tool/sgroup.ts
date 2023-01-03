@@ -461,7 +461,6 @@ class SGroupTool {
     const eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit'
 
     if (!selection.atoms && !selection.bonds && !sg) {
-      console.info('There is no selection or sgroup')
       return
     }
 

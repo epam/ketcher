@@ -1,6 +1,10 @@
-export type ContextMenuItemProps = {
+import type { ItemProps, SubMenuProps } from 'react-contexify'
+
+export type ContextMenuShowProps = {
   selected: boolean
   closestItem: any
 }
 
-export type ContextMenuItemData = unknown
+export type ItemData = unknown
+export type CustomItemProps = Omit<ItemProps, 'children'>
+export type CustomSubMenuProps = Omit<SubMenuProps, 'children' | 'label'>

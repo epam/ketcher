@@ -18,8 +18,9 @@ import { Component, ComponentType, createRef } from 'react'
 import { MolSerializer, Struct } from 'ketcher-core'
 import { RenderStruct } from '../utils'
 interface StructRenderProps {
-  struct: Struct
-  options: any
+  className?: string
+  struct: Struct | string
+  options?: any
   id?: any
   Tag?: string | ComponentType<any>
 }

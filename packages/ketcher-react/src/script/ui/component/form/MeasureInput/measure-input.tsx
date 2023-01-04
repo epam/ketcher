@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 import Input from '../input'
 import Select from '../Select'
@@ -34,7 +34,7 @@ const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
       setMeasure('px')
       setCust(value)
     } // Hack: Set init value (RESET)
-  }, [])
+  }, [cust, measure, value])
 
   const handleChange = (value) => {
     const convValue = convertValue(value, measure, 'px')
@@ -49,14 +49,14 @@ const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
     setMeasure(m)
   }
 
-  const calcValue = () => {
+  const calcValue = useCallback(() => {
     const newValue = convertValue(value, 'px', measure)
     setCust(newValue)
-  }
+  }, [value, measure])
 
   useEffect(() => {
     calcValue()
-  }, [value, measure, calcValue])
+  }, [calcValue])
 
   const desc = schema || schema.properties[name]
 
@@ -92,8 +92,12 @@ function convertValue(value, measureFrom, measureTo) {
   if ((!value && value !== 0) || isNaN(value)) return null // eslint-disable-line
 
   return measureTo === 'px' || measureTo === 'pt'
-    ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed() - 0
-    : ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(3) - 0
+    ? Number(
+        ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed()
+      ) - 0
+    : Number(
+        ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(3)
+      ) - 0
 }
 
 export default MeasureInput

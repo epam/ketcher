@@ -30,4 +30,4 @@ function SelectCheckbox({ schema, ...props }) {
   return <Input schema={currentSchema} {...props} />
 }
 
-export default SelectCheckbox
+export { SelectCheckbox }

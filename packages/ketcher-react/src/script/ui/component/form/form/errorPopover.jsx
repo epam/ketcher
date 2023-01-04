@@ -27,10 +27,10 @@ const ErrorMessage = styled(Popover)`
   }
 `
 
-export const ErrorPopover = ({ error, anchorEl, handleClose }) => (
+export const ErrorPopover = ({ error, anchorEl, handleClose, open = true }) => (
   <ErrorMessage
     id="form-error"
-    open={true}
+    open={open}
     anchorEl={anchorEl}
     disableAutoFocus
     sx={{

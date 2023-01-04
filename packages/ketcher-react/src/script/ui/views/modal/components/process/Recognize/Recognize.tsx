@@ -84,14 +84,14 @@ function RecognizeDialog(prop) {
   const { onRecognize, isFragment, onImage, onChangeImago, ...props } =
     partProps
   const [canPreviewImage, setCanPreviewImage] = useState(true)
-  const result = () =>
+  const result = (structStr, fragment) =>
     structStr && !(structStr instanceof Promise)
       ? { structStr, fragment }
       : null
 
   useEffect(() => {
     onRecognize(file, version)
-  }, [file, version])
+  }, [file, version, onRecognize])
 
   const clearFile = useCallback(() => {
     onImage(null)

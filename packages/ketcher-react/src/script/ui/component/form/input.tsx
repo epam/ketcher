@@ -14,7 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { PureComponent, ComponentType, useRef, useEffect } from 'react'
+import React, {
+  PureComponent,
+  ComponentType,
+  useRef,
+  useEffect,
+  ForwardedRef
+} from 'react'
 
 import classes from './input.module.less'
 import clsx from 'clsx'
@@ -23,14 +29,15 @@ type Props = {
   component?: ComponentType
   children?: React.ReactNode
   className?: string
-  type: string
-  value: number | string | boolean
-  onChange: (val: any) => void
+  type?: string
+  value?: number | string | boolean
+  onChange?: (val: any) => void
   placeholder?: string
   isFocused?: boolean
   innerRef?: React.Ref<any>
   schema?: any
   multiple?: boolean
+  step?: string
 }
 
 export function GenericInput({
@@ -367,6 +374,8 @@ class Input extends PureComponent<
   }
 }
 
-export default React.forwardRef((props: Props, ref) => (
-  <Input innerRef={ref} {...props} />
-))
+export default React.forwardRef(
+  (props: Props, ref: ForwardedRef<HTMLInputElement>) => (
+    <Input innerRef={ref} {...props} />
+  )
+)

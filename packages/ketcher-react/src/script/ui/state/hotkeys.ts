@@ -63,23 +63,26 @@ function keyHandle(dispatch, state, hotKeys, event) {
       .catch(() => null)
     event.preventDefault()
   } else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
-    let index = checkGroupOnTool(group, actionTool) // index currentTool in group || -1
+    const index = checkGroupOnTool(group, actionTool) // index currentTool in group || -1
     const groupLength = group !== null ? group.length : 1
-    index = (index + 1) % groupLength
+    const newIndex = (index + 1) % groupLength
 
-    const actName = group[index]
+    const actName = group[newIndex]
     if (actionState[actName] && actionState[actName].disabled === true) {
       event.preventDefault()
       return
     }
     if (clipArea.actions.indexOf(actName) === -1) {
-      const newAction = actions[actName].action
+      let newAction = actions[actName].action
       const hoveredItemId = getHoveredAtomId(render.ctab.atoms)
       const isHoveringOverAtom = hoveredItemId !== null
+      // check if atom is currently hovered over
+      // in this case we do not want to activate the corresponding tool
+      // and just insert the atom directly
       if (isHoveringOverAtom && newAction.tool !== 'select') {
-        // check if atom is currently hovered over
-        // in this case we do not want to activate the corresponding tool
-        // and just insert the atom directly
+        // keep current selected tool if applicable
+        const prevActName = group[index]
+        if (prevActName) newAction = actions[prevActName].action
         handleHotkeyOverAtom({
           hoveredItemId,
           newAction,

@@ -47,6 +47,7 @@ class AtomTool {
       .show()
       .attr('text', `${atomProps.label}`)
       .attr('fill', `${ElementColor[atomProps.label]}`)
+    this.editor.updateHoverIconPosition()
 
     if (editor.selection()) {
       if (editor.selection()?.atoms) {
@@ -140,6 +141,7 @@ class AtomTool {
 
   mouseover() {
     this.editor.hoverIcon.show()
+    this.editor.updateHoverIconPosition()
   }
 
   mousemove(event) {

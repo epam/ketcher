@@ -236,6 +236,8 @@ class TemplateTool {
   }
 
   mousemove(event) {
+    showCursorFollowingTemplate(this.editor, event)
+
     const restruct = this.editor.render.ctab
 
     if (!this.dragCtx) {
@@ -500,7 +502,12 @@ class TemplateTool {
     this.mouseup(e)
   }
 
+  mouseover(e) {
+    showCursorFollowingTemplate(this.editor, e)
+  }
+
   mouseleave(e) {
+    hideCursorFollowingTemplate(this.editor)
     this.mouseup(e)
   }
 }
@@ -535,6 +542,32 @@ function getSign(molecule, bond, v) {
   }
 
   return 0
+}
+
+export type CursorFollowingSubscriberPayload = {
+  disabled: boolean
+  offsetX: number
+  offsetY: number
+}
+
+function showCursorFollowingTemplate(editor: Editor, event: MouseEvent) {
+  const payload: CursorFollowingSubscriberPayload = {
+    disabled: false,
+    offsetX: event.offsetX,
+    offsetY: event.offsetY
+  }
+
+  editor.event.cursorFollowingChange.dispatch(payload)
+}
+
+function hideCursorFollowingTemplate(editor: Editor) {
+  const payload: CursorFollowingSubscriberPayload = {
+    disabled: true,
+    offsetX: 0,
+    offsetY: 0
+  }
+
+  editor.event.cursorFollowingChange.dispatch(payload)
 }
 
 export default TemplateTool

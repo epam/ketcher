@@ -32,6 +32,7 @@ import Cursor from '../Cursor'
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu'
 
 import InfoPanel from './InfoPanel'
+import CursorFollowing from './CursorFollowing'
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -232,6 +233,7 @@ class StructEditor extends Component {
               PressedIcon={compressedHandIcon}
               enableHandTool={this.state.enableCursor}
             />
+            <CursorFollowing />
             <div className={classes.measureLog} ref={this.logRef} />
             {indigoVerification && (
               <div className={classes.spinnerOverlay}>

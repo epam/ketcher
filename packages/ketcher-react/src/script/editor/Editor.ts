@@ -130,6 +130,7 @@ class Editor implements KetcherEditor {
     confirm: PipelineSubscription
     showInfo: PipelineSubscription
     cursor: Subscription
+    cursorFollowingChange: PipelineSubscription
   }
 
   lastEvent: any
@@ -178,7 +179,8 @@ class Editor implements KetcherEditor {
       enhancedStereoEdit: new PipelineSubscription(),
       confirm: new PipelineSubscription(),
       cursor: new PipelineSubscription(),
-      showInfo: new PipelineSubscription()
+      showInfo: new PipelineSubscription(),
+      cursorFollowingChange: new PipelineSubscription()
     }
 
     domEventSetup(this, clientArea)

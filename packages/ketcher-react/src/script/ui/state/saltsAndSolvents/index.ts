@@ -63,7 +63,14 @@ const prerenderPartOfStructures = (saltsAndSolvents: Struct[], settings) => {
     div.style.height = '100px'
     div.style.display = 'none'
     document.body.appendChild(div)
-    RenderStruct.render(div, struct, { ...settings, autoScaleMargin: 15 })
+    RenderStruct.render(div, struct, {
+      ...settings,
+      autoScaleMargin: 15,
+      fontsz: 55,
+      fontszsub: 55,
+      bondThickness: 4,
+      doubleBondWidth: 10
+    })
     div.remove()
   })
 }

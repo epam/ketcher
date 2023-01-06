@@ -14,13 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, {
-  PureComponent,
-  ComponentType,
-  useRef,
-  useEffect,
-  ForwardedRef
-} from 'react'
+import React, { PureComponent, ComponentType, useRef, useEffect } from 'react'
 
 import classes from './input.module.less'
 import clsx from 'clsx'

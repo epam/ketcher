@@ -71,7 +71,14 @@ const RenderTmpl: FC<{
   return (
     <StructRender
       struct={tmpl.struct}
-      options={{ ...options, autoScaleMargin: 15 }}
+      options={{
+        ...options,
+        autoScaleMargin: 15,
+        fontsz: 55,
+        fontszsub: 55,
+        bondThickness: 4,
+        doubleBondWidth: 10
+      }}
       {...props}
     />
   )

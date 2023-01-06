@@ -25,6 +25,8 @@ export class RenderStruct {
     struct: Struct | null,
     options: any = {}
   ) {
+    console.log(options)
+
     if (el && struct) {
       const { cachePrefix = '' } = options
       const cacheKey = `${cachePrefix}${struct.name}`

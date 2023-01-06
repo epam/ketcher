@@ -375,7 +375,7 @@ class Input extends PureComponent<
 }
 
 export default React.forwardRef(
-  (props: Props, ref: ForwardedRef<HTMLInputElement>) => (
+  (props: Props, ref: React.Ref<HTMLInputElement>) => (
     <Input innerRef={ref} {...props} />
   )
 )

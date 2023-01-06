@@ -20,11 +20,11 @@ import { useContextMenu } from 'react-contexify'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
 import { CONTEXT_MENU_ID } from './ContextMenu'
-import type { ContextMenuItemProps } from './contextMenu.types'
+import type { ContextMenuShowProps } from './contextMenu.types'
 
 const ContextMenuTrigger: React.FC = ({ children }) => {
   const { getKetcherInstance } = useAppContext()
-  const { show, hideAll } = useContextMenu<ContextMenuItemProps>({
+  const { show, hideAll } = useContextMenu<ContextMenuShowProps>({
     id: CONTEXT_MENU_ID
   })
 
@@ -89,7 +89,7 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
   const handleDisplay = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (event) => {
       const editor = getKetcherInstance().editor as Editor
-      const closestItem = editor.findItem(event, ['bonds'])
+      const closestItem = editor.findItem(event, null)
 
       if (!closestItem) {
         hideAll()
@@ -118,7 +118,7 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
             closestItem
           }
         })
-      } else if (closestItem.map === 'bonds') {
+      } else if (closestItem.map === 'bonds' || closestItem.map === 'atoms') {
         // Show menu items for single update
         if (selection) {
           editor.render.ctab.setSelection(null)

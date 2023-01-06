@@ -143,7 +143,8 @@ const EnhancedStereo: FC<Props> = (props) => {
               name="type"
               labelPos={false}
               type="radio"
-              value={`&${maxAnd + 1}`}
+              value={`${StereoLabel.And}${maxAnd + 1}`}
+              checked={result.type === `${StereoLabel.And}${maxAnd + 1}`}
             />
             Create new AND Group
           </label>
@@ -152,7 +153,8 @@ const EnhancedStereo: FC<Props> = (props) => {
               name="type"
               labelPos={false}
               type="radio"
-              value={`or${maxOr + 1}`}
+              value={`${StereoLabel.Or}${maxOr + 1}`}
+              checked={result.type === `${StereoLabel.Or}${maxOr + 1}`}
             />
             Create new OR Group
           </label>

@@ -406,6 +406,7 @@ export class Molfile {
           this.writeWhiteSpace()
           this.writePadded(labelList[k], 3)
         }
+        this.writeWhiteSpace()
         this.writeCR()
       }
     }

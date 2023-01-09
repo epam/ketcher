@@ -80,9 +80,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
       // in this case we do not want to activate the corresponding tool
       // and just insert the atom directly
       if (isHoveringOverAtom && newAction.tool !== 'select') {
-        // keep current selected tool if applicable
-        const prevActName = group[index]
-        if (prevActName) newAction = actions[prevActName].action
+        newAction = getCurrentAction(group[index]) || newAction
         handleHotkeyOverAtom({
           hoveredItemId,
           newAction,
@@ -99,6 +97,10 @@ function keyHandle(dispatch, state, hotKeys, event) {
       clipArea.exec(event)
     }
   }
+}
+
+function getCurrentAction(prevActName) {
+  return actions[prevActName]?.action
 }
 
 function getHoveredAtomId(atoms: Map<number, ReAtom>): number | null {

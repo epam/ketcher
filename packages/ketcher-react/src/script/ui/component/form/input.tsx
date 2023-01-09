@@ -14,23 +14,46 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component, useRef, useEffect } from 'react'
+import React, { PureComponent, ComponentType, useRef, useEffect } from 'react'
 
-import { omit } from 'lodash/fp'
 import classes from './input.module.less'
 import clsx from 'clsx'
+
+type Props = {
+  component?: ComponentType
+  children?: React.ReactNode
+  className?: string
+  type: string
+  value: number | string | boolean
+  onChange: (val: any) => void
+  placeholder?: string
+  isFocused?: boolean
+  innerRef?: React.Ref<any>
+  schema?: any
+  multiple?: boolean
+}
 
 export function GenericInput({
   schema,
   value = '',
   onChange,
+  innerRef,
   type = 'text',
   isFocused = false,
   ...props
 }) {
-  const inputRef = useRef(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
   useEffect(() => {
-    if (inputRef.current && isFocused) inputRef.current.focus()
+    if (innerRef?.current && inputRef.current) {
+      innerRef.current = inputRef.current
+    }
+  }, [innerRef])
+
+  useEffect(() => {
+    if (inputRef.current && isFocused) {
+      inputRef.current.focus()
+    }
   }, [inputRef, isFocused])
 
   return (
@@ -72,7 +95,7 @@ function CheckBox({ schema, value = '', onChange, ...rest }) {
     <div className={classes.fieldSetItem}>
       <input
         type="checkbox"
-        checked={value}
+        checked={Boolean(value)}
         onClick={onChange}
         onChange={onChange}
         className={classes.input}
@@ -114,13 +137,15 @@ function Select({
 }
 
 Select.val = function (ev, schema) {
-  const select = ev.target
+  const select = ev.target as HTMLSelectElement
   if (!select.multiple) return enumSchema(schema, select.selectedIndex)
 
-  return [].reduce.call(
-    select.options,
-    (res, o, i) => (!o.selected ? res : [enumSchema(schema, i), ...res]),
-    []
+  const options = select.options
+
+  return Array.from(options).reduce(
+    (res, o: HTMLOptionElement, i) =>
+      !o.selected ? res : [enumSchema(schema, i), ...res],
+    [] as HTMLOptionElement[]
   )
 }
 
@@ -158,19 +183,29 @@ function FieldSet({
 }
 
 FieldSet.val = function (ev, schema) {
-  const input = ev.target
+  const input = ev.target as HTMLInputElement
+
   if (ev.target.tagName !== 'INPUT') {
     ev.stopPropagation()
     return undefined
   }
+
   // Hm.. looks like premature optimization
   //      should we inline this?
-  const fieldset = input.parentNode.parentNode.parentNode
-  const result = [].reduce.call(
-    fieldset.querySelectorAll('input'),
-    (res, inp, i) => (!inp.checked ? res : [enumSchema(schema, i), ...res]),
-    []
-  )
+
+  const fieldset = input?.parentNode?.parentNode?.parentNode
+  const inputCollection = fieldset?.querySelectorAll('input')
+  let result
+
+  if (inputCollection?.length) {
+    result = Array.from(inputCollection).reduce(
+      (res, inp: HTMLInputElement, i) =>
+        !inp.checked ? res : [enumSchema(schema, i), ...res],
+
+      [] as HTMLInputElement[]
+    )
+  }
+
   return input.type === 'radio' ? result[0] : result
 }
 
@@ -261,7 +296,8 @@ function multipleSelectCtrl(component, schema, onChange) {
   }
 }
 
-function ctrlMap(component, { schema, multiple, onChange }) {
+function ctrlMap(component, props: Props) {
+  const { schema, multiple, onChange } = props
   if (
     !schema ||
     (!schema.enum && !schema.items && !Array.isArray(schema)) ||
@@ -275,11 +311,8 @@ function ctrlMap(component, { schema, multiple, onChange }) {
   return singleSelectCtrl(component, schema, onChange)
 }
 
-function componentMap({ schema, type, multiple }) {
-  if (schema?.type === 'boolean' && schema?.description === 'slider') {
-    return Slider
-  }
-
+function componentMap(props: Props) {
+  const { schema, type, multiple } = props
   if (!schema || (!schema.enum && !schema.items && !Array.isArray(schema))) {
     if (type === 'checkbox' || (schema && schema.type === 'boolean')) {
       return CheckBox
@@ -287,35 +320,55 @@ function componentMap({ schema, type, multiple }) {
 
     return type === 'textarea' ? TextArea : GenericInput
   }
+
+  if (schema?.type === 'boolean' && schema?.description === 'slider') {
+    return Slider
+  }
+
   if (multiple || schema.type === 'array')
     return type === 'checkbox' ? FieldSet : Select
 
   return type === 'radio' ? FieldSet : Select
 }
 
-function shallowCompare(a, b) {
-  for (const key in a) {
-    if (!(key in b)) return true
+class Input extends PureComponent<
+  Props & { innerRef: React.Ref<HTMLInputElement> }
+> {
+  component: any
+  ctrl: {
+    type?: string
+    onChange?: (val: any) => void
+    onSelect?: (ev, values) => void
+    selected?: (testVal: any, value: any) => boolean
+    multiple?: boolean
   }
-  for (const key in b) {
-    if (a[key] !== b[key]) return true
-  }
-  return false
-}
 
-export default class Input extends Component {
-  shouldComponentUpdate({ children, onChange, style, ...nextProps }) {
-    const oldProps = omit(this.props, ['children', 'onChange', 'style'])
-    return shallowCompare(oldProps, nextProps)
+  constructor(props: Props & { innerRef: React.Ref<HTMLInputElement> }) {
+    super(props)
+    this.component = props.component || componentMap(props)
+    this.ctrl = ctrlMap(this.component, props)
   }
 
   render() {
-    const { component } = this.props
-    this.component = component || componentMap(this.props)
-    this.ctrl = ctrlMap(this.component, this.props)
-
-    const { children, onChange, ...props } = this.props
+    const { children, onChange, ...restProps } = this.props
     const Component = this.component
-    return <Component {...this.ctrl} {...props} />
+
+    const ComponentWithRef = React.forwardRef((props, ref) => (
+      <Component {...props} innerRef={ref} />
+    ))
+
+    return (
+      <ComponentWithRef
+        ref={this.props.innerRef}
+        {...this.ctrl}
+        {...restProps}
+      />
+    )
   }
 }
+
+export default React.forwardRef(
+  (props: Props, ref: React.Ref<HTMLInputElement>) => (
+    <Input innerRef={ref} {...props} />
+  )
+)

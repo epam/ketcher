@@ -14,14 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dispatch, FC, useState, useEffect } from 'react'
+import { Dispatch, FC, useState, useEffect, useRef } from 'react'
 import TemplateTable, { Template } from './TemplateTable'
 import {
   changeFilter,
   changeGroup,
   deleteTmpl,
   editTmpl,
-  selectTmpl
+  selectTmpl,
+  changeTab
 } from '../../state/templates'
 import { filterLib, filterFGLib, greekify } from '../../utils'
 import Accordion from '@mui/material/Accordion'
@@ -75,7 +76,7 @@ interface TemplateLibProps {
   lib: Array<Template>
   selected: Template | null
   mode: string
-  initialTab: number
+  tab: number
   saltsAndSolvents: Template[]
 }
 
@@ -87,6 +88,7 @@ interface TemplateLibCallProps {
   onFilter: (filter: string) => void
   onOk: (res: any) => void
   onSelect: (res: any) => void
+  onTabChange: (tab: number) => void
   functionalGroups: Template[]
 }
 
@@ -148,16 +150,19 @@ const TemplateDialog: FC<Props> = (props) => {
   const {
     filter,
     onFilter,
+    onTabChange,
     onChangeGroup,
     mode,
-    initialTab,
+    tab,
     functionalGroups,
     lib: templateLib,
     saltsAndSolvents,
+    onSelect,
     ...rest
   } = props
 
-  const [tab, setTab] = useState(initialTab ?? TemplateTabs.TemplateLibrary)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     props.group
   ])
@@ -172,10 +177,10 @@ const TemplateDialog: FC<Props> = (props) => {
     setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS])
   }, [functionalGroups, filter])
 
-  const handleTabChange = (_, tab) => {
-    setTab(tab)
-    props.onSelect(null)
-  }
+  useEffect(() => {
+    searchInputRef.current?.focus()
+    onSelect(null)
+  }, [tab, onSelect])
 
   const handleAccordionChange = (accordion) => (_, isExpanded) => {
     setExpandedAccordions(
@@ -211,6 +216,7 @@ const TemplateDialog: FC<Props> = (props) => {
     >
       <div className={classes.inputContainer}>
         <Input
+          ref={searchInputRef}
           className={classes.input}
           type="search"
           value={filter}
@@ -220,7 +226,11 @@ const TemplateDialog: FC<Props> = (props) => {
         />
         <Icon name="search" className={classes.searchIcon} />
       </div>
-      <Tabs value={tab} onChange={handleTabChange} className={classes.tabs}>
+      <Tabs
+        value={tab}
+        onChange={(_, value) => onTabChange(value)}
+        className={classes.tabs}
+      >
         <Tab
           label="Template Library"
           {...a11yProps(TemplateTabs.TemplateLibrary)}
@@ -325,23 +335,31 @@ const TemplateDialog: FC<Props> = (props) => {
 const selectTemplate = (template, props, dispatch) => {
   dispatch(selectTmpl(null))
   if (!template) return
+  dispatch(changeFilter(''))
   dispatch(selectTmpl(template))
   dispatch(onAction({ tool: 'template', opts: template }))
   props.onOk(template)
 }
 
+const onModalClose = (props, dispatch) => {
+  dispatch(changeFilter(''))
+  props.onCancel()
+}
+
 export default connect(
   (store) => ({
     ...omit(['attach'], (store as any).templates),
-    initialTab: (store as any).modal?.prop?.tab,
+    initialTab: (store as any).modal?.prop?.tab || TemplateTabs.TemplateLibrary,
     functionalGroups: functionalGroupsSelector(store),
     saltsAndSolvents: saltsAndSolventsSelector(store)
   }),
   (dispatch: Dispatch<any>, props: Props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
+    onTabChange: (tab) => dispatch(changeTab(tab)),
     onSelect: (tmpl) => selectTemplate(tmpl, props, dispatch),
     onChangeGroup: (group) => dispatch(changeGroup(group)),
     onAttach: (tmpl) => dispatch(editTmpl(tmpl)),
+    onCancel: () => onModalClose(props, dispatch),
     onDelete: (tmpl) => dispatch(deleteTmpl(tmpl))
   })
 )(TemplateDialog)

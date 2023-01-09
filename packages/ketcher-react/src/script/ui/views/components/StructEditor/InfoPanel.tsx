@@ -102,11 +102,20 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
     sGroup
   } = props
   const [molecule, setMolecule] = useState<Struct | null>(null)
+  const [sGroupData, setSGroupData] = useState<string | null>(null)
   const childRef = useRef(null)
   const groupName = sGroup?.data?.name
-  let timer: ReturnType<typeof setTimeout>
 
   useEffect(() => {
+    if (!groupStruct && sGroup?.type === 'DAT') {
+      setSGroupData(`${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`)
+    } else {
+      setSGroupData(null)
+    }
+  }, [groupStruct, sGroup])
+
+  useEffect(() => {
+    let timer
     if (groupStruct) {
       timer = setTimeout(() => {
         setMolecule(groupStruct.clone())
@@ -115,41 +124,54 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
       setMolecule(null)
     }
     return () => clearTimeout(timer)
-  }, [groupName])
+  }, [groupName, groupStruct])
 
   const [position, size] = getPanelPosition(clientX, clientY, render, sGroup)
   const { x, y } = position
   const width = size.x
   const height = size.y
 
-  return (
-    molecule && (
-      <div
-        style={{
-          left: x + 'px',
-          top: y + 'px'
+  if (!molecule && !sGroupData) {
+    return null
+  }
+
+  return molecule ? (
+    <div
+      style={{
+        left: x + 'px',
+        top: y + 'px'
+      }}
+      className={clsx(classes.infoPanel, className)}
+    >
+      <StructRender
+        struct={molecule}
+        id={groupName}
+        ref={childRef}
+        options={{
+          ...render.options,
+          autoScale: true,
+          autoScaleMargin: 0,
+          rescaleAmount: 1,
+          cachePrefix: 'infoPanel',
+          viewSz: new Vec2(width, height),
+          width: width,
+          height: height
         }}
-        className={clsx(classes.infoPanel, className)}
-      >
-        <StructRender
-          struct={molecule}
-          id={groupName}
-          ref={childRef}
-          options={{
-            ...render.options,
-            autoScale: true,
-            autoScaleMargin: 0,
-            rescaleAmount: 1,
-            cachePrefix: 'infoPanel',
-            viewSz: new Vec2(width, height),
-            width: width,
-            height: height
-          }}
-        />
-      </div>
-    )
+      />
+    </div>
+  ) : (
+    <div
+      style={{
+        left: x + 'px',
+        top: y + 'px'
+      }}
+      className={clsx(classes.infoPanel, className)}
+    >
+      {sGroupData}
+    </div>
   )
 }
+
 export default connect((store: any) => ({
   clientX: functionGroupInfoSelector(store)?.event?.clientX || 0,
   clientY: functionGroupInfoSelector(store)?.event?.clientY || 0,

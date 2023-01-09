@@ -32,8 +32,6 @@ export async function handleHotkeyOverAtom({
     bond: () => handleBondTool({ hoveredItemId, newAction, render, editor }),
     eraser: () =>
       handleEraserTool({ hoveredItemId, newAction, render, editor }),
-    select: () =>
-      handleSelectionTool({ hoveredItemId, newAction, render, editor }),
     charge: () =>
       handleChargeTool({ hoveredItemId, newAction, render, editor }),
     rgroupatom: () =>
@@ -49,8 +47,7 @@ export async function handleHotkeyOverAtom({
       )
   }
   const toolHandler = toolsMapping[newAction.tool]
-  const isChangeStructureTool =
-    newAction.tool !== 'hand' || newAction.tool !== 'select'
+  const isChangeStructureTool = newAction.tool !== 'hand'
   if (toolHandler) {
     const isFunctionalGroupChange = await isChangingFunctionalGroup({
       hoveredItemId,
@@ -102,12 +99,6 @@ function handleEraserTool({
   editor
 }: hotkeyOverAtomHandler) {
   editor.update(fromOneAtomDeletion(render.ctab, hoveredItemId))
-}
-
-function handleSelectionTool({ hoveredItemId, editor }: hotkeyOverAtomHandler) {
-  editor.selection({
-    atoms: [hoveredItemId]
-  })
 }
 
 function handleChargeTool({

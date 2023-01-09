@@ -14,13 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { connect } from 'react-redux'
 import Editor from 'src/script/editor'
 import { CursorFollowingSubscriberPayload } from 'src/script/editor/tool/template'
 import StructRender from 'src/script/ui/component/structrender'
 import { Template } from 'src/script/ui/dialog/template/TemplateTable'
 import classes from './CursorFollowing.module.less'
+
+const stereoStructOffset = {
+  transform: `translate(14px, -22px)`
+}
 
 interface CursorFollowingProps {
   selectedTemplate?: Template
@@ -35,6 +39,12 @@ const CursorFollowing: React.FC<CursorFollowingProps> = ({
   const [dynamicStyles, setDynamicStyles] = useState({
     transform: 'none'
   })
+
+  const hasStereoAtom = useMemo<boolean | undefined>(
+    () =>
+      selectedTemplate?.struct.atoms.some((atom) => atom.stereoLabel !== null),
+    [selectedTemplate?.struct.atoms]
+  )
 
   const updatePosition = useCallback(
     (offsetX: number, offsetY: number) => {
@@ -86,18 +96,19 @@ const CursorFollowing: React.FC<CursorFollowingProps> = ({
           {isFunctionalGroupOrSaltOrSolvent ? (
             <div className={classes.text}>{selectedTemplate.struct.name}</div>
           ) : (
-            // todo @yulei the center not overlapped when stereotype
-            <StructRender
-              id={selectedTemplate.struct?.name}
-              struct={selectedTemplate.struct}
-              options={{
-                ...editor?.render.options,
-                cachePrefix: 'cursorFollowing',
-                autoScale: true,
-                autoScaleMargin: 0,
-                rescaleAmount: 1
-              }}
-            />
+            <div style={hasStereoAtom ? stereoStructOffset : undefined}>
+              <StructRender
+                id={selectedTemplate.struct?.name}
+                struct={selectedTemplate.struct}
+                options={{
+                  ...editor?.render.options,
+                  cachePrefix: 'cursorFollowing',
+                  autoScale: true,
+                  autoScaleMargin: 0,
+                  rescaleAmount: 1
+                }}
+              />
+            </div>
           )}
         </div>
       ) : null}

@@ -45,8 +45,10 @@ const CursorFollowing: React.FC<CursorFollowingProps> = ({
       const x = offsetX - scrollLeft
       const y = offsetY - scrollTop
 
+      const scale = editor.render.options.zoom
+
       setDynamicStyles({
-        transform: `translate(${x}px, ${y}px)`
+        transform: `translate(${x}px, ${y}px) scale(${scale})`
       })
     },
     [editor]

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import Editor from 'src/script/editor'
 import { CursorFollowingSubscriberPayload } from 'src/script/editor/tool/template'
@@ -31,39 +31,42 @@ const CursorFollowing: React.FC<CursorFollowingProps> = ({
   selectedTemplate,
   editor
 }) => {
-  const domRef = useRef<HTMLDivElement>(null)
-  const AnimationFrameRef = useRef<number>()
-
   const [disabled, setDisabled] = useState(true)
+  const [dynamicStyles, setDynamicStyles] = useState({
+    transform: 'none'
+  })
+
+  const updatePosition = useCallback(
+    (offsetX: number, offsetY: number) => {
+      if (!editor) return
+
+      const scrollTop = editor.render.clientArea?.scrollTop || 0
+      const scrollLeft = editor.render.clientArea?.scrollLeft || 0
+      const x = offsetX - scrollLeft
+      const y = offsetY - scrollTop
+
+      setDynamicStyles({
+        transform: `translate(${x}px, ${y}px)`
+      })
+    },
+    [editor]
+  )
 
   const subscriber = useCallback(
     (payload: CursorFollowingSubscriberPayload) => {
-      if (disabled !== payload.disabled) setDisabled(payload.disabled)
-
-      const updatePosition = () => {
-        if (!editor || !domRef.current) return
-
-        const scrollTop = editor.render.clientArea?.scrollTop || 0
-        const scrollLeft = editor.render.clientArea?.scrollLeft || 0
-        const x = payload.offsetX - scrollLeft
-        const y = payload.offsetY - scrollTop
-
-        domRef.current.style.transform = `translate(${x}px, ${y}px)`
+      if (disabled !== payload.disabled) {
+        setDisabled(payload.disabled)
       }
 
-      AnimationFrameRef.current &&
-        cancelAnimationFrame(AnimationFrameRef.current)
-      AnimationFrameRef.current = requestAnimationFrame(updatePosition)
+      updatePosition(payload.offsetX, payload.offsetY)
     },
-    [disabled, editor]
+    [disabled, updatePosition]
   )
 
   useEffect(() => {
     editor?.event.cursorFollowingChange.add(subscriber)
     return () => {
       editor?.event.cursorFollowingChange.remove(subscriber)
-      AnimationFrameRef.current &&
-        cancelAnimationFrame(AnimationFrameRef.current)
     }
   }, [editor, subscriber])
 
@@ -77,7 +80,7 @@ const CursorFollowing: React.FC<CursorFollowingProps> = ({
   return (
     <>
       {!disabled && isCustomTemplate && selectedTemplate ? (
-        <div className={classes.wrapper} ref={domRef}>
+        <div className={classes.wrapper} style={dynamicStyles}>
           {isFunctionalGroupOrSaltOrSolvent ? (
             <div className={classes.text}>{selectedTemplate.struct.name}</div>
           ) : (

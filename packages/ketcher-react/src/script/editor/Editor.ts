@@ -112,6 +112,7 @@ class Editor implements KetcherEditor {
   errorHandler: ((message: string) => void) | null
   highlights: Highlighter
   hoverIcon: any
+  lastCursorPosition: { x: number; y: number }
   event: {
     message: Subscription
     elementEdit: PipelineSubscription
@@ -155,10 +156,11 @@ class Editor implements KetcherEditor {
       this.renderAndRecoordinateStruct.bind(this)
     this.setOptions = this.setOptions.bind(this)
 
-    this.hoverIcon = this.render.paper
-      .text(0, 0, '')
-      .attr('font-size', options.fontsz)
-      .attr('opacity', HOVER_ICON_OPACITY)
+    this.lastCursorPosition = {
+      x: 0,
+      y: 0
+    }
+    this.createHoverIcon()
 
     this.event = {
       message: new Subscription(),
@@ -224,6 +226,24 @@ class Editor implements KetcherEditor {
     /* eslint-enable no-underscore-dangle */
   }
 
+  updateHoverIconPosition() {
+    const { x, y } = this.lastCursorPosition
+    const { height, width } = this.hoverIcon.getBBox()
+    this.hoverIcon.attr({
+      x: x - width / 2,
+      y: y - height / 2
+    })
+  }
+
+  createHoverIcon() {
+    this.hoverIcon = this.render.paper
+      .text(0, 0, '')
+      .attr('font-size', this.options().fontsz)
+      .attr('opacity', HOVER_ICON_OPACITY)
+
+    this.updateHoverIconPosition()
+  }
+
   clear() {
     this.struct(undefined)
   }
@@ -245,7 +265,10 @@ class Editor implements KetcherEditor {
     this.selection(null)
     const struct = value || new Struct()
 
-    return this.renderAndRecoordinateStruct(struct)
+    const molecule = this.renderAndRecoordinateStruct(struct)
+
+    this.createHoverIcon()
+    return molecule
   }
 
   // this is used by API addFragment method
@@ -574,6 +597,22 @@ function isMouseRight(event) {
   )
 }
 
+function resetSelectionOnCanvasClick(editor: Editor, eventName: string) {
+  if (eventName === 'mouseup') {
+    editor.selection(null)
+  }
+}
+
+function updateLastCursorPosition(editor: Editor, event) {
+  const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover']
+  if (events.includes(event.type)) {
+    editor.lastCursorPosition = {
+      x: event.layerX,
+      y: event.layerY
+    }
+  }
+}
+
 function domEventSetup(editor: Editor, clientArea) {
   // TODO: addEventListener('resize', ...);
   ;[
@@ -590,6 +629,7 @@ function domEventSetup(editor: Editor, clientArea) {
     clientArea.addEventListener(eventName, subs.dispatch.bind(subs))
 
     subs.add((event) => {
+      updateLastCursorPosition(editor, event)
       if (eventName !== 'mouseup' && eventName !== 'mouseleave') {
         // to complete drag actions
         if (
@@ -608,9 +648,7 @@ function domEventSetup(editor: Editor, clientArea) {
         EditorTool[eventName](event)
         return true
       }
-      if (eventName === 'mouseup') {
-        editor.selection(null)
-      }
+      resetSelectionOnCanvasClick(editor, eventName)
       return true
     }, -1)
   })

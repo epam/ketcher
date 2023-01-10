@@ -111,7 +111,7 @@ function findClosestSimpleObject(restruct, pos) {
   return ret
 }
 
-function contains(startX, startY, width, height, x, y) {
+function rectangleContainsPoint(startX, startY, width, height, x, y) {
   return (
     startX <= x && x <= startX + width && startY <= y && y <= startY + height
   )
@@ -437,7 +437,7 @@ function findClosestFG(restruct, pos) {
     const { startX, startY, width, height } =
       reSGroup.getTextHighlightDimensions()
     const { x, y } = Scale.obj2scaled(pos, restruct.render.options)
-    if (contains(startX, startY, width, height, x, y)) {
+    if (rectangleContainsPoint(startX, startY, width, height, x, y)) {
       const centerX = startX + width / 2
       const centerY = startY + height / 2
 

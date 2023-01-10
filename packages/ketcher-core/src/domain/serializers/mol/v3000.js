@@ -360,6 +360,7 @@ function parseRxn3000(
 
   const molLinesReactants = []
   const molLinesProducts = []
+  const molLinesAgents = []
   let current = null
   const rGroups = []
   for (let i = 0; i < ctabLines.length; ++i) {
@@ -378,6 +379,10 @@ function parseRxn3000(
       current = molLinesReactants
     } else if (line === 'M  V30 END REACTANT') {
       current = null
+    } else if (line === 'M  V30 BEGIN AGENT') {
+      current = molLinesAgents
+    } else if (line === 'M  V30 END AGENT') {
+      current = null
     } else if (line.startsWith('M  V30 BEGIN RGROUP')) {
       j = findRGroupEnd(i)
       rGroups.push(ctabLines.slice(i, j + 1))
@@ -391,7 +396,9 @@ function parseRxn3000(
     }
   }
   const mols = []
-  const molLines = molLinesReactants.concat(molLinesProducts)
+  const molLines = molLinesReactants
+    .concat(molLinesProducts)
+    .concat(molLinesAgents)
   for (j = 0; j < molLines.length; ++j) {
     const mol = parseCTabV3000(molLines[j], countsSplit)
     mols.push(mol)

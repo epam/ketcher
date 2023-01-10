@@ -91,7 +91,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
       const newAction = actions[actName].action
       const hoveredItemId = getHoveredAtomId(render.ctab.atoms)
       const isHoveringOverAtom = hoveredItemId !== null
-      if (isHoveringOverAtom) {
+      if (isHoveringOverAtom && newAction.tool !== 'select') {
         // check if atom is currently hovered over
         // in this case we do not want to activate the corresponding tool
         // and just insert the atom directly

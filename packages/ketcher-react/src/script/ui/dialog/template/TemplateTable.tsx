@@ -134,7 +134,10 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
               !isSaltOrSolventTemplate(tmpl) && (
                 <button
                   className={`${classes.button} ${classes.editButton}`}
-                  onClick={() => onAttach!(tmpl)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onAttach!(tmpl)
+                  }}
                 >
                   <Icon name="edit" />
                 </button>

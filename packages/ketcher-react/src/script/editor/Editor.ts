@@ -598,7 +598,7 @@ function isMouseRight(event) {
 }
 
 function resetSelectionOnCanvasClick(editor: Editor, eventName: string) {
-  if (eventName === 'mouseup') {
+  if (eventName === 'mouseup' && editor.selection()) {
     editor.selection(null)
   }
 }
@@ -645,7 +645,11 @@ function domEventSetup(editor: Editor, clientArea) {
       }
       const EditorTool = editor.tool()
       editor.lastEvent = event
-      if (EditorTool && eventName in EditorTool) {
+      if (
+        EditorTool &&
+        eventName in EditorTool &&
+        clientArea.contains(event.target)
+      ) {
         EditorTool[eventName](event)
         return true
       }

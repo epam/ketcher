@@ -21,6 +21,12 @@ import classes from './TemplateTable.module.less'
 import { greekify } from '../../utils'
 import { useSelector } from 'react-redux'
 import Icon from 'src/script/ui/component/view/icon'
+import {
+  AUTO_SCALE_MARGIN,
+  FONT_SIZE,
+  BOND_THICKNESS,
+  DOUBLE_BOND_WIDTH
+} from '../../../ui/constants'
 
 export interface Template {
   struct: Struct
@@ -73,11 +79,11 @@ const RenderTmpl: FC<{
       struct={tmpl.struct}
       options={{
         ...options,
-        autoScaleMargin: 15,
-        fontsz: 55,
-        fontszsub: 55,
-        bondThickness: 4,
-        doubleBondWidth: 10
+        autoScaleMargin: AUTO_SCALE_MARGIN,
+        fontsz: FONT_SIZE,
+        fontszsub: FONT_SIZE,
+        bondThickness: BOND_THICKNESS,
+        doubleBondWidth: DOUBLE_BOND_WIDTH
       }}
       {...props}
     />

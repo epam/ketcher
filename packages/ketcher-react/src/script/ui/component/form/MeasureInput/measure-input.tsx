@@ -88,16 +88,18 @@ const measureMap = {
   inch: 96
 }
 
+function getFormatedValue(value: number, measure: number, digits = 0) {
+  return Number((value * measure).toFixed(digits)) - 0
+}
+
 function convertValue(value, measureFrom, measureTo) {
   if ((!value && value !== 0) || isNaN(value)) return null // eslint-disable-line
 
+  const measure = measureMap[measureFrom] / measureMap[measureTo]
+
   return measureTo === 'px' || measureTo === 'pt'
-    ? Number(
-        ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed()
-      ) - 0
-    : Number(
-        ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(3)
-      ) - 0
+    ? getFormatedValue(value, measure)
+    : getFormatedValue(value, measure, 3)
 }
 
 export default MeasureInput

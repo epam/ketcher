@@ -25,6 +25,12 @@ import {
 } from 'ketcher-core'
 import { RenderStruct } from '../../utils'
 import templatesRawData from '../../../../templates/salts-and-solvents.sdf'
+import {
+  AUTO_SCALE_MARGIN,
+  FONT_SIZE,
+  BOND_THICKNESS,
+  DOUBLE_BOND_WIDTH
+} from '../../../ui/constants'
 
 interface SaltsAndSolventsState {
   lib: []
@@ -65,11 +71,11 @@ const prerenderPartOfStructures = (saltsAndSolvents: Struct[], settings) => {
     document.body.appendChild(div)
     RenderStruct.render(div, struct, {
       ...settings,
-      autoScaleMargin: 15,
-      fontsz: 55,
-      fontszsub: 55,
-      bondThickness: 4,
-      doubleBondWidth: 10
+      autoScaleMargin: AUTO_SCALE_MARGIN,
+      fontsz: FONT_SIZE,
+      fontszsub: FONT_SIZE,
+      bondThickness: BOND_THICKNESS,
+      doubleBondWidth: DOUBLE_BOND_WIDTH
     })
     div.remove()
   })

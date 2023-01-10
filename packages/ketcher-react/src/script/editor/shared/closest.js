@@ -34,6 +34,12 @@ const findMaps = {
   texts: findClosestText
 }
 
+function rectangleContainsPoint(startX, startY, width, height, x, y) {
+  return (
+    startX <= x && x <= startX + width && startY <= y && y <= startY + height
+  )
+}
+
 function findClosestText(restruct, cursorPosition) {
   let minDist = null
   let ret = null
@@ -109,16 +115,6 @@ function findClosestSimpleObject(restruct, pos) {
     }
   })
   return ret
-}
-
-function rectangleContainsPoint(startX, startY, width, height, x, y) {
-  return (
-    startX <= x && x <= startX + width && startY <= y && y <= startY + height
-  )
-}
-
-function distanceBetweenPoints(x1, y1, x2, y2) {
-  return Math.hypot(x2 - x1, y2 - y1)
 }
 
 function findClosestAtom(restruct, pos, skip, minDist) {
@@ -440,8 +436,10 @@ function findClosestFG(restruct, pos) {
     if (rectangleContainsPoint(startX, startY, width, height, x, y)) {
       const centerX = startX + width / 2
       const centerY = startY + height / 2
+      const rectangleCenter = new Vec2(centerX, centerY)
+      const cursorPosition = new Vec2(x, y)
 
-      const dist = distanceBetweenPoints(centerX, centerY, x, y)
+      const dist = Vec2.dist(rectangleCenter, cursorPosition)
       const { id } = reSGroup.item
       return { id, dist }
     }

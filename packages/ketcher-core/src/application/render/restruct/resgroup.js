@@ -123,14 +123,34 @@ class ReSGroup extends ReObject {
     return set
   }
 
+  getTextHighlightDimensions(render) {
+    const sGroupItem = this.item
+    const [firstAtomId] = sGroupItem.atoms
+    const sGroupAtom = render.ctab.atoms.get(firstAtomId)
+    const [sGroupAtomSVGElement] = sGroupAtom.visel.paths
+    const atomTextBoundingBox = sGroupAtomSVGElement.getBBox()
+    const padding = render.options.fontsz / 2
+    const { x, y, x2, y2 } = atomTextBoundingBox
+    const startX = x - render.options.offset.x - padding
+    const startY = y - render.options.offset.y - padding
+    const width = x2 - x + padding * 2
+    const height = y2 - y + padding * 2
+
+    return { startX, startY, width, height }
+  }
+
   makeSelectionPlate(restruct, paper, options) {
     const sgroup = this.item
-    const { startX, startY, size } = getHighlighPathInfo(sgroup, options)
     const functionalGroups = restruct.molecule.functionalGroups
     if (
       FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
     ) {
-      return paper.rect(startX, startY, size, size).attr(options.selectionStyle)
+      const { startX, startY, width, height } = this.getTextHighlightDimensions(
+        this.render
+      )
+      return paper
+        .rect(startX, startY, width, height)
+        .attr(options.selectionStyle)
     }
   }
 
@@ -149,9 +169,10 @@ class ReSGroup extends ReObject {
         functionalGroups
       )
     ) {
-      const { startX, startY, size } = getHighlighPathInfo(sGroupItem, options)
+      const { startX, startY, width, height } =
+        this.getTextHighlightDimensions(render)
       sGroupItem.hovering = paper
-        .rect(startX, startY, size, size)
+        .rect(startX, startY, width, height)
         .attr(options.hoverStyle)
     } else {
       sGroupItem.hovering = paper

@@ -598,7 +598,7 @@ function isMouseRight(event) {
 }
 
 function resetSelectionOnCanvasClick(editor: Editor, eventName: string) {
-  if (eventName === 'mouseup') {
+  if (eventName === 'mouseup' && editor.selection()) {
     editor.selection(null)
   }
 }
@@ -616,17 +616,18 @@ function updateLastCursorPosition(editor: Editor, event) {
 function domEventSetup(editor: Editor, clientArea) {
   // TODO: addEventListener('resize', ...);
   ;[
-    'click',
-    'dblclick',
-    'mousedown',
-    'mousemove',
-    'mouseup',
-    'mouseleave',
-    'mouseover'
-  ].forEach((eventName) => {
+    { target: clientArea, eventName: 'click' },
+    { target: clientArea, eventName: 'dblclick' },
+    { target: clientArea, eventName: 'mousedown' },
+    { target: document, eventName: 'mousemove' },
+    { target: document, eventName: 'mouseup' },
+    { target: document, eventName: 'mouseleave' },
+    { target: clientArea, eventName: 'mouseover' }
+  ].forEach(({ target, eventName }) => {
     editor.event[eventName] = new DOMSubscription()
     const subs = editor.event[eventName]
-    clientArea.addEventListener(eventName, subs.dispatch.bind(subs))
+
+    target.addEventListener(eventName, subs.dispatch.bind(subs))
 
     subs.add((event) => {
       updateLastCursorPosition(editor, event)
@@ -644,7 +645,11 @@ function domEventSetup(editor: Editor, clientArea) {
       }
       const EditorTool = editor.tool()
       editor.lastEvent = event
-      if (EditorTool && eventName in EditorTool) {
+      if (
+        EditorTool &&
+        eventName in EditorTool &&
+        clientArea.contains(event.target)
+      ) {
         EditorTool[eventName](event)
         return true
       }

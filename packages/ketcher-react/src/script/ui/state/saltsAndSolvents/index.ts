@@ -69,11 +69,14 @@ const prerenderPartOfStructures = (saltsAndSolvents: Struct[], settings) => {
     div.style.height = '100px'
     div.style.display = 'none'
     document.body.appendChild(div)
+
+    const fontSize = struct.name === 'water' ? FONT_SIZE / 2 : FONT_SIZE * 2
+
     RenderStruct.render(div, struct, {
       ...settings,
       autoScaleMargin: AUTO_SCALE_MARGIN,
-      fontsz: FONT_SIZE,
-      fontszsub: FONT_SIZE,
+      fontsz: fontSize,
+      fontszsub: fontSize,
       bondThickness: BOND_THICKNESS,
       doubleBondWidth: DOUBLE_BOND_WIDTH
     })

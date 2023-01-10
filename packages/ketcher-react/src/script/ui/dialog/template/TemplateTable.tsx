@@ -74,14 +74,16 @@ const RenderTmpl: FC<{
   options: any
   className: string
 }> = ({ tmpl, options, ...props }) => {
+  const fontSize = tmpl.struct.name === 'Me' ? FONT_SIZE / 2 : FONT_SIZE
+
   return (
     <StructRender
       struct={tmpl.struct}
       options={{
         ...options,
         autoScaleMargin: AUTO_SCALE_MARGIN,
-        fontsz: FONT_SIZE,
-        fontszsub: FONT_SIZE,
+        fontsz: fontSize,
+        fontszsub: fontSize,
         bondThickness: BOND_THICKNESS,
         doubleBondWidth: DOUBLE_BOND_WIDTH
       }}

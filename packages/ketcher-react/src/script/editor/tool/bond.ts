@@ -23,12 +23,10 @@ import {
   FunctionalGroup,
   SGroup,
   fromOneBondDeletion
-  // BondDelete
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
 import Editor from '../Editor'
-// import { fromBondReplacement } from 'ketcher-core'
 
 class BondTool {
   editor: Editor
@@ -331,16 +329,22 @@ class BondTool {
     But we can change our mind, then deleted bond needs to be restored
   */
   restoreBondWhenHoveringOnCanvas(event) {
+    if (!this.dragCtx.existedBond) {
+      return
+    }
     const isHoveringOverAtom = this.editor.findItem(event, ['atoms'])
-    if (!isHoveringOverAtom && this.dragCtx.existedBond) {
+    if (!isHoveringOverAtom) {
+      const { begin, end } = this.dragCtx.existedBond
+      const bondEnd = this.dragCtx.item.id === begin ? end : begin
       this.dragCtx.action.mergeWith(
         fromBondAddition(
           this.editor.render.ctab,
           this.dragCtx.existedBond,
           this.dragCtx.item.id,
-          this.dragCtx.existedBond.begin
+          bondEnd
         )[0]
       )
+      delete this.dragCtx.existedBond
     }
   }
 

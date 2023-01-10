@@ -27,6 +27,7 @@ import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction } from './shared'
 
 import actions from '../action'
+import tools from '../action/tools'
 import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
@@ -38,6 +39,16 @@ export function initKeydownListener(element) {
     element.addEventListener('keydown', (event) =>
       keyHandle(dispatch, getState(), hotKeys, event)
     )
+  }
+}
+
+function removeNotRenderedStruct(actionTool, event, dispatch) {
+  const { code, metaKey } = event
+  if (actionTool.tool === 'paste' && code === 'KeyS' && metaKey) {
+    dispatch({
+      type: 'ACTION',
+      action: tools['select-rectangle'].action
+    })
   }
 }
 
@@ -72,6 +83,10 @@ function keyHandle(dispatch, state, hotKeys, event) {
       event.preventDefault()
       return
     }
+    // Removing from what should be saved - structure, which was added to paste tool,
+    // but not yet rendered on canvas
+    removeNotRenderedStruct(actionTool, event, dispatch)
+
     if (clipArea.actions.indexOf(actName) === -1) {
       let newAction = actions[actName].action
       const hoveredItemId = getHoveredAtomId(render.ctab.atoms)

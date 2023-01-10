@@ -123,16 +123,15 @@ class ReSGroup extends ReObject {
     return set
   }
 
-  getTextHighlightDimensions(render) {
+  getTextHighlightDimensions(padding = 0) {
     const sGroupItem = this.item
     const [firstAtomId] = sGroupItem.atoms
-    const sGroupAtom = render.ctab.atoms.get(firstAtomId)
+    const sGroupAtom = this.render.ctab.atoms.get(firstAtomId)
     const [sGroupAtomSVGElement] = sGroupAtom.visel.paths
     const atomTextBoundingBox = sGroupAtomSVGElement.getBBox()
-    const padding = render.options.fontsz / 2
     const { x, y, x2, y2 } = atomTextBoundingBox
-    const startX = x - render.options.offset.x - padding
-    const startY = y - render.options.offset.y - padding
+    const startX = x - this.render.options.offset.x - padding
+    const startY = y - this.render.options.offset.y - padding
     const width = x2 - x + padding * 2
     const height = y2 - y + padding * 2
 
@@ -146,7 +145,7 @@ class ReSGroup extends ReObject {
       FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
     ) {
       const { startX, startY, width, height } = this.getTextHighlightDimensions(
-        this.render
+        this.render.options.fontsz / 2
       )
       return paper
         .rect(startX, startY, width, height)
@@ -169,8 +168,9 @@ class ReSGroup extends ReObject {
         functionalGroups
       )
     ) {
-      const { startX, startY, width, height } =
-        this.getTextHighlightDimensions(render)
+      const { startX, startY, width, height } = this.getTextHighlightDimensions(
+        options.fontsz / 2
+      )
       sGroupItem.hovering = paper
         .rect(startX, startY, width, height)
         .attr(options.hoverStyle)

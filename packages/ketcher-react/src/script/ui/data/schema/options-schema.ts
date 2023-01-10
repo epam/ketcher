@@ -131,7 +131,7 @@ const render: {
   absFlagLabel: {
     title: 'Text of Absolute flag',
     type: 'string',
-    default: 'ABS (Chiral)'
+    default: 'ABS'
   },
   andFlagLabel: {
     title: 'Text of AND flag',

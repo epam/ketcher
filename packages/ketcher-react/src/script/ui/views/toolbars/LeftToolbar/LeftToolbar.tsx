@@ -148,6 +148,11 @@ const LeftToolbar = (props: Props) => {
 
         <Group
           className={classes.groupItem}
+          items={[{ id: 'enhanced-stereo' }]}
+        />
+
+        <Group
+          className={classes.groupItem}
           items={[{ id: 'charge-plus' }, { id: 'charge-minus' }]}
         />
 

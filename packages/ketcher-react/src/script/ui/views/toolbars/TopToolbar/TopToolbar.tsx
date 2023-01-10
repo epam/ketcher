@@ -58,7 +58,6 @@ export interface PanelProps {
   onCalculate: VoidFunction
   onCheck: VoidFunction
   onAnalyse: VoidFunction
-  onStereo: VoidFunction
   onMiew: VoidFunction
   onFullscreen: VoidFunction
   onAbout: VoidFunction
@@ -129,7 +128,6 @@ export const TopToolbar = ({
   onCalculate,
   onCheck,
   onAnalyse,
-  onStereo,
   onMiew,
   onFullscreen,
   onAbout,
@@ -178,7 +176,6 @@ export const TopToolbar = ({
         onCalculate={onCalculate}
         onCheck={onCheck}
         onAnalyse={onAnalyse}
-        onStereo={onStereo}
         onMiew={onMiew}
         disabledButtons={disabledButtons}
         hiddenButtons={hiddenButtons}

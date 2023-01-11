@@ -18,8 +18,6 @@ The ketcher-polymer-editor-react library is available as an [NPM](https://www.np
 npm install --save ketcher-polymer-editor-react
 ```
 
-or [Yarn](https://yarnpkg.com/):
-
 ```sh
-yarn add ketcher-polymer-editor-react
+npm install ketcher-polymer-editor-react
 ```

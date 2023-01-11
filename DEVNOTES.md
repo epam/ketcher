@@ -3,7 +3,6 @@
 ## Prerequisites
 
 - Stable [Node.js](https://nodejs.org) version
-- [Yarn](https://yarnpkg.com/) installed globally
 
 ## Build instructions
 
@@ -14,8 +13,8 @@ The latest version of Ketcher has been splitted into two packages: component lib
 To create production build of ready-to-run application execute the following command from root directory:
 
 ```sh
-yarn install
-yarn build
+npm install
+npm build
 ```
 
 The following parameters are used by default:
@@ -28,25 +27,25 @@ PUBLIC_URL='./'
 If you want to change these parameters you can build application by using the following command:
 
 ```sh
-npx cross-env API_PATH='{your_api_path_here}' PUBLIC_URL='{your_public_url_here}' yarn build
+npx cross-env API_PATH='{your_api_path_here}' PUBLIC_URL='{your_public_url_here}' npm build
 ```
 
 To serve results of build locally run the following command from root directory:
 
 ```sh
-yarn serve:remote
+npm serve:remote
   or
-yarn serve:standalone
+npm serve:standalone
   or
-yarn serve
+npm serve
 ```
 
 ### Development
 
-The latest version of Ketcher is based on yarn workspaces. So before starting development it is necessary to run the following command from root directory:
+The latest version of Ketcher is based on npm workspaces. So before starting development it is necessary to run the following command from root directory:
 
 ```sh
-yarn install
+npm install
 ```
 
 After that component library and application should be started separately. First should be started ketcher-core package.
@@ -55,33 +54,33 @@ After that component library and application should be started separately. First
 
 ```sh
 cd packages/ketcher-core
-yarn install
-yarn start
+npm install
+npm start
 ```
 
 #### Build ketcher-react package
 
 ```sh
 cd packages/ketcher-react
-yarn install
-yarn start
+npm install
+npm start
 ```
 
 #### Build ketcher-standalone package
 
 ```sh
 cd packages/ketcher-standalone
-yarn install
-yarn start
+npm install
+npm start
 ```
 
 #### Build example application
 
 ```sh
 cd example
-yarn start:remote
+npm start:remote
   or
-yarn start:standalone
+npm start:standalone
 ```
 
 ## Indigo service
@@ -103,9 +102,9 @@ You can find the instruction for service installation
 ### Start unit tests
 
 ```sh
-yarn test:unit
+npm test:unit
   or
-yarn test:watch
+npm test:watch
 ```
 
 ### Start prettier
@@ -125,15 +124,15 @@ test:lint
 ### Start stylelint
 
 ```sh
-yarn stylelint
+npm stylelint
   or
-yarn stylelint:fix
+npm stylelint:fix
 ```
 
 ### Start all tests and formatting
 
 ```sh
-yarn test
+npm test
 ```
 
 ## Simple server

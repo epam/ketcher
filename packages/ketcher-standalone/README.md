@@ -18,10 +18,8 @@ The ketcher-standalone package contains only the functionality necessary to star
 npm install --save ketcher-standalone
 ```
 
-or [Yarn](https://yarnpkg.com/):
-
 ```sh
-yarn add ketcher-standalone
+npm install ketcher-standalone
 ```
 
 ## Usage

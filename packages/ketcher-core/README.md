@@ -18,10 +18,8 @@ The ketcher-core package serves as the entry point to Ketcher core functionality
 npm install --save ketcher-core
 ```
 
-or [Yarn](https://yarnpkg.com/):
-
 ```sh
-yarn add ketcher-core
+npm install ketcher-core
 ```
 
 ## Usage

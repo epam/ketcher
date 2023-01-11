@@ -20,10 +20,8 @@ The ketcher-react library is available as an [NPM](https://www.npmjs.com/) packa
 npm install --save ketcher-react
 ```
 
-or [Yarn](https://yarnpkg.com/):
-
 ```sh
-yarn add ketcher-react
+npm install ketcher-react
 ```
 
 ## Usage

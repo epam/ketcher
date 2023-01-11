@@ -442,8 +442,10 @@ class SGroupTool {
     }
 
     // TODO: handle click on an existing group?
-    if (id !== null || (selection && selection.atoms))
+    if (id !== null || (selection && selection.atoms)) {
+      this.editor.selection(selection)
       SGroupTool.sgroupDialog(this.editor, id, this.type)
+    }
   }
 
   cancel() {
@@ -460,11 +462,6 @@ class SGroupTool {
     const sg = id !== null ? struct.sgroups.get(id) : null
     const type = sg ? sg.type : defaultType
     const eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit'
-
-    if (!selection.atoms && !selection.bonds && !sg) {
-      console.info('There is no selection or sgroup')
-      return
-    }
 
     let attrs
     if (sg) {

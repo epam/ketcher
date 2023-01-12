@@ -542,7 +542,7 @@ class Editor implements KetcherEditor {
     if (res.atoms && res.bonds) {
       struct.bonds.forEach((bond, bid) => {
         if (
-          res.bonds.indexOf(bid) >= 0 &&
+          res.bonds.indexOf(bid) < 0 &&
           res.atoms.indexOf(bond.begin) >= 0 &&
           res.atoms.indexOf(bond.end) >= 0
         ) {

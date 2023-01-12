@@ -55,6 +55,10 @@ class SelectTool {
     )
   }
 
+  isSelectionRunning() {
+    return this.#lassoHelper.running()
+  }
+
   mousedown(event) {
     const rnd = this.editor.render
     const ctab = rnd.ctab

@@ -68,13 +68,13 @@ const toolActions = {
     hidden: (options) => isHidden(options, 'enhanced-stereo')
   },
   'charge-plus': {
-    shortcut: '5',
+    shortcut: '+',
     title: 'Charge Plus',
     action: { tool: 'charge', opts: 1 },
     hidden: (options) => isHidden(options, 'charge-plus')
   },
   'charge-minus': {
-    shortcut: '5',
+    shortcut: '-',
     title: 'Charge Minus',
     action: { tool: 'charge', opts: -1 },
     hidden: (options) => isHidden(options, 'charge-minus')
@@ -311,6 +311,7 @@ const toolActions = {
     hidden: (options) => isHidden(options, 'shape-line')
   },
   text: {
+    shortcut: 'Alt+t',
     title: 'Add text',
     action: { tool: 'text' },
     hidden: (options) => isHidden(options, 'text')

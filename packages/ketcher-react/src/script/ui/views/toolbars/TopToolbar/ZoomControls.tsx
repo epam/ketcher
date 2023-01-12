@@ -46,7 +46,7 @@ const ZoomLabel = styled('span')`
 const Dropdown = styled(Popover)`
   & .MuiPopover-paper {
     padding: 8px;
-    width: 135px;
+    width: 175px;
     border: none;
     border-radius: 0px 0px 4px 4px;
     box-shadow: 0px 30px 48px -17px rgba(160, 165, 174, 0.3);
@@ -199,8 +199,9 @@ export const ZoomControls = ({
               <ShortcutLabel>{shortcuts['zoom-in']}</ShortcutLabel>
             </ZoomControlButton>
           )}
-          <ZoomControlButton onClick={resetZoom}>
+          <ZoomControlButton title="Zoom 100%" onClick={resetZoom}>
             <span>Zoom 100%</span>
+            <ShortcutLabel>{shortcuts.zoom}</ShortcutLabel>
           </ZoomControlButton>
         </DropDownContent>
       </Dropdown>

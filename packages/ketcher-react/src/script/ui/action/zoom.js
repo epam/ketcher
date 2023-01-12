@@ -24,11 +24,13 @@ export const zoomList = [
 
 export default {
   zoom: {
+    shortcut: ['Ctrl+Shift+0'],
     selected: (editor) => editor.zoom(),
+    action: (editor) => editor.zoom(1),
     hidden: (options) => isHidden(options, 'zoom')
   },
   'zoom-out': {
-    shortcut: ['-', '_', 'Shift+-'],
+    shortcut: ['Ctrl+_', 'Ctrl+-'],
     title: 'Zoom Out',
     disabled: (editor) => editor.zoom() <= zoomList[0], // unsave
     action: (editor) => {
@@ -39,7 +41,7 @@ export default {
     hidden: (options) => isHidden(options, 'zoom-out')
   },
   'zoom-in': {
-    shortcut: ['+', '=', 'Shift+='],
+    shortcut: ['Ctrl+=', 'Ctrl++'],
     title: 'Zoom In',
     disabled: (editor) => zoomList[zoomList.length - 1] <= editor.zoom(),
     action: (editor) => {

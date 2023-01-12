@@ -37,6 +37,7 @@ const config = {
     hidden: (options) => isHidden(options, 'clean')
   },
   arom: {
+    shortcut: 'Alt+a',
     title: 'Aromatize',
     action: {
       thunk: serverTransform('aromatize')
@@ -45,6 +46,7 @@ const config = {
     hidden: (options) => isHidden(options, 'arom')
   },
   dearom: {
+    shortcut: 'Ctrl+Alt+a',
     title: 'Dearomatize',
     action: {
       thunk: serverTransform('dearomatize')
@@ -62,12 +64,14 @@ const config = {
     hidden: (options) => isHidden(options, 'cip')
   },
   check: {
+    shortcut: 'Alt+s',
     title: 'Check Structure',
     action: { dialog: 'check' },
     disabled: (editor, server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'check')
   },
   analyse: {
+    shortcut: 'Alt+c',
     title: 'Calculated Values',
     action: { dialog: 'analyse' },
     disabled: (editor, server, options) => !options.app.server,

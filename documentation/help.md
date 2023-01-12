@@ -10,10 +10,8 @@ reactions. The application operates in two modes - Standalone and Remote:
 
 - Remote version requires Indigo Service as a backend server to perform complex calculations (When the server is not responding you can continue to work in the application although some of the functions will be unavailable).
 
-
 **Ketcher** consists of the following elements:
 <img src = images/1_overviewn.png width = "100%"/>
-
 
 **Note** : Depending on the screen size, some tools on the _Tool
 palette_ can be displayed in expanded or collapsed forms.
@@ -53,7 +51,7 @@ To select **multiple atoms, bonds, structures, or other objects**, do one
 of the following:
 
 -`Shift-click`with the Lasso or Rectangle Selection tool selects
-  some (connected or not) atoms/bonds.
+some (connected or not) atoms/bonds.
 
 - With the Lasso or Rectangle Selection tool click and drag the
   mouse around the atoms, bonds, or structures that you want to
@@ -73,12 +71,12 @@ You can use the buttons of the _Main_ toolbar:
   from a molecular file or save it to a supported molecular file
   format;
 
--  **Copy** with additional abilties to **Copy As** (4), **Paste** (5), **Cut** (6) buttons to perform
+- **Copy** with additional abilties to **Copy As** (4), **Paste** (5), **Cut** (6) buttons to perform
   the corresponding actions;
 
 - **Undo** (7) / **Redo** (8) to manage the last actions taken on the canvas;
 
-- **Aromatize** (9) / **Dearomatize** (10) buttons to mark aromatic
+- **Aromatize** (Alt+a) / **Dearomatize** (Ctrl+Alt+a) buttons to mark aromatic
   structures (to convert a structure to the Aromatic or Kekule
   presentation);
 
@@ -91,7 +89,7 @@ You can use the buttons of the _Main_ toolbar:
 - **Calculate CIP** button (13) to determine R/S and E/Z
   configurations;
 
-- **Check Structure** button (14) to check the following properties  of the structure.
+- **Check Structure** button (Alt+s) to check the following properties of the structure.
   Check will be conducted immediately when the operation is selected.
   You can check only the Settings you are interested in and check structure again with new settings by clicking on Check button.
   Apply button will save the Settings checked and they will be applied for the file saving.
@@ -120,11 +118,9 @@ You can use the buttons of the _Main_ toolbar:
 
 - **Fullscreen mode** button (21) allows to initiate displaying Ketcher window in the fullscreen mode.
 
-- **Zoom panel** (22) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (23) to set the view manually, **Zoom in** (24) / **Zoom out** (25) to scale the view gradually, **Zoom 100%**  (26) to enable the default zoom setting.
-
+- **Zoom panel** (22) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (23) to set the view manually, **Zoom in** (24) / **Zoom out** (25) to scale the view gradually, **Zoom 100%** (26) to enable the default zoom setting.
 
  <img src = images/4.png width = "180" />
-
 
 # 3D Viewer
 
@@ -143,8 +139,6 @@ Ketcher Settings allow to change the appearance of the structure and background 
 
 "Lines" drawing method, "Bright" atom name coloring
 method and "Light" background coloring are default.
-
-
 
 # Drawing Atoms
 
@@ -195,8 +189,6 @@ To draw/edit atoms you can:
 
   <img src = images/14_ext_tablen.png width = "440" />
 
-
-
 # Drawing Bonds
 
 To draw/edit bonds you can:
@@ -204,23 +196,20 @@ To draw/edit bonds you can:
 - Click an arrow on the Bond tool <img src = images/15_bond_icon.png width = "42"/> in the Tool palette
   to open the drop-down list with the following bond types:
 
-  <img src = images/bond1.png height = "28"/>  <br>
-  <img src = images/bond2.png height = "28"/>  <br>
-  <img src = images/bond3.png height = "28"/>  <br>
-  <img src = images/bond4.png height = "28"/>  <br>
-  <img src = images/bond5.png height = "28"/>  <br>
-  <img src = images/bond6.png height = "28"/>  <br>
-  <img src = images/bond7.png height = "28"/>  <br>
-  <img src = images/bond8.png height = "28"/>  <br>
-  <img src = images/bond9.png height = "28"/>  <br>
-  <img src = images/bond91.png height = "28"/>  <br>
-  <img src = images/bond92.png height = "28"/>  <br>
-  <img src = images/bond93.png height = "28"/>  <br>
-  <img src = images/bond94.png height = "28"/>  <br>
-  <img src = images/bond95.png height = "28"/>  <br>
-
-
-
+  <img src = images/bond1.png height = "28"/> <br>
+  <img src = images/bond2.png height = "28"/> <br>
+  <img src = images/bond3.png height = "28"/> <br>
+  <img src = images/bond4.png height = "28"/> <br>
+  <img src = images/bond5.png height = "28"/> <br>
+  <img src = images/bond6.png height = "28"/> <br>
+  <img src = images/bond7.png height = "28"/> <br>
+  <img src = images/bond8.png height = "28"/> <br>
+  <img src = images/bond9.png height = "28"/> <br>
+  <img src = images/bond91.png height = "28"/> <br>
+  <img src = images/bond92.png height = "28"/> <br>
+  <img src = images/bond93.png height = "28"/> <br>
+  <img src = images/bond94.png height = "28"/> <br>
+  <img src = images/bond95.png height = "28"/> <br>
 
 - select a bond type from the drop down list and click inside the
   drawing area; a bond of the selected type will be drawn;
@@ -246,8 +235,6 @@ To draw/edit bonds you can:
 
 - clicking with the Single Bond tool or Chain tool switches the bond type
   cyclically: Single-Double-Triple-Single.
-
-
 
 # Drawing R-Groups
 
@@ -280,7 +267,7 @@ To create a set of R-Group members:
 
 1. Draw a structure to become an R-Group member.
 
-2. Select the structure using the *R-Group Fragment Tool* (2) to invoke
+2. Select the structure using the _R-Group Fragment Tool_ (2) to invoke
    the R-Group dialog; in this dialog select the label of the
    R-Group to assign the fragment to.
 
@@ -310,8 +297,6 @@ be presented as:
 
 ![](images/rgroup-example4.png)
 
-
-
 # R-Group Logic
 
 **Ketcher** enables one to add logic when using R-Groups. To access
@@ -337,8 +322,6 @@ the R-Group logic:
 5. Specify the logical **Condition**. Use the R-Group condition **If
    R(i) Then** to specify whether the presence of an R-Group is
    dependent on the presence of another R-Group.
-
-
 
 # Marking S-Groups
 
@@ -374,8 +357,6 @@ significance, but their underlying structure is hidden. The current
 version can&#39;t display contracted structures but correctly
 saves/reads them into/from files.
 
-
-
 # Data S-Groups
 
 The _Data S-Groups Tool_ <img src = images/31_datasgroup_icon.png width = "42" /> is a separate tool for
@@ -393,8 +374,6 @@ type of selected elements:
 - Select the appropriate Field Value.
 
 - Labels can be specified as Absolute, Relative or Attached.
-
-
 
 # Changing Structure Display
 
@@ -424,8 +403,6 @@ This tool flips the objects horizontally or vertically.
 - If some objects are selected, the Vertical Flip tool (or Alt+V) flips the selected objects vertically
 - If no objects are selected, or all objects are selected, the Vertical Flip tool (or Alt+V) flips each structure vertically
 
-
-
 # Drawing Reactions
 
 To draw/edit reactions you can:
@@ -436,7 +413,6 @@ To draw/edit reactions you can:
 - draw pluses in the reaction equation using the _Reaction Plus Tool_ <img src = images/38_reactplus_icon.png width = "42" />
 - map same atoms in reagents and products with the _Reaction Mapping Tools_ <img src = images/36_reactmap_icon.png width = "42" />. Explore the available reaction mapping tools below:
 
-
 <img src = images/37_reactmap_menu.png width = "130" />.
 
 1 – Reaction Auto-Mapping Tool
@@ -445,22 +421,18 @@ To draw/edit reactions you can:
 
 3 – Reaction Unmapping Tool
 
-
-
 # Drawing graphical objects
 
-To draw graphical objects click the arrow on the *Shape Ellipse* tool <img src = images/39_objects_icon.png width = "42" />  in the Tools palette
+To draw graphical objects click the arrow on the _Shape Ellipse_ tool <img src = images/39_objects_icon.png width = "42" /> in the Tools palette
 to open the drop-down list with the following tools:
 
 <img src = images/40_objects_menu.png width = "130" />.
 
- *Shape Ellipse* (1), *Shape Rectangle* (2), and *Shape Line* (3).
-
-
+_Shape Ellipse_ (1), _Shape Rectangle_ (2), and _Shape Line_ (3).
 
 # Creating text objects on the canvas
 
-To add text to the canvas click the *Add text* tool <img src = images/41_text_icon.png width = "42" />
+To add text to the canvas click the _Add text_ tool <img src = images/41_text_icon.png width = "42" />
 in the Tools palette and click the canvas to open the Text editor window:
 
 <img src = images/421_texttool.png width = "320" />
@@ -468,8 +440,6 @@ in the Tools palette and click the canvas to open the Text editor window:
 - To enter text, type in the Text editor field.
 - To edit text, double click the text object on the canvas.
 - Change the text style to bold and italic, make it subscript and superscript while typing or by selecting text and applying styles.
-
-
 
 # Templates toolbar
 
@@ -536,10 +506,9 @@ To create a user template:
 
 <img src = images/44.png  width = "440" />
 
-- enter a name and define the attachment atom and bond by clicking on the structure preview.  Click on Apply button to save the template.
+- enter a name and define the attachment atom and bond by clicking on the structure preview. Click on Apply button to save the template.
 
 Saved template will be available in User Templates tab in the list of templates.
-
 
 # Functional Groups
 
@@ -553,13 +522,13 @@ Navigate to the Functional Groups tab to explore the FGs available:
 ![](images/FG_tab.png)
 
 Filter Functional Groups by name: <br>
-<img src = images/FG_search.gif width = "400"/>  <br>
+<img src = images/FG_search.gif width = "400"/> <br>
 
 To add Functional Group to the canvas and join it to the structure do the following:
 
 1. Select the proper FG in the FG menu and click _Add to canvas_ <br> <img src=images/fg_selected.png width = "400">
 2. Click on the atom FG should connect with on the canvas: bond will be created automatically and FG will be joined to the structure.
-<img src = images/FG_attaching.gif width = "400"/>
+   <img src = images/FG_attaching.gif width = "400"/>
 
 You can just click on the canvas having the FG selected. To connect it with other structure on the canvas do the following:
 
@@ -586,7 +555,6 @@ Aromatize & Dearomatize operations will not be applied to the rings that are par
 
 Functional Groups will be considered as **super atoms** when opening and saving .mol files.
 
-
 # Working with Files
 
 Ketcher supports the following molecular formats that can be entered
@@ -594,7 +562,7 @@ either manually or from files:
 
 ![](images/formats-table.png)
 
-You can use the *Open…* and *Save As…* buttons of the _Main_
+You can use the _Open…_ and _Save As…_ buttons of the _Main_
 toolbar to import a molecule from a molecular file or save it to a
 supported molecular file format.
 
@@ -613,7 +581,6 @@ Ketcher suggests 2 ways for structure to be opened:
 _Open as New Project_ will clear the canvas and position new structure on it.
 _Add to Canvas_ will save the structure in the clipboard. Click on the canvas to place it.
 
-
 The **_Save Structure_** dialog enables one to save the molecular file:
 
 <img src=images/46_save_text.png width = "560"/>
@@ -622,21 +589,17 @@ Select the format needed in the _File Format_ drop down.
 <br> Check out the _Warnings_ tab if it's represented. It provides the list of chemical information that can't be saved properly to the format selected.
 <br> <br>
 You can save _a structure as image_ (in Standalone mode and in Remote mode when the server is available) by selectinig the _SVG Document_ or _PNG Image_ format.
-Please, note that saving structure to the image formats will results in chemical information loss in the file. You will not be able to open files in these formats in Ketcher. Supported graphics file formats are: *Portable Network Graphics (.png)* and *Scalable Vector Graphics (.svg)*.
+Please, note that saving structure to the image formats will results in chemical information loss in the file. You will not be able to open files in these formats in Ketcher. Supported graphics file formats are: _Portable Network Graphics (.png)_ and _Scalable Vector Graphics (.svg)_.
 
 <img src=images/47_save_image.png width = "560"/>
 
-
-
 # Stereochemistry
 
-When the structure with the correct tetrahedral stereochemistry is created on the canvas you can open the ‘Enhanced Stereochemistry’ window by clicking the *Stereochemistry* button <img src=images/481_ster_icon.png width = "42"/> and assign stereo marks:
+When the structure with the correct tetrahedral stereochemistry is created on the canvas you can open the ‘Enhanced Stereochemistry’ window by clicking the _Stereochemistry_ button <img src=images/481_ster_icon.png width = "42"/> and assign stereo marks:
 
  <img src=images/48_enhstereo.png width = "330"/>
 
-
-
-In the *Stereochemistry tab* in *Settings* you can:
+In the _Stereochemistry tab_ in _Settings_ you can:
 
 - enable/disable display of the Stereo flags
 - set the text of the Absolute/AND/OR/Mixed flags
@@ -648,9 +611,6 @@ In the *Stereochemistry tab* in *Settings* you can:
 
 <img src=images/50_sett_stereon.png width = "440"/>
 
-
-
-
 # Hotkeys
 
 You can use keyboard hotkeys (including Numeric keypad) for some
@@ -658,7 +618,7 @@ features/commands of the Editor. To display the hotkeys just place the
 cursor over a toolbar button. If a hotkey is available for the button,
 it will appear in brackets after the description of the button.
 
-*NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems*
+_NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 
 **General**
 | Shortcut| Action |
@@ -678,21 +638,22 @@ it will appear in brackets after the description of the button.
 | `Mod+Shift+a` | Deselect All |
 | `Mod+d` | Select descriptors |
 
-
 **Server**
 | Shortcut| Action |
 | --- | --- |
+| `Alt+a` | Aromatize |
+| `Mod+Alt+a` | Dearomatize |
 | `Mod+l` | Layout |
 | `Mod+Shift+l` | Clean Up |
 | `Mod+p` | Calculate CIP |
-
+| `Alt+s` | Check structure |
+| `Alt+c` | Calculate values |
 
 **Debug**
 | Shortcut| Action |
 | --- | --- |
-| `Ctrl+Shift+r` | force-update |
+| `Mod+Shift+r` | force-update |
 | `Alt+Shift+r` | qs-serialize |
-
 
 **Tools**
 | Shortcut| Action |
@@ -701,7 +662,8 @@ it will appear in brackets after the description of the button.
 | `Escape` | Rotate between: Lasso Selection, Rectangle Selection, Fragment Selection |
 | `Delete, Backspace` | Erase |
 | `Alt+e` | Stereochemistry |
-| `5` | Rotate between: Charge Plus, Charge Minus |
+| `+` | Charge Plus |
+| `-` | Charge Minus |
 | `Alt+r` | Rotate Tool |
 | `Alt+h` | Horizontal Flip |
 | `Alt+v` | Vertical Flip |
@@ -713,7 +675,7 @@ it will appear in brackets after the description of the button.
 | `3` | Triple Bond |
 | `4` | Aromatic Bond |
 | `0` | Any Bond |
-
+| `Alt+t` | Add text |
 
 **Atoms**
 | Shortcut| Action |
@@ -739,13 +701,12 @@ it will appear in brackets after the description of the button.
 | `m` | Any metal |
 | `x` | Any halogen |
 
-
 **Zoom**
 | Shortcut| Action |
 | --- | --- |
-| `-, _, Shift+-` | Zoom Out |
-| `+, =, Shift+=` | Zoom In |
-
+| `Mod+_, Mod+-` | Zoom Out |
+| `Mod+=, Mod++` | Zoom In |
+| `Mod+Shift+0` | Zoom 100% |
 
 **Templates**
 | Shortcut| Action |
@@ -753,12 +714,10 @@ it will appear in brackets after the description of the button.
 | `Shift+t` | Custom Templates |
 | `t` | Rotate between: Benzene, Cyclopentadiene, Cyclohexane, Cyclopentane, Cyclopropane, Cyclobutane, Cycloheptane, Cyclooctane |
 
-
 **FunctionalGroups**
 | Shortcut| Action |
 | --- | --- |
 | `Shift+f` | Functional Groups |
-
 
 **Help**
 | Shortcut| Action |
@@ -767,4 +726,3 @@ it will appear in brackets after the description of the button.
 
 **Note** : Please, use`Ctrl+V`to paste the selected object in
 Google Chrome and Mozilla Firefox browsers.
-

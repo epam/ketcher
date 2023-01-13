@@ -33,11 +33,11 @@ npx cross-env API_PATH='{your_api_path_here}' PUBLIC_URL='{your_public_url_here}
 To serve results of build locally run the following command from root directory:
 
 ```sh
-npm serve:remote
+npm run serve:remote
   or
-npm serve:standalone
+npm run serve:standalone
   or
-npm serve
+npm run serve
 ```
 
 ### Development
@@ -78,9 +78,9 @@ npm start
 
 ```sh
 cd example
-npm start:remote
+npm run start:remote
   or
-npm start:standalone
+npm run start:standalone
 ```
 
 ## Indigo service
@@ -102,9 +102,9 @@ You can find the instruction for service installation
 ### Start unit tests
 
 ```sh
-npm test:unit
+npm run test:unit
   or
-npm test:watch
+npm run test:watch
 ```
 
 ### Start prettier
@@ -124,9 +124,9 @@ test:lint
 ### Start stylelint
 
 ```sh
-npm stylelint
+npm run stylelint
   or
-npm stylelint:fix
+npm run stylelint:fix
 ```
 
 ### Start all tests and formatting

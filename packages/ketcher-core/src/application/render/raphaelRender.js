@@ -232,8 +232,6 @@ Render.prototype.update = function (force = false, viewSz = null) {
       const mv = new Vec2(marg, marg)
       const csz = viewSz
 
-      // console.log('viewSz: ', viewSz)
-
       if (marg && (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)) {
         throw new Error('View box too small for the given margin')
       }

@@ -231,6 +231,9 @@ Render.prototype.update = function (force = false, viewSz = null) {
       const marg = this.options.autoScaleMargin
       const mv = new Vec2(marg, marg)
       const csz = viewSz
+
+      // console.log('viewSz: ', viewSz)
+
       if (marg && (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)) {
         throw new Error('View box too small for the given margin')
       }
@@ -246,6 +249,17 @@ Render.prototype.update = function (force = false, viewSz = null) {
         csz.x * rescale,
         csz.y * rescale
       )
+
+      // Upscale font size for Template table
+      if (this.options.templFlag) {
+        const baseFontSize = this.options.fontsz
+        this.options = {
+          ...this.options,
+          fontsz: baseFontSize * rescale,
+          fontszsub: baseFontSize * rescale
+        }
+      }
+
       /* eslint-enable no-mixed-operators */
     }
   }

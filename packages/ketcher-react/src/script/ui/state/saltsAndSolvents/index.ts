@@ -27,7 +27,7 @@ import { RenderStruct } from '../../utils'
 import templatesRawData from '../../../../templates/salts-and-solvents.sdf'
 import {
   AUTO_SCALE_MARGIN,
-  FONT_SIZE,
+  // FONT_SIZE,
   BOND_THICKNESS,
   DOUBLE_BOND_WIDTH
 } from '../../../ui/constants'
@@ -70,7 +70,9 @@ const prerenderPartOfStructures = (saltsAndSolvents: Struct[], settings) => {
     div.style.display = 'none'
     document.body.appendChild(div)
 
-    const fontSize = struct.name === 'water' ? FONT_SIZE / 2 : FONT_SIZE * 2
+    // Tune font size for Template table
+    const baseFontSize = settings.fontsz + 2
+    const fontSize = struct.name === 'water' ? baseFontSize / 2 : baseFontSize
 
     RenderStruct.render(div, struct, {
       ...settings,
@@ -78,7 +80,8 @@ const prerenderPartOfStructures = (saltsAndSolvents: Struct[], settings) => {
       fontsz: fontSize,
       fontszsub: fontSize,
       bondThickness: BOND_THICKNESS,
-      doubleBondWidth: DOUBLE_BOND_WIDTH
+      doubleBondWidth: DOUBLE_BOND_WIDTH,
+      templFlag: true
     })
     div.remove()
   })

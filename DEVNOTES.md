@@ -14,7 +14,7 @@ To create production build of ready-to-run application execute the following com
 
 ```sh
 npm install
-npm build
+npm run build
 ```
 
 The following parameters are used by default:
@@ -27,7 +27,7 @@ PUBLIC_URL='./'
 If you want to change these parameters you can build application by using the following command:
 
 ```sh
-npx cross-env API_PATH='{your_api_path_here}' PUBLIC_URL='{your_public_url_here}' npm build
+npx cross-env API_PATH='{your_api_path_here}' PUBLIC_URL='{your_public_url_here}' npm run build
 ```
 
 To serve results of build locally run the following command from root directory:

@@ -1,3 +1,5 @@
+import { difference } from 'lodash'
+
 /**
  * Remove the word `bond` out of the title
  *
@@ -17,6 +19,25 @@ export const formatTitle = (title: string) => {
  */
 export const getBondNames = (tools) => {
   return Object.keys(tools).filter((key) => key.startsWith('bond-'))
+}
+
+export const queryBondNames = [
+  'bond-any',
+  'bond-aromatic',
+  'bond-singledouble',
+  'bond-singlearomatic',
+  'bond-doublearomatic'
+]
+
+/**
+ * Get bond names except for query bonds
+ *
+ * @returns `['bond-single', 'bond-up', 'bond-down', 'bond-updown', 'bond-double',
+ * 'bond-crossed', 'bond-triple', 'bond-aromatic', 'bond-hydrogen', 'bond-dative']`
+ */
+export const getNonQueryBondNames = (tools) => {
+  const allBondNames = getBondNames(tools)
+  return difference(allBondNames, queryBondNames)
 }
 
 export const noOperation = () => null

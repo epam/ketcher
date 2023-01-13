@@ -102,7 +102,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onCalculate: () => dispatchAction('cip'),
     onCheck: () => dispatchAction('check'),
     onAnalyse: () => dispatchAction('analyse'),
-    onStereo: () => dispatchAction('enhanced-stereo'),
     onMiew: () => dispatchAction('miew'),
     onAction: (action) => dispatch(onAction(action)),
     onOpen: (menuName, isSelected) =>

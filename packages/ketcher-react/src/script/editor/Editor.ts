@@ -597,8 +597,17 @@ function isMouseRight(event) {
   )
 }
 
-function resetSelectionOnCanvasClick(editor: Editor, eventName: string) {
-  if (eventName === 'mouseup') {
+function resetSelectionOnCanvasClick(
+  editor: Editor,
+  eventName: string,
+  clientArea: HTMLElement,
+  event
+) {
+  if (
+    eventName === 'mouseup' &&
+    editor.selection() &&
+    clientArea.contains(event.target)
+  ) {
     editor.selection(null)
   }
 }
@@ -613,20 +622,44 @@ function updateLastCursorPosition(editor: Editor, event) {
   }
 }
 
-function domEventSetup(editor: Editor, clientArea) {
+function useToolIfNeeded(
+  editor: Editor,
+  eventName: string,
+  clientArea: HTMLElement,
+  event
+) {
+  const EditorTool = editor.tool()
+  editor.lastEvent = event
+
+  const conditions = [
+    !!EditorTool,
+    eventName in EditorTool,
+    clientArea.contains(event.target) || EditorTool.isSelectionRunning?.()
+  ]
+
+  if (conditions.every((condition) => condition)) {
+    EditorTool[eventName](event)
+    return true
+  }
+
+  return false
+}
+
+function domEventSetup(editor: Editor, clientArea: HTMLElement) {
   // TODO: addEventListener('resize', ...);
   ;[
-    'click',
-    'dblclick',
-    'mousedown',
-    'mousemove',
-    'mouseup',
-    'mouseleave',
-    'mouseover'
-  ].forEach((eventName) => {
+    { target: clientArea, eventName: 'click' },
+    { target: clientArea, eventName: 'dblclick' },
+    { target: clientArea, eventName: 'mousedown' },
+    { target: document, eventName: 'mousemove' },
+    { target: document, eventName: 'mouseup' },
+    { target: document, eventName: 'mouseleave' },
+    { target: clientArea, eventName: 'mouseover' }
+  ].forEach(({ target, eventName }) => {
     editor.event[eventName] = new DOMSubscription()
     const subs = editor.event[eventName]
-    clientArea.addEventListener(eventName, subs.dispatch.bind(subs))
+
+    target.addEventListener(eventName, subs.dispatch.bind(subs))
 
     subs.add((event) => {
       updateLastCursorPosition(editor, event)
@@ -642,13 +675,14 @@ function domEventSetup(editor: Editor, clientArea) {
           return true
         }
       }
-      const EditorTool = editor.tool()
-      editor.lastEvent = event
-      if (EditorTool && eventName in EditorTool) {
-        EditorTool[eventName](event)
+
+      const isToolUsed = useToolIfNeeded(editor, eventName, clientArea, event)
+      if (isToolUsed) {
         return true
       }
-      resetSelectionOnCanvasClick(editor, eventName)
+
+      resetSelectionOnCanvasClick(editor, eventName, clientArea, event)
+
       return true
     }, -1)
   })

@@ -27,6 +27,7 @@ import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction } from './shared'
 
 import actions from '../action'
+import tools from '../action/tools'
 import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
@@ -38,6 +39,16 @@ export function initKeydownListener(element) {
     element.addEventListener('keydown', (event) =>
       keyHandle(dispatch, getState(), hotKeys, event)
     )
+  }
+}
+
+function removeNotRenderedStruct(actionTool, event, dispatch) {
+  const { code, metaKey } = event
+  if (actionTool.tool === 'paste' && code === 'KeyS' && metaKey) {
+    dispatch({
+      type: 'ACTION',
+      action: tools['select-rectangle'].action
+    })
   }
 }
 
@@ -63,23 +74,28 @@ function keyHandle(dispatch, state, hotKeys, event) {
       .catch(() => null)
     event.preventDefault()
   } else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
-    let index = checkGroupOnTool(group, actionTool) // index currentTool in group || -1
+    const index = checkGroupOnTool(group, actionTool) // index currentTool in group || -1
     const groupLength = group !== null ? group.length : 1
-    index = (index + 1) % groupLength
+    const newIndex = (index + 1) % groupLength
 
-    const actName = group[index]
+    const actName = group[newIndex]
     if (actionState[actName] && actionState[actName].disabled === true) {
       event.preventDefault()
       return
     }
+    // Removing from what should be saved - structure, which was added to paste tool,
+    // but not yet rendered on canvas
+    removeNotRenderedStruct(actionTool, event, dispatch)
+
     if (clipArea.actions.indexOf(actName) === -1) {
-      const newAction = actions[actName].action
+      let newAction = actions[actName].action
       const hoveredItemId = getHoveredAtomId(render.ctab.atoms)
       const isHoveringOverAtom = hoveredItemId !== null
+      // check if atom is currently hovered over
+      // in this case we do not want to activate the corresponding tool
+      // and just insert the atom directly
       if (isHoveringOverAtom && newAction.tool !== 'select') {
-        // check if atom is currently hovered over
-        // in this case we do not want to activate the corresponding tool
-        // and just insert the atom directly
+        newAction = getCurrentAction(group[index]) || newAction
         handleHotkeyOverAtom({
           hoveredItemId,
           newAction,
@@ -96,6 +112,10 @@ function keyHandle(dispatch, state, hotKeys, event) {
       clipArea.exec(event)
     }
   }
+}
+
+function getCurrentAction(prevActName) {
+  return actions[prevActName]?.action
 }
 
 function getHoveredAtomId(atoms: Map<number, ReAtom>): number | null {

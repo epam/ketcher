@@ -55,6 +55,10 @@ class SelectTool {
     )
   }
 
+  isSelectionRunning() {
+    return this.#lassoHelper.running()
+  }
+
   mousedown(event) {
     const rnd = this.editor.render
     const ctab = rnd.ctab
@@ -407,7 +411,11 @@ class SelectTool {
       // TODO it catches more events than needed, to be re-factored
       this.selectElementsOnCanvas(newSelected, editor, event)
     } else if (this.#lassoHelper.fragment) {
-      if (!event.shiftKey) editor.selection(null)
+      if (
+        !event.shiftKey &&
+        this.editor.render.clientArea.contains(event.target)
+      )
+        editor.selection(null)
     }
     editor.event.message.dispatch({
       info: false

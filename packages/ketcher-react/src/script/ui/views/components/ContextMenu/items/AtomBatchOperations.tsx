@@ -103,7 +103,7 @@ export const AtomBatchEdit: React.FC<CustomItemProps> = (props) => {
       disabled={isDisabled}
       onClick={handleClick}
     >
-      Edit selected atom(s)
+      Edit selected atom(s)...
     </Item>
   )
 }
@@ -165,7 +165,7 @@ export const AtomStereoBatchEdit: React.FC<CustomItemProps> = (props) => {
       disabled={isStereoDisabled}
       onClick={handleClick}
     >
-      Enhanced stereochemistry
+      Enhanced stereochemistry...
     </Item>
   )
 }

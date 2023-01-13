@@ -115,7 +115,7 @@ const AtomSingleOperations: React.FC = (props) => {
   return (
     <>
       <Item {...props} hidden={isHidden} onClick={handleEdit}>
-        Edit
+        Edit...
       </Item>
 
       <Item
@@ -124,7 +124,7 @@ const AtomSingleOperations: React.FC = (props) => {
         disabled={isStereoDisabled}
         onClick={handleStereoEdit}
       >
-        Enhanced stereochemistry
+        Enhanced stereochemistry...
       </Item>
 
       <Item {...props} hidden={isHidden} onClick={handleDelete}>

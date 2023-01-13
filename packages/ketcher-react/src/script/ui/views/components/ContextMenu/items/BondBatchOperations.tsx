@@ -93,7 +93,7 @@ export const BondBatchEdit: React.FC<CustomItemProps> = (props) => {
       disabled={isDisabled}
       onClick={handleClick}
     >
-      Edit selected bond(s)
+      Edit selected bond(s)...
     </Item>
   )
 }

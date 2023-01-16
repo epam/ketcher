@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Action, fromBondsAttrs, fromOneBondDeletion } from 'ketcher-core'
+import { fromBondsAttrs } from 'ketcher-core'
 import { useCallback } from 'react'
 import type { ItemParams, PredicateParams } from 'react-contexify'
 import { Item, Submenu } from 'react-contexify'
@@ -31,12 +31,14 @@ import type {
   CustomItemProps,
   CustomSubMenuProps
 } from '../contextMenu.types'
-import { formatTitle, getBondNames, noOperation } from './utils'
+import {
+  formatTitle,
+  getBondNames,
+  noOperation,
+  isBatchOperationHidden
+} from './utils'
 
 const bondNames = getBondNames(tools)
-
-const isHidden = ({ props }: PredicateParams<ContextMenuShowProps, ItemData>) =>
-  !props?.selected
 
 const useDisabled = () => {
   const { getKetcherInstance } = useAppContext()
@@ -46,7 +48,7 @@ const useDisabled = () => {
       props,
       triggerEvent
     }: PredicateParams<ContextMenuShowProps, ItemData>) => {
-      if (isHidden({ props, triggerEvent })) {
+      if (isBatchOperationHidden({ props, triggerEvent })) {
         return true
       }
 
@@ -89,7 +91,7 @@ export const BondBatchEdit: React.FC<CustomItemProps> = (props) => {
   return (
     <Item
       {...props}
-      hidden={isHidden}
+      hidden={isBatchOperationHidden}
       disabled={isDisabled}
       onClick={handleClick}
     >
@@ -120,7 +122,7 @@ export const BondTypeBatchChange: React.FC<CustomSubMenuProps> = (props) => {
     <Submenu
       {...props}
       label="Bond type"
-      hidden={isHidden}
+      hidden={isBatchOperationHidden}
       disabled={isDisabled}
       className={styles.subMenu}
     >
@@ -131,33 +133,5 @@ export const BondTypeBatchChange: React.FC<CustomSubMenuProps> = (props) => {
         </Item>
       ))}
     </Submenu>
-  )
-}
-
-export const BondBatchDelete: React.FC<CustomItemProps> = (props) => {
-  const { getKetcherInstance } = useAppContext()
-  const isDisabled = useDisabled()
-
-  const handleClick = useCallback(() => {
-    const editor = getKetcherInstance().editor as Editor
-    const action = new Action()
-    const selectedBonds = editor.selection()?.bonds
-
-    selectedBonds?.forEach((bondId) => {
-      action.mergeWith(fromOneBondDeletion(editor.render.ctab, bondId))
-    })
-
-    editor.update(action)
-  }, [getKetcherInstance])
-
-  return (
-    <Item
-      {...props}
-      hidden={isHidden}
-      disabled={isDisabled}
-      onClick={handleClick}
-    >
-      Delete selected bond(s)
-    </Item>
   )
 }

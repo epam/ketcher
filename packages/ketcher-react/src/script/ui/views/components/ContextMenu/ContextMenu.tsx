@@ -17,17 +17,10 @@
 import { Menu } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
 import styles from './ContextMenu.module.less'
-import {
-  AtomBatchEdit,
-  AtomStereoBatchEdit,
-  AtomBatchDelete
-} from './items/AtomBatchOperations'
+import { AtomBatchEdit, AtomStereoBatchEdit } from './items/AtomBatchOperations'
 import AtomSingleOperations from './items/AtomSingleOperations'
-import {
-  BondBatchEdit,
-  BondTypeBatchChange,
-  BondBatchDelete
-} from './items/BondBatchOperations'
+import { BatchDelete } from './items/BatchDelete'
+import { BondBatchEdit, BondTypeBatchChange } from './items/BondBatchOperations'
 import BondSingleOperations from './items/BondSingleOperations'
 
 export const CONTEXT_MENU_ID = 'ketcherBondAndAtomContextMenu'
@@ -42,8 +35,7 @@ const ContextMenu: React.FC = () => {
       <AtomBatchEdit />
       <BondTypeBatchChange />
       <AtomStereoBatchEdit />
-      <BondBatchDelete />
-      <AtomBatchDelete />
+      <BatchDelete />
     </Menu>
   )
 }

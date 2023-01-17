@@ -23,14 +23,15 @@ import { GroupDescriptor, MultiToolVariant } from './variants/variants.types'
 import { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types'
 import action, { UiAction, UiActionAction } from '../../../../action'
 
+import { useRef } from 'react'
+import clsx from 'clsx'
 import Icon from '../../../../component/view/icon'
 import { Portal } from '../../../../Portal'
 import { chooseMultiTool } from './variants/chooseMultiTool'
 import classes from './ToolbarMultiToolItem.module.less'
-import clsx from 'clsx'
 import { usePortalOpening } from './usePortalOpening'
 import { usePortalStyle } from './usePortalStyle'
-import { useRef } from 'react'
+import { SettingsManager } from '../../../../utils/settingsManager'
 
 interface ToolbarMultiToolItemProps {
   id: ToolbarItemVariant
@@ -97,9 +98,21 @@ const ToolbarMultiToolItem = (props: Props) => {
   const displayMultiToolItem = !(allInnerItemsHidden || currentStatus?.hidden)
 
   if (!currentStatus && options.length) {
+    const savedSelectionTool = SettingsManager.selectionTool
+    const savedSelectionToolId = `${savedSelectionTool.tool}-${savedSelectionTool.opts}`
     currentId =
-      options.filter((option) => !status[option.id]?.hidden)[0]?.id ||
-      options[0].id
+      savedSelectionTool &&
+      savedSelectionToolId &&
+      options.filter(
+        (option) =>
+          !status[option.id]?.hidden && option.id === savedSelectionToolId
+      )[0]?.id
+
+    if (!currentId) {
+      currentId =
+        options.filter((option) => !status[option.id]?.hidden)[0]?.id ||
+        options[0].id
+    }
   }
 
   const actionButtonProps: Omit<

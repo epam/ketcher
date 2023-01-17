@@ -20,8 +20,7 @@ import {
   KetSerializer,
   MolSerializer,
   formatProperties,
-  ChemicalMimeType,
-  ReAtom
+  ChemicalMimeType
 } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction } from './shared'
@@ -31,7 +30,7 @@ import tools from '../action/tools'
 import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
-import { handleHotkeyOverAtom } from './handleHotkeysOverAtom'
+import { handleHotkeyOverItems } from './handleHotkeysOverAtom'
 import { SettingsManager } from '../utils/settingsManager'
 
 export function initKeydownListener(element) {
@@ -91,17 +90,16 @@ function keyHandle(dispatch, state, hotKeys, event) {
 
     if (clipArea.actions.indexOf(actName) === -1) {
       let newAction = actions[actName].action
-      const hoveredItemId = getHoveredAtomId(render.ctab.atoms)
-      const isHoveringOverAtom = hoveredItemId !== null
+      const hoveredItem = getHoveredItem(render.ctab)
+      const isHoveringOverItem = Object.keys(hoveredItem).length
       // check if atom is currently hovered over
       // in this case we do not want to activate the corresponding tool
       // and just insert the atom directly
-      if (isHoveringOverAtom && newAction.tool !== 'select') {
+      if (isHoveringOverItem && newAction.tool !== 'select') {
         newAction = getCurrentAction(group[index]) || newAction
-        handleHotkeyOverAtom({
-          hoveredItemId,
+        handleHotkeyOverItems({
+          hoveredItem,
           newAction,
-          render,
           editor,
           dispatch
         })
@@ -120,11 +118,19 @@ function getCurrentAction(prevActName) {
   return actions[prevActName]?.action
 }
 
-function getHoveredAtomId(atoms: Map<number, ReAtom>): number | null {
-  for (const [id, atom] of atoms.entries()) {
-    if (atom.hover) return id
+function getHoveredItem(
+  ctab: Record<string, Map<number, Record<string, unknown>>>
+): Record<string, number> {
+  const hoveredItems = {}
+
+  for (const ctabItem in ctab) {
+    if (!(ctab[ctabItem] instanceof Map)) continue
+    ctab[ctabItem].forEach((item, id) => {
+      if (item.hover) hoveredItems[ctabItem] = id
+    })
   }
-  return null
+
+  return hoveredItems
 }
 
 function setHotKey(key, actName, hotKeys) {

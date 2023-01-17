@@ -86,9 +86,16 @@ export function fromFlip(restruct, selection, dir, center) {
 
 function getRotationPoint(struct, selection) {
   const { bonds } = struct
-  const isAttachmentBond = ({ begin, end }) =>
-    (selection.atoms.includes(begin) && !selection.atoms.includes(end)) ||
-    (selection.atoms.includes(end) && !selection.atoms.includes(begin))
+  const isAttachmentBond = ({ begin, end }) => {
+    const isBondStartsInSelectionAndEndsOutside =
+      selection.atoms.includes(begin) && !selection.atoms.includes(end)
+    const isBondEndsInSelectionAndStartsOutside =
+      selection.atoms.includes(end) && !selection.atoms.includes(begin)
+    return (
+      isBondStartsInSelectionAndEndsOutside ||
+      isBondEndsInSelectionAndStartsOutside
+    )
+  }
   const isSelectedAtom = (atomId) => selection.atoms.includes(atomId)
   const getAttachmentBond = () => {
     for (const [bondId, bond] of bonds.entries()) {
@@ -115,31 +122,7 @@ function getRotationPoint(struct, selection) {
   return struct.atoms.get(rotationPointAtomId).pp
 }
 
-function flipPartOfStructure({
-  fids,
-  struct,
-  restruct,
-  dir,
-  action,
-  selection
-}) {
-  const rotationPoint = getRotationPoint(struct, selection)
-  Object.keys(fids).forEach((frag) => {
-    const fragment = new Pile(fids[frag])
-
-    fragment.forEach((aid) => {
-      const atom = struct.atoms.get(aid)
-      const d = flipItemByCenter(atom, rotationPoint, dir)
-      action.addOp(new AtomMove(aid, d))
-    })
-
-    const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment))
-    sgroups.forEach((sg) => {
-      const d = flipItemByCenter(sg, rotationPoint, dir)
-      action.addOp(new SGroupDataMove(sg.id, d))
-    })
-  })
-
+function flipBonds(selection, struct, action) {
   if (selection.bonds) {
     selection.bonds.forEach((bid) => {
       const bond = struct.bonds.get(bid)
@@ -158,6 +141,35 @@ function flipPartOfStructure({
       }
     })
   }
+}
+
+function flipPartOfStructure({
+  fids,
+  struct,
+  restruct,
+  dir,
+  action,
+  selection
+}) {
+  const rotationPoint = getRotationPoint(struct, selection)
+
+  Object.keys(fids).forEach((frag) => {
+    const fragment = new Pile(fids[frag])
+
+    fragment.forEach((aid) => {
+      const atom = struct.atoms.get(aid)
+      const d = flipItemByCenter(atom, rotationPoint, dir)
+      action.addOp(new AtomMove(aid, d))
+    })
+
+    const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment))
+    sgroups.forEach((sg) => {
+      const d = flipItemByCenter(sg, rotationPoint, dir)
+      action.addOp(new SGroupDataMove(sg.id, d))
+    })
+  })
+
+  flipBonds(selection, struct, action)
 
   return action.perform(restruct)
 }
@@ -192,24 +204,7 @@ function flipStandaloneStructure({
     })
   })
 
-  if (selection.bonds) {
-    selection.bonds.forEach((bid) => {
-      const bond = struct.bonds.get(bid)
-
-      if (bond.type !== Bond.PATTERN.TYPE.SINGLE) {
-        return
-      }
-
-      if (bond.stereo === Bond.PATTERN.STEREO.UP) {
-        action.addOp(new BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.DOWN))
-        return
-      }
-
-      if (bond.stereo === Bond.PATTERN.STEREO.DOWN) {
-        action.addOp(new BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.UP))
-      }
-    })
-  }
+  flipBonds(selection, struct, action)
 
   return action.perform(restruct)
 }

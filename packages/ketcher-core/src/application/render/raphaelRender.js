@@ -208,8 +208,8 @@ Render.prototype.update = function (force = false, viewSz = null) {
       this.ctab.molecule.rescale()
     }
 
-    const autoScale = this.options.autoScale || this.options.downScale
-    if (!autoScale) {
+    const isAutoScale = this.options.autoScale || this.options.downScale
+    if (!isAutoScale) {
       const ext = Vec2.UNIT.scaled(sf)
       const eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb
       const vb = new Box2Abs(
@@ -243,9 +243,9 @@ Render.prototype.update = function (force = false, viewSz = null) {
         this.options.rescaleAmount ||
         Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg))
 
-      const forceDownscale = this.options.downScale && rescale < 1
+      const isForceDownscale = this.options.downScale && rescale < 1
       const isBondsLengthFit = this.options.maxBondLength / rescale > 1
-      if (isBondsLengthFit || forceDownscale) {
+      if (isBondsLengthFit || isForceDownscale) {
         rescale = 1
       }
       const sz2 = sz1.add(mv.scaled(2 * rescale))

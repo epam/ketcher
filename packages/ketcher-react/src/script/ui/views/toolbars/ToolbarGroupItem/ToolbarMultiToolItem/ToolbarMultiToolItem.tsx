@@ -99,7 +99,9 @@ const ToolbarMultiToolItem = (props: Props) => {
 
   if (!currentStatus && options.length) {
     const savedSelectionTool = SettingsManager.selectionTool
-    const savedSelectionToolId = `${savedSelectionTool.tool}-${savedSelectionTool.opts}`
+    const savedSelectionToolId =
+      savedSelectionTool &&
+      `${savedSelectionTool.tool}-${savedSelectionTool.opts}`
     currentId =
       savedSelectionTool &&
       savedSelectionToolId &&

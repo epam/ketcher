@@ -90,7 +90,7 @@ function TextArea({ schema, value, onChange, ...rest }) {
 
 TextArea.val = (ev) => ev.target.value
 
-function CheckBox({ schema, value = '', onChange, ...rest }) {
+function CheckBox({ schema, value = '', onChange, innerRef, ...rest }) {
   return (
     <div className={classes.fieldSetItem}>
       <input

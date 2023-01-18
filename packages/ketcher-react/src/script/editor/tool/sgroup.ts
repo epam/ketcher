@@ -442,7 +442,7 @@ class SGroupTool {
     }
 
     // TODO: handle click on an existing group?
-    if (id !== null || (selection && selection.atoms)) {
+    if (id !== null || selection?.atoms?.length) {
       this.editor.selection(selection)
       SGroupTool.sgroupDialog(this.editor, id, this.type)
     }

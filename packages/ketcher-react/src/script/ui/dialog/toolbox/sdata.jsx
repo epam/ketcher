@@ -87,7 +87,7 @@ function SData({
             result.context,
             result.fieldName,
             result.fieldValue,
-            radiobuttons
+            result.radiobuttons
           )}
         </fieldset>
       </Form>

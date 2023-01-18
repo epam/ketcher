@@ -74,10 +74,12 @@ class SGroupAtomRemove extends BaseOperation {
     const { aid, sgid } = this.data
 
     const struct = restruct.molecule
-    const atom = struct.atoms.get(aid)
-    const sgroup = struct.sgroups.get(sgid)
+    const atom = struct.atoms.get(aid)!
+    const sgroup = struct.sgroups.get(sgid)!
 
-    if (!atom || !sgroup) return
+    if (!atom || !sgroup) {
+      return
+    }
 
     SGroup.removeAtom(sgroup, aid)
     atom.sgs.delete(sgid)

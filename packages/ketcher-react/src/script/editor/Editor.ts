@@ -629,6 +629,8 @@ function useToolIfNeeded(
   event
 ) {
   const EditorTool = editor.tool()
+  // console.log(EditorTool)
+
   editor.lastEvent = event
 
   const conditions = [

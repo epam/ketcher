@@ -296,7 +296,9 @@ export class SGroup {
   }
 
   static removeAtom(sgroup: SGroup, aid: number): void {
-    if (!sgroup) return
+    if (!sgroup) {
+      return
+    }
 
     for (let i = 0; i < sgroup.atoms.length; ++i) {
       if (sgroup.atoms[i] === aid) {

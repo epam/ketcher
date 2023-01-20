@@ -332,15 +332,7 @@ class TemplateTool {
     let action = null
     let pasteItems
 
-    if (!ci) {
-      // ci.type == 'Canvas'
-      ;[action, pasteItems] = fromTemplateOnCanvas(
-        restruct,
-        this.template,
-        pos0,
-        angle
-      )
-    } else if (ci.map === 'atoms') {
+    if (ci.map === 'atoms') {
       ;[action, pasteItems] = fromTemplateOnAtom(
         restruct,
         this.template,

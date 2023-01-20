@@ -124,16 +124,22 @@ class ReSGroup extends ReObject {
   }
 
   getTextHighlightDimensions(padding = 0) {
+    let startX = 0
+    let startY = 0
+    let width = 0
+    let height = 0
     const sGroupItem = this.item
     const [firstAtomId] = sGroupItem.atoms
     const sGroupAtom = this.render.ctab.atoms.get(firstAtomId)
     const [sGroupAtomSVGElement] = sGroupAtom.visel.paths
-    const atomTextBoundingBox = sGroupAtomSVGElement.getBBox()
-    const { x, y, x2, y2 } = atomTextBoundingBox
-    const startX = x - this.render.options.offset.x - padding
-    const startY = y - this.render.options.offset.y - padding
-    const width = x2 - x + padding * 2
-    const height = y2 - y + padding * 2
+    if (sGroupAtomSVGElement) {
+      const atomTextBoundingBox = sGroupAtomSVGElement.getBBox()
+      const { x, y, x2, y2 } = atomTextBoundingBox
+      startX = x - this.render.options.offset.x - padding
+      startY = y - this.render.options.offset.y - padding
+      width = x2 - x + padding * 2
+      height = y2 - y + padding * 2
+    }
 
     return { startX, startY, width, height }
   }

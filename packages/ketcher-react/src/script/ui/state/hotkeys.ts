@@ -42,9 +42,9 @@ export function initKeydownListener(element) {
   }
 }
 
-function removeNotRenderedStruct(actionTool, event, dispatch) {
-  const { code, metaKey } = event
-  if (actionTool.tool === 'paste' && code === 'KeyS' && metaKey) {
+function removeNotRenderedStruct(actionTool, group, dispatch) {
+  const effectedTools = ['paste', 'template']
+  if (effectedTools.includes(actionTool.tool) && group?.includes('save')) {
     dispatch({
       type: 'ACTION',
       action: tools['select-rectangle'].action
@@ -85,7 +85,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
     }
     // Removing from what should be saved - structure, which was added to paste tool,
     // but not yet rendered on canvas
-    removeNotRenderedStruct(actionTool, event, dispatch)
+    removeNotRenderedStruct(actionTool, group, dispatch)
 
     if (clipArea.actions.indexOf(actName) === -1) {
       let newAction = actions[actName].action

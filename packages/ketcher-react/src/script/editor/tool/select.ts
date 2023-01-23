@@ -29,7 +29,8 @@ import {
   fromSimpleObjectResizing,
   fromArrowResizing,
   ReStruct,
-  ReSGroup
+  ReSGroup,
+  Vec2
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -38,6 +39,9 @@ import SGroupTool from './sgroup'
 import utils from '../shared/utils'
 import { xor } from 'lodash/fp'
 import { Editor } from '../Editor'
+import { isCloseToEdgeOfCanvas } from '../utils/canvasExtension'
+
+let extendCanvasTimeout: ReturnType<typeof setTimeout> | null = null
 
 class SelectTool {
   #mode: string
@@ -209,7 +213,7 @@ class SelectTool {
     const restruct = editor.render.ctab
     const dragCtx = this.dragCtx
     if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
-    if (dragCtx && dragCtx.item) {
+    if (dragCtx?.item) {
       const atoms = restruct.molecule.atoms
       const selection = editor.selection()
       const shouldDisplayDegree =
@@ -257,7 +261,7 @@ class SelectTool {
       if (dragCtx.action) {
         dragCtx.action.perform(restruct)
         // redraw the elements in unshifted position, lest the have different offset
-        editor.update(dragCtx.action, true)
+        // editor.update(dragCtx.action, true)
       }
 
       const expSel = editor.explicitSelected()
@@ -270,6 +274,7 @@ class SelectTool {
       dragCtx.mergeItems = getItemsToFuse(editor, expSel)
       editor.hover(getHoverToFuse(dragCtx.mergeItems))
 
+      extendCanvas(rnd, event, selection)
       editor.update(dragCtx.action, true)
       return true
     }
@@ -323,6 +328,7 @@ class SelectTool {
     const functionalGroups = molecule.functionalGroups
     const selectedSgroups: any[] = []
     const newSelected = { atoms: [] as any[], bonds: [] as any[] }
+    clearTimeout(extendCanvasTimeout as ReturnType<typeof setTimeout>)
     let actualSgroupId
 
     if (selected && functionalGroups.size && selected.atoms) {
@@ -613,6 +619,102 @@ class SelectTool {
     }
     return isDraggingOnSaltOrSolventAtom || isDraggingOnSaltOrSolventBond
   }
+}
+
+function extendCanvas(render, event, _) {
+  const offset = 150
+  // const speedCoefficient = 2
+  const { layerX, layerY } = event
+  // const isCloseToTopEdgeOfScreen = null
+  const {
+    isCloseToLeftEdgeOfCanvas,
+    isCloseToTopEdgeOfCanvas,
+    isCloseToRightEdgeOfCanvas,
+    isCloseToBottomEdgeOfCanvas
+  } = isCloseToEdgeOfCanvas(event, render.sz)
+  console.log(event)
+  // const shiftAndExtendCanvasByVector = (vector: Vec2) => {
+  //   // const newCanvasSize = new Vec2(
+  //   //   render.sz.x + Math.abs(vector.x),
+  //   //   render.sz.y + Math.abs(vector.y),
+  //   //   0
+  //   // )
+  //   // const delta = new Vec2(
+  //   //   vector.x / speedCoefficient,
+  //   //   vector.y / speedCoefficient,
+  //   //   0
+  //   // )
+  //   render.setScrollOffset(render.options.offset.add(vector))
+  //   // render.setOffset(render.options.offset.add(delta))
+  //   // render.ctab.translate(delta)
+  // }
+  const calculateCanvasExtension = (
+    clientArea,
+    currentCanvasSize,
+    extensionVector
+  ) => {
+    const newHorizontalScrollPosition =
+      clientArea.scrollLeft + extensionVector.x
+    const newVerticalScrollPosition = clientArea.scrollTop + extensionVector.y
+    let horizontalExtension = 0
+    let verticalExtension = 0
+    if (newHorizontalScrollPosition > currentCanvasSize.x) {
+      horizontalExtension = newHorizontalScrollPosition - currentCanvasSize.x
+    }
+    if (newHorizontalScrollPosition < 0) {
+      horizontalExtension = Math.abs(newHorizontalScrollPosition)
+    }
+    if (newVerticalScrollPosition > currentCanvasSize.y) {
+      verticalExtension = newVerticalScrollPosition - currentCanvasSize.y
+    }
+    if (newVerticalScrollPosition < 0) {
+      verticalExtension = Math.abs(newVerticalScrollPosition)
+    }
+    return new Vec2(horizontalExtension, verticalExtension, 0)
+  }
+  const shiftAndExtendCanvasByVector = (vector: Vec2) => {
+    const clientArea = render.clientArea
+    const extensionVector = calculateCanvasExtension(
+      clientArea,
+      render.sz.scaled(render.options.zoom),
+      vector
+    ).scaled(1 / render.options.zoom)
+    console.log(extensionVector)
+    if (extensionVector.x > 0 || extensionVector.y > 0) {
+      render.setPaperSize(render.sz.add(extensionVector))
+      render.setOffset(render.options.offset.add(vector))
+      render.ctab.translate(vector)
+    }
+
+    clientArea.scrollLeft += vector.x * render.options.scale
+    clientArea.scrollTop += vector.y * render.options.scale
+
+    render.update(false)
+  }
+
+  if (isCloseToLeftEdgeOfCanvas) {
+    // console.log('cursor is close to left corner')
+    render.setScrollOffset(render.options.offset.add(new Vec2(-offset, 0, 0)))
+    // shiftAndExtendCanvasByVector(new Vec2(offset, 0, 0))
+  }
+
+  if (isCloseToTopEdgeOfCanvas) {
+    // console.log('cursor is close to top corner')
+    render.setScrollOffset(render.options.offset.add(new Vec2(0, offset, 0)))
+    // shiftAndExtendCanvasByVector(new Vec2(0, offset, 0))
+  }
+
+  if (isCloseToRightEdgeOfCanvas) {
+    // console.log('cursor is close to right corner')
+    shiftAndExtendCanvasByVector(new Vec2(offset, 0, 0))
+  }
+
+  if (isCloseToBottomEdgeOfCanvas) {
+    // console.log('cursor is close to bottom corner')
+    shiftAndExtendCanvasByVector(new Vec2(0, offset, 0))
+  }
+  clearTimeout(extendCanvasTimeout as ReturnType<typeof setTimeout>)
+  extendCanvasTimeout = setTimeout(() => extendCanvas(render, event, _), 0)
 }
 
 function closestToSel(ci) {

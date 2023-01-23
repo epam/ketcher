@@ -52,7 +52,6 @@ class HandTool {
     this.begPos = this.endPos
 
     rnd.ctab.translate(diff)
-    rnd.options.offset = rnd.options.offset.add(diff)
     rnd.update(false)
   }
 

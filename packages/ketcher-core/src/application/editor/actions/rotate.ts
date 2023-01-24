@@ -23,7 +23,11 @@ import {
   SGroupDataMove
 } from '../operations'
 import { Bond, Fragment, Pile, Vec2 } from 'domain/entities'
-import { getRelSgroupsBySelection, structSelection } from './utils'
+import {
+  getRelSgroupsBySelection,
+  structSelection,
+  isAttachmentBond
+} from './utils'
 
 import { Action } from './action'
 import utils from '../shared/utils'
@@ -86,20 +90,10 @@ export function fromFlip(restruct, selection, dir, center) {
 
 function getRotationPoint(struct, selection) {
   const { bonds } = struct
-  const isAttachmentBond = ({ begin, end }) => {
-    const isBondStartsInSelectionAndEndsOutside =
-      selection.atoms.includes(begin) && !selection.atoms.includes(end)
-    const isBondEndsInSelectionAndStartsOutside =
-      selection.atoms.includes(end) && !selection.atoms.includes(begin)
-    return (
-      isBondStartsInSelectionAndEndsOutside ||
-      isBondEndsInSelectionAndStartsOutside
-    )
-  }
   const isSelectedAtom = (atomId) => selection.atoms.includes(atomId)
   const getAttachmentBond = () => {
     for (const [bondId, bond] of bonds.entries()) {
-      if (isAttachmentBond(bond)) {
+      if (isAttachmentBond(bond, selection)) {
         return [bondId, bond]
       }
     }

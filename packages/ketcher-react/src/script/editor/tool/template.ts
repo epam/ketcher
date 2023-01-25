@@ -332,7 +332,7 @@ class TemplateTool {
     let action = null
     let pasteItems
 
-    if (ci.map === 'atoms') {
+    if (ci?.map === 'atoms') {
       ;[action, pasteItems] = fromTemplateOnAtom(
         restruct,
         this.template,

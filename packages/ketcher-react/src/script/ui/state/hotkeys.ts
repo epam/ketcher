@@ -32,6 +32,7 @@ import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
 import { handleHotkeyOverAtom } from './handleHotkeysOverAtom'
+import { SettingsManager } from '../utils/settingsManager'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -45,9 +46,10 @@ export function initKeydownListener(element) {
 function removeNotRenderedStruct(actionTool, event, dispatch) {
   const { code, metaKey } = event
   if (actionTool.tool === 'paste' && code === 'KeyS' && metaKey) {
+    const savedSelectedTool = SettingsManager.selectionTool
     dispatch({
       type: 'ACTION',
-      action: tools['select-rectangle'].action
+      action: savedSelectedTool || tools['select-rectangle'].action
     })
   }
 }

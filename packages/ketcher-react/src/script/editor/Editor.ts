@@ -654,8 +654,13 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
     { target: document, eventName: 'mousemove' },
     { target: document, eventName: 'mouseup' },
     { target: document, eventName: 'mouseleave' },
+    {
+      target: clientArea,
+      eventName: 'mouseleave',
+      toolEventName: 'mouseLeaveClientArea'
+    },
     { target: clientArea, eventName: 'mouseover' }
-  ].forEach(({ target, eventName }) => {
+  ].forEach(({ target, eventName, toolEventName }) => {
     editor.event[eventName] = new DOMSubscription()
     const subs = editor.event[eventName]
 
@@ -676,7 +681,12 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
         }
       }
 
-      const isToolUsed = useToolIfNeeded(editor, eventName, clientArea, event)
+      const isToolUsed = useToolIfNeeded(
+        editor,
+        toolEventName || eventName,
+        clientArea,
+        event
+      )
       if (isToolUsed) {
         return true
       }

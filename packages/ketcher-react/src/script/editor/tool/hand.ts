@@ -69,7 +69,7 @@ class HandTool {
     this.editor.event.cursor.dispatch({ status: 'mouseover' })
   }
 
-  mouseleave() {
+  mouseLeaveClientArea() {
     this.begPos = null
     this.endPos = null
     this.editor.event.cursor.dispatch({ status: 'leave' })

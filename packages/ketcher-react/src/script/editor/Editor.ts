@@ -630,7 +630,6 @@ function useToolIfNeeded(
 ) {
   const EditorTool = editor.tool()
   editor.lastEvent = event
-
   const conditions = [
     !!EditorTool,
     eventName in EditorTool,

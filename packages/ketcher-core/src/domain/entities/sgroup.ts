@@ -331,7 +331,9 @@ export class SGroup {
   static bracketPos(
     sGroup,
     mol,
-    crossBondsPerAtom: { [key: number]: Array<Bond> }
+    crossBondsPerAtom: { [key: number]: Array<Bond> },
+    remol?,
+    render?
   ): void {
     const atoms = sGroup.atoms
     const crossBonds = crossBondsPerAtom
@@ -348,12 +350,24 @@ export class SGroup {
 
     let braketBox: Box2Abs | null = null
     const contentBoxes: Array<any> = []
+    const getAtom = (aid) => {
+      if (remol && render) {
+        return remol.atoms.get(aid)
+      }
+      return mol.atoms.get(aid)
+    }
     atoms.forEach((aid) => {
-      const atom = mol.atoms.get(aid)
-      const pos = new Vec2(atom.pp)
+      const atom = getAtom(aid)
       const ext = new Vec2(0.05 * 3, 0.05 * 3)
-      const bba = new Box2Abs(pos, pos).extend(ext, ext)
-      contentBoxes.push(bba)
+      let pos
+      let bba
+      if ('getVBoxObj' in atom && render) {
+        bba = atom.getVBoxObj(render)
+      } else {
+        pos = new Vec2(atom.pp)
+        bba = new Box2Abs(pos, pos)
+      }
+      contentBoxes.push(bba.extend(ext, ext))
     })
     contentBoxes.forEach((bba) => {
       let bbb: Box2Abs | null = null

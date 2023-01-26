@@ -21,6 +21,7 @@ import { Pile } from './pile'
 import { Struct } from './struct'
 import { SaltsAndSolventsProvider } from '../helpers'
 import { Vec2 } from './vec2'
+import { ReStruct } from '../../application/render'
 
 export class SGroupBracketParams {
   readonly c: Vec2
@@ -332,7 +333,7 @@ export class SGroup {
     sGroup,
     mol,
     crossBondsPerAtom: { [key: number]: Array<Bond> },
-    remol?,
+    remol?: ReStruct,
     render?
   ): void {
     const atoms = sGroup.atoms
@@ -359,15 +360,15 @@ export class SGroup {
     atoms.forEach((aid) => {
       const atom = getAtom(aid)
       const ext = new Vec2(0.05 * 3, 0.05 * 3)
-      let pos
-      let bba
+      let position
+      let structBoundingBox
       if ('getVBoxObj' in atom && render) {
-        bba = atom.getVBoxObj(render)
+        structBoundingBox = atom.getVBoxObj(render)
       } else {
-        pos = new Vec2(atom.pp)
-        bba = new Box2Abs(pos, pos)
+        position = new Vec2(atom.pp)
+        structBoundingBox = new Box2Abs(position, position)
       }
-      contentBoxes.push(bba.extend(ext, ext))
+      contentBoxes.push(structBoundingBox.extend(ext, ext))
     })
     contentBoxes.forEach((bba) => {
       let bbb: Box2Abs | null = null

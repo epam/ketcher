@@ -273,7 +273,6 @@ class SGroupTool {
     let bondsResult: Array<number> | null = []
     let extraBonds
     const result: Array<number> = []
-
     if (
       ci &&
       ci.map === 'functionalGroups' &&
@@ -433,7 +432,10 @@ class SGroupTool {
         selection = { atoms: [ci.id] }
       } else if (ci.map === 'bonds') {
         const bond = this.editor.render.ctab.bonds.get(ci.id)
-        selection = { atoms: [bond?.b.begin, bond?.b.end] }
+        selection = {
+          atoms: [bond?.b.begin, bond?.b.end],
+          bonds: [ci.id]
+        }
       } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
         id = ci.id
       } else {
@@ -441,8 +443,10 @@ class SGroupTool {
       }
     }
 
+    const isAtomsOrBondsSelected =
+      selection?.atoms?.length || selection?.bonds?.length
     // TODO: handle click on an existing group?
-    if (id !== null || selection?.atoms?.length) {
+    if (id !== null || isAtomsOrBondsSelected) {
       this.editor.selection(selection)
       SGroupTool.sgroupDialog(this.editor, id, this.type)
     }

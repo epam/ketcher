@@ -239,6 +239,9 @@ class SelectTool {
         editor.update(dragCtx.action, true)
         return true
       }
+      if (dragCtx.item.map === 'functionalGroups' && !dragCtx.action) {
+        editor.event.showInfo.dispatch(null)
+      }
       if (dragCtx.item.map === 'rxnArrows' && dragCtx.item.ref) {
         if (dragCtx?.action) dragCtx.action.perform(rnd.ctab)
         const current = rnd.page2obj(event)

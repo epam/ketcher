@@ -21,7 +21,7 @@ import { Pile } from './pile'
 import { Struct } from './struct'
 import { SaltsAndSolventsProvider } from '../helpers'
 import { Vec2 } from './vec2'
-import { ReAtom, ReStruct } from '../../application/render'
+import { ReStruct } from '../../application/render'
 
 export class SGroupBracketParams {
   readonly c: Vec2
@@ -362,7 +362,7 @@ export class SGroup {
       const ext = new Vec2(0.05 * 3, 0.05 * 3)
       let position
       let structBoundingBox
-      if (atom instanceof ReAtom && render) {
+      if ('getVBoxObj' in atom && render) {
         structBoundingBox = atom.getVBoxObj(render)
       } else {
         position = new Vec2(atom.pp)

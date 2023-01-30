@@ -37,7 +37,7 @@ export async function handleHotkeyOverAtom({
     rgroupatom: () =>
       handleRGroupAtomTool({ hoveredItemId, newAction, render, editor }),
     sgroup: () => {
-      Tools.sgroup.sgroupDialog(editor, hoveredItemId, null)
+      Tools.sgroup.sgroupDialog(editor, hoveredItemId)
     },
     hand: () =>
       dispatch(

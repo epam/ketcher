@@ -101,7 +101,6 @@ type LeftToolbarItemVariant =
   | 'transform-flip-v'
   // sgroup group
   | 'sgroup'
-  | 'sgroup-data'
   // reaction
   // plus
   | 'reaction-plus'

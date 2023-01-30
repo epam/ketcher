@@ -160,16 +160,6 @@ export default function initEditor(dispatch, getState) {
         .then(toSgroup),
     onRemoveFG: (result) =>
       sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
-    onSdataEdit: (sgroup) =>
-      sleep(0)
-        .then(() =>
-          openDialog(
-            dispatch,
-            sgroup.type === 'DAT' ? 'sdata' : 'sgroup',
-            fromSgroup(sgroup)
-          )
-        )
-        .then(toSgroup),
     onMessage: (msg) => {
       if (msg.error) {
         // TODO: add error handler call

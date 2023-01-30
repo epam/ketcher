@@ -18,6 +18,5 @@ export const supportedSGroupTypes = {
   MUL: 'MUL',
   SRU: 'SRU',
   SUP: 'SUP',
-  DAT: 'DAT',
-  GEN: 'GEN'
+  DAT: 'DAT'
 }

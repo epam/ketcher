@@ -40,7 +40,7 @@ class TemplateTool {
 
   constructor(editor, tmpl) {
     this.editor = editor
-    this.mode = tmpl.mode
+    this.mode = getTemplateMode(tmpl)
     this.editor.selection(null)
 
     this.template = {
@@ -518,6 +518,13 @@ function addSaltsAndSolventsOnCanvasWithoutMerge(
   editor.event.message.dispatch({
     info: false
   })
+}
+
+function getTemplateMode(tmpl) {
+  if (tmpl.mode) return tmpl.mode
+  if (['Functional Groups', 'Salts and Solvents'].includes(tmpl.props?.group))
+    return 'fg'
+  return null
 }
 
 function getSign(molecule, bond, v) {

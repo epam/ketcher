@@ -14,19 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field, SelectOneOf } from '../../component/form/form/form'
-
-import { Dialog } from '../../views/components'
-import Select from '../../component/form/Select'
-import classes from './sgroup.module.less'
+import Form, { SelectOneOf } from '../../component/form/form/form'
 import { connect } from 'react-redux'
-import { getSelectOptionsFromSchema } from '../../utils'
 import { sgroupMap as schemes } from '../../data/schema/struct-schema'
+import { Dialog } from '../../views/components'
+import SDataFieldset from './SDataFieldset'
+import classes from './sgroup.module.less'
+import SGroupFieldset from './SGroupFieldset'
+import { useMemo } from 'react'
 
-function Sgroup({ formState, ...prop }) {
+function Sgroup({ formState, ...props }) {
   const { result, valid } = formState
 
   const type = result.type
+
+  const serialize = useMemo(
+    () =>
+      type === 'DAT' && result.context && result.fieldName && result.fieldValue
+        ? {
+            context: result.context.trim(),
+            fieldName: result.fieldName.trim(),
+            fieldValue:
+              typeof result.fieldValue === 'string'
+                ? result.fieldValue.trim()
+                : result.fieldValue
+          }
+        : {},
+    [result.context, result.fieldName, result.fieldValue, type]
+  )
 
   return (
     <Dialog
@@ -37,41 +52,24 @@ function Sgroup({ formState, ...prop }) {
       buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: 'Apply' }}
       withDivider={true}
-      params={prop}
+      params={props}
     >
-      <Form schema={schemes[type]} init={prop} {...formState}>
+      <Form
+        serialize={serialize}
+        schema={schemes[type]}
+        init={props}
+        {...formState}
+      >
         <SelectOneOf title="Type" name="type" schema={schemes} />
-        {type !== 'GEN' && (
-          <fieldset className={type === 'DAT' ? classes.data : 'base'}>
-            {content(type)}
-          </fieldset>
+
+        {type === 'DAT' ? (
+          <SDataFieldset formState={formState} />
+        ) : (
+          <SGroupFieldset formState={formState} />
         )}
       </Form>
     </Dialog>
   )
 }
-
-const content = (type) =>
-  Object.keys(schemes[type].properties)
-    .filter((prop) => prop !== 'type')
-    .map((prop) => {
-      const props = {}
-      if (prop === 'name') props.maxLength = 15
-      if (prop === 'fieldName') props.maxLength = 30
-      if (prop === 'fieldValue') props.type = 'textarea'
-      if (prop === 'radiobuttons') props.type = 'radio'
-      if (prop === 'connectivity')
-        return (
-          <Field
-            name={prop}
-            key={`${type}-${prop}`}
-            {...props}
-            component={Select}
-            options={getSelectOptionsFromSchema(schemes[type].properties[prop])}
-          />
-        )
-
-      return <Field name={prop} key={`${type}-${prop}`} {...props} />
-    })
 
 export default connect((store) => ({ formState: store.modal.form }))(Sgroup)

@@ -206,7 +206,7 @@ export default function initEditor(dispatch, getState) {
         const { groupStruct, event, sGroup } = payload
         highlightFG(dispatch, { groupStruct, event, sGroup })
       } else {
-        highlightFG(dispatch, { groupStruct: null, event: null, sGroup: null })
+        highlightFG(dispatch, { groupStruct: null, sGroup: null })
       }
     }
   }

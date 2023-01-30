@@ -78,6 +78,7 @@ interface TemplateLibProps {
   mode: string
   tab: number
   saltsAndSolvents: Template[]
+  renderOptions?: any
 }
 
 interface TemplateLibCallProps {
@@ -283,6 +284,7 @@ const TemplateDialog: FC<Props> = (props) => {
                         selected={props.selected}
                         onDelete={props.onDelete}
                         onAttach={props.onAttach}
+                        renderOptions={props.renderOptions}
                       />
                     </AccordionDetails>
                   </Accordion>
@@ -303,6 +305,7 @@ const TemplateDialog: FC<Props> = (props) => {
                 templates={filteredFG}
                 onSelect={(templ) => select(templ)}
                 selected={props.selected}
+                renderOptions={props.renderOptions}
               />
             </div>
           ) : (
@@ -319,6 +322,7 @@ const TemplateDialog: FC<Props> = (props) => {
                 templates={filteredSaltsAndSolvents}
                 onSelect={(templ) => select(templ)}
                 selected={props.selected}
+                renderOptions={props.renderOptions}
               />
             </div>
           ) : (
@@ -350,6 +354,7 @@ export default connect(
   (store) => ({
     ...omit(['attach'], (store as any).templates),
     initialTab: (store as any).modal?.prop?.tab || TemplateTabs.TemplateLibrary,
+    renderOptions: (store as any).editor?.render?.options,
     functionalGroups: functionalGroupsSelector(store),
     saltsAndSolvents: saltsAndSolventsSelector(store)
   }),

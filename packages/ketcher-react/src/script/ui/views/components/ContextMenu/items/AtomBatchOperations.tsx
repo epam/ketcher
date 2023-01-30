@@ -14,12 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Action,
-  findStereoAtoms,
-  fromAtomsAttrs,
-  fromOneAtomDeletion
-} from 'ketcher-core'
+import { findStereoAtoms, fromAtomsAttrs } from 'ketcher-core'
 import { useCallback, useRef } from 'react'
 import type { PredicateParams } from 'react-contexify'
 import { Item } from 'react-contexify'
@@ -33,10 +28,7 @@ import type {
   ContextMenuShowProps,
   CustomItemProps
 } from '../contextMenu.types'
-import { noOperation } from './utils'
-
-const isHidden = ({ props }: PredicateParams<ContextMenuShowProps, ItemData>) =>
-  !props?.selected
+import { noOperation, isBatchOperationHidden } from './utils'
 
 const useDisabled = () => {
   const { getKetcherInstance } = useAppContext()
@@ -46,7 +38,7 @@ const useDisabled = () => {
       props,
       triggerEvent
     }: PredicateParams<ContextMenuShowProps, ItemData>) => {
-      if (isHidden({ props, triggerEvent })) {
+      if (isBatchOperationHidden({ props, triggerEvent })) {
         return true
       }
 
@@ -99,11 +91,11 @@ export const AtomBatchEdit: React.FC<CustomItemProps> = (props) => {
   return (
     <Item
       {...props}
-      hidden={isHidden}
+      hidden={isBatchOperationHidden}
       disabled={isDisabled}
       onClick={handleClick}
     >
-      Edit selected atom(s)
+      Edit selected atom(s)...
     </Item>
   )
 }
@@ -161,39 +153,11 @@ export const AtomStereoBatchEdit: React.FC<CustomItemProps> = (props) => {
   return (
     <Item
       {...props}
-      hidden={isHidden}
+      hidden={isBatchOperationHidden}
       disabled={isStereoDisabled}
       onClick={handleClick}
     >
-      Enhanced stereochemistry
-    </Item>
-  )
-}
-
-export const AtomBatchDelete: React.FC<CustomItemProps> = (props) => {
-  const { getKetcherInstance } = useAppContext()
-  const isDisabled = useDisabled()
-
-  const handleClick = useCallback(() => {
-    const editor = getKetcherInstance().editor as Editor
-    const action = new Action()
-    const selectedAtomIds = editor.selection()?.atoms
-
-    selectedAtomIds?.forEach((atomId) => {
-      action.mergeWith(fromOneAtomDeletion(editor.render.ctab, atomId))
-    })
-
-    editor.update(action)
-  }, [getKetcherInstance])
-
-  return (
-    <Item
-      {...props}
-      hidden={isHidden}
-      disabled={isDisabled}
-      onClick={handleClick}
-    >
-      Delete selected atom(s)
+      Enhanced stereochemistry...
     </Item>
   )
 }

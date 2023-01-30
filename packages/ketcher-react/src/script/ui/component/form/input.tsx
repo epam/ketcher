@@ -90,7 +90,7 @@ function TextArea({ schema, value, onChange, ...rest }) {
 
 TextArea.val = (ev) => ev.target.value
 
-function CheckBox({ schema, value = '', onChange, ...rest }) {
+function CheckBox({ schema, value = '', onChange, innerRef, ...rest }) {
   return (
     <div className={classes.fieldSetItem}>
       <input
@@ -331,6 +331,10 @@ function componentMap(props: Props) {
   return type === 'radio' ? FieldSet : Select
 }
 
+const AnyComponentWithRef = React.forwardRef(
+  ({ Component, ...props }: any, ref) => <Component {...props} innerRef={ref} />
+)
+
 class Input extends PureComponent<
   Props & { innerRef: React.Ref<HTMLInputElement> }
 > {
@@ -351,14 +355,10 @@ class Input extends PureComponent<
 
   render() {
     const { children, onChange, ...restProps } = this.props
-    const Component = this.component
-
-    const ComponentWithRef = React.forwardRef((props, ref) => (
-      <Component {...props} innerRef={ref} />
-    ))
 
     return (
-      <ComponentWithRef
+      <AnyComponentWithRef
+        Component={this.component}
         ref={this.props.innerRef}
         {...this.ctrl}
         {...restProps}

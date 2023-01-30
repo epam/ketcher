@@ -332,15 +332,7 @@ class TemplateTool {
     let action = null
     let pasteItems
 
-    if (!ci) {
-      // ci.type == 'Canvas'
-      ;[action, pasteItems] = fromTemplateOnCanvas(
-        restruct,
-        this.template,
-        pos0,
-        angle
-      )
-    } else if (ci.map === 'atoms') {
+    if (ci?.map === 'atoms') {
       ;[action, pasteItems] = fromTemplateOnAtom(
         restruct,
         this.template,
@@ -433,7 +425,7 @@ class TemplateTool {
           // on chain end
           const atom = struct.atoms.get(ci.id)
           const neiId = atom && struct.halfBonds.get(atom.neighbors[0])?.end
-          const nei: any = neiId && struct.atoms.get(neiId)
+          const nei: any = (neiId || neiId === 0) && struct.atoms.get(neiId)
 
           angle = event.ctrlKey
             ? utils.calcAngle(nei?.pp, atom?.pp)

@@ -296,6 +296,10 @@ export class SGroup {
   }
 
   static removeAtom(sgroup: SGroup, aid: number): void {
+    if (!sgroup) {
+      return
+    }
+
     for (let i = 0; i < sgroup.atoms.length; ++i) {
       if (sgroup.atoms[i] === aid) {
         sgroup.atoms.splice(i, 1)

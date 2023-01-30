@@ -55,6 +55,10 @@ class SelectTool {
     )
   }
 
+  isSelectionRunning() {
+    return this.#lassoHelper.running()
+  }
+
   mousedown(event) {
     const rnd = this.editor.render
     const ctab = rnd.ctab
@@ -234,6 +238,9 @@ class SelectTool {
         )
         editor.update(dragCtx.action, true)
         return true
+      }
+      if (dragCtx.item.map === 'functionalGroups' && !dragCtx.action) {
+        editor.event.showInfo.dispatch(null)
       }
       if (dragCtx.item.map === 'rxnArrows' && dragCtx.item.ref) {
         if (dragCtx?.action) dragCtx.action.perform(rnd.ctab)

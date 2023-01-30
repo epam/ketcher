@@ -25,9 +25,14 @@ import tools from 'src/script/ui/action/tools'
 import Icon from 'src/script/ui/component/view/icon'
 import styles from '../ContextMenu.module.less'
 import type { ItemData, ContextMenuShowProps } from '../contextMenu.types'
-import { formatTitle, getBondNames, noOperation } from './utils'
+import {
+  formatTitle,
+  getNonQueryBondNames,
+  noOperation,
+  queryBondNames
+} from './utils'
 
-const bondNames = getBondNames(tools)
+const nonQueryBondNames = getNonQueryBondNames(tools)
 
 const BondSingleOperations: React.FC = (props) => {
   const { getKetcherInstance } = useAppContext()
@@ -78,16 +83,29 @@ const BondSingleOperations: React.FC = (props) => {
   return (
     <>
       <Item {...props} hidden={isHidden} onClick={handleEdit}>
-        Edit
+        Edit...
       </Item>
+
+      {nonQueryBondNames.map((name) => (
+        <Item
+          {...props}
+          hidden={isHidden}
+          id={name}
+          onClick={handleTypeChange}
+          key={name}
+        >
+          <Icon name={name} className={styles.icon} />
+          <span>{formatTitle(tools[name].title)}</span>
+        </Item>
+      ))}
 
       <Submenu
         {...props}
-        label="Bond type"
+        label="Query bonds"
         hidden={isHidden}
         className={styles.subMenu}
       >
-        {bondNames.map((name) => (
+        {queryBondNames.map((name) => (
           <Item id={name} onClick={handleTypeChange} key={name}>
             <Icon name={name} className={styles.icon} />
             <span>{formatTitle(tools[name].title)}</span>

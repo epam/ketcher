@@ -20,7 +20,9 @@ import {
   KetSerializer,
   MolSerializer,
   formatProperties,
-  ChemicalMimeType
+  ChemicalMimeType,
+  fromAtomsAttrs,
+  fromBondsAttrs
 } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction } from './shared'
@@ -28,6 +30,7 @@ import { load, onAction } from './shared'
 import actions from '../action'
 import tools from '../action/tools'
 import keyNorm from '../data/convert/keynorm'
+import { fromAtom, toAtom, fromBond, toBond } from '../data/convert/structconv'
 import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
 import { handleHotkeyOverItem } from './handleHotkeysOverItem'
@@ -73,6 +76,48 @@ function keyHandle(dispatch, state, hotKeys, event) {
         dispatch(onAction({ tool: 'atom', opts: res }))
       })
       .catch(() => null)
+    event.preventDefault()
+  } else if (key && key.length === 1 && key.match(/\//)) {
+    const hoveredItemId = getHoveredItem(render.ctab)
+
+    if (hoveredItemId && Object.hasOwn(hoveredItemId, 'atoms')) {
+      const hoveredAtomId = hoveredItemId.atoms
+      const atomFromStruct = render.ctab.atoms.get(hoveredAtomId)
+      const convertedAtomForModal = fromAtom(atomFromStruct?.a)
+
+      openDialog(dispatch, 'atomProps', convertedAtomForModal)
+        .then((res) => {
+          const updatedAtom = fromAtomsAttrs(
+            render.ctab,
+            hoveredAtomId,
+            toAtom(res),
+            false
+          )
+
+          editor.update(updatedAtom)
+        })
+        .catch(() => null)
+    }
+
+    if (hoveredItemId && Object.hasOwn(hoveredItemId, 'bonds')) {
+      const hoveredBondId = hoveredItemId.bonds
+      const bondFromStruct = render.ctab.bonds.get(hoveredBondId)
+      const convertedBondForModal = fromBond(bondFromStruct?.b)
+
+      openDialog(dispatch, 'bondProps', convertedBondForModal)
+        .then((res) => {
+          const updatedBond = fromBondsAttrs(
+            render.ctab,
+            hoveredBondId,
+            toBond(res),
+            false
+          )
+
+          editor.update(updatedBond)
+        })
+        .catch(() => null)
+    }
+
     event.preventDefault()
   } else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
     const index = checkGroupOnTool(group, actionTool) // index currentTool in group || -1

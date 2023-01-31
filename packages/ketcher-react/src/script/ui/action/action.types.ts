@@ -20,7 +20,6 @@ type ToolVariant =
   | 'about'
   | 'analyse'
   | 'arom'
-  | 'atom-props'
   | 'bond-any'
   | 'bond-hydrogen'
   | 'bond-aromatic'

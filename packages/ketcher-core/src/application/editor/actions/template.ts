@@ -167,7 +167,7 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
 
   action.operations.reverse()
 
-  action.addOp(new CalcImplicitH([...pasteItems.atoms, aid]).perform(restruct))
+  action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct))
   action.mergeWith(
     fromBondStereoUpdate(
       restruct,

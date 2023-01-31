@@ -21,7 +21,10 @@ import {
   MolSerializer,
   formatProperties,
   ChemicalMimeType,
-  ReAtom
+  ReAtom,
+  ReBond,
+  fromAtomsAttrs,
+  fromBondsAttrs
 } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction } from './shared'
@@ -29,6 +32,7 @@ import { load, onAction } from './shared'
 import actions from '../action'
 import tools from '../action/tools'
 import keyNorm from '../data/convert/keynorm'
+import { fromAtom, toAtom, fromBond, toBond } from '../data/convert/structconv'
 import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
 import { handleHotkeyOverAtom } from './handleHotkeysOverAtom'
@@ -74,6 +78,47 @@ function keyHandle(dispatch, state, hotKeys, event) {
         dispatch(onAction({ tool: 'atom', opts: res }))
       })
       .catch(() => null)
+    event.preventDefault()
+  } else if (key && key.length === 1 && key.match(/\//)) {
+    const hoverAtomId = getHoveredAtomId(render.ctab.atoms)
+    const hoverBondId = getHoveredBondId(render.ctab.bonds)
+
+    if (hoverAtomId) {
+      const atomFromStruct = render.ctab.atoms.get(hoverAtomId)
+      const convertedAtomForModal = fromAtom(atomFromStruct?.a)
+
+      openDialog(dispatch, 'atomProps', convertedAtomForModal)
+        .then((res) => {
+          const updatedAtom = fromAtomsAttrs(
+            render.ctab,
+            hoverAtomId,
+            toAtom(res),
+            false
+          )
+
+          editor.update(updatedAtom)
+        })
+        .catch(() => null)
+    }
+
+    if (hoverBondId) {
+      const bondFromStruct = render.ctab.bonds.get(hoverBondId)
+      const convertedBondForModal = fromBond(bondFromStruct?.b)
+
+      openDialog(dispatch, 'bondProps', convertedBondForModal)
+        .then((res) => {
+          const updatedBond = fromBondsAttrs(
+            render.ctab,
+            hoverBondId,
+            toBond(res),
+            false
+          )
+
+          editor.update(updatedBond)
+        })
+        .catch(() => null)
+    }
+
     event.preventDefault()
   } else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
     const index = checkGroupOnTool(group, actionTool) // index currentTool in group || -1
@@ -122,7 +167,18 @@ function getCurrentAction(prevActName) {
 
 function getHoveredAtomId(atoms: Map<number, ReAtom>): number | null {
   for (const [id, atom] of atoms.entries()) {
-    if (atom.hover) return id
+    if (atom.hover) {
+      return id
+    }
+  }
+  return null
+}
+
+function getHoveredBondId(bonds: Map<number, ReBond>): number | null {
+  for (const [id, bond] of bonds.entries()) {
+    if (bond.hover) {
+      return id
+    }
   }
   return null
 }

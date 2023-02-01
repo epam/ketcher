@@ -30,7 +30,7 @@ import tools from '../action/tools'
 import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
-import { handleHotkeyOverItems } from './handleHotkeysOverAtom'
+import { handleHotkeyOverItem } from './handleHotkeysOverItem'
 import { SettingsManager } from '../utils/settingsManager'
 
 export function initKeydownListener(element) {
@@ -97,7 +97,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
       // and just insert the atom directly
       if (isHoveringOverItem && newAction.tool !== 'select') {
         newAction = getCurrentAction(group[index]) || newAction
-        handleHotkeyOverItems({
+        handleHotkeyOverItem({
           hoveredItem,
           newAction,
           editor,

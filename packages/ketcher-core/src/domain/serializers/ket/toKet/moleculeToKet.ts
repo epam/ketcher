@@ -124,7 +124,7 @@ function bondToKet(source) {
   return result
 }
 
-function sgroupToKet(struct, source) {
+export function sgroupToKet(struct, source) {
   const result = {}
 
   ifDef(result, 'type', source.type)

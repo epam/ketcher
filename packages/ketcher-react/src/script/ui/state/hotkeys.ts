@@ -123,9 +123,18 @@ function getHoveredItem(
   const hoveredItem = {}
 
   for (const ctabItem in ctab) {
-    if (!(ctab[ctabItem] instanceof Map)) continue
+    if (Object.keys(hoveredItem).length) {
+      break
+    }
+
+    if (!(ctab[ctabItem] instanceof Map)) {
+      continue
+    }
+
     ctab[ctabItem].forEach((item, id) => {
-      if (item.hover) hoveredItem[ctabItem] = id
+      if (item.hover) {
+        hoveredItem[ctabItem] = id
+      }
     })
   }
 

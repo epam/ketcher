@@ -85,6 +85,7 @@ export class KetSerializer implements Serializer<Struct> {
       else if (nodes[i].$ref) parseNode(ket[nodes[i].$ref], resultingStruct)
     })
     resultingStruct.name = ket.header ? ket.header.moleculeName : null
+    resultingStruct.bindSGroupsToFunctionalGroups()
 
     return resultingStruct
   }

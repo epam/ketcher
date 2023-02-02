@@ -91,11 +91,10 @@ function keyHandle(dispatch, state, hotKeys, event) {
     if (clipArea.actions.indexOf(actName) === -1) {
       let newAction = actions[actName].action
       const hoveredItem = getHoveredItem(render.ctab)
-      const isHoveringOverItem = Object.keys(hoveredItem).length
       // check if atom is currently hovered over
       // in this case we do not want to activate the corresponding tool
       // and just insert the atom directly
-      if (isHoveringOverItem && newAction.tool !== 'select') {
+      if (hoveredItem && newAction.tool !== 'select') {
         newAction = getCurrentAction(group[index]) || newAction
         handleHotkeyOverItem({
           hoveredItem,
@@ -120,17 +119,17 @@ function getCurrentAction(prevActName) {
 
 function getHoveredItem(
   ctab: Record<string, Map<number, Record<string, unknown>>>
-): Record<string, number> {
-  const hoveredItems = {}
+): Record<string, number> | null {
+  const hoveredItem = {}
 
   for (const ctabItem in ctab) {
     if (!(ctab[ctabItem] instanceof Map)) continue
     ctab[ctabItem].forEach((item, id) => {
-      if (item.hover) hoveredItems[ctabItem] = id
+      if (item.hover) hoveredItem[ctabItem] = id
     })
   }
 
-  return hoveredItems
+  return Object.keys(hoveredItem).length ? hoveredItem : null
 }
 
 function setHotKey(key, actName, hotKeys) {

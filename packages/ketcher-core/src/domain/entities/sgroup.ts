@@ -21,6 +21,7 @@ import { Pile } from './pile'
 import { Struct } from './struct'
 import { SaltsAndSolventsProvider } from '../helpers'
 import { Vec2 } from './vec2'
+import { ReStruct } from '../../application/render'
 
 export class SGroupBracketParams {
   readonly c: Vec2
@@ -335,7 +336,9 @@ export class SGroup {
   static bracketPos(
     sGroup,
     mol,
-    crossBondsPerAtom: { [key: number]: Array<Bond> }
+    crossBondsPerAtom: { [key: number]: Array<Bond> },
+    remol?: ReStruct,
+    render?
   ): void {
     const atoms = sGroup.atoms
     const crossBonds = crossBondsPerAtom
@@ -352,12 +355,24 @@ export class SGroup {
 
     let braketBox: Box2Abs | null = null
     const contentBoxes: Array<any> = []
+    const getAtom = (aid) => {
+      if (remol && render) {
+        return remol.atoms.get(aid)
+      }
+      return mol.atoms.get(aid)
+    }
     atoms.forEach((aid) => {
-      const atom = mol.atoms.get(aid)
-      const pos = new Vec2(atom.pp)
+      const atom = getAtom(aid)
       const ext = new Vec2(0.05 * 3, 0.05 * 3)
-      const bba = new Box2Abs(pos, pos).extend(ext, ext)
-      contentBoxes.push(bba)
+      let position
+      let structBoundingBox
+      if ('getVBoxObj' in atom && render) {
+        structBoundingBox = atom.getVBoxObj(render)
+      } else {
+        position = new Vec2(atom.pp)
+        structBoundingBox = new Box2Abs(position, position)
+      }
+      contentBoxes.push(structBoundingBox.extend(ext, ext))
     })
     contentBoxes.forEach((bba) => {
       let bbb: Box2Abs | null = null

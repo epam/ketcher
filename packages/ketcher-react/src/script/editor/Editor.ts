@@ -542,7 +542,7 @@ class Editor implements KetcherEditor {
     if (res.atoms && res.bonds) {
       struct.bonds.forEach((bond, bid) => {
         if (
-          res.bonds.indexOf(bid) >= 0 &&
+          res.bonds.indexOf(bid) < 0 &&
           res.atoms.indexOf(bond.begin) >= 0 &&
           res.atoms.indexOf(bond.end) >= 0
         ) {
@@ -630,7 +630,6 @@ function useToolIfNeeded(
 ) {
   const EditorTool = editor.tool()
   editor.lastEvent = event
-
   const conditions = [
     !!EditorTool,
     eventName in EditorTool,
@@ -654,8 +653,13 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
     { target: document, eventName: 'mousemove' },
     { target: document, eventName: 'mouseup' },
     { target: document, eventName: 'mouseleave' },
+    {
+      target: clientArea,
+      eventName: 'mouseleave',
+      toolEventName: 'mouseLeaveClientArea'
+    },
     { target: clientArea, eventName: 'mouseover' }
-  ].forEach(({ target, eventName }) => {
+  ].forEach(({ target, eventName, toolEventName }) => {
     editor.event[eventName] = new DOMSubscription()
     const subs = editor.event[eventName]
 
@@ -676,7 +680,12 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
         }
       }
 
-      const isToolUsed = useToolIfNeeded(editor, eventName, clientArea, event)
+      const isToolUsed = useToolIfNeeded(
+        editor,
+        toolEventName || eventName,
+        clientArea,
+        event
+      )
       if (isToolUsed) {
         return true
       }

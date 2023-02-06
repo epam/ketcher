@@ -331,6 +331,10 @@ function componentMap(props: Props) {
   return type === 'radio' ? FieldSet : Select
 }
 
+const AnyComponentWithRef = React.forwardRef(
+  ({ Component, ...props }: any, ref) => <Component {...props} innerRef={ref} />
+)
+
 class Input extends PureComponent<
   Props & { innerRef: React.Ref<HTMLInputElement> }
 > {
@@ -351,14 +355,10 @@ class Input extends PureComponent<
 
   render() {
     const { children, onChange, ...restProps } = this.props
-    const Component = this.component
-
-    const ComponentWithRef = React.forwardRef((props, ref) => (
-      <Component {...props} innerRef={ref} />
-    ))
 
     return (
-      <ComponentWithRef
+      <AnyComponentWithRef
+        Component={this.component}
         ref={this.props.innerRef}
         {...this.ctrl}
         {...restProps}

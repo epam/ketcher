@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Action } from './action'
-import { fromAtomMerge } from './atom'
+import { checkAtomValence, fromAtomMerge } from './atom'
 import { fromBondsMerge } from './bond'
 import utils from '../shared/utils'
 
@@ -25,6 +25,12 @@ export function fromItemsFuse(restruct, items) {
   if (!items) return action
 
   const usedAtoms = new Set()
+
+  const connectedAtomIds = getAllConnectedAtomsIds(
+    restruct,
+    mergeMapOfAtomsToSet(items.atoms),
+    mergeMapOfAtomsToSet(items.bonds)
+  )
 
   // merge single atoms
   items.atoms.forEach((dst, src) => {
@@ -36,6 +42,8 @@ export function fromItemsFuse(restruct, items) {
 
   // merge bonds
   action = fromBondsMerge(restruct, items.bonds).mergeWith(action)
+
+  action = valenceCheck(restruct, connectedAtomIds).mergeWith(action)
 
   return action
 }
@@ -97,4 +105,53 @@ function closestToMerge(struct, closestMap) {
   if (mergeMap.atoms.size === 0 && mergeMap.bonds.size === 0) return null
 
   return mergeMap
+}
+
+function mergeMapOfAtomsToSet(items: Map<number, number>): Set<number> {
+  const itemsSet = new Set<number>()
+  items.forEach((value, key) => {
+    itemsSet.add(value).add(key)
+  })
+  return itemsSet
+}
+
+function getAllConnectedAtomsIds(restruct, atomsIds, bondsIds) {
+  const initialAtoms = new Set(atomsIds)
+  const connectedAtoms = new Set()
+
+  for (const bondId of bondsIds) {
+    const bond = restruct.bonds.get(bondId)
+    if (bond) {
+      const { begin, end } = bond.b
+      initialAtoms.add(begin).add(end)
+    }
+  }
+
+  for (const initialAtom of initialAtoms) {
+    if (connectedAtoms.has(initialAtom)) continue
+    const relevantConnectedComponent = [
+      ...restruct.connectedComponents.values()
+    ].find((component) => component.has(initialAtom))
+    if (relevantConnectedComponent)
+      relevantConnectedComponent.forEach((id) => connectedAtoms.add(id))
+  }
+
+  return connectedAtoms
+}
+
+function valenceCheck(restruct, atomIds) {
+  let action = new Action()
+
+  if (!atomIds) return action
+  const usedAtoms = new Set()
+
+  // merge single atoms
+  atomIds.forEach((atomId) => {
+    if (usedAtoms.has(atomId)) return
+
+    action = checkAtomValence(restruct, atomId).mergeWith(action)
+    usedAtoms.add(atomId)
+  })
+
+  return action
 }

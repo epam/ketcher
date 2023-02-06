@@ -40,7 +40,7 @@ class ReSGroup extends ReObject {
     let set = this.render.paper.set()
     const atomSet = new Pile(sgroup.atoms)
     const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet)
-    SGroup.bracketPos(sgroup, remol.molecule, crossBonds)
+    SGroup.bracketPos(sgroup, remol.molecule, crossBonds, remol, this.render)
     const bracketBox = sgroup.bracketBox
     const d = sgroup.bracketDir
     sgroup.areas = [bracketBox]

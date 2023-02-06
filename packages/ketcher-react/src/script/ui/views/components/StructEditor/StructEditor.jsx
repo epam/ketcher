@@ -256,7 +256,10 @@ class StructEditor extends Component {
           groupStruct={this.props.groupStruct}
           sGroup={this.props.sGroup}
         />
-        <FGContextMenu />
+        <FGContextMenu
+          contextMenu={this.state.contextMenu}
+          handleClose={this.handleClose}
+        />
         <ContextMenu />
       </Tag>
     )

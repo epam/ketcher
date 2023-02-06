@@ -16,6 +16,7 @@
 
 import { isEmpty, isEqual, pickBy } from 'lodash/fp'
 
+import { SettingsManager } from '../../utils/settingsManager'
 import actions from '../../action'
 
 function execute(activeTool, { action, editor, server, options }) {
@@ -62,13 +63,18 @@ function status(actionName, activeTool, params) {
 export default function (state = null, { type, action, ...params }) {
   let activeTool
   switch (type) {
-    case 'INIT':
-      action = actions['select-lasso'].action
+    case 'INIT': {
+      const savedSelectedTool = SettingsManager.selectionTool
+      action = savedSelectedTool || actions['select-rectangle'].action
+    }
     case 'ACTION':
       activeTool = execute(state && state.activeTool, {
         ...params,
         action
       })
+      if (activeTool.tool === 'select') {
+        SettingsManager.selectionTool = activeTool
+      }
     case 'UPDATE':
       return Object.keys(actions).reduce(
         (res, actionName) => {

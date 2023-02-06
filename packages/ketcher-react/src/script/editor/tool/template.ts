@@ -22,7 +22,10 @@ import {
   fromTemplateOnCanvas,
   getHoverToFuse,
   getItemsToFuse,
-  FunctionalGroup
+  FunctionalGroup,
+  SGroup,
+  ReStruct,
+  Struct
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -37,7 +40,7 @@ class TemplateTool {
 
   constructor(editor, tmpl) {
     this.editor = editor
-    this.mode = tmpl.mode
+    this.mode = getTemplateMode(tmpl)
     this.editor.selection(null)
 
     this.template = {
@@ -236,7 +239,11 @@ class TemplateTool {
     const restruct = this.editor.render.ctab
 
     if (!this.dragCtx) {
-      this.editor.hover(this.editor.findItem(event, this.findItems))
+      this.editor.hover(
+        this.editor.findItem(event, this.findItems),
+        null,
+        event
+      )
       return true
     }
 
@@ -325,15 +332,7 @@ class TemplateTool {
     let action = null
     let pasteItems
 
-    if (!ci) {
-      // ci.type == 'Canvas'
-      ;[action, pasteItems] = fromTemplateOnCanvas(
-        restruct,
-        this.template,
-        pos0,
-        angle
-      )
-    } else if (ci.map === 'atoms') {
+    if (ci?.map === 'atoms') {
       ;[action, pasteItems] = fromTemplateOnAtom(
         restruct,
         this.template,
@@ -393,6 +392,16 @@ class TemplateTool {
     let action
     let pasteItems = null
 
+    if (SGroup.isSaltOrSolvent(this.template.molecule.name)) {
+      addSaltsAndSolventsOnCanvasWithoutMerge(
+        restruct,
+        this.template,
+        dragCtx,
+        this.editor
+      )
+      return true
+    }
+
     if (!dragCtx.action) {
       if (!ci) {
         //  ci.type == 'Canvas'
@@ -416,7 +425,7 @@ class TemplateTool {
           // on chain end
           const atom = struct.atoms.get(ci.id)
           const neiId = atom && struct.halfBonds.get(atom.neighbors[0])?.end
-          const nei: any = neiId && struct.atoms.get(neiId)
+          const nei: any = (neiId || neiId === 0) && struct.atoms.get(neiId)
 
           angle = event.ctrlKey
             ? utils.calcAngle(nei?.pp, atom?.pp)
@@ -460,16 +469,18 @@ class TemplateTool {
 
     this.editor.selection(null)
 
-    if (!dragCtx.mergeItems && pasteItems && this.mode !== 'fg')
+    if (!dragCtx.mergeItems && pasteItems && this.mode !== 'fg') {
       dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
+    }
     dragCtx.action = dragCtx.action
       ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
       : fromItemsFuse(restruct, dragCtx.mergeItems)
 
     this.editor.hover(null)
     const completeAction = dragCtx.action
-    if (completeAction && !completeAction.isDummy())
+    if (completeAction && !completeAction.isDummy()) {
       this.editor.update(completeAction)
+    }
     this.editor.event.message.dispatch({
       info: false
     })
@@ -484,6 +495,28 @@ class TemplateTool {
   mouseleave(e) {
     this.mouseup(e)
   }
+}
+
+function addSaltsAndSolventsOnCanvasWithoutMerge(
+  restruct: ReStruct,
+  template: Struct,
+  dragCtx,
+  editor: Editor
+) {
+  const [action] = fromTemplateOnCanvas(restruct, template, dragCtx.xy0, 0)
+  editor.update(action)
+  editor.selection(null)
+  editor.hover(null)
+  editor.event.message.dispatch({
+    info: false
+  })
+}
+
+function getTemplateMode(tmpl) {
+  if (tmpl.mode) return tmpl.mode
+  if (['Functional Groups', 'Salts and Solvents'].includes(tmpl.props?.group))
+    return 'fg'
+  return null
 }
 
 function getSign(molecule, bond, v) {

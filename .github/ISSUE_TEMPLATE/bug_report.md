@@ -2,8 +2,8 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: bug
-assignees: AndreiMazol
+labels: bug, feature request
+assignees: Nitvex
 
 ---
 
@@ -11,13 +11,12 @@ assignees: AndreiMazol
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
-4. See error
-
-**Expected behavior**
-A clear and concise description of what you expected to happen.
 
 **Actual behavior**
 A clear and concise description of what the bug is.
+
+**Expected behavior**
+A clear and concise description of what you expected to happen.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
@@ -33,7 +32,7 @@ If applicable, add screenshots to help explain your problem.
  - Browser [e.g. stock browser, safari]
  - Version [e.g. 22]
 
-**Ketcher version** [e.g. v2.4.2-115-gcf0c1394]. 
+**Ketcher version** [e.g. v2.4.2]. 
 To determine it, hover over the header of the Ketcher tab in a browser. 
 
 **Additional context**

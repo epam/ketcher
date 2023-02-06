@@ -22,7 +22,8 @@ import {
   Struct,
   Vec2,
   fromDescriptorsAlign,
-  fromNewCanvas
+  fromNewCanvas,
+  FunctionalGroup
 } from 'ketcher-core'
 import {
   DOMSubscription,
@@ -38,6 +39,7 @@ import { Highlighter } from './highlighter'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
+const HOVER_ICON_OPACITY = 0.7
 
 const structObjects = [
   'atoms',
@@ -99,6 +101,7 @@ interface Selection {
   rxnPluses?: Array<number>
   rxnArrows?: Array<number>
 }
+
 class Editor implements KetcherEditor {
   #origin?: any
   render: Render
@@ -108,6 +111,8 @@ class Editor implements KetcherEditor {
   historyPtr: any
   errorHandler: ((message: string) => void) | null
   highlights: Highlighter
+  hoverIcon: any
+  lastCursorPosition: { x: number; y: number }
   event: {
     message: Subscription
     elementEdit: PipelineSubscription
@@ -124,6 +129,7 @@ class Editor implements KetcherEditor {
     dearomatizeStruct: PipelineSubscription
     enhancedStereoEdit: PipelineSubscription
     confirm: PipelineSubscription
+    showInfo: PipelineSubscription
     cursor: Subscription
   }
 
@@ -146,6 +152,15 @@ class Editor implements KetcherEditor {
     this.historyPtr = 0
     this.errorHandler = null
     this.highlights = new Highlighter(this)
+    this.renderAndRecoordinateStruct =
+      this.renderAndRecoordinateStruct.bind(this)
+    this.setOptions = this.setOptions.bind(this)
+
+    this.lastCursorPosition = {
+      x: 0,
+      y: 0
+    }
+    this.createHoverIcon()
 
     this.event = {
       message: new Subscription(),
@@ -164,7 +179,8 @@ class Editor implements KetcherEditor {
       // TODO: correct
       enhancedStereoEdit: new PipelineSubscription(),
       confirm: new PipelineSubscription(),
-      cursor: new PipelineSubscription()
+      cursor: new PipelineSubscription(),
+      showInfo: new PipelineSubscription()
     }
 
     domEventSetup(this, clientArea)
@@ -196,6 +212,11 @@ class Editor implements KetcherEditor {
 
     const tool = new toolMap[name](this, opts)
 
+    const isAtomToolChosen = name === 'atom'
+    if (!isAtomToolChosen) {
+      this.hoverIcon.hide()
+    }
+
     if (!tool || tool.isNotActiveTool) {
       return null
     }
@@ -205,8 +226,35 @@ class Editor implements KetcherEditor {
     /* eslint-enable no-underscore-dangle */
   }
 
+  updateHoverIconPosition() {
+    const { x, y } = this.lastCursorPosition
+    const { height, width } = this.hoverIcon.getBBox()
+    this.hoverIcon.attr({
+      x: x - width / 2,
+      y: y - height / 2
+    })
+  }
+
+  createHoverIcon() {
+    this.hoverIcon = this.render.paper
+      .text(0, 0, '')
+      .attr('font-size', this.options().fontsz)
+      .attr('opacity', HOVER_ICON_OPACITY)
+
+    this.updateHoverIconPosition()
+  }
+
   clear() {
     this.struct(undefined)
+  }
+
+  renderAndRecoordinateStruct(struct: Struct) {
+    const action = fromNewCanvas(this.render.ctab, struct)
+    this.update(action)
+
+    const structCenter = getStructCenter(this.render.ctab)
+    recoordinate(this, structCenter)
+    return this.render.ctab.molecule
   }
 
   struct(value?: Struct): Struct {
@@ -216,12 +264,22 @@ class Editor implements KetcherEditor {
 
     this.selection(null)
     const struct = value || new Struct()
-    const action = fromNewCanvas(this.render.ctab, struct)
-    this.update(action)
 
-    const structCenter = getStructCenter(this.render.ctab)
-    recoordinate(this, structCenter)
-    return this.render.ctab.molecule
+    const molecule = this.renderAndRecoordinateStruct(struct)
+
+    this.createHoverIcon()
+    return molecule
+  }
+
+  // this is used by API addFragment method
+  structToAddFragment(value: Struct): Struct {
+    const superStruct = value.mergeInto(this.render.ctab.molecule)
+
+    return this.renderAndRecoordinateStruct(superStruct)
+  }
+
+  setOptions(opts: string) {
+    return this.render.updateOptions(opts)
   }
 
   options(value?: any) {
@@ -311,8 +369,10 @@ class Editor implements KetcherEditor {
     return this._selection // eslint-disable-line
   }
 
-  hover(ci: any, newTool?: any) {
+  hover(ci: any, newTool?: any, event?: PointerEvent) {
     const tool = newTool || this._tool // eslint-disable-line
+
+    let infoPanelData: any = null
 
     if (
       'ci' in tool &&
@@ -323,9 +383,34 @@ class Editor implements KetcherEditor {
     }
 
     if (ci && setHover(ci, true, this.render)) tool.ci = ci
+
+    if (!event) return
+
+    const checkFunctionGroupTypes = ['sgroups', 'functionalGroups']
+    const closestCollapsibleStructures = this.findItem(
+      event,
+      checkFunctionGroupTypes
+    )
+    if (closestCollapsibleStructures) {
+      const sGroup = this.struct()?.sgroups.get(closestCollapsibleStructures.id)
+      if (sGroup && !sGroup.data.expanded) {
+        const groupName = sGroup.data.name
+        const groupStruct = FunctionalGroup.getFunctionalGroupByName(groupName)
+        infoPanelData = {
+          groupStruct,
+          event,
+          sGroup
+        }
+      }
+    }
+    if (infoPanelData) {
+      this.event.showInfo.dispatch(infoPanelData)
+    } else {
+      this.event.showInfo.dispatch(null)
+    }
   }
 
-  update(action: Action | true, ignoreHistory?) {
+  update(action: Action | true, ignoreHistory?: boolean) {
     if (action === true) {
       this.render.update(true) // force
     } else {
@@ -457,7 +542,7 @@ class Editor implements KetcherEditor {
     if (res.atoms && res.bonds) {
       struct.bonds.forEach((bond, bid) => {
         if (
-          res.bonds.indexOf(bid) >= 0 &&
+          res.bonds.indexOf(bid) < 0 &&
           res.atoms.indexOf(bond.begin) >= 0 &&
           res.atoms.indexOf(bond.end) >= 0
         ) {
@@ -512,22 +597,76 @@ function isMouseRight(event) {
   )
 }
 
-function domEventSetup(editor: Editor, clientArea) {
+function resetSelectionOnCanvasClick(
+  editor: Editor,
+  eventName: string,
+  clientArea: HTMLElement,
+  event
+) {
+  if (
+    eventName === 'mouseup' &&
+    editor.selection() &&
+    clientArea.contains(event.target)
+  ) {
+    editor.selection(null)
+  }
+}
+
+function updateLastCursorPosition(editor: Editor, event) {
+  const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover']
+  if (events.includes(event.type)) {
+    editor.lastCursorPosition = {
+      x: event.layerX,
+      y: event.layerY
+    }
+  }
+}
+
+function useToolIfNeeded(
+  editor: Editor,
+  eventName: string,
+  clientArea: HTMLElement,
+  event
+) {
+  const EditorTool = editor.tool()
+  editor.lastEvent = event
+  const conditions = [
+    !!EditorTool,
+    eventName in EditorTool,
+    clientArea.contains(event.target) || EditorTool.isSelectionRunning?.()
+  ]
+
+  if (conditions.every((condition) => condition)) {
+    EditorTool[eventName](event)
+    return true
+  }
+
+  return false
+}
+
+function domEventSetup(editor: Editor, clientArea: HTMLElement) {
   // TODO: addEventListener('resize', ...);
   ;[
-    'click',
-    'dblclick',
-    'mousedown',
-    'mousemove',
-    'mouseup',
-    'mouseleave',
-    'mouseover'
-  ].forEach((eventName) => {
+    { target: clientArea, eventName: 'click' },
+    { target: clientArea, eventName: 'dblclick' },
+    { target: clientArea, eventName: 'mousedown' },
+    { target: document, eventName: 'mousemove' },
+    { target: document, eventName: 'mouseup' },
+    { target: document, eventName: 'mouseleave' },
+    {
+      target: clientArea,
+      eventName: 'mouseleave',
+      toolEventName: 'mouseLeaveClientArea'
+    },
+    { target: clientArea, eventName: 'mouseover' }
+  ].forEach(({ target, eventName, toolEventName }) => {
     editor.event[eventName] = new DOMSubscription()
     const subs = editor.event[eventName]
-    clientArea.addEventListener(eventName, subs.dispatch.bind(subs))
+
+    target.addEventListener(eventName, subs.dispatch.bind(subs))
 
     subs.add((event) => {
+      updateLastCursorPosition(editor, event)
       if (eventName !== 'mouseup' && eventName !== 'mouseleave') {
         // to complete drag actions
         if (
@@ -540,22 +679,34 @@ function domEventSetup(editor: Editor, clientArea) {
           return true
         }
       }
-      const EditorTool = editor.tool()
-      editor.lastEvent = event
-      if (EditorTool && eventName in EditorTool) {
-        EditorTool[eventName](event)
+
+      const isToolUsed = useToolIfNeeded(
+        editor,
+        toolEventName || eventName,
+        clientArea,
+        event
+      )
+      if (isToolUsed) {
+        return true
       }
+
+      resetSelectionOnCanvasClick(editor, eventName, clientArea, event)
+
       return true
     }, -1)
   })
 }
 
-function recoordinate(editor: Editor, rp /* , vp */) {
+function recoordinate(editor: Editor, rp?: Vec2 /* , vp */) {
   // rp is a point in scaled coordinates, which will be positioned
   // vp is the point where the reference point should now be (in view coordinates)
   //    or the center if not set
   console.assert(rp, 'Reference point not specified')
-  editor.render.setScrollOffset(0, 0)
+  if (rp) {
+    editor.render.setScrollOffset(rp.x, rp.y)
+  } else {
+    editor.render.setScrollOffset(0, 0)
+  }
 }
 
 function getStructCenter(ReStruct, selection?) {

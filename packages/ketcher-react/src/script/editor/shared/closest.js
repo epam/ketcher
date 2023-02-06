@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Fragment, FunctionalGroup, Vec2 } from 'ketcher-core'
+import { Fragment, FunctionalGroup, Vec2, Scale } from 'ketcher-core'
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4
 const SELECTION_WITHIN_TEXT = 0
@@ -32,6 +32,12 @@ const findMaps = {
   rgroups: findClosestRGroup,
   simpleObjects: findClosestSimpleObject,
   texts: findClosestText
+}
+
+function rectangleContainsPoint(startX, startY, width, height, x, y) {
+  return (
+    startX <= x && x <= startX + width && startY <= y && y <= startY + height
+  )
 }
 
 function findClosestText(restruct, cursorPosition) {
@@ -129,8 +135,9 @@ function findClosestAtom(restruct, pos, skip, minDist) {
         functionalGroups,
         true
       )
-    )
+    ) {
       return null
+    }
     if (aid === skipId) return
 
     const dist = Vec2.dist(pos, atom.a.pp)
@@ -421,42 +428,22 @@ function findClosestSGroup(restruct, pos) {
 }
 
 function findClosestFG(restruct, pos) {
-  let ret = null
-  let minDist = SELECTION_DISTANCE_COEFFICIENT
-  restruct.molecule.sgroups.forEach((sg, sgid) => {
-    if (sg.functionalGroup && !sg.data.expanded && sg.firstSgroupAtom) {
-      const firstAtomPp = sg.firstSgroupAtom.pp
-      const shift = new Vec2(0.625, 0.625)
-      const box = {
-        p0: Vec2.diff(firstAtomPp, shift),
-        p1: Vec2.sum(firstAtomPp, shift)
-      }
+  const sGroups = restruct.sgroups
+  for (const reSGroup of sGroups.values()) {
+    const { startX, startY, width, height } =
+      reSGroup.getTextHighlightDimensions()
+    const { x, y } = Scale.obj2scaled(pos, restruct.render.options)
+    if (rectangleContainsPoint(startX, startY, width, height, x, y)) {
+      const centerX = startX + width / 2
+      const centerY = startY + height / 2
+      const rectangleCenter = new Vec2(centerX, centerY)
+      const cursorPosition = new Vec2(x, y)
 
-      const inBox =
-        box.p0.y < pos.y &&
-        box.p1.y > pos.y &&
-        box.p0.x < pos.x &&
-        box.p1.x > pos.x
-      const xDist = Math.min(
-        Math.abs(box.p0.x - pos.x),
-        Math.abs(box.p0.y - pos.y),
-        Math.abs(box.p1.x - pos.x),
-        Math.abs(box.p0.y - pos.y)
-      )
-
-      if (inBox && (ret === null || xDist < minDist)) {
-        ret = sgid
-        minDist = xDist
-      }
-    }
-  })
-  if (ret !== null) {
-    return {
-      id: ret,
-      dist: minDist
+      const dist = Vec2.dist(rectangleCenter, cursorPosition)
+      const { id } = reSGroup.item
+      return { id, dist }
     }
   }
-
   return null
 }
 

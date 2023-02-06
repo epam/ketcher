@@ -27,6 +27,7 @@ import { LayerMap } from './generalEnumTypes'
 import ReObject from './reobject'
 import ReStruct from './restruct'
 import { Scale } from 'domain/helpers'
+import { RaphaelBaseElement } from 'raphael'
 
 interface CustomRawDraftInlineStyleRange
   extends Omit<RawDraftInlineStyleRange, 'style'> {
@@ -37,9 +38,11 @@ interface CustomRawDraftInlineStyleRange
     | TextCommand.FontSize
 }
 
+const SCALE = 40 // from ketcher-core
+
 class ReText extends ReObject {
   private item: Text
-  paths: Array<Array<any>> = []
+  paths: Array<Array<RaphaelBaseElement>> = []
 
   constructor(text: Text) {
     super('text')
@@ -51,19 +54,21 @@ class ReText extends ReObject {
   }
 
   getReferencePoints(): Array<Vec2> {
+    if (!this.paths.length) return []
+
     const { p0, p1 } = this.getRelBox(this.paths)
 
     const p = this.item.position
-    const w = Math.abs(Vec2.diff(p0, p1).x) / 40
-    const h = Math.abs(Vec2.diff(p0, p1).y) / 40
+    const width = Math.abs(Vec2.diff(p0, p1).x) / SCALE
+    const height = Math.abs(Vec2.diff(p0, p1).y) / SCALE
 
     const refPoints: Array<Vec2> = []
 
     refPoints.push(
       this.item.position,
-      new Vec2(p.x, p.y + h),
-      new Vec2(p.x + w, p.y + h),
-      new Vec2(p.x + w, p.y)
+      new Vec2(p.x, p.y + height),
+      new Vec2(p.x + width, p.y + height),
+      new Vec2(p.x + width, p.y)
     )
 
     return refPoints
@@ -77,27 +82,28 @@ class ReText extends ReObject {
     return render.paper.rect(topLeft.x, topLeft.y, width, height, 5)
   }
 
-  getRelBox(paths: Array<Array<any>>): { p0: Vec2; p1: Vec2 } {
-    const firstElOfFirstRow: any = paths[0][0]
+  getRelBox(paths: Array<Array<RaphaelBaseElement>>): { p0: Vec2; p1: Vec2 } {
+    const firstElOfFirstRow: RaphaelBaseElement = paths[0][0]
     const leftEdge = firstElOfFirstRow.getBBox().x
 
-    const firstRow: Array<any> = paths[0]
+    const firstRow: Array<RaphaelBaseElement> = paths[0]
     const topEdge: number = Math.min(
       ...firstRow.map((path) => path.getBBox().y)
     )
 
-    const widestRow: Array<any> = paths.reduce(
+    const widestRow: Array<RaphaelBaseElement> = paths.reduce(
       (widestRow, nextRow) =>
         this.getRowWidth(nextRow) > this.getRowWidth(widestRow)
           ? nextRow
           : widestRow,
       paths[0]
     )
-    const lastElOfWidestRow: any = widestRow[widestRow.length - 1]
+    const lastElOfWidestRow: RaphaelBaseElement =
+      widestRow[widestRow.length - 1]
     const rightEdge: number =
       lastElOfWidestRow.getBBox().x + lastElOfWidestRow.getBBox().width
 
-    const lastRow: Array<any> = paths[paths.length - 1]
+    const lastRow: Array<RaphaelBaseElement> = paths[paths.length - 1]
     const bottomEdge: number = Math.max(
       ...lastRow.map((path) => path.getBBox().y + path.getBBox().height)
     )
@@ -108,7 +114,7 @@ class ReText extends ReObject {
     }
   }
 
-  getRowWidth(row: Array<any>): number {
+  getRowWidth(row: Array<RaphaelBaseElement>): number {
     return row.reduce((rowWidth, nextRow) => {
       rowWidth += nextRow.getBBox().width
       return rowWidth
@@ -130,7 +136,7 @@ class ReText extends ReObject {
   show(restruct: ReStruct, _id: number, options: any): void {
     const render = restruct.render
     const paper = render.paper
-    const paperScale = Scale.obj2scaled(this.item.position, options)
+    const paperScale = Scale.obj2scaled(this.item.position!, options)
 
     let shiftY = 0
     this.paths = []
@@ -138,15 +144,17 @@ class ReText extends ReObject {
     const rawContentState: RawDraftContentState | null = this.item.content
       ? (JSON.parse(this.item.content) as RawDraftContentState)
       : null
-    if (!rawContentState) return
+    if (!rawContentState) {
+      return
+    }
+
     rawContentState.blocks.forEach((block: RawDraftContentBlock) => {
       const ranges: Array<[number, number, Record<string, any>]> =
         this.getRanges(block, options)
       let shiftX = 0
-      const row: Array<any> = []
+      const row: Array<RaphaelBaseElement> = []
       ranges.forEach(([start, end, styles]) => {
         block.text = block.text.replace(/[^\S\r\n]/g, '\u00a0')
-
         const path = paper
           .text(
             paperScale.x,
@@ -160,9 +168,7 @@ class ReText extends ReObject {
             fill: '#000000',
             ...styles
           })
-
         path.translateAbs(shiftX, shiftY + (styles.shiftY || 0))
-
         row.push(path)
         shiftX += path.getBBox().width
       })
@@ -172,6 +178,8 @@ class ReText extends ReObject {
       const { p0, p1 } = this.getRelBox([row])
       shiftY += Math.abs(Vec2.diff(p0, p1).y)
     })
+
+    this.item.setPos(this.getReferencePoints())
 
     render.ctab.addReObjectPath(
       LayerMap.data,

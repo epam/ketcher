@@ -29,6 +29,7 @@ import { Elements } from 'ketcher-core'
 import acts from '../../action'
 import { debounce } from 'lodash/fp'
 import { openDialog } from '../modal'
+import { highlightFG } from '../functionalGroups'
 import { serverCall } from '../server'
 
 export default function initEditor(dispatch, getState) {
@@ -199,6 +200,14 @@ export default function initEditor(dispatch, getState) {
     onMouseDown: () => {
       updateAction()
     },
-    onConfirm: () => openDialog(dispatch, 'confirm')
+    onConfirm: () => openDialog(dispatch, 'confirm'),
+    onShowInfo: (payload) => {
+      if (payload) {
+        const { groupStruct, event, sGroup } = payload
+        highlightFG(dispatch, { groupStruct, event, sGroup })
+      } else {
+        highlightFG(dispatch, { groupStruct: null, sGroup: null })
+      }
+    }
   }
 }

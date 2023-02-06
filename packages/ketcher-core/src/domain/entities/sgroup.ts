@@ -19,7 +19,9 @@ import { Bond } from './bond'
 import { Box2Abs } from './box2Abs'
 import { Pile } from './pile'
 import { Struct } from './struct'
+import { SaltsAndSolventsProvider } from '../helpers'
 import { Vec2 } from './vec2'
+import { ReStruct } from '../../application/render'
 
 export class SGroupBracketParams {
   readonly c: Vec2
@@ -76,6 +78,7 @@ export class SGroup {
   neiAtoms: any
   pp: Vec2 | null
   data: any
+  firstSgroupAtom: any
 
   constructor(type: string) {
     this.type = type
@@ -216,6 +219,39 @@ export class SGroup {
     return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1)
   }
 
+  static isSaltOrSolvent(moleculeName: string): boolean {
+    const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance()
+    const saltsAndSolvents = saltsAndSolventsProvider.getSaltsAndSolventsList()
+    return saltsAndSolvents.some(
+      ({ name, abbreviation }) =>
+        name === moleculeName || moleculeName === abbreviation
+    )
+  }
+
+  static isAtomInSaltOrSolvent(
+    atomId: number,
+    sgroupsOnCanvas: SGroup[]
+  ): boolean {
+    const onlySaltsOrSolvents = sgroupsOnCanvas.filter((sgroup) =>
+      this.isSaltOrSolvent(sgroup.data.name)
+    )
+    return onlySaltsOrSolvents.some(({ atoms }) =>
+      atoms.some((atomIdInSaltOrSolvent) => atomIdInSaltOrSolvent === atomId)
+    )
+  }
+
+  static isBondInSaltOrSolvent(
+    bondId: number,
+    sgroupsOnCanvas: SGroup[]
+  ): boolean {
+    const onlySaltsOrSolvents = sgroupsOnCanvas.filter((sgroup) =>
+      this.isSaltOrSolvent(sgroup.data.name)
+    )
+    return onlySaltsOrSolvents.some(({ bonds }) =>
+      bonds.some((bondIdInSaltOrSolvent) => bondIdInSaltOrSolvent === bondId)
+    )
+  }
+
   static filterAtoms(atoms: any, map: any) {
     const newAtoms: Array<any> = []
     for (let i = 0; i < atoms.length; ++i) {
@@ -261,6 +297,10 @@ export class SGroup {
   }
 
   static removeAtom(sgroup: SGroup, aid: number): void {
+    if (!sgroup) {
+      return
+    }
+
     for (let i = 0; i < sgroup.atoms.length; ++i) {
       if (sgroup.atoms[i] === aid) {
         sgroup.atoms.splice(i, 1)
@@ -296,7 +336,9 @@ export class SGroup {
   static bracketPos(
     sGroup,
     mol,
-    crossBondsPerAtom: { [key: number]: Array<Bond> }
+    crossBondsPerAtom: { [key: number]: Array<Bond> },
+    remol?: ReStruct,
+    render?
   ): void {
     const atoms = sGroup.atoms
     const crossBonds = crossBondsPerAtom
@@ -313,12 +355,24 @@ export class SGroup {
 
     let braketBox: Box2Abs | null = null
     const contentBoxes: Array<any> = []
+    const getAtom = (aid) => {
+      if (remol && render) {
+        return remol.atoms.get(aid)
+      }
+      return mol.atoms.get(aid)
+    }
     atoms.forEach((aid) => {
-      const atom = mol.atoms.get(aid)
-      const pos = new Vec2(atom.pp)
+      const atom = getAtom(aid)
       const ext = new Vec2(0.05 * 3, 0.05 * 3)
-      const bba = new Box2Abs(pos, pos).extend(ext, ext)
-      contentBoxes.push(bba)
+      let position
+      let structBoundingBox
+      if ('getVBoxObj' in atom && render) {
+        structBoundingBox = atom.getVBoxObj(render)
+      } else {
+        position = new Vec2(atom.pp)
+        structBoundingBox = new Box2Abs(position, position)
+      }
+      contentBoxes.push(structBoundingBox.extend(ext, ext))
     })
     contentBoxes.forEach((bba) => {
       let bbb: Box2Abs | null = null

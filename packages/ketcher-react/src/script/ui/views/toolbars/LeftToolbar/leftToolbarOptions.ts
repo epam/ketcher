@@ -21,8 +21,8 @@ const transformOptions: ToolbarItem[] = makeItems([
 ])
 
 const selectOptions: ToolbarItem[] = makeItems([
-  'select-lasso',
   'select-rectangle',
+  'select-lasso',
   'select-fragment'
 ])
 

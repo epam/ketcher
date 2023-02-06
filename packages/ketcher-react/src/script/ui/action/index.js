@@ -27,6 +27,7 @@ import zoom from './zoom'
 import help from './help'
 import functionalGroups from './functionalGroups'
 import fullscreen from './fullscreen'
+import { SettingsManager } from '../utils/settingsManager'
 
 export * from './action.types'
 
@@ -38,7 +39,11 @@ const config = {
       thunk: (dispatch, getState) => {
         const editor = getState().editor
         if (!editor.struct().isBlank()) editor.struct(null)
-        dispatch({ type: 'ACTION', action: tools['select-lasso'].action })
+        const savedSelectedTool = SettingsManager.selectionTool
+        dispatch({
+          type: 'ACTION',
+          action: savedSelectedTool || tools['select-rectangle'].action
+        })
       }
     },
     hidden: (options) => isHidden(options, 'clear')

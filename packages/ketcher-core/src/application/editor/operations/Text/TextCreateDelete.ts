@@ -23,33 +23,33 @@ import { OperationType } from '../OperationType'
 interface TextCreateData {
   id?: number
   content: string
+  pos: Array<Vec2>
   position: Vec2
 }
 
 export class TextCreate extends BaseOperation {
   data: TextCreateData
 
-  constructor(content: string, position: Vec2, id?: number) {
+  constructor(content: string, position: Vec2, pos: Array<Vec2>, id?: number) {
     super(OperationType.TEXT_CREATE)
-    this.data = { content: content, position, id }
+    this.data = { content: content, position, pos, id }
   }
 
   execute(restruct: ReStruct): void {
-    const struct = restruct.molecule
     const item = new Text(this.data)
 
     if (this.data.id == null) {
-      const index = struct.texts.add(item)
+      const index = restruct.molecule.texts.add(item)
       this.data.id = index
     } else {
-      struct.texts.set(this.data.id!, item)
+      restruct.molecule.texts.set(this.data.id!, item)
     }
 
     const itemId = this.data.id!
 
     restruct.texts.set(itemId, new ReText(item))
 
-    struct.textSetPosition(itemId, new Vec2(this.data.position))
+    restruct.molecule.textSetPosition(itemId, new Vec2(this.data.position))
     BaseOperation.invalidateItem(restruct, 'texts', itemId, 1)
   }
 
@@ -62,6 +62,7 @@ interface TextDeleteData {
   id: number
   content?: string
   position?: Vec2
+  pos?: Array<Vec2> | []
 }
 
 export class TextDelete extends BaseOperation {
@@ -89,6 +90,11 @@ export class TextDelete extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    return new TextCreate(this.data.content!, this.data.position!, this.data.id)
+    return new TextCreate(
+      this.data.content!,
+      this.data.position!,
+      this.data.pos!,
+      this.data.id
+    )
   }
 }

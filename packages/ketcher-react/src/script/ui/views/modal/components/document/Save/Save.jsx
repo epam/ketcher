@@ -29,7 +29,7 @@ import {
 import { Dialog } from '../../../../components'
 import Tabs from 'src/script/ui/component/view/Tabs'
 import { ErrorsContext } from '../../../../../../../contexts'
-import SaveButton from '../../../../../component/view/savebutton'
+import { SaveButton } from '../../../../../component/view/savebutton'
 import { check } from '../../../../../state/server'
 import classes from './Save.module.less'
 import { connect } from 'react-redux'
@@ -88,7 +88,9 @@ class SaveDialog extends Component {
         'inChIAuxInfo',
         '<----secondDivider--->', // for dividers in select list
         'svg',
-        'png'
+        'png',
+        'cdxml'
+        // 'cdx' TO DO: Uncomment, when export will be ready on Indigo side
       )
     // TODO: pass the necessary divider not like list element
 
@@ -125,6 +127,7 @@ class SaveDialog extends Component {
 
   changeType = (type) => {
     const { struct, server, options, formState } = this.props
+
     const errorHandler = this.context.errorHandler
     if (this.isImageFormat(type)) {
       const ketSerialize = new KetSerializer()
@@ -281,7 +284,10 @@ class SaveDialog extends Component {
     ) : this.isImageFormat(format) ? (
       <div className={classes.imageContainer}>
         {!isCleanStruct && (
-          <img src={`data:image/${format}+xml;base64,${imageSrc}`} />
+          <img
+            src={`data:image/${format}+xml;base64,${imageSrc}`}
+            alt={`${format} preview`}
+          />
         )}
       </div>
     ) : (

@@ -23,20 +23,47 @@ import { GenerateImageOptions, StructService } from 'domain/services'
 
 import { Editor } from './editor'
 import { Indigo } from 'application/indigo'
-import { MolfileFormat } from 'domain/serializers'
+import { KetSerializer, MolfileFormat } from 'domain/serializers'
 import { Struct } from 'domain/entities'
 import assert from 'assert'
+import { EventEmitter } from 'events'
+import { runAsyncAction } from 'utilities'
 
-function parseStruct(structStr: string, structService: StructService) {
+async function prepareStructToRender(
+  structStr: string,
+  structService: StructService,
+  ketcherInstance: Ketcher
+): Promise<Struct> {
+  const struct: Struct = await parseStruct(
+    structStr,
+    structService,
+    ketcherInstance
+  )
+  struct.initHalfBonds()
+  struct.initNeighbors()
+  struct.setImplicitHydrogen()
+  struct.markFragments()
+
+  return struct
+}
+
+function parseStruct(
+  structStr: string,
+  structService: StructService,
+  ketcherInstance: Ketcher
+) {
   const format = identifyStructFormat(structStr)
   const factory = new FormatterFactory(structService)
+  const options = ketcherInstance.editor.options()
 
-  const service = factory.create(format)
+  const service = factory.create(format, {
+    'dearomatize-on-load': options['dearomatize-on-load']
+  })
   return service.getStructureFromStringAsync(structStr)
 }
 
 function getStructure(
-  structureFormat: SupportedFormat = 'rxn',
+  structureFormat = SupportedFormat.rxn,
   formatterFactory: FormatterFactory,
   struct: Struct
 ): Promise<string> {
@@ -49,9 +76,14 @@ export class Ketcher {
   #formatterFactory: FormatterFactory
   #editor: Editor
   #indigo: Indigo
+  #eventBus: EventEmitter
 
   get editor(): Editor {
     return this.#editor
+  }
+
+  get eventBus(): EventEmitter {
+    return this.#eventBus
   }
 
   constructor(
@@ -67,26 +99,57 @@ export class Ketcher {
     this.#structService = structService
     this.#formatterFactory = formatterFactory
     this.#indigo = new Indigo(this.#structService)
+    this.#eventBus = new EventEmitter()
   }
 
   get indigo() {
     return this.#indigo
   }
 
+  // TEMP.: getting only dearomatize-on-load setting
+  get settings() {
+    const options = this.#editor.options()
+
+    if ('dearomatize-on-load' in options) {
+      return {
+        'general.dearomatize-on-load': options['dearomatize-on-load']
+      }
+    }
+    throw new Error('dearomatize-on-load option is not provided!')
+  }
+
+  // TODO: create optoions type
+  setSettings(settings: Record<string, string>) {
+    if (!settings) {
+      throw new Error('Please provide settings')
+    }
+
+    // eslint-disable-next-line prefer-const
+    let options = {}
+    if ('general.dearomatize-on-load' in settings) {
+      options['dearomatize-on-load'] = settings['general.dearomatize-on-load']
+    }
+    return this.#editor.setOptions(JSON.stringify(options))
+  }
+
   getSmiles(isExtended = false): Promise<string> {
-    const format: SupportedFormat = isExtended ? 'smilesExt' : 'smiles'
+    const format = isExtended
+      ? SupportedFormat.smilesExt
+      : SupportedFormat.smiles
     return getStructure(format, this.#formatterFactory, this.editor.struct())
   }
 
-  async getMolfile(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+  async getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
     if (this.containsReaction()) {
       throw Error(
         'The structure cannot be saved as *.MOL due to reaction arrrows.'
       )
     }
 
-    const format: SupportedFormat =
-      molfileFormat === 'v3000' ? 'molV3000' : 'mol'
+    const formatPassed =
+      molfileFormat === 'v3000' ? SupportedFormat.molV3000 : SupportedFormat.mol
+    const format = molfileFormat ? formatPassed : SupportedFormat.molAuto
+
     const molfile = await getStructure(
       format,
       this.#formatterFactory,
@@ -102,8 +165,8 @@ export class Ketcher {
         'The structure cannot be saved as *.RXN: there is no reaction arrows.'
       )
     }
-    const format: SupportedFormat =
-      molfileFormat === 'v3000' ? 'rxnV3000' : 'rxn'
+    const format =
+      molfileFormat === 'v3000' ? SupportedFormat.rxnV3000 : SupportedFormat.rxn
     const rxnfile = await getStructure(
       format,
       this.#formatterFactory,
@@ -114,20 +177,32 @@ export class Ketcher {
   }
 
   getKet(): Promise<string> {
-    return getStructure('ket', this.#formatterFactory, this.#editor.struct())
+    return getStructure(
+      SupportedFormat.ket,
+      this.#formatterFactory,
+      this.#editor.struct()
+    )
   }
 
   getSmarts(): Promise<string> {
-    return getStructure('smarts', this.#formatterFactory, this.#editor.struct())
+    return getStructure(
+      SupportedFormat.smarts,
+      this.#formatterFactory,
+      this.#editor.struct()
+    )
   }
 
   getCml(): Promise<string> {
-    return getStructure('cml', this.#formatterFactory, this.#editor.struct())
+    return getStructure(
+      SupportedFormat.cml,
+      this.#formatterFactory,
+      this.#editor.struct()
+    )
   }
 
   getInchi(withAuxInfo = false): Promise<string> {
     return getStructure(
-      withAuxInfo ? 'inChIAuxInfo' : 'inChI',
+      withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,
       this.#formatterFactory,
       this.#editor.struct()
     )
@@ -135,7 +210,7 @@ export class Ketcher {
 
   async generateInchIKey(): Promise<string> {
     const struct: string = await getStructure(
-      'ket',
+      SupportedFormat.ket,
       this.#formatterFactory,
       this.#editor.struct()
     )
@@ -148,20 +223,39 @@ export class Ketcher {
   }
 
   async setMolecule(structStr: string): Promise<void> {
-    assert(typeof structStr === 'string')
+    runAsyncAction<void>(async () => {
+      assert(typeof structStr === 'string')
 
-    const struct: Struct = await parseStruct(structStr, this.#structService)
-    struct.initHalfBonds()
-    struct.initNeighbors()
-    struct.setImplicitHydrogen()
-    struct.markFragments()
-    this.#editor.struct(struct)
+      const struct: Struct = await prepareStructToRender(
+        structStr,
+        this.#structService,
+        this
+      )
+
+      this.#editor.struct(struct)
+    }, this.eventBus)
   }
 
-  async addFragment(fragment: string): Promise<void> {
-    assert(typeof fragment === 'string')
+  async addFragment(structStr: string): Promise<void> {
+    runAsyncAction<void>(async () => {
+      assert(typeof structStr === 'string')
 
-    throw Error('not implemented yet')
+      const struct: Struct = await prepareStructToRender(
+        structStr,
+        this.#structService,
+        this
+      )
+
+      this.#editor.structToAddFragment(struct)
+    }, this.eventBus)
+  }
+
+  async layout(): Promise<void> {
+    runAsyncAction<void>(async () => {
+      const struct = await this.#indigo.layout(this.#editor.struct())
+      const ketSerializer = new KetSerializer()
+      this.setMolecule(ketSerializer.serialize(struct))
+    }, this.eventBus)
   }
 
   recognize(image: Blob, version?: string): Promise<Struct> {

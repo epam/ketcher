@@ -17,6 +17,7 @@ import { Pile, SGroup, Struct, Vec2 } from 'domain/entities'
 
 export function prepareStructForKet(struct: Struct) {
   const ketNodes: any = []
+  const atomIdMap: Map<number, number> = initAtomIdMap(struct)
 
   const rgFrags = new Set() // skip this when writing molecules
   for (const [rgnumber, rgroup] of struct.rgroups.entries()) {
@@ -84,8 +85,16 @@ export function prepareStructForKet(struct: Struct) {
       center: item.position,
       data: {
         content: item.content,
-        position: item.position
+        position: item.position,
+        pos: item.pos
       }
+    })
+  })
+
+  struct.sgroups.forEach((sgroup) => {
+    ketNodes.push({
+      type: 'sgroup',
+      data: SGroup.clone(sgroup, atomIdMap)
     })
   })
 
@@ -111,4 +120,16 @@ export function prepareStructForKet(struct: Struct) {
 function getFragmentCenter(struct, atomSet) {
   const bb = struct.getCoordBoundingBox(atomSet)
   return Vec2.centre(bb.min, bb.max)
+}
+
+function initAtomIdMap(struct: Struct): Map<number, number> {
+  const atomIdMap = new Map()
+
+  let index = 0
+  struct.atoms.forEach((_value, key) => {
+    atomIdMap.set(key, index)
+    index++
+  })
+
+  return atomIdMap
 }

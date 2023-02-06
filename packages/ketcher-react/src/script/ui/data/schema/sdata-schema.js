@@ -308,7 +308,7 @@ export const sdataCustomSchema = {
     type: { enum: ['DAT'] },
     context: {
       title: 'Context',
-      enum: ['Fragment', 'Multifragment', 'Bond', 'Atom', 'Group'],
+      enum: ['Atom', 'Bond', 'Fragment', 'Group', 'Multifragment'],
       default: 'Fragment'
     },
     fieldName: {
@@ -358,12 +358,16 @@ function firstKeyOf(obj) {
  * @param fieldName? { string }
  * @returns { string }
  */
-export function getSdataDefault(context, fieldName) {
-  if (!context && !fieldName) return firstKeyOf(sdataSchema)
+export function getSdataDefault(schema = sdataSchema, context, fieldName) {
+  if (schema.key === 'Custom') {
+    return schema.properties[context]?.default
+  }
 
-  if (!fieldName) return firstKeyOf(sdataSchema[context])
+  if (!context && !fieldName) return firstKeyOf(schema)
 
-  return sdataSchema[context][fieldName]
-    ? sdataSchema[context][fieldName].properties.fieldValue.default
+  if (!fieldName) return firstKeyOf(schema[context])
+
+  return schema[context][fieldName]
+    ? schema[context][fieldName].properties.fieldValue.default
     : ''
 }

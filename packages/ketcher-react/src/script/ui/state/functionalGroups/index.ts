@@ -22,15 +22,17 @@ import {
   SdfSerializer,
   Struct
 } from 'ketcher-core'
-import { prefetchStatic } from '../templates/init-lib'
+import templatesRawData from '../../../../templates/fg.sdf'
 
 interface FGState {
   lib: []
+  functionalGroupInfo: any
   mode: string
 }
 
 const initialState: FGState = {
   lib: [],
+  functionalGroupInfo: null,
   mode: 'fg'
 }
 
@@ -42,21 +44,29 @@ const functionalGroupsReducer = (
     case 'FG_INIT':
       return { ...state, ...payload }
 
+    case 'FG_HIGHLIGHT':
+      return { ...state, functionalGroupInfo: payload }
+
     default:
       return state
   }
 }
 
 const initFGroups = (lib: SdfItem[]) => ({ type: 'FG_INIT', payload: { lib } })
+const highlightFGroup = (group: any) => ({
+  type: 'FG_HIGHLIGHT',
+  payload: group
+})
 
-export function initFGTemplates(baseUrl: string) {
+export function highlightFG(dispatch, group: any) {
+  dispatch(highlightFGroup(group))
+}
+
+export function initFGTemplates() {
   return async (dispatch) => {
-    const fileName = 'fg.sdf'
-    const url = `${baseUrl}/templates/${fileName}`
     const provider = FunctionalGroupsProvider.getInstance()
     const sdfSerializer = new SdfSerializer()
-    const text = await prefetchStatic(url)
-    const templates = sdfSerializer.deserialize(text)
+    const templates = sdfSerializer.deserialize(templatesRawData)
     const functionalGroups = templates.reduce(
       (acc: Struct[], { struct }) => [...acc, struct],
       []

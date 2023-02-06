@@ -107,7 +107,7 @@ class ReactionArrowTool {
       }
     } else {
       const items = this.editor.findItem(event, ['rxnArrows'])
-      this.editor.hover(items)
+      this.editor.hover(items, null, event)
     }
   }
 

@@ -22,16 +22,13 @@ import {
 import {
   KetSerializer,
   MolSerializer,
-  MolSerializerOptions,
-  SmiSerializer
+  MolSerializerOptions
 } from 'domain/serializers'
 import { StructService, StructServiceOptions } from 'domain/services'
-
 import { KetFormatter } from './ketFormatter'
-import { MolfileV2000Formatter } from './molfileV2000Formatter'
 import { RxnFormatter } from './rxnFormatter'
 import { ServerFormatter } from './serverFormatter'
-import { SmilesFormatter } from './smilesFormatter'
+import { MolfileV2000Formatter } from './molfileV2000Formatter'
 
 export class FormatterFactory {
   #structService: StructService
@@ -71,41 +68,31 @@ export class FormatterFactory {
 
     let formatter: StructFormatter
     switch (format) {
-      case 'ket':
+      case SupportedFormat.ket:
         formatter = new KetFormatter(new KetSerializer())
         break
 
-      case 'mol':
+      case SupportedFormat.rxn:
+        formatter = new RxnFormatter(new MolSerializer(molSerializerOptions))
+        break
+
+      case SupportedFormat.mol:
         formatter = new MolfileV2000Formatter(
           new MolSerializer(molSerializerOptions)
         )
         break
 
-      case 'rxn':
-        formatter = new RxnFormatter(new MolSerializer(molSerializerOptions))
-        break
-
-      case 'smiles':
-        formatter = new SmilesFormatter(
-          new SmiSerializer(),
-
-          // only for ServerFormatter, because 'getStructureFromStringAsync' is delegated to it
-
-          this.#structService,
-          new KetSerializer(),
-          format,
-          structServiceOptions
-        )
-        break
-
-      case 'cml':
-      case 'inChIAuxInfo':
-      case 'inChI':
-      case 'molV3000':
-      case 'rxnV3000':
-      case 'smilesExt':
-      case 'smarts':
-      case 'cdxml':
+      case SupportedFormat.cml:
+      case SupportedFormat.inChIAuxInfo:
+      case SupportedFormat.inChI:
+      case SupportedFormat.molV3000:
+      case SupportedFormat.smiles:
+      case SupportedFormat.rxnV3000:
+      case SupportedFormat.smilesExt:
+      case SupportedFormat.smarts:
+      case SupportedFormat.cdxml:
+      case SupportedFormat.cdx:
+      case SupportedFormat.unknown:
       default:
         formatter = new ServerFormatter(
           this.#structService,

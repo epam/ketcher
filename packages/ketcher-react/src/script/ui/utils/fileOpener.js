@@ -40,11 +40,12 @@ export function fileOpener(server) {
 }
 
 function throughFileReader(file) {
+  const isCDX = file.name.endsWith('cdx')
   return new Promise((resolve, reject) => {
     const rd = new FileReader() // eslint-disable-line no-undef
 
     rd.onload = () => {
-      const content = rd.result
+      const content = isCDX ? rd.result.slice(37) : rd.result
       if (file.msClose) file.msClose()
       resolve(content)
     }
@@ -52,8 +53,7 @@ function throughFileReader(file) {
     rd.onerror = (event) => {
       reject(event)
     }
-
-    rd.readAsText(file, 'UTF-8')
+    isCDX ? rd.readAsDataURL(file) : rd.readAsText(file, 'UTF-8')
   })
 }
 

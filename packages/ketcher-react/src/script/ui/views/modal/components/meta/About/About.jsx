@@ -75,7 +75,7 @@ function AboutDialog(props) {
               </dt>
             </div>
             <br />
-            <div class={classes.indigoVersion}>
+            <div className={classes.indigoVersion}>
               <a
                 href="http://lifescience.opensource.epam.com/indigo/"
                 target="_blank"

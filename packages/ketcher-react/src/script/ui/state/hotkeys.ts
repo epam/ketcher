@@ -21,8 +21,6 @@ import {
   MolSerializer,
   formatProperties,
   ChemicalMimeType,
-  ReAtom,
-  ReBond,
   fromAtomsAttrs,
   fromBondsAttrs
 } from 'ketcher-core'
@@ -35,7 +33,7 @@ import keyNorm from '../data/convert/keynorm'
 import { fromAtom, toAtom, fromBond, toBond } from '../data/convert/structconv'
 import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
-import { handleHotkeyOverAtom } from './handleHotkeysOverAtom'
+import { handleHotkeyOverItem } from './handleHotkeysOverItem'
 import { SettingsManager } from '../utils/settingsManager'
 
 export function initKeydownListener(element) {
@@ -80,18 +78,18 @@ function keyHandle(dispatch, state, hotKeys, event) {
       .catch(() => null)
     event.preventDefault()
   } else if (key && key.length === 1 && key.match(/\//)) {
-    const hoverAtomId = getHoveredAtomId(render.ctab.atoms)
-    const hoverBondId = getHoveredBondId(render.ctab.bonds)
+    const hoveredItemId = getHoveredItem(render.ctab)
 
-    if (hoverAtomId) {
-      const atomFromStruct = render.ctab.atoms.get(hoverAtomId)
+    if (hoveredItemId && Object.hasOwn(hoveredItemId, 'atoms')) {
+      const hoveredAtomId = hoveredItemId.atoms
+      const atomFromStruct = render.ctab.atoms.get(hoveredAtomId)
       const convertedAtomForModal = fromAtom(atomFromStruct?.a)
 
       openDialog(dispatch, 'atomProps', convertedAtomForModal)
         .then((res) => {
           const updatedAtom = fromAtomsAttrs(
             render.ctab,
-            hoverAtomId,
+            hoveredAtomId,
             toAtom(res),
             false
           )
@@ -101,15 +99,16 @@ function keyHandle(dispatch, state, hotKeys, event) {
         .catch(() => null)
     }
 
-    if (hoverBondId) {
-      const bondFromStruct = render.ctab.bonds.get(hoverBondId)
+    if (hoveredItemId && Object.hasOwn(hoveredItemId, 'bonds')) {
+      const hoveredBondId = hoveredItemId.bonds
+      const bondFromStruct = render.ctab.bonds.get(hoveredBondId)
       const convertedBondForModal = fromBond(bondFromStruct?.b)
 
       openDialog(dispatch, 'bondProps', convertedBondForModal)
         .then((res) => {
           const updatedBond = fromBondsAttrs(
             render.ctab,
-            hoverBondId,
+            hoveredBondId,
             toBond(res),
             false
           )
@@ -136,17 +135,15 @@ function keyHandle(dispatch, state, hotKeys, event) {
 
     if (clipArea.actions.indexOf(actName) === -1) {
       let newAction = actions[actName].action
-      const hoveredItemId = getHoveredAtomId(render.ctab.atoms)
-      const isHoveringOverAtom = hoveredItemId !== null
+      const hoveredItem = getHoveredItem(render.ctab)
       // check if atom is currently hovered over
       // in this case we do not want to activate the corresponding tool
       // and just insert the atom directly
-      if (isHoveringOverAtom && newAction.tool !== 'select') {
+      if (hoveredItem && newAction.tool !== 'select') {
         newAction = getCurrentAction(group[index]) || newAction
-        handleHotkeyOverAtom({
-          hoveredItemId,
+        handleHotkeyOverItem({
+          hoveredItem,
           newAction,
-          render,
           editor,
           dispatch
         })
@@ -165,22 +162,28 @@ function getCurrentAction(prevActName) {
   return actions[prevActName]?.action
 }
 
-function getHoveredAtomId(atoms: Map<number, ReAtom>): number | null {
-  for (const [id, atom] of atoms.entries()) {
-    if (atom.hover) {
-      return id
-    }
-  }
-  return null
-}
+function getHoveredItem(
+  ctab: Record<string, Map<number, Record<string, unknown>>>
+): Record<string, number> | null {
+  const hoveredItem = {}
 
-function getHoveredBondId(bonds: Map<number, ReBond>): number | null {
-  for (const [id, bond] of bonds.entries()) {
-    if (bond.hover) {
-      return id
+  for (const ctabItem in ctab) {
+    if (Object.keys(hoveredItem).length) {
+      break
     }
+
+    if (!(ctab[ctabItem] instanceof Map)) {
+      continue
+    }
+
+    ctab[ctabItem].forEach((item, id) => {
+      if (item.hover) {
+        hoveredItem[ctabItem] = id
+      }
+    })
   }
-  return null
+
+  return Object.keys(hoveredItem).length ? hoveredItem : null
 }
 
 function setHotKey(key, actName, hotKeys) {

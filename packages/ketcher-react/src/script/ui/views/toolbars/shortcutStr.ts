@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { isMacOs } from 'react-device-detect'
 
-const isMac = /Mac/.test(navigator.platform) // eslint-disable-line no-undef
 const shortcutAliasMap = {
   Escape: 'Esc',
   Delete: 'Del',
-  Mod: isMac ? '⌘' : 'Ctrl'
+  Mod: isMacOs ? '⌘' : 'Ctrl'
 }
 
 export function shortcutStr(shortcut?: string | string[]) {

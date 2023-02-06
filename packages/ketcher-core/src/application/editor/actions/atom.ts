@@ -211,7 +211,6 @@ export function fromAtomMerge(restruct, srcId, dstId) {
   if (sgChanged) removeSgroupIfNeeded(action, restruct, [srcId])
 
   action.addOp(new AtomDelete(srcId))
-  action.addOp(new CalcImplicitH([dstId]))
   const dstAtomNeighbors = restruct.molecule.atomGetNeighbors(dstId)
   const bond = restruct.molecule.bonds.get(
     dstAtomNeighbors[0]?.bid || atomNeighbors[0]?.bid
@@ -226,7 +225,9 @@ export function fromAtomMerge(restruct, srcId, dstId) {
 export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {
   const frid = atomGetAttr(restruct, srcId, 'fragment')
   const frid2 = atomGetAttr(restruct, dstId, 'fragment')
-  if (frid2 === frid || typeof frid2 !== 'number') return
+  if (frid2 === frid || typeof frid2 !== 'number') {
+    return
+  }
 
   const struct = restruct.molecule
 
@@ -267,4 +268,14 @@ export function mergeSgroups(action, restruct, srcAtoms, dstAtom) {
       action.addOp(new SGroupAtomAdd(sid, aid).perform(restruct))
     )
   })
+}
+
+export function checkAtomValence(restruct, atomId) {
+  const action = new Action()
+
+  if (!restruct.atoms.has(atomId)) return action
+
+  action.addOp(new CalcImplicitH([atomId]))
+
+  return action.perform(restruct)
 }

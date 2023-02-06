@@ -184,3 +184,17 @@ export function getRelSgroupsBySelection(restruct, selectedAtoms) {
       difference(sg.atoms, selectedAtoms).length === 0
   )
 }
+
+export function isAttachmentBond({ begin, end }: Bond, selection): boolean {
+  if (!selection.atoms) {
+    return false
+  }
+  const isBondStartsInSelectionAndEndsOutside =
+    selection.atoms.includes(begin) && !selection.atoms.includes(end)
+  const isBondEndsInSelectionAndStartsOutside =
+    selection.atoms.includes(end) && !selection.atoms.includes(begin)
+  return (
+    isBondStartsInSelectionAndEndsOutside ||
+    isBondEndsInSelectionAndStartsOutside
+  )
+}

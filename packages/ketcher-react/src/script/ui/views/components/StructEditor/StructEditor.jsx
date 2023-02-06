@@ -25,6 +25,9 @@ import { upperFirst } from 'lodash/fp'
 import handIcon from '../../../../../icons/files/hand.svg'
 import compressedHandIcon from '../../../../../icons/files/compressed-hand.svg'
 import Cursor from '../Cursor'
+import { ContextMenu, ContextMenuTrigger } from '../ContextMenu'
+
+import InfoPanel from './InfoPanel'
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -69,7 +72,9 @@ class StructEditor extends Component {
     super(props)
     this.state = {
       enableCursor: false,
-      contextMenu: null
+      contextMenu: null,
+      clientX: 0,
+      clientY: 0
     }
     this.editorRef = createRef()
     this.logRef = createRef()
@@ -132,7 +137,9 @@ class StructEditor extends Component {
         case 'move':
           this.editorRef.current.classList.add(classes.enableCursor)
           this.setState({
-            enableCursor: true
+            enableCursor: true,
+            clientX,
+            clientY
           })
           break
         case 'disable':
@@ -210,9 +217,12 @@ class StructEditor extends Component {
       onCipChange,
       className,
       onConfirm,
+      onShowInfo,
       showAttachmentPoints = true,
       ...props
     } = this.props
+
+    const { clientX = 0, clientY = 0 } = this.state
 
     return (
       <Tag
@@ -220,24 +230,34 @@ class StructEditor extends Component {
         onContextMenu={this.handleContextMenu}
         {...props}
       >
-        <div ref={this.editorRef} className={clsx(classes.intermediateCanvas)}>
-          {/* svg here */}
-        </div>
-        <Cursor
-          Icon={handIcon}
-          PressedIcon={compressedHandIcon}
-          enableHandTool={this.state.enableCursor}
-        />
-        <div className={classes.measureLog} ref={this.logRef} />
-        {indigoVerification && (
-          <div className={classes.spinnerOverlay}>
-            <LoadingCircles />
+        <ContextMenuTrigger>
+          <div
+            ref={this.editorRef}
+            className={clsx(classes.intermediateCanvas)}
+          >
+            {/* svg here */}
           </div>
-        )}
-        <FGContextMenu
-          contextMenu={this.state.contextMenu}
-          handleClose={this.handleClose}
+          <Cursor
+            Icon={handIcon}
+            PressedIcon={compressedHandIcon}
+            enableHandTool={this.state.enableCursor}
+          />
+          <div className={classes.measureLog} ref={this.logRef} />
+          {indigoVerification && (
+            <div className={classes.spinnerOverlay}>
+              <LoadingCircles />
+            </div>
+          )}
+        </ContextMenuTrigger>
+        <InfoPanel
+          clientX={clientX}
+          clientY={clientY}
+          render={this.props.render}
+          groupStruct={this.props.groupStruct}
+          sGroup={this.props.sGroup}
         />
+        <FGContextMenu />
+        <ContextMenu />
       </Tag>
     )
   }

@@ -26,8 +26,12 @@ import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction } from './shared'
 
 import actions from '../action'
+import tools from '../action/tools'
 import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
+import { isIE } from 'react-device-detect'
+import { handleHotkeyOverItem } from './handleHotkeysOverItem'
+import { SettingsManager } from '../utils/settingsManager'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -38,18 +42,30 @@ export function initKeydownListener(element) {
   }
 }
 
+function removeNotRenderedStruct(actionTool, event, dispatch) {
+  const { code, metaKey } = event
+  if (actionTool.tool === 'paste' && code === 'KeyS' && metaKey) {
+    const savedSelectedTool = SettingsManager.selectionTool
+    dispatch({
+      type: 'ACTION',
+      action: savedSelectedTool || tools['select-rectangle'].action
+    })
+  }
+}
+
 /* HotKeys */
 function keyHandle(dispatch, state, hotKeys, event) {
   if (state.modal) return
 
-  const editor = state.editor
+  const { editor } = state
+  const { render } = editor
   const actionState = state.actionState
   const actionTool = actionState.activeTool
 
   const key = keyNorm(event)
   const atomsSelected = editor.selection() && editor.selection().atoms
 
-  let group = null
+  let group: any = null
 
   if (key && key.length === 1 && atomsSelected && key.match(/\w/)) {
     openDialog(dispatch, 'labelEdit', { letter: key })
@@ -59,23 +75,70 @@ function keyHandle(dispatch, state, hotKeys, event) {
       .catch(() => null)
     event.preventDefault()
   } else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
-    let index = checkGroupOnTool(group, actionTool) // index currentTool in group || -1
-    index = (index + 1) % group.length
+    const index = checkGroupOnTool(group, actionTool) // index currentTool in group || -1
+    const groupLength = group !== null ? group.length : 1
+    const newIndex = (index + 1) % groupLength
 
-    const actName = group[index]
+    const actName = group[newIndex]
     if (actionState[actName] && actionState[actName].disabled === true) {
       event.preventDefault()
       return
     }
+    // Removing from what should be saved - structure, which was added to paste tool,
+    // but not yet rendered on canvas
+    removeNotRenderedStruct(actionTool, event, dispatch)
+
     if (clipArea.actions.indexOf(actName) === -1) {
-      const newAction = actions[actName].action
-      dispatch(onAction(newAction))
+      let newAction = actions[actName].action
+      const hoveredItem = getHoveredItem(render.ctab)
+      // check if atom is currently hovered over
+      // in this case we do not want to activate the corresponding tool
+      // and just insert the atom directly
+      if (hoveredItem && newAction.tool !== 'select') {
+        newAction = getCurrentAction(group[index]) || newAction
+        handleHotkeyOverItem({
+          hoveredItem,
+          newAction,
+          editor,
+          dispatch
+        })
+      } else {
+        dispatch(onAction(newAction))
+      }
+
       event.preventDefault()
-    } else if (window.clipboardData) {
-      // IE support
+    } else if (isIE) {
       clipArea.exec(event)
     }
   }
+}
+
+function getCurrentAction(prevActName) {
+  return actions[prevActName]?.action
+}
+
+function getHoveredItem(
+  ctab: Record<string, Map<number, Record<string, unknown>>>
+): Record<string, number> | null {
+  const hoveredItem = {}
+
+  for (const ctabItem in ctab) {
+    if (Object.keys(hoveredItem).length) {
+      break
+    }
+
+    if (!(ctab[ctabItem] instanceof Map)) {
+      continue
+    }
+
+    ctab[ctabItem].forEach((item, id) => {
+      if (item.hover) {
+        hoveredItem[ctabItem] = id
+      }
+    })
+  }
+
+  return Object.keys(hoveredItem).length ? hoveredItem : null
 }
 
 function setHotKey(key, actName, hotKeys) {
@@ -116,7 +179,7 @@ function checkGroupOnTool(group, actionTool) {
 const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/
 
 /* ClipArea */
-export function initClipboard(dispatch, getState) {
+export function initClipboard(dispatch) {
   const formats = Object.keys(formatProperties).map(
     (format) => formatProperties[format].mime
   )
@@ -169,7 +232,7 @@ function clipData(editor) {
   const simpleObjectOrText = Boolean(
     struct.simpleObjects.size || struct.texts.size
   )
-  if (simpleObjectOrText && window.clipboardData) {
+  if (simpleObjectOrText && isIE) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
         'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button'
@@ -189,8 +252,8 @@ function clipData(editor) {
 
     // res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
     return res
-  } catch (ex) {
-    errorHandler(ex.message)
+  } catch (e: any) {
+    errorHandler(e.message)
   }
 
   return null

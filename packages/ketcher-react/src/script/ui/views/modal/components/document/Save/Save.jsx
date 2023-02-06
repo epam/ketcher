@@ -29,7 +29,7 @@ import {
 import { Dialog } from '../../../../components'
 import Tabs from 'src/script/ui/component/view/Tabs'
 import { ErrorsContext } from '../../../../../../../contexts'
-import SaveButton from '../../../../../component/view/savebutton'
+import { SaveButton } from '../../../../../component/view/savebutton'
 import { check } from '../../../../../state/server'
 import classes from './Save.module.less'
 import { connect } from 'react-redux'
@@ -88,6 +88,7 @@ class SaveDialog extends Component {
         'svg',
         'png',
         'cdxml'
+        // 'cdx' TO DO: Uncomment, when export will be ready on Indigo side
       )
 
     this.saveSchema = saveSchema

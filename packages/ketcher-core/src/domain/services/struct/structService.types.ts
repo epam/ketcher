@@ -22,9 +22,11 @@ export enum ChemicalMimeType {
   DaylightSmarts = 'chemical/x-daylight-smarts',
   InChI = 'chemical/x-inchi',
   InChIAuxInfo = 'chemical/x-inchi-aux',
+  CDX = 'chemical/x-cdx',
   CDXML = 'chemical/x-cdxml',
   CML = 'chemical/x-cml',
-  KET = 'chemical/x-indigo-ket'
+  KET = 'chemical/x-indigo-ket',
+  UNKNOWN = 'chemical/x-unknown'
 }
 
 export interface WithStruct {

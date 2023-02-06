@@ -308,7 +308,7 @@ class ReStruct {
     })
   }
 
-  getVBoxObj(selection): Box2Abs | null {
+  getVBoxObj(selection?): Box2Abs | null {
     selection = selection || {}
 
     if (isSelectionEmpty(selection)) {
@@ -575,8 +575,7 @@ class ReStruct {
     })
   }
 
-  setSelection(selection) {
-    const redraw = arguments.length === 0 // render.update only
+  setSelection(selection?) {
     const atoms: { selected: boolean; sgroup: number }[] = []
 
     Object.keys(ReStruct.maps).forEach((map) => {
@@ -605,9 +604,14 @@ class ReStruct {
             )
             item.selected = sGroupAtoms.length > 0 && sGroupAtoms[0].selected
           }
-          const selected = redraw
-            ? item.selected
-            : selection && selection[map] && selection[map].indexOf(id) > -1
+
+          let selected = selection?.[map]
+            ? selection[map].indexOf(id) > -1
+            : item.selected
+
+          if (selection === null) {
+            selected = false
+          }
 
           this.showItemSelection(item, selected)
         })

@@ -15,35 +15,12 @@
  ***************************************************************************/
 
 import { Component, ComponentType, createRef } from 'react'
-import { MolSerializer, Render, Struct } from 'ketcher-core'
-
-function renderStruct(
-  el: HTMLElement | null,
-  struct: Struct | null,
-  options = {}
-) {
-  if (el) {
-    if (struct) {
-      console.info('render!', el.clientWidth, el.clientWidth)
-      struct.initHalfBonds()
-      struct.initNeighbors()
-      struct.setImplicitHydrogen()
-      struct.markFragments()
-      const rnd = new Render(el, {
-        autoScale: true,
-        ...options
-      })
-      rnd.setMolecule(struct)
-      rnd.update()
-      // console.info('render!');//, el.innerHTML);
-      // struct.prerender = el.innerHTML;
-    }
-  }
-}
-
+import { MolSerializer, Struct } from 'ketcher-core'
+import { RenderStruct } from '../utils'
 interface StructRenderProps {
   struct: Struct
   options: any
+  id?: any
   Tag?: string | ComponentType<any>
 }
 
@@ -54,11 +31,11 @@ class StructRender extends Component<StructRenderProps> {
     this.tagRef = createRef()
   }
 
-  shouldComponentUpdate() {
-    return false
+  shouldComponentUpdate(previousProps) {
+    return Boolean(this.props.id && this.props.id !== previousProps.id)
   }
 
-  componentDidMount() {
+  update() {
     const el = this.tagRef.current
     const { struct, options } = this.props
     let parsedStruct: Struct | null
@@ -74,7 +51,18 @@ class StructRender extends Component<StructRenderProps> {
     } else {
       parsedStruct = struct
     }
-    renderStruct(el, parsedStruct, options)
+    el?.childNodes.forEach((node) => {
+      node.remove()
+    })
+    RenderStruct.render(el, parsedStruct, options)
+  }
+
+  componentDidMount() {
+    this.update()
+  }
+
+  componentDidUpdate() {
+    this.update()
   }
 
   render() {

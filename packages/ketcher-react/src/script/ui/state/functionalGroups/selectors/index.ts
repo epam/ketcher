@@ -15,4 +15,6 @@
  ***************************************************************************/
 
 export const functionalGroupsSelector = (state) => state.functionalGroups.lib
+export const functionGroupInfoSelector = (state) =>
+  state.functionalGroups.functionalGroupInfo
 export const modeSelector = (state) => state.functionalGroups.mode

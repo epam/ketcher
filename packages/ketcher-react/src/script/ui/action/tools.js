@@ -19,11 +19,12 @@ import { RxnArrowMode, SimpleObjectMode, findStereoAtoms } from 'ketcher-core'
 import { bond as bondSchema } from '../data/schema/struct-schema'
 import isHidden from './isHidden'
 import { toBondType } from '../data/convert/structconv'
+import { isFlipDisabled } from './flips'
 
 const toolActions = {
   hand: {
     title: 'Hand tool',
-    shortcut: 'Mod+h',
+    shortcut: 'Mod+Alt+h',
     action: { tool: 'hand' },
     hidden: (options) => isHidden(options, 'hand')
   },
@@ -91,12 +92,14 @@ const toolActions = {
     shortcut: 'Alt+h',
     title: 'Horizontal Flip',
     action: { tool: 'rotate', opts: 'horizontal' },
+    disabled: isFlipDisabled,
     hidden: (options) => isHidden(options, 'transform-flip-h')
   },
   'transform-flip-v': {
     shortcut: 'Alt+v',
     title: 'Vertical Flip',
     action: { tool: 'rotate', opts: 'vertical' },
+    disabled: isFlipDisabled,
     hidden: (options) => isHidden(options, 'transform-flip-v')
   },
   sgroup: {

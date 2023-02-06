@@ -41,7 +41,14 @@ export function changeGroup(group) {
 export function changeFilter(filter) {
   return {
     type: 'TMPL_CHANGE_FILTER',
-    data: { filter: filter.trim(), selected: null } // TODO: change this
+    data: { filter, selected: null }
+  }
+}
+
+export function changeTab(tab) {
+  return {
+    type: 'TMPL_CHANGE_TAB',
+    data: { tab }
   }
 }
 
@@ -148,14 +155,16 @@ export const initTmplsState = {
   filter: '',
   group: null,
   attach: {},
-  mode: 'classic'
+  mode: 'classic',
+  tab: 0
 }
 
 const tmplActions = [
   'TMPL_INIT',
   'TMPL_SELECT',
   'TMPL_CHANGE_GROUP',
-  'TMPL_CHANGE_FILTER'
+  'TMPL_CHANGE_FILTER',
+  'TMPL_CHANGE_TAB'
 ]
 
 const attachActions = ['INIT_ATTACH', 'SET_ATTACH_POINTS', 'SET_TMPL_NAME']

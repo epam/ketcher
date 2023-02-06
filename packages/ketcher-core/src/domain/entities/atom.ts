@@ -24,13 +24,14 @@ function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
   return typeof value !== 'undefined' ? value : defaultValue
 }
 
+function isCorrectPseudo(label) {
+  return (
+    !Elements.get(label) && label !== 'L' && label !== 'L#' && label !== 'R#'
+  )
+}
+
 function getPseudo(label: string) {
-  return !Elements.get(label) &&
-    label !== 'L' &&
-    label !== 'L#' &&
-    label !== 'R#'
-    ? label
-    : ''
+  return isCorrectPseudo(label) ? label : ''
 }
 
 export function radicalElectrons(radical: any) {
@@ -213,6 +214,11 @@ export class Atom {
       enumerable: true,
       get: function () {
         return getPseudo(this.label)
+      },
+      set: function (value) {
+        if (isCorrectPseudo(value)) {
+          this.label = value
+        }
       }
     })
   }

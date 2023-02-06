@@ -17,6 +17,7 @@
 import { initSdata, sdataReducer } from './sdata'
 
 import { getDefaultOptions } from '../../data/schema/options-schema'
+import { sdataCustomSchema } from '../../data/schema/sdata-schema'
 
 export const formsState = {
   // TODO: create from schema.{smth}.defaultValue
@@ -117,7 +118,7 @@ export const formsState = {
     valid: true,
     result: {}
   },
-  sdata: initSdata()
+  sdata: initSdata(sdataCustomSchema)
 }
 
 export function updateFormState(data) {
@@ -138,7 +139,7 @@ export function setDefaultSettings() {
   return {
     type: 'UPDATE_FORM',
     data: {
-      result: getDefaultOptions(),
+      result: getDefaultOptions(sdataCustomSchema),
       valid: true,
       errors: {}
     }

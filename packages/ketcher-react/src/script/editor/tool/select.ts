@@ -27,12 +27,14 @@ import {
   getItemsToFuse,
   FunctionalGroup,
   fromSimpleObjectResizing,
-  fromArrowResizing
+  fromArrowResizing,
+  ReStruct,
+  ReSGroup
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
 import { atomLongtapEvent } from './atom'
-import { sgroupDialog } from './sgroup'
+import SGroupTool from './sgroup'
 import utils from '../shared/utils'
 import { xor } from 'lodash/fp'
 import { Editor } from '../Editor'
@@ -51,6 +53,10 @@ class SelectTool {
       editor,
       this.#mode === 'fragment'
     )
+  }
+
+  isSelectionRunning() {
+    return this.#lassoHelper.running()
   }
 
   mousedown(event) {
@@ -191,6 +197,7 @@ class SelectTool {
     if (event.shiftKey) {
       this.editor.selection(selMerge(sel, selection, true))
     } else {
+      this.editor.selection(null)
       this.editor.selection(isSelected(selection, ci) ? selection : sel)
     }
     return true
@@ -231,6 +238,9 @@ class SelectTool {
         )
         editor.update(dragCtx.action, true)
         return true
+      }
+      if (dragCtx.item.map === 'functionalGroups' && !dragCtx.action) {
+        editor.event.showInfo.dispatch(null)
       }
       if (dragCtx.item.map === 'rxnArrows' && dragCtx.item.ref) {
         if (dragCtx?.action) dragCtx.action.perform(rnd.ctab)
@@ -303,7 +313,7 @@ class SelectTool {
             'texts'
           ]
 
-    editor.hover(editor.findItem(event, maps, null))
+    editor.hover(editor.findItem(event, maps, null), null, event)
 
     return true
   }
@@ -373,6 +383,23 @@ class SelectTool {
 
     if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
 
+    const possibleSaltOrSolvent = struct.sgroups.get(actualSgroupId)
+    const isDraggingSaltOrSolventOnStructure = SGroup.isSaltOrSolvent(
+      possibleSaltOrSolvent?.item.data.name
+    )
+    if (
+      (isDraggingSaltOrSolventOnStructure ||
+        this.isDraggingStructureOnSaltOrSolvent(dragCtx, struct.sgroups)) &&
+      dragCtx
+    ) {
+      preventSaltAndSolventsMerge(struct, dragCtx, editor)
+      delete this.dragCtx
+      if (this.#lassoHelper.running()) {
+        this.selectElementsOnCanvas(newSelected, editor, event)
+      }
+      return true
+    }
+
     if (dragCtx && dragCtx.item) {
       dragCtx.action = dragCtx.action
         ? fromItemsFuse(struct, dragCtx.mergeItems).mergeWith(dragCtx.action)
@@ -385,15 +412,13 @@ class SelectTool {
       delete this.dragCtx
     } else if (this.#lassoHelper.running()) {
       // TODO it catches more events than needed, to be re-factored
-      const sel =
-        newSelected.atoms.length > 0
-          ? selMerge(this.#lassoHelper.end(), newSelected, false)
-          : this.#lassoHelper.end()
-      editor.selection(
-        !event.shiftKey ? sel : selMerge(sel, editor.selection(), false)
-      )
+      this.selectElementsOnCanvas(newSelected, editor, event)
     } else if (this.#lassoHelper.fragment) {
-      if (!event.shiftKey) editor.selection(null)
+      if (
+        !event.shiftKey &&
+        this.editor.render.clientArea.contains(event.target)
+      )
+        editor.selection(null)
     }
     editor.event.message.dispatch({
       info: false
@@ -522,7 +547,7 @@ class SelectTool {
       ci.map === 'sgroupData'
     ) {
       editor.selection(closestToSel(ci))
-      sgroupDialog(editor, ci.id, null)
+      SGroupTool.sgroupDialog(editor, ci.id, null)
     } else if (ci.map === 'texts') {
       editor.selection(closestToSel(ci))
       const text = molecule.texts.get(ci.id)
@@ -558,6 +583,39 @@ class SelectTool {
 
     this.editor.hover(null)
   }
+
+  selectElementsOnCanvas(
+    elements: { atoms: number[]; bonds: number[] },
+    editor: Editor,
+    event
+  ) {
+    const sel =
+      elements.atoms.length > 0
+        ? selMerge(this.#lassoHelper.end(), elements, false)
+        : this.#lassoHelper.end()
+    editor.selection(
+      !event.shiftKey ? sel : selMerge(sel, editor.selection(), false)
+    )
+  }
+
+  isDraggingStructureOnSaltOrSolvent(dragCtx, sgroups: Map<number, ReSGroup>) {
+    let isDraggingOnSaltOrSolventAtom
+    let isDraggingOnSaltOrSolventBond
+    if (dragCtx?.mergeItems) {
+      const mergeAtoms = Array.from(dragCtx.mergeItems.atoms.values())
+      const mergeBonds = Array.from(dragCtx.mergeItems.bonds.values())
+      const sgroupsOnCanvas = Array.from(sgroups.values()).map(
+        ({ item }) => item
+      )
+      isDraggingOnSaltOrSolventAtom = mergeAtoms.some((atomId) =>
+        SGroup.isAtomInSaltOrSolvent(atomId as number, sgroupsOnCanvas)
+      )
+      isDraggingOnSaltOrSolventBond = mergeBonds.some((bondId) =>
+        SGroup.isBondInSaltOrSolvent(bondId as number, sgroupsOnCanvas)
+      )
+    }
+    return isDraggingOnSaltOrSolventAtom || isDraggingOnSaltOrSolventBond
+  }
 }
 
 function closestToSel(ci) {
@@ -589,6 +647,24 @@ function uniqArray(dest, add, reversible: boolean) {
     else if (!dest.includes(item)) dest.push(item)
     return dest
   }, [])
+}
+
+function preventSaltAndSolventsMerge(
+  struct: ReStruct,
+  dragCtx,
+  editor: Editor
+) {
+  const action = dragCtx.action
+    ? fromItemsFuse(struct, null).mergeWith(dragCtx.action)
+    : fromItemsFuse(struct, null)
+  editor.hover(null)
+  if (dragCtx.mergeItems) {
+    editor.selection(null)
+  }
+  editor.update(action)
+  editor.event.message.dispatch({
+    info: false
+  })
 }
 
 export default SelectTool

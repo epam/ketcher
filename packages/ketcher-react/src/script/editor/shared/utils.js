@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2, fracAngle } from 'ketcher-core'
+import { Vec2, fracAngle, Struct, FunctionalGroup } from 'ketcher-core'
 
 import { inRange } from 'lodash'
 
@@ -59,10 +59,46 @@ function mergeBondsParams(struct1, bond1, struct2, bond2) {
   return { merged, angle, scale, cross: Math.abs(degrees(angle)) > 90 }
 }
 
+/**
+ * Get all items IDs that do not belong to sgroups
+ * @param items {{ atoms?: number[]; bonds?: number[] } | null}
+ * @param struct {Struct}
+ * @returns {{ atoms: number[], bonds: number[] }}
+ */
+function getOnlyNonGroupItems(items, struct) {
+  const atoms =
+    items.atoms?.filter((key) => struct.isAtomBelongToGroup(key)) === null || []
+  const bonds =
+    items.bonds?.filter((key) => struct.isBondBelongToGroup(key)) === null || []
+
+  return { atoms, bonds }
+}
+
+/**
+ * Get all items IDs that do not belong to sgroups (except their attachment points)
+ * @param items {{ atoms?: number[]; bonds?: number[] } | null}
+ * @param struct {Struct}
+ * @returns {{ atoms: number[], bonds: number[] }}
+ */
+function getNonGroupItemsAndAttachmentPoints(items, struct) {
+  const atoms =
+    items.atoms?.filter(
+      (key) =>
+        struct.isAtomBelongToGroup(key) === null ||
+        FunctionalGroup.isAttachmentPointAtom(key, struct)
+    ) || []
+  const bonds =
+    items.bonds?.filter((key) => !struct.isBondBelongToGroup(key)) || []
+
+  return { atoms, bonds }
+}
+
 export default {
   calcAngle,
   fracAngle,
   calcNewAtomPos,
   degrees,
-  mergeBondsParams
+  mergeBondsParams,
+  getOnlyNonGroupItems,
+  getNonGroupItemsAndAttachmentPoints
 }

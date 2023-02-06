@@ -28,8 +28,8 @@ export function fromItemsFuse(restruct, items) {
 
   const connectedAtomIds = getAllConnectedAtomsIds(
     restruct,
-    mergeMapOfAtomsToSet(items.atoms),
-    mergeMapOfAtomsToSet(items.bonds)
+    mergeMapOfItemsToSet(items.atoms),
+    mergeMapOfItemsToSet(items.bonds)
   )
 
   // merge single atoms
@@ -73,6 +73,14 @@ export function getHoverToFuse(items) {
   return { map: 'merge', id: +Date.now(), items: hoverItems }
 }
 
+export function mergeMapOfItemsToSet(items: Map<number, number>): Set<number> {
+  const itemsSet = new Set<number>()
+  items.forEach((value, key) => {
+    itemsSet.add(value).add(key)
+  })
+  return itemsSet
+}
+
 /**
  * @param struct
  * @param closestMap {{
@@ -105,14 +113,6 @@ function closestToMerge(struct, closestMap) {
   if (mergeMap.atoms.size === 0 && mergeMap.bonds.size === 0) return null
 
   return mergeMap
-}
-
-function mergeMapOfAtomsToSet(items: Map<number, number>): Set<number> {
-  const itemsSet = new Set<number>()
-  items.forEach((value, key) => {
-    itemsSet.add(value).add(key)
-  })
-  return itemsSet
 }
 
 function getAllConnectedAtomsIds(restruct, atomsIds, bondsIds) {

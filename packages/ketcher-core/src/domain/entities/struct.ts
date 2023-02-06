@@ -116,6 +116,12 @@ export class Struct {
     )
   }
 
+  isSingleGroup(): boolean {
+    if (!this.sgroups.size || this.sgroups.size > 1) return false
+    const sgroup = Array.from(this.sgroups)[0][1]
+    return this.atoms.size === sgroup.atoms.length
+  }
+
   clone(
     atomSet?: Pile<number> | null,
     bondSet?: Pile<number> | null,
@@ -1063,5 +1069,27 @@ export class Struct {
         this.functionalGroups.add(new FunctionalGroup(sgroup))
       }
     })
+  }
+
+  isAtomBelongToGroup(atomId: number): number | null {
+    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+      if (sgroup.atoms.includes(atomId)) return groupId
+    }
+    return null
+  }
+
+  // TODO: simplify if bonds ids ever appear in sgroup
+  isBondBelongToGroup(bondId: number): number | null {
+    const bond = this.bonds.get(bondId)
+    if (!bond) return null
+    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+      if (
+        sgroup.atoms.includes(bond.begin) ||
+        sgroup.atoms.includes(bond.end)
+      ) {
+        return groupId
+      }
+    }
+    return null
   }
 }

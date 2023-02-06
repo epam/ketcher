@@ -29,7 +29,10 @@ import {
   fromSimpleObjectResizing,
   fromArrowResizing,
   ReStruct,
-  ReSGroup
+  ReSGroup,
+  setExpandSGroup,
+  Struct,
+  mergeMapOfItemsToSet
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -270,7 +273,12 @@ class SelectTool {
         editor.render.page2obj(event).sub(dragCtx.xy0)
       )
 
-      dragCtx.mergeItems = getItemsToFuse(editor, expSel)
+      const nonGroupItemsAndAttachPoints = {
+        ...expSel,
+        ...utils.getNonGroupItemsAndAttachmentPoints(expSel, restruct.molecule)
+      }
+
+      dragCtx.mergeItems = getItemsToFuse(editor, nonGroupItemsAndAttachPoints)
       editor.hover(getHoverToFuse(dragCtx.mergeItems))
 
       editor.update(dragCtx.action, true)
@@ -401,6 +409,15 @@ class SelectTool {
     }
 
     if (dragCtx && dragCtx.item) {
+      const groupsInMerge = idsOfGroupsInMerge(dragCtx.mergeItems, molecule)
+      if (groupsInMerge.length) {
+        groupsInMerge.forEach((groupId) => {
+          dragCtx.action.mergeWith(
+            setExpandSGroup(struct, groupId, { expanded: true })
+          )
+        })
+      }
+
       dragCtx.action = dragCtx.action
         ? fromItemsFuse(struct, dragCtx.mergeItems).mergeWith(dragCtx.action)
         : fromItemsFuse(struct, dragCtx.mergeItems)
@@ -639,6 +656,31 @@ function isSelected(selection, item) {
   return (
     selection && selection[item.map] && selection[item.map].includes(item.id)
   )
+}
+
+function idsOfGroupsInMerge(
+  mergeMaps: {
+    atoms?: Map<number, number>
+    bonds?: Map<number, number>
+  } | null,
+  struct: Struct
+): number[] {
+  const groupsIds: number[] = []
+
+  const atoms = mergeMaps?.atoms && mergeMapOfItemsToSet(mergeMaps.atoms)
+  const bonds = mergeMaps?.bonds && mergeMapOfItemsToSet(mergeMaps.bonds)
+
+  atoms?.forEach((atomId) => {
+    const groupId = struct.isAtomBelongToGroup(atomId)
+    if (groupId !== null) groupsIds.push(groupId)
+  })
+
+  bonds?.forEach((bondId) => {
+    const groupId = struct.isAtomBelongToGroup(bondId)
+    if (groupId !== null) groupsIds.push(groupId)
+  })
+
+  return groupsIds
 }
 
 function uniqArray(dest, add, reversible: boolean) {

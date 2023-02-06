@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { Divider, Menu, MenuItem } from '@mui/material'
 import {
   FunctionalGroup,
   setExpandSGroup,
@@ -7,7 +9,7 @@ import {
 } from 'ketcher-core'
 import { useAppContext } from '../../../../hooks'
 import classes from './ContextMenu.module.less'
-import { Divider, Menu, MenuItem } from '@mui/material'
+import { highlightFG } from '../../state/functionalGroups'
 
 interface IContextMenuProps {
   contextMenu: {
@@ -19,6 +21,7 @@ interface IContextMenuProps {
 
 const FGContextMenu = ({ contextMenu, handleClose }: IContextMenuProps) => {
   const { getKetcherInstance } = useAppContext()
+  const dispatch = useDispatch()
 
   const handleExpand = () => {
     const editor = getKetcherInstance().editor as any
@@ -34,6 +37,7 @@ const FGContextMenu = ({ contextMenu, handleClose }: IContextMenuProps) => {
     editor.update(action)
     setShowSGroupMenu(false)
     setTargetItems([])
+    highlightFG(dispatch, { group: null, id: null })
   }
 
   const handleRemove = function () {

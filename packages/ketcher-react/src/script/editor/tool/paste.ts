@@ -14,18 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  fromItemsFuse,
-  fromPaste,
-  FunctionalGroup,
-  getHoverToFuse,
-  getItemsToFuse,
-  mergeMapOfItemsToSet,
-  setExpandSGroup,
-  Struct
-} from 'ketcher-core'
+import { fromPaste, getHoverToFuse, getItemsToFuse, Struct } from 'ketcher-core'
 import Editor from '../Editor'
 import utils from '../shared/utils'
+import { dropAndMerge } from './helper/dropAndMerge'
+import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 
 class PasteTool {
   editor: Editor
@@ -85,97 +78,30 @@ class PasteTool {
   mouseup() {
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
-    const functionalGroups = molecule.functionalGroups
-    const atomsResult: Array<number> = []
-    const bondsResult: Array<number> = []
-    const result: Array<number> = []
 
-    if (
-      this.mergeItems &&
-      functionalGroups.size &&
-      this.mergeItems.atoms.size
-    ) {
-      for (const id of this.mergeItems.atoms.values()) {
-        const atomId = FunctionalGroup.atomsInFunctionalGroup(
-          functionalGroups,
-          id
-        )
-
-        if (atomId !== null) {
-          atomsResult.push(atomId)
-        }
-      }
-    }
-    if (
-      this.mergeItems &&
-      functionalGroups.size &&
-      this.mergeItems.bonds.size
-    ) {
-      for (const id of this.mergeItems.bonds.values()) {
-        const bondId = FunctionalGroup.atomsInFunctionalGroup(
-          functionalGroups,
-          id
-        )
-
-        if (bondId !== null) {
-          bondsResult.push(bondId)
-        }
-      }
-    }
-
-    if (atomsResult.length > 0) {
-      for (const id of atomsResult) {
-        const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-          functionalGroups,
-          id
-        )
-
-        if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
-        }
-      }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
-    } else if (bondsResult.length > 0) {
-      for (const id of bondsResult) {
-        const fgId = FunctionalGroup.findFunctionalGroupByBond(
-          molecule,
-          functionalGroups,
-          id
-        )
-
-        if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
-        }
-      }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
-    }
-    const editor = this.editor
-    const restruct = editor.render.ctab
-
-    editor.selection(null)
-
-    const groupsInMerge = idsOfGroupsInMerge(this.mergeItems, molecule)
-    if (groupsInMerge.length) {
-      groupsInMerge.forEach((groupId) => {
-        this.action.mergeWith(
-          setExpandSGroup(struct, groupId, { expanded: true })
-        )
+    const idsOfItemsMerged = this.mergeItems && {
+      ...(this.mergeItems.atoms && {
+        atoms: Array.from(this.mergeItems.atoms.values())
+      }),
+      ...(this.mergeItems.bonds && {
+        bonds: Array.from(this.mergeItems.bonds.values())
       })
     }
 
-    this.action = this.action
-      ? fromItemsFuse(restruct, this.mergeItems).mergeWith(this.action)
-      : fromItemsFuse(restruct, this.mergeItems)
+    const groupsIdsInvolvedInMerge = getGroupIdsFromItemArrays(
+      molecule,
+      idsOfItemsMerged
+    )
 
-    editor.hover(null)
-
-    if (this.action) {
-      const action = this.action
-      delete this.action
-      this.editor.update(action)
+    if (groupsIdsInvolvedInMerge.length) {
+      this.editor.event.removeFG.dispatch({ fgIds: groupsIdsInvolvedInMerge })
+      return
     }
+
+    // need to delete action first, because editor.update calls this.cancel() and thus action revert 🤦‍♂️
+    const action = this.action
+    delete this.action
+    dropAndMerge(this.editor, this.mergeItems, action)
   }
 
   cancel() {
@@ -192,31 +118,6 @@ class PasteTool {
   mouseleave() {
     this.cancel()
   }
-}
-
-function idsOfGroupsInMerge(
-  mergeMaps: {
-    atoms?: Map<number, number>
-    bonds?: Map<number, number>
-  } | null,
-  struct: Struct
-): number[] {
-  const groupsIds: number[] = []
-
-  const atoms = mergeMaps?.atoms && mergeMapOfItemsToSet(mergeMaps.atoms)
-  const bonds = mergeMaps?.bonds && mergeMapOfItemsToSet(mergeMaps.bonds)
-
-  atoms?.forEach((atomId) => {
-    const groupId = struct.isAtomBelongToGroup(atomId)
-    if (groupId !== null) groupsIds.push(groupId)
-  })
-
-  bonds?.forEach((bondId) => {
-    const groupId = struct.isAtomBelongToGroup(bondId)
-    if (groupId !== null) groupsIds.push(groupId)
-  })
-
-  return groupsIds
 }
 
 export default PasteTool

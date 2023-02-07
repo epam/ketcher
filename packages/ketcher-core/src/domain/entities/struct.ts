@@ -1071,7 +1071,7 @@ export class Struct {
     })
   }
 
-  isAtomBelongToGroup(atomId: number): number | null {
+  getGroupIdFromAtomId(atomId: number): number | null {
     for (const [groupId, sgroup] of Array.from(this.sgroups)) {
       if (sgroup.atoms.includes(atomId)) return groupId
     }
@@ -1079,7 +1079,7 @@ export class Struct {
   }
 
   // TODO: simplify if bonds ids ever appear in sgroup
-  isBondBelongToGroup(bondId: number): number | null {
+  getGroupIdFromBondId(bondId: number): number | null {
     const bond = this.bonds.get(bondId)
     if (!bond) return null
     for (const [groupId, sgroup] of Array.from(this.sgroups)) {

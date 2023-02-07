@@ -29,10 +29,7 @@ import {
   fromSimpleObjectResizing,
   fromArrowResizing,
   ReStruct,
-  ReSGroup,
-  setExpandSGroup,
-  Struct,
-  mergeMapOfItemsToSet
+  ReSGroup
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -41,6 +38,8 @@ import SGroupTool from './sgroup'
 import utils from '../shared/utils'
 import { xor } from 'lodash/fp'
 import { Editor } from '../Editor'
+import { dropAndMerge } from './helper/dropAndMerge'
+import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 
 class SelectTool {
   #mode: string
@@ -331,50 +330,13 @@ class SelectTool {
     const selected = editor.selection()
     const struct = editor.render.ctab
     const molecule = struct.molecule
-    const functionalGroups = molecule.functionalGroups
-    const selectedSgroups: any[] = []
     const newSelected = { atoms: [] as any[], bonds: [] as any[] }
-    let actualSgroupId
 
-    if (selected && functionalGroups.size && selected.atoms) {
-      for (const atom of selected.atoms) {
-        const atomId = FunctionalGroup.atomsInFunctionalGroup(
-          functionalGroups,
-          atom
-        )
-        const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a
+    const selectedSgroups = selected
+      ? getGroupIdsFromItemArrays(molecule, selected)
+      : []
 
-        if (atomFromStruct) {
-          for (const sgId of atomFromStruct.sgs.values()) {
-            actualSgroupId = sgId
-          }
-        }
-        if (
-          atomFromStruct &&
-          actualSgroupId !== undefined &&
-          !selectedSgroups.includes(actualSgroupId)
-        )
-          selectedSgroups.push(actualSgroupId)
-      }
-    }
-
-    if (selected && functionalGroups.size && selected.bonds) {
-      for (const atom of selected.bonds) {
-        const bondId = FunctionalGroup.bondsInFunctionalGroup(
-          molecule,
-          functionalGroups,
-          atom
-        )
-        const sGroupId = FunctionalGroup.findFunctionalGroupByBond(
-          molecule,
-          functionalGroups,
-          bondId
-        )
-        if (sGroupId !== null && !selectedSgroups.includes(sGroupId))
-          selectedSgroups.push(sGroupId)
-      }
-    }
-
+    /* add all items of all selectedSGroups to selection */
     if (selectedSgroups.length) {
       for (const sgId of selectedSgroups) {
         const sgroup = struct.sgroups.get(sgId)
@@ -386,12 +348,16 @@ class SelectTool {
         }
       }
     }
+    /* end */
 
     const dragCtx = this.dragCtx
 
     if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
 
-    const possibleSaltOrSolvent = struct.sgroups.get(actualSgroupId)
+    /* ignore salts and solvents */
+    const possibleSaltOrSolvent = struct.sgroups.get(
+      selectedSgroups[selectedSgroups.length - 1]
+    )
     const isDraggingSaltOrSolventOnStructure = SGroup.isSaltOrSolvent(
       possibleSaltOrSolvent?.item.data.name
     )
@@ -407,25 +373,10 @@ class SelectTool {
       }
       return true
     }
+    /* end */
 
     if (dragCtx && dragCtx.item) {
-      const groupsInMerge = idsOfGroupsInMerge(dragCtx.mergeItems, molecule)
-      if (groupsInMerge.length) {
-        groupsInMerge.forEach((groupId) => {
-          dragCtx.action.mergeWith(
-            setExpandSGroup(struct, groupId, { expanded: true })
-          )
-        })
-      }
-
-      dragCtx.action = dragCtx.action
-        ? fromItemsFuse(struct, dragCtx.mergeItems).mergeWith(dragCtx.action)
-        : fromItemsFuse(struct, dragCtx.mergeItems)
-
-      editor.hover(null)
-      if (dragCtx.mergeItems) editor.selection(null)
-      if (dragCtx.action.operations.length !== 0) editor.update(dragCtx.action)
-
+      dropAndMerge(editor, dragCtx.mergeItems, dragCtx.action)
       delete this.dragCtx
     } else if (this.#lassoHelper.running()) {
       // TODO it catches more events than needed, to be re-factored
@@ -521,7 +472,7 @@ class SelectTool {
       this.editor.event.removeFG.dispatch({ fgIds: result })
       return
     }
-    if (!ci) return true
+    if (!ci) return
 
     const selection = this.editor.selection()
 
@@ -656,31 +607,6 @@ function isSelected(selection, item) {
   return (
     selection && selection[item.map] && selection[item.map].includes(item.id)
   )
-}
-
-function idsOfGroupsInMerge(
-  mergeMaps: {
-    atoms?: Map<number, number>
-    bonds?: Map<number, number>
-  } | null,
-  struct: Struct
-): number[] {
-  const groupsIds: number[] = []
-
-  const atoms = mergeMaps?.atoms && mergeMapOfItemsToSet(mergeMaps.atoms)
-  const bonds = mergeMaps?.bonds && mergeMapOfItemsToSet(mergeMaps.bonds)
-
-  atoms?.forEach((atomId) => {
-    const groupId = struct.isAtomBelongToGroup(atomId)
-    if (groupId !== null) groupsIds.push(groupId)
-  })
-
-  bonds?.forEach((bondId) => {
-    const groupId = struct.isAtomBelongToGroup(bondId)
-    if (groupId !== null) groupsIds.push(groupId)
-  })
-
-  return groupsIds
 }
 
 function uniqArray(dest, add, reversible: boolean) {

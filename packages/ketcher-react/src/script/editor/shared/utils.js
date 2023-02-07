@@ -67,9 +67,11 @@ function mergeBondsParams(struct1, bond1, struct2, bond2) {
  */
 function getOnlyNonGroupItems(items, struct) {
   const atoms =
-    items.atoms?.filter((key) => struct.isAtomBelongToGroup(key)) === null || []
+    items.atoms?.filter((key) => struct.getGroupIdFromAtomId(key)) === null ||
+    []
   const bonds =
-    items.bonds?.filter((key) => struct.isBondBelongToGroup(key)) === null || []
+    items.bonds?.filter((key) => struct.getGroupIdFromBondId(key)) === null ||
+    []
 
   return { atoms, bonds }
 }
@@ -84,11 +86,11 @@ function getNonGroupItemsAndAttachmentPoints(items, struct) {
   const atoms =
     items.atoms?.filter(
       (key) =>
-        struct.isAtomBelongToGroup(key) === null ||
+        struct.getGroupIdFromAtomId(key) === null ||
         FunctionalGroup.isAttachmentPointAtom(key, struct)
     ) || []
   const bonds =
-    items.bonds?.filter((key) => !struct.isBondBelongToGroup(key)) || []
+    items.bonds?.filter((key) => !struct.getGroupIdFromBondId(key)) || []
 
   return { atoms, bonds }
 }

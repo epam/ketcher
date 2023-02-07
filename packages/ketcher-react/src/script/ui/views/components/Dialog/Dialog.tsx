@@ -92,8 +92,9 @@ const Dialog: FC<Props> = (props) => {
 
   const exit = (mode) => {
     const key = isButtonOk(mode) ? 'onOk' : 'onCancel'
-    if (params && key in params && (key !== 'onOk' || valid()))
+    if (params && key in params && (key !== 'onOk' || valid())) {
       params[key](result())
+    }
   }
 
   const keyDown = (event) => {

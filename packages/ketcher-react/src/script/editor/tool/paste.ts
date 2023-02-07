@@ -20,9 +20,12 @@ import {
   FunctionalGroup,
   getHoverToFuse,
   getItemsToFuse,
+  mergeMapOfItemsToSet,
+  setExpandSGroup,
   Struct
 } from 'ketcher-core'
 import Editor from '../Editor'
+import utils from '../shared/utils'
 
 class PasteTool {
   editor: Editor
@@ -67,7 +70,15 @@ class PasteTool {
     this.action = action
     this.editor.update(this.action, true)
 
-    this.mergeItems = getItemsToFuse(this.editor, pasteItems)
+    const nonGroupItemsAndAttachPoints = {
+      ...pasteItems,
+      ...utils.getNonGroupItemsAndAttachmentPoints(
+        pasteItems,
+        rnd.ctab.molecule
+      )
+    }
+
+    this.mergeItems = getItemsToFuse(this.editor, nonGroupItemsAndAttachPoints)
     this.editor.hover(getHoverToFuse(this.mergeItems))
   }
 
@@ -145,6 +156,15 @@ class PasteTool {
 
     editor.selection(null)
 
+    const groupsInMerge = idsOfGroupsInMerge(this.mergeItems, molecule)
+    if (groupsInMerge.length) {
+      groupsInMerge.forEach((groupId) => {
+        this.action.mergeWith(
+          setExpandSGroup(struct, groupId, { expanded: true })
+        )
+      })
+    }
+
     this.action = this.action
       ? fromItemsFuse(restruct, this.mergeItems).mergeWith(this.action)
       : fromItemsFuse(restruct, this.mergeItems)
@@ -172,6 +192,31 @@ class PasteTool {
   mouseleave() {
     this.cancel()
   }
+}
+
+function idsOfGroupsInMerge(
+  mergeMaps: {
+    atoms?: Map<number, number>
+    bonds?: Map<number, number>
+  } | null,
+  struct: Struct
+): number[] {
+  const groupsIds: number[] = []
+
+  const atoms = mergeMaps?.atoms && mergeMapOfItemsToSet(mergeMaps.atoms)
+  const bonds = mergeMaps?.bonds && mergeMapOfItemsToSet(mergeMaps.bonds)
+
+  atoms?.forEach((atomId) => {
+    const groupId = struct.isAtomBelongToGroup(atomId)
+    if (groupId !== null) groupsIds.push(groupId)
+  })
+
+  bonds?.forEach((bondId) => {
+    const groupId = struct.isAtomBelongToGroup(bondId)
+    if (groupId !== null) groupsIds.push(groupId)
+  })
+
+  return groupsIds
 }
 
 export default PasteTool

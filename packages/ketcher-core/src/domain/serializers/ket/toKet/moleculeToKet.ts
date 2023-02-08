@@ -44,6 +44,12 @@ export function moleculeToKet(struct: Struct): any {
     body.bonds = Array.from(struct.bonds.values()).map(bondToKet)
   }
 
+  if (struct.sgroups.size !== 0) {
+    body.sgroups = Array.from(struct.sgroups.values()).map((sGroup) =>
+      sgroupToKet(struct, sGroup)
+    )
+  }
+
   const fragment = struct.frags.get(0)
   if (fragment) {
     ifDef(body, 'stereoFlagPosition', fragment.stereoFlagPosition, null)
@@ -118,7 +124,7 @@ function bondToKet(source) {
   return result
 }
 
-export function sgroupToKet(struct, source) {
+function sgroupToKet(struct, source) {
   const result = {}
 
   ifDef(result, 'type', source.type)

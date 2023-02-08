@@ -94,7 +94,7 @@ function selectStereoFlagsIfNecessary(
   return stereoFlags
 }
 
-interface Selection {
+export interface Selection {
   atoms?: Array<number>
   bonds?: Array<number>
   enhancedFlags?: Array<number>

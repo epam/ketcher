@@ -16,9 +16,9 @@
 
 import { fromPaste, getHoverToFuse, getItemsToFuse, Struct } from 'ketcher-core'
 import Editor from '../Editor'
-import utils from '../shared/utils'
 import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
+import { getMergeItems } from './helper/getMergeItems'
 
 class PasteTool {
   editor: Editor
@@ -63,15 +63,7 @@ class PasteTool {
     this.action = action
     this.editor.update(this.action, true)
 
-    const nonGroupItemsAndAttachPoints = {
-      ...pasteItems,
-      ...utils.getNonGroupItemsAndAttachmentPoints(
-        pasteItems,
-        rnd.ctab.molecule
-      )
-    }
-
-    this.mergeItems = getItemsToFuse(this.editor, nonGroupItemsAndAttachPoints)
+    this.mergeItems = getMergeItems(this.editor, pasteItems)
     this.editor.hover(getHoverToFuse(this.mergeItems))
   }
 

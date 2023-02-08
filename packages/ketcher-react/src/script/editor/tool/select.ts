@@ -24,12 +24,12 @@ import {
   fromTextDeletion,
   fromTextUpdating,
   getHoverToFuse,
-  getItemsToFuse,
   FunctionalGroup,
   fromSimpleObjectResizing,
   fromArrowResizing,
   ReStruct,
-  ReSGroup
+  ReSGroup,
+  Vec2
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -40,6 +40,7 @@ import { xor } from 'lodash/fp'
 import { Editor } from '../Editor'
 import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
+import { getMergeItems } from './helper/getMergeItems'
 
 class SelectTool {
   #mode: string
@@ -65,89 +66,23 @@ class SelectTool {
     const rnd = this.editor.render
     const ctab = rnd.ctab
     const molecule = ctab.molecule
-    const functionalGroups = molecule.functionalGroups
-    const selectedSgroups: any[] = []
-    const newSelected = { atoms: [] as any[], bonds: [] as any[] }
-    let actualSgroupId
 
     this.editor.hover(null) // TODO review hovering for touch devicess
 
-    const selectFragment = this.#lassoHelper.fragment || event.ctrlKey
-    const ci = this.editor.findItem(
-      event,
-      selectFragment
-        ? [
-            'frags',
-            'sgroups',
-            'functionalGroups',
-            'sgroupData',
-            'rgroups',
-            'rxnArrows',
-            'rxnPluses',
-            'enhancedFlags',
-            'simpleObjects',
-            'texts'
-          ]
-        : [
-            'atoms',
-            'bonds',
-            'sgroups',
-            'functionalGroups',
-            'sgroupData',
-            'rgroups',
-            'rxnArrows',
-            'rxnPluses',
-            'enhancedFlags',
-            'simpleObjects',
-            'texts'
-          ],
-      null
+    const map = getMapsForClosestItem(
+      this.#lassoHelper.fragment || event.ctrlKey
     )
+    const ci = this.editor.findItem(event, map, null)
 
-    if (ci && ci.map === 'atoms' && functionalGroups.size) {
-      const atomId = FunctionalGroup.atomsInFunctionalGroup(
-        functionalGroups,
-        ci.id
-      )
-      const atomFromStruct = atomId !== null && ctab.atoms.get(ci.id)?.a
-
-      if (atomFromStruct) {
-        for (const sgId of atomFromStruct.sgs.values()) {
-          actualSgroupId = sgId
-        }
-      }
-      if (
-        atomFromStruct &&
-        actualSgroupId !== undefined &&
-        !selectedSgroups.includes(actualSgroupId)
-      )
-        selectedSgroups.push(actualSgroupId)
+    const selected = {
+      ...(ci?.map === 'atoms' && { atoms: [ci.id] }),
+      ...(ci?.map === 'bonds' && { bonds: [ci.id] })
     }
-    if (ci && ci.map === 'bonds' && functionalGroups.size) {
-      const bondId = FunctionalGroup.bondsInFunctionalGroup(
-        molecule,
-        functionalGroups,
-        ci.id
-      )
-      const sGroupId = FunctionalGroup.findFunctionalGroupByBond(
-        molecule,
-        functionalGroups,
-        bondId
-      )
-      if (sGroupId !== null && !selectedSgroups.includes(sGroupId))
-        selectedSgroups.push(sGroupId)
-    }
-
-    if (selectedSgroups.length) {
-      for (const sgId of selectedSgroups) {
-        const sgroup = ctab.sgroups.get(sgId)
-        if (sgroup) {
-          const sgroupAtoms = SGroup.getAtoms(molecule, sgroup.item)
-          const sgroupBonds = SGroup.getBonds(molecule, sgroup.item)
-          newSelected.atoms.push(...sgroupAtoms) &&
-            newSelected.bonds.push(...sgroupBonds)
-        }
-      }
+    const selectedSgroups = ci
+      ? getGroupIdsFromItemArrays(molecule, selected)
+      : []
+    const newSelected = getNewSelectedItems(this.editor, selectedSgroups)
+    if (newSelected.atoms?.length || newSelected.bonds?.length) {
       this.editor.selection(newSelected)
     }
 
@@ -210,10 +145,12 @@ class SelectTool {
     const rnd = editor.render
     const restruct = editor.render.ctab
     const dragCtx = this.dragCtx
-    if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
-    if (dragCtx && dragCtx.item) {
+    if (dragCtx?.stopTapping) dragCtx.stopTapping()
+    if (dragCtx?.item) {
       const atoms = restruct.molecule.atoms
       const selection = editor.selection()
+
+      /* handle atoms */
       const shouldDisplayDegree =
         dragCtx.item.map === 'atoms' &&
         atoms?.get(dragCtx.item.id)?.neighbors.length === 1 &&
@@ -224,41 +161,36 @@ class SelectTool {
         const pos = rnd.page2obj(event)
         const angle = utils.calcAngle(dragCtx.xy0, pos)
         const degrees = utils.degrees(angle)
-        this.editor.event.message.dispatch({ info: degrees + 'º' })
+        editor.event.message.dispatch({ info: degrees + 'º' })
       }
+      /* end */
+
+      /* handle simpleObjects */
       if (dragCtx.item.map === 'simpleObjects' && dragCtx.item.ref) {
-        if (dragCtx?.action) dragCtx.action.perform(rnd.ctab)
-        const current = rnd.page2obj(event)
-        const diff = current.sub(this.dragCtx.xy0)
-        dragCtx.action = fromSimpleObjectResizing(
-          rnd.ctab,
-          dragCtx.item.id,
-          diff,
-          current,
-          dragCtx.item.ref,
-          event.shiftKey
-        )
+        if (dragCtx.action) dragCtx.action.perform(rnd.ctab)
+        const props = getResizingProps(editor, dragCtx, event)
+        dragCtx.action = fromSimpleObjectResizing(...props, event.shiftKey)
         editor.update(dragCtx.action, true)
         return true
       }
+      /* end + fullstop */
+
+      /* handle rxnArrows */
+      if (dragCtx.item.map === 'rxnArrows' && dragCtx.item.ref) {
+        if (dragCtx?.action) dragCtx.action.perform(rnd.ctab)
+        const props = getResizingProps(editor, dragCtx, event)
+        dragCtx.action = fromArrowResizing(...props)
+        editor.update(dragCtx.action, true)
+        return true
+      }
+      /* end + fullstop */
+
+      /* handle functionalGroups */
       if (dragCtx.item.map === 'functionalGroups' && !dragCtx.action) {
         editor.event.showInfo.dispatch(null)
       }
-      if (dragCtx.item.map === 'rxnArrows' && dragCtx.item.ref) {
-        if (dragCtx?.action) dragCtx.action.perform(rnd.ctab)
-        const current = rnd.page2obj(event)
-        const diff = current.sub(dragCtx.xy0)
-        dragCtx.previous = current
-        dragCtx.action = fromArrowResizing(
-          rnd.ctab,
-          dragCtx.item.id,
-          diff,
-          current,
-          dragCtx.item.ref
-        )
-        editor.update(dragCtx.action, true)
-        return true
-      }
+      /* end */
+
       if (dragCtx.action) {
         dragCtx.action.perform(restruct)
         // redraw the elements in unshifted position, lest the have different offset
@@ -272,12 +204,7 @@ class SelectTool {
         editor.render.page2obj(event).sub(dragCtx.xy0)
       )
 
-      const nonGroupItemsAndAttachPoints = {
-        ...expSel,
-        ...utils.getNonGroupItemsAndAttachmentPoints(expSel, restruct.molecule)
-      }
-
-      dragCtx.mergeItems = getItemsToFuse(editor, nonGroupItemsAndAttachPoints)
+      dragCtx.mergeItems = getMergeItems(editor, expSel)
       editor.hover(getHoverToFuse(dragCtx.mergeItems))
 
       editor.update(dragCtx.action, true)
@@ -292,34 +219,9 @@ class SelectTool {
       return true
     }
 
-    const maps =
+    const maps = getMapsForClosestItem(
       this.#lassoHelper.fragment || event.ctrlKey
-        ? [
-            'frags',
-            'sgroups',
-            'functionalGroups',
-            'sgroupData',
-            'rgroups',
-            'rxnArrows',
-            'rxnPluses',
-            'enhancedFlags',
-            'simpleObjects',
-            'texts'
-          ]
-        : [
-            'atoms',
-            'bonds',
-            'sgroups',
-            'functionalGroups',
-            'sgroupData',
-            'rgroups',
-            'rxnArrows',
-            'rxnPluses',
-            'enhancedFlags',
-            'simpleObjects',
-            'texts'
-          ]
-
+    )
     editor.hover(editor.findItem(event, maps, null), null, event)
 
     return true
@@ -330,25 +232,12 @@ class SelectTool {
     const selected = editor.selection()
     const struct = editor.render.ctab
     const molecule = struct.molecule
-    const newSelected = { atoms: [] as any[], bonds: [] as any[] }
 
+    // add all items of all selectedSGroups to selection
     const selectedSgroups = selected
       ? getGroupIdsFromItemArrays(molecule, selected)
       : []
-
-    /* add all items of all selectedSGroups to selection */
-    if (selectedSgroups.length) {
-      for (const sgId of selectedSgroups) {
-        const sgroup = struct.sgroups.get(sgId)
-        if (sgroup) {
-          const sgroupAtoms = SGroup.getAtoms(molecule, sgroup.item)
-          const sgroupBonds = SGroup.getBonds(molecule, sgroup.item)
-          newSelected.atoms.push(...sgroupAtoms) &&
-            newSelected.bonds.push(...sgroupBonds)
-        }
-      }
-    }
-    /* end */
+    const newSelected = getNewSelectedItems(editor, selectedSgroups)
 
     if (this.dragCtx?.stopTapping) this.dragCtx.stopTapping()
 
@@ -626,6 +515,53 @@ function preventSaltAndSolventsMerge(
   editor.event.message.dispatch({
     info: false
   })
+}
+
+function getMapsForClosestItem(selectFragment: boolean) {
+  return [
+    'sgroups',
+    'functionalGroups',
+    'sgroupData',
+    'rgroups',
+    'rxnArrows',
+    'rxnPluses',
+    'enhancedFlags',
+    'simpleObjects',
+    'texts',
+    ...(selectFragment ? ['frags'] : ['atoms', 'bonds'])
+  ]
+}
+
+function getResizingProps(
+  editor: Editor,
+  dragCtx,
+  event
+): [ReStruct, number, Vec2, Vec2, any] {
+  const current = editor.render.page2obj(event)
+  const diff = current.sub(dragCtx.xy0)
+  return [editor.render.ctab, dragCtx.item.id, diff, current, dragCtx.item.ref]
+}
+
+function getNewSelectedItems(
+  editor: Editor,
+  selectedSgroups: number[]
+): { atoms: number[]; bonds: number[] } {
+  const newSelected: Record<'atoms' | 'bonds', number[]> = {
+    atoms: [],
+    bonds: []
+  }
+
+  for (const sgId of selectedSgroups) {
+    const sgroup = editor.render.ctab.sgroups.get(sgId)
+    if (sgroup) {
+      const sgroupAtoms = SGroup.getAtoms(editor.struct(), sgroup.item)
+      const sgroupBonds = SGroup.getBonds(editor.struct(), sgroup.item)
+      newSelected.atoms.push(...sgroupAtoms)
+      newSelected.bonds.push(...sgroupBonds)
+    }
+  }
+
+  return newSelected
 }
 
 export default SelectTool

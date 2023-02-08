@@ -42,10 +42,10 @@ export function GenericInput({
   isFocused = false,
   ...props
 }) {
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(innerRef)
 
   useEffect(() => {
-    if (innerRef?.current && inputRef.current) {
+    if (innerRef && inputRef.current) {
       innerRef.current = inputRef.current
     }
   }, [innerRef])
@@ -99,6 +99,7 @@ function CheckBox({ schema, value = '', onChange, innerRef, ...rest }) {
         onClick={onChange}
         onChange={onChange}
         className={classes.input}
+        ref={innerRef}
         {...rest}
       />
       <span className={classes.checkbox} />

@@ -129,16 +129,27 @@ class ReSGroup extends ReObject {
     let width = 0
     let height = 0
     const sGroupItem = this.item
-    const [firstAtomId] = sGroupItem.atoms
-    const sGroupAtom = this.render.ctab.atoms.get(firstAtomId)
-    const [sGroupAtomSVGElement] = sGroupAtom.visel.paths
-    if (sGroupAtomSVGElement) {
-      const atomTextBoundingBox = sGroupAtomSVGElement.getBBox()
-      const { x, y, x2, y2 } = atomTextBoundingBox
-      startX = x - this.render.options.offset.x - padding
-      startY = y - this.render.options.offset.y - padding
-      width = x2 - x + padding * 2
-      height = y2 - y + padding * 2
+    const sGroupHasFirstAtom =
+      sGroupItem.functionalGroup &&
+      !sGroupItem.data.expanded &&
+      sGroupItem.firstSgroupAtom
+    if (sGroupHasFirstAtom) {
+      const firstAtomPosition = sGroupItem.firstSgroupAtom.pp
+      const [firstAtomId] = sGroupItem.atoms
+      const reSGroupAtom = this.render.ctab.atoms.get(firstAtomId)
+      const sGroupTextBoundingBox =
+        reSGroupAtom.visel.boundingBox || reSGroupAtom.visel.oldBoundingBox
+      if (sGroupTextBoundingBox) {
+        const { x, y } = Scale.obj2scaled(
+          firstAtomPosition,
+          this.render.options
+        )
+        const { p0, p1 } = sGroupTextBoundingBox
+        width = p1.x - p0.x + padding * 2
+        height = p1.y - p0.y + padding * 2
+        startX = x - width / 2
+        startY = y - height / 2
+      }
     }
 
     return { startX, startY, width, height }

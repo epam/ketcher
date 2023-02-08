@@ -350,9 +350,7 @@ class SelectTool {
     }
     /* end */
 
-    const dragCtx = this.dragCtx
-
-    if (dragCtx && dragCtx.stopTapping) dragCtx.stopTapping()
+    if (this.dragCtx?.stopTapping) this.dragCtx.stopTapping()
 
     /* ignore salts and solvents */
     const possibleSaltOrSolvent = struct.sgroups.get(
@@ -362,21 +360,17 @@ class SelectTool {
       possibleSaltOrSolvent?.item.data.name
     )
     if (
+      this.dragCtx &&
       (isDraggingSaltOrSolventOnStructure ||
-        this.isDraggingStructureOnSaltOrSolvent(dragCtx, struct.sgroups)) &&
-      dragCtx
+        this.isDraggingStructureOnSaltOrSolvent(this.dragCtx, struct.sgroups))
     ) {
-      preventSaltAndSolventsMerge(struct, dragCtx, editor)
+      preventSaltAndSolventsMerge(struct, this.dragCtx, editor)
       delete this.dragCtx
-      if (this.#lassoHelper.running()) {
-        this.selectElementsOnCanvas(newSelected, editor, event)
-      }
-      return true
     }
     /* end */
 
-    if (dragCtx && dragCtx.item) {
-      dropAndMerge(editor, dragCtx.mergeItems, dragCtx.action)
+    if (this.dragCtx?.item) {
+      dropAndMerge(editor, this.dragCtx.mergeItems, this.dragCtx.action)
       delete this.dragCtx
     } else if (this.#lassoHelper.running()) {
       // TODO it catches more events than needed, to be re-factored
@@ -391,7 +385,6 @@ class SelectTool {
     editor.event.message.dispatch({
       info: false
     })
-    return true
   }
 
   dblclick(event) {

@@ -1,6 +1,6 @@
 {
   "name": "ketcher-standalone",
-  "version": "2.7.1",
+  "version": "2.7.2",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",

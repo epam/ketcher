@@ -26,10 +26,14 @@ import 'react-contexify/ReactContexify.css'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
 import EnhancedStereoTool from 'src/script/editor/tool/enhanced-stereo'
-import type { ItemData, ContextMenuShowProps } from '../contextMenu.types'
+import type {
+  ItemData,
+  ContextMenuShowProps,
+  CustomItemProps
+} from '../contextMenu.types'
 import { noOperation } from './utils'
 
-const AtomSingleOperations: React.FC = (props) => {
+const AtomSingleOperations: React.FC<CustomItemProps> = (properties) => {
   const { getKetcherInstance } = useAppContext()
 
   const handleEdit = useCallback(
@@ -82,18 +86,21 @@ const AtomSingleOperations: React.FC = (props) => {
     [getKetcherInstance]
   )
 
-  const isHidden = useCallback(
-    ({ props }: PredicateParams<ContextMenuShowProps, ItemData>) =>
-      props?.selected || props?.closestItem.map === 'bonds',
-    []
-  )
-
   const isStereoDisabled = useCallback(
     ({
       props,
-      triggerEvent
+      triggerEvent,
+      data
     }: PredicateParams<ContextMenuShowProps, ItemData>) => {
-      if (!props || isHidden({ props, triggerEvent })) {
+      if (
+        typeof properties.hidden === 'boolean'
+          ? properties.hidden
+          : properties.hidden?.({ props, triggerEvent, data })
+      ) {
+        return true
+      }
+
+      if (!props) {
         return true
       }
 
@@ -109,25 +116,24 @@ const AtomSingleOperations: React.FC = (props) => {
 
       return true
     },
-    [getKetcherInstance, isHidden]
+    [getKetcherInstance, properties]
   )
 
   return (
     <>
-      <Item {...props} hidden={isHidden} onClick={handleEdit}>
+      <Item {...properties} onClick={handleEdit}>
         Edit...
       </Item>
 
       <Item
-        {...props}
-        hidden={isHidden}
+        {...properties}
         disabled={isStereoDisabled}
         onClick={handleStereoEdit}
       >
         Enhanced stereochemistry...
       </Item>
 
-      <Item {...props} hidden={isHidden} onClick={handleDelete}>
+      <Item {...properties} onClick={handleDelete}>
         Delete
       </Item>
     </>

@@ -16,7 +16,7 @@
 
 import { findStereoAtoms, fromAtomsAttrs } from 'ketcher-core'
 import { useCallback, useRef } from 'react'
-import type { PredicateParams } from 'react-contexify'
+import type { BooleanPredicate, PredicateParams } from 'react-contexify'
 import { Item } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
 import { useAppContext } from 'src/hooks'
@@ -24,21 +24,26 @@ import Editor from 'src/script/editor'
 import EnhancedStereoTool from 'src/script/editor/tool/enhanced-stereo'
 import { toElement } from 'src/script/ui/data/convert/structconv'
 import type {
-  ItemData,
   ContextMenuShowProps,
-  CustomItemProps
+  CustomItemProps,
+  ItemData
 } from '../contextMenu.types'
-import { noOperation, isBatchOperationHidden } from './utils'
+import { noOperation } from './utils'
 
-const useDisabled = () => {
+const useDisabled = (hidden?: BooleanPredicate) => {
   const { getKetcherInstance } = useAppContext()
 
   const isDisabled = useCallback(
     ({
       props,
-      triggerEvent
+      triggerEvent,
+      data
     }: PredicateParams<ContextMenuShowProps, ItemData>) => {
-      if (isBatchOperationHidden({ props, triggerEvent })) {
+      if (
+        typeof hidden === 'boolean'
+          ? hidden
+          : hidden?.({ props, triggerEvent, data })
+      ) {
         return true
       }
 
@@ -51,7 +56,7 @@ const useDisabled = () => {
 
       return true
     },
-    [getKetcherInstance]
+    [getKetcherInstance, hidden]
   )
 
   return isDisabled
@@ -59,7 +64,7 @@ const useDisabled = () => {
 
 export const AtomBatchEdit: React.FC<CustomItemProps> = (props) => {
   const { getKetcherInstance } = useAppContext()
-  const isDisabled = useDisabled()
+  const isDisabled = useDisabled(props.hidden)
 
   const handleClick = useCallback(async () => {
     const editor = getKetcherInstance().editor as Editor
@@ -89,12 +94,7 @@ export const AtomBatchEdit: React.FC<CustomItemProps> = (props) => {
   }, [getKetcherInstance])
 
   return (
-    <Item
-      {...props}
-      hidden={isBatchOperationHidden}
-      disabled={isDisabled}
-      onClick={handleClick}
-    >
+    <Item {...props} disabled={isDisabled} onClick={handleClick}>
       Edit selected atom(s)...
     </Item>
   )
@@ -102,7 +102,7 @@ export const AtomBatchEdit: React.FC<CustomItemProps> = (props) => {
 
 export const AtomStereoBatchEdit: React.FC<CustomItemProps> = (props) => {
   const { getKetcherInstance } = useAppContext()
-  const isDisabled = useDisabled()
+  const isDisabled = useDisabled(props.hidden)
   const stereoAtomIdsRef = useRef<number[] | undefined>()
 
   const handleClick = useCallback(async () => {
@@ -127,9 +127,10 @@ export const AtomStereoBatchEdit: React.FC<CustomItemProps> = (props) => {
   const isStereoDisabled = useCallback(
     ({
       props,
-      triggerEvent
+      triggerEvent,
+      data
     }: PredicateParams<ContextMenuShowProps, ItemData>) => {
-      if (isDisabled({ props, triggerEvent })) {
+      if (isDisabled({ props, triggerEvent, data })) {
         return true
       }
       const editor = getKetcherInstance().editor as Editor
@@ -151,12 +152,7 @@ export const AtomStereoBatchEdit: React.FC<CustomItemProps> = (props) => {
   )
 
   return (
-    <Item
-      {...props}
-      hidden={isBatchOperationHidden}
-      disabled={isStereoDisabled}
-      onClick={handleClick}
-    >
+    <Item {...props} disabled={isStereoDisabled} onClick={handleClick}>
       Enhanced stereochemistry...
     </Item>
   )

@@ -1,10 +1,18 @@
 import type { ItemProps, SubMenuProps } from 'react-contexify'
 
+export type ItemData =
+  | 'for-one-functional-group'
+  | 'for-one-bond'
+  | 'for-one-atom'
+  | 'for-bonds-and-atoms-in-selection'
+  | 'for-functional-groups-in-selection'
+
 export type ContextMenuShowProps = {
-  selected: boolean
-  closestItem: any
+  itemData: ItemData
+  closestItem?: any
 }
 
-export type ItemData = unknown
-export type CustomItemProps = Omit<ItemProps, 'children'>
+export type CustomItemProps = Omit<ItemProps, 'children' | 'data'> & {
+  data: ItemData
+}
 export type CustomSubMenuProps = Omit<SubMenuProps, 'children' | 'label'>

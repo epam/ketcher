@@ -92,11 +92,7 @@ const AtomSingleOperations: React.FC<CustomItemProps> = (properties) => {
       triggerEvent,
       data
     }: PredicateParams<ContextMenuShowProps, ItemData>) => {
-      if (
-        typeof properties.hidden === 'boolean'
-          ? properties.hidden
-          : properties.hidden?.({ props, triggerEvent, data })
-      ) {
+      if (properties.hidden({ props, triggerEvent, data })) {
         return true
       }
 

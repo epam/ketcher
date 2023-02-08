@@ -98,14 +98,7 @@ export const BondBatchEdit: React.FC<CustomItemProps> = (props) => {
   )
 }
 
-interface BondTypeBatchChangeProps {
-  data: ItemData
-  hidden: BooleanPredicate
-}
-
-export const BondTypeBatchChange: React.FC<BondTypeBatchChangeProps> = (
-  properties
-) => {
+export const BondTypeBatchChange: React.FC<CustomItemProps> = (properties) => {
   const { getKetcherInstance } = useAppContext()
 
   const isSubMenuHidden = useCallback(

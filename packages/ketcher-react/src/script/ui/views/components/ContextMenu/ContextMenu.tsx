@@ -23,6 +23,7 @@ import AtomSingleOperations from './items/AtomSingleOperations'
 import { BatchDelete } from './items/BatchDelete'
 import { BondBatchEdit, BondTypeBatchChange } from './items/BondBatchOperations'
 import BondSingleOperations from './items/BondSingleOperations'
+import FunctionGroupOperations from './items/FunctionalGroupOperations'
 
 export const CONTEXT_MENU_ID = 'ketcherContextMenu'
 
@@ -39,6 +40,11 @@ const ContextMenu: React.FC = () => {
       <BondSingleOperations data="for-one-bond" hidden={isHidden} />
 
       <AtomSingleOperations data="for-one-atom" hidden={isHidden} />
+
+      <FunctionGroupOperations
+        data="for-one-functional-group"
+        hidden={isHidden}
+      />
 
       <BondBatchEdit
         data="for-bonds-and-atoms-in-selection"

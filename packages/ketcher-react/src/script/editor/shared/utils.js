@@ -90,7 +90,8 @@ function getNonGroupItemsAndAttachmentPoints(items, struct) {
         FunctionalGroup.isAttachmentPointAtom(key, struct)
     ) || []
   const bonds =
-    items.bonds?.filter((key) => !struct.getGroupIdFromBondId(key)) || []
+    items.bonds?.filter((key) => struct.getGroupIdFromBondId(key) === null) ||
+    []
 
   return { atoms, bonds }
 }

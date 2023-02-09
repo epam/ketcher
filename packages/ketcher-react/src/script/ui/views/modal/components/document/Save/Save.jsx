@@ -23,7 +23,8 @@ import {
   KetSerializer,
   formatProperties,
   getPropertiesByFormat,
-  getPropertiesByImgFormat
+  getPropertiesByImgFormat,
+  b64toBlob
 } from 'ketcher-core'
 
 import { Dialog } from '../../../../components'
@@ -301,7 +302,7 @@ class SaveDialog extends Component {
       return (
         <div className={classes.previewBackground}>
           <textarea
-            value={window.atob(structStr)}
+            value="No preview available for this format"
             className={classes.previewArea}
             readOnly
             ref={this.textAreaRef}
@@ -346,9 +347,9 @@ class SaveDialog extends Component {
 
     const savingStruct =
       this.isBinaryCdxFormat(format) && !isLoading
-        ? window.atob(structStr)
+        ? b64toBlob(structStr)
         : structStr
-    console.log('savingStruct: ', savingStruct)
+
     const isMoleculeContain =
       this.props.struct.atoms.size && this.props.struct.bonds.size
     const buttons = [

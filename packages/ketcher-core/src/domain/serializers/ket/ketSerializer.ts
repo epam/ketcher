@@ -138,7 +138,7 @@ export class KetSerializer implements Serializer<Struct> {
         case 'sgroup': {
           const sgroup: any = sgroupToKet(struct, item.data)
           sgroup.id = sgroupId++
-          sgroup.atoms.forEach((atomId) => {
+          sgroup.atoms?.forEach((atomId) => {
             const key = `mol${atomId}`
             if (!result[key]) return
             if (!result[key].sgroups) result[key].sgroups = []

@@ -103,6 +103,7 @@ export class KetSerializer implements Serializer<Struct> {
     const ketNodes = prepareStructForKet(struct)
 
     let moleculeId = 0
+    let sgroupId = 0
     ketNodes.forEach((item) => {
       switch (item.type) {
         case 'molecule': {
@@ -135,9 +136,17 @@ export class KetSerializer implements Serializer<Struct> {
           break
         }
         case 'sgroup': {
+          const sgroup: any = sgroupToKet(struct, item.data)
+          sgroup.id = sgroupId++
+          sgroup.atoms.forEach((atomId) => {
+            const key = `mol${atomId}`
+            if (!result[key]) return
+            if (!result[key].sgroups) result[key].sgroups = []
+            result[key].sgroups.push(sgroup)
+          })
           result.root.nodes.push({
             type: item.type,
-            data: sgroupToKet(struct, item.data)
+            data: sgroup
           })
           break
         }

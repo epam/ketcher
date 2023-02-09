@@ -24,47 +24,18 @@ import type { ContextMenuShowProps } from './contextMenu.types'
 
 const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
   const { getKetcherInstance } = useAppContext()
-  const { show, hideAll } = useContextMenu<ContextMenuShowProps>({
+  const { show } = useContextMenu<ContextMenuShowProps>({
     id: CONTEXT_MENU_ID
   })
-
-  /**
-   * Resolve conflicts with the existing functional-group context menu
-   * Note: the following scenarios are compatible with the existing logic process,
-   *       but maybe will change after refactoring the functional-group context menu.
-   *
-   * Scenario 1
-   * Given: an expanded functional group
-   * When: the user right-clicks a bond in the f-group
-   * Then: only the functional-group context menu shows
-   *
-   * Scenario 2
-   * Given: the user has selected a bunch of things including functional groups
-   * When: the user right-clicks a selected or non-selected bond
-   * Then: only the functional-group context menu shows
-   *
-   * More details: https://github.com/epam/ketcher/pull/1896
-   */
 
   const handleDisplay = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (event) => {
       const editor = getKetcherInstance().editor as Editor
       const closestItem = editor.findItem(event, null)
-
-      if (!closestItem) {
-        hideAll()
-        return
-      }
-
       const selection = editor.selection()
-
-      const isClickedWithinSelection: number | undefined = selection?.[
-        closestItem.map
-      ]?.includes(closestItem.id)
-
       const struct = editor.struct()
 
-      if (isClickedWithinSelection) {
+      if (selection) {
         const hasGroupsInSelection = selection?.atoms?.some((atomId) =>
           FunctionalGroup.atomsInFunctionalGroup(
             struct.functionalGroups,
@@ -87,8 +58,7 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
             }
           })
         }
-      } else {
-        selection && editor.render.ctab.setSelection(null)
+      } else if (closestItem) {
         switch (closestItem.map) {
           case 'bonds':
             {
@@ -150,7 +120,7 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
         }
       }
     },
-    [getKetcherInstance, hideAll, show]
+    [getKetcherInstance, show]
   )
 
   return (

@@ -50,7 +50,7 @@ const FunctionalGroupOperations: React.FC<CustomItemProps> = (properties) => {
   )
 
   const handleExpandOrContract = useCallback(
-    async ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
+    ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
       const functionalGroup: FunctionalGroup = props?.closestItem
 
@@ -69,7 +69,7 @@ const FunctionalGroupOperations: React.FC<CustomItemProps> = (properties) => {
   )
 
   const handleRemove = useCallback(
-    async ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
+    ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
       const functionalGroup: FunctionalGroup = props?.closestItem
 

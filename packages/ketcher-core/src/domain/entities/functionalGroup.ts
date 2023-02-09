@@ -106,7 +106,7 @@ export class FunctionalGroup {
     functionalGroups: Pool<FunctionalGroup>,
     atomId: number,
     isFunctionalGroupReturned: true
-  ): number | null
+  ): FunctionalGroup | null
 
   static findFunctionalGroupByAtom(
     functionalGroups: Pool<FunctionalGroup>,

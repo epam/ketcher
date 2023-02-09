@@ -98,6 +98,12 @@ const formatProperties: FormatPropertiesMap = {
   cdx: new SupportedFormatProperties(
     'Base64 CDX',
     ChemicalMimeType.CDX,
+    ['.b64'],
+    true
+  ),
+  binaryCdx: new SupportedFormatProperties(
+    'CDX',
+    ChemicalMimeType.CDX,
     ['.cdx'],
     true
   ),

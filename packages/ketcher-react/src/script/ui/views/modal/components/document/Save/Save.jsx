@@ -87,8 +87,9 @@ class SaveDialog extends Component {
         'cml',
         'svg',
         'png',
-        'cdxml'
-        // 'cdx' TO DO: Uncomment, when export will be ready on Indigo side
+        'cdxml',
+        'cdx',
+        'binaryCdx'
       )
 
     this.saveSchema = saveSchema
@@ -115,6 +116,10 @@ class SaveDialog extends Component {
 
   isImageFormat = (format) => {
     return !!getPropertiesByImgFormat(format)
+  }
+
+  isBinaryCdxFormat = (format) => {
+    return format === 'binaryCdx'
   }
 
   showStructWarningMessage = (format) => {
@@ -274,29 +279,47 @@ class SaveDialog extends Component {
     const { filename, format } = formState.result
     const { structStr, imageSrc, isLoading } = this.state
     const isCleanStruct = this.props.struct.isBlank()
-    return isLoading ? (
-      <div className={classes.loadingCirclesContainer}>
-        <LoadingCircles />
-      </div>
-    ) : this.isImageFormat(format) ? (
-      <div className={classes.imageContainer}>
-        {!isCleanStruct && (
-          <img
-            src={`data:image/${format}+xml;base64,${imageSrc}`}
-            alt={`${format} preview`}
+
+    if (isLoading) {
+      return (
+        <div className={classes.loadingCirclesContainer}>
+          <LoadingCircles />
+        </div>
+      )
+    } else if (this.isImageFormat(format)) {
+      return (
+        <div className={classes.imageContainer}>
+          {!isCleanStruct && (
+            <img
+              src={`data:image/${format}+xml;base64,${imageSrc}`}
+              alt={`${format} preview`}
+            />
+          )}
+        </div>
+      )
+    } else if (this.isBinaryCdxFormat(format)) {
+      return (
+        <div className={classes.previewBackground}>
+          <textarea
+            value={window.atob(structStr)}
+            className={classes.previewArea}
+            readOnly
+            ref={this.textAreaRef}
           />
-        )}
-      </div>
-    ) : (
-      <div className={classes.previewBackground}>
-        <textarea
-          value={structStr}
-          className={classes.previewArea}
-          readOnly
-          ref={this.textAreaRef}
-        />
-      </div>
-    )
+        </div>
+      )
+    } else {
+      return (
+        <div className={classes.previewBackground}>
+          <textarea
+            value={structStr}
+            className={classes.previewArea}
+            readOnly
+            ref={this.textAreaRef}
+          />
+        </div>
+      )
+    }
   }
 
   renderWarnings = () => {
@@ -316,10 +339,16 @@ class SaveDialog extends Component {
   }
 
   getButtons = () => {
-    const { disableControls, imageFormat, structStr } = this.state
+    const { disableControls, imageFormat, isLoading, structStr } = this.state
     const formState = this.props.formState
     const { filename, format } = formState.result
     const isCleanStruct = this.props.struct.isBlank()
+
+    const savingStruct =
+      this.isBinaryCdxFormat(format) && !isLoading
+        ? window.atob(structStr)
+        : structStr
+    console.log('savingStruct: ', savingStruct)
     const isMoleculeContain =
       this.props.struct.atoms.size && this.props.struct.bonds.size
     const buttons = [
@@ -370,7 +399,7 @@ class SaveDialog extends Component {
       buttons.push(
         <SaveButton
           mode="saveFile"
-          data={structStr}
+          data={savingStruct}
           filename={filename + getPropertiesByFormat(format).extensions[0]}
           key="save-file-button"
           type={format.mime}

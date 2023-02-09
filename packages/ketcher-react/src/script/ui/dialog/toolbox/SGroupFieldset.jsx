@@ -32,26 +32,29 @@ function SGroupFieldset({ formState }) {
   )
 }
 
+const propMapping = {
+  name: { maxLength: 15 },
+  fieldName: { maxLength: 30 },
+  fieldValue: { type: 'textarea' },
+  radiobuttons: { type: 'radio' }
+}
+
 const content = (type) =>
   Object.keys(schemes[type].properties)
     .filter((prop) => prop !== 'type')
     .map((prop) => {
-      const props = {}
-      if (prop === 'name') props.maxLength = 15
-      if (prop === 'fieldName') props.maxLength = 30
-      if (prop === 'fieldValue') props.type = 'textarea'
-      if (prop === 'radiobuttons') props.type = 'radio'
-      if (prop === 'connectivity')
+      if (prop === 'connectivity') {
         return (
           <Field
             name={prop}
             key={`${type}-${prop}`}
-            {...props}
             component={Select}
             options={getSelectOptionsFromSchema(schemes[type].properties[prop])}
           />
         )
+      }
 
+      const props = propMapping[prop] || {}
       return <Field name={prop} key={`${type}-${prop}`} {...props} />
     })
 

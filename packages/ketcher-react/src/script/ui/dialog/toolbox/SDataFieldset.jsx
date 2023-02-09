@@ -48,27 +48,33 @@ const content = (schema, context, fieldName, fieldValue, checked) =>
       (prop) => prop !== 'type' && prop !== 'context' && prop !== 'fieldName'
     )
     .map((prop) => {
-      return prop === 'radiobuttons' ? (
-        <Field
-          name={prop}
-          checked={checked}
-          type="radio"
-          key={`${context}-${fieldName}-${prop}-radio`}
-          labelPos={false}
-        />
-      ) : prop === 'fieldValue' ? (
-        <Field
-          name={prop}
-          key={`${context}-${fieldName}-${prop}-select`}
-          placeholder="Enter value"
-        />
-      ) : (
-        <Field
-          name={prop}
-          type="textarea"
-          key={`${context}-${fieldName}-${prop}-select`}
-        />
-      )
+      if (prop === 'radiobuttons') {
+        return (
+          <Field
+            name={prop}
+            checked={checked}
+            type="radio"
+            key={`${context}-${fieldName}-${prop}-radio`}
+            labelPos={false}
+          />
+        )
+      } else if (prop === 'fieldValue') {
+        return (
+          <Field
+            name={prop}
+            key={`${context}-${fieldName}-${prop}-select`}
+            placeholder="Enter value"
+          />
+        )
+      } else {
+        return (
+          <Field
+            name={prop}
+            type="textarea"
+            key={`${context}-${fieldName}-${prop}-select`}
+          />
+        )
+      }
     })
 
 export default SDataFieldset

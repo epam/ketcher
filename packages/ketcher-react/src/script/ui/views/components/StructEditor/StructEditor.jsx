@@ -17,7 +17,6 @@
 import { Component, createRef } from 'react'
 
 import Editor from '../../../../editor'
-import { FGContextMenu } from '../../../component/ContextMenu/ContextMenu'
 import { LoadingCircles } from '../Spinner/LoadingCircles'
 import classes from './StructEditor.module.less'
 import clsx from 'clsx'
@@ -72,21 +71,17 @@ class StructEditor extends Component {
     super(props)
     this.state = {
       enableCursor: false,
-      contextMenu: null,
       clientX: 0,
       clientY: 0
     }
     this.editorRef = createRef()
     this.logRef = createRef()
-    this.handleContextMenu = this.handleContextMenu.bind(this)
-    this.handleClose = this.handleClose.bind(this)
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.props.indigoVerification !== nextProps.indigoVerification ||
-      nextState.enableCursor !== this.state.enableCursor ||
-      nextState.contextMenu !== this.state.contextMenu
+      nextState.enableCursor !== this.state.enableCursor
     )
   }
 
@@ -174,24 +169,6 @@ class StructEditor extends Component {
     removeEditorHandlers(this.editor, this.props)
   }
 
-  handleContextMenu(event) {
-    event.preventDefault()
-    this.setState({
-      ...this.state,
-      contextMenu: {
-        mouseX: event.clientX,
-        mouseY: event.clientY
-      }
-    })
-  }
-
-  handleClose(event) {
-    this.setState({
-      ...this.state,
-      contextMenu: null
-    })
-  }
-
   render() {
     const {
       Tag = 'div',
@@ -225,11 +202,7 @@ class StructEditor extends Component {
     const { clientX = 0, clientY = 0 } = this.state
 
     return (
-      <Tag
-        className={clsx(classes.canvas, className)}
-        onContextMenu={this.handleContextMenu}
-        {...props}
-      >
+      <Tag className={clsx(classes.canvas, className)} {...props}>
         <ContextMenuTrigger>
           <div
             ref={this.editorRef}
@@ -237,18 +210,22 @@ class StructEditor extends Component {
           >
             {/* svg here */}
           </div>
-          <Cursor
-            Icon={handIcon}
-            PressedIcon={compressedHandIcon}
-            enableHandTool={this.state.enableCursor}
-          />
-          <div className={classes.measureLog} ref={this.logRef} />
-          {indigoVerification && (
-            <div className={classes.spinnerOverlay}>
-              <LoadingCircles />
-            </div>
-          )}
         </ContextMenuTrigger>
+
+        <Cursor
+          Icon={handIcon}
+          PressedIcon={compressedHandIcon}
+          enableHandTool={this.state.enableCursor}
+        />
+
+        <div className={classes.measureLog} ref={this.logRef} />
+
+        {indigoVerification && (
+          <div className={classes.spinnerOverlay}>
+            <LoadingCircles />
+          </div>
+        )}
+
         <InfoPanel
           clientX={clientX}
           clientY={clientY}
@@ -256,10 +233,7 @@ class StructEditor extends Component {
           groupStruct={this.props.groupStruct}
           sGroup={this.props.sGroup}
         />
-        <FGContextMenu
-          contextMenu={this.state.contextMenu}
-          handleClose={this.handleClose}
-        />
+
         <ContextMenu />
       </Tag>
     )

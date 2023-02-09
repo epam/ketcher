@@ -30,6 +30,8 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
 
   const handleDisplay = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (event) => {
+      event.preventDefault()
+
       const editor = getKetcherInstance().editor as Editor
       const closestItem = editor.findItem(event, null)
       const selection = editor.selection()

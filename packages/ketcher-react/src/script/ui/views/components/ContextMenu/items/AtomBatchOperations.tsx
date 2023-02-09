@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { findStereoAtoms, fromAtomsAttrs } from 'ketcher-core'
+import { findStereoAtoms } from 'ketcher-core'
 import { useCallback, useRef } from 'react'
 import type { PredicateParams } from 'react-contexify'
 import { Item } from 'react-contexify'
@@ -22,7 +22,8 @@ import 'react-contexify/ReactContexify.css'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
 import EnhancedStereoTool from 'src/script/editor/tool/enhanced-stereo'
-import { toElement } from 'src/script/ui/data/convert/structconv'
+import { getSelectedAtoms } from 'src/script/editor/tool/select'
+import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import type {
   ItemData,
   ContextMenuShowProps,
@@ -63,29 +64,16 @@ export const AtomBatchEdit: React.FC<CustomItemProps> = (props) => {
 
   const handleClick = useCallback(async () => {
     const editor = getKetcherInstance().editor as Editor
-    const defaultAtom = toElement({
-      label: 'C',
-      charge: 0,
-      isotope: 0,
-      explicitValence: -1,
-      radical: 0,
-      invRet: 0,
-      ringBondCount: 0,
-      substitutionCount: 0,
-      hCount: 0,
-      stereoParity: 0
+    const molecule = editor.render.ctab
+    const selection = editor.selection()
+    const selectedAtoms = getSelectedAtoms(selection, molecule)
+
+    const newAtom = editor.event.elementEdit.dispatch(selectedAtoms)
+    updateSelectedAtoms({
+      selection,
+      changeAtomPromise: newAtom,
+      editor
     })
-
-    try {
-      const newAtom = await editor.event.elementEdit.dispatch(defaultAtom)
-      const selectedAtomIds = editor.selection()?.atoms
-
-      editor.update(
-        fromAtomsAttrs(editor.render.ctab, selectedAtomIds, newAtom, false)
-      )
-    } catch (error) {
-      noOperation()
-    }
   }, [getKetcherInstance])
 
   return (

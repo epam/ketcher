@@ -30,7 +30,7 @@ import { getSelectOptionsFromSchema } from '../../../../../utils'
 import Icon from '../../../../../component/view/icon'
 import clsx from 'clsx'
 
-interface AtomProps extends BaseProps {
+interface AtomProps extends BaseCallProps, BaseProps {
   alias: string
   charge: string
   exactChangeFlag: boolean
@@ -46,12 +46,14 @@ interface AtomProps extends BaseProps {
   unsaturatedAtom: boolean
 }
 
-type Props = AtomProps & BaseCallProps
+type Props = AtomProps & {
+  isMultipleAtoms?: boolean
+}
 
 const atomProps = atomSchema.properties
 
-const Atom: FC<Props> = (props) => {
-  const { formState, stereoParity, ...rest } = props
+const Atom: FC<Props> = (props: Props) => {
+  const { formState, stereoParity, isMultipleAtoms = false, ...rest } = props
   const [currentLabel, setCurrentLabel] = useState<string>(rest.label)
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     'General'
@@ -159,8 +161,8 @@ const Atom: FC<Props> = (props) => {
       <Form
         schema={atomSchema}
         customValid={{
-          label: (label) => atomValid(label),
-          charge: (charge) => chargeValid(charge)
+          label: (label) => atomValid(label, isMultipleAtoms),
+          charge: (charge) => chargeValid(charge, isMultipleAtoms)
         }}
         init={rest}
         {...formState}
@@ -202,14 +204,22 @@ const Atom: FC<Props> = (props) => {
   )
 }
 
-function atomValid(label) {
-  return label && !!Elements.get(capitalize(label))
+function atomValid(label: string, isMultipleAtoms: boolean) {
+  const isChemicalElement = !!Elements.get(capitalize(label))
+  if (isMultipleAtoms) {
+    return label === '' || isChemicalElement
+  }
+  return label && isChemicalElement
 }
 
-function chargeValid(charge) {
+function chargeValid(charge, isMultipleAtoms: boolean) {
   const regex = new RegExp(atomSchema.properties.charge.pattern)
   const result = regex.exec(charge)
-  return result && (result[1] === '' || result[3] === '')
+  const isValidCharge = result && (result[1] === '' || result[3] === '')
+  if (isMultipleAtoms) {
+    return charge === '0' || charge === 0 || charge === '' || isValidCharge
+  }
+  return isValidCharge
 }
 
 export type { AtomProps }

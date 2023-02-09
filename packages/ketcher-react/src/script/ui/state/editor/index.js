@@ -31,6 +31,7 @@ import { debounce } from 'lodash/fp'
 import { openDialog } from '../modal'
 import { highlightFG } from '../functionalGroups'
 import { serverCall } from '../server'
+import { generateCommonProperties, isAtomsArray } from '../modal/atoms'
 
 export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }))
@@ -62,6 +63,13 @@ export default function initEditor(dispatch, getState) {
       updateAction()
     },
     onElementEdit: (selem) => {
+      if (isAtomsArray(selem)) {
+        const atomAttributes = generateCommonProperties(selem)
+        return openDialog(dispatch, 'atomProps', {
+          ...atomAttributes,
+          isMultipleAtoms: true
+        }).then(toElement)
+      }
       const elem = selem.type === 'text' ? selem : fromElement(selem)
       let dlg = null
       if (elem.type === 'text') {

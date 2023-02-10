@@ -166,10 +166,7 @@ const LeftToolbar = (props: Props) => {
           ]}
         />
 
-        <Group
-          className={classes.groupItem}
-          items={[{ id: 'sgroup' }, { id: 'sgroup-data' }]}
-        />
+        <Group className={classes.groupItem} items={[{ id: 'sgroup' }]} />
 
         <Group
           className={classes.groupItem}

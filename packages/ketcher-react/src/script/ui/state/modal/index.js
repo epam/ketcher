@@ -43,7 +43,7 @@ function modalReducer(state = null, action) {
       return null
     }
 
-    const formState = formReducer(state.form, action, state.name)
+    const formState = formReducer(state.form, action)
     return { ...state, form: formState }
   }
 

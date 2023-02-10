@@ -16,6 +16,7 @@
 
 import { mapOf } from './schema-helper'
 import { range } from 'lodash/fp'
+import { sdataCustomSchema } from './sdata-schema'
 
 export const atom = {
   title: 'Atom',
@@ -216,12 +217,7 @@ const sgroup = {
   required: ['type'],
   oneOf: [
     {
-      key: 'GEN',
-      title: 'Generic',
-      type: 'object',
-      properties: {
-        type: { enum: ['GEN'] }
-      }
+      ...sdataCustomSchema
     },
     {
       key: 'MUL',

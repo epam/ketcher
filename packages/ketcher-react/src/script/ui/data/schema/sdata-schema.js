@@ -303,6 +303,7 @@ const sData = {
 
 export const sdataCustomSchema = {
   key: 'Custom',
+  title: 'Data',
   type: 'object',
   properties: {
     type: { enum: ['DAT'] },

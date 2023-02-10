@@ -4,7 +4,6 @@ import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
 import EraserTool from 'src/script/editor/tool/eraser'
 import { CustomItemProps } from '../contextMenu.types'
-import { isBatchOperationHidden } from './utils'
 
 export const BatchDelete: React.FC<CustomItemProps> = (props) => {
   const { getKetcherInstance } = useAppContext()
@@ -17,7 +16,7 @@ export const BatchDelete: React.FC<CustomItemProps> = (props) => {
   }, [getKetcherInstance])
 
   return (
-    <Item {...props} hidden={isBatchOperationHidden} onClick={handleClick}>
+    <Item {...props} onClick={handleClick}>
       Delete
     </Item>
   )

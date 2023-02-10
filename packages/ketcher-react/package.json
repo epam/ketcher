@@ -41,8 +41,8 @@
     "stylelint:fix": "stylelint \"./**/*.{css,less}\" --formatter verbose --fix"
   },
   "peerDependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "dependencies": {
     "@babel/runtime": "^7.17.9",
@@ -63,7 +63,6 @@
     "miew-react": "^1.0.0",
     "react-colorful": "^5.4.0",
     "react-contexify": "^6.0.0",
-    "react-contextmenu": "^2.14.0",
     "react-device-detect": "^2.2.2",
     "react-dropzone": "^11.7.1",
     "react-intersection-observer": "^8.32.1",
@@ -95,15 +94,15 @@
     "@rollup/plugin-replace": "^2.3.4",
     "@rollup/plugin-strip": "^2.0.0",
     "@svgr/rollup": "^5.4.0",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
+    "@testing-library/jest-dom": "5.16.5",
+    "@testing-library/react": "13.4.0",
+    "@testing-library/user-event": "14.4.3",
     "@types/draft-js": "^0.11.7",
     "@types/jest": "^27.0.3",
     "@types/lodash": "^4.14.178",
     "@types/node": "^16.11.12",
-    "@types/react": "^17.0.37",
-    "@types/react-dom": "^17.0.11",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.8",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
     "@typescript-eslint/parser": "^5.6.0",
     "autoprefixer": "^10.2.5",

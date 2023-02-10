@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, MutableRefObject, useRef } from 'react'
+import { FC, MutableRefObject, PropsWithChildren, useRef } from 'react'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -28,9 +28,10 @@ import classes from './RightToolbar.module.less'
 import clsx from 'clsx'
 import { useInView } from 'react-intersection-observer'
 
-const Group: FC<{ className?: string }> = ({ children, className }) => (
-  <div className={clsx(classes.group, className)}>{children}</div>
-)
+const Group: FC<{ className?: string } & PropsWithChildren> = ({
+  children,
+  className
+}) => <div className={clsx(classes.group, className)}>{children}</div>
 
 interface RightToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {

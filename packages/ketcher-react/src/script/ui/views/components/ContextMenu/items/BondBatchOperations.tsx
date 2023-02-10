@@ -16,7 +16,11 @@
 
 import { fromBondsAttrs } from 'ketcher-core'
 import { useCallback } from 'react'
-import type { ItemParams, PredicateParams } from 'react-contexify'
+import type {
+  BooleanPredicate,
+  ItemParams,
+  PredicateParams
+} from 'react-contexify'
 import { Item, Submenu } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
 import { useAppContext } from 'src/hooks'
@@ -28,27 +32,26 @@ import styles from '../ContextMenu.module.less'
 import type {
   ItemData,
   ContextMenuShowProps,
-  CustomItemProps,
-  CustomSubMenuProps
+  CustomItemProps
 } from '../contextMenu.types'
-import {
-  formatTitle,
-  getBondNames,
-  noOperation,
-  isBatchOperationHidden
-} from './utils'
+import { formatTitle, getBondNames, noOperation } from './utils'
 
 const bondNames = getBondNames(tools)
 
-const useDisabled = () => {
+const useDisabled = (hidden?: BooleanPredicate) => {
   const { getKetcherInstance } = useAppContext()
 
   const isDisabled = useCallback(
     ({
       props,
-      triggerEvent
+      triggerEvent,
+      data
     }: PredicateParams<ContextMenuShowProps, ItemData>) => {
-      if (isBatchOperationHidden({ props, triggerEvent })) {
+      if (
+        typeof hidden === 'boolean'
+          ? hidden
+          : hidden?.({ props, triggerEvent, data })
+      ) {
         return true
       }
 
@@ -61,7 +64,7 @@ const useDisabled = () => {
 
       return true
     },
-    [getKetcherInstance]
+    [getKetcherInstance, hidden]
   )
 
   return isDisabled
@@ -69,7 +72,7 @@ const useDisabled = () => {
 
 export const BondBatchEdit: React.FC<CustomItemProps> = (props) => {
   const { getKetcherInstance } = useAppContext()
-  const isDisabled = useDisabled()
+  const isDisabled = useDisabled(props.hidden)
 
   const handleClick = useCallback(async () => {
     const editor = getKetcherInstance().editor as Editor
@@ -89,20 +92,22 @@ export const BondBatchEdit: React.FC<CustomItemProps> = (props) => {
   }, [getKetcherInstance])
 
   return (
-    <Item
-      {...props}
-      hidden={isBatchOperationHidden}
-      disabled={isDisabled}
-      onClick={handleClick}
-    >
+    <Item {...props} disabled={isDisabled} onClick={handleClick}>
       Edit selected bond(s)...
     </Item>
   )
 }
 
-export const BondTypeBatchChange: React.FC<CustomSubMenuProps> = (props) => {
+export const BondTypeBatchChange: React.FC<CustomItemProps> = (properties) => {
   const { getKetcherInstance } = useAppContext()
-  const isDisabled = useDisabled()
+
+  const isSubMenuHidden = useCallback(
+    ({ props }: PredicateParams<ContextMenuShowProps, ItemData>) =>
+      props?.type !== properties.data,
+    [properties.data]
+  )
+
+  const isDisabled = useDisabled(isSubMenuHidden)
 
   const handleClick = useCallback(
     ({ id }: ItemParams<ContextMenuShowProps, ItemData>) => {
@@ -120,9 +125,9 @@ export const BondTypeBatchChange: React.FC<CustomSubMenuProps> = (props) => {
 
   return (
     <Submenu
-      {...props}
+      {...properties}
       label="Bond type"
-      hidden={isBatchOperationHidden}
+      hidden={isSubMenuHidden}
       disabled={isDisabled}
       className={styles.subMenu}
     >

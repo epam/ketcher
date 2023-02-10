@@ -101,13 +101,6 @@ export const formsState = {
     valid: true,
     result: getDefaultOptions()
   },
-  sgroup: {
-    errors: {},
-    valid: true,
-    result: {
-      type: 'GEN'
-    }
-  },
   text: {
     errors: {},
     valid: true,
@@ -118,7 +111,7 @@ export const formsState = {
     valid: true,
     result: {}
   },
-  sdata: initSdata(sdataCustomSchema)
+  sgroup: initSdata(sdataCustomSchema)
 }
 
 export function updateFormState(data) {
@@ -146,8 +139,9 @@ export function setDefaultSettings() {
   }
 }
 
-export function formReducer(state, action, formName) {
-  if (formName === 'sdata') return sdataReducer(state, action)
+export function formReducer(state, action) {
+  const newType = action.data?.result?.type
+  if (newType === 'DAT') return sdataReducer(state, action)
 
   return Object.assign({}, state, action.data)
 }

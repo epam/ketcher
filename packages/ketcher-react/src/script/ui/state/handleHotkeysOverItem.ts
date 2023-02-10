@@ -187,7 +187,7 @@ function getToolHandler(itemType: string, toolName = '') {
       charge: (props: HandlersProps) => handleChargeTool(props),
       rgroupatom: (props: HandlersProps) => handleRGroupAtomTool(props),
       sgroup: ({ editor, hoveredItemId }: HandlersProps) => {
-        Tools.sgroup.sgroupDialog(editor, hoveredItemId, null)
+        Tools.sgroup.sgroupDialog(editor, hoveredItemId)
       },
       hand: ({ dispatch }: HandlersProps) =>
         dispatch(onAction({ tool: 'hand' }))

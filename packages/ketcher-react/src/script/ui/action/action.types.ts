@@ -77,7 +77,6 @@ type ToolVariant =
   | 'select-rectangle'
   | 'settings'
   | 'sgroup'
-  | 'sgroup-data'
   | 'template-0'
   | 'template-1'
   | 'template-2'

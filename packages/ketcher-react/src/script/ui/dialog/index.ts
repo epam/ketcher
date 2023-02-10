@@ -37,8 +37,7 @@ import PeriodTable from '../views/modal/components/PeriodTable'
 import ExtendedTable from '../views/modal/components/ExtendedTable'
 import { RemoveFG } from '../views/modal/components/toolbox/FG/RemoveFG'
 import Rgroup from './toolbox/rgroup/rgroup'
-import Sdata from './toolbox/sdata'
-import Sgroup from './toolbox/sgroup'
+import SGroup from './toolbox/sgroup'
 import TemplateAttach from './template/template-attach'
 import TemplatesDialog from './template/TemplateDialog'
 import Text from '../views/modal/components/Text'
@@ -66,8 +65,7 @@ export default {
   removeFG: RemoveFG,
   save: Save,
   settings: Settings,
-  sgroup: Sgroup,
-  sdata: Sdata,
+  sgroup: SGroup,
   text: Text,
   confirm: Confirm
 } as any

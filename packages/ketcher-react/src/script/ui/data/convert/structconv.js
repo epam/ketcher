@@ -18,7 +18,11 @@ import { AtomList, Bond, Elements, StereoLabel } from 'ketcher-core'
 
 import { atom as atomSchema } from '../schema/struct-schema'
 import { capitalize } from 'lodash/fp'
-import { sdataSchema } from '../schema/sdata-schema'
+import {
+  sdataSchema,
+  getSdataDefault,
+  sdataCustomSchema
+} from '../schema/sdata-schema'
 
 const DefaultStereoGroupNumber = 1
 
@@ -291,7 +295,7 @@ const bondCaptionMap = {
 }
 
 export function fromSgroup(ssgroup) {
-  const type = ssgroup.type || 'GEN'
+  const type = ssgroup.type || 'DAT'
   const { context, fieldName, fieldValue, absolute, attached } = ssgroup.attrs
 
   if (absolute === false && attached === false)
@@ -304,7 +308,18 @@ export function fromSgroup(ssgroup) {
   )
     ssgroup.attrs.fieldValue = fieldValue.split('\n')
 
-  return Object.assign({ type }, ssgroup.attrs)
+  const sDataInitValue =
+    type === 'DAT'
+      ? {
+          context: context || getSdataDefault(sdataCustomSchema, 'context'),
+          fieldName:
+            fieldName || getSdataDefault(sdataCustomSchema, 'fieldName'),
+          fieldValue:
+            fieldValue || getSdataDefault(sdataCustomSchema, 'fieldValue')
+        }
+      : {}
+
+  return Object.assign({ type }, ssgroup.attrs, sDataInitValue)
 }
 
 export function toSgroup(sgroup) {

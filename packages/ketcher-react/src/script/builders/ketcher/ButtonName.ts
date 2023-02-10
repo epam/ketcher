@@ -32,7 +32,6 @@ export type ButtonName =
   // left
   // sgroup group
   | 'sgroup'
-  | 'sgroup-data'
   // reaction
   // plus
   | 'reaction-plus'

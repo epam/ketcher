@@ -281,45 +281,53 @@ class SaveDialog extends Component {
     const { structStr, imageSrc, isLoading } = this.state
     const isCleanStruct = this.props.struct.isBlank()
 
+    const LoadingState = () => (
+      <div className={classes.loadingCirclesContainer}>
+        <LoadingCircles />
+      </div>
+    )
+
+    const ImageContent = () => (
+      <div className={classes.imageContainer}>
+        {!isCleanStruct && (
+          <img
+            src={`data:image/${format}+xml;base64,${imageSrc}`}
+            alt={`${format} preview`}
+          />
+        )}
+      </div>
+    )
+
+    const BinaryContent = () => (
+      <div className={classes.previewBackground}>
+        <textarea
+          value="Can not display binary content"
+          className={classes.previewArea}
+          readOnly
+          ref={this.textAreaRef}
+        />
+      </div>
+    )
+
+    const PreviewContent = () => (
+      <div className={classes.previewBackground}>
+        <textarea
+          value={structStr}
+          className={classes.previewArea}
+          readOnly
+          ref={this.textAreaRef}
+        />
+      </div>
+    )
+
     if (isLoading) {
-      return (
-        <div className={classes.loadingCirclesContainer}>
-          <LoadingCircles />
-        </div>
-      )
+      return <LoadingState />
     } else if (this.isImageFormat(format)) {
-      return (
-        <div className={classes.imageContainer}>
-          {!isCleanStruct && (
-            <img
-              src={`data:image/${format}+xml;base64,${imageSrc}`}
-              alt={`${format} preview`}
-            />
-          )}
-        </div>
-      )
+      return <ImageContent />
     } else if (this.isBinaryCdxFormat(format)) {
-      return (
-        <div className={classes.previewBackground}>
-          <textarea
-            value="No preview available for this format"
-            className={classes.previewArea}
-            readOnly
-            ref={this.textAreaRef}
-          />
-        </div>
-      )
+      return <BinaryContent />
     } else {
-      return (
-        <div className={classes.previewBackground}>
-          <textarea
-            value={structStr}
-            className={classes.previewArea}
-            readOnly
-            ref={this.textAreaRef}
-          />
-        </div>
-      )
+      return <PreviewContent />
     }
   }
 

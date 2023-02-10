@@ -16,7 +16,11 @@
 
 import { fromBondsAttrs, fromOneBondDeletion } from 'ketcher-core'
 import { useCallback } from 'react'
-import type { ItemParams, PredicateParams } from 'react-contexify'
+import type {
+  BooleanPredicate,
+  ItemParams,
+  PredicateParams
+} from 'react-contexify'
 import { Item, Submenu } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
 import { useAppContext } from 'src/hooks'
@@ -34,7 +38,14 @@ import {
 
 const nonQueryBondNames = getNonQueryBondNames(tools)
 
-const BondSingleOperations: React.FC = (props) => {
+interface BondSingleOperationsProps {
+  data: ItemData
+  hidden: BooleanPredicate
+}
+
+const BondSingleOperations: React.FC<BondSingleOperationsProps> = (
+  properties
+) => {
   const { getKetcherInstance } = useAppContext()
 
   const handleEdit = useCallback(
@@ -74,35 +85,29 @@ const BondSingleOperations: React.FC = (props) => {
     [getKetcherInstance]
   )
 
-  const isHidden = useCallback(
+  const isSubMenuHidden = useCallback(
     ({ props }: PredicateParams<ContextMenuShowProps, ItemData>) =>
-      props?.selected || props?.closestItem.map === 'atoms',
-    []
+      props?.type !== properties.data,
+    [properties.data]
   )
 
   return (
     <>
-      <Item {...props} hidden={isHidden} onClick={handleEdit}>
+      <Item {...properties} onClick={handleEdit}>
         Edit...
       </Item>
 
       {nonQueryBondNames.map((name) => (
-        <Item
-          {...props}
-          hidden={isHidden}
-          id={name}
-          onClick={handleTypeChange}
-          key={name}
-        >
+        <Item {...properties} id={name} onClick={handleTypeChange} key={name}>
           <Icon name={name} className={styles.icon} />
           <span>{formatTitle(tools[name].title)}</span>
         </Item>
       ))}
 
       <Submenu
-        {...props}
+        {...properties}
         label="Query bonds"
-        hidden={isHidden}
+        hidden={isSubMenuHidden}
         className={styles.subMenu}
       >
         {queryBondNames.map((name) => (
@@ -113,7 +118,7 @@ const BondSingleOperations: React.FC = (props) => {
         ))}
       </Submenu>
 
-      <Item {...props} hidden={isHidden} onClick={handleDelete}>
+      <Item {...properties} onClick={handleDelete}>
         Delete
       </Item>
     </>

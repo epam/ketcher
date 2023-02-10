@@ -16,7 +16,13 @@
 
 import * as KN from 'w3c-keyname'
 
-import { FC, ReactElement, useLayoutEffect, useRef } from 'react'
+import {
+  FC,
+  PropsWithChildren,
+  ReactElement,
+  useLayoutEffect,
+  useRef
+} from 'react'
 
 import Icon from '../../../component/view/icon'
 import clsx from 'clsx'
@@ -53,7 +59,7 @@ interface DialogCallProps {
 
 type Props = DialogProps & DialogCallProps
 
-const Dialog: FC<Props> = (props) => {
+const Dialog: FC<PropsWithChildren & Props> = (props) => {
   const {
     children,
     title,

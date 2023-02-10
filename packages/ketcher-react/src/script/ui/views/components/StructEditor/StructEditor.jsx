@@ -189,7 +189,6 @@ class StructEditor extends Component {
       onBondEdit,
       onRgroupEdit,
       onSgroupEdit,
-      onSdataEdit,
       onRemoveFG,
       onMessage,
       onAromatizeStruct,

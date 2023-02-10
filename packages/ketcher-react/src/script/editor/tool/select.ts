@@ -17,7 +17,6 @@
 import {
   Action,
   SGroup,
-  fromAtomsAttrs,
   fromBondsAttrs,
   fromItemsFuse,
   fromMultipleMove,
@@ -29,7 +28,8 @@ import {
   fromArrowResizing,
   ReStruct,
   ReSGroup,
-  Vec2
+  Vec2,
+  Atom
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -41,6 +41,7 @@ import { Editor } from '../Editor'
 import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { getMergeItems } from './helper/getMergeItems'
+import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 
 class SelectTool {
   #mode: string
@@ -359,22 +360,13 @@ class SelectTool {
     const selection = this.editor.selection()
 
     if (ci.map === 'atoms') {
-      const action = new Action()
-      const atom = molecule.atoms.get(ci.id)
-      const ra = editor.event.elementEdit.dispatch(atom)
-      if (selection?.atoms) {
-        const selectionAtoms = selection.atoms
-        Promise.resolve(ra)
-          .then((newatom) => {
-            // TODO: deep compare to not produce dummy, e.g.
-            // atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
-            selectionAtoms.forEach((aid) => {
-              action.mergeWith(fromAtomsAttrs(struct, aid, newatom, false))
-            })
-            editor.update(action)
-          })
-          .catch(() => null)
-      }
+      const atoms = getSelectedAtoms(selection, molecule)
+      const changeAtomPromise = editor.event.elementEdit.dispatch(atoms)
+      updateSelectedAtoms({
+        selection,
+        editor,
+        changeAtomPromise
+      })
     } else if (ci.map === 'bonds') {
       const bond = rnd.ctab.bonds.get(ci.id)?.b
       const rb = editor.event.bondEdit.dispatch(bond)
@@ -397,7 +389,7 @@ class SelectTool {
       ci.map === 'sgroupData'
     ) {
       editor.selection(closestToSel(ci))
-      SGroupTool.sgroupDialog(editor, ci.id, null)
+      SGroupTool.sgroupDialog(editor, ci.id)
     } else if (ci.map === 'texts') {
       editor.selection(closestToSel(ci))
       const text = molecule.texts.get(ci.id)
@@ -489,6 +481,20 @@ function isSelected(selection, item) {
   return (
     selection && selection[item.map] && selection[item.map].includes(item.id)
   )
+}
+
+export function getSelectedAtoms(selection, molecule) {
+  if (selection?.atoms) {
+    return mapAtomIdsToAtoms(selection?.atoms, molecule)
+  }
+  return []
+}
+
+export function mapAtomIdsToAtoms(atomsIds: number[], molecule): Atom[] {
+  return atomsIds.map((atomId) => {
+    const atomOrReAtom = molecule.atoms.get(atomId)
+    return atomOrReAtom.a || atomOrReAtom
+  })
 }
 
 function uniqArray(dest, add, reversible: boolean) {

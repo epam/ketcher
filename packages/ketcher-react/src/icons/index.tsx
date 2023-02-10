@@ -102,7 +102,6 @@ import SelectFragmentIcon from './files/select-fragment.svg'
 import SelectLassoIcon from './files/select-lasso.svg'
 import SelectRectangleIcon from './files/select-rectangle.svg'
 import SettingsIcon from './files/settings.svg'
-import SgroupDataIcon from './files/sgroup-data.svg'
 import SgroupIcon from './files/sgroup.svg'
 import ShapeEllipseIcon from './files/shape-ellipse.svg'
 import ShapeLineIcon from './files/shape-line.svg'
@@ -349,7 +348,6 @@ const icons = {
   'select-lasso': SelectLassoIcon,
   'select-rectangle': SelectRectangleIcon,
   settings: SettingsIcon,
-  'sgroup-data': SgroupDataIcon,
   sgroup: SgroupIcon,
   'template-0': Template0Icon,
   'template-1': Template1Icon,

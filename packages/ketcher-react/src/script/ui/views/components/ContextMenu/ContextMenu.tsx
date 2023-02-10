@@ -32,7 +32,7 @@ const isHidden = ({
   props,
   data
 }: PredicateParams<ContextMenuShowProps, ItemData>) => {
-  return props?.itemData !== data
+  return props?.type !== data
 }
 
 const ContextMenu: React.FC = () => {

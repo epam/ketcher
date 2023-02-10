@@ -1,8 +1,4 @@
-import {
-  fromSgroupDeletion,
-  FunctionalGroup,
-  setExpandSGroup
-} from 'ketcher-core'
+import { fromSgroupDeletion, setExpandSGroup } from 'ketcher-core'
 import { useCallback } from 'react'
 import { Item, ItemParams, PredicateParams } from 'react-contexify'
 import { useDispatch } from 'react-redux'
@@ -29,7 +25,7 @@ const FunctionalGroupOperations: React.FC<CustomItemProps> = (properties) => {
         return true
       }
 
-      return props?.closestItem?.isExpanded
+      return Boolean(props?.functionalGroup?.isExpanded)
     },
     [properties]
   )
@@ -44,7 +40,7 @@ const FunctionalGroupOperations: React.FC<CustomItemProps> = (properties) => {
         return true
       }
 
-      return !props?.closestItem?.isExpanded
+      return !props?.functionalGroup?.isExpanded
     },
     [properties]
   )
@@ -52,7 +48,9 @@ const FunctionalGroupOperations: React.FC<CustomItemProps> = (properties) => {
   const handleExpandOrContract = useCallback(
     ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
-      const functionalGroup: FunctionalGroup = props?.closestItem
+      const functionalGroup = props?.functionalGroup
+
+      if (!functionalGroup) return
 
       const action = setExpandSGroup(
         editor.render.ctab,
@@ -71,7 +69,9 @@ const FunctionalGroupOperations: React.FC<CustomItemProps> = (properties) => {
   const handleRemove = useCallback(
     ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
-      const functionalGroup: FunctionalGroup = props?.closestItem
+      const functionalGroup = props?.functionalGroup
+
+      if (!functionalGroup) return
 
       const action = fromSgroupDeletion(
         editor.render.ctab,

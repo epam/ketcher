@@ -103,7 +103,7 @@ export const BondTypeBatchChange: React.FC<CustomItemProps> = (properties) => {
 
   const isSubMenuHidden = useCallback(
     ({ props }: PredicateParams<ContextMenuShowProps, ItemData>) =>
-      props?.itemData !== properties.data,
+      props?.type !== properties.data,
     [properties.data]
   )
 

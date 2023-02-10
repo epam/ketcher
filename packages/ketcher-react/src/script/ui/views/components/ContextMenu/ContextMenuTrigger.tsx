@@ -28,6 +28,30 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
     id: CONTEXT_MENU_ID
   })
 
+  const getSelectedFunctionalGroups = useCallback(() => {
+    const editor = getKetcherInstance().editor as Editor
+    const struct = editor.struct()
+    const selectedAtomIds = editor.selection()?.atoms
+    // Map could do deduplication
+    const selectedFunctionalGroups = new Map<number, FunctionalGroup>()
+
+    selectedAtomIds?.forEach((atomId) => {
+      const functionalGroup = FunctionalGroup.findFunctionalGroupByAtom(
+        struct.functionalGroups,
+        atomId,
+        true
+      )
+
+      functionalGroup !== null &&
+        selectedFunctionalGroups.set(
+          functionalGroup.relatedSGroupId,
+          functionalGroup
+        )
+    })
+
+    return selectedFunctionalGroups
+  }, [getKetcherInstance])
+
   const handleDisplay = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (event) => {
       event.preventDefault()
@@ -35,32 +59,36 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
       const editor = getKetcherInstance().editor as Editor
       const closestItem = editor.findItem(event, null)
       const selection = editor.selection()
-      const struct = editor.struct()
+      const functionalGroupsInSelection = getSelectedFunctionalGroups()
 
       if (selection) {
-        const hasGroupsInSelection = selection?.atoms?.some((atomId) =>
-          FunctionalGroup.atomsInFunctionalGroup(
-            struct.functionalGroups,
-            atomId
+        if (functionalGroupsInSelection.size > 0) {
+          const functionalGroups = Array.from(
+            functionalGroupsInSelection.values()
           )
-        )
 
-        if (hasGroupsInSelection) {
+          const showProps: ContextMenuShowProps = {
+            type: 'for-functional-groups-in-selection',
+            functionalGroups
+          }
+
           show({
             event,
-            props: {
-              itemData: 'for-functional-groups-in-selection'
-            }
+            props: showProps
           })
         } else {
+          const showProps: ContextMenuShowProps = {
+            type: 'for-bonds-and-atoms-in-selection'
+          }
+
           show({
             event,
-            props: {
-              itemData: 'for-bonds-and-atoms-in-selection'
-            }
+            props: showProps
           })
         }
       } else if (closestItem) {
+        const struct = editor.struct()
+
         switch (closestItem.map) {
           case 'bonds':
             {
@@ -70,15 +98,18 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
                 closestItem.id,
                 true
               )
+
+              const showProps: ContextMenuShowProps =
+                functionalGroup === null
+                  ? {
+                      type: 'for-one-bond',
+                      closestItem
+                    }
+                  : { type: 'for-one-functional-group', functionalGroup }
+
               show({
                 event,
-                props: {
-                  itemData:
-                    functionalGroup === null
-                      ? 'for-one-bond'
-                      : 'for-one-functional-group',
-                  closestItem: functionalGroup || closestItem
-                }
+                props: showProps
               })
             }
             break
@@ -89,15 +120,18 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
               closestItem.id,
               true
             )
+
+            const showProps: ContextMenuShowProps =
+              functionalGroup === null
+                ? {
+                    type: 'for-one-atom',
+                    closestItem
+                  }
+                : { type: 'for-one-functional-group', functionalGroup }
+
             show({
               event,
-              props: {
-                itemData:
-                  functionalGroup === null
-                    ? 'for-one-atom'
-                    : 'for-one-functional-group',
-                closestItem: functionalGroup || closestItem
-              }
+              props: showProps
             })
             break
           }
@@ -109,20 +143,23 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
               struct.functionalGroups,
               sGroup
             )
+
+            const showProps: ContextMenuShowProps = {
+              type: 'for-one-functional-group',
+              functionalGroup
+            }
+
             functionalGroup &&
               show({
                 event,
-                props: {
-                  itemData: 'for-one-functional-group',
-                  closestItem: functionalGroup
-                }
+                props: showProps
               })
             break
           }
         }
       }
     },
-    [getKetcherInstance, show]
+    [getKetcherInstance, getSelectedFunctionalGroups, show]
   )
 
   return (

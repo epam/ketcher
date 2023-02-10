@@ -16,7 +16,11 @@
 
 import { fromBondsAttrs, fromOneBondDeletion } from 'ketcher-core'
 import { useCallback } from 'react'
-import type { BooleanPredicate, ItemParams } from 'react-contexify'
+import type {
+  BooleanPredicate,
+  ItemParams,
+  PredicateParams
+} from 'react-contexify'
 import { Item, Submenu } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
 import { useAppContext } from 'src/hooks'
@@ -81,6 +85,12 @@ const BondSingleOperations: React.FC<BondSingleOperationsProps> = (
     [getKetcherInstance]
   )
 
+  const isSubMenuHidden = useCallback(
+    ({ props }: PredicateParams<ContextMenuShowProps, ItemData>) =>
+      props?.type !== properties.data,
+    [properties.data]
+  )
+
   return (
     <>
       <Item {...properties} onClick={handleEdit}>
@@ -97,7 +107,7 @@ const BondSingleOperations: React.FC<BondSingleOperationsProps> = (
       <Submenu
         {...properties}
         label="Query bonds"
-        hidden={({ props }) => props.itemData !== properties.data}
+        hidden={isSubMenuHidden}
         className={styles.subMenu}
       >
         {queryBondNames.map((name) => (

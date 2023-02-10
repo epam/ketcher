@@ -1,16 +1,15 @@
-import {
-  Action,
-  fromSgroupDeletion,
-  FunctionalGroup,
-  setExpandSGroup
-} from 'ketcher-core'
+import { Action, fromSgroupDeletion, setExpandSGroup } from 'ketcher-core'
 import { useCallback } from 'react'
-import { Item } from 'react-contexify'
+import { Item, PredicateParams } from 'react-contexify'
 import { useDispatch } from 'react-redux'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
 import { highlightFG } from 'src/script/ui/state/functionalGroups'
-import { CustomItemProps } from '../contextMenu.types'
+import {
+  ContextMenuShowProps,
+  CustomItemProps,
+  ItemData
+} from '../contextMenu.types'
 
 const FunctionalGroupBatchOperations: React.FC<CustomItemProps> = (
   properties
@@ -18,34 +17,56 @@ const FunctionalGroupBatchOperations: React.FC<CustomItemProps> = (
   const { getKetcherInstance } = useAppContext()
   const dispatch = useDispatch()
 
-  const getSelectedFunctionalGroupIds = useCallback(() => {
-    const editor = getKetcherInstance().editor as Editor
-    const struct = editor.struct()
-    const selectedAtomIds = editor.selection()?.atoms
-    const selectedFunctionalGroupIds = new Set<number>()
+  const isExpandHidden = useCallback(
+    ({
+      props,
+      triggerEvent,
+      data
+    }: PredicateParams<ContextMenuShowProps, ItemData>) => {
+      if (properties.hidden({ props, triggerEvent, data })) {
+        return true
+      }
 
-    selectedAtomIds?.forEach((atomId) => {
-      const functionalGroupId = FunctionalGroup.findFunctionalGroupByAtom(
-        struct.functionalGroups,
-        atomId
+      return Boolean(
+        props?.functionalGroups?.every(
+          (functionalGroup) => functionalGroup.isExpanded
+        )
       )
+    },
+    [properties]
+  )
 
-      functionalGroupId !== null &&
-        selectedFunctionalGroupIds.add(functionalGroupId)
-    })
+  const isContractHidden = useCallback(
+    ({
+      props,
+      triggerEvent,
+      data
+    }: PredicateParams<ContextMenuShowProps, ItemData>) => {
+      if (properties.hidden({ props, triggerEvent, data })) {
+        return true
+      }
 
-    return selectedFunctionalGroupIds
-  }, [getKetcherInstance])
+      return Boolean(
+        props?.functionalGroups?.every(
+          (functionalGroup) => !functionalGroup.isExpanded
+        )
+      )
+    },
+    [properties]
+  )
 
   const handleExpandOrContract = useCallback(
-    (expanded: boolean) => {
+    (
+      { props }: PredicateParams<ContextMenuShowProps, ItemData>,
+      expanded: boolean
+    ) => {
       const editor = getKetcherInstance().editor as Editor
-      const selectedFunctionalGroupIds = getSelectedFunctionalGroupIds()
+      const selectedFunctionalGroups = props?.functionalGroups
       const action = new Action()
 
-      selectedFunctionalGroupIds.forEach((id) => {
+      selectedFunctionalGroups?.forEach((functionalGroup) => {
         action.mergeWith(
-          setExpandSGroup(editor.render.ctab, id, {
+          setExpandSGroup(editor.render.ctab, functionalGroup.relatedSGroupId, {
             expanded
           })
         )
@@ -54,28 +75,44 @@ const FunctionalGroupBatchOperations: React.FC<CustomItemProps> = (
       editor.update(action)
       highlightFG(dispatch, { group: null, id: null })
     },
-    [dispatch, getKetcherInstance, getSelectedFunctionalGroupIds]
+    [dispatch, getKetcherInstance]
   )
 
-  const handleRemove = useCallback(() => {
-    const editor = getKetcherInstance().editor as Editor
-    const selectedFunctionalGroupIds = getSelectedFunctionalGroupIds()
-    const action = new Action()
+  const handleRemove = useCallback(
+    ({ props }: PredicateParams<ContextMenuShowProps, ItemData>) => {
+      const editor = getKetcherInstance().editor as Editor
+      const selectedFunctionalGroups = props?.functionalGroups
+      const action = new Action()
 
-    selectedFunctionalGroupIds.forEach((id) => {
-      action.mergeWith(fromSgroupDeletion(editor.render.ctab, id))
-    })
+      selectedFunctionalGroups?.forEach((functionalGroup) => {
+        action.mergeWith(
+          fromSgroupDeletion(
+            editor.render.ctab,
+            functionalGroup.relatedSGroupId
+          )
+        )
+      })
 
-    editor.update(action)
-    highlightFG(dispatch, { group: null, id: null })
-  }, [dispatch, getKetcherInstance, getSelectedFunctionalGroupIds])
+      editor.update(action)
+      highlightFG(dispatch, { group: null, id: null })
+    },
+    [dispatch, getKetcherInstance]
+  )
 
   return (
     <>
-      <Item {...properties} onClick={() => handleExpandOrContract(true)}>
+      <Item
+        {...properties}
+        hidden={isExpandHidden}
+        onClick={(props) => handleExpandOrContract(props, true)}
+      >
         Expand Abbreviation
       </Item>
-      <Item {...properties} onClick={() => handleExpandOrContract(false)}>
+      <Item
+        {...properties}
+        hidden={isContractHidden}
+        onClick={(props) => handleExpandOrContract(props, false)}
+      >
         Contract Abbreviation
       </Item>
       <Item {...properties} onClick={handleRemove}>

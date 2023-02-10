@@ -1,3 +1,4 @@
+import { FunctionalGroup } from 'ketcher-core'
 import type { PredicateParams, SubMenuProps } from 'react-contexify'
 
 export type ItemData =
@@ -8,8 +9,10 @@ export type ItemData =
   | 'for-functional-groups-in-selection'
 
 export type ContextMenuShowProps = {
-  itemData: ItemData
+  type: ItemData
   closestItem?: any
+  functionalGroups?: FunctionalGroup[]
+  functionalGroup?: FunctionalGroup
 }
 
 export type CustomItemProps = {

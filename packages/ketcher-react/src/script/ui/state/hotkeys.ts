@@ -20,9 +20,7 @@ import {
   KetSerializer,
   MolSerializer,
   formatProperties,
-  ChemicalMimeType,
-  fromAtomsAttrs,
-  fromBondsAttrs
+  ChemicalMimeType
 } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction } from './shared'
@@ -30,7 +28,6 @@ import { load, onAction } from './shared'
 import actions from '../action'
 import tools from '../action/tools'
 import keyNorm from '../data/convert/keynorm'
-import { fromAtom, toAtom, fromBond, toBond } from '../data/convert/structconv'
 import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
 import { handleHotkeyOverItem } from './handleHotkeysOverItem'
@@ -78,44 +75,24 @@ function keyHandle(dispatch, state, hotKeys, event) {
       .catch(() => null)
     event.preventDefault()
   } else if (key && key.length === 1 && key.match(/\//)) {
-    const hoveredItemId = getHoveredItem(render.ctab)
-
-    if (hoveredItemId && Object.hasOwn(hoveredItemId, 'atoms')) {
-      const hoveredAtomId = hoveredItemId.atoms
-      const atomFromStruct = render.ctab.atoms.get(hoveredAtomId)
-      const convertedAtomForModal = fromAtom(atomFromStruct?.a)
-
-      openDialog(dispatch, 'atomProps', convertedAtomForModal)
-        .then((res) => {
-          const updatedAtom = fromAtomsAttrs(
-            render.ctab,
-            hoveredAtomId,
-            toAtom(res),
-            false
-          )
-
-          editor.update(updatedAtom)
-        })
-        .catch(() => null)
+    const hotkeyDialogTypes = {
+      atoms: actions['atom-props'].action,
+      bonds: actions['bond-props'].action
     }
 
-    if (hoveredItemId && Object.hasOwn(hoveredItemId, 'bonds')) {
-      const hoveredBondId = hoveredItemId.bonds
-      const bondFromStruct = render.ctab.bonds.get(hoveredBondId)
-      const convertedBondForModal = fromBond(bondFromStruct?.b)
+    const hoveredItem = getHoveredItem(render.ctab)
+    if (!hoveredItem) {
+      return
+    }
+    const dialogType = Object.keys(hoveredItem)[0]
 
-      openDialog(dispatch, 'bondProps', convertedBondForModal)
-        .then((res) => {
-          const updatedBond = fromBondsAttrs(
-            render.ctab,
-            hoveredBondId,
-            toBond(res),
-            false
-          )
-
-          editor.update(updatedBond)
-        })
-        .catch(() => null)
+    if (Object.hasOwn(hotkeyDialogTypes, dialogType)) {
+      handleHotkeyOverItem({
+        hoveredItem,
+        newAction: hotkeyDialogTypes[dialogType],
+        editor,
+        dispatch
+      })
     }
 
     event.preventDefault()

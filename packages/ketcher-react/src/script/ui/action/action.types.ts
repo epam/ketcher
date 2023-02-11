@@ -29,6 +29,7 @@ type ToolVariant =
   | 'bond-double'
   | 'bond-doublearomatic'
   | 'bond-down'
+  | 'bond-props'
   | 'bond-single'
   | 'bond-singlearomatic'
   | 'bond-singledouble'

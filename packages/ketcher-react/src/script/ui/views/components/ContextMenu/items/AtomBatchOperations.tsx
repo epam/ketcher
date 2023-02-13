@@ -16,13 +16,17 @@
 
 import { findStereoAtoms } from 'ketcher-core'
 import { useCallback, useRef } from 'react'
-import type { BooleanPredicate, PredicateParams } from 'react-contexify'
+import type {
+  BooleanPredicate,
+  ItemParams,
+  PredicateParams
+} from 'react-contexify'
 import { Item } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
 import EnhancedStereoTool from 'src/script/editor/tool/enhanced-stereo'
-import { getSelectedAtoms } from 'src/script/editor/tool/select'
+import { mapAtomIdsToAtoms } from 'src/script/editor/tool/select'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import type {
   ContextMenuShowProps,
@@ -32,8 +36,6 @@ import type {
 import { noOperation } from './utils'
 
 const useDisabled = (hidden?: BooleanPredicate) => {
-  const { getKetcherInstance } = useAppContext()
-
   const isDisabled = useCallback(
     ({
       props,
@@ -48,16 +50,15 @@ const useDisabled = (hidden?: BooleanPredicate) => {
         return true
       }
 
-      const editor = getKetcherInstance().editor as Editor
-      const selectedAtomIds = editor.selection()?.atoms
+      const atomIds = props?.atomIds
 
-      if (Array.isArray(selectedAtomIds) && selectedAtomIds.length !== 0) {
+      if (Array.isArray(atomIds) && atomIds.length !== 0) {
         return false
       }
 
       return true
     },
-    [getKetcherInstance, hidden]
+    [hidden]
   )
 
   return isDisabled
@@ -67,19 +68,22 @@ export const AtomBatchEdit: React.FC<CustomItemProps> = (props) => {
   const { getKetcherInstance } = useAppContext()
   const isDisabled = useDisabled(props.hidden)
 
-  const handleClick = useCallback(async () => {
-    const editor = getKetcherInstance().editor as Editor
-    const molecule = editor.render.ctab
-    const selection = editor.selection()
-    const selectedAtoms = getSelectedAtoms(selection, molecule)
+  const handleClick = useCallback(
+    async ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
+      const editor = getKetcherInstance().editor as Editor
+      const molecule = editor.render.ctab
+      const atomIds = props?.atomIds || []
+      const atoms = mapAtomIdsToAtoms(atomIds, molecule)
 
-    const newAtom = editor.event.elementEdit.dispatch(selectedAtoms)
-    updateSelectedAtoms({
-      selection,
-      changeAtomPromise: newAtom,
-      editor
-    })
-  }, [getKetcherInstance])
+      const newAtom = editor.event.elementEdit.dispatch(atoms)
+      updateSelectedAtoms({
+        selection: { atoms },
+        changeAtomPromise: newAtom,
+        editor
+      })
+    },
+    [getKetcherInstance]
+  )
 
   return (
     <Item {...props} disabled={isDisabled} onClick={handleClick}>
@@ -122,11 +126,10 @@ export const AtomStereoBatchEdit: React.FC<CustomItemProps> = (props) => {
         return true
       }
       const editor = getKetcherInstance().editor as Editor
-      const selectedAtomIds = editor.selection()?.atoms
 
       const stereoAtomIds: undefined | number[] = findStereoAtoms(
         editor.struct(),
-        selectedAtomIds
+        props?.atomIds
       )
       stereoAtomIdsRef.current = stereoAtomIds
 

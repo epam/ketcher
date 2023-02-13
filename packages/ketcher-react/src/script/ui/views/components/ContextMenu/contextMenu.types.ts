@@ -1,22 +1,22 @@
 import { FunctionalGroup } from 'ketcher-core'
-import type { PredicateParams, SubMenuProps } from 'react-contexify'
+import type { ItemProps, PredicateParams } from 'react-contexify'
 
 export type ItemData =
-  | 'for-one-functional-group'
-  | 'for-one-bond'
-  | 'for-one-atom'
-  | 'for-bonds-and-atoms-in-selection'
-  | 'for-functional-groups-in-selection'
+  | 'for-bonds'
+  | 'for-atoms'
+  | 'for-functional-groups'
+  | 'for-selection'
 
 export type ContextMenuShowProps = {
   type: ItemData
-  closestItem?: any
   functionalGroups?: FunctionalGroup[]
-  functionalGroup?: FunctionalGroup
+  bondIds?: number[]
+  atomIds?: number[]
 }
 
-export type CustomItemProps = {
+export type itemEventParams = PredicateParams<ContextMenuShowProps, ItemData>
+
+export interface CustomItemProps {
   data: ItemData
-  hidden: (args: PredicateParams<ContextMenuShowProps, ItemData>) => boolean
+  hidden: (params: itemEventParams) => boolean
 }
-export type CustomSubMenuProps = Omit<SubMenuProps, 'children' | 'label'>

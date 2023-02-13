@@ -27,7 +27,6 @@ import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
 import tools from 'src/script/ui/action/tools'
 import Icon from 'src/script/ui/component/view/icon'
-import { toBondType } from 'src/script/ui/data/convert/structconv'
 import styles from '../ContextMenu.module.less'
 import type {
   ItemData,
@@ -39,8 +38,6 @@ import { formatTitle, getBondNames, noOperation } from './utils'
 const bondNames = getBondNames(tools)
 
 const useDisabled = (hidden?: BooleanPredicate) => {
-  const { getKetcherInstance } = useAppContext()
-
   const isDisabled = useCallback(
     ({
       props,
@@ -55,8 +52,7 @@ const useDisabled = (hidden?: BooleanPredicate) => {
         return true
       }
 
-      const editor = getKetcherInstance().editor as Editor
-      const selectedBondIds = editor.selection()?.bonds
+      const selectedBondIds = props?.bondIds
 
       if (Array.isArray(selectedBondIds) && selectedBondIds.length !== 0) {
         return false
@@ -64,7 +60,7 @@ const useDisabled = (hidden?: BooleanPredicate) => {
 
       return true
     },
-    [getKetcherInstance, hidden]
+    [hidden]
   )
 
   return isDisabled
@@ -74,22 +70,21 @@ export const BondBatchEdit: React.FC<CustomItemProps> = (props) => {
   const { getKetcherInstance } = useAppContext()
   const isDisabled = useDisabled(props.hidden)
 
-  const handleClick = useCallback(async () => {
-    const editor = getKetcherInstance().editor as Editor
-    const defaultBond = toBondType('single')
+  const handleClick = useCallback(
+    async ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
+      const editor = getKetcherInstance().editor as Editor
+      const bondIds = props?.bondIds || []
+      const bond = editor.render.ctab.bonds.get(bondIds[0])?.b
 
-    try {
-      const newBond = await editor.event.bondEdit.dispatch(defaultBond)
-      const selectedBonds = editor.selection()?.bonds
-
-      selectedBonds &&
-        editor.update(
-          fromBondsAttrs(editor.render.ctab, selectedBonds, newBond)
-        )
-    } catch (error) {
-      noOperation()
-    }
-  }, [getKetcherInstance])
+      try {
+        const newBond = await editor.event.bondEdit.dispatch(bond)
+        editor.update(fromBondsAttrs(editor.render.ctab, bondIds, newBond))
+      } catch (error) {
+        noOperation()
+      }
+    },
+    [getKetcherInstance]
+  )
 
   return (
     <Item {...props} disabled={isDisabled} onClick={handleClick}>
@@ -110,15 +105,12 @@ export const BondTypeBatchChange: React.FC<CustomItemProps> = (properties) => {
   const isDisabled = useDisabled(isSubMenuHidden)
 
   const handleClick = useCallback(
-    ({ id }: ItemParams<ContextMenuShowProps, ItemData>) => {
+    ({ id, props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
-      const selectedBonds = editor.selection()?.bonds
+      const bondIds = props?.bondIds || []
       const bondProps = tools[id].action.opts
 
-      selectedBonds &&
-        editor.update(
-          fromBondsAttrs(editor.render.ctab, selectedBonds, bondProps)
-        )
+      editor.update(fromBondsAttrs(editor.render.ctab, bondIds, bondProps))
     },
     [getKetcherInstance]
   )

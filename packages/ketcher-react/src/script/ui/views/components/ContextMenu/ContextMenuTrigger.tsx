@@ -22,23 +22,9 @@ import Editor from 'src/script/editor'
 import { CONTEXT_MENU_ID } from './ContextMenu'
 import type { ContextMenuShowProps } from './contextMenu.types'
 
-/**
- * Initially, library itself should find a proper position for a menu
- * But sometimes it doesn't work correctly, so that's why fix is applied
- */
-const fixContextMenuPosition = () => {
-  const contextMenu: HTMLDivElement | null = document.querySelector(
-    `.${CONTEXT_MENU_ID}`
-  )
-  if (contextMenu) {
-    const computedStyles = getComputedStyle(contextMenu)
-    const contextMenuHeight = parseInt(computedStyles.height)
-    const currentTopPosition = parseInt(contextMenu.style.top)
-    const screenSize = document.body.clientHeight
-    if (currentTopPosition + contextMenuHeight > screenSize) {
-      contextMenu.style.top = screenSize - contextMenuHeight + 'px'
-    }
-  }
+function onlyHasProperty<T extends object>(checkedObject: T, key: keyof T) {
+  const numberOfProps = Object.keys(checkedObject).length
+  return numberOfProps === 1 && key in checkedObject
 }
 
 const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
@@ -80,26 +66,45 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
       const selection = editor.selection()
       const functionalGroupsInSelection = getSelectedFunctionalGroups()
 
+      let showProps: ContextMenuShowProps
+
       if (selection) {
         if (functionalGroupsInSelection.size > 0) {
           const functionalGroups = Array.from(
             functionalGroupsInSelection.values()
           )
-
-          const showProps: ContextMenuShowProps = {
-            type: 'for-functional-groups-in-selection',
+          showProps = {
+            type: 'for-functional-groups',
             functionalGroups
           }
-
+          show({
+            event,
+            props: showProps
+          })
+        } else if (onlyHasProperty(selection, 'bonds')) {
+          showProps = {
+            type: 'for-bonds',
+            bondIds: selection.bonds
+          }
+          show({
+            event,
+            props: showProps
+          })
+        } else if (onlyHasProperty(selection, 'atoms')) {
+          showProps = {
+            type: 'for-atoms',
+            atomIds: selection.atoms
+          }
           show({
             event,
             props: showProps
           })
         } else {
-          const showProps: ContextMenuShowProps = {
-            type: 'for-bonds-and-atoms-in-selection'
+          showProps = {
+            type: 'for-selection',
+            bondIds: selection.bonds,
+            atomIds: selection.atoms
           }
-
           show({
             event,
             props: showProps
@@ -118,13 +123,16 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
                 true
               )
 
-              const showProps: ContextMenuShowProps =
+              showProps =
                 functionalGroup === null
                   ? {
-                      type: 'for-one-bond',
-                      closestItem
+                      type: 'for-bonds',
+                      bondIds: [closestItem.id]
                     }
-                  : { type: 'for-one-functional-group', functionalGroup }
+                  : {
+                      type: 'for-functional-groups',
+                      functionalGroups: [functionalGroup]
+                    }
 
               show({
                 event,
@@ -140,13 +148,16 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
               true
             )
 
-            const showProps: ContextMenuShowProps =
+            showProps =
               functionalGroup === null
                 ? {
-                    type: 'for-one-atom',
-                    closestItem
+                    type: 'for-atoms',
+                    atomIds: [closestItem.id]
                   }
-                : { type: 'for-one-functional-group', functionalGroup }
+                : {
+                    type: 'for-functional-groups',
+                    functionalGroups: [functionalGroup]
+                  }
 
             show({
               event,
@@ -161,11 +172,11 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
             const functionalGroup = FunctionalGroup.findFunctionalGroupBySGroup(
               struct.functionalGroups,
               sGroup
-            )
+            ) as FunctionalGroup
 
             const showProps: ContextMenuShowProps = {
-              type: 'for-one-functional-group',
-              functionalGroup
+              type: 'for-functional-groups',
+              functionalGroups: [functionalGroup]
             }
 
             functionalGroup &&
@@ -177,7 +188,6 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
           }
         }
       }
-      fixContextMenuPosition()
     },
     [getKetcherInstance, getSelectedFunctionalGroups, show]
   )

@@ -24,7 +24,6 @@ import { BatchDelete } from './items/BatchDelete'
 import { BondBatchEdit, BondTypeBatchChange } from './items/BondBatchOperations'
 import BondSingleOperations from './items/BondSingleOperations'
 import FunctionalGroupBatchOperations from './items/FunctionalGroupBatchOperations'
-import FunctionalGroupOperations from './items/FunctionalGroupOperations'
 
 export const CONTEXT_MENU_ID = 'ketcherContextMenu'
 
@@ -37,40 +36,21 @@ const isHidden = ({
 
 const ContextMenu: React.FC = () => {
   return (
-    <Menu
-      id={CONTEXT_MENU_ID}
-      animation={false}
-      className={`${CONTEXT_MENU_ID} ${styles.contextMenu}`}
-    >
-      <BondSingleOperations data="for-one-bond" hidden={isHidden} />
+    <Menu id={CONTEXT_MENU_ID} animation={false} className={styles.contextMenu}>
+      <BondSingleOperations data="for-bonds" hidden={isHidden} />
+      <BatchDelete data="for-bonds" hidden={isHidden} />
 
-      <AtomSingleOperations data="for-one-atom" hidden={isHidden} />
+      <AtomSingleOperations data="for-atoms" hidden={isHidden} />
+      <BatchDelete data="for-atoms" hidden={isHidden} />
 
-      <FunctionalGroupOperations
-        data="for-one-functional-group"
-        hidden={isHidden}
-      />
-
-      <BondBatchEdit
-        data="for-bonds-and-atoms-in-selection"
-        hidden={isHidden}
-      />
-      <AtomBatchEdit
-        data="for-bonds-and-atoms-in-selection"
-        hidden={isHidden}
-      />
-      <BondTypeBatchChange
-        data="for-bonds-and-atoms-in-selection"
-        hidden={isHidden}
-      />
-      <AtomStereoBatchEdit
-        data="for-bonds-and-atoms-in-selection"
-        hidden={isHidden}
-      />
-      <BatchDelete data="for-bonds-and-atoms-in-selection" hidden={isHidden} />
+      <BondBatchEdit data="for-selection" hidden={isHidden} />
+      <AtomBatchEdit data="for-selection" hidden={isHidden} />
+      <BondTypeBatchChange data="for-selection" hidden={isHidden} />
+      <AtomStereoBatchEdit data="for-selection" hidden={isHidden} />
+      <BatchDelete data="for-selection" hidden={isHidden} />
 
       <FunctionalGroupBatchOperations
-        data="for-functional-groups-in-selection"
+        data="for-functional-groups"
         hidden={isHidden}
       />
     </Menu>

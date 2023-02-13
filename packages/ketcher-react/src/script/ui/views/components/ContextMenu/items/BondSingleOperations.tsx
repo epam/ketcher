@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromBondsAttrs, fromOneBondDeletion } from 'ketcher-core'
+import { fromBondsAttrs } from 'ketcher-core'
 import { useCallback } from 'react'
 import type {
   BooleanPredicate,
@@ -51,12 +51,12 @@ const BondSingleOperations: React.FC<BondSingleOperationsProps> = (
   const handleEdit = useCallback(
     async ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
-      const bondId = props?.closestItem.id
-      const bond = editor.render.ctab.bonds.get(bondId)?.b
+      const bondIds = props?.bondIds || []
+      const bond = editor.render.ctab.bonds.get(bondIds[0])?.b
 
       try {
         const newBond = await editor.event.bondEdit.dispatch(bond)
-        editor.update(fromBondsAttrs(editor.render.ctab, bondId, newBond))
+        editor.update(fromBondsAttrs(editor.render.ctab, bondIds, newBond))
       } catch (error) {
         noOperation()
       }
@@ -64,23 +64,13 @@ const BondSingleOperations: React.FC<BondSingleOperationsProps> = (
     [getKetcherInstance]
   )
 
-  const handleDelete = useCallback(
-    ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
-      const editor = getKetcherInstance().editor as Editor
-      const bondId = props?.closestItem.id
-
-      editor.update(fromOneBondDeletion(editor.render.ctab, bondId))
-    },
-    [getKetcherInstance]
-  )
-
   const handleTypeChange = useCallback(
     ({ id, props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
-      const bondId = props?.closestItem.id
+      const bondIds = props?.bondIds || []
       const bondProps = tools[id].action.opts
 
-      editor.update(fromBondsAttrs(editor.render.ctab, bondId, bondProps))
+      editor.update(fromBondsAttrs(editor.render.ctab, bondIds, bondProps))
     },
     [getKetcherInstance]
   )
@@ -117,10 +107,10 @@ const BondSingleOperations: React.FC<BondSingleOperationsProps> = (
           </Item>
         ))}
       </Submenu>
-
+      {/* 
       <Item {...properties} onClick={handleDelete}>
         Delete
-      </Item>
+      </Item> */}
     </>
   )
 }

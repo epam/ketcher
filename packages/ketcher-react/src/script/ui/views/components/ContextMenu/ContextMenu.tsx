@@ -37,7 +37,11 @@ const isHidden = ({
 
 const ContextMenu: React.FC = () => {
   return (
-    <Menu id={CONTEXT_MENU_ID} animation={false} className={styles.contextMenu}>
+    <Menu
+      id={CONTEXT_MENU_ID}
+      animation={false}
+      className={`${CONTEXT_MENU_ID} ${styles.contextMenu}`}
+    >
       <BondSingleOperations data="for-one-bond" hidden={isHidden} />
 
       <AtomSingleOperations data="for-one-atom" hidden={isHidden} />

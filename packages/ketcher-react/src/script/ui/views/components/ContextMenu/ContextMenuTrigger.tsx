@@ -22,6 +22,25 @@ import Editor from 'src/script/editor'
 import { CONTEXT_MENU_ID } from './ContextMenu'
 import type { ContextMenuShowProps } from './contextMenu.types'
 
+/**
+ * Initially, library itself should find a proper position for a menu
+ * But sometimes it doesn't work correctly, so that's why fix is applied
+ */
+const fixContextMenuPosition = () => {
+  const contextMenu: HTMLDivElement | null = document.querySelector(
+    `.${CONTEXT_MENU_ID}`
+  )
+  if (contextMenu) {
+    const computedStyles = getComputedStyle(contextMenu)
+    const contextMenuHeight = parseInt(computedStyles.height)
+    const currentTopPosition = parseInt(contextMenu.style.top)
+    const screenSize = document.body.clientHeight
+    if (currentTopPosition + contextMenuHeight > screenSize) {
+      contextMenu.style.top = screenSize - contextMenuHeight + 'px'
+    }
+  }
+}
+
 const ContextMenuTrigger: React.FC = ({ children }) => {
   const { getKetcherInstance } = useAppContext()
   const { show, hideAll } = useContextMenu<ContextMenuShowProps>({
@@ -128,6 +147,7 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
           props: { selected: false, closestItem }
         })
       }
+      fixContextMenuPosition()
     },
     [getKetcherInstance, hasConflictWithFunctionalGroupMenu, hideAll, show]
   )

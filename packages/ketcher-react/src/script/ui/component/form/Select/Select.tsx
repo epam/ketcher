@@ -75,7 +75,7 @@ const Select = ({
     >
       {options &&
         options.map((option) => {
-          const isDivider =
+          const isDivider: boolean =
             typeof option?.value === 'string'
               ? option.value.includes('Divider')
               : false

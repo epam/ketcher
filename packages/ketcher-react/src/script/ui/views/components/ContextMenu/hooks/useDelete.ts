@@ -1,27 +1,22 @@
 import { fromFragmentDeletion } from 'ketcher-core'
 import { useCallback } from 'react'
-import { Item, ItemParams } from 'react-contexify'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
-import {
-  ContextMenuShowProps,
-  CustomItemProps,
-  ItemData
-} from '../contextMenu.types'
+import { ItemEventParams } from '../contextMenu.types'
 
-export const BatchDelete: React.FC<CustomItemProps> = (props) => {
+const useDelete = () => {
   const { getKetcherInstance } = useAppContext()
 
-  const handleClick = useCallback(
-    async ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
+  const handler = useCallback(
+    async ({ props }: ItemEventParams) => {
       const editor = getKetcherInstance().editor as Editor
-
+      const molecule = editor.render.ctab
       const itemsToDelete = editor.selection() || {
         bonds: props?.bondIds,
         atoms: props?.atomIds
       }
 
-      const action = fromFragmentDeletion(editor.render.ctab, itemsToDelete)
+      const action = fromFragmentDeletion(molecule, itemsToDelete)
       editor.update(action)
 
       editor.selection(null)
@@ -29,9 +24,7 @@ export const BatchDelete: React.FC<CustomItemProps> = (props) => {
     [getKetcherInstance]
   )
 
-  return (
-    <Item {...props} onClick={handleClick}>
-      Delete
-    </Item>
-  )
+  return handler
 }
+
+export default useDelete

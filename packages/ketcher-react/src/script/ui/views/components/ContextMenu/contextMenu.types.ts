@@ -1,5 +1,5 @@
 import { FunctionalGroup } from 'ketcher-core'
-import type { ItemProps, PredicateParams } from 'react-contexify'
+import type { PredicateParams } from 'react-contexify'
 
 export type ItemData =
   | 'for-bonds'
@@ -14,9 +14,8 @@ export type ContextMenuShowProps = {
   atomIds?: number[]
 }
 
-export type itemEventParams = PredicateParams<ContextMenuShowProps, ItemData>
+export type ItemEventParams = PredicateParams<ContextMenuShowProps, ItemData>
 
 export interface CustomItemProps {
   data: ItemData
-  hidden: (params: itemEventParams) => boolean
 }

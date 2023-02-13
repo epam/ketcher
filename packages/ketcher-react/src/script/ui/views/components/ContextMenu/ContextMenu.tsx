@@ -14,45 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Menu, PredicateParams } from 'react-contexify'
+import { Menu } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
 import styles from './ContextMenu.module.less'
-import { ContextMenuShowProps, ItemData } from './contextMenu.types'
-import { AtomBatchEdit, AtomStereoBatchEdit } from './items/AtomBatchOperations'
-import AtomSingleOperations from './items/AtomSingleOperations'
-import { BatchDelete } from './items/BatchDelete'
-import { BondBatchEdit, BondTypeBatchChange } from './items/BondBatchOperations'
-import BondSingleOperations from './items/BondSingleOperations'
-import FunctionalGroupBatchOperations from './items/FunctionalGroupBatchOperations'
+import AtomMenuItems from './menuItems/AtomMenuItems'
+import BondMenuItems from './menuItems/BondMenuItems'
+import FunctionalGroupMenuItems from './menuItems/FunctionalGroupMenuItems'
+import SelectionMenuItems from './menuItems/SelectionMenuItems'
 
 export const CONTEXT_MENU_ID = 'ketcherContextMenu'
-
-const isHidden = ({
-  props,
-  data
-}: PredicateParams<ContextMenuShowProps, ItemData>) => {
-  return props?.type !== data
-}
 
 const ContextMenu: React.FC = () => {
   return (
     <Menu id={CONTEXT_MENU_ID} animation={false} className={styles.contextMenu}>
-      <BondSingleOperations data="for-bonds" hidden={isHidden} />
-      <BatchDelete data="for-bonds" hidden={isHidden} />
-
-      <AtomSingleOperations data="for-atoms" hidden={isHidden} />
-      <BatchDelete data="for-atoms" hidden={isHidden} />
-
-      <BondBatchEdit data="for-selection" hidden={isHidden} />
-      <AtomBatchEdit data="for-selection" hidden={isHidden} />
-      <BondTypeBatchChange data="for-selection" hidden={isHidden} />
-      <AtomStereoBatchEdit data="for-selection" hidden={isHidden} />
-      <BatchDelete data="for-selection" hidden={isHidden} />
-
-      <FunctionalGroupBatchOperations
-        data="for-functional-groups"
-        hidden={isHidden}
-      />
+      <BondMenuItems data="for-bonds" />
+      <AtomMenuItems data="for-atoms" />
+      <SelectionMenuItems data="for-selection" />
+      <FunctionalGroupMenuItems data="for-functional-groups" />
     </Menu>
   )
 }

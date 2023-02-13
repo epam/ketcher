@@ -75,7 +75,12 @@ const Select = ({
     >
       {options &&
         options.map((option) => {
-          return option.value.includes('Divider') ? (
+          const isDivider: boolean =
+            typeof option?.value === 'string'
+              ? option.value.includes('Divider')
+              : false
+
+          return isDivider ? (
             <Divider className={styles.listDivider} key={option.value} />
           ) : (
             <MenuItem

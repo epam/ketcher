@@ -35,9 +35,9 @@
     "ketcher-react": "workspace:*",
     "ketcher-standalone": "workspace:*",
     "normalize.css": "^8.0.1",
-    "react": "^17.0.2",
+    "react": "^18.2.0",
     "react-app-polyfill": "^2.0.0",
-    "react-dom": "^17.0.2"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",
@@ -45,8 +45,8 @@
     "@testing-library/user-event": "^7.2.1",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.12",
-    "@types/react": "^17.0.37",
-    "@types/react-dom": "^17.0.11",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.8",
     "@welldone-software/why-did-you-render": "^4.3.1",
     "cross-env": "^7.0.3",
     "customize-cra": "^1.0.0",

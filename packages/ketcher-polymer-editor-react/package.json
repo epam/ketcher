@@ -42,8 +42,8 @@
     "stylelint:fix": "stylelint \"./**/*.{css,less}\" --formatter verbose --fix"
   },
   "peerDependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "dependencies": {
     "@babel/runtime": "^7.17.9",
@@ -80,8 +80,8 @@
     "@types/jest": "^27.0.3",
     "@types/lodash": "^4.14.178",
     "@types/node": "^16.11.12",
-    "@types/react": "^17.0.37",
-    "@types/react-dom": "^17.0.11",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.8",
     "@types/testing-library__jest-dom": "^5.14.2",
     "autoprefixer": "^10.2.5",
     "babel-jest": "^27.4.5",

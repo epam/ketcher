@@ -14,28 +14,61 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Menu } from 'react-contexify'
+import { Menu, PredicateParams } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
 import styles from './ContextMenu.module.less'
+import { ContextMenuShowProps, ItemData } from './contextMenu.types'
 import { AtomBatchEdit, AtomStereoBatchEdit } from './items/AtomBatchOperations'
 import AtomSingleOperations from './items/AtomSingleOperations'
 import { BatchDelete } from './items/BatchDelete'
 import { BondBatchEdit, BondTypeBatchChange } from './items/BondBatchOperations'
 import BondSingleOperations from './items/BondSingleOperations'
+import FunctionalGroupBatchOperations from './items/FunctionalGroupBatchOperations'
+import FunctionalGroupOperations from './items/FunctionalGroupOperations'
 
-export const CONTEXT_MENU_ID = 'ketcherBondAndAtomContextMenu'
+export const CONTEXT_MENU_ID = 'ketcherContextMenu'
+
+const isHidden = ({
+  props,
+  data
+}: PredicateParams<ContextMenuShowProps, ItemData>) => {
+  return props?.type !== data
+}
 
 const ContextMenu: React.FC = () => {
   return (
     <Menu id={CONTEXT_MENU_ID} animation={false} className={styles.contextMenu}>
-      <BondSingleOperations />
-      <AtomSingleOperations />
+      <BondSingleOperations data="for-one-bond" hidden={isHidden} />
 
-      <BondBatchEdit />
-      <AtomBatchEdit />
-      <BondTypeBatchChange />
-      <AtomStereoBatchEdit />
-      <BatchDelete />
+      <AtomSingleOperations data="for-one-atom" hidden={isHidden} />
+
+      <FunctionalGroupOperations
+        data="for-one-functional-group"
+        hidden={isHidden}
+      />
+
+      <BondBatchEdit
+        data="for-bonds-and-atoms-in-selection"
+        hidden={isHidden}
+      />
+      <AtomBatchEdit
+        data="for-bonds-and-atoms-in-selection"
+        hidden={isHidden}
+      />
+      <BondTypeBatchChange
+        data="for-bonds-and-atoms-in-selection"
+        hidden={isHidden}
+      />
+      <AtomStereoBatchEdit
+        data="for-bonds-and-atoms-in-selection"
+        hidden={isHidden}
+      />
+      <BatchDelete data="for-bonds-and-atoms-in-selection" hidden={isHidden} />
+
+      <FunctionalGroupBatchOperations
+        data="for-functional-groups-in-selection"
+        hidden={isHidden}
+      />
     </Menu>
   )
 }

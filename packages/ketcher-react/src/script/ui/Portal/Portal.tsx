@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CSSProperties, Component } from 'react'
+import { CSSProperties, Component, ReactNode } from 'react'
 
 import ReactDOM from 'react-dom'
 
@@ -24,6 +24,7 @@ interface PortalProps {
   isOpen: boolean
   className?: string
   style?: CSSProperties
+  children: ReactNode
 }
 
 type Props = PortalProps

@@ -1,16 +1,21 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 
 import ColorPicker from './ColorPicker'
 
-const openPreset = () => {
+const openPreset = async () => {
   const presetToggleBtn = screen.getByTestId('color-picker-preview')
   userEvent.click(presetToggleBtn)
+  const preset = await screen.findByTestId('color-picker-preset')
+  await waitFor(() => expect(preset).toBeInTheDocument())
 }
-const openPalette = () => {
+const openPalette = async () => {
   const pickerToggleBtn = screen.getByTestId('color-picker-btn')
   userEvent.click(pickerToggleBtn)
+  const palette = await screen.findByTestId('color-palette')
+  await waitFor(() => expect(palette).toBeInTheDocument())
 }
 
 describe('should be rendered correctly', () => {
@@ -21,32 +26,33 @@ describe('should be rendered correctly', () => {
 })
 
 describe('should toggle color picker dialog', () => {
-  it('should show color preset on click', () => {
+  it('should show color preset on click', async () => {
     const { container } = render(<ColorPicker />)
-    openPreset()
+    await openPreset()
     expect(
       container.getElementsByClassName('classes.colorPickerWrap')
     ).toBeDefined()
   })
 
-  it('should show color picker dialog on click', () => {
+  it('should show color picker dialog on click', async () => {
     const { container } = render(<ColorPicker />)
-    openPreset()
-    openPalette()
+    await openPreset()
+    await openPalette()
     expect(container.getElementsByClassName('react-colorful')[0]).toBeDefined()
   })
 
   it('should hide color picker dialog on click outside picker', async () => {
     const { container } = render(<ColorPicker />)
-    openPreset()
-    openPalette()
-    const overlay = screen.getByTestId('color-picker-field')
+    await openPreset()
+    await openPalette()
+    const overlay = screen.getByTestId('color-picker-field-open')
     await new Promise((resolve) => {
       setTimeout(() => {
         userEvent.click(overlay)
         resolve()
       }, 300)
     })
+    expect(await screen.findByTestId('color-picker-field')).toBeInTheDocument()
 
     expect(
       container.getElementsByClassName('react-colorful')[0]
@@ -55,13 +61,13 @@ describe('should toggle color picker dialog', () => {
 })
 
 describe('should pick color correctly', () => {
-  it('should call onChange callback with picked color', () => {
+  it('should call onChange callback with picked color', async () => {
     const onChange = jest.fn()
     render(<ColorPicker onChange={onChange} />)
-    openPreset()
-    openPalette()
+    await openPreset()
+    await openPalette()
     const colorInput = screen.getByTestId('color-picker-input')
-    userEvent.type(colorInput, '#4d4d4d')
+    fireEvent.change(colorInput, { target: { value: '#4d4d4d' } })
     expect(onChange).toBeCalledWith('#4d4d4d')
   })
 

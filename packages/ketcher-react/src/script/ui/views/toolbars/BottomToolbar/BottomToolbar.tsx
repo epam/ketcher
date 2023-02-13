@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC } from 'react'
+import { FC, PropsWithChildren } from 'react'
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -25,9 +25,10 @@ import { TemplatesList } from './TemplatesList'
 import classes from './BottomToolbar.module.less'
 import clsx from 'clsx'
 
-const Group: FC<{ className?: string }> = ({ children, className }) => (
-  <div className={clsx(classes.group, className)}>{children}</div>
-)
+const Group: FC<{ className?: string } & PropsWithChildren> = ({
+  children,
+  className
+}) => <div className={clsx(classes.group, className)}>{children}</div>
 
 interface BottomToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {

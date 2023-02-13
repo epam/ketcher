@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromBondsAttrs, fromOneBondDeletion } from 'ketcher-core'
+import { fromBondsAttrs } from 'ketcher-core'
 import { useCallback } from 'react'
-import type { ItemParams, PredicateParams } from 'react-contexify'
+import type { ItemParams } from 'react-contexify'
 import { Item, Submenu } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
 import { useAppContext } from 'src/hooks'
@@ -40,12 +40,12 @@ const BondSingleOperations: React.FC = (props) => {
   const handleEdit = useCallback(
     async ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
-      const bondId = props?.closestItem.id
-      const bond = editor.render.ctab.bonds.get(bondId)?.b
+      const bondIds = props?.bondIds || []
+      const bond = editor.render.ctab.bonds.get(bondIds[0])?.b
 
       try {
         const newBond = await editor.event.bondEdit.dispatch(bond)
-        editor.update(fromBondsAttrs(editor.render.ctab, bondId, newBond))
+        editor.update(fromBondsAttrs(editor.render.ctab, bondIds, newBond))
       } catch (error) {
         noOperation()
       }
@@ -53,58 +53,31 @@ const BondSingleOperations: React.FC = (props) => {
     [getKetcherInstance]
   )
 
-  const handleDelete = useCallback(
-    ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
-      const editor = getKetcherInstance().editor as Editor
-      const bondId = props?.closestItem.id
-
-      editor.update(fromOneBondDeletion(editor.render.ctab, bondId))
-    },
-    [getKetcherInstance]
-  )
-
   const handleTypeChange = useCallback(
     ({ id, props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
-      const bondId = props?.closestItem.id
+      const bondIds = props?.bondIds || []
       const bondProps = tools[id].action.opts
 
-      editor.update(fromBondsAttrs(editor.render.ctab, bondId, bondProps))
+      editor.update(fromBondsAttrs(editor.render.ctab, bondIds, bondProps))
     },
     [getKetcherInstance]
-  )
-
-  const isHidden = useCallback(
-    ({ props }: PredicateParams<ContextMenuShowProps, ItemData>) =>
-      props?.selected || props?.closestItem.map === 'atoms',
-    []
   )
 
   return (
     <>
-      <Item {...props} hidden={isHidden} onClick={handleEdit}>
+      <Item {...props} onClick={handleEdit}>
         Edit...
       </Item>
 
       {nonQueryBondNames.map((name) => (
-        <Item
-          {...props}
-          hidden={isHidden}
-          id={name}
-          onClick={handleTypeChange}
-          key={name}
-        >
+        <Item {...props} id={name} onClick={handleTypeChange} key={name}>
           <Icon name={name} className={styles.icon} />
           <span>{formatTitle(tools[name].title)}</span>
         </Item>
       ))}
 
-      <Submenu
-        {...props}
-        label="Query bonds"
-        hidden={isHidden}
-        className={styles.subMenu}
-      >
+      <Submenu {...props} label="Query bonds" className={styles.subMenu}>
         {queryBondNames.map((name) => (
           <Item id={name} onClick={handleTypeChange} key={name}>
             <Icon name={name} className={styles.icon} />
@@ -112,10 +85,10 @@ const BondSingleOperations: React.FC = (props) => {
           </Item>
         ))}
       </Submenu>
-
-      <Item {...props} hidden={isHidden} onClick={handleDelete}>
+      {/* 
+      <Item {...properties} onClick={handleDelete}>
         Delete
-      </Item>
+      </Item> */}
     </>
   )
 }

@@ -14,55 +14,53 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  findStereoAtoms,
-  fromAtomsAttrs,
-  fromOneAtomDeletion
-} from 'ketcher-core'
-import { useCallback } from 'react'
+import { findStereoAtoms } from 'ketcher-core'
+import { useCallback, useRef } from 'react'
 import type { ItemParams, PredicateParams } from 'react-contexify'
 import { Item } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
 import EnhancedStereoTool from 'src/script/editor/tool/enhanced-stereo'
+import { mapAtomIdsToAtoms } from 'src/script/editor/tool/select'
+import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import type { ItemData, ContextMenuShowProps } from '../contextMenu.types'
 import { noOperation } from './utils'
 
 const AtomSingleOperations: React.FC = (props) => {
   const { getKetcherInstance } = useAppContext()
+  const stereoAtomIdsRef = useRef<number[] | undefined>()
 
   const handleEdit = useCallback(
     async ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
-      const atomId = props?.closestItem.id
-      const atom = editor.render.ctab.atoms.get(atomId)?.a
+      const molecule = editor.render.ctab
+      const atomIds = props?.atomIds || []
+      const atoms = mapAtomIdsToAtoms(atomIds, molecule)
 
-      try {
-        const newAtom = await editor.event.elementEdit.dispatch(atom)
-        editor.update(
-          fromAtomsAttrs(editor.render.ctab, atomId, newAtom, false)
-        )
-      } catch (error) {
-        noOperation()
-      }
+      const newAtom = editor.event.elementEdit.dispatch(atoms)
+
+      updateSelectedAtoms({
+        selection: { atoms },
+        changeAtomPromise: newAtom,
+        editor
+      })
     },
     [getKetcherInstance]
   )
 
   const handleStereoEdit = useCallback(
     async ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
-      if (!props) {
+      if (!props || !stereoAtomIdsRef.current) {
         return
       }
 
       const editor = getKetcherInstance().editor as Editor
-      const stereoAtomId: number = props.closestItem.id
 
       try {
         const action = await EnhancedStereoTool.changeAtomsStereoAction(
           editor,
-          [stereoAtomId]
+          stereoAtomIdsRef.current
         )
 
         action && editor.update(action)
@@ -73,63 +71,37 @@ const AtomSingleOperations: React.FC = (props) => {
     [getKetcherInstance]
   )
 
-  const handleDelete = useCallback(
-    ({ props }: ItemParams<ContextMenuShowProps, ItemData>) => {
-      const editor = getKetcherInstance().editor as Editor
-      const atomId = props?.closestItem.id
-      editor.update(fromOneAtomDeletion(editor.render.ctab, atomId))
-    },
-    [getKetcherInstance]
-  )
-
-  const isHidden = useCallback(
-    ({ props }: PredicateParams<ContextMenuShowProps, ItemData>) =>
-      props?.selected || props?.closestItem.map === 'bonds',
-    []
-  )
-
   const isStereoDisabled = useCallback(
-    ({
-      props,
-      triggerEvent
-    }: PredicateParams<ContextMenuShowProps, ItemData>) => {
-      if (!props || isHidden({ props, triggerEvent })) {
-        return true
-      }
-
+    ({ props }: PredicateParams<ContextMenuShowProps, ItemData>) => {
       const editor = getKetcherInstance().editor as Editor
-      const stereoAtoms: undefined | number[] = findStereoAtoms(
+      const stereoAtomIds: undefined | number[] = findStereoAtoms(
         editor.struct(),
-        [props.closestItem.id]
+        props?.atomIds
       )
+      stereoAtomIdsRef.current = stereoAtomIds
 
-      if (Array.isArray(stereoAtoms) && stereoAtoms.length !== 0) {
+      if (Array.isArray(stereoAtomIds) && stereoAtomIds.length !== 0) {
         return false
       }
 
       return true
     },
-    [getKetcherInstance, isHidden]
+    [getKetcherInstance]
   )
 
   return (
     <>
-      <Item {...props} hidden={isHidden} onClick={handleEdit}>
+      <Item {...props} onClick={handleEdit}>
         Edit...
       </Item>
 
-      <Item
-        {...props}
-        hidden={isHidden}
-        disabled={isStereoDisabled}
-        onClick={handleStereoEdit}
-      >
+      <Item {...props} disabled={isStereoDisabled} onClick={handleStereoEdit}>
         Enhanced stereochemistry...
       </Item>
-
-      <Item {...props} hidden={isHidden} onClick={handleDelete}>
+      {/* 
+      <Item {...properties} onClick={handleDelete}>
         Delete
-      </Item>
+      </Item> */}
     </>
   )
 }

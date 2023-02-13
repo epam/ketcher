@@ -22,23 +22,9 @@ import Editor from 'src/script/editor'
 import { CONTEXT_MENU_ID } from './ContextMenu'
 import type { ContextMenuShowProps } from './contextMenu.types'
 
-/**
- * Initially, library itself should find a proper position for a menu
- * But sometimes it doesn't work correctly, so that's why fix is applied
- */
-const fixContextMenuPosition = () => {
-  const contextMenu: HTMLDivElement | null = document.querySelector(
-    `.${CONTEXT_MENU_ID}`
-  )
-  if (contextMenu) {
-    const computedStyles = getComputedStyle(contextMenu)
-    const contextMenuHeight = parseInt(computedStyles.height)
-    const currentTopPosition = parseInt(contextMenu.style.top)
-    const screenSize = document.body.clientHeight
-    if (currentTopPosition + contextMenuHeight > screenSize) {
-      contextMenu.style.top = screenSize - contextMenuHeight + 'px'
-    }
-  }
+function onlyHasProperty<T extends object>(checkedObject: T, key: keyof T) {
+  const numberOfProps = Object.keys(checkedObject).length
+  return numberOfProps === 1 && key in checkedObject
 }
 
 const ContextMenuTrigger: React.FC = ({ children }) => {
@@ -110,44 +96,74 @@ const ContextMenuTrigger: React.FC = ({ children }) => {
       const editor = getKetcherInstance().editor as Editor
       const closestItem = editor.findItem(event, null)
 
-      if (!closestItem) {
-        hideAll()
-        return
-      }
-
       if (hasConflictWithFunctionalGroupMenu(closestItem)) {
         hideAll()
         return
       }
 
       const selection = editor.selection()
-      const isRightClickingSelection: number | undefined = selection?.[
-        closestItem.map
-      ]?.findIndex((selectedItemId) => selectedItemId === closestItem.id)
+      let showProps: ContextMenuShowProps
 
-      if (
-        isRightClickingSelection !== undefined &&
-        isRightClickingSelection !== -1
-      ) {
-        // Show menu items for batch updates
-        show({
-          event,
-          props: {
-            selected: true,
-            closestItem
+      if (selection) {
+        if (onlyHasProperty(selection, 'bonds')) {
+          showProps = {
+            type: 'for-bonds',
+            bondIds: selection.bonds
           }
-        })
-      } else if (closestItem.map === 'bonds' || closestItem.map === 'atoms') {
-        // Show menu items for single update
-        if (selection) {
-          editor.render.ctab.setSelection(null)
+          show({
+            event,
+            props: showProps
+          })
+        } else if (onlyHasProperty(selection, 'atoms')) {
+          showProps = {
+            type: 'for-atoms',
+            atomIds: selection.atoms
+          }
+          show({
+            event,
+            props: showProps
+          })
+        } else {
+          showProps = {
+            type: 'for-selection',
+            bondIds: selection.bonds,
+            atomIds: selection.atoms
+          }
+          show({
+            event,
+            props: showProps
+          })
         }
-        show({
-          event,
-          props: { selected: false, closestItem }
-        })
+      } else if (closestItem) {
+        const struct = editor.struct()
+
+        switch (closestItem.map) {
+          case 'bonds':
+            showProps = {
+              type: 'for-bonds',
+              bondIds: [closestItem.id]
+            }
+
+            show({
+              event,
+              props: showProps
+            })
+            break
+
+          case 'atoms': {
+            showProps = {
+              type: 'for-atoms',
+              atomIds: [closestItem.id]
+            }
+
+            show({
+              event,
+              props: showProps
+            })
+            break
+          }
+        }
       }
-      fixContextMenuPosition()
     },
     [getKetcherInstance, hasConflictWithFunctionalGroupMenu, hideAll, show]
   )

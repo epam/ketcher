@@ -25,21 +25,22 @@ import BondSingleOperations from './items/BondSingleOperations'
 
 export const CONTEXT_MENU_ID = 'ketcherBondAndAtomContextMenu'
 
+const isHidden = () => true
+
 const ContextMenu: React.FC = () => {
   return (
-    <Menu
-      id={CONTEXT_MENU_ID}
-      animation={false}
-      className={`${CONTEXT_MENU_ID} ${styles.contextMenu}`}
-    >
+    <Menu id={CONTEXT_MENU_ID} animation={false} className={styles.contextMenu}>
       <BondSingleOperations />
-      <AtomSingleOperations />
+      <BatchDelete data="for-bonds" hidden={isHidden} />
 
-      <BondBatchEdit />
-      <AtomBatchEdit />
+      <AtomSingleOperations />
+      <BatchDelete data="for-atoms" hidden={isHidden} />
+
+      <BondBatchEdit data="for-selection" hidden={isHidden} />
+      <AtomBatchEdit data="for-selection" hidden={isHidden} />
       <BondTypeBatchChange />
-      <AtomStereoBatchEdit />
-      <BatchDelete />
+      <AtomStereoBatchEdit data="for-selection" hidden={isHidden} />
+      <BatchDelete data="for-selection" hidden={isHidden} />
     </Menu>
   )
 }

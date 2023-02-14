@@ -67,10 +67,10 @@ function mergeBondsParams(struct1, bond1, struct2, bond2) {
  */
 function getOnlyNonGroupItems(items, struct) {
   const atoms =
-    items.atoms?.filter((key) => struct.getGroupIdFromAtomId(key)) === null ||
+    items.atoms?.filter((key) => struct.getGroupIdFromAtomId(key) === null) ||
     []
   const bonds =
-    items.bonds?.filter((key) => struct.getGroupIdFromBondId(key)) === null ||
+    items.bonds?.filter((key) => struct.getGroupIdFromBondId(key) === null) ||
     []
 
   return { atoms, bonds }

@@ -59,6 +59,7 @@ class TemplateTool {
     this.template.molecule = frag // preloaded struct
     this.findItems = []
     this.template.xy0 = xy0.scaled(1 / (frag.atoms.size || 1)) // template center
+    this.findItems.push('functionalGroups')
 
     const atom = frag.atoms.get(this.template.aid)
     if (atom) {
@@ -160,8 +161,11 @@ class TemplateTool {
         }
       }
     }
-
-    if (result.length) {
+    if (
+      result.length &&
+      (this.mode !== 'fg' ||
+        SGroup.isSaltOrSolvent(this.template.molecule.name))
+    ) {
       this.editor.event.removeFG.dispatch({ fgIds: result })
       return
     }
@@ -298,6 +302,10 @@ class TemplateTool {
       if (pos0) {
         extraBond = this.mode === 'fg' ? true : Vec2.dist(pos0, pos1) > 1
       }
+    }
+
+    if (!pos0) {
+      return true
     }
 
     // calc angle
@@ -464,6 +472,17 @@ class TemplateTool {
         })
 
         return true
+      } else if (ci.map === 'functionalGroups' && this.mode === 'fg') {
+        const angle = 0
+        const extraBond = false
+        ;[action, pasteItems] = fromTemplateOnAtom(
+          restruct,
+          this.template,
+          ci.id,
+          angle,
+          extraBond
+        )
+        dragCtx.action = action
       }
     }
 

@@ -27,7 +27,11 @@ export const CONTEXT_MENU_ID = 'ketcherBondAndAtomContextMenu'
 
 const ContextMenu: React.FC = () => {
   return (
-    <Menu id={CONTEXT_MENU_ID} animation={false} className={styles.contextMenu}>
+    <Menu
+      id={CONTEXT_MENU_ID}
+      animation={false}
+      className={`${CONTEXT_MENU_ID} ${styles.contextMenu}`}
+    >
       <BondSingleOperations />
       <AtomSingleOperations />
 

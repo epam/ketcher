@@ -17,30 +17,18 @@
 import { Menu } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
 import styles from './ContextMenu.module.less'
-import { AtomBatchEdit, AtomStereoBatchEdit } from './items/AtomBatchOperations'
-import AtomSingleOperations from './items/AtomSingleOperations'
-import { BatchDelete } from './items/BatchDelete'
-import { BondBatchEdit, BondTypeBatchChange } from './items/BondBatchOperations'
-import BondSingleOperations from './items/BondSingleOperations'
+import AtomMenuItems from './menuItems/AtomMenuItems'
+import BondMenuItems from './menuItems/BondMenuItems'
+import SelectionMenuItems from './menuItems/SelectionMenuItems'
 
 export const CONTEXT_MENU_ID = 'ketcherBondAndAtomContextMenu'
-
-const isHidden = () => true
 
 const ContextMenu: React.FC = () => {
   return (
     <Menu id={CONTEXT_MENU_ID} animation={false} className={styles.contextMenu}>
-      <BondSingleOperations />
-      <BatchDelete data="for-bonds" hidden={isHidden} />
-
-      <AtomSingleOperations />
-      <BatchDelete data="for-atoms" hidden={isHidden} />
-
-      <BondBatchEdit data="for-selection" hidden={isHidden} />
-      <AtomBatchEdit data="for-selection" hidden={isHidden} />
-      <BondTypeBatchChange />
-      <AtomStereoBatchEdit data="for-selection" hidden={isHidden} />
-      <BatchDelete data="for-selection" hidden={isHidden} />
+      <BondMenuItems data="for-bonds" />
+      <AtomMenuItems data="for-atoms" />
+      <SelectionMenuItems data="for-selection" />
     </Menu>
   )
 }

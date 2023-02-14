@@ -14,9 +14,8 @@ export type ContextMenuShowProps = {
   atomIds?: number[]
 }
 
-export type itemEventParams = PredicateParams<ContextMenuShowProps, ItemData>
+export type ItemEventParams = PredicateParams<ContextMenuShowProps, ItemData>
 
 export interface CustomItemProps {
   data: ItemData
-  hidden: (params: itemEventParams) => boolean
 }

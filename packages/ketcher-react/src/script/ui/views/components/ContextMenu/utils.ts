@@ -1,6 +1,6 @@
 import { difference } from 'lodash'
 import { PredicateParams } from 'react-contexify'
-import { ContextMenuShowProps, ItemData } from '../contextMenu.types'
+import { ContextMenuShowProps, ItemData } from './contextMenu.types'
 
 /**
  * Remove the word `bond` out of the title
@@ -43,7 +43,3 @@ export const getNonQueryBondNames = (tools) => {
 }
 
 export const noOperation = () => null
-
-export const isBatchOperationHidden = ({
-  props
-}: PredicateParams<ContextMenuShowProps, ItemData>) => !props?.selected

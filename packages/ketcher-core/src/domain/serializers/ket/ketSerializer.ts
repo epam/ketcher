@@ -19,8 +19,8 @@ import { arrowToKet, plusToKet } from './toKet/rxnToKet'
 
 import { Serializer } from '../serializers.types'
 import { headerToKet } from './toKet/headerToKet'
-import { moleculeToKet, sgroupToKet } from './toKet/moleculeToKet'
-import { moleculeToStruct, sgroupToStruct } from './fromKet/moleculeToStruct'
+import { moleculeToKet } from './toKet/moleculeToKet'
+import { moleculeToStruct } from './fromKet/moleculeToStruct'
 import { prepareStructForKet } from './toKet/prepare'
 import { rgroupToKet } from './toKet/rgroupToKet'
 import { rgroupToStruct } from './fromKet/rgroupToStruct'
@@ -64,10 +64,6 @@ function parseNode(node: any, struct: any) {
       textToStruct(node, struct)
       break
     }
-    case 'sgroup': {
-      struct.sgroups.add(sgroupToStruct(node.data))
-      break
-    }
     default:
       break
   }
@@ -85,7 +81,6 @@ export class KetSerializer implements Serializer<Struct> {
       else if (nodes[i].$ref) parseNode(ket[nodes[i].$ref], resultingStruct)
     })
     resultingStruct.name = ket.header ? ket.header.moleculeName : null
-    resultingStruct.bindSGroupsToFunctionalGroups()
 
     return resultingStruct
   }
@@ -132,13 +127,6 @@ export class KetSerializer implements Serializer<Struct> {
         }
         case 'text': {
           result.root.nodes.push(textToKet(item))
-          break
-        }
-        case 'sgroup': {
-          result.root.nodes.push({
-            type: item.type,
-            data: sgroupToKet(struct, item.data)
-          })
           break
         }
         default:

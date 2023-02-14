@@ -219,9 +219,8 @@ class EraserTool {
   click(event) {
     const rnd = this.editor.render
     const restruct = rnd.ctab
-    const struct = this.editor.render.ctab
-    const sgroups = struct.sgroups
-    const molecule = struct.molecule
+    const sgroups = restruct.sgroups
+    const molecule = restruct.molecule
     const functionalGroups = molecule.functionalGroups
     const ci = this.editor.findItem(event, this.maps)
     const atomResult: Array<number> = []
@@ -244,7 +243,7 @@ class EraserTool {
         functionalGroups,
         ci.id
       )
-      const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a
+      const atomFromStruct = atomId !== null && restruct.atoms.get(atomId)?.a
 
       if (
         atomFromStruct &&
@@ -263,7 +262,7 @@ class EraserTool {
         functionalGroups,
         ci.id
       )
-      const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b
+      const bondFromStruct = bondId !== null && restruct.bonds.get(bondId)?.b
 
       if (
         bondFromStruct &&

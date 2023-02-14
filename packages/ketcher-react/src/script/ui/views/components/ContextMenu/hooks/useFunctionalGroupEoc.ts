@@ -4,16 +4,14 @@ import { useDispatch } from 'react-redux'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
 import { highlightFG } from 'src/script/ui/state/functionalGroups'
-import { ItemData, ItemEventParams } from '../contextMenu.types'
-import useHidden from './useHidden'
+import { ItemEventParams } from '../contextMenu.types'
 
 /**
  * Fullname: useFunctionalGroupExpandOrContract
  */
-const useFunctionalGroupEoc = (data: ItemData) => {
+const useFunctionalGroupEoc = () => {
   const { getKetcherInstance } = useAppContext()
   const dispatch = useDispatch()
-  const hidden = useHidden(data)
 
   const handler = useCallback(
     ({ props }: ItemEventParams, toExpand: boolean) => {
@@ -37,18 +35,14 @@ const useFunctionalGroupEoc = (data: ItemData) => {
   )
 
   const disabled = useCallback(
-    ({ props, triggerEvent, data }: ItemEventParams, toExpand: boolean) => {
-      if (hidden({ props, triggerEvent, data })) {
-        return true
-      }
-
+    ({ props }: ItemEventParams, toExpand: boolean) => {
       return Boolean(
         props?.functionalGroups?.every((functionalGroup) =>
           toExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded
         )
       )
     },
-    [hidden]
+    []
   )
 
   return [handler, disabled] as const

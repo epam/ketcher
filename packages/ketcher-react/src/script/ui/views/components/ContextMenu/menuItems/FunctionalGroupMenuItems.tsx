@@ -1,38 +1,30 @@
 import { Item } from 'react-contexify'
-import { CustomItemProps } from '../contextMenu.types'
 import useFunctionalGroupEoc from '../hooks/useFunctionalGroupEoc'
 import useFunctionalGroupRemove from '../hooks/useFunctionalGroupRemove'
-import useHidden from '../hooks/useHidden'
 
-const FunctionalGroupMenuItems: React.FC<CustomItemProps> = (props) => {
-  const hidden = useHidden(props.data)
+const FunctionalGroupMenuItems: React.FC = (props) => {
   const [handleExpandOrContract, ExpandOrContractHidden] =
-    useFunctionalGroupEoc(props.data)
+    useFunctionalGroupEoc()
   const handleRemove = useFunctionalGroupRemove()
 
-  // @yulei need to document
-  // 1. lowercase abbreviation
-  // 2. disabled not hidden
   return (
     <>
       <Item
         {...props}
-        hidden={hidden}
-        disabled={(params) => ExpandOrContractHidden(params, true)}
+        hidden={(params) => ExpandOrContractHidden(params, true)}
         onClick={(params) => handleExpandOrContract(params, true)}
       >
-        Expand abbreviation
+        Expand Abbreviation
       </Item>
       <Item
         {...props}
-        hidden={hidden}
-        disabled={(params) => ExpandOrContractHidden(params, false)}
+        hidden={(params) => ExpandOrContractHidden(params, false)}
         onClick={(params) => handleExpandOrContract(params, false)}
       >
-        Contract abbreviation
+        Contract Abbreviation
       </Item>
-      <Item {...props} hidden={hidden} onClick={handleRemove}>
-        Remove abbreviation
+      <Item {...props} onClick={handleRemove}>
+        Remove Abbreviation
       </Item>
     </>
   )

@@ -3,12 +3,10 @@ import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
 import { mapAtomIdsToAtoms } from 'src/script/editor/tool/select'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
-import { ItemData, ItemEventParams } from '../contextMenu.types'
-import useHidden from './useHidden'
+import { ItemEventParams } from '../contextMenu.types'
 
-const useAtomEdit = (data: ItemData) => {
+const useAtomEdit = () => {
   const { getKetcherInstance } = useAppContext()
-  const hidden = useHidden(data)
 
   const handler = useCallback(
     async ({ props }: ItemEventParams) => {
@@ -28,21 +26,14 @@ const useAtomEdit = (data: ItemData) => {
     [getKetcherInstance]
   )
 
-  const disabled = useCallback(
-    ({ props, triggerEvent, data }: ItemEventParams) => {
-      if (hidden({ props, triggerEvent, data })) {
-        return true
-      }
+  const disabled = useCallback(({ props }: ItemEventParams) => {
+    const atomIds = props?.atomIds
+    if (Array.isArray(atomIds) && atomIds.length !== 0) {
+      return false
+    }
 
-      const atomIds = props?.atomIds
-      if (Array.isArray(atomIds) && atomIds.length !== 0) {
-        return false
-      }
-
-      return true
-    },
-    [hidden]
-  )
+    return true
+  }, [])
 
   return [handler, disabled] as const
 }

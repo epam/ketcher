@@ -14,15 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  fromItemsFuse,
-  fromPaste,
-  FunctionalGroup,
-  getHoverToFuse,
-  getItemsToFuse,
-  Struct
-} from 'ketcher-core'
+import { fromPaste, getHoverToFuse, getItemsToFuse, Struct } from 'ketcher-core'
 import Editor from '../Editor'
+import { dropAndMerge } from './helper/dropAndMerge'
+import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
+import { getMergeItems } from './helper/getMergeItems'
 
 class PasteTool {
   editor: Editor
@@ -67,95 +63,37 @@ class PasteTool {
     this.action = action
     this.editor.update(this.action, true)
 
-    this.mergeItems = getItemsToFuse(this.editor, pasteItems)
+    this.mergeItems = getMergeItems(this.editor, pasteItems)
     this.editor.hover(getHoverToFuse(this.mergeItems))
   }
 
   mouseup() {
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
-    const functionalGroups = molecule.functionalGroups
-    const atomsResult: Array<number> = []
-    const bondsResult: Array<number> = []
-    const result: Array<number> = []
 
-    if (
-      this.mergeItems &&
-      functionalGroups.size &&
-      this.mergeItems.atoms.size
-    ) {
-      for (const id of this.mergeItems.atoms.values()) {
-        const atomId = FunctionalGroup.atomsInFunctionalGroup(
-          functionalGroups,
-          id
-        )
-
-        if (atomId !== null) {
-          atomsResult.push(atomId)
-        }
-      }
-    }
-    if (
-      this.mergeItems &&
-      functionalGroups.size &&
-      this.mergeItems.bonds.size
-    ) {
-      for (const id of this.mergeItems.bonds.values()) {
-        const bondId = FunctionalGroup.atomsInFunctionalGroup(
-          functionalGroups,
-          id
-        )
-
-        if (bondId !== null) {
-          bondsResult.push(bondId)
-        }
-      }
+    const idsOfItemsMerged = this.mergeItems && {
+      ...(this.mergeItems.atoms && {
+        atoms: Array.from(this.mergeItems.atoms.values())
+      }),
+      ...(this.mergeItems.bonds && {
+        bonds: Array.from(this.mergeItems.bonds.values())
+      })
     }
 
-    if (atomsResult.length > 0) {
-      for (const id of atomsResult) {
-        const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-          functionalGroups,
-          id
-        )
+    const groupsIdsInvolvedInMerge = getGroupIdsFromItemArrays(
+      molecule,
+      idsOfItemsMerged
+    )
 
-        if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
-        }
-      }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
-    } else if (bondsResult.length > 0) {
-      for (const id of bondsResult) {
-        const fgId = FunctionalGroup.findFunctionalGroupByBond(
-          molecule,
-          functionalGroups,
-          id
-        )
-
-        if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
-        }
-      }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
+    if (groupsIdsInvolvedInMerge.length) {
+      this.editor.event.removeFG.dispatch({ fgIds: groupsIdsInvolvedInMerge })
       return
     }
-    const editor = this.editor
-    const restruct = editor.render.ctab
 
-    editor.selection(null)
-
-    this.action = this.action
-      ? fromItemsFuse(restruct, this.mergeItems).mergeWith(this.action)
-      : fromItemsFuse(restruct, this.mergeItems)
-
-    editor.hover(null)
-
-    if (this.action) {
-      const action = this.action
-      delete this.action
-      this.editor.update(action)
-    }
+    // need to delete action first, because editor.update calls this.cancel() and thus action revert 🤦‍♂️
+    const action = this.action
+    delete this.action
+    dropAndMerge(this.editor, this.mergeItems, action)
   }
 
   cancel() {

@@ -19,14 +19,12 @@ import { PropsWithChildren, useCallback } from 'react'
 import { useContextMenu } from 'react-contexify'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
-import { CONTEXT_MENU_ID } from './ContextMenu'
-import type { ContextMenuShowProps } from './contextMenu.types'
+import { ContextMenuShowProps, CONTEXT_MENU_ID } from './contextMenu.types'
+import { onlyHasProperty } from './utils'
 
 const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
   const { getKetcherInstance } = useAppContext()
-  const { show } = useContextMenu<ContextMenuShowProps>({
-    id: CONTEXT_MENU_ID
-  })
+  const { show } = useContextMenu<ContextMenuShowProps>()
 
   const getSelectedFunctionalGroups = useCallback(() => {
     const editor = getKetcherInstance().editor as Editor
@@ -61,30 +59,33 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
       const selection = editor.selection()
       const functionalGroupsInSelection = getSelectedFunctionalGroups()
 
+      let showProps: ContextMenuShowProps = null
+
       if (selection) {
         if (functionalGroupsInSelection.size > 0) {
           const functionalGroups = Array.from(
             functionalGroupsInSelection.values()
           )
-
-          const showProps: ContextMenuShowProps = {
-            type: 'for-functional-groups-in-selection',
+          showProps = {
+            id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
             functionalGroups
           }
-
-          show({
-            event,
-            props: showProps
-          })
-        } else {
-          const showProps: ContextMenuShowProps = {
-            type: 'for-bonds-and-atoms-in-selection'
+        } else if (onlyHasProperty(selection, 'bonds')) {
+          showProps = {
+            id: CONTEXT_MENU_ID.FOR_BONDS,
+            bondIds: selection.bonds
           }
-
-          show({
-            event,
-            props: showProps
-          })
+        } else if (onlyHasProperty(selection, 'atoms')) {
+          showProps = {
+            id: CONTEXT_MENU_ID.FOR_ATOMS,
+            atomIds: selection.atoms
+          }
+        } else {
+          showProps = {
+            id: CONTEXT_MENU_ID.FOR_SELECTION,
+            bondIds: selection.bonds,
+            atomIds: selection.atoms
+          }
         }
       } else if (closestItem) {
         const struct = editor.struct()
@@ -99,18 +100,16 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
                 true
               )
 
-              const showProps: ContextMenuShowProps =
+              showProps =
                 functionalGroup === null
                   ? {
-                      type: 'for-one-bond',
-                      closestItem
+                      id: CONTEXT_MENU_ID.FOR_BONDS,
+                      bondIds: [closestItem.id]
                     }
-                  : { type: 'for-one-functional-group', functionalGroup }
-
-              show({
-                event,
-                props: showProps
-              })
+                  : {
+                      id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+                      functionalGroups: [functionalGroup]
+                    }
             }
             break
 
@@ -121,18 +120,16 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
               true
             )
 
-            const showProps: ContextMenuShowProps =
+            showProps =
               functionalGroup === null
                 ? {
-                    type: 'for-one-atom',
-                    closestItem
+                    id: CONTEXT_MENU_ID.FOR_ATOMS,
+                    atomIds: [closestItem.id]
                   }
-                : { type: 'for-one-functional-group', functionalGroup }
-
-            show({
-              event,
-              props: showProps
-            })
+                : {
+                    id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+                    functionalGroups: [functionalGroup]
+                  }
             break
           }
 
@@ -142,22 +139,23 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
             const functionalGroup = FunctionalGroup.findFunctionalGroupBySGroup(
               struct.functionalGroups,
               sGroup
-            )
+            ) as FunctionalGroup
 
-            const showProps: ContextMenuShowProps = {
-              type: 'for-one-functional-group',
-              functionalGroup
+            showProps = {
+              id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+              functionalGroups: [functionalGroup]
             }
-
-            functionalGroup &&
-              show({
-                event,
-                props: showProps
-              })
             break
           }
         }
       }
+
+      showProps &&
+        show({
+          id: showProps.id,
+          event,
+          props: showProps
+        })
     },
     [getKetcherInstance, getSelectedFunctionalGroups, show]
   )

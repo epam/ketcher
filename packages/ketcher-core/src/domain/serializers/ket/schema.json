@@ -27,9 +27,6 @@
                 "$ref": "#/definitions/plus"
               },
               {
-                "$ref": "#/definitions/sgroup"
-              },
-              {
                 "type": "object",
                 "required": ["$ref"],
                 "properties": {
@@ -382,132 +379,117 @@
         ]
       }
     },
-    "sgroupData": {
-      "type": "object",
-      "required": ["atoms", "type"],
-      "properties": {
-        "atoms": {
-          "type": "array",
-          "items": {
-            "type": "integer",
-            "minimum": 0
-          }
-        },
-        "type": {
-          "type": "string",
-          "enum": ["GEN", "MUL", "SRU", "SUP", "DAT"]
-        }
-      },
-      "if": {
+    "sgroups": {
+      "type": "array",
+      "items": {
+        "required": ["atoms", "type"],
+        "type": "object",
         "properties": {
-          "type": {
-            "const": "MUL"
-          }
-        }
-      },
-      "then": {
-        "required": ["mul"],
-        "properties": {
-          "mul": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 1000
-          }
-        }
-      },
-      "if": {
-        "properties": {
-          "type": {
-            "const": "SRU"
-          }
-        }
-      },
-      "then": {
-        "required": ["subscript", "connectivity"],
-        "properties": {
-          "subscript": {
-            "type": "string",
-            "pattern": "^[a-zA-Z]$"
-          },
-          "connectivity": {
-            "type": "string",
-            "enum": ["HT", "HH", "EU"]
-          }
-        }
-      },
-      "if": {
-        "properties": {
-          "type": {
-            "const": "SUP"
-          }
-        }
-      },
-      "then": {
-        "required": ["type"],
-        "properties": {
-          "type": {
-            "type": "string",
-            "minLength": 1
-          },
-          "expanded": {
-            "type": "boolean"
-          },
-          "id": {
-            "type": "number"
-          }
-        }
-      },
-      "if": {
-        "properties": {
-          "type": {
-            "const": "DAT"
-          }
-        }
-      },
-      "then": {
-        "required": ["fieldName"],
-        "properties": {
-          "context": {
-            "enum": ["Fragment", "Multifragment", "Bond", "Atom", "Group"]
-          },
-          "fieldName": {
-            "type": "string"
-          },
-          "fieldValue": {
-            "type": "string",
-            "minLength": 1
-          },
-          "display": {
-            "type": "boolean"
-          },
-          "placement": {
-            "type": "boolean"
-          },
-          "bonds": {
+          "atoms": {
             "type": "array",
             "items": {
               "type": "integer",
               "minimum": 0
             }
+          },
+          "type": {
+            "type": "string",
+            "enum": ["GEN", "MUL", "SRU", "SUP", "DAT"]
           }
-        }
-      }
-    },
-    "sgroups": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/sgroupData"
-      }
-    },
-    "sgroup": {
-      "type": "object",
-      "required": ["type", "data"],
-      "properties": {
-        "type": {
-          "const": "sgroup"
         },
-        "data": {
-          "$ref": "#/definitions/sgroupData"
+        "if": {
+          "properties": {
+            "type": {
+              "const": "MUL"
+            }
+          }
+        },
+        "then": {
+          "required": ["mul"],
+          "properties": {
+            "mul": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            }
+          }
+        },
+        "if": {
+          "properties": {
+            "type": {
+              "const": "SRU"
+            }
+          }
+        },
+        "then": {
+          "required": ["subscript", "connectivity"],
+          "properties": {
+            "subscript": {
+              "type": "string",
+              "pattern": "^[a-zA-Z]$"
+            },
+            "connectivity": {
+              "type": "string",
+              "enum": ["HT", "HH", "EU"]
+            }
+          }
+        },
+        "if": {
+          "properties": {
+            "type": {
+              "const": "SUP"
+            }
+          }
+        },
+        "then": {
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expanded": {
+              "type": "boolean"
+            },
+            "id": {
+              "type": "number"
+            }
+          }
+        },
+        "if": {
+          "properties": {
+            "type": {
+              "const": "DAT"
+            }
+          }
+        },
+        "then": {
+          "required": ["fieldName"],
+          "properties": {
+            "context": {
+              "enum": ["Fragment", "Multifragment", "Bond", "Atom", "Group"]
+            },
+            "fieldName": {
+              "type": "string"
+            },
+            "fieldValue": {
+              "type": "string",
+              "minLength": 1
+            },
+            "display": {
+              "type": "boolean"
+            },
+            "placement": {
+              "type": "boolean"
+            },
+            "bonds": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
         }
       }
     },

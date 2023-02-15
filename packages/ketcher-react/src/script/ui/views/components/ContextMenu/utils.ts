@@ -41,3 +41,11 @@ export const getNonQueryBondNames = (tools) => {
 }
 
 export const noOperation = () => null
+
+export function onlyHasProperty<T extends object>(
+  checkedObject: T,
+  key: keyof T
+) {
+  const numberOfProps = Object.keys(checkedObject).length
+  return numberOfProps === 1 && key in checkedObject
+}

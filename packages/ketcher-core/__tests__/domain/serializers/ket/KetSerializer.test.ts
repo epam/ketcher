@@ -205,20 +205,6 @@ describe('serialize (ToKet)', () => {
     const plusKet = parsedPrepareContent.root.nodes[3]
     expect(structPlus).toEqual(plusKet)
   })
-  it('correct work with sgroups', () => {
-    const parsedSgroupStruct = JSON.parse(ket.serialize(moleculeSgroupStruct))
-    expect(parsedSgroupStruct.root.nodes[6].data.type).toEqual('GEN')
-    expect(parsedSgroupStruct.root.nodes[7].data.type).toEqual('MUL')
-    expect(parsedSgroupStruct.root.nodes[7].data.mul).toEqual(1)
-    expect(parsedSgroupStruct.root.nodes[8].data.type).toEqual('SRU')
-    expect(parsedSgroupStruct.root.nodes[8].data.subscript).toEqual('n')
-    expect(parsedSgroupStruct.root.nodes[8].data.connectivity).toEqual('HT')
-    expect(parsedSgroupStruct.root.nodes[9].data.type).toEqual('MUL')
-    expect(parsedSgroupStruct.root.nodes[9].data.mul).toEqual(1)
-    expect(parsedSgroupStruct.root.nodes[10].data.type).toEqual('SUP')
-    expect(parsedSgroupStruct.root.nodes[11].data.subscript).toEqual('n')
-    expect(parsedSgroupStruct.root.nodes[11].data.connectivity).toEqual('HT')
-  })
   it('moleculeToKet', () => {
     const spy = jest.spyOn(moleculeToKet, 'moleculeToKet')
     ket.serialize(moleculeContentStruct)
@@ -244,6 +230,19 @@ describe('serialize (ToKet)', () => {
     expect(
       spy.mock.results[1].value.bonds.filter((bond) => bond.type === 2).length
     ).toEqual(3)
+    // sgroups
+    ket.serialize(moleculeSgroupStruct)
+    expect(spy.mock.results[2].value.sgroups[0].type).toEqual('GEN')
+    expect(spy.mock.results[2].value.sgroups[1].type).toEqual('MUL')
+    expect(spy.mock.results[2].value.sgroups[1].mul).toEqual(1)
+    expect(spy.mock.results[2].value.sgroups[2].type).toEqual('SRU')
+    expect(spy.mock.results[2].value.sgroups[2].subscript).toEqual('n')
+    expect(spy.mock.results[2].value.sgroups[2].connectivity).toEqual('HT')
+    expect(spy.mock.results[2].value.sgroups[3].type).toEqual('MUL')
+    expect(spy.mock.results[2].value.sgroups[3].mul).toEqual(1)
+    expect(spy.mock.results[2].value.sgroups[4].type).toEqual('SUP')
+    expect(spy.mock.results[2].value.sgroups[5].subscript).toEqual('n')
+    expect(spy.mock.results[2].value.sgroups[5].connectivity).toEqual('HT')
   })
   it('rgroupToKet', () => {
     const spy = jest.spyOn(rgroupToKet, 'rgroupToKet')

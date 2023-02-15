@@ -69,7 +69,7 @@ class ReactionMapTool {
         )
       }
     } else {
-      editor.hover(editor.findItem(event, ['atoms']))
+      editor.hover(editor.findItem(event, ['atoms']), null, event)
     }
   }
 

@@ -130,6 +130,7 @@ class RotateTool {
 
   mousemove(event) {
     if (!this.dragCtx) {
+      this.editor.hover(null, null, event)
       return true
     }
 
@@ -165,7 +166,7 @@ class RotateTool {
 
     const expSel = this.editor.explicitSelected()
     dragCtx.mergeItems = getItemsToFuse(this.editor, expSel)
-    this.editor.hover(getHoverToFuse(dragCtx.mergeItems))
+    this.editor.hover(getHoverToFuse(dragCtx.mergeItems), null, event)
 
     this.editor.update(dragCtx.action, true)
     return true

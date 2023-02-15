@@ -37,7 +37,7 @@ class RGroupAtomTool {
 
     if (ci) {
       const atom = struct.atoms.get(ci.id)
-      if (atom?.attpnt === null) this.editor.hover(ci)
+      if (atom?.attpnt === null) this.editor.hover(ci, null, event)
     } else {
       this.editor.hover(null)
     }

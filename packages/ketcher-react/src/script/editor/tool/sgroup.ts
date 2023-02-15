@@ -247,7 +247,7 @@ class SGroupTool {
     if (this.lassoHelper.running(event)) {
       this.editor.selection(this.lassoHelper.addPoint(event))
     } else {
-      this.editor.hover(this.editor.findItem(event, searchMaps))
+      this.editor.hover(this.editor.findItem(event, searchMaps), null, event)
     }
   }
 

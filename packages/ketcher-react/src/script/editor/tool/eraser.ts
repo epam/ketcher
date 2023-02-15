@@ -76,7 +76,7 @@ class EraserTool {
     if (this.lassoHelper.running()) {
       this.editor.selection(this.lassoHelper.addPoint(event))
     } else {
-      this.editor.hover(this.editor.findItem(event, this.maps))
+      this.editor.hover(this.editor.findItem(event, this.maps), null, event)
     }
   }
 

@@ -30,7 +30,9 @@ class ReactionUnmapTool {
 
     if (ci && ci.map === 'atoms') {
       this.editor.hover(
-        this.editor.render.ctab.molecule.atoms.get(ci.id)?.aam ? ci : null
+        this.editor.render.ctab.molecule.atoms.get(ci.id)?.aam ? ci : null,
+        null,
+        event
       )
     } else {
       this.editor.hover(null)

@@ -465,9 +465,7 @@ function shouldDisplayStereoLabel(
       return !!(flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or)
     // IUPAC
     case StereLabelStyleType.IUPAC:
-      return !!(
-        flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs
-      )
+      return !!(stereoLabelType !== StereoLabel.Abs)
     default:
       return true
   }

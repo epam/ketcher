@@ -102,13 +102,13 @@ export class KetSerializer implements Serializer<Struct> {
       switch (item.type) {
         case 'molecule': {
           result.root.nodes.push({ $ref: `mol${moleculeId}` })
-          result[`mol${moleculeId++}`] = moleculeToKet(item.fragment)
+          result[`mol${moleculeId++}`] = moleculeToKet(item.fragment!)
           break
         }
         case 'rgroup': {
           result.root.nodes.push({ $ref: `rg${item.data!.rgnumber}` })
           result[`rg${item.data!.rgnumber}`] = rgroupToKet(
-            item.fragment,
+            item.fragment!,
             item.data
           )
           break

@@ -59,11 +59,11 @@ const highlightFGroup = (group: any) => ({
   payload: group
 })
 
-function notThrottledHighlightFG(dispatch, group: any) {
+function notDebouncedHighlightFG(dispatch, group: any) {
   dispatch(highlightFGroup(group))
 }
 
-export const highlightFG = _.throttle(notThrottledHighlightFG, 100)
+export const highlightFG = _.debounce(notDebouncedHighlightFG, 200)
 
 export function initFGTemplates() {
   return async (dispatch) => {

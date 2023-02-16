@@ -40,11 +40,13 @@ class TemplateTool {
   findItems: Array<string>
   dragCtx: any
   targetGroupsIds: Array<number> = []
+  isSaltOrSolvant: boolean
 
   constructor(editor, tmpl) {
     this.editor = editor
     this.mode = getTemplateMode(tmpl)
     this.editor.selection(null)
+    this.isSaltOrSolvant = SGroup.isSaltOrSolvent(tmpl.struct.name)
 
     this.template = {
       aid: parseInt(tmpl.aid) || 0,
@@ -62,7 +64,6 @@ class TemplateTool {
     this.template.molecule = frag // preloaded struct
     this.findItems = []
     this.template.xy0 = xy0.scaled(1 / (frag.atoms.size || 1)) // template center
-    this.findItems.push('functionalGroups')
 
     const atom = frag.atoms.get(this.template.aid)
     if (atom) {
@@ -120,7 +121,7 @@ class TemplateTool {
     const dragCtx = this.dragCtx
     const ci = dragCtx.item
 
-    if (!ci) {
+    if (!ci || this.isSaltOrSolvant) {
       //  ci.type == 'Canvas'
       delete dragCtx.item
       return
@@ -311,7 +312,7 @@ class TemplateTool {
   mouseup(event) {
     const dragCtx = this.dragCtx
 
-    if (this.targetGroupsIds.length) {
+    if (this.targetGroupsIds.length && this.mode !== 'fg') {
       this.editor.event.removeFG.dispatch({ fgIds: this.targetGroupsIds })
       return
     }
@@ -354,7 +355,7 @@ class TemplateTool {
     let pasteItems = null
     let isFunctionalGroupReplace = false
 
-    if (SGroup.isSaltOrSolvent(this.template.molecule.name)) {
+    if (this.isSaltOrSolvant) {
       addSaltsAndSolventsOnCanvasWithoutMerge(
         restruct,
         this.template,
@@ -365,7 +366,8 @@ class TemplateTool {
     } else if (
       ci?.map === 'functionalGroups' &&
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups) &&
-      this.mode === 'fg'
+      this.mode === 'fg' &&
+      this.targetGroupsIds.length
     ) {
       const sGroup = sgroups.get(ci.id)
       this.editor.update(

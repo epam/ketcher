@@ -29,7 +29,6 @@ import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { getMergeItems } from './helper/getMergeItems'
 import utils from '../shared/utils'
-// import utils from "../shared/utils";
 
 class PasteTool {
   editor: Editor
@@ -254,10 +253,5 @@ function prepareTemplateFromSingleGroup(molecule: Struct): Template | null {
 
   return template
 }
-
-/** ID is constantly changing while group is dragged, so we have to get it every time */
-// function getPastedGroupCurrentId(editor: Editor, pasteItems) {
-//   return editor.struct().getGroupIdFromAtomId(pasteItems.atoms[0])
-// }
 
 export default PasteTool

@@ -49,6 +49,7 @@ export function moleculeToStruct(ketItem: any): Struct {
   struct.initHalfBonds()
   struct.initNeighbors()
   struct.markFragments()
+  struct.bindSGroupsToFunctionalGroups()
 
   return struct
 }

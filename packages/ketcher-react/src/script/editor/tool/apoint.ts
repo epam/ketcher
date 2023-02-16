@@ -31,7 +31,7 @@ class APointTool {
     if (closestItem) {
       const atom = struct.atoms.get(closestItem.id)
       if (atom?.label !== 'R#' && atom?.rglabel === null)
-        this.editor.hover(closestItem)
+        this.editor.hover(closestItem, null, event)
     } else {
       this.editor.hover(null)
     }

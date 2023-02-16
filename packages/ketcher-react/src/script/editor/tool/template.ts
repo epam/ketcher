@@ -24,8 +24,9 @@ import {
   getItemsToFuse,
   FunctionalGroup,
   SGroup,
+  ReStruct,
   Struct,
-  ReStruct
+  fromFragmentDeletion
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -61,6 +62,7 @@ class TemplateTool {
     this.template.molecule = frag // preloaded struct
     this.findItems = []
     this.template.xy0 = xy0.scaled(1 / (frag.atoms.size || 1)) // template center
+    this.findItems.push('functionalGroups')
 
     const atom = frag.atoms.get(this.template.aid)
     if (atom) {
@@ -243,6 +245,10 @@ class TemplateTool {
       }
     }
 
+    if (!pos0) {
+      return true
+    }
+
     // calc angle
     let angle = utils.calcAngle(pos0, pos1)
 
@@ -317,8 +323,10 @@ class TemplateTool {
     delete this.dragCtx
 
     const restruct = this.editor.render.ctab
+    const sgroups = restruct.sgroups
     const struct = restruct.molecule
     const ci = dragCtx.item
+    const functionalGroups = struct.functionalGroups
 
     /* after moving around bond */
     if (dragCtx.action && ci && ci.map === 'bonds' && this.mode !== 'fg') {
@@ -344,6 +352,7 @@ class TemplateTool {
 
     let action
     let pasteItems = null
+    let isFunctionalGroupReplace = false
 
     if (SGroup.isSaltOrSolvent(this.template.molecule.name)) {
       addSaltsAndSolventsOnCanvasWithoutMerge(
@@ -353,10 +362,23 @@ class TemplateTool {
         this.editor
       )
       return true
+    } else if (
+      ci?.map === 'functionalGroups' &&
+      FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups) &&
+      this.mode === 'fg'
+    ) {
+      const sGroup = sgroups.get(ci.id)
+      this.editor.update(
+        fromFragmentDeletion(this.editor.render.ctab, {
+          atoms: [...SGroup.getAtoms(struct, sGroup?.item)],
+          bonds: [...SGroup.getBonds(struct, sGroup?.item)]
+        })
+      )
+      isFunctionalGroupReplace = true
     }
 
     if (!dragCtx.action) {
-      if (!ci) {
+      if (!ci || isFunctionalGroupReplace) {
         //  ci.type == 'Canvas'
         ;[action, pasteItems] = fromTemplateOnCanvas(
           restruct,
@@ -429,14 +451,15 @@ class TemplateTool {
       ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
       : fromItemsFuse(restruct, dragCtx.mergeItems)
 
-    this.editor.hover(null)
     const completeAction = dragCtx.action
     if (completeAction && !completeAction.isDummy()) {
       this.editor.update(completeAction)
     }
+    this.editor.event.showInfo.dispatch(null)
     this.editor.event.message.dispatch({
       info: false
     })
+    this.editor.hover(this.editor.findItem(event, this.findItems), null, event)
 
     return true
   }

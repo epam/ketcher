@@ -18,6 +18,7 @@ import { Bond, Vec2 } from 'domain/entities'
 
 import closest from '../shared/closest'
 import { difference } from 'lodash'
+import { Action, AtomAdd, BondAdd, fromBondAddition } from 'application/editor'
 
 export function atomGetAttr(restruct, aid, name) {
   return restruct.molecule.atoms.get(aid)[name]
@@ -197,4 +198,41 @@ export function isAttachmentBond({ begin, end }: Bond, selection): boolean {
     isBondStartsInSelectionAndEndsOutside ||
     isBondEndsInSelectionAndStartsOutside
   )
+}
+
+export function extraBondAction(restruct, aid, angle) {
+  let action = new Action()
+  const frid = atomGetAttr(restruct, aid, 'fragment')
+  let additionalAtom: any = null
+
+  if (angle === null) {
+    const middleAtom = atomForNewBond(restruct, aid)
+    const actionRes = fromBondAddition(
+      restruct,
+      { type: 1 },
+      aid,
+      middleAtom.atom,
+      middleAtom.pos.get_xy0()
+    )
+    action = actionRes[0]
+    action.operations.reverse()
+    additionalAtom = actionRes[2]
+  } else {
+    const operation = new AtomAdd(
+      { label: 'C', fragment: frid },
+      new Vec2(1, 0)
+        .rotate(angle)
+        .add(restruct.molecule.atoms.get(aid).pp)
+        .get_xy0()
+    ).perform(restruct) as AtomAdd
+
+    action.addOp(operation)
+    action.addOp(
+      new BondAdd(aid, operation.data.aid, { type: 1 }).perform(restruct)
+    )
+
+    additionalAtom = operation.data.aid
+  }
+
+  return { action, aid1: additionalAtom }
 }

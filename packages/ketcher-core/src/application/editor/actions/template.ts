@@ -16,9 +16,9 @@
 
 import { Atom, Vec2 } from 'domain/entities'
 import { AtomAdd, BondAdd, CalcImplicitH } from '../operations'
-import { atomForNewBond, atomGetAttr } from './utils'
+import { atomForNewBond, atomGetAttr, extraBondAction } from './utils'
 import { fromAtomsAttrs, mergeSgroups } from './atom'
-import { fromBondAddition, fromBondStereoUpdate, fromBondsAttrs } from './bond'
+import { fromBondStereoUpdate, fromBondsAttrs } from './bond'
 
 import { Action } from './action'
 import closest from '../shared/closest'
@@ -40,48 +40,13 @@ export function fromTemplateOnCanvas(restruct, template, pos, angle) {
   return [action, pasteItems]
 }
 
-function extraBondAction(restruct, aid, angle) {
-  let action = new Action()
-  const frid = atomGetAttr(restruct, aid, 'fragment')
-  let additionalAtom: any = null
-
-  if (angle === null) {
-    const middleAtom = atomForNewBond(restruct, aid)
-    const actionRes = fromBondAddition(
-      restruct,
-      { type: 1 },
-      aid,
-      middleAtom.atom,
-      middleAtom.pos.get_xy0()
-    )
-    action = actionRes[0]
-    action.operations.reverse()
-    additionalAtom = actionRes[2]
-  } else {
-    const operation = new AtomAdd(
-      { label: 'C', fragment: frid },
-      new Vec2(1, 0)
-        .rotate(angle)
-        .add(restruct.molecule.atoms.get(aid).pp)
-        .get_xy0()
-    ).perform(restruct) as AtomAdd
-
-    action.addOp(operation)
-    action.addOp(
-      new BondAdd(aid, operation.data.aid, { type: 1 }).perform(restruct)
-    )
-
-    additionalAtom = operation.data.aid
-  }
-
-  return { action, aid1: additionalAtom }
-}
-
 export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
   let action = new Action()
 
   const tmpl = template.molecule
   const struct = restruct.molecule
+
+  const isTmplSingleGroup = template.molecule.isSingleGroup()
 
   let atom = struct.atoms.get(aid) // aid - the atom that was clicked on
   let aid1 = aid // aid1 - the atom on the other end of the extra bond || aid
@@ -134,7 +99,8 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
       pasteItems.atoms.push(operation.data.aid)
     }
   })
-  mergeSgroups(action, restruct, pasteItems.atoms, aid)
+
+  if (!isTmplSingleGroup) mergeSgroups(action, restruct, pasteItems.atoms, aid)
 
   tmpl.bonds.forEach((bond) => {
     const operation = new BondAdd(

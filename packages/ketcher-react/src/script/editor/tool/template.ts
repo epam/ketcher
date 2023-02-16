@@ -24,8 +24,8 @@ import {
   getItemsToFuse,
   FunctionalGroup,
   SGroup,
-  ReStruct,
-  Struct
+  Struct,
+  ReStruct
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -38,6 +38,7 @@ class TemplateTool {
   template: any
   findItems: Array<string>
   dragCtx: any
+  targetGroupsIds: Array<number> = []
 
   constructor(editor, tmpl) {
     this.editor = editor
@@ -76,7 +77,7 @@ class TemplateTool {
 
     const sgroup = frag.sgroups.size
     if (sgroup) {
-      this.findItems.push('sgroups')
+      this.findItems.push('functionalGroups')
     }
   }
 
@@ -90,9 +91,8 @@ class TemplateTool {
     const ctab = this.editor.render.ctab
     const struct = ctab.molecule
 
-    /* break if merging into FG */
     if (struct.functionalGroups.size) {
-      const groupsIdsInvolvedInMerge = getGroupIdsFromItemArrays(struct, {
+      this.targetGroupsIds = getGroupIdsFromItemArrays(struct, {
         ...(closestItem?.map === 'atoms' && { atoms: [closestItem.id] }),
         ...(closestItem?.map === 'bonds' && { bonds: [closestItem.id] })
       })
@@ -104,15 +104,9 @@ class TemplateTool {
           struct.functionalGroups
         )
       ) {
-        groupsIdsInvolvedInMerge.push(closestItem.id)
-      }
-
-      if (groupsIdsInvolvedInMerge.length) {
-        this.editor.event.removeFG.dispatch({ fgIds: groupsIdsInvolvedInMerge })
-        return
+        this.targetGroupsIds.push(closestItem.id)
       }
     }
-    /* end */
 
     this.editor.hover(null)
 
@@ -236,11 +230,16 @@ class TemplateTool {
     if (!ci) {
       //  ci.type == 'Canvas'
       pos0 = dragCtx.xy0
-    } else if (ci.map === 'atoms') {
-      pos0 = struct.atoms.get(ci.id)?.pp
+    } else if (ci.map === 'atoms' || ci.map === 'functionalGroups') {
+      const atomId = getTargetAtomId(struct, ci)
 
-      if (pos0) {
-        extraBond = this.mode === 'fg' ? true : Vec2.dist(pos0, pos1) > 1
+      if (atomId !== undefined) {
+        const atom = struct.atoms.get(atomId)
+        pos0 = atom?.pp
+
+        if (pos0) {
+          extraBond = this.mode === 'fg' ? true : Vec2.dist(pos0, pos1) > 1
+        }
       }
     }
 
@@ -276,11 +275,13 @@ class TemplateTool {
     let action = null
     let pasteItems
 
-    if (ci?.map === 'atoms') {
+    if (ci?.map === 'atoms' || ci?.map === 'functionalGroups') {
+      const atomId = getTargetAtomId(struct, ci)
+
       ;[action, pasteItems] = fromTemplateOnAtom(
         restruct,
         this.template,
-        ci.id,
+        atomId,
         angle,
         extraBond
       )
@@ -295,11 +296,19 @@ class TemplateTool {
       this.editor.hover(getHoverToFuse(dragCtx.mergeItems))
     }
 
+    // TODO: refactor after #2195 comes into effect
+    if (this.targetGroupsIds.length) this.targetGroupsIds.length = 0
+
     return true
   }
 
   mouseup(event) {
     const dragCtx = this.dragCtx
+
+    if (this.targetGroupsIds.length) {
+      this.editor.event.removeFG.dispatch({ fgIds: this.targetGroupsIds })
+      return
+    }
 
     if (!dragCtx) {
       return true
@@ -478,6 +487,17 @@ function getSign(molecule, bond, v) {
   }
 
   return 0
+}
+
+function getTargetAtomId(struct: Struct, ci): number | void {
+  if (ci.map === 'atoms') {
+    return ci.id
+  }
+
+  if (ci.map === 'functionalGroups') {
+    const group = struct.sgroups.get(ci.id)
+    return group?.getAttAtomId(struct)
+  }
 }
 
 export default TemplateTool

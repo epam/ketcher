@@ -402,7 +402,6 @@ class TemplateTool {
 
     let action
     let pasteItems = null
-    let isFunctionalGroupReplace = false
 
     if (SGroup.isSaltOrSolvent(this.template.molecule.name)) {
       addSaltsAndSolventsOnCanvasWithoutMerge(
@@ -417,9 +416,11 @@ class TemplateTool {
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups) &&
       this.mode === 'fg'
     ) {
-      const sGroup = this.editor.struct().sgroups.get(ci.id)
+      const closestGroup = this.editor.struct().sgroups.get(ci.id)
+      const isClosestGroupAttached =
+        closestGroup && closestGroup.isGroupAttached(this.editor.struct())
 
-      if (sGroup?.isGroupAttached(this.editor.struct())) {
+      if (isClosestGroupAttached) {
         const groupAttachmentAtomId = this.editor
           .struct()
           .atoms.find((atomId) => {
@@ -428,7 +429,8 @@ class TemplateTool {
               .atomGetNeighbors(atomId)
               ?.find(
                 (neighbor) =>
-                  neighbor.aid === sGroup.getAttAtomId(this.editor.struct())
+                  neighbor.aid ===
+                  closestGroup.getAttAtomId(this.editor.struct())
               )
           })
 
@@ -445,15 +447,16 @@ class TemplateTool {
 
       this.editor.update(
         fromFragmentDeletion(this.editor.render.ctab, {
-          atoms: [...SGroup.getAtoms(struct, sGroup)],
-          bonds: [...SGroup.getBonds(struct, sGroup)]
+          atoms: [...SGroup.getAtoms(struct, closestGroup)],
+          bonds: [...SGroup.getBonds(struct, closestGroup)]
         })
       )
-      isFunctionalGroupReplace = true
+
+      if (!isClosestGroupAttached) ci = null
     }
 
     if (!dragCtx.action) {
-      if (!ci || (isFunctionalGroupReplace && ci.map === 'functionalGroups')) {
+      if (!ci) {
         //  ci.type == 'Canvas'
         ;[action, pasteItems] = fromTemplateOnCanvas(
           restruct,

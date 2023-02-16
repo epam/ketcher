@@ -214,6 +214,23 @@ export class SGroup {
     this.pp = topLeftPoint
   }
 
+  getAttAtomId(struct: Struct): number {
+    for (const atomId of this.atoms) {
+      const atom = struct.atoms.get(atomId)
+      if (!atom) continue
+      if (Number.isInteger(atom.attpnt)) return atomId
+    }
+    // in normal circumstances this should never be invoked
+    return this.atoms[0]
+  }
+
+  isGroupAttached(struct: Struct): boolean {
+    const attachPointId = this.getAttAtomId(struct)
+    const neighbours = struct.atomGetNeighbors(attachPointId)
+
+    return !neighbours?.every(({ aid }) => this.atoms.includes(aid))
+  }
+
   static getOffset(sgroup: SGroup): null | Vec2 {
     if (!sgroup?.pp) return null
     return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1)

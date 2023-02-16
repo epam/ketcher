@@ -227,7 +227,7 @@ export class SGroup {
     const attachPointId = this.getAttAtomId(struct)
     const neighbours = struct.atomGetNeighbors(attachPointId)
 
-    return !!neighbours?.every(({ aid }) => this.atoms.includes(aid))
+    return !neighbours?.every(({ aid }) => this.atoms.includes(aid))
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {

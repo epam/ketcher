@@ -373,9 +373,8 @@ class TemplateTool {
     delete this.dragCtx
 
     const restruct = this.editor.render.ctab
-    const sgroups = restruct.sgroups
     const struct = restruct.molecule
-    const ci = dragCtx.item
+    let ci = dragCtx.item
     const functionalGroups = struct.functionalGroups
 
     /* after moving around bond */
@@ -417,18 +416,43 @@ class TemplateTool {
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups) &&
       this.mode === 'fg'
     ) {
-      const sGroup = sgroups.get(ci.id)
+      const sGroup = this.editor.struct().sgroups.get(ci.id)
+
+      if (sGroup?.isGroupAttached(this.editor.struct())) {
+        const groupAttachmentAtomId = this.editor
+          .struct()
+          .atoms.find((atomId) => {
+            return !!this.editor
+              .struct()
+              .atomGetNeighbors(atomId)
+              ?.find(
+                (neighbor) =>
+                  neighbor.aid === sGroup.getAttAtomId(this.editor.struct())
+              )
+          })
+
+        if (groupAttachmentAtomId !== null) {
+          const pos0 =
+            this.editor.struct().atoms.get(groupAttachmentAtomId)?.pp ||
+            dragCtx.xy0
+          const pos1 = this.editor.render.page2obj(event)
+
+          const dist = Vec2.dist(pos0, pos1)
+          ci = { map: 'atoms', dist, id: groupAttachmentAtomId }
+        }
+      }
+
       this.editor.update(
         fromFragmentDeletion(this.editor.render.ctab, {
-          atoms: [...SGroup.getAtoms(struct, sGroup?.item)],
-          bonds: [...SGroup.getBonds(struct, sGroup?.item)]
+          atoms: [...SGroup.getAtoms(struct, sGroup)],
+          bonds: [...SGroup.getBonds(struct, sGroup)]
         })
       )
       isFunctionalGroupReplace = true
     }
 
     if (!dragCtx.action) {
-      if (!ci || isFunctionalGroupReplace) {
+      if (!ci || (isFunctionalGroupReplace && ci.map === 'functionalGroups')) {
         //  ci.type == 'Canvas'
         ;[action, pasteItems] = fromTemplateOnCanvas(
           restruct,

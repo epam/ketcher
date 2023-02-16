@@ -190,14 +190,14 @@ class TemplateTool {
 
     const dragCtx = this.dragCtx
     const ci = dragCtx.item
-    let pos0: Vec2 | null | undefined = null
-    const pos1 = this.editor.render.page2obj(event)
+    let targetPos: Vec2 | null | undefined = null
+    const eventPos = this.editor.render.page2obj(event)
     const struct = restruct.molecule
 
     /* moving when attached to bond */
     if (ci && ci.map === 'bonds' && this.mode !== 'fg') {
       const bond = struct.bonds.get(ci.id)
-      let sign = getSign(struct, bond, pos1)
+      let sign = getSign(struct, bond, eventPos)
 
       if (dragCtx.sign1 * this.template.sign > 0) {
         sign = -sign
@@ -232,26 +232,27 @@ class TemplateTool {
     // calc initial pos and is extra bond needed
     if (!ci) {
       //  ci.type == 'Canvas'
-      pos0 = dragCtx.xy0
+      targetPos = dragCtx.xy0
     } else if (ci.map === 'atoms' || ci.map === 'functionalGroups') {
       const atomId = getTargetAtomId(struct, ci)
 
       if (atomId !== undefined) {
         const atom = struct.atoms.get(atomId)
-        pos0 = atom?.pp
+        targetPos = atom?.pp
 
-        if (pos0) {
-          extraBond = this.mode === 'fg' ? true : Vec2.dist(pos0, pos1) > 1
+        if (targetPos) {
+          extraBond =
+            this.mode === 'fg' ? true : Vec2.dist(targetPos, eventPos) > 1
         }
       }
     }
 
-    if (!pos0) {
+    if (!targetPos) {
       return true
     }
 
     // calc angle
-    let angle = utils.calcAngle(pos0, pos1)
+    let angle = utils.calcAngle(targetPos, eventPos)
 
     if (!event.ctrlKey) {
       angle = utils.fracAngle(angle, null)
@@ -324,9 +325,8 @@ class TemplateTool {
     delete this.dragCtx
 
     const restruct = this.editor.render.ctab
-    const sgroups = restruct.sgroups
     const struct = restruct.molecule
-    const ci = dragCtx.item
+    let ci = dragCtx.item
     const functionalGroups = struct.functionalGroups
 
     /* after moving around bond */
@@ -353,7 +353,6 @@ class TemplateTool {
 
     let action
     let pasteItems = null
-    let isFunctionalGroupReplace = false
 
     if (this.isSaltOrSolvant) {
       addSaltsAndSolventsOnCanvasWithoutMerge(
@@ -369,18 +368,47 @@ class TemplateTool {
       this.mode === 'fg' &&
       this.targetGroupsIds.length
     ) {
-      const sGroup = sgroups.get(ci.id)
+      const closestGroup = this.editor.struct().sgroups.get(ci.id)
+      const isClosestGroupAttached =
+        closestGroup && closestGroup.isGroupAttached(this.editor.struct())
+
+      if (isClosestGroupAttached) {
+        const groupAttachmentAtomId = this.editor
+          .struct()
+          .atoms.find((atomId) => {
+            return !!this.editor
+              .struct()
+              .atomGetNeighbors(atomId)
+              ?.find(
+                (neighbor) =>
+                  neighbor.aid ===
+                  closestGroup.getAttAtomId(this.editor.struct())
+              )
+          })
+
+        if (groupAttachmentAtomId !== null) {
+          const targetPos =
+            this.editor.struct().atoms.get(groupAttachmentAtomId)?.pp ||
+            dragCtx.xy0
+          const eventPos = this.editor.render.page2obj(event)
+
+          const dist = Vec2.dist(targetPos, eventPos)
+          ci = { map: 'atoms', dist, id: groupAttachmentAtomId }
+        }
+      }
+
       this.editor.update(
         fromFragmentDeletion(this.editor.render.ctab, {
-          atoms: [...SGroup.getAtoms(struct, sGroup?.item)],
-          bonds: [...SGroup.getBonds(struct, sGroup?.item)]
+          atoms: [...SGroup.getAtoms(struct, closestGroup)],
+          bonds: [...SGroup.getBonds(struct, closestGroup)]
         })
       )
-      isFunctionalGroupReplace = true
+
+      if (!isClosestGroupAttached) ci = null
     }
 
     if (!dragCtx.action) {
-      if (!ci || isFunctionalGroupReplace) {
+      if (!ci) {
         //  ci.type == 'Canvas'
         ;[action, pasteItems] = fromTemplateOnCanvas(
           restruct,

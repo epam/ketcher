@@ -24,7 +24,6 @@ import clsx from 'clsx'
 
 import classes from './InfoPanel.module.less'
 
-const HOVER_DELAY = 400
 const HOVER_PANEL_PADDING = 20
 
 function getSGroupFirstAtom(sGroup: SGroup, render: Render): Vec2 {
@@ -108,15 +107,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   }, [groupStruct, sGroup])
 
   useEffect(() => {
-    let timer
-    if (groupStruct) {
-      timer = setTimeout(() => {
-        setMolecule(groupStruct.clone())
-      }, HOVER_DELAY)
-    } else {
-      setMolecule(null)
-    }
-    return () => clearTimeout(timer)
+    setMolecule(groupStruct ? groupStruct.clone() : null)
   }, [groupName, groupStruct])
 
   if (

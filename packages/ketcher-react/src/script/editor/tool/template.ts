@@ -344,8 +344,10 @@ class TemplateTool {
 
     if (!ci) {
       const isAddingFunctionalGroup = this.template?.molecule?.sgroups.size
-      // skip, b/c we dont want to do any additional actions (e.g. rotating for s-groups)
-      if (isAddingFunctionalGroup) return true
+      if (isAddingFunctionalGroup) {
+        // skip, b/c we dont want to do any additional actions (e.g. rotating for s-groups)
+        return true
+      }
       ;[action, pasteItems] = fromTemplateOnCanvas(
         restruct,
         this.template,

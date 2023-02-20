@@ -23,7 +23,8 @@ import {
   KetSerializer,
   formatProperties,
   getPropertiesByFormat,
-  getPropertiesByImgFormat
+  getPropertiesByImgFormat,
+  b64toBlob
 } from 'ketcher-core'
 
 import { Dialog } from '../../../../components'
@@ -89,8 +90,9 @@ class SaveDialog extends Component {
         '<----secondDivider--->', // for dividers in select list
         'svg',
         'png',
-        'cdxml'
-        // 'cdx' TO DO: Uncomment, when export will be ready on Indigo side
+        'cdxml',
+        'cdx',
+        'binaryCdx'
       )
     // TODO: pass the necessary divider not like list element
 
@@ -118,6 +120,10 @@ class SaveDialog extends Component {
 
   isImageFormat = (format) => {
     return !!getPropertiesByImgFormat(format)
+  }
+
+  isBinaryCdxFormat = (format) => {
+    return format === 'binaryCdx'
   }
 
   showStructWarningMessage = (format) => {
@@ -277,11 +283,14 @@ class SaveDialog extends Component {
     const { filename, format } = formState.result
     const { structStr, imageSrc, isLoading } = this.state
     const isCleanStruct = this.props.struct.isBlank()
-    return isLoading ? (
+
+    const LoadingState = () => (
       <div className={classes.loadingCirclesContainer}>
         <LoadingCircles />
       </div>
-    ) : this.isImageFormat(format) ? (
+    )
+
+    const ImageContent = () => (
       <div className={classes.imageContainer}>
         {!isCleanStruct && (
           <img
@@ -290,7 +299,20 @@ class SaveDialog extends Component {
           />
         )}
       </div>
-    ) : (
+    )
+
+    const BinaryContent = () => (
+      <div className={classes.previewBackground}>
+        <textarea
+          value="Can not display binary content"
+          className={classes.previewArea}
+          readOnly
+          ref={this.textAreaRef}
+        />
+      </div>
+    )
+
+    const PreviewContent = () => (
       <div className={classes.previewBackground}>
         <textarea
           value={structStr}
@@ -300,6 +322,16 @@ class SaveDialog extends Component {
         />
       </div>
     )
+
+    if (isLoading) {
+      return <LoadingState />
+    } else if (this.isImageFormat(format)) {
+      return <ImageContent />
+    } else if (this.isBinaryCdxFormat(format)) {
+      return <BinaryContent />
+    } else {
+      return <PreviewContent />
+    }
   }
 
   renderWarnings = () => {
@@ -319,10 +351,16 @@ class SaveDialog extends Component {
   }
 
   getButtons = () => {
-    const { disableControls, imageFormat, structStr } = this.state
+    const { disableControls, imageFormat, isLoading, structStr } = this.state
     const formState = this.props.formState
     const { filename, format } = formState.result
     const isCleanStruct = this.props.struct.isBlank()
+
+    const savingStruct =
+      this.isBinaryCdxFormat(format) && !isLoading
+        ? b64toBlob(structStr)
+        : structStr
+
     const isMoleculeContain =
       this.props.struct.atoms.size && this.props.struct.bonds.size
     const buttons = [
@@ -373,7 +411,7 @@ class SaveDialog extends Component {
       buttons.push(
         <SaveButton
           mode="saveFile"
-          data={structStr}
+          data={savingStruct}
           filename={filename + getPropertiesByFormat(format).extensions[0]}
           key="save-file-button"
           type={format.mime}

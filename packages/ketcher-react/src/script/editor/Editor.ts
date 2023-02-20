@@ -591,10 +591,12 @@ class Editor implements KetcherEditor {
   }
 }
 
-function isMouseRight(event) {
-  return (
-    (event.which && event.which === 3) || (event.button && event.button === 2)
-  )
+/**
+ * Main button pressed, usually the left button or the un-initialized state
+ * See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+ */
+function isMouseMainButtonPressed(event: MouseEvent) {
+  return event.button === 0
 }
 
 function resetSelectionOnCanvasClick(
@@ -667,13 +669,17 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
 
     subs.add((event) => {
       updateLastCursorPosition(editor, event)
+
+      if (
+        ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
+        !isMouseMainButtonPressed(event)
+      ) {
+        return true
+      }
+
       if (eventName !== 'mouseup' && eventName !== 'mouseleave') {
         // to complete drag actions
-        if (
-          isMouseRight(event) ||
-          !event.target ||
-          event.target.nodeName === 'DIV'
-        ) {
+        if (!event.target || event.target.nodeName === 'DIV') {
           // click on scroll
           editor.hover(null)
           return true

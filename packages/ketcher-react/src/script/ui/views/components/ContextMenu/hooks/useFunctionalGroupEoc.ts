@@ -34,7 +34,7 @@ const useFunctionalGroupEoc = () => {
     [dispatch, getKetcherInstance]
   )
 
-  const disabled = useCallback(
+  const hidden = useCallback(
     ({ props }: ItemEventParams, toExpand: boolean) => {
       return Boolean(
         props?.functionalGroups?.every((functionalGroup) =>
@@ -45,7 +45,7 @@ const useFunctionalGroupEoc = () => {
     []
   )
 
-  return [handler, disabled] as const
+  return [handler, hidden] as const
 }
 
 export default useFunctionalGroupEoc

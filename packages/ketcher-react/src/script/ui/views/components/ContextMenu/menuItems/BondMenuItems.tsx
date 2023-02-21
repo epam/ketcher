@@ -3,6 +3,8 @@ import tools from 'src/script/ui/action/tools'
 import Icon from 'src/script/ui/component/view/icon'
 import styles from '../ContextMenu.module.less'
 import useBondEdit from '../hooks/useBondEdit'
+import useBondSGroupAttach from '../hooks/useBondSGroupAttach'
+import useBondSGroupEdit from '../hooks/useBondSGroupEdit'
 import useBondTypeChange from '../hooks/useBondTypeChange'
 import useDelete from '../hooks/useDelete'
 import { formatTitle, getNonQueryBondNames, queryBondNames } from '../utils'
@@ -12,6 +14,9 @@ const nonQueryBondNames = getNonQueryBondNames(tools)
 const BondMenuItems: React.FC = (props) => {
   const [handleEdit] = useBondEdit()
   const [handleTypeChange] = useBondTypeChange()
+  const [handleSGroupAttach, sGroupAttachHidden] = useBondSGroupAttach()
+  const [handleSGroupEdit, sGroupEditDisabled, sGroupEditHidden] =
+    useBondSGroupEdit()
   const handleDelete = useDelete()
 
   return (
@@ -35,6 +40,19 @@ const BondMenuItems: React.FC = (props) => {
           </Item>
         ))}
       </Submenu>
+
+      <Item {...props} hidden={sGroupAttachHidden} onClick={handleSGroupAttach}>
+        Attach S-Group...
+      </Item>
+
+      <Item
+        {...props}
+        hidden={sGroupEditHidden}
+        disabled={sGroupEditDisabled}
+        onClick={handleSGroupEdit}
+      >
+        Edit S-Group...
+      </Item>
 
       <Item {...props} onClick={handleDelete}>
         Delete

@@ -134,7 +134,7 @@ export class Atom {
   implicitH: number
   pp: Vec2
   neighbors: Array<number>
-  sgs: Pile<any>
+  sgs: Pile<number>
   badConn: boolean
   alias: string | null
   rglabel: string | null

@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "postinstall": "husky install",
-    "precommit": "lint-staged --allow-empty && yarn workspaces foreach -pv run prettier:write",
+    "precommit": "lint-staged --allow-empty && npm run prettier:write --workspaces --if-present",
     "prepush": "yarn workspaces foreach -pv run test:eslint",
     "build": "./build.sh",
     "build:demo": "yarn workspaces foreach -ptvR --from demo run build",

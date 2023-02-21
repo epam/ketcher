@@ -30,10 +30,9 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "ketcher-core": "workspace:*",
-    "ketcher-polymer-editor-react": "workspace:*",
-    "ketcher-react": "workspace:*",
-    "ketcher-standalone": "workspace:*",
+    "ketcher-core": "^2.6.4",
+    "ketcher-react": "^2.6.4",
+    "ketcher-standalone": "^2.6.4",
     "normalize.css": "^8.0.1",
     "react": "^17.0.2",
     "react-app-polyfill": "^2.0.0",

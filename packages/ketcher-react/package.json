@@ -58,7 +58,7 @@
     "font-face-observer": "^1.0.0",
     "hoist-non-react-statics": "^3.3.2",
     "intersection-observer": "^0.12.0",
-    "ketcher-core": "workspace:*",
+    "ketcher-core": "2.6.4",
     "lodash": "^4.17.21",
     "miew-react": "^1.0.0",
     "react-colorful": "^5.4.0",

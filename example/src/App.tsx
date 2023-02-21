@@ -8,7 +8,6 @@ import {
 } from 'ketcher-core'
 
 import { ErrorModal } from './ErrorModal'
-import { PolymerToggler } from './PolymerToggler'
 import { useState } from 'react'
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
@@ -35,29 +34,12 @@ if (process.env.MODE === 'standalone') {
     new StandaloneStructServiceProvider() as StructServiceProvider
 }
 
-const enablePolymerEditor = process.env.ENABLE_POLYMER_EDITOR === 'true'
-
-type PolymerType = () => JSX.Element | null
-
-let PolymerEditor: PolymerType = () => null
-if (enablePolymerEditor) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { Editor } = require('ketcher-polymer-editor-react')
-  PolymerEditor = Editor as PolymerType
-}
-
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig()
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [showPolymerEditor, setShowPolymerEditor] = useState(false)
 
-  return showPolymerEditor ? (
-    <>
-      <PolymerEditor />
-      <PolymerToggler toggle={setShowPolymerEditor} />
-    </>
-  ) : (
+  return (
     <>
       <Editor
         errorHandler={(message: string) => {
@@ -77,7 +59,6 @@ const App = () => {
           )
         }}
       />
-      {enablePolymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}
       {hasError && (
         <ErrorModal
           message={errorMessage}

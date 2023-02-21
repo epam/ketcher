@@ -139,12 +139,14 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
             const functionalGroup = FunctionalGroup.findFunctionalGroupBySGroup(
               struct.functionalGroups,
               sGroup
-            ) as FunctionalGroup
+            )
 
-            showProps = {
-              id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-              functionalGroups: [functionalGroup]
-            }
+            showProps = functionalGroup
+              ? {
+                  id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+                  functionalGroups: [functionalGroup]
+                }
+              : null
             break
           }
         }

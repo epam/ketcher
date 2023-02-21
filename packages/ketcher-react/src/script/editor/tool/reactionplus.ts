@@ -53,7 +53,7 @@ class ReactionPlusTool {
       )
       editor.update(this.dragCtx.action, true)
     } else {
-      editor.hover(editor.findItem(event, ['rxnPluses']))
+      editor.hover(editor.findItem(event, ['rxnPluses']), null, event)
     }
   }
 

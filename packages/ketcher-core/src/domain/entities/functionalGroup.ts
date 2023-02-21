@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import assert from 'assert'
 import { FunctionalGroupsProvider } from '../helpers'
+import { Pool } from './pool'
 import { SGroup } from './sgroup'
 import { Struct } from './struct'
-import assert from 'assert'
 
 export class FunctionalGroup {
   #sgroup: SGroup
@@ -60,9 +61,14 @@ export class FunctionalGroup {
   static getFunctionalGroupByName(searchName: string): Struct | null {
     const provider = FunctionalGroupsProvider.getInstance()
     const functionalGroups = provider.getFunctionalGroupsList()
-    const foundGroup = functionalGroups.find(({ name, abbreviation }) => {
-      return name === searchName || abbreviation === searchName
-    })
+
+    let foundGroup
+    if (searchName) {
+      foundGroup = functionalGroups.find(({ name, abbreviation }) => {
+        return name === searchName || abbreviation === searchName
+      })
+    }
+
     return foundGroup || null
   }
 
@@ -91,23 +97,65 @@ export class FunctionalGroup {
     return null
   }
 
-  static findFunctionalGroupByAtom(functionalGroups, atom): number | null {
+  static findFunctionalGroupByAtom(
+    functionalGroups: Pool<FunctionalGroup>,
+    atomId: number
+  ): number | null
+
+  static findFunctionalGroupByAtom(
+    functionalGroups: Pool<FunctionalGroup>,
+    atomId: number,
+    isFunctionalGroupReturned: true
+  ): FunctionalGroup | null
+
+  static findFunctionalGroupByAtom(
+    functionalGroups: Pool<FunctionalGroup>,
+    atomId: number,
+    isFunctionalGroupReturned?: boolean
+  ): number | FunctionalGroup | null {
     for (const fg of functionalGroups.values()) {
-      if (fg.relatedSGroup.atoms.includes(atom)) return fg.relatedSGroupId
+      if (fg.relatedSGroup.atoms.includes(atomId))
+        return isFunctionalGroupReturned ? fg : fg.relatedSGroupId
     }
     return null
   }
 
   static findFunctionalGroupByBond(
-    molecule,
-    functionalGroups,
-    bond
-  ): number | null {
+    molecule: Struct,
+    functionalGroups: Pool<FunctionalGroup>,
+    bondId: number | null
+  ): number | null
+
+  static findFunctionalGroupByBond(
+    molecule: Struct,
+    functionalGroups: Pool<FunctionalGroup>,
+    bondId: number | null,
+    isFunctionalGroupReturned: true
+  ): FunctionalGroup | null
+
+  static findFunctionalGroupByBond(
+    molecule: Struct,
+    functionalGroups: Pool<FunctionalGroup>,
+    bondId: number | null,
+    isFunctionalGroupReturned?: boolean
+  ): FunctionalGroup | number | null {
     for (const fg of functionalGroups.values()) {
       const bonds = SGroup.getBonds(molecule, fg.relatedSGroup)
-      if (bonds.includes(bond)) return fg.relatedSGroupId
+      if (bonds.includes(bondId)) {
+        return isFunctionalGroupReturned ? fg : fg.relatedSGroupId
+      }
     }
     return null
+  }
+
+  static findFunctionalGroupBySGroup(
+    functionalGroups: Pool<FunctionalGroup>,
+    sGroup?: SGroup
+  ) {
+    const key = functionalGroups.find(
+      (_, functionalGroup) => functionalGroup.relatedSGroupId === sGroup?.id
+    )
+    return key !== null ? functionalGroups.get(key) : undefined
   }
 
   static clone(functionalGroup: FunctionalGroup): FunctionalGroup {

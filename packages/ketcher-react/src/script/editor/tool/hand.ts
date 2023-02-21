@@ -41,7 +41,15 @@ class HandTool {
 
   mousemove(event) {
     this.editor.event.cursor.dispatch({ status: 'move' })
-    if (this.begPos == null) return
+    this.editor.hover(
+      this.editor.findItem(event, ['atoms', 'bonds'], null),
+      null,
+      event
+    )
+
+    if (this.begPos == null) {
+      return
+    }
     const { clientX, clientY } = event
     this.endPos = new Vec2(clientX, clientY)
 
@@ -69,7 +77,7 @@ class HandTool {
     this.editor.event.cursor.dispatch({ status: 'mouseover' })
   }
 
-  mouseleave() {
+  mouseLeaveClientArea() {
     this.begPos = null
     this.endPos = null
     this.editor.event.cursor.dispatch({ status: 'leave' })

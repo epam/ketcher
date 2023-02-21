@@ -19,7 +19,7 @@ import { Ketcher, StructService } from 'ketcher-core'
 
 import App from './App.container'
 import { Provider } from 'react-redux'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import createStore from '../state'
 import { initKeydownListener } from '../state/hotkeys'
 import { initResize } from '../state/toolbar'
@@ -35,7 +35,8 @@ function initApp(
   store.dispatch(initKeydownListener(element))
   store.dispatch(initResize())
 
-  ReactDOM.render(
+  const root = createRoot(element!)
+  root.render(
     <Provider store={store}>
       <SettingsContext.Provider value={{ staticResourcesUrl }}>
         <ErrorsContext.Provider value={{ errorHandler: options.errorHandler }}>
@@ -48,8 +49,7 @@ function initApp(
           </AppContext.Provider>
         </ErrorsContext.Provider>
       </SettingsContext.Provider>
-    </Provider>,
-    element
+    </Provider>
   )
 }
 

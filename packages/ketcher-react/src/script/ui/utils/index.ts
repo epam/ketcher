@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import _ from 'lodash'
 import { escapeRegExp, filter as _filter, flow, reduce } from 'lodash/fp'
 import { Option } from '../component/form/Select'
 
@@ -35,7 +36,6 @@ export function greekify(str: string): string {
 }
 
 export function filterLib(lib, filter: string) {
-  console.warn('Filter', filter)
   const trimmedFilter = filter.trim()
   const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i')
   return flow(
@@ -54,7 +54,6 @@ export function filterLib(lib, filter: string) {
 }
 
 export function filterFGLib(lib, filter) {
-  console.warn('Filter', filter)
   const trimmedFilter = filter.trim()
   const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i')
   const searchFunction = (item) => {
@@ -84,6 +83,33 @@ export const getSelectOptionsFromSchema = (schema): Array<Option> => {
 
     return options
   }, [])
+}
+
+/**
+ * Creates a function, which is not called if the current argument is the same as the last one
+ * @param func function to be debounced
+ * @param delay delay in ms
+ * @param skipArguments indexes in arguments array to skip for comparison
+ * @returns debounced function, which is not called with previous argument
+ */
+export function memoizedDebounce(
+  func,
+  delay = 0,
+  skipArguments: number[] = []
+) {
+  let lastArgs
+  const debouncedFunction = _.debounce(func, delay)
+  const getArgumentsToCompare = (args) =>
+    args?.filter((_, index: number) => !skipArguments.includes(index)) || []
+  return function (...args) {
+    const lastArgsToCompare = getArgumentsToCompare(lastArgs)
+    const argsToCompare = getArgumentsToCompare(args)
+    if (lastArgs && _.isEqual(argsToCompare, lastArgsToCompare)) {
+      return
+    }
+    lastArgs = args
+    debouncedFunction(...args)
+  }
 }
 
 export { RenderStruct } from './renderStruct'

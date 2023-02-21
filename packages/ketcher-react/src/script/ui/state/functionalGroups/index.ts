@@ -23,6 +23,8 @@ import {
   Struct
 } from 'ketcher-core'
 import templatesRawData from '../../../../templates/fg.sdf'
+import { memoizedDebounce } from '../../utils'
+import { TOOLTIP_DELAY } from '../../../editor/utils/functionalGroupsTooltip'
 
 interface FGState {
   lib: []
@@ -58,9 +60,15 @@ const highlightFGroup = (group: any) => ({
   payload: group
 })
 
-export function highlightFG(dispatch, group: any) {
+function notDebouncedHighlightFG(dispatch, group: any) {
   dispatch(highlightFGroup(group))
 }
+
+export const highlightFG = memoizedDebounce(
+  notDebouncedHighlightFG,
+  TOOLTIP_DELAY / 3,
+  [0]
+)
 
 export function initFGTemplates() {
   return async (dispatch) => {

@@ -18,7 +18,7 @@ import { Atom, Vec2 } from 'domain/entities'
 import { AtomAdd, BondAdd, CalcImplicitH } from '../operations'
 import { atomForNewBond, atomGetAttr } from './utils'
 import { fromAtomsAttrs, mergeSgroups } from './atom'
-import { fromBondAddition, fromBondStereoUpdate, fromBondsAttrs } from './bond'
+import { fromBondStereoUpdate, fromBondsAttrs, fromBondAddition } from './bond'
 
 import { Action } from './action'
 import closest from '../shared/closest'
@@ -83,6 +83,8 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
   const tmpl = template.molecule
   const struct = restruct.molecule
 
+  const isTmplSingleGroup = template.molecule.isSingleGroup()
+
   let atom = struct.atoms.get(aid) // aid - the atom that was clicked on
   let aid1 = aid // aid1 - the atom on the other end of the extra bond || aid
 
@@ -134,7 +136,8 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
       pasteItems.atoms.push(operation.data.aid)
     }
   })
-  mergeSgroups(action, restruct, pasteItems.atoms, aid)
+
+  if (!isTmplSingleGroup) mergeSgroups(action, restruct, pasteItems.atoms, aid)
 
   tmpl.bonds.forEach((bond) => {
     const operation = new BondAdd(
@@ -167,7 +170,7 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
 
   action.operations.reverse()
 
-  action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct))
+  action.addOp(new CalcImplicitH([...pasteItems.atoms, aid]).perform(restruct))
   action.mergeWith(
     fromBondStereoUpdate(
       restruct,

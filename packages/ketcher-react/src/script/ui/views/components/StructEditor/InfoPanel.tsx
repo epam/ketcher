@@ -24,7 +24,6 @@ import clsx from 'clsx'
 
 import classes from './InfoPanel.module.less'
 
-const HOVER_DELAY = 400
 const HOVER_PANEL_PADDING = 20
 
 function getSGroupFirstAtom(sGroup: SGroup, render: Render): Vec2 {
@@ -84,8 +83,8 @@ function getPanelPosition(
 }
 
 interface InfoPanelProps {
-  clientX: number
-  clientY: number
+  clientX: number | undefined
+  clientY: number | undefined
   render: Render
   groupStruct: Struct
   sGroup: SGroup
@@ -93,67 +92,77 @@ interface InfoPanelProps {
 }
 
 const InfoPanel: FC<InfoPanelProps> = (props) => {
-  const {
-    clientX = 0,
-    clientY = 0,
-    render,
-    className,
-    groupStruct,
-    sGroup
-  } = props
+  const { clientX, clientY, render, className, groupStruct, sGroup } = props
   const [molecule, setMolecule] = useState<Struct | null>(null)
+  const [sGroupData, setSGroupData] = useState<string | null>(null)
   const childRef = useRef(null)
   const groupName = sGroup?.data?.name
-  let timer: ReturnType<typeof setTimeout>
 
   useEffect(() => {
-    if (groupStruct) {
-      timer = setTimeout(() => {
-        setMolecule(groupStruct.clone())
-      }, HOVER_DELAY)
+    if (!groupStruct && sGroup?.type === 'DAT') {
+      setSGroupData(`${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`)
     } else {
-      setMolecule(null)
+      setSGroupData(null)
     }
-    return () => clearTimeout(timer)
-  }, [groupName])
+  }, [groupStruct, sGroup])
+
+  useEffect(() => {
+    setMolecule(groupStruct ? groupStruct.clone() : null)
+  }, [groupName, groupStruct])
+
+  if (
+    (!molecule && !sGroupData) ||
+    clientX === undefined ||
+    clientY === undefined
+  ) {
+    return null
+  }
 
   const [position, size] = getPanelPosition(clientX, clientY, render, sGroup)
   const { x, y } = position
   const width = size.x
   const height = size.y
 
-  return (
-    molecule && (
-      <div
-        style={{
-          left: x + 'px',
-          top: y + 'px'
+  return molecule ? (
+    <div
+      style={{
+        left: x + 'px',
+        top: y + 'px'
+      }}
+      className={clsx(classes.infoPanel, className)}
+    >
+      <StructRender
+        struct={molecule}
+        id={groupName}
+        ref={childRef}
+        options={{
+          ...render.options,
+          autoScale: true,
+          autoScaleMargin: 0,
+          rescaleAmount: 1,
+          cachePrefix: 'infoPanel',
+          viewSz: new Vec2(width, height),
+          width: width,
+          height: height
         }}
-        className={clsx(classes.infoPanel, className)}
-      >
-        <StructRender
-          struct={molecule}
-          {...props}
-          id={groupName}
-          ref={childRef}
-          options={{
-            ...render.options,
-            autoScale: true,
-            autoScaleMargin: 0,
-            rescaleAmount: 1,
-            cachePrefix: 'infoPanel',
-            viewSz: new Vec2(width, height),
-            width: width,
-            height: height
-          }}
-        />
-      </div>
-    )
+      />
+    </div>
+  ) : (
+    <div
+      style={{
+        left: x + 'px',
+        top: y + 'px'
+      }}
+      className={clsx(classes.infoPanel, className)}
+    >
+      {sGroupData}
+    </div>
   )
 }
+
 export default connect((store: any) => ({
-  clientX: functionGroupInfoSelector(store)?.event?.clientX || 0,
-  clientY: functionGroupInfoSelector(store)?.event?.clientY || 0,
+  clientX: functionGroupInfoSelector(store)?.event?.clientX,
+  clientY: functionGroupInfoSelector(store)?.event?.clientY,
   groupStruct: functionGroupInfoSelector(store)?.groupStruct || null,
   sGroup: functionGroupInfoSelector(store)?.sGroup || null,
   render: store.editor?.render?.ctab?.render

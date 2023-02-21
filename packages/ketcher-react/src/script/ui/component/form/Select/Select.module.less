@@ -50,10 +50,10 @@
     overflow: auto;
     max-height: 200px;
     .scrollbar();
-  
+
     &::-webkit-scrollbar {
       background-color: @color-background-primary;
-      width: 4px; 
+      width: 4px;
     }
 
     &::-webkit-scrollbar-thumb {
@@ -64,6 +64,11 @@
     :global(.Mui-selected) {
       background-color: @color-background-primary;
     }
+  }
+
+  .listDivider {
+    border: 0.5px solid #e1e5ea;
+    margin: 4px 8px;
   }
 }
 
@@ -110,4 +115,3 @@
     height: 16px;
   }
 }
-

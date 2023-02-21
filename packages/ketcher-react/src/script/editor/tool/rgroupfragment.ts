@@ -33,7 +33,11 @@ class RGroupFragmentTool {
   }
 
   mousemove(event) {
-    this.editor.hover(this.editor.findItem(event, ['frags', 'rgroups']))
+    this.editor.hover(
+      this.editor.findItem(event, ['frags', 'rgroups']),
+      null,
+      event
+    )
   }
 
   click(event) {

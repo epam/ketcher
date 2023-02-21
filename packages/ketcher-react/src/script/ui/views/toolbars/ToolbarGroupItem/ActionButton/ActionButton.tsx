@@ -60,11 +60,10 @@ const ActionButton = (props: Props) => {
   const disabled =
     status.disabled || (indigoVerification && disableableButtons.includes(name))
 
-  const handleClick = (event) => {
+  const handleClick = () => {
     if (action?.action) {
       onAction(action.action)
     }
-    event.stopPropagation()
   }
 
   return (

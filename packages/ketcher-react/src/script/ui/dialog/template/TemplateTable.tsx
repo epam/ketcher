@@ -19,7 +19,6 @@ import { Struct } from 'ketcher-core'
 import StructRender from '../../component/structrender'
 import classes from './TemplateTable.module.less'
 import { greekify } from '../../utils'
-import { useSelector } from 'react-redux'
 import Icon from 'src/script/ui/component/view/icon'
 
 export interface Template {
@@ -41,9 +40,9 @@ interface TemplateTableProps {
   onDelete?: (tmpl: Template) => void
   onAttach?: (tmpl: Template) => void
   titleRows?: 1 | 2
+  renderOptions?: any
 }
 
-const getSettingsSelector = (state) => state.options.settings
 const isSaltOrSolventTemplate = (template) =>
   template.props.group === 'Salts and Solvents'
 const isFunctionalGroupTemplate = (template) =>
@@ -71,8 +70,13 @@ const RenderTmpl: FC<{
   return (
     <StructRender
       struct={tmpl.struct}
-      options={{ ...options, autoScaleMargin: 15 }}
       {...props}
+      options={{
+        ...options,
+        autoScaleMargin: 10,
+        cachePrefix: 'templates',
+        downScale: true
+      }}
     />
   )
 }
@@ -84,9 +88,9 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     onSelect,
     onDelete,
     onAttach,
-    titleRows = 2
+    titleRows = 2,
+    renderOptions
   } = props
-  const options = useSelector((state) => getSettingsSelector(state))
 
   return (
     <div
@@ -112,7 +116,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
           >
             <RenderTmpl
               tmpl={tmpl}
-              options={options}
+              options={renderOptions}
               className={classes.struct}
             />
             <div
@@ -134,7 +138,10 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
               !isSaltOrSolventTemplate(tmpl) && (
                 <button
                   className={`${classes.button} ${classes.editButton}`}
-                  onClick={() => onAttach!(tmpl)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onAttach!(tmpl)
+                  }}
                 >
                   <Icon name="edit" />
                 </button>

@@ -62,42 +62,6 @@
   }
 
   .scrollbar();
-
-  // stylelint-disable-next-line selector-pseudo-class-no-unknown
-  :global(.react-contextmenu-wrapper) {
-    height: 100%;
-  }
-  // stylelint-disable-next-line selector-pseudo-class-no-unknown
-  :global(.react-contextmenu) {
-    box-shadow: 0 2px 5px 0 rgba(@main-color, 0.54);
-    background-color: @color-background-primary;
-    border-radius: 4px;
-    padding: 4px;
-  }
-  // stylelint-disable-next-line selector-pseudo-class-no-unknown
-  :global(.react-contextmenu-item) {
-    background: 0 0;
-    border: 0;
-    color: @color-text-secondary;
-    cursor: pointer;
-    font-weight: 400;
-    line-height: 1.5;
-    padding: 3px 20px;
-    text-align: inherit;
-    white-space: nowrap;
-
-    &--selected {
-      background-color: @color-gray;
-      text-decoration: none;
-    }
-
-    &--divider {
-      border-bottom: 1px solid @border-color;
-      cursor: inherit;
-      margin-bottom: 3px;
-      padding: 2px 0;
-    }
-  }
 }
 
 .intermediateCanvas {

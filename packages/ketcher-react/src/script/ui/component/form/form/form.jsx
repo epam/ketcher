@@ -27,6 +27,7 @@ import { connect } from 'react-redux'
 import { getSelectOptionsFromSchema } from '../../../utils'
 import { updateFormState } from '../../../state/modal/form'
 import { useFormContext } from '../../../../../hooks'
+import { cloneDeep } from 'lodash'
 
 class Form extends Component {
   constructor(props) {
@@ -178,24 +179,33 @@ const SelectOneOf = (props) => {
 
 function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
   const ajv = new Ajv({ allErrors: true, verbose: true, strictSchema: false })
+  const schemaCopy = cloneDeep(schema)
 
   if (customValid) {
-    schema = Object.assign({}, schema) // copy
-    schema.properties = Object.keys(customValid).reduce((res, prop) => {
-      ajv.addFormat(customValid[prop].name, customValid[prop])
-      res[prop] = { format: prop, ...res[prop] }
-      return res
-    }, schema.properties)
+    Object.entries(customValid).forEach(([formatName, formatValidator]) => {
+      ajv.addFormat(formatName, formatValidator)
+      const {
+        pattern,
+        maxLength,
+        enum: enumIsReservedWord,
+        enumNames,
+        ...rest
+      } = schemaCopy.properties[formatName]
+      schemaCopy.properties[formatName] = {
+        ...rest,
+        format: formatName
+      }
+    })
   }
 
-  const validate = ajv.compile(schema)
+  const validate = ajv.compile(schemaCopy)
 
   return {
     key: schema.key || '',
     serialize: (inst) => {
       validate(inst)
       return {
-        instance: serializeRewrite(serialize, inst, schema),
+        instance: serializeRewrite(serialize, inst, schemaCopy),
         valid: validate(inst),
         errors: validate.errors || []
       }

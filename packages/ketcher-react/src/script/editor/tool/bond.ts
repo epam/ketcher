@@ -21,7 +21,8 @@ import {
   fromBondAddition,
   fromBondsAttrs,
   FunctionalGroup,
-  SGroup
+  SGroup,
+  fromOneBondDeletion
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -215,7 +216,7 @@ class BondTool {
           }
         }
         let dist = Number.MAX_VALUE
-        if (endAtom && endAtom.map === 'atoms') {
+        if (endAtom?.map === 'atoms') {
           // after mousedown events is appered, cursor is moved and then cursor intersects any atoms
           endAtom = endAtom.id
         } else {
@@ -238,6 +239,11 @@ class BondTool {
         }
         // don't rotate the bond if the distance between the start and end point is too small
         if (dist > 0.3) {
+          const [existingBondId, bond] = this.getExistingBond(
+            molecule,
+            beginAtom,
+            endAtom
+          )
           dragCtx.action = fromBondAddition(
             rnd.ctab,
             this.bondProps,
@@ -246,9 +252,16 @@ class BondTool {
             beginPos,
             endPos
           )[0]
+          if (existingBondId) {
+            this.dragCtx.existedBond = bond
+            this.dragCtx.action.mergeWith(
+              fromOneBondDeletion(rnd.ctab, existingBondId)
+            )
+          }
         } else {
           delete dragCtx.action
         }
+        this.restoreBondWhenHoveringOnCanvas(event)
         this.editor.update(dragCtx.action, true)
         return true
       }
@@ -267,6 +280,7 @@ class BondTool {
       const rnd = this.editor.render
       const struct = rnd.ctab.molecule
       if ('action' in dragCtx) {
+        this.restoreBondWhenHoveringOnCanvas(event)
         this.editor.update(dragCtx.action)
       } else if (!('item' in dragCtx)) {
         const xy = rnd.page2obj(event)
@@ -293,6 +307,7 @@ class BondTool {
             undefined
           )[0]
         )
+        delete this.dragCtx.existedBond
       } else if (dragCtx.item.map === 'bonds') {
         const bondProps = Object.assign({}, this.bondProps)
         const bond = struct.bonds.get(dragCtx.item.id) as Bond
@@ -307,6 +322,42 @@ class BondTool {
       info: false
     })
     return true
+  }
+
+  /*
+    If we want to add a new bond, we need to delete previous one
+    But we can change our mind, then deleted bond needs to be restored
+  */
+  restoreBondWhenHoveringOnCanvas(event) {
+    if (!this.dragCtx.existedBond) {
+      return
+    }
+    const isHoveringOverAtom = this.editor.findItem(event, ['atoms'])
+    if (!isHoveringOverAtom) {
+      const { begin, end } = this.dragCtx.existedBond
+      const bondEnd = this.dragCtx.item.id === begin ? end : begin
+      this.dragCtx.action.mergeWith(
+        fromBondAddition(
+          this.editor.render.ctab,
+          this.dragCtx.existedBond,
+          this.dragCtx.item.id,
+          bondEnd
+        )[0]
+      )
+      delete this.dragCtx.existedBond
+    }
+  }
+
+  getExistingBond(struct, begin, end) {
+    for (const [bondId, bond] of struct.bonds.entries()) {
+      const alreadyHasBondInOtherDirection =
+        (bond.begin === end && bond.end === begin) ||
+        (bond.begin === begin && bond.end === end)
+      if (alreadyHasBondInOtherDirection) {
+        return [bondId, bond]
+      }
+    }
+    return [null, null]
   }
 }
 

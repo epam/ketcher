@@ -32,12 +32,12 @@ class ReactionMapTool {
     const rnd = this.editor.render
     this.rcs = rnd.ctab.molecule.getComponents()
 
-    const ci = this.editor.findItem(event, ['atoms'])
+    const closestItem = this.editor.findItem(event, ['atoms'])
 
-    if (ci && ci.map === 'atoms') {
+    if (closestItem?.map === 'atoms') {
       this.editor.hover(null)
       this.dragCtx = {
-        item: ci,
+        item: closestItem,
         xy0: rnd.page2obj(event)
       }
     }
@@ -48,18 +48,18 @@ class ReactionMapTool {
     const rnd = editor.render
 
     if ('dragCtx' in this) {
-      const ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item)
+      const closestItem = this.editor.findItem(
+        event,
+        ['atoms'],
+        this.dragCtx.item
+      )
       const atoms = rnd.ctab.molecule.atoms
 
-      if (
-        ci &&
-        ci.map === 'atoms' &&
-        isValidMap(this.rcs, this.dragCtx.item.id, ci.id)
-      ) {
-        editor.hover(ci)
+      if (closestItem?.map === 'atoms') {
+        editor.hover(closestItem)
         this.updateLine(
           atoms.get(this.dragCtx.item.id)?.pp,
-          atoms.get(ci.id)?.pp
+          atoms.get(closestItem.id)?.pp
         )
       } else {
         editor.hover(null)
@@ -69,7 +69,7 @@ class ReactionMapTool {
         )
       }
     } else {
-      editor.hover(editor.findItem(event, ['atoms']))
+      editor.hover(editor.findItem(event, ['atoms']), null, event)
     }
   }
 
@@ -91,17 +91,13 @@ class ReactionMapTool {
   mouseup(event) {
     if ('dragCtx' in this) {
       const rnd = this.editor.render
-      const ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item)
+      const closestItem = this.editor.findItem(event, ['atoms'])
 
-      if (
-        ci &&
-        ci.map === 'atoms' &&
-        isValidMap(this.rcs, this.dragCtx.item.id, ci.id)
-      ) {
+      if (closestItem?.map === 'atoms') {
         const action = new Action()
         const atoms = rnd.ctab.molecule.atoms
         const atom1 = atoms.get(this.dragCtx.item.id)
-        const atom2 = atoms.get(ci.id)
+        const atom2 = atoms.get(closestItem.id)
         const aam1 = atom1?.aam
         const aam2 = atom2?.aam
 
@@ -121,7 +117,7 @@ class ReactionMapTool {
 
           if (aam1) {
             action.mergeWith(
-              fromAtomsAttrs(rnd.ctab, ci.id, { aam: aam1 }, null)
+              fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: aam1 }, null)
             )
           } else {
             let aam = 0
@@ -137,7 +133,7 @@ class ReactionMapTool {
               )
             )
             action.mergeWith(
-              fromAtomsAttrs(rnd.ctab, ci.id, { aam: aam + 1 }, null)
+              fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: aam + 1 }, null)
             )
           }
           this.editor.update(action)
@@ -148,30 +144,6 @@ class ReactionMapTool {
     }
     this.editor.hover(null)
   }
-}
-
-function isValidMap(rcs, aid1, aid2) {
-  let t1
-  let t2
-  for (let ri = 0; (!t1 || !t2) && ri < rcs.reactants.length; ri++) {
-    const ro = Array.from(rcs.reactants[ri])
-    if (!t1 && ro.indexOf(aid1) >= 0) {
-      t1 = 'r'
-    }
-    if (!t2 && ro.indexOf(aid2) >= 0) {
-      t2 = 'r'
-    }
-  }
-  for (let pi = 0; (!t1 || !t2) && pi < rcs.products.length; pi++) {
-    const po = Array.from(rcs.products[pi])
-    if (!t1 && po.indexOf(aid1) >= 0) {
-      t1 = 'p'
-    }
-    if (!t2 && po.indexOf(aid2) >= 0) {
-      t2 = 'p'
-    }
-  }
-  return t1 && t2 && t1 !== t2
 }
 
 export default ReactionMapTool

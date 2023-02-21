@@ -15,3 +15,5 @@
  ***************************************************************************/
 
 export const KETCHER_INIT_EVENT_NAME = 'ketcher-init'
+
+export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings'

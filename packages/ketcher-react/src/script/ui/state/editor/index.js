@@ -31,6 +31,7 @@ import { debounce } from 'lodash/fp'
 import { openDialog } from '../modal'
 import { highlightFG } from '../functionalGroups'
 import { serverCall } from '../server'
+import { generateCommonProperties, isAtomsArray } from '../modal/atoms'
 
 export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }))
@@ -62,6 +63,13 @@ export default function initEditor(dispatch, getState) {
       updateAction()
     },
     onElementEdit: (selem) => {
+      if (isAtomsArray(selem)) {
+        const atomAttributes = generateCommonProperties(selem)
+        return openDialog(dispatch, 'atomProps', {
+          ...atomAttributes,
+          isMultipleAtoms: true
+        }).then(toElement)
+      }
       const elem = selem.type === 'text' ? selem : fromElement(selem)
       let dlg = null
       if (elem.type === 'text') {
@@ -160,16 +168,6 @@ export default function initEditor(dispatch, getState) {
         .then(toSgroup),
     onRemoveFG: (result) =>
       sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
-    onSdataEdit: (sgroup) =>
-      sleep(0)
-        .then(() =>
-          openDialog(
-            dispatch,
-            sgroup.type === 'DAT' ? 'sdata' : 'sgroup',
-            fromSgroup(sgroup)
-          )
-        )
-        .then(toSgroup),
     onMessage: (msg) => {
       if (msg.error) {
         // TODO: add error handler call
@@ -206,7 +204,7 @@ export default function initEditor(dispatch, getState) {
         const { groupStruct, event, sGroup } = payload
         highlightFG(dispatch, { groupStruct, event, sGroup })
       } else {
-        highlightFG(dispatch, { groupStruct: null, event: null, sGroup: null })
+        highlightFG(dispatch, { groupStruct: null, sGroup: null })
       }
     }
   }

@@ -27,6 +27,7 @@ import {
 import { supportedSGroupTypes } from './constants'
 import { setAnalyzingFile } from './request'
 import tools from '../action/tools'
+import { SettingsManager } from '../utils/settingsManager'
 
 export function onAction(action) {
   if (action && action.dialog) {
@@ -142,9 +143,10 @@ export function load(struct: Struct, options?) {
 
       if (fragment) {
         if (parsedStruct.isBlank()) {
+          const savedSelectedTool = SettingsManager.selectionTool
           dispatch({
             type: 'ACTION',
-            action: tools['select-rectangle'].action
+            action: savedSelectedTool || tools['select-rectangle'].action
           })
         } else {
           dispatch(onAction({ tool: 'paste', opts: parsedStruct }))

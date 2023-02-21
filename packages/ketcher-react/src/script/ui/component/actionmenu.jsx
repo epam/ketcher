@@ -20,21 +20,7 @@ import Icon from './view/icon'
 import action from '../action'
 import clsx from 'clsx'
 import { hiddenAncestor } from '../state/toolbar'
-
-const isMac = /Mac/.test(navigator.platform) // eslint-disable-line no-undef
-const shortcutAliasMap = {
-  Escape: 'Esc',
-  Delete: 'Del',
-  Mod: isMac ? '⌘' : 'Ctrl'
-}
-
-export function shortcutStr(shortcut) {
-  const key = Array.isArray(shortcut) ? shortcut[0] : shortcut
-  return key.replace(
-    /(\b[a-z]\b$|Mod|Escape|Delete)/g,
-    (k) => shortcutAliasMap[k] || k.toUpperCase()
-  )
-}
+import { shortcutStr } from '../views/toolbars/shortcutStr'
 
 function isMenuOpened(currentNode) {
   const parentNode = hiddenAncestor(currentNode)

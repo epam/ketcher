@@ -13,11 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { OutputFormatType } from 'ketcher-core'
 
 import { saveAs } from 'file-saver'
+import React, { PropsWithChildren } from 'react'
 import { useAppContext } from '../../../../hooks'
 
-const SaveButton = (props) => {
+type Props = {
+  server?: any
+  filename: string
+  outputFormat?: OutputFormatType
+  data: any
+  type?: string
+  mode?: string
+  onSave?: () => void
+  onError?: (err: any) => void
+  className?: string
+  title?: string
+}
+
+type FileSaverReturnType = Promise<
+  (data: Blob | string, fn, type: string | undefined) => void | never
+>
+
+type SaverType = Awaited<FileSaverReturnType>
+type SaveButtonProps = PropsWithChildren<Props>
+
+const SaveButton = (props: SaveButtonProps) => {
   const noop = () => null
   const {
     server,
@@ -28,11 +50,12 @@ const SaveButton = (props) => {
     mode = 'saveFile',
     onSave = noop,
     onError = noop,
-    className
+    className,
+    title
   } = props
   const { getKetcherInstance } = useAppContext()
 
-  const save = (event) => {
+  const save = (event: React.KeyboardEvent | React.MouseEvent) => {
     event.preventDefault()
     switch (mode) {
       case 'saveImage':
@@ -47,7 +70,7 @@ const SaveButton = (props) => {
   const saveFile = () => {
     if (data) {
       try {
-        fileSaver(server).then((saver) => {
+        fileSaver(server).then((saver: SaverType) => {
           saver(data, filename, type)
           onSave()
         })
@@ -59,31 +82,33 @@ const SaveButton = (props) => {
 
   const saveImage = () => {
     const ketcherInstance = getKetcherInstance()
-    ketcherInstance
-      .generateImage(data, { outputFormat })
-      .then((blob) => {
-        saveAs(blob, `${filename}.${outputFormat}`)
-        onSave()
-      })
-      .catch((error) => {
-        onError(error)
-      })
+    if (outputFormat) {
+      ketcherInstance
+        .generateImage(data, { outputFormat })
+        .then((blob) => {
+          saveAs(blob, `${filename}.${outputFormat}`)
+          onSave()
+        })
+        .catch((error) => {
+          onError(error)
+        })
+    }
   }
 
   return (
     <button
+      title={title}
       className={className}
       onClick={(event) => {
         save(event)
       }}
-      {...props}
     >
       {props.children}
     </button>
   )
 }
 
-const fileSaver = (server) => {
+const fileSaver = (server): FileSaverReturnType => {
   return new Promise((resolve, reject) => {
     if (global.Blob && saveAs) {
       resolve((data, fn, type) => {
@@ -102,4 +127,4 @@ const fileSaver = (server) => {
   })
 }
 
-export default SaveButton
+export { SaveButton }

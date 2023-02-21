@@ -22,8 +22,7 @@ import {
   Struct,
   Vec2,
   fromDescriptorsAlign,
-  fromNewCanvas,
-  FunctionalGroup
+  fromNewCanvas
 } from 'ketcher-core'
 import {
   DOMSubscription,
@@ -36,6 +35,7 @@ import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 import { Highlighter } from './highlighter'
+import { showFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -94,7 +94,7 @@ function selectStereoFlagsIfNecessary(
   return stereoFlags
 }
 
-interface Selection {
+export interface Selection {
   atoms?: Array<number>
   bonds?: Array<number>
   enhancedFlags?: Array<number>
@@ -112,6 +112,7 @@ class Editor implements KetcherEditor {
   errorHandler: ((message: string) => void) | null
   highlights: Highlighter
   hoverIcon: any
+  lastCursorPosition: { x: number; y: number }
   event: {
     message: Subscription
     elementEdit: PipelineSubscription
@@ -155,10 +156,11 @@ class Editor implements KetcherEditor {
       this.renderAndRecoordinateStruct.bind(this)
     this.setOptions = this.setOptions.bind(this)
 
-    this.hoverIcon = this.render.paper
-      .text(0, 0, '')
-      .attr('font-size', options.fontsz)
-      .attr('opacity', HOVER_ICON_OPACITY)
+    this.lastCursorPosition = {
+      x: 0,
+      y: 0
+    }
+    this.createHoverIcon()
 
     this.event = {
       message: new Subscription(),
@@ -224,6 +226,24 @@ class Editor implements KetcherEditor {
     /* eslint-enable no-underscore-dangle */
   }
 
+  updateHoverIconPosition() {
+    const { x, y } = this.lastCursorPosition
+    const { height, width } = this.hoverIcon.getBBox()
+    this.hoverIcon.attr({
+      x: x - width / 2,
+      y: y - height / 2
+    })
+  }
+
+  createHoverIcon() {
+    this.hoverIcon = this.render.paper
+      .text(0, 0, '')
+      .attr('font-size', this.options().fontsz)
+      .attr('opacity', HOVER_ICON_OPACITY)
+
+    this.updateHoverIconPosition()
+  }
+
   clear() {
     this.struct(undefined)
   }
@@ -245,7 +265,10 @@ class Editor implements KetcherEditor {
     this.selection(null)
     const struct = value || new Struct()
 
-    return this.renderAndRecoordinateStruct(struct)
+    const molecule = this.renderAndRecoordinateStruct(struct)
+
+    this.createHoverIcon()
+    return molecule
   }
 
   // this is used by API addFragment method
@@ -349,8 +372,6 @@ class Editor implements KetcherEditor {
   hover(ci: any, newTool?: any, event?: PointerEvent) {
     const tool = newTool || this._tool // eslint-disable-line
 
-    let infoPanelData: any = null
-
     if (
       'ci' in tool &&
       (!ci || tool.ci.map !== ci.map || tool.ci.id !== ci.id)
@@ -363,31 +384,10 @@ class Editor implements KetcherEditor {
 
     if (!event) return
 
-    const checkFunctionGroupTypes = ['sgroups', 'functionalGroups']
-    const closestCollapsibleStructures = this.findItem(
-      event,
-      checkFunctionGroupTypes
-    )
-    if (closestCollapsibleStructures) {
-      const sGroup = this.struct()?.sgroups.get(closestCollapsibleStructures.id)
-      if (sGroup && !sGroup.data.expanded) {
-        const groupName = sGroup.data.name
-        const groupStruct = FunctionalGroup.getFunctionalGroupByName(groupName)
-        infoPanelData = {
-          groupStruct,
-          event,
-          sGroup
-        }
-      }
-    }
-    if (infoPanelData) {
-      this.event.showInfo.dispatch(infoPanelData)
-    } else {
-      this.event.showInfo.dispatch(null)
-    }
+    showFunctionalGroupsTooltip(this)
   }
 
-  update(action: Action | true, ignoreHistory?) {
+  update(action: Action | true, ignoreHistory?: boolean) {
     if (action === true) {
       this.render.update(true) // force
     } else {
@@ -519,7 +519,7 @@ class Editor implements KetcherEditor {
     if (res.atoms && res.bonds) {
       struct.bonds.forEach((bond, bid) => {
         if (
-          res.bonds.indexOf(bid) >= 0 &&
+          res.bonds.indexOf(bid) < 0 &&
           res.atoms.indexOf(bond.begin) >= 0 &&
           res.atoms.indexOf(bond.end) >= 0
         ) {
@@ -568,49 +568,113 @@ class Editor implements KetcherEditor {
   }
 }
 
-function isMouseRight(event) {
-  return (
-    (event.which && event.which === 3) || (event.button && event.button === 2)
-  )
+/**
+ * Main button pressed, usually the left button or the un-initialized state
+ * See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+ */
+function isMouseMainButtonPressed(event: MouseEvent) {
+  return event.button === 0
 }
 
-function domEventSetup(editor: Editor, clientArea) {
+function resetSelectionOnCanvasClick(
+  editor: Editor,
+  eventName: string,
+  clientArea: HTMLElement,
+  event
+) {
+  if (
+    eventName === 'mouseup' &&
+    editor.selection() &&
+    clientArea.contains(event.target)
+  ) {
+    editor.selection(null)
+  }
+}
+
+function updateLastCursorPosition(editor: Editor, event) {
+  const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover']
+  if (events.includes(event.type)) {
+    editor.lastCursorPosition = {
+      x: event.layerX,
+      y: event.layerY
+    }
+  }
+}
+
+function useToolIfNeeded(
+  editor: Editor,
+  eventName: string,
+  clientArea: HTMLElement,
+  event
+) {
+  const EditorTool = editor.tool()
+  editor.lastEvent = event
+  const conditions = [
+    !!EditorTool,
+    eventName in EditorTool,
+    clientArea.contains(event.target) || EditorTool.isSelectionRunning?.()
+  ]
+
+  if (conditions.every((condition) => condition)) {
+    EditorTool[eventName](event)
+    return true
+  }
+
+  return false
+}
+
+function domEventSetup(editor: Editor, clientArea: HTMLElement) {
   // TODO: addEventListener('resize', ...);
   ;[
-    'click',
-    'dblclick',
-    'mousedown',
-    'mousemove',
-    'mouseup',
-    'mouseleave',
-    'mouseover'
-  ].forEach((eventName) => {
+    { target: clientArea, eventName: 'click' },
+    { target: clientArea, eventName: 'dblclick' },
+    { target: clientArea, eventName: 'mousedown' },
+    { target: document, eventName: 'mousemove' },
+    { target: document, eventName: 'mouseup' },
+    { target: document, eventName: 'mouseleave' },
+    {
+      target: clientArea,
+      eventName: 'mouseleave',
+      toolEventName: 'mouseLeaveClientArea'
+    },
+    { target: clientArea, eventName: 'mouseover' }
+  ].forEach(({ target, eventName, toolEventName }) => {
     editor.event[eventName] = new DOMSubscription()
     const subs = editor.event[eventName]
-    clientArea.addEventListener(eventName, subs.dispatch.bind(subs))
+
+    target.addEventListener(eventName, subs.dispatch.bind(subs))
 
     subs.add((event) => {
+      updateLastCursorPosition(editor, event)
+
+      if (
+        ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
+        !isMouseMainButtonPressed(event)
+      ) {
+        return true
+      }
+
       if (eventName !== 'mouseup' && eventName !== 'mouseleave') {
         // to complete drag actions
-        if (
-          isMouseRight(event) ||
-          !event.target ||
-          event.target.nodeName === 'DIV'
-        ) {
+        if (!event.target || event.target.nodeName === 'DIV') {
           // click on scroll
           editor.hover(null)
           return true
         }
       }
-      const EditorTool = editor.tool()
-      editor.lastEvent = event
-      if (EditorTool && eventName in EditorTool) {
-        EditorTool[eventName](event)
+
+      const isToolUsed = useToolIfNeeded(
+        editor,
+        toolEventName || eventName,
+        clientArea,
+        event
+      )
+      if (isToolUsed) {
         return true
       }
-      if (eventName === 'mouseup') {
-        editor.selection(null)
-      }
+
+      resetSelectionOnCanvasClick(editor, eventName, clientArea, event)
+
       return true
     }, -1)
   })

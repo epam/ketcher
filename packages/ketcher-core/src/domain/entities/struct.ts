@@ -1079,6 +1079,7 @@ export class Struct {
   }
 
   // TODO: simplify if bonds ids ever appear in sgroup
+  // ! deprecate
   getGroupIdFromBondId(bondId: number): number | null {
     const bond = this.bonds.get(bondId)
     if (!bond) return null
@@ -1091,5 +1092,22 @@ export class Struct {
       }
     }
     return null
+  }
+
+  getGroupsIdsFromBondId(bondId: number): number[] {
+    const bond = this.bonds.get(bondId)
+    if (!bond) return []
+
+    const groupsIds: number[] = []
+
+    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+      if (
+        sgroup.atoms.includes(bond.begin) ||
+        sgroup.atoms.includes(bond.end)
+      ) {
+        groupsIds.push(groupId)
+      }
+    }
+    return groupsIds
   }
 }

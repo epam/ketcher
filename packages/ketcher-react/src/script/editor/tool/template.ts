@@ -342,7 +342,19 @@ class TemplateTool {
     let action = null
     let pasteItems
 
-    if (ci?.map === 'atoms') {
+    if (!ci) {
+      const isAddingFunctionalGroup = this.template?.molecule?.sgroups.size
+      if (isAddingFunctionalGroup) {
+        // skip, b/c we dont want to do any additional actions (e.g. rotating for s-groups)
+        return true
+      }
+      ;[action, pasteItems] = fromTemplateOnCanvas(
+        restruct,
+        this.template,
+        targetPos,
+        angle
+      )
+    } else if (ci?.map === 'atoms') {
       ;[action, pasteItems] = fromTemplateOnAtom(
         restruct,
         this.template,

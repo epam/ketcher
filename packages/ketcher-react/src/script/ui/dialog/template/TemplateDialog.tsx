@@ -77,6 +77,7 @@ interface TemplateLibProps {
   selected: Template | null
   mode: string
   tab: number
+  initialTab: number
   saltsAndSolvents: Template[]
   renderOptions?: any
 }
@@ -155,6 +156,7 @@ const TemplateDialog: FC<Props> = (props) => {
     onChangeGroup,
     mode,
     tab,
+    initialTab = null,
     functionalGroups,
     lib: templateLib,
     saltsAndSolvents,
@@ -163,6 +165,10 @@ const TemplateDialog: FC<Props> = (props) => {
   } = props
 
   const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const [thisInitialTab, setThisInitialTab] = useState<number | null>(
+    initialTab
+  )
 
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     props.group
@@ -191,6 +197,11 @@ const TemplateDialog: FC<Props> = (props) => {
             (expandedAccordion) => expandedAccordion !== accordion
           )
     )
+  }
+
+  const handleTabChange = (value) => {
+    setThisInitialTab(null)
+    onTabChange(value)
   }
 
   const sdfSerializer = new SdfSerializer()
@@ -228,8 +239,8 @@ const TemplateDialog: FC<Props> = (props) => {
         <Icon name="search" className={classes.searchIcon} />
       </div>
       <Tabs
-        value={tab}
-        onChange={(_, value) => onTabChange(value)}
+        value={thisInitialTab !== null ? initialTab : tab}
+        onChange={(_, value) => handleTabChange(value)}
         className={classes.tabs}
       >
         <Tab

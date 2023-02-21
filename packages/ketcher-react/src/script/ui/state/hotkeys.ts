@@ -44,7 +44,7 @@ export function initKeydownListener(element) {
 
 function removeNotRenderedStruct(actionTool, group, dispatch) {
   const affectedTools = ['paste', 'template']
-  if (effectedTools.includes(actionTool.tool) && group?.includes('save')) {
+  if (affectedTools.includes(actionTool.tool) && group?.includes('save')) {
     const savedSelectedTool = SettingsManager.selectionTool
     dispatch({
       type: 'ACTION',

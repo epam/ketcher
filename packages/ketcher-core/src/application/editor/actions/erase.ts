@@ -36,8 +36,8 @@ import { atomGetDegree } from './utils'
 import { fromBondStereoUpdate } from '../actions/bond'
 import { fromFragmentSplit } from './fragment'
 
-export function fromOneAtomDeletion(restruct, id) {
-  return fromFragmentDeletion(restruct, { atoms: [id] })
+export function fromOneAtomDeletion(restruct, atomId: number) {
+  return fromFragmentDeletion(restruct, { atoms: [atomId] })
 }
 
 function fromBondDeletion(restruct, bid: number, skipAtoms: Array<any> = []) {
@@ -49,7 +49,7 @@ function fromBondDeletion(restruct, bid: number, skipAtoms: Array<any> = []) {
 
   if (
     !skipAtoms.includes(bond.begin) &&
-    atomGetDegree(restruct, bond.begin) === 1
+    atomGetDegree(restruct, bond.begin) === 0
   ) {
     if (removeAtomFromSgroupIfNeeded(action, restruct, bond.begin)) {
       atomsToRemove.push(bond.begin)
@@ -60,7 +60,7 @@ function fromBondDeletion(restruct, bid: number, skipAtoms: Array<any> = []) {
 
   if (
     !skipAtoms.includes(bond.end) &&
-    atomGetDegree(restruct, bond.end) === 1
+    atomGetDegree(restruct, bond.end) === 0
   ) {
     if (removeAtomFromSgroupIfNeeded(action, restruct, bond.end)) {
       atomsToRemove.push(bond.end)

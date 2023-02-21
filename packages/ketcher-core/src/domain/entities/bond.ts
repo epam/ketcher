@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Pile } from './pile'
+import { Struct } from './struct'
 import { Vec2 } from './vec2'
 
 export interface BondAttributes {
@@ -149,5 +151,11 @@ export class Bond {
       cp.end = aidMap.get(cp.end)!
     }
     return cp
+  }
+
+  getAttachedSGroups(struct: Struct) {
+    const sGroupsWithBeginAtom = struct.atoms.get(this.begin)?.sgs || new Pile()
+    const sGroupsWithEndAtom = struct.atoms.get(this.end)?.sgs || new Pile()
+    return sGroupsWithBeginAtom?.intersection(sGroupsWithEndAtom)
   }
 }

@@ -40,13 +40,13 @@ class TemplateTool {
   findItems: Array<string>
   dragCtx: any
   targetGroupsIds: Array<number> = []
-  isSaltOrSolvant: boolean
+  isSaltOrSolvent: boolean
 
   constructor(editor, tmpl) {
     this.editor = editor
     this.mode = getTemplateMode(tmpl)
     this.editor.selection(null)
-    this.isSaltOrSolvant = SGroup.isSaltOrSolvent(tmpl.struct.name)
+    this.isSaltOrSolvent = SGroup.isSaltOrSolvent(tmpl.struct.name)
 
     this.template = {
       aid: parseInt(tmpl.aid) || 0,
@@ -121,7 +121,7 @@ class TemplateTool {
     const dragCtx = this.dragCtx
     const ci = dragCtx.item
 
-    if (!ci || this.isSaltOrSolvant) {
+    if (!ci || this.isSaltOrSolvent) {
       //  ci.type == 'Canvas'
       delete dragCtx.item
       return
@@ -354,7 +354,7 @@ class TemplateTool {
     let action
     let pasteItems = null
 
-    if (this.isSaltOrSolvant) {
+    if (this.isSaltOrSolvent) {
       addSaltsAndSolventsOnCanvasWithoutMerge(
         restruct,
         this.template,

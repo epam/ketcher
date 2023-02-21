@@ -233,6 +233,8 @@ type Template = {
   xy0?: Vec2
   angle0?: number
 }
+
+/** Adds position and angle info to the molecule, similar to Template tool native behavior */
 function prepareTemplateFromSingleGroup(molecule: Struct): Template | null {
   const template: Template = {}
   const sgroup = molecule.sgroups.get(0)

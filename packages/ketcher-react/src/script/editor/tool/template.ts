@@ -329,7 +329,7 @@ class TemplateTool {
         return true
       }
       ;[action, pasteItems] = fromTemplateOnCanvas(
-        restruct,
+        this.editor.render.ctab,
         this.template,
         targetPos,
         angle

@@ -427,9 +427,12 @@ function findClosestSGroup(restruct, pos) {
   return null
 }
 
-function findClosestFG(restruct, pos) {
+function findClosestFG(restruct, pos, skip) {
   const sGroups = restruct.sgroups
-  for (const reSGroup of sGroups.values()) {
+  const skipId = skip && skip.map === 'functionalGroups' ? skip.id : null
+  for (const [reSGroupId, reSGroup] of sGroups.entries()) {
+    if (reSGroupId === skipId) continue
+
     const { startX, startY, width, height } =
       reSGroup.getTextHighlightDimensions()
     const { x, y } = Scale.obj2scaled(pos, restruct.render.options)

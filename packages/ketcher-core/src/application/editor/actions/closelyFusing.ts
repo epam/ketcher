@@ -67,7 +67,10 @@ export function getHoverToFuse(items) {
 
   const hoverItems = {
     atoms: Array.from(items.atoms.values()),
-    bonds: Array.from(items.bonds.values())
+    bonds: Array.from(items.bonds.values()),
+    ...(items.functionalGroups && {
+      functionalGroups: Array.from(items.functionalGroups.values())
+    })
   }
 
   return { map: 'merge', id: +Date.now(), items: hoverItems }

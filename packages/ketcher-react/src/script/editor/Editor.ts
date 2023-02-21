@@ -22,8 +22,7 @@ import {
   Struct,
   Vec2,
   fromDescriptorsAlign,
-  fromNewCanvas,
-  FunctionalGroup
+  fromNewCanvas
 } from 'ketcher-core'
 import {
   DOMSubscription,
@@ -36,6 +35,7 @@ import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 import { Highlighter } from './highlighter'
+import { showFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -372,8 +372,6 @@ class Editor implements KetcherEditor {
   hover(ci: any, newTool?: any, event?: PointerEvent) {
     const tool = newTool || this._tool // eslint-disable-line
 
-    let infoPanelData: any = null
-
     if (
       'ci' in tool &&
       (!ci || tool.ci.map !== ci.map || tool.ci.id !== ci.id)
@@ -386,28 +384,7 @@ class Editor implements KetcherEditor {
 
     if (!event) return
 
-    const checkFunctionGroupTypes = ['sgroups', 'functionalGroups']
-    const closestCollapsibleStructures = this.findItem(
-      event,
-      checkFunctionGroupTypes
-    )
-    if (closestCollapsibleStructures) {
-      const sGroup = this.struct()?.sgroups.get(closestCollapsibleStructures.id)
-      if (sGroup && !sGroup.data.expanded) {
-        const groupName = sGroup.data.name
-        const groupStruct = FunctionalGroup.getFunctionalGroupByName(groupName)
-        infoPanelData = {
-          groupStruct,
-          event,
-          sGroup
-        }
-      }
-    }
-    if (infoPanelData) {
-      this.event.showInfo.dispatch(infoPanelData)
-    } else {
-      this.event.showInfo.dispatch(null)
-    }
+    showFunctionalGroupsTooltip(this)
   }
 
   update(action: Action | true, ignoreHistory?: boolean) {

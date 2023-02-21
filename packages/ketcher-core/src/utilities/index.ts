@@ -17,3 +17,4 @@
 export * from './ifDef'
 export * from './tfx'
 export * from './runAsyncAction'
+export * from './b64toBlob'

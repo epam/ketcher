@@ -35,6 +35,18 @@ export function generateCommonProperties(
   return resultAtomAttributes
 }
 
+function castAtomPropToType(property, value) {
+  const typesMapping = {
+    charge: Number,
+    exactChangeFlag: Number,
+    unsaturatedAtom: Number
+  }
+  if (typesMapping[property]) {
+    return typesMapping[property](value)
+  }
+  return value
+}
+
 export function updateOnlyChangedProperties(atomId, userChangedAtom, molecule) {
   const unchangedAtom = molecule.atoms.get(atomId)
   const updatedKeys = Object.getOwnPropertyNames(userChangedAtom).filter(
@@ -44,10 +56,7 @@ export function updateOnlyChangedProperties(atomId, userChangedAtom, molecule) {
     (updatedAtom, key) => {
       const isPropertyChanged = updatedKeys.includes(key)
       if (isPropertyChanged) {
-        updatedAtom[key] = userChangedAtom[key]
-        if (key === 'charge') {
-          updatedAtom[key] = Number(updatedAtom[key])
-        }
+        updatedAtom[key] = castAtomPropToType(key, userChangedAtom[key])
       } else {
         updatedAtom[key] = unchangedAtom[key]
       }

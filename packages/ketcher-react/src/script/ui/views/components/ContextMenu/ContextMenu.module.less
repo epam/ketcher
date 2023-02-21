@@ -51,6 +51,14 @@
     .scrollbar();
   }
 
+  :global(.contexify_item-disabled) {
+    opacity: inherit;
+
+    & > div {
+      opacity: 0.5;
+    }
+  }
+
   :global(.contexify_item):not(:last-child) {
     &::after {
       content: '';

@@ -15,121 +15,151 @@
  ***************************************************************************/
 
 import { FunctionalGroup } from 'ketcher-core'
-import { useCallback } from 'react'
+import { PropsWithChildren, useCallback } from 'react'
 import { useContextMenu } from 'react-contexify'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
-import { CONTEXT_MENU_ID } from './ContextMenu'
-import type { ContextMenuShowProps } from './contextMenu.types'
+import { ContextMenuShowProps, CONTEXT_MENU_ID } from './contextMenu.types'
+import { onlyHasProperty } from './utils'
 
-const ContextMenuTrigger: React.FC = ({ children }) => {
+const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
   const { getKetcherInstance } = useAppContext()
-  const { show, hideAll } = useContextMenu<ContextMenuShowProps>({
-    id: CONTEXT_MENU_ID
-  })
+  const { show } = useContextMenu<ContextMenuShowProps>()
 
-  /**
-   * Resolve conflicts with the existing functional-group context menu
-   * Note: the following scenarios are compatible with the existing logic process,
-   *       but maybe will change after refactoring the functional-group context menu.
-   *
-   * Scenario 1
-   * Given: an expanded functional group
-   * When: the user right-clicks a bond in the f-group
-   * Then: only the functional-group context menu shows
-   *
-   * Scenario 2
-   * Given: the user has selected a bunch of things including functional groups
-   * When: the user right-clicks a selected or non-selected bond
-   * Then: only the functional-group context menu shows
-   *
-   * More details: https://github.com/epam/ketcher/pull/1896
-   */
-  const hasConflictWithFunctionalGroupMenu = useCallback(
-    (closestItem: any) => {
-      const editor = getKetcherInstance().editor as Editor
-      const struct = editor.struct()
+  const getSelectedFunctionalGroups = useCallback(() => {
+    const editor = getKetcherInstance().editor as Editor
+    const struct = editor.struct()
+    const selectedAtomIds = editor.selection()?.atoms
+    // Map could do deduplication
+    const selectedFunctionalGroups = new Map<number, FunctionalGroup>()
 
-      const functionalGroupId = FunctionalGroup.findFunctionalGroupByBond(
-        struct,
+    selectedAtomIds?.forEach((atomId) => {
+      const functionalGroup = FunctionalGroup.findFunctionalGroupByAtom(
         struct.functionalGroups,
-        closestItem.id
-      )
-      const hasRelatedSGroup = struct.functionalGroups.some(
-        (item) => item.relatedSGroupId === functionalGroupId
+        atomId,
+        true
       )
 
-      if (functionalGroupId !== null && hasRelatedSGroup) {
-        return true
-      }
+      functionalGroup !== null &&
+        selectedFunctionalGroups.set(
+          functionalGroup.relatedSGroupId,
+          functionalGroup
+        )
+    })
 
-      const selection = editor.selection()
-
-      if (selection?.atoms) {
-        const hasSelectedFunctionalGroup = selection.atoms.some((atomId) => {
-          const functionalGroupId = FunctionalGroup.findFunctionalGroupByAtom(
-            struct.functionalGroups,
-            atomId
-          )
-          const hasRelatedSGroupId = struct.functionalGroups.some(
-            (item) => item.relatedSGroupId === functionalGroupId
-          )
-          return functionalGroupId !== null && hasRelatedSGroupId
-        })
-        if (hasSelectedFunctionalGroup) {
-          return true
-        }
-      }
-
-      return false
-    },
-    [getKetcherInstance]
-  )
+    return selectedFunctionalGroups
+  }, [getKetcherInstance])
 
   const handleDisplay = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (event) => {
+      event.preventDefault()
+
       const editor = getKetcherInstance().editor as Editor
       const closestItem = editor.findItem(event, null)
-
-      if (!closestItem) {
-        hideAll()
-        return
-      }
-
-      if (hasConflictWithFunctionalGroupMenu(closestItem)) {
-        hideAll()
-        return
-      }
-
       const selection = editor.selection()
-      const isRightClickingSelection: number | undefined = selection?.[
-        closestItem.map
-      ]?.findIndex((selectedItemId) => selectedItemId === closestItem.id)
+      const functionalGroupsInSelection = getSelectedFunctionalGroups()
 
-      if (
-        isRightClickingSelection !== undefined &&
-        isRightClickingSelection !== -1
-      ) {
-        // Show menu items for batch updates
-        show({
-          event,
-          props: {
-            selected: true,
-            closestItem
+      let showProps: ContextMenuShowProps = null
+
+      if (selection) {
+        if (functionalGroupsInSelection.size > 0) {
+          const functionalGroups = Array.from(
+            functionalGroupsInSelection.values()
+          )
+          showProps = {
+            id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+            functionalGroups
           }
-        })
-      } else if (closestItem.map === 'bonds' || closestItem.map === 'atoms') {
-        // Show menu items for single update
-        if (selection) {
-          editor.render.ctab.setSelection(null)
+        } else if (onlyHasProperty(selection, 'bonds')) {
+          showProps = {
+            id: CONTEXT_MENU_ID.FOR_BONDS,
+            bondIds: selection.bonds
+          }
+        } else if (onlyHasProperty(selection, 'atoms')) {
+          showProps = {
+            id: CONTEXT_MENU_ID.FOR_ATOMS,
+            atomIds: selection.atoms
+          }
+        } else {
+          showProps = {
+            id: CONTEXT_MENU_ID.FOR_SELECTION,
+            bondIds: selection.bonds,
+            atomIds: selection.atoms
+          }
         }
-        show({
-          event,
-          props: { selected: false, closestItem }
-        })
+      } else if (closestItem) {
+        const struct = editor.struct()
+
+        switch (closestItem.map) {
+          case 'bonds':
+            {
+              const functionalGroup = FunctionalGroup.findFunctionalGroupByBond(
+                struct,
+                struct.functionalGroups,
+                closestItem.id,
+                true
+              )
+
+              showProps =
+                functionalGroup === null
+                  ? {
+                      id: CONTEXT_MENU_ID.FOR_BONDS,
+                      bondIds: [closestItem.id]
+                    }
+                  : {
+                      id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+                      functionalGroups: [functionalGroup]
+                    }
+            }
+            break
+
+          case 'atoms': {
+            const functionalGroup = FunctionalGroup.findFunctionalGroupByAtom(
+              struct.functionalGroups,
+              closestItem.id,
+              true
+            )
+
+            showProps =
+              functionalGroup === null
+                ? {
+                    id: CONTEXT_MENU_ID.FOR_ATOMS,
+                    atomIds: [closestItem.id]
+                  }
+                : {
+                    id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+                    functionalGroups: [functionalGroup]
+                  }
+            break
+          }
+
+          case 'sgroups':
+          case 'functionalGroups': {
+            const sGroup = struct.sgroups.get(closestItem.id)
+            const functionalGroup = FunctionalGroup.findFunctionalGroupBySGroup(
+              struct.functionalGroups,
+              sGroup
+            )
+
+            showProps = functionalGroup
+              ? {
+                  id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+                  functionalGroups: [functionalGroup]
+                }
+              : null
+            break
+          }
+        }
       }
+
+      showProps &&
+        show({
+          id: showProps.id,
+          event,
+          props: showProps
+        })
     },
-    [getKetcherInstance, hasConflictWithFunctionalGroupMenu, hideAll, show]
+    [getKetcherInstance, getSelectedFunctionalGroups, show]
   )
 
   return (

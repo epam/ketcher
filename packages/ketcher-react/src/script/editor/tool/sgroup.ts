@@ -41,13 +41,11 @@ const searchMaps = [
 
 class SGroupTool {
   editor: Editor
-  type: any
   lassoHelper: any
   isNotActiveTool: boolean | undefined
 
-  constructor(editor, type) {
+  constructor(editor) {
     this.editor = editor
-    this.type = type
     this.lassoHelper = new LassoHelper(1, editor, null)
 
     this.checkSelection()
@@ -143,7 +141,7 @@ class SGroupTool {
         return
       }
 
-      SGroupTool.sgroupDialog(this.editor, id ?? null, this.type)
+      SGroupTool.sgroupDialog(this.editor, id ?? null)
       this.isNotActiveTool = true
     }
   }
@@ -249,7 +247,7 @@ class SGroupTool {
     if (this.lassoHelper.running(event)) {
       this.editor.selection(this.lassoHelper.addPoint(event))
     } else {
-      this.editor.hover(this.editor.findItem(event, searchMaps))
+      this.editor.hover(this.editor.findItem(event, searchMaps), null, event)
     }
   }
 
@@ -448,7 +446,7 @@ class SGroupTool {
     // TODO: handle click on an existing group?
     if (id !== null || isAtomsOrBondsSelected) {
       this.editor.selection(selection)
-      SGroupTool.sgroupDialog(this.editor, id, this.type)
+      SGroupTool.sgroupDialog(this.editor, id)
     }
   }
 
@@ -459,13 +457,11 @@ class SGroupTool {
     this.editor.selection(null)
   }
 
-  static sgroupDialog(editor, id, defaultType) {
+  static sgroupDialog(editor, id) {
     const restruct = editor.render.ctab
     const struct = restruct.molecule
     const selection = editor.selection() || {}
     const sg = id !== null ? struct.sgroups.get(id) : null
-    const type = sg ? sg.type : defaultType
-    const eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit'
 
     let attrs
     if (sg) {
@@ -477,8 +473,8 @@ class SGroupTool {
       }
     }
 
-    const res = editor.event[eventName].dispatch({
-      type,
+    const res = editor.event.sgroupEdit.dispatch({
+      type: sg?.type,
       attrs
     })
 

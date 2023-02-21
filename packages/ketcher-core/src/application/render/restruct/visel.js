@@ -24,6 +24,7 @@ class Visel {
     this.paths = []
     this.boxes = []
     this.boundingBox = null
+    this.oldBoundingBox = null
     this.exts = []
   }
 
@@ -41,6 +42,9 @@ class Visel {
     this.paths = []
     this.boxes = []
     this.exts = []
+    if (this.boundingBox !== null) {
+      this.oldBoundingBox = this.boundingBox.clone()
+    }
     this.boundingBox = null
   }
 

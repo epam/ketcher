@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import MuiSelect, { SelectChangeEvent } from '@mui/material/Select'
+import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import { useEffect, useState } from 'react'
 import clsx from 'clsx'
@@ -74,7 +75,14 @@ const Select = ({
     >
       {options &&
         options.map((option) => {
-          return (
+          const isDivider: boolean =
+            typeof option?.value === 'string'
+              ? option.value.includes('Divider')
+              : false
+
+          return isDivider ? (
+            <Divider className={styles.listDivider} key={option.value} />
+          ) : (
             <MenuItem
               value={option.value}
               key={option.value}

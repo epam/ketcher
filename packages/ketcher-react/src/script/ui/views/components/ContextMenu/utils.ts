@@ -1,6 +1,4 @@
 import { difference } from 'lodash'
-import { PredicateParams } from 'react-contexify'
-import { ContextMenuShowProps, ItemData } from '../contextMenu.types'
 
 /**
  * Remove the word `bond` out of the title
@@ -44,6 +42,10 @@ export const getNonQueryBondNames = (tools) => {
 
 export const noOperation = () => null
 
-export const isBatchOperationHidden = ({
-  props
-}: PredicateParams<ContextMenuShowProps, ItemData>) => !props?.selected
+export function onlyHasProperty<T extends object>(
+  checkedObject: T,
+  key: keyof T
+) {
+  const numberOfProps = Object.keys(checkedObject).length
+  return numberOfProps === 1 && key in checkedObject
+}

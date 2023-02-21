@@ -14,29 +14,39 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Menu } from 'react-contexify'
+import { Menu, MenuProps } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
 import styles from './ContextMenu.module.less'
-import { AtomBatchEdit, AtomStereoBatchEdit } from './items/AtomBatchOperations'
-import AtomSingleOperations from './items/AtomSingleOperations'
-import { BatchDelete } from './items/BatchDelete'
-import { BondBatchEdit, BondTypeBatchChange } from './items/BondBatchOperations'
-import BondSingleOperations from './items/BondSingleOperations'
+import { CONTEXT_MENU_ID } from './contextMenu.types'
+import AtomMenuItems from './menuItems/AtomMenuItems'
+import BondMenuItems from './menuItems/BondMenuItems'
+import FunctionalGroupMenuItems from './menuItems/FunctionalGroupMenuItems'
+import SelectionMenuItems from './menuItems/SelectionMenuItems'
 
-export const CONTEXT_MENU_ID = 'ketcherBondAndAtomContextMenu'
+const props: Partial<MenuProps> = {
+  animation: false,
+  className: styles.contextMenu
+}
 
 const ContextMenu: React.FC = () => {
   return (
-    <Menu id={CONTEXT_MENU_ID} animation={false} className={styles.contextMenu}>
-      <BondSingleOperations />
-      <AtomSingleOperations />
+    <>
+      <Menu {...props} id={CONTEXT_MENU_ID.FOR_BONDS}>
+        <BondMenuItems />
+      </Menu>
 
-      <BondBatchEdit />
-      <AtomBatchEdit />
-      <BondTypeBatchChange />
-      <AtomStereoBatchEdit />
-      <BatchDelete />
-    </Menu>
+      <Menu {...props} id={CONTEXT_MENU_ID.FOR_ATOMS}>
+        <AtomMenuItems />
+      </Menu>
+
+      <Menu {...props} id={CONTEXT_MENU_ID.FOR_SELECTION}>
+        <SelectionMenuItems />
+      </Menu>
+
+      <Menu {...props} id={CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS}>
+        <FunctionalGroupMenuItems />
+      </Menu>
+    </>
   )
 }
 

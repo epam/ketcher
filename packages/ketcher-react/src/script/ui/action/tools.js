@@ -108,12 +108,6 @@ const toolActions = {
     action: { tool: 'sgroup' },
     hidden: (options) => isHidden(options, 'sgroup')
   },
-  'sgroup-data': {
-    shortcut: 'Mod+g',
-    title: 'Data S-Group',
-    action: { tool: 'sgroup', opts: 'DAT' },
-    hidden: (options) => isHidden(options, 'sgroup-data')
-  },
   arrows: {
     hidden: (options) => isHidden(options, 'arrows')
   },

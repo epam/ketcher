@@ -40,7 +40,7 @@ export function fileOpener(server) {
 }
 
 function throughFileReader(file) {
-  const isCDX = file.name.endsWith('cdx')
+  const isCDX = file.name.endsWith('cdx') && !file.name.endsWith('b64cdx')
   return new Promise((resolve, reject) => {
     const rd = new FileReader() // eslint-disable-line no-undef
 

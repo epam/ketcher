@@ -109,7 +109,7 @@ class SimpleObjectTool {
       }
     } else {
       const items = this.editor.findItem(event, ['simpleObjects'])
-      this.editor.hover(items)
+      this.editor.hover(items, null, event)
     }
   }
 

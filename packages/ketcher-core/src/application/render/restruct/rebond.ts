@@ -109,13 +109,15 @@ class ReBond extends ReObject {
     const bond = restruct.molecule.bonds.get(bid)
     const sgroups = restruct.molecule.sgroups
     const functionalGroups = restruct.molecule.functionalGroups
+    const sgroupsIds = struct.getGroupsIdsFromBondId(bid)
     if (
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond,
         sgroups,
         functionalGroups,
         false
-      )
+      ) &&
+      sgroupsIds.length < 2
     ) {
       return
     }

@@ -38,6 +38,7 @@ export enum SupportedFormat {
   ket = 'ket',
   cdxml = 'cdxml',
   cdx = 'cdx',
+  binaryCdx = 'binaryCdx',
   unknown = 'unknown'
 }
 

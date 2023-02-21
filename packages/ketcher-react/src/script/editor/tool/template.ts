@@ -25,11 +25,13 @@ import {
   FunctionalGroup,
   SGroup,
   ReStruct,
-  Struct
+  Struct,
+  fromFragmentDeletion
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
 import Editor from '../Editor'
+import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 
 class TemplateTool {
   editor: Editor
@@ -37,11 +39,14 @@ class TemplateTool {
   template: any
   findItems: Array<string>
   dragCtx: any
+  targetGroupsIds: Array<number> = []
+  isSaltOrSolvent: boolean
 
   constructor(editor, tmpl) {
     this.editor = editor
     this.mode = getTemplateMode(tmpl)
     this.editor.selection(null)
+    this.isSaltOrSolvent = SGroup.isSaltOrSolvent(tmpl.struct.name)
 
     this.template = {
       aid: parseInt(tmpl.aid) || 0,
@@ -75,7 +80,7 @@ class TemplateTool {
 
     const sgroup = frag.sgroups.size
     if (sgroup) {
-      this.findItems.push('sgroups')
+      this.findItems.push('functionalGroups')
     }
   }
 
@@ -86,125 +91,63 @@ class TemplateTool {
       'sgroups',
       'functionalGroups'
     ])
-    const struct = this.editor.struct()
-    const atomResult: Array<number> = []
-    const bondResult: Array<number> = []
-    const sGroupResult: Array<number> = []
-    const result: Array<number> = []
     const ctab = this.editor.render.ctab
-    const molecule = ctab.molecule
-    const functionalGroups = molecule.functionalGroups
+    const struct = ctab.molecule
 
-    if (
-      closestItem &&
-      functionalGroups.size &&
-      closestItem.map === 'functionalGroups' &&
-      FunctionalGroup.isContractedFunctionalGroup(
-        closestItem.id,
-        functionalGroups
-      )
-    ) {
-      sGroupResult.push(closestItem.id)
-    }
+    if (struct.functionalGroups.size) {
+      this.targetGroupsIds = getGroupIdsFromItemArrays(struct, {
+        ...(closestItem?.map === 'atoms' && { atoms: [closestItem.id] }),
+        ...(closestItem?.map === 'bonds' && { bonds: [closestItem.id] })
+      })
 
-    if (closestItem && functionalGroups.size && closestItem.map === 'atoms') {
-      const atomId = FunctionalGroup.atomsInFunctionalGroup(
-        functionalGroups,
-        closestItem.id
-      )
-
-      if (atomId !== null) {
-        atomResult.push(atomId)
-      }
-    }
-
-    if (closestItem && functionalGroups.size && closestItem.map === 'bonds') {
-      const bondId = FunctionalGroup.bondsInFunctionalGroup(
-        molecule,
-        functionalGroups,
-        closestItem.id
-      )
-
-      if (bondId !== null) {
-        bondResult.push(bondId)
-      }
-    }
-
-    if (sGroupResult.length > 0) {
-      for (const id of sGroupResult) {
-        if (!result.includes(id)) result.push(id)
-      }
-    }
-
-    if (atomResult.length > 0) {
-      for (const id of atomResult) {
-        const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-          functionalGroups,
-          id
+      if (
+        closestItem?.map === 'functionalGroups' &&
+        FunctionalGroup.isContractedFunctionalGroup(
+          closestItem.id,
+          struct.functionalGroups
         )
-        if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
-        }
+      ) {
+        this.targetGroupsIds.push(closestItem.id)
       }
     }
 
-    if (bondResult.length > 0) {
-      for (const id of bondResult) {
-        const fgId = FunctionalGroup.findFunctionalGroupByBond(
-          molecule,
-          struct.functionalGroups,
-          id
-        )
-        if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
-        }
-      }
-    }
-
-    if (result.length) {
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
-    }
-    // eslint-disable-line max-statements
-    const editor = this.editor
     this.editor.hover(null)
 
     this.dragCtx = {
-      xy0: editor.render.page2obj(event),
-      item: editor.findItem(event, this.findItems)
+      xy0: this.editor.render.page2obj(event),
+      item: this.editor.findItem(event, this.findItems)
     }
 
     const dragCtx = this.dragCtx
     const ci = dragCtx.item
 
-    if (!ci) {
+    if (!ci || this.isSaltOrSolvent) {
       //  ci.type == 'Canvas'
       delete dragCtx.item
-      return true
+      return
     }
 
     if (ci.map === 'bonds' && this.mode !== 'fg') {
       // calculate fragment center
-      const molecule = ctab.molecule
       const xy0 = new Vec2()
-      const bond = molecule.bonds.get(ci.id)
-      const frid = molecule.atoms.get(bond?.begin as number)?.fragment
-      const frIds = molecule.getFragmentIds(frid as number)
+      const bond = struct.bonds.get(ci.id)
+      const frid = struct.atoms.get(bond?.begin as number)?.fragment
+      const frIds = struct.getFragmentIds(frid as number)
       let count = 0
 
-      let loop = molecule.halfBonds.get(bond?.hb1 as number)?.loop
+      let loop = struct.halfBonds.get(bond?.hb1 as number)?.loop
 
       if (loop && loop < 0) {
-        loop = molecule.halfBonds.get(bond?.hb2 as number)?.loop
+        loop = struct.halfBonds.get(bond?.hb2 as number)?.loop
       }
 
       if (loop && loop >= 0) {
-        const loopHbs = molecule.loops.get(loop)?.hbs
+        const loopHbs = struct.loops.get(loop)?.hbs
         loopHbs?.forEach((hb) => {
-          const halfBondBegin = molecule.halfBonds.get(hb)?.begin
+          const halfBondBegin = struct.halfBonds.get(hb)?.begin
 
           if (halfBondBegin) {
-            const hbbAtom = molecule.atoms.get(halfBondBegin)
+            const hbbAtom = struct.atoms.get(halfBondBegin)
 
             if (hbbAtom) {
               xy0.add_(hbbAtom.pp) // eslint-disable-line no-underscore-dangle, max-len
@@ -214,7 +157,7 @@ class TemplateTool {
         })
       } else {
         frIds.forEach((id) => {
-          const atomById = molecule.atoms.get(id)
+          const atomById = struct.atoms.get(id)
 
           if (atomById) {
             xy0.add_(atomById.pp) // eslint-disable-line no-underscore-dangle
@@ -225,14 +168,12 @@ class TemplateTool {
 
       dragCtx.v0 = xy0.scaled(1 / count)
 
-      const sign = getSign(molecule, bond, dragCtx.v0)
+      const sign = getSign(struct, bond, dragCtx.v0)
 
       // calculate default template flip
       dragCtx.sign1 = sign || 1
       dragCtx.sign2 = this.template.sign
     }
-
-    return true
   }
 
   mousemove(event) {
@@ -249,14 +190,14 @@ class TemplateTool {
 
     const dragCtx = this.dragCtx
     const ci = dragCtx.item
-    let pos0: Vec2 | null | undefined = null
-    const pos1 = this.editor.render.page2obj(event)
+    let targetPos: Vec2 | null | undefined = null
+    const eventPos = this.editor.render.page2obj(event)
     const struct = restruct.molecule
 
     /* moving when attached to bond */
     if (ci && ci.map === 'bonds' && this.mode !== 'fg') {
       const bond = struct.bonds.get(ci.id)
-      let sign = getSign(struct, bond, pos1)
+      let sign = getSign(struct, bond, eventPos)
 
       if (dragCtx.sign1 * this.template.sign > 0) {
         sign = -sign
@@ -291,17 +232,27 @@ class TemplateTool {
     // calc initial pos and is extra bond needed
     if (!ci) {
       //  ci.type == 'Canvas'
-      pos0 = dragCtx.xy0
-    } else if (ci.map === 'atoms') {
-      pos0 = struct.atoms.get(ci.id)?.pp
+      targetPos = dragCtx.xy0
+    } else if (ci.map === 'atoms' || ci.map === 'functionalGroups') {
+      const atomId = getTargetAtomId(struct, ci)
 
-      if (pos0) {
-        extraBond = this.mode === 'fg' ? true : Vec2.dist(pos0, pos1) > 1
+      if (atomId !== undefined) {
+        const atom = struct.atoms.get(atomId)
+        targetPos = atom?.pp
+
+        if (targetPos) {
+          extraBond =
+            this.mode === 'fg' ? true : Vec2.dist(targetPos, eventPos) > 1
+        }
       }
     }
 
+    if (!targetPos) {
+      return true
+    }
+
     // calc angle
-    let angle = utils.calcAngle(pos0, pos1)
+    let angle = utils.calcAngle(targetPos, eventPos)
 
     if (!event.ctrlKey) {
       angle = utils.fracAngle(angle, null)
@@ -332,11 +283,24 @@ class TemplateTool {
     let action = null
     let pasteItems
 
-    if (ci?.map === 'atoms') {
+    if (!ci) {
+      const isAddingFunctionalGroup = this.template?.molecule?.sgroups.size
+      if (isAddingFunctionalGroup) {
+        // skip, b/c we dont want to do any additional actions (e.g. rotating for s-groups)
+        return true
+      }
+      ;[action, pasteItems] = fromTemplateOnCanvas(
+        restruct,
+        this.template,
+        targetPos,
+        angle
+      )
+    } else if (ci?.map === 'atoms' || ci?.map === 'functionalGroups') {
+      const atomId = getTargetAtomId(struct, ci)
       ;[action, pasteItems] = fromTemplateOnAtom(
         restruct,
         this.template,
-        ci.id,
+        atomId,
         angle,
         extraBond
       )
@@ -351,11 +315,19 @@ class TemplateTool {
       this.editor.hover(getHoverToFuse(dragCtx.mergeItems))
     }
 
+    // TODO: refactor after #2195 comes into effect
+    if (this.targetGroupsIds.length) this.targetGroupsIds.length = 0
+
     return true
   }
 
   mouseup(event) {
     const dragCtx = this.dragCtx
+
+    if (this.targetGroupsIds.length && this.mode !== 'fg') {
+      this.editor.event.removeFG.dispatch({ fgIds: this.targetGroupsIds })
+      return
+    }
 
     if (!dragCtx) {
       return true
@@ -365,7 +337,8 @@ class TemplateTool {
 
     const restruct = this.editor.render.ctab
     const struct = restruct.molecule
-    const ci = dragCtx.item
+    let ci = dragCtx.item
+    const functionalGroups = struct.functionalGroups
 
     /* after moving around bond */
     if (dragCtx.action && ci && ci.map === 'bonds' && this.mode !== 'fg') {
@@ -392,7 +365,7 @@ class TemplateTool {
     let action
     let pasteItems = null
 
-    if (SGroup.isSaltOrSolvent(this.template.molecule.name)) {
+    if (this.isSaltOrSolvent) {
       addSaltsAndSolventsOnCanvasWithoutMerge(
         restruct,
         this.template,
@@ -400,6 +373,49 @@ class TemplateTool {
         this.editor
       )
       return true
+    } else if (
+      ci?.map === 'functionalGroups' &&
+      FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups) &&
+      this.mode === 'fg' &&
+      this.targetGroupsIds.length
+    ) {
+      const closestGroup = this.editor.struct().sgroups.get(ci.id)
+      const isClosestGroupAttached =
+        closestGroup && closestGroup.isGroupAttached(this.editor.struct())
+
+      if (isClosestGroupAttached) {
+        const groupAttachmentAtomId = this.editor
+          .struct()
+          .atoms.find((atomId) => {
+            return !!this.editor
+              .struct()
+              .atomGetNeighbors(atomId)
+              ?.find(
+                (neighbor) =>
+                  neighbor.aid ===
+                  closestGroup.getAttAtomId(this.editor.struct())
+              )
+          })
+
+        if (groupAttachmentAtomId !== null) {
+          const targetPos =
+            this.editor.struct().atoms.get(groupAttachmentAtomId)?.pp ||
+            dragCtx.xy0
+          const eventPos = this.editor.render.page2obj(event)
+
+          const dist = Vec2.dist(targetPos, eventPos)
+          ci = { map: 'atoms', dist, id: groupAttachmentAtomId }
+        }
+      }
+
+      this.editor.update(
+        fromFragmentDeletion(this.editor.render.ctab, {
+          atoms: [...SGroup.getAtoms(struct, closestGroup)],
+          bonds: [...SGroup.getBonds(struct, closestGroup)]
+        })
+      )
+
+      if (!isClosestGroupAttached) ci = null
     }
 
     if (!dragCtx.action) {
@@ -476,14 +492,15 @@ class TemplateTool {
       ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
       : fromItemsFuse(restruct, dragCtx.mergeItems)
 
-    this.editor.hover(null)
     const completeAction = dragCtx.action
     if (completeAction && !completeAction.isDummy()) {
       this.editor.update(completeAction)
     }
+    this.editor.event.showInfo.dispatch(null)
     this.editor.event.message.dispatch({
       info: false
     })
+    this.editor.hover(this.editor.findItem(event, this.findItems), null, event)
 
     return true
   }
@@ -534,6 +551,17 @@ function getSign(molecule, bond, v) {
   }
 
   return 0
+}
+
+function getTargetAtomId(struct: Struct, ci): number | void {
+  if (ci.map === 'atoms') {
+    return ci.id
+  }
+
+  if (ci.map === 'functionalGroups') {
+    const group = struct.sgroups.get(ci.id)
+    return group?.getAttAtomId(struct)
+  }
 }
 
 export default TemplateTool

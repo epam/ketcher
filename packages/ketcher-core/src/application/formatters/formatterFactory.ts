@@ -92,6 +92,7 @@ export class FormatterFactory {
       case SupportedFormat.smarts:
       case SupportedFormat.cdxml:
       case SupportedFormat.cdx:
+      case SupportedFormat.binaryCdx:
       case SupportedFormat.unknown:
       default:
         formatter = new ServerFormatter(

@@ -60,6 +60,16 @@ const config = {
     action: { dialog: 'save' },
     hidden: (options) => isHidden(options, 'save')
   },
+  'atom-props': {
+    title: 'Atom Properties',
+    action: { dialog: 'atomProps' },
+    hidden: (options) => isHidden(options, 'atom-props')
+  },
+  'bond-props': {
+    title: 'Bond Properties',
+    action: { dialog: 'bondProps' },
+    hidden: (options) => isHidden(options, 'bond-props')
+  },
   undo: {
     shortcut: 'Mod+z',
     title: 'Undo',

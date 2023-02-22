@@ -3,17 +3,23 @@ import {
   fromAtomAddition,
   fromAtomsAttrs,
   fromBondAddition,
+  fromBondsAttrs,
   fromFragmentDeletion,
   FunctionalGroup,
   SGroup,
   Atom
 } from 'ketcher-core'
+import { openDialog } from './modal'
 import Tools from '../../editor/tool'
+import { getSelectedAtoms } from '../../editor/tool/select'
 import { onAction } from './shared'
 import { Editor } from '../../editor'
+import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
+import { fromAtom, toAtom, fromBond, toBond } from '../data/convert/structconv'
 
 type TNewAction = {
-  tool: string
+  tool?: string
+  dialog?: string
   opts?: any
 }
 
@@ -34,7 +40,9 @@ type HandleHotkeyOverItemProps = {
 export function handleHotkeyOverItem(props: HandleHotkeyOverItemProps) {
   if (props.newAction.tool === 'eraser') {
     handleEraser(props)
-  } else {
+  } else if (props.newAction.dialog) {
+    handleDialog(props)
+  } else if (props.newAction.tool) {
     handleTool(props)
   }
 }
@@ -46,6 +54,99 @@ function handleEraser({ editor, hoveredItem }: HandleHotkeyOverItemProps) {
   )
   editor.update(action)
   editor.hover(null)
+}
+
+function handleDialog({
+  hoveredItem,
+  newAction,
+  editor,
+  dispatch
+}: HandleHotkeyOverItemProps) {
+  const dialogType = Object.keys(hoveredItem)[0]
+  const dialogHandler = getDialogHandler(dialogType)
+  const hoveredItemId = hoveredItem[dialogType]
+
+  if (dialogHandler) {
+    const props: HandlersProps = {
+      hoveredItemId,
+      newAction,
+      editor,
+      dispatch
+    }
+    return dialogHandler(props)
+  }
+}
+
+function getDialogHandler(itemType: string) {
+  const dialogs = {
+    atoms: (props: HandlersProps) => handleAtomPropsDialog(props),
+    bonds: (props: HandlersProps) => handleBondPropsDialog(props)
+  }
+
+  const dialog = dialogs[itemType]
+  return dialog
+}
+
+function handleAtomPropsDialog({
+  hoveredItemId,
+  newAction,
+  editor,
+  dispatch
+}: HandlersProps) {
+  const selection = editor.selection()
+  const atomsSelected = selection?.atoms
+  const restruct = editor.render.ctab
+
+  if (atomsSelected && atomsSelected.includes(hoveredItemId)) {
+    const atoms = getSelectedAtoms(selection, restruct.molecule)
+    const changeAtomPromise = editor.event.elementEdit.dispatch(atoms)
+
+    updateSelectedAtoms({
+      selection,
+      editor,
+      changeAtomPromise
+    })
+  } else {
+    const atomFromStruct = restruct.atoms.get(hoveredItemId)
+    const convertedAtomForModal = fromAtom(atomFromStruct?.a)
+
+    openDialog(dispatch, newAction.dialog, convertedAtomForModal)
+      .then((res) => {
+        const updatedAtom = fromAtomsAttrs(
+          restruct,
+          hoveredItemId,
+          toAtom(res),
+          false
+        )
+
+        editor.update(updatedAtom)
+      })
+      .catch(() => null)
+  }
+}
+
+function handleBondPropsDialog({
+  hoveredItemId,
+  newAction,
+  editor,
+  dispatch
+}: HandlersProps) {
+  const restruct = editor.render.ctab
+  const bondFromStruct = restruct.bonds.get(hoveredItemId)
+  const convertedBondForModal = fromBond(bondFromStruct?.b)
+
+  openDialog(dispatch, newAction.dialog, convertedBondForModal)
+    .then((res) => {
+      const updatedBond = fromBondsAttrs(
+        restruct,
+        hoveredItemId,
+        toBond(res),
+        false
+      )
+
+      editor.update(updatedBond)
+    })
+    .catch(() => null)
 }
 
 function handleTool({
@@ -73,11 +174,12 @@ function handleTool({
     }
   }
 }
+
 async function isFunctionalGroupChange(props: HandlersProps): Promise<boolean> {
   return await isChangingFunctionalGroup(props)
 }
 
-function getToolHandler(itemType: string, toolName: string) {
+function getToolHandler(itemType: string, toolName = '') {
   const items = {
     atoms: {
       atom: (props: HandlersProps) => handleAtomTool(props),
@@ -95,7 +197,9 @@ function getToolHandler(itemType: string, toolName: string) {
 
   const item = items[itemType]
 
-  if (item) return item[toolName]
+  if (item) {
+    return item[toolName]
+  }
   return items._default[toolName]
 }
 

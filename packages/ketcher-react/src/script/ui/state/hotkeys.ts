@@ -74,6 +74,28 @@ function keyHandle(dispatch, state, hotKeys, event) {
       })
       .catch(() => null)
     event.preventDefault()
+  } else if (key && key.length === 1 && key.match('/')) {
+    const hotkeyDialogTypes = {
+      atoms: actions['atom-props'].action,
+      bonds: actions['bond-props'].action
+    }
+
+    const hoveredItem = getHoveredItem(render.ctab)
+    if (!hoveredItem) {
+      return
+    }
+    const dialogType = Object.keys(hoveredItem)[0]
+
+    if (Object.hasOwn(hotkeyDialogTypes, dialogType)) {
+      handleHotkeyOverItem({
+        hoveredItem,
+        newAction: hotkeyDialogTypes[dialogType],
+        editor,
+        dispatch
+      })
+    }
+
+    event.preventDefault()
   } else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
     const index = checkGroupOnTool(group, actionTool) // index currentTool in group || -1
     const groupLength = group !== null ? group.length : 1

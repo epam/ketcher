@@ -36,7 +36,7 @@ If applicable, add screenshots to help explain your problem.
 To determine it, hover over the header of the Ketcher tab in a browser. 
 
 **Test case**
-Add link to test case if bug was found during test case run.
+Add test case number (in EPMLSOPKET-* format) if bug was found during test case run.
 
 **Additional context**
 Add any other context about the problem here.

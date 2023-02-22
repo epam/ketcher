@@ -74,7 +74,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
       })
       .catch(() => null)
     event.preventDefault()
-  } else if (key && key.length === 1 && key.match(/\//)) {
+  } else if (key && key.length === 1 && key.match('/')) {
     const hotkeyDialogTypes = {
       atoms: actions['atom-props'].action,
       bonds: actions['bond-props'].action

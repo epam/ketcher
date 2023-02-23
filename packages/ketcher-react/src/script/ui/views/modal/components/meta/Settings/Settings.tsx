@@ -124,6 +124,8 @@ const SettingsDialog = (props: Props) => {
     ...prop
   } = props
 
+  console.log(props)
+
   const [changedGroups, setChangedGroups] = useState(new Set())
 
   useEffect(() => {
@@ -183,6 +185,7 @@ const SettingsDialog = (props: Props) => {
         <Field name="andFlagLabel" />
         <Field name="orFlagLabel" />
         <Field name="mixedFlagLabel" />
+        <Field name="ignoreChiralFlag" />
       </fieldset>
     )
   }

@@ -54,6 +54,7 @@ const render: {
   absFlagLabel: ExtendedSchema
   andFlagLabel: ExtendedSchema
   mixedFlagLabel: ExtendedSchema
+  ignoreChiralFlag: ExtendedSchema
   orFlagLabel: ExtendedSchema
   font: ExtendedSchema
   fontsz: ExtendedSchema
@@ -142,6 +143,13 @@ const render: {
     title: 'Text of Mixed flag',
     type: 'string',
     default: 'Mixed'
+  },
+  ignoreChiralFlag: {
+    title: 'Ignore the chiral flag',
+    type: 'boolean',
+    description: 'slider',
+    default: false
+    // hoverText: 'Ignore chiral flag while loading from molfiles. By default all the stereo will be ABS'
   },
   orFlagLabel: {
     title: 'Text of OR flag',

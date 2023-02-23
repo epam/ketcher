@@ -17,6 +17,7 @@ const fieldGroups = {
   andFlagLabel: 'Stereochemistry',
   orFlagLabel: 'Stereochemistry',
   mixedFlagLabel: 'Stereochemistry',
+  ignoreChiralFlag: 'Stereochemistry',
   carbonExplicitly: 'Atoms',
   showCharge: 'Atoms',
   showValence: 'Atoms',

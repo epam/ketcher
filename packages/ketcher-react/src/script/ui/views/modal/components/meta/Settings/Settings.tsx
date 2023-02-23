@@ -124,8 +124,6 @@ const SettingsDialog = (props: Props) => {
     ...prop
   } = props
 
-  console.log(props)
-
   const [changedGroups, setChangedGroups] = useState(new Set())
 
   useEffect(() => {

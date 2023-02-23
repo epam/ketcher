@@ -257,7 +257,10 @@ const TemplateDialog: FC<Props> = (props) => {
         />
       </Tabs>
       <div className={classes.tabsContent}>
-        <TabPanel value={tab} index={TemplateTabs.TemplateLibrary}>
+        <TabPanel
+          value={thisInitialTab !== null ? initialTab : tab}
+          index={TemplateTabs.TemplateLibrary}
+        >
           <div>
             {Object.keys(filteredTemplateLib).length ? (
               Object.keys(filteredTemplateLib).map((groupName) => {

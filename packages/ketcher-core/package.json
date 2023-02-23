@@ -1,6 +1,6 @@
 {
   "name": "ketcher-core",
-  "version": "2.8.0-rc.4",
+  "version": "2.8.0-rc.3-dev.3",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -77,8 +77,8 @@
     "rollup-plugin-visualizer": "^5.5.2",
     "ts-jest": "26.5.6",
     "ttypescript": "^1.5.13",
-    "typedoc": "^0.22.17",
-    "typedoc-plugin-markdown": "^3.12.1",
+    "typedoc": "^0.23.25",
+    "typedoc-plugin-markdown": "^3.14.0",
     "typescript": "^4.5.2"
   },
   "files": [

@@ -145,6 +145,7 @@ class AtomTool {
   }
 
   mousemove(event) {
+    this.editor.hoverIcon.show()
     const rnd = this.editor.render
     const { layerX, layerY } = event
 

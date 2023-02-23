@@ -36,6 +36,7 @@ import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 import { Highlighter } from './highlighter'
 import { showFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip'
+import { contextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -113,6 +114,7 @@ class Editor implements KetcherEditor {
   highlights: Highlighter
   hoverIcon: any
   lastCursorPosition: { x: number; y: number }
+  contextMenu: contextMenuInfo
   event: {
     message: Subscription
     elementEdit: PipelineSubscription
@@ -161,6 +163,7 @@ class Editor implements KetcherEditor {
       y: 0
     }
     this.createHoverIcon()
+    this.contextMenu = {}
 
     this.event = {
       message: new Subscription(),
@@ -601,6 +604,10 @@ function updateLastCursorPosition(editor: Editor, event) {
   }
 }
 
+function isContextMenuClosed(editor: Editor) {
+  return !Object.values(editor.contextMenu).some(Boolean)
+}
+
 function useToolIfNeeded(
   editor: Editor,
   eventName: string,
@@ -612,7 +619,8 @@ function useToolIfNeeded(
   const conditions = [
     !!EditorTool,
     eventName in EditorTool,
-    clientArea.contains(event.target) || EditorTool.isSelectionRunning?.()
+    clientArea.contains(event.target) || EditorTool.isSelectionRunning?.(),
+    isContextMenuClosed(editor)
   ]
 
   if (conditions.every((condition) => condition)) {

@@ -18,3 +18,7 @@ export type ContextMenuShowProps = {
 } | null
 
 export type ItemEventParams = PredicateParams<ContextMenuShowProps, ItemData>
+
+export type contextMenuInfo = {
+  [id in CONTEXT_MENU_ID]?: boolean
+}

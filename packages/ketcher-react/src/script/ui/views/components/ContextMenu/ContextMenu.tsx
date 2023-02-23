@@ -14,8 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useCallback } from 'react'
 import { Menu, MenuProps } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
+import { useAppContext } from 'src/hooks'
+import Editor from 'src/script/editor'
 import styles from './ContextMenu.module.less'
 import { CONTEXT_MENU_ID } from './contextMenu.types'
 import AtomMenuItems from './menuItems/AtomMenuItems'
@@ -29,21 +32,58 @@ const props: Partial<MenuProps> = {
 }
 
 const ContextMenu: React.FC = () => {
+  const { getKetcherInstance } = useAppContext()
+
+  const trackVisibility = useCallback(
+    (id: CONTEXT_MENU_ID, visible: boolean) => {
+      const editor = getKetcherInstance().editor as Editor
+      if (visible) {
+        editor.hoverIcon.hide()
+      }
+      editor.contextMenu[id] = visible
+    },
+    [getKetcherInstance]
+  )
+
   return (
     <>
-      <Menu {...props} id={CONTEXT_MENU_ID.FOR_BONDS}>
+      <Menu
+        {...props}
+        id={CONTEXT_MENU_ID.FOR_BONDS}
+        onVisibilityChange={(visible) =>
+          trackVisibility(CONTEXT_MENU_ID.FOR_BONDS, visible)
+        }
+      >
         <BondMenuItems />
       </Menu>
 
-      <Menu {...props} id={CONTEXT_MENU_ID.FOR_ATOMS}>
+      <Menu
+        {...props}
+        id={CONTEXT_MENU_ID.FOR_ATOMS}
+        onVisibilityChange={(visible) =>
+          trackVisibility(CONTEXT_MENU_ID.FOR_ATOMS, visible)
+        }
+      >
         <AtomMenuItems />
       </Menu>
 
-      <Menu {...props} id={CONTEXT_MENU_ID.FOR_SELECTION}>
+      <Menu
+        {...props}
+        id={CONTEXT_MENU_ID.FOR_SELECTION}
+        onVisibilityChange={(visible) =>
+          trackVisibility(CONTEXT_MENU_ID.FOR_SELECTION, visible)
+        }
+      >
         <SelectionMenuItems />
       </Menu>
 
-      <Menu {...props} id={CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS}>
+      <Menu
+        {...props}
+        id={CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS}
+        onVisibilityChange={(visible) =>
+          trackVisibility(CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS, visible)
+        }
+      >
         <FunctionalGroupMenuItems />
       </Menu>
     </>

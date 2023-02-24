@@ -1,8 +1,7 @@
 import { Vec2 } from 'ketcher-core'
 import _ from 'lodash'
 
-const edgeOffset = 250
-// const debounceDelay = 100
+const edgeOffset = 150
 
 export function isCloseToEdgeOfScreen(event) {
   const { clientX, clientY } = event
@@ -71,18 +70,12 @@ export function shiftAndExtendCanvasByVector(vector: Vec2, render) {
     render.ctab.translate(vector)
   }
 
-  clientArea.scrollLeft += vector.x * render.options.scale
-  clientArea.scrollTop += vector.y * render.options.scale
-
+  scrollByVector(vector, render)
   render.update(false)
 }
-
-// export const shiftAndExtendCanvasByVector = _.throttle(shiftAndExtendCanvasByVectorWithoutThrottle, debounceDelay)
 
 export function scrollByVector(vector: Vec2, render) {
   const clientArea = render.clientArea
   clientArea.scrollLeft += vector.x * render.options.scale
   clientArea.scrollTop += vector.y * render.options.scale
 }
-
-// export const scrollByVector = _.throttle(scrollByVectorWithoutThrottle, debounceDelay)

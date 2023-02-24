@@ -46,8 +46,6 @@ import {
   shiftAndExtendCanvasByVector
 } from '../utils/canvasExtension'
 
-let extendCanvasTimeout: ReturnType<typeof setTimeout> | null = null
-
 class SelectTool {
   #mode: string
   #lassoHelper: LassoHelper
@@ -333,7 +331,6 @@ class SelectTool {
     const functionalGroups = molecule.functionalGroups
     const selectedSgroups: any[] = []
     const newSelected = { atoms: [] as any[], bonds: [] as any[] }
-    clearTimeout(extendCanvasTimeout as ReturnType<typeof setTimeout>)
     let actualSgroupId
 
     if (selected && functionalGroups.size && selected.atoms) {
@@ -640,27 +637,20 @@ function extendCanvas(render, event, _) {
     isCloseToRightEdgeOfScreen,
     isCloseToBottomEdgeOfScreen
   } = isCloseToEdgeOfScreen(event)
-  // console.log(event)
 
   if (isCloseToLeftEdgeOfCanvas) {
-    console.log('cursor is close to left CANVAS corner')
-    render.setScrollOffset(render.options.offset.add(new Vec2(-offset, 0, 0)))
-    // shiftAndExtendCanvasByVector(new Vec2(offset, 0, 0))
+    shiftAndExtendCanvasByVector(new Vec2(-offset, 0, 0), render)
   }
 
   if (isCloseToTopEdgeOfCanvas) {
-    console.log('cursor is close to top CANVAS corner')
-    render.setScrollOffset(render.options.offset.add(new Vec2(0, offset, 0)))
-    // shiftAndExtendCanvasByVector(new Vec2(0, offset, 0))
+    shiftAndExtendCanvasByVector(new Vec2(0, -offset, 0), render)
   }
 
   if (isCloseToRightEdgeOfCanvas) {
-    console.log('cursor is close to right CANVAS corner')
     shiftAndExtendCanvasByVector(new Vec2(offset, 0, 0), render)
   }
 
   if (isCloseToBottomEdgeOfCanvas) {
-    console.log('cursor is close to bottom CANVAS corner')
     shiftAndExtendCanvasByVector(new Vec2(0, offset, 0), render)
   }
 
@@ -676,27 +666,20 @@ function extendCanvas(render, event, _) {
   }
 
   if (isCloseToTopEdgeOfScreen) {
-    console.log('cursor is close to top Screen corner')
     scrollByVector(new Vec2(0, -offset), render)
   }
 
   if (isCloseToBottomEdgeOfScreen) {
-    console.log('cursor is close to bottom Screen corner')
     scrollByVector(new Vec2(0, offset), render)
   }
 
   if (isCloseToLeftEdgeOfScreen) {
-    console.log('cursor is close to left Screen corner')
     scrollByVector(new Vec2(-offset, 0), render)
   }
 
   if (isCloseToRightEdgeOfScreen) {
-    console.log('cursor is close to right Screen corner')
     scrollByVector(new Vec2(offset, 0), render)
   }
-
-  // clearTimeout(extendCanvasTimeout as ReturnType<typeof setTimeout>)
-  // extendCanvasTimeout = setTimeout(() => extendCanvas(render, event, _), 0)
 }
 
 function closestToSel(ci) {

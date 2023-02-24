@@ -183,7 +183,10 @@ const SettingsDialog = (props: Props) => {
         <Field name="andFlagLabel" />
         <Field name="orFlagLabel" />
         <Field name="mixedFlagLabel" />
-        <Field name="ignoreChiralFlag" />
+        <Field
+          name="ignoreChiralFlag"
+          tooltip="Ignore chiral flag while loading from molfiles. By default all the stereo will be ABS"
+        />
       </fieldset>
     )
   }

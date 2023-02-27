@@ -191,8 +191,7 @@ class SGroupTool {
         !FunctionalGroup.isBondInContractedFunctionalGroup(
           bondFromStruct,
           sgroups,
-          functionalGroups,
-          true
+          functionalGroups
         )
       ) {
         bondResult.push(bondId)

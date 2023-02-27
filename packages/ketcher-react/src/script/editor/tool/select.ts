@@ -468,13 +468,12 @@ class SelectTool {
       )
       const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b
       if (
-        bondId !== null &&
+        bondFromStruct &&
         !FunctionalGroup.isBondInContractedFunctionalGroup(
           // TODO: examine if this code is really needed, seems like its a hack
           bondFromStruct,
           sgroups,
-          functionalGroups,
-          true
+          functionalGroups
         )
       )
         bondResult.push(bondId)

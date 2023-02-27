@@ -181,8 +181,7 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond.b,
         sGroups,
-        functionalGroups,
-        true
+        functionalGroups
       )
     )
       return null
@@ -202,8 +201,7 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond.b,
         sGroups,
-        functionalGroups,
-        true
+        functionalGroups
       )
     )
       return null

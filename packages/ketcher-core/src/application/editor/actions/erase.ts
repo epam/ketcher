@@ -23,12 +23,8 @@ import {
   SimpleObjectDelete,
   TextDelete
 } from '../operations'
-import { Pile, RGroup } from 'domain/entities'
-import {
-  fromSgroupDeletion,
-  removeAtomFromSgroupIfNeeded,
-  removeSgroupIfNeeded
-} from './sgroup'
+import { RGroup } from 'domain/entities'
+import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup'
 
 import { Action } from './action'
 import assert from 'assert'
@@ -106,16 +102,6 @@ export function fromFragmentDeletion(restruct, selection) {
     texts: selection.texts || []
   }
 
-  const actionRemoveDataSGroups = new Action()
-  restruct.molecule.sgroups.forEach((sg, id) => {
-    if (
-      selection.sgroupData.includes(id) ||
-      new Pile(selection.atoms).isSuperset(new Pile(sg.atoms))
-    ) {
-      actionRemoveDataSGroups.mergeWith(fromSgroupDeletion(restruct, id))
-    }
-  })
-
   selection.atoms.forEach((aid) => {
     restruct.molecule.atomGetNeighbors(aid).forEach((nei) => {
       if (selection.bonds.indexOf(nei.bid) === -1) {
@@ -175,8 +161,6 @@ export function fromFragmentDeletion(restruct, selection) {
       action
     )
   }
-
-  action.mergeWith(actionRemoveDataSGroups)
 
   return action
 }

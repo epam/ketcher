@@ -23,7 +23,7 @@ import {
   SimpleObjectDelete,
   TextDelete
 } from '../operations'
-import { Pile, RGroup } from 'domain/entities'
+import { RGroup } from 'domain/entities'
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup'
 
 import { Action } from './action'
@@ -161,8 +161,6 @@ export function fromFragmentDeletion(restruct, selection) {
       action
     )
   }
-
-  action.mergeWith(actionRemoveDataSGroups)
 
   return action
 }

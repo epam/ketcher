@@ -42,8 +42,7 @@ function getElementsInRectangle(restruct, p0, p1) {
       !FunctionalGroup.isBondInContractedFunctionalGroup(
         bond.b,
         sGroups,
-        functionalGroups,
-        true
+        functionalGroups
       )
     ) {
       bondList.push(bid)
@@ -177,8 +176,7 @@ function getElementsInPolygon(restruct, rr) {
       !FunctionalGroup.isBondInContractedFunctionalGroup(
         bond.b,
         sGroups,
-        functionalGroups,
-        true
+        functionalGroups
       )
     ) {
       bondList.push(bid)

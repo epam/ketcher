@@ -67,8 +67,7 @@ class ReBond extends ReObject {
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond,
         sgroups,
-        functionalGroups,
-        true
+        functionalGroups
       )
     ) {
       return null
@@ -89,8 +88,7 @@ class ReBond extends ReObject {
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond,
         sgroups,
-        functionalGroups,
-        true
+        functionalGroups
       )
     ) {
       return null
@@ -110,11 +108,11 @@ class ReBond extends ReObject {
     const sgroups = restruct.molecule.sgroups
     const functionalGroups = restruct.molecule.functionalGroups
     if (
+      bond &&
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond,
         sgroups,
-        functionalGroups,
-        false
+        functionalGroups
       )
     ) {
       return

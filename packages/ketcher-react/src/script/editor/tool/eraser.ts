@@ -154,8 +154,7 @@ class EraserTool {
           !FunctionalGroup.isBondInContractedFunctionalGroup(
             bondFromStruct,
             sgroups,
-            functionalGroups,
-            true
+            functionalGroups
           )
         ) {
           bondsResult.push(bondId)
@@ -269,8 +268,7 @@ class EraserTool {
         !FunctionalGroup.isBondInContractedFunctionalGroup(
           bondFromStruct,
           sgroups,
-          functionalGroups,
-          true
+          functionalGroups
         )
       ) {
         bondResult.push(bondId)

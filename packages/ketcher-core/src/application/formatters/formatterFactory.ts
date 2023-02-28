@@ -44,8 +44,12 @@ export class FormatterFactory {
       return [{}, {}]
     }
 
-    const { reactionRelayout, badHeaderRecover, ...structServiceOptions } =
-      options
+    const {
+      reactionRelayout,
+      badHeaderRecover,
+      ignoreChiralFlag,
+      ...structServiceOptions
+    } = options
 
     const molfileParseOptions: Partial<MolSerializerOptions> = {}
 
@@ -54,6 +58,11 @@ export class FormatterFactory {
     }
     if (typeof badHeaderRecover === 'boolean') {
       molfileParseOptions.badHeaderRecover = badHeaderRecover
+    }
+
+    if (typeof ignoreChiralFlag === 'boolean') {
+      molfileParseOptions.ignoreChiralFlag = ignoreChiralFlag
+      structServiceOptions['ignore-no-chiral-flag'] = ignoreChiralFlag
     }
 
     return [molfileParseOptions, structServiceOptions]
@@ -65,11 +74,13 @@ export class FormatterFactory {
   ): StructFormatter {
     const [molSerializerOptions, structServiceOptions] =
       this.separateOptions(options)
+    console.log('create formatter', structServiceOptions)
 
     let formatter: StructFormatter
     switch (format) {
       case SupportedFormat.ket:
         formatter = new KetFormatter(new KetSerializer())
+        // formatter = new KetFormatter(new KetSerializer(molSerializerOptions))
         break
 
       case SupportedFormat.rxn:
@@ -77,6 +88,8 @@ export class FormatterFactory {
         break
 
       case SupportedFormat.mol:
+        console.log('saving', molSerializerOptions)
+
         formatter = new MolfileV2000Formatter(
           new MolSerializer(molSerializerOptions)
         )

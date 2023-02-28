@@ -20,6 +20,7 @@ export interface MolSerializerOptions {
   ignoreErrors: boolean
   noRgroups: boolean
   preserveIndigoDesc: boolean
+  ignoreChiralFlag?: boolean
 }
 
 export type MolfileFormat = 'v2000' | 'v3000'

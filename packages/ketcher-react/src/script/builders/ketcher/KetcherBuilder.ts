@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  DefaultStructServiceOptions,
   FormatterFactory,
   Ketcher,
   ServiceMode,
@@ -41,14 +42,10 @@ class KetcherBuilder {
   }
 
   async appendApiAsync(structServiceProvider: StructServiceProvider) {
-    this.structService = createApi(structServiceProvider, {
-      'smart-layout': true,
-      'ignore-stereochemistry-errors': true,
-      'mass-skip-error-on-pseudoatoms': false,
-      'gross-formula-add-rsites': true,
-      'aromatize-skip-superatoms': true,
-      'dearomatize-on-load': false
-    })
+    this.structService = createApi(
+      structServiceProvider,
+      DefaultStructServiceOptions
+    )
   }
 
   appendServiceMode(mode: ServiceMode) {

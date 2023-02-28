@@ -149,7 +149,6 @@ const render: {
     type: 'boolean',
     description: 'slider',
     default: false
-    // hoverText: 'Ignore chiral flag while loading from molfiles. By default all the stereo will be ABS'
   },
   orFlagLabel: {
     title: 'Text of OR flag',

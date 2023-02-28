@@ -132,7 +132,7 @@ class SaveDialog extends Component {
   }
 
   changeType = (type) => {
-    const { struct, server, options, formState } = this.props
+    const { struct, server, options, formState, ignoreChiralFlag } = this.props
 
     const errorHandler = this.context.errorHandler
     if (this.isImageFormat(type)) {
@@ -166,7 +166,7 @@ class SaveDialog extends Component {
     } else {
       this.setState({ disableControls: true, isLoading: true })
       const factory = new FormatterFactory(server)
-      const service = factory.create(type, options)
+      const service = factory.create(type, { ...options, ignoreChiralFlag })
 
       return service
         .getStructureFromStructAsync(struct)
@@ -449,7 +449,8 @@ const mapStateToProps = (state) => ({
   options: state.options.getServerSettings(),
   formState: state.modal.form,
   moleculeErrors: state.modal.form.moleculeErrors,
-  checkState: state.options.check
+  checkState: state.options.check,
+  ignoreChiralFlag: state.options.settings.ignoreChiralFlag
 })
 
 const mapDispatchToProps = (dispatch) => ({

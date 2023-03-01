@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { ReSGroup } from 'application/render'
 import assert from 'assert'
 import { FunctionalGroupsProvider } from '../helpers'
+import { Bond } from './bond'
 import { Pool } from './pool'
 import { SGroup } from './sgroup'
 import { Struct } from './struct'
@@ -259,36 +261,23 @@ export class FunctionalGroup {
   }
 
   static isBondInContractedFunctionalGroup(
-    bond,
-    sgroups,
-    functionalGroups,
-    sgroupsFromReStruct: boolean
-  ): boolean {
-    const contractedFunctionalGroupsAtoms: number[] = []
-    if (sgroupsFromReStruct) {
-      sgroups.forEach((sg) => {
-        if (
-          FunctionalGroup.isContractedFunctionalGroup(
-            sg.item.id,
-            functionalGroups
-          )
-        ) {
-          contractedFunctionalGroupsAtoms.push(...sg.item.atoms)
-        }
-      })
-    } else {
-      sgroups.forEach((sg) => {
-        if (
-          FunctionalGroup.isContractedFunctionalGroup(sg.id, functionalGroups)
-        ) {
-          contractedFunctionalGroupsAtoms.push(...sg.atoms)
-        }
-      })
-    }
-    return (
-      contractedFunctionalGroupsAtoms.includes(bond.begin) &&
-      contractedFunctionalGroupsAtoms.includes(bond.end)
-    )
+    bond: Bond,
+    sGroups: Map<number, ReSGroup> | Pool<SGroup>,
+    functionalGroups: Pool<FunctionalGroup>
+  ) {
+    return [...sGroups.values()].some((sGroup) => {
+      const sGroupId = 'item' in sGroup ? sGroup.item.id : sGroup.id
+      const atomsInSGroup = 'item' in sGroup ? sGroup.item.atoms : sGroup.atoms
+      const isContracted = FunctionalGroup.isContractedFunctionalGroup(
+        sGroupId,
+        functionalGroups
+      )
+      return (
+        isContracted &&
+        atomsInSGroup.includes(bond.begin) &&
+        atomsInSGroup.includes(bond.end)
+      )
+    })
   }
 
   static isContractedFunctionalGroup(sgroupId, functionalGroups): boolean {

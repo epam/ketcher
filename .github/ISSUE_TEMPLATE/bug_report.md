@@ -35,5 +35,8 @@ If applicable, add screenshots to help explain your problem.
 **Ketcher version** [e.g. v2.4.2]. 
 To determine it, hover over the header of the Ketcher tab in a browser. 
 
+**Test case**
+Add test case number (in EPMLSOPKET-* format) if bug was found during test case run.
+
 **Additional context**
 Add any other context about the problem here.

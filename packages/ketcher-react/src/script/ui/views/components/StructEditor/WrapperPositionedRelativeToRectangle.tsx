@@ -8,8 +8,7 @@ import {
   calculateScrollOffsetY
 } from './helpers'
 
-/* eslint-disable-line camelcase */
-const BAR_PANEl_SIZE = 32
+const BAR_PANEL_SIZE = 32
 const LEFT_PADDING_MULTIPLIER = 3
 
 function getPanelPositionRelativeToRect(
@@ -20,11 +19,11 @@ function getPanelPositionRelativeToRect(
   width: number,
   height: number
 ): Vec2 | null {
-  const viewportLeftLimit = BAR_PANEl_SIZE * LEFT_PADDING_MULTIPLIER + width
+  const viewportLeftLimit = BAR_PANEL_SIZE * LEFT_PADDING_MULTIPLIER + width
   const viewportBottomLimit =
-    render?.clientArea?.clientHeight - BAR_PANEl_SIZE - height
+    render?.clientArea?.clientHeight - BAR_PANEL_SIZE - height
   const viewportRightLimit =
-    render?.clientArea?.clientWidth - BAR_PANEl_SIZE - width
+    render?.clientArea?.clientWidth - BAR_PANEL_SIZE - width
 
   // We need to remove first element of the path. Example of the path => ['M', 23, 43]
   const rectCoords: Array<Array<number>> = sGroup.hovering.attrs?.path?.map(

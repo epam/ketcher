@@ -428,43 +428,19 @@ class TemplateTool {
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups) &&
       this.mode === 'fg'
     ) {
-      const closestGroup = this.editor.struct().sgroups.get(ci.id)
-      const isClosestGroupAttached =
-        closestGroup && closestGroup.isGroupAttached(this.editor.struct())
-
-      if (isClosestGroupAttached) {
-        const groupAttachmentAtomId = this.editor
-          .struct()
-          .atoms.find((atomId) => {
-            return !!this.editor
-              .struct()
-              .atomGetNeighbors(atomId)
-              ?.find(
-                (neighbor) =>
-                  neighbor.aid ===
-                  closestGroup.getAttAtomId(this.editor.struct())
-              )
-          })
-
-        if (groupAttachmentAtomId !== null) {
-          const targetPos =
-            this.editor.struct().atoms.get(groupAttachmentAtomId)?.pp ||
-            dragCtx.xy0
-          const eventPos = this.editor.render.page2obj(event)
-
-          const dist = Vec2.dist(targetPos, eventPos)
-          ci = { map: 'atoms', dist, id: groupAttachmentAtomId }
-        }
-      }
+      const struct = this.editor.struct()
+      const closestGroup = struct.sgroups.get(ci.id)!
+      const attachmentAtomId = closestGroup.getAttAtomId(struct)
+      ci = { map: 'atoms', id: attachmentAtomId }
 
       this.editor.update(
         fromFragmentDeletion(this.editor.render.ctab, {
-          atoms: [...SGroup.getAtoms(struct, closestGroup)],
+          atoms: [...SGroup.getAtoms(struct, closestGroup)].filter(
+            (atomId) => atomId !== attachmentAtomId
+          ),
           bonds: [...SGroup.getBonds(struct, closestGroup)]
         })
       )
-
-      if (!isClosestGroupAttached) ci = null
     }
 
     if (!dragCtx.action) {

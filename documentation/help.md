@@ -606,10 +606,23 @@ In the _Stereochemistry tab_ in _Settings_ you can:
 - change the style of the Label display at stereogenic centers
 - select the color of Absolute/AND/OR stereogenic centers
 - choose one of the four color display modes
+- enable/disable option when Chiral flag is ignored (_false_ by default)
 
 <img src=images/49_sett_stereon.png width = "440"/>
 
-<img src=images/50_sett_stereon.png width = "440"/>
+When option _Ignore the chiral flag_ is _true_ it will affect opening and saving of MDL V2000 and MDL V3000 files, as well as the display of labels at stereogenic centers and stereo flags:
+
+- stereo flags are not displayed
+
+<img src=images/49.1_sett_stereon.png/>
+
+- labels at stereogenic centers are displayed only for non-absolute groups
+
+<img src=images/49.2_sett_stereon.png/>
+
+- MDL V2000 and MDL V3000 file formats will save stereo information according to the following table
+
+<img src=images/50_sett_stereon.png/>
 
 # Hotkeys
 

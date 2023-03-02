@@ -19,7 +19,7 @@ function getPanelPositionRelativeToRect(
   render: Render,
   width: number,
   height: number
-): Array<Vec2> {
+): Vec2 | null {
   const viewportLeftLimit = BAR_PANEl_SIZE * LEFT_PADDING_MULTIPLIER + width
   const viewportBottomLimit =
     render?.clientArea?.clientHeight - BAR_PANEl_SIZE - height
@@ -33,6 +33,18 @@ function getPanelPositionRelativeToRect(
 
   const [mLeftSide, mBottomSide, mRightSide, mTopSide] =
     calculateMiddleCoordsForRect(rectCoords)
+
+  if (
+    !mBottomSide?.x ||
+    !mBottomSide?.y ||
+    !mTopSide?.y ||
+    !mLeftSide?.x ||
+    !mLeftSide?.y ||
+    !mRightSide?.x ||
+    !mRightSide?.y
+  ) {
+    return null
+  }
 
   // Default position for panel is in the bottom;
   let x = mBottomSide.x - width / 2
@@ -55,7 +67,7 @@ function getPanelPositionRelativeToRect(
   x += calculateScrollOffsetX(render)
   y += calculateScrollOffsetY(render)
 
-  return [new Vec2(x, y)]
+  return new Vec2(x, y)
 }
 
 interface WrapperPositionedRelativeToRectangleProps {
@@ -83,7 +95,7 @@ const WrapperPositionedRelativeToRectangle: FC<
     }
   })
 
-  const [coords] = getPanelPositionRelativeToRect(
+  const panelCoordinate = getPanelPositionRelativeToRect(
     clientX,
     clientY,
     sGroup,
@@ -92,19 +104,15 @@ const WrapperPositionedRelativeToRectangle: FC<
     wrapperHeight
   )
 
-  const { x, y } = coords
-
-  const style = { left: x + 'px', top: y + 'px' }
-
-  return (
+  return panelCoordinate ? (
     <div
       ref={wrapperRef}
-      style={style}
+      style={{ left: panelCoordinate.x + 'px', top: panelCoordinate.y + 'px' }}
       className={clsx(classes.infoPanel, className)}
     >
       {sGroupData}
     </div>
-  )
+  ) : null
 }
 
 export default WrapperPositionedRelativeToRectangle

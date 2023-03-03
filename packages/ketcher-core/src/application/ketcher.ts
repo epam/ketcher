@@ -28,6 +28,7 @@ import { Struct } from 'domain/entities'
 import assert from 'assert'
 import { EventEmitter } from 'events'
 import { runAsyncAction } from 'utilities'
+import { storage } from 'ketcher-react/src/script/ui/storage-ext'
 
 async function prepareStructToRender(
   structStr: string,
@@ -57,7 +58,8 @@ function parseStruct(
   const options = ketcherInstance.editor.options()
 
   const service = factory.create(format, {
-    'dearomatize-on-load': options['dearomatize-on-load']
+    'dearomatize-on-load': options['dearomatize-on-load'],
+    'ignore-no-chiral-flag': options.ignoreChiralFlag
   })
   return service.getStructureFromStringAsync(structStr)
 }
@@ -115,6 +117,11 @@ export class Ketcher {
         'general.dearomatize-on-load': options['dearomatize-on-load']
       }
     }
+    if ('ignoreChiralFlag' in options) {
+      return {
+        'general.ignore-no-chiral-flag': options.ignoreChiralFlag
+      }
+    }
     throw new Error('dearomatize-on-load option is not provided!')
   }
 
@@ -129,6 +136,16 @@ export class Ketcher {
     if ('general.dearomatize-on-load' in settings) {
       options['dearomatize-on-load'] = settings['general.dearomatize-on-load']
     }
+    if ('general.ignoreChiralFlag' in settings) {
+      console.log('options', options)
+
+      // eslint-disable-next-line dot-notation
+      options['ignoreChiralFlag'] = settings['general.ignoreChiralFlag']
+    }
+    storage.setItem('ketcher-opts', {
+      ...this.#editor.options(),
+      ...options
+    })
     return this.#editor.setOptions(JSON.stringify(options))
   }
 

@@ -450,7 +450,7 @@ const mapStateToProps = (state) => ({
   formState: state.modal.form,
   moleculeErrors: state.modal.form.moleculeErrors,
   checkState: state.options.check,
-  ignoreChiralFlag: state.options.settings.ignoreChiralFlag
+  ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag
 })
 
 const mapDispatchToProps = (dispatch) => ({

@@ -22,7 +22,8 @@ import {
   fromBondsAttrs,
   FunctionalGroup,
   SGroup,
-  fromOneBondDeletion
+  fromOneBondDeletion,
+  Struct
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -253,7 +254,7 @@ class BondTool {
             beginPos,
             endPos
           )[0]
-          if (existingBondId) {
+          if (existingBondId !== null) {
             this.dragCtx.existedBond = bond
             this.dragCtx.action.mergeWith(
               fromOneBondDeletion(rnd.ctab, existingBondId)
@@ -358,16 +359,16 @@ class BondTool {
     }
   }
 
-  getExistingBond(struct, begin, end) {
+  getExistingBond(struct: Struct, begin: number, end: number) {
     for (const [bondId, bond] of struct.bonds.entries()) {
       const alreadyHasBondInOtherDirection =
         (bond.begin === end && bond.end === begin) ||
         (bond.begin === begin && bond.end === end)
       if (alreadyHasBondInOtherDirection) {
-        return [bondId, bond]
+        return [bondId, bond] as const
       }
     }
-    return [null, null]
+    return [null, null] as const
   }
 }
 

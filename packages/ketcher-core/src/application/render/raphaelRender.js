@@ -120,13 +120,17 @@ Render.prototype.setZoom = function (zoom) {
   this.setViewBox(zoom)
 }
 
-function calcExtend(sSz, x0, y0, x1, y1) {
+function calcExtend(canvasSize, x0, y0, newXSize, newYSize) {
   // eslint-disable-line max-params
   let ex = x0 < 0 ? -x0 : 0
   let ey = y0 < 0 ? -y0 : 0
 
-  if (sSz.x < x1) ex += x1 - sSz.x
-  if (sSz.y < y1) ey += y1 - sSz.y
+  if (canvasSize.x < newXSize) {
+    ex += newXSize - canvasSize.x
+  }
+  if (canvasSize.y < newYSize) {
+    ey += newYSize - canvasSize.y
+  }
   return new Vec2(ex, ey)
 }
 
@@ -138,8 +142,8 @@ Render.prototype.setScrollOffset = function (x, y) {
     this.sz.scaled(this.options.zoom),
     x,
     y,
-    cx + x,
-    cy + y
+    cx + Math.abs(x),
+    cy + Math.abs(y)
   ).scaled(1 / this.options.zoom)
   if (e.x > 0 || e.y > 0) {
     this.setPaperSize(this.sz.add(e))
@@ -198,7 +202,7 @@ Render.prototype.update = function (force = false, viewSz = null) {
   const changes = this.ctab.update(force)
   this.ctab.setSelection() // [MK] redraw the selection bits where necessary
   if (changes) {
-    const sf = this.options.scale
+    const scale = this.options.scale
     const bb = this.ctab
       .getVBoxObj()
       .transform(Scale.obj2scaled, this.options)
@@ -210,7 +214,7 @@ Render.prototype.update = function (force = false, viewSz = null) {
 
     const isAutoScale = this.options.autoScale || this.options.downScale
     if (!isAutoScale) {
-      const ext = Vec2.UNIT.scaled(sf)
+      const ext = Vec2.UNIT.scaled(scale)
       const eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb
       const vb = new Box2Abs(
         this.scrollPos(),

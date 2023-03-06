@@ -56,7 +56,8 @@ class BondTool {
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
-    const ci = this.editor.findItem(event, ['atoms', 'bonds'])
+    const itemsToFind = ['atoms', 'bonds', 'functionalGroups']
+    const ci = this.editor.findItem(event, itemsToFind)
     const atomResult: Array<number> = []
     const bondResult: Array<number> = []
     const result: Array<number> = []
@@ -106,7 +107,7 @@ class BondTool {
     this.editor.selection(null)
     this.dragCtx = {
       xy0: rnd.page2obj(event),
-      item: this.editor.findItem(event, ['atoms', 'bonds'])
+      item: ci
     }
     if (!this.dragCtx.item)
       // ci.type == 'Canvas'
@@ -315,6 +316,15 @@ class BondTool {
         this.editor.update(
           bondChangingAction(rnd.ctab, dragCtx.item.id, bond, bondProps)
         )
+      } else if (dragCtx.item.map === 'functionalGroups') {
+        const groupId = dragCtx.item.id
+        const group = struct.sgroups.get(groupId)
+        const attAtomId = group?.getAttAtomId(struct)
+
+        this.editor.update(
+          fromBondAddition(rnd.ctab, this.bondProps, attAtomId, undefined)[0]
+        )
+        delete this.dragCtx.existedBond
       }
       delete this.dragCtx
     }

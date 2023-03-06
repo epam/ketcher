@@ -36,8 +36,7 @@ import { atomForNewBond, atomGetAttr } from './utils'
 import {
   fromAtomMerge,
   fromStereoAtomAttrs,
-  mergeFragmentsIfNeeded,
-  mergeSgroups
+  mergeFragmentsIfNeeded
 } from './atom'
 
 import { Action } from './action'
@@ -81,7 +80,8 @@ export function fromBondAddition(
     begin.fragment = frid
     begin = (action.addOp(new AtomAdd(begin, pos).perform(restruct)) as AtomAdd)
       .data.aid
-    if (typeof end === 'number') mergeSgroups(action, restruct, [begin], end)
+    if (typeof end === 'number')
+      mergeFragmentsIfNeeded(action, restruct, begin, end)
     pos = pos2
   } else if (atomGetAttr(restruct, begin, 'label') === '*') {
     action.addOp(new AtomAttr(begin, 'label', 'C').perform(restruct))
@@ -92,7 +92,8 @@ export function fromBondAddition(
     // TODO: <op>.data.aid here is a hack, need a better way to access the id of a created atom
     end = (action.addOp(new AtomAdd(end, pos).perform(restruct)) as AtomAdd)
       .data.aid
-    if (typeof begin === 'number') mergeSgroups(action, restruct, [end], begin)
+    if (typeof begin === 'number')
+      mergeFragmentsIfNeeded(action, restruct, end, begin)
   } else if (atomGetAttr(restruct, end, 'label') === '*') {
     action.addOp(new AtomAttr(end, 'label', 'C').perform(restruct))
   }

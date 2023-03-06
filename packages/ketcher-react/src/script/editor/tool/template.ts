@@ -26,7 +26,8 @@ import {
   SGroup,
   ReStruct,
   Struct,
-  fromFragmentDeletion
+  fromFragmentDeletion,
+  fromSgroupDeletion
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -380,18 +381,20 @@ class TemplateTool {
       this.targetGroupsIds.length
     ) {
       const struct = this.editor.struct()
+      const reStruct = this.editor.render.ctab
       const closestGroup = struct.sgroups.get(ci.id)!
       const attachmentAtomId = closestGroup.getAttAtomId(struct)
-      ci = { map: 'atoms', id: attachmentAtomId }
 
-      this.editor.update(
-        fromFragmentDeletion(this.editor.render.ctab, {
-          atoms: [...SGroup.getAtoms(struct, closestGroup)].filter(
-            (atomId) => atomId !== attachmentAtomId
-          ),
-          bonds: [...SGroup.getBonds(struct, closestGroup)]
-        })
-      )
+      const removeNonAttachmentAtoms = fromFragmentDeletion(reStruct, {
+        atoms: [...SGroup.getAtoms(struct, closestGroup)].filter(
+          (atomId) => atomId !== attachmentAtomId
+        ),
+        bonds: [...SGroup.getBonds(struct, closestGroup)]
+      })
+      const removeSGroup = fromSgroupDeletion(reStruct, ci.id)
+      this.editor.update(removeNonAttachmentAtoms.mergeWith(removeSGroup))
+
+      ci = { map: 'atoms', id: attachmentAtomId }
     }
 
     if (!dragCtx.action) {

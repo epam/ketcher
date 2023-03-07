@@ -25,42 +25,42 @@ function getPanelPositionRelativeToRect(
   const viewportRightLimit =
     render?.clientArea?.clientWidth - BAR_PANEL_SIZE - width
 
-  // We need to remove first element of the path. Example of the path => ['M', 23, 43]
+  // [['M', 23, 43], ['L', 23, 24]] we should remove first elements => [[23,43], [23,24]]
   const rectCoords: Array<Array<number>> = sGroup.hovering.attrs?.path?.map(
     (line) => line.slice(1)
   )
 
-  const [mLeftSide, mBottomSide, mRightSide, mTopSide] =
+  const [middleLeftSide, middleBottomSide, middleRightSide, middleTopSide] =
     calculateMiddleCoordsForRect(rectCoords)
 
   if (
-    !mBottomSide?.x ||
-    !mBottomSide?.y ||
-    !mTopSide?.y ||
-    !mLeftSide?.x ||
-    !mLeftSide?.y ||
-    !mRightSide?.x ||
-    !mRightSide?.y
+    !middleBottomSide?.x ||
+    !middleBottomSide?.y ||
+    !middleTopSide?.y ||
+    !middleLeftSide?.x ||
+    !middleLeftSide?.y ||
+    !middleRightSide?.x ||
+    !middleRightSide?.y
   ) {
     return null
   }
 
   // Default position for panel is in the bottom;
-  let x = mBottomSide.x - width / 2
-  let y = mBottomSide.y
+  let x = middleBottomSide.x - width / 2
+  let y = middleBottomSide.y
 
   if (clientY > viewportBottomLimit) {
-    y = mTopSide.y - height
+    y = middleTopSide.y - height
   }
 
   if (clientX > viewportRightLimit) {
-    x = mLeftSide.x - width
-    y = mLeftSide.y - height / 2
+    x = middleLeftSide.x - width
+    y = middleLeftSide.y - height / 2
   }
 
   if (clientX < viewportLeftLimit) {
-    x = mRightSide.x
-    y = mRightSide.y - height / 2
+    x = middleRightSide.x
+    y = middleRightSide.y - height / 2
   }
 
   x += calculateScrollOffsetX(render)
@@ -69,7 +69,7 @@ function getPanelPositionRelativeToRect(
   return new Vec2(x, y)
 }
 
-interface WrapperPositionedRelativeToRectangleProps {
+interface SGroupDataRenderProps {
   clientX: number
   clientY: number
   render: Render
@@ -79,9 +79,7 @@ interface WrapperPositionedRelativeToRectangleProps {
   className?: string
 }
 
-const WrapperPositionedRelativeToRectangle: FC<
-  WrapperPositionedRelativeToRectangleProps
-> = (props) => {
+const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
   const { clientX, clientY, render, className, sGroup, sGroupData } = props
   const [wrapperHeight, setWrapperHeight] = useState(0)
   const [wrapperWidth, setWrapperWidth] = useState(0)
@@ -114,4 +112,4 @@ const WrapperPositionedRelativeToRectangle: FC<
   ) : null
 }
 
-export default WrapperPositionedRelativeToRectangle
+export default SGroupDataRender

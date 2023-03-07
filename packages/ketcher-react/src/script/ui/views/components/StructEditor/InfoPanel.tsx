@@ -18,7 +18,7 @@ import { useState, useEffect, useRef, FC } from 'react'
 import { Scale, Vec2, Render, Struct, SGroup } from 'ketcher-core'
 
 import StructRender from '../../../component/structrender'
-import WrapperPositionedRelativeToRectangle from './WrapperPositionedRelativeToRectangle'
+import SGroupDataRender from './SGroupDataRender'
 import { calculateScrollOffsetX, calculateScrollOffsetY } from './helpers'
 import { functionGroupInfoSelector } from '../../../state/functionalGroups/selectors'
 import { connect } from 'react-redux'
@@ -145,7 +145,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
       />
     </div>
   ) : (
-    <WrapperPositionedRelativeToRectangle
+    <SGroupDataRender
       clientX={clientX}
       clientY={clientY}
       render={render}

@@ -70,6 +70,9 @@ export function getHoverToFuse(items) {
     bonds: Array.from(items.bonds.values()),
     ...(items.functionalGroups && {
       functionalGroups: Array.from(items.functionalGroups.values())
+    }),
+    ...(items.atomToFunctionalGroup && {
+      sgroups: Array.from(items.atomToFunctionalGroup.values())
     })
   }
 
@@ -88,17 +91,20 @@ export function mergeMapOfItemsToSet(items: Map<number, number>): Set<number> {
  * @param struct
  * @param closestMap {{
  * 		atoms: Map<number, number>,
- * 		bonds: Map<number, number>
+ * 		bonds: Map<number, number>,
+ *    atomToFunctionalGroup: Map<number, number>
  * }}
  * @return {{
  * 		atoms: Map<number, number>,
- * 		bonds: Map<number, number>
+ * 		bonds: Map<number, number>,
+ *    atomToFunctionalGroup: Map<number, number>
  * }}
  */
 function closestToMerge(struct, closestMap) {
   const mergeMap = {
     atoms: new Map(closestMap.atoms),
-    bonds: new Map(closestMap.bonds)
+    bonds: new Map(closestMap.bonds),
+    atomToFunctionalGroup: new Map(closestMap.atomToFunctionalGroup)
   }
 
   closestMap.bonds.forEach((dstId, srcId) => {
@@ -113,7 +119,12 @@ function closestToMerge(struct, closestMap) {
     }
   })
 
-  if (mergeMap.atoms.size === 0 && mergeMap.bonds.size === 0) return null
+  if (
+    mergeMap.atoms.size === 0 &&
+    mergeMap.bonds.size === 0 &&
+    mergeMap.atomToFunctionalGroup.size === 0
+  )
+    return null
 
   return mergeMap
 }

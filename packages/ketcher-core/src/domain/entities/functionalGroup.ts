@@ -122,14 +122,18 @@ export class FunctionalGroup {
     return new FunctionalGroup(functionalGroup.#sgroup)
   }
 
+  static isAttachmentBond(sgroup, { begin, end }) {
+    return (
+      (sgroup.atoms.includes(begin) && !sgroup.atoms.includes(end)) ||
+      (sgroup.atoms.includes(end) && !sgroup.atoms.includes(begin))
+    )
+  }
+
   // Checks, if S-Group is standalone or attached to some other structure
   static isAttachedSGroup(sgroup, molecule) {
     const { bonds } = molecule
-    const isAttachmentBond = ({ begin, end }) =>
-      (sgroup.atoms.includes(begin) && !sgroup.atoms.includes(end)) ||
-      (sgroup.atoms.includes(end) && !sgroup.atoms.includes(begin))
     for (const bond of bonds.values()) {
-      if (isAttachmentBond(bond)) {
+      if (FunctionalGroup.isAttachmentBond(sgroup, bond)) {
         return true
       }
     }

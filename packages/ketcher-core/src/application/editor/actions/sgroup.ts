@@ -364,11 +364,17 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
   sgCounts.forEach((count, sid) => {
     const sG = restruct.sgroups.get(sid).item
     const sgAtoms = SGroup.getAtoms(restruct.molecule, sG)
+    // const attachmentAtomId = sG.getAttAtomId(restruct.molecule)
+    // const atomsWithoutAttachmentPoint = sgAtoms.length - 1 === count && !atoms.includes(attachmentAtomId)
 
     if (sgAtoms.length === count) {
       // delete whole s-group
       const sgroup = struct.sgroups.get(sid)
       action.mergeWith(sGroupAttributeAction(sid, sgroup.getAttrs()))
+      // sgAtoms.forEach((atom) => {
+      //   action.addOp(new SGroupAtomRemove(sid, atom))
+      // })
+      // action.addOp(new SGroupAtomRemove(sid, attachmentAtomId))
       action.addOp(new SGroupRemoveFromHierarchy(sid))
       action.addOp(new SGroupDelete(sid))
     }

@@ -26,11 +26,18 @@ import {
   SGroup,
   ReStruct,
   Struct,
-  fromFragmentDeletion
+  fromFragmentDeletion,
+  fromSgroupDeletion
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
 import Editor from '../Editor'
+// import { fromAtomAddition } from 'ketcher-core'
+// import { fromBondAddition } from 'ketcher-core'
+// import { Bond } from 'ketcher-core'
+// import { SGroupRemoveFromHierarchy } from 'ketcher-core'
+// import { SGroupAtomRemove } from 'ketcher-core'
+// import { SGroupDelete } from 'ketcher-core'
 
 class TemplateTool {
   editor: Editor
@@ -430,16 +437,32 @@ class TemplateTool {
     ) {
       const struct = this.editor.struct()
       const closestGroup = struct.sgroups.get(ci.id)!
+      const sGroupAtoms = [...SGroup.getAtoms(struct, closestGroup)]
       const attachmentAtomId = closestGroup.getAttAtomId(struct)
+      // const functionalGroupReplaceAction = replaceSGroup(struct, ci, restruct)
       ci = { map: 'atoms', id: attachmentAtomId }
 
-      this.editor.update(
-        fromFragmentDeletion(this.editor.render.ctab, {
-          atoms: [...SGroup.getAtoms(struct, closestGroup)].filter(
-            (atomId) => atomId !== attachmentAtomId
-          ),
+      const deleteAtomsAndBondsAction = fromFragmentDeletion(
+        this.editor.render.ctab,
+        {
+          atoms: sGroupAtoms.filter((atomId) => atomId !== attachmentAtomId),
           bonds: [...SGroup.getBonds(struct, closestGroup)]
-        })
+        }
+      )
+      // const removeSGroup = () => {
+      //   deleteAtomsAndBondsAction.addOp(new SGroupRemoveFromHierarchy(closestGroup.id))
+      //   sGroupAtoms.forEach((atom) => {
+      //     deleteAtomsAndBondsAction.addOp(new SGroupAtomRemove(closestGroup.id, atom))
+      //   })
+      //   deleteAtomsAndBondsAction.addOp(new SGroupDelete(closestGroup.id))
+      // }
+      // removeSGroup()
+      const removeAbbreviationAction = fromSgroupDeletion(
+        restruct,
+        closestGroup.id
+      )
+      this.editor.update(
+        deleteAtomsAndBondsAction.mergeWith(removeAbbreviationAction)
       )
     }
 
@@ -538,6 +561,43 @@ class TemplateTool {
     this.mouseup(e)
   }
 }
+
+// function replaceSGroup(struct, ci, restruct) {
+//   const closestGroup = struct.sgroups.get(ci.id)!
+//   const sGroupAtoms = [...SGroup.getAtoms(struct, closestGroup)]
+//   const attachmentAtomId = closestGroup.getAttAtomId(struct)
+//   const attachmentAtom = struct.atoms.get(attachmentAtomId)
+//   const attachmentBond: Bond = Array.from(struct.bonds.values()).find((bond) =>
+//     FunctionalGroup.isAttachmentBond(closestGroup, bond as Bond)
+//   ) as Bond
+//   const wasGroupAttached =
+//     attachmentBond && closestGroup.isGroupAttached(struct)
+//   const beginAtom = struct.atoms.get(attachmentBond.begin)
+//   const endAtom = struct.atoms.get(attachmentBond.end)
+//   ci = { map: 'atoms', id: attachmentAtomId }
+
+//   const deleteAtomsAndBondsAction = fromFragmentDeletion(restruct, {
+//     atoms: sGroupAtoms,
+//     bonds: [...SGroup.getBonds(struct, closestGroup)]
+//   })
+
+//   if (wasGroupAttached) {
+//     return deleteAtomsAndBondsAction
+//       .mergeWith(fromAtomAddition(restruct, attachmentAtom.pp, attachmentAtom))
+//       .mergeWith(
+//         fromBondAddition(
+//           restruct,
+//           attachmentBond,
+//           beginAtom,
+//           endAtom,
+//           beginAtom.pp,
+//           endAtom.pp
+//         )
+//       )
+//   }
+
+//   return deleteAtomsAndBondsAction
+// }
 
 function addSaltsAndSolventsOnCanvasWithoutMerge(
   restruct: ReStruct,

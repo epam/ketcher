@@ -166,10 +166,6 @@ const TemplateDialog: FC<Props> = (props) => {
 
   const searchInputRef = useRef<HTMLInputElement>(null)
 
-  const [thisInitialTab, setThisInitialTab] = useState<number | null>(
-    initialTab
-  )
-
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     props.group
   ])
@@ -189,6 +185,12 @@ const TemplateDialog: FC<Props> = (props) => {
     onSelect(null)
   }, [tab, onSelect])
 
+  useEffect(() => {
+    if (initialTab !== null) {
+      onTabChange(initialTab)
+    }
+  }, [initialTab, onTabChange])
+
   const handleAccordionChange = (accordion) => (_, isExpanded) => {
     setExpandedAccordions(
       isExpanded
@@ -200,7 +202,6 @@ const TemplateDialog: FC<Props> = (props) => {
   }
 
   const handleTabChange = (value) => {
-    setThisInitialTab(null)
     onTabChange(value)
   }
 
@@ -239,7 +240,7 @@ const TemplateDialog: FC<Props> = (props) => {
         <Icon name="search" className={classes.searchIcon} />
       </div>
       <Tabs
-        value={thisInitialTab !== null ? initialTab : tab}
+        value={tab}
         onChange={(_, value) => handleTabChange(value)}
         className={classes.tabs}
       >
@@ -257,10 +258,7 @@ const TemplateDialog: FC<Props> = (props) => {
         />
       </Tabs>
       <div className={classes.tabsContent}>
-        <TabPanel
-          value={thisInitialTab !== null ? initialTab : tab}
-          index={TemplateTabs.TemplateLibrary}
-        >
+        <TabPanel value={tab} index={TemplateTabs.TemplateLibrary}>
           <div>
             {Object.keys(filteredTemplateLib).length ? (
               Object.keys(filteredTemplateLib).map((groupName) => {
@@ -367,7 +365,7 @@ const onModalClose = (props, dispatch) => {
 export default connect(
   (store) => ({
     ...omit(['attach'], (store as any).templates),
-    initialTab: (store as any).modal?.prop?.tab || TemplateTabs.TemplateLibrary,
+    initialTab: (store as any).modal?.prop?.tab,
     renderOptions: (store as any).editor?.render?.options,
     functionalGroups: functionalGroupsSelector(store),
     saltsAndSolvents: saltsAndSolventsSelector(store)

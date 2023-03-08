@@ -186,7 +186,6 @@ class RotateTool {
     delete this.dragCtx
 
     this.editor.update(action)
-    this.editor.hover(null)
 
     if (dragCtx.mergeItems) {
       this.editor.selection(null)

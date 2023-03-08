@@ -241,6 +241,11 @@ class AtomTool {
     this.editor.event.message.dispatch({
       info: false
     })
+    this.editor.hover(
+      this.editor.findItem(event, ['atoms', 'functionalGroups']),
+      null,
+      event
+    )
   }
 }
 

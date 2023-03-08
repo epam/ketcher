@@ -55,7 +55,7 @@ class ReactionUnmapTool {
       })
       this.editor.update(action)
     }
-    this.editor.hover(null)
+    this.editor.hover(this.editor.findItem(event, ['atoms']), null, event)
   }
 }
 

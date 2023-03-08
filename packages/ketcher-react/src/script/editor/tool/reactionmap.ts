@@ -142,7 +142,7 @@ class ReactionMapTool {
       this.updateLine(null, null)
       delete this.dragCtx
     }
-    this.editor.hover(null)
+    this.editor.hover(this.editor.findItem(event, ['atoms']), null, event)
   }
 }
 

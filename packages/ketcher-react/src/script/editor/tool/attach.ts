@@ -43,9 +43,11 @@ class AttachTool {
       ((ci.map === 'atoms' &&
         Elements.get(struct.atoms.get(ci.id)?.label as string)) ||
         ci.map === 'bonds')
-    )
+    ) {
       this.editor.hover(ci)
-    else this.editor.hover(null)
+    } else {
+      this.editor.hover(null)
+    }
     return true
   }
 

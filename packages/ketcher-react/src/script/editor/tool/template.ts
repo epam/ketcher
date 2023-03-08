@@ -26,7 +26,9 @@ import {
   SGroup,
   ReStruct,
   Struct,
-  fromFragmentDeletion
+  fromFragmentDeletion,
+  fromSgroupDeletion,
+  Action
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -412,7 +414,7 @@ class TemplateTool {
     }
     /* end */
 
-    let action
+    let action, functionalGroupRemoveAction
     let pasteItems = null
 
     if (SGroup.isSaltOrSolvent(this.template.molecule.name)) {
@@ -428,19 +430,20 @@ class TemplateTool {
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups) &&
       this.mode === 'fg'
     ) {
+      functionalGroupRemoveAction = new Action()
       const struct = this.editor.struct()
-      const closestGroup = struct.sgroups.get(ci.id)!
-      const attachmentAtomId = closestGroup.getAttAtomId(struct)
-      ci = { map: 'atoms', id: attachmentAtomId }
+      const restruct = this.editor.render.ctab
+      const functionalGroupToReplace = struct.sgroups.get(ci.id)!
+      const attachmentAtomId = functionalGroupToReplace.getAttAtomId(struct)
+      const sGroupAtoms = SGroup.getAtoms(struct, functionalGroupToReplace)
+      const [_, ...atoms] = sGroupAtoms
 
-      this.editor.update(
-        fromFragmentDeletion(this.editor.render.ctab, {
-          atoms: [...SGroup.getAtoms(struct, closestGroup)].filter(
-            (atomId) => atomId !== attachmentAtomId
-          ),
-          bonds: [...SGroup.getBonds(struct, closestGroup)]
-        })
+      functionalGroupRemoveAction.mergeWith(fromSgroupDeletion(restruct, ci.id))
+      functionalGroupRemoveAction.mergeWith(
+        fromFragmentDeletion(restruct, { atoms })
       )
+
+      ci = { map: 'atoms', id: attachmentAtomId }
     }
 
     if (!dragCtx.action) {
@@ -485,6 +488,9 @@ class TemplateTool {
           angle,
           extraBond
         )
+        if (functionalGroupRemoveAction) {
+          action = functionalGroupRemoveAction.mergeWith(action)
+        }
         dragCtx.action = action
       } else if (ci.map === 'bonds' && this.mode !== 'fg') {
         const promise = fromTemplateOnBondAction(

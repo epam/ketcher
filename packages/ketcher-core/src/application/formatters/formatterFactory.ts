@@ -26,7 +26,6 @@ import {
 } from 'domain/serializers'
 import { StructService, StructServiceOptions } from 'domain/services'
 import { KetFormatter } from './ketFormatter'
-import { RxnFormatter } from './rxnFormatter'
 import { ServerFormatter } from './serverFormatter'
 import { MolfileV2000Formatter } from './molfileV2000Formatter'
 
@@ -72,10 +71,6 @@ export class FormatterFactory {
         formatter = new KetFormatter(new KetSerializer())
         break
 
-      case SupportedFormat.rxn:
-        formatter = new RxnFormatter(new MolSerializer(molSerializerOptions))
-        break
-
       case SupportedFormat.mol:
         formatter = new MolfileV2000Formatter(
           new MolSerializer(molSerializerOptions)
@@ -94,6 +89,7 @@ export class FormatterFactory {
       case SupportedFormat.cdx:
       case SupportedFormat.binaryCdx:
       case SupportedFormat.unknown:
+      case SupportedFormat.rxn:
       default:
         formatter = new ServerFormatter(
           this.#structService,

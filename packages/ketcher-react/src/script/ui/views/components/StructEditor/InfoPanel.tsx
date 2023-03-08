@@ -18,6 +18,8 @@ import { useState, useEffect, useRef, FC } from 'react'
 import { Scale, Vec2, Render, Struct, SGroup } from 'ketcher-core'
 
 import StructRender from '../../../component/structrender'
+import SGroupDataRender from './SGroupDataRender'
+import { calculateScrollOffsetX, calculateScrollOffsetY } from './helpers'
 import { functionGroupInfoSelector } from '../../../state/functionalGroups/selectors'
 import { connect } from 'react-redux'
 import clsx from 'clsx'
@@ -71,17 +73,12 @@ function getPanelPosition(
       y = panelPosition.y - height - HOVER_PANEL_PADDING * 3
     }
     // adjust position to current scroll offset
-    const scrollOffsetX =
-      render?.options.offset?.x - render?.clientArea?.scrollLeft
-    const scrollOffsetY =
-      render?.options?.offset?.y - render?.clientArea?.scrollTop
-    x += scrollOffsetX
-    y += scrollOffsetY
+    x += calculateScrollOffsetX(render)
+    y += calculateScrollOffsetY(render)
   }
 
   return [new Vec2(x, y), new Vec2(width, height)]
 }
-
 interface InfoPanelProps {
   clientX: number | undefined
   clientY: number | undefined
@@ -148,15 +145,15 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
       />
     </div>
   ) : (
-    <div
-      style={{
-        left: x + 'px',
-        top: y + 'px'
-      }}
-      className={clsx(classes.infoPanel, className)}
-    >
-      {sGroupData}
-    </div>
+    <SGroupDataRender
+      clientX={clientX}
+      clientY={clientY}
+      render={render}
+      groupStruct={groupStruct}
+      sGroup={sGroup}
+      sGroupData={sGroupData}
+      className={className}
+    />
   )
 }
 

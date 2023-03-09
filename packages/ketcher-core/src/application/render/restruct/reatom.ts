@@ -335,8 +335,6 @@ class ReAtom extends ReObject {
     // TODO: fragment should not be null
     const fragment = restruct.molecule.frags.get(fragmentId)
 
-    console.log(stereoLabel)
-
     const text =
       (shouldDisplayStereoLabel(
         stereoLabel,

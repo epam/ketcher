@@ -335,16 +335,20 @@ class ReAtom extends ReObject {
     // TODO: fragment should not be null
     const fragment = restruct.molecule.frags.get(fragmentId)
 
+    console.log(stereoLabel)
+
     const text =
       (shouldDisplayStereoLabel(
         stereoLabel,
         options.stereoLabelStyle,
+        options.ignoreChiralFlag,
         fragment?.enhancedStereoFlag
       )
         ? `${stereoLabel}\n`
         : '') +
       (queryAttrsText.length > 0 ? `${queryAttrsText}\n` : '') +
       (aamText.length > 0 ? `.${aamText}.` : '')
+
     if (text.length > 0) {
       const elem = Elements.get(this.a.label)
       const aamPath = render.paper.text(ps.x, ps.y, text).attr({
@@ -447,12 +451,21 @@ function getStereoAtomOpacity(options, stereoLabel) {
 function shouldDisplayStereoLabel(
   stereoLabel,
   labelStyle,
+  ignoreChiralFlag,
   flag: StereoFlag | undefined
 ): boolean {
   if (!stereoLabel) {
     return false
   }
   const stereoLabelType = stereoLabel.match(/\D+/g)[0]
+
+  if (ignoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
+    return false
+  }
+  if (ignoreChiralFlag && stereoLabelType !== StereoLabel.Abs) {
+    return true
+  }
+
   switch (labelStyle) {
     // Off
     case StereLabelStyleType.Off:

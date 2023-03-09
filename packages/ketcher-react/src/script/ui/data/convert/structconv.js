@@ -70,7 +70,7 @@ export function toElement(elem) {
   return elem
 }
 
-function fromAtom(satom) {
+export function fromAtom(satom) {
   const alias = satom.alias || ''
   const charge = satom.charge.toString()
 
@@ -91,7 +91,7 @@ function fromAtom(satom) {
   }
 }
 
-function toAtom(atom) {
+export function toAtom(atom) {
   // TODO merge this to Atom.attrlist?
   //      see ratomtool
   const chargeRegexp = new RegExp(atomSchema.properties.charge.pattern)

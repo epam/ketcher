@@ -22,7 +22,8 @@ import {
   fromBondsAttrs,
   FunctionalGroup,
   SGroup,
-  fromOneBondDeletion
+  fromOneBondDeletion,
+  Struct
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -56,7 +57,8 @@ class BondTool {
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
-    const ci = this.editor.findItem(event, ['atoms', 'bonds'])
+    const itemsToFind = ['atoms', 'bonds', 'functionalGroups']
+    const ci = this.editor.findItem(event, itemsToFind)
     const atomResult: Array<number> = []
     const bondResult: Array<number> = []
     const result: Array<number> = []
@@ -106,7 +108,7 @@ class BondTool {
     this.editor.selection(null)
     this.dragCtx = {
       xy0: rnd.page2obj(event),
-      item: this.editor.findItem(event, ['atoms', 'bonds'])
+      item: ci
     }
     if (!this.dragCtx.item)
       // ci.type == 'Canvas'
@@ -252,7 +254,7 @@ class BondTool {
             beginPos,
             endPos
           )[0]
-          if (existingBondId) {
+          if (existingBondId !== null) {
             this.dragCtx.existedBond = bond
             this.dragCtx.action.mergeWith(
               fromOneBondDeletion(rnd.ctab, existingBondId)
@@ -315,12 +317,26 @@ class BondTool {
         this.editor.update(
           bondChangingAction(rnd.ctab, dragCtx.item.id, bond, bondProps)
         )
+      } else if (dragCtx.item.map === 'functionalGroups') {
+        const groupId = dragCtx.item.id
+        const group = struct.sgroups.get(groupId)
+        const attAtomId = group?.getAttAtomId(struct)
+
+        this.editor.update(
+          fromBondAddition(rnd.ctab, this.bondProps, attAtomId, undefined)[0]
+        )
+        delete this.dragCtx.existedBond
       }
       delete this.dragCtx
     }
     this.editor.event.message.dispatch({
       info: false
     })
+    this.editor.hover(
+      this.editor.findItem(event, ['atoms', 'bonds']),
+      null,
+      event
+    )
     return true
   }
 
@@ -348,16 +364,16 @@ class BondTool {
     }
   }
 
-  getExistingBond(struct, begin, end) {
+  getExistingBond(struct: Struct, begin: number, end: number) {
     for (const [bondId, bond] of struct.bonds.entries()) {
       const alreadyHasBondInOtherDirection =
         (bond.begin === end && bond.end === begin) ||
         (bond.begin === begin && bond.end === end)
       if (alreadyHasBondInOtherDirection) {
-        return [bondId, bond]
+        return [bondId, bond] as const
       }
     }
-    return [null, null]
+    return [null, null] as const
   }
 }
 

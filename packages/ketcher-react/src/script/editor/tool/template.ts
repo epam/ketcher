@@ -27,7 +27,8 @@ import {
   ReStruct,
   Struct,
   fromFragmentDeletion,
-  fromPaste
+  fromPaste,
+  fromSgroupDeletion
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -414,43 +415,21 @@ class TemplateTool {
       this.mode === 'fg' &&
       this.targetGroupsIds.length
     ) {
-      const closestGroup = this.editor.struct().sgroups.get(ci.id)
-      const isClosestGroupAttached =
-        closestGroup && closestGroup.isGroupAttached(this.editor.struct())
+      const struct = this.editor.struct()
+      const reStruct = this.editor.render.ctab
+      const closestGroup = struct.sgroups.get(ci.id)!
+      const attachmentAtomId = closestGroup.getAttAtomId(struct)
 
-      if (isClosestGroupAttached) {
-        const groupAttachmentAtomId = this.editor
-          .struct()
-          .atoms.find((atomId) => {
-            return !!this.editor
-              .struct()
-              .atomGetNeighbors(atomId)
-              ?.find(
-                (neighbor) =>
-                  neighbor.aid ===
-                  closestGroup.getAttAtomId(this.editor.struct())
-              )
-          })
+      const removeNonAttachmentAtoms = fromFragmentDeletion(reStruct, {
+        atoms: [...SGroup.getAtoms(struct, closestGroup)].filter(
+          (atomId) => atomId !== attachmentAtomId
+        ),
+        bonds: [...SGroup.getBonds(struct, closestGroup)]
+      })
+      const removeSGroup = fromSgroupDeletion(reStruct, ci.id)
+      this.editor.update(removeNonAttachmentAtoms.mergeWith(removeSGroup))
 
-        if (groupAttachmentAtomId !== null) {
-          const targetPos =
-            this.editor.struct().atoms.get(groupAttachmentAtomId)?.pp ||
-            dragCtx.xy0
-          const eventPos = this.editor.render.page2obj(event)
-
-          const dist = Vec2.dist(targetPos, eventPos)
-          ci = { map: 'atoms', dist, id: groupAttachmentAtomId }
-        }
-      }
-
-      this.editor.update(
-        fromFragmentDeletion(this.editor.render.ctab, {
-          atoms: [...SGroup.getAtoms(struct, closestGroup)],
-          bonds: [...SGroup.getBonds(struct, closestGroup)]
-        })
-      )
-
-      if (!isClosestGroupAttached) ci = null
+      ci = { map: 'atoms', id: attachmentAtomId }
     }
 
     if (!dragCtx.action) {

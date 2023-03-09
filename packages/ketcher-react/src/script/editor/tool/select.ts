@@ -42,6 +42,12 @@ import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { getMergeItems } from './helper/getMergeItems'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
+import {
+  isCloseToEdgeOfCanvas,
+  isCloseToEdgeOfScreen,
+  scrollByVector,
+  shiftAndExtendCanvasByVector
+} from '../utils/canvasExtension'
 
 class SelectTool {
   #mode: string
@@ -194,8 +200,6 @@ class SelectTool {
 
       if (dragCtx.action) {
         dragCtx.action.perform(restruct)
-        // redraw the elements in unshifted position, lest the have different offset
-        editor.update(dragCtx.action, true)
       }
 
       const expSel = editor.explicitSelected()
@@ -208,6 +212,7 @@ class SelectTool {
       dragCtx.mergeItems = getMergeItems(editor, expSel)
       editor.hover(getHoverToFuse(dragCtx.mergeItems))
 
+      extendCanvas(rnd, event)
       editor.update(dragCtx.action, true)
       return true
     }
@@ -318,13 +323,12 @@ class SelectTool {
       )
       const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b
       if (
-        bondId !== null &&
+        bondFromStruct &&
         !FunctionalGroup.isBondInContractedFunctionalGroup(
           // TODO: examine if this code is really needed, seems like its a hack
           bondFromStruct,
           sgroups,
-          functionalGroups,
-          true
+          functionalGroups
         )
       )
         bondResult.push(bondId)
@@ -457,6 +461,65 @@ class SelectTool {
       )
     }
     return isDraggingOnSaltOrSolventAtom || isDraggingOnSaltOrSolventBond
+  }
+}
+
+function extendCanvas(render, event) {
+  const offset = 1
+  const {
+    isCloseToLeftEdgeOfCanvas,
+    isCloseToTopEdgeOfCanvas,
+    isCloseToRightEdgeOfCanvas,
+    isCloseToBottomEdgeOfCanvas
+  } = isCloseToEdgeOfCanvas(event, render.sz)
+  const {
+    isCloseToLeftEdgeOfScreen,
+    isCloseToTopEdgeOfScreen,
+    isCloseToRightEdgeOfScreen,
+    isCloseToBottomEdgeOfScreen
+  } = isCloseToEdgeOfScreen(event)
+
+  if (isCloseToLeftEdgeOfCanvas) {
+    shiftAndExtendCanvasByVector(new Vec2(-offset, 0, 0), render)
+  }
+
+  if (isCloseToTopEdgeOfCanvas) {
+    shiftAndExtendCanvasByVector(new Vec2(0, -offset, 0), render)
+  }
+
+  if (isCloseToRightEdgeOfCanvas) {
+    shiftAndExtendCanvasByVector(new Vec2(offset, 0, 0), render)
+  }
+
+  if (isCloseToBottomEdgeOfCanvas) {
+    shiftAndExtendCanvasByVector(new Vec2(0, offset, 0), render)
+  }
+
+  const isCloseToSomeEdgeOfCanvas = [
+    isCloseToTopEdgeOfCanvas,
+    isCloseToRightEdgeOfCanvas,
+    isCloseToBottomEdgeOfCanvas,
+    isCloseToLeftEdgeOfCanvas
+  ].some((isCloseToEdge) => isCloseToEdge)
+
+  if (isCloseToSomeEdgeOfCanvas) {
+    return
+  }
+
+  if (isCloseToTopEdgeOfScreen) {
+    scrollByVector(new Vec2(0, -offset), render)
+  }
+
+  if (isCloseToBottomEdgeOfScreen) {
+    scrollByVector(new Vec2(0, offset), render)
+  }
+
+  if (isCloseToLeftEdgeOfScreen) {
+    scrollByVector(new Vec2(-offset, 0), render)
+  }
+
+  if (isCloseToRightEdgeOfScreen) {
+    scrollByVector(new Vec2(offset, 0), render)
   }
 }
 

@@ -161,6 +161,10 @@
         },
         "exactChangeFlag": {
           "type": "boolean"
+        },
+        "cip": {
+          "type": "string",
+          "enum": ["R", "S", "r", "s"]
         }
       },
       "additionalProperties": false
@@ -230,6 +234,10 @@
         "stereobox": {
           "type": "integer",
           "enum": [0, 1]
+        },
+        "cip": {
+          "type": "string",
+          "enum": ["Z", "E"]
         }
       }
     },

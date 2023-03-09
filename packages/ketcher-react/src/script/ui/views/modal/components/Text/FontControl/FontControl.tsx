@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
+import { useClickOutside } from '../../../../../../../hooks/useClickOutside'
 
 import classes from './FontControl.module.less'
 
@@ -24,6 +25,10 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
   const defaultFontSize = '13px'
   const [isShowingFontSizeMenu, setIsShowingFontSizeMenu] = useState(false)
   const [currentFontSize, setCurrentFontSize] = useState(defaultFontSize)
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const onClickOutsideCloseDrowndown = (): void =>
+    setIsShowingFontSizeMenu(false)
+  useClickOutside(wrapperRef, onClickOutsideCloseDrowndown)
 
   const setFontSize = (e, value) => {
     e.preventDefault()
@@ -58,7 +63,7 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
   )
 
   return (
-    <div>
+    <div ref={wrapperRef}>
       <button
         className={classes.fontBtn}
         onMouseDown={(e) => {

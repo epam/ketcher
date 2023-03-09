@@ -145,6 +145,7 @@ class AtomTool {
   }
 
   mousemove(event) {
+    this.editor.hoverIcon.show()
     const rnd = this.editor.render
     const { layerX, layerY } = event
 
@@ -240,6 +241,11 @@ class AtomTool {
     this.editor.event.message.dispatch({
       info: false
     })
+    this.editor.hover(
+      this.editor.findItem(event, ['atoms', 'functionalGroups']),
+      null,
+      event
+    )
   }
 }
 

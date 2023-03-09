@@ -21,7 +21,9 @@ export function dropAndMerge(
   mergeItems: MergeItems | null,
   action?: Action
 ): void {
-  if (!mergeItems) return
+  if (!mergeItems) {
+    return
+  }
 
   const restruct = editor.render.ctab
   const isMerging = !!mergeItems

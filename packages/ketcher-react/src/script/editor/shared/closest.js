@@ -529,7 +529,9 @@ function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
           scale
         )
 
-        if (item && !selected[map].includes(item.id)) res.set(srcId, item.id)
+        if (item && !selected[map].includes(item.id)) {
+          res.set(srcId, item.id)
+        }
 
         return res
       }, new Map())
@@ -552,7 +554,9 @@ function mergeAtomToAtom(atomId, restruct, atomPosition, selected, result) {
 }
 
 function mergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result) {
-  if (FunctionalGroup.isAttachmentPointAtom(atomId)) return false
+  if (FunctionalGroup.isAttachmentPointAtom(atomId, restruct.molecule)) {
+    return false
+  }
 
   const closestFunctionalGroup = findClosestFG(restruct, atomPosition, null)
   if (closestFunctionalGroup) {

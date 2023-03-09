@@ -421,12 +421,14 @@ class TemplateTool {
       const restruct = this.editor.render.ctab
       const functionalGroupToReplace = struct.sgroups.get(ci.id)!
       const attachmentAtomId = functionalGroupToReplace.getAttAtomId(struct)
-      const sGroupAtoms = SGroup.getAtoms(struct, functionalGroupToReplace)
-      const [_, ...atoms] = sGroupAtoms
+      const atomsWithoutAttachmentAtom = SGroup.getAtoms(
+        struct,
+        functionalGroupToReplace
+      ).filter((id) => id !== attachmentAtomId)
 
       functionalGroupRemoveAction.mergeWith(fromSgroupDeletion(restruct, ci.id))
       functionalGroupRemoveAction.mergeWith(
-        fromFragmentDeletion(restruct, { atoms })
+        fromFragmentDeletion(restruct, { atoms: atomsWithoutAttachmentAtom })
       )
 
       ci = { map: 'atoms', id: attachmentAtomId }

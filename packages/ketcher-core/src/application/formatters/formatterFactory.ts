@@ -74,7 +74,6 @@ export class FormatterFactory {
   ): StructFormatter {
     const [molSerializerOptions, structServiceOptions] =
       this.separateOptions(options)
-    console.log('create formatter', structServiceOptions)
 
     let formatter: StructFormatter
     switch (format) {
@@ -88,8 +87,6 @@ export class FormatterFactory {
         break
 
       case SupportedFormat.mol:
-        console.log('saving', molSerializerOptions)
-
         formatter = new MolfileV2000Formatter(
           new MolSerializer(molSerializerOptions)
         )

@@ -130,8 +130,6 @@ export class Molfile {
   ) {
     // eslint-disable-line max-statements
     /* saver */
-    console.log('ignoreChiralFlag', ignoreChiralFlag)
-
     this.reaction = molecule.hasRxnArrow()
     this.molfile = '' + molecule.name
     if (this.reaction) {

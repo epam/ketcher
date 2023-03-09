@@ -214,11 +214,7 @@ class TemplateTool {
         const skip = getIgnoredGroupItem(this.editor.struct(), pasteItems)
         const ci = this.editor.findItem(event, this.findItems, skip)
 
-        if (ci) {
-          this.editor.hover(ci)
-        } else {
-          this.editor.hover(null)
-        }
+        this.editor.hover(ci ?? null, null, event)
       } else {
         this.mergeItems = getMergeItems(this.editor, pasteItems)
         this.editor.hover(getHoverToFuse(this.mergeItems))

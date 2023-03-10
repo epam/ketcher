@@ -624,6 +624,8 @@ When option _Ignore the chiral flag_ is _true_ it will affect opening and saving
 
 <img src=images/50_sett_stereon.png/>
 
+This parameter can be changed via _ketcher.setSettings()_ api, e.g. _ketcher.setSettings({ ignoreChiralFlag: true })_
+
 # Hotkeys
 
 You can use keyboard hotkeys (including Numeric keypad) for some

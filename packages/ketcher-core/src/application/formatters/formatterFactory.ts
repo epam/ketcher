@@ -79,7 +79,6 @@ export class FormatterFactory {
     switch (format) {
       case SupportedFormat.ket:
         formatter = new KetFormatter(new KetSerializer())
-        // formatter = new KetFormatter(new KetSerializer(molSerializerOptions))
         break
 
       case SupportedFormat.rxn:

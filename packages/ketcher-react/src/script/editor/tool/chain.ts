@@ -22,8 +22,7 @@ import {
   fromItemsFuse,
   getHoverToFuse,
   getItemsToFuse,
-  FunctionalGroup,
-  Struct
+  FunctionalGroup
 } from 'ketcher-core'
 
 import { atomLongtapEvent } from './atom'
@@ -45,9 +44,7 @@ class ChainTool {
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
     const rnd = this.editor.render
-
-    const itemsToFind = ['atoms', 'bonds', 'functionalGroups']
-    const ci = this.editor.findItem(event, itemsToFind)
+    const ci = this.editor.findItem(event, ['atoms', 'bonds'])
     const atomResult: Array<number> = []
     const bondResult: Array<number> = []
     const result: Array<number> = []
@@ -138,19 +135,14 @@ class ChainTool {
 
     editor.selection(null)
 
-    if (
-      !dragCtx.item ||
-      ['atoms', 'functionalGroups'].includes(dragCtx.item.map)
-    ) {
+    if (!dragCtx.item || dragCtx.item.map === 'atoms') {
       if (dragCtx.action) {
         dragCtx.action.perform(restruct)
       }
 
-      const atomId = getTargetAtomId(dragCtx.item, this.editor.struct())
-
       const atoms = restruct.molecule.atoms
 
-      const pos0 = atomId !== null ? atoms.get(atomId)?.pp : dragCtx.xy0
+      const pos0 = dragCtx.item ? atoms.get(dragCtx.item.id)?.pp : dragCtx.xy0
 
       const pos1 = editor.render.page2obj(event)
       const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length())
@@ -164,7 +156,7 @@ class ChainTool {
         pos0,
         angle,
         sectCount,
-        atomId !== null ? atomId : null
+        dragCtx.item ? dragCtx.item.id : null
       )
 
       editor.event.message.dispatch({
@@ -267,20 +259,6 @@ class ChainTool {
   mouseleave() {
     this.mouseup()
   }
-}
-
-function getTargetAtomId(
-  closestItem: { id: number; map: string },
-  struct: Struct
-): number | null {
-  const { id, map } = closestItem
-  if (map === 'atoms') return id
-  if (map === 'functionalGroups') {
-    const sgroup = struct.sgroups.get(id)
-    const atomId = sgroup?.getAttAtomId(struct)
-    return atomId !== undefined ? atomId : null
-  }
-  return null
 }
 
 export default ChainTool

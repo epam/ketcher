@@ -28,7 +28,8 @@ import {
   Struct,
   fromFragmentDeletion,
   fromPaste,
-  fromSgroupDeletion
+  fromSgroupDeletion,
+  Action
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -398,7 +399,7 @@ class TemplateTool {
     }
     /* end */
 
-    let action
+    let action, functionalGroupRemoveAction
     let pasteItems = null
 
     if (this.isSaltOrSolvent) {
@@ -415,19 +416,20 @@ class TemplateTool {
       this.mode === 'fg' &&
       this.targetGroupsIds.length
     ) {
+      functionalGroupRemoveAction = new Action()
       const struct = this.editor.struct()
-      const reStruct = this.editor.render.ctab
-      const closestGroup = struct.sgroups.get(ci.id)!
-      const attachmentAtomId = closestGroup.getAttAtomId(struct)
+      const restruct = this.editor.render.ctab
+      const functionalGroupToReplace = struct.sgroups.get(ci.id)!
+      const attachmentAtomId = functionalGroupToReplace.getAttAtomId(struct)
+      const atomsWithoutAttachmentAtom = SGroup.getAtoms(
+        struct,
+        functionalGroupToReplace
+      ).filter((id) => id !== attachmentAtomId)
 
-      const removeNonAttachmentAtoms = fromFragmentDeletion(reStruct, {
-        atoms: [...SGroup.getAtoms(struct, closestGroup)].filter(
-          (atomId) => atomId !== attachmentAtomId
-        ),
-        bonds: [...SGroup.getBonds(struct, closestGroup)]
-      })
-      const removeSGroup = fromSgroupDeletion(reStruct, ci.id)
-      this.editor.update(removeNonAttachmentAtoms.mergeWith(removeSGroup))
+      functionalGroupRemoveAction.mergeWith(fromSgroupDeletion(restruct, ci.id))
+      functionalGroupRemoveAction.mergeWith(
+        fromFragmentDeletion(restruct, { atoms: atomsWithoutAttachmentAtom })
+      )
 
       ci = { map: 'atoms', id: attachmentAtomId }
     }
@@ -470,6 +472,9 @@ class TemplateTool {
           angle,
           this.mode === 'fg'
         )
+        if (functionalGroupRemoveAction) {
+          action = functionalGroupRemoveAction.mergeWith(action)
+        }
         dragCtx.action = action
       } else if (ci.map === 'bonds' && this.mode !== 'fg') {
         const promise = fromTemplateOnBondAction(

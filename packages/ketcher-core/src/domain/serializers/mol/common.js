@@ -23,19 +23,25 @@ import v3000 from './v3000'
 const loadRGroupFragments = true // TODO: set to load the fragments
 
 /* Parse Mol */
-function parseMol(/* string */ ctabLines) /* Struct */ {
+function parseMol(
+  /* string */ ctabLines,
+  /* boolean */ ignoreChiralFlag
+) /* Struct */ {
   /* reader */
   if (ctabLines[0].search('\\$MDL') === 0) {
-    const struct = v2000.parseRg2000(ctabLines)
+    const struct = v2000.parseRg2000(ctabLines, ignoreChiralFlag)
     struct.name = ctabLines[3].trim()
     return struct
   }
-  const struct = parseCTab(ctabLines.slice(3))
+  const struct = parseCTab(ctabLines.slice(3), ignoreChiralFlag)
   struct.name = ctabLines[0].trim()
   return struct
 }
 
-function parseCTab(/* string */ ctabLines) /* Struct */ {
+function parseCTab(
+  /* string */ ctabLines,
+  /* boolean */ ignoreChiralFlag
+) /* Struct */ {
   /* reader */
   const countsSplit = partitionLine(
     ctabLines[0],
@@ -44,7 +50,7 @@ function parseCTab(/* string */ ctabLines) /* Struct */ {
   const version = countsSplit[11].trim()
   ctabLines = ctabLines.slice(1)
   if (version === 'V2000') {
-    return v2000.parseCTabV2000(ctabLines, countsSplit)
+    return v2000.parseCTabV2000(ctabLines, countsSplit, ignoreChiralFlag)
   }
   if (version === 'V3000') {
     return v3000.parseCTabV3000(ctabLines, !loadRGroupFragments)
@@ -56,7 +62,8 @@ function parseCTab(/* string */ ctabLines) /* Struct */ {
 /* Parse Rxn */
 function parseRxn(
   /* string[] */ ctabLines,
-  shouldReactionRelayout
+  /* boolean */ shouldReactionRelayout,
+  /* boolean */ ignoreChiralFlag
 ) /* Struct */ {
   /* reader */
   const split = ctabLines[0].trim().split(' ')
@@ -64,7 +71,11 @@ function parseRxn(
     return v3000.parseRxn3000(ctabLines, shouldReactionRelayout)
   }
 
-  const struct = v2000.parseRxn2000(ctabLines, shouldReactionRelayout)
+  const struct = v2000.parseRxn2000(
+    ctabLines,
+    shouldReactionRelayout,
+    ignoreChiralFlag
+  )
   struct.name = ctabLines[1].trim()
   return struct
 }

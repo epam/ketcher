@@ -194,6 +194,7 @@ class StructEditor extends Component {
       className,
       onConfirm,
       onShowInfo,
+      onApiSettings,
       showAttachmentPoints = true,
       ...props
     } = this.props

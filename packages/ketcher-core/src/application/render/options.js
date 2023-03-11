@@ -27,6 +27,7 @@ function defaultOptions(opt) {
 
   const defaultOptions = {
     'dearomatize-on-load': false,
+    ignoreChiralFlag: false,
     // flags for debugging
     showAtomIds: false,
     showBondIds: false,

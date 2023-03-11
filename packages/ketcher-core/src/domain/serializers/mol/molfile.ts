@@ -27,6 +27,12 @@ type Mapping = {
 }
 type NumberTuple = [number, number]
 
+interface ParseCTFileProps {
+  molfileLines: string[]
+  shouldReactionRelayout?: boolean
+  ignoreChiralFlag?: boolean
+}
+
 export class Molfile {
   molecule: Struct | null
   molfile: string | null
@@ -43,12 +49,17 @@ export class Molfile {
     this.bondMapping = {}
   }
 
-  parseCTFile(molfileLines: string[], shouldReactionRelayout?: boolean) {
+  parseCTFile(props: ParseCTFileProps) {
+    const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } = props
     let ret
     if (molfileLines[0].search('\\$RXN') === 0) {
-      ret = common.parseRxn(molfileLines, shouldReactionRelayout)
+      ret = common.parseRxn(
+        molfileLines,
+        shouldReactionRelayout,
+        ignoreChiralFlag
+      )
     } else {
-      ret = common.parseMol(molfileLines)
+      ret = common.parseMol(molfileLines, ignoreChiralFlag)
     }
     ret.initHalfBonds()
     ret.initNeighbors()
@@ -114,7 +125,8 @@ export class Molfile {
     molecule: Struct,
     skipSGroupErrors: boolean,
     norgroups?: boolean,
-    preserveIndigoDesc?: boolean
+    preserveIndigoDesc?: boolean,
+    ignoreChiralFlag?: boolean
   ) {
     // eslint-disable-line max-statements
     /* saver */
@@ -181,7 +193,7 @@ export class Molfile {
     this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc)
 
     this.writeHeader()
-    this.writeCTab2000()
+    this.writeCTab2000(undefined, ignoreChiralFlag)
 
     return this.molfile
   }
@@ -248,7 +260,7 @@ export class Molfile {
     this.write(utils.paddedNum(number, width, precision))
   }
 
-  writeCTab2000Header() {
+  writeCTab2000Header(ignoreChiralFlag) {
     /* saver */
     this.writePaddedNumber(this.molecule!.atoms.size, 3)
     this.writePaddedNumber(this.molecule!.bonds.size, 3)
@@ -258,7 +270,8 @@ export class Molfile {
     const isAbsFlag = Array.from(this.molecule!.frags.values()).some((fr) =>
       fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false
     )
-    this.writePaddedNumber(isAbsFlag ? 1 : 0, 3)
+
+    this.writePaddedNumber(isAbsFlag || ignoreChiralFlag ? 1 : 0, 3)
     this.writePaddedNumber(0, 3)
     this.writePaddedNumber(0, 3)
     this.writePaddedNumber(0, 3)
@@ -268,10 +281,10 @@ export class Molfile {
     this.writeCR(' V2000')
   }
 
-  writeCTab2000(rgroups?: Map<any, any>) {
+  writeCTab2000(rgroups?: Map<any, any>, ignoreChiralFlag?: boolean) {
     // eslint-disable-line max-statements
     /* saver */
-    this.writeCTab2000Header()
+    this.writeCTab2000Header(ignoreChiralFlag)
 
     this.mapping = {}
     let i = 1

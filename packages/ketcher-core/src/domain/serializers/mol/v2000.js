@@ -275,7 +275,11 @@ function applyAtomProp(atoms, values, propId) {
   })
 }
 
-function parseCTabV2000(ctabLines, countsSplit) {
+function parseCTabV2000(
+  ctabLines,
+  countsSplit,
+  /* boolean */ ignoreChiralFlag
+) {
   // eslint-disable-line max-statements
   /* reader */
   const ctab = new Struct()
@@ -283,8 +287,8 @@ function parseCTabV2000(ctabLines, countsSplit) {
   const atomCount = utils.parseDecimalInt(countsSplit[0])
   const bondCount = utils.parseDecimalInt(countsSplit[1])
   const atomListCount = utils.parseDecimalInt(countsSplit[2])
-  const isAbs = utils.parseDecimalInt(countsSplit[4]) === 1
-  const isAnd = utils.parseDecimalInt(countsSplit[4]) === 0
+  const isAbs = utils.parseDecimalInt(countsSplit[4]) === 1 || ignoreChiralFlag
+  const isAnd = utils.parseDecimalInt(countsSplit[4]) === 0 && !ignoreChiralFlag
   const stextLinesCount = utils.parseDecimalInt(countsSplit[5])
   const propertyLinesCount = utils.parseDecimalInt(countsSplit[10])
   let shift = 0
@@ -361,7 +365,10 @@ function parseCTabV2000(ctabLines, countsSplit) {
   return ctab
 }
 
-function parseRg2000(/* string[] */ ctabLines) /* Struct */ {
+function parseRg2000(
+  /* string[] */ ctabLines,
+  /* boolean */ ignoreChiralFlag
+) /* Struct */ {
   // eslint-disable-line max-statements
   ctabLines = ctabLines.slice(7)
   if (ctabLines[0].trim() !== '$CTAB') throw new Error('RGFile format invalid')
@@ -405,14 +412,14 @@ function parseRg2000(/* string[] */ ctabLines) /* Struct */ {
     }
   }
 
-  const core = parseCTab(coreLines)
+  const core = parseCTab(coreLines, ignoreChiralFlag)
   const frag = {}
   if (loadRGroupFragments) {
     for (const strId in fragmentLines) {
       const id = parseInt(strId, 10)
       frag[id] = []
       for (let j = 0; j < fragmentLines[id].length; ++j) {
-        frag[id].push(parseCTab(fragmentLines[id][j]))
+        frag[id].push(parseCTab(fragmentLines[id][j], ignoreChiralFlag))
       }
     }
   }
@@ -421,7 +428,8 @@ function parseRg2000(/* string[] */ ctabLines) /* Struct */ {
 
 function parseRxn2000(
   /* string[] */ ctabLines,
-  shouldReactionRelayout
+  /* boolean */ shouldReactionRelayout,
+  /* boolean */ ignoreChiralFlag
 ) /* Struct */ {
   // eslint-disable-line max-statements
   /* reader */
@@ -443,9 +451,9 @@ function parseRxn2000(
     const lines = ctabLines.slice(0, n)
     var struct
     if (lines[0].search('\\$MDL') === 0) {
-      struct = parseRg2000(lines)
+      struct = parseRg2000(lines, /* boolean */ ignoreChiralFlag)
     } else {
-      struct = parseCTab(lines.slice(3))
+      struct = parseCTab(lines.slice(3), /* boolean */ ignoreChiralFlag)
       struct.name = lines[0].trim()
     }
     mols.push(struct)
@@ -460,14 +468,17 @@ function parseRxn2000(
   )
 }
 
-function parseCTab(/* string */ ctabLines) /* Struct */ {
+function parseCTab(
+  /* string */ ctabLines,
+  /* boolean */ ignoreChiralFlag
+) /* Struct */ {
   /* reader */
   const countsSplit = utils.partitionLine(
     ctabLines[0],
     utils.fmtInfo.countsLinePartition
   )
   ctabLines = ctabLines.slice(1)
-  return parseCTabV2000(ctabLines, countsSplit)
+  return parseCTabV2000(ctabLines, countsSplit, ignoreChiralFlag)
 }
 
 function labelsListToIds(labels) {

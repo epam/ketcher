@@ -54,6 +54,7 @@ const render: {
   absFlagLabel: ExtendedSchema
   andFlagLabel: ExtendedSchema
   mixedFlagLabel: ExtendedSchema
+  ignoreChiralFlag: ExtendedSchema
   orFlagLabel: ExtendedSchema
   font: ExtendedSchema
   fontsz: ExtendedSchema
@@ -142,6 +143,12 @@ const render: {
     title: 'Text of Mixed flag',
     type: 'string',
     default: 'Mixed'
+  },
+  ignoreChiralFlag: {
+    title: 'Ignore the chiral flag',
+    type: 'boolean',
+    description: 'slider',
+    default: false
   },
   orFlagLabel: {
     title: 'Text of OR flag',

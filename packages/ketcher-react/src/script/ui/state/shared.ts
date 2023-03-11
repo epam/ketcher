@@ -85,7 +85,8 @@ export function load(struct: Struct, options?) {
     options = options || {}
     options = {
       ...options,
-      'dearomatize-on-load': editor.options()['dearomatize-on-load']
+      'dearomatize-on-load': editor.options()['dearomatize-on-load'],
+      ignoreChiralFlag: editor.options().ignoreChiralFlag
     }
 
     dispatch(setAnalyzingFile(true))

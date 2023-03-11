@@ -28,6 +28,7 @@ interface OpenProps {
   errorHandler: (err: string) => void
   isRecognizeDisabled: boolean
   isAnalyzingFile: boolean
+  ignoreChiralFlag: boolean
 }
 
 type Props = OpenProps &
@@ -74,6 +75,7 @@ const Open: FC<Props> = (props) => {
     errorHandler,
     isAnalyzingFile,
     isRecognizeDisabled,
+    ignoreChiralFlag,
     ...rest
   } = props
 

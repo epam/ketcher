@@ -32,6 +32,7 @@ import { openDialog } from '../modal'
 import { highlightFG } from '../functionalGroups'
 import { serverCall } from '../server'
 import { generateCommonProperties, isAtomsArray } from '../modal/atoms'
+import { saveSettings } from '../options'
 
 export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }))
@@ -206,6 +207,7 @@ export default function initEditor(dispatch, getState) {
       } else {
         highlightFG(dispatch, { groupStruct: null, sGroup: null })
       }
-    }
+    },
+    onApiSettings: (payload) => dispatch(saveSettings(payload))
   }
 }

@@ -73,7 +73,7 @@ class ReEnhancedFlag extends ReObject {
       [StereoFlag.Or]: options.orFlagLabel
     }
 
-    if (options.showStereoFlags) {
+    if (options.showStereoFlags && !options.ignoreChiralFlag) {
       this.#path = paper
         .text(
           ps.x,

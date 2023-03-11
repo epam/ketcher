@@ -25,13 +25,14 @@ import { FormatterFactory } from 'application/formatters'
 import { Ketcher } from './ketcher'
 import assert from 'assert'
 
-const DefaultStructServiceOptions = {
+export const DefaultStructServiceOptions = {
   'smart-layout': true,
   'ignore-stereochemistry-errors': true,
   'mass-skip-error-on-pseudoatoms': false,
   'gross-formula-add-rsites': true,
   'aromatize-skip-superatoms': true,
-  'dearomatize-on-load': false
+  'dearomatize-on-load': false,
+  'ignore-no-chiral-flag': false
 }
 
 export class KetcherBuilder {

@@ -44,8 +44,12 @@ export class FormatterFactory {
       return [{}, {}]
     }
 
-    const { reactionRelayout, badHeaderRecover, ...structServiceOptions } =
-      options
+    const {
+      reactionRelayout,
+      badHeaderRecover,
+      ignoreChiralFlag,
+      ...structServiceOptions
+    } = options
 
     const molfileParseOptions: Partial<MolSerializerOptions> = {}
 
@@ -54,6 +58,11 @@ export class FormatterFactory {
     }
     if (typeof badHeaderRecover === 'boolean') {
       molfileParseOptions.badHeaderRecover = badHeaderRecover
+    }
+
+    if (typeof ignoreChiralFlag === 'boolean') {
+      molfileParseOptions.ignoreChiralFlag = ignoreChiralFlag
+      structServiceOptions['ignore-no-chiral-flag'] = ignoreChiralFlag
     }
 
     return [molfileParseOptions, structServiceOptions]

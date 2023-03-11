@@ -29,6 +29,11 @@ import assert from 'assert'
 import { EventEmitter } from 'events'
 import { runAsyncAction } from 'utilities'
 
+const allowedApiSettings = {
+  'general.dearomatize-on-load': 'dearomatize-on-load',
+  ignoreChiralFlag: 'ignoreChiralFlag'
+}
+
 async function prepareStructToRender(
   structStr: string,
   structService: StructService,
@@ -57,7 +62,8 @@ function parseStruct(
   const options = ketcherInstance.editor.options()
 
   const service = factory.create(format, {
-    'dearomatize-on-load': options['dearomatize-on-load']
+    'dearomatize-on-load': options['dearomatize-on-load'],
+    'ignore-no-chiral-flag': options.ignoreChiralFlag
   })
   return service.getStructureFromStringAsync(structStr)
 }
@@ -109,26 +115,36 @@ export class Ketcher {
   // TEMP.: getting only dearomatize-on-load setting
   get settings() {
     const options = this.#editor.options()
+    const result = Object.entries(allowedApiSettings).reduce(
+      (acc, [apiSetting, clientSetting]) => {
+        if (clientSetting in options) {
+          return { ...acc, [apiSetting]: clientSetting }
+        }
+        return acc
+      },
+      {}
+    )
 
-    if ('dearomatize-on-load' in options) {
-      return {
-        'general.dearomatize-on-load': options['dearomatize-on-load']
-      }
+    if (!Object.keys(result).length) {
+      throw new Error('Allowed options are not provided')
     }
-    throw new Error('dearomatize-on-load option is not provided!')
+
+    return result
   }
 
   // TODO: create optoions type
   setSettings(settings: Record<string, string>) {
+    // TODO: need to expand this and refactor this method
     if (!settings) {
       throw new Error('Please provide settings')
     }
-
-    // eslint-disable-next-line prefer-const
-    let options = {}
-    if ('general.dearomatize-on-load' in settings) {
-      options['dearomatize-on-load'] = settings['general.dearomatize-on-load']
+    const options = {}
+    for (const [apiSetting, clientSetting] of Object.entries(
+      allowedApiSettings
+    )) {
+      options[clientSetting] = settings[apiSetting]
     }
+
     return this.#editor.setOptions(JSON.stringify(options))
   }
 

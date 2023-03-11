@@ -95,11 +95,21 @@ export default connect(null, (dispatch) => ({
 }))(Form)
 
 function Label({ labelPos, title, children, ...props }) {
+  const tooltip = props.tooltip ? props.tooltip : null
+
   return (
     <label {...props}>
-      {title && labelPos !== 'after' ? <span>{title}</span> : ''}
+      {title && labelPos !== 'after' ? (
+        <span title={tooltip}>{title}</span>
+      ) : (
+        ''
+      )}
       {children}
-      {title && labelPos === 'after' ? <span>{title}</span> : ''}
+      {title && labelPos === 'after' ? (
+        <span title={tooltip}>{title}</span>
+      ) : (
+        ''
+      )}
     </label>
   )
 }
@@ -130,6 +140,7 @@ function Field(props) {
       error={dataError}
       title={rest.title || desc.title}
       labelPos={labelPos}
+      tooltip={rest?.tooltip}
     >
       <span
         className={classes.inputWrapper}

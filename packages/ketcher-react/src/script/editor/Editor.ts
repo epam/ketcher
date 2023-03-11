@@ -132,6 +132,7 @@ class Editor implements KetcherEditor {
     enhancedStereoEdit: PipelineSubscription
     confirm: PipelineSubscription
     showInfo: PipelineSubscription
+    apiSettings: PipelineSubscription
     cursor: Subscription
   }
 
@@ -183,7 +184,8 @@ class Editor implements KetcherEditor {
       enhancedStereoEdit: new PipelineSubscription(),
       confirm: new PipelineSubscription(),
       cursor: new PipelineSubscription(),
-      showInfo: new PipelineSubscription()
+      showInfo: new PipelineSubscription(),
+      apiSettings: new PipelineSubscription()
     }
 
     domEventSetup(this, clientArea)
@@ -282,6 +284,8 @@ class Editor implements KetcherEditor {
   }
 
   setOptions(opts: string) {
+    const options = JSON.parse(opts)
+    this.event.apiSettings.dispatch({ ...this.options(), ...options })
     return this.render.updateOptions(opts)
   }
 

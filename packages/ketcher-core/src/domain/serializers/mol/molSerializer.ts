@@ -37,27 +37,34 @@ export class MolSerializer implements Serializer<Struct> {
   deserialize(content: string): Struct {
     const molfile = new Molfile()
     const lines = content?.split(/\r\n|[\n\r]/g)
+
+    const parseCTFileParams = {
+      molfileLines: lines,
+      shouldReactionRelayout: this.options.reactionRelayout,
+      ignoreChiralFlag: this.options.ignoreChiralFlag
+    }
+
     try {
-      return molfile.parseCTFile(lines, this.options.reactionRelayout)
+      return molfile.parseCTFile(parseCTFileParams)
     } catch (ex) {
       if (this.options.badHeaderRecover) {
         try {
           // check whether there's an extra empty line on top
           // this often happens when molfile text is pasted into the dialog window
-          return molfile.parseCTFile(
-            lines.slice(1),
-            this.options.reactionRelayout
-          )
+          return molfile.parseCTFile({
+            ...parseCTFileParams,
+            molfileLines: lines.slice(1)
+          })
         } catch (ex1) {
           //
         }
         try {
           // check for a missing first line
           // this sometimes happens when pasting
-          return molfile.parseCTFile(
-            [''].concat(lines),
-            this.options.reactionRelayout
-          )
+          return molfile.parseCTFile({
+            ...parseCTFileParams,
+            molfileLines: [''].concat(lines)
+          })
         } catch (ex2) {
           //
         }
@@ -71,7 +78,8 @@ export class MolSerializer implements Serializer<Struct> {
       struct,
       this.options.ignoreErrors,
       this.options.noRgroups,
-      this.options.preserveIndigoDesc
+      this.options.preserveIndigoDesc,
+      this.options.ignoreChiralFlag
     )
   }
 }

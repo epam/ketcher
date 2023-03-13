@@ -163,7 +163,7 @@ class PasteTool {
         this.editor.render.page2obj(event)
       )
       this.action = action
-      this.editor.update(this.action, true)
+      this.editor.update(this.action, true, { extendCanvas: false })
 
       this.mergeItems = getMergeItems(this.editor, pasteItems)
       this.editor.hover(getHoverToFuse(this.mergeItems))

@@ -20,11 +20,12 @@ import {
   Neighbor,
   StereoLabel,
   Struct,
-  Vec2
+  Vec2,
+  AtomAttributes,
+  BondAttributes
 } from 'domain/entities'
 import {
   AtomAdd,
-  AtomAttr,
   BondAdd,
   BondAttr,
   BondDelete,
@@ -32,7 +33,7 @@ import {
   FragmentAdd,
   FragmentStereoFlag
 } from '../operations'
-import { atomForNewBond, atomGetAttr } from './utils'
+import { atomGetAttr } from './utils'
 import {
   fromAtomMerge,
   fromStereoAtomAttrs,
@@ -46,77 +47,125 @@ import { StereoValidator } from 'domain/helpers'
 import utils from '../shared/utils'
 
 export function fromBondAddition(
-  restruct: ReStruct,
-  bond: any,
-  begin: any,
-  end: any,
-  pos?: Vec2,
-  pos2?: Vec2
+  reStruct: ReStruct,
+  bond: Partial<BondAttributes>,
+  begin: number | AtomAttributes,
+  end: number | AtomAttributes,
+  beginAtomPos?: Vec2,
+  endAtomPos?: Vec2
 ): [Action, number, number, number] {
-  // eslint-disable-line
-  if (end === undefined) {
-    const atom = atomForNewBond(restruct, begin, bond)
-    end = atom.atom
-    pos = atom.pos
-  }
   const action = new Action()
-  const struct = restruct.molecule
-  let mergeFragments = false
 
-  let frid = null
+  const mouseDownNothingAndUpNothing = (
+    beginAtomAttr: AtomAttributes,
+    endAtomAttr: AtomAttributes
+  ) => {
+    const newFragmentId = (
+      action.addOp(new FragmentAdd().perform(reStruct)) as FragmentAdd
+    ).frid
 
-  if (!(typeof begin === 'number')) {
-    if (typeof end === 'number') frid = atomGetAttr(restruct, end, 'fragment')
+    const newBeginAtomId = (
+      action.addOp(
+        new AtomAdd(
+          { ...beginAtomAttr, fragment: newFragmentId },
+          beginAtomPos
+        ).perform(reStruct)
+      ) as AtomAdd
+    ).data.aid
+
+    const newEndAtomId = (
+      action.addOp(
+        new AtomAdd(
+          { ...endAtomAttr, fragment: newFragmentId },
+          endAtomPos ?? beginAtomPos
+        ).perform(reStruct)
+      ) as AtomAdd
+    ).data.aid
+
+    return [newBeginAtomId, newEndAtomId] as const
+  }
+
+  const mouseDownNothingAndUpAtom = (
+    beginAtomAttr: AtomAttributes,
+    endAtomId: number
+  ) => {
+    const fragmentId = atomGetAttr(reStruct, endAtomId, 'fragment')
+
+    const newBeginAtomId = (
+      action.addOp(
+        new AtomAdd(
+          { ...beginAtomAttr, fragment: fragmentId },
+          beginAtomPos
+        ).perform(reStruct)
+      ) as AtomAdd
+    ).data.aid
+
+    mergeSgroups(action, reStruct, [newBeginAtomId], endAtomId)
+    return [newBeginAtomId, endAtomId] as const
+  }
+
+  const mouseDownAtomAndUpNothing = (
+    beginAtomId: number,
+    endAtomAttr: AtomAttributes
+  ) => {
+    const fragmentId = atomGetAttr(reStruct, beginAtomId, 'fragment')
+
+    const newEndAtomId = (
+      action.addOp(
+        new AtomAdd(
+          {
+            ...endAtomAttr,
+            fragment: fragmentId
+          },
+          endAtomPos ?? beginAtomPos
+        ).perform(reStruct)
+      ) as AtomAdd
+    ).data.aid
+
+    mergeSgroups(action, reStruct, [newEndAtomId], beginAtomId)
+    return [beginAtomId, newEndAtomId] as const
+  }
+
+  let beginAtomId: number, endAtomId: number
+  if (typeof begin !== 'number' && typeof end !== 'number') {
+    ;[beginAtomId, endAtomId] = mouseDownNothingAndUpNothing(begin, end)
+  } else if (typeof begin !== 'number' && typeof end === 'number') {
+    ;[beginAtomId, endAtomId] = mouseDownNothingAndUpAtom(begin, end)
+  } else if (typeof begin === 'number' && typeof end !== 'number') {
+    ;[beginAtomId, endAtomId] = mouseDownAtomAndUpNothing(begin, end)
   } else {
-    frid = atomGetAttr(restruct, begin, 'fragment')
-    if (typeof end === 'number') mergeFragments = true
+    ;[beginAtomId, endAtomId] = [begin as number, end as number]
   }
 
-  if (frid == null) {
-    frid = (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd)
-      .frid
-  }
-
-  if (!(typeof begin === 'number')) {
-    begin.fragment = frid
-    begin = (action.addOp(new AtomAdd(begin, pos).perform(restruct)) as AtomAdd)
-      .data.aid
-    if (typeof end === 'number') mergeSgroups(action, restruct, [begin], end)
-    pos = pos2
-  } else if (atomGetAttr(restruct, begin, 'label') === '*') {
-    action.addOp(new AtomAttr(begin, 'label', 'C').perform(restruct))
-  }
-
-  if (!(typeof end === 'number')) {
-    end.fragment = frid
-    // TODO: <op>.data.aid here is a hack, need a better way to access the id of a created atom
-    end = (action.addOp(new AtomAdd(end, pos).perform(restruct)) as AtomAdd)
-      .data.aid
-    if (typeof begin === 'number') mergeSgroups(action, restruct, [end], begin)
-  } else if (atomGetAttr(restruct, end, 'label') === '*') {
-    action.addOp(new AtomAttr(end, 'label', 'C').perform(restruct))
-  }
-
-  const bid = (
-    action.addOp(new BondAdd(begin, end, bond).perform(restruct)) as BondAdd
+  const struct = reStruct.molecule
+  const newBondId = (
+    action.addOp(
+      new BondAdd(beginAtomId, endAtomId, bond).perform(reStruct)
+    ) as BondAdd
   ).data.bid
-
-  const bnd = struct.bonds.get(bid)
-
-  if (bnd) {
-    action.addOp(new CalcImplicitH([bnd.begin, bnd.end]).perform(restruct))
-    action.mergeWith(fromBondStereoUpdate(restruct, bnd))
+  const newBond = struct.bonds.get(newBondId)
+  if (newBond) {
+    action.addOp(
+      new CalcImplicitH([newBond.begin, newBond.end]).perform(reStruct)
+    )
+    action.mergeWith(fromBondStereoUpdate(reStruct, newBond))
   }
 
   action.operations.reverse()
 
-  if (mergeFragments) mergeFragmentsIfNeeded(action, restruct, begin, end)
-
-  if (struct.frags.get(frid || 0)?.stereoAtoms && !bond.stereo) {
-    action.addOp(new FragmentStereoFlag(frid || 0).perform(restruct))
+  const mergedFragmentId = mergeFragmentsIfNeeded(
+    action,
+    reStruct,
+    beginAtomId,
+    endAtomId
+  )
+  if (struct.frags.get(mergedFragmentId || 0)?.stereoAtoms && !bond.stereo) {
+    action.addOp(
+      new FragmentStereoFlag(mergedFragmentId || 0).perform(reStruct)
+    )
   }
 
-  return [action, begin, end, bid]
+  return [action, beginAtomId, endAtomId, newBondId]
 }
 
 export function fromBondsAttrs(

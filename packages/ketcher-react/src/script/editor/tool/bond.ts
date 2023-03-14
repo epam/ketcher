@@ -301,12 +301,9 @@ class BondTool {
       } else if (dragCtx.item.map === 'atoms') {
         // click on atom
         this.editor.update(
-          fromBondAddition(
-            rnd.ctab,
-            this.bondProps,
-            dragCtx.item.id,
-            undefined
-          )[0]
+          fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id, {
+            label: 'C'
+          })[0]
         )
         delete this.dragCtx.existedBond
       } else if (dragCtx.item.map === 'bonds') {

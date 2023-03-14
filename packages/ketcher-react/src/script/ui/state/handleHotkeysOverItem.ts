@@ -102,7 +102,7 @@ function handleAtomPropsDialog({
     const changeAtomPromise = editor.event.elementEdit.dispatch(atoms)
 
     updateSelectedAtoms({
-      selection,
+      atoms: selection.atoms || [],
       editor,
       changeAtomPromise
     })

@@ -18,7 +18,7 @@ const useAtomEdit = () => {
       const newAtom = editor.event.elementEdit.dispatch(atoms)
 
       updateSelectedAtoms({
-        selection: { atoms },
+        atoms: atomIds,
         changeAtomPromise: newAtom,
         editor
       })

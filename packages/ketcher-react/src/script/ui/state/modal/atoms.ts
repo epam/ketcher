@@ -66,17 +66,24 @@ export function updateOnlyChangedProperties(atomId, userChangedAtom, molecule) {
   )
 }
 
-export function updateSelectedAtoms({ selection, changeAtomPromise, editor }) {
+export function updateSelectedAtoms({
+  atoms,
+  changeAtomPromise,
+  editor
+}: {
+  atoms: number[]
+  editor
+  changeAtomPromise: Promise<Atom>
+}) {
   const action = new Action()
   const struct = editor.render.ctab
   const { molecule } = struct
-  if (selection?.atoms) {
-    const selectionAtoms = selection.atoms
+  if (atoms) {
     Promise.resolve(changeAtomPromise)
       .then((userChangedAtom) => {
         // TODO: deep compare to not produce dummy, e.g.
         // atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
-        selectionAtoms.forEach((atomId) => {
+        atoms.forEach((atomId) => {
           const atomWithChangedProperties = updateOnlyChangedProperties(
             atomId,
             userChangedAtom,

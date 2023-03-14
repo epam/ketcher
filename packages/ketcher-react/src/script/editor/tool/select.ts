@@ -367,7 +367,7 @@ class SelectTool {
       const atoms = getSelectedAtoms(selection, molecule)
       const changeAtomPromise = editor.event.elementEdit.dispatch(atoms)
       updateSelectedAtoms({
-        selection,
+        atoms: selection?.atoms || [],
         editor,
         changeAtomPromise
       })

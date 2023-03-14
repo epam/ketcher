@@ -53,7 +53,14 @@ export function fromChain(restruct, p0, v, nSect, atomId) {
   for (let i = 0; i < nSect; i++) {
     const pos = new Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0)
 
-    const ret = fromBondAddition(restruct, {}, id0, {}, pos)
+    const ret = fromBondAddition(
+      restruct,
+      {},
+      id0,
+      { label: 'C' },
+      undefined,
+      pos
+    )
     action = ret[0].mergeWith(action)
     id0 = ret[2]
     chainItems.bonds.push(ret[3])

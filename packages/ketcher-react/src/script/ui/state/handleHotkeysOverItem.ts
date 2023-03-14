@@ -219,7 +219,7 @@ function handleBondTool({ hoveredItemId, newAction, editor }: HandlersProps) {
     editor.render.ctab,
     newAction.opts,
     hoveredItemId,
-    undefined
+    { label: 'C' }
   )[0]
   editor.update(newBond)
 }

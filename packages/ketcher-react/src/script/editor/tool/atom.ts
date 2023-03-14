@@ -178,7 +178,7 @@ class AtomTool {
       this.#bondProps,
       dragCtx.item.id,
       Object.assign({}, this.atomProps),
-      newAtomPos,
+      undefined,
       newAtomPos
     )[0]
     this.editor.update(dragCtx.action, true)

@@ -8,13 +8,13 @@ const [action, begin, end] = fromBondAddition(
   restruct as any,
   singleBond as any,
   1,
-  undefined
+  { label: 'C' }
 )
 
 describe('Bond Addition', () => {
   it('function atomForNewBond was called when end undefined', () => {
     const spy = jest.spyOn(utils, 'atomForNewBond')
-    fromBondAddition(restruct as any, singleBond as any, 3, undefined)
+    fromBondAddition(restruct as any, singleBond as any, 3, { label: 'C' })
     expect(spy).toHaveBeenCalled()
   })
   it('function atomGetAttr was called', () => {

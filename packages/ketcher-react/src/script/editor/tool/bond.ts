@@ -231,7 +231,7 @@ class BondTool {
             // first mousedown event intersect with any atom and
             // rotation only, leght of bond = 1;
             const atom = rnd.ctab.molecule.atoms.get(beginAtom)
-            beginPos = utils.calcNewAtomPos(
+            endPos = utils.calcNewAtomPos(
               atom?.pp.get_xy0(),
               xy1,
               event.ctrlKey
@@ -301,12 +301,9 @@ class BondTool {
       } else if (dragCtx.item.map === 'atoms') {
         // click on atom
         this.editor.update(
-          fromBondAddition(
-            rnd.ctab,
-            this.bondProps,
-            dragCtx.item.id,
-            undefined
-          )[0]
+          fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id, {
+            label: 'C'
+          })[0]
         )
         delete this.dragCtx.existedBond
       } else if (dragCtx.item.map === 'bonds') {

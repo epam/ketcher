@@ -46,7 +46,7 @@ class PasteTool {
     this.struct = struct
 
     this.isSingleContractedGroup =
-      struct.isSingleGroup() && !struct.functionalGroups.get(0).isExpanded
+      struct.isSingleGroup() && !struct.functionalGroups.get(0)?.isExpanded
 
     const rnd = this.editor.render
     const { clientHeight, clientWidth } = rnd.clientArea
@@ -80,7 +80,7 @@ class PasteTool {
     }
 
     const closestGroupItem = this.editor.findItem(event, ['functionalGroups'])
-    const closestGroup = this.editor.struct().sgroups.get(closestGroupItem.id)
+    const closestGroup = this.editor.struct().sgroups.get(closestGroupItem?.id)
 
     // not dropping on a group (tmp, should be removed when dealing with other entities)
     if (!closestGroupItem || SGroup.isSaltOrSolvent(closestGroup?.data.name)) {

@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "composite": true,
     "outDir": "dist",
     "module": "esnext",
-    "lib": ["dom", "esnext"],
+    "lib": ["dom", "esnext", "ES2021"],
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "sourceMap": true,
@@ -24,9 +25,11 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
     "baseUrl": ".",
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
   },
+  "references": [{ "path": "../ketcher-core" }],
+  "build": true,
   "include": ["src"]
 }

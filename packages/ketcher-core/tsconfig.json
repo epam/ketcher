@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": true,
     "outDir": "dist",
     "module": "esnext",
     "lib": ["dom", "esnext"],
@@ -22,7 +23,7 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
     "baseUrl": "./",
     "paths": {
       "domain/*": ["src/domain/*"],
@@ -38,5 +39,5 @@
     ],
     "jsx": "react"
   },
-  "include": ["src/**/*", "__tests__/**/*"]
+  "include": ["src/**/*", "__tests__/**/*", "src/**/*.json"]
 }

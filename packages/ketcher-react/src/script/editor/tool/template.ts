@@ -210,7 +210,7 @@ class TemplateTool {
       )
 
       this.followAction = followAction
-      this.editor.update(followAction, true)
+      this.editor.update(followAction, true, { extendCanvas: false })
 
       if (this.mode === 'fg') {
         const skip = getIgnoredGroupItem(this.editor.struct(), pasteItems)

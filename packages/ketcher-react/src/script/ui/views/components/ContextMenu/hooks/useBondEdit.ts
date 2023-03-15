@@ -1,7 +1,8 @@
-import { fromBondsAttrs } from 'ketcher-core'
 import { useCallback } from 'react'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
+import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds'
+import { mapBondIdsToBonds } from 'src/script/editor/tool/select'
 import { ItemEventParams } from '../contextMenu.types'
 import { noOperation } from '../utils'
 
@@ -12,10 +13,11 @@ const useBondEdit = () => {
     async ({ props }: ItemEventParams) => {
       const editor = getKetcherInstance().editor as Editor
       const bondIds = props?.bondIds || []
-      const bond = editor.render.ctab.bonds.get(bondIds[0])?.b
+      const molecule = editor.render.ctab
       try {
-        const newBond = await editor.event.bondEdit.dispatch(bond)
-        editor.update(fromBondsAttrs(editor.render.ctab, bondIds, newBond))
+        const bonds = mapBondIdsToBonds(bondIds, molecule)
+        const changeBondPromise = await editor.event.bondEdit.dispatch(bonds)
+        updateSelectedBonds({ bonds: bondIds, changeBondPromise, editor })
       } catch (error) {
         noOperation()
       }

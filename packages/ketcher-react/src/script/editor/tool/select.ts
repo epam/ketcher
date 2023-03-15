@@ -15,9 +15,7 @@
  ***************************************************************************/
 
 import {
-  Action,
   SGroup,
-  fromBondsAttrs,
   fromItemsFuse,
   fromMultipleMove,
   fromTextDeletion,
@@ -29,7 +27,8 @@ import {
   ReStruct,
   ReSGroup,
   Vec2,
-  Atom
+  Atom,
+  Bond
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -42,6 +41,7 @@ import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { getMergeItems } from './helper/getMergeItems'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
+import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds'
 import {
   isCloseToEdgeOfCanvas,
   isCloseToEdgeOfScreen,
@@ -287,7 +287,6 @@ class SelectTool {
     const struct = editor.render.ctab
     const { molecule, sgroups } = struct
     const functionalGroups = molecule.functionalGroups
-    const rnd = editor.render
     const ci = editor.findItem(
       event,
       ['atoms', 'bonds', 'sgroups', 'functionalGroups', 'sgroupData', 'texts'],
@@ -372,21 +371,13 @@ class SelectTool {
         changeAtomPromise
       })
     } else if (ci.map === 'bonds') {
-      const bond = rnd.ctab.bonds.get(ci.id)?.b
-      const rb = editor.event.bondEdit.dispatch(bond)
-
-      if (selection?.bonds) {
-        const action = new Action()
-        const bondsSelection = selection.bonds
-        Promise.resolve(rb)
-          .then((newbond) => {
-            bondsSelection.forEach((bid) => {
-              action.mergeWith(fromBondsAttrs(struct, bid, newbond))
-            })
-            editor.update(action)
-          })
-          .catch(() => null) // w/o changes
-      }
+      const bonds = getSelectedBonds(selection, molecule)
+      const changeBondPromise = editor.event.bondEdit.dispatch(bonds)
+      updateSelectedBonds({
+        bonds: selection?.bonds || [],
+        changeBondPromise,
+        editor
+      })
     } else if (
       (ci.map === 'sgroups' &&
         !FunctionalGroup.isFunctionalGroup(molecule.sgroups.get(ci.id))) ||
@@ -553,10 +544,24 @@ export function getSelectedAtoms(selection, molecule) {
   return []
 }
 
+export function getSelectedBonds(selection, molecule) {
+  if (selection?.bonds) {
+    return mapBondIdsToBonds(selection?.bonds, molecule)
+  }
+  return []
+}
+
 export function mapAtomIdsToAtoms(atomsIds: number[], molecule): Atom[] {
   return atomsIds.map((atomId) => {
     const atomOrReAtom = molecule.atoms.get(atomId)
     return atomOrReAtom.a || atomOrReAtom
+  })
+}
+
+export function mapBondIdsToBonds(bondsIds: number[], molecule): Bond[] {
+  return bondsIds.map((bondId) => {
+    const bondOrReBond = molecule.bonds.get(bondId)
+    return bondOrReBond?.b || bondOrReBond
   })
 }
 

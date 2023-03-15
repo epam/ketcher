@@ -232,7 +232,7 @@ function fromBondType(type, stereo) {
     )
       return caption
   }
-  throw Error('No such bond caption')
+  return ''
 }
 
 const bondCaptionMap = {

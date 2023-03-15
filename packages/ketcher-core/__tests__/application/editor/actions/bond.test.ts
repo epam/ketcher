@@ -1,25 +1,23 @@
 import * as utils from 'application/editor/actions/utils'
 
 import { restruct, singleBond } from './data'
-
 import { fromBondAddition } from 'application/editor/actions'
 
-const [action, begin, end] = fromBondAddition(
-  restruct as any,
-  singleBond as any,
-  1,
-  { label: 'C' }
-)
+const reStruct = Object.assign({}, restruct) as any
+reStruct.molecule.sgroups = []
+const [action, begin, end] = fromBondAddition(reStruct, singleBond, 1, {
+  label: 'C'
+})
 
 describe('Bond Addition', () => {
-  it('function atomForNewBond was called when end undefined', () => {
+  test('function `atomForNewBond` will be called if `endAtomPos` is `undefined`', () => {
     const spy = jest.spyOn(utils, 'atomForNewBond')
-    fromBondAddition(restruct as any, singleBond as any, 3, { label: 'C' })
+    fromBondAddition(reStruct, singleBond, 3, { label: 'C' })
     expect(spy).toHaveBeenCalled()
   })
-  it('function atomGetAttr was called', () => {
+  test('function `atomGetAttr` will be called', () => {
     const spy = jest.spyOn(utils, 'atomGetAttr')
-    fromBondAddition(restruct as any, singleBond as any, 5, 1)
+    fromBondAddition(reStruct, singleBond, 5, 1)
     expect(spy).toHaveBeenCalled()
   })
   it('should contain operation CalcImplicitH', () => {
@@ -34,10 +32,10 @@ describe('Bond Addition', () => {
     )
     expect(addFragment).toBeDefined()
   })
-  it('bond begin should be defined', () => {
+  test('bond begin should be defined', () => {
     expect(begin).toBeDefined()
   })
-  it('bond end should be defined', () => {
+  test('bond end should be defined', () => {
     expect(end).toBeDefined()
   })
 })

@@ -22,7 +22,8 @@ import {
   Struct,
   Vec2,
   AtomAttributes,
-  BondAttributes
+  BondAttributes,
+  FunctionalGroup
 } from 'domain/entities'
 import {
   AtomAdd,
@@ -56,6 +57,7 @@ export function fromBondAddition(
   endAtomPos?: Vec2
 ): [Action, number, number, number] {
   const action = new Action()
+  const struct = reStruct.molecule
 
   const mouseDownNothingAndUpNothing = (
     beginAtomAttr: AtomAttributes,
@@ -101,7 +103,16 @@ export function fromBondAddition(
       ) as AtomAdd
     ).data.aid
 
-    mergeSgroups(action, reStruct, [newBeginAtomId], endAtomId)
+    if (
+      !FunctionalGroup.isAtomInContractedFunctionalGroup(
+        struct.atoms.get(endAtomId),
+        struct.sgroups,
+        struct.functionalGroups,
+        false
+      )
+    ) {
+      mergeSgroups(action, reStruct, [newBeginAtomId], endAtomId)
+    }
     return [newBeginAtomId, endAtomId] as const
   }
 
@@ -123,7 +134,17 @@ export function fromBondAddition(
       ) as AtomAdd
     ).data.aid
 
-    mergeSgroups(action, reStruct, [newEndAtomId], beginAtomId)
+    if (
+      !FunctionalGroup.isAtomInContractedFunctionalGroup(
+        struct.atoms.get(beginAtomId),
+        struct.sgroups,
+        struct.functionalGroups,
+        false
+      )
+    ) {
+      mergeSgroups(action, reStruct, [newEndAtomId], beginAtomId)
+    }
+
     return [beginAtomId, newEndAtomId] as const
   }
 
@@ -146,7 +167,6 @@ export function fromBondAddition(
     action.addOp(new AtomAttr(endAtomId, 'label', 'C').perform(reStruct))
   }
 
-  const struct = reStruct.molecule
   const newBondId = (
     action.addOp(
       new BondAdd(beginAtomId, endAtomId, bond).perform(reStruct)

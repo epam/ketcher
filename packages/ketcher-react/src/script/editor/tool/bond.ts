@@ -57,7 +57,11 @@ class BondTool {
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
-    const ci = this.editor.findItem(event, ['atoms', 'bonds'])
+    const ci = this.editor.findItem(event, [
+      'atoms',
+      'bonds',
+      'functionalGroups'
+    ])
     const atomResult: Array<number> = []
     const bondResult: Array<number> = []
     const result: Array<number> = []
@@ -102,12 +106,29 @@ class BondTool {
       this.editor.event.removeFG.dispatch({ fgIds: result })
       return
     }
+
+    let attachmentAtomId
+    if (ci?.map === 'functionalGroups') {
+      const functionalGroup = molecule.functionalGroups.get(ci.id)
+      if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
+        const sGroupId = ci.id
+        const sGroup = molecule.sgroups.get(sGroupId)
+        attachmentAtomId = sGroup?.getAttAtomId(molecule)
+      }
+    }
+
     const rnd = this.editor.render
     this.editor.hover(null)
     this.editor.selection(null)
     this.dragCtx = {
       xy0: rnd.page2obj(event),
-      item: this.editor.findItem(event, ['atoms', 'bonds'])
+      item:
+        attachmentAtomId === undefined
+          ? ci
+          : {
+              map: 'atoms',
+              id: attachmentAtomId
+            }
     }
     if (!this.dragCtx.item)
       // ci.type == 'Canvas'
@@ -268,7 +289,7 @@ class BondTool {
       }
     }
     this.editor.hover(
-      this.editor.findItem(event, ['atoms', 'bonds']),
+      this.editor.findItem(event, ['atoms', 'bonds', 'functionalGroups']),
       null,
       event
     )

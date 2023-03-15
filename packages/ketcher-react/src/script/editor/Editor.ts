@@ -394,9 +394,13 @@ class Editor implements KetcherEditor {
     showFunctionalGroupsTooltip(this)
   }
 
-  update(action: Action | true, ignoreHistory?: boolean) {
+  update(
+    action: Action | true,
+    ignoreHistory?: boolean,
+    options = { extendCanvas: true }
+  ) {
     if (action === true) {
-      this.render.update(true) // force
+      this.render.update(true, null, options) // force
     } else {
       if (!ignoreHistory && !action.isDummy()) {
         this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action)
@@ -406,7 +410,7 @@ class Editor implements KetcherEditor {
         this.historyPtr = this.historyStack.length
         this.event.change.dispatch(action) // TODO: stoppable here
       }
-      this.render.update()
+      this.render.update(false, null, options)
     }
   }
 

@@ -18,14 +18,14 @@
     "serve:demo": "cd demo && yarn run serve"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.6.0",
+    "@typescript-eslint/eslint-plugin": "^5.55.0",
     "@typescript-eslint/parser": "^5.6.0",
     "color-alpha": "^1.1.3",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-config-standard": "^16.0.3",
+    "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.2.0",
+    "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-workspaces": "^0.7.0",
     "husky": "^8.0.2",
     "lint-staged": "^12.1.2",

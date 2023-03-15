@@ -135,7 +135,7 @@ class AtomTool {
     }
   }
 
-  mouseleave() {
+  mouseLeaveClientArea() {
     this.editor.hoverIcon.hide()
   }
 

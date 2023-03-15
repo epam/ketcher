@@ -419,12 +419,11 @@ class SGroupTool {
           : this.lassoHelper.end(event)
       this.editor.selection(selection)
     } else {
-      if (!ci) {
+      if (!ci)
         // ci.type == 'Canvas'
         return
-      }
+      this.editor.hover(null)
 
-      this.editor.hover(this.editor.findItem(event, searchMaps), null, event)
       if (ci.map === 'atoms') {
         // if we click the SGroup tool on a single atom or bond, make a group out of those
         selection = { atoms: [ci.id] }

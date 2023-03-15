@@ -322,11 +322,6 @@ class BondTool {
     this.editor.event.message.dispatch({
       info: false
     })
-    this.editor.hover(
-      this.editor.findItem(event, ['atoms', 'bonds']),
-      null,
-      event
-    )
     return true
   }
 

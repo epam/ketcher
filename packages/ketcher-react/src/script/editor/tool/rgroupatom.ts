@@ -84,9 +84,9 @@ class RGroupAtomTool {
       propsDialog(this.editor, null, rnd.page2obj(event))
       return true
     } else if (ci.map === 'atoms') {
+      this.editor.hover(null)
       const struct = this.editor.render.ctab.molecule
       const atom = struct.atoms.get(ci.id)
-      this.editor.hover(this.editor.findItem(event, ['atoms']), null, event)
 
       if (atom?.attpnt !== null) return
 

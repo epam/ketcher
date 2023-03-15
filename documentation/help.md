@@ -657,7 +657,7 @@ _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 | Shortcut| Action |
 | --- | --- |
 | `Alt+a` | Aromatize |
-| `Mod+Alt+a` | Dearomatize |
+| `Ctrl+Alt+a` | Dearomatize |
 | `Mod+l` | Layout |
 | `Mod+Shift+l` | Clean Up |
 | `Mod+p` | Calculate CIP |
@@ -715,6 +715,12 @@ _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 | `q` | Any heteroatom |
 | `m` | Any metal |
 | `x` | Any halogen |
+| `/` | Display the Atom Properties dialog box |
+
+**Bonds**
+| Shortcut| Action |
+| --- | --- |
+| `/` | Open bond properties |
 
 **Zoom**
 | Shortcut| Action |

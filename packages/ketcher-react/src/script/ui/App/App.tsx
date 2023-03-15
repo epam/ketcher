@@ -56,8 +56,8 @@ const App = (props: Props) => {
 
   useEffect(() => {
     checkServer()
-    dispatch(initFGTemplates())
-    dispatch(initSaltsAndSolventsTemplates())
+    dispatch(initFGTemplates() as any)
+    dispatch(initSaltsAndSolventsTemplates() as any)
     window.scrollTo(0, 0)
   }, [])
 

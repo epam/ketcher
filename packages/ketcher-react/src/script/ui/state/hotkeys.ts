@@ -86,7 +86,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
     }
     const dialogType = Object.keys(hoveredItem)[0]
 
-    if (Object.hasOwn(hotkeyDialogTypes, dialogType)) {
+    if (hotkeyDialogTypes.hasOwnProperty(dialogType)) {
       handleHotkeyOverItem({
         hoveredItem,
         newAction: hotkeyDialogTypes[dialogType],

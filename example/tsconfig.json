@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": true,
     "outDir": "dist",
     "module": "esnext",
     "lib": ["dom", "esnext"],
@@ -27,5 +28,12 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"],
-  "exclude": ["node_modules", "build"]
+  "exclude": ["node_modules", "build"],
+  "build": true,
+  "references": [
+    { "path": ".../packages/ketcher-core" },
+    { "path": ".../packages/ketcher-react" },
+    { "path": ".../packages/ketcher-standalone" },
+    { "path": ".../packages/ketcher-polymer-editor-react" }
+  ],
 }

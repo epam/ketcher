@@ -1,6 +1,32 @@
 {
   "compilerOptions": {
-    "composite": true
+    "composite": true,
+    "module": "esnext",
+    "lib": ["dom", "esnext", "es2021", "es2017.object"],
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "sourceMap": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "esnext",
+    "downlevelIteration": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false,
+    "baseUrl": ".",
+    "noFallthroughCasesInSwitch": true,
   },
   "references": [{ "path": "packages/ketcher-core" }, { "path": "packages/ketcher-react" }]
 }

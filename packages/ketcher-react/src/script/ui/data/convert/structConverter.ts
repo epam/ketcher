@@ -113,7 +113,7 @@ export function couldBeSaved(
 
   if (
     (['mol', 'rxn'] as SupportedFormat[]).includes(format) &&
-    Array.from(struct.frags.values()).some((fr) => {
+    Array.from(struct.frags.values()).some((fr: any) => {
       if (fr?.enhancedStereoFlag) {
         return fr.enhancedStereoFlag !== StereoFlag.Abs
       }

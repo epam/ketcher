@@ -32,9 +32,9 @@ function getGroupIdsFromItemMaps(
   struct: Struct,
   mergeMaps: MergeItems | null
 ): number[] {
-  const atoms =
+  const atoms: any =
     mergeMaps?.atoms && Array.from(mergeMapOfItemsToSet(mergeMaps.atoms))
-  const bonds =
+  const bonds: any =
     mergeMaps?.bonds && Array.from(mergeMapOfItemsToSet(mergeMaps.bonds))
 
   return getGroupIdsFromItemArrays(struct, { atoms, bonds })

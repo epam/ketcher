@@ -3,7 +3,7 @@
     "composite": true,
     "outDir": "dist",
     "module": "esnext",
-    "lib": ["dom", "esnext", "ES2021"],
+    "lib": ["dom", "esnext", "es2021", "es2017.object"],
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "sourceMap": true,

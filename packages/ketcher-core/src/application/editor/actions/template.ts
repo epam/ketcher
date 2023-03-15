@@ -52,6 +52,7 @@ function extraBondAction(restruct, aid, angle) {
       { type: 1 },
       aid,
       middleAtom.atom,
+      undefined,
       middleAtom.pos.get_xy0()
     )
     action = actionRes[0]

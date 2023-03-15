@@ -231,7 +231,7 @@ class BondTool {
             // first mousedown event intersect with any atom and
             // rotation only, leght of bond = 1;
             const atom = rnd.ctab.molecule.atoms.get(beginAtom)
-            beginPos = utils.calcNewAtomPos(
+            endPos = utils.calcNewAtomPos(
               atom?.pp.get_xy0(),
               xy1,
               event.ctrlKey

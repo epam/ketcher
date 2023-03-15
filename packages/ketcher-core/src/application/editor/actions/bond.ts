@@ -26,6 +26,7 @@ import {
 } from 'domain/entities'
 import {
   AtomAdd,
+  AtomAttr,
   BondAdd,
   BondAttr,
   BondDelete,
@@ -33,7 +34,7 @@ import {
   FragmentAdd,
   FragmentStereoFlag
 } from '../operations'
-import { atomGetAttr } from './utils'
+import { atomForNewBond, atomGetAttr } from './utils'
 import {
   fromAtomMerge,
   fromStereoAtomAttrs,
@@ -77,7 +78,7 @@ export function fromBondAddition(
       action.addOp(
         new AtomAdd(
           { ...endAtomAttr, fragment: newFragmentId },
-          endAtomPos ?? beginAtomPos
+          endAtomPos
         ).perform(reStruct)
       ) as AtomAdd
     ).data.aid
@@ -117,7 +118,7 @@ export function fromBondAddition(
             ...endAtomAttr,
             fragment: fragmentId
           },
-          endAtomPos ?? beginAtomPos
+          endAtomPos ?? atomForNewBond(reStruct, begin, bond).pos
         ).perform(reStruct)
       ) as AtomAdd
     ).data.aid
@@ -135,6 +136,14 @@ export function fromBondAddition(
     ;[beginAtomId, endAtomId] = mouseDownAtomAndUpNothing(begin, end)
   } else {
     ;[beginAtomId, endAtomId] = [begin as number, end as number]
+  }
+
+  if (atomGetAttr(reStruct, beginAtomId, 'label') === '*') {
+    action.addOp(new AtomAttr(beginAtomId, 'label', 'C').perform(reStruct))
+  }
+
+  if (atomGetAttr(reStruct, endAtomId, 'label') === '*') {
+    action.addOp(new AtomAttr(endAtomId, 'label', 'C').perform(reStruct))
   }
 
   const struct = reStruct.molecule

@@ -22,7 +22,7 @@
     "url": "https://github.com/epam/ketcher/issues"
   },
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/src/index.d.ts",
   "module": "dist/index.modern.js",
   "source": "src/index.ts",
   "engines": {

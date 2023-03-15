@@ -111,5 +111,6 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "type": "module"
 }

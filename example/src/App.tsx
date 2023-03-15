@@ -37,13 +37,13 @@ if (process.env.MODE === 'standalone') {
 
 const enablePolymerEditor = process.env.ENABLE_POLYMER_EDITOR === 'true'
 
-type PolymerType = () => JSX.Element | null
+// type PolymerType = () => JSX.Element | null
 
-let PolymerEditor: PolymerType = () => null
+// let PolymerEditor: PolymerType = () => null
 if (enablePolymerEditor) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { Editor } = require('ketcher-polymer-editor-react')
-  PolymerEditor = Editor as PolymerType
+  // const { Editor } = require('ketcher-polymer-editor-react')
+  // PolymerEditor = Editor as PolymerType
 }
 
 const App = () => {
@@ -54,7 +54,7 @@ const App = () => {
 
   return showPolymerEditor ? (
     <>
-      <PolymerEditor />
+      {/* <PolymerEditor /> */}
       <PolymerToggler toggle={setShowPolymerEditor} />
     </>
   ) : (

@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "composite": true,
     "outDir": "dist",
     "module": "esnext",
-    "lib": ["dom", "esnext"],
+    "lib": ["dom", "esnext", "es2021"],
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
@@ -25,7 +26,7 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
     "baseUrl": ".",
     "noFallthroughCasesInSwitch": true,
     "paths": {
@@ -43,7 +44,8 @@
         "transform": "@zerollup/ts-transform-paths",
         "exclude": ["*"]
       }
-    ]
+    ],
   },
+  "build": true,
   "include": ["src"]
 }

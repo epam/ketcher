@@ -17,7 +17,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es5",
+    "target": "esnext",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -31,9 +31,9 @@
   "exclude": ["node_modules", "build"],
   "build": true,
   "references": [
-    { "path": ".../packages/ketcher-core" },
-    { "path": ".../packages/ketcher-react" },
-    { "path": ".../packages/ketcher-standalone" },
-    { "path": ".../packages/ketcher-polymer-editor-react" }
+    { "path": "../packages/ketcher-core" },
+    { "path": "../packages/ketcher-react" },
+    { "path": "../packages/ketcher-standalone" },
+    { "path": "../packages/ketcher-polymer-editor-react" }
   ],
 }

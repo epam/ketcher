@@ -35,7 +35,11 @@ export function atomGetPos(restruct, id) {
   return restruct.molecule.atoms.get(id).pp
 }
 
-export function findStereoAtoms(struct, aids) {
+export function findStereoAtoms(struct, aids: number[] | undefined): number[] {
+  if (!aids) {
+    return [] as number[]
+  }
+
   return aids.filter((aid) => struct.atoms.get(aid).stereoLabel !== null)
 }
 

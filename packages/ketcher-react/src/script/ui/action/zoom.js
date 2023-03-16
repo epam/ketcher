@@ -24,7 +24,7 @@ export const zoomList = [
 
 export default {
   zoom: {
-    shortcut: ['Ctrl+Shift+0'],
+    shortcut: ['Mod+Shift+0'],
     selected: (editor) => editor.zoom(),
     action: (editor) => editor.zoom(1),
     hidden: (options) => isHidden(options, 'zoom')

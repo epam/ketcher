@@ -6,7 +6,6 @@ import {
   RemoteStructServiceProvider,
   StructServiceProvider
 } from 'ketcher-core'
-
 import { ErrorModal } from './ErrorModal'
 import { PolymerToggler } from './PolymerToggler'
 import { useState } from 'react'

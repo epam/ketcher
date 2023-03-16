@@ -1,11 +1,11 @@
 {
+  "name": "ketcher",
   "private": true,
   "workspaces": [
     "packages/ketcher-core",
     "packages/ketcher-standalone",
     "packages/ketcher-polymer-editor-react",
     "packages/ketcher-react",
-    "packages/ketcher-core",
     "example",
     "demo"
   ],
@@ -13,13 +13,17 @@
     "postinstall": "husky install",
     "precommit": "lint-staged --allow-empty && npm run prettier:write --workspaces --if-present",
     "prepush": "npm run test --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present",
+    "build": "npm run build:core && run-p 'build:standalone' 'build:polymer-editor' 'build:react'",
+    "build:core": "npm run build -w ketcher-core",
+    "build:standalone": "npm run build -w ketcher-standalone",
+    "build:react": "npm run build -w ketcher-react",
+    "build:polymer-editor": "npm run build -w ketcher-polymer-editor-react",
     "build:demo": "yarn workspaces foreach -ptvR --from demo run build",
-    "test": "yarn workspaces foreach -v run test",
-    "serve:remote": "cd example && yarn serve:remote",
-    "serve:standalone": "cd example && yarn serve:standalone",
+    "test": "npm run test --workspaces --if-present",
+    "serve:remote": "cd example && npm run serve:remote",
+    "serve:standalone": "cd example && npm run serve:standalone",
     "serve": "run-p 'serve:remote' 'serve:standalone'",
-    "serve:demo": "cd demo && yarn run serve"
+    "serve:demo": "cd demo && npm run serve"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.6.0",

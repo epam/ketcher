@@ -44,7 +44,7 @@ jobs:
         run: npm install
 
       - name: Run audit
-        run: npm audit --all --severity critical
+        run: npm audit --all --audit-level=critical
 
       - name: Run build
         run: npx cross-env CI=false npm run build

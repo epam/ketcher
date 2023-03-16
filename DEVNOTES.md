@@ -25,6 +25,7 @@ Install all packages with npm:
 ```
 npm install
 ```
+*NOTE!* this command should only be run from root directory
 
 Build the project:
 ```

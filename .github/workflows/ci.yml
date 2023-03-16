@@ -8,6 +8,7 @@ on:
     branches:
       - master
       - 'release/**'
+      - npm-new-shrinkwrap
   pull_request:
     branches:
       - master
@@ -41,15 +42,15 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Install Dependencies
-        run: yarn install
+        run: npm install
 
       - name: Run audit
-        run: yarn npm audit --all --severity critical
+        run: npm audit --all --severity critical
 
       - name: Run build
-        run: npx cross-env CI=false yarn build
+        run: npx cross-env CI=false npm run build
 
       - name: Run tests
-        run: yarn test
+        run: npm test
         env:
           CI: true

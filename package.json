@@ -11,8 +11,8 @@
   ],
   "scripts": {
     "postinstall": "husky install",
-    "precommit": "lint-staged --allow-empty && yarn workspaces foreach -pv run prettier:write",
-    "prepush": "yarn workspaces foreach -pv run test:eslint",
+    "precommit": "lint-staged --allow-empty && npm run prettier:write --workspaces --if-present",
+    "prepush": "npm run test --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
     "build:demo": "yarn workspaces foreach -ptvR --from demo run build",
     "test": "yarn workspaces foreach -v run test",
@@ -42,5 +42,10 @@
   },
   "resolutions": {
     "react-error-overlay": "6.0.9"
+  },
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": ">=16.0.0",
+    "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in readme.md"
   }
 }

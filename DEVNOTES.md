@@ -33,7 +33,8 @@ npm run build
 
 ## Prerequisites
 
-- Stable [Node.js](https://nodejs.org) version > 16
+- Stable [Node.js](https://nodejs.org) version >= 16
+- Stable [npm](https://npmjs.com) version >= 7
 
 ## Build instructions
 

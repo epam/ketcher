@@ -57,6 +57,7 @@ const Table = (props) => {
       <GenericGroups
         selected={selected}
         onAtomSelect={onAtomSelect}
+        disabledQueryElements={props.disabledQueryElements}
       ></GenericGroups>
     </Dialog>
   )
@@ -74,10 +75,12 @@ function mapSelectionToProps(editor) {
 }
 
 const mapStateToProps = (state, ownProps) => {
+  const editor = state.editor
   if (ownProps.values || ownProps.label) {
     return {}
   }
-  return mapSelectionToProps(state.editor)
+  const disabledQueryElements = editor.render.options.disableQueryElements
+  return { disabledQueryElements, ...mapSelectionToProps(editor) }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {

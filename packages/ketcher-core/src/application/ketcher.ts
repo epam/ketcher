@@ -31,7 +31,8 @@ import { runAsyncAction } from 'utilities'
 
 const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
-  ignoreChiralFlag: 'ignoreChiralFlag'
+  ignoreChiralFlag: 'ignoreChiralFlag',
+  disableQueryElements: 'disableQueryElements'
 }
 
 async function prepareStructToRender(

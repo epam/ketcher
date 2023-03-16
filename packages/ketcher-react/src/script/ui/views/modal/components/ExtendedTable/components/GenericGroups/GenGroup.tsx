@@ -23,6 +23,7 @@ type GenProps = {
   selected: (label: string) => boolean
   onAtomSelect: (label: string, activateImmediately: boolean) => void
   group: GenGroupType
+  disabledQueryElements: Array<string> | null
 }
 
 const getLegendClassname = (title: string) => {
@@ -37,7 +38,12 @@ const getLegendClassname = (title: string) => {
   return 'legend'
 }
 
-const GenGroup = ({ group, onAtomSelect, selected }: GenProps) => {
+const GenGroup = ({
+  group,
+  onAtomSelect,
+  selected,
+  disabledQueryElements
+}: GenProps) => {
   return (
     <div className={styles.fieldFlexWrapper}>
       <fieldset className={styles.fieldset}>
@@ -58,6 +64,7 @@ const GenGroup = ({ group, onAtomSelect, selected }: GenProps) => {
               onAtomSelect={onAtomSelect}
               className={styles.subGroup}
               group={group.title}
+              disabledQueryElements={disabledQueryElements}
             />
           )}
         </div>

@@ -36,7 +36,6 @@
     "stylelint-config-prettier": "^9.0.3",
     "stylelint-config-standard": "22.0.0"
   },
-  "packageManager": "yarn@3.1.0",
   "resolutions": {
     "react-error-overlay": "6.0.9"
   }

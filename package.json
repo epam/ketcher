@@ -1,7 +1,11 @@
 {
   "private": true,
   "workspaces": [
-    "packages/*",
+    "packages/ketcher-core",
+    "packages/ketcher-standalone",
+    "packages/ketcher-polymer-editor-react",
+    "packages/ketcher-react",
+    "packages/ketcher-core",
     "example",
     "demo"
   ],
@@ -9,7 +13,7 @@
     "postinstall": "husky install",
     "precommit": "lint-staged --allow-empty && yarn workspaces foreach -pv run prettier:write",
     "prepush": "yarn workspaces foreach -pv run test:eslint",
-    "build": "yarn workspaces foreach -ptvR --from ketcher-react-app run build",
+    "build": "npm run build --workspaces --if-present",
     "build:demo": "yarn workspaces foreach -ptvR --from demo run build",
     "test": "yarn workspaces foreach -v run test",
     "serve:remote": "cd example && yarn serve:remote",

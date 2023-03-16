@@ -43,8 +43,8 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      # - name: Run audit
-      #   run: npm audit --all --severity critical
+      - name: Run audit
+        run: npm audit --all --severity critical
 
       - name: Run build
         run: npx cross-env CI=false npm run build

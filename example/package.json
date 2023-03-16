@@ -62,7 +62,7 @@
     "source-map-loader": "^3.0.1",
     "stylelint": "13.13.1",
     "typescript": "^4.5.2",
-    "webpack-bundle-analyzer": "^3.9.0"
+    "webpack-bundle-analyzer": "^4.8.0"
   },
   "browserslist": {
     "production": [

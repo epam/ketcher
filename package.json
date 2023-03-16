@@ -18,7 +18,7 @@
     "build:standalone": "npm run build -w ketcher-standalone",
     "build:react": "npm run build -w ketcher-react",
     "build:polymer-editor": "npm run build -w ketcher-polymer-editor-react",
-    "build:demo": "yarn workspaces foreach -ptvR --from demo run build",
+    "build:demo": "npm run build && npm run build -w demo",
     "test": "npm run test --workspaces --if-present",
     "serve:remote": "cd example && npm run serve:remote",
     "serve:standalone": "cd example && npm run serve:standalone",
@@ -50,6 +50,6 @@
   "engines": {
     "npm": ">=7.0.0",
     "node": ">=16.0.0",
-    "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in readme.md"
+    "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in DEVNOTES.md"
   }
 }

@@ -35,7 +35,7 @@ const useAtomStereo = () => {
   const disabled = useCallback(
     ({ props }: ItemEventParams) => {
       const editor = getKetcherInstance().editor as Editor
-      const stereoAtomIds: undefined | number[] = findStereoAtoms(
+      const stereoAtomIds: number[] = findStereoAtoms(
         editor.struct(),
         props?.atomIds
       )

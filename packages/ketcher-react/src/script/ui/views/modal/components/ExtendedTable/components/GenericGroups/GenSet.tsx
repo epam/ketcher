@@ -16,8 +16,8 @@
 
 import type { GenItemSet } from 'ketcher-core'
 import classes from './GenSet.module.less'
-import clsx from 'clsx'
 import { isGenericGroup } from '../../helpers'
+import ButtonGenSet from './components/ButtonGenSet'
 
 type GenSetProps = {
   labels: GenItemSet[]
@@ -46,29 +46,15 @@ function GenSet({
         return (
           <fieldset className={className} key={index}>
             <div className={classes[getGroupClassName(group)]}>
-              {buttons.map((button, index) => {
-                const isDisabled = disabledQueryElements?.includes(button.label)
-                const titleText = isDisabled
-                  ? `${button.label} is disabled`
-                  : button.description || button.label
-                return (
-                  <button
-                    key={index}
-                    onClick={() => onAtomSelect(button.label, false)}
-                    onDoubleClick={() => onAtomSelect(button.label, true)}
-                    title={titleText}
-                    disabled={isDisabled}
-                    className={clsx(
-                      {
-                        [classes.selected]: selected(button.label)
-                      },
-                      classes.button
-                    )}
-                  >
-                    {button.label}
-                  </button>
-                )
-              })}
+              {buttons.map((button, index) => (
+                <ButtonGenSet
+                  key={index}
+                  button={button}
+                  disabledQueryElements={disabledQueryElements}
+                  onAtomSelect={onAtomSelect}
+                  selected={selected}
+                />
+              ))}
             </div>
             {!isGenericGroup(group) && caption && (
               <div className={classes.legendBox}>

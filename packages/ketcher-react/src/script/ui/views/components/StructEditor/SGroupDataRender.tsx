@@ -25,6 +25,10 @@ function getPanelPositionRelativeToRect(
   const viewportRightLimit =
     render?.clientArea?.clientWidth - BAR_PANEL_SIZE - width
 
+  if (!sGroup.hovering) {
+    return null
+  }
+
   // [['M', 23, 43], ['L', 23, 24]] we should remove first elements => [[23,43], [23,24]]
   const rectCoords: Array<Array<number>> = sGroup.hovering.attrs?.path?.map(
     (line) => line.slice(1)

@@ -1,9 +1,12 @@
+## Prerequisites
+
+- Stable [Node.js](https://nodejs.org) version >= 16
+- Stable [npm](https://npmjs.com) version >= 7
+
 # NOTES
 
 The project switched from using yarn to using npm for managing packages.
 If you want to convert your current codebase from yarn to npm you can follow the instructions below.
-
-Prerequisites: `npm >= 7` `node >= 16`
 
 Remove current node_modules from all directories:
 ```
@@ -31,11 +34,6 @@ Build the project:
 ```
 npm run build
 ```
-
-## Prerequisites
-
-- Stable [Node.js](https://nodejs.org) version >= 16
-- Stable [npm](https://npmjs.com) version >= 7
 
 ## Build instructions
 

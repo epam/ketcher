@@ -478,6 +478,7 @@ function findClosestItem(restruct, pos, maps, skip, scale) {
  * @return {{
  * 		atoms: Map<number, number>?
  * 		bonds: Map<number, number>?
+ *    atomToFunctionalGroup: Map<number, number>?
  * }}
  */
 function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
@@ -505,19 +506,65 @@ function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
     )
   })
 
-  const result = {}
-  maps.forEach((mp) => {
-    result[mp] = Array.from(pos[mp].keys()).reduce((res, srcId) => {
-      const skip = { map: mp, id: srcId }
-      const item = findMaps[mp](restruct, pos[mp].get(srcId), skip, null, scale)
+  const result = {
+    atoms: new Map(),
+    atomToFunctionalGroup: new Map()
+  }
 
-      if (item && !selected[mp].includes(item.id)) res.set(srcId, item.id)
+  maps.forEach((map) => {
+    if (map === 'atoms') {
+      Array.from(pos.atoms.keys()).forEach((atomId) => {
+        const atomPosition = pos.atoms.get(atomId)
+        mergeAtomToAtom(atomId, restruct, atomPosition, selected, result) ||
+          mergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result)
+      })
+    } else {
+      result[map] = Array.from(pos[map].keys()).reduce((res, srcId) => {
+        const skip = { map, id: srcId }
+        const item = findMaps[map](
+          restruct,
+          pos[map].get(srcId),
+          skip,
+          null,
+          scale
+        )
 
-      return res
-    }, new Map())
+        if (item && !selected[map].includes(item.id)) {
+          res.set(srcId, item.id)
+        }
+
+        return res
+      }, new Map())
+    }
   })
 
   return result
+}
+
+function mergeAtomToAtom(atomId, restruct, atomPosition, selected, result) {
+  const skip = { map: 'atoms', id: atomId }
+  const closestAtom = findClosestAtom(restruct, atomPosition, skip, null)
+
+  if (closestAtom && !selected.atoms.includes(closestAtom.id)) {
+    result.atoms.set(atomId, closestAtom.id)
+    return true
+  }
+
+  return false
+}
+
+function mergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result) {
+  if (FunctionalGroup.isAttachmentPointAtom(atomId, restruct.molecule)) {
+    return false
+  }
+
+  const closestFunctionalGroup = findClosestFG(restruct, atomPosition, null)
+  if (closestFunctionalGroup) {
+    result.atomToFunctionalGroup.set(atomId, closestFunctionalGroup.id)
+    return true
+  }
+
+  return false
 }
 
 export default {

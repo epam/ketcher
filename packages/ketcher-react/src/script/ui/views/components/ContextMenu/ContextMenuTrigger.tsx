@@ -61,6 +61,10 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
 
       let showProps: ContextMenuShowProps = null
 
+      if (selection && !selection.bonds && !selection.atoms) {
+        return
+      }
+
       if (selection) {
         if (functionalGroupsInSelection.size > 0) {
           const functionalGroups = Array.from(

@@ -470,7 +470,7 @@ class TemplateTool {
           this.template,
           ci.id,
           angle,
-          this.mode === 'fg'
+          false
         )
         if (functionalGroupRemoveAction) {
           action = functionalGroupRemoveAction.mergeWith(action)

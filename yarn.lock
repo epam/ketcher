@@ -9450,12 +9450,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"indigo-ketcher@npm:1.10.0-rc.4":
-  version: 1.10.0-rc.4
-  resolution: "indigo-ketcher@npm:1.10.0-rc.4"
+"indigo-ketcher@npm:1.10.0-rc.5":
+  version: 1.10.0-rc.5
+  resolution: "indigo-ketcher@npm:1.10.0-rc.5"
   dependencies:
     looks-same: ^8.1.0
-  checksum: 83d700f55e0c4a7eac2f5ca263ca08e9adf6d91aa12593b94e36c9392b28cc39978c155f28a27dd4982d283a5004f9186cfeaf5ae3838c237d244b990083338f
+  checksum: 067e67814c270adb7c726695146d6df920d34605e46dd4271966bca385ed66b3dd75d00a35d7bae79d6c7f0ee97ca77b94ef661bb03dd8320fee8c2890e9130a
   languageName: node
   linkType: hard
 
@@ -11652,7 +11652,7 @@ __metadata:
     cross-env: ^7.0.3
     eslint: ^8.4.1
     eslint-plugin-jest: ^25.3.0
-    indigo-ketcher: 1.10.0-rc.4
+    indigo-ketcher: 1.10.0-rc.5
     jest: 26.6.0
     ketcher-core: "workspace:*"
     npm-run-all: ^4.1.5

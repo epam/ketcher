@@ -142,7 +142,7 @@ class TemplateTool {
     const dragCtx = this.dragCtx
     const ci = dragCtx.item
 
-    if (!ci || this.isSaltOrSolvent) {
+    if (!ci) {
       //  ci.type == 'Canvas'
       delete dragCtx.item
       return
@@ -226,6 +226,12 @@ class TemplateTool {
     }
 
     const dragCtx = this.dragCtx
+
+    if (this.isSaltOrSolvent) {
+      delete dragCtx.item
+      return
+    }
+
     const ci = dragCtx.item
     let targetPos: Vec2 | null | undefined = null
     const eventPos = this.editor.render.page2obj(event)
@@ -402,15 +408,7 @@ class TemplateTool {
     let action, functionalGroupRemoveAction
     let pasteItems = null
 
-    if (this.isSaltOrSolvent) {
-      addSaltsAndSolventsOnCanvasWithoutMerge(
-        restruct,
-        this.template,
-        dragCtx,
-        this.editor
-      )
-      return true
-    } else if (
+    if (
       ci?.map === 'functionalGroups' &&
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups) &&
       this.mode === 'fg' &&
@@ -446,8 +444,18 @@ class TemplateTool {
         dragCtx.action = action
       } else if (ci.map === 'atoms') {
         const degree = restruct.atoms.get(ci.id)?.a.neighbors.length
-        let angle
 
+        if (degree && degree >= 1 && this.isSaltOrSolvent) {
+          addSaltsAndSolventsOnCanvasWithoutMerge(
+            restruct,
+            this.template,
+            dragCtx,
+            this.editor
+          )
+          return true
+        }
+
+        let angle
         if (degree && degree > 1) {
           // common case
           angle = null

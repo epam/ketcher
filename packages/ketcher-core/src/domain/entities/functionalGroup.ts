@@ -16,6 +16,7 @@
 import { ReSGroup } from 'application/render'
 import assert from 'assert'
 import { FunctionalGroupsProvider } from '../helpers'
+import { Atom } from './atom'
 import { Bond } from './bond'
 import { Pool } from './pool'
 import { SGroup } from './sgroup'
@@ -235,7 +236,7 @@ export class FunctionalGroup {
   }
 
   static isAtomInContractedFunctionalGroup(
-    atom,
+    atom: Atom,
     sgroups,
     functionalGroups,
     sgroupsFromReStruct: boolean

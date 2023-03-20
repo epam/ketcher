@@ -135,7 +135,7 @@ class ReAtom extends ReObject {
 
   show(restruct: ReStruct, aid: number, options: any): void {
     // eslint-disable-line max-statements
-    const atom = restruct.molecule.atoms.get(aid)
+    const atom = restruct.molecule.atoms.get(aid)!
     const sgroups = restruct.molecule.sgroups
     const functionalGroups = restruct.molecule.functionalGroups
     const render = restruct.render
@@ -402,7 +402,58 @@ class ReAtom extends ReObject {
 
       restruct.addReObjectPath(LayerMap.hovering, this.visel, path)
     }
+
+    if (atom.cip) {
+      this.drawCIPLabel(atom, render.ctab)
+    }
   }
+
+  drawCIPLabel(atom: Atom, restruct: ReStruct) {
+    const render = restruct.render
+    const { options, paper } = render
+    const path = paper.set()
+
+    const cipLabelPosition = atom.pp.scaled(options.scale)
+    const cipValuePath = getCIPValuePath({
+      paper,
+      cipLabelPosition,
+      atom,
+      options
+    })
+    const box = util.relBox(cipValuePath.getBBox())
+
+    cipValuePath.translateAbs(0.5 * box.width, -0.5 * box.height)
+    path.push(cipValuePath.toBack())
+
+    restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true)
+  }
+}
+
+function getCIPValuePath({
+  paper,
+  cipLabelPosition,
+  atom,
+  options
+}: {
+  paper
+  cipLabelPosition: Vec2
+  atom: Atom
+  options
+}) {
+  const text = paper
+    .text(cipLabelPosition.x, cipLabelPosition.y, `(${atom.cip})`)
+    .attr({
+      font: options.font,
+      'font-size': options.fontsz
+    })
+  const box = text.getBBox()
+  const path = paper.set()
+  const rect = paper
+    .rect(box.x - 1, box.y - 1, box.width + 2, box.height + 2, 3, 3)
+    .attr({ fill: '#0f0', stroke: '#fff', opacity: 1 })
+  path.push(rect.toBack(), text.toBack())
+
+  return path
 }
 
 function getStereoAtomColor(options, stereoLabel) {

@@ -304,7 +304,7 @@ class SelectTool {
       )
       const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a
       if (
-        atomId !== null &&
+        atomFromStruct &&
         !FunctionalGroup.isAtomInContractedFunctionalGroup(
           // TODO: examine if this code is really needed, seems like its a hack
           atomFromStruct,

@@ -66,6 +66,11 @@ export const atom = {
       ],
       default: 0
     },
+    cip: {
+      title: 'CIP',
+      type: 'string',
+      enum: ['R', 'S', 'r', 's']
+    },
     ringBondCount: {
       title: 'Ring bond count',
       enum: [0, -2, -1, 2, 3, 4],

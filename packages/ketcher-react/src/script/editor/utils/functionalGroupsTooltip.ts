@@ -26,7 +26,7 @@ export function showFunctionalGroupsTooltip(editor) {
   )
   if (closestCollapsibleStructures) {
     const sGroup = editor.struct()?.sgroups.get(closestCollapsibleStructures.id)
-    if (sGroup && !sGroup.data.expanded) {
+    if (sGroup && !sGroup.data.expanded && sGroup.hovering) {
       const groupName = sGroup.data.name
       const groupStruct = FunctionalGroup.getFunctionalGroupByName(groupName)
       infoPanelData = {

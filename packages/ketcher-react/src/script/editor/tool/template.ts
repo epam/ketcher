@@ -75,10 +75,6 @@ type TemplateCategory =
   | 'Functional Groups'
   | 'Salts and Solvents'
 
-/**
- * - COMPLETE_STRUCT: current template is one of `'Simple Templates'` and `'Complex Templates'`
- * - ABBREVIATION: current template is one of `'Functional Groups'` and `'Salts and Solvents'`
- */
 enum MODE {
   /** In this mode, current template is one of `'Simple Templates'` and `'Complex Templates'`.
    * (See type `TemplateCategory` for more details) */

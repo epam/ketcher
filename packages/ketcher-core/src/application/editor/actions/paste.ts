@@ -32,6 +32,10 @@ import { Action } from './action'
 import { Vec2 } from 'domain/entities'
 import { fromSgroupAddition } from './sgroup'
 
+export type PasteItems = {
+  atoms: number[]
+  bonds: number[]
+}
 export function fromPaste(restruct, pstruct, point, angle = 0) {
   const xy0 = getStructCenter(pstruct)
   const offset = Vec2.diff(point, xy0)
@@ -41,7 +45,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   const aidMap = new Map()
   const fridMap = new Map()
 
-  const pasteItems: any = {
+  const pasteItems: PasteItems = {
     // only atoms and bonds now
     atoms: [],
     bonds: []
@@ -158,7 +162,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   })
 
   action.operations.reverse()
-  return [action, pasteItems]
+  return [action, pasteItems] as const
 }
 
 function getStructCenter(struct) {

@@ -37,7 +37,7 @@ export function fromTemplateOnCanvas(restruct, template, pos, angle) {
 
   action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct))
 
-  return [action, pasteItems]
+  return [action, pasteItems] as const
 }
 
 function extraBondAction(restruct, aid, angle) {

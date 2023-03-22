@@ -409,6 +409,11 @@ class TemplateTool {
         dragCtx,
         this.editor
       )
+      this.editor.hover(
+        this.editor.findItem(event, this.findItems),
+        null,
+        event
+      )
       return true
     } else if (
       ci?.map === 'functionalGroups' &&

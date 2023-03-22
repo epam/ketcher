@@ -37,10 +37,10 @@ import toolMap from './tool'
 import { Highlighter } from './highlighter'
 import { showFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip'
 import { contextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types'
+import { HoverIcon } from './HoverIcon'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
-const HOVER_ICON_OPACITY = 0.7
 
 const structObjects = [
   'atoms',
@@ -112,7 +112,7 @@ class Editor implements KetcherEditor {
   historyPtr: any
   errorHandler: ((message: string) => void) | null
   highlights: Highlighter
-  hoverIcon: any
+  hoverIcon: HoverIcon
   lastCursorPosition: { x: number; y: number }
   contextMenu: contextMenuInfo
   event: {
@@ -163,7 +163,8 @@ class Editor implements KetcherEditor {
       x: 0,
       y: 0
     }
-    this.createHoverIcon()
+    this.hoverIcon = new HoverIcon(this)
+    this.hoverIcon.updatePosition()
     this.contextMenu = {}
 
     this.event = {
@@ -231,24 +232,6 @@ class Editor implements KetcherEditor {
     /* eslint-enable no-underscore-dangle */
   }
 
-  updateHoverIconPosition() {
-    const { x, y } = this.lastCursorPosition
-    const { height, width } = this.hoverIcon.getBBox()
-    this.hoverIcon.attr({
-      x: x - width / 2,
-      y: y - height / 2
-    })
-  }
-
-  createHoverIcon() {
-    this.hoverIcon = this.render.paper
-      .text(0, 0, '')
-      .attr('font-size', this.options().fontsz)
-      .attr('opacity', HOVER_ICON_OPACITY)
-
-    this.updateHoverIconPosition()
-  }
-
   clear() {
     this.struct(undefined)
   }
@@ -272,7 +255,7 @@ class Editor implements KetcherEditor {
 
     const molecule = this.renderAndRecoordinateStruct(struct)
 
-    this.createHoverIcon()
+    this.hoverIcon.create()
     return molecule
   }
 

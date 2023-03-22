@@ -43,11 +43,10 @@ class AtomTool {
     this.atomProps = atomProps
     this.#bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE }
 
-    this.editor.hoverIcon
-      .show()
-      .attr('text', `${atomProps.label}`)
-      .attr('fill', `${ElementColor[atomProps.label]}`)
-    this.editor.updateHoverIconPosition()
+    this.editor.hoverIcon.show()
+    this.editor.hoverIcon.label = atomProps.label
+    this.editor.hoverIcon.fill = ElementColor[atomProps.label] ?? '#000000'
+    this.editor.hoverIcon.updatePosition()
 
     if (editor.selection()) {
       if (editor.selection()?.atoms) {
@@ -135,27 +134,13 @@ class AtomTool {
     }
   }
 
-  mouseLeaveClientArea() {
-    this.editor.hoverIcon.hide()
-  }
-
-  mouseover() {
-    this.editor.hoverIcon.show()
-    this.editor.updateHoverIconPosition()
-  }
-
   mousemove(event) {
     this.editor.hoverIcon.show()
     const rnd = this.editor.render
-    const { layerX, layerY } = event
 
     if (!this.dragCtx || !this.dragCtx.item) {
-      const { height, width } = this.editor.hoverIcon.getBBox()
+      this.editor.hoverIcon.updatePosition()
 
-      this.editor.hoverIcon.attr({
-        x: layerX - width / 2,
-        y: layerY - height / 2
-      })
       this.editor.hover(
         this.editor.findItem(event, ['atoms', 'functionalGroups']),
         null,

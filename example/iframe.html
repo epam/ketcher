@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <iframe
+      width="784"
+      height="624"
+      id="iframe"
+      src="environment_url"
+    ></iframe>
+    <script>
+      const iframe = document.getElementById('iframe')
+      iframe.onload = function () {
+        iframe.contentWindow.ketcher.setMolecule(`{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            }
+        ]
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    38.75999124960171,
+                    -17.62507441717461,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    40.49029294534458,
+                    -17.624589229177204,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    39.626779606964384,
+                    -17.12496688885019,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    40.49029294534458,
+                    -18.62553206782215,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    38.75999124960171,
+                    -18.630020056798138,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    39.628962952952705,
+                    -19.12503311114981,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    36.584991249601714,
+                    -17.60007441717461,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    38.31529294534458,
+                    -17.599589229177205,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    37.45177960696439,
+                    -17.09996688885019,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    38.31529294534458,
+                    -18.60053206782215,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    36.584991249601714,
+                    -18.60502005679814,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    37.45396295295271,
+                    -19.100033111149813,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            }
+        ]
+    }
+}`)
+      }
+    </script>
+  </body>
+</html>

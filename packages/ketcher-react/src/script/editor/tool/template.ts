@@ -27,7 +27,6 @@ import {
   ReStruct,
   Struct,
   fromFragmentDeletion,
-  fromPaste,
   fromSgroupDeletion,
   Action
 } from 'ketcher-core'
@@ -35,7 +34,6 @@ import {
 import utils from '../shared/utils'
 import Editor from '../Editor'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
-import { getMergeItems } from './helper/getMergeItems'
 
 type MergeItems = Record<string, Map<unknown, unknown>> | null
 
@@ -48,9 +46,8 @@ class TemplateTool {
   dragCtx: any
   targetGroupsIds: Array<number> = []
   isSaltOrSolvent: boolean
-  followAction: any
 
-  constructor(editor, tmpl) {
+  constructor(editor: Editor, tmpl) {
     this.editor = editor
     this.mode = getTemplateMode(tmpl)
     this.editor.selection(null)
@@ -90,14 +87,14 @@ class TemplateTool {
     if (sgroup) {
       this.findItems.push('functionalGroups')
     }
+
+    editor.hoverIcon.label = tmpl.struct.name
+    editor.hoverIcon.fill = '#000000'
+    editor.hoverIcon.show()
+    editor.hoverIcon.updatePosition()
   }
 
   mousedown(event) {
-    if (this.followAction) {
-      this.followAction.perform(this.editor.render.ctab)
-      delete this.followAction
-    }
-
     const closestItem = this.editor.findItem(event, [
       'atoms',
       'bonds',
@@ -126,17 +123,9 @@ class TemplateTool {
 
     this.editor.hover(null)
 
-    const dragCtxItem = getDragCtxItem(
-      this.editor,
-      event,
-      this.mode,
-      this.mergeItems,
-      this.findItems
-    )
-
     this.dragCtx = {
       xy0: this.editor.render.page2obj(event),
-      item: dragCtxItem
+      item: this.editor.findItem(event, this.findItems)
     }
 
     const dragCtx = this.dragCtx
@@ -199,30 +188,14 @@ class TemplateTool {
 
   mousemove(event) {
     if (!this.dragCtx) {
-      if (this.followAction) {
-        this.followAction.perform(this.editor.render.ctab)
-      }
-
-      const [followAction, pasteItems] = fromPaste(
-        this.editor.render.ctab,
-        this.template.molecule,
-        this.editor.render.page2obj(event)
+      this.editor.hoverIcon.show()
+      this.editor.hoverIcon.updatePosition()
+      this.editor.hover(
+        this.editor.findItem(event, this.findItems),
+        null,
+        event
       )
-
-      this.followAction = followAction
-      this.editor.update(followAction, true, { extendCanvas: false })
-
-      if (this.mode === 'fg') {
-        const skip = getIgnoredGroupItem(this.editor.struct(), pasteItems)
-        const ci = this.editor.findItem(event, this.findItems, skip)
-
-        this.editor.hover(ci ?? null, null, event)
-      } else {
-        this.mergeItems = getMergeItems(this.editor, pasteItems)
-        this.editor.hover(getHoverToFuse(this.mergeItems))
-      }
-
-      return
+      return true
     }
 
     const dragCtx = this.dragCtx
@@ -524,11 +497,6 @@ class TemplateTool {
   }
 
   cancel(e) {
-    if (this.followAction) {
-      this.followAction.perform(this.editor.render.ctab)
-      delete this.followAction
-    }
-
     this.mouseup(e)
   }
 
@@ -585,26 +553,6 @@ function getTargetAtomId(struct: Struct, ci): number | void {
     const group = struct.sgroups.get(ci.id)
     return group?.getAttAtomId(struct)
   }
-}
-
-function getIgnoredGroupItem(struct: Struct, pasteItems) {
-  const groupId = struct.getGroupIdFromAtomId(pasteItems.atoms[0])
-  return { map: 'functionalGroups', id: groupId }
-}
-
-function getDragCtxItem(
-  editor: Editor,
-  event,
-  mode: string,
-  mergeItems: MergeItems,
-  findItems
-): { map: string; id: number } | null {
-  if (mode === 'fg') return editor.findItem(event, findItems)
-  if (mergeItems?.atoms.size === 1 && mergeItems.bonds.size === 0) {
-    // get ID of single dst (target) atom we are hovering over
-    return { map: 'atoms', id: mergeItems.atoms.values().next().value }
-  }
-  return null
 }
 
 export default TemplateTool

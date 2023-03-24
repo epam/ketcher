@@ -420,11 +420,10 @@ class TemplateTool {
       } else if (ci.map === 'atoms') {
         const degree = restruct.atoms.get(ci.id)?.a.neighbors.length
         let angle
-        let extraBond
+
         if (degree && degree > 1) {
           // common case
           angle = null
-          extraBond = true
         } else if (degree === 1) {
           // on chain end
           const atom = struct.atoms.get(ci.id)
@@ -434,11 +433,9 @@ class TemplateTool {
           angle = event.ctrlKey
             ? utils.calcAngle(nei?.pp, atom?.pp)
             : utils.fracAngle(utils.calcAngle(nei.pp, atom?.pp), null)
-          extraBond = false
         } else {
           // on single atom
           angle = 0
-          extraBond = false
         }
 
         ;[action, pasteItems] = fromTemplateOnAtom(
@@ -446,7 +443,7 @@ class TemplateTool {
           this.template,
           ci.id,
           angle,
-          extraBond
+          false
         )
         if (functionalGroupRemoveAction) {
           action = functionalGroupRemoveAction.mergeWith(action)

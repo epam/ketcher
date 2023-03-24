@@ -141,3 +141,6 @@ export const ElementColor: ElementColorType = {
   Ts: '#000000',
   Og: '#000000'
 } as const
+
+type Keys = keyof typeof ElementColor
+export type AtomColor = typeof ElementColor[Keys]

@@ -77,11 +77,7 @@ export class HoverIcon {
 
   updatePosition() {
     const { x, y } = this.editor.lastCursorPosition
-    const { height, width } = this.element.getBBox()
-    this.element.attr({
-      x: x - width / 2,
-      y: y - height / 2
-    })
+    this.element.attr({ x, y })
   }
 
   show() {

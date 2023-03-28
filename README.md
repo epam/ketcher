@@ -73,6 +73,17 @@ You can add extra configuration in editor.setSetting
 ```js
 ketcher.setSettings({ "disableQueryElements": ["Pol", "CYH", "CXH"] })
 ```
+
+- general.dearomatize-on-load: Dearomatize the molecule when ketcher application starts
+```js
+ketcher.setSettings({ "general.dearomatize-on-load": true })
+```
+
+- ignoreChiralFlag: Ignore the chiral flag from .mol files
+```js
+ketcher.setSettings({ "ignoreChiralFlag": true })
+```
+
 ## Contribution
 
 See [Contributing Guide](./DEVNOTES.md).

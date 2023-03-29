@@ -108,7 +108,7 @@ export const Generics: GenericsType = {
           },
           {
             label: 'GH*',
-            description: 'Any group of hydrogen with a ring closure'
+            description: 'Any group with a ring closure or hydrogen'
           }
         ]
       }
@@ -213,7 +213,7 @@ export const Generics: GenericsType = {
                 ]
               },
               {
-                displayName: 'atyl',
+                displayName: 'aryl',
                 items: [
                   { label: 'ARY', description: 'Any aryl group' },
                   { label: 'ARH', description: 'Any aryl group or hydrogen' }

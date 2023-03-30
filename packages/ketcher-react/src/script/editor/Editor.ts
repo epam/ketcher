@@ -220,7 +220,7 @@ class Editor implements KetcherEditor {
 
     const isAtomToolChosen = name === 'atom'
     if (!isAtomToolChosen) {
-      this.hoverIcon.hide()
+      this.hoverIcon.hide(true)
     }
 
     if (!tool || tool.isNotActiveTool) {

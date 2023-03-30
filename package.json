@@ -7,7 +7,8 @@
     "packages/ketcher-polymer-editor-react",
     "packages/ketcher-react",
     "example",
-    "demo"
+    "demo",
+    "dev"
   ],
   "scripts": {
     "postinstall": "husky install",

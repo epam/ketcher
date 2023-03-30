@@ -5,17 +5,17 @@
   "scripts": {
     "start:standalone": "cross-env MODE=standalone react-app-rewired start",
     "start:remote": "cross-env MODE=remote react-app-rewired start",
-    "clean:build": "shx rm -rf build",
-    "delete:dist": "shx rm -rf dist/$MODE",
+    "init:build": "shx mkdir -p build",
     "init:dist": "shx mkdir -p dist/$MODE",
+    "delete:dist": "shx rm -rf dist/$MODE",
     "copy:build": "shx cp -r build/. dist/$MODE",
-    "prebuild": "run-s delete:dist init:dist",
-    "postbuild": "run-s copy:build clean:build",
+    "prebuild": "run-s init:build delete:dist init:dist",
+    "postbuild": "npm run copy:build",
     "build:remote": "cross-env MODE=remote run-s prebuild build:react postbuild",
     "build:standalone": "cross-env MODE=standalone run-s prebuild build:react postbuild",
     "build:react": "react-app-rewired build",
     "build:react:analyze": "react-app-rewired build --analyze",
-    "build": "run-s build:standalone build:remote",
+    "build": "npm run build:standalone && npm run build:remote",
     "build:standalone:analyze": "cross-env MODE=standalone run-s prebuild build:react:analyze postbuild",
     "build:remote:analyze": "cross-env MODE=remote run-s prebuild build:react:analyze postbuild",
     "test": "run-s test:prettier test:stylelint test:eslint test:unit",
@@ -30,10 +30,10 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "ketcher-core": "workspace:*",
-    "ketcher-polymer-editor-react": "workspace:*",
-    "ketcher-react": "workspace:*",
-    "ketcher-standalone": "workspace:*",
+    "ketcher-core": "*",
+    "ketcher-polymer-editor-react": "*",
+    "ketcher-react": "*",
+    "ketcher-standalone": "*",
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
     "react-app-polyfill": "^2.0.0",
@@ -62,7 +62,7 @@
     "source-map-loader": "^3.0.1",
     "stylelint": "13.13.1",
     "typescript": "^4.5.2",
-    "webpack-bundle-analyzer": "^3.9.0"
+    "webpack-bundle-analyzer": "^4.8.0"
   },
   "browserslist": {
     "production": [

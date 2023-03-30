@@ -8,9 +8,9 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.4.1",
     "@types/node": "^16.11.26",
-    "ketcher-core": "workspace:*",
-    "ketcher-react": "workspace:*",
-    "ketcher-standalone": "workspace:*",
+    "ketcher-core": "*",
+    "ketcher-react": "*",
+    "ketcher-standalone": "*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1",
@@ -45,6 +45,6 @@
   "devDependencies": {
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
-    "serve": "^13.0.2"
+    "serve": "^14.2.0"
   }
 }

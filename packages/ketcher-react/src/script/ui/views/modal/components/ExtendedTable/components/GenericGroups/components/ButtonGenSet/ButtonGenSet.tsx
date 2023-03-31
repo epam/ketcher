@@ -22,7 +22,7 @@ type ButtonGenSetProps = {
   button: GenItem
   onAtomSelect: (label: string, activateImmediately: boolean) => void
   selected: (label: string) => boolean
-  disabled?: boolean
+  disabled: boolean
 }
 
 const ButtonGenSet = ({

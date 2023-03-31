@@ -119,6 +119,9 @@ export default defineConfig({
       }
     ]
   },
+  server: {
+    open: true
+  },
   plugins: [
     react(),
     svgPlugin(),

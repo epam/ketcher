@@ -79,7 +79,21 @@ The latest version of Ketcher is based on npm workspaces. So before starting dev
 npm install
 ```
 
-After that component library and application should be started separately. First should be started ketcher-core package.
+Use Vite to develop:
+
+```sh
+cd dev
+
+# Standalone
+npm run start:standalone
+
+# Or remote
+npm run start:remote
+```
+
+When you finish coding, before creating a PR, you'd better preview your implementation to make sure everything works fine with Rollup. Please follow the following steps:
+
+Component libraries and application should be started separately. First should be started ketcher-core package.
 
 #### Build ketcher-core package
 

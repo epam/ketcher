@@ -1,10 +1,23 @@
 import react from '@vitejs/plugin-react'
+import { execSync } from 'child_process'
 import { resolve } from 'path'
 import { defineConfig, loadEnv } from 'vite'
 import { svgPlugin } from 'vite-plugin-fast-react-svg'
 import vitePluginRaw from 'vite-plugin-raw'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import ketcherReactPackageJSON from '../packages/ketcher-react/package.json'
 
 const env = loadEnv('development', '.', '')
+
+const getTagName = () => {
+  try {
+    return execSync('git describe --tags --abbrev=0', { encoding: 'utf8' })
+  } catch (error) {
+    console.error(error)
+    return 'master'
+  }
+}
 
 export default defineConfig({
   resolve: {
@@ -134,11 +147,21 @@ export default defineConfig({
   define: {
     'process.env': process.env,
     global: {},
+
+    /** The same as in example/.env */
     'process.env.SKIP_PREFLIGHT_CHECK': env.SKIP_PREFLIGHT_CHECK,
     'process.env.API_PATH': JSON.stringify(env.REACT_APP_API_PATH),
     'process.env.PUBLIC_URL': JSON.stringify(env.PUBLIC_URL),
     'process.env.GENERATE_SOURCEMAP': env.GENERATE_SOURCEMAP,
     'process.env.ENABLE_POLYMER_EDITOR': env.ENABLE_POLYMER_EDITOR,
-    'process.env.KETCHER_ENABLE_REDUX_LOGGER': env.KETCHER_ENABLE_REDUX_LOGGER
+    'process.env.KETCHER_ENABLE_REDUX_LOGGER': env.KETCHER_ENABLE_REDUX_LOGGER,
+
+    /** The same as in ketcher-react/rollup.config.js */
+    'process.env.VERSION': JSON.stringify(ketcherReactPackageJSON.version),
+    'process.env.BUILD_DATE': JSON.stringify(
+      new Date().toISOString().slice(0, 19)
+    ),
+    'process.env.BUILD_NUMBER': JSON.stringify(undefined),
+    'process.env.HELP_LINK': JSON.stringify(getTagName())
   }
 })

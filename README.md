@@ -64,6 +64,26 @@ Ketcher uses Miew-React for viewing and editing data in 3D.
 You can find the latest version of Miew-React [here](https://github.com/epam/miew/tree/master/packages/miew-react).
 The last checked version - [1.0.0](https://www.npmjs.com/package/miew-react).
 
+## Settings
+
+You can add extra configuration in editor.setSetting
+
+**Allowed parameters:**
+- disableQueryElements: Disable the elements from the Extended Table
+```js
+ketcher.setSettings({ "disableQueryElements": ["Pol", "CYH", "CXH"] })
+```
+
+- general.dearomatize-on-load: Dearomatize the molecule when ketcher application starts
+```js
+ketcher.setSettings({ "general.dearomatize-on-load": true })
+```
+
+- ignoreChiralFlag: Ignore the chiral flag from .mol files
+```js
+ketcher.setSettings({ "ignoreChiralFlag": true })
+```
+
 ## Contribution
 
 See [Contributing Guide](./DEVNOTES.md).

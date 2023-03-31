@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2022 EPAM Systems
+ * Copyright 2023 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import { groupNames } from './'
 type GenericGroupsProps = {
   selected: (label: string) => boolean
   onAtomSelect: (label: string, activateImmediately: boolean) => void
+  disabledQueryElements: Array<string> | null
 }
 
 const getGenericsGroupsMap = (tree) => {
@@ -40,35 +41,57 @@ const getGenericsGroupsMap = (tree) => {
   return newGroups
 }
 
-const renderGenGroupComponent = (group, selected, onAtomSelect) => (
+const renderGenGroupComponent = (
+  group,
+  selected,
+  onAtomSelect,
+  disabledQueryElements
+) => (
   <GenGroup
     group={groupsMap[group]}
     selected={selected}
     onAtomSelect={onAtomSelect}
+    disabledQueryElements={disabledQueryElements}
   />
 )
 
 const groupsMap = getGenericsGroupsMap(Generics)
 
-function GenericGroups({ selected, onAtomSelect }: GenericGroupsProps) {
+function GenericGroups({
+  selected,
+  onAtomSelect,
+  disabledQueryElements
+}: GenericGroupsProps) {
   return (
     <div className={classes.genericGroups}>
       <div className={classes.topGroupsContainer}>
-        {renderGenGroupComponent(groupNames.atomsGen, selected, onAtomSelect)}
+        {renderGenGroupComponent(
+          groupNames.atomsGen,
+          selected,
+          onAtomSelect,
+          disabledQueryElements
+        )}
         {renderGenGroupComponent(
           groupNames.specialNodes,
           selected,
-          onAtomSelect
+          onAtomSelect,
+          disabledQueryElements
         )}
       </div>
-      {renderGenGroupComponent(groupNames.groupGen, selected, onAtomSelect)}
+      {renderGenGroupComponent(
+        groupNames.groupGen,
+        selected,
+        onAtomSelect,
+        disabledQueryElements
+      )}
       <HorizontalBoxWithLines />
       <div className={classes.groupGenerics}>
         <div>
           {renderGenGroupComponent(
             groupNames.groupAcyclic,
             selected,
-            onAtomSelect
+            onAtomSelect,
+            disabledQueryElements
           )}
           <div className={classes.subgroupContainer}>
             <VerticalBoxWithLines />
@@ -76,12 +99,14 @@ function GenericGroups({ selected, onAtomSelect }: GenericGroupsProps) {
               {renderGenGroupComponent(
                 groupNames.acyclicCarbo,
                 selected,
-                onAtomSelect
+                onAtomSelect,
+                disabledQueryElements
               )}
               {renderGenGroupComponent(
                 groupNames.acyclicHetero,
                 selected,
-                onAtomSelect
+                onAtomSelect,
+                disabledQueryElements
               )}
             </div>
           </div>
@@ -90,7 +115,8 @@ function GenericGroups({ selected, onAtomSelect }: GenericGroupsProps) {
           {renderGenGroupComponent(
             groupNames.groupCyclic,
             selected,
-            onAtomSelect
+            onAtomSelect,
+            disabledQueryElements
           )}
           <div className={classes.subgroupContainer}>
             <VerticalBoxWithLines />
@@ -98,12 +124,14 @@ function GenericGroups({ selected, onAtomSelect }: GenericGroupsProps) {
               {renderGenGroupComponent(
                 groupNames.cyclicCarbo,
                 selected,
-                onAtomSelect
+                onAtomSelect,
+                disabledQueryElements
               )}
               {renderGenGroupComponent(
                 groupNames.cyclicHetero,
                 selected,
-                onAtomSelect
+                onAtomSelect,
+                disabledQueryElements
               )}
             </div>
           </div>

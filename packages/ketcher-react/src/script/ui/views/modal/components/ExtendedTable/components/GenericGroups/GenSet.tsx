@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2022 EPAM Systems
+ * Copyright 2023 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 import type { GenItemSet } from 'ketcher-core'
 import classes from './GenSet.module.less'
-import clsx from 'clsx'
 import { isGenericGroup } from '../../helpers'
+import ButtonGenSet from './components/ButtonGenSet'
 
 type GenSetProps = {
   labels: GenItemSet[]
@@ -25,6 +25,7 @@ type GenSetProps = {
   onAtomSelect: (label: string, activateImmediately: boolean) => void
   className?: string
   group: string
+  disabledQueryElements: Array<string> | null
 }
 
 const getGroupClassName = (groupName: string) => groupName.replaceAll(' ', '')
@@ -34,7 +35,8 @@ function GenSet({
   selected,
   onAtomSelect,
   className,
-  group
+  group,
+  disabledQueryElements
 }: GenSetProps) {
   return (
     <>
@@ -45,20 +47,15 @@ function GenSet({
           <fieldset className={className} key={index}>
             <div className={classes[getGroupClassName(group)]}>
               {buttons.map((button, index) => (
-                <button
+                <ButtonGenSet
                   key={index}
-                  onClick={() => onAtomSelect(button.label, false)}
-                  onDoubleClick={() => onAtomSelect(button.label, true)}
-                  title={button.description || button.label}
-                  className={clsx(
-                    {
-                      [classes.selected]: selected(button.label)
-                    },
-                    classes.button
+                  button={button}
+                  onAtomSelect={onAtomSelect}
+                  selected={selected}
+                  disabled={Boolean(
+                    disabledQueryElements?.includes(button.label)
                   )}
-                >
-                  {button.label}
-                </button>
+                />
               ))}
             </div>
             {!isGenericGroup(group) && caption && (

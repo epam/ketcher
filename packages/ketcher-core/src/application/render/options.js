@@ -28,6 +28,7 @@ function defaultOptions(opt) {
   const defaultOptions = {
     'dearomatize-on-load': false,
     ignoreChiralFlag: false,
+    disableQueryElements: null,
     // flags for debugging
     showAtomIds: false,
     showBondIds: false,

@@ -14,22 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styles from './BoxWithLines.module.less'
+@import 'src/style/mixins.less';
 
-export const HorizontalBoxWithLines = () => {
-  return (
-    <div className={styles.horizintalNodeLines}>
-      <div className={styles.upperLines} />
-      <div className={styles.lowerLine} />
-    </div>
-  )
-}
+.button {
+  width: 100%;
+  height: 100%;
+  font-size: @font-size-header;
+  line-height: @line-height-header;
+  vertical-align: middle;
+  padding: 0;
+  background: @color-background-primary;
+  border: 1px solid @color-grey-6;
+  border-radius: 4px;
+  color: @color-grey-6;
 
-export const VerticalBoxWithLines = () => {
-  return (
-    <div className={styles.verticalNodeLines}>
-      <div className={styles.upperLines} />
-      <div className={styles.lowerLine} />
-    </div>
-  )
+  &:hover {
+    color: @color-text-secondary;
+    border: 1px solid @color-primary-green;
+  }
+
+  &:focus,
+  &.selected {
+    background-color: @color-primary-green;
+    color: @color-text-light;
+    border: 1px solid @color-primary-green;
+  }
+
+  &:disabled {
+    color: @color-grey-5;
+    border: 1px solid @color-grey-5;
+  }
 }

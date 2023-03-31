@@ -14,22 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styles from './BoxWithLines.module.less'
-
-export const HorizontalBoxWithLines = () => {
-  return (
-    <div className={styles.horizintalNodeLines}>
-      <div className={styles.upperLines} />
-      <div className={styles.lowerLine} />
-    </div>
-  )
-}
-
-export const VerticalBoxWithLines = () => {
-  return (
-    <div className={styles.verticalNodeLines}>
-      <div className={styles.upperLines} />
-      <div className={styles.lowerLine} />
-    </div>
-  )
-}
+export { default } from './ButtonGenSet'

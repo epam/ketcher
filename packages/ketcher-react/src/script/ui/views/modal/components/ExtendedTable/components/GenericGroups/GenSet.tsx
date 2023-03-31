@@ -50,9 +50,11 @@ function GenSet({
                 <ButtonGenSet
                   key={index}
                   button={button}
-                  disabledQueryElements={disabledQueryElements}
                   onAtomSelect={onAtomSelect}
                   selected={selected}
+                  disabled={Boolean(
+                    disabledQueryElements?.includes(button.label)
+                  )}
                 />
               ))}
             </div>

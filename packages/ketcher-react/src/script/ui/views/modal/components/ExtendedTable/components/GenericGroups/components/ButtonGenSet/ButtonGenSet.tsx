@@ -15,16 +15,23 @@
  ***************************************************************************/
 
 import clsx from 'clsx'
+import { GenItem } from 'ketcher-core'
 import classes from './ButtonGenSet.module.less'
+
+type ButtonGenSetProps = {
+  button: GenItem
+  onAtomSelect: (label: string, activateImmediately: boolean) => void
+  selected: (label: string) => boolean
+  disabled?: boolean
+}
 
 const ButtonGenSet = ({
   button,
-  disabledQueryElements,
   onAtomSelect,
-  selected
-}) => {
-  const isDisabled = disabledQueryElements?.includes(button.label)
-  const titleText = isDisabled
+  selected,
+  disabled
+}: ButtonGenSetProps) => {
+  const titleText = disabled
     ? `${button.label} is disabled`
     : button.description || button.label
 
@@ -33,7 +40,7 @@ const ButtonGenSet = ({
       onClick={() => onAtomSelect(button.label, false)}
       onDoubleClick={() => onAtomSelect(button.label, true)}
       title={titleText}
-      disabled={isDisabled}
+      disabled={disabled}
       className={clsx(
         {
           [classes.selected]: selected(button.label)

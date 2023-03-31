@@ -141,8 +141,6 @@ export default defineConfig({
     vitePluginRaw({
       match: /\.sdf/
     })
-
-    // FIXME: https://github.com/vitejs/vite/issues/3033#issuecomment-1360691044
   ],
   define: {
     'process.env': process.env,

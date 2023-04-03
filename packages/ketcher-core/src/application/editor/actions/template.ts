@@ -350,7 +350,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
       const commonBond = bond.type > tmplBond.type ? bond : tmplBond
       action.mergeWith(fromBondsAttrs(restruct, existId, commonBond, true))
 
-      if (isFusingBenzeneBySpecialRules) {
+      if (isFusingBenzeneBySpecialRules && benzeneConnectingBondType) {
         action.addOp(
           new BondAttr(bid, 'type', benzeneConnectingBondType).perform(restruct)
         )

@@ -218,7 +218,11 @@ function getBondNeighbourIds(struct: Struct, bondId: number) {
   return { beginBondIds, endBondIds }
 }
 
-function getBenzeneConnectingBondType(bond, bondBegin, bondEnd) {
+function getBenzeneConnectingBondType(
+  bond: Bond,
+  bondBegin: Bond,
+  bondEnd: Bond
+): number | null {
   const { DOUBLE, SINGLE } = Bond.PATTERN.TYPE
   const isFusingToDoubleBond =
     bondBegin.type === SINGLE && bond.type === DOUBLE && bondEnd.type === SINGLE
@@ -294,6 +298,10 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
   })
   mergeSgroups(action, restruct, pasteItems.atoms, bond.begin)
 
+  // When a template of "Benzene" molecule is attached it
+  // uses specific fusing rules when attaching to a bond
+  // that is connected exactly to one bond on each side.
+  // For more info please refer to: https://github.com/epam/ketcher/issues/1855
   let isFusingBenzeneBySpecialRules = false
   let benzeneConnectingBondType: any = null
 

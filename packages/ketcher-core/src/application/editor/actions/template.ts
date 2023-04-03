@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Vec2 } from 'domain/entities'
-import { AtomAdd, BondAdd, CalcImplicitH } from '../operations'
+import { Atom, Bond, Struct, Vec2 } from 'domain/entities'
+import { AtomAdd, BondAdd, BondAttr, CalcImplicitH } from '../operations'
 import { atomForNewBond, atomGetAttr } from './utils'
 import { fromAtomsAttrs, mergeSgroups } from './atom'
 import { fromBondStereoUpdate, fromBondsAttrs, fromBondAddition } from './bond'
@@ -26,6 +26,9 @@ import { fromAromaticTemplateOnBond } from './aromaticFusing'
 import { fromPaste } from './paste'
 import utils from '../shared/utils'
 import { fromSgroupAddition } from './sgroup'
+
+const benzeneMoleculeName = 'Benzene'
+const benzeneDoubleBondIndexes = [1, 4]
 
 export function fromTemplateOnCanvas(restruct, template, pos, angle) {
   const [action, pasteItems] = fromPaste(
@@ -203,6 +206,32 @@ export function fromTemplateOnBondAction(
   )
 }
 
+function getBondNeighbourIds(struct: Struct, bondId: number) {
+  const bond = struct.bonds.get(bondId)!
+  const { begin, end } = bond
+  const beginBondIds = Atom.getConnectedBondIds(struct, begin).filter(
+    (id) => id !== bondId
+  )
+  const endBondIds = Atom.getConnectedBondIds(struct, end).filter(
+    (id) => id !== bondId
+  )
+  return { beginBondIds, endBondIds }
+}
+
+function getBenzeneConnectingBondType(bond, bondBegin, bondEnd) {
+  const { DOUBLE, SINGLE } = Bond.PATTERN.TYPE
+  const isFusingToDoubleBond =
+    bondBegin.type === SINGLE && bond.type === DOUBLE && bondEnd.type === SINGLE
+  const isFusingToSignleBond =
+    bondBegin.type === DOUBLE && bond.type === SINGLE && bondEnd.type === DOUBLE
+  if (isFusingToDoubleBond) {
+    return DOUBLE
+  } else if (isFusingToSignleBond) {
+    return SINGLE
+  }
+  return null
+}
+
 function fromTemplateOnBond(restruct, template, bid, flip) {
   // TODO: refactor function !!
   const action = new Action()
@@ -265,7 +294,27 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
   })
   mergeSgroups(action, restruct, pasteItems.atoms, bond.begin)
 
-  tmpl.bonds.forEach((tBond) => {
+  let isFusingBenzeneBySpecialRules = false
+  let benzeneConnectingBondType: any = null
+
+  const isBenzeneTemplate = tmpl.name === benzeneMoleculeName
+  if (tmpl.bonds.size && isBenzeneTemplate) {
+    const { beginBondIds, endBondIds } = getBondNeighbourIds(struct, bid)
+    const isOnlyTwoConnectingBonds =
+      beginBondIds.length === 1 && endBondIds.length === 1
+    if (isOnlyTwoConnectingBonds) {
+      const beginBond = struct.bonds.get(beginBondIds[0])
+      const endBond = struct.bonds.get(endBondIds[0])
+      benzeneConnectingBondType = getBenzeneConnectingBondType(
+        bond,
+        beginBond,
+        endBond
+      )
+      isFusingBenzeneBySpecialRules = benzeneConnectingBondType !== null
+    }
+  }
+
+  tmpl.bonds.forEach((tBond, tBondIndex) => {
     const existId = struct.findBondId(
       atomsMap.get(tBond.begin),
       atomsMap.get(tBond.end)
@@ -277,11 +326,27 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
         tBond
       ).perform(restruct) as BondAdd
       action.addOp(operation)
+      const newBondId = operation.data.bid
 
-      pasteItems.bonds.push(operation.data.bid)
+      if (isFusingBenzeneBySpecialRules) {
+        const newBondType = benzeneDoubleBondIndexes.includes(tBondIndex)
+          ? Bond.PATTERN.TYPE.DOUBLE
+          : Bond.PATTERN.TYPE.SINGLE
+        action.addOp(
+          new BondAttr(newBondId, 'type', newBondType).perform(restruct)
+        )
+      }
+
+      pasteItems.bonds.push(newBondId)
     } else {
       const commonBond = bond.type > tmplBond.type ? bond : tmplBond
       action.mergeWith(fromBondsAttrs(restruct, existId, commonBond, true))
+
+      if (isFusingBenzeneBySpecialRules) {
+        action.addOp(
+          new BondAttr(bid, 'type', benzeneConnectingBondType).perform(restruct)
+        )
+      }
     }
   })
 

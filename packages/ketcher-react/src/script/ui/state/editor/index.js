@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  fromAtom,
   fromBond,
   fromElement,
   fromSgroup,
@@ -31,7 +32,8 @@ import { debounce } from 'lodash/fp'
 import { openDialog } from '../modal'
 import { highlightFG } from '../functionalGroups'
 import { serverCall } from '../server'
-import { generateCommonProperties, isAtomsArray } from '../modal/atoms'
+import { isAtomsArray } from '../modal/atoms'
+import { generateCommonProperties } from './utils'
 import { saveSettings } from '../options'
 
 export default function initEditor(dispatch, getState) {
@@ -65,7 +67,10 @@ export default function initEditor(dispatch, getState) {
     },
     onElementEdit: (selem) => {
       if (isAtomsArray(selem)) {
-        const atomAttributes = generateCommonProperties(selem)
+        const atomAttributes = generateCommonProperties(
+          selem,
+          fromAtom(selem[0])
+        )
         return openDialog(dispatch, 'atomProps', {
           ...atomAttributes,
           isMultipleAtoms: true
@@ -129,8 +134,12 @@ export default function initEditor(dispatch, getState) {
       }),
 
     onQuickEdit: (atom) => openDialog(dispatch, 'labelEdit', atom),
-    onBondEdit: (bond) =>
-      openDialog(dispatch, 'bondProps', fromBond(bond)).then(toBond),
+    onBondEdit: (bonds) => {
+      const bondsAttributes = generateCommonProperties(bonds, bonds[0])
+      return openDialog(dispatch, 'bondProps', fromBond(bondsAttributes)).then(
+        toBond
+      )
+    },
     onRgroupEdit: (rgroup) => {
       const struct = getState().editor.struct()
 

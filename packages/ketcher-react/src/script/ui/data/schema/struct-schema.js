@@ -155,6 +155,7 @@ export const bond = {
     type: {
       title: 'Type',
       enum: [
+        '',
         'single',
         'up',
         'down',
@@ -171,6 +172,7 @@ export const bond = {
         'dative'
       ],
       enumNames: [
+        '',
         'Single',
         'Single Up',
         'Single Down',

@@ -25,6 +25,7 @@ import {
 import templatesRawData from '../../../../templates/fg.sdf'
 import { memoizedDebounce } from '../../utils'
 import { TOOLTIP_DELAY } from '../../../editor/utils/functionalGroupsTooltip'
+import { MODES } from 'ketcher-react/src/constants'
 
 interface FGState {
   lib: []
@@ -35,7 +36,7 @@ interface FGState {
 const initialState: FGState = {
   lib: [],
   functionalGroupInfo: null,
-  mode: 'fg'
+  mode: MODES.FG
 }
 
 const functionalGroupsReducer = (

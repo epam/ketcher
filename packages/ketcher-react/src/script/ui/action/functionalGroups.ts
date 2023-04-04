@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import isHidden from './isHidden'
+import { MODES } from 'ketcher-react/src/constants'
 
 const functionalGroupsLib = {
   'functional-groups': {
@@ -22,7 +23,7 @@ const functionalGroupsLib = {
     // TODO Update HELP about current tools
     title: 'Functional Groups',
     action: { dialog: 'templates', prop: { tab: 1 } },
-    selected: (editor) => editor._tool.mode === 'fg',
+    selected: (editor) => editor._tool.mode === MODES.FG,
     disabled: (_, __, options) => {
       return !options.app.functionalGroups
     },

@@ -34,6 +34,7 @@ import {
 import utils from '../shared/utils'
 import Editor from '../Editor'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
+import { MODES } from 'ketcher-react/src/constants'
 
 type MergeItems = Record<string, Map<unknown, unknown>> | null
 
@@ -77,7 +78,7 @@ class TemplateTool {
     }
 
     const bond = frag.bonds.get(this.template.bid)
-    if (bond && this.mode !== 'fg') {
+    if (bond && !this.isModeFunctionalGroup) {
       // template location sign against attachment bond
       this.template.sign = getSign(frag, bond, this.template.xy0)
       this.findItems.push('bonds')
@@ -94,7 +95,21 @@ class TemplateTool {
     editor.hoverIcon.updatePosition()
   }
 
-  mousedown(event) {
+  showRemoveAbbreviationPopup(): Promise<void> {
+    return this.editor.event.removeFG
+      .dispatch({ fgIds: this.targetGroupsIds })
+      .then(() => {
+        // case when we remove abbreviation group, click on benzene ring and try to add it
+        this.targetGroupsIds.length = 0
+        return Promise.resolve()
+      })
+  }
+
+  get isModeFunctionalGroup() {
+    return this.mode === MODES.FG
+  }
+
+  async mousedown(event) {
     const closestItem = this.editor.findItem(event, [
       'atoms',
       'bonds',
@@ -111,6 +126,7 @@ class TemplateTool {
       })
 
       if (
+        // if point is functional group and it is not expanded
         closestItem?.map === 'functionalGroups' &&
         FunctionalGroup.isContractedFunctionalGroup(
           closestItem.id,
@@ -119,6 +135,18 @@ class TemplateTool {
       ) {
         this.targetGroupsIds.push(closestItem.id)
       }
+    }
+
+    const isTargetExpanded = struct.functionalGroups.get(
+      this.targetGroupsIds[0]
+    )?.isExpanded
+    const isTargetAtomOrBond =
+      this.targetGroupsIds.length && !this.isModeFunctionalGroup
+
+    if (isTargetAtomOrBond || isTargetExpanded) {
+      await this.showRemoveAbbreviationPopup()
+
+      return
     }
 
     this.editor.hover(null)
@@ -137,7 +165,7 @@ class TemplateTool {
       return
     }
 
-    if (ci.map === 'bonds' && this.mode !== 'fg') {
+    if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       // calculate fragment center
       const xy0 = new Vec2()
       const bond = struct.bonds.get(ci.id)
@@ -205,7 +233,7 @@ class TemplateTool {
     const struct = this.editor.render.ctab.molecule
 
     /* moving when attached to bond */
-    if (ci && ci.map === 'bonds' && this.mode !== 'fg') {
+    if (ci && ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       const bond = struct.bonds.get(ci.id)
       let sign = getSign(struct, bond, eventPos)
 
@@ -251,8 +279,9 @@ class TemplateTool {
         targetPos = atom?.pp
 
         if (targetPos) {
-          extraBond =
-            this.mode === 'fg' ? true : Vec2.dist(targetPos, eventPos) > 1
+          extraBond = this.isModeFunctionalGroup
+            ? true
+            : Vec2.dist(targetPos, eventPos) > 1
         }
       }
     }
@@ -320,7 +349,7 @@ class TemplateTool {
 
     this.editor.update(dragCtx.action, true)
 
-    if (this.mode !== 'fg') {
+    if (!this.isModeFunctionalGroup) {
       dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
       this.editor.hover(getHoverToFuse(dragCtx.mergeItems))
     }
@@ -334,11 +363,6 @@ class TemplateTool {
   mouseup(event) {
     const dragCtx = this.dragCtx
 
-    if (this.targetGroupsIds.length && this.mode !== 'fg') {
-      this.editor.event.removeFG.dispatch({ fgIds: this.targetGroupsIds })
-      return
-    }
-
     if (!dragCtx) {
       return true
     }
@@ -351,7 +375,12 @@ class TemplateTool {
     const functionalGroups = struct.functionalGroups
 
     /* after moving around bond */
-    if (dragCtx.action && ci && ci.map === 'bonds' && this.mode !== 'fg') {
+    if (
+      dragCtx.action &&
+      ci &&
+      ci.map === 'bonds' &&
+      !this.isModeFunctionalGroup
+    ) {
       dragCtx.action.perform(restruct) // revert drag action
 
       const promise = fromTemplateOnBondAction(
@@ -391,7 +420,7 @@ class TemplateTool {
     } else if (
       ci?.map === 'functionalGroups' &&
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups) &&
-      this.mode === 'fg' &&
+      this.isModeFunctionalGroup &&
       this.targetGroupsIds.length
     ) {
       functionalGroupRemoveAction = new Action()
@@ -454,7 +483,7 @@ class TemplateTool {
           action = functionalGroupRemoveAction.mergeWith(action)
         }
         dragCtx.action = action
-      } else if (ci.map === 'bonds' && this.mode !== 'fg') {
+      } else if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
         const promise = fromTemplateOnBondAction(
           restruct,
           this.template,
@@ -465,7 +494,7 @@ class TemplateTool {
         ) as Promise<any>
 
         promise.then(([action, pasteItems]) => {
-          if (this.mode !== 'fg') {
+          if (!this.isModeFunctionalGroup) {
             const mergeItems = getItemsToFuse(this.editor, pasteItems)
             action = fromItemsFuse(restruct, mergeItems).mergeWith(action)
             this.editor.update(action)
@@ -478,7 +507,7 @@ class TemplateTool {
 
     this.editor.selection(null)
 
-    if (!dragCtx.mergeItems && pasteItems && this.mode !== 'fg') {
+    if (!dragCtx.mergeItems && pasteItems && !this.isModeFunctionalGroup) {
       dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
     }
     dragCtx.action = dragCtx.action
@@ -521,9 +550,14 @@ function addSaltsAndSolventsOnCanvasWithoutMerge(
 }
 
 function getTemplateMode(tmpl) {
-  if (tmpl.mode) return tmpl.mode
-  if (['Functional Groups', 'Salts and Solvents'].includes(tmpl.props?.group))
-    return 'fg'
+  if (tmpl.mode) {
+    return tmpl.mode
+  }
+
+  if (['Functional Groups', 'Salts and Solvents'].includes(tmpl.props?.group)) {
+    return MODES.FG
+  }
+
   return null
 }
 

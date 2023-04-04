@@ -25,6 +25,7 @@ import {
 } from 'ketcher-core'
 import { RenderStruct } from '../../utils'
 import templatesRawData from '../../../../templates/salts-and-solvents.sdf'
+import { MODES } from 'ketcher-react/src/constants'
 
 interface SaltsAndSolventsState {
   lib: []
@@ -33,7 +34,7 @@ interface SaltsAndSolventsState {
 
 const initialState: SaltsAndSolventsState = {
   lib: [],
-  mode: 'fg'
+  mode: MODES.FG
 }
 
 const saltsAndSolventsReducer = (

@@ -285,7 +285,7 @@ class Editor implements KetcherEditor {
       this.render.clientArea,
       Object.assign({ scale: SCALE }, value)
     )
-    this.render.setMolecule(struct) // TODO: reuse this.struct here?
+    this.struct(struct)
     this.render.setZoom(zoom)
     this.render.update()
     return this.render.options

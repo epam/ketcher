@@ -151,6 +151,10 @@
           "type": "integer",
           "enum": [-1, 0, 1, 2, 3, 4, 5]
         },
+        "implicitHCount": {
+          "type": "integer",
+          "enum": [0, 1, 2, 3, 4, 5]
+        },
         "mapping": {
           "type": "integer",
           "minimum": 0

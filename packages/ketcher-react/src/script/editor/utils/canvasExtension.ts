@@ -1,5 +1,4 @@
 import { Vec2 } from 'ketcher-core'
-import _ from 'lodash'
 
 const edgeOffset = 150
 

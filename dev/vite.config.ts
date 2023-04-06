@@ -144,7 +144,6 @@ export default defineConfig({
   ],
   define: {
     'process.env': process.env,
-    global: {},
 
     /** The same as in example/.env */
     'process.env.SKIP_PREFLIGHT_CHECK': env.SKIP_PREFLIGHT_CHECK,
@@ -152,7 +151,9 @@ export default defineConfig({
     'process.env.PUBLIC_URL': JSON.stringify(env.PUBLIC_URL),
     'process.env.GENERATE_SOURCEMAP': env.GENERATE_SOURCEMAP,
     'process.env.ENABLE_POLYMER_EDITOR': env.ENABLE_POLYMER_EDITOR,
-    'process.env.KETCHER_ENABLE_REDUX_LOGGER': env.KETCHER_ENABLE_REDUX_LOGGER,
+    'process.env.KETCHER_ENABLE_REDUX_LOGGER': JSON.stringify(
+      env.KETCHER_ENABLE_REDUX_LOGGER
+    ),
 
     /** The same as in ketcher-react/rollup.config.js */
     'process.env.VERSION': JSON.stringify(ketcherReactPackageJSON.version),

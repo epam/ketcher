@@ -8,6 +8,13 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      /**
+       * HACK: https://github.com/bevacqua/dragula/issues/602#issuecomment-1109840139
+       * error: global is not defined
+       */
+      var global = global || window
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

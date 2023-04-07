@@ -94,12 +94,13 @@ class SGroupTool {
 
           if (
             atomFromStruct &&
-            FunctionalGroup.isAtomInContractedFunctionalGroup(
+            (FunctionalGroup.isAtomInContractedFunctionalGroup(
               atomFromStruct,
               sgroups,
               functionalGroups,
               false
-            )
+            ) ||
+              SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups))
           ) {
             const sgroupAtoms =
               actualSgroupId !== undefined &&
@@ -165,11 +166,13 @@ class SGroupTool {
 
       if (
         atomFromStruct &&
-        !FunctionalGroup.isAtomInContractedFunctionalGroup(
-          atomFromStruct,
-          sgroups,
-          functionalGroups,
-          true
+        !(
+          FunctionalGroup.isAtomInContractedFunctionalGroup(
+            atomFromStruct,
+            sgroups,
+            functionalGroups,
+            true
+          ) || SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups)
         )
       ) {
         atomResult.push(atomId)
@@ -186,10 +189,12 @@ class SGroupTool {
 
       if (
         bondFromStruct &&
-        !FunctionalGroup.isBondInContractedFunctionalGroup(
-          bondFromStruct,
-          sgroups,
-          functionalGroups
+        !(
+          FunctionalGroup.isBondInContractedFunctionalGroup(
+            bondFromStruct,
+            sgroups,
+            functionalGroups
+          ) || SGroup.isBondInContractedSGroup(bondFromStruct, sgroups)
         )
       ) {
         bondResult.push(bondId)
@@ -299,12 +304,13 @@ class SGroupTool {
 
         if (
           atomFromStruct &&
-          FunctionalGroup.isAtomInContractedFunctionalGroup(
+          (FunctionalGroup.isAtomInContractedFunctionalGroup(
             atomFromStruct,
             sgroups,
             functionalGroups,
             true
-          )
+          ) ||
+            SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups))
         ) {
           const sgroupAtoms =
             actualSgroupId !== undefined &&

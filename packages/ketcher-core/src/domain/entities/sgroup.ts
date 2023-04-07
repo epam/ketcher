@@ -22,6 +22,8 @@ import { Struct } from './struct'
 import { SaltsAndSolventsProvider } from '../helpers'
 import { Vec2 } from './vec2'
 import { ReStruct } from '../../application/render'
+import { Pool } from 'domain/entities/pool'
+import { ReSGroup } from 'application/render'
 
 export class SGroupBracketParams {
   readonly c: Vec2
@@ -595,6 +597,58 @@ export class SGroup {
       c = c.addScaled(mol.atoms.get(atoms[i]).pp, 1.0 / atoms.length)
     }
     return c
+  }
+
+  static isAtomInContractedSGroup = (atom, sGroups) => {
+    const contractedSGroup: number[] = []
+
+    sGroups.forEach((sGroup) => {
+      const id = 'item' in sGroup ? sGroup.item.id : sGroup.id
+      if (this.isContractedSGroups(id, sGroups)) {
+        contractedSGroup.push(id)
+      }
+    })
+    return contractedSGroup.some((sg) => atom.sgs.has(sg))
+  }
+
+  static isBondInContractedSGroup(
+    bond: Bond,
+    sGroups: Map<number, ReSGroup> | Pool<SGroup>
+  ) {
+    return [...sGroups.values()].some((sGroup) => {
+      const atomsInSGroup = 'item' in sGroup ? sGroup.item.atoms : sGroup.atoms
+      const isContracted = !this.isExpandedSGroup(sGroup)
+      return (
+        isContracted &&
+        atomsInSGroup.includes(bond?.begin) &&
+        atomsInSGroup.includes(bond?.end)
+      )
+    })
+  }
+
+  static isSuperAtom(sGroup) {
+    if (!sGroup) {
+      return false
+    }
+    return sGroup.type === 'SUP'
+  }
+
+  static isExpandedSGroup(sGroup) {
+    return 'item' in sGroup ? sGroup?.item.data.expanded : sGroup.data.expanded
+  }
+
+  static isContractedSGroups(sGroupId, sGroups): boolean {
+    let isSGroup = false
+    let expanded = false
+    sGroups.forEach((sGroupItem) => {
+      const sGroupItemId =
+        'item' in sGroupItem ? sGroupItem?.item.id : sGroupItem.id
+      if (sGroupItemId === sGroupId) {
+        isSGroup = true
+        expanded = this.isExpandedSGroup(sGroupItem)
+      }
+    })
+    return !expanded && isSGroup
   }
 }
 

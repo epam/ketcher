@@ -18,9 +18,12 @@ import { Bond, Vec2 } from 'domain/entities'
 
 import closest from '../shared/closest'
 import { difference } from 'lodash'
+import { ReStruct } from 'application/render'
 
-export function atomGetAttr(restruct, aid, name) {
-  return restruct.molecule.atoms.get(aid)[name]
+export function atomGetAttr(restruct: ReStruct, aid: number, name: string) {
+  const atom = restruct.molecule.atoms.get(aid)
+  if (!atom) return null
+  return atom[name]
 }
 
 export function atomGetDegree(restruct, aid) {

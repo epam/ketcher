@@ -18,11 +18,11 @@ type MergeItems = {
 
 export function dropAndMerge(
   editor: Editor,
-  mergeItems: MergeItems | null,
+  mergeItems: any,
   action?: Action
-): void {
+): Action {
   if (!mergeItems) {
-    return
+    // return
   }
 
   const restruct = editor.render.ctab
@@ -35,18 +35,16 @@ export function dropAndMerge(
       mergeItems
     )
     dropItemAction = dropItemAction.mergeWith(expandGroupsAction)
+    if (mergeItems.atomToFunctionalGroup) {
+      const [newMergeItems, extractAttachmentAtomAction] = extractAttachmentAtom(
+        mergeItems,
+        editor
+      )
+      mergeItems = newMergeItems
+      dropItemAction = dropItemAction.mergeWith(extractAttachmentAtomAction)
+    }
+    dropItemAction = fromItemsFuse(restruct, mergeItems).mergeWith(dropItemAction)
   }
-
-  if (mergeItems.atomToFunctionalGroup) {
-    const [newMergeItems, extractAttachmentAtomAction] = extractAttachmentAtom(
-      mergeItems,
-      editor
-    )
-    mergeItems = newMergeItems
-    dropItemAction = dropItemAction.mergeWith(extractAttachmentAtomAction)
-  }
-
-  dropItemAction = fromItemsFuse(restruct, mergeItems).mergeWith(dropItemAction)
 
   if (action) {
     dropItemAction = dropItemAction.mergeWith(action)
@@ -58,6 +56,8 @@ export function dropAndMerge(
   if (dropItemAction?.operations.length > 0) {
     editor.update(dropItemAction)
   }
+
+  return dropItemAction
 }
 
 function getExpandGroupsInMergeAction(
@@ -119,6 +119,6 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
 
   return [
     newMergeItems,
-    removeNonAttachmentAtoms.mergeWith(removeSGroup)
+    removeNonAttachmentAtoms
   ] as const
 }

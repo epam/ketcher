@@ -46,7 +46,11 @@ class ReSGroup extends ReObject {
     sgroup.areas = [bracketBox]
     const functionalGroups = remol.molecule.functionalGroups
     if (
-      FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
+      FunctionalGroup.isContractedFunctionalGroup(
+        sgroup.id,
+        functionalGroups
+      ) ||
+      (SGroup.isSuperAtom(sgroup) && !sgroup.data.expanded)
     ) {
       sgroup.atoms.forEach((aid) => {
         if (FunctionalGroup.isAttachmentPointAtom(aid, remol.molecule)) {
@@ -158,8 +162,13 @@ class ReSGroup extends ReObject {
   makeSelectionPlate(restruct, paper, options) {
     const sgroup = this.item
     const functionalGroups = restruct.molecule.functionalGroups
+    const sGroups = restruct.molecule.sgroups
     if (
-      FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
+      FunctionalGroup.isContractedFunctionalGroup(
+        sgroup.id,
+        functionalGroups
+      ) ||
+      SGroup.isContractedSGroups(sgroup.id, sGroups)
     ) {
       const { startX, startY, width, height } = this.getTextHighlightDimensions(
         this.render.options.fontsz / 2
@@ -178,12 +187,14 @@ class ReSGroup extends ReObject {
     const { a0, a1, b0, b1 } = getHighlighPathInfo(sGroupItem, options)
 
     const functionalGroups = render.ctab.molecule.functionalGroups
+    const sGroups = render.ctab.molecule.sgroups
     const set = paper.set()
     if (
       FunctionalGroup.isContractedFunctionalGroup(
         sGroupItem.id,
         functionalGroups
-      )
+      ) ||
+      SGroup.isContractedSGroups(sGroupItem.id, sGroups)
     ) {
       const { startX, startY, width, height } = this.getTextHighlightDimensions(
         options.fontsz / 2

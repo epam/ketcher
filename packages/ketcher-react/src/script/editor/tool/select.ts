@@ -28,7 +28,12 @@ import {
   ReSGroup,
   Vec2,
   Atom,
-  Bond
+  Bond,
+  getDirections,
+  isCloseToEdgeOfCanvas,
+  isCloseToEdgeOfScreen,
+  scrollByVector,
+  shiftAndExtendCanvasByVector
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -42,12 +47,6 @@ import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { getMergeItems } from './helper/getMergeItems'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds'
-import {
-  isCloseToEdgeOfCanvas,
-  isCloseToEdgeOfScreen,
-  scrollByVector,
-  shiftAndExtendCanvasByVector
-} from '../utils/canvasExtension'
 
 class SelectTool {
   #mode: string
@@ -213,7 +212,7 @@ class SelectTool {
       editor.hover(getHoverToFuse(dragCtx.mergeItems))
 
       extendCanvas(rnd, event)
-      editor.update(dragCtx.action, true)
+      editor.update(dragCtx.action, true, { extendCanvas: false })
       return true
     }
 
@@ -469,47 +468,49 @@ function extendCanvas(render, event) {
     isCloseToRightEdgeOfScreen,
     isCloseToBottomEdgeOfScreen
   } = isCloseToEdgeOfScreen(event)
+  const { isMovingLeft, isMovingRight, isMovingTop, isMovingBottom } =
+    getDirections(event)
 
-  if (isCloseToLeftEdgeOfCanvas) {
+  if (isCloseToLeftEdgeOfCanvas && isMovingLeft) {
     shiftAndExtendCanvasByVector(new Vec2(-offset, 0, 0), render)
   }
 
-  if (isCloseToTopEdgeOfCanvas) {
+  if (isCloseToTopEdgeOfCanvas && isMovingTop) {
     shiftAndExtendCanvasByVector(new Vec2(0, -offset, 0), render)
   }
 
-  if (isCloseToRightEdgeOfCanvas) {
+  if (isCloseToRightEdgeOfCanvas && isMovingRight) {
     shiftAndExtendCanvasByVector(new Vec2(offset, 0, 0), render)
   }
 
-  if (isCloseToBottomEdgeOfCanvas) {
+  if (isCloseToBottomEdgeOfCanvas && isMovingBottom) {
     shiftAndExtendCanvasByVector(new Vec2(0, offset, 0), render)
   }
 
   const isCloseToSomeEdgeOfCanvas = [
-    isCloseToTopEdgeOfCanvas,
-    isCloseToRightEdgeOfCanvas,
-    isCloseToBottomEdgeOfCanvas,
-    isCloseToLeftEdgeOfCanvas
+    isCloseToTopEdgeOfCanvas && isMovingTop,
+    isCloseToRightEdgeOfCanvas && isMovingRight,
+    isCloseToBottomEdgeOfCanvas && isMovingBottom,
+    isCloseToLeftEdgeOfCanvas && isMovingLeft
   ].some((isCloseToEdge) => isCloseToEdge)
 
   if (isCloseToSomeEdgeOfCanvas) {
     return
   }
 
-  if (isCloseToTopEdgeOfScreen) {
+  if (isCloseToTopEdgeOfScreen && isMovingTop) {
     scrollByVector(new Vec2(0, -offset), render)
   }
 
-  if (isCloseToBottomEdgeOfScreen) {
+  if (isCloseToBottomEdgeOfScreen && isMovingBottom) {
     scrollByVector(new Vec2(0, offset), render)
   }
 
-  if (isCloseToLeftEdgeOfScreen) {
+  if (isCloseToLeftEdgeOfScreen && isMovingLeft) {
     scrollByVector(new Vec2(-offset, 0), render)
   }
 
-  if (isCloseToRightEdgeOfScreen) {
+  if (isCloseToRightEdgeOfScreen && isMovingRight) {
     scrollByVector(new Vec2(offset, 0), render)
   }
 }

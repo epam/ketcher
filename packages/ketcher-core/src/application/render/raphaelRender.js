@@ -17,6 +17,7 @@
 import { Box2Abs, Struct, Vec2 } from 'domain/entities'
 
 import Raphael from './raphael-ext'
+import { shiftAndExtendCanvasByVector } from './canvasExtension'
 import { ReStruct } from './restruct'
 import { Scale } from 'domain/helpers'
 import defaultOptions from './options'
@@ -232,8 +233,9 @@ Render.prototype.update = function (
       const sz = cb.sz().floor()
       const delta = this.oldCb.p0.sub(cb.p0).ceil()
       this.oldBb = bb
+      // TO DO: decrease canvas size, when it has empty space. This logic needs to be defined in the future
       if (
-        (!this.sz || sz.x !== this.sz.x || sz.y !== this.sz.y) &&
+        (!this.sz || sz.x > this.sz.x || sz.y > this.sz.y) &&
         options.extendCanvas
       ) {
         this.setPaperSize(sz)

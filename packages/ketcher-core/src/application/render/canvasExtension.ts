@@ -1,4 +1,4 @@
-import { Vec2 } from 'ketcher-core'
+import { Vec2 } from 'domain/entities'
 import _ from 'lodash'
 
 const edgeOffset = 150
@@ -83,6 +83,7 @@ export function shiftAndExtendCanvasByVector(vector: Vec2, render) {
     render.setPaperSize(render.sz.add(extensionVector))
     render.setOffset(render.options.offset.add(vector))
     render.ctab.translate(vector)
+    render.setViewBox(render.options.zoom)
     /**
      * When canvas extends previous (0, 0) coordinates may become (100, 100)
      */

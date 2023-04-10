@@ -29,7 +29,12 @@ import {
   ReStruct,
   ReSGroup,
   Vec2,
-  Atom
+  Atom,
+  getDirections,
+  isCloseToEdgeOfCanvas,
+  isCloseToEdgeOfScreen,
+  scrollByVector,
+  shiftAndExtendCanvasByVector
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -42,13 +47,6 @@ import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { getMergeItems } from './helper/getMergeItems'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
-import {
-  getDirections,
-  isCloseToEdgeOfCanvas,
-  isCloseToEdgeOfScreen,
-  scrollByVector,
-  shiftAndExtendCanvasByVector
-} from '../utils/canvasExtension'
 
 class SelectTool {
   #mode: string

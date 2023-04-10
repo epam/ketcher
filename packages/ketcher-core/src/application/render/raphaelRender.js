@@ -17,7 +17,6 @@
 import { Box2Abs, Struct, Vec2 } from 'domain/entities'
 
 import Raphael from './raphael-ext'
-import { shiftAndExtendCanvasByVector } from './canvasExtension'
 import { ReStruct } from './restruct'
 import { Scale } from 'domain/helpers'
 import defaultOptions from './options'

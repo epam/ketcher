@@ -1,5 +1,4 @@
 import { Vec2 } from 'domain/entities'
-import _ from 'lodash'
 
 const edgeOffset = 150
 const scrollMultiplier = 2

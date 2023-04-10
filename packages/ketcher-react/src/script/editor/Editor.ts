@@ -220,7 +220,7 @@ class Editor implements KetcherEditor {
 
     const isAtomToolChosen = name === 'atom'
     if (!isAtomToolChosen) {
-      this.hoverIcon.hide()
+      this.hoverIcon.hide(true)
     }
 
     if (!tool || tool.isNotActiveTool) {
@@ -285,7 +285,7 @@ class Editor implements KetcherEditor {
       this.render.clientArea,
       Object.assign({ scale: SCALE }, value)
     )
-    this.render.setMolecule(struct) // TODO: reuse this.struct here?
+    this.struct(struct)
     this.render.setZoom(zoom)
     this.render.update()
     return this.render.options

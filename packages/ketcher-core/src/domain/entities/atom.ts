@@ -19,6 +19,7 @@ import { Point, Vec2 } from './vec2'
 
 import { Elements } from 'domain/constants'
 import { Pile } from './pile'
+import { Struct } from './struct'
 
 function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
   return typeof value !== 'undefined' ? value : defaultValue
@@ -221,6 +222,16 @@ export class Atom {
         }
       }
     })
+  }
+
+  static getConnectedBondIds(struct: Struct, atomId: number): number[] {
+    const result: number[] = []
+    for (const [bondId, bond] of struct.bonds.entries()) {
+      if (bond.begin === atomId || bond.end === atomId) {
+        result.push(bondId)
+      }
+    }
+    return result
   }
 
   static getAttrHash(atom: Atom) {

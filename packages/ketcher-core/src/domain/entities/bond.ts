@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Atom } from './atom'
 import { Pile } from './pile'
 import { Struct } from './struct'
 import { Vec2 } from './vec2'
@@ -120,6 +121,40 @@ export class Bond {
       }
     }
     return attrs
+  }
+
+  static getBondNeighbourIds(struct: Struct, bondId: number) {
+    const bond = struct.bonds.get(bondId)!
+    const { begin, end } = bond
+    const beginBondIds = Atom.getConnectedBondIds(struct, begin).filter(
+      (id) => id !== bondId
+    )
+    const endBondIds = Atom.getConnectedBondIds(struct, end).filter(
+      (id) => id !== bondId
+    )
+    return { beginBondIds, endBondIds }
+  }
+
+  static getBenzeneConnectingBondType(
+    bond: Bond,
+    bondBegin: Bond,
+    bondEnd: Bond
+  ): number | null {
+    const { DOUBLE, SINGLE } = this.PATTERN.TYPE
+    const isFusingToDoubleBond =
+      bondBegin.type === SINGLE &&
+      bond.type === DOUBLE &&
+      bondEnd.type === SINGLE
+    const isFusingToSignleBond =
+      bondBegin.type === DOUBLE &&
+      bond.type === SINGLE &&
+      bondEnd.type === DOUBLE
+    if (isFusingToDoubleBond) {
+      return DOUBLE
+    } else if (isFusingToSignleBond) {
+      return SINGLE
+    }
+    return null
   }
 
   static attrGetDefault(attr: string) {

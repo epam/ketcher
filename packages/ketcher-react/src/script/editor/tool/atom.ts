@@ -135,10 +135,10 @@ class AtomTool {
   }
 
   mousemove(event) {
-    this.editor.hoverIcon.show()
     const rnd = this.editor.render
 
     if (!this.dragCtx || !this.dragCtx.item) {
+      this.editor.hoverIcon.show()
       this.editor.hoverIcon.updatePosition()
 
       this.editor.hover(
@@ -147,6 +147,8 @@ class AtomTool {
         event
       )
       return
+    } else {
+      this.editor.hoverIcon.hide()
     }
 
     const dragCtx = this.dragCtx

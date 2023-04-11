@@ -14,13 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond, Vec2 } from 'domain/entities'
+import { AtomAttributes, Bond, Vec2 } from 'domain/entities'
 
 import closest from '../shared/closest'
 import { difference } from 'lodash'
 import { ReStruct } from 'application/render'
 
-export function atomGetAttr(restruct: ReStruct, aid: number, name: string) {
+type AtomAttributeName = keyof AtomAttributes
+
+export function atomGetAttr(
+  restruct: ReStruct,
+  aid: number,
+  name: AtomAttributeName
+) {
   const atom = restruct.molecule.atoms.get(aid)
   if (!atom) return null
   return atom[name]

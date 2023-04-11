@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, Struct, Vec2 } from 'domain/entities'
+import { Atom, Bond, Vec2 } from 'domain/entities'
 import { AtomAdd, BondAdd, BondAttr, CalcImplicitH } from '../operations'
 import { atomForNewBond, atomGetAttr } from './utils'
 import { fromAtomsAttrs, mergeSgroups } from './atom'
@@ -206,36 +206,6 @@ export function fromTemplateOnBondAction(
   )
 }
 
-function getBondNeighbourIds(struct: Struct, bondId: number) {
-  const bond = struct.bonds.get(bondId)!
-  const { begin, end } = bond
-  const beginBondIds = Atom.getConnectedBondIds(struct, begin).filter(
-    (id) => id !== bondId
-  )
-  const endBondIds = Atom.getConnectedBondIds(struct, end).filter(
-    (id) => id !== bondId
-  )
-  return { beginBondIds, endBondIds }
-}
-
-function getBenzeneConnectingBondType(
-  bond: Bond,
-  bondBegin: Bond,
-  bondEnd: Bond
-): number | null {
-  const { DOUBLE, SINGLE } = Bond.PATTERN.TYPE
-  const isFusingToDoubleBond =
-    bondBegin.type === SINGLE && bond.type === DOUBLE && bondEnd.type === SINGLE
-  const isFusingToSignleBond =
-    bondBegin.type === DOUBLE && bond.type === SINGLE && bondEnd.type === DOUBLE
-  if (isFusingToDoubleBond) {
-    return DOUBLE
-  } else if (isFusingToSignleBond) {
-    return SINGLE
-  }
-  return null
-}
-
 function fromTemplateOnBond(restruct, template, bid, flip) {
   // TODO: refactor function !!
   const action = new Action()
@@ -307,13 +277,13 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
 
   const isBenzeneTemplate = tmpl.name === benzeneMoleculeName
   if (tmpl.bonds.size && isBenzeneTemplate) {
-    const { beginBondIds, endBondIds } = getBondNeighbourIds(struct, bid)
+    const { beginBondIds, endBondIds } = Bond.getBondNeighbourIds(struct, bid)
     const isOnlyTwoConnectingBonds =
       beginBondIds.length === 1 && endBondIds.length === 1
     if (isOnlyTwoConnectingBonds) {
       const beginBond = struct.bonds.get(beginBondIds[0])
       const endBond = struct.bonds.get(endBondIds[0])
-      benzeneConnectingBondType = getBenzeneConnectingBondType(
+      benzeneConnectingBondType = Bond.getBenzeneConnectingBondType(
         bond,
         beginBond,
         endBond

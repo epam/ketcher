@@ -29,8 +29,6 @@ import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { getMergeItems } from './helper/getMergeItems'
 import utils from '../shared/utils'
-import { FunctionalGroup } from 'ketcher-core'
-
 class PasteTool {
   editor: Editor
   struct: Struct

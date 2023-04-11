@@ -78,7 +78,6 @@ function extraBondAction(restruct, aid, angle) {
 }
 
 export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
-  console.log('fromTemplateOnAtom')
   let action = new Action()
 
   const tmpl = template.molecule

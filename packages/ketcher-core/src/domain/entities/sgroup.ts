@@ -604,7 +604,7 @@ export class SGroup {
 
     sGroups.forEach((sGroup) => {
       const id = 'item' in sGroup ? sGroup.item.id : sGroup.id
-      if (this.isContractedSGroups(id, sGroups)) {
+      if (this.isContractedSGroup(id, sGroups)) {
         contractedSGroup.push(id)
       }
     })
@@ -637,7 +637,7 @@ export class SGroup {
     return 'item' in sGroup ? sGroup?.item.data.expanded : sGroup.data.expanded
   }
 
-  static isContractedSGroups(sGroupId, sGroups): boolean {
+  static isContractedSGroup(sGroupId, sGroups): boolean {
     let isSGroup = false
     let expanded = false
     sGroups.forEach((sGroupItem) => {

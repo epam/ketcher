@@ -168,7 +168,7 @@ class ReSGroup extends ReObject {
         sgroup.id,
         functionalGroups
       ) ||
-      SGroup.isContractedSGroups(sgroup.id, sGroups)
+      SGroup.isContractedSGroup(sgroup.id, sGroups)
     ) {
       const { startX, startY, width, height } = this.getTextHighlightDimensions(
         this.render.options.fontsz / 2
@@ -194,7 +194,7 @@ class ReSGroup extends ReObject {
         sGroupItem.id,
         functionalGroups
       ) ||
-      SGroup.isContractedSGroups(sGroupItem.id, sGroups)
+      SGroup.isContractedSGroup(sGroupItem.id, sGroups)
     ) {
       const { startX, startY, width, height } = this.getTextHighlightDimensions(
         options.fontsz / 2

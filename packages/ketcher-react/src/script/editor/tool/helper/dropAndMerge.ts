@@ -22,7 +22,7 @@ export function dropAndMerge(
   action?: Action
 ): Action {
   const restruct = editor.render.ctab
-  const isMerging = !!mergeItems // && !(SGroup.isSuperAtom())
+  const isMerging = !!mergeItems
   let dropItemAction = new Action()
 
   if (isMerging) {
@@ -32,14 +32,14 @@ export function dropAndMerge(
     )
     dropItemAction = dropItemAction.mergeWith(expandGroupsAction)
     if (mergeItems.atomToFunctionalGroup) {
-      const [newMergeItems, extractAttachmentAtomAction] = extractAttachmentAtom(
-        mergeItems,
-        editor
-      )
+      const [newMergeItems, extractAttachmentAtomAction] =
+        extractAttachmentAtom(mergeItems, editor)
       mergeItems = newMergeItems
       dropItemAction = dropItemAction.mergeWith(extractAttachmentAtomAction)
     }
-    dropItemAction = fromItemsFuse(restruct, mergeItems).mergeWith(dropItemAction)
+    dropItemAction = fromItemsFuse(restruct, mergeItems).mergeWith(
+      dropItemAction
+    )
   }
 
   if (action) {
@@ -117,8 +117,5 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
     }
   })
 
-  return [
-    newMergeItems,
-    removeNonAttachmentAtoms
-  ] as const
+  return [newMergeItems, removeNonAttachmentAtoms] as const
 }

@@ -248,30 +248,10 @@ class ReBond extends ReObject {
     }
 
     if (bond.cip) {
-      this.drawCIPLabel(bond, restruct)
+      util.drawCIPLabel(bond, bond.center, render.ctab, this.visel)
     }
 
     this.path.toBack()
-  }
-
-  drawCIPLabel(bond: Bond, restruct: ReStruct) {
-    const render = restruct.render
-    const { options, paper } = render
-    const path = paper.set()
-
-    const cipLabelPosition = bond.center.scaled(options.scale)
-    const cipValuePath = util.getCIPValuePath({
-      paper,
-      cipLabelPosition,
-      atomOrBond: bond,
-      options
-    })
-    const box = util.relBox(cipValuePath.getBBox())
-
-    cipValuePath.translateAbs(0.5 * box.width, -0.5 * box.height)
-    path.push(cipValuePath.toBack())
-
-    restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true)
   }
 }
 

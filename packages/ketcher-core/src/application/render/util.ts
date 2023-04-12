@@ -16,6 +16,8 @@
 
 import { Atom, Bond, Vec2 } from 'domain/entities'
 import assert from 'assert'
+import { ReStruct, LayerMap } from './restruct'
+import Visel from './restruct/visel'
 
 function tfx(v) {
   return parseFloat(v).toFixed(8)
@@ -149,9 +151,34 @@ function getCIPValuePath({
   const rect = paper
     .rect(box.x - 1, box.y - 1, box.width + 2, box.height + 2, 3, 3)
     .attr({ fill: '#fff', stroke: '#fff', opacity: 1 })
-  path.push(rect.toBack(), text.toBack())
+  path.push(rect.toFront(), text.toFront())
 
   return path
+}
+
+function drawCIPLabel(
+  atomOrBond: Bond | Atom,
+  position: Vec2,
+  restruct: ReStruct,
+  visel: Visel
+) {
+  const render = restruct.render
+  const { options, paper } = render
+  const path = paper.set()
+
+  const cipLabelPosition = position.scaled(options.scale)
+  const cipValuePath = getCIPValuePath({
+    paper,
+    cipLabelPosition,
+    atomOrBond,
+    options
+  })
+  const box = relBox(cipValuePath.getBBox())
+
+  cipValuePath.translateAbs(0.5 * box.width, -0.5 * box.height)
+  path.push(cipValuePath.toFront())
+
+  restruct.addReObjectPath(LayerMap.data, visel, path, null, true)
 }
 
 const util = {
@@ -159,7 +186,8 @@ const util = {
   relBox,
   shiftRayBox,
   calcCoordinates,
-  getCIPValuePath
+  getCIPValuePath,
+  drawCIPLabel
 }
 
 export default util

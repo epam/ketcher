@@ -404,28 +404,8 @@ class ReAtom extends ReObject {
     }
 
     if (atom.cip) {
-      this.drawCIPLabel(atom, render.ctab)
+      util.drawCIPLabel(atom, atom.pp, render.ctab, this.visel)
     }
-  }
-
-  drawCIPLabel(atom: Atom, restruct: ReStruct) {
-    const render = restruct.render
-    const { options, paper } = render
-    const path = paper.set()
-
-    const cipLabelPosition = atom.pp.scaled(options.scale)
-    const cipValuePath = util.getCIPValuePath({
-      paper,
-      cipLabelPosition,
-      atomOrBond: atom,
-      options
-    })
-    const box = util.relBox(cipValuePath.getBBox())
-
-    cipValuePath.translateAbs(0.5 * box.width, -0.5 * box.height)
-    path.push(cipValuePath.toBack())
-
-    restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true)
   }
 }
 

@@ -614,6 +614,7 @@ class ReStruct {
           }
 
           this.showItemSelection(item, selected)
+          item.selectionPlate?.toBack()
         })
       }
     })

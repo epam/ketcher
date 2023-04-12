@@ -414,10 +414,10 @@ class ReAtom extends ReObject {
     const path = paper.set()
 
     const cipLabelPosition = atom.pp.scaled(options.scale)
-    const cipValuePath = getCIPValuePath({
+    const cipValuePath = util.getCIPValuePath({
       paper,
       cipLabelPosition,
-      atom,
+      atomOrBond: atom,
       options
     })
     const box = util.relBox(cipValuePath.getBBox())
@@ -427,33 +427,6 @@ class ReAtom extends ReObject {
 
     restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true)
   }
-}
-
-function getCIPValuePath({
-  paper,
-  cipLabelPosition,
-  atom,
-  options
-}: {
-  paper
-  cipLabelPosition: Vec2
-  atom: Atom
-  options
-}) {
-  const text = paper
-    .text(cipLabelPosition.x, cipLabelPosition.y, `(${atom.cip})`)
-    .attr({
-      font: options.font,
-      'font-size': options.fontsz
-    })
-  const box = text.getBBox()
-  const path = paper.set()
-  const rect = paper
-    .rect(box.x - 1, box.y - 1, box.width + 2, box.height + 2, 3, 3)
-    .attr({ fill: '#0f0', stroke: '#fff', opacity: 1 })
-  path.push(rect.toBack(), text.toBack())
-
-  return path
 }
 
 function getStereoAtomColor(options, stereoLabel) {

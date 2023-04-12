@@ -126,6 +126,7 @@ export function bondToStruct(source) {
   ifDef(params, 'topology', source.topology)
   ifDef(params, 'reactingCenterStatus', source.center)
   ifDef(params, 'stereo', source.stereo)
+  ifDef(params, 'cip', source.cip)
   // if (params.stereo)
   // 	params.stereo = params.stereo > 1 ? params.stereo * 2 : params.stereo;
   // params.xxx = 0;

@@ -104,7 +104,7 @@ class ReBond extends ReObject {
     // eslint-disable-line max-statements
     const render = restruct.render
     const struct = restruct.molecule
-    const bond = restruct.molecule.bonds.get(bid)
+    const bond = restruct.molecule.bonds.get(bid)!
     const sgroups = restruct.molecule.sgroups
     const functionalGroups = restruct.molecule.functionalGroups
     if (
@@ -246,6 +246,32 @@ class ReBond extends ReObject {
         true
       )
     }
+
+    if (bond.cip) {
+      this.drawCIPLabel(bond, restruct)
+    }
+
+    this.path.toBack()
+  }
+
+  drawCIPLabel(bond: Bond, restruct: ReStruct) {
+    const render = restruct.render
+    const { options, paper } = render
+    const path = paper.set()
+
+    const cipLabelPosition = bond.center.scaled(options.scale)
+    const cipValuePath = util.getCIPValuePath({
+      paper,
+      cipLabelPosition,
+      atomOrBond: bond,
+      options
+    })
+    const box = util.relBox(cipValuePath.getBBox())
+
+    cipValuePath.translateAbs(0.5 * box.width, -0.5 * box.height)
+    path.push(cipValuePath.toBack())
+
+    restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true)
   }
 }
 

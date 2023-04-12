@@ -212,6 +212,11 @@ export const bond = {
         'Made/broken and changes'
       ], // "Order changes" x 3
       default: 0
+    },
+    cip: {
+      title: 'CIP',
+      type: 'string',
+      enum: ['E', 'Z', 'e', 'z']
     }
   }
 }

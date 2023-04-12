@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'domain/entities'
+import { Atom, Bond, Vec2 } from 'domain/entities'
 import assert from 'assert'
 
 function tfx(v) {
@@ -127,11 +127,39 @@ function calcCoordinates(aPoint, bPoint, lengthHyp) {
   return obj
 }
 
+function getCIPValuePath({
+  paper,
+  cipLabelPosition,
+  atomOrBond,
+  options
+}: {
+  paper
+  cipLabelPosition: Vec2
+  atomOrBond: Atom | Bond
+  options
+}) {
+  const text = paper
+    .text(cipLabelPosition.x, cipLabelPosition.y, `(${atomOrBond.cip})`)
+    .attr({
+      font: options.font,
+      'font-size': options.fontsz
+    })
+  const box = text.getBBox()
+  const path = paper.set()
+  const rect = paper
+    .rect(box.x - 1, box.y - 1, box.width + 2, box.height + 2, 3, 3)
+    .attr({ fill: '#fff', stroke: '#fff', opacity: 1 })
+  path.push(rect.toBack(), text.toBack())
+
+  return path
+}
+
 const util = {
   tfx,
   relBox,
   shiftRayBox,
-  calcCoordinates
+  calcCoordinates,
+  getCIPValuePath
 }
 
 export default util

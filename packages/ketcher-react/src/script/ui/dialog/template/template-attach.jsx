@@ -192,9 +192,14 @@ const editorStyles = {
 }
 
 class Attach extends Component {
+  MODES = {
+    SAVE: 'save',
+    EDIT: 'edit'
+  }
+
   constructor({ onInit, ...props }) {
     super()
-    this.mode = isEmpty(props.tmpl.props) ? 'save' : 'edit'
+    this.mode = isEmpty(props.tmpl.props) ? this.MODES.SAVE : this.MODES.EDIT
     this.tmpl = initTmpl(props.tmpl)
     onInit(this.tmpl.struct.name, this.tmpl.props)
     this.onResult = this.onResult.bind(this)
@@ -232,10 +237,14 @@ class Attach extends Component {
     const options = Object.assign(editorStyles, this.props.globalSettings, {
       scale: getScale(struct)
     })
+    const dialogTitle =
+      this.mode === this.MODES.SAVE ? 'Save to Templates' : 'Template Edit'
+    const warningObject =
+      this.mode === this.MODES.SAVE ? 'Templates' : 'Edited templates'
 
     return (
       <TemplateEditDialog
-        title={this.mode === 'save' ? 'Save to Templates' : 'Template Edit'}
+        title={dialogTitle}
         result={this.onResult}
         valid={() => this.props.formState.valid && name}
         params={prop}
@@ -244,8 +253,8 @@ class Attach extends Component {
       >
         <Message>
           <div>
-            {this.mode === 'save' ? 'Templates' : 'Edited templates'} are saved
-            locally and cannot be accessed on different browsers or computers.
+            {warningObject} are saved locally and cannot be accessed on
+            different browsers or computers.
           </div>
           <div>
             Be aware that other users of the same computer and browser can
@@ -301,7 +310,7 @@ class Attach extends Component {
                 className={classes.button}
                 disabled={!this.checkIsValidName(name)}
               >
-                {this.mode === 'save' ? 'Save' : 'Edit'}
+                {this.mode === this.MODES.SAVE ? 'Save' : 'Edit'}
               </SaveButton>
             </Buttons>
           </RightColumn>

@@ -303,17 +303,21 @@ export class Atom {
       return true
     }
     const element = Elements.get(label)
-    if (!element) {
-      this.implicitH = 0
-      return true
-    }
-
-    const groupno = element.group
+    const groupno = element?.group
     const rad = radicalElectrons(this.radical)
     let valence = conn
     let hyd = 0
     const absCharge = Math.abs(charge)
-    if (groupno === 1) {
+
+    if (groupno === undefined) {
+      if (label === 'D' || label === 'T') {
+        valence = 1
+        hyd = 1 - rad - conn - absCharge
+      } else {
+        this.implicitH = 0
+        return true
+      }
+    } else if (groupno === 1) {
       if (
         label === 'H' ||
         label === 'Li' ||

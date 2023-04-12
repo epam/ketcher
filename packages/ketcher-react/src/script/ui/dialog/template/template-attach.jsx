@@ -97,15 +97,15 @@ const NameInput = styled(Field)`
   flex-direction: column;
   margin-bottom: 12px;
 
-  & > input[type='text'] {
+  & input[type='text'] {
     display: block;
     width: 100%;
     box-sizing: border-box;
-    padding: 4px 16px 4px 8px;
     border: 1px solid #cad3dd;
     border-radius: 4px;
     line-height: 16px;
     font-size: 14px;
+    margin-top: 4px;
 
     &:hover {
       border-color: #43b5c0;
@@ -120,7 +120,6 @@ const NameInput = styled(Field)`
   & span {
     display: block;
     width: 100%;
-    margin-bottom: 4px;
   }
 `
 

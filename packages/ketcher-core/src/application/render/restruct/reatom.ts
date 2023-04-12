@@ -496,6 +496,7 @@ function isLabelVisible(restruct, options, atom) {
   const shouldBeVisible =
     neighborsLength ||
     options.carbonExplicitly ||
+    options.showHydrogenLabels === ShowHydrogenLabels.On ||
     atom.a.alias ||
     atom.a.isotope !== 0 ||
     atom.a.radical !== 0 ||
@@ -529,15 +530,15 @@ function isLabelVisible(restruct, options, atom) {
   return false
 }
 
-function displayHydrogen(hydrogenLabels, atom) {
+function displayHydrogen(hydrogenLabels: ShowHydrogenLabels, atom: ReAtom) {
   return (
     hydrogenLabels === ShowHydrogenLabels.On ||
     (hydrogenLabels === ShowHydrogenLabels.Terminal &&
       atom.a.neighbors.length < 2) ||
     (hydrogenLabels === ShowHydrogenLabels.Hetero &&
-      atom.label.text.toLowerCase() !== 'c') ||
+      atom.label?.text.toLowerCase() !== 'c') ||
     (hydrogenLabels === ShowHydrogenLabels.TerminalAndHetero &&
-      (atom.a.neighbors.length < 2 || atom.label.text.toLowerCase() !== 'c'))
+      (atom.a.neighbors.length < 2 || atom.label?.text.toLowerCase() !== 'c'))
   )
 }
 

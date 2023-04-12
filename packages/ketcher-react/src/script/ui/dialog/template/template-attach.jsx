@@ -16,6 +16,7 @@
 
 import { Dialog, StructEditor } from '../../views/components'
 import { Component } from 'react'
+import { isEmpty } from 'lodash'
 import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
 
 import { connect } from 'react-redux'
@@ -68,6 +69,14 @@ const Warning = styled('div')`
   padding: 0 5px;
 `
 
+const Message = styled('div')`
+  background-color: #e1e5ea;
+  color: #333333;
+  padding: 10px 12px;
+  border-top: 1px solid #cad3dd;
+  border-bottom: 1px solid #cad3dd;
+`
+
 const LeftColumn = styled('div')`
   padding: 12px;
   border-radius: 0 0 0 8px;
@@ -88,16 +97,15 @@ const NameInput = styled(Field)`
   flex-direction: column;
   margin-bottom: 12px;
 
-  & > input[type='text'] {
+  & input[type='text'] {
     display: block;
     width: 100%;
     box-sizing: border-box;
-    padding: 4px 16px 4px 8px;
     border: 1px solid #cad3dd;
     border-radius: 4px;
     line-height: 16px;
     font-size: 14px;
-    margin-top: 2px;
+    margin-top: 4px;
 
     &:hover {
       border-color: #43b5c0;
@@ -126,7 +134,7 @@ const AttachmentOutput = styled('span')`
   line-height: 14px;
   font-size: 14px;
   background-color: #eff2f5;
-  margin-top: 2px;
+  margin-top: 4px;
 `
 
 const Buttons = styled('div')`
@@ -184,8 +192,14 @@ const editorStyles = {
 }
 
 class Attach extends Component {
+  MODES = {
+    SAVE: 'save',
+    EDIT: 'edit'
+  }
+
   constructor({ onInit, ...props }) {
     super()
+    this.mode = isEmpty(props.tmpl.props) ? this.MODES.SAVE : this.MODES.EDIT
     this.tmpl = initTmpl(props.tmpl)
     onInit(this.tmpl.struct.name, this.tmpl.props)
     this.onResult = this.onResult.bind(this)
@@ -223,16 +237,30 @@ class Attach extends Component {
     const options = Object.assign(editorStyles, this.props.globalSettings, {
       scale: getScale(struct)
     })
+    const dialogTitle =
+      this.mode === this.MODES.SAVE ? 'Save to Templates' : 'Template Edit'
+    const warningObject =
+      this.mode === this.MODES.SAVE ? 'Templates' : 'Edited templates'
 
     return (
       <TemplateEditDialog
-        title="Template edit"
+        title={dialogTitle}
         result={this.onResult}
         valid={() => this.props.formState.valid && name}
         params={prop}
         buttons={[]}
         needMargin={false}
       >
+        <Message>
+          <div>
+            {warningObject} are saved locally and cannot be accessed on
+            different browsers or computers.
+          </div>
+          <div>
+            Be aware that other users of the same computer and browser can
+            access them as well.
+          </div>
+        </Message>
         <Form
           schema={attachSchema}
           customValid={{
@@ -282,7 +310,7 @@ class Attach extends Component {
                 className={classes.button}
                 disabled={!this.checkIsValidName(name)}
               >
-                Apply
+                {this.mode === this.MODES.SAVE ? 'Save' : 'Edit'}
               </SaveButton>
             </Buttons>
           </RightColumn>

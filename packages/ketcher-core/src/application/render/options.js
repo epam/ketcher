@@ -16,6 +16,7 @@
 
 import { Vec2 } from 'domain/entities'
 import utils from '../editor/shared/utils'
+import { ShowHydrogenLabels } from './restruct/reatom'
 
 function defaultOptions(opt) {
   const scaleFactor = opt.scale || 100
@@ -46,7 +47,7 @@ function defaultOptions(opt) {
     // atoms
     carbonExplicitly: false,
     showCharge: true,
-    showHydrogenLabels: 'on',
+    showHydrogenLabels: ShowHydrogenLabels.TerminalAndHetero,
     showValence: true,
     // bonds
     aromaticCircle: true,

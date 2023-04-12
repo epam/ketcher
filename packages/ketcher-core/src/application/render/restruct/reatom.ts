@@ -46,7 +46,7 @@ interface ElemAttr {
 
 const StereoLabelMinOpacity = 0.3
 
-enum ShowHydrogenLabels {
+export enum ShowHydrogenLabels {
   Off = 'off',
   Hetero = 'Hetero',
   Terminal = 'Terminal',

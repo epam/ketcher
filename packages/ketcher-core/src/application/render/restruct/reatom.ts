@@ -61,6 +61,12 @@ class ReAtom extends ReObject {
   color: string
   component: number
   label?: ElemAttr
+  cip?: {
+    // Raphael paths
+    path: any
+    text: any
+    rectangle: any
+  }
 
   constructor(atom: Atom) {
     super('atom')
@@ -404,7 +410,12 @@ class ReAtom extends ReObject {
     }
 
     if (atom.cip) {
-      util.drawCIPLabel(atom, atom.pp, render.ctab, this.visel)
+      this.cip = util.drawCIPLabel({
+        atomOrBond: atom,
+        position: atom.pp,
+        restruct: render.ctab,
+        visel: this.visel
+      })
     }
   }
 }

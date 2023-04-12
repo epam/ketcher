@@ -40,6 +40,12 @@ class ReBond extends ReObject {
   neihbid2 = -1
   boldStereo?: boolean
   rbb?: { x: number; y: number; width: number; height: number }
+  cip?: {
+    // Raphael paths
+    path: any
+    text: any
+    rectangle: any
+  }
 
   constructor(bond: Bond) {
     super('bond')
@@ -248,7 +254,12 @@ class ReBond extends ReObject {
     }
 
     if (bond.cip) {
-      util.drawCIPLabel(bond, bond.center, render.ctab, this.visel)
+      this.cip = util.drawCIPLabel({
+        atomOrBond: bond,
+        position: bond.center,
+        restruct: render.ctab,
+        visel: this.visel
+      })
     }
 
     this.path.toBack()

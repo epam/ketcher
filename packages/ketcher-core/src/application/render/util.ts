@@ -150,20 +150,28 @@ function getCIPValuePath({
   const path = paper.set()
   const rect = paper
     .rect(box.x - 1, box.y - 1, box.width + 2, box.height + 2, 3, 3)
-    .attr({ fill: '#fff', stroke: '#fff', opacity: 1 })
+    .attr({ fill: '#fff', stroke: '#fff' })
   path.push(rect.toFront(), text.toFront())
 
-  return path
+  return {
+    path,
+    text,
+    rectangle: rect
+  }
 }
 
-function drawCIPLabel(
-  atomOrBond: Bond | Atom,
-  position: Vec2,
-  restruct: ReStruct,
+function drawCIPLabel({
+  atomOrBond,
+  position,
+  restruct,
+  visel
+}: {
+  atomOrBond: Bond | Atom
+  position: Vec2
+  restruct: ReStruct
   visel: Visel
-) {
-  const render = restruct.render
-  const { options, paper } = render
+}) {
+  const { options, paper } = restruct.render
   const path = paper.set()
 
   const cipLabelPosition = position.scaled(options.scale)
@@ -173,12 +181,14 @@ function drawCIPLabel(
     atomOrBond,
     options
   })
-  const box = relBox(cipValuePath.getBBox())
+  const box = relBox(cipValuePath.path.getBBox())
 
-  cipValuePath.translateAbs(0.5 * box.width, -0.5 * box.height)
-  path.push(cipValuePath.toFront())
+  cipValuePath.path.translateAbs(0.5 * box.width, -0.5 * box.height)
+  path.push(cipValuePath.path.toFront())
 
   restruct.addReObjectPath(LayerMap.data, visel, path, null, true)
+
+  return cipValuePath
 }
 
 const util = {

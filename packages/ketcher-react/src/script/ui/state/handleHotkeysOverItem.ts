@@ -44,9 +44,9 @@ export function handleHotkeyOverItem(props: HandleHotkeyOverItemProps) {
     handleDialog(props)
   } else if (props.newAction.tool) {
     handleTool(props)
+  } else {
+    handleOtherActions(props)
   }
-
-  handleOtherActions(props)
 }
 
 function handleOtherActions({

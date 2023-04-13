@@ -97,9 +97,9 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     const sgroup = restruct.sgroups.get(sgroupId)
     const sgroupAtoms = sgroup.item.atoms
 
-    selection.atoms = selection.atoms.concat(sgroupAtoms) as any[]
+    selection.atoms = selection.atoms.concat(sgroupAtoms)
 
-    Object.values(restruct.molecule.bonds).forEach((bond: any, bid) => {
+    restruct.molecule.bonds.forEach((bond, bid) => {
       if (
         sgroupAtoms.indexOf(bond.begin) >= 0 &&
         sgroupAtoms.indexOf(bond.end) >= 0

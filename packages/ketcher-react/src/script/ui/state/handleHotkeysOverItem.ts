@@ -45,6 +45,15 @@ export function handleHotkeyOverItem(props: HandleHotkeyOverItemProps) {
   } else if (props.newAction.tool) {
     handleTool(props)
   }
+
+  handleOtherActions(props)
+}
+
+function handleOtherActions({
+  dispatch,
+  newAction
+}: HandleHotkeyOverItemProps) {
+  dispatch(onAction(newAction))
 }
 
 function handleEraser({ editor, hoveredItem }: HandleHotkeyOverItemProps) {

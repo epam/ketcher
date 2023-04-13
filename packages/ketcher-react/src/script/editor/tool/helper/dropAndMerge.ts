@@ -18,13 +18,9 @@ type MergeItems = {
 
 export function dropAndMerge(
   editor: Editor,
-  mergeItems: MergeItems | null,
+  mergeItems: any,
   action?: Action
-): void {
-  if (!mergeItems) {
-    return
-  }
-
+): Action {
   const restruct = editor.render.ctab
   const isMerging = !!mergeItems
   let dropItemAction = new Action()
@@ -35,18 +31,16 @@ export function dropAndMerge(
       mergeItems
     )
     dropItemAction = dropItemAction.mergeWith(expandGroupsAction)
-  }
-
-  if (mergeItems.atomToFunctionalGroup) {
-    const [newMergeItems, extractAttachmentAtomAction] = extractAttachmentAtom(
-      mergeItems,
-      editor
+    if (mergeItems.atomToFunctionalGroup) {
+      const [newMergeItems, extractAttachmentAtomAction] =
+        extractAttachmentAtom(mergeItems, editor)
+      mergeItems = newMergeItems
+      dropItemAction = dropItemAction.mergeWith(extractAttachmentAtomAction)
+    }
+    dropItemAction = fromItemsFuse(restruct, mergeItems).mergeWith(
+      dropItemAction
     )
-    mergeItems = newMergeItems
-    dropItemAction = dropItemAction.mergeWith(extractAttachmentAtomAction)
   }
-
-  dropItemAction = fromItemsFuse(restruct, mergeItems).mergeWith(dropItemAction)
 
   if (action) {
     dropItemAction = dropItemAction.mergeWith(action)
@@ -58,6 +52,8 @@ export function dropAndMerge(
   if (dropItemAction?.operations.length > 0) {
     editor.update(dropItemAction)
   }
+
+  return dropItemAction
 }
 
 function getExpandGroupsInMergeAction(
@@ -102,6 +98,10 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
     const attachmentAtomId = sGroup?.getAttAtomId(struct)
 
     if (attachmentAtomId) {
+      const attachmentAtom = struct.atoms.get(attachmentAtomId)
+      if (SGroup.isAtomInContractedSGroup(attachmentAtom, struct.sgroups)) {
+        return
+      }
       newMergeItems.atoms.set(srcAtomId, attachmentAtomId)
 
       removeNonAttachmentAtoms.mergeWith(
@@ -117,8 +117,5 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
     }
   })
 
-  return [
-    newMergeItems,
-    removeNonAttachmentAtoms.mergeWith(removeSGroup)
-  ] as const
+  return [newMergeItems, removeNonAttachmentAtoms] as const
 }

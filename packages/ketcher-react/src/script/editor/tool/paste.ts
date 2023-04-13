@@ -29,7 +29,6 @@ import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { getMergeItems } from './helper/getMergeItems'
 import utils from '../shared/utils'
-
 class PasteTool {
   editor: Editor
   struct: Struct
@@ -207,7 +206,9 @@ class PasteTool {
       // need to delete action first, because editor.update calls this.cancel() and thus action revert 🤦‍♂️
       const action = this.action
       delete this.action
-      dropAndMerge(this.editor, this.mergeItems, action)
+      if (!this.isSingleContractedGroup || !this.mergeItems) {
+        this.editor.update(dropAndMerge(this.editor, this.mergeItems, action))
+      }
     }
   }
 

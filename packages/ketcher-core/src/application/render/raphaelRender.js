@@ -194,7 +194,7 @@ Render.prototype.update = function (
   force = false,
   viewSz = null,
   options = {
-    extendCanvas: true
+    resizeCanvas: true
   }
 ) {
   // eslint-disable-line max-statements
@@ -232,16 +232,17 @@ Render.prototype.update = function (
       const sz = cb.sz().floor()
       const delta = this.oldCb.p0.sub(cb.p0).ceil()
       this.oldBb = bb
-      // TO DO: decrease canvas size, when it has empty space. This logic needs to be defined in the future
-      if (
-        (!this.sz || sz.x > this.sz.x || sz.y > this.sz.y) &&
-        options.extendCanvas
-      ) {
+      const shouldResizeCanvas =
+        (!this.sz || sz.x !== this.sz.x || sz.y !== this.sz.y) &&
+        options.resizeCanvas
+      if (shouldResizeCanvas) {
         this.setPaperSize(sz)
       }
 
       this.options.offset = this.options.offset || new Vec2()
-      if ((delta.x !== 0 || delta.y !== 0) && options.extendCanvas) {
+      const shouldScrollCanvas =
+        (delta.x !== 0 || delta.y !== 0) && options.resizeCanvas
+      if (shouldScrollCanvas) {
         this.setOffset(this.options.offset.add(delta))
         this.ctab.translate(delta)
       }

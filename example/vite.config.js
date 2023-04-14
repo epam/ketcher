@@ -55,6 +55,14 @@ export default defineConfig({
   server: {
     open: true
   },
+  esbuild: {
+    tsconfigRaw: {
+      compilerOptions: {
+        // doc: https://vitejs.dev/guide/features.html#usedefineforclassfields
+        useDefineForClassFields: false
+      }
+    }
+  },
   css: {
     devSourcemap: true
   },

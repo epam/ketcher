@@ -10,10 +10,8 @@ import polymerEditorTSConfig from '../packages/ketcher-polymer-editor-react/tsco
 import { valuesToReplace as ketcherReactValues } from '../packages/ketcher-react/rollup.config'
 import { envVariables as exampleEnv } from './config/webpack.config'
 
-// @yuleicul rename this file to .ts
-
 const dotEnv = loadEnv('development', '.', '')
-Object.assign(process.env, dotEnv)
+Object.assign(process.env, dotEnv, exampleEnv)
 
 /**
  * To resolve alias in the range of the specific package,
@@ -86,7 +84,7 @@ export default defineConfig({
     })
   ],
   define: {
-    'process.env': exampleEnv
+    'process.env': process.env
   },
   resolve: {
     alias: [

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import isHidden from './isHidden'
-import { MODES } from 'ketcher-react/src/constants'
+import { MODES } from 'src/constants'
 
 const functionalGroupsLib = {
   'functional-groups': {

@@ -25,7 +25,7 @@ import {
 import templatesRawData from '../../../../templates/fg.sdf'
 import { memoizedDebounce } from '../../utils'
 import { TOOLTIP_DELAY } from '../../../editor/utils/functionalGroupsTooltip'
-import { MODES } from 'ketcher-react/src/constants'
+import { MODES } from 'src/constants'
 
 interface FGState {
   lib: []

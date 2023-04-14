@@ -6,6 +6,10 @@ import {
   RemoteStructServiceProvider,
   StructServiceProvider
 } from 'ketcher-core'
+import { Editor as PolymerEditorReact } from 'ketcher-polymer-editor-react'
+import { ButtonsConfig, Editor } from 'ketcher-react'
+import { StandaloneStructServiceProvider } from 'ketcher-standalone'
+import { useState } from 'react'
 import { ErrorModal } from './ErrorModal'
 import { PolymerToggler } from './PolymerToggler'
 import { useState } from 'react'
@@ -28,8 +32,6 @@ let structServiceProvider: StructServiceProvider =
     process.env.API_PATH || process.env.REACT_APP_API_PATH!
   )
 if (process.env.MODE === 'standalone') {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { StandaloneStructServiceProvider } = require('ketcher-standalone')
   structServiceProvider =
     new StandaloneStructServiceProvider() as StructServiceProvider
 }
@@ -40,9 +42,7 @@ type PolymerType = () => JSX.Element | null
 
 let PolymerEditor: PolymerType = () => null
 if (enablePolymerEditor) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { Editor } = require('ketcher-polymer-editor-react')
-  PolymerEditor = Editor as PolymerType
+  PolymerEditor = PolymerEditorReact as PolymerType
 }
 
 const App = () => {

@@ -81,6 +81,10 @@ export default defineConfig({
   resolve: {
     alias: [
       {
+        find: 'ketcher-react/dist/index.css',
+        customResolver: () => null
+      },
+      {
         find: 'ketcher-react',
         replacement: resolve(
           __dirname,

@@ -87,7 +87,9 @@ const config = {
       values: valuesToReplace
     }),
     json(),
-    typescript(),
+    typescript({
+      tsconfig: './tsconfig.build.json'
+    }),
     babel({
       extensions,
       babelHelpers: 'runtime',

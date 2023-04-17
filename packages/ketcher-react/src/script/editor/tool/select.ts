@@ -253,9 +253,13 @@ class SelectTool {
     const isDraggingSaltOrSolventOnStructure = SGroup.isSaltOrSolvent(
       possibleSaltOrSolvent?.item.data.name
     )
+    const isDraggingCustomSgroupOnStructure =
+      SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&
+      !FunctionalGroup.isFunctionalGroup(possibleSaltOrSolvent?.item)
     if (
       this.dragCtx &&
-      (isDraggingSaltOrSolventOnStructure ||
+      (isDraggingCustomSgroupOnStructure ||
+        isDraggingSaltOrSolventOnStructure ||
         this.isDraggingStructureOnSaltOrSolvent(this.dragCtx, struct.sgroups))
     ) {
       preventSaltAndSolventsMerge(struct, this.dragCtx, editor)

@@ -1,5 +1,4 @@
 {
-  "extends": "./tsconfig.dev.json",
   "compilerOptions": {
     "outDir": "dist",
     "module": "esnext",

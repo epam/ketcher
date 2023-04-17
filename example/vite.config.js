@@ -2,12 +2,14 @@ import replace from '@rollup/plugin-replace'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import { defineConfig, loadEnv } from 'vite'
-import svgr from 'vite-plugin-svgr'
 import vitePluginRaw from 'vite-plugin-raw'
-import ketcherReactTSConfig from '../packages/ketcher-core/tsconfig.json'
+import svgr from 'vite-plugin-svgr'
+import ketcherCoreTSConfig from '../packages/ketcher-core/tsconfig.json'
 import { valuesToReplace as polymerEditorValues } from '../packages/ketcher-polymer-editor-react/rollup.config'
 import polymerEditorTSConfig from '../packages/ketcher-polymer-editor-react/tsconfig.json'
 import { valuesToReplace as ketcherReactValues } from '../packages/ketcher-react/rollup.config'
+import ketcherReactTSConfig from '../packages/ketcher-react/tsconfig.json'
+import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.json'
 import { envVariables as exampleEnv } from './config/webpack.config'
 
 const dotEnv = loadEnv('development', '.', '')
@@ -15,36 +17,37 @@ Object.assign(process.env, dotEnv, exampleEnv)
 
 /**
  * To resolve alias in the range of the specific package,
+ * notice that it can't be an arrow function,
  * see: https://github.com/rollup/plugins/blob/master/packages/alias/src/index.ts
  */
-const resolver = (packageName) => {
-  return function (source, importer, options) {
-    if (!source.includes(packageName)) {
-      return null
-    }
-    return this.resolve(
-      source,
-      importer,
-      Object.assign({ skipSelf: true }, options)
-    ).then((resolved) => resolved || { id: source })
-  }
+function resolver(source, importer, options) {
+  const packageName = importer.match(/packages\/(.*?)\//)[1]
+  const updatedId = source.replace('%packageName%', packageName)
+
+  return this.resolve(
+    updatedId,
+    importer,
+    Object.assign({ skipSelf: true }, options)
+  ).then((resolved) => resolved || { id: updatedId })
 }
 
-const getTSConfig = (packageName) => {
+const getTSConfigByPackage = (packageName) => {
   return {
-    'ketcher-core': ketcherReactTSConfig,
-    'ketcher-polymer-editor-react': polymerEditorTSConfig
+    'ketcher-core': ketcherCoreTSConfig,
+    'ketcher-polymer-editor-react': polymerEditorTSConfig,
+    'ketcher-react': ketcherReactTSConfig,
+    'ketcher-standalone': ketcherStandaloneTSConfig
   }[packageName]
 }
 
-const getPackageAliases = (packageName) => {
-  const aliases = getTSConfig(packageName).compilerOptions.paths
+const getAliasesByPackage = (packageName) => {
+  const aliases = getTSConfigByPackage(packageName).compilerOptions.paths || []
   return Object.keys(aliases).map((alias) => {
     const find = alias.replace('/*', '')
     return {
       find,
-      replacement: resolve(__dirname, `../packages/${packageName}/src/${find}`),
-      customResolver: resolver(packageName)
+      replacement: resolve(__dirname, `../packages/%packageName%/src/${find}`),
+      customResolver: resolver
     }
   })
 }
@@ -118,18 +121,16 @@ export default defineConfig({
         )
       },
 
-      /** Alias in ketcher-react */
+      /** Get aliases from packages' tsconfig.json */
+      ...getAliasesByPackage('ketcher-core'),
+      ...getAliasesByPackage('ketcher-react'),
+      ...getAliasesByPackage('ketcher-polymer-editor-react'),
+      ...getAliasesByPackage('ketcher-standalone'),
       {
-        find: 'src',
-        replacement: resolve(__dirname, '../packages/ketcher-react/src'),
-        customResolver: resolver('ketcher-react')
+        find: 'src', // every package has this implicit alias
+        replacement: resolve(__dirname, `../packages/%packageName%/src`),
+        customResolver: resolver
       },
-
-      /** Aliases in packages/ketcher-core/tsconfig.json */
-      ...getPackageAliases('ketcher-core'),
-
-      /** Aliases in packages/ketcher-polymer-editor-react/tsconfig.json */
-      ...getPackageAliases('ketcher-polymer-editor-react'),
 
       /** Web worker in ketcher-standalone */
       {

@@ -2,6 +2,7 @@ import replace from '@rollup/plugin-replace'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import { defineConfig, loadEnv } from 'vite'
+import { createHtmlPlugin } from 'vite-plugin-html'
 import vitePluginRaw from 'vite-plugin-raw'
 import svgr from 'vite-plugin-svgr'
 import ketcherCoreTSConfig from '../packages/ketcher-core/tsconfig.json'
@@ -52,6 +53,22 @@ const getAliasesByPackage = (packageName) => {
   })
 }
 
+const HtmlReplaceVitePlugin = () => {
+  return {
+    name: 'ketcher-html-transform',
+    transformIndexHtml(html) {
+      return html
+        .replaceAll('%PUBLIC_URL%/', process.env.PUBLIC_URL)
+        .replaceAll(
+          '@@version',
+          JSON.parse(ketcherReactValues['process.env.HELP_LINK']).split(
+            '-'
+          )[0] + ' (Vite)'
+        )
+    }
+  }
+}
+
 export default defineConfig({
   server: {
     open: true
@@ -84,7 +101,25 @@ export default defineConfig({
       include: '**/ketcher-polymer-editor-react/src/**',
       preventAssignment: true,
       values: polymerEditorValues
-    })
+    }),
+    createHtmlPlugin({
+      entry: '/src/index.tsx',
+      template: 'public/index.html',
+      inject: {
+        tags: [
+          {
+            /**
+             * HACK: https://github.com/bevacqua/dragula/issues/602#issuecomment-1109840139
+             * Fix: global is not defined
+             */
+            injectTo: 'body',
+            tag: 'script',
+            children: 'var global = global || window'
+          }
+        ]
+      }
+    }),
+    HtmlReplaceVitePlugin()
   ],
   define: {
     'process.env': process.env

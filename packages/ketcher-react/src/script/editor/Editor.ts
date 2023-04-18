@@ -355,7 +355,7 @@ class Editor implements KetcherEditor {
     this.render.ctab.setSelection(this._selection) // eslint-disable-line
     this.event.selectionChange.dispatch(this._selection) // eslint-disable-line
 
-    this.render.update()
+    this.render.update(false, null, { resizeCanvas: false })
     return this._selection // eslint-disable-line
   }
 
@@ -380,7 +380,7 @@ class Editor implements KetcherEditor {
   update(
     action: Action | true,
     ignoreHistory?: boolean,
-    options = { extendCanvas: true }
+    options = { resizeCanvas: true }
   ) {
     if (action === true) {
       this.render.update(true, null, options) // force

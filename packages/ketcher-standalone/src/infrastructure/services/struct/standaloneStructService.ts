@@ -58,7 +58,8 @@ import {
   LayoutResult,
   RecognizeResult,
   StructService,
-  StructServiceOptions
+  StructServiceOptions,
+  emitEventRequestIsFinished
 } from 'ketcher-core'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -185,6 +186,8 @@ class IndigoService implements StructService {
       if (message.type !== undefined) {
         const event = messageTypeToEventMapping[message.type]
         this.EE.emit(event, { data: message })
+        console.log('standalone mode')
+        emitEventRequestIsFinished()
       }
     }
   }

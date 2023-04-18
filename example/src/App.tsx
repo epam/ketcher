@@ -28,8 +28,10 @@ let structServiceProvider: StructServiceProvider =
     process.env.API_PATH || process.env.REACT_APP_API_PATH!
   )
 if (process.env.MODE === 'standalone') {
-  const { StandaloneStructServiceProvider } = await import('ketcher-standalone')
-  structServiceProvider = new StandaloneStructServiceProvider()
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { StandaloneStructServiceProvider } = require('ketcher-standalone')
+  structServiceProvider =
+    new StandaloneStructServiceProvider() as StructServiceProvider
 }
 
 const enablePolymerEditor = process.env.ENABLE_POLYMER_EDITOR === 'true'
@@ -38,7 +40,8 @@ type PolymerType = () => JSX.Element | null
 
 let PolymerEditor: PolymerType = () => null
 if (enablePolymerEditor) {
-  const { Editor } = await import('ketcher-polymer-editor-react')
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { Editor } = require('ketcher-polymer-editor-react')
   PolymerEditor = Editor as PolymerType
 }
 

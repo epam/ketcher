@@ -197,9 +197,10 @@ export class FunctionalGroup {
     const isAtomInSameFunctionalGroup = (otherAtomId, sgroup) =>
       sgroup.atoms.includes(otherAtomId)
     for (const sgroup of sgroups.values()) {
-      const isFunctionalGroup = FunctionalGroup.isFunctionalGroup(sgroup)
+      const isSGroup =
+        FunctionalGroup.isFunctionalGroup(sgroup) || SGroup.isSuperAtom(sgroup)
       const isSGroupFound = sgroup.atoms.includes(atomId)
-      if (!isFunctionalGroup || !isSGroupFound) {
+      if (!isSGroup || !isSGroupFound) {
         continue
       }
       for (const bond of bonds.values()) {

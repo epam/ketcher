@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Fragment, FunctionalGroup, Vec2, Scale } from 'ketcher-core'
+import { Fragment, FunctionalGroup, Vec2, Scale, SGroup } from 'ketcher-core'
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4
 const SELECTION_WITHIN_TEXT = 0
@@ -182,7 +182,8 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
         bond.b,
         sGroups,
         functionalGroups
-      )
+      ) ||
+      SGroup.isBondInContractedSGroup(bond.b, sGroups)
     )
       return null
 
@@ -202,7 +203,8 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
         bond.b,
         sGroups,
         functionalGroups
-      )
+      ) ||
+      SGroup.isBondInContractedSGroup(bond.b, sGroups)
     )
       return null
 

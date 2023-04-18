@@ -114,6 +114,13 @@ export default defineConfig({
       preventAssignment: true,
       values: polymerEditorValues
     }),
+    replace({
+      include: '**/example/src/**',
+      preventAssignment: true,
+      values: {
+        require: 'await import'
+      }
+    }),
     createHtmlPlugin({
       entry: '/src/index.tsx',
       template: 'public/index.html',

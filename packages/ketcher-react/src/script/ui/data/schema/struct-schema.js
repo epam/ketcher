@@ -216,7 +216,7 @@ export const bond = {
     cip: {
       title: 'CIP',
       type: 'string',
-      enum: ['E', 'Z', 'e', 'z']
+      enum: ['E', 'Z', 'M', 'P']
     }
   }
 }

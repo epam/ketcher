@@ -21,8 +21,8 @@ import { Vec2 } from './vec2'
 enum CIP {
   E = 'E',
   Z = 'Z',
-  e = 'e',
-  z = 'z'
+  M = 'M',
+  P = 'P'
 }
 
 export interface BondAttributes {

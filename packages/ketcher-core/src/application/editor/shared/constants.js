@@ -21,3 +21,15 @@ export const SgContexts = {
   Atom: 'Atom',
   Group: 'Group'
 }
+
+export const selectionKeys = [
+  'atoms',
+  'bonds',
+  'frags',
+  'sgroups',
+  'rgroups',
+  'rxnArrows',
+  'rxnPluses',
+  'simpleObjects',
+  'texts'
+]

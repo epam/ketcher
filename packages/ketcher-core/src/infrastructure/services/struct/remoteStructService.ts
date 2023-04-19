@@ -40,7 +40,6 @@ import {
   StructService,
   StructServiceOptions
 } from 'domain/services'
-import { emitEventRequestIsFinished } from 'utilities'
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -95,8 +94,6 @@ function request(
         .then((res) => (response.ok ? res : Promise.reject(res.error)))
     )
   }
-  console.log('remote request')
-  response.finally(() => emitEventRequestIsFinished())
 
   return response
 }

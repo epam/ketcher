@@ -149,11 +149,15 @@ export function fromBondAddition(
   }
 
   let beginAtomId: number, endAtomId: number
-  if (typeof begin !== 'number' && typeof end !== 'number') {
+
+  const startsOnAtom = typeof begin === 'number'
+  const endsOnAtom = typeof end === 'number'
+
+  if (!startsOnAtom && !endsOnAtom) {
     ;[beginAtomId, endAtomId] = mouseDownNothingAndUpNothing(begin, end)
-  } else if (typeof begin !== 'number' && typeof end === 'number') {
+  } else if (!startsOnAtom && endsOnAtom) {
     ;[beginAtomId, endAtomId] = mouseDownNothingAndUpAtom(begin, end)
-  } else if (typeof begin === 'number' && typeof end !== 'number') {
+  } else if (startsOnAtom && !endsOnAtom) {
     ;[beginAtomId, endAtomId] = mouseDownAtomAndUpNothing(begin, end)
   } else {
     ;[beginAtomId, endAtomId] = [begin as number, end as number]

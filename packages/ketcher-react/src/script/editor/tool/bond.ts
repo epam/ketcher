@@ -107,7 +107,7 @@ class BondTool {
       return
     }
 
-    let attachmentAtomId
+    let attachmentAtomId: number | undefined
     if (ci?.map === 'functionalGroups') {
       const functionalGroup = molecule.functionalGroups.get(ci.id)
       if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
@@ -172,11 +172,13 @@ class BondTool {
               functionalGroups
             )
           ) {
-            const sGroup = sgroups.get(closestSGroup.id)
-            const sGroupAtoms = SGroup.getAtoms(molecule, sGroup?.item)
-            endAtom = {
-              id: sGroupAtoms[0],
-              map: 'atoms'
+            const sGroup = molecule.sgroups.get(closestSGroup.id)
+            const closestAttachmentAtomId = sGroup?.getAttAtomId(molecule)
+            if (closestAttachmentAtomId !== beginAtom) {
+              endAtom = {
+                id: closestAttachmentAtomId,
+                map: 'atoms'
+              }
             }
           }
           const fGroupId =

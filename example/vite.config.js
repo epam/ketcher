@@ -147,7 +147,10 @@ export default defineConfig({
     alias: [
       {
         find: 'ketcher-react/dist/index.css',
-        customResolver: () => null
+        replacement: resolve(
+          __dirname,
+          '../packages/ketcher-react/src/index.less'
+        )
       },
       {
         find: 'ketcher-react',

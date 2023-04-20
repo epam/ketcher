@@ -86,6 +86,7 @@ export interface AtomAttributes {
   fragment?: number
   pp?: Point
   implicitH?: number
+  implicitHCount?: number | null
 }
 
 export class Atom {
@@ -125,7 +126,8 @@ export class Atom {
     aam: 0,
     // enhanced stereo
     stereoLabel: null,
-    stereoParity: 0
+    stereoParity: 0,
+    implicitHCount: null
   }
 
   label: string
@@ -143,6 +145,7 @@ export class Atom {
   substitutionCount: number
   valence: number
   implicitH: number
+  implicitHCount: number | null
   pp: Vec2
   neighbors: Array<number>
   sgs: Pile<number>
@@ -168,13 +171,14 @@ export class Atom {
     this.charge = getValueOrDefault(attributes.charge, Atom.attrlist.charge)
     this.rglabel = getValueOrDefault(attributes.rglabel, Atom.attrlist.rglabel)
     this.attpnt = getValueOrDefault(attributes.attpnt, Atom.attrlist.attpnt)
+    this.implicitHCount = getValueOrDefault(attributes.implicitHCount, null)
     this.explicitValence = getValueOrDefault(
       attributes.explicitValence,
       Atom.attrlist.explicitValence
     )
 
     this.valence = 0
-    this.implicitH = attributes.implicitH || 0 // implicitH is not an attribute
+    this.implicitH = attributes.implicitHCount || attributes.implicitH || 0 // implicitH is not an attribute
     this.pp = attributes.pp ? new Vec2(attributes.pp) : new Vec2()
 
     // sgs should only be set when an atom is added to an s-group by an appropriate method,
@@ -259,6 +263,29 @@ export class Atom {
     }
   }
 
+  static isHeteroAtom(label: string): boolean {
+    return label !== 'C' && label !== 'H'
+  }
+
+  static isInAromatizedRing(struct: Struct, atomId: number): boolean {
+    const atom = struct.atoms.get(atomId)
+    if (atom && Atom.isHeteroAtom(atom.label)) {
+      for (const [_, loop] of struct.loops) {
+        const halfBondIds = loop.hbs
+        if (loop.aromatic) {
+          for (const halfBondId of halfBondIds) {
+            const halfBond = struct.halfBonds.get(halfBondId)!
+            const { begin, end } = halfBond
+            if (begin === atomId || end === atomId) {
+              return true
+            }
+          }
+        }
+      }
+    }
+    return false
+  }
+
   clone(fidMap: Map<number, number>): Atom {
     const ret = new Atom(this)
     if (fidMap && fidMap.has(this.fragment)) {
@@ -317,7 +344,7 @@ export class Atom {
     const groupno = element?.group
     const rad = radicalElectrons(this.radical)
     let valence = conn
-    let hyd = 0
+    let hyd: any = 0
     const absCharge = Math.abs(charge)
 
     if (groupno === undefined) {
@@ -524,7 +551,9 @@ export class Atom {
       if (conn + rad + absCharge === 0) valence = 1
       else hyd = -1
     }
-
+    if (Atom.isHeteroAtom(label) && this.implicitHCount !== null) {
+      hyd = this.implicitHCount
+    }
     this.valence = valence
     this.implicitH = hyd
     if (this.implicitH < 0) {

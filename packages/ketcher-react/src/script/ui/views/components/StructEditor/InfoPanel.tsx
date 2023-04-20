@@ -96,14 +96,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   const groupName = sGroup?.data?.name
 
   useEffect(() => {
-    // workaround for current release; just don't show tooltip for CIP data
-    // in future release CIP will be atom/bond property, not a s-group property
-    const CIP_FIELD_NAME = 'INDIGO_CIP_DESC'
-    if (
-      !groupStruct &&
-      sGroup?.type === 'DAT' &&
-      sGroup.data?.fieldName !== CIP_FIELD_NAME
-    ) {
+    if (!groupStruct && sGroup?.type === 'DAT') {
       setSGroupData(`${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`)
     } else {
       setSGroupData(null)

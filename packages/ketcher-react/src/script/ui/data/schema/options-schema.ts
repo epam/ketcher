@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { StereLabelStyleType, StereoColoringType } from 'ketcher-core'
+import {
+  StereLabelStyleType,
+  StereoColoringType,
+  ShowHydrogenLabels
+} from 'ketcher-core'
 import Ajv, { SchemaObject } from 'ajv'
 
 type ExtendedSchema = SchemaObject & {
@@ -195,8 +199,8 @@ const render: {
   },
   showHydrogenLabels: {
     title: 'Show hydrogen labels',
-    enum: ['off', 'Hetero', 'Terminal', 'Terminal and Hetero', 'on'],
-    default: 'on'
+    enum: Object.values(ShowHydrogenLabels),
+    default: ShowHydrogenLabels.TerminalAndHetero
   },
   // Bonds
   aromaticCircle: {

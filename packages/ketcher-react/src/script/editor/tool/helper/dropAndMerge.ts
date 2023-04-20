@@ -50,7 +50,7 @@ export function dropAndMerge(
   if (isMerging) editor.selection(null)
 
   if (dropItemAction?.operations.length > 0) {
-    editor.update(dropItemAction)
+    editor.update(dropItemAction, false, { resizeCanvas: false })
   }
 
   return dropItemAction

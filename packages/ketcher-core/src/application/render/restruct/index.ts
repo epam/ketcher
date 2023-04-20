@@ -29,6 +29,7 @@ import ReStruct from './restruct'
 import ReText from './retext'
 
 export * from './generalEnumTypes'
+export * from './reatom'
 export {
   ReAtom,
   ReBond,

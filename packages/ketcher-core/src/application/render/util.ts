@@ -14,8 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'domain/entities'
+import { Atom, Bond, Vec2 } from 'domain/entities'
 import assert from 'assert'
+import { ReStruct, LayerMap } from './restruct'
+import Visel from './restruct/visel'
 
 function tfx(v) {
   return parseFloat(v).toFixed(8)
@@ -127,11 +129,75 @@ function calcCoordinates(aPoint, bPoint, lengthHyp) {
   return obj
 }
 
+function getCIPValuePath({
+  paper,
+  cipLabelPosition,
+  atomOrBond,
+  options
+}: {
+  paper
+  cipLabelPosition: Vec2
+  atomOrBond: Atom | Bond
+  options
+}) {
+  const text = paper
+    .text(cipLabelPosition.x, cipLabelPosition.y, `(${atomOrBond.cip})`)
+    .attr({
+      font: options.font,
+      'font-size': options.fontsz
+    })
+  const box = text.getBBox()
+  const path = paper.set()
+  const rect = paper
+    .rect(box.x - 1, box.y - 1, box.width + 2, box.height + 2, 3, 3)
+    .attr({ fill: '#fff', stroke: '#fff' })
+  path.push(rect.toFront(), text.toFront())
+
+  return {
+    path,
+    text,
+    rectangle: rect
+  }
+}
+
+function drawCIPLabel({
+  atomOrBond,
+  position,
+  restruct,
+  visel
+}: {
+  atomOrBond: Bond | Atom
+  position: Vec2
+  restruct: ReStruct
+  visel: Visel
+}) {
+  const { options, paper } = restruct.render
+  const path = paper.set()
+
+  const cipLabelPosition = position.scaled(options.scale)
+  const cipValuePath = getCIPValuePath({
+    paper,
+    cipLabelPosition,
+    atomOrBond,
+    options
+  })
+  const box = relBox(cipValuePath.path.getBBox())
+
+  cipValuePath.path.translateAbs(0.5 * box.width, -0.5 * box.height)
+  path.push(cipValuePath.path.toFront())
+
+  restruct.addReObjectPath(LayerMap.data, visel, path, null, true)
+
+  return cipValuePath
+}
+
 const util = {
   tfx,
   relBox,
   shiftRayBox,
-  calcCoordinates
+  calcCoordinates,
+  getCIPValuePath,
+  drawCIPLabel
 }
 
 export default util

@@ -54,6 +54,13 @@ export enum StereoLabel {
   Or = 'or'
 }
 
+enum CIP {
+  S = 'S',
+  R = 'R',
+  s = 's',
+  r = 'r'
+}
+
 export interface AtomAttributes {
   stereoParity?: number
   stereoLabel?: string | null
@@ -70,6 +77,7 @@ export interface AtomAttributes {
   rglabel?: string | null
   charge?: number
   radical?: number
+  cip?: CIP | null
   isotope?: number
   alias?: string | null
   pseudo?: string
@@ -102,6 +110,7 @@ export class Atom {
     label: 'C',
     isotope: 0,
     radical: 0,
+    cip: null,
     charge: 0,
     explicitValence: -1,
     ringBondCount: 0,
@@ -126,6 +135,7 @@ export class Atom {
   isotope: number
   hCount: number
   radical: number
+  cip: CIP | null
   charge: number
   explicitValence: number
   ringBondCount: number
@@ -154,6 +164,7 @@ export class Atom {
     this.alias = getValueOrDefault(attributes.alias, Atom.attrlist.alias)
     this.isotope = getValueOrDefault(attributes.isotope, Atom.attrlist.isotope)
     this.radical = getValueOrDefault(attributes.radical, Atom.attrlist.radical)
+    this.cip = getValueOrDefault(attributes.cip, Atom.attrlist.cip)
     this.charge = getValueOrDefault(attributes.charge, Atom.attrlist.charge)
     this.rglabel = getValueOrDefault(attributes.rglabel, Atom.attrlist.rglabel)
     this.attpnt = getValueOrDefault(attributes.attpnt, Atom.attrlist.attpnt)
@@ -303,17 +314,21 @@ export class Atom {
       return true
     }
     const element = Elements.get(label)
-    if (!element) {
-      this.implicitH = 0
-      return true
-    }
-
-    const groupno = element.group
+    const groupno = element?.group
     const rad = radicalElectrons(this.radical)
     let valence = conn
     let hyd = 0
     const absCharge = Math.abs(charge)
-    if (groupno === 1) {
+
+    if (groupno === undefined) {
+      if (label === 'D' || label === 'T') {
+        valence = 1
+        hyd = 1 - rad - conn - absCharge
+      } else {
+        this.implicitH = 0
+        return true
+      }
+    } else if (groupno === 1) {
       if (
         label === 'H' ||
         label === 'Li' ||

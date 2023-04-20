@@ -83,6 +83,8 @@ export function atomToStruct(source) {
   ifDef(params, 'aam', source.mapping)
   ifDef(params, 'invRet', source.invRet)
   ifDef(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)))
+  // implicit hydrogens
+  ifDef(params, 'implicitHCount', source.implicitHCount)
   return new Atom(params)
 }
 

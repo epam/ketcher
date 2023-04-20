@@ -57,7 +57,11 @@ class BondTool {
     const struct = this.editor.render.ctab
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
-    const ci = this.editor.findItem(event, ['atoms', 'bonds'])
+    const ci = this.editor.findItem(event, [
+      'atoms',
+      'bonds',
+      'functionalGroups'
+    ])
     const atomResult: Array<number> = []
     const bondResult: Array<number> = []
     const result: Array<number> = []
@@ -102,12 +106,24 @@ class BondTool {
       this.editor.event.removeFG.dispatch({ fgIds: result })
       return
     }
+
+    let attachmentAtomId: number | undefined
+    if (ci?.map === 'functionalGroups') {
+      attachmentAtomId = SGroup.getAttachmentAtomIdBySGroupId(ci.id, molecule)
+    }
+
     const rnd = this.editor.render
     this.editor.hover(null)
     this.editor.selection(null)
     this.dragCtx = {
       xy0: rnd.page2obj(event),
-      item: this.editor.findItem(event, ['atoms', 'bonds'])
+      item:
+        attachmentAtomId === undefined
+          ? ci
+          : {
+              map: 'atoms',
+              id: attachmentAtomId
+            }
     }
     if (!this.dragCtx.item)
       // ci.type == 'Canvas'
@@ -138,7 +154,6 @@ class BondTool {
         let endAtom
         let beginPos
         let endPos
-        const extraNeighbour: Array<number> = []
         if ('item' in dragCtx && dragCtx.item.map === 'atoms') {
           // first mousedown event intersect with any atom
           beginAtom = dragCtx.item.id
@@ -151,11 +166,16 @@ class BondTool {
               functionalGroups
             )
           ) {
-            const sGroup = sgroups.get(closestSGroup.id)
-            const sGroupAtoms = SGroup.getAtoms(molecule, sGroup?.item)
-            endAtom = {
-              id: sGroupAtoms[0],
-              map: 'atoms'
+            const closestAttachmentAtomId =
+              SGroup.getAttachmentAtomIdBySGroupId(closestSGroup.id, molecule)
+            const isSaltOrSolvent = closestAttachmentAtomId === undefined
+            const isBeginFunctionalGroupItself =
+              closestAttachmentAtomId === beginAtom
+            if (!isSaltOrSolvent && !isBeginFunctionalGroupItself) {
+              endAtom = {
+                id: closestAttachmentAtomId,
+                map: 'atoms'
+              }
             }
           }
           const fGroupId =
@@ -171,22 +191,11 @@ class BondTool {
             this.editor.event.removeFG.dispatch({ fgIds: [fGroupId] })
             endAtom = null
           }
-          if (endAtom && fGroup && endAtom.id === fGroupAtoms?.[0]) {
-            const atomNeighbours = molecule.atomGetNeighbors(endAtom.id)
-            atomNeighbours?.forEach((nei) => {
-              !fGroupAtoms?.includes(nei.aid) &&
-                !extraNeighbour.includes(nei.aid) &&
-                extraNeighbour.push(nei.aid)
-            })
-          }
-          if (extraNeighbour.length >= 1) {
-            endAtom = null
-          }
         } else {
           // first mousedown event intersect with any canvas
           beginAtom = this.atomProps
           beginPos = dragCtx.xy0
-          endAtom = editor.findItem(event, ['atoms'])
+          endAtom = editor.findItem(event, ['atoms', 'functionalGroups'])
           const atomResult: Array<number> = []
           const result: Array<number> = []
           if (
@@ -200,6 +209,21 @@ class BondTool {
               endAtom.id
             )
             if (atomId !== null) atomResult.push(atomId)
+          } else if (endAtom?.map === 'functionalGroups') {
+            const functionalGroup = molecule.functionalGroups.get(endAtom.id)
+            if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
+              const attachmentAtomId = SGroup.getAttachmentAtomIdBySGroupId(
+                endAtom.id,
+                molecule
+              )
+              endAtom =
+                attachmentAtomId === undefined
+                  ? null
+                  : {
+                      map: 'atoms',
+                      id: attachmentAtomId
+                    }
+            }
           }
           if (atomResult.length > 0) {
             for (const id of atomResult) {
@@ -231,7 +255,7 @@ class BondTool {
             // first mousedown event intersect with any atom and
             // rotation only, leght of bond = 1;
             const atom = rnd.ctab.molecule.atoms.get(beginAtom)
-            beginPos = utils.calcNewAtomPos(
+            endPos = utils.calcNewAtomPos(
               atom?.pp.get_xy0(),
               xy1,
               event.ctrlKey
@@ -268,7 +292,7 @@ class BondTool {
       }
     }
     this.editor.hover(
-      this.editor.findItem(event, ['atoms', 'bonds']),
+      this.editor.findItem(event, ['atoms', 'bonds', 'functionalGroups']),
       null,
       event
     )
@@ -301,12 +325,9 @@ class BondTool {
       } else if (dragCtx.item.map === 'atoms') {
         // click on atom
         this.editor.update(
-          fromBondAddition(
-            rnd.ctab,
-            this.bondProps,
-            dragCtx.item.id,
-            undefined
-          )[0]
+          fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id, {
+            label: 'C'
+          })[0]
         )
         delete this.dragCtx.existedBond
       } else if (dragCtx.item.map === 'bonds') {

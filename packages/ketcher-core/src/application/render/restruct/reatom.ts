@@ -46,7 +46,7 @@ interface ElemAttr {
 
 const StereoLabelMinOpacity = 0.3
 
-enum ShowHydrogenLabels {
+export enum ShowHydrogenLabels {
   Off = 'off',
   Hetero = 'Hetero',
   Terminal = 'Terminal',
@@ -172,6 +172,7 @@ class ReAtom extends ReObject {
     let leftMargin
     let implh
     let isHydrogen
+    let isHydrogenIsotope
     let label
     let index: any = null
 
@@ -184,6 +185,7 @@ class ReAtom extends ReObject {
         (-label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom)
       implh = Math.floor(this.a.implicitH)
       isHydrogen = label.text === 'H'
+      isHydrogenIsotope = label.text === 'D' || label.text === 'T'
       restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true)
     }
     if (options.showAtomIds) {
@@ -206,7 +208,7 @@ class ReAtom extends ReObject {
     }
     this.setHover(this.hover, render)
 
-    if (this.showLabel && !this.a.pseudo) {
+    if (this.showLabel && (!this.a.pseudo || isHydrogenIsotope)) {
       let hydroIndex: any = null
       if (isHydrogen && implh > 0) {
         hydroIndex = showHydroIndex(this, render, implh, rightMargin)
@@ -496,6 +498,7 @@ function isLabelVisible(restruct, options, atom) {
   const shouldBeVisible =
     neighborsLength ||
     options.carbonExplicitly ||
+    options.showHydrogenLabels === ShowHydrogenLabels.On ||
     atom.a.alias ||
     atom.a.isotope !== 0 ||
     atom.a.radical !== 0 ||
@@ -529,23 +532,27 @@ function isLabelVisible(restruct, options, atom) {
   return false
 }
 
-function displayHydrogen(hydrogenLabels, atom) {
+function displayHydrogen(hydrogenLabels: ShowHydrogenLabels, atom: ReAtom) {
   return (
     hydrogenLabels === ShowHydrogenLabels.On ||
     (hydrogenLabels === ShowHydrogenLabels.Terminal &&
       atom.a.neighbors.length < 2) ||
     (hydrogenLabels === ShowHydrogenLabels.Hetero &&
-      atom.label.text.toLowerCase() !== 'c') ||
+      atom.label?.text.toLowerCase() !== 'c') ||
     (hydrogenLabels === ShowHydrogenLabels.TerminalAndHetero &&
-      (atom.a.neighbors.length < 2 || atom.label.text.toLowerCase() !== 'c'))
+      (atom.a.neighbors.length < 2 || atom.label?.text.toLowerCase() !== 'c'))
   )
 }
 
 function setHydrogenPos(struct, atom) {
   // check where should the hydrogen be put on the left of the label
   if (atom.a.neighbors.length === 0) {
-    const element = Elements.get(atom.a.label)
-    return !element || Boolean(element.leftH)
+    if (atom.a.label === 'D' || atom.a.label === 'T') {
+      return false
+    } else {
+      const element = Elements.get(atom.a.label)
+      return !element || Boolean(element.leftH)
+    }
   }
 
   let yl = 1

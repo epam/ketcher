@@ -103,9 +103,11 @@ export function fromBondAddition(
       ) as AtomAdd
     ).data.aid
 
+    const endAtom = struct.atoms.get(endAtomId)
     if (
+      endAtom &&
       !FunctionalGroup.isAtomInContractedFunctionalGroup(
-        struct.atoms.get(endAtomId),
+        endAtom,
         struct.sgroups,
         struct.functionalGroups,
         false
@@ -134,9 +136,11 @@ export function fromBondAddition(
       ) as AtomAdd
     ).data.aid
 
+    const beginAtom = struct.atoms.get(beginAtomId)
     if (
+      beginAtom &&
       !FunctionalGroup.isAtomInContractedFunctionalGroup(
-        struct.atoms.get(beginAtomId),
+        beginAtom,
         struct.sgroups,
         struct.functionalGroups,
         false

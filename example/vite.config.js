@@ -146,6 +146,7 @@ export default defineConfig({
   resolve: {
     alias: [
       {
+        // HACK: to ignore dist/index.css, you can set any file as replacement
         find: 'ketcher-react/dist/index.css',
         replacement: resolve(
           __dirname,

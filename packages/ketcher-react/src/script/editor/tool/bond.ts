@@ -167,9 +167,12 @@ class BondTool {
               functionalGroups
             )
           ) {
-            const sGroup = molecule.sgroups.get(closestSGroup.id)
-            const closestAttachmentAtomId = sGroup?.getAttAtomId(molecule)
-            if (closestAttachmentAtomId !== beginAtom) {
+            const closestAttachmentAtomId =
+              SGroup.getAttachmentAtomIdBySGroupId(closestSGroup.id, molecule)
+            if (
+              closestAttachmentAtomId &&
+              closestAttachmentAtomId !== beginAtom
+            ) {
               endAtom = {
                 id: closestAttachmentAtomId,
                 map: 'atoms'

@@ -19,6 +19,13 @@ import { Pile } from './pile'
 import { Struct } from './struct'
 import { Vec2 } from './vec2'
 
+enum CIP {
+  E = 'E',
+  Z = 'Z',
+  M = 'M',
+  P = 'P'
+}
+
 export interface BondAttributes {
   reactingCenterStatus?: number
   topology?: number
@@ -27,6 +34,7 @@ export interface BondAttributes {
   type: number
   end: number
   begin: number
+  cip?: CIP | null
 }
 
 export class Bond {
@@ -73,7 +81,8 @@ export class Bond {
     type: Bond.PATTERN.TYPE.SINGLE,
     stereo: Bond.PATTERN.STEREO.NONE,
     topology: Bond.PATTERN.TOPOLOGY.EITHER,
-    reactingCenterStatus: Bond.PATTERN.REACTING_CENTER.UNMARKED
+    reactingCenterStatus: Bond.PATTERN.REACTING_CENTER.UNMARKED,
+    cip: null
   }
 
   begin: number
@@ -86,6 +95,7 @@ export class Bond {
   len: number
   sb: number
   sa: number
+  cip?: CIP | null
   hb1?: number
   hb2?: number
   angle: number
@@ -99,6 +109,7 @@ export class Bond {
     this.stereo = Bond.PATTERN.STEREO.NONE
     this.topology = Bond.PATTERN.TOPOLOGY.EITHER
     this.reactingCenterStatus = 0
+    this.cip = attributes.cip ?? null
     this.len = 0
     this.sb = 0
     this.sa = 0

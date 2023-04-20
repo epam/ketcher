@@ -61,6 +61,12 @@ class ReAtom extends ReObject {
   color: string
   component: number
   label?: ElemAttr
+  cip?: {
+    // Raphael paths
+    path: any
+    text: any
+    rectangle: any
+  }
 
   constructor(atom: Atom) {
     super('atom')
@@ -135,7 +141,7 @@ class ReAtom extends ReObject {
 
   show(restruct: ReStruct, aid: number, options: any): void {
     // eslint-disable-line max-statements
-    const atom = restruct.molecule.atoms.get(aid)
+    const atom = restruct.molecule.atoms.get(aid)!
     const sgroups = restruct.molecule.sgroups
     const functionalGroups = restruct.molecule.functionalGroups
     const render = restruct.render
@@ -403,6 +409,15 @@ class ReAtom extends ReObject {
         .attr(style)
 
       restruct.addReObjectPath(LayerMap.hovering, this.visel, path)
+    }
+
+    if (atom.cip) {
+      this.cip = util.drawCIPLabel({
+        atomOrBond: atom,
+        position: atom.pp,
+        restruct: render.ctab,
+        visel: this.visel
+      })
     }
   }
 }

@@ -274,7 +274,8 @@ export class Atom {
         const halfBondIds = loop.hbs
         if (loop.aromatic) {
           for (const halfBondId of halfBondIds) {
-            const halfBond = struct.halfBonds.get(halfBondId)!
+            const halfBond = struct.halfBonds.get(halfBondId)
+            if (!halfBond) return false
             const { begin, end } = halfBond
             if (begin === atomId || end === atomId) {
               return true

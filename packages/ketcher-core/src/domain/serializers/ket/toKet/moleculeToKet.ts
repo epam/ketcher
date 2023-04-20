@@ -70,6 +70,7 @@ function atomToKet(source) {
   ifDef(result, 'isotope', source.isotope, 0)
   ifDef(result, 'radical', source.radical, 0)
   ifDef(result, 'attachmentPoints', source.attpnt, 0)
+  ifDef(result, 'cip', source.cip, '')
   // stereo
   ifDef(result, 'stereoLabel', source.stereoLabel, null)
   ifDef(result, 'stereoParity', source.stereoCare, 0)
@@ -120,6 +121,7 @@ function bondToKet(source) {
   ifDef(result, 'stereo', source.stereo, 0)
   ifDef(result, 'topology', source.topology, 0)
   ifDef(result, 'center', source.reactingCenterStatus, 0)
+  ifDef(result, 'cip', source.cip, '')
 
   return result
 }

@@ -154,7 +154,6 @@ class BondTool {
         let endAtom
         let beginPos
         let endPos
-        const extraNeighbour: Array<number> = []
         if ('item' in dragCtx && dragCtx.item.map === 'atoms') {
           // first mousedown event intersect with any atom
           beginAtom = dragCtx.item.id
@@ -190,17 +189,6 @@ class BondTool {
             fGroup && (SGroup.getAtoms(molecule, fGroup.item) as any)
           if (endAtom && fGroup && endAtom.id !== fGroupAtoms?.[0]) {
             this.editor.event.removeFG.dispatch({ fgIds: [fGroupId] })
-            endAtom = null
-          }
-          if (endAtom && fGroup && endAtom.id === fGroupAtoms?.[0]) {
-            const atomNeighbours = molecule.atomGetNeighbors(endAtom.id)
-            atomNeighbours?.forEach((nei) => {
-              !fGroupAtoms?.includes(nei.aid) &&
-                !extraNeighbour.includes(nei.aid) &&
-                extraNeighbour.push(nei.aid)
-            })
-          }
-          if (extraNeighbour.length >= 1) {
             endAtom = null
           }
         } else {

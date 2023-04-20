@@ -21,14 +21,14 @@ import {
   getStereoAtomsMap,
   identifyStructFormat,
   Struct,
-  SupportedFormat,
-  emitEventRequestIsFinished
+  SupportedFormat
 } from 'ketcher-core'
 
 import { supportedSGroupTypes } from './constants'
 import { setAnalyzingFile } from './request'
 import tools from '../action/tools'
 import { SettingsManager } from '../utils/settingsManager'
+import { emitEventRequestIsFinished } from '../utils/emitEventRequestIsFinished'
 
 export function onAction(action) {
   if (action && action.dialog) {

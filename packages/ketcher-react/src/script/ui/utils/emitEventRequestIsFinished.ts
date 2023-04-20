@@ -1,4 +1,12 @@
-export const REQUEST_IS_FINISHED = 'REQUEST_IS_FINISHED'
+import { Ketcher } from 'ketcher-core'
+
+const REQUEST_IS_FINISHED = 'REQUEST_IS_FINISHED'
+
+declare global {
+  interface Window {
+    ketcher: Ketcher
+  }
+}
 
 /**
  * Emit event when request is finished

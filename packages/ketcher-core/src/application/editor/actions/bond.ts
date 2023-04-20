@@ -67,7 +67,7 @@ export function fromBondAddition(
       action.addOp(new FragmentAdd().perform(reStruct)) as FragmentAdd
     ).frid
 
-    const newBeginAtomId = (
+    const newBeginAtomId: number = (
       action.addOp(
         new AtomAdd(
           { ...beginAtomAttr, fragment: newFragmentId },
@@ -76,7 +76,7 @@ export function fromBondAddition(
       ) as AtomAdd
     ).data.aid
 
-    const newEndAtomId = (
+    const newEndAtomId: number = (
       action.addOp(
         new AtomAdd(
           { ...endAtomAttr, fragment: newFragmentId },
@@ -94,7 +94,7 @@ export function fromBondAddition(
   ) => {
     const fragmentId = atomGetAttr(reStruct, endAtomId, 'fragment')
 
-    const newBeginAtomId = (
+    const newBeginAtomId: number = (
       action.addOp(
         new AtomAdd(
           { ...beginAtomAttr, fragment: fragmentId },
@@ -122,7 +122,7 @@ export function fromBondAddition(
   ) => {
     const fragmentId = atomGetAttr(reStruct, beginAtomId, 'fragment')
 
-    const newEndAtomId = (
+    const newEndAtomId: number = (
       action.addOp(
         new AtomAdd(
           {

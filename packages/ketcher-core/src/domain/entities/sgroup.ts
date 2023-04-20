@@ -650,6 +650,15 @@ export class SGroup {
     })
     return !expanded && isSGroup
   }
+
+  static getAttachmentAtomIdBySGroupId(sGroupId: number, struct: Struct) {
+    const functionalGroup = struct.functionalGroups.get(sGroupId)
+    if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
+      const sGroup = struct.sgroups.get(sGroupId)
+      return sGroup?.getAttAtomId(struct)
+    }
+    return undefined
+  }
 }
 
 function descriptorIntersects(sgroups: [], topLeftPoint: Vec2): boolean {

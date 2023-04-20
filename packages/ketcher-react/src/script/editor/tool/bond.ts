@@ -109,12 +109,7 @@ class BondTool {
 
     let attachmentAtomId: number | undefined
     if (ci?.map === 'functionalGroups') {
-      const functionalGroup = molecule.functionalGroups.get(ci.id)
-      if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
-        const sGroupId = ci.id
-        const sGroup = molecule.sgroups.get(sGroupId)
-        attachmentAtomId = sGroup?.getAttAtomId(molecule)
-      }
+      attachmentAtomId = SGroup.getAttachmentAtomIdBySGroupId(ci.id, molecule)
     }
 
     const rnd = this.editor.render
@@ -209,7 +204,7 @@ class BondTool {
           // first mousedown event intersect with any canvas
           beginAtom = this.atomProps
           beginPos = dragCtx.xy0
-          endAtom = editor.findItem(event, ['atoms'])
+          endAtom = editor.findItem(event, ['atoms', 'functionalGroups'])
           const atomResult: Array<number> = []
           const result: Array<number> = []
           if (
@@ -223,6 +218,21 @@ class BondTool {
               endAtom.id
             )
             if (atomId !== null) atomResult.push(atomId)
+          } else if (endAtom?.map === 'functionalGroups') {
+            const functionalGroup = molecule.functionalGroups.get(endAtom.id)
+            if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
+              const attachmentAtomId = SGroup.getAttachmentAtomIdBySGroupId(
+                endAtom.id,
+                molecule
+              )
+              endAtom =
+                attachmentAtomId === undefined
+                  ? null
+                  : {
+                      map: 'atoms',
+                      id: attachmentAtomId
+                    }
+            }
           }
           if (atomResult.length > 0) {
             for (const id of atomResult) {

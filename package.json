@@ -14,6 +14,7 @@
     "precommit": "lint-staged --allow-empty && npm run prettier:write --workspaces --if-present",
     "prepush": "npm run test:eslint --workspaces --if-present",
     "build": "npm run build:packages && npm run build:example",
+    "buildCi": "CI=false && npm run build",
     "build:core": "npm run build -w ketcher-core",
     "build:standalone": "npm run build -w ketcher-standalone",
     "build:react": "npm run build -w ketcher-react",
@@ -28,6 +29,7 @@
     "serve:demo": "cd demo && npm run serve"
   },
   "devDependencies": {
+    "@playwright/test": "^1.31.1",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
     "@typescript-eslint/parser": "^5.6.0",
     "color-alpha": "^1.1.3",

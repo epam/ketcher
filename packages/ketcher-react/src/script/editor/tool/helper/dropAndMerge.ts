@@ -10,7 +10,8 @@ type MergeItems = {
 export function dropAndMerge(
   editor: Editor,
   mergeItems: MergeItems,
-  action?: Action
+  action?: Action,
+  isPaste?: boolean
 ): void {
   const restruct = editor.render.ctab
   const isMerging = !!mergeItems
@@ -34,7 +35,7 @@ export function dropAndMerge(
   if (isMerging) editor.selection(null)
 
   if (dropItemAction?.operations.length > 0) {
-    editor.update(dropItemAction, false, { resizeCanvas: false })
+    editor.update(dropItemAction, false, { resizeCanvas: !!isPaste })
   }
 }
 

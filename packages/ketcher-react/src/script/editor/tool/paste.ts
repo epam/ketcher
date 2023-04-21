@@ -207,7 +207,7 @@ class PasteTool {
       // need to delete action first, because editor.update calls this.cancel() and thus action revert 🤦‍♂️
       const action = this.action
       delete this.action
-      dropAndMerge(this.editor, this.mergeItems, action)
+      dropAndMerge(this.editor, this.mergeItems, action, true)
     }
   }
 

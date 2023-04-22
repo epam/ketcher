@@ -20,6 +20,8 @@ import { Global, ThemeProvider } from '@emotion/react'
 import { createTheme } from '@mui/material/styles'
 import { merge } from 'lodash'
 
+import { Struct, KetSerializer, RenderStruct } from 'ketcher-core'
+
 import { store } from 'state'
 import {
   defaultTheme,
@@ -42,6 +44,8 @@ import {
 } from 'components/modal/modalContainer'
 import { FullscreenButton } from 'components/FullscreenButton'
 
+import testMolecule from './data/test-molecule.json'
+
 const muiTheme = createTheme(muiOverrides)
 
 type DeepPartial<T> = {
@@ -55,12 +59,26 @@ interface EditorProps {
 
 function Editor({ onInit, theme }: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
+  const mainElRef = useRef<HTMLDivElement>(null)
 
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
     : defaultTheme
 
   const mergedTheme: MergedThemeType = merge(muiTheme, { ketcher: editorTheme })
+
+  useEffect(() => {
+    const ketSerializer = new KetSerializer()
+    const struct: Struct = ketSerializer.deserialize(
+      JSON.stringify(testMolecule)
+    )
+    // @ts-ignore
+    const render = RenderStruct.render(
+      mainElRef.current,
+      struct,
+      window.ketcher.editor.options()
+    )
+  }, [mainElRef])
 
   useEffect(() => {
     onInit?.()
@@ -81,7 +99,7 @@ function Editor({ onInit, theme }: EditorProps) {
               <NotationInput />
             </Layout.Top>
 
-            <Layout.Main></Layout.Main>
+            <Layout.Main ref={mainElRef}></Layout.Main>
 
             <Layout.Right>
               <MonomerLibrary />

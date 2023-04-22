@@ -72,8 +72,7 @@ function Editor({ onInit, theme }: EditorProps) {
     const struct: Struct = ketSerializer.deserialize(
       JSON.stringify(testMolecule)
     )
-    // @ts-ignore
-    const render = RenderStruct.render(
+    RenderStruct.render(
       mainElRef.current,
       struct,
       window.ketcher.editor.options()

@@ -1,0 +1,91 @@
+export const editorOptions = {
+  'dearomatize-on-load': false,
+  ignoreChiralFlag: true,
+  disableQueryElements: null,
+  showAtomIds: false,
+  showBondIds: false,
+  showHalfBondIds: false,
+  showLoopIds: false,
+  showValenceWarnings: true,
+  autoScale: false,
+  autoScaleMargin: 0,
+  maxBondLength: 0,
+  atomColoring: true,
+  hideImplicitHydrogen: false,
+  hideTerminalLabels: false,
+  carbonExplicitly: false,
+  showCharge: true,
+  showHydrogenLabels: 'Terminal and Hetero',
+  showValence: true,
+  aromaticCircle: true,
+  scale: 40,
+  zoom: 1,
+  offset: {
+    x: 0,
+    y: 0,
+    z: 0
+  },
+  lineWidth: 2,
+  bondSpace: 6,
+  stereoBond: 6,
+  subFontSize: 10,
+  font: '30px Arial',
+  fontsz: 13,
+  fontszsub: 13,
+  fontRLabel: 15.6,
+  fontRLogic: 9.1,
+  lineattr: {
+    stroke: '#000',
+    'stroke-width': 2,
+    'stroke-linecap': 'round',
+    'stroke-linejoin': 'round'
+  },
+  selectionStyle: {
+    fill: '#7f7',
+    stroke: 'none'
+  },
+  hoverStyle: {
+    stroke: '#0c0',
+    'stroke-width': 1.2
+  },
+  sgroupBracketStyle: {
+    stroke: 'darkgray',
+    'stroke-width': 1
+  },
+  lassoStyle: {
+    stroke: 'gray',
+    'stroke-width': '1px'
+  },
+  hoverStyleSimpleObject: {
+    stroke: '#0c0',
+    'stroke-width': 10,
+    'stroke-linecap': 'round',
+    'stroke-opacity': 0.6
+  },
+  atomSelectionPlateRadius: 15.6,
+  contractedFunctionalGroupSize: 50,
+  resetToSelect: 'paste',
+  rotationStep: 15,
+  showStereoFlags: true,
+  stereoLabelStyle: 'Iupac',
+  colorOfAbsoluteCenters: '#ff0000',
+  colorOfAndCenters: '#0000cd',
+  colorOfOrCenters: '#228b22',
+  colorStereogenicCenters: 'LabelsOnly',
+  autoFadeOfStereoLabels: true,
+  absFlagLabel: 'ABS',
+  andFlagLabel: 'AND Enantiomer',
+  mixedFlagLabel: 'Mixed',
+  orFlagLabel: 'OR Enantiomer',
+  doubleBondWidth: 6,
+  bondThickness: 2,
+  stereoBondWidth: 6,
+  'smart-layout': true,
+  'ignore-stereochemistry-errors': true,
+  'mass-skip-error-on-pseudoatoms': false,
+  'gross-formula-add-rsites': true,
+  'gross-formula-add-isotopes': true,
+  miewMode: 'LN',
+  miewTheme: 'light',
+  miewAtomLabel: 'bright'
+}

@@ -14,10 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-declare global {
-  interface Window {
-    ketcher: any
-  }
-}
-
 export * from './Editor'

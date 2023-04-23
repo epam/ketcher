@@ -19,6 +19,7 @@ import { useEffect, useRef } from 'react'
 import { Global, ThemeProvider } from '@emotion/react'
 import { createTheme } from '@mui/material/styles'
 import { merge } from 'lodash'
+import { editorOptions } from './constants'
 
 import { Struct, KetSerializer, RenderStruct } from 'ketcher-core'
 
@@ -72,11 +73,7 @@ function Editor({ onInit, theme }: EditorProps) {
     const struct: Struct = ketSerializer.deserialize(
       JSON.stringify(testMolecule)
     )
-    RenderStruct.render(
-      mainElRef.current,
-      struct,
-      window.ketcher.editor.options()
-    )
+    RenderStruct.render(mainElRef.current, struct, editorOptions)
   }, [mainElRef])
 
   useEffect(() => {

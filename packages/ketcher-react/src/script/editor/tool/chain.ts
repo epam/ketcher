@@ -22,7 +22,8 @@ import {
   fromItemsFuse,
   getHoverToFuse,
   getItemsToFuse,
-  FunctionalGroup
+  FunctionalGroup,
+  SGroup
 } from 'ketcher-core'
 
 import { atomLongtapEvent } from './atom'
@@ -44,7 +45,11 @@ class ChainTool {
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
     const rnd = this.editor.render
-    const ci = this.editor.findItem(event, ['atoms', 'bonds'])
+    const ci = this.editor.findItem(event, [
+      'atoms',
+      'bonds',
+      'functionalGroups'
+    ])
     const atomResult: Array<number> = []
     const bondResult: Array<number> = []
     const result: Array<number> = []
@@ -113,6 +118,19 @@ class ChainTool {
       atomLongtapEvent(this, rnd)
     }
 
+    if (ci?.map === 'functionalGroups') {
+      const functionalGroup = molecule.functionalGroups.get(ci.id)
+      if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
+        const sGroupId = ci.id
+        const sGroup = molecule.sgroups.get(sGroupId)
+        const attachmentAtomId = sGroup?.getAttAtomId(molecule)
+        this.dragCtx.item = {
+          map: 'atoms',
+          id: attachmentAtomId
+        }
+      }
+    }
+
     if (!this.dragCtx.item)
       // ci.type == 'Canvas'
       delete this.dragCtx.item
@@ -124,7 +142,11 @@ class ChainTool {
     const restruct = editor.render.ctab
     const dragCtx = this.dragCtx
 
-    editor.hover(this.editor.findItem(event, ['atoms', 'bonds']), null, event)
+    editor.hover(
+      this.editor.findItem(event, ['atoms', 'bonds', 'functionalGroups']),
+      null,
+      event
+    )
     if (!dragCtx) {
       return true
     }

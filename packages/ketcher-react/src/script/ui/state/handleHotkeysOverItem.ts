@@ -44,7 +44,16 @@ export function handleHotkeyOverItem(props: HandleHotkeyOverItemProps) {
     handleDialog(props)
   } else if (props.newAction.tool) {
     handleTool(props)
+  } else {
+    handleOtherActions(props)
   }
+}
+
+function handleOtherActions({
+  dispatch,
+  newAction
+}: HandleHotkeyOverItemProps) {
+  dispatch(onAction(newAction))
 }
 
 function handleEraser({ editor, hoveredItem }: HandleHotkeyOverItemProps) {
@@ -219,7 +228,7 @@ function handleBondTool({ hoveredItemId, newAction, editor }: HandlersProps) {
     editor.render.ctab,
     newAction.opts,
     hoveredItemId,
-    undefined
+    { label: 'C' }
   )[0]
   editor.update(newBond)
 }

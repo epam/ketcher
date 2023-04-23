@@ -68,6 +68,7 @@ export function atomToStruct(source) {
   ifDef(params, 'explicitValence', source.explicitValence)
   ifDef(params, 'isotope', source.isotope)
   ifDef(params, 'radical', source.radical)
+  ifDef(params, 'cip', source.cip)
   ifDef(params, 'attpnt', source.attachmentPoints)
   // stereo
   ifDef(params, 'stereoLabel', source.stereoLabel)
@@ -82,6 +83,8 @@ export function atomToStruct(source) {
   ifDef(params, 'aam', source.mapping)
   ifDef(params, 'invRet', source.invRet)
   ifDef(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)))
+  // implicit hydrogens
+  ifDef(params, 'implicitHCount', source.implicitHCount)
   return new Atom(params)
 }
 
@@ -125,6 +128,7 @@ export function bondToStruct(source) {
   ifDef(params, 'topology', source.topology)
   ifDef(params, 'reactingCenterStatus', source.center)
   ifDef(params, 'stereo', source.stereo)
+  ifDef(params, 'cip', source.cip)
   // if (params.stereo)
   // 	params.stereo = params.stereo > 1 ? params.stereo * 2 : params.stereo;
   // params.xxx = 0;

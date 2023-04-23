@@ -614,6 +614,7 @@ class ReStruct {
           }
 
           this.showItemSelection(item, selected)
+          item.selectionPlate?.toBack()
         })
       }
     })
@@ -637,9 +638,19 @@ class ReStruct {
           item.selectionPlate
         )
       }
-      if (item.selectionPlate) item.selectionPlate.show() // TODO [RB] review
+      if (item.selectionPlate) {
+        item.selectionPlate.show()
+        item.cip?.rectangle.attr({
+          fill: '#7f7',
+          stroke: '#7f7'
+        })
+      }
     } else if (exists && item.selectionPlate) {
-      item.selectionPlate.hide() // TODO [RB] review
+      item.selectionPlate.hide()
+      item.cip?.rectangle.attr({
+        fill: '#fff',
+        stroke: '#fff'
+      })
     }
   }
 }

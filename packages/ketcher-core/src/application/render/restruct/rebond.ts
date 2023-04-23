@@ -40,6 +40,12 @@ class ReBond extends ReObject {
   neihbid2 = -1
   boldStereo?: boolean
   rbb?: { x: number; y: number; width: number; height: number }
+  cip?: {
+    // Raphael paths
+    path: any
+    text: any
+    rectangle: any
+  }
 
   constructor(bond: Bond) {
     super('bond')
@@ -104,7 +110,7 @@ class ReBond extends ReObject {
     // eslint-disable-line max-statements
     const render = restruct.render
     const struct = restruct.molecule
-    const bond = restruct.molecule.bonds.get(bid)
+    const bond = restruct.molecule.bonds.get(bid)!
     const sgroups = restruct.molecule.sgroups
     const functionalGroups = restruct.molecule.functionalGroups
     if (
@@ -246,6 +252,17 @@ class ReBond extends ReObject {
         true
       )
     }
+
+    if (bond.cip) {
+      this.cip = util.drawCIPLabel({
+        atomOrBond: bond,
+        position: bond.center,
+        restruct: render.ctab,
+        visel: this.visel
+      })
+    }
+
+    this.path.toBack()
   }
 }
 

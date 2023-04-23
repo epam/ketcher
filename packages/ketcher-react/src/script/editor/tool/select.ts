@@ -211,8 +211,8 @@ class SelectTool {
       dragCtx.mergeItems = getMergeItems(editor, expSel)
       editor.hover(getHoverToFuse(dragCtx.mergeItems))
 
-      extendCanvas(rnd, event)
-      editor.update(dragCtx.action, true, { extendCanvas: false })
+      resizeCanvas(rnd, event)
+      editor.update(dragCtx.action, true, { resizeCanvas: false })
       return true
     }
 
@@ -306,7 +306,7 @@ class SelectTool {
       )
       const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a
       if (
-        atomId !== null &&
+        atomFromStruct &&
         !FunctionalGroup.isAtomInContractedFunctionalGroup(
           // TODO: examine if this code is really needed, seems like its a hack
           atomFromStruct,
@@ -458,7 +458,7 @@ class SelectTool {
   }
 }
 
-function extendCanvas(render, event) {
+function resizeCanvas(render, event) {
   const offset = 1
   const {
     isCloseToLeftEdgeOfCanvas,

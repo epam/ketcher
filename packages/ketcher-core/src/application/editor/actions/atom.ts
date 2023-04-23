@@ -62,7 +62,7 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
   const action = new Action()
   const aids = Array.isArray(ids) ? ids : [ids]
 
-  aids.forEach((aid) => {
+  aids.forEach((atomId) => {
     Object.keys(Atom.attrlist).forEach((key) => {
       if (key === 'attpnt' && !(key in attrs)) return
       if (!(key in attrs) && !reset) return
@@ -72,16 +72,16 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
       switch (key) {
         case 'stereoLabel':
           if (key in attrs && value) {
-            action.addOp(new AtomAttr(aid, key, value).perform(restruct))
+            action.addOp(new AtomAttr(atomId, key, value).perform(restruct))
           }
           break
         case 'stereoParity':
           if (key in attrs && value) {
-            action.addOp(new AtomAttr(aid, key, value).perform(restruct))
+            action.addOp(new AtomAttr(atomId, key, value).perform(restruct))
           }
           break
         default:
-          action.addOp(new AtomAttr(aid, key, value).perform(restruct))
+          action.addOp(new AtomAttr(atomId, key, value).perform(restruct))
           break
       }
     })
@@ -93,15 +93,23 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
       attrs.label !== 'L#' &&
       !('atomList' in attrs)
     ) {
-      action.addOp(new AtomAttr(aid, 'atomList', null).perform(restruct))
+      action.addOp(new AtomAttr(atomId, 'atomList', null).perform(restruct))
     }
 
-    action.addOp(new CalcImplicitH([aid]).perform(restruct))
+    action.addOp(new CalcImplicitH([atomId]).perform(restruct))
 
-    const atomNeighbors = restruct.molecule.atomGetNeighbors(aid)
+    const atomNeighbors = restruct.molecule.atomGetNeighbors(atomId)
     const bond = restruct.molecule.bonds.get(atomNeighbors[0]?.bid)
     if (bond) {
       action.mergeWith(fromBondStereoUpdate(restruct, bond))
+    }
+    // when a heteroatom connects to an aromatic ring it's necessary to add a ImplicitHCount
+    // property to this atom to specify the number of hydrogens on it.
+    const atom = restruct.molecule.atoms.get(atomId)
+    if (Atom.isInAromatizedRing(restruct.molecule, atomId)) {
+      action.addOp(
+        new AtomAttr(atomId, 'implicitHCount', atom.implicitH).perform(restruct)
+      )
     }
   })
 
@@ -226,7 +234,7 @@ export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {
   const frid = atomGetAttr(restruct, srcId, 'fragment')
   const frid2 = atomGetAttr(restruct, dstId, 'fragment')
   if (frid2 === frid || typeof frid !== 'number' || typeof frid2 !== 'number') {
-    return
+    return frid
   }
 
   const struct = restruct.molecule
@@ -249,6 +257,8 @@ export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {
   mergeSgroups(action, restruct, fridAtoms, dstId)
   action.addOp(new FragmentDelete(frid2).perform(restruct))
   action.mergeWith(moveAtomsAction)
+
+  return frid
 }
 
 export function mergeSgroups(action, restruct, srcAtoms, dstAtom) {

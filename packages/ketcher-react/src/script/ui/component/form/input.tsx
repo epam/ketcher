@@ -35,7 +35,7 @@ type Props = {
 
 export function GenericInput({
   schema,
-  value = '',
+  value,
   onChange,
   innerRef,
   type = 'text',
@@ -60,7 +60,7 @@ export function GenericInput({
     <>
       <input
         type={type}
-        value={value}
+        value={value ?? ''}
         onInput={onChange}
         onChange={onChange}
         className={clsx(classes.input, classes.genericInput)}

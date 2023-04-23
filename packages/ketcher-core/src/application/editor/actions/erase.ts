@@ -28,7 +28,7 @@ import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup'
 
 import { Action } from './action'
 import assert from 'assert'
-import { atomGetDegree } from './utils'
+import { atomGetDegree, formatSelection } from './utils'
 import { fromBondStereoUpdate } from '../actions/bond'
 import { fromFragmentSplit } from './fragment'
 
@@ -84,23 +84,30 @@ export function fromOneBondDeletion(restruct, id) {
   return action
 }
 
-export function fromFragmentDeletion(restruct, selection) {
-  assert(!!selection != null)
+export function fromFragmentDeletion(restruct, rawSelection) {
+  assert(!!rawSelection != null)
 
   let action = new Action()
   const atomsToRemove: Array<number> = []
   const frids: Array<number> = []
 
-  selection = {
-    // TODO: refactor me
-    atoms: selection.atoms || [],
-    bonds: selection.bonds || [],
-    rxnPluses: selection.rxnPluses || [],
-    rxnArrows: selection.rxnArrows || [],
-    sgroupData: selection.sgroupData || [],
-    simpleObjects: selection.simpleObjects || [],
-    texts: selection.texts || []
-  }
+  const selection = formatSelection(rawSelection)
+
+  selection.sgroups.forEach((sgroupId) => {
+    const sgroup = restruct.sgroups.get(sgroupId)
+    const sgroupAtoms = sgroup.item.atoms
+
+    selection.atoms = selection.atoms.concat(sgroupAtoms)
+
+    restruct.molecule.bonds.forEach((bond, bondId) => {
+      if (
+        sgroupAtoms.indexOf(bond.begin) >= 0 &&
+        sgroupAtoms.indexOf(bond.end) >= 0
+      ) {
+        selection.bonds.push(bondId)
+      }
+    })
+  })
 
   selection.atoms.forEach((aid) => {
     restruct.molecule.atomGetNeighbors(aid).forEach((nei) => {

@@ -70,6 +70,7 @@ function atomToKet(source) {
   ifDef(result, 'isotope', source.isotope, 0)
   ifDef(result, 'radical', source.radical, 0)
   ifDef(result, 'attachmentPoints', source.attpnt, 0)
+  ifDef(result, 'cip', source.cip, '')
   // stereo
   ifDef(result, 'stereoLabel', source.stereoLabel, null)
   ifDef(result, 'stereoParity', source.stereoCare, 0)
@@ -83,6 +84,7 @@ function atomToKet(source) {
   ifDef(result, 'mapping', parseInt(source.aam), 0)
   ifDef(result, 'invRet', source.invRet, 0)
   ifDef(result, 'exactChangeFlag', !!source.exactChangeFlag, false)
+  ifDef(result, 'implicitHCount', source.implicitHCount)
   return result
 }
 
@@ -120,6 +122,7 @@ function bondToKet(source) {
   ifDef(result, 'stereo', source.stereo, 0)
   ifDef(result, 'topology', source.topology, 0)
   ifDef(result, 'center', source.reactingCenterStatus, 0)
+  ifDef(result, 'cip', source.cip, '')
 
   return result
 }

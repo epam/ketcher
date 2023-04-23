@@ -162,7 +162,7 @@ class PasteTool {
         this.editor.render.page2obj(event)
       )
       this.action = action
-      this.editor.update(this.action, true, { extendCanvas: false })
+      this.editor.update(this.action, true, { resizeCanvas: false })
 
       this.mergeItems = getMergeItems(this.editor, pasteItems)
       this.editor.hover(getHoverToFuse(this.mergeItems))
@@ -207,7 +207,9 @@ class PasteTool {
       const action = this.action
       delete this.action
       if (!this.isSingleContractedGroup || !this.mergeItems) {
-        this.editor.update(dropAndMerge(this.editor, this.mergeItems, action))
+        this.editor.update(
+          dropAndMerge(this.editor, this.mergeItems, action, true)
+        )
       }
     }
   }

@@ -19,6 +19,7 @@ import { AtomAttributes, Bond, Vec2 } from 'domain/entities'
 import closest from '../shared/closest'
 import { difference } from 'lodash'
 import { ReStruct } from 'application/render'
+import { selectionKeys } from '../shared/constants'
 
 type AtomAttributeName = keyof AtomAttributes
 
@@ -53,18 +54,16 @@ export function findStereoAtoms(struct, aids: number[] | undefined): number[] {
 }
 
 export function structSelection(struct) {
-  return [
-    'atoms',
-    'bonds',
-    'frags',
-    'sgroups',
-    'rgroups',
-    'rxnArrows',
-    'rxnPluses',
-    'simpleObjects',
-    'texts'
-  ].reduce((res, key) => {
+  return selectionKeys.reduce((res, key) => {
     res[key] = Array.from(struct[key].keys())
+    return res
+  }, {})
+}
+
+export function formatSelection(selection): any {
+  return selectionKeys.reduce((res, key) => {
+    res[key] = selection[key] || []
+
     return res
   }, {})
 }

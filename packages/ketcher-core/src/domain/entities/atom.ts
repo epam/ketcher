@@ -54,6 +54,13 @@ export enum StereoLabel {
   Or = 'or'
 }
 
+enum CIP {
+  S = 'S',
+  R = 'R',
+  s = 's',
+  r = 'r'
+}
+
 export interface AtomAttributes {
   stereoParity?: number
   stereoLabel?: string | null
@@ -70,6 +77,7 @@ export interface AtomAttributes {
   rglabel?: string | null
   charge?: number
   radical?: number
+  cip?: CIP | null
   isotope?: number
   alias?: string | null
   pseudo?: string
@@ -78,6 +86,7 @@ export interface AtomAttributes {
   fragment?: number
   pp?: Point
   implicitH?: number
+  implicitHCount?: number | null
 }
 
 export class Atom {
@@ -102,6 +111,7 @@ export class Atom {
     label: 'C',
     isotope: 0,
     radical: 0,
+    cip: null,
     charge: 0,
     explicitValence: -1,
     ringBondCount: 0,
@@ -116,7 +126,8 @@ export class Atom {
     aam: 0,
     // enhanced stereo
     stereoLabel: null,
-    stereoParity: 0
+    stereoParity: 0,
+    implicitHCount: null
   }
 
   label: string
@@ -126,6 +137,7 @@ export class Atom {
   isotope: number
   hCount: number
   radical: number
+  cip: CIP | null
   charge: number
   explicitValence: number
   ringBondCount: number
@@ -133,6 +145,7 @@ export class Atom {
   substitutionCount: number
   valence: number
   implicitH: number
+  implicitHCount: number | null
   pp: Vec2
   neighbors: Array<number>
   sgs: Pile<number>
@@ -154,16 +167,18 @@ export class Atom {
     this.alias = getValueOrDefault(attributes.alias, Atom.attrlist.alias)
     this.isotope = getValueOrDefault(attributes.isotope, Atom.attrlist.isotope)
     this.radical = getValueOrDefault(attributes.radical, Atom.attrlist.radical)
+    this.cip = getValueOrDefault(attributes.cip, Atom.attrlist.cip)
     this.charge = getValueOrDefault(attributes.charge, Atom.attrlist.charge)
     this.rglabel = getValueOrDefault(attributes.rglabel, Atom.attrlist.rglabel)
     this.attpnt = getValueOrDefault(attributes.attpnt, Atom.attrlist.attpnt)
+    this.implicitHCount = getValueOrDefault(attributes.implicitHCount, null)
     this.explicitValence = getValueOrDefault(
       attributes.explicitValence,
       Atom.attrlist.explicitValence
     )
 
     this.valence = 0
-    this.implicitH = attributes.implicitH || 0 // implicitH is not an attribute
+    this.implicitH = attributes.implicitHCount || attributes.implicitH || 0 // implicitH is not an attribute
     this.pp = attributes.pp ? new Vec2(attributes.pp) : new Vec2()
 
     // sgs should only be set when an atom is added to an s-group by an appropriate method,
@@ -248,6 +263,30 @@ export class Atom {
     }
   }
 
+  static isHeteroAtom(label: string): boolean {
+    return label !== 'C' && label !== 'H'
+  }
+
+  static isInAromatizedRing(struct: Struct, atomId: number): boolean {
+    const atom = struct.atoms.get(atomId)
+    if (atom && Atom.isHeteroAtom(atom.label)) {
+      for (const [_, loop] of struct.loops) {
+        const halfBondIds = loop.hbs
+        if (loop.aromatic) {
+          for (const halfBondId of halfBondIds) {
+            const halfBond = struct.halfBonds.get(halfBondId)
+            if (!halfBond) return false
+            const { begin, end } = halfBond
+            if (begin === atomId || end === atomId) {
+              return true
+            }
+          }
+        }
+      }
+    }
+    return false
+  }
+
   clone(fidMap: Map<number, number>): Atom {
     const ret = new Atom(this)
     if (fidMap && fidMap.has(this.fragment)) {
@@ -295,7 +334,7 @@ export class Atom {
     )
   }
 
-  calcValence(conn: number): boolean {
+  calcValence(connectionCount: number): boolean {
     const label = this.label
     const charge = this.charge
     if (this.isQuery()) {
@@ -309,11 +348,20 @@ export class Atom {
     }
 
     const groupno = element.group
-    const rad = radicalElectrons(this.radical)
-    let valence = conn
-    let hyd = 0
+    const radicalCount = radicalElectrons(this.radical)
+    let valence = connectionCount
+    let hydrogenCount: any = 0
     const absCharge = Math.abs(charge)
-    if (groupno === 1) {
+
+    if (groupno === undefined) {
+      if (label === 'D' || label === 'T') {
+        valence = 1
+        hydrogenCount = 1 - radicalCount - connectionCount - absCharge
+      } else {
+        this.implicitH = 0
+        return true
+      }
+    } else if (groupno === 1) {
       if (
         label === 'H' ||
         label === 'Li' ||
@@ -324,156 +372,162 @@ export class Atom {
         label === 'Fr'
       ) {
         valence = 1
-        hyd = 1 - rad - conn - absCharge
+        hydrogenCount = 1 - radicalCount - connectionCount - absCharge
       }
     } else if (groupno === 2) {
-      if (conn + rad + absCharge === 2 || conn + rad + absCharge === 0) {
+      if (
+        connectionCount + radicalCount + absCharge === 2 ||
+        connectionCount + radicalCount + absCharge === 0
+      ) {
         valence = 2
-      } else hyd = -1
+      } else hydrogenCount = -1
     } else if (groupno === 3) {
       if (label === 'B' || label === 'Al' || label === 'Ga' || label === 'In') {
         if (charge === -1) {
           valence = 4
-          hyd = 4 - rad - conn
+          hydrogenCount = 4 - radicalCount - connectionCount
         } else {
           valence = 3
-          hyd = 3 - rad - conn - absCharge
+          hydrogenCount = 3 - radicalCount - connectionCount - absCharge
         }
       } else if (label === 'Tl') {
         if (charge === -1) {
-          if (rad + conn <= 2) {
+          if (radicalCount + connectionCount <= 2) {
             valence = 2
-            hyd = 2 - rad - conn
+            hydrogenCount = 2 - radicalCount - connectionCount
           } else {
             valence = 4
-            hyd = 4 - rad - conn
+            hydrogenCount = 4 - radicalCount - connectionCount
           }
         } else if (charge === -2) {
-          if (rad + conn <= 3) {
+          if (radicalCount + connectionCount <= 3) {
             valence = 3
-            hyd = 3 - rad - conn
+            hydrogenCount = 3 - radicalCount - connectionCount
           } else {
             valence = 5
-            hyd = 5 - rad - conn
+            hydrogenCount = 5 - radicalCount - connectionCount
           }
-        } else if (rad + conn + absCharge <= 1) {
+        } else if (radicalCount + connectionCount + absCharge <= 1) {
           valence = 1
-          hyd = 1 - rad - conn - absCharge
+          hydrogenCount = 1 - radicalCount - connectionCount - absCharge
         } else {
           valence = 3
-          hyd = 3 - rad - conn - absCharge
+          hydrogenCount = 3 - radicalCount - connectionCount - absCharge
         }
       }
     } else if (groupno === 4) {
       if (label === 'C' || label === 'Si' || label === 'Ge') {
         valence = 4
-        hyd = 4 - rad - conn - absCharge
+        hydrogenCount = 4 - radicalCount - connectionCount - absCharge
       } else if (label === 'Sn' || label === 'Pb') {
-        if (conn + rad + absCharge <= 2) {
+        if (connectionCount + radicalCount + absCharge <= 2) {
           valence = 2
-          hyd = 2 - rad - conn - absCharge
+          hydrogenCount = 2 - radicalCount - connectionCount - absCharge
         } else {
           valence = 4
-          hyd = 4 - rad - conn - absCharge
+          hydrogenCount = 4 - radicalCount - connectionCount - absCharge
         }
       }
     } else if (groupno === 5) {
       if (label === 'N' || label === 'P') {
         if (charge === 1) {
           valence = 4
-          hyd = 4 - rad - conn
+          hydrogenCount = 4 - radicalCount - connectionCount
         } else if (charge === 2) {
           valence = 3
-          hyd = 3 - rad - conn
-        } else if (label === 'N' || rad + conn + absCharge <= 3) {
+          hydrogenCount = 3 - radicalCount - connectionCount
+        } else if (
+          label === 'N' ||
+          radicalCount + connectionCount + absCharge <= 3
+        ) {
           valence = 3
-          hyd = 3 - rad - conn - absCharge
+          hydrogenCount = 3 - radicalCount - connectionCount - absCharge
         } else {
           // ELEM_P && rad + conn + absCharge > 3
           valence = 5
-          hyd = 5 - rad - conn - absCharge
+          hydrogenCount = 5 - radicalCount - connectionCount - absCharge
         }
       } else if (label === 'Bi' || label === 'Sb' || label === 'As') {
         if (charge === 1) {
-          if (rad + conn <= 2 && label !== 'As') {
+          if (radicalCount + connectionCount <= 2 && label !== 'As') {
             valence = 2
-            hyd = 2 - rad - conn
+            hydrogenCount = 2 - radicalCount - connectionCount
           } else {
             valence = 4
-            hyd = 4 - rad - conn
+            hydrogenCount = 4 - radicalCount - connectionCount
           }
         } else if (charge === 2) {
           valence = 3
-          hyd = 3 - rad - conn
-        } else if (rad + conn <= 3) {
+          hydrogenCount = 3 - radicalCount - connectionCount
+        } else if (radicalCount + connectionCount <= 3) {
           valence = 3
-          hyd = 3 - rad - conn - absCharge
+          hydrogenCount = 3 - radicalCount - connectionCount - absCharge
         } else {
           valence = 5
-          hyd = 5 - rad - conn - absCharge
+          hydrogenCount = 5 - radicalCount - connectionCount - absCharge
         }
       }
     } else if (groupno === 6) {
       if (label === 'O') {
         if (charge >= 1) {
           valence = 3
-          hyd = 3 - rad - conn
+          hydrogenCount = 3 - radicalCount - connectionCount
         } else {
           valence = 2
-          hyd = 2 - rad - conn - absCharge
+          hydrogenCount = 2 - radicalCount - connectionCount - absCharge
         }
       } else if (label === 'S' || label === 'Se' || label === 'Po') {
         if (charge === 1) {
-          if (conn <= 3) {
+          if (connectionCount <= 3) {
             valence = 3
-            hyd = 3 - rad - conn
+            hydrogenCount = 3 - radicalCount - connectionCount
           } else {
             valence = 5
-            hyd = 5 - rad - conn
+            hydrogenCount = 5 - radicalCount - connectionCount
           }
-        } else if (conn + rad + absCharge <= 2) {
+        } else if (connectionCount + radicalCount + absCharge <= 2) {
           valence = 2
-          hyd = 2 - rad - conn - absCharge
-        } else if (conn + rad + absCharge <= 4) {
+          hydrogenCount = 2 - radicalCount - connectionCount - absCharge
+        } else if (connectionCount + radicalCount + absCharge <= 4) {
           // See examples in PubChem
           // [S] : CID 16684216
           // [Se]: CID 5242252
           // [Po]: no example, just following ISIS/Draw logic here
           valence = 4
-          hyd = 4 - rad - conn - absCharge
+          hydrogenCount = 4 - radicalCount - connectionCount - absCharge
         } else {
           // See examples in PubChem
           // [S] : CID 46937044
           // [Se]: CID 59786
           // [Po]: no example, just following ISIS/Draw logic here
           valence = 6
-          hyd = 6 - rad - conn - absCharge
+          hydrogenCount = 6 - radicalCount - connectionCount - absCharge
         }
       } else if (label === 'Te') {
         if (charge === -1) {
-          if (conn <= 2) {
+          if (connectionCount <= 2) {
             valence = 2
-            hyd = 2 - rad - conn - absCharge
+            hydrogenCount = 2 - radicalCount - connectionCount - absCharge
           }
         } else if (charge === 0 || charge === 2) {
-          if (conn <= 2) {
+          if (connectionCount <= 2) {
             valence = 2
-            hyd = 2 - rad - conn - absCharge
-          } else if (conn <= 4) {
+            hydrogenCount = 2 - radicalCount - connectionCount - absCharge
+          } else if (connectionCount <= 4) {
             valence = 4
-            hyd = 4 - rad - conn - absCharge
-          } else if (charge === 0 && conn <= 6) {
+            hydrogenCount = 4 - radicalCount - connectionCount - absCharge
+          } else if (charge === 0 && connectionCount <= 6) {
             valence = 6
-            hyd = 6 - rad - conn - absCharge
+            hydrogenCount = 6 - radicalCount - connectionCount - absCharge
           } else {
-            hyd = -1
+            hydrogenCount = -1
           }
         }
       }
     } else if (groupno === 7) {
       if (label === 'F') {
         valence = 1
-        hyd = 1 - rad - conn - absCharge
+        hydrogenCount = 1 - radicalCount - connectionCount - absCharge
       } else if (
         label === 'Cl' ||
         label === 'Br' ||
@@ -481,39 +535,49 @@ export class Atom {
         label === 'At'
       ) {
         if (charge === 1) {
-          if (conn <= 2) {
+          if (connectionCount <= 2) {
             valence = 2
-            hyd = 2 - rad - conn
-          } else if (conn === 3 || conn === 5 || conn >= 7) {
-            hyd = -1
+            hydrogenCount = 2 - radicalCount - connectionCount
+          } else if (
+            connectionCount === 3 ||
+            connectionCount === 5 ||
+            connectionCount >= 7
+          ) {
+            hydrogenCount = -1
           }
         } else if (charge === 0) {
-          if (conn <= 1) {
+          if (connectionCount <= 1) {
             valence = 1
-            hyd = 1 - rad - conn
+            hydrogenCount = 1 - radicalCount - connectionCount
             // While the halogens can have valence 3, they can not have
             // hydrogens in that case.
-          } else if (conn === 2 || conn === 4 || conn === 6) {
-            if (rad === 1) {
-              valence = conn
-              hyd = 0
+          } else if (
+            connectionCount === 2 ||
+            connectionCount === 4 ||
+            connectionCount === 6
+          ) {
+            if (radicalCount === 1) {
+              valence = connectionCount
+              hydrogenCount = 0
             } else {
-              hyd = -1 // will throw an error in the end
+              hydrogenCount = -1 // will throw an error in the end
             }
-          } else if (conn > 7) {
-            hyd = -1 // will throw an error in the end
+          } else if (connectionCount > 7) {
+            hydrogenCount = -1 // will throw an error in the end
           }
         }
       }
     } else if (groupno === 8) {
-      if (conn + rad + absCharge === 0) valence = 1
-      else hyd = -1
+      if (connectionCount + radicalCount + absCharge === 0) valence = 1
+      else hydrogenCount = -1
     }
-
+    if (Atom.isHeteroAtom(label) && this.implicitHCount !== null) {
+      hydrogenCount = this.implicitHCount
+    }
     this.valence = valence
-    this.implicitH = hyd
+    this.implicitH = hydrogenCount
     if (this.implicitH < 0) {
-      this.valence = conn
+      this.valence = connectionCount
       this.implicitH = 0
       this.badConn = true
       return false

@@ -47,7 +47,6 @@ class TemplateTool {
   dragCtx: any
   targetGroupsIds: Array<number> = []
   isSaltOrSolvent: boolean
-  event: Event | undefined
 
   constructor(editor: Editor, tmpl) {
     this.editor = editor
@@ -96,53 +95,6 @@ class TemplateTool {
     editor.hoverIcon.updatePosition()
   }
 
-  get struct() {
-    return this.editor.render.ctab.molecule
-  }
-
-  get functionalGroups() {
-    return this.struct.functionalGroups
-  }
-
-  get isModeFunctionalGroup(): boolean {
-    return this.mode === MODES.FG
-  }
-
-  get closestItem() {
-    return this.editor.findItem(this.event, [
-      'atoms',
-      'bonds',
-      'sgroups',
-      'functionalGroups'
-    ])
-  }
-
-  get isNeedToShowRemoveAbbreviationPopup(): boolean {
-    const targetId = this.findKeyOfRelatedGroupId(this.closestItem?.id)
-    const isTargetExpanded = this.functionalGroups.get(targetId!)?.isExpanded
-    const isTargetAtomOrBond =
-      this.targetGroupsIds.length && !this.isModeFunctionalGroup
-
-    return Boolean(isTargetExpanded || isTargetAtomOrBond)
-  }
-
-  findKeyOfRelatedGroupId(clickedClosestItemId: number): number {
-    let targetId
-
-    const relatedGroupId = FunctionalGroup.findFunctionalGroupByAtom(
-      this.functionalGroups,
-      clickedClosestItemId
-    )
-
-    this.functionalGroups.forEach((fg, key) => {
-      if (fg.relatedSGroupId === relatedGroupId) {
-        targetId = key
-      }
-    })
-
-    return targetId
-  }
-
   showRemoveAbbreviationPopup(): Promise<void> {
     return this.editor.event.removeFG
       .dispatch({ fgIds: this.targetGroupsIds })
@@ -153,32 +105,45 @@ class TemplateTool {
       })
   }
 
-  async mousedown(event) {
-    this.event = event
+  get isModeFunctionalGroup() {
+    return this.mode === MODES.FG
+  }
 
-    if (this.functionalGroups.size) {
-      this.targetGroupsIds = getGroupIdsFromItemArrays(this.struct, {
-        ...(this.closestItem?.map === 'atoms' && {
-          atoms: [this.closestItem.id]
-        }),
-        ...(this.closestItem?.map === 'bonds' && {
-          bonds: [this.closestItem.id]
-        })
+  async mousedown(event) {
+    const closestItem = this.editor.findItem(event, [
+      'atoms',
+      'bonds',
+      'sgroups',
+      'functionalGroups'
+    ])
+    const ctab = this.editor.render.ctab
+    const struct = ctab.molecule
+
+    if (struct.functionalGroups.size) {
+      this.targetGroupsIds = getGroupIdsFromItemArrays(struct, {
+        ...(closestItem?.map === 'atoms' && { atoms: [closestItem.id] }),
+        ...(closestItem?.map === 'bonds' && { bonds: [closestItem.id] })
       })
 
       if (
         // if point is functional group and it is not expanded
-        this.closestItem?.map === 'functionalGroups' &&
+        closestItem?.map === 'functionalGroups' &&
         FunctionalGroup.isContractedFunctionalGroup(
-          this.closestItem.id,
-          this.functionalGroups
+          closestItem.id,
+          struct.functionalGroups
         )
       ) {
-        this.targetGroupsIds.push(this.closestItem.id)
+        this.targetGroupsIds.push(closestItem.id)
       }
     }
 
-    if (this.isNeedToShowRemoveAbbreviationPopup) {
+    const isTargetExpanded = struct.functionalGroups.get(
+      this.targetGroupsIds[0]
+    )?.isExpanded
+    const isTargetAtomOrBond =
+      this.targetGroupsIds.length && !this.isModeFunctionalGroup
+
+    if (isTargetAtomOrBond || isTargetExpanded) {
       await this.showRemoveAbbreviationPopup()
 
       return
@@ -187,8 +152,8 @@ class TemplateTool {
     this.editor.hover(null)
 
     this.dragCtx = {
-      xy0: this.editor.render.page2obj(this.event),
-      item: this.editor.findItem(this.event, this.findItems)
+      xy0: this.editor.render.page2obj(event),
+      item: this.editor.findItem(event, this.findItems)
     }
 
     const dragCtx = this.dragCtx
@@ -203,24 +168,24 @@ class TemplateTool {
     if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       // calculate fragment center
       const xy0 = new Vec2()
-      const bond = this.struct.bonds.get(ci.id)
-      const frid = this.struct.atoms.get(bond?.begin as number)?.fragment
-      const frIds = this.struct.getFragmentIds(frid as number)
+      const bond = struct.bonds.get(ci.id)
+      const frid = struct.atoms.get(bond?.begin as number)?.fragment
+      const frIds = struct.getFragmentIds(frid as number)
       let count = 0
 
-      let loop = this.struct.halfBonds.get(bond?.hb1 as number)?.loop
+      let loop = struct.halfBonds.get(bond?.hb1 as number)?.loop
 
       if (loop && loop < 0) {
-        loop = this.struct.halfBonds.get(bond?.hb2 as number)?.loop
+        loop = struct.halfBonds.get(bond?.hb2 as number)?.loop
       }
 
       if (loop && loop >= 0) {
-        const loopHbs = this.struct.loops.get(loop)?.hbs
+        const loopHbs = struct.loops.get(loop)?.hbs
         loopHbs?.forEach((hb) => {
-          const halfBondBegin = this.struct.halfBonds.get(hb)?.begin
+          const halfBondBegin = struct.halfBonds.get(hb)?.begin
 
           if (halfBondBegin) {
-            const hbbAtom = this.struct.atoms.get(halfBondBegin)
+            const hbbAtom = struct.atoms.get(halfBondBegin)
 
             if (hbbAtom) {
               xy0.add_(hbbAtom.pp) // eslint-disable-line no-underscore-dangle, max-len
@@ -230,7 +195,7 @@ class TemplateTool {
         })
       } else {
         frIds.forEach((id) => {
-          const atomById = this.struct.atoms.get(id)
+          const atomById = struct.atoms.get(id)
 
           if (atomById) {
             xy0.add_(atomById.pp) // eslint-disable-line no-underscore-dangle
@@ -241,7 +206,7 @@ class TemplateTool {
 
       dragCtx.v0 = xy0.scaled(1 / count)
 
-      const sign = getSign(this.struct, bond, dragCtx.v0)
+      const sign = getSign(struct, bond, dragCtx.v0)
 
       // calculate default template flip
       dragCtx.sign1 = sign || 1
@@ -265,11 +230,12 @@ class TemplateTool {
     const ci = dragCtx.item
     let targetPos: Vec2 | null | undefined = null
     const eventPos = this.editor.render.page2obj(event)
+    const struct = this.editor.render.ctab.molecule
 
     /* moving when attached to bond */
     if (ci && ci.map === 'bonds' && !this.isModeFunctionalGroup) {
-      const bond = this.struct.bonds.get(ci.id)
-      let sign = getSign(this.struct, bond, eventPos)
+      const bond = struct.bonds.get(ci.id)
+      let sign = getSign(struct, bond, eventPos)
 
       if (dragCtx.sign1 * this.template.sign > 0) {
         sign = -sign
@@ -306,10 +272,10 @@ class TemplateTool {
       //  ci.type == 'Canvas'
       targetPos = dragCtx.xy0
     } else if (ci.map === 'atoms' || ci.map === 'functionalGroups') {
-      const atomId = getTargetAtomId(this.struct, ci)
+      const atomId = getTargetAtomId(struct, ci)
 
       if (atomId !== undefined) {
-        const atom = this.struct.atoms.get(atomId)
+        const atom = struct.atoms.get(atomId)
         targetPos = atom?.pp
 
         if (targetPos) {
@@ -369,7 +335,7 @@ class TemplateTool {
         angle
       )
     } else if (ci?.map === 'atoms' || ci?.map === 'functionalGroups') {
-      const atomId = getTargetAtomId(this.struct, ci)
+      const atomId = getTargetAtomId(struct, ci)
       ;[action, pasteItems] = fromTemplateOnAtom(
         this.editor.render.ctab,
         this.template,
@@ -404,7 +370,9 @@ class TemplateTool {
     delete this.dragCtx
 
     const restruct = this.editor.render.ctab
+    const struct = restruct.molecule
     let ci = dragCtx.item
+    const functionalGroups = struct.functionalGroups
 
     /* after moving around bond */
     if (
@@ -451,21 +419,17 @@ class TemplateTool {
       return true
     } else if (
       ci?.map === 'functionalGroups' &&
-      FunctionalGroup.isContractedFunctionalGroup(
-        ci.id,
-        this.functionalGroups
-      ) &&
+      FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups) &&
       this.isModeFunctionalGroup &&
       this.targetGroupsIds.length
     ) {
       functionalGroupRemoveAction = new Action()
+      const struct = this.editor.struct()
       const restruct = this.editor.render.ctab
-      const functionalGroupToReplace = this.struct.sgroups.get(ci.id)!
-      const attachmentAtomId = functionalGroupToReplace.getAttAtomId(
-        this.struct
-      )
+      const functionalGroupToReplace = struct.sgroups.get(ci.id)!
+      const attachmentAtomId = functionalGroupToReplace.getAttAtomId(struct)
       const atomsWithoutAttachmentAtom = SGroup.getAtoms(
-        this.struct,
+        struct,
         functionalGroupToReplace
       ).filter((id) => id !== attachmentAtomId)
 
@@ -496,11 +460,9 @@ class TemplateTool {
           angle = null
         } else if (degree === 1) {
           // on chain end
-          const atom = this.struct.atoms.get(ci.id)
-          const neiId =
-            atom && this.struct.halfBonds.get(atom.neighbors[0])?.end
-          const nei: any =
-            (neiId || neiId === 0) && this.struct.atoms.get(neiId)
+          const atom = struct.atoms.get(ci.id)
+          const neiId = atom && struct.halfBonds.get(atom.neighbors[0])?.end
+          const nei: any = (neiId || neiId === 0) && struct.atoms.get(neiId)
 
           angle = event.ctrlKey
             ? utils.calcAngle(nei?.pp, atom?.pp)

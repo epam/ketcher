@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run Build for all packages
-        run: npm run build
+        run: npm run buildSyncCi
       - name: Run example in standalone mode
         run: cd example/ && nohup npm run serve:standalone &
       - name: Run Playwright tests

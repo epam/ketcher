@@ -24,7 +24,7 @@ jobs:
       - name: Run Build for all packages
         run: npm run build
       - name: Run example in standalone mode
-        run: cd packages/ketcher-standalone && nohup npm serve:standalone &
+        run: cd example/ && nohup npm run serve:standalone &
       - name: Run Playwright tests
         run: npx playwright test
       - uses: actions/upload-artifact@v3

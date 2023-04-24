@@ -283,6 +283,9 @@ class SelectTool {
     editor.event.message.dispatch({
       info: false
     })
+
+    // @yuleicul is here the right position to put this line
+    this.editor.rotateController.show()
   }
 
   dblclick(event) {

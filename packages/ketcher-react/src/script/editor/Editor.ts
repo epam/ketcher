@@ -38,6 +38,7 @@ import { Highlighter } from './highlighter'
 import { showFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip'
 import { contextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types'
 import { HoverIcon } from './HoverIcon'
+import RotateController from './tool/rotate-controller'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -115,6 +116,7 @@ class Editor implements KetcherEditor {
   hoverIcon: HoverIcon
   lastCursorPosition: { x: number; y: number }
   contextMenu: contextMenuInfo
+  rotateController: RotateController
   event: {
     message: Subscription
     elementEdit: PipelineSubscription
@@ -166,6 +168,7 @@ class Editor implements KetcherEditor {
     this.hoverIcon = new HoverIcon(this)
     this.hoverIcon.updatePosition()
     this.contextMenu = {}
+    this.rotateController = new RotateController(this)
 
     this.event = {
       message: new Subscription(),
@@ -354,6 +357,7 @@ class Editor implements KetcherEditor {
 
     this.render.ctab.setSelection(this._selection) // eslint-disable-line
     this.event.selectionChange.dispatch(this._selection) // eslint-disable-line
+    this.rotateController.onSelectChange(this._selection)
 
     this.render.update(false, null, { resizeCanvas: false })
     return this._selection // eslint-disable-line

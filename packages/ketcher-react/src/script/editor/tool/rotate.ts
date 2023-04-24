@@ -59,10 +59,19 @@ class RotateTool {
   }
 
   mousedown(event) {
+    const xy0 = RotateTool.getCenter(this.editor, event)
+    this.dragCtx = {
+      xy0,
+      angle1: utils.calcAngle(xy0, this.editor.render.page2obj(event))
+    }
+    return true
+  }
+
+  static getCenter(editor: Editor, event?) {
+    const selection = editor.selection()
+    const struct = editor.render.ctab.molecule
+
     let xy0 = new Vec2()
-    const selection = this.editor.selection()
-    const rnd = this.editor.render
-    const struct = rnd.ctab.molecule
 
     if (selection && selection.atoms) {
       let rotId: number | null = null
@@ -118,14 +127,11 @@ class RotateTool {
       }) // eslint-disable-line no-underscore-dangle, max-len
       // poor man struct center (without sdata, etc)
       xy0 = xy0.scaled(1 / struct.atoms.size)
-    } else {
-      xy0 = rnd.page2obj(event)
+    } else if (event) {
+      xy0 = editor.render.page2obj(event)
     }
-    this.dragCtx = {
-      xy0,
-      angle1: utils.calcAngle(xy0, rnd.page2obj(event))
-    }
-    return true
+
+    return xy0
   }
 
   mousemove(event) {

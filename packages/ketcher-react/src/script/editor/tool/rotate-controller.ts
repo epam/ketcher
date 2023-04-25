@@ -6,7 +6,7 @@ import utils from '../shared/utils'
 import RotateTool from './rotate'
 import SelectTool from './select'
 
-// todo @yuleicul tfx
+// todo @yuleicul tfx to check if rotate use tfx... try to keep consistent
 type RaphaelElement = {
   [key: string]: any
 }
@@ -61,7 +61,6 @@ class RotateController {
       return
     }
 
-    // FIXME: @yuleicul zoom in/out
     const render = this.editor.render
     const originalCenter = RotateTool.getCenter(this.editor)
     this.center = originalCenter
@@ -76,7 +75,7 @@ class RotateController {
     // NOTE: remember to remove all listeners before calling `hide()`
     this.handle?.hover(this.hoverInHandle, this.hoverOutHandle)
     this.handle?.mousedown(this.mouseDownHandle)
-    this.handle?.drag(this.dragHandleOnMove(), undefined, this.dragHandleOnEnd)
+    this.handle?.drag(this.dragHandleOnMove())
   }
 
   private drawCross() {
@@ -206,6 +205,11 @@ class RotateController {
   private mouseDownHandle = (event: MouseEvent) => {
     event.stopPropagation()
 
+    const isLeftButtonPressed = event.buttons === 1
+    if (!isLeftButtonPressed) {
+      return
+    }
+
     this.cross?.attr({
       stroke: STYLE.ACTIVE_COLOR
     })
@@ -226,9 +230,6 @@ class RotateController {
   }
 
   private dragHandleOnMove = () => {
-    // FIXME: handle&rect don't sync with structur when rotating
-    // @yuleicul prevent right button
-
     let lastHandleCenter = this.initialHandleCenter
     let lastRotateAngle = utils.calcAngle(lastHandleCenter, this.center)
 
@@ -239,7 +240,8 @@ class RotateController {
       _clientY: number,
       event: MouseEvent
     ) => {
-      if (!lastHandleCenter) {
+      const isLeftButtonPressed = event.buttons === 1
+      if (!lastHandleCenter || !isLeftButtonPressed) {
         return
       }
 
@@ -270,11 +272,6 @@ class RotateController {
 
       this.rotateTool?.mousemove(event)
     }
-  }
-
-  private dragHandleOnEnd = () => {
-    this.rotateTool?.mouseup()
-    this.hide()
   }
 }
 

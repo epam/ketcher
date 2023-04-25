@@ -1,4 +1,6 @@
 import { Scale, Vec2 } from 'ketcher-core'
+import { FC } from 'react'
+import TransFormRotateIcon from 'src/icons/files/transform-rotate-handle.svg'
 import Editor, { Selection } from '../Editor'
 import utils from '../shared/utils'
 import RotateTool from './rotate'
@@ -49,8 +51,8 @@ class RotateController {
 
     this.drawCross()
     const rectStartY = this.drawRectangle()
-    this.drawHandle(rectStartY)
-    this.drawLink()
+    this.drawLink(rectStartY)
+    this.drawHandle()
 
     // NOTE: remember to remove all listeners before calling `hide()`
     this.handle?.hover(this.hoverInHandle, this.hoverOutHandle)
@@ -95,7 +97,37 @@ class RotateController {
     return rectStartY
   }
 
-  private drawHandle(rectStartY: number) {
+  private drawHandle() {
+    const paper = this.editor.render.paper
+
+    const circle = paper.circle(0, 0, STYLE.HANDLE_RADIUS).attr({
+      fill: '#B4B9D6',
+      stroke: 'none'
+    })
+
+    const iconPaths = (TransFormRotateIcon as unknown as FC)({})?.props.children
+    const leftArrowPath: string = iconPaths[1].props.d
+    const rightArrowPath: string = iconPaths[2].props.d
+    const leftArrow = paper
+      .path(leftArrowPath)
+      .attr({ fill: 'white', stroke: 'none' })
+    const rightArrow = paper
+      .path(rightArrowPath)
+      .attr({ fill: 'white', stroke: 'none' })
+    const arrowSet: RaphaelElement = paper.set()
+    arrowSet.push(leftArrow, rightArrow)
+    const { x, y, width, height } = arrowSet.getBBox()
+    arrowSet.translate(-(x + width / 2), -(y + height / 2))
+
+    this.handle = paper.set() as RaphaelElement
+    this.handle.push(circle, arrowSet)
+    this.handle.translate(
+      this.initialHandleCenter?.x,
+      this.initialHandleCenter?.y
+    )
+  }
+
+  private drawLink(rectStartY: number) {
     if (!this.center) {
       return
     }
@@ -106,21 +138,9 @@ class RotateController {
       this.center.x,
       this.center.y - distanceBetweenHandleAndCenter
     )
-    this.handle = this.editor.render.paper
-      .circle(
-        // todo @yuleicul replace with icon
-        this.initialHandleCenter.x,
-        this.initialHandleCenter.y,
-        STYLE.HANDLE_RADIUS
-      )
-      .attr({
-        fill: '#B4B9D6'
-      })
-  }
 
-  private drawLink() {
     this.link = this.editor.render.paper.path(
-      `M${this.initialHandleCenter?.x},${this.initialHandleCenter?.y}l0,${
+      `M${this.initialHandleCenter.x},${this.initialHandleCenter.y}l0,${
         STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN
       }`
     )
@@ -128,13 +148,15 @@ class RotateController {
 
   // NOTE: When handle is non-arrow function, `this` is element itself
   private hoverInHandle = () => {
-    this.handle?.attr({
+    const handleBackground = this.handle?.[0]
+    handleBackground.attr({
       fill: '#365CFF'
     })
   }
 
   private hoverOutHandle = () => {
-    this.handle?.attr({
+    const handleBackground = this.handle?.[0]
+    handleBackground.attr({
       fill: '#B4B9D6'
     })
   }
@@ -150,6 +172,7 @@ class RotateController {
     this.link = paper.path(
       `M${this.center?.x},${this.center?.y}L${this.initialHandleCenter?.x},${this.initialHandleCenter?.y}`
     )
+    // FIXME: @yuleicul overlay link
 
     this.rotateTool = new RotateTool(this.editor, undefined)
     this.rotateTool?.mousedown(event)

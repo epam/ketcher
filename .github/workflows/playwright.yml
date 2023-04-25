@@ -32,7 +32,7 @@ jobs:
       - name: Run example in standalone mode
         run: cd example/ && nohup npm run serve:standalone &
       - name: Run Playwright tests
-        run: cd .. && cd ketcher-autotests && npx playwright test
+        run: cd .. && cd ketcher-autotests && npm run test:ci
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()

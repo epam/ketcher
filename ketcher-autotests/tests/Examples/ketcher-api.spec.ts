@@ -1,0 +1,18 @@
+import { test, expect } from '@playwright/test';
+import fullMolV2000Test from '@tests/test-data/molV2000-result';
+import { clickInTheMiddleOfTheScreen } from '@utils';
+
+test('getting molV2000 from Ketcher API', async ({ page }) => {
+  await page.goto('');
+
+  await page.getByRole('button', { name: 'Benzene (T)' }).click();
+
+  await clickInTheMiddleOfTheScreen(page);
+
+  const [, , molFile] = (
+    await page.evaluate(() => window.ketcher.getMolfile())
+  ).split('\n');
+  const [, , molV2000Test] = fullMolV2000Test.split('\n');
+
+  expect(molFile).toBe(molV2000Test);
+});

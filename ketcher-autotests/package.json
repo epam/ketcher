@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npx playwright test",
     "test:debug": "npx playwright test --debug",
-    "test:ci": "npx playwright test ketcher-api"
+    "test:ci": "npx playwright test ketcher-canvas"
   },
   "author": "Nitvex",
   "license": "ISC",

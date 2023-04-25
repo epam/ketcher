@@ -14,8 +14,6 @@ dotenv.config();
  */
 
 function baseURL(): string {
-  console.log('process.env.MODE', process.env.MODE);
-  console.log('process.env.KETCHER_URL', process.env.KETCHER_URL);
   if (!process.env.MODE || !process.env.KETCHER_URL) {
     return DEFAULT_KETCHER_STANDALONE_URL;
   }

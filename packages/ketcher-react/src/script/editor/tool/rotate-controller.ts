@@ -6,6 +6,7 @@ import utils from '../shared/utils'
 import RotateTool from './rotate'
 import SelectTool from './select'
 
+// todo @yuleicul tfx
 type RaphaelElement = {
   [key: string]: any
 }
@@ -14,7 +15,7 @@ const STYLE = {
   HANDLE_MARGIN: 15,
   HANDLE_RADIUS: 10,
   RECT_RADIUS: 20,
-  RECT_PADDING: 20,
+  RECT_PADDING: 10,
   INITIAL_COLOR: '#B4B9D6',
   ACTIVE_COLOR: '#365CFF'
 }
@@ -100,10 +101,22 @@ class RotateController {
       .transform(Scale.obj2scaled, render.options)
       .translate(render.options.offset || new Vec2())
 
-    const rectStartX = rectBox.p0.x - STYLE.RECT_PADDING
-    const rectStartY = rectBox.p0.y - STYLE.RECT_PADDING
-    const rectEndX = rectBox.p1.x + STYLE.RECT_PADDING
-    const rectEndY = rectBox.p1.y + STYLE.RECT_PADDING
+    const rectStartX =
+      rectBox.p0.x -
+      STYLE.RECT_PADDING -
+      render.options.atomSelectionPlateRadius
+    const rectStartY =
+      rectBox.p0.y -
+      STYLE.RECT_PADDING -
+      render.options.atomSelectionPlateRadius
+    const rectEndX =
+      rectBox.p1.x +
+      STYLE.RECT_PADDING +
+      render.options.atomSelectionPlateRadius
+    const rectEndY =
+      rectBox.p1.y +
+      STYLE.RECT_PADDING +
+      render.options.atomSelectionPlateRadius
 
     this.rectangle = render.paper
       .rect(

@@ -34,7 +34,7 @@ jobs:
       - name: Show all files
         run: ls
       - name: Run Playwright tests
-        run: cd .. && cd ketcher-autotests/ && npm run test:ci
+        run: cd ketcher-autotests/ && npm run test:ci
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()

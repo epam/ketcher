@@ -314,16 +314,17 @@ function ctrlMap(component, props: Props) {
 
 function componentMap(props: Props) {
   const { schema, type, multiple } = props
+
+  if (schema?.type === 'boolean' && schema?.description === 'slider') {
+    return Slider
+  }
+
   if (!schema || (!schema.enum && !schema.items && !Array.isArray(schema))) {
     if (type === 'checkbox' || (schema && schema.type === 'boolean')) {
       return CheckBox
     }
 
     return type === 'textarea' ? TextArea : GenericInput
-  }
-
-  if (schema?.type === 'boolean' && schema?.description === 'slider') {
-    return Slider
   }
 
   if (multiple || schema.type === 'array')

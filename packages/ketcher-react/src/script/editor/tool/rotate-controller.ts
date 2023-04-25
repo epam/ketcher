@@ -16,6 +16,7 @@ class RotateController {
   private editor: Editor
   private center?: Vec2
   private initialHandleCenter?: Vec2
+  private rotateTool?: RotateTool
 
   // @yuleicul rethink names, more professional
   /** Raphaël elements */
@@ -29,11 +30,12 @@ class RotateController {
   }
 
   show() {
+    // FIXME: context menu doesn't work
     this.hide()
 
     // FIXME: @yuleicul when to show? what's fragment/structure
     const selection = this.editor.selection()
-    const disable = !selection?.atoms
+    const disable = !selection?.atoms || selection.atoms.length <= 1
     if (disable) {
       return
     }
@@ -50,6 +52,7 @@ class RotateController {
     this.drawHandle(rectStartY)
     this.drawLink()
 
+    // NOTE: remember to remove all listeners before calling `hide()`
     this.handle?.hover(this.hoverInHandle, this.hoverOutHandle)
     this.handle?.mousedown(this.mouseDownHandle)
     this.handle?.drag(this.dragHandleOnMove(), undefined, this.dragHandleOnEnd)
@@ -147,6 +150,9 @@ class RotateController {
     this.link = paper.path(
       `M${this.center?.x},${this.center?.y}L${this.initialHandleCenter?.x},${this.initialHandleCenter?.y}`
     )
+
+    this.rotateTool = new RotateTool(this.editor, undefined)
+    this.rotateTool?.mousedown(event)
   }
 
   private dragHandleOnMove = () => {
@@ -155,7 +161,13 @@ class RotateController {
     let lastHandleCenter = this.initialHandleCenter
     let lastRotateAngle = utils.calcAngle(lastHandleCenter, this.center)
 
-    return (dxFromStart: number, dyFromStart: number) => {
+    return (
+      dxFromStart: number,
+      dyFromStart: number,
+      _clientX: number,
+      _clientY: number,
+      event: MouseEvent
+    ) => {
       if (!lastHandleCenter) {
         return
       }
@@ -178,14 +190,18 @@ class RotateController {
 
       lastHandleCenter = newHandleCenter
       lastRotateAngle = newRotateAngle
+
+      this.rotateTool?.mousemove(event)
     }
   }
 
   private dragHandleOnEnd = () => {
+    this.rotateTool?.mouseup()
     this.hide()
   }
 
   private hide() {
+    // @yuleicul after switching to Rotate Tool, hide handle
     this.handle?.unhover(this.hoverInHandle, this.hoverOutHandle)
     this.handle?.unmousedown(this.mouseDownHandle)
     this.handle?.undrag()

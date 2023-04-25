@@ -29,10 +29,13 @@ jobs:
         run: npm run buildCi
       - name: Run example in standalone mode
         run: cd example/ && nohup npm run serve:standalone &
-      - name: Show all files
-        run: ls
-      - name: Run Playwright tests
-        run: cd ketcher-autotests/ && npx playwright install --with-deps && npm run test:ci
+      - name: Go to ketcher-autotests and install playwright browsers
+        run: cd ketcher-autotests/ && npx playwright install --with-deps
+      - name: Run playwright tests
+        env:
+          MODE: standalone
+          KETCHER_URL: http://localhost:4002
+        run: npm run test:ci
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()

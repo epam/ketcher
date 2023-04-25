@@ -226,6 +226,11 @@ class Editor implements KetcherEditor {
       this.hoverIcon.hide(true)
     }
 
+    const isSelectToolChosen = name === 'select'
+    if (!isSelectToolChosen) {
+      this.rotateController.hide()
+    }
+
     if (!tool || tool.isNotActiveTool) {
       return null
     }

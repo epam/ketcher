@@ -200,8 +200,7 @@ class RotateController {
     this.hide()
   }
 
-  private hide() {
-    // @yuleicul after switching to Rotate Tool, hide handle
+  hide() {
     this.handle?.unhover(this.hoverInHandle, this.hoverOutHandle)
     this.handle?.unmousedown(this.mouseDownHandle)
     this.handle?.undrag()

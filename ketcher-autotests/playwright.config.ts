@@ -114,7 +114,7 @@ const config: PlaywrightTestConfig = {
   ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
-  snapshotPathTemplate: 'test-results/{testFilePath}/{arg}{ext}',
+  snapshotPathTemplate: 'tests/{testFilePath}-snapshots/{arg}{ext}',
 
   /* Run your local dev server before starting the tests */
   // webServer: {

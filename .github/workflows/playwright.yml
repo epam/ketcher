@@ -8,6 +8,9 @@ on:
     branches:
       - master
       - 'release/**'
+env:
+  MODE: standalone
+  KETCHER_URL: http://localhost:4002
 jobs:
   test:
     timeout-minutes: 60
@@ -32,9 +35,6 @@ jobs:
       - name: Go to ketcher-autotests and install playwright browsers
         run: cd ketcher-autotests/ && npx playwright install --with-deps
       - name: Run playwright tests
-        env:
-          MODE: standalone
-          KETCHER_URL: http://localhost:4002
         run: npm run test:ci
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails

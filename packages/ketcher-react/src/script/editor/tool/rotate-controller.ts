@@ -11,7 +11,11 @@ type RaphaelElement = {
 
 const STYLE = {
   HANDLE_MARGIN: 15,
-  HANDLE_RADIUS: 10
+  HANDLE_RADIUS: 10,
+  RECT_RADIUS: 20,
+  RECT_PADDING: 20,
+  INITIAL_COLOR: '#B4B9D6',
+  ACTIVE_COLOR: '#365CFF'
 }
 
 class RotateController {
@@ -67,7 +71,7 @@ class RotateController {
         `${moveToCenter}h8${moveToCenter}h-8${moveToCenter}v8${moveToCenter}v-8`
       )
       .attr({
-        stroke: '#B4B9D6',
+        stroke: STYLE.INITIAL_COLOR,
         'stroke-width': 2,
         'stroke-linecap': 'round'
       })
@@ -82,17 +86,23 @@ class RotateController {
       .transform(Scale.obj2scaled, render.options)
       .translate(render.options.offset || new Vec2())
 
-    const rectStartX = rectBox.p0.x
-    const rectStartY = rectBox.p0.y
-    const rectEndX = rectBox.p1.x
-    const rectEndY = rectBox.p1.y
+    const rectStartX = rectBox.p0.x - STYLE.RECT_PADDING
+    const rectStartY = rectBox.p0.y - STYLE.RECT_PADDING
+    const rectEndX = rectBox.p1.x + STYLE.RECT_PADDING
+    const rectEndY = rectBox.p1.y + STYLE.RECT_PADDING
 
-    this.rectangle = render.paper.rect(
-      rectStartX,
-      rectStartY,
-      rectEndX - rectStartX,
-      rectEndY - rectStartY
-    )
+    this.rectangle = render.paper
+      .rect(
+        rectStartX,
+        rectStartY,
+        rectEndX - rectStartX,
+        rectEndY - rectStartY,
+        STYLE.RECT_RADIUS
+      )
+      .attr({
+        'stroke-dasharray': '-',
+        stroke: STYLE.INITIAL_COLOR
+      })
 
     return rectStartY
   }
@@ -101,7 +111,7 @@ class RotateController {
     const paper = this.editor.render.paper
 
     const circle = paper.circle(0, 0, STYLE.HANDLE_RADIUS).attr({
-      fill: '#B4B9D6',
+      fill: STYLE.INITIAL_COLOR,
       stroke: 'none'
     })
 
@@ -139,25 +149,30 @@ class RotateController {
       this.center.y - distanceBetweenHandleAndCenter
     )
 
-    this.link = this.editor.render.paper.path(
-      `M${this.initialHandleCenter.x},${this.initialHandleCenter.y}l0,${
-        STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN
-      }`
-    )
+    this.link = this.editor.render.paper
+      .path(
+        `M${this.initialHandleCenter.x},${this.initialHandleCenter.y}l0,${
+          STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN
+        }`
+      )
+      .attr({
+        'stroke-dasharray': '-',
+        stroke: STYLE.INITIAL_COLOR
+      })
   }
 
   // NOTE: When handle is non-arrow function, `this` is element itself
   private hoverInHandle = () => {
     const handleBackground = this.handle?.[0]
     handleBackground.attr({
-      fill: '#365CFF'
+      fill: STYLE.ACTIVE_COLOR
     })
   }
 
   private hoverOutHandle = () => {
     const handleBackground = this.handle?.[0]
     handleBackground.attr({
-      fill: '#B4B9D6'
+      fill: STYLE.INITIAL_COLOR
     })
   }
 
@@ -165,13 +180,18 @@ class RotateController {
     event.stopPropagation()
 
     this.cross?.attr({
-      stroke: '#365CFF'
+      stroke: STYLE.ACTIVE_COLOR
     })
     const paper = this.editor.render.paper
     this.link?.remove()
-    this.link = paper.path(
-      `M${this.center?.x},${this.center?.y}L${this.initialHandleCenter?.x},${this.initialHandleCenter?.y}`
-    )
+    this.link = paper
+      .path(
+        `M${this.center?.x},${this.center?.y}L${this.initialHandleCenter?.x},${this.initialHandleCenter?.y}`
+      )
+      .attr({
+        'stroke-dasharray': '-',
+        stroke: STYLE.ACTIVE_COLOR
+      })
     // FIXME: @yuleicul overlay link
 
     this.rotateTool = new RotateTool(this.editor, undefined)
@@ -179,6 +199,7 @@ class RotateController {
   }
 
   private dragHandleOnMove = () => {
+    // FIXME: handle&rect don't sync with structur when rotating
     // @yuleicul prevent right button
 
     let lastHandleCenter = this.initialHandleCenter
@@ -202,9 +223,14 @@ class RotateController {
       const delta = newHandleCenter?.sub(lastHandleCenter)
       this.handle?.translate(delta?.x, delta?.y)
       this.link?.remove()
-      this.link = this.editor.render.paper.path(
-        `M${this.center?.x},${this.center?.y}L${newHandleCenter?.x},${newHandleCenter?.y}`
-      )
+      this.link = this.editor.render.paper
+        .path(
+          `M${this.center?.x},${this.center?.y}L${newHandleCenter?.x},${newHandleCenter?.y}`
+        )
+        .attr({
+          'stroke-dasharray': '-',
+          stroke: STYLE.ACTIVE_COLOR
+        })
 
       const newRotateAngle = utils.calcAngle(newHandleCenter, this.center)
       const rotateDegree = utils.degrees(newRotateAngle - lastRotateAngle)

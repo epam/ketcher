@@ -32,7 +32,6 @@ jobs:
         run: cd ketcher-autotests/ && npx playwright install --with-deps
       - name: Run playwright tests
         run: cd ketcher-autotests/ && npm run test:ci
-        working-directory: ./ketcher
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()

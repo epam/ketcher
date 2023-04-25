@@ -6,8 +6,7 @@
   "scripts": {
     "test": "npx playwright test",
     "test:debug": "npx playwright test --debug",
-    "update:snapshots": "playwright test s-group-click-atom --update-snapshots",
-    "test:ci": "npx playwright test s-group-click-atom"
+    "test:ci": "npx playwright test ketcher-api"
   },
   "author": "Nitvex",
   "license": "ISC",

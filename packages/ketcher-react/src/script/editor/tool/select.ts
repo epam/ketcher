@@ -284,8 +284,7 @@ class SelectTool {
       info: false
     })
 
-    // @yuleicul is here the right position to put this line
-    this.editor.rotateController.show()
+    this.editor.rotateController.rerender()
   }
 
   dblclick(event) {

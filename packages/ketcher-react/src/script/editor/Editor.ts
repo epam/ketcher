@@ -311,6 +311,7 @@ class Editor implements KetcherEditor {
     recoordinate(this, structCenter)
 
     this.render.update()
+    this.rotateController.rerender()
     return this.render.options.zoom
   }
 
@@ -362,7 +363,7 @@ class Editor implements KetcherEditor {
 
     this.render.ctab.setSelection(this._selection) // eslint-disable-line
     this.event.selectionChange.dispatch(this._selection) // eslint-disable-line
-    this.rotateController.onSelectChange(this._selection)
+    this._selection === null && this.rotateController.hide()
 
     this.render.update(false, null, { resizeCanvas: false })
     return this._selection // eslint-disable-line

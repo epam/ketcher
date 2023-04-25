@@ -1,9 +1,10 @@
 import { Scale, Vec2 } from 'ketcher-core'
 import { FC } from 'react'
 import TransFormRotateIcon from 'src/icons/files/transform-rotate-handle.svg'
-import Editor, { Selection } from '../Editor'
+import Editor from '../Editor'
 import utils from '../shared/utils'
 import RotateTool from './rotate'
+import SelectTool from './select'
 
 type RaphaelElement = {
   [key: string]: any
@@ -24,8 +25,6 @@ class RotateController {
   private initialHandleCenter?: Vec2
   private rotateTool?: RotateTool
 
-  // @yuleicul rethink names, more professional
-  /** Raphaël elements */
   private handle?: RaphaelElement
   private rectangle?: RaphaelElement
   private cross?: RaphaelElement
@@ -35,14 +34,29 @@ class RotateController {
     this.editor = editor
   }
 
-  show() {
-    // FIXME: context menu doesn't work
+  rerender() {
     this.hide()
+    this.show()
+  }
 
-    // FIXME: @yuleicul when to show? what's fragment/structure
+  hide() {
+    this.handle?.unhover(this.hoverInHandle, this.hoverOutHandle)
+    this.handle?.unmousedown(this.mouseDownHandle)
+    this.handle?.undrag()
+
+    this.cross?.hide()
+    this.rectangle?.hide()
+    this.handle?.hide()
+    this.link?.hide()
+  }
+
+  private show() {
     const selection = this.editor.selection()
-    const disable = !selection?.atoms || selection.atoms.length <= 1
-    if (disable) {
+    const enable =
+      selection?.atoms &&
+      selection.atoms.length >= 1 &&
+      this.editor.tool() instanceof SelectTool
+    if (!enable) {
       return
     }
 
@@ -216,8 +230,9 @@ class RotateController {
         return
       }
 
+      const options = this.editor.render.options
       const newHandleCenter = this.initialHandleCenter?.add(
-        new Vec2(dxFromStart, dyFromStart)
+        new Vec2(dxFromStart, dyFromStart).scaled(1 / options.zoom) // HACK: zoom in/out
       )
 
       const delta = newHandleCenter?.sub(lastHandleCenter)
@@ -247,24 +262,6 @@ class RotateController {
   private dragHandleOnEnd = () => {
     this.rotateTool?.mouseup()
     this.hide()
-  }
-
-  hide() {
-    this.handle?.unhover(this.hoverInHandle, this.hoverOutHandle)
-    this.handle?.unmousedown(this.mouseDownHandle)
-    this.handle?.undrag()
-
-    this.cross?.hide()
-    this.rectangle?.hide()
-    this.handle?.hide()
-    this.link?.hide()
-  }
-
-  onSelectChange(selection: Selection | null) {
-    const disable = !selection?.atoms
-    if (disable) {
-      this.hide()
-    }
   }
 }
 

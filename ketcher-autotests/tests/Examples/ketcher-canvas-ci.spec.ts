@@ -8,23 +8,17 @@ import {
 } from '@utils';
 
 test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('');
-  });
-
-  test.afterEach(async ({ page }) => {
-    await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
-  });
-
   test('single bond tool', async ({ page }) => {
     /*
      *   Test case: EPMLSOPKET-1371
      */
+    await page.goto('');
 
     await selectBond(BondTypeName.Single, page);
 
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('calculation', () => {

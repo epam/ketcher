@@ -342,12 +342,8 @@ export class Atom {
       return true
     }
     const element = Elements.get(label)
-    if (!element) {
-      this.implicitH = 0
-      return true
-    }
 
-    const groupno = element.group
+    const groupno = element?.group
     const radicalCount = radicalElectrons(this.radical)
     let valence = connectionCount
     let hydrogenCount: any = 0

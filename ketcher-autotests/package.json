@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npx playwright test",
     "test:debug": "npx playwright test --debug",
-    "test:ci": "npm run test click-fg-on-canvas --workers 4"
+    "test:ci": "npx playwright test click-fg-on-canvas --workers 4"
   },
   "author": "Nitvex",
   "license": "ISC",

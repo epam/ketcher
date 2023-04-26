@@ -1,0 +1,13 @@
+name: Reviewer lottery
+on:
+  pull_request:
+    types: [opened, ready_for_review, reopened]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: nitvex/reviewer-lottery@v2
+      with:
+        repo-token: ${{ secrets.REVIEWER_LOTTERY_SECRET }}

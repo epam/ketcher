@@ -1,23 +1,33 @@
 import { FunctionalGroup } from 'ketcher-core'
+import Editor from '../Editor'
 
 let showTooltipTimer: ReturnType<typeof setTimeout> | null = null
 
 export const TOOLTIP_DELAY = 300
 
-export function showTooltip(editor, infoPanelData) {
+function hideTooltip(editor: Editor) {
   editor.event.showInfo.dispatch(null)
 
   if (showTooltipTimer) {
     clearTimeout(showTooltipTimer)
   }
-  if (infoPanelData) {
-    showTooltipTimer = setTimeout(() => {
-      editor.event.showInfo.dispatch(infoPanelData)
-    }, TOOLTIP_DELAY)
-  }
 }
 
-export function showFunctionalGroupsTooltip(editor) {
+function showTooltip(editor: Editor, infoPanelData: any) {
+  hideTooltip(editor)
+
+  showTooltipTimer = setTimeout(() => {
+    editor.event.showInfo.dispatch(infoPanelData)
+  }, TOOLTIP_DELAY)
+}
+
+export function setFunctionalGroupsTooltip(editor: Editor, isShow: boolean) {
+  if (!isShow) {
+    hideTooltip(editor)
+
+    return
+  }
+
   let infoPanelData: any = null
   const checkFunctionGroupTypes = ['sgroups', 'functionalGroups']
   const closestCollapsibleStructures = editor.findItem(

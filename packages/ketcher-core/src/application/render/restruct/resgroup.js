@@ -127,7 +127,7 @@ class ReSGroup extends ReObject {
     return set
   }
 
-  getTextHighlightDimensions(padding = 0) {
+  getTextHighlightDimensions(padding = 0, render) {
     let startX = 0
     let startY = 0
     let width = 0
@@ -140,14 +140,11 @@ class ReSGroup extends ReObject {
     if (sGroupHasFirstAtom) {
       const firstAtomPosition = sGroupItem.firstSgroupAtom.pp
       const [firstAtomId] = sGroupItem.atoms
-      const reSGroupAtom = this.render.ctab.atoms.get(firstAtomId)
+      const reSGroupAtom = render.ctab.atoms.get(firstAtomId)
       const sGroupTextBoundingBox =
         reSGroupAtom.visel.boundingBox || reSGroupAtom.visel.oldBoundingBox
       if (sGroupTextBoundingBox) {
-        const { x, y } = Scale.obj2scaled(
-          firstAtomPosition,
-          this.render.options
-        )
+        const { x, y } = Scale.obj2scaled(firstAtomPosition, render.options)
         const { p0, p1 } = sGroupTextBoundingBox
         width = p1.x - p0.x + padding * 2
         height = p1.y - p0.y + padding * 2
@@ -163,6 +160,7 @@ class ReSGroup extends ReObject {
     const sgroup = this.item
     const functionalGroups = restruct.molecule.functionalGroups
     const sGroups = restruct.molecule.sgroups
+    const render = restruct.render
     if (
       FunctionalGroup.isContractedFunctionalGroup(
         sgroup.id,
@@ -171,7 +169,8 @@ class ReSGroup extends ReObject {
       SGroup.isContractedSGroup(sgroup.id, sGroups)
     ) {
       const { startX, startY, width, height } = this.getTextHighlightDimensions(
-        this.render.options.fontsz / 2
+        render.options.fontsz / 2,
+        render
       )
       return paper
         .rect(startX, startY, width, height)
@@ -197,7 +196,8 @@ class ReSGroup extends ReObject {
       SGroup.isContractedSGroup(sGroupItem.id, sGroups)
     ) {
       const { startX, startY, width, height } = this.getTextHighlightDimensions(
-        options.fontsz / 2
+        options.fontsz / 2,
+        render
       )
       sGroupItem.hovering = paper
         .rect(startX, startY, width, height)

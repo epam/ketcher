@@ -77,7 +77,11 @@ class RotateController {
     // NOTE: remember to remove all listeners before calling `hide()`
     this.handle?.hover(this.hoverInHandle, this.hoverOutHandle)
     this.handle?.mousedown(this.mouseDownHandle)
-    this.handle?.drag(this.dragHandleOnMove())
+    this.handle?.drag(
+      this.dragHandleOnMove(),
+      undefined,
+      this.dragHandleOnEndOutsideWindow
+    )
   }
 
   private drawCross() {
@@ -290,6 +294,11 @@ class RotateController {
 
       this.rotateTool?.mousemove(event)
     }
+  }
+
+  private dragHandleOnEndOutsideWindow = () => {
+    this.rotateTool?.mouseup()
+    this.rerender()
   }
 }
 

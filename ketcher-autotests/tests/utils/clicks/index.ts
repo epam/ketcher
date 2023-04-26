@@ -7,9 +7,14 @@ type BoundingBox = {
   x: number;
 };
 
-export async function clickInTheMiddleOfTheScreen(page: Page) {
+export async function clickInTheMiddleOfTheScreen(
+  page: Page,
+  button: 'left' | 'right' = 'left'
+) {
   const body = (await page.locator('body').boundingBox()) as BoundingBox;
-  await page.mouse.click(body.x + body?.width / 2, body.y + body?.height / 2);
+  await page.mouse.click(body.x + body?.width / 2, body.y + body?.height / 2, {
+    button,
+  });
 }
 
 export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {

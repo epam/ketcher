@@ -32,7 +32,6 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await delay(7);
     await takeEditorScreenshot(page);
   });
-
   test('Clean bonds angles', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1779
@@ -58,8 +57,8 @@ test.describe('Indigo Tools - Clean Tools', () => {
   test('Cleaned structure is placed horizontally', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1781
-    Description: After the Layout action the structure moves to the upper left corner of the canvas. 
-    The structure is placed horizontally. 
+    Description: After the Layout action the structure moves to the upper left corner of the canvas.
+    The structure is placed horizontally.
     During the Layout action structure is rotated 90° counterclockwise.
     After the Clean Up action the structure does not change.
    */
@@ -79,7 +78,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
   test('Clean distorted molecule with Layout tool', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1782
-    Description: After the Layout action the structures are aligned to the upper 
+    Description: After the Layout action the structures are aligned to the upper
     left corner of the canvas.
     The structure group of structures appears undistorted.
    */
@@ -160,7 +159,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
   test('Structure with Stereochemistry', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1789
-    Description: After the Clean Up and Layout actions the structure 
+    Description: After the Clean Up and Layout actions the structure
     with stereochemistry is appear undistorted.
    */
     await openFileAndAddToCanvas('clean-stereo.mol', page);
@@ -200,7 +199,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
   test.skip('Structure with S-Groups', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1795
-    Description: S-group brackets aren't moved away from the structure after the 
+    Description: S-group brackets aren't moved away from the structure after the
     Clean Up and Layout actions.
     S-group properties are correct after the Clean Up and Layout actions.
    */
@@ -221,7 +220,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     /*
     Test case: EPMLSOPKET-1796
     Description: The cleaned structure has the correct abs/or1/&1 stereolabels.
-    The Clean Up action is applied correctly and simultaneously 
+    The Clean Up action is applied correctly and simultaneously
     to the whole structure with stereolabels.
    */
     await openFileAndAddToCanvas('stereolabels.ket', page);

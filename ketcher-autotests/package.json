@@ -6,13 +6,12 @@
   "scripts": {
     "test": "npx playwright test",
     "test:debug": "npx playwright test --debug",
-    "test:ci": "npx playwright test ketcher-canvas"
+    "test:ci": "npx playwright test reagents-molecule-above-arrow"
   },
   "author": "Nitvex",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.31.1",
-    "husky": "^8.0.3",
     "lint-staged": "^13.1.2",
     "prettier": "2.8.4"
   },

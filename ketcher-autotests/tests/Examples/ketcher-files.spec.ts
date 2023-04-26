@@ -1,18 +1,18 @@
 import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  buttonLocator,
   openFile,
   pressButton,
   delay,
   takeEditorScreenshot,
+  selectTopPanelButton,
+  TopPanelButton,
 } from '@utils';
 
 test('opening molfile', async ({ page }) => {
   await page.goto('');
 
-  const openButton = await page.locator(buttonLocator);
-  await openButton.click();
+  await selectTopPanelButton(TopPanelButton.Open, page);
 
   await openFile('display-abbrev-groups-example.mol', page);
 
@@ -29,8 +29,7 @@ test('opening rnx files', async ({ page }) => {
   */
   await page.goto('');
 
-  const openButton = page.locator(buttonLocator);
-  await openButton.click();
+  await selectTopPanelButton(TopPanelButton.Open, page);
 
   await openFile('1839-ketcher.rxn', page);
 
@@ -46,8 +45,7 @@ test('opening smi files', async ({ page }) => {
   */
   await page.goto('');
 
-  const openButton = page.locator(buttonLocator);
-  await openButton.click();
+  await selectTopPanelButton(TopPanelButton.Open, page);
 
   await openFile('1840-cyclopentyl.smi', page);
 
@@ -65,8 +63,8 @@ test('opening inchi files', async ({ page }) => {
   Test case: EPMLSOPKET-1841
   */
   await page.goto('');
-  const openButton = page.locator(buttonLocator);
-  await openButton.click();
+
+  await selectTopPanelButton(TopPanelButton.Open, page);
 
   await openFile('1841-ketcher.inchi', page);
 

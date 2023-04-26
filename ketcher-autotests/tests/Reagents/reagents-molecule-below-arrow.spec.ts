@@ -11,7 +11,9 @@ import {
 
 test.describe('Reagents molecule below arrow', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await page.goto(
+      'https://rc.test.lifescience.opensource.epam.com/KetcherDemo/index.html'
+    );
   });
 
   test('Open File RXN v3000 with reagent HCl below arrow', async ({ page }) => {

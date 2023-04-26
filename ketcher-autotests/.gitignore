@@ -1,6 +1,6 @@
 node_modules/
-/playwright-report/
 /test-results/
+/playwright-report/
 /playwright/.cache/
 .DS_Store
 .vscode

@@ -12,12 +12,13 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  takeEditorScreenshot,
   resetCurrentTool,
+  takeEditorScreenshot,
   drawFGAndDrag,
+  drawSaltAndDrag,
 } from '@utils';
 
-test.describe('Click and drag FG on canvas', () => {
+test.describe('Click and drag Salts and Solvents on canvas', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });
@@ -27,51 +28,54 @@ test.describe('Click and drag FG on canvas', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Cbz forms a bond with Oxygen atom', async ({ page }) => {
+  test('Formic acid appears near Oxygen', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-11550
-      Description: when click & drag with an FG on atom it should forms a bond between
+      Test case: EPMLSOPKET-11555
+      Description: when click & drag with a Salts and Solvents on atom 
+      Salts appears near atom where the left mouse button was released
     */
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await drawFGAndDrag(FunctionalGroups.Cbz, 50, page);
+    await drawSaltAndDrag(SaltsAndSolvents.FormicAcid, 50, page);
   });
 
-  test('Boc forms a bond with Cbz functional group', async ({ page }) => {
+  test('Acetic acid appears near Cbz', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-11551
-      Description: when click & drag with an FG on FG it should forms a bond between it
+      Test case: EPMLSOPKET-11556
+      Description: when click & drag with a Salts and Solvents on Functional Group 
+      Salts appears near FG where the left mouse button was released
     */
     await pressButton(page, 'Custom Templates');
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await drawFGAndDrag(FunctionalGroups.Boc, 50, page);
+    await drawSaltAndDrag(SaltsAndSolvents.AceticAcid, 50, page);
   });
 
-  test.skip('Boc appears near FormicAcid where the left mouse button was released', async ({
+  test('Propionic acid appears near Methane sulphonic acid', async ({
     page,
   }) => {
     /*
-      Test case: EPMLSOPKET-11552
-      Description: when click & drag with an FG on Salts and Solvents 
-      FG appears near Salt and Solvents where the left mouse button was released
+      Test case: EPMLSOPKET-11557
+      Description: when click & drag with a Salts and Solvents on Salts and Solvents 
+      Salts appears near Salts where the left mouse button was released
     */
     await pressButton(page, 'Custom Templates');
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-    await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
+    await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await drawFGAndDrag(FunctionalGroups.Boc, 50, page);
+    await drawSaltAndDrag(SaltsAndSolvents.PropionicAcid, 50, page);
   });
 
-  test('CF3 forms a bond with Oxygen atom', async ({ page }) => {
+  test('Isobutanol appears near Oxygen atom', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-11553
-      Description: when click & drag with an FG on an atom connected with bond to another atom
-      it should forms a bond 
+      Test case: EPMLSOPKET-11558
+      Description: when click & drag with a Salts and Solvents 
+      on an atom connected with bond to another atom Salts appears 
+      near atom where the left mouse button was released
     */
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -83,23 +87,24 @@ test.describe('Click and drag FG on canvas', () => {
     await dragMouseTo(coordinatesWithShift, y, page);
     await resetCurrentTool(page);
 
-    await drawFGAndDrag(FunctionalGroups.CF3, -50, page);
+    await drawSaltAndDrag(SaltsAndSolvents.Isobutanol, -50, page);
   });
 
-  test('Ms forms a bond with FMOC', async ({ page }) => {
+  test('Glycerol appears near FMOC Functional Group', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-11554
-      Description: when click & drag with an FG on an FG connected with bond to another FG
-      it should forms a bond 
+      Test case: EPMLSOPKET-11559
+      Description: when click & drag with a Salts and Solvents 
+      on a FG connected with bond to another FG Salts appears 
+      near FG where the left mouse button was released
     */
     await pressButton(page, 'Custom Templates');
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await drawFGAndDrag(FunctionalGroups.CO2Et, 50, page);
+    await drawFGAndDrag(FunctionalGroups.Boc, 50, page);
     await resetCurrentTool(page);
 
-    await drawFGAndDrag(FunctionalGroups.Ms, -50, page);
+    await drawSaltAndDrag(SaltsAndSolvents.Glycerol, -50, page);
   });
 });

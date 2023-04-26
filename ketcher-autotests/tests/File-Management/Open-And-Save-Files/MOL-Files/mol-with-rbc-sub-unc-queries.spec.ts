@@ -20,6 +20,6 @@ test('Open MOL file with RBC,SUB,UNC queries', async ({ page }) => {
   await pressButton(page, 'Add to Canvas');
   await clickInTheMiddleOfTheScreen(page);
 
-  await delay(2);
+  await delay(5);
   await takeEditorScreenshot(page);
 });

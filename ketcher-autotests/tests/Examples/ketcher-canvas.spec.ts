@@ -1,30 +1,66 @@
+import { BondTypeName } from '@utils/canvas/selectBond';
 import { test } from '@playwright/test';
-import * as Utils from '@utils';
+import {
+  clickInTheMiddleOfTheScreen,
+  AtomButton,
+  selectBond,
+  dragMouseTo,
+  drawBenzeneRing,
+  getCoordinatesOfTheMiddleOfTheScreen,
+  getCoordinatesTopAtomOfBenzeneRing,
+  moveMouseToTheMiddleOfTheScreen,
+  selectAtomInToolbar,
+  selectSingleBondTool,
+  takeEditorScreenshot,
+  resetCurrentTool,
+} from '@utils';
 
-test('drawing atom, then dragging other atom', async ({ page }) => {
-  await page.goto('');
+test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('');
+  });
 
-  await Utils.selectAtom(Utils.AtomButton.Carbon, page);
-  await Utils.clickInTheMiddleOfTheScreen(page);
+  test.afterEach(async ({ page }) => {
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+  });
 
-  await Utils.selectAtom(Utils.AtomButton.Nitrogen, page);
-  await Utils.moveMouseToTheMiddleOfTheScreen(page);
+  test('drawing atom, then dragging other atom', async ({ page }) => {
+    await selectAtomInToolbar(AtomButton.Carbon, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-  const { x, y } = await Utils.getCoordinatesOfTheMiddleOfTheScreen(page);
-  await Utils.dragMouseTo(x + 100, y, page);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await moveMouseToTheMiddleOfTheScreen(page);
 
-  await Utils.takeEditorScreenshot(page);
-});
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    await dragMouseTo(x + 100, y, page);
+  });
 
-test('drawing benzene ring, then adding single bond', async ({ page }) => {
-  await page.goto('');
+  test('drawing benzene ring, then adding single bond', async ({ page }) => {
+    await drawBenzeneRing(page);
 
-  await Utils.drawBenzeneRing(page);
+    await selectSingleBondTool(page);
 
-  await Utils.selectBond(Utils.BondTypeName.Single, page);
+    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
+    await page.mouse.click(x, y);
+  });
 
-  const { x, y } = await Utils.getCoordinatesTopAtomOfBenzeneRing(page);
-  await page.mouse.click(x, y);
+  test('single bond tool', async ({ page }) => {
+    /*
+     *   Test case: EPMLSOPKET-1371
+     */
 
-  await Utils.takeEditorScreenshot(page);
+    await selectBond(BondTypeName.Single, page);
+
+    await clickInTheMiddleOfTheScreen(page);
+  });
+
+  test('double bond tool ', async ({ page }) => {
+    /*
+     *   Test case: EPMLSOPKET-1380
+     */
+    await selectBond(BondTypeName.Double, page);
+
+    await clickInTheMiddleOfTheScreen(page);
+  });
 });

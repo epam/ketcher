@@ -1,10 +1,14 @@
 import { Page } from '@playwright/test';
 import {
+  LeftPanelButton,
+  clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   pressButton,
-} from '..';
+  selectLeftPanelButton,
+  takeEditorScreenshot,
+} from '@utils';
 
 export enum SaltsAndSolvents {
   AceticAcid = 'acetic acid',
@@ -122,4 +126,27 @@ export async function drawSaltAndDrag(
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const coordinatesWithShift = x + shift;
   await dragMouseTo(coordinatesWithShift, y, page);
+}
+/*
+  Function for selecting tool from left panel, click right mouse in the middle of canvas and take
+  screenshot
+  */
+export async function selectLeftPanelToolClickAndScreenshot(
+  leftbutton: LeftPanelButton,
+  page: Page
+) {
+  await selectLeftPanelButton(leftbutton, page);
+  await clickInTheMiddleOfTheScreen(page, 'right');
+  await takeEditorScreenshot(page);
+}
+/*
+  Function for attaching structures on top of bonds attached on Benzene ring
+  */
+export async function attachOnTopOfBenzeneBonds(page: Page) {
+  await page.mouse.click(560, 330);
+  await page.mouse.click(650, 280);
+  await page.mouse.click(720, 320);
+  await page.mouse.click(720, 400);
+  await page.mouse.click(650, 450);
+  await page.mouse.click(560, 400);
 }

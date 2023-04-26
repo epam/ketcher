@@ -53,7 +53,7 @@ test.describe('Click Functional Group on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test.skip('The CCl3 replaces methane sulphonic acid', async ({ page }) => {
+  test('The CCl3 replaces methane sulphonic acid', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-10107
       Description: when clicking with an FG template on a Salts and Solvents it should replace it

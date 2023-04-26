@@ -28,7 +28,7 @@ class RotateController {
   private initialHandleCenter?: Vec2
   private rotateTool?: RotateTool
 
-  private handle?: RaphaelElement
+  private handle?: RaphaelElement // [circle, arrowSet]
   private rectangle?: RaphaelElement
   private cross?: RaphaelElement
   private link?: RaphaelElement
@@ -193,22 +193,35 @@ class RotateController {
   }
 
   // NOTE: When handle is non-arrow function, `this` is element itself
-  private hoverInHandle = () => {
-    const handleBackground = this.handle?.[0]
-    handleBackground.attr({
+  private hoverInHandle = (event: MouseEvent) => {
+    const isSomeButtonPressed = event.buttons !== 0
+    if (isSomeButtonPressed) {
+      return
+    }
+
+    this.handle?.attr({
+      cursor: 'grab'
+    })
+    const circle = this.handle?.[0]
+    circle.attr({
       fill: STYLE.ACTIVE_COLOR
     })
   }
 
-  private hoverOutHandle = () => {
-    const handleBackground = this.handle?.[0]
-    handleBackground.attr({
+  private hoverOutHandle = (event: MouseEvent) => {
+    const isSomeButtonPressed = event.buttons !== 0
+    if (isSomeButtonPressed) {
+      return
+    }
+
+    const circle = this.handle?.[0]
+    circle.attr({
       fill: STYLE.INITIAL_COLOR
     })
   }
 
   private mouseDownHandle = (event: MouseEvent) => {
-    event.stopPropagation()
+    event.stopPropagation() // avoid triggering SelectTool's mousedown
 
     const isLeftButtonPressed = event.buttons === 1
     if (!isLeftButtonPressed) {
@@ -224,6 +237,11 @@ class RotateController {
         `L${this.initialHandleCenter?.x},${this.initialHandleCenter?.y}`,
       stroke: STYLE.ACTIVE_COLOR
     })
+    this.handle?.attr({
+      cursor: 'grabbing'
+    })
+    const arrowSet = this.handle?.[1]
+    arrowSet?.attr({ fill: 'none' })
 
     this.rotateTool = new RotateTool(this.editor, undefined)
     this.rotateTool?.mousedown(event)
@@ -252,6 +270,9 @@ class RotateController {
 
       const delta = newHandleCenter?.sub(lastHandleCenter)
       this.handle?.translate(delta?.x, delta?.y)
+      this.handle?.attr({
+        cursor: 'grabbing'
+      })
       this.link?.attr({
         path:
           `M${this.center?.x},${this.center?.y}` +

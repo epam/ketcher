@@ -6,7 +6,6 @@ import {
   fromBondsAttrs,
   fromFragmentDeletion,
   FunctionalGroup,
-  SGroup,
   Atom
 } from 'ketcher-core'
 import { openDialog } from './modal'
@@ -56,13 +55,40 @@ function handleOtherActions({
   dispatch(onAction(newAction))
 }
 
-function handleEraser({ editor, hoveredItem }: HandleHotkeyOverItemProps) {
-  const action = fromFragmentDeletion(
-    editor.render.ctab,
-    mapItemsToArrays(hoveredItem)
-  )
+function eraseItem({
+  editor,
+  item
+}: {
+  editor: Editor
+  item: Record<string, number[]>
+}) {
+  const action = fromFragmentDeletion(editor.render.ctab, item)
+
   editor.update(action)
   editor.hover(null)
+}
+
+function handleEraser({
+  editor,
+  hoveredItem,
+  newAction,
+  dispatch
+}: HandleHotkeyOverItemProps) {
+  const item = mapItemsToArrays(hoveredItem)
+  const itemType = Object.keys(hoveredItem)[0]
+
+  if (['atoms', 'bonds'].includes(itemType)) {
+    isFunctionalGroupChange(
+      { editor, hoveredItemId: item[itemType][0], newAction, dispatch },
+      itemType
+    ).then((res) => {
+      res && eraseItem({ editor, item })
+    })
+
+    return
+  }
+
+  eraseItem({ editor, item })
 }
 
 function handleDialog({
@@ -176,7 +202,7 @@ function handleTool({
         newAction,
         dispatch
       }
-      isFunctionalGroupChange(props).then((result) => {
+      isFunctionalGroupChange(props, item).then((result) => {
         if (!result && isChangeStructureTool) return
         toolHandler(props)
       })
@@ -184,8 +210,11 @@ function handleTool({
   }
 }
 
-async function isFunctionalGroupChange(props: HandlersProps): Promise<boolean> {
-  return await isChangingFunctionalGroup(props)
+async function isFunctionalGroupChange(
+  props: HandlersProps,
+  type = 'atoms'
+): Promise<boolean> {
+  return await isChangingFunctionalGroup(props, type)
 }
 
 function getToolHandler(itemType: string, toolName = '') {
@@ -289,49 +318,32 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
   } catch (error) {} // w/o changes
 }
 
-async function isChangingFunctionalGroup({
-  hoveredItemId,
-  editor
-}: HandlersProps) {
-  const atomResult: number[] = []
-  const result: number[] = []
-  const atom = editor.render.ctab.atoms.get(hoveredItemId)?.a
+function getFunctionalGroupIdByItem(
+  editor: Editor,
+  hoveredItemId: number,
+  type: string
+): number | null {
   const molecule = editor.render.ctab.molecule
   const functionalGroups = molecule.functionalGroups
-  const sgroupsOnCanvas = Array.from(molecule.sgroups.values())
-  if (atom && functionalGroups) {
-    const atomId = FunctionalGroup.atomsInFunctionalGroup(
-      functionalGroups,
-      hoveredItemId
-    )
 
-    if (atomId !== null) {
-      atomResult.push(atomId)
-    }
-  }
-
-  const isFunctionalGroup = atomResult.length > 0
-
-  if (isFunctionalGroup) {
-    if (
-      SGroup.isAtomInSaltOrSolvent(
-        hoveredItemId as number,
-        sgroupsOnCanvas as SGroup[]
-      )
-    ) {
-      return false
-    }
-    for (const id of atomResult) {
-      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+  return type === 'atoms'
+    ? FunctionalGroup.findFunctionalGroupByAtom(functionalGroups, hoveredItemId)
+    : FunctionalGroup.findFunctionalGroupByBond(
+        molecule,
         functionalGroups,
-        id
+        hoveredItemId
       )
+}
 
-      if (fgId !== null && !result.includes(fgId)) {
-        result.push(fgId)
-      }
-    }
-    return await editor.event.removeFG.dispatch({ fgIds: result })
+async function isChangingFunctionalGroup(
+  { hoveredItemId, editor }: HandlersProps,
+  type: string
+) {
+  const fgId = getFunctionalGroupIdByItem(editor, hoveredItemId, type)
+
+  if (fgId !== null) {
+    return await editor.event.removeFG.dispatch({ fgIds: [fgId] })
   }
+
   return true
 }

@@ -29,9 +29,10 @@ class RotateController {
   private rotateTool?: RotateTool
 
   private handle?: RaphaelElement // [circle, arrowSet]
-  private rectangle?: RaphaelElement
+  private boundingRect?: RaphaelElement
   private cross?: RaphaelElement
   private link?: RaphaelElement
+  // private protractor?: RaphaelElement
 
   constructor(editor: Editor) {
     this.editor = editor
@@ -60,7 +61,7 @@ class RotateController {
     this.handle?.undrag()
 
     this.cross?.hide()
-    this.rectangle?.hide()
+    this.boundingRect?.hide()
     this.handle?.hide()
     this.link?.hide()
   }
@@ -133,7 +134,7 @@ class RotateController {
       STYLE.RECT_PADDING +
       render.options.atomSelectionPlateRadius
 
-    this.rectangle = render.paper
+    this.boundingRect = render.paper
       .rect(
         rectStartX,
         rectStartY,
@@ -257,6 +258,7 @@ class RotateController {
     let lastHandleCenter = this.initialHandleCenter
     let lastRotateAngle = utils.calcAngle(lastHandleCenter, this.center)
 
+    // TODO: @yuleicul after 130px numbers disappear should be done or not?
     return (
       dxFromStart: number,
       dyFromStart: number,
@@ -289,7 +291,7 @@ class RotateController {
       const newRotateAngle = utils.calcAngle(newHandleCenter, this.center)
       const rotateDegree = utils.degrees(newRotateAngle - lastRotateAngle)
       this.cross?.rotate(rotateDegree, this.center?.x, this.center?.y)
-      this.rectangle?.rotate(rotateDegree, this.center?.x, this.center?.y)
+      this.boundingRect?.rotate(rotateDegree, this.center?.x, this.center?.y)
 
       lastHandleCenter = newHandleCenter
       lastRotateAngle = newRotateAngle

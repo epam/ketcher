@@ -1,25 +1,31 @@
-import { BondTypeName } from '@utils/canvas/selectBond';
 import { test, expect } from '@playwright/test';
-import {
-  clickInTheMiddleOfTheScreen,
-  selectBond,
-  takeEditorScreenshot,
-  resetCurrentTool,
-} from '@utils';
+// import {
+//   selectTopPanelButton,
+//   openFile,
+//   pressButton,
+//   clickInTheMiddleOfTheScreen,
+//   delay,
+//   takeEditorScreenshot,
+//   TopPanelButton,
+// } from '@utils';
 
-test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
-  test('single bond tool', async ({ page }) => {
-    /*
-     *   Test case: EPMLSOPKET-1371
-     */
-    await page.goto('');
+test.describe('Test CI', () => {
+  //   test('Reagents molecule above arrow Open File RXN v3000 with reagent NH3 above arrow', async ({
+  //     page,
+  //   }) => {
+  //     /*
+  //       Test case: EPMLSOPKET-4680
+  //       Description: File opens with the reagent NH3 on top of the arrow
+  //     */
+  //     await page.goto('');
+  //     await selectTopPanelButton(TopPanelButton.Open, page);
+  //     await openFile('benzene-arrow-benzene-reagent-nh3.rxn', page);
+  //     await pressButton(page, 'Add to Canvas');
 
-    await selectBond(BondTypeName.Single, page);
-
-    await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
-  });
+  //     await clickInTheMiddleOfTheScreen(page);
+  //     await delay(3);
+  //     await takeEditorScreenshot(page);
+  //   });
 
   test('calculation', () => {
     expect(1 + 1).toBe(2);

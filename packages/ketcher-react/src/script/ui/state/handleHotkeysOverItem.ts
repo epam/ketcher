@@ -212,7 +212,7 @@ function handleTool({
 
 async function isFunctionalGroupChange(
   props: HandlersProps,
-  type = 'atoms'
+  type: string
 ): Promise<boolean> {
   return await isChangingFunctionalGroup(props, type)
 }
@@ -342,7 +342,9 @@ async function isChangingFunctionalGroup(
   const fgId = getFunctionalGroupIdByItem(editor, hoveredItemId, type)
 
   if (fgId !== null) {
-    return await editor.event.removeFG.dispatch({ fgIds: [fgId] })
+    await editor.event.removeFG.dispatch({ fgIds: [fgId] })
+
+    return false
   }
 
   return true

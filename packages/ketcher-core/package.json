@@ -40,9 +40,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.17.9",
+    "@pixi-essentials/svg": "^2.0.1",
     "ajv": "^8.10.0",
     "assert": "^2.0.0",
     "lodash": "^4.17.21",
+    "pixi.js": "^7.2.4",
     "raphael": "^2.3.0",
     "svgpath": "^2.3.1"
   },

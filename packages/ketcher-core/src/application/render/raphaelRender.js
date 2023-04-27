@@ -15,12 +15,32 @@
  ***************************************************************************/
 
 import { Box2Abs, Struct, Vec2 } from 'domain/entities'
+import * as PIXI from 'pixi.js'
 
 import Raphael from './raphael-ext'
 import { ReStruct } from './restruct'
 import { Scale } from 'domain/helpers'
 import defaultOptions from './options'
 import draw from './draw'
+
+export function createCanvas() {
+  const canvas = document.querySelector('.root-canvas')
+  const style = window.getComputedStyle(canvas)
+  const app = new PIXI.Application({
+    width: parseInt(style.width),
+    height: parseInt(style.height),
+    backgroundColor: '#fff',
+    resolution: 2,
+    antialias: true,
+    view: canvas
+  })
+  app.stage.eventMode = 'static'
+  app.stage.hitArea = app.screen
+  app.stage.sortableChildren = true
+  globalThis.__PIXI_APP__ = app
+
+  return app
+}
 
 export function Render(clientArea, opt) {
   let renderWidth = opt.width || clientArea.clientWidth - 10
@@ -34,6 +54,7 @@ export function Render(clientArea, opt) {
   this.sz = Vec2.ZERO
   this.ctab = new ReStruct(new Struct(), this)
   this.options = defaultOptions(this.userOpts)
+  // this.app = createCanvas(clientArea)
 }
 
 Render.prototype.updateOptions = function (opts) {

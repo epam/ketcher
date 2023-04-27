@@ -207,40 +207,55 @@ class StructEditor extends Component {
     const { clientX = 0, clientY = 0 } = this.state
 
     return (
-      <Tag className={clsx(classes.canvas, className)} {...props}>
-        <ContextMenuTrigger>
-          <div
-            ref={this.editorRef}
-            className={clsx(classes.intermediateCanvas)}
-          >
-            {/* svg here */}
-          </div>
-        </ContextMenuTrigger>
+      <div style={{ position: 'relative' }}>
+        <Tag className={clsx(classes.canvas, className)} {...props}>
+          <ContextMenuTrigger>
+            <div
+              ref={this.editorRef}
+              className={clsx(classes.intermediateCanvas)}
+            >
+              {/* svg here */}
+            </div>
+          </ContextMenuTrigger>
 
-        <Cursor
-          Icon={handIcon}
-          PressedIcon={compressedHandIcon}
-          enableHandTool={this.state.enableCursor}
-        />
+          <Cursor
+            Icon={handIcon}
+            PressedIcon={compressedHandIcon}
+            enableHandTool={this.state.enableCursor}
+          />
 
-        <div className={classes.measureLog} ref={this.logRef} />
+          <div className={classes.measureLog} ref={this.logRef} />
 
-        {indigoVerification && (
-          <div className={`${classes.spinnerOverlay} loading-spinner`}>
-            <LoadingCircles />
-          </div>
-        )}
+          {indigoVerification && (
+            <div className={`${classes.spinnerOverlay} loading-spinner`}>
+              <LoadingCircles />
+            </div>
+          )}
 
-        <InfoPanel
-          clientX={clientX}
-          clientY={clientY}
-          render={this.props.render}
-          groupStruct={this.props.groupStruct}
-          sGroup={this.props.sGroup}
-        />
+          <InfoPanel
+            clientX={clientX}
+            clientY={clientY}
+            render={this.props.render}
+            groupStruct={this.props.groupStruct}
+            sGroup={this.props.sGroup}
+          />
 
-        <ContextMenu />
-      </Tag>
+          <ContextMenu />
+        </Tag>
+        {
+          <canvas
+            className="root-canvas"
+            style={{
+              width: '100%',
+              height: '100%',
+              position: 'absolute',
+              zIndex: 1,
+              left: 0,
+              top: 0
+            }}
+          ></canvas>
+        }
+      </div>
     )
   }
 }

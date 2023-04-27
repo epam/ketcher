@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import * as PIXI from 'pixi.js'
 import { Box2Abs } from 'domain/entities'
 import { LayerMap } from './generalEnumTypes'
 import ReObject from './reobject'
@@ -53,10 +54,19 @@ class ReRxnPlus extends ReObject {
   show(restruct, id, options) {
     const render = restruct.render
     const centre = Scale.obj2scaled(this.item.pp, options)
-    const path = draw.plus(render.paper, centre, options)
-    const offset = options.offset
-    if (offset != null) path.translateAbs(offset.x, offset.y)
-    this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())))
+    // const path = draw.plus(render.paper, centre, options)
+    window.ketcher.app.stage.addChild(this.drawPlus(centre.x, centre.y, 10))
+  }
+
+  drawPlus(x, y, size) {
+    const graphics = new PIXI.Graphics()
+
+    graphics.lineStyle(0)
+    graphics.beginFill(0xde3249, 1)
+    graphics.drawCircle(x, y, size)
+    graphics.endFill()
+
+    return graphics
   }
 }
 

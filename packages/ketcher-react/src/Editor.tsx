@@ -24,7 +24,7 @@ import './index.less'
 import init, { Config } from './script'
 import { useEffect, useRef } from 'react'
 
-import { Ketcher } from 'ketcher-core'
+import { Ketcher, createCanvas } from 'ketcher-core'
 import classes from './Editor.module.less'
 import clsx from 'clsx'
 import { useResizeObserver } from './hooks'
@@ -56,6 +56,7 @@ function Editor(props: EditorProps) {
       if (typeof onInit === 'function') {
         onInit(ketcher)
         window.dispatchEvent(ketcherInitEvent)
+        ketcher.app = createCanvas()
       }
     })
     // TODO: provide the list of dependencies after implementing unsubscribe function

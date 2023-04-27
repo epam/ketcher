@@ -84,6 +84,8 @@ export class Ketcher {
   #editor: Editor
   #indigo: Indigo
   #eventBus: EventEmitter
+  app: any
+  pixi: any
 
   get editor(): Editor {
     return this.#editor

@@ -21,9 +21,11 @@ import {
   Render,
   Struct,
   Vec2,
+  createCanvas,
   fromDescriptorsAlign,
   fromNewCanvas
 } from 'ketcher-core'
+import * as PIXI from 'pixi.js'
 import {
   DOMSubscription,
   PipelineSubscription,
@@ -115,6 +117,8 @@ class Editor implements KetcherEditor {
   hoverIcon: HoverIcon
   lastCursorPosition: { x: number; y: number }
   contextMenu: contextMenuInfo
+  app: any
+  pixi: any
   event: {
     message: Subscription
     elementEdit: PipelineSubscription
@@ -148,6 +152,10 @@ class Editor implements KetcherEditor {
         options
       )
     )
+    // setTimeout(() => {
+    //   this.app = createCanvas()
+    //   this.pixi = PIXI
+    // }, 5000)
 
     this._selection = null // eslint-disable-line
     this._tool = null // eslint-disable-line

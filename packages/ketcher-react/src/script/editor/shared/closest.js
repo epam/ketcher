@@ -454,22 +454,29 @@ function findClosestItem(restruct, pos, maps, skip, scale) {
   // eslint-disable-line max-params
   maps = maps || Object.keys(findMaps)
 
-  return maps.reduce((res, mp) => {
+  let priorityItem = null
+
+  const closestItem = maps.reduce((res, mp) => {
     const minDist = res ? res.dist : null
     const item = findMaps[mp](restruct, pos, skip, minDist, scale)
 
-    if (item !== null && (res === null || item.dist < res.dist)) {
-      const { id, dist, ...other } = item
-      return {
+    if (item !== null) {
+      const enrichedItem = {
         map: mp,
-        id: id,
-        dist: dist,
-        ...other
+        ...item
+      }
+
+      if (mp === 'sgroupData') {
+        priorityItem = enrichedItem
+      } else if (res === null || item.dist < res.dist) {
+        return enrichedItem
       }
     }
 
     return res
   }, null)
+
+  return priorityItem || closestItem
 }
 
 /**

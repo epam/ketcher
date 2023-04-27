@@ -43,8 +43,9 @@ class RotateController {
   }
 
   hide() {
-    this.handle?.unhover(this.hoverInHandle, this.hoverOutHandle)
-    this.handle?.unmousedown(this.mouseDownHandle)
+    this.handle?.unhover(this.hoverIn, this.hoverOut)
+    this.handle?.unmousedown(this.mouseDown)
+    this.handle?.unmouseup(this.mouseUp)
     this.handle?.undrag()
 
     this.cross?.hide()
@@ -75,12 +76,13 @@ class RotateController {
     this.drawHandle()
 
     // NOTE: remember to remove all listeners before calling `hide()`
-    this.handle?.hover(this.hoverInHandle, this.hoverOutHandle)
-    this.handle?.mousedown(this.mouseDownHandle)
+    this.handle?.hover(this.hoverIn, this.hoverOut)
+    this.handle?.mousedown(this.mouseDown)
+    this.handle?.mouseup(this.mouseUp)
     this.handle?.drag(
-      this.dragHandleOnMove(),
+      this.dragMove(),
       undefined,
-      this.dragHandleOnEndOutsideWindow
+      this.mouseUp // Fix rotation getting stuck when mouseup outside window
     )
   }
 
@@ -197,7 +199,7 @@ class RotateController {
   }
 
   // NOTE: When handle is non-arrow function, `this` is element itself
-  private hoverInHandle = (event: MouseEvent) => {
+  private hoverIn = (event: MouseEvent) => {
     const isSomeButtonPressed = event.buttons !== 0
     if (isSomeButtonPressed) {
       return
@@ -212,7 +214,7 @@ class RotateController {
     })
   }
 
-  private hoverOutHandle = (event: MouseEvent) => {
+  private hoverOut = (event: MouseEvent) => {
     const isSomeButtonPressed = event.buttons !== 0
     if (isSomeButtonPressed) {
       return
@@ -224,7 +226,7 @@ class RotateController {
     })
   }
 
-  private mouseDownHandle = (event: MouseEvent) => {
+  private mouseDown = (event: MouseEvent) => {
     event.stopPropagation() // avoid triggering SelectTool's mousedown
 
     const isLeftButtonPressed = event.buttons === 1
@@ -251,7 +253,7 @@ class RotateController {
     this.rotateTool?.mousedown(event)
   }
 
-  private dragHandleOnMove = () => {
+  private dragMove = () => {
     let lastHandleCenter = this.initialHandleCenter
     let lastRotateAngle = utils.calcAngle(lastHandleCenter, this.center)
 
@@ -296,7 +298,11 @@ class RotateController {
     }
   }
 
-  private dragHandleOnEndOutsideWindow = () => {
+  // FIXME @yuleicul position change when window move
+  // TODO @yuleicul add unit tests according commit messages
+  private mouseUp = (event: MouseEvent) => {
+    event.stopPropagation() // avoid triggering SelectTool's mouseup
+
     this.rotateTool?.mouseup()
     this.rerender()
   }

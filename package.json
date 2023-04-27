@@ -29,7 +29,6 @@
     "serve:demo": "cd demo && npm run serve"
   },
   "devDependencies": {
-    "@playwright/test": "^1.31.1",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
     "@typescript-eslint/parser": "^5.6.0",
     "color-alpha": "^1.1.3",

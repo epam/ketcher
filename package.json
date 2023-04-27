@@ -14,7 +14,6 @@
     "precommit": "lint-staged --allow-empty && npm run prettier:write --workspaces --if-present",
     "prepush": "npm run test:eslint --workspaces --if-present",
     "build": "npm run build:packages && npm run build:example",
-    "buildCi": "CI=false && npm run build",
     "build:core": "npm run build -w ketcher-core",
     "build:standalone": "npm run build -w ketcher-standalone",
     "build:react": "npm run build -w ketcher-react",

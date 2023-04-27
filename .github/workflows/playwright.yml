@@ -9,6 +9,9 @@ on:
       - master
       - 'release/**'
 env:
+  # Warnings breaks build on CI
+  # See: https://github.com/orgs/community/discussions/25228#discussioncomment-3246960
+  CI: false
   MODE: standalone
   KETCHER_URL: http://localhost:4002
 jobs:
@@ -25,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build all packages
-        run: npm run buildCi
+        run: npm run build
       - name: Run example in standalone mode
         run: cd example/ && nohup npm run serve:standalone &
       - name: Install playwright browsers and playwright/test

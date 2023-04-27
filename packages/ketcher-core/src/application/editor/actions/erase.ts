@@ -109,6 +109,9 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     })
   })
 
+  selection.atoms = Array.from(new Set(selection.atoms))
+  selection.bonds = Array.from(new Set(selection.bonds))
+
   selection.atoms.forEach((aid) => {
     restruct.molecule.atomGetNeighbors(aid).forEach((nei) => {
       if (selection.bonds.indexOf(nei.bid) === -1) {

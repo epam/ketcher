@@ -28,8 +28,8 @@ jobs:
         run: npm run buildCi
       - name: Run example in standalone mode
         run: cd example/ && nohup npm run serve:standalone &
-      - name: Go to ketcher-autotests and install playwright browsers
-        run: cd ketcher-autotests/ && npx playwright install --with-deps
+      - name: Install playwright browsers and playwright/test
+        run: cd ketcher-autotests/ && npx playwright install --with-deps && npm install -D @playwright/test
       - name: Run playwright tests
         run: cd ketcher-autotests/ && npm run test:ci
       - uses: actions/upload-artifact@v3

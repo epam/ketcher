@@ -57,7 +57,7 @@ class RotateController {
     const selection = this.editor.selection()
     const enable =
       selection?.atoms &&
-      selection.atoms.length >= 1 &&
+      selection.atoms.length > 1 &&
       this.editor.tool() instanceof SelectTool
     if (!enable) {
       return

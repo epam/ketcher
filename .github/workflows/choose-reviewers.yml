@@ -8,6 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - uses: nitvex/reviewer-lottery@v2
+    - uses: uesteibar/reviewer-lottery@v2
       with:
         repo-token: ${{ secrets.REVIEWER_LOTTERY_SECRET }}

@@ -1,4 +1,4 @@
-name: Reviewer lottery
+name: Choose reviewers
 on:
   pull_request:
     types: [opened, ready_for_review, reopened]

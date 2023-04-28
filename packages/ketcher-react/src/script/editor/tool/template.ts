@@ -34,7 +34,7 @@ import {
 import utils from '../shared/utils'
 import Editor from '../Editor'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
-import { MODES } from 'ketcher-react/src/constants'
+import { MODES } from 'src/constants'
 
 type MergeItems = Record<string, Map<unknown, unknown>> | null
 

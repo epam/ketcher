@@ -25,7 +25,7 @@ import {
 } from 'ketcher-core'
 import { RenderStruct } from '../../utils'
 import templatesRawData from '../../../../templates/salts-and-solvents.sdf'
-import { MODES } from 'ketcher-react/src/constants'
+import { MODES } from 'src/constants'
 
 interface SaltsAndSolventsState {
   lib: []

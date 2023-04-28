@@ -21,8 +21,7 @@ import {
   fromItemsFuse,
   fromRotate,
   getHoverToFuse,
-  getItemsToFuse,
-  HalfBond
+  getItemsToFuse
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -80,8 +79,6 @@ class RotateTool {
       selection.atoms.forEach((aid) => {
         const atom = struct.atoms.get(aid)
 
-        xy0.add_(atom?.pp as Vec2) // eslint-disable-line no-underscore-dangle
-
         if (rotAll) return
 
         atom?.neighbors.find((nei) => {
@@ -89,21 +86,6 @@ class RotateTool {
 
           if (hb) {
             if (selection.atoms?.indexOf(hb.end as number) === -1) {
-              if (hb.loop >= 0) {
-                const neiAtom = struct.atoms.get(aid)
-                if (
-                  !neiAtom?.neighbors.find((neiNei) => {
-                    const neiHb = struct.halfBonds.get(neiNei) as HalfBond
-                    return (
-                      neiHb?.loop >= 0 &&
-                      selection.atoms?.indexOf(neiHb?.end) !== -1
-                    )
-                  })
-                ) {
-                  rotAll = true
-                  return true
-                }
-              }
               if (rotId == null) {
                 rotId = aid
               } else if (rotId !== aid) {
@@ -119,7 +101,8 @@ class RotateTool {
       if (!rotAll && rotId !== null) {
         xy0 = struct.atoms.get(rotId)?.pp as Vec2
       } else {
-        xy0 = xy0.scaled(1 / selection.atoms.length)
+        const selectionBoundingBox = editor.render.ctab.getVBoxObj(selection)!
+        xy0 = selectionBoundingBox.centre()
       }
     } else if (struct.atoms?.size) {
       struct.atoms.forEach((atom) => {

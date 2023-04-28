@@ -298,8 +298,7 @@ class RotateController {
     }
   }
 
-  // FIXME @yuleicul position change when window move
-  // TODO @yuleicul add unit tests according commit messages
+  // Fix: @yuleicul functional group
   private mouseUp = (event: MouseEvent) => {
     event.stopPropagation() // avoid triggering SelectTool's mouseup
 

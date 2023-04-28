@@ -84,6 +84,7 @@ class RxnPlusDelete extends BaseOperation {
     const rxn = restruct.rxnPluses.get(plid)
     if (!rxn) return
     restruct.clearVisel(rxn.visel)
+    rxn.container?.destroy()
     restruct.rxnPluses.delete(plid)
 
     struct.rxnPluses.delete(plid)

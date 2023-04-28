@@ -611,6 +611,9 @@ class ReStruct {
 
           if (selection === null) {
             selected = false
+            if (item.container) {
+              item.container.removeChild(item.hoverObject)
+            }
           }
 
           this.showItemSelection(item, selected)

@@ -43,6 +43,11 @@ export class RxnPlusMove extends BaseOperation {
 
     this.data.d = d.negated()
 
+    if (rxn.container) {
+      rxn.container.x += scaled.x
+      rxn.container.y += scaled.y
+    }
+
     if (!noinvalidate) {
       BaseOperation.invalidateItem(restruct, 'rxnPluses', id, 1)
     }

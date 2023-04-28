@@ -26,6 +26,9 @@ class ReRxnPlus extends ReObject {
   constructor(/* chem.RxnPlus */ plus) {
     super('rxnPlus')
     this.item = plus
+    this.container = new PIXI.Container()
+    this.container.sortableChildren = true
+    this.hoverObject = null
   }
 
   static isSelectable() {
@@ -48,23 +51,39 @@ class ReRxnPlus extends ReObject {
 
   makeSelectionPlate(restruct, paper, styles) {
     // TODO [MK] review parameters
-    return this.hoverPath(restruct.render).attr(styles.selectionStyle)
+    const centre = Scale.obj2scaled(this.item.pp, { scale: 40 })
+    const graphics = new PIXI.Graphics()
+    graphics.lineStyle(0)
+    graphics.beginFill(0xde3249, 1)
+    graphics.drawCircle(centre.x, centre.y, 10)
+    graphics.endFill()
+    graphics.zIndex = 1
+    this.container.addChild(graphics)
+    this.hoverObject = graphics
+
+    return this.hoverPath(restruct.render) // .attr(styles.selectionStyle)
   }
 
   show(restruct, id, options) {
     const render = restruct.render
     const centre = Scale.obj2scaled(this.item.pp, options)
     // const path = draw.plus(render.paper, centre, options)
-    window.ketcher.app.stage.addChild(this.drawPlus(centre.x, centre.y, 10))
+    const plus = this.drawPlus(centre.x, centre.y, 10)
+    this.container.addChild(plus)
+    window.ketcher.app.stage.addChild(this.container)
   }
 
   drawPlus(x, y, size) {
     const graphics = new PIXI.Graphics()
+    graphics.zIndex = 2
+    graphics.lineStyle(size / 3, 0x000000, 1)
+    // Draw the horizontal line
+    graphics.moveTo(x - size, y)
+    graphics.lineTo(x + size, y)
 
-    graphics.lineStyle(0)
-    graphics.beginFill(0xde3249, 1)
-    graphics.drawCircle(x, y, size)
-    graphics.endFill()
+    // Draw the vertical line
+    graphics.moveTo(x, y - size)
+    graphics.lineTo(x, y + size)
 
     return graphics
   }

@@ -585,6 +585,10 @@ function fromContextType(id, editor, newSg, currSelection) {
   const sourceAtoms = (sg && sg.atoms) || currSelection.atoms || []
   const context = newSg.attrs.context
 
+  if (newSg.type === SGroup.TYPES.SUP) {
+    newSg.attrs.expanded = true
+  }
+
   const result = fromSgroupAction(
     context,
     restruct,

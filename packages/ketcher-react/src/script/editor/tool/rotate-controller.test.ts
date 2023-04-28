@@ -6,18 +6,21 @@ import Editor from '../Editor'
 describe('Rotate controller', () => {
   /**
    * Steps to check:
-   * Select one atom using Select Tool
+   * Select one atom/functional group using Select Tool
    */
-  it(`hides for one selected atom`, () => {
+  it(`hides for one visible atom`, () => {
     const paper = jest.fn()
-    const selection = () => ({ atoms: [0] })
     const controller = new RotateController({
-      selection,
-      render: { paper }
+      render: {
+        paper
+      }
     } as any)
 
-    controller.rerender()
+    const visibleAtoms = [0]
+    // @ts-ignore
+    controller.show(visibleAtoms)
 
+    expect(visibleAtoms.length).toBe(1)
     expect(paper).toBeCalledTimes(0)
   })
 
@@ -27,16 +30,19 @@ describe('Rotate controller', () => {
    * 2. click Rotate Tool
    */
   it('hides when active tool is not SelectTool', () => {
+    const editor = new Editor(document, {})
+    const NonSelectTool = new RotateTool(editor, undefined)
     const paper = jest.fn()
-    const selection = () => ({ atoms: [0, 1] })
     const controller = new RotateController({
-      selection,
-      tool: () => new RotateTool({ selection }, undefined),
+      tool: () => NonSelectTool,
       render: { paper }
     } as any)
 
-    controller.rerender()
+    const visibleAtoms = [0, 1]
+    // @ts-ignore
+    controller.show(visibleAtoms)
 
+    expect(visibleAtoms.length).toBeGreaterThan(1)
     expect(paper).toBeCalledTimes(0)
   })
 

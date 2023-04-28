@@ -39,7 +39,18 @@ class RotateController {
 
   rerender() {
     this.hide()
-    this.show()
+
+    this.rotateTool = new RotateTool(this.editor, undefined, true)
+    const [originalCenter, visibleAtoms] = this.rotateTool.getCenter(
+      this.editor
+    )
+
+    const render = this.editor.render
+    this.center = originalCenter
+      .scaled(render.options.scale)
+      .add(render.options.offset)
+
+    this.show(visibleAtoms)
   }
 
   hide() {
@@ -54,24 +65,15 @@ class RotateController {
     this.link?.hide()
   }
 
-  private show() {
-    const selection = this.editor.selection()
+  private show(visibleAtoms: number[]) {
     const enable =
-      selection?.atoms &&
-      selection.atoms.length > 1 &&
-      this.editor.tool() instanceof SelectTool
+      visibleAtoms.length > 1 && this.editor.tool() instanceof SelectTool
     if (!enable) {
       return
     }
 
-    const render = this.editor.render
-    const originalCenter = RotateTool.getCenter(this.editor)
-    this.center = originalCenter
-      .scaled(render.options.scale)
-      .add(render.options.offset)
-
     this.drawCross()
-    const rectStartY = this.drawRectangle()
+    const rectStartY = this.drawRectangle(visibleAtoms)
     this.drawLink(rectStartY)
     this.drawHandle()
 
@@ -106,12 +108,11 @@ class RotateController {
       })
   }
 
-  private drawRectangle() {
-    const selection = this.editor.selection()
+  private drawRectangle(visibleAtoms: number[]) {
     const render = this.editor.render
 
     const rectBox = render.ctab
-      .getVBoxObj(selection)!
+      .getVBoxObj({ atoms: visibleAtoms })!
       .transform(Scale.obj2scaled, render.options)
       .translate(render.options.offset || new Vec2())
 
@@ -249,7 +250,6 @@ class RotateController {
     const arrowSet = this.handle?.[1]
     arrowSet?.attr({ fill: 'none' })
 
-    this.rotateTool = new RotateTool(this.editor, undefined)
     this.rotateTool?.mousedown(event)
   }
 
@@ -298,7 +298,6 @@ class RotateController {
     }
   }
 
-  // Fix: @yuleicul functional group
   private mouseUp = (event: MouseEvent) => {
     event.stopPropagation() // avoid triggering SelectTool's mouseup
 

@@ -162,11 +162,7 @@ class ReSGroup extends ReObject {
     const sGroups = restruct.molecule.sgroups
     const render = restruct.render
     if (
-      FunctionalGroup.isContractedFunctionalGroup(
-        sgroup.id,
-        functionalGroups
-      ) ||
-      SGroup.isContractedSGroup(sgroup.id, sGroups)
+      FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
     ) {
       const { startX, startY, width, height } = this.getTextHighlightDimensions(
         render.options.fontsz / 2,
@@ -192,8 +188,7 @@ class ReSGroup extends ReObject {
       FunctionalGroup.isContractedFunctionalGroup(
         sGroupItem.id,
         functionalGroups
-      ) ||
-      SGroup.isContractedSGroup(sGroupItem.id, sGroups)
+      )
     ) {
       const { startX, startY, width, height } = this.getTextHighlightDimensions(
         options.fontsz / 2,

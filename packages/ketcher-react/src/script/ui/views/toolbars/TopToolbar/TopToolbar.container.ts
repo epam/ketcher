@@ -81,7 +81,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     onClear: () => dispatchAction('clear'),
     onFileOpen: () => dispatchAction('open'),
-    onSave: () => dispatchAction('save'),
+    onSave: () => {
+      dispatchAction('remove-not-rendered-struct')
+      dispatchAction('save')
+    },
     onUndo: () => dispatchAction('undo'),
     onRedo: () => dispatchAction('redo'),
     onCopy: () => dispatchAction('copy'),

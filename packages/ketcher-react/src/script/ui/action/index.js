@@ -222,6 +222,20 @@ const config = {
     },
     hidden: (options) => isHidden(options, 'any-atom')
   },
+  // Removing from what should be saved - structure, which was added to paste tool,
+  // but not yet rendered on canvas
+  'remove-not-rendered-struct': {
+    action: {
+      thunk: (dispatch) => {
+        const savedSelectedTool = SettingsManager.selectionTool
+
+        dispatch({
+          type: 'ACTION',
+          action: savedSelectedTool || tools['select-rectangle'].action
+        })
+      }
+    }
+  },
   ...server,
   ...debug,
   ...tools,

@@ -4,10 +4,7 @@ on:
     types: [opened, ready_for_review, reopened]
 
 jobs:
-  test:
+  add-reviews:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: uesteibar/reviewer-lottery@v2
-      with:
-        repo-token: ${{ secrets.REVIEWER_LOTTERY_SECRET }}
+      - uses: kentaro-m/auto-assign-action@v1.2.5

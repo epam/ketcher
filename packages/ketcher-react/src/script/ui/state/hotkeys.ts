@@ -23,15 +23,13 @@ import {
   ChemicalMimeType
 } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
-import { load, onAction } from './shared'
+import { load, onAction, removeStructAction } from './shared'
 
 import actions from '../action'
-import tools from '../action/tools'
 import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
 import { handleHotkeyOverItem } from './handleHotkeysOverItem'
-import { SettingsManager } from '../utils/settingsManager'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -45,11 +43,7 @@ export function initKeydownListener(element) {
 function removeNotRenderedStruct(actionTool, group, dispatch) {
   const affectedTools = ['paste', 'template']
   if (affectedTools.includes(actionTool.tool) && group?.includes('save')) {
-    const savedSelectedTool = SettingsManager.selectionTool
-    dispatch({
-      type: 'ACTION',
-      action: savedSelectedTool || tools['select-rectangle'].action
-    })
+    dispatch(removeStructAction())
   }
 }
 

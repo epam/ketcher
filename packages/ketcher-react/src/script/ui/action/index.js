@@ -28,6 +28,7 @@ import help from './help'
 import functionalGroups from './functionalGroups'
 import fullscreen from './fullscreen'
 import { SettingsManager } from '../utils/settingsManager'
+import { removeStructAction } from '../state/shared'
 
 export * from './action.types'
 
@@ -38,12 +39,10 @@ const config = {
     action: {
       thunk: (dispatch, getState) => {
         const editor = getState().editor
+
+        dispatch(removeStructAction())
+
         if (!editor.struct().isBlank()) editor.struct(null)
-        const savedSelectedTool = SettingsManager.selectionTool
-        dispatch({
-          type: 'ACTION',
-          action: savedSelectedTool || tools['select-rectangle'].action
-        })
       }
     },
     hidden: (options) => isHidden(options, 'clear')

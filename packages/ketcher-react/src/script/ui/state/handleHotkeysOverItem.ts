@@ -8,6 +8,7 @@ import {
   FunctionalGroup,
   Atom
 } from 'ketcher-core'
+import { STRUCT_TYPE } from 'src/constants'
 import { openDialog } from './modal'
 import Tools from '../../editor/tool'
 import { getSelectedAtoms } from '../../editor/tool/select'
@@ -77,7 +78,7 @@ function handleEraser({
   const item = mapItemsToArrays(hoveredItem)
   const itemType = Object.keys(hoveredItem)[0]
 
-  if (['atoms', 'bonds'].includes(itemType)) {
+  if ([STRUCT_TYPE.atoms, STRUCT_TYPE.bonds].includes(itemType)) {
     isFunctionalGroupChange(
       { editor, hoveredItemId: item[itemType][0], newAction, dispatch },
       itemType

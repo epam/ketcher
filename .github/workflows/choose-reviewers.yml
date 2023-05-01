@@ -9,5 +9,5 @@ jobs:
     steps:
       - uses: kentaro-m/auto-assign-action@v1.2.5
         with:
-          repo-token: '${{ secrets.GITHUB_TOKEN }}'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           configuration-path: ".github/auto_assign.yml" 

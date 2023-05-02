@@ -84,39 +84,25 @@ function getExpandGroupsInMergeAction(
  * ] = extractAttachmentAtom(mergeItems)
  */
 function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
-  const struct = editor.struct()
   const reStruct = editor.render.ctab
 
   const newMergeItems = {
     atoms: new Map(mergeItems.atoms),
     bonds: new Map(mergeItems.bonds)
   }
-  const removeNonAttachmentAtoms = new Action()
-  const removeSGroup = new Action()
+
+  const action = new Action()
 
   mergeItems.atomToFunctionalGroup?.forEach((functionalGroupId, srcAtomId) => {
-    const sGroup = struct.sgroups.get(functionalGroupId)
-    const attachmentAtomId = sGroup?.getAttAtomId(struct)
+    const selectedSgroup = reStruct.sgroups.get(functionalGroupId)
+    const sGroupAtoms = SGroup.getAtoms(reStruct.molecule, selectedSgroup?.item)
+    const [firstAtom, ...atoms] = sGroupAtoms
 
-    if (attachmentAtomId) {
-      const attachmentAtom = struct.atoms.get(attachmentAtomId)
-      if (SGroup.isAtomInContractedSGroup(attachmentAtom, struct.sgroups)) {
-        return
-      }
-      newMergeItems.atoms.set(srcAtomId, attachmentAtomId)
+    action.mergeWith(fromSgroupDeletion(reStruct, functionalGroupId))
+    action.mergeWith(fromFragmentDeletion(reStruct, { atoms }))
 
-      removeNonAttachmentAtoms.mergeWith(
-        fromFragmentDeletion(reStruct, {
-          atoms: [...SGroup.getAtoms(struct, sGroup)].filter(
-            (atomId) => atomId !== attachmentAtomId
-          ),
-          bonds: [...SGroup.getBonds(struct, sGroup)]
-        })
-      )
-
-      removeSGroup.mergeWith(fromSgroupDeletion(reStruct, functionalGroupId))
-    }
+    newMergeItems.atoms.set(srcAtomId, firstAtom)
   })
 
-  return [newMergeItems, removeNonAttachmentAtoms] as const
+  return [newMergeItems, action] as const
 }

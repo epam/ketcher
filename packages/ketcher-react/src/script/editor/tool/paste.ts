@@ -18,8 +18,10 @@ import {
   fromItemsFuse,
   fromPaste,
   fromTemplateOnAtom,
+  FunctionalGroup,
   getHoverToFuse,
   getItemsToFuse,
+  setExpandSGroup,
   SGroup,
   Struct,
   Vec2
@@ -58,6 +60,21 @@ class PasteTool {
 
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point)
     this.action = action
+    this.editor.update(this.action, true)
+
+    struct.sgroups.forEach((sgroup) => {
+      const count = FunctionalGroup.getAttachmentPointCount(
+        sgroup,
+        this.editor.render.ctab.molecule
+      )
+      if (count > 1) {
+        action.mergeWith(
+          setExpandSGroup(this.editor.render.ctab, sgroup.id, {
+            expanded: true
+          })
+        )
+      }
+    })
     this.editor.update(this.action, true)
 
     this.findItems = ['functionalGroups']
@@ -155,11 +172,23 @@ class PasteTool {
       this.dragCtx.action = action
       this.editor.update(this.dragCtx.action, true)
     } else {
+      const sGroupsIdExpanded: number[] = []
+      this.struct.sgroups.forEach((sgroup) => {
+        const count = FunctionalGroup.getAttachmentPointCount(
+          sgroup,
+          this.struct
+        )
+        if (count > 1) {
+          sGroupsIdExpanded.push(sgroup.id)
+        }
+      })
       // common paste logic
       const [action, pasteItems] = fromPaste(
         this.editor.render.ctab,
         this.struct,
-        this.editor.render.page2obj(event)
+        this.editor.render.page2obj(event),
+        0,
+        sGroupsIdExpanded
       )
       this.action = action
       this.editor.update(this.action, true, { resizeCanvas: false })

@@ -3,14 +3,18 @@ import useFunctionalGroupEoc from '../hooks/useFunctionalGroupEoc'
 import useFunctionalGroupRemove from '../hooks/useFunctionalGroupRemove'
 
 const FunctionalGroupMenuItems: React.FC = (props) => {
-  const [handleExpandOrContract, ExpandOrContractHidden] =
-    useFunctionalGroupEoc()
+  const [
+    handleExpandOrContract,
+    ExpandOrContractHidden,
+    ExpandOrContractDisabled
+  ] = useFunctionalGroupEoc()
   const handleRemove = useFunctionalGroupRemove()
 
   return (
     <>
       <Item
         {...props}
+        disabled={(params) => ExpandOrContractDisabled(params)}
         hidden={(params) => ExpandOrContractHidden(params, true)}
         onClick={(params) => handleExpandOrContract(params, true)}
       >
@@ -18,6 +22,7 @@ const FunctionalGroupMenuItems: React.FC = (props) => {
       </Item>
       <Item
         {...props}
+        disabled={(params) => ExpandOrContractDisabled(params)}
         hidden={(params) => ExpandOrContractHidden(params, false)}
         onClick={(params) => handleExpandOrContract(params, false)}
       >

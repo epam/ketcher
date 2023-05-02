@@ -38,6 +38,8 @@ import {
 // @ts-ignore
 import indigoModuleFn from 'indigo-ketcher'
 
+console.log('indigoModuleFn', indigoModuleFn)
+
 interface IndigoOptions {
   set: (key: string, value: string) => void
 }
@@ -81,6 +83,7 @@ function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {
   }
 }
 
+debugger
 const module = indigoModuleFn()
 
 self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {

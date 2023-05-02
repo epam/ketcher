@@ -1,0 +1,25 @@
+
+> ketcher-react-app@1.0.0 start:standalone
+> cross-env MODE=standalone react-app-rewired start
+
+Starting the development server...
+
+Compiled with warnings.
+
+src/App.tsx
+  Line 28:29:  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+  Line 67:29:  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+  Line 70:23:  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  Line 87:43:  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in src/App.tsx
+  Line 28:29:  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+  Line 67:29:  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+  Line 70:23:  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  Line 87:43:  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+
+webpack compiled with 1 warning
+No issues found.

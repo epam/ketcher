@@ -51,6 +51,7 @@
     "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@rollup/plugin-strip": "^2.0.0",
+    "@rollup/plugin-wasm": "^6.1.2",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.12",
     "cross-env": "^7.0.3",

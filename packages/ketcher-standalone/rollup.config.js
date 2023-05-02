@@ -7,6 +7,7 @@ import pkg from './package.json'
 import resolve from '@rollup/plugin-node-resolve'
 import strip from '@rollup/plugin-strip'
 import typescript from 'rollup-plugin-typescript2'
+import { wasm } from '@rollup/plugin-wasm'
 import webWorkerLoader from 'rollup-plugin-web-worker-loader'
 import { license } from '../../license.ts'
 
@@ -15,7 +16,7 @@ const mode = {
   DEVELOPMENT: 'development'
 }
 
-const extensions = ['.js', '.ts']
+const extensions = ['.js', '.ts', '.wasm']
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION
 const includePattern = 'src/**/*'
 
@@ -44,6 +45,10 @@ const config = {
     nodePolyfills(),
     resolve({ extensions }),
     commonjs(),
+    wasm({
+      include: 'node_modules/**/*.{wasm}',
+      publicPath: './'
+    }),
     webWorkerLoader({
       extensions,
       sourcemap: false,

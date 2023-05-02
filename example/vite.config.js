@@ -1,5 +1,6 @@
 import replace from '@rollup/plugin-replace'
 import react from '@vitejs/plugin-react'
+import wasm from '@rollup/plugin-wasm'
 import { resolve } from 'path'
 import { createLogger, defineConfig, loadEnv } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
@@ -84,6 +85,16 @@ logger.warn = (msg, options) => {
 export default defineConfig({
   server: {
     open: true
+  },
+  build: {
+    rollupOptions: {
+      plugins: [
+        wasm({
+          include: '../node_modules/**/*.wasm',
+          publicPath: './'
+        })
+      ]
+    }
   },
   esbuild: {
     tsconfigRaw: {

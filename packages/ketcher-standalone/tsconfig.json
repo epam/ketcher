@@ -27,6 +27,9 @@
     "baseUrl": ".",
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": [
+    "src",
+    "./src/infrastructure/services/struct/indigo-ketcher.d.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }

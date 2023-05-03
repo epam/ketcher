@@ -180,7 +180,7 @@ class PasteTool {
           this.struct
         )
         if (countAttachmentPoint > 1) {
-          sgroup.data.expanded = true
+          sgroup.setAttr('expanded', true)
         }
       })
       // common paste logic

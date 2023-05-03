@@ -122,7 +122,7 @@ class ReBond extends ReObject {
 
     const rect = paper.rect(
       center.x - bond.len / 2 + beginPad,
-      center.y - 4 - addY/2,
+      center.y - 4 - addY / 2,
       bond.len - endPad * 2,
       8 + addY,
       4

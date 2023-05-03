@@ -603,7 +603,7 @@ function fromContextType(id, editor, newSg, currSelection) {
     result.action = result.action.mergeWith(fromSgroupDeletion(restruct, id))
   }
 
-  editor.selection(result.selection)
+  // editor.selection(result.selection)
 
   return result
 }

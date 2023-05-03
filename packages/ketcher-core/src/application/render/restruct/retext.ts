@@ -235,8 +235,8 @@ class ReText extends ReObject {
 
     return ranges.reduce(
       (styles: any, textRange: CustomRawDraftInlineStyleRange) => {
-        const fontsz = customFontSize || options.fontsz
-        const fontszsub = (customFontSize || options.fontszsub) * 0.8
+        const fontsz = 10 || customFontSize || options.fontsz
+        const fontszsub = (customFontSize || options.fontszsub) * 0.5
         switch (textRange.style) {
           case TextCommand.Bold:
             styles['font-weight'] = 'bold'
@@ -248,7 +248,7 @@ class ReText extends ReObject {
 
           case TextCommand.Subscript:
             styles['font-size'] = fontszsub + 'px'
-            styles.shiftY = fontsz / 3
+            styles.shiftY = fontsz / 4
 
             break
 

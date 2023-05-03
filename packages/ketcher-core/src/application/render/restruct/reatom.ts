@@ -101,6 +101,7 @@ class ReAtom extends ReObject {
     const options = render.options
     const ps = Scale.obj2scaled(this.a.pp, options)
     const atom = this.a
+    console.log('atom', this)
     const sgroups = render.ctab.sgroups
     const functionalGroups = render.ctab.molecule.functionalGroups
     if (
@@ -113,9 +114,25 @@ class ReAtom extends ReObject {
     ) {
       return null
     }
-    return paper
-      .circle(ps.x, ps.y, options.atomSelectionPlateRadius)
-      .attr(options.hoverStyle)
+    const paddingLeftRight = 4
+    const paddingTopBottom = 2
+    const radius = 12
+    const box = this.getVBoxObj(render)!
+    const ps1 = Scale.obj2scaled(box.p0, render.options)
+    const ps2 = Scale.obj2scaled(box.p1, render.options)
+    const ww = ps2.x - ps1.x
+    const hh = ps2.y - ps1.y
+    const result = this.showLabel
+    ? paper
+      .rect(
+        ps1.x - paddingLeftRight,
+        ps1.y - paddingTopBottom,
+        ww + paddingLeftRight * 2,
+        hh + paddingTopBottom * 2,
+        radius
+      )
+    : paper.circle(ps.x, ps.y, options.atomSelectionPlateRadius)
+    return result.attr(options.hoverStyle)
   }
 
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any) {
@@ -133,10 +150,28 @@ class ReAtom extends ReObject {
       return null
     }
 
+    // const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
+    const paddingLeftRight = 3
+    const paddingTopBottom = 6
+    const radius = 6
+    const box = this.getVBoxObj(restruct.render)!
+    const ps1 = Scale.obj2scaled(box.p0, restruct.render.options)
+    const ps2 = Scale.obj2scaled(box.p1, restruct.render.options)
+    const ww = ps2.x - ps1.x
+    const hh = 16
     const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
-    return paper
-      .circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
-      .attr(styles.selectionStyle)
+    console.log('this.showLabel', this.showLabel)
+    const result = this.showLabel
+    ? paper
+      .rect(
+        ps1.x - paddingLeftRight,
+        ps1.y - paddingTopBottom,
+        ww + paddingLeftRight * 2,
+        hh + paddingTopBottom * 2,
+        radius
+      )
+    : paper.circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
+    return result.attr(styles.selectionStyle)
   }
 
   show(restruct: ReStruct, aid: number, options: any): void {
@@ -631,6 +666,7 @@ function buildLabel(
   }
 
   atom.label = label
+  console.log('atom.label', atom.label)
   return label
 }
 

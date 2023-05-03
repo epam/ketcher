@@ -1,0 +1,28 @@
+Rendering library: PIXI.js
+  + performance
+
+Architecture: as stated in notion (will refine a bit)
+
+Polymer react app:
+ - framework: React
+ - state management: React-redux
+
+Build tool: vite.js
+
+Documentation: TBD
+
+Unit tests for (core/editor) and for react components (react testing library)
+
+Package structure:
+  - ketcher-core: current core functionality, render for tooltips and serializers will be imported from here
+  - ketcher-polymer-editor: core polymer business and editor logic
+  - ketcher-polymer-editor-react: react container app for PE
+  - ketcher-react: will be used as a component library for components that are common between PE and Ketcher
+  - ketcher-render: new render based on PIXI for PE, in the future to be used in Ketcher as well
+  - ketcher-standalone: used for standalone indigo service
+
+  - ketcher-core: ketcher + PE business logic and editor logic
+  - ketcher-react: ketcher + PE editors + common components
+  - ketcher-render: new render based on PIXI for PE, in the future to be used in Ketcher as well
+  - ketcher-standalone: used for standalone indigo service
+

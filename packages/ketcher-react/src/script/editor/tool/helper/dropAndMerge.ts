@@ -95,29 +95,23 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
   const action = new Action()
 
   mergeItems.atomToFunctionalGroup?.forEach((functionalGroupId, srcAtomId) => {
-    const reSGroup = reStruct.sgroups.get(functionalGroupId)
-    const reSGroupAtoms = SGroup.getAtoms(reStruct.molecule, reSGroup?.item)
-    const [firstAtom] = reSGroupAtoms
-    const atomNeighbours = reStruct.molecule.atomGetNeighbors(firstAtom)
-    const isExtraNeighbour = atomNeighbours?.some(
-      (atom) => !reSGroupAtoms.includes(atom.aid)
-    )
+    const sGroup = struct.sgroups.get(functionalGroupId)
 
-    const targetAtomId = isExtraNeighbour
-      ? struct.sgroups.get(functionalGroupId)?.getAttAtomId(struct)
-      : firstAtom
+    const attachmentAtomId = struct.sgroups
+      .get(functionalGroupId)
+      ?.getAttAtomId(struct)
 
-    if (targetAtomId !== undefined) {
-      const atomsToDelete = [
-        ...SGroup.getAtoms(reStruct.molecule, reSGroup?.item)
-      ].filter((atomId) => atomId !== targetAtomId)
+    if (attachmentAtomId !== undefined) {
+      const atomsToDelete = [...SGroup.getAtoms(struct, sGroup)].filter(
+        (atomId) => atomId !== attachmentAtomId
+      )
       action.mergeWith(fromSgroupDeletion(reStruct, functionalGroupId))
       action.mergeWith(
         fromFragmentDeletion(reStruct, {
           atoms: atomsToDelete
         })
       )
-      newMergeItems.atoms.set(srcAtomId, targetAtomId)
+      newMergeItems.atoms.set(srcAtomId, attachmentAtomId)
     }
   })
 

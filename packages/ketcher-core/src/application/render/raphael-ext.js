@@ -24,7 +24,13 @@ Raphael.el.translateAbs = function (x, y) {
   this.delta = this.delta || new Vec2()
   this.delta.x += x - 0
   this.delta.y += y - 0
-  this.transform('t' + this.delta.x.toString() + ',' + this.delta.y.toString())
+  let rotationTransformString = ''
+  const allPathTransforms = this.transform()
+  const lastTransform = allPathTransforms[allPathTransforms.length - 1]
+  if (lastTransform && lastTransform.length > 1 && lastTransform[0] === 'r') {
+    rotationTransformString = `r${lastTransform[1]}`
+  }
+  this.transform('t' + this.delta.x.toString() + ',' + this.delta.y.toString() + rotationTransformString)
 }
 
 Raphael.st.translateAbs = function (x, y) {

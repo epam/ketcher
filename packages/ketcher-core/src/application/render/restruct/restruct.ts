@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  Bond,
   Box2Abs,
   FunctionalGroup,
   Pile,
@@ -251,13 +252,13 @@ class ReStruct {
     if (!path || !this.layers[group].node.parentNode) return
 
     const paths = Array.isArray(path) ? path : [path]
-
+    // debugger
     paths.forEach((path) => {
       const offset = this.render.options.offset
       let bb = visible ? Box2Abs.fromRelBox(util.relBox(path.getBBox())) : null
       const ext = pos && bb ? bb.translate(pos.negated()) : null
       if (offset !== null) {
-        path.translateAbs(offset.x, offset.y)
+        path.translateAbs(offset.x, offset.y, path.angle)
         bb = bb ? bb.translate(offset) : null
       }
       visel.add(path, bb, ext)
@@ -626,6 +627,9 @@ class ReStruct {
     item.selected = selected
     if (item instanceof ReDataSGroupData) item.sgroup.selected = selected
     if (selected) {
+      if (item === Bond) {
+        console.log('Bond', item)
+      }
       if (!exists) {
         const render = this.render
         const options = render.options

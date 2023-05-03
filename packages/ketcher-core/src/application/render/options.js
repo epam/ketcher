@@ -24,7 +24,7 @@ function defaultOptions(opt) {
   if (opt.rotationStep) utils.setFracAngle(opt.rotationStep)
 
   const labelFontSize = Math.ceil(1.9 * (scaleFactor / 6))
-  const subFontSize = Math.ceil(0.7 * labelFontSize)
+  const subFontSize = 5 // Math.ceil(0.5 * labelFontSize)
 
   const defaultOptions = {
     'dearomatize-on-load': false,
@@ -62,7 +62,7 @@ function defaultOptions(opt) {
     subFontSize,
     font: '30px Arial',
     fontsz: labelFontSize,
-    fontszsub: subFontSize,
+    fontszsub: 4, //subFontSize,
     fontRLabel: labelFontSize * 1.2,
     fontRLogic: labelFontSize * 0.7,
 
@@ -75,11 +75,11 @@ function defaultOptions(opt) {
     },
     /* eslint-enable quote-props */
     selectionStyle: {
-      fill: '#7f7',
+      fill: '#57ff8f',
       stroke: 'none'
     },
     hoverStyle: {
-      stroke: '#0c0',
+      stroke: '#00BF7F',
       'stroke-width': (0.6 * scaleFactor) / 20
     },
     sgroupBracketStyle: {

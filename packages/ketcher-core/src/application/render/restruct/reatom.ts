@@ -116,7 +116,7 @@ class ReAtom extends ReObject {
     }
     const paddingLeftRight = 4
     const paddingTopBottom = 2
-    const radius = 12
+    const radius = 10
     const box = this.getVBoxObj(render)!
     const ps1 = Scale.obj2scaled(box.p0, render.options)
     const ps2 = Scale.obj2scaled(box.p1, render.options)
@@ -153,7 +153,7 @@ class ReAtom extends ReObject {
     // const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
     const paddingLeftRight = 3
     const paddingTopBottom = 6
-    const radius = 6
+    const radius = 10
     const box = this.getVBoxObj(restruct.render)!
     const ps1 = Scale.obj2scaled(box.p0, restruct.render.options)
     const ps2 = Scale.obj2scaled(box.p1, restruct.render.options)

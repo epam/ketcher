@@ -32,13 +32,7 @@ import { Action } from './action'
 import { Vec2 } from 'domain/entities'
 import { fromSgroupAddition } from './sgroup'
 
-export function fromPaste(
-  restruct,
-  pstruct,
-  point,
-  angle = 0,
-  sGroupsIdExpanded: number[] = []
-) {
+export function fromPaste(restruct, pstruct, point, angle = 0) {
   const xy0 = getStructCenter(pstruct)
   const offset = Vec2.diff(point, xy0)
 
@@ -103,9 +97,6 @@ export function fromPaste(
   pstruct.sgroups.forEach((sg) => {
     const newsgid = restruct.molecule.sgroups.newId()
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid))
-    if (sg.type === 'SUP' && sGroupsIdExpanded?.includes(sg.id)) {
-      sg.data.expanded = true
-    }
     const sgAction = fromSgroupAddition(
       restruct,
       sg.type,

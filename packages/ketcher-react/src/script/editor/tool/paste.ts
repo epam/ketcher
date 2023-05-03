@@ -62,12 +62,13 @@ class PasteTool {
     this.action = action
     this.editor.update(this.action, true)
 
+    // todo delete after supporting expand - collapse for 2 attachment points
     struct.sgroups.forEach((sgroup) => {
-      const count = FunctionalGroup.getAttachmentPointCount(
+      const countAttachmentPoint = FunctionalGroup.getAttachmentPointCount(
         sgroup,
         this.editor.render.ctab.molecule
       )
-      if (count > 1) {
+      if (countAttachmentPoint > 1) {
         action.mergeWith(
           setExpandSGroup(this.editor.render.ctab, sgroup.id, {
             expanded: true
@@ -172,23 +173,21 @@ class PasteTool {
       this.dragCtx.action = action
       this.editor.update(this.dragCtx.action, true)
     } else {
-      const sGroupsIdExpanded: number[] = []
+      // todo delete after supporting expand - collapse for 2 attachment points
       this.struct.sgroups.forEach((sgroup) => {
-        const count = FunctionalGroup.getAttachmentPointCount(
+        const countAttachmentPoint = FunctionalGroup.getAttachmentPointCount(
           sgroup,
           this.struct
         )
-        if (count > 1) {
-          sGroupsIdExpanded.push(sgroup.id)
+        if (countAttachmentPoint > 1) {
+          sgroup.data.expanded = true
         }
       })
       // common paste logic
       const [action, pasteItems] = fromPaste(
         this.editor.render.ctab,
         this.struct,
-        this.editor.render.page2obj(event),
-        0,
-        sGroupsIdExpanded
+        this.editor.render.page2obj(event)
       )
       this.action = action
       this.editor.update(this.action, true, { resizeCanvas: false })

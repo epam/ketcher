@@ -295,6 +295,8 @@ class SelectTool {
     editor.event.message.dispatch({
       info: false
     })
+
+    this.editor.rotateController.rerender()
   }
 
   dblclick(event) {

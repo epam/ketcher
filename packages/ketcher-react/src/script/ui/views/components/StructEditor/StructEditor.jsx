@@ -112,12 +112,17 @@ class StructEditor extends Component {
     })
 
     this.editor.event.cursor.add((csr) => {
+      let clientX, clientY
+
       switch (csr.status) {
         case 'enable':
           this.editorRef.current.classList.add(classes.enableCursor)
           const { left, top, right, bottom } =
             this.editorRef.current.getBoundingClientRect()
-          const { clientX, clientY } = csr.cursorPosition
+
+          clientX = csr.cursorPosition.clientX
+          clientY = csr.cursorPosition.clientY
+
           const handShouldBeShown =
             clientX >= left &&
             clientX <= right &&

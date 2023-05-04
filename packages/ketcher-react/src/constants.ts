@@ -21,3 +21,8 @@ export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings'
 export const MODES = {
   FG: 'fg'
 }
+
+export const STRUCT_TYPE = {
+  atoms: 'atoms',
+  bonds: 'bonds'
+}

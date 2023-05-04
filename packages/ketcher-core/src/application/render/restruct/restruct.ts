@@ -627,9 +627,6 @@ class ReStruct {
     item.selected = selected
     if (item instanceof ReDataSGroupData) item.sgroup.selected = selected
     if (selected) {
-      if (item === Bond) {
-        console.log('Bond', item)
-      }
       if (!exists) {
         const render = this.render
         const options = render.options

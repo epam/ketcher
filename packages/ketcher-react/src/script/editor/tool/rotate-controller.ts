@@ -286,6 +286,8 @@ class RotateController {
         })
       this.protractor.push(degreeText)
     }
+
+    this.protractor.toBack()
   }
 
   // NOTE: When handle is non-arrow function, `this` is element itself

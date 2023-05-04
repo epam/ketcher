@@ -754,7 +754,7 @@ function plus(paper, c, options) {
     .attr(options.lineattr)
 }
 
-function bondSingle(paper, hb1, hb2, options, color = '#000', angle = 0) {
+function bondSingle(paper, hb1, hb2, options, color = '#000') {
   const a = hb1.p
   const b = hb2.p
 

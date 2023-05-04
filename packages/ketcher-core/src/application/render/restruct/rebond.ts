@@ -34,6 +34,8 @@ import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
 
+const tfx = util.tfx
+
 function rotatePoint(pointX, pointY, angle, originX, originY) {
   // Convert the angle to radians
   const angleRad = angle * Math.PI / 180;
@@ -57,6 +59,27 @@ function rotatePoint(pointX, pointY, angle, originX, originY) {
   // Return the rotated coordinates as an array
   return [finalX, finalY];
 }
+
+function inside(point, vs) {
+  // ray-casting algorithm based on
+  // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
+
+  const { x, y } = point;
+
+  let inside = false;
+  for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+      const xi = vs[i].x
+      const yi = vs[i].y
+      const xj = vs[j].x
+      const yj = vs[j].y
+
+      const intersect = ((yi > y) !== (yj > y))
+          && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+  }
+
+  return inside;
+};
 
 class ReBond extends ReObject {
   b: Bond
@@ -89,11 +112,39 @@ class ReBond extends ReObject {
     return ret
   }
 
+  getSelectionContour(render: Render, options) {
+    const bond = this.b
+    const { bondThickness, doubleBondWidth } = options
+    const { paper, ctab: restruct } = render
+    const center = Scale.obj2scaled(bond.center, options)
+    const spY = doubleBondWidth + bondThickness
+    const addY = spY
+
+    const { begin, end } = bond
+    const beginAtom = restruct.atoms.get(begin)
+    const endAtom = restruct.atoms.get(end)
+    const beginPad = beginAtom?.showLabel ? 6 : 0
+    const endPad = endAtom?.showLabel ? 6 : 0
+
+    // bondThickness = 2
+    // doubleBondWidth = 6
+
+    const rect = paper.rect(
+      center.x - bond.len / 2,
+      center.y - spY / 2 - addY / 2,
+      bond.len,
+      spY + addY,
+      spY
+    )
+
+    return rect
+  }
+
   makeHoverPlate(render: Render) {
-    const options = render.options
     const restruct = render.ctab
-    const { paper } = render
+    const options = render.options
     bondRecalc(this, restruct, options)
+    const { paper } = render
     const bond = this.b
     const sgroups = restruct.sgroups
     const functionalGroups = restruct.molecule.functionalGroups
@@ -107,32 +158,47 @@ class ReBond extends ReObject {
       return null
     }
 
-    // const c = Scale.obj2scaled(this.b.center, options)
-    if (!this.rbb) return null
-    const center = Scale.obj2scaled(this.b.center, options)
-    let addY = 0
-    if (bond.type === Bond.PATTERN.TYPE.DOUBLE) addY = 4
-    if (bond.type === Bond.PATTERN.TYPE.TRIPLE) addY = 8
+    const p1 = restruct.atoms.get(bond.begin).a.pp
+    const p2 = restruct.atoms.get(bond.end).a.pp
 
-    const { begin, end } = this.b
-    const beginAtom = restruct.atoms.get(begin)
-    const endAtom = restruct.atoms.get(end)
-    const beginPad = beginAtom?.showLabel ? 6 : 0
-    const endPad = endAtom?.showLabel ? 6 : 0
+    const p11 = Scale.obj2scaled(new Vec2(p1.x - 0.2, p1.y - 0.2), options)
+    const p12 = Scale.obj2scaled(new Vec2(p1.x + 0.2, p1.y + 0.2), options)
+    const p21 = Scale.obj2scaled(new Vec2(p2.x - 0.2, p2.y - 0.2), options)
+    const p22 = Scale.obj2scaled(new Vec2(p2.x + 0.2, p2.y + 0.2), options)
 
-    const rect = paper.rect(
-      center.x - bond.len / 2 + beginPad,
-      center.y - 4 - addY / 2,
-      bond.len - endPad * 2,
-      8 + addY,
-      4
-    ).attr(options.hoverStyle)
-
-
-    // rect.rotation = 30
+    const rect = this.getSelectionContour(render, options)
     rect.angle = bond.angle
     rect.rotate(bond.angle)
-    return rect
+
+    const { hoverStyle } = options
+    if (this.selected) {
+      // hoverStyle.fill = '#ccffdd'
+    }
+    return rect.attr(options.hoverStyle)
+  }
+
+  rotatePoint(pointX, pointY, angle, originX, originY) {
+    // Convert the angle to radians
+    var angleRad = angle * Math.PI / 180;
+
+    // Subtract the origin coordinates from the point coordinates
+    var offsetX = pointX - originX;
+    var offsetY = pointY - originY;
+
+    // Apply the rotation matrix to the point coordinates
+    var rotatedX = Math.cos(angleRad) * offsetX - Math.sin(angleRad) * offsetY;
+    var rotatedY = Math.sin(angleRad) * offsetX + Math.cos(angleRad) * offsetY;
+
+    // Add the origin coordinates back to the rotated point coordinates
+    var finalX = rotatedX + originX;
+    var finalY = rotatedY + originY;
+
+    // Round the output values to 5 decimal places
+    finalX = Number(finalX.toFixed(5));
+    finalY = Number(finalY.toFixed(5));
+
+    // Return the rotated coordinates as an array
+    return [finalX, finalY];
   }
 
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any) {
@@ -151,52 +217,38 @@ class ReBond extends ReObject {
       return null
     }
 
-    if (!this.rbb) return null
-    console.log('bond', bond)
-    // return paper.path(
-    //   `M${this.rbb?.x + this.rbb?.width},${this.rbb?.y} L${this.rbb?.x},${
-    //     this.rbb?.y + this.rbb?.height
-    //   }`
-    // )\
-
     const hb1 =
       this.b.hb1 !== undefined ? struct.halfBonds.get(this.b.hb1) : null
     const hb2 =
       this.b.hb2 !== undefined ? struct.halfBonds.get(this.b.hb2) : null
-      console.log('hb1', hb1)
-      console.log('hb2', hb2)
 
-    let addY = 0
-    if (bond.type === Bond.PATTERN.TYPE.DOUBLE) addY = 4
-    if (bond.type === Bond.PATTERN.TYPE.TRIPLE) addY = 8
+    const p1 = hb1.p
+    const p2 = hb2.p
 
-    const { begin, end } = this.b
-    const beginAtom = restruct.atoms.get(begin)
-    const endAtom = restruct.atoms.get(end)
-    const beginPad = beginAtom?.showLabel ? 6 : 0
-    const endPad = endAtom?.showLabel ? 6 : 0
+    // const p11 = { x: p1.x - 5, y: p1.y - 5 }
+    // const p12 = { x: p1.x + 5, y: p1.y + 5 }
+    // const p21 = { x: p2.x - 5, y: p2.y - 5 }
+    // const p22 = { x: p2.x + 5, y: p2.y + 5 }
 
-    const center = Scale.obj2scaled(this.b.center, options)
-    const rect = paper.rect(
-      center.x - bond.len / 2 + beginPad,
-      center.y - 4 - addY/2,
-      bond.len - endPad * 2,
-      8 + addY,
-      4
-    )
+    const center = Scale.obj2scaled(bond.center, options)
+    const addY = 8
 
-    // rect.rotation = 30
+    const r1x = center.x - bond.len / 2
+    const r1y = center.y - 4 - addY / 2
+    const r2x = center.x + bond.len / 2
+    const r2y = center.y + 4 + addY / 2
+
+    const p11 = this.rotatePoint(r1x, r1y, bond.angle, center.x, center.y)
+    const p12 = this.rotatePoint(r2x, r1y, bond.angle, center.x, center.y)
+    const p21 = this.rotatePoint(r1x, r2y, bond.angle, center.x, center.y)
+    const p22 = this.rotatePoint(r2x, r2y, bond.angle, center.x, center.y)
+
+    const rect =this.getSelectionContour(restruct.render, options)
+
     rect.angle = bond.angle
     rect.rotate(bond.angle)
 
-
-
     return rect.attr(options.selectionStyle)
-
-    // const c = Scale.obj2scaled(this.b.center, options)
-    // return paper
-    //   .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
-    //   .attr(options.selectionStyle)
   }
 
   show(restruct: ReStruct, bid: number, options: any): void {
@@ -1159,6 +1211,7 @@ function selectDoubleBondShiftChain(struct: Struct, bond: ReBond): number {
   if ((!bond.b.hb1 && bond.b.hb1 !== 0) || (!bond.b.hb2 && bond.b.hb2 !== 0)) {
     return 0
   }
+
 
   const hb1 = struct.halfBonds.get(bond.b.hb1)
   const hb2 = struct.halfBonds.get(bond.b.hb2)

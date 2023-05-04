@@ -76,7 +76,7 @@ function defaultOptions(opt) {
     /* eslint-enable quote-props */
     selectionStyle: {
       fill: '#57ff8f',
-      stroke: 'none'
+      stroke: '#57ff8f'
     },
     hoverStyle: {
       stroke: '#00BF7F',
@@ -96,7 +96,7 @@ function defaultOptions(opt) {
       'stroke-linecap': 'round',
       'stroke-opacity': 0.6
     },
-    atomSelectionPlateRadius: labelFontSize * 1.2,
+    atomSelectionPlateRadius: labelFontSize * 1,
     contractedFunctionalGroupSize: 50
   }
 

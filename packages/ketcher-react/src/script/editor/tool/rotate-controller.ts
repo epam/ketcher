@@ -9,12 +9,15 @@ type RaphaelElement = {
 }
 
 const STYLE = {
-  HANDLE_MARGIN: 15,
+  HANDLE_MARGIN: 15, // circle bounding to handle bottom bounding
   HANDLE_RADIUS: 10,
   RECT_RADIUS: 20,
   RECT_PADDING: 10,
   INITIAL_COLOR: '#B4B9D6',
-  ACTIVE_COLOR: '#365CFF'
+  ACTIVE_COLOR: '#365CFF',
+  PROTRACTOR_COLOR: '#E1E5EA',
+  DEGREE_TEXT_MARGIN: 10, // handle top bounding to text underline
+  DEGREE_FONT_SIZE: 12
 }
 
 const LEFT_ARROW_PATH =
@@ -24,6 +27,8 @@ const RIGHT_ARROW_PATH =
 
 class RotateController {
   private editor: Editor
+
+  private protractorRadius: number
   private center?: Vec2
   private initialHandleCenter?: Vec2
   private rotateTool?: RotateTool
@@ -32,10 +37,11 @@ class RotateController {
   private boundingRect?: RaphaelElement
   private cross?: RaphaelElement
   private link?: RaphaelElement
-  // private protractor?: RaphaelElement
+  private protractor?: RaphaelElement // [circle, degree0Line, degree0Text, degree30Line, degree30Text, ...]
 
   constructor(editor: Editor) {
     this.editor = editor
+    this.protractorRadius = 0
   }
 
   rerender() {
@@ -64,6 +70,7 @@ class RotateController {
     this.boundingRect?.hide()
     this.handle?.hide()
     this.link?.hide()
+    this.protractor?.hide()
   }
 
   private show(visibleAtoms: number[]) {
@@ -74,8 +81,9 @@ class RotateController {
     }
 
     this.drawCross()
-    const rectStartY = this.drawRectangle(visibleAtoms)
-    this.drawLink(rectStartY)
+    const rectStartY = this.drawBoundingRect(visibleAtoms)
+    this.protractorRadius = this.center!.y - rectStartY
+    this.drawShortLink()
     this.drawHandle()
 
     // NOTE: remember to remove all listeners before calling `hide()`
@@ -109,7 +117,7 @@ class RotateController {
       })
   }
 
-  private drawRectangle(visibleAtoms: number[]) {
+  private drawBoundingRect(visibleAtoms: number[]) {
     const render = this.editor.render
 
     const rectBox = render.ctab
@@ -177,13 +185,13 @@ class RotateController {
     )
   }
 
-  private drawLink(rectStartY: number) {
+  private drawShortLink() {
     if (!this.center) {
       return
     }
 
     const distanceBetweenHandleAndCenter =
-      this.center.y - rectStartY + STYLE.HANDLE_MARGIN + STYLE.HANDLE_RADIUS
+      this.protractorRadius + STYLE.HANDLE_MARGIN + STYLE.HANDLE_RADIUS
     this.initialHandleCenter = new Vec2(
       this.center.x,
       this.center.y - distanceBetweenHandleAndCenter
@@ -198,6 +206,86 @@ class RotateController {
         'stroke-dasharray': '-',
         stroke: STYLE.INITIAL_COLOR
       })
+  }
+
+  private redrawProtractor() {
+    this.protractor?.remove()
+    this.drawProtractor()
+  }
+
+  // @yuleicul rotate degree should be consistent with true rotation
+  // @yuleicul pass parameters
+  private drawProtractor() {
+    if (!this.center) {
+      return
+    }
+
+    const paper = this.editor.render.paper
+
+    const circle = paper
+      .circle(this.center.x, this.center.y, this.protractorRadius)
+      .attr({
+        'stroke-dasharray': '-',
+        stroke: STYLE.PROTRACTOR_COLOR
+      })
+
+    const degree0Line = paper
+      .path(
+        `M${this.center.x},${this.center.y - this.protractorRadius}` +
+          `v-${STYLE.HANDLE_MARGIN}`
+      )
+      .attr({
+        'stroke-dasharray': '-',
+        stroke: STYLE.PROTRACTOR_COLOR
+      })
+    const degree0TextY =
+      this.center.y -
+      this.protractorRadius -
+      STYLE.HANDLE_MARGIN -
+      STYLE.HANDLE_RADIUS * 2 -
+      STYLE.DEGREE_TEXT_MARGIN
+    const degree0Text = paper.text(this.center.x, degree0TextY, '0°').attr({
+      fill: STYLE.INITIAL_COLOR,
+      'font-size': STYLE.DEGREE_FONT_SIZE
+    })
+
+    this.protractor = paper.set() as RaphaelElement
+    this.protractor.push(circle, degree0Line, degree0Text)
+
+    let degreeLine = degree0Line
+    let oTextVec = new Vec2(this.center.x, degree0TextY)
+
+    // todo @yuleicul draw 45°
+    /**
+     * i ∈ [1, 11], rotate 30°
+     * i === 12, rotate 45°
+     * i > 12, rotate 90°
+     */
+    for (let i = 1; i <= 11; i++) {
+      degreeLine = degreeLine.clone().rotate(30, this.center.x, this.center.y)
+      this.protractor.push(degreeLine)
+
+      const oCenterVec = this.center
+      const centerTextVec = Vec2.diff(oTextVec, oCenterVec)
+      const newCenterTextVec = centerTextVec.rotate(Math.PI / 6)
+      oTextVec = oCenterVec.add(newCenterTextVec)
+
+      const degree = (30 * i) % 360
+      let displayDegree = `${degree}°`
+      if (degree === 180) {
+        displayDegree = '±180°'
+      } else if (degree > 180) {
+        displayDegree = `${degree - 360}°`
+      }
+
+      const degreeText = paper
+        .text(oTextVec.x, oTextVec.y, displayDegree)
+        .attr({
+          fill: STYLE.INITIAL_COLOR,
+          'font-size': STYLE.DEGREE_FONT_SIZE
+        })
+      this.protractor.push(degreeText)
+    }
   }
 
   // NOTE: When handle is non-arrow function, `this` is element itself
@@ -236,15 +324,19 @@ class RotateController {
       return
     }
 
+    this.boundingRect?.remove()
+    this.drawProtractor()
     this.cross?.attr({
       stroke: STYLE.ACTIVE_COLOR
     })
-    this.link?.attr({
-      path:
-        `M${this.center?.x},${this.center?.y}` +
-        `L${this.initialHandleCenter?.x},${this.initialHandleCenter?.y}`,
-      stroke: STYLE.ACTIVE_COLOR
-    })
+    this.link
+      ?.attr({
+        path:
+          `M${this.center?.x},${this.center?.y}` +
+          `L${this.initialHandleCenter?.x},${this.initialHandleCenter?.y}`,
+        stroke: STYLE.ACTIVE_COLOR
+      })
+      .toFront()
     this.handle?.attr({
       cursor: 'grabbing'
     })
@@ -267,31 +359,45 @@ class RotateController {
       event: MouseEvent
     ) => {
       const isLeftButtonPressed = event.buttons === 1
-      if (!lastHandleCenter || !isLeftButtonPressed) {
+      if (
+        !lastHandleCenter ||
+        !this.initialHandleCenter ||
+        !this.center ||
+        !isLeftButtonPressed
+      ) {
         return
       }
 
       const options = this.editor.render.options
-      const newHandleCenter = this.initialHandleCenter?.add(
+      const newHandleCenter = this.initialHandleCenter.add(
         new Vec2(dxFromStart, dyFromStart).scaled(1 / options.zoom) // HACK: zoom in/out
       )
 
-      const delta = newHandleCenter?.sub(lastHandleCenter)
-      this.handle?.translate(delta?.x, delta?.y)
+      const newProtractorRadius =
+        Vec2.dist(newHandleCenter, this.center) -
+        STYLE.HANDLE_MARGIN -
+        STYLE.HANDLE_RADIUS
+      this.protractorRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0
+      this.redrawProtractor()
+
+      this.link
+        ?.attr({
+          path:
+            `M${this.center.x},${this.center.y}` +
+            `L${newHandleCenter.x},${newHandleCenter.y}`,
+          stroke: STYLE.ACTIVE_COLOR
+        })
+        .toFront()
+
+      const delta = newHandleCenter.sub(lastHandleCenter)
+      this.handle?.translate(delta.x, delta.y)
       this.handle?.attr({
         cursor: 'grabbing'
-      })
-      this.link?.attr({
-        path:
-          `M${this.center?.x},${this.center?.y}` +
-          `L${newHandleCenter?.x},${newHandleCenter?.y}`,
-        stroke: STYLE.ACTIVE_COLOR
       })
 
       const newRotateAngle = utils.calcAngle(newHandleCenter, this.center)
       const rotateDegree = utils.degrees(newRotateAngle - lastRotateAngle)
-      this.cross?.rotate(rotateDegree, this.center?.x, this.center?.y)
-      this.boundingRect?.rotate(rotateDegree, this.center?.x, this.center?.y)
+      this.cross?.rotate(rotateDegree, this.center.x, this.center.y)
 
       lastHandleCenter = newHandleCenter
       lastRotateAngle = newRotateAngle

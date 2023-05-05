@@ -384,7 +384,7 @@ class Editor implements KetcherEditor {
 
     if (!event) return
 
-    showFunctionalGroupsTooltip(this)
+    showFunctionalGroupsTooltip(this, event)
   }
 
   update(

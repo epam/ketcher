@@ -39,7 +39,7 @@ export function showTooltip(editor, infoPanelData) {
   }
 }
 
-export function showFunctionalGroupsTooltip(editor) {
+export function showFunctionalGroupsTooltip(editor, event: PointerEvent) {
   let infoPanelData: any = null
   const checkFunctionGroupTypes = ['sgroups', 'functionalGroups']
   const closestCollapsibleStructures = editor.findItem(

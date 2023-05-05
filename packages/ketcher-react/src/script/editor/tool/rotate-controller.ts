@@ -307,14 +307,16 @@ class RotateController {
     const TEXT_COLOR = '#333333'
 
     // Doc: https://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands
-    arc.attr({
-      path:
-        `M${rotateArcStart.x},${rotateArcStart.y}` +
-        `A${this.protractorRadius},${this.protractorRadius} ` +
-        `0 0,${structRotateDegree < 0 ? '0' : '1'} ` +
-        `${rotateArcEnd.x},${rotateArcEnd.y}`,
-      stroke: STYLE.ACTIVE_COLOR
-    })
+    arc
+      .attr({
+        path:
+          `M${rotateArcStart.x},${rotateArcStart.y}` +
+          `A${this.protractorRadius},${this.protractorRadius} ` +
+          `0 0,${structRotateDegree < 0 ? '0' : '1'} ` +
+          `${rotateArcEnd.x},${rotateArcEnd.y}`,
+        stroke: STYLE.ACTIVE_COLOR
+      })
+      .toBack()
 
     text.attr({
       text: `${structRotateDegree}°`,
@@ -413,14 +415,6 @@ class RotateController {
           new Vec2(dxFromStart, dyFromStart).scaled(1 / options.zoom) // HACK: zoom in/out
         )
 
-        const newProtractorRadius =
-          Vec2.dist(newHandleCenter, this.center) -
-          STYLE.HANDLE_MARGIN -
-          STYLE.HANDLE_RADIUS
-        this.protractorRadius =
-          newProtractorRadius >= 0 ? newProtractorRadius : 0
-        this.redrawProtractor()
-
         this.link
           ?.attr({
             path:
@@ -440,13 +434,21 @@ class RotateController {
         const rotateDegree = utils.degrees(newRotateAngle - lastRotateAngle)
         this.cross?.rotate(rotateDegree, this.center.x, this.center.y)
 
+        this.rotateTool.mousemove(event)
+        const newProtractorRadius =
+          Vec2.dist(newHandleCenter, this.center) -
+          STYLE.HANDLE_MARGIN -
+          STYLE.HANDLE_RADIUS
+        this.protractorRadius =
+          newProtractorRadius >= 0 ? newProtractorRadius : 0
+        this.drawRotateArc(this.rotateTool.dragCtx.angle)
+        // NOTE: drawing protractor last
+        this.redrawProtractor(this.rotateTool.dragCtx.angle)
+
         lastHandleCenter = newHandleCenter
         lastRotateAngle = newRotateAngle
-
-        this.rotateTool.mousemove(event)
-        this.drawRotateArc(this.rotateTool.dragCtx.angle)
       },
-      100
+      40 // 25fps
     )
   }
 

@@ -200,14 +200,15 @@ class RotateController {
       })
   }
 
-  private redrawProtractor() {
+  private redrawProtractor(structRotateDegree?: number) {
+    if (structRotateDegree === undefined) {
+      return
+    }
     this.protractor?.remove()
-    this.drawProtractor()
+    this.drawProtractor(structRotateDegree)
   }
 
-  // @yuleicul rotate degree should be consistent with true rotation
-  // @yuleicul pass parameters
-  private drawProtractor() {
+  private drawProtractor(structRotateDegree: number) {
     if (!this.center) {
       return
     }
@@ -250,27 +251,34 @@ class RotateController {
     let degreeLine = degree0Line
     let textPos = new Vec2(this.center.x, degree0TextY)
 
-    // todo @yuleicul draw 45°
-    /**
-     * i ∈ [1, 11], rotate 30°
-     * i === 12, rotate 45°
-     * i > 12, rotate 90°
-     */
-    for (let i = 1; i <= 11; i++) {
-      degreeLine = degreeLine.clone().rotate(30, this.center.x, this.center.y)
-      this.protractor.push(degreeLine)
+    const predefinedDegrees = [
+      0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60, -45,
+      -30
+    ]
+    predefinedDegrees.reduce((previousDegree, currentDegree) => {
+      const gap = currentDegree - previousDegree
+      const abs = Math.abs(currentDegree - structRotateDegree)
 
-      textPos = rotatePoint(this.center, textPos, Math.PI / 6)
+      degreeLine = degreeLine
+        .clone()
+        .rotate(gap, this.center!.x, this.center!.y)
+        .attr({
+          stroke: abs > 90 ? 'none' : PROTRACTOR_COLOR
+        })
+      this.protractor!.push(degreeLine)
 
-      const degree = (30 * i) % 360
-      const displayDegree = degree > 180 ? `${degree - 360}°` : `${degree}°`
+      textPos = rotatePoint(this.center!, textPos, (gap / 180) * Math.PI)
 
-      const degreeText = paper.text(textPos.x, textPos.y, displayDegree).attr({
-        fill: STYLE.INITIAL_COLOR,
-        'font-size': DEGREE_FONT_SIZE
-      })
-      this.protractor.push(degreeText)
-    }
+      const degreeText = paper
+        .text(textPos.x, textPos.y, `${currentDegree}°`)
+        .attr({
+          fill: abs > 90 ? 'none' : STYLE.INITIAL_COLOR,
+          'font-size': DEGREE_FONT_SIZE
+        })
+      this.protractor!.push(degreeText)
+
+      return currentDegree
+    })
 
     this.protractor.toBack()
   }
@@ -283,8 +291,8 @@ class RotateController {
     this.rotateArc = paper.set().push(arc, text)
   }
 
-  private drawRotateArc(structRotateDegree: number) {
-    if (!this.center || !this.rotateArc) {
+  private drawRotateArc(structRotateDegree?: number) {
+    if (!this.center || !this.rotateArc || structRotateDegree === undefined) {
       return
     }
 
@@ -365,7 +373,7 @@ class RotateController {
     }
 
     this.boundingRect?.remove()
-    this.drawProtractor()
+    this.drawProtractor(0)
     this.cross?.attr({
       stroke: STYLE.ACTIVE_COLOR
     })
@@ -441,9 +449,9 @@ class RotateController {
           STYLE.HANDLE_RADIUS
         this.protractorRadius =
           newProtractorRadius >= 0 ? newProtractorRadius : 0
-        this.drawRotateArc(this.rotateTool.dragCtx.angle)
+        this.drawRotateArc(this.rotateTool.dragCtx?.angle)
         // NOTE: drawing protractor last
-        this.redrawProtractor(this.rotateTool.dragCtx.angle)
+        this.redrawProtractor(this.rotateTool.dragCtx?.angle)
 
         lastHandleCenter = newHandleCenter
         lastRotateAngle = newRotateAngle

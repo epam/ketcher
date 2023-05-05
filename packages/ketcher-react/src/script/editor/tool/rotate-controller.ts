@@ -11,13 +11,8 @@ type RaphaelElement = {
 const STYLE = {
   HANDLE_MARGIN: 15, // circle bounding to handle bottom bounding
   HANDLE_RADIUS: 10,
-  RECT_RADIUS: 20,
-  RECT_PADDING: 10,
   INITIAL_COLOR: '#B4B9D6',
-  ACTIVE_COLOR: '#365CFF',
-  PROTRACTOR_COLOR: '#E1E5EA',
-  DEGREE_TEXT_MARGIN: 10, // handle top bounding to text underline
-  DEGREE_FONT_SIZE: 12
+  ACTIVE_COLOR: '#365CFF'
 }
 
 const LEFT_ARROW_PATH =
@@ -29,25 +24,26 @@ class RotateController {
   private editor: Editor
 
   private protractorRadius: number
+  private rotateTool: RotateTool
   private center?: Vec2
   private initialHandleCenter?: Vec2
-  private rotateTool?: RotateTool
 
   private handle?: RaphaelElement // [circle, arrowSet]
   private boundingRect?: RaphaelElement
   private cross?: RaphaelElement
   private link?: RaphaelElement
   private protractor?: RaphaelElement // [circle, degree0Line, degree0Text, degree30Line, degree30Text, ...]
+  private rotateArc?: RaphaelElement
 
   constructor(editor: Editor) {
     this.editor = editor
     this.protractorRadius = 0
+    this.rotateTool = new RotateTool(this.editor, undefined, true)
   }
 
   rerender() {
     this.hide()
 
-    this.rotateTool = new RotateTool(this.editor, undefined, true)
     const [originalCenter, visibleAtoms] = this.rotateTool.getCenter(
       this.editor
     )
@@ -71,6 +67,7 @@ class RotateController {
     this.handle?.hide()
     this.link?.hide()
     this.protractor?.hide()
+    this.rotateArc?.hide()
   }
 
   private show(visibleAtoms: number[]) {
@@ -119,6 +116,8 @@ class RotateController {
 
   private drawBoundingRect(visibleAtoms: number[]) {
     const render = this.editor.render
+    const RECT_RADIUS = 20
+    const RECT_PADDING = 10
 
     const rectBox = render.ctab
       .getVBoxObj({ atoms: visibleAtoms })!
@@ -126,21 +125,13 @@ class RotateController {
       .translate(render.options.offset || new Vec2())
 
     const rectStartX =
-      rectBox.p0.x -
-      STYLE.RECT_PADDING -
-      render.options.atomSelectionPlateRadius
+      rectBox.p0.x - RECT_PADDING - render.options.atomSelectionPlateRadius
     const rectStartY =
-      rectBox.p0.y -
-      STYLE.RECT_PADDING -
-      render.options.atomSelectionPlateRadius
+      rectBox.p0.y - RECT_PADDING - render.options.atomSelectionPlateRadius
     const rectEndX =
-      rectBox.p1.x +
-      STYLE.RECT_PADDING +
-      render.options.atomSelectionPlateRadius
+      rectBox.p1.x + RECT_PADDING + render.options.atomSelectionPlateRadius
     const rectEndY =
-      rectBox.p1.y +
-      STYLE.RECT_PADDING +
-      render.options.atomSelectionPlateRadius
+      rectBox.p1.y + RECT_PADDING + render.options.atomSelectionPlateRadius
 
     this.boundingRect = render.paper
       .rect(
@@ -148,7 +139,7 @@ class RotateController {
         rectStartY,
         rectEndX - rectStartX,
         rectEndY - rectStartY,
-        STYLE.RECT_RADIUS
+        RECT_RADIUS
       )
       .attr({
         'stroke-dasharray': '-',
@@ -221,12 +212,15 @@ class RotateController {
     }
 
     const paper = this.editor.render.paper
+    const DEGREE_TEXT_MARGIN = 10 // handle top bounding to text underline
+    const PROTRACTOR_COLOR = '#E1E5EA'
+    const DEGREE_FONT_SIZE = 12
 
     const circle = paper
       .circle(this.center.x, this.center.y, this.protractorRadius)
       .attr({
         'stroke-dasharray': '-',
-        stroke: STYLE.PROTRACTOR_COLOR
+        stroke: PROTRACTOR_COLOR
       })
 
     const degree0Line = paper
@@ -236,24 +230,24 @@ class RotateController {
       )
       .attr({
         'stroke-dasharray': '-',
-        stroke: STYLE.PROTRACTOR_COLOR
+        stroke: PROTRACTOR_COLOR
       })
     const degree0TextY =
       this.center.y -
       this.protractorRadius -
       STYLE.HANDLE_MARGIN -
       STYLE.HANDLE_RADIUS * 2 -
-      STYLE.DEGREE_TEXT_MARGIN
+      DEGREE_TEXT_MARGIN
     const degree0Text = paper.text(this.center.x, degree0TextY, '0°').attr({
       fill: STYLE.INITIAL_COLOR,
-      'font-size': STYLE.DEGREE_FONT_SIZE
+      'font-size': DEGREE_FONT_SIZE
     })
 
     this.protractor = paper.set() as RaphaelElement
     this.protractor.push(circle, degree0Line, degree0Text)
 
     let degreeLine = degree0Line
-    let oTextVec = new Vec2(this.center.x, degree0TextY)
+    let textPos = new Vec2(this.center.x, degree0TextY)
 
     // todo @yuleicul draw 45°
     /**
@@ -265,29 +259,70 @@ class RotateController {
       degreeLine = degreeLine.clone().rotate(30, this.center.x, this.center.y)
       this.protractor.push(degreeLine)
 
-      const oCenterVec = this.center
-      const centerTextVec = Vec2.diff(oTextVec, oCenterVec)
-      const newCenterTextVec = centerTextVec.rotate(Math.PI / 6)
-      oTextVec = oCenterVec.add(newCenterTextVec)
+      textPos = rotatePoint(this.center, textPos, Math.PI / 6)
 
       const degree = (30 * i) % 360
-      let displayDegree = `${degree}°`
-      if (degree === 180) {
-        displayDegree = '±180°'
-      } else if (degree > 180) {
-        displayDegree = `${degree - 360}°`
-      }
+      const displayDegree = degree > 180 ? `${degree - 360}°` : `${degree}°`
 
-      const degreeText = paper
-        .text(oTextVec.x, oTextVec.y, displayDegree)
-        .attr({
-          fill: STYLE.INITIAL_COLOR,
-          'font-size': STYLE.DEGREE_FONT_SIZE
-        })
+      const degreeText = paper.text(textPos.x, textPos.y, displayDegree).attr({
+        fill: STYLE.INITIAL_COLOR,
+        'font-size': DEGREE_FONT_SIZE
+      })
       this.protractor.push(degreeText)
     }
 
     this.protractor.toBack()
+  }
+
+  private initRotateArc() {
+    const paper = this.editor.render.paper
+    const arc = paper.path()
+    const text = paper.text(0, 0, '')
+
+    this.rotateArc = paper.set().push(arc, text)
+  }
+
+  private drawRotateArc(structRotateDegree: number) {
+    if (!this.center || !this.rotateArc) {
+      return
+    }
+
+    const rotateArcStart = new Vec2(
+      this.center.x,
+      this.center.y - this.protractorRadius
+    )
+    const rotateArcEnd = rotatePoint(
+      this.center,
+      rotateArcStart,
+      (structRotateDegree / 180) * Math.PI
+    )
+
+    const arc = this.rotateArc[0]
+    const text = this.rotateArc[1]
+
+    const TEXT_MARGIN_LEFT = 8
+    const TEXT_MARGIN_BOTTOM = 12
+    const TEXT_FONT_SIZE = 16
+    const TEXT_COLOR = '#333333'
+
+    // Doc: https://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands
+    arc.attr({
+      path:
+        `M${rotateArcStart.x},${rotateArcStart.y}` +
+        `A${this.protractorRadius},${this.protractorRadius} ` +
+        `0 0,${structRotateDegree < 0 ? '0' : '1'} ` +
+        `${rotateArcEnd.x},${rotateArcEnd.y}`,
+      stroke: STYLE.ACTIVE_COLOR
+    })
+
+    text.attr({
+      text: `${structRotateDegree}°`,
+      'text-anchor': 'start',
+      x: this.center.x + TEXT_MARGIN_LEFT,
+      y: this.center.y - this.protractorRadius - TEXT_MARGIN_BOTTOM,
+      'font-size': TEXT_FONT_SIZE,
+      fill: TEXT_COLOR
+    })
   }
 
   // NOTE: When handle is non-arrow function, `this` is element itself
@@ -345,12 +380,13 @@ class RotateController {
     const arrowSet = this.handle?.[1]
     arrowSet?.attr({ fill: 'none' })
 
-    this.rotateTool?.mousedown(event)
+    this.rotateTool.mousedown(event)
   }
 
   private dragMove = () => {
     let lastHandleCenter = this.initialHandleCenter
     let lastRotateAngle = utils.calcAngle(lastHandleCenter, this.center)
+    this.initRotateArc()
 
     // TODO: @yuleicul after 130px numbers disappear should be done or not?
     return (
@@ -404,16 +440,28 @@ class RotateController {
       lastHandleCenter = newHandleCenter
       lastRotateAngle = newRotateAngle
 
-      this.rotateTool?.mousemove(event)
+      this.rotateTool.mousemove(event)
+      this.drawRotateArc(this.rotateTool.dragCtx.angle)
     }
   }
 
   private mouseUp = (event: MouseEvent) => {
     event.stopPropagation() // avoid triggering SelectTool's mouseup
 
-    this.rotateTool?.mouseup()
+    this.rotateTool.mouseup()
     this.rerender()
   }
+}
+
+const rotatePoint = (centerPoint: Vec2, startPoint: Vec2, angle: number) => {
+  const oCenter = centerPoint
+  const oStart = startPoint
+
+  const centerStart = oStart.sub(oCenter)
+  const centerEnd = centerStart.rotate(angle)
+
+  const oEnd = oCenter.add(centerEnd)
+  return oEnd
 }
 
 export default RotateController

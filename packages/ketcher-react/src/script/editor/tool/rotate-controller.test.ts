@@ -11,6 +11,7 @@ describe('Rotate controller', () => {
   it(`hides for one visible atom`, () => {
     const paper = jest.fn()
     const controller = new RotateController({
+      selection: () => null,
       render: {
         paper
       }
@@ -34,6 +35,7 @@ describe('Rotate controller', () => {
     const NonSelectTool = new RotateTool(editor, undefined)
     const paper = jest.fn()
     const controller = new RotateController({
+      selection: () => null,
       tool: () => NonSelectTool,
       render: { paper }
     } as any)

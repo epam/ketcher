@@ -33,12 +33,41 @@ import {
   LayoutCommandData,
   OutputMessage
 } from './indigoWorker.types'
+// import { indigoModule } from './standaloneStructService';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import indigoModuleFn from 'indigo-ketcher'
+// import init, { main, layout } from 'indigo-ketcher/indigo-ketcher'
+// import wasm from 'indigo-ketcher/indigo-ketcher.wasm'
+// import { expose } from 'comlink'
+// importScripts('./standaloneSturctService')
+// @ts-ignore
+// console.log(indigoModule)
 
-console.log('indigoModuleFn', indigoModuleFn)
+// console.log('indigoModuleFn', indigoModuleFn)
+// console.log(wasm)
+// @ts-ignore
+// wasm()
+// //   // @ts-ignore
+//   .then((mod) => console.log(mod))
+
+// async function loadWasm() {
+//   const importObject = {
+//     env: {
+//       __memory_base: 0,
+//       __table_base: 0,
+//       memory: new WebAssembly.Memory({initial: 1})
+//     }
+//   }
+//   const wasm = fetch('http://localhost:3000/indigo-ketcher.wasm');
+//   WebAssembly.instantiateStreaming(wasm, importObject)
+//   .then(res => console.log(res))
+// }
+// loadWasm()
+
+import('indigo-ketcher/indigo-ketcher.wasm')
+  // @ts-ignore
+  .then((mod) => console.log(mod.default()))
 
 interface IndigoOptions {
   set: (key: string, value: string) => void
@@ -51,7 +80,10 @@ function handle(
   options?: CommandOptions,
   messageType?: Command
 ) {
+  // @ts-ignore
   module.then((indigo) => {
+    console.log('Indigo is', indigo)
+    // @ts-ignore
     const indigoOptions = new indigo.MapStringString()
     setOptions(indigoOptions, options || {})
     let msg: OutputMessage<string>
@@ -83,13 +115,48 @@ function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {
   }
 }
 
-debugger
-const module = indigoModuleFn()
+// const workerUrl = self.location + '';
+// const basePath = workerUrl.replace(/\/[^/]+$/, '/');
+// const [,removedBlobPath] = basePath.split('blob:');
+
+// console.log('called', removedBlobPath)
+// // @ts-ignore
+// self.importScripts(removedBlobPath + 'static/js/indigo-ketcher.js')
+
+// const module = import('indigo-ketcher/indigo-ketcher.wasm')
+//   .then(async (indigoModule) => {
+//     // @ts-ignore
+//     console.log(await indigoModule)
+//     // @ts-ignore
+//     return indigoModule.default()
+//   })
+
+// const wasmUrl = new URL('indigo-ketcher.wasm', import.meta.url);
+// const module = import(wasmUrl.href)
+//   .then(async (indigoModule) => {
+//     // @ts-ignore
+//     console.log(await indigoModule)
+//     // @ts-ignore
+//     return indigoModule.default()
+//   })
+
+// const module = import('indigo-ketcher').then(async (indigoModule) => {
+//   const res = await indigoModule.default()
+//   console.log(res)
+//   return res
+// })
 
 self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
   const message = e.data
 
   switch (message.type) {
+    // case Command.Init: {
+    //   const data: InitCommandData = message.data as InitCommandData
+    //   import(data.data)
+    //   .then((mod) => mod.default)
+    //   break;
+    // }
+
     case Command.GenerateImageAsBase64: {
       const data: GenerateImageCommandData =
         message.data as GenerateImageCommandData
@@ -247,3 +314,5 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       throw Error('Unsupported enum type')
   }
 }
+
+// expose(handle)

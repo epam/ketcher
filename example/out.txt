@@ -2,24 +2,167 @@
 > ketcher-react-app@1.0.0 start:standalone
 > cross-env MODE=standalone react-app-rewired start
 
+/Users/Nikita_Vozisov/Public/Projects/ketcher/node_modules/indigo-ketcher/indigo-ketcher.wasm
+executed! {
+  target: [ 'browserslist' ],
+  stats: 'errors-warnings',
+  mode: 'development',
+  bail: false,
+  devtool: 'cheap-module-source-map',
+  entry: '/Users/Nikita_Vozisov/Public/Projects/ketcher/example/src/index.tsx',
+  output: {
+    path: '/Users/Nikita_Vozisov/Public/Projects/ketcher/example/build',
+    pathinfo: true,
+    filename: 'static/js/bundle.js',
+    chunkFilename: 'static/js/[name].chunk.js',
+    assetModuleFilename: 'static/media/[name].[hash][ext]',
+    publicPath: '/',
+    devtoolModuleFilenameTemplate: [Function (anonymous)]
+  },
+  cache: {
+    type: 'filesystem',
+    version: 'b99227ec410a6690150951092d606e1f',
+    cacheDirectory: '/Users/Nikita_Vozisov/Public/Projects/ketcher/example/node_modules/.cache',
+    store: 'pack',
+    buildDependencies: { defaultWebpack: [Array], config: [Array], tsconfig: [Array] }
+  },
+  infrastructureLogging: { level: 'none' },
+  optimization: {
+    minimize: false,
+    minimizer: [ [TerserPlugin], [CssMinimizerPlugin] ]
+  },
+  resolve: {
+    modules: [
+      'node_modules',
+      '/Users/Nikita_Vozisov/Public/Projects/ketcher/example/node_modules'
+    ],
+    extensions: [
+      '.web.mjs', '.mjs',
+      '.web.js',  '.js',
+      '.web.ts',  '.ts',
+      '.web.tsx', '.tsx',
+      '.json',    '.web.jsx',
+      '.jsx'
+    ],
+    alias: { 'react-native': 'react-native-web' },
+    plugins: [ [ModuleScopePlugin] ]
+  },
+  module: { strictExportPresence: true, rules: [ [Object] ] },
+  plugins: [
+    HtmlWebpackPlugin { userOptions: [Object], version: 5 },
+    InterpolateHtmlPlugin {
+      htmlWebpackPlugin: [Function],
+      replacements: [Object]
+    },
+    ModuleNotFoundPlugin {
+      appPath: '/Users/Nikita_Vozisov/Public/Projects/ketcher/example',
+      yarnLockFile: undefined,
+      useYarnCommand: [Function: bound useYarnCommand],
+      getRelativePath: [Function: bound getRelativePath],
+      prettierError: [Function: bound prettierError]
+    },
+    DefinePlugin { definitions: [Object] },
+    ReactRefreshPlugin { options: [Object] },
+    CaseSensitivePathsPlugin {
+      options: {},
+      logger: [Object [console]],
+      pathCache: Map(0) {},
+      fsOperations: 0,
+      primed: false
+    },
+    WebpackManifestPlugin { options: [Object] },
+    IgnorePlugin {
+      options: [Object],
+      checkIgnore: [Function: bound checkIgnore]
+    },
+    ForkTsCheckerWebpackPlugin { options: [Object] },
+    ESLintWebpackPlugin {
+      key: 'ESLintWebpackPlugin',
+      options: [Object],
+      run: [Function: bound run] AsyncFunction
+    },
+    EnvironmentPlugin { keys: [Array], defaultValues: [Object] },
+    HtmlReplaceWebpackPlugin { replace: [Function (anonymous)] }
+  ],
+  performance: false
+}
 Starting the development server...
 
-Compiled with warnings.
+Compiled successfully!
 
-src/App.tsx
-  Line 28:29:  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
-  Line 67:29:  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
-  Line 70:23:  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  Line 87:43:  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+You can now view ketcher-react-app in the browser.
 
-Search for the keywords to learn more about each warning.
-To ignore, add // eslint-disable-next-line to the line before.
+  Local:            http://localhost:3000
+  On Your Network:  http://192.168.1.102:3000
 
-WARNING in src/App.tsx
-  Line 28:29:  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
-  Line 67:29:  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
-  Line 70:23:  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  Line 87:43:  Forbidden non-null assertion              @typescript-eslint/no-non-null-assertion
+Note that the development build is not optimized.
+To create a production build, use npm run build.
 
-webpack compiled with 1 warning
+webpack compiled successfully
+Files successfully emitted, waiting for typecheck results...
+Issues checking in progress...
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled successfully
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled successfully
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled successfully
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled successfully
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled successfully
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled successfully
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled successfully
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled successfully
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled successfully
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled successfully
+Compiling...
+No issues found.
+Compiled successfully!
+webpack compiled successfully
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled successfully
+Compiling...
+No issues found.
+Compiled successfully!
+webpack compiled successfully
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled successfully
+Compiling...
+No issues found.
+Compiled successfully!
+webpack compiled successfully
+No issues found.
+Compiling...
+Compiled successfully!
+webpack compiled successfully
 No issues found.

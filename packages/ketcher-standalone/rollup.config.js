@@ -1,6 +1,8 @@
 import babel from '@rollup/plugin-babel'
 import cleanup from 'rollup-plugin-cleanup'
 import commonjs from '@rollup/plugin-commonjs'
+import * as path from 'path'
+// import url from '@rollup/plugin-url'
 import del from 'rollup-plugin-delete'
 import nodePolyfills from 'rollup-plugin-node-polyfills'
 import pkg from './package.json'
@@ -32,7 +34,8 @@ const config = {
     {
       file: pkg.module,
       exports: 'named',
-      format: 'es',
+      format: 'umd',
+      name: 'indigoModule',
       banner: license
     }
   ],
@@ -45,13 +48,25 @@ const config = {
     nodePolyfills(),
     resolve({ extensions }),
     commonjs(),
+    // url({
+    //   include: 'node_modules/**/*.{wasm}',
+    //   publicPath: './'
+    // }),
+    // wasm({
+    //   include: 'node_modules/**/*.{wasm}',
+    //   publicPath: './'
+    // }),
     wasm({
-      include: 'node_modules/**/*.{wasm}',
-      publicPath: './'
+      include: path.resolve(
+        path.join(__dirname, '../..'),
+        'node_modules/indigo-ketcher/indigo-ketcher.wasm'
+      ),
+      publicPath: './',
+      targetEnv: 'browser'
     }),
     webWorkerLoader({
       extensions,
-      sourcemap: false,
+      sourcemap: true,
       targetPlatform: 'browser',
       external: ['@babel/runtime']
     }),

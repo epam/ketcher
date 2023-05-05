@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
+// @ts-nocheck
 import {
   AromatizeCommandData,
   AutomapCommandData,
@@ -63,8 +63,17 @@ import {
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
+// import IndigoWorker from './indigoWorker'
 import IndigoWorker from 'web-worker:./indigoWorker'
+// import indigoModule from 'indigo-ketcher/indigo-ketcher.wasm'
+// export { indigoModule }
+// import { wrap } from "comlink";
 import EventEmitter from 'events'
+
+// const indigoWorker = wrap(new IndigoWorker());
+
+// initIndigo()
+// .then((module) => console.log(module))
 
 interface KeyValuePair {
   [key: string]: number | string | boolean | object
@@ -174,12 +183,14 @@ const messageTypeToEventMapping: {
 
 class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions
+  // private readonly worker: typeof indigoWorker
   private readonly worker: IndigoWorker
   private readonly EE: EventEmitter = new EventEmitter()
 
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions
     this.worker = new IndigoWorker()
+    // @ts-ignore
     this.worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
       const message: OutputMessage<string> = e.data
       if (message.type !== undefined) {

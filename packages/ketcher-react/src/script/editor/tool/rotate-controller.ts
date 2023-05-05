@@ -10,7 +10,7 @@ type RaphaelElement = {
 }
 
 const STYLE = {
-  HANDLE_MARGIN: 15, // circle bounding to handle bottom bounding
+  HANDLE_MARGIN: 15,
   HANDLE_RADIUS: 10,
   INITIAL_COLOR: '#B4B9D6',
   ACTIVE_COLOR: '#365CFF'
@@ -29,11 +29,11 @@ class RotateController {
   private center?: Vec2
   private initialHandleCenter?: Vec2
 
-  private handle?: RaphaelElement // [circle, arrowSet]
+  private handle?: RaphaelElement
   private boundingRect?: RaphaelElement
   private cross?: RaphaelElement
   private link?: RaphaelElement
-  private protractor?: RaphaelElement // [circle, degree0Line, degree0Text, degree30Line, degree30Text, ...]
+  private protractor?: RaphaelElement
   private rotateArc?: RaphaelElement
 
   constructor(editor: Editor) {
@@ -214,7 +214,7 @@ class RotateController {
     }
 
     const paper = this.editor.render.paper
-    const DEGREE_TEXT_MARGIN = 10 // handle top bounding to text underline
+    const DEGREE_TEXT_MARGIN = 10
     const PROTRACTOR_COLOR = '#E1E5EA'
     const DEGREE_FONT_SIZE = 12
 
@@ -225,60 +225,66 @@ class RotateController {
         stroke: PROTRACTOR_COLOR
       })
 
-    const degree0Line = paper
-      .path(
-        `M${this.center.x},${this.center.y - this.protractorRadius}` +
-          `v-${STYLE.HANDLE_MARGIN}`
-      )
-      .attr({
-        'stroke-dasharray': '-',
-        stroke: PROTRACTOR_COLOR
-      })
+    this.protractor = paper.set() as RaphaelElement
+    this.protractor.push(circle)
+
     const degree0TextY =
       this.center.y -
       this.protractorRadius -
       STYLE.HANDLE_MARGIN -
       STYLE.HANDLE_RADIUS * 2 -
       DEGREE_TEXT_MARGIN
-    const degree0Text = paper.text(this.center.x, degree0TextY, '0°').attr({
-      fill: STYLE.INITIAL_COLOR,
-      'font-size': DEGREE_FONT_SIZE
-    })
 
-    this.protractor = paper.set() as RaphaelElement
-    this.protractor.push(circle, degree0Line, degree0Text)
-
-    let degreeLine = degree0Line
+    let degreeLine: RaphaelElement | undefined
     let textPos = new Vec2(this.center.x, degree0TextY)
 
     const predefinedDegrees = [
       0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60, -45,
       -30
     ]
-    predefinedDegrees.reduce((previousDegree, currentDegree) => {
+    predefinedDegrees.reduce((previousDegree, currentDegree, currentIndex) => {
+      const isDrawingDegree0 = currentIndex === 0
       const gap = currentDegree - previousDegree
       const abs = Math.abs(currentDegree - structRotateDegree)
 
-      degreeLine = degreeLine
-        .clone()
-        .rotate(gap, this.center!.x, this.center!.y)
-        .attr({
-          stroke: abs > 90 ? 'none' : PROTRACTOR_COLOR
-        })
+      if (isDrawingDegree0) {
+        degreeLine = paper
+          .path(
+            `M${this.center!.x},${this.center!.y - this.protractorRadius}` +
+              `v-${
+                this.protractorRadius >= 65
+                  ? STYLE.HANDLE_MARGIN
+                  : STYLE.HANDLE_MARGIN / 2
+              }`
+          )
+          .attr({
+            'stroke-dasharray': '-'
+          })
+      } else {
+        degreeLine = degreeLine!
+          .clone()
+          .rotate(gap, this.center!.x, this.center!.y)
+      }
+      degreeLine!.attr({
+        stroke: abs > 90 ? 'none' : PROTRACTOR_COLOR
+      })
       this.protractor!.push(degreeLine)
 
-      textPos = rotatePoint(this.center!, textPos, (gap / 180) * Math.PI)
+      if (this.protractorRadius < 65) {
+        return currentDegree
+      }
 
+      textPos = rotatePoint(this.center!, textPos, (gap / 180) * Math.PI)
       const degreeText = paper
         .text(textPos.x, textPos.y, `${currentDegree}°`)
         .attr({
           fill: abs > 90 ? 'none' : STYLE.INITIAL_COLOR,
           'font-size': DEGREE_FONT_SIZE
         })
-      this.protractor!.push(degreeText)
 
+      this.protractor!.push(degreeText)
       return currentDegree
-    })
+    }, -1)
 
     this.protractor.toBack()
   }
@@ -399,7 +405,6 @@ class RotateController {
     let lastRotateAngle = utils.calcAngle(lastHandleCenter, this.center)
     this.initRotateArc()
 
-    // TODO: @yuleicul after 130px numbers disappear should be done or not?
     return throttle(
       (
         dxFromStart: number,

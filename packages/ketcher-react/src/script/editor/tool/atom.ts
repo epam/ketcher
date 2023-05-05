@@ -109,30 +109,32 @@ class AtomTool {
       editor: {
         render: rnd,
         render: {
+          ctab: reStruct,
           ctab: { molecule }
         }
       }
     } = this
 
     const eventMaps = ['atoms', 'functionalGroups']
+    const ci = editor.findItem(event, eventMaps)
 
-    if (!dragCtx?.item) {
+    if (!dragCtx?.item || (ci?.id !== undefined && ci.id === dragCtx.item.id)) {
       editor.hoverIcon.show()
       editor.hoverIcon.updatePosition()
       editor.hover(editor.findItem(event, eventMaps), null, event)
+
+      if (dragCtx?.action) {
+        const action = dragCtx.action.perform(reStruct)
+
+        delete dragCtx.action
+
+        editor.update(action, true)
+      }
 
       return
     }
 
     editor.hoverIcon.hide()
-
-    const ci = editor.findItem(event, eventMaps)
-
-    if (ci?.map === 'atoms' && ci?.id === dragCtx.item.id) {
-      editor.hover(editor.findItem(event, eventMaps))
-
-      return
-    }
 
     let atomId: number | undefined
     if (dragCtx.item.map === 'atoms') {
@@ -154,7 +156,10 @@ class AtomTool {
         rnd.page2obj(event),
         event.ctrlKey
       )
-      if (dragCtx.action) dragCtx.action.perform(rnd.ctab)
+
+      if (dragCtx.action) {
+        dragCtx.action.perform(reStruct)
+      }
 
       dragCtx.action = fromBondAddition(
         rnd.ctab,
@@ -222,8 +227,9 @@ class AtomTool {
           const atomId = ci.id
 
           if (
-            FunctionalGroup.atomsInFunctionalGroup(functionalGroups, atomId) ==
-            null
+            dragCtx.action === undefined &&
+            FunctionalGroup.atomsInFunctionalGroup(functionalGroups, atomId) ===
+              null
           ) {
             action.mergeWith(fromAtomsAttrs(reStruct, atomId, atomProps, true))
           }

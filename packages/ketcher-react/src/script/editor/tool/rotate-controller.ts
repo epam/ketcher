@@ -1,4 +1,5 @@
 import { Scale, Vec2 } from 'ketcher-core'
+import { throttle } from 'lodash'
 import Editor from '../Editor'
 import utils from '../shared/utils'
 import RotateTool from './rotate'
@@ -389,60 +390,64 @@ class RotateController {
     this.initRotateArc()
 
     // TODO: @yuleicul after 130px numbers disappear should be done or not?
-    return (
-      dxFromStart: number,
-      dyFromStart: number,
-      _clientX: number,
-      _clientY: number,
-      event: MouseEvent
-    ) => {
-      const isLeftButtonPressed = event.buttons === 1
-      if (
-        !lastHandleCenter ||
-        !this.initialHandleCenter ||
-        !this.center ||
-        !isLeftButtonPressed
-      ) {
-        return
-      }
+    return throttle(
+      (
+        dxFromStart: number,
+        dyFromStart: number,
+        _clientX: number,
+        _clientY: number,
+        event: MouseEvent
+      ) => {
+        const isLeftButtonPressed = event.buttons === 1
+        if (
+          !lastHandleCenter ||
+          !this.initialHandleCenter ||
+          !this.center ||
+          !isLeftButtonPressed
+        ) {
+          return
+        }
 
-      const options = this.editor.render.options
-      const newHandleCenter = this.initialHandleCenter.add(
-        new Vec2(dxFromStart, dyFromStart).scaled(1 / options.zoom) // HACK: zoom in/out
-      )
+        const options = this.editor.render.options
+        const newHandleCenter = this.initialHandleCenter.add(
+          new Vec2(dxFromStart, dyFromStart).scaled(1 / options.zoom) // HACK: zoom in/out
+        )
 
-      const newProtractorRadius =
-        Vec2.dist(newHandleCenter, this.center) -
-        STYLE.HANDLE_MARGIN -
-        STYLE.HANDLE_RADIUS
-      this.protractorRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0
-      this.redrawProtractor()
+        const newProtractorRadius =
+          Vec2.dist(newHandleCenter, this.center) -
+          STYLE.HANDLE_MARGIN -
+          STYLE.HANDLE_RADIUS
+        this.protractorRadius =
+          newProtractorRadius >= 0 ? newProtractorRadius : 0
+        this.redrawProtractor()
 
-      this.link
-        ?.attr({
-          path:
-            `M${this.center.x},${this.center.y}` +
-            `L${newHandleCenter.x},${newHandleCenter.y}`,
-          stroke: STYLE.ACTIVE_COLOR
+        this.link
+          ?.attr({
+            path:
+              `M${this.center.x},${this.center.y}` +
+              `L${newHandleCenter.x},${newHandleCenter.y}`,
+            stroke: STYLE.ACTIVE_COLOR
+          })
+          .toFront()
+
+        const delta = newHandleCenter.sub(lastHandleCenter)
+        this.handle?.translate(delta.x, delta.y)
+        this.handle?.attr({
+          cursor: 'grabbing'
         })
-        .toFront()
 
-      const delta = newHandleCenter.sub(lastHandleCenter)
-      this.handle?.translate(delta.x, delta.y)
-      this.handle?.attr({
-        cursor: 'grabbing'
-      })
+        const newRotateAngle = utils.calcAngle(newHandleCenter, this.center)
+        const rotateDegree = utils.degrees(newRotateAngle - lastRotateAngle)
+        this.cross?.rotate(rotateDegree, this.center.x, this.center.y)
 
-      const newRotateAngle = utils.calcAngle(newHandleCenter, this.center)
-      const rotateDegree = utils.degrees(newRotateAngle - lastRotateAngle)
-      this.cross?.rotate(rotateDegree, this.center.x, this.center.y)
+        lastHandleCenter = newHandleCenter
+        lastRotateAngle = newRotateAngle
 
-      lastHandleCenter = newHandleCenter
-      lastRotateAngle = newRotateAngle
-
-      this.rotateTool.mousemove(event)
-      this.drawRotateArc(this.rotateTool.dragCtx.angle)
-    }
+        this.rotateTool.mousemove(event)
+        this.drawRotateArc(this.rotateTool.dragCtx.angle)
+      },
+      100
+    )
   }
 
   private mouseUp = (event: MouseEvent) => {

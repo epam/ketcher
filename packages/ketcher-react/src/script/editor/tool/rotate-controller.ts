@@ -43,7 +43,7 @@ class RotateController {
   }
 
   rerender() {
-    this.hide()
+    this.clean()
 
     const [originalCenter, visibleAtoms] = this.rotateTool.getCenter(
       this.editor
@@ -57,18 +57,28 @@ class RotateController {
     this.show(visibleAtoms)
   }
 
-  hide() {
+  clean() {
     this.handle?.unhover(this.hoverIn, this.hoverOut)
-    this.handle?.unmousedown(this.mouseDown)
-    this.handle?.unmouseup(this.mouseUp)
+    this.handle?.unmousedown(this.dragStart)
+    this.handle?.unmouseup(this.dragEnd)
     this.handle?.undrag()
 
-    this.cross?.hide()
-    this.boundingRect?.hide()
-    this.handle?.hide()
-    this.link?.hide()
-    this.protractor?.hide()
-    this.rotateArc?.hide()
+    this.cross?.remove()
+    delete this.cross
+    this.boundingRect?.remove()
+    delete this.boundingRect
+    this.link?.remove()
+    delete this.link
+    this.handle?.remove()
+    delete this.handle
+    this.protractor?.remove()
+    delete this.protractor
+    this.rotateArc?.remove()
+    delete this.rotateArc
+
+    this.protractorRadius = 0
+    delete this.center
+    delete this.initialHandleCenter
   }
 
   private show(visibleAtoms: number[]) {
@@ -84,14 +94,13 @@ class RotateController {
     this.drawShortLink()
     this.drawHandle()
 
-    // NOTE: remember to remove all listeners before calling `hide()`
     this.handle?.hover(this.hoverIn, this.hoverOut)
-    this.handle?.mousedown(this.mouseDown)
-    this.handle?.mouseup(this.mouseUp)
+    this.handle?.mousedown(this.dragStart)
+    this.handle?.mouseup(this.dragEnd)
     this.handle?.drag(
       this.dragMove(),
       undefined,
-      this.mouseUp // Fix rotation getting stuck when mouseup outside window
+      this.dragEnd // Fix rotation getting stuck when mouseup outside window
     )
   }
 
@@ -370,15 +379,15 @@ class RotateController {
     })
   }
 
-  private mouseDown = (event: MouseEvent) => {
-    event.stopPropagation() // avoid triggering SelectTool's mousedown
+  private dragStart = (event: MouseEvent) => {
+    event.stopPropagation() // Avoid triggering SelectTool's mousedown
 
     const isLeftButtonPressed = event.buttons === 1
     if (!isLeftButtonPressed) {
       return
     }
 
-    this.boundingRect?.remove()
+    this.boundingRect?.hide()
     this.drawProtractor(0)
     this.cross?.attr({
       stroke: STYLE.ACTIVE_COLOR
@@ -418,7 +427,8 @@ class RotateController {
           !lastHandleCenter ||
           !this.initialHandleCenter ||
           !this.center ||
-          !isLeftButtonPressed
+          !isLeftButtonPressed ||
+          !this.protractor // Fix `dragMove` being called without `dragStart` being called first when DnDing very fast
         ) {
           return
         }
@@ -455,7 +465,7 @@ class RotateController {
         this.protractorRadius =
           newProtractorRadius >= 0 ? newProtractorRadius : 0
         this.drawRotateArc(this.rotateTool.dragCtx?.angle)
-        // NOTE: drawing protractor last
+        // NOTE: draw protractor last
         this.redrawProtractor(this.rotateTool.dragCtx?.angle)
 
         lastHandleCenter = newHandleCenter
@@ -465,8 +475,8 @@ class RotateController {
     )
   }
 
-  private mouseUp = (event: MouseEvent) => {
-    event.stopPropagation() // avoid triggering SelectTool's mouseup
+  private dragEnd = (event: MouseEvent) => {
+    event.stopPropagation() // Avoid triggering SelectTool's mouseup
 
     this.rotateTool.mouseup()
     this.rerender()

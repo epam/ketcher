@@ -228,7 +228,7 @@ class Editor implements KetcherEditor {
 
     const isSelectToolChosen = name === 'select'
     if (!isSelectToolChosen) {
-      this.rotateController.hide()
+      this.rotateController.clean()
     }
 
     if (!tool || tool.isNotActiveTool) {
@@ -363,7 +363,7 @@ class Editor implements KetcherEditor {
 
     this.render.ctab.setSelection(this._selection) // eslint-disable-line
     this.event.selectionChange.dispatch(this._selection) // eslint-disable-line
-    this._selection === null && this.rotateController.hide()
+    this._selection === null && this.rotateController.clean()
 
     this.render.update(false, null, { resizeCanvas: false })
     return this._selection // eslint-disable-line

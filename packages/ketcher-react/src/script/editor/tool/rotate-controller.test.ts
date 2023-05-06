@@ -74,7 +74,7 @@ describe('Rotate controller', () => {
     }
 
     // @ts-ignore
-    controller.mouseDown({
+    controller.dragStart({
       buttons: 2, // Right button
       stopPropagation: () => null
     })

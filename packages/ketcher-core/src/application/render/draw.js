@@ -765,6 +765,7 @@ function bondSingle(paper, hb1, hb2, options, color = '#000') {
 }
 
 function bondSingleUp(paper, a, b2, b3, options, color = '#000') {
+  console.log('bondSingleUp')
   // eslint-disable-line max-params
   return paper
     .path(
@@ -784,6 +785,8 @@ function bondSingleUp(paper, a, b2, b3, options, color = '#000') {
 }
 
 function bondSingleStereoBold(paper, a1, a2, a3, a4, options, color = '#000') {
+
+  console.log('bondSingleStereoBold')
   // eslint-disable-line max-params
   const bond = paper
     .path(

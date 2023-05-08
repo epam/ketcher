@@ -137,7 +137,7 @@ class ReAtom extends ReObject {
       return null
     }
 
-    const result = this.showLabel
+    const result = this.showLabel && this.a.implicitH !== 0
     ? this.getSelectionContour(render)
     : paper.circle(ps.x, ps.y, options.atomSelectionPlateRadius)
     return result.attr(options.hoverStyle)
@@ -157,6 +157,8 @@ class ReAtom extends ReObject {
     ) {
       return null
     }
+
+    console.log(123, this)
 
     const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
     const result = this.showLabel

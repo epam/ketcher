@@ -123,21 +123,57 @@ class ReBond extends ReObject {
     const { begin, end } = bond
     const beginAtom = restruct.atoms.get(begin)
     const endAtom = restruct.atoms.get(end)
-    const beginPad = beginAtom?.showLabel ? 6 : 0
-    const endPad = endAtom?.showLabel ? 6 : 0
+    const beginPad = 0 //(beginAtom?.showLabel ? 6 : 0) * this.doubleBondShift
+    const endPad = 0 //(endAtom?.showLabel ? 6 : 0) * this.doubleBondShift
 
-    // bondThickness = 2
-    // doubleBondWidth = 6
+    const hb2 = restruct.molecule.halfBonds.get(bond.hb1)
+    const hb1 = restruct.molecule.halfBonds.get(bond.hb2)
 
-    const rect = paper.rect(
-      center.x - bond.len / 2,
+    // const r1x = hb1.p.x
+    // const r1y = hb1.p.y
+    // const r2x = hb2.p.x
+    // const r2y = hb2.p.y
+
+    const r1x = center.x - bond.len / 2
+    const r1y = center.y
+    const r2x = center.x //+ bond.len / 2
+    const r2y = center.y + 4 + addY / 2
+
+    const p11 = rotatePoint(r1x, r1y, bond.angle, center.x, center.y)
+    const p12 = rotatePoint(r2x, r1y, bond.angle, center.x, center.y)
+    const p21 = rotatePoint(r1x, r2y, bond.angle, center.x, center.y)
+    const p22 = rotatePoint(r2x, r2y, bond.angle, center.x, center.y)
+
+    const leftP = rotatePoint(hb2?.p.x, hb2?.p.y, bond.angle + 5, hb1?.p.x, hb1?.p.y)
+    const rightP = rotatePoint(hb2?.p.x, hb2?.p.y, bond.angle - 5, hb1?.p.x, hb1?.p.y)
+
+    // const p11 = [r1x, r1y]
+    // const p12 = rotatePoint(r2x, r1y, bond.angle + 10, r1x, r1y)
+    // const p21 = rotatePoint(r1x, r2y, bond.angle - 10, r1x, r1y)
+    // const p22 = rotatePoint(r2x, r2y, bond.angle, r1x, r1y)
+
+    const spx = center.x - bond.len / 2
+    const spy = center.y
+
+    let final = paper.path('M' + hb1?.p.x + ',' + hb1?.p.y + 'L' + leftP[0] + ',' + leftP[1])
+
+    return final
+
+
+    let rect = paper.rect(
+      center.x - bond.len / 2 + beginPad,
       center.y - spY / 2 - addY / 2,
-      bond.len,
+      bond.len - endPad * 2,
       spY + addY,
       spY
     )
+     console.log('bond.stereo', bond.stereo)
+     if (bond.stereo > 0) {
+      console.log('bond.stereo >> ')
+      rect = getBondSingleStereoBoldPath(render, bond.hb1, bond.hb2, this, restruct.molecule)
+    }
 
-    return rect
+    return rect.rotate(bond.angle, center.x, center.y)
   }
 
   makeHoverPlate(render: Render) {
@@ -158,19 +194,11 @@ class ReBond extends ReObject {
       return null
     }
 
-    const p1 = restruct.atoms.get(bond.begin).a.pp
-    const p2 = restruct.atoms.get(bond.end).a.pp
-
-    const p11 = Scale.obj2scaled(new Vec2(p1.x - 0.2, p1.y - 0.2), options)
-    const p12 = Scale.obj2scaled(new Vec2(p1.x + 0.2, p1.y + 0.2), options)
-    const p21 = Scale.obj2scaled(new Vec2(p2.x - 0.2, p2.y - 0.2), options)
-    const p22 = Scale.obj2scaled(new Vec2(p2.x + 0.2, p2.y + 0.2), options)
+    const p1 = restruct.atoms?.get(bond.begin).a.pp
+    const p2 = restruct.atoms?.get(bond.end).a.pp
 
     const rect = this.getSelectionContour(render, options)
-    rect.angle = bond.angle
-    rect.rotate(bond.angle)
 
-    const { hoverStyle } = options
     if (this.selected) {
       // hoverStyle.fill = '#ccffdd'
     }
@@ -179,19 +207,19 @@ class ReBond extends ReObject {
 
   rotatePoint(pointX, pointY, angle, originX, originY) {
     // Convert the angle to radians
-    var angleRad = angle * Math.PI / 180;
+    const angleRad = angle * Math.PI / 180;
 
     // Subtract the origin coordinates from the point coordinates
-    var offsetX = pointX - originX;
-    var offsetY = pointY - originY;
+    const offsetX = pointX - originX;
+    const offsetY = pointY - originY;
 
     // Apply the rotation matrix to the point coordinates
-    var rotatedX = Math.cos(angleRad) * offsetX - Math.sin(angleRad) * offsetY;
-    var rotatedY = Math.sin(angleRad) * offsetX + Math.cos(angleRad) * offsetY;
+    const rotatedX = Math.cos(angleRad) * offsetX - Math.sin(angleRad) * offsetY;
+    const rotatedY = Math.sin(angleRad) * offsetX + Math.cos(angleRad) * offsetY;
 
     // Add the origin coordinates back to the rotated point coordinates
-    var finalX = rotatedX + originX;
-    var finalY = rotatedY + originY;
+    let finalX = rotatedX + originX;
+    let finalY = rotatedY + originY;
 
     // Round the output values to 5 decimal places
     finalX = Number(finalX.toFixed(5));
@@ -217,36 +245,7 @@ class ReBond extends ReObject {
       return null
     }
 
-    const hb1 =
-      this.b.hb1 !== undefined ? struct.halfBonds.get(this.b.hb1) : null
-    const hb2 =
-      this.b.hb2 !== undefined ? struct.halfBonds.get(this.b.hb2) : null
-
-    const p1 = hb1.p
-    const p2 = hb2.p
-
-    // const p11 = { x: p1.x - 5, y: p1.y - 5 }
-    // const p12 = { x: p1.x + 5, y: p1.y + 5 }
-    // const p21 = { x: p2.x - 5, y: p2.y - 5 }
-    // const p22 = { x: p2.x + 5, y: p2.y + 5 }
-
-    const center = Scale.obj2scaled(bond.center, options)
-    const addY = 8
-
-    const r1x = center.x - bond.len / 2
-    const r1y = center.y - 4 - addY / 2
-    const r2x = center.x + bond.len / 2
-    const r2y = center.y + 4 + addY / 2
-
-    const p11 = this.rotatePoint(r1x, r1y, bond.angle, center.x, center.y)
-    const p12 = this.rotatePoint(r2x, r1y, bond.angle, center.x, center.y)
-    const p21 = this.rotatePoint(r1x, r2y, bond.angle, center.x, center.y)
-    const p22 = this.rotatePoint(r2x, r2y, bond.angle, center.x, center.y)
-
-    const rect =this.getSelectionContour(restruct.render, options)
-
-    rect.angle = bond.angle
-    rect.rotate(bond.angle)
+    const rect = this.getSelectionContour(restruct.render, options)
 
     return rect.attr(options.selectionStyle)
   }
@@ -501,15 +500,18 @@ function getBondPath(
     case Bond.PATTERN.TYPE.SINGLE:
       switch (bond.b.stereo) {
         case Bond.PATTERN.STEREO.UP:
+          console.log('Bond.PATTERN.STEREO.UP')
           findIncomingUpBonds(hb1.bid, bond, restruct)
           if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0) {
             path = getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct)
           } else path = getBondSingleUpPath(render, hb1, hb2, bond, struct)
           break
         case Bond.PATTERN.STEREO.DOWN:
+          console.log('Bond.PATTERN.STEREO.DOWN')
           path = getBondSingleDownPath(render, hb1, hb2, bond, struct)
           break
         case Bond.PATTERN.STEREO.EITHER:
+          console.log('Bond.PATTERN.STEREO.EITHER')
           path = getBondSingleEitherPath(render, hb1, hb2, bond, struct)
           break
         default:
@@ -1149,6 +1151,8 @@ function bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
   const render = restruct.render
   const atom1 = restruct.atoms.get(bond.b.begin)
   const atom2 = restruct.atoms.get(bond.b.end)
+
+  console.log('bondRecalc')
 
   if (
     !atom1 ||

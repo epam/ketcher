@@ -50,6 +50,8 @@ export function dropAndMerge(
   editor.hover(null)
   if (isMerging) editor.selection(null)
 
+  console.log('dropItemAction', dropItemAction)
+
   if (dropItemAction?.operations.length > 0) {
     editor.update(dropItemAction, false, { resizeCanvas: !!resizeCanvas })
   }

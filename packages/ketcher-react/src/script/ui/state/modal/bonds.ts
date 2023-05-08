@@ -17,6 +17,7 @@ export function updateSelectedBonds({
     Promise.resolve(changeBondPromise)
       .then((userChangedBond) => {
         bonds.forEach((bondId) => {
+          console.log('updateOnlyChangedProperties')
           const unchangedBond = molecule.bonds.get(bondId)
           const bondWithChangedProperties = updateOnlyChangedProperties(
             unchangedBond,

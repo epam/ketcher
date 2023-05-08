@@ -100,54 +100,24 @@ class ReBond extends ReObject {
   }
 
   getSelectionContour(render: Render, options) {
-    const bond = this.b
+    const bond: Bond = this.b
     const { bondThickness, doubleBondWidth, stereoBondWidth } = options
     const { paper, ctab: restruct } = render
     const center = Scale.obj2scaled(bond.center, options)
     const spY = doubleBondWidth + bondThickness
     const addY = spY
 
-    const { begin, end } = bond
-    const beginAtom = restruct.atoms.get(begin)
-    const endAtom = restruct.atoms.get(end)
-    const beginPad = 0 //(beginAtom?.showLabel ? 6 : 0) * this.doubleBondShift
-    const endPad = 0 //(endAtom?.showLabel ? 6 : 0) * this.doubleBondShift
-
     const hb2 = restruct.molecule.halfBonds.get(bond.hb1)
     const hb1 = restruct.molecule.halfBonds.get(bond.hb2)
 
-    // const r1x = hb1.p.x
-    // const r1y = hb1.p.y
-    // const r2x = hb2.p.x
-    // const r2y = hb2.p.y
+    const isStereoBond = bond.stereo !== Bond.PATTERN.STEREO.NONE && bond.stereo !== Bond.PATTERN.STEREO.CIS_TRANS
 
-    const r1x = center.x - bond.len / 2
-    const r1y = center.y
-    const r2x = center.x //+ bond.len / 2
-    const r2y = center.y + 4 + addY / 2
+    const addStereoPadding = isStereoBond ? stereoBondWidth / 2 : 0
+    const [hbStartX, hbStartY] = this.getLinePoint(hb1?.p.x, hb1?.p.y, hb2?.p.x, hb2?.p.y, -5 - addStereoPadding)
+    const [hbEndX, hbEndY] = this.getLinePoint(hb2?.p.x, hb2?.p.y, hb1?.p.x, hb1?.p.y, -5)
 
-    const p11 = rotatePoint(r1x, r1y, bond.angle, center.x, center.y)
-    const p12 = rotatePoint(r2x, r1y, bond.angle, center.x, center.y)
-    const p21 = rotatePoint(r1x, r2y, bond.angle, center.x, center.y)
-    const p22 = rotatePoint(r2x, r2y, bond.angle, center.x, center.y)
-
-    const leftP = rotatePoint(hb2?.p.x + 10, hb2?.p.y, bond.angle + 70, hb2?.p.x, hb2?.p.y)
-    const rightP = rotatePoint(hb2?.p.x + 10, hb2?.p.y, bond.angle - 70, hb2?.p.x, hb2?.p.y)
-
-    const qX = rotatePoint(hb2?.p.x + 10, hb2?.p.y, bond.angle, hb1?.p.x, hb1?.p.y)
-
-    const testX1 = rotatePoint(hb1?.p.x + 5, hb1?.p.y, 90, hb1?.p.x, hb1?.p.y)
-    const testX2 = rotatePoint(hb1?.p.x + 5, hb1?.p.y, 90, hb1?.p.x, hb1?.p.y)
-
-    const [hbStartX, hbStartY] = this.getLinePoint(hb1?.p.x, hb1?.p.y, hb2?.p.x, hb2?.p.y, -4)
-    const [hbEndX, hbEndY] = this.getLinePoint(hb2?.p.x, hb2?.p.y, hb1?.p.x, hb1?.p.y, -4)
-    // const hbEndX = hb2?.p.x || 0
-    // const hbEndY = hb2?.p.y || 0
-
-    const addCFC = options
-
-    const addStart = bond.stereo > 0 ? (spY + (stereoBondWidth * 0.25)) : spY
-    const addEnd = bond.stereo > 0 ? (spY - (stereoBondWidth * 0.25)) : spY
+    const addStart = isStereoBond ? stereoBondWidth * 1.2 : spY
+    const addEnd = isStereoBond ? stereoBondWidth * 0.25 : spY
 
     const [hbPadStartX, hbPadStartY] = this.getLinePoint(hbStartX, hbStartY, hbEndX, hbEndY, addStart)
     const [hbPadEndX, hbPadEndY] = this.getLinePoint(hbEndX, hbEndY, hbStartX, hbStartY, addEnd)
@@ -161,6 +131,15 @@ class ReBond extends ReObject {
     const endTop = rotatePoint(hbPadEndX + addEnd, hbPadEndY, bond.angle + 90, hbPadEndX, hbPadEndY)
     const endBottom = rotatePoint(hbPadEndX + addEnd, hbPadEndY, bond.angle - 90, hbPadEndX, hbPadEndY)
 
+    // const startPadTop = rotatePoint(hbStartX + addStart, hbStartY, bond.angle + 90, hbStartX, hbStartY)
+    // const startPadBottom = rotatePoint(hbStartX + addStart, hbStartY, bond.angle - 90, hbStartX, hbStartY)
+    // const startTop = rotatePoint(hbPadStartX + addStart, hbPadStartY, bond.angle + 90, hbPadStartX, hbPadStartY)
+    // const startBottom = rotatePoint(hbPadStartX + addStart, hbPadStartY, bond.angle - 90, hbPadStartX, hbPadStartY)
+    // const endPadTop = rotatePoint(hbEndX + addEnd, hbEndY, bond.angle + 90, hbEndX, hbEndY)
+    // const endPadBottom = rotatePoint(hbEndX + addEnd, hbEndY, bond.angle - 90, hbEndX, hbEndY)
+    // const endTop = rotatePoint(hbPadEndX + addEnd, hbPadEndY, bond.angle + 90, hbPadEndX, hbPadEndY)
+    // const endBottom = rotatePoint(hbPadEndX + addEnd, hbPadEndY, bond.angle - 90, hbPadEndX, hbPadEndY)
+
     // please refer to: https://raw.githubusercontent.com/epam/ketcher/317167a5b484d4fcb2641a384c5fdf3d6f638d24/hover_selection_2.png
 
     const pathString =
@@ -170,26 +149,10 @@ class ReBond extends ReObject {
     `L ${startBottom[0]} ${startBottom[1]}` +
     `C ${startPadBottom[0]} ${startPadBottom[1]}, ${startPadTop[0]} ${startPadTop[1]}, ${startTop[0]} ${startTop[1]}`
 
-    // const pathString =
-    //   `M${hb1?.p.x},${hb1?.p.y}` +
-    //   `L${leftP[0]},${leftP[1]}` +
-    //   `L${rightP[0]},${rightP[1]}` +
-    //   `L${hb1?.p.x},${hb1?.p.y}`
     const final = paper.path(pathString)
-
-    // const p11 = [r1x, r1y]
-    // const p12 = rotatePoint(r2x, r1y, bond.angle + 10, r1x, r1y)
-    // const p21 = rotatePoint(r1x, r2y, bond.angle - 10, r1x, r1y)
-    // const p22 = rotatePoint(r2x, r2y, bond.angle, r1x, r1y)
 
     const spx = center.x - bond.len / 2
     const spy = center.y
-
-    // const final = paper.path('M' + hb1?.p.x + ',' + hb1?.p.y + 'L' + leftP[0] + ',' + leftP[1]+ 'L' + rightP[0] + ',' + rightP[1] + 'L'  + hb1?.p.x + ',' + hb1?.p.y)
-
-    // let final = paper.set()
-    // final.push(paper.circle(center.x, center.y, 2))
-    // final.push(paper.path('M' + hb1?.p.x + ',' + hb1?.p.y + 'L' + leftP[0] + ',' + rightP[1]+ 'L' + rightP[0] + ',' + rightP[1] + 'L'  + hb1?.p.x + ',' + hb1?.p.y))
 
     return final
 
@@ -1161,8 +1124,6 @@ function bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
   const render = restruct.render
   const atom1 = restruct.atoms.get(bond.b.begin)
   const atom2 = restruct.atoms.get(bond.b.end)
-
-  console.log('bondRecalc')
 
   if (
     !atom1 ||

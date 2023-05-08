@@ -31,6 +31,7 @@ export class BondMove extends BaseOperation {
   }
 
   execute(restruct: ReStruct) {
+    console.log('BondMove execute')
     const { bid, d } = this.data
     const bond = restruct.bonds.get(bid)
     if (!bond) return

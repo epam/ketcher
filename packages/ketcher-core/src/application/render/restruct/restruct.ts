@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+// @ts-nocheck
+
 import {
   Box2Abs,
   FunctionalGroup,
@@ -39,6 +41,19 @@ import ReText from './retext'
 import { Render } from '../raphaelRender'
 import Visel from './visel'
 import util from '../util'
+
+class MyMap extends Map {
+  get(key) {
+    console.log('set get', key)
+    return undefined
+  }
+
+  set(key, value) {
+    console.log('set', key, value)
+    this[key] = value
+    return this
+  }
+}
 
 class ReStruct {
   public static maps = {
@@ -81,8 +96,10 @@ class ReStruct {
   private rxnArrowsChanged: Map<number, ReRxnArrow> = new Map()
   private rxnPlusesChanged: Map<number, ReRxnPlus> = new Map()
   private enhancedFlagsChanged: Map<number, ReEnhancedFlag> = new Map()
-  private bondsChanged: Map<number, ReEnhancedFlag> = new Map()
   private textsChanged: Map<number, ReText> = new Map()
+
+  bondsChanged: MyMap<number, ReEnhancedFlag> = new MyMap()
+
   constructor(molecule, render: Render) {
     // eslint-disable-line max-statements
     this.render = render
@@ -692,6 +709,12 @@ function scaleVisel(visel, s) {
  * @returns {boolean}
  */
 function isSelectionSvgObjectExists(item) {
+  console.log('>> item', item)
+  console.log('>> item.selectionPlate', item.selectionPlate)
+  console.log('>> item.selectionPlate?.items', item.selectionPlate?.items)
+  console.log('>> item.selectionPlate?.removed', item.selectionPlate?.removed)
+  console.log('>> (Array.isArray(item.selectionPlate?.items)', Array.isArray(item.selectionPlate?.items))
+  // console.log('>> !item.selectionPlate[0]?.removed)', !item?.selectionPlate[0] && !item.selectionPlate[0]?.removed)
   return (
     item &&
     item.selectionPlate !== null &&

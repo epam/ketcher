@@ -70,6 +70,7 @@ class AtomTool {
       editor: {
         render: {
           ctab: {
+            molecule,
             molecule: { functionalGroups }
           }
         }
@@ -96,8 +97,16 @@ class AtomTool {
       }
     }
 
+    const ciFunctionalGroupName =
+      ci?.map === 'functionalGroups'
+        ? molecule.functionalGroups.get(ci?.id)?.name
+        : undefined
+    const ciIsSaltOrSolvent = ciFunctionalGroupName
+      ? SGroup.isSaltOrSolvent(ciFunctionalGroupName)
+      : false
+
     this.dragCtx = {
-      item: ci
+      item: ciIsSaltOrSolvent ? undefined : ci
     }
   }
 

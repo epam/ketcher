@@ -38,19 +38,19 @@ const tfx = util.tfx
 
 function rotatePoint(pointX, pointY, angle, originX, originY) {
   // Convert the angle to radians
-  const angleRad = angle * Math.PI / 180;
+  var angleRad = angle * Math.PI / 180;
 
   // Subtract the origin coordinates from the point coordinates
-  const offsetX = pointX - originX;
-  const offsetY = pointY - originY;
+  var offsetX = pointX - originX;
+  var offsetY = pointY - originY;
 
   // Apply the rotation matrix to the point coordinates
-  const rotatedX = Math.cos(angleRad) * offsetX - Math.sin(angleRad) * offsetY;
-  const rotatedY = Math.sin(angleRad) * offsetX + Math.cos(angleRad) * offsetY;
+  var rotatedX = Math.cos(angleRad) * offsetX - Math.sin(angleRad) * offsetY;
+  var rotatedY = Math.sin(angleRad) * offsetX + Math.cos(angleRad) * offsetY;
 
   // Add the origin coordinates back to the rotated point coordinates
-  let finalX = rotatedX + originX;
-  let finalY = rotatedY + originY;
+  var finalX = rotatedX + originX;
+  var finalY = rotatedY + originY;
 
   // Round the output values to 5 decimal places
   finalX = Number(finalX.toFixed(5));
@@ -59,27 +59,6 @@ function rotatePoint(pointX, pointY, angle, originX, originY) {
   // Return the rotated coordinates as an array
   return [finalX, finalY];
 }
-
-function inside(point, vs) {
-  // ray-casting algorithm based on
-  // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
-
-  const { x, y } = point;
-
-  let inside = false;
-  for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-      const xi = vs[i].x
-      const yi = vs[i].y
-      const xj = vs[j].x
-      const yj = vs[j].y
-
-      const intersect = ((yi > y) !== (yj > y))
-          && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-      if (intersect) inside = !inside;
-  }
-
-  return inside;
-};
 
 class ReBond extends ReObject {
   b: Bond
@@ -112,9 +91,17 @@ class ReBond extends ReObject {
     return ret
   }
 
+  getLinePoint(x1, y1, x2, y2, len) {
+    const dx = x2 - x1
+    const dy = y2 - y1
+    const d = Math.sqrt(dx * dx + dy * dy)
+    const ratio = len / d
+    return [x1 + dx * ratio, y1 + dy * ratio]
+  }
+
   getSelectionContour(render: Render, options) {
     const bond = this.b
-    const { bondThickness, doubleBondWidth } = options
+    const { bondThickness, doubleBondWidth, stereoBondWidth } = options
     const { paper, ctab: restruct } = render
     const center = Scale.obj2scaled(bond.center, options)
     const spY = doubleBondWidth + bondThickness
@@ -144,8 +131,51 @@ class ReBond extends ReObject {
     const p21 = rotatePoint(r1x, r2y, bond.angle, center.x, center.y)
     const p22 = rotatePoint(r2x, r2y, bond.angle, center.x, center.y)
 
-    const leftP = rotatePoint(hb2?.p.x, hb2?.p.y, bond.angle + 5, hb1?.p.x, hb1?.p.y)
-    const rightP = rotatePoint(hb2?.p.x, hb2?.p.y, bond.angle - 5, hb1?.p.x, hb1?.p.y)
+    const leftP = rotatePoint(hb2?.p.x + 10, hb2?.p.y, bond.angle + 70, hb2?.p.x, hb2?.p.y)
+    const rightP = rotatePoint(hb2?.p.x + 10, hb2?.p.y, bond.angle - 70, hb2?.p.x, hb2?.p.y)
+
+    const qX = rotatePoint(hb2?.p.x + 10, hb2?.p.y, bond.angle, hb1?.p.x, hb1?.p.y)
+
+    const testX1 = rotatePoint(hb1?.p.x + 5, hb1?.p.y, 90, hb1?.p.x, hb1?.p.y)
+    const testX2 = rotatePoint(hb1?.p.x + 5, hb1?.p.y, 90, hb1?.p.x, hb1?.p.y)
+
+    const [hbStartX, hbStartY] = this.getLinePoint(hb1?.p.x, hb1?.p.y, hb2?.p.x, hb2?.p.y, -4)
+    const [hbEndX, hbEndY] = this.getLinePoint(hb2?.p.x, hb2?.p.y, hb1?.p.x, hb1?.p.y, -4)
+    // const hbEndX = hb2?.p.x || 0
+    // const hbEndY = hb2?.p.y || 0
+
+    const addCFC = options
+
+    const addStart = bond.stereo > 0 ? (spY + (stereoBondWidth * 0.25)) : spY
+    const addEnd = bond.stereo > 0 ? (spY - (stereoBondWidth * 0.25)) : spY
+
+    const [hbPadStartX, hbPadStartY] = this.getLinePoint(hbStartX, hbStartY, hbEndX, hbEndY, addStart)
+    const [hbPadEndX, hbPadEndY] = this.getLinePoint(hbEndX, hbEndY, hbStartX, hbStartY, addEnd)
+
+    const startPadTop = rotatePoint(hbStartX + addStart, hbStartY, bond.angle + 90, hbStartX, hbStartY)
+    const startPadBottom = rotatePoint(hbStartX + addStart, hbStartY, bond.angle - 90, hbStartX, hbStartY)
+    const startTop = rotatePoint(hbPadStartX + addStart, hbPadStartY, bond.angle + 90, hbPadStartX, hbPadStartY)
+    const startBottom = rotatePoint(hbPadStartX + addStart, hbPadStartY, bond.angle - 90, hbPadStartX, hbPadStartY)
+    const endPadTop = rotatePoint(hbEndX + addEnd, hbEndY, bond.angle + 90, hbEndX, hbEndY)
+    const endPadBottom = rotatePoint(hbEndX + addEnd, hbEndY, bond.angle - 90, hbEndX, hbEndY)
+    const endTop = rotatePoint(hbPadEndX + addEnd, hbPadEndY, bond.angle + 90, hbPadEndX, hbPadEndY)
+    const endBottom = rotatePoint(hbPadEndX + addEnd, hbPadEndY, bond.angle - 90, hbPadEndX, hbPadEndY)
+
+    // please refer to: https://raw.githubusercontent.com/epam/ketcher/317167a5b484d4fcb2641a384c5fdf3d6f638d24/hover_selection_2.png
+
+    const pathString =
+    `M ${startTop[0]} ${startTop[1]}` +
+    `L ${endTop[0]} ${endTop[1]}` +
+    `C ${endPadTop[0]} ${endPadTop[1]}, ${endPadBottom[0]} ${endPadBottom[1]}, ${endBottom[0]} ${endBottom[1]}` +
+    `L ${startBottom[0]} ${startBottom[1]}` +
+    `C ${startPadBottom[0]} ${startPadBottom[1]}, ${startPadTop[0]} ${startPadTop[1]}, ${startTop[0]} ${startTop[1]}`
+
+    // const pathString =
+    //   `M${hb1?.p.x},${hb1?.p.y}` +
+    //   `L${leftP[0]},${leftP[1]}` +
+    //   `L${rightP[0]},${rightP[1]}` +
+    //   `L${hb1?.p.x},${hb1?.p.y}`
+    const final = paper.path(pathString)
 
     // const p11 = [r1x, r1y]
     // const p12 = rotatePoint(r2x, r1y, bond.angle + 10, r1x, r1y)
@@ -155,7 +185,11 @@ class ReBond extends ReObject {
     const spx = center.x - bond.len / 2
     const spy = center.y
 
-    let final = paper.path('M' + hb1?.p.x + ',' + hb1?.p.y + 'L' + leftP[0] + ',' + leftP[1])
+    // const final = paper.path('M' + hb1?.p.x + ',' + hb1?.p.y + 'L' + leftP[0] + ',' + leftP[1]+ 'L' + rightP[0] + ',' + rightP[1] + 'L'  + hb1?.p.x + ',' + hb1?.p.y)
+
+    // let final = paper.set()
+    // final.push(paper.circle(center.x, center.y, 2))
+    // final.push(paper.path('M' + hb1?.p.x + ',' + hb1?.p.y + 'L' + leftP[0] + ',' + rightP[1]+ 'L' + rightP[0] + ',' + rightP[1] + 'L'  + hb1?.p.x + ',' + hb1?.p.y))
 
     return final
 
@@ -203,30 +237,6 @@ class ReBond extends ReObject {
       // hoverStyle.fill = '#ccffdd'
     }
     return rect.attr(options.hoverStyle)
-  }
-
-  rotatePoint(pointX, pointY, angle, originX, originY) {
-    // Convert the angle to radians
-    const angleRad = angle * Math.PI / 180;
-
-    // Subtract the origin coordinates from the point coordinates
-    const offsetX = pointX - originX;
-    const offsetY = pointY - originY;
-
-    // Apply the rotation matrix to the point coordinates
-    const rotatedX = Math.cos(angleRad) * offsetX - Math.sin(angleRad) * offsetY;
-    const rotatedY = Math.sin(angleRad) * offsetX + Math.cos(angleRad) * offsetY;
-
-    // Add the origin coordinates back to the rotated point coordinates
-    let finalX = rotatedX + originX;
-    let finalY = rotatedY + originY;
-
-    // Round the output values to 5 decimal places
-    finalX = Number(finalX.toFixed(5));
-    finalY = Number(finalY.toFixed(5));
-
-    // Return the rotated coordinates as an array
-    return [finalX, finalY];
   }
 
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any) {

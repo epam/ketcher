@@ -99,14 +99,15 @@ class AtomTool {
 
     const ciFunctionalGroupName =
       ci?.map === 'functionalGroups'
-        ? molecule.functionalGroups.get(ci?.id)?.name
+        ? molecule.sgroups.get(ci?.id)?.data.name
         : undefined
-    const ciIsSaltOrSolvent = ciFunctionalGroupName
+    const isSaltOrSolvent = ciFunctionalGroupName
       ? SGroup.isSaltOrSolvent(ciFunctionalGroupName)
       : false
 
     this.dragCtx = {
-      item: ciIsSaltOrSolvent ? undefined : ci
+      item: ci,
+      isSaltOrSolvent
     }
   }
 
@@ -127,7 +128,11 @@ class AtomTool {
     const eventMaps = ['atoms', 'functionalGroups']
     const ci = editor.findItem(event, eventMaps)
 
-    if (!dragCtx?.item || (ci?.id !== undefined && ci.id === dragCtx.item.id)) {
+    if (
+      !dragCtx?.item ||
+      dragCtx?.isSaltOrSolvent ||
+      (ci?.id !== undefined && ci.id === dragCtx.item.id)
+    ) {
       editor.hoverIcon.show()
       editor.hoverIcon.updatePosition()
       editor.hover(editor.findItem(event, eventMaps), null, event)
@@ -203,7 +208,7 @@ class AtomTool {
     const ci = editor.findItem(event, ['atoms', 'bonds', 'functionalGroups'])
     const action = new Action()
 
-    if (!dragCtx.item && !ci) {
+    if ((!dragCtx.item || dragCtx?.isSaltOrSolvent) && !ci) {
       action.mergeWith(
         fromAtomAddition(reStruct, rnd.page2obj(event), atomProps)
       )

@@ -651,6 +651,12 @@ export class SGroup {
     return !expanded && isSGroup
   }
 
+  static getAtomsSGroupWithoutAttachmentPoint(sGroup: SGroup, struct: Struct) {
+    const atomsSGroup = SGroup.getAtoms(struct, sGroup)
+    const attachmentPointId = sGroup?.getAttAtomId(struct)
+    return atomsSGroup.filter((atomId) => atomId !== attachmentPointId)
+  }
+
   /**
    * @returns `undefined`: if it's salt or solvent
    */

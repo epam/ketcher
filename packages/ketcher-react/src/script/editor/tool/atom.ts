@@ -30,6 +30,7 @@ import {
 
 import Editor from '../Editor'
 import utils from '../shared/utils'
+import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 
 class AtomTool {
   editor: Editor
@@ -48,18 +49,48 @@ class AtomTool {
     this.editor.hoverIcon.fill = ElementColor[atomProps.label] ?? '#000000'
     this.editor.hoverIcon.updatePosition()
 
-    if (editor.selection()) {
-      if (editor.selection()?.atoms) {
-        const action = fromAtomsAttrs(
-          editor.render.ctab,
-          editor.selection().atoms,
-          atomProps,
-          true
+    const selected = editor.selection()
+    const selectedAtoms = selected?.atoms
+
+    if (selected) {
+      if (selectedAtoms) {
+        const action = new Action()
+        const struct = editor.render.ctab
+        const atomsInSGroups: number[] = []
+        const selectedSGroupsId =
+          selected && getGroupIdsFromItemArrays(struct.molecule, selected)
+        if (selectedSGroupsId?.length) {
+          const sgroups = struct.sgroups
+          selectedSGroupsId.forEach((sGroupId) => {
+            if (SGroup.isContractedSGroup(sGroupId, sgroups)) {
+              const sGroupItem = sgroups.get(sGroupId).item
+              const atomsWithoutAttachmentPoint =
+                SGroup.getAtomsSGroupWithoutAttachmentPoint(sGroupItem, struct)
+              atomsInSGroups.push(...atomsWithoutAttachmentPoint)
+              action.mergeWith(fromSgroupDeletion(struct, sGroupId))
+              action.mergeWith(
+                fromFragmentDeletion(struct, {
+                  atoms: atomsWithoutAttachmentPoint,
+                  bonds: SGroup.getBonds(struct, sGroupItem)
+                })
+              )
+            }
+          })
+        }
+        action.mergeWith(
+          fromAtomsAttrs(
+            struct,
+            selectedAtoms.filter(
+              (selectAtomId) => !atomsInSGroups.includes(selectAtomId)
+            ),
+            atomProps,
+            true
+          )
         )
         editor.update(action)
         editor.selection(null)
+        this.editor.hoverIcon.hide()
       }
-
       this.isNotActiveTool = true
     }
   }

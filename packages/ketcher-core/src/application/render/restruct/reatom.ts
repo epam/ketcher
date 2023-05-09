@@ -51,7 +51,8 @@ export enum ShowHydrogenLabels {
   Hetero = 'Hetero',
   Terminal = 'Terminal',
   TerminalAndHetero = 'Terminal and Hetero',
-  On = 'on'
+  On = 'on',
+  All = 'all'
 }
 
 class ReAtom extends ReObject {
@@ -513,7 +514,7 @@ function isLabelVisible(restruct, options, atom) {
   const shouldBeVisible =
     neighborsLength ||
     options.carbonExplicitly ||
-    options.showHydrogenLabels === ShowHydrogenLabels.On ||
+    options.showHydrogenLabels === ShowHydrogenLabels.All ||
     atom.a.alias ||
     atom.a.isotope !== 0 ||
     atom.a.radical !== 0 ||
@@ -549,12 +550,14 @@ function isLabelVisible(restruct, options, atom) {
 
 function displayHydrogen(hydrogenLabels: ShowHydrogenLabels, atom: ReAtom) {
   return (
-    hydrogenLabels === ShowHydrogenLabels.On ||
+    hydrogenLabels === ShowHydrogenLabels.All ||
     (hydrogenLabels === ShowHydrogenLabels.Terminal &&
       atom.a.neighbors.length < 2) ||
     (hydrogenLabels === ShowHydrogenLabels.Hetero &&
       atom.label?.text.toLowerCase() !== 'c') ||
-    (hydrogenLabels === ShowHydrogenLabels.TerminalAndHetero &&
+    ([ShowHydrogenLabels.TerminalAndHetero, ShowHydrogenLabels.On].includes(
+      hydrogenLabels
+    ) &&
       (atom.a.neighbors.length < 2 || atom.label?.text.toLowerCase() !== 'c'))
   )
 }

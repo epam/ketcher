@@ -275,3 +275,7 @@ Render.prototype.update = function (
     }
   }
 }
+
+Raphael.el.isVisible = function() {
+  return (this.node.style.display !== 'none')
+}

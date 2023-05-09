@@ -79,13 +79,51 @@ class ReBond extends ReObject {
     super('bond')
     this.b = bond // TODO rename b to item
     this.doubleBondShift = 0
+    this.changeSelection = (isHovering: boolean) => {
+      this.selectionPlate.attr({
+        fill: isHovering ? '#CCFFDD' : '#57FF8F'
+      })
+    }
   }
 
   static isSelectable() {
     return true
   }
 
+  static bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
+    const render = restruct.render
+    const atom1 = restruct.atoms.get(bond.b.begin)
+    const atom2 = restruct.atoms.get(bond.b.end)
+
+    if (
+      !atom1 ||
+      !atom2 ||
+      bond.b.hb1 === undefined ||
+      bond.b.hb2 === undefined
+    ) {
+      return
+    }
+
+    const p1 = Scale.obj2scaled(atom1.a.pp, render.options)
+    const p2 = Scale.obj2scaled(atom2.a.pp, render.options)
+    const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1)
+    const hb2 = restruct.molecule.halfBonds.get(bond.b.hb2)
+
+    if (!hb1?.dir || !hb2?.dir) return
+
+    hb1.p = shiftBondEnd(atom1, p1, hb1.dir, 2 * options.lineWidth)
+    hb2.p = shiftBondEnd(atom2, p2, hb2.dir, 2 * options.lineWidth)
+    bond.b.center = Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5)
+    bond.b.len = Vec2.dist(p1, p2)
+    bond.b.sb = options.lineWidth * 5
+    /* eslint-disable no-mixed-operators */
+    bond.b.sa = Math.max(bond.b.sb, bond.b.len / 2 - options.lineWidth * 2)
+    /* eslint-enable no-mixed-operators */
+    bond.b.angle = (Math.atan2(hb1.dir.y, hb1.dir.x) * 180) / Math.PI
+  }
+
   drawHover(render: Render) {
+    console.log('drawHover')
     const ret = this.makeHoverPlate(render)
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
     return ret
@@ -176,7 +214,8 @@ class ReBond extends ReObject {
   makeHoverPlate(render: Render) {
     const restruct = render.ctab
     const options = render.options
-    bondRecalc(this, restruct, options)
+    const { hoverStyle } = options
+    ReBond.bondRecalc(this, restruct, options)
     const { paper } = render
     const bond = this.b
     const sgroups = restruct.sgroups
@@ -199,11 +238,11 @@ class ReBond extends ReObject {
     if (this.selected) {
       // hoverStyle.fill = '#ccffdd'
     }
-    return rect.attr(options.hoverStyle)
+    return rect.attr(options.hoverStyle).toBack()
   }
 
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any) {
-    bondRecalc(this, restruct, options)
+    ReBond.bondRecalc(this, restruct, options)
     const bond = this.b
     const struct = restruct.molecule
     const sgroups = restruct.render.ctab.sgroups
@@ -248,7 +287,7 @@ class ReBond extends ReObject {
       this.b.hb2 !== undefined ? struct.halfBonds.get(this.b.hb2) : null
 
     checkStereoBold(bid, this, restruct)
-    bondRecalc(this, restruct, options)
+    ReBond.bondRecalc(this, restruct, options)
     setDoubleBondShift(this, struct)
     if (!hb1 || !hb2) return
     this.path = getBondPath(restruct, this, hb1, hb2)
@@ -1118,38 +1157,6 @@ function setDoubleBondShift(bond: ReBond, struct: Struct): void {
   } else {
     bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond)
   }
-}
-
-function bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
-  const render = restruct.render
-  const atom1 = restruct.atoms.get(bond.b.begin)
-  const atom2 = restruct.atoms.get(bond.b.end)
-
-  if (
-    !atom1 ||
-    !atom2 ||
-    bond.b.hb1 === undefined ||
-    bond.b.hb2 === undefined
-  ) {
-    return
-  }
-
-  const p1 = Scale.obj2scaled(atom1.a.pp, render.options)
-  const p2 = Scale.obj2scaled(atom2.a.pp, render.options)
-  const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1)
-  const hb2 = restruct.molecule.halfBonds.get(bond.b.hb2)
-
-  if (!hb1?.dir || !hb2?.dir) return
-
-  hb1.p = shiftBondEnd(atom1, p1, hb1.dir, 2 * options.lineWidth)
-  hb2.p = shiftBondEnd(atom2, p2, hb2.dir, 2 * options.lineWidth)
-  bond.b.center = Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5)
-  bond.b.len = Vec2.dist(p1, p2)
-  bond.b.sb = options.lineWidth * 5
-  /* eslint-disable no-mixed-operators */
-  bond.b.sa = Math.max(bond.b.sb, bond.b.len / 2 - options.lineWidth * 2)
-  /* eslint-enable no-mixed-operators */
-  bond.b.angle = (Math.atan2(hb1.dir.y, hb1.dir.x) * 180) / Math.PI
 }
 
 function shiftBondEnd(

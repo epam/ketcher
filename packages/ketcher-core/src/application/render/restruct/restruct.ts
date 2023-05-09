@@ -632,6 +632,7 @@ class ReStruct {
 
           this.showItemSelection(item, selected)
           item.selectionPlate?.toBack()
+          // item.selectionPlate?.toFront()
         })
       }
     })

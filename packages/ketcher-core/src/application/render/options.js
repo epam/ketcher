@@ -79,7 +79,7 @@ function defaultOptions(opt) {
       stroke: '#57ff8f'
     },
     hoverStyle: {
-      stroke: '#00BF7F',
+      stroke: '#0097A8',
       'stroke-width': (0.6 * scaleFactor) / 20
     },
     sgroupBracketStyle: {

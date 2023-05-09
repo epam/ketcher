@@ -17,7 +17,8 @@
 import {
   StereLabelStyleType,
   StereoColoringType,
-  ShowHydrogenLabels
+  ShowHydrogenLabels,
+  ShowHydrogenLabelNames
 } from 'ketcher-core'
 import Ajv, { SchemaObject } from 'ajv'
 
@@ -200,6 +201,7 @@ const render: {
   showHydrogenLabels: {
     title: 'Show hydrogen labels',
     enum: Object.values(ShowHydrogenLabels),
+    enumNames: Object.values(ShowHydrogenLabelNames),
     default: ShowHydrogenLabels.TerminalAndHetero
   },
   // Bonds

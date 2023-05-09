@@ -254,7 +254,7 @@ class RotateController {
     predefinedDegrees.reduce((previousDegree, currentDegree, currentIndex) => {
       const isDrawingDegree0 = currentIndex === 0
       const gap = currentDegree - previousDegree
-      const abs = Math.abs(currentDegree - structRotateDegree)
+      const diff = getDifference(currentDegree, structRotateDegree)
 
       if (isDrawingDegree0) {
         degreeLine = paper
@@ -275,7 +275,7 @@ class RotateController {
           .rotate(gap, this.center!.x, this.center!.y)
       }
       degreeLine!.attr({
-        stroke: abs > 90 ? 'none' : PROTRACTOR_COLOR
+        stroke: diff > 90 ? 'none' : PROTRACTOR_COLOR
       })
       this.protractor!.push(degreeLine)
 
@@ -287,7 +287,7 @@ class RotateController {
       const degreeText = paper
         .text(textPos.x, textPos.y, `${currentDegree}°`)
         .attr({
-          fill: abs > 90 ? 'none' : STYLE.INITIAL_COLOR,
+          fill: diff > 90 ? 'none' : STYLE.INITIAL_COLOR,
           'font-size': DEGREE_FONT_SIZE
         })
 
@@ -483,6 +483,8 @@ class RotateController {
   }
 }
 
+export default RotateController
+
 const rotatePoint = (centerPoint: Vec2, startPoint: Vec2, angle: number) => {
   const oCenter = centerPoint
   const oStart = startPoint
@@ -494,4 +496,21 @@ const rotatePoint = (centerPoint: Vec2, startPoint: Vec2, angle: number) => {
   return oEnd
 }
 
-export default RotateController
+const getDifference = (currentDegree: number, structRotateDegree: number) => {
+  let abs = 0
+
+  // HACK: https://github.com/epam/ketcher/pull/2574#issuecomment-1539509046
+  if (structRotateDegree > 90) {
+    const positiveCurrentDegree =
+      currentDegree < 0 ? currentDegree + 360 : currentDegree
+    abs = Math.abs(positiveCurrentDegree - structRotateDegree)
+  } else if (structRotateDegree < -90) {
+    const negativeCurrentDegree =
+      currentDegree > 0 ? currentDegree - 360 : currentDegree
+    abs = Math.abs(negativeCurrentDegree - structRotateDegree)
+  } else {
+    abs = Math.abs(currentDegree - structRotateDegree)
+  }
+
+  return abs
+}

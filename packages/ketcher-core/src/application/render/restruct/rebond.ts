@@ -81,7 +81,6 @@ class ReBond extends ReObject {
     this.doubleBondShift = 0
     this.changeSelection = (isHovering: boolean) => {
       setTimeout(() => {
-        console.log('this.selected', this.selected)
         this.selectionPlate?.attr({
           fill: isHovering ? '#CCFFDD' : '#57FF8F'
         })
@@ -130,7 +129,6 @@ class ReBond extends ReObject {
   }
 
   drawHover(render: Render) {
-    console.log('drawHover')
     const ret = this.makeHoverPlate(render)
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
     return ret
@@ -519,18 +517,15 @@ function getBondPath(
     case Bond.PATTERN.TYPE.SINGLE:
       switch (bond.b.stereo) {
         case Bond.PATTERN.STEREO.UP:
-          console.log('Bond.PATTERN.STEREO.UP')
           findIncomingUpBonds(hb1.bid, bond, restruct)
           if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0) {
             path = getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct)
           } else path = getBondSingleUpPath(render, hb1, hb2, bond, struct)
           break
         case Bond.PATTERN.STEREO.DOWN:
-          console.log('Bond.PATTERN.STEREO.DOWN')
           path = getBondSingleDownPath(render, hb1, hb2, bond, struct)
           break
         case Bond.PATTERN.STEREO.EITHER:
-          console.log('Bond.PATTERN.STEREO.EITHER')
           path = getBondSingleEitherPath(render, hb1, hb2, bond, struct)
           break
         default:

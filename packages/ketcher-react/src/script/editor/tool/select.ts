@@ -285,7 +285,6 @@ class SelectTool {
         editor.render,
         editor.options().scale
       )
-      console.log('dropAndMerge')
       dropAndMerge(
         editor,
         this.dragCtx.mergeItems,

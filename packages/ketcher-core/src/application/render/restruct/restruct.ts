@@ -710,12 +710,6 @@ function scaleVisel(visel, s) {
  * @returns {boolean}
  */
 function isSelectionSvgObjectExists(item) {
-  console.log('>> item', item)
-  console.log('>> item.selectionPlate', item.selectionPlate)
-  console.log('>> item.selectionPlate?.items', item.selectionPlate?.items)
-  console.log('>> item.selectionPlate?.removed', item.selectionPlate?.removed)
-  console.log('>> (Array.isArray(item.selectionPlate?.items)', Array.isArray(item.selectionPlate?.items))
-  // console.log('>> !item.selectionPlate[0]?.removed)', !item?.selectionPlate[0] && !item.selectionPlate[0]?.removed)
   return (
     item &&
     item.selectionPlate !== null &&

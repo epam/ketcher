@@ -47,8 +47,6 @@ export function dropAndMerge(
   if (action) {
     dropItemAction = dropItemAction.mergeWith(action)
   }
-  console.log('<< dropItemAction', dropItemAction)
-  console.log('<< editor.selection()', editor.selection())
 
   const bonds = editor.selection()?.bonds ?? []
   for (const bondId of bonds) {
@@ -58,7 +56,6 @@ export function dropAndMerge(
   // editor.hover(null)
   if (isMerging) editor.selection(null)
 
-  console.log('dropItemAction', dropItemAction)
 
   if (dropItemAction?.operations.length > 0) {
     editor.update(dropItemAction, false, { resizeCanvas: !!resizeCanvas })

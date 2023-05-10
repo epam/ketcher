@@ -80,9 +80,16 @@ class ReBond extends ReObject {
     this.b = bond // TODO rename b to item
     this.doubleBondShift = 0
     this.changeSelection = (isHovering: boolean) => {
-      this.selectionPlate.attr({
-        fill: isHovering ? '#CCFFDD' : '#57FF8F'
-      })
+      setTimeout(() => {
+        console.log('this.selected', this.selected)
+        this.selectionPlate?.attr({
+          fill: isHovering ? '#CCFFDD' : '#57FF8F'
+        })
+        this.hovering?.attr({
+          fill: this.selected ? '#CCFFDD' : 'transparent',
+          'fill-opacity': this.selected ? 1 : 0
+        })
+      }, 20)
     }
   }
 
@@ -154,7 +161,7 @@ class ReBond extends ReObject {
     const [hbStartX, hbStartY] = this.getLinePoint(hb1?.p.x, hb1?.p.y, hb2?.p.x, hb2?.p.y, -5 - addStereoPadding)
     const [hbEndX, hbEndY] = this.getLinePoint(hb2?.p.x, hb2?.p.y, hb1?.p.x, hb1?.p.y, -5)
 
-    const addStart = isStereoBond ? stereoBondWidth * 1.2 : spY
+    const addStart = isStereoBond ? (stereoBondWidth + 26 / stereoBondWidth) : spY
     const addEnd = isStereoBond ? stereoBondWidth * 0.25 : spY
 
     const [hbPadStartX, hbPadStartY] = this.getLinePoint(hbStartX, hbStartY, hbEndX, hbEndY, addStart)
@@ -238,7 +245,7 @@ class ReBond extends ReObject {
     if (this.selected) {
       // hoverStyle.fill = '#ccffdd'
     }
-    return rect.attr(options.hoverStyle).toBack()
+    return rect.attr(options.hoverStyle)
   }
 
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any) {
@@ -418,7 +425,7 @@ class ReBond extends ReObject {
       })
     }
 
-    this.path.toBack()
+    // this.path.toBack()
   }
 }
 

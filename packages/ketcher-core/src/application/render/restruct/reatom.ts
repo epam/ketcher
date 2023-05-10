@@ -79,9 +79,11 @@ class ReAtom extends ReObject {
     this.component = -1
 
     this.changeSelection = (isHovering: boolean) => {
-      this.selectionPlate.attr({
-        fill: isHovering ? '#CCFFDD' : '#57FF8F'
-      })
+      setTimeout(() => {
+        this.selectionPlate?.attr({
+          fill: isHovering ? '#CCFFDD' : '#57FF8F'
+        })
+      }, 20);
     }
   }
 

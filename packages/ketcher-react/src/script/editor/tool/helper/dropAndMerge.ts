@@ -55,7 +55,7 @@ export function dropAndMerge(
     ReBond.bondRecalc(restruct.bonds.get(bondId)!, restruct, editor.options())
   }
 
-  editor.hover(null)
+  // editor.hover(null)
   if (isMerging) editor.selection(null)
 
   console.log('dropItemAction', dropItemAction)

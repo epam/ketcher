@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+// @ts-nocheck
+
 import { Box2Abs } from 'domain/entities'
 import ReStruct from './restruct'
 import { Render } from '../raphaelRender'
@@ -55,7 +57,7 @@ class ReObject {
       }
       if (noredraw) {
         console.log('ooo hover', this.selected, this.changeSelection)
-        if (this.selected && this.changeSelection) {
+        if (this.changeSelection) {
           this.changeSelection(true)
         }
         this.hovering.show()
@@ -65,7 +67,7 @@ class ReObject {
         this.hovering = render.paper.setFinish()
       }
     } else if (this.hovering) {
-      if (this.selected && this.changeSelection) {
+      if (this.changeSelection) {
         this.changeSelection(false)
       }
       this.hovering.hide()

@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+// @ts-nocheck
+
 import {
   SGroup,
   fromItemsFuse,
@@ -33,7 +35,8 @@ import {
   isCloseToEdgeOfCanvas,
   isCloseToEdgeOfScreen,
   scrollByVector,
-  shiftAndExtendCanvasByVector
+  shiftAndExtendCanvasByVector,
+  ReBond
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -74,7 +77,7 @@ class SelectTool {
     const ctab = rnd.ctab
     const molecule = ctab.molecule
 
-    this.editor.hover(null) // TODO review hovering for touch devicess
+    // this.editor.hover(null) // TODO review hovering for touch devicess
 
     const map = getMapsForClosestItem(
       this.#lassoHelper.fragment || event.ctrlKey
@@ -101,6 +104,13 @@ class SelectTool {
     if (!ci || ci.map === 'atoms') {
       atomLongtapEvent(this, rnd)
     }
+
+    ctab.bonds.forEach(bondId => {
+      const rebond = ctab.bonds.get(bondId)
+      if (!rebond) return
+      ReBond.bondRecalc(rebond, ctab, rnd.options)
+      if (rebond?.changeSelection) rebond.changeSelection(rebond.selected)
+    })
 
     if (!ci) {
       //  ci.type == 'Canvas'
@@ -297,6 +307,14 @@ class SelectTool {
       info: false
     })
 
+    ctab.bonds.forEach(bondId => {
+      console.log('bonds', selection)
+      const rebond = ctab.bonds.get(bondId)
+      if (!rebond) return
+      ReBond.bondRecalc(rebond, ctab, rnd.options)
+      if (rebond?.changeSelection) rebond.changeSelection(rebond.selected)
+    })
+
     this.editor.rotateController.rerender()
   }
 
@@ -436,7 +454,7 @@ class SelectTool {
 
     delete this.dragCtx
 
-    this.editor.hover(null)
+    // this.editor.hover(null)
   }
 
   selectElementsOnCanvas(
@@ -601,7 +619,7 @@ function preventSaltAndSolventsMerge(
   const action = dragCtx.action
     ? fromItemsFuse(struct, null).mergeWith(dragCtx.action)
     : fromItemsFuse(struct, null)
-  editor.hover(null)
+  // editor.hover(null)
   if (dragCtx.mergeItems) {
     editor.selection(null)
   }

@@ -287,7 +287,12 @@ class RotateController {
       const degreeText = paper
         .text(textPos.x, textPos.y, `${currentDegree}°`)
         .attr({
-          fill: diff > 90 ? 'none' : STYLE.INITIAL_COLOR,
+          fill:
+            diff > 90
+              ? 'none'
+              : currentDegree !== 0 && currentDegree === structRotateDegree
+              ? STYLE.ACTIVE_COLOR
+              : STYLE.INITIAL_COLOR,
           'font-size': DEGREE_FONT_SIZE
         })
 

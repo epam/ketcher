@@ -363,12 +363,13 @@ class RotateController {
       return
     }
 
+    const isDragPaused = !this.boundingRect
     this.handle?.attr({
-      cursor: 'grab'
+      cursor: isDragPaused ? 'not-allowed' : 'grab'
     })
     const circle = this.handle?.[0]
     circle.attr({
-      fill: STYLE.ACTIVE_COLOR
+      fill: isDragPaused ? STYLE.INITIAL_COLOR : STYLE.ACTIVE_COLOR
     })
   }
 
@@ -392,19 +393,26 @@ class RotateController {
       return
     }
 
-    this.boundingRect?.hide()
+    const isDragPaused = !this.boundingRect
+    if (isDragPaused) {
+      // Fix protractor staying after screenshot/being paused
+      // see https://github.com/epam/ketcher/pull/2574#issuecomment-1539201020
+      this.clean()
+      return
+    }
+
+    this.boundingRect?.remove()
+    delete this.boundingRect
     this.drawProtractor(0)
     this.cross?.attr({
       stroke: STYLE.ACTIVE_COLOR
     })
-    this.link
-      ?.attr({
-        path:
-          `M${this.center?.x},${this.center?.y}` +
-          `L${this.initialHandleCenter?.x},${this.initialHandleCenter?.y}`,
-        stroke: STYLE.ACTIVE_COLOR
-      })
-      .toFront()
+    this.link?.attr({
+      path:
+        `M${this.center?.x},${this.center?.y}` +
+        `L${this.initialHandleCenter?.x},${this.initialHandleCenter?.y}`,
+      stroke: STYLE.ACTIVE_COLOR
+    })
     this.handle?.attr({
       cursor: 'grabbing'
     })
@@ -443,14 +451,12 @@ class RotateController {
           new Vec2(dxFromStart, dyFromStart).scaled(1 / render.options.zoom) // HACK: zoom in/out
         )
 
-        this.link
-          ?.attr({
-            path:
-              `M${this.center.x},${this.center.y}` +
-              `L${newHandleCenter.x},${newHandleCenter.y}`,
-            stroke: STYLE.ACTIVE_COLOR
-          })
-          .toFront()
+        this.link?.attr({
+          path:
+            `M${this.center.x},${this.center.y}` +
+            `L${newHandleCenter.x},${newHandleCenter.y}`,
+          stroke: STYLE.ACTIVE_COLOR
+        })
 
         const delta = newHandleCenter.sub(lastHandleCenter)
         this.handle?.translate(delta.x, delta.y)

@@ -6,7 +6,7 @@ const {
 } = require('customize-cra')
 const path = require('path')
 const webpack = require('webpack')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+// const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlReplaceWebpackPlugin = require('html-replace-webpack-plugin')
 const GitRevisionPlugin = require('git-revision-webpack-plugin')
 

@@ -65,9 +65,26 @@ import {
 // }
 // loadWasm()
 
-import('indigo-ketcher/indigo-ketcher.wasm')
+// import('indigo-ketcher/indigo-ketcher.wasm')
+//   // @ts-ignore
+//   .then((mod) => console.log(mod.default()))
+import indigoModuleFn from 'indigo-ketcher'
+// console.log('indigoModuleFn', indigoModuleFn)
+// indigoModuleFn().then((result) => {
+//   console.log(result)
+//   indigo = result
+// })
+
+const originalFetch = self.fetch
+
+self.fetch = async (url, options) => {
   // @ts-ignore
-  .then((mod) => console.log(mod.default()))
+  const isHttp = url.startsWith('http::') || url.startsWith('https::')
+  const fixedUrl = !isHttp ? self.location.origin + '/' + url : url
+  return originalFetch(fixedUrl, options)
+}
+
+const indigoPromise = indigoModuleFn()
 
 interface IndigoOptions {
   set: (key: string, value: string) => void
@@ -75,37 +92,36 @@ interface IndigoOptions {
 
 type handlerType = (indigo: any, indigoOptions: IndigoOptions) => string
 
-function handle(
+async function handle(
   handler: handlerType,
   options?: CommandOptions,
   messageType?: Command
 ) {
   // @ts-ignore
-  module.then((indigo) => {
-    console.log('Indigo is', indigo)
-    // @ts-ignore
-    const indigoOptions = new indigo.MapStringString()
-    setOptions(indigoOptions, options || {})
-    let msg: OutputMessage<string>
-    try {
-      const payload = handler(indigo, indigoOptions)
-      msg = {
-        type: messageType,
-        payload,
-        hasError: false
-      }
-    } catch (error: any) {
-      msg = {
-        type: messageType,
-        hasError: true,
-        error: error
-      }
+  console.log('Indigo is', indigo)
+  const indigo = await indigoPromise
+  // @ts-ignore
+  const indigoOptions = new indigo.MapStringString()
+  setOptions(indigoOptions, options || {})
+  let msg: OutputMessage<string>
+  try {
+    const payload = handler(indigo, indigoOptions)
+    msg = {
+      type: messageType,
+      payload,
+      hasError: false
     }
+  } catch (error: any) {
+    msg = {
+      type: messageType,
+      hasError: true,
+      error: error
+    }
+  }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    self.postMessage(msg)
-  })
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  self.postMessage(msg)
 }
 
 function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {

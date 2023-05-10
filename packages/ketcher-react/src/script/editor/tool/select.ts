@@ -307,13 +307,13 @@ class SelectTool {
       info: false
     })
 
-    ctab.bonds.forEach(bondId => {
-      console.log('bonds', selection)
-      const rebond = ctab.bonds.get(bondId)
-      if (!rebond) return
-      ReBond.bondRecalc(rebond, ctab, rnd.options)
-      if (rebond?.changeSelection) rebond.changeSelection(rebond.selected)
-    })
+    // ctab.bonds.forEach(bondId => {
+    //   console.log('bonds', selection)
+    //   const rebond = ctab.bonds.get(bondId)
+    //   if (!rebond) return
+    //   ReBond.bondRecalc(rebond, ctab, rnd.options)
+    //   if (rebond?.changeSelection) rebond.changeSelection(rebond.selected)
+    // })
 
     this.editor.rotateController.rerender()
   }

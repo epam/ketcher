@@ -411,7 +411,7 @@ class RotateController {
     const arrowSet = this.handle?.[1]
     arrowSet?.attr({ fill: 'none' })
 
-    this.rotateTool.mousedown(event)
+    this.rotateTool.mousedown(event, true)
   }
 
   private dragMove = () => {
@@ -438,9 +438,9 @@ class RotateController {
           return
         }
 
-        const options = this.editor.render.options
+        const render = this.editor.render
         const newHandleCenter = this.initialHandleCenter.add(
-          new Vec2(dxFromStart, dyFromStart).scaled(1 / options.zoom) // HACK: zoom in/out
+          new Vec2(dxFromStart, dyFromStart).scaled(1 / render.options.zoom) // HACK: zoom in/out
         )
 
         this.link
@@ -462,7 +462,10 @@ class RotateController {
         const rotateDegree = utils.degrees(newRotateAngle - lastRotateAngle)
         this.cross?.rotate(rotateDegree, this.center.x, this.center.y)
 
-        this.rotateTool.mousemove(event)
+        this.rotateTool.mousemove(
+          event,
+          render.view2obj(newHandleCenter.scaled(render.options.zoom))
+        )
         const newProtractorRadius =
           Vec2.dist(newHandleCenter, this.center) -
           STYLE.HANDLE_MARGIN -

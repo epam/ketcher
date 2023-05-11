@@ -27,7 +27,6 @@ import { load, onAction, removeStructAction } from './shared'
 
 import actions from '../action'
 import keyNorm from '../data/convert/keynorm'
-import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
 import { handleHotkeyOverItem } from './handleHotkeysOverItem'
 
@@ -57,18 +56,10 @@ function keyHandle(dispatch, state, hotKeys, event) {
   const actionTool = actionState.activeTool
 
   const key = keyNorm(event)
-  const atomsSelected = editor.selection() && editor.selection().atoms
 
   let group: any = null
 
-  if (key && key.length === 1 && atomsSelected && key.match(/\w/)) {
-    openDialog(dispatch, 'labelEdit', { letter: key })
-      .then((res) => {
-        dispatch(onAction({ tool: 'atom', opts: res }))
-      })
-      .catch(() => null)
-    event.preventDefault()
-  } else if (key && key.length === 1 && key.match('/')) {
+  if (key && key.length === 1 && key.match('/')) {
     const hotkeyDialogTypes = {
       atoms: actions['atom-props'].action,
       bonds: actions['bond-props'].action

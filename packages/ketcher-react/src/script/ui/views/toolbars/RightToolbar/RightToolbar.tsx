@@ -50,8 +50,8 @@ type Props = RightToolbarProps & RightToolbarCallProps
 const RightToolbar = (props: Props) => {
   const { className, ...rest } = props
   const { active, onAction, freqAtoms } = rest
-  const [startRef, startInView] = useInView({ threshold: 0.95 })
-  const [endRef, endInView] = useInView({ threshold: 0.8 })
+  const [startRef, startInView] = useInView({ threshold: 1 })
+  const [endRef, endInView] = useInView({ threshold: 1 })
   const sizeRef = useRef() as MutableRefObject<HTMLDivElement>
   const scrollRef = useRef() as MutableRefObject<HTMLDivElement>
 

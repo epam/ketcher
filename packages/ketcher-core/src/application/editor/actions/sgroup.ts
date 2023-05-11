@@ -24,7 +24,7 @@ import {
   SGroupDelete,
   SGroupRemoveFromHierarchy
 } from '../operations'
-import { Pile, SGroup } from 'domain/entities'
+import { FunctionalGroup, Pile, SGroup } from 'domain/entities'
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils'
 
 import { Action } from './action'
@@ -89,6 +89,29 @@ export function setExpandSGroup(restruct, sgid, attrs) {
   })
 
   return action.perform(restruct)
+}
+
+// todo delete after supporting expand - collapse for 2 attachment points
+export function expandSGroupWithMultipleAttachmentPoint(restruct) {
+  const action = new Action()
+
+  const struct = restruct.molecule
+
+  struct.sgroups.forEach((sgroup) => {
+    const countAttachmentPoint = FunctionalGroup.getAttachmentPointCount(
+      sgroup,
+      struct
+    )
+    if (countAttachmentPoint > 1) {
+      action.mergeWith(
+        setExpandSGroup(restruct, sgroup.id, {
+          expanded: true
+        })
+      )
+    }
+  })
+
+  return action
 }
 
 export function sGroupAttributeAction(id, attrs) {

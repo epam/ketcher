@@ -23,7 +23,8 @@ import {
   fromSgroupDeletion,
   FunctionalGroup,
   SGroup,
-  Pool
+  Pool,
+  expandSGroupWithMultipleAttachmentPoint
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -511,6 +512,8 @@ class SGroupTool {
               sg.atoms,
               newSg.attrs
             ).mergeWith(fromSgroupDeletion(restruct, id))
+
+            action.mergeWith(expandSGroupWithMultipleAttachmentPoint(restruct))
 
             editor.update(action)
             editor.selection(selection)

@@ -511,7 +511,10 @@ const rotatePoint = (centerPoint: Vec2, startPoint: Vec2, angle: number) => {
   return oEnd
 }
 
-const getDifference = (currentDegree: number, structRotateDegree: number) => {
+export const getDifference = (
+  currentDegree: number,
+  structRotateDegree: number
+) => {
   let abs = 0
 
   // HACK: https://github.com/epam/ketcher/pull/2574#issuecomment-1539509046

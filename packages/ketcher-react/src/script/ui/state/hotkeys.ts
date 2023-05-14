@@ -30,6 +30,7 @@ import keyNorm from '../data/convert/keynorm'
 import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
 import { handleHotkeyOverItem } from './handleHotkeysOverItem'
+import { SettingsManager } from '../utils/settingsManager'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -119,6 +120,11 @@ function keyHandle(dispatch, state, hotKeys, event) {
           dispatch
         })
       } else {
+        if (newAction.tool === 'select') {
+          const savedSelectionTool = SettingsManager.getSettings().selectionTool
+          newAction = savedSelectionTool
+        }
+
         dispatch(onAction(newAction))
       }
 

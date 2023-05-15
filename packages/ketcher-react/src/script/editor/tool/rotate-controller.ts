@@ -28,6 +28,7 @@ class RotateController {
   private editor: Editor
   private rotateTool: RotateTool
   private originalCenter!: Vec2
+  private initialHandleCenter!: Vec2
   private handleCenter!: Vec2
   private isRotating!: boolean
   private isMovingCenter!: boolean
@@ -47,6 +48,7 @@ class RotateController {
 
   private init() {
     this.originalCenter = new Vec2()
+    this.initialHandleCenter = new Vec2()
     this.handleCenter = new Vec2()
     this.isRotating = false
     this.isMovingCenter = false
@@ -112,7 +114,7 @@ class RotateController {
     }
 
     const rectStartY = this.drawBoundingRect(visibleAtoms)
-    this.handleCenter = new Vec2(
+    this.initialHandleCenter = this.handleCenter = new Vec2(
       this.center.x,
       rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS
     )
@@ -342,7 +344,6 @@ class RotateController {
   private drawProtractor(structRotateDegree: number, radius: number) {
     this.protractor?.remove()
 
-    const DEGREE_TEXT_MARGIN = 10
     const PROTRACTOR_COLOR = '#E1E5EA'
     const DEGREE_FONT_SIZE = 12
 
@@ -356,22 +357,7 @@ class RotateController {
     this.protractor = this.paper.set() as RaphaelElement
     this.protractor.push(circle)
 
-    const degree0TextY =
-      this.center.y -
-      radius -
-      STYLE.HANDLE_MARGIN -
-      STYLE.HANDLE_RADIUS * 2 -
-      DEGREE_TEXT_MARGIN
-    const degree0Line = this.paper
-      .path(
-        `M${this.center.x},${this.center.y - radius}` +
-          `v-${radius >= 65 ? STYLE.HANDLE_MARGIN : STYLE.HANDLE_MARGIN / 2}`
-      )
-      .attr({
-        'stroke-dasharray': '-'
-      })
-    let degreeLine = degree0Line
-    let textPos = new Vec2(this.center.x, degree0TextY)
+    let [degreeLine, textPos] = this.getProtractorBaseLine(radius)
 
     const predefinedDegrees = [
       0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60, -45,
@@ -416,6 +402,43 @@ class RotateController {
     }, -1)
 
     this.protractor.toBack()
+  }
+
+  private getProtractorBaseLine(radius: number) {
+    const DEGREE_TEXT_MARGIN = 10
+
+    const centerHandleVec = this.initialHandleCenter.sub(this.center)
+    const normalizedCenterHandleVec = centerHandleVec.normalized()
+
+    const distBetweenDegree0TextAndCenter =
+      radius +
+      STYLE.HANDLE_MARGIN +
+      STYLE.HANDLE_RADIUS * 2 +
+      DEGREE_TEXT_MARGIN
+    const centerDegree0TextVec = normalizedCenterHandleVec.scaled(
+      distBetweenDegree0TextAndCenter
+    )
+    const degree0TextPos = this.center.add(centerDegree0TextVec)
+
+    const lineLength =
+      radius >= 65 ? STYLE.HANDLE_MARGIN : STYLE.HANDLE_MARGIN / 2
+    const centerLineStartVec = normalizedCenterHandleVec.scaled(radius)
+    const lineVec = normalizedCenterHandleVec.scaled(lineLength)
+    const lineStart = this.center.add(centerLineStartVec)
+    const lineEnd = lineStart.add(lineVec)
+    const lineEndHalf = lineStart.addScaled(lineVec, 1 / 2)
+    const degree0Line = this.paper
+      .path(
+        `M${lineStart.x},${lineStart.y}` +
+          (radius >= 65
+            ? `L${lineEnd.x}, ${lineEnd.y}`
+            : `L${lineEndHalf.x}, ${lineEndHalf.y}`)
+      )
+      .attr({
+        'stroke-dasharray': '-'
+      })
+
+    return [degree0Line, degree0TextPos] as const
   }
 
   private drawRotateArc(structRotateDegree: number, radius: number) {

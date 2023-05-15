@@ -58,7 +58,7 @@ const LeftToolbar = (props: Props) => {
   const { ref, height } = useResizeObserver<HTMLDivElement>()
   const scrollRef = useRef() as MutableRefObject<HTMLDivElement>
   const [startRef, startInView] = useInView({ threshold: 1 })
-  const [endRef, endInView] = useInView({ threshold: 1 })
+  const [endRef, endInView] = useInView({ threshold: 0.8 })
   const sizeRef = useRef() as MutableRefObject<HTMLDivElement>
 
   type ItemProps = {

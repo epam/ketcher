@@ -537,7 +537,10 @@ class RotateController {
     this.drawLink('long')
     this.drawHandle('active')
 
-    this.rotateTool.mousedown(event, true)
+    const originalHandleCenter = this.handleCenter
+      .sub(this.render.options.offset)
+      .scaled(1 / this.render.options.scale)
+    this.rotateTool.mousedown(event, originalHandleCenter, this.originalCenter)
   }
 
   private dragMove = throttle(

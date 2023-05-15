@@ -1,4 +1,4 @@
-import { Scale, Vec2 } from 'ketcher-core'
+import { Scale, Struct, Vec2 } from 'ketcher-core'
 import { throttle } from 'lodash'
 import Editor from '../Editor'
 import RotateTool from './rotate'
@@ -131,11 +131,13 @@ class RotateController {
       this.dragEnd // Fix rotation getting stuck when mouseup outside window
     )
 
-    const crossArea = this.cross?.[1]
-    crossArea?.hover(this.hoverCrossIn, this.hoverCrossOut)
-    crossArea?.mousedown(this.dragCrossStart)
-    crossArea?.mouseup(this.dragCrossEnd)
-    crossArea?.drag(this.dragCrossMove, undefined, this.dragCrossEnd)
+    if (isEveryAtomInTheSameFragment(visibleAtoms, this.render.ctab.molecule)) {
+      const crossArea = this.cross?.[1]
+      crossArea?.hover(this.hoverCrossIn, this.hoverCrossOut)
+      crossArea?.mousedown(this.dragCrossStart)
+      crossArea?.mouseup(this.dragCrossEnd)
+      crossArea?.drag(this.dragCrossMove, undefined, this.dragCrossEnd)
+    }
   }
 
   private drawCross(state?: CrossState) {
@@ -711,4 +713,14 @@ export const getDifference = (
   }
 
   return abs
+}
+
+const isEveryAtomInTheSameFragment = (atomIds: number[], struct: Struct) => {
+  const fragmentId = struct.atoms.get(atomIds[0])?.fragment
+  if (fragmentId === undefined) {
+    return
+  }
+  return atomIds.every(
+    (atomId) => struct.atoms.get(atomId)?.fragment === fragmentId
+  )
 }

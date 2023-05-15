@@ -8,6 +8,10 @@ type RaphaelElement = {
   [key: string]: any
 }
 
+type LinkState = 'long' | 'short' | 'moveCenter' | 'moveHandle'
+type CrossState = 'active' | 'inactive' | 'offset' | 'move'
+type HandleState = 'hoverIn' | 'hoverOut' | 'active' | 'move'
+
 const STYLE = {
   HANDLE_MARGIN: 15,
   HANDLE_RADIUS: 10,
@@ -23,9 +27,9 @@ const RIGHT_ARROW_PATH =
 class RotateController {
   private editor: Editor
   private rotateTool: RotateTool
-  private originalCenter: Vec2
-  private initialHandleCenter: Vec2
-  private protractorRadius: number
+  private originalCenter!: Vec2
+  private initialHandleCenter!: Vec2
+  private protractorRadius!: number
 
   private handle?: RaphaelElement
   private boundingRect?: RaphaelElement
@@ -36,10 +40,14 @@ class RotateController {
 
   constructor(editor: Editor) {
     this.editor = editor
+    this.init()
+    this.rotateTool = new RotateTool(this.editor, undefined, true)
+  }
+
+  private init() {
     this.originalCenter = new Vec2()
     this.initialHandleCenter = new Vec2()
     this.protractorRadius = 0
-    this.rotateTool = new RotateTool(this.editor, undefined, true)
   }
 
   private get render() {
@@ -58,6 +66,7 @@ class RotateController {
 
   rerender() {
     this.clean()
+    this.init()
 
     const [originalCenter, visibleAtoms] = this.rotateTool.getCenter(
       this.editor
@@ -73,6 +82,12 @@ class RotateController {
     this.handle?.unmouseup(this.dragEnd)
     this.handle?.undrag()
 
+    const crossArea = this.cross?.[1]
+    crossArea?.unhover(this.hoverCrossIn, this.hoverCrossOut)
+    crossArea?.unmousedown(this.dragCrossStart)
+    crossArea?.unmouseup(this.dragCrossEnd)
+    crossArea?.undrag()
+
     this.cross?.remove()
     delete this.cross
     this.boundingRect?.remove()
@@ -85,10 +100,6 @@ class RotateController {
     delete this.protractor
     this.rotateArc?.remove()
     delete this.rotateArc
-
-    this.originalCenter = new Vec2()
-    this.initialHandleCenter = new Vec2()
-    this.protractorRadius = 0
   }
 
   private show(visibleAtoms: number[]) {
@@ -98,12 +109,11 @@ class RotateController {
       return
     }
 
-    this.drawCross()
     const rectStartY = this.drawBoundingRect(visibleAtoms)
     this.protractorRadius = this.center.y - rectStartY
-    this.drawShortLink()
+    this.drawLink()
+    this.drawCross()
     this.drawHandle()
-    this.initRotateArc()
 
     this.handle?.hover(this.hoverIn, this.hoverOut)
     this.handle?.mousedown(this.dragStart)
@@ -113,41 +123,61 @@ class RotateController {
       undefined,
       this.dragEnd // Fix rotation getting stuck when mouseup outside window
     )
+
+    const crossArea = this.cross?.[1]
+    crossArea?.hover(this.hoverCrossIn, this.hoverCrossOut)
+    crossArea?.mousedown(this.dragCrossStart)
+    crossArea?.mouseup(this.dragCrossEnd)
+    crossArea?.drag(this.dragCrossMove, undefined, this.dragCrossEnd)
   }
 
-  private drawCross() {
-    const moveToCenter = `M${this.center.x}, ${this.center.y}`
-    this.cross = this.paper
-      .path(
-        moveToCenter +
-          `h8` +
-          moveToCenter +
-          `h-8` +
-          moveToCenter +
-          `v8` +
-          moveToCenter +
-          `v-8`
-      )
-      .attr({
-        stroke: STYLE.INITIAL_COLOR,
-        'stroke-width': 2,
-        'stroke-linecap': 'round'
-      })
-  }
+  private drawCross(state?: CrossState) {
+    switch (state) {
+      case 'active': {
+        this.cross?.attr({
+          stroke: STYLE.ACTIVE_COLOR
+        })
+        break
+      }
 
-  private updateCrossPosition() {
-    const moveToCenter = `M${this.center.x}, ${this.center.y}`
-    this.cross?.attr({
-      path:
-        moveToCenter +
-        `h8` +
-        moveToCenter +
-        `h-8` +
-        moveToCenter +
-        `v8` +
-        moveToCenter +
-        `v-8`
-    })
+      case 'inactive': {
+        this.cross?.attr({
+          stroke: STYLE.INITIAL_COLOR
+        })
+        break
+      }
+
+      case 'move': {
+        this.cross?.transform('')
+        this.cross?.translate(this.center.x, this.center.y)
+        break
+      }
+
+      default: {
+        const cross = this.paper
+          .path(`M0,0` + `h8` + `M0,0` + `h-8` + `M0,0` + `v8` + `M0,0` + `v-8`)
+          // todo @yuleicul cursor
+          // todo @yuleicul event stop / when cross and atom are overlapped
+          // todo @yuleicul make it bigger to conviently move
+          .attr({
+            stroke: STYLE.INITIAL_COLOR,
+            'stroke-width': 2,
+            'stroke-linecap': 'round'
+          })
+        // HACK: increase hover/drag area
+        const circle = this.paper.circle(0, 0, 10).attr({
+          // fill: 'white',
+          // opacity: 0,
+          fill: 'red',
+          opacity: 0.5
+        })
+        this.cross = this.paper.set()
+        this.cross?.push(cross, circle)
+        this.cross?.translate(this.center.x, this.center.y)
+
+        break
+      }
+    }
   }
 
   private drawBoundingRect(visibleAtoms: number[]) {
@@ -184,56 +214,143 @@ class RotateController {
     return rectStartY
   }
 
-  private drawHandle() {
-    const circle = this.paper.circle(0, 0, STYLE.HANDLE_RADIUS).attr({
-      fill: STYLE.INITIAL_COLOR,
-      stroke: 'none'
-    })
+  private drawHandle(state: 'hoverIn', option: boolean)
+  private drawHandle(state: 'move', option: Vec2)
+  private drawHandle(state?: HandleState)
+  private drawHandle(state?: HandleState, option?: Vec2 | boolean) {
+    switch (state) {
+      case 'hoverIn': {
+        const isDragPaused = option as boolean
+        this.handle?.attr({
+          cursor: isDragPaused ? 'not-allowed' : 'grab'
+        })
+        const circle = this.handle?.[0]
+        circle.attr({
+          fill: isDragPaused ? STYLE.INITIAL_COLOR : STYLE.ACTIVE_COLOR
+        })
+        break
+      }
 
-    const leftArrow = this.paper
-      .path(LEFT_ARROW_PATH)
-      .attr({ fill: 'white', stroke: 'none' })
-    const rightArrow = this.paper
-      .path(RIGHT_ARROW_PATH)
-      .attr({ fill: 'white', stroke: 'none' })
-    const arrowSet: RaphaelElement = this.paper.set()
-    arrowSet.push(leftArrow, rightArrow)
-    const { x, y, width, height } = arrowSet.getBBox()
-    arrowSet.translate(-(x + width / 2), -(y + height / 2))
+      case 'hoverOut': {
+        const circle = this.handle?.[0]
+        circle.attr({
+          fill: STYLE.INITIAL_COLOR
+        })
+        break
+      }
 
-    this.handle = this.paper.set() as RaphaelElement
-    this.handle.push(circle, arrowSet)
-    this.handle.translate(
-      this.initialHandleCenter.x,
-      this.initialHandleCenter.y
-    )
+      case 'active': {
+        this.handle?.attr({
+          cursor: 'grabbing'
+        })
+        const arrowSet = this.handle?.[1]
+        arrowSet?.attr({ fill: 'none' })
+        break
+      }
+
+      case 'move': {
+        const moveTo = option as Vec2
+        this.handle?.transform('').translate(moveTo.x, moveTo.y).attr({
+          cursor: 'grabbing' // todo@yuleicul remove?
+        })
+        break
+      }
+
+      default: {
+        const circle = this.paper.circle(0, 0, STYLE.HANDLE_RADIUS).attr({
+          fill: STYLE.INITIAL_COLOR,
+          stroke: 'none'
+        })
+
+        const leftArrow = this.paper
+          .path(LEFT_ARROW_PATH)
+          .attr({ fill: 'white', stroke: 'none' })
+        const rightArrow = this.paper
+          .path(RIGHT_ARROW_PATH)
+          .attr({ fill: 'white', stroke: 'none' })
+        const arrowSet: RaphaelElement = this.paper.set()
+        arrowSet.push(leftArrow, rightArrow)
+        const { x, y, width, height } = arrowSet.getBBox()
+        arrowSet.translate(-(x + width / 2), -(y + height / 2))
+
+        this.handle = this.paper.set() as RaphaelElement
+        this.handle.push(circle, arrowSet)
+        this.handle.translate(
+          this.initialHandleCenter.x,
+          this.initialHandleCenter.y
+        )
+        break
+      }
+    }
   }
 
-  private drawShortLink() {
-    const distanceBetweenHandleAndCenter =
-      this.protractorRadius + STYLE.HANDLE_MARGIN + STYLE.HANDLE_RADIUS
-    this.initialHandleCenter = new Vec2(
-      this.center.x,
-      this.center.y - distanceBetweenHandleAndCenter
-    )
+  private drawLink(state: 'moveHandle', option: Vec2)
+  private drawLink(state?: LinkState)
+  private drawLink(state?: LinkState, option?: Vec2) {
+    switch (state) {
+      case 'long': {
+        this.link?.attr({
+          path:
+            `M${this.center.x},${this.center.y}` +
+            `L${this.initialHandleCenter.x},${this.initialHandleCenter.y}`,
+          stroke: STYLE.ACTIVE_COLOR
+        })
+        break
+      }
 
-    this.link = this.paper
-      .path(
-        `M${this.initialHandleCenter.x},${this.initialHandleCenter.y}` +
-          `l0,${STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN}`
-      )
-      .attr({
-        'stroke-dasharray': '-',
-        stroke: STYLE.INITIAL_COLOR
-      })
-  }
+      case 'short': {
+        this.link?.attr({
+          path:
+            `M${this.initialHandleCenter.x},${this.initialHandleCenter.y}` +
+            `l0,${STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN}`,
+          stroke: STYLE.INITIAL_COLOR
+        })
+        break
+      }
 
-  private redrawProtractor(structRotateDegree: number) {
-    this.protractor?.remove()
-    this.drawProtractor(structRotateDegree)
+      case 'moveCenter': {
+        this.link?.attr({
+          path:
+            `M${this.center.x},${this.center.y}` +
+            `L${this.initialHandleCenter.x},${this.initialHandleCenter.y}`
+        })
+        break
+      }
+
+      case 'moveHandle': {
+        const moveTo = option as Vec2
+        this.link?.attr({
+          path:
+            `M${this.center.x},${this.center.y}` + `L${moveTo.x},${moveTo.y}`
+        })
+        break
+      }
+
+      default: {
+        const distanceBetweenHandleAndCenter =
+          this.protractorRadius + STYLE.HANDLE_MARGIN + STYLE.HANDLE_RADIUS
+        this.initialHandleCenter = new Vec2(
+          this.center.x,
+          this.center.y - distanceBetweenHandleAndCenter
+        )
+
+        this.link = this.paper
+          .path(
+            `M${this.initialHandleCenter.x},${this.initialHandleCenter.y}` +
+              `l0,${STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN}`
+          )
+          .attr({
+            'stroke-dasharray': '-',
+            stroke: STYLE.INITIAL_COLOR
+          })
+        break
+      }
+    }
   }
 
   private drawProtractor(structRotateDegree: number) {
+    this.protractor?.remove()
+
     const DEGREE_TEXT_MARGIN = 10
     const PROTRACTOR_COLOR = '#E1E5EA'
     const DEGREE_FONT_SIZE = 12
@@ -314,16 +431,12 @@ class RotateController {
     this.protractor.toBack()
   }
 
-  private initRotateArc() {
-    const arc = this.paper.path()
-    const text = this.paper.text(0, 0, '')
-
-    this.rotateArc = this.paper.set().push(arc, text)
-  }
-
   private drawRotateArc(structRotateDegree: number) {
     if (!this.rotateArc) {
-      return
+      const arc = this.paper.path()
+      const text = this.paper.text(0, 0, '')
+
+      this.rotateArc = this.paper.set().push(arc, text) as RaphaelElement
     }
 
     const rotateArcStart = new Vec2(
@@ -374,15 +487,7 @@ class RotateController {
     }
 
     const isDragPaused = !this.boundingRect
-
-    this.handle?.attr({
-      cursor: isDragPaused ? 'not-allowed' : 'grab'
-    })
-
-    const circle = this.handle?.[0]
-    circle.attr({
-      fill: isDragPaused ? STYLE.INITIAL_COLOR : STYLE.ACTIVE_COLOR
-    })
+    this.drawHandle('hoverIn', isDragPaused)
   }
 
   private hoverOut = (event: MouseEvent) => {
@@ -391,10 +496,7 @@ class RotateController {
       return
     }
 
-    const circle = this.handle?.[0]
-    circle.attr({
-      fill: STYLE.INITIAL_COLOR
-    })
+    this.drawHandle('hoverOut')
   }
 
   private dragStart = (event: MouseEvent) => {
@@ -417,24 +519,9 @@ class RotateController {
     delete this.boundingRect
 
     this.drawProtractor(0)
-
-    this.cross?.attr({
-      stroke: STYLE.ACTIVE_COLOR
-    })
-
-    this.link?.attr({
-      path:
-        `M${this.center.x},${this.center.y}` +
-        `L${this.initialHandleCenter.x},${this.initialHandleCenter.y}`,
-      stroke: STYLE.ACTIVE_COLOR
-    })
-
-    this.handle?.attr({
-      cursor: 'grabbing'
-    })
-
-    const arrowSet = this.handle?.[1]
-    arrowSet?.attr({ fill: 'none' })
+    this.drawCross('active')
+    this.drawLink('long')
+    this.drawHandle('active')
 
     this.rotateTool.mousedown(event, true)
   }
@@ -460,21 +547,9 @@ class RotateController {
         .scaled(this.render.options.scale)
         .add(this.render.options.offset)
 
-      this.link?.attr({
-        path:
-          `M${this.center.x},${this.center.y}` +
-          `L${newHandleCenter.x},${newHandleCenter.y}`,
-        stroke: STYLE.ACTIVE_COLOR
-      })
-
-      this.handle
-        ?.transform('')
-        .translate(newHandleCenter.x, newHandleCenter.y)
-        .attr({
-          cursor: 'grabbing'
-        })
-
-      this.updateCrossPosition()
+      this.drawLink('moveHandle', newHandleCenter)
+      this.drawHandle('move', newHandleCenter)
+      this.drawCross('move')
 
       this.rotateTool.mousemove(event)
 
@@ -485,7 +560,7 @@ class RotateController {
       this.protractorRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0
       this.drawRotateArc(this.rotateTool.dragCtx?.angle || 0)
       // NOTE: draw protractor last
-      this.redrawProtractor(this.rotateTool.dragCtx?.angle || 0)
+      this.drawProtractor(this.rotateTool.dragCtx?.angle || 0)
     },
     40 // 25fps
   )
@@ -495,6 +570,64 @@ class RotateController {
 
     this.rotateTool.mouseup()
     this.rerender()
+  }
+
+  private hoverCrossIn = (event: MouseEvent) => {
+    const isMovingCenter = event.buttons !== 0
+    if (isMovingCenter) {
+      return
+    }
+
+    console.log('hoverCrossIn')
+    this.drawCross('active')
+    this.drawLink('long')
+  }
+
+  // fix @yuleicul link shanshuo
+  private hoverCrossOut = (event: MouseEvent) => {
+    const isMovingCenter = event.buttons !== 0
+    if (isMovingCenter) {
+      return
+    }
+
+    console.log('hoverCrossOut')
+    this.drawCross('inactive')
+    this.drawLink('short')
+  }
+
+  private dragCrossStart = (event: MouseEvent) => {
+    console.log('dragCrossStart')
+    event.stopPropagation()
+  }
+
+  private dragCrossMove = throttle(
+    (
+      _dxFromStart: number,
+      _dyFromStart: number,
+      _clientX: number,
+      _clientY: number,
+      event: MouseEvent
+    ) => {
+      // hack @yuleicul ???? have no idea why move triggered after end
+      const isLeftButtonPressed = event.buttons !== 0
+      if (!isLeftButtonPressed) {
+        return
+      }
+
+      this.originalCenter = this.render.page2obj(event)
+
+      this.drawCross('move')
+      this.drawLink('moveCenter')
+    },
+    40
+  )
+
+  // todo @yuleicul drag out of bounding
+  private dragCrossEnd = (event: MouseEvent) => {
+    console.log('dragCrossEnd')
+
+    this.originalCenter = this.render.page2obj(event)
+    event.stopPropagation()
   }
 }
 

@@ -30,6 +30,7 @@ class RotateController {
   private originalCenter!: Vec2
   private initialHandleCenter!: Vec2
   private protractorRadius!: number
+  private isRotating!: boolean
 
   private handle?: RaphaelElement
   private boundingRect?: RaphaelElement
@@ -48,6 +49,7 @@ class RotateController {
     this.originalCenter = new Vec2()
     this.initialHandleCenter = new Vec2()
     this.protractorRadius = 0
+    this.isRotating = false
   }
 
   private get render() {
@@ -214,19 +216,17 @@ class RotateController {
     return rectStartY
   }
 
-  private drawHandle(state: 'hoverIn', option: boolean)
   private drawHandle(state: 'move', option: Vec2)
   private drawHandle(state?: HandleState)
   private drawHandle(state?: HandleState, option?: Vec2 | boolean) {
     switch (state) {
       case 'hoverIn': {
-        const isDragPaused = option as boolean
         this.handle?.attr({
-          cursor: isDragPaused ? 'not-allowed' : 'grab'
+          cursor: 'grab'
         })
         const circle = this.handle?.[0]
         circle.attr({
-          fill: isDragPaused ? STYLE.INITIAL_COLOR : STYLE.ACTIVE_COLOR
+          fill: STYLE.ACTIVE_COLOR
         })
         break
       }
@@ -486,8 +486,7 @@ class RotateController {
       return
     }
 
-    const isDragPaused = !this.boundingRect
-    this.drawHandle('hoverIn', isDragPaused)
+    this.drawHandle('hoverIn')
   }
 
   private hoverOut = (event: MouseEvent) => {
@@ -507,13 +506,15 @@ class RotateController {
       return
     }
 
-    const isDragPaused = !this.boundingRect
+    const isDragPaused = this.isRotating
     if (isDragPaused) {
       // Fix protractor staying after screenshot/being paused
       // see https://github.com/epam/ketcher/pull/2574#issuecomment-1539201020
       this.clean()
       return
     }
+
+    this.isRotating = true
 
     this.boundingRect?.remove()
     delete this.boundingRect
@@ -534,11 +535,7 @@ class RotateController {
       _clientY: number,
       event: MouseEvent
     ) => {
-      const isLeftButtonPressed = event.buttons === 1
-      if (
-        !isLeftButtonPressed ||
-        !this.protractor // Fix `dragMove` being called without `dragStart` being called first when DnDing very fast
-      ) {
+      if (!this.isRotating) {
         return
       }
 

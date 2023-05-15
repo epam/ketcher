@@ -28,9 +28,9 @@ class RotateController {
   private editor: Editor
   private rotateTool: RotateTool
   private originalCenter!: Vec2
-  private initialHandleCenter!: Vec2
-  private protractorRadius!: number
+  private handleCenter!: Vec2
   private isRotating!: boolean
+  private isMovingCenter!: boolean
 
   private handle?: RaphaelElement
   private boundingRect?: RaphaelElement
@@ -47,9 +47,9 @@ class RotateController {
 
   private init() {
     this.originalCenter = new Vec2()
-    this.initialHandleCenter = new Vec2()
-    this.protractorRadius = 0
+    this.handleCenter = new Vec2()
     this.isRotating = false
+    this.isMovingCenter = false
   }
 
   private get render() {
@@ -112,7 +112,10 @@ class RotateController {
     }
 
     const rectStartY = this.drawBoundingRect(visibleAtoms)
-    this.protractorRadius = this.center.y - rectStartY
+    this.handleCenter = new Vec2(
+      this.center.x,
+      rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS
+    )
     this.drawLink()
     this.drawCross()
     this.drawHandle()
@@ -216,9 +219,7 @@ class RotateController {
     return rectStartY
   }
 
-  private drawHandle(state: 'move', option: Vec2)
-  private drawHandle(state?: HandleState)
-  private drawHandle(state?: HandleState, option?: Vec2 | boolean) {
+  private drawHandle(state?: HandleState) {
     switch (state) {
       case 'hoverIn': {
         this.handle?.attr({
@@ -249,10 +250,12 @@ class RotateController {
       }
 
       case 'move': {
-        const moveTo = option as Vec2
-        this.handle?.transform('').translate(moveTo.x, moveTo.y).attr({
-          cursor: 'grabbing' // todo@yuleicul remove?
-        })
+        this.handle
+          ?.transform('')
+          .translate(this.handleCenter.x, this.handleCenter.y)
+          .attr({
+            cursor: 'grabbing' // todo@yuleicul remove? -> check on react-app-aweird
+          })
         break
       }
 
@@ -275,24 +278,19 @@ class RotateController {
 
         this.handle = this.paper.set() as RaphaelElement
         this.handle.push(circle, arrowSet)
-        this.handle.translate(
-          this.initialHandleCenter.x,
-          this.initialHandleCenter.y
-        )
+        this.handle.translate(this.handleCenter.x, this.handleCenter.y)
         break
       }
     }
   }
 
-  private drawLink(state: 'moveHandle', option: Vec2)
-  private drawLink(state?: LinkState)
-  private drawLink(state?: LinkState, option?: Vec2) {
+  private drawLink(state?: LinkState) {
     switch (state) {
       case 'long': {
         this.link?.attr({
           path:
             `M${this.center.x},${this.center.y}` +
-            `L${this.initialHandleCenter.x},${this.initialHandleCenter.y}`,
+            `L${this.handleCenter.x},${this.handleCenter.y}`,
           stroke: STYLE.ACTIVE_COLOR
         })
         break
@@ -301,7 +299,7 @@ class RotateController {
       case 'short': {
         this.link?.attr({
           path:
-            `M${this.initialHandleCenter.x},${this.initialHandleCenter.y}` +
+            `M${this.handleCenter.x},${this.handleCenter.y}` +
             `l0,${STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN}`,
           stroke: STYLE.INITIAL_COLOR
         })
@@ -312,31 +310,24 @@ class RotateController {
         this.link?.attr({
           path:
             `M${this.center.x},${this.center.y}` +
-            `L${this.initialHandleCenter.x},${this.initialHandleCenter.y}`
+            `L${this.handleCenter.x},${this.handleCenter.y}`
         })
         break
       }
 
       case 'moveHandle': {
-        const moveTo = option as Vec2
         this.link?.attr({
           path:
-            `M${this.center.x},${this.center.y}` + `L${moveTo.x},${moveTo.y}`
+            `M${this.center.x},${this.center.y}` +
+            `L${this.handleCenter.x},${this.handleCenter.y}`
         })
         break
       }
 
       default: {
-        const distanceBetweenHandleAndCenter =
-          this.protractorRadius + STYLE.HANDLE_MARGIN + STYLE.HANDLE_RADIUS
-        this.initialHandleCenter = new Vec2(
-          this.center.x,
-          this.center.y - distanceBetweenHandleAndCenter
-        )
-
         this.link = this.paper
           .path(
-            `M${this.initialHandleCenter.x},${this.initialHandleCenter.y}` +
+            `M${this.handleCenter.x},${this.handleCenter.y}` +
               `l0,${STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN}`
           )
           .attr({
@@ -348,7 +339,7 @@ class RotateController {
     }
   }
 
-  private drawProtractor(structRotateDegree: number) {
+  private drawProtractor(structRotateDegree: number, radius: number) {
     this.protractor?.remove()
 
     const DEGREE_TEXT_MARGIN = 10
@@ -356,7 +347,7 @@ class RotateController {
     const DEGREE_FONT_SIZE = 12
 
     const circle = this.paper
-      .circle(this.center.x, this.center.y, this.protractorRadius)
+      .circle(this.center.x, this.center.y, radius)
       .attr({
         'stroke-dasharray': '-',
         stroke: PROTRACTOR_COLOR
@@ -367,18 +358,14 @@ class RotateController {
 
     const degree0TextY =
       this.center.y -
-      this.protractorRadius -
+      radius -
       STYLE.HANDLE_MARGIN -
       STYLE.HANDLE_RADIUS * 2 -
       DEGREE_TEXT_MARGIN
     const degree0Line = this.paper
       .path(
-        `M${this.center.x},${this.center.y - this.protractorRadius}` +
-          `v-${
-            this.protractorRadius >= 65
-              ? STYLE.HANDLE_MARGIN
-              : STYLE.HANDLE_MARGIN / 2
-          }`
+        `M${this.center.x},${this.center.y - radius}` +
+          `v-${radius >= 65 ? STYLE.HANDLE_MARGIN : STYLE.HANDLE_MARGIN / 2}`
       )
       .attr({
         'stroke-dasharray': '-'
@@ -406,7 +393,7 @@ class RotateController {
       })
       this.protractor?.push(degreeLine)
 
-      if (this.protractorRadius < 65) {
+      if (radius < 65) {
         return currentDegree
       }
 
@@ -431,7 +418,7 @@ class RotateController {
     this.protractor.toBack()
   }
 
-  private drawRotateArc(structRotateDegree: number) {
+  private drawRotateArc(structRotateDegree: number, radius: number) {
     if (!this.rotateArc) {
       const arc = this.paper.path()
       const text = this.paper.text(0, 0, '')
@@ -439,10 +426,7 @@ class RotateController {
       this.rotateArc = this.paper.set().push(arc, text) as RaphaelElement
     }
 
-    const rotateArcStart = new Vec2(
-      this.center.x,
-      this.center.y - this.protractorRadius
-    )
+    const rotateArcStart = new Vec2(this.center.x, this.center.y - radius)
     const rotateArcEnd = rotatePoint(
       this.center,
       rotateArcStart,
@@ -462,7 +446,7 @@ class RotateController {
       .attr({
         path:
           `M${rotateArcStart.x},${rotateArcStart.y}` +
-          `A${this.protractorRadius},${this.protractorRadius} ` +
+          `A${radius},${radius} ` +
           `0 0,${structRotateDegree < 0 ? '0' : '1'} ` +
           `${rotateArcEnd.x},${rotateArcEnd.y}`,
         stroke: STYLE.ACTIVE_COLOR
@@ -473,7 +457,7 @@ class RotateController {
       text: `${structRotateDegree}°`,
       'text-anchor': 'start',
       x: this.center.x + TEXT_MARGIN_LEFT,
-      y: this.center.y - this.protractorRadius - TEXT_MARGIN_BOTTOM,
+      y: this.center.y - radius - TEXT_MARGIN_BOTTOM,
       'font-size': TEXT_FONT_SIZE,
       fill: TEXT_COLOR
     })
@@ -519,7 +503,13 @@ class RotateController {
     this.boundingRect?.remove()
     delete this.boundingRect
 
-    this.drawProtractor(0)
+    const newProtractorRadius =
+      Vec2.dist(this.handleCenter, this.center) -
+      STYLE.HANDLE_MARGIN -
+      STYLE.HANDLE_RADIUS
+    const radius = newProtractorRadius >= 0 ? newProtractorRadius : 0
+    this.drawProtractor(0, radius)
+
     this.drawCross('active')
     this.drawLink('long')
     this.drawHandle('active')
@@ -539,25 +529,26 @@ class RotateController {
         return
       }
 
-      const newHandleCenter = this.render
+      this.handleCenter = this.render
         .page2obj(event)
         .scaled(this.render.options.scale)
         .add(this.render.options.offset)
 
-      this.drawLink('moveHandle', newHandleCenter)
-      this.drawHandle('move', newHandleCenter)
+      this.drawLink('moveHandle')
+      this.drawHandle('move')
       this.drawCross('move')
 
       this.rotateTool.mousemove(event)
 
       const newProtractorRadius =
-        Vec2.dist(newHandleCenter, this.center) -
+        Vec2.dist(this.handleCenter, this.center) -
         STYLE.HANDLE_MARGIN -
         STYLE.HANDLE_RADIUS
-      this.protractorRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0
-      this.drawRotateArc(this.rotateTool.dragCtx?.angle || 0)
+      const radius = newProtractorRadius >= 0 ? newProtractorRadius : 0
+
+      this.drawRotateArc(this.rotateTool.dragCtx?.angle || 0, radius)
       // NOTE: draw protractor last
-      this.drawProtractor(this.rotateTool.dragCtx?.angle || 0)
+      this.drawProtractor(this.rotateTool.dragCtx?.angle || 0, radius)
     },
     40 // 25fps
   )
@@ -570,8 +561,8 @@ class RotateController {
   }
 
   private hoverCrossIn = (event: MouseEvent) => {
-    const isMovingCenter = event.buttons !== 0
-    if (isMovingCenter) {
+    const isSomeButtonPressed = event.buttons !== 0
+    if (isSomeButtonPressed) {
       return
     }
 
@@ -582,8 +573,8 @@ class RotateController {
 
   // fix @yuleicul link shanshuo
   private hoverCrossOut = (event: MouseEvent) => {
-    const isMovingCenter = event.buttons !== 0
-    if (isMovingCenter) {
+    const isSomeButtonPressed = event.buttons !== 0
+    if (isSomeButtonPressed) {
       return
     }
 
@@ -593,8 +584,8 @@ class RotateController {
   }
 
   private dragCrossStart = (event: MouseEvent) => {
-    console.log('dragCrossStart')
     event.stopPropagation()
+    this.isMovingCenter = true
   }
 
   private dragCrossMove = throttle(
@@ -605,9 +596,7 @@ class RotateController {
       _clientY: number,
       event: MouseEvent
     ) => {
-      // hack @yuleicul ???? have no idea why move triggered after end
-      const isLeftButtonPressed = event.buttons !== 0
-      if (!isLeftButtonPressed) {
+      if (!this.isMovingCenter) {
         return
       }
 
@@ -621,10 +610,11 @@ class RotateController {
 
   // todo @yuleicul drag out of bounding
   private dragCrossEnd = (event: MouseEvent) => {
+    event.stopPropagation()
     console.log('dragCrossEnd')
 
+    this.isMovingCenter = false
     this.originalCenter = this.render.page2obj(event)
-    event.stopPropagation()
   }
 }
 

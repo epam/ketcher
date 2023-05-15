@@ -341,7 +341,13 @@ class RotateController {
     }
   }
 
-  private drawProtractor(structRotateDegree: number, radius: number) {
+  // @yuleicul zoom out, zero is not on the correct pos
+  private drawProtractor(
+    structRotateDegree: number,
+    radius: number,
+    degreeLine: RaphaelElement,
+    textPos: Vec2
+  ) {
     this.protractor?.remove()
 
     const PROTRACTOR_COLOR = '#E1E5EA'
@@ -356,8 +362,6 @@ class RotateController {
 
     this.protractor = this.paper.set() as RaphaelElement
     this.protractor.push(circle)
-
-    let [degreeLine, textPos] = this.getProtractorBaseLine(radius)
 
     const predefinedDegrees = [
       0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60, -45,
@@ -404,7 +408,72 @@ class RotateController {
     this.protractor.toBack()
   }
 
-  private getProtractorBaseLine(radius: number) {
+  private drawRotateArc(
+    structRotateDegree: number,
+    radius: number,
+    rotateArcStart: Vec2,
+    textPos: Vec2
+  ) {
+    if (!this.rotateArc) {
+      const arc = this.paper.path()
+      const text = this.paper.text(0, 0, '')
+
+      this.rotateArc = this.paper.set().push(arc, text) as RaphaelElement
+    }
+
+    const rotateArcEnd = rotatePoint(
+      this.center,
+      rotateArcStart,
+      (structRotateDegree / 180) * Math.PI
+    )
+
+    const arc = this.rotateArc[0]
+    const text = this.rotateArc[1]
+
+    const TEXT_FONT_SIZE = 16
+    const TEXT_COLOR = '#333333'
+
+    // Doc: https://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands
+    arc
+      .attr({
+        path:
+          `M${rotateArcStart.x},${rotateArcStart.y}` +
+          `A${radius},${radius} ` +
+          `0 0,${structRotateDegree < 0 ? '0' : '1'} ` +
+          `${rotateArcEnd.x},${rotateArcEnd.y}`,
+        stroke: STYLE.ACTIVE_COLOR
+      })
+      .toBack()
+
+    text.attr({
+      text: `${structRotateDegree}°`,
+      x: textPos.x,
+      y: textPos.y,
+      'font-size': TEXT_FONT_SIZE,
+      fill: TEXT_COLOR
+    })
+  }
+
+  // NOTE: When handle is non-arrow function, `this` is element itself
+  private hoverIn = (event: MouseEvent) => {
+    const isSomeButtonPressed = event.buttons !== 0
+    if (isSomeButtonPressed) {
+      return
+    }
+
+    this.drawHandle('hoverIn')
+  }
+
+  private hoverOut = (event: MouseEvent) => {
+    const isSomeButtonPressed = event.buttons !== 0
+    if (isSomeButtonPressed) {
+      return
+    }
+
+    this.drawHandle('hoverOut')
+  }
+
+  private getProtractorBaseInfo(radius: number) {
     const DEGREE_TEXT_MARGIN = 10
 
     const centerHandleVec = this.initialHandleCenter.sub(this.center)
@@ -438,71 +507,24 @@ class RotateController {
         'stroke-dasharray': '-'
       })
 
-    return [degree0Line, degree0TextPos] as const
-  }
-
-  private drawRotateArc(structRotateDegree: number, radius: number) {
-    if (!this.rotateArc) {
-      const arc = this.paper.path()
-      const text = this.paper.text(0, 0, '')
-
-      this.rotateArc = this.paper.set().push(arc, text) as RaphaelElement
-    }
-
-    const rotateArcStart = new Vec2(this.center.x, this.center.y - radius)
-    const rotateArcEnd = rotatePoint(
-      this.center,
-      rotateArcStart,
-      (structRotateDegree / 180) * Math.PI
+    const arcStartPos = this.center.add(
+      normalizedCenterHandleVec.scaled(radius)
     )
 
-    const arc = this.rotateArc[0]
-    const text = this.rotateArc[1]
+    const TEXT_MARGIN_LEFT = 20
+    const l1 = centerLineStartVec.add(lineVec)
+    const l2 = l1
+      .rotate(Math.PI / 2)
+      .normalized()
+      .scaled(TEXT_MARGIN_LEFT)
+    const currentDegreeMarkPos = this.center.add(l1).add(l2)
 
-    const TEXT_MARGIN_LEFT = 8
-    const TEXT_MARGIN_BOTTOM = 12
-    const TEXT_FONT_SIZE = 16
-    const TEXT_COLOR = '#333333'
-
-    // Doc: https://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands
-    arc
-      .attr({
-        path:
-          `M${rotateArcStart.x},${rotateArcStart.y}` +
-          `A${radius},${radius} ` +
-          `0 0,${structRotateDegree < 0 ? '0' : '1'} ` +
-          `${rotateArcEnd.x},${rotateArcEnd.y}`,
-        stroke: STYLE.ACTIVE_COLOR
-      })
-      .toBack()
-
-    text.attr({
-      text: `${structRotateDegree}°`,
-      'text-anchor': 'start',
-      x: this.center.x + TEXT_MARGIN_LEFT,
-      y: this.center.y - radius - TEXT_MARGIN_BOTTOM,
-      'font-size': TEXT_FONT_SIZE,
-      fill: TEXT_COLOR
-    })
-  }
-
-  // NOTE: When handle is non-arrow function, `this` is element itself
-  private hoverIn = (event: MouseEvent) => {
-    const isSomeButtonPressed = event.buttons !== 0
-    if (isSomeButtonPressed) {
-      return
-    }
-
-    this.drawHandle('hoverIn')
-  }
-
-  private hoverOut = (event: MouseEvent) => {
-    const isSomeButtonPressed = event.buttons !== 0
-    if (isSomeButtonPressed) {
-      return
-    }
-
-    this.drawHandle('hoverOut')
+    return [
+      degree0Line,
+      degree0TextPos,
+      arcStartPos,
+      currentDegreeMarkPos
+    ] as const
   }
 
   private dragStart = (event: MouseEvent) => {
@@ -531,7 +553,8 @@ class RotateController {
       STYLE.HANDLE_MARGIN -
       STYLE.HANDLE_RADIUS
     const radius = newProtractorRadius >= 0 ? newProtractorRadius : 0
-    this.drawProtractor(0, radius)
+    const [degree0Line, degree0TextPos] = this.getProtractorBaseInfo(radius)
+    this.drawProtractor(0, radius, degree0Line, degree0TextPos)
 
     this.drawCross('active')
     this.drawLink('long')
@@ -571,10 +594,21 @@ class RotateController {
         STYLE.HANDLE_MARGIN -
         STYLE.HANDLE_RADIUS
       const radius = newProtractorRadius >= 0 ? newProtractorRadius : 0
-
-      this.drawRotateArc(this.rotateTool.dragCtx?.angle || 0, radius)
+      const [degree0Line, degree0TextPos, rotateArcStart, textPos] =
+        this.getProtractorBaseInfo(radius)
+      this.drawRotateArc(
+        this.rotateTool.dragCtx?.angle || 0,
+        radius,
+        rotateArcStart,
+        textPos
+      )
       // NOTE: draw protractor last
-      this.drawProtractor(this.rotateTool.dragCtx?.angle || 0, radius)
+      this.drawProtractor(
+        this.rotateTool.dragCtx?.angle || 0,
+        radius,
+        degree0Line,
+        degree0TextPos
+      )
     },
     40 // 25fps
   )

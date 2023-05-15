@@ -212,6 +212,7 @@ const TemplateDialog: FC<Props> = (props) => {
     [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents
   }
   const data = sdfSerializer.serialize(serializerMapper[tab])
+  console.log('data 2', data)
 
   const select = (tmpl: Template): void => {
     onChangeGroup(tmpl.props.group)

@@ -67,7 +67,7 @@ const Top = styled.div({
 
 const Main = styled.div({
   height: '100%',
-  width: '100%'
+  width: '0'
 })
 
 const DummyDiv = styled.div({

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { MonomerGroup } from '../monomerLibraryGroup'
 import { MonomerItemType } from '../monomerLibraryItem'
 
@@ -12,6 +13,11 @@ export interface MonomerListProps {
 }
 
 export const MonomerList = ({ list, onItemClick }: MonomerListProps) => {
+  const test = localStorage.getItem('library')
+  useEffect(() => {
+    console.log(test)
+  }, [test])
+
   return (
     <>
       {list.map(({ groupTitle, groupItems }, key) => {

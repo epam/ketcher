@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+// @ts-nocheck
 
 import { Provider } from 'react-redux'
 import { useEffect, useRef } from 'react'
 import { Global, ThemeProvider } from '@emotion/react'
 import { createTheme } from '@mui/material/styles'
 import { merge } from 'lodash'
+import { editorOptions } from './constants'
+import monomersData from './monomers.sdf'
+
+import { Struct, KetSerializer, RenderStruct, SdfSerializer } from 'ketcher-core'
 
 import { store } from 'state'
 import {
@@ -42,7 +47,11 @@ import {
 } from 'components/modal/modalContainer'
 import { FullscreenButton } from 'components/FullscreenButton'
 
+import testMolecule from './data/test-molecule.json'
+
 const muiTheme = createTheme(muiOverrides)
+
+console.log(monomersData)
 
 type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>
@@ -55,12 +64,39 @@ interface EditorProps {
 
 function Editor({ onInit, theme }: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
+  const mainElRef = useRef<HTMLDivElement>(null)
 
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
     : defaultTheme
 
   const mergedTheme: MergedThemeType = merge(muiTheme, { ketcher: editorTheme })
+
+  useEffect(() => {
+    function handleScroll({ struct }) {
+      mainElRef.current.innerHTML = ''
+      struct.rescale()
+      RenderStruct.render(mainElRef.current, struct, editorOptions)
+    }
+
+    window.addEventListener('loadTemplate', handleScroll)
+
+    return () => {
+      window.removeEventListener('loadTemplate', handleScroll)
+    }
+  }, [])
+
+  // useEffect(() => {
+  //   // const ketSerializer = new KetSerializer()
+  //   // const sdfSerializer = new SdfSerializer()
+  //   // const data = sdfSerializer.deserialize(monomersData)
+  //   // console.log('data 3', data)
+  //   // const struct: Struct = ketSerializer.deserialize(
+  //   //   JSON.stringify(testMolecule)
+  //   //   )
+  //   //   console.log(testMolecule)
+  //   // RenderStruct.render(mainElRef.current, struct, editorOptions)
+  // }, [])
 
   useEffect(() => {
     onInit?.()
@@ -81,7 +117,7 @@ function Editor({ onInit, theme }: EditorProps) {
               <NotationInput />
             </Layout.Top>
 
-            <Layout.Main></Layout.Main>
+            <Layout.Main ref={mainElRef}></Layout.Main>
 
             <Layout.Right>
               <MonomerLibrary />

@@ -1,78 +1,66 @@
+// @ts-nocheck
 import { RnaMonomerSection } from 'components/rna/RnaMonomerSection'
 import { MonomerList } from './monomerLibraryList'
+import { SdfSerializer } from 'ketcher-core'
+import monomersData from '../../monomers.sdf'
+
+
+const sdfSerializer = new SdfSerializer()
+const data = sdfSerializer.deserialize(monomersData)
+
+const colors = [ '#CCCBD6', '#FFE34C', '#AD4551', '#93F5F5', '#5656BF', '#50E576', '#F2C5B6' ]
+
+
+console.log('prepareddata', data)
+
+
+const getResult = (type = 'PEPTIDE') => {
+  const preparedData = data.filter(m => m.props.MonomerType === type).reduce((a, c) => {
+  const code = c.props.MonomerNaturalAnalogCode
+      if (!a[code]) {
+          a[code] = []
+      }
+      a[code].push({ label: c.props.MonomerName, struct: c.struct, props: c.props })
+      return a
+  }, {})
+  const result = Object.keys(preparedData).sort().reduce((a, c, i) => {
+    const res: {
+      groupTitle: string,
+      groupItems: {
+        label: string,
+        colorScheme: string
+        struct: any
+      }[]
+    } = {
+      groupTitle: c,
+      groupItems: []
+    }
+    preparedData[c].forEach((item: {label: string, struct: any}) => {
+      res.groupItems.push({ ...item, colorScheme: colors[i % colors.length], props: {...item.props} })
+    })
+    // @ts-ignore
+    a.push(res)
+    return a
+  }, [])
+  return result
+}
 
 export const tabsContent = [
   {
-    caption: '✩',
+    caption: '★',
     component: () => <></>
   },
   {
     caption: 'Peptides',
     component: MonomerList,
     props: {
-      list: [
-        {
-          groupItems: [
-            { label: 'A', colorScheme: '#A0A0FF' },
-            { label: '1Nal' },
-            { label: '2Nal' },
-            { label: 'Ala_tBu' },
-            { label: 'bAla' },
-            { label: 'Cha' },
-            { label: 'Cya' },
-            { label: 'D-1Nal' },
-            { label: 'D-2Nal' },
-            { label: 'D-2Thi' },
-            { label: 'D-2Cha' },
-            { label: 'dA' },
-            { label: 'Dha' },
-            { label: 'MeA' },
-            { label: 'Thi' },
-            { label: 'Tza' }
-          ],
-          groupTitle: 'A'
-        },
-        {
-          groupItems: [
-            { label: 'C', colorScheme: '#FFEB3B' },
-            { label: 'Cys_Bn', colorScheme: '#FFEB3B' },
-            { label: 'Cys_Me', colorScheme: '#FFEB3B' },
-            { label: 'Cys_SE', colorScheme: '#FFEB3B' },
-            { label: 'dC', colorScheme: '#FFEB3B' },
-            { label: 'Hcy', colorScheme: '#FFEB3B' },
-            { label: 'meC', colorScheme: '#FFEB3B' },
-            { label: 'seC', colorScheme: '#FFEB3B' }
-          ],
-          groupTitle: 'C'
-        },
-        {
-          groupTitle: 'D',
-          groupItems: [
-            {
-              label: 'D',
-              colorScheme: '#F44336'
-            },
-            {
-              label: 'Asp_OMe',
-              colorScheme: '#F44336'
-            },
-            {
-              label: 'Asp_Ph2NH2',
-              colorScheme: '#F44336'
-            },
-            {
-              label: 'dD',
-              colorScheme: '#F44336'
-            },
-            {
-              label: 'meD',
-              colorScheme: '#F44336'
-            }
-          ]
-        }
-      ],
-      onItemClick: () => {
-        console.log('callback for monomer item')
+      list: getResult('PEPTIDE'),
+      onItemClick: (item) => {
+        const event = new Event('loadTemplate')
+        // @ts-ignore
+        event.struct = item.struct
+        window.dispatchEvent(event)
+        console.log('callback for monomer item', item)
       }
     }
   },
@@ -621,6 +609,16 @@ export const tabsContent = [
   },
   {
     caption: 'CHEM',
-    component: () => <></>
+    component: MonomerList,
+    props: {
+      list: getResult('CHEM'),
+      onItemClick: (item) => {
+        const event = new Event('loadTemplate')
+        // @ts-ignore
+        event.struct = item.struct
+        window.dispatchEvent(event)
+        console.log('callback for monomer item', item)
+      }
+    }
   }
 ]

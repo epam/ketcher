@@ -23,7 +23,7 @@ import { scrollbarThin } from 'theming/mixins'
 
 function TabPanel({ children, value, index, ...other }) {
   return (
-    <div role="tabpanel" hidden={value !== index} id={index} {...other}>
+    <div style={{ height: 'calc(100% - 24px)', overflowY: 'scroll' }} role="tabpanel" hidden={value !== index} id={index} {...other}>
       {value === index && <Box>{children}</Box>}
     </div>
   )
@@ -63,6 +63,7 @@ function CustomTabs(props): ReactElement {
     minHeight: 24,
     minWidth: 60,
     height: 1,
+    // overflowY: 'scroll',
     width: 65,
     padding: 0,
     fontSize: theme.ketcher.font.size.small,
@@ -89,7 +90,7 @@ function CustomTabs(props): ReactElement {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
-    overflowY: 'auto',
+    overflowY: 'scroll',
     width: '100%',
 
     ...scrollbarThin(theme)

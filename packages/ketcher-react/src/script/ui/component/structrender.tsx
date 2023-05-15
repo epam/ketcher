@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import { Component, ComponentType, createRef } from 'react'
-import { MolSerializer, Struct } from 'ketcher-core'
-import { RenderStruct } from '../utils'
+import { MolSerializer, Struct, RenderStruct } from 'ketcher-core'
+
 interface StructRenderProps {
   struct: Struct
   options: any

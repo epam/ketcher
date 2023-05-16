@@ -158,6 +158,52 @@ function findClosestAtom(restruct, pos, skip, minDist) {
   return null
 }
 
+function inside(point, vs) {
+  // ray-casting algorithm based on
+  // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
+
+  const { x, y } = point;
+
+  let inside = false;
+  for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+      const xi = vs[i][0]
+      const yi = vs[i][1]
+      const xj = vs[j][0]
+      const yj = vs[j][1]
+
+      const intersect = ((yi > y) !== (yj > y))
+          && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+  }
+
+  return inside;
+};
+
+
+function rotatePoint(pointX, pointY, angle, originX, originY) {
+  // Convert the angle to radians
+  const angleRad = angle * Math.PI / 180;
+
+  // Subtract the origin coordinates from the point coordinates
+  const offsetX = pointX - originX;
+  const offsetY = pointY - originY;
+
+  // Apply the rotation matrix to the point coordinates
+  const rotatedX = Math.cos(angleRad) * offsetX - Math.sin(angleRad) * offsetY;
+  const rotatedY = Math.sin(angleRad) * offsetX + Math.cos(angleRad) * offsetY;
+
+  // Add the origin coordinates back to the rotated point coordinates
+  let finalX = rotatedX + originX;
+  let finalY = rotatedY + originY;
+
+  // Round the output values to 5 decimal places
+  finalX = Number(finalX.toFixed(5));
+  finalY = Number(finalY.toFixed(5));
+
+  // Return the rotated coordinates as an array
+  return [finalX, finalY];
+}
+
 function findClosestBond(restruct, pos, skip, minDist, scale) {
   // eslint-disable-line max-params
   let closestBond = null
@@ -184,13 +230,33 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
         functionalGroups
       ) ||
       SGroup.isBondInContractedSGroup(bond.b, sGroups)
-    )
+    ) {
       return null
+    }
 
     const mid = Vec2.lc2(a1.pp, 0.5, a2.pp, 0.5)
     const cdist = Vec2.dist(pos, mid)
 
-    if (cdist < minCDist) {
+    const { options } = restruct.render
+
+    const center = Scale.obj2scaled(bond.b.center, options)
+    const addY = 8
+
+    const r1x = center.x - bond.b.len / 2
+    const r1y = center.y - 4 - addY / 2
+    const r2x = center.x + bond.b.len / 2
+    const r2y = center.y + 4 + addY / 2
+
+    const p11 = rotatePoint(r1x, r1y, bond.b.angle, center.x, center.y)
+    const p12 = rotatePoint(r2x, r1y, bond.b.angle, center.x, center.y)
+    const p21 = rotatePoint(r1x, r2y, bond.b.angle, center.x, center.y)
+    const p22 = rotatePoint(r2x, r2y, bond.b.angle, center.x, center.y)
+
+    const posx = Scale.obj2scaled(pos, options)
+
+    const isPosInsidePolygon = inside(posx, [p11, p12, p22, p21, p11])
+
+    if (isPosInsidePolygon) {
       minCDist = cdist
       closestBondCenter = bid
     }
@@ -215,9 +281,30 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
     const p1 = restruct.atoms.get(bond.b.begin).a.pp
     const p2 = restruct.atoms.get(bond.b.end).a.pp
 
+    const { options } = restruct.render
+
+    const center = Scale.obj2scaled(bond.b.center, options)
+    const addY = 8
+
+    const r1x = center.x - bond.b.len / 2
+    const r1y = center.y - 4 - addY / 2
+    const r2x = center.x + bond.b.len / 2
+    const r2y = center.y + 4 + addY / 2
+
+    const p11 = rotatePoint(r1x, r1y, bond.b.angle, center.x, center.y)
+    const p12 = rotatePoint(r2x, r1y, bond.b.angle, center.x, center.y)
+    const p21 = rotatePoint(r1x, r2y, bond.b.angle, center.x, center.y)
+    const p22 = rotatePoint(r2x, r2y, bond.b.angle, center.x, center.y)
+
+    const posx = Scale.obj2scaled(pos, options)
+
+    // console.log('INSIDE', inside(pos, [a1.pp, a2.pp, { x: a1.pp.x - 0.1, y: a1.pp.y - 0.1 }, { x: a2.pp.x + 0.1, y: a2.pp.y + 0.1 }]))
+
+    const isPosInsidePolygon = inside(posx, [p11, p12, p22, p21, p11])
+
     const inStripe = Vec2.dot(pos.sub(p1), dir) * Vec2.dot(pos.sub(p2), dir) < 0
 
-    if (inStripe) {
+    if (isPosInsidePolygon) {
       const dist = Math.abs(Vec2.dot(pos.sub(p1), norm))
 
       if (dist < minDist) {

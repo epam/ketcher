@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+
 import {
   Atom,
   Bond,
@@ -31,6 +32,30 @@ import { Render } from '../raphaelRender'
 import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
+
+function rotatePoint(pointX, pointY, angle, originX, originY) {
+  // Convert the angle to radians
+  const angleRad = angle * Math.PI / 180;
+
+  // Subtract the origin coordinates from the point coordinates
+  const offsetX = pointX - originX;
+  const offsetY = pointY - originY;
+
+  // Apply the rotation matrix to the point coordinates
+  const rotatedX = Math.cos(angleRad) * offsetX - Math.sin(angleRad) * offsetY;
+  const rotatedY = Math.sin(angleRad) * offsetX + Math.cos(angleRad) * offsetY;
+
+  // Add the origin coordinates back to the rotated point coordinates
+  let finalX = rotatedX + originX;
+  let finalY = rotatedY + originY;
+
+  // Round the output values to 5 decimal places
+  finalX = Number(finalX.toFixed(5));
+  finalY = Number(finalY.toFixed(5));
+
+  // Return the rotated coordinates as an array
+  return [finalX, finalY];
+}
 
 class ReBond extends ReObject {
   b: Bond
@@ -51,10 +76,51 @@ class ReBond extends ReObject {
     super('bond')
     this.b = bond // TODO rename b to item
     this.doubleBondShift = 0
+    this.changeSelection = (isHovering: boolean) => {
+      this.selectionPlate?.attr({
+        fill: isHovering ? '#CCFFDD' : '#57FF8F'
+      })
+      this.hovering?.attr({
+        fill: this.selected ? '#CCFFDD' : 'transparent',
+        'fill-opacity': this.selected ? 1 : 0
+      })
+    }
   }
 
   static isSelectable() {
     return true
+  }
+
+  static bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
+    const render = restruct.render
+    const atom1 = restruct.atoms.get(bond.b.begin)
+    const atom2 = restruct.atoms.get(bond.b.end)
+
+    if (
+      !atom1 ||
+      !atom2 ||
+      bond.b.hb1 === undefined ||
+      bond.b.hb2 === undefined
+    ) {
+      return
+    }
+
+    const p1 = Scale.obj2scaled(atom1.a.pp, render.options)
+    const p2 = Scale.obj2scaled(atom2.a.pp, render.options)
+    const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1)
+    const hb2 = restruct.molecule.halfBonds.get(bond.b.hb2)
+
+    if (!hb1?.dir || !hb2?.dir) return
+
+    hb1.p = shiftBondEnd(atom1, p1, hb1.dir, 2 * options.lineWidth)
+    hb2.p = shiftBondEnd(atom2, p2, hb2.dir, 2 * options.lineWidth)
+    bond.b.center = Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5)
+    bond.b.len = Vec2.dist(p1, p2)
+    bond.b.sb = options.lineWidth * 5
+    /* eslint-disable no-mixed-operators */
+    bond.b.sa = Math.max(bond.b.sb, bond.b.len / 2 - options.lineWidth * 2)
+    /* eslint-enable no-mixed-operators */
+    bond.b.angle = (Math.atan2(hb1.dir.y, hb1.dir.x) * 180) / Math.PI
   }
 
   drawHover(render: Render) {
@@ -63,12 +129,63 @@ class ReBond extends ReObject {
     return ret
   }
 
+  getLinePoint(x1, y1, x2, y2, len) {
+    const dx = x2 - x1
+    const dy = y2 - y1
+    const d = Math.sqrt(dx * dx + dy * dy)
+    const ratio = len / d
+    return [x1 + dx * ratio, y1 + dy * ratio]
+  }
+
+  getSelectionContour(render: Render, options) {
+    const bond: Bond = this.b
+    const { bondThickness, doubleBondWidth, stereoBondWidth } = options
+    const { paper, ctab: restruct } = render
+    const spY = doubleBondWidth + bondThickness
+
+    const hb2 = restruct.molecule.halfBonds.get(bond.hb1!)
+    const hb1 = restruct.molecule.halfBonds.get(bond.hb2!)
+
+    const isStereoBond = bond.stereo !== Bond.PATTERN.STEREO.NONE && bond.stereo !== Bond.PATTERN.STEREO.CIS_TRANS
+
+    const addStereoPadding = isStereoBond ? stereoBondWidth / 2 : 0
+    const [hbStartX, hbStartY] = this.getLinePoint(hb1?.p.x, hb1?.p.y, hb2?.p.x, hb2?.p.y, -5 - addStereoPadding)
+    const [hbEndX, hbEndY] = this.getLinePoint(hb2?.p.x, hb2?.p.y, hb1?.p.x, hb1?.p.y, -5)
+
+    const addStart = isStereoBond ? (stereoBondWidth + 26 / stereoBondWidth) : spY
+    const addEnd = isStereoBond ? stereoBondWidth * 0.25 : spY
+
+    const [hbPadStartX, hbPadStartY] = this.getLinePoint(hbStartX, hbStartY, hbEndX, hbEndY, addStart)
+    const [hbPadEndX, hbPadEndY] = this.getLinePoint(hbEndX, hbEndY, hbStartX, hbStartY, addEnd)
+
+    const startPadTop = rotatePoint(hbStartX + addStart, hbStartY, bond.angle + 90, hbStartX, hbStartY)
+    const startPadBottom = rotatePoint(hbStartX + addStart, hbStartY, bond.angle - 90, hbStartX, hbStartY)
+    const startTop = rotatePoint(hbPadStartX + addStart, hbPadStartY, bond.angle + 90, hbPadStartX, hbPadStartY)
+    const startBottom = rotatePoint(hbPadStartX + addStart, hbPadStartY, bond.angle - 90, hbPadStartX, hbPadStartY)
+    const endPadTop = rotatePoint(hbEndX + addEnd, hbEndY, bond.angle + 90, hbEndX, hbEndY)
+    const endPadBottom = rotatePoint(hbEndX + addEnd, hbEndY, bond.angle - 90, hbEndX, hbEndY)
+    const endTop = rotatePoint(hbPadEndX + addEnd, hbPadEndY, bond.angle + 90, hbPadEndX, hbPadEndY)
+    const endBottom = rotatePoint(hbPadEndX + addEnd, hbPadEndY, bond.angle - 90, hbPadEndX, hbPadEndY)
+
+    // please refer to: https://raw.githubusercontent.com/epam/ketcher/317167a5b484d4fcb2641a384c5fdf3d6f638d24/hover_selection_2.png
+
+    const pathString =
+    `M ${startTop[0]} ${startTop[1]}` +
+    `L ${endTop[0]} ${endTop[1]}` +
+    `C ${endPadTop[0]} ${endPadTop[1]}, ${endPadBottom[0]} ${endPadBottom[1]}, ${endBottom[0]} ${endBottom[1]}` +
+    `L ${startBottom[0]} ${startBottom[1]}` +
+    `C ${startPadBottom[0]} ${startPadBottom[1]}, ${startPadTop[0]} ${startPadTop[1]}, ${startTop[0]} ${startTop[1]}`
+
+    return paper.path(pathString)
+  }
+
   makeHoverPlate(render: Render) {
+    const restruct = render.ctab
     const options = render.options
-    bondRecalc(this, render.ctab, options)
+    ReBond.bondRecalc(this, restruct, options)
     const bond = this.b
-    const sgroups = render.ctab.sgroups
-    const functionalGroups = render.ctab.molecule.functionalGroups
+    const sgroups = restruct.sgroups
+    const functionalGroups = restruct.molecule.functionalGroups
     if (
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond,
@@ -79,14 +196,14 @@ class ReBond extends ReObject {
       return null
     }
 
-    const c = Scale.obj2scaled(this.b.center, options)
-    return render.paper
-      .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
-      .attr(options.hoverStyle)
+    const rect = this.getSelectionContour(render, options)
+
+    return rect.attr(options.hoverStyle)
   }
 
+  // @ts-ignore
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any) {
-    bondRecalc(this, restruct, options)
+    ReBond.bondRecalc(this, restruct, options)
     const bond = this.b
     const sgroups = restruct.render.ctab.sgroups
     const functionalGroups = restruct.render.ctab.molecule.functionalGroups
@@ -100,10 +217,9 @@ class ReBond extends ReObject {
       return null
     }
 
-    const c = Scale.obj2scaled(this.b.center, options)
-    return paper
-      .circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
-      .attr(options.selectionStyle)
+    const rect = this.getSelectionContour(restruct.render, options)
+
+    return rect.attr(options.selectionStyle)
   }
 
   show(restruct: ReStruct, bid: number, options: any): void {
@@ -131,7 +247,7 @@ class ReBond extends ReObject {
       this.b.hb2 !== undefined ? struct.halfBonds.get(this.b.hb2) : null
 
     checkStereoBold(bid, this, restruct)
-    bondRecalc(this, restruct, options)
+    ReBond.bondRecalc(this, restruct, options)
     setDoubleBondShift(this, struct)
     if (!hb1 || !hb2) return
     this.path = getBondPath(restruct, this, hb1, hb2)
@@ -261,8 +377,6 @@ class ReBond extends ReObject {
         visel: this.visel
       })
     }
-
-    this.path.toBack()
   }
 }
 
@@ -998,38 +1112,6 @@ function setDoubleBondShift(bond: ReBond, struct: Struct): void {
   } else {
     bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond)
   }
-}
-
-function bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
-  const render = restruct.render
-  const atom1 = restruct.atoms.get(bond.b.begin)
-  const atom2 = restruct.atoms.get(bond.b.end)
-
-  if (
-    !atom1 ||
-    !atom2 ||
-    bond.b.hb1 === undefined ||
-    bond.b.hb2 === undefined
-  ) {
-    return
-  }
-
-  const p1 = Scale.obj2scaled(atom1.a.pp, render.options)
-  const p2 = Scale.obj2scaled(atom2.a.pp, render.options)
-  const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1)
-  const hb2 = restruct.molecule.halfBonds.get(bond.b.hb2)
-
-  if (!hb1?.dir || !hb2?.dir) return
-
-  hb1.p = shiftBondEnd(atom1, p1, hb1.dir, 2 * options.lineWidth)
-  hb2.p = shiftBondEnd(atom2, p2, hb2.dir, 2 * options.lineWidth)
-  bond.b.center = Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5)
-  bond.b.len = Vec2.dist(p1, p2)
-  bond.b.sb = options.lineWidth * 5
-  /* eslint-disable no-mixed-operators */
-  bond.b.sa = Math.max(bond.b.sb, bond.b.len / 2 - options.lineWidth * 2)
-  /* eslint-enable no-mixed-operators */
-  bond.b.angle = (Math.atan2(hb1.dir.y, hb1.dir.x) * 180) / Math.PI
 }
 
 function shiftBondEnd(

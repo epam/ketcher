@@ -169,7 +169,7 @@ class ReSGroup extends ReObject {
         render
       )
       return paper
-        .rect(startX, startY, width, height)
+        .rect(startX, startY, width, height, options.atomSelectionPlateRadius / 2)
         .attr(options.selectionStyle)
     }
   }
@@ -195,7 +195,7 @@ class ReSGroup extends ReObject {
         render
       )
       sGroupItem.hovering = paper
-        .rect(startX, startY, width, height)
+        .rect(startX, startY, width, height, options.atomSelectionPlateRadius / 2)
         .attr(options.hoverStyle)
     } else {
       sGroupItem.hovering = paper

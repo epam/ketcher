@@ -26,6 +26,7 @@ class ReObject {
   public hovering: any = null
   public selected = false
   public selectionPlate: any = null
+  public changeSelection: any | undefined
 
   constructor(viselType: string) {
     this.visel = new Visel(viselType)
@@ -43,7 +44,7 @@ class ReObject {
   setHover(hover: boolean, render: Render): void {
     // TODO render should be field
     if (hover) {
-      let noredraw = 'hovering' in this && this.hovering !== null // && !this.highlighting.removed;
+      let noredraw = 'hovering' in this && this.hovering !== null
       if (noredraw) {
         if (this.hovering.type === 'set') {
           if (!this.hovering[0]) return
@@ -53,6 +54,9 @@ class ReObject {
         }
       }
       if (noredraw) {
+        if (this.changeSelection) {
+          this.changeSelection(true)
+        }
         this.hovering.show()
       } else {
         render.paper.setStart()
@@ -60,6 +64,9 @@ class ReObject {
         this.hovering = render.paper.setFinish()
       }
     } else if (this.hovering) {
+      if (this.changeSelection) {
+        this.changeSelection(false)
+      }
       this.hovering.hide()
     }
 

@@ -21,7 +21,8 @@ import {
   getStereoAtomsMap,
   identifyStructFormat,
   Struct,
-  SupportedFormat
+  SupportedFormat,
+  emitEventRequestIsFinished
 } from 'ketcher-core'
 
 import { supportedSGroupTypes } from './constants'
@@ -167,6 +168,8 @@ export function load(struct: Struct, options?) {
     } catch (err: any) {
       dispatch(setAnalyzingFile(false))
       err && errorHandler(err.message)
+    } finally {
+      emitEventRequestIsFinished()
     }
   }
 }

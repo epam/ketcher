@@ -136,7 +136,11 @@ class RotateController {
       crossArea?.hover(this.hoverCrossIn, this.hoverCrossOut)
       crossArea?.mousedown(this.dragCrossStart)
       crossArea?.mouseup(this.dragCrossEnd)
-      crossArea?.drag(this.dragCrossMove, undefined, this.dragCrossEnd)
+      crossArea?.drag(
+        this.dragCrossMove,
+        undefined,
+        this.dragCrossEndOUtOfBounding
+      )
     }
   }
 
@@ -165,9 +169,6 @@ class RotateController {
       default: {
         const cross = this.paper
           .path(`M0,0` + `h8` + `M0,0` + `h-8` + `M0,0` + `v8` + `M0,0` + `v-8`)
-          // todo @yuleicul cursor
-          // todo @yuleicul event stop / when cross and atom are overlapped
-          // todo @yuleicul make it bigger to conviently move
           .attr({
             stroke: STYLE.INITIAL_COLOR,
             'stroke-width': 2,
@@ -175,10 +176,8 @@ class RotateController {
           })
         // HACK: increase hover/drag area
         const circle = this.paper.circle(0, 0, 10).attr({
-          // fill: 'white',
-          // opacity: 0,
           fill: 'red',
-          opacity: 0.5
+          opacity: 0
         })
         this.cross = this.paper.set()
         this.cross?.push(cross, circle)
@@ -257,9 +256,6 @@ class RotateController {
         this.handle
           ?.transform('')
           .translate(this.handleCenter.x, this.handleCenter.y)
-          .attr({
-            cursor: 'grabbing' // todo@yuleicul remove? -> check on react-app-aweird
-          })
         break
       }
 
@@ -627,19 +623,16 @@ class RotateController {
       return
     }
 
-    console.log('hoverCrossIn')
     this.drawCross('active')
     this.drawLink('long')
   }
 
-  // fix @yuleicul link shanshuo
   private hoverCrossOut = (event: MouseEvent) => {
     const isSomeButtonPressed = event.buttons !== 0
     if (isSomeButtonPressed) {
       return
     }
 
-    console.log('hoverCrossOut')
     this.drawCross('inactive')
     this.drawLink('short')
   }
@@ -669,13 +662,16 @@ class RotateController {
     40
   )
 
-  // todo @yuleicul drag out of bounding
   private dragCrossEnd = (event: MouseEvent) => {
     event.stopPropagation()
-    console.log('dragCrossEnd')
 
     this.isMovingCenter = false
     this.originalCenter = this.render.page2obj(event)
+  }
+
+  private dragCrossEndOUtOfBounding = (_event: MouseEvent) => {
+    this.isMovingCenter = false
+    this.rerender()
   }
 }
 

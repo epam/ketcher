@@ -14,20 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export type MonomerItemType = {
   label: string
-  colorScheme?: string
+  colorScheme?: string[]
   monomers?: object
+  favorite?: boolean
+  props?: any
 }
 
 interface MonomerItemProps {
   item: MonomerItemType
   onClick: () => void
+  onStarClick?: any
 }
 
-const Card = styled.div<{ colorScheme?: string }>`
+const Card = styled.div<{ colorScheme?: string[] }>`
   background: white;
   border-radius: 2px;
   width: 60px;
@@ -46,8 +49,12 @@ const Card = styled.div<{ colorScheme?: string }>`
   margin-bottom: 12px;
 
   &:hover {
-    outline: 1px solid ${({ colorScheme, theme }) =>
-    colorScheme || theme.ketcher.color.monomer.default};
+    outline: 1px solid #B4B9D6;
+
+    &::after {
+      background: ${({ colorScheme, theme }) =>
+      (colorScheme && colorScheme[1]) || theme.ketcher.color.monomer.default};;
+    }
 
     > .star {
       visibility: visible;
@@ -64,7 +71,7 @@ const Card = styled.div<{ colorScheme?: string }>`
     width: 100%;
     height: 8px;
     background: ${({ colorScheme, theme }) =>
-     colorScheme || theme.ketcher.color.monomer.default};
+    (colorScheme && colorScheme[0]) || theme.ketcher.color.monomer.default};
   }
 
   > span {
@@ -82,7 +89,16 @@ const Card = styled.div<{ colorScheme?: string }>`
     opacity: 0;
     transition: 0.2s ease;
 
-    &:hover {
+    &.visible {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    &:active {
+      transform: scale(1.4);
+    }
+
+    &:hover, &.visible {
       color: #FAA500;
     }
   }
@@ -92,17 +108,40 @@ const addToFavorites = (event, item) => {
   event.stopPropagation()
   const libString = localStorage.getItem('library') || '[]'
   const lib = JSON.parse(libString)
-  lib.push(item)
+  const existingItemIndex = lib.findIndex(l => l.props.Name === item.props.Name)
+  if (existingItemIndex > -1) {
+    lib.splice(existingItemIndex, 1)
+    item.favorite = false
+  } else {
+    lib.push(item)
+    item.favorite = true
+  }
   localStorage.setItem('library', JSON.stringify(lib))
 }
 
 const MonomerItem = (props: MonomerItemProps) => {
-  const { item, onClick } = props
+  const { item, onClick, onStarClick } = props
+  const { favorite } = item
+  const [showFavorite, setShowFavorite]: [any, any] = useState(false)
+
+  useEffect(() => {
+    setShowFavorite(favorite)
+  }, [])
 
   return (
     <Card onClick={onClick} colorScheme={item.colorScheme}>
       <span>{item.label}</span>
-      <div onClick={(event) => addToFavorites(event, item)} className='star'>★</div>
+      <div
+        onClick={(event) => {
+          addToFavorites(event, item)
+          setShowFavorite(!!item.favorite)
+          if (onStarClick) {
+            onStarClick(item)
+          }
+        }}
+        className={'star' + (showFavorite ? ' visible': '')}>
+          ★
+      </div>
     </Card>
   )
 }

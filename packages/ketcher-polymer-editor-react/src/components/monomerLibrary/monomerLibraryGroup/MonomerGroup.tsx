@@ -69,10 +69,10 @@ const MonomerGroup = (props: MonomerGroupProps) => {
         </GroupTitle>
       )}
       <ItemsContainer>
-        {items.map((monomer, key) => {
+        {items.map((monomer) => {
           return (
             <MonomerItem
-              key={key}
+              key={monomer.props?.Name || monomer.label}
               item={monomer}
               onClick={() => onItemClick(monomer)}
             />

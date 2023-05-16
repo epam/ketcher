@@ -34,7 +34,7 @@ export interface MonomerSectionProps {
 }
 
 const getInitialMonomers = (items) => {
-  return items.Nucleotide[0].groupItems[0].monomers as selectedMonomersType
+  return items.Nucleotide()[0].groupItems[0].monomers as selectedMonomersType
 }
 
 const RnaMonomerSection = ({ selectItem, items }: MonomerSectionProps) => {

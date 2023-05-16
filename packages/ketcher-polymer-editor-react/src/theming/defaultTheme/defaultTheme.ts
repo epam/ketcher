@@ -98,7 +98,7 @@ export const defaultTheme: EditorTheme = {
     },
     icon: {
       hover: '#005662',
-      active: '#525252',
+      active: '#333333',
       activeMenu: '#005662',
       clicked: '#FFFFFF',
       disabled: 'rgba(82, 82, 82, 0.4)'

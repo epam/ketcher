@@ -28,7 +28,7 @@ class RotateController {
   private editor: Editor
   private rotateTool: RotateTool
   private originalCenter!: Vec2
-  private initialHandleCenter!: Vec2
+  private normalizedCenterInitialHandleVec!: Vec2
   private handleCenter!: Vec2
   private isRotating!: boolean
   private isMovingCenter!: boolean
@@ -48,7 +48,7 @@ class RotateController {
 
   private init() {
     this.originalCenter = new Vec2()
-    this.initialHandleCenter = new Vec2()
+    this.normalizedCenterInitialHandleVec = new Vec2()
     this.handleCenter = new Vec2()
     this.isRotating = false
     this.isMovingCenter = false
@@ -114,10 +114,12 @@ class RotateController {
     }
 
     const rectStartY = this.drawBoundingRect(visibleAtoms)
-    this.initialHandleCenter = this.handleCenter = new Vec2(
+
+    this.handleCenter = new Vec2(
       this.center.x,
       rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS
     )
+
     this.drawLink()
     this.drawCross()
     this.drawHandle()
@@ -473,23 +475,21 @@ class RotateController {
   private getProtractorBaseInfo(radius: number) {
     const DEGREE_TEXT_MARGIN = 10
 
-    const centerHandleVec = this.initialHandleCenter.sub(this.center)
-    const normalizedCenterHandleVec = centerHandleVec.normalized()
-
     const distBetweenDegree0TextAndCenter =
       radius +
       STYLE.HANDLE_MARGIN +
       STYLE.HANDLE_RADIUS * 2 +
       DEGREE_TEXT_MARGIN
-    const centerDegree0TextVec = normalizedCenterHandleVec.scaled(
+    const centerDegree0TextVec = this.normalizedCenterInitialHandleVec.scaled(
       distBetweenDegree0TextAndCenter
     )
     const degree0TextPos = this.center.add(centerDegree0TextVec)
 
     const lineLength =
       radius >= 65 ? STYLE.HANDLE_MARGIN : STYLE.HANDLE_MARGIN / 2
-    const centerLineStartVec = normalizedCenterHandleVec.scaled(radius)
-    const lineVec = normalizedCenterHandleVec.scaled(lineLength)
+    const centerLineStartVec =
+      this.normalizedCenterInitialHandleVec.scaled(radius)
+    const lineVec = this.normalizedCenterInitialHandleVec.scaled(lineLength)
     const lineStart = this.center.add(centerLineStartVec)
     const lineEnd = lineStart.add(lineVec)
     const lineEndHalf = lineStart.addScaled(lineVec, 1 / 2)
@@ -505,7 +505,7 @@ class RotateController {
       })
 
     const arcStartPos = this.center.add(
-      normalizedCenterHandleVec.scaled(radius)
+      this.normalizedCenterInitialHandleVec.scaled(radius)
     )
 
     const TEXT_MARGIN_LEFT = 20
@@ -544,6 +544,9 @@ class RotateController {
 
     this.boundingRect?.remove()
     delete this.boundingRect
+
+    const centerHandleVec = this.handleCenter.sub(this.center)
+    this.normalizedCenterInitialHandleVec = centerHandleVec.normalized()
 
     const newProtractorRadius =
       Vec2.dist(this.handleCenter, this.center) -

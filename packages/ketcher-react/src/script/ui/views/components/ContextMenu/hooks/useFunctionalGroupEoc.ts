@@ -1,4 +1,4 @@
-import { Action, setExpandSGroup } from 'ketcher-core'
+import { Action, FunctionalGroup, setExpandSGroup } from 'ketcher-core'
 import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { useAppContext } from 'src/hooks'
@@ -44,8 +44,21 @@ const useFunctionalGroupEoc = () => {
     },
     []
   )
+  const disabled = useCallback(({ props }: ItemEventParams) => {
+    const editor = getKetcherInstance().editor as Editor
+    const molecule = editor.render.ctab.molecule
+    return Boolean(
+      props?.functionalGroups?.every(
+        (functionalGroup) =>
+          FunctionalGroup.getAttachmentPointCount(
+            functionalGroup?.relatedSGroup,
+            molecule
+          ) > 1
+      )
+    )
+  }, [])
 
-  return [handler, hidden] as const
+  return [handler, hidden, disabled] as const
 }
 
 export default useFunctionalGroupEoc

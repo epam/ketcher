@@ -138,6 +138,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
           autoScaleMargin: 0,
           rescaleAmount: 1,
           cachePrefix: 'infoPanel',
+          needCache: false,
           viewSz: new Vec2(width, height),
           width: width,
           height: height

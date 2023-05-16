@@ -1,4 +1,4 @@
-import { Scale, Struct, Vec2 } from 'ketcher-core'
+import { Scale, Vec2 } from 'ketcher-core'
 import { throttle } from 'lodash'
 import Editor from '../Editor'
 import RotateTool from './rotate'
@@ -106,6 +106,24 @@ class RotateController {
     delete this.rotateArc
   }
 
+  private isPartOfFragmentSelected() {
+    const allAtoms = this.render.ctab.molecule.atoms
+    const selectedAtomIds = this.editor.selection()?.atoms || []
+    const selectedFragmentIdSet = new Set()
+
+    selectedAtomIds.forEach((atomId) => {
+      const fragmentId = allAtoms.get(atomId)?.fragment
+      selectedFragmentIdSet.add(fragmentId)
+    })
+
+    const nonSelectedAtoms = allAtoms.filter(
+      (id) => !selectedAtomIds.includes(id)
+    )
+    return nonSelectedAtoms.some((atom) =>
+      selectedFragmentIdSet.has(atom.fragment)
+    )
+  }
+
   private show(visibleAtoms: number[]) {
     const enable =
       visibleAtoms.length > 1 && this.editor.tool() instanceof SelectTool
@@ -133,17 +151,19 @@ class RotateController {
       this.dragEnd // Fix rotation getting stuck when mouseup outside window
     )
 
-    if (isEveryAtomInTheSameFragment(visibleAtoms, this.render.ctab.molecule)) {
-      const crossArea = this.cross?.[1]
-      crossArea?.hover(this.hoverCrossIn, this.hoverCrossOut)
-      crossArea?.mousedown(this.dragCrossStart)
-      crossArea?.mouseup(this.dragCrossEnd)
-      crossArea?.drag(
-        this.dragCrossMove,
-        undefined,
-        this.dragCrossEndOUtOfBounding
-      )
+    if (this.isPartOfFragmentSelected()) {
+      return
     }
+
+    const crossArea = this.cross?.[1]
+    crossArea?.hover(this.hoverCrossIn, this.hoverCrossOut)
+    crossArea?.mousedown(this.dragCrossStart)
+    crossArea?.mouseup(this.dragCrossEnd)
+    crossArea?.drag(
+      this.dragCrossMove,
+      undefined,
+      this.dragCrossEndOUtOfBounding
+    )
   }
 
   private drawCross(state?: CrossState) {
@@ -711,14 +731,4 @@ export const getDifference = (
   }
 
   return abs
-}
-
-const isEveryAtomInTheSameFragment = (atomIds: number[], struct: Struct) => {
-  const fragmentId = struct.atoms.get(atomIds[0])?.fragment
-  if (fragmentId === undefined) {
-    return
-  }
-  return atomIds.every(
-    (atomId) => struct.atoms.get(atomId)?.fragment === fragmentId
-  )
 }

@@ -343,7 +343,6 @@ class RotateController {
     }
   }
 
-  // @yuleicul zoom out, zero is not on the correct pos
   private drawProtractor(
     structRotateDegree: number,
     radius: number,
@@ -405,7 +404,7 @@ class RotateController {
       this.protractor?.push(degreeText)
 
       return currentDegree
-    }, -1)
+    }, 0)
 
     this.protractor.toBack()
   }

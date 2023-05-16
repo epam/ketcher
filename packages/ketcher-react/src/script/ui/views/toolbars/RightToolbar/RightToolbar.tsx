@@ -27,6 +27,7 @@ import { basicAtoms } from '../../../action/atoms'
 import classes from './RightToolbar.module.less'
 import clsx from 'clsx'
 import { useInView } from 'react-intersection-observer'
+import { useResizeObserver } from '../../../../../hooks'
 
 const Group: FC<{ className?: string } & PropsWithChildren> = ({
   children,
@@ -50,8 +51,12 @@ type Props = RightToolbarProps & RightToolbarCallProps
 const RightToolbar = (props: Props) => {
   const { className, ...rest } = props
   const { active, onAction, freqAtoms } = rest
-  const [startRef, startInView] = useInView({ threshold: 1 })
-  const [endRef, endInView] = useInView({ threshold: 0.9 })
+  const { ref, height } = useResizeObserver<HTMLDivElement>()
+  const [startRef, startInView] = useInView({
+    threshold: 1,
+    initialInView: true
+  })
+  const [endRef, endInView] = useInView({ threshold: 1, initialInView: true })
   const sizeRef = useRef() as MutableRefObject<HTMLDivElement>
   const scrollRef = useRef() as MutableRefObject<HTMLDivElement>
 
@@ -64,7 +69,7 @@ const RightToolbar = (props: Props) => {
   }
 
   return (
-    <div className={clsx(classes.root, className)}>
+    <div className={clsx(classes.root, className)} ref={ref}>
       <div className={classes.buttons} ref={scrollRef}>
         <Group className={classes.atomsList}>
           <AtomsList
@@ -91,12 +96,14 @@ const RightToolbar = (props: Props) => {
           </div>
         </Group>
       </div>
-      <ArrowScroll
-        startInView={startInView}
-        endInView={endInView}
-        scrollUp={scrollUp}
-        scrollDown={scrollDown}
-      />
+      {height && scrollRef?.current?.scrollHeight > height && (
+        <ArrowScroll
+          startInView={startInView}
+          endInView={endInView}
+          scrollUp={scrollUp}
+          scrollDown={scrollDown}
+        />
+      )}
     </div>
   )
 }

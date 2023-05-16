@@ -18,8 +18,10 @@ import {
   fromItemsFuse,
   fromPaste,
   fromTemplateOnAtom,
+  FunctionalGroup,
   getHoverToFuse,
   getItemsToFuse,
+  setExpandSGroup,
   SGroup,
   Struct,
   Vec2
@@ -58,6 +60,22 @@ class PasteTool {
 
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point)
     this.action = action
+    this.editor.update(this.action, true)
+
+    // todo delete after supporting expand - collapse for 2 attachment points
+    struct.sgroups.forEach((sgroup) => {
+      const countAttachmentPoint = FunctionalGroup.getAttachmentPointCount(
+        sgroup,
+        this.editor.render.ctab.molecule
+      )
+      if (countAttachmentPoint > 1) {
+        action.mergeWith(
+          setExpandSGroup(this.editor.render.ctab, sgroup.id, {
+            expanded: true
+          })
+        )
+      }
+    })
     this.editor.update(this.action, true)
 
     this.findItems = ['functionalGroups']
@@ -155,6 +173,16 @@ class PasteTool {
       this.dragCtx.action = action
       this.editor.update(this.dragCtx.action, true)
     } else {
+      // todo delete after supporting expand - collapse for 2 attachment points
+      this.struct.sgroups.forEach((sgroup) => {
+        const countAttachmentPoint = FunctionalGroup.getAttachmentPointCount(
+          sgroup,
+          this.struct
+        )
+        if (countAttachmentPoint > 1) {
+          sgroup.setAttr('expanded', true)
+        }
+      })
       // common paste logic
       const [action, pasteItems] = fromPaste(
         this.editor.render.ctab,
@@ -207,7 +235,9 @@ class PasteTool {
       const action = this.action
       delete this.action
       if (!this.isSingleContractedGroup || !this.mergeItems) {
-        this.editor.update(dropAndMerge(this.editor, this.mergeItems, action))
+        this.editor.update(
+          dropAndMerge(this.editor, this.mergeItems, action, true)
+        )
       }
     }
   }

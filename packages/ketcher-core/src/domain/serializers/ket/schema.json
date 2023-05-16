@@ -98,6 +98,9 @@
         "label": {
           "type": "string"
         },
+        "alias": {
+          "type": "string"
+        },
         "location": {
           "type": "array",
           "minItems": 2,

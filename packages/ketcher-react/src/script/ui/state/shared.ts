@@ -75,6 +75,17 @@ function parseStruct(
   }
 }
 
+// Removing from what should be saved - structure, which was added to paste tool,
+// but not yet rendered on canvas
+export function removeStructAction(): {
+  type: string
+  action?: Record<string, unknown>
+} {
+  const savedSelectedTool = SettingsManager.selectionTool
+
+  return onAction(savedSelectedTool || tools['select-rectangle'].action)
+}
+
 export function load(struct: Struct, options?) {
   return async (dispatch, getState) => {
     const state = getState()
@@ -144,11 +155,7 @@ export function load(struct: Struct, options?) {
 
       if (fragment) {
         if (parsedStruct.isBlank()) {
-          const savedSelectedTool = SettingsManager.selectionTool
-          dispatch({
-            type: 'ACTION',
-            action: savedSelectedTool || tools['select-rectangle'].action
-          })
+          dispatch(removeStructAction())
         } else {
           dispatch(onAction({ tool: 'paste', opts: parsedStruct }))
         }

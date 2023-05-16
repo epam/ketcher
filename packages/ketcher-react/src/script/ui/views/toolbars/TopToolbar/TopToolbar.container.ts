@@ -21,6 +21,7 @@ import { connect } from 'react-redux'
 import { onAction } from '../../../state'
 import action from 'src/script/ui/action/index.js'
 import { shortcutStr } from '../shortcutStr'
+import { removeStructAction } from 'src/script/ui/state/shared'
 
 const shortcuts = Object.keys(action).reduce((acc, key) => {
   if (action[key]?.shortcut) {
@@ -81,7 +82,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     onClear: () => dispatchAction('clear'),
     onFileOpen: () => dispatchAction('open'),
-    onSave: () => dispatchAction('save'),
+    onSave: () => {
+      dispatch(removeStructAction())
+      dispatchAction('save')
+    },
     onUndo: () => dispatchAction('undo'),
     onRedo: () => dispatchAction('redo'),
     onCopy: () => dispatchAction('copy'),

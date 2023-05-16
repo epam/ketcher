@@ -47,6 +47,7 @@ import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { getMergeItems } from './helper/getMergeItems'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds'
+import { hasAtomsOutsideCanvas } from './helper/isAtomOutSideCanvas'
 
 class SelectTool {
   #mode: string
@@ -268,7 +269,18 @@ class SelectTool {
     /* end */
 
     if (this.dragCtx?.item) {
-      dropAndMerge(editor, this.dragCtx.mergeItems, this.dragCtx.action)
+      const atoms = Array.from(editor.struct().atoms.values())
+      const shouldResizeCanvas = hasAtomsOutsideCanvas(
+        atoms,
+        editor.render,
+        editor.options().scale
+      )
+      dropAndMerge(
+        editor,
+        this.dragCtx.mergeItems,
+        this.dragCtx.action,
+        shouldResizeCanvas
+      )
       delete this.dragCtx
     } else if (this.#lassoHelper.running()) {
       // TODO it catches more events than needed, to be re-factored
@@ -283,6 +295,8 @@ class SelectTool {
     editor.event.message.dispatch({
       info: false
     })
+
+    this.editor.rotateController.rerender()
   }
 
   dblclick(event) {

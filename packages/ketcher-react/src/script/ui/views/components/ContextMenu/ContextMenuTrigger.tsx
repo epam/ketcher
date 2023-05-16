@@ -65,33 +65,7 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
         return
       }
 
-      if (selection) {
-        if (functionalGroupsInSelection.size > 0) {
-          const functionalGroups = Array.from(
-            functionalGroupsInSelection.values()
-          )
-          showProps = {
-            id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-            functionalGroups
-          }
-        } else if (onlyHasProperty(selection, 'bonds')) {
-          showProps = {
-            id: CONTEXT_MENU_ID.FOR_BONDS,
-            bondIds: selection.bonds
-          }
-        } else if (onlyHasProperty(selection, 'atoms')) {
-          showProps = {
-            id: CONTEXT_MENU_ID.FOR_ATOMS,
-            atomIds: selection.atoms
-          }
-        } else {
-          showProps = {
-            id: CONTEXT_MENU_ID.FOR_SELECTION,
-            bondIds: selection.bonds,
-            atomIds: selection.atoms
-          }
-        }
-      } else if (closestItem) {
+      if (closestItem) {
         const struct = editor.struct()
 
         switch (closestItem.map) {
@@ -152,6 +126,32 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
                 }
               : null
             break
+          }
+        }
+      } else if (selection) {
+        if (functionalGroupsInSelection.size > 0) {
+          const functionalGroups = Array.from(
+            functionalGroupsInSelection.values()
+          )
+          showProps = {
+            id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+            functionalGroups
+          }
+        } else if (onlyHasProperty(selection, 'bonds')) {
+          showProps = {
+            id: CONTEXT_MENU_ID.FOR_BONDS,
+            bondIds: selection.bonds
+          }
+        } else if (onlyHasProperty(selection, 'atoms')) {
+          showProps = {
+            id: CONTEXT_MENU_ID.FOR_ATOMS,
+            atomIds: selection.atoms
+          }
+        } else {
+          showProps = {
+            id: CONTEXT_MENU_ID.FOR_SELECTION,
+            bondIds: selection.bonds,
+            atomIds: selection.atoms
           }
         }
       }

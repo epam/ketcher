@@ -15,14 +15,14 @@
  ***************************************************************************/
 
 import {
+  FunctionalGroup,
   Vec2,
   fromBondAlign,
   fromFlip,
   fromItemsFuse,
   fromRotate,
   getHoverToFuse,
-  getItemsToFuse,
-  HalfBond
+  getItemsToFuse
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -33,7 +33,7 @@ class RotateTool {
   dragCtx: any
   isNotActiveTool: boolean | undefined
 
-  constructor(editor, dir) {
+  constructor(editor, dir, isNotActiveTool?: boolean) {
     this.editor = editor
 
     if (dir) {
@@ -52,26 +52,51 @@ class RotateTool {
       return
     }
 
-    if (!editor.selection() || !editor.selection()?.atoms) {
-      // otherwise, clear selection
-      this.editor.selection(null)
+    this.isNotActiveTool = isNotActiveTool
+    if (!editor.selection()?.atoms) {
+      !isNotActiveTool && this.editor.selection(null)
     }
   }
 
   mousedown(event) {
-    let xy0 = new Vec2()
-    const selection = this.editor.selection()
-    const rnd = this.editor.render
-    const struct = rnd.ctab.molecule
+    const xy0 = this.getCenter(this.editor, event)[0]
+    this.dragCtx = {
+      xy0,
+      angle1: utils.calcAngle(xy0, this.editor.render.page2obj(event))
+    }
+    return true
+  }
 
-    if (selection && selection.atoms) {
+  /**
+   * @returns `[center, visibleAtoms]`,
+   * `visibleAtoms` = selected atoms
+   *                - atoms in contracted functional groups
+   *                + functional groups's attachment atoms
+   */
+  getCenter(editor: Editor, event?) {
+    const visibleAtoms =
+      this.editor.selection()?.atoms?.filter((atomId) => {
+        const struct = this.editor.render.ctab.molecule
+        const atom = struct.atoms.get(atomId)!
+        return (
+          !FunctionalGroup.isAtomInContractedFunctionalGroup(
+            atom,
+            struct.sgroups,
+            struct.functionalGroups,
+            false
+          ) || FunctionalGroup.isAttachmentPointAtom(atomId, struct)
+        )
+      }) || []
+
+    let xy0 = new Vec2()
+    const struct = editor.render.ctab.molecule
+
+    if (visibleAtoms.length > 0) {
       let rotId: number | null = null
       let rotAll = false
 
-      selection.atoms.forEach((aid) => {
+      visibleAtoms.forEach((aid) => {
         const atom = struct.atoms.get(aid)
-
-        xy0.add_(atom?.pp as Vec2) // eslint-disable-line no-underscore-dangle
 
         if (rotAll) return
 
@@ -79,22 +104,7 @@ class RotateTool {
           const hb = struct.halfBonds.get(nei)
 
           if (hb) {
-            if (selection.atoms?.indexOf(hb.end as number) === -1) {
-              if (hb.loop >= 0) {
-                const neiAtom = struct.atoms.get(aid)
-                if (
-                  !neiAtom?.neighbors.find((neiNei) => {
-                    const neiHb = struct.halfBonds.get(neiNei) as HalfBond
-                    return (
-                      neiHb?.loop >= 0 &&
-                      selection.atoms?.indexOf(neiHb?.end) !== -1
-                    )
-                  })
-                ) {
-                  rotAll = true
-                  return true
-                }
-              }
+            if (editor.selection()?.atoms?.indexOf(hb.end as number) === -1) {
               if (rotId == null) {
                 rotId = aid
               } else if (rotId !== aid) {
@@ -110,7 +120,10 @@ class RotateTool {
       if (!rotAll && rotId !== null) {
         xy0 = struct.atoms.get(rotId)?.pp as Vec2
       } else {
-        xy0 = xy0.scaled(1 / selection.atoms.length)
+        const selectionBoundingBox = editor.render.ctab.getVBoxObj({
+          atoms: visibleAtoms
+        })!
+        xy0 = selectionBoundingBox.centre()
       }
     } else if (struct.atoms?.size) {
       struct.atoms.forEach((atom) => {
@@ -118,14 +131,11 @@ class RotateTool {
       }) // eslint-disable-line no-underscore-dangle, max-len
       // poor man struct center (without sdata, etc)
       xy0 = xy0.scaled(1 / struct.atoms.size)
-    } else {
-      xy0 = rnd.page2obj(event)
+    } else if (event) {
+      xy0 = editor.render.page2obj(event)
     }
-    this.dragCtx = {
-      xy0,
-      angle1: utils.calcAngle(xy0, rnd.page2obj(event))
-    }
-    return true
+
+    return [xy0, visibleAtoms] as const
   }
 
   mousemove(event) {

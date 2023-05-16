@@ -19,7 +19,8 @@ type MergeItems = {
 export function dropAndMerge(
   editor: Editor,
   mergeItems: any,
-  action?: Action
+  action?: Action,
+  resizeCanvas?: boolean
 ): Action {
   const restruct = editor.render.ctab
   const isMerging = !!mergeItems
@@ -50,7 +51,7 @@ export function dropAndMerge(
   if (isMerging) editor.selection(null)
 
   if (dropItemAction?.operations.length > 0) {
-    editor.update(dropItemAction, false, { resizeCanvas: false })
+    editor.update(dropItemAction, false, { resizeCanvas: !!resizeCanvas })
   }
 
   return dropItemAction
@@ -90,32 +91,29 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
     atoms: new Map(mergeItems.atoms),
     bonds: new Map(mergeItems.bonds)
   }
-  const removeNonAttachmentAtoms = new Action()
-  const removeSGroup = new Action()
+
+  const action = new Action()
 
   mergeItems.atomToFunctionalGroup?.forEach((functionalGroupId, srcAtomId) => {
     const sGroup = struct.sgroups.get(functionalGroupId)
+
     const attachmentAtomId = sGroup?.getAttAtomId(struct)
 
-    if (attachmentAtomId) {
-      const attachmentAtom = struct.atoms.get(attachmentAtomId)
-      if (SGroup.isAtomInContractedSGroup(attachmentAtom, struct.sgroups)) {
-        return
-      }
-      newMergeItems.atoms.set(srcAtomId, attachmentAtomId)
-
-      removeNonAttachmentAtoms.mergeWith(
+    if (attachmentAtomId !== undefined) {
+      const atomsToDelete = [...SGroup.getAtoms(struct, sGroup)].filter(
+        (atomId) => atomId !== attachmentAtomId
+      )
+      const bondsToDelete = [...SGroup.getBonds(struct, sGroup)]
+      action.mergeWith(fromSgroupDeletion(reStruct, functionalGroupId))
+      action.mergeWith(
         fromFragmentDeletion(reStruct, {
-          atoms: [...SGroup.getAtoms(struct, sGroup)].filter(
-            (atomId) => atomId !== attachmentAtomId
-          ),
-          bonds: [...SGroup.getBonds(struct, sGroup)]
+          atoms: atomsToDelete,
+          bonds: bondsToDelete
         })
       )
-
-      removeSGroup.mergeWith(fromSgroupDeletion(reStruct, functionalGroupId))
+      newMergeItems.atoms.set(srcAtomId, attachmentAtomId)
     }
   })
 
-  return [newMergeItems, removeNonAttachmentAtoms] as const
+  return [newMergeItems, action] as const
 }

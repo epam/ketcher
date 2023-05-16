@@ -43,16 +43,13 @@ class AtomTool {
     this.atomProps = atomProps
     this.#bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE }
 
-    this.editor.hoverIcon.show()
-    this.editor.hoverIcon.label = atomProps.label
-    this.editor.hoverIcon.fill = ElementColor[atomProps.label] ?? '#000000'
-    this.editor.hoverIcon.updatePosition()
+    const editorSelection = editor.selection()
 
-    if (editor.selection()) {
-      if (editor.selection()?.atoms) {
+    if (editorSelection) {
+      if (editorSelection.atoms) {
         const action = fromAtomsAttrs(
           editor.render.ctab,
-          editor.selection().atoms,
+          editorSelection.atoms,
           atomProps,
           true
         )
@@ -61,6 +58,11 @@ class AtomTool {
       }
 
       this.isNotActiveTool = true
+    } else {
+      this.editor.hoverIcon.show()
+      this.editor.hoverIcon.label = atomProps.label
+      this.editor.hoverIcon.fill = ElementColor[atomProps.label] ?? '#000000'
+      this.editor.hoverIcon.updatePosition()
     }
   }
 
@@ -178,7 +180,7 @@ class AtomTool {
       this.#bondProps,
       dragCtx.item.id,
       Object.assign({}, this.atomProps),
-      newAtomPos,
+      undefined,
       newAtomPos
     )[0]
     this.editor.update(dragCtx.action, true)

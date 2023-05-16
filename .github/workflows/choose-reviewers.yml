@@ -1,7 +1,7 @@
 name: Choose reviewers
 on:
   pull_request:
-    types: [opened, ready_for_review, reopened]
+    types: [opened]
 
 jobs:
   add-reviews:
@@ -10,4 +10,3 @@ jobs:
       - uses: kentaro-m/auto-assign-action@v1.2.5
         with:
           configuration-path: '.github/auto_assign.yml'
-          repo-token: ${{ secrets.REVIEWER_LOTTERY_SECRET }}

@@ -23,38 +23,23 @@ interface MonomerGroupProps {
 }
 
 const ItemsContainer = styled.div`
-  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: flex-start;
-  margin: 0 15px;
-
-  & > * {
-    margin: 4px 2px;
-  }
-`
-
-const Divider = styled.div`
-  display: block;
-  height: 5px;
-  width: 10px;
-  border-bottom: 1px solid;
-  border-color: ${({ theme }) => theme.ketcher.color.divider};
+  justify-content: space-between;
 `
 
 const GroupTitle = styled.div`
-  width: 100%;
+  flex: 0 0 1;
   height: 100%;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: flex-start;
-  font-size: ${({ theme }) => theme.ketcher.font.size.small};
+  font-size: ${({ theme }) => theme.ketcher.font.size.medium};
   font-family: ${({ theme }) => theme.ketcher.font.family.roboto};
-  color: ${({ theme }) => theme.ketcher.color.divider};
-  margin: 4px 4px 0;
+  color: ${({ theme }) => theme.ketcher.color.text};
 `
 
 const MonomerGroup = (props: MonomerGroupProps) => {
@@ -62,23 +47,29 @@ const MonomerGroup = (props: MonomerGroupProps) => {
 
   return (
     <>
-      {title && (
-        <GroupTitle>
-          <span>{title}</span>
-          <Divider />
-        </GroupTitle>
-      )}
-      <ItemsContainer>
-        {items.map((monomer) => {
-          return (
-            <MonomerItem
-              key={monomer.props?.Name || monomer.label}
-              item={monomer}
-              onClick={() => onItemClick(monomer)}
-            />
-          )
-        })}
-      </ItemsContainer>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'row',
+        margin: '0 12px 12px',
+        columnGap: '10px'
+      }}>
+        {title && (
+          <GroupTitle>
+            <span>{title}</span>
+          </GroupTitle>
+        )}
+        <ItemsContainer>
+          {items.map((monomer) => {
+            return (
+              <MonomerItem
+                key={monomer.props?.Name || monomer.label}
+                item={monomer}
+                onClick={() => onItemClick(monomer)}
+              />
+            )
+          })}
+        </ItemsContainer>
+      </div>
     </>
   )
 }

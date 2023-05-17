@@ -95,12 +95,14 @@ function Editor({ onInit, theme }: EditorProps) {
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
 
-        <div ref={rootElRef} className="Ketcher-polymer-editor-root">
+        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }} ref={rootElRef} className="Ketcher-polymer-editor-root">
           <div className='header'>
             <nav style={{
               padding: '8px 16px',
               display: 'flex',
-              flexDirection: 'row'
+              flexDirection: 'row',
+              height: '42px',
+              boxSizing: 'border-box'
             }}>
               <TopMenuComponent />
             </nav>

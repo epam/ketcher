@@ -32,8 +32,8 @@ export const MonomerList = ({ list, onItemClick }: MonomerListProps) => {
 
   return (
     <>
-      <span>
-        <input onInput={(e) => setFilter(e.currentTarget.value)} placeholder='Search..' style={{ display: 'block', margin: '10px auto', width: '90%' }} />
+      <span style={{ display: 'block', margin: '10px 12px'}}>
+        <input onInput={(e) => setFilter(e.currentTarget.value)} placeholder='Search..' style={{ display: 'block', width: '100%'}} />
       </span>
       {items.map(({ groupTitle, groupItems }, key) => {
         return (

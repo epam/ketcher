@@ -45,7 +45,6 @@ const Card = styled.div<{ colorScheme?: string[] }>`
   overflow: hidden;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-  margin-right: 18px;
   margin-bottom: 12px;
 
   &:hover {

@@ -27,6 +27,7 @@ import {
   GetIsItemInSelectionArgs
 } from './contextMenu.types'
 import { Selection } from '../../../../editor/Editor'
+import { onlyHasProperty } from './utils'
 
 const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
   const { getKetcherInstance } = useAppContext()
@@ -232,6 +233,8 @@ function getMenuPropsForClosestItem(
   }
 }
 
+const ENHANCED_FLAGS_MAP_NAME = 'enhancedFlags'
+
 function getMenuPropsForSelection(
   selection: Selection | null,
   selectedFunctionalGroups: Map<number, FunctionalGroup>
@@ -252,12 +255,18 @@ function getMenuPropsForSelection(
   } else if (bondsInSelection && !atomsInSelection) {
     return {
       id: CONTEXT_MENU_ID.FOR_BONDS,
-      bondIds: selection.bonds
+      bondIds: selection.bonds,
+      extraItemsSelected: !onlyHasProperty(selection, 'bonds', [
+        ENHANCED_FLAGS_MAP_NAME
+      ])
     }
   } else if (atomsInSelection && !bondsInSelection) {
     return {
       id: CONTEXT_MENU_ID.FOR_ATOMS,
-      atomIds: selection.atoms
+      atomIds: selection.atoms,
+      extraItemsSelected: !onlyHasProperty(selection, 'atoms', [
+        ENHANCED_FLAGS_MAP_NAME
+      ])
     }
   } else {
     return {

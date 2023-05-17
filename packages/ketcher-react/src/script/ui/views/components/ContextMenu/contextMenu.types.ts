@@ -1,5 +1,5 @@
 import { FunctionalGroup } from 'ketcher-core'
-import type { PredicateParams } from 'react-contexify'
+import type { TriggerEvent, PredicateParams } from 'react-contexify'
 import { Selection } from '../../../../editor/Editor'
 
 export enum CONTEXT_MENU_ID {
@@ -16,7 +16,13 @@ export type ContextMenuShowProps = {
   functionalGroups?: FunctionalGroup[]
   bondIds?: number[]
   atomIds?: number[]
+  extraItemsSelected?: boolean
 } | null
+
+export interface MenuItemsProps {
+  triggerEvent?: TriggerEvent
+  propsFromTrigger?: ContextMenuShowProps
+}
 
 export type ItemEventParams = PredicateParams<ContextMenuShowProps, ItemData>
 

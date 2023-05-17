@@ -19,8 +19,15 @@ import { PropsWithChildren, useCallback } from 'react'
 import { useContextMenu } from 'react-contexify'
 import { useAppContext } from 'src/hooks'
 import Editor from 'src/script/editor'
-import { ContextMenuShowProps, CONTEXT_MENU_ID } from './contextMenu.types'
+import {
+  ClosestItem,
+  CONTEXT_MENU_ID,
+  ContextMenuShowProps,
+  ContextMenuTriggerType,
+  GetIsItemInSelectionArgs
+} from './contextMenu.types'
 import { onlyHasProperty } from './utils'
+import { Selection } from '../../../../editor/Editor'
 
 const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
   const { getKetcherInstance } = useAppContext()
@@ -30,8 +37,9 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
     const editor = getKetcherInstance().editor as Editor
     const struct = editor.struct()
     const selectedAtomIds = editor.selection()?.atoms
-    // Map could do deduplication
+    // Map and Set can do deduplication
     const selectedFunctionalGroups = new Map<number, FunctionalGroup>()
+    const selectedSGroupsIds: Set<number> = new Set()
 
     selectedAtomIds?.forEach((atomId) => {
       const functionalGroup = FunctionalGroup.findFunctionalGroupByAtom(
@@ -45,9 +53,18 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
           functionalGroup.relatedSGroupId,
           functionalGroup
         )
+
+      const sGroupId = struct.sgroups.find((_, sGroup) =>
+        sGroup.atoms.includes(atomId)
+      )
+
+      sGroupId !== null && selectedSGroupsIds.add(sGroupId)
     })
 
-    return selectedFunctionalGroups
+    return {
+      selectedFunctionalGroups,
+      selectedSGroupsIds
+    }
   }, [getKetcherInstance])
 
   const handleDisplay = useCallback<React.MouseEventHandler<HTMLDivElement>>(
@@ -57,102 +74,42 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
       const editor = getKetcherInstance().editor as Editor
       const closestItem = editor.findItem(event, null)
       const selection = editor.selection()
-      const functionalGroupsInSelection = getSelectedFunctionalGroups()
+      const { selectedFunctionalGroups, selectedSGroupsIds } =
+        getSelectedFunctionalGroups()
 
       let showProps: ContextMenuShowProps = null
+      let triggerType: ContextMenuTriggerType
 
-      if (selection && !selection.bonds && !selection.atoms) {
+      if (!closestItem) {
         return
+      } else if (!selection) {
+        triggerType = ContextMenuTriggerType.ClosestItem
+      } else if (
+        getIsItemInSelection({
+          item: closestItem,
+          selection,
+          selectedFunctionalGroups,
+          selectedSGroupsIds
+        })
+      ) {
+        triggerType = ContextMenuTriggerType.Selection
+      } else {
+        // closestItem is outside of selection
+        editor.selection(null)
+        triggerType = ContextMenuTriggerType.ClosestItem
       }
 
-      if (closestItem) {
-        const struct = editor.struct()
-
-        switch (closestItem.map) {
-          case 'bonds':
-            {
-              const functionalGroup = FunctionalGroup.findFunctionalGroupByBond(
-                struct,
-                struct.functionalGroups,
-                closestItem.id,
-                true
-              )
-
-              showProps =
-                functionalGroup === null
-                  ? {
-                      id: CONTEXT_MENU_ID.FOR_BONDS,
-                      bondIds: [closestItem.id]
-                    }
-                  : {
-                      id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-                      functionalGroups: [functionalGroup]
-                    }
-            }
-            break
-
-          case 'atoms': {
-            const functionalGroup = FunctionalGroup.findFunctionalGroupByAtom(
-              struct.functionalGroups,
-              closestItem.id,
-              true
-            )
-
-            showProps =
-              functionalGroup === null
-                ? {
-                    id: CONTEXT_MENU_ID.FOR_ATOMS,
-                    atomIds: [closestItem.id]
-                  }
-                : {
-                    id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-                    functionalGroups: [functionalGroup]
-                  }
-            break
-          }
-
-          case 'sgroups':
-          case 'functionalGroups': {
-            const sGroup = struct.sgroups.get(closestItem.id)
-            const functionalGroup = FunctionalGroup.findFunctionalGroupBySGroup(
-              struct.functionalGroups,
-              sGroup
-            )
-
-            showProps = functionalGroup
-              ? {
-                  id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-                  functionalGroups: [functionalGroup]
-                }
-              : null
-            break
-          }
+      switch (triggerType) {
+        case ContextMenuTriggerType.ClosestItem: {
+          showProps = getMenuPropsForClosestItem(editor, closestItem)
+          break
         }
-      } else if (selection) {
-        if (functionalGroupsInSelection.size > 0) {
-          const functionalGroups = Array.from(
-            functionalGroupsInSelection.values()
+
+        case ContextMenuTriggerType.Selection: {
+          showProps = getMenuPropsForSelection(
+            selection,
+            selectedFunctionalGroups
           )
-          showProps = {
-            id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-            functionalGroups
-          }
-        } else if (onlyHasProperty(selection, 'bonds')) {
-          showProps = {
-            id: CONTEXT_MENU_ID.FOR_BONDS,
-            bondIds: selection.bonds
-          }
-        } else if (onlyHasProperty(selection, 'atoms')) {
-          showProps = {
-            id: CONTEXT_MENU_ID.FOR_ATOMS,
-            atomIds: selection.atoms
-          }
-        } else {
-          showProps = {
-            id: CONTEXT_MENU_ID.FOR_SELECTION,
-            bondIds: selection.bonds,
-            atomIds: selection.atoms
-          }
         }
       }
 
@@ -171,6 +128,130 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
       {children}
     </div>
   )
+}
+
+const getIsItemInSelection = ({
+  item,
+  selection,
+  selectedSGroupsIds,
+  selectedFunctionalGroups
+}: GetIsItemInSelectionArgs): boolean => {
+  if (!item || !selection) {
+    return false
+  }
+
+  switch (item.map) {
+    case 'sgroups':
+      return selectedSGroupsIds.has(item.id)
+
+    case 'functionalGroups':
+      return Array.from(selectedFunctionalGroups.keys()).includes(item.id)
+
+    default:
+      return (
+        item.map in selection &&
+        Array.isArray(selection[item.map]) &&
+        selection[item.map].includes(item.id) &&
+        (selection.bonds || selection.atoms)
+      )
+  }
+}
+
+function getMenuPropsForClosestItem(
+  editor: Editor,
+  closestItem: ClosestItem
+): ContextMenuShowProps | null {
+  const struct = editor.struct()
+
+  switch (closestItem.map) {
+    case 'bonds': {
+      const functionalGroup = FunctionalGroup.findFunctionalGroupByBond(
+        struct,
+        struct.functionalGroups,
+        closestItem.id,
+        true
+      )
+
+      return functionalGroup === null
+        ? {
+            id: CONTEXT_MENU_ID.FOR_BONDS,
+            bondIds: [closestItem.id]
+          }
+        : {
+            id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+            functionalGroups: [functionalGroup]
+          }
+    }
+
+    case 'atoms': {
+      const functionalGroup = FunctionalGroup.findFunctionalGroupByAtom(
+        struct.functionalGroups,
+        closestItem.id,
+        true
+      )
+
+      return functionalGroup === null
+        ? {
+            id: CONTEXT_MENU_ID.FOR_ATOMS,
+            atomIds: [closestItem.id]
+          }
+        : {
+            id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+            functionalGroups: [functionalGroup]
+          }
+    }
+
+    case 'sgroups':
+    case 'functionalGroups': {
+      const sGroup = struct.sgroups.get(closestItem.id)
+      const functionalGroup = FunctionalGroup.findFunctionalGroupBySGroup(
+        struct.functionalGroups,
+        sGroup
+      )
+
+      return functionalGroup
+        ? {
+            id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+            functionalGroups: [functionalGroup]
+          }
+        : null
+    }
+
+    default:
+      return null
+  }
+}
+
+function getMenuPropsForSelection(
+  selection: Selection | null,
+  selectedFunctionalGroups: Map<number, FunctionalGroup>
+): ContextMenuShowProps | null {
+  if (!selection) {
+    return null
+  }
+  if (selectedFunctionalGroups.size > 0) {
+    const functionalGroups = Array.from(selectedFunctionalGroups.values())
+    return {
+      id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+      functionalGroups
+    }
+  } else if (onlyHasProperty(selection, 'bonds')) {
+    return {
+      id: CONTEXT_MENU_ID.FOR_BONDS,
+      bondIds: selection.bonds
+    }
+  } else if (onlyHasProperty(selection, 'atoms')) {
+    return {
+      id: CONTEXT_MENU_ID.FOR_ATOMS,
+      atomIds: selection.atoms
+    }
+  } else {
+    return {
+      id: CONTEXT_MENU_ID.FOR_SELECTION,
+      bondIds: selection.bonds,
+      atomIds: selection.atoms
+    }
+  }
 }
 
 export default ContextMenuTrigger

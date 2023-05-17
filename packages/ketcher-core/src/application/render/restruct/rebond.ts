@@ -134,47 +134,54 @@ class ReBond extends ReObject {
     const dy = y2 - y1
     const d = Math.sqrt(dx * dx + dy * dy)
     const ratio = len / d
-    return [x1 + dx * ratio, y1 + dy * ratio]
+    return new Vec2(x1 + dx * ratio, y1 + dy * ratio)
   }
 
   getSelectionContour(render: Render, options) {
     const bond: Bond = this.b
     const { bondThickness, doubleBondWidth, stereoBondWidth } = options
     const { paper, ctab: restruct } = render
-    const spY = doubleBondWidth + bondThickness
+    const thickness = doubleBondWidth + bondThickness
 
-    const hb2 = restruct.molecule.halfBonds.get(bond.hb1!)
-    const hb1 = restruct.molecule.halfBonds.get(bond.hb2!)
+    // half-bonds
+    const hbStart = restruct.molecule.halfBonds.get(bond.hb1!)
+    const hbEnd = restruct.molecule.halfBonds.get(bond.hb2!)
+
+    const halfBondStart = new Vec2(hbStart?.p.x, hbStart?.p.y)
+    const halfBondEnd = new Vec2(hbEnd?.p.x, hbEnd?.p.y)
 
     const isStereoBond = bond.stereo !== Bond.PATTERN.STEREO.NONE && bond.stereo !== Bond.PATTERN.STEREO.CIS_TRANS
 
     const addStereoPadding = isStereoBond ? stereoBondWidth / 2 : 0
-    const [hbStartX, hbStartY] = this.getLinePoint(hb1?.p.x, hb1?.p.y, hb2?.p.x, hb2?.p.y, -5 - addStereoPadding)
-    const [hbEndX, hbEndY] = this.getLinePoint(hb2?.p.x, hb2?.p.y, hb1?.p.x, hb1?.p.y, -5)
+    const contourStart = Vec2.getLinePoint(halfBondEnd, halfBondStart, (-bondThickness * 2.5) - addStereoPadding)
+    const contourEnd = Vec2.getLinePoint(halfBondStart, halfBondEnd, -bondThickness * 2.5)
 
-    const addStart = isStereoBond ? (stereoBondWidth + 26 / stereoBondWidth) : spY
-    const addEnd = isStereoBond ? stereoBondWidth * 0.25 : spY
+    const addStart = isStereoBond ? stereoBondWidth * 0.25 : thickness
+    const addEnd = isStereoBond ? (stereoBondWidth + (thickness * 4) / stereoBondWidth) : thickness
 
-    const [hbPadStartX, hbPadStartY] = this.getLinePoint(hbStartX, hbStartY, hbEndX, hbEndY, addStart)
-    const [hbPadEndX, hbPadEndY] = this.getLinePoint(hbEndX, hbEndY, hbStartX, hbStartY, addEnd)
+    const contourPaddedStart = Vec2.getLinePoint(contourStart, contourEnd, addEnd)
+    const contourPaddedEnd = Vec2.getLinePoint(contourEnd, contourStart, addStart)
 
-    const startPadTop = rotatePoint(hbStartX + addStart, hbStartY, bond.angle + 90, hbStartX, hbStartY)
-    const startPadBottom = rotatePoint(hbStartX + addStart, hbStartY, bond.angle - 90, hbStartX, hbStartY)
-    const startTop = rotatePoint(hbPadStartX + addStart, hbPadStartY, bond.angle + 90, hbPadStartX, hbPadStartY)
-    const startBottom = rotatePoint(hbPadStartX + addStart, hbPadStartY, bond.angle - 90, hbPadStartX, hbPadStartY)
-    const endPadTop = rotatePoint(hbEndX + addEnd, hbEndY, bond.angle + 90, hbEndX, hbEndY)
-    const endPadBottom = rotatePoint(hbEndX + addEnd, hbEndY, bond.angle - 90, hbEndX, hbEndY)
-    const endTop = rotatePoint(hbPadEndX + addEnd, hbPadEndY, bond.angle + 90, hbPadEndX, hbPadEndY)
-    const endBottom = rotatePoint(hbPadEndX + addEnd, hbPadEndY, bond.angle - 90, hbPadEndX, hbPadEndY)
+    const addedStart = contourStart.add(new Vec2(addEnd, 0))
+    const addedEnd = contourEnd.add(new Vec2(addStart, 0))
 
-    // please refer to: https://raw.githubusercontent.com/epam/ketcher/317167a5b484d4fcb2641a384c5fdf3d6f638d24/hover_selection_2.png
+    const startTop = addedStart.rotateAroundOrigin(bond.angle + 90, new Vec2(contourStart.x, contourStart.y))
+    const startBottom = addedStart.rotateAroundOrigin(bond.angle - 90, new Vec2(contourStart.x, contourStart.y))
+    const startPadTop = rotatePoint(contourPaddedStart.x + addEnd, contourPaddedStart.y, bond.angle + 90, contourPaddedStart.x, contourPaddedStart.y)
+    const startPadBottom = rotatePoint(contourPaddedStart.x + addEnd, contourPaddedStart.y, bond.angle - 90, contourPaddedStart.x, contourPaddedStart.y)
+    const endTop = rotatePoint(addedEnd.x, addedEnd.y, bond.angle + 90, contourEnd.x, contourEnd.y)
+    const endBottom = rotatePoint(addedEnd.x, addedEnd.y, bond.angle - 90, contourEnd.x, contourEnd.y)
+    const endPadTop = rotatePoint(contourPaddedEnd.x + addStart, contourPaddedEnd.y, bond.angle + 90, contourPaddedEnd.x, contourPaddedEnd.y)
+    const endPadBottom = rotatePoint(contourPaddedEnd.x + addStart, contourPaddedEnd.y, bond.angle - 90, contourPaddedEnd.x, contourPaddedEnd.y)
 
+    // for a visual representation of the points
+    // please refer to: ketcher-core/docs/data/hover_selection_exp.png
     const pathString =
-    `M ${startTop[0]} ${startTop[1]}` +
+    `M ${startTop.x} ${startTop.y}` +
     `L ${endTop[0]} ${endTop[1]}` +
     `C ${endPadTop[0]} ${endPadTop[1]}, ${endPadBottom[0]} ${endPadBottom[1]}, ${endBottom[0]} ${endBottom[1]}` +
-    `L ${startBottom[0]} ${startBottom[1]}` +
-    `C ${startPadBottom[0]} ${startPadBottom[1]}, ${startPadTop[0]} ${startPadTop[1]}, ${startTop[0]} ${startTop[1]}`
+    `L ${startBottom.x} ${startBottom.y}` +
+    `C ${startPadBottom[0]} ${startPadBottom[1]}, ${startPadTop[0]} ${startPadTop[1]}, ${startTop.x} ${startTop.y}`
 
     return paper.path(pathString)
   }
@@ -201,8 +208,7 @@ class ReBond extends ReObject {
     return rect.attr(options.hoverStyle)
   }
 
-  // @ts-ignore
-  makeSelectionPlate(restruct: ReStruct, paper: any, options: any) {
+  makeSelectionPlate(restruct: ReStruct, _: any, options: any) {
     ReBond.bondRecalc(this, restruct, options)
     const bond = this.b
     const sgroups = restruct.render.ctab.sgroups

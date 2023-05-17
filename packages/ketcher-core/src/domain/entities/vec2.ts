@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import assert from 'assert'
+import { tfx } from 'utilities'
 
 export interface Point {
   x?: number
@@ -113,6 +114,16 @@ export class Vec2 {
 
   static centre(v1: Vec2, v2: Vec2) {
     return Vec2.lc2(v1, 0.5, v2, 0.5)
+  }
+
+  static getLinePoint(lineStart: Vec2, lineEnd: Vec2, length) {
+    const difference = lineStart.sub(lineEnd)
+    const distance = difference.length()
+    const ratio = length / distance
+    return new Vec2(
+      lineStart.x + difference.x * ratio,
+      lineStart.y + difference.y * ratio
+    )
   }
 
   length(): number {
@@ -217,6 +228,25 @@ export class Vec2 {
     return new Vec2(
       this.x * cos - this.y * sin,
       this.x * sin + this.y * cos,
+      this.z
+    )
+  }
+
+  rotateAroundOrigin(angle: number, origin: Vec2) {
+    const angleRad = angle * Math.PI / 180
+    const offsetX = this.x - origin.x
+    const offsetY = this.y - origin.y
+
+    // apply rotation matrix to the point coordinates
+    const rotatedX = Math.cos(angleRad) * offsetX - Math.sin(angleRad) * offsetY
+    const rotatedY = Math.sin(angleRad) * offsetX + Math.cos(angleRad) * offsetY
+
+    const finalX = rotatedX + origin.x
+    const finalY = rotatedY + origin.y
+
+    return new Vec2(
+      Number(tfx(finalX)),
+      Number(tfx(finalY)),
       this.z
     )
   }

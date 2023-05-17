@@ -6,7 +6,13 @@
   "scripts": {
     "test": "npx playwright test",
     "test:debug": "npx playwright test --debug",
-    "test:ci": "npx playwright test click-fg-on-canvas --workers 4"
+    "test:ci": "npx playwright test click-fg-on-canvas --workers 4",
+    "test:update": "npx playwright test --update-snapshots",
+    "docker": "docker-compose run --rm autotests",
+    "docker:test": "npm run docker npm run test",
+    "docker:debug": "npm run docker npm run test:debug",
+    "docker:test:ci": "npm run docker npm run test:ci",
+    "docker:update": "npm run docker npm run test:update"
   },
   "author": "Nitvex",
   "license": "ISC",

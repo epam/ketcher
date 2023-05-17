@@ -1,0 +1,21 @@
+services:
+  frontend:
+    container_name: ketcher-frontend
+    build:
+      context: .
+    ports:
+      - 4002:4002
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+
+  autotests:
+    image: node:18.12.0
+    build:
+      context: ketcher-autotests
+    container_name: ketcher-autotest
+    volumes:
+      - ./ketcher-autotests:/app
+      - /app/node_modules
+    depends_on:
+      - frontend

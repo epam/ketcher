@@ -73,3 +73,23 @@ getFirstBondCoordinatesByAttributes - get one bond by attributes
 To select tools with nested / sub levels use:
 
 selectNestedTool - select specific tool that has sub / nested levels.
+
+## Docker
+
+### Prerequisites
+
+- Docker
+- Docker-compose
+- You should build the app (`npm run build` from directory "ketcher")
+- Set .env variable KETCHER_URL=http://frontend:4002 in "ketcher-autotests"
+
+### How to run
+
+1. Build frontend for docker (directory "ketcher"):
+   - `npm run docker:build`
+2. Run tests in the directory "ketcher-autotests":
+   - `npm run docker:test` run all tests
+   - `npm run docker:update` run all tests and update snapshots
+   - `npm run docker:debug` run all tests with debugging enabled
+
+- if you want to **stop** docker, run the next command in the directory "ketcher": `npm run docker:down`

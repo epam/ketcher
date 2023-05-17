@@ -25,7 +25,9 @@
     "serve:remote": "cd example && npm run serve:remote",
     "serve:standalone": "cd example && npm run serve:standalone",
     "serve": "run-p 'serve:remote' 'serve:standalone'",
-    "serve:demo": "cd demo && npm run serve"
+    "serve:demo": "cd demo && npm run serve",
+    "docker:build": "docker-compose up --no-start frontend && docker-compose start frontend",
+    "docker:down": "docker-compose down"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.6.0",

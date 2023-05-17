@@ -28,7 +28,7 @@ const ItemsContainer = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: normal;
-  column-gap: 13px;
+  column-gap: 10px;
 `
 
 const GroupTitle = styled.div`

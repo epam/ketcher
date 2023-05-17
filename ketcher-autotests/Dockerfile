@@ -4,9 +4,9 @@ FROM mcr.microsoft.com/playwright:v1.33.0-jammy
 
 WORKDIR /app
 
-COPY package.json /app/package.json
-RUN npm ci
-COPY . /app
+COPY . .
 
 ENV CI false
 ENV MODE standalone
+
+RUN npm ci && npx playwright install

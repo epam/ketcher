@@ -26,7 +26,6 @@ import {
   ContextMenuTriggerType,
   GetIsItemInSelectionArgs
 } from './contextMenu.types'
-import { onlyHasProperty } from './utils'
 import { Selection } from '../../../../editor/Editor'
 
 const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
@@ -121,6 +120,7 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
             selection,
             selectedFunctionalGroups
           )
+          break
         }
       }
 
@@ -239,18 +239,22 @@ function getMenuPropsForSelection(
   if (!selection) {
     return null
   }
+
+  const bondsInSelection = 'bonds' in selection
+  const atomsInSelection = 'atoms' in selection
+
   if (selectedFunctionalGroups.size > 0) {
     const functionalGroups = Array.from(selectedFunctionalGroups.values())
     return {
       id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
       functionalGroups
     }
-  } else if (onlyHasProperty(selection, 'bonds')) {
+  } else if (bondsInSelection && !atomsInSelection) {
     return {
       id: CONTEXT_MENU_ID.FOR_BONDS,
       bondIds: selection.bonds
     }
-  } else if (onlyHasProperty(selection, 'atoms')) {
+  } else if (atomsInSelection && !bondsInSelection) {
     return {
       id: CONTEXT_MENU_ID.FOR_ATOMS,
       atomIds: selection.atoms

@@ -1,6 +1,7 @@
 import { Scale, Vec2 } from 'ketcher-core'
 import { throttle } from 'lodash'
 import Editor from '../Editor'
+import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import RotateTool from './rotate'
 import SelectTool from './select'
 
@@ -215,7 +216,12 @@ class RotateController {
     const RECT_PADDING = 10
 
     const rectBox = this.render.ctab
-      .getVBoxObj({ atoms: visibleAtoms })!
+      .getVBoxObj({
+        atoms: visibleAtoms,
+        sgroups: getGroupIdsFromItemArrays(this.render.ctab.molecule, {
+          atoms: visibleAtoms
+        })
+      })!
       .transform(Scale.obj2scaled, this.render.options)
       .translate(this.render.options.offset || new Vec2())
 

@@ -31,7 +31,7 @@ import AccordionDetails from '@mui/material/AccordionDetails'
 import Icon from '../../component/view/icon'
 
 import { Dialog } from '../../views/components'
-import Input from '../../component/form/form/Input/Input'
+import Input from '../../component/form/Input/Input'
 import { SaveButton } from '../../component/view/savebutton'
 import { SdfSerializer } from 'ketcher-core'
 import classes from './template-lib.module.less'

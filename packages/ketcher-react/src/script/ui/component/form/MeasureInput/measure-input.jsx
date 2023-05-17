@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from 'react'
 
-import Input from '../form/Input/Input'
+import Input from '../Input/Input'
 import Select from '../Select'
 import styles from './measure-input.module.less'
 import { getSelectOptionsFromSchema } from '../../../utils'

@@ -22,7 +22,7 @@ import {
 } from '../../../../../state/options'
 
 import { Dialog } from '../../../../components'
-import Input from '../../../../../component/form/form/Input/Input'
+import Input from '../../../../../component/form/Input/Input'
 import OpenButton from '../../../../../component/view/openbutton'
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
 import StructRender from '../../../../../component/structrender'

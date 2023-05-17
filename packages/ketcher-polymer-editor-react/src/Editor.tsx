@@ -36,7 +36,6 @@ import { MonomerLibrary } from 'components/monomerLibrary'
 import { Menu } from 'components/menu'
 import { selectEditorActiveTool, selectTool } from 'state/common'
 import { useAppDispatch, useAppSelector } from 'hooks'
-import { Logo } from 'components/Logo'
 import { openModal } from 'state/modal'
 import {
   modalComponentList,
@@ -123,7 +122,6 @@ function Editor({ onInit, theme }: EditorProps) {
             </Layout.Right>
           </Layout>
 
-          <Logo />
           <FullscreenButton />
 
           <ModalContainer />

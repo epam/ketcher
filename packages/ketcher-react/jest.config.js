@@ -8,6 +8,8 @@ module.exports = {
     '\\.svg$': '<rootDir>/testFileTransformer.js'
   },
   moduleNameMapper: {
-    '\\.(css|less)$': 'identity-obj-proxy'
-  }
+    '\\.(css|less)$': 'identity-obj-proxy',
+    'src(.*)$': '<rootDir>/src/$1'
+  },
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts']
 }

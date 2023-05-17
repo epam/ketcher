@@ -26,9 +26,9 @@ export class RenderStruct {
     options: any = {}
   ) {
     if (el && struct) {
-      const { cachePrefix = '' } = options
+      const { cachePrefix = '', needCache = true } = options
       const cacheKey = `${cachePrefix}${struct.name}`
-      if (renderCache.has(cacheKey)) {
+      if (renderCache.has(cacheKey) && needCache) {
         el.innerHTML = renderCache.get(cacheKey)
         return
       }
@@ -43,7 +43,9 @@ export class RenderStruct {
       })
       rnd.setMolecule(preparedStruct)
       rnd.update(true, options.viewSz)
-      renderCache.set(cacheKey, rnd.clientArea.innerHTML)
+      if (needCache) {
+        renderCache.set(cacheKey, rnd.clientArea.innerHTML)
+      }
     }
   }
 }

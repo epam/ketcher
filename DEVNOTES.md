@@ -84,7 +84,21 @@ The latest version of Ketcher is based on npm workspaces. So before starting dev
 npm install
 ```
 
-After that component library and application should be started separately. First should be started ketcher-core package.
+Then start a Vite dev server in example:
+
+```sh
+cd example
+
+# Standalone
+npm run dev:standalone
+
+# Or remote
+npm run dev:remote
+```
+
+**NB!** We use Vite for development and react-app-rewired(Webpack based) for build. To make sure your implementation has consistent behavior both in development and production, after you finish developing with Vite, you'd better check your implementation with react-app-rewired before creating a new PR. Please follow the following steps:
+
+Component libraries and application should be started separately. First should be started ketcher-core package.
 
 #### Build ketcher-core package
 

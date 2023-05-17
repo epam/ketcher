@@ -21,7 +21,8 @@ import {
   getStereoAtomsMap,
   identifyStructFormat,
   Struct,
-  SupportedFormat
+  SupportedFormat,
+  emitEventRequestIsFinished
 } from 'ketcher-core'
 
 import { supportedSGroupTypes } from './constants'
@@ -73,6 +74,17 @@ function parseStruct(
   } else {
     return Promise.resolve(struct)
   }
+}
+
+// Removing from what should be saved - structure, which was added to paste tool,
+// but not yet rendered on canvas
+export function removeStructAction(): {
+  type: string
+  action?: Record<string, unknown>
+} {
+  const savedSelectedTool = SettingsManager.selectionTool
+
+  return onAction(savedSelectedTool || tools['select-rectangle'].action)
 }
 
 export function load(struct: Struct, options?) {
@@ -144,11 +156,7 @@ export function load(struct: Struct, options?) {
 
       if (fragment) {
         if (parsedStruct.isBlank()) {
-          const savedSelectedTool = SettingsManager.selectionTool
-          dispatch({
-            type: 'ACTION',
-            action: savedSelectedTool || tools['select-rectangle'].action
-          })
+          dispatch(removeStructAction())
         } else {
           dispatch(onAction({ tool: 'paste', opts: parsedStruct }))
         }
@@ -160,6 +168,8 @@ export function load(struct: Struct, options?) {
     } catch (err: any) {
       dispatch(setAnalyzingFile(false))
       err && errorHandler(err.message)
+    } finally {
+      emitEventRequestIsFinished()
     }
   }
 }

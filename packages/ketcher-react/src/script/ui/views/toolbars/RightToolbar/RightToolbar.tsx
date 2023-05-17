@@ -27,6 +27,7 @@ import { basicAtoms } from '../../../action/atoms'
 import classes from './RightToolbar.module.less'
 import clsx from 'clsx'
 import { useInView } from 'react-intersection-observer'
+import { useResizeObserver } from '../../../../../hooks'
 
 const Group: FC<{ className?: string } & PropsWithChildren> = ({
   children,
@@ -50,8 +51,9 @@ type Props = RightToolbarProps & RightToolbarCallProps
 const RightToolbar = (props: Props) => {
   const { className, ...rest } = props
   const { active, onAction, freqAtoms } = rest
-  const [startRef, startInView] = useInView({ threshold: 0.95 })
-  const [endRef, endInView] = useInView({ threshold: 0.8 })
+  const { ref, height } = useResizeObserver<HTMLDivElement>()
+  const [startRef, startInView] = useInView({ threshold: 1 })
+  const [endRef, endInView] = useInView({ threshold: 1 })
   const sizeRef = useRef() as MutableRefObject<HTMLDivElement>
   const scrollRef = useRef() as MutableRefObject<HTMLDivElement>
 
@@ -64,12 +66,17 @@ const RightToolbar = (props: Props) => {
   }
 
   return (
-    <div className={clsx(classes.root, className)}>
+    <div className={clsx(classes.root, className)} ref={ref}>
       <div className={classes.buttons} ref={scrollRef}>
         <Group className={classes.atomsList}>
           <AtomsList
             ref={startRef}
-            atoms={basicAtoms}
+            atoms={basicAtoms.slice(0, 1)}
+            active={active}
+            onAction={onAction}
+          />
+          <AtomsList
+            atoms={basicAtoms.slice(1)}
             active={active}
             onAction={onAction}
           />
@@ -80,17 +87,20 @@ const RightToolbar = (props: Props) => {
         <Group>
           <div ref={sizeRef}>
             <ToolbarGroupItem id="any-atom" {...rest} />
-            <ToolbarGroupItem id="extended-table" {...rest} />
+            <div ref={endRef}>
+              <ToolbarGroupItem id="extended-table" {...rest} />
+            </div>
           </div>
         </Group>
-        <div ref={endRef}></div>
       </div>
-      <ArrowScroll
-        startInView={startInView}
-        endInView={endInView}
-        scrollUp={scrollUp}
-        scrollDown={scrollDown}
-      />
+      {height && scrollRef?.current?.scrollHeight > height && (
+        <ArrowScroll
+          startInView={startInView}
+          endInView={endInView}
+          scrollUp={scrollUp}
+          scrollDown={scrollDown}
+        />
+      )}
     </div>
   )
 }

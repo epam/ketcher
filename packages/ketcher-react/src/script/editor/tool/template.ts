@@ -34,7 +34,7 @@ import {
 import utils from '../shared/utils'
 import Editor from '../Editor'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
-import { MODES } from 'ketcher-react/src/constants'
+import { MODES } from 'src/constants'
 
 type MergeItems = Record<string, Map<unknown, unknown>> | null
 
@@ -194,7 +194,7 @@ class TemplateTool {
     const dragCtx = this.dragCtx
     const ci = dragCtx.item
 
-    if (!ci || this.isSaltOrSolvent) {
+    if (!ci) {
       //  ci.type == 'Canvas'
       delete dragCtx.item
       return
@@ -258,6 +258,11 @@ class TemplateTool {
         null,
         event
       )
+      return true
+    }
+
+    if (this.isSaltOrSolvent) {
+      delete this.dragCtx.item
       return true
     }
 
@@ -436,20 +441,7 @@ class TemplateTool {
     let action, functionalGroupRemoveAction
     let pasteItems = null
 
-    if (this.isSaltOrSolvent) {
-      addSaltsAndSolventsOnCanvasWithoutMerge(
-        restruct,
-        this.template,
-        dragCtx,
-        this.editor
-      )
-      this.editor.hover(
-        this.editor.findItem(event, this.findItems),
-        null,
-        event
-      )
-      return true
-    } else if (
+    if (
       ci?.map === 'functionalGroups' &&
       FunctionalGroup.isContractedFunctionalGroup(
         ci.id,
@@ -458,9 +450,23 @@ class TemplateTool {
       this.isModeFunctionalGroup &&
       this.targetGroupsIds.length
     ) {
-      functionalGroupRemoveAction = new Action()
       const restruct = this.editor.render.ctab
       const functionalGroupToReplace = this.struct.sgroups.get(ci.id)!
+
+      if (
+        this.isSaltOrSolvent &&
+        functionalGroupToReplace.isGroupAttached(this.struct)
+      ) {
+        addSaltsAndSolventsOnCanvasWithoutMerge(
+          restruct,
+          this.template,
+          dragCtx,
+          this.editor
+        )
+        return true
+      }
+
+      functionalGroupRemoveAction = new Action()
       const attachmentAtomId = functionalGroupToReplace.getAttAtomId(
         this.struct
       )
@@ -489,8 +495,18 @@ class TemplateTool {
         dragCtx.action = action
       } else if (ci.map === 'atoms') {
         const degree = restruct.atoms.get(ci.id)?.a.neighbors.length
-        let angle
 
+        if (degree && degree >= 1 && this.isSaltOrSolvent) {
+          addSaltsAndSolventsOnCanvasWithoutMerge(
+            restruct,
+            this.template,
+            dragCtx,
+            this.editor
+          )
+          return true
+        }
+
+        let angle
         if (degree && degree > 1) {
           // common case
           angle = null

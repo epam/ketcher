@@ -227,6 +227,15 @@ export class FunctionalGroup {
     return false
   }
 
+  static getAttachmentPointCount(sGroup, molecule): number {
+    return sGroup.atoms?.reduce((count, currentAtom) => {
+      if (FunctionalGroup.isAttachmentPointAtom(currentAtom, molecule)) {
+        count++
+      }
+      return count
+    }, 0)
+  }
+
   static isFirstAtomInFunctionalGroup(sgroups, aid): boolean {
     for (const sg of sgroups.values()) {
       if (FunctionalGroup.isFunctionalGroup(sg) && aid === sg.atoms[0]) {

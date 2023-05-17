@@ -23,15 +23,12 @@ import {
   ChemicalMimeType
 } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
-import { load, onAction } from './shared'
+import { load, onAction, removeStructAction } from './shared'
 
 import actions from '../action'
-import tools from '../action/tools'
 import keyNorm from '../data/convert/keynorm'
-import { openDialog } from './modal'
 import { isIE } from 'react-device-detect'
 import { handleHotkeyOverItem } from './handleHotkeysOverItem'
-import { SettingsManager } from '../utils/settingsManager'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -45,11 +42,7 @@ export function initKeydownListener(element) {
 function removeNotRenderedStruct(actionTool, group, dispatch) {
   const affectedTools = ['paste', 'template']
   if (affectedTools.includes(actionTool.tool) && group?.includes('save')) {
-    const savedSelectedTool = SettingsManager.selectionTool
-    dispatch({
-      type: 'ACTION',
-      action: savedSelectedTool || tools['select-rectangle'].action
-    })
+    dispatch(removeStructAction())
   }
 }
 
@@ -63,18 +56,10 @@ function keyHandle(dispatch, state, hotKeys, event) {
   const actionTool = actionState.activeTool
 
   const key = keyNorm(event)
-  const atomsSelected = editor.selection() && editor.selection().atoms
 
   let group: any = null
 
-  if (key && key.length === 1 && atomsSelected && key.match(/\w/)) {
-    openDialog(dispatch, 'labelEdit', { letter: key })
-      .then((res) => {
-        dispatch(onAction({ tool: 'atom', opts: res }))
-      })
-      .catch(() => null)
-    event.preventDefault()
-  } else if (key && key.length === 1 && key.match('/')) {
+  if (key && key.length === 1 && key.match('/')) {
     const hotkeyDialogTypes = {
       atoms: actions['atom-props'].action,
       bonds: actions['bond-props'].action
@@ -116,7 +101,11 @@ function keyHandle(dispatch, state, hotKeys, event) {
       // check if atom is currently hovered over
       // in this case we do not want to activate the corresponding tool
       // and just insert the atom directly
-      if (hoveredItem && newAction.tool !== 'select') {
+      if (
+        hoveredItem &&
+        newAction.tool !== 'select' &&
+        newAction.dialog !== 'templates'
+      ) {
         newAction = getCurrentAction(group[index]) || newAction
         handleHotkeyOverItem({
           hoveredItem,

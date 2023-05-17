@@ -15,9 +15,11 @@
  ***************************************************************************/
 
 import {
+  expandSGroupWithMultipleAttachmentPoint,
   fromItemsFuse,
   fromPaste,
   fromTemplateOnAtom,
+  FunctionalGroup,
   getHoverToFuse,
   getItemsToFuse,
   SGroup,
@@ -58,6 +60,12 @@ class PasteTool {
 
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point)
     this.action = action
+    this.editor.update(this.action, true)
+
+    action.mergeWith(
+      expandSGroupWithMultipleAttachmentPoint(this.editor.render.ctab)
+    )
+
     this.editor.update(this.action, true)
 
     this.findItems = ['functionalGroups']
@@ -155,6 +163,16 @@ class PasteTool {
       this.dragCtx.action = action
       this.editor.update(this.dragCtx.action, true)
     } else {
+      // todo delete after supporting expand - collapse for 2 attachment points
+      this.struct.sgroups.forEach((sgroup) => {
+        const countAttachmentPoint = FunctionalGroup.getAttachmentPointCount(
+          sgroup,
+          this.struct
+        )
+        if (countAttachmentPoint > 1) {
+          sgroup.setAttr('expanded', true)
+        }
+      })
       // common paste logic
       const [action, pasteItems] = fromPaste(
         this.editor.render.ctab,

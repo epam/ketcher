@@ -28,6 +28,7 @@ const ItemsContainer = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
+  column-gap: 15px;
 `
 
 const GroupTitle = styled.div`
@@ -51,7 +52,7 @@ const MonomerGroup = (props: MonomerGroupProps) => {
         display: 'flex',
         flexDirection: 'row',
         margin: '0 12px 12px',
-        columnGap: '10px'
+        columnGap: '8px'
       }}>
         {title && (
           <GroupTitle>
@@ -60,9 +61,10 @@ const MonomerGroup = (props: MonomerGroupProps) => {
         )}
         <ItemsContainer>
           {items.map((monomer) => {
+            const key = monomer.props ? `${monomer.props.MonomerName + monomer.props.Name}` : monomer.label
             return (
               <MonomerItem
-                key={monomer.props?.Name || monomer.label}
+                key={key}
                 item={monomer}
                 onClick={() => onItemClick(monomer)}
               />

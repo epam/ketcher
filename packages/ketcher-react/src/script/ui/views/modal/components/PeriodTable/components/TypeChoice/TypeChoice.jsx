@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import classes from './TypeChoice.module.less'
-import { GenericInput } from 'src/script/ui/component/form/input'
+import { GenericInput } from 'src/script/ui/component/form/form/Input/Input'
 
 const typeSchema = [
   { title: 'Single', value: 'atom' },

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Input from './input'
+import Input from './form/Input/Input'
 
 function SelectCheckbox({ schema, ...props }) {
   let currentSchema = schema

@@ -81,6 +81,9 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
       let triggerType: ContextMenuTriggerType
 
       if (!closestItem) {
+        if (selection) {
+          editor.selection(null)
+        }
         return
       } else if (!selection) {
         triggerType = ContextMenuTriggerType.ClosestItem

@@ -92,7 +92,11 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
           selectedSGroupsIds
         })
       ) {
-        triggerType = ContextMenuTriggerType.Selection
+        if (!selection.bonds && !selection.atoms) {
+          triggerType = ContextMenuTriggerType.None
+        } else {
+          triggerType = ContextMenuTriggerType.Selection
+        }
       } else {
         // closestItem is outside of selection
         editor.selection(null)
@@ -100,6 +104,10 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
       }
 
       switch (triggerType) {
+        case ContextMenuTriggerType.None: {
+          return
+        }
+
         case ContextMenuTriggerType.ClosestItem: {
           showProps = getMenuPropsForClosestItem(editor, closestItem)
           break
@@ -151,8 +159,7 @@ const getIsItemInSelection = ({
       return (
         item.map in selection &&
         Array.isArray(selection[item.map]) &&
-        selection[item.map].includes(item.id) &&
-        (selection.bonds || selection.atoms)
+        selection[item.map].includes(item.id)
       )
   }
 }

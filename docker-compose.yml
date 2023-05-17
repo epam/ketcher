@@ -13,6 +13,7 @@ services:
     image: node:18.12.0
     build:
       context: ketcher-autotests
+      dockerfile: ./Dockerfile
     container_name: ketcher-autotest
     volumes:
       - ./ketcher-autotests:/app

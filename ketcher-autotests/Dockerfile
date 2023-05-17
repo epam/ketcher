@@ -6,7 +6,4 @@ WORKDIR /app
 
 COPY . .
 
-ENV CI false
-ENV MODE standalone
-
 RUN npm ci && npx playwright install

@@ -26,7 +26,9 @@
     "serve:standalone": "cd example && npm run serve:standalone",
     "serve": "run-p 'serve:remote' 'serve:standalone'",
     "serve:demo": "cd demo && npm run serve",
-    "docker:build": "docker-compose up --no-start frontend && docker-compose start frontend",
+    "docker:build:frontend": "docker-compose up --no-start frontend && docker-compose start frontend",
+    "docker:build:autotests": "docker-compose build autotests",
+    "docker:build": "npm run docker:build:frontend && npm run docker:build:autotests",
     "docker:down": "docker-compose down"
   },
   "devDependencies": {

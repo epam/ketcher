@@ -85,7 +85,7 @@ selectNestedTool - select specific tool that has sub / nested levels.
 
 ### How to run
 
-1. Build frontend for docker (directory "ketcher"):
+1. Build frontend and autotests for docker (directory "ketcher"):
    - `npm run docker:build`
 2. Run tests in the directory "ketcher-autotests":
    - `npm run docker:test` run all tests

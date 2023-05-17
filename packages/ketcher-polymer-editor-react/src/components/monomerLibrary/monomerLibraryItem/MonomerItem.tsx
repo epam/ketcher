@@ -33,7 +33,7 @@ interface MonomerItemProps {
 const Card = styled.div<{ colorScheme?: string[] }>`
   background: white;
   border-radius: 2px;
-  width: 60px;
+  width: 58px;
   height: 48px;
   text-align: center;
   cursor: pointer;
@@ -45,7 +45,12 @@ const Card = styled.div<{ colorScheme?: string[] }>`
   overflow: hidden;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  margin-right: 10px;
   margin-bottom: 12px;
+
+  &:nth-child(3n) {
+    margin-right: 0;
+  }
 
   &:hover {
     outline: 1px solid #B4B9D6;

@@ -28,7 +28,6 @@ const ItemsContainer = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: normal;
-  column-gap: 10px;
 `
 
 const GroupTitle = styled.div`
@@ -41,6 +40,8 @@ const GroupTitle = styled.div`
   font-size: ${({ theme }) => theme.ketcher.font.size.medium};
   font-family: ${({ theme }) => theme.ketcher.font.family.roboto};
   color: ${({ theme }) => theme.ketcher.color.text};
+  margin-right: 8px;
+  width: 8px;
 `
 
 const MonomerGroup = (props: MonomerGroupProps) => {
@@ -51,8 +52,7 @@ const MonomerGroup = (props: MonomerGroupProps) => {
       <div style={{
         display: 'flex',
         flexDirection: 'row',
-        margin: '0 12px 12px',
-        columnGap: '8px'
+        margin: '0 12px 12px'
       }}>
         {title && (
           <GroupTitle>

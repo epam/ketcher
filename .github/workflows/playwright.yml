@@ -13,7 +13,7 @@ env:
   # See: https://github.com/orgs/community/discussions/25228#discussioncomment-3246960
   CI: false
   MODE: standalone
-  KETCHER_URL: http://localhost:4002
+  KETCHER_URL: http://frontend:4002
 jobs:
   playwright_tests:
     timeout-minutes: 60
@@ -29,12 +29,10 @@ jobs:
         run: npm ci
       - name: Build all packages
         run: npm run build
-      - name: Run example in standalone mode
-        run: cd example/ && nohup npm run serve:standalone &
-      - name: Install playwright browsers and playwright/test
-        run: cd ketcher-autotests/ && npm ci && npx playwright install --with-deps
-      - name: Run playwright tests
-        run: cd ketcher-autotests/ && npm run test:ci
+      - name: Build frontend for docker
+        run: npm run docker:build
+      - name: Run playwright tests in docker
+        run: cd ketcher-autotests/ && npm run docker:test:ci
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()

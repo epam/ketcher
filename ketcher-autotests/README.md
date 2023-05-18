@@ -89,22 +89,23 @@ Docker runs automatically in the pipeline after pushing changes to the repositor
 
 #### If you want to update snapshots based on the rc version:
 
-1. Directory "ketcher-autotests": Set .env variable KETCHER_URL=https://rc.test.lifescience.opensource.epam.com
+1. Directory "ketcher-autotests": Set .env variable KETCHER_URL=link_to_rc
 2. Directory "ketcher": Build autotests for docker:`npm run docker:build:autotests`
-3. Directory "ketcher-autotests": run the snapshot update: `npm run docker:update`
+3. Directory "ketcher-autotests": Run the snapshot update: `npm run docker:update`
 
 #### If you want to update snapshots based on the current frontend version (local)
 
 1. Directory "ketcher": You should build the app: `npm run build` (if you already have "build" of the frontend part on your localhost, you can skip this step )
 2. Directory "ketcher-autotests": Set .env variable KETCHER_URL=http://frontend:4002
 3. Directory "ketcher": Build frontend and autotests for docker: `npm run docker:build`
-4. Directory "ketcher-autotests": run the snapshot update: `npm run docker:update`
+4. Directory "ketcher-autotests": Run the snapshot update: `npm run docker:update`
 
 ### All command in Docker
 
 Run tests in the directory "ketcher-autotests":
 
 - `npm run docker:test` run all tests
+- `npm run docker:test name_test_file` run a specific test (point out filename)
 - `npm run docker:update` run all tests and update snapshots
 - `npm run docker:debug` run all tests with debugging enabled
 

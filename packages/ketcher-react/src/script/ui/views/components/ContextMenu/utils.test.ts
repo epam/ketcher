@@ -23,12 +23,22 @@ describe('Utils', () => {
           undefined,
           false
         ],
-        [{ [REQUIRED_PROP_NAME]: null }, REQUIRED_PROP_NAME, undefined, false],
+        [{ [REQUIRED_PROP_NAME]: null }, REQUIRED_PROP_NAME, undefined, true],
         [
           { [REQUIRED_PROP_NAME]: null, [ANOTHER_PROP_NAME2]: null },
           REQUIRED_PROP_NAME,
           [ANOTHER_PROP_NAME2],
-          false
+          true
+        ],
+        [
+          {
+            [REQUIRED_PROP_NAME]: null,
+            [ANOTHER_PROP_NAME]: null,
+            [ANOTHER_PROP_NAME2]: null
+          },
+          REQUIRED_PROP_NAME,
+          [ANOTHER_PROP_NAME, ANOTHER_PROP_NAME2],
+          true
         ]
       ]
 

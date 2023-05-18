@@ -15,13 +15,13 @@
  ***************************************************************************/
 
 import {
+  expandSGroupWithMultipleAttachmentPoint,
   fromItemsFuse,
   fromPaste,
   fromTemplateOnAtom,
   FunctionalGroup,
   getHoverToFuse,
   getItemsToFuse,
-  setExpandSGroup,
   SGroup,
   Struct,
   Vec2
@@ -62,20 +62,10 @@ class PasteTool {
     this.action = action
     this.editor.update(this.action, true)
 
-    // todo delete after supporting expand - collapse for 2 attachment points
-    struct.sgroups.forEach((sgroup) => {
-      const countAttachmentPoint = FunctionalGroup.getAttachmentPointCount(
-        sgroup,
-        this.editor.render.ctab.molecule
-      )
-      if (countAttachmentPoint > 1) {
-        action.mergeWith(
-          setExpandSGroup(this.editor.render.ctab, sgroup.id, {
-            expanded: true
-          })
-        )
-      }
-    })
+    action.mergeWith(
+      expandSGroupWithMultipleAttachmentPoint(this.editor.render.ctab)
+    )
+
     this.editor.update(this.action, true)
 
     this.findItems = ['functionalGroups']

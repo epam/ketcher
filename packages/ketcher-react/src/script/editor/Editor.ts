@@ -35,7 +35,7 @@ import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 import { Highlighter } from './highlighter'
-import { showFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip'
+import { setFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip'
 import { contextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types'
 import { HoverIcon } from './HoverIcon'
 import RotateController from './tool/rotate-controller'
@@ -384,7 +384,11 @@ class Editor implements KetcherEditor {
 
     if (!event) return
 
-    showFunctionalGroupsTooltip(this)
+    setFunctionalGroupsTooltip({
+      editor: this,
+      event,
+      isShow: true
+    })
   }
 
   update(
@@ -392,6 +396,11 @@ class Editor implements KetcherEditor {
     ignoreHistory?: boolean,
     options = { resizeCanvas: true }
   ) {
+    setFunctionalGroupsTooltip({
+      editor: this,
+      isShow: false
+    })
+
     if (action === true) {
       this.render.update(true, null, options) // force
     } else {
@@ -462,7 +471,7 @@ class Editor implements KetcherEditor {
 
   subscribe(eventName: any, handler: any) {
     const subscriber = {
-      handler: handler
+      handler
     }
 
     switch (eventName) {

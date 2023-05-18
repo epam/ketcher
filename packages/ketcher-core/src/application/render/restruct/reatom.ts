@@ -51,7 +51,15 @@ export enum ShowHydrogenLabels {
   Hetero = 'Hetero',
   Terminal = 'Terminal',
   TerminalAndHetero = 'Terminal and Hetero',
-  On = 'on'
+  On = 'all'
+}
+
+export enum ShowHydrogenLabelNames {
+  Off = 'Off',
+  Hetero = 'Hetero',
+  Terminal = 'Terminal',
+  TerminalAndHetero = 'Terminal and Hetero',
+  On = 'On'
 }
 
 class ReAtom extends ReObject {

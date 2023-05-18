@@ -57,8 +57,8 @@ const LeftToolbar = (props: Props) => {
   const { className, ...rest } = props
   const { ref, height } = useResizeObserver<HTMLDivElement>()
   const scrollRef = useRef() as MutableRefObject<HTMLDivElement>
-  const [startRef, startInView] = useInView({ threshold: 0.8 })
-  const [endRef, endInView] = useInView({ threshold: 0.8 })
+  const [startRef, startInView] = useInView({ threshold: 1 })
+  const [endRef, endInView] = useInView({ threshold: 1 })
   const sizeRef = useRef() as MutableRefObject<HTMLDivElement>
 
   type ItemProps = {
@@ -195,12 +195,14 @@ const LeftToolbar = (props: Props) => {
           <Group className={classes.groupItem} items={[{ id: 'text' }]} />
         </div>
       </div>
-      <ArrowScroll
-        startInView={startInView}
-        endInView={endInView}
-        scrollUp={scrollUp}
-        scrollDown={scrollDown}
-      />
+      {height && scrollRef?.current?.scrollHeight > height && (
+        <ArrowScroll
+          startInView={startInView}
+          endInView={endInView}
+          scrollUp={scrollUp}
+          scrollDown={scrollDown}
+        />
+      )}
     </div>
   )
 }

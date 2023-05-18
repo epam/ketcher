@@ -35,7 +35,7 @@ import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'
 import toolMap from './tool'
 import { Highlighter } from './highlighter'
-import { showFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip'
+import { setFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip'
 import { contextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types'
 import { HoverIcon } from './HoverIcon'
 import RotateController from './tool/rotate-controller'
@@ -228,7 +228,7 @@ class Editor implements KetcherEditor {
 
     const isSelectToolChosen = name === 'select'
     if (!isSelectToolChosen) {
-      this.rotateController.hide()
+      this.rotateController.clean()
     }
 
     if (!tool || tool.isNotActiveTool) {
@@ -321,9 +321,10 @@ class Editor implements KetcherEditor {
     }
 
     let ReStruct = this.render.ctab
-
+    let selectAll = false
     this._selection = null // eslint-disable-line
     if (ci === 'all') {
+      selectAll = true
       // TODO: better way will be this.struct()
       ci = structObjects.reduce((res, key) => {
         res[key] = Array.from(ReStruct[key].keys())
@@ -363,7 +364,12 @@ class Editor implements KetcherEditor {
 
     this.render.ctab.setSelection(this._selection) // eslint-disable-line
     this.event.selectionChange.dispatch(this._selection) // eslint-disable-line
-    this._selection === null && this.rotateController.hide()
+
+    if (selectAll) {
+      this.rotateController.rerender()
+    } else if (this._selection === null) {
+      this.rotateController.clean()
+    }
 
     this.render.update(false, null, { resizeCanvas: false })
     return this._selection // eslint-disable-line
@@ -384,7 +390,11 @@ class Editor implements KetcherEditor {
 
     if (!event) return
 
-    showFunctionalGroupsTooltip(this)
+    setFunctionalGroupsTooltip({
+      editor: this,
+      event,
+      isShow: true
+    })
   }
 
   update(
@@ -392,6 +402,11 @@ class Editor implements KetcherEditor {
     ignoreHistory?: boolean,
     options = { resizeCanvas: true }
   ) {
+    setFunctionalGroupsTooltip({
+      editor: this,
+      isShow: false
+    })
+
     if (action === true) {
       this.render.update(true, null, options) // force
     } else {
@@ -462,7 +477,7 @@ class Editor implements KetcherEditor {
 
   subscribe(eventName: any, handler: any) {
     const subscriber = {
-      handler: handler
+      handler
     }
 
     switch (eventName) {

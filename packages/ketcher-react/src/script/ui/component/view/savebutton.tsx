@@ -30,6 +30,7 @@ type Props = {
   onError?: (err: any) => void
   className?: string
   title?: string
+  disabled?: boolean
 }
 
 type FileSaverReturnType = Promise<
@@ -51,7 +52,8 @@ const SaveButton = (props: SaveButtonProps) => {
     onSave = noop,
     onError = noop,
     className,
-    title
+    title,
+    disabled
   } = props
   const { getKetcherInstance } = useAppContext()
 
@@ -99,6 +101,7 @@ const SaveButton = (props: SaveButtonProps) => {
     <button
       title={title}
       className={className}
+      disabled={disabled}
       onClick={(event) => {
         save(event)
       }}

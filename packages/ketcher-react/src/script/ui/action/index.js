@@ -180,9 +180,9 @@ const config = {
     shortcut: 'Mod+a',
     action: {
       thunk: (dispatch, getState) => {
-        getState().editor.selection('all')
         const selectionTool = getState().toolbar.visibleTools.select
         dispatch({ type: 'ACTION', action: tools[selectionTool].action })
+        getState().editor.selection('all')
       }
     },
     hidden: (options) => isHidden(options, 'select-all')

@@ -33,7 +33,7 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
   const { getKetcherInstance } = useAppContext()
   const { show } = useContextMenu<ContextMenuShowProps>()
 
-  const getSelectedFunctionalGroups = useCallback(() => {
+  const getSelectedGroupsInfo = useCallback(() => {
     const editor = getKetcherInstance().editor as Editor
     const struct = editor.struct()
     const selectedAtomIds = editor.selection()?.atoms
@@ -75,13 +75,14 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
       const closestItem = editor.findItem(event, null)
       const selection = editor.selection()
       const { selectedFunctionalGroups, selectedSGroupsIds } =
-        getSelectedFunctionalGroups()
+        getSelectedGroupsInfo()
 
       let showProps: ContextMenuShowProps = null
       let triggerType: ContextMenuTriggerType
 
       if (!closestItem) {
         if (selection) {
+          // if it was a click outside of any item
           editor.selection(null)
         }
         return
@@ -132,7 +133,7 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
           props: showProps
         })
     },
-    [getKetcherInstance, getSelectedFunctionalGroups, show]
+    [getKetcherInstance, getSelectedGroupsInfo, show]
   )
 
   return (
@@ -233,7 +234,7 @@ function getMenuPropsForClosestItem(
   }
 }
 
-const ENHANCED_FLAGS_MAP_NAME = 'enhancedFlags'
+const IGNORED_MAPS_LIST = ['enhancedFlags']
 
 function getMenuPropsForSelection(
   selection: Selection | null,
@@ -256,17 +257,21 @@ function getMenuPropsForSelection(
     return {
       id: CONTEXT_MENU_ID.FOR_BONDS,
       bondIds: selection.bonds,
-      extraItemsSelected: !onlyHasProperty(selection, 'bonds', [
-        ENHANCED_FLAGS_MAP_NAME
-      ])
+      extraItemsSelected: !onlyHasProperty(
+        selection,
+        'bonds',
+        IGNORED_MAPS_LIST
+      )
     }
   } else if (atomsInSelection && !bondsInSelection) {
     return {
       id: CONTEXT_MENU_ID.FOR_ATOMS,
       atomIds: selection.atoms,
-      extraItemsSelected: !onlyHasProperty(selection, 'atoms', [
-        ENHANCED_FLAGS_MAP_NAME
-      ])
+      extraItemsSelected: !onlyHasProperty(
+        selection,
+        'atoms',
+        IGNORED_MAPS_LIST
+      )
     }
   } else {
     return {

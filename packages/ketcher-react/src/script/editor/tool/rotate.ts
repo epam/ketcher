@@ -58,11 +58,17 @@ class RotateTool {
     }
   }
 
-  mousedown(event) {
+  /**
+   * @param rotatedByHandle when rotated by handle (see: ./rotate-controller),
+   *        starting angle should be `-Math.PI / 2` from the X axis
+   */
+  mousedown(event, rotatedByHandle?: boolean) {
     const xy0 = this.getCenter(this.editor, event)[0]
     this.dragCtx = {
       xy0,
-      angle1: utils.calcAngle(xy0, this.editor.render.page2obj(event))
+      angle1: rotatedByHandle
+        ? -Math.PI / 2
+        : utils.calcAngle(xy0, this.editor.render.page2obj(event))
     }
     return true
   }

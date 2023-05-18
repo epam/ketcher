@@ -1,6 +1,6 @@
 import { Scale, Vec2 } from 'ketcher-core'
+import { throttle } from 'lodash'
 import Editor from '../Editor'
-import utils from '../shared/utils'
 import RotateTool from './rotate'
 import SelectTool from './select'
 
@@ -11,8 +11,6 @@ type RaphaelElement = {
 const STYLE = {
   HANDLE_MARGIN: 15,
   HANDLE_RADIUS: 10,
-  RECT_RADIUS: 20,
-  RECT_PADDING: 10,
   INITIAL_COLOR: '#B4B9D6',
   ACTIVE_COLOR: '#365CFF'
 }
@@ -24,45 +22,73 @@ const RIGHT_ARROW_PATH =
 
 class RotateController {
   private editor: Editor
-  private center?: Vec2
-  private initialHandleCenter?: Vec2
-  private rotateTool?: RotateTool
+  private rotateTool: RotateTool
+  private originalCenter: Vec2
+  private initialHandleCenter: Vec2
+  private protractorRadius: number
 
-  private handle?: RaphaelElement // [circle, arrowSet]
-  private rectangle?: RaphaelElement
+  private handle?: RaphaelElement
+  private boundingRect?: RaphaelElement
   private cross?: RaphaelElement
   private link?: RaphaelElement
+  private protractor?: RaphaelElement
+  private rotateArc?: RaphaelElement
 
   constructor(editor: Editor) {
     this.editor = editor
+    this.originalCenter = new Vec2()
+    this.initialHandleCenter = new Vec2()
+    this.protractorRadius = 0
+    this.rotateTool = new RotateTool(this.editor, undefined, true)
+  }
+
+  private get render() {
+    return this.editor.render
+  }
+
+  private get paper() {
+    return this.render.paper
+  }
+
+  private get center() {
+    return this.originalCenter
+      .scaled(this.render.options.scale)
+      .add(this.render.options.offset)
   }
 
   rerender() {
-    this.hide()
+    this.clean()
 
-    this.rotateTool = new RotateTool(this.editor, undefined, true)
     const [originalCenter, visibleAtoms] = this.rotateTool.getCenter(
       this.editor
     )
 
-    const render = this.editor.render
-    this.center = originalCenter
-      .scaled(render.options.scale)
-      .add(render.options.offset)
-
+    this.originalCenter = originalCenter
     this.show(visibleAtoms)
   }
 
-  hide() {
+  clean() {
     this.handle?.unhover(this.hoverIn, this.hoverOut)
-    this.handle?.unmousedown(this.mouseDown)
-    this.handle?.unmouseup(this.mouseUp)
+    this.handle?.unmousedown(this.dragStart)
+    this.handle?.unmouseup(this.dragEnd)
     this.handle?.undrag()
 
-    this.cross?.hide()
-    this.rectangle?.hide()
-    this.handle?.hide()
-    this.link?.hide()
+    this.cross?.remove()
+    delete this.cross
+    this.boundingRect?.remove()
+    delete this.boundingRect
+    this.link?.remove()
+    delete this.link
+    this.handle?.remove()
+    delete this.handle
+    this.protractor?.remove()
+    delete this.protractor
+    this.rotateArc?.remove()
+    delete this.rotateArc
+
+    this.originalCenter = new Vec2()
+    this.initialHandleCenter = new Vec2()
+    this.protractorRadius = 0
   }
 
   private show(visibleAtoms: number[]) {
@@ -73,24 +99,25 @@ class RotateController {
     }
 
     this.drawCross()
-    const rectStartY = this.drawRectangle(visibleAtoms)
-    this.drawLink(rectStartY)
+    const rectStartY = this.drawBoundingRect(visibleAtoms)
+    this.protractorRadius = this.center.y - rectStartY
+    this.drawShortLink()
     this.drawHandle()
+    this.initRotateArc()
 
-    // NOTE: remember to remove all listeners before calling `hide()`
     this.handle?.hover(this.hoverIn, this.hoverOut)
-    this.handle?.mousedown(this.mouseDown)
-    this.handle?.mouseup(this.mouseUp)
+    this.handle?.mousedown(this.dragStart)
+    this.handle?.mouseup(this.dragEnd)
     this.handle?.drag(
-      this.dragMove(),
+      this.dragMove,
       undefined,
-      this.mouseUp // Fix rotation getting stuck when mouseup outside window
+      this.dragEnd // Fix rotation getting stuck when mouseup outside window
     )
   }
 
   private drawCross() {
-    const moveToCenter = `M${this.center?.x}, ${this.center?.y}`
-    this.cross = this.editor.render.paper
+    const moveToCenter = `M${this.center.x}, ${this.center.y}`
+    this.cross = this.paper
       .path(
         moveToCenter +
           `h8` +
@@ -108,38 +135,46 @@ class RotateController {
       })
   }
 
-  private drawRectangle(visibleAtoms: number[]) {
-    const render = this.editor.render
+  private updateCrossPosition() {
+    const moveToCenter = `M${this.center.x}, ${this.center.y}`
+    this.cross?.attr({
+      path:
+        moveToCenter +
+        `h8` +
+        moveToCenter +
+        `h-8` +
+        moveToCenter +
+        `v8` +
+        moveToCenter +
+        `v-8`
+    })
+  }
 
-    const rectBox = render.ctab
+  private drawBoundingRect(visibleAtoms: number[]) {
+    const RECT_RADIUS = 20
+    const RECT_PADDING = 10
+
+    const rectBox = this.render.ctab
       .getVBoxObj({ atoms: visibleAtoms })!
-      .transform(Scale.obj2scaled, render.options)
-      .translate(render.options.offset || new Vec2())
+      .transform(Scale.obj2scaled, this.render.options)
+      .translate(this.render.options.offset || new Vec2())
 
     const rectStartX =
-      rectBox.p0.x -
-      STYLE.RECT_PADDING -
-      render.options.atomSelectionPlateRadius
+      rectBox.p0.x - RECT_PADDING - this.render.options.atomSelectionPlateRadius
     const rectStartY =
-      rectBox.p0.y -
-      STYLE.RECT_PADDING -
-      render.options.atomSelectionPlateRadius
+      rectBox.p0.y - RECT_PADDING - this.render.options.atomSelectionPlateRadius
     const rectEndX =
-      rectBox.p1.x +
-      STYLE.RECT_PADDING +
-      render.options.atomSelectionPlateRadius
+      rectBox.p1.x + RECT_PADDING + this.render.options.atomSelectionPlateRadius
     const rectEndY =
-      rectBox.p1.y +
-      STYLE.RECT_PADDING +
-      render.options.atomSelectionPlateRadius
+      rectBox.p1.y + RECT_PADDING + this.render.options.atomSelectionPlateRadius
 
-    this.rectangle = render.paper
+    this.boundingRect = this.paper
       .rect(
         rectStartX,
         rectStartY,
         rectEndX - rectStartX,
         rectEndY - rectStartY,
-        STYLE.RECT_RADIUS
+        RECT_RADIUS
       )
       .attr({
         'stroke-dasharray': '-',
@@ -150,45 +185,39 @@ class RotateController {
   }
 
   private drawHandle() {
-    const paper = this.editor.render.paper
-
-    const circle = paper.circle(0, 0, STYLE.HANDLE_RADIUS).attr({
+    const circle = this.paper.circle(0, 0, STYLE.HANDLE_RADIUS).attr({
       fill: STYLE.INITIAL_COLOR,
       stroke: 'none'
     })
 
-    const leftArrow = paper
+    const leftArrow = this.paper
       .path(LEFT_ARROW_PATH)
       .attr({ fill: 'white', stroke: 'none' })
-    const rightArrow = paper
+    const rightArrow = this.paper
       .path(RIGHT_ARROW_PATH)
       .attr({ fill: 'white', stroke: 'none' })
-    const arrowSet: RaphaelElement = paper.set()
+    const arrowSet: RaphaelElement = this.paper.set()
     arrowSet.push(leftArrow, rightArrow)
     const { x, y, width, height } = arrowSet.getBBox()
     arrowSet.translate(-(x + width / 2), -(y + height / 2))
 
-    this.handle = paper.set() as RaphaelElement
+    this.handle = this.paper.set() as RaphaelElement
     this.handle.push(circle, arrowSet)
     this.handle.translate(
-      this.initialHandleCenter?.x,
-      this.initialHandleCenter?.y
+      this.initialHandleCenter.x,
+      this.initialHandleCenter.y
     )
   }
 
-  private drawLink(rectStartY: number) {
-    if (!this.center) {
-      return
-    }
-
+  private drawShortLink() {
     const distanceBetweenHandleAndCenter =
-      this.center.y - rectStartY + STYLE.HANDLE_MARGIN + STYLE.HANDLE_RADIUS
+      this.protractorRadius + STYLE.HANDLE_MARGIN + STYLE.HANDLE_RADIUS
     this.initialHandleCenter = new Vec2(
       this.center.x,
       this.center.y - distanceBetweenHandleAndCenter
     )
 
-    this.link = this.editor.render.paper
+    this.link = this.paper
       .path(
         `M${this.initialHandleCenter.x},${this.initialHandleCenter.y}` +
           `l0,${STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN}`
@@ -199,6 +228,144 @@ class RotateController {
       })
   }
 
+  private redrawProtractor(structRotateDegree: number) {
+    this.protractor?.remove()
+    this.drawProtractor(structRotateDegree)
+  }
+
+  private drawProtractor(structRotateDegree: number) {
+    const DEGREE_TEXT_MARGIN = 10
+    const PROTRACTOR_COLOR = '#E1E5EA'
+    const DEGREE_FONT_SIZE = 12
+
+    const circle = this.paper
+      .circle(this.center.x, this.center.y, this.protractorRadius)
+      .attr({
+        'stroke-dasharray': '-',
+        stroke: PROTRACTOR_COLOR
+      })
+
+    this.protractor = this.paper.set() as RaphaelElement
+    this.protractor.push(circle)
+
+    const degree0TextY =
+      this.center.y -
+      this.protractorRadius -
+      STYLE.HANDLE_MARGIN -
+      STYLE.HANDLE_RADIUS * 2 -
+      DEGREE_TEXT_MARGIN
+    const degree0Line = this.paper
+      .path(
+        `M${this.center.x},${this.center.y - this.protractorRadius}` +
+          `v-${
+            this.protractorRadius >= 65
+              ? STYLE.HANDLE_MARGIN
+              : STYLE.HANDLE_MARGIN / 2
+          }`
+      )
+      .attr({
+        'stroke-dasharray': '-'
+      })
+    let degreeLine = degree0Line
+    let textPos = new Vec2(this.center.x, degree0TextY)
+
+    const predefinedDegrees = [
+      0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60, -45,
+      -30
+    ]
+    predefinedDegrees.reduce((previousDegree, currentDegree, currentIndex) => {
+      const isDrawingDegree0 = currentIndex === 0
+      const gap = currentDegree - previousDegree
+      const diff = getDifference(currentDegree, structRotateDegree)
+
+      if (!isDrawingDegree0) {
+        degreeLine = degreeLine
+          .clone()
+          .rotate(gap, this.center.x, this.center.y)
+      }
+
+      degreeLine.attr({
+        stroke: diff > 90 ? 'none' : PROTRACTOR_COLOR
+      })
+      this.protractor?.push(degreeLine)
+
+      if (this.protractorRadius < 65) {
+        return currentDegree
+      }
+
+      textPos = rotatePoint(this.center, textPos, (gap / 180) * Math.PI)
+      const degreeText = this.paper
+        .text(textPos.x, textPos.y, `${currentDegree}°`)
+        .attr({
+          fill:
+            diff > 90
+              ? 'none'
+              : currentDegree !== 0 && currentDegree === structRotateDegree
+              ? STYLE.ACTIVE_COLOR
+              : STYLE.INITIAL_COLOR,
+          'font-size': DEGREE_FONT_SIZE
+        })
+
+      this.protractor?.push(degreeText)
+
+      return currentDegree
+    }, -1)
+
+    this.protractor.toBack()
+  }
+
+  private initRotateArc() {
+    const arc = this.paper.path()
+    const text = this.paper.text(0, 0, '')
+
+    this.rotateArc = this.paper.set().push(arc, text)
+  }
+
+  private drawRotateArc(structRotateDegree: number) {
+    if (!this.rotateArc) {
+      return
+    }
+
+    const rotateArcStart = new Vec2(
+      this.center.x,
+      this.center.y - this.protractorRadius
+    )
+    const rotateArcEnd = rotatePoint(
+      this.center,
+      rotateArcStart,
+      (structRotateDegree / 180) * Math.PI
+    )
+
+    const arc = this.rotateArc[0]
+    const text = this.rotateArc[1]
+
+    const TEXT_MARGIN_LEFT = 8
+    const TEXT_MARGIN_BOTTOM = 12
+    const TEXT_FONT_SIZE = 16
+    const TEXT_COLOR = '#333333'
+
+    // Doc: https://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands
+    arc
+      .attr({
+        path:
+          `M${rotateArcStart.x},${rotateArcStart.y}` +
+          `A${this.protractorRadius},${this.protractorRadius} ` +
+          `0 0,${structRotateDegree < 0 ? '0' : '1'} ` +
+          `${rotateArcEnd.x},${rotateArcEnd.y}`,
+        stroke: STYLE.ACTIVE_COLOR
+      })
+      .toBack()
+
+    text.attr({
+      text: `${structRotateDegree}°`,
+      'text-anchor': 'start',
+      x: this.center.x + TEXT_MARGIN_LEFT,
+      y: this.center.y - this.protractorRadius - TEXT_MARGIN_BOTTOM,
+      'font-size': TEXT_FONT_SIZE,
+      fill: TEXT_COLOR
+    })
+  }
+
   // NOTE: When handle is non-arrow function, `this` is element itself
   private hoverIn = (event: MouseEvent) => {
     const isSomeButtonPressed = event.buttons !== 0
@@ -206,12 +373,15 @@ class RotateController {
       return
     }
 
+    const isDragPaused = !this.boundingRect
+
     this.handle?.attr({
-      cursor: 'grab'
+      cursor: isDragPaused ? 'not-allowed' : 'grab'
     })
+
     const circle = this.handle?.[0]
     circle.attr({
-      fill: STYLE.ACTIVE_COLOR
+      fill: isDragPaused ? STYLE.INITIAL_COLOR : STYLE.ACTIVE_COLOR
     })
   }
 
@@ -227,83 +397,138 @@ class RotateController {
     })
   }
 
-  private mouseDown = (event: MouseEvent) => {
-    event.stopPropagation() // avoid triggering SelectTool's mousedown
+  private dragStart = (event: MouseEvent) => {
+    event.stopPropagation() // Avoid triggering SelectTool's mousedown
 
     const isLeftButtonPressed = event.buttons === 1
     if (!isLeftButtonPressed) {
       return
     }
 
+    const isDragPaused = !this.boundingRect
+    if (isDragPaused) {
+      // Fix protractor staying after screenshot/being paused
+      // see https://github.com/epam/ketcher/pull/2574#issuecomment-1539201020
+      this.clean()
+      return
+    }
+
+    this.boundingRect?.remove()
+    delete this.boundingRect
+
+    this.drawProtractor(0)
+
     this.cross?.attr({
       stroke: STYLE.ACTIVE_COLOR
     })
+
     this.link?.attr({
       path:
-        `M${this.center?.x},${this.center?.y}` +
-        `L${this.initialHandleCenter?.x},${this.initialHandleCenter?.y}`,
+        `M${this.center.x},${this.center.y}` +
+        `L${this.initialHandleCenter.x},${this.initialHandleCenter.y}`,
       stroke: STYLE.ACTIVE_COLOR
     })
+
     this.handle?.attr({
       cursor: 'grabbing'
     })
+
     const arrowSet = this.handle?.[1]
     arrowSet?.attr({ fill: 'none' })
 
-    this.rotateTool?.mousedown(event)
+    this.rotateTool.mousedown(event, true)
   }
 
-  private dragMove = () => {
-    let lastHandleCenter = this.initialHandleCenter
-    let lastRotateAngle = utils.calcAngle(lastHandleCenter, this.center)
-
-    return (
-      dxFromStart: number,
-      dyFromStart: number,
+  private dragMove = throttle(
+    (
+      _dxFromStart: number,
+      _dyFromStart: number,
       _clientX: number,
       _clientY: number,
       event: MouseEvent
     ) => {
       const isLeftButtonPressed = event.buttons === 1
-      if (!lastHandleCenter || !isLeftButtonPressed) {
+      if (
+        !isLeftButtonPressed ||
+        !this.protractor // Fix `dragMove` being called without `dragStart` being called first when DnDing very fast
+      ) {
         return
       }
 
-      const options = this.editor.render.options
-      const newHandleCenter = this.initialHandleCenter?.add(
-        new Vec2(dxFromStart, dyFromStart).scaled(1 / options.zoom) // HACK: zoom in/out
-      )
+      const newHandleCenter = this.render
+        .page2obj(event)
+        .scaled(this.render.options.scale)
+        .add(this.render.options.offset)
 
-      const delta = newHandleCenter?.sub(lastHandleCenter)
-      this.handle?.translate(delta?.x, delta?.y)
-      this.handle?.attr({
-        cursor: 'grabbing'
-      })
       this.link?.attr({
         path:
-          `M${this.center?.x},${this.center?.y}` +
-          `L${newHandleCenter?.x},${newHandleCenter?.y}`,
+          `M${this.center.x},${this.center.y}` +
+          `L${newHandleCenter.x},${newHandleCenter.y}`,
         stroke: STYLE.ACTIVE_COLOR
       })
 
-      const newRotateAngle = utils.calcAngle(newHandleCenter, this.center)
-      const rotateDegree = utils.degrees(newRotateAngle - lastRotateAngle)
-      this.cross?.rotate(rotateDegree, this.center?.x, this.center?.y)
-      this.rectangle?.rotate(rotateDegree, this.center?.x, this.center?.y)
+      this.handle
+        ?.transform('')
+        .translate(newHandleCenter.x, newHandleCenter.y)
+        .attr({
+          cursor: 'grabbing'
+        })
 
-      lastHandleCenter = newHandleCenter
-      lastRotateAngle = newRotateAngle
+      this.updateCrossPosition()
 
-      this.rotateTool?.mousemove(event)
-    }
-  }
+      this.rotateTool.mousemove(event)
 
-  private mouseUp = (event: MouseEvent) => {
-    event.stopPropagation() // avoid triggering SelectTool's mouseup
+      const newProtractorRadius =
+        Vec2.dist(newHandleCenter, this.center) -
+        STYLE.HANDLE_MARGIN -
+        STYLE.HANDLE_RADIUS
+      this.protractorRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0
+      this.drawRotateArc(this.rotateTool.dragCtx?.angle || 0)
+      // NOTE: draw protractor last
+      this.redrawProtractor(this.rotateTool.dragCtx?.angle || 0)
+    },
+    40 // 25fps
+  )
 
-    this.rotateTool?.mouseup()
+  private dragEnd = (event: MouseEvent) => {
+    event.stopPropagation() // Avoid triggering SelectTool's mouseup
+
+    this.rotateTool.mouseup()
     this.rerender()
   }
 }
 
 export default RotateController
+
+const rotatePoint = (centerPoint: Vec2, startPoint: Vec2, angle: number) => {
+  const oCenter = centerPoint
+  const oStart = startPoint
+
+  const centerStart = oStart.sub(oCenter)
+  const centerEnd = centerStart.rotate(angle)
+
+  const oEnd = oCenter.add(centerEnd)
+  return oEnd
+}
+
+export const getDifference = (
+  currentDegree: number,
+  structRotateDegree: number
+) => {
+  let abs = 0
+
+  // HACK: https://github.com/epam/ketcher/pull/2574#issuecomment-1539509046
+  if (structRotateDegree > 90) {
+    const positiveCurrentDegree =
+      currentDegree < 0 ? currentDegree + 360 : currentDegree
+    abs = Math.abs(positiveCurrentDegree - structRotateDegree)
+  } else if (structRotateDegree < -90) {
+    const negativeCurrentDegree =
+      currentDegree > 0 ? currentDegree - 360 : currentDegree
+    abs = Math.abs(negativeCurrentDegree - structRotateDegree)
+  } else {
+    abs = Math.abs(currentDegree - structRotateDegree)
+  }
+
+  return abs
+}

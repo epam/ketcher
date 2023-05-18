@@ -33,7 +33,7 @@ describe('Utils', () => {
       ]
 
     it.each(testTable)(
-      'Should check that only required field is present in the object except ignore list',
+      'Should check that only a required field is present in the object except ignore list',
       (testObject, requiredPropName, ignoreList, expectedResult) => {
         const result = onlyHasProperty(testObject, requiredPropName, ignoreList)
         expect(result).toBe(expectedResult)

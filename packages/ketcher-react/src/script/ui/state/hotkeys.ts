@@ -121,8 +121,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
         })
       } else {
         if (newAction.tool === 'select') {
-          const savedSelectionTool = SettingsManager.getSettings().selectionTool
-          newAction = savedSelectionTool
+          newAction = SettingsManager.getSettings().selectionTool
         }
 
         dispatch(onAction(newAction))

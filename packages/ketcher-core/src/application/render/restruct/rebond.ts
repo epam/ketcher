@@ -92,6 +92,7 @@ class ReBond extends ReObject {
   }
 
   static bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
+    if (!bond) return
     const render = restruct.render
     const atom1 = restruct.atoms.get(bond.b.begin)
     const atom2 = restruct.atoms.get(bond.b.end)

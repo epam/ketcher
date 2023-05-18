@@ -76,23 +76,37 @@ selectNestedTool - select specific tool that has sub / nested levels.
 
 ## Docker
 
-### Prerequisites
+Docker runs automatically in the pipeline after pushing changes to the repository. (It runs tests on the current version of frontend)
+
+### How to update snapshots?
+
+**Prerequisites:**
 
 - Docker Desktop
   - How to install for Mac OS: https://docs.docker.com/desktop/install/mac-install/
   - How to install for Windows: https://docs.docker.com/desktop/install/windows-install/
   - How to install for Linux: https://docs.docker.com/desktop/install/linux-install/
-- You should build the app (`npm run build` from directory "ketcher")
-- Set .env variable KETCHER_URL=http://frontend:4002 in "ketcher-autotests"
 
-### How to run
+#### If you want to update snapshots based on the rc version:
 
-1. Build frontend and autotests for docker (directory "ketcher"):
-   - `npm run docker:build`
-2. Run tests in the directory "ketcher-autotests":
-   - `npm run docker:test` run all tests
-   - `npm run docker:update` run all tests and update snapshots
-   - `npm run docker:debug` run all tests with debugging enabled
+1. Directory "ketcher-autotests": Set .env variable KETCHER_URL=https://rc.test.lifescience.opensource.epam.com
+2. Directory "ketcher": Build autotests for docker:`npm run docker:build:autotests`
+3. Directory "ketcher-autotests": run the snapshot update: `npm run docker:update`
+
+#### If you want to update snapshots based on the current frontend version (local)
+
+1. Directory "ketcher": You should build the app: `npm run build` (if you already have "build" of the frontend part on your localhost, you can skip this step )
+2. Directory "ketcher-autotests": Set .env variable KETCHER_URL=http://frontend:4002
+3. Directory "ketcher": Build frontend and autotests for docker: `npm run docker:build`
+4. Directory "ketcher-autotests": run the snapshot update: `npm run docker:update`
+
+### All command in Docker
+
+Run tests in the directory "ketcher-autotests":
+
+- `npm run docker:test` run all tests
+- `npm run docker:update` run all tests and update snapshots
+- `npm run docker:debug` run all tests with debugging enabled
 
 - if your command doesn't exist in package.json and you want to run it in the docker container: `npm run docker any_command`
 - if you want to **stop** docker, run the next command in the directory "ketcher": `npm run docker:down`

@@ -16,7 +16,7 @@
 
 import React, { PureComponent, ComponentType, useRef, useEffect } from 'react'
 
-import classes from './input.module.less'
+import classes from './Input.module.less'
 import clsx from 'clsx'
 
 type Props = {
@@ -84,8 +84,8 @@ GenericInput.val = function (ev, schema) {
   return isNumber && !isNaN(value - 0) ? value - 0 : value // eslint-disable-line
 }
 
-function TextArea({ schema, value, onChange, ...rest }) {
-  return <textarea value={value} onInput={onChange} {...rest} />
+function TextArea({ schema, value, onChange, innerRef, ...rest }) {
+  return <textarea value={value} ref={innerRef} onInput={onChange} {...rest} />
 }
 
 TextArea.val = (ev) => ev.target.value
@@ -210,10 +210,11 @@ FieldSet.val = function (ev, schema) {
   return input.type === 'radio' ? result[0] : result
 }
 
-function Slider({ value, onChange, name, ...rest }) {
+function Slider({ value, onChange, name, innerRef, ...rest }) {
   return (
     <div className={classes.slider} key={name}>
       <input
+        ref={innerRef}
         type="checkbox"
         checked={value}
         onClick={onChange}
@@ -314,16 +315,17 @@ function ctrlMap(component, props: Props) {
 
 function componentMap(props: Props) {
   const { schema, type, multiple } = props
+
+  if (schema?.type === 'boolean' && schema?.description === 'slider') {
+    return Slider
+  }
+
   if (!schema || (!schema.enum && !schema.items && !Array.isArray(schema))) {
     if (type === 'checkbox' || (schema && schema.type === 'boolean')) {
       return CheckBox
     }
 
     return type === 'textarea' ? TextArea : GenericInput
-  }
-
-  if (schema?.type === 'boolean' && schema?.description === 'slider') {
-    return Slider
   }
 
   if (multiple || schema.type === 'array')
@@ -355,12 +357,11 @@ class Input extends PureComponent<
   }
 
   render() {
-    const { children, onChange, ...restProps } = this.props
-
+    const { children, onChange, innerRef, ...restProps } = this.props
     return (
       <AnyComponentWithRef
         Component={this.component}
-        ref={this.props.innerRef}
+        ref={innerRef}
         {...this.ctrl}
         {...restProps}
       />
@@ -369,7 +370,7 @@ class Input extends PureComponent<
 }
 
 export default React.forwardRef(
-  (props: Props, ref: React.Ref<HTMLInputElement>) => (
-    <Input innerRef={ref} {...props} />
-  )
+  (props: Props, ref: React.Ref<HTMLInputElement>) => {
+    return <Input innerRef={ref} {...props} />
+  }
 )

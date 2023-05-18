@@ -78,8 +78,10 @@ selectNestedTool - select specific tool that has sub / nested levels.
 
 ### Prerequisites
 
-- Docker
-- Docker-compose
+- Docker Desktop
+  - How to install for Mac OS: https://docs.docker.com/desktop/install/mac-install/
+  - How to install for Windows: https://docs.docker.com/desktop/install/windows-install/
+  - How to install for Linux: https://docs.docker.com/desktop/install/linux-install/
 - You should build the app (`npm run build` from directory "ketcher")
 - Set .env variable KETCHER_URL=http://frontend:4002 in "ketcher-autotests"
 
@@ -92,4 +94,5 @@ selectNestedTool - select specific tool that has sub / nested levels.
    - `npm run docker:update` run all tests and update snapshots
    - `npm run docker:debug` run all tests with debugging enabled
 
+- if your command doesn't exist in package.json and you want to run it in the docker container: `npm run docker any_command`
 - if you want to **stop** docker, run the next command in the directory "ketcher": `npm run docker:down`

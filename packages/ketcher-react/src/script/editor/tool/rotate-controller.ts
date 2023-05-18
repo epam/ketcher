@@ -30,6 +30,7 @@ class RotateController {
   private originalCenter!: Vec2
   private normalizedCenterInitialHandleVec!: Vec2
   private handleCenter!: Vec2
+  private initialRadius!: number
   private isRotating!: boolean
   private isMovingCenter!: boolean
 
@@ -50,6 +51,7 @@ class RotateController {
     this.originalCenter = new Vec2()
     this.normalizedCenterInitialHandleVec = new Vec2()
     this.handleCenter = new Vec2()
+    this.initialRadius = 0
     this.isRotating = false
     this.isMovingCenter = false
   }
@@ -146,7 +148,7 @@ class RotateController {
     this.handle?.mousedown(this.dragStart)
     this.handle?.mouseup(this.dragEnd)
     this.handle?.drag(
-      this.dragMove,
+      this.dragMove(),
       undefined,
       this.dragEnd // Fix rotation getting stuck when mouseup outside window
     )
@@ -572,9 +574,11 @@ class RotateController {
       Vec2.dist(this.handleCenter, this.center) -
       STYLE.HANDLE_MARGIN -
       STYLE.HANDLE_RADIUS
-    const radius = newProtractorRadius >= 0 ? newProtractorRadius : 0
-    const [degree0Line, degree0TextPos] = this.getProtractorBaseInfo(radius)
-    this.drawProtractor(0, radius, degree0Line, degree0TextPos)
+    this.initialRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0
+    const [degree0Line, degree0TextPos] = this.getProtractorBaseInfo(
+      this.initialRadius
+    )
+    this.drawProtractor(0, this.initialRadius, degree0Line, degree0TextPos)
 
     this.drawCross('active')
     this.drawLink('long')
@@ -586,52 +590,65 @@ class RotateController {
     this.rotateTool.mousedown(event, originalHandleCenter, this.originalCenter)
   }
 
-  private dragMove = throttle(
-    (
-      _dxFromStart: number,
-      _dyFromStart: number,
-      _clientX: number,
-      _clientY: number,
-      event: MouseEvent
-    ) => {
-      if (!this.isRotating) {
-        return
-      }
+  private dragMove = () => {
+    let lastSnappingRadius: number | undefined
+    return throttle(
+      (
+        _dxFromStart: number,
+        _dyFromStart: number,
+        _clientX: number,
+        _clientY: number,
+        event: MouseEvent
+      ) => {
+        if (!this.isRotating) {
+          return
+        }
 
-      this.handleCenter = this.render
-        .page2obj(event)
-        .scaled(this.render.options.scale)
-        .add(this.render.options.offset)
+        this.handleCenter = this.render
+          .page2obj(event)
+          .scaled(this.render.options.scale)
+          .add(this.render.options.offset)
 
-      this.drawLink('moveHandle')
-      this.drawHandle('move')
-      this.drawCross('move')
+        this.drawLink('moveHandle')
+        this.drawHandle('move')
+        this.drawCross('move')
 
-      this.rotateTool.mousemove(event)
+        this.rotateTool.mousemove(event)
 
-      const newProtractorRadius =
-        Vec2.dist(this.handleCenter, this.center) -
-        STYLE.HANDLE_MARGIN -
-        STYLE.HANDLE_RADIUS
-      const radius = newProtractorRadius >= 0 ? newProtractorRadius : 0
-      const [degree0Line, degree0TextPos, rotateArcStart, textPos] =
-        this.getProtractorBaseInfo(radius)
-      this.drawRotateArc(
-        this.rotateTool.dragCtx?.angle || 0,
-        radius,
-        rotateArcStart,
-        textPos
-      )
-      // NOTE: draw protractor last
-      this.drawProtractor(
-        this.rotateTool.dragCtx?.angle || 0,
-        radius,
-        degree0Line,
-        degree0TextPos
-      )
-    },
-    40 // 25fps
-  )
+        const newProtractorRadius =
+          Vec2.dist(this.handleCenter, this.center) -
+          STYLE.HANDLE_MARGIN -
+          STYLE.HANDLE_RADIUS
+        let newRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0
+        lastSnappingRadius = lastSnappingRadius ?? this.initialRadius
+        if (
+          newRadius >= lastSnappingRadius * 1.4 ||
+          newRadius <= lastSnappingRadius / 1.4
+        ) {
+          lastSnappingRadius = newRadius
+        } else {
+          newRadius = lastSnappingRadius
+        }
+
+        const [degree0Line, degree0TextPos, rotateArcStart, textPos] =
+          this.getProtractorBaseInfo(newRadius)
+        this.drawRotateArc(
+          this.rotateTool.dragCtx?.angle || 0,
+          newRadius,
+          rotateArcStart,
+          textPos
+        )
+        // NOTE: draw protractor last
+        this.drawProtractor(
+          this.rotateTool.dragCtx?.angle || 0,
+          newRadius,
+          degree0Line,
+          degree0TextPos
+        )
+      },
+      40 // 25fps
+    )
+  }
 
   private dragEnd = (event: MouseEvent) => {
     event.stopPropagation() // Avoid triggering SelectTool's mouseup

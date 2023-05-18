@@ -12,7 +12,7 @@
   "scripts": {
     "postinstall": "husky install",
     "precommit": "lint-staged --allow-empty && npm run prettier:write --workspaces --if-present",
-    "prepush": "npm run test:eslint --workspaces --if-present",
+    "prepush": "npm run test --workspaces --if-present",
     "build": "npm run build:packages && npm run build:example",
     "build:core": "npm run build -w ketcher-core",
     "build:standalone": "npm run build -w ketcher-standalone",

@@ -1065,7 +1065,10 @@ export class Struct {
 
   bindSGroupsToFunctionalGroups() {
     this.sgroups.forEach((sgroup) => {
-      if (FunctionalGroup.isFunctionalGroup(sgroup)) {
+      if (
+        FunctionalGroup.isFunctionalGroup(sgroup) ||
+        SGroup.isSuperAtom(sgroup)
+      ) {
         this.functionalGroups.add(new FunctionalGroup(sgroup))
       }
     })

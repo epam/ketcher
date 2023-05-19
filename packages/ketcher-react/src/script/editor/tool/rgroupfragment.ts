@@ -22,9 +22,10 @@ import {
   FunctionalGroup
 } from 'ketcher-core'
 import Editor from '../Editor'
+import { AbstractTool } from './AbstractTool'
 
-class RGroupFragmentTool {
-  editor: Editor
+class RGroupFragmentTool implements AbstractTool {
+  private readonly editor: Editor
 
   constructor(editor) {
     // TODO: check if it's a fragments already

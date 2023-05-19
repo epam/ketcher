@@ -18,16 +18,18 @@ import {
   fromMultipleMove,
   fromSimpleObjectAddition,
   fromSimpleObjectDeletion,
-  fromSimpleObjectResizing
+  fromSimpleObjectResizing,
+  SimpleObjectMode
 } from 'ketcher-core'
 import Editor from '../Editor'
+import { AbstractTool } from './AbstractTool'
 
-class SimpleObjectTool {
-  mode: any
-  editor: Editor
-  dragCtx: any
+class SimpleObjectTool implements AbstractTool {
+  private readonly mode: SimpleObjectMode
+  private readonly editor: Editor
+  private dragCtx: any
 
-  constructor(editor, mode) {
+  constructor(editor: Editor, mode: SimpleObjectMode) {
     this.mode = mode
     this.editor = editor
     this.editor.selection(null)

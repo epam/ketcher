@@ -30,12 +30,13 @@ import {
 
 import Editor from '../Editor'
 import utils from '../shared/utils'
+import { AbstractTool } from './AbstractTool'
 
-class AtomTool {
-  editor: Editor
-  atomProps: any
-  dragCtx: any
-  #bondProps: { stereo: number; type: number }
+class AtomTool implements AbstractTool {
+  private readonly editor: Editor
+  private readonly atomProps: any
+  private dragCtx: any
+  readonly #bondProps: { stereo: number; type: number }
   isNotActiveTool: boolean | undefined
 
   constructor(editor, atomProps) {

@@ -37,7 +37,7 @@ import SimpleObjectTool from './simpleobject'
 import TemplateTool from './template'
 import TextTool from './text'
 
-const tools = {
+export const toolsMap = {
   hand: HandTool,
   rgroupatom: RGroupAtomTool,
   select: SelectTool,
@@ -61,5 +61,3 @@ const tools = {
   simpleobject: SimpleObjectTool,
   text: TextTool
 }
-
-export default tools

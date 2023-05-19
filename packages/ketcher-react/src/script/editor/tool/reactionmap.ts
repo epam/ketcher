@@ -16,12 +16,12 @@
 
 import { Action, Scale, fromAtomsAttrs } from 'ketcher-core'
 import Editor from '../Editor'
+import { AbstractTool } from './AbstractTool'
 
-class ReactionMapTool {
-  editor: Editor
-  rcs: any
-  dragCtx: any
-  line: any
+class ReactionMapTool implements AbstractTool {
+  private readonly editor: Editor
+  private dragCtx: any
+  private line: any
 
   constructor(editor) {
     this.editor = editor
@@ -30,7 +30,6 @@ class ReactionMapTool {
 
   mousedown(event) {
     const rnd = this.editor.render
-    this.rcs = rnd.ctab.molecule.getComponents()
 
     const closestItem = this.editor.findItem(event, ['atoms'])
 

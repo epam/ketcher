@@ -33,12 +33,17 @@ import {
 import closest from './shared/closest'
 import { customOnChangeHandler } from './utils'
 import { isEqual } from 'lodash/fp'
-import toolMap from './tool'
+import { toolsMap } from './tool'
 import { Highlighter } from './highlighter'
 import { setFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip'
 import { contextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types'
 import { HoverIcon } from './HoverIcon'
 import RotateController from './tool/rotate-controller'
+import {
+  AbstractTool,
+  ToolConstructorInterface,
+  ToolEventHandlerName
+} from './tool/AbstractTool'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -108,7 +113,7 @@ class Editor implements KetcherEditor {
   #origin?: any
   render: Render
   _selection: Selection | null
-  _tool: any
+  _tool: AbstractTool | null
   historyStack: any
   historyPtr: any
   errorHandler: ((message: string) => void) | null
@@ -209,7 +214,7 @@ class Editor implements KetcherEditor {
     this.#origin = position ? this.historyStack[position - 1] : null
   }
 
-  tool(name?: any, opts?: any) {
+  tool(name?: any, opts?: any): AbstractTool | null {
     /* eslint-disable no-underscore-dangle */
     if (arguments.length === 0) {
       return this._tool
@@ -219,7 +224,9 @@ class Editor implements KetcherEditor {
       this._tool.cancel()
     }
 
-    const tool = new toolMap[name](this, opts)
+    const ToolConstructor: ToolConstructorInterface = toolsMap[name]
+
+    const tool = new ToolConstructor(this, opts)
 
     const isAtomToolChosen = name === 'atom'
     if (!isAtomToolChosen) {
@@ -433,13 +440,13 @@ class Editor implements KetcherEditor {
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty')
     }
-    if (this.tool() && this.tool().cancel) {
-      this.tool().cancel()
+    if (this._tool && this._tool.cancel) {
+      this._tool.cancel()
     }
 
     this.selection(null)
 
-    if (this._tool instanceof toolMap.paste) {
+    if (this._tool instanceof toolsMap.paste) {
       this.event.change.dispatch()
       return
     }
@@ -458,12 +465,12 @@ class Editor implements KetcherEditor {
       throw new Error('Redo stack is empty')
     }
 
-    if (this.tool() && this.tool().cancel) {
-      this.tool().cancel()
+    if (this._tool && this._tool.cancel) {
+      this._tool.cancel()
     }
 
     this.selection(null)
-    if (this._tool instanceof toolMap.paste) {
+    if (this._tool instanceof toolsMap.paste) {
       this.event.change.dispatch()
       return
     }
@@ -620,27 +627,30 @@ function updateLastCursorPosition(editor: Editor, event) {
   }
 }
 
-function isContextMenuClosed(editor: Editor) {
-  return !Object.values(editor.contextMenu).some(Boolean)
+function isContextMenuClosed(contextMenu: contextMenuInfo) {
+  return !Object.values(contextMenu).some(Boolean)
 }
 
 function useToolIfNeeded(
   editor: Editor,
-  eventName: string,
+  eventHandlerName: ToolEventHandlerName,
   clientArea: HTMLElement,
   event
 ) {
-  const EditorTool = editor.tool()
+  const editorTool = editor.tool()
+  if (!editorTool) {
+    return false
+  }
+
   editor.lastEvent = event
   const conditions = [
-    !!EditorTool,
-    eventName in EditorTool,
-    clientArea.contains(event.target) || EditorTool.isSelectionRunning?.(),
-    isContextMenuClosed(editor)
+    eventHandlerName in editorTool,
+    clientArea.contains(event.target) || editorTool.isSelectionRunning?.(),
+    isContextMenuClosed(editor.contextMenu)
   ]
 
   if (conditions.every((condition) => condition)) {
-    EditorTool[eventName](event)
+    editorTool[eventHandlerName]?.(event)
     return true
   }
 
@@ -649,20 +659,54 @@ function useToolIfNeeded(
 
 function domEventSetup(editor: Editor, clientArea: HTMLElement) {
   // TODO: addEventListener('resize', ...);
-  ;[
-    { target: clientArea, eventName: 'click' },
-    { target: clientArea, eventName: 'dblclick' },
-    { target: clientArea, eventName: 'mousedown' },
-    { target: document, eventName: 'mousemove' },
-    { target: document, eventName: 'mouseup' },
-    { target: document, eventName: 'mouseleave' },
+  const trackedDomEvents: {
+    target: Node
+    eventName: string
+    toolEventHandler: ToolEventHandlerName
+  }[] = [
+    {
+      target: clientArea,
+      eventName: 'click',
+      toolEventHandler: 'click'
+    },
+    {
+      target: clientArea,
+      eventName: 'dblclick',
+      toolEventHandler: 'dblclick'
+    },
+    {
+      target: clientArea,
+      eventName: 'mousedown',
+      toolEventHandler: 'mousedown'
+    },
+    {
+      target: document,
+      eventName: 'mousemove',
+      toolEventHandler: 'mousemove'
+    },
+    {
+      target: document,
+      eventName: 'mouseup',
+      toolEventHandler: 'mouseup'
+    },
+    {
+      target: document,
+      eventName: 'mouseleave',
+      toolEventHandler: 'mouseleave'
+    },
     {
       target: clientArea,
       eventName: 'mouseleave',
-      toolEventName: 'mouseLeaveClientArea'
+      toolEventHandler: 'mouseLeaveClientArea'
     },
-    { target: clientArea, eventName: 'mouseover' }
-  ].forEach(({ target, eventName, toolEventName }) => {
+    {
+      target: clientArea,
+      eventName: 'mouseover',
+      toolEventHandler: 'mouseover'
+    }
+  ]
+
+  trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
     editor.event[eventName] = new DOMSubscription()
     const subs = editor.event[eventName]
 
@@ -689,7 +733,7 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
 
       const isToolUsed = useToolIfNeeded(
         editor,
-        toolEventName || eventName,
+        toolEventHandler,
         clientArea,
         event
       )

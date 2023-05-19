@@ -16,10 +16,11 @@
 
 import { Elements, FunctionalGroup } from 'ketcher-core'
 import Editor from '../Editor'
+import { AbstractTool } from './AbstractTool'
 
-class AttachTool {
-  attach: any
-  editor: Editor
+class AttachTool implements AbstractTool {
+  private readonly attach: { atomid: number; bondid: number }
+  private readonly editor: Editor
 
   constructor(editor, attachPoints) {
     this.attach = {

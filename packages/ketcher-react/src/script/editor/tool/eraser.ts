@@ -30,11 +30,12 @@ import {
 import LassoHelper from './helper/lasso'
 import { selMerge } from './select'
 import Editor from '../Editor'
+import { AbstractTool } from './AbstractTool'
 
-class EraserTool {
-  editor: Editor
-  maps: Array<string>
-  lassoHelper: LassoHelper
+class EraserTool implements AbstractTool {
+  private readonly editor: Editor
+  private readonly maps: Array<string>
+  private readonly lassoHelper: LassoHelper
   isNotActiveTool: boolean | undefined
 
   constructor(editor, mode) {

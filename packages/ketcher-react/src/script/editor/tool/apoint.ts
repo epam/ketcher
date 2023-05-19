@@ -16,9 +16,10 @@
 
 import { fromAtomsAttrs, FunctionalGroup } from 'ketcher-core'
 import Editor from '../Editor'
+import { AbstractTool } from './AbstractTool'
 
-class APointTool {
-  editor: Editor
+class APointTool implements AbstractTool {
+  private readonly editor: Editor
 
   constructor(editor) {
     this.editor = editor

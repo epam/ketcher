@@ -31,6 +31,7 @@ import LassoHelper from './helper/lasso'
 import { isEqual } from 'lodash/fp'
 import { selMerge } from './select'
 import Editor from '../Editor'
+import { AbstractTool } from './AbstractTool'
 
 const searchMaps = [
   'atoms',
@@ -40,9 +41,9 @@ const searchMaps = [
   'sgroupData'
 ]
 
-class SGroupTool {
-  editor: Editor
-  lassoHelper: any
+class SGroupTool implements AbstractTool {
+  private readonly editor: Editor
+  private readonly lassoHelper: any
   isNotActiveTool: boolean | undefined
 
   constructor(editor) {

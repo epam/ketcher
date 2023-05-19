@@ -44,8 +44,13 @@ export const noOperation = () => null
 
 export function onlyHasProperty<T extends object>(
   checkedObject: T,
-  key: keyof T
+  key: keyof T,
+  ignoredProps: string[] = []
 ) {
-  const numberOfProps = Object.keys(checkedObject).length
+  const props = Object.keys(checkedObject).filter(
+    (key) => !ignoredProps.includes(key)
+  )
+
+  const numberOfProps = props.length
   return numberOfProps === 1 && key in checkedObject
 }

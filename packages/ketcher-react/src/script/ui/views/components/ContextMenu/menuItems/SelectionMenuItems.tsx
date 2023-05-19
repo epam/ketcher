@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import { Item, Submenu } from 'react-contexify'
 import tools from 'src/script/ui/action/tools'
 import Icon from 'src/script/ui/component/view/icon'
@@ -8,10 +9,11 @@ import useBondEdit from '../hooks/useBondEdit'
 import useBondTypeChange from '../hooks/useBondTypeChange'
 import useDelete from '../hooks/useDelete'
 import { formatTitle, getBondNames } from '../utils'
+import { MenuItemsProps } from '../contextMenu.types'
 
 const bondNames = getBondNames(tools)
 
-const SelectionMenuItems: React.FC = (props) => {
+const SelectionMenuItems: FC<MenuItemsProps> = (props) => {
   const [handleBondEdit, bondEditDisabled] = useBondEdit()
   const [handleAtomEdit, atomEditDisabled] = useAtomEdit()
   const [handleTypeChange, bondTypeChangeDisabled] = useBondTypeChange()
@@ -21,11 +23,11 @@ const SelectionMenuItems: React.FC = (props) => {
   return (
     <>
       <Item {...props} disabled={bondEditDisabled} onClick={handleBondEdit}>
-        Edit selected bond(s)...
+        Edit selected bonds...
       </Item>
 
       <Item {...props} disabled={atomEditDisabled} onClick={handleAtomEdit}>
-        Edit selected atom(s)...
+        Edit selected atoms...
       </Item>
 
       <Submenu

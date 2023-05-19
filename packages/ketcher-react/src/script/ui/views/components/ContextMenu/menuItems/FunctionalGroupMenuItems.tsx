@@ -1,8 +1,10 @@
+import { FC } from 'react'
 import { Item } from 'react-contexify'
 import useFunctionalGroupEoc from '../hooks/useFunctionalGroupEoc'
 import useFunctionalGroupRemove from '../hooks/useFunctionalGroupRemove'
+import { MenuItemsProps } from '../contextMenu.types'
 
-const FunctionalGroupMenuItems: React.FC = (props) => {
+const FunctionalGroupMenuItems: FC<MenuItemsProps> = (props) => {
   const [
     handleExpandOrContract,
     ExpandOrContractHidden,

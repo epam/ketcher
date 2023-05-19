@@ -241,7 +241,7 @@ class ReBond extends ReObject {
 
     const rect = this.getSelectionContour(render)
 
-    return rect.attr(options.hoverStyle)
+    return rect.attr({ ...options.hoverStyle, fill: 'transparent' })
   }
 
   makeSelectionPlate(restruct: ReStruct, _: any, options: any) {

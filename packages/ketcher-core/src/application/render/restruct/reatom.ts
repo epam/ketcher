@@ -96,7 +96,7 @@ class ReAtom extends ReObject {
     return ret
   }
 
-  getSelectionContour(render: Render) {
+  getLabeledSelectionContour(render: Render) {
     const { paper, ctab: restruct, options } = render
     const { fontsz, radiusScaleFactor } = options
     const padding = fontsz * radiusScaleFactor
@@ -115,11 +115,22 @@ class ReAtom extends ReObject {
     )
   }
 
-  makeHoverPlate(render: Render) {
-    const paper = render.paper
-    const options = render.options
+  getUnlabeledSelectionContour(render: Render) {
+    const { paper, options } = render
+    const { atomSelectionPlateRadius } = options
     const ps = Scale.obj2scaled(this.a.pp, options)
+    return paper.circle(ps.x, ps.y, atomSelectionPlateRadius)
+  }
+
+  getSelectionContour(render: Render) {
+    return this.showLabel && this.a.implicitH !== 0
+      ? this.getLabeledSelectionContour(render)
+      : this.getUnlabeledSelectionContour(render)
+  }
+
+  makeHoverPlate(render: Render) {
     const atom = this.a
+    const { options } = render
     const sgroups = render.ctab.sgroups
     const functionalGroups = render.ctab.molecule.functionalGroups
     if (
@@ -133,17 +144,15 @@ class ReAtom extends ReObject {
       return null
     }
 
-    const result =
-      this.showLabel && this.a.implicitH !== 0
-        ? this.getSelectionContour(render)
-        : paper.circle(ps.x, ps.y, options.atomSelectionPlateRadius)
-    return result.attr(options.hoverStyle)
+    return this.getSelectionContour(render).attr(options.hoverStyle)
   }
 
-  makeSelectionPlate(restruct: ReStruct, paper: any, styles: any) {
+  makeSelectionPlate(restruct: ReStruct) {
     const atom = this.a
-    const sgroups = restruct.render.ctab.sgroups
-    const functionalGroups = restruct.render.ctab.molecule.functionalGroups
+    const { render } = restruct
+    const { options } = render
+    const sgroups = render.ctab.sgroups
+    const functionalGroups = render.ctab.molecule.functionalGroups
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
@@ -155,12 +164,7 @@ class ReAtom extends ReObject {
       return null
     }
 
-    const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
-    const result =
-      this.showLabel && this.a.implicitH !== 0
-        ? this.getSelectionContour(restruct.render)
-        : paper.circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
-    return result.attr(styles.selectionStyle)
+    return this.getSelectionContour(render).attr(options.selectionStyle)
   }
 
   show(restruct: ReStruct, aid: number, options: any): void {

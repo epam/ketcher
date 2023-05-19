@@ -30,7 +30,11 @@ const AppHidden = (props: Props) => {
   const { staticResourcesUrl } = useSettingsContext()
 
   useEffect(() => {
-    onInitTmpls(ref.current, staticResourcesUrl)
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(() => onInitTmpls(ref.current, staticResourcesUrl))
+    } else {
+      onInitTmpls(ref.current, staticResourcesUrl)
+    }
   }, [])
 
   return <div style={{ display: 'none' }} ref={ref} />

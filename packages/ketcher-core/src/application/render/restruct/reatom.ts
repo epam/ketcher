@@ -96,6 +96,25 @@ class ReAtom extends ReObject {
     return ret
   }
 
+  getSelectionContour(render: Render) {
+    const { paper, ctab: restruct, options } = render
+    const { fontsz, radiusScaleFactor } = options
+    const padding = fontsz * radiusScaleFactor
+    const radius = fontsz * radiusScaleFactor * 2
+    const box = this.getVBoxObj(restruct.render)!
+    const ps1 = Scale.obj2scaled(box.p0, restruct.render.options)
+    const ps2 = Scale.obj2scaled(box.p1, restruct.render.options)
+    const width = ps2.x - ps1.x
+    const height = fontsz * 1.23
+    return paper.rect(
+      ps1.x - padding,
+      ps1.y - padding,
+      width + padding * 2,
+      height + padding * 2,
+      radius
+    )
+  }
+
   makeHoverPlate(render: Render) {
     const paper = render.paper
     const options = render.options
@@ -113,9 +132,12 @@ class ReAtom extends ReObject {
     ) {
       return null
     }
-    return paper
-      .circle(ps.x, ps.y, options.atomSelectionPlateRadius)
-      .attr(options.hoverStyle)
+
+    const result =
+      this.showLabel && this.a.implicitH !== 0
+        ? this.getSelectionContour(render)
+        : paper.circle(ps.x, ps.y, options.atomSelectionPlateRadius)
+    return result.attr(options.hoverStyle)
   }
 
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any) {
@@ -134,9 +156,11 @@ class ReAtom extends ReObject {
     }
 
     const ps = Scale.obj2scaled(this.a.pp, restruct.render.options)
-    return paper
-      .circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
-      .attr(styles.selectionStyle)
+    const result =
+      this.showLabel && this.a.implicitH !== 0
+        ? this.getSelectionContour(restruct.render)
+        : paper.circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
+    return result.attr(styles.selectionStyle)
   }
 
   show(restruct: ReStruct, aid: number, options: any): void {

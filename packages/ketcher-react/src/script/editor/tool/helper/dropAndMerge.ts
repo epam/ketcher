@@ -5,7 +5,8 @@ import {
   fromSgroupDeletion,
   ReStruct,
   setExpandSGroup,
-  SGroup
+  SGroup,
+  ReBond
 } from 'ketcher-core'
 import Editor from '../../Editor'
 import { getGroupIdsFromItemMaps } from './getGroupIdsFromItems'
@@ -45,6 +46,14 @@ export function dropAndMerge(
 
   if (action) {
     dropItemAction = dropItemAction.mergeWith(action)
+  }
+
+  const bonds = editor.selection()?.bonds ?? []
+  for (const bondId of bonds) {
+    const rebond = restruct.bonds.get(bondId)
+    if (rebond) {
+      ReBond.bondRecalc(rebond, restruct, editor.options())
+    }
   }
 
   editor.hover(null)

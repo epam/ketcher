@@ -31,6 +31,17 @@ class ReObject {
     this.visel = new Visel(viselType)
   }
 
+  changeSelectionStyle(isHovering: boolean, options: any) {
+    const { selectionStyle, hoverStyle } = options
+    this.selectionPlate?.attr({
+      fill: isHovering ? hoverStyle.fill : selectionStyle.fill
+    })
+    this.hovering?.attr({
+      fill: this.selected ? hoverStyle.fill : 'transparent',
+      'fill-opacity': this.selected ? 1 : 0
+    })
+  }
+
   getVBoxObj(render: Render): Box2Abs | null {
     let vbox = this.visel.boundingBox
     if (vbox === null) return null
@@ -42,8 +53,9 @@ class ReObject {
 
   setHover(hover: boolean, render: Render): void {
     // TODO render should be field
+    const { options } = render
     if (hover) {
-      let noredraw = 'hovering' in this && this.hovering !== null // && !this.highlighting.removed;
+      let noredraw = 'hovering' in this && this.hovering !== null
       if (noredraw) {
         if (this.hovering.type === 'set') {
           if (!this.hovering[0]) return
@@ -53,6 +65,7 @@ class ReObject {
         }
       }
       if (noredraw) {
+        this.changeSelectionStyle(true, options)
         this.hovering.show()
       } else {
         render.paper.setStart()
@@ -60,6 +73,7 @@ class ReObject {
         this.hovering = render.paper.setFinish()
       }
     } else if (this.hovering) {
+      this.changeSelectionStyle(false, options)
       this.hovering.hide()
     }
 

@@ -82,7 +82,8 @@ function defaultOptions(opt) {
     },
     hoverStyle: {
       stroke: '#0097A8',
-      fill: '#CCFFDD',
+      fill: 'transparent',
+      fillSelected: '#CCFFDD',
       'stroke-width': (0.6 * scaleFactor) / 20
     },
     sgroupBracketStyle: {

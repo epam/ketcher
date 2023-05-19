@@ -110,11 +110,8 @@ class ReBond extends ReObject {
     const regularSelectionThikness = doubleBondWidth + bondThickness
 
     // half-bonds
-    const hbStart = restruct.molecule.halfBonds.get(bond.hb1!)
-    const hbEnd = restruct.molecule.halfBonds.get(bond.hb2!)
-
-    const halfBondStart = new Vec2(hbStart?.p.x, hbStart?.p.y)
-    const halfBondEnd = new Vec2(hbEnd?.p.x, hbEnd?.p.y)
+    const halfBondStart = restruct.molecule.halfBonds.get(bond.hb1!)!.p
+    const halfBondEnd = restruct.molecule.halfBonds.get(bond.hb2!)!.p
 
     const isStereoBond =
       bond.stereo !== Bond.PATTERN.STEREO.NONE &&
@@ -241,7 +238,7 @@ class ReBond extends ReObject {
 
     const rect = this.getSelectionContour(render)
 
-    return rect.attr({ ...options.hoverStyle, fill: 'transparent' })
+    return rect.attr({ ...options.hoverStyle })
   }
 
   makeSelectionPlate(restruct: ReStruct, _: any, options: any) {

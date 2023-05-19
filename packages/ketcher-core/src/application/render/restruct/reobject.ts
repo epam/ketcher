@@ -31,13 +31,10 @@ class ReObject {
     this.visel = new Visel(viselType)
   }
 
-  changeSelectionStyle(isHovering: boolean, options: any) {
-    const { selectionStyle, hoverStyle } = options
-    this.selectionPlate?.attr({
-      fill: isHovering ? hoverStyle.fill : selectionStyle.fill
-    })
+  changeSelectionStyle(options: any) {
+    const { hoverStyle } = options
     this.hovering?.attr({
-      fill: this.selected ? hoverStyle.fill : 'transparent',
+      fill: this.selected ? hoverStyle.fillSelected : hoverStyle.fill,
       'fill-opacity': this.selected ? 1 : 0
     })
   }
@@ -65,7 +62,7 @@ class ReObject {
         }
       }
       if (noredraw) {
-        this.changeSelectionStyle(true, options)
+        this.changeSelectionStyle(options)
         this.hovering.show()
       } else {
         render.paper.setStart()
@@ -73,7 +70,7 @@ class ReObject {
         this.hovering = render.paper.setFinish()
       }
     } else if (this.hovering) {
-      this.changeSelectionStyle(false, options)
+      this.changeSelectionStyle(options)
       this.hovering.hide()
     }
 

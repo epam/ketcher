@@ -232,13 +232,15 @@ export class Vec2 {
     )
   }
 
-  rotateAroundOrigin(angle: number, origin: Vec2) {
-    const angleRad = (angle * Math.PI) / 180
+  rotateAroundOrigin(angleInDegrees: number, origin: Vec2) {
+    const angleInRadians = (angleInDegrees * Math.PI) / 180
     const offsetX = this.x - origin.x
     const offsetY = this.y - origin.y
 
-    const rotatedX = Math.cos(angleRad) * offsetX - Math.sin(angleRad) * offsetY
-    const rotatedY = Math.sin(angleRad) * offsetX + Math.cos(angleRad) * offsetY
+    const rotatedX =
+      Math.cos(angleInRadians) * offsetX - Math.sin(angleInRadians) * offsetY
+    const rotatedY =
+      Math.sin(angleInRadians) * offsetX + Math.cos(angleInRadians) * offsetY
 
     const x = rotatedX + origin.x
     const y = rotatedY + origin.y

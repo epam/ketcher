@@ -95,14 +95,6 @@ class ReBond extends ReObject {
     return ret
   }
 
-  getLinePoint(x1, y1, x2, y2, len) {
-    const dx = x2 - x1
-    const dy = y2 - y1
-    const d = Math.sqrt(dx * dx + dy * dy)
-    const ratio = len / d
-    return new Vec2(x1 + dx * ratio, y1 + dy * ratio)
-  }
-
   getSelectionPoints(render: Render) {
     const bond: Bond = this.b
     const { ctab: restruct, options } = render

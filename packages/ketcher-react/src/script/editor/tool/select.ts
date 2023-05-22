@@ -33,7 +33,8 @@ import {
   isCloseToEdgeOfCanvas,
   isCloseToEdgeOfScreen,
   scrollByVector,
-  shiftAndExtendCanvasByVector
+  shiftAndExtendCanvasByVector,
+  getItemsToFuse
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -44,7 +45,6 @@ import { xor } from 'lodash/fp'
 import { Editor } from '../Editor'
 import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
-import { getMergeItems } from './helper/getMergeItems'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds'
 import { hasAtomsOutsideCanvas } from './helper/isAtomOutSideCanvas'
@@ -207,7 +207,7 @@ class SelectTool {
         editor.render.page2obj(event).sub(dragCtx.xy0)
       )
 
-      dragCtx.mergeItems = getMergeItems(editor, expSel)
+      dragCtx.mergeItems = getItemsToFuse(editor, expSel)
       editor.hover(getHoverToFuse(dragCtx.mergeItems))
 
       resizeCanvas(rnd, event)

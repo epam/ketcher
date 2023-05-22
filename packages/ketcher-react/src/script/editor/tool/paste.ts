@@ -29,13 +29,12 @@ import {
 import Editor from '../Editor'
 import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
-import { getMergeItems } from './helper/getMergeItems'
 import utils from '../shared/utils'
+
 class PasteTool {
   editor: Editor
   struct: Struct
   action: any
-  templateAction: any
   dragCtx: any
   findItems: string[]
   mergeItems: any
@@ -182,7 +181,7 @@ class PasteTool {
       this.action = action
       this.editor.update(this.action, true, { resizeCanvas: false })
 
-      this.mergeItems = getMergeItems(this.editor, pasteItems)
+      this.mergeItems = getItemsToFuse(this.editor, pasteItems)
       this.editor.hover(getHoverToFuse(this.mergeItems))
     }
   }

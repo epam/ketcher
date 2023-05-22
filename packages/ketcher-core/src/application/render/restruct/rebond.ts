@@ -96,6 +96,7 @@ class ReBond extends ReObject {
   }
 
   getSelectionPoints(render: Render) {
+    // please refer to: ketcher-core/docs/data/hover_selection_1.png
     const bond: Bond = this.b
     const { ctab: restruct, options } = render
     const { bondThickness, doubleBondWidth, stereoBondWidth } = options
@@ -105,6 +106,7 @@ class ReBond extends ReObject {
     // image on the screen is drawn, it may be different e.g. if the
     // bond is connected to an atom with a label as opposed
     // to when it is connected to a Carbon atom w/o a label
+    // please refer to: ketcher-core/docs/data/hover_selection_2.png
     const halfBondStart = restruct.molecule.halfBonds.get(bond.hb1!)!.p
     const halfBondEnd = restruct.molecule.halfBonds.get(bond.hb2!)!.p
 
@@ -150,6 +152,7 @@ class ReBond extends ReObject {
     // and two for each line that together form the selection contour
     // the padded values are for the curve points and the rest of
     // the values are for drawing the lines
+    // please refer to: ketcher-core/docs/data/hover_selection_3.png
     const startPoint = contourStart.add(new Vec2(addEnd, 0))
     const endPoint = contourEnd.add(new Vec2(addStart, 0))
     const padStartPoint = contourPaddedStart.add(new Vec2(addEnd, 0))

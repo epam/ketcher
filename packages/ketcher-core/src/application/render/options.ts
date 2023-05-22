@@ -17,16 +17,19 @@
 import { Vec2 } from 'domain/entities'
 import utils from '../editor/shared/utils'
 import { ShowHydrogenLabels } from './restruct/reatom'
+import { RenderOptions } from './render.types'
 
-function defaultOptions(opt) {
-  const scaleFactor = opt.scale || 100
+function defaultOptions(options: RenderOptions): RenderOptions {
+  const scaleFactor = options.scale || 100
 
-  if (opt.rotationStep) utils.setFracAngle(opt.rotationStep)
+  if (options.rotationStep) {
+    utils.setFracAngle(options.rotationStep)
+  }
 
   const labelFontSize = Math.ceil(1.9 * (scaleFactor / 6))
   const subFontSize = Math.ceil(0.5 * labelFontSize)
 
-  const defaultOptions = {
+  const defaultOptions: Partial<RenderOptions> = {
     'dearomatize-on-load': false,
     ignoreChiralFlag: false,
     disableQueryElements: null,
@@ -57,8 +60,8 @@ function defaultOptions(opt) {
     offset: new Vec2(),
 
     lineWidth: scaleFactor / 20,
-    bondSpace: opt.doubleBondWidth || scaleFactor / 7,
-    stereoBond: opt.stereoBondWidth || scaleFactor / 7,
+    bondSpace: options.doubleBondWidth || scaleFactor / 7,
+    stereoBond: options.stereoBondWidth || scaleFactor / 7,
     subFontSize,
     font: '30px Arial',
     fontsz: labelFontSize,
@@ -71,7 +74,7 @@ function defaultOptions(opt) {
     /* styles */
     lineattr: {
       stroke: '#000',
-      'stroke-width': opt.bondThickness || scaleFactor / 20,
+      'stroke-width': options.bondThickness || scaleFactor / 20,
       'stroke-linecap': 'round',
       'stroke-linejoin': 'round'
     },
@@ -104,7 +107,7 @@ function defaultOptions(opt) {
     contractedFunctionalGroupSize: 50
   }
 
-  return Object.assign({}, defaultOptions, opt)
+  return Object.assign({}, defaultOptions, options)
 }
 
 export default defaultOptions

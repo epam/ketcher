@@ -52,7 +52,7 @@
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:25](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L25)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:25](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L25)
 
 ## Properties
 
@@ -62,7 +62,7 @@
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:32](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L32)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:32](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L32)
 
 ___
 
@@ -72,7 +72,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:35](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L35)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:35](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L35)
 
 ___
 
@@ -82,7 +82,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:204](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L204)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:204](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L204)
 
 ___
 
@@ -92,7 +92,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:200](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L200)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:200](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L200)
 
 ___
 
@@ -102,7 +102,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:36](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L36)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:36](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L36)
 
 ___
 
@@ -112,7 +112,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:33](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L33)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:33](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L33)
 
 ___
 
@@ -122,7 +122,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:34](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L34)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:34](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L34)
 
 ___
 
@@ -132,7 +132,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:31](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L31)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:31](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L31)
 
 ## Methods
 
@@ -153,7 +153,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:61](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L61)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:61](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L61)
 
 ___
 
@@ -173,7 +173,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:76](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L76)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:76](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L76)
 
 ___
 
@@ -187,7 +187,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:72](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L72)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:72](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L72)
 
 ___
 
@@ -208,7 +208,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:43](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L43)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:43](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L43)
 
 ___
 
@@ -228,7 +228,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:39](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L39)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:39](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L39)
 
 ___
 
@@ -249,7 +249,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:47](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L47)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:47](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L47)
 
 ___
 
@@ -269,7 +269,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:167](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L167)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:167](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L167)
 
 ___
 
@@ -289,7 +289,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:92](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L92)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:92](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L92)
 
 ___
 
@@ -309,7 +309,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:86](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L86)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:86](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L86)
 
 ___
 
@@ -329,7 +329,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:149](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L149)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:149](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L149)
 
 ___
 
@@ -350,7 +350,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:120](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L120)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:120](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L120)
 
 ___
 
@@ -370,7 +370,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:158](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L158)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:158](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L158)
 
 ___
 
@@ -390,7 +390,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:102](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L102)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:102](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L102)
 
 ___
 
@@ -411,7 +411,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:174](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L174)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:174](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L174)
 
 ___
 
@@ -432,4 +432,4 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/raphaelRender.js:51](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L51)
+[packages/ketcher-core/src/application/render/raphaelRender.ts:51](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/raphaelRender.js#L51)

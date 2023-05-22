@@ -1,6 +1,25 @@
-import { Vec2 } from 'domain/entities'
+import { RxnArrowMode, Vec2 } from 'domain/entities'
+import { StereLabelStyleType } from 'application/render/restruct'
+
+type RenderOptionStyles = Record<string, string | number>
 
 export type RenderOptions = {
+  width?: number
+  height?: number
+
+  rotationStep?: number
+  doubleBondWidth: number
+  stereoBondWidth: number
+  bondThickness: number
+
+  downScale?: boolean
+  rescaleAmount?: number
+  radiusScaleFactor: number
+
+  'dearomatize-on-load'?: boolean
+  ignoreChiralFlag?: boolean
+  disableQueryElements?: string[] | null
+
   showAtomIds: boolean
   showBondIds: boolean
   showHalfBondIds: boolean
@@ -32,15 +51,29 @@ export type RenderOptions = {
   fontRLogic: number
 
   /* styles */
-  lineattr: Record<string, string>
-  /* eslint-enable quote-props */
-  selectionStyle: Record<string, string>
-  hoverStyle: Record<string, string>
-  sgroupBracketStyle: Record<string, string>
-  lassoStyle: Record<string, string>
-  hoverStyleSimpleObject: Record<string, string>
+  // TODO check style properties types, how they work with numbers
+  lineattr: RenderOptionStyles
+  selectionStyle: RenderOptionStyles
+  hoverStyle: RenderOptionStyles
+  sgroupBracketStyle: RenderOptionStyles
+  lassoStyle: RenderOptionStyles
+  hoverStyleSimpleObject: RenderOptionStyles
   atomSelectionPlateRadius: number
   contractedFunctionalGroupSize: number
+
+  stereoLabelStyle?: StereLabelStyleType
 }
 
-// ketcher.setSettings('{"showAtomIds":true,"showBondIds":true,"showHalfBondIds":false}')
+export interface RelativeBox {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+// TODO check types if it's compatible with RxnArrowAttributes
+export interface ArrowItem {
+  mode?: RxnArrowMode
+  pos: Vec2[]
+  height: number
+}

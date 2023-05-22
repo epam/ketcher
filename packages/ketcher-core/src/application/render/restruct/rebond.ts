@@ -101,7 +101,10 @@ class ReBond extends ReObject {
     const { bondThickness, doubleBondWidth, stereoBondWidth } = options
     const regularSelectionThikness = doubleBondWidth + bondThickness
 
-    // half-bonds
+    // get half-bond positions, this is where the actual bond
+    // image on the screen is drawn, it may be different e.g. if the
+    // bond is connected to an atom with a label as opposed
+    // to when it is connected to a Carbon atom w/o a label
     const halfBondStart = restruct.molecule.halfBonds.get(bond.hb1!)!.p
     const halfBondEnd = restruct.molecule.halfBonds.get(bond.hb2!)!.p
 
@@ -109,7 +112,11 @@ class ReBond extends ReObject {
       bond.stereo !== Bond.PATTERN.STEREO.NONE &&
       bond.stereo !== Bond.PATTERN.STEREO.CIS_TRANS
 
+    // for stereo bonds we slightly change the parameters
+    // to adjust the shape of the selection
     const addStereoPadding = isStereoBond ? stereoBondWidth / 2 : 0
+
+    // find the points on the line where we will be drawing the curves
     const contourStart = Vec2.getLinePoint(
       halfBondEnd,
       halfBondStart,
@@ -139,6 +146,10 @@ class ReBond extends ReObject {
       addStart
     )
 
+    // we need four points for each bezier curve
+    // and two for each line that together form the selection contour
+    // the padded values are for the curve points and the rest of
+    // the values are for drawing the lines
     const startPoint = contourStart.add(new Vec2(addEnd, 0))
     const endPoint = contourEnd.add(new Vec2(addStart, 0))
     const padStartPoint = contourPaddedStart.add(new Vec2(addEnd, 0))
@@ -146,6 +157,9 @@ class ReBond extends ReObject {
 
     const { angle } = bond
 
+    // rotate the points +/-90 degrees to find the
+    // perpendicular points that will be used for actual drawing
+    // of selection contour on canvas
     const startTop = startPoint.rotateAroundOrigin(
       angle + 90,
       new Vec2(contourStart.x, contourStart.y)

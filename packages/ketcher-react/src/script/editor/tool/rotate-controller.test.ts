@@ -98,7 +98,7 @@ describe('Rotate controller', () => {
         scale: 2,
         offset: new Vec2(1, 1)
       }
-    }
+    } as any
 
     // @ts-ignore
     expect(controller.center.x).toBe(3)

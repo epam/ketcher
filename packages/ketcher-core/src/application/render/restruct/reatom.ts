@@ -123,7 +123,9 @@ class ReAtom extends ReObject {
   }
 
   getSelectionContour(render: Render) {
-    return this.showLabel && this.a.implicitH !== 0
+    const hasLabel =
+      Boolean(this.a.pseudo) || (this.showLabel && this.a.implicitH !== 0)
+    return hasLabel
       ? this.getLabeledSelectionContour(render)
       : this.getUnlabeledSelectionContour(render)
   }

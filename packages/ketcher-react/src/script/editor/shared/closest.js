@@ -175,8 +175,9 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
   restruct.bonds.forEach((bond, bid) => {
     if (bid === skipId) return
 
-    const a1 = restruct.atoms.get(bond.b.begin).a
-    const a2 = restruct.atoms.get(bond.b.end).a
+    const p1 = restruct.atoms.get(bond.b.begin).a.pp
+    const p2 = restruct.atoms.get(bond.b.end).a.pp
+
     if (
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond.b,
@@ -184,36 +185,27 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
         functionalGroups
       ) ||
       SGroup.isBondInContractedSGroup(bond.b, sGroups)
-    )
+    ) {
       return null
+    }
 
-    const mid = Vec2.lc2(a1.pp, 0.5, a2.pp, 0.5)
+    const mid = Vec2.lc2(p1, 0.5, p2, 0.5)
     const cdist = Vec2.dist(pos, mid)
 
-    if (cdist < minCDist) {
+    const { render } = restruct
+    const { options } = render
+    const hitboxPoints = bond.getSelectionPoints(render)
+    const position = Scale.obj2scaled(pos, options)
+    const isPosInsidePolygon = position.isInsidePolygon(hitboxPoints)
+
+    if (isPosInsidePolygon) {
       minCDist = cdist
       closestBondCenter = bid
     }
-  })
-
-  restruct.bonds.forEach((bond, bid) => {
-    if (bid === skipId) return
-    if (
-      FunctionalGroup.isBondInContractedFunctionalGroup(
-        bond.b,
-        sGroups,
-        functionalGroups
-      ) ||
-      SGroup.isBondInContractedSGroup(bond.b, sGroups)
-    )
-      return null
 
     const hb = restruct.molecule.halfBonds.get(bond.b.hb1)
     const dir = hb.dir
     const norm = hb.norm
-
-    const p1 = restruct.atoms.get(bond.b.begin).a.pp
-    const p2 = restruct.atoms.get(bond.b.end).a.pp
 
     const inStripe = Vec2.dot(pos.sub(p1), dir) * Vec2.dot(pos.sub(p2), dir) < 0
 

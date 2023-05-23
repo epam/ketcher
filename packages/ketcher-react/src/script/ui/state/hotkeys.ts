@@ -28,7 +28,6 @@ import { load, onAction, removeStructAction } from './shared'
 import actions from '../action'
 import keyNorm from '../data/convert/keynorm'
 import { isIE } from 'react-device-detect'
-import { handleHotkeyOverItem } from './handleHotkeysOverItem'
 import { SettingsManager } from '../utils/settingsManager'
 import {
   handleHotkeyOverItem,

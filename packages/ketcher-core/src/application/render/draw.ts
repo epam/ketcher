@@ -23,7 +23,6 @@ import util from './util'
 import { ArrowItem, RelativeBox, RenderOptions } from './render.types'
 import { tfx } from 'utilities'
 
-// TODO extract type [Vec2, Vec2]
 function rectangle(paper: RaphaelPaper, points: [Vec2, Vec2]) {
   return paper.rect(
     tfx(Math.min(points[0].x, points[1].x)),
@@ -578,7 +577,7 @@ function arrowEquilibriumOpenAngle(
   const arrowLen = 9
   const lineOffset = 3.5
 
-  // TODO check if it's required or not
+  // TODO check if this variable `arrowOffset` is required or not
   // const arrowOffset = 7
 
   const b0x = point1.x + arrowLength
@@ -665,7 +664,7 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
   const lineOffset = 3.5
   const unbalanceVal = 15
 
-  // TODO check if it's required or not
+  // TODO check if this variable `arrowOffset` is required or not
   // const arrowOffset = 7
 
   const b0x = point1.x + arrowLength
@@ -1263,7 +1262,7 @@ function aromaticBondPaths(
   dash: number[] | null
 ) {
   // eslint-disable-line max-params
-  // TODO mask might be null, remove not null assertion and fix it a better way.
+  // TODO mask might be null, remove not null assertion and fix it in a better way.
   const l1 = dash && mask! & 1 ? dashedPath(a2, b2, dash) : makeStroke(a2, b2)
   const l2 = dash && mask! & 2 ? dashedPath(a3, b3, dash) : makeStroke(a3, b3)
 

@@ -25,17 +25,13 @@ import draw from './draw'
 import { RenderOptions } from './render.types'
 
 export class Render {
-  // TODO refactor to use getter instead of public property
+  // TODO refactor to use getters instead of public properties
   public readonly clientArea: HTMLElement
-  // TODO refactor to use getter instead of public property
   public readonly paper: RaphaelPaper
-  // TODO refactor to use getter instead of public property
   // TODO https://github.com/epam/ketcher/issues/2631
   public sz: Vec2
-  // TODO refactor to use getter instead of public property
   // TODO https://github.com/epam/ketcher/issues/2630
   public ctab: ReStruct
-  // TODO refactor to use getter instead of public property
   public options: RenderOptions
   private readonly userOpts: RenderOptions
   private oldCb: Box2Abs | null = null

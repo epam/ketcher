@@ -30,7 +30,6 @@ import {
 
 import Editor from '../Editor'
 import utils from '../shared/utils'
-import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 
 class AtomTool {
   editor: Editor
@@ -45,43 +44,14 @@ class AtomTool {
     this.#bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE }
 
     const editorSelection = editor.selection()
-    const selected = editor.selection()
-    const selectedAtoms = selected?.atoms
 
     if (editorSelection) {
       if (editorSelection.atoms) {
-        const action = new Action()
-        const struct = editor.render.ctab
-        const atomsInSGroups: number[] = []
-        const selectedSGroupsId =
-          selected && getGroupIdsFromItemArrays(struct.molecule, selected)
-        if (selectedSGroupsId?.length) {
-          const sgroups = struct.sgroups
-          selectedSGroupsId.forEach((sGroupId) => {
-            if (SGroup.isContractedSGroup(sGroupId, sgroups)) {
-              const sGroupItem = sgroups.get(sGroupId).item
-              const atomsWithoutAttachmentPoint =
-                SGroup.getAtomsSGroupWithoutAttachmentPoint(sGroupItem, struct)
-              atomsInSGroups.push(...atomsWithoutAttachmentPoint)
-              action.mergeWith(fromSgroupDeletion(struct, sGroupId))
-              action.mergeWith(
-                fromFragmentDeletion(struct, {
-                  atoms: atomsWithoutAttachmentPoint,
-                  bonds: SGroup.getBonds(struct, sGroupItem)
-                })
-              )
-            }
-          })
-        }
-        action.mergeWith(
-          fromAtomsAttrs(
-            struct,
-            selectedAtoms.filter(
-              (selectAtomId) => !atomsInSGroups.includes(selectAtomId)
-            ),
-            atomProps,
-            true
-          )
+        const action = fromAtomsAttrs(
+          editor.render.ctab,
+          editorSelection.atoms,
+          atomProps,
+          true
         )
         editor.update(action)
         editor.selection(null)

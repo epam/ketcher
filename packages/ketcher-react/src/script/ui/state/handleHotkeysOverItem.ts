@@ -6,7 +6,10 @@ import {
   fromBondsAttrs,
   fromFragmentDeletion,
   FunctionalGroup,
-  Atom
+  Atom,
+  Action,
+  SGroup,
+  fromSgroupDeletion
 } from 'ketcher-core'
 import { STRUCT_TYPE } from 'src/constants'
 import { openDialog } from './modal'
@@ -16,6 +19,8 @@ import { onAction } from './shared'
 import { Editor } from '../../editor'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import { fromAtom, toAtom, fromBond, toBond } from '../data/convert/structconv'
+import { getGroupIdsFromItemArrays } from '../../editor/tool/helper/getGroupIdsFromItems'
+import { Selection } from '../../editor/Editor'
 
 type TNewAction = {
   tool?: string
@@ -35,6 +40,12 @@ type HandleHotkeyOverItemProps = {
   newAction: TNewAction
   editor: Editor
   dispatch: Dispatch
+}
+
+type HandleHotkeyOverSGroupsProps = {
+  selected: Selection
+  atomProps: Partial<TNewAction>
+  editor: Editor
 }
 
 export function handleHotkeyOverItem(props: HandleHotkeyOverItemProps) {
@@ -261,6 +272,45 @@ function handleBondTool({ hoveredItemId, newAction, editor }: HandlersProps) {
     { label: 'C' }
   )[0]
   editor.update(newBond)
+}
+
+export function handleHotkeyOverSGroup({
+  selected,
+  atomProps,
+  editor
+}: HandleHotkeyOverSGroupsProps) {
+  const struct = editor.render.ctab
+  const selectedSGroupsId =
+    selected && getGroupIdsFromItemArrays(struct.molecule, selected)
+  const action = new Action()
+  const atomsInSGroups: number[] = []
+  const sgroups = struct.sgroups
+  selectedSGroupsId.forEach((sGroupId) => {
+    if (SGroup.isContractedSGroup(sGroupId, sgroups)) {
+      const sGroupItem = sgroups.get(sGroupId)?.item
+      const atomsWithoutAttachmentPoint =
+        SGroup.getAtomsSGroupWithoutAttachmentPoint(sGroupItem, struct.molecule)
+      atomsInSGroups.push(...atomsWithoutAttachmentPoint)
+      action.mergeWith(fromSgroupDeletion(struct, sGroupId))
+      action.mergeWith(
+        fromFragmentDeletion(struct, {
+          atoms: atomsWithoutAttachmentPoint,
+          bonds: SGroup.getBonds(struct, sGroupItem)
+        })
+      )
+    }
+  })
+  action.mergeWith(
+    fromAtomsAttrs(
+      struct,
+      selected?.atoms?.filter(
+        (selectAtomId) => !atomsInSGroups.includes(selectAtomId)
+      ),
+      atomProps,
+      true
+    )
+  )
+  editor.update(action)
 }
 
 function handleChargeTool({ hoveredItemId, newAction, editor }: HandlersProps) {

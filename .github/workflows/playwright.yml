@@ -34,7 +34,7 @@ jobs:
       - name: Build frontend and autotests for docker
         run: npm run docker:build
       - name: Run playwright tests in docker
-        run: cd ketcher-autotests && npm run docker:test &
+        run: cd ketcher-autotests && npm run docker:test
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()

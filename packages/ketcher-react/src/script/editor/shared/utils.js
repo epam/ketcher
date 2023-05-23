@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-// TODO check difference with packages/ketcher-core/src/application/editor/editor.types.ts
-
 import { Vec2, fracAngle, Struct, FunctionalGroup } from 'ketcher-core'
 
 import { inRange } from 'lodash'

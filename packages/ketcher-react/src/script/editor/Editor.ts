@@ -503,22 +503,11 @@ class Editor implements KetcherEditor {
   findItem(event: any, maps: any, skip: any = null) {
     const pos = new Vec2(this.render.page2obj(event))
 
-    return closest.item(
-      this.render.ctab,
-      pos,
-      maps,
-      skip,
-      this.render.options.scale
-    )
+    return closest.item(this.render.ctab, pos, maps, skip, this.render.options)
   }
 
   findMerge(srcItems: any, maps: any) {
-    return closest.merge(
-      this.render.ctab,
-      srcItems,
-      maps,
-      this.render.options.scale
-    )
+    return closest.merge(this.render.ctab, srcItems, maps, this.render.options)
   }
 
   explicitSelected() {

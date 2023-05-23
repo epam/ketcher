@@ -1,4 +1,5 @@
-import { Render, Struct } from 'ketcher-core'
+import { Struct } from 'domain/entities'
+import { Render } from './raphaelRender'
 
 /**
  * Is used to improve search and opening tab performance in Template Dialog

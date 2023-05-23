@@ -21,7 +21,8 @@ import {
   FunctionalGroupsProvider,
   SdfItem,
   SdfSerializer,
-  Struct
+  Struct,
+  RenderStruct
 } from 'ketcher-core'
 import templatesRawData from '../../../../templates/salts-and-solvents.sdf'
 import { MODES } from 'src/constants'

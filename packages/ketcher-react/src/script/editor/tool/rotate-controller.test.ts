@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import RotateTool from './rotate'
-import RotateController from './rotate-controller'
+import { Vec2 } from 'ketcher-core'
 import Editor from '../Editor'
+import RotateTool from './rotate'
+import RotateController, { getDifference } from './rotate-controller'
 
 describe('Rotate controller', () => {
   /**
@@ -11,6 +12,7 @@ describe('Rotate controller', () => {
   it(`hides for one visible atom`, () => {
     const paper = jest.fn()
     const controller = new RotateController({
+      selection: () => null,
       render: {
         paper
       }
@@ -34,6 +36,7 @@ describe('Rotate controller', () => {
     const NonSelectTool = new RotateTool(editor, undefined)
     const paper = jest.fn()
     const controller = new RotateController({
+      selection: () => null,
       tool: () => NonSelectTool,
       render: { paper }
     } as any)
@@ -72,11 +75,90 @@ describe('Rotate controller', () => {
     }
 
     // @ts-ignore
-    controller.mouseDown({
+    controller.dragStart({
       buttons: 2, // Right button
       stopPropagation: () => null
     })
 
     expect(changeCrossColor).toBeCalledTimes(0)
+  })
+
+  /**
+   * Steps to check:
+   * Select and move a big structure to edge of canvas,
+   * then rotate it by the handle
+   */
+  test('center changes with `scale` and `offset`', () => {
+    const controller = new RotateController({ selection: () => null } as any)
+    // @ts-ignore
+    controller.originalCenter = new Vec2(1, 1)
+    // @ts-ignore
+    controller.editor.render = {
+      options: {
+        scale: 2,
+        offset: new Vec2(1, 1)
+      }
+    }
+
+    // @ts-ignore
+    expect(controller.center.x).toBe(3)
+    // @ts-ignore
+    expect(controller.center.y).toBe(3)
+  })
+
+  it('shows half predefined degrees', () => {
+    let structRotateDegree = 180
+    let predefinedDegree1 = 90
+    let predefinedDegree2 = -90
+    let predefinedDegree3 = 89
+    let predefinedDegree4 = -89
+    expect(
+      getDifference(predefinedDegree1, structRotateDegree)
+    ).toBeLessThanOrEqual(90)
+    expect(
+      getDifference(predefinedDegree2, structRotateDegree)
+    ).toBeLessThanOrEqual(90)
+    expect(
+      getDifference(predefinedDegree3, structRotateDegree)
+    ).toBeGreaterThan(90)
+    expect(
+      getDifference(predefinedDegree4, structRotateDegree)
+    ).toBeGreaterThan(90)
+
+    structRotateDegree = 135
+    predefinedDegree1 = 45
+    predefinedDegree2 = -135
+    predefinedDegree3 = 44
+    predefinedDegree4 = -134
+    expect(
+      getDifference(predefinedDegree1, structRotateDegree)
+    ).toBeLessThanOrEqual(90)
+    expect(
+      getDifference(predefinedDegree2, structRotateDegree)
+    ).toBeLessThanOrEqual(90)
+    expect(
+      getDifference(predefinedDegree3, structRotateDegree)
+    ).toBeGreaterThan(90)
+    expect(
+      getDifference(predefinedDegree4, structRotateDegree)
+    ).toBeGreaterThan(90)
+
+    structRotateDegree = -135
+    predefinedDegree1 = -45
+    predefinedDegree2 = 135
+    predefinedDegree3 = -44
+    predefinedDegree4 = 134
+    expect(
+      getDifference(predefinedDegree1, structRotateDegree)
+    ).toBeLessThanOrEqual(90)
+    expect(
+      getDifference(predefinedDegree2, structRotateDegree)
+    ).toBeLessThanOrEqual(90)
+    expect(
+      getDifference(predefinedDegree3, structRotateDegree)
+    ).toBeGreaterThan(90)
+    expect(
+      getDifference(predefinedDegree4, structRotateDegree)
+    ).toBeGreaterThan(90)
   })
 })

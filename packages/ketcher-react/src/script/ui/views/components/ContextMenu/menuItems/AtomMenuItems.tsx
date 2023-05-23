@@ -1,9 +1,11 @@
+import { FC } from 'react'
 import { Item } from 'react-contexify'
 import useAtomEdit from '../hooks/useAtomEdit'
 import useAtomStereo from '../hooks/useAtomStereo'
 import useDelete from '../hooks/useDelete'
+import { MenuItemsProps } from '../contextMenu.types'
 
-const AtomMenuItems: React.FC = (props) => {
+const AtomMenuItems: FC<MenuItemsProps> = (props) => {
   const [handleEdit] = useAtomEdit()
   const [handleStereo, stereoDisabled] = useAtomStereo()
   const handleDelete = useDelete()
@@ -11,7 +13,9 @@ const AtomMenuItems: React.FC = (props) => {
   return (
     <>
       <Item {...props} onClick={handleEdit}>
-        Edit...
+        {props.propsFromTrigger?.extraItemsSelected
+          ? 'Edit selected atoms...'
+          : 'Edit...'}
       </Item>
 
       <Item {...props} disabled={stereoDisabled} onClick={handleStereo}>

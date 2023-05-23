@@ -58,11 +58,14 @@ class RotateTool {
     }
   }
 
-  mousedown(event) {
-    const xy0 = this.getCenter(this.editor, event)[0]
+  mousedown(event, handleCenter?: Vec2, center?: Vec2) {
+    const xy0 = center || this.getCenter(this.editor, event)[0]
     this.dragCtx = {
       xy0,
-      angle1: utils.calcAngle(xy0, this.editor.render.page2obj(event))
+      angle1: utils.calcAngle(
+        xy0,
+        handleCenter || this.editor.render.page2obj(event)
+      )
     }
     return true
   }

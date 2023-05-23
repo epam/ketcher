@@ -156,6 +156,17 @@ class ReSGroup extends ReObject {
     return { startX, startY, width, height }
   }
 
+  getContractedSelectionContour(render) {
+    const { paper, options } = render
+    const { fontsz, radiusScaleFactor } = options
+    const radius = fontsz * radiusScaleFactor * 2
+    const { startX, startY, width, height } = this.getTextHighlightDimensions(
+      fontsz / 2,
+      render
+    )
+    return paper.rect(startX, startY, width, height, radius)
+  }
+
   makeSelectionPlate(restruct, paper, options) {
     const sgroup = this.item
     const functionalGroups = restruct.molecule.functionalGroups
@@ -164,13 +175,9 @@ class ReSGroup extends ReObject {
     if (
       FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
     ) {
-      const { startX, startY, width, height } = this.getTextHighlightDimensions(
-        render.options.fontsz / 2,
-        render
+      return this.getContractedSelectionContour(render).attr(
+        options.selectionStyle
       )
-      return paper
-        .rect(startX, startY, width, height)
-        .attr(options.selectionStyle)
     }
   }
 
@@ -190,13 +197,9 @@ class ReSGroup extends ReObject {
         functionalGroups
       )
     ) {
-      const { startX, startY, width, height } = this.getTextHighlightDimensions(
-        options.fontsz / 2,
-        render
+      sGroupItem.hovering = this.getContractedSelectionContour(render).attr(
+        options.hoverStyle
       )
-      sGroupItem.hovering = paper
-        .rect(startX, startY, width, height)
-        .attr(options.hoverStyle)
     } else {
       sGroupItem.hovering = paper
         .path(

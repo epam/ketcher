@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import assert from 'assert'
+import { tfx } from 'utilities'
 
 export interface Point {
   x?: number
@@ -113,6 +114,16 @@ export class Vec2 {
 
   static centre(v1: Vec2, v2: Vec2) {
     return Vec2.lc2(v1, 0.5, v2, 0.5)
+  }
+
+  static getLinePoint(lineStart: Vec2, lineEnd: Vec2, length) {
+    const difference = lineStart.sub(lineEnd)
+    const distance = difference.length()
+    const ratio = length / distance
+    return new Vec2(
+      lineStart.x + difference.x * ratio,
+      lineStart.y + difference.y * ratio
+    )
   }
 
   length(): number {
@@ -219,6 +230,42 @@ export class Vec2 {
       this.x * sin + this.y * cos,
       this.z
     )
+  }
+
+  rotateAroundOrigin(angleInDegrees: number, origin: Vec2) {
+    const angleInRadians = (angleInDegrees * Math.PI) / 180
+    const offsetX = this.x - origin.x
+    const offsetY = this.y - origin.y
+
+    const rotatedX =
+      Math.cos(angleInRadians) * offsetX - Math.sin(angleInRadians) * offsetY
+    const rotatedY =
+      Math.sin(angleInRadians) * offsetX + Math.cos(angleInRadians) * offsetY
+
+    const x = rotatedX + origin.x
+    const y = rotatedY + origin.y
+
+    return new Vec2(Number(tfx(x)), Number(tfx(y)), this.z || 0)
+  }
+
+  isInsidePolygon(points: Vec2[]) {
+    // ray-casting algorithm based on
+    // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
+    const { x, y } = this
+    let inside = false
+
+    for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+      const xi = points[i].x || 0
+      const yi = points[i].y || 0
+      const xj = points[j].x || 0
+      const yj = points[j].y || 0
+
+      const intersect =
+        yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi
+      if (intersect) inside = !inside
+    }
+
+    return inside
   }
 
   oxAngle(): number {

@@ -28,6 +28,8 @@ import { load, onAction, removeStructAction } from './shared'
 import actions from '../action'
 import keyNorm from '../data/convert/keynorm'
 import { isIE } from 'react-device-detect'
+import { handleHotkeyOverItem } from './handleHotkeysOverItem'
+import { SettingsManager } from '../utils/settingsManager'
 import {
   handleHotkeyOverItem,
   handleHotkeyOverSGroup
@@ -120,6 +122,10 @@ function keyHandle(dispatch, state, hotKeys, event) {
           dispatch
         })
       } else {
+        if (newAction.tool === 'select') {
+          newAction = SettingsManager.getSettings().selectionTool
+        }
+
         dispatch(onAction(newAction))
       }
 

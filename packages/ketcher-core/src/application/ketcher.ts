@@ -217,6 +217,22 @@ export class Ketcher {
     )
   }
 
+  getCDXml(): Promise<string> {
+    return getStructure(
+      SupportedFormat.cdxml,
+      this.#formatterFactory,
+      this.#editor.struct()
+    )
+  }
+
+  getCDX(): Promise<string> {
+    return getStructure(
+      SupportedFormat.cdx,
+      this.#formatterFactory,
+      this.#editor.struct()
+    )
+  }
+
   getInchi(withAuxInfo = false): Promise<string> {
     return getStructure(
       withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,

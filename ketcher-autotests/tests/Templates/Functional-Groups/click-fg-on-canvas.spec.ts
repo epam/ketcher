@@ -34,7 +34,7 @@ test.describe('Click Functional Group on canvas', () => {
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickInTheMiddleOfTheScreen(page);
     await pressButton(page, 'Custom Templates');
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
+    // await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
   });

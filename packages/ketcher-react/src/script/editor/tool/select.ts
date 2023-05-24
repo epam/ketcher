@@ -77,8 +77,6 @@ class SelectTool implements AbstractTool {
     const ctab = rnd.ctab
     const molecule = ctab.molecule
 
-    this.editor.hover(null) // TODO review hovering for touch devicess
-
     const map = getMapsForClosestItem(
       this.#lassoHelper.fragment || event.ctrlKey
     )
@@ -426,7 +424,7 @@ class SelectTool implements AbstractTool {
     return true
   }
 
-  mouseleave(_) {
+  mouseleave() {
     if (this.dragCtx && this.dragCtx.stopTapping) this.dragCtx.stopTapping()
 
     if (this.dragCtx && this.dragCtx.action) {

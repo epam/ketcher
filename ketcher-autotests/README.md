@@ -76,37 +76,52 @@ selectNestedTool - select specific tool that has sub / nested levels.
 
 ## Docker
 
-Docker runs automatically in the pipeline after pushing changes to the repository. (It runs tests on the current version of frontend)
+- Docker runs automatically in the pipeline after pushing changes to the repository. (It runs tests on the current version of frontend)
+- When you want to run tests in Docker on your computer, Docker should be run
 
-### How to update snapshots?
+Its configuration allows you to work in 2 modes (you should choose one of them):
 
-**Prerequisites:**
+1. Run only autotests
+2. Run ketcher-frontend and autotests.
 
-- Docker Desktop
+### Prerequisites:
+
+- **Docker Desktop**
   - How to install for Mac OS: https://docs.docker.com/desktop/install/mac-install/
   - How to install for Windows: https://docs.docker.com/desktop/install/windows-install/
   - How to install for Linux: https://docs.docker.com/desktop/install/linux-install/
+- **Build Docker**:
+  For build docker, you should choose ONLY ONE way to build ("Autotest" or "Autotest + frontend"):
+  - **Autotest**
+    - Directory "ketcher-autotests": `npm run docker:autotest:build`
+  - **Autotest + frontend**
+    - Directory "ketcher": You should build the app: `npm run build`
+    - Directory "ketcher": Build autotests for docker:`npm run docker:build:autotests`
+- **Choose environment**:
+  In the directory "ketcher-autotests" set .env variable the variable KETCHER_URL, where you want to run tests
+  - Rc: KETCHER_URL=link_to_rc
+  - Frontend in Docker: KETCHER_URL=http://frontend:4002
 
-#### If you want to update snapshots based on the rc version:
+### Commands
 
-1. Directory "ketcher-autotests": Set .env variable KETCHER_URL=link_to_rc
-2. Directory "ketcher": Build autotests for docker:`npm run docker:build:autotests`
-3. Directory "ketcher-autotests": Run the snapshot update: `npm run docker:update`
+#### Autotest
 
-#### If you want to update snapshots based on the current frontend version (local)
+Run this command in the directory "ketcher-autotests"
 
-1. Directory "ketcher": You should build the app: `npm run build` (if you already have "build" of the frontend part on your localhost, you can skip this step )
-2. Directory "ketcher-autotests": Set .env variable KETCHER_URL=http://frontend:4002
-3. Directory "ketcher": Build frontend and autotests for docker: `npm run docker:build`
-4. Directory "ketcher-autotests": Run the snapshot update: `npm run docker:update`
+- `npm run docker:autotest:start` run all tests
+- `npm run docker:autotest:update` run all tests and update snapshots
+- `npm run docker:autotest:start name_test_file` run a specific test (point out filename)
 
-### All command in Docker
+- if your command doesn't exist in package.json and you want to run it in the docker container: `npm run docker:autotest any_command`
+- if you want to **delete** the docker build, run the next command in the directory "ketcher-autotest": `npm run docker:down`
 
-Run tests in the directory "ketcher-autotests":
+#### Autotest + frontend
+
+Run this command in the directory "ketcher-autotests"
 
 - `npm run docker:test` run all tests
-- `npm run docker:test name_test_file` run a specific test (point out filename)
 - `npm run docker:update` run all tests and update snapshots
+- `npm run docker:test name_test_file` run a specific test (point out filename)
 - `npm run docker:debug` run all tests with debugging enabled
 
 - if your command doesn't exist in package.json and you want to run it in the docker container: `npm run docker any_command`

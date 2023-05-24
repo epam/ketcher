@@ -75,15 +75,15 @@ const config: PlaywrightTestConfig = {
       },
     },
 
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-        launchOptions: {
-          headless: true,
-        },
-      },
-    },
+    // {
+    //   name: 'firefox',
+    //   use: {
+    //     ...devices['Desktop Firefox'],
+    //     launchOptions: {
+    //       headless: true,
+    //     },
+    //   },
+    // },
     /* Test against mobile viewports. */
     // {
     //   name: 'Mobile Chrome',

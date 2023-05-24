@@ -36,7 +36,7 @@ import SelectTool from './select'
 import SimpleObjectTool from './simpleobject'
 import TemplateTool from './template'
 import TextTool from './text'
-import { ToolConstructorInterface } from './AbstractTool'
+import { ToolConstructorInterface } from './Tool'
 
 export const toolsMap: Record<string, ToolConstructorInterface> = {
   hand: HandTool,

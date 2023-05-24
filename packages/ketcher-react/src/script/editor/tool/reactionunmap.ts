@@ -16,9 +16,9 @@
 
 import { Action, fromAtomsAttrs } from 'ketcher-core'
 import Editor from '../Editor'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class ReactionUnmapTool implements AbstractTool {
+class ReactionUnmapTool implements Tool {
   private readonly editor: Editor
 
   constructor(editor) {

@@ -27,9 +27,9 @@ import {
 
 import utils from '../shared/utils'
 import Editor from '../Editor'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class RotateTool implements AbstractTool {
+class RotateTool implements Tool {
   private readonly editor: Editor
   dragCtx: any
   isNotActiveTool: boolean | undefined

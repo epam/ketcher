@@ -23,9 +23,9 @@ import {
   Vec2
 } from 'ketcher-core'
 import Editor from '../Editor'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class ReactionArrowTool implements AbstractTool {
+class ReactionArrowTool implements Tool {
   private readonly mode: RxnArrowMode
   private readonly editor: Editor
   private dragCtx: any

@@ -48,11 +48,11 @@ import { getMergeItems } from './helper/getMergeItems'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds'
 import { hasAtomsOutsideCanvas } from './helper/isAtomOutSideCanvas'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
 type SelectMode = 'lasso' | 'fragment' | 'rectangle'
 
-class SelectTool implements AbstractTool {
+class SelectTool implements Tool {
   readonly #mode: SelectMode
   readonly #lassoHelper: LassoHelper
   private readonly editor: Editor

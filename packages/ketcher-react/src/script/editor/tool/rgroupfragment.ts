@@ -22,9 +22,9 @@ import {
   FunctionalGroup
 } from 'ketcher-core'
 import Editor from '../Editor'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class RGroupFragmentTool implements AbstractTool {
+class RGroupFragmentTool implements Tool {
   private readonly editor: Editor
 
   constructor(editor) {

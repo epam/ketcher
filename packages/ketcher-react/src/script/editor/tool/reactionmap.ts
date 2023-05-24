@@ -16,9 +16,9 @@
 
 import { Action, Scale, fromAtomsAttrs } from 'ketcher-core'
 import Editor from '../Editor'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class ReactionMapTool implements AbstractTool {
+class ReactionMapTool implements Tool {
   private readonly editor: Editor
   private dragCtx: any
   private line: any

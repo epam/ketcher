@@ -16,9 +16,9 @@
 
 import { fromMultipleMove, fromPlusAddition } from 'ketcher-core'
 import Editor from '../Editor'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class ReactionPlusTool implements AbstractTool {
+class ReactionPlusTool implements Tool {
   private readonly editor: Editor
   private dragCtx: any
 

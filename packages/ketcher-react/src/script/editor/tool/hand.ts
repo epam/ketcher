@@ -16,9 +16,9 @@
 
 import Editor from '../Editor'
 import { Vec2 } from 'ketcher-core'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class HandTool implements AbstractTool {
+class HandTool implements Tool {
   private readonly editor: Editor
   private begPos: Vec2 | null = null
   private endPos: Vec2 | null = null

@@ -18,9 +18,7 @@ interface ToolEventHandler {
   mouseover?(event: Event): void
 }
 
-export interface AbstractTool extends ToolEventHandler {
-  close?(): void
-
+export interface Tool extends ToolEventHandler {
   cancel?(): void
 
   isSelectionRunning?(): boolean
@@ -29,7 +27,7 @@ export interface AbstractTool extends ToolEventHandler {
 }
 
 export type ToolConstructorInterface = {
-  new (editor: Editor, ...args: any[]): AbstractTool
+  new (editor: Editor, ...args: any[]): Tool
 }
 
 export type ToolEventHandlerName = keyof ToolEventHandler

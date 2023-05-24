@@ -21,9 +21,9 @@ import {
 } from 'ketcher-core'
 
 import Editor from '../Editor'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class EnhancedStereoTool implements AbstractTool {
+class EnhancedStereoTool implements Tool {
   private readonly editor: Editor
   private readonly stereoAtoms: Array<number>
   isNotActiveTool: true

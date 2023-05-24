@@ -40,10 +40,10 @@ import { contextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.
 import { HoverIcon } from './HoverIcon'
 import RotateController from './tool/rotate-controller'
 import {
-  AbstractTool,
+  Tool,
   ToolConstructorInterface,
   ToolEventHandlerName
-} from './tool/AbstractTool'
+} from './tool/Tool'
 
 const SCALE = 40
 const HISTORY_SIZE = 32 // put me to options
@@ -113,7 +113,7 @@ class Editor implements KetcherEditor {
   #origin?: any
   render: Render
   _selection: Selection | null
-  _tool: AbstractTool | null
+  _tool: Tool | null
   historyStack: any
   historyPtr: any
   errorHandler: ((message: string) => void) | null
@@ -214,7 +214,7 @@ class Editor implements KetcherEditor {
     this.#origin = position ? this.historyStack[position - 1] : null
   }
 
-  tool(name?: any, opts?: any): AbstractTool | null {
+  tool(name?: any, opts?: any): Tool | null {
     /* eslint-disable no-underscore-dangle */
     if (arguments.length === 0) {
       return this._tool

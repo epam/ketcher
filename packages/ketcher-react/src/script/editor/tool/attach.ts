@@ -16,9 +16,9 @@
 
 import { Elements, FunctionalGroup } from 'ketcher-core'
 import Editor from '../Editor'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class AttachTool implements AbstractTool {
+class AttachTool implements Tool {
   private readonly attach: { atomid: number; bondid: number }
   private readonly editor: Editor
 

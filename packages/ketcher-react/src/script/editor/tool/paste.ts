@@ -31,9 +31,9 @@ import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { getMergeItems } from './helper/getMergeItems'
 import utils from '../shared/utils'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class PasteTool implements AbstractTool {
+class PasteTool implements Tool {
   private readonly editor: Editor
   private readonly struct: Struct
   private action: any

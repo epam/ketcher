@@ -35,9 +35,9 @@ import utils from '../shared/utils'
 import Editor from '../Editor'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { MODES } from 'src/constants'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class TemplateTool implements AbstractTool {
+class TemplateTool implements Tool {
   private readonly editor: Editor
   private readonly mode: any
   private readonly template: any

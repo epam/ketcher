@@ -23,13 +23,13 @@ import {
   fromTextDeletion,
   fromTextUpdating
 } from 'ketcher-core'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
 interface Result {
   content: string
 }
 
-class TextTool implements AbstractTool {
+class TextTool implements Tool {
   private readonly editor: any
   private dragCtx: any
 

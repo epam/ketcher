@@ -29,9 +29,9 @@ import {
 import { atomLongtapEvent } from './atom'
 import utils from '../shared/utils'
 import Editor from '../Editor'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class ChainTool implements AbstractTool {
+class ChainTool implements Tool {
   private readonly editor: Editor
   private dragCtx: any
 

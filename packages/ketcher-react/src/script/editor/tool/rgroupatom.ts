@@ -21,9 +21,9 @@ import {
   FunctionalGroup
 } from 'ketcher-core'
 import Editor from '../Editor'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class RGroupAtomTool implements AbstractTool {
+class RGroupAtomTool implements Tool {
   private readonly editor: Editor
 
   constructor(editor) {

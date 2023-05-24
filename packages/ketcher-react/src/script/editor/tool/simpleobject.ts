@@ -22,9 +22,9 @@ import {
   SimpleObjectMode
 } from 'ketcher-core'
 import Editor from '../Editor'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class SimpleObjectTool implements AbstractTool {
+class SimpleObjectTool implements Tool {
   private readonly mode: SimpleObjectMode
   private readonly editor: Editor
   private dragCtx: any

@@ -30,9 +30,9 @@ import {
 import LassoHelper from './helper/lasso'
 import { selMerge } from './select'
 import Editor from '../Editor'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class EraserTool implements AbstractTool {
+class EraserTool implements Tool {
   private readonly editor: Editor
   private readonly maps: Array<string>
   private readonly lassoHelper: LassoHelper

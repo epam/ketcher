@@ -28,9 +28,9 @@ import {
 
 import utils from '../shared/utils'
 import Editor from '../Editor'
-import { AbstractTool } from './AbstractTool'
+import { Tool } from './Tool'
 
-class BondTool implements AbstractTool {
+class BondTool implements Tool {
   private readonly editor: Editor
   private readonly atomProps: { label: string }
   private readonly bondProps: any

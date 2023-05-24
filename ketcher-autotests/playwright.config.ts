@@ -25,10 +25,12 @@ function baseURL(): string {
   return `${process.env.KETCHER_URL}${REMOTE_URL}`;
 }
 
+const MAX_NUMBER_OF_RETRIES = 2;
+
 const config: PlaywrightTestConfig = {
   testDir: './tests',
   /* Maximum time one test can run for. */
-  timeout: 100 * 1000,
+  timeout: 60_000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -39,14 +41,14 @@ const config: PlaywrightTestConfig = {
     //   /* An acceptable ratio of pixels that are different to the total amount of pixels, between 0 and 1. */
     //   maxDiffPixelRatio: 0.01,
     // },
-    timeout: 10000,
+    timeout: 10_000,
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
+  forbidOnly: Boolean(process.env.CI),
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */

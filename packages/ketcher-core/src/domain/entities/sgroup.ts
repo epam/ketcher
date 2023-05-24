@@ -81,6 +81,7 @@ export class SGroup {
   pp: Vec2 | null
   data: any
   firstSgroupAtom: any
+  firstSgroupAtomId: number
 
   constructor(type: string) {
     this.type = type
@@ -101,6 +102,7 @@ export class SGroup {
     this.xBonds = []
     this.neiAtoms = []
     this.pp = null
+    this.firstSgroupAtomId = -1
     this.data = {
       mul: 1, // multiplication count for MUL group
       connectivity: 'ht', // head-to-head, head-to-tail or either-unknown
